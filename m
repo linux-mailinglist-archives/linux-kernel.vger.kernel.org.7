@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-637696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA23CAADC26
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:04:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E21AADC2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D6F1C222BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C944C3C19
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1D02147F6;
-	Wed,  7 May 2025 10:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F78820B1F4;
+	Wed,  7 May 2025 10:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FBHGeRui"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="mxAeDq6Q"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E864A21019C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E30748D;
+	Wed,  7 May 2025 10:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746612251; cv=none; b=ZDDwXtAtQyAQnEKEziygZRzdLV4iag02iIPZ37smC2SbZy2vSidnfKDWA3R9QGi/vAtddbjanug3Ag+4xmLLSORk0edo13sJnDbKa+i07fu4IxgWhfkR/Hgdb5gK5Vqa+g2f+u8pqUGQ2Of/3O98JzeqJXL2rtWdLU+fCmXpL90=
+	t=1746612288; cv=none; b=W37YJjHvPkWzAGcgGHxhdungEkDALxx2evCsfh8pqwSxCZvUScDVk4j6UtANTM/6rDCX/Q+SSRRpRHS4RDkuOICx1uSDeXMNbfNz8t/LeVoba7JxXDnXjv5wFeT4PAGU7CdBF2JCp37jR+iCXexeqw3n2gHEFpW1ri3YCTS+O5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746612251; c=relaxed/simple;
-	bh=+5OdA0oEnVokN1rpaxGvi2C+sVk9jnywPeQTetGSAjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyTf/TUrFvZ3uKEmDVCi/lfRLTguawtxiSP1TiV57aNewFoor5FN4WCjUPLp4ajBHZkAcKqrSqpbTZd//7b6wDYVxoSbl0enYkRijsA3lwDwCIh7nzijmwALqIAFgw3jQa3wMyx4BtFj4LGa38TdCWO0Vtn2/JPqyN+WKLVGR7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FBHGeRui; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c1efbefc6so4942118f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 03:04:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746612247; x=1747217047; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4drvJJUgYEZxCfccWRhpTUQplm3nJwkaeKuYVaNajo=;
-        b=FBHGeRuiP/D5ULFDX4C8tJN50BJFtLetYxx3xI3Ym3Lq1O2sZSHPTyEDoo2uLNs2tJ
-         x3phYgvnPlIniqPl4b132a33+qNykw9umaiz75PKaIqprOGaI2MkJRk7h0IUd4mco5aQ
-         qECR3O7YxPTewhqrGPzYsBilX+zUy5MnEMG8rXjFe+hCk/2KloiSoPLKzZ54JLtW5ehW
-         wzI08cZi4JxsBNLxz1w00rxRUrXsIP0lhNmZFrHb9GvUp7LCmmv03wTbtSZlb75hUISp
-         wtypzjvPQFuBzFXWjJ9tGvflPtnraZcQJvPTA57GAEoLrGJ9zl5VL6EV1GebgbHgEzGS
-         P45A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746612247; x=1747217047;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4drvJJUgYEZxCfccWRhpTUQplm3nJwkaeKuYVaNajo=;
-        b=RYPNJdPjx+PIDw7yZlbmTrjz7I5tec0T+C2HvJtsxvt+ya5R0bvB9c7jVOnnvMz+bd
-         3vSgzQiHMcPl7P5oqp1m0L1ZCpF5DV+BVtrqunY5VZX8AguG266o1cBtK+GDMCHGKUUr
-         5LSZvWBo6CFYiFVs0mlKXj0lRDbFXgg412OMLgF2Y36NmLKwP5B0eUBNQ0UD+V9P1ivI
-         gHIDiRVN2nEx4v4ZC77oc04hbdBqP0UsmAqfCySzj1sNkAXUiR1D2SEo+XEoUQ3VAyka
-         064yl13O1HNghqZwNi5hlaKQOHw4DIli+JqNL16u3fJ4YiYcRUdiNgWjEU2NKL/HogIN
-         uIKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0r6wE2iJmWbizO4IpFn+rf+f9RjcZZ7y8R2uiS2ahZgjCKfrL5dDfh8CsOCuEXVJFZmYcjSXCgIZMplA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeQ7HG03KqGlVxMjE5riXTehFLAfNtGgwuogH8c1lOqn3CpYWt
-	/LpHPodEWKNoU6H5n9TFlD80dlQpdURbLr2aFB0j27HH2XIi1/ZPrUCk3JivpO8=
-X-Gm-Gg: ASbGncudS7gCLMHjJ6gsWNE/noDU0iG+6W+/Dl5KEGcM1c5N9UIhsNQDioa9dgO1VX8
-	bYrvKzyZPUmtOhVIhxtjXUn5+3BI4B0EWCP24Ksb7cOWTEjILf4HIZMNPclFpAguvDylxKAbmoz
-	e+9HWZt4ymRWHmL87J6sKkwElassAfJafn95+gA1crFyddAGieeB+aMk6VQbNkR0VUVVwe49gNh
-	jhI7vQrMGUKWZy+1N43m0dvNreq+JrvKjDVpRWKu3Q7LIqHAU1ccqG0E8bQ3+KDmWqtUrMQFuVK
-	4aDyGC0gMhvMTA2NVydVU+wlq4m1FKncbYLfvu/jo9LtqspfJ2FXhJMsqs+l9qOw1iCBB6HPsga
-	XaGJP45M=
-X-Google-Smtp-Source: AGHT+IEaSN+8g1NFKyP/wiEuCt2qNtlAySEQ9Eluq9F9UG0pScqdYhwwvlQsl1TiQ3pW5g9bViorNA==
-X-Received: by 2002:a5d:53ce:0:b0:3a0:b72a:b36 with SMTP id ffacd0b85a97d-3a0b72a0ce2mr649663f8f.36.1746612247148;
-        Wed, 07 May 2025 03:04:07 -0700 (PDT)
-Received: from localhost (p200300f65f00780800000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f00:7808::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae7cc6sm16743937f8f.55.2025.05.07.03.04.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 03:04:06 -0700 (PDT)
-Date: Wed, 7 May 2025 12:04:04 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: linux-pwm@vger.kernel.org
-Cc: David Lechner <dlechner@baylibre.com>, 
-	Kent Gibson <warthog618@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/4] pwm: userspace support
-Message-ID: <yvpdeff577l72zxbtz2a2pwghzk3app4dfntjfgijdultauvea@dqkaek7tbbos>
-References: <cover.1746010245.git.u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1746612288; c=relaxed/simple;
+	bh=mmFmsqM7Nq7w8TVg8U3Rogh4VyZckeHRwu9Hsc96wPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qp57OErttkW1i+WmjSr517pt1+cAwyTXMFmZjExayUcz6sS3yApo5YOHmWxyNRFqHpr90uAJjXiR4FrU54GsjkSimfC4eTW2w+KT6wWTk9ZPIOrh0RUVkoSnqldHFbKyo5BxHff7keSm+InqMyMUX98PK1owN/wimIUAm7EPn+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=mxAeDq6Q; arc=none smtp.client-ip=159.100.248.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [149.56.97.132])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id C9E6A2634A;
+	Wed,  7 May 2025 10:04:43 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay1.mymailcheap.com (Postfix) with ESMTPS id 363933EBDC;
+	Wed,  7 May 2025 10:04:36 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 40101400CD;
+	Wed,  7 May 2025 10:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1746612275; bh=mmFmsqM7Nq7w8TVg8U3Rogh4VyZckeHRwu9Hsc96wPQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mxAeDq6QxdoymKp2Jk5R5qeSYKbrNDAoqW/k9L6ABkSfPd/EQb/RjNne0hUHqDstk
+	 n1OzJmRdXny2UfrV0wjEn4XGiIyd2z6GBUWtJPpO7/LpoFQ/F5lTKfzX4raxNWBDyn
+	 ke/CtQdMOtS6bA2AEPIscYxPrEfO2o5gh7g3Ek80=
+Received: from hrh-ofice.wok.cipunited.com (unknown [60.247.127.212])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 35131409D2;
+	Wed,  7 May 2025 10:04:30 +0000 (UTC)
+From: Runhua He <hua@aosc.io>
+To: platform-driver-x86@vger.kernel.org
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Rong Zhang <i@rong.moe>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Runhua He <hua@aosc.io>,
+	Xinhui Yang <cyan@cyano.uk>,
+	Yemu Lu <prcups@krgm.moe>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] platform/x86/amd/pmc: Declare quirk_spurious_8042 for MECHREVO Wujie 14XA (GX4HRXL)
+Date: Wed,  7 May 2025 18:01:03 +0800
+Message-ID: <20250507100103.995395-1-hua@aosc.io>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2rfq35pycrfzygjr"
-Content-Disposition: inline
-In-Reply-To: <cover.1746010245.git.u.kleine-koenig@baylibre.com>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Queue-Id: 40101400CD
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [1.50 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	SUBJECT_RANDOM_CHARS_1(0.10)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ONE(0.00)[1];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[prcups.krgm.moe:server fail,cyan.cyano.uk:server fail,i.rong.moe:server fail,jeffbai.aosc.io:server fail,hua.aosc.io:server fail,mario.limonciello.amd.com:server fail];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
 
+MECHREVO Wujie 14XA (GX4HRXL) wakes up immediately after s2idle entry.
+This happens regardless of whether the laptop is plugged into AC power,
+or whether any peripheral is plugged into the laptop.
 
---2rfq35pycrfzygjr
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 0/4] pwm: userspace support
-MIME-Version: 1.0
+Similar to commit a55bdad5dfd1 ("platform/x86/amd/pmc: Disable keyboard
+wakeup on AMD Framework 13"), the MECHREVO Wujie 14XA wakes up almost
+instantly after s2idle suspend entry (IRQ1 is the keyboard):
 
-Hello,
+2025-04-18 17:23:57,588 DEBUG:  PM: Triggering wakeup from IRQ 9
+2025-04-18 17:23:57,588 DEBUG:  PM: Triggering wakeup from IRQ 1
 
-On Wed, Apr 30, 2025 at 01:55:57PM +0200, Uwe Kleine-K=F6nig wrote:
-> after the feedback I got from David on v7[1] and some internal
-> discussion here comes a new version of the patch.
->=20
-> Apart from rebasing to a newer base (current pwm/for-next) the only
-> change in the relevant patch #4 about return values from the
-> PWM_IOCTL_SETEXACTWF ioctl. Instead of returning 1 if the request failed
-> to apply exactly, return -EDOM.
->=20
-> The earlier patches in this series prepare that and implement a
-> similar change in pwm_set_waveform_might_sleep() to simplify also other
-> users of this function. Patch #3 is only a documentation update that is
-> not strictly related to the userspace chardev, but reflects the changes
-> in patches #1 and #2.
->=20
-> Feedback welcome.
+Add this model to the spurious_8042 quirk to workaround this.
 
-I hope that no feedback is good feedback and pushed that series. The
-first three patches to
+This patch does not affect the wake-up function of the built-in keyboard.
+Because the firmware of this machine adds an insurance for keyboard
+wake-up events, as it always triggers an additional IRQ 9 to wake up the
+system.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for=
--next
+Suggested-by: Mingcong Bai <jeffbai@aosc.io>
+Suggested-by: Xinhui Yang <cyan@cyano.uk>
+Suggested-by: Rong Zhang <i@rong.moe>
+Fixes: a55bdad5dfd1 ("platform/x86/amd/pmc: Disable keyboard wakeup on AMD Framework 13")
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4166
+Cc: Mario Limonciello <mario.limonciello@amd.com>
+Link: https://zhuanldan.zhihu.com/p/730538041
+Tested-by: Yemu Lu <prcups@krgm.moe>
+Signed-off-by: Runhua He <hua@aosc.io>
 
-as v6.16-rc1 material. The last patch only to pwm/for-nexxt which I will
-push to next after v6.16-rc1 to give that a long time in next before
-going into a release.
+---
+Changes in v2:
+- Match quirk to precise motherboard models to avoid false positives.
+---
+ drivers/platform/x86/amd/pmc/pmc-quirks.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Best regards
-Uwe
+diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+index b4f49720c87f..2e3f6fc67c56 100644
+--- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
++++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+@@ -217,6 +217,13 @@ static const struct dmi_system_id fwbug_list[] = {
+ 			DMI_MATCH(DMI_BIOS_VERSION, "03.05"),
+ 		}
+ 	},
++	{
++		.ident = "MECHREVO Wujie 14X (GX4HRXL)",
++		.driver_data = &quirk_spurious_8042,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "WUJIE14-GX4HRXL"),
++		}
++	},
+ 	{}
+ };
+ 
+-- 
+2.49.0
 
---2rfq35pycrfzygjr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgbMBEACgkQj4D7WH0S
-/k43Kwf+MCeLEQtaqRQp3PKuwsCxXrVgqiIWBtSxhmcZpHfDOqHkAYPzfe5mHgaU
-r4HpXdFemnQ5KcQFqbjSkhwO7pxWewfO4MOjXgL0TdKUKwsKE7yoB+Cd4wM219AD
-cLeRtxR97DUCM8eH4mludOJ9ooD+HdnMXKskRlUik4yPmaqU3eNFVjHsndqOo43B
-jqGkB1/MiDv+NupH1VWeRD4ruZ19yGXup1/JGaNmnG3Gz++jxGMZ5SpsPaHS5Ej/
-/rnP5ihOWSpUUCx6VFibZwukq2TcI8nDjzm27IxdOZB/K182Kbqb5ZIaKzXZGVv7
-ctJjAnZoDNrXZyA751C9WBE8kYlgQQ==
-=FhI5
------END PGP SIGNATURE-----
-
---2rfq35pycrfzygjr--
 
