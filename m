@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-637946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94296AADF81
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:45:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FC8AADF97
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204761BC54E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE6D4E7091
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5932820CD;
-	Wed,  7 May 2025 12:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C526288C18;
+	Wed,  7 May 2025 12:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="kcxcIV1S";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="kj0fwJqq"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RydokPtq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45326280338
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D648D288536;
+	Wed,  7 May 2025 12:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746621874; cv=none; b=r2GNUwJnJTU8URg2CSKmkZEKjGUHU4Mc3ReUsFgi4ajvLCIqyBPdGFVfdL+X6onJQWAPuAB3Ga9gY7vNvn16N2QMDY952kk51wk68HJmpaBTkqhbW+o+lU2aiENkA5ItcG1DKoE+YwvA6HOmCCWalTmMd618FFn/IGKRHgmJsaQ=
+	t=1746621926; cv=none; b=iauq3i9VwFIGAPtIDipkMkHN/bjDmSp8yuVx3LITqD5ZdNQugTqpmilmrV9SFnE81bl4ln8JPDWHMYtbcSSN0At+4NPb1iI4f4LtoHu6SxCTeSP445mIIfAyH7UZOd8ELdRGf44HVoKabhiAtiLCjcP5Ws1/BnSqWCc3zP2WBxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746621874; c=relaxed/simple;
-	bh=nQujC6034IbbV1/Takj+ktYRPduuI1NiEdr6M8Bk9tM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UbliXLh+KO/4+cL2I2lQqOuEDUoXtdouQPp9bZobtn9cHAiV1bAaw9yG35Blvr9t7VrjyGDnscw9wwU1n6WsnOEjXG5q+50/qmRL5Rno9votZ3Jat9LEDfJ5GCbgSxQhqC1saMLok7dKZt8F+V/A+F0aGoXZRNBTuTriewkBwBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=kcxcIV1S; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=kj0fwJqq reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1746621870; x=1778157870;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UaNOIapp4J5KzxMU+tHJGWnVbFnnDP/ugTkRCJiT7PY=;
-  b=kcxcIV1SUWHiDKEmQrHcfBVbAp93yBgLaqQ9msTevKDN+848jZHh3kCw
-   N6x5O5OoFNeIoM2EsejADbynAp4HI4idI+CjWWv2MF+LlydBSLX+XUO3r
-   PwD6jjVKjrkKPvoRUk2Y9iVhWvoChARWHMojQWtyCWsEEZYe6iEEtXsit
-   wMHArzYrVPRMzOfUNnHwlOziznhHRxa7NcIzk9QVX+lmTJHHpakIJEJc5
-   8jIATm6uC59emSpj2PEh1goyeLdIXOy/PEeXkqhnZ25Z5vI8s7eh/DDCy
-   ZdqUhFygiQCNfwXG25Uq5lF8W9gPU5YSjHv1mkJWAtYRECyCdozPAAhvJ
-   w==;
-X-CSE-ConnectionGUID: DrLXQv0vSxemKXNx8bmoHA==
-X-CSE-MsgGUID: TR8Z33pXRm+v+2x3xaMeBQ==
-X-IronPort-AV: E=Sophos;i="6.15,269,1739833200"; 
-   d="scan'208";a="43936346"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 May 2025 14:44:27 +0200
-X-CheckPoint: {681B55AB-12-C7E25413-F4312D34}
-X-MAIL-CPID: 6E8B7F67FFA38057D06757D6A4063F61_4
-X-Control-Analysis: str=0001.0A006398.681B55BB.0089,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C0BF21609AF;
-	Wed,  7 May 2025 14:44:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1746621863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UaNOIapp4J5KzxMU+tHJGWnVbFnnDP/ugTkRCJiT7PY=;
-	b=kj0fwJqqaZdYnzp02ZZSmaFjCKy0xnCdVTH1vg3rjVYqjeGZF+pLxbMZBh4WxAsvoWwDO+
-	lXU1tFBr5T71QnznSaMTc5aPiE4RR0AitCWmZRrqBw6U8emPNxOEnlPfiSzjSIr6h29cdG
-	+m35eKK4OAnaBve+dKIcgugoRu1F6TAxFH/OcaRzPhS/Rvs1NJ/6wJrIASjZbipq7R9Zw/
-	qh53wh3NX8PTa/UMsDL2Ja0993wOyaWxLzRzBDiWii5BH10/7RnO/9EaLYVCEjmgQqUhwH
-	1H/HX5BEjlrUOCidIubhqLpR0KODCxQsOK4c3+iTJ8clmSaH5byHQguhjD7Vzg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] arm64: Kconfig: Enable PINCTRL on i.MX platforms
-Date: Wed,  7 May 2025 14:44:13 +0200
-Message-ID: <20250507124414.3088510-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746621926; c=relaxed/simple;
+	bh=hWPZGZMyO9m9fh1QoW2+cS/xkUtBH3giL/aGBqo0sQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zlpcc3HadlK/3AoT6L1MbyBSJ3zjRpK5d8nr3T0yqkzgCgRApjWwhNhFVHu0CVicup1HV01yLVvxnQF2nVHKkzl2lCpM27NXrQI2lEORyLAvbnkSt/E2G1BbRKZ82fLaGvwDoEeADa+xpM4yZG6e3iN96+RM81BQ/JFvh8usAUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RydokPtq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA35C4CEEB;
+	Wed,  7 May 2025 12:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746621925;
+	bh=hWPZGZMyO9m9fh1QoW2+cS/xkUtBH3giL/aGBqo0sQA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RydokPtqw6JMBeritrP3myYZFnrzDRKicoD7SFnI4ez6VyTLq8yq93mi0/Tqb09eK
+	 kI0G3iGJxANin2RCOC4rO7RLuYrXF1O3FFIJKq+Ke2hlPVBrH7mW0dBds2biLe2QQE
+	 b6ZZmU5hrTpW8vbZb8AnNWk+9XdUdu/Hu5Ssgb3PA0KKlBVIlgiL8ZjRTv87JfZu7J
+	 kAMB3nhY4ewgMajr00ZLKTGgIarqwvMP/iPn2OjyqV1xI5VzRNMpRt6mF4A0TV25y5
+	 Zf8aS3MpZtvO1kESbFRaGp/OMhcWlWeZw12v43fE5aCqjGGFsWhZu9if099O2zvpjg
+	 fVWZVsQFH0P/Q==
+Date: Wed, 7 May 2025 13:45:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tanmay Jagdale <tanmay@marvell.com>
+Cc: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, bbhushan2@marvell.com, bhelgaas@google.com,
+	pstanner@redhat.com, gregkh@linuxfoundation.org,
+	peterz@infradead.org, linux@treblig.org,
+	krzysztof.kozlowski@linaro.org, giovanni.cabiddu@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rkannoth@marvell.com, sumang@marvell.com,
+	gcherian@marvell.com, Kiran Kumar K <kirankumark@marvell.com>,
+	Nithin Dabilpuram <ndabilpuram@marvell.com>
+Subject: Re: [net-next PATCH v1 07/15] octeontx2-af: Add support for SPI to
+ SA index translation
+Message-ID: <20250507124517.GC3339421@horms.kernel.org>
+References: <20250502132005.611698-1-tanmay@marvell.com>
+ <20250502132005.611698-8-tanmay@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502132005.611698-8-tanmay@marvell.com>
 
-Select PINCTRL for NXP i.MX SoCs.
+On Fri, May 02, 2025 at 06:49:48PM +0530, Tanmay Jagdale wrote:
+> From: Kiran Kumar K <kirankumark@marvell.com>
+> 
+> In case of IPsec, the inbound SPI can be random. HW supports mapping
+> SPI to an arbitrary SA index. SPI to SA index is done using a lookup
+> in NPC cam entry with key as SPI, MATCH_ID, LFID. Adding Mbox API
+> changes to configure the match table.
+> 
+> Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
+> Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+> Signed-off-by: Sunil Kovvuri Goutham <sgoutham@marvell.com>
+> Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+...
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index a541bb029aa4e..49c3bc25e5f68 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -219,6 +219,7 @@ config ARCH_MXC
- 	select ARM64_ERRATUM_845719 if COMPAT
- 	select IMX_GPCV2
- 	select IMX_GPCV2_PM_DOMAINS
-+	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
- 	select SOC_BUS
--- 
-2.43.0
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+> index 715efcc04c9e..5cebf10a15a7 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+> @@ -326,6 +326,10 @@ M(NIX_READ_INLINE_IPSEC_CFG, 0x8023, nix_read_inline_ipsec_cfg,		\
+>  M(NIX_LF_INLINE_RQ_CFG, 0x8024, nix_lf_inline_rq_cfg,		\
+>  				nix_rq_cpt_field_mask_cfg_req,  \
+>  				msg_rsp)	\
+> +M(NIX_SPI_TO_SA_ADD,    0x8026, nix_spi_to_sa_add, nix_spi_to_sa_add_req,   \
+> +				nix_spi_to_sa_add_rsp)                      \
+> +M(NIX_SPI_TO_SA_DELETE, 0x8027, nix_spi_to_sa_delete, nix_spi_to_sa_delete_req,   \
+> +				msg_rsp)                                        \
 
+Please keep line length to 80 columns or less in Networking code,
+unless it reduces readability.
+
+In this case perhaps:
+
+M(NIX_SPI_TO_SA_DELETE, 0x8027, nix_spi_to_sa_delete,     \
+				nix_spi_to_sa_delete_req, \
+				msg_rsp)                  \
+
+Likewise throughout this patch (set).
+checkpatch.pl --max-line-length=80 is your friend.
+
+>  M(NIX_MCAST_GRP_CREATE,	0x802b, nix_mcast_grp_create, nix_mcast_grp_create_req,	\
+>  				nix_mcast_grp_create_rsp)			\
+>  M(NIX_MCAST_GRP_DESTROY, 0x802c, nix_mcast_grp_destroy, nix_mcast_grp_destroy_req,	\
+
+...
 
