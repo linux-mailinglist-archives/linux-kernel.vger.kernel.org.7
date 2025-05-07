@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-638678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C17AAEB3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B79AAEB52
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D987BFD21
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E151C08C85
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C89128E574;
-	Wed,  7 May 2025 19:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5963428E5F8;
+	Wed,  7 May 2025 19:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhRh0Bgp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iNgXu4BQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B2F28BA9F;
-	Wed,  7 May 2025 19:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7341CF5C6
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 19:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746644698; cv=none; b=gSBqzQ9BS6i2iBgMn6ta6RXCr/79osjVLCFoaiLHtIIBroXOlr+AmXmwv2Sr9AhfzWJuWaDfTLLLbIRGrVhwwbE1BfsApZ0OcLvanK/tHVg9kNrj2SuqA7xRET8SoCYkBjDBhNXA7amPaYJmxrH52Itlmp6T/ykRwSZucbxOcxg=
+	t=1746644726; cv=none; b=j/82DWxPIAtxY/iqU2LG9jHQiQAC4+SlaVIYmOUCcgfrV8pr7z/bajgMmkIChkVEz2werzEcNV3RT/VqRhlw5xOOepU0p6tM6PLVb1bjZ4MtVWnAoLiQyxDT/C9iGwHfxXsKHltuQVMwaHfxbTuXGciXqgsjKlRqOvXDS6orfgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746644698; c=relaxed/simple;
-	bh=CRCiIABz/kFgdTeK7BF7RrV6jJF7IbV0KFOhjFLNr0o=;
+	s=arc-20240116; t=1746644726; c=relaxed/simple;
+	bh=ArXRECZePX9nR53th53onl2ZCJR2NcBY5XJZ5S+hN8U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eld+dsa8vz31mjm/uGV8UsUEuJI7MuxokMO7baw4Prxk7gIF/LPDnqBQjnw6wVdqC6Ulvp8/b2tuDOb944sDTVRv9t4Aq7jx0Ne433apCfNBRsfm4Im9u2XFQGBWzwbfdLg5Pcp09XRO+JxEPXdtP4srOMR29N/u4WZwcAv9smY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhRh0Bgp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D653FC4CEE2;
-	Wed,  7 May 2025 19:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746644698;
-	bh=CRCiIABz/kFgdTeK7BF7RrV6jJF7IbV0KFOhjFLNr0o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lhRh0BgpAtDuVzNTHwJeeIpZV8B/fvJdYcifpSbxeLTlR4qy4A9r+y4pzZ8G8SwIq
-	 CSIscRiuqpRioY9xkq9ah4CoAGvtS52bMQn/IrpYa6s5DtvDZvPe/BGr119Socc93Q
-	 6LtsrF4ntJJJpjELtxY8qmqyAUP2mcsha+jHKZ9jLCxshFATtyP9oH1uaI3NbXkd2T
-	 T4TOR34KmE6bNQZ6kdLnw1vR5X9dn/jLMYyUyAhtAm/j9yxUdf+b+PD738FEq85M/s
-	 aUaS15NG0gL0jr7L671fyi3WPfSu8xB+Y4zsO83HLOjHfDFLXydEO+j5dFM8DnJwGI
-	 cE1Z69pdf4/1w==
-Message-ID: <e4cf6912-74fb-441f-ad05-82ea99d81020@kernel.org>
-Date: Wed, 7 May 2025 21:04:51 +0200
+	 In-Reply-To:Content-Type; b=e7LnNIZP0NazDdwcIcZCNaGJq5JGZK1VoOod0xFAXgJGI5MgnE11s+0hJrNJXDwvHFnExVCJFVhz282zlVwiCK2RCCZTnrj2SRL4lqsYh4+0xn1qZD/IZ0qi45pEbLecNTsAX4h/RqV6OCwDDHin/O4cFc4D2vFMvKRiJ5qMW9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iNgXu4BQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547AP3sq017072
+	for <linux-kernel@vger.kernel.org>; Wed, 7 May 2025 19:05:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+SHDmPRfAeDjssx8L+cu2l7LCPnVp2BGSEPoSn2MUB8=; b=iNgXu4BQN8U92D6D
+	Lxf9aOjh+Vb2zIhmTz2xMpMRID9F5WtGLTuDNmZ0fWZjsLoOVBpVJJGGA3AyVm8N
+	i5S6rbAo6tcwUIBENLofOj26VB0thosM8mqr1BtAZQ/bG6wW4mvKa3jkjkiD2FHN
+	dCcI5OA3/Z+D0ToO88pqAq/lWKPC/Tqs43y06TrgeaHC2XRwkTGasAQAW79t8qbO
+	DBRZRY5h/xL0PtidAbmVSy8GepBaUYkjv3tdj66Xo/hTuA9/oCsf8Tj6VInE81k6
+	I8WSpylLhlVdpshdngSxHx45/y8XddFVgDKGXTNrLzRLWO8czpUMB6GXh2FH7+ot
+	4bDrGg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5u46wfv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 19:05:23 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c7789335f7so1700485a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 12:05:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746644723; x=1747249523;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+SHDmPRfAeDjssx8L+cu2l7LCPnVp2BGSEPoSn2MUB8=;
+        b=Z90pR0E0MQXrju07N6cXMLPEe0KsnLHLFnHM1KPkH9fUu0PyL1mWms70SvCY9harZ0
+         CejoaqSPJJPzexUT5rHGeP1aVgT61trJlxGjP1Kedtxt3IKxv8fvf+uuyoXylRiE4n2Z
+         E0Bnvk4kV8YC6YigD6pLecnYMXVjOtpAvkst/slCJAnVoMZd0oCZyVP98iEbZGMmbQDQ
+         7xEbkRN48CpMiQbmMY7RKBe3/jA4q1L+49MTUlg0/JT9Y2eCAcLUOev8GIKVTmjVqY8o
+         zvg9xsGjuioNNhNapgjmylYWGm0FzhtWMmqEleRDOdpQJjRD7J7HevUK35lP+mKkvJK4
+         BMDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcCtGThn9I3dzAb5A1v0FHtZlvAz6S28AB0GPKCfq3yLvAr1e+/HO6rMfqIbTWCs8hAtUvAPn4rOgdAq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTchBg+XxsSOcL4w4WHqDpGdeUjtBB76DC3q3n1eqPgNF+aczR
+	Z7cEcXhRD0I8jGlHEevrYlovesInYOo9d/QqFQv37lty8/5BwR0uyyHxCMS4ukSRGAm+Z3HurP4
+	OmDE4yQ+BsJAVt2XhOPIYeghaq2eRaOW5Wr4UOs01r1ykErC5Dz07UucXGqKEc0E=
+X-Gm-Gg: ASbGncu65nZfNRP/dvsvgXzeBVFR3JxBVpa18wmabxvCZiBCUl1uUXCdFovRQPzHlUP
+	89k+zssjhD57q1hZv1DeMbXENp5pq9dAvSS9C1pGy99tICOQF51nqLmTynyOhbT4OZ6/6Q1hJfJ
+	nsQPuWIc2fRInz1+yfLlm9RsVRr8onqOOvOmjtY//mMxa53DmjnXUHUuxWRMbtABu2aSeNgxIhG
+	q09yCFjx3di2zxzAlRQRoos62dJgMKo2DeArC0MVz7xPDUa/KegdC5cf947enXif/QTJQPNOktv
+	ILO7GKoMiTlK3qQTBOkblJmb1qdRoO73Bwt+XVx/w5P58Wtw4ocCve7sKRaxoLZOGO8=
+X-Received: by 2002:a05:620a:318f:b0:7c5:6fee:246f with SMTP id af79cd13be357-7caf73734camr275201985a.1.1746644722758;
+        Wed, 07 May 2025 12:05:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHi8oUmL4ldGmEKyWAOMA5TwxCGWZERQSSET3xMoBXXRc5YWp0bJOTj+IEY5QkdrpAQaT3HLg==
+X-Received: by 2002:a05:620a:318f:b0:7c5:6fee:246f with SMTP id af79cd13be357-7caf73734camr275200185a.1.1746644722249;
+        Wed, 07 May 2025 12:05:22 -0700 (PDT)
+Received: from [192.168.65.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189147329sm949542466b.1.2025.05.07.12.05.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 12:05:21 -0700 (PDT)
+Message-ID: <e307c4aa-1dae-4d48-ae79-36923372c8e0@oss.qualcomm.com>
+Date: Wed, 7 May 2025 21:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,104 +88,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] xdp: Add helpers for head length, headroom,
- and metadata length
-To: Jon Kohler <jon@nutanix.com>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Zvi Effron <zeffron@riotgames.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Jason Wang <jasowang@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- Jacob Keller <jacob.e.keller@intel.com>
-References: <20250506125242.2685182-1-jon@nutanix.com>
- <aBpKLNPct95KdADM@mini-arch>
- <681b603ac8473_1e4406294a6@willemb.c.googlers.com.notmuch>
- <c8ad3f65-f70e-4c6e-9231-0ae709e87bfe@kernel.org>
- <CAC1LvL3nE14cbQx7Me6oWS88EdpGP4Gx2A0Um4g-Vuxk4m_7Rw@mail.gmail.com>
- <062e886f-7c83-4d46-97f1-ebbce3ca8212@kernel.org>
- <681b96abe7ae4_1f6aad294c9@willemb.c.googlers.com.notmuch>
- <B4F050C6-610F-4D04-88D7-7EF581DA7DF1@nutanix.com>
+Subject: Re: [PATCH] drm/msm/adreno: Remove MODULE_FIRMWARE()'s
+To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20250507154723.275987-1-robdclark@gmail.com>
 Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <B4F050C6-610F-4D04-88D7-7EF581DA7DF1@nutanix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250507154723.275987-1-robdclark@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=KcfSsRYD c=1 sm=1 tr=0 ts=681baef3 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8
+ a=O4ZBKxZU-tJ0OIaaHa0A:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: p-AY8m3yoqdvgtuCVC-aEfQKQ6K7d0Lq
+X-Proofpoint-ORIG-GUID: p-AY8m3yoqdvgtuCVC-aEfQKQ6K7d0Lq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDE3MyBTYWx0ZWRfXwleZ6jInz3EB
+ xjPFVzIqQfpappmPZ23uF8ItadQ5mq4w+y3Ycs5tkT9EVudqpN7tCadxSosKbdsdpRsRiAMv0QD
+ PsZGXkDuECexjzflh9AhWcbzSR1v7mTCN0iJEhfZMmbPGXFGh2pyQsXByEAvBlDkzgk/FcJmnGh
+ 2x2wxit106LjYi8rRCfusiGzA5OA4LzQlukfAW3hiE9SGjV/d3iTNwZkHptbwdSZ/5zXIFjE9lN
+ p7JDNpSPNpBArd2M1qlaEMHNFzn+W1UhP8gLeQ628Jc4OOdQgWXZNy+ogADUGTS4SaphqQ0v4E3
+ gyi7TZQF9CBZ++tXPuoodNrXtf8Zk1fQkUv1YkTDeaoEqEyae+fvOeYH9q8IPi6NCNB3zJz6n1t
+ v2zyrTbs6CUCAvo/543l0eXtFNxQ8M3okMNomDN/04yf+SQqJq0vfEQDn4zmhMXNs9rkQvy/
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_06,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=844
+ phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505070173
 
-
-
-On 07/05/2025 19.47, Jon Kohler wrote:
+On 5/7/25 5:47 PM, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
+> The driver handles the case where gpu fw is not in the initrd.  OTOH it
+> doesn't always handle the case where _some_ fw is in the initrd, but
+> others are not.  In particular the zap fw tends to be signed with an OEM
+> specific key, so the paths/names differ across devices with the same
+> SoC/GPU, so we cannot sanely list them with MODULE_FIRMWARE().
 > 
->> On May 7, 2025, at 1:21 PM, Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
->>
->>
->> Jesper Dangaard Brouer wrote:
->>>
->>>
->>> On 07/05/2025 19.02, Zvi Effron wrote:
->>>> On Wed, May 7, 2025 at 9:37 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 07/05/2025 15.29, Willem de Bruijn wrote:
->>>>>> Stanislav Fomichev wrote:
->>>>>>> On 05/06, Jon Kohler wrote:
->>>>>>>> Introduce new XDP helpers:
->>>>>>>> - xdp_headlen: Similar to skb_headlen
->>>>>
->>>>> I really dislike xdp_headlen(). This "headlen" originates from an SKB
->>>>> implementation detail, that I don't think we should carry over into XDP
->>>>> land.
->>>>> We need to come up with something that isn't easily mis-read as the
->>>>> header-length.
->>>>
->>>> ... snip ...
->>>>
->>>>>>> + * xdp_headlen - Calculate the length of the data in an XDP buffer
->>>>
->>>> How about xdp_datalen()?
->>>
->>> Yes, I like xdp_datalen() :-)
->>
->> This is confusing in that it is the inverse of skb->data_len:
->> which is exactly the part of the data not in the skb head.
->>
->> There is value in consistent naming. I've never confused headlen
->> with header len.
->>
->> But if diverging, at least let's choose something not
->> associated with skbs with a different meaning.
+> So MODULE_FIRMWARE() just ends up causing problems without actually
+> solving anything.  Remove them!
 > 
-> Brainstorming a few options:
-> - xdp_head_datalen() ?
-> - xdp_base_datalen() ?
-> - xdp_base_headlen() ?
-> - xdp_buff_datalen() ?
-> - xdp_buff_headlen() ?
-> - xdp_datalen() ? (ZivE, JesperB)
-> - xdp_headlen() ? (WillemB, JonK, StanislavF, JacobK, DanielB)
-> 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
 
-What about keeping it really simple: xdp_buff_len() ?
+it's probably the best decision to avoid all the mess..
 
-Or even simpler: xdp_len() as the function documentation already
-describe this doesn't include frags.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-To Jon, you seems to be on a cleanup spree:
-For SKBs netstack have this diagram documented [1].  Which also explains
-the concept of a "head" buffer, which isn't a concept for XDP.  I would
-really like to see a diagram documenting both xdp_buff and xdp_frame
-data structures via ascii art, like the one for SKBs. (Hint, this is
-actually defined in the header file include/linux/skbuff.h, but
-converted to RST/HTML format.)
-
-[1] https://docs.kernel.org/networking/skbuff.html
-
---Jesper
+Konrad
 
