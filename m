@@ -1,178 +1,144 @@
-Return-Path: <linux-kernel+bounces-637028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C763AAD3A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B4CAAD3AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F469188BA08
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565291BA0CC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36521A0730;
-	Wed,  7 May 2025 02:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="cemf43Gi"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6542F1AF0B4;
+	Wed,  7 May 2025 02:58:51 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D2357C9F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 02:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB59B134A8;
+	Wed,  7 May 2025 02:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746586603; cv=none; b=R4TTQ8lsRL+Zg6Gzu+YU/xxR1JBUtw4E131mxDs9BgM3FMgzeohmLXBlB7DtCV7wXKV8KLnLsOtk5f0XloFadtLaP0Levri+cWCdBLPWM1oHaCitACpMmcCGq9l5NyaGKAA+3lxYSdpNv7Ff1D7j5zHn0Vr59x4in5HKj8QR3gg=
+	t=1746586731; cv=none; b=YaFYa4We5q50S/+rUdCk7p+pafAXXnJZNZFvkA82KspgoYjeHXWcegC1Lb3MlHKqWJoReYkZvPhDkO0yq7T0rTEnQvHr8g09zznXcXHPbIxy8svdj7Li8p3o16n8YlMSlPCbcRTo86DqouEAsEF63hn8L5y+Jo859IyIbIJ5+D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746586603; c=relaxed/simple;
-	bh=oiB1/PfjqCcQ+7yPYGV0MVy4hltlZT9+IqFolSaBInM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gw2U0XaWO3l1NptrcyY5+qTZm+Z7sHAsdo5DuOp5BOF/aY62rS/86neqQJjM0YOP/orNIY5UFi7XVK0QF8B9rYu2yvW8sDgKd2URJxvqS+S4xYb5JXyZSsBfW2uPYX+tSLw2wA8QkV7CvHDPytUzMcKGlWsub1KapDHMcuGL/94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=cemf43Gi; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1746586543;
-	bh=oiB1/PfjqCcQ+7yPYGV0MVy4hltlZT9+IqFolSaBInM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=cemf43GiZ7RR5h8dL8JhwdmG0SgCkibmLoA5EZ21sxAxhLSPP6VWw1Chagc78LDgT
-	 fAJG0XI6D+IsSHW75dQ+kvbIbKPWirF24sDeBbpOt2t/nexvmaRtF93KHdhGnoNp1X
-	 JJgRKxe64zhArD6S4zw3/Pm613hTxGW/JW7mtgmk=
-X-QQ-mid: zesmtpip4t1746586534t7f0ef9b6
-X-QQ-Originating-IP: KyZelEfd2e9YpTzPSfs0K9MthbL+ozGEiAQKHG92X1M=
-Received: from [IPV6:240e:668:120a::212:232] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 07 May 2025 10:55:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4696384252794236686
-EX-QQ-RecipientCnt: 10
-Message-ID: <FF9F758FB6DEBA6B+668772f9-2604-4035-bb04-b59eabf9bbd3@uniontech.com>
-Date: Wed, 7 May 2025 10:55:31 +0800
+	s=arc-20240116; t=1746586731; c=relaxed/simple;
+	bh=MmUPH4ARy9/vAzjyU9ahx/w7xXUYQgpi4F73R0SBSnA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jxt9/XMvybFRRAl9nS9nBpu1UkyLSI96f6qC0R8Tfw9eGFaW9AW2z2KE4pbVYxvPBDoZyz08w0XuhveAKo3W7ACHV0VHE5LT+5U2GSEvSJv8/6LVGBZoU6a8mEMgVTu38twHHbAOxFYkJU4s8dG1EMKj5Ye6qBY+J+NSA8OScL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 2c49f9162aef11f0b29709d653e92f7d-20250507
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:fc6c30e8-57af-4dbe-b9c6-6dd9fc0d9916,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:848f288d76073cecd9c059e60a8b1d35,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 2c49f9162aef11f0b29709d653e92f7d-20250507
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1047783727; Wed, 07 May 2025 10:58:37 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 7A81AE006100;
+	Wed,  7 May 2025 10:58:37 +0800 (CST)
+X-ns-mid: postfix-681ACC5D-342742475
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 24B1BE0080FF;
+	Wed,  7 May 2025 10:58:34 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: corbet@lwn.net,
+	rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org,
+	akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	rostedt@goodmis.org,
+	thuth@redhat.com,
+	bp@alien8.de,
+	ardb@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] PM / sleep: add configurable delay for pm_test
+Date: Wed,  7 May 2025 10:57:06 +0800
+Message-Id: <20250507025706.311686-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
-To: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, yuzhao@google.com,
- stevensd@chromium.org, kaleshsingh@google.com, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com
-References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
- <aBo3W5HNMxLdtV2p@casper.infradead.org>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <aBo3W5HNMxLdtV2p@casper.infradead.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------jHM03T8zLeVSaGGbMR6adtxv"
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NwsFSQp7kFPKTVD4q6cvkQRx63Y29KpdntYKH5wc3JrjaJlIXExg8KWY
-	f/cNLeM1YLJaX9yxZHRXUfgMvzFF4KehiKTlKnFDbhnlNZBQaCnvO0f9wU/qevSbYIsz/J+
-	Pbt4dD8XOIFUATTFPueR2aWxfNeJUpdFuHG+6kqgmBSK1SIUKRWY6r3ekecbV3ZoHLks02A
-	6HZxoS3kCYeIoDT7vv2NdMMEsphcgr8HmsIVyWBCVNQzgxjOECc75V6lVhRgjol7SgU8xrq
-	6tZobZOb/HKEJfrg83qxgrb3yzhEG5/V4r4eTuybogrussYXq07Sj4yvYkK6x/pmZ7OPocx
-	4jvpvhKJ+PG2/XZAHIiShimC+ZyLLj8GI49D7rf6Q9vYEekZKXVosru74zWVkNJQ0lHvavM
-	w90r9ULRdo4VxzfeO/wdRR+ATV9OksXEjZqaQCK4yTO0mEP4qSp7yIgQluc1sxTXGPMxObh
-	TMv+RSXUBF5WGAnGZhXwvHaMi8az7EG7AxBPbdjdN9Hs4xgYo4O/Dy33ULli0mT7sZwsvUr
-	xCv55TwkTBqGfbNBBabTrVSz8EMThB7+Rau2oNxSvE6CaGV6RsXwPDFaKiv5FsX3Rb1R7i9
-	fs78F7qwiqZSN7hn+04hWm74nSElI8L4qJObZLS4D5jFVpurVowRwxduWc/nUONFG9E3w+O
-	Vm9gQAC/OZT9on0jmZFeDpNEmoByqFJkeSOLMcB9a0wNeq5jRh5ThmTJAfgNDzvHpq7AlnV
-	hyitxt1a50XlbYDvCc9o8+k0X7hyYNLZPLkOTjzvwQrIh2j07LSs6sltOtapabfoiDYeZmj
-	NrYr8QAp0fedevxTB19BXRZJ7X0sNHSrR6VhHptMzI/v53KGnVPooB7KLEPSEVyf6jmYPsb
-	ZXEBxKycTaqOxyLbUsaN58cbLpi/V+6v4RHavbTc6Z5/LKe7Dv94aLAchtBNZCy1it4jNGq
-	w0PNk87KvFB2L9opRkLAuu0G5M4rQDUAj62cnG88HRamjqCzcQqQrFuGqv5mnmSnTDwJl9n
-	vzeVQx1Hsb0fMHbMDz3EI8g/Cw0jCHxZVDIJWzG+AmEpUp+5d5i35LmwfLHmENChAxKm+M9
-	xzootI6GJLdB6/RIfvh16kvSoECEsWd7Q==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------jHM03T8zLeVSaGGbMR6adtxv
-Content-Type: multipart/mixed; boundary="------------OqCfk29SlztYE2Mh4fmYVnAX";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, yuzhao@google.com,
- stevensd@chromium.org, kaleshsingh@google.com, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com
-Message-ID: <668772f9-2604-4035-bb04-b59eabf9bbd3@uniontech.com>
-Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
-References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
- <aBo3W5HNMxLdtV2p@casper.infradead.org>
-In-Reply-To: <aBo3W5HNMxLdtV2p@casper.infradead.org>
-
---------------OqCfk29SlztYE2Mh4fmYVnAX
-Content-Type: multipart/mixed; boundary="------------5XS5Lw2uw9WzI37F3LQYQA07"
-
---------------5XS5Lw2uw9WzI37F3LQYQA07
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-SGkgTWF0dGhldyBXaWxjb3ggYW5kIEFuZHJldyBNb3J0b24sDQoNCk9uIDIwMjUvNS83IDAw
-OjIyLCBNYXR0aGV3IFdpbGNveCB3cm90ZToNCj4gMS4gVGhpcyBoYXMgbm90aGluZyB0byBk
-byB3aXRoIHRoZSBjb21waWxlciB2ZXJzaW9uOyB0aGUgdHlwZS1jaGVja2luZw0KPiBpcyBi
-dWlsdCBpbnRvIG1pbigpLg0KDQpUaGFuayB5b3UgZm9yIHBvaW50aW5nIHRoYXQgb3V0ISBN
-eSBwcmV2aW91cyBzdGF0ZW1lbnQgd2FzIGluY29ycmVjdC4NCg0KVGhlIGVycm9yIGlzIGFj
-dHVhbGx5IGZyb20gdGhlIF9fdHlwZXNfb2sgY2hlY2sgd2l0aGluIHRoZSANCl9fY2FyZWZ1
-bF9jbXBfb25jZSBtYWNybyBmYWlsaW5nLCB3aGljaCB0cmlnZ2VyZWQgQlVJTERfQlVHX09O
-Lg0KDQpCdXQgdGhlbiwgd2h5IGRvIG5ld2VyIGNvbXBpbGVycyBjb21waWxlIHRoaXMgd2l0
-aG91dCBlcnJvcj8gSXMgaXQgDQpwZXJoYXBzIGJlY2F1c2UgdGhleSBjb25zaWRlciA0VSAt
-IDEgdG8gYmUgc2lnbmVkPw0KDQo+IDIuIFdlIGhhdmUgbWluX3QgZm9yIGEgcmVhc29uDQpZ
-ZXMsIHVzaW5nIG1pbl90IGluc3RlYWQgb2YgbWluIGlzIGEgYmV0dGVyIGFwcHJvYWNoLg0K
-PiAzLiBXaHkgaXMgYSBzaWduZWQgbWluIHRoZSByaWdodCBhbnN3ZXIgaW5zdGVhZCBvZiBh
-biB1bnNpZ25lZCBtaW4/DQo+DQpUaGF0IGlzIGluZGVlZCBmYWxzZS4gSnVzdCBhcyBBbmRy
-ZXcgTW9ydG9uIHNhaWQsICJuZWdhdGl2ZSB0aWVyIG51bWJlcnMgDQphcmUgbm9uc2Vuc2lj
-YWwiLg0KDQpUaGFuayB5b3UgZm9yIGV2ZXJ5b25lJ3MgY29ycmVjdGlvbnMuIEknbGwgc3Vi
-bWl0IGEgdjIgcGF0Y2guDQoNCi0tIA0KV2FuZ1l1bGkNCg==
---------------5XS5Lw2uw9WzI37F3LQYQA07
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+This patch turns this 5 second delay into a configurable module
+parameter, so users can determine how long to wait in this
+pseudo-hibernate state before resuming the system.
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
+The configurable delay parameter has been added to suspend and
+synchronized to hibernate.
 
---------------5XS5Lw2uw9WzI37F3LQYQA07--
+Example (wait 30 seconds);
 
---------------OqCfk29SlztYE2Mh4fmYVnAX--
+  # echo 30 > /sys/module/hibernate/parameters/pm_test_delay
+  # echo core > /sys/power/pm_test
 
---------------jHM03T8zLeVSaGGbMR6adtxv
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
+ kernel/power/hibernate.c                        | 9 +++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+index d9fd26b95b34..082a697a3e95 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6998,6 +6998,13 @@
+ 			/sys/power/pm_test). Only available when CONFIG_PM_DEBUG
+ 			is set. Default value is 5.
+=20
++	hibernate.pm_test_delay=3D
++			[hibernate]
++			Sets the number of seconds to remain in a suspend test
++			mode before resuming the system (see
++			/sys/power/pm_test). Only available when CONFIG_PM_DEBUG
++			is set. Default value is 5.
++
+ 	svm=3D		[PPC]
+ 			Format: { on | off | y | n | 1 | 0 }
+ 			This parameter controls use of the Protected
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 23c0f4e6cb2f..da7533aab8d1 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -133,10 +133,15 @@ bool system_entering_hibernation(void)
+ EXPORT_SYMBOL(system_entering_hibernation);
+=20
+ #ifdef CONFIG_PM_DEBUG
++static unsigned int pm_test_delay =3D 5;
++module_param(pm_test_delay, uint, 0644);
++MODULE_PARM_DESC(pm_test_delay,
++		 "Number of seconds to wait before resuming from hibernate test");
+ static void hibernation_debug_sleep(void)
+ {
+-	pr_info("debug: Waiting for 5 seconds.\n");
+-	mdelay(5000);
++	pr_info("hibernation debug: Waiting for %d second(s).\n",
++			pm_test_delay);
++	mdelay(pm_test_delay * 1000);
+ }
+=20
+ static int hibernation_test(int level)
+--=20
+2.25.1
 
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCaBrLpAUDAAAAAAAKCRDF2h8wRvQL7rqW
-AQCHika+2XT5+ntLHoW+rbNam6gUvq4k4Lqe7O6qBH8WzQEAuiVQpHWpNsP5J/4OjlkVucdmsASe
-CqYaT+MPvGFJ5gk=
-=HnaG
------END PGP SIGNATURE-----
-
---------------jHM03T8zLeVSaGGbMR6adtxv--
 
