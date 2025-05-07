@@ -1,155 +1,180 @@
-Return-Path: <linux-kernel+bounces-638368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3D9AAE521
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A906AAE524
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0274A84BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F9B4A8759
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2319D28B4EC;
-	Wed,  7 May 2025 15:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1638A28B7D7;
+	Wed,  7 May 2025 15:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbYyiEs7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RNQYaZUT"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B3728B4E2;
-	Wed,  7 May 2025 15:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B5E28B7CE
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 15:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632544; cv=none; b=bYDGwhLkl/LPJ42edBT4lpb4RrrlxLzf0/IwmZ+HJ/aJo9VEXdArSkTcvzDVGpRVrQGtITjlEoynVJSfENVuTdOm/G+09bEc46owEsRbXj0L/lKNuuKfT7bv0VlhbqhZzVEFfkG6sXO+Sm0EOLfRIZfp7jQub3r0ZbJyyfy8hgo=
+	t=1746632561; cv=none; b=OdHcMsRxq/AJPSpVDh2jiiWG6c8KaLWdDbRPmx15bCDwDJXJSJkMpdOEStho0IUG0L0Mqt8Df5PDJuwN2SDr+uKKDzOnb60LicueZxckUjxR4B3BSaWS3I9QejwDD7oppJAJfy28b+JVtCVav03zybjedHPq1ojW4lyxplOg6bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632544; c=relaxed/simple;
-	bh=X6a4mVmc9Gg+626jkP+iQ/neOLmh8i1nYRqm1zgMs0I=;
+	s=arc-20240116; t=1746632561; c=relaxed/simple;
+	bh=x+P+mSyCsqdybvF9FNMXVrb0hR5PY7/tsywTVL8r+B4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZF5Gn7qHDBK7brLV+FGM/iUxDIuS2ivd8pC/1MYeAI8TEdpQL67rcOjQ6JpkGsYfBUXjyRus8tx0MrJulC5SzsLdOwmEHWIAo8AJd4aNM+o3mfCAshmj1I3jKbZJXlZ93p30JIjbJz6lgXu/iDXHybARrbCwLtb0GYLG6kRkJmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbYyiEs7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C510C4CEE9;
-	Wed,  7 May 2025 15:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746632544;
-	bh=X6a4mVmc9Gg+626jkP+iQ/neOLmh8i1nYRqm1zgMs0I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RbYyiEs7wpnnw8imM6jb3u7SFlt3Hqn5B0wGfNcOEWLQnobDGeH8bQBUkTqXHu93l
-	 AObLrQsBXwxcdg5/QsC8PWLbYslJENDskuMWVnZQAGaSNJpJBp7iSUACe70E08JCiC
-	 kRSUmMhHeLS91T7IPrFEjbnChP+hNcblovKjh06VwoizzOxDCJzj0iqhxqovg5aRe+
-	 ipT51pZVW9zcC3KReij0nOPiUd4JJYuQu3tj+lNxeZpjZvDd5KlaQs4D8W/q/e0LhD
-	 KFt33SqPxIQ9Dx9+Na0rOPfv3nk7NS10V1kVfpMnvu5kbwrq7gdcFHImvOAzn3ha14
-	 RW89QAqBGgOGw==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2da3b3bb560so32216fac.3;
-        Wed, 07 May 2025 08:42:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQg/JpnEJPymoV0DDbcrFTdF0hT7OnYILpNMDt0rAZzgSzwnawev/Cp8/7EzcCHH7q53oon5b5jlx2@vger.kernel.org, AJvYcCVfB2Q5KoBVo/C68O4nNRkc1jFGo6iSY8SKo+LH0YHbD4ohWIW5ZDyAhKTl84qCUeGTo7CkH/E4@vger.kernel.org, AJvYcCVyg+QR2VFNDgAcm5nsxRZKXlGWcX3D9kI387YjenUGdJfzyqEDhLY6Z3YoHe657bsLfBWYcVIosx04Hsvc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv+0jYsv46X6J5ViQQ9M+zFSB9Obb20DFbmsor4PnLHMsiq1Lp
-	Sv2qHZQwUmZstoiYmhH97ncq8fs4NsXg2W0jly9KOGFGUXgYCohMzSr6xMSA2Zcu/O6LN0GRNYo
-	50Q5wXBhP4ZwV1ZaA7KlIdmmbrLk=
-X-Google-Smtp-Source: AGHT+IF9g0bYO+YbMTdPoNSKVhb7oxdZ2SOFycPAHV8kmay8GgVyfTxxkuMDCK4QI6tlWeIbB4BlcK0/VaSa95NIsNo=
-X-Received: by 2002:a05:6870:6109:b0:2c1:461f:309a with SMTP id
- 586e51a60fabf-2db5bda3d4amr2310275fac.8.1746632543645; Wed, 07 May 2025
- 08:42:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=UUgK44ShePdLSvaFNc1WXKC6hTUKhIoOcDi7ZsD1/s93UDQgBqn3Q6l9g/j2fBC9QC9LNQYrCczdmsidFN+RlYHBASCscFO1C2nd4tkuuzVlJLkDsQK/NiOfl6KiU9WDJ7iBgK9MsSLq9SAQlAFcrbXysJpn39zH8kN1z6G3j4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RNQYaZUT; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d96836c1c2so194115ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 08:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746632559; x=1747237359; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vDxRXbqBwDv5Hl+NYnHumSA5lo4ZmV7LDaBP3Rm06RQ=;
+        b=RNQYaZUT0HZ/5v8OaZ5P1i3yaZPsIa3+WwcTFfjsLmx5317HST7ci69i4MA69d/T0m
+         vj8bqeDrYqDH3c9ZMajm/jpvvUcPbAHHP8w9FnhQqwPDgc3/wUE30xz9jniT/i4C+/dV
+         HZiKRzcM7LP+mush4IeRU080tKOZvfE3XEy1yETl8aUIpOXXI7aOXNCohjfeIenciMnB
+         e8px2/a3/ZI4EyBdxwMN4zFa0wGwu83flK0cwCG5e1B7hx/wflt9xm0aYvHpU5ynVM0+
+         ei75sAhlChCGleuu7Dh5D16EYlqyor35dfxDTIrRH0SG2fD2U4g/sbtVq5AwqhIjDsZu
+         6lXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746632559; x=1747237359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vDxRXbqBwDv5Hl+NYnHumSA5lo4ZmV7LDaBP3Rm06RQ=;
+        b=pbANfZkjSmCew/J49p9kDyK8K485lJ7mlz7A8JslS7N2Bv83s7Crk+a6DSXwrmNM0B
+         USuIsFWKeZhq5ClwvarsD9mRqT+p838wIHvSRPhk8FsTtBBS6YUYKLGxyGYoT1IQI+Pu
+         QU8a57sKtx/iQMxPChGmtBuay5/g0QsleK3bkrEoHwvE7w5N37Q+H78K1zb87J2x/j4p
+         QD6Ax0RlxD74olkAUT8J1up1nW2HDyx1nb0kVZyEsm836bftUBBIsY4v+K/hm1Fu3N0m
+         7pwRsJvRh//1/c3HQVmbJOGq7f6b6jQHbAzMSvXq6GqFc0xOnko8BNe5WXCCeimVfvKQ
+         t2hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVreUGDtlJpFFp286DFLWK8YnCM1dWnzL7kO1Bnkjawb/dEzvKO42t8Os1nOgFnm9BycqJ4Kpzjcn1ACas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfV27NgIK+LpqYjuwqr5o+l/MuH7FAH0PdiAa9mynayVw35HYN
+	j1JzZEf2+TVDfvZU5KkFR9wCdcBpWJZOMeht2RmhNLC2GCINjwOBi7j8dYNQjhlF/qkL7Lx0NT6
+	z/5Qr27bGUCEJpiDlNaNPNNcvu/BN/TJrUiAQ
+X-Gm-Gg: ASbGnctj5Ay6ovPgbN+M7adEnyZsAd1ml7K1BjkgwB7fXIRKOLGCJ9Kucwc1AORA7NH
+	ApxFbYihKqgVteloLdiGrHiKXMRCG9iwQ+mBdjnYPN4nOP1kZshffKLik/M5saB21I18be/rXz+
+	kBNCKyINjasgZr7Q0zf8Y9Xmad4zoUxHSvArLvm3SNjU1KNUL7fRCPYeyvnjuPOQ==
+X-Google-Smtp-Source: AGHT+IGTypjRM/7ms+WuZpQigxlm/yFBEDRPIwGBX1nH/YGYbY7Jdvqu4d62IsDngl4ROr/SIaa731t7JOB9ZvYrVig=
+X-Received: by 2002:a05:6e02:3808:b0:3a7:cd21:493f with SMTP id
+ e9e14a558f8ab-3da7390c734mr3599225ab.26.1746632558521; Wed, 07 May 2025
+ 08:42:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-draco-taped-15f475cd@mheyne-amazon> <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
-In-Reply-To: <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 7 May 2025 17:42:12 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jvWXDQQ++4wmWJ+i=jds+MZ68bRB9+26WM4tAPHFxALw@mail.gmail.com>
-X-Gm-Features: ATxdqUFhaifr6kFHTAZ2IQkc_RdcvjRSQqknxvPrr1gBeUalvCjgLodiDGXZ-24
-Message-ID: <CAJZ5v0jvWXDQQ++4wmWJ+i=jds+MZ68bRB9+26WM4tAPHFxALw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI/PPTT: fix off-by-one error
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: "Heyne, Maximilian" <mheyne@amazon.de>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250506222312.1125082-1-namhyung@kernel.org>
+In-Reply-To: <20250506222312.1125082-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 7 May 2025 08:42:27 -0700
+X-Gm-Features: ATxdqUHOpYfEQYtVa6X7orww9lCxei4UarhBcNmcqY_ClU7-OjKy9fphUM-tYKA
+Message-ID: <CAP-5=fVvth_HnfnPNxtHe=FzxT9hNNKKDLGCSvQfLqwTY4WpHg@mail.gmail.com>
+Subject: Re: [PATCH] perf pmu: Consider raw events as legacy events
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 7, 2025 at 5:25=E2=80=AFPM Jeremy Linton <jeremy.linton@arm.com=
-> wrote:
+On Tue, May 6, 2025 at 3:23=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
 >
-> Hi,
+> When it finds a matching pmu for a legacy event, it should look for
+> core pmus.  The raw events also refers to core events so it should be
+> handled together.
 >
-> On 5/6/25 8:13 AM, Heyne, Maximilian wrote:
-> > Commit 7ab4f0e37a0f ("ACPI PPTT: Fix coding mistakes in a couple of
-> > sizeof() calls") corrects the processer entry size but unmasked a longe=
-r
-> > standing bug where the last entry in the structure can get skipped due
-> > to an off-by-one mistake if the last entry ends exactly at the end of
-> > the ACPI subtable.
-> >
-> > The error manifests for instance on EC2 Graviton Metal instances with
-> >
-> >    ACPI PPTT: PPTT table found, but unable to locate core 63 (63)
-> >    [...]
-> >    ACPI: SPE must be homogeneous
-> >
-> > Fixes: 2bd00bcd73e5 ("ACPI/PPTT: Add Processor Properties Topology Tabl=
-e parsing")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-> > ---
-> >   drivers/acpi/pptt.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> > index f73ce6e13065d..4364da90902e5 100644
-> > --- a/drivers/acpi/pptt.c
-> > +++ b/drivers/acpi/pptt.c
-> > @@ -231,7 +231,7 @@ static int acpi_pptt_leaf_node(struct acpi_table_he=
-ader *table_hdr,
-> >                            sizeof(struct acpi_table_pptt));
-> >       proc_sz =3D sizeof(struct acpi_pptt_processor);
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/pmus.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> This isn't really right, it should be struct acpi_subtable_header, then
-> once the header is safe, pull the length from it.
+> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+> index b99292de76693dbb..0134321fc520b1fc 100644
+> --- a/tools/perf/util/pmus.c
+> +++ b/tools/perf/util/pmus.c
+> @@ -726,7 +726,8 @@ struct perf_pmu *evsel__find_pmu(const struct evsel *=
+evsel)
+>         pmu =3D perf_pmus__find_by_type(evsel->core.attr.type);
+>         legacy_core_type =3D
+>                 evsel->core.attr.type =3D=3D PERF_TYPE_HARDWARE ||
+> -               evsel->core.attr.type =3D=3D PERF_TYPE_HW_CACHE;
+> +               evsel->core.attr.type =3D=3D PERF_TYPE_HW_CACHE ||
+> +               evsel->core.attr.type =3D=3D PERF_TYPE_RAW;
+
+I don't think this is right. The PERF_TYPE_RAW isn't a legacy type as
+we map sysfs/json names to the format encoding. More than this, the
+extended type information will not be present for a raw type and so
+this change could cause an invalid PMU to be looked up on
+hybrid/BIG.little systems. On x86 the cpu or cpu_core PMU will have
+type PERF_TYPE_RAW (4). As is common ARM decided to do things
+differently, meaning there is no type 4 to a PMU mapping. I think we
+need a change like:
+```
+diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+index b99292de7669..6632209c6664 100644
+--- a/tools/perf/util/pmus.c
++++ b/tools/perf/util/pmus.c
+@@ -727,14 +727,21 @@ struct perf_pmu *evsel__find_pmu(const struct
+evsel *evsel)
+       legacy_core_type =3D
+               evsel->core.attr.type =3D=3D PERF_TYPE_HARDWARE ||
+               evsel->core.attr.type =3D=3D PERF_TYPE_HW_CACHE;
+-       if (!pmu && legacy_core_type) {
+-               if (perf_pmus__supports_extended_type()) {
+-                       u32 type =3D evsel->core.attr.config >>
+PERF_PMU_TYPE_SHIFT;
++       if (!pmu && legacy_core_type && perf_pmus__supports_extended_type()=
+) {
++               u32 type =3D evsel->core.attr.config >> PERF_PMU_TYPE_SHIFT=
+;
+
+-                       pmu =3D perf_pmus__find_by_type(type);
+-               } else {
+-                       pmu =3D perf_pmus__find_core_pmu();
+-               }
++               pmu =3D perf_pmus__find_by_type(type);
++       }
++       if (!pmu && (legacy_core_type || evsel->core.attr.type =3D=3D
+PERF_TYPE_RAW)) {
++               /*
++                * For legacy events, if there was no extended type info th=
+en
++                * assume the PMU is the first core PMU.
++                *
++                * On architectures like ARM there is no sysfs PMU with typ=
+e
++                * PERF_TYPE_RAW, assume the RAW events are going to be han=
+dled
++                * by the first core PMU.
++                */
++               pmu =3D perf_pmus__find_core_pmu();
+       }
+       ((struct evsel *)evsel)->pmu =3D pmu;
+       return pmu;
+```
+which handles both the case that the extended type was missing on
+hybrid/BIG.little and the ARM raw type problem.
+
+Thanks,
+Ian
+
+>         if (!pmu && legacy_core_type) {
+>                 if (perf_pmus__supports_extended_type()) {
+>                         u32 type =3D evsel->core.attr.config >> PERF_PMU_=
+TYPE_SHIFT;
+> --
+> 2.49.0.987.g0cc8ee98dc-goog
 >
-> But then, really if we are trying to fix the original bug that the table
-> could be shorter than the data in it suggests, the struct
-> acpi_pptt_processor length plus its resources needs to be checked once
-> the subtype is known to be a processor node.
->
-> Otherwise the original sizeof * change isn't really fixing anything.
-
-Sorry, what sense did it make to do
-
-proc_sz =3D sizeof(struct acpi_pptt_processor *);
-
-here?  As much as proc_sz =3D 0 I suppose?
-
-> >
-> > -     while ((unsigned long)entry + proc_sz < table_end) {
-> > +     while ((unsigned long)entry + proc_sz <=3D table_end) {
-> >               cpu_node =3D (struct acpi_pptt_processor *)entry;
-> >               if (entry->type =3D=3D ACPI_PPTT_TYPE_PROCESSOR &&
-
-And this checks if the current entry is a CPU one and goes to the next
-one otherwise, so it clearly looks for a CPU entry.
-
-So the size check is logically correct now: It checks if there's
-enough space in the table to hold a CPU entry that's being looked for.
-The only problem with it is the assumption that the size of a CPU
-entry must be greater than sizeof(struct acpi_pptt_processor).
-
-Previously, it didn't make sense at all.
-
-> >                   cpu_node->parent =3D=3D node_entry)
-> > @@ -273,7 +273,7 @@ static struct acpi_pptt_processor *acpi_find_proces=
-sor_node(struct acpi_table_he
-> >       proc_sz =3D sizeof(struct acpi_pptt_processor);
-> >
-> >       /* find the processor structure associated with this cpuid */
-> > -     while ((unsigned long)entry + proc_sz < table_end) {
-> > +     while ((unsigned long)entry + proc_sz <=3D table_end) {
-> >               cpu_node =3D (struct acpi_pptt_processor *)entry;
-> >
-> >               if (entry->length =3D=3D 0) {
 
