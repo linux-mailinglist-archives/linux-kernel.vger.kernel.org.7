@@ -1,147 +1,466 @@
-Return-Path: <linux-kernel+bounces-637522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF37AADA3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:35:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15475AADA42
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5959B7A52ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F63450405C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E141EB5C9;
-	Wed,  7 May 2025 08:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823E620FABA;
+	Wed,  7 May 2025 08:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcPP5ps8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he+WdVR0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14974B1E7F;
-	Wed,  7 May 2025 08:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6FD2063E7;
+	Wed,  7 May 2025 08:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746606910; cv=none; b=b8Bq9XZRKlT7PmJEOQc10VQiMSLvvVs53h/eNq6ZIoD+GHclCB0Ol8D+WX7v9dRVHhnf7ucYvlE29i2FDhLn+jc3egrL1ZD1LnlSaiR1d/TFDAmy4RV2fPdVpz/De8tcitaKhoNy1IIXxYvyn2EvgfKdy+MBtmLvuBUnLGAli9g=
+	t=1746606923; cv=none; b=LEaUQZ4BEa+OnGPCF9DqLuPZAyliYNayplC1oc6c+JFu4zpXtJ31WUg7Jy7eWknvV9mxqAAlinV8/Nion7ZQdT+2ib0k9QGGvLt7Gkkm5YXqj18dXJ8LjRpPCwM+tNh6XuJ14AH4ZxTbYTlghcj/mOAliTZDukcYI2s8q/WFmvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746606910; c=relaxed/simple;
-	bh=ntqMCWClVr/IqN4hqrEpbOJXuWetPrMEWpOov9MrQuY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ac3DjhAULcQIkMSrOSKes+1yUglRaThhqGhd8HKS6xyG8NaxBaexL1V8J79/vbzDLQ/FltJxXUGHiiWx0xQPwRD3wQaeWNG3NS1rd5IiRV7RKFn/81wZtpQ0NJsdgNSRfnZAt7TSDqqemlnJN8sLbZzTDnr2D9/5gMFchxiyMgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcPP5ps8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A272C4CEE7;
-	Wed,  7 May 2025 08:35:06 +0000 (UTC)
+	s=arc-20240116; t=1746606923; c=relaxed/simple;
+	bh=ezSMwP78jgvQr4kd01B2ANtpKsRsHw0sxOHPCFX5u8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9MUzKIuC+vO4zqjEhesrfuVlKA2vq73CPnc8uaCgoBjoscRcV3KvuAFZsycmgouFGlk+vNkp1kl3hvCWSgmsZl8UA/o2lODYMsX2gBJ60UG4Nc/hLS9EZ9WRPkB3NIttM+BpatePWet2yEdCG/g3ZkFFmRsPcMQYH7Imd5oIOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he+WdVR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14244C4CEEB;
+	Wed,  7 May 2025 08:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746606910;
-	bh=ntqMCWClVr/IqN4hqrEpbOJXuWetPrMEWpOov9MrQuY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=UcPP5ps8oQe49KsnuIJb/JBOirGKo5rh5NyukLkjOdbPBQdMyXjwt6Uz2LdxST0c6
-	 HT1EtgStv7lXJL0pMTEXYPy0ZpyDjQ29jcSvjpwva6/PD1icOj05M9QAXwWhq7761o
-	 mOF9ya70vvB6LJUruBCFe8Qb0SmXPvIIoe3Hb78w/q8fVS77Ib62++ksT8xMA8UvIg
-	 ufXeO0yNUSewUh2zCXA9dERQLS8hEU0PVEcdvsiDJExN7i/JY6PqVossBO73tr958A
-	 An7DfdOv52PJgMhB1sN/gls45fhyked2V5YEYIiohTVizDkma58fxBjouO0K762iO4
-	 uC/Rjp5MrKR4g==
-Message-ID: <6d2c1b03-6046-4a8a-8858-47f9bc9dbb7b@kernel.org>
-Date: Wed, 7 May 2025 10:35:04 +0200
+	s=k20201202; t=1746606923;
+	bh=ezSMwP78jgvQr4kd01B2ANtpKsRsHw0sxOHPCFX5u8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=he+WdVR0pGxJJ346lHYmUZEFHWPogbIs2RqMo1sHw7j7DmO4t8Dcbi6UAxxA4HQl2
+	 wztsDP5NUNYyn/JCQIG6SEEWQZyBSsnP8Re7FnQ9oujO64AbYa0Q0XLpNNu20/miFM
+	 7uhid14WFQ0yHEpT34p1VEc1+mT33t9I1HFrKsNvzyUIuyjwqRUaCRp98tiUklEUpw
+	 julw9+PHGk1XITvJ8Fnan0v2CktlfhqRkvTsGjgUFLEH4QTF3DSHymTGvDXiEZWjkK
+	 wkQ9Laz/ZGh9ppFTUqXOEXBwQCfeRDHZmqpiAGZ9AseLKUffj4EeLjvf8dBtdfnkSO
+	 oKOF1JFRvh8FQ==
+Date: Wed, 7 May 2025 10:35:16 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 01/25] dt-bindings: interrupt-controller: Add Arm GICv5
+Message-ID: <aBsbRLmjylZrzv9h@lpieralisi>
+References: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
+ <20250506-gicv5-host-v3-1-6edd5a92fd09@kernel.org>
+ <CAL_JsqK1mTrj4tG_D3sjXdE_jbpHG_o79ReDpZNCH44wXiBj2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/4] Add STM32MP25 SPI NOR support
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: christophe.kerello@foss.st.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-References: <20250507-upstream_ospi_v6-v13-0-32290b21419a@foss.st.com>
- <1f7760c6-0fdf-48b0-9c13-85fa5e01cddd@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1f7760c6-0fdf-48b0-9c13-85fa5e01cddd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqK1mTrj4tG_D3sjXdE_jbpHG_o79ReDpZNCH44wXiBj2g@mail.gmail.com>
 
-On 07/05/2025 10:28, Krzysztof Kozlowski wrote:
-> On 07/05/2025 09:25, Patrice Chotard wrote:
->> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
->>
->> On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
->> the memory area split, the chip select override and the time constraint
->> between its 2 Octo SPI children.
->>
->> Due to these depedencies, this series adds support for:
->>   - Octo Memory Manager driver.
->>   - Octo SPI driver.
->>   - yaml schema for Octo Memory Manager and Octo SPI drivers.
->>
->> The device tree files adds Octo Memory Manager and its 2 associated Octo
->> SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
->> board.
->>     
->> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
->>
->> Changes in v13:
->> - Make firewall prototypes always exposed.
+On Tue, May 06, 2025 at 02:08:00PM -0500, Rob Herring wrote:
+> On Tue, May 6, 2025 at 7:24 AM Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> >
+> > The GICv5 interrupt controller architecture is composed of:
+> >
+> > - one or more Interrupt Routing Service (IRS)
+> > - zero or more Interrupt Translation Service (ITS)
+> > - zero or more Interrupt Wire Bridge (IWB)
+> >
+> > Describe a GICv5 implementation by specifying a top level node
+> > corresponding to the GICv5 system component.
+> >
+> > IRS nodes are added as GICv5 system component children.
+> >
+> > An ITS is associated with an IRS so ITS nodes are described
+> > as IRS children - use the hierarchy explicitly in the device
+> > tree to define the association.
+> >
+> > IWB nodes are described as a separate schema.
+> >
+> > An IWB is connected to a single ITS, the connection is made explicit
+> > through the msi-parent property and therefore is not required to be
+> > explicit through a parent-child relationship in the device tree.
+> >
+> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: Conor Dooley <conor+dt@kernel.org>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  .../interrupt-controller/arm,gic-v5-iwb.yaml       |  76 ++++++++
+> >  .../bindings/interrupt-controller/arm,gic-v5.yaml  | 196 +++++++++++++++++++++
+> >  MAINTAINERS                                        |   7 +
+> >  3 files changed, 279 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5-iwb.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5-iwb.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..b3eb89567b3457e91b93588d7db1cef69b6b9813
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5-iwb.yaml
+> > @@ -0,0 +1,76 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/interrupt-controller/arm,gic-v5-iwb.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: ARM Generic Interrupt Controller, version 5 Interrupt Wire Bridge (IWB)
+> > +
+> > +maintainers:
+> > +  - Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > +  - Marc Zyngier <maz@kernel.org>
+> > +
+> > +description: |
+> > +  The GICv5 architecture defines the guidelines to implement GICv5
+> > +  compliant interrupt controllers for AArch64 systems.
+> > +
+> > +  The GICv5 specification can be found at
+> > +  https://developer.arm.com/documentation/aes0070
+> > +
+> > +  GICv5 has zero or more Interrupt Wire Bridges (IWB) that are responsible
+> > +  for translating wire signals into interrupt messages to the GICv5 ITS.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/interrupt-controller.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: arm,gic-v5-iwb
+> > +
+> > +  interrupt-controller: true
 > 
+> Move next to #interrupt-cells
+
+I will move it below #interrupt-cells (ie alphabetical order ignoring
+'#'), is that OK (it is a bit counterintuitive, that's why I am asking) ?
+
+Same goes for msi-controller after #msi-cells.
+
+> > +
+> > +  "#address-cells":
+> > +    const: 0
+> > +
+> > +  "#interrupt-cells":
+> > +    description: |
+> > +      The 1st cell corresponds to the IWB wire.
+> > +
+> > +      The 2nd cell is the flags, encoded as follows:
+> > +      bits[3:0] trigger type and level flags.
+> > +
+> > +      1 = low-to-high edge triggered
+> > +      2 = high-to-low edge triggered
+> > +      4 = active high level-sensitive
+> > +      8 = active low level-sensitive
+> > +
+> > +    const: 2
+> > +
+> > +  reg:
 > 
-> I do not see any changes here.
+> Generally, the order is compatible, reg, common properties, vendor
+> properties, child nodes. Related properties grouped together and
+> alphabetical order (ignoring '#') within common and vendor properties.
+
+Updated, noted.
+
+> > +    items:
+> > +      - description: IWB control frame
+> > +
+> > +  msi-parent:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - msi-parent
 > 
-> b4 diff suggests this is the same as v11 so I expect the same failures.
+> interrupt-controller and #interrupt-cells should be required
 
+Done.
 
-My bad, I missed patch #1 here, so it seems fine on the first glance.
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    interrupt-controller@2f000000 {
+> > +      compatible = "arm,gic-v5-iwb";
+> > +      #address-cells = <0>;
+> > +
+> > +      interrupt-controller;
+> > +      #interrupt-cells = <2>;
+> > +
+> > +      reg = <0x2f000000 0x10000>;
+> 
+> Use the same order as the schema.
 
-Best regards,
-Krzysztof
+Done.
+
+> 
+> > +
+> > +      msi-parent = <&its0 64>;
+> > +    };
+> > +...
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..1ba0a2088e6d15bacae22c9fc9eebc4ce5c51b0b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml
+> > @@ -0,0 +1,196 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/interrupt-controller/arm,gic-v5.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: ARM Generic Interrupt Controller, version 5
+> > +
+> > +maintainers:
+> > +  - Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > +  - Marc Zyngier <maz@kernel.org>
+> > +
+> > +description: |
+> > +  The GICv5 architecture defines the guidelines to implement GICv5
+> > +  compliant interrupt controllers for AArch64 systems.
+> > +
+> > +  The GICv5 specification can be found at
+> > +  https://developer.arm.com/documentation/aes0070
+> > +
+> > +  The GICv5 architecture is composed of multiple components:
+> > +    - one or more IRS (Interrupt Routing Service)
+> > +    - zero or more ITS (Interrupt Translation Service)
+> > +
+> > +  The architecture defines:
+> > +    - PE-Private Peripheral Interrupts (PPI)
+> > +    - Shared Peripheral Interrupts (SPI)
+> > +    - Logical Peripheral Interrupts (LPI)
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/interrupt-controller.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: arm,gic-v5
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +  "#address-cells":
+> > +    enum: [ 1, 2 ]
+> > +
+> > +  "#size-cells":
+> > +    enum: [ 1, 2 ]
+> > +
+> > +  ranges: true
+> > +
+> > +  "#interrupt-cells":
+> > +    description: |
+> > +      The 1st cell corresponds to the INTID.Type field in the INTID; 1 for PPI,
+> > +      3 for SPI. LPI interrupts must not be described in the bindings since
+> > +      they are allocated dynamically by the software component managing them.
+> > +
+> > +      The 2nd cell contains the interrupt INTID.ID field.
+> > +
+> > +      The 3rd cell is the flags, encoded as follows:
+> > +      bits[3:0] trigger type and level flags.
+> > +
+> > +        1 = low-to-high edge triggered
+> > +        2 = high-to-low edge triggered
+> > +        4 = active high level-sensitive
+> > +        8 = active low level-sensitive
+> > +
+> > +    const: 3
+> > +
+> > +  interrupts:
+> > +    description:
+> > +      The VGIC maintenance interrupt.
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> 
+> If you always have an IRS which you say there is, then #address-cells,
+> #size-cells, and ranges are required. And interrupt-controller and
+> #interrupt-cells.
+
+Right, done.
+
+> > +
+> > +patternProperties:
+> > +  "^irs@[0-9a-f]+$":
+> > +    type: object
+> > +    description:
+> > +      GICv5 has one or more Interrupt Routing Services (IRS) that are
+> > +      responsible for handling IRQ state and routing.
+> > +
+> > +    additionalProperties: false
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: arm,gic-v5-irs
+> > +
+> > +      "#address-cells":
+> > +        enum: [ 1, 2 ]
+> > +
+> > +      "#size-cells":
+> > +        enum: [ 1, 2 ]
+> > +
+> > +      ranges: true
+> > +
+> > +      dma-noncoherent:
+> > +        description:
+> > +          Present if the GIC IRS permits programming shareability and
+> > +          cacheability attributes but is connected to a non-coherent
+> > +          downstream interconnect.
+> > +
+> > +      reg:
+> 
+> Move after compatible
+
+Done.
+
+> > +        minItems: 1
+> > +        items:
+> > +          - description: IRS control frame
+> > +          - description: IRS setlpi frame
+> > +
+> > +      cpus:
+> > +        description:
+> > +          CPUs managed by the IRS.
+> > +
+> > +      arm,iaffids:
+> > +        $ref: /schemas/types.yaml#/definitions/uint16-array
+> > +        description:
+> > +          Interrupt AFFinity ID (IAFFID) associated with the CPU whose
+> > +          CPU node phandle is at the same index in the cpus array.
+> > +
+> > +    patternProperties:
+> > +      "^msi-controller@[0-9a-f]+$":
+> > +        type: object
+> > +        description:
+> > +          GICv5 has zero or more Interrupt Translation Services (ITS) that are
+> > +          used to route Message Signalled Interrupts (MSI) to the CPUs. Each
+> > +          ITS is connected to an IRS.
+> > +        additionalProperties: false
+> > +
+> > +        properties:
+> > +          compatible:
+> > +            const: arm,gic-v5-its
+> > +
+> > +          dma-noncoherent:
+> > +            description:
+> > +              Present if the GIC ITS permits programming shareability and
+> > +              cacheability attributes but is connected to a non-coherent
+> > +              downstream interconnect.
+> > +
+> > +          msi-controller: true
+> > +
+> > +          "#msi-cells":
+> > +            description:
+> > +              The single msi-cell is the DeviceID of the device which will
+> > +              generate the MSI.
+> > +            const: 1
+> > +
+> > +          reg:
+> 
+> Move after compatible.
+
+Done.
+
+> > +            items:
+> > +              - description: ITS control frame
+> > +              - description: ITS translate frame
+> > +
+> > +        required:
+> > +          - compatible
+> > +          - msi-controller
+> > +          - "#msi-cells"
+> > +          - reg
+> > +
+> > +    required:
+> > +      - compatible
+> > +      - reg
+> > +      - cpus
+> > +      - arm,iaffids
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    interrupt-controller {
+> > +      compatible = "arm,gic-v5";
+> > +      #interrupt-cells = <3>;
+> > +      #address-cells = <1>;
+> > +      #size-cells = <1>;
+> > +      ranges;
+> > +
+> > +      interrupt-controller;
+> > +
+> > +      interrupts = <1 25 4>;
+> > +
+> > +      irs@2f1a0000 {
+> > +        compatible = "arm,gic-v5-irs";
+> > +        #address-cells = <1>;
+> > +        #size-cells = <1>;
+> > +        ranges;
+> > +
+> > +        reg = <0x2f1a0000 0x10000>;  // IRS_CONFIG_FRAME for NS
+> > +
+> > +        arm,iaffids = /bits/ 16 <0 1 2 3 4 5 6 7>;
+> > +        cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>, <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
+> > +
+> > +        msi-controller@2f120000 {
+> > +          compatible = "arm,gic-v5-its";
+> > +
+> > +          msi-controller;
+> > +          #msi-cells = <1>;
+> > +
+> > +          reg = <0x2f120000 0x10000    // ITS_CONFIG_FRAME for NS
+> 
+> Enclose each entry in <>'s.
+
+Done.
+
+Thanks a lot,
+Lorenzo
+
+> > +                 0x2f130000 0x10000>;  // ITS_TRANSLATE_FRAME
+> > +        };
+> > +      };
+> > +    };
+> > +...
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 96b82704950184bd71623ff41fc4df31e4c7fe87..1902291c3cccc06d27c5f79123e67774cf9a0e43 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1901,6 +1901,13 @@ F:       drivers/irqchip/irq-gic*.[ch]
+> >  F:     include/linux/irqchip/arm-gic*.h
+> >  F:     include/linux/irqchip/arm-vgic-info.h
+> >
+> > +ARM GENERIC INTERRUPT CONTROLLER V5 DRIVERS
+> > +M:     Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > +M:     Marc Zyngier <maz@kernel.org>
+> > +L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > +S:     Maintained
+> > +F:     Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5*.yaml
+> > +
+> >  ARM HDLCD DRM DRIVER
+> >  M:     Liviu Dudau <liviu.dudau@arm.com>
+> >  S:     Supported
+> >
+> > --
+> > 2.48.0
+> >
 
