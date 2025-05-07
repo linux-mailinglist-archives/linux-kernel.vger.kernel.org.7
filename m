@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-638050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5210AAE0DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:36:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009BCAAE0A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AFC1C077AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EE93A8C0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50E628001E;
-	Wed,  7 May 2025 13:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62961289369;
+	Wed,  7 May 2025 13:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XNdvC1Ez"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAESpbE7"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A282B2D7
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086C928934C;
+	Wed,  7 May 2025 13:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746624958; cv=none; b=Z02SJQ7SM7wiKL1bky8GZIzFP9Tnjb3u+KeXxddv/UzYrEoTuljz4B//2tpxnJyi4+rsy/Vbku8GZPlofss7/s2+G9d1+UiEERzgPPiU9yV9n8fibak+oYfT7aCpFlFeUtXh0O27a9zUR6z1BDumzC2q1AaqSwzPJlqnbBfh2WA=
+	t=1746624305; cv=none; b=FE9AOL1haemR+ceDJAnYKjIdtEwU0xs4iNZHkMBdxzJZR/6olMZZ+rZIZdM0/qTZ7u6zY9MKggl9zUdzUbdVxKEeyzzCgiA6miEYUe+AdZ4npfAfZxaTyPi2WU6U9xgufPuQP9NWDYUP9a1ocwr6EmF9678wvytuzUQ0yHeUhmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746624958; c=relaxed/simple;
-	bh=5Jciuq5twNayGvhNEegwlXnF765QTUXXRKMPnMk6YaY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=J8Y62Nm9XG63xi0bPr9ttH6OpvcSlLl5aIt0ZsELCylAbiGd0zHaVy5PgcGED4KZ93JH8yr0uQSBXAh+JhmwcCNf/ItYFE1EVTi4NjTAOKjRBa3eftYCSYo/bvXY9IpnUeVju20Un3dsRVgaUIRj4l2Mz9i2r7OTMLshFvz/2wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XNdvC1Ez; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1746624948; bh=SeYSq3VFv0lFDJsZXUY05jjblB4Kn0Y5fV5O3f9HOrs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XNdvC1Ez7deZNd/hGcvIf/eQdmjRo5VdRiXw47oqjl6lP+tuDTJKYUkqLiMYowVBb
-	 3BuPpIitSolOUqyP6XXpScjubfZc9OM3equH/ve52+7kkU58ujQ5y5BzTPGqf0oD6A
-	 nhpwWV3ANJm+FYJ3UWPpui6CClLYUcUfJKrR7Nlk=
-Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 5D31746A; Wed, 07 May 2025 21:23:19 +0800
-X-QQ-mid: xmsmtpt1746624199tq0noae7k
-Message-ID: <tencent_E9E91EEE86CD84787A6EF82C196CD494640A@qq.com>
-X-QQ-XMAILINFO: Nq7sfrZZD4Jf4JH/oozqZPk/ShJJ65KfG+IE1RA9VTrQ1BD08ZOLNCC92ZNeuV
-	 RuxWl+D/Xcq2xycEJTgl2guzfv8suPaYUVA4Hly0sid8vbYtSMZyAc/ECZMtEyQ9AO+70G2zNJ8J
-	 HVuoWF6urDLBOXTfqBdWmqKsJ+j/liNZA0QibypDYE5q/IvOlH2CrQ9ju9CyR4xs1wHaCXQMdztj
-	 tVkStSG8V6tRgwPGwPM6NZLU+azmYqz+F+mMH/o/sOUIpJ3Cimdq20U7l3suChG/NcJYI7z7CLiL
-	 52qP2jtr7CywHoeLkJpUEj5EklkLUEdEoL70+7lF4NkLPmzHwq48vU0G5apQvbgXczcY0AHDqNG9
-	 ZkBD2HLa2dRwfQIl31CpmXMUi09Gel1515EEYswpQAjEGYdBw9V0NcOFLJ1MlYRtrUXNk17Hg22i
-	 Ol36EAWOoPRYvzVBJTzDAktFIImZEOm+8cRO8ugKdDXwlZYEv84xu1vHa2DHzDWmyhV3k/Glug+6
-	 rUEHGLxTbtkvDWQ4BgSbI3tb5bVAbSVwwGrn9NuQBGs6Vx5hkP60fKVn3uBdCBhgWutL7eBVsO2U
-	 uTwdxzZ8OmVf7Uka+vaPQXO6v6xVONyW9Wrv9o6WlrEIx0qD0MNOe41TTSxOzSXQRnz0JyGPOF6P
-	 C9nTpGq1XRyqjm5PofGaRa1AWNqOSTn296/iJmEgNu2cc4Efrc4XQ7iR/eFeHf/oSIskhOFPD/m1
-	 X/yo5RQhbPgotuRmwVl6oNjYSwDI3h+YmrFBLkD6NIko3yLjxhK7st72zDzrl4YOd4iSZDYWmG7D
-	 BOpxGXtcImGJSDgSm2t7WK63axKgJ8p+mgubPKTgEs0OaD1Y6kgkinToue+v4PCvQKrm3fUFyRhV
-	 7rQm95eMpep4Y9fE43qzmuLS1MCFRWsfeOywp61Y3hIWKf6wGN9kygLEyEi7WVqSvxro1sZH4Z90
-	 AN+e+psn4=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
-Date: Wed,  7 May 2025 21:23:19 +0800
-X-OQ-MSGID: <20250507132318.3346552-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
-References: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
+	s=arc-20240116; t=1746624305; c=relaxed/simple;
+	bh=tmAzgqdFUhv7D3TEEOzATF1+3A7Oy4p8s+Yt4t2a+x4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BHXfBV97a3WdCema0VSDXeuaZHbQnA2W6x44aXcuOthcDnojpaqp9xfudrN1mqfS4jxpHr5EzY/rqkKXNb/dClmUMuwLanPjZpZh2TTAVQpt1V1UoJ2ZSA3ZAVKTOQXul2EJpq6ubvjGk1BcMehGav0wxnl+GR/FTPBAagDmPSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAESpbE7; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso563282166b.0;
+        Wed, 07 May 2025 06:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746624302; x=1747229102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FNK9TXRAZQx3t8pFiOXuC7lEgpm/XQ/fl6MmaDUuV1M=;
+        b=kAESpbE7Lb2WdbkjAKxGE6E1KC9SIH5rPunPnfd37krP1ed5kMjSOsOA5lpoB3CLGB
+         aPvBTFwyCHFmtca49OzQIUmdbK1cBKHCsHnLovKks4XHr8sSdofNexKykEoSNzuv+TqN
+         Hk5jo7/eEBXqz4yY4gpY4prplre2nh5ovw3PiaooCr/1lPraVUwBuavCL0jwbaKtyVw+
+         pmbtEBhO8BVy8t4TKp5RyEBWv6NNODCi4FmNidd97T6udpFRTiPVM9AgkJ6/ewCOB1wm
+         Y2R8u5HoHSW5fyk0WF2z6tjV68cIR1QYQGl7daex7sE90lPnf1E3mgxrvW5L1yOelE/b
+         +0VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746624302; x=1747229102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FNK9TXRAZQx3t8pFiOXuC7lEgpm/XQ/fl6MmaDUuV1M=;
+        b=vwk73EYr7IiKBnafKxq1sz7J2nlgowcaXaE5TOkD7d5FVN6yQOmX29qHYZaXG+0gE2
+         4iinykH8+rW1RGshgfDmUdh8jkJkWWaqNiKU+d88FbPKSAmyNNd3BC7mhEVc+t8LDCls
+         +bnmUuYKa+k/gYwkz1XqFLWGTZPFi4wmqrfnqsHxFpGQUwStsrS2UQPpgdbS7pQEI327
+         3T4m25t0FiUyyNBr9CUv8EDKiFyfazO6TTmEs2BF1iKKctt88CNl1nV1+JRtKZU9YUL1
+         8yE6WVTzoxpDRmZXJL/ou5mVnfXDf9n9j/2a423Oh1SvG9smxkuXOxoHCXNEDmJmUyls
+         077g==
+X-Forwarded-Encrypted: i=1; AJvYcCUyUNQzJc/tCDKI/iWXIupoeb//chIGBYXx7Np9L7U5s/uJS79aN6XHYU5aFmARXJ2rVnT1GzEAK3m0@vger.kernel.org, AJvYcCVxyIPUA2xFdiyf33sC2fJ1XaSO8QmpZ7/1pPAEgtHKIgWWte3hvDfzGydDxQ/jwlTaTck3f+m9qtLA1z0h@vger.kernel.org, AJvYcCW/qYFsSQNChva4gibqIHpj8w0TNB/lcJ5xUAL9Z4lH+S4N8ys06AMChJcgOFQi9VBOKlwQ8NXeuh/z2z/mPxkw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwioMvlotZvSiPdtE7K/MXDd9uh60+APEDAQfmAyyy9Rioou80C
+	HKaQe7igSQXRdG2L/DRzbf7aBuIHCiJbofMhN+XWhGGwDoQNdkjBPywC187CJGYMuEwYUbY/Vou
+	cMu0OMXNLDb4uZh2D4hbdCK7jAkaylVsn
+X-Gm-Gg: ASbGncsBtlvpRs6Z1dQKBz5ftYBew45N8MmtBZKQV310E1VxRhGepiW4+2XoXVIanQw
+	p9TWn635xay4YT/521qjNE9c6jHvkqsxK7q6Sr1Soz9PM/dOkLFbBajOR5PLpHvfm74mxt1QhPl
+	XNmqU47RuoeHdA4gy60vdxU1tL
+X-Google-Smtp-Source: AGHT+IHy1EPVp61/xmfKkJx7M5e2sjnMM6R2+K4MN9fr5Jbv3S3oFUuFFqA76cSi8wIatUpZHrrUtGhl0K2kjxnH13k=
+X-Received: by 2002:a17:907:970b:b0:abf:6a53:2cd5 with SMTP id
+ a640c23a62f3a-ad1e8cd6b35mr343831166b.48.1746624291513; Wed, 07 May 2025
+ 06:24:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
+ <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
+ <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com> <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com>
+In-Reply-To: <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 7 May 2025 16:24:14 +0300
+X-Gm-Features: ATxdqUGXLJ378PIXRVvlYYFoCZ00RtoL8KPIUx0XRCLsMFPpNnN-agl8soleSGc
+Message-ID: <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
+Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
+ gpio_desc in gpiochip_fwd
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Wed, May 7, 2025 at 1:10=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+> On 5/7/25 08:34, Andy Shevchenko wrote:
+> > On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
+> > <thomas.richard@bootlin.com> wrote:
 
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index cb7079071885..88ee1ce44e8e 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -369,6 +369,9 @@ static bool ieee80211_prep_hw_scan(struct ieee80211_sub_if_data *sdata)
- 		return false;
- 
- 	if (ieee80211_hw_check(&local->hw, SINGLE_SCAN_ON_ALL_BANDS)) {
-+		if (WARN_ON_ONCE(req->n_channels == 0))
-+			return -EINVAL;
-+
- 		local->hw_scan_req->req.n_channels = req->n_channels;
- 
- 		for (i = 0; i < req->n_channels; i++) {
-@@ -760,6 +763,9 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
- 		/* None of the channels are actually set
- 		 * up but let UBSAN know the boundaries.
- 		 */
-+		if (WARN_ON_ONCE(req->n_channels == 0))
-+			return -EINVAL;
-+
- 		local->hw_scan_req->req.n_channels = req->n_channels;
- 
- 		ies = (u8 *)local->hw_scan_req +
+...
 
+> >> +       /*
+> >> +        * get_direction() is called during gpiochip registration, ret=
+urn input
+> >> +        * direction if there is no descriptor for the line.
+> >> +        */
+> >> +       if (!test_bit(offset, fwd->valid_mask))
+> >> +               return GPIO_LINE_DIRECTION_IN;
+> >
+> > Can you remind me why we choose a valid return for invalid line? From
+> > a pure code perspective this should return an error.
+>
+> I reproduced gpiolib behavior. During gpiochip registration, we get the
+> direction of all lines. In the case the line is not valid, it is marked
+> as input if direction_input operation exists, otherwise it is marked as
+> output. [1]
+>
+> But in fact we could return an error and the core will mark the line as
+> input. Maybe ENODEV ?
+
+I am fine with this error code, but do we have similar cases already
+in the kernel? Do they use the same or different error code(s)?
+
+> [1]
+> https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/gpio/gpiolib.c#=
+L1105-L1123
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
