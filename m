@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-637646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA3EAADB7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:32:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CE0AADB6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BFC63A914A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:31:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5A918832A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4986C1E7648;
-	Wed,  7 May 2025 09:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801621DDA32;
+	Wed,  7 May 2025 09:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VtYv1Tn+"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="X4VnYI8a"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789A624B28
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF701EB5DD
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746610301; cv=none; b=H16IUxcQ4Ip3gnz0LG5LSpWK73lq8J+oNFnuccgHdNgMJexkit2xqMbLXm8tYWZb9XTIEaKs4sqm/5dF2G9nCoAPD2K7WAp18j+pv4paODDP6OfJoWgYOFE4cjWtR8k5C0spkYZ0WA7ah09cRSGTJ+put4rUF2/OS6Yd8oXH3Io=
+	t=1746609987; cv=none; b=iY5SRNgTXWgM85uerP4gbOmX62IPzmNBbAiGOziK21fvljBQlXNG9bwomOFCFx8nbUSJf/jweC0p8Y5ek8v3p8qt2ih7tSjzwAp/mAFoNXaCt8oCdggkK0uMWQluvs4w23vgukf3RZ4t+NvxYSjf7ni8e/Ywd7Cv1QnQk9diMio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746610301; c=relaxed/simple;
-	bh=K9X9Nn/7fufwUGnClucrIwI28bxVDHFEpQ+W4zTrDek=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gy7UnsyFs2SBxtpFwX8BqFFyBLwMOpUeWMO0IK8vmhd8mZ0/WwVdxBeYVDSXOVjFpM12E3dW6JGI/EX2cVWDNnGTulcEzcmIyrFsk6JTiEzz5Npu+H04vgaGXw+TBGpEtmC2IY6FGFpv2pVCXY95ZDRh05EaRCo2AnYjr/t/mWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VtYv1Tn+; arc=none smtp.client-ip=115.124.30.111
+	s=arc-20240116; t=1746609987; c=relaxed/simple;
+	bh=edb1F0ELtb6ma+5nvYAcL+6DNpG8qMzqeCimtjZQEuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qD2rdZlv5Rwk2327zU5kpaZf9jC3HjqP+XvJ6WjGiJUMaeYadaXRjccGSf+2lAdcKOanrOmCZWiP4nWPPVnNGhs+aAekG1AqlVLUGGzUQYKJJhJC+7u3rJRafEykwf8gvzRiCuNwiE47hC3NQBm06SokVD/4KMIVqjC1TvIczoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=X4VnYI8a; arc=none smtp.client-ip=115.124.30.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1746610295; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=XmgMg6STtlyinvSAL5WS1Sr98izqTtA9oefqvb3PDJw=;
-	b=VtYv1Tn+xj27V3HA/bTINb5xGD/kYwuRJtWBHUcGB2X1Ot1P99eTvORe3twKSTcdklPuY3NQSQxyTi8X9+Pf7BGrhPpCcYE87T3finWyQTGzz1z2RZHZsyO3JBHxNMhvMrCGlx5WEylrFzqVfAd6q2kRN2VXGnQYQExaS+XXKi0=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WZpDwwa_1746609976 cluster:ay36)
+	t=1746609981; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=SPbYJw55rv/PzjxTaZakdI9TN7HDp9a+IFeGVFn/9gY=;
+	b=X4VnYI8aRBCrfpBk9ZghE9TgzHfcD2bIa0/DouYk+7XrY8iRjrPfTfebQNZTws1uTZZBhSJNqEQz1a26hHKqQOm5l9hCgmepNnGbblYl1Clsgr5MGrvCBMZW9ZNmfAjCFvugYiECf+t+mJRptcouzEYcJR91s9ABHDfXETLRUus=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WZopYX-_1746609978 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 07 May 2025 17:26:17 +0800
+          Wed, 07 May 2025 17:26:19 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	willy@infradead.org,
@@ -55,10 +56,12 @@ Cc: hannes@cmpxchg.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] mm: khugepaged: convert set_huge_pmd() to take a folio
-Date: Wed,  7 May 2025 17:26:12 +0800
-Message-ID: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH 2/2] mm: convert do_set_pmd() to take a folio
+Date: Wed,  7 May 2025 17:26:13 +0800
+Message-ID: <a2faee74256c22cff2238487a86b154d5520c334.1746609191.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
+References: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,54 +70,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We've already gotten the stable locked folio in collapse_pte_mapped_thp(),
-so just use folio for set_huge_pmd() to set the PMD entry, which is more
-straightforward.
+In do_set_pmd(), we always use the folio->page to build PMD mappings for
+the entire folio. Since all callers of do_set_pmd() already hold a stable
+folio, converting do_set_pmd() to take a folio is safe and more straightforward.
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- mm/khugepaged.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/linux/mm.h |  2 +-
+ mm/filemap.c       |  3 +--
+ mm/khugepaged.c    |  2 +-
+ mm/memory.c        | 12 ++++++------
+ 4 files changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index b04b6a770afe..0215ef6095d9 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1467,7 +1467,7 @@ static void collect_mm_slot(struct khugepaged_mm_slot *mm_slot)
- #ifdef CONFIG_SHMEM
- /* hpage must be locked, and mmap_lock must be held */
- static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
--			pmd_t *pmdp, struct page *hpage)
-+			pmd_t *pmdp, struct folio *folio)
- {
- 	struct vm_fault vmf = {
- 		.vma = vma,
-@@ -1476,13 +1476,13 @@ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
- 		.pmd = pmdp,
- 	};
- 
--	VM_BUG_ON(!PageTransHuge(hpage));
-+	VM_BUG_ON(!folio_test_large(folio));
- 	mmap_assert_locked(vma->vm_mm);
- 
--	if (do_set_pmd(&vmf, hpage))
-+	if (do_set_pmd(&vmf, &folio->page))
- 		return SCAN_FAIL;
- 
--	get_page(hpage);
-+	folio_get(folio);
- 	return SCAN_SUCCEED;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 43748c8f3454..e00d81b9eb2a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1237,7 +1237,7 @@ static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
+ 	return pte;
  }
  
-@@ -1689,7 +1689,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- maybe_install_pmd:
- 	/* step 5: install pmd entry */
- 	result = install_pmd
--			? set_huge_pmd(vma, haddr, pmd, &folio->page)
-+			? set_huge_pmd(vma, haddr, pmd, folio)
- 			: SCAN_SUCCEED;
- 	goto drop_folio;
- abort:
+-vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page);
++vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio);
+ void set_pte_range(struct vm_fault *vmf, struct folio *folio,
+ 		struct page *page, unsigned int nr, unsigned long addr);
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 7b90cbeb4a1a..fbf8d7b76ab7 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3532,8 +3532,7 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct folio *folio,
+ 	}
+ 
+ 	if (pmd_none(*vmf->pmd) && folio_test_pmd_mappable(folio)) {
+-		struct page *page = folio_file_page(folio, start);
+-		vm_fault_t ret = do_set_pmd(vmf, page);
++		vm_fault_t ret = do_set_pmd(vmf, folio);
+ 		if (!ret) {
+ 			/* The page is mapped successfully, reference consumed. */
+ 			folio_unlock(folio);
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 0215ef6095d9..575a3384d046 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1479,7 +1479,7 @@ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 	VM_BUG_ON(!folio_test_large(folio));
+ 	mmap_assert_locked(vma->vm_mm);
+ 
+-	if (do_set_pmd(&vmf, &folio->page))
++	if (do_set_pmd(&vmf, folio))
+ 		return SCAN_FAIL;
+ 
+ 	folio_get(folio);
+diff --git a/mm/memory.c b/mm/memory.c
+index 68c1d962d0ad..0f5c8d8d59b0 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5176,14 +5176,14 @@ static void deposit_prealloc_pte(struct vm_fault *vmf)
+ 	vmf->prealloc_pte = NULL;
+ }
+ 
+-vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
++vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio)
+ {
+-	struct folio *folio = page_folio(page);
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	bool write = vmf->flags & FAULT_FLAG_WRITE;
+ 	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+ 	pmd_t entry;
+ 	vm_fault_t ret = VM_FAULT_FALLBACK;
++	struct page *page;
+ 
+ 	/*
+ 	 * It is too late to allocate a small folio, we already have a large
+@@ -5251,7 +5251,7 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+ 	return ret;
+ }
+ #else
+-vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
++vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio)
+ {
+ 	return VM_FAULT_FALLBACK;
+ }
+@@ -5345,6 +5345,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 	else
+ 		page = vmf->page;
+ 
++	folio = page_folio(page);
+ 	/*
+ 	 * check even for read faults because we might have lost our CoWed
+ 	 * page
+@@ -5356,8 +5357,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 	}
+ 
+ 	if (pmd_none(*vmf->pmd)) {
+-		if (PageTransCompound(page)) {
+-			ret = do_set_pmd(vmf, page);
++		if (folio_test_pmd_mappable(folio)) {
++			ret = do_set_pmd(vmf, folio);
+ 			if (ret != VM_FAULT_FALLBACK)
+ 				return ret;
+ 		}
+@@ -5368,7 +5369,6 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 			return VM_FAULT_OOM;
+ 	}
+ 
+-	folio = page_folio(page);
+ 	nr_pages = folio_nr_pages(folio);
+ 
+ 	/*
 -- 
 2.43.5
 
