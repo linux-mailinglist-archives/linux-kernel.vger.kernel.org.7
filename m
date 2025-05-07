@@ -1,175 +1,88 @@
-Return-Path: <linux-kernel+bounces-638230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A208AAE2EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:30:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84918AAE2CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C26052645E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0CE18867C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F8F28AB0A;
-	Wed,  7 May 2025 14:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE8289E26;
+	Wed,  7 May 2025 14:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eFVs6h7h"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lkIbSxKq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A688289E33
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E869289839;
+	Wed,  7 May 2025 14:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627490; cv=none; b=Qisw5Ks30aqcK2llsPWS3wID/6Kf3gChQDIJfEAmZCtbun9B2PFxZHWx04appnCFPSxrZ/ESRYjjK4gV0Hgebl05dSqoeo6SBNd6S6diPD70JKXyB4P2NLs3b10eqpgr1kDQZlVkk8+1MGqKzOJn7DRsRczBUf+9OpqSuTCqxLM=
+	t=1746627464; cv=none; b=azjWyjwGrGEUfF9VTZiKBteoR2SsY197zuQfe0TSdZ3KarDgGlzVYnX0d1lSPcxeJkr2VFO3eY8Gq9VuDkayPIskJubaeuEdCuRiqWz8403mI7W51xeDY+AJfEFCrqvtcwG1P39RLzmhSy/j3jO+pLnwJYWtSxD8N7mSnlJL42A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627490; c=relaxed/simple;
-	bh=z5pSE65ULIjqvpmH+J9vRAyHolUkWZ/Oap1Uu7HAaSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DkWMBqgFo1dWlC95PWwH5sENp284x4QYwBLgIQI++KS8SoeB8oN/XDZd2YYCjaa4mIpoVJbJ/ZuT79Kj7NcxA6gGuBBv3CcVv8h158LWs/FVgraf+wu6EV/SM1RX+JCB9wYhZJI8b6bxZvSvbCCc6ztwelSHBuLETr4XluZcNDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eFVs6h7h; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746627483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/32H+9/41lr99VTZd+rMmdnuXbjt0IaFlsmmN5aVGwc=;
-	b=eFVs6h7hQ4X5aTOrzTFfWANQ2NH9vy51F4wteOdrqeIaY5lWZHtPB0eCKm5YIQ5N50i49N
-	z38UXgiKr4rG2j2zMss5Ff6LHzC2C3XLxG5bkFDanrcEY6nac8oK0q0asq9YhS1hiPgljy
-	/uFdVv5MLQOv7cUVhmRwWJbpOnT25aI=
-From: Dawei Li <dawei.li@linux.dev>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dawei.li@linux.dev,
-	set_pte_at@outlook.com
-Subject: [PATCH 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-Date: Wed,  7 May 2025 22:17:12 +0800
-Message-Id: <20250507141712.4276-4-dawei.li@linux.dev>
-In-Reply-To: <20250507141712.4276-1-dawei.li@linux.dev>
-References: <20250507141712.4276-1-dawei.li@linux.dev>
+	s=arc-20240116; t=1746627464; c=relaxed/simple;
+	bh=PtB5Usi8xLaJmNGDACycIzyHJbkLqaznxmbCpeinUIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+c4ulPne4CBL5wCTCLKKrux7cetiJXtSkYMnSKBCEObU0Pd/3OXVo8isVMwrwQwco47LHbsIA3DG1+ZEcbJluN5vo5eJQkf7RHC5ap4xfgGnURGXSRKCiJwZM4/9tDLl72FuyYt4IZQWtvlHlE+Ykf5Jr51KneifxzILAyUNqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lkIbSxKq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=riPhI6Eapns1oW9Gn4OqspYK1Wq/yqbnDVBWZAn6+N8=; b=lkIbSxKqLABQ9AeH01kNU+Ma68
+	D2Qc2irMyCeY79HtU6uyKbwy9YC2uBNN6XuJkfxzXiF7IXvaz7ddDFy4VlqK9JaYSN7o/mA9LEiM0
+	JO6jfOniUqp8quI+9Z7OjGhmrJgow+qL/essHLdqatkcyaSOh/DLqaGSqaMfs1waDT08=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uCfac-00BtMw-8e; Wed, 07 May 2025 16:17:38 +0200
+Date: Wed, 7 May 2025 16:17:38 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	kernel@quicinc.com, kernel@oss.qualcomm.com
+Subject: Re: [PATCH 0/8] qcom: Refactor sa8775p/qcs9100 based ride boards
+Message-ID: <d87d203c-cd81-43c6-8731-00ff564bbf2f@lunn.ch>
+References: <20250507065116.353114-1-quic_wasimn@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507065116.353114-1-quic_wasimn@quicinc.com>
 
-Implement RPMSG_CREATE_EPT_FD_IOCTL, new uAPI for rpmsg ctrl, which
-shares most of operations of RPMSG_CREATE_EPT_IOCTL except that it
-returns fd representing eptdev to userspace directly.
+> Ethernet card:
+>   - There are two variants of ethernet card each with different capabilities:
+>     - [Ethernet-v1] card contains:
+>       - 2x 1G RGMII phy, 2x 1G SGMII phy(enabled currently)
+>       - Total 4 phy supported, only 2 phy are enabled and it is used in ride.
+>     - [Ethernet-v2] card contains:
+>       - 2x 1G RGMII phy, 2x 2.5G HSGMII(enabled currently) & 10G PCIe
+>         based MAC+PHY controller
+>       - Total 5 phy supported, only 2 phy are enabled and it is used
+>         in ride-r3.
+>   - Either [Ethernet-v1] or [Ethernet-v2] is connected to backplain
+>     board via B2B connector.
 
-Possible calling procedures for userspace are:
-- fd = open("/dev/rpmsg_ctrlX")
-- ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &info);
-- fd_ep = info.fd
-- operations on fd_ep(write, read, poll ioctl)
-- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-- close(fd_ep)
-- close(fd)
+Is it possible to identify the card, e.g. does it have an I2C EEPROM,
+or some strapping resistors on the B2B bus?
 
-Signed-off-by: Dawei Li <dawei.li@linux.dev>
----
- drivers/rpmsg/rpmsg_ctrl.c | 37 +++++++++++++++++++++++++++++--------
- include/uapi/linux/rpmsg.h | 19 +++++++++++++++++++
- 2 files changed, 48 insertions(+), 8 deletions(-)
+I'm just wondering if DT overlays would be a better solution.
 
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 28f57945ccd9..c2cfdf46ccc6 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -75,19 +75,32 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
- 				unsigned long arg)
- {
- 	struct rpmsg_ctrldev *ctrldev = fp->private_data;
-+	struct rpmsg_endpoint_fd_info ept_fd_info;
- 	void __user *argp = (void __user *)arg;
- 	struct rpmsg_endpoint_info eptinfo;
- 	struct rpmsg_channel_info chinfo;
- 	struct rpmsg_device *rpdev;
- 	int ret = 0;
--
--	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
--		return -EFAULT;
--
--	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
--	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
--	chinfo.src = eptinfo.src;
--	chinfo.dst = eptinfo.dst;
-+	int fd = -1;
-+
-+	if (cmd == RPMSG_CREATE_EPT_IOCTL || cmd == RPMSG_CREATE_DEV_IOCTL ||
-+	    cmd == RPMSG_RELEASE_DEV_IOCTL) {
-+		if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-+			return -EFAULT;
-+
-+		memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
-+		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-+		chinfo.src = eptinfo.src;
-+		chinfo.dst = eptinfo.dst;
-+	} else if (cmd == RPMSG_CREATE_EPT_FD_IOCTL) {
-+		if (copy_from_user(&ept_fd_info, argp, sizeof(ept_fd_info)))
-+			return -EFAULT;
-+
-+		memcpy(chinfo.name, ept_fd_info.name, RPMSG_NAME_SIZE);
-+		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-+		chinfo.src = ept_fd_info.src;
-+		chinfo.dst = ept_fd_info.dst;
-+	}
- 
- 	mutex_lock(&ctrldev->ctrl_lock);
- 	switch (cmd) {
-@@ -110,6 +123,14 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
- 				chinfo.name, ret);
- 		break;
- 
-+	case RPMSG_CREATE_EPT_FD_IOCTL:
-+		ret = rpmsg_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo, &fd);
-+		if (!ret) {
-+			ept_fd_info.fd = fd;
-+			ret = copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info));
-+		}
-+		break;
-+
- 	default:
- 		ret = -EINVAL;
- 	}
-diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-index f0c8da2b185b..934c0e76bfe3 100644
---- a/include/uapi/linux/rpmsg.h
-+++ b/include/uapi/linux/rpmsg.h
-@@ -53,4 +53,23 @@ struct rpmsg_endpoint_info {
-  */
- #define RPMSG_SET_INCOMING_FLOWCONTROL _IOR(0xb5, 0x6, int)
- 
-+/**
-+ * struct rpmsg_endpoint_fd_info - endpoint & fd info representation
-+ * @name: name of service
-+ * @src: local address. To set to RPMSG_ADDR_ANY if not used.
-+ * @dst: destination address. To set to RPMSG_ADDR_ANY if not used.
-+ * @fd: fd returned from driver
-+ */
-+struct rpmsg_endpoint_fd_info {
-+	char name[32];
-+	__u32 src;
-+	__u32 dst;
-+	__s32 fd;
-+};
-+
-+/**
-+ * Instantiate a new rmpsg endpoint which is represented by fd
-+ */
-+#define RPMSG_CREATE_EPT_FD_IOCTL _IOWR(0xb5, 0x7, struct rpmsg_endpoint_fd_info)
-+
- #endif
--- 
-2.25.1
-
+	Andrew
 
