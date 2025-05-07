@@ -1,172 +1,138 @@
-Return-Path: <linux-kernel+bounces-637692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA71AADC1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1A5AADC28
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED82178825
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230E24C0BAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4C8205E3B;
-	Wed,  7 May 2025 10:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA126209F2E;
+	Wed,  7 May 2025 10:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sgxIqJAZ"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cIlxdgyR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009B1F91C5
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B590A20FAA9
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746612227; cv=none; b=q4b+T9eWdH06kMgrP4KC2bjW3i25/+Usibgfm4gXc0YAv3aPhU5rJohqZ/liEXMcCEr8yjk/8p/acf4/nwAtc2J89ArhpC1hyhpPspMQGUQK+wdr98g5a/3iVFqEvnzVsfiJGtGCY3aNSHIZF9XIy3I3RmVDdKaDHTaxSFZusr0=
+	t=1746612250; cv=none; b=maGl4dMObHqqaMmrvAnzfS9LyUJKol0NnZWdHCtG5/GsU3YQIuslj1uNv5AOFM0Ae2I/xvkxagI7eIyF5ieMTiykZ4YzMRx3m7h7/clP7tN+lL0HN8v+vcEBj61WngRDDdmNWxr7nukxkhNDsGoCyhkpTd9LRrZRmW/eyPsKtzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746612227; c=relaxed/simple;
-	bh=JPqB85uGz5OWzFqLAvlB+Xmhgew3sJv2rTxhQ7cBYIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O0fz8aZJkCpDEb2bAJE7epBD6Bwu2y6wRAvJcsp4UcqwMQ2OGGUdBDmQ5NWdWpbhh4N2C6y2ERXNWmuo0wzncVyQ5ZoayETfbZSUsirh7NJKWGq1WAv7p6PrnZpgd445Aa/UXAdVi315EDk7AXAiqFMiy1DaF0WEvG3U59cnGIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sgxIqJAZ; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1746612220; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=EWQps3oaNtZZ7GNbFF8Y5bHARbDvabiLn4K5Tv65RZI=;
-	b=sgxIqJAZ85b4SoNGEzv3rsVZEwfQhCWs/piDav3mOLvhhW4iYarE8IK1I/lTJkaKyYTtr6QIWytISEJJRKj0cZK76U0YEgNiJ6WAGbh4Qh1I9dxVd+YfhW00WZD1Ea/OFh1N7y3z5k1g833fFJWEY4ohEB+XM33XMkCWqYZUPd0=
-Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WZpIPoD_1746612218 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 07 May 2025 18:03:39 +0800
-Message-ID: <c0b2221f-2686-49a7-a1bd-97f5181065e0@linux.alibaba.com>
-Date: Wed, 7 May 2025 18:03:37 +0800
+	s=arc-20240116; t=1746612250; c=relaxed/simple;
+	bh=bCOjuFO/OeJWl7EfL/BAocHP1BtkXZ438OOIHujOMIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0ApN/J85+Saw6zP0XxwU+K+hUcJdZ/LnIYXu4ltur9rNcrgx5gpZG4XoFW3/cEbykNVjKKsHx4PqgX9Mpn/GhlzWWn8goBlaCqYDhxfLuQdg0EkZMcV4LmZFMjHaVIyQA3emKMaDRX56qKiyL3P4qE55fubaeQ5hrhJ9cUTsdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cIlxdgyR; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746612249; x=1778148249;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bCOjuFO/OeJWl7EfL/BAocHP1BtkXZ438OOIHujOMIY=;
+  b=cIlxdgyRoZsi4n8MY/sbK0cOEK950hbeg9bbhJeGSD7MpuRUAwl7qAjZ
+   xDZ+PqOTRFlm4aV853VxKPLA4ozmx5shinoJGcC+Yajj11GP63ZzTyWzO
+   VO+L/DHAlF8UktvCINyussMge73iBcNvvTwe5N5KKwOGrGF8Mu5+yNlKR
+   hmHaCoCwHPhPQ4mXQil5Lp1os3UNk2PmuwhhjNq/gqx73luPUJMX91cRI
+   VStVA/AJmr/HZDKnbvtAyLkDHZ15LyBXJBcACN2iUGW87QqIxUrtKxEIP
+   PaBAZPVWCCpJAKUE0oQfipaSPE4WguXgqwMDrUPY9hjSerMdCuIpREf74
+   Q==;
+X-CSE-ConnectionGUID: YaivdwxhREGi3VwPDE38tg==
+X-CSE-MsgGUID: jzmXIop5R8uiJpBerZ9adg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52147985"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="52147985"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 03:04:09 -0700
+X-CSE-ConnectionGUID: 9ObRoTSVTNetRpwNKzdPuQ==
+X-CSE-MsgGUID: D5EB3DOuQVSxLFoBgFSj0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="136841519"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 07 May 2025 03:04:05 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCbdC-0007Yl-1T;
+	Wed, 07 May 2025 10:04:02 +0000
+Date: Wed, 7 May 2025 18:03:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Dhaval Giani (AMD)" <dhaval@gianis.ca>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Dhaval Giani <dhaval.giani@amd.com>,
+	Gautham Shenoy <gautham.shenoy@amd.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Subject: Re: [PATCH 1/3] sched/fair: Introduce a new debugfs directory for
+ EEVDF tests
+Message-ID: <202505071739.GJbmEQJp-lkp@intel.com>
+References: <20250422-b4-eevdf-tests-v1-post-v1-1-35d158254c72@gianis.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: mincore: use folio_pte_batch() to batch process
- large folios
-To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
- akpm@linux-foundation.org, hughd@google.com
-Cc: willy@infradead.org, 21cnbao@gmail.com, ryan.roberts@arm.com,
- ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
- <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
- <17289428-894a-4397-9d61-c8500d032b28@arm.com>
- <6a8418ba-dbd1-489f-929b-e31831bea0cf@linux.alibaba.com>
- <fc883e4c-41cb-4f05-a5ef-3b756c689da3@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <fc883e4c-41cb-4f05-a5ef-3b756c689da3@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422-b4-eevdf-tests-v1-post-v1-1-35d158254c72@gianis.ca>
+
+Hi Dhaval,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on c70fc32f44431bb30f9025ce753ba8be25acbba3]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dhaval-Giani-AMD/sched-fair-Introduce-a-new-debugfs-directory-for-EEVDF-tests/20250423-082221
+base:   c70fc32f44431bb30f9025ce753ba8be25acbba3
+patch link:    https://lore.kernel.org/r/20250422-b4-eevdf-tests-v1-post-v1-1-35d158254c72%40gianis.ca
+patch subject: [PATCH 1/3] sched/fair: Introduce a new debugfs directory for EEVDF tests
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250507/202505071739.GJbmEQJp-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071739.GJbmEQJp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505071739.GJbmEQJp-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/sched/build_utility.c:71:
+>> kernel/sched/debug.c:539:2: error: call to undeclared function 'debugfs_eevdf_testing_init'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     539 |         debugfs_eevdf_testing_init(debugfs_sched);
+         |         ^
+   1 error generated.
 
 
+vim +/debugfs_eevdf_testing_init +539 kernel/sched/debug.c
 
-On 2025/5/7 17:54, David Hildenbrand wrote:
-> On 07.05.25 11:48, Baolin Wang wrote:
->>
->>
->> On 2025/5/7 13:12, Dev Jain wrote:
->>>
->>>
->>> On 26/03/25 9:08 am, Baolin Wang wrote:
->>>> When I tested the mincore() syscall, I observed that it takes longer 
->>>> with
->>>> 64K mTHP enabled on my Arm64 server. The reason is the
->>>> mincore_pte_range()
->>>> still checks each PTE individually, even when the PTEs are contiguous,
->>>> which is not efficient.
->>>>
->>>> Thus we can use folio_pte_batch() to get the batch number of the 
->>>> present
->>>> contiguous PTEs, which can improve the performance. I tested the
->>>> mincore()
->>>> syscall with 1G anonymous memory populated with 64K mTHP, and 
->>>> observed an
->>>> obvious performance improvement:
->>>>
->>>> w/o patch        w/ patch        changes
->>>> 6022us            1115us            +81%
->>>>
->>>> Moreover, I also tested mincore() with disabling mTHP/THP, and did not
->>>> see any obvious regression.
->>>>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> ---
->>>>    mm/mincore.c | 27 ++++++++++++++++++++++-----
->>>>    1 file changed, 22 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/mm/mincore.c b/mm/mincore.c
->>>> index 832f29f46767..88be180b5550 100644
->>>> --- a/mm/mincore.c
->>>> +++ b/mm/mincore.c
->>>> @@ -21,6 +21,7 @@
->>>>    #include <linux/uaccess.h>
->>>>    #include "swap.h"
->>>> +#include "internal.h"
->>>>    static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned
->>>> long addr,
->>>>                unsigned long end, struct mm_walk *walk)
->>>> @@ -105,6 +106,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned
->>>> long addr, unsigned long end,
->>>>        pte_t *ptep;
->>>>        unsigned char *vec = walk->private;
->>>>        int nr = (end - addr) >> PAGE_SHIFT;
->>>> +    int step, i;
->>>>        ptl = pmd_trans_huge_lock(pmd, vma);
->>>>        if (ptl) {
->>>> @@ -118,16 +120,31 @@ static int mincore_pte_range(pmd_t *pmd,
->>>> unsigned long addr, unsigned long end,
->>>>            walk->action = ACTION_AGAIN;
->>>>            return 0;
->>>>        }
->>>> -    for (; addr != end; ptep++, addr += PAGE_SIZE) {
->>>> +    for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
->>>>            pte_t pte = ptep_get(ptep);
->>>> +        step = 1;
->>>>            /* We need to do cache lookup too for pte markers */
->>>>            if (pte_none_mostly(pte))
->>>>                __mincore_unmapped_range(addr, addr + PAGE_SIZE,
->>>>                             vma, vec);
->>>> -        else if (pte_present(pte))
->>>> -            *vec = 1;
->>>> -        else { /* pte is a swap entry */
->>>> +        else if (pte_present(pte)) {
->>>> +            if (pte_batch_hint(ptep, pte) > 1) {
->>>> +                struct folio *folio = vm_normal_folio(vma, addr, pte);
->>>> +
->>>> +                if (folio && folio_test_large(folio)) {
->>>> +                    const fpb_t fpb_flags = FPB_IGNORE_DIRTY |
->>>> +                                FPB_IGNORE_SOFT_DIRTY;
->>>> +                    int max_nr = (end - addr) / PAGE_SIZE;
->>>> +
->>>> +                    step = folio_pte_batch(folio, addr, ptep, pte,
->>>> +                            max_nr, fpb_flags, NULL, NULL, NULL);
->>>> +                }
->>>> +            }
->>>
->>> Can we go ahead with this along with [1], that will help us generalize
->>> for all arches.
->>>
->>> [1] https://lore.kernel.org/all/20250506050056.59250-3-dev.jain@arm.com/
->>> (Please replace PAGE_SIZE with 1)
->>
->> As discussed with Ryan, we don’t need to call folio_pte_batch()
->> (something like the code below), so your patch seems unnecessarily
->> complicated. However, David is unhappy about the open-coded
->> pte_batch_hint().
-> 
-> I can live with the below :)
-> 
-> Having something more universal does maybe not make sense here. Any form 
-> of patching contiguous PTEs (contiguous PFNs) -- whether with folios or 
-> not -- is not required here as we really only want to
-> 
-> (a) Identify pte_present() PTEs
-> (b) Avoid the cost of repeated ptep_get() with cont-pte.
+   534	
+   535		debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
+   536	
+   537		debugfs_fair_server_init();
+   538	
+ > 539		debugfs_eevdf_testing_init(debugfs_sched);
+   540	
+   541		return 0;
+   542	}
+   543	late_initcall(sched_init_debug);
+   544	
 
-Good. I will change the patch and resend it. Thanks.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
