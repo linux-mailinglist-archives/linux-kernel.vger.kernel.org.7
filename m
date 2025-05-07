@@ -1,168 +1,213 @@
-Return-Path: <linux-kernel+bounces-638317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C25BAAE44A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:16:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709F6AAE457
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1453BCAAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939DF52203A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A69728A715;
-	Wed,  7 May 2025 15:15:17 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133CF28A720;
+	Wed,  7 May 2025 15:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yy44zIO9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4656728A411;
-	Wed,  7 May 2025 15:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8361FDA61;
+	Wed,  7 May 2025 15:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746630916; cv=none; b=dDTPExKThYRWikAtrqPwdojGNpuONeZA5e1q5IQvWvKAJ4abvzwjjH0/ISxOtePsnEk/x6Mz7kAufmUh+2IhXKesPYiPUnuVdMCsuTj9ZtNtBBd+8Pk5+rttRKzuF08ZJ4w31jEySDHS78vF0SjhNHpH0VXaaAkjcT3WNxfoTNo=
+	t=1746630950; cv=none; b=Tz2+7UTDWpPkfMG/2V42hWhkwjPExzU2316FSbP1/hZeJu0a5NWUuli9zgetclUP4tTUAnWhD8PzYwzmvSroNUm6JDXvjbkcBS/aHoqfl4MrPN7pAMn0PsseLqWm/yeKrgv1Qa9KkBIAeGt6abzRaf52wwiGCXY6ruwbeTnLfmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746630916; c=relaxed/simple;
-	bh=6aJyKwDJyYv14UMvQvqVQkM2F5iS184Hqu9roe/nEC8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lD8WBW1MGgc4hDxgurE1Wd0YKvfMh8/PJ7tZcSj4HA9lsmkfGBYWxnhXhucQP13mLJ14EYeetH72twV3zrBse0jgLVQbp1rUHYJuuIuv0fDf4rh38FyTWn2Xf5Un54WNKs2CkMBToa+IbOo0ksnlji1xCeryGMTo0YCexR0S0PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZszGm6nRfz6M53M;
-	Wed,  7 May 2025 23:10:40 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 279381402F5;
-	Wed,  7 May 2025 23:15:12 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 7 May
- 2025 17:15:11 +0200
-Date: Wed, 7 May 2025 16:15:10 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v5 05/14] cxl/region: Rename function to
- cxl_port_pick_region_decoder()
-Message-ID: <20250507161510.00001ee8@huawei.com>
-In-Reply-To: <20250429163119.00001eba@huawei.com>
-References: <20250428214318.1682212-1-rrichter@amd.com>
-	<20250428214318.1682212-6-rrichter@amd.com>
-	<20250429163119.00001eba@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1746630950; c=relaxed/simple;
+	bh=yO+CLLJleqQCOJ1P7Cw9+o2RW0jsGz/mD7j9rcWCyFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=erYOFfOwJLpeg7FTnqWPECC9AJwDqdCRYOmCCW7hBeCQxQH8J+edYGm2+NQPo8qkSQBFIZEXWaB2B6+qJWhwnDwRM41NTmoB2y3gypKkPf0hXtsJ9YTO+5q/eNWS9TMjGEQkvv1Lo5lQ7SRI2Nbg2/v7NtUT8Mg5gWeKcdBu+ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yy44zIO9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746630949; x=1778166949;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yO+CLLJleqQCOJ1P7Cw9+o2RW0jsGz/mD7j9rcWCyFk=;
+  b=Yy44zIO9S8es7yCDyOqM/+Bmx2BiBh12nDbqIb322z+UvoZMnQk0Ifcx
+   LH/HvLGt8VzdfLnnCoqPIb3+qRlGR0FM3nw/Ski5f7aXWLR7OhMmpZa28
+   FqtKkwOckmSWKXK+tO/+j5tHoA32iSJuVO43Q67UhSVLNCunj4ZS31U8A
+   c8GsWCWUCceNjYyguH+Fi+GsdG54u3Ls3RF4Lj2H2n+ldMArYk8u/wKxk
+   +DRph4ibvsJy5fKTa/1PjtwJGr8TI14eoS/cEuiZe5t8xc1wVyQh006VO
+   e0EUQEhy7Qb1TUs4bTWTotfZ4jVoCr8I7bEzGQV+mdrs9kZM4G+a1YW43
+   Q==;
+X-CSE-ConnectionGUID: mG/VuD5BThS7DPpV4/tNQw==
+X-CSE-MsgGUID: tUMIjCwfSaqpZZ5qtc3QoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48480563"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="48480563"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:15:47 -0700
+X-CSE-ConnectionGUID: OcLle1K7QPmnpTiiYJJHXQ==
+X-CSE-MsgGUID: jQAKSpd0R9iEv0m2vr7j7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="135906012"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:15:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uCgUg-00000003lXp-2GW9;
+	Wed, 07 May 2025 18:15:34 +0300
+Date: Wed, 7 May 2025 18:15:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 04/26] driver core: Avoid warning when removing a
+ device while its supplier is unbinding
+Message-ID: <aBt5FvZ95S1Y_Mba@smile.fi.intel.com>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+ <20250507071315.394857-5-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507071315.394857-5-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 29 Apr 2025 16:31:19 +0100
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+On Wed, May 07, 2025 at 09:12:46AM +0200, Herve Codina wrote:
+> During driver removal, the following warning can appear:
+>    WARNING: CPU: 1 PID: 139 at drivers/base/core.c:1497 __device_links_no_driver+0xcc/0xfc
+>    ...
+>    Call trace:
+>      __device_links_no_driver+0xcc/0xfc (P)
+>      device_links_driver_cleanup+0xa8/0xf0
+>      device_release_driver_internal+0x208/0x23c
+>      device_links_unbind_consumers+0xe0/0x108
+>      device_release_driver_internal+0xec/0x23c
+>      device_links_unbind_consumers+0xe0/0x108
+>      device_release_driver_internal+0xec/0x23c
+>      device_links_unbind_consumers+0xe0/0x108
+>      device_release_driver_internal+0xec/0x23c
+>      driver_detach+0xa0/0x12c
+>      bus_remove_driver+0x6c/0xbc
+>      driver_unregister+0x30/0x60
+>      pci_unregister_driver+0x20/0x9c
+>      lan966x_pci_driver_exit+0x18/0xa90 [lan966x_pci]
+> 
+> This warning is triggered when a consumer is removed because the links
+> status of its supplier is not DL_DEV_DRIVER_BOUND and the link flag
+> DL_FLAG_SYNC_STATE_ONLY is not set.
+> 
+> The topology in terms of consumers/suppliers used was the following
+> (consumer ---> supplier):
+> 
+>       i2c -----------> OIC ----> PCI device
+>        |                ^
+>        |                |
+>        +---> pinctrl ---+
+> 
+> When the PCI device is removed, the OIC (interrupt controller) has to be
+> removed. In order to remove the OIC, pinctrl and i2c need to be removed
+> and to remove pinctrl, i2c need to be removed. The removal order is:
+>   1) i2c
+>   2) pinctrl
+>   3) OIC
+>   4) PCI device
+> 
+> In details, the removal sequence is the following (with 0000:01:00.0 the
+> PCI device):
+>   driver_detach: call device_release_driver_internal(0000:01:00.0)...
+>     device_links_busy(0000:01:00.0):
+>       links->status = DL_DEV_UNBINDING
+>     device_links_unbind_consumers(0000:01:00.0):
+>       0000:01:00.0--oic link->status = DL_STATE_SUPPLIER_UNBIND
+>       call device_release_driver_internal(oic)...
+>         device_links_busy(oic):
+>           links->status = DL_DEV_UNBINDING
+>         device_links_unbind_consumers(oic):
+>           oic--pinctrl link->status = DL_STATE_SUPPLIER_UNBIND
+>           call device_release_driver_internal(pinctrl)...
+>             device_links_busy(pinctrl):
+>               links->status = DL_DEV_UNBINDING
+>             device_links_unbind_consumers(pinctrl):
+>               pinctrl--i2c link->status = DL_STATE_SUPPLIER_UNBIND
+>               call device_release_driver_internal(i2c)...
+>                 device_links_busy(i2c): links->status = DL_DEV_UNBINDING
+>                 __device_links_no_driver(i2c)...
+>                   pinctrl--i2c link->status is DL_STATE_SUPPLIER_UNBIND
+>                   oic--i2c link->status is DL_STATE_ACTIVE
+>                   oic--i2c link->supplier->links.status is DL_DEV_UNBINDING
+> 
+> The warning is triggered by the i2c removal because the OIC (supplier)
+> links status is not DL_DEV_DRIVER_BOUND. Its links status is indeed set
+> to DL_DEV_UNBINDING.
+> 
+> It is perfectly legit to have the links status set to DL_DEV_UNBINDING
+> in that case. Indeed we had started to unbind the OIC which triggered
+> the consumer unbinding and didn't finish yet when the i2c is unbound.
+> 
+> Avoid the warning when the supplier links status is set to
+> DL_DEV_UNBINDING and thus support this removal sequence without any
+> warnings.
 
-> On Mon, 28 Apr 2025 23:43:08 +0200
-> Robert Richter <rrichter@amd.com> wrote:
-> 
-> > Current function cxl_region_find_decoder() is used to find a port's
-> > decoder during region setup. In the region creation path the function
-> > is an allocator to find a free port. In the region assembly path, it
-> > is recalling the decoder that platform firmware picked for validation
-> > purposes.
-> > 
-> > Rename function to cxl_port_pick_region_decoder() that better
-> > describes its use and update the function's description.
-> > 
-> > The result of cxl_port_pick_region_decoder() is recorded in a 'struct
-> > cxl_region_ref' in @port for later recall when other endpoints might
-> > also be targets of the picked decoder.  
-> 
-> I'm not convinced pick is really any clearer than find as it doesn't to me
-> imply 'get the one that was already allocated'.  I'm also not seeing
-> a lot of precedence in kernel for this use of pick.
-> 
-> I don't feel that strongly either way though and I guess I'll
-> get used to the term if we go with pick.
-> 
-> Alternative might just be to make it an or...
-> 
-> cxl_region_find_or_alloc_decoder()
-> 
-Just taking a look at where this series stands and feel a clarification
-is needed.
+...
 
-Note I don't care enough on this to block the series going forwards!
+>  		if (link->supplier->links.status == DL_DEV_DRIVER_BOUND) {
+>  			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
+>  		} else {
+> -			WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
+> +			if (link->supplier->links.status != DL_DEV_UNBINDING)
+> +				WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
 
-> 
-> > 
-> > Signed-off-by: Robert Richter <rrichter@amd.com>
-> > Reviewed-by: Gregory Price <gourry@gourry.net>
-> > Tested-by: Gregory Price <gourry@gourry.net>
-> > ---
-> >  drivers/cxl/core/region.c | 25 ++++++++++++++++++++-----
-> >  1 file changed, 20 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> > index e35209168c9c..e104035e0855 100644
-> > --- a/drivers/cxl/core/region.c
-> > +++ b/drivers/cxl/core/region.c
-> > @@ -865,10 +865,25 @@ static int match_auto_decoder(struct device *dev, const void *data)
-> >  	return 0;
-> >  }
-> >  
-> > +/**
-> > + * cxl_port_pick_region_decoder() - assign or lookup a decoder for a region
-> > + * @port: a port in the ancestry of the endpoint implied by @cxled
-> > + * @cxled: endpoint decoder to be, or currently, mapped by @port
-> > + * @cxlr: region to establish, or validate, decode @port
-> > + *
-> > + * In the region creation path cxl_port_pick_region_decoder() is an
-> > + * allocator to find a free port. In the region assembly path, it is
-> > + * recalling the decoder that platform firmware picked for validation
-> > + * purposes.
-> > + *
-> > + * The result is recorded in a 'struct cxl_region_ref' in @port for
-> > + * later recall when other endpoints might also be targets of the picked
-> > + * decoder.
-> > + */
-> >  static struct cxl_decoder *
-> > -cxl_region_find_decoder(struct cxl_port *port,
-> > -			struct cxl_endpoint_decoder *cxled,
-> > -			struct cxl_region *cxlr)
-> > +cxl_port_pick_region_decoder(struct cxl_port *port,
-> > +			     struct cxl_endpoint_decoder *cxled,
-> > +			     struct cxl_region *cxlr)
-> >  {
-> >  	struct device *dev;
-> >  
-> > @@ -932,7 +947,7 @@ alloc_region_ref(struct cxl_port *port, struct cxl_region *cxlr,
-> >  		if (test_bit(CXL_REGION_F_AUTO, &cxlr->flags)) {
-> >  			struct cxl_decoder *cxld;
-> >  
-> > -			cxld = cxl_region_find_decoder(port, cxled, cxlr);
-> > +			cxld = cxl_port_pick_region_decoder(port, cxled, cxlr);
-> >  			if (auto_order_ok(port, iter->region, cxld))
-> >  				continue;
-> >  		}
-> > @@ -1020,7 +1035,7 @@ static int cxl_rr_alloc_decoder(struct cxl_port *port, struct cxl_region *cxlr,
-> >  {
-> >  	struct cxl_decoder *cxld;
-> >  
-> > -	cxld = cxl_region_find_decoder(port, cxled, cxlr);
-> > +	cxld = cxl_port_pick_region_decoder(port, cxled, cxlr);
-> >  	if (!cxld) {
-> >  		dev_dbg(&cxlr->dev, "%s: no decoder available\n",
-> >  			dev_name(&port->dev));  
-> 
-> 
+Why not
+
+			WARN_ON(link->supplier->links.status != DL_DEV_UNBINDING &&
+			        !(link->flags & DL_FLAG_SYNC_STATE_ONLY));
+
+>  			WRITE_ONCE(link->status, DL_STATE_DORMANT);
+>  		}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
