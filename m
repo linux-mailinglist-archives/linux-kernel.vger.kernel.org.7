@@ -1,196 +1,175 @@
-Return-Path: <linux-kernel+bounces-637020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6482AAD387
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:44:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32723AAD38F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DCA57B40F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6A5983E54
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2572519D084;
-	Wed,  7 May 2025 02:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E901A3168;
+	Wed,  7 May 2025 02:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDBL5SY8"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hzxWeT6q"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2089.outbound.protection.outlook.com [40.107.244.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C726C70824
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 02:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746585882; cv=none; b=gJiR3JIUyaA9Ugohy6HCS5TFVrYLONiQ4qMcvxNmafFYHDF7MZ4OXlsRgsj6XtkgaR93xiNVADWz6H1YfpUXFy0xqPHktEfmfz4dSeFFKGwKUAE1E16b/XsAm+G43tXLwJxsPVyY2Sfej2k/kOTaq7qvyigTQ62Kj5CKyQ+RGKE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746585882; c=relaxed/simple;
-	bh=v/k8fkqi/B+bFFED5fC8etueQPbo8d8r4bvAvy5moCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D18SkW/mkEP1S/U7GBBLY9ppdU0Tkt76PUMzt4oaMAzAZIfx5uTA5cUzjfR26fSzGq+4RlcKNaVq0v/E/pU5MME+cDbl7wJhOFetN61zTja/HfABKCAEa0+JnCJmnMLjYmt1aHWs38/JQBeDPryp56QljHH24SlrRBggV5fOtOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDBL5SY8; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-523dc190f95so2253034e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 19:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746585879; x=1747190679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9EiL3jR8M7yopoi7vVdrmMpQt07YMhxaiFiq0iV4zSA=;
-        b=mDBL5SY89fSQf2/nASFPRi76HcjyuWMrNwApoyGvpMQqJqlZBK8MaFuyLVnSrMWqGT
-         fSXWAd6rFYC5EjUGXbmwVSIrYzifNiAF5LlA7mc1efT+OHlXCsV/vyZX2YQJbROCRPyT
-         AbVnd19yafup5A74kIha1Exumt/3kQ9fQCz19FD1oWiaqBuFQAfNj5Hx/zuVGkL34fFI
-         3ByB+60Iu9vBxFkar5gZJY2Gf4QqfyewC5oB5K0I1MxAvnGrlYaaTV5sjuycAozTo7Fe
-         Qw6eOQL+ApuZDvYQXRSMPVDRitupk8r4EAaFc8BvHJeVVLVEwHdVuS/b5zc2oZG2tjfY
-         owVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746585879; x=1747190679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9EiL3jR8M7yopoi7vVdrmMpQt07YMhxaiFiq0iV4zSA=;
-        b=BDj2kap7MO1uADG9aJmf99aCsR1afTW2pVhcjPmPtKAWzfKJIXa0DFi89hZ1xmjm58
-         IgnT70UH19LkOlm8Vo6zWxTt1GW8H1wNZI2e0ywrNhkKT4laNzhYXtD1dF12GbkTV+nT
-         W8garA90BIrLDNzHGu/W0Lgcj+r7mVWgNCYFX/lQs+sXU+1bcFuu4kdIpsK7U6tcxiya
-         UzxMY4I0ehiShmCi731Blu+p74OvqCHyLCGvUm4m6n7X9bRNNLlZcYmAqOnbq0fNbYsA
-         aud4rwO7APE1tRNOyYPUPhCtfIhhuT63s9BzxgFuD7S2h5NtvfCa8fujpLUOH+fWzGxw
-         0y5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXRobFG/gfloAeJx7NnVdmLhwiMzr4bPkoL0SFae/RzNpiydi6K4zLNECAMI64vJI1G9Xs1GMcucMgsHrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzohwbziepZY7c3e/g/6BJotribvsuXzycVKoVkzgbgZCF3Zuc4
-	PNPLFcAP3gKCSvOWS34+lPqkOlROrykNaIoUDARgHY88j8Mo/PyVyd4VZ6H2ipCYLBW6ILLqU5e
-	0/GxmD+CbLZOCi0lRu9kqtjd4bNE=
-X-Gm-Gg: ASbGncsJWNJw30TOWKTOlt3uJLYBwTltxN1931hEFeSfGG8EdyIxRCvowqy30F4bMmT
-	bHfsGqxrEEgJghFoNUc9n2q15AsJmaw/tqddzN5DB3BaIf5MbWyy59t1p8MgLTMxZRs5+4/VQ9l
-	j6+4/hL1nLH25THLRADrmnhQ==
-X-Google-Smtp-Source: AGHT+IHmw5taEtGxcRol3Sk9+refsDygdCulc98vDVOXQNNgeJkuyxo9X2/0ZA5i0x8IY6U3umyzodWkDkT+MDbZS4g=
-X-Received: by 2002:a05:6122:181b:b0:51f:fc9d:875d with SMTP id
- 71dfb90a1353d-52c37ab9312mr1279220e0c.8.1746585879594; Tue, 06 May 2025
- 19:44:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283E1A29;
+	Wed,  7 May 2025 02:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746586128; cv=fail; b=UQa0XiEfVGe9DEBYCFL+iGFCPnFb4aJDmfJdDIJs1AZ5qhC3ug2J5LuHv2xkWsMLrOeRRWCw7VlOagGnzDCG/Hm1RTo5msDpd1EOtPZS0po88p4ZrZSdij0aYOPqk71jvmC6RQOiov4uy3YAh68OuYlZemWRks/9ZvlPNKmU3vA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746586128; c=relaxed/simple;
+	bh=TkUPRIuQlbnCmXX2XCSNc8089Ilo6Ns6jRIFSy6MPKU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rhwqlKD27dtEUPWJoDkZ80ru+EXjsjYj0URMmeVADUrlxzdAtnTW6d+ILqQO+i9rSg71vEmq3Ns1fPnueEJWffRAp/30FvOKFPmv7sH2EeWdGATqNdSscxLAVf2GP8BcQ+Llphz9L8i343t5UcwaK2EQjTQsL8b/j2DEWTTF5w8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hzxWeT6q; arc=fail smtp.client-ip=40.107.244.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MX0QiHCilazzKJwXtNc+mI4H7idwrQwYHVIEmg6VNc2Ls7P02bX5HBu2exvPkg+/9tBTwpz3Kbd9dd46BqRWo0U1Nisb49xi9btMXWz09eQ+zvkyVG1LCw39sF5F0BT5HCCw3qycNe5X8pycSuAWuC88NVTqFU9u+v0Twm9eXhowfNqBenBS7n24uKJVYzr0zw0AGgmpmoKcxNjt9gqmegFNYu1R4+El8YDsZZhui/hpsxthJs+uNX1OQ8HHVfbD8Mg/NkU75DiSufM3/ytvvouRvXHqMjoX+EpFXZtrYd2adKvXHXqu1KIVKWHKNTY+v2QaM/LrXLQfi89ThUjbRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T1cSmlw6ekFdTq7IylobwpZNhqNSRsQCTj5lhYZJpqY=;
+ b=xGOYj2PksuLQWjnFMdI1v8FuN8nZWAzACiU2/UOP1Tcz0byyW5DkFHfBiaK80aWz1niY1ElY188R2jFR2ut4XrJwrydD0sJGUmDh7xTkQZ3bS3gDI+eqNP1v7iXpyF11WZBtJmEvk909SmFi5X+JQr8fmKirGubWaLSCoEiOkvZpFad+a50Y4itAdHR31c56w2bILj3Oh8BMOw5rwP1mw1ZRXVFafsMSAYoimBoBbU2+CoZV9Xdfk/cCISMr3IJizW97dQtJs+HUd07IEgnUQNoi98LRox/fof8wfZdqtaJrF9GDf43qSXKKVVcm0N8HuZsX0snlQ32+BwjUDhZKeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T1cSmlw6ekFdTq7IylobwpZNhqNSRsQCTj5lhYZJpqY=;
+ b=hzxWeT6qaSzMomaUYyf/lOkf/0THnf5jvgVIJiSwP2uFoBqdl4+vn7rVFZiEsX+7ut1V9qUJnBGR4t/HUR975QtiGIjA+eYLD/ynWr3XnfXaJ7Q9oB3FIcNJRqww/hIvz/t1r/FXssjmwUdo1lhvf89rpKBuDES4sOXqhGtOne4sbOZRT3j0eKioZZc0RYh8/yhw/GlNawAL4YxGXG3u8Qp1/qSUK5YGYUcV9KawNCtbp9/oWDHXatzRlMb6mWO0Yosmvu3Cy4AYDdFCReDxQhC5s2Ho2PLTIAd6n2wIHiq4K8oEBx5NInhNt1QjdxkYcr0anCACoVnONss61WEWKw==
+Received: from MN2PR12CA0032.namprd12.prod.outlook.com (2603:10b6:208:a8::45)
+ by CH3PR12MB8401.namprd12.prod.outlook.com (2603:10b6:610:130::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 7 May
+ 2025 02:48:38 +0000
+Received: from BL02EPF00021F6B.namprd02.prod.outlook.com
+ (2603:10b6:208:a8:cafe::29) by MN2PR12CA0032.outlook.office365.com
+ (2603:10b6:208:a8::45) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Wed,
+ 7 May 2025 02:48:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL02EPF00021F6B.mail.protection.outlook.com (10.167.249.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.18 via Frontend Transport; Wed, 7 May 2025 02:48:37 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 May 2025
+ 19:48:22 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 6 May 2025 19:48:23 -0700
+Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14
+ via Frontend Transport; Tue, 6 May 2025 19:48:22 -0700
+From: Wayne Chang <waynec@nvidia.com>
+To: <waynec@nvidia.com>, <jckuo@nvidia.com>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC: <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] Disable periodic tracking on Tegra234
+Date: Wed, 7 May 2025 10:48:18 +0800
+Message-ID: <20250507024820.1648733-1-waynec@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506030100.394376-1-xiaqinxin@huawei.com> <20250506030100.394376-5-xiaqinxin@huawei.com>
-In-Reply-To: <20250506030100.394376-5-xiaqinxin@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 7 May 2025 14:44:28 +1200
-X-Gm-Features: ATxdqUH3yMt1mMhq6jKANZZxcE5NsXFCSy7HTPU7XFirkrVBPl8KliTmhIKDXLE
-Message-ID: <CAGsJ_4z9oYtCkdXqk=s+F4ZFrjCan+-AuGqRQDeQcXcswPzaHw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] dma mapping benchmark:add support for dma_map_sg
-To: Qinxin Xia <xiaqinxin@huawei.com>
-Cc: yangyicong@huawei.com, hch@lst.de, iommu@lists.linux.dev, 
-	jonathan.cameron@huawei.com, prime.zeng@huawei.com, fanghao11@huawei.com, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6B:EE_|CH3PR12MB8401:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6012551e-3b8c-4217-8548-08dd8d11ab13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZDZBZXJ6SG11czdoUVJtWnU1Vi9wc01YQWo4ZEY2V2k4WWpjaG0zUUkzUDRP?=
+ =?utf-8?B?NllVbFYrQTVhb2ZIaTBjVWgxVml4a3YzT3NkNjg5MjRiL2dqSVBIMmxwS1Ft?=
+ =?utf-8?B?UXZlTitHaWxxN1dQKzhrZk94bzNSUzNmK3krYXI3eWs0T3h6UkM5Sk9RdTN4?=
+ =?utf-8?B?aGpFeXFMUklJcVE0bm9MclBxOGNWMUNtWjJhV1pZK3EyMmlFM3lHaktpcmpo?=
+ =?utf-8?B?dWN3RHpFTGM0N1lDRitOaHBHb3gxWEdjd1lxK0l1dmNGMEZRTGpFNFpIN2N2?=
+ =?utf-8?B?cDRkM25TVGpsRS9pUEowM2t6YzJTT2JhbG9FcDVMV1FHOExTSDBHQVp6a2do?=
+ =?utf-8?B?a1VNMklDTVk2NmhvUzROdHRvUzRFTUp2alNZK0I2aHdieVRCQkZlL0ptcFRI?=
+ =?utf-8?B?UWZoMjl4QnYrVldNMHY3WmFDcjdoWlFHNTRJSk0vWDlUUVhGK1FPUXBWbTNo?=
+ =?utf-8?B?bHdFQzhhd0dpNU0waFRBMEt5UGdEV3ZCY1hIbnQ3dGV3dm1od3ZpanR4Tmpk?=
+ =?utf-8?B?UWxmL0ZFN2cvZkZkNHNzMGliVW5lZEhheUJDVC9JZ2ZERWpjT2NKWk12TFVi?=
+ =?utf-8?B?aWxTRXJEMUY0TWVtZEQrbUJGTW5lQkorM2tXZnVQc2VVOGlUWUZWamdZT1BB?=
+ =?utf-8?B?ZW1ybzNyY0VpMG9lM0JmYnFzK0xJOFVtSllQRDhvcmJKTEo4R2QvWnF2d0F3?=
+ =?utf-8?B?TnhXYlpVTGVQcFVnQjR2ZXIxNG95UDU5anBKNUpGVEp5S2twL0dkN1JNZ25C?=
+ =?utf-8?B?TFFYSmhweDNjYmdDejg0VVJnMC8xRFo1QlNmUktNR3hpa2JoSG5EWDdUMEZO?=
+ =?utf-8?B?SkJ0cEpoQzNRY1FacjliK3d6aGJBaDRSNkVWOWI1QjlialRTSm9maHF0QWNy?=
+ =?utf-8?B?bWIyN0t4L3RpeXV4R1BTN0l4SzNnZ21oeHZDT1JSeTd2cUFReEpiOXRqZUlt?=
+ =?utf-8?B?U0liU3RhTStJZ2J5K3FlQVRHQXdFVkZMWVlDSG1jR1ZqMDhYQmZYKzN3L243?=
+ =?utf-8?B?dDVvZkpOVW9JTG9ETWxaUy9vTW5Qa2VPaEtPRVlhMGpqSmxkcTFhWlovbThW?=
+ =?utf-8?B?U1cyWjBWUGgzYS85R1Zwem5pa2d2bVRrVk83WEMzQmpwNXkrczErZWF3RC9F?=
+ =?utf-8?B?ZGs3bDI5eEQ3Kzg5VlF1VkdCYjM1cmZJYWlJSWg2UTR1dFdJQWtOZVlaYURC?=
+ =?utf-8?B?Z2xBa2ZUSDJCTmdta1l0Q2l2ZHFFbkZmeVEzM044ZU5oQUh6YlVSM3ZTWlMw?=
+ =?utf-8?B?U2FLd2FyYWtXUmFDdWxwMGV6emQwNk9wMWNPSXNUV2dXaVlFcnYyOTU3ekl2?=
+ =?utf-8?B?YzNMQ3V0UHBLbE40bDMwUllIc2JZcXVWb0tBYms2dXBsSmRseDkrTjJseGUy?=
+ =?utf-8?B?VU4xbFlLUW9VWll6ZklZZm9MRUh3MDdIWHBqdGYrbnc2S1hSeWc3WHlrR0w2?=
+ =?utf-8?B?a1dyRGttbTlSMG1xYWlTalJmVEI2U3RwZGRPcVJIMk9scTVQTlIzNkhQYW9B?=
+ =?utf-8?B?VWdNRUkxWDFrM1lDQklEL3NtWXhoMHhMNEwycDF1Q0EvejQzWDRNcytwU3dz?=
+ =?utf-8?B?a29zWk5OYXNFT3VJdjBsK0FZS3Y3SzJGS0VXUGRmTEJtVEZkWFlqV01EdnlU?=
+ =?utf-8?B?eTM5OGYxcWdhTThUdW5yWFg2eGhyRHFjU05qQU5xSk1sM0tPaXgvQUg3N0hI?=
+ =?utf-8?B?TlVYaE9aS3l1dmRmLzNseWRYbi9GRU9vSHZVV0JpZEJRUXJ2VzRTUnVXL0R4?=
+ =?utf-8?B?V3MyU0c0anp1V3ViZGdYN2Q3YVJuWDVnZGVoaCtvTkhoaitWNXhZSzhCZTRu?=
+ =?utf-8?B?d2RZY055SFFxQVBMUEwyZ0VkRERSWnhETmxlMFI4cmJkZXN0UGhoU29jYWZ1?=
+ =?utf-8?B?MjBObjBMMVBGZ2d1ZUI0a2JRcTAxQjQyQVlzWDNvUU1objQ5eUh5V2YxUUQz?=
+ =?utf-8?B?QlplQVd2WlhCbWZSUFNTcnNyR0ptb0ZuQk8wVm9meXFmam50cEFwQ1dEL3JK?=
+ =?utf-8?B?WVU3ZUZ4RDFwMzVEQml2QWtyYkdKamhJUEtYaERUelZHNlRpK0N3M2R4ajZG?=
+ =?utf-8?Q?gnlQH4?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 02:48:37.8642
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6012551e-3b8c-4217-8548-08dd8d11ab13
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8401
 
-On Tue, May 6, 2025 at 3:01=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> wr=
-ote:
->
-> Support for dma_map_sg, add option '-m' to distinguish mode.
->
-> i) Users can set option '-m' to select mode:
->    DMA_MAP_SINGLE_MODE=3D0, DMA_MAP_SG_MODE:=3D1
->    (The mode is also show in the test result).
-> ii) Users can set option '-g' to set sg_nents
->     (total count of entries in scatterlist)
->     the maximum number is 1024. Each of sg buf size is PAGE_SIZE.
->     e.g
->     [root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
->     dma mapping mode: DMA_MAP_SG_MODE
->     dma mapping benchmark: threads:8 seconds:30 node:-1
->     dir:FROM_DEVICE granule/sg_nents: 8
->     average map latency(us):1.4 standard deviation:0.3
->     average unmap latency(us):1.3 standard deviation:0.3
->     [root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
->     dma mapping mode: DMA_MAP_SINGLE_MODE
->     dma mapping benchmark: threads:8 seconds:30 node:-1
->     dir:FROM_DEVICE granule/sg_nents: 8
->     average map latency(us):1.0 standard deviation:0.3
->     average unmap latency(us):1.3 standard deviation:0.5
->
-> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from trk_hw_mode and disable
+periodic tracking on Tegra234
 
-Either merge this into the previous patch or use the correct prefix in the
-subject to differentiate patch 3 from patch 4. For example: selftests/dma
+Haotien Hsu (1):
+  phy: tegra: xusb: Disable periodic tracking on Tegra234
 
-> ---
->  tools/testing/selftests/dma/dma_map_benchmark.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/test=
-ing/selftests/dma/dma_map_benchmark.c
-> index b12f1f9babf8..036ddb5ac862 100644
-> --- a/tools/testing/selftests/dma/dma_map_benchmark.c
-> +++ b/tools/testing/selftests/dma/dma_map_benchmark.c
-> @@ -27,6 +27,7 @@ int main(int argc, char **argv)
->         int fd, opt;
->         /* default single thread, run 20 seconds on NUMA_NO_NODE */
->         int threads =3D 1, seconds =3D 20, node =3D -1;
-> +       int map_mode =3D DMA_MAP_SINGLE_MODE;
->         /* default dma mask 32bit, bidirectional DMA */
->         int bits =3D 32, xdelay =3D 0, dir =3D DMA_MAP_BIDIRECTIONAL;
->         /* default granule 1 PAGESIZE */
-> @@ -34,7 +35,7 @@ int main(int argc, char **argv)
->
->         int cmd =3D DMA_MAP_BENCHMARK;
->
-> -       while ((opt =3D getopt(argc, argv, "t:s:n:b:d:x:g:")) !=3D -1) {
-> +       while ((opt =3D getopt(argc, argv, "t:s:n:b:d:x:g:m:")) !=3D -1) =
-{
->                 switch (opt) {
->                 case 't':
->                         threads =3D atoi(optarg);
-> @@ -57,11 +58,20 @@ int main(int argc, char **argv)
->                 case 'g':
->                         granule =3D atoi(optarg);
->                         break;
-> +               case 'm':
-> +                       map_mode =3D atoi(optarg);
-> +                       break;
->                 default:
->                         return -1;
->                 }
->         }
->
-> +       if (map_mode >=3D DMA_MAP_MODE_MAX) {
-> +               fprintf(stderr, "invalid map mode, DMA_MAP_SINGLE_MODE:%d=
-, DMA_MAP_SG_MODE:%d\n",
-> +                       DMA_MAP_SINGLE_MODE, DMA_MAP_SG_MODE);
-> +               exit(1);
-> +       }
-> +
->         if (threads <=3D 0 || threads > DMA_MAP_MAX_THREADS) {
->                 fprintf(stderr, "invalid number of threads, must be in 1-=
-%d\n",
->                         DMA_MAP_MAX_THREADS);
-> @@ -111,13 +121,15 @@ int main(int argc, char **argv)
->         map.dma_dir =3D dir;
->         map.dma_trans_ns =3D xdelay;
->         map.granule =3D granule;
-> +       map.map_mode =3D map_mode;
->
->         if (ioctl(fd, cmd, &map)) {
->                 perror("ioctl");
->                 exit(1);
->         }
->
-> -       printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:=
-%s granule: %d\n",
-> +       printf("dma mapping mode: %d\n", map_mode);
-> +       printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:=
-%s granule/sg_nents: %d\n",
->                         threads, seconds, node, dir[directions], granule)=
-;
->         printf("average map latency(us):%.1f standard deviation:%.1f\n",
->                         map.avg_map_100ns/10.0, map.map_stddev/10.0);
-> --
-> 2.33.0
->
+Wayne Chang (1):
+  phy: tegra: xusb: Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from
+    trk_hw_mode
 
-Thanks
-Barry
+ drivers/phy/tegra/xusb-tegra186.c | 16 +++++++++-------
+ drivers/phy/tegra/xusb.h          |  1 +
+ 2 files changed, 10 insertions(+), 7 deletions(-)
+
+
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+-- 
+2.25.1
+
 
