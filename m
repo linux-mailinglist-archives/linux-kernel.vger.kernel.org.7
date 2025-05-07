@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-638049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7D1AAE0DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:35:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB416AAE0DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B083A5023C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606A6173935
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6710E288CBA;
-	Wed,  7 May 2025 13:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E7B288C95;
+	Wed,  7 May 2025 13:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Glyag8Un"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsQwQ9oM"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C7128136B;
-	Wed,  7 May 2025 13:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678E21CC48;
+	Wed,  7 May 2025 13:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746624898; cv=none; b=YVqR0Y7++Fe8dg4mAr47WEzmNLPajaS3CHXZiXnTo8kN0UZo1ENo1il+6v5DzyX+7eSWukKhJef7WSedLd9dRAtNNkf44eAQFiGw24V7oO7qu3vtNToo6x6KOrqxK+NB3xd3wPg9FSy66NfASkc9grnxwgnEu1yvmNUZdEu1/so=
+	t=1746625134; cv=none; b=eLewTMKIf9SvLcxfZF2xLjilvviOmUsQTRuv/UOt+NSi7Q9Hy2VO3KF+q8x86gLkRLCjwga6Fv3y+1Ud10UCwzjYz+zJme55grrRRDEx4Fr3fB3hHOvM5sDfWZ+fpVbmfStPeO8VM5FAlm9xrm23aIkYJ/XckjQIj1+80OYUd08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746624898; c=relaxed/simple;
-	bh=9s/anmmmHnCBE/Juya8NxbudhVpKAE3I7ntHPIaGTeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5akgXU8PJnaSCtTLVU3wtgUa48SRSQDQSxHCjAkH+e4rlV2G8ciXd10WUIi1LjEHH7g+fuLMGC6kKkeaZMD/znJ099qwMI5Lb2O6F2se+tSSnkOROFBtxj/3jF0h0M1wp8qyar8A/yoNaIdttlNlG0noy1MTgildSH5BqbvlVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Glyag8Un; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746624897; x=1778160897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9s/anmmmHnCBE/Juya8NxbudhVpKAE3I7ntHPIaGTeM=;
-  b=Glyag8UnW4ZmHoCFv2kda9DYoZQBIHpET9lU2Fziuwsv2B7SGljUMklO
-   CzXAwlEJw/BlDIBYegBHb6BNufvGaE7T7HANGS/zaJiiKpkyQLtXebYtO
-   fBIkNQis0SDyVEQGZSFYVXho7HmAQveQU/YMqv3w/4HKg3yCHObCZfrKQ
-   /ydfHv14q0CBYL3zbRjT/Z9zC59Wv/WX3B3dn3LzQZEPPJ0BBtP02HoZo
-   wdHOUtECWo9kKMcPkBL/jlzBWc/Pzon6HfrtvRwtEOuG20blSuiR5kZBs
-   SBAfu5xZIq68SOtRf1lfC+X3q10ALfvY1FmAKY03EwGADMz1Q8Gl93/v4
-   g==;
-X-CSE-ConnectionGUID: 5ae23F6hT/+JnrcqjFEezw==
-X-CSE-MsgGUID: xlMytwUoRjCFN9eGEok1zQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="47606971"
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="47606971"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:34:55 -0700
-X-CSE-ConnectionGUID: fT4LPrCgQimWp74WxhC1qg==
-X-CSE-MsgGUID: SgIV+25KTCG6vTtXnu+F0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="140006944"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 07 May 2025 06:34:52 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCevB-0007sX-2o;
-	Wed, 07 May 2025 13:34:49 +0000
-Date: Wed, 7 May 2025 21:34:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cyan Yang <cyan.yang@sifive.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, corbet@lwn.net, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	samuel.holland@sifive.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Cyan Yang <cyan.yang@sifive.com>
-Subject: Re: [PATCH 02/12] riscv: Add SiFive xsfvqmaccdod and xsfvqmaccqoq
- vendor extensions
-Message-ID: <202505072100.TZlEp8h1-lkp@intel.com>
-References: <20250418053239.4351-3-cyan.yang@sifive.com>
+	s=arc-20240116; t=1746625134; c=relaxed/simple;
+	bh=LfNP7WJnwi+phkB8AdTkI2n6mePHkoApep398h3RGrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DU745Qr8wDB+dA0VCrFVnttOFqleOctSskhloh6RECsCAn4eY4RFjscVntXgt+l8Hm+P39YtL1GmEz2/nlr67v9AxKLLJsmuBhTH3QuYgBHrw/YFy/e5QCpWwXMtvgK/lG+4s7toTIi9lV6ngRhIbfQqQ+f9VrUIg3v0EwUfels=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsQwQ9oM; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54e816aeca6so9076908e87.2;
+        Wed, 07 May 2025 06:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746625130; x=1747229930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OD/yxQNBXIGY/VHqYV6OisAoQh685n5/Owltr5spKgw=;
+        b=XsQwQ9oMyu+dE6S3eYEMOiWaUH7Of106bt6dI00jGSbemygX5DcHozSA93/l1qiz15
+         swFTF9NfL57wjux45f5Ba3a7FsmlBQjeIUe10wxQGW0pyFZn9vYO/y5xNkBIG5k6TUft
+         Lq8wbgqKlkjfyp05Fz8bMG2RJWUIRpq3J0/4t4JWCMppXJK8KEqydM3HViL8HhH7KowC
+         t7ETv+g975cWD30CiZGRCHFj6Wn8qIwYADt6h+tXVFnl4k1SBT7XTLwJQVEEvmlORPRW
+         9repqNVNTbXulVF8BLPZxHqLw/Gy59HZZI9oY3B9ANlSmQ1Ib0ljagcNX6krsRu+SdT2
+         LStQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746625130; x=1747229930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OD/yxQNBXIGY/VHqYV6OisAoQh685n5/Owltr5spKgw=;
+        b=TX7dtKHMzJY4uiCkdwXT8GOywQ7/vyg97vKZH0c+4Ol/33Q8gZQZFyRvTEqHBgHvLu
+         TbFAymV2fHTYgg6LNsuj1LKPFecZiZIzzSe8ZlWzP+5Z8IuXRH758CxSW2o4SdmkF7mo
+         jozCaOS9ee/40TBCU50SQlq5z6Da+/LPNUJrQwEQRHWhzwPWBkN9pUqGOJxMwWEru3+t
+         NgC8nA9qDHQwg8li9t1b3uFUbPbBgvNeJVfSSFjOE/zz0xf+MscC6u6Rq1kgTPSx8rlp
+         qzPtyg8Rt+u0KXy5jeX/N1v6Z5Le4dv9bNszTfsbuWf6TgzgIjkxwBUydnf/kSZNtqSu
+         i4Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC+w4Aoyh+UjJHUSQp4uc5uZ4M32xbNssnEWKgrGEkwGShkaIGjHLFTIECE9QG9xDKwbBSOzO0OL3aWkk=@vger.kernel.org, AJvYcCWJF9gpYQLPxQ1su5J5qcU+RWuYOxEVXXeM1ccLdFIvVy4D6DInehVSh6+Cpa1JwrARL0FVffY9+7rcEErbVOB+rxOs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfWlyKWIvVxGybKf2oYfOd782Hu29lOgP8Jay3IBDdE4F5NCWb
+	E0aS0fhjKPMn+kjH+DIEbanfa2bo50pA7rRIYa8gN7VEm8BIwnqJ
+X-Gm-Gg: ASbGncvQYBc1LCElSNInd0kX5sJSNfBswX9B3qhr+Is9tRZFEOWKW40vEYm62xd4iPD
+	P0pHCYUPP5nlxkBgKZe+zWD+LYTBENh1Ocv4fP7H5jyab6o0SYNXeqkxDkzKuZ0mC1bXz08ciHw
+	O38eOqFruOYxxh5M26osfq0a5DCvUwlI8VTC5cFxT1xiZllY8ouRbgRS2asV2NHmLQGYjETZavT
+	e6LEMzVnkCZcBrP3IH91HhZa3GkVUg8eEfA0vY7SrJ8G68EXxssAtP0q9cJXA3PDBCT6ramwQMH
+	KndlDr/d/7t1xtWjxyHzzYQyFHet2xi74rHHBsI=
+X-Google-Smtp-Source: AGHT+IE7OuUNY21KuuPCZDuP+BcZV7oI8FYP8VyCZ4PN2pl4RI2QdeBd+BN8VNJT1RoUI1Io7w0QGw==
+X-Received: by 2002:ac2:5693:0:b0:54a:cc07:4091 with SMTP id 2adb3069b0e04-54fb928f00emr1141623e87.2.1746625130185;
+        Wed, 07 May 2025 06:38:50 -0700 (PDT)
+Received: from fedora.. ([37.131.106.85])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94bf0cesm2348836e87.57.2025.05.07.06.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:38:49 -0700 (PDT)
+From: Devaansh Kumar <devaanshk840@gmail.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: Devaansh Kumar <devaanshk840@gmail.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [RESEND PATCH v5] tracing: Replace deprecated strncpy() with strscpy() for stack_trace_filter_buf
+Date: Wed,  7 May 2025 19:08:36 +0530
+Message-ID: <20250507133837.19640-1-devaanshk840@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418053239.4351-3-cyan.yang@sifive.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Cyan,
+strncpy() is deprecated for NUL-terminated destination buffers and must
+be replaced by strscpy().
 
-kernel test robot noticed the following build warnings:
+See issue: https://github.com/KSPP/linux/issues/90
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.15-rc5 next-20250507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Devaansh Kumar <devaanshk840@gmail.com>
+---
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cyan-Yang/dt-bindings-riscv-Add-xsfvqmaccdod-and-xsfvqmaccqoq-ISA-extension-description/20250418-133832
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250418053239.4351-3-cyan.yang%40sifive.com
-patch subject: [PATCH 02/12] riscv: Add SiFive xsfvqmaccdod and xsfvqmaccqoq vendor extensions
-config: riscv-randconfig-r112-20250426 (https://download.01.org/0day-ci/archive/20250507/202505072100.TZlEp8h1-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 8.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250507/202505072100.TZlEp8h1-lkp@intel.com/reproduce)
+Changes since v4:
+- Removed unnecessary sizeof(stack_trace_filter_buf) in strscpy
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505072100.TZlEp8h1-lkp@intel.com/
+Changes since v3:
+- Refactored code to compare length with str_has_prefix in a single line
 
-sparse warnings: (new ones prefixed by >>)
->> arch/riscv/kernel/vendor_extensions/sifive.c:11:33: sparse: sparse: symbol 'riscv_isa_vendor_ext_sifive' was not declared. Should it be static?
+Changes since v2;
+- Removed unnecessary string.h header file inclusion
 
-vim +/riscv_isa_vendor_ext_sifive +11 arch/riscv/kernel/vendor_extensions/sifive.c
+Changes since v1:
+- Moved from memcpy() to strscpy()
 
-     9	
-    10	/* All SiFive vendor extensions supported in Linux */
-  > 11	const struct riscv_isa_ext_data riscv_isa_vendor_ext_sifive[] = {
-    12		__RISCV_ISA_EXT_DATA(xsfvqmaccdod, RISCV_ISA_VENDOR_EXT_XSFVQMACCDOD),
-    13		__RISCV_ISA_EXT_DATA(xsfvqmaccqoq, RISCV_ISA_VENDOR_EXT_XSFVQMACCQOQ),
-    14	};
-    15	
 
+ kernel/trace/trace_stack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 14c6f272c4d8..4c349db381cb 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -542,7 +542,7 @@ static __init int enable_stacktrace(char *str)
+ 	int len;
+ 
+ 	if ((len = str_has_prefix(str, "_filter=")))
+-		strncpy(stack_trace_filter_buf, str + len, COMMAND_LINE_SIZE);
++		strscpy(stack_trace_filter_buf, str + len);
+ 
+ 	stack_tracer_enabled = 1;
+ 	return 1;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
