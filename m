@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-638500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21208AAE6CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942BBAAE6B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAAB18866B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07B36506C18
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED2028C038;
-	Wed,  7 May 2025 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFB728C004;
+	Wed,  7 May 2025 16:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lpi0Hlbk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="helrUNnD"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19CE28B7CD;
-	Wed,  7 May 2025 16:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E216828A419;
+	Wed,  7 May 2025 16:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746635486; cv=none; b=rcf0YOb2waemIdIHHYo1VHetF2LLmKldMTVq0dvLPfD6IJf2y4mgDYEK6k6r4xE3iqfmFvbm7F2G0FEK7SaGxV2ygXqLPUl3JII/EhYRUSTfSIRWeXkTd+aiQat+8qltdxL1wk4cyEJ5NksjWqM99+dNSbJfdENrshWiRO+m648=
+	t=1746635509; cv=none; b=XU6366Bqqo98WbQBk7ILsHy6bImBrg7lP8e55CNLfgLNi3Vowo/nO6fBs+GjtUM15AYgTY8QTUFMQiquSYKmyb0qdpa0Y5fV6q6Vu+VHKF0fV7PTsI/iIiNuZ3YNp7+oLZSSiDH2OmzQNXsvyAbnVVd8OlxX9br2vQLo3ZGcIgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746635486; c=relaxed/simple;
-	bh=TlSIndUGwwBydlnSwSdtYNA0hIlK9V8Mv94OepnzT4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ih/Olz5B749c9yHLdPfcEbUR/kPTkIDtqIFNX2qEc9hALMB6xLw4IdihC1PJfRz0pBfH3KDlvh/vfANrN88ElF63Mgnz2EOkROUDAZ+LwwwN+IakhyZxQ29NkXQbpAokTXP9mM545B9+YLFB8AohenBpKZ9oVmmfSC45d/3C6ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lpi0Hlbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0C5EC4CEE2;
-	Wed,  7 May 2025 16:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746635486;
-	bh=TlSIndUGwwBydlnSwSdtYNA0hIlK9V8Mv94OepnzT4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lpi0HlbkI5FAe47DHdgMIifQpEKjewdjKr16jROVTBsCh93c3pYDTq2aHielItXXy
-	 FlwPPfNAd3yqmd6cho17HyeJJ7e3KM0B+IJzsIBI9O51Fp4/9PVTJBnWmanPr4XKb9
-	 Owjh63RGAX12S2tDHmbxt2HJPYL/lYP5xkpPk5zhcJOzbaqeFHtwaJ6TX8RseDHpJs
-	 btw0C5U0ZT27sEVSDMw1Bp7Xuj7F6zOHgGE67ZYxTkYvwzdzFC43V7ot99KDpILxs1
-	 Uy1f9PZI4fLOOV1sQ4KXhu9nbvqVYNPExGZhceTU/2nZuJEcx7bgq4QJtXkTDgEEvL
-	 IhneeKJszWYIA==
-Date: Wed, 7 May 2025 18:31:23 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Zqiang <qiang.zhang1211@gmail.com>, paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
-	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rcu/nocb: Add Safe checks for access offloaded rdp
-Message-ID: <aBuK29q6nuhTgHIq@localhost.localdomain>
-References: <20250507112605.20910-1-qiang.zhang1211@gmail.com>
- <20250507112605.20910-2-qiang.zhang1211@gmail.com>
- <b242ab38-c488-450c-9735-11e1b666106c@nvidia.com>
+	s=arc-20240116; t=1746635509; c=relaxed/simple;
+	bh=J7zUAtlGwiwO/WIy81WUiaijUl2DgI8V4ukSV13GD4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xb5X5u0jmHPVNhfZxgzDBT/7G0YREg0vATtx+4/n2r24UqCujqk4UjHsd1FiCWFJf/9LBYlB0Pto2258wC0ZsZoPCqZFq6m8Q0K/aMBhe0av92MqZAK4TDVR7PQ+7QPD7/Drs7FRpHbLPHCKJEhxZ4qWYCk1gZP/FBWuZqxjPFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=helrUNnD; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 547GVSR21426205
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 7 May 2025 11:31:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746635488;
+	bh=T5HdIX4Eagvu+H1MhZGppYcNn1F0MPYiO0LJscqQoS0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=helrUNnDcX8ZBFLiV/JattiHtRMgbRJucIJHH0ZMZNfxWLQRe0zEf1ENwnqpwWI+1
+	 IadWicWNHSemEtS0lmE6D2WY53XePKp6AZPsvfzyXTPQLJLWpE1HmqeceI4l3a5zCt
+	 3jVbkTxutRUhSp9iPOAPbkSKh64t2HXrgZh/3M78=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 547GVSEG052668
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 May 2025 11:31:28 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ May 2025 11:31:27 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 May 2025 11:31:27 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 547GVRia102625;
+	Wed, 7 May 2025 11:31:27 -0500
+Message-ID: <ba88a5c0-a8b8-4e48-9752-76881fa8e94e@ti.com>
+Date: Wed, 7 May 2025 11:31:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b242ab38-c488-450c-9735-11e1b666106c@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/2] Introduce PRU UART driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman
+	<khilman@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, Hari Nagalla
+	<hnagalla@ti.com>
+References: <20250501003113.1609342-1-jm@ti.com>
+ <aBSSpsT_7UsqN6bl@smile.fi.intel.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <aBSSpsT_7UsqN6bl@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Le Wed, May 07, 2025 at 12:06:29PM -0400, Joel Fernandes a écrit :
-> 
-> 
-> On 5/7/2025 7:26 AM, Zqiang wrote:
-> > For built with CONFIG_PROVE_RCU=y and CONFIG_PREEMPT_RT=y kernels,
-> > Disable BH does not change the SOFTIRQ corresponding bits in
-> > preempt_count(), but change current->softirq_disable_cnt, this
-> > resulted in the following splat:
-> > 
-> > WARNING: suspicious RCU usage
-> > kernel/rcu/tree_plugin.h:36 Unsafe read of RCU_NOCB offloaded state!
-> > stack backtrace:
-> > CPU: 0 UID: 0 PID: 22 Comm: rcuc/0
-> > Call Trace:
-> > [    0.407907]  <TASK>
-> > [    0.407910]  dump_stack_lvl+0xbb/0xd0
-> > [    0.407917]  dump_stack+0x14/0x20
-> > [    0.407920]  lockdep_rcu_suspicious+0x133/0x210
-> > [    0.407932]  rcu_rdp_is_offloaded+0x1c3/0x270
-> > [    0.407939]  rcu_core+0x471/0x900
-> > [    0.407942]  ? lockdep_hardirqs_on+0xd5/0x160
-> > [    0.407954]  rcu_cpu_kthread+0x25f/0x870
-> > [    0.407959]  ? __pfx_rcu_cpu_kthread+0x10/0x10
-> > [    0.407966]  smpboot_thread_fn+0x34c/0xa50
-> > [    0.407970]  ? trace_preempt_on+0x54/0x120
-> > [    0.407977]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> > [    0.407982]  kthread+0x40e/0x840
-> > [    0.407990]  ? __pfx_kthread+0x10/0x10
-> > [    0.407994]  ? rt_spin_unlock+0x4e/0xb0
-> > [    0.407997]  ? rt_spin_unlock+0x4e/0xb0
-> > [    0.408000]  ? __pfx_kthread+0x10/0x10
-> > [    0.408006]  ? __pfx_kthread+0x10/0x10
-> > [    0.408011]  ret_from_fork+0x40/0x70
-> > [    0.408013]  ? __pfx_kthread+0x10/0x10
-> > [    0.408018]  ret_from_fork_asm+0x1a/0x30
-> > [    0.408042]  </TASK>
-> > 
-> > Currently, triggering an rdp offloaded state change need the
-> > corresponding rdp's CPU goes offline, and at this time the rcuc
-> > kthreads has already in parking state. this means the corresponding
-> > rcuc kthreads can safely read offloaded state of rdp while it's
-> > corresponding cpu is online.
-> > 
-> > This commit therefore add softirq_count() check for
-> > Preempt-RT kernels.
-> > 
-> > Suggested-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-> > ---
-> >  kernel/rcu/tree_plugin.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > index 003e549f6514..a91b2322a0cd 100644
-> > --- a/kernel/rcu/tree_plugin.h
-> > +++ b/kernel/rcu/tree_plugin.h
-> > @@ -29,7 +29,7 @@ static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
-> >  		  (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_held()) ||
-> >  		  lockdep_is_held(&rdp->nocb_lock) ||
-> >  		  lockdep_is_held(&rcu_state.nocb_mutex) ||
-> > -		  (!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible()) &&
-> > +		  ((!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible()) || softirq_count()) &&
-> >  		   rdp == this_cpu_ptr(&rcu_data)) ||
-> This looks good to me. Frederic told me he'll further review and give final
-> green signal. Then I'll pull this particular one.
-> 
-> One thing I was wondering -- it would be really nice if preemptible() itself
-> checked for softirq_count() by default. Or adding something like a
-> really_preemptible() which checks for both CONFIG_PREEMPT_COUNT and
-> softirq_count() along with preemptible().  I feel like this always comes back to
-> bite us in different ways, and not knowing atomicity complicates various code paths.
-> 
-> Maybe a summer holidays project? ;)
+Hi Andy,
 
-I thought about that too but I think this is semantically incorrect.
-In PREEMPT_RT, softirqs are actually preemptible.
-
-Thanks.
-
+On 5/2/25 4:38 AM, Andy Shevchenko wrote:
+> On Wed, Apr 30, 2025 at 07:31:11PM -0500, Judith Mendez wrote:
+>> This patch series is sent as an RFC to get some initial comments
+>> on the PRU UART driver.
+>>
+>> The ICSSM modules on am64x SoC and the PRUSS module on am62 SoC or am335x
+>> SoCs have a UART sub-module. This patch series introduces the driver and the
+>> corresponding binding documentation for this sub-module.
+>>
+>> The DTS patches for adding PRU nodes and enabling PRU UART will be added
+>> in a later v1 version of the series if accepted.
+>>
+>> This driver has been previously tested on the following boards:
+>> am64x SK, am62x SK, and am335x SK boards.
 > 
->  - Joel
+> The first and main question here: Have you checked the existing zillion of
+> drivers and become with an idea that none of them not even close to this one
+> (based on RTL)?
 > 
 
--- 
-Frederic Weisbecker
-SUSE Labs
+Thanks for reviewing.
+
+I have looked through the drivers in tty/serial/8250 and I believe there
+are no drivers we could leverage, especially since this driver has a
+dependency on the PRU drivers for clock and power. This PORT_16550A UART
+is in PRU module which is specific to TI, so besides simplifying the
+driver a bit further, I don't think we can use another driver.
+
+~ Judith
+
+
+
 
