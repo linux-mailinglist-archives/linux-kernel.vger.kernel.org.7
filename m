@@ -1,133 +1,198 @@
-Return-Path: <linux-kernel+bounces-638383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8311AAE548
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:48:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EB6AAE54F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4E75081EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:48:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5345A7ABEE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A4028B7E1;
-	Wed,  7 May 2025 15:47:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A41B28C010;
-	Wed,  7 May 2025 15:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E2A28BA83;
+	Wed,  7 May 2025 15:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DN2Xp91c"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B27289837;
+	Wed,  7 May 2025 15:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632837; cv=none; b=qelrjfptRpV/xYl0OlhhI9aE2tXB7V8dm4LA3LFWpwrjfaYo8EA3e8rndS9ACwGVOCaY6ww727D3B4zm3RGa0wWRt58YxobAj+LXZl+P42llpXYvfnNA7AMnm2IlkdulDwCIi4ezbq9mVCVvLZ3RW8mct94reFP5IS5T2zgeXak=
+	t=1746632848; cv=none; b=KxKi+hAjxnnCdH2bf5ALBH5xdN3SPUzLlXROs/Ip1Y1cL3V+STbQssSzHsYDZDndw+kAYGNbvFsSy2Gt2gvpnDwClE3sEMmL7B1yGCmqzafB9A9BsRya1FiUy/AuoUADKAGBqxYexBxEYBtKDxXkcRS+Z3qR7Z48ggUEVu44738=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632837; c=relaxed/simple;
-	bh=w2kApnDbGDviYWYaQBt9Zg0Aa/bp4BdPTRzMtx55rus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFWzmoOBYrYMAoGbjBwTJ31DVX/022WmaeNX3Le8kHYYoXcxIi3rf1NBIu9hHlbNWSs52L6x4yWOsMtNmuFjRgMYDgkVgGwot+13HR82Y4gRk5bSSandzw/Wonzgis/MOPosoJvCjQX+rtBoM0/1MwJCbqJsEQMlx/2mqkHdNpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D26102008;
-	Wed,  7 May 2025 08:47:04 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F9523F778;
-	Wed,  7 May 2025 08:47:13 -0700 (PDT)
-Date: Wed, 7 May 2025 16:47:10 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: "Heyne, Maximilian" <mheyne@amazon.de>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ACPI/PPTT: fix off-by-one error
-Message-ID: <20250507-tasteful-wren-of-devotion-f010af@sudeepholla>
-References: <20250506-draco-taped-15f475cd@mheyne-amazon>
- <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
+	s=arc-20240116; t=1746632848; c=relaxed/simple;
+	bh=XJP3ksP+po7wqMMJKXn4rgDgRNdO3D3MPvv47yMTjsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bkbJ3Pou2ex/qrb/bZCT2/D83YLnvYnlpZEva/tee+EEOSPBXX+f4kjEK6svxNreXP4ZJMBTXECSfUZATskZKSQXYnXumKzHswOt5LeXKaSunMq4WBTP9aX/DlZTMstkjpGNd1tVxNAOcDnvNWUAQjjz8slfHB0GM+oHsT8sijY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DN2Xp91c; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso78028b3a.2;
+        Wed, 07 May 2025 08:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746632846; x=1747237646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LmkbRzm6/L2ISgCL3Ow+dZj/hCqoVpb93sMpickKofs=;
+        b=DN2Xp91c8ar5ctiEjxFlX3ZSga1DfqiPk7VUjs3E176jVfZpB/bK+4QOw0MqAJstwd
+         Fmz2t9O6f1gX7ZBt/GrPGghiPGnJ/gT9FTAkxsILXfKU9kz2yzeph/Q2VbfHRKvZ6PFn
+         I13ZaQ9va2DUpLaqOjvo/F9dLMJulltDu7WpWzZPq2PJ0RIwyJl8c10+/FXcSTq6Zs86
+         smf0FhFX4731jzkMxa/ATabHluZjVLr5x8K3X+qjP4lwDnJ/aqHj8xHchVApW/J0AJqV
+         v8D34f2H4DKL05EXJqvce5lLqejO3f0hZ6siFlT0A5+cU7D1X+sXBgNQXLrd5XPb04D1
+         QkGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746632846; x=1747237646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LmkbRzm6/L2ISgCL3Ow+dZj/hCqoVpb93sMpickKofs=;
+        b=u8ihhveMV66Oci5d7uXa+vMEkY+8ju/tZDCh40iyMpnQnQeWApHJL9FhpsPUkMK39B
+         HDcdwIcrMjE2NdIVzoeImeW9uh1529vu9CGmpw40w8JOJ2l7VVi4nwnJrwG7mm5/eBM1
+         PU4aVEfY75qYTy7VF0pQ/Y2p5pZE+YRZIgv2Rye+hl9YogP0Vu7FRK1TvkOhx7OlQgeT
+         WVtVhCCfwScHWAnTUdqkTQvfvITCMnQ1jgrF7tZ/UebJmSXiL0xHpLn+vB4xe3LJ4klU
+         e02GT4+5djPpw1PIq4Xet2KKil9DmK2N1yYKI1+OqKvwTyPBiU50j93EvbAtLSAcht59
+         AWAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE8nUMpAveEXJuIZzrjf19mqnA6SklygvnLgZv9eCjyMHu4mMVGv241Gk25iD5TeTOaOUjPL/fhKC6ZJL+@vger.kernel.org, AJvYcCVgoG09wJbZzn1IO3NFzvFlTHljtOKqg7kuKcM6xY7L2ofGOD6kzQ9wkUBEDlBodoTGLwrZwAprBI/S01zv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBZ4z07WjJbjZMyu7SYhWNaaLAYRfI6k+Yr8PmiZ3PkHcKCIfl
+	BGoRMX6hJygEQZfQJ6t4QDUSWFk+z60IB9mm5c5d2XwN8H+8KTyC
+X-Gm-Gg: ASbGnctwOtfzkC1lTQcwx3EKyqmspqZxjESYAq30TNVt/U8ibpSbZR2N8tHBgoJktPY
+	fsHV1PTr8mUQRSAOQvWq/s9mUZH+9+ZFT6Gmn5EExaqpu++HD+cV7lN7J8qFft3p/a0b1e0XRXi
+	hsUqoyjcjipqOOXvziQw0WWc7emgRzmBH9IN08jI5i8KP7IUAVBEUlmlOL1WExusBW0p8EZkxSM
+	nUYkVZV/lTrXfzmHAdszzoj//cWY4PmsWTbVCscQRjE5p4RGZs1wOl2Smie9FZkDAChUwREtdeh
+	1y8Ujue0vfMdFfAcbYo7kQ6roGf1wLHvQOqqu18agJPyclgJ0Ufa1BIzUmfPNs7ql9qq0sZMrH+
+	ijwbVMIf4ax9T3XI=
+X-Google-Smtp-Source: AGHT+IEjee61+V1bhnajLB99NRDjF86bj6+oLpOJxzBD/kzEvFWRPqLSBK91CgrPhNzavqWjuXF4TA==
+X-Received: by 2002:a05:6a21:3944:b0:201:8a13:f392 with SMTP id adf61e73a8af0-2148c0f634bmr5732814637.20.1746632846056;
+        Wed, 07 May 2025 08:47:26 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058d7ad7asm11852752b3a.11.2025.05.07.08.47.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 08:47:25 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Rob Clark <robdclark@chromium.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/adreno: Remove MODULE_FIRMWARE()'s
+Date: Wed,  7 May 2025 08:47:22 -0700
+Message-ID: <20250507154723.275987-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 07, 2025 at 10:25:25AM -0500, Jeremy Linton wrote:
-> Hi,
-> 
-> On 5/6/25 8:13 AM, Heyne, Maximilian wrote:
-> > Commit 7ab4f0e37a0f ("ACPI PPTT: Fix coding mistakes in a couple of
-> > sizeof() calls") corrects the processer entry size but unmasked a longer
-> > standing bug where the last entry in the structure can get skipped due
-> > to an off-by-one mistake if the last entry ends exactly at the end of
-> > the ACPI subtable.
-> > 
-> > The error manifests for instance on EC2 Graviton Metal instances with
-> > 
-> >    ACPI PPTT: PPTT table found, but unable to locate core 63 (63)
-> >    [...]
-> >    ACPI: SPE must be homogeneous
-> > 
-> > Fixes: 2bd00bcd73e5 ("ACPI/PPTT: Add Processor Properties Topology Table parsing")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-> > ---
-> >   drivers/acpi/pptt.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> > index f73ce6e13065d..4364da90902e5 100644
-> > --- a/drivers/acpi/pptt.c
-> > +++ b/drivers/acpi/pptt.c
-> > @@ -231,7 +231,7 @@ static int acpi_pptt_leaf_node(struct acpi_table_header *table_hdr,
-> >   			     sizeof(struct acpi_table_pptt));
-> >   	proc_sz = sizeof(struct acpi_pptt_processor);
-> 
-> This isn't really right, it should be struct acpi_subtable_header, then once
-> the header is safe, pull the length from it.
-> 
+From: Rob Clark <robdclark@chromium.org>
 
-Ah OK. Sorry I wasn't able to understand your point earlier. I get it now.
+The driver handles the case where gpu fw is not in the initrd.  OTOH it
+doesn't always handle the case where _some_ fw is in the initrd, but
+others are not.  In particular the zap fw tends to be signed with an OEM
+specific key, so the paths/names differ across devices with the same
+SoC/GPU, so we cannot sanely list them with MODULE_FIRMWARE().
 
-But just for sake of argument here, accessing entry->length before
-doing some sanity check is also risky. So ideally we should be checking
-if entry + entry->length <= table_end right ?
+So MODULE_FIRMWARE() just ends up causing problems without actually
+solving anything.  Remove them!
 
-> But then, really if we are trying to fix the original bug that the table
-> could be shorter than the data in it suggests, the struct
-> acpi_pptt_processor length plus its resources needs to be checked once the
-> subtype is known to be a processor node.
-> 
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/a2xx_catalog.c |  5 -----
+ drivers/gpu/drm/msm/adreno/a3xx_catalog.c |  5 -----
+ drivers/gpu/drm/msm/adreno/a4xx_catalog.c |  3 ---
+ drivers/gpu/drm/msm/adreno/a5xx_catalog.c |  9 ---------
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 11 -----------
+ 5 files changed, 33 deletions(-)
 
-Indeed.
-
-> Otherwise the original sizeof * change isn't really fixing anything.
-> 
-
-How about extending the check for entry->length ? Do you think it will
-be any better ? The entry pointer is anyway updated to jump entry->length
-ahead at the end of the loop.
-
-Regards,
-Sudeep
-
--->8
-
-@@ -276,7 +276,7 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
-        while ((unsigned long)entry + proc_sz <= table_end) {
-                cpu_node = (struct acpi_pptt_processor *)entry;
-
--               if (entry->length == 0) {
-+               if (!entry->length || entry->length < proc_sz) {
-                        pr_warn("Invalid zero length subtable\n");
-                        break;
-                }
-
-
+diff --git a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+index 9ddb7b31fd98..5ddd015f930d 100644
+--- a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+@@ -45,8 +45,3 @@ static const struct adreno_info a2xx_gpus[] = {
+ 	}
+ };
+ DECLARE_ADRENO_GPULIST(a2xx);
+-
+-MODULE_FIRMWARE("qcom/leia_pfp_470.fw");
+-MODULE_FIRMWARE("qcom/leia_pm4_470.fw");
+-MODULE_FIRMWARE("qcom/yamato_pfp.fw");
+-MODULE_FIRMWARE("qcom/yamato_pm4.fw");
+diff --git a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+index 2eb6c3e93748..1498e6532f62 100644
+--- a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+@@ -85,8 +85,3 @@ static const struct adreno_info a3xx_gpus[] = {
+ 	}
+ };
+ DECLARE_ADRENO_GPULIST(a3xx);
+-
+-MODULE_FIRMWARE("qcom/a300_pm4.fw");
+-MODULE_FIRMWARE("qcom/a300_pfp.fw");
+-MODULE_FIRMWARE("qcom/a330_pm4.fw");
+-MODULE_FIRMWARE("qcom/a330_pfp.fw");
+diff --git a/drivers/gpu/drm/msm/adreno/a4xx_catalog.c b/drivers/gpu/drm/msm/adreno/a4xx_catalog.c
+index 93519f807f87..09f9f228b75e 100644
+--- a/drivers/gpu/drm/msm/adreno/a4xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a4xx_catalog.c
+@@ -45,6 +45,3 @@ static const struct adreno_info a4xx_gpus[] = {
+ 	}
+ };
+ DECLARE_ADRENO_GPULIST(a4xx);
+-
+-MODULE_FIRMWARE("qcom/a420_pm4.fw");
+-MODULE_FIRMWARE("qcom/a420_pfp.fw");
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_catalog.c b/drivers/gpu/drm/msm/adreno/a5xx_catalog.c
+index 633f31539162..b48a636d8237 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_catalog.c
+@@ -150,12 +150,3 @@ static const struct adreno_info a5xx_gpus[] = {
+ 	}
+ };
+ DECLARE_ADRENO_GPULIST(a5xx);
+-
+-MODULE_FIRMWARE("qcom/a530_pm4.fw");
+-MODULE_FIRMWARE("qcom/a530_pfp.fw");
+-MODULE_FIRMWARE("qcom/a530v3_gpmu.fw2");
+-MODULE_FIRMWARE("qcom/a530_zap.mdt");
+-MODULE_FIRMWARE("qcom/a530_zap.b00");
+-MODULE_FIRMWARE("qcom/a530_zap.b01");
+-MODULE_FIRMWARE("qcom/a530_zap.b02");
+-MODULE_FIRMWARE("qcom/a540_gpmu.fw2");
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+index 3b996837b178..bc8e6f621b70 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+@@ -1092,17 +1092,6 @@ static const struct adreno_info a6xx_gpus[] = {
+ };
+ DECLARE_ADRENO_GPULIST(a6xx);
+ 
+-MODULE_FIRMWARE("qcom/a615_zap.mbn");
+-MODULE_FIRMWARE("qcom/a619_gmu.bin");
+-MODULE_FIRMWARE("qcom/a630_sqe.fw");
+-MODULE_FIRMWARE("qcom/a630_gmu.bin");
+-MODULE_FIRMWARE("qcom/a630_zap.mbn");
+-MODULE_FIRMWARE("qcom/a640_gmu.bin");
+-MODULE_FIRMWARE("qcom/a650_gmu.bin");
+-MODULE_FIRMWARE("qcom/a650_sqe.fw");
+-MODULE_FIRMWARE("qcom/a660_gmu.bin");
+-MODULE_FIRMWARE("qcom/a660_sqe.fw");
+-
+ static const struct adreno_reglist a702_hwcg[] = {
+ 	{ REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x22222222 },
+ 	{ REG_A6XX_RBBM_CLOCK_CNTL2_SP0, 0x02222220 },
+-- 
+2.49.0
 
 
