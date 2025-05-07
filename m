@@ -1,168 +1,295 @@
-Return-Path: <linux-kernel+bounces-638198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36926AAE278
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B37AAE2B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45411898B7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1509716FC63
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C849328A1C0;
-	Wed,  7 May 2025 14:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0654D28B7D1;
+	Wed,  7 May 2025 14:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="U45JcO5d";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HSlVKmCf"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n+WSKwfI"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2088.outbound.protection.outlook.com [40.107.94.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141D8289E16;
-	Wed,  7 May 2025 14:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627072; cv=none; b=MNf+TcYj8PdN2FivYbmYv7QkptPVC4pPhtMBGr/cxu65N/bzOVV3vS/fweKr0JtLNy3a1iKSSQuI2MVcEeRlAe9X7vZwoVqUi6xb5iR1o3h7v0ANBPnN8cflITqXjDLklcBc8UR9JXNwurf7uldQljjQL3lCdN7UAHs564YplVg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627072; c=relaxed/simple;
-	bh=z11Mdp9N+HQThG5kGtS7Ut5YZtwW6lqCgnekzmFLTSE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jW8wDN3IV9K9uN/4PG1rLOHp/krFgJ4tvccAqBQb5FzaZiESCmvg/ZQcbge5aG5nVTdF61CWJSbin8XGMz/xwxC1nkDx6liBekEpFP3cGiOrXoovzRILt1DyjR9hMz8lKLP2e2UdOO6Zbwi7jXw2dGKgMjAOdrFu0x/YGCkqLl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=U45JcO5d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HSlVKmCf; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 090ED13801FA;
-	Wed,  7 May 2025 10:11:10 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-08.internal (MEProxy); Wed, 07 May 2025 10:11:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1746627070; x=1746713470; bh=ooJTaPOwar
-	NV0/nPDHqrPx4hBeb38NYA1+SgywieEj0=; b=U45JcO5dy3z2Yst0ZaRYBWAWlr
-	7iznkB8iAZn0YJuJA0L6Hhdu03/0FWgAMraHrO0OIjeDiKZEK/V+0FojUyEOKA+8
-	lnA7P2aADBwHPsZDbt9heY0zLRnHy0rqJV05sVGMQnkSO9pLvrI4ebffOOpMztyG
-	qYVS+rgioPRrWvX8CRw/2ez6fvDsTHGe1Bz0+d5lkq4CLpEhfUM8SJPACpzK9Cj4
-	YZMvmXjig0e6ahHjSlXT3+4ZAA/VoV75pkt0B0mpOLI1bIEKVqzt0f5JgLf5hKtZ
-	c0JKVkIEMS0iIZMagg1XxY09xPW+hCdVIHTJjguy78VXeZdmcecLvRb6PUvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1746627070; x=1746713470; bh=ooJTaPOwarNV0/nPDHqrPx4hBeb38NYA1+S
-	gywieEj0=; b=HSlVKmCfXv3+lfNSrxh/cHpa96ILdERPOetEVpeueS0xfTXjJ2V
-	pxzCjkskNZP28TWmetZ3Si/sDvruH9v6f36NPCYlYbMBxSdQAhfcvkaCB2/+zCHp
-	mzlEVvUskSSXyHJ7PN2BwNVCpi6Kjrb/Ckrgh+wK1r3BRZWGgEyrXXs1Fs9P9Pv8
-	VNg17eoUdgSEBc2p+sneZjkPdEIoq+mlNkZhZuNioa2ZyHm02HTkNJfDLXb4KW27
-	EeVTtV150vk14PVPc1AOUmEpv9E7+a2q7tY8PCP20FUZn46h3XkyF5kgivleVv4V
-	CaFXE063SvIkih7yEqQJJTv8OeCBs65D32g==
-X-ME-Sender: <xms:_WkbaIMEVoq45981r18kVUjfHUkIHVbyQbl8l40Xne6tObhKTA7AGQ>
-    <xme:_WkbaO-5ZzkWkuaJhAr2mTsQJy-Lq0-QctXgGbQ22rQ67qnncVWYbO4dMh9st6UDD
-    8irLGRzSB2fIT9zjmY>
-X-ME-Received: <xmr:_WkbaPQ860MEJZ0YBCCnu_so-YpBS6t-9qcbORuMJ8SujYTcwC8LL9QXeM2Lv8YfbbvaCAs1OJgxXzB0EeWRfylcOXI1d6g8tbg3GD_FHWQTFdyJVg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehmtderredttdej
-    necuhfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnihgtrd
-    hnvghtqeenucggtffrrghtthgvrhhnpeekveeftdfgkeejhfejleeigeffueehieetvdei
-    fedvhfeluedtkedvgeeuieejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgvthdpnhgspghrtghpthht
-    ohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirhhishhlrggshieskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggr
-    thhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:_WkbaAuYv1FiXpH3eegdoFgkzZ1YLymt_aIljCpBDDG7F5cIgvYODA>
-    <xmx:_WkbaAdjleGyXdt_jyVfWzdEtbfKJUNwjObt1Z6R2Eihh_mKGY9cQA>
-    <xmx:_WkbaE0Q7iBm8GYvydInn156eEDDumySuvDspbRo5f1S65CkNYlLzw>
-    <xmx:_WkbaE-wmyfO3IV65pHmBToIlrk54Cw8HEtevyJVf6Ok-1sbtSys4A>
-    <xmx:_WkbaKwmqsOnzwOxBXqFlpSF2dtT53z60f2FDtBhlajBCs9JAGyorzui>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 7 May 2025 10:11:09 -0400 (EDT)
-Received: from xanadu (xanadu.lan [192.168.1.120])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 004451189E7B;
-	Wed, 07 May 2025 10:11:08 -0400 (EDT)
-Date: Wed, 7 May 2025 10:11:08 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Jiri Slaby <jirislaby@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] vt: introduce gen_ucs_fallback_table.py to create
- ucs_fallback_table.h
-In-Reply-To: <1a91b1b3-a8b8-4040-add6-857c8207b97c@kernel.org>
-Message-ID: <pp270717-111q-8746-4r1o-2srp04r4roo7@syhkavp.arg>
-References: <20250505170021.29944-1-nico@fluxnic.net> <20250505170021.29944-5-nico@fluxnic.net> <1a91b1b3-a8b8-4040-add6-857c8207b97c@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483B728A3E4;
+	Wed,  7 May 2025 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746627131; cv=fail; b=e7ijUuSu7oGdWe7DJM2+9OeFi79F88Dh7A4FrFKz6xU2drsYvfPL+NLgqG62mfRTBI1Hkn9NLULcnsmVgXEbeBmc0er5iIAKwoST2YR5deina1h6p8dGcxf1L/VmiCKpMuH+kq1ZI5kA12RSx59RQIupIVNBiqOTg9Md7C4IJQU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746627131; c=relaxed/simple;
+	bh=X7mBzkbITSJL34k3woVAhak448/kpJyivOUl+VNM5Vs=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=ZfLDVGqU3kwNA6sG1tW5wHoWGcEqPUvaQD+pdgRqJ3izXyT5L5cG9s0ouFU0SZ5xmWNf9M23gzqO0hNobqRFSAWKqiuc8nDiq/YahK98ECtltVwORjt76xNJtLFjG2hO3LqWSwMTc0YCQ+SWKfIVocHIjIaBx5US5DI1wdlJiIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n+WSKwfI; arc=fail smtp.client-ip=40.107.94.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kKnewoPC5K5Zrnq9HWA4d1nPp/xorplfSu1CwbEAFI1VAEcGnH+0PlC5sHT1LlHWqpvFv5g6Svo9AZGqFTdQj28hbww7842YXon7F540GCerDj8EHfvr8BFbbiA3lJEsPyGA+jrYIrv1pkowsA1ZL56p7XcVXJBtDl9WirEoxVdbFeHStYfbobzQuR6ZcY85JxjqVpnoN7K8gSLQx/RNK7TISIRxeBVt5O0bHlO2HiKCcR97K0Svw75cbbiusnurJuVa59EO9DxQlCB2XHEZxlDi9y2dGVve1bc3U/oe92PPDEZ70FCiVbHWisk9NGDc07BzDpcSIcKZcWsblw71jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kmwfPeoelHsTumPpFLrBckGhFhAPls7i7W+dYfes86E=;
+ b=IwknFeZzxn5so0sxOZrELN2gCMdfJY7zbIUAbldeJvkaG6eHKO4BVTS/opSd8P2FNB4ut0kPP0g+Rk5yhHHy5CivwSewyBbl4cAp6QfeDs60I4/sPQ7O9aCx8n6v6D3DzHuqeRYsIKpxonTjblKbRCPw/nOriwsUHgQh2J0R8sEkwAZP0d10bZLsax1xWXeo+kPrwn/3T3dqw745HPSfw7AsCq/z4zK3jVl8KHhpcZoj7ZiUbkHeVbpsS8OMqCg+DGjPlcdJfIJfu3yMmhHjJzD/wqUD4tfIJ6rH9ADLhvOkSVECXEhrlMTtcHL9YHUO+Z3IFaT8eeE5p45uoqqypg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kmwfPeoelHsTumPpFLrBckGhFhAPls7i7W+dYfes86E=;
+ b=n+WSKwfIc2uALYV2fdF3cou0dU9ftMJEBmQB44tZknf2qAhpdLo8ex1Y6VbHDOt5OI4PhJjL5lKF9OnUM68Qo2kdpmnoa+A4KLSjcG4u1CxD/sshgQ/kTmb91GiJss06xt1NcV4/ObS0CgQXDhovzyr0cZdx3pM7xCXeOlYaUaJMG1jcyIyKM8dPVEfZmITv2u16Bpv7uBK3mOrCB/yK8oRByabtKd1EPjN6uBe2Z3wdeJYXc+xyT7/2MzrAd2cXASBelDRM7OP39dmK9yROuqHaHVLbAhcqVRySPaE8+B5pjI6oCjArge+IPw8lJHAe8QY1wQ/bDmBPNyIFXxxfZg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DM4PR12MB7742.namprd12.prod.outlook.com (2603:10b6:8:102::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Wed, 7 May
+ 2025 14:12:02 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8699.026; Wed, 7 May 2025
+ 14:12:02 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 May 2025 23:11:59 +0900
+Message-Id: <D9PZN1E5H5I4.WXP8OB3ANJ02@nvidia.com>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
+ "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v2 17/21] rust: num: Add an upward alignment helper for
+ usize
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Jonathan Corbet"
+ <corbet@lwn.net>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250501-nova-frts-v2-0-b4a137175337@nvidia.com>
+ <20250501-nova-frts-v2-17-b4a137175337@nvidia.com>
+ <D9LEQ1U1PLO8.3N22GRY380ZM3@nvidia.com>
+ <d6962ea3-282d-437c-b3cf-ce701d514558@nvidia.com>
+ <D9M5K55GTN6S.1X827WU0Z50UM@nvidia.com>
+ <112d971f-20c8-4598-86c9-6822d9c24001@nvidia.com>
+ <D9MLOQC5G7XH.3GTUIRCCN8X70@nvidia.com>
+ <ce197acc-8b66-4a6c-85aa-3318666d80d3@nvidia.com>
+In-Reply-To: <ce197acc-8b66-4a6c-85aa-3318666d80d3@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0229.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::8) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463781375-402983484-1746627069=:8235"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DM4PR12MB7742:EE_
+X-MS-Office365-Filtering-Correlation-Id: 714bd876-d538-48fa-9be2-08dd8d71236c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|7416014|366016|1800799024|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eTQyc29zZE5pOEtnRVh5M1pFMnJwNkJWSnY4M2w0dFFUcnN0aGlBZ0Y3VXlK?=
+ =?utf-8?B?VmYwcTlpSDJoQ3M3MXpLSWc1RXkrNTJaU3F0RVRKeFZzam1kRVlETkd5TGpl?=
+ =?utf-8?B?VWdJcHd3Z2dkWDVyOG1qYXB5YWZHNEhxS2tNTTVRRnFrQVI0NGozSEIrd3N6?=
+ =?utf-8?B?S1d2RFhUZTBkaEg5aEhhakdmU0ZhNnNQcGs0dXQzWkN5aFNuaWNIbFpkM3JR?=
+ =?utf-8?B?RXJNZ2dvTjZkZlVYaEVlRExWRWtVZDNsZDlEdTA3RkgzaTlQWEM0VnRsVlFG?=
+ =?utf-8?B?L1VyZGEySGhHQzZNVnJKbEZKblhWcEdvT2FZeTk2bTVzY042Uno5dlhXS20w?=
+ =?utf-8?B?TW5TU1B6U2EzNmp6cXdvQW11QWJlTTN3NUNEQ21SeUJTVjNJZmRmTEU1THBj?=
+ =?utf-8?B?Y1BTU0hpYWxZTncvRmtsY0ZRdmNjRFVMQkVTVXhkRDRtWDA2MVNTRkd2eFVz?=
+ =?utf-8?B?eWk2WWlpRUphdG1VbFBRNlNEYm1YcndwU2QvL3RKSkN0T2srd3pxdGludXF5?=
+ =?utf-8?B?SUlJZFZSdUcvNTZUWDB2SEY1bE5TRHpCME9WUW1QWmxOK1pjT0JuTzBIcnp0?=
+ =?utf-8?B?aUxJa1Q4aldMaUF2MXlGajRTTnVrY3BVR3hGREhzQktYdWpvT05VOE1waGR4?=
+ =?utf-8?B?Nm5VdVhtQU5RbXluYmpyLzgwVk5zU0s3dEFwMnlQSnZueFUrM1ZwbW91SHFW?=
+ =?utf-8?B?YzIrVStGNVhuWXFBUHI2Mi9FbXBVdVNKenFhVnFpSEZxQ1VvMWltZFovMklx?=
+ =?utf-8?B?bG1GR29ISFIvN0ZDWFdNV0taSVZIa25WZXBoOHpkUFpQcnNMeUoyM0c2UEV4?=
+ =?utf-8?B?Z2tONzRHOXNnb3V0dU9WbCtHZ1lPcXFSTUtwK0dqMkpTNW9RWFVpc212enE2?=
+ =?utf-8?B?S1dTVWRpWVFWbG1CWHdnaVQ0cDA0cVVPanNoRTh6Ui9zZndMdW9FRVBMaURj?=
+ =?utf-8?B?MndORGtjVmR1aitKejdTdmVxc2lTSTBWVkVQQlBIaXlsMFJVMEN0SEYxdnVU?=
+ =?utf-8?B?YlhWd2s4N2kwaVNnTll2c0xMeVhqd21xczU4NlRNTnFUek9nTlp2RzNEcjRl?=
+ =?utf-8?B?MDhzRXZkM3JMckcwcUhJUHN3U0NBbUZFWDNuQjFCRjh6QmtRWVlBNVBPbEUw?=
+ =?utf-8?B?cnM5b3MrRkl0VUlPSEpnc1Ywb25EK2lGYVl3ZG5mTENVbmZYOVFveWhNTTg1?=
+ =?utf-8?B?MjJXQkVvZEI2SERWTkxCYVd2NUFMTVl6TzNCbVo5R044TzFVREZpamVubFRX?=
+ =?utf-8?B?bDhpY3dHbFBQd01HVkFKelZsbFE5eWlNZVovWnZlMk5yMkd2RnI2WG1jQUFj?=
+ =?utf-8?B?SCttS0Z1MDRPUkZwb1MyUTExSFdweGJBWHNpZ1NhRVllSmJHYWVpQndOZGsw?=
+ =?utf-8?B?UTI5cmhJci9rT24yRTZxMlcrSXZGOGxTVWMxenB4VkptdGRSdTFCQ0hwM1JI?=
+ =?utf-8?B?N3NZTWJtbU55QlJKZ0QzUlpRc2ZISG92am1oTGJZSkcyZWNKYUR0YmE0Y3E1?=
+ =?utf-8?B?WUEvSG1ub3JBWTFwT1ppSmZJb3JQRzVGOFdlUTkxNEE5YzFNNjlaa1Jka2JJ?=
+ =?utf-8?B?dHhqNjRDUXBiNUJEaXpWd3UzMVVlZzZDVWlxd2F5cTFHenJrRWxaWlJWN1J2?=
+ =?utf-8?B?eGtjSzhuZzExOUtjVmFqeFcrRUxkUjBHU0s2ajg0bVk3VktUOEE0dyt5anpV?=
+ =?utf-8?B?SWtLSFhxeVNmV1JKV1ZpTnlzN2hqa3Z3a0xXTXUybHFTUVBwTVhDeDN6blJQ?=
+ =?utf-8?B?UWc5cXgzYlBxallTQWJyM0FHRGQ5SWlSclA4MGttYU9pMzBMWG1sY2loZy95?=
+ =?utf-8?B?RTF1WkVGU2RQTk1yYUxORGh4SjRZWGZmaGhEMnZWcy9aK0JrYUdMaFZpaTVZ?=
+ =?utf-8?B?eVdxUnZZY3BjS2dDQ3Q1WnFOQlg4NDAybXh0bVR0TEw3aDZONWlRS3NJRFRL?=
+ =?utf-8?B?cnpzNTJ0RmdMK2xTMWFuY2h2RkFzRldRWjFSUGhZNTg0WHAyUGdTelFqZkxy?=
+ =?utf-8?B?T3EvdmJKYkpBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(366016)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QU1WeXA3WUt6N2NkV25kWE9ieTNTb1ozWWhvLzJqb09vVzdOdWpKYjY5dkFv?=
+ =?utf-8?B?STBVSnRXZml1R3laaDdFK0g0d3owaEpsUmlXZ3M4eDJrc2M3QTZhSm9PQjNH?=
+ =?utf-8?B?eFdvZGlZSkVydzYzZSs3RzF6WVBHL29xNlJwNXVHVWgzaFlwNDVVZGJnRWhV?=
+ =?utf-8?B?M0tJVE5XYjA3djliYUxJMUoydW11YmN2Q1hFbkRZait2R0xja0hDT21XVFhB?=
+ =?utf-8?B?cHgveWd3SFp3ZmRuQ0VmamlodllvUWJGa040VWY0QzVRT2VGNW9xbnZrM2hR?=
+ =?utf-8?B?dTRCdC93UFlZNXNZU1RLWHg4N1JpWEV0dTZvdGpCbTZ2Z3lsbVFDM0RMZEhL?=
+ =?utf-8?B?OU81UThiRmZ2K1REdHZMcU5nTkJyNmNxTWNCZ0luV2svNVU5Ulg2MHgybUY4?=
+ =?utf-8?B?QkdSWGZvZDcyVFBFSWN5WjJkZTRCWmdLMXRIc3JqTHI2aTBkV1ZHbE5tazNJ?=
+ =?utf-8?B?M29qYnp4cnk1WXpaZituMXhlQ1VnMHZtcXMyRHR6V1FMaEVwY0tzR0d2Y1Zk?=
+ =?utf-8?B?WGREM1pZNStjaGFOSVcyZEpSRHdRQzgrVk9vbkdMQ2xYV3l5dGZvOGd3SDZm?=
+ =?utf-8?B?cGg3TGFlQUlLcjBLNENqUEcvYVZTbytXWVEyYnRZV0lXdC8rQnBLZXZnM0tO?=
+ =?utf-8?B?UWNqaUpmYU9GbkhaUUtIdzRNakZMV1ZHaUJsd0dZTDI0N0doblVjZ3BzdUt4?=
+ =?utf-8?B?MGtNeUlEa3F5Mm5Td3VUY3pqWTkyTzd2MjloVkRaSDZseEZMaHg1WFhrb01k?=
+ =?utf-8?B?ODBmUVF2VllOVVN2VzN3QmZNZ2x5SWMyNUhXakU4Qm95ZXAxeWNNK3hBTitD?=
+ =?utf-8?B?SFViY0U2amZBZWhsQWQwcHAxdlAyd3VmOFRjamJsL3EzWUlKUXNNNVN3cncy?=
+ =?utf-8?B?a21DL0Q0SmtEd1VRMzJqTXVHYVpEc3NCanlOTDU5dmpocUFaRmIyNk1pM3c3?=
+ =?utf-8?B?NWxGaGJoL3dWbmhDeVprd0lBbjlDclRNcUxQcm8wVVVETi9Cb2pjNEgwM3J2?=
+ =?utf-8?B?N2QrWTQ4Z0dvTGlsQ0EzNjVhdXNHN1pJMHBLODB4d25aNUdBdk5lakt1YmVG?=
+ =?utf-8?B?M0tvY010ZkpqWUlLQWg1eW5yV2Q3UlFWWEVMMkl2NnFkeENNSGtDbnVqZjJ1?=
+ =?utf-8?B?K2E0dWpCVXN0YS9XQml1aU9kclhGZzBUTi8zRXF0aUxIb0hFeDlIbEM1QWh4?=
+ =?utf-8?B?dEx6WUJXWUtqc2kwV3ZhM1NCUG9CVmF2L0p4TU81OUZZR1BmK1o3eE91Sml3?=
+ =?utf-8?B?b25ETEtrTytEL0g4UEJuR1NUTTlwNWk0M0x4YitBZUZFUko5bDQvYjhmTFY3?=
+ =?utf-8?B?eHdaN1NsYVpkVDBjdlRqdVppZjNtTVlacDJuZDZQU1VWY2RWY2J6TzhWeUZj?=
+ =?utf-8?B?NWwrWHpwQWRRQTZMcEl6bStQelhmWXlaY05WbWEvUzNyWjlJOFdQbDFGeVBl?=
+ =?utf-8?B?WmF4WjJoYmg4MHlTZUtpd1RkNnBkNFlIUDRvSGhuVVBkbHZMZXpMMmx1V3Ra?=
+ =?utf-8?B?M3pEV2tjcVVxcDNCVmJEU01VMDFQMFdON2hQanFMUXVtRGwzeXlnMHlvSGJY?=
+ =?utf-8?B?N01ib2FzNmtGTVYzYWVEZzFSR3VsVXlJTHJSTGJvSFY1U1Y3STBLUHo4RU1H?=
+ =?utf-8?B?NWNoNWEybXFyVGFPSkgwcXBRK0VweTVlMGFDWnROcU5nOS9PNXNibEVQSEtm?=
+ =?utf-8?B?M3BHUFJIMmtkMmg1L1djTXA1R1dtR2JkWmJSdmVlYiszWkFPMUlScDlkOEhr?=
+ =?utf-8?B?OUJnS0s1b2tWaWVoL1dJS080UTVpWWw1SVlNb2kzSDBndFE4VCtielBnMnFL?=
+ =?utf-8?B?NmtYZGRmQjV3Vm1NM2hNeHprck0xMXkzZ1RhSzNhekpzV2NaZ1F3VEo3K0o1?=
+ =?utf-8?B?NUg5SWtmLzh6RXJNQkM3TCtWVkJGOGhITHVpT0lLRHlZSnMySTlaZEQzWmdN?=
+ =?utf-8?B?Nlg5R2VDSmhHVDJoejV6MzJGalBvTHZITURJOVhQQjNDVzMxYithRWlaSzM4?=
+ =?utf-8?B?TGEyc3pYaHh6UHh1czRuRnIyZk5LUnJmdFo5bE9VNW9sSmExNll5U0pjTGxq?=
+ =?utf-8?B?ejZHM3RQa2Z4akRzeklPYm1YM1YrKzhvUkNYdkI4QWphT01tMERzbFhwdlpN?=
+ =?utf-8?B?U09qSFVROUdmeW5JeEJVRkwrWmtaalJRNi9iWU9WeHZPNEJmemRtOUpqOXZa?=
+ =?utf-8?Q?WuChYC7bTqYA22rDd7a493lQ+yEKMD/UXpg/ILmhhmZl?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 714bd876-d538-48fa-9be2-08dd8d71236c
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 14:12:02.3348
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AdnutZnXDl3iaPSn5TjgJVfW+KsIyhqArXIWojWYzlKPhyFR1FZtsSh/WUu61J8TPGoN7oRzjr+YSuTxhRucNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7742
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue May 6, 2025 at 12:25 AM JST, Joel Fernandes wrote:
+>> Actually it may be a good idea to move this into its own patch/series so
+>> it gets more attention as this is starting to look like the `num` or
+>> `num_integer` crates and we might be well-advised to take more
+>> inspiration from them in order to avoid reinventing the wheel. It is
+>> basically asking the question "how do we want to extend the integer
+>> types in a useful way for the kernel", so it's actually pretty important
+>> that we get our answer right. :)
+>
+> I am not sure if we want to split the series for a simple change like thi=
+s,
+> because then the whole series gets blocked? It may also be better to pair=
+ the
+> user of the function with the function itself IMHO since the function is =
+also
+> quite small. I am also Ok with keeping the original patch in the series a=
+nd
+> extending on that in the future (with just usize) to not block the series=
+.
+>
+> Regarding for the full blown num module, I looked over the weekend and it=
+s
+> actually a bunch of modules working together, with dozens of numeric APIs=
+, so I
+> am not sure if we should pull everything or try to copy parts of it. The =
+R4l
+> guidelines have something to say here. A good approach IMO is to just do =
+it
+> incrementally, like I'm doing with this patch.
+>
+> I think defining a "Unsigned" trait does make sense, and then for future
+> expansion, it can be expanded on in the new num module?
 
----1463781375-402983484-1746627069=:8235
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Yeah maybe I was looking too far ahead. This can definitely grow
+gradually.
 
-On Tue, 6 May 2025, Jiri Slaby wrote:
+>> To address our immediate needs of an `align_up`, it just occurred to me
+>> that we could simply use the `next_multiple_of` method, at least
+>> temporarily. It is implemented with a modulo and will therefore probably
+>> result in less efficient code than a version optimized for powers of
+>> two, but it will do the trick until we figure out how we want to extend
+>> the primitive types for the kernel, which is really what this patch is
+>> about - we will also need an `align_down` for instance, and I don't know
+>> of a standard library equivalent for it...
+>
+> Why do we want to trade off for "less efficient code"? :) I think that's =
+worse
+> than the original change (before this series) I had which had no function=
+ call
+> at all, but hardcoded the expression at the call site. The suggestion is =
+also
+> less desirable than having a local helper in the vbios module itself. I a=
+m not
+> much a fan of the idea "lets call this temporarily and have sub optimal c=
+ode"
+> when the alternative is to just do it in-place, in-module, or via a num m=
+odule
+> extension :)
 
-> On 05. 05. 25, 18:55, Nicolas Pitre wrote:
-> > From: Nicolas Pitre <npitre@baylibre.com>
-> > 
-> > The generated table maps complex characters to their simpler fallback
-> > forms for a terminal display when corresponding glyphs are unavailable.
-> > This includes diacritics, symbols as well as many drawing characters.
-> > Fallback characters aren't perfect replacements, obviously. But they are
-> > still far more useful than a bunch of squared question marks.
-> > 
-> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> > ---
-> >   drivers/tty/vt/gen_ucs_fallback_table.py | 882 +++++++++++++++++++++++
-> >   1 file changed, 882 insertions(+)
-> >   create mode 100755 drivers/tty/vt/gen_ucs_fallback_table.py
-> > 
-> > diff --git a/drivers/tty/vt/gen_ucs_fallback_table.py
-> > b/drivers/tty/vt/gen_ucs_fallback_table.py
-> > new file mode 100755
-> > index 000000000000..cb4e75b454fe
-> > --- /dev/null
-> > +++ b/drivers/tty/vt/gen_ucs_fallback_table.py
-> > @@ -0,0 +1,882 @@
-> > +    fallback_map[0x00D9] = ord('U')  # Ù LATIN CAPITAL LETTER U WITH GRAVE
-> > +    fallback_map[0x00DA] = ord('U')  # Ú LATIN CAPITAL LETTER U WITH ACUTE
-> > +    fallback_map[0x00DB] = ord('U')  # Û LATIN CAPITAL LETTER U WITH CIRCUMFLEX
-> > +    fallback_map[0x00DC] = ord('U')  # Ü LATIN CAPITAL LETTER U WITH DIAERESIS
-> > +    fallback_map[0x00DD] = ord('Y')  # Ý LATIN CAPITAL LETTER Y WITH ACUTE
-> 
-> 
-> So you are in fact doing iconv's utf-8 -> ascii//translit conversion. Does
-> python not have an iconv lib?
-> 
-> > perl -e 'use Text::Iconv; print Text::Iconv->new("UTF8", 
-> "ASCII//TRANSLIT")->convert("áąà"), "\n";'
-> aaa
-> 
-> /me digging
-> 
-> Ah, unidecode:
-> > python3 -c 'from unidecode import unidecode; print(unidecode("áąà"))'
-> aaa
-> 
-> Perhaps use that instead of manual table?
+`next_multiple_of` has the benefit of returning the correct result even
+for non-powers of 2, but at the same time trying to align to something
+that is not a power of 2 is probably a defect in the code itself. ^_^;
 
-Good idea! Go figure why I didn't think of that.
+Another reason for not using it is to have things properly named, so
+agreed that an extension trait with the functionality we need, with a
+name that clearly carries our intent and implemented as efficiently as
+the C equivalent is better than reusing standard library methods that
+happen to provide the correct result.
 
-Some overrides are still needed but the script is much smaller now (and 
-the table somewhat bigger though). 
+>>> I added the #[inline] and hopefully that
+>>> gives similar benefits to const that you're seeking:
+>>=20
+>> A `const` version is still going to be needed, `#[inline]` encourages th=
+e
+>> compiler to try and inline the function, but AFAIK it doesn't allow use
+>> in const context.
+>
+> Right, so for the vbios use case there is no use of a const function. The=
+ only
+> reason I added it is because there were other functions at the time which=
+ were
+> used (by the now dropped timer module). I suggest let us add the const fu=
+nction
+> once there is a user of it, I also don't know right how to do it. Like if=
+ I use
+> generics for the const fn, I get this:
+>
+> const fn align_up_unsigned<T: Unsigned>(value: T, alignment: T) -> T {
+>     let one =3D T::from(1u8);
+>     (value + alignment - one) & !(alignment - one)
+> }
+>
+> error[E0658]: cannot call conditionally-const method `<T as Add>::add` in
+> constant functions
 
+Interesting, I would expect that to fail but "conditionally-const"?
+After looking that up is appears we can constraint a generic type
+against a const trait, but that feature is still experimental and not
+enabled in the kernel. So agreed, let's consider that later.
 
-Nicolas
----1463781375-402983484-1746627069=:8235--
 
