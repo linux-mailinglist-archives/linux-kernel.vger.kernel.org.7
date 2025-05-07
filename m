@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-638670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E31EAAE9A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C893BAAEC3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5304350630F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:47:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C554A5B6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2E211A0E;
-	Wed,  7 May 2025 18:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996C128E58E;
+	Wed,  7 May 2025 19:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5K5At9M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="WBhdGvGO"
+Received: from sonic316-54.consmr.mail.gq1.yahoo.com (sonic316-54.consmr.mail.gq1.yahoo.com [98.137.69.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094A71A29A;
-	Wed,  7 May 2025 18:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8428728E56F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 19:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746643629; cv=none; b=QdFRFRikQaSfq10iHOKrI0i8QUh2lti8oaB13liisUZRI7vH0tQB60UTKtTzMlaC7ybSKj2HvM8wSMk8IpwaawwBFoaO5CSJvrky6n/RGBmDR9UiMZgy2oY0r/7SdXTZrc23frxtn2joQYPbn6jhJT325/oXwRkJVeP7uyZEFo8=
+	t=1746646545; cv=none; b=Hm6aBgHWeHW7XdlmwjsAKGuoeTXBvuAaJPS/7BO9v86ypb7HeRQQOoJGkl0QfuGjfj7YKibAJ+ubJU+OuA1h59nG+Fp/ZS1crct631KGSzKuJ292wxblN0zwMj2LPmHYDKk9PVn6ZA+SwMO5NfczdjAGjZIGnEh79IADtdCi8xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746643629; c=relaxed/simple;
-	bh=M6g93D+bjw+Vyz0Z2hFP3flpB+wtQYATdyTDn2UBGEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVo8J7k3vL+J5Nu6fHPPW2J5xbe5MAHMBoNUOFVkHp1KDX53sfi+uGNDdiNcl6Oej5IpprCZyECaXeEgwbGAD5Zc9RTTbiU57+7cBQ8468yHnBaaY+gSbkzdg5WJpUvh+IRBYQfKOLa8fmqT2UCXY8mJo3kxq3I3TFLPg7WvIq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5K5At9M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFE0C4CEE2;
-	Wed,  7 May 2025 18:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746643628;
-	bh=M6g93D+bjw+Vyz0Z2hFP3flpB+wtQYATdyTDn2UBGEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m5K5At9MGX0YQFyaRIQoqy4OAdTkdxVIwXvfA1TstN093Z9GHxG6fIZHbHsAVizTJ
-	 HRoHqxGCMq5MnLxON24Q7Q+81KM+9zeWsRcVrejP4S1nV6g4s++4kcQEoAW5dnNHtj
-	 8hdJRl5JC09TZWEcE035G6M5q4h6+aWqgqp50GvtbSCWjWucW2r5/geSm2hPAlu/7h
-	 /ftRtrdwV19uowBM4hkczsjljgHeewmQRicoIRi5+o8beCpJGSK7A5+nLaO4gfi/QA
-	 PqbCP4gxeY/vYQGz87MwzPe8ndmb9v6x9Cu5Bx0gK5qVBoGveIFiXwBtkzud55gNtU
-	 0h1RSSf3MHh1Q==
-Date: Wed, 7 May 2025 20:47:04 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Cc: linux-tip-commits@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>, x86@kernel.org
-Subject: Re: [tip: x86/msr] um: Add UML version of <asm/tsc.h> to define
- rdtsc()
-Message-ID: <aBuqqJoHOag7ZRML@gmail.com>
-References: <202505080003.0t7ewxGp-lkp@intel.com>
- <174664324585.406.10812098910624084030.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1746646545; c=relaxed/simple;
+	bh=/ibJ+ZdIq4NSJpcnXBtJz4+mTK5QylfZENGb9T8Fi8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=aROPB9xPxwot6Of5m5ZMg/hovXqJd+Lnhqqs6IsnWzWoPzP09U/5CJpc+oOGnOCXpyWXsHGgxYDfhjU1fxkiBDDFg1NtW1KGtuEWGCgVgvOS9569fMfJ0BlQeLjehco0pPvxeOrr3nG9pmOgVLxcS9ux7G5fna2HRGLjAfbnI0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=WBhdGvGO; arc=none smtp.client-ip=98.137.69.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1746646543; bh=lmga7zKv8+wZUarLSSX0s6Q7CJ3U6AGRqKJhtN6JNfo=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=WBhdGvGOpFqNNissheUddh7dNq7WIdjxGB7lKqcf4wD0EzHOYIV7FnAjQZNG6T14onTZGi/CajL20ftR4aMJMq/4yMGtAywTfnfmritIAAwfLbJO5NmvBNQQglzyV7vYv0VMVwBcdgijrExf62lkpzrWpBmzx/LmLsL3GTnBbthp19xfqD40QVBJweeqygCgzZOiFb4D1c3Q0dgQvPyDlzzoA3dZigpIOv+vhHmxQItxhPRsBMkbPzybo+UDCFdqMnl3TDWGmV2Crl8Trdw/eZy0TPrvcDJ6joJGiGvGiso9zqCoaJbzFcVitCF3B0ROdtdMcISoY0V1XjvMcjeZbQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746646543; bh=+FUTSJKU36OlC5KtC8XxzrJw3knNe9t88rza3HeSRck=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ITt/M1onpNikuhDgeuQRI76KCmrlWlRQOS22outWcPhX4A7Bml0+dZN4/xDVPk2ZqJvnhUHbEKMzR/uPv2iibnGOEHSJUXn8njzITj/6bScqYbohwJWWUhXxRBW+IL0678l0o839GyevsOEuyQxio+l3zxIlXFGZOqEAP9febIej5M14Paf2+nckRyfAXuOMy8pqXj5CJi5hFMsriNeI+5Woo8/Zw9ei3DUNr2AEgOb+tM6ab4UWpCyYqUJoI6RfEmVx61cx27SQJ9dp0y48kOWTwLvz0682uBUisYzMonR9zwaRcMAZajXQs8otrZNIU/qBL0PG495/LoCTyNKW4g==
+X-YMail-OSG: r98ej.sVM1k38Qf03FFb9in0YlqEhRuo.SbCZAqOGUf7tmKaSlBz1niZj03gNAR
+ rF68RuvP7P_Tfj2mtJLpxtCOxri75414SU26i39Sv908k14MOCt7AVgBBat95S2lEje.TYGpakCk
+ Ta_pn6jPMCYikra9TeyKMAXunfqOvA7mBJNkcjR_TuJTVHePehMhL2HeidqoVapc45fdaQQzu0Ui
+ VUpLak8.ysBvm0U3u9Wbbc8WrnCaBtJwY_I4.3aH_PzktrVzZ7JlCH4aH1UIWEn45SvLRudHYth1
+ T3abILqb1LbFNHyUVU.ZnZvNoIKE1Neu2bicy7jxWyCbqftYLcCPuGa41R.1U3ZAZBhWMCwLIga8
+ .lF1BE_He_sBaRA8E4tfPacEIiXyFnzTqNcjmGy8akNl56FJNLTcQn2Bk1CdRMTZYUH7.rU1QJs.
+ k6CQhF.ikJE9cWBi6WmxymDHSJwoi1YY1NSmGll7tR.unxToqvkW_5MCwOnQx6.xDPPLqHEPdkac
+ md6hOM4nQRnXbuEXwtT7zuzHyx3FCuC44wOmqc63XNoWaMNPyyFUSPtahLNQJo4N.U6mxTgDFD1F
+ fRpHxBvuHTZr8E17CnIBJNAm0LRzl.5HDJkWCGZpPdLxPxerKhGL4gZpsjtW24SzvEeXjqalfbRJ
+ X.cXfIu55yxce11YGUI7Y3qyIcry5a.Bsv9hslYQiruVS6b0hl4gyhu4k4cMutfHp3TO0I3v7Mbu
+ yVd3_c3CLyLVfkQ5SpOnEcSx5irHkrn0Gw5LI_S36Grq9IMXee5s58HTLfu40xFj1udrwVT3RdVK
+ 6ehddzN0arB94MxYmNSUllTK9q9_YfBPHUecMt80WGBwU.OhSoyN7OEOjPbtQ2Kp_uMXou9ltgX0
+ 2e4HTh.bPszDmnQuJXWF9MbabHLHD8lkmTemsWEDqqT5murniYF8_ezU0HWYu9AEqMxLJTRZEQQK
+ RFCBsGmInqzmu_MIWi.pAS_YL52wpXRx7PIQ91vtJ1LOz8pTL37TdUw.tRunhvhlBF1FHLSPzdE6
+ 7GVehiqutA7_sqEmX.AsHJjfhTnQQod6Y4JruH4feAxfu491pxbOfrvWRmwmT_JzeRQdMHR9B3sW
+ 1RHycUbZ5cdPtST6KGA.9GW09Dre0GI8K.rczUZy5_hcOjESVmo_KOe24UE8ztfWZzyuM33zS_z3
+ BVppYdKag2wAByslR.hsz6Z7mNhX9TFACVVBxgukQqjQKxDH9ix2YKVm_YQwPQID17IagODf9L64
+ UNRUh_uB9gbki_H_FKRvxxE3oc9pLd_9hDuP0zlxxk.fguvXF9JGLM19tiCv79Fk7S476lGwvtUp
+ eKxnAshQb.i3ebdfAjBAn2PXmg5sw8tLk5IJ9VV49Dbh9AVQQN.i0y3.yJ1m6fn93RAsL6uPhGk6
+ dChiuazrvm3teCNUqQUqKyG6F_leQ8Wx56ivQEgLiNFzpTWeGJRhmZ52sb1AoCiqMe4uHJ1AXAES
+ jupJFGn1BoaWqbTcLZ6JFkeFSp.64sxXR.yINFQnvmP5IiuBWXo2dudOtLIM4F5dxe38uhrGM9yJ
+ QxxJybzyHSCLQJtpo.Ry8v_dhFozoa2d1DHXw9AjLCNcGMADiysM8TmgpK4BwzA7QJaItQ3Cb9w_
+ ZudOGD6M5SsfeSeblD5_PX6kptJnwNQdaKJ0uifi_WTu8KeFyBanWTHuztXTIZJe4Ou_vMyi4JR_
+ AX1HCpHUVy1I3338qBQI1dHPVLP.2eb3S3ERHSQaZEEwAlpdrjmWXD6RFyKquBIU4WFVxje4ksCo
+ Glk7Wx6QQ15AHnlPFb3LZrvansBFALRdfNqYd3Cj9EYxW.5vPn_I._HMu2PSB2xmwEUTZI5S7efz
+ bFl.OzTHl_5U_hImmImE4WqM4sbPEFlVZ7ucuyif5rrujZo5h034QDGp.D1ujflzpUsk4_ox5x82
+ Po9rP1VBMcNqK6r5YsDP2k6xx6bWWXcUcpTpsLi4y4_2iSToVggiq4sLs5EvFJ1qjlstU7.SUMfw
+ boM49TstsyHp1ggknVnKi.CRXFJwd_WXs6yLaYlntpSyUBGmp83bRH8M4.PUiLUB8JNHpRDdW06R
+ 6TMRn39tnM9mKjzsgTqgMhhOvz_bgJTpTg1wngix9zJUi7CHBC6MWF8NdxHlmhWnFxuo8xkVbFrE
+ tjQk8j9Hxyoz.78O_1PcpvD3CSrs1ekv8LPqVZFopylcViYf_H_mZwJHsQVzDPKsl61N5NJs_x3B
+ 2FSCqQxFUCa8XsR4pxzZgOb8ul2KCMqouT82Hz8JZOyuEUhm6nEf8jGxVP1cgm94Z
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 5588d6e7-8905-487b-99f4-71023ca18f2b
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Wed, 7 May 2025 19:35:43 +0000
+Received: by hermes--production-ir2-858bd4ff7b-mp79t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0ce168842b6194365513fec4b9b0872e;
+          Wed, 07 May 2025 18:55:10 +0000 (UTC)
+From: Ruben Wauters <rubenru09@aol.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Ruben Wauters <rubenru09@aol.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu/intel: replace deprecated strcpy with strscpy
+Date: Wed,  7 May 2025 19:51:36 +0100
+Message-ID: <20250507185459.8769-1-rubenru09@aol.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <174664324585.406.10812098910624084030.tip-bot2@tip-bot2>
+References: <20250507185459.8769-1-rubenru09.ref@aol.com>
 
+strcpy is deprecated due to lack of bounds checking.
+This patch replaces strcpy with strscpy, the recommended alternative for
+null terminated strings, to follow best practices.
 
-Johannes: this is basically an RFC, not a final commit, will add your 
-Reviewed-by if it's fine to you, or will change the patch if it's not.
+Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+---
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 584dd55bf739..b49bba30434d 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		}
+ 
+ 		if (p)
+-			strcpy(c->x86_model_id, p);
++			strscpy(c->x86_model_id, p);
+ 	}
+ #endif
+ 
+-- 
+2.48.1
 
-	Ingo
-
-* tip-bot2 for Ingo Molnar <tip-bot2@linutronix.de> wrote:
-
-> The following commit has been merged into the x86/msr branch of tip:
-> 
-> Commit-ID:     24b58adaa7508d9d2cdb6bca44803954baf24459
-> Gitweb:        https://git.kernel.org/tip/24b58adaa7508d9d2cdb6bca44803954baf24459
-> Author:        Ingo Molnar <mingo@kernel.org>
-> AuthorDate:    Wed, 07 May 2025 20:18:22 +02:00
-> Committer:     Ingo Molnar <mingo@kernel.org>
-> CommitterDate: Wed, 07 May 2025 20:30:39 +02:00
-> 
-> um: Add UML version of <asm/tsc.h> to define rdtsc()
-> 
-> In the x86 tree rdtsc() methods got moved out of <asm/msr.h>, but this
-> broke UML, as the x86 version of <asm/tsc.h> cannot be used by UML as-is:
-> 
-> 	  CC [M]  drivers/accel/habanalabs/common/habanalabs_ioctl.o
-> 	In file included from drivers/accel/habanalabs/common/habanalabs_ioctl.c:20:
-> 	./arch/x86/include/asm/tsc.h:70:28: error: conflicting types for ‘cycles_t’; have ‘long long unsigned int’
-> 	   70 | typedef unsigned long long cycles_t;
-> 	      |                            ^~~~~~~~
-> 	In file included from ./arch/um/include/asm/timex.h:7,
-> 	                 from ./include/linux/timex.h:67,
-> 	                 from ./include/linux/time32.h:13,
-> 	                 from ./include/linux/time.h:60,
-> 	                 from ./include/linux/skbuff.h:15,
-> 	                 from ./include/linux/if_ether.h:19,
-> 	                 from ./include/linux/habanalabs/cpucp_if.h:12,
-> 	                 from drivers/accel/habanalabs/common/habanalabs.h:11,
-> 	                 from drivers/accel/habanalabs/common/habanalabs_ioctl.c:11:
-> 	./include/asm-generic/timex.h:8:23: note: previous declaration of ‘cycles_t’ with type ‘cycles_t’ {aka ‘long unsigned int’}
-> 	    8 | typedef unsigned long cycles_t;
-> 	      |                       ^~~~~~~~
-> 
-> To resolve these kinds of problems and to allow <asm/tsc.h> to be included on UML,
-> add a simplified version of <asm/tsc.h>, which only adds the rdtsc() definition.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Cc: Johannes Berg <johannes.berg@intel.com>
-> Link: https://lore.kernel.org/r/202505080003.0t7ewxGp-lkp@intel.com
-> ---
->  arch/um/include/asm/tsc.h | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 arch/um/include/asm/tsc.h
-> 
-> diff --git a/arch/um/include/asm/tsc.h b/arch/um/include/asm/tsc.h
-> new file mode 100644
-> index 0000000..a52b0e4
-> --- /dev/null
-> +++ b/arch/um/include/asm/tsc.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_UM_TSC_H
-> +#define _ASM_UM_TSC_H
-> +
-> +#include <asm/asm.h>
-> +
-> +/**
-> + * rdtsc() - returns the current TSC without ordering constraints
-> + *
-> + * rdtsc() returns the result of RDTSC as a 64-bit integer.  The
-> + * only ordering constraint it supplies is the ordering implied by
-> + * "asm volatile": it will put the RDTSC in the place you expect.  The
-> + * CPU can and will speculatively execute that RDTSC, though, so the
-> + * results can be non-monotonic if compared on different CPUs.
-> + */
-> +static __always_inline u64 rdtsc(void)
-> +{
-> +	EAX_EDX_DECLARE_ARGS(val, low, high);
-> +
-> +	asm volatile("rdtsc" : EAX_EDX_RET(val, low, high));
-> +
-> +	return EAX_EDX_VAL(val, low, high);
-> +}
-> +
-> +#endif /* _ASM_UM_TSC_H */
 
