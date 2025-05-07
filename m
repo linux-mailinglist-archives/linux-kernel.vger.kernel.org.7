@@ -1,88 +1,106 @@
-Return-Path: <linux-kernel+bounces-638227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84918AAE2CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:27:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3A2AAE2EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0CE18867C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8801B9C3933
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE8289E26;
-	Wed,  7 May 2025 14:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D2028AB03;
+	Wed,  7 May 2025 14:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lkIbSxKq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs2bW5Mz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E869289839;
-	Wed,  7 May 2025 14:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8669289E33;
+	Wed,  7 May 2025 14:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627464; cv=none; b=azjWyjwGrGEUfF9VTZiKBteoR2SsY197zuQfe0TSdZ3KarDgGlzVYnX0d1lSPcxeJkr2VFO3eY8Gq9VuDkayPIskJubaeuEdCuRiqWz8403mI7W51xeDY+AJfEFCrqvtcwG1P39RLzmhSy/j3jO+pLnwJYWtSxD8N7mSnlJL42A=
+	t=1746627474; cv=none; b=NJ0niUYNf4/oJgzBQaFOke/y1VZHk/D2U/7HVuJypImGZUMGM3iXccmUrCKagAgDe7GXfxyRjz8Zru/d5F18uxVFpugZ+eBXAF6IOVhl3V0s6Nrz7wVk0QT+OS8D82chmWLVpBnERT4vUHsa2DA0R7ts084v2uJlUoo52o2mF/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627464; c=relaxed/simple;
-	bh=PtB5Usi8xLaJmNGDACycIzyHJbkLqaznxmbCpeinUIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+c4ulPne4CBL5wCTCLKKrux7cetiJXtSkYMnSKBCEObU0Pd/3OXVo8isVMwrwQwco47LHbsIA3DG1+ZEcbJluN5vo5eJQkf7RHC5ap4xfgGnURGXSRKCiJwZM4/9tDLl72FuyYt4IZQWtvlHlE+Ykf5Jr51KneifxzILAyUNqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lkIbSxKq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=riPhI6Eapns1oW9Gn4OqspYK1Wq/yqbnDVBWZAn6+N8=; b=lkIbSxKqLABQ9AeH01kNU+Ma68
-	D2Qc2irMyCeY79HtU6uyKbwy9YC2uBNN6XuJkfxzXiF7IXvaz7ddDFy4VlqK9JaYSN7o/mA9LEiM0
-	JO6jfOniUqp8quI+9Z7OjGhmrJgow+qL/essHLdqatkcyaSOh/DLqaGSqaMfs1waDT08=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uCfac-00BtMw-8e; Wed, 07 May 2025 16:17:38 +0200
-Date: Wed, 7 May 2025 16:17:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kernel@quicinc.com, kernel@oss.qualcomm.com
-Subject: Re: [PATCH 0/8] qcom: Refactor sa8775p/qcs9100 based ride boards
-Message-ID: <d87d203c-cd81-43c6-8731-00ff564bbf2f@lunn.ch>
-References: <20250507065116.353114-1-quic_wasimn@quicinc.com>
+	s=arc-20240116; t=1746627474; c=relaxed/simple;
+	bh=XCPO4OwtHdklV75ZQexHUDw+NLtN7k5eDz9cWsLCD7s=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=VG+BsSsRpBPb0haT7A/jMzwIHhqPCnFBhpSg9efNewChf2cojK16IYRSDVmbDy7E6+kuU8xFu06I3B4aLUxvg/TyAX2d8Z6shIqDLSVX2A9J1uf2Vspp7mMU3Saifg5sQhk92bVbwKDjNNE/iwol8gWfKSDecpSQl8v9mzVNiZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs2bW5Mz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084DCC4CEE2;
+	Wed,  7 May 2025 14:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746627473;
+	bh=XCPO4OwtHdklV75ZQexHUDw+NLtN7k5eDz9cWsLCD7s=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Qs2bW5MzeuhyoRfLeHZNePhETq1cuep9TM1AX0aZzNMUr9PnjrD+ikLE7R6NI5/kC
+	 sT8P5/a7l15vu7DkzFtpOqPt9jV0uleb9TQDr4MFRa4vZOSIjdQZVfFuLEd1YMgwVg
+	 Y7r3hvxC/mFmYpPVity5Vk356zOtJCIiaM2KgLg70cssO++MRkuF6rQH8CBusTBpHC
+	 I3/s2GNEJzkOAQwdg93eoOB333RctMzWrBgOJPEsy4wkhgydykSIVK+bk9kSzveOEY
+	 LBX2wjMtEUO1cBDwbR0lmtWkc7pHOISw//59HVydxnYJPpA/EM+y93uoCgr7+l5vuo
+	 o9cjCGU9eSMlw==
+Date: Wed, 07 May 2025 09:17:51 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507065116.353114-1-quic_wasimn@quicinc.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Benjamin Hahn <b.hahn@phytec.de>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Yashwanth Varakala <y.varakala@phytec.de>, 
+ Teresa Remmet <t.remmet@phytec.de>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, upstream@lists.phytec.de, 
+ linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ linux-arm-kernel@lists.infradead.org, Jan Remmet <j.remmet@phytec.de>, 
+ Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev, 
+ Catalin Marinas <catalin.marinas@arm.com>
+To: Yannic Moog <y.moog@phytec.de>
+In-Reply-To: <20250507-wip-y-moog-phytec-de-imx95-libra-v1-1-4b73843ad4cd@phytec.de>
+References: <20250507-wip-y-moog-phytec-de-imx95-libra-v1-0-4b73843ad4cd@phytec.de>
+ <20250507-wip-y-moog-phytec-de-imx95-libra-v1-1-4b73843ad4cd@phytec.de>
+Message-Id: <174662747122.1094223.1125259086632722690.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: add imx95-libra-rdk-fpsc
 
-> Ethernet card:
->   - There are two variants of ethernet card each with different capabilities:
->     - [Ethernet-v1] card contains:
->       - 2x 1G RGMII phy, 2x 1G SGMII phy(enabled currently)
->       - Total 4 phy supported, only 2 phy are enabled and it is used in ride.
->     - [Ethernet-v2] card contains:
->       - 2x 1G RGMII phy, 2x 2.5G HSGMII(enabled currently) & 10G PCIe
->         based MAC+PHY controller
->       - Total 5 phy supported, only 2 phy are enabled and it is used
->         in ride-r3.
->   - Either [Ethernet-v1] or [Ethernet-v2] is connected to backplain
->     board via B2B connector.
 
-Is it possible to identify the card, e.g. does it have an I2C EEPROM,
-or some strapping resistors on the B2B bus?
+On Wed, 07 May 2025 15:13:12 +0200, Yannic Moog wrote:
+> imx95-libra-rdk-fpsc is a development board based on the phyCORE-i.MX 95
+> Plus FPSC SoM. Add its description and binding.
+> 
+> Signed-off-by: Yannic Moog <y.moog@phytec.de>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
 
-I'm just wondering if DT overlays would be a better solution.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-	Andrew
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/arm/fsl.yaml:1372:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250507-wip-y-moog-phytec-de-imx95-libra-v1-1-4b73843ad4cd@phytec.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
