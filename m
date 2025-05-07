@@ -1,182 +1,128 @@
-Return-Path: <linux-kernel+bounces-638864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43666AAEF03
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 01:09:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B8FAAEF17
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 01:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5743B1BC376F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7293C9C4E23
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC1C291146;
-	Wed,  7 May 2025 23:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B71290DB1;
+	Wed,  7 May 2025 23:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVUT35wF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="P8X/6VT/"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBB1ACEC8;
-	Wed,  7 May 2025 23:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E7C1B422A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 23:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746659359; cv=none; b=gvExzpBVbw4xRTrAKdwR9tx0sK98x9AItAOpCPUGPKMR5Ub6fbET2ToxQuA7jujXdL2GpCgf3saPuQUtUYH0Y8z9ZP5NvWZh77Qk5KybJAYTj0UVmRVK3ldZK62GKEGsKeZY5wOtdcjD5AcnfOuFKJvpkD91OrJgTDZi80fwass=
+	t=1746659587; cv=none; b=OcUcl0EJzc7V2I0hvLSgiQgwwZ9iNiRFusk1Q8Kxa4TeM9nRGZpDdtp5laQDxewc2OhrH/O0+mtUvqoHtppEbuQqn8e7Gm6ueWjaiFTlxKTke7vArzeo1bMOGR9112XbQPRtarNELG8huNWapDD9w8m+ZsPsy9jb+IOTgEIihis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746659359; c=relaxed/simple;
-	bh=if38SdnC0AJjNobF5sj+Z+diQFRQsDZaQWTmcM3J0z0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=R36SoJwxghaJNxV9TCRsXK/cFUiD46/d5p4S9YVlDASq3QXM8ifAfW/P0cBaWPmvxtkwCfAhrtue+IVzWTmwXaL0KTy7/W4zmKIAmmcLVwC9uXp0NUYmLWJAhU6R2uUKI4FzxaV2cY4YcK9GXIPC6remPbRPOPH7N5DlCIKgRGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVUT35wF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4150CC4CEE2;
-	Wed,  7 May 2025 23:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746659358;
-	bh=if38SdnC0AJjNobF5sj+Z+diQFRQsDZaQWTmcM3J0z0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=bVUT35wFQvPLtu0LytwChJj8OCMGL50uKSUkAw/N299dum2gMqiUCpyl5S06wAMwP
-	 LCEdm1qGVJNMvc0xia9kjE1XilBbXfDOpHCsU+MT0fvQXnKV30xtuGljLYyec6KmdU
-	 oULJXb2Q7uBOQcET4vHAELvnYz0czULBYVtQ6q33A3B4HtESvwX2yIvtSGq/aN99sv
-	 nupLajSjMLfm3Xb5VyTkcRwbKAkT+w97QNGWS/Nsk9lDPzNTbaXKMCQbpExRU3KOvb
-	 aFIvTIa68tC4XysVp57S5ddzdoZm1eOBI+/yvxN/Snhy0o+j9u8OrcZTJ8DARIVDKk
-	 8PdOrgh3+9ShA==
-Date: Wed, 7 May 2025 16:09:15 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: John Ernberg <john.ernberg@actia.se>
-cc: Stefano Stabellini <sstabellini@kernel.org>, 
-    Juergen Gross <jgross@suse.com>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    Catalin Marinas <catalin.marinas@arm.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, 
-    "iommu@lists.linux.dev" <iommu@lists.linux.dev>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-    "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-    Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
-In-Reply-To: <75266eb7-66a4-4477-ae8a-cbd1ebbee8db@actia.se>
-Message-ID: <alpine.DEB.2.22.394.2505071602570.3879245@ubuntu-linux-20-04-desktop>
-References: <20250502114043.1968976-1-john.ernberg@actia.se> <20250502114043.1968976-3-john.ernberg@actia.se> <alpine.DEB.2.22.394.2505021007460.3879245@ubuntu-linux-20-04-desktop> <75266eb7-66a4-4477-ae8a-cbd1ebbee8db@actia.se>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1746659587; c=relaxed/simple;
+	bh=VpRYCxbgwTqyjkzN/WuYkouF17B9EPHH8+zr5YUI1SQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwfBiH75J2sYrxO7aPYzL2D45vh1vftSTWXScnoc1V1nDas0VAbBKpY7vnhGCKLAhLLh0kOa9HZWVIdLNRoaZxsxLpKrcaXjWxQJ3BApTw+htvyvYZJwgN98M88ieIExPQ8iFPGRq28sV/bVT2RJ/3Zjc3321SfhMCN3DRgP/hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=P8X/6VT/; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-309e54e469cso57456a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 16:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1746659585; x=1747264385; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bze+nlRK9GdebdTiqCcyHrSNtG9GFSGfKrcCqT38XaI=;
+        b=P8X/6VT/bH+DNaO2+oHs867bT2Z/O9Wr3sVgbS0Yk0/qu5GsyU3S13zK6kBGdmYQRq
+         eHZUhBEkZaZwhSCl44wfEjpwi8mKJMtWKI8v8lLBEw4PLAhPwykLFh/UMZ7twDTkHKp/
+         Kg87QcW6dVdopQ1rGp/DT3MXq/1K8OWrUbDDH+aKTxmjMBH1DPLewWXxIsYwaoLWQpWO
+         OKNHalSLGpGFWTmwNLwkRMctryJEr9hQP5qIkhaaciVh/qtWPmJuEeQUnQB//2DByd8I
+         BcMXLJtmQ+eQuk6Zmf78xLCZalerB+bo4w1dDAUOg7nc1SmcAM3UbuRcaI8LIK3WodkN
+         pH8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746659585; x=1747264385;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bze+nlRK9GdebdTiqCcyHrSNtG9GFSGfKrcCqT38XaI=;
+        b=GTi1wJBI+7/1BKH3ywM8vBPduJ2eRxQtMJdA5HRozxp/mk/jWS6qeCA26G5e/7edYA
+         1ZhVxuSyh2atAuRA9XiGeJ2Q8PEU1FeFG3rsXdNfgxRETjT9e0e+rRv1kws+tJwyD1b9
+         gGGXxESUN/lvIQWgMQs5ulGxnwdyG3x5pTiymyJKvKXVn6X4GYnI7H94aSsLyVAeyFXL
+         KW8wl+IJa+hggWH/5UEO1ZzKlOmwiEPOC62MplppZb/NwJI3r1XAdq0rt9O8R1lkmPQl
+         KLu14Qw2R6rhP7HZT0jnZp0/vDULKeRrcmw9Op+NeKi4lIVMns9AzbJk+Ib4kVcyZ3di
+         oS/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPx9MTgyd5sEpxWKrEYkLrEXYNc+EMiH/mX5Wiw5PVny6eZEiK6WUpDab6rJdeVqmRKfUi13tSTzcEJxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMiteiJWnBS/45oheBvUlMv867ir/ACU/FKkaCx9AAj2rrOrLY
+	oiUHT1Kiq92RWcLiRwTBRvhTy9c1nNzpVH8qGrW+/t3qChix5k1lAuMaiVDAGis=
+X-Gm-Gg: ASbGncuoRwsiUHtkR9LbrEhFkvzhLbXZNLC+sYF4z3xkyL4kNUcZQ6F2P6l+TFf+zoq
+	vf0eUhJqL61p1V2hv63cfxtzS0r3SF9FUkSrZvI0F8kR6QXEbvRt2hX0e8r82nPizzQ//AeJ8U7
+	6YLnXNhN2VDmVve5+0TczLG3Xe5hBgYJ2PDELagMb0WFlQC09kl5PQuCC/SI1om4LO7Wj3PmnzJ
+	F/kKz02f8g5jbPSeFXu8s5Q5/zGRGcuqvohqXetNAstfUM68t2nM4+f0UklsSfYSW/W1BFiaTS6
+	jUkna6S84UGfba4dPpho8SE=
+X-Google-Smtp-Source: AGHT+IHXf2uaAFydOllzDh6nhZaOcR5ywT2UaACaV2lmI5F+DIMWgpuh5HCG0Ql/E9CoWvoaXWr8HA==
+X-Received: by 2002:a17:90b:3e83:b0:30a:80bc:ad5 with SMTP id 98e67ed59e1d1-30aac1f1bd8mr3014058a91.3.1746659584720;
+        Wed, 07 May 2025 16:13:04 -0700 (PDT)
+Received: from telecaster ([2601:602:8980:9170::71f1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e152204desm100243565ad.140.2025.05.07.16.13.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 16:13:04 -0700 (PDT)
+Date: Wed, 7 May 2025 16:13:03 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-debuggers@vger.kernel.org,
+	Sentaro Onizuka <sentaro@amazon.com>
+Subject: Re: [PATCH] fs: convert mount flags to enum
+Message-ID: <aBvo_-Ee7QQtd3YU@telecaster>
+References: <20250507223402.2795029-1-stephen.s.brennan@oracle.com>
+ <20250507230511.GA2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507230511.GA2023217@ZenIV>
 
-On Tue, 6 May 2025, John Ernberg wrote:
-> Hi Stefano,
+On Thu, May 08, 2025 at 12:05:11AM +0100, Al Viro wrote:
+> On Wed, May 07, 2025 at 03:34:01PM -0700, Stephen Brennan wrote:
+> > In prior kernel versions (5.8-6.8), commit 9f6c61f96f2d9 ("proc/mounts:
+> > add cursor") introduced MNT_CURSOR, a flag used by readers from
+> > /proc/mounts to keep their place while reading the file. Later, commit
+> > 2eea9ce4310d8 ("mounts: keep list of mounts in an rbtree") removed this
+> > flag and its value has since been repurposed.
+> > 
+> > For debuggers iterating over the list of mounts, cursors should be
+> > skipped as they are irrelevant. Detecting whether an element is a cursor
+> > can be difficult. Since the MNT_CURSOR flag is a preprocessor constant,
+> > it's not present in debuginfo, and since its value is repurposed, we
+> > cannot hard-code it. For this specific issue, cursors are possible to
+> > detect in other ways, but ideally, we would be able to read the mount
+> > flag definitions out of the debuginfo. For that reason, convert the
+> > mount flags to an enum.
 > 
-> On 5/2/25 7:20 PM, Stefano Stabellini wrote:
-> > +Christoph
-> > 
-> > On Fri, 2 May 2025, John Ernberg wrote:
-> >> Needed by the eDMA v3 DMA engine found in iommu-less SoCs such as iMX8QXP
-> >> to be able to perform DMA operations as a Xen Hardware Domain, which needs
-> >> to be able to do DMA in MMIO space.
+> Just a warning - there's a bunch of pending changes in that area,
+> so debuggers are going to be in trouble anyway.
 > 
-> Self-note: The above part of the commit message is a disaster and should 
-> read something like.
+> Folks, VFS data structures do *NOT* come with any stability warranties.
+> Especially if the object in question is not even defined in include/*/*...
 > 
-> Needed by SoCs without an iommu (such as the iMX8QXP and it's eDMA v3 
-> engine) that need to be able to perform DMA operations in MMIO space.
-> 
-> >>
-> >> The callback implementation is basically the same as the one for direct
-> >> mapping of resources, except this also takes into account Xen page
-> >> mappings.
-> >>
-> >> There is nothing to do for unmap, just like with direct, so the unmap
-> >> callback is not needed.
-> >>
-> >> Signed-off-by: John Ernberg <john.ernberg@actia.se>
-> >>
-> >> ---
-> >>
-> >> I originally exported dma_direct_map_resource() and used that which
-> >> appeared to work, but it felt like not checking Xen page mappings wasn't
-> >> fully correct and I went with this. But if dma_direct_map_resource() is
-> >> the correct approach here then I can submit that isntead.
-> >> ---
-> >>   drivers/xen/swiotlb-xen.c | 15 +++++++++++++++
-> >>   1 file changed, 15 insertions(+)
-> >>
-> >> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> >> index ef56a2500ed6..0f02fdd9128d 100644
-> >> --- a/drivers/xen/swiotlb-xen.c
-> >> +++ b/drivers/xen/swiotlb-xen.c
-> >> @@ -285,6 +285,20 @@ static void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
-> >>                                           attrs, pool);
-> >>   }
-> >>
-> >> +static dma_addr_t xen_swiotlb_map_resource(struct device *dev, phys_addr_t phys,
-> >> +                                        size_t size, enum dma_data_direction dir,
-> >> +                                        unsigned long attrs)
-> >> +{
-> >> +     dma_addr_t dev_addr = xen_phys_to_dma(dev, phys);
-> > 
-> > Yes, we need the xen_phys_to_dma call here. This is one of the reasons I
-> > don't think we can use dma_direct_map_resource() to implement
-> > map_resource
-> > 
-> > 
-> >> +     BUG_ON(dir == DMA_NONE);
-> >> +
-> >> +     if (!dma_capable(dev, dev_addr, size, false))
-> >> +             return DMA_MAPPING_ERROR;
-> > 
-> > But here you also need to check that phys+size doesn't cross a page
-> > boundary. You need to call range_straddles_page_boundary, like we do at
-> > the beginning of xen_swiotlb_map_page.
-> > 
-> > If it is possible to cross a page boundary, then we need to basically to
-> > do the same thing here as we do in xen_swiotlb_map_page where we check
-> > for:
-> > 
-> >          if (dma_capable(dev, dev_addr, size, true) &&
-> >              !range_straddles_page_boundary(phys, size) &&
-> >                  !xen_arch_need_swiotlb(dev, phys, dev_addr) &&
-> >                  !is_swiotlb_force_bounce(dev))
-> >                  goto done;
-> > 
-> > if all is well, we go with the native path, otherwise we bounce on
-> > swiotlb-xen.
-> > 
-> 
-> I'll preface this with that it's my first deep dive in DMA, so the 
-> following may entirely be me being stupid:
-> 
-> I'm not sure a straddles page boundary path makes sense.
-> 
-> This mapping is not for a RAM backed address. In the eDMA case for the 
-> iMX8QXP the `phys` coming in here is the address of a register.
+> _Anything_ that tries to play with these objects must be version-dependent
+> and be ready to be broken by changes in underlying code at zero notice.
 
-Ok, this information is important :-)
-
-I am not certain whether the map_resource interface can only be called
-for MMIO addresses or if it can also be called for RAM-backed addresses
-with a size > PAGE_SIZE. In the latter case, we could run into the issue
-I was describing.
-
-
-> I cannot see how a swiotlb bounce would fix anything if you end up
-> straddling a page boundary. At most I can see a WARN_ON with a
-> DMA_MAPPING_ERROR return if such a check would yield true.
-> 
-> Let's say you want to do a DEV_TO_MEM and a check decides you need to 
-> bounce it you'd bounce an RX register address. I cannot see how that DMA 
-> would ever end up doing the expected thing.
-> 
-> The eDMA engine will manage the RX/TX registers for an IP block and move 
-> the data between them and RAM, where the RAM memory is mapped separately 
-> by dma_map_page (and family). And these can be swiotlb bounced via the 
-> map page callback with no problem.
-
-OK thanks for the explanation. Like I wrote above, if we are guaranteed
-that map_resource cannot be called for RAM-backed addresses or size is
-less than PAGE_SIZE, then your patch is good as-is. If there are no such
-guarantees, then we'll have to think a bit more about it.
+That's totally fine, we can deal with breakages as long as we can
+reliably detect what version we're dealing with. We can see changed enum
+values, renamed/removed structure members, etc., so that's why those are
+preferable. Macros are invisible at the debug info level (since no one
+compiles with -g3), so those are no good for us. We also avoid version
+checks as much as possible because backports in RHEL and co. make
+version numbers mostly meaningless.
 
