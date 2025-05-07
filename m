@@ -1,166 +1,155 @@
-Return-Path: <linux-kernel+bounces-638022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF3D8AAE06E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:16:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE17BAAE072
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CF816A0C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0426981499
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D729289E2E;
-	Wed,  7 May 2025 13:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9D4280A2E;
+	Wed,  7 May 2025 13:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsaBvMxx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="HUYLgu2n"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407D288C83;
-	Wed,  7 May 2025 13:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746623612; cv=none; b=pmTZsFh79YXdsVhUJbZ01+wKodZjpduQ7T72UOzJUyfcgC6bSJQ73KeYPoOPE2g1wM4w/EOcBlMmF/gKLfTbezXIchvDKdMtqp1TrwUnilnEZXyXlM3MUaeoM4Gjt95BreGTNAOaZaMO3bDKvK3qewP4gxxEbPY0k6lFEAt0XCc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746623612; c=relaxed/simple;
-	bh=EvSfj4vAnVYm+UyKmJGpN6uS9VDG2AEHRBmIOOxfqvU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VeVfyutfGOB4AG5+qPmBLd6hKTP2iDTksgpC3v3wbDyjAC1KOLNZjaxkqGdi7lmtmlGOHSUYPqe2/tdu0StmDxhV7IFNlUB72J7jWPI4eejty6gW0qREdqyGN0k+um7NPiwQWAgYyR4sSOwcZr3AVDNj2v9xOXllz6sfcf2ihHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsaBvMxx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 51996C4CEEB;
-	Wed,  7 May 2025 13:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746623612;
-	bh=EvSfj4vAnVYm+UyKmJGpN6uS9VDG2AEHRBmIOOxfqvU=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=RsaBvMxxu+2L7Y8HvYegoDt9HJFNHUdleNllf1onWoifcdiDZ6RqQclsPm2qwmRLT
-	 /eqg1pnmhPn6DsccJdYRwQ8Je939kJTqIJ0t2CcNf9Ja7bMXNrge4e5zW9Hcq2tQgf
-	 H/RZICkQ6eCywFaxECF8xtuJme2bmmi7ejw86UxP1dcuJkLhhEyPmdaeEk3PNQTSDO
-	 CN/ULiejpD7IQr+ob0rV9FN4PhDNxYNIrvR+FkMFbEovG558ju0H7H6EuNkuKghK1I
-	 NCbFIT2rP6WFHl+MEqJ3+1Yyf9n5KobyvuRV44bzGZfOyWgByvejOr25AGY9B/fauW
-	 WDEO8eOafb7hw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4106EC3ABC0;
-	Wed,  7 May 2025 13:13:32 +0000 (UTC)
-From: Ignacio Moreno Gonzalez via B4 Relay <devnull+Ignacio.MorenoGonzalez.kuka.com@kernel.org>
-Date: Wed, 07 May 2025 15:13:27 +0200
-Subject: [PATCH v4] mm: mmap: map MAP_STACK to VM_NOHUGEPAGE only if THP is
- enabled
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE7A286D7A;
+	Wed,  7 May 2025 13:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746623720; cv=pass; b=Ps0XcNMXLOrofDypGzguFv5TSWE3m/nLNIRpyHt8EeC2gw/ULo21i7qidQBeA5H9UbSH3BEaTOE0I3JpZ1vREoUogdkG3PndJSK/Zuy+CvKk7o6kfdCZlQ01zck/LQS57TlmrfLF488R8jvuDyUUKiO2jBkCLNydKyTbCgkqKL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746623720; c=relaxed/simple;
+	bh=2yOg3Bb/rac0XgXN9hTPToGcLyfnbfMaRV2hE+l7Eg8=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=noDxaNEIxm9hpf/vsKVekA7geao0mJDJa9tXUj2oht5Qxv3v/hIdUIeZayx8nnpQ5Gb4Li+hQ9dZWzTHZtBUN81ppQP9CTzaAgN6+ik+7HjyXSDkyzshzP3G/suIV5w5q02KkBR273UD7gcpaq1onBzmJMx/7TrvsoinRouRvos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=HUYLgu2n; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1746623684; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eDcPnx8EZoR6mILNb1tC9QJ2hoMrWLxxe6xqeD5gDldVIaSd5yha8mjGIS6OpzWm+uQOrDic4bA8+9+3OiETC12L5zJqUxEVBdGn29v/Le16i+Cqs1r0OJDkSLQGN96Qx8WLmRSGm6hVrKJc6Z6fOuiFMG0x8VQHieTu68DKmAI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1746623684; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZsmKLqMYFF5FclFI2zl2gM9NnSF+GvqV6ouEAfjIasM=; 
+	b=iZ39D3xX3qtNwIulRL+AXulntpwWckebQj6nyzJ9/p61cdTJzvc0dPnR5qVaEAR9Ao2z/n11WrVXFTiKb1qp37N1i0ybVTU8jb24Uuglx0N4qS3o7L0lD+1dNtrYTDtVsCnbeUOrE3yq5vuVJqNp8byFI8QnewwHDUkzkGQsaJo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746623684;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ZsmKLqMYFF5FclFI2zl2gM9NnSF+GvqV6ouEAfjIasM=;
+	b=HUYLgu2nlDBywApn/QVH6qKLLqV/PsDfMGc0ZbZByNa026ebRL8Q1Rcb6u8sgcaX
+	hQQvKZ1+cRh3O5d+5CosaREm+17xzQhycT+XLT8zSaRlDEKkHiQdAJJLOq+qQOb2b9N
+	eNR4nbf8FU9ACw0jDJhWNx8kvJXkQDIihmERn0QQ=
+Received: by mx.zohomail.com with SMTPS id 1746623681228340.1573753215861;
+	Wed, 7 May 2025 06:14:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Inochi Amaoto" <inochiama@gmail.com>, 
+	"Conor Dooley" <conor@kernel.org>
+In-Reply-To: <myug24f2rnscxracipkv2ghsjlv32qcyui6u4ckpwtaij6bw3x@yesvbm6vh5ls>
+Cc: "Jassi Brar" <jassisinghbrar@gmail.com>, 
+	"Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Chen Wang" <unicorn_wang@outlook.com>, 
+	"Yuntao Dai" <d1581209858@live.com>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, <linux-kernel@vger.kernel.org>, 
+	<devicetree@vger.kernel.org>, <sophgo@lists.linux.dev>, 
+	<linux-riscv@lists.infradead.org>, "Junhui Liu" <junhui.liu@pigmoral.tech>
+Subject: Re: [PATCH v3 2/3] riscv: dts: add mailbox for Sophgo CV18XX series
+	 SoC
+Message-ID: <183d40fa26bbd878.d80bda6c3142fde6.abe31e31d76ed1ce@Jude-Air.local>
+Date: Wed, 7 May 2025 13:14:33 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v4-1-4837c932c2a3@kuka.com>
-X-B4-Tracking: v=1; b=H4sIAHZcG2gC/53PzWrDMAwH8FcpPk9D/kiT9LT3GKV4ttyYNHaIU
- 9NS8u5zukvYMRgd/kLoJ79YoslTYqfDi02UffIxlKA+Dsx0OlwJvC2ZCRQVKtHAoMe1LmnWpoc
- 5Qh4uIXb3K426TMdwe4J3MHcj+AQU9M+NLBhSqLklbCvLyu5xIucfb/f7XHLn0xyn5/uMzNfun
- 1ih2ClmDuVxacxRKmMr/tXfe/1p4sBWMIstctyLCEBwnDs0dauaWvxD5Bap9yKy/KTBVrROonW
- 12yDLsvwCz+bBXsMBAAA=
-X-Change-ID: 20250428-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-ce40a1de095d
-To: lorenzo.stoakes@oracle.com
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
- yang@os.amperecomputing.com, david@redhat.com, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746623611; l=3766;
- i=Ignacio.MorenoGonzalez@kuka.com; s=20220915; h=from:subject:message-id;
- bh=CFDC/jXDPSAZFIvTmdqTfpEdDeY9SykW8IcDrYyz9Sk=;
- b=oosiSknovA27oKP7xuUr50VhtrW8KCjZby1J3kVQxRhVrj6RuDXT2QxK7l3ZycPjW75iEwPte
- XwiNbMZCpsIA2yU4iCOKFkxUEALi/V3kdb/Hhz9+icP59gDgDixZTxX
-X-Developer-Key: i=Ignacio.MorenoGonzalez@kuka.com; a=ed25519;
- pk=j7nClQnc5Q1IDuT4eS/rYkcLHXzxszu2jziMcJaFdBQ=
-X-Endpoint-Received: by B4 Relay for
- Ignacio.MorenoGonzalez@kuka.com/20220915 with auth_id=391
-X-Original-From: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-Reply-To: Ignacio.MorenoGonzalez@kuka.com
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-From: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+Hi Inochi,
 
-commit c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE") maps
-the mmap option MAP_STACK to VM_NOHUGEPAGE. This is also done if
-CONFIG_TRANSPARENT_HUGETABLES is not defined. But in that case, the
-VM_NOHUGEPAGE does not make sense.
+On 07/05/2025 20:12, Inochi Amaoto wrote:
+> On Tue, Apr 29, 2025 at 02:44:10AM +0000, Junhui Liu wrote:
+>> Hi Conor,
+>> Thanks for you review.
+>>=20
+>> The previous email accidentally lost some Cc lists :(, I'm sorry to
+>> harass you.
+>>=20
+>> On 28/04/2025 17:55, Conor Dooley wrote:
+>> > On Mon, Apr 28, 2025 at 08:39:45PM +0800, Junhui Liu wrote:
+>> >> From: Yuntao Dai <d1581209858@live.com>
+>> >>=20
+>> >> Add mailbox node for Sophgo CV18XX series SoC.
+>> >>=20
+>> >> Signed-off-by: Yuntao Dai <d1581209858@live.com>
+>> >> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> >> ---
+>> >>  arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 7 +++++++
+>> >>  1 file changed, 7 insertions(+)
+>> >>=20
+>> >> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/=
+dts/sophgo/cv18xx.dtsi
+>> >> index c18822ec849f353bc296965d2d600a3df314cff6..f7277288f03c024039054b=
+dc4176fc95c2c8be52 100644
+>> >> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> >> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> >> @@ -55,6 +55,13 @@ soc {
+>> >>  		dma-noncoherent;
+>> >>  		ranges;
+>> >> =20
+>> >> +		mailbox: mailbox@1900000 {
+>> >> +			compatible =3D "sophgo,cv1800b-mailbox";
+>> >> +			reg =3D <0x01900000 0x1000>;
+>> >> +			interrupts =3D <101 IRQ_TYPE_LEVEL_HIGH>;
+>> >> +			#mbox-cells =3D <2>;
+>> >> +		};
+>> >=20
+>> > No user added here, is there another series in the works that adds a
+>> > user of the mailbox?
+>> >=20
+>>=20
+>> There isn't an actual user node in this specific patch. I used a
+>> `mailbox-test` node to verify the functionality in this patch series.
+>>=20
+>=20
+> I am happy to see the way you test it. Can you add it to the cover?
 
-I discovered this issue when trying to use the tool CRIU to checkpoint
-and restore a container. Our running kernel is compiled without
-CONFIG_TRANSPARENT_HUGETABLES. CRIU parses the output of
-/proc/<pid>/smaps and saves the "nh" flag. When trying to restore the
-container, CRIU fails to restore the "nh" mappings, since madvise()
-MADV_NOHUGEPAGE always returns an error because
-CONFIG_TRANSPARENT_HUGEPAGE is not defined.
+Sure, I will post the testing process to the cover letter in the next
+version.
 
-Fixes: c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE")
-Cc: stable@vger.kernel.org
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Yang Shi <yang@os.amperecomputing.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Signed-off-by: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
----
-I discovered this issue when trying to use the tool CRIU to checkpoint
-and restore a container. Our running kernel is compiled without
-CONFIG_TRANSPARENT_HUGEPAGE. CRIU parses the output of /proc/<pid>/smaps
-and saves the "nh" flag. When trying to restore the container, CRIU
-fails to restore the "nh" mappings, since madvise() MADV_NOHUGEPAGE
-always returns an error because CONFIG_TRANSPARENT_HUGEPAGE is not
-defined.
+>=20
+>> The intended user for this mailbox is the `remoteproc` node. I plan to
+>> submit the `remoteproc` driver patches once the corresponding reset
+>> driver [1] is ready and merged.
+>>=20
+>> link: https://lore.kernel.org/linux-riscv/20250209122936.2338821-1-inochi=
+ama@gmail.com/ [1]
+>>=20
+>=20
+> I will submit a version for this in the next rc1. I think you can submit
+> you remoteproc patch in RFC to get it reviewed.
 
-The mapping MAP_STACK -> VM_NOHUGEPAGE was introduced by commit
-c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE") in order to
-fix a regression introduced by commit efa7df3e3bb5 ("mm: align larger
-anonymous mappings on THP boundaries"). The change introducing the
-regression (efa7df3e3bb5) was limited to THP kernels, but its fix
-(c4608d1bf7c6) is applied without checking if THP is set.
+ok, thanks.
 
-The mapping MAP_STACK -> VM_NOHUGEPAGE should only be applied if THP is
-enabled.
----
-Changes in v4:
-- Correct typo CONFIG_TRANSPARENT_HUGETABLES -> CONFIG_TRANSPARENT_HUGEPAGE
-- Copy description from cover letter to commit description
-- Link to v3: https://lore.kernel.org/r/20250507-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v3-1-80929f30df7f@kuka.com
+>=20
+> Regards,
+> Inochi
 
-Changes in v3:
-- Exclude non-stable patch (for huge_mm.h) from this series to avoid mixing stable and non-stable patches, as suggested by Andrew.
-- Extend description in cover letter.
-- Link to v2: https://lore.kernel.org/r/20250506-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v2-0-f11f0c794872@kuka.com
-
-Changes in v2:
-- [Patch 1/2] Use '#ifdef' instead of '#if defined(...)'
-- [Patch 1/2] Add 'Fixes: c4608d1bf7c6...'
-- Create [Patch 2/2]
-
-- Link to v1: https://lore.kernel.org/r/20250502-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v1-1-113cc634cd51@kuka.com
----
- include/linux/mman.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/linux/mman.h b/include/linux/mman.h
-index bce214fece16b9af3791a2baaecd6063d0481938..f4c6346a8fcd29b08d43f7cd9158c3eddc3383e1 100644
---- a/include/linux/mman.h
-+++ b/include/linux/mman.h
-@@ -155,7 +155,9 @@ calc_vm_flag_bits(struct file *file, unsigned long flags)
- 	return _calc_vm_trans(flags, MAP_GROWSDOWN,  VM_GROWSDOWN ) |
- 	       _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
- 	       _calc_vm_trans(flags, MAP_SYNC,	     VM_SYNC      ) |
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	       _calc_vm_trans(flags, MAP_STACK,	     VM_NOHUGEPAGE) |
-+#endif
- 	       arch_calc_vm_flag_bits(file, flags);
- }
- 
-
----
-base-commit: fc96b232f8e7c0a6c282f47726b2ff6a5fb341d2
-change-id: 20250428-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-ce40a1de095d
-
+--=20
 Best regards,
--- 
-Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-
-
+Junhui Liu
 
