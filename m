@@ -1,87 +1,165 @@
-Return-Path: <linux-kernel+bounces-638112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEC8AAE198
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:55:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A42AAE1BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3A01C40DD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:55:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC1BB251DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5E286D64;
-	Wed,  7 May 2025 13:52:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAC128AB19;
+	Wed,  7 May 2025 13:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2GiHouZb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sdtGOSM9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2GiHouZb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sdtGOSM9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D77289E33;
-	Wed,  7 May 2025 13:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33731289E30
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625927; cv=none; b=Fevmm0zx+WLjQ6bnWc3PrOcgZy3Ae3ZA2XPLatbISJhbTsL+sTyAVK6MCaSBaWeegMxsm+H/fqHFsNpF6Rej9wVefeNJBYCKFuM2tgH038VBE5VuMe0ASRQkyhCMGZZ/zOIWh/38TXsYw2p8G6OZ9ncZzHAaAyMU9MDt5m14pOg=
+	t=1746625941; cv=none; b=M3libgPEurHL4cJKJg5yLZqmPL/55euSg0q4ZuWqIsfc9gtuWKQtBJ/u/JLbnOd1wPhVrunB1W75zyYT3qesO114uyqja7d7uEK7I3xirYNHN0Tsuw79jcurDmRhbGa2FsHLMG14OmMS35z/76S7EQ53hjePjHLEId9/X/zOSaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625927; c=relaxed/simple;
-	bh=CbDm41Tf/oUefKTycomGEUjeLYQT4F4RYLJYctJWcN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gVSz/I8MzJ4TpfZJ4AwbyGFKyCe2L4lssRYQrf1HZkvO/3doXhy4jpAZgbLy8ZABg0Zn76cgOdpCkwJbwqj2w6v/j7wsmr8Y4aH66knFSxDUg2Uf7ntslX/lJt8MPJYSlJVWf7uNRsE0GgbHlCmW9p2w4gRR/sXywael7pdH4KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38002C4CEE2;
-	Wed,  7 May 2025 13:52:06 +0000 (UTC)
-Date: Wed, 7 May 2025 09:52:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tom Zanussi <zanussi@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Miaoqian Lin
- <linmq006@gmail.com>, Mathieu Desnoyers  <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Fix error handling in event_trigger_parse
-Message-ID: <20250507095215.26493050@gandalf.local.home>
-In-Reply-To: <02549e50e26565ffb54ea943af87c19f40692576.camel@kernel.org>
-References: <20250318112737.4174-1-linmq006@gmail.com>
-	<20250319090650.fe63164eac3ac32bb559ffc8@kernel.org>
-	<02549e50e26565ffb54ea943af87c19f40692576.camel@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746625941; c=relaxed/simple;
+	bh=KZXnhnVlS3ZpCIW8/m7DHyBauUv8UN31Uqw5kc9B10M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mfNhjDjXEo66Z4hcsKIjk834ANIzZGq0H77zLolpn2bvagNd3hs7y3h2+HpzrNFlIV3MR0Os+Kkz9qNVKLCvPk5PIIj4bP3KwhMBLbZhdGnQZ7EPTyu4ytx3cAF/pRV3+jnonogyRA13SP4deLSq7mAjE4/sPdXiZEZ1URFRm30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2GiHouZb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sdtGOSM9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2GiHouZb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sdtGOSM9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1A59F211FE;
+	Wed,  7 May 2025 13:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746625938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mrm0LSgf0T7+vZehFw5e/fA0qycFUxwAcsUfEA9Tu5E=;
+	b=2GiHouZbu/TlRGvEdr9zCHXJwY8+Auhs+BJVOmXCAIrMjdV3/kBbywt/dZAdsNdYYw57Cs
+	fHkfIaE7dqrzPOSRuzl4isRUoZyiOA0EkjyIqAr4hVPzRFHOQcv2K80GuxfWXamw687o22
+	UY4CQKfYM/TUVta6MzcgeQLXPMGcZWk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746625938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mrm0LSgf0T7+vZehFw5e/fA0qycFUxwAcsUfEA9Tu5E=;
+	b=sdtGOSM9yYADlYW2cbb7Nk1RQHUxOgGd53cKK7L1JJDaAoQ/S5n8ZZFL9pzoVHiiQYxHFv
+	VnOjEg3M4jjs1ZAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=2GiHouZb;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sdtGOSM9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746625938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mrm0LSgf0T7+vZehFw5e/fA0qycFUxwAcsUfEA9Tu5E=;
+	b=2GiHouZbu/TlRGvEdr9zCHXJwY8+Auhs+BJVOmXCAIrMjdV3/kBbywt/dZAdsNdYYw57Cs
+	fHkfIaE7dqrzPOSRuzl4isRUoZyiOA0EkjyIqAr4hVPzRFHOQcv2K80GuxfWXamw687o22
+	UY4CQKfYM/TUVta6MzcgeQLXPMGcZWk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746625938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mrm0LSgf0T7+vZehFw5e/fA0qycFUxwAcsUfEA9Tu5E=;
+	b=sdtGOSM9yYADlYW2cbb7Nk1RQHUxOgGd53cKK7L1JJDaAoQ/S5n8ZZFL9pzoVHiiQYxHFv
+	VnOjEg3M4jjs1ZAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E1BF1139D9;
+	Wed,  7 May 2025 13:52:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z7lKNpFlG2hcTAAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 07 May 2025 13:52:17 +0000
+Message-ID: <61024777-f640-4455-8f96-aa81c48f710b@suse.de>
+Date: Wed, 7 May 2025 15:52:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 07/14] nvmet-fcloop: access fcpreq only when holding
+ reqlock
+To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250507-nvmet-fcloop-v6-0-ca02e16fb018@kernel.org>
+ <20250507-nvmet-fcloop-v6-7-ca02e16fb018@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250507-nvmet-fcloop-v6-7-ca02e16fb018@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1A59F211FE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-On Wed, 19 Mar 2025 14:03:03 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> In both these cases, the code calls kfree() directly in order to avoid
-> the WARN_ON_ONCE(data->ref) check.
+On 5/7/25 14:23, Daniel Wagner wrote:
+> The abort handling logic expects that the state and the fcpreq are only
+> accessed when holding the reqlock lock.
 > 
-> In the first case (remove), trigger_data is only being used as a test
-> object and will never have data->ref incremented.
+> While at it, only handle the aborts in the abort handler.
 > 
-> The second case is the failure case, which is also dealing with a
-> trigger_data object that hasn't been successfully registered and
-> therefore has a 0 data->ref.
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/nvme/target/fcloop.c | 31 ++++++++++++++++---------------
+>   1 file changed, 16 insertions(+), 15 deletions(-)
 > 
-> So perhaps the event_trigger_alloc doc should be changed to something
-> like:
-> 
-> "Use event_trigger_free() to free a successfully registered
-> event_trigger_data object."
+Reviewed-by: Hannes Reinecke <hare@kernel.org>
 
-I was trying to get this patch in, and realized that the code is all messed
-up.
+Cheers,
 
-event_trigger_alloc() creates a event_trigger_data which needs to be freed
-by trigger_data_free() NOT event_trigger_free()!
-
-I'm renaming event_tigger_alloc() to trigger_data_alloc(), and changing
-this patch to just call trigger_data_free() on error.
-
-One day, if I get time, I need to rewrite the event trigger code, as it's
-really confusing to deal with! Trying to follow the function pointers that
-get called via init, reg, unreg, etc between struct event_command and
-struct event_trigger_ops is just a nightmare!
-
--- Steve
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
