@@ -1,252 +1,148 @@
-Return-Path: <linux-kernel+bounces-637254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897EDAAD697
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E8AAAD69D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F3A1BC77BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F234B465C62
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811C62135B7;
-	Wed,  7 May 2025 06:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7618E214814;
+	Wed,  7 May 2025 06:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zr5rA2Iv"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2ucT4cz"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A9B2063D2;
-	Wed,  7 May 2025 06:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593252144D8;
+	Wed,  7 May 2025 06:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746601060; cv=none; b=tVE/0s+g8YlVZ8uSnZTmn2C7kUMoA71nxlJCOb5IR3OC8Q6jzrbAMVwyIH74nkoKDMgz2wZxRrxxSG10WszLkKQoIu57zl6bqAb8HnGOkU9nw0h18hWVyhaykJWMIDc3FitVvUuAiZebxXJit542GT4gVYXdOF+uLSSk+0LrpxA=
+	t=1746601133; cv=none; b=hzNVhcdrVw6HijCYbs+JoPW3cSdmtOv8leGLa8G1tPpQH860hik1Z6OrB+hKmKjdenw/1tGcdQhssi9DpP7lFLmMBbJuftEN/d+5R1XEOJM2nVmA/Ibxz0uH3/tsmaPuIqJiydxw0P7aVPtEtuLIpzvHjKNLwJ4whPZKVRqnzNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746601060; c=relaxed/simple;
-	bh=uPboJtORJLTXZAEefZEjcc4REguT1i3TGxVcx273sNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HFX6G4aHua9lAMqc5fEV8OMMF5ez+gK9tc/yYwQod3bD/Nqz9zKsz47b9m0PkiB4DVpr8fDi4bwDW+/FQONgfHiyIoBgjimbSkR39xO3fUTqV+86t0L4meaGipatyC603FqO33f9LcsjmqbHfaJd5hHbUik0r1NDfjZU+t4CiFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zr5rA2Iv; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1746601133; c=relaxed/simple;
+	bh=CJdFR5JtlDtikPD4OrMiZayMUaCskl6VAbLParxDykI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rFlECIfA14mHGnnz7waaZlCUeTXd8WBtQ2A2WtLZFTvzF7y3DgJKJEHKBm6hZHhvdkZ0MVISnCsozbclSr6qudZ/C+mUka7NFEuS9/YTBkZUDRmv4Q4CrQHIXby8072IGFTM33bYV7Vt4/1b4wNHWUZ5JhPlQPxgXBttrzfzgTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2ucT4cz; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac34257295dso369932066b.2;
-        Tue, 06 May 2025 23:57:38 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476ab588f32so104331771cf.2;
+        Tue, 06 May 2025 23:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746601057; x=1747205857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xamK371qeDgglo6MoBubskEqTznJCUNhPzrK1iwUBn0=;
-        b=Zr5rA2Ivf9FCL0p4CPXLlIxuji+1IbOhUapMKbmTwR7/ruU8j/elJBuZ1jtKwcqWUm
-         Kmwvmw7McjBv+vMOFOkZVIahk6ss1UbpjMauTk2VU/DPz267KXWQDfekPQ11mf13aorC
-         iyi2vkIF/K1Hnkgq6McLXYk4tLQiH6EGZVmom8HT9RID9D0xWfD8WaVvB+sY3vH60lws
-         j0Uu4XSMQ9mfgo3ZrIqzX1RQtIt6EEOgjZSZRs6Z49+a1w51VcFoe85Vju4cvny7CZDf
-         MD0i7gN3smevHU32V/SCDLCuDtgW9SJAAuG54RADSCVm24ZSWC/K5SLk7eMsbKIluYvc
-         N5Tg==
+        d=gmail.com; s=20230601; t=1746601131; x=1747205931; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jIOpltPILeInSwqFzp6wxXo2CyfMdnE8s6AQHz0yqWI=;
+        b=U2ucT4czKJe9YtP/LYjtduMIjthktEJHZSyUhGPTfDITJE0b7qjBO9Bq261mRhTnAU
+         KqevOKvr6D/Bfoc3UEo6fthkTeEgSYe8YNpLTiDE2rSSCckgBWL+thlEh+REqzUVbMx7
+         L1NsgVMNQdQgVfwGhmJhBlotM6xot6+p2n1lXPzX5NgzgwkxXtlhtMDhTzDkm8QdG6P1
+         r908njOW//LZ894nubXWYbZZKYDquMSn5qZRA3ddo17+vyzxddK4ZXOZknHNNMb4fj9C
+         ufeQJqJ99fG8g9OR5xF5I6t83Zq60FIkwsMOmIkY2IRk2jYETwwDo51qeREhfFnmjEmK
+         jATg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746601057; x=1747205857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xamK371qeDgglo6MoBubskEqTznJCUNhPzrK1iwUBn0=;
-        b=rceJOGxRB/sHlN/hkIJZXfA/Jor2jZx7NVi0/+LYYYOV1nlJDsZSL8eYcrNKL/RgFt
-         65qI27ZMpC3P4k09QGDO6He0GOf5R6q1+V6me1Qt3eeWAIXUxpxSoTFNa6yVQHhHcCpm
-         9dyO+XrOtHCAUobQa3GCs8aZzbd/ktj7MzSMp4D4zrHCt/yWLOf3sbjI3DAGL5cSugfQ
-         mZ9I9sm7g044kBC1MaLBoXRIWfG3ekmE9xiR0Wub8s1ylrUkGXXkwtjEGvquI1RVDa1t
-         fHztNa1Y6z/BQsfKzUul/trBmpiI6Bs+N2atRaADxEzDJ5qrfB7W8GtkwmagtOydFX0u
-         PO6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMLvGCc/zysTt8YYNV/CXwpfIzQgmbw26gvLJ3uWb9NTTxmZ8Vf7hq4Z2tUV8qK8PZOD3wm3Yh4BQH@vger.kernel.org, AJvYcCWoBB/v0ntFlxUE++qXa9iHsqUXoq1TD0gy6tWmbqr+QT/XUs2BdlKDutx6/KWzR9fPjuHGLDhkT1H7wAcN@vger.kernel.org, AJvYcCXZc2q817oq79epNQFy4svBxgeSATL2uumqK3Sgth06SNqpp4KNhKTLC49uygrFjRLqi28HmYK2jaBb4wi6kGGZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwECC71ZhKFbU+7CX6Mo089Skrag//KuyVZ3+5kWPbyq8Gvb1NK
-	oTPClJu3y4yIIfwqCtAlBzVhEDd7gtF+9Ht8d+GpF+7esCnIChs+c32MHOM8gvc2wT33oq/Y5/e
-	L80e+/Yig4Bbgx7qB/JKtltIdp2w=
-X-Gm-Gg: ASbGnctXl9Y5EMHor5zxo+r0ZlPvMIXze6qS8wMBltyJKYM0roV62jcu0+kv/gjxzPg
-	jkyES8NzEmkfrEizKcMujSa84wRA9eaIb0fCtKlzDrbULnCvhit8Vcvgb5t6MS2jF56r/GQ/P2C
-	7GpQn179OTzA0NlJhEIWTIsA==
-X-Google-Smtp-Source: AGHT+IGI77F5aV03xw4q/HDB6CAuRWeWQEFqnds/n2CENsez5LXuhQv2OMhweTULBgv7huoEcYH14MKgqYabvNZ5Nug=
-X-Received: by 2002:a17:907:3d94:b0:ace:68a5:ec50 with SMTP id
- a640c23a62f3a-ad1e8cd6aaamr232314366b.45.1746601057038; Tue, 06 May 2025
- 23:57:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746601131; x=1747205931;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jIOpltPILeInSwqFzp6wxXo2CyfMdnE8s6AQHz0yqWI=;
+        b=mGbANwj71zGKXLazFs2VfxLl7vpQeI1Lo2CSmrmC1DWG9JRKWC/Wjw4AKAe3YOGbDi
+         aZT4USJ4vIZor9wevnv0xiAOgo5jg4dr6I98Ueb5IY6FtEVQ5CAbxjEBnzBUnncC9t12
+         /fcOm8bSw11DMLxf+bjoWBgaNKFzv3AQq0N5k+GGTCMmr8Q/JxQWZY/VjsLUpgqcM/cg
+         iVVIAc9Aw1LXTcEA5ZV3hkaP/rKtRgQGF65mQnx8CGqFG2iyAp5XM1O5GNAbevZRSrPt
+         D4xYA16hlLdYQOGvu2JaArrV9KoF0qyKhp0gSFiOadBQId4Wr9as7uZHBXRS41WlLvKi
+         twCg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/a5AEHPEbPNW9RcQkgL/GGWnfBRqWdoOXImPbFZrzYnY7NmYcPkDRnkbtGskGKjPfe616oSk0L6XI@vger.kernel.org, AJvYcCURmdgHrI2mRh9vd4BOZs3E11iwUdmnI48/rfVzKWkgbuudzOCbxn3JW7QEUcLjwlrQDlByEH+hJ3l99Ws7@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMcQYKyTaesMixBePIWxJTqQLZ4gtwgql+/UVmxKVlohPiicI
+	8tQTxu8EI1MlaQVUfogvh82BOyqV0lEzqyHZBulyCxH9N04bog+1/LwvZrCeLuUMwQ==
+X-Gm-Gg: ASbGnct0uhrjjzkgFBraDICMWb3ZJHOEjdNMyFXYBHEFS6dEzSxA9vUszh0YX4BX8kd
+	Zr0yFlxPT7oMeVaSuksBJ/cw3iaS5YFKTjBvLGHvO84m+CawUft8AWUD7BX9nBdL135sh1DnmQo
+	5AVcrXp759qEhgqA1ey2SudN+Rh8yh0ICZ0Px30JQ7nBtadykzpfdIoomULZc2acHfiwZkzmsTO
+	guWp8+O7ErFWce+qVJdYgednXsxxvJ0ZV/KKV9aJUksnvDCOs7jhGTHYgj8e4ij+4XlRY8VUscD
+	YcdyFMDXkOIZqfMBoh1m5zgThRWFN80KlmkjCkKXPDoMyytRa8RPZ2GRz1kYT8s=
+X-Google-Smtp-Source: AGHT+IEuH9gQXJVdRcbH2dTIbJ9oZxHTm9KD4cWN5untak0N55vRPUL7OXKYZ7KaeTcHEvqoW9uAlQ==
+X-Received: by 2002:a17:90b:3945:b0:2f2:a664:df20 with SMTP id 98e67ed59e1d1-30aac179364mr3888974a91.7.1746601120438;
+        Tue, 06 May 2025 23:58:40 -0700 (PDT)
+Received: from NB-GIGA003.letovo.school ([5.194.95.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30aae525db4sm1315529a91.22.2025.05.06.23.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 23:58:40 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+Subject: [PATCH v2 0/4] clocksource/drivers/timer-vt8500: clean up and add
+ watchdog function
+Date: Wed, 07 May 2025 10:58:29 +0400
+Message-Id: <20250507-vt8500-timer-updates-v2-0-65e5d1b0855e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-12-3906529757d2@bootlin.com>
-In-Reply-To: <20250506-aaeon-up-board-pinctrl-support-v5-12-3906529757d2@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 7 May 2025 09:57:00 +0300
-X-Gm-Features: ATxdqUEyr2DC5DFowZNdUkHLnOYf7BYsyZqXfrppxWGAEJovaoI5Q4o1n5r63Dk
-Message-ID: <CAHp75VfFnd616FiG8XP_oW4MeMBrqj_nmi0xCOGUj-LG1ru-qw@mail.gmail.com>
-Subject: Re: [PATCH v5 12/12] pinctrl: Add pin controller driver for AAEON UP boards
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJUEG2gC/22NywrCMBBFf6XM2pFpbBNx5X9IF7GZtgP2QRKDU
+ vrvxoI7l+fAPXeFwF44wKVYwXOSIPOUQR0KaAc79YziMoMiVVNNGlM810QYZWSPz8XZyAGrypJ
+ TqnVGEeTp4rmT1569NZkHCXH27/0llV/7C5r/wVQiob4b3ZnuVJHV13608ji28wjNtm0ftmOkx
+ rgAAAA=
+X-Change-ID: 20250506-vt8500-timer-updates-44a0d22cd720
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Alexey Charkov <alchark@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746601114; l=2013;
+ i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
+ bh=CJdFR5JtlDtikPD4OrMiZayMUaCskl6VAbLParxDykI=;
+ b=vn6WIN2+S1/nDLbOVRpn67Dhf7fJCqQf3bu10iaHHYgZ2sWifYO/4cVgZ8GSSBKZWPk7w8dAq
+ hgW+lOK4owGBqom9MxYcnK3dDD12j+gr5i56ZVJq2sGzhAr4Fmoi2M7
+X-Developer-Key: i=alchark@gmail.com; a=ed25519;
+ pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
 
-On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
->
-> This enables the pin control support of the onboard FPGA on AAEON UP
-> boards.
->
-> This FPGA acts as a level shifter between the Intel SoC pins and the pin
-> header, and also as a mux or switch.
->
-> +---------+          +--------------+             +---+
->           |          |              |             |   |
->           | PWM0     |       \      |             | H |
->           |----------|------  \-----|-------------| E |
->           | I2C0_SDA |              |             | A |
-> Intel SoC |----------|------\       |             | D |
->           | GPIO0    |       \------|-------------| E |
->           |----------|------        |             | R |
->           |          |     FPGA     |             |   |
-> ----------+          +--------------+             +---+
->
-> For most of the pins, the FPGA opens/closes a switch to enable/disable
-> the access to the SoC pin from a pin header.
-> Each switch, has a direction flag that is set depending the status of the
-> SoC pin.
->
-> For some other pins, the FPGA acts as a mux, and routes one pin (or the
-> other one) to the header.
->
-> The driver also provides a GPIO chip. It requests SoC pins in GPIO mode,
-> and drives them in tandem with FPGA pins (switch/mux direction).
->
-> This commit adds support only for UP Squared board.
+Add named defines for all registers and bits in timer-vt8500.
+Move the system events timer from channel 0 to channel 1 when enough
+information is provided by the device tree (i.e. more than one IRQ).
+Use channel 0 for the system watchdog
 
-...
+Signed-off-by: Alexey Charkov <alchark@gmail.com>
+---
+Changes in v2:
+- Included the previously reviewed binding change that is directly related
+  to this series as the first patch here (thanks Krzysztof)
+- Created a separate config symbol for the watchdog function to let users
+  build a kernel without forcing watchdog functionality upon them
+  (thanks Krzysztof)
+- Link to the previous binding submission: https://lore.kernel.org/all/20250506-via_vt8500_timer_binding-v3-1-88450907503f@gmail.com/
+- Link to v1: https://lore.kernel.org/r/20250507-vt8500-timer-updates-v1-0-6b76f7f340a6@gmail.com
 
-> +#define UPBOARD_UP_PIN_MUX(bit, data)                          \
-> +       {                                                       \
-> +               .number =3D UPBOARD_UP_BIT_##bit,                 \
-> +               .name =3D "PINMUX_"#bit,                          \
-> +               .drv_data =3D (void *)(data),                     \
+---
+Alexey Charkov (4):
+      dt-bindings: timer: via,vt8500-timer: Convert to YAML
+      clocksource/drivers/timer-vt8500: Add defines for magic constants
+      clocksource/drivers/timer-vt8500: Add watchdog functionality
+      ARM: dts: vt8500: list all four timer interrupts
 
-Wondering why we need to cast here and there if currently we all use
-constant driver data. Perhaps enable const for now and if we ever need
-that to be modified by the consumer we add that.
+ .../devicetree/bindings/timer/via,vt8500-timer.txt |  15 ---
+ .../bindings/timer/via,vt8500-timer.yaml           |  51 +++++++++
+ MAINTAINERS                                        |   1 +
+ arch/arm/boot/dts/vt8500/vt8500.dtsi               |   2 +-
+ arch/arm/boot/dts/vt8500/wm8505.dtsi               |   2 +-
+ arch/arm/boot/dts/vt8500/wm8650.dtsi               |   2 +-
+ arch/arm/boot/dts/vt8500/wm8750.dtsi               |   2 +-
+ arch/arm/boot/dts/vt8500/wm8850.dtsi               |   2 +-
+ drivers/clocksource/Kconfig                        |  11 ++
+ drivers/clocksource/timer-vt8500.c                 | 118 ++++++++++++++++-----
+ 10 files changed, 162 insertions(+), 44 deletions(-)
+---
+base-commit: 0a00723f4c2d0b273edd0737f236f103164a08eb
+change-id: 20250506-vt8500-timer-updates-44a0d22cd720
 
-> +       }
-> +
-> +#define UPBOARD_UP_PIN_FUNC(id, data)                          \
-> +       {                                                       \
-> +               .number =3D UPBOARD_UP_BIT_##id,                  \
-> +               .name =3D #id,                                    \
-> +               .drv_data =3D (void *)(data),                     \
+Best regards,
+-- 
+Alexey Charkov <alchark@gmail.com>
 
-Ditto.
-
-> +       }
-
-...
-
-> +static int upboard_pinctrl_register_groups(struct upboard_pinctrl *pctrl=
-)
-> +{
-> +       const struct upboard_pingroup *groups =3D pctrl->pctrl_data->grou=
-ps;
-> +       size_t ngroups =3D pctrl->pctrl_data->ngroups;
-> +       unsigned int i;
-> +       int ret;
-> +
-> +       for (i =3D 0; i < ngroups; i++) {
-> +               ret =3D pinctrl_generic_add_group(pctrl->pctldev, groups[=
-i].grp.name,
-> +                                               groups[i].grp.pins, group=
-s[i].grp.npins, pctrl);
-
-> +               if (ret < 0)
-
-Why ' < 0' ?
-
-> +                       return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int upboard_pinctrl_register_functions(struct upboard_pinctrl *pc=
-trl)
-> +{
-> +       const struct pinfunction *funcs =3D pctrl->pctrl_data->funcs;
-> +       size_t nfuncs =3D pctrl->pctrl_data->nfuncs;
-> +       unsigned int i;
-> +       int ret;
-> +
-> +       for (i =3D 0; i < nfuncs ; i++) {
-> +               ret =3D pinmux_generic_add_function(pctrl->pctldev, funcs=
-[i].name,
-> +                                                 funcs[i].groups, funcs[=
-i].ngroups, NULL);
-> +               if (ret < 0)
-
-Ditto.
-
-> +                       return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-
-...
-
-> +       board_id =3D (enum upboard_board_id)(unsigned long)dmi_id->driver=
-_data;
-> +
-
-Unneeded blank line.
-
-> +       switch (board_id) {
-> +       case UPBOARD_APL01:
-> +               pctrl->maps =3D upboard_pinctrl_mapping_apl01;
-> +               pctrl->nmaps =3D ARRAY_SIZE(upboard_pinctrl_mapping_apl01=
-);
-> +               break;
-> +       default:
-> +               return dev_err_probe(dev, -ENODEV, "Unsupported board\n")=
-;
-> +       }
-
-And actually we can get rid of that train of castings by switching to
-use the info type of the structure
-
-(namings are just constructed without checking for the better or
-existing ones, choose another if you think they fit)
-
-struct upboard_pinctrl_map {
-  ... *maps;
-  ... nmaps;
-};
-
-static const struct upboard_pinctrl_map apl01 =3D {
-  ...
-};
-
-...dmi... =3D {
-  ...
-  .data =3D (void *)&apl01,
-  ...
-};
-
-board_map =3D (const ...) dmi_id->driver_data;
-
-...
-
-But since DMI will require castings, it's up to you as I don't like
-the idea of having that driver data not to be const in the first
-place.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
