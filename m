@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-638033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C6AAAE0A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B6AAAE0B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB3F189A2EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30291188C432
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7842F289343;
-	Wed,  7 May 2025 13:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CB820DD4E;
+	Wed,  7 May 2025 13:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n3ssBU8L"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="ou+DeZyt"
+Received: from sender4-op-o16.zoho.com (sender4-op-o16.zoho.com [136.143.188.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F2C288C2C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746624302; cv=none; b=s8FWs0h47LWylwlRyGWA2Xe8tYbfZGbyfGkDy4Cam6i7T097reouYzBmiGlv/Hi2cD/IROwgQmLDogsU6a5B0hu3VPU2UicvOf1H3J9oT3kq4CafFyijEAuATjGN/LVMmjf7SFV8FTpwS73/yWW3R1sWZnfHVpoyJyywQOxW8Rc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746624302; c=relaxed/simple;
-	bh=JPbsFId9HOcNNCMKmW+AhN0ZtMa4qZCci/vBQwntvgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UeYROykHS6ZXWhdAjhQLY/+yq/ovNTOByxAnV8u44tzWsaSMTCz9Cn02/q7k6++c2ELsdEXNvV3iAZRy1JOkV8f6r1krmXWz16nGaVLmLzl6rkDHJ94wN6fB5/Pg2JAb6Gl87+hyanRnI0NCsbnQh0rx4tDoYocXoHO8pz9KcG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n3ssBU8L; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6f5496972d3so1274606d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746624300; x=1747229100; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1mNpLvD5vQVoCYoH8klEkGMCzhi+IWNYb5PmxSoaGgQ=;
-        b=n3ssBU8Lp0W2PZYdMzR65aXwQMuNo/o7Nmr/FofZQnTiNB0QemN9b7ejhPlCpAw6CR
-         urmmdwInwtUS1SSOutMdT9rQzv0Wb/W+KnEu3IPgWSgUTOZhSjWYvcQJYrFOIdoAIfVE
-         /A6o5TlQSdBlYR01dk2tx7mOlgVv/Y3enhWwIoFido6LCwwMNWUj0fIzYZEUN9fBSe+U
-         z6Nf+m3tKuUaywbd75n6tfNoCOtjzrVlaUa0Rsp2kumV+K/XsvkHlvuTcES49QPsdEku
-         ag4mHEUHEA7Iv1O/rqXVVh1VwNKkwh71ECAeMqf1ff2nCfoDI8xzmS2JaSTjSE2+0e7L
-         zHwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746624300; x=1747229100;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mNpLvD5vQVoCYoH8klEkGMCzhi+IWNYb5PmxSoaGgQ=;
-        b=LSUGbSnUgOyLVbCo2XOjA7XaT5cdnJIqnWIQL0LmLitZaMzkHkMApPo+/+tVMcp6ZR
-         vC8myTcq52G0cjB57VwPQKOK68jJTiv9VqZNgklKc8Wa6+upYCCvKNDNjwta6JC0nCAC
-         hOQy6Y4V1fo474ba2zjH9MQDt5ZAGhdJlIEHRuXz6wGGZGxOFV+FfcD8eETiKQk5jNGd
-         YTRYj4/zdJQt513e/GPptWT0wgwhfV7fklUrxH8xhufxmVrb3rVzCYhlkWYqruz27ogQ
-         aM+tVysYzGWJYmF3vNm1x7YV0fw+lzUgQLatRd1yHibmXJWQaz5LrW3m2atmhZXVJR3Y
-         TmVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY1sFPbgceyTHI3T+8VSdkHRV+bXWtD/6YbAQzj+NUGjLdqIzzciOfsB3t3I4x8TIPo5a5h/7J3YuxtyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMvG1XLyRx2fdp+C3gGUqTSuj/aXoj/Khwhi/x/ZCw7jX+4465
-	sjFIsUqwhIdSRTdO9gW/mCy0I+DlApNEJXuTS0DGOxrsvqEg6RXLDKqLVLdumcza7CkRxpvooGA
-	v
-X-Gm-Gg: ASbGnct3Srlw566Df/hnzdNcwe6fVlqLeZby4EOTrApna2ZT3HLBZl1o69AEjp0O2FH
-	xv5pNTsEGRLTJapXfTeqdWs/POIoRVcSzgr+OwjNSKBPLoabRJIHoYBGEY9c1E5ZgHp3CpO4YdL
-	4bUaA0Zq6RxaCSzaolPIFVSD341gq45dOpZ3Q2FqC0BpPGC4JnRf5CB0XRLosK7ZidfHJdchbJr
-	Rs468m9hIpz4GR0ef+d5yTFyop4R2KLd0MoYqbqRD1u/E4W32pro7X0c0mC+JRPVrB+QDldFwPZ
-	GWSxEr7yvkijQo0CSsCZn35pHXC4+WAwgt1uZUvXlPo2x5IQpKF34j+cG3+RpNVayItuNmSHVeC
-	BFGKvTl6tkx43Gh8=
-X-Google-Smtp-Source: AGHT+IETb2JbAqHKM0Nsvz8Uj3dfNmRTjWBQrhF4LcQa8hFco6QFGOGpJTMa1w7dB5MoJJ1ZXmiC3Q==
-X-Received: by 2002:a05:6870:47a6:b0:296:5928:7a42 with SMTP id 586e51a60fabf-2db5bed9a3amr1627337fac.22.1746624289401;
-        Wed, 07 May 2025 06:24:49 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:3356:f6f6:bf76:a32? ([2600:8803:e7e4:1d00:3356:f6f6:bf76:a32])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2db5d0666fesm585351fac.33.2025.05.07.06.24.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 06:24:49 -0700 (PDT)
-Message-ID: <9457b419-6aca-412a-b0f7-4b3c7274789a@baylibre.com>
-Date: Wed, 7 May 2025 08:24:48 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B09F204C3B;
+	Wed,  7 May 2025 13:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746624404; cv=pass; b=T4pZ3JZ3jGRF68TXUGC+1ZYkssYO+Mo6mfLj5ylyRyaxFAXkskn1C+kUshqiSiDx3i4pq6E3NvTkWnLFjLKrmXufRsBsLmLsztAdR8TNzlGXemlwDlwy6swX/YFcR2mjMLaBPUmtRH5ekDw8i5lu8WKaU060ifQyjfchl+V3EXo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746624404; c=relaxed/simple;
+	bh=OphoVpCuqFGZlnD/uLkmltrZIdA0mlHD7z5s3T7G71M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ad8Xgxp3rLZN0Gidrdbte51I9HA8zQ7nj8qr9vSe7+5PP7vwJX9osxp/BNp/AdCcUCWveGR4p5P0jX0CY5de19VcYhahOj8uy0g9FFmnrpPdNZaP07PenuxG/rSflNvFm3/cws+3env0+5pLGYMgJhHPmFAJk/OqZ+YyrButC0g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=ou+DeZyt; arc=pass smtp.client-ip=136.143.188.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1746624377; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=S1k8a2Acv6BXrjoxOTVMKMHBXn+k71huHmWZkYha2kI8zC90aC+rnJX2c6Xhc2t08Ce19Kf4LmuHzpFsKI8wML5khJJh3Jekg0i1xjva+lVOQZccMD/nYAR4zpzJUzfL11Aikn7QmRts5k3+jEUVkxE5WoOvzOEktasam3eYhro=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1746624377; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2FqE0aBRpg5Xv7N9/CQAH4qFbVDGFCNbZ0/TBEJd4YQ=; 
+	b=RKk8hD/MV9r/D9GwcOpG3VhmJHBnECSG0QuXUpAwmOq8DPR6Xf0+DqZ6WZoJO9fJkf5c5D7Vr9CrxUq64xX5azTBTYlY9/88BEShmZeMnH0LW+23hJEngIMlDM/+bRkkWbAk2hLIoglcdwQ00fdQ8SNShC+8wxunMsCr+QryWwU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746624377;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=2FqE0aBRpg5Xv7N9/CQAH4qFbVDGFCNbZ0/TBEJd4YQ=;
+	b=ou+DeZytE/vwJN6wq68vpIBCToFSVMuZX5EpTs+7IpY2YKgTrudxp0RcdJjZCw4I
+	Ru2Lc7on1lipzkCJLDIx0X8HIGWpR5Lh1wf5BwPrLTT0BtXxG7E7wAIdGnmIgwOlZ/4
+	yKApiCxRs/NgBEmZ/8jInWj6I0yR5LtgtxBg5r2k=
+Received: by mx.zohomail.com with SMTPS id 1746624375197517.6340677539908;
+	Wed, 7 May 2025 06:26:15 -0700 (PDT)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH v3 0/2] reset: canaan: add Kendryte K230 reset support
+Date: Wed, 07 May 2025 21:25:32 +0800
+Message-Id: <20250507-k230-reset-v3-0-c85240782ea5@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] HID: sensor-hub: Fix typo and improve documentation
-To: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>, jikos@kernel.org,
- bentiss@kernel.org, jic23@kernel.org, srinivas.pandruvada@linux.intel.com
-Cc: linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250507055745.4069933-1-chelsyratnawat2001@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250507055745.4069933-1-chelsyratnawat2001@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAExfG2gC/1WOQQ6DIBQFr2JYF/NBtNKV92hcKHyVaMWAJW2Md
+ y+adOFyXjKTtxGPzqAnj2QjDoPxxs4RsltC1NDMPVKjIxMOPAcBgo48A+rQ40ozLsu7KjpAnZM
+ oLA478zljzzryYPxq3fdsB3asR0aA5JdMYBSoBqUVY7KU2Fb2vU7WjqmyL3KEAv/L8QOHi8yj3
+ LFWNMAKFFlZLaZ/WddM6YpqIPW+7z9oT2HL5QAAAA==
+X-Change-ID: 20250404-k230-reset-32987c6f0ed5
+To: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Chen Wang <unicorn_wang@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746624358; l=2115;
+ i=junhui.liu@pigmoral.tech; s=20250507; h=from:subject:message-id;
+ bh=OphoVpCuqFGZlnD/uLkmltrZIdA0mlHD7z5s3T7G71M=;
+ b=xAvDQhHX2IBFtskj/M2/vl8PQmBqS8nBzIsDpb4ebzccXFl735ggOhobIAT6e9TzCYcIITT16
+ Hj1F3TxUqXvBw8lkyHxyxr4v7//yIWuLPsTQudffN694dSZZUk8Zf3E
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=d3i4H2mg9LUn4SQemoLAjLRQy0nTcyknIv6zgKMwiBA=
+X-ZohoMailClient: External
 
-On 5/7/25 12:57 AM, Chelsy Ratnawat wrote:
-> Includes the following corrections -
->  - Changed Measurment -> Measurement
->  - Changed clode -> close
->  - Gyro -> gyro
-> 
-> Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-> ---
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+This patch series add reset controller support for the Canaan Kendryte
+K230 SoC.
+
+Tested on CanMV-K230-V1.1 board. Some of the HW_DONE and SW_DONE reset
+type was tested by reseting the submodule and checking the reset
+register value[1]. The CPU reset type was tested by a temporary rproc
+driver[2][3].
+
+link: https://gist.github.com/pigmoral/cc45de673775575750ac7fe49d4456a2 [1]
+link: https://github.com/pigmoral/linux/tree/k230/rproc-cpu0 [2]
+link: https://github.com/pigmoral/linux/tree/k230/rproc-cpu1 [3]
+
+---
+Changes in v3:
+- Update copyright/license in driver and bindings headers
+- Rename HS/LS to HISYS/LOSYS in DT bindings
+- Add reset-timing notes at the top of reset-k230.c
+- Replace long udelay(200) to fsleep(200) for HW_DONE paths
+- Remove rstc->dev, store device in rstc->rcdev.dev
+- Link to v2: https://lore.kernel.org/r/20250420-k230-reset-v2-0-f1b4a016e438@pigmoral.tech
+
+Changes in v2:
+- Turn to_k230_rst from macro to inline function
+- Use guard to replace spin_lock_irqsave and spin_unlock_irqrestore
+- Remove assert and deassert operations for self-clearing reset types,
+  only reserve the reset operation
+- Add delay to accommodate the reset time
+- Remove blank line inside read-modify-write operations
+- Remove redundant default case in enum switch
+- Update copyright dates and my email address
+- Link to v1: https://lore.kernel.org/r/20240924-k230-reset-v1-0-d0cdc11989eb@outlook.com
+
+---
+Junhui Liu (2):
+      dt-bindings: reset: add support for canaan,k230-rst
+      reset: canaan: add reset driver for Kendryte K230
+
+ .../devicetree/bindings/reset/canaan,k230-rst.yaml |  39 +++
+ drivers/reset/Kconfig                              |   9 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-k230.c                         | 371 +++++++++++++++++++++
+ include/dt-bindings/reset/canaan,k230-rst.h        |  90 +++++
+ 5 files changed, 510 insertions(+)
+---
+base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+change-id: 20250404-k230-reset-32987c6f0ed5
+
+Best regards,
+-- 
+Junhui Liu <junhui.liu@pigmoral.tech>
 
 
