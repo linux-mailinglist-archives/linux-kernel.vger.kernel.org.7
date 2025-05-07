@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-638327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45308AAE47C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:22:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BB1AAE480
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063891C21EF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50094E76EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C1028A411;
-	Wed,  7 May 2025 15:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE49C28A40A;
+	Wed,  7 May 2025 15:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7uU6SRX"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOciCNrz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C441118EB0;
-	Wed,  7 May 2025 15:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A469C28A406
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 15:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746631358; cv=none; b=VPiZqeaOZJR6Gbu3p1aW1OB/mYs7ZKYufZgzmI/cc1y0j/wc+bM+62D9hDj8BsMnVKbJDgqeaoTOqKEBSQ3Ovz+ejljy66vfGwEhv6wyrTNcjp9INUrPeNcjytOSVJkSWeY83HwzFoiIdOsMa1SlSeF/1BfXZy7UnUDyISmZE78=
+	t=1746631385; cv=none; b=qRX0A2dLXJNoXxh30iNIHTG4SJo7HeLi5JWkFfisc0hNh6RNRg+TRv2X6SvHB0jmcwOvV0vfDcVojt3H3pXRwd8Lw7Ioh8roi5isVu+704YuYRIhTdtkQg/2zsqXbCQ4VsSN+CTUXe4EoaTtVFkIKjkWa3USrUZlM9MXfGcqfmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746631358; c=relaxed/simple;
-	bh=G6GIobQZjGbAv136r9m+tdpjpUDEpPUBOIo+rwGG/qE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BfdULuT2ElLYtGRv9poViQWfMfQo5E/08+0Zo0aO9i9A2iDSloJiM6Th2AOi0WdBPkUZ/wn/Z2cSWQW8hlp3xuYgqJKMQ+u34PU7xaEV+Oj6CaGBZfQPpqTyjTD6DklR3xCE0Ed54U10R5kvCe1VxveJwwvm61xoq8Zxm6lZcFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7uU6SRX; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5fbe7a65609so2196524a12.0;
-        Wed, 07 May 2025 08:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746631355; x=1747236155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QLt5UoHo/uyFct2KVPgAYy9QmHAyTkt3+bUdcit5PVs=;
-        b=J7uU6SRXzQE6EccKmf+j9MC5sVrPjP/hHsf/+5oUdQMT2wUU+UQNETSuasmGSBfliJ
-         cBTitvTwzNzrT2+iQPC1SnlZV5QySgocAodPI6/zApjgXWkk2L2iKFHGJKORj8YzETrS
-         C7u9JXnUfqYCRSHCld63rwpfV2bI8eXaEkPFbt73xm/7a94HyUo513a3yRn2hVj8U8cm
-         cJH4z0WkjuFjUToZGzOYXHyrsfkZfJ4uoDXTFT3xZGsjEuEmDr82uUhJyrBRZvOvXNas
-         YRZyrZCL5cXfiAI76Fz40SCEIwhPMX/URTy6m50iNS9+vapAqZYn0fkvQVe+fQk5aU6T
-         0JqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746631355; x=1747236155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QLt5UoHo/uyFct2KVPgAYy9QmHAyTkt3+bUdcit5PVs=;
-        b=mTSt8fDbvGD5ui+4Gts8PeifmPNGQ72+GYkI+aVJxMHuKU2gwC/Mh0krQyWBHg2afN
-         fWHTgravKDAkP81VUTU3Kh6SiGyBcafQW6I7ekdk4BZaTW98dDbfDkiOF69DdLtFBrFa
-         SbLBpjHEokpaXavDHM/rbX0ak4E1N2IniI2SMTdMJpDOxaqG3wfPDg4JvdwTfISSEqGd
-         go5HKMAekyZVTH0OSXwQSz9PPnnAvghFLzl8cimCgWcOcJ4GVCWwlReb7mt3PtMNDU+x
-         H9+EyR4HGixPmw/N0uApenTe27sVYLkvtdmOwnJMtSHcYahlqSRpdTAYMCIcClSyqqqR
-         MrNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUH0fRzwwKuUgmm3SSxyWa2SGAwtRUWS9JHwZDVX66fn2msknHi/yFjM6HMn0cwPsjczbFd0I6GVDeBJ7a23i17@vger.kernel.org, AJvYcCVk9Yko2L8Xa73xHa+y2Wd+GktuJeq/HiACPBsI3vLo8HEx/YTS9Zzk8Xeyd8IQ9n3whRxeN8OCDAbje6yZ@vger.kernel.org, AJvYcCW9TA6WQWdBHBUa91OHE4d1evuzaq5vdwYNGPdlKSs2CEYcuZ/AvAV8+SGlGYIP70AZvQ3FmNw1h1xk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBCbTCt9I+LJKm+VLWO2hngHvac/tEw61Q9IFgjB71VEvPpVc+
-	4adzpY4d8Y24ZpdGb/xaFoSd+7Ih8cAOQkDOHcAdsrz3cUDMSI+s2JprQ2CgQnQHmnK1VLEdFhA
-	yN4pq7wcZ66dAYKQqA6F9NOyZVEc=
-X-Gm-Gg: ASbGncshpWr9BKs9Zum60GEc+sfcC4RJzKvUltFMO2oj/opeL7BQJiZe8AR6+AyAa6B
-	9Lc1AqmHNEhOycEIABQLYwclpb46P9JTbeVo6XFYnMZhH9iU3hNBelvlosbZ/zO87v/3CVYm48e
-	1iY0oxFN/DWwUggDTmhc0MtdgG
-X-Google-Smtp-Source: AGHT+IENrHBhDJ6QmCIALW/trOZbo+S+uz/FTJiKIkupIyaB84PssD8rkhzD5vVURdYtZ1ValTicpx4mnni9dTZkiMw=
-X-Received: by 2002:a17:907:7f1f:b0:acb:88ac:e30f with SMTP id
- a640c23a62f3a-ad1e8bd008dmr427685966b.20.1746631354904; Wed, 07 May 2025
- 08:22:34 -0700 (PDT)
+	s=arc-20240116; t=1746631385; c=relaxed/simple;
+	bh=Zgmr6iJd8g+KzK5o4rT/ELhK01dSOYofk9zzH8Ey8ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ol/A7W5ljpJP38M1P52DqK4miR+UH64BkxH3stPgSGbtjxXJEgqvhDZCuXkHWYclc+6DCeYB7lsbgr6slc+CGNNMws2vKxHjeyfm9VCRXfPlSbdVOjP4vPQrRtc3Stwm8nme1HtaqmrTVNfOJ2AVmbiNBQyXp6pYCH0KF81tlrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOciCNrz; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746631383; x=1778167383;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Zgmr6iJd8g+KzK5o4rT/ELhK01dSOYofk9zzH8Ey8ic=;
+  b=fOciCNrzxvFsfxd1i6RnGDnVtougFqKahW7D34Kwj06Zek8rlvwN/a2F
+   DmdW4TO5n/rc97QiDs/7FjRBJBaPN+0UZo+x0bqUhh1d1n8tW0pBZJOFf
+   oj0WSIo58+0nLaP2JkUp9U4lH4YPMZsbaE/EMkXTwbauROm3K1atAL5Ss
+   Ipb5z2BmwHqvRbvt37LE2idCcWnbomyflVu7gBZsFeDjVEdvA4oMOAoND
+   j8ZmpCYFeQza50/2KHZweB2otaD5Z6K8JtWzOB1lzuEpI6Yp3nwCG2RDC
+   zeDm74iU2ndKsAXiYdsQIV+nttNAOYu22NXqLOrgKuHKAru+vCpJaZxLv
+   A==;
+X-CSE-ConnectionGUID: 74uG4hwARLynV10MAX5OMg==
+X-CSE-MsgGUID: yXoGOgV+Q3yIHadaiMaAjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52186926"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="52186926"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:23:03 -0700
+X-CSE-ConnectionGUID: SQZhonD9SmSnwxX7tMw4lQ==
+X-CSE-MsgGUID: iJ5SNU+pR9exN/yj1i6iTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="173179086"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 07 May 2025 08:23:01 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCgbr-00084H-2k;
+	Wed, 07 May 2025 15:22:59 +0000
+Date: Wed, 7 May 2025 23:22:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: ld.lld: error: insufficient padding bytes for R_RISCV_ALIGN: 4 bytes
+ available for requested alignment of 8 bytes
+Message-ID: <202505072328.Xo8JNSdv-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
- <CAHp75VdRp7RG-YCAL2Jx4uXsT2RVQNeu-MxPB5pWRq8TqtsSXw@mail.gmail.com> <cb98bec7-748c-4e00-aa9f-b5075bebb5b2@bootlin.com>
-In-Reply-To: <cb98bec7-748c-4e00-aa9f-b5075bebb5b2@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 7 May 2025 18:21:58 +0300
-X-Gm-Features: ATxdqUGUzY3A4zHzeU_ubjrnOY2zfB9ZK-KToR7BIUdNK8ReLiEBIkmZ9i8rOpA
-Message-ID: <CAHp75Ve_oM6NyvLGsBK4CddEEv=cafw_VfONKwEBX2CBdNxJmA@mail.gmail.com>
-Subject: Re: [PATCH v5 08/12] gpio: aggregator: export symbols of the GPIO
- forwarder library
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, May 7, 2025 at 5:53=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
-> On 5/7/25 08:29, Andy Shevchenko wrote:
-> >> +/**
-> >> + * gpio_fwd_gpio_add - Add a GPIO in the forwarder
-> >
-> > forwarder
->
-> Sorry I do not see the typo :)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+commit: d4b500cceb0e09ae22722d41454df6012848062b Merge patch series "riscv: 64-bit NOMMU fixes and enhancements"
+date:   1 year ago
+config: riscv-randconfig-r113-20250428 (https://download.01.org/0day-ci/archive/20250507/202505072328.Xo8JNSdv-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce: (https://download.01.org/0day-ci/archive/20250507/202505072328.Xo8JNSdv-lkp@intel.com/reproduce)
 
-Your original piece of the code. Please look better.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505072328.Xo8JNSdv-lkp@intel.com/
 
--static int gpiochip_fwd_gpio_add(struct gpiochip_fwd *fwd,
--                                struct gpio_desc *desc,
--                                unsigned int offset)
-+/**
-+ * gpio_fwd_gpio_add - Add a GPIO in the forwader
+All errors (new ones prefixed by >>):
 
+>> ld.lld: error: insufficient padding bytes for R_RISCV_ALIGN: 4 bytes available for requested alignment of 8 bytes
+>> ld.lld: error: insufficient padding bytes for R_RISCV_ALIGN: 4 bytes available for requested alignment of 8 bytes
+>> ld.lld: error: insufficient padding bytes for R_RISCV_ALIGN: 4 bytes available for requested alignment of 8 bytes
+>> ld.lld: error: insufficient padding bytes for R_RISCV_ALIGN: 4 bytes available for requested alignment of 8 bytes
 
-> >> + * @fwd: GPIO forwarder
-> >> + * @desc: GPIO decriptor to register
-> >
-> > descriptor
-
-Ditto.
-
-> >> + * @offset: offset for the GPIO in the forwarder
-> >> + *
-> >> + * Returns: 0 on success, or negative errno on failure.
-> >> + */
-> >
-> > Please, spellcheck all of the comments.
->
-> Ditto
-
-See above and spell check. Thank you.
-
-...
-
-> > + struct gpio_chip;
->
-> And also struct gpio_desc;
-
-Yes. :-)
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
