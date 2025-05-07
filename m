@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-638431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5A8AAE5EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CB9AAE5FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ED61C010B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE029C55A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC96E28C2CC;
-	Wed,  7 May 2025 16:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2585528C01A;
+	Wed,  7 May 2025 16:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O3sqzBOA"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwPPIYAx"
 Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC9528C2B5
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EC728C876
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746633625; cv=none; b=OyzTD6p4VDEIihQcCFIwsU2Pwi9FHSuSW6z+8+R/1RYJnMIi4yR8bFlHWB/HVe/jX/Gk1F5LRJ/ljWJbAWPjW6FTA9jo2dOXdxaGwYJhtUQFnQGhnfNTmdFiXpKVoUUpfUCev2zDU5uV9ktf/xc7kNMPVzhpL3Fm8KoJ0a9oBAM=
+	t=1746633630; cv=none; b=HfW4TOB5u/UyZ8N/+2inXQBvqL5J+EHWlfMkPdf26QTbmVyKMDXk2f5mRgJQgZI6UyDzxxSfe7wZWbf9kDY4/cuNrZQaG5LqONQ68riqHvWKv8ehuQPc1n5Wufdip5cQ2ctr+Q0aXAZeHg1pRGgPE9uQlRfU8yyw3cVy4shrRFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746633625; c=relaxed/simple;
-	bh=Y/mhuvCecsqejneEVrknKH6BBV5XgR0N2ByP0o2/GPQ=;
+	s=arc-20240116; t=1746633630; c=relaxed/simple;
+	bh=XD6tq6DLpwHFBhGWr/rk78lh/gZU6XNiduo7++24E/k=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TpeB4qY4sntHdHNj5dCfeaSKYe11Z4tiF5rbA/ckR9GU7I2afzT7ZYtAKGHYq2vUS/56hBo9vlGzAEuFScDurZgoramSVHJ7eAtP+aKTNgnMahzhN9dysgehrL49c2TSzhdEbSCSUCjryn84fkSYh1YLEOsu9oyA9GOlOt/h8jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O3sqzBOA; arc=none smtp.client-ip=209.85.208.74
+	 To:Cc:Content-Type; b=uJqifdhTWxZEUjNZX5v/tYpzjLMLQSIxliS4NjRAJynOzox7NN3P5rY7ZHXQugI07Oo6eP6ZACwngMBqmMFmjCzqKaLiNfuX0y/lJDeZzMTk/SYtdwQCTODFmZpk0IlOIGSol1UkC2flveg0suczAjbqV8vbVzYZm8vZCSBOjh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fwPPIYAx; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--glider.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5fc1796ff88so179846a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:00:23 -0700 (PDT)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5fbc2b3180aso2334558a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746633622; x=1747238422; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746633627; x=1747238427; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sPR0SEzdksw+QARijEF+8H2O/syRn+ur/NtvRkf+UuQ=;
-        b=O3sqzBOARPSIlKdDnD1yO1gTi1txMLW9rMSpyfV6cvTKNltbKzcke0KC5xx8Nbn9VI
-         2m2glr01VM8oBQdjqm5ccZfjxKfHCuv+BIGRkYjfP1lCq8cJtdEpX9trnPMyCiKhJY8P
-         1hzg7mJPN9sRO8+MdSjypy1M+YrJ8t0UxnWhvdCjTcbRrOG3INSIZUYt29YcrwyHDYy9
-         n4wDxnFh24Eh9f6w+6wFcH1de2Nl+msZyhkO8nrVTvkclebfOwr/stDkQpL5TdfYCcqY
-         LPFPPEoduk+CrR1iIrO22C5nwFjBzI/sDS3Nh14Yo0OoQ0pJjq+PsGuz5N+iUl6OmSRv
-         90Sg==
+        bh=KJFmPHpAjo9itenoi9XTrC240347opuYhZoN6Yf/YdQ=;
+        b=fwPPIYAxDsLGNGxegifijq+j2vjIb+2o39SYo7PEKrNmjUQeQvSNxKvQz8guUdXhUW
+         ThLfisQc4uYwC+58H/Vvgrl9SGsjh3JPaGHsdBrzIzMKFZjWl2PcgxyVdh9ioSfHtjr/
+         REv8AxVtbeq8s4/+mkT4MBY3Et4m3w9Bra7xMDatFiPdU7PM3T6j9jecMw79sAa8wD4q
+         YQKCFmp4O7EpBINyEF+41Fx08LN9g8O40TYGceRV8SARaGESTOPHb8KPr5xe35cIoCQi
+         SGR2EOpwB/LRoTtOEXPosRTe7bifU7Ryh5OuU9QmDpp/NhkIV0f9RMOJ3QGsqC/D6ghv
+         TC5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746633622; x=1747238422;
+        d=1e100.net; s=20230601; t=1746633627; x=1747238427;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sPR0SEzdksw+QARijEF+8H2O/syRn+ur/NtvRkf+UuQ=;
-        b=nJdAuYBG1LRX2Ue0J7eVsZ0lSFTE4N8FJVh+2x2Lkg261zLRsR2HGBeNr1A8zSqQ+T
-         S6odhss5Ttpw/h6LK0qCK7Ma6O0jv7DJW6RdY6bVjTtQYhE2dHZLNBuyRLxAxOhHHSSy
-         NgMTQpgwetKoohy9xBwKM9ortfFvv7ydIV/7pKaGuM3kv4yFU55mwpA6oadyjNrieZ0N
-         vmgNlvYVvULrWheOJW0ICcJPh1Zykt3VmwnJGXufo0itrfykTj3ELMDKi/1zYYEAvnEV
-         F/hYA6KccUuVo8ZZ17UzPILscCD9czV03kHJx3XAelePUIr8i4ePo2Pn7emFuhxvT0JE
-         y8eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGeENlHcsowUIQMmhqx+uIJl1IAIto5a8fcU7lSyUjmHAkXsKOxi2DqalKuVEKWGXqKx7bjxDadUz9QuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU8tPykzzSwz+17JE81u1sYIogzk3CHh3e+Qmi9lXKTkuhaX/J
-	LZHEdXUfomMdt9G3+FjPq7nhD4MJVU0/4u++0jLOsrha0hID5aTTGaB6Idgqa6zuVJH0xw8X85l
-	rLg==
-X-Google-Smtp-Source: AGHT+IHQX+IUbHAPL3YWJZE1CLzx6Dp5YQzDNePen25Z4MCL94G3lLRUxhaPC0VmdhzxfcSUsNM6e/GkHJk=
-X-Received: from ejda5.prod.google.com ([2002:a17:906:2745:b0:ad1:83e8:4210])
- (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:7fa8:b0:ad1:e587:9387
- with SMTP id a640c23a62f3a-ad1e8c50524mr400870066b.21.1746633621858; Wed, 07
- May 2025 09:00:21 -0700 (PDT)
-Date: Wed,  7 May 2025 18:00:10 +0200
+        bh=KJFmPHpAjo9itenoi9XTrC240347opuYhZoN6Yf/YdQ=;
+        b=HxHX7pPiotKTRJlmlMkj574Lttj3QomZVlEjfhBHHfmSAONlnobxNdj46jGz4cS5m/
+         79h7M57hBUw3xuVM++bKPgXxiN0AlPFry4C7k/EhXuZ21+ZZ+2VK0J8bcc+gphQ4EkKD
+         KBYhtadY5dcMzZBTi3rYe8uQG8pQkz9hgsBszh7dVdqxWk6hgvY22dQNEi//5b0eszCS
+         im/uoCWMBBDvQt0uYEjntaBfY3YUbEdE0MgQyjkdRE7dJQtU/9pDgAzbD9iI8if7LU6x
+         WxN6mPX0WhzEOTctkKcdA6MUHQ/Hb/eirkXQBpn6/6SYlwcmn2kYmMIBD0OWNjAEqB2t
+         OIxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDvJjiLAs8K00eLOV8+5fnnHiUQ3vq2L9fxFO6sIQDiwuMOX2ysdeqk+wGPtGo8hPbujpJmggdZipCT2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDL+JCPS+n116JZOspFz7B76Gf6PK458WNUas2zyufuNhMu5mq
+	0Yds4HEkqLVFkcTwEhjh3L5G+Z5GR5gn5bp4vigmm4RJh9pQunM0kp2Lh00oD+cOwLIRpt0S9zr
+	0fg==
+X-Google-Smtp-Source: AGHT+IEY9J+6RSk9J+rQrBpcKgdLus6Hc6WLS3gR6uaIUF9WhG69XJktB+w6hozbhPAqchg3BSYqyZ02YBM=
+X-Received: from edxf17.prod.google.com ([2002:a05:6402:14d1:b0:5ec:cf38:1b3f])
+ (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:3813:b0:5fb:fb49:9cff
+ with SMTP id 4fb4d7f45d1cf-5fbfb499ef2mr1646769a12.7.1746633627031; Wed, 07
+ May 2025 09:00:27 -0700 (PDT)
+Date: Wed,  7 May 2025 18:00:12 +0200
 In-Reply-To: <20250507160012.3311104-1-glider@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250507160012.3311104-1-glider@google.com>
 X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
-Message-ID: <20250507160012.3311104-3-glider@google.com>
-Subject: [PATCH 3/5] kmsan: drop the declaration of kmsan_save_stack()
+Message-ID: <20250507160012.3311104-5-glider@google.com>
+Subject: [PATCH 5/5] kmsan: rework kmsan_in_runtime() handling in kmsan_report()
 From: Alexander Potapenko <glider@google.com>
 To: glider@google.com
 Cc: elver@google.com, dvyukov@google.com, bvanassche@acm.org, 
@@ -82,25 +82,117 @@ Cc: elver@google.com, dvyukov@google.com, bvanassche@acm.org,
 	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-This function is not defined anywhere.
+kmsan_report() calls used to require entering/leaving the runtime around
+them. To simplify the things, drop this requirement and move calls to
+kmsan_enter_runtime()/kmsan_leave_runtime() into kmsan_report().
 
+Cc: Marco Elver <elver@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
 Signed-off-by: Alexander Potapenko <glider@google.com>
 ---
- mm/kmsan/kmsan.h | 1 -
- 1 file changed, 1 deletion(-)
+ mm/kmsan/core.c            | 8 --------
+ mm/kmsan/instrumentation.c | 4 ----
+ mm/kmsan/report.c          | 6 +++---
+ 3 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/mm/kmsan/kmsan.h b/mm/kmsan/kmsan.h
-index 29555a8bc3153..bc3d1810f352c 100644
---- a/mm/kmsan/kmsan.h
-+++ b/mm/kmsan/kmsan.h
-@@ -121,7 +121,6 @@ static __always_inline void kmsan_leave_runtime(void)
- 	KMSAN_WARN_ON(--ctx->kmsan_in_runtime);
+diff --git a/mm/kmsan/core.c b/mm/kmsan/core.c
+index a97dc90fa6a93..1ea711786c522 100644
+--- a/mm/kmsan/core.c
++++ b/mm/kmsan/core.c
+@@ -274,11 +274,9 @@ void kmsan_internal_check_memory(void *addr, size_t size,
+ 			 * bytes before, report them.
+ 			 */
+ 			if (cur_origin) {
+-				kmsan_enter_runtime();
+ 				kmsan_report(cur_origin, addr, size,
+ 					     cur_off_start, pos - 1, user_addr,
+ 					     reason);
+-				kmsan_leave_runtime();
+ 			}
+ 			cur_origin = 0;
+ 			cur_off_start = -1;
+@@ -292,11 +290,9 @@ void kmsan_internal_check_memory(void *addr, size_t size,
+ 				 * poisoned bytes before, report them.
+ 				 */
+ 				if (cur_origin) {
+-					kmsan_enter_runtime();
+ 					kmsan_report(cur_origin, addr, size,
+ 						     cur_off_start, pos + i - 1,
+ 						     user_addr, reason);
+-					kmsan_leave_runtime();
+ 				}
+ 				cur_origin = 0;
+ 				cur_off_start = -1;
+@@ -312,11 +308,9 @@ void kmsan_internal_check_memory(void *addr, size_t size,
+ 			 */
+ 			if (cur_origin != new_origin) {
+ 				if (cur_origin) {
+-					kmsan_enter_runtime();
+ 					kmsan_report(cur_origin, addr, size,
+ 						     cur_off_start, pos + i - 1,
+ 						     user_addr, reason);
+-					kmsan_leave_runtime();
+ 				}
+ 				cur_origin = new_origin;
+ 				cur_off_start = pos + i;
+@@ -326,10 +320,8 @@ void kmsan_internal_check_memory(void *addr, size_t size,
+ 	}
+ 	KMSAN_WARN_ON(pos != size);
+ 	if (cur_origin) {
+-		kmsan_enter_runtime();
+ 		kmsan_report(cur_origin, addr, size, cur_off_start, pos - 1,
+ 			     user_addr, reason);
+-		kmsan_leave_runtime();
+ 	}
  }
  
--depot_stack_handle_t kmsan_save_stack(void);
- depot_stack_handle_t kmsan_save_stack_with_flags(gfp_t flags,
- 						 unsigned int extra_bits);
+diff --git a/mm/kmsan/instrumentation.c b/mm/kmsan/instrumentation.c
+index 02a405e55d6ca..69f0a57a401c4 100644
+--- a/mm/kmsan/instrumentation.c
++++ b/mm/kmsan/instrumentation.c
+@@ -312,13 +312,9 @@ EXPORT_SYMBOL(__msan_unpoison_alloca);
+ void __msan_warning(u32 origin);
+ void __msan_warning(u32 origin)
+ {
+-	if (!kmsan_enabled || kmsan_in_runtime())
+-		return;
+-	kmsan_enter_runtime();
+ 	kmsan_report(origin, /*address*/ NULL, /*size*/ 0,
+ 		     /*off_first*/ 0, /*off_last*/ 0, /*user_addr*/ NULL,
+ 		     REASON_ANY);
+-	kmsan_leave_runtime();
+ }
+ EXPORT_SYMBOL(__msan_warning);
  
+diff --git a/mm/kmsan/report.c b/mm/kmsan/report.c
+index 94a3303fb65e0..d6853ce089541 100644
+--- a/mm/kmsan/report.c
++++ b/mm/kmsan/report.c
+@@ -157,14 +157,14 @@ void kmsan_report(depot_stack_handle_t origin, void *address, int size,
+ 	unsigned long ua_flags;
+ 	bool is_uaf;
+ 
+-	if (!kmsan_enabled)
++	if (!kmsan_enabled || kmsan_in_runtime())
+ 		return;
+ 	if (current->kmsan_ctx.depth)
+ 		return;
+ 	if (!origin)
+ 		return;
+ 
+-	kmsan_disable_current();
++	kmsan_enter_runtime();
+ 	ua_flags = user_access_save();
+ 	raw_spin_lock(&kmsan_report_lock);
+ 	pr_err("=====================================================\n");
+@@ -217,5 +217,5 @@ void kmsan_report(depot_stack_handle_t origin, void *address, int size,
+ 	if (panic_on_kmsan)
+ 		panic("kmsan.panic set ...\n");
+ 	user_access_restore(ua_flags);
+-	kmsan_enable_current();
++	kmsan_leave_runtime();
+ }
 -- 
 2.49.0.967.g6a0df3ecc3-goog
 
