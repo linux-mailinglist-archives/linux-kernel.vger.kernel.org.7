@@ -1,160 +1,157 @@
-Return-Path: <linux-kernel+bounces-638786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67442AAEDA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:12:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5F5AAEDAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD729C5BD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41C01C244CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FF028FFEE;
-	Wed,  7 May 2025 21:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063002900A0;
+	Wed,  7 May 2025 21:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJX3cB2d"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ULp4C9gS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804CD1D6DB9;
-	Wed,  7 May 2025 21:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE57290080
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746652322; cv=none; b=h6r23em8n4u0LV1cR8QVBZfK9cetKgVp9Js0Pu1R3WOU/cu9JZuKrY6TKO+iNxOV8Z90eBZADBNwhPfSDuZDgH7JpiEn6Ikdw6VszhUCPgX8dl1g1KhvVBi6iPqzMkBrsT65joiIzPvqH40DEK0LI7hard+g0cfmft/qAWs27FU=
+	t=1746652421; cv=none; b=QWkwrezlmuS3b/17SLzdOpS3LVMDcPwSSNbeOCPeHFJBn45Dr9tnK9GtvL8Ud2pwX+lwcTJuAi3klVgRZvu1s5pyAANgfS/ZSVUo6VWNywrIA/T99Cr9YKsLu1Ylwg0XbFfcajCtQljQIL8IkPp8ajbEgq3j5blUe5iMhyFydVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746652322; c=relaxed/simple;
-	bh=C6PGx1drOJ6K79RV41IwKa1LTClhF7+DSTMJJXHHhJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAlwlQAq04z4wDOZ6BCLVOXtVo7m3R6hmA9yx0XXZGKhNKugxpBRHwpzsPOSQNg0KfwlTeahfGHQjLbSUfChMBIZUMHsdVyvLBWK7bhM/63ALSAzNKF5lnIK0JSgVBc11xHCZq8LxUvdKoN9R6zFMx73Jjoapv6ILJtH9VAaPc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJX3cB2d; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-736e52948ebso431560b3a.1;
-        Wed, 07 May 2025 14:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746652319; x=1747257119; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NdCLGz2DZVB3CVya/CFMD4neohtrxAI0XC38K0Q82cY=;
-        b=JJX3cB2dnCu75Xcm+6RqlerWhH/dRrVSsUGmeRhGXkk+LBfVxZKsORGxhyRvIN7932
-         Myu5ZjHfK/L1DxyzIDwzfD6P14Dbbuz50EPQVpy7WdzRy7xXhhG2/zOqGeopBoh0wLyM
-         A3azpL/dfJSmIoFHg3/QwQruRUkguU+GoadNOmP0YHqq9fwnp+TkXKFK6d0QaX0D+nKf
-         gD9Eqlrri4D+QHCmwPxQyIWWCemSigNT2mrEl7uRer9c0TSYjv2mgG2j0CzOHKDIZcsP
-         lsss0Ksd89em9lC1JipLzbbRjzTKj0OyOivqRbq+ex+dFIM+vpCmve1OpmapEHL6lZ7A
-         NXjw==
+	s=arc-20240116; t=1746652421; c=relaxed/simple;
+	bh=rDi+M50iRkEBn8NyIC4MJndVXEuY8kocc7kmsv6+/pY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S59ZVsZ6z0bcHYzcFOJA4jaCvCftqnJxtEJQK3Q9vySkMr+90Yr7MZpTw6vtVTc+Ihbxvom6lgG2NFI0KOtKK+1WdcmAobU7lf6lQljkuiQP4zfeF9sUeFJsnA+Gv1VBhhZwRFBhAYEuE/qR5VSwSL5HaITkZoZDLkIpgO69CrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ULp4C9gS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746652418;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pyFruEMGsFO4LymNbk8Aadri71IZZ9QOzkfxFDvyktk=;
+	b=ULp4C9gSV8QTXGgtceR6n6EI8ulDRdGOn0Z17H7X4V0deHS7gTw2sGKZBLAhjDpFkX1Mud
+	EYPY1/MCiT53PAs7p1Z1dix3oJR+/n+KKwHz/UkXI6iXH1nE/qjeLvYjjNwP3zGOphDRus
+	sAZR4Yzp81vv7AnUC7AdCvqJVB3VC7M=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-568-yX7h75K1OvOP5_bgJ_Nnag-1; Wed, 07 May 2025 17:13:37 -0400
+X-MC-Unique: yX7h75K1OvOP5_bgJ_Nnag-1
+X-Mimecast-MFC-AGG-ID: yX7h75K1OvOP5_bgJ_Nnag_1746652415
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac297c7a0c2so16418766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 14:13:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746652319; x=1747257119;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1746652415; x=1747257215;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdCLGz2DZVB3CVya/CFMD4neohtrxAI0XC38K0Q82cY=;
-        b=kcg4p81xwmwvRCdAlTVRYNlkiIBSeQHc7c0tnhnWttWNgepq8DYGEg/crOx8f5oiw3
-         uLtnFcbMuWyx9c//Fhz/ymPI+yloAC/nOWbzg+kNp8MChKrT2yhsHyGJtQ6sEMthEXJo
-         MG11JZZZ/jSTAhdEpZ21roCt2T/QzjHM5xrlCrB8hYWNgRkLaminC3qBjGcg4QON/Lfh
-         KjpBw1bRYUyvPRmn2vjEDsF/Q8etd9ohOx7zQaRa6/jk257+lim7Uyp1HJi9biRMeh3E
-         L31u1ZYCloCGS9nJu7SBEhsF/5XUx6wutOrmDr7F6w9ot/t8hBI40lStvm5h6hpVNJ/0
-         B9qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWr1wzqf0P11xbTyzcSCLrtnyley2hzDY3vZ45MtT+grmb2xEi6Llqzh8f7tLL6SPLIwaTneAWtKHuO67g@vger.kernel.org, AJvYcCXLrqrznG6P0FSg9clqST5dtTlOzwECuhwO/AyJ5jTQLaodYf0IXd3F2JZl9CC7u4dL1fM2HEJdIz7S0Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYfsv8jIOgvZpMr35zcJGkIA48Ja+6d72V+/L72dLH0FRmwsiy
-	ccX2jUZDH0XAOwU8O17FLdvLfpGf00B5M+AanoM0qMWL1R7QV/G0
-X-Gm-Gg: ASbGnct5BL9LgPZg7SOfaf3M7HEJP8n+LCANhKANCmNCqSQONij3lTPhRxB6NbnILzM
-	3dfwYjLsb28G0MTeE1FYyZTlOAMEGEFb5VpPwQUHHRo6Vn+JNIc9RcQEpwWwlQm80CX4DbWrDoO
-	IHLodUIOT32veCdkV4G0wkZbGWhVa5375Jm38YGwtobqVOUs3NPApUkLCiGPI2Fmw46C/Wtpgql
-	+a4RImPT1UYC+QGeeykDbAnWrLjUL6Z+rcvRp5cvSr1tbun599VBQ9UjEXsroXcj6h24f2mNWog
-	gKF4XVWYpWlkgIB1U9j8jaTZnMQcotxjjYJBy7ty
-X-Google-Smtp-Source: AGHT+IF6cg3WQvAi4difZx/0M9quEsQjn7kDxlNH4NgJkSPBMCMRXNkDANMpFgq/Jw1J2fNtScKMHQ==
-X-Received: by 2002:a05:6a00:4296:b0:730:95a6:3761 with SMTP id d2e1a72fcca58-740a9964a20mr1532458b3a.3.1746652319490;
-        Wed, 07 May 2025 14:11:59 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fe5b:f2b0:d1f:f5ac])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405902104fsm11737100b3a.115.2025.05.07.14.11.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 14:11:59 -0700 (PDT)
-Date: Wed, 7 May 2025 14:11:56 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Holger =?utf-8?Q?Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Lunn <andrew@lunn.ch>, Woojung Huh <woojung.huh@microchip.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] Stuck key syndrome
-Message-ID: <yn7pxv6l2wg6cnaikpbxmqkblbnj62vpiq6ixcwr6qhhxnvtky@7nikfwvevptq>
-References: <20250507000911.14825-1-Tristram.Ha@microchip.com>
- <20250507094449.60885752@fedora.home>
- <aBsadO2IB_je91Jx@shell.armlinux.org.uk>
- <20250507105457.25a3b9cb@fedora.home>
- <aBsmhfI45zMltjcy@shell.armlinux.org.uk>
- <aBsu-WBlPQy5g-Jn@shell.armlinux.org.uk>
- <20250507153236.5303be86@fedora.home>
- <aBtHmNGRTVP9SttE@shell.armlinux.org.uk>
- <859b32ca-acd5-43fd-0577-a76559ba3a9e@applied-asynchrony.com>
+        bh=pyFruEMGsFO4LymNbk8Aadri71IZZ9QOzkfxFDvyktk=;
+        b=ptUwHX0aIU8Ql4xiWTAdsDhOnxTtsE+HICnFPCIFmChv06pOwNz3K45P1YsBN8gjoJ
+         NmoveJidzmmVIMgrs/xdk3wmC6AN0TS4PL0Uttw8e4UacHkyfzrVKUrpmM97HHJF396J
+         cW7qxnMjE2gIMjCHbim8RDMtJMax9H6hwyEZMD8IEQeOP6AWXnBKzsFCXksoywvnZSKs
+         +90gb5UJoqVRpeXTLcDpmLmmG4LSP3Xezqq/Ecjwf3SMmL1tujsCxeR8TKG0gDrDnOX7
+         MVJaTwaDh40awehh7ZirpodlFhuiirM9GOFYu+bA4kAq0iiuJRWpLrLQBhUrtG1QtrvO
+         MBbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+xu4cibeETM9UwRDves1I/pRsY740FfvCAiSG1xgwIMveOV5HVnyD+kC1KvIVBSDdUfOXDRFuuJztQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDTRMFLRnqhJMX1NP4EyjdpPvuhdy7ZOEAjA8sbScKJ6IRji/e
+	r83LYcc0QbVbq8jM/PJBjrDmz7ruDrKwaeOIE1ho83tyXfAnSBSLU75A6okKH0H0dqIu9nCoTeq
+	l8Iu2dCs1JmhVyfLp35lparD4MOIqvsol0Ld6ESixUDh1tanDhdcBB8M+RvOPXA==
+X-Gm-Gg: ASbGncuc71nYIoKoB03YFcfK7++w4fJFvhm36reRlzZ9pq3ycpcGTbAREKyHWaN5KwQ
+	mFLv+E3Aaa1HL/pF+5z7Nl736FREcF1iRfH1xP5pT3TvkLzsJM2BBacuL/81FTDkb6Wr1tADzW1
+	0iwx4SCU4vcpv1rLZTG6lye2gjEz4tS1MJiAw+t9lE07ZBtkkmBjFEh1HksuH9hhrB9QVbnASBF
+	E5dwbUXcNHIE7jlphizBwFkukjdAzLq2YmoKKehFlLJy9yla7nkgoE6SmkV5wqeU9lQIAR/1yGx
+	OLPDZUk3P8G2DbcKYitTfpVRpfs+i1uE16qPZWl59pwNj0lF/OHTa6CR8h0yU9s+2qVGnuAFZE1
+	/+jZiw7/O3iSRDC00oWWjb7pLzu4hjOT0V2NcMtjYWa4bDtzuAoL+WAyRAsvEJQ==
+X-Received: by 2002:a17:907:7d88:b0:ac3:4139:9346 with SMTP id a640c23a62f3a-ad1e8b9c92bmr474554666b.9.1746652415457;
+        Wed, 07 May 2025 14:13:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9Pd3cb9fBsixR0vs0CblTQxcvY90hk5Dm8Nag6f3wwTUMQqcKULDist3ihZOkXkbCvFhKHg==
+X-Received: by 2002:a17:907:7d88:b0:ac3:4139:9346 with SMTP id a640c23a62f3a-ad1e8b9c92bmr474552966b.9.1746652415077;
+        Wed, 07 May 2025 14:13:35 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a2df5sm961549766b.38.2025.05.07.14.13.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 14:13:34 -0700 (PDT)
+Message-ID: <0d801367-da24-4596-83d9-08ccd89ca670@redhat.com>
+Date: Wed, 7 May 2025 23:13:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <859b32ca-acd5-43fd-0577-a76559ba3a9e@applied-asynchrony.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12] platform/x86: Add AMD ISP platform config for OV05C10
+To: Sakari Ailus <sakari.ailus@iki.fi>,
+ Pratap Nirujogi <pratap.nirujogi@amd.com>
+Cc: W_Armin@gmx.de, ilpo.jarvinen@linux.intel.com, mario.limonciello@amd.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
+ king.li@amd.com, dantony@amd.com
+References: <20250505171302.4177445-1-pratap.nirujogi@amd.com>
+ <aBosuj_TbH7bzjfZ@valkosipuli.retiisi.eu>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <aBosuj_TbH7bzjfZ@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 07, 2025 at 10:46:35PM +0200, Holger Hoffstätte wrote:
-> On 2025-05-07 13:44, Russell King (Oracle) wrote:
-> > Could you try booting with i8042_unlock=1 and see whether that makes any
-> > difference please?
+Hi Sakari,
+
+On 6-May-25 5:37 PM, Sakari Ailus wrote:
+> Hi Pratap,
 > 
-> It did not help - just had another runaway event with that setting,
-> on my ca. 2021 Thinkpad L14. Had the symptom for as long as I have
-> had this machine.
+> On Mon, May 05, 2025 at 01:11:26PM -0400, Pratap Nirujogi wrote:
+>> ISP device specific configuration is not available in ACPI. Add
+>> swnode graph to configure the missing device properties for the
+>> OV05C10 camera device supported on amdisp platform.
+>>
+>> Add support to create i2c-client dynamically when amdisp i2c
+>> adapter is available.
+>>
+>> Co-developed-by: Benjamin Chan <benjamin.chan@amd.com>
+>> Signed-off-by: Benjamin Chan <benjamin.chan@amd.com>
+>> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+>> ---
+
+<snip>
+
+>> +/*
+>> + * Remote endpoint AMD ISP node definition. No properties defined for
+>> + * remote endpoint node for OV05C10.
 > 
-> We've been tracking this problem in Gentoo since late 2022, see
-> https://bugs.gentoo.org/873163 and none of the suggested options
-> for i8042 really make a difference. In my case I almost always get
-> the stuck key events when using the cursor keys for scrolling in a
-> web browser. Sometimes once a month, sometimes twice a day.
-> 
-> Fwiw it's not necessary to reboot; suspend/resume fixes it,
-> as in close/reopen the lid if you have that configured.
+> How will this scale? Can you use other sensors with this ISP? Although if
+> you get little from firmware, there's not much you can do. That being said,
+> switching to DisCo for Imaging could be an easier step in this case.
 
-So looking at your logs in gentoo bugzilla we see:
+Note I've already talked to AMD about the way the camera setup
+is currently being described in ACPI tables is suboptimal and
+how they really should use proper ACPI description using e.g.
+a _CRS with an I2cSerialBus resource for the sensor.
 
->>> It is around 1 second later that I realise the J key has died.
->>> Now I sit and watch for a few seconds before closing the lid.
-Event: time 1664975487.559043, -------------- SYN_REPORT ------------
-Event: time 1664975487.591980, type 4 (EV_MSC), code 4 (MSC_SCAN), value 24
-Event: time 1664975487.591980, type 1 (EV_KEY), code 36 (KEY_J), value 2
-Event: time 1664975487.591980, -------------- SYN_REPORT ------------
-Event: time 1664975487.624955, type 4 (EV_MSC), code 4 (MSC_SCAN), value 24
-Event: time 1664975487.624955, type 1 (EV_KEY), code 36 (KEY_J), value 2
-Event: time 1664975487.624955, -------------- SYN_REPORT ------------
-Event: time 1664975487.657800, type 4 (EV_MSC), code 4 (MSC_SCAN), value 24
-Event: time 1664975487.657800, type 1 (EV_KEY), code 36 (KEY_J), value 2
-Event: time 1664975487.657800, -------------- SYN_REPORT ------------
+Although I must admit I did not bring up the ACPI DisCo for imaging
+spec as something to also look at for future generations.
 
-Because I see the MSC_SCAN events this means you are not using
-atkbd.softrepeat for software-emulated autorepeat and is using the
-hardware autorepeat function (which is the default). In this mode
-keyboard controller repeatedly sends the scancode for the pressed key
-and kernel reports it. We know that interrupts are working because we do
-get scancodes from i8042 and from the kernel POV the key is still
-pressed because [piece of software that emulates] i8042 tells it so. :(
+Note that there currently is hw shipping using the somewhat
+broken ACPI sensor description this glue driver binds to,
+so we're stuck with dealing with these ACPI tables as they
+are already out there in the wild.
 
-...
-Event: time 1664975493.812157, -------------- SYN_REPORT ------------
-Event: time 1664975495.120717, type 1 (EV_KEY), code 36 (KEY_J), value 0
->>> It is around here that the computer resumes from suspend.
+But yes for future hw generations it would be good to have
+a better description of the hw in ACPI.
 
-This is software-emulated key release that we do as part of suspend
-process. And afterwards firmware gets jolted into its senses by suspend
-and starts working...
+Regards,
 
-Thanks.
+Hans
 
--- 
-Dmitry
 
