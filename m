@@ -1,140 +1,187 @@
-Return-Path: <linux-kernel+bounces-638435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9169AAE600
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:07:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945A3AAE622
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DACC73B36F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF231BA6369
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588DC28B7E6;
-	Wed,  7 May 2025 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC3619047F;
+	Wed,  7 May 2025 16:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qJiu4eja"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CYSX60hd"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB7328B7E2;
-	Wed,  7 May 2025 16:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BD328A3F2;
+	Wed,  7 May 2025 16:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746633703; cv=none; b=XwXcGlJe00UdmabhZOMJTETMlgAFT6BRIntZZbVjYiPRPXiDo1neFchHHRqr12PfnveT6dnLGUlOeFwXdpYMfC1bKW2mF8VvzNfQht8bIF4flLiJcjXbLjHm7pIAdTlE/LJtZDiVt+CqwSJoWhR6VAumbZ0FDE1KZ/0HMTEiTck=
+	t=1746634013; cv=none; b=YWlciHVzwv/1QlrLDra6AFtlSprjnmczkuEcgzCTHGMA18SWdGJVfKnCd1yVeoqPbBZgU9A1ByPboQaDFSmy8Wdi9WO+QnXG++KdgH9TQCnvUvzKi94nwnpfivXewK8W88fgM0Ua8E9lEWrZmfqmtcsE/sKigO6fUiLaZC5KWwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746633703; c=relaxed/simple;
-	bh=2H6b3nh1dKeMmoukhta7R0sBe8aInWjBPDcAcht8dgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JU048/sPDp1T6OGBImRN5WeyPj2zGwvkxdSchhBMYE2aaAetAYy7bBFXph7qASV5oOW3kBhaCMM8nKBrYe9Bs58to1KR/1vrajt0fwbgzy6NzozjrixzM88ovclDRA6pMR7a//XnsOEZe7Kh6OJEhtxVloU64cSHsO+JCcsTNdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qJiu4eja; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547BPROA016817;
-	Wed, 7 May 2025 16:01:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7Hb3hC
-	X4ws37T6+RhFjuU+hFX+30251K4pI/tNrllNk=; b=qJiu4eja8eTUKJfsDmvaqg
-	Wt9Osf+V1IdPZkuGm1z2wlESZC1PPkGnT+JGpph917pknYl7qUYQj0mStjN3RDdS
-	hJB2NcR36eXnCVnx9gu87Qvh/8LCmtT4fA0a1ffteP2YkltMhm29EgB3KY+TCMpl
-	XB0ajW5rMlOXEHxIMLdDmWoRxgPowEVPfXSAEe2YqgIa6hxuyTZ1gwd50u83Ye37
-	dokLBpXxC8GSQ9zzYph2uz7Q7USzgds+zBDZ95FUbbbzEG0H6srhfUbQL2Hoz6a8
-	yTERWdGNH6vRsqTKFo63T5/IFd1KSrOh18C3FEsygkpFAp/4A2CblCHqXpxR7eNQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fvd0m5h9-1
+	s=arc-20240116; t=1746634013; c=relaxed/simple;
+	bh=ZVcFxrUwLsp8UimoHBNXmU+mH22fGYyQQiTP85i9eWw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tB2hbFcc5qhGmYd11FEgmOwRhcDmpdlq3bBybzZksA2NN3mpJt6GlbXVVKGmy9eDOpjCVgdlYZq/JveXtrRE0CakhYh0N2rwtAFW4Cu36XTxU5csqGOmMvTE0e6jctwICH/IBHsMj82Ei4e1xhSDGkpA7xBrmVttL/3xlfkBWDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CYSX60hd; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547G61NL018057;
+	Wed, 7 May 2025 18:06:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=vCapwiYCSryyoPcvy0z16j
+	reDDrgyZ3re2vUlLK59e4=; b=CYSX60hda3TKyka1XN8/exySgPYR9R5gST/ggB
+	JN3LbA17CTpQUaJcVhOMurWwLwTBaYEaVvexTPWaEjfTfxLTRI0svuQzTUoOR4WZ
+	V0dZrtA8hR8TD9+rMnWfd2adKHXZq4TWypteTSreRA6kPRRuG6ThEHv2kiA7dY2M
+	V+Cx/k54g4A0gKjyqgGP2AuKTERuWHs2+g1bQrFbfq0+1sns8qQkpHXNdD0bQ6G2
+	o/Uoozr4UAI5IS4yLJJRIjyXH+JlFYHNnI+4Lr2BDIDaR0LUgo4j0T9VBk4rnGKr
+	efd63g6DYem97xBR1Xjor1fYbTc+1fBLzrG/lQuKiUoqdghw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46g1sxarxx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 16:01:36 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 547CE5EW025896;
-	Wed, 7 May 2025 16:01:35 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwv01m33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 16:01:35 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 547G1ZTK23986832
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 7 May 2025 16:01:35 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1B16158052;
-	Wed,  7 May 2025 16:01:35 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E034C58056;
-	Wed,  7 May 2025 16:01:34 +0000 (GMT)
-Received: from [9.41.105.251] (unknown [9.41.105.251])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  7 May 2025 16:01:34 +0000 (GMT)
-Message-ID: <689ab62a-7800-497d-a9a6-3a81e256f98d@linux.ibm.com>
-Date: Wed, 7 May 2025 11:01:34 -0500
+	Wed, 07 May 2025 18:06:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F19D34004C;
+	Wed,  7 May 2025 18:04:43 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3027EA5E0C1;
+	Wed,  7 May 2025 18:04:15 +0200 (CEST)
+Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 May
+ 2025 18:04:14 +0200
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Date: Wed, 7 May 2025 18:04:13 +0200
+Subject: [PATCH v3] spi: stm32-ospi: Make usage of
+ reset_control_acquire/release() API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] vsock/test: Fix occasional failure in SIOCOUTQ
- tests
-Content-Language: en-US
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-References: <20250507151456.2577061-1-kshk@linux.ibm.com>
- <CAGxU2F6ssoadHjCH9qi6HdaproC3rH=d-CdYh2mvK+_X4-C4nw@mail.gmail.com>
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
-In-Reply-To: <CAGxU2F6ssoadHjCH9qi6HdaproC3rH=d-CdYh2mvK+_X4-C4nw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: dr-t7Gfk8KfJM_SPjiYZG9BMOX4OjzIw
-X-Proofpoint-GUID: dr-t7Gfk8KfJM_SPjiYZG9BMOX4OjzIw
-X-Authority-Analysis: v=2.4 cv=LYc86ifi c=1 sm=1 tr=0 ts=681b83e0 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=5k3jPeAxnmsgk_UWXUgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDE0NyBTYWx0ZWRfX1kIjyTpIbXO0 09GN/mayzwc49Lk154Wq8khd7hPOUNm4t6Cb/6YWzeCfHiBXXscuKnJjyTRIiWGxeYMgYYjd3YS IE4Zkm4jrfkNqWzjklw38m499m4HVECLm3aT05Gah7Cdw7e8XGPNAX+6KiLmhTuUIB9xB/TFyiE
- 5Mq/evnQ4qRtyR4+H1N+xizvj1JlfDnLigjeQhMPS2NcyYB4ysNYDFmAj11dIi5r0XTs8FJGg7d NSqTcGKQqqeZB1urbUghnSumQflEOrDvC91fsN7LglQfAs7OKrT3KzdKowBoS/0U2YOxoRvS03m iRrOQr70FVyTc9yOSy9zkFAkDoa2H+C0yMHozmc6qQJKYWVa2PhRouufaSoBK5g3173CVu58cmQ
- vcDey5g5S5AiFrg0mqOghNI/KS5wabRAzweVHot5+p2fD0Ri3PvHls6uInZNgu5vnbmajpHZ
+Message-ID: <20250507-b4-upstream_ospi_reset_update-v3-1-7e46a8797572@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAHyEG2gC/43NQQ6CMBCF4auQWVtCa6vBlfcwhFQ6yCygTacQD
+ endrZzA5fcW/9uBMRIy3KodIm7E5JeC86mCYbLLCwW5YlCNMo2WUjy1WAOniHbuPQfqIzKmfg3
+ OJhSmvQyotLHOSiiNEHGk99F/dMUTcfLxc9xt6rf+W96UaIR2eB2Nc8q28j565ppTPfgZupzzF
+ 3prTFrMAAAA
+X-Change-ID: 20250411-b4-upstream_ospi_reset_update-596ce245ada1
+To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-07_05,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- impostorscore=0 priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0
- adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070147
 
-On 07-May-25 10:41, Stefano Garzarella wrote:
-> On Wed, 7 May 2025 at 17:15, Konstantin Shkolnyy <kshk@linux.ibm.com> wrote:
->>
->> These tests:
->>      "SOCK_STREAM ioctl(SIOCOUTQ) 0 unsent bytes"
->>      "SOCK_SEQPACKET ioctl(SIOCOUTQ) 0 unsent bytes"
->> output: "Unexpected 'SIOCOUTQ' value, expected 0, got 64 (CLIENT)".
->>
->> They test that the SIOCOUTQ ioctl reports 0 unsent bytes after the data
->> have been received by the other side. However, sometimes there is a delay
->> in updating this "unsent bytes" counter, and the test fails even though
->> the counter properly goes to 0 several milliseconds later.
->>
->> The delay occurs in the kernel because the used buffer notification
->> callback virtio_vsock_tx_done(), called upon receipt of the data by the
->> other side, doesn't update the counter itself. It delegates that to
->> a kernel thread (via vsock->tx_work). Sometimes that thread is delayed
->> more than the test expects.
->>
->> Change the test to poll SIOCOUTQ until it returns 0 or a timeout occurs.
->>
->> Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
->> ---
->> Changes in v2:
->>   - Use timeout_check() to end polling, instead of counting iterations.
-> 
-> Why removing the sleep?
+As ospi reset is consumed by both OMM and OSPI drivers, use the reset
+acquire/release mechanism which ensure exclusive reset usage.
 
-I just imagined that whoever uses SIOCOUTQ might want to repeat it 
-without a delay, so why not do it, it's a test. Is there a reason to 
-insert a sleep?
+This avoid to call reset_control_get/put() in OMM driver each time
+we need to reset OSPI children and guarantee the reset line stays
+deasserted.
+
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+---
+Changes in v3:
+  - Remove previous patch 1/2 as already merged.
+  - Keep the reset control acquired from probe() to remove().
+  - Link to v2: https://lore.kernel.org/r/20250411-b4-upstream_ospi_reset_update-v2-0-4de7f5dd2a91@foss.st.com
+
+Changes in v2:
+  - Rebased on spi/for-next (7a978d8fcf57).
+  - Remove useless check on reset.
+  - Add error handling on reset_control_acquire().
+  - Link to v1: https://lore.kernel.org/all/20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com/
+---
+ drivers/spi/spi-stm32-ospi.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+index 668022098b1eac3628f0677e6d786e5a267346be..b2597b52beb1133155e0d6f601b0632ad4b8e8f5 100644
+--- a/drivers/spi/spi-stm32-ospi.c
++++ b/drivers/spi/spi-stm32-ospi.c
+@@ -804,7 +804,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ospi->rstc = devm_reset_control_array_get_optional_exclusive(dev);
++	ospi->rstc = devm_reset_control_array_get_exclusive_released(dev);
+ 	if (IS_ERR(ospi->rstc))
+ 		return dev_err_probe(dev, PTR_ERR(ospi->rstc),
+ 				     "Can't get reset\n");
+@@ -936,11 +936,13 @@ static int stm32_ospi_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_pm_enable;
+ 
+-	if (ospi->rstc) {
+-		reset_control_assert(ospi->rstc);
+-		udelay(2);
+-		reset_control_deassert(ospi->rstc);
+-	}
++	ret = reset_control_acquire(ospi->rstc);
++	if (ret)
++		return dev_err_probe(dev, ret, "Can not acquire reset %d\n", ret);
++
++	reset_control_assert(ospi->rstc);
++	udelay(2);
++	reset_control_deassert(ospi->rstc);
+ 
+ 	ret = spi_register_controller(ctrl);
+ 	if (ret) {
+@@ -983,6 +985,8 @@ static void stm32_ospi_remove(struct platform_device *pdev)
+ 	if (ospi->dma_chrx)
+ 		dma_release_channel(ospi->dma_chrx);
+ 
++	reset_control_release(ospi->rstc);
++
+ 	pm_runtime_put_sync_suspend(ospi->dev);
+ 	pm_runtime_force_suspend(ospi->dev);
+ }
+@@ -993,6 +997,8 @@ static int __maybe_unused stm32_ospi_suspend(struct device *dev)
+ 
+ 	pinctrl_pm_select_sleep_state(dev);
+ 
++	reset_control_release(ospi->rstc);
++
+ 	return pm_runtime_force_suspend(ospi->dev);
+ }
+ 
+@@ -1012,6 +1018,12 @@ static int __maybe_unused stm32_ospi_resume(struct device *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = reset_control_acquire(ospi->rstc);
++	if (ret) {
++		dev_err(dev, "Can not acquire reset\n");
++		return ret;
++	}
++
+ 	writel_relaxed(ospi->cr_reg, regs_base + OSPI_CR);
+ 	writel_relaxed(ospi->dcr_reg, regs_base + OSPI_DCR1);
+ 	pm_runtime_mark_last_busy(ospi->dev);
+
+---
+base-commit: 1c64de886b8893c0158097edd6ba08d527a2c97a
+change-id: 20250411-b4-upstream_ospi_reset_update-596ce245ada1
+
+Best regards,
+-- 
+Patrice Chotard <patrice.chotard@foss.st.com>
 
 
