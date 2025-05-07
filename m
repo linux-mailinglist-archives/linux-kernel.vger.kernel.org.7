@@ -1,123 +1,279 @@
-Return-Path: <linux-kernel+bounces-637877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F29EAADEB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:14:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAD6AADEB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5537C1888B04
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177AF9A7BD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C4625B692;
-	Wed,  7 May 2025 12:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9E925C6F0;
+	Wed,  7 May 2025 12:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xjwuKz9r"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyUyxHKp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BA721B9C7
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEC125D20E;
+	Wed,  7 May 2025 12:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619879; cv=none; b=uKTepSz2ExRmbxNDokHeKEsde/XoMe7ulxnG1guyHdurHkmhkA7V94phTDgLK1DtvrEUmlSUYhXx/QokLS/4PHmw9jSCYoWV5DKSe543twVa7uiixuz3WrrQkH9gwLalIRJqniapzw2LJCmKuXgk5RjuGNZcCk0g7z9aCnI99sY=
+	t=1746619899; cv=none; b=Nfx1kXaUpT+AZ9pWuWia4Gdj01jQZf5wH5SxWL/bwl+xzXdeY3kuze1Xj3/vcegQlw5dNpCv+E6Y6VcZm2yeniwELhEQq8pzOQh5VMaU+xDEyxO7ZVlVKPBiwQINRbftZ9kmB3OrbuyUEHoCFE6oqpLuUpIASMPjOZLiW30yWnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619879; c=relaxed/simple;
-	bh=ZwMl1jmbgmzYrhfYTpZjT1qj6wac4wSVs91SQ8cjA7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eur2iGlhVJbIdCWQTHadVcJbKimg9JyN9XgL6+Hvf73jJxLq19yQHzS51eRqppWWQRIVScyfBDNwqPozNK9t0EXpkP4p92OpFfhqKI87AKZT+LgyFk8nQmRuewsGO6X8q3aJ1BuBsmYGKQETQrZoMP9N0AepJQWMdFkfUQhYcrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xjwuKz9r; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 7 May 2025 14:10:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746619865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U24XQpAOzVn9OeiX2WXRKmdViNITlRLJUufl1hqU+7o=;
-	b=xjwuKz9rinwdzzhVqNnlMxNciaX3Kc9S07w8Xu5j+TKTlQIE0EraBQvW7SyAW8/aCP3oXO
-	xK+q07svcAmdGlOvay907f7wIinAGGMa1CNKwofQ7NxQTMSCDSjiqxm1g6ggK77CRwa3bs
-	lbQUUB3zYjo18Ben9b+GtAGrwB6IYuo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Kees Cook <kees@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, llvm@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] gcc-plugins: Force full rebuild when plugins
- change
-Message-ID: <20250507-overjoyed-coucal-from-betelgeuse-4eaa7b@l-nschier-aarch64>
-References: <20250503184001.make.594-kees@kernel.org>
- <20250503184623.2572355-1-kees@kernel.org>
- <20250507-emerald-lyrebird-of-advertising-e86beb@l-nschier-aarch64>
+	s=arc-20240116; t=1746619899; c=relaxed/simple;
+	bh=cSo6FStu8b5zTsbjRZmWUY84qNUjg6csdXKm1ISmQ4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oF8kqqqbPpPOjDMKcJkZKE4irNO7GHdBw8o0sGcdAf+w8oiAJpq393Ah0CpcCAOUF4fvsKG6FapHZ6RvdLOm2XS2JIgFFZiBOmyBUwuFdp0maNz884wNt0M7Ho4y5kQ1pfPa0S5rNY7N2Yvf28+17pqxqxBm7R2+Su0fpgj2OiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyUyxHKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EFFCC4CEE7;
+	Wed,  7 May 2025 12:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746619898;
+	bh=cSo6FStu8b5zTsbjRZmWUY84qNUjg6csdXKm1ISmQ4w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TyUyxHKpdMXb5VkrfKTlhYrSc2Pp3Y0PmmReFW5iTtCd+4Rd+beq1YBmPsLAo69h3
+	 XpZsjRackyQM0njfUKu0SaG/UQshXZasebbkKLKdC8HE7rbfd6ODhLFxqAIeqT+l1l
+	 zTFzRWFYso5v7osjq4rEkgRnSZMwGZfi61AwHQp1rdBPpr730z+9U3wu1V63sSAaIB
+	 CUHxQOz5nXLgkWM3wNzXn3vq7ZvAQ6kn+ljiSGMKHPslX9qj7rX38ek/qLXw9YDXbv
+	 f7Z6hai7ztv79Dl2KnMr7//h3pGw7EOJYMDzY/UrM03gl8mCl9lJPUJNbMqty/sVmU
+	 uDMNhDzcVwOHA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uCdce-00000001KgE-043m;
+	Wed, 07 May 2025 14:11:36 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: conf.py: drop backward support for old Sphinx versions
+Date: Wed,  7 May 2025 14:11:17 +0200
+Message-ID: <20250507121117.317810-1-mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250507-emerald-lyrebird-of-advertising-e86beb@l-nschier-aarch64>
-Organization: AVM GmbH
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Wed, 07 May 2025, Nicolas Schier wrote:
+Since commit 5e25b972a22b ("docs: changes: update Python minimal version"),
+the minimal Sphinx version is 3.4.3.
 
-> On Sat, 03 May 2025, Kees Cook wrote:
-> 
-> > There was no dependency between the plugins changing and the rest of the
-> > kernel being built. This could cause strange behaviors as instrumentation
-> > could vary between targets depending on when they were built.
-> > 
-> > Generate a new header file, gcc-plugins.h, any time the GCC plugins
-> > change. Include the header file in compiler-version.h when its associated
-> > feature name, GCC_PLUGINS, is defined. This will be picked up by fixdep
-> > and force rebuilds where needed.
-> > 
-> > Add a generic "touch" kbuild command, which will be used again in
-> > a following patch. Add a "normalize_path" string helper to make the
-> > "TOUCH" output less ugly.
-> > 
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Masahiro Yamada <masahiroy@kernel.org>
-> > Cc: Nicolas Schier <nicolas.schier@linux.dev>
-> > Cc: Nathan Chancellor <nathan@kernel.org>
-> > Cc: <linux-hardening@vger.kernel.org>
-> > Cc: <linux-kbuild@vger.kernel.org>
-> > ---
-> >  include/linux/compiler-version.h |  4 ++++
-> >  scripts/Makefile.gcc-plugins     |  2 +-
-> >  scripts/Makefile.lib             | 18 ++++++++++++++++++
-> >  scripts/gcc-plugins/Makefile     |  4 ++++
-> >  4 files changed, 27 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/compiler-version.h b/include/linux/compiler-version.h
-> > index 573fa85b6c0c..74ea11563ce3 100644
-> > --- a/include/linux/compiler-version.h
-> > +++ b/include/linux/compiler-version.h
-> > @@ -12,3 +12,7 @@
-> >   * and add dependency on include/config/CC_VERSION_TEXT, which is touched
-> >   * by Kconfig when the version string from the compiler changes.
-> >   */
-> > +
-> > +#ifdef GCC_PLUGINS
-> 
-> Out of curiousity:  Why can't we use CONFIG_GCC_PLUGINS here?
+Drop support for older versions from the config file.
 
-... because compiler-version.h is included before kconfig.h (which 
-includes autoconf.h).  Sorry for the noise.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/conf.py | 162 +++++++++++++++++-------------------------
+ 1 file changed, 65 insertions(+), 97 deletions(-)
+
+diff --git a/Documentation/conf.py b/Documentation/conf.py
+index b126f6760b5f..12de52a2b17e 100644
+--- a/Documentation/conf.py
++++ b/Documentation/conf.py
+@@ -28,16 +28,6 @@ def have_command(cmd):
+     """
+     return shutil.which(cmd) is not None
+ 
+-# Get Sphinx version
+-major, minor, patch = sphinx.version_info[:3]
+-
+-#
+-# Warn about older versions that we don't want to support for much
+-# longer.
+-#
+-if (major < 2) or (major == 2 and minor < 4):
+-    print('WARNING: support for Sphinx < 2.4 will be removed soon.')
+-
+ # If extensions (or modules to document with autodoc) are in another directory,
+ # add these directories to sys.path here. If the directory is relative to the
+ # documentation root, use os.path.abspath to make it absolute, like shown here.
+@@ -57,76 +47,71 @@ extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include',
+               'maintainers_include', 'sphinx.ext.autosectionlabel',
+               'kernel_abi', 'kernel_feat', 'translations']
+ 
+-if major >= 3:
+-    if (major > 3) or (minor > 0 or patch >= 2):
+-        # Sphinx c function parser is more pedantic with regards to type
+-        # checking. Due to that, having macros at c:function cause problems.
+-        # Those needed to be scaped by using c_id_attributes[] array
+-        c_id_attributes = [
+-            # GCC Compiler types not parsed by Sphinx:
+-            "__restrict__",
+-
+-            # include/linux/compiler_types.h:
+-            "__iomem",
+-            "__kernel",
+-            "noinstr",
+-            "notrace",
+-            "__percpu",
+-            "__rcu",
+-            "__user",
+-            "__force",
+-            "__counted_by_le",
+-            "__counted_by_be",
+-
+-            # include/linux/compiler_attributes.h:
+-            "__alias",
+-            "__aligned",
+-            "__aligned_largest",
+-            "__always_inline",
+-            "__assume_aligned",
+-            "__cold",
+-            "__attribute_const__",
+-            "__copy",
+-            "__pure",
+-            "__designated_init",
+-            "__visible",
+-            "__printf",
+-            "__scanf",
+-            "__gnu_inline",
+-            "__malloc",
+-            "__mode",
+-            "__no_caller_saved_registers",
+-            "__noclone",
+-            "__nonstring",
+-            "__noreturn",
+-            "__packed",
+-            "__pure",
+-            "__section",
+-            "__always_unused",
+-            "__maybe_unused",
+-            "__used",
+-            "__weak",
+-            "noinline",
+-            "__fix_address",
+-            "__counted_by",
+-
+-            # include/linux/memblock.h:
+-            "__init_memblock",
+-            "__meminit",
+-
+-            # include/linux/init.h:
+-            "__init",
+-            "__ref",
+-
+-            # include/linux/linkage.h:
+-            "asmlinkage",
+-
+-            # include/linux/btf.h
+-            "__bpf_kfunc",
+-        ]
+-
+-else:
+-    extensions.append('cdomain')
++# Since Sphinx version 3, the C function parser is more pedantic with regards
++# to type checking. Due to that, having macros at c:function cause problems.
++# Those needed to be escaped by using c_id_attributes[] array
++c_id_attributes = [
++    # GCC Compiler types not parsed by Sphinx:
++    "__restrict__",
++
++    # include/linux/compiler_types.h:
++    "__iomem",
++    "__kernel",
++    "noinstr",
++    "notrace",
++    "__percpu",
++    "__rcu",
++    "__user",
++    "__force",
++    "__counted_by_le",
++    "__counted_by_be",
++
++    # include/linux/compiler_attributes.h:
++    "__alias",
++    "__aligned",
++    "__aligned_largest",
++    "__always_inline",
++    "__assume_aligned",
++    "__cold",
++    "__attribute_const__",
++    "__copy",
++    "__pure",
++    "__designated_init",
++    "__visible",
++    "__printf",
++    "__scanf",
++    "__gnu_inline",
++    "__malloc",
++    "__mode",
++    "__no_caller_saved_registers",
++    "__noclone",
++    "__nonstring",
++    "__noreturn",
++    "__packed",
++    "__pure",
++    "__section",
++    "__always_unused",
++    "__maybe_unused",
++    "__used",
++    "__weak",
++    "noinline",
++    "__fix_address",
++    "__counted_by",
++
++    # include/linux/memblock.h:
++    "__init_memblock",
++    "__meminit",
++
++    # include/linux/init.h:
++    "__init",
++    "__ref",
++
++    # include/linux/linkage.h:
++    "asmlinkage",
++
++    # include/linux/btf.h
++    "__bpf_kfunc",
++]
+ 
+ # Ensure that autosectionlabel will produce unique names
+ autosectionlabel_prefix_document = True
+@@ -149,10 +134,6 @@ if 'SPHINX_IMGMATH' in os.environ:
+     else:
+         sys.stderr.write("Unknown env SPHINX_IMGMATH=%s ignored.\n" % env_sphinx_imgmath)
+ 
+-# Always load imgmath for Sphinx <1.8 or for epub docs
+-load_imgmath = (load_imgmath or (major == 1 and minor < 8)
+-                or 'epub' in sys.argv)
+-
+ if load_imgmath:
+     extensions.append("sphinx.ext.imgmath")
+     math_renderer = 'imgmath'
+@@ -322,14 +303,6 @@ if "DOCS_CSS" in os.environ:
+     for l in css:
+         html_css_files.append(l)
+ 
+-if major <= 1 and minor < 8:
+-    html_context = {
+-        'css_files': [],
+-    }
+-
+-    for l in html_css_files:
+-        html_context['css_files'].append('_static/' + l)
+-
+ if  html_theme == 'alabaster':
+     html_theme_options = {
+         'description': get_cline_version(),
+@@ -409,11 +382,6 @@ latex_elements = {
+     ''',
+ }
+ 
+-# Fix reference escape troubles with Sphinx 1.4.x
+-if major == 1:
+-    latex_elements['preamble']  += '\\renewcommand*{\\DUrole}[2]{ #2 }\n'
+-
+-
+ # Load kerneldoc specific LaTeX settings
+ latex_elements['preamble'] += '''
+         % Load kerneldoc specific LaTeX settings
+-- 
+2.49.0
 
 
