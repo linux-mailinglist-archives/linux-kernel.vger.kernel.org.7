@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-637844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F738AADDB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:49:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD85AADDBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C302E1C233B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A82BA7B56DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EF5257427;
-	Wed,  7 May 2025 11:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43A6257AF4;
+	Wed,  7 May 2025 11:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSO14H+I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="rvLd25vn"
+Received: from outbound.pv.icloud.com (p-west1-cluster4-host10-snip4-4.eps.apple.com [57.103.65.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61481233145;
-	Wed,  7 May 2025 11:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159F921882F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.65.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746618572; cv=none; b=uVP272xiNuqPtfLbj6LV8I+LRS8zHEWCRANl7sQTPP1T00VjqAZrx5dx+cXXHC80i1U7BWZnPNNLQsV/gvh/NuNaLPX4OnkYzkftxUBHuA6e4mtZA04YdgkYQbb0brGF3PyP1goiu7KPtr+GL9Gcn3HWEEAEui/deIBeE+iT/qg=
+	t=1746618657; cv=none; b=KmZ0x5g+kiHwCq0QxJSmt6oxKHi0OKNm952oH6Qjd994kelo51WcGeUYtU74gCNfJY4HLUyL2xk9zyxA81ttWXoMspxN39uk3d64Tu81/4bkfUiZL/LU8QMEbk8KZ5i6xorxdhJeLj3Ktmsvt93JYHG5lQ/r1cZ8BOJOWnyxC9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746618572; c=relaxed/simple;
-	bh=Q4o0fFmfThH09sb0d8R9/UT4Ki/dcycKtlq2v1Yg8cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sF0DPkvNgSMLkdONW/rSmW8BESHSFOOv4bZSZm89Cd32kyT/6T3zVhmu6JANp/LBo17JAMJpFAA9EV8Ua0F2IdtRRjQe+7Z1fIn7lWigAzAtInilEsmNBTeGi1SQIJDy6Jbfl9apg9JwA+IxMmx1Apow22QlcF3c+tQ0mbKSYu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSO14H+I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4A7C4CEE7;
-	Wed,  7 May 2025 11:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746618571;
-	bh=Q4o0fFmfThH09sb0d8R9/UT4Ki/dcycKtlq2v1Yg8cs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DSO14H+IpsNgJc1JF6TVkBOno/ZTvSaGvXOtI8F7caSC1Su6hQJIESypVzBcmOpZT
-	 1h3wbKEF/FtbWkPY/pBUD/suEXaAQmE72Se+Y+OGqvSN9vJy/qUEuwA8oas+ha9u5K
-	 cnTXFlZ9pfKlBGccaSf8Narri4djKLI2y7sZcuwzmyTVdTmU3sAF1vniOrWoW2Kt3r
-	 b1GcaY9aTB3CKFnGxpb9FbW/dLJZnPcmJL8YlcgBImuUKro1fWXST8nQ+/4sJ3PJZ2
-	 7kBRzXWAUuGagevFJVQVQPTCTvKFrlmxoLdk4pmI3pNxcY9E5CaGXHXnqujqpWkhNJ
-	 Nkqko6CufPaKA==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bf5d7d107so54994301fa.2;
-        Wed, 07 May 2025 04:49:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWkjwUsYwf+lFVi5kvz+pOqg/atqRzUve/Mv+pP7FnG4KTRmd13508MV15PVtQt8SB41asDR6vWXtwRaxEm@vger.kernel.org, AJvYcCWzP3l+IC6J9PzgZO/FiT/G9WKzzMfBy+bjlNr3XYb32rVGTbJmZd9YUERLgMkeK6EEj7O3RVpSIu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLQ9ET5+as/63W20ggXXs4JRYa+koNkm5iX0Hp1mpRwxWz8Vnm
-	dxLbTnltru8ubDHCuI9rhKrw1MBLZ15lrapEDVGcIVX5YFlgvEeYUvq61GxeuOXvIn/Q8PFvR6e
-	kc5WxWhsIV84pYwG5NET6hZsutt0=
-X-Google-Smtp-Source: AGHT+IGyuczRVoIfKOuvSe4gWmNKzJpVRRL6/4X0pW0V0I6ErEGy9VFfhIR3MsuIm3dmJf3Yo1p5j6Gkk/7fcY8NYxg=
-X-Received: by 2002:a2e:b891:0:b0:30c:f60:6c6 with SMTP id 38308e7fff4ca-326ad15318fmr10546881fa.6.1746618570255;
- Wed, 07 May 2025 04:49:30 -0700 (PDT)
+	s=arc-20240116; t=1746618657; c=relaxed/simple;
+	bh=oDXS7Iv9ESrigVT8yDofRqAl6D+tr1qroP5oD1MvuX4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ootg+uhJ+x6s3OG4xW7Fyuy8dPoeH9LtZPmnmHx8cop/0rJ4fnPpCiBHt91G2pnBIsUASZHkG6JrBc3K8sMcmHoU1bC3zUKmxEA8KitMw6TGEIoRjM3Yz9CXsgzEijsSEoNjbe+73bk9ophe3LvfI2bzXenn/wLQZ04pwLbswfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=rvLd25vn; arc=none smtp.client-ip=57.103.65.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=u6Ar7PNlePfv0tbFS0qNV80XajEfxKCgPXtPAJebxL0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme;
+	b=rvLd25vnk6izcGaVGTlr+DSqkwlUaWfuk8ic3icr0Af/wRhJEVf1MIwtrw3xICbbe
+	 LV3sBGJjyekG+B/uehMk9a80IPcYlMqNnWqDV8nf0t6tI0O6fr5QInmMF6G0MRvUa1
+	 75Wk8ErVJQ//evA6Io8QOoAHunlsKjkvnyBUpOuRyHAkiXp4YLO+xQpAhuCzzWsVdi
+	 gAdowK6DpyhP38TR+sgVdfDGbrGTEOwvGXeEfTMIly1vetUk5CMKNZ9hIpVT3DdKS8
+	 IS6YBZLK4g062mD4JhrH+omX8J4EdpThYk5IIW18v+6BG8/jK+PNSxdrUVOVLbr05i
+	 pa8VmZTNFu6iA==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 9110018009C0;
+	Wed,  7 May 2025 11:50:48 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v3 0/3] configfs: fix bugs
+Date: Wed, 07 May 2025 19:50:24 +0800
+Message-Id: <20250507-fix_configfs-v3-0-fe2d96de8dc4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250504095230.2932860-25-ardb+git@google.com>
- <20250504095230.2932860-30-ardb+git@google.com> <20250507095801.GNaBsuqd7m15z0kHji@fat_crate.local>
-In-Reply-To: <20250507095801.GNaBsuqd7m15z0kHji@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 7 May 2025 13:49:19 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEpO3bip+Zyi9x4WN_=qy+oBQ+PpJRw-Je=roQcRt3KsA@mail.gmail.com>
-X-Gm-Features: ATxdqUH9fH7i7x1fH01oa-ejsPddPFo25J-cW4bGdzm04ZYbdzUayU21u3lgbvA
-Message-ID: <CAMj1kXEpO3bip+Zyi9x4WN_=qy+oBQ+PpJRw-Je=roQcRt3KsA@mail.gmail.com>
-Subject: Re: [RFT PATCH v2 05/23] x86/sev: Move instruction decoder into
- separate source file
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAABJG2gC/3WMQQ7CIBQFr9KwFgMUWurKexhjmg+0fyFUUKJpe
+ ndpV2rict7LzEySjWgTOVQziTZjwuAL1LuKwNj7wVI0hYlgQjHJNHX4vEDwDgeXaNN1rax5U0M
+ jSVGmaMu/5U7nwiOme4ivrZ75uv4JZU4ZVb0ErTVTxrXH2wMBPewhXMmayuJD5+pHF0V3YJRoj
+ eFayG99WZY3CInCBukAAAA=
+X-Change-ID: 20250408-fix_configfs-699743163c64
+To: Joel Becker <jlbec@evilplan.org>, 
+ Pantelis Antoniou <pantelis.antoniou@konsulko.com>, 
+ Al Viro <viro@zeniv.linux.org.uk>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Breno Leitao <leitao@debian.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: HfjbSoOaVj10G7Pw07YThKiJxMhJcXzq
+X-Proofpoint-GUID: HfjbSoOaVj10G7Pw07YThKiJxMhJcXzq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_03,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=950 spamscore=0
+ clxscore=1011 adultscore=0 mlxscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2505070111
 
-On Wed, 7 May 2025 at 11:58, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Sun, May 04, 2025 at 11:52:35AM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > As a first step towards disentangling the SEV #VC handling code -which
-> > is shared between the decompressor and the core kernel- from the SEV
-> > startup code, move the decompressor's copy of the instruction decoder
-> > into a separate source file.
->
-> Why?
->
-> I'm still unclear why that happens.
->
-> I'd like to read some blurb in those commit messages which explains the big
-> picture: the insn decoder bits are going to be in the bla mapping because...
-> , and because... and this is wonderful because ...
->
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v3:
+- To both Andreas Hindborg and Breno Leitao.
+- Link to v2: https://lore.kernel.org/r/20250415-fix_configfs-v2-0-fcd527dd1824@quicinc.com
 
-Sure, I can add some more prose. I'll add something along the lines of
+Changes in v2:
+- Drop the last patch which seems wrong.
+- Link to v1: https://lore.kernel.org/r/20250408-fix_configfs-v1-0-5a4c88805df7@quicinc.com
 
-"Some of the SEV code that is shared between the decompressor and the
-kernel proper runs very early in the latter, and therefore needs to be
-built in a special way. This does not apply to all of that shared
-code, though - some is used both by the decompressor, and by the
-kernel proper but at a much later stage. That code can be built as
-ordinary, position dependent code with instrumentations enabled etc
-etc.
+---
+Zijun Hu (3):
+      configfs: Delete semicolon from macro type_print() definition
+      configfs: Do not override creating attribute file failure in populate_attrs()
+      configfs: Correct error value returned by API config_item_set_name()
 
-The #VC handling machinery and the associated instruction decoder are
-conceptually separate from the SEV initialization code, and are never
-used on the early startup path in the core kernel. So start separating
-it from the SEV startup code, by moving the decompressor's copy of the
-instruction decoder to a separate source file. In a subsequent patch,
-the shared #VC handling code will be moved into a separate shared
-source file, which will be included here too and no longer into sev.c.
-That way, it no longer gets included into the early SEV startup code,
-and can be built in the ordinary way."
+ fs/configfs/dir.c  | 4 ++--
+ fs/configfs/item.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+---
+base-commit: eae324ca644554d5ce363186bee820a088bb74ab
+change-id: 20250408-fix_configfs-699743163c64
 
-Does that help?
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
