@@ -1,193 +1,142 @@
-Return-Path: <linux-kernel+bounces-637213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E257AAAD613
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:30:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06E6AAD810
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EEE17F1D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D0D1884728
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AACA1DEFD9;
-	Wed,  7 May 2025 06:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F1321E0A8;
+	Wed,  7 May 2025 07:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjwL+2M3"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjZPvZpg"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A05520F087;
-	Wed,  7 May 2025 06:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A533E21481D;
+	Wed,  7 May 2025 07:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599419; cv=none; b=fl/ht4ofGHtMHGctZEthyOEdoHIo1/3631FCJ99uJrSm6jv7M1LQZdWB8LiV7UFSqCGKHjtVwZxjS3Z2PP7c536ADXH1RB8in3GaqwxumVuL9+88xoITXXIjpvKo6eIFMkAXwzPJ2qfxrkf7A1e+ZawUBzQSjA+qmbWsb6HoyaQ=
+	t=1746602961; cv=none; b=IsWSJGzv8nlNA+kHiF1GhhXrIm+q4blaUBoeLQkJUsOOkyJJu69Lmo4I3MbuBZJ/XaNKBGPzCFr8vso59s935Kq66lNGdpPU8dnQ1NScbJUYVU1yHUpZZrp72RajBtepoxxeGFDboujQM6X9L7xohfNdxcxLExOXZ5R1icbUnR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599419; c=relaxed/simple;
-	bh=N+YWqAagy2PNEYBUXppE9xNSFaI/hWRK4ibyNABsABo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xmh0rxvkQ90Z4wXxEVIk09F90qL6Sr26GxDyfZauLhdgqE8ZMzjjM03S8mPYB77ZsZ5f+MEnDnGefmXfidjUAB/hiNnFqHrzNPtcfdq3rB9Hqt6wd4zO/tYvxgVx6OioDTpV+jKUtVHxWURgZgRd5nU0U4vfchGShdeB1yTKTzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjwL+2M3; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1746602961; c=relaxed/simple;
+	bh=yHf9/ftT8R0NcVDJ1hfNI2qi/CtPmDvZv+p8tcq8me0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XOc36Hsteyj9fM8eCUEsZxaFPquWi1I5YpVmj0wb3Js5tcTLvehyW+79kFJYbLCnCJEHJXZIvVykfE/U/KIgFYUWbXFOsvJ0Io5MX2hpRcH1RKvObt5E+raTTWNJUQxONiRPA9nmONv7onM17x10kGTSB1YkLR+PFjP1tQd6RaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XjZPvZpg; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac7bd86f637so114850666b.1;
-        Tue, 06 May 2025 23:30:16 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-441d1ed82faso10350625e9.0;
+        Wed, 07 May 2025 00:29:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746599415; x=1747204215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TSeJ8GummMKurtzsjDLLI70rnghg+iLSCJEe/th3YoM=;
-        b=PjwL+2M3YK54jemlh6Xw5aQBuA8P8w2EPLcqRUAdfzRdTVP++ElyWWRPNjfxztyk8z
-         zmpt5V83N8ozEXDW/yy/EMfhyblgo6h8msYu7uXZtIamyxBneiEAj+VTtuf/TmDUizHi
-         B/9nxxGMlCNnHA9ysnyJYurG8ksLnThjVz8e8QZEdD2DCSGXspga4FJKp87IuWD5nQ+D
-         C/a9+TbAJ+xIWdXXIzgscqOn4l442JnHP9BMoOINbCY0UwHeG5Mfk5y+wQSx0VGIfaRH
-         5IsoDMRepTNXYc/oSNrz4cfWYlGPbJjNBF27HRpJYhlsF6oeJIb6i9Pd9Cz7mxYHQ4tK
-         yziQ==
+        d=gmail.com; s=20230601; t=1746602958; x=1747207758; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iR2zA0EdcdHsgk0AyQDnICvVvY4Gi25oEb1LErzmdKk=;
+        b=XjZPvZpg7JD4Zf/3eRDQfL/MUu1skKioHGszV4yuHYq9oCsAxdinM7IDlcAJj0Rc9B
+         EuBXQcQCFpKqNAfOJ0bYBKs9ChJOvmGwURjZ6vA7D77HBtIEBPFiVutXwXT94iYw6lIL
+         lHe1ZBawghwTxjZK/1bYmkzRYDWseV3NX9asCLwkiQvV1oM1AjY227QI7X76/LvgFpvk
+         8rwpgIYTMsd4FoZ5XAYpN1unEs/nBNA8sD4Jn+/x/aRUSMJCxHsV5zgL0T33eViJGQh7
+         diDMAZ2jt8uumBd+00rhXwQd8xiP8m3nlYiSupIHdWdZJljnsR7wwCHpm457m3aEv35j
+         DVqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746599415; x=1747204215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TSeJ8GummMKurtzsjDLLI70rnghg+iLSCJEe/th3YoM=;
-        b=kaVAbbmItcREfZLSIlWJ8Wsime0zwOtoydTDBXmp0ZpEOqXtExYix9LelKCy/2nkGr
-         AZmBd/ZgYu9zuCAf4iS+w5M031oFazpS6Tx6Tg6/Cr/W6ShMbRLfP41MEDpQfGlO+aDs
-         qUap46ZukqqM9c/kd3DCHTnGJ8dlC48aDZuAK3/yPY9qEWhyleF7XNJd8bAxfJV76UUp
-         khIo/1QESp4V6ffYvfuv7XYOKoQnZ3CIUiiXw47H6mSUyMA8LaH4uksLJ7LcqIshibgO
-         YsSqLtpdtjjFvGmi5kDMGTR+UnotIc8uSVY+pb7msL2MUYWkYsryIa7kgwYKuIeUTl8P
-         YVEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUmFgQhyiL4rTb38aoQk9PPq/+QHc8gQP9y9fSs54WN6Zsw+DSrlWOwdJAiCkOLbWGQJOf/PX2QwFi3q/MBSvJ@vger.kernel.org, AJvYcCWsveb4GumffXyoL6wAPyo9i3stCGc9MQqxA4BCdkseDagttEV0D+T7CuIggivx24CTAEb90pPItbveIkDL@vger.kernel.org, AJvYcCX1DPthhR9H2j4Cts7G2tKBfm4ZlAECVSAi0d+F2ql4LdaeML19D31BI9I3FzTFPW+qdf9GvVJZMdAP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUMUqn020uGNUFg6qGAGkaM5jO4W75W8/FvsXTicR081CkuTUH
-	S+c9TBj8p9EJFJ8/7dfsmD0cHGNyknXL/sZ8SJPFiOaBQtYetrjI0VKQhe/nNNm2g9H1ZPFljoA
-	RP4R/24sHu5Il2o4kAITkqSJdvJg=
-X-Gm-Gg: ASbGncsLgsMPDNPo5S5gVcCuR6phW25GBQ3iaAkc8kZOG16+tPL/bKv+bHit8cRQPq/
-	2/2mGGtbKqgLNhq2oCpNchvePpYu4nHS9Y6Rw9uXwmqnbegczzM76aM3DmSF3g28BrXhlY6BWrc
-	/i0gqqhoGZQAb9MksTN3VWTA==
-X-Google-Smtp-Source: AGHT+IGqkl0IuDJeY54EbiKZOROW287of8VT2hi8N7bhyY4NWf51b1Ep4jdyE9HeuDOx+3xvco3gwlGwot3mPT+p5t4=
-X-Received: by 2002:a17:907:d50a:b0:ac7:81b0:62c9 with SMTP id
- a640c23a62f3a-ad1eb183b98mr170480966b.20.1746599415368; Tue, 06 May 2025
- 23:30:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746602958; x=1747207758;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iR2zA0EdcdHsgk0AyQDnICvVvY4Gi25oEb1LErzmdKk=;
+        b=e2XuukMX4W7BGunHQ8tS2cnDWP03qCrWbeYEbMAOXwnkH5O9t8eT7wW0J4fnXs19U2
+         HJPfldWsEbwVfajjN9j+5Y9wk4ss6NT8aijLtk+akejO64PWhvK978OaplZJzEENmSBf
+         77unrS6u/NY8Z9mvdEEcBursRq1a4fCEVHZ/DFPFYzPxYH0U4BG8ofe331z78IQE4s1t
+         /T6wB/yR1A5c3sfEDGF6JO2lPdQSSvzy4qyG0zqL+fl5vwrDaM/7Ud8B1NepFJSJxExW
+         bPut1Te22LK98qq4uJqbS85a/wPrJcBbIKQz4XYf3yi6Dou6i7oAdq3JKFoN/QhGczCq
+         DanQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJUHFDLCMu3shMfiOkHIwAhLAVH//GG9URKrTjey3OJxjBbtuDBhR8T1irwcq/3ozsObbMSx7wM2Y=@vger.kernel.org, AJvYcCXSZI3Y+YyO8t4uWdE55MI1zQyC8q/IuAJkGTr9b5eal5KHLiMqP2Vq5s7HO3l2625btdmGR6Dblfnty/eR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1RFrq5RfhHqfIsKPCZHiSi4K+XkQCF7DOJWqMwZd+rGupXKSw
+	xVMtZpS3YCXnxbWtAeOAou0DBSuR4DRM35FVPmvrfqgoZ0cdiGao
+X-Gm-Gg: ASbGncu2ebgaC48THC/FHLnuTDbg1EFV/vkdnSVvXoHrcFfK3e/lhzlbLTclxWNI5Ni
+	WR1iTmZjgoRdRUzuOnVxUfVjqbxNYQWdF336d6ba9IQU2hnViyOl1PYN4hN89I9FT6LRtyUTu8P
+	XDPnQ+KH+AjtC2yjFIei3eTToKA7trw7doa3TFHre6CUvEY41ozYd62+VJdp2IkLQOZuVBlFvuA
+	R8flgGXQpUxNZjTB4uQRG1ryA9L712xUjr5GBeZ4CINl1vsYIsjKeVX77yg5ovXVtkbn+27imVf
+	JtOG+mNa3yQA8V/ygxOSrpJosaTdnk6lyYxmdfZh2ewjX2sQm6QYw9c12Nx8hQiWS6RjkhABjYi
+	m7H37EWQoQUCGtHE=
+X-Google-Smtp-Source: AGHT+IGGaL+rl/74nMAHw73kbNQ4stZN3O4aJfmM7No/pxs2x5k2i6dSgRLIWAu6ib9gbXsfdqUuwA==
+X-Received: by 2002:a05:600c:1d8f:b0:43d:2230:303b with SMTP id 5b1f17b1804b1-441d44dd262mr13902825e9.20.1746602957701;
+        Wed, 07 May 2025 00:29:17 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d43d0b41sm20443695e9.11.2025.05.07.00.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 00:29:17 -0700 (PDT)
+Message-ID: <dd7dda31525f2947060386a2b605300cf02677f2.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7944: max high bits on direct read
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Wed, 07 May 2025 07:29:41 +0100
+In-Reply-To: <20250505-iio-adc-ad7944-max-high-bits-on-direct-read-v1-1-b173facceefe@baylibre.com>
+References: 
+	<20250505-iio-adc-ad7944-max-high-bits-on-direct-read-v1-1-b173facceefe@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
-In-Reply-To: <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 7 May 2025 09:29:39 +0300
-X-Gm-Features: ATxdqUH1O8-wn-pTn2DLhKviZyXveFJTms9HkgmuTddY7fjWS_0mrPzychvcbF4
-Message-ID: <CAHp75VdRp7RG-YCAL2Jx4uXsT2RVQNeu-MxPB5pWRq8TqtsSXw@mail.gmail.com>
-Subject: Re: [PATCH v5 08/12] gpio: aggregator: export symbols of the GPIO
- forwarder library
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
->
-> Export all symbols and create header file for the GPIO forwarder library.
-> It will be used in the next changes.
+On Mon, 2025-05-05 at 13:28 -0500, David Lechner wrote:
+> Apply a mask to the raw value received over the SPI bus for unsigned
+> direct reads. As we found recently, SPI controllers may not set unused
+> bits to 0 when reading with bits_per_word !=3D {8,16,32}. The ad7944 uses
+> bits_per_word of 14 and 18, so we need to mask the value to be sure we
+> returning the correct value to userspace during a direct read.
+>=20
+> Fixes: d1efcf8871db ("iio: adc: ad7944: add driver for AD7944/AD7985/AD79=
+86")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> The sign_extend32() already takes care of signed reads in case that
+> isn't obvious - it overwrites the unknown bits with the sign bit.
+> ---
 
-...
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-> +/**
-> + * gpio_fwd_to_irq - Return the IRQ corresponding to a GPIO forwarder li=
-ne
-> + * @chip: GPIO chip in the forwarder
-> + * @offset: the offset of the line
-> + *
-> + * Returns: The IRQ corresponding to the passed line, or an error code i=
-n case
+> =C2=A0drivers/iio/adc/ad7944.c | 2 ++
+> =C2=A01 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+> index
+> 2f949fe5587318957f2e423029294ced0a6f803d..37a137bd83571b055e970a8cd483d87=
+26972d637
+> 100644
+> --- a/drivers/iio/adc/ad7944.c
+> +++ b/drivers/iio/adc/ad7944.c
+> @@ -377,6 +377,8 @@ static int ad7944_single_conversion(struct ad7944_adc=
+ *adc,
+> =C2=A0
+> =C2=A0	if (chan->scan_type.sign =3D=3D 's')
+> =C2=A0		*val =3D sign_extend32(*val, chan->scan_type.realbits - 1);
+> +	else
+> +		*val &=3D GENMASK(chan->scan_type.realbits - 1, 0);
+> =C2=A0
+> =C2=A0	return IIO_VAL_INT;
+> =C2=A0}
+>=20
+> ---
+> base-commit: b72f1157bfb9b92b0439e11469f7f94e47363460
+> change-id: 20250505-iio-adc-ad7944-max-high-bits-on-direct-read-b358289d0=
+337
+>=20
+> Best regards,
 
-"The Linux IRQ..." since it's a logical number and 0 can't be ever returned=
-.
-
-> + * of error.
-> + */
-
-...
-
-> +/**
-> + * gpio_fwd_gpio_add - Add a GPIO in the forwarder
-
-forwarder
-
-> + * @fwd: GPIO forwarder
-> + * @desc: GPIO decriptor to register
-
-descriptor
-
-> + * @offset: offset for the GPIO in the forwarder
-> + *
-> + * Returns: 0 on success, or negative errno on failure.
-> + */
-
-Please, spellcheck all of the comments.
-
-...
-
-> +#ifndef __LINUX_GPIO_FORWARDER_H
-> +#define __LINUX_GPIO_FORWARDER_H
-
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/gpio/driver.h>
-
-These are not used (at least as of this patch).
-
-+ struct gpio_chip;
-
-> +struct gpiochip_fwd;
-
-> +struct gpio_chip *gpio_fwd_get_gpiochip(struct gpiochip_fwd *fwd);
-> +
-> +int gpio_fwd_get_direction(struct gpio_chip *chip, unsigned int offset);
-> +
-> +int gpio_fwd_direction_input(struct gpio_chip *chip, unsigned int offset=
-);
-> +
-> +int gpio_fwd_direction_output(struct gpio_chip *chip, unsigned int offse=
-t,
-> +                             int value);
-> +
-> +int gpio_fwd_get(struct gpio_chip *chip, unsigned int offset);
-> +
-> +int gpio_fwd_get_multiple_locked(struct gpio_chip *chip, unsigned long *=
-mask,
-> +                                unsigned long *bits);
-> +
-> +int gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)=
-;
-> +
-> +int gpio_fwd_set_multiple_locked(struct gpio_chip *chip, unsigned long *=
-mask,
-> +                                unsigned long *bits);
-> +
-> +int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
-> +                       unsigned long config);
-> +
-> +int gpio_fwd_to_irq(struct gpio_chip *chip, unsigned int offset);
-> +
-> +struct gpiochip_fwd *devm_gpio_fwd_alloc(struct device *dev,
-> +                                        unsigned int ngpios);
-> +
-> +int gpio_fwd_gpio_add(struct gpiochip_fwd *fwd,
-> +                     struct gpio_desc *desc, unsigned int offset);
-> +
-> +int gpio_fwd_register(struct gpiochip_fwd *fwd);
-> +
-> +#endif
-
---=20
-With Best Regards,
-Andy Shevchenko
 
