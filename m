@@ -1,326 +1,207 @@
-Return-Path: <linux-kernel+bounces-637826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB50BAADD88
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:39:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA689AADD8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFEF1BC887C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1380C50056A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2244233728;
-	Wed,  7 May 2025 11:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758AC233723;
+	Wed,  7 May 2025 11:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxcCDH8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fyCNaDnJ"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF3E23315A;
-	Wed,  7 May 2025 11:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746617943; cv=none; b=AFCC5ik8yZgYHhde1S3FlNqLcjA60qFT3YAPOFQJMn6gHqGz7uYhB9ju16yieVf/tH2Ei461wez5sLOLAwK19gwM9g37ObswQy/kQHM7CC95pdgorEncexrUDxe4vpu5da6gcnoXySHYtll0BFNuP1lOtj8LHipZ8/Jwdp3GMHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746617943; c=relaxed/simple;
-	bh=Hg6l6V9O/4wtXYDdTgCPzwnNnEBa8OCBsehc8OvrrqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CXzCDYjokVgbe4o1f0qEtgJiOIDJdvpauMCyiY2cboMN1900TZIGL+yGdNUyFzx9yZ0FiLUImcDh7fCmIOIJA97ludKxHmK7D3GuNbum/QQHQVoTfoSzkB7InDrgs3wEaE/T67NBR6v39K1VwlKo37rSSSgw3nEpBvtTLO1rmcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxcCDH8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0709C4AF0B;
-	Wed,  7 May 2025 11:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746617942;
-	bh=Hg6l6V9O/4wtXYDdTgCPzwnNnEBa8OCBsehc8OvrrqA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DxcCDH8qx/q6v1LR8JboomoBFDhoa1gA+AZYhADwXOQoAShTQMj3Ox8tMI+/RxeJA
-	 OI6EqRypC18VcI8R0AsLAA6YhQSjprYEfBUQfiEkuBRcb0zk6hPyBIOp7I1fqxaR/G
-	 J80oA9b3ek2D2P2OBhDSPTxTU9fZbeUT17yh8bAUcwskixojQljCuDTu06bGf8LODZ
-	 sJVMv9JvzDbKwzU76CLgnle18qHBhvxmc1A68+VVU/B7YabbKrOVTl7lIfhgZcwyYJ
-	 prSEy0Bu0uZ6l8444DVysssxEGG81hwWIhctQtwWLrtORx2oNC6R9AvYGvg8Rt9j4r
-	 3rM7gYMqXzMZA==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c76a1b574cso2125320fac.2;
-        Wed, 07 May 2025 04:39:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAkXtVde/Xko/zEr7rLeO1iHnozLF/He3Bi7PD+nQVGn34Bekv/SSzjwybYZl+r5W7P7wd35FmnEzdZ+jg@vger.kernel.org, AJvYcCXpZzml6u725UKquCCfy4fGlb5+wXxZ6urqZbin4BZBHIe979MptovBjRgkYgu1VsfmWBpLSzuXlzd1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV17pmmZH8oWkBdrZEsQveHkbt5B909Ek4kPtKBrKiogsB4usp
-	OhF42dIFvf7tBj6h5WKLxL0C03Ymtu8OtVPcBRk7eFG4k9TDE5gqz/jsJtA2gYb7e6iyykPOxnY
-	pmeBWeRrHHP2Za/1Y8sgTHMpArKQ=
-X-Google-Smtp-Source: AGHT+IFaSvdYyurc08EQzE/f5lxzhMMtC8SjK5DkN1Oux0A085DrUh3IgQugzwZfSDEB0LFsg/5XTZkvMW78zYzqS4k=
-X-Received: by 2002:a05:6870:95a0:b0:2c1:650b:fc86 with SMTP id
- 586e51a60fabf-2db5bd5c524mr1481924fac.1.1746617941915; Wed, 07 May 2025
- 04:39:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C831C07C4;
+	Wed,  7 May 2025 11:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746618001; cv=fail; b=LV14zcgy/BE5gz9fhFpK6M2ZuQmH6CTGIjD/l45qTIV+XIy86CzIaxmRr3vOCK2ml3YP1SfDxFqzjmiEH46tJz9uNH6B3y8VBkZLv2pkFHzLezI4R6rIvH5c9z5qhbk8b1SQJJFDuhFFiHDTiTltHqYy9zXNV0oVJ812vpYXCKI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746618001; c=relaxed/simple;
+	bh=LKh1cM4hxyT9zp/fqbVu8nB/YSn35sV8DoE9SQFwK3w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WwJ+aANsCQtqjEyGMC/I69lGvJ7nwwi3vClkm15EwyzGByquvzSHZveaPv108+913NN5X9WnfQ9RdGVffCFZsylVGiBP8fHi0ru8Mn0Cy+8q1lRvMORe+grF65e70RmWFfS26V6WSgWpzlPOakEooRqmSVBT/wj4Z1ssM9OxTec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fyCNaDnJ; arc=fail smtp.client-ip=40.107.237.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KogdxJxmTAgE+GW86mnO0lgWrIH7sUjVe4Tk6ZyQ/umSJPr7dQYDSq4LV7XR+AbUlupWBRGq3ewmLdlVWIN+8ME1srIKMvCZUZRslE7Q9qv06fFAh5V1ExSWNFZYlBvwHlpka8KKKpjBfyNi7wbGXkqr8kOmSSAyRfP/GRTDmZvlegQPyxXorCKC4LdALiILwKlj8u3fwHW7QpEJMjBzsMxneuf98ao2ss1lqy3GA4s4C4FvaONOWMGBCgOePLZGdYtZaauq3RE2K7Lxf7dt0qkhedX5OkFbSHBCKDQH9vlaCezJYWemDQ4a5zish69BKmkFTlxatooA2Vjh1RbbMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D2Jzn5o0h8OJN8xpeUskC10vcHVr9yFoAgmNeX3FHuE=;
+ b=uk8cKAEth+GNcEq0QxhksWGYUjOToQTgNFUV/EpGgGpnyAGDg//Xa/BfMEML2yoiwdgwZdxuXdHbGDKsECP8X9uq/pgLBXOr5BrBKyD0NTKsvjoEkYBUXtKwocTuz8X2XkeJyU7Q9MrqkFEzK/DbkMKN72+gLMEZ8ibTETFr3T0uk6HpieaYFYOzH2uJNGMwUxe7Jw2SYjAjiHG704Vp3checxR3ACdecFa//yjdoKkGzJDEP9+Br98O5aWAIqkZg7VzvuZovd/tW7M/Rsy1cRXAltStHrvd+wOy2tSuh+6uq3vM3B6pCsJz3MxmjIOlEIp5XH5fK1Sv/Eraicn/Lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D2Jzn5o0h8OJN8xpeUskC10vcHVr9yFoAgmNeX3FHuE=;
+ b=fyCNaDnJEUVtcGNcVxZlC1hrN/UT5m+Pd+aCUFNbQKc9eCB6VJHwE6yDasiI4jahfXu1Faclimij5Vu+vORCQQ6mAUkzASWlacf3uTFMGrJ4mM4tecbjmnDApbmVM9DSIBUqpF1/iTyYEoR9eupzQhR6zjuRZe9Sn0+VrJkGms4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ DM6PR12MB4452.namprd12.prod.outlook.com (2603:10b6:5:2a4::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.21; Wed, 7 May 2025 11:39:51 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%6]) with mapi id 15.20.8699.024; Wed, 7 May 2025
+ 11:39:51 +0000
+Message-ID: <83dbcf46-642a-48fa-b9e5-6d163f0dda35@amd.com>
+Date: Wed, 7 May 2025 17:09:37 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/20] KVM: x86: Move find_highest_vector() to a common
+ header
+To: Borislav Petkov <bp@alien8.de>
+Cc: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com,
+ kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+ naveen.rao@amd.com, francescolavra.fl@gmail.com
+References: <20250429061004.205839-1-Neeraj.Upadhyay@amd.com>
+ <20250429061004.205839-2-Neeraj.Upadhyay@amd.com>
+ <aBDlVF4qXeUltuju@google.com> <62ae9c91-b62e-4bf9-8cf2-e68ddd0a1487@amd.com>
+ <20250507103821.GOaBs4HVnMXOdzOo_y@fat_crate.local>
+Content-Language: en-US
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20250507103821.GOaBs4HVnMXOdzOo_y@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0148.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:c8::10) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com> <20250506213814.2365788-6-zaidal@os.amperecomputing.com>
-In-Reply-To: <20250506213814.2365788-6-zaidal@os.amperecomputing.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 7 May 2025 13:38:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hr74LKfz+8EzAeR59_2RYKCNAxh0_MSRvfA+nJakyfHw@mail.gmail.com>
-X-Gm-Features: ATxdqUF_NwJ81TANR2N1xhJiUnotNJZzTryt9AripfXwdoa0owKuov1zAn95eDc
-Message-ID: <CAJZ5v0hr74LKfz+8EzAeR59_2RYKCNAxh0_MSRvfA+nJakyfHw@mail.gmail.com>
-Subject: Re: [PATCH v7 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, 
-	tony.luck@intel.com, bp@alien8.de, robert.moore@intel.com, 
-	Jonathan.Cameron@huawei.com, ira.weiny@intel.com, Benjamin.Cheatham@amd.com, 
-	dan.j.williams@intel.com, arnd@arndb.de, Avadhut.Naik@amd.com, 
-	u.kleine-koenig@pengutronix.de, john.allen@amd.com, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|DM6PR12MB4452:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc154c17-40a5-428c-7dcd-08dd8d5be104
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dlR5QTlpVFpuNFJ0dTlGS2psMGd6T1V1RlB0TEgyTENKSnQvaUZ0aE1uUDN2?=
+ =?utf-8?B?SUY3VGhrOExIRElIczB0R1B0UmNnOFRTdC9YY1NzVk8vLytVS2x2KzZ1UW84?=
+ =?utf-8?B?QThkVHZ3MC8rQjBUa0E0MUFWbk9XU2JKNzI4TnNIS1JIQVY2dlVjMTJJY1hS?=
+ =?utf-8?B?TS9iTHRjd2lFclVpMWhUM1MzREpOSmd1ZE41RDVibzc0WlU5VEdqai9JMFMv?=
+ =?utf-8?B?eWdpMHB2NFdkMlBUT0RLUTJQRHVqdUliVEVDaWxETUVsVkdpeXB2b0xycitv?=
+ =?utf-8?B?OHBLbGpTcFN3RTMrZTlkYzZWeDZLbkMzbjgvM1BDY3NuZDZSRko3MkxNVnBQ?=
+ =?utf-8?B?RERKUHJpejdKbXM0bXVPelkxOWtnbTlzMnFSbkMzcUp0ZW5aZWFOMXdYU2tV?=
+ =?utf-8?B?YmNCakRaSHNjS0t0anhYUFpZdnR5SllDczA2MGhBUjVtN21HMnRSeHpscDht?=
+ =?utf-8?B?KzFacy9oZDBVZ3dxdVRvUmdsNGlhdmRWVG54RHpTTmowZXFSRnZXWCtxUUdH?=
+ =?utf-8?B?VTYxMmVhZXVqVmJ1THhWa3R0YTR4dnNla2JVai9tNjVZMWpGUGkzeWtVamlW?=
+ =?utf-8?B?am9HRlA0QlQwaVlURnJYMWxaQnUvTm5FY2E3RUJjSmdybGY0NDl2VXh0d29X?=
+ =?utf-8?B?MVNTbG8wQXNQSVlDSWVDdGVwb1J3QUFtbVNmRHliL0FoR0NZTHlrd2IvYzhv?=
+ =?utf-8?B?eVYvUDc4SndFQnFVbVc3bUpoSFdMemhaQXdXdWx0VWczcmxLamZvWEFOcS9l?=
+ =?utf-8?B?ZTUxbjZUYm9Ca0NWSTNRaTBHclBZU1E2emlqNnBXVEZkandONkt5NER0bnhv?=
+ =?utf-8?B?K2NscTZtZUc4MnJYTFpIR1FSZWt1YUpPYmdnSlhzVkg3TlM4RzZEYXdPWDB0?=
+ =?utf-8?B?eUlaRCtvem90djVMMFkrTHVUSXl3aWtRTTEzdWgrdC80aDBuRWtuUyttbTBU?=
+ =?utf-8?B?bDM0T1ZtamdoSGVoRi8yYXBaNWt6RHRpRUtteE92Q0o0YWZZTlMzNG1ZWVVu?=
+ =?utf-8?B?K2dHNUkrMTROM3RCamh5cXZJSzJ2cHNUenFqNU9DZGdlMGpaQTczeUs4bUNn?=
+ =?utf-8?B?Qk93R3VoNU4vSkhsME1wTUhOSDZzdDZDRTdxMkxUSkdqbUx0d3k0OXU4ejM3?=
+ =?utf-8?B?a2w2LytmMWRyc1MvS0FOME1QR1NGTXV6cEswRDFwT0RzQThQclkxcFJUY2Iv?=
+ =?utf-8?B?YTgrTW1ia09KSnh0dEhzcW1WY2N3Yml2WmhQRis4THdYdFViOGI5RGdnV0J4?=
+ =?utf-8?B?V2l5Nk4yRjFPaFdEdzhuYkZUUEYxTTN0RDlQbWUxVUdYTitjNVI2Y0JPVjJw?=
+ =?utf-8?B?bnlLM1RVUXNwMEQrU1dKNUVBeDdieCs2Rnk0NjFpL0FQZzlleW9aTWxXWi9P?=
+ =?utf-8?B?Vnc3Rm5RSnlHYnRRNXhuRXFUQlk3ZTVXZ0hXa1lUeWlkZlg1K0duSTdUaFhT?=
+ =?utf-8?B?c2hMaTJkamJwY2pCcHJzWVBpNWJxTkFTa2E1Nlo5Ly8rc2VMK252enRHSytm?=
+ =?utf-8?B?cTdPZFd5MW9TdWNQeWY4c3htMjlrU29zWkl0dkUzMGR3UUhXVUR2MEdLcCti?=
+ =?utf-8?B?azNqdnQwTWxWTERibG9tTjNIemlaS0VHNXBmV3ZhU2NXalFRWTNFd09iUEJV?=
+ =?utf-8?B?OGJYSFhIMW9VcUxUczk1OENRdkNiMzFuM014cXlrSWhwN2ZnSmFtZjhYemZP?=
+ =?utf-8?B?UDIySWlWTmZKck9sRlVtSUJuTHNveXRZekI5UnZscVBlYjl3RXdIL01ONDdw?=
+ =?utf-8?B?Q3lIUjNXSHJyNDVncnlsTGdFaUk2VkZWOVFtOUIzZ3ZaZmZuOU1VMVRJVWJJ?=
+ =?utf-8?B?RlhlMlYwNjlnKzVLZGZBU2lmSGdIc0RxMWt0RkZ6ckNWQktNYm9HaFE2cWlC?=
+ =?utf-8?B?eTk4WDliQ2pGcE1ubVY5NnRnSTZiQ1hPc3gvVVNZMnNnU2VSYy9JMGxUcE8r?=
+ =?utf-8?Q?3KDBq8lgXcM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cy9CbDZ6RXBOMDlxeXpSd3dLVkwzOGh6WnVLZWo2SVh5OStON1RKWlhxSmdz?=
+ =?utf-8?B?NVlWT2JRc0llMWZpMGR5bDFWMldZa1Vob0d4THVmcmhmVitlRXdWTXYreGlq?=
+ =?utf-8?B?Q0w0Wk1ZU2txOEpYa2VSZTlGYnh1V3J0NCs0ck54ZjFZdEJWMmU4cytuMEw0?=
+ =?utf-8?B?a2R3RVAyUHZseHVoQ1RDTFZFRENoUWp3SE9menJxK0V2VVF4eFUrWFVFSWor?=
+ =?utf-8?B?ZkNIQ1k3Y29HWXozaEx6ZXZoeGszQkNtZmRPLy91bFRjTDZoVTBoU3U5NW9J?=
+ =?utf-8?B?WmNSVVlKNUM0L2J0QUpnenlRRVlad3hxaThObnBVL3ZoemlmbW9PVlFJOC9x?=
+ =?utf-8?B?YU8yOWhURzdGV1dNbFUzbTNIWDE4aW9wZzR0T2lnWm84NWZ0QkFqcU92RGdS?=
+ =?utf-8?B?Ky9rdE15bnFUMjY4VkV4ODV0L0t3SWRmQnprUkNrTEJtbEpyRTcvUU5TUGpi?=
+ =?utf-8?B?S0huakU5QUs2QnI0RlBpMkZ5N3Nrd1dxUWhKZ0hnY0t1b0VnYmJmYys5Wkx1?=
+ =?utf-8?B?RXp2Mit6MDlDa2xzVXp1TlEraDdRbEszazdLVmRkUjVEUDNhNEViMzJqYndp?=
+ =?utf-8?B?clFENkZXOWN2TGRBL0VJTVZzSUhxWDcyeFp2d0tnM2xmRDg4UjMyeUZCR09p?=
+ =?utf-8?B?eWRMa1g1SXVJYnR4bDUwL2MvRUZHY0ROcHlqQkVvT3p4SWw0Z1BWSTJwS3pL?=
+ =?utf-8?B?N2o4Sjc1S2twOXoyeFdQYjg4eWRrTDdDQW80QjlXTlN4VEpOK3ZZN3ZjTG1Q?=
+ =?utf-8?B?NUN1REo0Ty9yMEhUYmQ2QVFjSmJFaW1iZVdVNWZweWdFbnU1dFlTZld6bkJH?=
+ =?utf-8?B?bDc4NnhCVlBQQTFzaXFOQWlIaTc4NlEycWcySFZxVnd0Z0FLbmlvMVdoa0tr?=
+ =?utf-8?B?aCtqdGpXRDd2RXJ6ZHFoS3lLN0xhQllLdmR3ckJaVFBWWHR1d216dFQ3RGNm?=
+ =?utf-8?B?a2xudFpZdVVidUhJQXRwTXRYMFVxa1FPOERnd0txdlVMSEt1eS91eENsaHNZ?=
+ =?utf-8?B?a1VoQmhHdXZabk1KTmROaEt1bWxBTkd6U2sxa1BCSEM1dVNDM2Jia0d0RVBJ?=
+ =?utf-8?B?ZnJNU01ma0ZrV2luUHZkZkpUdmNtVVFzbU02NU12alpPY294QlZnZEtUbUJa?=
+ =?utf-8?B?ZU41VDhsQUZQVWZJUGxjc09QTUNQak1Ld2pLZ09vZFFjbmExWlk1VkJyTHp0?=
+ =?utf-8?B?UGdrbENsZmFtbW9OS252SlBCTWoxT2RtZ01SYUxFWjJTMDFiRVBNMFh0SnRV?=
+ =?utf-8?B?RzRXMldJUHM3cWN3VTFwcHR3bHp3eStnZzd6MlN2NWd5R0dZZExaWnVTUjhj?=
+ =?utf-8?B?b01CdVNSVklQYjdYOUNTa3NwVTZHSmpXTW1OaXphbm5QbXo1MUw2MWV6QnpF?=
+ =?utf-8?B?TXUwTWF5TzhJTnExcVlMelluVTNzSDN1UUF6b242OEIwekhBeDVJRE5aQStj?=
+ =?utf-8?B?U2NrVmRuRXU3ZXk1elNEMG9wd09DY1FPQmllVExZWUNPU1k1bXh1K1dGNzZY?=
+ =?utf-8?B?MW11WUw0U3A3bWxIbi9FMVM1SERDQmRKUVJwSXR6YmhXL3NwZGtkOWhLWllH?=
+ =?utf-8?B?M21TZmliN0piQ2dNejVmS2prS0NNODZ2QkRjRzdUMGJaeDg3amFjVVoxYVZI?=
+ =?utf-8?B?QTRkbWpRbFBhaGNQMVJlS1Q0KzBOK1RFcEdicXJiU3I3aFRtQ3Myc1k5cHFS?=
+ =?utf-8?B?UEJSN3Qwd0dsQzJ0OHBDZStCZHlXTVpTNlNVVFdURlVrZndTNmUzQ280TW9R?=
+ =?utf-8?B?K1dscWM0amJPcWxRVVhtL2pJSWVOS1pQL3hEa2hIQytqV2ptaTJjM3FHdGx3?=
+ =?utf-8?B?U3BFZk9LdWRaYXc2YXBjdytyNXY5ajJvTm5kYmwzOUpvejVlNXNMZGgyWnVI?=
+ =?utf-8?B?cVRmTSt4UkZyc21DMFl2QTdoa0FzQytBdU9sM2g4TWNhYnlkTEFSejdQRTdN?=
+ =?utf-8?B?OHUrZ05VTmZ1UVJLOXJZR2RjV3krTEdZQURyWE5CNjhzK1ROaW5uOXFETzNX?=
+ =?utf-8?B?VjNDeHFBWHFBRU9DNGE5bXUveHhjMDA5cUxlZ29vTm9XZ0RxWHIxU1dpU2p4?=
+ =?utf-8?B?U1RCMDhTMWN2anZ0OHpMaWlwUW5QSnBCOXB0cWw1TGlWd1JFOVlIZ1BwUTR5?=
+ =?utf-8?Q?NAz12b1nLOfzG1/AqWXQ7/Vfy?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc154c17-40a5-428c-7dcd-08dd8d5be104
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 11:39:51.4627
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wmx07EzIno62SP853FypWDZmxtJ4/FYlGJF9A+YgrZsWFYEVSR5YGwjJ1JMpTe4Ckn1KO3J4hEhQVubUIUqtRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4452
 
-On Tue, May 6, 2025 at 11:38=E2=80=AFPM Zaid Alali
-<zaidal@os.amperecomputing.com> wrote:
->
-> Enable the driver to show all supported error injections for EINJ
-> and EINJv2 at the same time. EINJv2 capabilities can be discovered
-> by checking the return value of get_error_type, where bit 30 set
-> indicates EINJv2 support.
->
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
 
-While the tag provided by Jonathan is appreciated, patches [5-9/9]
-need to be reviewed by one of the reviewers listed in the APEI entry
-in MAINTAINERS.
 
-> ---
->  drivers/acpi/apei/apei-internal.h |  2 +-
->  drivers/acpi/apei/einj-core.c     | 75 +++++++++++++++++++++++++------
->  drivers/acpi/apei/einj-cxl.c      |  2 +-
->  3 files changed, 63 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/acpi/apei/apei-internal.h b/drivers/acpi/apei/apei-i=
-nternal.h
-> index cd2766c69d78..77c10a7a7a9f 100644
-> --- a/drivers/acpi/apei/apei-internal.h
-> +++ b/drivers/acpi/apei/apei-internal.h
-> @@ -131,7 +131,7 @@ static inline u32 cper_estatus_len(struct acpi_hest_g=
-eneric_status *estatus)
->
->  int apei_osc_setup(void);
->
-> -int einj_get_available_error_type(u32 *type);
-> +int einj_get_available_error_type(u32 *type, int einj_action);
->  int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 p=
-aram3,
->                       u64 param4);
->  int einj_cxl_rch_error_inject(u32 type, u32 flags, u64 param1, u64 param=
-2,
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
-c
-> index ada1d7026af5..ee26df0398fc 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -33,6 +33,7 @@
->  #define SLEEP_UNIT_MAX         5000                    /* 5ms */
->  /* Firmware should respond within 1 seconds */
->  #define FIRMWARE_TIMEOUT       (1 * USEC_PER_SEC)
-> +#define ACPI65_EINJV2_SUPP     BIT(30)
->  #define ACPI5_VENDOR_BIT       BIT(31)
->  #define MEM_ERROR_MASK         (ACPI_EINJ_MEMORY_CORRECTABLE | \
->                                 ACPI_EINJ_MEMORY_UNCORRECTABLE | \
-> @@ -84,6 +85,7 @@ static struct debugfs_blob_wrapper vendor_errors;
->  static char vendor_dev[64];
->
->  static u32 available_error_type;
-> +static u32 available_error_type_v2;
->
->  /*
->   * Some BIOSes allow parameters to the SET_ERROR_TYPE entries in the
-> @@ -159,13 +161,13 @@ static void einj_exec_ctx_init(struct apei_exec_con=
-text *ctx)
->                            EINJ_TAB_ENTRY(einj_tab), einj_tab->entries);
->  }
->
-> -static int __einj_get_available_error_type(u32 *type)
-> +static int __einj_get_available_error_type(u32 *type, int einj_action)
->  {
->         struct apei_exec_context ctx;
->         int rc;
->
->         einj_exec_ctx_init(&ctx);
-> -       rc =3D apei_exec_run(&ctx, ACPI_EINJ_GET_ERROR_TYPE);
-> +       rc =3D apei_exec_run(&ctx, einj_action);
->         if (rc)
->                 return rc;
->         *type =3D apei_exec_ctx_get_output(&ctx);
-> @@ -174,17 +176,34 @@ static int __einj_get_available_error_type(u32 *typ=
-e)
->  }
->
->  /* Get error injection capabilities of the platform */
-> -int einj_get_available_error_type(u32 *type)
-> +int einj_get_available_error_type(u32 *type, int einj_action)
->  {
->         int rc;
->
->         mutex_lock(&einj_mutex);
-> -       rc =3D __einj_get_available_error_type(type);
-> +       rc =3D __einj_get_available_error_type(type, einj_action);
->         mutex_unlock(&einj_mutex);
->
->         return rc;
->  }
->
-> +static int einj_get_available_error_types(u32 *type1, u32 *type2)
-> +{
-> +       int rc;
-> +
-> +       rc =3D einj_get_available_error_type(type1, ACPI_EINJ_GET_ERROR_T=
-YPE);
-> +       if (rc)
-> +               return rc;
-> +       if (*type1 & ACPI65_EINJV2_SUPP) {
-> +               rc =3D einj_get_available_error_type(type2,
-> +                                                  ACPI_EINJV2_GET_ERROR_=
-TYPE);
-> +               if (rc)
-> +                       return rc;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int einj_timedout(u64 *t)
->  {
->         if ((s64)*t < SLEEP_UNIT_MIN) {
-> @@ -646,6 +665,7 @@ static u64 error_param2;
->  static u64 error_param3;
->  static u64 error_param4;
->  static struct dentry *einj_debug_dir;
-> +static char einj_buf[32];
->  static struct { u32 mask; const char *str; } const einj_error_type_strin=
-g[] =3D {
->         { BIT(0), "Processor Correctable" },
->         { BIT(1), "Processor Uncorrectable non-fatal" },
-> @@ -662,6 +682,12 @@ static struct { u32 mask; const char *str; } const e=
-inj_error_type_string[] =3D {
->         { BIT(31), "Vendor Defined Error Types" },
->  };
->
-> +static struct { u32 mask; const char *str; } const einjv2_error_type_str=
-ing[] =3D {
-> +       { BIT(0), "EINJV2 Processor Error" },
-> +       { BIT(1), "EINJV2 Memory Error" },
-> +       { BIT(2), "EINJV2 PCI Express Error" },
-> +};
-> +
->  static int available_error_type_show(struct seq_file *m, void *v)
->  {
->
-> @@ -669,17 +695,22 @@ static int available_error_type_show(struct seq_fil=
-e *m, void *v)
->                 if (available_error_type & einj_error_type_string[pos].ma=
-sk)
->                         seq_printf(m, "0x%08x\t%s\n", einj_error_type_str=
-ing[pos].mask,
->                                    einj_error_type_string[pos].str);
-> -
-> +       if (available_error_type & ACPI65_EINJV2_SUPP) {
-> +               for (int pos =3D 0; pos < ARRAY_SIZE(einjv2_error_type_st=
-ring); pos++) {
-> +                       if (available_error_type_v2 & einjv2_error_type_s=
-tring[pos].mask)
-> +                               seq_printf(m, "V2_0x%08x\t%s\n", einjv2_e=
-rror_type_string[pos].mask,
-> +                                          einjv2_error_type_string[pos].=
-str);
-> +               }
-> +       }
->         return 0;
->  }
->
->  DEFINE_SHOW_ATTRIBUTE(available_error_type);
->
-> -static int error_type_get(void *data, u64 *val)
-> +static ssize_t error_type_get(struct file *file, char __user *buf,
-> +                               size_t count, loff_t *ppos)
->  {
-> -       *val =3D error_type;
-> -
-> -       return 0;
-> +       return simple_read_from_buffer(buf, count, ppos, einj_buf, strlen=
-(einj_buf));
->  }
->
->  bool einj_is_cxl_error_type(u64 type)
-> @@ -712,9 +743,23 @@ int einj_validate_error_type(u64 type)
->         return 0;
->  }
->
-> -static int error_type_set(void *data, u64 val)
-> +static ssize_t error_type_set(struct file *file, const char __user *buf,
-> +                               size_t count, loff_t *ppos)
->  {
->         int rc;
-> +       u64 val;
-> +
-> +       memset(einj_buf, 0, sizeof(einj_buf));
-> +       if (copy_from_user(einj_buf, buf, count))
-> +               return -EFAULT;
-> +
-> +       if (strncmp(einj_buf, "V2_", 3) =3D=3D 0) {
-> +               if (!sscanf(einj_buf, "V2_%llx", &val))
-> +                       return -EINVAL;
-> +       } else {
-> +               if (!sscanf(einj_buf, "%llx", &val))
-> +                       return -EINVAL;
-> +       }
->
->         rc =3D einj_validate_error_type(val);
->         if (rc)
-> @@ -722,11 +767,13 @@ static int error_type_set(void *data, u64 val)
->
->         error_type =3D val;
->
-> -       return 0;
-> +       return count;
->  }
->
-> -DEFINE_DEBUGFS_ATTRIBUTE(error_type_fops, error_type_get, error_type_set=
-,
-> -                        "0x%llx\n");
-> +static const struct file_operations error_type_fops =3D {
-> +       .read           =3D error_type_get,
-> +       .write          =3D error_type_set,
-> +};
->
->  static int error_inject_set(void *data, u64 val)
->  {
-> @@ -783,7 +830,7 @@ static int __init einj_probe(struct platform_device *=
-pdev)
->                 goto err_put_table;
->         }
->
-> -       rc =3D einj_get_available_error_type(&available_error_type);
-> +       rc =3D einj_get_available_error_types(&available_error_type, &ava=
-ilable_error_type_v2);
->         if (rc)
->                 return rc;
->
-> diff --git a/drivers/acpi/apei/einj-cxl.c b/drivers/acpi/apei/einj-cxl.c
-> index 78da9ae543a2..e70a416ec925 100644
-> --- a/drivers/acpi/apei/einj-cxl.c
-> +++ b/drivers/acpi/apei/einj-cxl.c
-> @@ -30,7 +30,7 @@ int einj_cxl_available_error_type_show(struct seq_file =
-*m, void *v)
->         int cxl_err, rc;
->         u32 available_error_type =3D 0;
->
-> -       rc =3D einj_get_available_error_type(&available_error_type);
-> +       rc =3D einj_get_available_error_type(&available_error_type, ACPI_=
-EINJ_GET_ERROR_TYPE);
->         if (rc)
->                 return rc;
->
-> --
-> 2.43.0
->
+On 5/7/2025 4:08 PM, Borislav Petkov wrote:
+> On Tue, Apr 29, 2025 at 11:39:53PM +0530, Neeraj Upadhyay wrote:
+>> My bad. I missed updating the changelog with the information about logic update.
+> 
+> No, remember: when you move code like this, your first patch is *solely*
+> *mechanical* move.
+> 
+> Then, ontop, in further patches you do other changes.
+> 
+> You want to keep mechanical move separate from other changes because it
+> complicates review unnecessarily.
+> 
+> One of the reasons I'm trying to get you guys to do review too is because then
+> you'll know.
+> 
+
+Understood. Thanks for explaining this!
+
+
+- Neeraj
+
+
+> Thx.
+> 
+
 
