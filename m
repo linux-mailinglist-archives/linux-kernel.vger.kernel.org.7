@@ -1,338 +1,259 @@
-Return-Path: <linux-kernel+bounces-637609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA5EAADB1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:17:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E39BAADB22
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2C61C07356
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E972B9A260F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6A5233719;
-	Wed,  7 May 2025 09:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6D9235047;
+	Wed,  7 May 2025 09:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AawHkf1W"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jl/ubejR"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199122309B2;
-	Wed,  7 May 2025 09:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1117234971
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746608927; cv=none; b=evWOE1aU9aSfulwcnAZs9p2OW7dwxX9Osw6SI9c3cH+LTjTlS8Uw/UVZdpMOqMzPUfGh6BR0OEyEI5nVWI4IB8AG9LZ+bdNhsQpBnyaTFAgJunjycdXjWy7/bxHpoC77NnI6b0kFMqa5J7TELcsFDoG/8DB0RoUHCntOuk7xOo8=
+	t=1746608982; cv=none; b=D64x355+XrLE54ZQ0q7jYnXRMikye06of+u9bNAxuVE15NtvkkCJl8p9uTtW97tD7KGCDqkXCheA/9R0SpgaI53+HeLSc+s6BgQpNw/7XX8/3iU94OiL7IltbS/N186wf5auOBcys4DpnO3zfrSnocq13HtWvJgWYnt4lV6VgN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746608927; c=relaxed/simple;
-	bh=bcDiPz4rwZOGkdYGrLrevc3ngISFokcqcUlpEvXZJME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsAlj49gmRXJ5PD5QX3aCvepcaluo36kvK920dfFIj8ZBzX2KlhoMnR1KzGUSPCX/rdD3RTWzUdKAI5RbclviemLdQxf9TQgAvyuwp59TXwDZm+xbtwgM3nNbfk8r5WRZYYF5ll6sOdlSJja1/b1uUI6crBtulbm/NcD/JaLmJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AawHkf1W; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so616418566b.0;
-        Wed, 07 May 2025 02:08:44 -0700 (PDT)
+	s=arc-20240116; t=1746608982; c=relaxed/simple;
+	bh=wXBWuPEfAaX019ieJsFKSJGb5hqbbPn+USMn7aPCQB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ib07peOEWV2i5xWJIiAkIkz+Uk8dS74R2NWlT3xtwPSKQyZqvr4nXz/oFAJudZl0HSqMecPTL70k4iWfKQScVSA6p1DMyXvQPgcuMBeEJlhBE2bgdQJ7I2mGTFoXuFnCh4ux8podJ6XaiS38Y7G1HrZW5IQltP6Lo0n6nhC7azI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jl/ubejR; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22e15aea506so61343915ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:09:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746608923; x=1747213723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iDNlseJp/i5QCLgbJ7HKyZOKWGPy8tHwHzU0G67jD/4=;
-        b=AawHkf1WyXFBUAV81EVXpJtLMnGQq47BnEEtK9tDCIlVfNJf62P4guq3tDHsSOxw+e
-         5IiUIKS4HbOlTc9LQTHP0CSh4zMaaiZuCP1/owuvgGzVgvzHEvsbu4/CqudhIX0NcBlQ
-         80H06DdMcGuTudtruTSrjedsksr7krFmLiulEI9jtV0X/6FbGBaCxtmcNOgJ8R6DUVB5
-         heiHtR35x94WSD3/WUJBW1uGoitHZpmhQ260eKVjaonT1zK3/TjAwX8GCXNdE9phVMH3
-         kZ3IjYKz+/xfQcyljGa1lMKjNX9UzD3b4r/OZaKAaix3q8qypeiuKTDpus27vllFuIYG
-         aWtg==
+        d=bytedance.com; s=google; t=1746608979; x=1747213779; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WY1b1qiEg0mRIsEvq0huyi5nrN2SoYZxQsiO6G2Z2So=;
+        b=jl/ubejRFhvM6R8pDpQ4BTM42r6IlgIE3i2FTGElSF9CS0h7mDLAlYc1YSlasg8dRv
+         LOkhbQfne/fVbc87EgWwZMOlUyrrDrDZgr1N62NWC9d/vUoAfRT4r4BYDTxodcHZIu9k
+         naihlQDa8vX3CSwESWWz/Cbvy4BZH5ZELaWEQh2QGq1Q7vaHt5f3SHjHNibwrHoK7L3Z
+         252uGij1seyutsPsIdwUhj9BC0hbnjCFL6mjJn7bnaSQ4co793Mdd9AadUjYXsouGp+8
+         1Z7QCIbrxfFpLjRmfd/sZLN2XoJlS+SMmAox/LT7FOFx8rdno8VF13Ys0k9k9LewDage
+         bwPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746608923; x=1747213723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iDNlseJp/i5QCLgbJ7HKyZOKWGPy8tHwHzU0G67jD/4=;
-        b=jbxrMWrpcJwzxiUxWXdMqKQz3kOdJSYwqxhPvZapzifwropTIyA+mOnFTfROnCI+wH
-         Zutkhx9i0OmJJtejBmDI6TSxY0i/l5/ZfDSRaYqeA/mKUxpNp6kmgB2F7cUGRQkjXVGd
-         fS0vYBMY5uVhV5H91J41BoCCUEM6uvLLFWW5JXndxv6CWR+hY0pZePrAhtOgY03IO+RC
-         SLShOwA/gt/91+kgumWO2hU3Jvp/aPyzHKd/hzUJmhvaMF+kCAebtxyw65k0+wuQBTWf
-         SVFwzLiwmBkKlp2qcIFtu2gUnSVgFkyOMkTae8YYyEaNRAxL3H5Y9AZ3mCAaZM3yyWDB
-         Ksvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWb4czx3sAapQnORv/8pNQ9a02K+yrw/o5ERubIcEpwxhwON7a02kpS0qujEwhA1vjPIIov6geTJQOcf2SbQw==@vger.kernel.org, AJvYcCXH66SiSpFDgM5lztXwmSMtG1LbzFL5DfSWv4G9n/Y908bdrJoZ1xwMn7AKQMgWnNbN9kLtHxx7FHQzbHw5@vger.kernel.org, AJvYcCXVmq08Vf/bFDsJ1P4n9CJENZ66GP2Jc0PFFVnAstUd3bBFMOhaNXhFW6Hlki0UtzNQ3+8mynlECgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxYzA+h98S7XwrOwDR1mlcSwIgUIq+TYs/Y1paYbgBoIP4l8Me
-	oEeAU06kbOLXgdm4/DXqNhcyl19fxOVWrrr7c4vHIoY/BuRqxKZAk1GJLYN/mWiO1LmQ9SXmPxk
-	TW77Chb18dPoPyyoMM3pgcVM87jiOsK01HgY=
-X-Gm-Gg: ASbGncs41HJcwaNd4DfXpvKCwltCwPzOdLvwE79quX54QC/eKpsHbLkJ3zWJNjhh733
-	CBAXcQkZcoLKtx7Yvlptra98Yw6Rh/D1FDMr2XH1H0ODy4C3CUIL1bVGIzKuRmA6Vzvi6C21vcT
-	1aM1Bd8AtKsxMsIu9L//G2QA==
-X-Google-Smtp-Source: AGHT+IHElRaGzJn3jeSjMAmLa+FqMepTIDa3ktAEq2CX3EhC5svkEFhHOJlrSpohJQkGwU/YloXXbBvwiAHdrABu+u0=
-X-Received: by 2002:a17:907:6d29:b0:aca:e1ea:c5fc with SMTP id
- a640c23a62f3a-ad1e8c90d98mr251829266b.26.1746608922867; Wed, 07 May 2025
- 02:08:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746608979; x=1747213779;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WY1b1qiEg0mRIsEvq0huyi5nrN2SoYZxQsiO6G2Z2So=;
+        b=iK2KtjBcK2kiIJc9Xe+kZ3txODUmudHGUhadwPlh6zKRNTVqZoz1Ru865NmD9Td1OQ
+         bcKGirz+ZPWo11HHVRjLEhT5UaGQ36zjlfm6f6o5n1VTmgZUgXGxxcYiaOoNyAxyJSU4
+         KT4tQCLjWE2QeYQWaihHQETgTX45JMysoIt3eBtepFCG+kGTPN2GfTUGu74bKCx9Oglt
+         SuU3gmPwv5RygbxbxX6GmK7bZOxc37lcIVK4gN44YxIEchD15uiZXNMgrvcI9+xN0e1P
+         ktPsXea4/5TAP76NgGLKb+ysBC703d2NE6uv+hEgUfApWT3F1GabjkZ0jNc121DjR4Gq
+         E2mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTHExqIZIytwD2rbr6MLsqe4FfyOKo/kwH0CbfYu6slD4s3sKNTVZ/fxQcTHYQ670/oWjQQFVRTKgzaqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOPxVl4los8iwUboI8ldP68QlZ6EYHagmwWs1I1yEjPQonJOEe
+	Rr7J0cvz6c7q7Jd31OvovKVQAIGWuYCdKiFHWxdX7dwQFqDOpZRHAxi1rL/gxA==
+X-Gm-Gg: ASbGnctWgf9SA4258Kq9NB9JZppIIHnWqNTy6CgIhgX7W7lXIlod7bQAs+Vgi3APQkq
+	vtE9nxhlqSiSRTDwMjiuLZ5zAiejVyxh5lVwZCepSENq9DkXPeR14vK6cNYUYFdX3Hf8P82kZgw
+	iJwJCmEj+Dee1OPd4dvVDiuPX/xUCD3TUa8uPpgMPVhmjlyER4TQgtdS+oDWBzO5R3XjcbBslhn
+	muG+liFJX7alRl2iWxh/YzraIZ0vSDCoJDw4cGBetjBuMUbkvgqJ2WeDVDmQwFfqbIQOYuqkZ8q
+	DIRzuC+DnPrr5cu4STtZ4+WfDFgPgiP+g0sFYub5VBMZSlWBVq0=
+X-Google-Smtp-Source: AGHT+IEq/46S+fUXZ/+XrT12GP+VOr9i+mCJitceDea4tmF0O13MZB1YIdMs727wtiU507BTRVy4mw==
+X-Received: by 2002:a17:903:2a83:b0:224:a96:e39 with SMTP id d9443c01a7336-22e5ea58fccmr35866655ad.9.1746608979110;
+        Wed, 07 May 2025 02:09:39 -0700 (PDT)
+Received: from bytedance ([115.190.40.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e70881d52sm5343095ad.129.2025.05.07.02.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 02:09:38 -0700 (PDT)
+Date: Wed, 7 May 2025 17:09:23 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Florian Bezdeka <florian.bezdeka@siemens.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [RFC PATCH v2 7/7] sched/fair: alternative way of accounting
+ throttle time
+Message-ID: <20250507090923.GA194948@bytedance>
+References: <20250409120746.635476-1-ziqianlu@bytedance.com>
+ <20250409120746.635476-8-ziqianlu@bytedance.com>
+ <099db50ce28f8b4bde37b051485de62a8f452cc2.camel@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507-fuse-passthrough-doc-v2-0-ae7c0dd8bba6@uniontech.com> <20250507-fuse-passthrough-doc-v2-2-ae7c0dd8bba6@uniontech.com>
-In-Reply-To: <20250507-fuse-passthrough-doc-v2-2-ae7c0dd8bba6@uniontech.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 7 May 2025 11:08:30 +0200
-X-Gm-Features: ATxdqUGYbdTUdaZjQmW-DPcCa4rq11m0Ukjid7lXU4zoa9mjpZ9HxwNDAair8qg
-Message-ID: <CAOQ4uxjCSO0Fu4myX9MgDfdR-zEkcsFr7PyUJAU2mEbdksY16Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] docs: filesystems: add fuse-passthrough.rst
-To: chenlinxuan@uniontech.com
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <099db50ce28f8b4bde37b051485de62a8f452cc2.camel@siemens.com>
 
-On Wed, May 7, 2025 at 10:42=E2=80=AFAM Chen Linxuan via B4 Relay
-<devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
->
-> From: Chen Linxuan <chenlinxuan@uniontech.com>
->
-> Add a documentation about FUSE passthrough.
->
-> It's mainly about why FUSE passthrough needs CAP_SYS_ADMIN.
->
-> Some related discussions:
->
-> Link: https://lore.kernel.org/all/4b64a41c-6167-4c02-8bae-3021270ca519@fa=
-stmail.fm/T/#mc73e04df56b8830b1d7b06b5d9f22e594fba423e
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxhAY1m7ubJ3p-A3rSufw_53=
-WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com/
+Hi Florian,
+
+On Thu, Apr 17, 2025 at 04:06:16PM +0200, Florian Bezdeka wrote:
+> Hi Aaron,
+>=20
+> On Wed, 2025-04-09 at 20:07 +0800, Aaron Lu wrote:
+> > @@ -5889,27 +5943,21 @@ static int tg_unthrottle_up(struct task_group *=
+tg, void *data)
+> > =C2=A0	cfs_rq->throttled_clock_pelt_time +=3D rq_clock_pelt(rq) -
+> > =C2=A0		cfs_rq->throttled_clock_pelt;
+> > =C2=A0
+> > -	if (cfs_rq->throttled_clock_self) {
+> > -		u64 delta =3D rq_clock(rq) - cfs_rq->throttled_clock_self;
+> > -
+> > -		cfs_rq->throttled_clock_self =3D 0;
+> > -
+> > -		if (WARN_ON_ONCE((s64)delta < 0))
+> > -			delta =3D 0;
+> > -
+> > -		cfs_rq->throttled_clock_self_time +=3D delta;
+> > -	}
+> > +	if (cfs_rq->throttled_clock_self)
+> > +		account_cfs_rq_throttle_self(cfs_rq);
+> > =C2=A0
+> > =C2=A0	/* Re-enqueue the tasks that have been throttled at this level. =
+*/
+> > =C2=A0	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list, =
+throttle_node) {
+> > =C2=A0		list_del_init(&p->throttle_node);
+> > -		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
+> > +		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP | ENQUEUE_THROTTL=
+E);
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	/* Add cfs_rq with load or one or more already running entities =
+to the list */
+> > =C2=A0	if (!cfs_rq_is_decayed(cfs_rq))
+> > =C2=A0		list_add_leaf_cfs_rq(cfs_rq);
+> > =C2=A0
+> > +	WARN_ON_ONCE(cfs_rq->h_nr_throttled);
+> > +
+> > =C2=A0	return 0;
+> > =C2=A0}
+> > =C2=A0
+>=20
+> I got this warning while testing in our virtual environment:
+>=20
+> Any idea?
 >
 
-For future reference, those links are usually part of the tail part
-(without newline)
-but don't worry about it - this can be fixed when applying the patch.
+I made a stupid mistake here: I thought when a cfs_rq gets unthrottled,
+it should have no tasks in throttled state, hence I added that check in
+tg_unthrottle_up():
+        WARN_ON_ONCE(cfs_rq->h_nr_throttled);
 
-Thanks,
-Amir.
+But h_nr_throttled tracks hierarchical throttled task number, which
+means if this cfs_rq has descendent cfs_rqs that are still in throttled
+state, its h_nr_throttled can be > 0 when it gets unthrottled.
 
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Bernd Schubert <bernd.schubert@fastmail.fm>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> ---
->  Documentation/filesystems/fuse-passthrough.rst | 133 +++++++++++++++++++=
-++++++
->  Documentation/filesystems/index.rst            |   1 +
->  2 files changed, 134 insertions(+)
->
-> diff --git a/Documentation/filesystems/fuse-passthrough.rst b/Documentati=
-on/filesystems/fuse-passthrough.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2b0e7c2da54acde4d48fd91ec=
-ece27256c4e04fd
-> --- /dev/null
-> +++ b/Documentation/filesystems/fuse-passthrough.rst
-> @@ -0,0 +1,133 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +FUSE Passthrough
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Introduction
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +FUSE (Filesystem in Userspace) passthrough is a feature designed to impr=
-ove the
-> +performance of FUSE filesystems for I/O operations. Typically, FUSE oper=
-ations
-> +involve communication between the kernel and a userspace FUSE daemon, wh=
-ich can
-> +incur overhead. Passthrough allows certain operations on a FUSE file to =
-bypass
-> +the userspace daemon and be executed directly by the kernel on an underl=
-ying
-> +"backing file".
-> +
-> +This is achieved by the FUSE daemon registering a file descriptor (point=
-ing to
-> +the backing file on a lower filesystem) with the FUSE kernel module. The=
- kernel
-> +then receives an identifier (``backing_id``) for this registered backing=
- file.
-> +When a FUSE file is subsequently opened, the FUSE daemon can, in its res=
-ponse to
-> +the ``OPEN`` request, include this ``backing_id`` and set the
-> +``FOPEN_PASSTHROUGH`` flag. This establishes a direct link for specific
-> +operations.
-> +
-> +Currently, passthrough is supported for operations like ``read(2)``/``wr=
-ite(2)``
-> +(via ``read_iter``/``write_iter``), ``splice(2)``, and ``mmap(2)``.
-> +
-> +Enabling Passthrough
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +To use FUSE passthrough:
-> +
-> +  1. The FUSE filesystem must be compiled with ``CONFIG_FUSE_PASSTHROUGH=
-``
-> +     enabled.
-> +  2. The FUSE daemon, during the ``FUSE_INIT`` handshake, must negotiate=
- the
-> +     ``FUSE_PASSTHROUGH`` capability and specify its desired
-> +     ``max_stack_depth``.
-> +  3. The (privileged) FUSE daemon uses the ``FUSE_DEV_IOC_BACKING_OPEN``=
- ioctl
-> +     on its connection file descriptor (e.g., ``/dev/fuse``) to register=
- a
-> +     backing file descriptor and obtain a ``backing_id``.
-> +  4. When handling an ``OPEN`` or ``CREATE`` request for a FUSE file, th=
-e daemon
-> +     replies with the ``FOPEN_PASSTHROUGH`` flag set in
-> +     ``fuse_open_out::open_flags`` and provides the corresponding ``back=
-ing_id``
-> +     in ``fuse_open_out::backing_id``.
-> +  5. The FUSE daemon should eventually call ``FUSE_DEV_IOC_BACKING_CLOSE=
-`` with
-> +     the ``backing_id`` to release the kernel's reference to the backing=
- file
-> +     when it's no longer needed for passthrough setups.
-> +
-> +Privilege Requirements
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Setting up passthrough functionality currently requires the FUSE daemon =
-to
-> +possess the ``CAP_SYS_ADMIN`` capability. This requirement stems from se=
-veral
-> +security and resource management considerations that are actively being
-> +discussed and worked on. The primary reasons for this restriction are de=
-tailed
-> +below.
-> +
-> +Resource Accounting and Visibility
-> +----------------------------------
-> +
-> +The core mechanism for passthrough involves the FUSE daemon opening a fi=
-le
-> +descriptor to a backing file and registering it with the FUSE kernel mod=
-ule via
-> +the ``FUSE_DEV_IOC_BACKING_OPEN`` ioctl. This ioctl returns a ``backing_=
-id``
-> +associated with a kernel-internal ``struct fuse_backing`` object, which =
-holds a
-> +reference to the backing ``struct file``.
-> +
-> +A significant concern arises because the FUSE daemon can close its own f=
-ile
-> +descriptor to the backing file after registration. The kernel, however, =
-will
-> +still hold a reference to the ``struct file`` via the ``struct fuse_back=
-ing``
-> +object as long as it's associated with a ``backing_id`` (or subsequently=
-, with
-> +an open FUSE file in passthrough mode).
-> +
-> +This behavior leads to two main issues for unprivileged FUSE daemons:
-> +
-> +  1. **Invisibility to lsof and other inspection tools**: Once the FUSE
-> +     daemon closes its file descriptor, the open backing file held by th=
-e kernel
-> +     becomes "hidden." Standard tools like ``lsof``, which typically ins=
-pect
-> +     process file descriptor tables, would not be able to identify that =
-this
-> +     file is still open by the system on behalf of the FUSE filesystem. =
-This
-> +     makes it difficult for system administrators to track resource usag=
-e or
-> +     debug issues related to open files (e.g., preventing unmounts).
-> +
-> +  2. **Bypassing RLIMIT_NOFILE**: The FUSE daemon process is subject to
-> +     resource limits, including the maximum number of open file descript=
-ors
-> +     (``RLIMIT_NOFILE``). If an unprivileged daemon could register backi=
-ng files
-> +     and then close its own FDs, it could potentially cause the kernel t=
-o hold
-> +     an unlimited number of open ``struct file`` references without thes=
-e being
-> +     accounted against the daemon's ``RLIMIT_NOFILE``. This could lead t=
-o a
-> +     denial-of-service (DoS) by exhausting system-wide file resources.
-> +
-> +The ``CAP_SYS_ADMIN`` requirement acts as a safeguard against these issu=
-es,
-> +restricting this powerful capability to trusted processes.
-> +
-> +**NOTE**: ``io_uring`` solves this similar issue by exposing its "fixed =
-files",
-> +which are visible via ``fdinfo`` and accounted under the registering use=
-r's
-> +``RLIMIT_NOFILE``.
-> +
-> +Filesystem Stacking and Shutdown Loops
-> +--------------------------------------
-> +
-> +Another concern relates to the potential for creating complex and proble=
-matic
-> +filesystem stacking scenarios if unprivileged users could set up passthr=
-ough.
-> +A FUSE passthrough filesystem might use a backing file that resides:
-> +
-> +  * On the *same* FUSE filesystem.
-> +  * On another filesystem (like OverlayFS) which itself might have an up=
-per or
-> +    lower layer that is a FUSE filesystem.
-> +
-> +These configurations could create dependency loops, particularly during
-> +filesystem shutdown or unmount sequences, leading to deadlocks or system
-> +instability. This is conceptually similar to the risks associated with t=
-he
-> +``LOOP_SET_FD`` ioctl, which also requires ``CAP_SYS_ADMIN``.
-> +
-> +To mitigate this, FUSE passthrough already incorporates checks based on
-> +filesystem stacking depth (``sb->s_stack_depth`` and ``fc->max_stack_dep=
-th``).
-> +For example, during the ``FUSE_INIT`` handshake, the FUSE daemon can neg=
-otiate
-> +the ``max_stack_depth`` it supports. When a backing file is registered v=
-ia
-> +``FUSE_DEV_IOC_BACKING_OPEN``, the kernel checks if the backing file's
-> +filesystem stack depth is within the allowed limit.
-> +
-> +The ``CAP_SYS_ADMIN`` requirement provides an additional layer of securi=
-ty,
-> +ensuring that only privileged users can create these potentially complex
-> +stacking arrangements.
-> +
-> +General Security Posture
-> +------------------------
-> +
-> +As a general principle for new kernel features that allow userspace to i=
-nstruct
-> +the kernel to perform direct operations on its behalf based on user-prov=
-ided
-> +file descriptors, starting with a higher privilege requirement (like
-> +``CAP_SYS_ADMIN``) is a conservative and common security practice. This =
-allows
-> +the feature to be used and tested while further security implications ar=
-e
-> +evaluated and addressed.
-> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesyst=
-ems/index.rst
-> index a9cf8e950b15ad68a021d5f214b07f58d752f4e3..2913f4f2e00ccc466563aba56=
-92e2f95699cb674 100644
-> --- a/Documentation/filesystems/index.rst
-> +++ b/Documentation/filesystems/index.rst
-> @@ -99,6 +99,7 @@ Documentation for filesystem implementations.
->     fuse
->     fuse-io
->     fuse-io-uring
-> +   fuse-passthrough
->     inotify
->     isofs
->     nilfs2
->
-> --
-> 2.43.0
->
->
+I just made a setup to emulate this scenario and can reproduce this
+warning. I guess in your setup, there are multiple cpu.max settings in a
+cgroup hierarchy.
+
+It's just the warn_on_once() itself is incorrect, I'll remove it in next
+version, thanks for the report!
+
+Best regards,
+Aaron
+
+> [   26.639641] ------------[ cut here ]------------
+> [   26.639644] WARNING: CPU: 5 PID: 0 at kernel/sched/fair.c:5967 tg_unth=
+rottle_up+0x1a6/0x3d0
+> [   26.639653] Modules linked in: veth xt_nat nft_chain_nat xt_MASQUERADE=
+ nf_nat nf_conntrack_netlink xfrm_user xfrm_algo br_netfilter bridge stp ll=
+c xt_recent rfkill ip6t_REJECT nf_reject_ipv6 xt_hl ip6t_rt vsock_loopback =
+vmw_vsock_virtio_transport_common ipt_REJECT nf_reject_ipv4 xt_LOG nf_log_s=
+yslog vmw_vsock_vmci_transport xt_comment vsock nft_limit xt_limit xt_addrt=
+ype xt_tcpudp xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nft_c=
+ompat nf_tables intel_rapl_msr intel_rapl_common nfnetlink binfmt_misc inte=
+l_uncore_frequency_common isst_if_mbox_msr isst_if_common skx_edac_common n=
+fit libnvdimm ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 aesn=
+i_intel snd_pcm crypto_simd cryptd snd_timer rapl snd soundcore vmw_balloon=
+ vmwgfx pcspkr drm_ttm_helper ttm drm_client_lib button ac drm_kms_helper s=
+g vmw_vmci evdev joydev serio_raw drm loop efi_pstore configfs efivarfs ip_=
+tables x_tables autofs4 overlay nls_ascii nls_cp437 vfat fat ext4 crc16 mbc=
+ache jbd2 squashfs dm_verity dm_bufio reed_solomon dm_mod
+> [   26.639715]  sd_mod ata_generic mptspi mptscsih ata_piix mptbase libat=
+a scsi_transport_spi psmouse scsi_mod vmxnet3 i2c_piix4 i2c_smbus scsi_comm=
+on
+> [   26.639726] CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 6.14.2-CF=
+Sfixes #1
+> [   26.639729] Hardware name: VMware, Inc. VMware7,1/440BX Desktop Refere=
+nce Platform, BIOS VMW71.00V.24224532.B64.2408191458 08/19/2024
+> [   26.639731] RIP: 0010:tg_unthrottle_up+0x1a6/0x3d0
+> [   26.639735] Code: 00 00 48 39 ca 74 14 48 8b 52 10 49 8b 8e 58 01 00 0=
+0 48 39 8a 28 01 00 00 74 24 41 8b 86 68 01 00 00 85 c0 0f 84 8d fe ff ff <=
+0f> 0b e9 86 fe ff ff 49 8b 9e 38 01 00 00 41 8b 86 40 01 00 00 48
+> [   26.639737] RSP: 0000:ffffa5df8029cec8 EFLAGS: 00010002
+> [   26.639739] RAX: 0000000000000001 RBX: ffff981c6fcb6a80 RCX: ffff98194=
+3752e40
+> [   26.639741] RDX: 0000000000000005 RSI: ffff981c6fcb6a80 RDI: ffff98194=
+3752d00
+> [   26.639742] RBP: ffff9819607dc708 R08: ffff981c6fcb6a80 R09: 000000000=
+0000000
+> [   26.639744] R10: 0000000000000001 R11: ffff981969936a10 R12: ffff98196=
+07dc708
+> [   26.639745] R13: ffff9819607dc9d8 R14: ffff9819607dc800 R15: ffffffffa=
+d913fb0
+> [   26.639747] FS:  0000000000000000(0000) GS:ffff981c6fc80000(0000) knlG=
+S:0000000000000000
+> [   26.639749] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   26.639750] CR2: 00007ff1292dc44c CR3: 000000015350e006 CR4: 000000000=
+07706f0
+> [   26.639779] PKRU: 55555554
+> [   26.639781] Call Trace:
+> [   26.639783]  <IRQ>
+> [   26.639787]  ? __pfx_tg_unthrottle_up+0x10/0x10
+> [   26.639790]  ? __pfx_tg_nop+0x10/0x10
+> [   26.639793]  walk_tg_tree_from+0x58/0xb0
+> [   26.639797]  unthrottle_cfs_rq+0xf0/0x360
+> [   26.639800]  ? sched_clock_cpu+0xf/0x190
+> [   26.639808]  __cfsb_csd_unthrottle+0x11c/0x170
+> [   26.639812]  ? __pfx___cfsb_csd_unthrottle+0x10/0x10
+> [   26.639816]  __flush_smp_call_function_queue+0x103/0x410
+> [   26.639822]  __sysvec_call_function_single+0x1c/0xb0
+> [   26.639826]  sysvec_call_function_single+0x6c/0x90
+> [   26.639832]  </IRQ>
+> [   26.639833]  <TASK>
+> [   26.639834]  asm_sysvec_call_function_single+0x1a/0x20
+> [   26.639840] RIP: 0010:pv_native_safe_halt+0xf/0x20
+> [   26.639844] Code: 22 d7 c3 cc cc cc cc 0f 1f 40 00 90 90 90 90 90 90 9=
+0 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 45 c1 13 00 fb f4 <=
+c3> cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90
+> [   26.639846] RSP: 0000:ffffa5df80117ed8 EFLAGS: 00000242
+> [   26.639848] RAX: 0000000000000005 RBX: ffff981940804000 RCX: ffff9819a=
+9df7000
+> [   26.639849] RDX: 0000000000000005 RSI: 0000000000000005 RDI: 000000000=
+005c514
+> [   26.639851] RBP: 0000000000000005 R08: 0000000000000000 R09: 000000000=
+0000001
+> [   26.639852] R10: 0000000000000001 R11: 0000000000000000 R12: 000000000=
+0000000
+> [   26.639853] R13: 0000000000000000 R14: 0000000000000000 R15: 000000000=
+0000000
+> [   26.639858]  default_idle+0x9/0x20
+> [   26.639861]  default_idle_call+0x30/0x100
+> [   26.639863]  do_idle+0x1fd/0x240
+> [   26.639869]  cpu_startup_entry+0x29/0x30
+> [   26.639872]  start_secondary+0x11e/0x140
+> [   26.639875]  common_startup_64+0x13e/0x141
+> [   26.639881]  </TASK>
+> [   26.639882] ---[ end trace 0000000000000000 ]---
 
