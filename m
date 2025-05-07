@@ -1,185 +1,223 @@
-Return-Path: <linux-kernel+bounces-637833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3218EAADD98
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:42:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C05FAADDA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91587506FEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572C91C08019
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF96241673;
-	Wed,  7 May 2025 11:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F1D233701;
+	Wed,  7 May 2025 11:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Vs0EHE2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yIpHJvFt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hBp9QEAI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rn7ktXyD"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="gU1jYMHt"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37840241689
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8623C38C
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746618157; cv=none; b=efl6rYX1N3KpAgOSwdUrh/sNBy4QzMI4VfGx0v4BZpuMgqVmg4usNTViXF4hWth9w6Em0fql9XPclo2kslrgGsgM3WVTDth0Xr3Pz7p1q7dtjP4twbjRhu4YX7eYvrNzOn8u8Mrk0MXTaCS5xczB+h5CJYLQswztXN4/fbvwI7E=
+	t=1746618246; cv=none; b=kYsi5Ddg47BLuHj6GeYOYFyIBqTHNQzyzdHpOc4qR5CIBxuBqS7Ltmdfyk5md6qKZj71IaLvM8kXtz2mxsRqXfe6OzHSVL0zPeaZ2wFied/a0tb0YZunQqha/qla8hBs6oa//o56nWedFkSpP6wpOw6zgwixMSc/FH/L8DfSt7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746618157; c=relaxed/simple;
-	bh=/Bh3jW1bNzFgkJnbT2NX6ZtY9kjOWTe3mvKAmdAXJ4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T1W4yp6xKsyPDv9gLOJEhg42ELRxGOQ4HhS/mInBpjL0JAOdiSXEzMiW8D/9Ba/+xl/fL8BjJM4Rbc0QK00PTIkHtSLTotXs1JcWRhNY1ejkxYT2sn2SS7mtzH7LPXbtt1zl/QYnqhIpHw6cGU0omwNKGqI5+UbAMhJJFrgoGMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Vs0EHE2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yIpHJvFt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hBp9QEAI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rn7ktXyD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 620051F393;
-	Wed,  7 May 2025 11:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746618154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fcYaw+phsHmb4CGjsUuKwwWNlP8Li19pE0M34m/c9G0=;
-	b=0Vs0EHE244sqvREDBAkoVSSnEa9OI5gy5G0DfJgtPF4OukOQgCxxgqJ3RdutiCUvimU29o
-	WrBt7QHlNbRIFH60nR6D9OOLczkLwspzoyPK4gY5wJo1A6V9jN0ZUuaoP8qYe/9Vuqy+uf
-	213Ap+emco6ovEzha7P3pDX3kj1FVqw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746618154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fcYaw+phsHmb4CGjsUuKwwWNlP8Li19pE0M34m/c9G0=;
-	b=yIpHJvFtWUUasSt0l91z4u3dP3B5HxWS5hllAtCM9xkgJvaBCWFuw86276sWka5uayhoFA
-	jqtUdZph2o1TI4BQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hBp9QEAI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rn7ktXyD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746618153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fcYaw+phsHmb4CGjsUuKwwWNlP8Li19pE0M34m/c9G0=;
-	b=hBp9QEAIcq4vHt5+ICzOYvdzia4ggsVcKpscnwcNIs2eoiNFmPaS0V1Zro+1Ba6Gk5CcDg
-	Of6NAIYpzg552hdPaq9MXIS4yYZXgc0JAUvUaJQdZL97YLM6xAqoZJP7MItRmXQVcD+16E
-	rJtw0aq/cW/HwOIozKxCvh4UawHD3rc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746618153;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fcYaw+phsHmb4CGjsUuKwwWNlP8Li19pE0M34m/c9G0=;
-	b=rn7ktXyD+voIbvaXlQd7Ie8eb1CRs2GRi+ZNfzpG7Kbn0sYISqGp1QSpPVPcY2vZuMj2rL
-	05T1c5z1ZdmsI5AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 493DD13882;
-	Wed,  7 May 2025 11:42:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cheRESlHG2iqIwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 07 May 2025 11:42:33 +0000
-Message-ID: <a2925f3d-9af0-4299-aafa-70dfaf0f3230@suse.cz>
-Date: Wed, 7 May 2025 13:43:06 +0200
+	s=arc-20240116; t=1746618246; c=relaxed/simple;
+	bh=qEEBf/EvhFb5+S8vt2g6XJwST6O0nTQJRpn12U1g7EA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z536eqA9/a21J2VvK+di/QFvM/1qddG4wnJ3RY9iZlwUHjPs93o7um8YBavwvADy8sPurEa9zAgwgtYd+y8c0kHQchR1/gX1tZvDLdvzRSV3BTFLv0IuDQS/L7Syn45AWcRCwa68NPxAyvkhhlLjNGKG04VMUeJsPTwkLx94+p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=gU1jYMHt; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3da7642b5deso2536695ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746618243; x=1747223043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bVz2E+K/uMAryK5WXZfBalhzFkygNbdnQ6nqZ/JT97Y=;
+        b=gU1jYMHtLBX/bg6svOh/7/0bsT6Z+HrtMQzz7sSs+MZt1TfP1dglBLOf69poDnGZKN
+         rGGzzdWiMTgzVDiLw7vgrMpVRWE+1J74dwaV1KTqsnVjik5t+NuxzGiSUQ2ZGnqCIxNp
+         VXa8wyN+oH6CKLiCNzpnoxi88jnA5qACOS3BAagy2svsLUdUYPbe0PBSU/678M5grmac
+         CP5jSi5Y9JDkKVdXRfHqwNXY0OaiOG6skPI2gvMB0phNILSWNOhUn67LfSapnmwMlbbb
+         8BndgiZM/syqMYPm2tzvwYob1FQfT31nsoj5ZY9u9SQYiL6abQjzgCQ33ZczPsfdMsXE
+         Ar0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746618243; x=1747223043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bVz2E+K/uMAryK5WXZfBalhzFkygNbdnQ6nqZ/JT97Y=;
+        b=aAQY4oG5Thikd4RgSZ3ttWYvMe8Bre9lrfeHZWUY1o3vOvD9P704oDGJwCxw4Dh8vj
+         19N0Hspv2DXphIRSR82lwLZ45VodmiBp/nJZwEusNqMyDrt2FUQboQq3emnn3S3/4HSk
+         m6hr1bDpwtXQt9XkBEjui4n/uZuPMrcCazkH/Att5aS43ue6EMUbKujvDLDBDPBt3krm
+         rs9wZWKJcTs1DX77vJOR4HnZL7S+RxscGiU2fYbXQIXlQzrHYcq7DMDB8Rg5CxtV4otD
+         YO1GnWCRxXyxLLVE5uNkTOXI1nOmjndiKDVlOz8wak2LJsfQnsnTkG7j8gNQ0bbZJlQt
+         o1lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuBeBfxWHTeUzyB3FiXm948P45ScJNszguIzPerrDwp9l6DR51NW8fSVYwhlqtmuPRgWC8K7ZcJ6nfwOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXSjPV/DMRwQJq0cwDgW4f+taicHqMvBCwoF90V3Nn4jAjIya5
+	0STtbRe8o2PKgWkVR6uDxs4BYOkzBdl55Tt6koBQO319U1+XTcI67iUnlta4R6bN+KX/iA5q0y1
+	uXvyf217kjfCZ2YhELWP/rjhj4S8F/mrk4oHuJA==
+X-Gm-Gg: ASbGncsoBIVKmkRMG4auuZEFucMNibPryb+LwBsAGpJGNJQIFcaN3EdM+hEPIQNPvQz
+	cp/VNMbd5RpUigkHL6gERNCW0hnhYvQyAc83E8ViJgn2JzBodfWK+wsiZcg2g/yjLOZq5oIBTwW
+	YrBPRkYvWF6wpmSu0BOpwfJIfUMFVfqU2MBQ==
+X-Google-Smtp-Source: AGHT+IEqTEU3gW24Jmigd2cIa8Pl0Ves+lUOw1f5tu/7B6fJK/PzbflFbxkax13tPvkDxDTPwZvRy4srBUyjnSLHpH0=
+X-Received: by 2002:a05:6e02:1529:b0:3d8:21ae:d9c with SMTP id
+ e9e14a558f8ab-3da738e9934mr32539925ab.5.1746618242847; Wed, 07 May 2025
+ 04:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] memcg: simplify consume_stock
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, netdev@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20250506225533.2580386-1-shakeel.butt@linux.dev>
- <20250506225533.2580386-2-shakeel.butt@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250506225533.2580386-2-shakeel.butt@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 620051F393
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim,linux.dev:email];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Spam-Score: -3.51
+References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com> <20250403112522.1566629-4-rkrcmar@ventanamicro.com>
+In-Reply-To: <20250403112522.1566629-4-rkrcmar@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 7 May 2025 17:13:51 +0530
+X-Gm-Features: ATxdqUETEm-yQn1qrwlBDD0f3dy7uLqyAaalj3uycXV7-PAmSrqpx552FKWRajk
+Message-ID: <CAAhSdy0XBTW1FUuUwSBanspDwpHMRbBL-8oSiRR1R=5SgF1+hw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] KVM: RISC-V: refactor vector state reset
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/7/25 12:55 AM, Shakeel Butt wrote:
-> The consume_stock() does not need to check gfp_mask for spinning and can
-> simply trylock the local lock to decide to proceed or fail. No need to
-> spin at all for local lock.
-> 
-> One of the concern raised was that on PREEMPT_RT kernels, this trylock
-> can fail more often due to tasks having lock_lock can be preempted. This
-> can potentially cause the task which have preempted the task having the
-> local_lock to take the slow path of memcg charging.
-> 
-> However this behavior will only impact the performance if memcg charging
-> slowpath is worse than two context switches and possibly scheduling
-> delay behavior of current code. From the network intensive workload
-> experiment it does not seem like the case.
-> 
-> We ran varying number of netperf clients in different cgroups on a 72 CPU
-> machine for PREEMPT_RT config.
-> 
->  $ netserver -6
->  $ netperf -6 -H ::1 -l 60 -t TCP_SENDFILE -- -m 10K
-> 
-> number of clients | Without series | With series
->   6               | 38559.1 Mbps   | 38652.6 Mbps
->   12              | 37388.8 Mbps   | 37560.1 Mbps
->   18              | 30707.5 Mbps   | 31378.3 Mbps
->   24              | 25908.4 Mbps   | 26423.9 Mbps
->   30              | 22347.7 Mbps   | 22326.5 Mbps
->   36              | 20235.1 Mbps   | 20165.0 Mbps
-> 
-> We don't see any significant performance difference for the network
-> intensive workload with this series.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar=
+@ventanamicro.com> wrote:
+>
+> Do not depend on the reset structures.
+>
+> vector.datap is a kernel memory pointer that needs to be preserved as it
+> is not a part of the guest vector data.
+>
+> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Queued this patch for Linux-6.16
 
+Thanks,
+Anup
+
+> ---
+>  arch/riscv/include/asm/kvm_vcpu_vector.h |  6 ++----
+>  arch/riscv/kvm/vcpu.c                    |  5 ++++-
+>  arch/riscv/kvm/vcpu_vector.c             | 13 +++++++------
+>  3 files changed, 13 insertions(+), 11 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_vector.h b/arch/riscv/includ=
+e/asm/kvm_vcpu_vector.h
+> index 27f5bccdd8b0..57a798a4cb0d 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_vector.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_vector.h
+> @@ -33,8 +33,7 @@ void kvm_riscv_vcpu_guest_vector_restore(struct kvm_cpu=
+_context *cntx,
+>                                          unsigned long *isa);
+>  void kvm_riscv_vcpu_host_vector_save(struct kvm_cpu_context *cntx);
+>  void kvm_riscv_vcpu_host_vector_restore(struct kvm_cpu_context *cntx);
+> -int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu,
+> -                                       struct kvm_cpu_context *cntx);
+> +int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu);
+>  void kvm_riscv_vcpu_free_vector_context(struct kvm_vcpu *vcpu);
+>  #else
+>
+> @@ -62,8 +61,7 @@ static inline void kvm_riscv_vcpu_host_vector_restore(s=
+truct kvm_cpu_context *cn
+>  {
+>  }
+>
+> -static inline int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *v=
+cpu,
+> -                                                     struct kvm_cpu_cont=
+ext *cntx)
+> +static inline int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *v=
+cpu)
+>  {
+>         return 0;
+>  }
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 60d684c76c58..2fb75288ecfe 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -57,6 +57,7 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
+>         struct kvm_vcpu_csr *reset_csr =3D &vcpu->arch.guest_reset_csr;
+>         struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
+>         struct kvm_cpu_context *reset_cntx =3D &vcpu->arch.guest_reset_co=
+ntext;
+> +       void *vector_datap =3D cntx->vector.datap;
+>         bool loaded;
+>
+>         /**
+> @@ -79,6 +80,8 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
+>
+>         kvm_riscv_vcpu_fp_reset(vcpu);
+>
+> +       /* Restore datap as it's not a part of the guest context. */
+> +       cntx->vector.datap =3D vector_datap;
+>         kvm_riscv_vcpu_vector_reset(vcpu);
+>
+>         kvm_riscv_vcpu_timer_reset(vcpu);
+> @@ -143,7 +146,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+>         cntx->hstatus |=3D HSTATUS_SPV;
+>         spin_unlock(&vcpu->arch.reset_cntx_lock);
+>
+> -       if (kvm_riscv_vcpu_alloc_vector_context(vcpu, cntx))
+> +       if (kvm_riscv_vcpu_alloc_vector_context(vcpu))
+>                 return -ENOMEM;
+>
+>         /* By default, make CY, TM, and IR counters accessible in VU mode=
+ */
+> diff --git a/arch/riscv/kvm/vcpu_vector.c b/arch/riscv/kvm/vcpu_vector.c
+> index d92d1348045c..a5f88cb717f3 100644
+> --- a/arch/riscv/kvm/vcpu_vector.c
+> +++ b/arch/riscv/kvm/vcpu_vector.c
+> @@ -22,6 +22,9 @@ void kvm_riscv_vcpu_vector_reset(struct kvm_vcpu *vcpu)
+>         struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
+>
+>         cntx->sstatus &=3D ~SR_VS;
+> +
+> +       cntx->vector.vlenb =3D riscv_v_vsize / 32;
+> +
+>         if (riscv_isa_extension_available(isa, v)) {
+>                 cntx->sstatus |=3D SR_VS_INITIAL;
+>                 WARN_ON(!cntx->vector.datap);
+> @@ -70,13 +73,11 @@ void kvm_riscv_vcpu_host_vector_restore(struct kvm_cp=
+u_context *cntx)
+>                 __kvm_riscv_vector_restore(cntx);
+>  }
+>
+> -int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu,
+> -                                       struct kvm_cpu_context *cntx)
+> +int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu)
+>  {
+> -       cntx->vector.datap =3D kmalloc(riscv_v_vsize, GFP_KERNEL);
+> -       if (!cntx->vector.datap)
+> +       vcpu->arch.guest_context.vector.datap =3D kzalloc(riscv_v_vsize, =
+GFP_KERNEL);
+> +       if (!vcpu->arch.guest_context.vector.datap)
+>                 return -ENOMEM;
+> -       cntx->vector.vlenb =3D riscv_v_vsize / 32;
+>
+>         vcpu->arch.host_context.vector.datap =3D kzalloc(riscv_v_vsize, G=
+FP_KERNEL);
+>         if (!vcpu->arch.host_context.vector.datap)
+> @@ -87,7 +88,7 @@ int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu=
+ *vcpu,
+>
+>  void kvm_riscv_vcpu_free_vector_context(struct kvm_vcpu *vcpu)
+>  {
+> -       kfree(vcpu->arch.guest_reset_context.vector.datap);
+> +       kfree(vcpu->arch.guest_context.vector.datap);
+>         kfree(vcpu->arch.host_context.vector.datap);
+>  }
+>  #endif
+> --
+> 2.48.1
+>
 
