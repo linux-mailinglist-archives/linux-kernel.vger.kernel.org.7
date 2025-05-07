@@ -1,195 +1,159 @@
-Return-Path: <linux-kernel+bounces-637795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210F8AADD38
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:23:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB773AADD1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A2A1BC4189
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE633AE41C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F9623315A;
-	Wed,  7 May 2025 11:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1A521ABBF;
+	Wed,  7 May 2025 11:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="mybp3sV6"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHAfuVv/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D6A23315C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8201DF270;
+	Wed,  7 May 2025 11:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746616994; cv=none; b=o8BJBDxfMpDTUUV+UvY+XANKoynMBDLSL9qugzlAI7m0yrw6g9dua/qTQZv4omWuRq1hUjSkZKc1Y/GloPmQPzM/KCtXwd5Rjd+VHyTFl1CHmxU7rTJhcM7hvMwfUv/y9hJxis49lQOQZ7SjVi7gFC1l243oQMeXofuIpBJO/Ac=
+	t=1746616672; cv=none; b=gulhUYtk+5hZqqnEpk4tveOPeJkSdFVmQmBA/BAJP4EwsxjO17PV+dS3HtiB2R+WJv4FP4Afc//ras0nWR3mhoCpGrEj8PpImIVK5iUmoLwNdrk3g0tGa1zg2PY9l9mfgIIfSb3+zx77WOgp9ADaHZ5e/8jK/wMWHF2Li+V9Gco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746616994; c=relaxed/simple;
-	bh=0YN7Qt+8hBYIMYQkj/bbF+8pso2oPM0KoT57Hc+rRzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X+waumBoeqggDkw4e2SFx9NzapJzs9IvJ6uCtUMma90LliMVdlTyPDt52mQTIIeoN8nXsxpoXSQ8V3u1n+vd6vp20f3u9/zX8goMhGy8UHnD3Z41snw716jgGqbNGEBoT2lV8O0Vd0s4tzSu74w7xhaAb7qrV5D44xZ3x4Q5Tvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=mybp3sV6; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e78e53cc349so395964276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1746616991; x=1747221791; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BrlKQngaih/GyBdcD0JlQz7H1v2pzxnPiDTUdfvP4es=;
-        b=mybp3sV6AGCN4BO5zB4gqBXdriJSZwq2KPTT4t1sB9sklCUTuGVZYldgh+kx2rTcYl
-         08zoX1KX5bW/qeDqD3fWSMSMXo4VlXlMhymWUyLWNFF8tCcJ9MwiIf6pd3ap/S6r3Nu9
-         RzS8HsHMmQnznzifQ9Xod4Tg9HuGeLEpdGivLJGk57LRpNV9iC5mLEcxG7pAPa+suJbC
-         T6cSiSrhsoJc5PE3rnq90R9/ZGyxB6HaWA3PXa6Eo/1GZF9j3rh4hvU28iuzY4C1kcGD
-         7gLVavPFZSwcGv6S+ra6DL0VAx1EzyrVgn/O3thmrlGtratkZnpVruJA6TM0WBaWCBIz
-         uxXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746616991; x=1747221791;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BrlKQngaih/GyBdcD0JlQz7H1v2pzxnPiDTUdfvP4es=;
-        b=d/S/CzgBJVG1/BeZzV5QmS7jUpT3+45j8iZlUxI7yGnriFcpLMt5YIAuuWvIiQCcKY
-         iUuq8svrAHOliMXD5dFSGknjoy4EK7V5gkqLpz5bicrq/IEK8PRmTHqRSi37LKXFVNSk
-         0cl4d2su5/6DHyQyUaJTtR7Pj8HWTlNHxxOQjSSQcFgs/ipKJ/Ioy0EuOxZXYG9Xj0gf
-         d+ffTSKTPk2lI6CuCt1cSdkBnblDXi9V9ZVlAPq6MW3y40Yq5/X70nLXxkKtKftOvyFh
-         xXRYC+3HHSt+DAu1rDN/3NFc5cY6oua+vaonVF/DYH0M4zj1qPiBSEfPU52V8AT3d88C
-         tpqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMOajhi2vjn5F6TbCDpoEp72JMAUBBh5+JeqU2iUegeIgENrrrO10UTbFkZ++G5HnWQ5UCYd7YRSXIL/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAXaJUd7ebpk8jAXuQMp0OJVf2NJHOM7FqdwmcOu3CoJ77VPqA
-	cJh52gPgV1nonyzDBrG4fKJKhFo8fFT60QjGAH95oz8tarmnkh+Zugmo7fpaCpZbl6tsRfjbVIw
-	co0xirYVaJPuUFYppz2UjVlHVXquzl+y+U5NjUg==
-X-Gm-Gg: ASbGnctg/2PSXZTrpZnvryQhBuv/SPrYfeT9D0ourNcKKB+hjXMGCpnkoG3bdvKfS+F
-	rTrlkj0Gp9yUAD8Ybr0jY5VKMdR/6my60ho/ma6Dt93PIsagKiwc1+PQ8nkI2cvswmzQatCbHdt
-	BvAwdnjwZtef7KSAweb7VbsII26F7NK6HSHJugCl4mJEUdX4QXnF61
-X-Google-Smtp-Source: AGHT+IFxdYKCzY2TKwPokyurfueqmOKja0Rc4hCwr5SUWy06EioalRQvocuOR1AAy0bCdqDcNh77dszj2t/Oy74t3i4=
-X-Received: by 2002:a05:6902:18cd:b0:e74:e02:626a with SMTP id
- 3f1490d57ef6-e7880fc6382mr3556036276.19.1746616991034; Wed, 07 May 2025
- 04:23:11 -0700 (PDT)
+	s=arc-20240116; t=1746616672; c=relaxed/simple;
+	bh=J34de4dIKJGQUh5DHfc+AkSr13+tj6zgvxA8HJxO/yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+FzqVMkeIdfIXsdnqCZLKqQuYPRA3lNRO/X7JwFF9gYRErTBHiZOXXAqgHaRjrJ96Pirshl7v41AhaQPJ6X5qFgmNX7Kue+xlOizBuCQZo+4Z1ztCpqfidMFan3wv1Oaa2axYOY8C5Dp499FKz6DIHEtvfDWrVrBw0uoblaNr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHAfuVv/; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746616671; x=1778152671;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=J34de4dIKJGQUh5DHfc+AkSr13+tj6zgvxA8HJxO/yI=;
+  b=OHAfuVv/UrFgsbSZ/plnFUpEV3shTu8L4sNK3iJuW0hrCxfmrtlEgA8D
+   qdc+yAd2drfN0VusD18OGINNlywvRhXUFCKTguBYhbeN2kySGfe1devRZ
+   ZN4Q7vvXLoUPnztAIv2F6cj/GuFhGzOX9DpJuyoo798H2CkPNLLG7u85c
+   TL2eiuaUqzMxxEiO8vALZNjP5Ls4GNuUge1baoP8fylAeKJyyLjllITay
+   HrR2DIPTquTY8nLGxIhMDdfg+42MKaYhaDGSldRCQ8nso3ujgvjDR8+/o
+   fxIU8qxADh8eJ+i9J3jKUqPgXofFsBwSOVnhQloBgtuHycLHN6xRNTaCM
+   w==;
+X-CSE-ConnectionGUID: EXMfnIN6S3ewdg/eDV3DXQ==
+X-CSE-MsgGUID: 5ujAiqrfSn6lMgAQW1INjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="48240124"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="48240124"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:17:50 -0700
+X-CSE-ConnectionGUID: 8Kup3MNdRiGjxFn0ssrQ3Q==
+X-CSE-MsgGUID: 0u8g8DD4Smi/vt+aRzhIZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="135838264"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:17:49 -0700
+Date: Wed, 7 May 2025 04:22:54 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>
+Subject: Re: [PATCH v3 03/13] x86/acpi: Move acpi_wakeup_cpu() and helpers to
+ smpboot.c
+Message-ID: <20250507112254.GA27839@ranerica-svr.sc.intel.com>
+References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
+ <20250503191515.24041-4-ricardo.neri-calderon@linux.intel.com>
+ <CAJZ5v0h_QcH72COEU-cnHUMfXj2grHv1EoLuBJnxm7_AeRteWw@mail.gmail.com>
+ <20250506053726.GF25533@ranerica-svr.sc.intel.com>
+ <CAJZ5v0gctkVZUs1SrzQtezmfMuMfbrAJ4+DTLgaQB=pMc8_hvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309084814.3114794-1-demonsingur@gmail.com>
- <20250309084814.3114794-13-demonsingur@gmail.com> <b214bf8d-33d0-4da8-bf16-cc62bd1fbd55@videtronic.com>
-In-Reply-To: <b214bf8d-33d0-4da8-bf16-cc62bd1fbd55@videtronic.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 7 May 2025 12:22:50 +0100
-X-Gm-Features: ATxdqUG3nHKGjKOQoFEY4aL1pXCEA2rU5jPHWszWU5gDb-fbZzf1eN3M8MI_ltM
-Message-ID: <CAPY8ntCtycm+fha9yuJyr2_9obq8cq6xjYJT7acnFPgh_sCi8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 12/16] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer drivers
-To: Jakub Kostiw <jakub.kostiw@videtronic.com>
-Cc: Cosmin Tanislav <demonsingur@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Cosmin Tanislav <cosmin.tanislav@analog.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Julien Massot <julien.massot@collabora.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Bjorn Andersson <quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Taniya Das <quic_tdas@quicinc.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Eric Biggers <ebiggers@google.com>, Javier Carrasco <javier.carrasco@wolfvision.net>, 
-	Ross Burton <ross.burton@arm.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Zhi Mao <zhi.mao@mediatek.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, Dongcheng Yan <dongcheng.yan@intel.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Tommaso Merciai <tomm.merciai@gmail.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Ihor Matushchak <ihor.matushchak@foobox.net>, 
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0gctkVZUs1SrzQtezmfMuMfbrAJ4+DTLgaQB=pMc8_hvg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-Hi Jakub and Cosmin
+On Tue, May 06, 2025 at 07:26:01PM +0200, Rafael J. Wysocki wrote:
+> On Tue, May 6, 2025 at 7:32 AM Ricardo Neri
+> <ricardo.neri-calderon@linux.intel.com> wrote:
+> >
+> > On Mon, May 05, 2025 at 12:03:13PM +0200, Rafael J. Wysocki wrote:
+> > > On Sat, May 3, 2025 at 9:10 PM Ricardo Neri
+> > > <ricardo.neri-calderon@linux.intel.com> wrote:
+> > > >
+> > > > The bootstrap processor uses acpi_wakeup_cpu() to indicate to firmware that
+> > > > it wants to boot a secondary CPU using a mailbox as described in the
+> > > > Multiprocessor Wakeup Structure of the ACPI specification.
+> > > >
+> > > > The wakeup mailbox does not strictly require support from ACPI.
+> > >
+> > > Well, except that it is defined by the ACPI specification.
+> >
+> > That is true.
+> >
+> > >
+> > > > The platform firmware can implement a mailbox compatible in structure and
+> > > > operation and enumerate it using other mechanisms such a DeviceTree graph.
+> > >
+> > > So is there a specification defining this mechanism?
+> > >
+> > > It is generally not sufficient to put the code and DT bindings
+> > > unilaterally into the OS and expect the firmware to follow suit.
+> > >
+> >
+> > This mechanism is described in the section 4.3.5 of the Intel TDX
+> > Virtual Firmware Design Guide [1], but it refeers to the ACPI
+> > specification for the interface.
+> 
+> Yes, it does.
+> 
+> > > > Move the code used to setup and use the mailbox out of the ACPI
+> > > > directory to use it when support for ACPI is not available or needed.
+> > >
+> > > I think that the code implementing interfaces defined by the ACPI
+> > > specification is not generic and so it should not be built when the
+> > > kernel is configured without ACPI support.
+> >
+> > Support for ACPI would not be used on systems describing hardware using
+> > a DeviceTree graph. My goal is to have a common interface that both
+> > DT and ACPI can use. I think what is missing is that common interface.
+> 
+> I get the general idea. :-)
+> 
+> > Would it be preferred to have a separate implementation that is
+> > functionally equivalent?
+> 
+> Functionally equivalent on the OS side, that is.
+> 
+> It would be better, but honestly I'm not sure if this is going to be
+> sufficient to eliminate the dependency on the ACPI spec.  It is just
+> as you want the firmware to implement this tiny bit of the ACPI spec
+> even though it is not implementing the rest of it.
 
-On Tue, 6 May 2025 at 19:34, Jakub Kostiw <jakub.kostiw@videtronic.com> wrote:
->
-> Hi Cosmin
->
-> Awesome work. The initiative to establish a common framework for GMSL
-> devices is a great idea.
->
-> I believe that we have found few bugs:
->
-> > +#define MAX9296A_BACKTOP22(x)                        (0x31d * (x) * 0x3)
->
-> The first multiplication is wrong and should be replaced with addition:
->
-> +#define MAX9296A_BACKTOP22(x)                  (0x31d + (x) * 0x3)
->
-> The same goes for MAX96724 equivalent macro:
->
-> > +#define MAX96724_BACKTOP22(x)                        (0x415 * (x) * 0x3)
->
-> In MAX96714 driver there is an issue with setting up lane-polarities.
->
-> > +static const struct max9296a_chip_info max96714_info = {
-> > +     .max_register = 0x5011,
-> > +     .set_pipe_stream_id = max96714_set_pipe_stream_id,
-> > +     .set_pipe_enable = max96714_set_pipe_enable,
-> > +     .set_pipe_tunnel_enable = max96714_set_pipe_tunnel_enable,
-> > +     .phys_configs = {
-> > +             .num_configs = ARRAY_SIZE(max96714_phys_configs),
-> > +             .configs = max96714_phys_configs,
-> > +     },
-> > +     .polarity_on_physical_lanes = true,
-> > +     .supports_phy_log = true,
-> > +     .adjust_rlms = true,
-> > +     .num_pipes = 1,
-> > +     .pipe_hw_ids = { 1 },
-> > +     .num_phys = 1,
-> > +     .phy_hw_ids = { 1 },
-> > +     .num_links = 1,
-> > +};
->
-> In order to make thing work we had to set
->
-> > +     .polarity_on_physical_lanes = true,
->
-> To false. So this field is either improperly set for MAX96714, or handling of this case is wrong:
->
-> > +             if (priv->info->polarity_on_physical_lanes)
-> > +                     map = phy->mipi.data_lanes[i];
-> > +             else
-> > +                     map = i;
->
-> Upon mentioned changes we have successfully tested two GMSL2
-> combinations on Raspberry 5 platform:
->
-> 1. MAX96724 + MAX96717 (only 2 MIPI-CSI2 lanes with single camera due to
-> hardware limitations)
->
-> 2. MAX96714 + MAX96717
+Yes, that is all I need: the address of the mailbox and firmware that
+implements the mailbox interface as described in the ACPI Multiprocessor
+Structure.
 
-Feel free to shout if you want help on the Pi side.
-
-Pi5 should be able to extract multiple virtual channels to support
-several sensors simultaneously (up to 4 VC/DT combinations). It does
-need a rework so the CFE runs from memory rather than being fed data
-directly from the CSI-2 receiver, but I believe that is pencilled in
-as future work with libcamera already.
-
-Unless things have regressed, libcamera should report all connected
-sensors to SerDes setups, and set up Media Controller appropriately to
-use them one at a time. I know I've had that working with simple CSI-2
-multiplexers and thought I'd had it working with TI FPD-Link III
-SerDes (Arducam's IMX219 V3Link kit, modded to remove their MCU). I
-don't have any GMSL hardware to test with.
-
-We're also fairly open to merging drivers and overlays for 3rd party
-hardware into the downstream Pi kernel. If they've been reviewed and
-merged upstream then that is the ideal, but if you're prepared to
-support them, then it saves the user the headache of having to build
-out-of-tree modules.
-
-Cheers
-  Dave
+Thanks and BR,
+Ricardo
+> 
 
