@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-638563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D0BAAE787
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:15:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7E3AAE7A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683D14E6A4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882761C021B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A349328B7D7;
-	Wed,  7 May 2025 17:15:47 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9806328C846;
+	Wed,  7 May 2025 17:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KubgLt9W"
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48CF2C9D;
-	Wed,  7 May 2025 17:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A821DF728;
+	Wed,  7 May 2025 17:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746638147; cv=none; b=TrqRmcxPjOyW6ByKPv7PGnIueSKpWlOkC2LCnTaG8iq5SpVvrfTSUWRAK4l4IbT+mLgxUI/n/W9Gqlsie/AQfuBrTxS702xpCmzezfAq3vsSj4jNGAAB62Sn4sh1xrU3pBjEQf5oqXE+FL+MCmOaMWNXQdXL21lwY8Ri9pLX06I=
+	t=1746638321; cv=none; b=KepWIv1sYOOzxLLNwfIva7ynK+ajfXXCwpTH5Qm9NC984zJgH3j0CnRYu+jcu1QBC7idN1oL0WukRBSWJaJhFoFkZ4BwtSTYI6JHOC27W8hHZ1KBacDo5uizLPmUYsYyonSsxtcY5xUyVwWPUi0hoOCw98kTajxT+bej4S3Rczw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746638147; c=relaxed/simple;
-	bh=EodWvoVBr9X0H3RmTywHuGYU76j0rL2oQlt9Tkhfqc4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JxsJKf4OsYlDSqJWJ634rAGNjxV7pki4tt7s9LJOfBMEQrYMNtJkLB+RwipS+NhAhypr2ayqsIaefbH7ZbmS5eSTp7uy19Vt/H2zpXyeE90BHyiEmcGTFPbC2hGh7q3d/q2lHcRf4SMG3pyQ5P61jRi+E9yK3Bx/XAvZEPjVJCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5242f137a1eso23058e0c.1;
-        Wed, 07 May 2025 10:15:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746638144; x=1747242944;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tjssFlw1FzpH4B0sQSNz2YHpp3SvNlCS+DZZcEssn9M=;
-        b=MIrGMvnItV69H0BBspd71AvQ2gDXSDgTjieOzJU1OLfD2QdMKjO3v/6DD83YNf5Yej
-         yM17R89TqlPYgBzCLGgKiyQVeZUnbtpLHAFWdMKQcxhCAgmPl8PkLPH0w5xqJrYkFnIj
-         twOXdVxYUYF1V9uKfrkpmPtMvpZzuDRTQ4UJ39VL+eq6A9D91BeXOjBrQG1JsnoSWQMb
-         kvvv3B7laSN8Fao8o8bZSB43pqf+nevJqrMwA32Hg59xr6j+1PoowVgwRbnpacQ92EM1
-         LbZiykYbpOojdPjLfG1X0DdyGAcDBQUbxkFJmoX1zpUUQ5T5raByOrKcSBWYpgxb+tJu
-         xYGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG2iDBZ1zME/1OB+3aRModeXjkR4kWzIS8NwYOIxCHCiByTsFGbgZs6faBrCagO9NoeOo2ZGEoFxN8@vger.kernel.org, AJvYcCVPmwvF8UrhHmG2fbR1S8+vyz73KX0GGsRDhsJLiWh+4a3Oipv9DRMyXUkwgyDUeBw6TOfX4LR6/+2gCEs+Xk/s7H4=@vger.kernel.org, AJvYcCVQ158jo6Dw3SD8b/kmSDskCizEYZrxM9XfrXrzphwTj4qpoPq+SzjSfhfzgkUyNaK9mAiboewg3SCEi9ib@vger.kernel.org, AJvYcCXBoeYlW5zU+r6tq9VWoKzNDgAhSwRnN1SV/qwwnkv02FTYuJj0OziA+xaAxFHDIZxOcpkGckkVnK8N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0n+H4OekdhhQQritL+/aiyd6DbaBtUvhgYfmwxYtCkyUUZIac
-	dunUd4/rn4GRbLK3/zlfJIQ9EIFYfEvK5OyxQZF+bcZtQPw4/YYvCg3jfke1
-X-Gm-Gg: ASbGnctcomxj+rkHES7aU/rfGYMmCqXvW4NEK029nPdh+sGyQpWn+l1AAsqhwDmmEG8
-	Mymxau7fa1FNjoncu2ibSEyxglDcPDfT56vZk6HdMqaZTCVtFBJYFeUN1o5SbOp+Pfl8BGY0l8Q
-	a/7Jqs72UaVThrbgD3RxswF57U1xyp6i4qjJs3PawhxMJiCDR5GwY0vKFLHO1ToUVse48GqRhcf
-	OalRfFwx3mKVHzMxJCs+3+OBDoam4zqECG7tvVAAkUEc8uYQlxx3g/xG7qazat6cri/OInEPtU6
-	qp3jb3eVVflWJTbOSsQU1qhgpcOtgDFuL7NJno8YM1FuPkG4KiuQ5vi20Bb+rboww6rfRZW6//E
-	VgkM=
-X-Google-Smtp-Source: AGHT+IH3aVDhaWRFn4FB9MgDrcU6nndPWSx0YZkPnyqHM0aXOplfWvBDjOvj6bwuy5TjEiSf1oOVvQ==
-X-Received: by 2002:a05:6122:4692:b0:529:995:5aec with SMTP id 71dfb90a1353d-52c379ccb4cmr3336141e0c.4.1746638144092;
-        Wed, 07 May 2025 10:15:44 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae41eb5d7sm2455492e0c.39.2025.05.07.10.15.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 10:15:43 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4c326617e6cso21764137.1;
-        Wed, 07 May 2025 10:15:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVB1+9wyrdrUm5hK3gvdbG7dnTe2vQ3GxXm1Ydmm7nMfCrqYo/bVPOY5ZRqpujolMNZcVIUjNREw9XhFYyh9zNKA3A=@vger.kernel.org, AJvYcCVCokQ6l2Daa0ZvE35e2yu6ImXytKsqTmtZHXObIZJ9cXvqBS2X5+eR8gvrP5tZ3IcOV4o2H/hjQQWd@vger.kernel.org, AJvYcCW5GGzOWJ5NWXCwfjkSkiBjikT9XydSgGOkNTMvmrAZlNQEHMnjzeMnHxTPrNFljuI19jOi7ojgyDzF71CE@vger.kernel.org, AJvYcCXoYhraIgs/iU+sgENE9bvx2bp6KhmvH1Pm2/+Lha//PZdJeQes58j5U7W18O/SyMN+6nUR+eGDjBQ3@vger.kernel.org
-X-Received: by 2002:a05:6102:5e82:b0:4c1:76a4:aee4 with SMTP id
- ada2fe7eead31-4dc73896351mr3305611137.19.1746638143350; Wed, 07 May 2025
- 10:15:43 -0700 (PDT)
+	s=arc-20240116; t=1746638321; c=relaxed/simple;
+	bh=/P6sAh0NrXRYaP0FUPo2DCEv9cadpmfXoNKPq0fNKpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UFJN9md1ciiYFqJF0gRIoFD7NhU1nXkjWIpKyAdDHH43bF136DGzPBtmS+e7y8Z4kvbaQ3O/ce4DBzHtCUYQphpA5hzvjzgU+ZDyJYlFBqe1ih7iu1X2l7mJ8lZhpJrSoED8oliADAVnZm8TyNWU9AoJv5i8sFUKsNoqE0CkdlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KubgLt9W; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id CiOcuTurMZu1yCiOcuMLmW; Wed, 07 May 2025 19:17:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746638249;
+	bh=+X+LlhXccWqiDMD0o118ntOtyxF71TzYXOzVd7j3Sb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=KubgLt9W2lIE32wVFKiyKm5DOQ7iOgevmvVmBnYxfb6ADsIxO/2kH1pEdeDyiqHQ4
+	 CM9xShNJ693MAo64JzJ7lYLJxoyR4NrlqpL+4nv4QDU3gjsqFJvRSSGO8BVeJ2+h8K
+	 3kPi+L+vGafQLDHGjE6obV4Hjn9/trWHtDlFUluPMUIkJ0x27EmxwtlAvffA9zvwFb
+	 5Vy0f+o0W74hKat0yv5VVrGzEiXBfl26gUu3hohhvvB17CTGV5z8RON4wIzCwOejNq
+	 zDScjd0vmgOhPgXR1DtbezseqdEQzdFH1TL2M7bmKfqSdfz1hP9rB53Aqfljn8qhi9
+	 RrXsbNpmjfRqw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 07 May 2025 19:17:29 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <43f5dfb3-ea3a-4f1d-b3bd-9e62f976b651@wanadoo.fr>
+Date: Wed, 7 May 2025 19:17:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-6-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250410140628.4124896-6-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 May 2025 19:15:31 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXcUCsa-c0oHz20huEG0cvv6zVq4OwONfrcMVSQC84XbQ@mail.gmail.com>
-X-Gm-Features: ATxdqUFFIBTCxfle3eXYQu4EEydjHa0Zh6WAfCUTIuL1cqOuLd_-RqXuGIJbNNw
-Message-ID: <CAMuHMdXcUCsa-c0oHz20huEG0cvv6zVq4OwONfrcMVSQC84XbQ@mail.gmail.com>
-Subject: Re: [PATCH 5/7] clk: renesas: rzg2l-cpg: Drop MSTOP based power
- domain support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] regulator: tps65219: Fix erorr codes in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aBtZHEkgYGK33fWk@stanley.mountain>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <aBtZHEkgYGK33fWk@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Since the configuration order between the individual MSTOP and CLKON bits
-> cannot be preserved with the power domain abstraction, drop the power
-> domain core code.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Le 07/05/2025 à 14:59, Dan Carpenter a écrit :
+> There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
+> instead of "error".  The "rdev" pointer is valid at this point so the
+> existing code returns a positive value instead of instead of a negative
+> error code.
+> 
+> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/regulator/tps65219-regulator.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi,
 
-Gr{oetje,eeting}s,
+> 
+> diff --git a/drivers/regulator/tps65219-regulator.c b/drivers/regulator/tps65219-regulator.c
+> index b16b300d7f45..f5cd8e33e518 100644
+> --- a/drivers/regulator/tps65219-regulator.c
+> +++ b/drivers/regulator/tps65219-regulator.c
+> @@ -454,7 +454,7 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
+>   						  irq_type->irq_name,
+>   						  &irq_data[i]);
+>   		if (error)
+> -			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+> +			return dev_err_probe(tps->dev, error,
+>   					     "Failed to request %s IRQ %d: %d\n",
+>   					     irq_type->irq_name, irq, error);
 
-                        Geert
+and error can also be removed in the message as well, with the 
+corresponding %d.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>   	}
+> @@ -477,7 +477,7 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
+>   						  irq_type->irq_name,
+>   						  &irq_data[i]);
+>   		if (error)
+> -			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+> +			return dev_err_probe(tps->dev, error,
+>   					     "Failed to request %s IRQ %d: %d\n",
+>   					     irq_type->irq_name, irq, error);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Same.
+
+>   	}
+
 
