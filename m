@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-637932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68465AADF46
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:34:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C07AADF50
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9262D1C25366
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4823B4BC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D225280020;
-	Wed,  7 May 2025 12:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBFE280036;
+	Wed,  7 May 2025 12:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xGidBM4B"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKVUmewQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A53120E315
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573752327A7;
+	Wed,  7 May 2025 12:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746621270; cv=none; b=bVgzpH+rrJEwxwEs4wfQDVQUaKOxFIhmxR+hmF6f96brTMrowaj6c1QaVTmX2NQ1OxLrmnTDOTjT5jgPI/phG8C/inZzfy1y4COC7OdUQJHe004jSNSijURQvqjTsmlXUkITP6Z1UydP/v+dgzUmXqF+cV8ROo637lrEuLjYn1U=
+	t=1746621339; cv=none; b=LrYMiMosljKaOlo9cndijdF4HlTOfl3mYBqBJhsL+EX64QF4MfHDNzzx6BsvwlDO2qrMhQog3c7QknnK2+oddILHauNbKlvApxYJJDBjbrudlXRuMpNXU03dH9bSO6FwiLkauORm7zmmLnhnS5Of5qOALQgf9NDRd75uJvbfveA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746621270; c=relaxed/simple;
-	bh=ZB6p0b8UH/bESGFVljJSkPx38LKg32CurYlFoIT8hZc=;
+	s=arc-20240116; t=1746621339; c=relaxed/simple;
+	bh=QN0iYaTj5lXtSoMu1TVz9P54D0YZyQOGyVxihYjrfeA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=upIfrEzFJAa3ZhMqepOUNKraU/6SYuJ1aNqb8bpWOtvYPglgHyW8yrJYvW2yXfQMEn7klkbKOTZj6BS2GfjTK3MjIxdKx5bvDCVNnzNfKqn+2ugLYYmG2QDUBQ8RHYMx1eKPr8IotpZCbqCrNQzT3lLCCCZaYvlgFhefa/5wF1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xGidBM4B; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5499614d3d2so6148992e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 05:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746621267; x=1747226067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZB6p0b8UH/bESGFVljJSkPx38LKg32CurYlFoIT8hZc=;
-        b=xGidBM4BxDWDPx+kY0CEBMQEkiPYkIlDafiVWfKhbA30+sLcGEG4Bcf3JPOuhjzsqn
-         5rgVd5suB3Q/FJGpO6Xy9MbjqcIEXTNVV2WnWCJGxP8iDl5ij64AzY8eZOhrw87Vbfg1
-         gXnpO9WkOfxH9En8/AfEZYex82a2u1lYh9DADDfsbXHEo0cYaj6MJbmcYDGBJNTc/mIJ
-         UJ0UsT0kfUy7jajqaJuXFu+1jMz5TeNbMmqQsWwQszgqqWHfv84qvRZwo7N9t9WMp7fG
-         OtZ4MBwKUV6mfSLXIYNxtbkZBKBIzNPIkxp7SAkfTv96EJFYDNuJkWhEmJksRm0AhcQf
-         tFYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746621267; x=1747226067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZB6p0b8UH/bESGFVljJSkPx38LKg32CurYlFoIT8hZc=;
-        b=YF7zX1JOj7TZxIj2nyXd+cepOEOTGZ45BkX+grE5dUBqapxJVqIuKXnxpGtjT7BohG
-         RnCAQytTY6HJMuhFMC0C2s5DSFQQv8vmM2dzvP9jcus29N6uDsUyCf9YWd9MXB2Cb9Ap
-         SiFe04A3za/NndPkaV1Uy6H/Uj40nlUAK+gUql7yGlCeQ/2GeYMfg+rnCp4Fzlzxb1tS
-         h9qczStFdwW0W13NjqY7JHz6LqVmVhF9kD0q9jpcgwCYmY4akrrOBfo4kPdg+WpOtTfW
-         gUrbgXts1xtBxAPkva6SbQUmP72asdcqGmRVx8XWG4a0LiQrmZ2UxyOD3vKggouL2Wwo
-         LzOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIqclah0DeLTLE7KVLGZL5t2p3Qp0RpTvhunf8aMGxVh9x5XkvwYSELvXvnwEmv1q/ee/U0BDbR26qp/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo/HSpStftDRyNhHH7TnaqNimgetYlsODASgvDO6a3UlXvWBVu
-	SSWa0xyk8SmLzNxANk3eni6jPN1flHIVSnMaK7bBctdq5ZUovVb7xg7HirRytKOdARLlR1kRQcg
-	GXI795bDN+0T3QlqdTiUKJv8NKU5shzsmBOaUPw==
-X-Gm-Gg: ASbGnctP1e7GkwquV6letRMKKGy5igaRq8csR3gh7JBgn1SOgSzyBb0rUBDTYD83oDT
-	Kore3gsHEVmIGUUew7dh9w0kHZPzbcfKPEVddg1LsAJL6CwtAtPJwbwBTazSk1DVY/mQLlp47ZZ
-	ykp4grDKm7VXhM5SuYMvihVA/mp5eSYTO2xO46J+GMUVK7JjKjXP1Qxg==
-X-Google-Smtp-Source: AGHT+IFgG+UK5CY55EUMSZUkeEuk/IEYk0VOZ0UOQusDDqiZWUfgLmmWHTO06WOk/G/RNJCbB+WH17/isnZ24eNHT8g=
-X-Received: by 2002:a05:6512:31d5:b0:540:2fd2:6c87 with SMTP id
- 2adb3069b0e04-54fb9292d7dmr1436866e87.16.1746621266974; Wed, 07 May 2025
- 05:34:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=pEBWnZ1C2IW1v5+bLa6QATOB5pHTAJCz+neU7iX2g0+0HPsaK51o/XsOqm/FJOO4mX8lCzPfroM8UbgBo0QJ0zY28An7oalGi5N7ra+vuR867UmhqhAFn+n5MgLhrPrM9sS2wchhuhV815oZxVsXVm3PEZED9gHz/OZOVk6lUt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKVUmewQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCEEFC4CEF1;
+	Wed,  7 May 2025 12:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746621338;
+	bh=QN0iYaTj5lXtSoMu1TVz9P54D0YZyQOGyVxihYjrfeA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SKVUmewQj0XsJbohitWCvOFhVcI3BQwXlMeNl81ZbJq4yZj0YcbyGdR9A2cXhzLWV
+	 5Pyo0TRbZwQyzY8z4MsgXQ1Nf2D+AtwlXfgNrg/O3vIdkOuXslQPtzx1DGxmKRDW2s
+	 rY5zfUB08tYbf07d0Mj9lsi7EnnDutxufWZUXh5kNNb0B6W1wZ/eztYwouuY/X2u+2
+	 VJmNDQ9ZcD2yelmJRFOIEqicqZXSlCzubiKeQ0pp0aDhbs3XWp8eY333k8J2JE+B/2
+	 SaACfxY4iP3BbKAIowN+iez74ipUPe6fLiK/5ykkMk+7uHQTQsDhk8zHTrqYXX1c9M
+	 A6XV16fRQ+e8w==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2da73155e91so1763697fac.0;
+        Wed, 07 May 2025 05:35:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbOwWGHTgNtMYCVVF2mQ9nOtl+xc4/sHRCdgrFA5L1ONZoYctVOGRHb1dzVblBXkvcCjdwHanCgkqe@vger.kernel.org, AJvYcCX4UpcDox8sME3w1DuZpL9BUYNTiw3ouJ1rPqeeLDCqfy0POpkOzsk9kf6WN7aXqakd4y84gIdUq6SK+jaq@vger.kernel.org, AJvYcCXpQGNdV4xIS4tNQedBsBDDQd54tOrhE7Hkz6pDZ0rDBoQF3gXUL8B3kIBZoYOo4YFtzq449ugq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1PBY7S4zQhSDis3a7iS1YyRXv3CIvmxuib7boj/g28y/cYCHU
+	GNZA2qVfjDbQyMfA1Y8UbgzjZq0JPnDF9B7wdfvhahU3blzSOfQzj9sdN2oEVzVe+anB+Xy2c1J
+	2h1P86PBlONU78KIRrd27JNtzYT4=
+X-Google-Smtp-Source: AGHT+IGQLgvypqx3JcHwD5PFPM2WjUgglfXhMZCVbBxVzPyWXbTBVdybrYDiwZRccGO4EQVpsjcwxf77T7Ddt+bH3NU=
+X-Received: by 2002:a05:6870:1585:b0:2c6:72d3:fc93 with SMTP id
+ 586e51a60fabf-2db5be13542mr1641073fac.12.1746621338107; Wed, 07 May 2025
+ 05:35:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505144903.1293558-1-robh@kernel.org>
-In-Reply-To: <20250505144903.1293558-1-robh@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 7 May 2025 14:34:14 +0200
-X-Gm-Features: ATxdqUF5eL8gozIaQNQZaqyBb_VdC7-G7d3hXKd0rOv6I6RqAOxjq7im7gawZqQ
-Message-ID: <CAMRc=MezTdjGmzTSsfJa-Srrhobz4du4NKVvPWv9zDRMsz2v8Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: Convert ti,cp-intc to
- DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20250506-draco-taped-15f475cd@mheyne-amazon> <20250506-shapeless-merciful-inchworm-7bfdb4@sudeepholla>
+ <20250506-dialog-57th-c4e70064@mheyne-amazon> <20250507-mysterious-emu-of-fertility-951c69@sudeepholla>
+ <20250507-blend-revel-3d94099b@mheyne-amazon> <20250507-quantum-solid-ibex-218f1b@sudeepholla>
+In-Reply-To: <20250507-quantum-solid-ibex-218f1b@sudeepholla>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 7 May 2025 14:35:25 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ixm4MYCxkMo0wiRP=W7TD3cwQtj0Fwb3H24yY+MGoLUQ@mail.gmail.com>
+X-Gm-Features: ATxdqUGdAhoqiscdDan0zbOIvJu8owZ1f9kinzJ-STFEWdVHedeGnKVeBK7FnIc
+Message-ID: <CAJZ5v0ixm4MYCxkMo0wiRP=W7TD3cwQtj0Fwb3H24yY+MGoLUQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI/PPTT: fix off-by-one error
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "Heyne, Maximilian" <mheyne@amazon.de>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Jeremy Linton <jeremy.linton@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 5, 2025 at 4:49=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org> =
+On Wed, May 7, 2025 at 2:31=E2=80=AFPM Sudeep Holla <sudeep.holla@arm.com> =
 wrote:
 >
-> Convert the TI Common Platform interrupt controller binding to schema
-> format. It's a straight-forward conversion of the typical interrupt
-> controller.
+> On Wed, May 07, 2025 at 11:56:48AM +0000, Heyne, Maximilian wrote:
+> > On Wed, May 07, 2025 at 12:52:18PM +0100, Sudeep Holla wrote:
+> > >
+> > > Just to understand, this node is absolutely processor node with no
+> > > private resources ? I find it hard to trust this as most of the CPUs
+> > > do have L1 I&D caches. If they were present the table can't abruptly =
+end
+> > > like this.
+> >
+> > Yes looks like it. In our case the ACPI subtable has length 0x14 which =
+is
+> > exactly sizeof(acpi_pptt_processor).
+> >
 >
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
+> OK, this seem like it is emulated platform with no private resources as
+> it is specified in the other similar patch clearly(QEMU/VM). So this
+> doesn't match real platforms. Your PPTT is wrong if it is real hardware
+> platform as you must have private resources.
+>
+> Anyways if we allow emulation to present CPUs without private resources
+> we may have to consider allowing this as the computed pointer will match
+> the table end.
+>
+> Rafael,
+>
+> If it is OK for QEMU to present cacheless CPUs, then we need to allow
+> this logic. What do you think ?
 
-LGTM
-
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+I don't see why QEMU would be disallowed to do so.
 
