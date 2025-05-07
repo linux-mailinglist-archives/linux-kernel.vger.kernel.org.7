@@ -1,145 +1,168 @@
-Return-Path: <linux-kernel+bounces-637935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E3AAADF54
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CF1AADF5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6ED73AD118
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:35:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F4B3BCC0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C99280A38;
-	Wed,  7 May 2025 12:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E63B27A103;
+	Wed,  7 May 2025 12:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMNOgP8b"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HyTpaWuP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866A426B08C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429C7280CD0
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746621341; cv=none; b=audTjaQ4JJRVdDcaxKC32ouWG22+wOJzg104sGbsfbd41KYGkUhCle9QmEpYzMJbwKnYd/mqpfPJygQrsDXmxucTjTPhIr6B8LW0VzuSp9iSpMsyS0BiES2kNz1w5zRRYx/j7Rb4r83O/j/HZBa1hkBxQUx7ZclBIlBrNFJBzUQ=
+	t=1746621398; cv=none; b=oE+SumYqJD/kqdw3czoBM5u05alaro7tRwZu4EXwfxTIvXnBWBc8K3BVrJps3HwPTTn1PYZ4/89Y6FUDYJe3t7pGjaJeHYfZWJn3vC4pb60U4AjBbbInbthm/69kOy2o7nIfuEaOyS4qPg2Wlc7BS+U3kCyEpsuq5x6Br2WcjLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746621341; c=relaxed/simple;
-	bh=W/jXllp7QKxqo10uYHex1yrZDnuxG/dHXbYSQf58jCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Py27gJO+EKMUGBM4XKWzaJyKpqhyibMpznPIvCj21yS+whzEHzaKW3lu8x3y2xjHwBeRCCGpTxIiLedTH3V577S1M++0i+6eK7zVOTS37yvNzpPx2RJAZUrw2PhddLjXZ0zy6E+1obBN4gyN3lwCfvATk/LjDLAUUz2fx2M2INw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMNOgP8b; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acacb8743a7so162485366b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 05:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746621338; x=1747226138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xWON9I4ameGxWiEKwkDziYc8iN3l6k5w6SWR59IgmyI=;
-        b=VMNOgP8bLj4AVsSyMG7GFjNj1ljxv5Qc9LFV+17zVZa+eKaVQazoUTb7SLBLoZUzXD
-         R7XwvHGU7dOWl+uLp2gmVDvMj9uYT/WsuE9e2ffY7eQ9dn0bGLotWYIjSgQrUEayAay6
-         YgoI9h319Ppx1K55O8GZi9zsJ5Wr0PONOC/weaqKTCQ6GgSikFRmngzuiSc1l/3SnWlL
-         KyFbc3pjLKXRU8luFAU2lm5jITtDS+Wipwtaj06DKmI27jekC1FBA3DUHccgYG7jyC13
-         CgRjd6pIqMfGjrQZQ554UeSCYXVqHtBD7ZdbTBCuv+fAUKvdrO/qHTqe0RiBpIFneqcU
-         ap0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746621338; x=1747226138;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xWON9I4ameGxWiEKwkDziYc8iN3l6k5w6SWR59IgmyI=;
-        b=rclRrKZZdQLvAyqr9nkZBXbjTa7hyiA2QVPjyqAiDINHfCw6ltk3W11GAQkZ7v/gUC
-         Oohg2y19X2az6aZp95fPH5tbl/42bhTMqhdevC39DYfC/xB0/v+Upz0NnPzPQcPI8g9x
-         bym5CUu398qp1SbJ9al9RoraUnM1vHHMo0HTlSDfP+Aq3eLHMl7QNobkLkyx464o1YZ0
-         syhQq2tILLtjHC2SJ+Dme/dLwdz80gX9IXuasnWcSeZawymj/8BFjOab7W7hcLJHRHH2
-         YB+0fVCl8fXEDhBZUvbbtj0f/q8Pc4mSh4HCILD6k/Cp1XIkwAis45jksI8c3wqI1lju
-         vlLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcZLBzM2qv/PLedbtV9zRdrOtI5W8RaROI9xIa2XfSLsLRa8nC6nBU+sNX6DUlA1gCZAVY86jO78mPFmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx97bBU2ioeJmu/1nVthfgLwggBRtLxYzATcPZnAFA374F2Huh8
-	EDvqZVNpyIMmqo4uCT0iPQbGSXe3g6MTHI2bXuTIaJvPjNgeokYVU6jlLYe0XoY=
-X-Gm-Gg: ASbGncubsNxvHWYWxS78b+0HfLGSFzu8YyPJZ5VKFUEjxA9FeYGbKsZBrJR2IZbWTqJ
-	GXHcVpU1MdbZMqEsGWshIx77xN83Z0oYkdeDlHdwRSkETeM/pVMw4z5/l7ZoCXR0LcTpkI+S29o
-	WE5dZukQSSmqpjCa0dkZF1ziI8OmpnuHZ/B8dyl1KNos9weXsdNKLb/VMF/Q2Hx31HRwQwrenB3
-	3pnzMyDWDP4N/BcZlRMybtGixyAWRqQVHBwpGoszIwDVW31FBwYCSyYx3HqpG6KvMQYpviLGPFf
-	l0Y3zfQkyqB2i+P7Pgz9kG4EHvmLxvZg3Ss6CIk=
-X-Google-Smtp-Source: AGHT+IEMmTi4bmJFoUPDT0YBq0AgR9RZuiis3rxqwa+boAiz7GJ/sZbLrp/zC5X9/7Njxkr4VGX0Ww==
-X-Received: by 2002:a17:907:6eaa:b0:ac7:b1eb:8283 with SMTP id a640c23a62f3a-ad1e7830348mr370649066b.17.1746621337789;
-        Wed, 07 May 2025 05:35:37 -0700 (PDT)
-Received: from hackbox.lan ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891f04absm897883966b.78.2025.05.07.05.35.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 05:35:36 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.16
-Date: Wed,  7 May 2025 15:35:28 +0300
-Message-Id: <20250507123528.585447-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746621398; c=relaxed/simple;
+	bh=ANQL2Z2mMkbXRvzftivNBYyTpd2FsjheCIMPkPyIky0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChAiw9KACofcty3L2+punD4qhEjGTZopIly2fwZl/6I5Gb2sb25vRaOGli+l0SdbLiD7EJxPDqMiLFARUN4/pAZbYXzjPdArGN4KxSGxgS8519h/a2q2lzWd+ZVIQ/RTax++4k2vLh9rT2jtSdsAchspWoeTfOlTgOYc/Z99rds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HyTpaWuP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746621395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R4OangMaKmpfQS75O4hoSdU6AYI1lR2PZPMYPMmrmQc=;
+	b=HyTpaWuPCNivfzvqfScWsns6YFYFqhDBXVFr/1THkbPC2YSJ1ocd+wPUD13mgE+DFXEskx
+	1CQi8AhwASvlES3AWZRCsvco762ApxoS5qEa0i+fJXRuW7v+vJQHcm9C+wrb3T887rIXhR
+	6hGQuo1c5eCDfcCwGb4M4Gzc/OWAiZg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-301-TZ32l5kDOH2JZUq_QcgFLg-1; Wed,
+ 07 May 2025 08:36:30 -0400
+X-MC-Unique: TZ32l5kDOH2JZUq_QcgFLg-1
+X-Mimecast-MFC-AGG-ID: TZ32l5kDOH2JZUq_QcgFLg_1746621388
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 52F141955DE8;
+	Wed,  7 May 2025 12:36:28 +0000 (UTC)
+Received: from [10.44.33.91] (unknown [10.44.33.91])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C65371953B85;
+	Wed,  7 May 2025 12:36:22 +0000 (UTC)
+Message-ID: <ef8ae196-84c9-447e-98ff-071d347531d5@redhat.com>
+Date: Wed, 7 May 2025 14:36:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 8/8] mfd: zl3073x: Register DPLL sub-device
+ during init
+To: Lee Jones <lee@kernel.org>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Michal Schmidt <mschmidt@redhat.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250430101126.83708-1-ivecera@redhat.com>
+ <20250430101126.83708-9-ivecera@redhat.com>
+ <20250501132201.GP1567507@google.com>
+ <a699035f-3e8d-44d7-917d-13c693feaf2e@redhat.com>
+ <20250507110621.GJ3865826@google.com>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250507110621.GJ3865826@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+On 07. 05. 25 1:06 odp., Lee Jones wrote:
+> On Fri, 02 May 2025, Ivan Vecera wrote:
+> 
+>>
+>>
+>> On 01. 05. 25 3:22 odp., Lee Jones wrote:
+>>> On Wed, 30 Apr 2025, Ivan Vecera wrote:
+>>>
+>>>> Register DPLL sub-devices to expose the functionality provided
+>>>> by ZL3073x chip family. Each sub-device represents one of
+>>>> the available DPLL channels.
+>>>>
+>>>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>>>> ---
+>>>> v4->v6:
+>>>> * no change
+>>>> v3->v4:
+>>>> * use static mfd cells
+>>>> ---
+>>>>    drivers/mfd/zl3073x-core.c | 19 +++++++++++++++++++
+>>>>    1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+>>>> index 050dc57c90c3..3e665cdf228f 100644
+>>>> --- a/drivers/mfd/zl3073x-core.c
+>>>> +++ b/drivers/mfd/zl3073x-core.c
+>>>> @@ -7,6 +7,7 @@
+>>>>    #include <linux/device.h>
+>>>>    #include <linux/export.h>
+>>>>    #include <linux/math64.h>
+>>>> +#include <linux/mfd/core.h>
+>>>>    #include <linux/mfd/zl3073x.h>
+>>>>    #include <linux/module.h>
+>>>>    #include <linux/netlink.h>
+>>>> @@ -755,6 +756,14 @@ static void zl3073x_devlink_unregister(void *ptr)
+>>>>    	devlink_unregister(ptr);
+>>>>    }
+>>>> +static const struct mfd_cell zl3073x_dpll_cells[] = {
+>>>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 0),
+>>>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 1),
+>>>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 2),
+>>>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 3),
+>>>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 4),
+>>>> +};
+>>>
+>>> What other devices / subsystems will be involved when this is finished?
+>>
+>> Lee, btw. I noticed from another discussion that you mentioned that
+>> mfd_cell->id should not be used outside MFD.
+>>
+>> My sub-drivers uses this to get DPLL channel number that should be used
+>> for the particular sub-device.
+>>
+>> E.g.
+>> 1) MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 2);
+>> 2) MFD_CELL_BASIC("zl3073x-phc", NULL, NULL, 0, 3);
+>>
+>> In these cases dpll_zl3073x sub-driver will use DPLL channel 2 for this
+>> DPLL sub-device and ptp_zl3073x sub-driver will use DPLL channel 3 for
+>> this PHC sub-device.
+>>
+>> platform_device->id cannot be used for this purpose in conjunction with
+>> PLATFORM_DEVID_AUTO as that ->id can be arbitrary.
+>>
+>> So if I cannot use mfd_cell->id what should I use for that case?
+>> Platform data per cell with e.g. the DPLL channel number?
+> 
+> Yes, using the device ID for anything other than enumeration is a hack.
+> 
+> Channel numbers and the like should be passed as platform data.
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+OK, I will send v7 quickly.
 
-are available in the Git repository at:
+Ivan
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.16
-
-for you to fetch changes up to 6a55647af3334f1d935ece67de4a838a864b53fc:
-
-  dt-bindings: clock: imx8m-clock: add PLLs (2025-05-05 10:48:56 +0300)
-
-----------------------------------------------------------------
-i.MX clock changes for 6.16
-
-- Add video PLL clocks to both i.MX8MM and i.MX8MP
-  while dropping the numeral suffix.
-- Add imx_anatop_get_clk_hw helper
-- Add anatop clock providers for i.MX8M[MNP]
-- Drop ccm_ prefix from base in i.MX8MP clock provider
-- Document bindings for PLLs in imx8m-clock schema
-
-----------------------------------------------------------------
-Dario Binacchi (11):
-      dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
-      clk: imx8mm: rename video_pll1 to video_pll
-      dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
-      clk: imx8mp: rename video_pll1 to video_pll
-      dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-      clk: imx: add hw API imx_anatop_get_clk_hw
-      clk: imx: add support for i.MX8MM anatop clock driver
-      clk: imx: add support for i.MX8MN anatop clock driver
-      clk: imx: add support for i.MX8MP anatop clock driver
-      clk: imx8mp: rename ccm_base to base
-      dt-bindings: clock: imx8m-clock: add PLLs
-
- .../bindings/clock/fsl,imx8m-anatop.yaml           |  53 +-
- .../devicetree/bindings/clock/imx8m-clock.yaml     |  27 +-
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-imx8mm-anatop.c                | 287 +++++++++
- drivers/clk/imx/clk-imx8mm.c                       | 262 ++++----
- drivers/clk/imx/clk-imx8mn-anatop.c                | 283 +++++++++
- drivers/clk/imx/clk-imx8mn.c                       | 183 +++---
- drivers/clk/imx/clk-imx8mp-anatop.c                | 306 ++++++++++
- drivers/clk/imx/clk-imx8mp.c                       | 672 ++++++++++-----------
- drivers/clk/imx/clk.c                              |  15 +
- drivers/clk/imx/clk.h                              |   2 +
- include/dt-bindings/clock/imx8mm-clock.h           |  76 ++-
- include/dt-bindings/clock/imx8mn-clock.h           |  64 ++
- include/dt-bindings/clock/imx8mp-clock.h           |  80 ++-
- 14 files changed, 1711 insertions(+), 605 deletions(-)
- create mode 100644 drivers/clk/imx/clk-imx8mm-anatop.c
- create mode 100644 drivers/clk/imx/clk-imx8mn-anatop.c
- create mode 100644 drivers/clk/imx/clk-imx8mp-anatop.c
 
