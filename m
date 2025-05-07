@@ -1,223 +1,202 @@
-Return-Path: <linux-kernel+bounces-637836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C05FAADDA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:44:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FD9AADDA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572C91C08019
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2109A1A9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F1D233701;
-	Wed,  7 May 2025 11:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EA7242D89;
+	Wed,  7 May 2025 11:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="gU1jYMHt"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GUL4Pqgb"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8623C38C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C93220E005;
+	Wed,  7 May 2025 11:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746618246; cv=none; b=kYsi5Ddg47BLuHj6GeYOYFyIBqTHNQzyzdHpOc4qR5CIBxuBqS7Ltmdfyk5md6qKZj71IaLvM8kXtz2mxsRqXfe6OzHSVL0zPeaZ2wFied/a0tb0YZunQqha/qla8hBs6oa//o56nWedFkSpP6wpOw6zgwixMSc/FH/L8DfSt7g=
+	t=1746618279; cv=none; b=Tr6Tf5UaM8069DDtwDtxvlG9yWc+iYn9R42/3W0RAO9RhyIKUp6iq9zRRI9pzEi0hx68MtENwqrrarWbrOa6Cdt/Yl5sp+o8WWjrrfYsFzeSb/6DP4XA15N3lLJ4ydmef8OdCvqFAtKWCoRWXfGJibEKk15edwiRiXhSIK5vrvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746618246; c=relaxed/simple;
-	bh=qEEBf/EvhFb5+S8vt2g6XJwST6O0nTQJRpn12U1g7EA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z536eqA9/a21J2VvK+di/QFvM/1qddG4wnJ3RY9iZlwUHjPs93o7um8YBavwvADy8sPurEa9zAgwgtYd+y8c0kHQchR1/gX1tZvDLdvzRSV3BTFLv0IuDQS/L7Syn45AWcRCwa68NPxAyvkhhlLjNGKG04VMUeJsPTwkLx94+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=gU1jYMHt; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3da7642b5deso2536695ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746618243; x=1747223043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bVz2E+K/uMAryK5WXZfBalhzFkygNbdnQ6nqZ/JT97Y=;
-        b=gU1jYMHtLBX/bg6svOh/7/0bsT6Z+HrtMQzz7sSs+MZt1TfP1dglBLOf69poDnGZKN
-         rGGzzdWiMTgzVDiLw7vgrMpVRWE+1J74dwaV1KTqsnVjik5t+NuxzGiSUQ2ZGnqCIxNp
-         VXa8wyN+oH6CKLiCNzpnoxi88jnA5qACOS3BAagy2svsLUdUYPbe0PBSU/678M5grmac
-         CP5jSi5Y9JDkKVdXRfHqwNXY0OaiOG6skPI2gvMB0phNILSWNOhUn67LfSapnmwMlbbb
-         8BndgiZM/syqMYPm2tzvwYob1FQfT31nsoj5ZY9u9SQYiL6abQjzgCQ33ZczPsfdMsXE
-         Ar0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746618243; x=1747223043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bVz2E+K/uMAryK5WXZfBalhzFkygNbdnQ6nqZ/JT97Y=;
-        b=aAQY4oG5Thikd4RgSZ3ttWYvMe8Bre9lrfeHZWUY1o3vOvD9P704oDGJwCxw4Dh8vj
-         19N0Hspv2DXphIRSR82lwLZ45VodmiBp/nJZwEusNqMyDrt2FUQboQq3emnn3S3/4HSk
-         m6hr1bDpwtXQt9XkBEjui4n/uZuPMrcCazkH/Att5aS43ue6EMUbKujvDLDBDPBt3krm
-         rs9wZWKJcTs1DX77vJOR4HnZL7S+RxscGiU2fYbXQIXlQzrHYcq7DMDB8Rg5CxtV4otD
-         YO1GnWCRxXyxLLVE5uNkTOXI1nOmjndiKDVlOz8wak2LJsfQnsnTkG7j8gNQ0bbZJlQt
-         o1lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuBeBfxWHTeUzyB3FiXm948P45ScJNszguIzPerrDwp9l6DR51NW8fSVYwhlqtmuPRgWC8K7ZcJ6nfwOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXSjPV/DMRwQJq0cwDgW4f+taicHqMvBCwoF90V3Nn4jAjIya5
-	0STtbRe8o2PKgWkVR6uDxs4BYOkzBdl55Tt6koBQO319U1+XTcI67iUnlta4R6bN+KX/iA5q0y1
-	uXvyf217kjfCZ2YhELWP/rjhj4S8F/mrk4oHuJA==
-X-Gm-Gg: ASbGncsoBIVKmkRMG4auuZEFucMNibPryb+LwBsAGpJGNJQIFcaN3EdM+hEPIQNPvQz
-	cp/VNMbd5RpUigkHL6gERNCW0hnhYvQyAc83E8ViJgn2JzBodfWK+wsiZcg2g/yjLOZq5oIBTwW
-	YrBPRkYvWF6wpmSu0BOpwfJIfUMFVfqU2MBQ==
-X-Google-Smtp-Source: AGHT+IEqTEU3gW24Jmigd2cIa8Pl0Ves+lUOw1f5tu/7B6fJK/PzbflFbxkax13tPvkDxDTPwZvRy4srBUyjnSLHpH0=
-X-Received: by 2002:a05:6e02:1529:b0:3d8:21ae:d9c with SMTP id
- e9e14a558f8ab-3da738e9934mr32539925ab.5.1746618242847; Wed, 07 May 2025
- 04:44:02 -0700 (PDT)
+	s=arc-20240116; t=1746618279; c=relaxed/simple;
+	bh=ARNpSkioTWa/QNiQYCHE3Jg8Dd0xmmavPCfPg7mh8/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rM7htb+uI2WFjOLYwjNz2V187Ed9gODhY8Vs8YTonJcFuzwalUmKg5+Tw5GaXwLtfNtxOTXg9Orb+khVI+akx2hZn4FIrhPAzhuPrvGGL+4SVcXe/keeN+jv90DuSFv8JdozhSXJKVSwBmpTe2OIJENOEwJ1G0WtiGn33Y7lMgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GUL4Pqgb; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EN8g4EHsDjptpFzBX1wGeZiDRnrK6OKpcAy2HnA0VHo=; b=GUL4Pqgbb9W892qJhD8aJcoqZl
+	3y7WCfpmmJ2IzTsw1Oas4CTPWw03yrXKF1eG8LxQbxfkmhbJI5wGSSwYqxvwrAJT9isWpbtjwHSrD
+	1Xvt8dQg/39xNAsSWWE562+PW6lsDLxJ3r88+NG8b4XNBqQImOnpypUU5AjA5zEbGTmaGSHg00unq
+	zd4zg8pkmx/i5COnS+H6FjDiIN5eNQ0p3XNtfs4WKc8JFwNGxAnZVhhBaiNWa6R53hbohhyciPrnw
+	EHrI68e1IrGp604t7Ng3JdSyPrSwJIt5/5Yg4hCMqp+OsT+6OzkzWZX1jTMhg2lTSjDEbXpFRLOJb
+	89Y+aGfg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35768)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uCdCN-0007U0-1u;
+	Wed, 07 May 2025 12:44:27 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uCdCK-0005l0-1K;
+	Wed, 07 May 2025 12:44:24 +0100
+Date: Wed, 7 May 2025 12:44:24 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] Stuck key syndrome (was: Re: [PATCH net-next v2] net: dsa:
+ microchip: Add SGMII port support to KSZ9477 switch)
+Message-ID: <aBtHmNGRTVP9SttE@shell.armlinux.org.uk>
+References: <20250507000911.14825-1-Tristram.Ha@microchip.com>
+ <20250507094449.60885752@fedora.home>
+ <aBsadO2IB_je91Jx@shell.armlinux.org.uk>
+ <20250507105457.25a3b9cb@fedora.home>
+ <aBsmhfI45zMltjcy@shell.armlinux.org.uk>
+ <aBsu-WBlPQy5g-Jn@shell.armlinux.org.uk>
+ <20250507153236.5303be86@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com> <20250403112522.1566629-4-rkrcmar@ventanamicro.com>
-In-Reply-To: <20250403112522.1566629-4-rkrcmar@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 7 May 2025 17:13:51 +0530
-X-Gm-Features: ATxdqUETEm-yQn1qrwlBDD0f3dy7uLqyAaalj3uycXV7-PAmSrqpx552FKWRajk
-Message-ID: <CAAhSdy0XBTW1FUuUwSBanspDwpHMRbBL-8oSiRR1R=5SgF1+hw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] KVM: RISC-V: refactor vector state reset
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507153236.5303be86@fedora.home>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar=
-@ventanamicro.com> wrote:
->
-> Do not depend on the reset structures.
->
-> vector.datap is a kernel memory pointer that needs to be preserved as it
-> is not a part of the guest vector data.
->
-> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
+Hi Maxime,
 
-Queued this patch for Linux-6.16
+On Wed, May 07, 2025 at 03:32:36PM +0200, Maxime Chevallier wrote:
+> Hi Russell,
+> 
+> On Wed, 7 May 2025 10:59:21 +0100
+> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> 
+> > On Wed, May 07, 2025 at 10:23:17AM +0100, Russell King (Oracle) wrote:
+> > > [Sorry for going off topic here - changed the Cc list, added Linus,
+> > > changed the subject.]
+> > > 
+> > > On Wed, May 07, 2025 at 10:54:57AM +0200, Maxime Chevallier wrote:  
+> > > > On Wed, 7 May 2025 09:31:48 +0100
+> > > > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:  
+> > > > > [rest of the email got deleted because Linux / X11 / KDE got confused
+> > > > > about the state the backspace key and decided it was going to be
+> > > > > continuously pressed and doing nothing except shutting the laptop
+> > > > > down would stop it.]  
+> > > > 
+> > > > Funny how I have the same exact issue on my laptop as well...   
+> > > 
+> > > I've had the "stuck key" behaviour with the HP Pavilion 15-au185sa
+> > > laptop I had previously (normally with ctrl-F keys). However, hitting
+> > > ctrl/shift/alt would stop it.
+> > > 
+> > > This is the first time I've seen the behaviour with the Carbon X1
+> > > laptop, but this was way more severe. No key would stop it. Trying to
+> > > move the focus using the trackpad/nipple had any effect. Meanwhile
+> > > the email was being deleted one character at a time. So I shut the
+> > > laptop lid causing it to suspend, and wondered what to do... on
+> > > re-opening the laptop, it didn't restart and is back to normal.
+> > > 
+> > > This suggests that the entire input subsystem in the software stack
+> > > collapsed just after the backspace key was pressed, and Xorg never
+> > > saw the key-release event. So Xorg duitifully did its key-repeat
+> > > processing, causing the email to be deleted one character at a time.
+> > > 
+> > > The problem is, not only did this destroy the email reply, but it
+> > > also destroyed my train of thought for the reply as well through
+> > > the panic of trying to stop the entire email being deleted.
+> > > 
+> > > I don't think this is a hardware issue - I think there's a problem
+> > > in the input handling somewhere in the stack of kernel, Xorg,
+> > > whatever multiple input libraries make up modern systems, and KDE.
+> > > 
+> > > I did check the logs. Nothing in the kernel messages that suggests
+> > > a problem. Nothing in Xorg's logs (which are difficult to tie up
+> > > because it doesn't use real timestamps that one can relate to real
+> > > time.) There's no longer any ~/.xsession-errors logfile for logging
+> > > the stuff below Xorg.
+> > > 
+> > > I'm running Debian Stable here - kernel 6.1.0-34-amd64, X.Org X Server
+> > > 1.21.1.7, KDE Plasma (5.27.5, frameworks 5.103.0, QT 5.15.8).  
+> > 
+> > I'll also add that The Carbon X1, being a laptop, its built-in keyboard
+> > uses the i8042:
+> > 
+> > [    1.698156] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+> > [    1.698543] i8042: Warning: Keylock active
+> > [    1.700170] serio: i8042 KBD port at 0x60,0x64 irq 1
+> > [    1.700174] serio: i8042 AUX port at 0x60,0x64 irq 12
+> > [    1.700271] mousedev: PS/2 mouse device common for all mice
+> > [    1.702951] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input0
+> > 
+> > I don't have the HP laptop with me to check what that was using.
+> > 
+> > The mysterious thing is "Keylock active" - clearly it isn't because I
+> > can write this email typing on that very keyboard. However, I wonder
+> > if it needs i8042_unlock=1 to set I8042_CTR_IGNKEYLOCK.
+> > 
+> > Unfortunately, it's probably going to take a year on the Carbon X1
+> > to work out if this makes any difference.
+> >
+> > > Anyone else seeing this kind of behaviour - if so, what are you
+> > > using?
+> 
+> It just happened to me as I was typing this very email (key 'd' got
+> stuck, nothing could un-stick it, couldn't move the mouse cursor but
+> mouse-click events did work, had to suspend/resume the laptop to fix
+> that)
 
-Thanks,
-Anup
+'d' can be quite disastrous if you're using vi and you're in command
+mode!
 
-> ---
->  arch/riscv/include/asm/kvm_vcpu_vector.h |  6 ++----
->  arch/riscv/kvm/vcpu.c                    |  5 ++++-
->  arch/riscv/kvm/vcpu_vector.c             | 13 +++++++------
->  3 files changed, 13 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_vector.h b/arch/riscv/includ=
-e/asm/kvm_vcpu_vector.h
-> index 27f5bccdd8b0..57a798a4cb0d 100644
-> --- a/arch/riscv/include/asm/kvm_vcpu_vector.h
-> +++ b/arch/riscv/include/asm/kvm_vcpu_vector.h
-> @@ -33,8 +33,7 @@ void kvm_riscv_vcpu_guest_vector_restore(struct kvm_cpu=
-_context *cntx,
->                                          unsigned long *isa);
->  void kvm_riscv_vcpu_host_vector_save(struct kvm_cpu_context *cntx);
->  void kvm_riscv_vcpu_host_vector_restore(struct kvm_cpu_context *cntx);
-> -int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu,
-> -                                       struct kvm_cpu_context *cntx);
-> +int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu);
->  void kvm_riscv_vcpu_free_vector_context(struct kvm_vcpu *vcpu);
->  #else
->
-> @@ -62,8 +61,7 @@ static inline void kvm_riscv_vcpu_host_vector_restore(s=
-truct kvm_cpu_context *cn
->  {
->  }
->
-> -static inline int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *v=
-cpu,
-> -                                                     struct kvm_cpu_cont=
-ext *cntx)
-> +static inline int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *v=
-cpu)
->  {
->         return 0;
->  }
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 60d684c76c58..2fb75288ecfe 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -57,6 +57,7 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
->         struct kvm_vcpu_csr *reset_csr =3D &vcpu->arch.guest_reset_csr;
->         struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
->         struct kvm_cpu_context *reset_cntx =3D &vcpu->arch.guest_reset_co=
-ntext;
-> +       void *vector_datap =3D cntx->vector.datap;
->         bool loaded;
->
->         /**
-> @@ -79,6 +80,8 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
->
->         kvm_riscv_vcpu_fp_reset(vcpu);
->
-> +       /* Restore datap as it's not a part of the guest context. */
-> +       cntx->vector.datap =3D vector_datap;
->         kvm_riscv_vcpu_vector_reset(vcpu);
->
->         kvm_riscv_vcpu_timer_reset(vcpu);
-> @@ -143,7 +146,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->         cntx->hstatus |=3D HSTATUS_SPV;
->         spin_unlock(&vcpu->arch.reset_cntx_lock);
->
-> -       if (kvm_riscv_vcpu_alloc_vector_context(vcpu, cntx))
-> +       if (kvm_riscv_vcpu_alloc_vector_context(vcpu))
->                 return -ENOMEM;
->
->         /* By default, make CY, TM, and IR counters accessible in VU mode=
- */
-> diff --git a/arch/riscv/kvm/vcpu_vector.c b/arch/riscv/kvm/vcpu_vector.c
-> index d92d1348045c..a5f88cb717f3 100644
-> --- a/arch/riscv/kvm/vcpu_vector.c
-> +++ b/arch/riscv/kvm/vcpu_vector.c
-> @@ -22,6 +22,9 @@ void kvm_riscv_vcpu_vector_reset(struct kvm_vcpu *vcpu)
->         struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
->
->         cntx->sstatus &=3D ~SR_VS;
-> +
-> +       cntx->vector.vlenb =3D riscv_v_vsize / 32;
-> +
->         if (riscv_isa_extension_available(isa, v)) {
->                 cntx->sstatus |=3D SR_VS_INITIAL;
->                 WARN_ON(!cntx->vector.datap);
-> @@ -70,13 +73,11 @@ void kvm_riscv_vcpu_host_vector_restore(struct kvm_cp=
-u_context *cntx)
->                 __kvm_riscv_vector_restore(cntx);
->  }
->
-> -int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu,
-> -                                       struct kvm_cpu_context *cntx)
-> +int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu *vcpu)
->  {
-> -       cntx->vector.datap =3D kmalloc(riscv_v_vsize, GFP_KERNEL);
-> -       if (!cntx->vector.datap)
-> +       vcpu->arch.guest_context.vector.datap =3D kzalloc(riscv_v_vsize, =
-GFP_KERNEL);
-> +       if (!vcpu->arch.guest_context.vector.datap)
->                 return -ENOMEM;
-> -       cntx->vector.vlenb =3D riscv_v_vsize / 32;
->
->         vcpu->arch.host_context.vector.datap =3D kzalloc(riscv_v_vsize, G=
-FP_KERNEL);
->         if (!vcpu->arch.host_context.vector.datap)
-> @@ -87,7 +88,7 @@ int kvm_riscv_vcpu_alloc_vector_context(struct kvm_vcpu=
- *vcpu,
->
->  void kvm_riscv_vcpu_free_vector_context(struct kvm_vcpu *vcpu)
->  {
-> -       kfree(vcpu->arch.guest_reset_context.vector.datap);
-> +       kfree(vcpu->arch.guest_context.vector.datap);
->         kfree(vcpu->arch.host_context.vector.datap);
->  }
->  #endif
-> --
-> 2.48.1
->
+> Got the same "Keylock active" warning at boot :
+> 
+> [    0.916750] i8042: PNP: PS/2 Controller [PNP0303:PS2K,PNP0f13:PS2M] at 0x60,0x64 irq 1,12
+> [    0.917210] i8042: Warning: Keylock active
+> [    0.920087] serio: i8042 KBD port at 0x60,0x64 irq 1
+> [    0.920090] serio: i8042 AUX port at 0x60,0x64 irq 12
+> 
+> Nothing in the kernel logs when the key got stuck.
+> 
+> Laptop is a Dell XPS 15 9510, Running Fedora 41 but I saw this issue
+> before, kernel 6.14.4-200.fc41.x86_64, Wayland-based, Gnome 47.
+> 
+> Hopefully this helps a bit narrowing this down, I have a fairly
+> different userspace stack and kernel version, but we do have the same
+> driver involved and same keylock warning...
+
+Could you try booting with i8042_unlock=1 and see whether that makes any
+difference please?
+
+I've added that to my grub config in preparation for rebooting, but even
+if I booted now, I suspect it'll be some time before I have any useful
+result.
+
+How often do you see the problem?
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
