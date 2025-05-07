@@ -1,238 +1,152 @@
-Return-Path: <linux-kernel+bounces-637413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA76BAAD8EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35565AAD901
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16055168299
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:51:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E4B950411B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BE9220F58;
-	Wed,  7 May 2025 07:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE63221FA5;
+	Wed,  7 May 2025 07:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ilJTXEy5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bxH/piR1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286E22068E;
-	Wed,  7 May 2025 07:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746604287; cv=fail; b=XOUmG7Wk9ReF4bflefIjIqP0+jVoKGhL3jXOApBjg8kRIhgJ8nq+IAVN4LNdqcFBc0ieYbSbCpeMIrOO7QjphZTLwd+ohbi++InRTevYngFc4zxtlNL5EhGgjFteWri0tlci9tNn5VsryRk8A98ts+ppGpOtlZuUqpdc7MfRKZk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746604287; c=relaxed/simple;
-	bh=TnUtGs6Kq4SIUxn8t7hp/7KrAf0j6LacT71uD6d0Xvs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hBuBjrflmhOLNvyG0rJvEqvwKPne8SvfeFLiqr+Fk+DQWDGgRgzhogOp9mSXmFvIICgGOWWDaYkaKlGTVFdHFBz2llaH7tM2aZH5nwignn8gkMvdMLikiXkSuHYtIIfJ01dVwRX95xuIgZLQ1/uY07JBGPw/2YpaLyiUVRZ5yG8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ilJTXEy5; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746604286; x=1778140286;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=TnUtGs6Kq4SIUxn8t7hp/7KrAf0j6LacT71uD6d0Xvs=;
-  b=ilJTXEy5iTpeFinJw3WF+mBFZ2NZebykIr6zOFU9BGgBWDhsz27Zp+3w
-   tEEc/UXgDg2HKxtZAPzlMYULEIfFYeIgfcs4TDXsoGVatpNJm7SBnouxT
-   i73DqTsMjZKoF2Ff68vxXYuRGRUgFVyS/Eq12fFvTW0XqhAXKa4yZR1Dw
-   o5qEbKnlFHDa3q0erxICQ9ObIaN+Uo2qPO2MG+tBoZ/F9v/3auRMdcrEd
-   yB4IDckmQnQZkDiOJ7BzDgbGzetBidJOxN+S5/RDjBX3GgvJdQPCGypRm
-   h6MAZcC4DXfPYzMeY15ahL25g4nPguKtiPwtpXO7xT35ldYDKCVc0qPMF
-   Q==;
-X-CSE-ConnectionGUID: PcHz3hxxRmezK1hfsQQvJQ==
-X-CSE-MsgGUID: Vx6qD72FTtuJvWEeCzURZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="59306786"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="59306786"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:51:26 -0700
-X-CSE-ConnectionGUID: mECZwim5T+WDt+meLJ7DQQ==
-X-CSE-MsgGUID: 76KUHadeTOyw2FIV5BA8WQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="166917362"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:51:24 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 7 May 2025 00:51:24 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 7 May 2025 00:51:24 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.43) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 7 May 2025 00:51:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AGMu3pdPt2QPKQyrtk5kWh72dzgcdpT7HJGqrga5l5f1yoy1ePqD1GjXm3onYPy+jKyO3c6YtuhSxgi1gBR4HPKKw3/ftdFeK68o5FndPb7MjeokWbUtxhjAZVRQuOCP6a1LgjWPyPZijaBCU/uhAeyvqsV56A67Qf5J4dYbgwNKg3KVBR/fZ4LAc3+Dwaph52n1GZhtQLXkyaqNCiuqUZCrN1S0qL0e0YVEODUqptAF11HdN++PB8ACYSM3ApILk3TmNYfg13urdIabo8w58nJ+f3fag0V+DOjSzAnR0rZFpEfXmpI+dd7kTuCHtoG3S852wePmoKmO1T8XpYK4NQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TnUtGs6Kq4SIUxn8t7hp/7KrAf0j6LacT71uD6d0Xvs=;
- b=b/nBZNqxCkfgii/uzjLRo/ACCAR/vOy/udQ/el+3DHReAjuh/V3W5db0gxL+zFZ0flDYKwXYsjFgXFLoEEb+cPFXGMr0WjMVzM30S5n3uuAN0LeRLCUPOLKXdXoJSlgEnI4+zQTb6lVzcpxkH+qTnqkL8rEEnyW/5QUjetdr8d7qd+agra3Q9zhmb7vXZT0o6YSILj3hmw1UvXaapUMriIUCexiFQQVwwJU1uyj4w5H2H82aT1QbwLCQypttNg4HdbbvnuAynE2vfb8WVWwrHsJd9svaA6TQvHyVagdqemJ4xBgnICbT+PYeMQHeE+Y8eEzQxltNlinwqVYwRNrXSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SA1PR11MB8320.namprd11.prod.outlook.com (2603:10b6:806:37c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Wed, 7 May
- 2025 07:51:11 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.8699.026; Wed, 7 May 2025
- 07:51:11 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
-	"will@kernel.org" <will@kernel.org>, "bagasdotme@gmail.com"
-	<bagasdotme@gmail.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "thierry.reding@gmail.com"
-	<thierry.reding@gmail.com>, "vdumpa@nvidia.com" <vdumpa@nvidia.com>,
-	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
-	"nathan@kernel.org" <nathan@kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"mshavit@google.com" <mshavit@google.com>, "praan@google.com"
-	<praan@google.com>, "zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>, "mochs@nvidia.com" <mochs@nvidia.com>,
-	"alok.a.tiwari@oracle.com" <alok.a.tiwari@oracle.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>
-Subject: RE: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
- iopt_unpin_pages helpers
-Thread-Topic: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
- iopt_unpin_pages helpers
-Thread-Index: AQHbtnBgpkGgdbEd20qNTy9huUtOtLPFZrYQgACjfwCAAMZl4IAACA0AgAAD46A=
-Date: Wed, 7 May 2025 07:51:11 +0000
-Message-ID: <BN9PR11MB52767C9253073156A63C27B98C88A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
- <BN9PR11MB52762F5A464ACC68D78465578C892@BN9PR11MB5276.namprd11.prod.outlook.com>
- <aBpgWNitAgNenOPY@nvidia.com>
- <BN9PR11MB5276090879BB4C76CB27909E8C88A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <aBsNhsVryZs2c+AT@nvidia.com>
-In-Reply-To: <aBsNhsVryZs2c+AT@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SA1PR11MB8320:EE_
-x-ms-office365-filtering-correlation-id: dd4ff61a-57da-474c-b070-08dd8d3bef5c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?WCIIB4bCt8F3pyE2pXMJss2m+Gznw8Q7rpP/sRJedvA1Ltx38H1sQmrMau6q?=
- =?us-ascii?Q?LXPQ4dwcTbGMBcFQjL3PtP79L19i2Jjwa258yrlVotp5Nc2pB4Z59IKEqcmn?=
- =?us-ascii?Q?fNb7nl1OZkMuOBKzCtUqmEDoIci7rbz/UE5SNnrOAaucG7g67i/UCfORoTYV?=
- =?us-ascii?Q?3xHxyd3HnBDcpJZSrMO2prtoW1lbhRtduEXnRZYmGQxl+TvGjar8s9mmVaXh?=
- =?us-ascii?Q?iBiaxtJe/D6cIv4MgWfk8uUkGq/06GAQuRbz81g1h/rdAYo7E6GkEH8Asuv1?=
- =?us-ascii?Q?vBBZ6036HAw/32npCp/n/qQ6Dw+/BQgt6DRGyRGFkce1EvbeyKjX9XFwPLVg?=
- =?us-ascii?Q?nEwrYKCRq4IufTsOYMyrddAs4cfo63x92v0GtpY8e1LZhDHMwv2gTMgMPPTL?=
- =?us-ascii?Q?0Cnw6Co/+lZxed+XULjuIIshgcXUWfH0WtfTyVRRwdCPcbjW8MOboT+GXEJY?=
- =?us-ascii?Q?lGwmJ9YnO+RGMffhw2vVSCELkgbhfawe1y5kwuVLWK9FdLuB/qKgWsWAX/qf?=
- =?us-ascii?Q?JArdB1AEbtUJlyA8BFaW4lYnGHOGcW2qk4sycViGMmkKX6j70u+4ZyNqCxCq?=
- =?us-ascii?Q?KbYD4J6oKlsgh91yGCLPqNgcTHiO1W6hctGHcdjX6stSjx4oh+f2a6FCqBlM?=
- =?us-ascii?Q?FrIfXF+hUriWbhWl57fkTJ+rg7S/FOCiioPmymiyyrO2KGVTz9VxS7n86vWT?=
- =?us-ascii?Q?yGcgQQpwbwpwSfH36ZS1rj5CIsQKUTG96O+rNmxukJGXfUd2Q4lT3EXjep6V?=
- =?us-ascii?Q?i/roNCXyLv66HbU26R6owmDq+s41aAeYo8Q4gXk6mJU2obinKfxTOTv+0RFM?=
- =?us-ascii?Q?eh0+Y3xon0edA4Vbqp78mJ4JiejoHi1svFY6PExaB6roGz7jeU6KgszdRKQt?=
- =?us-ascii?Q?smmuitFcQx14DtRR1ya5+rKtg1M/DjfjbjRfqBOKGM8Q3kgSTGmTJrXOGZza?=
- =?us-ascii?Q?ImCuHpnqtYCCO9qVn+qdc1NTu/kQrdunoZRzWc3AboaID0mpUNHIeg6AAWHJ?=
- =?us-ascii?Q?A2tIEUlMqAFoAykbJxj9DynELPvhBLxlkC1SELY0DPMHpD6MflYolSK5HVOg?=
- =?us-ascii?Q?ReQGqc6PpV7urjFYnjAYEKGwzSrmR0eSMW3kXuLL0Yapdmf8mGWmkxwgL5ys?=
- =?us-ascii?Q?KWMbo8fsZTkXTYqY+3AhDc4juWJrxMeElIsy+9mf2YYtBVaFAomHODhgl3eb?=
- =?us-ascii?Q?6H4fSrJxfEW/0FJcT5XeQKLDwOq0n/6zw7UNt1l7DrY+ejeal/801tzKt8G5?=
- =?us-ascii?Q?XkQC9uyQSAzwQdTTSmOA64+GROsuu95scBE8O799o1nxcLfrc0e8M2cMCukr?=
- =?us-ascii?Q?TBsEH2sUErwXIWqSeedi9BwPwIc0uiAAWDIkGYdT25wXJb2A1HJTR32/EWAD?=
- =?us-ascii?Q?FUA3bOpZW/1qqc1SGK1sK+pL8nlBkT6ddprRsX1SiqvoiEMtEB+yXOLBcwGX?=
- =?us-ascii?Q?mpYMxMwUKyERPK6KC02VexNn8OZ6NZw6PGWavaml1xWje4z9n/vp3u8HpFUp?=
- =?us-ascii?Q?leSYakRwqpkwnU4=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?I1QiknSMw0iTNbUWRQ78ylKbAJ+pkco9afWDtEQ52JnxN2fIj6eaZ5V2e7fS?=
- =?us-ascii?Q?RU9hheaHJAv2iThAUJXYshpo6f2Ips76rmbXbGDwiemNE9Oof3h1wZLiSGjG?=
- =?us-ascii?Q?DVCNYs5Du2Xvb86klGHBK3hlnifmuNedQ5CXFGErDRNgOeXiN+fiS2sB/uJB?=
- =?us-ascii?Q?96wOCQGvnKgPy7EXkirKhENz7Mr0c4qYWTrlY2QJCbtzV6O6LiiSwnc7/+Ug?=
- =?us-ascii?Q?dQbrkuRtVKWQM/jTciFARZEgC7X6VsT7LSoH2CY1nrdEQYaeGdYXPzsDnBOW?=
- =?us-ascii?Q?UzA+wpgt/L4C2t5WTKSJIDYUtWEQFd8MGrfzZxOEKZC5/1jvT099Q2EuvLMm?=
- =?us-ascii?Q?1ixhS9LPz3LCxc48wAN/qDUsiWcl3z2EFfazl5RbZHrlWji8HPu0t5aDv0Tl?=
- =?us-ascii?Q?9dHpciMXmBREDGZ5f74AHb4MuwJoX4xMm3w9i041oEc4yR1wmFjjkt1flnFV?=
- =?us-ascii?Q?nXbmgtl0G5i0rVWAy2FgUZDBsnS9wEGeB+u5Q6GoNheFDLsCGB4UvSvQ63Dp?=
- =?us-ascii?Q?TJylP7v955tjcz6x5zfQDrjSPewrCrnAmfsBVgn3rzmU+w5ELWr/jvEC31G3?=
- =?us-ascii?Q?5cbaFApBSK4zpDToc5CQv2RIzKSxJU6PgnUps/RjBUmYzVUFx1BVinMlHhP8?=
- =?us-ascii?Q?aAVd99B0yBjcVn0t19nOS40fSvMfMB6KnSsJ0L+cvaCephWr1R8fdN+o8WYR?=
- =?us-ascii?Q?JvzyDBr7sdA6GtyFNppSCa94aF28cZapbD94uqqBFxVkE1WlEJ3DlVHZ9Nvd?=
- =?us-ascii?Q?Pe7wJiJJecKor3do3tcTVrabfY58AAnXxw36+zYcffvrLQ1H80nJ+A7OBZ5L?=
- =?us-ascii?Q?B4Oe8eBnT+u7iaRUiWmzaIQGY2y/rqqRd598YpHXlhobV5DOSgVszkvre7yf?=
- =?us-ascii?Q?Biad1Vn7tM69w3TDLkDzpYqK8brTJfquXS07BB6J+hQULe92OF5yZQzx4L4+?=
- =?us-ascii?Q?gX1MyjmggJ4/XOsu4eAMWZ/IbViblJGfeZT4/8Gg/vJwAl6mqVREaGey3H1U?=
- =?us-ascii?Q?As1h7KbeRksZ5O2Jpd4kUN1IAPwSPd+ftceA5n+ru8gOK8PIiu7OOBeXr7jN?=
- =?us-ascii?Q?/5/v9eaLZ8QjpXzoN1wACJ6oDqOcCmEpXBmTy0soQbitOc4Inp/ZP9daRoyU?=
- =?us-ascii?Q?EK7NMUbgKI6M7hs0W7YRanYSV8+GFS6dQtf6Kg7hUh+PVHuQLjA1Lamm/vcQ?=
- =?us-ascii?Q?0m/Yze+J7aUFD1YMnJqaElaMm3z5LWFyixYABXgyBi2JDPh6nFUTQDI9zaJN?=
- =?us-ascii?Q?KLIdgD4GKj750Tw+FY0tpVCzvqQCaWLpdIeyIhJEUbkIkYRHgJW44DIvi00k?=
- =?us-ascii?Q?TzVXOyO8yMQsB+LNm4t4EFHRJe1tbMRFY5K9LI5AVpvo+OGkT4/9uVOIn30h?=
- =?us-ascii?Q?GKcj0SwAF76ewIJj+Dr/193aD7eS64tcTJR3mUHaeKKat/XLZtdadKgl99ch?=
- =?us-ascii?Q?K7eXFkg1pwpWTDtCoNDQhD0MnyLJzx19fI4G6zJhraw1iTA23qEzhaW0dneg?=
- =?us-ascii?Q?rqbjBlHhqs+NyUU8fV3XMZBqb3n5KFKDOgc1U8LwEFtuTs+p0SmzBjmc5kRU?=
- =?us-ascii?Q?cO/AoUE2YGdPlaL+zgGFczuMLIzcMdawTZHoecje?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0F522128B;
+	Wed,  7 May 2025 07:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746604342; cv=none; b=XQsT/JOGmW1gDT7GxV/qrK60/43Dtf9pZYgZZPOU4rz+EnggYvQI0hpaAlVn9tcL8G2wh4YX9t6/T1N825K2Jl2G+BXyHM+5y3/jeR1yrpY/ICXKlLedanyDy/IQT5qNEHopscJtyYgJlvgUxtypl2A4CDfuF9TLxzKCOxiQAH8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746604342; c=relaxed/simple;
+	bh=eeEVorPJN0nXCrBRZypjiRCYewlw7IZRHx4JfomHnDs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Tr0EQa8FNMofVfxP1a+A0GnPW27xzX9HyKpMDiNjHHrGRrA2jFCwoV1zi5gDK8hTlwUPz6nuhnmtxoCnS1repdGHboC8gTgaz//+u7kkueudrSuVQhaUvETi7pIklJJyQkm6G4eOxDS1g0n6NBFINubzISzVA4kqlnScoxOK4FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bxH/piR1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AC08C4CEE7;
+	Wed,  7 May 2025 07:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1746604341; bh=eeEVorPJN0nXCrBRZypjiRCYewlw7IZRHx4JfomHnDs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=bxH/piR1C8rCEIDpwZih8gOyUne9xr6MkksoN35hA5jVMuli7uuCASbXfrR/xItoA
+	 V3+uWgR+OmJOhyOygpFZrAXpLZ2kMmzWRWBYNnE3AQH/sPnxY2ETnjcFUQp0sZbP4B
+	 wauZ1iNKlG0xIEsZKYANtAzHGYMMJ3Vb3+YVvJgU=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFB9C3ABC0;
+	Wed,  7 May 2025 07:52:21 +0000 (UTC)
+From: Richard Leitner <richard.leitner@linux.dev>
+Subject: [PATCH v4 00/10] Add strobe/flash duration v4l2 ctrl & use it for
+ ov9282
+Date: Wed, 07 May 2025 09:51:29 +0200
+Message-Id: <20250507-ov9282-flash-strobe-v4-0-72b299c1b7c9@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd4ff61a-57da-474c-b070-08dd8d3bef5c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2025 07:51:11.4476
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: smCkY3Eb09FPcEgYjYwieTjFQ0Fzr0jOO65ZbWOWes2D/G/q8AJErFYrB+ZwljvDBLtGRZnpPx6PSy5RYlfT1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8320
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAERG2gC/33OzYrCMBQF4FcpWZshuUla09W8x+AiPzc2IO1MU
+ oMiffeJFVFEXJ4D5+NcSMYUMZO+uZCEJeY4jTXITUPcYMY90uhrJsBAMcEEnYqGLdBwMHmgeU6
+ TRWpcaz1jTntsSV3+JgzxtKo/u1tO+Hes+HwrH3bfrDKAolbe8b2JI8XAnTfWKBt8Xzi5QkPM8
+ 5TO69taXaWPxwqnjLLgVWe4aqU134c4Hk9fHsvqFXgyuHxvQDW49J2BLRcS/KshHoYE/d4Q1QD
+ OlEPeaa3g2ViW5R+zeMRvhwEAAA==
+X-Change-ID: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ Richard Leitner <richard.leitner@linux.dev>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746604340; l=3478;
+ i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
+ bh=eeEVorPJN0nXCrBRZypjiRCYewlw7IZRHx4JfomHnDs=;
+ b=E1Lase4cSqMwUx7/+BwSD9ViFiV2pxg8SyjeuLN7PPr5X9TL5us8oRJaMUSpFckDImpAEdnd2
+ p3lokN+U1W0AN5gWe7WjZxB/yYDDt5eDLTyR+Z7g50YZp0M8j1QSVLb
+X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
+ pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
+X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
+ with auth_id=350
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Wednesday, May 7, 2025 3:37 PM
->=20
-> On Wed, May 07, 2025 at 07:22:24AM +0000, Tian, Kevin wrote:
-> > > > any reason why this cannot be done by the core? all types of vcmd
-> > > > queues need to pin the guest buffer pages, no matter the IOMMU
-> > > > accesses GPA or HPA.
->=20
-> > > But I am doing in the core. I have iopt_pin_pages() called in the
-> > > core ioctl handler iommufd_vqueue_alloc_ioctl():
->=20
-> > IMHO we just want to keep the pin logic in the core while leaving
-> > the check of PFN continuity to the driver (or have a way for the
-> > driver to communicate such need to the core).
-> >
-> > It's possible for have an implementation with IOMMU accessing
-> > GPA of the queue which further goes through the stage-2
-> > translation. In such case it's fine to have disjointed PFNs.
->=20
-> That makes sense. In the iommufd_viommu_ops structure, we can add
-> "u32 flag" where driver can define IOMMUFD_VQUEUE_CONTIGUOUS_PFNS?
->=20
+This series adds a new v4l2 controls named "strobe duration" with id
+V4L2_CID_FLASH_DURATION. This control enables setting a desired
+flash/strobe length/duration in µs.
 
-that works.
+As a first user of this new control add basic flash/strobe support for
+ov9282 sensors using their "hardware strobe output". The duration
+calculation is only interpolated from various measurements, as no
+documentation was found.
+
+Further flash/strobe-related controls as well as a migration to v4l2-cci
+helpers for ov9282 will likely be implemented in future series.
+
+All register addresses/values are based on the OV9281 datasheet v1.53
+(january 2019). This series was tested using an ov9281 VisionComponents
+camera module.
+
+Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+---
+Changes in v4:
+- Fix FLASH_DURATION implementation in v4l2-flash-led-class.c by adding a
+  missing brace and enum entry (thanks Sakari)
+- Fix format of multiline comment in ov9282.c (thanks Sakari)
+- Add missing NULL check in ov9282.c (thanks Sakari)
+- Adapt nr_of_controls_hint for v4l2 handler in ov9282.c (thanks Sakari)
+- Add patch for implementing try_ctrl for strobe_duration (thanks Sakari)
+- Link to v3: https://lore.kernel.org/r/20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev
+
+Changes in v3:
+- create separate patch for leds driver changes (thanks Lee)
+- Link to v2: https://lore.kernel.org/r/20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev
+
+Changes in v2:
+- remove not needed controls in struct ov9282 (thanks Dave)
+- Fix commit message of 3/3 regarding framerate get/set (thanks Dave)
+- Add V4L2_CID_FLASH_STROBE_SOURCE impementation to ov9282
+- Add new V4L2_CID_FLASH_DURATION control (as suggested by Laurent)
+- Use FLASH_DURATION instead of FLASH_TIMEOUT for ov9282
+- Link to v1: https://lore.kernel.org/r/20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev
+
+---
+Richard Leitner (10):
+      media: v4l: ctrls: add a control for flash/strobe duration
+      leds: flash: add support for flash/stobe duration
+      media: v4l2-flash: add support for flash/strobe duration
+      media: v4l2-flash: fix flash_timeout comment
+      Documentation: uAPI: media: add V4L2_CID_FLASH_DURATION
+      media: i2c: ov9282: add output enable register definitions
+      media: i2c: ov9282: add led_mode v4l2 control
+      media: i2c: ov9282: add strobe_duration v4l2 control
+      media: i2c: ov9282: add strobe_source v4l2 control
+      media: i2c: ov9282: implement try_ctrl for strobe_duration
+
+ .../userspace-api/media/v4l/ext-ctrls-flash.rst    |   5 +
+ drivers/leds/led-class-flash.c                     |  15 +++
+ drivers/media/i2c/ov9282.c                         | 148 ++++++++++++++++++++-
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c          |   1 +
+ drivers/media/v4l2-core/v4l2-flash-led-class.c     |  25 ++++
+ include/linux/led-class-flash.h                    |  18 ++-
+ include/uapi/linux/v4l2-controls.h                 |   1 +
+ 7 files changed, 208 insertions(+), 5 deletions(-)
+---
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+prerequisite-change-id: 20250225-b4-ov9282-gain-ef1cdaba5bfd:v1
+prerequisite-patch-id: 86f2582378ff7095ab65ce4bb25a143eb639e840
+prerequisite-patch-id: b06eb6ec697aaf0b3155b4b2370f171d0d304ae2
+prerequisite-patch-id: b123047d71bfb9b93f743bbdd6893d5a98495801
+
+Best regards,
+-- 
+Richard Leitner <richard.leitner@linux.dev>
+
+
 
