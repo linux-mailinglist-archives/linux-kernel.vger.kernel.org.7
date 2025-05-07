@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-638746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA51AAED36
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:43:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D23AAED46
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A18524421
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B751B666F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321D228F95A;
-	Wed,  7 May 2025 20:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDACC28D8F5;
+	Wed,  7 May 2025 20:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mm58GYXC"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6F3xvKq"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CECC28C5B5;
-	Wed,  7 May 2025 20:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CE81E3DDB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 20:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746650616; cv=none; b=tNQU+eUDY1gg+GLwHi5dL4egT5qfPQRra3k5gYj7D+gjQfb31sfiM/42pmrdBy0IZ2+s8InIPeugkG80jKH2rLf6OEcTgUXIjgs+lkl/y6VelCk1w+QQH3zt5vXimwSaItZ3tE3YIKq5xsIgnPAVj4IZEmPOcUEhJ7KdWQqQZRg=
+	t=1746650782; cv=none; b=gfNnpblbv3fdnByFpgcH8g7/zADMBVKUlFUkcGPTywevqkM2i4fjuL8zP8kx9av5awjecdSQnBoFzgBa9pL/uZGBeiZqB+mh1nXlSx3YF1aCG4bO6VbhE/zJ9T1R1loX+h11z9L1DwbiSVmrANgM1yeuI0LxwmLyDT7rJJJ5yXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746650616; c=relaxed/simple;
-	bh=6rPxVYpokiEhO+TzLzqBvA7lWBd6HHd4fis1YLJuMvo=;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=XoMz0gA2pdXu6+uIZSVMGaR0SqsvFlvzOs0D8s+3XLkkKafEEUDyg6LmEn4z8rOuSbJcVWsSlcV2JxFirCSvKV+hK9vVHyjBL+3UIxycZjnVvz8wEeplhOft3BUzEGFYcNWoYwAzoj/feubcthsXGghHZckto7V8hf2K92bJAME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mm58GYXC; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1746650782; c=relaxed/simple;
+	bh=NnM9hCAXsuMvfwyIug5ErVJSeiwd/zb63lOOKYS2CqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=quFRwa/HJ1OQh6A3xY2t8dX/UHkajP5Sk+frKGznqr/EtK9ySfsf0dw/Gp8ksTDVC0eOWyBOn3m/8LSJgr36cY+D8yUzK+PKQbbQe39pI2cAgldq5nTeZZARs3OzxUwxGGHDye8bmnmnVLJxvZMw03d29gH/gPpNTD0a+2eIeNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6F3xvKq; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c54f67db99so155253385a.1;
-        Wed, 07 May 2025 13:43:34 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so2594715e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 13:46:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746650614; x=1747255414; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1746650778; x=1747255578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tTuvkoeLz9OFKlj9Dviyt8wquS2tMT58gS6cPYVlW1g=;
-        b=mm58GYXCIAYWc89utE9BbYTDT8OYCkMJ67ebF3OMmovvbq9Nj++7MEzWPllYzajLSm
-         7PGN3z8ehGmA/tZa5B/sj3IrkrI+axOF+3R3HWK2wY4E+9pC9QIZOIugtR9gv4a/x+rT
-         V9PyPMklLzL6LH68HMZIrE+D+8hZXQZ9B8l4yhJ4vgwJSNSrGBBcKeKuznkqIyOflyNP
-         sDwDdkNrUCdfj4KEwu3dMhW8UALIij0LGqgH+6YXq1fzuEb2SoQJb3ZIfr+zpvRsQifj
-         yl5KnL+i9U8UlAhvah4xzkpn9rN3A1HOUmgbM6lAozaToUTyhb9lvQFRnS8TzvFpvbIc
-         wO8g==
+        bh=XXID5/+UEXqkdMjs781A6X+RM5i/wPq/zCGWpihYsXY=;
+        b=l6F3xvKq5bSMhjruoQfSl7pn0ANmNZoL+rxpYR1ZQHcivpXnYg1TtXgyRqwwvnL0Yr
+         njS7ECXA6HqVUjazFqWRK2EXTrTUoRpwyBJh12wC2UxMsdbMJhkyYsykAVZ96/zBj4/k
+         ZDe5+LYYKReQgSe72YYrKITthmX+5VuJX5RwUK4cBiwCheQBvho2uwRK6VlmnlFOVLBf
+         uALm8NIY93ZIUoWhKkhvcjjzvktNa6I3Xsiro7ViudQpZPyYaQobCaFQ3aZVzTmp2mk9
+         fPwzq0eYbwBcMQVxLqp9bKnZlzTsSeNkZO0Pj4ZRYRMZdgFtKRxoyDO+oE0THa43Wia9
+         T1nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746650614; x=1747255414;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1746650778; x=1747255578;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tTuvkoeLz9OFKlj9Dviyt8wquS2tMT58gS6cPYVlW1g=;
-        b=KHiUPWl6cemiiosheytubBmwrBLvoJGp9VL2d0+52J/ALbFTAwwY15sNVoG7ICNNFG
-         xnDV9dxuyfygxXASTg1r0uaH0zS3GW2sZT1KMfCqFa1gyaGBUKPOIT26afWe5mLM56q4
-         /vK5hzo5SK8vlciqPFy+zch8LtIfh6K7xZhvKep2i58L31JWJ1+6QVos3SLtsMHrPAeB
-         +mNti9xL1d/h+udC2e1R82+y8or9NrmtblmBS8pyBHKHk/3Bz6Nhkl9iQe2AX1KKvfWk
-         FRY9rQ/oExdAMHl0Y8rt6/8QGaA+CpD7zOkZ1upDgqpbFapvop8xHWXY5Ujpp6I/C3A+
-         ymSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsSzJMqc/fz9JP3RLld4XLQBIPlbPhnEO5h3pJZhAKRa6Zd1dQxQRrWWgzU4MRiIPLbBs=@vger.kernel.org, AJvYcCVAulJSsHQHg0yvMCx5vzw1Rmq/0aNAZNYvqzzIMsAELRirtn9pFtFB00nei4P4gEtRRq8D8eP4SmJTMs3P@vger.kernel.org, AJvYcCWT0v/La2/ZB7cEeiFmWwQtuFfy5WyvaBfohFwYKutiInGFJUdA3JRqFXDYUu3wpOrJ1tmahCy3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6r8tGrvckEQzkafY2oIBNCJQeppgE6pdOoHTlBM2igHgFT5mO
-	G6jLwoeLgsprx8e8IzQZq0u3VAKS2x6D0ZZ68V70a1SJmhggp8e5
-X-Gm-Gg: ASbGncssQQRND9tkpmPDfpNHcuJ6D5u616EJsdLwqB9Xv1lYVW0nf+/AbcyiZY46Rwh
-	LRyYdZklKNK1nDvHKwMJ4iW0gJv49Rygea4FQ8o8vU7mUKDsjYgI5KgrNrAkArPoU5DRdTf+Qsh
-	dJ65l9W2CcodtJ6F9edSOb58Z8gsC2uf1c9kX1eBWwcQUJwdc4e0YyXEo2FTc1MkCf7j18LvSa/
-	QY3+1F56DJzC2z1PAnkVXRShuxto9YaHJyvI1Kq9o/bg36a4o4YjHF22A5pZKyQS5eK8wd/PZdK
-	XZEDqfzgVE6wv74fqHUA3/HbR2dCGj/mNFMMdGzVlse+IzJIMJCJ/opdoPLvoobyRFz9/4pu4r/
-	NKOHWC1TlGZqbpKj26d9X
-X-Google-Smtp-Source: AGHT+IG0djn3yeJAK6hcpM8Kyq0xTsIur4G494vPRBrWDsVOBbqGXJBbHsOuIVLjON6Wq6XAQmt62g==
-X-Received: by 2002:a05:620a:f01:b0:7c7:b8bf:35cf with SMTP id af79cd13be357-7ccf9961e16mr146671085a.7.1746650613685;
-        Wed, 07 May 2025 13:43:33 -0700 (PDT)
-Received: from localhost (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7caf75d97d9sm210196485a.101.2025.05.07.13.43.33
+        bh=XXID5/+UEXqkdMjs781A6X+RM5i/wPq/zCGWpihYsXY=;
+        b=YCpDDl8sF928vVfvtaASFYJmqdF+7MUO2vquudjW+2Jsq7OKZB+UnwUIWDnp0aGUqN
+         sJ1TzoHMypSxvKneXh/Nsex5Alh31ZhF6e/ujKBPxjO2gZGmrxsZD6kaUQePQChsy1Zl
+         rQI9/ScCRCHtzmA7tz+qjR6gBEOAGig75uXiV/HY6TrlgymCGIeViTkdkH52JIL87To1
+         D3DLJfkwlzWcDdMQ2V5/xN66B35vuBld4l/CqkzHWC/jCH5DWjG0bswEbPET6ryDDq9O
+         BADQvu2gfsaQAT1plbKK1GnfOTPBJKgw0JBCZ0T/Wq8yKbxcrklUQE5FIz/ocsBVHfQm
+         msUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSfuqH7OwCkuKZ7o/Eu740TP9uuJG+6DGSAJD4xyWV2YSo3c8Ut/5zpQYSwrFM0/ai3xqLGy/HrKFqU2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqQJGkp2pfDWJ4QVEIiuR6NkwGhXpkXaLCzpfeCRvWHllX9qR8
+	/nKGe8Czadv76oa/7rsFiaiA1rv7yZU7Cub7FJ7Li9YzE/y7HEVM
+X-Gm-Gg: ASbGncvGDRu3okVTwmZWeXAGMDMllCM6vtqTbyzMaeKCWOl9AQkLt7oQsdM3i/1sb4p
+	vZSupd7z7+Jc7suAYBXhcTbaQJ0v4ldUyA48qMUxTfqHJGlN9Z/2fPxeUilg7h+tPhSgZTldBsv
+	LKystV8Z10vFzRawBx3dYsrwn20tkQ73/jfQ53zcBrLWWu1Kp0FVMEzcQNqKuQ2NPyO3KdFraJh
+	YLO4NjCKTkkGIUuu+YrJHiRr1PddTUvlcsyu/76P7CyeyDjSAfUJIaVsrlzqbXfc+zLXSlidAFx
+	SjYm7zxRmnYfKQQqml8XhVLWHH2IKBlJBxppXTZ8VN8X4m3bO276eQ7390ui3bbxSZfkuEkLVbU
+	WMZE=
+X-Google-Smtp-Source: AGHT+IGz+dz6evHhAkTv1nqWjVBbzhxZR0I6BQYszfecXr647yKe0xXv2YHosqbi3Ue6FUFhZffQkg==
+X-Received: by 2002:a05:600c:1c91:b0:43c:f332:703a with SMTP id 5b1f17b1804b1-441d44e088bmr47636325e9.31.1746650777906;
+        Wed, 07 May 2025 13:46:17 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd33103dsm12361095e9.10.2025.05.07.13.46.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 13:43:33 -0700 (PDT)
-Date: Wed, 07 May 2025 16:43:32 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Jon Kohler <jon@nutanix.com>, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- davem@davemloft.net, 
- kuba@kernel.org, 
- hawk@kernel.org, 
- john.fastabend@gmail.com, 
- netdev@vger.kernel.org, 
- bpf@vger.kernel.org, 
- jon@nutanix.com, 
- aleksander.lobakin@intel.com, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Wang <jasowang@redhat.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, 
- linux-kernel@vger.kernel.org (open list)
-Message-ID: <681bc5f4b261e_20dc6429482@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20250506145530.2877229-2-jon@nutanix.com>
-References: <20250506145530.2877229-1-jon@nutanix.com>
- <20250506145530.2877229-2-jon@nutanix.com>
-Subject: Re: [PATCH net-next 1/4] tun: rcu_deference xdp_prog only once per
- batch
+        Wed, 07 May 2025 13:46:17 -0700 (PDT)
+Date: Wed, 7 May 2025 21:46:16 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, yuzhao@google.com,
+ stevensd@chromium.org, kaleshsingh@google.com, zhanjun@uniontech.com,
+ niecheng1@uniontech.com, guanwentao@uniontech.com
+Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
+Message-ID: <20250507214616.4d91620e@pumpkin>
+In-Reply-To: <FF9F758FB6DEBA6B+668772f9-2604-4035-bb04-b59eabf9bbd3@uniontech.com>
+References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
+	<aBo3W5HNMxLdtV2p@casper.infradead.org>
+	<FF9F758FB6DEBA6B+668772f9-2604-4035-bb04-b59eabf9bbd3@uniontech.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Jon Kohler wrote:
-> Hoist rcu_dereference(tun->xdp_prog) out of tun_xdp_one, so that
-> rcu_deference is called once during batch processing.
+On Wed, 7 May 2025 10:55:31 +0800
+WangYuli <wangyuli@uniontech.com> wrote:
 
-I'm skeptical that this does anything.
-
-The compiler can inline tun_xdp_one and indeed seems to do so. And
-then it can cache the read in a register if that is the best use of
-a register.
-
+> Hi Matthew Wilcox and Andrew Morton,
 > 
-> No functional change intended.
+> On 2025/5/7 00:22, Matthew Wilcox wrote:
+> > 1. This has nothing to do with the compiler version; the type-checking
+> > is built into min().  
 > 
-> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> Thank you for pointing that out! My previous statement was incorrect.
+> 
+> The error is actually from the __types_ok check within the 
+> __careful_cmp_once macro failing, which triggered BUILD_BUG_ON.
+> 
+> But then, why do newer compilers compile this without error? Is it 
+> perhaps because they consider 4U - 1 to be signed?
+
+No, statically_true(tier >= 0) is true even though 'tier' is signed
+because the compiler has inlined the function and followed the domain
+of 'tier' from the assignments and loops.
+
+	David
 
