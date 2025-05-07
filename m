@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-637616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94552AADB26
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 923A3AADB35
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418891C248F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DC81BC5D57
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE40523717F;
-	Wed,  7 May 2025 09:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5D523A9B3;
+	Wed,  7 May 2025 09:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeJdwO0j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="R6Oht6xM"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4A5236A73;
-	Wed,  7 May 2025 09:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E078239E90;
+	Wed,  7 May 2025 09:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609110; cv=none; b=kGEARRxIEGxy4Vnp2Fd4ap9ADiCJ2PIGOkdxhggwu2wyoja1iiK1dqR9eL/ifwHgfjaygDMnSEJaE6Sv32GEGcc5ObW4GFlyM5gN264pxN0lmhvr1L/CmnUGR7/ivsz4u2VA7mjMm0/gXhgg1QEgh4UBO3halidasETcoDD6W2Q=
+	t=1746609298; cv=none; b=V20AQHPKDALtsoKMWNXUh8QtucU18yBFNmh/WrM//RCRV1XYJYPun7K22cb8ZL0fW/e7/y9t5GZC7OCVfPStpFaaiMRPhaVO+4ztB76XSN5gZg/y87fDpPCjAtKSbmPyqDzcIR/cJUQQYqjEaB7njOI9VZOrEQxVkqteWLoesGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609110; c=relaxed/simple;
-	bh=ruOPmaR3kq6WkNEpmIlLEkIQx5iMRlPXDJqT7pUWy1A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GIZA7aczb3+9NG3Rrs9kV4i0QikclbByMK0oWMaLs7RtqfZPUZKMctTDOXwZQ2/v/8vU8IePPtskBBWT+zq6hMzGZPP72jP/gJmYCL4NVjHs0JrpL0yQz0q3ctyiHmvN25eD0keZTM0i/6JYaW6WcGsP8+7o4hJi8px5y4qzzck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeJdwO0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6B6EAC4CEE7;
-	Wed,  7 May 2025 09:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746609109;
-	bh=ruOPmaR3kq6WkNEpmIlLEkIQx5iMRlPXDJqT7pUWy1A=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=BeJdwO0jzY3YVOG8vT7lLaMqjxDvOWOEFuBBQEqnpKqBZkIRo01mThdSqhhUEWcio
-	 beD+4EyszAifl7/k8knkVSUrBkGBq1AXKsyDmVolxi/u4Idm2JYkyyVaO4wfwCv3nc
-	 zM3vLqtNOhN1jjgWymJhZKS8C+6uJyh87qGemKzZJ8T74YoBpf4ByAtLXVro+lNiJf
-	 HCKAUj+QzPjEXUaihpHnnRi+2P+0ErAUGsfkfCTSrvh7eIDWCeCvzsMWCD6/r3AeZh
-	 VVOk7ZWOxbD5pAslD1y8WyVKtdAw2LI7FB3iTG6xXdkjkBSY+5dO5K2TwbD3PFgvnE
-	 3fXyFUkQ8/OKw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574B2C3ABC5;
-	Wed,  7 May 2025 09:11:49 +0000 (UTC)
-From: Ignacio Moreno Gonzalez via B4 Relay <devnull+Ignacio.MorenoGonzalez.kuka.com@kernel.org>
-Date: Wed, 07 May 2025 11:11:48 +0200
-Subject: [PATCH v3] mm: mmap: map MAP_STACK to VM_NOHUGEPAGE only if THP is
- enabled
+	s=arc-20240116; t=1746609298; c=relaxed/simple;
+	bh=MwgFJKN7l7kFdYNY6suwGldRZuE0owjh8S7GL/kNLcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lr3IWDJXYWRoprA8AJt8yl3Kil1h5zYi2HaXmOJmGgaPCYvaPJHSEwjxXPqhWsyW3ev79DrVLkYgq9RWTA68DePqWFppNtjWb+I/Fr3uRAgQrp1j5fCA+7j9KH3pmbS6yc/sqUhngk1js1JLLDVierotY6mBmxF9F2vGKS/gBo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=R6Oht6xM; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1746609244;
+	bh=TmJE6Xzc8x7k0lHbsb8PJi+nXReCRhz9/VASnE1oJO0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=R6Oht6xMeZ0HP2auyNRlqHFur4zyU0+3CG4LJnz+t5Nrhw1E8RHZRYYvf02UZCSKT
+	 PzHrDj5RkZ974fF/SnjCCoaHi1EeR1BFzh6sNHPMa+dgykTOg2xMw6QEHO4NzARRsZ
+	 5Uc/ZvIJP5OgDvj6PZWLhfK+BfpE+udBEGvmSbas=
+X-QQ-mid: zesmtpip2t1746609232t4ca7945c
+X-QQ-Originating-IP: npKWDtNpgAvnhADZiJ4Q8/K/84jJsngOlV8SX2izEwk=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 07 May 2025 17:13:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7718231128625625772
+EX-QQ-RecipientCnt: 10
+From: WangYuli <wangyuli@uniontech.com>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas.schier@linux.dev
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	m.seyfarth@gmail.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] kbuild: Disable -Wdefault-const-init-var-unsafe
+Date: Wed,  7 May 2025 17:13:40 +0800
+Message-ID: <7331A23DB8786121+20250507091340.276092-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v3-1-80929f30df7f@kuka.com>
-X-B4-Tracking: v=1; b=H4sIANMjG2gC/53OwQ6CMAwG4FcxO1uzjYHiyfcwhsytkwXYCINFQ
- nh3B148m6aHv2n6dSEBB4uBXA8LGTDaYL1LITseiKqleyFYnTLhlOdU8At0st+6CqNUDYweYlc
- 5X08v7GXa9q6dwRoY6x5sAHTy2aIGhYJKppGWuSbpdj+gse/dvT9Srm0Y/TDvb0S2Tb9iTvmfY
- mSQimVKFZlQOme3ZmrkSfmObGDkv0jxL8KBgmHMUHUuxeXMf5B1XT9iL/yTXgEAAA==
-X-Change-ID: 20250428-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-ce40a1de095d
-To: lorenzo.stoakes@oracle.com
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
- yang@os.amperecomputing.com, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746609108; l=3053;
- i=Ignacio.MorenoGonzalez@kuka.com; s=20220915; h=from:subject:message-id;
- bh=/MtKRql7ItkYcZxcaRWd5jbyLrdw5wLAjEr52LPM+gk=;
- b=QGykkmGizMl/Qs3eTfiT7sngvK4B8FBhNaATEoCQbvxX6Nuvwk5NPySUYzBi0gxfIqG0hYTr1
- AOf+mrM9ExTDqPXoFHTEP4x+UunC8r3hoqB7IKDj3P3snYN864keY91
-X-Developer-Key: i=Ignacio.MorenoGonzalez@kuka.com; a=ed25519;
- pk=j7nClQnc5Q1IDuT4eS/rYkcLHXzxszu2jziMcJaFdBQ=
-X-Endpoint-Received: by B4 Relay for
- Ignacio.MorenoGonzalez@kuka.com/20220915 with auth_id=391
-X-Original-From: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-Reply-To: Ignacio.MorenoGonzalez@kuka.com
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NGX5+lQVxpC+4pTvz3/eN6omZ4UFI4WqwtTK9sHvLj+ldY0PR1+wWZh5
+	PmG6811Tle7rlSt7UNpsBJK5Z4quW+Ha4/0eRJ036uHvvHy/BWewr3b0+RiVKGqocdSlN96
+	sMmLw+EUNuHFnhRavUBLClq5Sb7mVNCJcWSA7dvFUkHJhmN1zsIGe/TKENh00WpOpD//rSA
+	AA/ccUSGgSFOuWPMPxF1/Pi6xXUbx+z1VF8VP2PqYJi4CL9Pm2CQ2EQQ3Jzz7vcnRufPw3h
+	+owfsBkxfppIZvFDJOnTqnYIIrHJdtt/EvU3dQe9qFskY1AedS981R9fJZKg6d1NZWFACAy
+	tTUOkeKEVyHrWE23b5Dot0vX6PTIT8kJ5RMqs+LqeKxwLVsprEO8NoHEdUrHn4TLV/eThiB
+	ZECES5jMrQ+MJsblV3LLtN16Sd1Hr9MbQlFPvULeZ7OzB7VYfs44YH13J9Jha6YNbltMPoI
+	RxsbTSmzcnbpKgKarXvwiB3jrQ+Rg7KQamiNv2ofa8KsmX6WvGsmEjfjTqNoVAS/8fjyXXs
+	yYH0tQD3CNltjC4yw+CNdsPn2NX71JEb2U9ZMbZgcRff8O5dQy2QZN20UVrkheTX32yn5Pf
+	bEOChw/G/JwVTcAvqvS0XWIFNGeehdWnlNVC3g8oCOH8odB5VBee9h+aTn86eQSYnYD/2RC
+	hgoNYyZ7gjmgMarEP6Zf4zRgz4HcbgANnhJoQg6x9ZS2AXeTXTf3bILgjaSarLh8pN8o+Pl
+	vfoyN/sfJ1wz0tKpP7Am+SMtXMREIMKlF7Gs4kV3hso+2s5WGkmgvEB67SXnIwt0cwiLIR4
+	ysQuMrrZSnPeyp23thqRQr7hHnZGnnfbIVBjGTKaIEZB8VAymozwK+VwDYsYEbdaBaTP2/f
+	+BsJPgtOCe5oGViMMWF5SPbxzw69nF8WDjahppgL3XwCCHxdALPl70vjysBaiA1pORozjEN
+	PwIKesn8AMFWWiXEt6+DYA3wBAGh+mwY02jLUQMAwTsjKF0uKC7Vr2hWFW3U4hPVxtFTO2B
+	lE4E3OxN+q299tUZjFhs6lTq0sshqucxPknieRFg==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-From: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+Similar to ("kbuild: Disable -Wdefault-const-init-field-unsafe")
+from list, -Wdefault-const-init-var-unsafe need to be disabled too.
 
-commit c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE") maps
-the mmap option MAP_STACK to VM_NOHUGEPAGE. This is also done if
-CONFIG_TRANSPARENT_HUGETABLES is not defined. But in that case, the
-VM_NOHUGEPAGE does not make sense.
+While I haven't found this warning triggered in the kernel code
+itself (my testing covers just a tiny fraction), it's clearly
+something that should be disabled for the same reason.
 
-Fixes: c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE")
-Cc: stable@vger.kernel.org
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Yang Shi <yang@os.amperecomputing.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Signed-off-by: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+Additionally, because dkms uses kernel compile parameters, some
+out-of-tree modules might also hit this warning, like the Mucse
+network driver.
+
+Fix follow error with -Werror:
+  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c:6126:11: error: default initialization of an object of type 'const u8[6]' (aka 'const unsigned char[6]') leaves the object uninitialized and is incompatible with C++ [-Werror,-Wdefault-const-init-var-unsafe]
+   6126 |         const u8 target_addr[ETH_ALEN];
+        |                  ^
+  1 error generated.
+
+Link: https://lore.kernel.org/all/20250501-default-const-init-clang-v1-0-3d2c6c185dbb@kernel.org/
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
-I discovered this issue when trying to use the tool CRIU to checkpoint
-and restore a container. Our running kernel is compiled without
-CONFIG_TRANSPARENT_HUGETABLES. CRIU parses the output of
-/proc/<pid>/smaps and saves the "nh" flag. When trying to restore the
-container, CRIU fails to restore the "nh" mappings, since madvise()
-MADV_NOHUGEPAGE always returns an error because
-CONFIG_TRANSPARENT_HUGETABLES is not defined.
+ scripts/Makefile.extrawarn | 1 +
+ 1 file changed, 1 insertion(+)
 
-The mapping MAP_STACK -> VM_NOHUGEPAGE was introduced by commit
-c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE") in order to
-fix a regression introduced by commit efa7df3e3bb5 ("mm: align larger
-anonymous mappings on THP boundaries"). The change introducing the
-regression (efa7df3e3bb5) was limited to THP kernels, but its fix
-(c4608d1bf7c6) is applied without checking if THP is set.
-
-The mapping MAP_STACK -> VM_NOHUGEPAGE should only be applied if THP is
-enabled.
----
-Changes in v3:
-- Exclude non-stable patch (for huge_mm.h) from this series to avoid mixing stable and non-stable patches, as suggested by Andrew.
-- Extend description in cover letter.
-- Link to v2: https://lore.kernel.org/r/20250506-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v2-0-f11f0c794872@kuka.com
-
-Changes in v2:
-- [Patch 1/2] Use '#ifdef' instead of '#if defined(...)'
-- [Patch 1/2] Add 'Fixes: c4608d1bf7c6...'
-- Create [Patch 2/2]
-
-- Link to v1: https://lore.kernel.org/r/20250502-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v1-1-113cc634cd51@kuka.com
----
- include/linux/mman.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/linux/mman.h b/include/linux/mman.h
-index bce214fece16b9af3791a2baaecd6063d0481938..f4c6346a8fcd29b08d43f7cd9158c3eddc3383e1 100644
---- a/include/linux/mman.h
-+++ b/include/linux/mman.h
-@@ -155,7 +155,9 @@ calc_vm_flag_bits(struct file *file, unsigned long flags)
- 	return _calc_vm_trans(flags, MAP_GROWSDOWN,  VM_GROWSDOWN ) |
- 	       _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
- 	       _calc_vm_trans(flags, MAP_SYNC,	     VM_SYNC      ) |
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	       _calc_vm_trans(flags, MAP_STACK,	     VM_NOHUGEPAGE) |
-+#endif
- 	       arch_calc_vm_flag_bits(file, flags);
- }
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index a7b680df5b24..14e22310fbbf 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -44,6 +44,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format-truncation-non-kprintf)
+ # the field is within a union with other non-const members, or the containing
+ # object is not const so the field can be modified via memcpy() / memset().
+ KBUILD_CFLAGS += $(call cc-disable-warning, default-const-init-field-unsafe)
++KBUILD_CFLAGS += $(call cc-disable-warning, default-const-init-var-unsafe)
+ else
  
-
----
-base-commit: fc96b232f8e7c0a6c282f47726b2ff6a5fb341d2
-change-id: 20250428-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-ce40a1de095d
-
-Best regards,
+ # gcc inanely warns about local variables called 'main'
 -- 
-Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-
+2.49.0
 
 
