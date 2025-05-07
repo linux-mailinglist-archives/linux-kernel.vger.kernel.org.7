@@ -1,130 +1,202 @@
-Return-Path: <linux-kernel+bounces-637227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B7AAAD638
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07631AAD872
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04BB3B62CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7EA3BD63F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05BB21146F;
-	Wed,  7 May 2025 06:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AF2220F27;
+	Wed,  7 May 2025 07:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="tw13pxsB"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m794G3VT"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED8C139579
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8945A2144CF;
+	Wed,  7 May 2025 07:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599915; cv=none; b=GMIsPwqLgx0TgwxUPIB2F3bBRtRMS6kvGrUb9OeRD/AZIxJ56yNTubBeJYpnYqpAI18a1RqacSQfvScBYFLmCzRJmYNQmNer9USDEBpKBYikjAMzS00RzWWyxlzh8srGZl7cYKV+Rj67LT3GhatQbW1TShIrYzBAQ5CxV638eeI=
+	t=1746603529; cv=none; b=UiN1SOdkhu/Yub8nCtX3MnV3GARlLPa1CgG1aTWGYKWc41DyDgpiSq2wL4YGgg9Lmo9S8wFUI64y1mmQIuMHayc9QAnijwASjWUUmvw0Gsy6zze05oea6gZjQMjgQ3BABRKuGup1GYUS+3XaKGu41v2sZtgE0wIhk5GOn3P4gVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599915; c=relaxed/simple;
-	bh=FMz0xL1Cwnszn0V3OnOQdvE86LJBrAEHmyJ8pPb9gko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aJ2yKX0S9wgkvMxgi68biTnC3mDNvAcEWsc01PTn8CFDN7Jq9iJ7tnQV4SpB4h8wzIft9uXDKRZbVM4zBlNNlkEnJHG8Mku17ImBQUOXjtnJFWJXyoyX7sdseYphCJpRet60Ps7j8SASiCZi4kChFdiT+Vo6dW3sDY27jOHs9Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=tw13pxsB; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d4436ba324so57578315ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 23:38:33 -0700 (PDT)
+	s=arc-20240116; t=1746603529; c=relaxed/simple;
+	bh=LUbeHMzIFsOzUSMB2htO29hpRr03KwAvpfp2sAuDens=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SaZ88yI1Lkyb01lMMjLBDyCWOYhEdn9NVRcxLwR17nA6FI2d6SOtQXq5gN55MfnKwrUGff/Vq7CM383hD+/y5zy2vQ06UrUCG1AGOTyxaXuA+JanEkjBKMPe3TB/E/l657I72wrRAGjrKG441bsi+ozcxOQtDLo6SzBMCbQdxNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m794G3VT; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a0b6aa08e5so106601f8f.1;
+        Wed, 07 May 2025 00:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746599913; x=1747204713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SLSCTSvU1Pu3KZzXKgSBgnw1+cmm1sdq2UzaECQAViA=;
-        b=tw13pxsBDZFlG2oOiQZjyah41ZFT4uuuUUBkuVgBXTR/MycERvyapnQnUuW/wtjw/k
-         OABCRMCq1tf5rdOqmu68OXQaNzZfIEp/UY5HTjymD6VNuFTi9SL8eLvCspc6TWhd52MJ
-         Zgkp/ksmZTI/knVqvr38DfMxMsm3ZvtpP6dItf39Th3ROKv9qv9SZ7egg738reIKQdH1
-         s73DYQljbAcMCV8ZUawvRDk1NyJeagKpXsYGnMOLm0AVLdvDX1KFYosBKGxr+SjtSvb0
-         gwWd2c1ID9q2K3zGBTTI1VyHNS9efbIAagHxuUh0J1DmUNm5GabTExjdOJz19yo9ZjFE
-         QVag==
+        d=gmail.com; s=20230601; t=1746603524; x=1747208324; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LUbeHMzIFsOzUSMB2htO29hpRr03KwAvpfp2sAuDens=;
+        b=m794G3VTeuhMlKp8TdId3looqhtQiyGgYcAx5KjDR3+jxVx5fqHJxM4frZT9SXULq9
+         n05Q0+/GAAoQEPu/GnImg4eF3jGy3n4oCr77MZAvp+F7DdyNzw1lk4fh9PLX4fBGG0ki
+         NmCg4qVOMlPFBzZjscxd/LPdkJN1kbUNHDuBcBcv5IHzaWHBDZdKpyVNZ4qteEYCQXDm
+         py3p0AFSiGBSToDOk+Ews7cMrzYSXgDHeEoUnyjHSvVYKT2rql1txA/xNVbfLBiXRdoy
+         yZt09FBi4Dw98Mh1MQaW76u+im9SZUC2KpcenqaBYsezBbwO/WiCSu0/KYpVNSeh1Ytn
+         WHFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746599913; x=1747204713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SLSCTSvU1Pu3KZzXKgSBgnw1+cmm1sdq2UzaECQAViA=;
-        b=JbIwaiwcvUPEPWPYPjshbtTJKr8gS/dOFeTfsXfeyds+fjyBy1dam+g5Odm2x11Vap
-         m21ALJSimO6lVJu66eV0oefIivFj1MxRDpzBjXpuYvy/1FSADKsvG/QxFvYqHBe0d+EW
-         2wvFD6OPYSElxfh5bcvzmICbyJ84deWL1oARyU1RhjdkZS5vV/gUzbxpgMATKo5rioXR
-         DEweC8m4+UE10BsQdf9f325JufadAt0EwaR1oO8/Bvh5UnBECuvL9uGdMofwhqynrSIP
-         kxe0s6YVaKDYdxabq3fHDdXWOielf5vFcmW6xRukwx6gHSfw1UckQ2+TICVhvyt5tiFx
-         YpEw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0MXpKc5A3ePRyGxYQXLPBld2476BgHTSBQZfOipAhynWcqLsM7Z0+cqa5deRAXvQhHZm6GLf4MVN9Pl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2/FO+qqIo3IBJqTwWqrWbY6WhPbCBr8Fwaamt1UM4MI4HIe1d
-	BSoEcJr2iUHz17vALcQ4PCC/2e7shZoRMh7XQo+KK9N2PacLhWOWnBzc1rJtOD5DRwK/P9JxXrj
-	Ek3FdvR02jDqTFfDT19FPcZCt/Z/4rSfwXboAvQ==
-X-Gm-Gg: ASbGnct2n+qN3lEfud9pJl6YrXcKJ2mWyr+0KB9LRDqc9mQTHy9ymTlfAxMljFPjs13
-	/rMh4ZencNQj0sJvvbPU3OEMldB+w1DB72lhzv+as2w66GBK8KdxUjjKxILzmfIczll4TkPfkTO
-	Qw7CCQ+/ft/eSi+DsbP8ij
-X-Google-Smtp-Source: AGHT+IHf27rispqj66mqizfYO/3jAKoO4k+nD2tMDDWQ6j9J0hfCfqo5ejjOrQE39XLxzrAH6W+8xBqOHYZ/XCR2Qq0=
-X-Received: by 2002:a05:6e02:3d83:b0:3d9:2ca8:dda0 with SMTP id
- e9e14a558f8ab-3da7393603amr23647845ab.22.1746599912818; Tue, 06 May 2025
- 23:38:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746603524; x=1747208324;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LUbeHMzIFsOzUSMB2htO29hpRr03KwAvpfp2sAuDens=;
+        b=rMOXXrjSZQ7OgVQAuIQRuK4B9SSwEdn1djeHvU9wS3mJ+OC3KiAZg5ZBt2YP/zolYj
+         bFPL4rvI+u5YrxhbaXrG6bUnHUWiEOzge19ori/81/s9Nt7yg/l4BMlKEGVwfhU4mclY
+         jveUug+9aXiR0doPNKGqXOtutfw58dtZSpgNkoKWBwkT23sO1MRpAZkVt4M+D+ahSJl2
+         T5bP/uhXOOgj2d782yZ3EXmpUogSy1t2UbA2VI+DHnh1gbRpltCDkE8O03ahzwhUX6va
+         NrKpoAj7Q2Rb1FgzR5HYPDiy/H8mTJfftOffSAtc73dP1nJQkfqP0TlMQKYNZIuDieHe
+         6ujg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIVniUtIduXOhzNeK9SbOKZ0KXbq6i+fA1PqRJJKiDUkWA6zfw2qFY92qh9T0xAqMONhqmtLcX30WIbB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiM6S0qiqFTrr+GV3Q/sineoL/ntdYTZrMDxw9YQhOCXhXp1kj
+	Gp57ZfIHH6jMl0dvwn/u0mEoK3hWH0XeSrU26gRPTmAOxXCUb3qR
+X-Gm-Gg: ASbGnctrbxZdo8QsymSM9ld2CrCqo7wp8LTbxr1A0CyNZxmj3tBVMmFE9QocssCq06U
+	5h3pjgO5QcaxZsfCGF37ehWqzHIoPOZjePYWOKYAReumMCKXKNP+OFAM/f5TiloeCGmUPZvqinS
+	SjYg9oaR3v5uuL3DtfsCd1oB/GXHUkxqBrN/7KMCTilaK+ifCGtSEUeSSuc6OlRTrqVTy09tjDc
+	sUcYb7YkIWq6qsh/0xBG3l1Twise1dHFkXAA1mvfkgJhhmFspMRQ4UP+7EKfDaF70hlEEjXwNrk
+	PFy+lQj29WG7iJ1uGeKSk7LrFugXnROFhQ0pVOrX7i4r5PtIlsgfmoItuAia+LdfQP8jQRNZmog
+	hUer6jceir97TXgc=
+X-Google-Smtp-Source: AGHT+IFcrfJVgjIHTQQ2WPmB67RGJPQ8xi7u9h/v5miFvmeP2RpN+ZcyLqGtFi9WsQS7CkgsL5VSLw==
+X-Received: by 2002:a5d:64ad:0:b0:39e:cbca:74cf with SMTP id ffacd0b85a97d-3a0b53a06bfmr1636435f8f.6.1746603523625;
+        Wed, 07 May 2025 00:38:43 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b17748sm15851404f8f.100.2025.05.07.00.38.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 00:38:43 -0700 (PDT)
+Message-ID: <ec7c00c640b0b359bfd98d460d067aee64ca069f.camel@gmail.com>
+Subject: Re: [PATCH v5 0/7] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Eugen Hristev
+ <eugen.hristev@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Trevor Gamblin <tgamblin@baylibre.com>
+Date: Wed, 07 May 2025 07:39:07 +0100
+In-Reply-To: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
+References: 
+	<20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505-kvm_tag_change-v1-1-6dbf6af240af@rivosinc.com>
-In-Reply-To: <20250505-kvm_tag_change-v1-1-6dbf6af240af@rivosinc.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 7 May 2025 12:08:22 +0530
-X-Gm-Features: ATxdqUEEO9ElPqopLSdn1cGhHTcD6oP-eNKU_g5Vu-IabLPJnfhIVALu0OXu3ns
-Message-ID: <CAAhSdy0pdqnUa-GWiGHG3H_J9=J2yGXcRLfzsZgDzaZv+6r=jQ@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: KVM: Remove experimental tag for RISC-V
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 6, 2025 at 1:17=E2=80=AFAM Atish Patra <atishp@rivosinc.com> wr=
-ote:
->
-> RISC-V KVM port is no longer experimental. Let's remove it to avoid
-> confusion.
->
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+On Mon, 2025-05-05 at 11:31 -0500, David Lechner wrote:
+> Creating a buffer of the proper size and correct alignment for use with
+> iio_push_to_buffers_with_ts() is commonly used and not easy to get
+> right (as seen by a number of recent fixes on the mailing list).
+>=20
+> In general, we prefer to use this pattern for creating such buffers:
+>=20
+> struct {
+> =C2=A0=C2=A0=C2=A0 u16 data[2];
+> =C2=A0=C2=A0=C2=A0 aligned_s64 timestamp;
+> } buffer;
+>=20
+> However, there are many cases where a driver may have a large number of
+> channels that can be optionally enabled or disabled in a scan or the
+> driver might support a range of chips that have different numbers of
+> channels or different storage sizes for the data. In these cases, the
+> timestamp may not always be at the same place relative to the data. To
+> handle these, we allocate a buffer large enough for the largest possible
+> case and don't care exactly where the timestamp ends up in the buffer.
+>=20
+> For these cases, we propose to introduce new macros to make it easier
+> it easier for both the authors to get it right and for readers of the
+> code to not have to do all of the math to verify that it is correct.
+>=20
+> I have just included a few examples of drivers that can make use of this
+> new macro, but there are dozens more.
+>=20
 > ---
->  arch/riscv/kvm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Queued for Linux-6.16
+LGTM
 
-Thanks,
-Anup
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
->
-> diff --git a/arch/riscv/kvm/Kconfig b/arch/riscv/kvm/Kconfig
-> index 0c3cbb0915ff..704c2899197e 100644
-> --- a/arch/riscv/kvm/Kconfig
-> +++ b/arch/riscv/kvm/Kconfig
-> @@ -18,7 +18,7 @@ menuconfig VIRTUALIZATION
->  if VIRTUALIZATION
->
->  config KVM
-> -       tristate "Kernel-based Virtual Machine (KVM) support (EXPERIMENTA=
-L)"
-> +       tristate "Kernel-based Virtual Machine (KVM) support"
->         depends on RISCV_SBI && MMU
->         select HAVE_KVM_IRQCHIP
->         select HAVE_KVM_IRQ_ROUTING
->
+> Changes in v5:
+> - Add new patch to set minimum alignment to 8 for IIO_DMA_MINALIGN.
+> - Adjust IIO_DECLARE_DMA_BUFFER_WITH_TS() macro for above change.
+> - Drop one ad4695 patch that was already applied.
+> - Link to v4:
+> https://lore.kernel.org/r/20250428-iio-introduce-iio_declare_buffer_with_=
+ts-v4-0-6f7f6126f1cb@baylibre.com
+>=20
+> Changes in v4:
+> - Dropped static_assert()s from the first patch.
+> - Handle case when IIO_DMA_MINALIGN < sizeof(timestamp).
+> - Added one more patch for ad4695 to rename a confusing macro.
+> - Link to v3:
+> https://lore.kernel.org/r/20250425-iio-introduce-iio_declare_buffer_with_=
+ts-v3-0-f12df1bff248@baylibre.com
+>=20
+> Changes in v3:
+> - Fixed a few mistakes, style issues and incorporate other feedback (see
+> =C2=A0 individual commit message changelogs for details).
+> - Link to v2:
+> https://lore.kernel.org/r/20250422-iio-introduce-iio_declare_buffer_with_=
+ts-v2-0-3fd36475c706@baylibre.com
+>=20
+> Changes in v2:
+> - Add 2nd macro for case where we need DMA alignment.
+> - Add new patch for ad4695 to convert buffer from u8 to u16 before
+> =C2=A0 making use of the new macro.
+> - Drop the bmp280 patch since it was determined to have a better
+> =C2=A0 alternative not using these macros.
+> - Add a few more examples to show the non-DMA case, both in a struct and
+> =C2=A0 stack allocated.
+> - Link to v1:
+> https://lore.kernel.org/r/20250418-iio-introduce-iio_declare_buffer_with_=
+ts-v1-0-ee0c62a33a0f@baylibre.com
+>=20
 > ---
-> base-commit: f15d97df5afae16f40ecef942031235d1c6ba14f
-> change-id: 20250505-kvm_tag_change-dea24351a355
-> --
-> Regards,
-> Atish patra
->
+> David Lechner (7):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: make IIO_DMA_MINALIGN minimum of 8 by=
+tes
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: introduce IIO_DECLARE_BUFFER_WITH_TS =
+macros
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad4695: use IIO_DECLARE_DMA_BUFF=
+ER_WITH_TS
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad4695: rename AD4695_MAX_VIN_CH=
+ANNELS
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7380: use IIO_DECLARE_DMA_BUFF=
+ER_WITH_TS
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: accel: sca3300: use IIO_DECLARE_BUFFE=
+R_WITH_TS
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: at91-sama5d2: use IIO_DECLARE_BU=
+FFER_WITH_TS
+>=20
+> =C2=A0drivers/iio/accel/sca3300.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 18 ++--------------
+> =C2=A0drivers/iio/adc/ad4695.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 11 +++++-----
+> =C2=A0drivers/iio/adc/ad7380.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +--
+> =C2=A0drivers/iio/adc/at91-sama5d2_adc.c | 13 ++----------
+> =C2=A0include/linux/iio/iio.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 42 ++++++++++++++++++++++++++++++++++++++
+> =C2=A05 files changed, 52 insertions(+), 35 deletions(-)
+> ---
+> base-commit: 7e9a82ab5b861d3c33c99a22c1245a5b262ee502
+> change-id: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
+>=20
+> Best regards,
+
 
