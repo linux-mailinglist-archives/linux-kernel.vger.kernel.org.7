@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-638725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB26AAECB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9503AAECC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49EC50670D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:14:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC22050699A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E05820B80C;
-	Wed,  7 May 2025 20:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B03202996;
+	Wed,  7 May 2025 20:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+Tb5fda"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFOyh6j3"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F363D209F45
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 20:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A2728373
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 20:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746648874; cv=none; b=EHtqsMTX96xVkegzvRkJuo6Cs1CcB6ssDR/6P/F4n/QfiLvT2xDUI33soCrWYPhq+6lJIG+QkvBKqjluCc1Aky9NBzXBHAmFADKUeAQ0KTNlrjcx3w9k9ZrYkWJCsxbJhAbXlT4FCfHQqebcbfHhcaW1SzTikJTzXrDQ6Vu0ePU=
+	t=1746649233; cv=none; b=dEbaoY2FJSfZwnMnKvgjeIVRwVXrjOGK0kUkaXdPq6g1EqCU195NgIGFI4xfxYUbQORNshaBnJ+MomK+ut6FH4umHMYW8GYOevMjeHNEnumcpxL6qE+jwb6o6ioOeCS6zRjHjpH8xmefktrIBd3/GUBCmqMjrbo/aFOawfTzKgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746648874; c=relaxed/simple;
-	bh=61qRZmN+Q09efrT5xgxj3jNCO6jzB1dGBeY60oZbbJA=;
+	s=arc-20240116; t=1746649233; c=relaxed/simple;
+	bh=QWgKk3rlpNB1FghPQdseTO3Ox2Q3ajMEvVZ+8yV2nTM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hssqAC0Jcl4fw5DYSmasndPNfmadv2W+nHPj6Y4+/inpF4qaBq72aBSNixrKKNvMd4ZQ6gAbOh1Zqn0Cxq74C7+5oxiJs5HWVaRNmYjH650h8809eCAJ+ppaA0dMcEq6Vv16pYbaPzDE22kZNmRZjnwTJWFSMQa5qfy/TFOFG7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+Tb5fda; arc=none smtp.client-ip=209.85.210.51
+	 In-Reply-To:Content-Type; b=gCohAq44ekdBn/Wm4EAY8WVoorjEccqM8DOCzDvpqQ90nkKJTLc9F15HjT21PA8639mb9g5LgdmmF7D0gnhYtLBUEEvcAVkfbeDJZTze48oWroljAdhu0gDe3jP6x4cfGyHJCogDUcNBuj58FKCgJzQY3Nio956UHIghzsn8RTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YFOyh6j3; arc=none smtp.client-ip=209.85.167.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-72c27166ab3so173321a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 13:14:32 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3fa6c54cc1aso193030b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 13:20:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746648872; x=1747253672; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746649230; x=1747254030; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=61qRZmN+Q09efrT5xgxj3jNCO6jzB1dGBeY60oZbbJA=;
-        b=R+Tb5fda0VqI0r3HV+u/EeZp2apHkLmlMYw71iDYACwdIxAygBiWgisS1J6W0LPO6q
-         46z4xPq00pGzMKrPfsjchID08kTFS/xFfk8fGkyFw/9uenlCpjb9cTEbil2T/5ObDK/k
-         YMFVxyqAsXJwGCj/hrKL6X2o47MwA978OXx/sv9mYDdmmJeSDQC6v4GKhXyUJR966nlp
-         vFTv1xQtiSShyUdMzY5ZRqO+uvimMuT4Xa4NXLg4cFYqOppjXlAyjePd8Z9XDaJFk2vJ
-         Az8Z0iEx0YCfXsl6IAeFpgFIehDucXiIX3qApqmnr0zr060yWfyNQVRIwMg9g7Ywv7rz
-         dmcA==
+        bh=IbNUqgHSQF2ubI6P24XlUmz50WOVhS68byJoC4GVdtY=;
+        b=YFOyh6j3dh1b3NHbqv/24dfaRlvwEYmF7edPG1dXSSccpFzrXb3HUJ4i4Y1qJhyh8f
+         T9OUOevJ8LrQa4JGHRoO+8o8SbejEstSMc3poIz340cC0o9D61wFG9pdC7JZ+oFENV9u
+         f9omNWAlp1SC1PSPZ8cqcKWJgaWwHA9zraUDUL3zNrTMr9Z/o/PGbHlU1GI3RwyLv09+
+         Tz7rJoy6hx0MoMkfbmc40WxUJ+dSX2O6DX7rZ4uM5u8fI7zKLBu6v9w/b5QHIa2WNpH1
+         eDqRNjVJ+R79pOA3tOixgH9/39w0QW5JCS5ZbZCxSnP+hMZyZ9WRUbqOsYeIPB26CE2m
+         DnrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746648872; x=1747253672;
+        d=1e100.net; s=20230601; t=1746649230; x=1747254030;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=61qRZmN+Q09efrT5xgxj3jNCO6jzB1dGBeY60oZbbJA=;
-        b=LyuiAZmfOCKeMSPt5iksSk1SkWqGkdP+3k2WgnW3Z3XrCHFjcydhT4qW6DjAJkv7go
-         AqurmzJojvZqhhiEP7izBgQ2dUmJ33RyROYrDk5otgqLGStPpzSQdna8DUwS9f+52z+J
-         kbVPBCZqo+ayhnn8AZ5aPQkjaYGpAP/jMDZ7wrMXBLg8GSC0D7ro/HUzUQYxhoXeJIPh
-         0j4XDxjoLV9k+zm7PHVz4AYvmbJ2ef9FeaFnLoMMd69Ut5FUC+DbqfGcxdqxXKdfdRWl
-         Fo7mKI4IPdgXfQQsJw1LC/bA5nffC9JT74Sxg2HDzi/ejpFWTNQ6z3leZT1IHqV+KK6M
-         dQEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtJIKwk3YhLFZ6tZGc+kXsWWW1xFKbpHkmA3uO2x1gnm361doDBxST9AylHc5Fa08LI5HfOAh4GWf8K3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUZ2pQrg6A04dsEZ8Ntc07UPKiT83vfcJh95ruuzpOZEjiGltb
-	c0euh3uvtTzsdaDejbfntFVE2/xZEKWnSTn/AXHJ9tuZ2HKF2u1T
-X-Gm-Gg: ASbGncuSyikcPyfE3btPoQZhQohAzIK2nAQGzjFdzYr9nJBehteAUo6hqICg8oOAT2L
-	TJjpaneaitMlAsI4LX5GxB75UedigQI2vwYPhgED64ZWcAhV1AkestkNCadU9ZK6rn+Fx2CVX60
-	A7RV69JmyPsPpbw6CnW9208J4cEGaGkXvwOiuWM06MiqyXfyMPT9LH0nu6qKfp6movXCtxYpBGn
-	Gcfa8UVPfqw4KAnZTSWkcDFlAjM13SdzHnPriu31wwsyz9nezYu6t71DD69pt1Lf0qD2n/PdtGl
-	gWITt+9kqF2VVKzEm7k14KWkF6xdpg/pzLk9YF+MpflciuBTriTXIHZ7Sla7GqwGo0dHYI1BvsD
-	EpmaIgr1YA9QNAXoBGDTyF+Iev7g5wGATcRpmQLQ=
-X-Google-Smtp-Source: AGHT+IGbOaDLg7RwKcF4Ef5VkxSd1b6ZWl0tz3q1F21g43CpHGH8jatCPGElo0KRmPcggCubKUyYWw==
-X-Received: by 2002:a05:6830:2906:b0:72b:87bd:ad47 with SMTP id 46e09a7af769-73210a72f1emr3059099a34.3.1746648871898;
-        Wed, 07 May 2025 13:14:31 -0700 (PDT)
+        bh=IbNUqgHSQF2ubI6P24XlUmz50WOVhS68byJoC4GVdtY=;
+        b=OKTfrAFy1LBRYheE5Lf7iTiaksCIa2xWMTe2cvdx/mp1A9Gcra76m0wX+TaEbNk9T6
+         Z62DPI8nkNMOBzpYmcBiRE/S2jL64U57b5VavFCMaX63hbRLJW0pQF6iv6Zrn4AucbQh
+         FWcV+G4EJ63ybUM0xwSZy/9O5uKtYIX50dmCnUpjKJeOQPSOQhgI72ASnhil04+BKwPD
+         GaasCaWySu+MUFI35XIYITLWZsdcf0lZRNm0q+Jzc+Q/NbGUreGWANJDjFEbhjdsv67b
+         3K9XKNUVll4EgZGd7zAstsFKqGZTh63jmzvdqtWpWxZAnNs7S8vc5eUmvsmAZcv5CYED
+         mKGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnI1bNgAlFEjdoepn4XX2I/Ya7SBSI6vTJHkMkrhuYcvS1igI7qSApfRKhAIvYAoBrHB/6TDzvWcI6Kkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSHhWrXQ7FmXsl+zP52ypJWu6+jy14qOFTzw9PqU9LDKEUtWmG
+	649J6yGkow4s+9PJxxhsMXmjD+GAeJJI0MerWeQuSAK2GfNe0gzu
+X-Gm-Gg: ASbGncvnJGmdZ9uktgBY06t5dPL/+uho52HqAGg+H8OlsIvZw4APjBG4kbpUi/dNNgl
+	JuOLBVp44D6pqcxxSH3bLa8IBQLc6ltH69/yo5AAFU15bWpoGvpmg4O7ib53z5SRvapGCk/6M2m
+	DV2potv1ZiAsjU2Zx3JOQfrs08Ps61kr5Q02HF3eMr3L85CKDsERs+EHJj6tNG26Ofwkt0xGRSB
+	DoWUCTU5YlkgB4xiWwYRFM1Hu8SJtGa7girQn3IaSYB3K8TZjPUD6iH7nIOQ7557hpjFe4jQsem
+	STtwBqyrU+7S+ksbUNywXDa3nKx2AwW0hhsNI5nvr18y03nijPdQQvTTf3/2vwNR6sT9ZFySZGY
+	OIIKrNXd5AMzMMWeUF6wFZD93V2xI
+X-Google-Smtp-Source: AGHT+IFb8VwJn/VbxJLHvFvMl5aoFMmfsOcs2xBmMJ4MGpDPZVsU/uwc3pUlkngMRb2J6sWbbl7fXw==
+X-Received: by 2002:a05:6808:1925:b0:403:36aa:e085 with SMTP id 5614622812f47-4036f085a23mr3110673b6e.23.1746649230406;
+        Wed, 07 May 2025 13:20:30 -0700 (PDT)
 Received: from ?IPV6:2600:100c:b2a7:c99a:12d7:b0e2:f546:4c3b? ([2600:100c:b2a7:c99a:12d7:b0e2:f546:4c3b])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73210a19326sm729554a34.30.2025.05.07.13.14.30
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4036f3b1604sm725591b6e.50.2025.05.07.13.20.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 13:14:31 -0700 (PDT)
-Message-ID: <9a3f8105-1156-486d-9b6e-f444e36a271f@gmail.com>
-Date: Wed, 7 May 2025 14:49:09 -0500
+        Wed, 07 May 2025 13:20:29 -0700 (PDT)
+Message-ID: <832be7b3-7f1a-4c9a-9dfc-6b9120eb30db@gmail.com>
+Date: Wed, 7 May 2025 14:55:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,77 +81,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] Reduce CPU consumption after panic
-To: Peter Zijlstra <peterz@infradead.org>, Carlos Bilbao <bilbao@vt.edu>
-Cc: Andrew Morton <akpm@linux-foundation.org>, seanjc@google.com,
- carlos.bilbao@kernel.org, tglx@linutronix.de, jan.glauber@gmail.com,
- pmladek@suse.com, jani.nikula@intel.com, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, takakura@valinux.co.jp,
- john.ogness@linutronix.de, x86@kernel.org
-References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
- <20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
- <20250429210650.GD4439@noisy.programming.kicks-ass.net>
- <433c6561-353e-4752-b9cf-155e49e62e63@vt.edu>
- <20250429221049.GG4439@noisy.programming.kicks-ass.net>
- <94faa778-38d5-4ea5-aa0d-9259b56999a4@vt.edu>
- <20250430084852.GN4198@noisy.programming.kicks-ass.net>
- <2e075491-538c-40e1-8086-5405aecb2779@vt.edu>
- <20250501085528.GR4439@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH 09/15] x86/kconfig/64: Enable more virtualization guest
+ options in the defconfig: enable Xen, Xen_PVH, Jailhouse, ACRN and Intel TDX
+To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Ard Biesheuvel <ardb@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Carlos Bilbao <carlos.bilbao@kernel.org>,
+ David Woodhouse <dwmw@amazon.co.uk>,
+ Elena Reshetova <elena.reshetova@intel.com>, Fei Li <fei1.li@intel.com>,
+ Jan Kiszka <jan.kiszka@siemens.com>, Juergen Gross <jgross@suse.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michal Marek <michal.lkml@markovi.net>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <20250505110946.1095363-1-mingo@kernel.org>
+ <20250505110946.1095363-10-mingo@kernel.org>
 Content-Language: en-US
 From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <20250501085528.GR4439@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250505110946.1095363-10-mingo@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hello Peter,
+On 5/5/25 06:09, Ingo Molnar wrote:
 
-On 5/1/25 03:55, Peter Zijlstra wrote:
-> On Wed, Apr 30, 2025 at 01:54:11PM -0500, Carlos Bilbao wrote:
+> Since the x86 defconfig aims to be a distro kernel work-alike with
+> fewer drivers and a shorter build time, refresh all the virtualization
+> guest Kconfig features, enabling paravirt spinlocks, and
+> enabling the guest support code for the following guests:
 >
->>> All that said... the default more or less does for(;;) { mdelay(100) },
->>> if you have a modern chip that should not end up using much power at
->>> all. That should end up in delay_halt_tpause() or delay_halt_mwaitx()
->>> (depending on you being on Intel or AMD). And spend most its time in
->>> deep idle states.
->>>
->>> Is something not working?
->> Well, in my experiments, that’s not what happened -- halting the CPU in VMs
->> reduced CPU usage by around 70%.
-> Because you're doing VMs, and VMs create problems where there weren't
-> any before. IOW you get to keep the pieces.
+>  - Xen
+>  - Xen_PVH
+>  - Jailhouse
+>  - ACRN
+>  - Intel TDX
 >
-> Specifically, VMs do VMEXIT on HLT and this is what's working for you.
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Carlos Bilbao <carlos.bilbao@kernel.org>
+> Cc: David Woodhouse <dwmw@amazon.co.uk>
+> Cc: Elena Reshetova <elena.reshetova@intel.com>
+> Cc: Fei Li <fei1.li@intel.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/configs/defconfig.x86_64 | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >
-> On real hardware though, HLT gets you C1, while both TPAUSE and MWAITX
-> can probably get you deeper C states. As such, HLT is probably a
-> regression on power.
+> diff --git a/arch/x86/configs/defconfig.x86_64 b/arch/x86/configs/defconfig.x86_64
+> index 156e9490e29b..514f8fdc2102 100644
+> --- a/arch/x86/configs/defconfig.x86_64
+> +++ b/arch/x86/configs/defconfig.x86_64
+> @@ -31,6 +31,12 @@ CONFIG_KEXEC=y
+>  CONFIG_SMP=y
+>  CONFIG_HYPERVISOR_GUEST=y
+>  CONFIG_PARAVIRT=y
+> +CONFIG_PARAVIRT_SPINLOCKS=y
+> +CONFIG_XEN=y
+> +CONFIG_XEN_PVH=y
+> +CONFIG_JAILHOUSE_GUEST=y
+> +CONFIG_ACRN_GUEST=y
+> +CONFIG_INTEL_TDX_GUEST=y
+>  CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+>  CONFIG_X86_MSR=y
+>  CONFIG_X86_CPUID=y
 
 
-That's a good point -- wouldn't TPAUSE achieve what I was trying to
-accomplish with HLT? Assuming there's support and wouldn't just #UD.
-
-
->
->> How would folks feel about adding something like
->> /proc/sys/kernel/halt_after_panic, disabled by default? It would help in
->> the Linux use cases I care about (e.g., virtualized environments), without
->> affecting others.
-> What's wrong with any of the existing options? Fact remains you need to
-> configure your VMs properly.
-
-
-See, that's the problem -- it's not _my_VMs. It's the VMs of cloud users,
-who are ultimately responsible for configuring their kernels however they
-want. We can try to educate them, as some maintainers have suggested me,
-but many people either don't know what the kernel is or don't care -- they
-just trust that Linux will have sensible defaults. I get your point that
-VM-specific problems shouldn't burden the broader kernel ecosystem, but I’d
-still like to think whether there's something we can do to improve the
-situation for VMs post-panic without negatively impacting other use cases.
-
-
-Thanks,
-
-Carlos
+Acked-by: Carlos Bilbao <carlos.bilbao@kernel.org>
 
 
