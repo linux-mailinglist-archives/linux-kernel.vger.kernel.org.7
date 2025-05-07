@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-637623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A46AADB49
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:21:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B30DAADB46
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8F59A4629
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AA64C14F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056CE1AA1D2;
-	Wed,  7 May 2025 09:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011B823FC52;
+	Wed,  7 May 2025 09:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b="biZnOZNI"
-Received: from h8.fbrelay.privateemail.com (h8.fbrelay.privateemail.com [162.0.218.231])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyrPsxfX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3741B1DED52
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C2F23F40F;
+	Wed,  7 May 2025 09:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609327; cv=none; b=elwkQ6+DT+RApmuZ77l5IZzPCJKsX9qIi5CnFzEFcvbOMa9xyuUh/lIV+5Bnw+O068MkZHhcP1TpY2gHg8BZlOF8/S/jeh8zpMQgfgzOh8fVKgw0LligG5NKkHaxlieMPPkdghzLZCpZnfagMs4AnrD5RvfJ28ZXaJEHNIKzvCc=
+	t=1746609338; cv=none; b=TwdH3lTySK1uzjENcwP32Z23JvuIi1D3vVh3gKTAoy3SWSlBUj5NZCGba/sEBM59uglF0HTGpQLfEzow8CGGDC2yZkjOWZdVUCZpe6ambgHaOGFrkJicU3/rvtzBDBoo9Njlya4KZfbQSMpCM7PzuKDHLNYpU7zE/7LzVi8XKqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609327; c=relaxed/simple;
-	bh=egT0yKlCDwoRHqLe+MRwanT0SawFfp6yH1Bs4mtm8UE=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=jhdXNDvD61ZhoMRpnRnoxZ7aJWf23O7BrFlm0E7knUVDtXPgnB3uA7zYqxDmDYC60m/1sLi1fI0o4FzAwaBue11foSsFbNb+tQT1CiIqY0BADrH/IxKERgD1JSzXFTA96VmSNHUlxtGNMujtq4bIlaPvMqjGS45Q9BesnMjBcKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org; spf=pass smtp.mailfrom=kenogo.org; dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b=biZnOZNI; arc=none smtp.client-ip=162.0.218.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kenogo.org
-Received: from MTA-08-4.privateemail.com (mta-08.privateemail.com [198.54.118.215])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by h7.fbrelay.privateemail.com (Postfix) with ESMTPSA id 4ZsqNp613zz2xFV
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:15:22 -0400 (EDT)
-Received: from mta-08.privateemail.com (localhost [127.0.0.1])
-	by mta-08.privateemail.com (Postfix) with ESMTP id 4ZsqNf65Dwz3hhVf
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:15:14 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=kenogo.org; s=default;
-	t=1746609314; bh=egT0yKlCDwoRHqLe+MRwanT0SawFfp6yH1Bs4mtm8UE=;
-	h=Date:To:From:Subject:From;
-	b=biZnOZNIx4HeYWxnfWP5ZlETzlGzf0Qj6yKKxbspsW0WCW6c8anQsDF6iG4QfsjmZ
-	 PpQnJ3xv2d8xp0d10nZdqaG9TnD8ow0kSFecKHbPS2uPJxGuDAQewSft+XLV7y6C+X
-	 n2ZNf0RxdOk8FfhkYAkGZjA3k1IbbSi5vKkdIKLqpB1UaqeAhWQeUd0f5T2fUcN2Iv
-	 +wGNnSyDKQGrV4vnOdRPgdogprgJmvf7vv3F7JabyTz1XrvOgHKkSSRqc3mccaeqZB
-	 wus3hqN5OQvu0Ga+oIMO422mdayHpeddLW3PDQSscJLKWd9K8ysgrCNL5i0hb8pBTQ
-	 +ElspbD+MvFCg==
-Received: from [100.115.92.203] (nat-141-76-8-190.dip.tu-dresden.de [141.76.8.190])
-	by mta-08.privateemail.com (Postfix) with ESMTPA
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:15:14 -0400 (EDT)
-Message-ID: <fed2cedc-0458-4dfe-9e14-6d64be618165@kenogo.org>
-Date: Wed, 7 May 2025 11:15:12 +0200
+	s=arc-20240116; t=1746609338; c=relaxed/simple;
+	bh=9z++eVUjo5Nt6P9zv3aLaT+qA0f6xjadJ4gnXukQoHQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BrTNSL29qXUO0tnyIi0adq5yWIbjQqlNAlKb3wcaYxMIaxrrz4ziuYPt8GhJG2HzSO0rcPWh8jU2PYhbzFIR72/rauKNIwfYJfR/n7uy9bbS2buCQ/umPM59ZVgV3WlRlRr2jd1Mrwzw3f82FLlMZZ5tMr6L7rvwqVfWCYkPg+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyrPsxfX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FF4C4CEEE;
+	Wed,  7 May 2025 09:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746609337;
+	bh=9z++eVUjo5Nt6P9zv3aLaT+qA0f6xjadJ4gnXukQoHQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=tyrPsxfXjyHj3ItkcRhJIoeIeE8vRiwZxU+LKjOJf4zVEECLepFyq91CH867FCzVw
+	 NGLgRR6eAlMBpH2nOp21RUrBUuCsW0V0oh95BWZT6TnqSaE9qFBTCvjGefvaBT6SZK
+	 WSbV5tj1gJwhj9NZtFI34Pegg70mtePnLWD1rwctfzmns4V6LgcFVY33OqLNC20a3R
+	 6nMJaEyEw2ftHtx+A/JfuVO9yXjNEA1QEFr9e9L3RwxqFn5mX2yJTZN5vuWIJ3Aa8S
+	 UZkafOw8f6DD+QRNVH8GqEZR0O2eNAzxo6rzN0n4EJcCqlnVumDxj5rykWzRi8c4gk
+	 llS6pFyj/eyZg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Luis Chamberlain" <mcgrof@kernel.org>,  "Danilo
+ Krummrich" <dakr@kernel.org>,  "Nicolas Schier"
+ <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
+ Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,  "Fiona
+ Behrens" <me@kloenk.dev>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v12 1/3] rust: str: add radix prefixed integer parsing
+ functions
+In-Reply-To: <D9PSYQMCW74W.39JB3NDCWB2H3@kernel.org> (Benno Lossin's message
+	of "Wed, 07 May 2025 10:58:08 +0200")
+References: <20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org>
+	<20250506-module-params-v3-v12-1-c04d80c8a2b1@kernel.org>
+	<UfD3pllWu8O_qAKsi04IMH1WGszkDe31KpLs7oMvDsUC-tryEbrYKmtDAPj5w-BO2CyZ8_S_G5lWBE2Ud72n8w==@protonmail.internalid>
+	<D9PSYQMCW74W.39JB3NDCWB2H3@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 07 May 2025 11:15:19 +0200
+Message-ID: <87ldr8pys8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kernel@vger.kernel.org
-From: Keno Goertz <contact@kenogo.org>
-Subject: ntp: Adjustment of time_maxerror with 500ppm instead of 15ppm
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain
 
-Hello,
+"Benno Lossin" <lossin@kernel.org> writes:
 
-I've been looking into the kernel's NTP code and found what I understand 
-to be a deviation from NTP as standardized by RFC 5905.  The 
-documentation of this part of the kernel is pretty sparse, so there may 
-be some motivation behind this that I don't know of.  Perhaps someone 
-with more knowledge can explain this.
+> On Tue May 6, 2025 at 3:02 PM CEST, Andreas Hindborg wrote:
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index 878111cb77bc..174e70397305 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -573,7 +573,6 @@ macro_rules! c_str {
+>>  }
+>>
+>>  #[cfg(test)]
+>> -#[expect(clippy::items_after_test_module)]
+>>  mod tests {
+>>      use super::*;
+>>
+>> @@ -946,3 +945,174 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>>  macro_rules! fmt {
+>>      ($($f:tt)*) => ( core::format_args!($($f)*) )
+>>  }
+>> +
+>> +/// Integer parsing functions for parsing signed and unsigned integers
+>> +/// potentially prefixed with `0x`, `0o`, or `0b`.
+>> +pub mod parse_int {
+>
+> Why not make this its own file? It's 172 lines long already.
 
-The doc string of `struct ntp_data` states that `time_maxerror` holds 
-the "NTP sync distance (NTP dispersion + delay / 2)".
+Sure. I'm really hoping to land this series for this cycle though, so if
+it's OK I would move the code next cycle.
 
-ntpd indeed sets this value to what RFC 5905 calls the "root 
-synchronization distance" LAMBDA.
+>
+>> +    pub trait ParseInt: private::FromStrRadix + TryFrom<u64> {
+>> +        /// Parse a string according to the description in [`Self`].
+>> +        fn from_str(src: &BStr) -> Result<Self> {
+>> +            match src.deref() {
+>> +                [b'-', rest @ ..] => {
+>> +                    let (radix, digits) = strip_radix(rest.as_ref());
+>> +                    // 2's complement values range from -2^(b-1) to 2^(b-1)-1.
+>> +                    // So if we want to parse negative numbers as positive and
+>> +                    // later multiply by -1, we have to parse into a larger
+>> +                    // integer. We choose `u64` as sufficiently large.
+>> +                    //
+>> +                    // NOTE: 128 bit integers are not available on all
+>> +                    // platforms, hence the choice of 64 bits.
+>> +                    let val = u64::from_str_radix(
+>> +                        core::str::from_utf8(digits).map_err(|_| EINVAL)?,
+>> +                        radix,
+>> +                    )
+>> +                    .map_err(|_| EINVAL)?;
+>> +
+>> +                    if val > Self::abs_min() {
+>> +                        return Err(EINVAL);
+>> +                    }
+>> +
+>> +                    if val == Self::abs_min() {
+>> +                        return Ok(Self::MIN);
+>> +                    }
+>> +
+>> +                    // SAFETY: We checked that `val` will fit in `Self` above.
+>> +                    let val: Self = unsafe { val.try_into().unwrap_unchecked() };
+>> +
+>> +                    Ok(val.complement())
+>
+> You're allowing to parse `u32` with a leading `-`? I'd expect an error
+> in that case. Maybe `complement` should be named `negate` and return a
+> `Result`?
 
-In RFC 5905, this LAMBDA increases over time because the root dispersion 
-increases at a rate of PHI, which is set to 15ppm.  Running
+You would get `Err(EINVAL)` in that case, hitting this:
 
-$ ntpq -c "rv 0 rootdisp"
+  if val > Self::abs_min() {
+      return Err(EINVAL);
+  }
 
-a couple of times confirms that the root dispersion reported by ntpd 
-increases with this rate.  Consequently, so does the root 
-synchronization distance LAMBDA.
 
-However, the function `ntp.c:second_overflow()` instead increases the 
-value of `time_maxerror` with the rate MAXFREQ, which is set to 500ppm.
+Best regards,
+Andreas Hindborg
 
-This leads to standard library functions like ntp_gettime() reporting 
-much bigger values of `maxerror` than ntpd is working with.  This can be 
-confirmed by running
-
-$ adjtimex -p
-
-a couple of times.
-
-MAXFREQ *can* be found in the reference implementation of RFC 5905 and 
-is also set to 500ppm there, but it is used in a different context: 
-MAXFREQ is an upper bound for the local clock's frequency offset, while 
-PHI is an upper bound for the frequency drift of a clock synchronized 
-with NTP.
-
-At least this is my understanding.  Can someone explain this?
-
-Best regards
-Keno
 
