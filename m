@@ -1,205 +1,192 @@
-Return-Path: <linux-kernel+bounces-637454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AD5AAD993
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E47EAAD994
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9689B9A19F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD573A7300
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A36022CBEC;
-	Wed,  7 May 2025 07:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3222D4F2;
+	Wed,  7 May 2025 07:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xdtPkbew";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HfL+OfYP"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J9Ys3at9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Aso/WPzC"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5628822A4FC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C201122A80C;
 	Wed,  7 May 2025 07:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746604683; cv=none; b=QkH3yi9u61VBjgtEzU5UpsLyQ6VdchqSL3+0AJ7JsvvibLDnmqQ/5FgLj0Ks2eh0K/2uLBSVywEpYqW22srO6huJVcLMN5WqD8213wERiVk238JVDqD0KxcNVnE3ir6s/oDZhiPPSPdx5JTvcAOPxoPcfGr5WXgT/eUFXY4LAY8=
+	t=1746604684; cv=none; b=PekNSMuRx1QZb5+XG3vFXYzRI9b8c8FYNSw80zOl0PitDOEhHhL6h/fNmbkSX8IPEB5Jw5/w0chCfsw4IfhtyUoNiK+WzPDF3dGTATCd3WjdPlZ0SDIdHVdEvxfaLNTjen8SYZjn7N3vGDFY/nssDYf+inUKX9NbjSGT5NYxS6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746604683; c=relaxed/simple;
-	bh=D9O2RiO7R76Lj7Bhj/on+qyqOUoCP7DHVUHbtlOjRDU=;
+	s=arc-20240116; t=1746604684; c=relaxed/simple;
+	bh=q21UfdvxnYKcE56iFaSAUiqlHdGmkUcmZE92s+CBrAI=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=iHU6poPcyV95dwS1AJgm+H3ci8rgLlUcW/+VSWDHh2shSHp7juuLIJcwwn07V3AIGp4g96z96DU7KVUehvT2XSg+nHGiFKn0lZKS8U4p7R3hYgGbpNuYEcOIuX6d9uakKzbm6ICo7giBZhlpQ7K/ZBeDastZt+Uphrp6h9uA3dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xdtPkbew; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HfL+OfYP; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=k4dAJAXYVn6m7HpV9mz+5Lvlwat/UuPOCtr10s/xAWBnd/5LZLofPNsMuj6HNayZznRlNErHmcLTPE/RE9WLyEd5b0+cs/JObd7bwOYJCmt0F6CX56YuRoMvossgml9H2zNxEbfywjs6nsFskJADCer2bWxUM7damHhpx1qcVgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J9Ys3at9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Aso/WPzC; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 07 May 2025 07:57:58 -0000
+Date: Wed, 07 May 2025 07:57:59 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746604678;
+	s=2020; t=1746604680;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3DAZdZrT9enQEIjdBSHxpcRCBJ5y60pQM+698f6odmQ=;
-	b=xdtPkbewb7YkgzkekZGAFdWfqrm4gaswSZBQpfmD/dJHyYPlZtDmTeyoIwWUbDVpBBJuq6
-	sxqjmP38Tlv7gpgIqJiuzFn3MNgpwZlRHtJyXW5yVhwjkX6ZKejxVh6VVL1CBGC9FIfi0C
-	IhyqlKjLrGArQW5Y9NT9bKLX9RpeTO0joOSTCVJnc3JbvglvRRX9tFrtmyr2a9V5BenXQi
-	v+FZJplGZ+bQQj97Ni7X01IE/POLFCrtIEReJV4DxQVUcycKVTJc29hnGSURkf9xGBbn4+
-	q0ZstYA2UxlYGmhsFirmMzOUx0B0bfZhAgK1WmTYbsGKqAuzMY7xXt7Z7zccDA==
+	bh=dJhLVo9i2DSJvG006MNbQffR1dTDeewf1VFOrdFGSkY=;
+	b=J9Ys3at9uLN8OZFYs+K9Q6y35kswaE4v2JZT3Xu1v7zv1+3cYF0W4smk2L1YTq6wY0L4Ov
+	f7b322hb1EHNN1SyryrIHTAx9bL88DMDpRMr64w3T+SzDisHdY1MMB249g+xbA1DzheNbT
+	Wm/2Cugtk3MC4XkyTF+AGsdCM2dMKYvSq/MNp7HHt0zGJN0zpzCS7vosMKK7noJCi+uSlV
+	BAmZgQTv8xpjXzNOLMKWddCik5QTGoAbAIAOrjC0Wj9PfZspbQ2vraMwGM28iuAlIbLv3k
+	QfdRGgn5qgl9lunauVfw0FkoHvDdvcXPW+QUqymL7xqBqHp7LAdpCijD1Pz9ZA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746604678;
+	s=2020e; t=1746604680;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3DAZdZrT9enQEIjdBSHxpcRCBJ5y60pQM+698f6odmQ=;
-	b=HfL+OfYPhVv9XaRjpAbrMeceW8z2kyFwQTRnI7yhBlbstwBFGEIYbv8eA7LniomLpv71y/
-	+kJh10stbZ8DTZBQ==
+	bh=dJhLVo9i2DSJvG006MNbQffR1dTDeewf1VFOrdFGSkY=;
+	b=Aso/WPzCGektC+X+Hjv77qJ8gj/Gb4NPlKNDF6AbZ1kHHTW2vfhe28Nm9Uwwsgx4AWcQfk
+	ObXKpPEJQbNMPrAw==
 From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/cleanups]
- _PATCH_v2_39_57_irqdomain_ppc_Switch_irq_domain_add_nomap_to_use_fwnode
+Subject: [tip: irq/cleanups] soc: Switch to irq_domain_create_*()
 Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250319092951.37667-40-jirislaby@kernel.org>
-References: <20250319092951.37667-40-jirislaby@kernel.org>
+In-Reply-To: <20250319092951.37667-35-jirislaby@kernel.org>
+References: <20250319092951.37667-35-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174660467800.406.4762071752708151976.tip-bot2@tip-bot2>
+Message-ID: <174660467950.406.6776874360261937120.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/cleanups branch of tip:
 
-Commit-ID:     2a56e7f16a7166605997103b3f108123c350d706
-Gitweb:        https://git.kernel.org/tip/2a56e7f16a7166605997103b3f108123c35=
-0d706
+Commit-ID:     8dce8fc2eb28ab4fbf4a57646fe5eb3057cb1966
+Gitweb:        https://git.kernel.org/tip/8dce8fc2eb28ab4fbf4a57646fe5eb3057cb1966
 Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Wed, 19 Mar 2025 10:29:32 +01:00
+AuthorDate:    Wed, 19 Mar 2025 10:29:27 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 07 May 2025 09:53:24 +02:00
+CommitterDate: Wed, 07 May 2025 09:53:23 +02:00
 
-_PATCH_v2_39_57_irqdomain_ppc_Switch_irq_domain_add_nomap_to_use_fwnode
+soc: Switch to irq_domain_create_*()
 
-All irq_domain_add_*() functions are going away. PowerPC is the only
-user of irq_domain_add_nomap() and there is no irq_domain_create_nomap()
-complement.
+irq_domain_add_*() interfaces are going away as being obsolete now.
+Switch to the preferred irq_domain_create_*() ones. Those differ in the
+node parameter: They take more generic struct fwnode_handle instead of
+struct device_node. Therefore, of_fwnode_handle() is added around the
+original parameter.
 
-Therefore, to align with the rest of the kernel, rename
-irq_domain_add_nomap() to irq_domain_create_nomap() and accept a
-fwnode_handle instead of a device_node.
+Note some of the users can likely use dev->fwnode directly instead of
+indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
+guaranteed to be set for all, so this has to be investigated on case to
+case basis (by people who can actually test with the HW).
 
 [ tglx: Fix up subject prefix ]
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250319092951.37667-40-jirislaby@kernel.org
+Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu> # For soc/fsl
+Link: https://lore.kernel.org/all/20250319092951.37667-35-jirislaby@kernel.org
 
 ---
- Documentation/core-api/irq/irq-domain.rst                    | 2 +-
- Documentation/translations/zh_CN/core-api/irq/irq-domain.rst | 2 +-
- arch/powerpc/platforms/powermac/smp.c                        | 2 +-
- arch/powerpc/platforms/ps3/interrupt.c                       | 2 +-
- include/linux/irqdomain.h                                    | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/soc/dove/pmu.c     | 4 ++--
+ drivers/soc/fsl/qe/qe_ic.c | 4 ++--
+ drivers/soc/qcom/smp2p.c   | 2 +-
+ drivers/soc/qcom/smsm.c    | 2 +-
+ drivers/soc/tegra/pmc.c    | 5 +++--
+ 5 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-a=
-pi/irq/irq-domain.rst
-index f88a6ee..44f4ba5 100644
---- a/Documentation/core-api/irq/irq-domain.rst
-+++ b/Documentation/core-api/irq/irq-domain.rst
-@@ -141,7 +141,7 @@ No Map
-=20
- ::
-=20
--	irq_domain_add_nomap()
-+	irq_domain_create_nomap()
-=20
- The No Map mapping is to be used when the hwirq number is
- programmable in the hardware.  In this case it is best to program the
-diff --git a/Documentation/translations/zh_CN/core-api/irq/irq-domain.rst b/D=
-ocumentation/translations/zh_CN/core-api/irq/irq-domain.rst
-index 9174fce..ecb23cf 100644
---- a/Documentation/translations/zh_CN/core-api/irq/irq-domain.rst
-+++ b/Documentation/translations/zh_CN/core-api/irq/irq-domain.rst
-@@ -124,7 +124,7 @@ irq_domain_add_tree()=E5=92=8Cirq_domain_create_tree()=E5=
-=9C=A8=E5=8A=9F=E8=83=BD=E4=B8=8A=E6=98=AF=E7=AD=89=E4=BB=B7=E7=9A=84=EF=BC=
-=8C=E9=99=A4=EF=BF=BD
-=20
- ::
-=20
--	irq_domain_add_nomap()
-+	irq_domain_create_nomap()
-=20
- =E5=BD=93=E7=A1=AC=E4=BB=B6=E4=B8=AD=E7=9A=84hwirq=E5=8F=B7=E6=98=AF=E5=8F=
-=AF=E7=BC=96=E7=A8=8B=E7=9A=84=E6=97=B6=E5=80=99=EF=BC=8C=E5=B0=B1=E5=8F=AF=
-=E4=BB=A5=E9=87=87=E7=94=A8=E6=97=A0=E6=98=A0=E5=B0=84=E7=B1=BB=E5=9E=8B=E3=
-=80=82 =E5=9C=A8=E8=BF=99=E7=A7=8D=E6=83=85=E5=86=B5=E4=B8=8B=EF=BC=8C=E6=9C=
-=80=E5=A5=BD=E5=B0=86
- Linux IRQ=E5=8F=B7=E7=BC=96=E5=85=A5=E7=A1=AC=E4=BB=B6=E6=9C=AC=E8=BA=AB=EF=
-=BC=8C=E8=BF=99=E6=A0=B7=E5=B0=B1=E4=B8=8D=E9=9C=80=E8=A6=81=E6=98=A0=E5=B0=
-=84=E4=BA=86=E3=80=82 =E8=B0=83=E7=94=A8irq_create_direct_mapping()
-diff --git a/arch/powerpc/platforms/powermac/smp.c b/arch/powerpc/platforms/p=
-owermac/smp.c
-index 09e7fe2..88e92af 100644
---- a/arch/powerpc/platforms/powermac/smp.c
-+++ b/arch/powerpc/platforms/powermac/smp.c
-@@ -190,7 +190,7 @@ static int __init psurge_secondary_ipi_init(void)
+diff --git a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
+index 6202dbc..cfc0efa 100644
+--- a/drivers/soc/dove/pmu.c
++++ b/drivers/soc/dove/pmu.c
+@@ -274,8 +274,8 @@ static int __init dove_init_pmu_irq(struct pmu_data *pmu, int irq)
+ 	writel(0, pmu->pmc_base + PMC_IRQ_MASK);
+ 	writel(0, pmu->pmc_base + PMC_IRQ_CAUSE);
+ 
+-	domain = irq_domain_add_linear(pmu->of_node, NR_PMU_IRQS,
+-				       &irq_generic_chip_ops, NULL);
++	domain = irq_domain_create_linear(of_fwnode_handle(pmu->of_node), NR_PMU_IRQS,
++					  &irq_generic_chip_ops, NULL);
+ 	if (!domain) {
+ 		pr_err("%s: unable to add irq domain\n", name);
+ 		return -ENOMEM;
+diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+index 77bf0e8..e4b6ff2 100644
+--- a/drivers/soc/fsl/qe/qe_ic.c
++++ b/drivers/soc/fsl/qe/qe_ic.c
+@@ -446,8 +446,8 @@ static int qe_ic_init(struct platform_device *pdev)
+ 		high_handler = NULL;
+ 	}
+ 
+-	qe_ic->irqhost = irq_domain_add_linear(node, NR_QE_IC_INTS,
+-					       &qe_ic_host_ops, qe_ic);
++	qe_ic->irqhost = irq_domain_create_linear(of_fwnode_handle(node), NR_QE_IC_INTS,
++						  &qe_ic_host_ops, qe_ic);
+ 	if (qe_ic->irqhost == NULL) {
+ 		dev_err(dev, "failed to add irq domain\n");
+ 		return -ENODEV;
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index a3e88ce..8c8878b 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -399,7 +399,7 @@ static int qcom_smp2p_inbound_entry(struct qcom_smp2p *smp2p,
+ 				    struct smp2p_entry *entry,
+ 				    struct device_node *node)
  {
- 	int rc =3D -ENOMEM;
-=20
--	psurge_host =3D irq_domain_add_nomap(NULL, ~0, &psurge_host_ops, NULL);
-+	psurge_host =3D irq_domain_create_nomap(NULL, ~0, &psurge_host_ops, NULL);
-=20
- 	if (psurge_host)
- 		psurge_secondary_virq =3D irq_create_direct_mapping(psurge_host);
-diff --git a/arch/powerpc/platforms/ps3/interrupt.c b/arch/powerpc/platforms/=
-ps3/interrupt.c
-index 95e96bd..a4ad4b4 100644
---- a/arch/powerpc/platforms/ps3/interrupt.c
-+++ b/arch/powerpc/platforms/ps3/interrupt.c
-@@ -743,7 +743,7 @@ void __init ps3_init_IRQ(void)
- 	unsigned cpu;
- 	struct irq_domain *host;
-=20
--	host =3D irq_domain_add_nomap(NULL, PS3_PLUG_MAX + 1, &ps3_host_ops, NULL);
-+	host =3D irq_domain_create_nomap(NULL, PS3_PLUG_MAX + 1, &ps3_host_ops, NUL=
-L);
- 	irq_set_default_domain(host);
-=20
- 	for_each_possible_cpu(cpu) {
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 6e9a5ec..f3c79f9 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -431,13 +431,13 @@ static inline struct irq_domain *irq_domain_add_linear(=
-struct device_node *of_no
- }
-=20
- #ifdef CONFIG_IRQ_DOMAIN_NOMAP
--static inline struct irq_domain *irq_domain_add_nomap(struct device_node *of=
-_node,
-+static inline struct irq_domain *irq_domain_create_nomap(struct fwnode_handl=
-e *fwnode,
- 					 unsigned int max_irq,
- 					 const struct irq_domain_ops *ops,
- 					 void *host_data)
- {
- 	struct irq_domain_info info =3D {
--		.fwnode		=3D of_fwnode_handle(of_node),
-+		.fwnode		=3D fwnode,
- 		.hwirq_max	=3D max_irq,
- 		.direct_max	=3D max_irq,
- 		.ops		=3D ops,
+-	entry->domain = irq_domain_add_linear(node, 32, &smp2p_irq_ops, entry);
++	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smp2p_irq_ops, entry);
+ 	if (!entry->domain) {
+ 		dev_err(smp2p->dev, "failed to add irq_domain\n");
+ 		return -ENOMEM;
+diff --git a/drivers/soc/qcom/smsm.c b/drivers/soc/qcom/smsm.c
+index e803ea3..021e9d1 100644
+--- a/drivers/soc/qcom/smsm.c
++++ b/drivers/soc/qcom/smsm.c
+@@ -456,7 +456,7 @@ static int smsm_inbound_entry(struct qcom_smsm *smsm,
+ 		return ret;
+ 	}
+ 
+-	entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
++	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smsm_irq_ops, entry);
+ 	if (!entry->domain) {
+ 		dev_err(smsm->dev, "failed to add irq_domain\n");
+ 		return -ENOMEM;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 51b9d85..e0d67bf 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -2500,8 +2500,9 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+ 	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+ 
+-	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+-					       &tegra_pmc_irq_domain_ops, pmc);
++	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96,
++						  of_fwnode_handle(pmc->dev->of_node),
++						  &tegra_pmc_irq_domain_ops, pmc);
+ 	if (!pmc->domain) {
+ 		dev_err(pmc->dev, "failed to allocate domain\n");
+ 		return -ENOMEM;
 
