@@ -1,226 +1,173 @@
-Return-Path: <linux-kernel+bounces-638192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0961AAE285
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:21:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45401AAE27D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BD354005E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4C8189DB99
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7D828A72F;
-	Wed,  7 May 2025 14:05:12 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12ED28A1CC;
+	Wed,  7 May 2025 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="BWKgJ76U"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010010.outbound.protection.outlook.com [52.103.68.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1666E28CF72;
-	Wed,  7 May 2025 14:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626712; cv=none; b=XKiHWnEwfHGAe+WTnfDlXImCojmGl+qaFe2nEaDVVe31wxhjnRh1ieHRs1/1AJ2XgMkh9TY7KPs+nVn67sVC4KwI+UAdbfwUaWZJd1IidNIhqjI0+olTpWoHEgRvG/u5dayd5c92EcX2U81gclNGTOAf2mJRReKORKI5gc3YHbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626712; c=relaxed/simple;
-	bh=VZeY2x/zH0DHAE9y8NcR51lGy2rQ5ssZLOF2RKorHLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tqP0sUlLFYnQhgl5zAFRSyzQF86derCSL1cO7DQwO6AT6nahu8ClN99wOmqFxQrgczGBec0StmkPm52rXtdFD2nc5FpRnU5Z6E9TqtMcI9MNRxCrEfPKH86qZLXEZ/pXBznAwWLwe3XlAX3gvNLAMpJD6tN+YT9U7Npq485oUvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fbeadf2275so1742657a12.2;
-        Wed, 07 May 2025 07:05:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746626708; x=1747231508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dy47WfspidijBe6S4QRWQIIMIPDG64IjZcCZJzTilW8=;
-        b=HBhtMazo9wF10qa+5V4DGOhbDF5CgghlXxk5tnoWeT1ozmol4sNzlOU74i1mUZw+cJ
-         WbCJWhit0MQVKEboce0k6t6zKem8zvcI36FG+YbCrCbjMCMNv+YbiBF7xckMW9NAVV8q
-         ajIfGWEQ+SEJ06anbpOpNTA8hw5v7YkIrHQ4PZg2DGH/KdzBfF6oLdR03wgYbf5a6GV2
-         l1y5UvZmLSmirIYx7SPtX5pIYmlkxsrSgBH0HMzskJ44CbSIQhxiLqJxpB9/C2RKsnb9
-         ZZ3QXoQpaX5jqCeR4L6N3RxpmaiC+yoIQWIlyRZbHdEms24SRadipRzQTLS4eog6v1ki
-         ExVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiJttwRUiAfvkyfz7qc5uBw1fI6HYlcwx247jwun6qvT/Z1SxKkyYVV8S872wO4LvlcE/Vp7Q101LoRRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSy3mHbjNi16VzBrGffaAex7rSJx47+JwcwVIxlTkdtUR+3rwt
-	5UIaKtbwwRn882u4J7OjzIAiX565Cg8F+bhRycTVxMMpHisNO/0XnNM1L5knrtU=
-X-Gm-Gg: ASbGnct5svMgdloNeox0HWWmh+SSxdxiTOGuh5uaQjOwKIVccBFovnrrpEjQLSSS2kY
-	uTVAfSWucm/YfW83+g+bn8xNczu1gqazt0DkZbvKffnL42XJibwSLN2Ixw5o8se+CLgsQq5vpfW
-	aV9pxQJQcX4xkCVIz4rFX+ignnqRoPRdWMGusDJ12CSOduSWDjWhHTvMQ8viUaZc33b/MqAJt0q
-	Pk9jMoyRkCPdWeojXki+/Oe0z1xPykxADHJM2tuvrvzjymNVXYpXxBQe0Gku25VcT8FJPxLCNYa
-	G9s0HXqi/b9wodG77Qxn9dG0sAu4OR9Doe9JoKc8L6R7khZT8krhoTg93afEVUJzI1Bbq4AZqjt
-	S/00Cr1YYCw==
-X-Google-Smtp-Source: AGHT+IE7JkO6fL/7y3ZqFeN6XA6T/g/QwIAVyjDJ/PQOb6/nAxPkHJUjrPjOpWQCaTvyKgLjW5tDfQ==
-X-Received: by 2002:a05:6402:2695:b0:5fb:2105:c62c with SMTP id 4fb4d7f45d1cf-5fbe9d8c5f3mr2980172a12.3.1746626698434;
-        Wed, 07 May 2025 07:04:58 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5faa42f65dfsm8428388a12.38.2025.05.07.07.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 07:04:57 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5fbeadf2275so1742263a12.2;
-        Wed, 07 May 2025 07:04:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3d6s3A4Qi9mBOj4x75Y2K81CGLYL7y+xgf2Hvow0IZvXu9yrqDejtWzgCMh9k23qzGBdwDYNXEr8uVes=@vger.kernel.org
-X-Received: by 2002:a05:6402:5cd:b0:5f6:4a5b:9305 with SMTP id
- 4fb4d7f45d1cf-5fbe9fb1978mr3174944a12.33.1746626696797; Wed, 07 May 2025
- 07:04:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01167289E16;
+	Wed,  7 May 2025 14:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746627097; cv=fail; b=u+Boo5+1ArwytOtgXH4xKyQ9lAe4vXBSFc5R2cVi8JmRrQVPpWRfNR/aWyNt6pveo3IIB1w8xUl0+UPu+DfkLlj2VwEMTFQxqt01LsBoSvRIl4py4lOFBJXA2SXn4lwKNO5lyPxPg7vhMUwB6p7W+wEIZSXv/40fzvaRUNHGkk0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746627097; c=relaxed/simple;
+	bh=dFthDyvceAXqCf8DTeca4KNURkh+72/fAtHbBpvu4X0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gKhPKp4A+tDADDkR4erOHW81pKBW+DtDdxF9ZnZWTPg62x6kAsx27wEYszDH7qZAIJGSohhlqoD1sHqN1CUmGK7MK3mTvOeMv3mE7QU4QxVmNNluMcbHxaxDOHjkvI6n3zKIwopmdO+a5x2eEGrVLBaAzvL8EwLtC9tXeE7ZjfY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=BWKgJ76U; arc=fail smtp.client-ip=52.103.68.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ioVu8PlddZcYskzq+SXol+UO5quLN1d4/10KwqknG8hp8JGfqhyb+CQqnwjNFaL8pUScFaKfv5gtDXIWpoITzhaZZ7X9x9hYVeLBDkQEpi5MraERXq5S2MLtY2BGDNCAE8Q69dF2sI5EVBV6UiCuaB6V/c7R37m2OpjlQAgMlKHSPSCzmql1ecKyz6ZmyOw0lqvGw+TFqncTdqyphv1AkIAVspL4baMgsrc62L0lOc2nXubKzBKt2Q/UrzZCVXTzwggpRC/UDwbs3jUMNR8ywi3N5Q+DXTq2bL4XZXC05+jUHuB2EmPI+09LTG1LA6xDSK/6Hek3oIbQhd9ggRcNHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vdj+3z9gZAQ0+C+B4ktuXcXc4D7qPL/HoYYdEnQWhOg=;
+ b=sptOve3FfvkfGUdDCFJ0OChpFLAFR0Fp41bGAXPTm50ROOYbwoMjpjOHaEwkCk+3FCI+XaUys97fOxQC4ixEUd7fNPvgPdqvMIkVeBpu90dYVbJxmr67dvDXnvuqHu//yedogQu5tz//6rh5wdCHZ47M/5HsBTXP/uAeJQzgrDbfg3JmXX4zEucxmhjgj78Z35o9EGR8yBMWFuO4w+91wn01QJaZyNT05xFqc+aUJoM+PFDEbLqMyQ13Sg/i6wK/kjvJyKscwXFDpGAUPx/HmkR2kf+JKYecRTaa96j43HVcV7kk7Try/PkEXY+OI7CGfEjxKAbFnQHOpLNS1KChYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vdj+3z9gZAQ0+C+B4ktuXcXc4D7qPL/HoYYdEnQWhOg=;
+ b=BWKgJ76Upmcykn2lmG7N2gYBhapvPmCed3BWZclswDKWwhQ/lXjFM/Gk+8onlbpnhIAMlOYQKDot/3VUAy+QqZidMdtHxeQI23CgUrli7R0PM+7/l3aYVA51FgalcY+NXJkCyKPNsjkdATqH3wKJ0trq0MVjISy5mmJA/Vbp2qzyGLiTdBhn3RNZIaxUxh/I3cR7gULZQo5bYn3J6jOBLZo01iaCVUWVTJBC4FHcbSfWrC1sEY8YijnPWQGLic4Y5Aw9RoSUwo6V/UARSJByOAQc7S0UW+E/NcTAhM7MCWpcrJYh3k+A37NIx6tEkT/qVTAnfev25KogwqYU7ld1Bg==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MA0PR01MB5559.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:6c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Wed, 7 May
+ 2025 14:11:29 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8699.030; Wed, 7 May 2025
+ 14:11:29 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manuel Fombuena <fombuena@outlook.com>,
+	Carlos Song <carlos.song@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Takashi Iwai <tiwai@suse.de>
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xuntao Chi <chotaotao1qaz2wsx@gmail.com>,
+	Matthias Eilert <kernel.hias@eilert.tech>,
+	Markus Rathgeb <maggu2810@gmail.com>
+Subject: [PATCH 0/4] Input: synaptics - enable InterTouch for new devices
+Date: Wed,  7 May 2025 14:05:14 +0000
+Message-ID:
+ <PN3PR01MB95975989E919EDEA7717BF89B888A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email @GIT_VERSION@
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PNYPR01CA0060.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:2b5::7) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:f7::14)
+X-Microsoft-Original-Message-ID:
+ <20250507141114.25077-1-gargaditya08@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5aaee9fdfe8437ef2566b200bea45e4baaba3fcb.1745426811.git.tavianator@tavianator.com>
- <7637e816-8c63-4e95-98fc-aea6a4843391@linux.intel.com>
-In-Reply-To: <7637e816-8c63-4e95-98fc-aea6a4843391@linux.intel.com>
-From: Tavian Barnes <tavianator@tavianator.com>
-Date: Wed, 7 May 2025 10:04:45 -0400
-X-Gmail-Original-Message-ID: <CABg4E-=MSxLMJJyQtCyoy=E7MU5Od0MFUiOJn+F8qL7AXe-Ouw@mail.gmail.com>
-X-Gm-Features: ATxdqUHa2kHKbT2_ZiQFNSHYsfs7FlZFoQ9vR_gdXWUXMmzjvHh-4X7vQfxzjP4
-Message-ID: <CABg4E-=MSxLMJJyQtCyoy=E7MU5Od0MFUiOJn+F8qL7AXe-Ouw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2] ASoC: SOF: Intel: hda: Fix UAF when reloading module
-To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-Cc: linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Brent Lu <brent.lu@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, sound-open-firmware@alsa-project.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MA0PR01MB5559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83f34a0b-ce1a-499a-dcf5-08dd8d710fd3
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|19110799006|15080799009|8060799009|7092599006|5072599009|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?p6mxa7OTWRb5zNqyiBk9oaWFCtLfMysK2PBiDQj7Rw8KQ7bV/QwpJizBG7IT?=
+ =?us-ascii?Q?fkXuEprQpBeMxtUqxrptbNr29QF35A/H4e6GfE23NuCYfKCO/AprunuQoUsE?=
+ =?us-ascii?Q?2uJy8qlWwe9l0sTwH0dOOMnPELhA+ahNW9Shgxd9i9Uu1IR3mi/jJTfNJOPY?=
+ =?us-ascii?Q?WPVqxu9gkEO4NMPMur/ilW1P/eUYKcTumgiextRuw6ZQ5f/S8B19bWqfs6Hj?=
+ =?us-ascii?Q?rvt0//3/CIR4OV7IlxCCxNYI1j9JoP3/vwFBle7yPsWrPYV89N45SeRCk3tv?=
+ =?us-ascii?Q?+XfBCbTP9po00A3YgT6+9EiRMbawcZ+gYlGBdg7bG0N5b2GoIJpIuhXSzrsW?=
+ =?us-ascii?Q?Xkl8PUYDwpS582xjKTtltnohJeKNRCsMF3ini7/Ap4UN2CHf8fmIwp29Of2/?=
+ =?us-ascii?Q?GVZdrr/SUAbXVxpzS2tq4y5Qna0gei1sLsSrQ96pc/UsvAGmhvI29Ol+3x66?=
+ =?us-ascii?Q?RA6W1RHfrKm4jNDeoVHvZ2D4CxbqpVwmvIaw8aijStB+dSrqJEhisvYdjNna?=
+ =?us-ascii?Q?/aO8PB8h272plvFeCRpgdPCvEyxz/WstsQDajszEd36SwTT9kDiKXfqkGZPk?=
+ =?us-ascii?Q?QCbhYsMt9BC2QDSLb2N5p22IJIW/W23gT0YKlGBbOTVaPCQGbOG7Un2B+EKy?=
+ =?us-ascii?Q?Bt5m9UR32i79+28cJ7GVEG1hzzrLVstvdeTg+j0qFTMxinPZT8PxcSqmpsdy?=
+ =?us-ascii?Q?fc8P0Dv7GMDc+xTWWAHz/goOz0M8Td8v6W6x93Gltg/34gIppsY+iaSckbKD?=
+ =?us-ascii?Q?UP+zRMEHmRV4R2WUY1PoUrGJq7aa1S6JqeoAN1agxAEPsZfaC3xQzGKoo9Ai?=
+ =?us-ascii?Q?W/dhaWmCjr4ySkXgwTEgrSeglt71gLbsbVh+y0nYEgtOpgG61TWbwDSs3eFg?=
+ =?us-ascii?Q?d/kJONJTeRQwsuAdTIF4rQIwkxaxxp3ej8QI7sCRmMhZ00nAlJLomJwYoxRd?=
+ =?us-ascii?Q?cVp2VCPMgpo6oSvCqa7WOuQH7Gnds08KS2vdJl1oRCgGV13MW0ozSVFRy4+r?=
+ =?us-ascii?Q?ktcFrBILIKCBvuZfuVLBpEbDLHv5dCyk2OqpA0ZLQd1ORoWJLa507kJB0xVU?=
+ =?us-ascii?Q?o5pTLWR/jo7jVXuGf3Imw51LSkMc6x0VGon4smmmhCTO+iBYyYE=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ReKlJl8g6IyRgziJqOp6cG5GqO58rEJwcNSFzk5k5wd6LFnVTkvihGRJ8B1L?=
+ =?us-ascii?Q?0EVAMrlz4BTwmH/oPxsRPiecKhRGKit4WZKJD4KGEfOM1loTcGIAvv4FrI0R?=
+ =?us-ascii?Q?mxVIlCSczb0yPXcpVPqTusK//6iU6e90vEtsc6sf2kktVnIKZb66uOjjbETz?=
+ =?us-ascii?Q?VKOJF/xayIZytv/5ihUh4aFW1Ifwc4r1TjY/PW3Dku8f7+kO7Lsov9EI+HuK?=
+ =?us-ascii?Q?AC/8/gXui1uXDtO3IAyAfKbzc+F8I+rlbrWgO43xrWct9rr63lFuxDQ6pHvH?=
+ =?us-ascii?Q?mh4owcBti29d/0KmwYPE8BjpZYy1ziF7J8VHGRH2Lha/KkyVLVVELy4rSRbZ?=
+ =?us-ascii?Q?VMPHd7MGubD9264w31WvAbpzi9fcyMhMnrkPIOo0FdWHUropn/tt2Esnz4za?=
+ =?us-ascii?Q?JkPP9iiRdULxMsm6XwuIyvXTD/SuJnlmW4H856AokO+SFOQe48F36320fTtb?=
+ =?us-ascii?Q?CldxhKf5v5YvLUAVlt8O92UcyPxgT5l4ZelDZSL4xDBAq1aax/a2jZPJra6Q?=
+ =?us-ascii?Q?yERmZB6hR6h+GAQhycARy3gGzoP6GJIoJS2Rk5nuIJnWh6cA4Lge52uWE9ul?=
+ =?us-ascii?Q?929Ci1V/8labpf1dt+M0SLkeEFT+lTGWELVm5CjkltV4MANIJQM90zbu5nIA?=
+ =?us-ascii?Q?4Jijz2cchU0GPTC0ISHCFwwH5PrdsrZeif3WQ6/EJvNblp9Io4A2ovmBGRcw?=
+ =?us-ascii?Q?La905ausd6LQKgfVmfrQ4OchYRO/QqYPXT2FnZ5gJ2Nr9TwcS60qmzvYgAI/?=
+ =?us-ascii?Q?rud/VBy8F6DRo+ZvAXD3Ev4Y6RSg1DdIqxDa5IcToF/+BwhrVubrvUmVFXQP?=
+ =?us-ascii?Q?sW8NSf0cvrhnhZKdXcKRL61tjJcN5UIzdXaQFCQK/EqhgPdUuohpJy7H+dMc?=
+ =?us-ascii?Q?CgEOqRd1HwO2fMAVzPFIGp5IhyboTaJsXT225kIc2kpr1E9RN11qU9vnGjZG?=
+ =?us-ascii?Q?v7IdCTPrCqRoJKs+PL1sEbd3RLlMlaPK8pAB+R7+CxI5vEUOhf16JXxaGsZ/?=
+ =?us-ascii?Q?uqF6o/xhUVJWQ7xPDp+t27E8cd0jfIzhbJDkZAIaqDM+IyUJXDqCkSbSQxjc?=
+ =?us-ascii?Q?cuazOm6tpEQ3YZ6T4q4NHgkQcLTvgfoZT3mQ6Yn7Kym89ex/Gy5hY/IOyZgA?=
+ =?us-ascii?Q?JfULbtH7M+dhyvUWL4KlCthOD3R5ABGGy6UBF38VbGbDE7zGpmdzB+Bu/E3z?=
+ =?us-ascii?Q?CWiVdpJI2mF63lddc9WHsAywhdbzw5b/wWvb7ABWcxKfYVnpO0i3+XScBVo?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83f34a0b-ce1a-499a-dcf5-08dd8d710fd3
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 14:11:29.6780
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB5559
 
-On Wed, May 7, 2025 at 3:32=E2=80=AFAM P=C3=A9ter Ujfalusi
-<peter.ujfalusi@linux.intel.com> wrote:
-> On 06/05/2025 18:12, Tavian Barnes wrote:
-> > hda_generic_machine_select() appends -idisp to the tplg filename by
-> > allocating a new string with devm_kasprintf(), then stores the string
-> > right back into the global variable snd_soc_acpi_intel_hda_machines.
-> > When the module is unloaded, this memory is freed, resulting in a globa=
-l
-> > variable pointing to freed memory.  Reloading the modules then triggers
-> > a use-after-free:
-> >
-> > BUG: KFENCE: use-after-free read in string+0x48/0xe0
-> >
-> > Use-after-free read at 0x00000000967e0109 (in kfence-#99):
-> >  string+0x48/0xe0
-> >  vsnprintf+0x329/0x6e0
-> >  devm_kvasprintf+0x54/0xb0
-> >  devm_kasprintf+0x58/0x80
-> >  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
-> >  sof_probe_work+0x7f/0x600 [snd_sof]
-> >  process_one_work+0x17b/0x330
-> >  worker_thread+0x2ce/0x3f0
-> >  kthread+0xcf/0x100
-> >  ret_from_fork+0x31/0x50
-> >  ret_from_fork_asm+0x1a/0x30
-> >
-> > kfence-#99: 0x00000000198a940f-0x00000000ace47d9d, size=3D64, cache=3Dk=
-malloc-64
-> >
-> > allocated by task 333 on cpu 8 at 17.798069s (130.453553s ago):
-> >  devm_kmalloc+0x52/0x120
-> >  devm_kvasprintf+0x66/0xb0
-> >  devm_kasprintf+0x58/0x80
-> >  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
-> >  sof_probe_work+0x7f/0x600 [snd_sof]
-> >  process_one_work+0x17b/0x330
-> >  worker_thread+0x2ce/0x3f0
-> >  kthread+0xcf/0x100
-> >  ret_from_fork+0x31/0x50
-> >  ret_from_fork_asm+0x1a/0x30
-> >
-> > freed by task 1543 on cpu 4 at 141.586686s (6.665010s ago):
-> >  release_nodes+0x43/0xb0
-> >  devres_release_all+0x90/0xf0
-> >  device_unbind_cleanup+0xe/0x70
-> >  device_release_driver_internal+0x1c1/0x200
-> >  driver_detach+0x48/0x90
-> >  bus_remove_driver+0x6d/0xf0
-> >  pci_unregister_driver+0x42/0xb0
-> >  __do_sys_delete_module+0x1d1/0x310
-> >  do_syscall_64+0x82/0x190
-> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> >
-> > Fix it by saving the filename in pdata->tplg_filename instead, just lik=
-e
-> > every other code path that appends to the tplg filename.
-> >
-> > Fixes: 5458411d7594 ("ASoC: SOF: Intel: hda: refactoring topology name =
-fixup for HDA mach")
-> > Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
-> > ---
-> > v2: Fix typo
-> >
-> >  sound/soc/sof/intel/hda.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-> > index b34e5fdf10f1..1767977e7cff 100644
-> > --- a/sound/soc/sof/intel/hda.c
-> > +++ b/sound/soc/sof/intel/hda.c
-> > @@ -1069,7 +1069,7 @@ static void hda_generic_machine_select(struct snd=
-_sof_dev *sdev,
-> >                               if (!tplg_filename)
-> >                                       return;
-> >
-> > -                             hda_mach->sof_tplg_filename =3D tplg_file=
-name;
-> > +                             pdata->tplg_filename =3D tplg_filename;
-> >                       }
-> >
-> >                       if (codec_num =3D=3D 2 ||
->
-> I think the correct way would be to make a local copy of the
-> snd_soc_acpi_intel_hda_machines array as we might be modifying it:
->
->
-> /*
->  * make a local copy of the match array since we might
->  * be modifying it
->  */
-> hda_mach =3D devm_kmemdup_array(sdev->dev,
->                 snd_soc_acpi_intel_hda_machines,
->                 2 /* we have one entry + sentinel in the array */,
->                 sizeof(snd_soc_acpi_intel_hda_machines[0]),
->                 GFP_KERNEL);
-> if (!hda_mach) {
->         dev_err(bus->dev,
->                 "%s: Failed to duplicate the HDA match table\n",
->                 __func__);
->         return;
-> }
->
-> or if the "2" is not satisfactory (we _know_ that the array size is 2
-> for this and will not change):
-> include/sound/soc-acpi-intel-match.h
-> +extern size_t snd_soc_acpi_num_intel_hda_machines;
->
-> sound/soc/intel/common/soc-acpi-intel-hda-match.c
-> +size_t snd_soc_acpi_num_intel_hda_machines =3D
-> ARRAY_SIZE(snd_soc_acpi_intel_hda_machines);
-> +EXPORT_SYMBOL_GPL(snd_soc_acpi_num_intel_hda_machines);
->
-> and:
-> /*
->  * make a local copy of the match array since we might
->  * be modifying it
->  */
-> hda_mach =3D devm_kmemdup_array(sdev->dev,
->                 snd_soc_acpi_intel_hda_machines,
->                 snd_soc_acpi_num_intel_hda_machines,
->                 sizeof(snd_soc_acpi_intel_hda_machines[0]),
->                 GFP_KERNEL);
-> if (!hda_mach) {
->         dev_err(bus->dev,
->                 "%s: Failed to duplicate the HDA match table\n",
->                 __func__);
->         return;
-> }
+Hi all
 
-I don't think anything is relying on hda_mach being an array (correct
-me if I'm wrong!).  So maybe just devm_kmemdup() is fine?  I'll test
-it now.
+The linux input mainling list seems to have receivied reports of requiring
+psmouse.synaptics_intertouch=1 for some devices. This patch series adds support
+for InterTouch on the following devices by adding them to the list of
+SMBus-enabled variants:
+1. TOS01f6 (Dynabook Portege X30L-G)
+2. SYN1221 (TUXEDO InfinityBook Pro 14 v5)
+3. DLL060d (Dell Precision M3800)
+4. TOS0213 (Dynabook Portege X30-D)
+
+Aditya Garg (3):
+  Input: synaptics - enable InterTouch for TOS01f6
+  Input: synaptics - enable InterTouch for SYN1221
+  Input: synaptics - enable InterTouch for DLL060d
+
+Manuel Fombuena (1):
+  Input: synaptics - enable InterTouch for TOS0213
+
+ drivers/input/mouse/synaptics.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+-- 
+2.49.0
+
 
