@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-638689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C89AAEC32
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109B7AAEC3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D0F188DD38
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69DC13A3252
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B8928DF58;
-	Wed,  7 May 2025 19:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A18428E591;
+	Wed,  7 May 2025 19:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m+buex5R"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KC6LJOcf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB18D1D9346;
-	Wed,  7 May 2025 19:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6CE28E570;
+	Wed,  7 May 2025 19:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746646301; cv=none; b=cVK+xb2vrbumFnOS5+3ZM2Vca04t1pYsr6ANJo5xB05CgIGBU6+wIHvZwah00qq4AJVW24xwpn/eu3nFr1vG/A4hMJxMheE3TNZ6NIIEuXr0noXXpi9R2o9GLI7fiug2+Od81ieymbl/2lGMR0M1yc6xLr2Wm1xVRxrxppL1RCA=
+	t=1746646565; cv=none; b=Z+jNKD3MBOVbzkwIk6nYFPRPJDIcucyg/d8s+4oDMVGyAYkUDAQ4ZPLkWi0RBXyGTY/k2ZNw/KBiWxCWkwGMff1ypTq6WBQdVUo3AxXmsocxbgX6WAVwENOUb45aTG8tDcoLcWDwUMaIQUscMlEEz1Tm/wVsv3MBclf1Do7sDQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746646301; c=relaxed/simple;
-	bh=XkT3rf/GhFkQ/rhyKTyqEyqJNDGvu/1GzX9MJDAJu64=;
+	s=arc-20240116; t=1746646565; c=relaxed/simple;
+	bh=iGvi/yqa0wbn0CkanjM0OCae1/tSLVv3/DLoooCpJUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYDGpw9WBU3/fucJqrX/RvC+QAlSOQ9rivLM79WhRIfH22QSPB10A6KaBMnovo/9COnjFUHh1UccsBWe6blFb0HUGdz02tihTJLG8z1/FJnZ48X6mj4p2/FaCMrEl9wHhNQV4emxmrUD7ZydhfZ5SqKUClydJM1+zhMUPvFxcKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m+buex5R; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746646297;
-	bh=XkT3rf/GhFkQ/rhyKTyqEyqJNDGvu/1GzX9MJDAJu64=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qp3DSdIJhxVRv+RNgJm1O1tKfIcYg08RNbO+ZcNS4dNfDhD67ikqyLsyWSaVg1Co6V71/cFz3adPkeq+DV65lAk1WnU10Oxb1dKGW7grLucUZe6UF7tojyb8D/g7P3XVfxYTdUxqSbt3zo136X/vZujoaO0dHYEbM7ciBl981nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KC6LJOcf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6C71440E01FA;
+	Wed,  7 May 2025 19:35:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dcXQVQhjsy8q; Wed,  7 May 2025 19:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1746646554; bh=Mr4i9nDPNN2ozb4bNdmXhguhPiB4LmuNAw2Fv4Z0jHo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m+buex5RPLqc5Lxi+5UspQuvlsrpHUCgfknhkggqX56fSWjdqwBNQemBl+XLqGlNx
-	 T9ajjjib1yET3HT2K6UZs0EaU3SxQPlhqtRnBte3crUksQL+6QRLMLBz9lHmwUY4v6
-	 IyAPxzdMR5aiMRlJTFEOxHUwJMznAIrFl4EgAd9RUDpSi6hgyMUDs4ok0pDQcdOMwV
-	 dnHCVaUZ6aYQ3K5V6apNvxzzLFp6+QgFjQeIAaSUsA3qraAx6IZyhqiRr4avwTWAWH
-	 yTqd8Ym24aUYBQfQF9FENZ8whUsdWyMt7K/GgVoSBjIihkX+d4SX+Y4AA1jF/TOaw4
-	 2sU1W6+UAP80g==
-Received: from notapiano (unknown [70.107.117.78])
+	b=KC6LJOcf+XT1CL4Ubts4m2wTVfr5/cHmkGNIfBKMBuaWZgwq2/rgPJR5laenWjWfz
+	 NDnG6tvEtss9We5IGPtkcKzsgsNyv8+MsLmQ8cz3TqRHScjBUqwaO/lGvC1oCxG4uM
+	 Xsc9wR+rAQh2Eleu6jSGjLpKUi94AIIpMzYrXGJFN38mKgOKKR6HkBjAuBNIJkj3y7
+	 pKiIZaRPAnaZVL4uK3zodX5BXYAeDdYDhUCt1pyY09CsnkZgOYVLhKkczibAXzPmsP
+	 2h23SlP/1BKP5yU4ZDTkVw7W+adWlsO8fVSVchPc11WfpZ0xdbdAXaPtCOrrcEtA8l
+	 uEiMh9vzDMp4n1HuP9yMwlgUbRw0O5nT6Vmx3MI9ababD+pBhftfYEitqGc1pLW+YF
+	 IHPRHCuSmai2SvpSith9lND1OJMuWCFO6EUCGErkmH3aWkatHcXYgWnt0nRoa8UC5x
+	 w59Kuhb+k45JQcFVe9oGBFTRciFQXGL+2Ns77g3DsOXNc8W0yhXkmrXi+WIdP46W77
+	 k1xuK5WHjUhOK5S+lyj2OH+mEB/N1Yy46BOkaXxlfemCVeWS+8TSghBwHDEzb+G7KK
+	 vL3BcHKQSbzuEX6LFxXUsSNsgrO91+q8BJ9FTIsxoP2b87rTCUj44sSeenovpf+Lpn
+	 7Ru2aPiKaQJSTu0K2+Dmp29Q=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C2A4917E04C0;
-	Wed,  7 May 2025 21:31:34 +0200 (CEST)
-Date: Wed, 7 May 2025 15:31:32 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Zoran Zhan <zoran.zhan@mediatek.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] ASoC: mediatek: mt8188-mt6359: select
- CONFIG_SND_SOC_MT6359_ACCDET
-Message-ID: <5e45cf78-ea88-4a93-83e6-9022feed0421@notapiano>
-References: <20250505052106.1811802-1-arnd@kernel.org>
- <d9642581-3fed-47d8-9661-4335ec1e9c27@notapiano>
- <86a3a0ab-be37-4b4d-a5a5-32d09c1a75ce@app.fastmail.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3BC9B40E01ED;
+	Wed,  7 May 2025 19:35:47 +0000 (UTC)
+Date: Wed, 7 May 2025 21:35:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Subject: Re: [PATCH v3 14/17] x86/mce/amd: Enable interrupt vectors once
+ per-CPU on SMCA systems
+Message-ID: <20250507193539.GPaBu2C_Gt7ksvRHoc@fat_crate.local>
+References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
+ <20250415-wip-mca-updates-v3-14-8ffd9eb4aa56@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86a3a0ab-be37-4b4d-a5a5-32d09c1a75ce@app.fastmail.com>
+In-Reply-To: <20250415-wip-mca-updates-v3-14-8ffd9eb4aa56@amd.com>
 
-On Wed, May 07, 2025 at 07:10:54PM +0200, Arnd Bergmann wrote:
-> On Wed, May 7, 2025, at 18:41, Nícolas F. R. A. Prado wrote:
-> > On Mon, May 05, 2025 at 07:20:52AM +0200, Arnd Bergmann wrote:
-> >> From: Arnd Bergmann <arnd@arndb.de>
-> >> 
-> >> The driver support was added without selecting the codec, which leads to
-> >> a link failure:
-> >> 
-> >> aarch64-linux-ld: sound/soc/mediatek/mt8188/mt8188-mt6359.o: in function `mt8188_mt6359_init':
-> >> mt8188-mt6359.c:(.text+0x19f0): undefined reference to `mt6359_accdet_enable_jack_detect'
-> >
-> > Hm, I cannot seem to reproduce this. I just tried to build on today's next with
-> > CONFIG_SND_SOC_MT6359_ACCDET disabled and have tried
-> > CONFIG_SND_SOC_MT8188_MT6359 both =m and =y, but in both cases it compiles fine.
-> 
-> The config that failed for me had CONFIG_SND_SOC_MT6359_ACCDET.
-> 
-> > I wonder if somehow your tree was missing "ASoC: mediatek: mt6359: Add stub for
-> > mt6359_accdet_enable_jack_detect" [1]
-> 
-> > https://lore.kernel.org/all/20250306-mt8188-accdet-v3-3-7828e835ff4b@collabora.com/
-> 
-> I had not seen that patch, but with that applied, my patch needs to
-> be revised as well. If the idea is that CONFIG_SND_SOC_MT8188_MT6359
-> can work correctly without CONFIG_SND_SOC_MT6359_ACCDET, it should be
-> 
->       depends on SND_SOC_MT6359_ACCDET || !SND_SOC_MT6359_ACCDET
-> 
-> in order to force SND_SOC_MT8188_MT6359=m if the ACCDET portion
-> is in a loadable module.
+On Tue, Apr 15, 2025 at 02:55:09PM +0000, Yazen Ghannam wrote:
+> -static void deferred_error_interrupt_enable(struct cpuinfo_x86 *c)
+> -{
+> -	u32 low = 0, high = 0;
+> -	int def_offset = -1, def_new;
+> -
+> -	if (rdmsr_safe(MSR_CU_DEF_ERR, &low, &high))
+> -		return;
+> -
+> -	def_new = (low & MASK_DEF_LVTOFF) >> 4;
+> -	if (!(low & MASK_DEF_LVTOFF)) {
+> -		pr_err(FW_BUG "Your BIOS is not setting up LVT offset 0x2 for deferred error IRQs correctly.\n");
 
-Ah indeed, that's it. The stub was added to allow MT8188_MT6359 to work without 
-ACCDET, but we still need to prevent the MT8188_MT6359=y and ACCDET=m case, like
-you suggest. I can send that patch right away.
+I'm not sure why it is ok to remove that one.
 
-Thanks,
-Nícolas
+/me goes and digs into lore...
+
+Here's why we did it back then:
+
+https://lore.kernel.org/all/5547906E.3060701@amd.com/
+
+and apparently that was for some bulldozer BIOS.
+
+How can we trust Zen BIOS all of a sudden?
+
+;-)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
