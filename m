@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-637871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC26AADEA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:12:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22EEAADE9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820E99C0317
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A615010F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730C3259CA4;
-	Wed,  7 May 2025 12:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yh/jWaDV"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E289325C80F;
+	Wed,  7 May 2025 12:07:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388FF258CC1
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DBD25B671
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619600; cv=none; b=PE1sa12lhLKtr24hrqug8zqZND0Pr3ufGprUmWcROXXtd8x7jTEJ0eZF7nDKD+0shxihBu8Qo8GkrF7TMqbmbKq02mt6ZUAqd0FWwmq4cPRPrnKwfW1oTvLG9EZ/bCFUudPnFZjHL4r552ADE1MYVbkSCHp1G2JyDpZ8tR/pGLg=
+	t=1746619655; cv=none; b=JwWkIa2e0TUZNZf4ZFGs3PAbG4q+wf5QoHi6D2EYNG5ARYcCjPjkX+IBTjPi4pwClzJ2pUyOxF14jsEd2ReN8Uy0BddN5O1CIk1VRnuKxyWfe35ZSL0HBoPUN8kMo0BPjhmbFx5uHbuQiJdg67PquaP85zv8w7GtaSvtTsncJ9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619600; c=relaxed/simple;
-	bh=bZoO2jxC64CtB3eROZHBgf0N4kFEXtsSReBN+E/atLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oLVRSW/roHq3ldEk2W7J1GDUYgWbc33r4ZaeJshvvZAssgXEgzhHCeB+JmzdeQOvfupo1Tq0V/2E6obOQRLxq/KHi2UTIjyFyQEUpXzz38dY/w1gj3OGzBetV9SLjck7GkhgjbrM1u6oP7RfUg3qNIIJBXqUCsOlB3BnrvWq/3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yh/jWaDV; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so45278425e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 05:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746619597; x=1747224397; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o9kghykG29WfM/5QurOmGS2Z0jr56p5eKv8MqxmLHkg=;
-        b=Yh/jWaDViPSV7CGPQSmt3+a1xq34T8we1Y6c6MD8tZ1PSZ1x2ZLXaJ3I8Yf2AkE3fH
-         3x2TfCCB0CflQk1dSwkHnl7kkIpm4KIp9xrTWfU1Pq1A4kqnJ4bv++4No2rVek7fsgOr
-         6xOEBAfN4tJZdFQo9Fmp8GaLr5IsCLDnB5Vag/2KfqdaNYPXCiBeiyIbk4dOYrtdnI6y
-         gVxel2APIgUxd1/TzXFDBz8PMXOarHqI9VLpKLEdxi6+I3dg1XoSpXIwjuNgaEAnpI4X
-         s1TPf+PbimANNzc/R/TNOxIoG+/0IcZyNhO1QvAhLwGpKSHrLI1UG91IC4Dajo6XFQBW
-         ++og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746619597; x=1747224397;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o9kghykG29WfM/5QurOmGS2Z0jr56p5eKv8MqxmLHkg=;
-        b=aSK4WZJbmMBk/oEeEkmWPBfyeroWald9yUf5F+5uOOzwFckXqrG0eySFECtFLDZMqa
-         AZHZd6+pm1m1t3m+rd7miGm1TtyuNIOvaPGem3rQraQPJb5GSYLeYv0flL6PDVNT99j6
-         xEAEF8NCc6nRYxbnPN2Y7HRON1yK7QOTHiqJMUnsGe6ZyCOi9VzY4ynW54cxfm+ThqA+
-         clLkcAHHEC2yAlTVxZ99tEDFmRO7wivdkiMNaSGJ7qubf14ESCSXn/zx+PbnUwELLbrg
-         1Uadhi70vsv8Rxs+mYpFkGpyg7MoiEhJSsxcbU7kXH2E9bfGBa9vMdu+VH8Om3Mlk2bR
-         jp1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+z+jfOybMDjIivQa4CAp1iTATR4C0T504a5RmzBXAC5E9eSRexwbX6veHl/2Hi9D7mcSij+1VwFgdGWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFfBRwI+c0oCMCT1W4sqILnyok634UhfIa89AEyqON9FDp14yn
-	Ol5QHbF07wvEmXVO1aewwbusSrhfof2dCsJHJJKj63YDRYQO/HutCaSZUw==
-X-Gm-Gg: ASbGnct7a0DG4ZuEEIWXXivkcTf0YeywLhiMUhQZC5Wm8SGxKhGHbovqwGydXPO9JZu
-	p/b6yfpohn+ZLQsuMZLZ8E7JSQhQU2BG82VHwwkCi73SsESKBKEo7FD/leBu/1zooGblcaShXTX
-	zMttk4nqnq8Pld43mF6jVQFBhX3+iQ0tYc2e7zcZgRO4F7zfhFJmZoBqxDOVruBvb8AD2aUKrrm
-	uYnWF3WHc3Pq3zcscZaGPCWxTsS3BMS17VpisAXyEr5+EXJym/uypLG5wJWgX0YcZFQis3Ob9ZK
-	CWtl/w/rMG97imsFrvMuayCtznkrNTaiug/chdjYB5fsnu5U4Dig1sKM8IJ/tcKRRpm1tdTaQK9
-	4olw145PzQWFGLA==
-X-Google-Smtp-Source: AGHT+IEMRpmzlKt1cCPCQn4bwWAH2byEnhm2IIX4fgH353B/MjznTc9F7tqWGUWyfRjHfvwdQmyLKA==
-X-Received: by 2002:a05:600c:3ca1:b0:43d:aed:f7d0 with SMTP id 5b1f17b1804b1-441d44d8107mr19706025e9.28.1746619597160;
-        Wed, 07 May 2025 05:06:37 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d43d6ee7sm29247575e9.20.2025.05.07.05.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 05:06:36 -0700 (PDT)
-Date: Wed, 7 May 2025 13:06:29 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: WangYuli <wangyuli@uniontech.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, yuzhao@google.com,
- stevensd@chromium.org, kaleshsingh@google.com, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com
-Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
-Message-ID: <20250507130629.303b01f8@pumpkin>
-In-Reply-To: <aBo3W5HNMxLdtV2p@casper.infradead.org>
-References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
-	<aBo3W5HNMxLdtV2p@casper.infradead.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1746619655; c=relaxed/simple;
+	bh=1bILE7b1cKhuZEEWiM570vrQti54ZeG2GhZ2W5BeGTM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Xy6qEy4a/h+e6q2W0q3ACVGeuFHFPJ9PajdU1A76JlbKrw5Ub7rpaFZ5z3VRMkYldiyxnqqzvkCzHGRdxF4oF30q7jC1Qidjzyrxcid6yfVgvEo84//LWsWT8ZrSlPMQPrJjIepONALfDZAbdV2XVK3l+Hi0jF5ISZKOCdwe9G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1uCdYa-0005tw-5I; Wed, 07 May 2025 14:07:24 +0200
+Message-ID: <05552657cac9395b83d454e2ede05271d4c15abc.camel@pengutronix.de>
+Subject: Re: [PATCH] drm/etnaviv: Fix flush sequence logic
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org
+Cc: Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, etnaviv@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org
+Date: Wed, 07 May 2025 14:07:22 +0200
+In-Reply-To: <20250507112131.3686966-1-tomeu@tomeuvizoso.net>
+References: <20250507112131.3686966-1-tomeu@tomeuvizoso.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, 6 May 2025 17:22:51 +0100
-Matthew Wilcox <willy@infradead.org> wrote:
+Am Mittwoch, dem 07.05.2025 um 13:21 +0200 schrieb Tomeu Vizoso:
+> We should be comparing the last submitted sequence number with that of
+> the address space we may be switching to.
+>=20
+> And we should be using the latter as the last submitted sequence number
+> afterwards.
+>=20
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_buffer.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_buffer.c b/drivers/gpu/drm/e=
+tnaviv/etnaviv_buffer.c
+> index b13a17276d07..865b07b14b38 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
+> @@ -347,7 +347,7 @@ void etnaviv_buffer_queue(struct etnaviv_gpu *gpu, u3=
+2 exec_state,
+>  	u32 link_target, link_dwords;
+>  	bool switch_context =3D gpu->exec_state !=3D exec_state;
+>  	bool switch_mmu_context =3D gpu->mmu_context !=3D mmu_context;
+> -	unsigned int new_flush_seq =3D READ_ONCE(gpu->mmu_context->flush_seq);
+> +	unsigned int new_flush_seq =3D READ_ONCE(mmu_context->flush_seq);
+>  	bool need_flush =3D switch_mmu_context || gpu->flush_seq !=3D new_flush=
+_seq;
+>  	bool has_blt =3D !!(gpu->identity.minor_features5 &
+>  			  chipMinorFeatures5_BLT_ENGINE);
+> @@ -399,6 +399,7 @@ void etnaviv_buffer_queue(struct etnaviv_gpu *gpu, u3=
+2 exec_state,
+>  			struct etnaviv_iommu_context *old_context =3D gpu->mmu_context;
+> =20
+>  			gpu->mmu_context =3D etnaviv_iommu_context_get(mmu_context);
+> +			gpu->flush_seq =3D new_flush_seq;
 
-> On Wed, May 07, 2025 at 12:02:38AM +0800, WangYuli wrote:
-> > To the compiler, (MAX_NR_TIERS - 1) (i.e., (4U - 1)) is unsigned,
-> > whereas tier is a signed integer.
-> > 
-> > GCC 5.4 does not permit the minimum operation on such
-> > type-inconsistent operands.  
-> 
-> 1. This has nothing to do with the compiler version; the type-checking
-> is built into min().
-> 2. We have min_t for a reason
+As I said in IRC: this should not be necessary. If we switch to a new
+MMU context, need_flush will also be set. The code under the need_flush
+condition already includes this exact line.
 
-Mostly historical - to match the original inline function min().
-min_t() is definitely overused, it should be the 'last resort'
-for a type mismatch, not the first.
-
-> 3. Why is a signed min the right answer instead of an unsigned min?
-> 
-
-I don't seem to have the patch itself, but I' guessing it is for:
-
-for (i = tier % MAX_NR_TIERS; i <= min(tier, MAX_NR_TIERS - 1); i++) {
-
-which seems to have been added for 6.14-rc1 - so why is it only an issue now.
-
-Looks closer, I bet the function is usually inlined.
-
-	David
+Regards,
+Lucas
 
