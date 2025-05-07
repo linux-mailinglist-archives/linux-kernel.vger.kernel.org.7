@@ -1,220 +1,129 @@
-Return-Path: <linux-kernel+bounces-638028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618E2AAE07F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:19:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AAAAAE089
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD071BA73B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB5AB22502
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8D82868BF;
-	Wed,  7 May 2025 13:18:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE672836A2
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A462F283C8C;
+	Wed,  7 May 2025 13:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PysQpbFs"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE725E809
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746623928; cv=none; b=kFvW+c5ypUJTEl+k4aBdRZNtOwzn9zrsf5Q6+cjK/p2iDL6C8PFoxp9pnjdDmp6mkZKMbiIeLeRLq6f9orA6TSwL/bxAUu/lpjrFr5jSoB6s3AEIsD4q/5Q3ICW9zuhAjXcC1f0a3VVM50q0Eg2BjVoi1awCi5rO3fZB9snGxJk=
+	t=1746623945; cv=none; b=dzp14JDf6jTazS/btD4kK44xxAoT+TYjCUAUK4KVg3KG4u5RhTIz5g0IsxSfu+nDX3y/fSsKSrHymCu9p/wZ9yK61m0TTizcZ0CSVinjVghBCJfSlTc0mWiOe8xV00nauLwc6gNt6S0Xqhx4yLW+wId5DBaSVdtEL5k5yoDVKjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746623928; c=relaxed/simple;
-	bh=Aqxfb0D1OaZTFVrIlyE4sDxOdOo3XhRb8mptgkA+QUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nKyPh3LJLcXJylfX4oq1yQihFf/Xo7e+xjh4a3uvFFnv5o0sMWMVXYYzN1J74FmH5h34M6cYqI3wVEBykZChd95tUoO+4KOuVMN8T7JeQYJnS/RSUSB2oBuFbbBva6Srne6ftvkjsg31Ceam4al+uA2UXyzAVvTx1YjnNNPRfoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0C0516F2;
-	Wed,  7 May 2025 06:18:35 -0700 (PDT)
-Received: from [10.57.20.214] (unknown [10.57.20.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8190B3F58B;
-	Wed,  7 May 2025 06:18:43 -0700 (PDT)
-Message-ID: <1cfa00a3-75ac-4fc9-bcda-d2dab688bc87@arm.com>
-Date: Wed, 7 May 2025 14:18:41 +0100
+	s=arc-20240116; t=1746623945; c=relaxed/simple;
+	bh=0aeeZzBAboUCL2dYAAmEo32zpolosp3HiSeGVBJnS+Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kXfubhgoEZRtJ5pDf6d+NtHOFGLo1EfNCXrJ3/py6qta//HRLGEN+RxPVd3Pnq2RpXYQ7bva0FrLS2CagEjCQmYCezCTteORZyM5BumPg02K49oMGzqMuwNscDn3styivhXeSCAE5zda/JAAZ/3B7lsGhwFCN3G92AYigoi54vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PysQpbFs; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b0e5f28841dso4360822a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746623943; x=1747228743; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiDDof4wiRjH13eU8HS600kti+qoQv7U6EC7ECLTvXQ=;
+        b=PysQpbFsLvNideaj9JwoHeW2LfCx1qvAp/bICsQVWkKz0xu2sxgPubKmKGhDW9ovFS
+         Z2OSc4RS/dsR5+p1S26Rq7gM9JExvc7PN6hXI0WPQkpRRtj7d/Z3FHRMwOWc+gU6lPU/
+         GaTSoqxEAMOb65Q8wSyXi11ao5ncXdqsshnASOi2LdG6nuwhic8QR/42dlzQBnsM2+1p
+         GQjUod/hJt7BAzn0zmd7X4UJ++WLTvlAu0FINp/4S85FZhPVfAmINHXlN2JLc4T+k5+2
+         VRB2U72Eg5Qj9H3raIiOOHaRHa3HNXd063tCDe9opJTzh42zl3NEo8jgeglexg89Vtcq
+         3c0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746623943; x=1747228743;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiDDof4wiRjH13eU8HS600kti+qoQv7U6EC7ECLTvXQ=;
+        b=qsHI7P89qXVO3kg08N8IObjQLMvSk3M17tbNRfj42TGD7AMp3z3CLnFk3yayppQ2s5
+         jh6WiEUAgWaPbmpIFxhzzNPPWA4jb5C5aYm2GbSPFMEclp8xO2h31d8PAbn1BOvK7D2B
+         8oapLHC4wdEEgZtCmN63rIs7ChAnxTHFoYHhNIc4bralkvI3MIrUp9nUIHfACB39+lKB
+         JIkCGUmBHc/mnvUlc/nFJUgm+U9RyxehKJmo95JyEw+Fh46WWnrMu2IahnV4TdMg8TVD
+         V86xyKGNRKdU+xYP8EAh95LpxOdLviduhtRFNk4cyz7EEZQ2K2IKeEM9cI/9j4eZx//u
+         newg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVXtD9atG4mYOEQ+AMcqOnSuGqdlfGL1b1ZW+YR4ZCPB5KiCD2mk/FtsTGCcvasLi8SVFVlrjnrnyBuUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaCW4tJp8Wv8dEzHLs0BZ4132sUB39ttK1lasBmYSJvfT+Hgeb
+	osgR+TFfSTbAhNeu4kCFsa5K6dmZn6hU392HA/Sb67f6QdcU1l7u/M+iAwULXmy4s4M1SPBW0xi
+	TxQ==
+X-Google-Smtp-Source: AGHT+IG0pbnqCOzrdthF9M4ba5aUOwNn28h6yygWEFPEB7MG/opmaX+QYIEbz4HJ6A2roFeeeso4RABRwXI=
+X-Received: from pjbse11.prod.google.com ([2002:a17:90b:518b:b0:2fe:7f7a:74b2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e84:b0:2ff:5357:1c7f
+ with SMTP id 98e67ed59e1d1-30aac28b3bcmr4899205a91.30.1746623942825; Wed, 07
+ May 2025 06:19:02 -0700 (PDT)
+Date: Wed, 7 May 2025 06:19:01 -0700
+In-Reply-To: <aBsGNPvG75KspVmp@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/panfrost: Add driver IOCTL for setting BO labels
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20250424022138.709303-1-adrian.larumbe@collabora.com>
- <20250424022138.709303-3-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250424022138.709303-3-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250505180300.973137-1-seanjc@google.com> <aBnbBL8Db0rHXxFX@google.com>
+ <aBoZpr2HNPysavjd@google.com> <aBoc0MhlvO4hR03u@google.com>
+ <aBoxcOPWRWyFIgVE@google.com> <aBsGNPvG75KspVmp@google.com>
+Message-ID: <aBtc7Y8odYFGGLrt@google.com>
+Subject: Re: [PATCH v2] KVM: SVM: Set/clear SRSO's BP_SPEC_REDUCE on 0 <=> 1
+ VM count transitions
+From: Sean Christopherson <seanjc@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Larabel <Michael@michaellarabel.com>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="us-ascii"
 
-On 24/04/2025 03:21, Adrián Larumbe wrote:
-> Allow UM to label a BO for which it possesses a DRM handle.
+On Wed, May 07, 2025, Yosry Ahmed wrote:
+> On Tue, May 06, 2025 at 08:57:36AM -0700, Sean Christopherson wrote:
+> > Sleepable spinlocks aside, the lockdep_assert_irqs_enabled() in
+> > smp_call_function_many_cond() already provides sufficient of coverage for that
+> > case.  And if code is using some other form of IPI communication *and* taking raw
+> > spinlocks, then I think it goes without saying that developers would need to be
+> > very, very careful.
 > 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-
-Minor comments below, but otherwise:
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 44 ++++++++++++++++++++++++-
->  drivers/gpu/drm/panfrost/panfrost_gem.h |  2 ++
->  include/uapi/drm/panfrost_drm.h         | 20 +++++++++++
->  3 files changed, 65 insertions(+), 1 deletion(-)
+> I think we are not talking about the same thing, or I am
+> misunderstanding you. The lockdep_assert_irqs_enabled() assertion in
+> smp_call_function_many_cond() does not protect against this case AFAICT.
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index b87f83e94eda..b0ab76d67e96 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -495,6 +495,46 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
->  	return ret;
->  }
->  
-> +static int panfrost_ioctl_set_label_bo(struct drm_device *ddev, void *data,
-> +				       struct drm_file *file)
-> +{
-> +	struct drm_panfrost_set_label_bo *args = data;
-> +	struct drm_gem_object *obj;
-> +	const char *label = NULL;
-> +	int ret = 0;
-> +
-> +	if (args->pad)
-> +		return -EINVAL;
-> +
-> +	obj = drm_gem_object_lookup(file, args->handle);
-> +	if (!obj)
-> +		return -ENOENT;
-> +
-> +	if (args->label) {
-> +		label = strndup_user((const char __user *)(uintptr_t)args->label,
+> Basically imagine that a new code path is added that does:
+> 
+> 	spin_lock_irq(&srso_lock);
+> 	/* Some trivial logic, no IPI sending */
+> 	spin_unlock_irq(&srso_lock);
+> 
+> I believe spin_lock_irq() will disable IRQs (at least on some setups)
+> then spin on the lock.
 
-Use u64_to_user_ptr()
+Yes, because the most common use case for spin_lock_irq() is to prevent deadlock
+due to the lock being taken in IRQ context.
 
-> +				     PANFROST_BO_LABEL_MAXLEN);
-> +		if (IS_ERR(label)) {
-> +			ret = PTR_ERR(label);
-> +			if (ret == -EINVAL)
-> +				ret = -E2BIG;
-> +			goto err_put_obj;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * We treat passing a label of length 0 and passing a NULL label
-> +	 * differently, because even though they might seem conceptually
-> +	 * similar, future uses of the BO label might expect a different
-> +	 * behaviour in each case.
-> +	 */
-> +	panfrost_gem_set_label(obj, label);
-> +
-> +err_put_obj:
-> +	drm_gem_object_put(obj);
-> +
-> +	return ret;
-> +}
-> +
->  int panfrost_unstable_ioctl_check(void)
->  {
->  	if (!unstable_ioctls)
-> @@ -561,6 +601,7 @@ static const struct drm_ioctl_desc panfrost_drm_driver_ioctls[] = {
->  	PANFROST_IOCTL(PERFCNT_ENABLE,	perfcnt_enable,	DRM_RENDER_ALLOW),
->  	PANFROST_IOCTL(PERFCNT_DUMP,	perfcnt_dump,	DRM_RENDER_ALLOW),
->  	PANFROST_IOCTL(MADVISE,		madvise,	DRM_RENDER_ALLOW),
-> +	PANFROST_IOCTL(SET_LABEL_BO,	set_label_bo,	DRM_RENDER_ALLOW),
->  };
->  
->  static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
-> @@ -625,6 +666,7 @@ static const struct file_operations panfrost_drm_driver_fops = {
->   * - 1.2 - adds AFBC_FEATURES query
->   * - 1.3 - adds JD_REQ_CYCLE_COUNT job requirement for SUBMIT
->   *       - adds SYSTEM_TIMESTAMP and SYSTEM_TIMESTAMP_FREQUENCY queries
-> + * - 1.4 - adds SET_LABEL_BO
->   */
->  static const struct drm_driver panfrost_drm_driver = {
->  	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
-> @@ -637,7 +679,7 @@ static const struct drm_driver panfrost_drm_driver = {
->  	.name			= "panfrost",
->  	.desc			= "panfrost DRM",
->  	.major			= 1,
-> -	.minor			= 3,
-> +	.minor			= 4,
->  
->  	.gem_create_object	= panfrost_gem_create_object,
->  	.gem_prime_import_sg_table = panfrost_gem_prime_import_sg_table,
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/panfrost/panfrost_gem.h
-> index c0be2934f229..842e025b9bdc 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gem.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
-> @@ -9,6 +9,8 @@
->  
->  struct panfrost_mmu;
->  
-> +#define PANFROST_BO_LABEL_MAXLEN	4096
-> +
->  struct panfrost_gem_object {
->  	struct drm_gem_shmem_object base;
->  	struct sg_table *sgts;
-> diff --git a/include/uapi/drm/panfrost_drm.h b/include/uapi/drm/panfrost_drm.h
-> index 568724be6628..b0445c5e514d 100644
-> --- a/include/uapi/drm/panfrost_drm.h
-> +++ b/include/uapi/drm/panfrost_drm.h
-> @@ -21,6 +21,7 @@ extern "C" {
->  #define DRM_PANFROST_PERFCNT_ENABLE		0x06
->  #define DRM_PANFROST_PERFCNT_DUMP		0x07
->  #define DRM_PANFROST_MADVISE			0x08
-> +#define DRM_PANFROST_SET_LABEL_BO		0x09
->  
->  #define DRM_IOCTL_PANFROST_SUBMIT		DRM_IOW(DRM_COMMAND_BASE + DRM_PANFROST_SUBMIT, struct drm_panfrost_submit)
->  #define DRM_IOCTL_PANFROST_WAIT_BO		DRM_IOW(DRM_COMMAND_BASE + DRM_PANFROST_WAIT_BO, struct drm_panfrost_wait_bo)
-> @@ -29,6 +30,7 @@ extern "C" {
->  #define DRM_IOCTL_PANFROST_GET_PARAM		DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_GET_PARAM, struct drm_panfrost_get_param)
->  #define DRM_IOCTL_PANFROST_GET_BO_OFFSET	DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_GET_BO_OFFSET, struct drm_panfrost_get_bo_offset)
->  #define DRM_IOCTL_PANFROST_MADVISE		DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_MADVISE, struct drm_panfrost_madvise)
-> +#define DRM_IOCTL_PANFROST_SET_LABEL_BO		DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_SET_LABEL_BO, struct drm_panfrost_set_label_bo)
->  
->  /*
->   * Unstable ioctl(s): only exposed when the unsafe unstable_ioctls module
-> @@ -227,6 +229,24 @@ struct drm_panfrost_madvise {
->  	__u32 retained;       /* out, whether backing store still exists */
->  };
->  
-> +/**
-> + * struct drm_panfrost_set_label_bo - ioctl argument for labelling Panfrost BOs.
-> + */
-> +struct drm_panfrost_set_label_bo {
-> +	/** @handle: Handle of the buffer object to label. */
-> +	__u32 handle;
-> +
-> +	/**  @pad: MBZ. */
-> +	__u32 pad;
-> +
-> +	/**
-> +	 * @label: User pointer to a NUL-terminated string
-> +	 *
-> +	 * Length cannot be greater than 4096
+> Now imagine svm_srso_vm_destroy() is already holding the lock and sends
+> the IPI from CPU 1, while CPU 2 is executing the above code with IRQs
+> already disabled and spinning on the lock.
+> 
+> This is the deadlock scenario I am talking about. The lockdep assertion
+> in smp_call_function_many_cond() doesn't help because IRQs are enabled
+> on CPU 1, the problem is that they are disabled on CPU 2.
+> 
+> Lockdep can detect this by keeping track of the fact that some code
+> paths acquire the lock with IRQs off while some code paths acquire the
+> lock and send IPIs, I think.
 
-NULL is permitted and means clear the label.
+I understand the scenario, I just don't see any meaningful risk in this case,
+which in turn means I don't see any reason to use an inferior lock type (for this
+particular case) to protect the count.  
 
-Thanks,
-Steve
-
-> +	 */
-> +	__u64 label;
-> +};
-> +
->  /* Definitions for coredump decoding in user space */
->  #define PANFROSTDUMP_MAJOR 1
->  #define PANFROSTDUMP_MINOR 0
-
+spin_lock_irq() isn't a tool that's used willy-nilly, and the usage of srso_lock
+is extremely limited.  If we manage to merge code that does spin_lock_irq(&srso_lock),
+you have my full permission to mock my ineptitude :-)
 
