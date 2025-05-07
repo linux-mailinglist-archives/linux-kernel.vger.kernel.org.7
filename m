@@ -1,262 +1,222 @@
-Return-Path: <linux-kernel+bounces-637403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D880AAD8DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B82B8AAD8E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3399188A030
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B551C23E62
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372072236E1;
-	Wed,  7 May 2025 07:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eIK7M34k"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21D82101BD;
+	Wed,  7 May 2025 07:46:39 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AD9221286;
-	Wed,  7 May 2025 07:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2421F5F6;
+	Wed,  7 May 2025 07:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746603903; cv=none; b=CIHOhBnrCXFTM6KqbtWDCgdlRS8TU9noUENFSLgbtwdBYCfOEe7qc1pofKCJryTsj3XxlJfubleSBBZWrklcRaNLFnySljQ1im+y+rOHtiVo99Oc4+RbZ00yNqKJyqF9fmAWqmUxEpcD9XTxfIFB9mzXOqQ6L/s8xNVvi0NJsVg=
+	t=1746603999; cv=none; b=tV6tsGGg9/luEb4oUKrShmAuRTDZvTqT/aZrtkSikTf6PHRMHdren3izaVi6PICpYvy2V+3wv9e4i3J4g6kKPObBlw0gfz4d9TqKUlp52xVPBlmNznJ414+/3mo8JeRgmGP4icry0NclGAxMDaPOx8y24ftGw6s4oAJrpFn39fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746603903; c=relaxed/simple;
-	bh=SQsRYLRdU71LaJ3wdeA+W6LRxPDPNV2wGe+Mwnyowgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nbe/d09VuzATvEXbT6h1pMmVwYrmQizchoQI9xxW0odOGFYyebDwHKLC0dX3rfbVZ6FeysqroLB4YpZx30uxrYhif87Fqhstl+VDEIhTn8cxfp6K3TzIhWs6cQNXYnCpJPUP0gH7WT+XE3VnhdFjossNYLyu7SeDys0EykvovS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eIK7M34k; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3876A4419B;
-	Wed,  7 May 2025 07:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746603893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h0HW6CbY74NioaSQ8ld8M44cztZr/A/kw8B41kCDVZo=;
-	b=eIK7M34kbOGrSDj67RJbY66sYJfkjUMO8K0CZTog3FdE2x5vlRgAcon+h/SWdCKOxhnmZa
-	lloNynWr58xtnndahT5HViyWiwzyZW44D4zpCJiGrtGS8ar/oNCcSV89NdU3q4XLiBriNW
-	An+emOeh1BrqFpwpyDxSBN3JdccXNUk3FqrrmuCbhE9146GEHcxJXMFgCZtlFMhgTr0OUd
-	NRln1YjsbIUpeXo43BszMw83V6hIAmBFHSJ1g57p5tqyMB0z3XDVFMdkUYkIn6xfL6n72W
-	IkYBxjpo4GXf7+lAoxNrMpk8c/oRhZmxNpHLwuMIqkDaGaUYh6qD4FI56yOU+A==
-Date: Wed, 7 May 2025 09:44:49 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: <Tristram.Ha@microchip.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Woojung Huh <woojung.huh@microchip.com>,
- Russell King <linux@armlinux.org.uk>, Vladimir Oltean <olteanv@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
- <UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2] net: dsa: microchip: Add SGMII port support
- to KSZ9477 switch
-Message-ID: <20250507094449.60885752@fedora.home>
-In-Reply-To: <20250507000911.14825-1-Tristram.Ha@microchip.com>
-References: <20250507000911.14825-1-Tristram.Ha@microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1746603999; c=relaxed/simple;
+	bh=CSJbBMxbiFZ9Dwrizn0+7PYBa9x5P9Q4GNd96rnCSSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrIX0g1lBhxbUyLqifpNTSy5goNmWc9tfR3BRUgthw96Q7kFPtbzn+hDbfiLx+kX1flvmGsfIkV8/oC604N1Mpejyp95z9ow4lG5+n4dhaa+PlRZhduTfux2TMW9uAColLaFnm65+IukPUYJ32pSRaYy4T5gFsfPVsvfILCCvMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af47d.dynamic.kabel-deutschland.de [95.90.244.125])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D000161EA1BF8;
+	Wed, 07 May 2025 09:46:24 +0200 (CEST)
+Message-ID: <98f52c3b-349f-4a32-9a47-443996c95bd5@molgen.mpg.de>
+Date: Wed, 7 May 2025 09:46:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeeifedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleehgeevfeejgfduledtlefhlefgveelkeefffeuiedtteejheduueegiedvveehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopefvrhhishhtrhgrmhdrjfgrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepf
- ihoohhjuhhnghdrhhhuhhesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: fix socket matching ambiguity between BIS and
+ CIS
+To: Yang Li <yang.li@amlogic.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250507-iso-v1-1-6f60d243e037@amlogic.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250507-iso-v1-1-6f60d243e037@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Tristram,
+Dear Yang,
 
-On Tue, 6 May 2025 17:09:11 -0700
-<Tristram.Ha@microchip.com> wrote:
 
-> From: Tristram Ha <tristram.ha@microchip.com>
+Thank you for your patch.
+
+Am 07.05.25 um 09:30 schrieb Yang Li via B4 Relay:
+> From: Yang Li <yang.li@amlogic.com>
+
+It’d be great if you could start by describing the problem.
+
+> The iso_get_sock function adds dst address matching to
+> distinguish BIS and CIS sockets.
 > 
-> The KSZ9477 switch driver uses the XPCS driver to operate its SGMII
-> port.  However there are some hardware bugs in the KSZ9477 SGMII
-> module so workarounds are needed.  There was a proposal to update the
-> XPCS driver to accommodate KSZ9477, but the new code is not generic
-> enough to be used by other vendors.  It is better to do all these
-> workarounds inside the KSZ9477 driver instead of modifying the XPCS
-> driver.
+> Link: https://github.com/bluez/bluez/issues/1224
+
+How can this patch be tested?
+
+> Signed-off-by: Yang Li <yang.li@amlogic.com>
+> ---
+>   net/bluetooth/hci_event.c | 35 ++++++++++++++++++++---------------
+>   net/bluetooth/iso.c       | 12 +++++++++---
+>   2 files changed, 29 insertions(+), 18 deletions(-)
 > 
-> There are 3 hardware issues.  The first is the MII_ADVERTISE register
-> needs to be write once after reset for the correct code word to be
-> sent.  The XPCS driver disables auto-negotiation first before
-> configuring the SGMII/1000BASE-X mode and then enables it back.  The
-> KSZ9477 driver then writes the MII_ADVERTISE register before enabling
-> auto-negotiation.  In 1000BASE-X mode the MII_ADVERTISE register will
-> be set, so KSZ9477 driver does not need to write it.
-> 
-> The second issue is the MII_BMCR register needs to set the exact speed
-> and duplex mode when running in SGMII mode.  During link polling the
-> KSZ9477 will check the speed and duplex mode are different from
-> previous ones and update the MII_BMCR register accordingly.
-> 
-> The last issue is 1000BASE-X mode does not work with auto-negotiation
-> on.  The cause is the local port hardware does not know the link is up
-> and so network traffic is not forwarded.  The workaround is to write 2
-> additional bits when 1000BASE-X mode is configured.
-> 
-> Note the SGMII interrupt in the port cannot be masked.  As that
-> interrupt is not handled in the KSZ9477 driver the SGMII interrupt bit
-> will not be set even when the XPCS driver sets it.
->
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 66052d6aaa1d..c1f32e98ef8a 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -6413,6 +6413,8 @@ static void hci_le_pa_sync_estabilished_evt(struct hci_dev *hdev, void *data,
+>   
+>   	conn->sync_handle = le16_to_cpu(ev->handle);
+>   	conn->sid = HCI_SID_INVALID;
+> +	conn->dst = ev->bdaddr;
+> +	conn->dst_type = ev->bdaddr_type;
+>   
+>   	mask |= hci_proto_connect_ind(hdev, &ev->bdaddr, BIS_LINK,
+>   				      &flags);
+> @@ -6425,7 +6427,8 @@ static void hci_le_pa_sync_estabilished_evt(struct hci_dev *hdev, void *data,
+>   		goto unlock;
+>   
+>   	/* Add connection to indicate PA sync event */
+> -	pa_sync = hci_conn_add_unset(hdev, BIS_LINK, BDADDR_ANY,
+> +
 
-[...]
+Why the extra blank line?
 
-> +
-> +static int ksz9477_pcs_read(struct mii_bus *bus, int phy, int mmd, int reg)
-> +{
-> +	struct ksz_device *dev = bus->priv;
-> +	int port = ksz_get_sgmii_port(dev);
-> +	u16 val;
-> +
-> +	port_sgmii_r(dev, port, mmd, reg, &val);
-> +
-> +	/* Simulate a value to activate special code in the XPCS driver if
-> +	 * supported.
-> +	 */
-> +	if (mmd == MDIO_MMD_PMAPMD) {
-> +		if (reg == MDIO_DEVID1)
-> +			val = 0x9477;
-> +		else if (reg == MDIO_DEVID2)
-> +			val = 0x22 << 10;
-> +	} else if (mmd == MDIO_MMD_VEND2) {
-> +		struct ksz_port *p = &dev->ports[port];
-> +
-> +		/* Need to update MII_BMCR register with the exact speed and
-> +		 * duplex mode when running in SGMII mode and this register is
-> +		 * used to detect connected speed in that mode.
-> +		 */
-> +		if (reg == MMD_SR_MII_AUTO_NEG_STATUS) {
-> +			int duplex, speed;
-> +
-> +			if (val & SR_MII_STAT_LINK_UP) {
-> +				speed = (val >> SR_MII_STAT_S) & SR_MII_STAT_M;
-> +				if (speed == SR_MII_STAT_1000_MBPS)
-> +					speed = SPEED_1000;
-> +				else if (speed == SR_MII_STAT_100_MBPS)
-> +					speed = SPEED_100;
-> +				else
-> +					speed = SPEED_10;
-> +
-> +				if (val & SR_MII_STAT_FULL_DUPLEX)
-> +					duplex = DUPLEX_FULL;
-> +				else
-> +					duplex = DUPLEX_HALF;
-> +
-> +				if (!p->phydev.link ||
-> +				    p->phydev.speed != speed ||
-> +				    p->phydev.duplex != duplex) {
-> +					u16 ctrl;
-> +
-> +					p->phydev.link = 1;
-> +					p->phydev.speed = speed;
-> +					p->phydev.duplex = duplex;
-> +					port_sgmii_r(dev, port, mmd, MII_BMCR,
-> +						     &ctrl);
-> +					ctrl &= BMCR_ANENABLE;
-> +					ctrl |= mii_bmcr_encode_fixed(speed,
-> +								      duplex);
-> +					port_sgmii_w(dev, port, mmd, MII_BMCR,
-> +						     ctrl);
-> +				}
-> +			} else {
-> +				p->phydev.link = 0;
-> +			}
-> +		} else if (reg == MII_BMSR) {
-> +			p->phydev.link = (val & BMSR_LSTATUS);
-> +		}
-> +	}
-> +	return val;
-> +}
-> +
-> +static int ksz9477_pcs_write(struct mii_bus *bus, int phy, int mmd, int reg,
-> +			     u16 val)
-> +{
-> +	struct ksz_device *dev = bus->priv;
-> +	int port = ksz_get_sgmii_port(dev);
-> +
-> +	if (mmd == MDIO_MMD_VEND2) {
-> +		struct ksz_port *p = &dev->ports[port];
-> +
-> +		if (reg == MMD_SR_MII_AUTO_NEG_CTRL) {
-> +			u16 sgmii_mode = SR_MII_PCS_SGMII << SR_MII_PCS_MODE_S;
-> +
-> +			/* Need these bits for 1000BASE-X mode to work with
-> +			 * AN on.
-> +			 */
-> +			if (!(val & sgmii_mode))
-> +				val |= SR_MII_SGMII_LINK_UP |
-> +				       SR_MII_TX_CFG_PHY_MASTER;
-> +
-> +			/* SGMII interrupt in the port cannot be masked, so
-> +			 * make sure interrupt is not enabled as it is not
-> +			 * handled.
-> +			 */
-> +			val &= ~SR_MII_AUTO_NEG_COMPLETE_INTR;
-> +		} else if (reg == MII_BMCR) {
-> +			/* The MII_ADVERTISE register needs to write once
-> +			 * before doing auto-negotiation for the correct
-> +			 * config_word to be sent out after reset.
-> +			 */
-> +			if ((val & BMCR_ANENABLE) && !p->sgmii_adv_write) {
-> +				u16 adv;
-> +
-> +				/* The SGMII port cannot disable flow contrl
-> +				 * so it is better to just advertise symmetric
-> +				 * pause.
-> +				 */
-> +				port_sgmii_r(dev, port, mmd, MII_ADVERTISE,
-> +					     &adv);
-> +				adv |= ADVERTISE_1000XPAUSE;
-> +				adv &= ~ADVERTISE_1000XPSE_ASYM;
-> +				port_sgmii_w(dev, port, mmd, MII_ADVERTISE,
-> +					     adv);
-> +				p->sgmii_adv_write = 1;
-> +			} else if (val & BMCR_RESET) {
-> +				p->sgmii_adv_write = 0;
-> +			}
-> +		} else if (reg == MII_ADVERTISE) {
-> +			/* XPCS driver writes to this register so there is no
-> +			 * need to update it for the errata.
-> +			 */
-> +			p->sgmii_adv_write = 1;
-> +		}
-> +	}
-> +	port_sgmii_w(dev, port, mmd, reg, val);
-> +	return 0;
-> +}
+> +	pa_sync = hci_conn_add_unset(hdev, BIS_LINK, &ev->bdaddr,
+>   				     HCI_ROLE_SLAVE);
+>   
+>   	if (IS_ERR(pa_sync))
 
-I'm a bit confused here, are you intercepting r/w ops that are supposed
-to be handled by xpcs ?
 
-Russell has sent a series [1] (not merged yet, I think we were waiting
-on some feedback from Synopsys folks ?) to properly support the XPCS
-version that's in KSZ9477, and you also had a patchset that didn't
-require all this sgmii_r/w snooping [2].
+Kind regards,
 
-I've been running your previous patchset on top of Russell's for a few
-months, if works fine with SGMII as well as 1000BaseX :)
+Paul
 
-Can we maybe focus on getting pcs-xpcs to properly support this version
-of the IP instead of these 2 R/W functions ? Or did I miss something in
-the previous discussions ?
 
-Maxime
-
-[1] : https://lore.kernel.org/netdev/Z6NnPm13D1n5-Qlw@shell.armlinux.org.uk/ 
-[2] : https://lore.kernel.org/netdev/20250208002417.58634-1-Tristram.Ha@microchip.com/
+> @@ -6456,13 +6459,6 @@ static void hci_le_per_adv_report_evt(struct hci_dev *hdev, void *data,
+>   
+>   	hci_dev_lock(hdev);
+>   
+> -	mask |= hci_proto_connect_ind(hdev, BDADDR_ANY, BIS_LINK, &flags);
+> -	if (!(mask & HCI_LM_ACCEPT))
+> -		goto unlock;
+> -
+> -	if (!(flags & HCI_PROTO_DEFER))
+> -		goto unlock;
+> -
+>   	pa_sync = hci_conn_hash_lookup_pa_sync_handle
+>   			(hdev,
+>   			le16_to_cpu(ev->sync_handle));
+> @@ -6470,6 +6466,13 @@ static void hci_le_per_adv_report_evt(struct hci_dev *hdev, void *data,
+>   	if (!pa_sync)
+>   		goto unlock;
+>   
+> +	mask |= hci_proto_connect_ind(hdev, &pa_sync->dst, ISO_LINK, &flags);
+> +	if (!(mask & HCI_LM_ACCEPT))
+> +		goto unlock;
+> +
+> +	if (!(flags & HCI_PROTO_DEFER))
+> +		goto unlock;
+> +
+>   	if (ev->data_status == LE_PA_DATA_COMPLETE &&
+>   	    !test_and_set_bit(HCI_CONN_PA_SYNC, &pa_sync->flags)) {
+>   		/* Notify iso layer */
+> @@ -6993,6 +6996,8 @@ static void hci_le_big_sync_established_evt(struct hci_dev *hdev, void *data,
+>   			set_bit(HCI_CONN_PA_SYNC, &bis->flags);
+>   
+>   		bis->sync_handle = conn->sync_handle;
+> +		bis->dst = conn->dst;
+> +		bis->dst_type = conn->dst_type;
+>   		bis->iso_qos.bcast.big = ev->handle;
+>   		memset(&interval, 0, sizeof(interval));
+>   		memcpy(&interval, ev->latency, sizeof(ev->latency));
+> @@ -7038,13 +7043,6 @@ static void hci_le_big_info_adv_report_evt(struct hci_dev *hdev, void *data,
+>   
+>   	hci_dev_lock(hdev);
+>   
+> -	mask |= hci_proto_connect_ind(hdev, BDADDR_ANY, BIS_LINK, &flags);
+> -	if (!(mask & HCI_LM_ACCEPT))
+> -		goto unlock;
+> -
+> -	if (!(flags & HCI_PROTO_DEFER))
+> -		goto unlock;
+> -
+>   	pa_sync = hci_conn_hash_lookup_pa_sync_handle
+>   			(hdev,
+>   			le16_to_cpu(ev->sync_handle));
+> @@ -7054,6 +7052,13 @@ static void hci_le_big_info_adv_report_evt(struct hci_dev *hdev, void *data,
+>   
+>   	pa_sync->iso_qos.bcast.encryption = ev->encryption;
+>   
+> +	mask |= hci_proto_connect_ind(hdev, &pa_sync->dst, ISO_LINK, &flags);
+> +	if (!(mask & HCI_LM_ACCEPT))
+> +		goto unlock;
+> +
+> +	if (!(flags & HCI_PROTO_DEFER))
+> +		goto unlock;
+> +
+>   	/* Notify iso layer */
+>   	hci_connect_cfm(pa_sync, 0);
+>   
+> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> index 6e2c752aaa8f..1dc233f04dbe 100644
+> --- a/net/bluetooth/iso.c
+> +++ b/net/bluetooth/iso.c
+> @@ -641,11 +641,12 @@ static struct sock *iso_get_sock(bdaddr_t *src, bdaddr_t *dst,
+>   			continue;
+>   
+>   		/* Exact match. */
+> -		if (!bacmp(&iso_pi(sk)->src, src)) {
+> +		if (!bacmp(&iso_pi(sk)->src, src)
+> +		     && !bacmp(&iso_pi(sk)->dst, dst)
+> +			){
+>   			sock_hold(sk);
+>   			break;
+>   		}
+> -
+>   		/* Closest match */
+>   		if (!bacmp(&iso_pi(sk)->src, BDADDR_ANY)) {
+>   			if (sk1)
+> @@ -1962,7 +1963,7 @@ static void iso_conn_ready(struct iso_conn *conn)
+>   		}
+>   
+>   		if (!parent)
+> -			parent = iso_get_sock(&hcon->src, BDADDR_ANY,
+> +			parent = iso_get_sock(&hcon->src, &hcon->dst,
+>   					      BT_LISTEN, NULL, NULL);
+>   
+>   		if (!parent)
+> @@ -2203,6 +2204,11 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 *flags)
+>   	} else {
+>   		sk = iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
+>   				  BT_LISTEN, NULL, NULL);
+> +		if (!sk)
+> +			sk = iso_get_sock(&hdev->bdaddr, bdaddr,
+> +					  BT_LISTEN, NULL, NULL);
+> +		else
+> +			iso_pi(sk)->dst = *bdaddr;
+>   	}
+>   
+>   done:
 
