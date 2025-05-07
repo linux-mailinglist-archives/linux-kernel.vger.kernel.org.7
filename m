@@ -1,178 +1,175 @@
-Return-Path: <linux-kernel+bounces-638211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5019DAAE2AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED68EAAE2CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EE827B5BFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B89446335A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA7128A710;
-	Wed,  7 May 2025 14:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0A28C2DA;
+	Wed,  7 May 2025 14:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qYIOaCWp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHUXyZA3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qYIOaCWp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHUXyZA3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="V7JN6WA3"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EA9289362
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F7928C2A4
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627254; cv=none; b=DIE5utM5nwWG+Coe2kgMus1Swf7GXjBm927or2QI3QBqsMTvKafokvHsLAyDseXvUr0rZtNY5dKe2K9yTJrFCXtc8KxbJUNUonvTyPLTKuW3l5kPXNzgTBD0/wqnbdJF4IkYHgVSkQvqcIy1oyPtCJrcq5LXQv61Ei0p0vtOFFY=
+	t=1746627325; cv=none; b=Fj5GKYVp7EqoKGVTIGhfBH7RMT0+Skb0NCrkdxEp7RI+4anwo+wk006rxvyDMgvKzqs1wnxzn02ENoy1484Rah1NWLJHF83rfczcS2CvXLhpuYqj99CN3wTI586htGZS96BXzQ3xufmN0pvwe4LnSjo/83nBeTmZA0HBDcOMWH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627254; c=relaxed/simple;
-	bh=U7pBCzrIW0KnwzsJGeK5F1oB8PzHqIO1Cc82hD+Rhmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oD9vRPer0ummn/F696HRixKDVEew1+0kjkp2CGkz3O1Ichjw260IxPLJOOA300Ku5eHHuRlSaXSmmdiYHPA3o7NX7C3iNMf1IOCzKiYZZmVaCKgwIdPrpDByrywgGmWxKgs8IJtp6BZBX+ycFL7vzQhqFkwyMs3YlyuPKe7tyqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qYIOaCWp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHUXyZA3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qYIOaCWp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHUXyZA3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 327D32123B;
-	Wed,  7 May 2025 14:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746627251;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4F+lmQfDzO1utDvoQ1V5GTpLQaeGDhuvUOdxa8KD7cw=;
-	b=qYIOaCWpZhsLWlZo/yD0frKhX34LnLUxbyzDb1Sgc7aNDXDJlftxrAC11MxDHz2zYSXYFj
-	QJZV07n8aU9/zKlKW0ZV1OVHpaYsRPwKIoJ4RFseACkI5t0HP6DWRZ0Lsb4Qt8NNGPS6uM
-	9xfUcRIzsagfglNWCPh4g0AbseKCH/A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746627251;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4F+lmQfDzO1utDvoQ1V5GTpLQaeGDhuvUOdxa8KD7cw=;
-	b=xHUXyZA3cF4kNzY9ScKBML+wdF77e+nolc3cO0OXB6b9J0gHp8Mn6XOoDFRip/3ipjG5NT
-	9p63X72vH6ywr2Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qYIOaCWp;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=xHUXyZA3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746627251;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4F+lmQfDzO1utDvoQ1V5GTpLQaeGDhuvUOdxa8KD7cw=;
-	b=qYIOaCWpZhsLWlZo/yD0frKhX34LnLUxbyzDb1Sgc7aNDXDJlftxrAC11MxDHz2zYSXYFj
-	QJZV07n8aU9/zKlKW0ZV1OVHpaYsRPwKIoJ4RFseACkI5t0HP6DWRZ0Lsb4Qt8NNGPS6uM
-	9xfUcRIzsagfglNWCPh4g0AbseKCH/A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746627251;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4F+lmQfDzO1utDvoQ1V5GTpLQaeGDhuvUOdxa8KD7cw=;
-	b=xHUXyZA3cF4kNzY9ScKBML+wdF77e+nolc3cO0OXB6b9J0gHp8Mn6XOoDFRip/3ipjG5NT
-	9p63X72vH6ywr2Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0EACD139D9;
-	Wed,  7 May 2025 14:14:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0P8RA7NqG2jJUgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 07 May 2025 14:14:11 +0000
-Date: Wed, 7 May 2025 16:14:09 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Venkat <venkat88@linux.ibm.com>, quwenruo.btrfs@gmx.com,
-	linux-btrfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
-	ritesh.list@gmail.com, disgoel@linux.ibm.com,
-	David Sterba <dsterba@suse.com>
-Subject: Re: [linux-next-20250320][btrfs] Kernel OOPs while running btrfs/108
-Message-ID: <20250507141409.GG9140@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <0B1A34F5-2EEB-491E-9DD0-FC128B0D9E07@linux.ibm.com>
- <CAL3q7H7PqVRnDuooSr6OhvUQ3G5V2gq6VEDpqTqNX9jHmq97aw@mail.gmail.com>
+	s=arc-20240116; t=1746627325; c=relaxed/simple;
+	bh=RKMneX1wQOhwOyRqZHFY/RTQfW6urNlhtUZHaTk0CvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PzNmKVt3zonDubRLA/9gwWKEILuvOCbxxllmCtZUFC9jNkJFY1zLx4jBW5ZjGtqu9COYBLpajqUxSXu0aAMISLhigVGo7qvW2PF9ieNhknD2ntyOC1ptG6nbvXCpYh9R1aWO1zznBb5T9kNdAz5uUYvQsvFP5axUo8WakAtDKg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=V7JN6WA3; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30ddad694c1so74074481fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1746627321; x=1747232121; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kbahxvpfkE5SUIJ9O+RAhHkMsjfPizkD68mJarweeM=;
+        b=V7JN6WA3kO9kuBo1l87bOyniRKlsIKllpzU1KwqWf2Pl1IGYAFv2HWs3Z0OZpWqIWP
+         2wtHHx1HtCiliJ0eFha76/mlGh8as/sNzPBj/PACgPiRfa7S4Gqs40L1wGiDLee5aLeS
+         tN66l8tHbbLNdhJsmgKsnsLXvjSPqK9xctC/A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746627321; x=1747232121;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8kbahxvpfkE5SUIJ9O+RAhHkMsjfPizkD68mJarweeM=;
+        b=UcL8S4neYzmDeXcR2Voq5fauxNbnWxci1opn6NhW+DZK3lZ4Wsq+AOYtJh1Rhfm3Yu
+         TaJImP9vnAXd/MnU14J1QFobm5ybU+jlQg5OK0slszP81VAumEf3H7muGY3uqlwLAo2W
+         7zsp89O/kptHsdwaHaL8qKLiEm3FSx0vWgFSTCmGV1gT1sGtquqHHQL3Ey2M4bpZKwLx
+         i76DzilCRt/fRDsVdTfUvpoLx5031CBoKwSLoiHmMvC6obAlUiheijIAdg46nSwI8Au6
+         w5QaR9T6rrlDUWM8ApLFph/vwFOEeIgByJFDap09tSZCtPbit6KTrh+5n+zD2fkPbVnO
+         Q2UQ==
+X-Gm-Message-State: AOJu0YwzY98zZw9NrKpe3xOdz6JWPymUeWftPIJlIwi+q/7XRWinbi0g
+	z7EtHo1SO0sIbQAT1nkGOBfRdrZYHtmNhdu+94IdUgqLyLJLQPoh4Iy1u/qJg79JKF69mGgXs6I
+	M
+X-Gm-Gg: ASbGnctBJ4sfSduX9nayQIkC3/7HGALBAx3g1WHJWmjZbj1q8ivnzHu1J02RE+S66l2
+	h6qOMPr2EK+ITQfECUNLMh+YbP+fNeF/PD8WoiDg2as1Qqq3r9Fwofa3wSX5GoJtoc4Vg+J8ueH
+	9kT3cvSR9xvhHnFyc7YfQh/pbATzmiMz790/M48ye7OAYS/vzocjGVXY40UJje28qF+qaszgUvZ
+	/Rdpqe+66EScoTpxnH5sNnKv4sQJeMPYM8CpOXXjqPt0VqeMz3GNS5LaWCyIZIbWWMtJIju3jN1
+	Dr66RtIUzPkjVNF/DCCW4qW3OwA/FegMvDZHyh66GZRq7ehh9hEhKBuoYRJhZq8m53T914j5Khl
+	9qYt74x2w7VYdeRSbGDquYNglOdHSaw==
+X-Google-Smtp-Source: AGHT+IHdlj7CpNVBpX0ik+NG/wdlK6dMWu7TW5P7ZwM+3Yc0y5PuGMTHr+/cHr3uiayAfwmPefwgnQ==
+X-Received: by 2002:a17:907:2d23:b0:ac7:4d45:f13e with SMTP id a640c23a62f3a-ad1e8bc3151mr378991766b.13.1746627310389;
+        Wed, 07 May 2025 07:15:10 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.43.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1894c02f3sm927944966b.92.2025.05.07.07.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 07:15:10 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: mxs: use padconfig macros
+Date: Wed,  7 May 2025 16:14:58 +0200
+Message-ID: <20250507141504.1332054-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL3q7H7PqVRnDuooSr6OhvUQ3G5V2gq6VEDpqTqNX9jHmq97aw@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 327D32123B
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,gmx.com,vger.kernel.org,lists.ozlabs.org,gmail.com,suse.com];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Score: -1.71
 
-On Wed, May 07, 2025 at 02:04:47PM +0100, Filipe Manana wrote:
-> On Wed, May 7, 2025 at 10:02 AM Venkat <venkat88@linux.ibm.com> wrote:
-> >
-> > +Disha,
-> >
-> > Hello Qu,
-> >
-> > I still see this failure on next-20250505.
-> >
-> > May I know, when will this be fixed.
-> 
-> The two patches pointed out before by Qu are still being added to linux-next.
-> Qu reported this on the thread for the patches:
-> 
-> https://lore.kernel.org/linux-btrfs/0146825e-a1b1-4789-b4f5-a0894347babe@gmx.com/
-> 
-> There was no reply from the author and David added them again to
-> for-next/linux-next.
-> 
-> David, can you drop them out from for-next? Why are they being added
-> again when there were no changes since last time?
+Convert mx2{3,8} dts files to use the padconfig macros defined in
+mxs-pinfunc.h.
 
-The patches have been there for like 4 -rc kernels without reported
-problems. I will remove them again.
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
+
+ arch/arm/boot/dts/nxp/mxs/imx23-sansa.dts    |  6 +++---
+ arch/arm/boot/dts/nxp/mxs/imx23-xfi3.dts     | 12 ++++++------
+ arch/arm/boot/dts/nxp/mxs/imx28-cfa10036.dts |  6 +++---
+ 3 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx23-sansa.dts b/arch/arm/boot/dts/nxp/mxs/imx23-sansa.dts
+index cb661bf2d157..613f13b6c8a8 100644
+--- a/arch/arm/boot/dts/nxp/mxs/imx23-sansa.dts
++++ b/arch/arm/boot/dts/nxp/mxs/imx23-sansa.dts
+@@ -93,9 +93,9 @@ MX23_PAD_LCD_DOTCK__GPIO_1_22
+ 						MX23_PAD_LCD_HSYNC__GPIO_1_24
+ 						MX23_PAD_PWM3__GPIO_1_29
+ 					>;
+-					fsl,drive-strength = <0>;
+-					fsl,voltage = <1>;
+-					fsl,pull-up = <0>;
++					fsl,drive-strength = <MXS_DRIVE_4mA>;
++					fsl,voltage = <MXS_VOLTAGE_HIGH>;
++					fsl,pull-up = <MXS_PULL_DISABLE>;
+ 				};
+ 			};
+ 		};
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx23-xfi3.dts b/arch/arm/boot/dts/nxp/mxs/imx23-xfi3.dts
+index 0b088c8ab6b6..fad08f6c008f 100644
+--- a/arch/arm/boot/dts/nxp/mxs/imx23-xfi3.dts
++++ b/arch/arm/boot/dts/nxp/mxs/imx23-xfi3.dts
+@@ -83,9 +83,9 @@ hog_pins_a: hog@0 {
+ 					fsl,pinmux-ids = <
+ 						MX23_PAD_GPMI_D07__GPIO_0_7
+ 					>;
+-					fsl,drive-strength = <0>;
+-					fsl,voltage = <1>;
+-					fsl,pull-up = <0>;
++					fsl,drive-strength = <MXS_DRIVE_4mA>;
++					fsl,voltage = <MXS_VOLTAGE_HIGH>;
++					fsl,pull-up = <MXS_PULL_DISABLE>;
+ 				};
+ 
+ 				key_pins_a: keys@0 {
+@@ -94,9 +94,9 @@ key_pins_a: keys@0 {
+ 						MX23_PAD_ROTARYA__GPIO_2_7
+ 						MX23_PAD_ROTARYB__GPIO_2_8
+ 					>;
+-					fsl,drive-strength = <0>;
+-					fsl,voltage = <1>;
+-					fsl,pull-up = <1>;
++					fsl,drive-strength = <MXS_DRIVE_4mA>;
++					fsl,voltage = <MXS_VOLTAGE_HIGH>;
++					fsl,pull-up = <MXS_PULL_ENABLE>;
+ 				};
+ 			};
+ 		};
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-cfa10036.dts b/arch/arm/boot/dts/nxp/mxs/imx28-cfa10036.dts
+index d004b1cbb4ae..f170df37b3f8 100644
+--- a/arch/arm/boot/dts/nxp/mxs/imx28-cfa10036.dts
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-cfa10036.dts
+@@ -102,9 +102,9 @@ mmc_pwr_cfa10036: mmc_pwr_cfa10036@0 {
+ 			0x31c3 /*
+ 			MX28_PAD_PWM3__GPIO_3_28 */
+ 		>;
+-		fsl,drive-strength = <0>;
+-		fsl,voltage = <1>;
+-		fsl,pull-up = <0>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_DISABLE>;
+ 	};
+ };
+ 
+-- 
+2.43.0
+
+base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+branch: modify-mx28-pad
 
