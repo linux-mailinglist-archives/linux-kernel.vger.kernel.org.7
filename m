@@ -1,107 +1,87 @@
-Return-Path: <linux-kernel+bounces-638115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D87AAE1B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEC8AAE198
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C71143A3328
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3A01C40DD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EDB28B40F;
-	Wed,  7 May 2025 13:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aLlV+rCS"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5E286D64;
+	Wed,  7 May 2025 13:52:07 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0CF28A1E4;
-	Wed,  7 May 2025 13:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D77289E33;
+	Wed,  7 May 2025 13:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625960; cv=none; b=mEpkIbkwR5AYaZgRbdmMLA9MoReQW50exCC07NNytZZySoWeSSsoYpF/9yXCGSEOr/xcJwGa79wDLEwEll7bOjmzCYMFMmc+4eJfi1OeO219YeTh5/mGogHwfr48vLojHP/k33mGJySuOLMPYl0LU29QN8o0lWsd1tNCEYx9BoM=
+	t=1746625927; cv=none; b=Fevmm0zx+WLjQ6bnWc3PrOcgZy3Ae3ZA2XPLatbISJhbTsL+sTyAVK6MCaSBaWeegMxsm+H/fqHFsNpF6Rej9wVefeNJBYCKFuM2tgH038VBE5VuMe0ASRQkyhCMGZZ/zOIWh/38TXsYw2p8G6OZ9ncZzHAaAyMU9MDt5m14pOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625960; c=relaxed/simple;
-	bh=FFX+dl/GhsusXaQJ5VK1uk9708RlbzuTFb6DU2mI0N4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRwa78BrLzccqfBbLHrvbMuk4svBWZJeO//p2TSpVJY5WTtXPIO4/qRq3KNHZwh9iTnLhS7rgHCak8nypsYP3Fywjin9vO5Gbv3qlm2ttEGc/SuGT5YIvAJIt1o8qOURwdzBN92NPwjaVNKYj+IoDr+cFNhRtbBTgwWXYd5seYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aLlV+rCS; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 547DqEwB828907
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 7 May 2025 08:52:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746625934;
-	bh=qjPNmdnxXBiIPY12FlXpuGsba5Ly/JzhgqEh19IK/qs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=aLlV+rCS4UXbBRkkQGHsgQTtC8TBe08x9WPBgrBV7dGGYurJQ79bZtmlgY4nZDPn5
-	 rQyhSYA5xFwtBFO+XheQdWIysa51siZ0+ItsG1uwoUtyNB5Fk8UHDZUXH8k/sQv192
-	 AOmfc8HVi50LfduXmpxtKNcHQoeXVhUiI/pzg/xA=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 547DqEno009511
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 May 2025 08:52:14 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- May 2025 08:52:13 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 May 2025 08:52:13 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 547DqDpr032312;
-	Wed, 7 May 2025 08:52:13 -0500
-Date: Wed, 7 May 2025 08:52:13 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Guillaume La Roque <glaroque@baylibre.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Andrew Davis <afd@ti.com>, <vishalm@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: Kconfig.platforms: remove useless select for
- ARCH_K3
-Message-ID: <20250507135213.g6li6ufp3cosxoys@stinging>
-References: <20250504-kconfig-v1-1-ab0216f4fa98@baylibre.com>
- <20250505123615.yqzdv7dlel7kyojf@degrease>
- <fa33b7d6-8e28-40bc-9219-41dab643e88f@baylibre.com>
- <b1949ec7-a0b3-4c4c-a439-93afced7bb0c@baylibre.com>
+	s=arc-20240116; t=1746625927; c=relaxed/simple;
+	bh=CbDm41Tf/oUefKTycomGEUjeLYQT4F4RYLJYctJWcN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gVSz/I8MzJ4TpfZJ4AwbyGFKyCe2L4lssRYQrf1HZkvO/3doXhy4jpAZgbLy8ZABg0Zn76cgOdpCkwJbwqj2w6v/j7wsmr8Y4aH66knFSxDUg2Uf7ntslX/lJt8MPJYSlJVWf7uNRsE0GgbHlCmW9p2w4gRR/sXywael7pdH4KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38002C4CEE2;
+	Wed,  7 May 2025 13:52:06 +0000 (UTC)
+Date: Wed, 7 May 2025 09:52:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tom Zanussi <zanussi@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Miaoqian Lin
+ <linmq006@gmail.com>, Mathieu Desnoyers  <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Fix error handling in event_trigger_parse
+Message-ID: <20250507095215.26493050@gandalf.local.home>
+In-Reply-To: <02549e50e26565ffb54ea943af87c19f40692576.camel@kernel.org>
+References: <20250318112737.4174-1-linmq006@gmail.com>
+	<20250319090650.fe63164eac3ac32bb559ffc8@kernel.org>
+	<02549e50e26565ffb54ea943af87c19f40692576.camel@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1949ec7-a0b3-4c4c-a439-93afced7bb0c@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 15:28-20250507, Guillaume La Roque wrote:
-> Hi Nishanth,
+On Wed, 19 Mar 2025 14:03:03 -0500
+Tom Zanussi <zanussi@kernel.org> wrote:
+
+> In both these cases, the code calls kfree() directly in order to avoid
+> the WARN_ON_ONCE(data->ref) check.
 > 
-> if i remove MAILBOX it's  enabled by some  non TI drivers and/or ARCH_XXX
-> which have it in deps so all TI drivers are still enabled properly but not
-> sure it's safe.
-> and PM_GENERIC_DOMAINS look OK to remove it.
+> In the first case (remove), trigger_data is only being used as a test
+> object and will never have data->ref incremented.
 > 
-> if i try a defconfig based on android defconfig (more simple than default
-> defconfig) with only ARCH_K3 enabled i need to set CONFIG_MAILBOX flag to
-> still have same TI drivers enabled.
-> let me know what you want to do.
+> The second case is the failure case, which is also dealing with a
+> trigger_data object that hasn't been successfully registered and
+> therefore has a 0 data->ref.
+> 
+> So perhaps the event_trigger_alloc doc should be changed to something
+> like:
+> 
+> "Use event_trigger_free() to free a successfully registered
+> event_trigger_data object."
 
+I was trying to get this patch in, and realized that the code is all messed
+up.
 
-Let us drop both from the select statement - from our K3 perspective
-there is no longer a need for them to be built-in. Thank you for working
-through this.
+event_trigger_alloc() creates a event_trigger_data which needs to be freed
+by trigger_data_free() NOT event_trigger_free()!
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+I'm renaming event_tigger_alloc() to trigger_data_alloc(), and changing
+this patch to just call trigger_data_free() on error.
+
+One day, if I get time, I need to rewrite the event trigger code, as it's
+really confusing to deal with! Trying to follow the function pointers that
+get called via init, reg, unreg, etc between struct event_command and
+struct event_trigger_ops is just a nightmare!
+
+-- Steve
 
