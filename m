@@ -1,131 +1,179 @@
-Return-Path: <linux-kernel+bounces-638265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67420AAE34C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:42:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AC4AAE34F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260D49C2A12
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE5F9C2E04
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EDF289E2F;
-	Wed,  7 May 2025 14:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8E3289374;
+	Wed,  7 May 2025 14:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nh62yrhR"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="GGpJfSiD"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBD0289E1B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA7C28136B
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746628558; cv=none; b=qYZNlE5V0lWHrG+ROtskceRGkHrrkqtKzM5nVKFQvN0dVVqGla+yfGDNVpYElZ6LKcylWnEo1SYhHZOsnLKR9UAIXxX76foIdwlQloh2SoDhtYx8m8o243WVbL2YgdfUm1/V+JFxOHxR5x8tMKSP4OyBLoQM900kWwa+6W2CqdE=
+	t=1746628594; cv=none; b=ZKtnI0VmwCWv2SzZIbh6KpSKRZ5GewKgi308YUusrZwmoo0VC6PgfGMn/PXL3LsYlHCG3EKkM94IfdRdJxaDN8OZotFxqtJby3vUCRLNGUCT9UP6VNsJKoam/oATxgthiafjDQcOcSNmvwl0bLeUgfkKg3dt50ECGpuhDpn+vlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746628558; c=relaxed/simple;
-	bh=1vJaV5IB3PQLrcO3XwAI003ot8u30fZLIj9vvrH7iAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KgzUiL3Vg41vxxO5q8NdAIz6ouA0Vo+ASdxEPoAAZACxtUIx/zCE/EHkO3Zae3by11LT85qVthFYoqDu0YiOQjSJTgV87K2xQqW3Zp+ceUV3w9cyUrO/yOyBqEBpjILIdYg4ds2UhhgmaleiWr2rEsw5dALCS7Pkmh+yx62T1EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nh62yrhR; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-441d1ed82faso13833125e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:35:56 -0700 (PDT)
+	s=arc-20240116; t=1746628594; c=relaxed/simple;
+	bh=fVlSFbG3u628EYseVWSf4N6fNlIkvPxjlWaKQ+obPNo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=ctY/zezNTm6PpOgdFiwj+JNGRom0Qkeyl3hcHkmHwOXUw4BGCzlMrpPO+byMghXThEbpEEYUkJLDB4A+bH8ToX3vqDpVDgVKTqYCMeDSzsm/QuJ4J5CFMbF0LI0AXPjBeKWMYiWBVP/WaLN3SHo6/JnsrwX0bSaBJBuOFKQTRnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=GGpJfSiD; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a0b0d8090dso176081f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746628554; x=1747233354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZP+vwFNWuh5ghEI4qOKuQl+IJHm3W7oUZPfVYjUgRU=;
-        b=nh62yrhRcUjU+nz7qykKCBu474EfYvXE1KqrWFiUo06p9xJSHYzeRYXSXfzCt5mh1/
-         T/i0e5UhCuosauWgV2Zk0Wivpx1RvSIMnvNG2g5QNWXiOv4l313YkWn5FguiVjTwkm4C
-         bPGOQnAF9k9A8rehzSSfPor7ESRVu3iuYTVzrM47gcrg0tvTwLt2RGgrA3wgtWXe8Tgk
-         0UMp7SNyoT6ZppBYl/9Xpav+8YKoVcRlX7QSeRyC9YMrvKWR+hZPi10MUc+N4B8AQOej
-         3jozzO6V6rYShCF4zyPOgkW2OGqXsN6vt8JVl+Kaji1mjX5YHaK+nJSIK62Rzm8K0v6u
-         Zhvg==
+        d=ventanamicro.com; s=google; t=1746628591; x=1747233391; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ziqHwwsRYBlnOytFFSvfeo7+WCPTNxHeZbIxMBlJdhs=;
+        b=GGpJfSiDkF+av8Huk4dE9niZ99bCkYcYkCWrZbetJrdHyzZxjyLSN4DT6E1eJrTjAr
+         EYvegDuqJtBtE/L2W+JIfJkA9r3eZPAi9OE4GsB0LdiUJapHnYU0drsD6Fh+/GwXrwJ6
+         D+ZaDKxlf9vhbJApMTqwGQ7PeiUEtsBGaPd6DdHB0j8Z5HWPRqbYSQcJN1j2YV3yi/5l
+         IXaIlKuL2qAas8IkLSfCuW0cHIH9KCIkD4AR90f0pA8O6p9rjIb9EoNjNVDsA5crd+54
+         xgn7M30UZd0wsyQmLIKpb/Tm1VeLA20t0J8KyKrEBst1YeK86p7g4D80bTCn/eOltZkn
+         ILEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746628554; x=1747233354;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PZP+vwFNWuh5ghEI4qOKuQl+IJHm3W7oUZPfVYjUgRU=;
-        b=HACjuVroveU7QmO0Go9FuX0fduiBGVV9YODmXuB7IRpso9cTDidgoFAksMeEvBqWKc
-         X8L2834h0TLU2FaXtsXioV765ALSkQIYjPD+O4EUZvvy0jti2fXk4bAeK/4S4j/k+c7W
-         rQOs7Oy0aRVr03aRgq1CcyN1/ApDJJ1EaMfWnwwb/exs4zu0dV1TgozFbe680QRMGSVj
-         W6rO+NB3+dX3NzahZK7ureaI4S7psQRRfvFeDlbCEL/8tZrNXpx2qvLbU7Z9TVfFHNhg
-         aFgRiBqTsl62lmvRGQmIRrJ6sOOOAGTuhi3oP9ALiWqhwPX2MKk1auHQlYQUC24qPogm
-         guVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUywf/h0Ws6maxut5pcRMruH34qG+Z4VByl4NGRq8aMFU0C6pkLTnMcM7K6QdUeV0xrQm5pekcEmk+CRz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHfbj7ptbE1TdSu2CCKa5O7Cf5jwqTylzUA/WHAGLvH0I/ESeY
-	xQ1KqlkceTmXyX4Sng+ZXaBqbYGWGS1thUyGuleHOnKmDXB21IajW0EjY0ozea0=
-X-Gm-Gg: ASbGnct7akHsEm81/PWVM9myZ0uuPDu4w13v3tl+RSbSVZJROdIQvVdmtDKaPRxWSrw
-	H5Uu811PhipDQgfmz9M9ZAZH6Gm2j82+ENsyDslK2ccjYD0JribL1q/mncbw6SP5W2wUdq9fc7N
-	NdiZ2RVdNcwx04Z0xZzcPHNhXzMD7tnpLNWhyE7DvBglTDfeDuWPwjhU2e0RRxLas6zw5J7PjLt
-	XM5p4vNGwQ0kETbhTvmUsfe067hRCHrvR9eDQguJ6QBlLhARiAN/zjdpy81QBU7zHO49FaDNU8/
-	lZkWRibgybryjn9zHBrEAg2UPqIlIuvlLcYhYpe/lw==
-X-Google-Smtp-Source: AGHT+IFha+RZUAi+OttzpPGZymHN1i6U1q2b9g+xVfZMh7twm5F69jMyZbgHMqWJlmduu30guOSv0g==
-X-Received: by 2002:adf:a458:0:b0:3a0:b53a:7b3b with SMTP id ffacd0b85a97d-3a0b53a7b97mr1913697f8f.12.1746628553963;
-        Wed, 07 May 2025 07:35:53 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b323:3744:4800:6909])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b9322eb9sm123475f8f.3.2025.05.07.07.35.53
+        d=1e100.net; s=20230601; t=1746628591; x=1747233391;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ziqHwwsRYBlnOytFFSvfeo7+WCPTNxHeZbIxMBlJdhs=;
+        b=cHhHuSJLIHS/gGfHlCpWTD4Ig4ao8iIRkgGeU3W3EJpMZx0teoY7tVHVzS0cShB30B
+         /XfcrCnmbZ1Z4ytVX1QcButmq/A3Qlxmly8lD+MR45OZyd6BdsEGf96KMPiBAf19oGJl
+         JvJB1WS3RFsbxhWJWhzVoxaxFiyV8UVx81Y2PsWoq1yic0zZNp30mYTLiHeNdA6+BDvT
+         LKhyM3ImGzgcGrexiNcm8ojflIjMInz0tMYN3SIJ5UWZ8QJ9GAZ1+p8DRKSVKVyDIrsY
+         NqySysGFBqjAxFfcabZ4z6q4fDYemYM9XFKHSlEganAvvgmFkkFo19+aqPUkw7aPIK4E
+         96Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUbrUUhw/xhbU6u93hSLm854SDapGwD15iKhYXz3xiYO7xmvONeGHFitfjfUi5QR++V+DU6wODgIunvPMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvom6mMcSKtg1//tK08LzElIJy7bYjcOZdj5V7sSAlqRERhfEg
+	jDWlMQgEKR8VpMkYjyX3Gf/HdNZyrJV/rY9pNLTiNcJQE5DKphbxGekUzUwqTLU=
+X-Gm-Gg: ASbGnctCjIxS2Gy/P/hocXgEq90ARfUya+QNR1Pt9lZsn6E70tRvnl2tPH3jnnJBSL1
+	98wdTNrlty44oM7j8ct4vTR18BxWbG16z48UQRR43VUYU9HGLmWQ3JXLytOlDtijSbx3ixQkdfU
+	PPpolcVvjP9KWjGED6Aokyz9xOkdn+VaMMkHgIRpQV4qlSGvYu98d5zvc62UyMgpgY7nhyDmR8p
+	v9IvVW/U4pvRuK2ZaxLicbT0ftjhJksPAMNgCsB0IplCrAkMJBPQZsMulaaYkStzkeOBTbNntKU
+	yvfKLmspmEbRZRJtyUH8KxgmJoKDOHxLgTGBWhv4msDKvAeR
+X-Google-Smtp-Source: AGHT+IEajZZzNeyoeib2XsmQjInc2KEWeUmYjGy4p5Qc/30lHXvX26EPvLDj1a/b0VLqz2Zq6F2iCA==
+X-Received: by 2002:a5d:64e2:0:b0:3a0:7e53:b52d with SMTP id ffacd0b85a97d-3a0b4a69bdamr1109869f8f.15.1746628590982;
+        Wed, 07 May 2025 07:36:30 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:f39f:9517:bfc5:cd5e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b0efbfsm17536249f8f.69.2025.05.07.07.36.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 07:35:53 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] pinctrl: add stubs for OF-specific pinconf functions
-Date: Wed,  7 May 2025 16:35:51 +0200
-Message-ID: <20250507143551.47056-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+        Wed, 07 May 2025 07:36:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 May 2025 16:36:30 +0200
+Message-Id: <D9Q05T702L8Y.3UTLG7VXIFXOK@ventanamicro.com>
+Cc: <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
+ <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+To: "Atish Patra" <atish.patra@linux.dev>, "Anup Patel"
+ <anup@brainfault.org>, "Atish Patra" <atishp@atishpatra.org>, "Paul
+ Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Alexandre Ghiti" <alex@ghiti.fr>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH 0/5] Enable hstateen bits lazily for the KVM RISC-V
+ Guests
+References: <20250505-kvm_lazy_enable_stateen-v1-0-3bfc4008373c@rivosinc.com> <D9OYWFEXSA55.OUUXFPIGGBZV@ventanamicro.com> <bc0f1273-d596-47dd-bcc6-be9894157828@linux.dev>
+In-Reply-To: <bc0f1273-d596-47dd-bcc6-be9894157828@linux.dev>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2025-05-06T11:24:41-07:00, Atish Patra <atish.patra@linux.dev>:
+> On 5/6/25 2:24 AM, Radim Kr=C4=8Dm=C3=A1=C5=99 wrote:
+>> 2025-05-05T14:39:25-07:00, Atish Patra <atishp@rivosinc.com>:
+>>> This series adds support for enabling hstateen bits lazily at runtime
+>>> instead of statically at bootime. The boot time enabling happens for
+>>> all the guests if the required extensions are present in the host and/o=
+r
+>>> guest. That may not be necessary if the guest never exercise that
+>>> feature. We can enable the hstateen bits that controls the access lazil=
+y
+>>> upon first access. This providers KVM more granular control of which
+>>> feature is enabled in the guest at runtime.
+>>>
+>>> Currently, the following hstateen bits are supported to control the acc=
+ess
+>>> from VS mode.
+>>>
+>>> 1. BIT(58): IMSIC     : STOPEI and IMSIC guest interrupt file
+>>> 2. BIT(59): AIA       : SIPH/SIEH/STOPI
+>>> 3. BIT(60): AIA_ISEL  : Indirect csr access via siselect/sireg
+>>> 4. BIT(62): HSENVCFG  : SENVCFG access
+>>> 5. BIT(63): SSTATEEN0 : SSTATEEN0 access
+>>>
+>>> KVM already support trap/enabling of BIT(58) and BIT(60) in order
+>>> to support sw version of the guest interrupt file.
+>> I don't think KVM toggles the hstateen bits at runtime, because that
+>> would mean there is a bug even in current KVM.
+>
+> This was a typo. I meant to say trap/emulate BIT(58) and BIT(60).
+> This patch series is trying to enable the toggling of the hstateen bits=
+=20
+> upon first access.
+>
+> Sorry for the confusion.
 
-Allow building drivers using these interfaces with COMPILE_TEST enabled
-and OF disabled by providing stub definitions.
+No worries, it's my fault for misreading.
+I got confused, because the code looked like generic lazy enablement,
+while it's really only for the upper 32 bits and this series is not lazy
+toggling any VS-mode visible bits.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505072245.OgSXI1hh-lkp@intel.com/
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/pinconf.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+>>>                                                     This series extends
+>>> those to enable to correpsonding hstateen bits in PATCH1. The remaining
+>>> patches adds lazy enabling support of the other bits.
+>> The ISA has a peculiar design for hstateen/sstateen interaction:
+>>
+>>    For every bit in an hstateen CSR that is zero (whether read-only zero
+>>    or set to zero), the same bit appears as read-only zero in sstateen
+>>    when accessed in VS-mode.
+>
+> Correct.
+>
+>> This means we must clear bit 63 in hstateen and trap on sstateen
+>> accesses if any of the sstateen bits are not supposed to be read-only 0
+>> to the guest while the hypervisor wants to have them as 0.
+>
+> Currently, there are two bits in sstateen. FCSR and ZVT which are not=20
+> used anywhere in opensbi/Linux/KVM stack.
 
-diff --git a/drivers/pinctrl/pinconf.h b/drivers/pinctrl/pinconf.h
-index a171195b36159..e1ae716105261 100644
---- a/drivers/pinctrl/pinconf.h
-+++ b/drivers/pinctrl/pinconf.h
-@@ -142,4 +142,21 @@ int pinconf_generic_parse_dt_config(struct device_node *np,
- int pinconf_generic_parse_dt_pinmux(struct device_node *np, struct device *dev,
- 				    unsigned int **pid, unsigned int **pmux,
- 				    unsigned int *npins);
-+#else
-+static inline int
-+pinconf_generic_parse_dt_config(struct device_node *np,
-+				struct pinctrl_dev *pctldev,
-+				unsigned long **configs,
-+				unsigned int *nconfigs)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int
-+pinconf_generic_parse_dt_pinmux(struct device_node *np, struct device *dev,
-+				unsigned int **pid, unsigned int **pmux,
-+				unsigned int *npins)
-+{
-+	return -ENOTSUPP;
-+}
- #endif
--- 
-2.45.2
+True, I guess we can just make sure the current code can't by mistake
+lazily enable any of the bottom 32 hstateen bits and handle the case
+properly later.
 
+> In case, we need to enable one of the bits in the future, does hypevisor=
+=20
+> need to trap every sstateen access ?
+
+We need to trap sstateen accesses if the guest is supposed to be able to
+control a bit in sstateen, but the hypervisor wants to lazily enable
+that feature and sets 0 in hstateen until the first trap.
+
+If hstateen is 1 for all features that the guest could control through
+sstateen, we can and should just set the SE bit (63) to 1 as well.
+
+> As per my understanding, it should be handled in the hardware and any=20
+> write access to to those bits should be masked
+> with hstateen bit value so that it matches. That's what we do in Qemu as=
+=20
+> well.
+
+Right, hardware will do the job most of the time.  It's really only for
+the lazy masking, beause if we don't trap the stateen accesses, they
+would differ from what the guest should see.
 
