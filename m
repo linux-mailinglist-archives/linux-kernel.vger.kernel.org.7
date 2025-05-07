@@ -1,148 +1,78 @@
-Return-Path: <linux-kernel+bounces-638190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E63AAE25B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:17:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985EEAAE249
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EF3189970D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A841BB27E94
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF56E28C879;
-	Wed,  7 May 2025 14:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6A528C5DA;
+	Wed,  7 May 2025 14:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="DZgvryuF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P6jl+Ik7"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UElt6Ea5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E891772637;
-	Wed,  7 May 2025 14:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5050288CB3;
+	Wed,  7 May 2025 14:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626662; cv=none; b=XZMwv3Y+ATuzWEPFZceLzw4PLj18vFi1X+TvZhUphoq/HYiqseRVefhB0dp91g3Z33mGP/j+mSPGTQZvCRcMQzcp4CJmUq9tC0x2juyktogu2K2c/9mcPDqEhTHbjL/axZtXbnokI6PEVDUIVODX3/TSksvwLe0stHqLIIlPG/s=
+	t=1746626634; cv=none; b=W7LrVhe0haTZkCK3FiyoePGpwaIESi7kfpezEJb6bDTQZ/At3XiZGsvMUBhoTqC9bV5lFCLunebDtBo88VgdTaiuwD+N3ActWXEFsdtnBKY4OYNpI/DomBTbW5LmBpgzEkpE0JzT/maYzfbtnmRM5vbbgvzTJi/MgwK33290fPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626662; c=relaxed/simple;
-	bh=isVRjAVTnJdLXP9eMmF4E2ceEc9sRy5hZKwW3gaLap4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KcGV2cUPfWohdutXt3FRx8dM0TM1p4b0GOXwrRs3JOWvuAwwUx2SjdXPY5n5aYE82Tydd9e/v1FUbFj8Zee13Rw1fmycQ3Qtg2sDclNS1UB6zH/rOaeufD9P74EzRXGk1VxRFAPEn4xEWTerWNGDS7MF8tma+1nQLAEDkqY5ljM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=DZgvryuF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P6jl+Ik7; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id AA7021140163;
-	Wed,  7 May 2025 10:04:17 -0400 (EDT)
-Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-02.internal (MEProxy); Wed, 07 May 2025 10:04:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1746626657; x=1746713057; bh=RpZ1wH82Kb
-	3RQvc6BvVGwJPwQFc9QvFjJH3aSsmodhU=; b=DZgvryuF04PlAcWSoY3uCG/aZb
-	+mOefJTMh3Yrak2SHS+kCVkMDB8nYv2pVNTi1bOz3Ves4XpdoMOXLuBjsyc8dTWb
-	Z5WCg7/+HxQoIvPVdYi06kURxyf1K4sR4lkz9VrKter3/2zjzQiMKbUqKDqbjcjd
-	ioSQE4W69cFIQlDAvrpSqaZxWBPIYeQnuNSJF8ViHlsj91WAVwogWyWzRslNqldA
-	dIXtr2uvmXs3svCaNaYS2bSTMVLSxz36rTbc16SFLxk0gaarcE6yP913SWmGAG7r
-	hKVU5zl2pG310Pdz9ynZGRAphlXeOQH8foqlHg+tZHqWLyOxQ+o7YAU4h3Zw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1746626657; x=1746713057; bh=RpZ1wH82Kb3RQvc6BvVGwJPwQFc9QvFjJH3
-	aSsmodhU=; b=P6jl+Ik7G4QUrVnZuGPjBNsZ6VNRqmrZg+XZJpmyPZo+WkBSgpr
-	dwkC4B7kDR6fpQZDiNJVqg05DuVNZe2ESLKruu2/eNV7Vnm0aYnXFQfaMAiIZpRp
-	ShfisieB3KQNryN6H7eAMP4Z4Eaigls2hCBmLYPNq7vEzJEmkiMzkkmfc2NhjaP/
-	zv62PIvxhQZXlEHCohav2PsyDfedQSZbTQulTBJ8GiHHmLNtgBZpipyuNePpsB9g
-	jT+MNsS10ggCqVnMXGHVQso9ttxQvHm2XewsmaIE+SV1KBuEcHyCF9qIOHyRwpGV
-	WuOHyLTpGtjIU/0TzleJVQtjQkVKNx5BSCA==
-X-ME-Sender: <xms:YWgbaGvKQTCKpvnTp4Xq_BS76pVCRmtAdrURSM1esVpCQw4WNnpeZg>
-    <xme:YWgbaLdteVQWKQbGxu8353C0NAZI2fXdcA-Mij2sVuuz4KxtFkdw8e1dHthz8bP_E
-    6WXjVAK4KjHH-8QJ38>
-X-ME-Received: <xmr:YWgbaBx5Wt7FfVTv28drwVP09NLSO7SwXAFgWbgPbve-gPE1vSZhVWSel_EZOJc6oyGZ_0GQAtZ_N9eNXt6q19kby7HfSzwqxUm3ow9CvyneRCLL1A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehmtderredttdej
-    necuhfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnihgtrd
-    hnvghtqeenucggtffrrghtthgvrhhnpeekveeftdfgkeejhfejleeigeffueehieetvdei
-    fedvhfeluedtkedvgeeuieejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgvthdpnhgspghrtghpthht
-    ohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirhhishhlrggshieskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggr
-    thhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:YWgbaBMlCCjSUCrVIr5BYQHIo9_bth7kMLVMC_gEoWa5xaD_jNftQQ>
-    <xmx:YWgbaG-fjkBrzPueprtC7ML61AVhONjGwX-4U4IRMa9THmV5gVwRCQ>
-    <xmx:YWgbaJU4Ml0zjlwsmWODIFU7AAn9OaPCvS0vMZ6jfefo4fMfFDDKkA>
-    <xmx:YWgbaPeGMZ98iJ2oTLpfuNLpF8OPWKFjVlKw-7EqCV21cieqdbjShA>
-    <xmx:YWgbaJRzEe3T75DSapInXBaOXofc1V3qaM0NgzttO1CzvZned2P1sw7s>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 7 May 2025 10:04:17 -0400 (EDT)
-Received: from xanadu (xanadu.lan [192.168.1.120])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 96E611189E49;
-	Wed, 07 May 2025 10:04:16 -0400 (EDT)
-Date: Wed, 7 May 2025 10:04:16 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Jiri Slaby <jirislaby@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] vt: process the full-width ASCII fallback range
- programmatically
-In-Reply-To: <58ee071e-b2d9-4e1a-b150-c2be59827676@kernel.org>
-Message-ID: <ss849930-nr48-q998-oo41-3qs64or91670@syhkavp.arg>
-References: <20250505170021.29944-1-nico@fluxnic.net> <20250505170021.29944-9-nico@fluxnic.net> <58ee071e-b2d9-4e1a-b150-c2be59827676@kernel.org>
+	s=arc-20240116; t=1746626634; c=relaxed/simple;
+	bh=6XsXebDpsjazR5speYQbXEo86c9N1sKVIft3y+kCwcw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=btiFEr4LIy6tmc1ZOb68+K4JHaDISqSeOLrOev/eDmCWmK5EoWxfNUX24mtP6qW9XEpbtynJoRicu6T5zNPo//YOhAn/oKCL4fcx5Hx6dfyEOkt/koI60eQuh80uz6LqymhgwP9wXiTENXf164BpvnoFISAidLgqgZ//L5TRBUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UElt6Ea5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2519AC4CEE2;
+	Wed,  7 May 2025 14:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746626634;
+	bh=6XsXebDpsjazR5speYQbXEo86c9N1sKVIft3y+kCwcw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UElt6Ea5TW7faS7nCyrqstUNmxhW/Zl++JkdPSCwUj8jxQKuAza274lxYRot0TFNN
+	 oZRxjtJxHOKuMse9Egd9tN5WSc6ZjMscDk+Hqjwwq6oFurKd/IgUzl44msOeuOT6m5
+	 AuWRm/Gkzphg+SWO1ZS7DET0+8WE/fRdtQh8XlygxMjTNzoQcv/VJILg+p0JBMa7ku
+	 +QIYzZ1vdjoDUyBMFvgbXhcYCO64PF4Ulagyqw3CRS/6/FJcvXywdgI9BNt/bMictT
+	 W1lXN4RiNjB27wXqVtzSooSiguF1JmIwzpIOVM1hfxDwA3x2ZBxjubSCLDNh7g/qaF
+	 3pbeda8qUDj9A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3416B380AA70;
+	Wed,  7 May 2025 14:04:34 +0000 (UTC)
+Subject: Re: [GIT PULL for v6.15-rc6] media fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250507110246.1cf54e65@foz.lan>
+References: <20250507110246.1cf54e65@foz.lan>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250507110246.1cf54e65@foz.lan>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git media/v6.15-2
+X-PR-Tracked-Commit-Id: d51adf038ebe59b592005166209b70218b1da849
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 707df3375124b51048233625a7e1c801e8c8a7fd
+Message-Id: <174662667294.2242128.1591227197624092477.pr-tracker-bot@kernel.org>
+Date: Wed, 07 May 2025 14:04:32 +0000
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463781375-782106772-1746626656=:8235"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The pull request you sent on Wed, 7 May 2025 11:02:46 +0200:
 
----1463781375-782106772-1746626656=:8235
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git media/v6.15-2
 
-On Tue, 6 May 2025, Jiri Slaby wrote:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/707df3375124b51048233625a7e1c801e8c8a7fd
 
-> On 05. 05. 25, 18:55, Nicolas Pitre wrote:
-> > From: Nicolas Pitre <npitre@baylibre.com>
-> > 
-> > This saves about 258 bytes of text.
-> 
-> You mean .rodata, actually?
+Thank you!
 
-I used the `size`command which lumps .text and .rodata together. In 
-reality .rodata goes down and .text goes up a little, and the end result 
-is the combined text size.
-
-> > --- a/drivers/tty/vt/ucs.c
-> > +++ b/drivers/tty/vt/ucs.c
-> > @@ -222,5 +222,13 @@ u32 ucs_get_fallback(u32 cp)
-> >    if (single)
-> >     return ucs_fallback_singles_subs[single - ucs_fallback_singles];
-> >   +	/*
-> > +	 * Full-width to ASCII mapping (covering all printable ASCII 33-126)
-> > +	 * 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
-> > +	 * We process them programmatically to reduce the table size.
-> > +	 */
-> > +	if (cp >= 0xFF01 && cp <= 0xFF5E)
-> > +		return cp - 0xFF01 + 33;
-> 
-> So do really »+ '!'« instead of »+ 33«.
-
-Uh... why? Having both as numerical value is more meaningful and clearer 
-here IMHO.
-
-
-Nicolas
----1463781375-782106772-1746626656=:8235--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
