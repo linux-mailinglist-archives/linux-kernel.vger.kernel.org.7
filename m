@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-638787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A522AAEDA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D14AAED95
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9527C7B38F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8641BA8C2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C5028FFC0;
-	Wed,  7 May 2025 21:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CCD28F930;
+	Wed,  7 May 2025 21:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="dxQdsDpT"
-Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fWa8zeS2"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C69719D087
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2F172626
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746652408; cv=none; b=GpaMkb4s6aPrL5Psa/M3m6aU7j8THqGYUW/LQMto+iqYDfvijpTaRDIX0m/w7xxvwTQAA1IR81t/L9vNeDrnXuMJbblk567Gi50vIUCCLeYNLSno9P0qOrXuMhXuGLhPCm7fysk6WYyBlLyqEe0OdNPjSSLHJCWz4pmK+T9ROPg=
+	t=1746651981; cv=none; b=Q/ru0Y1N6FPZM+ZVRO8huR6fwvD9cW1uGSl/i/VxzHu3sUz0XaQtER2mizLaTuGnvg+zZ6iHriEqNHEhJ1wynJfo6Gvhj66aSg8rdiSmQp33akYL0E6o4ss09lX/zrr3ggPmXd3FCFy/DR76wfStoFe9aEFOb7qntPj5npvT5NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746652408; c=relaxed/simple;
-	bh=dbNPdGsmVrlahME3bAUZHjqgAKAkN35JiXmCUn9IdHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X/6SgwvFM3Bkkksw2hIBVSoL67Ri3/RdHh+AwEpKhJxpiL0CeahlTdnIFtmPPS+8tcO5HEcKJO/qGUjjydJ7wWOy3UPqq5YrUR/02Kh2D4fq450c5/V2Gvev19+Vrqww1zvLxJOwdatn/U1AVzyGcmxoYmBqoYM8CCtKhZQKw/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=dxQdsDpT; arc=none smtp.client-ip=195.133.245.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
-Received: from mail.nppct.ru (localhost [127.0.0.1])
-	by mail.nppct.ru (Postfix) with ESMTP id 8A1A91C0E8A
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 00:06:27 +0300 (MSK)
-Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
-	reason="pass (just generated, assumed good)" header.d=nppct.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
-	content-transfer-encoding:content-type:content-type:mime-version
-	:x-mailer:message-id:date:date:subject:subject:to:from:from; s=
-	dkim; t=1746651986; x=1747515987; bh=dbNPdGsmVrlahME3bAUZHjqgAKA
-	kN35JiXmCUn9IdHE=; b=dxQdsDpTE+eNnNQeV8kmEwT3CCcS8rmd7PKfccBgUlP
-	RPlXqAhWNOPgVVeQC2qUCY0Z7hf6Y+/0v34cek4lOREIriOGH3+O7p8WEfYWWu3y
-	d08r0JXHSmudxbRlspV8vDg20QFi9D/uOwY94xSGW+IhsGDyZixtKAzzG0nBH6Hs
-	=
-X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
-Received: from mail.nppct.ru ([127.0.0.1])
-	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id r8k099UXX65Z for <linux-kernel@vger.kernel.org>;
-	Thu,  8 May 2025 00:06:26 +0300 (MSK)
-Received: from localhost.localdomain (unknown [87.249.24.51])
-	by mail.nppct.ru (Postfix) with ESMTPSA id F1DB61C012F;
-	Thu,  8 May 2025 00:06:25 +0300 (MSK)
-From: Alexey Nepomnyashih <sdl@nppct.ru>
-To: Lyude Paul <lyude@redhat.com>
-Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Ben Skeggs <bskeggs@redhat.com>,
-	James Jones <jajones@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] drm/nouveau/kms: fix overflow in block size calculation in nouveau_check_bl_size()
-Date: Wed,  7 May 2025 21:05:47 +0000
-Message-ID: <20250507210550.141861-1-sdl@nppct.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746651981; c=relaxed/simple;
+	bh=XtTsVAtq5Aa/qds/mZ03c/a2dVfCPxnBWxrBVfFn9qg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOF3Tff5VY3RTKsNcTUcnqqyIE6YL3BnW9OChttuAGLqTKdz3DNYoucsubujz+ObFVBFvVMVaWkyujZAygA91nSe75paW4GzJF1vnkDCULrMXZ2po5GVnr2+RQH7DaUfVmbbNDipXF9+CIwWneDcewQgl3Y4vU0W0Pc2X0OXMhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fWa8zeS2; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d817bc6eb0so1245195ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 14:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1746651977; x=1747256777; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gt0PzsH7dWP1Jv9XAe02KqpL+75JPfquQQIOm1GgXlY=;
+        b=fWa8zeS2HzgeRMgxZn7qxzvcXL+ZMJp8IlbLWmKvLBt3IrpSPkEYY8iFfy+1D/jwzm
+         ZxY2a/Xlq7O2DcsYFcRc+S35ONMzd+B3/3m5HQ/dIam5IlqnQNjI1KWOIvT1cEC5jMbm
+         c+RVNH53YoPxQ45BP7CWP8i2po4P/I7i8+rRs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746651977; x=1747256777;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gt0PzsH7dWP1Jv9XAe02KqpL+75JPfquQQIOm1GgXlY=;
+        b=JhO7cxWoxCUb6T7oarduXq41H/s79RSSuwILbaCqpTagzoRmCQJSAa030qxHMhD0RB
+         r2yuiEgSaLaTpzp/HFwgogML9gsPgMrrVaxVstIxTtcwrDYn1q4nXRwvM2rqOkDjBZuo
+         vWPGYyQtxEZ/RxYkBulwgvlWyVno7OYgDXVJQookKRXLR5kNwAxBai9M6yVbuzkuuyKg
+         M3U7IA7pDjq3hX9q5r2sEJ4v57preVupGCbZeIHHBifiZ3ueFwLqGirUYBdIVHyF20V9
+         n23uZ87SuAgZvVjnwbDqg2MlavwS5Wo6u/x6iUSwx56t5mI7K20yBc+BI+68N+WgrtWc
+         42NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBa7ftGUymIsaEQUwMyzSf7OUzEgGOchn+wOchTr82y5o1ZQUusL9IQcSAQ/9t0c58vnUbEd6rqiegTc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNruXWJTW3uop0nXPSRwB1is0UUOW2D5sQmp9NwCzbEXkatE0s
+	OZZ2L5Eu2OdGTwiWKofxmimsigKPiKY2fbKX30vrrgx73FAfWBYMmPA2lcFuvxE=
+X-Gm-Gg: ASbGncuF2EO6djnuZxykc3/2Odufv5FNTGksKMfMuEyMLJkAQntJcIGSdB3RYnFmJTr
+	1joBVf8SkXMFUEcp8jjYVmTw/AV+cpNbiFv4/Ac7Ott/ntvPFbc/oMxuqXjIHW6wHcqVGjtFNJ0
+	uAyz/Mrudpv/KMdwhUEmLIqCWECQwU1yGJKrUl/BRP4sZPLrqpBIlJYL3Fd+ZoNMl2qAiM4MwqG
+	mAmDHfr6xmJj66X1n1hdCUMpLudrS8uGOjUxY2xSepo1jqYEkxtEV6O0h9oXQTemvjKIcqZHGSK
+	ReZGIres/udZTGrFPCHNRs48BPEx05FfwjRvF3919FHcYTsFYuo=
+X-Google-Smtp-Source: AGHT+IHil6UBUd1d2VFVV3oLh2+dvDjnd7fFqJ7qiYmhGGigtFWjtbpZGojq+iOGKz2limwEmfyriw==
+X-Received: by 2002:a05:6e02:1aae:b0:3d4:337f:121c with SMTP id e9e14a558f8ab-3da738f9f2cmr51404305ab.10.1746651977014;
+        Wed, 07 May 2025 14:06:17 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88aa8e16dsm2886817173.114.2025.05.07.14.06.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 14:06:16 -0700 (PDT)
+Message-ID: <5609c6de-e5cf-4f6d-8412-71149fae2580@linuxfoundation.org>
+Date: Wed, 7 May 2025 15:06:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] selftests/timens: Print TAP headers
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Shuah Khan <shuah@kernel.org>, "Bird, Timothy" <Tim.Bird@sony.com>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250502-selftests-timens-fixes-v1-0-fb517c76f04d@linutronix.de>
+ <20250502-selftests-timens-fixes-v1-1-fb517c76f04d@linutronix.de>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250502-selftests-timens-fixes-v1-1-fb517c76f04d@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Prevent potential overflow in nouveau_check_bl_size() when calculating
-bl_size. Although bl_size is a 64-bit value, the intermediate
-multiplication of 32-bit operands (bw, bh, tile_mode, and gob_size) may
-overflow before being assigned. gob_size is 256 or 512, and tile_mode is
-validated to be ≤ 31, but bw and bh can still be large enough to trigger
-overflow. Cast bw to uint64_t to ensure proper 64-bit arithmetic.
+On 5/2/25 06:03, Thomas Weißschuh wrote:
+> The TAP specification requires that the output begins with a header line.
+> These headers lines are missing in the timens tests.
+> 
+> Print such a line.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+There is no cover letter for this - so I will respond to the first
+patch. The TAP information is added by the kselftest wrapper if
+you were to run the test using ksefltest.
 
-Fixes: 4f5746c863db ("drm/nouveau/kms: Check framebuffer size against bo")
-Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
----
- drivers/gpu/drm/nouveau/nouveau_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following will add the TAP header or if you use make kselftest
+command from the main Makefile.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index add006fc8d81..0363711ee0ee 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -239,7 +239,7 @@ nouveau_check_bl_size(struct nouveau_drm *drm, struct nouveau_bo *nvbo,
- 	bh = nouveau_get_height_in_blocks(h, gobs_in_block, drm->client.device.info.family);
- 	gob_size = nouveau_get_gob_size(drm->client.device.info.family);
- 
--	bl_size = bw * bh * gobs_in_block * gob_size;
-+	bl_size = (uint64_t)bw * bh * gobs_in_block * gob_size;
- 
- 	DRM_DEBUG_KMS("offset=%u stride=%u h=%u gobs_in_block=%u bw=%u bh=%u gob_size=%u bl_size=%llu size=%zu\n",
- 		      offset, stride, h, gobs_in_block, bw, bh, gob_size,
--- 
-2.43.0
+make -C timens run_tests
 
+cd timens; make run_tests (will also add TAP header)
+
+The only time you won't see the TAP headers is when you run the test
+from the test directory just as a command. Is this what you need
+to do? I would rather not see TAP headers added to invidual tests
+unless there is a good reason for it.
+
+The problem with adding TAP headers is two-fold:
+
+1. It becomes hard to read the ouptput if test is run using
+    the framework a. make -C timens run_tests b. cd timens; make run_tests
+2. These headers become bested and TAP doesn't like nested TAP headers.
+    My undestansing is parses will have problems.
+
+I am adding Tim Bird to the discussion.
+
+Tim, is this still an issue? Are nested TAP headers still a problem.
+
+Even if they aren't there is the issue of multiple TAP headers for
+each test when we run the test using framework.
+
+thanks,
+-- Shuah
 
