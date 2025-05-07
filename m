@@ -1,184 +1,142 @@
-Return-Path: <linux-kernel+bounces-638160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F873AAE219
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271AAAAE252
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8B01BC3341
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5CD39C0306
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0DF290DBB;
-	Wed,  7 May 2025 13:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4608E289E21;
+	Wed,  7 May 2025 13:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IHCdpcgs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fp3WBv+n"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DBD28937C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14291289E0F;
+	Wed,  7 May 2025 13:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626083; cv=none; b=DsCA0Ad1UwEQL6uWW6hnVPg6hQwrAlkSdqZEpO9qoojiNlfSkPLflFQVWq1/+/9+m0E7WqPUvaZQ/Ml2eijMr8iXUbynlCdSUp4heopg0N8U9iNSmrYXzkiIhU2mPxIOrZ5op4pG7/vinHhirwoOe3qpv4xmHuneQuiMj9LOKqw=
+	t=1746626111; cv=none; b=k1B9FP41jfIdtX25yytiMBeq4gmf2C3KXLdxRJiWsw0FO/NS3zMAp1fds1478Ecug5qp+yu6658b0Yv29qOzcTHOESDLqSk6vPdr8oXTFuWklR5iJ2b2PfBh7OktMGK7QutQjgnz0lqlZdFEXYla3QKiTJNj3zoHvhr6AjO+MrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626083; c=relaxed/simple;
-	bh=gDezvb+lG+PJ+vyrdK/H0gkWDsWOcy2gDnIeDCkdU3w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VsEv2WwsWz8k2xYsD3uLmpuJKeniFzY4RqtFqSRRCgB2oA7RBUpTb8s8s0OpqYC0hzgHIinNiMfLIu4obRwd4s8q2EKpoQ3UQ0xduYj/gI4ACtcHbyhrqOu1ioJSPbQlntI0C86n6SLpgLNu1OQHXbmcnyTtQrip+G2sL61CVoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IHCdpcgs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746626080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gDezvb+lG+PJ+vyrdK/H0gkWDsWOcy2gDnIeDCkdU3w=;
-	b=IHCdpcgscnMQpBcpYQzMw/kTL8Ix7oyef46TVUHJgzullwG0IKiJhCbQgWVaUs/K1lYXhk
-	eaCyKLf1Z+ADzwc7tyTuKPuGwf97H/lHqYO0kF7nH0K8wJHwrKnF6kC1cVjSfD0Ha2w0Ji
-	05cZqZAgJk1/qRkupcfVvVT77qe0TAI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-QyMav7CTPVyYGo2Y8rnolg-1; Wed, 07 May 2025 09:54:36 -0400
-X-MC-Unique: QyMav7CTPVyYGo2Y8rnolg-1
-X-Mimecast-MFC-AGG-ID: QyMav7CTPVyYGo2Y8rnolg_1746626075
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a064c45f03so537662f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:54:36 -0700 (PDT)
+	s=arc-20240116; t=1746626111; c=relaxed/simple;
+	bh=O3lK9O8MOlFJ22S3bVWYOt57Oo1oTISBPFrYqr8v6Qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlLirb8R4MFyj+OVv6toidmSmMKYU3bVKGYscrBOMCs064xe8xVOq2eObMTqqe9KUPzh05DdvaupS4TMgTMLqLyGxgCxjrv6uH8CanYQI6vzobUpFF4EGclzHmMzUI5YG5cwo6jox5PclODXL737/chhdEbuN4tN3x58q09MsPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fp3WBv+n; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0618746bso50499465e9.2;
+        Wed, 07 May 2025 06:55:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746626108; x=1747230908; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WnTHQiWLUMQGeqv2NTcj6QDK3soHu+sTbr9U/eBZ7WI=;
+        b=Fp3WBv+nRbIqIL44f+NIzZXi2hs9xo/bMqIhJzZWb04jp5Z5ME5YYtNOy5n3WM/D/u
+         lqI3CDC8wz0tuzQ3Mm/T7bdObvQrsMk75yBgqJKCIbJQh3dq5Ao4AkmbvKeqn7URXOXD
+         8klOlv6TXnyD06tXMjcEB+Tup9C4uK6UVFjyVVL3ri015V2zEkrOnlhAWy5Kpvplk8AE
+         Gy/QQ5eQ3lcHHWgGSLYA5BdGxEWzTxURcH/eVbqglhwxjBS/E8Mdx4RpgBd68+QpL8Uo
+         drmKgaUhvrbiYkeDnMR5m7/ADKnoH2ezl2YhaAY6K90u38VA4cPmVs+WgphVLSESQS5H
+         Df0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746626075; x=1747230875;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDezvb+lG+PJ+vyrdK/H0gkWDsWOcy2gDnIeDCkdU3w=;
-        b=xS5IqSx48IVJXZoHPmpnJP1kGeGE9/es1tMHFXq+Kg1lwNELfC27Mjw2UsZI0hufBF
-         rEuCpeHIVXCwuJJTb8WSOQ0zrO/S8kL4AEwtAcbVsjhpg3JQN5WC5RBPuxm6KR53Ckzo
-         W3GEwqP9EDOa7QvZXi5LH8i+3XZzYsIAK7p88T4mmteTOsde53VgQCtjQbYivtD5gALw
-         8UesHWTKTByCapytM/CWAIhO2lamVvEEO27cjvijQtWcZgzJ0P9zduCLZrNsFmb77xlB
-         ZxXT4619yfqoLWXY2MTg/h7gz2rV2szefxqq1dN1mZ/GWUXaeJL5FmbaHU4o0j7qg4JB
-         Y6+Q==
-X-Gm-Message-State: AOJu0YyzI1V3iFU+t3fpMQuw88SbAwJt+uxcmNQm7GRm+igTTmSvXgw1
-	chuVbVChRbQF6av5j/c/ucPOTp2pAcwlO/1dyKKfF+RGcR6FIsxlc0rz6hg8Qqbkl+hBkwVq7lg
-	NvQb+cAXXPvSAs1i5ZuAA3CiP1HnUp82BkZ1EgVG7HcaRrQW3RbIV4g0SaQ7eEHzeNXaf51Aq
-X-Gm-Gg: ASbGncs9vf7spdrlbI3hXrt4GKDDPGxk1OsMi39jI+fikcQ3HawPyMmJJj/7/K3qJDv
-	PqU+tV3f2lIEa7nM8eGNivUI2uOThZCLmeF3pA/XfF5eMl8T43iVVPMlCCMetPoKOAaccKyF+i/
-	fONaVkGesbLeJaeRWjNbNhvA26kNwFf2C7Jres15fQyCCfWlo3yYdGjCXXQZdkvs1ufEU4te6F5
-	6+9213TofXQca8kZrhKY44avlzA4khigUzH/tNwRVzOqQMILX8AxSKVbaf611lqlBJei82Zr7mC
-	gUs1VQX/FguYvj30l9mITZNFs868w9XzM4otXg==
-X-Received: by 2002:adf:f28a:0:b0:3a0:b56a:c256 with SMTP id ffacd0b85a97d-3a0b56ac2aamr1938319f8f.28.1746626074989;
-        Wed, 07 May 2025 06:54:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHdqBYBd1i9XRqKE/sahoAtiebVaCz1MPuXCrb6x28xleKAlXNlXKxmlbs2cjQNDNk3pszYpg==
-X-Received: by 2002:adf:f28a:0:b0:3a0:b56a:c256 with SMTP id ffacd0b85a97d-3a0b56ac2aamr1938311f8f.28.1746626074626;
-        Wed, 07 May 2025 06:54:34 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0d15sm17362729f8f.13.2025.05.07.06.54.33
+        d=1e100.net; s=20230601; t=1746626108; x=1747230908;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WnTHQiWLUMQGeqv2NTcj6QDK3soHu+sTbr9U/eBZ7WI=;
+        b=bao5Z5hAKW2oKeRWH3luJ3ijpYNe8IqkGrz2OwnZHMRVed+ZmTRHDnQ87bE7c1lM1b
+         fDv7oPTNyom88E55/Hu/zcYvnOBUNbkPCLgEKcq2vcHGnsm++YzIaZVDiJ8a1MwKhXTx
+         BKNFh01Fu9UQjOUWdX5IIIiNPYqTfmRhXuhAyGgNDjNRBkE2szfS+hERuo7O2qg48nIw
+         RbPae9WkSIiYx5k6JS1qEJP+MPVPfQsuocYznjRGpYLeENIsN7dZW6umG7dR6f/F0g+w
+         tpqEc8vT9ZvtcPLkrZ7dXXDH1vcam7tU0+AIX0kRGMXNf9X4SpGv8Xn+ZaXME5yYeVfk
+         +oGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUR/ID0Z02pSc+i8nC+rh9CeCprzU/Q8BCDsP0+9yvXdjsRCblm483vMVk3qPWxR+zUoqCDiW7lwJS5DUiU@vger.kernel.org, AJvYcCURvIVDwUeOvk+hv9lk/L73e98DaunHPt11Y6TJRnDwhbBW23vDbtxCU5UXlvYVQvqSrs7YQpxQ5MNS@vger.kernel.org, AJvYcCVzwB+ihvXeydkolXPfT9hReBIfgArS/eIn30FQc+1Bi+y3CrCRiSEUiWT46aYIMXSIgK+yZwBy8kP42J3z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaMx5Xf9purJgHDfOaGRvXIhVcGb9YrsRMDZipgg8M18A/C3wG
+	Px+TBnJUYkPlXm/btJrYME7RweJAJ4L/fvLBzG1uIcRzLRHozq2I
+X-Gm-Gg: ASbGncvF2jAwdfmLx6flDSw4t0ViFRECZmniUAWS5ojrccx1RM8FPYqL+Vy1QehG5bA
+	/+2GcEgW7GdcgQZmWsWhTqej+sBYMUv1NVC8rwlOLZvMHHnV/o1RUO4kKGrv73vQc6ABWex7B/N
+	JXT+YT2yhVKXy/RaPopvLdJpJ0khTYQZmJXyx9CDufglsXEqKXbuPUABVhtUuGrnMds22lY7wAG
+	EnFxU+UEvddRBo5DOXk0eAw2thbnStTTPEYtF6hBJkvimLNsfCrJP08dpwrhMjAhi0qWRgIqf2w
+	RCbGs6Ttra7lSpTDvdWwyxBfSe9hb3Nlnve0pQEk2c7XYn0REczYkP4ARvfrUrMsWtZ6ntAVSOQ
+	n/06Evq7uTrJr+BAq+B+Ds7JfkG0=
+X-Google-Smtp-Source: AGHT+IEb3s5r0tzt4J13SHuTnyrUEEoizYd/G0Q4fUW6CsFjqN+mxH2wI6fI3XlsrrrqYAMtkKGuOw==
+X-Received: by 2002:a05:600d:1b:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-442459df273mr20612315e9.11.1746626108099;
+        Wed, 07 May 2025 06:55:08 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd35fb49sm1820095e9.28.2025.05.07.06.55.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 06:54:34 -0700 (PDT)
-Message-ID: <dfb2721b2619130a3b3ed45c3e6d18916faf5ccb.camel@redhat.com>
-Subject: Re: [PATCH v4 2/5] timers: Add the available mask in timer migration
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
- Waiman Long <longman@redhat.com>
-Date: Wed, 07 May 2025 15:54:32 +0200
-In-Reply-To: <aBtix0VHFCRI_Y-c@localhost.localdomain>
-References: <20250506091534.42117-7-gmonaco@redhat.com>
-	 <20250506091534.42117-9-gmonaco@redhat.com>
-	 <aBozrJ0C6yzW7oB_@localhost.localdomain>
-	 <3f54534266f4405fc3c6943599edd9be88becd57.camel@redhat.com>
-	 <aBtRSSCxyHcypo4b@localhost.localdomain>
-	 <9b96acdb43b80f067a34b83c5fe9fc3e79f1e3a4.camel@redhat.com>
-	 <aBtix0VHFCRI_Y-c@localhost.localdomain>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+        Wed, 07 May 2025 06:55:07 -0700 (PDT)
+Date: Wed, 7 May 2025 15:55:05 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, John Crispin <john@phrozen.org>, 
+	Songjun Wu <songjun.wu@linux.intel.com>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: serial: Convert lantiq,asc to DT schema
+Message-ID: <tr4jy53i53iiyzdznhtczy62vcqdrqhz5ncyw2rozwvdh4gs2h@yls6ovvkpqf2>
+References: <20250506220029.2546179-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dlvhedjs2xvby25t"
+Content-Disposition: inline
+In-Reply-To: <20250506220029.2546179-1-robh@kernel.org>
 
 
+--dlvhedjs2xvby25t
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] dt-bindings: serial: Convert lantiq,asc to DT schema
+MIME-Version: 1.0
 
-On Wed, 2025-05-07 at 15:40 +0200, Frederic Weisbecker wrote:
-> Le Wed, May 07, 2025 at 02:46:39PM +0200, Gabriele Monaco a =C3=A9crit :
-> >=20
-> > I'm not so sure about this one though.
-> > As far as I understand [1], is preventing the user from setting
-> > different CPUs while doing isolcpus=3Dnohz, and nohz_full=3D (which is
-> > now
-> > equivalent). But I seem to be able to do isolcpus=3D0-3 and
-> > nohz_full=3D4-7
-> > without any problem and I believe I'd hit the issue you're
-> > mentioning.
+On Tue, May 06, 2025 at 05:00:28PM -0500, Rob Herring (Arm) wrote:
+> Convert the Lantiq SoC ASC UART binding to DT schema. There are no such
+> clock identifier defines nor a user with clocks, so drop the example
+> with clocks.
 >=20
-> Duh!
->=20
-> > (The same would work if I swap the masks as 0 cannot be nohz_full).
->=20
-> Unfortunately 0 can be nohz_full...
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/serial/lantiq,asc.yaml           | 56 +++++++++++++++++++
+>  .../devicetree/bindings/serial/lantiq_asc.txt | 31 ----------
+>  2 files changed, 56 insertions(+), 31 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/serial/lantiq,asc.y=
+aml
+>  delete mode 100644 Documentation/devicetree/bindings/serial/lantiq_asc.t=
+xt
 
-Well, I haven't found what enforces it, but I wasn't able to set 0 as
-nohz_full, no matter what I tried on x86 and arm64. Not sure if 0 was
-just by chance in this case (I'm guessing it has something to do with
-tick_do_timer_cpu, I'm not quite familiar with this code).
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-I was trying to see if we can make some assumption in the tmigr but
-what you propose (enforce fully housekeeping CPUs everywhere) seems
-much neater.
+--dlvhedjs2xvby25t
+Content-Type: application/pgp-signature; name="signature.asc"
 
->=20
-> >=20
-> > =C2=A0 # vng -a isolcpus=3D0-7 -a nohz_full=3D8-15 head
-> > /sys/devices/system/cpu/{isolated,nohz_full}
-> >=20
-> > =C2=A0 =3D=3D> /sys/devices/system/cpu/isolated <=3D=3D
-> > =C2=A0 0-7
-> >=20
-> > =C2=A0 =3D=3D> /sys/devices/system/cpu/nohz_full <=3D=3D
-> > =C2=A0 8-15
-> >=20
-> > (where probably some CPUs are set up to do housekeeping stuff
-> > anyway,
-> > but if we just look at the masks, we won't notice)
-> >=20
-> > Then I assume this should not be allowed either, should it?
-> > Or am I missing something here?
->=20
-> Exactly then. housekeeping_setup() already handles cases when
-> there is no housekeeping left. I guess that section could be
-> made aware of nohz_full + isolcpus not leaving any housekeeping left.
->=20
-> >=20
-> > >=20
-> > > But if nohz_full=3D is passed on boot and cpusets later create an
-> > > isolated
-> > > partition which spans the housekeeping set, then the isolated
-> > > partition must
-> > > be rejected.
-> >=20
-> > Mmh, that would make things easier actually.
-> > I assume there's no real use case for that kind of hybrid setup
-> > with
-> > half CPUs nohz_full and half domain isolated..
->=20
-> I guess we can accept nohz_full + isolated partition as long as a
-> housekeeping
-> CPU remains.
+-----BEGIN PGP SIGNATURE-----
 
-Yeah makes sense, I'll explore that.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgbZjkACgkQ3SOs138+
+s6FdGw//V8g7aZGNkt/SaLaEDGkgANm+T6HBw7ktIC/ewVKIe8aeZsPtMTUf8nwb
+o5oZXCbcqiGdGw06UnNyVOBOd+2PIkJTs5rOMz5ZhLZ7rcqQi1OmK45FegKj64Im
+RphFC816ZznMZaW0u7NsFpRdFJnse20Y/nPGywZ8BlotVpC19HqG7zZz+iG5eMaE
+hozF54uidBXDzB8BvUdu1ug80vcmk8MfgQiI/S5/Ec2Ih1C4GFNO79j0PcuxAm99
+eTQ0REUSmdKuEFnp1GAkq6rIIva6KdSNF4S1gL3sveD6UAhCGEoN+QvBfrLreJt9
+hsjOqOyu2ia9eML0KSn2zMy7+SoU5OcNylqAeYC30PZsL8uOeN8Jw2RYeN9dHJQN
+SMZikkWSOszba4pUjk+5b9t6G6vTChd5Gwk6Lf3lBHJ1lPUAW5hbVaHs7iGM84RN
+PVU7u1nXjhpdppj4+cdnMatF+td/jHDcd1VGFgcph9N6aAwgGTt9gC/FRnHLBzKF
+jsG2ZdyJaAVM3Mm6cMa9XF6q5EMdm7ns+OBfMVyf3SlYw/zFFZO1lSHDrGIr7KaT
+PokYEQMAo9Mg56xAUlbH6ZSSvGOUJYPkXBlmcpyuLecW1hfD6voaEQJ5z0KplPD3
+mgrnfLuClahfcMWrGthhZCFLZmQfh8IVwalujrczCLIVfdJEEGs=
+=7lG2
+-----END PGP SIGNATURE-----
 
-Thanks,
-Gabriele
-
+--dlvhedjs2xvby25t--
 
