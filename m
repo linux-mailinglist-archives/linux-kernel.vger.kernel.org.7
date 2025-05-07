@@ -1,111 +1,104 @@
-Return-Path: <linux-kernel+bounces-637181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D7AAD5AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D041AAD5B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1F96501F84
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:08:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060D6501EC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826F1DF247;
-	Wed,  7 May 2025 06:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D405F1FECCD;
+	Wed,  7 May 2025 06:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="brxdk7j3"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="IGXm52W9"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FF829A0
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214771D63C0;
+	Wed,  7 May 2025 06:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746598096; cv=none; b=nk5uRJbkk6hmVmHX4ngZJ+RBQpqfb71XpvaKagLh9wS/Q8v2VhYRSoO+8+axLvMg4ZSV254WJnDVXe6nHkramym3ToAiCzU/BP76dDq1galT+drOG7FbZ0P+VFPJXnw546z55krrLXu+TErdBqevVBNVXQA66bfWdtgq95zu1sQ=
+	t=1746598261; cv=none; b=PRVMNv4CqqQv/BfkG+RhoI/0WE22PXAuQdHGto22rbUsgT8qLDOCDS3SM1D/4Rmfp5LQULz+6T3kzWnmZMWHI7kT84sIcgNcbVY6GiwBwD5tOhC1N/qlRreZhWjNnyzlYzyiS5I4nhLN2e4bYorOBDbNMzG7q0phLRoCdzuc794=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746598096; c=relaxed/simple;
-	bh=g4nvhxTyxOvsu+c4Lti5TSIpl/a+nyGJc0hvXoRCZkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUhJxiNRl1UnnHzpmKH8u4IbBvgL/2EEolqFw7leWF9WifoN6FRU3Mx+PvEo8uEs9a/ZBgRVYqdJEjHbeIgtBUWh4SjgfEVqagFzXSSe0hOhCMt4eAoOxymVA2OmEQq+tpaLrQciXZGHIptJsnYbmtGmBvZpc7l5+rF4ZnPlJWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=brxdk7j3; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736c062b1f5so6737008b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 23:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1746598094; x=1747202894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPLviMCblLtdTlmTDGOR7DqRoK221oLbVJ1Meb8wioM=;
-        b=brxdk7j3tOT6Eq4hqPH3deYycWIqpsm+ttIwL0g2jq7yCa5VBnEDQWLhoaB/Vy99Bw
-         AGz6YzqK0hcnNe1WgEqljvM3hJFM57UN+ekdCuAMy4GAcC7VA/EgX4lk+RVyAk4bDdJg
-         cgguaVyqc1eaGn/GUYlaT1/A2tKMAsDrCQwOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746598094; x=1747202894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JPLviMCblLtdTlmTDGOR7DqRoK221oLbVJ1Meb8wioM=;
-        b=bVJrxhh4USG4balpQrPePI4o93/7oUDTZ6uBQhFkUp3As1TIZlHvILcyNRokearxAz
-         3Qu/dBFY4qD3J1RwPksOxiTUv9pBcTl2ZWstvc1aZjWspngwbJ3T/l8b1ykuSAwUP/fd
-         48WNICGJzlHHxveSKTUZZutg6zREWOkSJpdxC/W9MHxf1XEqFLfSh8yIAm+NL37BgwsQ
-         AmklOGVIB/VByLcfDQdkuLT73d5Hf/waCsn1n/+r9tZnEjhl8JuxneOg9v/dpFn5V36s
-         jTkR2+YZiYvdZu2k6X3o67eQPscQtYGYdNhXE3XPZxWuZruy4B9EjxV1AMdGqDmrk+v2
-         bKbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfvZOZTudL8fvUO5z/R2aMrcTtJwDcizJyOzgaHMl/fySN23uu7XO2zoAQIScuEhJYYwfY+P1TvghzW2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeEH2/1Py1y6WfXkzuqG8mciMAsNxYaQN8ZZqSszbQq81O4nQM
-	9MFlTRkSmSXSNQnP1AOS7nU7PIB/T4mldvybEeAtHSxSGLdXLuOlZnV0LA4n2w==
-X-Gm-Gg: ASbGncuBNPVkqFPeW7I8fQKD0WcflRqzf9QGeTwi7adKCvh+QDABWXhsSbfrZdEP2Di
-	GUNIsyOi/oC4OIn6auU3fy4JHgrayYYgGgYCi887OB00/WuFiioBrujWqLZCBvQF3QGMiy9JuWt
-	UsdIFb43gwEDxPrKvRgqF/9n5GStbTB/0yEsdfSSDGXCwp5Uj05xdjKiwHWrzsoMpKgMoqMYdQl
-	g8ujwdrrTXzoAFCgxkHoK2yntELc1L2gK+3Bqi6PFit3MV0XCicOXK5yvAx6vpdreHbZbSN5yqc
-	JWpVfGxcvN35D/ImIKrjNhxY07//5Z8yFrL/BrN6SiKW
-X-Google-Smtp-Source: AGHT+IGk5iSUyLdcfQYnCzoPIL9eHF11OOkANIs0f4AL420z2NrtHDSKEOrCjzRea7U1wy7PxwcmMw==
-X-Received: by 2002:a05:6a20:ce47:b0:1f6:6539:e026 with SMTP id adf61e73a8af0-2148bc133a3mr2769491637.15.1746598094289;
-        Tue, 06 May 2025 23:08:14 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:284f:37bc:f484:cbc6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb3b7afd4sm7248326a12.33.2025.05.06.23.08.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 23:08:13 -0700 (PDT)
-Date: Wed, 7 May 2025 15:08:08 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Minchan Kim <minchan@kernel.org>, Igor Belousov <igor.b@beldev.am>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH] mm/zblock: use vmalloc for page allocations
-Message-ID: <b42gpp5qsa4j22ai2v4rwwkjhvfbcbf3lcnjoccz7xeidae5c7@ot2ocric3qzs>
-References: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
- <aBoK7f7rtfbPFGap@google.com>
- <m2dmxnhtvxano6lye7lr3saiobn4ygpln55xntlstfo4zwws5g@qpq7aagx3xwq>
+	s=arc-20240116; t=1746598261; c=relaxed/simple;
+	bh=IxXYbJZD48dI0SPVv07NCmFRsZxS5O4mEiYyeuloddY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=KfeH4I5/bE034CQ++XjI2pVg2vtiV/YJlydGbxSBxliaIShLOhNopDlKWbbxo81jUhvU5g1VUpmuvv2XmCbID8YLfzaeQ2V76YueTjolKpUBEsEwhqVKpca9BsJB7hgDTt/79pY2MJCfcxFJUhBnb4hXjRg6/vVK27z8AnK9ByM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=IGXm52W9 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=PcVJcsU188XGP4XUJP8u7N7/UYZL6lmQlc06xU1P3b4=; b=I
+	GXm52W9An7b66EY+bwlClR2kb61UfayXY4DJB9K8JuFRbRLOZ2TBmIn0Mq5I228Q
+	hXMoTGkSq5j9dLHnAg/e/g0taBwjPkHiyVrcprvsL4N4MIIlcJ5+TYGDLoznP+oP
+	NEadLyop4merzsaX1tC+JTu5O/vbf43G1vxLfbV0xM=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-104 (Coremail) ; Wed, 7 May 2025 14:09:13 +0800 (CST)
+Date: Wed, 7 May 2025 14:09:13 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>,
+	"Maxime Ripard" <mripard@kernel.org>
+Cc: lumag@kernel.org, neil.armstrong@linaro.org,
+	dri-devel@lists.freedesktop.org, dianders@chromium.org,
+	jani.nikula@intel.com, lyude@redhat.com, jonathanh@nvidia.com,
+	p.zabel@pengutronix.de, simona@ffwll.ch, victor.liu@nxp.com,
+	rfoss@kernel.org, chunkuang.hu@kernel.org,
+	cristian.ciocaltea@collabora.com, Laurent.pinchart@ideasonboard.com,
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
+	"Andy Yan" <andy.yan@rock-chips.com>
+Subject: Re:Re:Re: [PATCH 1/1] drm/bridge: Pass down connector to drm bridge
+ detect hook
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <1bb549f4.746e.1965c8256e4.Coremail.andyshrk@163.com>
+References: <20250321085345.136380-1-andyshrk@163.com>
+ <20250321085345.136380-2-andyshrk@163.com>
+ <20250321-optimistic-prompt-civet-bdcdba@houat>
+ <1bb549f4.746e.1965c8256e4.Coremail.andyshrk@163.com>
+X-NTES-SC: AL_Qu2fBPmSt0ku5SebbOkfmkcVgOw9UcO5v/Qk3oZXOJF8jC7pxyUYZFlTGWvs7PCDJim1nQiHezZt88JTXIVAZqUNHPapzRP0H9he/eEM1/JOWw==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <m2dmxnhtvxano6lye7lr3saiobn4ygpln55xntlstfo4zwws5g@qpq7aagx3xwq>
+Message-ID: <20cd09da.5462.196a95cce13.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:aCgvCgCnD4oJ+RpoUXimAA--.12567W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqA1GXmga9Zpt5QABsp
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On (25/05/07 14:57), Sergey Senozhatsky wrote:
-> On (25/05/06 13:13), Yosry Ahmed wrote:
-> > If we can use vmalloc for zblock, then we can probably also use vmalloc
-> > in zsmalloc and get rid of the chaining logic completely. This would
-> > make zsmalloc simpler and closer to zblock in that regard.
-> > 
-> > Sergey, WDYT?
-> 
-> This sounds interesting.  We might get rid of lots of memcpy()
-> in object read/write paths, and so on.  I don't know if 0-order
-> chaining was the only option for zsmalloc, or just happened to
-> be the first one.
-
-I assume we might have problems with zspage release path.  vfree()
-should break .swap_slot_free_notify, as far as I can see.
-.swap_slot_free_notify is called under swap-cluster spin-lock,
-so if we free the last object in the zspage we cannot immediately
-free that zspage, because vfree() might_sleep().
+CgpQaW5nLi4uLi4uCgpBdCAyMDI1LTA0LTIyIDE1OjU5OjI3LCAiQW5keSBZYW4iIDxhbmR5c2hy
+a0AxNjMuY29tPiB3cm90ZToKPgo+SGkgYWxsLAo+Cj5BdCAyMDI1LTAzLTIxIDE3OjQ4OjA0LCAi
+TWF4aW1lIFJpcGFyZCIgPG1yaXBhcmRAa2VybmVsLm9yZz4gd3JvdGU6Cj4+T24gRnJpLCBNYXIg
+MjEsIDIwMjUgYXQgMDQ6NTM6MzhQTSArMDgwMCwgQW5keSBZYW4gd3JvdGU6Cj4+PiBGcm9tOiBB
+bmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+PiAKPj4+IEluIHNvbWUgYXBwbGlj
+YXRpb24gc2NlbmFyaW9zLCB3ZSBob3BlIHRvIGdldCB0aGUgY29ycmVzcG9uZGluZwo+Pj4gY29u
+bmVjdG9yIHdoZW4gdGhlIGJyaWRnZSdzIGRldGVjdCBob29rIGlzIGludm9rZWQuCj4+PiAKPj4+
+IEluIG1vc3QgY2FzZXMsIHdlIGNhbiBnZXQgdGhlIGNvbm5lY3RvciBieSBkcm1fYXRvbWljX2dl
+dF9jb25uZWN0b3JfZm9yX2VuY29kZXIKPj4+IGlmIHRoZSBlbmNvZGVyIGF0dGFjaGVkIHRvIHRo
+ZSBicmlkZ2UgaXMgZW5hYmxlZCwgaG93ZXZlciB0aGVyZSB3aWxsCj4+PiBzdGlsbCBiZSBzb21l
+IHNjZW5hcmlvcyB3aGVyZSB0aGUgZGV0ZWN0IGhvb2sgb2YgdGhlIGJyaWRnZSBpcyBjYWxsZWQK
+Pj4+IGJ1dCB0aGUgY29ycmVzcG9uZGluZyBlbmNvZGVyIGhhcyBub3QgYmVlbiBlbmFibGVkIHll
+dC4gRm9yIGluc3RhbmNlLAo+Pj4gdGhpcyBvY2N1cnMgd2hlbiB0aGUgZGV2aWNlIGlzIGhvdCBw
+bHVnIGluIGZvciB0aGUgZmlyc3QgdGltZS4KPj4+IAo+Pj4gU2luY2UgdGhlIGNhbGwgdG8gYnJp
+ZGdlJ3MgZGV0ZWN0IGlzIGluaXRpYXRlZCBieSB0aGUgY29ubmVjdG9yLCBwYXNzaW5nCj4+PiBk
+b3duIHRoZSBjb3JyZXNwb25kaW5nIGNvbm5lY3RvciBkaXJlY3RseSB3aWxsIG1ha2UgdGhpbmdz
+IHNpbXBsZXIuCj4+PiAKPj4+IFNpZ25lZC1vZmYtYnk6IEFuZHkgWWFuIDxhbmR5LnlhbkByb2Nr
+LWNoaXBzLmNvbT4KPj4KPj5GVFIsIEknbSBhZ2FpbnN0IGl0IGFuZCB3b3VsZCBoYXZlIGFwcHJl
+Y2lhdGVkIHRoYXQgeW91IHdhaXQgZm9yIGEKPj5tZWFuaW5nZnVsIGNsb3N1cmUgdG8gdGhlIGRp
+c2N1c3Npb24gd2UndmUgaGFkIG9uIHRoaXMuCj4KPkNhbiB3ZSBzdGFydCB0byByZXZpZXcgdGhp
+cyBwYXRjaD8gU2luY2UgaXQncyBiZWVuIGFsbW9zdCBhIG1vbnRoIG5vdyBhbmQKPm5vIG9uZSBo
+YXMgcmFpc2VkIGFueSBvYmplY3Rpb24gdG8gRG1pdHJ5J3Mgc3VnZ2VzdGlvblsxXS4KPgo+Cj5b
+MV1odHRwczovL2xvcmUua2VybmVsLm9yZy9kcmktZGV2ZWwvdncybmNkb214M3J3bHRiMnhsbzZu
+ZjNyYXBnY2R0Y2pjb2RvZmdtZWNyenphYmY3amlAcHlic2Z2Mjdqa3EyLwo+Cj4KPj4KPj5NYXhp
+bWUK
 
