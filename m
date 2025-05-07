@@ -1,146 +1,173 @@
-Return-Path: <linux-kernel+bounces-638402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C881DAAE584
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCC5AAE572
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 196F63A04B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AC7524FBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E64528D837;
-	Wed,  7 May 2025 15:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE7628CF4A;
+	Wed,  7 May 2025 15:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HbNhBWWt"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJMFQ5xX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9847A28C861;
-	Wed,  7 May 2025 15:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727B028BAA5;
+	Wed,  7 May 2025 15:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632986; cv=none; b=e1YXQK7O0Gk6chNLQ6C8ZyloDGxg/1XqsdgLCPw/j6B6dhYc+617Pi5JjRRz/cnNlFqOZgGRXBNRAXz09ZtFmuw9t3G35eo7ozSXabN++jVqOaP6Ayogw1ity2As9Wb8AfAf3w9+jBlAhQ04YUhgSEpr+0gLkIF/WkbOjPZ+hzE=
+	t=1746632973; cv=none; b=K0+butVhiuST8jALlhdN62vk56MOghNXgNUJqp1UNNc3OQXucs6Mh+L7hQUNjRA4Dw8+Jhq8OdCfnnWxCKqI6WkVdRKOA0aw9+DeXnYbNxrz1YmrXEdo7jQDMbOHWlkVgUlq0Bq+vuV+sfVTigRiqup5jkzr/8GxQyMGypwBrus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632986; c=relaxed/simple;
-	bh=nNzHKx96NKIWwmqZT773FwQ0tJHihDbRn8PZQIr1ypk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SUyjJV8xYlN58G2zdR7swQ8zrzH7WZZDPjoHzEw3XGHwSAeMJEg4HMlDAqJmHAuLLlkaEbJddx+4MNo5vxVW3EKrAgAiagVqy0iDwpXOSYyp8KCa/zWo8MsUKfwWfm0C0oOR/vu/EUCWpsn0yzil73y8mR8kFG5LC6wIQKxas7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HbNhBWWt; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=XrB6lkb4kjYGUyvVTgh7sRxO8qkr0KQ3qTvgnKF9Guw=; b=HbNhBWWte43Fv5kuCqbpHhn/3b
-	ozaiWNEm+7ZeZNWHs+UA7boIngxYZAk+/TS10Y4z7uT/jCw70n8HHsqeWCagYiShZhZDTYpR4PhMV
-	aYPFXltC2a6pIm+LHQBJfQ1PD4qsYVvSkuOqgjqOolmgriTNE1Q7LsohaUPPldbXtiCrqcUJhO3QA
-	dRkhpzH1n+45qZqRV4J/B9qwvErE51DQU5inkKyzMa7uis2XE95F3vOob2At1B4tvktlDGp225045
-	QIBqKW82DhqYGR+U3B7g0zFFTvmm6X/zDO3Q2aDcq7KRjH0t5UN7mSAMmb1zf3F37guGuosLxZ3tR
-	JSNrqzYg==;
-Received: from [50.39.124.201] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uCh1T-0000000FsKa-0PVQ;
-	Wed, 07 May 2025 15:49:27 +0000
-Message-ID: <06bcea82-11d5-4dcf-8331-c073e6d9078f@infradead.org>
-Date: Wed, 7 May 2025 08:49:20 -0700
+	s=arc-20240116; t=1746632973; c=relaxed/simple;
+	bh=Tp8NdrkzlSlV2qbKcvvrIUR3zgxxR1AAJTORcyzUazM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=na9BHRce8cGCDDEfaPKDv46x3vEELXeMsPRhsbLuvD9ZfGzOCyKfogKSn8+QRbAt9tamPzLr77R7BMI2Hr0e1Q1mhnyxqEDNxMdVMDaU56wmlCOM7v/2IDCyhJLf0FtAVea+FpRXAanrMe/kfplV28Q9SpWRAp1wZbzPX79pvoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJMFQ5xX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0111C4CEE2;
+	Wed,  7 May 2025 15:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746632972;
+	bh=Tp8NdrkzlSlV2qbKcvvrIUR3zgxxR1AAJTORcyzUazM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iJMFQ5xXd5/NPJU1rTDYfFCPEXo9wEQPkrPTbD76lclEZlppbkn8LW+J2UZLwGtRB
+	 HnRFjosuyiQoZH2YPjDxE/eazD5CMNqOyUc3aX/CNVggCIpWduzs6qcqGsFGqn6OQb
+	 Rz7iwLo0rDqh5jW5FTWCtwmlIGrz0rThaYDr0IrpcQj7v58J8mBQB+r53XQiHn+vht
+	 FZm6SNDwh/nSFAGFPUySzVTFPX2ZPb8M/1Z+nLfa+//QIkw0+c6KJDhi5SZ1Ey4o4p
+	 jTd+aPeLd/M1Z/vy1SDvJVTgFzo5E3qYYlsh0JCCcv7UNG7/tQX9a8bCt8pXXXl0O6
+	 9SkASNlXi02Bg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>
+Cc: Thierry Reding <treding@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] dt-bindings: serial: Convert socionext,milbeaut-usio-uart to DT schema
+Date: Wed,  7 May 2025 10:49:22 -0500
+Message-ID: <20250507154924.1602842-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PM / sleep: add configurable delay for pm_test
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>, corbet@lwn.net, rafael@kernel.org,
- len.brown@intel.com, pavel@kernel.org, akpm@linux-foundation.org,
- paulmck@kernel.org, rostedt@goodmis.org, thuth@redhat.com, bp@alien8.de,
- ardb@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250507063520.419635-1-zhangzihuan@kylinos.cn>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250507063520.419635-1-zhangzihuan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Convert the Socionext Milbeaut UART binding to DT schema. It is a
+straight-forward conversion.
 
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Fix $id path
+---
+ .../bindings/serial/milbeaut-uart.txt         | 21 -------
+ .../serial/socionext,milbeaut-usio-uart.yaml  | 56 +++++++++++++++++++
+ 2 files changed, 56 insertions(+), 21 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/serial/milbeaut-uart.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/socionext,milbeaut-usio-uart.yaml
 
-On 5/6/25 11:35 PM, Zihuan Zhang wrote:
-> This patch turns this 5 second delay into a configurable module
-> parameter, so users can determine how long to wait in this
-> pseudo-hibernate state before resuming the system.
-> 
-> The configurable delay parameter has been added to suspend and
-> synchronized to hibernation.
-> 
-> Example (wait 30 seconds);
-> 
->   # echo 30 > /sys/module/hibernate/parameters/pm_test_delay
->   # echo core > /sys/power/pm_test
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-
-Looks good. Thanks.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-> ---
-> v3:
->  - Fix the location of the hibernate.pm_test_delay parameter in
->    kernel-parameters.txt.
->  - Update ‘[hibernate]’ to ‘[HIBERNATION]’
-> v2:
->  - Fix typos.
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
->  kernel/power/hibernate.c                        | 9 +++++++--
->  2 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index d9fd26b95b34..a110cbb37f20 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1828,6 +1828,13 @@
->  				lz4: Select LZ4 compression algorithm to
->  				compress/decompress hibernation image.
->  
-> +	hibernate.pm_test_delay=
-> +			[HIBERNATION]
-> +			Sets the number of seconds to remain in a hibernation test
-> +			mode before resuming the system (see
-> +			/sys/power/pm_test). Only available when CONFIG_PM_DEBUG
-> +			is set. Default value is 5.
-> +
->  	highmem=nn[KMG]	[KNL,BOOT,EARLY] forces the highmem zone to have an exact
->  			size of <nn>. This works even on boxes that have no
->  			highmem otherwise. This also works to reduce highmem
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index 23c0f4e6cb2f..485133af884d 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -133,10 +133,15 @@ bool system_entering_hibernation(void)
->  EXPORT_SYMBOL(system_entering_hibernation);
->  
->  #ifdef CONFIG_PM_DEBUG
-> +static unsigned int pm_test_delay = 5;
-> +module_param(pm_test_delay, uint, 0644);
-> +MODULE_PARM_DESC(pm_test_delay,
-> +		 "Number of seconds to wait before resuming from hibernation test");
->  static void hibernation_debug_sleep(void)
->  {
-> -	pr_info("debug: Waiting for 5 seconds.\n");
-> -	mdelay(5000);
-> +	pr_info("hibernation debug: Waiting for %d second(s).\n",
-> +		pm_test_delay);
-> +	mdelay(pm_test_delay * 1000);
->  }
->  
->  static int hibernation_test(int level)
-
+diff --git a/Documentation/devicetree/bindings/serial/milbeaut-uart.txt b/Documentation/devicetree/bindings/serial/milbeaut-uart.txt
+deleted file mode 100644
+index 3d2fb1a7ba94..000000000000
+--- a/Documentation/devicetree/bindings/serial/milbeaut-uart.txt
++++ /dev/null
+@@ -1,21 +0,0 @@
+-Socionext Milbeaut UART controller
+-
+-Required properties:
+-- compatible: should be "socionext,milbeaut-usio-uart".
+-- reg: offset and length of the register set for the device.
+-- interrupts: two interrupts specifier.
+-- interrupt-names: should be "rx", "tx".
+-- clocks: phandle to the input clock.
+-
+-Optional properties:
+-- auto-flow-control: flow control enable.
+-
+-Example:
+-	usio1: usio_uart@1e700010 {
+-		compatible = "socionext,milbeaut-usio-uart";
+-		reg = <0x1e700010 0x10>;
+-		interrupts = <0 141 0x4>, <0 149 0x4>;
+-		interrupt-names = "rx", "tx";
+-		clocks = <&clk 2>;
+-		auto-flow-control;
+-	};
+diff --git a/Documentation/devicetree/bindings/serial/socionext,milbeaut-usio-uart.yaml b/Documentation/devicetree/bindings/serial/socionext,milbeaut-usio-uart.yaml
+new file mode 100644
+index 000000000000..34a997ca2e11
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/socionext,milbeaut-usio-uart.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/serial/socionext,milbeaut-usio-uart.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Socionext Milbeaut UART controller
++
++maintainers:
++  - Sugaya Taichi <sugaya.taichi@socionext.com>
++
++allOf:
++  - $ref: /schemas/serial/serial.yaml#
++
++properties:
++  compatible:
++    const: socionext,milbeaut-usio-uart
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: RX interrupt specifier
++      - description: TX interrupt specifier
++
++  interrupt-names:
++    items:
++      - const: rx
++      - const: tx
++
++  clocks:
++    maxItems: 1
++
++  auto-flow-control:
++    description: Enable automatic flow control.
++    type: boolean
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    serial@1e700010 {
++        compatible = "socionext,milbeaut-usio-uart";
++        reg = <0x1e700010 0x10>;
++        interrupts = <0 141 0x4>, <0 149 0x4>;
++        interrupt-names = "rx", "tx";
++        clocks = <&clk 2>;
++        auto-flow-control;
++    };
 -- 
-~Randy
+2.47.2
+
 
