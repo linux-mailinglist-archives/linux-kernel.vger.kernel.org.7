@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-638567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7E3AAE7A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C973AAE79E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882761C021B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51ED4E68F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9806328C846;
-	Wed,  7 May 2025 17:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KubgLt9W"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8348B28C5C0;
+	Wed,  7 May 2025 17:18:01 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A821DF728;
-	Wed,  7 May 2025 17:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C661DF728;
+	Wed,  7 May 2025 17:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746638321; cv=none; b=KepWIv1sYOOzxLLNwfIva7ynK+ajfXXCwpTH5Qm9NC984zJgH3j0CnRYu+jcu1QBC7idN1oL0WukRBSWJaJhFoFkZ4BwtSTYI6JHOC27W8hHZ1KBacDo5uizLPmUYsYyonSsxtcY5xUyVwWPUi0hoOCw98kTajxT+bej4S3Rczw=
+	t=1746638281; cv=none; b=KJusaf+Bkd+hXTunRPq/EXi58KdIsLFgTEpW3J68RGvugvubaJ1/epdwpxYWikUE0XF04QbglSO3L80QtZ4CXHnQRleU3ByrXqEf4C9/VJd9F6vapnJ3FEwSThiHQDX2ccqCKPPSISii+OF5q8kSkSSQeF5WlbIKjGE9icmm9Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746638321; c=relaxed/simple;
-	bh=/P6sAh0NrXRYaP0FUPo2DCEv9cadpmfXoNKPq0fNKpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFJN9md1ciiYFqJF0gRIoFD7NhU1nXkjWIpKyAdDHH43bF136DGzPBtmS+e7y8Z4kvbaQ3O/ce4DBzHtCUYQphpA5hzvjzgU+ZDyJYlFBqe1ih7iu1X2l7mJ8lZhpJrSoED8oliADAVnZm8TyNWU9AoJv5i8sFUKsNoqE0CkdlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KubgLt9W; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id CiOcuTurMZu1yCiOcuMLmW; Wed, 07 May 2025 19:17:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1746638249;
-	bh=+X+LlhXccWqiDMD0o118ntOtyxF71TzYXOzVd7j3Sb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=KubgLt9W2lIE32wVFKiyKm5DOQ7iOgevmvVmBnYxfb6ADsIxO/2kH1pEdeDyiqHQ4
-	 CM9xShNJ693MAo64JzJ7lYLJxoyR4NrlqpL+4nv4QDU3gjsqFJvRSSGO8BVeJ2+h8K
-	 3kPi+L+vGafQLDHGjE6obV4Hjn9/trWHtDlFUluPMUIkJ0x27EmxwtlAvffA9zvwFb
-	 5Vy0f+o0W74hKat0yv5VVrGzEiXBfl26gUu3hohhvvB17CTGV5z8RON4wIzCwOejNq
-	 zDScjd0vmgOhPgXR1DtbezseqdEQzdFH1TL2M7bmKfqSdfz1hP9rB53Aqfljn8qhi9
-	 RrXsbNpmjfRqw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 07 May 2025 19:17:29 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <43f5dfb3-ea3a-4f1d-b3bd-9e62f976b651@wanadoo.fr>
-Date: Wed, 7 May 2025 19:17:25 +0200
+	s=arc-20240116; t=1746638281; c=relaxed/simple;
+	bh=To4Nka6PcTnjY/W40o5KRZA+FJVBH94/uqD+QUvAcg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L9N47GnuWZPzFqIcVckyDPSSXYJrFKgFIeaGrwSsXuVzzTLio1GmZTBHQn/dZ8kj0h56wAxoutCQt1yZZoO1+WPQdXvLsZPXsNkVQ2h5oGjIwBvLRj4HOXdkiHTHfYPzOfwJKTQV7eEjHwLD3a1WdYU9AELXgfSdR/n5v4KyDVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4c4fa0bfca2so25056137.0;
+        Wed, 07 May 2025 10:17:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746638276; x=1747243076;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8VFgCHIP/JVV/sPKyqeBY+tuXtoeeARuomTCXRay2l4=;
+        b=AtVbCimd/FcSBbf4KpCj5dTLxnf6XwUn4/M/VS0dVncKfF9mv+zcAb0/H1COnzwlcX
+         8p3QSyIEPFiCJ65YFM8iah6+tbsoQ0IrxJ22cXVu8hZdVj8d+kLypXA192W16r5Jpc9T
+         CCLvbT9fDfLGrXfciOXB5Lhendq4yU4gwuENHR0AJByEq84bx4sNwZz0zJYYEAd0ndj/
+         vkczlf2sg9U6S0lFrWj15ZwMa4PyUAR2bOdveD2g5QJUZ0HsPr4aQmFXmah1RfNmtmk2
+         dzIuv7aQIa+yMfFmcaoa0217PzGiuwIgUXWCZ3b0u7bffKPeWCaRYQs5uaJrY1pCxGb1
+         +AMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Bt41zx372WVSpoEGK+5gShvTT/vU/HxZe8Uh1DYljEyh6um77e9EGulgOPCVGvKdvT6xhLylY1keWg0T@vger.kernel.org, AJvYcCVBdqTlU5FC92BTcaD3ipP6Fy5WdgCHAVO4EFsiBT0Ia+NXix/2S2Avsjx23gEdjVlDFzQWv6MdyBmp@vger.kernel.org, AJvYcCVioFPW58LDey+DD5gq8n2aiAPyUpUL7QoHk6gTJofwSkO421BP0Z4TgRxjL+CYVNl2S8PRQm+hvjCW@vger.kernel.org, AJvYcCWTpao7T1qXI1qWc37rb/z3Oj6oRNnRqKkq21jc67VaeudtHOj1Rwd2X2+36DcpvB/m9+cN1GsAumwHbUln7pS+7fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ktBsbkjQTDJdYi4kdqNCGhCI6kIx1K3PNx4A66C7Zdw6idFc
+	miUZ1ooA9/opgdT2o8soQBNm+qzxcvVVMJl27wjYlExFmi+xueG4XvcEVeTs
+X-Gm-Gg: ASbGncvRTYCi/Dm2YFtMwn4HQTqq/pmNUJS/u0hWTByMO+XFgFz+XhG+3J1TFGoC/B9
+	F1nr9P1erQw7d/xi4caRVRkrXd2KOPS1nXn0dYxd8B9tdxQtpkevR0/ufubW4I+/8d/2LUcCMxC
+	LbQflbFwlL1Sfy/B5NEcjjUd0KJsV0Nw+w4gJSLQFTZ4sLNlDKDslo1ItGzdxEMyr2001IZsTmD
+	OnE0S/EcvpzdwhHwsul8iYlFihHQ+FDx+6MNDrWsAU/Gnmkdid1WidgMfoifJ81/oo5zfEIADIx
+	uK6lySC1pyx/jFDeBk34BJmNnPhP/WfgWGvcwGx46o7/wIh1wdhWbLUX4Nrpvag7CIekPnkxH0o
+	+4X4=
+X-Google-Smtp-Source: AGHT+IHPIXcDpBrKDJs8gxDAM7Nj25eRQ9ltApOmLsB34EAC7YxZQicy1/D/ZLz0J/n81OW+F3/KZA==
+X-Received: by 2002:a05:6102:8015:b0:4c3:6393:843f with SMTP id ada2fe7eead31-4ddacf2e38emr336533137.5.1746638276398;
+        Wed, 07 May 2025 10:17:56 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4db1c605c57sm1391200137.13.2025.05.07.10.17.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 10:17:55 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86d5e3ddb66so30088241.2;
+        Wed, 07 May 2025 10:17:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6dt+FEoCl0Hxi7JRP/DrJ1jCHehKgy0gZNKTniE2uNynPOSXlCppXJ4O4pTtWzgLNfJMGJeSdQbVnIQvI@vger.kernel.org, AJvYcCWO/FLJEUGeC/JuQ41HbzqeBgUpFQNlG4SM/dLFw01uWrqv7Ba0p/xOx3/f1GBJSfYy9Fv7U4yb/V89@vger.kernel.org, AJvYcCWWwTONuIAxaM5EHASdZFXg37fJ2JqNd+t2Mh2i8EkkwXm8MPv+l2iJoegWMedSovcbnTf7kkGXCIuJ@vger.kernel.org, AJvYcCWjT0c2d4rbKZmDovEkAqr8Z+ctJwVGg8MdZ/t5jvYlUh/yJDIdE6vMe0QYix4r+J17rHdrcqpjbhzdkp9TjYHVSPw=@vger.kernel.org
+X-Received: by 2002:a05:6102:5247:b0:4c3:6568:3e18 with SMTP id
+ ada2fe7eead31-4ddacfc3838mr302535137.15.1746638275342; Wed, 07 May 2025
+ 10:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] regulator: tps65219: Fix erorr codes in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aBtZHEkgYGK33fWk@stanley.mountain>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aBtZHEkgYGK33fWk@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-7-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250410140628.4124896-7-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 May 2025 19:17:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV4OgiQBU0HbzpdB2Dj1i8CFdw_4RTeJTk4nKiypvar=w@mail.gmail.com>
+X-Gm-Features: ATxdqUGj-wUJNPIxE39nb_-uJRxFLq7Nslb_bmFxGktZdIK8uRzxScDRTKEfXQw
+Message-ID: <CAMuHMdV4OgiQBU0HbzpdB2Dj1i8CFdw_4RTeJTk4nKiypvar=w@mail.gmail.com>
+Subject: Re: [PATCH 6/7] dt-bindings: clock: rzg2l-cpg: Drop power domain IDs
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Le 07/05/2025 à 14:59, Dan Carpenter a écrit :
-> There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
-> instead of "error".  The "rdev" pointer is valid at this point so the
-> existing code returns a positive value instead of instead of a negative
-> error code.
-> 
-> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/regulator/tps65219-regulator.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Since the configuration order between the individual MSTOP and CLKON bits
+> cannot be preserved with the power domain abstraction, drop the power
+> domain IDs. The corresponding code has also been removed. Currently, there
+> are no device tree users for these IDs.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> diff --git a/drivers/regulator/tps65219-regulator.c b/drivers/regulator/tps65219-regulator.c
-> index b16b300d7f45..f5cd8e33e518 100644
-> --- a/drivers/regulator/tps65219-regulator.c
-> +++ b/drivers/regulator/tps65219-regulator.c
-> @@ -454,7 +454,7 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
->   						  irq_type->irq_name,
->   						  &irq_data[i]);
->   		if (error)
-> -			return dev_err_probe(tps->dev, PTR_ERR(rdev),
-> +			return dev_err_probe(tps->dev, error,
->   					     "Failed to request %s IRQ %d: %d\n",
->   					     irq_type->irq_name, irq, error);
+Gr{oetje,eeting}s,
 
-and error can also be removed in the message as well, with the 
-corresponding %d.
+                        Geert
 
->   	}
-> @@ -477,7 +477,7 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
->   						  irq_type->irq_name,
->   						  &irq_data[i]);
->   		if (error)
-> -			return dev_err_probe(tps->dev, PTR_ERR(rdev),
-> +			return dev_err_probe(tps->dev, error,
->   					     "Failed to request %s IRQ %d: %d\n",
->   					     irq_type->irq_name, irq, error);
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Same.
-
->   	}
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
