@@ -1,105 +1,198 @@
-Return-Path: <linux-kernel+bounces-637618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3E0AADB2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A68AADB47
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870431C25037
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45699A3D2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23293239090;
-	Wed,  7 May 2025 09:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C023D284;
+	Wed,  7 May 2025 09:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjzGV6yC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F4nSP2Fz"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C040192D8F;
-	Wed,  7 May 2025 09:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36BB23C4E1;
+	Wed,  7 May 2025 09:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609273; cv=none; b=mJDUCAwLnSF21WhAQmE0bD/oaI97iX9Xyi00wqchcWOx8fsbO8HLqTBE6I7dZF5FfDhHo5V46BUOFH+ISYXcbM1dKDohXD33Pjsj3zpInz0u+uqrcrFVYJu3Zc5OmQcb10pV3g39DIpsw/Y1dGC0gtXCoPKDojjK7c63RfZSfaI=
+	t=1746609303; cv=none; b=sRk69KjBgJB6Q9Hy9TlUo1q3ZiH1++bRTqig8FS96g932xjZSDjlx81uTPyAF4Y+OhOpy+HgFtvyIVCvc7sZU5Er0Fysyfp6DR0QijtL1dq98m3Cs2fK8LNvZlAnEULUnEMSD8oVcD1gjqaJmIYDN2mn7c01TFZyIrGyFMGd45w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609273; c=relaxed/simple;
-	bh=bMRotR6sHrHiFqd8cq3cCqa6cfuObmO7cwP+0halJek=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UQNVZOdx9IWfhSGUEKj5lF4AwwSJy203MIemEPDNEU9QQzwh+PI785bBpk/dmamY7XMR9wo5tKK240lkZeCuswS88mQbu6cZcldry/i3QiwiqerfDvNwLe/g8+vjcHcTtqin57t0+pKIj+VGZLVD2ZexUy2Uq0djo7pP46unm7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjzGV6yC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C150C4CEE7;
-	Wed,  7 May 2025 09:14:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746609273;
-	bh=bMRotR6sHrHiFqd8cq3cCqa6cfuObmO7cwP+0halJek=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WjzGV6yCVCGZZCdYD4aRpjcWB/HhiFulV1TmDLmdZL+ZT2BeGwlIERfi9kHcmfUSy
-	 AfEUmYKO3x8q5rkUL3rNuR2keeslMT7PXyIWgwptyamIA4GK93lljdluNf1+8fdx0P
-	 hv++GqOsMtg4TVQV/UwM+dxd+CjU3rAvJHgtI5+N1iDgmyaPkK3F8RSLK6DxHhmFTs
-	 rBf/6R2h0wL8+e2h1Yq/yfvHHMYH1NNHCwklwkptBRu7sbrYvszX3UCfzAPgbi4n1o
-	 pwCzJImD56wpoxOBEN6JNNBX9vWJKzwMACaVIVDJeu1oeLl/ovm3KWaGTbVsS3TWOS
-	 F4HG7vMTomWnA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uCarH-00CYHp-2W;
-	Wed, 07 May 2025 10:14:31 +0100
-Date: Wed, 07 May 2025 10:14:29 +0100
-Message-ID: <86a57ohjey.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski
- <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas
- <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff
- <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	"Liam R.\
- Howlett" <Liam.Howlett@oracle.com>,
+	s=arc-20240116; t=1746609303; c=relaxed/simple;
+	bh=8bzrdEFI6hGktiNjZu3XxSN3Ansccky9WP6hM1uEFvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSwKHAj/FgKjMq7eKydUBWXbD90gsvy9/cametHrZDGOaGE8C7SNmS+nWUUxDFT3RAqqMZippYLmM7clPGwz/9KC+U7jFczQSJdTaUsZdxPo4eADea/QrbR/22Rxj3b6Lbgt50APondy/ctQ74xzD+POLe7C4Wuwqu616BRBGpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F4nSP2Fz; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=N6hxa7ktAI16FThLApG5BUFDutIZOY100z1nEuVdsWU=; b=F4nSP2FzZ8rKSWMhBjzEjDSXfc
+	z0A3zK1IOTGReBK/EpHD0aBhmsW2oNP7kbHRgPHTTUtnt2kktsrF0yOEe9ra4dEXCAT6KXzpP2uYR
+	Jg7RfQ5RUR9fBMXgRHAHWTHyhL612ZYnAnxFuYwPGXKLjWNlE7hym93yt0n6z+e953H8AFlgNea9a
+	myU1RrJLqJdpzCqyrZ//9TIuXE/t4qfzOgfQQordbCIfzKm/FPAHg7E3lDASVhcvEKnCVLFLag3Zf
+	N3Jfo8TXjFZ2GG1cmRMpkskB3h0cpZq3nLpZS97h6EU4nb3/arJfY4jA5mP0vK2K4rW9oPj1WAjq8
+	f6/K3HEA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uCarT-0000000FogU-247e;
+	Wed, 07 May 2025 09:14:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C9D82300780; Wed,  7 May 2025 11:14:42 +0200 (CEST)
+Date: Wed, 7 May 2025 11:14:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 20/25] irqchip/gic-v5: Add GICv5 PPI support
-In-Reply-To: <87zffpn5rk.ffs@tglx>
-References: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
-	<20250506-gicv5-host-v3-20-6edd5a92fd09@kernel.org>
-	<87zffpn5rk.ffs@tglx>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Andi Kleen <ak@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-perf-users@vger.kernel.org, linux-edac@vger.kernel.org,
+	kvm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/9] x86/nmi: Add support to handle NMIs with source
+ information
+Message-ID: <20250507091442.GB4439@noisy.programming.kicks-ass.net>
+References: <20250507012145.2998143-1-sohil.mehta@intel.com>
+ <20250507012145.2998143-6-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, lpieralisi@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, sascha.bischoff@arm.com, timothy.hayes@arm.com, Liam.Howlett@oracle.com, mark.rutland@arm.com, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507012145.2998143-6-sohil.mehta@intel.com>
 
-On Tue, 06 May 2025 16:00:31 +0100,
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On Tue, May 06, 2025 at 06:21:41PM -0700, Sohil Mehta wrote:
+> The NMI-source bitmap is delivered as FRED event data to the kernel.
+> When available, use NMI-source based filtering to determine the exact
+> handlers to run.
 > 
-> How does this test distinguish between LEVEL_LOW and LEVEL_HIGH? It only
-> tests for level, no? So the test is interesting at best ...
+> Activate NMI-source based filtering only for Local NMIs. While handling
+> platform NMI types (such as SERR and IOCHK), do not use the source
+> bitmap. They have only one handler registered per type, so there is no
+> need to disambiguate between multiple handlers.
+> 
+> Some third-party chipsets may send NMI messages with a hardcoded vector
+> of 2, which would result in bit 2 being set in the NMI-source bitmap.
+> Skip the local NMI handlers in this situation.
+> 
+> Bit 0 of the source bitmap is set by the hardware whenever a source
+> vector was not used while generating an NMI, or the originator could not
+> be reliably identified. Poll all the registered handlers in that case.
+> 
+> When multiple handlers need to be executed, adhere to the existing
+> priority scheme and execute the handlers registered with NMI_FLAG_FIRST
+> before others.
+> 
+> The logic for handling legacy NMIs is unaffected since the source bitmap
+> would always be zero.
+> 
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> ---
+> v5: Significantly simplify NMI-source handling logic.
+>     Get rid of a separate lookup table for NMI-source vectors.
+>     Adhere to existing priority scheme for handling NMIs.
+> ---
+>  arch/x86/kernel/nmi.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+> index a1d672dcb6f0..183e3e717326 100644
+> --- a/arch/x86/kernel/nmi.c
+> +++ b/arch/x86/kernel/nmi.c
 
-There is no distinction between HIGH and LOW, RISING and FALLING, in
-any revision of the GIC architecture.
+>  static int nmi_handle(unsigned int type, struct pt_regs *regs)
+>  {
+>  	struct nmi_desc *desc = nmi_to_desc(type);
+> +	unsigned long source_bitmap = 0;
 
-	M.
+	unsigned long source = ~0UL;
 
--- 
-Without deviation from the norm, progress is not possible.
+>  	nmi_handler_t ehandler;
+>  	struct nmiaction *a;
+>  	int handled=0;
+> @@ -148,16 +164,40 @@ static int nmi_handle(unsigned int type, struct pt_regs *regs)
+>  
+>  	rcu_read_lock();
+>  
+> +	/*
+> +	 * Activate NMI source-based filtering only for Local NMIs.
+> +	 *
+> +	 * Platform NMI types (such as SERR and IOCHK) have only one
+> +	 * handler registered per type, so there is no need to
+> +	 * disambiguate between multiple handlers.
+> +	 *
+> +	 * Also, if a platform source ends up setting bit 2 in the
+> +	 * source bitmap, the local NMI handlers would be skipped since
+> +	 * none of them use this reserved vector.
+> +	 *
+> +	 * For Unknown NMIs, avoid using the source bitmap to ensure all
+> +	 * potential handlers have a chance to claim responsibility.
+> +	 */
+> +	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL)
+> +		source_bitmap = fred_event_data(regs);
+
+	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL) {
+		source = fred_event_data(regs);
+		if (source & BIT(0))
+			source = ~0UL;
+	}
+
+>  	/*
+>  	 * NMIs are edge-triggered, which means if you have enough
+>  	 * of them concurrently, you can lose some because only one
+>  	 * can be latched at any given time.  Walk the whole list
+>  	 * to handle those situations.
+> +	 *
+> +	 * However, NMI-source reporting does not have this limitation.
+> +	 * When NMI-source information is available, only run the
+> +	 * handlers that match the reported vectors.
+>  	 */
+>  	list_for_each_entry_rcu(a, &desc->head, list) {
+>  		int thishandled;
+>  		u64 delta;
+>  
+> +		if (source_bitmap && !match_nmi_source(source_bitmap, a))
+> +			continue;
+
+		if (!(souce & BIT(a->source_vector)))
+			continue;
+
+>  		delta = sched_clock();
+>  		thishandled = a->handler(type, regs);
+>  		handled += thishandled;
 
