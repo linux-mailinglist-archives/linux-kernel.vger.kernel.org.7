@@ -1,45 +1,57 @@
-Return-Path: <linux-kernel+bounces-637620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278DCAADB44
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A46AADB49
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C4B9A32D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8F59A4629
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD123A9A8;
-	Wed,  7 May 2025 09:14:54 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056CE1AA1D2;
+	Wed,  7 May 2025 09:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b="biZnOZNI"
+Received: from h8.fbrelay.privateemail.com (h8.fbrelay.privateemail.com [162.0.218.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD66239E96
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3741B1DED52
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609294; cv=none; b=GLUjz/46dP7XiTCzdE0K+HaawgNqSKhZ7/XaqWdpVkXcaOoj/P0xXN6TKMQbrVdueS2Pjx7p15kUL9KucNAOKhmcjKMj/nL1Eh5CGqfuvMNi5SGauaWgKReK3f2oPKs2N0LGJwmJzyYEVO247bwKceEpMT/SvQygGPcth2NWVyo=
+	t=1746609327; cv=none; b=elwkQ6+DT+RApmuZ77l5IZzPCJKsX9qIi5CnFzEFcvbOMa9xyuUh/lIV+5Bnw+O068MkZHhcP1TpY2gHg8BZlOF8/S/jeh8zpMQgfgzOh8fVKgw0LligG5NKkHaxlieMPPkdghzLZCpZnfagMs4AnrD5RvfJ28ZXaJEHNIKzvCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609294; c=relaxed/simple;
-	bh=ILju9IWF+HLUzQbAqYkzUNiVqYwQ/8n9JZEQhbn15zw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YI0wagoLTatHyuyj1XNqOleJet/xjOivyKROl57qmngAR/MGx8gBfaqP/uHuw89D+FOBNGdW/cQQASkbtoLUSHG8sNXGR8xBwJUWTSTfvwydTMoEAJNfmEJ1Zrgn8SLvA73/RH4pAqmsR9naJa6TcTVsTBDQsteFSrJ7DAlim44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZsqLg52nPz1d10k;
-	Wed,  7 May 2025 17:13:31 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id A94021800B2;
-	Wed,  7 May 2025 17:14:48 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 May 2025 17:14:48 +0800
-Message-ID: <2f6b9715-b25a-47e3-b2d1-6852ba1038d2@huawei.com>
-Date: Wed, 7 May 2025 17:14:47 +0800
+	s=arc-20240116; t=1746609327; c=relaxed/simple;
+	bh=egT0yKlCDwoRHqLe+MRwanT0SawFfp6yH1Bs4mtm8UE=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=jhdXNDvD61ZhoMRpnRnoxZ7aJWf23O7BrFlm0E7knUVDtXPgnB3uA7zYqxDmDYC60m/1sLi1fI0o4FzAwaBue11foSsFbNb+tQT1CiIqY0BADrH/IxKERgD1JSzXFTA96VmSNHUlxtGNMujtq4bIlaPvMqjGS45Q9BesnMjBcKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org; spf=pass smtp.mailfrom=kenogo.org; dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b=biZnOZNI; arc=none smtp.client-ip=162.0.218.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kenogo.org
+Received: from MTA-08-4.privateemail.com (mta-08.privateemail.com [198.54.118.215])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by h7.fbrelay.privateemail.com (Postfix) with ESMTPSA id 4ZsqNp613zz2xFV
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:15:22 -0400 (EDT)
+Received: from mta-08.privateemail.com (localhost [127.0.0.1])
+	by mta-08.privateemail.com (Postfix) with ESMTP id 4ZsqNf65Dwz3hhVf
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:15:14 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=kenogo.org; s=default;
+	t=1746609314; bh=egT0yKlCDwoRHqLe+MRwanT0SawFfp6yH1Bs4mtm8UE=;
+	h=Date:To:From:Subject:From;
+	b=biZnOZNIx4HeYWxnfWP5ZlETzlGzf0Qj6yKKxbspsW0WCW6c8anQsDF6iG4QfsjmZ
+	 PpQnJ3xv2d8xp0d10nZdqaG9TnD8ow0kSFecKHbPS2uPJxGuDAQewSft+XLV7y6C+X
+	 n2ZNf0RxdOk8FfhkYAkGZjA3k1IbbSi5vKkdIKLqpB1UaqeAhWQeUd0f5T2fUcN2Iv
+	 +wGNnSyDKQGrV4vnOdRPgdogprgJmvf7vv3F7JabyTz1XrvOgHKkSSRqc3mccaeqZB
+	 wus3hqN5OQvu0Ga+oIMO422mdayHpeddLW3PDQSscJLKWd9K8ysgrCNL5i0hb8pBTQ
+	 +ElspbD+MvFCg==
+Received: from [100.115.92.203] (nat-141-76-8-190.dip.tu-dresden.de [141.76.8.190])
+	by mta-08.privateemail.com (Postfix) with ESMTPA
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:15:14 -0400 (EDT)
+Message-ID: <fed2cedc-0458-4dfe-9e14-6d64be618165@kenogo.org>
+Date: Wed, 7 May 2025 11:15:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,257 +59,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dma mapping benchmark: modify the framework to
- adapt to more map modes
-To: Barry Song <21cnbao@gmail.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
-References: <20250506030100.394376-1-xiaqinxin@huawei.com>
- <20250506030100.394376-3-xiaqinxin@huawei.com>
- <CAGsJ_4wgxgXs6pyYUTNFmNmqHSWtPbKSUnMCzf8=rvOdhgJ04Q@mail.gmail.com>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <CAGsJ_4wgxgXs6pyYUTNFmNmqHSWtPbKSUnMCzf8=rvOdhgJ04Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+From: Keno Goertz <contact@kenogo.org>
+Subject: ntp: Adjustment of time_maxerror with 500ppm instead of 15ppm
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
+Hello,
 
-在 2025/5/7 10:30, Barry Song 写道:
-> On Tue, May 6, 2025 at 3:01 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->> In this patch map_benchmark abstract in four interface: prepare, unprepare,
->> do_map, do_unmap. When there's a new mode to add, need four steps:
->> 1) Add the mode in map_benchmark.h
->> 2) Defines the mode param, like struct dma_xxx_map_param, and this object
->>     will be return in prepare and as input parameter in other ops;
->> 3) Defines the ops functions:prepare, unprepare, do_map, do_unmap.
->> 4) Add the new mode in dma_map_benchmark_ops.
-> There are too many irrelevant details.
->
-> We're more interested in the reasoning behind this change than just the change
-> itself. There should be some explanation of the purpose.
-Okay, I'm going to add some purposeful commit information.
->> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->> ---
->>   include/linux/map_benchmark.h |   8 ++-
->>   kernel/dma/map_benchmark.c    | 120 +++++++++++++++++++++++++++-------
->>   2 files changed, 104 insertions(+), 24 deletions(-)
->>
->> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
->> index 2ac2fe52f248..5294dfd1870f 100644
->> --- a/include/linux/map_benchmark.h
->> +++ b/include/linux/map_benchmark.h
->> @@ -15,6 +15,11 @@
->>   #define DMA_MAP_TO_DEVICE       1
->>   #define DMA_MAP_FROM_DEVICE     2
->>
->> +enum {
->> +       DMA_MAP_SINGLE_MODE,
->> +       DMA_MAP_MODE_MAX
->> +};
->> +
->>   struct map_benchmark {
->>          __u64 avg_map_100ns; /* average map latency in 100ns */
->>          __u64 map_stddev; /* standard deviation of map latency */
->> @@ -27,6 +32,7 @@ struct map_benchmark {
->>          __u32 dma_dir; /* DMA data direction */
->>          __u32 dma_trans_ns; /* time for DMA transmission in ns */
->>          __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
->> -       __u8 expansion[76];     /* For future use */
->> +       __u8  map_mode; /* the mode of dma map */
->> +       __u8 expansion[75];     /* For future use */
->>   };
->>   #endif /* _KERNEL_DMA_BENCHMARK_H */
->> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
->> index cc19a3efea89..f04973eba1d8 100644
->> --- a/kernel/dma/map_benchmark.c
->> +++ b/kernel/dma/map_benchmark.c
->> @@ -5,6 +5,7 @@
->>
->>   #define pr_fmt(fmt)    KBUILD_MODNAME ": " fmt
->>
->> +#include <linux/cleanup.h>
->>   #include <linux/debugfs.h>
->>   #include <linux/delay.h>
->>   #include <linux/device.h>
->> @@ -31,17 +32,97 @@ struct map_benchmark_data {
->>          atomic64_t loops;
->>   };
->>
->> +struct map_benchmark_ops {
->> +       void *(*prepare)(struct map_benchmark_data *map);
->> +       void (*unprepare)(void *arg);
->> +       int (*do_map)(void *arg);
->> +       void (*do_unmap)(void *arg);
->> +};
->> +
->> +struct dma_single_map_param {
->> +       struct device *dev;
->> +       dma_addr_t addr;
->> +       void *xbuf;
->> +       u32 npages;
->> +       u32 dma_dir;
->> +};
->> +
->> +static void *dma_single_map_benchmark_prepare(struct map_benchmark_data *map)
->> +{
->> +       struct dma_single_map_param *mparam __free(kfree) = kzalloc(sizeof(*mparam),
->> +                                                                   GFP_KERNEL);
->> +       if (!mparam)
->> +               return NULL;
->> +
->> +       mparam->npages = map->bparam.granule;
->> +       mparam->dma_dir = map->bparam.dma_dir;
->> +       mparam->dev = map->dev;
->> +       mparam->xbuf = alloc_pages_exact(mparam->npages * PAGE_SIZE, GFP_KERNEL);
->> +       if (!mparam->xbuf)
->> +               return NULL;
->> +
->> +       /*
->> +        * for a non-coherent device, if we don't stain them in the
->> +        * cache, this will give an underestimate of the real-world
->> +        * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
->> +        * 66 means evertything goes well! 66 is lucky.
->> +        */
->> +       if (mparam->dma_dir != DMA_FROM_DEVICE)
->> +               memset(mparam->xbuf, 0x66, mparam->npages * PAGE_SIZE);
->> +
->> +       return_ptr(mparam);
->> +}
->> +
->> +static void dma_single_map_benchmark_unprepare(void *arg)
->> +{
->> +       struct dma_single_map_param *mparam = arg;
->> +
->> +       free_pages_exact(mparam->xbuf, mparam->npages * PAGE_SIZE);
->> +       kfree(mparam);
->> +}
->> +
->> +static int dma_single_map_benchmark_do_map(void *arg)
->> +{
->> +       struct dma_single_map_param *mparam = arg;
->> +
->> +       mparam->addr = dma_map_single(mparam->dev, mparam->xbuf,
->> +                                     mparam->npages * PAGE_SIZE, mparam->dma_dir);
->> +       if (unlikely(dma_mapping_error(mparam->dev, mparam->addr))) {
->> +               pr_err("dma_map_single failed on %s\n", dev_name(mparam->dev));
->> +               return -ENOMEM;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static void dma_single_map_benchmark_do_unmap(void *arg)
->> +{
->> +       struct dma_single_map_param *mparam = arg;
->> +
->> +       dma_unmap_single(mparam->dev, mparam->addr,
->> +                        mparam->npages * PAGE_SIZE, mparam->dma_dir);
->> +}
->> +
->> +static struct map_benchmark_ops dma_single_map_benchmark_ops = {
->> +       .prepare = dma_single_map_benchmark_prepare,
->> +       .unprepare = dma_single_map_benchmark_unprepare,
->> +       .do_map = dma_single_map_benchmark_do_map,
->> +       .do_unmap = dma_single_map_benchmark_do_unmap,
->> +};
->> +
->> +static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
->> +       [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
->> +};
->> +
->>   static int map_benchmark_thread(void *data)
->>   {
->> -       void *buf;
->> -       dma_addr_t dma_addr;
->>          struct map_benchmark_data *map = data;
->> -       int npages = map->bparam.granule;
->> -       u64 size = npages * PAGE_SIZE;
->> +       __u8 map_mode = map->bparam.map_mode;
->>          int ret = 0;
->>
->> -       buf = alloc_pages_exact(size, GFP_KERNEL);
->> -       if (!buf)
->> +       void *arg = dma_map_benchmark_ops[map_mode]->prepare(map);
-> It's a bit awkward. Let's try something like this instead:
->
-> struct map_benchmark_ops *mb_ops = &dma_map_benchmark_ops[map_mode];
->
-> then
-> mb_ops->prepare()/map/unmap/unprepare etc.
->
-> And can you find a better name than "arg" which is meaningless, mparam?
+I've been looking into the kernel's NTP code and found what I understand 
+to be a deviation from NTP as standardized by RFC 5905.  The 
+documentation of this part of the kernel is pretty sparse, so there may 
+be some motivation behind this that I don't know of.  Perhaps someone 
+with more knowledge can explain this.
 
-OK, I'll change it in the next version according to your suggestion.
+The doc string of `struct ntp_data` states that `time_maxerror` holds 
+the "NTP sync distance (NTP dispersion + delay / 2)".
 
-Thanks!
+ntpd indeed sets this value to what RFC 5905 calls the "root 
+synchronization distance" LAMBDA.
 
->> +
->> +       if (!arg)
->>                  return -ENOMEM;
->>
->>          while (!kthread_should_stop())  {
->> @@ -49,23 +130,10 @@ static int map_benchmark_thread(void *data)
->>                  ktime_t map_stime, map_etime, unmap_stime, unmap_etime;
->>                  ktime_t map_delta, unmap_delta;
->>
->> -               /*
->> -                * for a non-coherent device, if we don't stain them in the
->> -                * cache, this will give an underestimate of the real-world
->> -                * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
->> -                * 66 means evertything goes well! 66 is lucky.
->> -                */
->> -               if (map->dir != DMA_FROM_DEVICE)
->> -                       memset(buf, 0x66, size);
->> -
->>                  map_stime = ktime_get();
->> -               dma_addr = dma_map_single(map->dev, buf, size, map->dir);
->> -               if (unlikely(dma_mapping_error(map->dev, dma_addr))) {
->> -                       pr_err("dma_map_single failed on %s\n",
->> -                               dev_name(map->dev));
->> -                       ret = -ENOMEM;
->> +               ret = dma_map_benchmark_ops[map_mode]->do_map(arg);
->> +               if (ret)
->>                          goto out;
->> -               }
->>                  map_etime = ktime_get();
->>                  map_delta = ktime_sub(map_etime, map_stime);
->>
->> @@ -73,7 +141,8 @@ static int map_benchmark_thread(void *data)
->>                  ndelay(map->bparam.dma_trans_ns);
->>
->>                  unmap_stime = ktime_get();
->> -               dma_unmap_single(map->dev, dma_addr, size, map->dir);
->> +               dma_map_benchmark_ops[map_mode]->do_unmap(arg);
->> +
->>                  unmap_etime = ktime_get();
->>                  unmap_delta = ktime_sub(unmap_etime, unmap_stime);
->>
->> @@ -108,7 +177,7 @@ static int map_benchmark_thread(void *data)
->>          }
->>
->>   out:
->> -       free_pages_exact(buf, size);
->> +       dma_map_benchmark_ops[map_mode]->unprepare(arg);
->>          return ret;
->>   }
->>
->> @@ -209,6 +278,11 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
->>
->>          switch (cmd) {
->>          case DMA_MAP_BENCHMARK:
->> +               if (map->bparam.map_mode >= DMA_MAP_MODE_MAX) {
->> +                       pr_err("invalid map mode\n");
->> +                       return -EINVAL;
->> +               }
->> +
->>                  if (map->bparam.threads == 0 ||
->>                      map->bparam.threads > DMA_MAP_MAX_THREADS) {
->>                          pr_err("invalid thread number\n");
->> --
->> 2.33.0
->>
-> Thanks
-> Barry
+In RFC 5905, this LAMBDA increases over time because the root dispersion 
+increases at a rate of PHI, which is set to 15ppm.  Running
+
+$ ntpq -c "rv 0 rootdisp"
+
+a couple of times confirms that the root dispersion reported by ntpd 
+increases with this rate.  Consequently, so does the root 
+synchronization distance LAMBDA.
+
+However, the function `ntp.c:second_overflow()` instead increases the 
+value of `time_maxerror` with the rate MAXFREQ, which is set to 500ppm.
+
+This leads to standard library functions like ntp_gettime() reporting 
+much bigger values of `maxerror` than ntpd is working with.  This can be 
+confirmed by running
+
+$ adjtimex -p
+
+a couple of times.
+
+MAXFREQ *can* be found in the reference implementation of RFC 5905 and 
+is also set to 500ppm there, but it is used in a different context: 
+MAXFREQ is an upper bound for the local clock's frequency offset, while 
+PHI is an upper bound for the frequency drift of a clock synchronized 
+with NTP.
+
+At least this is my understanding.  Can someone explain this?
+
+Best regards
+Keno
 
