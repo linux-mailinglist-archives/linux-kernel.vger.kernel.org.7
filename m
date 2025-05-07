@@ -1,80 +1,136 @@
-Return-Path: <linux-kernel+bounces-637016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124CBAAD366
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:39:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32542AAD371
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E442598365A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:39:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E631F7B4449
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D3119E96A;
-	Wed,  7 May 2025 02:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B7219F120;
+	Wed,  7 May 2025 02:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="MbtsnBpi"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IObWT5zk"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37DE19AD5C;
-	Wed,  7 May 2025 02:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5A119C54B
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 02:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746585558; cv=none; b=N9SQAvNf7/GSIB3MdCqjalxTcvDpHZkKBV0L3utuIhwjByO+fE6DiLNCWvTuNVzg6n9LEX+Yx8JgLwpCqPVNL+9h+q0uqpUDHZvAec3rlJE7uDFkUwH/aRUufoWN1JC9K1eHH91xlIC/z3TOq+00IXaKnJZjzYVHb8z7ou6EcZE=
+	t=1746585728; cv=none; b=l9Ef+M/PRI1XNTvMKu/+VVappb0T+bq/viYh7D2TuPMj2GwKmaeYXVDLEgGbP+avg/6AYw5ijpUKUNwBuAb7Z4yyDMTBXK5mJ3YhVoEer/mukEtl2cAN1VafC10oU6LMEDYYm31BR5WEsK7u8HUXE68cBnHgkc6qtl34lBaTJ58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746585558; c=relaxed/simple;
-	bh=mYzVdCxb05r5IV1qxjq+fLxj+ckGAC7t6/gKEWdHZbQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WG8DiGrHFe+sIOHHb2WlIptdUPp2AMA5IlawbR+e0fG1S1yGuL/A6bg0xWbX3kEtt6EPwtTer7hz4SwnBoheREyTNbEI4uNrHdkyd7R3AbDsXX9jQtwA62E5QLH/Df9LuIEoG291cqjzWckQLDgUG98rXRW/m0ESdnhgpgpH81s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=MbtsnBpi; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1746585553;
-	bh=BW9Mbotb7DptqVa6zP9NiVBowm1eZRCpQ6q2nbVAePY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=MbtsnBpiO3vYwGBeF6POnqBj+HSq90yXnHnMY2WUNK2+Gqbi9YpI1kKLtMG9A6kik
-	 qT7t0rnJpkVt/3QE8JvXP34geWKX5fU9gKxe4KfbIfV0aca03l9Aw0oyOX7N++k9WM
-	 mV9sDstUxraScv5Ve28OVRcCAcE9nRgEm9SNBFyKWSQJgb6OmIqT1FRt4Q3lxTpDfu
-	 OaIjWyibxDqtyxu9B0IbxYLoJPLW1OA9FaxevolKR95oVd5VYkJibuZ6yVaIiE/G4e
-	 Dt7XWx+/vP6mTmugUl7pB20aMviKBR6lyE8J1vdgbo2NxEc2ITNwX+YWzoqsfc5dj2
-	 3FbnylinI35xA==
-Received: from [127.0.1.1] (unknown [180.150.112.225])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2DC6A64473;
-	Wed,  7 May 2025 10:39:12 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Avi Fishman <avifishman70@gmail.com>, 
- Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- "William A. Kennington III" <william@wkennington.com>
-Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250416015902.2091251-1-william@wkennington.com>
-References: <20250416015902.2091251-1-william@wkennington.com>
-Subject: Re: [PATCH] arm64: dts: nuvoton: Add pinctrl
-Message-Id: <174658555212.2363912.15584445504922514625.b4-ty@codeconstruct.com.au>
-Date: Wed, 07 May 2025 12:09:12 +0930
+	s=arc-20240116; t=1746585728; c=relaxed/simple;
+	bh=6etL97QEsqJN3YZrjYchxkPsyMZOXMw61jInfbT3Xw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rKx9Tp1OZBTdQfHVOtmkqd5RjSEPc1bXpoq911JzOhztbdqW88a4OVZOVU5H3I43jU49S6Sf/UUKf7fpMS7Mtzd3we+Pm3EV3IwOBJbohObLTxywfVbP0b2E+ev0b0dRRme2Uq9Y01NzSlfSOojm+sM825qnv1riAU3oUD9ukvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IObWT5zk; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <87e475ca-c4db-4fe4-94df-4e29f779a383@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746585713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jR9JKWCrpFIfn9jOgzBStj0mD3xOCH22odNml15ltfQ=;
+	b=IObWT5zkKq5EkbWwVKTGdfdlbql9PSombG1SPX7hWaaxp/EZwXp2Nl3674HN9qu9nFmHVS
+	RgIulIF+wOLmuBVb0Sv6jMyjKYDRkt7uDwC8waWe5ZIGzGz9EYnlcH9IWiJyaih6994gMd
+	OrHpRZDB6IIrblHWYWCjsyBVZ6D71g8=
+Date: Wed, 7 May 2025 10:41:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Subject: Re: [PATCH v9 5/5] MAINTAINERS: Add tpm_loongson.c to LOONGSON CRYPTO
+ DRIVER entry
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-crypto@vger.kernel.org, jgg@ziepe.ca,
+ linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de,
+ Huacai Chen <chenhuacai@loongson.cn>
+References: <20250506032053.11147-1-zhaoqunqin@loongson.cn>
+ <a03b4963-55aa-4a75-b795-1e8f0db7ec89@linux.dev>
+ <00196f77-1060-fe67-3e6b-6721092207d6@loongson.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <00196f77-1060-fe67-3e6b-6721092207d6@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 15 Apr 2025 18:59:02 -0700, William A. Kennington III wrote:
-> This is critical to support multifunction pins shared between devices as
-> well as generic GPIOs.
-> 
-> 
 
-Thanks, I've applied this to be picked up through the BMC tree.
+在 5/6/25 8:14 PM, Qunqin Zhao 写道:
+>
+> 在 2025/5/6 下午5:03, Yanteng Si 写道:
+>> 在 5/6/25 11:20 AM, Qunqin Zhao 写道:
+>>> Changes to Loongson TPM driver would be best reviewed by the Loongson
+>>> crypto driver maintainers.
+>>>
+>>> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+>>> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+>>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>> ---
+>>> v8-v9: None
+>>> v7: Added tag from Jarkko and Huacai
+>>> v6: "tpm_lsse.c" -> "tpm_loongson"
+>>> v4-v5: None
+>>>
+>>>   MAINTAINERS | 1 +
+>>>   1 file changed, 1 insertion(+)
+>> I'm just curious. Why is this patch kept outside the tmp_loongson 
+>> patch set?
+>
+> Hi, Yanteng. Thanks for your reply.
+>
+>
+> When sending this patch, git send-email prompted "too many commands"
+>
+> and disconnected from the server. Then I sent this patch separately.
+>
+> Even after setting sendemail.smtpBatchSize to 100, I still have this 
+> problem.
 
--- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
+>
+> Now I am trying to find  Loongson SMTP server administrator to solve it.
 
+This is the best solution.
+
+
+>
+> Have you ever encountered this kind of problem?
+
+This seems to be a feature of the Loongson mailbox. I've observed that Yang
+
+Tiezhu also has a patch that is outside of the patch set. An interesting 
+pattern
+
+is that there are only five emails in one patch set.
+
+
+Thanks,
+
+Yanteng
+
+
+
+>
+>
+> BR, Qunqin.
+>
+>>
+>> <https://lore.kernel.org/loongarch/20250506031947.11130-1-zhaoqunqin@loongson.cn/T/#mf09225c286a8e2b92a677720afafb9e20be57a18> 
+>>
+>>
+>> Thanks,
+>> Yanteng
+>
 
