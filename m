@@ -1,245 +1,262 @@
-Return-Path: <linux-kernel+bounces-637404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AAA6AAD914
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:53:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D880AAD8DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51273BBF17
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3399188A030
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8422256A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372072236E1;
 	Wed,  7 May 2025 07:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XEkdeg76"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eIK7M34k"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A6822171C;
-	Wed,  7 May 2025 07:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AD9221286;
+	Wed,  7 May 2025 07:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746603904; cv=none; b=c7S9zT34UpWGD5FRQgvxE0de96fTzV5REm1tM1zmEenlG8EMu++zQZqp+9b2KNMv5VAYiwE0r7XQ1RarncTr1D0YpI/PCVwtXm/xLuR9EfC13BIpd+TacIwOFhuUa3YaZniq00q/jKj2+x/xqSela19FwhFJTCqh6rzvMXrNaQE=
+	t=1746603903; cv=none; b=CIHOhBnrCXFTM6KqbtWDCgdlRS8TU9noUENFSLgbtwdBYCfOEe7qc1pofKCJryTsj3XxlJfubleSBBZWrklcRaNLFnySljQ1im+y+rOHtiVo99Oc4+RbZ00yNqKJyqF9fmAWqmUxEpcD9XTxfIFB9mzXOqQ6L/s8xNVvi0NJsVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746603904; c=relaxed/simple;
-	bh=6/jiacqs+BE5sKFVaJVl3pTOctY9aLG7bidxHyZlPAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I6UexG9z1SJ/3j99LroW8tf07I7qFgVb89icWxrGTzNvAZiMN5YeqQK0WbivJ1CJIxEWKf0uJGkxabiLeSn2KwUEIKumwauXsFcJVZnGk/IsF5xfUzfJ6LUadLHRKh16dcI/STbyEr58IvNBwEL8UFisEA0ALw+2dk3yhVhaoa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XEkdeg76; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471HIij010452;
-	Wed, 7 May 2025 07:44:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=xm1LHK0kQ39
-	c6KYFcyxAeiWwAkXK7E7xXs4xpTTVT1w=; b=XEkdeg761BKI3IcoaL+sRg9v1/O
-	xVwl+94MaBCpA+mF/6KLy1qA0kAZ1IWeAsfALzqGhqXYohFVga9QytXT7zBq0WA7
-	4vHpu1xfojED5ShkeU7/dgOwyTew/NGE0406miyF/fjeEzqoav9H+hFfaJHKeFPG
-	CwK46uoyAdoS6R2xfwZhVYM2GBm4wiXnjlyZSHdcW/jITj5pmkYAyBK+cdzUZPOE
-	Us9ZOnz/IUhS1ccc/mJMS1Cj034wBAnwJwBChPaYVBGgFkp0407FPPg/idhcc1XF
-	Ph7P43L+RhKoTzkr0kdX8DNoz3rhtsO4irHoSf+gSGZwzuh2eoXxTy659ow==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fnm1j1wy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 07:44:40 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5477icYG032586;
-	Wed, 7 May 2025 07:44:38 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46dc7m7dyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 07:44:38 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5477ibbe032576;
-	Wed, 7 May 2025 07:44:37 GMT
-Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5477ibYx032573
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 07:44:37 +0000
-Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 393357)
-	id BE20140CF7; Wed,  7 May 2025 15:44:35 +0800 (CST)
-From: Ziqi Chen <quic_ziqichen@quicinc.com>
-To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
-        beanhuo@micron.com, avri.altman@wdc.com, junwoo80.lee@samsung.com,
-        martin.petersen@oracle.com, quic_ziqichen@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_rampraka@quicinc.com, neil.armstrong@linaro.org,
-        luca.weiss@fairphone.com, konrad.dybcio@oss.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/3] scsi: ufs: qcom: Call ufs_qcom_cfg_timers() in clock scaling path
-Date: Wed,  7 May 2025 15:44:15 +0800
-Message-Id: <20250507074415.2451940-4-quic_ziqichen@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250507074415.2451940-1-quic_ziqichen@quicinc.com>
-References: <20250507074415.2451940-1-quic_ziqichen@quicinc.com>
+	s=arc-20240116; t=1746603903; c=relaxed/simple;
+	bh=SQsRYLRdU71LaJ3wdeA+W6LRxPDPNV2wGe+Mwnyowgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nbe/d09VuzATvEXbT6h1pMmVwYrmQizchoQI9xxW0odOGFYyebDwHKLC0dX3rfbVZ6FeysqroLB4YpZx30uxrYhif87Fqhstl+VDEIhTn8cxfp6K3TzIhWs6cQNXYnCpJPUP0gH7WT+XE3VnhdFjossNYLyu7SeDys0EykvovS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eIK7M34k; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3876A4419B;
+	Wed,  7 May 2025 07:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746603893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h0HW6CbY74NioaSQ8ld8M44cztZr/A/kw8B41kCDVZo=;
+	b=eIK7M34kbOGrSDj67RJbY66sYJfkjUMO8K0CZTog3FdE2x5vlRgAcon+h/SWdCKOxhnmZa
+	lloNynWr58xtnndahT5HViyWiwzyZW44D4zpCJiGrtGS8ar/oNCcSV89NdU3q4XLiBriNW
+	An+emOeh1BrqFpwpyDxSBN3JdccXNUk3FqrrmuCbhE9146GEHcxJXMFgCZtlFMhgTr0OUd
+	NRln1YjsbIUpeXo43BszMw83V6hIAmBFHSJ1g57p5tqyMB0z3XDVFMdkUYkIn6xfL6n72W
+	IkYBxjpo4GXf7+lAoxNrMpk8c/oRhZmxNpHLwuMIqkDaGaUYh6qD4FI56yOU+A==
+Date: Wed, 7 May 2025 09:44:49 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: <Tristram.Ha@microchip.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Woojung Huh <woojung.huh@microchip.com>,
+ Russell King <linux@armlinux.org.uk>, Vladimir Oltean <olteanv@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ <UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2] net: dsa: microchip: Add SGMII port support
+ to KSZ9477 switch
+Message-ID: <20250507094449.60885752@fedora.home>
+In-Reply-To: <20250507000911.14825-1-Tristram.Ha@microchip.com>
+References: <20250507000911.14825-1-Tristram.Ha@microchip.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: f-_kt8j6LvkChmARA3htteSYhUZ8a9n_
-X-Proofpoint-ORIG-GUID: f-_kt8j6LvkChmARA3htteSYhUZ8a9n_
-X-Authority-Analysis: v=2.4 cv=bLkWIO+Z c=1 sm=1 tr=0 ts=681b0f68 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=x4qbwuVvB1nHrQTLSukA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA3MCBTYWx0ZWRfX50Rj7anBldf3
- z7VbpkL2zdWm5N57Dgl+sC9336IUeF77vzVAeV6G/SweckCaZjIbTtvewP+KUCF017TOXY2cUpp
- 2bKBIlre44cBnjwYU0GqOSwoTDXLDpUu0RnbfZI0/RvFhvWP7PCpH9yLTacW8j4tGDEgW4SRtmV
- HMQEedG/K0lo2ffSOPo4kYhgSyzqCI/kMq+L895gqa2yrjL/HS7q8O8Axurcj90WUxJkMYOwODW
- zn32TCJIdAZxSXCSdNMktNIM4n37YAkbRjG10wgM8etAwRRHkdh1Txex4gwPWMDCgcSwT+vyYrk
- udo3fKHjl9UTR/fYwIA5z8qmOCekTjsmENoMTd8c5V9JdIUP1VIW8ds7WvTXFJ0cUZy2Z9CUCne
- KAoPAXoobgcLTCeBvuU9FPWrp3DySS3N9RE5a5i2N0fpBuSjXb1pw6O2veTANN8dhd+eZDVn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxlogscore=999 spamscore=0 clxscore=1015 suspectscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070070
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeeifedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleehgeevfeejgfduledtlefhlefgveelkeefffeuiedtteejheduueegiedvveehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopefvrhhishhtrhgrmhdrjfgrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepf
+ ihoohhjuhhnghdrhhhuhhesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-From: Can Guo <quic_cang@quicinc.com>
+Hi Tristram,
 
-ufs_qcom_cfg_timers() is clock freq dependent like ufs_qcom_set_core_clk_
-ctrl(), hence move ufs_qcom_cfg_timers() call to clock scaling path. In
-addition, do not assume the devfreq OPP freq is always the 'core_clock'
-freq although 'core_clock' is the first clock phandle in device tree, use
-ufs_qcom_opp_freq_to_clk_freq() to find the core clk freq.
+On Tue, 6 May 2025 17:09:11 -0700
+<Tristram.Ha@microchip.com> wrote:
 
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
-Co-developed-by: Ziqi Chen <quic_ziqichen@quicinc.com>
-Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 49 ++++++++++++++++++++++---------------
- 1 file changed, 29 insertions(+), 20 deletions(-)
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> The KSZ9477 switch driver uses the XPCS driver to operate its SGMII
+> port.  However there are some hardware bugs in the KSZ9477 SGMII
+> module so workarounds are needed.  There was a proposal to update the
+> XPCS driver to accommodate KSZ9477, but the new code is not generic
+> enough to be used by other vendors.  It is better to do all these
+> workarounds inside the KSZ9477 driver instead of modifying the XPCS
+> driver.
+> 
+> There are 3 hardware issues.  The first is the MII_ADVERTISE register
+> needs to be write once after reset for the correct code word to be
+> sent.  The XPCS driver disables auto-negotiation first before
+> configuring the SGMII/1000BASE-X mode and then enables it back.  The
+> KSZ9477 driver then writes the MII_ADVERTISE register before enabling
+> auto-negotiation.  In 1000BASE-X mode the MII_ADVERTISE register will
+> be set, so KSZ9477 driver does not need to write it.
+> 
+> The second issue is the MII_BMCR register needs to set the exact speed
+> and duplex mode when running in SGMII mode.  During link polling the
+> KSZ9477 will check the speed and duplex mode are different from
+> previous ones and update the MII_BMCR register accordingly.
+> 
+> The last issue is 1000BASE-X mode does not work with auto-negotiation
+> on.  The cause is the local port hardware does not know the link is up
+> and so network traffic is not forwarded.  The workaround is to write 2
+> additional bits when 1000BASE-X mode is configured.
+> 
+> Note the SGMII interrupt in the port cannot be masked.  As that
+> interrupt is not handled in the KSZ9477 driver the SGMII interrupt bit
+> will not be set even when the XPCS driver sets it.
+>
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 804c8ccd8d03..e8fabf4a6d8a 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -599,13 +599,14 @@ static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
-  *
-  * @hba: host controller instance
-  * @is_pre_scale_up: flag to check if pre scale up condition.
-+ * @freq: target opp freq
-  * Return: zero for success and non-zero in case of a failure.
-  */
--static int ufs_qcom_cfg_timers(struct ufs_hba *hba, bool is_pre_scale_up)
-+static int ufs_qcom_cfg_timers(struct ufs_hba *hba, bool is_pre_scale_up, unsigned long freq)
- {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
- 	struct ufs_clk_info *clki;
--	unsigned long core_clk_rate = 0;
-+	unsigned long clk_freq = 0;
- 	u32 core_clk_cycles_per_us;
- 
- 	/*
-@@ -617,22 +618,34 @@ static int ufs_qcom_cfg_timers(struct ufs_hba *hba, bool is_pre_scale_up)
- 	if (host->hw_ver.major < 4 && !ufshcd_is_intr_aggr_allowed(hba))
- 		return 0;
- 
-+	if (hba->use_pm_opp) {
-+		clk_freq = ufs_qcom_opp_freq_to_clk_freq(hba, freq, "core_clk");
-+		if (clk_freq)
-+			goto cfg_timers;
-+	}
-+
- 	list_for_each_entry(clki, &hba->clk_list_head, list) {
- 		if (!strcmp(clki->name, "core_clk")) {
-+			if (freq == ULONG_MAX) {
-+				clk_freq = clki->max_freq;
-+				break;
-+			}
-+
- 			if (is_pre_scale_up)
--				core_clk_rate = clki->max_freq;
-+				clk_freq = clki->max_freq;
- 			else
--				core_clk_rate = clk_get_rate(clki->clk);
-+				clk_freq = clk_get_rate(clki->clk);
- 			break;
- 		}
- 
- 	}
- 
-+cfg_timers:
- 	/* If frequency is smaller than 1MHz, set to 1MHz */
--	if (core_clk_rate < DEFAULT_CLK_RATE_HZ)
--		core_clk_rate = DEFAULT_CLK_RATE_HZ;
-+	if (clk_freq < DEFAULT_CLK_RATE_HZ)
-+		clk_freq = DEFAULT_CLK_RATE_HZ;
- 
--	core_clk_cycles_per_us = core_clk_rate / USEC_PER_SEC;
-+	core_clk_cycles_per_us = clk_freq / USEC_PER_SEC;
- 	if (ufshcd_readl(hba, REG_UFS_SYS1CLK_1US) != core_clk_cycles_per_us) {
- 		ufshcd_writel(hba, core_clk_cycles_per_us, REG_UFS_SYS1CLK_1US);
- 		/*
-@@ -652,7 +665,7 @@ static int ufs_qcom_link_startup_notify(struct ufs_hba *hba,
- 
- 	switch (status) {
- 	case PRE_CHANGE:
--		if (ufs_qcom_cfg_timers(hba, false)) {
-+		if (ufs_qcom_cfg_timers(hba, false, ULONG_MAX)) {
- 			dev_err(hba->dev, "%s: ufs_qcom_cfg_timers() failed\n",
- 				__func__);
- 			return -EINVAL;
-@@ -930,17 +943,6 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
- 
- 		break;
- 	case POST_CHANGE:
--		if (ufs_qcom_cfg_timers(hba, false)) {
--			dev_err(hba->dev, "%s: ufs_qcom_cfg_timers() failed\n",
--				__func__);
--			/*
--			 * we return error code at the end of the routine,
--			 * but continue to configure UFS_PHY_TX_LANE_ENABLE
--			 * and bus voting as usual
--			 */
--			ret = -EINVAL;
--		}
--
- 		/* cache the power mode parameters to use internally */
- 		memcpy(&host->dev_req_params,
- 				dev_req_params, sizeof(*dev_req_params));
-@@ -1492,7 +1494,7 @@ static int ufs_qcom_clk_scale_up_pre_change(struct ufs_hba *hba, unsigned long f
- {
- 	int ret;
- 
--	ret = ufs_qcom_cfg_timers(hba, true);
-+	ret = ufs_qcom_cfg_timers(hba, true, freq);
- 	if (ret) {
- 		dev_err(hba->dev, "%s ufs cfg timer failed\n", __func__);
- 		return ret;
-@@ -1529,6 +1531,13 @@ static int ufs_qcom_clk_scale_down_pre_change(struct ufs_hba *hba)
- 
- static int ufs_qcom_clk_scale_down_post_change(struct ufs_hba *hba, unsigned long freq)
- {
-+	int ret;
-+
-+	ret = ufs_qcom_cfg_timers(hba, false, freq);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: ufs_qcom_cfg_timers() failed\n",	__func__);
-+		return ret;
-+	}
- 	/* set unipro core clock attributes and clear clock divider */
- 	return ufs_qcom_set_core_clk_ctrl(hba, false, freq);
- }
--- 
-2.34.1
+[...]
 
+> +
+> +static int ksz9477_pcs_read(struct mii_bus *bus, int phy, int mmd, int reg)
+> +{
+> +	struct ksz_device *dev = bus->priv;
+> +	int port = ksz_get_sgmii_port(dev);
+> +	u16 val;
+> +
+> +	port_sgmii_r(dev, port, mmd, reg, &val);
+> +
+> +	/* Simulate a value to activate special code in the XPCS driver if
+> +	 * supported.
+> +	 */
+> +	if (mmd == MDIO_MMD_PMAPMD) {
+> +		if (reg == MDIO_DEVID1)
+> +			val = 0x9477;
+> +		else if (reg == MDIO_DEVID2)
+> +			val = 0x22 << 10;
+> +	} else if (mmd == MDIO_MMD_VEND2) {
+> +		struct ksz_port *p = &dev->ports[port];
+> +
+> +		/* Need to update MII_BMCR register with the exact speed and
+> +		 * duplex mode when running in SGMII mode and this register is
+> +		 * used to detect connected speed in that mode.
+> +		 */
+> +		if (reg == MMD_SR_MII_AUTO_NEG_STATUS) {
+> +			int duplex, speed;
+> +
+> +			if (val & SR_MII_STAT_LINK_UP) {
+> +				speed = (val >> SR_MII_STAT_S) & SR_MII_STAT_M;
+> +				if (speed == SR_MII_STAT_1000_MBPS)
+> +					speed = SPEED_1000;
+> +				else if (speed == SR_MII_STAT_100_MBPS)
+> +					speed = SPEED_100;
+> +				else
+> +					speed = SPEED_10;
+> +
+> +				if (val & SR_MII_STAT_FULL_DUPLEX)
+> +					duplex = DUPLEX_FULL;
+> +				else
+> +					duplex = DUPLEX_HALF;
+> +
+> +				if (!p->phydev.link ||
+> +				    p->phydev.speed != speed ||
+> +				    p->phydev.duplex != duplex) {
+> +					u16 ctrl;
+> +
+> +					p->phydev.link = 1;
+> +					p->phydev.speed = speed;
+> +					p->phydev.duplex = duplex;
+> +					port_sgmii_r(dev, port, mmd, MII_BMCR,
+> +						     &ctrl);
+> +					ctrl &= BMCR_ANENABLE;
+> +					ctrl |= mii_bmcr_encode_fixed(speed,
+> +								      duplex);
+> +					port_sgmii_w(dev, port, mmd, MII_BMCR,
+> +						     ctrl);
+> +				}
+> +			} else {
+> +				p->phydev.link = 0;
+> +			}
+> +		} else if (reg == MII_BMSR) {
+> +			p->phydev.link = (val & BMSR_LSTATUS);
+> +		}
+> +	}
+> +	return val;
+> +}
+> +
+> +static int ksz9477_pcs_write(struct mii_bus *bus, int phy, int mmd, int reg,
+> +			     u16 val)
+> +{
+> +	struct ksz_device *dev = bus->priv;
+> +	int port = ksz_get_sgmii_port(dev);
+> +
+> +	if (mmd == MDIO_MMD_VEND2) {
+> +		struct ksz_port *p = &dev->ports[port];
+> +
+> +		if (reg == MMD_SR_MII_AUTO_NEG_CTRL) {
+> +			u16 sgmii_mode = SR_MII_PCS_SGMII << SR_MII_PCS_MODE_S;
+> +
+> +			/* Need these bits for 1000BASE-X mode to work with
+> +			 * AN on.
+> +			 */
+> +			if (!(val & sgmii_mode))
+> +				val |= SR_MII_SGMII_LINK_UP |
+> +				       SR_MII_TX_CFG_PHY_MASTER;
+> +
+> +			/* SGMII interrupt in the port cannot be masked, so
+> +			 * make sure interrupt is not enabled as it is not
+> +			 * handled.
+> +			 */
+> +			val &= ~SR_MII_AUTO_NEG_COMPLETE_INTR;
+> +		} else if (reg == MII_BMCR) {
+> +			/* The MII_ADVERTISE register needs to write once
+> +			 * before doing auto-negotiation for the correct
+> +			 * config_word to be sent out after reset.
+> +			 */
+> +			if ((val & BMCR_ANENABLE) && !p->sgmii_adv_write) {
+> +				u16 adv;
+> +
+> +				/* The SGMII port cannot disable flow contrl
+> +				 * so it is better to just advertise symmetric
+> +				 * pause.
+> +				 */
+> +				port_sgmii_r(dev, port, mmd, MII_ADVERTISE,
+> +					     &adv);
+> +				adv |= ADVERTISE_1000XPAUSE;
+> +				adv &= ~ADVERTISE_1000XPSE_ASYM;
+> +				port_sgmii_w(dev, port, mmd, MII_ADVERTISE,
+> +					     adv);
+> +				p->sgmii_adv_write = 1;
+> +			} else if (val & BMCR_RESET) {
+> +				p->sgmii_adv_write = 0;
+> +			}
+> +		} else if (reg == MII_ADVERTISE) {
+> +			/* XPCS driver writes to this register so there is no
+> +			 * need to update it for the errata.
+> +			 */
+> +			p->sgmii_adv_write = 1;
+> +		}
+> +	}
+> +	port_sgmii_w(dev, port, mmd, reg, val);
+> +	return 0;
+> +}
+
+I'm a bit confused here, are you intercepting r/w ops that are supposed
+to be handled by xpcs ?
+
+Russell has sent a series [1] (not merged yet, I think we were waiting
+on some feedback from Synopsys folks ?) to properly support the XPCS
+version that's in KSZ9477, and you also had a patchset that didn't
+require all this sgmii_r/w snooping [2].
+
+I've been running your previous patchset on top of Russell's for a few
+months, if works fine with SGMII as well as 1000BaseX :)
+
+Can we maybe focus on getting pcs-xpcs to properly support this version
+of the IP instead of these 2 R/W functions ? Or did I miss something in
+the previous discussions ?
+
+Maxime
+
+[1] : https://lore.kernel.org/netdev/Z6NnPm13D1n5-Qlw@shell.armlinux.org.uk/ 
+[2] : https://lore.kernel.org/netdev/20250208002417.58634-1-Tristram.Ha@microchip.com/
 
