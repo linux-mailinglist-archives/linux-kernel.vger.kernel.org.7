@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-637191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674FFAAD5CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:15:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8249AAAD629
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577221C20900
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2394C5280
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA78F1FF603;
-	Wed,  7 May 2025 06:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hp5Ft0v0"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E31320E033;
+	Wed,  7 May 2025 06:34:33 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4661BD01D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BADC1A841B
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746598506; cv=none; b=k0bIaQTYKWzTMhsNQSFUGOEktIqD3IZVUnFvI/pNPReCFLgIo+E7d61gAQFoFvWwFVdlUgrz76oOfith90eztrv+NHNEoJa8ESE+UqFfAewM+2mV999FIR6XfIMVU8j0Hj/amRlPA6OMIiF6pgosRAlX3WPJW88vyZplYOgUn7U=
+	t=1746599672; cv=none; b=fnosOYvyXIPfGwtIkE/CZKn2QxN4xZqfKYo0Od0CWO2lhNHG8MG35HlcGrlXxvdeleHg7JHs29cnAogso+zd1TI8bAaapBL18sUsYIv1WyAEU9MzU06Y7VIES4PkeLcnxk/emJc7M2cbpFRKQE2hivf5j22hLhar74n5z1o1Njs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746598506; c=relaxed/simple;
-	bh=vSJ3hzFFhyk+/JSg4qzlSqae6qCpEEs7wyzUJ92o3nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPGdOveUXzrS625WZoZTQWlQgxqak7Qf3aL7DBimIY6PiVWWbz/H8s20zI9P1dpKQ+UuCtKKUW+KC3i7bq5kRS8D4/KT7XNpZXpyxDSo0DfahmtEtSBqdhu//ZA/orCtmiW8kgT9fIX6ou7RPmIz+vn6PdLJ6DwQcQd5zDKfcQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hp5Ft0v0; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff784dc055so5888447a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 23:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1746598504; x=1747203304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hA73hgBO4nqj41CFJ+0WVG+4WFvvFaJgFRfbQga+uE=;
-        b=hp5Ft0v07nn/QUR0QmMJS5AgujLjnnj0oQejy+ghide/gG+1yw0PqI+VYvZBfbcMxz
-         P8cEa9JrA93r/QImuFPnmstqOiEXTifJfbRN3sP2hncXHpOdcAPDqjsQZ4BVo8OCem3U
-         Dnt8pLguADz2bWbtSD0N+FVxCqMu7RSxwhrOI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746598504; x=1747203304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7hA73hgBO4nqj41CFJ+0WVG+4WFvvFaJgFRfbQga+uE=;
-        b=RxOyBNLjH0/LYa7KPg/8HDDV6ZoLUgK0UOKvkSo5Zaj5eNHqZ0I1Eno4L7g18f9Y0T
-         2q0imwYdgy+Zno/eopPtkA8dfdvUry51FCI+u+T+7UZFTTbDVEQ4JX/nOlpIjH5aebIQ
-         KU4Px68kLUUqHRZr88ojmw9UAMNvGw9kiHpSkpxWalPH5SRNXGptbY6z4SfFWt8Siyoq
-         lvo3uVsHQYBD9xROAaewVAweCOFeUVRAzIbcWX/3LozoR2VjqmiHb6fzbWrmILxnubch
-         d6yrh/tSbgB8tzLmoBPoyVXhB0wwdF+xVNJWBAktT5yqieIzQCQUVvtEcFJWySWImhed
-         SieQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXW2WF1zzJbBpilHqd9lEIjYx+lEH+xKlWZO6RbuZ0jOJ5J38Duj8i0Wsy0yULC2/eekZSoyqKUMzkctmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbMMIAm9qMS9FvoEELrqVQN0lVxyph2WBml8HGg8gNQQXsSt5R
-	Tt4Ae3DdWa7NIaO9gtCv4Aa/Izcb8THNdtB8cOqj3XP3AiLhD3jCQTCfi1W6RTlAl4wKfiKswhO
-	mHw==
-X-Gm-Gg: ASbGncuFMKWEi8yPCfpQ90d8gSeSchNWLWcAl0CBCMpMAAXcbZmOsaeNugvmcCBfRbB
-	K1UTmjurthLlttN9/0WfC5iaJ6eR3c+NFCgba16l4CduwfAjVhEp1JIaiZUET4x5wg2rK1/YhnU
-	Jw0RWUnjU4RDe0eTlildW6mSt+DfgkrE3Cy/fKQ9Fa4gG1oxL8RRXQCuGp6uewWQoHNxpSL5uxN
-	4mb8CMk9rPQp4Ltkw8hWWfA8dZane2/3oSXfPRtP3tWwV6UWAP7/hF6Y6wdWNexwoNTha2jwEbu
-	1ie3qPX3ny2loJeKpmgQIHOMv+BVe/RJtOguK7Toh26v
-X-Google-Smtp-Source: AGHT+IFt8mxFg2hYeSdOmmKvC1muDMtlAuLWggPsSZO3O0YnP2AnJEZfGHzWefvQFgQU+wsbULnGPQ==
-X-Received: by 2002:a17:90b:350b:b0:2ff:7ad4:77af with SMTP id 98e67ed59e1d1-30aac1be4d2mr3373826a91.20.1746598503912;
-        Tue, 06 May 2025 23:15:03 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:284f:37bc:f484:cbc6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30aae525d8esm1084822a91.23.2025.05.06.23.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 23:15:03 -0700 (PDT)
-Date: Wed, 7 May 2025 15:14:58 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Minchan Kim <minchan@kernel.org>, Igor Belousov <igor.b@beldev.am>, 
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] mm/zblock: use vmalloc for page allocations
-Message-ID: <jzbcscg45stzhkbqyldzecmmu34h3yorxkulgowcya4t2x2ccc@3hiz3kkqxnxa>
-References: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
- <aBoK7f7rtfbPFGap@google.com>
- <m2dmxnhtvxano6lye7lr3saiobn4ygpln55xntlstfo4zwws5g@qpq7aagx3xwq>
- <b42gpp5qsa4j22ai2v4rwwkjhvfbcbf3lcnjoccz7xeidae5c7@ot2ocric3qzs>
+	s=arc-20240116; t=1746599672; c=relaxed/simple;
+	bh=g2T4JaX1PQVtaJym4rSRe7C5rjrjNOPBhBVkp6Ld+9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vm8goa9q+BN5N3vhzjIDIfBgFAcMPheOvG+xK+CTgrRmefNc80nOM8U+0g3WO98BAIgxx3ejAWFlGcN1bVXZgvDmMRhtCqvzpk1Y5L76GMQ0DFEWshLErBjC1JRQb1SGvOUfICvOjViHC+Dqkqn74unRMeqNQ/NWCPyAQuonXdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZslLV1kzgz1R7Yj;
+	Wed,  7 May 2025 14:13:06 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id 21A4F140113;
+	Wed,  7 May 2025 14:15:12 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 May 2025 14:15:11 +0800
+Message-ID: <40f2f891-bd09-4600-9540-b6e6fa977958@huawei.com>
+Date: Wed, 7 May 2025 14:15:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b42gpp5qsa4j22ai2v4rwwkjhvfbcbf3lcnjoccz7xeidae5c7@ot2ocric3qzs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] erofs: fix file handle encoding for 64-bit NIDs
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, <xiang@kernel.org>,
+	<chao@kernel.org>, <zbestahu@gmail.com>, <jefflexu@linux.alibaba.com>
+CC: <dhavale@google.com>, <linux-erofs@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250429134257.690176-1-lihongbo22@huawei.com>
+ <18d272ce-6a80-4fdc-b67b-ddc2ffa522d4@linux.alibaba.com>
+ <3e068311-9223-4c1b-9091-15eb2d867ede@huawei.com>
+ <1151f059-fd08-4dba-9448-c8c535ea8700@linux.alibaba.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <1151f059-fd08-4dba-9448-c8c535ea8700@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-On (25/05/07 15:08), Sergey Senozhatsky wrote:
-> On (25/05/07 14:57), Sergey Senozhatsky wrote:
-> > On (25/05/06 13:13), Yosry Ahmed wrote:
-> > > If we can use vmalloc for zblock, then we can probably also use vmalloc
-> > > in zsmalloc and get rid of the chaining logic completely. This would
-> > > make zsmalloc simpler and closer to zblock in that regard.
-> > > 
-> > > Sergey, WDYT?
-> > 
-> > This sounds interesting.  We might get rid of lots of memcpy()
-> > in object read/write paths, and so on.  I don't know if 0-order
-> > chaining was the only option for zsmalloc, or just happened to
-> > be the first one.
+
+
+On 2025/5/7 10:42, Gao Xiang wrote:
 > 
-> I assume we might have problems with zspage release path.  vfree()
-> should break .swap_slot_free_notify, as far as I can see.
-> .swap_slot_free_notify is called under swap-cluster spin-lock,
-> so if we free the last object in the zspage we cannot immediately
-> free that zspage, because vfree() might_sleep().
+> 
+> On 2025/5/7 09:53, Hongbo Li wrote:
+>>
+>>
+>> On 2025/5/6 23:10, Gao Xiang wrote:
+>>> Hi Hongbo,
+>>>
+>>> On 2025/4/29 21:42, Hongbo Li wrote:
+>>>> In erofs, the inode number has the location information of
+>>>> files. The default encode_fh uses the ino32, this will lack
+>>>> of some information when the file is too big. So we need
+>>>> the internal helpers to encode filehandle.
+>>>
+>>> EROFS uses NID to indicate the on-disk inode offset, which can
+>>> exceed 32 bits. However, the default encode_fh uses the ino32,
+>>> thus it doesn't work if the image is large than 128GiB.
+>>>
+>> Thanks for helping me correct my description.
+>>
+>> Here, an image larger than 128GiB won't trigger NID reversal. It 
+>> requires a 128GiB file inside, and the NID of the second file may 
+>> exceed U32 during formatting. So here can we change it to "However, 
+>> the default encode_fh uses the ino32, thus it may not work if there 
+>> exist a file which is large than 128GiB." ?
+> 
+> Why? Currently EROFS doesn't arrange inode metadata
+> together, but close to its data (or its directory)
+> if possible for data locality.
+> 
+> So NIDs can exceed 32-bit for images larger than
+> 128 GiB.
+> 
 
-... but there is a deferred zspage free already, we can switch
-to it entirely, I assume.
+Ok, I see your point, and you are right. It doesn't have to be a 128GiB 
+file, but it is easy to construct this kind of EROFS image by large 
+file. Such as:
+
+mkfs.erofs -d7 --tar=f --clean=data foo.erofs 128g-file.tar  # the nid 
+of 128g-file is 39.
+mkfs.erofs -d7 --tar=f --incremental=data 1b-file.tar  # the nid of 
+1b-file is 4294967425.
+
+Thank you again for your review, I will send the next version of the 
+patch later.
+
+Thanks,
+Hongbo
+
+> Thanks,
+> Gao Xiang
+> 
+>>
+>> Thanks,
+>> Hongbo
+>>
+> 
 
