@@ -1,136 +1,284 @@
-Return-Path: <linux-kernel+bounces-637187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12928AAD5C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF606AAD7CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F443AC1D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58BF3B9620
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75549200110;
-	Wed,  7 May 2025 06:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED5521FF55;
+	Wed,  7 May 2025 07:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K29WEJ88"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFmyDLzJ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDC1182D2;
-	Wed,  7 May 2025 06:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A7F21FF20;
+	Wed,  7 May 2025 07:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746598436; cv=none; b=e9xzx0rE85otothRx3xoPLN9mgNBMDc1d4khwI6C1B6Dj+heC0REMkfB1jCfuWUPLsBkt/S7ZPn/X0JQAhaaHD5+qrdX+8rLFFKBetgiimOgSobGeb2hZIbZTRNJK+PgHb11gLc9e2P6QYyRG3/lZoBgo5z3NuyTqo+HAXBP9GI=
+	t=1746602075; cv=none; b=tQ3mfKP2KFHgrBQT58Jos9yfsLTn3O/qwl1DAIF1RDqNf3O8BwkzEatr0llRlTncPdKDDcVq6+CIl3KgV2fbnFCZXhiPU18wAL9n9pk7SWmnoMeF9fBFku94rIgJt5M83Binh4K/GEau/rFofQ3z22SvFm/a3iTQ2+4PTErQnyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746598436; c=relaxed/simple;
-	bh=xfAfj1klcleSKHXLxNAOO+8ONspPBsJHamkZ5reirUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M2GWjla+0HZqm4BL0HbRJkdL0grFsP1bT80A5Eb9Q8LbbcJEl+ULKLovmHNAO1WImyk4H6y8GrsbdI+olix+T9Nh67PT1hm/cnCE5yco0C+eih9D+IZ2IXGXyrw6m5ZUc787cTlhSXYZTEYFNzx1hBm+32VQnrk23kjW5VJq+1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K29WEJ88; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1746602075; c=relaxed/simple;
+	bh=8DZu+CVrNlQyC6E7OM9zW9eqU6hui/E49M6tRuuZs38=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pozm0w4/3SHCSIxBb1Sdb2wVlulkr8jk31ufyF+dr4CWelB+vWjJQvO99TGnJ7cOJrdmMjExdZryrzPml9jeDlMF8JTiebAM6xzGuKFK9OCfGt3WH6KPqUN/DrflxaR0ohsqFPsH3XsIohWh7UMrNlqz3rqf+ZGndAgjz/SP1v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFmyDLzJ; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22c3407a87aso96699195ad.3;
-        Tue, 06 May 2025 23:13:55 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0782d787so41202325e9.0;
+        Wed, 07 May 2025 00:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746598435; x=1747203235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rozxfw15XCGd2H6xaiwn51c9kWvMu98WF+4nRevjr28=;
-        b=K29WEJ88fMTBk20UdItvrGMigXbDafwjX8jGVTU9sQQiAck0FcE4O7Muofn84BS71i
-         3ce6JvkBqIzSdYU8xKiCY3JMYteSm4aHWKZTiNP6v1V2V/l0CMyFgrce4i1jQXPsM7lr
-         Q8OxDD+hTHzmTV4hXtlI+i6JTdw+b2tn1yCyA3O79ut5A2ZFvSjTd00oGj9BQoGToy/h
-         8rc3jcfVVhR33og6Zowaw9QEs/idnt/2p6HylLt2Z0mU0AdXePXYFN8rcGkbWDS57O+u
-         hhHbJ3/MRbWCS5UNtMMoBWbpu1H1hf7CSfRSOAf5g59hh86BLNsV3X22XJwj4kEfQ0mN
-         211A==
+        d=gmail.com; s=20230601; t=1746602072; x=1747206872; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WdzGG901viVjb88sEKqQvjvWyI+7evUPLJXxwNVitw4=;
+        b=HFmyDLzJwP4/pYqqltG1mMmFijX4MlZCnOS2OcFru7ustCY7fg2Q0qXgp6sojyE8QN
+         LQpRhEXIi9uaUsVRZg7P283/VVzxIIFO0fwsKNp5u6qM3wSm9x/g+XgQ2HSV3uveKH6g
+         n96FeGpx/va8DHAMs2fjcqUAIxzkMCx+w2mxyXIarwd2wWZqKHyCGxLJoij0QIxIu4sM
+         iqAg+FlS9WNoOFpSTSeCwTC2YWitm5z8OBuuueYW6r6FNlp/UT2CdNrV8/qxOMPmm6Tl
+         JmaCRlchC0ysQ8o3iws7P53AdshDOs0vsZ1+v0OIpJE6FLHKo+a0qnVfyDdjQfR6b7Pe
+         TIVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746598435; x=1747203235;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rozxfw15XCGd2H6xaiwn51c9kWvMu98WF+4nRevjr28=;
-        b=BV8c5M1Mzmi3R+ZVbV882mVu5pwQHIZnqjqaay8FiqaJWg277tsFMKUOs5Bescip9q
-         LElHNAQpB4o5E1imoUeYlnEmO1oZQmWsi3DmuS7C/4zMgyzuMJS4PhWFB/8fuSUzKYF0
-         zBFXPXrBaMT2ofbthzcTzNrpS+91QN4iCuoMa9M1VfUbRJ8Hcv3LF5Ch5GT0t7XH0wS8
-         cxvHW9Lw2Bu3ILrEmvI/yBsPOOFqIRcYICmkpx8uE9Krr/h6fpN8HeKzpp/2/XYPTy4z
-         0rnHvr279NDFQt2zE5ALV8nlBKOn448EgiKXzE6zhtyUN/NlEaV7Z3FivtVzdvLbe0hU
-         4qiA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4B4+De7qbQiPBm3o0xbiSDoIO6py1qYULN1AFc4MOEProXkr1UOXTBnbJ9WvnznRmsABpD6dZFSs=@vger.kernel.org, AJvYcCX6U1urxLvC1DDDdaFHShnyNp4vtn3ESqaww8A/uBh7rHiEB0mTDcRdk1RHFVKIAk55RQGhms/I@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3SIjvsBqLx5dk3XgDRoaqyFXurfl0ho9paq5Qnj6TApczPuEq
-	1TXX7tCO+EqB8IzeKceQ3uH7bRXuCCgNZNW3WvodVAzWR+8vqFBJ
-X-Gm-Gg: ASbGncvTG9bgqEel+GTdmk96Xiyt7qn7ARreNnUQGGtce60ZXZADGZzAJeppxB9bQ4m
-	Gvo5clfFeNavsIvfsEdl6xvwN7FdtuxMW2YXDhdjVrHOFUdC8oWMeoOdYQTXh08F5rknB78816H
-	tfVKHUZwZiud4hKnWfqmDBqrPUE+Mw9dxo8y+dt8ecDWY/ghDs2cakXA5jCyrujVk/gSyWsa3mQ
-	7Jr9DWr5ekwsaZvCNmo40bTijSbuYnd4AODwANcz/2So9mabZyi9rDcprwzeat2lTvAMfHReNtt
-	tSvJEZLE1JZ5AVUqMjzWR6USWRHG6ht7i2rCpmin
-X-Google-Smtp-Source: AGHT+IHn1JoIwnOddTfG6PRyqZCpjAnehF1wYY+TV7xyiH9zs9UIjbHMUdyCMMVyIeRgK6aA0NFoqA==
-X-Received: by 2002:a17:903:478d:b0:223:f7ec:f834 with SMTP id d9443c01a7336-22e5ecc2c09mr32036665ad.31.1746598434443;
-        Tue, 06 May 2025 23:13:54 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e1522ef9bsm86224765ad.217.2025.05.06.23.13.53
+        d=1e100.net; s=20230601; t=1746602072; x=1747206872;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WdzGG901viVjb88sEKqQvjvWyI+7evUPLJXxwNVitw4=;
+        b=XxVbqKED00vjF8KqkFfKBnFeUQJ+oFrsKXv2mL1d47GHmySWVY30NmXAjAe3pE0Jfv
+         PSAyC1rmTWkcJUMnXtvLC7ONqyKQso6XgOLTBvFFdeZ5Z/0eupN5AqOujh4ujKNcrqp7
+         UjsR68D6bfOTI/8Gay8kQTgab3nHuvJV1qYbQBL3ueQfKVkWQba49hvlNR8idQKEz1FE
+         GWapxzuflxsMSR3ZumYKBfXxebOt2UfNQ6jPby5gJnA/oAItEUQ24X+fMYOsbA384hUM
+         Bqtb51CtWOQKnL+xTCy0YG5XzQ5yU6JHbbSsT+IIwgDJNrK+l6S6N1xk848F3R0U8jL/
+         qf6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXGV5Lsk0FyWEvd4asMI6gL92WN4Qs4i0wGkPPnsfkFT2VLIxDUzzv2RjLDOS2byK+WmAlW4z+HaKPPWBPd@vger.kernel.org, AJvYcCXqvyTKGeq9wn0hKpnPxytkqQyZie7GdX5EShTa3t2NMraiTTqA+kv2C9jgqq54AmEtdZnoQMiJep+G@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBbsGPlDsGQxi6TtSxMofHET+sRZbhaWvcPhCenMsWW0E6HuVk
+	WVxgZ/jc9rFygb0ZLha4+XrkQPVJQ0RyEQ7FY2bRyj+5RByIUBSaTAaOdzcvTEk=
+X-Gm-Gg: ASbGncvUfKXjUyySS+KVteH7KlB8q/321TYXM7/s/3WLuE23vVpYa+djY1pkLiShqb2
+	CHQRcYaBaVoGlutCFNVvcyfusi+Dr1eK1jcQUI3FzjuKsxOuh9B2jIOrNF+5Ns9Rqgg9mlBC/cf
+	k8o9TXhaRZ2vuk+UN8NJAPfTH8ldkXpMAGVzRplih8xmDZRvhMLnnce98Sp0gqYUAUqg8WJfTY+
+	gIxWL1WHc01j2UffPQFuL11F03bPz3PirzSWaYGmY55iiZ26nKsyCwYdVhblELQR2l+ZgziCuKw
+	vJhk2ufjgCf7fmcJeQthuPQkVI/NO1dCDCgK5wz2koUnsyr6uOBuMvNFiir2xX8U9v0LwY/+BpU
+	FqV++bs/Uau+pgv4=
+X-Google-Smtp-Source: AGHT+IG0f21nMpug0H9uYtk3jXDdCPiWQnEsLWKOgVecub29JtWAFAClqY9cvgAxUgipGNLU0oehqA==
+X-Received: by 2002:adf:ce8f:0:b0:3a0:b4ca:474 with SMTP id ffacd0b85a97d-3a0b4ca06a4mr1364319f8f.31.1746602071905;
+        Wed, 07 May 2025 00:14:31 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b10083sm16087711f8f.62.2025.05.07.00.14.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 23:13:53 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 289E642A3183; Wed, 07 May 2025 13:13:52 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux PowerPC <linuxppc-dev@lists.ozlabs.org>,
-	Linux Networking <netdev@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Haren Myneni <haren@linux.ibm.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Donnellan <ajd@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>
-Subject: [PATCH 3/3] Documentation: ioctl-number: Correct full path to papr-physical-attestation.h
-Date: Wed,  7 May 2025 13:13:03 +0700
-Message-ID: <20250507061302.25219-5-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250507061302.25219-2-bagasdotme@gmail.com>
-References: <20250507061302.25219-2-bagasdotme@gmail.com>
+        Wed, 07 May 2025 00:14:31 -0700 (PDT)
+Message-ID: <c999800bb5f6c1f2687ff9b257079dcf719dd084.camel@gmail.com>
+Subject: Re: [PATCH v3 5/5] iio: adc: ad7606: add gain calibration support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Date: Wed, 07 May 2025 07:14:56 +0100
+In-Reply-To: <20250506-wip-bl-ad7606-calibration-v3-5-6eb7b6e72307@baylibre.com>
+References: 
+	<20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com>
+	 <20250506-wip-bl-ad7606-calibration-v3-5-6eb7b6e72307@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1833; i=bagasdotme@gmail.com; h=from:subject; bh=xfAfj1klcleSKHXLxNAOO+8ONspPBsJHamkZ5reirUg=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlSP9hFHpo7Bmol7VRe578uf3OIuf12U978h+pvVje05 O9TWni8o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABMxvcnI8Jb1kPtfpaOCbBst Vhsy8YS0H08O6Y7c6iDOHM+tm9zBzchwboEoa+Qny9+5K9u92ANb0vkrs3s21r3Sa9jFcy6hdgs bAA==
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
 
-Commit 03c9d1a5a30d93 ("Documentation: Fix description format for
-powerpc RTAS ioctls") fixes Sphinx warning by chopping arch/ path
-component of papr-physical-attestation.h to fit existing "Include File"
-column. Now that the column has been widened just enough for that
-header file, add back its arch/ path component.
+On Tue, 2025-05-06 at 23:03 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Add gain calibration support, using resistor values set on devicetree,
+> values to be set accordingly with ADC external RFilter, as explained in
+> the ad7606c-16 datasheet, rev0, page 37.
+>=20
+> Usage example in the fdt yaml documentation.
+>=20
+> Tested-by: David Lechner <dlechner@baylibre.com>
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+> =C2=A0drivers/iio/adc/ad7606.c | 56 +++++++++++++++++++++++++++++++++++++=
++++++++++++
+> =C2=A0drivers/iio/adc/ad7606.h |=C2=A0 4 ++++
+> =C2=A02 files changed, 60 insertions(+)
+>=20
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index
+> a986eb1284106da4980ac36cb0b5990e4e3bd948..049fd8616769d32778aa238b348b2fb=
+82fa83745
+> 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -33,6 +33,10 @@
+> =C2=A0
+> =C2=A0#include "ad7606.h"
+> =C2=A0
+> +#define AD7606_CALIB_GAIN_MIN	0
+> +#define AD7606_CALIB_GAIN_STEP	1024
+> +#define AD7606_CALIB_GAIN_MAX	(63 * AD7606_CALIB_GAIN_STEP)
+> +
+> =C2=A0/*
+> =C2=A0 * Scales are computed as 5000/32768 and 10000/32768 respectively,
+> =C2=A0 * so that when applied to the raw values they provide mV values.
+> @@ -125,6 +129,8 @@ static int ad7609_chan_scale_setup(struct iio_dev *in=
+dio_dev,
+> =C2=A0				=C2=A0=C2=A0 struct iio_chan_spec *chan);
+> =C2=A0static int ad7616_sw_mode_setup(struct iio_dev *indio_dev);
+> =C2=A0static int ad7606b_sw_mode_setup(struct iio_dev *indio_dev);
+> +static int ad7606_chan_calib_gain_setup(struct iio_dev *indio_dev,
+> +					struct iio_chan_spec *chan);
+> =C2=A0
+> =C2=A0const struct ad7606_chip_info ad7605_4_info =3D {
+> =C2=A0	.max_samplerate =3D 300 * KILO,
+> @@ -180,6 +186,7 @@ const struct ad7606_chip_info ad7606b_info =3D {
+> =C2=A0	.scale_setup_cb =3D ad7606_16bit_chan_scale_setup,
+> =C2=A0	.sw_setup_cb =3D ad7606b_sw_mode_setup,
+> =C2=A0	.offload_storagebits =3D 32,
+> +	.calib_gain_setup_cb =3D ad7606_chan_calib_gain_setup,
+> =C2=A0	.calib_offset_avail =3D ad7606_calib_offset_avail,
+> =C2=A0	.calib_phase_avail =3D ad7606b_calib_phase_avail,
+> =C2=A0};
+> @@ -195,6 +202,7 @@ const struct ad7606_chip_info ad7606c_16_info =3D {
+> =C2=A0	.scale_setup_cb =3D ad7606c_16bit_chan_scale_setup,
+> =C2=A0	.sw_setup_cb =3D ad7606b_sw_mode_setup,
+> =C2=A0	.offload_storagebits =3D 32,
+> +	.calib_gain_setup_cb =3D ad7606_chan_calib_gain_setup,
+> =C2=A0	.calib_offset_avail =3D ad7606_calib_offset_avail,
+> =C2=A0	.calib_phase_avail =3D ad7606c_calib_phase_avail,
+> =C2=A0};
+> @@ -246,6 +254,7 @@ const struct ad7606_chip_info ad7606c_18_info =3D {
+> =C2=A0	.scale_setup_cb =3D ad7606c_18bit_chan_scale_setup,
+> =C2=A0	.sw_setup_cb =3D ad7606b_sw_mode_setup,
+> =C2=A0	.offload_storagebits =3D 32,
+> +	.calib_gain_setup_cb =3D ad7606_chan_calib_gain_setup,
+> =C2=A0	.calib_offset_avail =3D ad7606c_18bit_calib_offset_avail,
+> =C2=A0	.calib_phase_avail =3D ad7606c_calib_phase_avail,
+> =C2=A0};
+> @@ -357,6 +366,49 @@ static int ad7606_get_chan_config(struct iio_dev *in=
+dio_dev,
+> int ch,
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +static int ad7606_chan_calib_gain_setup(struct iio_dev *indio_dev,
+> +					struct iio_chan_spec *chan)
+> +{
+> +	struct ad7606_state *st =3D iio_priv(indio_dev);
+> +	unsigned int num_channels =3D st->chip_info->num_adc_channels;
+> +	struct device *dev =3D st->dev;
+> +	int ret;
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		u32 reg, r_gain;
+> +
+> +		ret =3D fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* channel number (here) is from 1 to num_channels */
+> +		if (reg < 1 || reg > num_channels) {
+> +			dev_warn(dev, "wrong ch number (ignoring): %d\n", reg);
+> +			continue;
+> +		}
+> +
 
-Fixes: 03c9d1a5a30d ("Documentation: Fix description format for powerpc RTAS ioctls")
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/userspace-api/ioctl/ioctl-number.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry Angelo, just realized this now. Any reason for not treating the above=
+ as a real
+invalid argument? It's minor and not a big deal but odd enough...
 
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 3864c8416627e0..855139f3bc0e48 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -370,7 +370,7 @@ Code  Seq#    Include File                                             Comments
-                                                                        <mailto:linuxppc-dev@lists.ozlabs.org>
- 0xB2  06-07  arch/powerpc/include/uapi/asm/papr-platform-dump.h        powerpc/pseries Platform Dump API
-                                                                        <mailto:linuxppc-dev@lists.ozlabs.org>
--0xB2  08     powerpc/include/uapi/asm/papr-physical-attestation.h      powerpc/pseries Physical Attestation API
-+0xB2  08     arch/powerpc/include/uapi/asm/papr-physical-attestation.h powerpc/pseries Physical Attestation API
-                                                                        <mailto:linuxppc-dev@lists.ozlabs.org>
- 0xB3  00     linux/mmc/ioctl.h
- 0xB4  00-0F  linux/gpio.h                                              <mailto:linux-gpio@vger.kernel.org>
--- 
-An old man doll... just what I always wanted! - Clara
+- Nuno S=C3=A1
+
+> +		ret =3D fwnode_property_read_u32(child, "adi,rfilter-ohms",
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &r_gain);
+> +		if (ret =3D=3D -EINVAL)
+> +			/* Keep the default register value. */
+> +			continue;
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (r_gain > AD7606_CALIB_GAIN_MAX)
+> +			return dev_err_probe(st->dev, -EINVAL,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "wrong gain calibration value.");
+> +
+> +		/* Chan reg is 1-based index. */
+> +		ret =3D st->bops->reg_write(st, AD7606_CALIB_GAIN(reg - 1),
+> +			DIV_ROUND_CLOSEST(r_gain, AD7606_CALIB_GAIN_STEP));
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> =C2=A0static int ad7606c_18bit_chan_scale_setup(struct iio_dev *indio_dev=
+,
+> =C2=A0					=C2=A0 struct iio_chan_spec *chan)
+> =C2=A0{
+> @@ -1410,6 +1462,10 @@ static int ad7606_probe_channels(struct iio_dev *i=
+ndio_dev)
+> =C2=A0				chan->info_mask_separate_available |=3D
+> =C2=A0					BIT(IIO_CHAN_INFO_CALIBBIAS) |
+> =C2=A0					BIT(IIO_CHAN_INFO_CONVDELAY);
+> +				ret =3D st->chip_info->calib_gain_setup_cb(
+> +					indio_dev, chan);
+> +				if (ret)
+> +					return ret;
+> =C2=A0			}
+> =C2=A0
+> =C2=A0			/*
+> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+> index
+> f613583a7fa4095115b0b28e3f8e51cd32b93524..94165d217b69d54cbce9109b8c0f9dc=
+0237cf304
+> 100644
+> --- a/drivers/iio/adc/ad7606.h
+> +++ b/drivers/iio/adc/ad7606.h
+> @@ -50,6 +50,8 @@ struct ad7606_state;
+> =C2=A0typedef int (*ad7606_scale_setup_cb_t)(struct iio_dev *indio_dev,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec *chan=
+);
+> =C2=A0typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
+> +typedef int (*ad7606_calib_gain_setup_cb_t)(struct iio_dev *indio_dev,
+> +					=C2=A0=C2=A0=C2=A0 struct iio_chan_spec *chan);
+> =C2=A0
+> =C2=A0/**
+> =C2=A0 * struct ad7606_chip_info - chip specific information
+> @@ -66,6 +68,7 @@ typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *ind=
+io_dev);
+> =C2=A0 * @init_delay_ms:	required delay in milliseconds for initializatio=
+n
+> =C2=A0 *			after a restart
+> =C2=A0 * @offload_storagebits: storage bits used by the offload hw implem=
+entation
+> + * @calib_gain_setup_cb: callback to setup of gain calibration for each =
+channel
+> =C2=A0 * @calib_offset_avail: pointer to offset calibration range/limits =
+array
+> =C2=A0 * @calib_phase_avail:=C2=A0 pointer to phase calibration range/lim=
+its array
+> =C2=A0 */
+> @@ -81,6 +84,7 @@ struct ad7606_chip_info {
+> =C2=A0	bool				os_req_reset;
+> =C2=A0	unsigned long			init_delay_ms;
+> =C2=A0	u8				offload_storagebits;
+> +	ad7606_calib_gain_setup_cb_t	calib_gain_setup_cb;
+> =C2=A0	const int			*calib_offset_avail;
+> =C2=A0	const int			(*calib_phase_avail)[2];
+> =C2=A0};
+>=20
 
 
