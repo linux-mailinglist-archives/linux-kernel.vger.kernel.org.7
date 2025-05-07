@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-638737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F49AAED0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:28:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12E0AAEDA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226A15070B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537C51BA8D94
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1C728EA72;
-	Wed,  7 May 2025 20:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ACA28FFD5;
+	Wed,  7 May 2025 21:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHVE3PNW"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Xcw7eZov"
+Received: from sonic316-55.consmr.mail.gq1.yahoo.com (sonic316-55.consmr.mail.gq1.yahoo.com [98.137.69.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D567A1C5D5A
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 20:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA6A28FFD0
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746649698; cv=none; b=bNI74+5r9rgZo1RbqpOPYULfa/d3phZUQxGi8aRdY93Y5vMC/tMVNCG4IU5/wg09GzuM3GrkCv0GL0VVJ0xvNCI13U8LFoLFVe14VGI2GyvlIv+cw3b2rYHtQ6Tfl5kolq6t8o/OZRDAt5dkXvg2thrX0NG7M7x1pS+CEUDZk3U=
+	t=1746652243; cv=none; b=erWvpfPNcoiUzgk1w0bC6AdN//QcJQ5xWUfbluVhGzlmNscJo+gtAg5pVFgOPDhPyD2EbyTgI4s3rQYKR1THCrCpmZerw9+iKXTi+yzWXB7AkJHnfTPeIHAXtX1FmK+WG7vyW+dg1hYYS70YVVnMmzIaCm0rw0oFKqB2rhUeXoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746649698; c=relaxed/simple;
-	bh=mf9zl460fVwgNd/Xzx+sgR2Ul5ayHK8J9uHI5yI4eFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Psivab/LJFa35Wgykn3DZneyygtz7wh0QtqEq3Xgxb6oB3ZZXym8q5vsDGHodgEMqDrxMuZ+MAqcQAwzv7nvHB3o8w2nrsIBwpM77lLcs3MiJSrsg+TfhA7ekk2wFIvUN7hLm6dWTjW9GOB4AtX4DEeHJakBstgB0Sgqv59A5V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHVE3PNW; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so2515845e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 13:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746649695; x=1747254495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qGf8Q9ccd3iDZuWgtfak1WQeYMZj/2GPzE2SYSX8Ifw=;
-        b=UHVE3PNW5be9kymZx3KXYj/8+2WCDR+VQJBfewSDIgQpvYXTKf6MYPlJeTPZwazc8r
-         gVaFP+gOYwo+3qpC1w5Huh67Cg8Z4JHdoz7uzqSttQUVmHM/bI9IfPxJt18N7jGNqrBz
-         VZM3m1dpEk6Djztcj9vn2gwhbwP6M9ygXP98v1J4ZkmA7BglpztoilBQrY4muRG6JYUR
-         /xHmubBUQvKI3B98R0lUmqQhB0Gcz9N7W9zxpYUsBBVq0Itp4wsO8V2R0by6LD9hTl0l
-         /zghYXsVY0pvrR+V5v9oXQ5aJfwdsOM8TEOrX/53eLwJyrygBIGN40zzr3+evUNx34bQ
-         Fupg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746649695; x=1747254495;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qGf8Q9ccd3iDZuWgtfak1WQeYMZj/2GPzE2SYSX8Ifw=;
-        b=KGNgu+6WlLyXkOTTXb4H3gM8gBdZ+/mgVyvFuvimz3PYiKVb3Su54w9HEpGfxzJ9u5
-         qSgbvxul7In26+kKzctaCAUBid6sdMRd3Sb1QCUD7v27N6Ozzr6NP+YjYqUZOmyeqPWZ
-         cdKiObx2VK3w2saEnEzfzUpQQ2LCNt8Tv2nmIkaUB1E6gF3LIPgZP8Jw5l68b9mFWMH8
-         96y5JYWFVUOfdKhKARLkAj+SpofPbuJ3yFprRvw+gAVk4spGIdN41uTKTXMgC8A8XETb
-         YgSSCsc+4yOGuDsjsBaWnKqrTg+a8x+fjWVtcwHCHOnWy1A5lTUvj20jp/6fUaDDWvhh
-         422g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSTi4NCdeYI5uQI8pZUe3dsrMdw9drHwY8wFFbc+d6Yb6SfVX8Y686DR4bCOtox6qMbE42bgdVdxBxJnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLn/FWuVgJV7//XS890c/N4vNsJsYTQyw+JcevzmAVKOP9B1w+
-	WIetBWpLzl+SEbRHqyOWoIYUM7Bvxa3CUQ2TwQOwdOj1fL5QOFsalGgYtQ==
-X-Gm-Gg: ASbGncv9xyvH7Gs4+MQBaLffYFFLd8spqQx/wDy4Sow9akNoJIFxvvMsa/6pCaqJzxk
-	XZjy+2vkVcUXfyXeARO3jPwdslAxmU0jk5v/92Zycsxfn4pQQ/3KX99l+w1GTQoL48zTONx+bXz
-	YJmgM7+Jm0lxoVw7yBFYvoCS+SYKIn3UebejSrzbBVC/AXuaqcj2xCJ0tpIKQsGnQIWXHKhkBDw
-	gb9DhRa5tY16rtTDJQjzn+ASGf/DYA8phmDI7WrcFkOy0cxCNnE5VbsJGxOTJN46FF4l9Sb+xPh
-	FaQi98lTXSfePghfECFQF2MGBEoHzuDUe08xYKNvTTBztia5DXF/tfaOQBlgkl+9fFbc4UAyC3F
-	Z72E=
-X-Google-Smtp-Source: AGHT+IE2zG7igwd9NAyWCEtqop4ZEXNBrXquUegBACkobWnJrCa03IgYtDVnYsHO8Kw/povHrD47sQ==
-X-Received: by 2002:a05:600c:35d4:b0:43e:ee80:c233 with SMTP id 5b1f17b1804b1-442d034be6fmr5881415e9.32.1746649694859;
-        Wed, 07 May 2025 13:28:14 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b6e52796sm2213833f8f.37.2025.05.07.13.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 13:28:14 -0700 (PDT)
-Date: Wed, 7 May 2025 21:28:07 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
- <hpa@zytor.com>
-Subject: Re: [PATCH -tip 3/3] x86/asm/32: Modernize _memcpy()
-Message-ID: <20250507212807.568551f2@pumpkin>
-In-Reply-To: <CAFULd4Z6Np=_zUUFH+Jys1VxyCAp6omgnMH9OL7iCKM1Si4q0A@mail.gmail.com>
-References: <20250506165227.158932-1-ubizjak@gmail.com>
-	<20250506165227.158932-3-ubizjak@gmail.com>
-	<CAFULd4Z6Np=_zUUFH+Jys1VxyCAp6omgnMH9OL7iCKM1Si4q0A@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1746652243; c=relaxed/simple;
+	bh=PdsStWpDAOrbQNTBeUXh3+YQFOgXfk8ojBc1rPdiaXw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p0kY2wuJ4GRZqW6tje0Z4rS4I9anQUVEdev8OLdPkPAe86rP8tNSi3X0JphY9f8PeYYepnkJTRCv7wELAcMzt7+7mUJkYc8W3b8jljOk0bnA+s5vCAON9b9QnnYJEaec9imw77ZDEaKXVcomF+60lFYLLRdHNmbmRywFOpZ1oQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Xcw7eZov; arc=none smtp.client-ip=98.137.69.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1746652241; bh=37oY+BcrB2bCXRDZYQAmwZGD83DkqqzSaYr1YJei3eg=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=Xcw7eZovVdCW3xAR6JHpECXHW8ZDgeyMN8uIUyYbSqQXOBoRivJudDiMHglgi++RcwpyQj2yQG8YInyVFiHNnPZTCPvSnCkNtqOMEvJ6e/nxoDDyusj9B172mtDwnUtJYCfwuwgPvcEtNVeQQec5M0THEvrDQ9WcVKvf46fMhVjl+A8sBXVfA1v2gwMUVgP7RoOjpcRMbVJwrjYuvNrI+djimIC7mKiJXXZvNJgSB5Qoh5YcUwPU2VrJUV5a0Rb9B6lNpJENdHHH35i4t6LSLnwkCqvys/J5hGbEPWoDV11dMi3fYQRRplpQSzVXEIf4IaTAZPr/IBzM6m+RJ7HeIw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746652241; bh=Ojou4D4AjedHs8gj6pZzYtMAFx70UG4HVz3xryLyfOj=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=GklStXiAA+qAJiCw4dyzjH0GDJSTN4YqPBT/1ofzp9+aaBemTd8Vf+WxrHzHJRc4S9FkwyO9t+6Ml9KuFAyMFxKpFfQopaKFcntSvbep+gTLEruEqI78LbFQAYUcnK/c33mMDzN7kuuOYBbnXtJVMxIvfOVCUQVON0MkjSMFKLwd6cvFUHRtyLi1chGIOz8AZrbSjFIopTGq+pmNJ5WDCx+9O94dpEspKBuKJi05iUkzBkkBA9UGuXsNmV4yMmxToQ6/picfLC7dWsJroHDwKMlaRIUiapma3rKXvTk2Xq0OF4k36/Fk5BRkUjFUQj6BJNgzXmSrUowfWnxh5suk8w==
+X-YMail-OSG: tM_v6LwVM1kQpJWCH2__vdHp_S9TKFIofMVf.fpuqVadd9knn19aGJmmkrDVTfA
+ mUkKV4CDCSputOhhUhv4ptMKFQRMBPl_qd9nIWF6KrXVbRuPtBpUPhk.LR3vhTRzFpldidlTucRz
+ YAOLy9Drzk6RN7PpDmwySyjKeti4aUhBkMmC0owhECxEf.e86.5i8rQsEtaTzaIqBLYvtplO1aqs
+ 0BMyCzPseNQkc2D6Qd97_PCL3C9rqnOen04KN5dZuuqV5Y5qHLF2znlUKvLUe6X2UNOTwlIYbmrT
+ aWlvNqEuu.PgI2nvM9g3RAsybb.7UQBAUL_ZjVUVT1XazvzzvSZit_fHQbQPxXwQwmKiwrefYQPl
+ xWzaVyvosLkqG.TodG9tpfABROpRluoppoxcOI0vnRtEIwCADVgQ4W5pLRvmG_F2wzXln53CZ97X
+ 4zXlCqGPquXiKDFrs5FwCj.hQ1EqJUVC6_I4gx.8btQVjEyNWsehOKnvXiMNSAF.hhf6aTJPsCAO
+ 57QwQ76rhqkxxCguXa_dE8ayh4JpF9DQG0NTfF5fBgzLWgwOynP1ju1dy9aNxZeAlaNr8qFZZAaI
+ sCiZ59JxrP5da3Aj9.6RI3KtTCkt9KR.kWZBhgoTDaCR0SuoFnaImnmwQSZGovUF0u.X1_4OO_H5
+ Nv_Om.1xEF0T53kFEAlDKVhJ5cactRIentYHzd2cJcyC9uM7D4hDf.GwLRJ4bCIsIhBxhO7Pj8TP
+ JFBJ4rtF62YyA17RJShHWXq7_WEP.vrk3O_3i9SgMeZXsj3HFnkpgA7vh8w413S4U787VsF8nyuF
+ jNZ3CSJ4FdzttvutZEJoU5CPwuzCTinR8u9N8eZ06VUPCtj81uYFV4j9YhIilWtSmSptdqz1WXMv
+ zl9xUrAi42OMWt2GjSmQqwrz3s4FwazG2y6xdFOWycfXRKtits.SFKBB7kHiybvyjD4kfH7whP14
+ DvgwkOHE.9b29WYLSHnxA2_Kb_Lhe8QAXQiQp4dDDgtzQar7JVMQVUkxhYd5iUZY09feofhLKfrU
+ bJ.itaGzaUHmXZT30uWPiC3BVX9p6O43dtsYwm8k_YunpbGgO7fiXH6r3MprbQdvakXvliRh3Y.A
+ rjiD29hXwIziwlRuxTwLvsgCEDWzsrHJ5L.bA65yk4T9ZPpZXrRTiuqPFroiuJ9LmNs0aJmus4YB
+ G9oZ5Fybp_vjfdWE8FsVpDKLuwjqOMSp8SVgcVTtxh9QQ_f1cfgULFm_YDXQ_g1iD6uIaSCQj5IM
+ m6.LsSgH7SU9txaB_YgX0XZiNEitEPZuI_hC81Qsq54Y0Dnrd5YshVF_uI2iobMS2PNme48DOx62
+ ZA7qEVKkqNA6MHzRGta4WAtazm0FqApy_ehfOxwxmcn7eBRHUtEYIUfPOXEtK81h2SjOBIgooJKX
+ cK0pzY87lojTKyQFRo80TH7bFXx.mc.Hcql4zCknIlG3ct41ze.ncAVgUEF8BLaWjA0KBRQ3CEbg
+ YJJTuWZRU5QVBaddGi3F0eWVOl_KBeZ2IPw7f4qiTyrkwMkOW5JKhRkuVac5vEOVg4NvFkyD12.P
+ tQLjfFIdAOAspUhzEq2PlH7s3WwkqwgZDdLBF64uiLpqsxDQTlND8OEIpuIUl4FMq0hYDnUgwAHb
+ uqS5rhNMZZHyvp7fG7BIn6EaW5xDzWd6Iw8hSQFFbtYQbek3C_MFOyGoXA4AbHbCiJ7uA0.EYGlU
+ bdZaT8lMPO7A7qcPeA.Wm8LEmmSIXhpe7MRURKrQ5KkyhyDZE_zLwkt.YTZhnM1MHESJ8UZpnMke
+ U7FlJpQH0jtMQXeEP.oa82HDwpImj.TwZzP3XdHqP6RQmOnfV0OIOwfvepOc5oGAiepJ8wFyd4lJ
+ hI.YurjaPDl3DAfiF.eT8MWnYkhMN_.WOQdk1ruYfaqzk9fAn9Kmo5CdzdRcKaAwyaRmZamrtAY6
+ HaYH1hP33Yll2eK.NYSmLag2biMbyFzYTzwpFV.WOLWlGKCd1C4akpa18N_wCrKGSpdHtAGI.qub
+ 0HigSOB33Du2FxDxx7YIu7nfz961Tczwk5I5yHljbywE15pOtDGYqddAMMWWYGzkOGtJEAuPCZVJ
+ u0KjCFKT1u9jBvr_VS0d9_yEzFOUFP4p_VdA8UkloO5D0u42FljUsdXTMw6mraZu19ocJhRRvYY_
+ miqfdsFpAd0d6LINtyzaVM5fuJ1cyfaLc9gTBADxtS7MT8VftWJvhJ2M.dnyIFkbSzb.9ZIojvQP
+ uBxdbNyiXdE.AVgBFBdU17d.B9pYuTu0cP1d_i7PS2CvnHVC28UUjxsXffba2HQ--
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: bb5d17e8-c0f3-47ff-a78a-ca3eca102ac0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Wed, 7 May 2025 21:10:41 +0000
+Received: by hermes--production-ir2-858bd4ff7b-vtq9f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6d052b03b64f3af48b113650e23cc432;
+          Wed, 07 May 2025 20:30:10 +0000 (UTC)
+Message-ID: <758195078eee66ce97c05091004bca9d5c3b6cd9.camel@aol.com>
+Subject: Re: [PATCH] x86/cpu/intel: replace deprecated strcpy with strscpy
+From: Ruben Wauters <rubenru09@aol.com>
+To: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, 	x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Date: Wed, 07 May 2025 21:30:07 +0100
+In-Reply-To: <3AFD7702-7D6F-479C-950A-CA439E01838C@zytor.com>
+References: <20250507185459.8769-1-rubenru09.ref@aol.com>
+	 <20250507185459.8769-1-rubenru09@aol.com>
+	 <3AFD7702-7D6F-479C-950A-CA439E01838C@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Tue, 6 May 2025 19:34:34 +0200
-Uros Bizjak <ubizjak@gmail.com> wrote:
+On Wed, 2025-05-07 at 13:14 -0700, H. Peter Anvin wrote:
+> On May 7, 2025 11:51:36 AM PDT, Ruben Wauters <rubenru09@aol.com>
+> wrote:
+> > strcpy is deprecated due to lack of bounds checking.
+> > This patch replaces strcpy with strscpy, the recommended
+> > alternative for
+> > null terminated strings, to follow best practices.
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > ---
+> > arch/x86/kernel/cpu/intel.c | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/arch/x86/kernel/cpu/intel.c
+> > b/arch/x86/kernel/cpu/intel.c
+> > index 584dd55bf739..b49bba30434d 100644
+> > --- a/arch/x86/kernel/cpu/intel.c
+> > +++ b/arch/x86/kernel/cpu/intel.c
+> > @@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+> > 		}
+> >=20
+> > 		if (p)
+> > -			strcpy(c->x86_model_id, p);
+> > +			strscpy(c->x86_model_id, p);
+> > 	}
+> > #endif
+> >=20
+>=20
+> strscpy() needs a buffer length; this patch wouldn't even compile!
 
-> On Tue, May 6, 2025 at 6:52=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wr=
-ote:
-> >
-> > Use inout "+" constraint modifier where appropriate, declare
-> > temporary variables as unsigned long and rewrite parts of assembly
-> > in plain C. The memcpy() function shrinks by 10 bytes, from:
-> >
-> > 00e778d0 <memcpy>:
-> >   e778d0:       55                      push   %ebp
-> >   e778d1:       89 e5                   mov    %esp,%ebp
-> >   e778d3:       83 ec 0c                sub    $0xc,%esp
-> >   e778d6:       89 5d f4                mov    %ebx,-0xc(%ebp)
-> >   e778d9:       89 c3                   mov    %eax,%ebx
-> >   e778db:       89 c8                   mov    %ecx,%eax
-> >   e778dd:       89 75 f8                mov    %esi,-0x8(%ebp)
-> >   e778e0:       c1 e9 02                shr    $0x2,%ecx
-> >   e778e3:       89 d6                   mov    %edx,%esi
-> >   e778e5:       89 7d fc                mov    %edi,-0x4(%ebp)
-> >   e778e8:       89 df                   mov    %ebx,%edi
-> >   e778ea:       f3 a5                   rep movsl %ds:(%esi),%es:(%edi)
-> >   e778ec:       89 c1                   mov    %eax,%ecx
-> >   e778ee:       83 e1 03                and    $0x3,%ecx
-> >   e778f1:       74 02                   je     e778f5 <memcpy+0x25>
-> >   e778f3:       f3 a4                   rep movsb %ds:(%esi),%es:(%edi)
+Hi, this is incorrect, strscpy is defined in string.h as
+#define strscpy(dst, src, ...)	\
+	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src,
+__VA_ARGS__)
 
-Hmmm....
-IIRC you really don't want to be doing a [1..3] byte 'rep movsb' there.
-Some cpu will run it quickly - but most of those will do a 'rep movsb' fast=
-er.
+the third parameter is optional, and it works perfectly fine with two
+parameters. I have compiled it, and there are no errors.
 
-It would also be interesting to try to measure the cost of the 'je'
-being mispredicted.
-I bet a beer or two that at least one cpu can't abort the setup cost
-of the 'rep movsb' - so you take the full hit.
+> Not to mention that the string in question is generated in such a way
+> that cannot be unterminated.
 
-I do need to rerun my 'rep movsb' performance measurements using data
-dependencies (not lfence/mfence) to synchronise things.
-The 'before' data dependency is easy: count +=3D (clocks & volatile_zero).
-The 'after' one can be done the same way if using the performance counters.
-It is probably enough to use the updated value of %si or %di rather than
-doing a read-back of the last memory write.
-
-I've done that for a different function and can see how the clock count
-for divide depends on its arguments.
-
-	David
+I'm not entirely sure what you mean here? The assignments above are
+null terminated strings, which the two parameter version works fine
+with.
 
