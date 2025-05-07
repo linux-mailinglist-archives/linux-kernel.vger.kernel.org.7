@@ -1,58 +1,52 @@
-Return-Path: <linux-kernel+bounces-638006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD1CAAE04D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B273AAE03E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76BC3ACCE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A61C25348
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6820D28AB0B;
-	Wed,  7 May 2025 13:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="UgSIQJXp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CB228935D;
+	Wed,  7 May 2025 13:07:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CB6289802;
-	Wed,  7 May 2025 13:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746623292; cv=pass; b=gW+pfGZ4MUyEa6kqW9pNiztOhgtSgrPfUw6IcBzck8Yb5ds2Ko4Ihvue5y6R5suIzediLd8fVcfBhFd+qYRscswVbflPLDhBIN51HWwkgIfH+3ZFlfMWF1yEVIOsS9dbhh8Xq8Xjlkve0GOsijPljuHzEuf1/y+sz9D/4tJMffA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746623292; c=relaxed/simple;
-	bh=MTAb9rz5IjDPFHU4fcHQ4VBXXcHmzG1zGNQI2Arg+5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bP6mSCsvDZo4/ZoXpJFO9DBeXPlMyBvNZKLmE+A6s8ChDMdTungYoVqsg/xY25YGVPkyD8ABWERQzgk3Ae9z+h61QClzWtix6qx61dCgHySYUVFWqo1dqO4BPIdFcg025/Y8z195hjk6u/CWIw0gaUNkSCwo/Vcbb3ayjOZsa34=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=UgSIQJXp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1746623270; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lrg3mL/fl3g21qBIr7JHsU9AgJdDTBwJgUwEmF2MWRPDxs82b0mMndWXxpGn5SqhqXbwC9LY0E+pbtRtVb3pnvAEar/lJY9kcV7SBE3Ou3dZ+Rl1c5Y0egHUQwRdM4prxRn0WGBISC8YnISxgvaEkYaQZIGIhOa8N7wpb0shnE0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1746623270; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=n/b63KH5NJPUOPZ1g1cKRKHd1zEwEqpry3HADn6QvTM=; 
-	b=X4XIXLTqBJUKStQo2Q6NXfd5PrDMik2UqVgXPsUU0AYBPG0CUpxx7Ch6IDPgZaJeQSuUICweSqeJ2tttyZ7WXSEvX7/pfulNyzov8MW/41ufDiKlDvaWtbhUGVLJPhJVhN5hrwg7OvrcfPOaiszN82oT59y8Zda/j79jLYpE9Ig=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746623270;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=n/b63KH5NJPUOPZ1g1cKRKHd1zEwEqpry3HADn6QvTM=;
-	b=UgSIQJXpt40JoQWQx9NJh3nI/TmbfDvztlOBqxNfBs9vkcxjaESiACyVYMYtZFRo
-	BhXMI1s3LDC+ZZX7qsKyOYMy2T62FK+kGmqIrv5LD2a+jG2sImjma9kDVzfqZA7q40I
-	gCvHjWbEbkFHYtzGCfd9YzkZBldYeJbvEXwqSnJ8=
-Received: by mx.zohomail.com with SMTPS id 1746623268314716.9665012016193;
-	Wed, 7 May 2025 06:07:48 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Wed, 07 May 2025 15:07:24 +0200
-Subject: [PATCH v3 4/4] arm64: dts: rockchip: enable USB on Sige5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFC8289350
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746623278; cv=none; b=UhCmXugOSDOXnwYTCsABnUGen63OK2Aox0kCO1/Z608zDUTK2dFyNTVBcHV30xA85p3lZYVAL8gNlH71k01h/KYzdwcV1AHjkp+COq6Xp+ioGGXJgpt8Ck5BpKk5v/vB1HJIOxX/Qrysp1lnadsxDR76v78pScvBDaKYis4wjDY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746623278; c=relaxed/simple;
+	bh=VrozmJHqdPopRWKMda1tn1rm5/kvvsrCa0JkWaKp31M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AyvBa3eJT6CgdeOoo9RdWTDx4Myy3Rnhbv5o+2Mit7Guw2LLIawJSsU4Ei/PZmLS+lmJdVvmmisLJMNZEyhREHLRtMV/OIX4hztAQsnZpZHKop1X7ssoBmTJz5DGN03zfAM9MWwSb75FbZK05f8Z4eZqCw7tGoK/WrCHARGiRSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uCeUy-0006P4-8e; Wed, 07 May 2025 15:07:44 +0200
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uCeUw-001ZIn-2o;
+	Wed, 07 May 2025 15:07:42 +0200
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uCeUx-00EJKB-0s;
+	Wed, 07 May 2025 15:07:42 +0200
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Wed, 07 May 2025 15:07:25 +0200
+Subject: [PATCH v2] gpio: mxc: configure dynamic GPIO base for
+ CONFIG_GPIO_SYSFS=n
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,236 +55,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-rk3576-sige5-usb-v3-4-89bf5a614ccf@collabora.com>
-References: <20250507-rk3576-sige5-usb-v3-0-89bf5a614ccf@collabora.com>
-In-Reply-To: <20250507-rk3576-sige5-usb-v3-0-89bf5a614ccf@collabora.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Frank Wang <frank.wang@rock-chips.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
- kernel@collabora.com, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Message-Id: <20250507-b4-imx-gpio-base-warning-v2-1-d43d09e2c6bf@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAA1bG2gC/42NQQ6CMBBFr0Jm7Zi2gBRW3sOwKDCUWdiSFhFDu
+ LuVE7h8L/nv7xApMEVosh0CrRzZuwTqkkE/GWcJeUgMSqhSSJljVyA/N7Qze+xMJHyb4NhZLMb
+ akK61rgYBaT4HGnk704828cRx8eFzPq3yZ/+IrhIFCqN0lUtT9uPtPpOzryV4x9t1IGiP4/gCg
+ LUfEcUAAAA=
+X-Change-ID: 20250113-b4-imx-gpio-base-warning-4f9ae89887d0
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-gpio@vger.kernel.org, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ Haibo Chen <haibo.chen@nxp.com>, 
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Ahmad Fatoum <a.fatoum@pengutronix.de>
 X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The ArmSoM Sige5 has several USB ports: a Type-A USB 3 port (USB2 lines
-going through a hub), a Type-A USB 2.0 port (also going through a hub),
-a Type-C DC input port that has absolutely no USB data connection and a
-Type-C port with USB3.2 Gen1x1 that's also the maskrom programming port.
+i.MX GPIO numbering has been deterministic since commit 7e6086d9e54a
+("gpio/mxc: specify gpio base for device tree probe"), a year after
+device tree support was first added back in 2011.
 
-Enable these ports, and set the device role to be host for the host
-ports.
+Reverting to dynamically allocated GPIO base now would break most
+systems making use of the sysfs API. These systems will be eventually
+broken by the removal of the sysfs API, but that would result in GPIO
+scripts not working instead of essentially toggling at random according
+to probe order, which would happen if we unconditionally set base to -1.
 
-The data capable Type-C USB port uses a fusb302 for data role switching.
+Yet, the warning is annoying and has resulted in many rejected attempts
+to remove it over the years[1][2][3].
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+As the i.MX GPIO driver is device tree only, GPIO_SYSFS is the only
+consumer of the deterministic GPIO numbering. Let's therefore restrict the
+static base and the warning that comes with it to configurations
+with CONFIG_GPIO_SYSFS enabled.
+
+[1]: https://lore.kernel.org/all/20230226205319.1013332-1-dario.binacchi@amarulasolutions.com/
+[2]: https://lore.kernel.org/all/20230506085928.933737-2-haibo.chen@nxp.com/
+[3]: https://lore.kernel.org/all/20241121145515.3087855-1-catalin.popescu@leica-geosystems.com/
+
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 160 +++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+This was one result of the discussion with Bartosz at FOSDEM 2025.
+---
+Changes in v2:
+- drop warning opt-out flag
+- set a dynamic base only if sysfs support is disabled.
+- drop unrelated driver cleanup separately picked by Bartosz
+- Link to v1: https://lore.kernel.org/r/20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de
+---
+ drivers/gpio/gpio-mxc.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-index 570252c4c0bfe56a3c269e47d81fca7676e61787..74de0fc77fefeffb8a90dd6dd9327ddb0083a146 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-@@ -177,6 +177,33 @@ vcc_3v3_ufs_s0: regulator-vcc-ufs-s0 {
- 		regulator-max-microvolt = <3300000>;
- 		vin-supply = <&vcc_5v0_sys>;
- 	};
-+
-+	vcc_5v0_typec0: regulator-vcc-5v0-typec0 {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_otg0_pwren>;
-+		regulator-name = "vcc_5v0_typec0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc_5v0_device>;
-+	};
-+	vcc_5v0_usbhost: regulator-vcc-5v0-usbhost {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_host_pwren>;
-+		regulator-name = "vcc_5v0_usbhost";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc_5v0_device>;
-+	};
-+};
-+
-+&combphy1_psu {
-+	status = "okay";
- };
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 619b6fb9d833a4bb94a93b4209f01b49ad1cbdb0..38504c9486b05802a792367111c9d71dc08bdd16 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -490,7 +490,14 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	port->gc.request = mxc_gpio_request;
+ 	port->gc.free = mxc_gpio_free;
+ 	port->gc.to_irq = mxc_gpio_to_irq;
+-	port->gc.base = of_alias_get_id(np, "gpio") * 32;
++	/*
++	 * Driver is DT-only, so a fixed base needs only be maintained for legacy
++	 * userspace with sysfs interface.
++	 */
++	if (IS_ENABLED(CONFIG_GPIO_SYSFS))
++		port->gc.base = of_alias_get_id(np, "gpio") * 32;
++	else /* silence boot time warning */
++		port->gc.base = -1;
  
- &combphy0_ps {
-@@ -611,6 +638,58 @@ regulator-state-mem {
- &i2c2 {
- 	status = "okay";
- 
-+	usbc0: typec-portc@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA5 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbc0_interrupt>;
-+		vbus-supply = <&vcc_5v0_typec0>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			/* fusb302 supports PD Rev 2.0 Ver 1.2 */
-+			pd-revision = /bits/ 8 <0x2 0x0 0x1 0x2>;
-+			power-role = "source";
-+			source-pdos = <PDO_FIXED(5000, 2000,
-+						 PDO_FIXED_USB_COMM | PDO_FIXED_DATA_SWAP)>;
-+
-+			altmodes {
-+				displayport {
-+					svid = /bits/ 16 <0xff01>;
-+					vdo = <0xffffffff>;
-+				};
-+			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					usbc0_hs_ep: endpoint {
-+						remote-endpoint = <&usb_drd0_hs_ep>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					usbc0_ss_ep: endpoint {
-+						remote-endpoint = <&usb_drd0_ss_ep>;
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					usbc0_dp_ep: endpoint {
-+						remote-endpoint = <&usbdp_phy_ep>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	hym8563: rtc@51 {
- 		compatible = "haoyu,hym8563";
- 		reg = <0x51>;
-@@ -678,6 +757,24 @@ pcie_reset: pcie-reset {
- 			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
- 		};
- 	};
-+
-+	usb {
-+		usb_host_pwren: usb-host-pwren {
-+			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		usb_otg0_pwren: usb-otg0-pwren {
-+			rockchip,pins = <4 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		usbc0_interrupt: usbc0-interrupt {
-+			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+		usbc0_sbu1: usbc0-sbu1 {
-+			rockchip,pins = <2 RK_PA6 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+		usbc0_sbu2: usbc0-sbu2 {
-+			rockchip,pins = <2 RK_PA7 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+	};
- };
- 
- &sdhci {
-@@ -706,11 +803,74 @@ &sdmmc {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	phy-supply = <&vcc_5v0_usbhost>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0m0_xfer>;
- 	status = "okay";
- };
- 
-+&usb_drd0_dwc3 {
-+	usb-role-switch;
-+	dr_mode = "otg";
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			usb_drd0_hs_ep: endpoint {
-+				remote-endpoint = <&usbc0_hs_ep>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			usb_drd0_ss_ep: endpoint {
-+				remote-endpoint = <&usbc0_ss_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&usb_drd1_dwc3 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usbdp_phy {
-+	mode-switch;
-+	orientation-switch;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc0_sbu1 &usbc0_sbu2>;
-+	sbu1-dc-gpios = <&gpio2 RK_PA6 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio2 RK_PA7 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+
-+	port {
-+		usbdp_phy_ep: endpoint {
-+			remote-endpoint = <&usbc0_dp_ep>;
-+		};
-+	};
-+};
-+
- &vop {
- 	status = "okay";
- };
+ 	err = devm_gpiochip_add_data(&pdev->dev, &port->gc, port);
+ 	if (err)
 
+---
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+change-id: 20250113-b4-imx-gpio-base-warning-4f9ae89887d0
+
+Best regards,
 -- 
-2.49.0
+Ahmad Fatoum <a.fatoum@pengutronix.de>
 
 
