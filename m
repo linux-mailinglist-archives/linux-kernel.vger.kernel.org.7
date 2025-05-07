@@ -1,130 +1,82 @@
-Return-Path: <linux-kernel+bounces-636919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA05AAD1BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 01:57:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961B9AAD1C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CEF4A6EF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526DE503E6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6760021D5BB;
-	Tue,  6 May 2025 23:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7FC3398A;
+	Wed,  7 May 2025 00:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVYJz8oN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vNhGJci5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0C5214815
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 23:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5202C23DE;
+	Wed,  7 May 2025 00:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746575843; cv=none; b=lsNd/vKhyaLjgOCO99YEZF2ZQlv2NHmRZp4Ci4S07QBRKqPwpTTHFRSGZnxx7bfrvFydWtFUG4lxyJssRICF2CLD2TS+PDvO/pX5jbqhcpmfZyCDhWLSsTsk0soeJ/m7hH0fUyv8LAp1ozX9GY8nVxswvZIlfxbn8DX+siesfLI=
+	t=1746576036; cv=none; b=ctQwoKtwp7ITnMM3ihXoVCMWw01l0QM6L8j3rT9cKFetC6g3WPvbIEwEcjgj8RWEmASlaG5J4+zOBpjzVfByq6f7PNEN9GggO64Sidpgg/xsTX1/1dW2R/EEVFRJGNgFsxLn+iB44w+Eb2jjoC/MT3qtKb0rrPPCOREwlU5IUtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746575843; c=relaxed/simple;
-	bh=yxSEOOrKIkvEzMKukyHAhQPQyFWYQHJ/8Utird1u5bU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ivPTszKI4ccwrlsH9zRUxp9O4olOnw2S+XIv8yhlGid71tSCnUM+e3DKSe6ihbDb3AXSucLiwdjcPMu5GSykP10yUZHTEYSkLCOJzN16MCWR4adFweaEXAfXtq5aFXLysVLYPY9RRnpcB+kWYtu5THIG4XdGl2GABblMmVI8A00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVYJz8oN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630FFC4CEE4;
-	Tue,  6 May 2025 23:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746575843;
-	bh=yxSEOOrKIkvEzMKukyHAhQPQyFWYQHJ/8Utird1u5bU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=JVYJz8oNyKONT9+TOS6KyHKoWQjF7wfPUuYUryFI+j3cj7KUTD2WcFnIwXu97KDjW
-	 3wti9Pkvrm9RPyaLMMR3/kBorRBltIwgDy8FbIKVwa5ce+cGxZGojuJmgwSAe/xhY/
-	 q6bmhV6AGQbA08ocA5xJPlbhyFXGn0NjgxqrLmL4LLnX7dHwQhK2JYdwZwZgM89YfU
-	 LY3LXL/psSODAFl4P0+DxsBrKQHnQuYLmHEn8zqEvRjKY7p+I6ZDj2B9PtIFaqcyLW
-	 o/cLWkYAg4QHE1QeZnhQWUblcEK9x0GuXfuAFRsedb1Oesz/tJthqXgWXMmgjAbzjb
-	 ZUSz2W3tbkVSA==
-Date: Tue, 6 May 2025 16:57:21 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Jason Andryuk <jason.andryuk@amd.com>
-cc: Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] xenbus: Allow PVH dom0 a non-local xenstore
-In-Reply-To: <20250506204456.5220-1-jason.andryuk@amd.com>
-Message-ID: <alpine.DEB.2.22.394.2505061657080.3879245@ubuntu-linux-20-04-desktop>
-References: <20250506204456.5220-1-jason.andryuk@amd.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1746576036; c=relaxed/simple;
+	bh=ALYrDOrB4kuaNVu4GIvtF0UwXvPLkIaw599sx0ttPQs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=IK/pPDKM4DHNw+X1RP/KvdjI5PO+xOlW4e8G4ND0LZWNHU0of257rKRppiw2ZtwGDhbxzGX5aPNkmR+YDwPmh33gvOqJALX3r9YOjoFmm4TXfPBFwBENBv8fwmgBX1Q+AOIgZfLB4VvNd67pDXhOeqDSTospvlv5WsuMufhbwNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vNhGJci5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5559AC4CEE4;
+	Wed,  7 May 2025 00:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1746576035;
+	bh=ALYrDOrB4kuaNVu4GIvtF0UwXvPLkIaw599sx0ttPQs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vNhGJci5KF4sUfhQi/F5mgwAbmaQ5IOzu2ZVaggQMEqNVwDKaM4IK0FGeaOxy5Cut
+	 PImhvyH+KCjOKzMut9/ehotAytzyVlC6rAfPsqapaHfEZpVO8+lVhOJ3OkCeluw6cS
+	 xIH4KsWeRSYlGXQjuCoPFLcdduXIVkXJgR/e1cU4=
+Date: Tue, 6 May 2025 17:00:34 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: vbabka@suse.cz, surenb@google.com, mhocko@suse.com, jackmanb@google.com,
+ hannes@cmpxchg.org, bp@alien8.de, tglx@linutronix.de, david@redhat.com,
+ ast@kernel.org, linux-mm@kvack.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/page_alloc: Ensure try_alloc_pages() plays well
+ with unaccepted memory
+Message-Id: <20250506170034.2c6cb08808e60772c207233f@linux-foundation.org>
+In-Reply-To: <20250506112509.905147-2-kirill.shutemov@linux.intel.com>
+References: <20250506112509.905147-1-kirill.shutemov@linux.intel.com>
+	<20250506112509.905147-2-kirill.shutemov@linux.intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 6 May 2025, Jason Andryuk wrote:
-> Make xenbus_init() allow a non-local xenstore for a PVH dom0 - it is
-> currently forced to XS_LOCAL.  With Hyperlaunch booting dom0 and a
-> xenstore stubdom, dom0 can be handled as a regular XS_HVM following the
-> late init path.
-> 
-> Ideally we'd drop the use of xen_initial_domain() and just check for the
-> event channel instead.  However, ARM has a xen,enhanced no-xenstore
-> mode, where the event channel and PFN would both be 0.  Retain the
-> xen_initial_domain() check, and use that for an additional check when
-> the event channel is 0.
-> 
-> Check the full 64bit HVM_PARAM_STORE_EVTCHN value to catch the off
-> chance that high bits are set for the 32bit event channel.
-> 
-> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
-> Change-Id: I5506da42e4c6b8e85079fefb2f193c8de17c7437
-> ---
-> v2:
-> Re-add xen_initial_domain() check to avoid breaking ARM's xen,enhanced
-> no-xenstore mode where event channel and PFN are both 0.
+On Tue,  6 May 2025 14:25:08 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
 
-Thanks for the catch!
-
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
-
-
->  drivers/xen/xenbus/xenbus_probe.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
+> try_alloc_pages() will not attempt to allocate memory if the system has
+> *any* unaccepted memory. Memory is accepted as needed and can remain in
+> the system indefinitely, causing the interface to always fail.
 > 
-> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
-> index 22d3f90ee205..b12cbd9663e3 100644
-> --- a/drivers/xen/xenbus/xenbus_probe.c
-> +++ b/drivers/xen/xenbus/xenbus_probe.c
-> @@ -969,9 +969,15 @@ static int __init xenbus_init(void)
->  	if (xen_pv_domain())
->  		xen_store_domain_type = XS_PV;
->  	if (xen_hvm_domain())
-> +	{
->  		xen_store_domain_type = XS_HVM;
-> -	if (xen_hvm_domain() && xen_initial_domain())
-> -		xen_store_domain_type = XS_LOCAL;
-> +		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
-> +		if (err)
-> +			goto out_error;
-> +		xen_store_evtchn = (int)v;
-> +		if (!v && xen_initial_domain())
-> +			xen_store_domain_type = XS_LOCAL;
-> +	}
->  	if (xen_pv_domain() && !xen_start_info->store_evtchn)
->  		xen_store_domain_type = XS_LOCAL;
->  	if (xen_pv_domain() && xen_start_info->store_evtchn)
-> @@ -990,10 +996,6 @@ static int __init xenbus_init(void)
->  		xen_store_interface = gfn_to_virt(xen_store_gfn);
->  		break;
->  	case XS_HVM:
-> -		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
-> -		if (err)
-> -			goto out_error;
-> -		xen_store_evtchn = (int)v;
->  		err = hvm_get_parameter(HVM_PARAM_STORE_PFN, &v);
->  		if (err)
->  			goto out_error;
-> -- 
-> 2.34.1
+> Rather than immediately giving up, attempt to use already accepted
+> memory on free lists.
 > 
+> Pass 'alloc_flags' to cond_accept_memory() and do not accept new memory
+> for ALLOC_TRYLOCK requests.
+
+What are the userspace-visible effects, please?
+
+Was the omission of cc:stable intentional?  I cannot locally determine
+this without the above info.
+
+If the cc:stable omission was indeed intentional then it would be better
+if this series was presented as two standalone patches.
 
