@@ -1,231 +1,140 @@
-Return-Path: <linux-kernel+bounces-638303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FECBAAE3DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:07:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B82DAAE3DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A85506C97
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:07:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E90167B81DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA4628A1DB;
-	Wed,  7 May 2025 15:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A93F28A1F8;
+	Wed,  7 May 2025 15:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kk0fa7Ti"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hi5qpeWu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6E6145B16;
-	Wed,  7 May 2025 15:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0785280325;
+	Wed,  7 May 2025 15:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746630409; cv=none; b=RnrsQCsaM6/ovA6JeX0aLNBj92LO+RT3pQYVy35+TCthM7fQl5OICdgKjPITn0799EZneZoMa5MASSg4FVyDHAJh1V5GUjqUQSEoSlB9LmvhFWL10Hm4bI/pmkExwjMIkxjbyV0agSDjs5yM+LU66xhGgf6Xit/2y2Ym1NP9Iik=
+	t=1746630379; cv=none; b=WxevQmuip5KvWgF2QkHpzsyWhLpt+6CTSPPxhY2XcaftVhv/1Zums915Mn120x1Y25cN9ZIpLk9IH2lyYmwX+lFSacY7wma0pCApiSc2uNrqRHiy9KG5kXE7c1Lim2zdahSbVr9cVIo31vDgqA8SUHUwlgEo88h9iPu8Msb4BIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746630409; c=relaxed/simple;
-	bh=N1rwgRRnDqs/M9QA2Mc7JZlhCWle/rl+V84fvGvfCDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J+meyvNGHUxbAt/aAHzvXKJj5SwqhMSmLmKf+lbTxTIJHTiIVgZ5oGEYxn4iWfwRVLvOc13maba+AEnR+aHwdAV9KAstJyQYmvTkp67NfInlUT3ef4V3DICjZOdYZU4IC/H9lHtszxnoxdTlT1GAo2WTvLmB2oV6opMM/4F+n3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kk0fa7Ti; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547Da8xt011186;
-	Wed, 7 May 2025 15:06:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u8No8/KPTSLU3O+50ue4WHZSN0FQGaSfa9yafjJ6UAs=; b=Kk0fa7Tibq9z5ln0
-	DbzpkNOGMLuGeYA/Q1kzjo1UvdmlnYg0eR+/+JMEM7EsU74Etp+C/SPxISB0kctx
-	wFgJmMmsiBeYIvCxRISL/IqmFb1/GSdscdxnmBUHuoN01IU/STJd3O19DbQxobXg
-	edpPW/Ktlf4uAhLr9dZ9QwjzbW9GBs4W2EyR3/Ix14EMTP3rM9pSiwTEE3Y40Tw9
-	k9bKpL5pENbRz+JbyACqfD2JVP09FiW9RVlThDyztbdP4AbUkh+0RrdgZAhq6MP5
-	ode0g8hpRFHBtXGgnWPN1zdfAA70y0xrjUJJ7fBFB73+UxzatALQJ+gXP4Jz+EQC
-	8WJPjA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46g13vsrcs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 15:06:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 547F6334006734
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 May 2025 15:06:03 GMT
-Received: from [10.216.23.216] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 May 2025
- 08:05:58 -0700
-Message-ID: <626f208c-7060-4fce-9aac-4c48606fc56d@quicinc.com>
-Date: Wed, 7 May 2025 20:35:54 +0530
+	s=arc-20240116; t=1746630379; c=relaxed/simple;
+	bh=Y/WUVh0ev6M+r+m9bgj7h8JDEj1XP6+S3ee84YZotzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzXdLFlZRumFwsb676Dql+0qKlrVFkSwQRcPn20p9056rFCCKdnBil1DEBVzz5Qt7H16aXoWJhUaVe9PBn65wJMn+1CNZe+LcOs9dX7y6WCDYgiAiHqY+TL7RhJOSzFC7xTsbElTxSKAKfMRyzsoQEVyMa8WSB9QiYy1fmqT9xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hi5qpeWu; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746630378; x=1778166378;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y/WUVh0ev6M+r+m9bgj7h8JDEj1XP6+S3ee84YZotzA=;
+  b=Hi5qpeWuqGVwCfebbZfd+jIULw1Al/Q0injcLNVQrC5XJb4dSjwyee04
+   MIyAqnBYeOIDNUFqYpAcrUAL27Ti1AtBfEd1Waj5qwCBE7iZ6fDaEjh4S
+   IvRNCM6Ezf//zmV5ujy2ncClCNt6/ZngFcY0M/EBDYnFKdqaH2u+hCQPv
+   1BYC02Gy6iEXEkBxFkBjw6xCftTHo8yFFHs56YSecOlkRCPbK5rlZTr+S
+   m4vDjDp4ZmAP2aXL0gvdm1fm3evZC8k4vIM3XgJ7/TEScuyJb79TLoc+n
+   WIvaFDmVni6qvKn+PLxv3gyEGzQgN9uludtATJ1Anpeac2fQDeBl+NgFQ
+   g==;
+X-CSE-ConnectionGUID: BoVPYeN9QryGnx/F72B3MQ==
+X-CSE-MsgGUID: YTKdKMdhR96JO91JgiPoRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52183812"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="52183812"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:06:16 -0700
+X-CSE-ConnectionGUID: Z/H6YXNKTMeyF9mW6VqssQ==
+X-CSE-MsgGUID: d/50a7xkRzuk5pzTD8W5Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="136502215"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:06:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uCgLS-00000003lQ1-4BdZ;
+	Wed, 07 May 2025 18:06:03 +0300
+Date: Wed, 7 May 2025 18:06:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 08/26] pinctrl: cs42l43: Use fw_devlink_set_device()
+Message-ID: <aBt22olAebSy8Xx3@smile.fi.intel.com>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+ <20250507071315.394857-9-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 06/11] phy: qcom-qmp-ufs: Rename qmp_ufs_power_off
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>,
-        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <bvanassche@acm.org>, <andersson@kernel.org>,
-        <neil.armstrong@linaro.org>, <konrad.dybcio@oss.qualcomm.com>,
-        <quic_rdwivedi@quicinc.com>, <quic_cang@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-References: <20250503162440.2954-1-quic_nitirawa@quicinc.com>
- <20250503162440.2954-7-quic_nitirawa@quicinc.com>
- <prbe2guxzsea6aqonf32m44zp6oa3vzdf5ieazcontv4fmx3d3@2r4tu5nr2k4x>
- <2191c270-f4fc-47e4-8bb7-ba6329332ef3@quicinc.com>
- <qhblitwmuhnb7axrflsqh7pmshmhrehh2hina23k6zqq7mhafv@xtsl376cyooy>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <qhblitwmuhnb7axrflsqh7pmshmhrehh2hina23k6zqq7mhafv@xtsl376cyooy>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8lyCi0D8an1jr1kZOvVJkHON42edOAn2
-X-Proofpoint-ORIG-GUID: 8lyCi0D8an1jr1kZOvVJkHON42edOAn2
-X-Authority-Analysis: v=2.4 cv=JNc7s9Kb c=1 sm=1 tr=0 ts=681b76dd cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=JfrnYn6hAAAA:8
- a=COk6AnOGAAAA:8 a=zV9PPM8jW_R1-xSbYZ8A:9 a=QEXdDO2ut3YA:10
- a=1CNFftbPRP8L7MoqJWF3:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDE0MSBTYWx0ZWRfX3IyhT/6pcPLz
- IjYIlt5taCWiRLorU3mTzOIsmVoLgiTi0SJPA8CpnA92PCdbzcGl4msb20iVjXu09TSbQp2fO5u
- JdYdKeo00nE2tdNMVsq4WSkf/Grj39xroJiSwNiQ4ooJTs2DQJKA8MSjBeft9maPekLVn1EF/Pi
- 8kb77g/LOysrc+wPsqD5XgAUGAFOGgVH6JtUSX6J0Mz8NE4TbzS/r6Xt2Ncz7l6ekQgxJEi0PZr
- Wt1mNBjqdwuRWSekXkXHV4r1MA+WhbXYCCvSlAU5Abm1vIOmMojkpkuzrHOFkypd9wQza9sIV+/
- i04hzhk3HcSKV8eBVBbmgdyHdUJRuod9esL8+6WQH9iCuMgegb5RYXwDxaV+j04BE5hoDPbONYA
- u7t301y0QVMJrlAP0ndjp4NOGBMLl6wL6asS+euzgXg34I1vrTSDoitZMSaJeW1gWVgD5azy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_04,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 mlxlogscore=999 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507071315.394857-9-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-
-On 5/6/2025 5:23 PM, Dmitry Baryshkov wrote:
-> On Sun, May 04, 2025 at 09:22:06PM +0530, Nitin Rawat wrote:
->>
->>
->> On 5/4/2025 9:07 PM, Dmitry Baryshkov wrote:
->>> On Sat, May 03, 2025 at 09:54:35PM +0530, Nitin Rawat wrote:
->>>> Rename qmp_ufs_disable to qmp_ufs_power_off to better represent its
->>>> functionality. Additionally, move the qmp_ufs_exit() call inside
->>>> qmp_ufs_power_off to preserve the functionality of .power_off.
->>>>
->>>> There is no functional change.
->>>>
->>>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->>>> ---
->>>>    drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 30 +++++++++----------------
->>>>    1 file changed, 11 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>>> index 94095393148c..c501223fc5f9 100644
->>>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>>> @@ -1835,6 +1835,15 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
->>>>    	return 0;
->>>>    }
->>>>
->>>> +static int qmp_ufs_exit(struct phy *phy)
->>>> +{
->>>> +	struct qmp_ufs *qmp = phy_get_drvdata(phy);
->>>> +
->>>> +	qmp_ufs_com_exit(qmp);
->>>
->>> Just inline it, unless you have any other plans.
->>
->> Hi Dmitry,
->>
->> I have inlined qcom_ufs_com_exit in patch #7 of the same series. I separated
->> it into a different patch to keep each patch simpler.
+On Wed, May 07, 2025 at 09:12:50AM +0200, Herve Codina wrote:
+> The code set directly fwnode->dev field.
 > 
-> You have inlined qmp_ufs_com_exit() contents. Here I've asked you to
-> inline qmp_ufs_exit(), keeping qmp_ufs_com_exit() as is.
+> Use the dedicated fw_devlink_set_device() helper to perform this
+> operation.
 
+...
 
-Sure Dmitry. I'll update this in next patchset. Thanks
-> 
->>
->> Could you please review patch #7 and share your thoughts.
->>
->> [PATCH V4 07/11] phy: qcom-qmp-ufs: Remove qmp_ufs_exit() and Inline
->> qmp_ufs_com_exit().
->>
->>
->> Regards,
->> Nitin
->>
->>
->>>
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>>    static int qmp_ufs_power_off(struct phy *phy)
->>>>    {
->>>>    	struct qmp_ufs *qmp = phy_get_drvdata(phy);
->>>> @@ -1851,28 +1860,11 @@ static int qmp_ufs_power_off(struct phy *phy)
->>>>    	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->>>>    			SW_PWRDN);
->>>>
->>>> -	return 0;
->>>> -}
->>>> -
->>>> -static int qmp_ufs_exit(struct phy *phy)
->>>> -{
->>>> -	struct qmp_ufs *qmp = phy_get_drvdata(phy);
->>>> -
->>>> -	qmp_ufs_com_exit(qmp);
->>>> +	qmp_ufs_exit(phy);
->>>>
->>>>    	return 0;
->>>>    }
->>>>
->>>> -static int qmp_ufs_disable(struct phy *phy)
->>>> -{
->>>> -	int ret;
->>>> -
->>>> -	ret = qmp_ufs_power_off(phy);
->>>> -	if (ret)
->>>> -		return ret;
->>>> -	return qmp_ufs_exit(phy);
->>>> -}
->>>> -
->>>>    static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
->>>>    {
->>>>    	struct qmp_ufs *qmp = phy_get_drvdata(phy);
->>>> @@ -1921,7 +1913,7 @@ static int qmp_ufs_phy_init(struct phy *phy)
->>>>    static const struct phy_ops qcom_qmp_ufs_phy_ops = {
->>>>    	.init		= qmp_ufs_phy_init,
->>>>    	.power_on	= qmp_ufs_power_on,
->>>> -	.power_off	= qmp_ufs_disable,
->>>> +	.power_off	= qmp_ufs_power_off,
->>>>    	.calibrate	= qmp_ufs_phy_calibrate,
->>>>    	.set_mode	= qmp_ufs_set_mode,
->>>>    	.owner		= THIS_MODULE,
->>>> --
->>>> 2.48.1
->>>>
->>>
->>
->>
->> -- 
->> linux-phy mailing list
->> linux-phy@lists.infradead.org
->> https://lists.infradead.org/mailman/listinfo/linux-phy
-> 
+>  		fwnode = fwnode_get_named_child_node(fwnode, "pinctrl");
+>  
+
+>  		if (fwnode && !fwnode->dev)
+
+Why do we bother checking the fwnode->dev here?
+Just wondering... Hopefully the original author of the code can explain what is
+going on here.
+
+> -			fwnode->dev = priv->dev;
+> +			fw_devlink_set_device(fwnode, priv->dev);
+>  	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
