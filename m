@@ -1,149 +1,216 @@
-Return-Path: <linux-kernel+bounces-637484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E73AAD9A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:08:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C0AAAD990
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602C41C22A6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AED4C0BE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DA4222578;
-	Wed,  7 May 2025 07:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4552A236A9C;
+	Wed,  7 May 2025 07:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHNBUs5m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c5ncab5L";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VgxcGzRO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53455222568;
-	Wed,  7 May 2025 07:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A9223535F;
+	Wed,  7 May 2025 07:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746604744; cv=none; b=TYatBW7tNDsltKNtc23pU1w3/WFYrDkYgT8VCP0xJ9rZDZ7NeBNHIKxTx3lVdMYtpAkOTyNFrFgmBUEbW0h1ZgpddBsWvWSKTNjxhzmSzTBCB3xQIKv7beEGxfHwEV+bUoD0Lctb5/dFg/iHBeEGPvlSk2QTKoKpYKysE65X908=
+	t=1746604700; cv=none; b=Xri75icKknehxj/Es+OjMDwppZvKXwa2jwCkvHKhzkgXiHuH0xLYj30fUdHsJrXmdblg0S+I9Xk7W1R19enJnQZTGpWIKVTLlyePDsVFo+vIx04DOt6lNFL20aV7ggqrWBD/ugr74nyCsE3DgnnaV4Rt4/iAXRhyRaZVjOE1avA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746604744; c=relaxed/simple;
-	bh=cJVc8vDwwV6eG3WvH6uiIoTnL+2Yb4/F1G4OnVH37bo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0TsRwNIhWoZG5gMWL6UpD+FPQ56K2lovAG+HygHLlankl5y/VzPWmSEY1e8qiEZbg3MhektabdcBJG92YZu2ZZJMxHcUu1cVbVyeqfT4MxPxVXrURVPPvWtz1Dv5P9H2GcN93k0GhW2e9iRNl0ODMsmj1xEjzf58khI+cqX5r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHNBUs5m; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746604743; x=1778140743;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cJVc8vDwwV6eG3WvH6uiIoTnL+2Yb4/F1G4OnVH37bo=;
-  b=FHNBUs5mDrvEsxe9oKHXAckoUDjW+E+nwv9OduaOoLleq4nr+NivnNRU
-   axX8QACXSFiReYugRQaqILIQNVM/2WTB+6ovi+vcyO7kK8ZB19G+2GntJ
-   Vc/sgfR9J3TOPA1qa9xon9Ftpc6PNAlRbErEvswo5MwtGdhEbhGNk7OsH
-   t6zVBYkkf4BtiKm1PTHShoIUi82o1hIE9xZY9YJmfYWnpW6PkoYqjukJQ
-   c9I6QOgZLmm+A4RnwxH8oh2ctGR29pVKzxMObWUeCpJcG2ZpC671lTYIX
-   l6nSiJxqVViXh5LoBCczU9CRvlDFrqVBDJESmpRrsYWtZm8/1Zt4pXBwc
-   Q==;
-X-CSE-ConnectionGUID: 6quq6gNZQQ6YUoBqs1saBg==
-X-CSE-MsgGUID: S1scbWBCTpOo7xheNtEUtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="51969535"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="51969535"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:59:02 -0700
-X-CSE-ConnectionGUID: i3OY1f7dSP6kowPaS9EQDw==
-X-CSE-MsgGUID: XJ5A9IlWRxamSWSXFFzBUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="159175153"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 May 2025 00:58:57 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCZg6-0007Mx-21;
-	Wed, 07 May 2025 07:58:54 +0000
-Date: Wed, 7 May 2025 15:58:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Praveen Talari <quic_ptalari@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, psodagud@quicinc.com, djaggi@quicinc.com,
-	quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
-	quic_arandive@quicinc.com, quic_mnaresh@quicinc.com,
-	quic_shazhuss@quicinc.com
-Subject: Re: [PATCH v3 8/9] serial: qcom-geni: Enable PM runtime for serial
- driver
-Message-ID: <202505071523.FhPMXslL-lkp@intel.com>
-References: <20250502031018.1292-9-quic_ptalari@quicinc.com>
+	s=arc-20240116; t=1746604700; c=relaxed/simple;
+	bh=iPiB7fnUx17WULm1HehJx3YBTOaobVrYG7iKWbFfHzE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=j3zjS0yCJanVrXujFMogDCaWfV08OO4NIVuqc8BxqhnMZuMBuryY58CtQlhKjVZ4bxePMoBEYJrNsep2Im9z9mAAnDDslejYJKbekP3GNZLgBHeN4q8vBdXCX4ihqTX6RR6XZzCuE4vbCoa2Jeo46h8ge+NFvpVZfFLJRKdepNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c5ncab5L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VgxcGzRO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 07 May 2025 07:58:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746604695;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0/BkMXVyFUAsx4kaOmJIj9kJ0qxQrfDYzm5EV0u238=;
+	b=c5ncab5LWRdkZ7/ORXPLPyu/uAku/fW2n8LqDmlb0h8KXhuZ2keGQZJ1ovccUfEI3N7RbI
+	pgymgJxKLV9FKN0192N+Kpeysp6XsocXb2+JHiTiw5QlX2l3LGtB+5a4sYc5gPXTkUDmDZ
+	GC8KF2g3DTRkD69XjoqLm5EN1F8Vg/eqp7EVajmvZUBWbEt7HToAbT0DibLUiGz0lcQ65b
+	LROkS4cW0ihYzS4GD870/KIcF41uD1U/3f0P8toiUpzixaEmilwmBHU50UoW9AzUzxBJ93
+	YG695XqxsMFGLzTko7kzdMyJe3kdRWds2Iq915B53YzXkvoczeCZXqxBayQYsg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746604695;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0/BkMXVyFUAsx4kaOmJIj9kJ0qxQrfDYzm5EV0u238=;
+	b=VgxcGzROu58RTa+MI5RVccPWVnAfc8k3VIPbcx93/ohRKSAjFOk/cN/gghrkE/Ky6PLAbx
+	DFApUW+84Ul4W6AQ==
+From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/cleanups] irqdomain: Make irq_domain_create_hierarchy() an inline
+Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250319092951.37667-13-jirislaby@kernel.org>
+References: <20250319092951.37667-13-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250502031018.1292-9-quic_ptalari@quicinc.com>
+Message-ID: <174660469504.406.12443181542346195506.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Praveen,
+The following commit has been merged into the irq/cleanups branch of tip:
 
-kernel test robot noticed the following build warnings:
+Commit-ID:     0b8018a1333cbccf37dceb2054be1c5db78eb953
+Gitweb:        https://git.kernel.org/tip/0b8018a1333cbccf37dceb2054be1c5db78eb953
+Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
+AuthorDate:    Wed, 19 Mar 2025 10:29:05 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 07 May 2025 09:53:21 +02:00
 
-[auto build test WARNING on 3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7]
+irqdomain: Make irq_domain_create_hierarchy() an inline
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Praveen-Talari/opp-add-new-helper-API-dev_pm_opp_set_level/20250502-111540
-base:   3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7
-patch link:    https://lore.kernel.org/r/20250502031018.1292-9-quic_ptalari%40quicinc.com
-patch subject: [PATCH v3 8/9] serial: qcom-geni: Enable PM runtime for serial driver
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250507/202505071523.FhPMXslL-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071523.FhPMXslL-lkp@intel.com/reproduce)
+There is no reason to export the function as an extra symbol. It is
+simple enough and is just a wrapper to already exported functions.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505071523.FhPMXslL-lkp@intel.com/
+Therefore, switch the exported function to an inline.
 
-All warnings (new ones prefixed by >>):
+Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250319092951.37667-13-jirislaby@kernel.org
 
->> drivers/tty/serial/qcom_geni_serial.c:1876:12: warning: 'qcom_geni_serial_runtime_resume' defined but not used [-Wunused-function]
-    1876 | static int qcom_geni_serial_runtime_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/tty/serial/qcom_geni_serial.c:1868:12: warning: 'qcom_geni_serial_runtime_suspend' defined but not used [-Wunused-function]
-    1868 | static int qcom_geni_serial_runtime_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---
+ include/linux/irqdomain.h | 45 ++++++++++++++++++++++++++++++++------
+ kernel/irq/irqdomain.c    | 41 +-----------------------------------
+ 2 files changed, 39 insertions(+), 47 deletions(-)
 
-
-vim +/qcom_geni_serial_runtime_resume +1876 drivers/tty/serial/qcom_geni_serial.c
-
-  1867	
-> 1868	static int qcom_geni_serial_runtime_suspend(struct device *dev)
-  1869	{
-  1870		struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
-  1871		struct uart_port *uport = &port->uport;
-  1872	
-  1873		return geni_serial_resources_off(uport);
-  1874	};
-  1875	
-> 1876	static int qcom_geni_serial_runtime_resume(struct device *dev)
-  1877	{
-  1878		struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
-  1879		struct uart_port *uport = &port->uport;
-  1880	
-  1881		return geni_serial_resources_on(uport);
-  1882	};
-  1883	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 91ed86f..6e9a5ec 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -591,12 +591,45 @@ void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+ 			 void *handler_data, const char *handler_name);
+ void irq_domain_reset_irq_data(struct irq_data *irq_data);
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+-struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
+-					       unsigned int flags,
+-					       unsigned int size,
+-					       struct fwnode_handle *fwnode,
+-					       const struct irq_domain_ops *ops,
+-					       void *host_data);
++/**
++ * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
++ * @parent:	Parent irq domain to associate with the new domain
++ * @flags:	Irq domain flags associated to the domain
++ * @size:	Size of the domain. See below
++ * @fwnode:	Optional fwnode of the interrupt controller
++ * @ops:	Pointer to the interrupt domain callbacks
++ * @host_data:	Controller private data pointer
++ *
++ * If @size is 0 a tree domain is created, otherwise a linear domain.
++ *
++ * If successful the parent is associated to the new domain and the
++ * domain flags are set.
++ * Returns pointer to IRQ domain, or NULL on failure.
++ */
++static inline struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
++					    unsigned int flags,
++					    unsigned int size,
++					    struct fwnode_handle *fwnode,
++					    const struct irq_domain_ops *ops,
++					    void *host_data)
++{
++	struct irq_domain_info info = {
++		.fwnode		= fwnode,
++		.size		= size,
++		.hwirq_max	= size,
++		.ops		= ops,
++		.host_data	= host_data,
++		.domain_flags	= flags,
++		.parent		= parent,
++	};
++	struct irq_domain *d;
++
++	if (!info.size)
++		info.hwirq_max = ~0U;
++
++	d = irq_domain_instantiate(&info);
++	return IS_ERR(d) ? NULL : d;
++}
+ 
+ static inline struct irq_domain *irq_domain_add_hierarchy(struct irq_domain *parent,
+ 					    unsigned int flags,
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 0eb99d2..74ad4a8 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1308,47 +1308,6 @@ void irq_domain_reset_irq_data(struct irq_data *irq_data)
+ EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
+ 
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+-/**
+- * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
+- * @parent:	Parent irq domain to associate with the new domain
+- * @flags:	Irq domain flags associated to the domain
+- * @size:	Size of the domain. See below
+- * @fwnode:	Optional fwnode of the interrupt controller
+- * @ops:	Pointer to the interrupt domain callbacks
+- * @host_data:	Controller private data pointer
+- *
+- * If @size is 0 a tree domain is created, otherwise a linear domain.
+- *
+- * If successful the parent is associated to the new domain and the
+- * domain flags are set.
+- * Returns pointer to IRQ domain, or NULL on failure.
+- */
+-struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
+-					    unsigned int flags,
+-					    unsigned int size,
+-					    struct fwnode_handle *fwnode,
+-					    const struct irq_domain_ops *ops,
+-					    void *host_data)
+-{
+-	struct irq_domain_info info = {
+-		.fwnode		= fwnode,
+-		.size		= size,
+-		.hwirq_max	= size,
+-		.ops		= ops,
+-		.host_data	= host_data,
+-		.domain_flags	= flags,
+-		.parent		= parent,
+-	};
+-	struct irq_domain *d;
+-
+-	if (!info.size)
+-		info.hwirq_max = ~0U;
+-
+-	d = irq_domain_instantiate(&info);
+-	return IS_ERR(d) ? NULL : d;
+-}
+-EXPORT_SYMBOL_GPL(irq_domain_create_hierarchy);
+-
+ static void irq_domain_insert_irq(int virq)
+ {
+ 	struct irq_data *data;
 
