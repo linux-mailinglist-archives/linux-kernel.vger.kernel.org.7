@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-638221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6421AAE2BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC034AAE2D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE2A1BA20EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5BE5082A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E15628D829;
-	Wed,  7 May 2025 14:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDA228C5D0;
+	Wed,  7 May 2025 14:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="fChE39gE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iUO8/S+t"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="LTC+9c2o";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hvKYojAl"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC90288539;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E5128A712;
 	Wed,  7 May 2025 14:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627346; cv=none; b=N6ER3UMpmtJHgd+j79LzYivOEAGDrLGVwvS9GU8DCBPbW38yral8itizEl/u17RyYNJe/1zgS35BNrdjpfgbFhPHtp+B/xwp0YQNB85myXiPNgnpA06+b5Y7vAybGpfm2UafwIBGJZhTv67tUDIlPZQz0GGeqbmxDuC4g3hULWs=
+	t=1746627345; cv=none; b=cC2xqvXlovErMGRbhb0nPlRSPCipqd8yNiF2hDsjHQIpJtsH5zxxY2XPaj87hdCaCsEWgxh8m3S+wNgWE+M6+U3unz9Tgf3ZJfUmGlLF+ZReh5JbP2bYGqcVoSNowr43TJrUxNVe5qWI9pV6H9pElkskm5o4zeBImgBSg2Ecci0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627346; c=relaxed/simple;
-	bh=PjuGJHGeB2MF+v69Bo2qC9kMy6XJXy/TbdCNGtfCWoo=;
+	s=arc-20240116; t=1746627345; c=relaxed/simple;
+	bh=PX5hFaTPDzmMrCD/q58DPW4+GN9DRqsg9Mb15jIpJBc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HySJqdtMiq8WwYuckMNN9c03OJ8fD0BRI/88CAP5MfPBQ9kkzQAt3ED8PAIJchIN00c2XO+7x5LsxdNLgFh1B2TEZvyjk7TSaXaPzZaIYobMdNMSUPL8PKBk9/BQjhyvC/RRw+7NK6mO/pEc6ZwtQsVl5s/gd25gBeKxKoXctmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=fChE39gE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iUO8/S+t; arc=none smtp.client-ip=103.168.172.155
+	 MIME-Version; b=uhmb+DKWqTatHPaFiSPSZuN6HpP0vtuW6yLl4QkkAk5W4TSeC1jnhHRPozM7d1C0LCE4HBjXwmr3qGIDp/XPsoWeBhMKscNGN9eRaqbNMvBsSJjLzq3gjRnlt55y+XN3F85b0HdrhFuskmdOdN78eqEArAWjzCbWNzp+l94jpCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=LTC+9c2o; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hvKYojAl; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8B64D11400F3;
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9410713801EC;
 	Wed,  7 May 2025 10:15:42 -0400 (EDT)
 Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-01.internal (MEProxy); Wed, 07 May 2025 10:15:42 -0400
+  by phl-compute-05.internal (MEProxy); Wed, 07 May 2025 10:15:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to; s=fm3; t=1746627342; x=
-	1746713742; bh=XNpF4JgFKM/Z4mjRfly1s+3cu5aICbUG9CzAZUaSDjU=; b=f
-	ChE39gEDH8z0iaNkYbHCIGDuNFA0LB2l4M80Qo3n0heS7c7pKNcumtKLkkNJVMgc
-	jlY+N3cZL1R45KjxuCkxWSYWL0s2nocwS8F9XdwR11+w1xnA9Kmu1Qz8ZVzbPdm4
-	9dekiOA5XbY++KiwqAg4HqOORe0WTvEus7q9MGYuU+qQiRDIqOZD/bcxsKNRDKYI
-	r/A9kr+OIyAAm4+DbbO7ip7RGQ6noz33jbYqrSwosHB/XnNCT/OAmsWH6XHpE+EG
-	25rkirNsCOqUwPSYoTOsOLSxnh+iaBn5spPbWFVjmJRoGdXRK0DHiWh8NAVGbUou
-	qvho53BZj6SQwT3Xkm1sQ==
+	1746713742; bh=9n0M/Qbz0wIk0K+/MBcZ+vu+g0r7fsT7X9v480CFjEg=; b=L
+	TC+9c2o950mBLN+tqRfIjZjI0bBwWKAY46Tcri04cQjp85MjhEYmK7AjYwAFSID9
+	skMhBxZlSNc5t2L24bLJqv1yxqpFgXEK/s5lO3TAJJONrmUWKkzJtOl61gHT65Wt
+	SDCDGPXOiSY/ElLbim7TVn17KgDy7jeSzc4tRpmc7TEkxIRsOw1bhRtsWGccitmG
+	wPOHR+5zZq1JdfrOkjuFGKNMCgpoMChhdORBLtcmWsEIUYzlg7P80s4Syy0M4BDv
+	zcp2cRYEWmIQLmPspDvuvrE56Cs82bbGu8QpxqWm1OpT48TwwBHmhgjVdwqnYwZr
+	JNfYSOYbYHwy9LK8hZ8AQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1746627342; x=1746713742; bh=X
-	NpF4JgFKM/Z4mjRfly1s+3cu5aICbUG9CzAZUaSDjU=; b=iUO8/S+tj7tXJY46r
-	6qclICcayadZCTb2Inxytb7I8X6JQs+4acsz7n9kEJrQxoQ2rjrtJFlsI4B/irqt
-	o1r4DL5pTz7br9MYYQz2bXjv2f8scoh9i6HoLYFbOPOGJFXLbzY9YW2LZn6lVxdF
-	o/j82PtFvrlKCXORuRbuQqcZ+PCNffFPvRiPOVqP6OkTzIH/kfeF0sU02okxLnEW
-	ZaNSbtN3E3LrgvaKI48kbgDGeNUcHZhYgBtblYIRrzJlqk5wLahYtmTZhDD7ELoF
-	XlQlvbvhl8KoTIw91mg0MHY7rjZnH+J2DkgFP/z858OSDj+hQd8XrkF/EG5sRtyk
-	R9t+Q==
-X-ME-Sender: <xms:DmsbaH-_ihkNPHZ-0bO4t4BuvadUYnpqCWattsAX3d_uLzTcP4Sjkg>
-    <xme:DmsbaDu_KXuN7NOw8ZHsd2mJlcKKgsWCNg0DvtTf51CZOjxY_Ly78LNrrjQXz22Bg
-    9VGQZfFrRKH6WKfYBU>
-X-ME-Received: <xmr:DmsbaFDGWV6lgHMeL9AvYtvYqb2r75wdDFvTbsVfuWt5lqjrv-fMx6M9740VhJZBBTl9_2JxpHfsEb_PuU0WpESAquLmV_mzeJxdEUFIQbbHZPeRTw>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1746627342; x=1746713742; bh=9
+	n0M/Qbz0wIk0K+/MBcZ+vu+g0r7fsT7X9v480CFjEg=; b=hvKYojAlJnBr0eS52
+	bVUnLm4duRFblKHhTv5PddX0IVbrxE/WWjn2bncDQQ+wXbCakOBHSSblasJ+zmvN
+	d0QwjVYcKWMuLaysonUkkxbGXhg3nbdfTxrGxC8OefLfgpI+2ct4atvEHi41oBWc
+	wQkxiyYb7b/XwMQECgn2hlmEQM6AxcvSuTvWwNFyWzMZlXboEVtksN93CTAKUFqv
+	Jch+5TD9zWWWW/BsJN5Dh8EgdpfqIOBpUUIUcpmpT/QeEU6hL6hnbG7o+nuJKtFU
+	WgHfnD7/FIlqYAFGSPXiDqPYMQ/M05u82b4ORzkIK5QqiE6ZKR0a+7ADuM77sWXV
+	igV+Q==
+X-ME-Sender: <xms:DmsbaP0b0BfSfGNLl3oPLbhT3ufE6nT4vOOZ8jxv807MoG4tFdfE9A>
+    <xme:DmsbaOFU85eq5CHiIoMH0iKL7BUq2DxEWz2P49N-vnMXajfZpJkb-rO_-4TlCu7Dp
+    6StZQKMLq1aNIp1KMo>
+X-ME-Received: <xmr:DmsbaP6hqaVJWvphJTBwjyV9t3Op_w8JXH0LABKnNHUoeS5UWZZHArSIUezcb5WFR2dQgnir2mKsnOM5brA64hI6FTTEXnJFSyDx_GggSZ8OPey6Ww>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdejucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
@@ -78,16 +78,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdejucetufdote
     hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
     rhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrd
     horhhg
-X-ME-Proxy: <xmx:DmsbaDe8CEsj5Yaev-rCKqODe6XPv5gfeP9VK9Xo7Nw3koi4PL6KvA>
-    <xmx:DmsbaMNRyTx8z5tkLkkkHFfxbbCPnRrhWqVZUERJwRqbtwOLA8CuBg>
-    <xmx:DmsbaFme17uTtrKetdhUR02SLGaRZRaoAy83AX-if_QGAJVgdGqSXw>
-    <xmx:DmsbaGvzu01w3lFvsLNOBbNroas2Ww8A8YXZBK0sOiWYhpVAVFwIgA>
-    <xmx:DmsbaCM3VYuZrYPIGcI9qpPr7nbB90L4XN4XvmE1p8joVLbqnrXMuYQ->
+X-ME-Proxy: <xmx:DmsbaE2Zz891sOyWT2K-6MSsedI082LLEYnwhUPd04mS6ojXWMyYlw>
+    <xmx:DmsbaCE4X1QxP1iOxnIrocMLRuesBppOiWnycUYv2OlD9TnmgFw0Ww>
+    <xmx:DmsbaF8oS1bH1YTyzUUvxZAyNYor-IMqwRfUqClxwhrofcmOdZ4OCg>
+    <xmx:DmsbaPkbd1AGxb3ram77KukQ2JLvl8zAfEM37hy7Ga5WhmwyqPFBZA>
+    <xmx:DmsbaCmy51PCXGE2vIraSAg0a48lPCMFokB_VHyMZ5fjf592BBF60WiB>
 Feedback-ID: i58514971:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
  7 May 2025 10:15:42 -0400 (EDT)
 Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id B5CA41189EA0;
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id CE3901189EA2;
 	Wed, 07 May 2025 10:15:41 -0400 (EDT)
 From: Nicolas Pitre <nico@fluxnic.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -95,9 +95,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: Nicolas Pitre <npitre@baylibre.com>,
 	linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/8] vt: ucs.c: fix misappropriate in_range() usage
-Date: Wed,  7 May 2025 10:13:16 -0400
-Message-ID: <20250507141535.40655-2-nico@fluxnic.net>
+Subject: [PATCH v2 2/8] vt: make sure displayed double-width characters are remembered as such
+Date: Wed,  7 May 2025 10:13:17 -0400
+Message-ID: <20250507141535.40655-3-nico@fluxnic.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250507141535.40655-1-nico@fluxnic.net>
 References: <20250507141535.40655-1-nico@fluxnic.net>
@@ -111,48 +111,35 @@ Content-Transfer-Encoding: 8bit
 
 From: Nicolas Pitre <npitre@baylibre.com>
 
-The in_range() helper accepts a start and a length, not a start and
-an end.
+And to do so we ensure the Unicode screen buffer is initialized when
+double-width characters are encountered.
 
 Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 ---
- drivers/tty/vt/ucs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tty/vt/vt.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/vt/ucs.c b/drivers/tty/vt/ucs.c
-index 0b58cb7344a3..b0b23830170d 100644
---- a/drivers/tty/vt/ucs.c
-+++ b/drivers/tty/vt/ucs.c
-@@ -46,7 +46,7 @@ static int interval32_cmp(const void *key, const void *element)
- 
- static bool cp_in_range16(u16 cp, const struct ucs_interval16 *ranges, size_t size)
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 24c6cd2eed78..58fa1b285f22 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -2930,8 +2930,15 @@ static int vc_process_ucs(struct vc_data *vc, int *c, int *tc)
  {
--	if (!in_range(cp, ranges[0].first, ranges[size - 1].last))
-+	if (cp < ranges[0].first || cp > ranges[size - 1].last)
- 		return false;
+ 	u32 prev_c, curr_c = *c;
  
- 	return __inline_bsearch(&cp, ranges, size, sizeof(*ranges),
-@@ -55,7 +55,7 @@ static bool cp_in_range16(u16 cp, const struct ucs_interval16 *ranges, size_t si
+-	if (ucs_is_double_width(curr_c))
++	if (ucs_is_double_width(curr_c)) {
++		/*
++		 * The Unicode screen memory is allocated only when
++		 * required. This is one such case as we need to remember
++		 * which displayed characters are double-width.
++		 */
++		vc_uniscr_check(vc);
+ 		return 2;
++	}
  
- static bool cp_in_range32(u32 cp, const struct ucs_interval32 *ranges, size_t size)
- {
--	if (!in_range(cp, ranges[0].first, ranges[size - 1].last))
-+	if (cp < ranges[0].first || cp > ranges[size - 1].last)
- 		return false;
- 
- 	return __inline_bsearch(&cp, ranges, size, sizeof(*ranges),
-@@ -144,8 +144,8 @@ static int recomposition_cmp(const void *key, const void *element)
- u32 ucs_recompose(u32 base, u32 mark)
- {
- 	/* Check if characters are within the range of our table */
--	if (!in_range(base, UCS_RECOMPOSE_MIN_BASE, UCS_RECOMPOSE_MAX_BASE) ||
--	    !in_range(mark, UCS_RECOMPOSE_MIN_MARK, UCS_RECOMPOSE_MAX_MARK))
-+	if (base < UCS_RECOMPOSE_MIN_BASE || base > UCS_RECOMPOSE_MAX_BASE ||
-+	    mark < UCS_RECOMPOSE_MIN_MARK || mark > UCS_RECOMPOSE_MAX_MARK)
- 		return 0;
- 
- 	struct compare_key key = { base, mark };
+ 	if (!ucs_is_zero_width(curr_c))
+ 		return 1;
 -- 
 2.49.0
 
