@@ -1,158 +1,207 @@
-Return-Path: <linux-kernel+bounces-638186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F412FAAE247
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:16:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8430DAAE29A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78D2A1BC4804
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3438D524CFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD21728C027;
-	Wed,  7 May 2025 14:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA6D28AB10;
+	Wed,  7 May 2025 14:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0nLRhv/v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BJyz950A";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0nLRhv/v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BJyz950A"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3pozz7c"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F448C1E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F032628A1FD
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626434; cv=none; b=oBeWrgYhtAxg/1swO1J7HMCNhofKtcjeTt1kLncIyaTg2qiofkVHAxa45iDtWogoO3Oncfnu06yMRijOi556PXQTDrAiH5QAsVLINWelA0u0bopig9yEFinff3RDi2K+K3q8ekfDkpH3QJlkDulHwJdk6BIJo3zLlv2SAYUKfH0=
+	t=1746627100; cv=none; b=H97UK439zJXV/A1Q0slN3/jZgSv5pgtXypeQ1ZDPPAZykngCkL6pTofaniKbBTKtyBzEarsCJSOzg8271fIpjCwncXH2rOIz4tDA1WnL3rbue7uJWB017DyrNm9SwVZCMUSUrltgOHBlhcG2oy1hLi5CzaABPvlni9gZPvl3FKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626434; c=relaxed/simple;
-	bh=NwtgKP/1Bpu/AU+dPZrcXjDVLispyZfNDe1bO/HuWG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NLhdwqtbZSpp9Rp3Y16rxEju5ouqGniFgrfZhtj2NJTTkT8mALO2oldR5zuTeWEYd++NBL7yUliqOPtpT/qdhlx6B/Z4rpRXqpbLClfiHbJB+gioXfR0gp850gdZ2Vb+qHG6skjJgT9lGi0J1a/Ot4WbyE5ky6F9kXYVy2h2poU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0nLRhv/v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BJyz950A; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0nLRhv/v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BJyz950A; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AE1A92122B;
-	Wed,  7 May 2025 14:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746626429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v+jC7fhLj+zx5bCmc1OemyfyZibCKf4H3PvfP7t1Rlg=;
-	b=0nLRhv/v9C+FvQhgyVUXOb5CO5j0CtS5fJyq7jr+KpkVn7H29u7a5x0g1WGKYa81C61yjY
-	jaIXCv1P3e7mQ0eenbjZQ1jlmOwCCDGWJjocQvKpFZo/3N/tsCAttzcUQE7NAUFc2Siug0
-	IaImq7aUTM4ayCPKUa/9ZqSe8fiNlHw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746626429;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v+jC7fhLj+zx5bCmc1OemyfyZibCKf4H3PvfP7t1Rlg=;
-	b=BJyz950A1OUc6XpNTxr3Shdg0chPghJT9oTy/xvxuQIaWuy/EOZ97z5dGm8yJhCtBUqZsP
-	ItUIeeueEM535hCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746626429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v+jC7fhLj+zx5bCmc1OemyfyZibCKf4H3PvfP7t1Rlg=;
-	b=0nLRhv/v9C+FvQhgyVUXOb5CO5j0CtS5fJyq7jr+KpkVn7H29u7a5x0g1WGKYa81C61yjY
-	jaIXCv1P3e7mQ0eenbjZQ1jlmOwCCDGWJjocQvKpFZo/3N/tsCAttzcUQE7NAUFc2Siug0
-	IaImq7aUTM4ayCPKUa/9ZqSe8fiNlHw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746626429;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v+jC7fhLj+zx5bCmc1OemyfyZibCKf4H3PvfP7t1Rlg=;
-	b=BJyz950A1OUc6XpNTxr3Shdg0chPghJT9oTy/xvxuQIaWuy/EOZ97z5dGm8yJhCtBUqZsP
-	ItUIeeueEM535hCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9316E139D9;
-	Wed,  7 May 2025 14:00:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cjaAI31nG2jRTgAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 07 May 2025 14:00:29 +0000
-Message-ID: <1ce2a108-1b20-4ad9-ad29-ea4721c938e1@suse.de>
-Date: Wed, 7 May 2025 16:00:29 +0200
+	s=arc-20240116; t=1746627100; c=relaxed/simple;
+	bh=3SOOQfF2JKHZmEoRqtYoAy8369hkoCjgbrAUAp8RKaA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XlXIQMX18CXv7RJSHLE0G4R3ocnO6JjrlYpKPHWTcGg2CqvsMmipucxtTlIqrvN4K7fJx9AV6DpAspFkbtukClF0Kh0exNUlNZprOYnf6V8GgJzOjc/9sm+SHIFVBc7sxdkIbTAhRoZNCyxoOTPzsMxNUkGAw3HEsKsctJBrxCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3pozz7c; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f2c45ecaffso66675156d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746627098; x=1747231898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HnjZkBRVEGg6RMQCwW+FP47UVOcstV38TzY2od/qixs=;
+        b=Z3pozz7cCsepOy/h1dj/WXpclbV43CXIlB4jKaaXFdWp3F6sI6VNofVoNcmi9GNr0a
+         1BYZc6lFV88k26+wgKVqvkK3ogtC+hTGs9PfqbBL86vKMEpHGDbtwF3z2FJDlWNpxlFe
+         Ro+5u5QRKs1a/H2RDJzYv6QTpjRuv2YOADPlcOrIuEYt0o+m/MWIFNKUzF8m9FCp7qGE
+         O6fdCcvTDyFYwFrVVojsXnpfOCXrfy6xPxMbblo+t517uBZqe4zTNtlXjyaytGu1+r6H
+         PSgx1XSjJHqBFEVgz37Oo2qMaBdABky2L+//FqCL207gKPkMRnf+8+62E3I4svJLgoOV
+         gaTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746627098; x=1747231898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HnjZkBRVEGg6RMQCwW+FP47UVOcstV38TzY2od/qixs=;
+        b=frSvtWqiZaRKurXKAMTza4nCT+aBaM3X857sBdYbEFglGrBYF0ywJgpNb9SGA90k+j
+         NyKn0sUmhweLmgRmfq/ZPIkLHRr9ph4d43tflu64yvff4qGvjxNa51Y4avCNgZ96KlBw
+         DX6WL4D8puM9oZhs016JwEN6M20JHHXTwI8XiKGIdSANfYgwN2l/ZP54UMf6VoSRToxK
+         yFnpOdOpcM9TnZSpJCGFAY51Pf/AKQ1efYgSJ7akKYFIekQcXXyq4wNl6d0OsQBmnVsd
+         kztnDg6/oCS0/3865oibhXWX9sVFbWoWW2EE39KrqTVqYFlPr24A/Ezkx8+KBTlqLlBu
+         lhvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU13htRiUWclW7RgUVKt7VIf78YvgT4MEsRmzfJ1ZRXAmfYBaQX1eCjYLeewyNl+nFyLA0dKDM9ONBvKbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDCYPb28MGZe9ufsSgANUwjxOpTzVxNMcdJgDzmZkeWsrdIE+/
+	Aa4i9gw3yJ8AHu8ZWJB/3ZrVS6PYEHsITh7RYDBl2uwjuCnHpm64
+X-Gm-Gg: ASbGnctppUAckfS5rWa0WoWIGsc18JKGGXona5lHuMW1Z08DjC5nI7pMnp4xng+pCzo
+	bzxoc9Flaf9lbfuJSw+gGl3pCSQhnUpfJr0gY+uFnmXKoD5GWbp5HJjIgy2XUQOICV7D812XBJO
+	1oh4+a+VMUd9vfBU+BhIG7sBSoIMGwnY9l7R5wHzsxVzTEDTxoEv2r+curB8sIxU4vpvaaEFgjO
+	1CBT4Af3ltr/U8hzbhtFg1wqA7V7WLfKU2qdzicX4rvlMmkFw8RFk3ACm5HRCrwdUPDG3fKhhes
+	etAaNvIXiyc55htdTTHV7YYB1NRovnaH8/O8hdQqVrgBmmWV
+X-Google-Smtp-Source: AGHT+IG6yf1DLKd9RBqBzhmjs+vsqWMxZMxsOyEVpIx2HZ0YwcmkSl4odD1JjuxgVA3Jl74sl+M1Ug==
+X-Received: by 2002:a05:6214:226a:b0:6e4:4011:9df7 with SMTP id 6a1803df08f44-6f542a1dcf7mr48827996d6.16.1746627097378;
+        Wed, 07 May 2025 07:11:37 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:7::])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f542780ecfsm14100776d6.86.2025.05.07.07.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 07:11:37 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	david@redhat.com,
+	linux-mm@kvack.org
+Cc: hannes@cmpxchg.org,
+	shakeel.butt@linux.dev,
+	riel@surriel.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH 0/1] prctl: allow overriding system THP policy to always
+Date: Wed,  7 May 2025 15:00:33 +0100
+Message-ID: <20250507141132.2773275-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 14/14] nvme-fc: do not reference lsrsp after failure
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250507-nvmet-fcloop-v6-0-ca02e16fb018@kernel.org>
- <20250507-nvmet-fcloop-v6-14-ca02e16fb018@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250507-nvmet-fcloop-v6-14-ca02e16fb018@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_SHORT(-0.20)[-0.994];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
 
-On 5/7/25 14:23, Daniel Wagner wrote:
-> The lsrsp object is maintained by the LLDD. The lifetime of the lsrsp
-> object is implicit. Because there is no explicit cleanup/free call into
-> the LLDD, it is not safe to assume after xml_rsp_fails, that the lsrsp
-> is still valid. The LLDD could have freed the object already.
-> 
-> With the recent changes how fcloop tracks the resources, this is the
-> case. Thus don't access lsrsp after xml_rsp_fails.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/nvme/host/fc.c | 13 ++++++++++---
->   1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@kernel.org>
+Allowing override of global THP policy per process allows workloads
+that have shown to benefit from hugepages to do so, without regressing
+workloads that wouldn't benefit. This will allow such types of
+workloads to be run/stacked on the same machine.
 
-Cheers,
+It also helps in rolling out hugepages in hyperscaler configurations
+for workloads that benefit from them, where a single THP policy is
+likely to be used across the entire fleet, and prctl will help override it.
 
-Hannes
+An advantage of doing it via prctl vs creating a cgroup specific
+option (like /sys/fs/cgroup/test/memory.transparent_hugepage.enabled) is
+that this will work even when there are no cgroups present, and my
+understanding is there is a strong preference of cgroups controls being
+hierarchical which usually means them having a numerical value.
+
+
+The output and code of test program is below:
+
+[root@vm4 vmuser]# echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+[root@vm4 vmuser]# echo inherit > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+[root@vm4 vmuser]# ./a.out
+Default THP setting:
+THP is not set to 'always'.
+PR_SET_THP_ALWAYS = 1
+THP is set to 'always'.
+PR_SET_THP_ALWAYS = 0
+THP is not set to 'always'.
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/prctl.h>
+
+#define PR_SET_THP_ALWAYS 78
+#define SIZE 12 * (2 * 1024 * 1024) // 24 MB
+
+void check_smaps(void) {
+    FILE *file = fopen("/proc/self/smaps", "r");
+    if (!file) {
+        perror("fopen");
+        return;
+    }
+
+    char line[256];
+    int is_hugepage = 0;
+    while (fgets(line, sizeof(line), file)) {
+        // if (strstr(line, "AnonHugePages:"))
+        //     printf("%s\n", line);
+        if (strstr(line, "AnonHugePages:") && strstr(line, "24576 kB"))
+{
+            // printf("%s\n", line);
+            is_hugepage = 1;
+            break;
+        }
+    }
+    fclose(file);
+    if (is_hugepage) {
+        printf("THP is set to 'always'.\n");
+    } else {
+        printf("THP is not set to 'always'.\n");
+    }
+}
+
+void test_mmap_thp(void) {
+    char *buffer = (char *)mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
+                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (buffer == MAP_FAILED) {
+        perror("mmap");
+        return;
+    }
+    // Touch the memory to ensure it's allocated
+    memset(buffer, 0, SIZE);
+    check_smaps();
+    munmap(buffer, SIZE);
+}
+
+int main() {
+    printf("Default THP setting: \n");
+    test_mmap_thp();
+    printf("PR_SET_THP_ALWAYS = 1 \n");
+    prctl(PR_SET_THP_ALWAYS, 1, NULL, NULL, NULL);
+    test_mmap_thp();
+    printf("PR_SET_THP_ALWAYS = 0 \n");
+    prctl(PR_SET_THP_ALWAYS, 0, NULL, NULL, NULL);
+    test_mmap_thp();
+
+    return 0;
+}
+
+
+Usama Arif (1):
+  prctl: allow overriding system THP policy to always per process
+
+ include/linux/huge_mm.h                          |  3 ++-
+ include/linux/mm_types.h                         |  7 ++-----
+ include/uapi/linux/prctl.h                       |  3 +++
+ kernel/sys.c                                     | 16 ++++++++++++++++
+ tools/include/uapi/linux/prctl.h                 |  3 +++
+ .../perf/trace/beauty/include/uapi/linux/prctl.h |  3 +++
+ 6 files changed, 29 insertions(+), 6 deletions(-)
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.47.1
+
 
