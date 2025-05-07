@@ -1,141 +1,278 @@
-Return-Path: <linux-kernel+bounces-637049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFD7AAD3F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:17:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1BBAAD3FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676FD4E7ACA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:17:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869F17B23AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050311DEFF3;
-	Wed,  7 May 2025 03:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1c4o8RZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715E1B4153;
+	Wed,  7 May 2025 03:19:55 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3061DE2DE;
-	Wed,  7 May 2025 03:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351EF78C9C;
+	Wed,  7 May 2025 03:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746587784; cv=none; b=fVDuuoYcSyrV0ycmbubiGkaz/rES4u4faDXxcb89MsV/AvAqWTdYEqJwKhr2uYInZUvmFWx3i+/vBxIrbyHlYGdHYX2UjgxmvcLTEGDXxMW6yNAV3gI5C/R5xvFVH4cUsL6iB/r5l8XSgSnCbXT+8PhSzYvhLAX4aavWU4PTtz8=
+	t=1746587994; cv=none; b=txSxd/R5LAfC8BI4PKZ7JN/GBztqGfpvynsA8gcN33yiF2S3rlyIMwZA1a5AfhZoRiLJQ2Sy5yQywML65VoN4nIuyVpby15VXL0uIWaEDQfbA1lGRUpjvha57ZpAWC9ECTpob9az14P47708V6E4pOXBgUTrP7GVSZ1AM7BIDzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746587784; c=relaxed/simple;
-	bh=32WlCO71OjiYT2aoyhlntKR9ovKyf9vnH96JdQigswI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dsf25ugwTspw74u8aiVEbPRT5FLtX6ixhenFTPTMwRNgSqdQF3VcX8bSmHZICoAXBDmvTX2/ymqHESmLg9czFFI4DOY2Kjm9hwN1G31Vg99U/9O9S+hqgQsf8CM105dqnMtgRJEhbfLSL+VViWxzlQWhljEuKcdeRSUbz+h+DIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1c4o8RZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB29C4CEF8;
-	Wed,  7 May 2025 03:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746587783;
-	bh=32WlCO71OjiYT2aoyhlntKR9ovKyf9vnH96JdQigswI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=o1c4o8RZdJlLclWm5TxXkFl/BRqAbrNpGURmvXPllf0vZcQUGCX0LY5fxyALR7IDs
-	 YER9d2Fb3NUDtZxWwQzNbnrlHLXdpULL79qSC1B2mIIQQv6xABU+cDOncIQZaOBifb
-	 nMG2jeKOJAo2YHCCNlzhVhjvQowqW1nIi5mMuBve4ips9xg7tzy9+e0nNUM0MobN9d
-	 6Vs9UkTTjfqJUQO/nmfma8Bno+xKLy3Tw66Iu9pMp0jcliiDl6K8psYmQUJ60HWtla
-	 GxziLenaLcc/51dVL7imu2cPX7jgFsZ0JWHhZrPEL9TzDXKAfRDx8rbBTiYbgwuXTo
-	 mO+9Nk9FOmAEQ==
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-af548cb1f83so6132264a12.3;
-        Tue, 06 May 2025 20:16:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWTV+HTlOfWnZ0E+jGcpdJo8A9G9BRCW3Qr77+8tK2bFMEBhtfQjoprX4RP5zhXwj587OfyvnW+kec14roP42KYZnu3OaJB@vger.kernel.org, AJvYcCXgBpJ/VkQUJu6nr1jDyrJFYTscKw7EAI8995foa79BzzkuivQnXFH+YSfnVsVzG9f35zh9H3G00APwaAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcHeDxvtu3rNkd0vCPjx03FKvBmgBMtmdaF0so+vEOt0B5/7Z9
-	jdjP8jrPbjnODg8zRZ3Gvi6m2vnPVcUf0V5w7XZy6YLrWfqlohpOz4trbpi6xrrl5mrgp62Fjsd
-	Ek7jpS9llZUFPJz1Un1yI0GQMVqI=
-X-Google-Smtp-Source: AGHT+IEXC3Vsr2Rgr65O8kyUpKpYF3B44exSqyI1j/ooaXaFLZkr4cb5MPWzkviMbzeR3GEzlF8cg3G6JIm6ZI+Fz0U=
-X-Received: by 2002:a17:90a:ec8c:b0:2ee:f687:6acb with SMTP id
- 98e67ed59e1d1-30aac1947a5mr3125622a91.13.1746587783328; Tue, 06 May 2025
- 20:16:23 -0700 (PDT)
+	s=arc-20240116; t=1746587994; c=relaxed/simple;
+	bh=gjTSE8TwjXFd7R7STL4/axrDCulEZEZIXFeZ/4lbO6w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hr7daHTeVvZUkdw3igne+cPOSKFAB1aCxxzf0733TasS4pZaOr6/6iDvptlf6wFKLidG5V2wDrHHj0FJX/a4ZiEtuKsEqTRk2aofDhi4ZY+zUhitsgPmgO8EVKR5H0ZKhEdzSQ/uUtUr89Sx01yLuDHE/aIeUuSHDsqX1ifZDFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZsgTl75PlzsTJb;
+	Wed,  7 May 2025 11:19:07 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id BDD301A016C;
+	Wed,  7 May 2025 11:19:42 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 May 2025 11:19:41 +0800
+From: Lifeng Zheng <zhenglifeng1@huawei.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<sumitg@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mario.limonciello@amd.com>,
+	<yumpusamongus@gmail.com>, <srinivas.pandruvada@linux.intel.com>,
+	<jonathan.cameron@huawei.com>, <zhanjie9@hisilicon.com>,
+	<lihuisong@huawei.com>, <cenxinghai@h-partners.com>, <yubowen8@huawei.com>,
+	<zhenglifeng1@huawei.com>, <hepeng68@huawei.com>
+Subject: [PATCH] cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
+Date: Wed, 7 May 2025 11:19:41 +0800
+Message-ID: <20250507031941.2812701-1-zhenglifeng1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
- <20250309151907.GA178120@mail.hallyn.com> <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
- <20250506132158.GA682102@mail.hallyn.com> <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
-In-Reply-To: <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
-From: "Andrew G. Morgan" <morgan@kernel.org>
-Date: Tue, 6 May 2025 20:16:12 -0700
-X-Gmail-Original-Message-ID: <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
-X-Gm-Features: ATxdqUFmZ2s_ZlLLimKgjcARTYd5C_qFYoCyepjYfWpeDu4uUNFd_ukk0NjhmpY
-Message-ID: <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
-Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com, 
-	jmorris@namei.org, kees@kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On Tue, May 6, 2025 at 7:51=E2=80=AFAM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
-> To me, the current implementation looks weird and buggy (but that's
-> just my opinion). The code figures that that it's a set-id exec when
-> effective!=3Dreal, which is indeed how set-id execution looks like, but
-> still that check is slightly off:
->
-> 1. it's really only set-id when new!=3Dold; checking real!=3Deffective is
-> conceptually the wrong angle
-> 2. there may be other reasons why real!=3Deffective
->
-> My patch is an attempt to fix this in an unintrusive way, by not
-> rewriting it but adding another check to rule out some special case.
-> If I were to rewrite this from scratch, I'd do it differently (only
-> compare new!=3Dold), but I don't want to mess too much with security
-> code that I'm not very familiar with. I believe the guy who initially
-> wrote it made wrong assumptions, but maybe I'm just wrong, I'm not the
-> expert here.
->
-> > Note also that so far I'm only asking about the intent of the patch.
->
-> In a shared webhosting environment, we want to run an Apache (or
-> nginx) in each website's container. If the website owner does "chmod
-> 600", the Apache should not be able to read the file; but PHP
-> processes spawned by the Apache should have full access. Therefore, we
-> run Apache with a different fsuid; when Apache executes PHP, the fsuid
-> is reverted.
+Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
+driver.
 
-[...]
+Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+---
+Hi Rafael,
 
-> > Apart from that, I do think the implementation is wrong, because you
-> > are impacting non-NO_NEW_PRIVS behavior as well, such as calculation
-> > of cap_permitted and the clearing of ambient capabilities.
->
-> You are right, it affects all three code blocks that are checking
-> "is_setid", but why do you believe it's wrong?
-> I can move the new check to the bottom, covering only the
-> "secureexec=3D1" line, if that worries you.
+This patch is the 8th patch in [1]. After the discussion in [2], Sumit
+is OK with adding sysfs entries under cpufreq sysfs node, so I resend
+this patch. He will later send his updated patch after.
 
-If a setuid program execs itself, does the presence of this code undo
-any protection the kernel afforded it on its first invocation? It
-feels like changing that could easily turn out to be exploitable in
-some context. Programs re-exec themselves all the time.
+Any comments appreciated!
 
-> > And, I'm not sure the has_identical_uids_gids() is quite right, as I'm
-> > not sure what the bprm->cred->fsuid and suid make sense, though the
-> > process's fsuid and suid of course need to be checked.
->
-> Sorry, I don't get that. What do you mean?
+Lifeng
 
-I suspect Serge is noting that s*id and f*uid are forced to be the
-corresponding e*id later in the code (indeed you mention this feature
-above where I've put [...]), so comparing the values before that takes
-effect isn't really comparing the right values in your added code.
+[1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@huawei.com/
+[2] https://lore.kernel.org/all/20250211103737.447704-1-sumitg@nvidia.com/
 
-FWIW I ran the libcap quicktest.sh script against your change and it
-doesn't break any capability thing I test for when making libcap
-releases. That being said, in general this whole zoo of *[ug]id values
-and their subtle behavior is not casually obvious. I'd recommend using
-a userspace workaround for your use case, and not changing the legacy
-behavior of the kernel.
+ .../ABI/testing/sysfs-devices-system-cpu      |  54 +++++++++
+ drivers/cpufreq/cppc_cpufreq.c                | 109 ++++++++++++++++++
+ 2 files changed, 163 insertions(+)
 
-Cheers
+diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+index 206079d3bd5b..37065e1b8ebc 100644
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -268,6 +268,60 @@ Description:	Discover CPUs in the same CPU frequency coordination domain
+ 		This file is only present if the acpi-cpufreq or the cppc-cpufreq
+ 		drivers are in use.
+ 
++What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_select
++Date:		May 2025
++Contact:	linux-pm@vger.kernel.org
++Description:	Autonomous selection enable
++
++		Read/write interface to control autonomous selection enable
++			Read returns autonomous selection status:
++				0: autonomous selection is disabled
++				1: autonomous selection is enabled
++
++			Write 'y' or '1' or 'on' to enable autonomous selection.
++			Write 'n' or '0' or 'off' to disable autonomous selection.
++
++		This file is only present if the cppc-cpufreq driver is in use.
++
++What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_act_window
++Date:		May 2025
++Contact:	linux-pm@vger.kernel.org
++Description:	Autonomous activity window
++
++		This file indicates a moving utilization sensitivity window to
++		the platform's autonomous selection policy.
++
++		Read/write an integer represents autonomous activity window (in
++		microseconds) from/to this file. The max value to write is
++		1270000000 but the max significand is 127. This means that if 128
++		is written to this file, 127 will be stored. If the value is
++		greater than 130, only the first two digits will be saved as
++		significand.
++
++		Writing a zero value to this file enable the platform to
++		determine an appropriate Activity Window depending on the workload.
++
++		Writing to this file only has meaning when Autonomous Selection is
++		enabled.
++
++		This file is only present if the cppc-cpufreq driver is in use.
++
++What:		/sys/devices/system/cpu/cpuX/cpufreq/energy_performance_preference_val
++Date:		May 2025
++Contact:	linux-pm@vger.kernel.org
++Description:	Energy performance preference
++
++		Read/write an 8-bit integer from/to this file. This file
++		represents a range of values from 0 (performance preference) to
++		0xFF (energy efficiency preference) that influences the rate of
++		performance increase/decrease and the result of the hardware's
++		energy efficiency and performance optimization policies.
++
++		Writing to this file only has meaning when Autonomous Selection is
++		enabled.
++
++		This file is only present if the cppc-cpufreq driver is in use.
++
+ 
+ What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
+ Date:		August 2008
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index b3d74f9adcf0..3c3d00cec298 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -808,10 +808,119 @@ static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
+ 
+ 	return cpufreq_show_cpus(cpu_data->shared_cpu_map, buf);
+ }
++
++static ssize_t show_auto_select(struct cpufreq_policy *policy, char *buf)
++{
++	bool val;
++	int ret;
++
++	ret = cppc_get_auto_sel(policy->cpu, &val);
++
++	/* show "<unsupported>" when this register is not supported by cpc */
++	if (ret == -EOPNOTSUPP)
++		return sysfs_emit(buf, "<unsupported>\n");
++
++	if (ret)
++		return ret;
++
++	return sysfs_emit(buf, "%d\n", val);
++}
++
++static ssize_t store_auto_select(struct cpufreq_policy *policy,
++				 const char *buf, size_t count)
++{
++	bool val;
++	int ret;
++
++	ret = kstrtobool(buf, &val);
++	if (ret)
++		return ret;
++
++	ret = cppc_set_auto_sel(policy->cpu, val);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
++{
++	u64 val;
++	int ret;
++
++	ret = cppc_get_auto_act_window(policy->cpu, &val);
++
++	/* show "<unsupported>" when this register is not supported by cpc */
++	if (ret == -EOPNOTSUPP)
++		return sysfs_emit(buf, "<unsupported>\n");
++
++	if (ret)
++		return ret;
++
++	return sysfs_emit(buf, "%llu\n", val);
++}
++
++static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
++				     const char *buf, size_t count)
++{
++	u64 usec;
++	int ret;
++
++	ret = kstrtou64(buf, 0, &usec);
++	if (ret)
++		return ret;
++
++	ret = cppc_set_auto_act_window(policy->cpu, usec);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++static ssize_t show_energy_performance_preference_val(struct cpufreq_policy *policy, char *buf)
++{
++	u64 val;
++	int ret;
++
++	ret = cppc_get_epp_perf(policy->cpu, &val);
++
++	/* show "<unsupported>" when this register is not supported by cpc */
++	if (ret == -EOPNOTSUPP)
++		return sysfs_emit(buf, "<unsupported>\n");
++
++	if (ret)
++		return ret;
++
++	return sysfs_emit(buf, "%llu\n", val);
++}
++
++static ssize_t store_energy_performance_preference_val(struct cpufreq_policy *policy,
++						       const char *buf, size_t count)
++{
++	u64 val;
++	int ret;
++
++	ret = kstrtou64(buf, 0, &val);
++	if (ret)
++		return ret;
++
++	ret = cppc_set_epp(policy->cpu, val);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
+ cpufreq_freq_attr_ro(freqdomain_cpus);
++cpufreq_freq_attr_rw(auto_select);
++cpufreq_freq_attr_rw(auto_act_window);
++cpufreq_freq_attr_rw(energy_performance_preference_val);
+ 
+ static struct freq_attr *cppc_cpufreq_attr[] = {
+ 	&freqdomain_cpus,
++	&auto_select,
++	&auto_act_window,
++	&energy_performance_preference_val,
+ 	NULL,
+ };
+ 
+-- 
+2.33.0
 
-Andrew
 
