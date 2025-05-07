@@ -1,177 +1,146 @@
-Return-Path: <linux-kernel+bounces-637897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DB1AADEEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:21:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C62AADF09
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11CE1C0680F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F36E9A73DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A50F267393;
-	Wed,  7 May 2025 12:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F02525E814;
+	Wed,  7 May 2025 12:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQWiZG9h"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="miau027A"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017B6266569;
-	Wed,  7 May 2025 12:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB82594B7
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620381; cv=none; b=rhUS+VZJq2XZ5UL3SDAupkGyzcBvN+/k2/g/l3HjsMlD5ZH8LMm5gPIT1W0pD+7PfffbRzixHoRyoEfG56ew5Zn9ELbo1YzpVvqxGWhSTsxlq5+Z/VBRqlVrb0xUw5InvDUZxrmfFz+Nn6J7IuH/iIEUiRLeS5eq/wAT+rWDNT0=
+	t=1746620526; cv=none; b=PKjVduB8NTKKSXpNMmbBcKrBue6FLGR9sOYHxwcbhDaRiAr3dIOwPHWLF14ZcL15PzyHJ/utUP7Em8zsfTGHY4EzvkHBzLEDG1WBNKne+3vg695+agbcAbzHKW0il+myLRdZH2rr6Ot2+9fsYBTxZpaS16jDKBnJpZeZjo1JLIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620381; c=relaxed/simple;
-	bh=3jljKQy3JilUwk5OeTWzq9vI3w85PUGJDm3mDHSbT8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nMDzoUtxj50ptqGdN16vbI2gG/rMnRPQS4BUNuU3Yv8G61A1U7Xxbkh5K4AiFtPQhoHRCItT7i4jMOEnAQcazg/nEWvg7/POv4OGxaOKEKsk1uq0IBL4VPuhVwqZwTc5Fa8+dVG1rylsbPCRwEoTlOPPkjjAItMwP9S8juvCrMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQWiZG9h; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2c663a3daso1369791866b.2;
-        Wed, 07 May 2025 05:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746620378; x=1747225178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ou6MOwGHqD731U9gMCJRk94Iq+LGR7LXnbZdgEjcxuk=;
-        b=EQWiZG9h5D/duLWlAvxLI7EWqe8+Fpdou0w9enqahUiRr4GDD65nFRnZqGjAK7+vXe
-         zFA8z/X6ZaHGCPeKukJv1t/IMK+GxXso9tobjOyLEG8o07SsakwIO1MYDdR/Ey/EMQNS
-         eZ4Pg323rtvXdlGMQHhJo7J+FIqUS3WN3F/6SYpxyUp/JwDD3SDpR4X7/HEmIPVQreG/
-         OutK8FLGHq0uxcVoCVSkPM3Ee4ZGaxv+r1T6hX79qzZJTbps5YLCTVBiWs7O7Liq0Pb3
-         +UybsfXXvbjuLjj3PdtpDecjOvNJ8fvKuoRmqraGpXca+D73YcQjlfdBicn/w4PFSD/J
-         7iaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746620378; x=1747225178;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ou6MOwGHqD731U9gMCJRk94Iq+LGR7LXnbZdgEjcxuk=;
-        b=nAZA6sWlTUP63fyJu5D8pfkBK7qJyBwToSU2lhN5NhyVmTD3uT7knq5h/lX1WM38AQ
-         Ie+XKbEpUHRtK7C+krJy2TKcfZMF81cKVUct3RT1lglMeF1OOxJJwcwIHrpt0gYXuH1s
-         +Qyby537JOwzMuC91wwE84dnxlBuXXvjinY2S3xmxN2iaNozrzXUWOAha1PucG5pta77
-         ZrDSbCSaKbSmH9NUTJp12AhYFV5Jp+ppLG86pztbAa+AOCvtNMODD9/UEeIirYj3JwUz
-         RpdWYXJQpVwMpRUtx0x9RIUNnPLGUzh1Z+BHH2MFQemh17scHhWDgvgWxagffCsir+mc
-         THdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0S/YjkXCJJvCKlGOoNDPDDJIzYPlrWgvY9yW1Dqf3s93REX5QSBpTSgzwp0fZC8jfOs7dHO2BqW9v5TE=@vger.kernel.org, AJvYcCVndks3EntTDkbpcOH/F2Q6f0nyk2O38M7EMOsiKXzwMEmFe0OUOgbiCu81dW3snrBrxisRIcZulFhZ5sT7@vger.kernel.org, AJvYcCXr/iF44hGZR9NQLF2r/6KE0ss90oBI7j4tUeQ2F+8E7fk03etol5dU0Mrfb5y4LmcvaYmxE7oxuA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4C8os3QoDCwHmN57BlDFyRFCWTgrY14iBOIkachj6R3xnAmEH
-	nBxkOMqrYog2q2cfB1e+4JExzY1NC/IigscxnGAA6btP6aidJbhw
-X-Gm-Gg: ASbGncu4wecfRCPdyBUAv1r34VO/clI4TiO9bdYoYVEIbBT8THakaL0g4msN4/nKVsg
-	h5yRxg8oflA3LODcuT68K6Twq1F3GqgkjN0jsOm0jXVEq8w7E9BwtBZxShDzHjXZVk5nq/V8wHf
-	6aO1XBlMMmFVoDaj/HTGQujOdLo0iG+Th4TXF+gWFYNdIj4H5lB3CEIAeu9HOCbqMHgmTHJ1bbV
-	kM7Q2y80zsgdC55OoqECh2ZJxn1cLgHEwQfG0o656FeDetW00+UN1J3gjniN6CAiFXlmLQkVpJY
-	SINpoa1cdwM5WCjfBr7FLA8M57swcMEd+XQ1WdAMksAXbOw/0eRk
-X-Google-Smtp-Source: AGHT+IF8d4mvPDamh8+NAYSDDhRH4GELbHrWX7qqTJyJjvKWNL1ITeDM9+p41l0nfll4OeRP/pke9w==
-X-Received: by 2002:a17:907:3f9b:b0:ac7:ecea:8472 with SMTP id a640c23a62f3a-ad1e8bf158emr308173866b.26.1746620378128;
-        Wed, 07 May 2025 05:19:38 -0700 (PDT)
-Received: from demon-pc.localdomain ([188.27.128.5])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa777557b9sm9350002a12.10.2025.05.07.05.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 05:19:37 -0700 (PDT)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Cosmin Tanislav <demonsingur@gmail.com>
-Subject: [PATCH v5 9/9] i2c: atr: add passthrough flag
-Date: Wed,  7 May 2025 15:19:15 +0300
-Message-ID: <20250507121917.2364416-10-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250507121917.2364416-1-demonsingur@gmail.com>
-References: <20250507121917.2364416-1-demonsingur@gmail.com>
+	s=arc-20240116; t=1746620526; c=relaxed/simple;
+	bh=OrVUBAduC66EM+Jy5ubOZJRLtPoNQLKUZOMruFW9g5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXo04RnqYkPe2Qce9kYUlAfkACy6T4pHy1ZLR5Np1A2XkuofllS0e8mQiajKR1M85yX7C96mGukqP9WYtcPH9vocoV2s7qoSKOEeOJ6xq10Stkx5xlRrvdxh9aWnbHSfEpnfF/XSmRIrv54zLLavyk4Jic+mxbNd1iI5LuXqVKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=miau027A; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 7 May 2025 14:21:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746620512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DpPHSAGatCtkUGCaP/yd2Qyr3LuW/jp4fovDif5/S4M=;
+	b=miau027A/ds+uz1cHnS94jFw15X1wRBY3OGmNorw1Q5T0CDrb9MfiGEUwixSA4NcBf5fSh
+	U0/lnSeOScqRZQE5E5E9JVBQnkLcpbv5EELOm/sVPMXKnMgi0Dlqw0hK4bukgvlf7R6Koo
+	jScoCjrpPLs11OO6fs5Fm8t3UFHHyAo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Kees Cook <kees@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 3/3] integer-wrap: Force full rebuild when .scl file
+ changes
+Message-ID: <20250507-piquant-fascinating-pug-7ce4cd@l-nschier-aarch64>
+References: <20250503184001.make.594-kees@kernel.org>
+ <20250503184623.2572355-3-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250503184623.2572355-3-kees@kernel.org>
+Organization: AVM GmbH
+X-Migadu-Flow: FLOW_OUT
 
-Some I2C ATRs can have other I2C ATRs as children. The I2C messages of
-the child ATRs need to be forwarded as-is if the parent I2C ATR can
-only do static mapping.
+On Sat, 03 May 2025, Kees Cook wrote:
 
-In the case of GMSL, the deserializer I2C ATR actually doesn't have I2C
-address remapping hardware capabilities, but it is able to select which
-GMSL link to talk to, allowing it to change the address of the
-serializer.
+> Since the integer wrapping sanitizer's behavior depends on its associated
+> .scl file, we must force a full rebuild if the file changes. If not,
+> instrumentation may differ between targets based on when they were built.
+> 
+> Generate a new header file, integer-wrap.h, any time the Clang .scl
+> file changes. Include the header file in compiler-version.h when its
+> associated feature name, INTEGER_WRAP, is defined. This will be picked
+> up by fixdep and force rebuilds where needed.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Justin Stitt <justinstitt@google.com>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nicolas Schier <nicolas.schier@linux.dev>
+> Cc: Marco Elver <elver@google.com>
+> Cc: Andrey Konovalov <andreyknvl@gmail.com>
+> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+> Cc: <linux-kbuild@vger.kernel.org>
+> Cc: <kasan-dev@googlegroups.com>
+> Cc: <linux-hardening@vger.kernel.org>
+> ---
+>  include/linux/compiler-version.h | 3 +++
+>  scripts/Makefile.ubsan           | 1 +
+>  scripts/basic/Makefile           | 5 +++++
+>  3 files changed, 9 insertions(+)
+> 
+> diff --git a/include/linux/compiler-version.h b/include/linux/compiler-version.h
+> index 69b29b400ce2..187e749f9e79 100644
+> --- a/include/linux/compiler-version.h
+> +++ b/include/linux/compiler-version.h
+> @@ -19,3 +19,6 @@
+>  #ifdef RANDSTRUCT
+>  #include <generated/randstruct_hash.h>
+>  #endif
+> +#ifdef INTEGER_WRAP
+> +#include <generated/integer-wrap.h>
+> +#endif
+> diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
+> index 9e35198edbf0..653f7117819c 100644
+> --- a/scripts/Makefile.ubsan
+> +++ b/scripts/Makefile.ubsan
+> @@ -15,6 +15,7 @@ ubsan-cflags-$(CONFIG_UBSAN_TRAP)		+= $(call cc-option,-fsanitize-trap=undefined
+>  export CFLAGS_UBSAN := $(ubsan-cflags-y)
+>  
+>  ubsan-integer-wrap-cflags-$(CONFIG_UBSAN_INTEGER_WRAP)     +=	\
+> +	-DINTEGER_WRAP						\
+>  	-fsanitize-undefined-ignore-overflow-pattern=all	\
+>  	-fsanitize=signed-integer-overflow			\
+>  	-fsanitize=unsigned-integer-overflow			\
+> diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
+> index dd289a6725ac..fb8e2c38fbc7 100644
+> --- a/scripts/basic/Makefile
+> +++ b/scripts/basic/Makefile
+> @@ -14,3 +14,8 @@ cmd_create_randstruct_seed = \
+>  $(obj)/randstruct.seed: $(gen-randstruct-seed) FORCE
+>  	$(call if_changed,create_randstruct_seed)
+>  always-$(CONFIG_RANDSTRUCT) += randstruct.seed
+> +
+> +# integer-wrap: if the .scl file changes, we need to do a full rebuild.
+> +$(obj)/../../include/generated/integer-wrap.h: $(srctree)/scripts/integer-wrap-ignore.scl FORCE
+> +	$(call if_changed,touch)
+> +always-$(CONFIG_UBSAN_INTEGER_WRAP) += ../../include/generated/integer-wrap.h
+> -- 
+> 2.34.1
+> 
 
-The child ATRs need to have their alias pools defined in such a way to
-prevent overlapping addresses between them, but there's no way around
-this without orchestration between multiple ATR instances.
-
-To allow for this use-case, add a flag that allows unmapped addresses
-to be passed through, since they are already remapped by the child ATRs.
-
-There's no case where an address that has not been remapped by the child
-ATR will hit the parent ATR.
-
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
----
- drivers/i2c/i2c-atr.c   | 7 +++++--
- include/linux/i2c-atr.h | 2 ++
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-index 76d70efdf190..be7d6d41e0b2 100644
---- a/drivers/i2c/i2c-atr.c
-+++ b/drivers/i2c/i2c-atr.c
-@@ -394,6 +394,9 @@ static int i2c_atr_map_msgs(struct i2c_atr_chan *chan, struct i2c_msg *msgs,
- 		c2a = i2c_atr_get_mapping_by_addr(chan, msgs[i].addr);
- 
- 		if (!c2a) {
-+			if (atr->flags & I2C_ATR_F_PASSTHROUGH)
-+				continue;
-+
- 			dev_err(atr->dev, "client 0x%02x not mapped!\n",
- 				msgs[i].addr);
- 
-@@ -486,13 +489,13 @@ static int i2c_atr_smbus_xfer(struct i2c_adapter *adap, u16 addr,
- 
- 	c2a = i2c_atr_get_mapping_by_addr(chan, addr);
- 
--	if (!c2a) {
-+	if (!c2a && !(atr->flags & I2C_ATR_F_PASSTHROUGH)) {
- 		dev_err(atr->dev, "client 0x%02x not mapped!\n", addr);
- 		mutex_unlock(&chan->alias_pairs_lock);
- 		return -ENXIO;
- 	}
- 
--	alias = c2a->alias;
-+	alias = c2a ? c2a->alias : addr;
- 
- 	mutex_unlock(&chan->alias_pairs_lock);
- 
-diff --git a/include/linux/i2c-atr.h b/include/linux/i2c-atr.h
-index 5aaab1598084..2bb54dc87c8e 100644
---- a/include/linux/i2c-atr.h
-+++ b/include/linux/i2c-atr.h
-@@ -26,9 +26,11 @@ struct i2c_atr;
-  *                    devices being added or removed from a child bus.
-  *                    The ATR pool will have to be big enough to accomodate all
-  *                    devices expected to be added to the child buses.
-+ * @I2C_ATR_F_PASSTHROUGH: Allow unmapped incoming addresses to pass through
-  */
- enum i2c_atr_flags {
- 	I2C_ATR_F_STATIC = BIT(0),
-+	I2C_ATR_F_PASSTHROUGH = BIT(1),
- };
- 
- /**
--- 
-2.49.0
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
 
