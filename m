@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-637207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09632AAD5FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:25:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09455AAD80F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9EE1C067ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19423B0E25
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6AB20C00E;
-	Wed,  7 May 2025 06:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187602153CB;
+	Wed,  7 May 2025 07:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JXYJ4VNS"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK45uTdw"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3842B207E00
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA17620C48D;
+	Wed,  7 May 2025 07:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599091; cv=none; b=rK+1ONRhPwf0NjNNeZY7hVz5K9rhNOJ8AYB1oFaKAxlH7Hxwz1IcFWp2DGtC5KpUtTlrxG19m6MZvzqUD9QriZzPsL7Pd5bn8depoy5RfyRHmFTeLpOL1W4P6axpG2+DN5IPpuj3IKci/mvInuQtaWEuRG9Lxw2Ukg2lzo4rk0g=
+	t=1746602672; cv=none; b=GwaEyPXnI11tu++7SdLAQimoiWxh1YIjkzBWgI0M9uqBJmT7haxgewYWnD92CmfICVStk98NzKym2mGtUbplC7J36qTN2+eSW0GLrupKQZRUe76FCpzXP+BhonbzdXRcz1moAWQYrUnODgAk3PQ3wobqhg3jpkvRMtQ7qVB1FIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599091; c=relaxed/simple;
-	bh=yIxpL7LJINcGQCYV3WKDg2l3cC2MaNWqR8MRzfpUgBM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J/I9agPC7DFl7icZuJtiX67G+zVNVCcuDKNKTXZWYIsFz1bcvh91fTKsgrJJOjJfVF5udTHyJBprruXwZoIsVhxfVcceLKXYkewB3VostmKVC5Olva2l3erQAEgI4hWp5XxXYyVfmMnH9WVWGF6CIWCMqTQLWwEdINzsZG+t5+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JXYJ4VNS; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so34968795e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 23:24:49 -0700 (PDT)
+	s=arc-20240116; t=1746602672; c=relaxed/simple;
+	bh=eL+3ZL1xhHCfwrllCnsVU7U/Mj3B44v54kzTtHbql9g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fR13Uw+N4T7HnGMyDArxtr+v8U21MLTyzBe6IBIUyQzwrk8mhrat6atobPeFhiU398vn2ZIKKAXz8SOUYW1LjzfDfWH0hll2xDOrMu36JqPOYvxu66TZXDMIoetxQvVfIAirZd6eP1bayYyOuVaZZuV7dgBkFQTC+/kATmroSa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CK45uTdw; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so4332945e9.1;
+        Wed, 07 May 2025 00:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746599088; x=1747203888; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hD9zIW42LA6slVSrrFyagI194Qso9e0OpjZIhXRXyvA=;
-        b=JXYJ4VNSzuK5Dx3QGIgF3DqJaxKCNOjuajHX6j4kWTNmw4qUouNy0iZ9Gn4ZQpEANM
-         TyvLfCWLbVMRSfMqdevgFzRqsrVbcRWEGaH8KU5kDWioknX/yVisAj0FI1lDSWpAa9xp
-         pjSQzuII3jDMN5Hei1SgcAXkmTH6J6vY+UthHPELij6W7lU3ki5gooyNaK955Ul8g0p4
-         EuZv0wue0lcd3zFS7wNgwwcnAEDcXze71F51lJlPAos2VVm0Nk0YbCb9wpzArvJg5phq
-         Z4wZUAV5Gqv6li9E088s/+Pvrjnx9dVWNDoG4OiCMosOHPH64WhrrBu2SNfzd8mtmEnh
-         o0MA==
+        d=gmail.com; s=20230601; t=1746602669; x=1747207469; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XbGOM+5j9DljoawcsNITwWaLqQVpAIHR+pSXDo1606Q=;
+        b=CK45uTdwl6NLOqo3SV8MYlwdDIz6fuEoUK++MPBTj4G5aQNbzfO+4pJF6A2MnIAD81
+         DILIdxPEB3TuwGONWpSIrlIUuV1nIcjYu1eIQKgGcEZJ5Qa9ewigc/Y+pFA0z9kb6DYI
+         wk0Y45vMtRJjyRD8WkuJKF5G9dUCZ2QoB0Lqi2TAQPZyNTopOyp7RaKtHipZeCtLPLR5
+         zN2X23pokiQvgCkq1a/8mPQcAfRnqunFXQvkL+iXY2QD9BPAiZyDxTmM0UWKsrvuRl95
+         VICLhbga6yQhzqy2s15gPXNqeote+xNqsT68d6O/LIYiFPj0T9BOB+LmULtD66oAo23S
+         TuLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746599088; x=1747203888;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hD9zIW42LA6slVSrrFyagI194Qso9e0OpjZIhXRXyvA=;
-        b=th7FdeqxKDjske0HeIbGgB4aHiLSkkrkRyjb9BJKfDtILHaHzqPGL9KlV5k4flfzf0
-         FbIyNzo7kYDR7frmnQkAQknXTiEALNdLoy39P1SLNF0jRgIP8XZRsWX1iY1oXvk8xV/l
-         CE3ffrv1mYc1PkXbZDvo83z7U1m2pUI6btTm65XVnw4mzUw1iOZ2cVk4J1q0eXXhXt3+
-         yhNUHYnb3xj2B0svgofgx39gjQ0FkyPlPPYj7YV0RmMXJiXLfYDl2VRw7miiC6Qj5RRe
-         AumC2LgVfAl+zAHk2VG0lRaSGFQZtfLZtPVTaOco/RAw703/i/nZGNdTtMlDPuRKGW3j
-         38vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD65LL1g7fHGFwxwEbBAgdN8BR/6tW7paTZJO3QIfmFQ3HEIckgumbVUUMLtXzxAHydy0T4lctUx1tqmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw33XhM0mffrTPmYOLBykhJiIW8ZEw8gNW0FLbuPhGhaYuYWyJm
-	E5nZgZAJCpZjsR1CD1E+lcK99PWdQ3Pt2dzc47MvOq/qyKd8lJAo56DDxRfYvopdtnHDaCRmiow
-	zejlJLkkahoayPw==
-X-Google-Smtp-Source: AGHT+IEQD3CUFYskBATw0XZ+FKCVzi/D0fVledLscEilaA+KhdfsGoZlOtCY+5Bdl7cSzmBzTJ++V5TmOaZ4qwQ=
-X-Received: from wmbdr22.prod.google.com ([2002:a05:600c:6096:b0:440:60ac:3f40])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:a44:b0:43d:7588:667b with SMTP id 5b1f17b1804b1-441d44c2b9bmr13748615e9.10.1746599088658;
- Tue, 06 May 2025 23:24:48 -0700 (PDT)
-Date: Wed, 7 May 2025 06:24:46 +0000
-In-Reply-To: <aBoYYzj7sGEbsQzw@Mac.home>
+        d=1e100.net; s=20230601; t=1746602669; x=1747207469;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XbGOM+5j9DljoawcsNITwWaLqQVpAIHR+pSXDo1606Q=;
+        b=gpea6y5MErMyKpjSyyVRF9j5m9IkES/dPmfXXnAXZ3BFgHFOn9JFKg48Gc5LiBfEoX
+         UqLiFsGdkFRLHU5R4/ZR/7CufDFeyzmSiQ+BmW+nPxKPWSN3lCbNuUkkLsSAtuhD8SXI
+         4KqRn2b+n5mshmYENFM+PRZHJs0XUPPJjWjTbYHp9WlsuZMht3/WC3GrIb3pfeGYOfgu
+         hIGMB1f0qgU6Qct4HrMIrIZcCHuu6GmPo+PrXx59zKwmBn9yymIndjQiG6zePmfI23hx
+         3msCJZXEEk4NEE8ga1Ci5PTPKoAnAqVx5kHBfVI+D5j2g8qWOYcEj947u6rByHy38cvJ
+         DpvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0CYBRJoPtJ/gYmvMT9V5uPbYoyH49FeRtFc0B2ipc7QyIEyQGeLv8SIDys39j99wY7UVBxC/B9I8=@vger.kernel.org, AJvYcCXrQvEGhGMJ8dzZjC5l4B18B6t6gscePIWgXqdRuc5cZl7TMfc5W43v2QwIzdxAku088X6TnQzXpSzJyI6G@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXrOLyeUu4jJz9eEfyBPBE9ma2Z91zJFZkaTsDetHMMHB/tPRn
+	UBtPzeh3S+CgZsHNR5NMbkg/IOFOkmBh1R+6MOkwHs1IgWPH80ox
+X-Gm-Gg: ASbGnctnsVjale82Tl0it8ZcMvNSLiJHz/fkTE/8qO2jnowlfl3jPg2EzkcwUdRgRSH
+	U/rwTmOXfDqy+XjbfeFACkfl9GgJM19IcGI0bU9Auuvu7RiDyx8dMWoNICLOOMB6o7uOjOD0Fsq
+	c7FKl/N3uOif16v8/hUAer9un218qi/dniRG3pSxoroknx7M4Yew4xumrRa6tSuLfDjx8QWQDpM
+	W+XRfq86bpCdQnmdwebEQg5GA4mWg1bbgehIooo8LznwNt1hFfnCDfyORTUrEbZmq+fawpuv2jM
+	+NzmFfYu6VWffdn7bo1vT5r6qm3N0QeWk1YyI1lriCtKuMBGrUqTVmHW+ccO5hzsy18VnAsrxSu
+	zmHMS68926WI0sys=
+X-Google-Smtp-Source: AGHT+IHmtJRYo7J1NRPVLlws65MS91lxXsFbUL0vBq7K20lHdwXV2pWj4OoYN2xYkz2zzIKMVRp2/Q==
+X-Received: by 2002:a05:600c:2e52:b0:43c:ec72:3daf with SMTP id 5b1f17b1804b1-441d3a78febmr17516365e9.14.1746602668754;
+        Wed, 07 May 2025 00:24:28 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d433e9efsm21630205e9.3.2025.05.07.00.24.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 00:24:28 -0700 (PDT)
+Message-ID: <4dad5856ae822e2f6dc5786846e4347668434863.camel@gmail.com>
+Subject: Re: [PATCH] iio: bmp280: zero-init buffer
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org, Dan Carpenter
+ <dan.carpenter@linaro.org>
+Date: Wed, 07 May 2025 07:24:52 +0100
+In-Reply-To: <20250506-iio-pressure-bmp280-zero-init-buffer-v1-1-0935c31558ac@baylibre.com>
+References: 
+	<20250506-iio-pressure-bmp280-zero-init-buffer-v1-1-0935c31558ac@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250506-aref-from-raw-v2-1-5a35e47f4ec2@kernel.org> <aBoYYzj7sGEbsQzw@Mac.home>
-Message-ID: <aBr8rnOk2QmBBR-n@google.com>
-Subject: Re: [PATCH v2] rust: elaborate safety requirements for `AlwaysReferenceCounted`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Oliver Mangold <oliver.mangold@pm.me>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 
-On Tue, May 06, 2025 at 07:10:43AM -0700, Boqun Feng wrote:
-> On Tue, May 06, 2025 at 10:29:02AM +0200, Andreas Hindborg wrote:
-> > Clarify that implementers of `AlwaysReferenceCounted` must prevent the
-> > implementer from being directly initialized by users.
-> > 
-> > It is a violation of the safety requirements of `AlwaysReferenceCounted` if
-> > its implementers can be initialized on the stack by users. Although this
-> > follows from the safety requirements, it is not immediately obvious.
-> > 
-> > The following example demonstrates the issue. Note that the safety
-> > requirements for implementing `AlwaysRefCounted` and for calling
-> > `ARef::from_raw` are satisfied.
-> > 
-> >   struct Empty {}
-> > 
-> >   unsafe impl AlwaysRefCounted for Empty {
-> >       fn inc_ref(&self) {}
-> >       unsafe fn dec_ref(_obj: NonNull<Self>) {}
-> >   }
-> > 
-> >   fn unsound() -> ARef<Empty> {
-> >       use core::ptr::NonNull;
-> >       use kernel::types::{ARef, RefCounted};
-> > 
-> >       let mut data = Empty {};
-> >       let ptr = NonNull::<Empty>::new(&mut data).unwrap();
-> >       let aref: ARef<Empty> = unsafe { ARef::from_raw(ptr) };
-> > 
-> 
-> Hmm.. I would say in this case, what gets violated is the safe
-> requirement of ARef::from_raw(), because callers are supposed to
-> guarantee that an refcount increment was passed to `ARef` and in this
-> case, and unsound() cannot guarantee that here because it's going to
-> clean up `data` when the it returns.
+On Tue, 2025-05-06 at 13:49 -0500, David Lechner wrote:
+> Zero-initialize the buffer used with iio_push_to_buffers_with_ts(). The
+> struct used for the buffer has holes in it, so we need to make sure that
+> the holes are zeroed out rather than containing uninitialized data from
+> the stack.
+>=20
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-iio/aBoBR5D1UMjsSUfZ@stanley.mounta=
+in/
+> Fixes: 4e6c3c4801a6 ("iio: pressure: bmp280: drop sensor_data array")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> The patch this fixes is currently in iio/togreg, so no need for stable
+> backport, etc.
+> ---
 
-You can change the example to go through `impl From<&T> for ARef<T>`,
-and then you have the same situation without this unsafe op.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Alice
+> =C2=A0drivers/iio/pressure/bmp280-core.c | 3 +++
+> =C2=A01 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bm=
+p280-
+> core.c
+> index
+> 5728cc18cced223284a2c41dc6dec6f47169c797..f37f20776c89173b0b2a8e28be0ef9a=
+a30ceea53
+> 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -1237,6 +1237,9 @@ static irqreturn_t bme280_trigger_handler(int irq, =
+void *p)
+> =C2=A0	} buffer;
+> =C2=A0	int ret;
+> =C2=A0
+> +	/* Don't leak uninitialized stack to userspace. */
+> +	memset(&buffer, 0, sizeof(buffer));
+> +
+> =C2=A0	guard(mutex)(&data->lock);
+> =C2=A0
+> =C2=A0	/* Burst read data registers */
+>=20
+> ---
+> base-commit: 7a175d9667b21b2495913ec7496a6c20aa7a4a89
+> change-id: 20250506-iio-pressure-bmp280-zero-init-buffer-942dd4f48719
+>=20
+> Best regards,
+
 
