@@ -1,151 +1,193 @@
-Return-Path: <linux-kernel+bounces-637209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F49DAAD5FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:25:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F023AAD5A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D6A1C06894
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3407A981EBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3279209F45;
-	Wed,  7 May 2025 06:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368C11FDE33;
+	Wed,  7 May 2025 06:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dSax7/gr"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xydg6riZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B381A841B;
-	Wed,  7 May 2025 06:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A513209;
+	Wed,  7 May 2025 06:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599144; cv=none; b=FQgtkUfz8NLDdM9NgDhiJsR9q/jsObScD4RTZuPK7BM6bplPT+XK1oso7k19899HEoJZR5M7uoPKRTGIhkGOLN6xbfb2zAusGEgzwfrmzYcFauw1PhbqnD11UI6evUV79lsoLbpSs4ucs490ptVQa6TX1NFrpwte9yxCwtVUpmQ=
+	t=1746597939; cv=none; b=pC8hmZo1kE22gs9lcDn8dHxSthmKYPNTczEHAakJVtU7JsjZx20oPdU1KOJd4uAa3y2/tjOwaoKlNtmd9KgYZMGXNuF3W8LX41S7Y5qO7ep+AN1buzxROazPDnmWCmBoGFgyXU6mEqP2vtTIizrgtDmQSymAICMBX7IMxArNOOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599144; c=relaxed/simple;
-	bh=kvwKtS+G6N6Uy2Tm3WYCdbWmcbnzZRJ/lMKMFb8zWso=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NJly1E1fTGCNJgXR1tfjzLzh5yNwXtefMzeaYbOjz80FtCd18Zf3xDsfAvIsHntitlL6p7m1mOt3KGiwkjFHRx1g0+kJ4v8bbNi2m+lGCmW7oyPF8jw/OWv2sHql9V3hyua2xgH/wpQOPm4mSvU+Oz2gjKETEn+9iqPjW14u7wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dSax7/gr; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 546J06iH011055;
-	Wed, 7 May 2025 06:25:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1H2SKd
-	w/CJ1oFZysP7AbA7rtWkaow9Z02aBk9jm2tJY=; b=dSax7/grc7WqB/w/bpL/qP
-	srxnysIRxGGAAXDI6H07wewjbDmW9dQAKxo3hIx0sAJuRV4Y3UnGCqJTo0TGTh+E
-	CSEx4GKSUi74QnnzVHwsttQdyRdXhKiL8GPcX/daPcm1e6gYwCycshMQGispPPPo
-	Cuou3Vg4l+Ua0iF6+JtMrw1ue5LgVKtNzLH80ZHBo09C3DONozFyXjRJfWxxp0qw
-	WFFAIhDbdC9B38s7KpNzdI9Se8DzWOJZVYBtM5pu6AyAERGdgfNKz2IB+6n/VwcM
-	qqusOBll8cO+kIt09bxOjxi8Xwf7a0F9ilw9zWT5w4orqwJl1ZSsTzX2R/7xlUPw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fgvsmunb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 06:25:28 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5476M1Rq015839;
-	Wed, 7 May 2025 06:25:27 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fgvsmun8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 06:25:27 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5475xk1u014583;
-	Wed, 7 May 2025 06:25:27 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46dypkq40a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 06:25:27 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5476PPXP40436050
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 7 May 2025 06:25:25 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 69C4420082;
-	Wed,  7 May 2025 06:04:01 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 011B520081;
-	Wed,  7 May 2025 06:04:01 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  7 May 2025 06:04:00 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 37A13600BB;
-	Wed,  7 May 2025 16:03:57 +1000 (AEST)
-Message-ID: <f950789abaad0e854c4e60c7316b675c712c386f.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/3] powerpc/pseries: Correct secvar format
- representation for static key management
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Nayna Jain <nayna@linux.ibm.com>, Srish Srinivasan
- <ssrish@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org
-Date: Wed, 07 May 2025 16:03:57 +1000
-In-Reply-To: <3fe59767-954b-4c2c-a602-9801f1c1080a@linux.ibm.com>
-References: <20250430090350.30023-1-ssrish@linux.ibm.com>
-	 <20250430090350.30023-2-ssrish@linux.ibm.com>
-	 <87e1185273ce21e5fd69ff071a1be986c2a0301a.camel@linux.ibm.com>
-	 <3fe59767-954b-4c2c-a602-9801f1c1080a@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+	s=arc-20240116; t=1746597939; c=relaxed/simple;
+	bh=MxaitG3CeVKWMYfeMyrLf5dhe0p3NY2WKRP6bXurY4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J/Cjk0PkbzCpFolxhI+/ucO1Tnz6uuo8t88jUjJCuaTqYNysfYc3x1cGWaFWnX4yS6srNK2pvaujPYBXlIRUP9aGxt/PXwZDqau8Y1wfc3vUfawqRXRI/xl13Wu8azj6lQWYO75PlNcIyoufd9f5gV8KndvmuXCmahqWsbWdDxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xydg6riZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927D5C4CEE7;
+	Wed,  7 May 2025 06:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746597938;
+	bh=MxaitG3CeVKWMYfeMyrLf5dhe0p3NY2WKRP6bXurY4A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xydg6riZZiopOfjrEFs9cFM5vjxkDdxaMx26gHeyNlsv+htBqzNyK7TVu8UV47g/W
+	 FyiB8SBP7pt7G4J8OkZgHtZmi96TDgsuoZAouple+rlD9GrEqkguTWHMr2DbhbSxX4
+	 9gAxC2ZFcu4W783A17jlYjR/ObGNRnbN0QZ0S1BN3qRHsZa3YxFFBTiOwHlYxoGPyr
+	 t41ThI81r1N88XNZ6lUB1DJp6DQxNkv6LxFKj77YtSa7H8gWLPG+ANoy04+v4wukif
+	 C1jtgshJvfUr5cTyxig5zIyf/uRaD40LVREPv1kz+Wm8qi+E6BnD7uZuOXzSnAcPlv
+	 DzZXeYATjqonA==
+Message-ID: <d51b4422-0c46-4b03-840b-302603b3136f@kernel.org>
+Date: Wed, 7 May 2025 08:05:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=CLAqXQrD c=1 sm=1 tr=0 ts=681afcd8 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=VI1NQ0rgZN61wkHHH4kA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: QD1K8PZ3uYzMJ7kPAvcb9JP4VkJn7oLp
-X-Proofpoint-ORIG-GUID: rztLrWR4sWMaBLVOXO8rmeAHuH-8u504
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA1NSBTYWx0ZWRfX4xfKB8NZ6lMj ZtfYnsUNf0YlOGsCxzKwCSwj0/7ZlN3V0rIXgktRbJk96/zqTwFBQ7qJYF8HaIgiF/JLG/ZXHLP fwfAFfN8Egegx3Azq06LVxs0lFt5rN7e20WRWDH2PJ3ZltAxbeAfNv2yKK1Djc7/QOjuHCBDB+B
- 5kjED0cI8vLL0DVSGP5e0sePnn0Zn4n8YUhQCUGXYqBadtJUHz05ns+OmaSiTCqwQ03cWzz3mbc ZSoHS2RpPBuOSbR0JXN5VxkSA0GXQMDRy3/p40WWRIyvVAp3fa6p/Thlb5JJUm6JYhz/shzMNMK CWAxRkmqguwkzSHnyNA11yoiZ5Opo5bHsCKgKXHCxg87TcMZPlcFirIXEg+1Ty4YPN7di82VJqJ
- DuXhzSc/Oz4AuIOl9chIMEvHa+o4omFhDcj61hplespwcl4lrvYa9iPXXvMWDUUCs9zOhGDl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- phishscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=678 clxscore=1015
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070055
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] tty: serial: 8250_omap: fix tx with dma
+To: Mans Rullgard <mans@mansr.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-omap@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250506150748.3162-1-mans@mansr.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
+ rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
+ rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
+ i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
+ wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
+ ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
+ cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
+ 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
+ w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
+ YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
+ IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
+ BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
+ eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
+ 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
+ XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
+ l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
+ UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
+ gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
+ oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
+ o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
+ Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
+ wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
+ t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
+ YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
+ DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
+ f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
+ 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
+ 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
+ /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
+ 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
+ 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
+ 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
+ wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
+ 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
+ jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
+ wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
+ wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
+ W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
+ f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
+ DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
+ S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
+In-Reply-To: <20250506150748.3162-1-mans@mansr.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-05-06 at 15:27 -0400, Nayna Jain wrote:
->=20
-> > It might be better to use something like "ibm,plpks-sb-static" in
-> > place
-> > of "ibm,plpks-sb-v0" to make it instantly clear that static mode
-> > doesn't use the same version numbering scheme as dynamic mode.
->=20
-> Yes, "ibm,plpks-sb-static" is more clear compared to "ibm,plpks-sb-
-> v0".=C2=A0=20
-> However, I am not sure why "static mode doesn't use the same version=20
-> numbering scheme as dynamic mode". Infact, as per my understanding,=C2=A0
-> it=20
-> is part of same versioning system. "0 represent static, 1 represent=20
-> dynamic and anything beyond 1 would mean dynamic with additional
-> features".
->=20
-> Also, wouldn't having "ibm,pkpks-sb-static" and then "ibm,pkpk-sb-v1"
-> for dynamic would be bit confusing? I mean being static is clear, but
-> what they relate v1 to? Or did you mean to have "ibm,plpks-sb-static"
-> and "ibm,plpks-sb-dynamic"=C2=A0 for the two modes?
->=20
+On 06. 05. 25, 17:07, Mans Rullgard wrote:
+> Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+> introduced an error in the TX DMA handling for 8250_omap.
+> 
+> When the OMAP_DMA_TX_KICK flag is set, one byte is pulled from the
+> kfifo and emitted directly in order to start the DMA.  This is done
+> without updating DMA tx_size which leads to uart_xmit_advance() called
+> in the DMA complete callback advancing the kfifo by one too much.
+> 
+> In practice, transmitting N bytes has been seen to result in the last
+> N-1 bytes being sent repeatedly.
+> 
+> This change fixes the problem by moving all of the dma setup after
+> the OMAP_DMA_TX_KICK handling and using kfifo_len() instead of the
+> dma size for the 4-byte cutoff check. This slightly changes the
+> behaviour at buffer wraparound, but it still transmits the correct
+> bytes somehow. At the point kfifo_dma_out_prepare_mapped is called,
+> at least one byte is guaranteed to be in the fifo, so checking the
+> return value is not necessary.
+> 
+> Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> ---
+> v2: split patch in two
+> ---
+>   drivers/tty/serial/8250/8250_omap.c | 24 +++++++++---------------
+>   1 file changed, 9 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index f1aee915bc02..180466e09605 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -1173,16 +1173,6 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>   		return 0;
+>   	}
+>   
+> -	sg_init_table(&sg, 1);
+> -	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+> -					   UART_XMIT_SIZE, dma->tx_addr);
+> -	if (ret != 1) {
+> -		serial8250_clear_THRI(p);
+> -		return 0;
+> -	}
+> -
+> -	dma->tx_size = sg_dma_len(&sg);
+> -
+>   	if (priv->habit & OMAP_DMA_TX_KICK) {
+>   		unsigned char c;
+>   		u8 tx_lvl;
+...
+> @@ -1216,11 +1206,12 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>   			goto err;
+>   		}
+>   		skip_byte = c;
+> -		/* now we need to recompute due to kfifo_get */
+> -		kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+> -				UART_XMIT_SIZE, dma->tx_addr);
+>   	}
+>   
+> +	sg_init_table(&sg, 1);
+> +	kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+> +				     UART_XMIT_SIZE, dma->tx_addr);
 
-I don't feel strongly about this, as long as it's well documented.
+This can fail (note the first call to this was checked). The latter 
+(deliberately) not.
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+> +
+>   	desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1, DMA_MEM_TO_DEV,
+>   			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+>   	if (!desc) {
+...
+> @@ -1248,8 +1240,10 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>   err:
+>   	dma->tx_err = 1;
+>   out_skip:
+> -	if (skip_byte >= 0)
+> +	if (skip_byte >= 0) {
+>   		serial_out(p, UART_TX, skip_byte);
+> +		p->port.icount.tx++;
+
+This is still unrelated.
+
+thanks,
+-- 
+js
+suse labs
 
