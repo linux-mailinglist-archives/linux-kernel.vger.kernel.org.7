@@ -1,274 +1,115 @@
-Return-Path: <linux-kernel+bounces-638453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03846AAE639
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:14:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B7BAAE63D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6722188AD04
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBA13B10C7
 	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C4028B7F0;
-	Wed,  7 May 2025 16:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCB828B7E2;
+	Wed,  7 May 2025 16:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfRogJFH"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3aH8hCXp"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E0B289824
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA0A289824
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746634176; cv=none; b=N97tC96ZOubwGJhIVohOMHb0QEMF4LRBY9+EpJdWOfYebqU8rn/Rcbc+wg5FA+5zkR5iBELafXoARGTXTjiC+B0M6ZP8hfpFCaeI2lUb3En1uRyHeNegGHPs4oopa6MK2/zKHSoO0/94RbGTrKqYZwuDMt8Lj/+X5HhqIaSRWWk=
+	t=1746634213; cv=none; b=AV5X/lhAg7RR18bWvWG9QBHUeUKtALTLvQY6TutF55ZEEV/RI0MRkXjK8d5wzxn+8btN2O4JKfCoTDTfwjx6tRDYZg8Wcl1wb/dWz+36arIT8BlRrGd4FCelv/2wPPBVZExBpAR5eFDEGqS05zb1n/IP1zvK4HE72VLUZsJtVIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746634176; c=relaxed/simple;
-	bh=a9auzZSL5Kq/PdECtuk7WTXM/HrGNFDZL7se90kWKNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qsBW/nKxu5KCZ+QlPBz4tegJHTIGlzvWB3+3fmP1rqTxK+82jQ/oi0OwTAt71UhDECzKy8M2Cc785qQxslfU5/YZ7rqafK4oKU2ciXVfd3V9D3yFF0TJO/z/QRF0RkUMGCTidYW3sX9iul3yc7qtlLKHbX5jvdqDC6kCvtPnk1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfRogJFH; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so691779966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:09:33 -0700 (PDT)
+	s=arc-20240116; t=1746634213; c=relaxed/simple;
+	bh=tEO4wl5q9mnSb4N1++fnfe4GPrIhRxfr9Re5c9yeDJg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AtzLgmdMVxxqYzmZuKhQPh5drKyHDh62CEKgF8JahIHSMug1Yv+bkfdf3YE4Tu+kZuG6uGYSQqnmuyFKFSi9wHM8vZHNGafeDYDr+i+Q1S0e7XPxSWV/V5W/6tUDLEoGxpk+Lao4dRI7xjHpHS0NBLgJVYfpnWi4JFZLh0DlCFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3aH8hCXp; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-30828fc17adso118722a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746634172; x=1747238972; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fIjEVj0DEgX91fXHT09wKDzBRPLgzhUHI19sZdE1aQM=;
-        b=bfRogJFH9cdF2W4feY82j7fEzRWMMVgk44K6WcNOBi3c8kfZYT5TBBQz5YiZJo3xm4
-         JLSfJv3F99OETvfsDHpDtv1O11I5Kr1zxGVQON3cFnwTWUS25csc5z35Fuv5xdQ/LR8A
-         RzQ372m47TJlhF6svBkhPn0GvWYTuTGIaYgpe9zIvrB8plazd9SMJxZZyGRSOusLGGXe
-         J/hdwovblTgaLAr6rvKKFsh6QVckc7kNlB5CEJhiBFhQb92Du4e2ex2XWuqh9oC6Dh1P
-         Pny/1US8dS3cIi+pBMAsZCGw/N4/0o8iPW/veNtdGuoOyYMQ05+jmEakg9gYHsmJPOwr
-         UPiA==
+        d=google.com; s=20230601; t=1746634211; x=1747239011; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NP1IWzAxZPWttfk70bAFVVWLlYvnNyqULPRz1VjxJ5A=;
+        b=3aH8hCXpC15FdvyKlxryItBVMt/rg+aHZpLoZFvBwZzdkTvK4Aghk0+kZeDc+wQbst
+         UvNLebKVLwYhA+APZv/GY9S4iupbi0D3lVxGEw5+bUyfP5eCUs+DCYqJyoEWxGXbnytL
+         DL4qeOaGcpEV1BEqeLMeCqUxDDzwgYWnViopJaVfVR1SAsFAk9X7f3Km4tyVAcPNAHg8
+         ouqK6pNXIByYY9zd38EzuirjkhDJoanuhagF4qSaos7nRg1OUFVteBBcQd4Xye1G7be3
+         6QiId2mZaVWdrEdik87rUoeExJITY19gbB0UqN5h5hmc8IBHtDa+AGUP1jWyQvgxxupT
+         YaOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746634172; x=1747238972;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fIjEVj0DEgX91fXHT09wKDzBRPLgzhUHI19sZdE1aQM=;
-        b=waYeRSZ3LJnKByhqqD4/701O+c9lu6n/+RvUDwg6M/8cLJ9duKbAGhYwC5JJBDF74j
-         j4Waw588SntlcmSzfHnObbD62CwgVnEPTHda4x/QmusfDuJslZRRs5sshpuV3z/0BGUg
-         URudRKLUz1ystgobgZUlFMnSzMlKy7rMOEUNIlYdAhoi0LfLKWbNGfdEeSHPla3o1b/R
-         P7dD+07r0fDsuNdkBVic55zINMJogKlsepe0eczoz6UmCJglZChhx0f+lPXH9sTKs9qA
-         0lcZb4mNLEybcP0IpXrIA8j9ZlHqOoL2t5ubJQoH7RSKYr0piI8fbLlxTG0+YUG/3v+t
-         1ccg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVKm8ZHPuieP4cWHflate5gjf9JTJfvo9a5XnUuFzbRSSRyIbyJ070hyV9lMnxjI0DF5PSzZdlBflseno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvOsuKxu/vlnbvWd1tEZA61f8aFe/UQ1oSCpWcZ0/sLo31ntmU
-	ZBuepJTBnpGCIUuMazHkHVjLL0KIA4jfaRJwDyo4UPZE3B/vApQr
-X-Gm-Gg: ASbGncsfa5uC1tE0zOyFFcoFlUIOnA1be4t2nyIssccqTC3OFAr4LXnKQLb78nQl+1e
-	cnnh+ZNrYT9yyQNoXqb6+OsneC1p/2Vi+oRlmYGlVYKg9hsuoMYR+7aEEat7t5Mh1p8qopfS0W5
-	Ju1J2LcXAU+xSqmMr/FTZWLxDSJXoCWWr8uvtBBQ0K5I/f1zxdr/32QaBy9/825I4tOW4q6M3Qr
-	65QO8+a32Be3yR9GRD7gwhYtk9H4MhTxjpuH9gQELLbmuIJ2LNiV8cJDPvk4KhCyf57R2K/oY6f
-	SlLq6DkqrmbGZyJcxhb8jqmku15iE4e9wH3yc197L7isHHxPx4ZGzqxHMR9UJunprXqMGefYFRe
-	DRFpAccTUZPzlMw==
-X-Google-Smtp-Source: AGHT+IGIMCIP/zJlWIR0g6snp1hXwheU1vJJVVQPLxWqkovc2gx1xdJ/MjalJ0Y2FNbr/emoAUdqqg==
-X-Received: by 2002:a17:907:a641:b0:ace:c5de:24cc with SMTP id a640c23a62f3a-ad1e8d9c678mr353455666b.60.1746634171909;
-        Wed, 07 May 2025 09:09:31 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f7:eab6:23d5:4cab? ([2620:10d:c092:500::7:6396])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891f3c6bsm922430666b.82.2025.05.07.09.09.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 09:09:31 -0700 (PDT)
-Message-ID: <279d29ad-cbd6-4a0e-b904-0a19326334d1@gmail.com>
-Date: Wed, 7 May 2025 17:09:30 +0100
+        d=1e100.net; s=20230601; t=1746634211; x=1747239011;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NP1IWzAxZPWttfk70bAFVVWLlYvnNyqULPRz1VjxJ5A=;
+        b=WBeRyHTC5OxdyCY6ijrw2nWL+2zWCSYbX6F7eRdOext4DhJnaWVELaMPsipJJNgYDM
+         n+Fh4zEm6MLHKZ9a/GNBVO5qS7cjJfGhIWbFDeQbo7tr+YvX/cfGNtiFTVT3aGBSdRDT
+         aEeRxHjegvlePEz+Bx3eugMgymPWvkr1k29nijeXp9m4WDhRtp9zd8XG5CSmSGLo/bsU
+         xv6PaZhohOh2I4Xb0nlSMsCRXJk8DEotX11KXsKFFcCpyq4z1yNvnjh5TdQpySlocjJX
+         ntM91gVX2qXzxXVHUPSmZFnIa5bGYpsJnBdW40NPlZQoUeABl5lSd8Y1F3vTbRczU58z
+         mCyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo8ypjuPHaHI/1Lk2hQyLIc/+fA5YwkDDHeHxJQ+J8hiLfxlDElIwDVcXxSVp7A5xBITCq4at35W6AlRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF31vM3apc0zXUSveahpNaOLaoY7sW/ido0vb+4r5VPcoMP9l9
+	bYIgb3q6P7uy/geRqAXXrk5ShSaEm+9uiqRYC0rArqOdE/Kqj1eJJsCmY860t2Zrg2PxSwvu0+1
+	RIJAVxk1rFRobA35pPYnpD7uZG/q64A7ga7ln
+X-Gm-Gg: ASbGncviJ5Pl9vp0D5fjqoQyw5R5Ex43mFqderLe8mn+8kMCrjxYAbowwEDTS+mZ1Xf
+	lcyVw7OvBZ+W19p8fTkEhSvbJZflRwZ02m/6v3tSlQIix0Aq5cZRiYqWc79DHedIwOZlWzoib0n
+	N+wIY1CL/EwvIP8wM4/vjK8c3zDMnFc9dsRpYMBXfRIUjJV/uNA6uhug==
+X-Google-Smtp-Source: AGHT+IEt1JF3O5B91bj2juesU9JM6Yd55FTIMTna/Naaihysq1FxBbSRBU74eer0m51bUQ3W6roTe9w0s7kWHR23baA=
+X-Received: by 2002:a17:90b:2241:b0:2ee:f440:53ed with SMTP id
+ 98e67ed59e1d1-30aac2483e9mr5433231a91.31.1746634211085; Wed, 07 May 2025
+ 09:10:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] prctl: allow overriding system THP policy to always
-To: Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, hannes@cmpxchg.org, shakeel.butt@linux.dev,
- riel@surriel.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Yafang Shao <laoar.shao@gmail.com>
-References: <20250507141132.2773275-1-usamaarif642@gmail.com>
- <293530AA-1AB7-4FA0-AF40-3A8464DC0198@nvidia.com>
- <96eccc48-b632-40b7-9797-1b0780ea59cd@gmail.com>
- <8E3EC5A4-4387-4839-926F-3655188C20F4@nvidia.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <8E3EC5A4-4387-4839-926F-3655188C20F4@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250507160012.3311104-1-glider@google.com> <20250507160012.3311104-3-glider@google.com>
+In-Reply-To: <20250507160012.3311104-3-glider@google.com>
+From: Marco Elver <elver@google.com>
+Date: Wed, 7 May 2025 18:09:33 +0200
+X-Gm-Features: ATxdqUH0mWSb1W8gFSOo12rKgcriXJX1rwTk1Z3Qj0HHv4T9Qymk1NFHYU5acZo
+Message-ID: <CANpmjNMZos17oYAZsBqhhYuRRiGqsG+aLBpk+had5aWi4YA02g@mail.gmail.com>
+Subject: Re: [PATCH 3/5] kmsan: drop the declaration of kmsan_save_stack()
+To: Alexander Potapenko <glider@google.com>
+Cc: dvyukov@google.com, bvanassche@acm.org, kent.overstreet@linux.dev, 
+	iii@linux.ibm.com, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 7 May 2025 at 18:00, Alexander Potapenko <glider@google.com> wrote:
+>
+> This function is not defined anywhere.
+>
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
+Acked-by: Marco Elver <elver@google.com>
 
-On 07/05/2025 16:57, Zi Yan wrote:
-> On 7 May 2025, at 11:12, Usama Arif wrote:
-> 
->> On 07/05/2025 15:57, Zi Yan wrote:
->>> +Yafang, who is also looking at changing THP config at cgroup/container level.
->>>
->>> On 7 May 2025, at 10:00, Usama Arif wrote:
->>>
->>>> Allowing override of global THP policy per process allows workloads
->>>> that have shown to benefit from hugepages to do so, without regressing
->>>> workloads that wouldn't benefit. This will allow such types of
->>>> workloads to be run/stacked on the same machine.
->>>>
->>>> It also helps in rolling out hugepages in hyperscaler configurations
->>>> for workloads that benefit from them, where a single THP policy is
->>>> likely to be used across the entire fleet, and prctl will help override it.
->>>>
->>>> An advantage of doing it via prctl vs creating a cgroup specific
->>>> option (like /sys/fs/cgroup/test/memory.transparent_hugepage.enabled) is
->>>> that this will work even when there are no cgroups present, and my
->>>> understanding is there is a strong preference of cgroups controls being
->>>> hierarchical which usually means them having a numerical value.
->>>
->>> Hi Usama,
->>>
->>> Do you mind giving an example on how to change THP policy for a set of
->>> processes running in a container (under a cgroup)?
->>
->> Hi Zi,
->>
->> In our case, we create the processes in the cgroup via systemd. The way we will enable THP=always
->> for processes in a cgroup is in the same way we enable KSM for the cgroup.
->> The change in systemd would be very similar to the line in [1], where we would set prctl PR_SET_THP_ALWAYS
->> in exec-invoke.
->> This is at the start of the process, but you would already know at the start of the process
->> whether you want THP=always for it or not.
->>
->> [1] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/src/core/exec-invoke.c#L5045
-> 
-> You also need to add a new systemd.directives, e.g., MemoryTHP, to
-> pass the THP enablement or disablement info from a systemd config file.
-> And if you find those processes do not benefit from using THPs,
-> you can just change the new "MemoryTHP" config and restart the processes.
-> 
-> Am I getting it? Thanks.
-> 
-
-Yes, thats right. They would exactly the same as what we (Meta) do
-for KSM. So have MemoryTHP similar to MemroryKSM [1] and if MemoryTHP is set,
-the ExecContext->memory_thp would be set similar to memory_ksm [2], and when
-that is set, the prctl will be called at exec_invoke of the process [3].
-
-The systemd changes should be quite simple to do.
-
-[1] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/man/systemd.exec.xml#L1978 
-[2] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/src/core/dbus-execute.c#L2151
-[3] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/src/core/exec-invoke.c#L5045
->>>
->>> Yafang mentioned that the prctl approach would require restarting all running
->>> services[1] and other inflexiblities, so he proposed to use BPF to change THP
->>> policy[2]. I wonder if Yafang's issues also apply to your case and if you
->>> have a solution to them.
->>>
->>> Thanks.
->>>
->>> [1] https://lore.kernel.org/linux-mm/CALOAHbCXMi2GaZdHJaNLXxGsJf-hkDTrztsQiceaBcJ8d8p3cA@mail.gmail.com/
->>> [2] https://lore.kernel.org/linux-mm/20250429024139.34365-1-laoar.shao@gmail.com/
->>>>
->>>>
->>>> The output and code of test program is below:
->>>>
->>>> [root@vm4 vmuser]# echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
->>>> [root@vm4 vmuser]# echo inherit > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>>> [root@vm4 vmuser]# ./a.out
->>>> Default THP setting:
->>>> THP is not set to 'always'.
->>>> PR_SET_THP_ALWAYS = 1
->>>> THP is set to 'always'.
->>>> PR_SET_THP_ALWAYS = 0
->>>> THP is not set to 'always'.
->>>>
->>>>
->>>> #include <stdio.h>
->>>> #include <stdlib.h>
->>>> #include <string.h>
->>>> #include <unistd.h>
->>>> #include <sys/mman.h>
->>>> #include <sys/prctl.h>
->>>>
->>>> #define PR_SET_THP_ALWAYS 78
->>>> #define SIZE 12 * (2 * 1024 * 1024) // 24 MB
->>>>
->>>> void check_smaps(void) {
->>>>     FILE *file = fopen("/proc/self/smaps", "r");
->>>>     if (!file) {
->>>>         perror("fopen");
->>>>         return;
->>>>     }
->>>>
->>>>     char line[256];
->>>>     int is_hugepage = 0;
->>>>     while (fgets(line, sizeof(line), file)) {
->>>>         // if (strstr(line, "AnonHugePages:"))
->>>>         //     printf("%s\n", line);
->>>>         if (strstr(line, "AnonHugePages:") && strstr(line, "24576 kB"))
->>>> {
->>>>             // printf("%s\n", line);
->>>>             is_hugepage = 1;
->>>>             break;
->>>>         }
->>>>     }
->>>>     fclose(file);
->>>>     if (is_hugepage) {
->>>>         printf("THP is set to 'always'.\n");
->>>>     } else {
->>>>         printf("THP is not set to 'always'.\n");
->>>>     }
->>>> }
->>>>
->>>> void test_mmap_thp(void) {
->>>>     char *buffer = (char *)mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
->>>>                                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
->>>>     if (buffer == MAP_FAILED) {
->>>>         perror("mmap");
->>>>         return;
->>>>     }
->>>>     // Touch the memory to ensure it's allocated
->>>>     memset(buffer, 0, SIZE);
->>>>     check_smaps();
->>>>     munmap(buffer, SIZE);
->>>> }
->>>>
->>>> int main() {
->>>>     printf("Default THP setting: \n");
->>>>     test_mmap_thp();
->>>>     printf("PR_SET_THP_ALWAYS = 1 \n");
->>>>     prctl(PR_SET_THP_ALWAYS, 1, NULL, NULL, NULL);
->>>>     test_mmap_thp();
->>>>     printf("PR_SET_THP_ALWAYS = 0 \n");
->>>>     prctl(PR_SET_THP_ALWAYS, 0, NULL, NULL, NULL);
->>>>     test_mmap_thp();
->>>>
->>>>     return 0;
->>>> }
->>>>
->>>>
->>>> Usama Arif (1):
->>>>   prctl: allow overriding system THP policy to always per process
->>>>
->>>>  include/linux/huge_mm.h                          |  3 ++-
->>>>  include/linux/mm_types.h                         |  7 ++-----
->>>>  include/uapi/linux/prctl.h                       |  3 +++
->>>>  kernel/sys.c                                     | 16 ++++++++++++++++
->>>>  tools/include/uapi/linux/prctl.h                 |  3 +++
->>>>  .../perf/trace/beauty/include/uapi/linux/prctl.h |  3 +++
->>>>  6 files changed, 29 insertions(+), 6 deletions(-)
->>>>
->>>> -- 
->>>> 2.47.1
->>>
->>>
->>> --
->>> Best Regards,
->>> Yan, Zi
-> 
-> 
+> ---
+>  mm/kmsan/kmsan.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/mm/kmsan/kmsan.h b/mm/kmsan/kmsan.h
+> index 29555a8bc3153..bc3d1810f352c 100644
+> --- a/mm/kmsan/kmsan.h
+> +++ b/mm/kmsan/kmsan.h
+> @@ -121,7 +121,6 @@ static __always_inline void kmsan_leave_runtime(void)
+>         KMSAN_WARN_ON(--ctx->kmsan_in_runtime);
+>  }
+>
+> -depot_stack_handle_t kmsan_save_stack(void);
+>  depot_stack_handle_t kmsan_save_stack_with_flags(gfp_t flags,
+>                                                  unsigned int extra_bits);
+>
 > --
-> Best Regards,
-> Yan, Zi
-
+> 2.49.0.967.g6a0df3ecc3-goog
+>
 
