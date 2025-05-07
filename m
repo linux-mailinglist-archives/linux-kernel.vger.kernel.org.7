@@ -1,104 +1,79 @@
-Return-Path: <linux-kernel+bounces-637916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D294AADF11
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:26:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077AAAADE89
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A931C07BF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:26:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18F52B211F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D004272E6B;
-	Wed,  7 May 2025 12:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0877225DD1C;
+	Wed,  7 May 2025 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="k1mjTvSd"
-Received: from out0-222.mail.aliyun.com (out0-222.mail.aliyun.com [140.205.0.222])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TEovlvPC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F80C25EFB5;
-	Wed,  7 May 2025 12:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7420F25DCFE
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620622; cv=none; b=ZN8XkobhLDbLMzRAg6Gk7kpJm/UbJpnNTbro5nP5k71o5kHFz5qkmJ3WCaovKAOs8F1aOPYuTexA/IgIeSojqs/sy1jmCBiZ5Ukb2o8lG9cPriGGdyH9cEkdwvDpQDAkjL17/Olyda2/Xu9huBlSWMpBag2QkSQfaZe+ZXILKuk=
+	t=1746619571; cv=none; b=p024Heqir6MMYQg/LiiWxhqT+R6SzdH1VPZwu7HYxqhMBhjqRO2kl2uj+esk46zLFAxjCE9ycWxqv2wLqidTa9BaIlNSvfDbl6Jcns0jCApD5AevcaGaknlPvOCh270vIJfmtU7zUTiAA5lkK6T9aFNxRWts+Yx05orbKmXZVZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620622; c=relaxed/simple;
-	bh=VX5Y48Mu89dzAbsuakWMa787AtgPl0MehdbZ14cTgOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jY4aKo/rEgtSEsgaGNQGY86WEnZBvPikBavyb7OjanWdx3aeHXo1u54LvNvDLxJMeul5sHloAz1uFBHeA5x3Qr1AfbwA2TSMcwCKueDSqsZr3x5zy+WZaxra/a8FiGHxfvKBLMQK8xXi75fwX7StrawQ+vigPKCoq52cHOV8aJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=k1mjTvSd; arc=none smtp.client-ip=140.205.0.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1746620614; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=IdnAOnCRq90p308A+UdFioQ4SgHht6IUlP0dVVbjW0U=;
-	b=k1mjTvSdiRQGabCLqY7DpLN5zgkv6lLVGusybQBx+fpKILtndgW9FSH5RP9GjQM5pX6si+isSq/nGcq8CSFxhIEmpsdd6XuhapjuIGcOsPKjfWBzafeQtr3edTmeW8u/ngnn9bgSHJoyFtLbiuI1IOxzT92swYhqXvVHhy8HZbI=
-Received: from 30.174.106.64(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.cgyj98E_1746618744 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Wed, 07 May 2025 19:52:35 +0800
-Message-ID: <2ac70b02-7841-4355-ae71-5b57a6ce15e2@antgroup.com>
-Date: Wed, 07 May 2025 19:52:22 +0800
+	s=arc-20240116; t=1746619571; c=relaxed/simple;
+	bh=5PYQq9flUB/B85ax7GJ6DVCpLppA6FUrBFrM0euAV0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yjq1CoWbdUJMavu4qvWdKTyOqp0ACyNKWDQeatQYYgjr+MacBRhJ8dYMbr1ov4YBI2MYYObuHgaXjLqF+RTpl4MwxdMy4UdLYp/Lf/kCBufJYr+6y2Ilf6Ix3ttKTszvYyz07A6W2yrCMkJ9x2M5wRkiHZ1kpzayZSIonEqMXss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TEovlvPC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Wfi8zDqJeKm+TpJFOzJJcwP0H7sHmszS6OiiTXY8kN4=; b=TEovlvPCjbkfdh/+tLVWTQwbRY
+	kQ6i1GdRE7WE6IewFS72g+H4B6BNlD7y0NAtdrnPJTTc5ZC0JeXYgBzdcJXsu1brvVcCaRQpr8Ri9
+	Z+eEaStCh/OvbXKsJJE7JhVPrYqcZoKZVOoA7H4GzalUQ7uafP8Ia0LUSc+4I7UjViQji14tKVHus
+	52KOSEJqfrSe2fkVh6S53jeJYufx7iZHL1VfENbpAGg06W1m5hh7wpdnt0IKenKXK0eQjCFq8H8H/
+	1b/pcJ0av3AfPF0g3odG8hHVmDIqVLdm2WBy97VwqMDICugvPaxouA63S3NkewiwtWsVp7iOoiwyY
+	+nhSvoiw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCdW4-00000004E8Y-2h7R;
+	Wed, 07 May 2025 12:04:48 +0000
+Date: Wed, 7 May 2025 13:04:48 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, hannes@cmpxchg.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	ziy@nvidia.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+	mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: khugepaged: convert set_huge_pmd() to take a
+ folio
+Message-ID: <aBtMYHE9BgiT8nT-@casper.infradead.org>
+References: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: remove obsolete file entry in TUN/TAP DRIVER
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>, linux-um@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20250507071004.35120-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-In-Reply-To: <20250507071004.35120-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
 
-On 2025/5/7 15:10, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 65eaac591b75 ("um: Remove obsolete legacy network transports")
-> removes the directory arch/um/os-Linux/drivers/, but misses to remove the
-> file entry in TUN/TAP DRIVER referring to that directory.
-> 
-> Remove this obsolete file entry. While at it, put the section name in
-> capital letters.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9c166503cc6b..34a55e3ff863 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24981,13 +24981,12 @@ L:	linux-parisc@vger.kernel.org
->  S:	Orphan
->  F:	drivers/net/ethernet/dec/tulip/
+On Wed, May 07, 2025 at 05:26:12PM +0800, Baolin Wang wrote:
+> @@ -1476,13 +1476,13 @@ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  		.pmd = pmdp,
+>  	};
 >  
-> -TUN/TAP driver
-> +TUN/TAP DRIVER
->  M:	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
->  M:	Jason Wang <jasowang@redhat.com>
->  S:	Maintained
->  W:	http://vtun.sourceforge.net/tun
->  F:	Documentation/networking/tuntap.rst
-> -F:	arch/um/os-Linux/drivers/
->  F:	drivers/net/tap.c
->  F:	drivers/net/tun*
->  
+> -	VM_BUG_ON(!PageTransHuge(hpage));
+> +	VM_BUG_ON(!folio_test_large(folio));
 
-I missed that. Thanks for the fix!
+I don't think this is aterribly useful assertion to keep in a static
+function with one caller, do you?
 
-Reviewed-by: Tiwei Bie <tiwei.btw@antgroup.com>
-
-Regards,
-Tiwei
 
