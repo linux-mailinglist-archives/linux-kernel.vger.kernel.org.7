@@ -1,162 +1,127 @@
-Return-Path: <linux-kernel+bounces-638345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7EBAAE4D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CD4AAE4D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3FD9C419E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8281891B83
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F57228B404;
-	Wed,  7 May 2025 15:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0434128AAFC;
+	Wed,  7 May 2025 15:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPplaysz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WS2abuPW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C180228B3FE;
-	Wed,  7 May 2025 15:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE19B28A419;
+	Wed,  7 May 2025 15:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746631575; cv=none; b=gVQFKKIRzJCDlooTGSKdNxzcnPoLgmY8yKN4Co3zxLFYsGmKMWmPj3cSyWJBt+vESMnYI8L7aUJuvBe6FF15DbXNywBFtC0a4RCFMYwrL+FuAaSovfYRqp41yOCeNEOV2lvNt3VTbB0tyjgrpsoRwyJpDSCljZWJj8ZrMkSq3oU=
+	t=1746631629; cv=none; b=q4PbV+ri2l8HhHNYRr4U668AESPLh/++ww+qCS06ebvtYYDmewEgwgoBhGdsDnbt420Fg9PhHTQy9dSZt9io+ErZ8gvhzt7KwiZ7moEZBC2Ihi9u7UuyXYhDGdYv9azxC9nCKfhZyjyY5iuI3aMdsDJY9RoBXmprx2KWIAsF5zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746631575; c=relaxed/simple;
-	bh=slVt5lIKJTnZi3bMfiTdllvE+A/QE0g4pjjhSkT/YcU=;
+	s=arc-20240116; t=1746631629; c=relaxed/simple;
+	bh=dSxWBR6uNnt2Ow5gUL3hqc70/Tl+5eZVriLB2UuGbzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I8mouej3hX77F582lgM4efVeXW9WXONYzXLX+56kYGuL3SIlb3+VwMhBBaH8R88t73GnR6LxQvoRJzR7wXIaqLrFMQYA53NjIokKHh3au+s9PIgFJs//Mq0DjuOLPG6cDnPwxfc6kOPzgEfl8X0SU0eCm1HCdUb70e4OI2m2CLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPplaysz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC3FC4CEE2;
-	Wed,  7 May 2025 15:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746631575;
-	bh=slVt5lIKJTnZi3bMfiTdllvE+A/QE0g4pjjhSkT/YcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JPplaysznrNxewK4xJFXoM6FH/opMrnXUuyDlpJUQrchZDSjl+lmLHkIzGTI2aw5q
-	 5SzfCCD+9kN008ozTvtXZKxVmrOJzVrhPw9ow8PcP8a46YtFe9lKgR35VHj61VIdrj
-	 e3CwVVoH6BhjptX7AYMSFzx02/OQQ98ujl+kCP/d5X/m3dk3WkNTZ21HhPhnE3uRBs
-	 34kTOKppM/jlAg5mVFWuNRX7DfS29sxRUWLDx5h/IRS416wfEo5KdLYleSN08qYLWD
-	 NQvyPf7iYyjw7LwoBDtxCwjsFYeF6+k0PS/vWldDW2pLZ35yCtYZyNngFJQl3KT5Xc
-	 308dbhYb3NAyg==
-Date: Wed, 7 May 2025 16:26:09 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v7 8/8] mfd: zl3073x: Register DPLL sub-device
- during init
-Message-ID: <20250507152609.GK3865826@google.com>
-References: <20250507124358.48776-1-ivecera@redhat.com>
- <20250507124358.48776-9-ivecera@redhat.com>
- <CAHp75Ven0i05QhKz2djYx0UU9E9nipb7Qw3mm4e+UN+ZSF_enA@mail.gmail.com>
- <2e3eb9e3-151d-42ef-9043-998e762d3ba6@redhat.com>
- <aBt1N6TcSckYj23A@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KwQYVGTz2Qu0bYuq4AACKyxWyZV19uvqJNZ5sSCil7ljcNqvCXHNPVxa45umDWCHbUoGgPlQZGZz87RYic0H8qiCHnzEgBcwVGRncAxuB/iQYJnTW1jCcD9eDrkfpQ+W2+ROkEQdbjFgbg+MGhi3+4ek3S9uewFFRqYJyzMg4a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WS2abuPW; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746631627; x=1778167627;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dSxWBR6uNnt2Ow5gUL3hqc70/Tl+5eZVriLB2UuGbzk=;
+  b=WS2abuPWD09HQb2mv/vugQ8xFZOi1n0n7mZDbTVd3urMdEaJ4ixY4OU8
+   TcTvrTeuh0c4TPf7XH/vAnNtMM1e67AMexDhWyuU9VAiAgfQ6KFB8xMwa
+   vZ8ah7XngCjR3CJBJY3oAWvv0rRo73RSmQuG2IUMb3820yupjddDSvd0r
+   EqIIGry4ZPAz3vbPSurgkzcUGImdzH6VTAFDpDsWBMcH9TuNrcFzrWKU9
+   meenzAILzUdOwpEypQB1OmaoviAsZdrRoPs5e899twFMOf4I72/+ivpPB
+   26+E5+rp1aQ/T0P5CFFJ3kSvCCA7AGDxBEvswCodA2HNI5AYYIBoMQKgS
+   Q==;
+X-CSE-ConnectionGUID: Cwst8ctLR5++2NRt/fxLEg==
+X-CSE-MsgGUID: Wj6LQtNPSQq2lYQ68d2oHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59029009"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="59029009"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:27:06 -0700
+X-CSE-ConnectionGUID: Sjw+UHyMShKKK6dnruuP5w==
+X-CSE-MsgGUID: y7H2T2VATtmJOFOhND4f1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="166914976"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 07 May 2025 08:27:02 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCgfk-00084v-2e;
+	Wed, 07 May 2025 15:27:00 +0000
+Date: Wed, 7 May 2025 23:26:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Burak Emir <bqe@google.com>, Yury Norov <yury.norov@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/5] rust: add find_bit_benchmark_rust module.
+Message-ID: <202505072334.8gubqjKX-lkp@intel.com>
+References: <20250423134344.3888205-6-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aBt1N6TcSckYj23A@smile.fi.intel.com>
+In-Reply-To: <20250423134344.3888205-6-bqe@google.com>
 
-On Wed, 07 May 2025, Andy Shevchenko wrote:
+Hi Burak,
 
-> On Wed, May 07, 2025 at 03:56:37PM +0200, Ivan Vecera wrote:
-> > On 07. 05. 25 3:41 odp., Andy Shevchenko wrote:
-> > > On Wed, May 7, 2025 at 3:45 PM Ivan Vecera <ivecera@redhat.com> wrote:
-> 
-> ...
-> 
-> > > > +static const struct zl3073x_pdata zl3073x_pdata[ZL3073X_MAX_CHANNELS] = {
-> > > > +       { .channel = 0, },
-> > > > +       { .channel = 1, },
-> > > > +       { .channel = 2, },
-> > > > +       { .channel = 3, },
-> > > > +       { .channel = 4, },
-> > > > +};
-> > > 
-> > > > +static const struct mfd_cell zl3073x_devs[] = {
-> > > > +       ZL3073X_CELL("zl3073x-dpll", 0),
-> > > > +       ZL3073X_CELL("zl3073x-dpll", 1),
-> > > > +       ZL3073X_CELL("zl3073x-dpll", 2),
-> > > > +       ZL3073X_CELL("zl3073x-dpll", 3),
-> > > > +       ZL3073X_CELL("zl3073x-dpll", 4),
-> > > > +};
-> > > 
-> > > > +#define ZL3073X_MAX_CHANNELS   5
-> > > 
-> > > Btw, wouldn't be better to keep the above lists synchronised like
-> > > 
-> > > 1. Make ZL3073X_CELL() to use indexed variant
-> > > 
-> > > [idx] = ...
-> > > 
-> > > 2. Define the channel numbers
-> > > 
-> > > and use them in both data structures.
-> > > 
-> > > ...
-> > 
-> > WDYM?
-> > 
-> > > OTOH, I'm not sure why we even need this. If this is going to be
-> > > sequential, can't we make a core to decide which cell will be given
-> > > which id?
-> > 
-> > Just a note that after introduction of PHC sub-driver the array will look
-> > like:
-> > static const struct mfd_cell zl3073x_devs[] = {
-> >        ZL3073X_CELL("zl3073x-dpll", 0),  // DPLL sub-dev for chan 0
-> >        ZL3073X_CELL("zl3073x-phc", 0),   // PHC sub-dev for chan 0
-> >        ZL3073X_CELL("zl3073x-dpll", 1),  // ...
-> >        ZL3073X_CELL("zl3073x-phc", 1),
-> >        ZL3073X_CELL("zl3073x-dpll", 2),
-> >        ZL3073X_CELL("zl3073x-phc", 2),
-> >        ZL3073X_CELL("zl3073x-dpll", 3),
-> >        ZL3073X_CELL("zl3073x-phc", 3),
-> >        ZL3073X_CELL("zl3073x-dpll", 4),
-> >        ZL3073X_CELL("zl3073x-phc", 4),   // PHC sub-dev for chan 4
-> > };
-> 
-> Ah, this is very important piece. Then I mean only this kind of change
-> 
-> enum {
-> 	// this or whatever meaningful names
-> 	..._CH_0	0
-> 	..._CH_1	1
-> 	...
-> };
-> 
-> static const struct zl3073x_pdata zl3073x_pdata[ZL3073X_MAX_CHANNELS] = {
->        { .channel = ..._CH_0, },
->        ...
-> };
-> 
-> static const struct mfd_cell zl3073x_devs[] = {
->        ZL3073X_CELL("zl3073x-dpll", ..._CH_0),
->        ZL3073X_CELL("zl3073x-phc", ..._CH_0),
->        ...
-> };
+kernel test robot noticed the following build errors:
 
-This is getting hectic.  All for a sequential enumeration.  Seeing as
-there are no other differentiations, why not use IDA in the child
-instead?
+[auto build test ERROR on rust/rust-next]
+[also build test ERROR on akpm-mm/mm-nonmm-unstable linus/master v6.15-rc5]
+[cannot apply to next-20250507]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Burak-Emir/rust-add-bindings-for-bitmap-h/20250423-214819
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/20250423134344.3888205-6-bqe%40google.com
+patch subject: [PATCH v7 4/5] rust: add find_bit_benchmark_rust module.
+config: riscv-allyesconfig (https://download.01.org/0day-ci/archive/20250507/202505072334.8gubqjKX-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505072334.8gubqjKX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505072334.8gubqjKX-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> error[E0463]: can't find crate for `core`
+   |
+   = note: the `riscv64imac-unknown-none-elf` target may not be installed
+   = help: consider downloading the target with `rustup target add riscv64imac-unknown-none-elf`
+   = help: consider building the standard library from source with `cargo build -Zbuild-std`
 
 -- 
-Lee Jones [李琼斯]
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
