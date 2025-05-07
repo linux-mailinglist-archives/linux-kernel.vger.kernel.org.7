@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-637061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFDEAAD417
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:31:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED18AAD420
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2184E1C025B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5239F3BC550
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311DB1AF0D0;
-	Wed,  7 May 2025 03:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8EF1B4153;
+	Wed,  7 May 2025 03:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CigDcurq"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFeVxxYz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5EA35948
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 03:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2644B1E4E;
+	Wed,  7 May 2025 03:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746588657; cv=none; b=dnL3VvC5ZA8zkenwcWLCiULKsUh8jCzuwT3G1yq6QYo1A3fcK4woGUwLxfRk0pXhSzp9ULu4TYAADdy66OijwkhXUPrdiMzI03akIKbZaNvfEGyJQ9RbgNZqu+qEhkWHuovOltzKTdAOYfsqzW1P4JhhkBThssxuNQMnS42GIP4=
+	t=1746588945; cv=none; b=rPB7NtCwwSw0f1TL4SIlv0+EWWodJg1F1YZddqFUiN/IwyJHn/rnD8d2DbzNqpCiodoKmOXp4iLHoNWdJ7Kn972FYIAv/EoiT8XUogtxWxbwM1NZ28M3xIIO0FBkK16hPBtByu3Zm2vZUgoHAhQsrGcpwh1Oj3bXceH+VgHI+Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746588657; c=relaxed/simple;
-	bh=6xHK2mZb9YSozxZk2Q7AKfM4E2+Diy2ewPVdV43zFxc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ZCoH6Rl7/z0ARFLolOef+w8gTn64Pr0nmmkPnkH25rnKaUjiLAnn3RQQTRQ95NcbPEKi2mnOc4lyCzDfC9CO8SHfujR8ljVzA6amO4pfaVjfve3ZEcW/gh/nyFdiIZamlGdkVeGOTDJooJQACNWEOrLQBHl8rj0JTDZUvzXGHYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CigDcurq; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746588643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qowYpm3BAfgX31Aen7B4hyVsFkHKwyebwwN0Uq02GZI=;
-	b=CigDcurqPGRd8k5xSbpf580mvx+9WkVag2UWKtb4AN06/0wy+xnZ9jslOaKFCy+tCBfh6i
-	Dflh1yLTPUZTotl+GWXwynmNCNtaF5VzOW2uYq3EcnD0hWmjmJ9UQ8JahTJrkDwmFUGe3N
-	YOansLkXgmo9MnmdUD9ujQhsLtfve+Y=
+	s=arc-20240116; t=1746588945; c=relaxed/simple;
+	bh=uZoSquFI+a0xjog8hTbmiXK+g9d2dTlbWp8mPmCNMg8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sNXAwEZz4yWxAje4es6H8SDQCWTQoz/6oGGtornomCQJFNN/0gn07Jvw474dPOMVUUOJkQNEo8DQiRFMBSYgpIzqj3CUTQc6PKZXQdj6JDl0rT6LEEnaLlfw006+PrIPw7X+SWh95qPC5uxC9Ra0RYegRy8IvguYCjE7C/HaNWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFeVxxYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057AFC4CEE4;
+	Wed,  7 May 2025 03:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746588945;
+	bh=uZoSquFI+a0xjog8hTbmiXK+g9d2dTlbWp8mPmCNMg8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WFeVxxYz++1KH1jMeZt2VBUw5kpf+6c/ySp5CfVMv4iCU3ZWQibte5PhfHWgtgjws
+	 Nvio6rv1O2Jji611UlfMd9ZMTwxKGmNqmok2Da3yhf8rErrla+xXpORsA15KS+tdNg
+	 vsr42ivVYWMkvomyp9/OQLBHTUFCYUqKIvU63sJu+QFdqF31noo9tnOJsU47LhAkM7
+	 E+jZnY+xNacPPTuT7yWT4jM2sYvF19TlVqCQdiUc+NWoIl0zpiuY/cixe5rTgNnt3x
+	 iplCeWSqXYggJNjkS7dIw8Zh8pjW7SH0CrEgkeeRprCJwbrf87UMgHrLpn4R4aFbun
+	 dY3TL0bO1dqXg==
+From: Kees Cook <kees@kernel.org>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] nvme-pci: Make nvme_pci_npages_prp() __always_inline
+Date: Tue,  6 May 2025 20:35:40 -0700
+Message-Id: <20250507033536.work.088-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [PATCH RFC 07/28] mm: thp: use folio_batch to handle THP
- splitting in deferred_split_scan()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <7fd0262d-ff36-d621-191e-4f623a2038c0@google.com>
-Date: Wed, 7 May 2025 11:30:01 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- Johannes Weiner <hannes@cmpxchg.org>,
- mhocko@kernel.org,
- roman.gushchin@linux.dev,
- shakeel.butt@linux.dev,
- akpm@linux-foundation.org,
- david@fromorbit.com,
- zhengqi.arch@bytedance.com,
- yosry.ahmed@linux.dev,
- nphamcs@gmail.com,
- chengming.zhou@linux.dev,
- linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org,
- linux-mm@kvack.org,
- hamzamahfooz@linux.microsoft.com,
- apais@linux.microsoft.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <ED148952-0144-48CB-ADAD-012D58025035@linux.dev>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
- <20250415024532.26632-8-songmuchun@bytedance.com>
- <20250430143714.GA2020@cmpxchg.org>
- <235f2616-99dd-abfa-f6d1-c178d8ffb363@google.com>
- <7fd0262d-ff36-d621-191e-4f623a2038c0@google.com>
-To: Hugh Dickins <hughd@google.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3008; i=kees@kernel.org; h=from:subject:message-id; bh=uZoSquFI+a0xjog8hTbmiXK+g9d2dTlbWp8mPmCNMg8=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlSV3k+Hf24wEbxTuuVerVrbi/vK3wvT9t9rNXLSsvpx I//LEFTOkpZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACayQI6RoevuTseXEua71zzN XcWesHZppYjqn6DCDxdecVy8tWJ5/h5GhtcRZpnrFiWfZ+aJZtLZxKBsY1v2/uEmkQd5RuxOzMx ijAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+The only reason nvme_pci_npages_prp() could be used as a compile-time
+known result in BUILD_BUG_ON() is because the compiler was always choosing
+to inline the function. Under special circumstances (sanitizer coverage
+functions disabled for __init functions on ARCH=um), the compiler decided
+to stop inlining it:
 
+   drivers/nvme/host/pci.c: In function 'nvme_init':
+   include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_678' declared with attribute error: BUILD_BUG_ON failed: nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:538:25: note: in definition of macro '__compiletime_assert'
+     538 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:557:9: note: in expansion of macro '_compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/nvme/host/pci.c:3804:9: note: in expansion of macro 'BUILD_BUG_ON'
+    3804 |         BUILD_BUG_ON(nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS);
+         |         ^~~~~~~~~~~~
 
-> On May 7, 2025, at 05:44, Hugh Dickins <hughd@google.com> wrote:
-> 
-> On Mon, 5 May 2025, Hugh Dickins wrote:
-> ...
->> 
->> However... I was intending to run it for 12 hours on the workstation,
->> but after 11 hours and 35 minutes, that crashed with list_del corruption,
->> kernel BUG at lib/list_debug.c:65! from deferred_split_scan()'s
->> list_del_init().
->> 
->> I've not yet put together the explanation: I am deeply suspicious of
->> the change to when list_empty() becomes true (the block Hannes shows
->> above is not the only such: (__)folio_unqueue_deferred_split() and
->> migrate_pages_batch() consult it too), but each time I think I have
->> the explanation, it's ruled out by folio_try_get()'s reference.
->> 
->> And aside from the crash (I don't suppose 6.15-rc5 is responsible,
->> or that patches 08-28/28 would fix it), I'm not so sure that this
->> patch is really an improvement (folio reference held for longer, and
->> list lock taken more often when split fails: maybe not important, but
->> I'm also not so keen on adding in fbatch myself).  I didn't spend very
->> long looking through the patches, but maybe this 07/28 is not essential?
+Force it to be __always_inline to make sure it is always available for
+use with BUILD_BUG_ON().
 
-Hi Hugh,
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202505061846.12FMyRjj-lkp@intel.com/
+Fixes: c372cdd1efdf ("nvme-pci: iod npages fits in s8")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Keith Busch <kbusch@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: <linux-nvme@lists.infradead.org>
+---
+ drivers/nvme/host/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Really thanks for your time to look at this patch. 07/28 is actually a
-necessary change in this series.
-
-> 
-> The BUG would be explained by deferred_split_folio(): that is still using
-> list_empty(&folio->_deferred_list) to decide whether the folio needs to be
-> added to the _deferred_list (else is already there).  With the 07/28 mods,
-> it's liable to add THP to the _deferred_list while deferred_split_scan()
-> holds that THP in its local fbatch.  I haven't tried to go through all the
-> ways in which that may go horribly wrong (or be harmless), but one of them
-> is deferred_split_scan() after failed split doing a second list_add_tail()
-> on that THP: no!  I won't think about fixes, I'll  move on to other tasks.
-
-Thanks for your analysis. I'll look at it deeply.
-
-> 
-> Or does that get changed in 08-28/28? I've not looked.
-
-No. 08-28/28 did not change anything related to THP _deferred_list.
-
-Muchun,
-Thanks.
-
-> 
-> Hugh
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index b178d52eac1b..9ab070a9f037 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -390,7 +390,7 @@ static bool nvme_dbbuf_update_and_check_event(u16 value, __le32 *dbbuf_db,
+  * as it only leads to a small amount of wasted memory for the lifetime of
+  * the I/O.
+  */
+-static int nvme_pci_npages_prp(void)
++static __always_inline int nvme_pci_npages_prp(void)
+ {
+ 	unsigned max_bytes = (NVME_MAX_KB_SZ * 1024) + NVME_CTRL_PAGE_SIZE;
+ 	unsigned nprps = DIV_ROUND_UP(max_bytes, NVME_CTRL_PAGE_SIZE);
+-- 
+2.34.1
 
 
