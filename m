@@ -1,387 +1,253 @@
-Return-Path: <linux-kernel+bounces-638779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9B4AAEDA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8BFAAEDA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2E981BA8D58
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C2B1BA8D42
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4536D28FFD7;
-	Wed,  7 May 2025 21:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D7F28FFCC;
+	Wed,  7 May 2025 21:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HmUNGwYc"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kDQ2rGKR"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2072.outbound.protection.outlook.com [40.107.243.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F8A28FFFD
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746652227; cv=none; b=fLu8rS/0IYa2ac/FKlERaJr4MCiElCjuQWtbzXjQqaPS1h5/Bs991hityv9IguaXjPmjHNcjEpqEaT8O9Z4WfGQ0PkWW7wGaVQVgK4h1gfS5RDcbVV4NHwaFxdSTzyjdISqk24rmGi7aFKfP6mIlNN6ShqN3sCmFSIefmURv42M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746652227; c=relaxed/simple;
-	bh=mudg1S08WtbXpt3bBhQd16BpjFM5MzfMdIXtOllRjmg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dmCZptU/8bIwQiUdE2193J5vzUyJHXB583XN32D7rwaiZ35x+UCHg3pkhoc71D/BOtDOz6F+JE+loNrKOreyF4H5s1iVZSDlL3RuxH80FXHULdCvvydCVxvvcxaD1408pBwljX3ViRnANzgi4ct9vllySFq3p1zR5pCGJ7VW3oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HmUNGwYc; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22e7343c777so2616785ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 14:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746652225; x=1747257025; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kVWY/Nymcc5Mi21meIhjAtxrGO1+LJjfuVy5Y4z4RY=;
-        b=HmUNGwYcbjy0Zet2XVqWE7E3mKCehisk8S2QvBwRQWRgYatakA6dAwoCgDaFlI7ZLM
-         eyf9l1qLnLHeA0b9VjR9R0OU717sKh+sBKfv9galAhzfo2QRvRsNfKEsZFQIal1z873Y
-         83sjCQCjEqSYo7eZdv89/l9FY+Y8jAUl9SbGC8SW3fubbVxRP0KVX6IU/K3VdA/sdhF+
-         JkTrLYsSSg1rlDGwrKSQt41aFn7ZJiRBgknQLBulRYT8u4xnPrGBz++jWXJRWe+jzfG3
-         kQw6FcVhC7BXsGgkJVx9INoa0rY+LpBN9vO/348w76jV7iq8opecY2x0GuOPfyWys4P/
-         ShGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746652225; x=1747257025;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kVWY/Nymcc5Mi21meIhjAtxrGO1+LJjfuVy5Y4z4RY=;
-        b=SFcdd4iyXoWXSjvm39C9cGT+fgsWUY1GR3dxQLLtDA1vFVj8dx5//u7lIs9s4qkMmE
-         y1KaRpmIiGtrSyXHR9DbOYec9Aj3cvTYnJor+yNKUCuD97kGHuRDCNgms5dApSoY9KST
-         HSEnIu9v1xndwUsc/siSxu8I8M3tO6Dt9a/c8U7/YK8LrTCjMvbAwkU9T4yo+yqSh+Qd
-         EwKJyeSPyDi3sWB4uQ1Pohr5w9Y5t4TFT/EF8BxwhD7Maut0GUDeADzB86emyDkzGCE8
-         Ajbp3TQu5vmI+AhJwckLtBONXNEF5zGK5QRKJmNDFUU93Q1L+l/GEBOrZx4P5uzAT46v
-         0N5g==
-X-Gm-Message-State: AOJu0YykUCHB+mQTlxwSiKRZlKylRDEWBCNCc9FMuUpEhJ6/QD+zN2D3
-	cKvkkkzho8wVZpxM0IaEXIZZEbFhbvoxi2Qu2CMUABoD4Opf3SmKqcc2cUdkCgVWwVVzowm4XLD
-	5IyrRBQ==
-X-Google-Smtp-Source: AGHT+IE6i+G7XeAWyyrmAhumr4SLznZ8NngvskzIvptC6BQRErvKAzQZFi3uaUTvwh5bjbQ7DNVFXJwxoQaU
-X-Received: from plbkz11.prod.google.com ([2002:a17:902:f9cb:b0:22d:e49c:3cb])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d50b:b0:225:abd2:5e39
- with SMTP id d9443c01a7336-22e5ea75caamr65137815ad.30.1746652224731; Wed, 07
- May 2025 14:10:24 -0700 (PDT)
-Date: Wed,  7 May 2025 21:10:06 +0000
-In-Reply-To: <20250507211005.449435-3-ynaffit@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5D31D6DB9
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746652279; cv=fail; b=GNAQ5aMD7vB4R3+wJXHKnvNs3UZqa6eZej5A/Js/MNzavIcDywTAtQyC64dl8rIlsZTZHl3z3dDRgqUzo7+4Ml1SchzmZFOXPBDl9CKSx23ndtbFFjO7KngpcioScyyKKyuDWZFmhSD2orBAT15L0EBnUHVC/UV0uNaD0nH5ozY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746652279; c=relaxed/simple;
+	bh=R1RlMbl/pdUkDTP/TI2uHgXKXpq5YoeI5OTk+jiy/5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=C/xDzbr4UNOayaJf1DHSIGjKICkjQJVdFB60v6bbGxq9fvhDKQyPN7cZZ+/UVXYN3K6BQTW+RQU9s1g7Cg6Y2cxb5cA2FoQTkm1s3NFrvsqaIETYH17Q6J8uDz6sWAB2SMa9i1FRhMfS3Rc3RuxNhP9T7v0j3/8J5Bw9p0cS9pA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kDQ2rGKR; arc=fail smtp.client-ip=40.107.243.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UkpR1KarYo4ryvVxslP2bWNvF8dFX2JaFjRDIlHg/3OFvk6vacFn1hZkjeHw5RF6+bfa9iTXm2HQWqpwndvNgRs4dQ3DDZEmMxBU1an4NCYXFdNHbfJ+ScOEHeWwoNF4OAJXttlFlhsT495CZbFpiWKEnWt0d/6wjTDEa2yuLbrxkCwYTyBJryAPahkiahzpwJZMJWWg7mfDhuGBrRlsA6/QU3hBFshfWg7fZgzkld63WPnqgCht/BTigWbtPQsPbZkHVxJas2Sewcm+IQ2J4iVL2kw3vS59Wz7SgTFTu9MMAXhYUREjo54v1qiNY/17oUB0SN16d4u1SDDeqwHOOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vsvBl46JLFUDJU678btsOaGN+YSkhzmNEwC9T/KqI7I=;
+ b=LZTn/8yUxWueEtEZ79XJnS2t0mtFbHOAtsClGyAWwm1dH1ygxUYLECXrchQRQmOu+PA61PEY61Vbaph0EnMOfZX+DUMzr5Xo8m20BP9vliSTt313k+bv11/Ag6yBybtbbkp/GxjlVDNp4Dib5O4AaBb5ETLXC6ZDW0p5vrpza4P6p5UaBrOb8ESz/upuC0NuQ3qLsUdSiorAs9p/FmUZALlXlvKuMrLqDWEfcV3jeCXgEg+Svnj4brA4wgBcgVhI0LYh5HQA0B5NIK1whEVoFT63az7xmjuFVuA3yF6Q3RLM4uf2YRSPkX4giStEt58+LfeT2srSLsxhuDoNiJSlNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vsvBl46JLFUDJU678btsOaGN+YSkhzmNEwC9T/KqI7I=;
+ b=kDQ2rGKRPSnmCFVtnfbddU8thpXcgaCNIML3Q3D8YqrSvscG0CzFHm/9dNh+tEa172XjkIWFn3jUX3tKiKS2WufJf+vKki2iAOczFFo77OsMhjlvkP54tJ73Fv2cDfSsWl0TD5ttKgbjtTmjMHF95rb9mM05ybiSAX+Kgs0ewagnlxmeRLAkOnFT+11Nq+XGC4ZqfFaDVvAayD61+n3YgkDK+fEsHYZEBYvyHCaRaK+CkFhQhRO6yMqkmrVNDUILSNhpHPvI5dDDBAa7dkBBbp740XpPKlr+PSshPMfEXhlDGiiWhR6oWS4JgMADxF5bS7Q+VDX82eq9Z1bEJNu9uw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ LV3PR12MB9236.namprd12.prod.outlook.com (2603:10b6:408:1a5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 7 May
+ 2025 21:11:11 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8722.020; Wed, 7 May 2025
+ 21:11:10 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Richard Chang <richardycc@google.com>,
+	linux-kernel@vger.kernel.org,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v3 0/4] Make MIGRATE_ISOLATE a standalone bit
+Date: Wed,  7 May 2025 17:10:55 -0400
+Message-ID: <20250507211059.2211628-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL6PEPF00013E00.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1001:0:1a) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250507211005.449435-3-ynaffit@google.com>
-X-Mailer: git-send-email 2.49.0.987.g0cc8ee98dc-goog
-Message-ID: <20250507211005.449435-4-ynaffit@google.com>
-Subject: [PATCH v3 2/2] binder: Create safe versions of binder log files
-From: "Tiffany Y. Yang" <ynaffit@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	"Tiffany Y. Yang" <ynaffit@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|LV3PR12MB9236:EE_
+X-MS-Office365-Filtering-Correlation-Id: cadf5352-d3ff-4e7a-801a-08dd8dabb127
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hkIRDEhaMnAxvJVtWqumJjGf7TfHU77FHIK7V1FVMkiFl8JeG34Z/nB5+j4C?=
+ =?us-ascii?Q?8Zc1GbgIUtm+U0MB2rWlBeVsI1ttVakOjCahO40k4kXm5lhgmqPQBaf0A37o?=
+ =?us-ascii?Q?hYNUeXlZ9BuP5TDFCNAKnnQErS5H279jg5sGRiCeyI3Ebd1hojCjLKac5ZRZ?=
+ =?us-ascii?Q?Bso5D8Ta2kXSGSxAkQzsICZoWFNBA0wwEgs+89AG7RJvHh9usRp7OHV+Uhmh?=
+ =?us-ascii?Q?VeByV2VXl0SDgucLWdtmx40WiimTvSSrtDVdVplQ7wyhKBtUscg1b7lvtp/k?=
+ =?us-ascii?Q?cKllzWiK2STn972IMs5nHoGHswHkDLXuf3I1A/eOnSUnv4GcOnTqRl6Gh7CK?=
+ =?us-ascii?Q?H5sRh5SoyIhAqC6QqsIvkt3U4aAfQkMfmUyGCKYskSCGIrQhVWj/PmjopPRm?=
+ =?us-ascii?Q?JegkYUA4hpGAnw8Jp9syY+Rz7BWqueObAAjvTTEscUzlnXBLHN9HyxX+BZyB?=
+ =?us-ascii?Q?iJzU2gZxGpldYQovpOD0u5XxytyHS+WVRg8VysEkAV8Ir6MFjGIYyK4I8A/y?=
+ =?us-ascii?Q?0DL3hM+zzJ0uMRVOuuR/vNonOZFL3tsQCyG/YbE9x5qt6k67S5YliOo7NmgS?=
+ =?us-ascii?Q?nGcHqY28P+6krdM49xFs1XNloidtXUlwQf4PvD8/zfeaY9Oi4vegkxJSdp2D?=
+ =?us-ascii?Q?AX3PkkHimF3rHg5Bwtkm4lA8eriPe6mqPJobFIIj2Wf3pxIIO2ao2ZWt/F0w?=
+ =?us-ascii?Q?xqaneVXlKVoQIKmL7Z1xqD9O3642N0Ux1ZygQcKBC1ziFe7Ceu8/bWhTBP5p?=
+ =?us-ascii?Q?71jRSUxVe3jSYEUfAvh2TTsML+2+QZRvTeS9OAvCUUXwu4MUi/4tqDmC40yW?=
+ =?us-ascii?Q?cmAqgBMU3foowMbYnHdTELL/ECyk5k2eFN35K14zG7Ev3L/PKGRIxP9YuYOy?=
+ =?us-ascii?Q?OHLZSNpUj9R1Odja3XZUYt0WH9mLVh7B5SoIn1HIBeNwgj/2IHEs4Yd8nFv7?=
+ =?us-ascii?Q?XjtO2ECvvn5OSNvEylP9FYQTpZ/szzUuxaAM7Lx84ye3JX3ZhxTnMlpHIs0Z?=
+ =?us-ascii?Q?U++Bjtx8FrBeYEfeE7HjIylyDp+a9MPTjpEqfvAHNJbjLhAQK+keQdm4HRzG?=
+ =?us-ascii?Q?Td0IFceGYM2Piz2t77GqOca3gCR5/ifZo5PSrcD8Lp4649QAHJCoI8N//q17?=
+ =?us-ascii?Q?7ZH8DTCi/bHNO2nOP21FZKl9pn9bzGBytUzEeOabOKW0tooFBreZ+kUg/HCG?=
+ =?us-ascii?Q?Ec4qds6RP9VD2Z67SqICzIQL7ecjwgv+WIVW9tas8PI7zdE9n5DT+pTrtuWE?=
+ =?us-ascii?Q?0F/x3bL1p5Wy7B0H0Tm3l66fk5qbapHKSV0MItb4VFCrUUXeCYYWQlocnd6E?=
+ =?us-ascii?Q?hrhzjWTB//1JWQj7xMY/GcRMhmARnwCsp0nSSoPgUVtlZ0Ij7fp1gEcJzmtV?=
+ =?us-ascii?Q?SfgEpi9rpnjEe5rXK1NdOOIkJIGuFL2UaKpfF9CVCKmX6KCyR2KAlFV3ml4/?=
+ =?us-ascii?Q?p9CAnxSdzbk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Thtoaig0JiP+59MdAxGi/3pMToi9b4NcF9CeeQQsjOLoSdZpniNF5ZsArgSa?=
+ =?us-ascii?Q?qF+D1479Ez3emIqoLmnU/t7V39yr6zcoc3rV4api5okvsLDFjKecQOXO2ihH?=
+ =?us-ascii?Q?m+X9XSkB/vd0lHr4tvSkTRkqWPM+gdPnOQ025vRgWd+F3BRiJc1kOUxYGDDf?=
+ =?us-ascii?Q?Y4Ra0MrPTFaJY/5wEWpasf7YQ/xdMzYy2OHaCCSGfv242GPDZaHWeB+eHCMi?=
+ =?us-ascii?Q?BedKi4fo4MUeOD7qTaw7g5mX8Yb3oXCuWWybdyv/+EmuWxrGthNbWwZUxX9F?=
+ =?us-ascii?Q?vZtL91cd3yBXTiZQnkOjZvc5uWfEy2QCHFIAiR0rL++xG+ujn3IGsn3DGhMR?=
+ =?us-ascii?Q?5dcAqXE7nKKoPl+BfhL+dTuD23D07tX4KSgrt1mDrKKYhOxZzi4VfUUSOf/+?=
+ =?us-ascii?Q?mZUQyZNHTa1fmVUkSRBV3TTDsgn1XgdN/RoQWLDXAh/HU31WBZ27Ox1Huc5N?=
+ =?us-ascii?Q?Ifo7i9wHAqbjD1XEOc63hMNEE7EMkBCf08Qf09ufHzK7/eadE4DU+J1FdMlr?=
+ =?us-ascii?Q?wJbgbPub/bJE6tzW5J8Js4gaJEKlOQutKhFTvC4QAPYvJr1aiXz9xiu4yam/?=
+ =?us-ascii?Q?Hhv1txPptrQhLjpL9P6kNaf/7ZhzOTznHijKCsB+CG51wpx83ORamAgAsoz5?=
+ =?us-ascii?Q?q/94ZJfAe3viD8mWjaWJGXU7a8/Z6FLn9ZHzTzoZUMP61/nMhj31yhRunjSd?=
+ =?us-ascii?Q?+V8cSSfHQus6RGyi5lyXYMfzqk9fCmuYxxBYqp1n7hUxHRJ2HiqGGgjVwg+1?=
+ =?us-ascii?Q?fGfLsfXMmZCwOH/HREbN6EJTxz3MpbFDEwjWQE/gY36ElrraidEMbm+Uxa0C?=
+ =?us-ascii?Q?6A3yEEWIKPxM7b6GyO9Ddz4twSrvQgQeZRvKl/rlimkRYUJH4bF79hFt3y1w?=
+ =?us-ascii?Q?266o5iiuIvKojezWY+x6tn9JBkEk694f7WXn1SeG8BK9o6pe+hyDzo/TkM+Z?=
+ =?us-ascii?Q?d6T9mWBKiXRO/2E96CNcLaG47IwUZmcE5P/sblhUp67k+eQlxzp5xOU1RUT8?=
+ =?us-ascii?Q?so4uKPjlXrGJcMBQreHvl8gtkoKkX5h81bK3kJfbRbrRJZ8+ryTGZapYOqXP?=
+ =?us-ascii?Q?bB7+rjDn6oqd/jJFH14IQiUGs3infwYzuxFnWgHzIAuUSxz9jkc/FifSV2wR?=
+ =?us-ascii?Q?NgporLyZR6WjHqXd/v6evsBnKNzSJPUHDw3ZGlIrMIs3Ajzv2eRUzuYwblQI?=
+ =?us-ascii?Q?QRgUPm91hTZmPiw5VksDSrFU/9H8mFP6jCoLOOSSYKJ4Sv9W4I0FO/qlae3i?=
+ =?us-ascii?Q?iXODgqrFnJV1RpKzCpLtk7jOW8XyqQUFvgYGWyvgKlmo/yYWM21VH6CMbYOC?=
+ =?us-ascii?Q?0rjk8BsjzOW/gvWwPWCqnXoQT2COhcQ+WdwPgFOKQsu/ewdOzaJTySiJZ8oJ?=
+ =?us-ascii?Q?DNAr9bC6FOWSkJxjf1fUoe/NSSayvdv2lA9pSSqJuuNCeZ8uafP2i5JZaeMa?=
+ =?us-ascii?Q?WjiPklYpixCJrfWQbCkrlJoIYQtgua/gijWYMMqSAqqRpdrvHQlYfi4MComp?=
+ =?us-ascii?Q?mshLKIo7rFj3GkZyibJiYPWHLhd7hHue4baVAuZbWMgbsS3Eh1KjlylnbwCw?=
+ =?us-ascii?Q?ib1p4K8xDsQJ8df4vhfe2BKdn+6EUySG25W1ABxG?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cadf5352-d3ff-4e7a-801a-08dd8dabb127
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 21:11:10.8747
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cKMysVRtSe2MYrT/6F5dnMLLm/+LRAuXPxqOuiTtctcew3iMbuRmGpfojM5NYSeb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9236
 
-Binder defines several seq_files that can be accessed via debugfs or
-binderfs. Some of these files (e.g., 'state' and 'transactions')
-contain more granular information about binder's internal state that
-is helpful for debugging, but they also leak userspace address data
-through user-defined 'cookie' or 'ptr' values. Consequently, access
-to these files must be heavily restricted.
 
-Add two new files, 'state_hashed' and 'transactions_hashed', that
-reproduce the information in the original files but use the kernel's
-raw pointer obfuscation to hash any potential user addresses. This
-approach allows systems to grant broader access to the new files
-without having to change the security policy around the existing ones.
+Hi Johannes,
 
-In practice, userspace populates these fields with user addresses, but
-within the driver, these values only serve as unique identifiers for
-their associated binder objects. Consequently, binder logs can
-obfuscate these values and still retain meaning. While this strategy
-prevents leaking information about the userspace memory layout in the
-existing log files, it also decouples log messages about binder
-objects from their user-defined identifiers.
+I incorporated all your feedback on v2 (see Changelog below), except the
+"decoupling enum migratetype from the pageblock bits" one[1], since all
+5 migratetypes (not MIGRATE_ISOLATE) are just values and
+"#define PB_migratetype_bits MIGRATE_TYPE_BITS" would take 5 bits
+for migratetypes, which only requires 3 bits. Let me know if I
+misunderstand your suggestion. Thanks.
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
-Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
----
----
-V2->V3: Cast binder_uintptr_t to long before casting to ptr
-V1->V2: Update commit message
 
- drivers/android/binder.c | 106 +++++++++++++++++++++++++++++----------
- 1 file changed, 79 insertions(+), 27 deletions(-)
+Hi all,
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 960d055c27d5..5578e72f435b 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -6380,7 +6380,7 @@ static void print_binder_work_ilocked(struct seq_file *m,
- 				      struct binder_proc *proc,
- 				      const char *prefix,
- 				      const char *transaction_prefix,
--				      struct binder_work *w)
-+				      struct binder_work *w, bool hash_ptrs)
- {
- 	struct binder_node *node;
- 	struct binder_transaction *t;
-@@ -6403,9 +6403,15 @@ static void print_binder_work_ilocked(struct seq_file *m,
- 		break;
- 	case BINDER_WORK_NODE:
- 		node = container_of(w, struct binder_node, work);
--		seq_printf(m, "%snode work %d: u%016llx c%016llx\n",
--			   prefix, node->debug_id,
--			   (u64)node->ptr, (u64)node->cookie);
-+		if (hash_ptrs)
-+			seq_printf(m, "%snode work %d: u%p c%p\n",
-+				   prefix, node->debug_id,
-+				   (void *)(long)node->ptr,
-+				   (void *)(long)node->cookie);
-+		else
-+			seq_printf(m, "%snode work %d: u%016llx c%016llx\n",
-+				   prefix, node->debug_id,
-+				   (u64)node->ptr, (u64)node->cookie);
- 		break;
- 	case BINDER_WORK_DEAD_BINDER:
- 		seq_printf(m, "%shas dead binder\n", prefix);
-@@ -6430,7 +6436,7 @@ static void print_binder_work_ilocked(struct seq_file *m,
- 
- static void print_binder_thread_ilocked(struct seq_file *m,
- 					struct binder_thread *thread,
--					bool print_always)
-+					bool print_always, bool hash_ptrs)
- {
- 	struct binder_transaction *t;
- 	struct binder_work *w;
-@@ -6460,14 +6466,16 @@ static void print_binder_thread_ilocked(struct seq_file *m,
- 	}
- 	list_for_each_entry(w, &thread->todo, entry) {
- 		print_binder_work_ilocked(m, thread->proc, "    ",
--					  "    pending transaction", w);
-+					  "    pending transaction",
-+					  w, hash_ptrs);
- 	}
- 	if (!print_always && m->count == header_pos)
- 		m->count = start_pos;
- }
- 
- static void print_binder_node_nilocked(struct seq_file *m,
--				       struct binder_node *node)
-+				       struct binder_node *node,
-+				       bool hash_ptrs)
- {
- 	struct binder_ref *ref;
- 	struct binder_work *w;
-@@ -6475,8 +6483,13 @@ static void print_binder_node_nilocked(struct seq_file *m,
- 
- 	count = hlist_count_nodes(&node->refs);
- 
--	seq_printf(m, "  node %d: u%016llx c%016llx hs %d hw %d ls %d lw %d is %d iw %d tr %d",
--		   node->debug_id, (u64)node->ptr, (u64)node->cookie,
-+	if (hash_ptrs)
-+		seq_printf(m, "  node %d: u%p c%p", node->debug_id,
-+			   (void *)(long)node->ptr, (void *)(long)node->cookie);
-+	else
-+		seq_printf(m, "  node %d: u%016llx c%016llx", node->debug_id,
-+			   (u64)node->ptr, (u64)node->cookie);
-+	seq_printf(m, " hs %d hw %d ls %d lw %d is %d iw %d tr %d",
- 		   node->has_strong_ref, node->has_weak_ref,
- 		   node->local_strong_refs, node->local_weak_refs,
- 		   node->internal_strong_refs, count, node->tmp_refs);
-@@ -6489,7 +6502,8 @@ static void print_binder_node_nilocked(struct seq_file *m,
- 	if (node->proc) {
- 		list_for_each_entry(w, &node->async_todo, entry)
- 			print_binder_work_ilocked(m, node->proc, "    ",
--					  "    pending async transaction", w);
-+					  "    pending async transaction",
-+					  w, hash_ptrs);
- 	}
- }
- 
-@@ -6510,6 +6524,7 @@ static void print_binder_ref_olocked(struct seq_file *m,
-  * @m:          struct seq_file for output via seq_printf()
-  * @node:       struct binder_node to print fields of
-  * @prev_node:	struct binder_node we hold a temporary reference to (if any)
-+ * @hash_ptrs:  whether to hash @node's binder_uintptr_t fields
-  *
-  * Helper function to handle synchronization around printing a struct
-  * binder_node while iterating through @node->proc->nodes or the dead nodes
-@@ -6521,7 +6536,7 @@ static void print_binder_ref_olocked(struct seq_file *m,
-  */
- static struct binder_node *
- print_next_binder_node_ilocked(struct seq_file *m, struct binder_node *node,
--			       struct binder_node *prev_node)
-+			       struct binder_node *prev_node, bool hash_ptrs)
- {
- 	/*
- 	 * Take a temporary reference on the node so that isn't removed from
-@@ -6539,7 +6554,7 @@ print_next_binder_node_ilocked(struct seq_file *m, struct binder_node *node,
- 	if (prev_node)
- 		binder_put_node(prev_node);
- 	binder_node_inner_lock(node);
--	print_binder_node_nilocked(m, node);
-+	print_binder_node_nilocked(m, node, hash_ptrs);
- 	binder_node_inner_unlock(node);
- 	if (node->proc)
- 		binder_inner_proc_lock(node->proc);
-@@ -6549,7 +6564,7 @@ print_next_binder_node_ilocked(struct seq_file *m, struct binder_node *node,
- }
- 
- static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
--			      bool print_all)
-+			      bool print_all, bool hash_ptrs)
- {
- 	struct binder_work *w;
- 	struct rb_node *n;
-@@ -6564,7 +6579,7 @@ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
- 	binder_inner_proc_lock(proc);
- 	for (n = rb_first(&proc->threads); n; n = rb_next(n))
- 		print_binder_thread_ilocked(m, rb_entry(n, struct binder_thread,
--						rb_node), print_all);
-+						rb_node), print_all, hash_ptrs);
- 
- 	for (n = rb_first(&proc->nodes); n; n = rb_next(n)) {
- 		struct binder_node *node = rb_entry(n, struct binder_node,
-@@ -6572,7 +6587,8 @@ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
- 		if (!print_all && !node->has_async_transaction)
- 			continue;
- 
--		last_node = print_next_binder_node_ilocked(m, node, last_node);
-+		last_node = print_next_binder_node_ilocked(m, node, last_node,
-+							   hash_ptrs);
- 	}
- 	binder_inner_proc_unlock(proc);
- 	if (last_node)
-@@ -6590,7 +6606,8 @@ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
- 	binder_inner_proc_lock(proc);
- 	list_for_each_entry(w, &proc->todo, entry)
- 		print_binder_work_ilocked(m, proc, "  ",
--					  "  pending transaction", w);
-+					  "  pending transaction", w,
-+					  hash_ptrs);
- 	list_for_each_entry(w, &proc->delivered_death, entry) {
- 		seq_puts(m, "  has delivered dead binder\n");
- 		break;
-@@ -6772,7 +6789,7 @@ static void print_binder_proc_stats(struct seq_file *m,
- 	print_binder_stats(m, "  ", &proc->stats);
- }
- 
--static int state_show(struct seq_file *m, void *unused)
-+static void print_binder_state(struct seq_file *m, bool hash_ptrs)
- {
- 	struct binder_proc *proc;
- 	struct binder_node *node;
-@@ -6784,16 +6801,38 @@ static int state_show(struct seq_file *m, void *unused)
- 	if (!hlist_empty(&binder_dead_nodes))
- 		seq_puts(m, "dead nodes:\n");
- 	hlist_for_each_entry(node, &binder_dead_nodes, dead_node)
--		last_node = print_next_binder_node_ilocked(m, node, last_node);
-+		last_node = print_next_binder_node_ilocked(m, node, last_node,
-+							   hash_ptrs);
- 	spin_unlock(&binder_dead_nodes_lock);
- 	if (last_node)
- 		binder_put_node(last_node);
- 
- 	mutex_lock(&binder_procs_lock);
- 	hlist_for_each_entry(proc, &binder_procs, proc_node)
--		print_binder_proc(m, proc, true);
-+		print_binder_proc(m, proc, true, hash_ptrs);
- 	mutex_unlock(&binder_procs_lock);
-+}
-+
-+static void print_binder_transactions(struct seq_file *m, bool hash_ptrs)
-+{
-+	struct binder_proc *proc;
-+
-+	seq_puts(m, "binder transactions:\n");
-+	mutex_lock(&binder_procs_lock);
-+	hlist_for_each_entry(proc, &binder_procs, proc_node)
-+		print_binder_proc(m, proc, false, hash_ptrs);
-+	mutex_unlock(&binder_procs_lock);
-+}
-+
-+static int state_show(struct seq_file *m, void *unused)
-+{
-+	print_binder_state(m, false);
-+	return 0;
-+}
- 
-+static int state_hashed_show(struct seq_file *m, void *unused)
-+{
-+	print_binder_state(m, true);
- 	return 0;
- }
- 
-@@ -6815,14 +6854,13 @@ static int stats_show(struct seq_file *m, void *unused)
- 
- static int transactions_show(struct seq_file *m, void *unused)
- {
--	struct binder_proc *proc;
--
--	seq_puts(m, "binder transactions:\n");
--	mutex_lock(&binder_procs_lock);
--	hlist_for_each_entry(proc, &binder_procs, proc_node)
--		print_binder_proc(m, proc, false);
--	mutex_unlock(&binder_procs_lock);
-+	print_binder_transactions(m, false);
-+	return 0;
-+}
- 
-+static int transactions_hashed_show(struct seq_file *m, void *unused)
-+{
-+	print_binder_transactions(m, true);
- 	return 0;
- }
- 
-@@ -6835,7 +6873,7 @@ static int proc_show(struct seq_file *m, void *unused)
- 	hlist_for_each_entry(itr, &binder_procs, proc_node) {
- 		if (itr->pid == pid) {
- 			seq_puts(m, "binder proc state:\n");
--			print_binder_proc(m, itr, true);
-+			print_binder_proc(m, itr, true, false);
- 		}
- 	}
- 	mutex_unlock(&binder_procs_lock);
-@@ -6902,8 +6940,10 @@ const struct file_operations binder_fops = {
- };
- 
- DEFINE_SHOW_ATTRIBUTE(state);
-+DEFINE_SHOW_ATTRIBUTE(state_hashed);
- DEFINE_SHOW_ATTRIBUTE(stats);
- DEFINE_SHOW_ATTRIBUTE(transactions);
-+DEFINE_SHOW_ATTRIBUTE(transactions_hashed);
- DEFINE_SHOW_ATTRIBUTE(transaction_log);
- 
- const struct binder_debugfs_entry binder_debugfs_entries[] = {
-@@ -6913,6 +6953,12 @@ const struct binder_debugfs_entry binder_debugfs_entries[] = {
- 		.fops = &state_fops,
- 		.data = NULL,
- 	},
-+	{
-+		.name = "state_hashed",
-+		.mode = 0444,
-+		.fops = &state_hashed_fops,
-+		.data = NULL,
-+	},
- 	{
- 		.name = "stats",
- 		.mode = 0444,
-@@ -6925,6 +6971,12 @@ const struct binder_debugfs_entry binder_debugfs_entries[] = {
- 		.fops = &transactions_fops,
- 		.data = NULL,
- 	},
-+	{
-+		.name = "transactions_hashed",
-+		.mode = 0444,
-+		.fops = &transactions_hashed_fops,
-+		.data = NULL,
-+	},
- 	{
- 		.name = "transaction_log",
- 		.mode = 0444,
+This patchset moves MIGRATE_ISOLATE to a standalone bit to avoid
+being overwritten during pageblock isolation process. Currently,
+MIGRATE_ISOLATE is part of enum migratetype (in include/linux/mmzone.h),
+thus, setting a pageblock to MIGRATE_ISOLATE overwrites its original
+migratetype. This causes pageblock migratetype loss during
+alloc_contig_range() and memory offline, especially when the process
+fails due to a failed pageblock isolation and the code tries to undo the
+finished pageblock isolations.
+
+It is on top of mm-everything-2025-05-07-03-02.
+
+In terms of performance for changing pageblock types, no performance
+change is observed:
+
+1. I used perf to collect stats of offlining and onlining all memory of a
+40GB VM 10 times and see that get_pfnblock_flags_mask() and
+set_pfnblock_flags_mask() take about 0.12% and 0.02% of the whole process
+respectively with and without this patchset across 3 runs.
+
+2. I used perf to collect stats of dd from /dev/random to a 40GB tmpfs file
+and find get_pfnblock_flags_mask() takes about 0.05% of the process with and
+without this patchset across 3 runs.
+
+Changelog
+===
+From v2[2]:
+1. Moved MIGRATETYPE_NO_ISO_MASK to Patch 2, where it is used.
+2. Removed spurious changes in Patch 1.
+3. Refactored code so that migratetype mask is passed properly for all
+callers to {get,set}_pfnblock_flags_mask().
+4. Added toggle_pageblock_isolate() for setting and clearing
+MIGRATE_ISOLATE.
+5. Changed get_pageblock_migratetype() when CONFIG_MEMORY_ISOLATION to
+handle MIGRATE_ISOLATE case. It acts like a parsing layer for
+get_pfnblock_flags_mask().
+
+
+Design
+===
+
+Pageblock flags are read in words to achieve good performance and existing
+pageblock flags take 4 bits per pageblock. To avoid a substantial change
+to the pageblock flag code, pageblock flag bits are expanded to use 8
+and MIGRATE_ISOLATE is moved to use the last bit (bit 7).
+
+It might look like the pageblock flags have doubled the overhead, but in
+reality, the overhead is only 1 byte per 2MB/4MB (based on pageblock config),
+or 0.0000476 %.
+
+Any comment and/or suggestion is welcome. Thanks.
+
+[1] https://lore.kernel.org/linux-mm/20250214172032.GA241035@cmpxchg.org/
+[2] https://lore.kernel.org/linux-mm/20250214154215.717537-1-ziy@nvidia.com/
+
+Zi Yan (4):
+  mm/page_isolation: make page isolation a standalone bit.
+  mm/page_isolation: remove migratetype from
+    move_freepages_block_isolate()
+  mm/page_isolation: remove migratetype from undo_isolate_page_range()
+  mm/page_isolation: remove migratetype parameter from more functions.
+
+ drivers/virtio/virtio_mem.c     |   3 +-
+ include/linux/gfp.h             |   6 +-
+ include/linux/mmzone.h          |  19 ++++--
+ include/linux/page-isolation.h  |  24 ++++---
+ include/linux/pageblock-flags.h |  33 ++++++++-
+ include/trace/events/kmem.h     |  14 ++--
+ mm/cma.c                        |   2 +-
+ mm/memory_hotplug.c             |   5 +-
+ mm/page_alloc.c                 | 114 +++++++++++++++++++++++++-------
+ mm/page_isolation.c             |  66 ++++++++----------
+ 10 files changed, 197 insertions(+), 89 deletions(-)
+
 -- 
-2.49.0.987.g0cc8ee98dc-goog
+2.47.2
 
 
