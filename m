@@ -1,76 +1,60 @@
-Return-Path: <linux-kernel+bounces-638788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AABAAEDAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:13:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BDB5AAEDD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6B01C24472
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D888503AD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D343628FFFB;
-	Wed,  7 May 2025 21:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4241C28FFF2;
+	Wed,  7 May 2025 21:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gpzYs8Nn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RinESwQd"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C46C1E4AB;
-	Wed,  7 May 2025 21:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782B619343B;
+	Wed,  7 May 2025 21:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746652418; cv=none; b=Q7HnTKrRep2Qhp4gSWkYSPiK34jNw17JXITz5YRE+yLXXBr2KVQfXaimXzxkvjxy09FMGVt8x+PeYfLp8sHuobHWvEuMhMMErlrktQhlNFIcqb+5tLuEDIH1x63JZsPei05sE/ZClqHw1AMaumklZmewjtIEUdoo7CJM+rzTrxg=
+	t=1746652735; cv=none; b=slRGEByMrJVp3gAzRham8Tk2DAn0f4CN7xljHgSKOBoWzO91Yq3AV17z+7XNaSW9/dPxhHVgNFg0qxgzGx6s9beRPD+XCfBozCW0XouhDK/G1MMJzWNjIIo87/ZLqmijxDwXgGk9ZV76FHErXyF+EfyiuHRZ0MPUt18KSCIq6Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746652418; c=relaxed/simple;
-	bh=6fHhnpXDAQhZV2ukVhtrbZkclB2lIGfri+PqEM2Fm2Y=;
+	s=arc-20240116; t=1746652735; c=relaxed/simple;
+	bh=Rzoa//+suWP+65hhHc1KbF30oGorhKVv9nvFCeLfsU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGoQJmTJiDPJdfvzWt/DAcZsKaGfhoWfXYKMnTzw9FAyQkfGTM7gY1ef0GKpUBIdmIW97ptnC++45E2qzHyyGx95xcQi6eWTrEQh1JJwsu1Vbg0KQRWcJ/VOnEL9w2YxthJ7JDn5UomFm0oe1FQ2xnP9iDyz0kBwfVLQrgUsKN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gpzYs8Nn; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746652416; x=1778188416;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6fHhnpXDAQhZV2ukVhtrbZkclB2lIGfri+PqEM2Fm2Y=;
-  b=gpzYs8NnNYJun60RN0wUh0e44nWITo4mF36YAPX2Z7kUhwZnRaCNRf+U
-   lQJvUKtdczG48K6tmfUbwhJDTyFwuh87KBhF8quFfFdZkQgAT9g3eLPrC
-   zgOddsZzTv/GpQ5qkacUaz9uY51FsE7/b9O/mODjTrzGSNDqAASocazWh
-   f79+kd2iGCguRFa6NilbiM52WpHDeRJFenPYqSatZLjBavDFmahDxpQ09
-   PWx4KtQETypDbYu4QQheoHJuPInpJ7TaScc0mZjveen8lfseenkqG8TcT
-   0BbSVUvRsmjKjQ+QkI5bfLRqEKeNoXSa2/oDQgpQgefenLbbYUfAvTb/z
-   g==;
-X-CSE-ConnectionGUID: /oxPP0Q3Q86lfS20i55usQ==
-X-CSE-MsgGUID: Xtk0LUy6QUeIJIOmb8OkCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48278115"
-X-IronPort-AV: E=Sophos;i="6.15,270,1739865600"; 
-   d="scan'208";a="48278115"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 14:13:36 -0700
-X-CSE-ConnectionGUID: MuRt1wA4S3e57hSpg6hFOw==
-X-CSE-MsgGUID: BblFTQLDR/eNk/uhw3Rj5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,270,1739865600"; 
-   d="scan'208";a="136593394"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 14:13:35 -0700
-Date: Wed, 7 May 2025 14:18:41 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH 1/2] arch_topology: Relocate cpu_scale to topology.[h|c]
-Message-ID: <20250507211841.GA28763@ranerica-svr.sc.intel.com>
-References: <20250419025504.9760-1-ricardo.neri-calderon@linux.intel.com>
- <20250419025504.9760-2-ricardo.neri-calderon@linux.intel.com>
- <7c583e2e-14b6-40e5-8e12-01584b817e4c@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6XXp3PQZWKutzmXURAJYl4k58Q9R+lqDJyYXi4l9zaFW6zxcbPrkFUGrmDS4ahBxwRbWf5XCWhllj8MqpNIMYCdfinZ1fu+vhFsl4hhQjocBk2tJa0jyRbmggt1VELhw5qDnL0dB8h3GpGfRxpQb3N/OCB8pS1sWVxxX8VY3kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RinESwQd; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QTihWgIiBkpZ0So2wXnOWa/xllZkmD8mBa818vmY+ag=; b=RinESwQd87yy5BJVrPytdkF/yT
+	IHjOC3NetkE10Z9yLZXv4sdSE7fogbOjzKNyH8BCZqA7WfHOO3E/T/T/Vmpy1fYDR0qeP6f1yhXmd
+	uPJYfsTR/0YgzqKr+HFRLHRXMVq5x7Rt/5fsGrzA5amxGKaULOZKgsSSNaFVMlKKCU92IEdfpfr58
+	Q0GpF8M+Scl8JAKbsaIbWTRnpMyA94Z5UeCzkR4wTuzLSu88lNSVm6YPf8tHx5/vnFRFgWoFV07cM
+	lNvLhHEURJgrnNF89r59Np+yyzHnuFATVhTeicAUXlyixzBqGtK3ZsBJWzC9SO9bVd3XyBXQJK8z8
+	gvYIhSmQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCmAF-00000001d1n-0KRR;
+	Wed, 07 May 2025 21:18:51 +0000
+Date: Wed, 7 May 2025 22:18:51 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-btrfs@vger.kernel.org, riteshh@linux.ibm.com,
+	Qu Wenruo <quwenruo.btrfs@gmx.com>, disgoel@linux.vnet.ibm.com,
+	dsterba@suse.com
+Subject: Re: [next-20250506][btrfs] Kernel OOPS while btrfs/001 TC
+Message-ID: <20250507211851.GX2023217@ZenIV>
+References: <75b94ef2-752b-4018-9b2a-148ecda5e8f4@linux.ibm.com>
+ <2a17b9b1-c490-4571-8f6a-fa567ed0b57e@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,29 +63,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c583e2e-14b6-40e5-8e12-01584b817e4c@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <2a17b9b1-c490-4571-8f6a-fa567ed0b57e@linux.ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Apr 25, 2025 at 05:31:01PM +0100, Christian Loehle wrote:
-> On 4/19/25 03:55, Ricardo Neri wrote:
-> > arch_topology.c provides functionality to parse and scale CPU capacity. It
-> > also provides a corresponding sysfs interface. Some architectures parse
-> > and scale CPU capacity differently as per their own needs. On Intel
-> > processors, for instance, it is responsibility of the Intel P-state driver.
-> > 
-> > Relocate the implementation of that interface to a common location in
-> > topology.c. Architectures can use the interface and populate it using their
-> > own mechanisms.
-> > 
-> > An alternative approach would be to compile arch_topology.c even if not
-> > needed only to get this interface. This approach would create duplicated
-> > and conflicting functionality and data structures.
-> > 
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> 
-> Maybe an FYI for the non-x86 folks, this doesn't break anything on the
-> usual arm64 setup:
-> Tested-by: Christian Loehle <christian.loehle@arm.com>
+On Wed, May 07, 2025 at 09:05:42PM +0530, Venkat Rao Bagalkote wrote:
 
-Thanks for testing these patches!
+> > I am observing kernel OOPS, while running btrfs/001 TC, from xfstests
+> > suite.
+> > 
+> > 
+> > This issue is introduced in next-20250506. This issue is not seen on
+> > next-20250505 kernel.
+
+Braino in fs/btrfs/super.c patch - in a couple of places 'fc' should be
+replaced with 'dup_fc'.
+
+See https://lore.kernel.org/all/?q=20250506195826.GU2023217@ZenIV
+for replacement patch...
 
