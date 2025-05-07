@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-638349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7853BAAE4DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:32:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71D4AAE4EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B209A4A94
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:29:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24024C6FC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377AA28A72F;
-	Wed,  7 May 2025 15:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E39528A70A;
+	Wed,  7 May 2025 15:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ltby96jY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Yoiob9l4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB01A28A40A;
-	Wed,  7 May 2025 15:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C732C1A3178;
+	Wed,  7 May 2025 15:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746631729; cv=none; b=iRwsQH3vva/MDZVURbtBYW+MeG0cKxZfWlVwMAm0NyjDX2rJGS7oVWlTlI7IxkHj2W3swPUBtu63t0o9hI9cIqHIrx8Jncbrd/XowwWpTwD1TCcSAExh1aC5sltgfNAXfmsepBoLk+t/QiNbOLvs/ePRa/U6LXkU7qEz+msSkU0=
+	t=1746632156; cv=none; b=FynofdI/ZkCaVRlIaqGbogZA+JcYzgI5Z1L7VswZ+EYwdWPSrfteEtHx31CJySEVF04K2Wg52q7cdKSonx/JuHetKpLOnBTgbPnPZUv+mTi+u3DVnsCnhsiIt6Gqv51aJ2fjW/hpLEG0NU9DZOcQVRsIZtZxrI3CXv9NUyubkjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746631729; c=relaxed/simple;
-	bh=U3gqx9HJDrBUxRXpFQ0kGmgcPR6L+B/y4mEAOBvP1VE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JYZP17GGJN1x8mLKzJ38iS6anjNtuTzgxLlGklgm8HD/ndlpW3b0t/u0uR6tDbqT8+F3W7PVpv9LKMQfHn1U8t5DDyoyJ0FWnBYqZADpKNt0XRJaTCnHBHMbBsYSPfvMYXA/dYZwga7n88MaN22iSBDPX6nxoFWPhoeSU65Ac30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ltby96jY; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746631727; x=1778167727;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=U3gqx9HJDrBUxRXpFQ0kGmgcPR6L+B/y4mEAOBvP1VE=;
-  b=ltby96jYdDoKeZTXqerJZLNLrak4ZiZV1Qz7TnQA4d75bwwC8f78H/k9
-   nHxmJJ7UDyHYu6SO8mEjrFEDtH7nCnrU5z4LwZnqDaiXqMB9ln0r4/1fk
-   A3sPwsjP5K9E374wXtwPXVsE5/pDK0GibMnLJvDKc5giUeYy4LfE8sh4B
-   PxquWKdsOSlef3W9i/IdFL6PC9a+xIr75gfzJvZFEFQhznfIAVRYBsEWE
-   Y7Z3KOn+4SZXFfrmJhfFZL4HvOUsggxPUPelILXvGd25EbHvJ4fXy74vc
-   0pxXmD8Ecmf3/clyCN97nU1pAQpKoZLfkjRYTH+x3MtQrSGS6P2pn++4f
-   A==;
-X-CSE-ConnectionGUID: oiu4cotxTl2JIrkRw7Pp/Q==
-X-CSE-MsgGUID: iOSfXmOATp+wMAFXvwzh3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="36003902"
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="36003902"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:28:47 -0700
-X-CSE-ConnectionGUID: qJxKP7HQSsqZicpk6Mrr1A==
-X-CSE-MsgGUID: OB7GjsU/QqyFV3H/aeBaXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="167057498"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.101]) ([10.245.246.101])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 08:28:43 -0700
-Message-ID: <40ac692b-2a97-4b4c-a9f5-47601571f6f3@linux.intel.com>
-Date: Wed, 7 May 2025 18:29:56 +0300
+	s=arc-20240116; t=1746632156; c=relaxed/simple;
+	bh=Ys9RqHkEV6d7PP5ZwD0JF9LgVCJPOKqk25Si+zcdE0I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=atH4DdkXr8t0YqnEGAJxeqki5Q3MdJba7NFEdZlac3tAHhWJYCXy0geHph34tW6AfKY7VTzVNyO+5VCFAp6sV0PUsrbTqA+yYRpGnWJReLqiQJ3Zehs0f9suujd3EohWGJ9VHkVqTsuTAejZpL6jk1t3CYaUNPkzP23HZeYm6S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Yoiob9l4; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547CHYwE016760;
+	Wed, 7 May 2025 15:35:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=g6ui48
+	CEyp4+SYwXoh+HY/hFCaSs30FReWsdX+wX9BE=; b=Yoiob9l4fwojvxi9KxXiun
+	Gdr37iNbEGGtDgBUTTZLj3MSu49wOVuSDegw7EaQslkAwujfifVyxyDOn/AM57ok
+	5t7eU6nHk4mN4PwaldBof06/eGdiEcSunsF9nqVyMwpglsQ6OpuuF/MIptLFPD2f
+	mgqX3WTKf1OgAZYIFTpukKY/XAUxw2gBOhWs6vrtwgB8IdvEK6G3V02WoFkouZcP
+	ybcB7xCJgOU3q18Bz1SxlBNw7LtiLh2KlfYSFdYKuP1Q8vlvw6qrgnzzWT4W0Pvn
+	0uB+v86kkfCNMPGp8909uxELxhT1kqlIVchVrlxuswLoS+XndCCLvOm3+8QL71eA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fvd0m1xn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 15:35:47 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 547FW27h015100;
+	Wed, 7 May 2025 15:35:47 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fvd0m1xm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 15:35:47 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 547FDGoC001304;
+	Wed, 7 May 2025 15:35:46 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46dwfthk6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 15:35:46 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 547FZkMM29688464
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 7 May 2025 15:35:46 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 58D5D5805C;
+	Wed,  7 May 2025 15:35:46 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E6B6458051;
+	Wed,  7 May 2025 15:35:43 +0000 (GMT)
+Received: from [9.61.241.123] (unknown [9.61.241.123])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  7 May 2025 15:35:43 +0000 (GMT)
+Message-ID: <2a17b9b1-c490-4571-8f6a-fa567ed0b57e@linux.ibm.com>
+Date: Wed, 7 May 2025 21:05:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,114 +83,264 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ASoC: SOF: Intel: hda: Fix UAF when reloading module
-To: Tavian Barnes <tavianator@tavianator.com>, linux-sound@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- sound-open-firmware@alsa-project.org, linux-kernel@vger.kernel.org
-References: <fb47a18bdea9e9f86d6fccf1d881434cda3cd5f0.1746627007.git.tavianator@tavianator.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <fb47a18bdea9e9f86d6fccf1d881434cda3cd5f0.1746627007.git.tavianator@tavianator.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [next-20250506][btrfs] Kernel OOPS while btrfs/001 TC
+Content-Language: en-GB
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-btrfs@vger.kernel.org, riteshh@linux.ibm.com,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>, disgoel@linux.vnet.ibm.com,
+        viro@zeniv.linux.org.uk, dsterba@suse.com
+References: <75b94ef2-752b-4018-9b2a-148ecda5e8f4@linux.ibm.com>
+In-Reply-To: <75b94ef2-752b-4018-9b2a-148ecda5e8f4@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: GGOCG1nCfCO_1y2u1oTYzwNmFv48Q_r9
+X-Proofpoint-GUID: wDTdeb9W6Ou_-sPa6o07b06Wl7yc7FVn
+X-Authority-Analysis: v=2.4 cv=LYc86ifi c=1 sm=1 tr=0 ts=681b7dd4 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=CZZ_5JIpypcmvY0KRe0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDE0MiBTYWx0ZWRfX6aas+zrw/GuJ O85OUX+TJPDzkcdwCkymJx5Od2c5rP6hAstGS1LMN5Ys5j7I1YrSDNbE31Ra3uCkzz9FiU74t81 S3K3ZFtfSjMDDRinN7FxXtax+7s1eoqwCEuc+cbf5MTi2oJ2u4cgzII17xsciF0gDxB/qxQmVzV
+ AZrW8k6vcm6GocTwCFYnXpng8ww1nxO1Z7wg38+1vTZA/klj0W/r5VM6ftESPP5w2ZWYEgHsqI1 z7rAUllIhELFWcLn8mJIHfRnqceI1uAr2oFArtMfKzH03zKmhv2GAMiLzLMoTibIAFD/jXZAD2Z nuqn8NMn3wcOGWE+p+sHgTQdr9RG1hhPzsvXB7pYA0/YjUirNtyoy9cQ54R09hw0uV6rVYfXqFy
+ 50pEWWZiSITOGsjOO8N8YRCGUVx7qY3OjrRtwYhllMzzcZC8FdwLf4lExVupl+hk494JWj8X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_04,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ impostorscore=0 priorityscore=1501 spamscore=0 clxscore=1011 phishscore=0
+ adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505070142
 
-Hi,
 
-On 07/05/2025 18:10, Tavian Barnes wrote:
-> hda_generic_machine_select() appends -idisp to the tplg filename by
-> allocating a new string with devm_kasprintf(), then stores the string
-> right back into the global variable snd_soc_acpi_intel_hda_machines.
-> When the module is unloaded, this memory is freed, resulting in a global
-> variable pointing to freed memory.  Reloading the module then triggers
-> a use-after-free:
-> 
-> BUG: KFENCE: use-after-free read in string+0x48/0xe0
-> 
-> Use-after-free read at 0x00000000967e0109 (in kfence-#99):
->  string+0x48/0xe0
->  vsnprintf+0x329/0x6e0
->  devm_kvasprintf+0x54/0xb0
->  devm_kasprintf+0x58/0x80
->  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
->  sof_probe_work+0x7f/0x600 [snd_sof]
->  process_one_work+0x17b/0x330
->  worker_thread+0x2ce/0x3f0
->  kthread+0xcf/0x100
->  ret_from_fork+0x31/0x50
->  ret_from_fork_asm+0x1a/0x30
-> 
-> kfence-#99: 0x00000000198a940f-0x00000000ace47d9d, size=64, cache=kmalloc-64
-> 
-> allocated by task 333 on cpu 8 at 17.798069s (130.453553s ago):
->  devm_kmalloc+0x52/0x120
->  devm_kvasprintf+0x66/0xb0
->  devm_kasprintf+0x58/0x80
->  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
->  sof_probe_work+0x7f/0x600 [snd_sof]
->  process_one_work+0x17b/0x330
->  worker_thread+0x2ce/0x3f0
->  kthread+0xcf/0x100
->  ret_from_fork+0x31/0x50
->  ret_from_fork_asm+0x1a/0x30
-> 
-> freed by task 1543 on cpu 4 at 141.586686s (6.665010s ago):
->  release_nodes+0x43/0xb0
->  devres_release_all+0x90/0xf0
->  device_unbind_cleanup+0xe/0x70
->  device_release_driver_internal+0x1c1/0x200
->  driver_detach+0x48/0x90
->  bus_remove_driver+0x6d/0xf0
->  pci_unregister_driver+0x42/0xb0
->  __do_sys_delete_module+0x1d1/0x310
->  do_syscall_64+0x82/0x190
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Fix it by copying the machine with devm_kmemdup() before we modify it.
-> 
-> Fixes: 5458411d7594 ("ASoC: SOF: Intel: hda: refactoring topology name fixup for HDA mach")
-> Suggested-by: Péter Ujfalusi" <peter.ujfalusi@linux.intel.com>
-> Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
-> ---
-> v3: Copy the whole machine struct instead so we can safely modify it
->     (instead of storing the name in pdata->tplg_filename, breaking other
->     fixups).  The problem with v2 was pointed out by Bard Liao, with the
->     alternative fix suggested by Péter Ujfalusi.
-> 
->  sound/soc/sof/intel/hda.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-> index b34e5fdf10f1..cbf96b342005 100644
-> --- a/sound/soc/sof/intel/hda.c
-> +++ b/sound/soc/sof/intel/hda.c
-> @@ -1049,7 +1049,13 @@ static void hda_generic_machine_select(struct snd_sof_dev *sdev,
->  		if (!*mach && codec_num <= 2) {
->  			bool tplg_fixup = false;
->  
-> -			hda_mach = snd_soc_acpi_intel_hda_machines;
-> +			/* make a copy so we can modify it below */
-> +			hda_mach = devm_kmemdup(sdev->dev,
-> +						snd_soc_acpi_intel_hda_machines,
-> +						sizeof(*hda_mach),
-> +						GFP_KERNEL);
+On 07/05/25 2:14 pm, Venkat Rao Bagalkote wrote:
+> Hello,
+>
+>
+> I am observing kernel OOPS, while running btrfs/001 TC, from xfstests 
+> suite.
+>
+>
+> This issue is introduced in next-20250506. This issue is not seen on 
+> next-20250505 kernel.
+>
+>
+> Steps to repro:
+>
+>
+> 1. git clone git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+> 2. cd xfstests-dev/
+> 3. mkdir /mnt/loop-device /mnt/test /mnt/scratch
+> 4. for i in $(seq 0 5); do fallocate -o 0 -l 5GiB 
+> /mnt/loop-device/file-$i.img; done
+> 5. for i in $(seq 0 5); do losetup /dev/loop$i 
+> /mnt/loop-device/file-$i.img; done
+> 6. mkfs.btrfs -f -s 65536 -n 65536 /dev/loop0; mkfs.btrfs -f 
+> /dev/loop1; mkfs.btrfs -f /dev/loop2; mkfs.btrfs -f /dev/loop3; 
+> mkfs.btrfs -f /dev/loop4; mkfs.btrfs -f /dev/loop5
+> 8. vi local.config
+> 9. make
+> 10. ./check tools/btrfs/001
+>
+>
+> local.config contents:
+>
+>
+> export RECREATE_TEST_DEV=true
+> export TEST_DEV=/dev/loop0
+> export TEST_DIR=/mnt/test
+> export SCRATCH_DEV_POOL="/dev/loop1 /dev/loop2 /dev/loop3 /dev/loop4 
+> /dev/loop5"
+> export SCRATCH_MNT=/mnt/scratch
+> export MKFS_OPTIONS="-f -s 4096 -n 4096"
+> export FSTYP=btrfs
+> export MOUNT_OPTIONS=""
+>
+>
+> Crash:
+>
+>
+> [  953.799060] Btrfs loaded, zoned=yes, fsverity=no
+> [  968.070858] BTRFS: device fsid 3813dc53-a2f3-4342-b44e-c9349f17f991 
+> devid 1 transid 8 /dev/loop0 (7:0) scanned by mount (25422)
+> [  968.072561] BTRFS info (device loop0): first mount of filesystem 
+> 3813dc53-a2f3-4342-b44e-c9349f17f991
+> [  968.072584] BTRFS info (device loop0): using crc32c 
+> (crc32c-powerpc) checksum algorithm
+> [  968.072594] BTRFS info (device loop0): forcing free space tree for 
+> sector size 4096 with page size 65536
+> [  968.072599] BTRFS info (device loop0): using free-space-tree
+> [  968.073867] BTRFS info (device loop0): checking UUID tree
+> [  968.074000] Kernel attempted to read user page (68) - exploit 
+> attempt? (uid: 0)
+> [  968.074009] BUG: Kernel NULL pointer dereference on read at 0x00000068
+> [  968.074013] Faulting instruction address: 0xc00800000f7fb5e0
+> [  968.074019] Oops: Kernel access of bad area, sig: 11 [#1]
+> [  968.074022] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
+> [  968.074028] Modules linked in: btrfs blake2b_generic xor raid6_pq 
+> zstd_compress loop dm_mod nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 
+> nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject 
+> nft_ct sunrpc nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 
+> nf_defrag_ipv4 bonding tls rfkill ip_set nf_tables nfnetlink 
+> pseries_rng vmx_crypto fuse ext4 crc16 mbcache jbd2 sd_mod sg ibmvscsi 
+> scsi_transport_srp ibmveth
+> [  968.074074] CPU: 0 UID: 0 PID: 25422 Comm: mount Kdump: loaded Not 
+> tainted 6.15.0-rc5-next-20250506 #1 VOLUNTARY
+>
+> [  968.074087] NIP:  c00800000f7fb5e0 LR: c00800000f7fb3b4 CTR: 
+> c00000000047862c
+> [  968.074091] REGS: c000000154747920 TRAP: 0300   Not tainted 
+> (6.15.0-rc5-next-20250506)
+> [  968.074096] MSR:  800000000280b033 
+> <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24022882  XER: 00000000
+> [  968.074109] CFAR: c00800000f7fb650 DAR: 0000000000000068 DSISR: 
+> 40000000 IRQMASK: 0
+> [  968.074109] GPR00: c00800000f7fb3b4 c000000154747bc0 
+> c0080000099da600 0000000000000000
+> [  968.074109] GPR04: c000000008570c20 7fffffffffffffff 
+> 0000000000000000 c0000000068e3a00
+> [  968.074109] GPR08: 0000000000000000 0000000000000000 
+> c0000000068e3a00 0000000000002000
+> [  968.074109] GPR12: c00000000047862c c000000003020000 
+> 0000000000000000 0000000000000000
+> [  968.074109] GPR16: 0000000000000000 0000000000000000 
+> 0000000000000000 0000000000000000
+> [  968.074109] GPR20: 0000000000000000 0000000000000000 
+> 0000000000000000 0000000000000000
+> [  968.074109] GPR24: 0000000000000000 c000000015b00000 
+> c00000007a38ac00 0000000000000020
+> [  968.074109] GPR28: c000000008560a00 c00000006b1784c0 
+> 0000000000000000 c000000063147980
+> [  968.074163] NIP [c00800000f7fb5e0] 
+> btrfs_get_tree_subvol+0x32c/0x544 [btrfs]
+> [  968.074205] LR [c00800000f7fb3b4] btrfs_get_tree_subvol+0x100/0x544 
+> [btrfs]
+> [  968.074241] Call Trace:
+> [  968.074244] [c000000154747bc0] [c00800000f7fb3b4] 
+> btrfs_get_tree_subvol+0x100/0x544 [btrfs] (unreliable)
+> [  968.074282] [c000000154747cb0] [c000000000630da4] 
+> vfs_get_tree+0x48/0x15c
+> [  968.074291] [c000000154747d30] [c00000000067675c] 
+> do_new_mount+0x234/0x438
+> [  968.074297] [c000000154747da0] [c000000000678298] 
+> sys_mount+0x164/0x1b0
+> [  968.074303] [c000000154747e10] [c000000000033338] 
+> system_call_exception+0x138/0x330
+> [  968.074311] [c000000154747e50] [c00000000000d05c] 
+> system_call_vectored_common+0x15c/0x2ec
+> [  968.074319] ---- interrupt: 3000 at 0x7fff89d4edf4
+> [  968.074323] NIP:  00007fff89d4edf4 LR: 00007fff89d4edf4 CTR: 
+> 0000000000000000
+> [  968.074328] REGS: c000000154747e80 TRAP: 3000   Not tainted 
+> (6.15.0-rc5-next-20250506)
+> [  968.074333] MSR:  800000000280f033 
+> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44022804  XER: 00000000
+> [  968.074345] IRQMASK: 0
+> [  968.074345] GPR00: 0000000000000015 00007fffc25e41b0 
+> 00007fff89e37d00 000000015e810710
+> [  968.074345] GPR04: 000000015e810730 000000015e8106f0 
+> 0000000000000000 000000015e810690
+> [  968.074345] GPR08: 000000015e8106f0 0000000000000000 
+> 0000000000000000 0000000000000000
+> [  968.074345] GPR12: 0000000000000000 00007fff8a03c140 
+> 0000000000000000 0000000000000000
+> [  968.074345] GPR16: 0000000000000000 0000000000000000 
+> 0000000000000000 0000000125d1f298
+> [  968.074345] GPR20: 0000000000000000 0000000000000000 
+> 000000015e810530 000000015e810730
+> [  968.074345] GPR24: 00007fff89f38e68 00007fff89f38e78 
+> 00007fff89f3dfe8 00007fff89f60240
+> [  968.074345] GPR28: 000000015e8106f0 0000000000000000 
+> 000000015e810710 0000000000100000
+> [  968.074396] NIP [00007fff89d4edf4] 0x7fff89d4edf4
+> [  968.074399] LR [00007fff89d4edf4] 0x7fff89d4edf4
+> [  968.074403] ---- interrupt: 3000
+> [  968.074406] Code: 4bffeffd 3920f000 7c234840 7c7e1b78 41810144 
+> 7c7a1b78 4bfffe30 60000000 813f0088 71290001 41820068 e93d0040 
+> <e8690068> 38630070 481416e1 e8410018
+> [  968.074425] ---[ end trace 0000000000000000 ]---
+> [  968.076694] pstore: backend (nvram) writing error (-1)
+> [  968.076698]
+>
+>
 
-We need to copy 2x the size as the snd_soc_acpi_intel_hda_machines[] has
-two entries, the second is the sentinel (all 0).
+Git bisect is pointing first bad commit: 
+[25efcff06654aa283be379420e8b1f8d344c2f78] btrfs_get_tree_subvol(): 
+switch from fc_mount() to vfs_create_mount().
 
-> +			if (!hda_mach)
-> +				return;
->  
->  			dev_info(bus->dev, "using HDA machine driver %s now\n",
->  				 hda_mach->drv_name);
 
--- 
-Péter
+Upon reverting above commit, issue is not seen. Please help in fixing 
+this issue.
 
+
+Bisection log:
+
+
+git bisect start
+# status: waiting for both good and bad commits
+# good: [92a09c47464d040866cf2b4cd052bc60555185fb] Linux 6.15-rc5
+git bisect good 92a09c47464d040866cf2b4cd052bc60555185fb
+# status: waiting for bad commit, 1 good commit known
+# bad: [0a00723f4c2d0b273edd0737f236f103164a08eb] Add linux-next 
+specific files for 20250506
+git bisect bad 0a00723f4c2d0b273edd0737f236f103164a08eb
+# bad: [d0a7045528df303c86ce87662728ea8ee136c7ef] Merge branch 
+'nand/next' of git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git
+git bisect bad d0a7045528df303c86ce87662728ea8ee136c7ef
+# bad: [3acffb16ef28cc1979b42c235fed9c7bf653e815] Merge branch 'fs-next' 
+of linux-next
+git bisect bad 3acffb16ef28cc1979b42c235fed9c7bf653e815
+# good: [59e921108839edbbcbce23475596fee455ec4129] Merge branch 'next' 
+of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
+git bisect good 59e921108839edbbcbce23475596fee455ec4129
+# bad: [28485805726d7960c1d5be4a45d59ea26652f6d2] Merge branch 'master' 
+of https://github.com/Paragon-Software-Group/linux-ntfs3.git
+git bisect bad 28485805726d7960c1d5be4a45d59ea26652f6d2
+# bad: [255b0bb00ae27f2adcf054b71f29be50d2e34025] Merge branch 
+'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git
+git bisect bad 255b0bb00ae27f2adcf054b71f29be50d2e34025
+# good: [456619c2c7107c700321664f79c4e89d19805063] btrfs: simplify 
+getting and extracting previous transaction at clean_pinned_extents()
+git bisect good 456619c2c7107c700321664f79c4e89d19805063
+# good: [028156969e9f640e7eee0a98b19c731fd9862f14] bcachefs: 
+bch2_io_failures_to_text()
+git bisect good 028156969e9f640e7eee0a98b19c731fd9862f14
+# good: [b3f59e3a42fd075d40a65dbcdf853302db4ba93f] bcachefs: Ensure 
+proper write alignment
+git bisect good b3f59e3a42fd075d40a65dbcdf853302db4ba93f
+# good: [8209541b4998a1bcf99c7530e60ce6c9aefd87f8] btrfs: update 
+lookup_root_entry to to use rb helper
+git bisect good 8209541b4998a1bcf99c7530e60ce6c9aefd87f8
+# good: [94fa56d94dbca52e07b0f0233257f502ca6d547a] btrfs: scrub: fix a 
+wrong error type when metadata bytenr mismatches
+git bisect good 94fa56d94dbca52e07b0f0233257f502ca6d547a
+# bad: [c91d3cff2a3ce3fc0960d8e6bdb69be51f105d67] Merge branch 
+'misc-next' into for-next-next-v6.15-20250505
+git bisect bad c91d3cff2a3ce3fc0960d8e6bdb69be51f105d67
+# bad: [25efcff06654aa283be379420e8b1f8d344c2f78] 
+btrfs_get_tree_subvol(): switch from fc_mount() to vfs_create_mount()
+git bisect bad 25efcff06654aa283be379420e8b1f8d344c2f78
+# good: [4254b8e069c7fa48106be44f8fcf4cafc264bd14] btrfs: scrub: 
+aggregate small bitmaps into a larger one
+git bisect good 4254b8e069c7fa48106be44f8fcf4cafc264bd14
+# first bad commit: [25efcff06654aa283be379420e8b1f8d344c2f78] 
+btrfs_get_tree_subvol(): switch from fc_mount() to vfs_create_mount()
+
+
+Regards,
+
+Venkat.
+
+>
+> If you happent to fix this, please add below tag.
+>
+>
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>
+>
+> Regards,
+>
+> Venkat.
+>
 
