@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-637694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6318FAADC24
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:04:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA71AADC1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E128E3B5B27
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED82178825
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD12211299;
-	Wed,  7 May 2025 10:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4C8205E3B;
+	Wed,  7 May 2025 10:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="I866g5h3"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sgxIqJAZ"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DFA748D;
-	Wed,  7 May 2025 10:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009B1F91C5
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746612249; cv=none; b=M8RgTVWNOwGBfdeVr2VARM5ztEx8MsSCi6vC/wMJntH/wxolbubE4LeD97POAwRZBXBWgB8JwXx0r2IYzNGYLOW67HWpgu7/fnNxQLTsmoqE4RMVqslsyOBZ/vVD+PzIVqB56i5iPfRVTn7yZZn96z5sePzMpJLIdtchRQwc+5A=
+	t=1746612227; cv=none; b=q4b+T9eWdH06kMgrP4KC2bjW3i25/+Usibgfm4gXc0YAv3aPhU5rJohqZ/liEXMcCEr8yjk/8p/acf4/nwAtc2J89ArhpC1hyhpPspMQGUQK+wdr98g5a/3iVFqEvnzVsfiJGtGCY3aNSHIZF9XIy3I3RmVDdKaDHTaxSFZusr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746612249; c=relaxed/simple;
-	bh=ONKdy+w9gyMKFQEXUyZDqN8rmz0A1AXazcIgetb64o8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Sr5DXATrGqANmPhl9yoQ6BYjqYL70l4h1K0K7Fv4rZSh9kNCVgrzRU2T+77OSuXm2Iv/E9JWa2OciKMVWp5Cn2CKU5rWYloY7QoruX8VPdsv+BmaNeatFEqFFvlZZK2/8oFZDkb7URceEgTANxhUk3GnZD3tUnmCLq/hO12n+YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=I866g5h3; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1746612214;
-	bh=ONKdy+w9gyMKFQEXUyZDqN8rmz0A1AXazcIgetb64o8=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=I866g5h3l/88iOQEgAMIP3SJI7+5Lxy2XkSVjn0tsufAFwHU6QJwDUQ9hGPWuEOnB
-	 72E7OjFDpZHXlBra/RKyh7aoN/88Dk1v51xMEqu0wl5eQLNhxWt3FTfoSEUJxkkTFD
-	 WksD/sHRvwOp3URtIW2mDkAXozpI1HxxLTXxrMTM=
-X-QQ-mid: zesmtpip3t1746612207t5145e6a1
-X-QQ-Originating-IP: YPTKlIROWMCFYMZ9/Uwc5rfUQLWe4dBAq2hngwjFGs8=
-Received: from smtpclient.apple ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 07 May 2025 18:03:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4692290289710788905
-EX-QQ-RecipientCnt: 8
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1746612227; c=relaxed/simple;
+	bh=JPqB85uGz5OWzFqLAvlB+Xmhgew3sJv2rTxhQ7cBYIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O0fz8aZJkCpDEb2bAJE7epBD6Bwu2y6wRAvJcsp4UcqwMQ2OGGUdBDmQ5NWdWpbhh4N2C6y2ERXNWmuo0wzncVyQ5ZoayETfbZSUsirh7NJKWGq1WAv7p6PrnZpgd445Aa/UXAdVi315EDk7AXAiqFMiy1DaF0WEvG3U59cnGIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sgxIqJAZ; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1746612220; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EWQps3oaNtZZ7GNbFF8Y5bHARbDvabiLn4K5Tv65RZI=;
+	b=sgxIqJAZ85b4SoNGEzv3rsVZEwfQhCWs/piDav3mOLvhhW4iYarE8IK1I/lTJkaKyYTtr6QIWytISEJJRKj0cZK76U0YEgNiJ6WAGbh4Qh1I9dxVd+YfhW00WZD1Ea/OFh1N7y3z5k1g833fFJWEY4ohEB+XM33XMkCWqYZUPd0=
+Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WZpIPoD_1746612218 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 07 May 2025 18:03:39 +0800
+Message-ID: <c0b2221f-2686-49a7-a1bd-97f5181065e0@linux.alibaba.com>
+Date: Wed, 7 May 2025 18:03:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: KASAN: slab-out-of-bounds in hfsplus_bnode_read+0x268/0x290
-From: =?utf-8?B?6IOh54Sc?= <huk23@m.fudan.edu.cn>
-In-Reply-To: <d8f947a94233710bffa498d9770ef23469aff073.camel@dubeyko.com>
-Date: Wed, 7 May 2025 18:03:15 +0800
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
- "frank.li@vivo.com" <frank.li@vivo.com>,
- "baishuoran@hrbeu.edu.cn" <baishuoran@hrbeu.edu.cn>,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5703A932-C5B0-4C98-BC5D-133F6E7943B3@m.fudan.edu.cn>
-References: <TYSPR06MB71580B4132B73E43C0D86517F68D2@TYSPR06MB7158.apcprd06.prod.outlook.com>
- <1058be22b49415c3065ced5242988ff81e2e9218.camel@ibm.com>
- <d8f947a94233710bffa498d9770ef23469aff073.camel@dubeyko.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MQCbYOYzcCnkjtU6IFXzJA8EYQM7wP8wWlxy07rqQY2iix/Im8i4gSCj
-	oybCBnJdBU3D3h96YspfxxP0mLb8GhL2THPbbhXMyM3a/aKYrYAA8mcf2eWM4k+PQ6CkTcp
-	cN/lkLUStIUlxKIlVRJsgdTZ31DOKOIhQtuIJ9+4qc503zODfMJxcGQE1+tjpgmonRfNGCx
-	JblB4b/G4bp5ft4pAKhfteyrXN1qDCiY5EEuwP9ZXl75qHtNvWTOAMZ7iwQjycpEI1mZf6D
-	b+T3pEz+bTq5MHVAFSH6aXCojDGahKnxY2e3Wm5qqpnvuKaNieSdMr50+GKKr6iuVjoI8q5
-	bcR07fKUl0/pnNwbcEiNX/LfMinnEM4fyhPHNBp6QyRycbmsC8ERQxMuvxfybGxa3A6amPe
-	U6a3hCMrnYcsqosOygDoHnRd9tZFmjA9MjDonVNblb2VAm6W75jrHkrVgYWkEaD4dcntwVw
-	bHX0E0DogI+WuUvKIdUwSaIM5I1UOvsuqxtVOGGdJfkzqd7Og4BSAG19P8vp0I7U6dRqJ8E
-	UNstEJRi9muQLiFnQKMIESj9WYe+wZbg9GkrFvQdsLSaZlXBNNF5Bog/JhLDrgxZMiCuALc
-	ISNWJ8vQQfUTzB9Ocx4+KOgWUGAXPps2AhoXKP00EAFr3MP3/sciA2hSksT1DgQufk1J79s
-	LOelol/VsomWcxAWvj8mKp9bkX+tU5SBgtT7dynIgXJ+F8CpJvQ2EIsW4iTB7SH4v0g6X8D
-	6CBTCxecyGDSzAy5W8UfPTsYkQRBKoYmd5avkxYSCC5SEw2ZBAdL0SJlsZjVRFiLQEeWNRj
-	+KepM34fm7CjhOnHKZOx7rMu9IVeCx3taF9cY64+9jnSn3SJgSllZldES9Huj2qPBSJli9l
-	sEqKluU0n7Bz2bZM8Kyj7Y0psyGKgcUFmYq8J86qDpr5muwAwEMz9CHOWgaIPJi8VTeZsqU
-	bgThA+3HW8sfvbhr28/0l9Vlhy9dDK2OpyBL2D2bA7MHPYrUPNhLu3Ae50/hkaeBTjBSdr7
-	BzT3Npx/O6OmOFT/YsnazI3bivms8=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm: mincore: use folio_pte_batch() to batch process
+ large folios
+To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ akpm@linux-foundation.org, hughd@google.com
+Cc: willy@infradead.org, 21cnbao@gmail.com, ryan.roberts@arm.com,
+ ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
+ <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
+ <17289428-894a-4397-9d61-c8500d032b28@arm.com>
+ <6a8418ba-dbd1-489f-929b-e31831bea0cf@linux.alibaba.com>
+ <fc883e4c-41cb-4f05-a5ef-3b756c689da3@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <fc883e4c-41cb-4f05-a5ef-3b756c689da3@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> I have the fix and I would like to check it. I am trying to use the C
-> reproducer for triggering the issue. Probably, I am doing something
-> wrong. I have complied the kernel by using the shared kernel config =
-and
-> I have compiled the C reproducer. It works several hours already and I
-> still cannot trigger the issue. Am I doing something wrong? How long
-> should I wait the issue reproduction? Could you please share the
-> correct way of the issue reproduction?
->=20
-> Thanks,
-> Slava.=20
->=20
 
+On 2025/5/7 17:54, David Hildenbrand wrote:
+> On 07.05.25 11:48, Baolin Wang wrote:
+>>
+>>
+>> On 2025/5/7 13:12, Dev Jain wrote:
+>>>
+>>>
+>>> On 26/03/25 9:08 am, Baolin Wang wrote:
+>>>> When I tested the mincore() syscall, I observed that it takes longer 
+>>>> with
+>>>> 64K mTHP enabled on my Arm64 server. The reason is the
+>>>> mincore_pte_range()
+>>>> still checks each PTE individually, even when the PTEs are contiguous,
+>>>> which is not efficient.
+>>>>
+>>>> Thus we can use folio_pte_batch() to get the batch number of the 
+>>>> present
+>>>> contiguous PTEs, which can improve the performance. I tested the
+>>>> mincore()
+>>>> syscall with 1G anonymous memory populated with 64K mTHP, and 
+>>>> observed an
+>>>> obvious performance improvement:
+>>>>
+>>>> w/o patch        w/ patch        changes
+>>>> 6022us            1115us            +81%
+>>>>
+>>>> Moreover, I also tested mincore() with disabling mTHP/THP, and did not
+>>>> see any obvious regression.
+>>>>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>>    mm/mincore.c | 27 ++++++++++++++++++++++-----
+>>>>    1 file changed, 22 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/mm/mincore.c b/mm/mincore.c
+>>>> index 832f29f46767..88be180b5550 100644
+>>>> --- a/mm/mincore.c
+>>>> +++ b/mm/mincore.c
+>>>> @@ -21,6 +21,7 @@
+>>>>    #include <linux/uaccess.h>
+>>>>    #include "swap.h"
+>>>> +#include "internal.h"
+>>>>    static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned
+>>>> long addr,
+>>>>                unsigned long end, struct mm_walk *walk)
+>>>> @@ -105,6 +106,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned
+>>>> long addr, unsigned long end,
+>>>>        pte_t *ptep;
+>>>>        unsigned char *vec = walk->private;
+>>>>        int nr = (end - addr) >> PAGE_SHIFT;
+>>>> +    int step, i;
+>>>>        ptl = pmd_trans_huge_lock(pmd, vma);
+>>>>        if (ptl) {
+>>>> @@ -118,16 +120,31 @@ static int mincore_pte_range(pmd_t *pmd,
+>>>> unsigned long addr, unsigned long end,
+>>>>            walk->action = ACTION_AGAIN;
+>>>>            return 0;
+>>>>        }
+>>>> -    for (; addr != end; ptep++, addr += PAGE_SIZE) {
+>>>> +    for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
+>>>>            pte_t pte = ptep_get(ptep);
+>>>> +        step = 1;
+>>>>            /* We need to do cache lookup too for pte markers */
+>>>>            if (pte_none_mostly(pte))
+>>>>                __mincore_unmapped_range(addr, addr + PAGE_SIZE,
+>>>>                             vma, vec);
+>>>> -        else if (pte_present(pte))
+>>>> -            *vec = 1;
+>>>> -        else { /* pte is a swap entry */
+>>>> +        else if (pte_present(pte)) {
+>>>> +            if (pte_batch_hint(ptep, pte) > 1) {
+>>>> +                struct folio *folio = vm_normal_folio(vma, addr, pte);
+>>>> +
+>>>> +                if (folio && folio_test_large(folio)) {
+>>>> +                    const fpb_t fpb_flags = FPB_IGNORE_DIRTY |
+>>>> +                                FPB_IGNORE_SOFT_DIRTY;
+>>>> +                    int max_nr = (end - addr) / PAGE_SIZE;
+>>>> +
+>>>> +                    step = folio_pte_batch(folio, addr, ptep, pte,
+>>>> +                            max_nr, fpb_flags, NULL, NULL, NULL);
+>>>> +                }
+>>>> +            }
+>>>
+>>> Can we go ahead with this along with [1], that will help us generalize
+>>> for all arches.
+>>>
+>>> [1] https://lore.kernel.org/all/20250506050056.59250-3-dev.jain@arm.com/
+>>> (Please replace PAGE_SIZE with 1)
+>>
+>> As discussed with Ryan, we don’t need to call folio_pte_batch()
+>> (something like the code below), so your patch seems unnecessarily
+>> complicated. However, David is unhappy about the open-coded
+>> pte_batch_hint().
+> 
+> I can live with the below :)
+> 
+> Having something more universal does maybe not make sense here. Any form 
+> of patching contiguous PTEs (contiguous PFNs) -- whether with folios or 
+> not -- is not required here as we really only want to
+> 
+> (a) Identify pte_present() PTEs
+> (b) Avoid the cost of repeated ptep_get() with cont-pte.
 
-Hi Slava,
-Thank you for taking your time.
-
-We originally obtained this issue's syz and C reproducers using =
-Syzkaller's repro tool (refer to the URL below). The issue was triggered =
-when we ran the syz reproducer through Syzkaller.
-
-Url: =
-https://github.com/google/syzkaller/blob/master/docs/reproducing_crashes.m=
-d
-
-Syzkaller also provides syz-execprog to verify whether the C program can =
-trigger the issue. We are currently in the process of verifying whether =
-the C reproducer can reliably reproduce the issue. Please allow us some =
-time to complete this verification.
-
-We'll follow up with you once we have more concrete results.
-
-Best regards,
-Kun=
+Good. I will change the patch and resend it. Thanks.
 
