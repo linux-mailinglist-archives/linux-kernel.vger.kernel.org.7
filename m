@@ -1,150 +1,160 @@
-Return-Path: <linux-kernel+bounces-637153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16A6AAD564
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:44:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF467AAD569
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EA41BA5A2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50683BE2C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98ACC1D8E07;
-	Wed,  7 May 2025 05:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AA71FBEA4;
+	Wed,  7 May 2025 05:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="or9V5GoJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WvjP0AnB"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AMCrJBwn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2707114884C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801271E7C34;
+	Wed,  7 May 2025 05:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746596671; cv=none; b=SWMkJjYb1TA1zCWEFxY0JCRO0g/6x73k+iqnEP7CGBlSGf0/MUFbxa6XDmNigWNeMyrxAE07S4la3wn3QXqRRhyXWugmLpqT5FhrZzBNN4tFzvhRvExSw1AUT5/kWo05amBss19UK66/k/VLcocAbdQF1RmZJI54lwPp/ep44TQ=
+	t=1746596692; cv=none; b=iCftFI3+hdb+ZWKw2fR4ALxoMACw6AT8wIrG7j68YDzolxSvGgGAMccvoy258E1nWgrWifpBO49UWABXFIBrLKc/WJfArSlOGHlmj4UN8FOaGfS7BY6Nb2cMsfM6BCIJceMKAug1Hb/7FFxC9PnNuSYW+MsMFs/NjpY33r2mICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746596671; c=relaxed/simple;
-	bh=KPBoQL0ylIAnLG0wRYS21DXL8j+LIo3GFqd0/PZ2T2U=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=FawQrV+3tVKnLC2KraSez1nwFC4rfL7PpsHNQXT6xdYuAVEQKtPllc89EeGcfI/G7inkbgJGqLjOvmHJ6t8c1ZTCBv7YGksSlKeqx5oOCF7UqlWa54voCJl+bsBq+gtgPk14hpCNUVAoULJLGXGRe3P0EgELrLDQVsRMHI3sejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=or9V5GoJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WvjP0AnB; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 05A0511401D4;
-	Wed,  7 May 2025 01:44:29 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Wed, 07 May 2025 01:44:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1746596669;
-	 x=1746683069; bh=LKBIs/dRAt14qDvy0dxUZojjV4ghFeutXbz3h4nTrKE=; b=
-	or9V5GoJc0Z6S6oxIWoJakZSoQSPhkg552t2/QAYvZUytGoDOB4q5up7sALJDjSu
-	t810N784i2Sk1eDq7yprZcrnBF7wV8qengH+GUHGS588yH+qkG/t8zp11odFh6tZ
-	GTacQKt/j+iIN1ySRZ5zYWvhUrVF8lBLMY/E2kF4K1QHQ1utRT5vefsDYU/sPIYo
-	XXcZ8pX92fznG1jLAXsgzwRsmuDg7vPyhWEavSCoUu4/yrPcB+AtwiQKwVGyp1hi
-	JsSfLDomWeLgfdwAa8eLK8lMiPnRYJYs/93KXhnKHS41burxmSx/4I3wdYKF9eJP
-	sFCjomZBGHpHbN0YSEGdfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746596669; x=
-	1746683069; bh=LKBIs/dRAt14qDvy0dxUZojjV4ghFeutXbz3h4nTrKE=; b=W
-	vjP0AnBCLSX9vyvKfmv1oaRaaYYx90zhfR77wxemtKWBjREOa3nIXi28DZo7MV5H
-	mXZCrkld/iuoRVnDzTKcgh/irt9azaCxfGYtdMgubfkiylYKU4y9qorPWGU6++JH
-	/Yuis9ETLzsv6iw/GKPFQDIpXxSimWo+eyCOAjQV7PfylPbHombPtk4xUNrpwlkX
-	UsO7b8fFP3Iqr/7tPCiZ9rNScose7znuNnC2PF6eoErFAFu6rBlUXuUwC1hK3kqR
-	x8LppJV0Zze3E+Lj3CxTsBsf6QLnfzJPtVeo35Cb7rsWH4Uh0P47uNMQuRbC5QBU
-	2L6B9uuAd+pzH0irCSVjA==
-X-ME-Sender: <xms:PPMaaIs_O6ZRZtYKp4EvPYM2IkayejYsPuBizLCV5XID6N5uXA-Fnw>
-    <xme:PPMaaFcMa2iQt7Oc0hZ7qqnuhveNCTjSG2y_NhIXJyDmLEVmVRjca3X16Q1J-U3WF
-    oxMShDC-lpEWlj3sI8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeeitdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    uddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
-    dprhgtphhtthhopegufihmfiesrghmrgiiohhnrdgtohdruhhkpdhrtghpthhtohepphgv
-    thgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehtohhrvhgrlh
-    gusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepmhhitghh
-    rghlrdhlkhhmlhesmhgrrhhkohhvihdrnhgvthdprhgtphhtthhopehvkhhuiihnvghtsh
-    esrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:PPMaaDzDPmx2h-aCJSg6UyglHEZiqsFPoEwgyqOZN92ZFqqUDbFgYw>
-    <xmx:PPMaaLN0VMJ7SlnfouQgYQLVNHcwuygzMgeY_zLXM6t7jcPIVA4ywg>
-    <xmx:PPMaaI9GFqrkSGTXXN98fqvSkOiPnVg7thfWMq2xCLGx2NE0_eXOuw>
-    <xmx:PPMaaDUhm_2p4W5aqFAYvtYz9dVA5GWSSbEcApQSK5flvU1W-hQOUA>
-    <xmx:PPMaaOXIRnKzkqB82ZO-1vGmFSI8fjXj9drw3E8J6gLlvJtghL-fDJnU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 99C3D1C20067; Wed,  7 May 2025 01:44:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1746596692; c=relaxed/simple;
+	bh=dET57/3w7AB13kQwYH18hcOd/6ONv+xqKFslnB4Aw1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gdfMC87jIEbXjLAGTAvPBExX07WDbUvt1SyHmBrVyjK0++2MRkcuv/tEHlXn2g/zHvU+hH/WU+NyFmDxqf5LE2knKXtZa/fWLkfSHspPbxV+B53yqkt0HahbRZsc7pafdSLldyDg9aJGV1orDnmqI77n1Sdleyo5mmKd0K6jtsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AMCrJBwn; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746596689; x=1778132689;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dET57/3w7AB13kQwYH18hcOd/6ONv+xqKFslnB4Aw1E=;
+  b=AMCrJBwnMSAEhfknUhieo041xJqbDWHJhQlCWGK4dfu3cj8rBvYtDqmH
+   yWtBXGhxcczZZSF8koCvFnT7O66lntACHcj8MMWi1ZwL5vU0WWKSxYMmV
+   sbdh4dptULT1BsG0I13ifQY0XKMidfMogpjZgP/1t65CNYjt4QBnLWBDU
+   qQk4XZJd0b3FFsm77kuM+fIC3JMOX/eDTG7CW5mhJD24zV5jn7rat6iHu
+   1vVVsGX39iXXwBmShAdf3kYiIrO3J+MoffNW7sS3gEUfwN0ugaSBC91oo
+   BmzkcebN2bmbmIzKvGLvI1xvQQ59ILwaG3TbJTOhpXo0G0+k81AaQY4JM
+   w==;
+X-CSE-ConnectionGUID: CdNASeqrTZaH2BfvljYAdg==
+X-CSE-MsgGUID: vyxluEeTS7ChrUJ3Tdtb6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="35932877"
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="35932877"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:44:49 -0700
+X-CSE-ConnectionGUID: c4D2Ws4lRaymkTlaqFHm/g==
+X-CSE-MsgGUID: ocnwfwJRR2WLdCgnFPKUdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="140959206"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 06 May 2025 22:44:46 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCXaF-000769-1E;
+	Wed, 07 May 2025 05:44:43 +0000
+Date: Wed, 7 May 2025 13:44:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, dave.hansen@linux.intel.com
+Cc: oe-kbuild-all@lists.linux.dev, x86@kernel.org,
+	Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Naveen N Rao <naveen@kernel.org>,
+	Vishal Annapurve <vannapurve@google.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
+Subject: Re: [PATCH v3 2/2] x86/devmem: Drop /dev/mem access for confidential
+ guests
+Message-ID: <202505071309.Aa4vRJxa-lkp@intel.com>
+References: <174491712829.1395340.5054725417641299524.stgit@dwillia2-xfh.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T29c54119c216f9b9
-Date: Wed, 07 May 2025 07:44:06 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ingo Molnar" <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Borislav Petkov" <bp@alien8.de>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>, "Ard Biesheuvel" <ardb@kernel.org>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Masahiro Yamada" <yamada.masahiro@socionext.com>,
- "Michal Marek" <michal.lkml@markovi.net>
-Message-Id: <cd541739-4ec5-4772-9cef-e3527fc69e26@app.fastmail.com>
-In-Reply-To: <20250506170924.3513161-5-mingo@kernel.org>
-References: <20250506170924.3513161-1-mingo@kernel.org>
- <20250506170924.3513161-5-mingo@kernel.org>
-Subject: Re: [PATCH 04/15] x86/kbuild: Introduce the 'x86_32' subarchitecture
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174491712829.1395340.5054725417641299524.stgit@dwillia2-xfh.jf.intel.com>
 
-On Tue, May 6, 2025, at 19:09, Ingo Molnar wrote:
-> 
->  # Additional ARCH settings for x86
-> -ifeq ($(ARCH),i386)
-> +ifeq ($(ARCH),x86_64)
->          SRCARCH := x86
->  endif
-> -ifeq ($(ARCH),x86_64)
-> +ifeq ($(ARCH),x86_32)
-> +        SRCARCH := x86
-> +endif
-> +ifeq ($(ARCH),i386)
->          SRCARCH := x86
->  endif
+Hi Dan,
 
-Would it be possible to just remove the entire SRCARCH hack
-for x86? It's not clear from the changelog what the intention
-was in 2007 when it was added, but my impression was that
-this should be a temporary workaround to users doing
-'make defconfig' on i386 would still get a 32-bit config
-by default and didn't have to change there scripts.
+kernel test robot noticed the following build errors:
 
-I would guess that even in a 'setarch --32bit' environment,
-most users today would want to build a 64-bit kernel, having
-the special case for that seems to add more confusion that
-it avoids.
+[auto build test ERROR on 0af2f6be1b4281385b618cb86ad946eded089ac8]
 
-Also, I don't think there are any systems that return
-'x86_32' from 'uname -m', so your added special case
-would never be used by default, only when cross-compiling
-from some other architecture.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Williams/x86-devmem-Remove-duplicate-range_is_allowed-definition/20250419-080713
+base:   0af2f6be1b4281385b618cb86ad946eded089ac8
+patch link:    https://lore.kernel.org/r/174491712829.1395340.5054725417641299524.stgit%40dwillia2-xfh.jf.intel.com
+patch subject: [PATCH v3 2/2] x86/devmem: Drop /dev/mem access for confidential guests
+config: openrisc-randconfig-r073-20250428 (https://download.01.org/0day-ci/archive/20250507/202505071309.Aa4vRJxa-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071309.Aa4vRJxa-lkp@intel.com/reproduce)
 
-      Arnd
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505071309.Aa4vRJxa-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/char/mem.c: In function 'open_port':
+>> drivers/char/mem.c:604:6: error: implicit declaration of function 'cc_platform_has' [-Werror=implicit-function-declaration]
+     604 |      cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
+         |      ^~~~~~~~~~~~~~~
+>> drivers/char/mem.c:604:22: error: 'CC_ATTR_GUEST_MEM_ENCRYPT' undeclared (first use in this function)
+     604 |      cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
+         |                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/char/mem.c:604:22: note: each undeclared identifier is reported only once for each function it appears in
+   cc1: some warnings being treated as errors
+
+
+vim +/cc_platform_has +604 drivers/char/mem.c
+
+   586	
+   587	static int open_port(struct inode *inode, struct file *filp)
+   588	{
+   589		int rc;
+   590	
+   591		if (!capable(CAP_SYS_RAWIO))
+   592			return -EPERM;
+   593	
+   594		rc = security_locked_down(LOCKDOWN_DEV_MEM);
+   595		if (rc)
+   596			return rc;
+   597	
+   598		/*
+   599		 * Enforce encrypted mapping consistency and avoid unaccepted
+   600		 * memory conflicts, "lockdown" /dev/mem for confidential
+   601		 * guests.
+   602		 */
+   603		if (IS_ENABLED(CONFIG_STRICT_DEVMEM) &&
+ > 604		    cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
+   605			return -EPERM;
+   606	
+   607		if (iminor(inode) != DEVMEM_MINOR)
+   608			return 0;
+   609	
+   610		/*
+   611		 * Use a unified address space to have a single point to manage
+   612		 * revocations when drivers want to take over a /dev/mem mapped
+   613		 * range.
+   614		 */
+   615		filp->f_mapping = iomem_get_mapping();
+   616	
+   617		return 0;
+   618	}
+   619	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
