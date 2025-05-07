@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-637222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E5AAAD62A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE99AAD632
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22E94C5253
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940C99858A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0376F20E033;
-	Wed,  7 May 2025 06:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFnCL0ta"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5296620E003;
+	Wed,  7 May 2025 06:35:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6311E1A841B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8285F21019E;
+	Wed,  7 May 2025 06:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599711; cv=none; b=cMeV5pVlLMJZdew85hukthZXMFD8Nq8YCa6WRpWXO9fe55Pf79/XnVk6agMujkkwMc6G9SpGc8sxAHmndoXUuFWICIxSnGgxxWNYyADrqotd041wMs7TBqCQiOBSYUDSGBdDKYG0GGbXVxnwRkbGlcO7I1GBp9y7zNafAeZ03UE=
+	t=1746599739; cv=none; b=IlyBbO9cj89PXHREcnWnycgU0eONewdev6fqz81Z800RY+r6/as9njbIATQp8VWjorqAYp966umBl6kS7kSSH5x6ZokXmi8NkgWT7YFu1qIOur9AEgNiokKeH9Okt/SMhxYgsXJN1iEQSPqEeoo/G2P8D6vRlqZfDIBglTROBUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599711; c=relaxed/simple;
-	bh=aw40nhVq4qGCb1FGtJLCrkrXQEqvvRfwD3kXfxz9VU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fF5ocBdnHwT+WSTip92oW+jecTjLFgb/QsHOFcyNph0KE9o8AXSikXoRizIFSDOg0nuj4avYICuZ3eyjSD+XhZJbQFDIOr5SCixv6VRMAUAgkdP3IDWT99hiGjZ4Dh0X8Gz5xwipu86dPBSbuDZaAfdZflxuv29YEpyEK7Pru6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFnCL0ta; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F23BC4CEE7;
-	Wed,  7 May 2025 06:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746599710;
-	bh=aw40nhVq4qGCb1FGtJLCrkrXQEqvvRfwD3kXfxz9VU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sFnCL0taaEa1cy4cOV2pECs3UQInUbvEt5yJP50ku4p4re7ZvbCUuxnI17XiNgZ1C
-	 CqUf5zqyL2UUFMzfJtVf8nypWA62jxVMPEZzq6exDiTnW/6tt86kTQhAjzGbjMn8AR
-	 BVAH4UVrXsytFhuqdWCdzVOE+5K54ZgTTnncRbTTVyUyDzuGcvv1GEt6Ka1h939zEQ
-	 lc9Op8rwgZRNC4pz3qQcltAedez8135qze74Tf2Zndlmq3NvpOZvwdUMZBjTZtzGDf
-	 vv1e+06X4ilMNp7vRf8SQUiziItjBMtTT4Xc5tLHSKNrRWfu+c5oT/ju1Zz+NXNXFq
-	 vHzglZgwNLF4g==
-Date: Wed, 7 May 2025 08:35:05 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH 04/15] x86/kbuild: Introduce the 'x86_32' subarchitecture
-Message-ID: <aBr_GZ9P7k_I7RU6@gmail.com>
-References: <20250506170924.3513161-1-mingo@kernel.org>
- <20250506170924.3513161-5-mingo@kernel.org>
- <cd541739-4ec5-4772-9cef-e3527fc69e26@app.fastmail.com>
+	s=arc-20240116; t=1746599739; c=relaxed/simple;
+	bh=EunsBZu+dPFyFx+so1aikErZNXrHK15H5QeG0WGOHis=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=A9w8eLx3Jvg+eSOrlak9UgZGf3KxWKen/zNDBb8sfe56ug3OHikmK2fm0ZMsDJ1OgZYA6SMq5zLTNMsKIOEhujVbOeLiEA6iNGFXBMHDIt+6hLkZPkclfrqJOcI8CidA7MhQHu4VskYmsyFLCJzRNZs1vE5dLET6wqEsPLLI9V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 77aa34ac2b0d11f0b29709d653e92f7d-20250507
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:01f278ff-13a4-4f34-8fda-6627e63156e8,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:957d935d78f12afb161e3c7259de899b,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 77aa34ac2b0d11f0b29709d653e92f7d-20250507
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 507086601; Wed, 07 May 2025 14:35:29 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id C72F0E006100;
+	Wed,  7 May 2025 14:35:28 +0800 (CST)
+X-ns-mid: postfix-681AFF30-651625104
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 3AE54E0080FF;
+	Wed,  7 May 2025 14:35:25 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: corbet@lwn.net,
+	rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org,
+	akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	rostedt@goodmis.org,
+	thuth@redhat.com,
+	bp@alien8.de,
+	ardb@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v3] PM / sleep: add configurable delay for pm_test
+Date: Wed,  7 May 2025 14:35:20 +0800
+Message-Id: <20250507063520.419635-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd541739-4ec5-4772-9cef-e3527fc69e26@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+This patch turns this 5 second delay into a configurable module
+parameter, so users can determine how long to wait in this
+pseudo-hibernate state before resuming the system.
 
-* Arnd Bergmann <arnd@arndb.de> wrote:
+The configurable delay parameter has been added to suspend and
+synchronized to hibernation.
 
-> On Tue, May 6, 2025, at 19:09, Ingo Molnar wrote:
-> > 
-> >  # Additional ARCH settings for x86
-> > -ifeq ($(ARCH),i386)
-> > +ifeq ($(ARCH),x86_64)
-> >          SRCARCH := x86
-> >  endif
-> > -ifeq ($(ARCH),x86_64)
-> > +ifeq ($(ARCH),x86_32)
-> > +        SRCARCH := x86
-> > +endif
-> > +ifeq ($(ARCH),i386)
-> >          SRCARCH := x86
-> >  endif
-> 
-> Would it be possible to just remove the entire SRCARCH hack for x86? 
-> It's not clear from the changelog what the intention was in 2007 when 
-> it was added, but my impression was that this should be a temporary 
-> workaround to users doing 'make defconfig' on i386 would still get a 
-> 32-bit config by default and didn't have to change there scripts.
+Example (wait 30 seconds);
 
-Correct, this was done during the x86 unification: a significant number 
-of kernel developers were still using 32-bit x86 systems, and they 
-expected the host architecture to be used by default like it was when 
-it lived in arch/i386/.
+  # echo 30 > /sys/module/hibernate/parameters/pm_test_delay
+  # echo core > /sys/power/pm_test
 
-Ie. it was a 'seamless x86 unification' build feature.
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+v3:
+ - Fix the location of the hibernate.pm_test_delay parameter in
+   kernel-parameters.txt.
+ - Update =E2=80=98[hibernate]=E2=80=99 to =E2=80=98[HIBERNATION]=E2=80=99
+v2:
+ - Fix typos.
+---
+ Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
+ kernel/power/hibernate.c                        | 9 +++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-I'd be glad to add a tested patch for SRCARCH hack removal, which 
-should simplify things a bit.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+index d9fd26b95b34..a110cbb37f20 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1828,6 +1828,13 @@
+ 				lz4: Select LZ4 compression algorithm to
+ 				compress/decompress hibernation image.
+=20
++	hibernate.pm_test_delay=3D
++			[HIBERNATION]
++			Sets the number of seconds to remain in a hibernation test
++			mode before resuming the system (see
++			/sys/power/pm_test). Only available when CONFIG_PM_DEBUG
++			is set. Default value is 5.
++
+ 	highmem=3Dnn[KMG]	[KNL,BOOT,EARLY] forces the highmem zone to have an e=
+xact
+ 			size of <nn>. This works even on boxes that have no
+ 			highmem otherwise. This also works to reduce highmem
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 23c0f4e6cb2f..485133af884d 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -133,10 +133,15 @@ bool system_entering_hibernation(void)
+ EXPORT_SYMBOL(system_entering_hibernation);
+=20
+ #ifdef CONFIG_PM_DEBUG
++static unsigned int pm_test_delay =3D 5;
++module_param(pm_test_delay, uint, 0644);
++MODULE_PARM_DESC(pm_test_delay,
++		 "Number of seconds to wait before resuming from hibernation test");
+ static void hibernation_debug_sleep(void)
+ {
+-	pr_info("debug: Waiting for 5 seconds.\n");
+-	mdelay(5000);
++	pr_info("hibernation debug: Waiting for %d second(s).\n",
++		pm_test_delay);
++	mdelay(pm_test_delay * 1000);
+ }
+=20
+ static int hibernation_test(int level)
+--=20
+2.25.1
 
-> Also, I don't think there are any systems that return 'x86_32' from 
-> 'uname -m', so your added special case would never be used by 
-> default, only when cross-compiling from some other architecture.
-
-No, on most 32-bit systems 'uname -m' returns 'i686', which we cannot 
-use straight away anyway. And it looked a bit silly to me for us to 
-fudge over the architecture from 'i686' to 'i386', when we haven't 
-supported i386 for quite some while and are now working on i486 
-removal...
-
-Let's just have x86_32 as the internal primary subarchitecture name, 
-with support for historic aliases like 'i386'. That it cleans up things 
-for defconfig naming is a bonus.
-
-Thanks,
-
-	Ingo
 
