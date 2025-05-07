@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-638154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BABAAE216
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA62AAE23F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375F74A5136
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59869C72F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E572900B7;
-	Wed,  7 May 2025 13:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D5629209E;
+	Wed,  7 May 2025 13:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RWcUEBVG"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUZySloI"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EED628936D;
-	Wed,  7 May 2025 13:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982C2289827
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626072; cv=none; b=XqnupDncxV9KAoKqbNRRnh1wEjIOB4YbaiT3dnhMLPyOKKA7JLG6FH9ViE79H3xhQsvXQ/66o94v/gkO0B2aSfgBgivUt+kSuj0Gv0NXwu92QqYhfEfZ7vw2t8r0N89JoliWOd/u6n7wTbkl6r5QwkwDUQfUwG4UmSEIhcgsgi8=
+	t=1746626093; cv=none; b=BBAIo0DMffnkS1MV+IFzy3tINXqP4fzaXXaqbxl5OFX2uw0V09uXHhWtlyyN4ewcqJ0YzLbTivRnQuBo6jMBE1nbnbUUbPr6a1zGNyWDj17dbKqhHa2ksGVgrdQxJPam6QdBCqW0EASEfowfHNJbxM4kDVjfLFYLob2T5FGB+uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626072; c=relaxed/simple;
-	bh=C02ObScTFbiaNdWfFXvVyCLtKf11sLD6lCT0jJlOvwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGTLDcCDBu3RL5ZtFKPJxAUMy+kRaIBsMRN0bqVTnUScfLvIg5oHEy0Gw0/UEEGY3Akfhp8bt5jkcWBBlKGe2BuzuFVZWaGelUBe2CJaeDeouIx0LpMqpYiWxufYDyw1c84LjlWa3q+pfDfAahQUP2E5r6Zjq+uvZ0vRBSt8/vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RWcUEBVG; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 437C843989;
-	Wed,  7 May 2025 13:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746626068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CZ2N7o6h8qE4U3KVspLCs0bJ9tD0zoPZrZLgbdQrquw=;
-	b=RWcUEBVGojXNeqqjDdOmecevKuK2UFooi2yT5TIDhRowDMIgazVgUuwKMhr/r+ueMjOgBh
-	bjBNvV8U0XZFFeMhSBSeISa1ovvPbc17tqHTYWbe2h3wBQ17twTcwtbRwU8RnO4qbLuaLN
-	dZFwwu030ylFvHVWZUIrUZbdC/bqbktpAI65Y4cVqzXLKJ2PnO8aNUN5AKGy8gakvMsZ6z
-	JPVEJlYSFiklVxTGPeIOqKKiWJD89ZuUN4f5bhr5vEKAqfvwMuWYd+KDDkLK0nrgMKH88x
-	CWZP+eHSlnXJ5gWrva4cv0O4vpq2+w/VjtacPF9c/lMHzc3G95M4EJP7MG7/SQ==
-Message-ID: <2f02284d-2922-4bc3-ab2a-8848023019b7@bootlin.com>
-Date: Wed, 7 May 2025 15:54:26 +0200
+	s=arc-20240116; t=1746626093; c=relaxed/simple;
+	bh=pqUkG5pPZAQuWFiXDSONHcLU3/phVQ5nFrwCiq55Qxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rKFaYFwwoBltoVj5NBRMw2zBK8niiXjDYw9gYYXufYMsTVMstUPWM31POuqWUcPz2vaCN9LZ7gU0826pWClPUO30vLwzyAJH/K7fAhsXHewbfZBS9Oa6F2fF+iyotWhfq8WwLMaVSpDr01SioxPGXdnTAZ4QAk2szj3axJJGZCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUZySloI; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d0782d787so44426935e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746626090; x=1747230890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+YuRwz8f2hm9m7I6mJzRn6e33kisXWPP7uKIXupdFzE=;
+        b=DUZySloILVhyGHjCJdwWWZbrtPVdMKTcAqg4pHymqgCY43hPR3TRTiO6kVW8tM5oXu
+         gt3nTAOdox8evJQ8KJbtXXZ+BZZy1d+Z/JFRSQxkPUCEhVjx1ZSzKnclcvUgz0x/tmM9
+         z4TWi5kqGA4anZcPk+hdcV7eAC9blxQpb79ApcESHRg0YbZsK7wXxDV+7Uyse00eU6em
+         HKCaDQudBi7Q/gYUzw1WJzDpyA23zM3nzILQAJ0V3ARAE2LJH+dmv1padSbAc6x8YRub
+         IK1bjEtx2oabrqJczoZYQ5QwQ77kh7XT30sfzeFKjAr3MbPupYho1oLcZNP2v/1rt8GE
+         EK+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746626090; x=1747230890;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+YuRwz8f2hm9m7I6mJzRn6e33kisXWPP7uKIXupdFzE=;
+        b=Ida4yvBuaKlG6a/r+JS/CKKMlrm3DtyWhF9lhkZROyrcebyOMQ/3C0aabqQyFUSwLb
+         +dlvJs9HLFO/tgp//cznQHTpBWkwklMpP+iQ21Tm8R80uOutx/8QlKqI/yu8+nyD6xu5
+         Rk6LikENENUQWGy9BQEM6gUHAcqdaV4m8suk955zsDXRmTMoOJjYvpiqZcKOWsd0U4qu
+         0tQ85Txq0VzOzZLmcFFqmI4CI2aWXU/OsuqmXbHnfjgyfnH7etqQP19aA1FnDi7/YtCM
+         FsTLogygmtVZ0xXywCBqXXwUi7/1mR+AC/l3jNsRPr2+qIG9zL6Fiz3dv5BMn5ftEOoI
+         wq7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVKSUp90eyfXbnRBM7MSFXqnCrhZico/dvoa3XEkpxpc/m7yJcM45LDPDKZdcg4X0cUR6WgZn7QcesfB80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhuNYaZf+7n3p8iPiz3SxJSbCzgEOvOA/xmPZiDhH8l4lzNTG3
+	OZknbgG+3gj2+pwZrM4jxMHs6o7r/TLYXhiwFf/HpT/OUhT/OiH5
+X-Gm-Gg: ASbGnculACvlsOzu/SY1aH9MBlGQGxf0Dg5lmiGZ/hxdlYOLsQwFDNzkAQ9xW/7Q9pk
+	pX8uc81+jVvmSx881gTQkpCynq9ilbBNPHB7PFySUnsPzSxLe13UPA0C5On2BhzON/LyPEU5ozV
+	oVZhkuHa5qSDiYVMl6AvQgysyiurovfhLC7/4G5A2o/MKVXXrxkl4GwHRQTfo1lE7RgoMqpxvMX
+	btmTJ5kKfl4LUacGmQArLmRWCAT4sAbzD59As3HmqxpBvJHhyGps2H85YFAHkEDnFWUdmwppYf8
+	w8cvCbaHGib0MvwEWN6ROp2sc6mf8vw89BYdYOYXDQ==
+X-Google-Smtp-Source: AGHT+IGgEkenNlvKaapknt+N0+kCv1udjBqtfUNTUtiVhvLQ4hCJxf/W2wwohiE2nA/36QexVoD1Jg==
+X-Received: by 2002:a05:600c:4454:b0:441:b19c:96fe with SMTP id 5b1f17b1804b1-441d44c3353mr31394405e9.10.1746626089945;
+        Wed, 07 May 2025 06:54:49 -0700 (PDT)
+Received: from fedora.. ([94.73.35.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f1eesm1894295e9.9.2025.05.07.06.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:54:49 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v5 12/16] drm/vkms: Allow to configure the default device creation
+Date: Wed,  7 May 2025 15:54:27 +0200
+Message-ID: <20250507135431.53907-13-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250507135431.53907-1-jose.exposito89@gmail.com>
+References: <20250507135431.53907-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
- gpio_desc in gpiochip_fwd
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, linux-hardening@vger.kernel.org
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
- <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com>
- <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com>
- <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetueefgeetveffheevkedvffeugfevhefgueegieelveejjeefgfeigefggfdvkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrngdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdprhgtphhtthhop
- ehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: thomas.richard@bootlin.com
 
-On 5/7/25 15:24, Andy Shevchenko wrote:
-> On Wed, May 7, 2025 at 1:10 PM Thomas Richard
-> <thomas.richard@bootlin.com> wrote:
->> On 5/7/25 08:34, Andy Shevchenko wrote:
->>> On Tue, May 6, 2025 at 6:21 PM Thomas Richard
->>> <thomas.richard@bootlin.com> wrote:
-> 
-> ...
-> 
->>>> +       /*
->>>> +        * get_direction() is called during gpiochip registration, return input
->>>> +        * direction if there is no descriptor for the line.
->>>> +        */
->>>> +       if (!test_bit(offset, fwd->valid_mask))
->>>> +               return GPIO_LINE_DIRECTION_IN;
->>>
->>> Can you remind me why we choose a valid return for invalid line? From
->>> a pure code perspective this should return an error.
->>
->> I reproduced gpiolib behavior. During gpiochip registration, we get the
->> direction of all lines. In the case the line is not valid, it is marked
->> as input if direction_input operation exists, otherwise it is marked as
->> output. [1]
->>
->> But in fact we could return an error and the core will mark the line as
->> input. Maybe ENODEV ?
-> 
-> I am fine with this error code, but do we have similar cases already
-> in the kernel? Do they use the same or different error code(s)?
+Add a new module param to allow to create or not the default VKMS
+instance. Useful when combined with configfs to avoid having additional
+VKMS instances.
 
-I dumped all get_direction() operations in drivers/gpio and
-drivers/pinctrl and returned values are:
-- GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN (make sense).
-- -EINVAL (for example [1]).
-- -EBADE in gpiochip_get_direction() [2].
-- regmap_read() return code.
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+---
+ drivers/gpu/drm/vkms/vkms_drv.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-But from my point of view -EINVAL and -EBADE do not match our case.
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 5bcfbcb6c0c5..b4ed19c97576 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -50,6 +50,10 @@ static bool enable_overlay;
+ module_param_named(enable_overlay, enable_overlay, bool, 0444);
+ MODULE_PARM_DESC(enable_overlay, "Enable/Disable overlay support");
+ 
++static bool create_default_dev = true;
++module_param_named(create_default_dev, create_default_dev, bool, 0444);
++MODULE_PARM_DESC(create_default_dev, "Create or not the default VKMS device");
++
+ DEFINE_DRM_GEM_FOPS(vkms_driver_fops);
+ 
+ static void vkms_atomic_commit_tail(struct drm_atomic_state *old_state)
+@@ -219,6 +223,9 @@ static int __init vkms_init(void)
+ 	if (ret)
+ 		return ret;
+ 
++	if (!create_default_dev)
++		return 0;
++
+ 	config = vkms_config_default_create(enable_cursor, enable_writeback, enable_overlay);
+ 	if (IS_ERR(config))
+ 		return PTR_ERR(config);
+-- 
+2.49.0
 
-[1]
-https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/gpio/gpio-cros-ec.c#L70
-[2]
-https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/gpio/gpiolib.c#L359
-
-Regards,
-
-Thomas
 
