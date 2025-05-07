@@ -1,154 +1,125 @@
-Return-Path: <linux-kernel+bounces-638109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E07DAAE19F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E54FCAAE1A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C1717F117
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:54:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CA84C1774
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9B8289376;
-	Wed,  7 May 2025 13:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A847289E36;
+	Wed,  7 May 2025 13:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G7hIR4ku";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hoFCj8aF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qb6Zz4vV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="s3N7jbhR"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lFAhvrr/"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2B0209F43
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06260289E38
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625894; cv=none; b=uXYZaAwWu7rb+MahZhBaG4E7Wz4vWEPJAweFgz+sE2QYwS3LpgnN1cieNZj8S8bkRTys3ly088voTanAhx/oxGpCFzs2Ka0I9CjFTLfF1lf4JxjjCltY9+iG68VAH89IZqG2NtTuOK3OaVBtLLejrR8Y5mSUN3elavubWiLqd8w=
+	t=1746625925; cv=none; b=axSoqrYKUeFo7i+zo7Gvs8V0D1j2aLPLUrkKiRQsoiNRGC2TdnUgm/i4so/XFdyOssoWbnntn8gvWzEEMomA+qBkiIYYq/Opns3Nt/KuBsjubisbBSWmMakcSms7H3aAESye0V5t6nlAFcRAQzG9VGtrYeiQpMmh0deAv680e6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625894; c=relaxed/simple;
-	bh=0N7ntTXUYuKVCt8MHdZNa5d3VconHB3xgSzpjk8WSnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKvlIy6KAL4d6lPKKZCur+pH7bFIoegBc1HHlUuFyJ87mUwlti6UigbWBb/9M+A9gvy/HSKAelJDO/yn24gPksRPP1vgFcBLzsEZgqkaDkl3shrEg+HOC0dm6M+2gixI+2u98VRdHI6vPiWHL7jL0cFMkoqWHgp8NsDS9okBBIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G7hIR4ku; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hoFCj8aF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qb6Zz4vV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=s3N7jbhR; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F1E1B1F441;
-	Wed,  7 May 2025 13:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746625890; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cp6Y+iDKepynE7pZQgIxTxDWzN13jqiRumIztALhbSM=;
-	b=G7hIR4kuxKcK7GSeHWsCo27dYQvvqtgHHbdRWjF4ECx/GctLq80ZagakJsgCfg9R9ls5sD
-	a0WFVUsmgzWTMv/2S9My8RAPFExr6sIQ9wYvuu81vAqffQCiHv72bUcBzL/auyprdKgCJu
-	5KPV1uZF2+HLtEoM1TuyHaFoWTWitu0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746625890;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cp6Y+iDKepynE7pZQgIxTxDWzN13jqiRumIztALhbSM=;
-	b=hoFCj8aF080Bj0J9YfEsMWTFdHYno6sS5xMSqifUGeaoPC02YwwP8LJYoyrOIhqFIqJKhr
-	Pr5wU+sjV3UtpQBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746625889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cp6Y+iDKepynE7pZQgIxTxDWzN13jqiRumIztALhbSM=;
-	b=qb6Zz4vVBmN2OeoHzyJQqXpzCe2xhdqP08qJAP/VWwc7/xjbEI22dQk+weqz65XFuAilDt
-	P272RxP6WzPQbfrBeLBqYct/VFkWNCpa9c09Hff/O5qFl0GEBXA1rGidtzmQXn0Wxw4Ty5
-	hI5hW/9IFA5GT8HJ+ZEFza9RwzZGJ4Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746625889;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cp6Y+iDKepynE7pZQgIxTxDWzN13jqiRumIztALhbSM=;
-	b=s3N7jbhRGRKMOl+Cq70lEkgSAO7iPXWL9ZeP1RYPMAZ74MMX8V0g8bqvPUeJ7yqPYY79om
-	7UdPbhxZRIwNABBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D0739139D9;
-	Wed,  7 May 2025 13:51:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id otJHMmFlG2gYTAAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 07 May 2025 13:51:29 +0000
-Message-ID: <6fdc1395-ab4d-4288-96dc-e16c1162ba42@suse.de>
-Date: Wed, 7 May 2025 15:51:29 +0200
+	s=arc-20240116; t=1746625925; c=relaxed/simple;
+	bh=5LLKe8a++xD2c3tJVJ8drGjnk/736Tl6kXc3j0/ObLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ncExgUTNhZ6QEE+Xosyss9xYNhxRgBvdj2U4gkUWy4yNf0kRi2eXLyjE4waczbo4nP0wThibOR8KiNslhADBfDoqoTp77e4qoy7x7eYTQJkoIeTuF7DXEDHfL3eWX7QRA4mJZFRGJjW8Sax/63RDxgJ8si64TRB+3KDJH3SFpBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=lFAhvrr/; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac25520a289so1176304466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1746625922; x=1747230722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7GeKwUyzeFoIF4XHNI7B0gCteSiC3k5ZfaiHzje0KNY=;
+        b=lFAhvrr/x2lCs9AaM/SYfyToFSb5i2OyrG4DEJm4NkxKfoRAsd3erSklk/W8AJ1JMM
+         mUJqPvjfLN0DXTjKTDqhuenAUbGp6bEPixhKMk/TCst8b0MCfBrTVhElgkJAVv4WEkQ3
+         ACgZmU6p5+YtfDKuJpo0xQg/imF8f8l7hezmk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746625922; x=1747230722;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7GeKwUyzeFoIF4XHNI7B0gCteSiC3k5ZfaiHzje0KNY=;
+        b=qmerAxW7+8aUEYZFTN9Wb+QMzhiWpvGfpDhTUZsdmrLBX+A3/ReopUk1pUBPnX313I
+         D5BrXQo7YG3dN4LPkxahZ/d8XpVmtLrUdvX+CmoVsK6UH93dxxlnv+KSGZMTSuayLyb4
+         Bo3aTEiLj6ZfSWLQzUkGUosJMuXBBQlUhqJ+Vtw7YlNJyCWCi/QSpsyuG4BNCqgBrlj1
+         sO78f6ybIIPLlmuRDrZ1cD0GwyCzfyHHg+xFGCUGoi93ibtiNa9FRwMm9Rl6YFKc8lom
+         GhZEENA0+VPv9Ox1zCzNNAQvvJvIR1EuXxK5cFL0dBEFArH1lpb+b8CFavdsZwf/WesE
+         EqpQ==
+X-Gm-Message-State: AOJu0Yx4KRkRfqjaMVC6fIqGKxjnMGkE81Kn1RkHyYJqZ/2zYQK/OrEN
+	c1QxOsWys3sydkcfmkxC6CC+TZkgZT53YWGBgHarjufdidUh1FX0eUtFMm6EnQzRb7jpw8wcgmS
+	2
+X-Gm-Gg: ASbGnctfRIGcc6wTZ7AqqUCXxX+UPKPCHi+/7tIf0KwOcltOOY5CdP1D5LlAB2UjVsu
+	YEzAiKTah4BBLdok30/ewaCtOIs1dzH3s6w/tRavLd+DZjRqnT1yIrZT2HhJtnmBpd25GVFGfRR
+	nzT/1pJp+lKMuX8kYh3xUUmATue7jcXYYckWS6Le9uzl+/wjHGaj28xQAnY/Vb/LuTya2aP+Ojo
+	9mOp2+AUZ2vEx9efe14j9BiT+poQ5tKKHWxA9+90W1tz/YPwHQsLzjnBDtsTd1dKqOQY5eePCI3
+	c5zEjblzIISwPPrCF9iVOoV3aNz8ReMxJU/OreHSPFVERvH70JCe4QtBMvIu+XwXy7CqOTa6WFc
+	eHhQ1CDUolKUNcE1RtNAOrkFZBkIUCA==
+X-Google-Smtp-Source: AGHT+IF8nFh7Jj3E3ztZAdeC2ct0kjtnQ1x6LvMRae+EEiYHTrZbN6TQQ4YbOvTXqTUEGvOdOJzFVA==
+X-Received: by 2002:a17:906:bf47:b0:ace:6a18:595c with SMTP id a640c23a62f3a-ad1e8ce4c1emr334611466b.16.1746625922122;
+        Wed, 07 May 2025 06:52:02 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.43.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a6873sm920845266b.61.2025.05.07.06.52.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:52:01 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH] dt-bindings: iio: light: apds9160: add missing type definition
+Date: Wed,  7 May 2025 15:51:38 +0200
+Message-ID: <20250507135147.1328639-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/14] nvmet-fcloop: add missing
- fcloop_callback_host_done
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250507-nvmet-fcloop-v6-0-ca02e16fb018@kernel.org>
- <20250507-nvmet-fcloop-v6-6-ca02e16fb018@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250507-nvmet-fcloop-v6-6-ca02e16fb018@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Score: -3.30
 
-On 5/7/25 14:23, Daniel Wagner wrote:
-> Add the missing fcloop_call_host_done calls so that the caller
-> frees resources when something goes wrong.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/nvme/target/fcloop.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@kernel.org>
+Fix the following warning:
 
-Cheers,
+ Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml: ps-cancellation-current-picoamp: missing type definition
 
-Hannes
+raised by command:
+
+ make dt_binding_check  DT_SCHEMA_FILES=fsl.yaml
+
+Fixes: be464661e7532 ("dt-bindings: iio: light: Add APDS9160 binding")
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
+
+ Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml b/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
+index bb1cc4404a55..f9c35c29fe04 100644
+--- a/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
++++ b/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
+@@ -37,6 +37,7 @@ properties:
+     maximum: 63
+ 
+   ps-cancellation-current-picoamp:
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+       Proximity sensor crosstalk cancellation current in picoampere.
+       This parameter adjusts the current in steps of 2400 pA up to 276000 pA.
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.43.0
+
+base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+branch: fix-brcm,apds9160.yaml
 
