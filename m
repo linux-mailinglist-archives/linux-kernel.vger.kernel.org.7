@@ -1,165 +1,188 @@
-Return-Path: <linux-kernel+bounces-637637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A97AADB6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BD8AADB63
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1C93B0BC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:22:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02F5188734A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CEF230D0F;
-	Wed,  7 May 2025 09:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D414CA31;
+	Wed,  7 May 2025 09:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FjmklosG"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9k+UWsu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4996A230BDF
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199DA2747B;
+	Wed,  7 May 2025 09:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609692; cv=none; b=XfKkmdYFvpc9FedvoGWqjQshRhQTbegM4GGw2qgzsRHuonUVUBqhBh+hVqs3sISx7BJtcPgl1rtER+E4I5DGr1hg8jv7JStWR1xNc53wrFSz04coYRPGfTuleUxmysemL6BesAV4YfiOJK/oaT7laoSUgZ56UOBa7gznyjAnMnQ=
+	t=1746609775; cv=none; b=t+4q/C328ODd+lke32Nz0rVCdbP9wccxmlLlXiaLyb6C37POCpcfZIrvbm1lVAUYvyFLFUOrqh/D74BQjdAxEb+RDQlXSkiIUTCsQ2MHYMwBeWrjZK35l9/ba6BZ/cIBX0skKQUhGvPnRc4SbHkhZsifoRNZvz9zV4OsWLNGKZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609692; c=relaxed/simple;
-	bh=Zuk4ngv1wcV3NMC95okNfizOZQtgYbFjGF2v7oWA7MU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OO/9KLIF7/tf2e3/5qljriWceYtF2OYQVeUN3E1u4dT1oi2XJyv5N5gW4kHUGOans3j2FqkBPF5+j5i9UN/3V4xgdN058SySGlQtS6oP3FTfMPtHES+I5hI2NtL3+2LR7xAsDKESViOGVFtA+t3fgJixeY+C/CUgBMdtA8OM1xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FjmklosG; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a0b0d8090dso147478f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746609688; x=1747214488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+y8jPOzO/Gnjm1gvhE1qivFemvUWxShS+OkhHR4ZTcI=;
-        b=FjmklosGXNCndGj2Ube/jmC6+zs6C31CEDfF6sWwRVPN1zxhieEW5W7Wr1uanoQQTa
-         sLdUl7AbtV53/eE7eKArkQjeyHJmQIs6Q5sOCabusg5y1+RHxfK0cDUpfYq9o0WDjfXw
-         APd6WAnXdjwtv2IEgNevtGEmOBEbv8IsXl6IWn2U+PIXNgAY3Fk/TzvAfa4PQrxZnYFJ
-         i7MClMBXF2HZhl7ybTQnCFoMYAI3Giu5Z5P75qw0dnwGyqr2jEhL/3ydq8HJByhzNY6J
-         xxopq9DLaYu5h6Tfwhswr/2czJgGNJ9H4BLMCENWajmCJFRvPohk2SEeiJ1+2oFYgwdK
-         AePw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746609688; x=1747214488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+y8jPOzO/Gnjm1gvhE1qivFemvUWxShS+OkhHR4ZTcI=;
-        b=NR3AGdAufAtCFTwtwd9SL8yX63I6l5B8Tuahk6Twl83wLj5i5PRWTjjnHTERIreNLG
-         gt+tkpgZwwJwEdTT1SqPE72uJkdj0Dd99uMqscS/BrcQZg4zREKOBO7IDlijYhQreb6t
-         OzQ4fO7OaZDcFCIRyi5ZUXMkuqUu/eC+iNJhqNbozzzrtWxaSLzHyS8TsQ0cJ2CR1hrD
-         yoXYc6BGdYEa4apn9vyVwhBX/PStepqO2gsrb9Myys4SNFE81t5HTNIQUQWf6L4qyHG7
-         CUJf/KKHAC358KHywrBXQgl6/HdL+591MJVPjlSU7f7CdPm0AL+7rjqOAbiScQ4H1YiI
-         b3yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqxcx/SCXKogCJsLwVEO8Bn9yPLsl/99cyTn1TCWu6GCvW+d591aIccZlD9bcKhpiKyJXaw8qmF9OpdOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHa1nmoJD6RZZYiZRYmJ1/ziiVWFpDEXy5YhMdv9ZfiYGCsunu
-	4+ikR05Lf7xGwchXcIRKsiyXkKqKkwCXVAazIHfME6iQUvjxUmA5J2ANUiuviIoGBC+U1GhSnSo
-	i
-X-Gm-Gg: ASbGnctMyIaXE4sRWYHvhr/sW/kNcSDz/gUQFBwABebfN1i1U/PtQurcIUdfrpHYvCs
-	z+3zojrN1AHt7+v1YsbqF70zxcHWGp6fMAvti3Wgw1c8HOjR/68+ayeFmL4yocf7IXYnu+e83bv
-	AjQ5lm6EOhAtS2/jp8BTQ6PXMrY7AeALcTOf0mrJJ/BuNF1GtmdUoWHCsz2dB5mFWiAKGeSV+e6
-	vTbKeVhJLNHxW+ZBNIKY/Dm6D0FTjvOaNt6Bk1krwALkWe2qtkZoiWe7yQ/TK1caY/CJFDtXJJy
-	V5igjgCN8YJm5L6ruUkxw7n8cnx2m35pNjTfUNg9Fpy/P+ekRQ==
-X-Google-Smtp-Source: AGHT+IGj/1ahHnSJ4e2xPVwr+AuBbHJ0wuhNIZomcjtqGtlqcAu1lDRaE0pf4RUZq68YnrfTUyA8AA==
-X-Received: by 2002:a5d:47c5:0:b0:3a0:7d47:8d7e with SMTP id ffacd0b85a97d-3a0b4a363a9mr745845f8f.8.1746609688581;
-        Wed, 07 May 2025 02:21:28 -0700 (PDT)
-Received: from kuoka.. ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b5764733sm1633431f8f.22.2025.05.07.02.21.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 02:21:27 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] bus: firewall: Fix missing static inline annotations for stubs
-Date: Wed,  7 May 2025 11:21:22 +0200
-Message-ID: <20250507092121.95121-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1746609775; c=relaxed/simple;
+	bh=yNe/yghsog/b5Puwx6JCvObC6eqIzd/4ueq2VaAB2yU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bX598xDlUNCYclkKPpzJJEuA8RQQrRV+GdHGlkmLMYWj+4WN8AJGmJuZm5ATNYR1jlf97OXU8/ElVQKg07ClvYuOrvSdTeSMKA8o81q0EXQJ9kl+K+4cq5MrfNek76fFjQt3sxp7YpQsUCrmgft0BV11VNzfu6nSXDwom2lEf8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9k+UWsu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA74C4CEE7;
+	Wed,  7 May 2025 09:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746609774;
+	bh=yNe/yghsog/b5Puwx6JCvObC6eqIzd/4ueq2VaAB2yU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n9k+UWsugyDH/IF579694s5FyZt8jd6vyF0dbaGZ3G41pVvUE0jqAgUCuoaXdK+Of
+	 BWR8HRi5W9FHaMdDxYZHZ0uJWnFsL6qUgeWVuvfbTXZv5uEBRaKuJRfMOP5ihZHtLc
+	 v9GvG+ES3VDQI73i9//Rlc6o1nNSgnuN0thWlVEWoM/dQWNE9GbUF5ONA+f+QVvdfM
+	 Ih11WnnRaYooheZbMHVSeSu8j7wOhca06kOmriCjJl4jTBPrDoAPnEEePEzvxrwD33
+	 sINnLw5lyivWCX/3okKLrmuwrkn9KUi/pwNf0KMU15lhHFofVNVGAwSgXVs+CARSVH
+	 TKZCzywJk75YA==
+Message-ID: <7b344f05-70b6-4c59-9b5f-611dde59c09b@kernel.org>
+Date: Wed, 7 May 2025 11:22:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2063; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=Zuk4ngv1wcV3NMC95okNfizOZQtgYbFjGF2v7oWA7MU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoGyYROrndXK6jXz7UdfFDTRPGKx2tUXBG8hAo+
- NjoRR0HvAyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBsmEQAKCRDBN2bmhouD
- 1yXTEACTo9Eb1/KCCY3Jd9m8bNUsYfG6kBXHtTAAFI8wXEESF8U4GhmrAvx81vwof2w0YREvtxb
- ISMF0pjB6RnocBfCP85nQ746kCG8w4rVNu7MT0UDe2Jz018fFc7e0HVZvZYTA6jt8gJBKwCmqd/
- OgFPMAwzCMmhAN0BMMRhei5JK5WBibxnRVJcAEQUEStj9wP5hwWVvHLNHyVpQvZfaC/8dWZBQtn
- zmtaN+U9IM6vKJGcwlagZLSUw66zRwLh2m+JGoab8bZzlOQ14Obp0WgsNouRNXtU9sKOglP/YrK
- Me7qo1tycDwv/7E4OHa3sRgrA68d2lbHXQc4FGvocItlGvWTu/gKzaXMeN7j0BXnWRU1GukWcOQ
- l5QHEjIyw1Vub0gO20KmikggPtrV01IS1/6oWur1TIG6J1cQDwQrWO3sOTlviVTRx7y/vrfwuuN
- w54+Az1E3GuM7qxNAvOY+CEG5RIzkNT/aVfRMbCZt4GBPLFctNStFxyP1qSRnD/nA+4AT9Nqy9Z
- D+nsGkQaCaMla6U9FWlPBqK6HaD1qzIz3Wd/OF8PYatfVDMZSP1QMZGFmYK2BV1r7DZV431BQET
- XmFwOSmhvwY44mJFyA9kdRO+00I/Vd3zISVSx8V6tEaHfIjeqV0ByI9r73KKQY17jhlYWNl1C6W qg3wA9+J6hsAWEg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 1/4] firewall: Always expose firewall prototype
+To: Patrice Chotard <patrice.chotard@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>
+Cc: christophe.kerello@foss.st.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+References: <20250507-upstream_ospi_v6-v13-0-32290b21419a@foss.st.com>
+ <20250507-upstream_ospi_v6-v13-1-32290b21419a@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250507-upstream_ospi_v6-v13-1-32290b21419a@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Stubs in the header file for !CONFIG_STM32_FIREWALL case should be both
-static and inline, because they do not come with earlier declaration and
-should be inlined in every unit including the header.
+On 07/05/2025 09:25, Patrice Chotard wrote:
+> In case CONFIG_STM32_FIREWALL is not set, prototype are not visible
+> which leads to following errors when enabling, for example, COMPILE_TEST
+> and STM32_OMM:
+> 
+> stm32_firewall_device.h:117:5: error: no previous prototype for
+> ‘stm32_firewall_get_firewall’ [-Werror=missing-prototypes]
+>   117 | int stm32_firewall_get_firewall(struct device_node *np, struct
+> stm32_firewall *firewall,
+>       |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> include/linux/bus/stm32_firewall_device.h:123:5:
+> error: no previous prototype for ‘stm32_firewall_grant_access’
+> [-Werror=missing-prototypes]
+>   123 | int stm32_firewall_grant_access(struct stm32_firewall *firewall)
+>       |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> include/linux/bus/stm32_firewall_device.h:128:6:
+> error: no previous prototype for ‘stm32_firewall_release_access’
+> [-Werror=missing-prototypes]
+>   128 | void stm32_firewall_release_access(struct stm32_firewall *firewall)
+>       |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> include/linux/bus/stm32_firewall_device.h:132:5:
+> error: no previous prototype for ‘stm32_firewall_grant_access_by_id’
+> [-Werror=missing-prototypes]
+>   132 | int stm32_firewall_grant_access_by_id(struct stm32_firewall *firewall, u32 subsystem_id)
+>       |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> include/linux/bus/stm32_firewall_device.h:137:6:
+> error: no previous prototype for ‘stm32_firewall_release_access_by_id’
+> [-Werror=missing-prototypes]
+>   137 | void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 subsystem_id)
+>       |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Make prototypes always exposed to fix this issue.
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: 5c9668cfc6d7 ("firewall: introduce stm32_firewall framework")
+> 
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> ---
+>  include/linux/bus/stm32_firewall_device.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bus/stm32_firewall_device.h b/include/linux/bus/stm32_firewall_device.h
+> index 5178b72bc920986bb6c55887453d146f382a8e77..ba6ef4468a0a8dfeb3e146ec90502e2f35172edc 100644
+> --- a/include/linux/bus/stm32_firewall_device.h
+> +++ b/include/linux/bus/stm32_firewall_device.h
+> @@ -35,7 +35,6 @@ struct stm32_firewall {
+>  	u32 firewall_id;
+>  };
+>  
+> -#if IS_ENABLED(CONFIG_STM32_FIREWALL)
+>  /**
+>   * stm32_firewall_get_firewall - Get the firewall(s) associated to given device.
+>   *				 The firewall controller reference is always the first argument
+> @@ -112,6 +111,15 @@ int stm32_firewall_grant_access_by_id(struct stm32_firewall *firewall, u32 subsy
+>   */
+>  void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 subsystem_id);
+>  
+> +#if IS_ENABLED(CONFIG_STM32_FIREWALL)
+> +
+> +extern int stm32_firewall_get_firewall(struct device_node *np, struct stm32_firewall *firewall,
+> +				unsigned int nb_firewall);
 
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 5c9668cfc6d7 ("firewall: introduce stm32_firewall framework")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- include/linux/bus/stm32_firewall_device.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+That's duplicated with earlier declaration. If you need to duplicate
+declarations means your code is not correct. That's not a fix at all and
+you are again masking the real problem which I asked to understand and
+learn.
 
-diff --git a/include/linux/bus/stm32_firewall_device.h b/include/linux/bus/stm32_firewall_device.h
-index 5178b72bc920..eaa7a3f54450 100644
---- a/include/linux/bus/stm32_firewall_device.h
-+++ b/include/linux/bus/stm32_firewall_device.h
-@@ -114,27 +114,30 @@ void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 su
- 
- #else /* CONFIG_STM32_FIREWALL */
- 
--int stm32_firewall_get_firewall(struct device_node *np, struct stm32_firewall *firewall,
--				unsigned int nb_firewall)
-+static inline int stm32_firewall_get_firewall(struct device_node *np,
-+					      struct stm32_firewall *firewall,
-+					      unsigned int nb_firewall)
- {
- 	return -ENODEV;
- }
- 
--int stm32_firewall_grant_access(struct stm32_firewall *firewall)
-+static inline int stm32_firewall_grant_access(struct stm32_firewall *firewall)
- {
- 	return -ENODEV;
- }
- 
--void stm32_firewall_release_access(struct stm32_firewall *firewall)
-+static inline void stm32_firewall_release_access(struct stm32_firewall *firewall)
- {
- }
- 
--int stm32_firewall_grant_access_by_id(struct stm32_firewall *firewall, u32 subsystem_id)
-+static inline int stm32_firewall_grant_access_by_id(struct stm32_firewall *firewall,
-+						    u32 subsystem_id)
- {
- 	return -ENODEV;
- }
- 
--void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 subsystem_id)
-+static inline void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall,
-+						       u32 subsystem_id)
- {
- }
- 
--- 
-2.45.2
+This is something solved already in all other common interfaces (ones
+with stubs) and it confuses me why here it takes so much time. I'll just
+fix it myself and I will apply v11.
 
+Best regards,
+Krzysztof
 
