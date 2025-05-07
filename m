@@ -1,123 +1,208 @@
-Return-Path: <linux-kernel+bounces-638516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2633AAAE6F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:41:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F0BAAE6FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93ECF521A22
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238DF9C28D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7731C28C02E;
-	Wed,  7 May 2025 16:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WqmJ7wZC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA57028A73F;
-	Wed,  7 May 2025 16:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BE428C011;
+	Wed,  7 May 2025 16:41:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643C928B7EC;
+	Wed,  7 May 2025 16:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746636095; cv=none; b=E5dl6OUHOFs9gHpX9Xzcv7C2B/4jK3FFa0uTDbBmTz4WSreOYqy4wi0qVfIy2YjvRnDo1aKvCesLe/lMC7nltEOr+NTuY4FLgrXz3ZMRQeIPtkxgxQ4yL8BcO3gn9XA/hezbo4EHJXcKi5+zK1wp/z+2zL2wC9/op08E7rfUZAs=
+	t=1746636116; cv=none; b=FyjxLvsrUZ0PGf9PdoQ0MXfM6xpuNgTbxJg33WMbQVAa5UTiuI2FSiQvbQ2HxgAnArPy0uWtNQHb/bgIwDtVbcjrBDHQYURDrxpX5yzWBM7xuZbn30EaB1MFk/vDbsb80Q187qCbxpj5+vLTPKga2Yhc0lPCuczUQ3wlZtBFjBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746636095; c=relaxed/simple;
-	bh=iu4DqH0BiPBmHQ3Yxxgy5dmtT9CVDW/JTaBvXtsoyVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjCLn1s7Fj23xlBdDLCHX8uTiAi1/+IITRJuWwJCgIrYGlogDpktoBsywQ/De0/SbMZ9f4HbtJBAgZ7I1F9HPZyruEUlAZ1AewgKQGRO5IcHDXC/W1Zmpv5iipeG7LbIWDp4WjCEIWYxw8rQga7kRrx6nMvQepW6jygN4voh7rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WqmJ7wZC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746636091;
-	bh=iu4DqH0BiPBmHQ3Yxxgy5dmtT9CVDW/JTaBvXtsoyVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WqmJ7wZCGoPV75a1CSt5fFVV8hrvOqfCXQ0JPVfKoPTPhbHeRx4CnRdrVacfFgkw6
-	 ZyBkuUrakoPGIFob+t4tXeZF0bqBAR0RcoqSw6Lxl4LeFkHhIcZePw8nJUW037Q0l9
-	 +XYqQGkw0UHbU5S80EWBf/miDl1sTjzjwfLTVt4PuE6NyAXbWIIfrYjhUtxERDpUEI
-	 +wNcJ8nnwgIUgcGoWK52d/XXRG8e6n05o3z+UvAgOA8x93+GfjpOERpguPMLhmvj37
-	 dD+3TVjgDSNCoEVQHqicrGFRCMBWH7i3EqXSMya3BBb6oIRG5Q2O+HSnD5lpo19NZ4
-	 flhNyI2SI20kA==
-Received: from notapiano (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BEA5417E04C0;
-	Wed,  7 May 2025 18:41:29 +0200 (CEST)
-Date: Wed, 7 May 2025 12:41:27 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Zoran Zhan <zoran.zhan@mediatek.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] ASoC: mediatek: mt8188-mt6359: select
- CONFIG_SND_SOC_MT6359_ACCDET
-Message-ID: <d9642581-3fed-47d8-9661-4335ec1e9c27@notapiano>
-References: <20250505052106.1811802-1-arnd@kernel.org>
+	s=arc-20240116; t=1746636116; c=relaxed/simple;
+	bh=Ogw0DFLSrTYjT3Ruuf+27tuiTdHS43qmK0Cb8CUCaZg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Lcf6/lpVYQC8QBhpWvEIUbUIdVWa512vXKqnDlA2iFnyWHX1KD7ZSkAmKON3E1Ussjn0YoADu+E7wZ7mn2dUN/raionBU2diIfZsu/LMC+9F6/NU8C3WApye0K8dLjFaA8FqcZfAtm97L7hZKAAwjcAOm9j4WUw9k0GVt6nAP04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DFDC16F2;
+	Wed,  7 May 2025 09:41:43 -0700 (PDT)
+Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F30CE3F58B;
+	Wed,  7 May 2025 09:41:51 -0700 (PDT)
+Message-ID: <25aa77b9-0077-4021-b55c-e94327b7847b@arm.com>
+Date: Wed, 7 May 2025 11:41:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI/PPTT: fix off-by-one error
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Heyne, Maximilian" <mheyne@amazon.de>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250506-draco-taped-15f475cd@mheyne-amazon>
+ <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
+ <CAJZ5v0jvWXDQQ++4wmWJ+i=jds+MZ68bRB9+26WM4tAPHFxALw@mail.gmail.com>
+ <1911d3b6-f328-40a6-aa03-cde3d79554de@arm.com>
+ <CAJZ5v0ii9HLfqfgcp=1qRRX6M1yThf7ZPNkSLVc5GGFhv=N-Lg@mail.gmail.com>
+ <ad04d07b-d610-4355-bd47-1d2fb49711f3@arm.com>
+ <fb2e3c60-1171-4f5c-852d-a5bfdc4f9c2a@arm.com>
+Content-Language: en-US
+In-Reply-To: <fb2e3c60-1171-4f5c-852d-a5bfdc4f9c2a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250505052106.1811802-1-arnd@kernel.org>
 
-On Mon, May 05, 2025 at 07:20:52AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 5/7/25 11:38 AM, Jeremy Linton wrote:
+> On 5/7/25 11:31 AM, Jeremy Linton wrote:
+>> On 5/7/25 11:12 AM, Rafael J. Wysocki wrote:
+>>> On Wed, May 7, 2025 at 5:51 PM Jeremy Linton <jeremy.linton@arm.com> 
+>>> wrote:
+>>>>
+>>>> On 5/7/25 10:42 AM, Rafael J. Wysocki wrote:
+>>>>> On Wed, May 7, 2025 at 5:25 PM Jeremy Linton 
+>>>>> <jeremy.linton@arm.com> wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 5/6/25 8:13 AM, Heyne, Maximilian wrote:
+>>>>>>> Commit 7ab4f0e37a0f ("ACPI PPTT: Fix coding mistakes in a couple of
+>>>>>>> sizeof() calls") corrects the processer entry size but unmasked a 
+>>>>>>> longer
+>>>>>>> standing bug where the last entry in the structure can get 
+>>>>>>> skipped due
+>>>>>>> to an off-by-one mistake if the last entry ends exactly at the 
+>>>>>>> end of
+>>>>>>> the ACPI subtable.
+>>>>>>>
+>>>>>>> The error manifests for instance on EC2 Graviton Metal instances 
+>>>>>>> with
+>>>>>>>
+>>>>>>>      ACPI PPTT: PPTT table found, but unable to locate core 63 (63)
+>>>>>>>      [...]
+>>>>>>>      ACPI: SPE must be homogeneous
+>>>>>>>
+>>>>>>> Fixes: 2bd00bcd73e5 ("ACPI/PPTT: Add Processor Properties 
+>>>>>>> Topology Table parsing")
+>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+>>>>>>> ---
+>>>>>>>     drivers/acpi/pptt.c | 4 ++--
+>>>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+>>>>>>> index f73ce6e13065d..4364da90902e5 100644
+>>>>>>> --- a/drivers/acpi/pptt.c
+>>>>>>> +++ b/drivers/acpi/pptt.c
+>>>>>>> @@ -231,7 +231,7 @@ static int acpi_pptt_leaf_node(struct 
+>>>>>>> acpi_table_header *table_hdr,
+>>>>>>>                              sizeof(struct acpi_table_pptt));
+>>>>>>>         proc_sz = sizeof(struct acpi_pptt_processor);
+>>>>>>
+>>>>>> This isn't really right, it should be struct acpi_subtable_header, 
+>>>>>> then
+>>>>>> once the header is safe, pull the length from it.
+>>>>>>
+>>>>>> But then, really if we are trying to fix the original bug that the 
+>>>>>> table
+>>>>>> could be shorter than the data in it suggests, the struct
+>>>>>> acpi_pptt_processor length plus its resources needs to be checked 
+>>>>>> once
+>>>>>> the subtype is known to be a processor node.
+>>>>>>
+>>>>>> Otherwise the original sizeof * change isn't really fixing anything.
+>>>>>
+>>>>> Sorry, what sense did it make to do
+>>>>>
+>>>>> proc_sz = sizeof(struct acpi_pptt_processor *);
+>>>>>
+>>>>> here?  As much as proc_sz = 0 I suppose?
+>>>>
+>>>> No, I agree, I think the original checks were simplified along the way
+>>>> to that. It wasn't 'right' either.
+>>>>
+>>>> The problem is that there are three subtypes of which processor is only
+>>>> one, and that struct acpi_pptt_processor doesn't necessarily reflect 
+>>>> the
+>>>> actual size of the processor structure in the table because it has
+>>>> optional private resources tagged onto the end.
+>>>
+>>> Right.
+>>>
+>>>> So if the bug being fixed is that the length check is validating that
+>>>> the table length is less than the data in the table, that's still a
+>>>> problem because its only validating the processor node without 
+>>>> resources.
+>>>
+>>> Admittedly, it is not my code, but I understand this check as a
+>>> termination condition for the loop: If there's not enough space in the
+>>> table to hold a thing that I'm looking for, I may as well bail out.
+>>>
+>>>> AKA the return is still potentially returning a pointer to a structure
+>>>> which may not be entirely contained in the table.
+>>>
+>>> Right, but this check should be made anyway before comparing
+>>> cpu_node->parent to node_entry, when it is known to be a CPU entry
+>>> because otherwise why bother.
+>>
+>> Right, but then there is a clarity because really its walking the 
+>> table+subtypes looking for the cpu node. Exiting early because its not 
+>> big enough for a cpu node makes sense but you still need the cpu node 
+>> check to avoid a variation on the original bug.
+>>
+>>
+>>
+>>>
+>>> Roughly something like this:
+>>>
+>>> proc_sz = sizeof(struct acpi_pptt_processor);
+>>>
+>>> while ((unsigned long)entry + entry->length <= table_end) {
+>>
+>> Here your reading the entry, without knowing its long enough. For the 
+>> leaf check just using struct acpi_pptt_processor is fine, but for the 
+>> acpi_find_processor_node():
+>>
+>> proc_sz = sizeof(struct acpi_subtable_type);
 > 
-> The driver support was added without selecting the codec, which leads to
-> a link failure:
-> 
-> aarch64-linux-ld: sound/soc/mediatek/mt8188/mt8188-mt6359.o: in function `mt8188_mt6359_init':
-> mt8188-mt6359.c:(.text+0x19f0): undefined reference to `mt6359_accdet_enable_jack_detect'
+> Although, maybe I just wrote code that justifies using 
+> acpi_pptt_processor here because the entry->num_of_priv_resources length 
+> check isn't being made without it. So ok, use proc_sz = sizeof(struct 
+> acpi_subtable_type) and assume that we don't care if the subtable type 
+> is less than proc_sz.
 
-Hm, I cannot seem to reproduce this. I just tried to build on today's next with
-CONFIG_SND_SOC_MT6359_ACCDET disabled and have tried
-CONFIG_SND_SOC_MT8188_MT6359 both =m and =y, but in both cases it compiles fine.
+Sorry for the noise, scratch that, a better solution is just to swap the 
+length checking in the 'if' statement. Then its clear its iterating 
+subtable types not processor nodes.
 
-I wonder if somehow your tree was missing "ASoC: mediatek: mt6359: Add stub for
-mt6359_accdet_enable_jack_detect" [1], or if it's due to a difference in
-compiler versions used...
-
-(I'm using gcc-linaro-12.3.1-2023.06-x86_64_aarch64-linux-gnu)
-
-Thanks,
-N�colas
-
-[1] https://lore.kernel.org/all/20250306-mt8188-accdet-v3-3-7828e835ff4b@collabora.com/
 
 > 
-> Fixes: f35d834d67ad ("ASoC: mediatek: mt8188-mt6359: Add accdet headset jack detect support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  sound/soc/mediatek/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
-> index 3033e2d3fe16..e148d4d94160 100644
-> --- a/sound/soc/mediatek/Kconfig
-> +++ b/sound/soc/mediatek/Kconfig
-> @@ -229,6 +229,7 @@ config SND_SOC_MT8188_MT6359
->  	tristate "ASoC Audio driver for MT8188 with MT6359 and I2S codecs"
->  	depends on SND_SOC_MT8188 && MTK_PMIC_WRAP
->  	depends on I2C
-> +	select SND_SOC_MT6359_ACCDET
->  	select SND_SOC_MT6359
->  	select SND_SOC_HDMI_CODEC
->  	select SND_SOC_DMIC
-> -- 
-> 2.39.5
+>>
+>> while ((unsigned long)entry + proc_sz <= table_end) {
+>>   if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+>>   entry->length == sizeof(struct acpi_pptt_processor) +
+>>      entry->number_of_priv_resources * sizeof(u32) &&
+>>   entry + entry->length <= table_end &&
+>>   acpi_pptt_leaf_node(...))
+>>      return (...)entry;
+>>
+>>
+>> Although at this point the while loops entry + proc_sz could just be < 
+>> table_end under the assumption that entry->length will be > 0 but 
+>> whichever makes more sense.
+>>
+>>
+>>
 > 
+
 
