@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-637346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62030AAD80C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C86AAD812
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882434E310C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012131C22271
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7B821E087;
-	Wed,  7 May 2025 07:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC442135CB;
+	Wed,  7 May 2025 07:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjHRLkUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqcX8HWj"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658622153D0
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83942217F46
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746602948; cv=none; b=aSbDmit063Bues4Y4Ob97Ood1TY+5UQ6ty9hdB0PJuRAAJprFS8dQ4qIpEXE3cgOvKXKKcMuyIPavkoY7J9lD7FVkP7L76VPgquN1J/OeuLun4ocJBVTlXedL52qCnoF7VYCVwpbwu9P60VyaZbuW5gav7ra+Po5yUFsCP2mbs0=
+	t=1746602971; cv=none; b=YbQ609LGk/Iz6YYTQDWjIVt8BZPoXQbADauGO2Je2p4FNjPcd4WbQTgoHNBR8E9DC1D2pF+akxkbovTwxLqs9hCZ+CaJ47c+gFftMbAl+4O+rpb8Okxv1HhNqUZ62iaNEKbquFA2kVWWIYHn35tzKkT5R9GuxwS9m9+KzOcXFwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746602948; c=relaxed/simple;
-	bh=7cURyXjXdoJmTyb8hLReJVBL1sTYAuBh4yrjjz9NI/g=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tFlEE9xOBo4fo+z0fSnC0Q0/yw8wvbOEinCOZAmtumX8xxFl1iUc7bDOgVKIMgzPJlE9abydJJjBWMJlEMKmV6ki5Fv0mE4RWxuA9pCZZIZb0k5tpqvLh6hWG4tFyaJjYyklEP8Ws5JZmAtUUYBkybvuxwnenexuhDs3ss1SfvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjHRLkUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E87B6C4CEE7;
-	Wed,  7 May 2025 07:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746602947;
-	bh=7cURyXjXdoJmTyb8hLReJVBL1sTYAuBh4yrjjz9NI/g=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=OjHRLkUVX+ps0CQnHqc4HjSygB3ca5HmzNXyReL8SHXICmX9jk+mU7qyYbTsmF1Ds
-	 Y+lhLizkLmF9I9OzgQb5+8jsQTL7RjXq9VCVsngzPm2BYUvcUOin9XmNPKw3ZnI6Vm
-	 XdX6IvpCW9dzy8n2YVRs45CRvRWw9glf7a7XC+uSuBDsyCvkpKXjlvAN5l1jud1sxh
-	 SGVB3hcCv5rOeEONNwi2zwrrkuo/qLef90RdiryGY9OSZOXdcj+bRJ0zGnSHMknbYH
-	 pxV+I/jqZXKkNUTxTo13kMPGl9H8DsiemEQl2XLbRyNxk+aKXAUYdr0qAYMhjQ4oPL
-	 IjEQ3f7t68Epw==
-Message-ID: <866f9738-cc57-464c-a14d-c167910cf370@kernel.org>
-Date: Wed, 7 May 2025 15:29:04 +0800
+	s=arc-20240116; t=1746602971; c=relaxed/simple;
+	bh=3ofFTovtnJvX5M/xuhvl18Z0GfLNgQGP2MJvinEcTik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CpeODfDuzNZ3dFOp5X7QPqpq2lI0rsNpX7mh+7Dbuv9E+Oan+gEtOHPZmnAjJjXmF3w23aOTHHG7jHJxucSa0H3alhKls8AQmPJ02g0BxpMsGtgXUAMKsVcQ42iSL4NWAFZqawl62D5TT9mOcOOCHogAmQK25rXPMSX6o46E3Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqcX8HWj; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39ee651e419so3438488f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 00:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746602968; x=1747207768; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=exh3b5R7L77rlGB9XDLUTNFBk7LtXN6j6kHQ/wrFppg=;
+        b=lqcX8HWjoX36WHrfdPUWIjNj0BPu4jxR/vDN0sjAWhBJQ7QMdXwwwRn20Na67XyaNs
+         zHRWU9RdQEm52VDinC1WP3zhufhSSap2ix1APn4UVW706vlBGsTTSr7E1kOYi/Z0yrHb
+         TTYmpP3N0NXBHnieEZKmqSuC9UsAvDTniQz82qqKpTkd+wKP8fiHBBQR3gWkSjKtXjaE
+         u1K0iGAv7JdeeqgIYPqdeTRQ2q6VfzsWxDU1vLI/y+pkJZ5YicQstZdEmoPGpih70KZ5
+         IpzulRQDCE2YGYLBW6+NN+uJmfQmESsHDdaVmVMcnOWUgDLz7gFX//YoL6mv3zx4Q++8
+         9xoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746602968; x=1747207768;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=exh3b5R7L77rlGB9XDLUTNFBk7LtXN6j6kHQ/wrFppg=;
+        b=spOUEC+XGmgGdqQzXKO4PaEdyJp8DiN3SEGIk1t0lUQGyiBVm+m9C4ADN1KC51qf9s
+         QjFaHWtMSCO5Ffoapxu3sXFeJ+pOjVt3x4TfZTYkajNM4BhMpSDZf111nx+HQXqYhdA1
+         ErC8zcPZiStEGkCIEVQv+bfibL0ZITLDzuVKnZMbcc8HFn9tJKO4N1D7pbLwNheX5ANn
+         +q8/VRHmuIAQLeZBYrVQR/dX5uWykKupym7S/BVYu7QMWHmNKpHg2EySiTKRumLNCMu4
+         UB7pYNy6E3KmVeVS92ighfF+dhw/45i1SQfI1+eYu2UJlXkPREGMpJqVvVaI7D6qAfHi
+         QF3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ZvWto4rN2HzkAWtyPHh0/RRI74FexFIXPaiHM5yranGLrq4oR366TPs2T4qL6sgSdts9wz34TRqjY7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAaOPrATx5qTcl7pJ89o92MbrNh3pcyBOZPviB/5YsKPeT8v6y
+	EY1cmWTJGa9r+/dDIYeYg0MZakrcSCZud08sYRookFSPgtWKWgYDp9EOK3inDTI=
+X-Gm-Gg: ASbGncudHcNJy3s2VOkwOR//se50mAhrlK+D0Pa3bjfltssIyUEd0hBB55T5kBaLhzD
+	LTdyDrLS+LZe7V+QGZlWFILPk+gqrIp8BkAo+zxoH5IzJnz3RFGgwGB5f627Mi4M8zlctPS+F90
+	dEfWmKfX9dVPbWoT+0ZIOfQGvD0QJokDrQxCv0ycGdkKEa5PdX7HE/CejFoyCjUOsRiHz4KpXJS
+	mPaknH0S0Bd/wgrhSGeZxSwYBbM4RYQcGNfiPujN/TrTdWtzyyM2ejAlO9yyyB1cemqDZr2EGIF
+	FrRvnLRZ0oTywt///sJnktbmI4A6bhi236zDS7qAeUvOLZcSvQLfuC6gFMTnLfdsjVWXR3/o2bJ
+	LtP2r
+X-Google-Smtp-Source: AGHT+IEH+UhigDV51ycf06z5unZsxUS1KzhCHNWdikOd5Jo+ShmTKo/P+eDgWolx1p8pfsovDvmOIg==
+X-Received: by 2002:a5d:64e7:0:b0:38d:b325:471f with SMTP id ffacd0b85a97d-3a0b4a16497mr2004847f8f.15.1746602967790;
+        Wed, 07 May 2025 00:29:27 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a0b350f604sm2547973f8f.21.2025.05.07.00.29.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 00:29:27 -0700 (PDT)
+Message-ID: <c0e9a395-41d1-4edc-a759-f958ea10387a@linaro.org>
+Date: Wed, 7 May 2025 09:29:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +81,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+Subject: Re: [PATCH v5 2/2] thermal: Add support for Airoha EN7581 thermal
+ sensor
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] f2f2: return bool from __write_node_folio
-To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250505092613.3451524-1-hch@lst.de>
- <20250505092613.3451524-5-hch@lst.de>
+References: <20250226003608.8973-1-ansuelsmth@gmail.com>
+ <20250226003608.8973-2-ansuelsmth@gmail.com>
+ <a9f58437-5992-4042-85cd-b9150c4855ff@linaro.org>
+ <6814de0d.7b0a0220.2add1a.0689@mx.google.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250505092613.3451524-5-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <6814de0d.7b0a0220.2add1a.0689@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 5/5/25 17:26, Christoph Hellwig wrote:
-> __write_node_folio can only return 0 or AOP_WRITEPAGE_ACTIVATE.
-> As part of phasing out AOP_WRITEPAGE_ACTIVATE, switch to a bool return
-> instead.
+On 02/05/2025 17:00, Christian Marangi wrote:
+> On Fri, May 02, 2025 at 03:30:56PM +0200, Daniel Lezcano wrote:
+
+[ ... ]
+
+>>> +static int airoha_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+>>> +{
+>>> +	struct airoha_thermal_priv *priv = thermal_zone_device_priv(tz);
+>>> +	int min, max, avg_temp, temp_adc;
+>>> +	int i;
+>>> +
+>>> +	/* Get the starting temp */
+>>> +	temp_adc = airoha_get_thermal_ADC(priv);
+>>> +	min = temp_adc;
+>>> +	max = temp_adc;
+>>> +	avg_temp = temp_adc;
+>>> +
+>>> +	/* Make 5 more measurement and average the temp ADC difference */
+>>> +	for (i = 0; i < 5; i++) {
+>>> +		temp_adc = airoha_get_thermal_ADC(priv);
+>>> +		avg_temp += temp_adc;
+>>> +		if (temp_adc > max)
+>>> +			max = temp_adc;
+>>> +		if (temp_adc < min)
+>>> +			min = temp_adc;
+>>> +	}
+>>> +	avg_temp = avg_temp - max - min;
+>>> +	avg_temp /= 4;
+
+Why 4 ? There is 5 samples no ? one before the loop and 4 with the loop
+
+>>> +	*temp = RAW_TO_TEMP(priv, avg_temp);
+
+Does RAW_TO_TEMP() on a average raw adc value report the same value as 
+an average of the temperature after their conversion ?
+
+>>> +	return 0;
+>>> +}
+
+The routine is a bit confusing because of the initial adc read.
+
+avg_value = 0;
+min_value = INT_MAX;
+max_value = INT_MIN;
+
+for (i = 0; i < AIROHA_MAX_SAMPLES; i++) {
+	value = airoha_get_thermal_ADC(priv);
+	min_value = min(value, min_value);
+	max_value = max(value, max_value);
+	avg_value += value;
+}
+
+avg_value -= (min_value + max_value);
+avg_value /= AIROHA_MAX_SAMPLES;
+
+>> Does this chip support the averaging with the filtered mode which prevent to
+>> do this expensive calls when getting the temperature ?
+>>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> If you notice in this function we read directly from the ADC sensor to
+> have a more precise and realtime temperature.
+> 
+> Yes the thermal module support averaging (and this is what is set for
+> the critical temperature monitor) but since we base everything on
+> interrupt the expensive call is called only when the user poll the
+> temperature with sysfs.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+When the temperature reaches the threshold, the interrupt is fired which 
+in turn calls thermal_zone_device_update(). This lead to a polling from 
+the kernel at a higher rate with the governor taking cooling decision.
 
-Thanks,
+> Do you prefer to use the thermal module entirely?
+
+It is up to you. I would say if the sensor has a hardware assistance to 
+compute the averaging while the CPU does something else it is better. 
+But if the filtered mode has the same issues than the LVTS, then it is 
+probably not worth it.
+
+
+[ ... ]
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
