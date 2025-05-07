@@ -1,284 +1,245 @@
-Return-Path: <linux-kernel+bounces-637320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD8AAAD7DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A15DAAD7EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1079A0FAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CDE9864B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6978521C18E;
-	Wed,  7 May 2025 07:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26E521CC5F;
+	Wed,  7 May 2025 07:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="BKe6f9Km"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbJ1HJP2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4457202F6D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746602499; cv=none; b=DGlqgKieHC2XHPLSQT1zRxhGG2HQXvIfStOEgml31OOdrZSTeJqt4Fkc3f2YEn+tRF1r/WPVqK4mt+m830TwR3G17U9jIXGm05xcsKGUBwFWQMXQycX3XPFy0CTvtA/blwMUF0+NdNeeV5bhA7qAnxl1zKWPVw3snTPRUbBc4iM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746602499; c=relaxed/simple;
-	bh=CKJ9woqhM9I9ObdtUWpH9Tkz0E+lAr1zOy114e/BsYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YpMKK73X5qiALhVJEvdXZEQ3mdVrsZkpx1mjT9cGI6rrzEuwlhdF/T8OAo8pz+W+cpq18ntjCMmwZ+6D+z7MXNsNHKomKBnX4zt0UqAvNwTm7t0ANzqQi+ZPPtk4Y2mCSDdQwOZR7/Y7rz10C2NZ8LDZ5ZYYO6e+OpS356Hs0R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=BKe6f9Km; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 109043F215
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746602495;
-	bh=uVVNS9K1l5ioZli6+Y1ApU3mzdOmP0mkHrMyUz5xWvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type;
-	b=BKe6f9KmOPWRVSMPs5c9g/3b+LOR4d2/75gPG0S6xJRnCLFy308PHQwswd8Nb2oso
-	 sAIq/9+/W0O1900qGdehU3UaeWsEeg3yWHMcI/oxY0dyevxZJtecUHb8TvKpFqU2C7
-	 PcWV8vtk8PsGO9ssHbo6mYIIKjF5VYPf+BaEZJZtIEgI3t1dJXW72+1v7p7jFo77es
-	 VlmIoVuoVnVSIwOfYIZKepIcrVqZx+yXxVewwRHYDJrDYEOZoFgw1wHVeGIFhebKHL
-	 eTqjOSxc9Orv0rpq6mFD9DpPYfdJq2VJaODWUsKt2/FAb0wZ5HK8IkartXovmUSy/Z
-	 te4bFLjhGjG/g==
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-44059976a1fso28185005e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 00:21:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746602494; x=1747207294;
-        h=mime-version:organization:references:in-reply-to:message-id:subject
-         :cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uVVNS9K1l5ioZli6+Y1ApU3mzdOmP0mkHrMyUz5xWvI=;
-        b=lr0CMJNAIrDbee9mM0B30qPI6maBLpXN/anPGo/GMtAlicX0T8b1UVvDN4lO0cPHv6
-         4sMXIyjthgcwt6rj6pMQsSHaUGE5zvOHvVnEnF4qil4yH7uMLk2VQM2fmuQeuZZbXfKd
-         rvYyCIXu8122onJSwt+jh9rvBWY5YygMaFMre3/Xz7WIvo2dx5PidDKGJ8HknM+rP5K8
-         3DsnGZCFcn6jv8u5APXYibwTP4cpFuLYREn+ycWt3FZjrR1qSm9rTqAcVj+SNV1T88BA
-         E+gnkXQKtXNJKkiRakeJnvSrqI6grdK1kxUW3Ngk4ygtOlIpemplOQLc7kYBFhYEMGQV
-         G86g==
-X-Forwarded-Encrypted: i=1; AJvYcCWd2/nF9aLLpix4ETvKlWSufrLrhjfeeGmMJxYA7HoyC7c4ZepQ6fVtGnnrfrSfvc3SSB0/LeRYeIeLNeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyojwcefC9cWRZPgTFhT7zPCFbBjqDvrCe5fXPtDJ5i3gy8mrc+
-	v8wpygo7CsnqdRVhhq897UESueZ11a14g/KLEEJXizja6rvcGqVf5CPylz3FItPJzaNN0POkLj8
-	OHYmbQgErryrV5/EVB8Rmjn68yQ0VxvUIMJQI4uxXweoNvk4dY6IACdD9KRsD2S9f3FqjytayRk
-	u4Uw==
-X-Gm-Gg: ASbGncsiFBJ5kuKk+hoK/Fx0wL9Pu2zMqEiNgMjp35/L0Jqbk4c565JayLqxiiAJ65y
-	2tlZwywh4QLLqnnXuPskznbPZQ35VB0RUpaIOQ68kgHXFMI70cBSoJemICzNELNF/t8PMESg8bq
-	F+6vsqOlxY2HrOsgADAy6meKBMrcf1IRQmZ24rJIbnd+RL0wgdDXaLdKkXMe29C0/hiqtxtn/q7
-	DS/GjzyioAXz9VrxR5lQO4Uhz2zXL4YpaIHySSbHMkdb1dXEOhI2UBZ0cHDudme/+MCRWPq4OHV
-	cFaneEarubPWGDOGd87i+8EfQSJ5antvVu8jdtz7LJRJmhNulHY9
-X-Received: by 2002:a05:600c:8414:b0:43d:7413:cb3e with SMTP id 5b1f17b1804b1-441d44bc65dmr14233815e9.1.1746602494117;
-        Wed, 07 May 2025 00:21:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoJ30zNqAeLb94sb4B+QOVmofAE49i+gdW0NJecOa6XdH5XJLR4CdZYMqUjkXpobjaUj8zQw==
-X-Received: by 2002:a05:600c:8414:b0:43d:7413:cb3e with SMTP id 5b1f17b1804b1-441d44bc65dmr14233525e9.1.1746602493659;
-        Wed, 07 May 2025 00:21:33 -0700 (PDT)
-Received: from gollum (151-243-191-194.pool.dsl-net.ch. [194.191.243.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d43d6f2fsm20496645e9.22.2025.05.07.00.21.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 00:21:33 -0700 (PDT)
-Date: Wed, 7 May 2025 09:21:29 +0200
-From: Juerg Haefliger <juerg.haefliger@canonical.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Leif Lindholm
- <leif.lindholm@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>,
- Ricardo Salveti <ricardo@foundries.io>, Marc Zyngier <maz@kernel.org>,
- linux-efi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: UEFI EBS() failures on Lenovo T14s
-Message-ID: <20250507092129.2ef56913@gollum>
-In-Reply-To: <Z0iCNJVWNzBzdq0C@hovoldconsulting.com>
-References: <Z0gn1N3IsP8r3gTA@hovoldconsulting.com>
-	<CAMj1kXGjiA1HydMaY82MQsYvkchpN7v7CMOB5i3NEdqcYGn19Q@mail.gmail.com>
-	<Z0g_HL01eqXu4cwQ@hovoldconsulting.com>
-	<CAMj1kXFtr7ejEjjSRj9dcRa7YbO0SR5OR3pm+K6OvbX2=RfhAQ@mail.gmail.com>
-	<CAMj1kXHS_TY=jfBT=dqUQSXf2pBXbt12uaLsMw-FLX3uU_X6uA@mail.gmail.com>
-	<Z0iCNJVWNzBzdq0C@hovoldconsulting.com>
-Organization: Canonical Ltd
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BD5214A7D;
+	Wed,  7 May 2025 07:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746602607; cv=fail; b=sDPizxzYNJD+XFN9w9nDilaz/Bt0zgBwB897s1vapR8mQlTBGxTLCRtShYumUlRFNgWZeh2D/FnJMW/Lcx3xBiK7Y7ehBkV+cpBDJVZx3twnYsodjrn+bqSEBcb0I38OLqNvl2z7IYlkkrpcI4OjY6XiYkonxsrgCDiQLXM9ATw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746602607; c=relaxed/simple;
+	bh=1d6QmGpcEbBsaG3g/MsqjnHTGx0gHhMibkumcVybBiU=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=O+ZxrZrUWeZ/cNEK6ZWRyxdjyPZxGmul0WYL7VRsJpSq3V4zVcqokzd+9CM98uGHmmh69+Tvo9pt0R9s/rtsZ6v9s8ekWCPVmSYol/L+4COcSLA4sZ7fpRjz8k4sowXBICDZhrLNCZ6SefoDIgiMzbJJ27f7moCYtzZz/UsRYtU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbJ1HJP2; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746602606; x=1778138606;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=1d6QmGpcEbBsaG3g/MsqjnHTGx0gHhMibkumcVybBiU=;
+  b=lbJ1HJP2gPtfrM2z5qGWi9pJyKcPVX+8mTdlm/Ng49tHOzlIjNDqRJkt
+   DliAEp24nXm2dmZ2FnN3ZygmWPMqAOhyVwbWQa4IH6KQx+j7snhe7Seg0
+   IfJOcfKcL1avzxqUNaQ7Lhza+jGqvIRCPexaUcIHGxHHHB1wXCD5Z9vzC
+   Yoot0X+LttLVorKgA2sXfR428xm49YIHrWfcv4npgS3GhD08qBNgSv1ez
+   pfu8qsDEUySDv/0N5TEODqAGo2WzQpnmukQCCqFh7FDKIf4xkCza1LpSs
+   GZ/iT37w4fCnjMfZmWLU5yqwPeU6Q1O3+F1f8HJLrCUWhPFUqxJDpqzWJ
+   g==;
+X-CSE-ConnectionGUID: to2M0I0GRKu21Z5cMrtzpw==
+X-CSE-MsgGUID: TP4FS8MOSJ6UZAiw5G+9bg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="47564230"
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="47564230"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:23:25 -0700
+X-CSE-ConnectionGUID: 6hK/jbBoR6eq+wIJcUg+iQ==
+X-CSE-MsgGUID: nOj86PNdTTyaPT6Ifarbgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="140984974"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:23:25 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 7 May 2025 00:23:22 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 7 May 2025 00:23:22 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 7 May 2025 00:22:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ib/bO4wUfeAK/tLDCBwjnBYYlVGwbPxyzqSuh+9tg//f8fsXNlufXceYbE+41rn+LkNcp4adUhfElXY9dJuBZmtKOaMrDWW8T2fXSGTmNqthf1NwqmltZRR8ltYsu9gkbzEctLolTPwA/GlBkQ+KQEFH+5IXgliGmXL73/X3KVaaUBEJaS2LNZBCYKLcOZafx+JGcaGV/aWxWM0wAQUX1zawQ7bXuGqQK7SmnvR/lDqo7xc8JsTPRiy3r/Zuc0qmkridpZ12vbWOn9fqcx+kAtQkrrwnGz4ybF4bDltxiPfPk0mQcvmGC2yEjnrD5yY7u7YLE6eMgAESnutjVdW/JQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KCSVGZAPDX3WMSGzStLOnz410VlgNT/qKRyHvix+D4o=;
+ b=WFh9sbxQ1eXKQPlmCxG7vfjT29Jve5mUJfItevx5U3FbX+c0yoNd9qpHEUUt5ROAmzWmysRI0is8qSAVBbWTa0FGyCFkpeFlSyMd3xe85CFiQXstwJJEThPWBQvqqxKi9vnmaHcMnpMhNQwBheX6hZuuywGPqzTKavApc9P62BAaGoXArgoCPVhS8AS7/Z4L5hJI2Q4tAqA7SABgQpj5Kkjpn9BmAx34AdlarFoB8I6MSKaiy7aGTBVYlE/CPislk0sloHJdhLS4Ve5A3DltKQptxPdSCFOk9vcOY15tOWoydgrVGWg03SOyf0rl1/FqVcBBDBTDCk4FFQBd8pQLbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by SJ0PR11MB8270.namprd11.prod.outlook.com (2603:10b6:a03:479::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Wed, 7 May
+ 2025 07:21:48 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8699.022; Wed, 7 May 2025
+ 07:21:48 +0000
+From: Dan Williams <dan.j.williams@intel.com>
+To: <linux-cxl@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alison Schofield
+	<alison.schofield@intel.com>, Dave Jiang <dave.jiang@intel.com>, "David
+ Lechner" <dlechner@baylibre.com>, Davidlohr Bueso <dave@stgolabs.net>, "Fabio
+ M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>, Ingo Molnar
+	<mingo@kernel.org>, Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+	Vishal Verma <vishal.l.verma@intel.com>
+Subject: [PATCH 0/7] Introduce DEFINE_ACQUIRE(), a scoped_cond_guard() replacement
+Date: Wed, 7 May 2025 00:21:38 -0700
+Message-ID: <20250507072145.3614298-1-dan.j.williams@intel.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0313.namprd04.prod.outlook.com
+ (2603:10b6:303:82::18) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/t6+A9NYapYO6ac5qH4NgA+z";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ0PR11MB8270:EE_
+X-MS-Office365-Filtering-Correlation-Id: e80839cb-d0e7-42e3-9ef8-08dd8d37d481
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?KdiI/wJfiCXshA9QH+Bbm9MYea5VJlXo/wcZqRxVsCQKdLxjwLfI0h0NB7Lw?=
+ =?us-ascii?Q?ckZjG01C1VDmFkQYzf6bk7OeVuLme2Db5+g4EwOTugsuJ4UpDWhgwYUx1fVd?=
+ =?us-ascii?Q?lfZSFvu0IPczIRVeNUVcWH8xQ93cvQ/5QoMMvl9oZDWypUV9ZdLuLZlD/Z1c?=
+ =?us-ascii?Q?zKlHPP5DOI4xSgVpDgYJZQo6OF34ImqL+0BTk/Q+NPgHngmIzFHgNyDFp57h?=
+ =?us-ascii?Q?tVQWH4UXpq/jt2IpL4NRYYQTt1hYdxoHr9olxHBh7wHhn3JDHpIKtUE0Aj+O?=
+ =?us-ascii?Q?yWNvLObTN7TYhQqIb9y5QFxrAoVEmSZuepGoYt4jTwAtJMrC4IjZsJPqvocS?=
+ =?us-ascii?Q?n55HtuUNPRBwZ9u+/UqH2n1HeHFko2HFeEmYhqNARB+tZWAGdw4i0eKqGfVh?=
+ =?us-ascii?Q?aw9EueYgvGoXmy0rMDbsiUn7ypLiD7kPKOFD6CcqOO22Zcw69vx96EqxoLJB?=
+ =?us-ascii?Q?MSVlCzpSBHX2Yw4RqTD2VjnvFz3fd1ZVMNUzzCQw+6wiVlQmLqz/25x4be+G?=
+ =?us-ascii?Q?qOlGa4lqviXDsQCxD5Vpqu5dyswFtJmr5p8+876ittRmQ/K5SmUcWlL+fago?=
+ =?us-ascii?Q?cJDIzSNiXns01pIV2vFbKN6dsz1JLdAjijNLmvYuFV+3iT63ltx+zx61eD8Y?=
+ =?us-ascii?Q?hNTAYO9NzCo08a/B/fBwpiYJz5xfv1M316m9y772sWQbDV5pBto91vv1YFfI?=
+ =?us-ascii?Q?r1ZmTN/bK2oDQRxE3xJx7oSklEr/XggCgp3OBf+YQB5mY7P5Q+oqgMX+o3ve?=
+ =?us-ascii?Q?76jxjRe03VplRp2MlZ1FDbnmQHNeTvBLs/gOpm3gQVoi65v7cfwfRc9Zlpwc?=
+ =?us-ascii?Q?nMgvY6uCj5k9jFgw8NdHWLLLI/7/2131Obwd5Q++fkTcrPqWXf/Tm14MOXXD?=
+ =?us-ascii?Q?dRFr9+eczsdmzkltSysk6myYT+wzr7LKm4GrqqMjBKSGLSdrfNiMUJo7kI5M?=
+ =?us-ascii?Q?4S/CgT79D7muYPA4DrXwyo9RuKs51JiYaPffam5cZyC0GXDodvuzdTkoF+p4?=
+ =?us-ascii?Q?6CaUX2HuicG/jv7vEnixILDrXGN8q0FczksPGE0G+Glx0qs6au3VOxv1tVKp?=
+ =?us-ascii?Q?q6f3xUC2Nt2nr/o/8dYHWZiRxF+OA9YnzdIajt26VvaQRWMeoXJTMV36HmmW?=
+ =?us-ascii?Q?eobQjqZF7weMiieryGnzfHPo9E9vUNR4oepNdeoRql2MJy83Mwt5R4VtgMvz?=
+ =?us-ascii?Q?vyo0JZbOwsfStezpikpX45CrfxR0nlqVZA4NIHqYP2EdrDr8mHkyGctnXPlb?=
+ =?us-ascii?Q?gBU1T2+6F3oEuYzXO9fLp7YF3fjG/9HuDqYfdLXHq19rcl3rGVym+OZY8QGm?=
+ =?us-ascii?Q?zg0gEyIVarUGQjBk8krBswJYBvKS2rphpBohQmDfcVaOEji5gzj0dmDbOK2B?=
+ =?us-ascii?Q?jpr3lN7S8qGSoyBjebdYsegl6jOBa/p8Ff6ayICsY4pQO5lWMnyhkuFA8/dX?=
+ =?us-ascii?Q?+gAI1UkUCA0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dxV+U7Adw08a6c8mwFxDCVXQIGnZbsLIz6Ld7OVhcVnRQWhHo1Vy5WgLZPwb?=
+ =?us-ascii?Q?lV9QEPPmmyoO3E1hUL7tI6vLz5z+S4ruR9W667/Ot4N+yEybyKNVO+jopUSb?=
+ =?us-ascii?Q?2CPB1p/qRW6hseu5lXVsrlsd2Td3pkG8y1z5U/h+P+uoRW86yTOCp4zIiVor?=
+ =?us-ascii?Q?EbL7SNuEI2oaW3xZS3KzzmJS92tZhip98/g+rjqji57YsHl4x4Q9mgol0+2H?=
+ =?us-ascii?Q?Ho9lmUq878KO9jsC4PUZ0DENbDmp2ws7RyVIwzRnGClZYO9RrVRN1WKaIFSQ?=
+ =?us-ascii?Q?QgOJ1lXzVMbRIysr3OTR74/iOvNiiNLyxBksWTExO0FpeLJ68gGflNpEcmUO?=
+ =?us-ascii?Q?+kmMwAg4heg2H6KmP2gxEafYCq7KJ4W719LpcRUUF5xifTUIsJwPOAugjk/u?=
+ =?us-ascii?Q?zNwA0XFMOm8wtFQWjaR28jImrhSPpG4b2a3dK8xTpbAMeVY2LKrFp0kFQlvR?=
+ =?us-ascii?Q?uOLeqyOXor0Y2L52wsZpc5j9v40odCrT63uaj9TU0TvxKx+4alcSBFw+5tOa?=
+ =?us-ascii?Q?8cJFfNAzWZhdjsrV11twr3SC39k+nYa0YbMUSGDEkcZVsuzGm20DQ2Kx9eg6?=
+ =?us-ascii?Q?M8kUsLKTNjLcSGtfJolRr3wHzG33Ny/qlILy7anXfyMKsaCua1O/263Kw54A?=
+ =?us-ascii?Q?tArayja4R5I0oKS1xxI3YFGM6L5+eIqJF7eGVrqU9ouRhNpuf3RLLHqclwpb?=
+ =?us-ascii?Q?2YgGb/zO+Z1fEyfXgod7469xUWZfp+TUWhGtk8jDEoJewdZpbGgiL67R+GKB?=
+ =?us-ascii?Q?N5HX9J46P+2vZebNuyCib0u5EMBeqkh5qkTYPYxTpLdipQFIco7jW5T6ZKUp?=
+ =?us-ascii?Q?5KRTGZ95cvHK3o6lrwlCQzOP+QwLuVrtjBpv5NhETxrTqQ8mjrfFHbVngVi5?=
+ =?us-ascii?Q?YWpvk++mFn+d6Xax/ogR3fBJIjajQIC3gJzdxb7G2d7wWnpuWjG1mznHv/Rb?=
+ =?us-ascii?Q?E8FcLKU79l0Umk/qHHcUS1ymSZKSUqiJSIivLvPh1nz+0Kw0/P/YDd51oJXn?=
+ =?us-ascii?Q?SlNOuzzMq5xYT5v1IGIKUV50gvZ9o46rl/AQZ1Wky2W46re0H+OUQHfIxqRR?=
+ =?us-ascii?Q?Lx6EKvvTys5zgckLCK30z049QF6qTWCrSOtJrXSYdIi1gYG1+fsK9b/VazBU?=
+ =?us-ascii?Q?sKX96H/FUG7NuDW/0ITSLXzZDRAZgqdAzPgXMUmI/XhEdgcyqVnYTWvYh6Vj?=
+ =?us-ascii?Q?cZBRcT0KeahEUri+YAKwwyMese+ors57e16NofQ/v7M2YtLAqEMBFLi5/aVo?=
+ =?us-ascii?Q?3KBywlyLnpi+lwa445XQJLfwXJfj7XQV+hYLrU9UPeRyrjgO3buE9gmCwUsK?=
+ =?us-ascii?Q?sVk8sBDMjUN+jeg046OTY8xSjKUE2XI9wJhhf7d5xcXoswaXpzp4Q/pxfLgQ?=
+ =?us-ascii?Q?Y1fNPdc9uwEEg7WLa/zU9Xzl+wWxb0/I865grrcPCmt6XHZhTWHEH5NkNnnC?=
+ =?us-ascii?Q?/L6DOwdNoD7y+V2K3t/5xuhZcXItVvGR5uu0rBSpaVdrv4dVBp7MiuQeT0aS?=
+ =?us-ascii?Q?McZUW3Sf/FnNleZjzrO0zVKVGamApxMBej+9pYJBNpg3cjv9krQy1mD32850?=
+ =?us-ascii?Q?dtrx7v0A9kkLfGJ7IQ/W1KiJwQ60dWijXKyr5BtiDybsm8rSDptNDKBU+MPL?=
+ =?us-ascii?Q?Cg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e80839cb-d0e7-42e3-9ef8-08dd8d37d481
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 07:21:48.6181
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lAo2+/bvVmpCWxnMhMGBL/hfv8uEqu+VX6AWvC4r953Tdg8WYJPNQTQGE1Wtp0cgwdgypzOJTi4EztuL4Tf8BR7bw1txIpBYDTJCebCCE3s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB8270
+X-OriginatorOrg: intel.com
 
---Sig_/t6+A9NYapYO6ac5qH4NgA+z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+As detailed in patch1, scoped_cond_guard() has some usability warts. The
+"if_not_guard()" effort tried to improve upon the situation, but was
+buggy and difficult to fix.
 
-On Thu, 28 Nov 2024 15:46:12 +0100
-Johan Hovold <johan@kernel.org> wrote:
+It turns out however that CLASS() already has the necessary semantics to
+address both the scoped_cond_guard() and if_not_guard() problems.
+CLASS() can be used to define an auto variable with a constructor
+(lock()), and a destructor (unlock()). This is what guard() does with a
+hidden variable for unconditional locks. For conditional locks, the
+variable is simply unhidden and evaluated with IS_ERR() to determine if
+the lock acquisition was successful.
 
-> On Thu, Nov 28, 2024 at 12:05:09PM +0100, Ard Biesheuvel wrote:
->=20
-> > If you're happy to experiment more, you could try and register a
-> > notification for EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES using
-> > CreateEventEx(), and see if it gets called when ExitBootServices() is
-> > called. That would at least help narrow it down. =20
->=20
-> Thanks for the suggestion.
->=20
-> I see the notify function being called when I signal it as well as on
-> each ExitBootServices().
->=20
-> With an efi_printk() in the callback ExitBootServices() fails as
-> expected, but with an empty function the kernel seems to start every
-> time.
->=20
-> Interestingly, ExitBootServices() now succeeds also if I add back the
-> CloseEvent() call. In fact, it works also if I never signal the event
-> (i.e. if I just create and close the event).
->=20
-> The patch below should suffice as a workaround I can carry until the
-> firmware has been fixed.
->=20
-> Johan
->=20
->=20
-> From 1464360c7c16d1a6ce454bf88ee5815663f27283 Mon Sep 17 00:00:00 2001
-> From: Johan Hovold <johan+linaro@kernel.org>
-> Date: Wed, 27 Nov 2024 16:05:37 +0100
-> Subject: [PATCH] hack: efi/libstub: fix t14s exit_boot_services() failure
->=20
-> The UEFI firmware on the Lenovo ThinkPad T14s is broken and
-> ExitBootServices() often fails and prevents the kernel from starting:
->=20
-> 	EFI stub: Exiting boot services...
-> 	EFI stub: Exit boot services failed.
->=20
-> One bootloader entry may fail to start almost consistently (once in a
-> while it may start), while a second entry may always work even when the
-> kernel, dtb and initramfs images are copies of the failing entry on the
-> same ESP.
->=20
-> This can be worked around by starting and exiting a UEFI shell from the
-> bootloader or by starting the bootloader manually via the Boot Menu
-> (F12) before starting the kernel.
->=20
-> Notably starting the kernel automatically from the shell startup.nsh
-> does not work, while calling the same script manually works.
->=20
-> Experiments have revealed that allocating an event before calling
-> ExitBootServices() can make the call succeed. When providing a
-> notification function there apparently is no need to actually signal the
-> event group and CloseEvent() could also be called directly.
->=20
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  .../firmware/efi/libstub/efi-stub-helper.c    | 24 +++++++++++++++++++
->  drivers/firmware/efi/libstub/efistub.h        |  4 ++--
->  2 files changed, 26 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/fir=
-mware/efi/libstub/efi-stub-helper.c
-> index de659f6a815f..9c9c7a1f1718 100644
-> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> @@ -409,6 +409,13 @@ char *efi_convert_cmdline(efi_loaded_image_t *image,=
- int *cmd_line_len)
->  	return (char *)cmdline_addr;
->  }
-> =20
-> +#define EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES \
-> +	EFI_GUID(0x8be0e274, 0x3970, 0x4b44,  0x80, 0xc5, 0x1a, 0xb9, 0x50, 0x2=
-f, 0x3b, 0xfc)
-> +
-> +static void efi_before_ebs_notify(efi_event_t event, void *context)
-> +{
-> +}
-> +
->  /**
->   * efi_exit_boot_services() - Exit boot services
->   * @handle:	handle of the exiting image
-> @@ -429,10 +436,27 @@ efi_status_t efi_exit_boot_services(void *handle, v=
-oid *priv,
->  {
->  	struct efi_boot_memmap *map;
->  	efi_status_t status;
-> +	efi_guid_t guid =3D EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES;
-> +	efi_event_t event;
-> =20
->  	if (efi_disable_pci_dma)
->  		efi_pci_disable_bridge_busmaster();
-> =20
-> +	status =3D efi_bs_call(create_event_ex, EFI_EVT_NOTIFY_SIGNAL,
-> +			     EFI_TPL_CALLBACK, efi_before_ebs_notify, NULL,
-> +			     &guid, &event);
-> +	if (status =3D=3D EFI_SUCCESS) {
-> +		status =3D efi_bs_call(signal_event, event);
-> +		if (status !=3D EFI_SUCCESS)
-> +			efi_err("%s - signal event failed: %02lx\n", __func__, status);
-> +
-> +		status =3D efi_bs_call(close_event, event);
-> +		if (status !=3D EFI_SUCCESS)
-> +			efi_err("%s - close event failed: %02lx\n", __func__, status);
-> +	} else {
-> +		efi_err("%s - create event ex failed: %02lx\n", __func__, status);
-> +	}
-> +
->  	status =3D efi_get_memory_map(&map, true);
->  	if (status !=3D EFI_SUCCESS)
->  		return status;
-> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/ef=
-i/libstub/efistub.h
-> index 685098f9626f..e3f710823a29 100644
-> --- a/drivers/firmware/efi/libstub/efistub.h
-> +++ b/drivers/firmware/efi/libstub/efistub.h
-> @@ -272,7 +272,7 @@ union efi_boot_services {
->  		efi_status_t (__efiapi *wait_for_event)(unsigned long,
->  							efi_event_t *,
->  							unsigned long *);
-> -		void *signal_event;
-> +		efi_status_t (__efiapi *signal_event)(efi_event_t);
->  		efi_status_t (__efiapi *close_event)(efi_event_t);
->  		void *check_event;
->  		void *install_protocol_interface;
-> @@ -322,7 +322,7 @@ union efi_boot_services {
->  		void *calculate_crc32;
->  		void (__efiapi *copy_mem)(void *, const void *, unsigned long);
->  		void (__efiapi *set_mem)(void *, unsigned long, unsigned char);
-> -		void *create_event_ex;
-> +		efi_status_t (__efiapi *create_event_ex)(u32, int, void *, void *, voi=
-d *, efi_event_t *);
->  	};
->  	struct {
->  		efi_table_hdr_t hdr;
+The proposal goes one step further and forces conversions to this new
+scheme to be type-safe. So, if a subsystem using a mutex wants to use
+scope-based unlock for mutex_lock_interruptible() it needs to convert to
+the 'struct mutex_aquire' object and convert the entirety of the
+subsystem to using CLASS(), guard(), and/or scoped_guard() helpers.
+Note, scoped_cond_guard() is not defined for 'struct mutex_acquire'.
 
-Johan,
+Reworks to accommodate type-safety enforcement is what makes this series
+7 patches instead of 2. It converts all existing 'struct rw_semaphore'
+usage in the CXL subsystem to 'struct rw_semaphore_acquire'. That
+requires cleaning up some "reverse" locking patterns and "unlock in the
+middle of the function" patterns. The result is smaller and easier to
+reason about, once familiarity with CLASS() is established.
 
-FYI, we've applied this patch to Ubuntu's 6.14 kernel and it seems to break
-some older x86 Macs [1]. I'm going to '#ifdef CONFIG_ARM64' these changes.
+Dan Williams (7):
+  cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for conditional locking
+  cxl/decoder: Move decoder register programming to a helper
+  cxl/decoder: Drop pointless locking
+  cxl/region: Split commit_store() into __commit() and queue_reset()
+    helpers
+  cxl/region: Move ready-to-probe state check to a helper
+  cxl/region: Introduce CLASS(cxl_decoder_detach...) consolidate
+    multiple paths
+  cleanup: Create an rwsem conditional acquisition class
 
-...Juerg
+ drivers/cxl/core/cdat.c   |   6 +-
+ drivers/cxl/core/core.h   |  49 +++-
+ drivers/cxl/core/hdm.c    | 115 +++++-----
+ drivers/cxl/core/mbox.c   |  15 +-
+ drivers/cxl/core/memdev.c |  62 ++---
+ drivers/cxl/core/port.c   |  18 +-
+ drivers/cxl/core/region.c | 463 ++++++++++++++++++--------------------
+ drivers/cxl/cxlmem.h      |   2 +-
+ include/linux/cleanup.h   |  62 +++++
+ include/linux/mutex.h     |  24 ++
+ include/linux/rwsem.h     |  37 +++
+ 11 files changed, 491 insertions(+), 362 deletions(-)
 
-[1] https://bugs.launchpad.net/bugs/2105402
 
---Sig_/t6+A9NYapYO6ac5qH4NgA+z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+-- 
+2.49.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEhZfU96IuprviLdeLD9OLCQumQrcFAmgbCfkACgkQD9OLCQum
-QreQsg//RvOhwMgHbfRkqSmdAWEr+TqH7/wSc3d6eOecpHm8P2OdIdFRwV5hSXQA
-WdtXyee4aMbX6NWsd/VFBF/sEofpwdTsy7nxTmn2KwGO55g2cDOaM6ODNU3MKaOy
-FO7758rcnasHkPAc/2WGwnjwQAY/XSVvA/+mJXzNlxhLtD/bZzTv+xvSkktTFFmx
-F+MiRjpSSKXUsSXS/Cy8UmTWHmYoBFhDq8lyGeHlrIe9HaColXpVZCWx1V7xSE9M
-9MOdVuLbfzjsiEw7kc19bRwtkii3Jw3+XhzMyInuiOB9r+HKic0+kUeM7Db74hOV
-SdfaiR2NIjhbvljKHkb4MeK95u93HLpMNfTmW7z7K8PDjeFGmssWgGoLCS3NJpAI
-P1cSVAyPK/zTXOUYWrUgjCuMzacqg5kjyWx1dYYxGnKkUKoU4/Hj/c+3EsUx94v1
-SGUnrgnCPQw3qFCkLV6V1798Qs093CPanYnbJdvgdkrlIStelk7jIwR+BIGaYXdO
-OhhuA3Pw03FaIItX7mLvtBcIe51Y3vlN7cV1WHNC5efU7XVLkDb7mOzRwzCK8ioR
-1RwqtermvR/vBCMr4nqv+XNlTEOc4ru88hOA7z/whf00u7sw4VKnqDsIKWEiERiS
-RNbeRGOrlZ0jR82Bg8Jwv8cnzrUkTbyxRcyb0vKT8KIGkbnP43A=
-=AjL+
------END PGP SIGNATURE-----
-
---Sig_/t6+A9NYapYO6ac5qH4NgA+z--
 
