@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-638488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617DDAAE6AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994DCAAE688
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92331B63469
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5570987913
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2C4156237;
-	Wed,  7 May 2025 16:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKQjP0u7"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A066F28C032;
+	Wed,  7 May 2025 16:24:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32E118B46E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5FB28A705
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746635030; cv=none; b=uI8e6vJ6gZNdTtYBzSAWVezZ9pKoUUSHtiU/MD23DL62e3qT0ZO/3rXqlrokLh4sFLCBvZ59xbK+YgfPWIJDeFzqfpG2d4B2Tklz42ap7xqIZHJ9mL8uHD7rAG9jywMxBoX4Q+F3jM7meDYp6ci3mzx+fEPhdMyRv0uwwspiODc=
+	t=1746635089; cv=none; b=U/Q6co38WIHCqTcao3CTThze1rHDWv+hGWdlbpu3ukHIyeilpLgP2za29vGklBo2OOVo1JS9lblfh5b86XIvpqMe+ji6zD7MGWjEJ1+qeo80RQ66WxFir4jvwbPaxzIVQBZrkKC2jy64r9bEJ2TufBwDpuZnkh0CwWuqa6hHNt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746635030; c=relaxed/simple;
-	bh=GVDVeBab869aYBvCQlDw416oEjXOoR2zkFp+c7adIZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knwP/7ZamPUrMXGCSsckizLPyPC1k4aFvYgjlXqRH25wCQIO3rRUyNnzusXG3oZPeCqm1soUShhZLNjgoeRdMAKr1yjUFSx+ggMpEoaJmGzYSWgqisls7awU2V2S6QyKxpPraP4d7X3IsMc4+fRWGkDnwbaTKx/r/K75n4tZSgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QKQjP0u7; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso649945e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746635027; x=1747239827; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdgRnYflnPlN6KlJOaYP1q0InGmD8pNNwfuxpkTXEio=;
-        b=QKQjP0u7j6tV0U62Bbj/W89PJ8hwqtbNlR8DMr8z2ONWvT1O0/64dta2QE7V7FuqyI
-         uDHgMDgT8xPZS8BIJnrN/Y1Ua/QGjY+hhyPWMJGv9aCP9ZTvrNkRCuVyjHYvcB8pv5QW
-         niB7ougtqQmCmuoNC2jYr1/P87vE1STe8RUlhNez8VQ+ECG+61a4z29ltD0B6GtPC8uj
-         XqZMBCF1ijGJVds1W4vsIuHV6BlzAjfAW2RT/MHxW40Y9C4tuuPJm4PRR5FmfTQ4Zv06
-         qKp36Kl99XH01i0N0DRo8e/emXChWby2Z9U6GnVOjPk5TA5ceTEMqzLmFgUadQsNXhJz
-         3VSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746635027; x=1747239827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NdgRnYflnPlN6KlJOaYP1q0InGmD8pNNwfuxpkTXEio=;
-        b=oCmTVMZReeS73mQULK57DtGwf7MpjB2j1TUYulctr2tbThKnlMjWZpmwvK3pie+V1G
-         NinCel4P/RTxMTzWvKM92D75znHho9Eb7Y9Mzkr8Ewa/8ch9/Il6nz1v/h+EcQgGC7sp
-         cF1lE+jaK58EO3GInfWaIVItJ0WPFdjI5HFF2mE7dgd3FGCohXLCG71Cq/MuEUDb4W2O
-         /BYkzJVh3xaO6077FA/Z3IvRGHRxOBhV/4gTfO51/jBvNOBvzex9OIcZfAQHPji/PY07
-         CU7Pss9osJx6IOr0nRE9sLSa7a5GlbiMK8L2TpUVaFx2OLkp2p5VZUAJp+cHhs4ej0D2
-         caZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtJ6bo4BVDkb2Pfv7diRrVRZFlLs6a/BZU8D2Rnt92ZLzAW2+H9ISL5AIk0OJr0arV6DLQKwzFFdItdxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqzIuqwz1g6eSJNTkw3M5DD3BeXzrOUoa6U6Kv8Ob11vLiw16T
-	fWFh4xZhCns6ow+KNgM/+pOgEeSo52Japz574cJxLEPk8IhKQ7kOfKEe3OqNAGg=
-X-Gm-Gg: ASbGncud6n8UMrBR0/jE1h+KJgKYign8bQXI0DDIh+XhGOX7rEafV1fcbjjD+67gPh9
-	cW8wGdo6YW+q17HrbHbvAOkzTiI3MexhK2QUYdYeiXrO22csxVmA7Gr4aVGmXeb5kwzBW/vxsPv
-	xsv1Mxoh/QrEWt2raNlRIJn5T483ohuXEC7dBj3XPzTFfI9ELiupUa8LO9qN7jQUi1Z+3zb2l5w
-	kT4FKHMTzLOC10UuzHFBVee0XSVNRzkagWl4Fh9cVT2rc7ejwCisw+XxwqBGiurTl6KKwWurUHZ
-	pl17GaJJR51P9UCPgGUrx47xSiZJpPDYrJNtXhlYFvWovQ==
-X-Google-Smtp-Source: AGHT+IE6y0LlIV4IlIooPu6OJTNcYKnkqYqnx0WCylTRROLNd4cSZyHpQkJmtgiFMm+bT9j1cn2H6g==
-X-Received: by 2002:a05:600c:4e47:b0:43d:36c:f24 with SMTP id 5b1f17b1804b1-442d02ed455mr1853855e9.13.1746635026951;
-        Wed, 07 May 2025 09:23:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442cd32f0easm5943165e9.12.2025.05.07.09.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 09:23:46 -0700 (PDT)
-Date: Wed, 7 May 2025 19:23:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>,
-	Peng Fan <peng.fan@oss.nxp.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Johan Hovold <johan@kernel.org>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] pmdomain: core: Export a common ->sync_state()
- helper for genpd providers
-Message-ID: <aBuJD1izaMqKUJ_s@stanley.mountain>
-References: <20250417142513.312939-1-ulf.hansson@linaro.org>
- <20250417142513.312939-8-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1746635089; c=relaxed/simple;
+	bh=nqpCCru5vpj7hrOWoi3hKzRDHzM59HnACs2LIao0n5o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=H8PKpnyXP4gFFnXfg6Xu7L7k6HbI8xLjGmrW0ApGVeHyptYCOQdyYqhUg4BjVAzxMrXqioLcI+r6QswJ1kt+zbYMtMh33umdIYsmpQda/1XDEEb4fNRxfzM78FlKZv2IPag9NovKRiTzmmw/1S/UBPtANZZccC5tu6E3zcAM434=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uChZU-0001RP-2W; Wed, 07 May 2025 18:24:36 +0200
+Message-ID: <4e1600a7-24d4-454a-87d6-6528b1c4c88d@pengutronix.de>
+Date: Wed, 7 May 2025 18:24:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417142513.312939-8-ulf.hansson@linaro.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US, de-DE, de-BE
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Subject: [RFC] block: Make MMC respect REQ_NOUNMAP?
+To: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ linux-block@vger.kernel.org, linux-mmc@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Apr 17, 2025 at 04:25:05PM +0200, Ulf Hansson wrote:
-> +void of_genpd_sync_state(struct device *dev)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	struct generic_pm_domain *genpd;
-> +
-> +	if (!np)
-> +		return;
-> +
-> +	mutex_lock(&gpd_list_lock);
-> +	list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
-> +		if (genpd->provider == &np->fwnode) {
+Hi,
 
-Presumably this would be "== of_fwnode_handle(np)) {" as well...
+We would like to tell storage (mostly eMMC, but not exclusively though) to
+discard a block range, so it reads back zeroes and is preferably unmapped
+to give the storage device the most flexibility. For eMMCs, this is possible
+right now with blkdiscard -z (BLKZEROOUT), but digging through the code with Jan,
+I am starting to question whether eMMC is correctly implementing REQ_OP_WRITE_ZEROES
+(granted, the expected semantics seem to be spelt out nowhere).
 
-regards,
-dan carpenter
+Read along for what MMC does, what semantics BLKZEROOUT seems to should have,
+and what I think might need to be done to address this.
 
-> +			genpd_lock(genpd);
-> +			genpd_power_off(genpd, false, 0);
-> +			genpd_unlock(genpd);
-> +		}
-> +	}
-> +	mutex_unlock(&gpd_list_lock);
-> +}
+
+eMMC supports a number of different commands for erasing/discarding data[1].
+Relevant to my question are two commands:
+
+  DISCARD: Host no longer needs the data and doesn't care about value
+           read from it. Card may remove or unmap portions or all of it.
+
+  TRIM:    implies DISCARD and additionally guarantees to
+           return all-zero or all-ones on read.
+
+These are made available to the block layer as follows:
+
+  REQ_OP_DISCARD      -> DISCARD
+  REQ_OP_WRITE_ZEROES -> TRIM (if erased_byte == 0, otherwise
+  if all-ones, blk_queue_max_write_zeroes_sectors() is not called)
+
+Looking at it from the ioctl side:
+
+blkdev_common_ioctl(..., BLKZEROOUT, ...)
+    blk_ioctl_zeroout
+        blkdev_issue_zeroout(..., BLKDEV_ZERO_NOUNMAP)
+            __blkdev_issue_write_zeroes(..., BLKDEV_ZERO_NOUNMAP)
+	    submit_bio_wait(bio->bi_opf = REQ_NOUNMAP)
+
+__REQ_NOUNMAP has comment saying 'do not free blocks when zeroing',
+but as shown above, TRIM allows the card to unmap the indicated region.
+
+REQ_NOUNMAP has no other documentation, but virtio inverts it and translates
+it to VIRTIO_BLK_WRITE_ZEROES_FLAG_UNMAP, which is documented as follows[2]:
+
+"For write zeroes commands, if the unmap is set, the device MAY deallocate
+the specified range of sectors in the device backend storage, as if the
+discard command had been sent.".
+
+I.e. REQ_NOUNMAP -> device MAY NOT deallocate
+
+This is at odds with the MMC implementation, which ignores REQ_NOUNMAP
+completely it seems. I don't believe there is a MMC command for write zeroes
+without discard short of actually writing zeroes, so it sounds like the
+correct implementation for MMC would be:
+
+	if (req->cmd_flags & REQ_NOUNMAP)
+		// or w/e causes fallback to __blkdev_issue_zero_pages
+		return -EOPNOTSUPP;
+	// do TRIM as before
+
+Of course, this will change user visible behavior: blkdiscard -z will start
+taking much longer for most users. These users will have to migrate to
+using fallocate instead:
+
+blkdev_fallocate(mode = FALLOC_FL_ZERO_RANGE):
+	blkdev_issue_zeroout(..., BLKDEV_ZERO_NOUNMAP)
+
+blkdev_fallocate(mode = FALLOC_FL_PUNCH_HOLE)
+	blkdev_issue_zeroout(..., BLKDEV_ZERO_NOFALLBACK)
+
+So, it's not a drop-in replacement. I guess user code can punch hole
+with fallback to BLKZEROOUT if it fails in order to get back the old
+behavior.
+
+I must admit I don't even know why one would write zeroes and care about
+them remaining mapped on the storage device, but that seems to be
+what's expected with BLKZEROOUT.
+
+
+Thoughts? What did I miss?
+
+Thanks,
+Ahmad
+
+[1]: For a short and incomplete summary, see:
+     https://github.com/barebox/barebox/commit/91a11c7d50df91
+[1]: https://docs.oasis-open.org/virtio/virtio/v1.2/csd01/virtio-v1.2-csd01.html
+     5.2.6.2 Device Requirements: Device Operation
+
+
+-- 
+Pengutronix e.K.                  |                             |
+Steuerwalder Str. 21              | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
 
 
