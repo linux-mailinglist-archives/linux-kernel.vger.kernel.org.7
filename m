@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-636937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A587BAAD204
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:12:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA690AAD1F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4807E5208A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:12:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28EA27B70FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9345B14012;
-	Wed,  7 May 2025 00:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F738460;
+	Wed,  7 May 2025 00:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Zga/Aob9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hnj8VECe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404EEADC;
-	Wed,  7 May 2025 00:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCD33BB48
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 00:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746576685; cv=none; b=TDyyfbII0d+F/fxJYTwMIRBvA+y2jpUmo7JmekgblHJl8PTZG/1JTG5fLYUY4XNEC+1eNriX7hJiJg2viUFNjXHXXdOdIlTSo0eKqEE7WkYQEbQJP3umMFX4tgY7Rns9Bz7rVshL0B4fuXyv4MzoqogIe0LDC//I14z5VJ3V/zU=
+	t=1746576653; cv=none; b=HGZmrd4Ud9T82PBCxcGOq2RDVPhSgr8hMWXYCB7iDadiavZZfxx+x/rFCcHgASeeowSfo/xCv0fCDnURbwO6cyauLj/kk0pZ54OhMsIgqdCByJblilmy6PyjaL6+T97r8jTnkkxI8tw85DvpObrSGTught1DCwT70BvMz4pCvN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746576685; c=relaxed/simple;
-	bh=G1qOCutaiBY5l/fT4RAeuVBxtwE5c+wjYJ9a5Eg6DZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nP05S96E5CWCnagn85+WPMgDoqASPImmSd7ptNHXqJ2ugKNmNYQEzRRp++cG/+ynmptYrlqGKrR2w1soCDfXx/rqRodedvankpj6rXp2rDK0G2jvz50+U9qoCWT3Adu7OlS1TObAxJeOcX5WrOdvZjuTyJLhxyg/rmuFCo7qpR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Zga/Aob9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=98pflIFzNKHbzDVEXy4pjIzkWLVMBe8kC2mJxekYy5E=; b=Zga/Aob9wxV06lwi0mqp5S5X7v
-	D5tObw97kMGUxSSpg9nYOysSnSHxjdyf7RonaYzrUXSmb9Ruy9EKNemuQmj1nQDxs5JPZNTYLDlKM
-	ZfnI0EGgd+wu3r7qc2HjpxyDnmthD2HxAKtE84XCMVcnMqub4Pw9LRmCGmhWYJRElAts=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uCSN6-00BpFN-Sr; Wed, 07 May 2025 02:10:48 +0200
-Date: Wed, 7 May 2025 02:10:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Guo Ren <guoren@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next 0/4] riscv: sophgo: Add ethernet support for
- SG2042
-Message-ID: <ffa044e2-ee9e-4a34-af6a-2e45294144f7@lunn.ch>
-References: <20250506093256.1107770-1-inochiama@gmail.com>
- <c7a8185e-07b7-4a62-b39b-7d1e6eec64d6@lunn.ch>
- <fgao5qnim6o3gvixzl7lnftgsish6uajlia5okylxskn3nrexe@gyvgrp72jvj6>
+	s=arc-20240116; t=1746576653; c=relaxed/simple;
+	bh=oDgUPGKFsW8595GnJVa8eZKTK3chh79fOciO/uFQHB4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=oSEJMDi0hq8nJhcdxVn+YXaGPQZoLO/Y7tzYvu6l+aZ3DK/lwp/T2mYNxT2sZrxi49UEvAS8/Xk3nyxahRA83AL83IlXtcCta4dWQ3tXh6ZkRGSZhGWjvsnRx13XASc+DSCQyfcfY8Mdw+iHj8OiJBBAlDn7XhF5ApZurg5KloY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hnj8VECe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F5BAC4CEEF;
+	Wed,  7 May 2025 00:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1746576652;
+	bh=oDgUPGKFsW8595GnJVa8eZKTK3chh79fOciO/uFQHB4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hnj8VECe4xXdTXUtsonYBFVRdLaxLjTkmR9vS66O8ksAzzdUQem+loVccHfei+w2Y
+	 qkeZZZKzFyYO+nTnXjTc6NeZ4PsyljtbLmd0EBIdGNo2nrKohrooeTnnQemvOYZFZW
+	 39HnUMdK7FFFtWn/W7NgTML0z9B4gtme8lA0kNLk=
+Date: Tue, 6 May 2025 17:10:51 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jeongjun Park <aha310510@gmail.com>, dennis@kernel.org, tj@kernel.org,
+ cl@linux.com, jack@suse.cz, hughd@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/percpu_counter: fix data race in
+ __percpu_counter_limited_add()
+Message-Id: <20250506171051.7c9a4bed6ff799e8060ca0d7@linux-foundation.org>
+In-Reply-To: <aiap53zqms4igpmdxorv45xsgzyx44xb57jupr2ndiibu3qugo@mg53s6mdbq3j>
+References: <20250506102402.88141-1-aha310510@gmail.com>
+	<aiap53zqms4igpmdxorv45xsgzyx44xb57jupr2ndiibu3qugo@mg53s6mdbq3j>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fgao5qnim6o3gvixzl7lnftgsish6uajlia5okylxskn3nrexe@gyvgrp72jvj6>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 07, 2025 at 06:24:29AM +0800, Inochi Amaoto wrote:
-> On Tue, May 06, 2025 at 02:03:18PM +0200, Andrew Lunn wrote:
-> > On Tue, May 06, 2025 at 05:32:50PM +0800, Inochi Amaoto wrote:
-> > > The ethernet controller of SG2042 is Synopsys DesignWare IP with
-> > > tx clock. Add device id for it.
-> > > 
-> > > This patch can only be tested on a SG2042 x4 evb board, as pioneer
-> > > does not expose this device.
+On Tue, 6 May 2025 13:56:13 +0200 Mateusz Guzik <mjguzik@gmail.com> wrote:
+
+> >  	unknown = batch * num_online_cpus();
+> >  	count = __this_cpu_read(*fbc->counters);
+> >  
+> > @@ -344,11 +345,10 @@ bool __percpu_counter_limited_add(struct percpu_counter *fbc,
+> >  	    ((amount > 0 && fbc->count + unknown <= limit) ||
+> >  	     (amount < 0 && fbc->count - unknown >= limit))) {
+> >  		this_cpu_add(*fbc->counters, amount);
+> > -		local_irq_restore(flags);
+> > -		return true;
+> > +		good = true;
+> > +		goto out;
+> >  	}
+> >  
+> > -	raw_spin_lock(&fbc->lock);
+> >  	count = fbc->count + amount;
+> >  
+> >  	/* Skip percpu_counter_sum() when safe */
+> > --
 > > 
-> > Do you have a patch for this EVB board? Ideally there should be a user
-> > added at the same time as support for a device.
-> > 
-> > 	Andrew
 > 
-> Yes, I have one for this device. And Han Gao told me that he will send
-> the board patch for the evb board. So I only send the driver.
-> And the fragment for the evb board is likes below, I think it is kind
-> of trivial:
+> As this always takes the centralized lock in the fast path this defeats
+> the point of using a per-cpu counter in the first place.
+
+Well.  It partially "defeats the point" if the client code actually
+uses percpu_counter_limited_add().  Only shmem.c does that.
+
+> I noted this thing is buggy almost a year ago:
+> https://lore.kernel.org/linux-mm/5eemkb4lo5eefp7ijgncgogwmadyzmvjfjmmmvfiki6cwdskfs@hi2z4drqeuz6/
 > 
-> &gmac0 {
-> 	phy-handle = <&phy0>;
-> 	phy-mode = "rgmii-txid";
+> per the e-mail I don't believe existence of this routine is warranted.
+> 
+> shmem is still the only consumer.
 
-And this is why i ask, because this is broken. For more information,
-please see:
+Totally.  It would be better to remove percpu_counter_limited_add() and
+to implement its intended effect within shmem.c
 
-https://patchwork.kernel.org/project/netdevbpf/patch/20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch/
-
-	Andrew
 
