@@ -1,108 +1,80 @@
-Return-Path: <linux-kernel+bounces-637029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80EAAAAD3A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:57:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD319AAD3A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5C31BA0DED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA08A9853C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972871A3178;
-	Wed,  7 May 2025 02:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085941A83E4;
+	Wed,  7 May 2025 02:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEipz76b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Tvdw5ZaD"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A5279E1;
-	Wed,  7 May 2025 02:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F005979E1;
+	Wed,  7 May 2025 02:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746586654; cv=none; b=mKLe+lK8TFMHPOAtpSMRKnbKRVLqdIA3My8rUigx7RVZrm/IlmW3uNAnmJhYlBxb93Cl3xMnZ4rV2sbYrCBW6U4PmsbU01LglAM5xhhhJO7DYpw7tnAaksbEwBrijmA28gaGM6BqiX2A9863IZbieW1ejya0bkxHjM/akMR6HgE=
+	t=1746586730; cv=none; b=X4IiLhK/MdsF4lgMmMoqTZjnSg/f64v4s3a1zGHlyQbPfqBqSx7ZigFnLdbznzNbJIWHbb25QMD5I64wj98dDtkdNLDpQq2wE4TUPGTZt4Guc/kK1OvzhSxIM+Xengc9CGUmF5DXDu211xZY7Km0Kv3RUikmy5Mj1TM8138wQrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746586654; c=relaxed/simple;
-	bh=/vzEubHwuNMF2pBidBwkQbCA050os6rVvYI9/KUiFKE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I5S5T1Wr8YNWf2jbSeKqCDq2NjYyhpXjSHRkeAnl5FQEkCoTYs/JtgiwEKEsCqhgssLHdspcVtRdPGGeQOQIjHAUSf3JQEyX37XiDUI8+krpwpYGkTyBmlw/2cNOQiv7yNP3MURpdkUkJg0A54AVliqGdtGl+zvKVhpcjP0+1GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEipz76b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01EE8C4CEE4;
-	Wed,  7 May 2025 02:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746586653;
-	bh=/vzEubHwuNMF2pBidBwkQbCA050os6rVvYI9/KUiFKE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BEipz76b/Y9YZ5H3MlR3LfGbsb7JeKII4hi8g/2UiDGI5l9iwkl0puYFCIZoNuqGl
-	 RxiAPXJ2/7sId8yJ6Q1lljj+LxjoUOEHY6BwjZtRYebAq3xoaJ1NwGuP5wJvdj6j+v
-	 0hGatneKfnfV52pskxPRiHXFESjzqqhKS2Ov6WYpZOgn3Jg7t3kk3ApTRejFcIhCy2
-	 1F6qij6Q4t+l+vU3vmWXLe6RceCBB/8XUoaXO4IdPQjq5655dngicDWw5Yh3n0CK3q
-	 zavMzcpyh7HmMe2I1nYhIt/9UkEw1EYPVVd5kEgFvWe4LHEUCm11+R+GN3/zLK1LtQ
-	 vQDy1LzcVv+Lw==
-From: Mark Brown <broonie@kernel.org>
-To: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, 
- Haibo Chen <haibo.chen@nxp.com>
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250428-flexspipatch-v3-0-61d5e8f591bc@nxp.com>
-References: <20250428-flexspipatch-v3-0-61d5e8f591bc@nxp.com>
-Subject: Re: [PATCH v3 0/5] This patch set did some clean up and add
- runtime pm support for flexspi driver
-Message-Id: <174658665186.4165102.13950594775211534528.b4-ty@kernel.org>
-Date: Wed, 07 May 2025 11:57:31 +0900
+	s=arc-20240116; t=1746586730; c=relaxed/simple;
+	bh=nXlSMWZFp/UNpyJGN+JfAGIB2yLICPFXWZ3dy64EAHY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OomZXpEbS1b22y0jjOf4Uy3p6CGCaK0+opfby8iWGKVEE1GJTh4VWdba+atjeDjAWfuu7sA03EA0hjeSMH0hWpQxJn6bVdKX2wPsOfIISslkmjLBtTown76XQtoBqTarT2CLfvAYQLmK5VhWRIMwB2Us1DOmf2LEGol9R/V7Kjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Tvdw5ZaD; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1746586726;
+	bh=nXlSMWZFp/UNpyJGN+JfAGIB2yLICPFXWZ3dy64EAHY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=Tvdw5ZaDRfSlNK/cGmHOf7usOW3+sTa/3HirQ9VXE1cQefBjeB3YYi9ersBmWyG/H
+	 vwFdvoHzh1Lwlitl4rsZbpgE9QHj9F1wG2DeGzkNTECwZSkNCZQ70IT9SIL+dxNAS5
+	 7hZJNiZQySufSsP1Z6UDBwvL1BTjePJCwSuKBIFgfnk4+DIFdLkZpTGd9Nk/opLDNv
+	 SGEN4MwMagyXK/PmelwtAJ1hZrxgDqEJSzwfnr5Wh07y1s8XlLMEH2vqGJulBsDtwl
+	 3mhOSLlr3DIJaMHm6ka1SJZW7wN9t025Yhvwur9R1bww+9pR0zxSiLa2k+m7R0QB5d
+	 Ho3XXZMybvWEw==
+Received: from [192.168.68.112] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5CD5764473;
+	Wed,  7 May 2025 10:58:46 +0800 (AWST)
+Message-ID: <59c5351d701e9dd5d8ea7d274c6362aadd22ddae.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] arm64: dts: nuvoton: Add USB Hosts
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: "William A. Kennington III" <william@wkennington.com>, Avi Fishman
+ <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Tali Perry
+ <tali.perry1@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 07 May 2025 12:28:45 +0930
+In-Reply-To: <20250416001818.2067486-1-william@wkennington.com>
+References: <20250416001818.2067486-1-william@wkennington.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
 
-On Mon, 28 Apr 2025 18:06:42 +0800, Haibo Chen wrote:
-> PATCH1/3/4 to clean up the code, make the code more readable
-> PATCH2 add the runtime pm support
-> PATCH5 use devm_add_action_or_reset() to replace remove() callback, this can avoid
->        oops when do bind/unbind test
-> 
-> 
+On Tue, 2025-04-15 at 17:18 -0700, William A. Kennington III wrote:
+> The npcm 8xx chip has 2 EHCI and 2 OHCI hosts with driver support
+> already existing in the kernel.
+>=20
+> Signed-off-by: William A. Kennington III <william@wkennington.com>
 
-Applied to
+Please rebase to address fuzz as noted here:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+https://lore.kernel.org/all/2ed50b1463f62a829f863b889ab818f492b73946.camel@=
+codeconstruct.com.au/
 
-Thanks!
-
-[1/5] spi: spi-nxp-fspi: remove the goto in probe
-      commit: 48900813abd2730a35c6e3afd1609bafac5271cc
-[2/5] spi: spi-nxp-fspi: enable runtime pm for fspi
-      commit: 97be4b919a609fc8c4bd1118502b5d26cc2f77c4
-[3/5] spi: spi-nxp-fspi: use guard(mutex) to simplify the code
-      commit: 93be516f819dcb1fdac035566381d8899d4b389c
-[4/5] spi: spi-nxp-fspi: remove the unchecked return value for nxp_fspi_clk_disable_unprep
-      commit: e0558eb74c6e082b60e03981eb7cbf0fc3780ef4
-[5/5] spi: nxp-fspi: use devm instead of remove for driver detach
-      commit: 9f7cd1bcb6363368abc954ff4e727b579813c697
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Andrew
 
