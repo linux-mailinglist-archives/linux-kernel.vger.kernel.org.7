@@ -1,143 +1,143 @@
-Return-Path: <linux-kernel+bounces-637220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462CEAAD628
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:33:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A45AAD62F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A57F1BC3581
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:33:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D22C7B4145
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57F61E8348;
-	Wed,  7 May 2025 06:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A27620E003;
+	Wed,  7 May 2025 06:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="cMEN7xmz"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdDlUnF2"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8E0205E16
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79FC1E8348;
+	Wed,  7 May 2025 06:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599620; cv=none; b=pKXl1hKimdZlmM+nEaADjTTMopAkHx1rlpd7Y7Ee9B4+jOMIZCxRsfhW2U5rrDf0Z2/pZrgDTDdzTeoCczb0o2bhpyF1dclDPTTbRBdnBrCWCc+V8sn8Ma6N/83jJ117mYDw6IuujAB23e/DSt4ldaevXxzyTjx/MOOc47uvxyo=
+	t=1746599727; cv=none; b=PqVMo8Za8rggW2JfHU/+tZ21j7mGrUv5DUWwQRsd+9pqPqlfDsU3NNfgBa3AEh648LhXAfsrtR/qRz9wzYArjKve7gF4zRDB1NurNHxiNPPNcOHp8+Alx22ztrOV4rI96ToyuZfzmU0367KpjMqbEncr29TqRLiNLC3FTQWZE0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599620; c=relaxed/simple;
-	bh=uMAhnwLIriUAjWznAGzjKTzWgRC9VyoYGCsYbnhwUYg=;
+	s=arc-20240116; t=1746599727; c=relaxed/simple;
+	bh=nJWIEiMDSYo0Y23NEoKbx/lhi1dCMSONDvq9aB4E4XE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r92M2ppaifLI7ZBVg8K/rTyMnYl10K/jiLK/YTD53wra418zf6cFC1cOcJsh6ae+Yd2glBU9HSGv8b35QqmDaE3zTiAGKfiiy8e+q4nmVZ9iDfHzyqy2JhRml0tsb8KOAdL1RyLB7X/nDmdVYZjlUUcXTZjemR+ttg0j75NI6FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=cMEN7xmz; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac3b12e8518so1114528966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 23:33:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=dIwa6OpaKafgHjCO/8HuZyGdWnjJD4GHY/fgpUcz3MxI3gB4wd+dF8eTlyp8W9AHOJGe3JCrkj1w+e4zvxFNZR7ZCKGGOPBkT88+R5q9+oGMbgn4MTn+ICofLTeWRTeNb/9hlDi9/Khqk72zsgJvv1jpGDDnBR5RqRRFMcfHyEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdDlUnF2; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2aeada833so129721866b.0;
+        Tue, 06 May 2025 23:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1746599616; x=1747204416; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746599724; x=1747204524; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uMAhnwLIriUAjWznAGzjKTzWgRC9VyoYGCsYbnhwUYg=;
-        b=cMEN7xmzt9VOKuBJM5JNrWrM/7Lq51DB7puJe5wdwvUpt7HqqvjmPM5xHymuF4Etyi
-         t2epzc099X2W7iTzevkCpQ3jIjGihkFDS4h1AZ7dDpGVorTbEbOI/qpILx5Ok67XXEHW
-         wpbrqo12IGXOD3YaeMP3bfE8cm1yj4VNroFGnRb0PVKAhQZbhnzEGLmiIzmsYT2GhDk7
-         gddmuKIBSv7vQI4ivamSXIyvlVsytpHbKgRZV5eB7srownU3/mfjdbuLphqDeRWnHVVS
-         shGQuclGEIQzUOwvwZt+3F0RltGT7RzglvoKu1GviSUE7EsqFx9cfRjxDRgxaVv9Qrtz
-         vKQw==
+        bh=4tSnaafv10+hEryjBGo1tIUlQzaLszY16+8UsMNNQYc=;
+        b=SdDlUnF2Em8lZrBwYrQwk0lUO2ZMazbdz3h2W9qQwGtMGiNkCUnNRnO8DnS3U3xT8d
+         4dXwLETTF4ry3UdZIBWPgtd0FfzuMhUy6/JwWUibN8fdMMkvuvGwE51MVmd0mkQlTpeb
+         rPhXawpsGjeTZJVYClQRNKjvvV1d5QFEubKMcQRVodX8yz9F3us9XDPitAgAFwhYps/g
+         7V9nmBvxvyoLKLCkCU3bGuupXnYWyiOSXh8225vyu98oxXbouJxZMqCH6mbGDmoiF3Er
+         GUGHGvGs/uhUfGgCOgPPlO02HoIxKBVzAdW5urqA+6+P8W91L7FUexDNDqsDdM2VXVSv
+         Zl8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746599616; x=1747204416;
+        d=1e100.net; s=20230601; t=1746599724; x=1747204524;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uMAhnwLIriUAjWznAGzjKTzWgRC9VyoYGCsYbnhwUYg=;
-        b=ZGl5B7/+r+4iHMMRinGQN1GbBba5ZEPqNLm/zT9tF60Jzz/u3XAW7bz5hS5TkPHf/d
-         xcM5E9z2UVSt2AyRdtpmlCSTG0ma0GwIL4zTXJX31WyqkcH7XiYEEzNKTJqH5tcU9NX6
-         e4OAmwlvGlPgYBYTqxK8+5Jdvt4IiGH9t3fxboROUofC+O7mcIsiZVMYS5Hh7Ney4cs4
-         i6OfUp1zptkapXCCylSK3AKch7y2H8MgwNMLo+o5hAo6usx3OjmBM8lTu4yh5l/7l1UF
-         btO51b0lXXL8uBGJJt5q4jdJ4G4b5nXRwX6WhESvdH3mJTfUU751148XGzM9xeJmNkYy
-         6cGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoj5jkVlE8x7u6pniYLHjwIXJEoLKGabfKbcXqYlVOIDrv3V9yjyyfl4H7zN3t3qzDNXuElRKXVvhLiGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcZI3B9V6IQOFaOhnyO2J8IXglW49Oa34fvLrzm41hkL30lsgh
-	qdYdasfgEANVbOU+sZjgwLEfV1odTNYn5m/QdZn4C/c8jZWtjY5O5cY5FihQbOcvZEHN8tUlWug
-	+6lnVauje2tfrhURWOlSQuP1SK1OScfUoc/SQlQ==
-X-Gm-Gg: ASbGncuFg4v2vFn/1gmGUIK1iRxRfc+GYzZ5db4Kya9zhRLZLQTFYOp2qu5nGhVscMA
-	YP6Sw79hlBhwoAoVbhQhvtWHGyiZnfaH+zVE28FLKpPgJXMGpXh15NomI1Jr+w4cAFYaX7jW+Nv
-	o7zmMaCNceA5QpmCkrhbOwwoZUN2YGhQjRXdPaezG0kJia2PvsWe3wXoGyothnIQ==
-X-Google-Smtp-Source: AGHT+IHxOk1DDQlqgVtRtzVrvtv+KQ+N8hq4sPyVAvu/WTYpqvLk0tXsOwVbxO+K6hN7KxjpnpMjq49TMM7Kxdczpcs=
-X-Received: by 2002:a17:907:a08f:b0:ace:c2ab:a729 with SMTP id
- a640c23a62f3a-ad1e8cd5fb7mr222232866b.42.1746599616299; Tue, 06 May 2025
- 23:33:36 -0700 (PDT)
+        bh=4tSnaafv10+hEryjBGo1tIUlQzaLszY16+8UsMNNQYc=;
+        b=UGPqkI3hX5LxVZlCcrDDKOyqqwHcPmLOHpj2zzxw/+vkB9XoBH7P/FpYnl0jl0JZV4
+         nCs2jaRU7mvDv9jZMzCINiwNgi1OzkKgQgZ/Mpn6+NhbIKr3HeLFOyranLUGoOdhSxyl
+         BeJL90/ehZQjIggq8PFcvjZ3KP3/HEaSgJXJ7MqDzffEo+Pr85gbDcbdg+cvsU6DxeyG
+         StISlhy41hdqI6LmnWTg0DyMIdCQ+Z+3fFRSRuqr2EELv1ZHnWv2UUS+1TCYJ2yvFAla
+         quJrY6c+MkiUuWCV+3ivnrChnvymKcgc/a7w0ZTi5/akfATTcON9TSbjp6EcxE3yrnl5
+         yNZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCnAYffHEpicgyk3RNuAiG02IzJ62Dzg5hu7iEVbTjJp6iIXOahPDdkhZjtGWe5zi69w15TuCSyywb@vger.kernel.org, AJvYcCVNzySH2tDiTfD1K9DT9sRLhvF2tkhlrPydB2GYYlyP90GexNmS+dsKDLjt8cqhx9boSloXNvbY3yRBhY5EPnme@vger.kernel.org, AJvYcCWQ8xi/n8Mjsdf8xCIkwBdom9lh7NHQg28XNUGSQQl8oKH7l+yV9XghAMC8GzKWJto0ufJ7MBt0NWUyUFzq@vger.kernel.org
+X-Gm-Message-State: AOJu0YybJYD8DUr4Xp/4RTzBb/nrnaWqkoZ5+3aGORSI+G9jQ/WUdrFo
+	Sk7saaRviv3ZvAL5g5Qi91PGiPqTKBgDpBmNbVQGSQaLFqDyLG6FkEVS/1MKTjtc1sd3uQg+pmY
+	T+mkcj2Ww9EAC/5npfXHIlkMmkXE=
+X-Gm-Gg: ASbGncsv2XAJqvmMyOMCVv0pzGyeX/Hgi4Kdw1Prw+PXHXl/ZQ3adf7r+KNlCdpWZng
+	Oa1VsiGrgFca5jirgMl4vFxs+8TMkHLDawPaNYDF2MMcGTPakv3vg7/85H31dvHj9b6RSWxrhNq
+	fGtveewX63SkzIjaX5fFhbyAR9f2yQwND9
+X-Google-Smtp-Source: AGHT+IFKDPg4bjgVdtlfQ09ZDOjRhfaXcZfLpq3bWiNiaGUd1Epqhz4Bm7knxBtyysuJty5+HRROqSzr64gzEsz7snM=
+X-Received: by 2002:a17:907:2d0c:b0:aca:c699:8d3c with SMTP id
+ a640c23a62f3a-ad1e77d7d7dmr219704166b.2.1746599723758; Tue, 06 May 2025
+ 23:35:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
- <20250309151907.GA178120@mail.hallyn.com> <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
- <20250506132158.GA682102@mail.hallyn.com> <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
- <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
-In-Reply-To: <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 7 May 2025 08:33:25 +0200
-X-Gm-Features: ATxdqUGgj7GRkdrDE2HhvGUTjaPAjkb2odBFmjaet1H89q27DW5giCWFSRk2X80
-Message-ID: <CAKPOu+_=ocLeEqcaSMjb5qqrvi6KAu3GYJa19Fqz_dm3a5F77w@mail.gmail.com>
-Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
-To: "Andrew G. Morgan" <morgan@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com, 
-	jmorris@namei.org, kees@kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
+ <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
+In-Reply-To: <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 7 May 2025 09:34:47 +0300
+X-Gm-Features: ATxdqUF_tXrLmm11l2dOZKOeYq9d6KItYisL8xcY_V7Ghp5-2WvAXQvmSSbOl-0
+Message-ID: <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com>
+Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
+ gpio_desc in gpiochip_fwd
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 7, 2025 at 5:16=E2=80=AFAM Andrew G. Morgan <morgan@kernel.org>=
- wrote:
-> If a setuid program execs itself, does the presence of this code undo
-> any protection the kernel afforded it on its first invocation?
+On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+>
+> Add request() callback to check if the GPIO descriptor was well registere=
+d
+> in the gpiochip_fwd before using it. This is done to handle the case wher=
+e
+> GPIO descriptor is added at runtime in the forwarder.
+>
+> If at least one GPIO descriptor was not added before the forwarder
+> registration, we assume the forwarder can sleep as if a GPIO is added at
+> runtime it may sleep.
 
-What protection do you mean, and what behavior do you expect when
-setid execs itself? I see this affects:
+...
 
-1. reset effective ids to real ids (only affects NO_NEW_PRIVS)
-2. new cap_permitted cannot be higher than old cap_permitted
-3. clear cap_ambient
-4. clear pdeath_signal (in begin_new_exec)
-5. reset stack limits (in begin_new_exec)
+>  {
+>         struct gpiochip_fwd *fwd =3D gpiochip_get_data(chip);
+>
+> +       /*
+> +        * get_direction() is called during gpiochip registration, return=
+ input
+> +        * direction if there is no descriptor for the line.
+> +        */
+> +       if (!test_bit(offset, fwd->valid_mask))
+> +               return GPIO_LINE_DIRECTION_IN;
 
-About these (from my very limited knowledge of this part of the kernel):
+Can you remind me why we choose a valid return for invalid line? From
+a pure code perspective this should return an error.
 
-1. is my primary goal, and really no new privs gained by allowing the
-process to keep existing ids
-2. only ever changes anything if new cap_permitted is higher, but if
-that's the case, the is_setid check is irrelevant because __cap_gained
-is true, therefore no change with my patch
-3. as I already described, the kernel is wrong (or the documentation
-is wrong), and my patch adjusts kernel to behave as documented
-4. I don't see how this is dangerous for anything regarding re-exec;
-if pdeath_signal wasn't reset on the first exec, it's safe to keep it
-after the re-exec, too
-5. same as 4, I think
+>         return gpiod_get_direction(fwd->descs[offset]);
+>  }
 
-Did I miss anything?
+...
 
-> FWIW I ran the libcap quicktest.sh script against your change and it
-> doesn't break any capability thing I test for when making libcap
-> releases.
+> +       /*
+> +        * Some gpio_desc were not registered. They will be registered at=
+ runtime
+> +        * but we have to suppose they can sleep.
 
-Thanks for taking the time to run these tests. I'm glad the existing
-tests didn't find any obvious bugs. If we identify an actual problem
-with my patch, let's write a new test that fails with my patch!
+suppose --> assume ?
 
-> That being said, in general this whole zoo of *[ug]id values
-> and their subtle behavior is not casually obvious. I'd recommend using
-> a userspace workaround for your use case, and not changing the legacy
-> behavior of the kernel.
+> +        */
+> +       if (!bitmap_full(fwd->valid_mask, chip->ngpio))
+> +               chip->can_sleep =3D true;
 
-What userspace workaround would be possible? The only thing that comes
-to my mind is to apply NO_NEW_PRIVS in the child process after exec -
-but that's too late, because arbitrary untrusted code has already been
-executed at this point. This means I lose NO_NEW_PRIVS completely,
-because the attacker can simply skip the call.
-
-Max
+--=20
+With Best Regards,
+Andy Shevchenko
 
