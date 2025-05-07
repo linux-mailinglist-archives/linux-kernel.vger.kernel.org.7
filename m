@@ -1,206 +1,131 @@
-Return-Path: <linux-kernel+bounces-637011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5EFAAAD32E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C203AAD30A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5701C03666
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:18:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17694E81B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49F5185B72;
-	Wed,  7 May 2025 02:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADE118C01D;
+	Wed,  7 May 2025 02:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Otzecflp"
-Received: from mail-m3285.qiye.163.com (mail-m3285.qiye.163.com [220.197.32.85])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Pb3cEynk"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F50EBA38;
-	Wed,  7 May 2025 02:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA63A41C72
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 02:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746584267; cv=none; b=crnwIpdUx7C41lGf86ulM+wzfgNoCiFriOwGenOBSeQ/9P7joZeQUD0V47J6C6nTdbdYJ/hbM9qaN3OTUX8jhXYRyZ8Fm+GqfQ6FYLTHMWpcMo4LOp5i+qsRcW7J2NLjMKR7KHAHvejBOjuraduRABPwEuNM02ilVmJqwD/ZDCE=
+	t=1746583650; cv=none; b=iwWRdUJbVZXqi/gszdojK/LX8q4iKIqwzyJk3DPySmJfy6fF03tPlCFZUnTHhOkyK8gYL5+JCpHxybV1Eeb+eCHME332XOYR5sNDfGH7isuHS8eVeB1G5U49x61F9ZVtMV+mZh3PbswS/EIpkYtpVwiVAZ9RotVXh1syiP8nJsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746584267; c=relaxed/simple;
-	bh=yEDtcuagXBE3WpNM9QEf7srqAr2BZBmw0w+sUPDns4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KemD5BYjdZXgqdegVNQCKknmZln/JkhkNbYjP5Zkr3y5DEv0I316u1SPKtXKm4FahpyB9Qd24l7CsFETgVLmnT91corxtpRc+jzk0aMDxZ/KJC+mQqpdAfuL/z3vjVI4lV0Lo6qG+OHodAdx+kYrRjqrpm4doQVuUyETa2Mq1zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Otzecflp; arc=none smtp.client-ip=220.197.32.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [192.168.60.65] (unknown [103.29.142.67])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 142d62da9;
-	Wed, 7 May 2025 10:02:14 +0800 (GMT+08:00)
-Message-ID: <a5da2a81-6944-4d4e-a582-a24f8340efc5@rock-chips.com>
-Date: Wed, 7 May 2025 10:02:12 +0800
+	s=arc-20240116; t=1746583650; c=relaxed/simple;
+	bh=BOl1Hjbmg6sfv+e8b7AdM2sJt3n7EOZ+HP8cM6weGGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=ghVkDLVrCgAkOLnbFRvIdoYvUFRHVKWPsdPxKkZREZrqke/tbzjQVfePYWb+lfnOrCSXcTgtf0uJC8AJLHBfdqNEXOOUOVC7+U6R4vU24fb7uayb8WbDRUq6+yrCOEYbq+mel7oRRdWeXois0tWbtKG+k9VUZMPd88i74bot9Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Pb3cEynk; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250507020724epoutp023650af2cde39dd9262386831fd94f64f~9HJIqDQwN0565905659epoutp02F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 02:07:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250507020724epoutp023650af2cde39dd9262386831fd94f64f~9HJIqDQwN0565905659epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746583644;
+	bh=vh1sjlzdmhCkJFjPMX98BXTIFWJ0pn9mK1R1KkIvKng=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Pb3cEynk6F8WoAo0cJo8eN35U7puwDzSpLG1/9UW7aFNG7hSJejLqqmg126pTPHNy
+	 juPkqNGjZkPZ5VnF1sWMztrKtNL+JmT1mSPNSKdRBJ6FhCO1k06SxZZ1tI03QloTYL
+	 OBAiFsQonW3lx3Tppdg8ZQMBKuwNAAkVzkVZs+4A=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250507020724epcas1p3619785b5d0f5987100eee9ded9f925bc~9HJIWdcCe1697116971epcas1p3n;
+	Wed,  7 May 2025 02:07:24 +0000 (GMT)
+Received: from epcas1p4.samsung.com (unknown [182.195.36.226]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4Zsdtz6H9yz2SSKf; Wed,  7 May
+	2025 02:07:23 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250507020722epcas1p1171c5e96ef474d587a1a35af8d6931bf~9HJHJU48N2947929479epcas1p1p;
+	Wed,  7 May 2025 02:07:22 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250507020722epsmtrp274642db3c1aaac5cb6471feff3b7bd6a~9HJHIpGAQ0063700637epsmtrp2D;
+	Wed,  7 May 2025 02:07:22 +0000 (GMT)
+X-AuditID: b6c32a52-40bff70000004c16-3f-681ac05aa7c4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0D.A0.19478.A50CA186; Wed,  7 May 2025 11:07:22 +0900 (KST)
+Received: from wkk-400TFA-400SFA.. (unknown [10.253.99.106]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250507020722epsmtip101809ac449763400cd7224bd757d3da2~9HJG_O8Fa0522205222epsmtip1O;
+	Wed,  7 May 2025 02:07:22 +0000 (GMT)
+From: wkon-kim <wkon.kim@samsung.com>
+To: James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: wkon.kim@samsung.com
+Subject: [PATCH] ufs: core: Print error value as hex format on
+ ufshcd_err_handler()
+Date: Wed,  7 May 2025 11:07:18 +0900
+Message-Id: <20250507020718.7446-1-wkon.kim@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] rockchip: Add rk3562 SoC and evb support
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: heiko@sntech.de, linux-kernel@vger.kernel.org,
- Jonas Karlman <jonas@kwiboo.se>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Yao Zi <ziyao@disroot.org>,
- Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- Elaine Zhang <zhangqing@rock-chips.com>,
- Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
- Jamie Iles <jamie@jamieiles.com>, Guenter Roeck <linux@roeck-us.net>,
- Frank Wang <frank.wang@rock-chips.com>, linux-rockchip@lists.infradead.org,
- linux-watchdog@vger.kernel.org, Jimmy Hon <honyuenkwun@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- linux-arm-kernel@lists.infradead.org,
- Finley Xiao <finley.xiao@rock-chips.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- FUKAUMI Naoki <naoki@radxa.com>, Diederik de Haas <didi.debian@cknow.org>,
- Shresth Prasad <shresthprasad7@gmail.com>,
- Quentin Schulz <quentin.schulz@cherry.de>, Johan Jonker <jbx6244@gmail.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250506025715.33595-1-kever.yang@rock-chips.com>
- <174655575165.2171034.16453137338500014976.robh@kernel.org>
-Content-Language: en-US
-From: Kever Yang <kever.yang@rock-chips.com>
-In-Reply-To: <174655575165.2171034.16453137338500014976.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHxhJVkhLTE5PS0IdSBlJTlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKS0hVSUJVSk9JVU1MWVdZFhoPEhUdFFlBWU9LSFVKS0lIQktDVUpLS1
-	VKQlkG
-X-HM-Tid: 0a96a87aadb103afkunm142d62da9
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ogg6Sxw*DjJLThVONSMKMjhL
-	CzMaFDJVSlVKTE9NTkNISEhMT09OVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQU5DSkw3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=OtzecflpZnKWD8Lhk8YvqQFaFozPhpcL1pqbDiGpgC9A0ZDXFmuvh+VcYpV8dUal9T4xeNviwwGdxZ1idVC02A3wz5eHeYeDzO+YJ0vE5KOvgIsr+GLtwQRxbsc8LujSNLYBAJ2FeVNUIvCo8GcLng88Kqx8G+yVuzEPSt8FDv4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=1zFclqcGuYPNryGvnI+na4Nb66ye8cJcL9CEUWPikAg=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOLMWRmVeSWpSXmKPExsWy7bCSnG7UAakMg4UPzSw29nNYXN41h82i
+	+/oONovlx/8xWWy+9I3FgdVj2qRTbB4fn95i8ejbsorR4/MmuQCWKC6blNSczLLUIn27BK6M
+	7ZP+shRs46y4vGAWSwPjN/YuRk4OCQETiUsvHrF0MXJxCAlsZ5R4PvMZUIIDKCEhseVLNoQp
+	LHH4cDFIuZDAe0aJe9tCQGw2AVWJ3w0HGEFaRQRaGSWe3roI1soM1Hrgli1IjbBAsMSPeQ9Z
+	QMIsQPVnLsaChHkFLCR+H7/CDHGBvMT+g2eZIeKCEidnPmEBsZmB4s1bZzNPYOSbhSQ1C0lq
+	ASPTKkbR1ILi3PTc5AJDveLE3OLSvHS95PzcTYzgsNMK2sG4bP1fvUOMTByMhxglOJiVRHjv
+	35fMEOJNSaysSi3Kjy8qzUktPsQozcGiJM6rnNOZIiSQnliSmp2aWpBaBJNl4uCUamASXv5F
+	cVq05inTT79DjsoaWjzPvme1r19QOif9RcROpUO3ln3yKFgerlZ7sGyz37vkxTO77VsnFaRM
+	X7+AtXyDscgu7oWaa6fNrHf/euTe3nqLooqdW7fxTDtWeDfz9JbFt++cO/3srwSTsdyB7lfL
+	j3dyvHv5av6f39MPVP9p6Iidstq5LPD33FfOF56+ODFB2czhcurHpbJTj6XsZVDyllw62/xc
+	n0er9wGvrQctTH7yKB+acWSD2PxS7c4tTXudvX8LMN5aWLT+o8j5ixt4bgrNZ5A6JJOle31t
+	y05nnq+XnG+vVdooELBzyrF/sZFyZ3zu8rM/XBs6YUvGiU06vQ2O/9yfm0z+JmJi6tWdd0mJ
+	pTgj0VCLuag4EQB2hhOjqgIAAA==
+X-CMS-MailID: 20250507020722epcas1p1171c5e96ef474d587a1a35af8d6931bf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250507020722epcas1p1171c5e96ef474d587a1a35af8d6931bf
+References: <CGME20250507020722epcas1p1171c5e96ef474d587a1a35af8d6931bf@epcas1p1.samsung.com>
 
+It is better to print saved_err and saved_uic_err in hex format.
+Integer format is hard to spot.
 
-On 2025/5/7 02:23, Rob Herring (Arm) wrote:
-> On Tue, 06 May 2025 10:57:09 +0800, Kever Yang wrote:
->> Patch series V5 remove [v4 1/7] which had taken by Manivannan, and move
->> scmi-shmem from soc node to reserved memory.
->>
->> Patch series V4 remove patches already landed, and remove dts nodes for
->> modules still under review.
->>
->> This patch set adds rk3562 SoC and its evb support.
->>
->> I have split out patches need driver change for different subsystem.
->> And all the modules with dt-binding document update in this patch set
->> do not need any driver change. I put them together to make it clear we
->> have a new SoC and board to use the new compatible. Please pick up the
->> patch for your subsystem, or please let me know if the patch has to
->> send separate.
->>
->> Test with USB, PCIe, EMMC, SD Card.
->>
->> This patch set is base on the patch set for rk3576 evb1 support.
->>
->> V3:
->> https://lore.kernel.org/linux-rockchip/20250227111913.2344207-1-kever.yang@rock-chips.com/
->> V2:
->> https://lore.kernel.org/linux-rockchip/b4df8a73-58a2-4765-a9e4-3513cb2bc720@rock-chips.com/T/
->>
->>
->> Changes in v5:
->> - Collect review tag
->> - Update scmi-shmem from soc to reserved memory
->>
->> Changes in v4:
->> - Collect ack tag
->> - Collect ack tag
->> - Collect ack tag
->> - remove gmac and otp nodes
->> - remove gmac nodes
->>
->> Changes in v3:
->> - Collect reveiw tag
->> - Collect the Acked-by tag
->> - remove i2c/serial/spi alias
->> - add soc node
->>
->> Changes in v2:
->> - Update in sort order
->> - remove grf in cru
->> - Update some properties order
->>
->> Finley Xiao (2):
->>    arm64: dts: rockchip: add core dtsi for RK3562 Soc
->>    arm64: dts: rockchip: Add RK3562 evb2 devicetree
->>
->> Kever Yang (4):
->>    dt-bindings: watchdog: Add rk3562 compatible
->>    dt-bindings: rockchip: pmu: Add rk3562 compatible
->>    dt-bindings: soc: rockchip: Add rk3562 syscon compatibles
->>    dt-bindings: arm: rockchip: Add rk3562 evb2 board
->>
->>   .../devicetree/bindings/arm/rockchip.yaml     |    5 +
->>   .../devicetree/bindings/arm/rockchip/pmu.yaml |    2 +
->>   .../devicetree/bindings/soc/rockchip/grf.yaml |    7 +
->>   .../bindings/watchdog/snps,dw-wdt.yaml        |    1 +
->>   arch/arm64/boot/dts/rockchip/Makefile         |    1 +
->>   .../boot/dts/rockchip/rk3562-evb2-v10.dts     |  488 ++++
->>   .../boot/dts/rockchip/rk3562-pinctrl.dtsi     | 2352 +++++++++++++++++
->>   arch/arm64/boot/dts/rockchip/rk3562.dtsi      | 1270 +++++++++
->>   8 files changed, 4126 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3562-evb2-v10.dts
->>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3562-pinctrl.dtsi
->>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3562.dtsi
->>
->> --
->> 2.25.1
->>
->>
->>
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->    pip3 install dtschema --upgrade
->
->
-> This patch series was applied (using b4) to base:
->   Base: attempting to guess base-commit...
->   Base: tags/next-20250506 (exact match)
->
-> If this is not the correct base, please add 'base-commit' tag
-> (or use b4 which does this automatically)
->
-> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250506025715.33595-1-kever.yang@rock-chips.com:
->
-> arch/arm64/boot/dts/rockchip/rk3562-evb2-v10.dtb: /soc/usb2-phy@ff740000: failed to match any schema with compatible: ['rockchip,rk3562-usb2phy']
+[ 1024.485428] [2: kworker/u20:13:28211] exynos-ufs 17100000.ufs: ufshcd_err_handler started; HBA state eh_fatal; powered 1; shutting down 0; saved_err = 131072; saved_uic_err = 0; force_reset = 0; link is broken
 
-The usb2-phy patch set[1] has send and got reviewed tag from Heiko for a 
-long time, what should I do for that patch?
+Signed-off-by: Wonkon Kim <wkon.kim@samsung.com>
+---
+ drivers/ufs/core/ufshcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 5cb6132b8147..eb0ce35a7a9c 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6572,7 +6572,7 @@ static void ufshcd_err_handler(struct work_struct *work)
+ 	hba = container_of(work, struct ufs_hba, eh_work);
+ 
+ 	dev_info(hba->dev,
+-		 "%s started; HBA state %s; powered %d; shutting down %d; saved_err = %d; saved_uic_err = %d; force_reset = %d%s\n",
++		 "%s started; HBA state %s; powered %d; shutting down %d; saved_err = 0x%x; saved_uic_err = 0x%x; force_reset = %d%s\n",
+ 		 __func__, ufshcd_state_name[hba->ufshcd_state],
+ 		 hba->is_powered, hba->shutting_down, hba->saved_err,
+ 		 hba->saved_uic_err, hba->force_reset,
+-- 
+2.34.1
 
-Thanks,
-- Kever
-
-[1] 
-https://patchwork.kernel.org/project/linux-phy/patch/20250415050005.52773-2-kever.yang@rock-chips.com/
-
->
->
->
->
->
->
 
