@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-637405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDE0AAD8D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E63EAAD8DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1C34C5602
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0861C205C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4D5223DC7;
-	Wed,  7 May 2025 07:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFD22222DB;
+	Wed,  7 May 2025 07:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W6y4niVW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b74+gGhv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0E7222568
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4AD22155F;
+	Wed,  7 May 2025 07:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746603904; cv=none; b=hmTJTX9rBqgnIsfyKUMpFPSKI34t9JrYumlirOhg3bN1J3uroKRiZjNPTTDEjg6Tp6plgoawBjf5f3P382pPq9h9RJcV4C8mZgNy4rKGmXdY5n8hz7NWo2RyOlTYy4JYoplxHMcHrj13o/Hq7hHy34vlUoa9k1Juxdly0p2j10g=
+	t=1746603902; cv=none; b=ECQLixINQt2wFwYpn2ui0LEYjcoRBSfYoz/JWpj1EHU564Bu136EUpnAyh4mXhGa4s9r7OQHImj0Ui9Ovl7TwXHWRn7cVXxtpe+koJmrcD7LEVwSFtHczaO47rpfY9X9QJu09eITvbt5ssfdy7pS6gDFAMorWVr5uZHDWfZ+qpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746603904; c=relaxed/simple;
-	bh=iu1EOTLAhb020bpCSuvHHrgL15BOnipScV+aaqIQksM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GxzDlOQm7NSmBWnV5pAYPKCiISU7aitSsCBiWg11dwcp7nT4VC+B52pKalun9sOpEqYgNLzTysCBOI96nEkUlnzZy5P5k2TXVmM/gGN2qZBxf87j097AoGFjqxAPSmPghloy/XuEWJYEslE/UNnHoIKeywixe4sIOP0I3+rM63g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W6y4niVW; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746603903; x=1778139903;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iu1EOTLAhb020bpCSuvHHrgL15BOnipScV+aaqIQksM=;
-  b=W6y4niVWsDPISM1qMWqgbLNusPqGfYEWogo1MTjlkou7f9JiHZByrKE2
-   9I3TCJlk3zVBr0LnbVs/v9ubrl+0rwp1O2ICsDfVKEQ5oXexhXdpdVxCs
-   BVO7SpujnM2MyjZRmN5bsRxdMkH+TEsGnrCzVxtXN6yuGVRHz458YksWG
-   i53M7s0KYlIcJZBPE710P+tCZNInw5JPsteipGcz/cMMc0U2EhkpTt7yl
-   rPUWnkevr2XXmrtfZMo3nXMYRXNo4occRza5VLKQZZlYsW7o1DcPH1WW4
-   S3PlJ3TakVEdyduFzDAxfEUAW+9nhF5ls37R2Sq3hiHyjG2nW9YkSBfQu
-   w==;
-X-CSE-ConnectionGUID: IHHyD+P2QcyO/aJp2t9lSw==
-X-CSE-MsgGUID: 3fhnk7bwSzKEugOFQQ2u+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52133187"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="52133187"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:45:02 -0700
-X-CSE-ConnectionGUID: k/FupIOJSfuvz0pC7u2qRw==
-X-CSE-MsgGUID: nVYJ+ab8SVqxndgaV2iasA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="135875085"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 07 May 2025 00:44:52 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCZSU-0007LR-02;
-	Wed, 07 May 2025 07:44:50 +0000
-Date: Wed, 7 May 2025 15:44:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	David Lechner <david@lechnology.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: Re: [PATCH] drm/sitronix: move tiny Sitronix drivers to their own
- subdir
-Message-ID: <202505071503.faytuvgs-lkp@intel.com>
-References: <20250428-sitronix-v1-1-4e7cc0a8195a@gmail.com>
+	s=arc-20240116; t=1746603902; c=relaxed/simple;
+	bh=UIXL1PvyHToreKlZvHLHBe7wN5iOR5xedG7X6aJRfws=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=oJbcKQbcYYB43bVxYbuK3w5V3e/gImI5i6EaWu8QbH5+CecYFaIk/o3ETvzc49ek6uuymMg+2Z+aLXQXlMkF67BTlB69FNv8wVClnZL/EgspbJjP2xLWl9HLQ3h9CfqjEBu4J1OjU3XO2TaAJoe12qRfRg7QamkjSY3QxBHxqpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b74+gGhv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471GtHu021520;
+	Wed, 7 May 2025 07:44:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=p6XzLl4yT9v
+	/QX/o4bFHum741R03mKKatFvOYyg9AKE=; b=b74+gGhvGl5EXtxC0Msm9dqqPdV
+	c+kzjqYybf54XIrrpgMr7Dg8d8HGZ5aOcgJv5i+Z70/v1kbhXqk4rEyreYNNJ607
+	vDyE6mB8SwwLryxlJD/GAwy2HyDT7sRsNSOjprgxd39zQoDD/S9JZ4OSB/YRrrdq
+	7cZooWsRpQIL4w7Y++uM5Boo2yPqlYMfs6LlXATBF9MSfiPjqh+ojLqL2LcrsQUw
+	fqHZ3kBHlXWgCkBC2jAnavFX75eJvPwdGkGQAAvhOG9ASgkjmhjlDJRPmoAY5bVZ
+	Fg0zVk4Bq9B6Rx1Lc9Eb2FGPeeWIvTlc6gY1kuIHxZrGrm+Q2aGlpSRnieg==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fdwtumpe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 07:44:35 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5477iXP1032533;
+	Wed, 7 May 2025 07:44:33 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46dc7m7dxx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 07:44:33 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5477iOp0032448;
+	Wed, 7 May 2025 07:44:33 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5477iXjo032515
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 07:44:33 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 393357)
+	id 2057D40CF7; Wed,  7 May 2025 15:44:32 +0800 (CST)
+From: Ziqi Chen <quic_ziqichen@quicinc.com>
+To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
+        beanhuo@micron.com, avri.altman@wdc.com, junwoo80.lee@samsung.com,
+        martin.petersen@oracle.com, quic_ziqichen@quicinc.com,
+        quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_rampraka@quicinc.com, neil.armstrong@linaro.org,
+        luca.weiss@fairphone.com, konrad.dybcio@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/3] scsi: ufs: qcom: Check gear against max gear in vop freq_to_gear()
+Date: Wed,  7 May 2025 15:44:13 +0800
+Message-Id: <20250507074415.2451940-2-quic_ziqichen@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250507074415.2451940-1-quic_ziqichen@quicinc.com>
+References: <20250507074415.2451940-1-quic_ziqichen@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428-sitronix-v1-1-4e7cc0a8195a@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=VPPdn8PX c=1 sm=1 tr=0 ts=681b0f63 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=ufAJUjbdAAAA:8
+ a=QQTxopGz-chmN7SC5sQA:9 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+ a=rB1ygNaI0PWiOa_UD5GD:22
+X-Proofpoint-GUID: d5ww0YVl4YMfa313amaXIc8xqpSd-fHy
+X-Proofpoint-ORIG-GUID: d5ww0YVl4YMfa313amaXIc8xqpSd-fHy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA3MCBTYWx0ZWRfX8yOkEMxAR1eX
+ J17+S6TmrZV+UMHUUtpTzN/dqMHB5dt9v3nSra3jazUmcz1vqjF50wO9ycsJdhR3ogCZAswiwK0
+ 8xJWLrqh08qJxyabq9FimF6ovqIf1lt6Hdstw/TzN+te1s53jIYMczfGwYQi5dFNvv2b50bmQqN
+ 44F3fOU6nfuSgD3Zuux4TrY0MLqSPE/JZOVXFSGL1RenSdsvAF9IYmnmVRfYbfmHnaPd2XCbaQ+
+ QONzIY5GdWlLRcMGbJig+eXbMDuQdFRWZRHsjggxflvYac4w3K9I2etPkDXYiWK4rF1i9weJFz1
+ A2wRzs8pJPMEuPPq1MJxnrw2N+0tCZZ9Pfbjt+Ym11N2rrx4a1ChG37lY7Rg9ELl4npk5xwqh1V
+ YhscnsxjbdWJERAHq1Sz55T4ZkKMYkvoCm5vb/LW7YORG37dL70s9hUdo08MMxNmsxhtY1LS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505070070
 
-Hi Marcus,
+The vop freq_to_gear() may return a gear greater than the negotiated max
+gear, return the negotiated max gear if the mapped gear is greater than it.
 
-kernel test robot noticed the following build warnings:
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
 
-[auto build test WARNING on ef6517ac5cf971cfeaccea4238d9da7e2425b8b1]
+---
+v1 - > v2:
+1. Instead of return 'gear', return '0' directly if didn't find mapped
+   gear
+2. Derectly return min_t(gear,max_gear) instead assign to 'gear' then
+   return it.
+---
+ drivers/ufs/host/ufs-qcom.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marcus-Folkesson/drm-sitronix-move-tiny-Sitronix-drivers-to-their-own-subdir/20250428-144721
-base:   ef6517ac5cf971cfeaccea4238d9da7e2425b8b1
-patch link:    https://lore.kernel.org/r/20250428-sitronix-v1-1-4e7cc0a8195a%40gmail.com
-patch subject: [PATCH] drm/sitronix: move tiny Sitronix drivers to their own subdir
-config: m68k-randconfig-r121-20250429 (https://download.01.org/0day-ci/archive/20250507/202505071503.faytuvgs-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 7.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250507/202505071503.faytuvgs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505071503.faytuvgs-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/sitronix/st7571-i2c.c:965:26: sparse: sparse: symbol 'st7571_config' was not declared. Should it be static?
-
-vim +/st7571_config +965 drivers/gpu/drm/sitronix/st7571-i2c.c
-
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  964  
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23 @965  struct st7571_panel_data st7571_config = {
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  966  	.init = st7571_lcd_init,
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  967  	.constraints = {
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  968  		.min_nlines = 1,
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  969  		.max_nlines = 128,
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  970  		.min_ncols = 128,
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  971  		.max_ncols = 128,
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  972  		.support_grayscale = true,
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  973  	},
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  974  };
-4b35f0f41ee2950 drivers/gpu/drm/tiny/st7571-i2c.c Marcus Folkesson 2025-04-23  975  
-
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 790da25cbaf3..7f10926100a5 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -2105,10 +2105,10 @@ static u32 ufs_qcom_freq_to_gear_speed(struct ufs_hba *hba, unsigned long freq)
+ 		break;
+ 	default:
+ 		dev_err(hba->dev, "%s: Unsupported clock freq : %lu\n", __func__, freq);
+-		break;
++		return 0;
+ 	}
+ 
+-	return gear;
++	return min_t(u32, gear, hba->max_pwr_info.info.gear_rx);
+ }
+ 
+ /*
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
