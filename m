@@ -1,198 +1,156 @@
-Return-Path: <linux-kernel+bounces-637160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB02AAD57D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:50:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C925AAAD585
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314277A2CCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30781BA40F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEF81F4717;
-	Wed,  7 May 2025 05:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d3jv5ykb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFE31C84BF
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBF31F4612;
+	Wed,  7 May 2025 05:51:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66D11C54A2
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746596992; cv=none; b=RrK8Dn95anCk7o7kAe85BWcJkZIoNLGoP5FDJW1vNiHqLiVLW6Pwm6NtZogswMXy7z2eheIClzjtmPFD3uxETReOjAdmgut4DhHR1vQzTEG7S5RHD/K8JvmPOcrCydikTvpoTSMZPveDQUGZW1J69hAnHUANOxp631vJtY/MYTY=
+	t=1746597116; cv=none; b=sKbogRdAi1+DH61hupa7DUR5L4bxDjpKiQOTv+kWfqzQQ5Bm2MGbDg025f2H9004Yx2LOOtuLDY4FgU4hZO9bhGg++GAz0BHSCYznwRrBSmvbAPgfDhorkf4QRlFa6TIjh8Fzqb13MT8l+dOqJGlky4paUDcCFCxYmy82JVG2C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746596992; c=relaxed/simple;
-	bh=s3jtPPys9Ndu5/zHikXScciKpT4dvC7aNsBkEMstihM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXPxO3i9v3Di/z9rOoPnokLlhsVpxusv7V2cfqUK+aNmAKzsUpJmMa5n5ShzffbYKQMHX8BtX6u+O/ne0zFXTtwPDL4lN/QMx+Q2xpAtRMlsv5osk83+65wGWsfbO1VpyNBLfqaLaFhjQES+CmPMC1rwZRNi7tfcc3JJeHrlhs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d3jv5ykb; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746596990; x=1778132990;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s3jtPPys9Ndu5/zHikXScciKpT4dvC7aNsBkEMstihM=;
-  b=d3jv5ykb2EF2DP13jivi01X3nVlWN5fOggfQA50Z0WGUgIUiLOByaSH9
-   xqKoGPj6a3DClxSYhWSZCn1ifnDE75kRikC9o6sfqhvMtaodSP4rUcLGj
-   TaqpudbD77kK5ZwvhDFGIDZh3WiIBMrXYd8tM7K+9FdOdsxx/uOR2Vr1S
-   jrob5GFG6DdPFOh9dgWyLV4lhSRMFuyeGS5uX7xNY2CNIk8gBeEZblHUW
-   eU0reSEN9OMJApqKNzQX4Gg1PZzKj89Go+eZWGsgR7KqIk94lAGIvUdTM
-   z1mFlgPzGfP4wHkNsylQvx5YZJsp4iG4G0/b7nGTk8RcMKCUNCygEvdv1
-   w==;
-X-CSE-ConnectionGUID: TAD/F7w/TnKzaFNWgj2Blg==
-X-CSE-MsgGUID: tQwagpKcSCSB2UXME4MslA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52120518"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="52120518"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:49:50 -0700
-X-CSE-ConnectionGUID: ip+J+NnLQ6ySssTCUnohBQ==
-X-CSE-MsgGUID: HOlc05yCQtSPBiCuEqDALw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="140580410"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 06 May 2025 22:49:48 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCXf7-00077N-2M;
-	Wed, 07 May 2025 05:49:45 +0000
-Date: Wed, 7 May 2025 13:49:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Darshan Rathod <darshanrathod475@gmail.com>, abbotti@mev.co.uk
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	hsweeten@visionengravers.com, linux-kernel@vger.kernel.org,
-	Darshan Rathod <darshanrathod475@gmail.com>
-Subject: Re: [PATCH] staging: comedi: das16 : fixed a struct warning in code
-Message-ID: <202505071332.006irHBZ-lkp@intel.com>
-References: <20250426094145.13564-1-darshanrathod475@gmail.com>
+	s=arc-20240116; t=1746597116; c=relaxed/simple;
+	bh=nSOv5rQ5SxT1Vqqk9mSgLjHBzWa93SRsnwYLo5JvTNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qZawY/ww4oJ5YQWwtKu5VZOxGj5TMmHidN27hQwLCAuuN2zpHb6qQHaWdjnczZL8x4kPJrGIDBpSzOoiIjOTsClNxj7DhI6IyS78TLgdSzstxV4T6CXamqGi7D23YWT5wDlWSzc8IUlt2p6+tW50+yqD0MrCbddA2ysD+py8Trg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C5C92F;
+	Tue,  6 May 2025 22:51:42 -0700 (PDT)
+Received: from [192.168.0.12] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 910583F5A1;
+	Tue,  6 May 2025 22:51:48 -0700 (PDT)
+Message-ID: <b93cb084-de85-47ff-856d-c18556ec00fa@arm.com>
+Date: Wed, 7 May 2025 11:21:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250426094145.13564-1-darshanrathod475@gmail.com>
-
-Hi Darshan,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on staging/staging-testing]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Darshan-Rathod/staging-comedi-das16-fixed-a-struct-warning-in-code/20250426-174345
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20250426094145.13564-1-darshanrathod475%40gmail.com
-patch subject: [PATCH] staging: comedi: das16 : fixed a struct warning in code
-config: x86_64-randconfig-072-20250506 (https://download.01.org/0day-ci/archive/20250507/202505071332.006irHBZ-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071332.006irHBZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505071332.006irHBZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/comedi/drivers/das16.c:969:18: error: cannot assign to variable 'lrange' with const-qualified type 'const struct comedi_lrange *'
-     969 |                 lrange->length = 1;
-         |                 ~~~~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:959:31: note: variable 'lrange' declared const here
-     959 |                 const struct comedi_lrange *lrange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
->> drivers/comedi/drivers/das16.c:971:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
-     971 |                 krange->min = min;
-         |                 ~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:960:31: note: variable 'krange' declared const here
-     960 |                 const struct comedi_krange *krange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/comedi/drivers/das16.c:972:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
-     972 |                 krange->max = max;
-         |                 ~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:960:31: note: variable 'krange' declared const here
-     960 |                 const struct comedi_krange *krange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/comedi/drivers/das16.c:973:17: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
-     973 |                 krange->flags = UNIT_volt;
-         |                 ~~~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:960:31: note: variable 'krange' declared const here
-     960 |                 const struct comedi_krange *krange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/comedi/drivers/das16.c:1003:18: error: cannot assign to variable 'lrange' with const-qualified type 'const struct comedi_lrange *'
-    1003 |                 lrange->length = 1;
-         |                 ~~~~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:993:31: note: variable 'lrange' declared const here
-     993 |                 const struct comedi_lrange *lrange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/comedi/drivers/das16.c:1005:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
-    1005 |                 krange->min = min;
-         |                 ~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:994:31: note: variable 'krange' declared const here
-     994 |                 const struct comedi_krange *krange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/comedi/drivers/das16.c:1006:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
-    1006 |                 krange->max = max;
-         |                 ~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:994:31: note: variable 'krange' declared const here
-     994 |                 const struct comedi_krange *krange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/comedi/drivers/das16.c:1007:17: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
-    1007 |                 krange->flags = UNIT_volt;
-         |                 ~~~~~~~~~~~~~ ^
-   drivers/comedi/drivers/das16.c:994:31: note: variable 'krange' declared const here
-     994 |                 const struct comedi_krange *krange;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-   8 errors generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] coresight: Consolidate clock enabling
+To: Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250423151726.372561-1-leo.yan@arm.com>
+ <20250423151726.372561-8-leo.yan@arm.com>
+ <08690315-ce0e-4b2e-b85e-d8b9a82f4b11@arm.com>
+ <20250506105352.GE177796@e132581.arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250506105352.GE177796@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +969 drivers/comedi/drivers/das16.c
 
-742c4a095973f6 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-12  947  
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  948  static const struct comedi_lrange *das16_ai_range(struct comedi_device *dev,
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  949  						  struct comedi_subdevice *s,
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  950  						  struct comedi_devconfig *it,
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  951  						  unsigned int pg_type,
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  952  						  unsigned int status)
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  953  {
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  954  	unsigned int min = it->options[4];
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  955  	unsigned int max = it->options[5];
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  956  
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  957  	/* get any user-defined input range */
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  958  	if (pg_type == das16_pg_none && (min || max)) {
-a987dd48bc19ae drivers/comedi/drivers/das16.c         Darshan Rathod      2025-04-26  959  		const struct comedi_lrange *lrange;
-a987dd48bc19ae drivers/comedi/drivers/das16.c         Darshan Rathod      2025-04-26  960  		const struct comedi_krange *krange;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  961  
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  962  		/* allocate single-range range table */
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  963  		lrange = comedi_alloc_spriv(s,
-ee8ed0141d532d drivers/comedi/drivers/das16.c         Gustavo A. R. Silva 2022-01-25  964  					    struct_size(lrange, range, 1));
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  965  		if (!lrange)
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  966  			return &range_unknown;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  967  
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  968  		/* initialize ai range */
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26 @969  		lrange->length = 1;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  970  		krange = lrange->range;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26 @971  		krange->min = min;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  972  		krange->max = max;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  973  		krange->flags = UNIT_volt;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  974  
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  975  		return lrange;
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  976  	}
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  977  
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  978  	/* use software programmable range */
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  979  	if (status & DAS16_STATUS_UNIPOLAR)
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  980  		return das16_ai_uni_lranges[pg_type];
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  981  	return das16_ai_bip_lranges[pg_type];
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  982  }
-0ce8280e287609 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  983  
+On 5/6/25 16:23, Leo Yan wrote:
+> On Mon, May 05, 2025 at 12:58:06PM +0530, Anshuman Khandual wrote:
+> 
+> [...]
+> 
+>>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>>> @@ -1645,6 +1645,51 @@ int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(coresight_etm_get_trace_id);
+>>>  
+>>> +/*
+>>> + * Attempt to find and enable programming clock (pclk) and trace clock (atclk)
+>>> + * for the given device.
+>>> + *
+>>> + * The AMBA bus driver will cover the pclk, to avoid duplicate operations,
+>>> + * skip to get and enable the pclk for an AMBA device.
+>>> + *
+>>> + * atclk is an optional clock, it will be only enabled when it is existed.
+>>> + * Otherwise, a NULL pointer will be returned to caller.
+>>> + *
+>>> + * Returns: '0' on Success; Error code otherwise.
+>>> + */
+>>> +int coresight_get_enable_clocks(struct device *dev, struct clk **pclk,
+>>> +				struct clk **atclk)
+>>
+>> These arguments probably could be arranged better as pclk and atclk are
+>> always contained inside 'xxx_drvdata' structure, which could be derived
+>> from the 'dev' structure itself, if [dev|platform]_set_drvdata() always
+>> ensured to be called earlier.
+> 
+> Seems to me, the conclusion "pclk and atclk ... could be derived from
+> the 'dev' structure itself" is not true.
+> 
+> The reason is the coresight_get_enable_clocks() function is located in
+> the CoreSight core layer, it has no knowledge for driver data
+> definitions (see etmv4_drvdata, funnel_drvdata, etc).  as a result, it
+> cannot directly access the fields "drvdata->pclk" and "drvdata->atclk".
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+That's correct because all device's drvdata structure definitions are
+local to their drivers and not really available in the core coresight
+layer. Trying to make them available might create more code churn and
+also break the abstraction.
+
+I guess then a struct device and two clock double pointers are needed
+for these optional clocks to be assigned and enabled as proposed here.
+
+> 
+>> Currently there are only two instances where a NULL is being passed to
+>> indicate that 'atclk' clock is not to be probed or enabled. Could not
+>> individual clock requirements be passed in a flag argument instead ?
+>>
+>> #define CORESIGHT_ENABLE_PCLK	0x1
+>> #define CORESIGHT_ENABLE_ATCLK	0x2
+>>
+>> coresight_get_enable_clocks(struct device *dev, unsigned long flags)
+>>
+>> - atclk/pclk derived from drdvata which in turn from dev
+>> - flags can be checked for pclk/atclk requirements
+>>
+>> Even better - as atlck is the only optional clock here, it could just
+>> have a boolean flag argument to indicate for atclk clock.
+>>
+>>> +{
+>>> +	WARN_ON(!pclk);
+>>> +
+>>> +	if (!dev_is_amba(dev)) {
+>>> +		/*
+>>> +		 * "apb_pclk" is the default clock name for an Arm Primecell
+>>> +		 * peripheral, while "apb" is used only by the CTCU driver.
+>>> +		 *
+>>> +		 * For easier maintenance, CoreSight drivers should use
+>>> +		 * "apb_pclk" as the programming clock name.
+>>> +		 */
+>>> +		*pclk = devm_clk_get_enabled(dev, "apb_pclk");
+>>> +		if (IS_ERR(*pclk))
+>>> +			*pclk = devm_clk_get_enabled(dev, "apb");
+>>> +		if (IS_ERR(*pclk))
+>>> +			return PTR_ERR(*pclk);
+>>> +	} else {
+>>> +		/* Don't enable pclk for an AMBA device */
+>>> +		*pclk = NULL;
+>>> +	}
+>>
+>> Might be better to invert this conditional check as if (dev_is_amba(dev))
+>> for better readability.
+> 
+> Will refine code for this.
+
+Sure
 
