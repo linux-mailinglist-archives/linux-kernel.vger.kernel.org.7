@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-637697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92755AADC2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:05:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E9FAADC31
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6704C6B6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6768C17AC16
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB99A215184;
-	Wed,  7 May 2025 10:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JkPLRVWu"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415A1213E66
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5553E207A16;
+	Wed,  7 May 2025 10:06:33 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEFCA31
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746612253; cv=none; b=TeVGLTxbQmTGHb5xAPJ3EGD4avZTkXmeCv0EJTr+cVoloEplrjWF47GrBytY2JE71iQ9c82/BLDlOkFc19Omse2cCSyqqs1Rafeya15lSj/l4X1frviQ9+dFlBOrR80owbtlnxllj5W8eL1oObOmX+CLgg4HCAQvOoSloJRtjg8=
+	t=1746612393; cv=none; b=LETwS+EsKSrV8386qFrKNrwxmtE4S+j6+TxjRlS5eX80wPP6mZ9uqhwmw3ctdBQpXiwqLMe24bii8LWvZ1EgvfxFRFR5ejYoIRJSeDU1neXmIYqWH/Tzn9MDsAlsVe3zXCNqpRvJwpcy//OTbfh+kb3sSRVmx1Yglw3tbA3ImhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746612253; c=relaxed/simple;
-	bh=KKDPdf+RYih2MpxRJbdswI13umMtHPKoTSKbUwdg2SQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=OkzUECpGeHpCT89wLdRZL/5J7218aLIJeLcqBT7fLkwIUlTZm553B0SljNk9NGpDB+fZmxOsRhrGqS9ZzP9vYhb7kQ4z70LUPKnooBTRTEqpnrWJ1jKIM1SaweiC9AgT33rYtpfdB24Blwn2NWStHe/ABS8vG+xu1Bvpi7GBdjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JkPLRVWu; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250507100403euoutp01612ba194b53756c58ff997548e8a6885~9NpT5d5eT1175611756euoutp01J
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:04:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250507100403euoutp01612ba194b53756c58ff997548e8a6885~9NpT5d5eT1175611756euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746612243;
-	bh=N32TfHVqNTkje4PcTK07rh/HIsJBsQBWcN1H8kWn9js=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=JkPLRVWuHBDbxns/R/3DK8w87IPCtNOg2sGMoqr4GavTq/yF0viOnzZnBTs8ZrWI6
-	 lYvhnCAFyq59EGWlnhGYpCXwQzDsHeXwqOD/orpLzP+waygrJJjzqYthmqoUeCMMKg
-	 PCaedNImP5Y/Dbgr/zZOR/RRE7Oq68itdkMfRpGQ=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250507100403eucas1p1c31cf23f55512589a7663132f9f50778~9NpTWWOeV1269412694eucas1p11;
-	Wed,  7 May 2025 10:04:03 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250507100402eusmtip2f16f3da88a0473dad88a4f960a19539c~9NpSR_l2o2857428574eusmtip2I;
-	Wed,  7 May 2025 10:04:02 +0000 (GMT)
-Message-ID: <91ecca14-2102-4c29-9252-025ce6b6a07f@samsung.com>
-Date: Wed, 7 May 2025 12:04:01 +0200
+	s=arc-20240116; t=1746612393; c=relaxed/simple;
+	bh=TkYjw2gY1eODfPiUtFnFZw5vNxrfJTGcP3anVqaHl7c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gCY7/b0XHY1efySliYl81QyPmun9WEsC77+adR+lB3EbQl0W+SzAvBd/nxiojIbbC0M+rCHgBOfh7dJP2IGIwlFh1mRmLgqli09/50dO/9hCjaiy9Q8uMnVfGEfApvJi9goAycbRxpwh3HlQxswd5b8rOcGOQ+nyteB6/kFKoLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8CxieCjMBtoHwvYAA--.48533S3;
+	Wed, 07 May 2025 18:06:27 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by front1 (Coremail) with SMTP id qMiowMBxXsWiMBtoQcS5AA--.13196S2;
+	Wed, 07 May 2025 18:06:26 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	rostedt@goodmis.org
+Cc: loongarch@lists.linux.dev,
+	linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tianyang Zhang <zhangtianyang@loongson.cn>
+Subject: [PATCH] Loongarch:Prevent cond_resched occurring within kernel-fpu
+Date: Wed,  7 May 2025 18:06:24 +0800
+Message-Id: <20250507100624.8925-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
- controller
-To: Stephen Boyd <sboyd@kernel.org>, Drew Fustini <drew@pdp7.com>
-Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, guoren@kernel.org, wefu@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, jszhang@kernel.org, p.zabel@pengutronix.de,
-	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <c46de621e098b7873a00c1af4ca550a1@kernel.org>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250507100403eucas1p1c31cf23f55512589a7663132f9f50778
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
-X-EPHeader: CA
-X-CMS-RootMailID: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
-References: <20250403094425.876981-1-m.wilczynski@samsung.com>
-	<CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
-	<20250403094425.876981-4-m.wilczynski@samsung.com> <Z/BoQIXKEhL3/q50@x1>
-	<17d69810-9d1c-4dd9-bf8a-408196668d7b@samsung.com>
-	<9ce45e7c1769a25ea1abfaeac9aefcfb@kernel.org>
-	<475c9a27-e1e8-4245-9ca0-74c9ed663920@samsung.com>
-	<c46de621e098b7873a00c1af4ca550a1@kernel.org>
+X-CM-TRANSID:qMiowMBxXsWiMBtoQcS5AA--.13196S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uryrJrW3Cw4rJr1fCF1fKrX_yoW8uF1rpr
+	yS9r95tr4UJ3ZIvay3Jr18Gry5J3ykGw1xWFZxGa4rA3y5Xry8Xwn2gr12qFy29FWIvFWf
+	ZFn5XrWIg3WUA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOa93UUUUU=
 
+When CONFIG_PREEMPT_COUNT is not configured, preempt_disable/preempt_enable
+merely acts as a barrier. However, cond_resched can still trigger a
+context switch and modify the EUEN, resulting in do_fpu being activated
+within kernel-fpu critical section, as demonstrated in the following path:
 
+dcn32_calculate_wm_and_dlg
+    DC_FP_START
+	dcn32_calculate_wm_and_dlg_fpu
+	    dcn32_find_dummy_latency_index_for_fw_based_mclk_switch
+		dcn32_internal_validate_bw
+		    dcn32_enable_phantom_stream
+			dc_create_stream_for_sink
+			   kzalloc(GFP_KERNEL)
+				__kmem_cache_alloc_node
+				    __cond_resched
+    DC_FP_END
 
-On 5/6/25 23:30, Stephen Boyd wrote:
-> Quoting Michal Wilczynski (2025-04-30 00:52:29)
->>
->> In the v2 version of the patchset, there was no reset controller yet, so
->> I thought your comment was made referring to that earlier version.
->> This representation clearly describes the hardware correctly, which is
->> the requirement for the Device Tree.
->>
->> The manual, in section 5.4.1.6 VO_SUBSYS, describes the reset registers
->> starting at 0xFF_EF52_8000:
->>
->> GPU_RST_CFG             0x00
->> DPU_RST_CFG             0x04
->> MIPI_DSI0_RST_CFG       0x8
->> MIPI_DSI1_RST_CFG       0xc
->> HDMI_RST_CFG            0x14
->> AXI4_VO_DW_AXI          0x18
->> X2H_X4_VOSYS_DW_AXI_X2H 0x20
->>
->> And the clock registers for VO_SUBSYS, manual section 4.4.1.6 start at offset 0x50:
->> VOSYS_CLK_GATE          0x50
->> VOSYS_CLK_GATE1         0x54
->> VOSYS_DPU_CCLK_CFG0     0x64
->> TEST_CLK_FREQ_STAT      0xc4
->> TEST_CLK_CFG            0xc8
->>
->> So I considered this back then and thought it was appropriate to divide
->> it into two nodes, as the reset node wasn't being considered at that
->> time.
->>
->> When looking for the reference [1], I didn't notice if you corrected
->> yourself later, but I do remember considering the single-node approach
->> at the time.
->>
-> 
-> If the two register ranges don't overlap then this is probably OK. I
-> imagine this is one device shipped by the hardware engineer, VO_SUBSYS,
-> which happens to be a clock and reset controller. This is quite common,
-> and we usually have one node with both #clock-cells and #reset-cells in
-> it. Then we use the auxiliary bus to create the reset device from the
-> clk driver with the same node. This helps match the device in the
-> datasheet to the node and compatible in DT without making the compatible
-> provider specific (clk or reset postfix).
-> 
-> That's another reason why we usually have one node. DT doesn't describe
-> software, i.e. the split between clk and reset frameworks may not exist
-> in other operating systems. We don't want to put the software design
-> decisions into the DT.
-> 
-> It may also be that a device like this consumes shared power resources
-> like clks or regulators that need to be enabled to drive the device, or
-> an IOMMU is used to translate the register mappings. We wouldn't want to
-> split the device in DT in that case so we can easily manage the power
-> resources or memory mappings for the device.
-> 
-> TL;DR: This is probably OK, but I'd be careful to not make it a thing.
+This patch is similar to d02198550423a0b695e7a24ec77153209ad45b09
+(x86/fpu: Improve crypto performance by making kernel-mode FPU reliably
+usablein softirqs),to avoids the issue, and extends kernel-fpu application
+scenarios to softirq.
 
-Thank you very much for the comprehensive explanation. Because the
-registers don’t overlap, it’s fine in this case. Since Drew also seem to
-agree, we can probably push these patches forward, while keeping in mind
-that for future SoCs it would be better to use a single node.
+Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+---
+ arch/loongarch/kernel/kfpu.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-> 
-
-Best regards,
+diff --git a/arch/loongarch/kernel/kfpu.c b/arch/loongarch/kernel/kfpu.c
+index ec5b28e570c9..e60bbaca357a 100644
+--- a/arch/loongarch/kernel/kfpu.c
++++ b/arch/loongarch/kernel/kfpu.c
+@@ -18,11 +18,28 @@ static unsigned int euen_mask = CSR_EUEN_FPEN;
+ static DEFINE_PER_CPU(bool, in_kernel_fpu);
+ static DEFINE_PER_CPU(unsigned int, euen_current);
+ 
++static inline void fpu_lock(void)
++{
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
++		local_bh_disable();
++	else
++		preempt_disable();
++}
++
++static inline void fpu_unlock(void)
++{
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
++		local_bh_enable();
++	else
++		preempt_enable();
++}
++
+ void kernel_fpu_begin(void)
+ {
+ 	unsigned int *euen_curr;
+ 
+-	preempt_disable();
++	if (!irqs_disabled())
++		fpu_lock();
+ 
+ 	WARN_ON(this_cpu_read(in_kernel_fpu));
+ 
+@@ -73,7 +90,8 @@ void kernel_fpu_end(void)
+ 
+ 	this_cpu_write(in_kernel_fpu, false);
+ 
+-	preempt_enable();
++	if (!irqs_disabled())
++		fpu_unlock();
+ }
+ EXPORT_SYMBOL_GPL(kernel_fpu_end);
+ 
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.20.1
+
 
