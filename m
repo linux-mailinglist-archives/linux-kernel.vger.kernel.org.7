@@ -1,125 +1,202 @@
-Return-Path: <linux-kernel+bounces-636971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F037AAD28B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:16:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254BFAAD296
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE391C00F24
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 01:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0D91C0344D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 01:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAC686323;
-	Wed,  7 May 2025 01:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24668149C55;
+	Wed,  7 May 2025 01:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ghv7mB+/"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A898F5E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 01:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="BwjSrewc"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5878F5D;
+	Wed,  7 May 2025 01:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746580555; cv=none; b=XE6o/LCoL8TGlYBOMxH24WoeIs8ep+e30joiHtc7H5Hli6wJERPogaK+5N/CnN6vZBDBmhE//SLsrwxn0QqBAX9m856KsBY3K1aW9H+qF6PQZoJuU0bFwGGcIPoUGJod8JCANX5vcovsnByd10YPIa1p9RVUicsjbpB+3m40glg=
+	t=1746580678; cv=none; b=ZVDVj+WqetCDyzrUN+PcjHmDXwHbFAZqnl8TK6P0lmbRCMmccuOiqWCX8g3/sE+5DTWN9KCE1p+eLR5i1qtU6jaOtb3FG4J9Z8okUgfIKgdgneEiSUOlaBxCbNsv7izx+88iZ9wy6nBNdwn5m1Ls/MJ/3Os676feuUSaaxQBSzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746580555; c=relaxed/simple;
-	bh=PJGXADhPgftHf4790J6bTo3LvncDFYONRNlduMuQnLQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dPEG7j9iaNRgkvrLIzS4EBKcsCQioFx205UlSp1A7+zX2Xru69iZf+VT08PZvFSH7K2lewSjvEmRtl2jZoiQPFptCA6hWV+N0EThUDB4JwglcfJDcIZCMQlXMy9oHNkM59JiQjHowu6Kgs3YKEsiMdN1Uzg1xOH7JEgnDKqweSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ghv7mB+/; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22e39fbad5fso53605ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 18:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746580553; x=1747185353; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oI9dvuYFSW41PetZu8+C11r8U9aYDixgfsHjUdZoR8Q=;
-        b=Ghv7mB+/SjUpHzvJNIUSJUBfDP9d/j42r/qarfES45zUEoFJkNTd90LRgUyCV04Z53
-         qq9bSk4pVAhIFJQVVTNBVNZpcf8PZhVg1pOAy/TBpOEzAKUKvf0hjXy8Yau/MM6pid3j
-         WtLnatOe8v24pZRsbwrbGHJFxY524lRZJrT1B8hIIHVvERxBlf+O7F7rUO5RI4uwCnfc
-         IdzE4tdUUhcBk63XjXmryYfxZ1PD4anlgQ2Se/7OV1HAQj+AWILuuvoC89sRKrgcdOdu
-         THXQ+e2sb0eF3c7Et95ljooJPwsaqBpgrreMhYb/VHSM6jGWmslmpnGFg+abhKGM3xD2
-         F5vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746580553; x=1747185353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oI9dvuYFSW41PetZu8+C11r8U9aYDixgfsHjUdZoR8Q=;
-        b=uBId36fqw4Z3okgXFvVHnaly7kSWv/vT02lqfJ4QLURvsKQlcJDNlfkXkTDob0QqOW
-         edVds6hQ19uYXKJJlXSyHAVOshT1n57YFUJyHyFeFvpa70RAFjLarN8kYv6NfADNx5U1
-         EXpaVeItra/Yv0IVDsA6E1Ko5Lpahq2RjHRH4K7VsjEGvLouewxkmJr946e1Dg7bACks
-         PH8JXPXh3yJjmhpMjIv+bV0W2KoF8ezKBNN2dxpVEGrdNugA8qq6ZjtgBGf/7cs8vN+o
-         O2vU2Uixb2jPmksDESPh3GBQQx6AcPBip9/eY6lGmSTudqnfDkY/ihnx8C7QeK4KewZi
-         8rKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXn5z0TF8+yECSVJL1u1HHE9Bm8I6UoyJK+qYANcbt8WegVd40+3tgDRpZXe6LlODzj1fReFdEYQN5czB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1UpPKT9JtzG0vgWg10zrsMpRgwagDTdlDV6xnrgcj/hLzs+r
-	PlpzceFCdswXLgLLe0F7nWuGs+HwZLT8FajH3/aPNaOBFWrkb1qO+cm15km2yzMFgpQTRRToani
-	SG83y4tE1EFImGbv9MyYPyttmtLxqjosLZgjf
-X-Gm-Gg: ASbGncsULc5JFEr5RWJlbFefKtFoLuMSeqpengxIp1rQS4PV7hqQdnRwJ9dgvvyiYtq
-	tV+crACWb7sVyizppcrw11EwMjkWfhsBf74tp8srQ1TkBR6t+oM7ogjxywP7nWDZmgnN0UEhIIK
-	4ahleCQ9s4d+VYGO/USLDEWc2yh+FtTxEhr6V0BVhSbCSCDlaYgtc=
-X-Google-Smtp-Source: AGHT+IF64r1XV/UTd8/0ODGcdklsJP9ZXTT9L0J+KnSI3mOMSiLbsNkGeaQ+3WDmuLUAtwcZxubdXugCorUmCh9N7IU=
-X-Received: by 2002:a17:903:198d:b0:216:6ecd:8950 with SMTP id
- d9443c01a7336-22e62a2f82dmr714135ad.19.1746580552732; Tue, 06 May 2025
- 18:15:52 -0700 (PDT)
+	s=arc-20240116; t=1746580678; c=relaxed/simple;
+	bh=sRTYYXi+q6YFmn2CM84PAr5Xq+GZZ+uf1kwrPa8hsxQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qr5QcBLFxR5QF4GKLu1MdXBBSFdDPpqzDi6tIkm2WgLSnrqOQZqbqEw6bdtZjQgTSgVroXiPLZquXpQ1FbsedHIj0XBxXWOtcPVHdI6cCDa7jfcwxOIlTAUDzU0ge8vu/enZSmQDyR921cA97qs8i5yqOWurJXFiizVSppuNPKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=BwjSrewc; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=dfDAl
+	NI7Mtaa7Np1mFi7q1dvflRvIlHpBBi3IZLBURw=; b=BwjSrewc35f/WCXjZKAg/
+	iHn2LToVJW6fdPOUw1ijtdxCl4pS3E+1oMZDM0JyY9M6QqG4PU82CioSyI82+2Lo
+	Xad0avGIBAoq6vlT2JNJD3RKEn36uWaJECQhoPab+9HZiWiC5sHr9276AreI/3mu
+	Cgw2lxPkN1vIXQjJl6yyvc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3P8x2tBpocz5dBw--.62210S3;
+	Wed, 07 May 2025 09:16:41 +0800 (CST)
+From: Honglei Wang <jameshongleiwang@126.com>
+To: tj@kernel.org,
+	void@manifault.com,
+	arighi@nvidia.com,
+	changwoo@igalia.com
+Cc: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	joshdon@google.com,
+	brho@google.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	jameshongleiwang@126.com
+Subject: [RESEND PATCH v2 1/2] sched_ext: change the variable name for slice refill event
+Date: Wed,  7 May 2025 09:16:36 +0800
+Message-Id: <20250507011637.77589-2-jameshongleiwang@126.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250507011637.77589-1-jameshongleiwang@126.com>
+References: <20250507011637.77589-1-jameshongleiwang@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502130828.4071412-1-kirill.shutemov@linux.intel.com>
- <20250502130828.4071412-6-kirill.shutemov@linux.intel.com>
- <55c1c173bfb13d897eaaabcc04f38d010608a7e3.camel@intel.com> <aBqxBmHtpSipnULS@yzhao56-desk.sh.intel.com>
-In-Reply-To: <aBqxBmHtpSipnULS@yzhao56-desk.sh.intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Tue, 6 May 2025 18:15:40 -0700
-X-Gm-Features: ATxdqUFj6OOGJl4u4NDEeHbj2QFi6gwUbyBFBzHWdPZhV4mq2dQvBXHS3gCPlyY
-Message-ID: <CAGtprH9GvBd0QLksKGan0V-RPsbJVPrsZ9PE=PPgHx11x4z1aA@mail.gmail.com>
-Subject: Re: [RFC, PATCH 05/12] KVM: TDX: Add tdx_pamt_get()/put() helpers
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: "Huang, Kai" <kai.huang@intel.com>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3P8x2tBpocz5dBw--.62210S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gr4DXrW8Aw4Dtw4fAF1rtFb_yoW7Zr45p3
+	W5G345tr48t3y2vrWFqF4ku3WaqrWFqw1qkF95W393ZF1jgwnYyFyYyr4aqFyYgrsYkF1S
+	kw4UKF43ArZY9rDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UjYLkUUUUU=
+X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiYBVGrWgatD0D8gAEsQ
 
-On Tue, May 6, 2025 at 6:04=E2=80=AFPM Yan Zhao <yan.y.zhao@intel.com> wrot=
-e:
->
-> On Mon, May 05, 2025 at 08:44:26PM +0800, Huang, Kai wrote:
-> > On Fri, 2025-05-02 at 16:08 +0300, Kirill A. Shutemov wrote:
-> > > +static int tdx_pamt_add(atomic_t *pamt_refcount, unsigned long hpa,
-> > > +                   struct list_head *pamt_pages)
-> > > +{
-> > > +   u64 err;
-> > > +
-> > > +   hpa =3D ALIGN_DOWN(hpa, SZ_2M);
-> > > +
-> > > +   spin_lock(&pamt_lock);
-> >
-> > Just curious, Can the lock be per-2M-range?
-> Me too.
-> Could we introduce smaller locks each covering a 2M range?
->
-> And could we deposit 2 pamt pages per-2M hpa range no matter if it's fina=
-lly
-> mapped as a huge page or not?
->
+SCX_EV_ENQ_SLICE_DFL gives the impression that the event only occurs
+when the tasks were enqueued, which seems not accurate. What it actually
+means is the refilling with defalt slice, and this can occur either when
+enqueue or pick_task. Let's change the variable to
+SCX_EV_REFILL_SLICE_DFL.
 
-Are you suggesting to keep 2 PAMT pages allocated for each private 2M
-page even if it's mapped as a hugepage? It will lead to wastage of
-memory of 4 MB per 1GB of guest memory range. For large VM sizes that
-will amount to high values.
+Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
+---
+v2:
+- refine the comments base on Andrea's suggestion.
+---
+ kernel/sched/ext.c             | 22 +++++++++++-----------
+ tools/sched_ext/scx_qmap.bpf.c |  4 ++--
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 66bcd40a28ca..2a091ea23328 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -1517,10 +1517,10 @@ struct scx_event_stats {
+ 	s64		SCX_EV_ENQ_SKIP_MIGRATION_DISABLED;
+ 
+ 	/*
+-	 * The total number of tasks enqueued (or pick_task-ed) with a
+-	 * default time slice (SCX_SLICE_DFL).
++	 * Total number of times a task's time slice was refilled with the
++	 * default value (SCX_SLICE_DFL).
+ 	 */
+-	s64		SCX_EV_ENQ_SLICE_DFL;
++	s64		SCX_EV_REFILL_SLICE_DFL;
+ 
+ 	/*
+ 	 * The total duration of bypass modes in nanoseconds.
+@@ -2197,7 +2197,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+ 	 */
+ 	touch_core_sched(rq, p);
+ 	p->scx.slice = SCX_SLICE_DFL;
+-	__scx_add_event(SCX_EV_ENQ_SLICE_DFL, 1);
++	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
+ local_norefill:
+ 	dispatch_enqueue(&rq->scx.local_dsq, p, enq_flags);
+ 	return;
+@@ -2205,7 +2205,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+ global:
+ 	touch_core_sched(rq, p);	/* see the comment in local: */
+ 	p->scx.slice = SCX_SLICE_DFL;
+-	__scx_add_event(SCX_EV_ENQ_SLICE_DFL, 1);
++	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
+ 	dispatch_enqueue(find_global_dsq(p), p, enq_flags);
+ }
+ 
+@@ -3296,7 +3296,7 @@ static struct task_struct *pick_task_scx(struct rq *rq)
+ 		p = prev;
+ 		if (!p->scx.slice) {
+ 			p->scx.slice = SCX_SLICE_DFL;
+-			__scx_add_event(SCX_EV_ENQ_SLICE_DFL, 1);
++			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
+ 		}
+ 	} else {
+ 		p = first_local_task(rq);
+@@ -3313,7 +3313,7 @@ static struct task_struct *pick_task_scx(struct rq *rq)
+ 				scx_warned_zero_slice = true;
+ 			}
+ 			p->scx.slice = SCX_SLICE_DFL;
+-			__scx_add_event(SCX_EV_ENQ_SLICE_DFL, 1);
++			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
+ 		}
+ 	}
+ 
+@@ -3399,7 +3399,7 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
+ 		if (cpu >= 0) {
+ 			p->scx.slice = SCX_SLICE_DFL;
+ 			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
+-			__scx_add_event(SCX_EV_ENQ_SLICE_DFL, 1);
++			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
+ 		} else {
+ 			cpu = prev_cpu;
+ 		}
+@@ -4413,7 +4413,7 @@ static ssize_t scx_attr_events_show(struct kobject *kobj,
+ 	at += scx_attr_event_show(buf, at, &events, SCX_EV_DISPATCH_KEEP_LAST);
+ 	at += scx_attr_event_show(buf, at, &events, SCX_EV_ENQ_SKIP_EXITING);
+ 	at += scx_attr_event_show(buf, at, &events, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED);
+-	at += scx_attr_event_show(buf, at, &events, SCX_EV_ENQ_SLICE_DFL);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_REFILL_SLICE_DFL);
+ 	at += scx_attr_event_show(buf, at, &events, SCX_EV_BYPASS_DURATION);
+ 	at += scx_attr_event_show(buf, at, &events, SCX_EV_BYPASS_DISPATCH);
+ 	at += scx_attr_event_show(buf, at, &events, SCX_EV_BYPASS_ACTIVATE);
+@@ -5148,7 +5148,7 @@ static void scx_dump_state(struct scx_exit_info *ei, size_t dump_len)
+ 	scx_dump_event(s, &events, SCX_EV_DISPATCH_KEEP_LAST);
+ 	scx_dump_event(s, &events, SCX_EV_ENQ_SKIP_EXITING);
+ 	scx_dump_event(s, &events, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED);
+-	scx_dump_event(s, &events, SCX_EV_ENQ_SLICE_DFL);
++	scx_dump_event(s, &events, SCX_EV_REFILL_SLICE_DFL);
+ 	scx_dump_event(s, &events, SCX_EV_BYPASS_DURATION);
+ 	scx_dump_event(s, &events, SCX_EV_BYPASS_DISPATCH);
+ 	scx_dump_event(s, &events, SCX_EV_BYPASS_ACTIVATE);
+@@ -7313,7 +7313,7 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events,
+ 		scx_agg_event(&e_sys, e_cpu, SCX_EV_DISPATCH_KEEP_LAST);
+ 		scx_agg_event(&e_sys, e_cpu, SCX_EV_ENQ_SKIP_EXITING);
+ 		scx_agg_event(&e_sys, e_cpu, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED);
+-		scx_agg_event(&e_sys, e_cpu, SCX_EV_ENQ_SLICE_DFL);
++		scx_agg_event(&e_sys, e_cpu, SCX_EV_REFILL_SLICE_DFL);
+ 		scx_agg_event(&e_sys, e_cpu, SCX_EV_BYPASS_DURATION);
+ 		scx_agg_event(&e_sys, e_cpu, SCX_EV_BYPASS_DISPATCH);
+ 		scx_agg_event(&e_sys, e_cpu, SCX_EV_BYPASS_ACTIVATE);
+diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
+index 26c40ca4f36c..c3cd9a17d48e 100644
+--- a/tools/sched_ext/scx_qmap.bpf.c
++++ b/tools/sched_ext/scx_qmap.bpf.c
+@@ -784,8 +784,8 @@ static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
+ 		   scx_read_event(&events, SCX_EV_DISPATCH_KEEP_LAST));
+ 	bpf_printk("%35s: %lld", "SCX_EV_ENQ_SKIP_EXITING",
+ 		   scx_read_event(&events, SCX_EV_ENQ_SKIP_EXITING));
+-	bpf_printk("%35s: %lld", "SCX_EV_ENQ_SLICE_DFL",
+-		   scx_read_event(&events, SCX_EV_ENQ_SLICE_DFL));
++	bpf_printk("%35s: %lld", "SCX_EV_REFILL_SLICE_DFL",
++		   scx_read_event(&events, SCX_EV_REFILL_SLICE_DFL));
+ 	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DURATION",
+ 		   scx_read_event(&events, SCX_EV_BYPASS_DURATION));
+ 	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DISPATCH",
+-- 
+2.45.2
+
 
