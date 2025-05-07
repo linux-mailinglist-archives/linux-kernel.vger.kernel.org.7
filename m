@@ -1,140 +1,107 @@
-Return-Path: <linux-kernel+bounces-638110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88DBAAE1A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:56:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D87AAE1B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF272464843
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:55:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C71143A3328
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF6C289E10;
-	Wed,  7 May 2025 13:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EDB28B40F;
+	Wed,  7 May 2025 13:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AM5uEYWB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aLlV+rCS"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A2C286D64;
-	Wed,  7 May 2025 13:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0CF28A1E4;
+	Wed,  7 May 2025 13:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625912; cv=none; b=cYP0XSHlJ0hMaG3MKVqpd7cn1yvr4KIJVmXO3/WZve/s4Czf+8TCwDUedGg5/U6oqM6hXZDR6mhrcom68BdLwd+M45Mb5yIASfWSo987aPeUYz4RwzkwIs/O5sz9MkCBynHAgWJm+Ri8hdSkLIEhE3nugCO/73sCCHhDhDY0EY8=
+	t=1746625960; cv=none; b=mEpkIbkwR5AYaZgRbdmMLA9MoReQW50exCC07NNytZZySoWeSSsoYpF/9yXCGSEOr/xcJwGa79wDLEwEll7bOjmzCYMFMmc+4eJfi1OeO219YeTh5/mGogHwfr48vLojHP/k33mGJySuOLMPYl0LU29QN8o0lWsd1tNCEYx9BoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625912; c=relaxed/simple;
-	bh=h47AWz6e86VE/pORR0sq5lsusKYJBjxKblt7H5Ks3D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cw4SasGrbxwSAOVkSv8JHlndo6OD8B+1wHrXLogtB6CPowUj/lG1xuYUZEPQxCPc9QldpaunZHl7jQ/GM2EOoRNyTnIo2qaAhKr9IfSIIwd55c6Mh21LvcJLASW5y89eQ7fXKAp1UkPibDU7Rx7UX+d1WBLM8VPI4IshM1KlgEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AM5uEYWB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223fb0f619dso80364465ad.1;
-        Wed, 07 May 2025 06:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746625911; x=1747230711; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F0y9NC6vp0a8s9iJ8BhQvpZ0iFDf2yyS+rfp+xWO/1g=;
-        b=AM5uEYWBT/V59UbE57gqFmLLdhPDOSJ4a7pgSe0NhbVsHKoeVn3YKhF6wFbhEweWin
-         TEuOHtTyQBCCpu4qsFzStlvXAO/WZUgaGfb5dd4rHykczKu9kqboirett0fJv7HbkR/B
-         lH12i7R0cl+75rc2/jRx6qMvsmwdM5o/WP0KwCZBoUckXV2D0T2XAx+h42Gx8hTDrJIF
-         4pZLeuyODD8C4pPynLFVB8z+TrIKxK424Q2iSFEALxC6R5IA083YHt+s5F6q8/ceg++/
-         jRVRKXUnKYagyuZUTyE1e9rTA2kEQZaXxEQhP37S4l1eA5N3GQhv3t+Qsv+wHCz6xE1k
-         upFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746625911; x=1747230711;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F0y9NC6vp0a8s9iJ8BhQvpZ0iFDf2yyS+rfp+xWO/1g=;
-        b=uaLnfsDsZHYswEIkg50bkedjakqDNIe1ZhXdE1McG+QMfceGmJYg1tQ6FcrsARiWVa
-         wfF/HAmRqWxp5KarfTKP/sLW5g6yXoXJ8TU8XZ9fqbqVZ2LHzbo/8kggEHtX1FTv4GRf
-         s7xSSCbvGwfs7UYaZW1nZ14XYah9aznjbQda0RwzFX8rRAOLLOEITvyCiObnYt1K1abR
-         i9jQy69wgFOyEIj2oIv/9kLe1iEK/7kSCivXpH0fvzKkTwmWNb3YHBkAS+dLqlB32S2T
-         nRucxrPB1pWYbTs6lTJkT4VZPC+bEVdcTsmvIPo465zCPKplnhZxQ4Xngp3dWQeC+Ite
-         YrMg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ZbaQqQVAQFPAdY4bUF0JGdiSSbINMM9KyrFlh2eKEQHwxuyouwMDIdE9wiBgqHwCgkHFuUsbAIXh9xLW@vger.kernel.org, AJvYcCX6uWs/hyWiFd8VgZ0EHtbP2RGTI4na89lpgXLruCxCQ++W05UEYI+gBxNJZk8eVwZYE1yfDCJEOj8zKz3I@vger.kernel.org, AJvYcCXjzZ9E6914kK+zR8mzPe4a0EefVuoQGj46RS78wTQTWL2wmnBuhgdggzlzU3muY3jYw9r6TL5MBuuX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2qK/kdnhu827RB4PtmBKm0uIKVYiLLYyf8BpE99Y79cQVhTxL
-	Bpie+KwZby14WtCgo9zn4gliFT38gwvdQfuDmcOtjDo29gO6fSN1XpIElw==
-X-Gm-Gg: ASbGncs0MtNI/Z4JtQglnaZSJhsrdpELsPtSPiPrICEFC7SsyVoMyRIrFVk3K9/rz2/
-	60snzpe4f8Ys174Y3q7yMpea1IPrxBH3rrrGdcbo5EEIB1yRIICWj7uaEzRTPT/dugyy5e8bmLv
-	kRiFvdQSnlFglpbVGian15vlHRuOI3KDS6uIMhr4gjSZQV3NZjIZXMq4AFw9GaS6NxBYE6teYh/
-	tvbq0SkFDFk9zB7ek0jwdTa8PzofHw8hkGMyyoAr6yTHjMpNiKZfmQRTODwpxLxVSmtU5J7fKZk
-	up/CoECPBs1ivXYrhANKR+Hyjtid2iHUJNRm8cW4BdhZh7KTZW/uJ9FAKNAeUCJA+GI69ngs/6R
-	iU3qh/sXoUgw0fxJh6Lar0/Z0IqL9TvoZXidswQ==
-X-Google-Smtp-Source: AGHT+IFZpdNpzgDNCCYdJwtqu9K9pEOb9S3Pi3mdEpAsRm6Rul1XB31z6qeBSlh9ylWDVCaBdCC4VQ==
-X-Received: by 2002:a17:903:990:b0:223:517c:bfa1 with SMTP id d9443c01a7336-22e5ece3fe1mr50812985ad.38.1746625910654;
-        Wed, 07 May 2025 06:51:50 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e151e97eesm94163495ad.71.2025.05.07.06.51.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 06:51:49 -0700 (PDT)
-Date: Wed, 7 May 2025 15:51:38 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: serial: Convert arm,sbsa-uart to DT schema
-Message-ID: <jnacngndarw4hsjy3r7r7gksxser65uwuznwgywf3woofa6xch@q7llf3x2egqy>
-References: <20250506220016.2545637-1-robh@kernel.org>
+	s=arc-20240116; t=1746625960; c=relaxed/simple;
+	bh=FFX+dl/GhsusXaQJ5VK1uk9708RlbzuTFb6DU2mI0N4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRwa78BrLzccqfBbLHrvbMuk4svBWZJeO//p2TSpVJY5WTtXPIO4/qRq3KNHZwh9iTnLhS7rgHCak8nypsYP3Fywjin9vO5Gbv3qlm2ttEGc/SuGT5YIvAJIt1o8qOURwdzBN92NPwjaVNKYj+IoDr+cFNhRtbBTgwWXYd5seYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aLlV+rCS; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 547DqEwB828907
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 7 May 2025 08:52:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746625934;
+	bh=qjPNmdnxXBiIPY12FlXpuGsba5Ly/JzhgqEh19IK/qs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=aLlV+rCS4UXbBRkkQGHsgQTtC8TBe08x9WPBgrBV7dGGYurJQ79bZtmlgY4nZDPn5
+	 rQyhSYA5xFwtBFO+XheQdWIysa51siZ0+ItsG1uwoUtyNB5Fk8UHDZUXH8k/sQv192
+	 AOmfc8HVi50LfduXmpxtKNcHQoeXVhUiI/pzg/xA=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 547DqEno009511
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 May 2025 08:52:14 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ May 2025 08:52:13 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 May 2025 08:52:13 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 547DqDpr032312;
+	Wed, 7 May 2025 08:52:13 -0500
+Date: Wed, 7 May 2025 08:52:13 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Guillaume La Roque <glaroque@baylibre.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Andrew Davis <afd@ti.com>, <vishalm@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: Kconfig.platforms: remove useless select for
+ ARCH_K3
+Message-ID: <20250507135213.g6li6ufp3cosxoys@stinging>
+References: <20250504-kconfig-v1-1-ab0216f4fa98@baylibre.com>
+ <20250505123615.yqzdv7dlel7kyojf@degrease>
+ <fa33b7d6-8e28-40bc-9219-41dab643e88f@baylibre.com>
+ <b1949ec7-a0b3-4c4c-a439-93afced7bb0c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bvuag6cniewn6z7a"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20250506220016.2545637-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1949ec7-a0b3-4c4c-a439-93afced7bb0c@baylibre.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+
+On 15:28-20250507, Guillaume La Roque wrote:
+> Hi Nishanth,
+> 
+> if i remove MAILBOX it's  enabled by some  non TI drivers and/or ARCH_XXX
+> which have it in deps so all TI drivers are still enabled properly but not
+> sure it's safe.
+> and PM_GENERIC_DOMAINS look OK to remove it.
+> 
+> if i try a defconfig based on android defconfig (more simple than default
+> defconfig) with only ARCH_K3 enabled i need to set CONFIG_MAILBOX flag to
+> still have same TI drivers enabled.
+> let me know what you want to do.
 
 
---bvuag6cniewn6z7a
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] dt-bindings: serial: Convert arm,sbsa-uart to DT schema
-MIME-Version: 1.0
+Let us drop both from the select statement - from our K3 perspective
+there is no longer a need for them to be built-in. Thank you for working
+through this.
 
-On Tue, May 06, 2025 at 05:00:15PM -0500, Rob Herring (Arm) wrote:
-> Convert the Arm SBSA UART binding to DT schema. It is a straight-forward
-> conversion.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/serial/arm,sbsa-uart.yaml        | 38 +++++++++++++++++++
->  .../bindings/serial/arm_sbsa_uart.txt         | 10 -----
->  2 files changed, 38 insertions(+), 10 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/serial/arm,sbsa-uar=
-t.yaml
->  delete mode 100644 Documentation/devicetree/bindings/serial/arm_sbsa_uar=
-t.txt
-
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-
---bvuag6cniewn6z7a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgbZWoACgkQ3SOs138+
-s6G1/Q//Xf45F928Et50M8R8ozm9SUWkTSIoEGUsbVUOVT9o416eo+LyuZB6NOVF
-Pg+a4gCY++YAyk2lXUQ7aPSbBX/sxsDOsDsNElfTlnDzX8cFXjz48DstgCgy8ec2
-/8/0505Yf1OzYa9pbh1d/HhYeqQmb5b7K/LJwpgnU6Orp9XrB3u081OiYpATFWCd
-X+lOsVcMPCNcbpqoEe4ruQB2ZAXrT1aXGzRAqCWOsVI090vSp/D5lWCfkNiDnZSf
-mdPHAnSxjvkaTQ+2zdunKZanMrQy9jnxnAXZHJFVft0ttgdSOgFQ4++fDb9nSZHL
-QzxN89y9u6E50FB83eFwuemy8ADb/ombS6D4/48dg6KK3nZIJlA4NfMEElYsyLVG
-ECsdjBzBKGB9SLFvBzXfUAAbHbrdO64cYV1q4KP1tFDKGIvEXxCO3Wih/tnNerpY
-SZlcPIwjW/iTXLZTXASuN2Iwpb35716Oj82EzGnYeQL23vJNXCtyyoMUUT6ZfIg5
-ZvnVJTnw0YLiTWG/MV6hHU99yZnT/d7Nm/mqnajH7ifJHsBrJ+KWVGleUymZCwMd
-7Ab5WkXA1iTe7/6gsaIpYVZHoYl/TVYVqLxELNLcBF5ZRwc4Xgg72ELzl7gf1p57
-smMrg1caggeAnwyPoSmQdpYBMn/UEmNsOSLnu1/fyoUKaC5Cho0=
-=IOpy
------END PGP SIGNATURE-----
-
---bvuag6cniewn6z7a--
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
