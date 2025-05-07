@@ -1,174 +1,173 @@
-Return-Path: <linux-kernel+bounces-637818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571F1AADD73
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DC9AADD79
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7EF4E5B92
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F16B1B67C2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4E7233151;
-	Wed,  7 May 2025 11:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9EC23315A;
+	Wed,  7 May 2025 11:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DC5YO2Zw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cxVwit8Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274E221019C;
-	Wed,  7 May 2025 11:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD2821CC45;
+	Wed,  7 May 2025 11:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746617698; cv=none; b=dvoF2B3FzVAlHmIP+9bENpdV4YG1CtHs1iGUBa3krgtF+jtXclPV5iJsiJ/8pLcbm0TX5qPUlyLWwn1ZvsxVfSuNaZc/trpL1ftB4OvCpgQQe2pW7fWbZsKMcTYKfp9XWpcet712DF9ZOVhLooODB8Z3OIt5fYmg2qRgNTZp+Kw=
+	t=1746617767; cv=none; b=gaYHGCW4RXPG5b2oPvn2dr55oCh7Svf01pLM3QTTLYxWe7FczmxphJD3iuREwlr4Js4Ccu3U5HYealb10D9797py0zB6/9HYvifRc1dDwQ6vADPxkXGEWgOv2D6yuyHacLr7bfXHuQSmmU6QGA0yLKdSEr9zpTOWL0rZOOdRGKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746617698; c=relaxed/simple;
-	bh=SC0HTXn/LkVgrR8Tndvl49zyehmbitAVQKEPvqIXjkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oMFKtrHfrdABWlgxHrzzsaQymgG29NW5REodDWbm/1i/jeXtMwkA98T9XM6pjoQMOtawOdZe+HIqLUOA0FHmQjWaANg2AZTHYCeAloENYvGBucr79ZHKp10aO7uB26WphNJ90pDBF4HlUdBPfdY9nW4g/5W5ddyPxIRVg8ToTR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DC5YO2Zw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919A8C4CEEB;
-	Wed,  7 May 2025 11:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746617697;
-	bh=SC0HTXn/LkVgrR8Tndvl49zyehmbitAVQKEPvqIXjkM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DC5YO2ZwSDGb9fivcalZdqyqqNNA1m8gKt9lE4jASbZQhX+WebeCim3aE71z+U4LL
-	 sCJ8Iupf3HJ6mpXNjvqOwNQYgB6esf0kJpPkXE/ud9VXpGJQfqO+OVjYcZpvExiHlS
-	 5IlzpDomxriyVSZRX7S3qtY/sxY+mWVNY6zyOREknDAvDShluFrW4JQMbjM7A+unHs
-	 3N16RCx5Eeb+N0X9RHd4suMFIOgSMSuW18+EyorY6ovTiTXjCxs/Z3Eag571O7eo/2
-	 XBjfoFv20heuW2N9yuvD3P9vD8CSCRrVA0hLNP+MwW+wuhwHhPWXN0XYAdUzwNOSnd
-	 r7MPzD9eLgxyA==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-403407e998eso3363192b6e.0;
-        Wed, 07 May 2025 04:34:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXY4ZReXttkFAN5P73BRuAKHnhHbPtOZzh1j9k8+DzLmLgeLZxVHlLv3u449Bdrt035hMdtSNz34UWYdAWM@vger.kernel.org, AJvYcCXlP1Pk13+P5n7xVqRurl0QmmZK4GETVmPKXdOt18kRrLIfBuXjG7qj3GVtjJl8Iqt+u59oevhqFq73@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf3bXXGmBMCkvoY4JRFPv01bnc0/VksXWlqEE+96LYyrlHueDq
-	LygxS8rNA2EjXZvfJyN6M4ECSh8rjBlEP7AnY61ot7Zwp9YR+RxwBm8xmSQRK1Ro420NqBWN8HJ
-	hDKJYMloRbbcMytZ2AY+51cpwAZo=
-X-Google-Smtp-Source: AGHT+IF4YK67tIpkwsZswLnC9nszcTGZb0WX1YzzFw8/i8GM8voajrlh579SmjmLL7VCIfEf+DqGnxNahUO6cTWsDj8=
-X-Received: by 2002:a05:6808:19aa:b0:403:31a4:f3fa with SMTP id
- 5614622812f47-4036f0da2cbmr1833792b6e.35.1746617686660; Wed, 07 May 2025
- 04:34:46 -0700 (PDT)
+	s=arc-20240116; t=1746617767; c=relaxed/simple;
+	bh=49oBLtVDl/a7eoaCQ18JFPDgN5OMlYWx4iq2ZQubEEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=noyjuJ4vza6770v1d1sf0hdLsifYkK8p6a2VfB2bZ3AXkio7dnubHN7Q0vxBiv0WJdxOroUthPx01rRP1VvfsW9CPbvAdY59J+Sf+XF4x7jhj4ibCasqSH0YNbQ+fjCSYoZ45MFODd6cBRTPYh75EI66hDCt70mbKefzEOdFsaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cxVwit8Y; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746617766; x=1778153766;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=49oBLtVDl/a7eoaCQ18JFPDgN5OMlYWx4iq2ZQubEEg=;
+  b=cxVwit8Y2PifFb+5IL1q3OfndKn54YFdU9JfsFtoI7nGDbE4vMi7u7o9
+   cArlkuaMniZ7IkHIAaOr/MVmQibv9+/CIbzVEHw8qru6n00UxjyGaIv62
+   GY8ifOU4zYkp0QAZ+MMmL3QwLEJRrwstbrDXR4vc+a5Za4C1SkBW7KDku
+   un1IHo8h/6UcZ9+7nnsKR1iBW3Gg6gjCq0RstFteWDdRslVH80LFWg0U7
+   wHi4NFAsk2+LnWzgXRTYW5FewKjRGdWJiAfdHMxZiDLaoqYUeWDSSf3IH
+   jFzFkmi2MqgPTVk45gMdmvbzRMCK7rFkjO7fjHGgzZHsmoOMFgRjGowHW
+   A==;
+X-CSE-ConnectionGUID: m48hsSsuSJm9QClvODiiZg==
+X-CSE-MsgGUID: 5RyERPSfQNGFXnxaFzMp4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48243595"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="48243595"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:36:05 -0700
+X-CSE-ConnectionGUID: X5e6XJ8GRXaTzAwMUqYDWQ==
+X-CSE-MsgGUID: u7fHLKZYQ6a9CF74WHQAUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="135841842"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 07 May 2025 04:36:03 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCd4C-0007gv-0f;
+	Wed, 07 May 2025 11:36:00 +0000
+Date: Wed, 7 May 2025 19:35:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chiang Brian <chiang.brian@inventec.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: oe-kbuild-all@lists.linux.dev, Chiang Brian <chiang.brian@inventec.com>,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+Message-ID: <202505071941.RISL4lFW-lkp@intel.com>
+References: <20250424132538.2004510-2-chiang.brian@inventec.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com> <20250506213814.2365788-5-zaidal@os.amperecomputing.com>
-In-Reply-To: <20250506213814.2365788-5-zaidal@os.amperecomputing.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 7 May 2025 13:34:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j-84MDP10YEL48GTPWy1SqHWAA_Dbq+X-k3PFi9brZPw@mail.gmail.com>
-X-Gm-Features: ATxdqUFo9t00Y08Bqt8BJZ0VScpKVfjmIqHn29yfFbbnRTEorhLPCSwW2nP9xUw
-Message-ID: <CAJZ5v0j-84MDP10YEL48GTPWy1SqHWAA_Dbq+X-k3PFi9brZPw@mail.gmail.com>
-Subject: Re: [PATCH v7 4/9] ACPI: APEI: EINJ: Remove redundant calls to einj_get_available_error_type
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, 
-	tony.luck@intel.com, bp@alien8.de, robert.moore@intel.com, 
-	Jonathan.Cameron@huawei.com, ira.weiny@intel.com, Benjamin.Cheatham@amd.com, 
-	dan.j.williams@intel.com, arnd@arndb.de, Avadhut.Naik@amd.com, 
-	u.kleine-koenig@pengutronix.de, john.allen@amd.com, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424132538.2004510-2-chiang.brian@inventec.corp-partner.google.com>
 
-On Tue, May 6, 2025 at 11:38=E2=80=AFPM Zaid Alali
-<zaidal@os.amperecomputing.com> wrote:
->
-> A single call to einj_get_available_error_type in init function is
-> sufficient to save the return value in a global variable to be used
-> later in various places in the code. This commit does not introduce
-> any functional changes, but only removing unnecessary redundant
-> function calls.
->
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+Hi Chiang,
 
-Does this patch depend on patches [1-3/7]?  If not, I can pick it up
-as an optimization.
+kernel test robot noticed the following build warnings:
 
-> ---
->  drivers/acpi/apei/einj-core.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
-c
-> index 47abd9317fef..ada1d7026af5 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -83,6 +83,8 @@ static struct debugfs_blob_wrapper vendor_blob;
->  static struct debugfs_blob_wrapper vendor_errors;
->  static char vendor_dev[64];
->
-> +static u32 available_error_type;
-> +
->  /*
->   * Some BIOSes allow parameters to the SET_ERROR_TYPE entries in the
->   * EINJ table through an unpublished extension. Use with caution as
-> @@ -662,14 +664,9 @@ static struct { u32 mask; const char *str; } const e=
-inj_error_type_string[] =3D {
->
->  static int available_error_type_show(struct seq_file *m, void *v)
->  {
-> -       int rc;
-> -       u32 error_type =3D 0;
->
-> -       rc =3D einj_get_available_error_type(&error_type);
-> -       if (rc)
-> -               return rc;
->         for (int pos =3D 0; pos < ARRAY_SIZE(einj_error_type_string); pos=
-++)
-> -               if (error_type & einj_error_type_string[pos].mask)
-> +               if (available_error_type & einj_error_type_string[pos].ma=
-sk)
->                         seq_printf(m, "0x%08x\t%s\n", einj_error_type_str=
-ing[pos].mask,
->                                    einj_error_type_string[pos].str);
->
-> @@ -692,8 +689,7 @@ bool einj_is_cxl_error_type(u64 type)
->
->  int einj_validate_error_type(u64 type)
->  {
-> -       u32 tval, vendor, available_error_type =3D 0;
-> -       int rc;
-> +       u32 tval, vendor;
->
->         /* Only low 32 bits for error type are valid */
->         if (type & GENMASK_ULL(63, 32))
-> @@ -709,13 +705,9 @@ int einj_validate_error_type(u64 type)
->         /* Only one error type can be specified */
->         if (tval & (tval - 1))
->                 return -EINVAL;
-> -       if (!vendor) {
-> -               rc =3D einj_get_available_error_type(&available_error_typ=
-e);
-> -               if (rc)
-> -                       return rc;
-> +       if (!vendor)
->                 if (!(type & available_error_type))
->                         return -EINVAL;
-> -       }
->
->         return 0;
->  }
-> @@ -791,6 +783,10 @@ static int __init einj_probe(struct platform_device =
-*pdev)
->                 goto err_put_table;
->         }
->
-> +       rc =3D einj_get_available_error_type(&available_error_type);
-> +       if (rc)
-> +               return rc;
-> +
->         rc =3D -ENOMEM;
->         einj_debug_dir =3D debugfs_create_dir("einj", apei_get_debugfs_di=
-r());
->
-> --
-> 2.43.0
->
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on robh/for-next linus/master v6.15-rc5 next-20250507]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chiang-Brian/dt-bindings-trivial-Add-tps53685-support/20250424-222559
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20250424132538.2004510-2-chiang.brian%40inventec.corp-partner.google.com
+patch subject: [PATCH v6 1/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+config: riscv-randconfig-r112-20250426 (https://download.01.org/0day-ci/archive/20250507/202505071941.RISL4lFW-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250507/202505071941.RISL4lFW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505071941.RISL4lFW-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/hwmon/pmbus/tps53679.c:133:57: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected char *id @@     got int device_id @@
+   drivers/hwmon/pmbus/tps53679.c:133:57: sparse:     expected char *id
+   drivers/hwmon/pmbus/tps53679.c:133:57: sparse:     got int device_id
+>> drivers/hwmon/pmbus/tps53679.c:165:45: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected int device_id @@     got char * @@
+   drivers/hwmon/pmbus/tps53679.c:165:45: sparse:     expected int device_id
+   drivers/hwmon/pmbus/tps53679.c:165:45: sparse:     got char *
+>> drivers/hwmon/pmbus/tps53679.c:133:57: sparse: sparse: non size-preserving integer to pointer cast
+>> drivers/hwmon/pmbus/tps53679.c:165:45: sparse: sparse: non size-preserving pointer to integer cast
+
+vim +133 drivers/hwmon/pmbus/tps53679.c
+
+53030bcc87e4a4 Guenter Roeck 2020-01-20  120  
+53030bcc87e4a4 Guenter Roeck 2020-01-20  121  /*
+53030bcc87e4a4 Guenter Roeck 2020-01-20  122   * Common identification function for chips with multi-phase support.
+53030bcc87e4a4 Guenter Roeck 2020-01-20  123   * Since those chips have special configuration registers, we want to have
+53030bcc87e4a4 Guenter Roeck 2020-01-20  124   * some level of reassurance that we are really talking with the chip
+53030bcc87e4a4 Guenter Roeck 2020-01-20  125   * being probed. Check PMBus revision and chip ID.
+53030bcc87e4a4 Guenter Roeck 2020-01-20  126   */
+53030bcc87e4a4 Guenter Roeck 2020-01-20  127  static int tps53679_identify_multiphase(struct i2c_client *client,
+53030bcc87e4a4 Guenter Roeck 2020-01-20  128  					struct pmbus_driver_info *info,
+53030bcc87e4a4 Guenter Roeck 2020-01-20  129  					int pmbus_rev, int device_id)
+53030bcc87e4a4 Guenter Roeck 2020-01-20  130  {
+53030bcc87e4a4 Guenter Roeck 2020-01-20  131  	int ret;
+53030bcc87e4a4 Guenter Roeck 2020-01-20  132  
+53030bcc87e4a4 Guenter Roeck 2020-01-20 @133  	ret = tps53679_identify_chip(client, pmbus_rev, device_id);
+53030bcc87e4a4 Guenter Roeck 2020-01-20  134  	if (ret < 0)
+53030bcc87e4a4 Guenter Roeck 2020-01-20  135  		return ret;
+53030bcc87e4a4 Guenter Roeck 2020-01-20  136  
+53030bcc87e4a4 Guenter Roeck 2020-01-20  137  	ret = tps53679_identify_mode(client, info);
+53030bcc87e4a4 Guenter Roeck 2020-01-20  138  	if (ret < 0)
+53030bcc87e4a4 Guenter Roeck 2020-01-20  139  		return ret;
+53030bcc87e4a4 Guenter Roeck 2020-01-20  140  
+53030bcc87e4a4 Guenter Roeck 2020-01-20  141  	return tps53679_identify_phases(client, info);
+53030bcc87e4a4 Guenter Roeck 2020-01-20  142  }
+53030bcc87e4a4 Guenter Roeck 2020-01-20  143  
+53030bcc87e4a4 Guenter Roeck 2020-01-20  144  static int tps53679_identify(struct i2c_client *client,
+53030bcc87e4a4 Guenter Roeck 2020-01-20  145  			     struct pmbus_driver_info *info)
+53030bcc87e4a4 Guenter Roeck 2020-01-20  146  {
+53030bcc87e4a4 Guenter Roeck 2020-01-20  147  	return tps53679_identify_mode(client, info);
+53030bcc87e4a4 Guenter Roeck 2020-01-20  148  }
+53030bcc87e4a4 Guenter Roeck 2020-01-20  149  
+a49c0dafb304b8 Chiang Brian  2025-04-24  150  static int tps53685_identify(struct i2c_client *client,
+a49c0dafb304b8 Chiang Brian  2025-04-24  151  				 struct pmbus_driver_info *info)
+a49c0dafb304b8 Chiang Brian  2025-04-24  152  {
+a49c0dafb304b8 Chiang Brian  2025-04-24  153  	info->func[1] |= PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
+a49c0dafb304b8 Chiang Brian  2025-04-24  154  			 PMBUS_HAVE_STATUS_INPUT;
+a49c0dafb304b8 Chiang Brian  2025-04-24  155  	info->format[PSC_VOLTAGE_OUT] = linear;
+a49c0dafb304b8 Chiang Brian  2025-04-24  156  	return tps53679_identify_chip(client, TPS53681_PMBUS_REVISION,
+a49c0dafb304b8 Chiang Brian  2025-04-24  157  					   TPS53685_DEVICE_ID);
+a49c0dafb304b8 Chiang Brian  2025-04-24  158  }
+a49c0dafb304b8 Chiang Brian  2025-04-24  159  
+53030bcc87e4a4 Guenter Roeck 2020-01-20  160  static int tps53681_identify(struct i2c_client *client,
+53030bcc87e4a4 Guenter Roeck 2020-01-20  161  			     struct pmbus_driver_info *info)
+53030bcc87e4a4 Guenter Roeck 2020-01-20  162  {
+53030bcc87e4a4 Guenter Roeck 2020-01-20  163  	return tps53679_identify_multiphase(client, info,
+53030bcc87e4a4 Guenter Roeck 2020-01-20  164  					    TPS53681_PMBUS_REVISION,
+53030bcc87e4a4 Guenter Roeck 2020-01-20 @165  					    TPS53681_DEVICE_ID);
+53030bcc87e4a4 Guenter Roeck 2020-01-20  166  }
+53030bcc87e4a4 Guenter Roeck 2020-01-20  167  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
