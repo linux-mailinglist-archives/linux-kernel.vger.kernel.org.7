@@ -1,159 +1,151 @@
-Return-Path: <linux-kernel+bounces-637834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DE2AADD9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:43:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2A2AADD96
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FF3507136
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765BC1C0744A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EC724C692;
-	Wed,  7 May 2025 11:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E0230BCB;
+	Wed,  7 May 2025 11:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1VATUE6"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MeB6AhQZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE01243951
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A777E221FD1
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746618160; cv=none; b=CArNg7gKdkdBvocbviFWIHKYmEt96/8hekX9EIoDefnr1twZZJ0IYzoAQ7JoAx0dceU2l7nKQPzf6z/cwZCbKCOza8qRqFW7LuEyU2viiwsKHAVBOFpTnmLVCwN9ycfaAt6cu1k/E7k/oNzNHjQghQhDjbseMt6nRkLRgTB9rug=
+	t=1746618131; cv=none; b=rQzQkC8xJDgc2T7zeN8V/75tpb7ezkSP2CQgPwX+ypP6EuC2JOfgvL2jlSAWaQU6Aq5f5eWhvIo3eW6CrDBAUEcicInV9a0qCG39HGaxz/3Iw4OT31PrG1ivIlUkSOsU0bGtoHarE32IOTeYa3BiIoyg6m8OxLAsGsyyLRodRsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746618160; c=relaxed/simple;
-	bh=Mh5ONYQAaIxwhfDiAcBJ2ep+eU/1VKQfzw6VJVH6Eqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PKKrWkV3B5ky+/o3UXwlf9RDv5npgxxjojl7sGcVYS0CKLGL3W9gR0TvRzV8hn0KoWElN0B5LVQdffUPPBX72v+eMcyKtda9t4VzJIGk5pbvWGYDFTa0BgMq2ivxU4SyCJ+HR1/CreBlmx45cpb2HMFAq044bdR5bjxHS8ICu5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1VATUE6; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f6970326so70013246d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746618157; x=1747222957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rg3f/Tg5SjzCfWpyeO6mKlvZkFNAOCxWB2ctnK8uuws=;
-        b=m1VATUE6KBpPb3hBc0TNdJbiX1n1/zv3z0ubOXrqU71+e8gvLDRH+co1M/ncKHBsg0
-         Y14maJZQQLZCFDnHDgEXH03am2/kQbJhvT/rsG1BsTHdMcP9VJxRDpFk6VXLWzmA+XxG
-         4qBqssegwAbhMUxYDMP4gw+Dg0SWQ31IH6rPkgPFj2p9NfrxgMcUjXqY/n0CoZx7bTWa
-         YLMoFpLjRlSJlbcsrkzh4SCmBZtVSrE1RMEEoM3NxFGCLR0JD3eE1kTBQbMnnMHUL1o0
-         3myV6XUZM41t9OjK/14NmNQAV6f3Pb0kZDEgXEogB1KgLiG70+MXl5ZHr0l/UrTq5qV1
-         IPxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746618157; x=1747222957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rg3f/Tg5SjzCfWpyeO6mKlvZkFNAOCxWB2ctnK8uuws=;
-        b=F4Xtgm5u99P1JVoCM3hUwKPH52+9I5aUPzTiL0qJaSLCNbdE69WZSv7LAVQ3/1moVz
-         b7jirmvAoQf//YAOfItAwba+J4OaiJ3Pyc6XVAPz+Mx5sMU3y+0vCoMkFkI+eQkC5JbZ
-         usjjGUTWr7zssaKP172rfkx5h5xJzPVQOusKy0t1QV5G29qGLSUCDIZ2DxvfrWiFghW5
-         XtJPM9qDrgtgUnU/wJqWRdilLnLKLqYn8vCjUxmmoljc6X7JsEOVURRQFjCIOd1hlo27
-         eU15pQYfTmBtbUp9b28XM4SjQBPhQf0Uk0OEOFtrgfekr9LQ3lLNNaJO1NrLsOowQq8b
-         FBTg==
-X-Forwarded-Encrypted: i=1; AJvYcCURKi1R0cIXmcM0ADAk85wiB5LcDHVhdbSZBrkPt5B0hmKS9jHbej3fFwHr+DB4IEexVn4vneYdMdnxmNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGgX8f0YNFrnzHlpJh7Fuw6t37rgTOVAM0s46BNPA5S3LDdG/W
-	vxBvJ9Z6MOudicukscpUUBWM/IyrZh84FKvg71mnp2J3sulNqiDMiMISUhbvfmH0PVzyNvtZJJb
-	HcnTghys14MuG/t96xReF5Tjn9VxyTctkp+Y=
-X-Gm-Gg: ASbGncsCuv9T3jIGx92KPMfqt3A2bTA6apZMc4hHkbLdqVZ6olCDbLvGc6SHwQTjxiZ
-	3cxwTt9M8AxNWKylxZcNJsZEEMAy5geotDV2wh12vbvdyNvQ0QqkF49qXpxDlOzqilcoUepl/OG
-	cEIFuwVpZcSC68kLvsNmDD7Ds=
-X-Google-Smtp-Source: AGHT+IGhmGCl/Qabfe6PF2gVG2FCXlv75JhOYiHCAmg2KP/kTgXiDpq2L5Oqn7Mw6g4ZxBz1ascOoWHSoGFt3D66+Dw=
-X-Received: by 2002:a05:6214:caa:b0:6f2:d264:aaa8 with SMTP id
- 6a1803df08f44-6f542a661b4mr46907126d6.19.1746618157189; Wed, 07 May 2025
- 04:42:37 -0700 (PDT)
+	s=arc-20240116; t=1746618131; c=relaxed/simple;
+	bh=scmx9/CI8fIhmSsNVMG2OPZtZKYUEzWBeTPDd1j0hZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeqqbXXP5Z9c9OcaNunE8utlZ87ZWIEQEta4TncH0Pyf7N+uXtGthBHvyQKSoA8PVpbQVaf1UEIZ2MK1npSL+rxEPjtbVwPm8lakppAwCRUbsdieuXgQUfd0lwojdiseS4wDZRXXzH6XPRQaI5Uw5X0UN3/r+/nidnGeQ1SwzIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MeB6AhQZ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746618129; x=1778154129;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=scmx9/CI8fIhmSsNVMG2OPZtZKYUEzWBeTPDd1j0hZ4=;
+  b=MeB6AhQZSrwpi6NIfV9MVQUPPF/BBsMco0oZkF4QYzu/fK88iHB9NUZs
+   fOQB5fWEPV2QAUS6TaSMNXe8d5Ee3iI5jA6IrOyqVUCqYRgAkvv0bjiG0
+   wOKfzrBRlkbprbjBaEFicZjzAQoKw1uoO07jTgdE8hlCeF3moZ847qWq+
+   ebNAS8DkG2+SIoikgllBIWveoIb+S9Ucm+VO64jDJTjAfq2tbCt4cH7PP
+   1IXlLpnaBLczrPpjtFZE1Xl2alSJyYZIBYtSl6fypR/I8pJv+SVS+irYc
+   njXT7/KLVql//xWoiiTwF7+nnJufVAtlK8YMk3Un5zi/HM7yoW/qrN314
+   A==;
+X-CSE-ConnectionGUID: s4S8m6agSUqO0HPUCy/ClQ==
+X-CSE-MsgGUID: f34pU5G0TXGOuPCcU6BEWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="58538576"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="58538576"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:42:09 -0700
+X-CSE-ConnectionGUID: q9XSds6TQn63GLtMSGR/qA==
+X-CSE-MsgGUID: AhP43ObISL6IHyWluqbCkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="136447207"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.193])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:42:07 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id B17C111F871;
+	Wed,  7 May 2025 14:42:04 +0300 (EEST)
+Date: Wed, 7 May 2025 11:42:04 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Wentong Wu <wentong.wu@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] mei: vsc: Cast tx_buf to (__be32 *) when passed to
+ cpu_to_be32_array()
+Message-ID: <aBtHDKB6FbIkBS_J@kekkonen.localdomain>
+References: <20250507090728.115910-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506170924.3513161-14-mingo@kernel.org> <9b31f1df-7dc6-468b-9418-0b13239df8bc@gmail.com>
- <aBsGXCKX8-2_Cn9x@gmail.com>
-In-Reply-To: <aBsGXCKX8-2_Cn9x@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 7 May 2025 19:42:01 +0800
-X-Gm-Features: ATxdqUEtyqfJKw_PG_rAbh1TtHCwAdQSdIY0FbZtDOs8b0D97olgkHo0RcguHCM
-Message-ID: <CALOAHbDGSpDnzQ7AKiMci0708DwYr8gmruVGdJZ_Nt9rmnbxNg@mail.gmail.com>
-Subject: Re: [PATCH 13/15] x86/kconfig/64: Enable popular scheduler, cgroups
- and namespaces options in the defconfig
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, ardb@kernel.org, arnd@arndb.de, bp@alien8.de, 
-	dwmw@amazon.co.uk, hpa@zytor.com, linux-kernel@vger.kernel.org, 
-	michal.lkml@markovi.net, tglx@linutronix.de, torvalds@linux-foundation.org, 
-	vkuznets@redhat.com, yamada.masahiro@socionext.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507090728.115910-1-hdegoede@redhat.com>
 
-On Wed, May 7, 2025 at 3:06=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrote=
-:
->
->
-> * Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> > Hello Mingo,
-> >
-> > > +CONFIG_VIRT_CPU_ACCOUNTING_GEN=3Dy
-> > > +CONFIG_IRQ_TIME_ACCOUNTING=3Dy
-> >
-> > Enabling CONFIG_IRQ_TIME_ACCOUNTING=3Dy can lead to user-visible behavi=
-oral
-> > changes. For more context, please refer to the related discussion here:
-> > https://lore.kernel.org/all/20241222024734.63894-1-laoar.shao@gmail.com=
-/ .
->
-> Yeah. I actually agree with your series. It (re-)includes IRQ/softirq
-> time in task CPU usage statistics even under IRQ_TIME_ACCOUNTING=3Dy,
-> while still keeping the finegrained IRQ/softirq statistics as well,
-> correct?
+Hi Hans,
 
-Correct.
+On Wed, May 07, 2025 at 11:07:28AM +0200, Hans de Goede wrote:
+> Commit f88c0c72ffb0 ("mei: vsc: Use struct vsc_tp_packet as vsc-tp tx_buf
+> and rx_buf type") changed the type of tx_buf from "void *" to "struct
+> vsc_tp_packet *" and added a cast to (u32 *) when passing it to
+> cpu_to_be32_array() and the same change was made for rx_buf.
+> 
+> This triggers the type-check warning in sparse:
+> 
+> vsc-tp.c:327:28: sparse: expected restricted __be32 [usertype] *dst
+> vsc-tp.c:327:28: sparse: got unsigned int [usertype] *
+> 
+> vsc-tp.c:343:42: sparse: expected restricted __be32 const [usertype] *src
+> vsc-tp.c:343:42: sparse: got unsigned int [usertype] *
+> 
+> Fix this by casting to (__be32 *) instead.
+> 
+> Note actually changing the type of the buffers to "be32 *" is not an option
+> this buffer does actually contain a "struct vsc_tp_packet" and is used
+> as such most of the time. vsc_tp_rom_xfer() re-uses the buffers as just
+> dumb arrays of 32 bit words to talk to the device before the firmware has
+> booted, to avoid needing to allocate a separate buffer.
+> 
+> Fixes: f88c0c72ffb0 ("mei: vsc: Use struct vsc_tp_packet as vsc-tp tx_buf and rx_buf type")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202505071634.kZ0I7Va6-lkp@intel.com/
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
->
-> The Kconfig option is also arguably rather misleading:
->
-> config IRQ_TIME_ACCOUNTING
->         bool "Fine granularity task level IRQ time accounting"
->         depends on HAVE_IRQ_TIME_ACCOUNTING && !VIRT_CPU_ACCOUNTING_NATIV=
-E
->         help
->           Select this option to enable fine granularity task irq time
->           accounting. This is done by reading a timestamp on each
->           transitions between softirq and hardirq state, so there can be =
-a
->           small performance impact.
->
-> It only warns about a small performance impact, but doesn't warn that
-> CPU accounting is changed in an incompatible fashion that surprises
-> tooling...
+Thanks!
 
-Yes, this breaks our userspace tools.
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
+> ---
+>  drivers/misc/mei/vsc-tp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
+> index da26a080916c..267d0de5fade 100644
+> --- a/drivers/misc/mei/vsc-tp.c
+> +++ b/drivers/misc/mei/vsc-tp.c
+> @@ -324,7 +324,7 @@ int vsc_tp_rom_xfer(struct vsc_tp *tp, const void *obuf, void *ibuf, size_t len)
+>  	guard(mutex)(&tp->mutex);
+>  
+>  	/* rom xfer is big endian */
+> -	cpu_to_be32_array((u32 *)tp->tx_buf, obuf, words);
+> +	cpu_to_be32_array((__be32 *)tp->tx_buf, obuf, words);
+>  
+>  	ret = read_poll_timeout(gpiod_get_value_cansleep, ret,
+>  				!ret, VSC_TP_ROM_XFER_POLL_DELAY_US,
+> @@ -340,7 +340,7 @@ int vsc_tp_rom_xfer(struct vsc_tp *tp, const void *obuf, void *ibuf, size_t len)
+>  		return ret;
+>  
+>  	if (ibuf)
+> -		be32_to_cpu_array(ibuf, (u32 *)tp->rx_buf, words);
+> +		be32_to_cpu_array(ibuf, (__be32 *)tp->rx_buf, words);
+>  
+>  	return ret;
+>  }
 
->
-> But I think we should probably treat this as a bug, not as lack of
-> documentation. Peter, do you concur?
->
-> > If we decide to enable it by default, we should clearly document this
-> > behavior change. Below is the patch I wrote earlier but haven=E2=80=99t=
- sent
-> > out for review yet.
->
-> Note that it's not enabled by default - this patch is just about the
-> x86 defconfig.
->
-> Thanks,
->
->         Ingo
+-- 
+Regards,
 
-
-
---
-Regards
-Yafang
+Sakari Ailus
 
