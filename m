@@ -1,174 +1,115 @@
-Return-Path: <linux-kernel+bounces-637669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEBFAADBD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AAFAADB9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325E398380E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0724685D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F2A207A16;
-	Wed,  7 May 2025 09:49:01 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E571F4CB0;
+	Wed,  7 May 2025 09:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w0TWwhpa"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F5220298C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADDF1DFE12
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746611341; cv=none; b=Zae/g2zE2Lnh125gULgtYPZyjjWfR06OudSDRyuXtZu3aLYg9WEAD1YfzN4qPekh0b/FMaYIJvfvS6n3BbNq6GQq6/1yMI+iOJs7fM4vzWuE2cVXxqSpczZAFdU7LvZsHDttLiUsHdD+W7e45Fsbgq2Y/OxyLtYFrP4XQmZs1O8=
+	t=1746610858; cv=none; b=DdrpkL75D5s7tumJx56X06fDreL392LWam8Xp2GvXGeQmVQxHRMqe4emFk4KLq+Iy7lUGSsH9TGiWJ+75wbIPoRPF75Y7wxKThqJxpa/iTJOAkaD+BTSOb1FZQYAV/0kxqd4BiE8J6XKFyRImEWieX28njCghMo3LqSfEsMTfxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746611341; c=relaxed/simple;
-	bh=g9aEaqfbTnilVwvxFFtp0xkTCacv9+qYLQ7a6NZYGzQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l5SyKjgIFW3oid+Ki04p8LOhnODW1UwAYP5yEnStTCPxGNKT8DUMyBX2UcU3l2UXrP9lLL/sNyYkQ7mVHtl2rwVnllNeEMR/TykvtPZMQCtd98xpV1+lSxBZ0EQfnXal9tej/0PQozvUAO116e1I8q0SyotPNF4D4ZtlbubVEfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Zsr6l1ZVGz2TSDk;
-	Wed,  7 May 2025 17:48:15 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id A5FF91A016C;
-	Wed,  7 May 2025 17:48:49 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
- (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 7 May
- 2025 17:48:49 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <xiang@kernel.org>, <chao@kernel.org>, <huyue2@coolpad.com>,
-	<jefflexu@linux.alibaba.com>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<lihongbo22@huawei.com>
-Subject: [PATCH v4] erofs: fix file handle encoding for 64-bit NIDs
-Date: Wed, 7 May 2025 09:40:15 +0000
-Message-ID: <20250507094015.14007-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1746610858; c=relaxed/simple;
+	bh=ZAkl/D4HYMiTs8TdHPaNq0qUfW7IR4yaQoTiRnukCNo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Q4hzuUBCLBtsaoOqQztcTG2dzj0X5QgPLg6H/LmpQZQb+GGV6RfRSMGwPUrEWjY1WF/xi+z8woHyLZlWmKVMv6ajMAzatA0+XyPX8NbXDMm/GjtsXuDgcjvK3etrW6eu//LiH6BlqS9fMp099z8Xi9E++WJ/GxgmyFsLEwjh5Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w0TWwhpa; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf825f46bso5862405e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746610854; x=1747215654; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JjJVOzsV/sS1KqYgiKb6WpgqfUC9eIpjHHMhaITJ/3o=;
+        b=w0TWwhpawoLeSkCQGcoV8GTgRzYmEFfPFh23PuMqFSRdcCIpmO5a3VaX/cuIUcG6K2
+         33mFOXKr+Dmupwsiejyx57b0ygRbyyJvEuf9Y09sSjQ8DhPO4aDXw6rH2rslPyr1HXob
+         c++ACrZYEa8Ou9yr771B3zBquhM0kUWWwWVuRKI/ibZKNSpHZc76K6pYv9RXWkbefdnb
+         fPtB0+6O1vqRVAANeLAdCI6rr7763tDESe7hYpS1E0g8+cJzNntAcqEGdoj8503r016R
+         7WFrqyDP+wPDrgDpVtdMNNrIRMxHGJ9Er5mZupVkhu22M9gyeBasYJBLV+aqqNmjQCEF
+         VSqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746610854; x=1747215654;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JjJVOzsV/sS1KqYgiKb6WpgqfUC9eIpjHHMhaITJ/3o=;
+        b=O3GIF0AivRsUD48WOftNUyiPANx9B/XE5t621DG2ebAerpb09w0OpSwHyq+d5O6Cjg
+         4rbMoqpoNaD1aGQ8ixJ2iiEOOCi7S1RYXYlitridXFT8tWBClHUIP2f48q9HMJsqt3jw
+         lAR3krS1S35redKF6uBH43wfC7HhkxWqkZJuGALP/BiNJkT3EQJIbFvrc6ss3sLPKaJS
+         6u1FUoukhALwdF9GriQpfpbzsIIHmtUZE4uS9Wp3wnyUwLBwBq1wlycVoJK6O98DGNyw
+         rj3OyAzFS8TVN9ZJCD7QLlW1m1mdfEm1KfucbNOQoeN+yvkY/pjH8OYKHa8FagfexTqs
+         lUGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbj3XChDVz2tpVkWtODZ40c89lUt9GNT3Jhe/UaFmd8ullTpXa1ZK4ZMBSMaa/1Rp9F3rIhzKZXTCSet8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6+FMRl/vUXg+nrPRgIBP14ohYGs/BCw7oB6hbqCZArNArOm5d
+	edDXaT84HfCozaM+VDSXeEzvjN7Lbo6IGw0t68kfQs72BnrpnvBH6/gsymU0VmU=
+X-Gm-Gg: ASbGncvxfK6kqCtmeSO+r5I1MjwFOdjH685tAXQirzsjDeYsTg6V92MpXUx1i1h8vEV
+	tJYYcZCeJ9bIB1SGH/0kxo+r13x6a4nw8EGL3MgZvvcsMdYLumIgLL+A5J3gmOtfL0oPDHB000K
+	edHhtQSVk9VRCgv+M4A2kqAAvJgYPUiO38l+58xoRu05DvcEfROzq0ovLOa67f4zlkObAFfMTfc
+	jaUOeKLSBXbKBv/NLjeCcDgHxDT7f1cHj+vdNCd8HfqNDz4poHYr3puBoGQzOJPJTbaaLvev+iB
+	19J5pzAiDxdKPFIu1EH7QKGv9gM3cl17fTpk55w4HdhsnV+0Kl1NsaG5/lo=
+X-Google-Smtp-Source: AGHT+IGTYzGThTxOdxwaI5G+9aUb3aVHRykaAtXbsesYBP9DWb7wZzv8RquKPzZDNQ1IOuOLVdxb7w==
+X-Received: by 2002:a05:600c:1c8c:b0:441:b397:e324 with SMTP id 5b1f17b1804b1-441d44ed543mr6268495e9.9.1746610854412;
+        Wed, 07 May 2025 02:40:54 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d438e7f0sm25374535e9.29.2025.05.07.02.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 02:40:53 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Gatien Chevallier <gatien.chevallier@foss.st.com>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Patrice Chotard <patrice.chotard@foss.st.com>, stable@vger.kernel.org
+In-Reply-To: <20250507092121.95121-2-krzysztof.kozlowski@linaro.org>
+References: <20250507092121.95121-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] bus: firewall: Fix missing static inline annotations
+ for stubs
+Message-Id: <174661085321.105567.10502174461599708056.b4-ty@linaro.org>
+Date: Wed, 07 May 2025 11:40:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-EROFS uses NID to indicate the on-disk inode offset, which can
-exceed 32 bits. However, the default encode_fh uses the ino32,
-thus it doesn't work if the image is larger than 128GiB.
 
-Let's introduce our own helpers to encode file handles.
+On Wed, 07 May 2025 11:21:22 +0200, Krzysztof Kozlowski wrote:
+> Stubs in the header file for !CONFIG_STM32_FIREWALL case should be both
+> static and inline, because they do not come with earlier declaration and
+> should be inlined in every unit including the header.
+> 
+> 
 
-It's easy to reproduce:
-  1. prepare an erofs image with nid bigger than U32_MAX
-  2. mount -t erofs foo.img /mnt/erofs
-  3. set exportfs with configuration: /mnt/erofs *(rw,sync,
-     no_root_squash)
-  4. mount -t nfs $IP:/mnt/erofs /mnt/nfs
-  5. md5sum /mnt/nfs/foo # foo is the file which nid bigger
-     than U32_MAX.  # you will get ESTALE error.
+Applied, thanks!
 
-In the case of overlayfs, the underlying filesystem's file
-handle is encoded in ovl_fb.fid, which is similar to NFS's
-case. If the NID of file is larger than U32_MAX, the overlay
-will get -ESTALE error when calls exportfs_decode_fh.
+[1/1] bus: firewall: Fix missing static inline annotations for stubs
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/66db876162155c1cec87359cd78c62aaafde9257
 
-Fixes: 3e917cc305c6 ("erofs: make filesystem exportable")
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
-v3: https://lore.kernel.org/all/20250429134257.690176-1-lihongbo22@huawei.com/
-  - Improve commit message readability as suggested by Xiang.
-  - Remove extra variable to make the code simpler as suggested
-    by Xiang.
-
-v2: https://lore.kernel.org/all/20250429074109.689075-1-lihongbo22@huawei.com/
-  - Assign parent nid with correct value.
-
-v1: https://lore.kernel.org/all/20250429011139.686847-1-lihongbo22@huawei.com/
-   - Encode generation into file handle and minor clean code.
-   - Update the commiti's title.
----
- fs/erofs/super.c | 44 ++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 36 insertions(+), 8 deletions(-)
-
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index cadec6b1b554..727e2fbaa168 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -511,24 +511,52 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 	return 0;
- }
- 
--static struct inode *erofs_nfs_get_inode(struct super_block *sb,
--					 u64 ino, u32 generation)
-+static int erofs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-+			   struct inode *parent)
- {
--	return erofs_iget(sb, ino);
-+	erofs_nid_t nid = EROFS_I(inode)->nid;
-+	int len = parent ? 6 : 3;
-+
-+	if (*max_len < len) {
-+		*max_len = len;
-+		return FILEID_INVALID;
-+	}
-+
-+	fh[0] = (u32)(nid >> 32);
-+	fh[1] = (u32)(nid & 0xffffffff);
-+	fh[2] = inode->i_generation;
-+
-+	if (parent) {
-+		nid = EROFS_I(parent)->nid;
-+
-+		fh[3] = (u32)(nid >> 32);
-+		fh[4] = (u32)(nid & 0xffffffff);
-+		fh[5] = parent->i_generation;
-+	}
-+
-+	*max_len = len;
-+	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
- }
- 
- static struct dentry *erofs_fh_to_dentry(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
- {
--	return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
--				    erofs_nfs_get_inode);
-+	if ((fh_type != FILEID_INO64_GEN &&
-+	     fh_type != FILEID_INO64_GEN_PARENT) || fh_len < 3)
-+		return NULL;
-+
-+	return d_obtain_alias(erofs_iget(sb,
-+		((u64)fid->raw[0] << 32) | fid->raw[1]));
- }
- 
- static struct dentry *erofs_fh_to_parent(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
- {
--	return generic_fh_to_parent(sb, fid, fh_len, fh_type,
--				    erofs_nfs_get_inode);
-+	if (fh_type != FILEID_INO64_GEN_PARENT || fh_len < 6)
-+		return NULL;
-+
-+	return d_obtain_alias(erofs_iget(sb,
-+		((u64)fid->raw[3] << 32) | fid->raw[4]));
- }
- 
- static struct dentry *erofs_get_parent(struct dentry *child)
-@@ -544,7 +572,7 @@ static struct dentry *erofs_get_parent(struct dentry *child)
- }
- 
- static const struct export_operations erofs_export_ops = {
--	.encode_fh = generic_encode_ino32_fh,
-+	.encode_fh = erofs_encode_fh,
- 	.fh_to_dentry = erofs_fh_to_dentry,
- 	.fh_to_parent = erofs_fh_to_parent,
- 	.get_parent = erofs_get_parent,
+Best regards,
 -- 
-2.22.0
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
