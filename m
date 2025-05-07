@@ -1,159 +1,203 @@
-Return-Path: <linux-kernel+bounces-637860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3555BAADDEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:00:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067C4AADDE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C68D1B686B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6529C4A36CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC43E25C712;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18189259C96;
 	Wed,  7 May 2025 12:00:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A6D233145;
-	Wed,  7 May 2025 11:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j6f+0JzF"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3B6257AED
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619200; cv=none; b=qNgB3/vAmNt4x5hhzHYn9dix16faj3Z7XerLiL9wcvBWpfHBerYb7JCGatFjuMYpwu8c41RztdaBv3z4BWoLL+5bQPwZLaiPbaSy5Jd2A05qipfYcvcUmGKS74pZ+jNSDgCg4xWtkYXa++WOU2x71Rbx0YskB6cCtjZ04AYprf0=
+	t=1746619199; cv=none; b=YltrzWIhfhVsUfk1pkd+pyP5kvjkp2Q/sReCV6JpR97SL7XYlCNRFfp2GQpXNcJCCj/LdXj04neML/KeLjirINi7ciXmrZxPvlR6rtp3OX7I9wAaj9MRBa1T5f2VLLnRvJ0AA7AH+jumKTComI1ZCQlJRf8JtDAnbJMPaii7Cyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619200; c=relaxed/simple;
-	bh=8RO7qb8A2o2/SWPKRVHIg+XW346Qu4M2ikcfzJXF/Nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C2wEOUei0Cu7GSYxID4w0Qxx62sjiAoP2weRd0iRaicBae5eW6Q7iLYdGFN2ElpAqdKvd8bm4BSFEtl4dCJuABVmB+0uwfU88naQXshtR/4ML0SYoC8/PoDHphwfk4tMamnnF/QyALXI7lgMEchSZ5yhZzOpn+L/KnJF9sF20rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B3C6339;
-	Wed,  7 May 2025 04:59:46 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 476B23F5A1;
-	Wed,  7 May 2025 04:59:54 -0700 (PDT)
-Date: Wed, 7 May 2025 12:59:45 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Mike Tipton <quic_mdtipton@quicinc.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@oss.nxp.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3] cpufreq: scmi: Skip SCMI devices that aren't used by
- the CPUs
-Message-ID: <aBtLMYqcnwacGJuy@pluto>
-References: <20250428144728.871404-1-quic_mdtipton@quicinc.com>
+	s=arc-20240116; t=1746619199; c=relaxed/simple;
+	bh=qbnCw7dOQkq3nFndIdhgatR4r8qCPfL3w4RscWXHG3c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LPlMJSKRSrXkMddZdmgFSjs4uT8wZHfGr2SlsnCnqOfWynuj69G8h3n2IR/4H4sGBWBDhRSlmLONsf8QBT0/RiIbVFzhVANcnIo3b01WMe1MBq5fLYwK81EA1frqOGIp19zx+fbSLsJjSePBCOkpR+5grRyQCUSJ1PPX5Ds9WWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j6f+0JzF; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso56531875e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746619195; x=1747223995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CqPJI4HdquVpCx3k4hEKfR3V8+wlA5emf3OFZSQ9jYg=;
+        b=j6f+0JzFQYl3GPNHcnI6Ch7j/dtyjYiKszBG2AbKIgQlBLvH/okBpQqj+O2tgFkIvA
+         EBd2u5dNU7V9VDxa2mUqWvvg9x+2o98uVyWs8LM3vuOJTwvmUNHQNQnZoOT8pmdtmfPc
+         lXpIUW9P0SoWMl3eTHP7p74PPs51rInyU7eUoNNVjrr543ChEFzOFTSOtVqoaYc9GGmo
+         oVBjz5Nzhrm6BeckPNxEVJ8wGYiQ2/34FMSJRsWljB1H/XmQF4g6zMSwz7yJEA5R4Clb
+         umeU/cPJkEaHy44QUWHoj9EGSmG8/frWcYO2vmqsxRl1Z0bMtoerKhewNVTPueiuzNDt
+         AjFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746619195; x=1747223995;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CqPJI4HdquVpCx3k4hEKfR3V8+wlA5emf3OFZSQ9jYg=;
+        b=keklw0G84tzhyefFhBeLqCdUGCQajcqk507mJUwr8/heff8GD7sK0rQTC8KMDaB/OL
+         uO0CZIRbKJyxbsRc35DnrBwP4eDf8ALZe0lv2AW30XVTsnxribpByS+eykLG2Ok9gCDv
+         Hlwzc65rRC/kLbr6bC9OXnlZ+B+bquqlKoxpE/Fp1KQF8lWT2HX6Ir1l3fb78x8Exx+D
+         V+RVF8pHcX51XfY5abAGQascZCLmZo4FiGrdBEvEs0mkzGNWpruPjcmNKzlwHlExzsPj
+         lNraATKnEaAQfZWVA27SJUsLSMn5VCq4kNd1UPQ5IotF/CRWOGaqJd5Kx18aO5BhEhM0
+         gQEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnJt6NI52Je3YMR+yb2dxeKwSkmRc1QYXzSvu2FaoD1DilVK4F5g6IuMmNiogqb9elWW5V0wq85MCgrFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyINVhYh3u568SF8xoXF5ax7HKQxNNWgetALIzgS2z88Xlzpla
+	2H67FfqAAhctS9TZwAm+xZl/Ee+gePGz1Ibdv9DxBpuIVf0fAEDcPa4ZUlmXf2k=
+X-Gm-Gg: ASbGnct5AkY75/+yEJHvIOmCRZkxeMg/C133kTyQlRu18KkPf3h1T57yQk+Rj5LX+6M
+	OEsCMZIfWQ/518eWsiPAiKB2qYaFYGYqDvAKkjj9mzUvSHxoy79YE+XeOcSOb+5y+1yQROpw6g+
+	K+R5nDcMnaNsMfaW1muDKg2nHDTVXD3qTZgPzDuSEOfK55oEWlQ0X76W50cOXq8oCiS+mYNv3Xc
+	w3oJsuAbDuFjXWwFSXiGvtQVSZ+oL8nF2zyfFhEJMbTSxTn1AJllQiDNY8NvJMc96kwtjV/E9CR
+	XMV94o8XlpvK6sWUPVVrcCEC0rLW4n+W4HTMUWk1WlvNJz5nRSnif4/h2sLE2ZB+uCqy/3Wz+su
+	nISqfWPXABVEZAuznQQ==
+X-Google-Smtp-Source: AGHT+IFIxLzUQYS8WbSe7gjUBBLP5moevd2VzC6lwoikd3JqtPlVaRPaA2s8NpuN78U3XjMiFPwpFw==
+X-Received: by 2002:a05:600c:1c8c:b0:43d:683:8cb2 with SMTP id 5b1f17b1804b1-441d4eeb512mr15437105e9.14.1746619195054;
+        Wed, 07 May 2025 04:59:55 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:784f:3312:6406:12a9? ([2a01:e0a:3d9:2080:784f:3312:6406:12a9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b17096sm17206685f8f.96.2025.05.07.04.59.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 04:59:54 -0700 (PDT)
+Message-ID: <7ccbd722-c99a-43b3-9ceb-4c207521822d@linaro.org>
+Date: Wed, 7 May 2025 13:59:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428144728.871404-1-quic_mdtipton@quicinc.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 2/3] scsi: ufs: qcom: Map devfreq OPP freq to UniPro
+ Core Clock freq
+To: Ziqi Chen <quic_ziqichen@quicinc.com>,
+ Luca Weiss <luca.weiss@fairphone.com>, quic_cang@quicinc.com,
+ bvanassche@acm.org, mani@kernel.org, beanhuo@micron.com,
+ avri.altman@wdc.com, junwoo80.lee@samsung.com, martin.petersen@oracle.com,
+ quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
+ quic_rampraka@quicinc.com, konrad.dybcio@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250507074415.2451940-1-quic_ziqichen@quicinc.com>
+ <20250507074415.2451940-3-quic_ziqichen@quicinc.com>
+ <D9PS51XVRKLP.1AHMCRH9CZFWU@fairphone.com>
+ <7c74a395-a8b8-4a12-9ddb-691f28c90885@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <7c74a395-a8b8-4a12-9ddb-691f28c90885@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 28, 2025 at 07:47:28AM -0700, Mike Tipton wrote:
-> Currently, all SCMI devices with performance domains attempt to register
-> a cpufreq driver, even if their performance domains aren't used to
-> control the CPUs. The cpufreq framework only supports registering a
-> single driver, so only the first device will succeed. And if that device
-> isn't used for the CPUs, then cpufreq will scale the wrong domains.
+On 07/05/2025 11:09, Ziqi Chen wrote:
+> Hi Luca,
+> 
+> On 5/7/2025 4:19 PM, Luca Weiss wrote:
+>> Hi Ziqi,
+>>
+>> On Wed May 7, 2025 at 9:44 AM CEST, Ziqi Chen wrote:
+>>> From: Can Guo <quic_cang@quicinc.com>
+>>>
+>>> On some platforms, the devfreq OPP freq may be different than the unipro
+>>> core clock freq. Implement ufs_qcom_opp_freq_to_clk_freq() and use it to
+>>> find the unipro core clk freq.
+>>>
+>>> Signed-off-by: Can Guo <quic_cang@quicinc.com>
+>>> Co-developed-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+>>> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+>>> ---
+>>>   drivers/ufs/host/ufs-qcom.c | 81 ++++++++++++++++++++++++++++++++-----
+>>>   1 file changed, 71 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+>>> index 7f10926100a5..804c8ccd8d03 100644
+>>> --- a/drivers/ufs/host/ufs-qcom.c
+>>> +++ b/drivers/ufs/host/ufs-qcom.c
+>>> +static unsigned long ufs_qcom_opp_freq_to_clk_freq(struct ufs_hba *hba,
+>>> +                                                   unsigned long freq, char *name)
+>>> +{
+>>> +    struct ufs_clk_info *clki;
+>>> +    struct dev_pm_opp *opp;
+>>> +    unsigned long clk_freq;
+>>> +    int idx = 0;
+>>> +    bool found = false;
+>>> +
+>>> +    opp = dev_pm_opp_find_freq_exact_indexed(hba->dev, freq, 0, true);
+>>> +    if (IS_ERR(opp)) {
+>>> +        dev_err(hba->dev, "Failed to find OPP for exact frequency %lu\n", freq);
+>>
+>> I'm hitting this print on bootup:
+>>
+>> [    0.512515] ufshcd-qcom 1d84000.ufshc: Failed to find OPP for exact frequency 18446744073709551615
+>> [    0.512571] ufshcd-qcom 1d84000.ufshc: Failed to find OPP for exact frequency 18446744073709551615
+>>
+>> Doesn't look like it's intended? The number is (2^64 - 1)
+>>
+> Yes, this is expected. During link startup, the frequency
+> ULONG_MAX will be passed to ufs_qcom_set_core_clk_ctrl() and
+> ufs_qcom_cfg_timer(). This frequency cannot be found through the API
+> dev_pm_opp_find_freq_exact_indexed(). Therefore, we handle the
+> frequency ULONG_MAX separately within Ufs_qcom_set_core_clk_ctrl()
+> and ufs_qcom_cfg_timer().
+> 
+> This print only be print twice during link startup. If you think print
+> such print during bootup is not make sense, I can improve the code and
+> update a new vwesion.
+
+I think just don't call ufs_qcom_opp_freq_to_clk_freq() if freq==ULONG_MAX
+
+Neil
+
+> 
+> BRs.
+> Ziqi
+> 
+>> Regards
+>> Luca
+>>
+> 
 > 
 
-Hi,
-
-bit of lagging behind, my bad.
-
-
-> To avoid this, return early from scmi_cpufreq_probe() if the probing
-> SCMI device isn't referenced by the CPU device phandles.
-> 
-> This keeps the existing assumption that all CPUs are controlled by a
-> single SCMI device.
-> 
-> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Changes in v3:
-> - Use dev_of_node(dev) instead of dev->of_node.
-> - Sanity check scmi_np.
-> - Pick up Reviewed-by from Peng.
-> - Link to v2: https://lore.kernel.org/all/20250421195206.3736128-1-quic_mdtipton@quicinc.com/
-> 
-> Changes in v2:
-> - Return -ENODEV instead of 0 for irrelevant devices.
-> - Link to v1: https://lore.kernel.org/all/20250411212941.1275572-1-quic_mdtipton@quicinc.com/
-> 
->  drivers/cpufreq/scmi-cpufreq.c | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> index 944e899eb1be..b63992de9fc7 100644
-> --- a/drivers/cpufreq/scmi-cpufreq.c
-> +++ b/drivers/cpufreq/scmi-cpufreq.c
-> @@ -393,6 +393,35 @@ static struct cpufreq_driver scmi_cpufreq_driver = {
->  	.set_boost	= cpufreq_boost_set_sw,
->  };
->  
-> +static bool scmi_dev_used_by_cpus(struct device *scmi_dev)
-> +{
-> +	struct device_node *scmi_np = dev_of_node(scmi_dev);
-> +	struct device_node *np;
-> +	struct device *cpu_dev;
-> +	int cpu, idx;
-> +
-> +	if (!scmi_np)
-> +		return false;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		cpu_dev = get_cpu_device(cpu);
-> +		if (!cpu_dev)
-> +			continue;
-> +
-> +		np = dev_of_node(cpu_dev);
-> +
-> +		if (of_parse_phandle(np, "clocks", 0) == scmi_np)
-
-Shouldn't this, on Success, be released by an of_node_put() (or, BETTER,
-by some OF-related cleanup.h magic...)
-
-> +			return true;
-> +
-> +		idx = of_property_match_string(np, "power-domain-names", "perf");
-> +
-> +		if (of_parse_phandle(np, "power-domains", idx) == scmi_np)
-
-Same.
-
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static int scmi_cpufreq_probe(struct scmi_device *sdev)
->  {
->  	int ret;
-> @@ -401,7 +430,7 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
->  
->  	handle = sdev->handle;
->  
-> -	if (!handle)
-> +	if (!handle || !scmi_dev_used_by_cpus(dev))
->  		return -ENODEV;
->  
->  	scmi_cpufreq_driver.driver_data = sdev;
-
-Other than the above glitches, LGTM.
-(I gave it a go on JUNO and some emulated setup..)
-
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-Tested-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Thanks,
-Cristian
 
