@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-638524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37176AAE71B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773CCAAE71E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344E69C1CC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675D09C24F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A642828BAAF;
-	Wed,  7 May 2025 16:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A55328C5A9;
+	Wed,  7 May 2025 16:48:18 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1CE19AD5C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278AA28C2CB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746636492; cv=none; b=eSGhZv+umwPq4CMuR9A2oCqR6ZlWA3F45s9z6T14SUre/xwHQKf8Fejk4BaiAbGc3cLtt2oA88eyuDdsR1exALEkSEzKOW4IYwxulBZTHn12M5vgnubCc0CzhcXaXTN99d6Vvszo3rdFHHXYYN5l9GEAAe6AaWVm/uBQinZ9Z28=
+	t=1746636497; cv=none; b=bTC9N3XHa/Druv1pPW4VUgHdNRxYVbwqE41yUtvOxpjD1GSyuO5Wd8vlTGbU3IYAEwP6nK7SBBZ+CwIgxl+pR9DBgVwdAV+y4Va7bxkGGlYpaG1YZdSoB8WEVNm7+Iu12ZQf9VaBBSweaRoc/oeuESdV61Ltf3Do1UytNT6NDfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746636492; c=relaxed/simple;
-	bh=LS8TmSOg3Gs2T4+wkm7KOtnzj+KPoFKvmIzZI/C6wmk=;
+	s=arc-20240116; t=1746636497; c=relaxed/simple;
+	bh=9GkcMa1y+mhEUVclN/fj0VWYGn75LzkiJYMzjkOde+M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W++RxZ7bc2jZPt5nB91jNsT+XbkWsMyWk8li4Cp6j+3uUDj43k22OKgnca/Gg+0MCahv8RZ+4ww1evPalhne096ubfjy5dIS/P2AE5tf3r25Kd4hsebmfn+Ysal8cLNcMK2YaZ2ycV6rRzs6fIwQnDwNtruCvjBJTSb8TCd6n78=
+	 In-Reply-To:Content-Type; b=seMWa/G9/TAgjA6e89kTlJl4Wj4gqxOwUj72sDYlLxG7cQGZZblLkMtdeY2T7aESwN8gi8SKnvZHkbTZGRa27A7zaDxP05QG2skAfYNUPrlPOglQBS8RszBV7sFJf6hv+vIvs9nw4d1u7457LYJ5CL3cFhQwbQY/efKxpybjUbA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A548816F2;
-	Wed,  7 May 2025 09:47:59 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D49F1CC4;
+	Wed,  7 May 2025 09:48:05 -0700 (PDT)
 Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9136F3F58B;
-	Wed,  7 May 2025 09:48:04 -0700 (PDT)
-Message-ID: <37db00d7-6839-447c-914f-31d2f4d8737d@arm.com>
-Date: Wed, 7 May 2025 17:48:02 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 377203F58B;
+	Wed,  7 May 2025 09:48:10 -0700 (PDT)
+Message-ID: <8e14da3a-7335-471f-aa4c-f871e67c9862@arm.com>
+Date: Wed, 7 May 2025 17:48:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,8 +41,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 04/27] x86/resctrl: resctrl_exit() teardown resctrl but
- leave the mount point
+Subject: Re: [PATCH v9 08/27] x86/resctrl: Expand the width of domid by
+ replacing mon_data_bits
 To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -57,102 +57,77 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
  Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+ Tony Luck <tony.luck@intel.com>
 References: <20250425173809.5529-1-james.morse@arm.com>
- <20250425173809.5529-5-james.morse@arm.com>
- <669c32d0-384a-4224-87db-f8af551fd6d3@intel.com>
+ <20250425173809.5529-9-james.morse@arm.com>
+ <ac19ac7e-e230-4310-9b70-b9d57ee4439e@intel.com>
 Content-Language: en-GB
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <669c32d0-384a-4224-87db-f8af551fd6d3@intel.com>
+In-Reply-To: <ac19ac7e-e230-4310-9b70-b9d57ee4439e@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi Reinette,
 
-On 01/05/2025 18:03, Reinette Chatre wrote:
+On 01/05/2025 18:04, Reinette Chatre wrote:
 > On 4/25/25 10:37 AM, James Morse wrote:
->> @@ -4432,23 +4445,42 @@ static bool __exit resctrl_online_domains_exist(void)
->>  	return false;
->>  }
->>  
->> -/*
->> +/**
-
-> Why make the switch to kernel-doc now? The benefit is not clear considering
-> resctrl_init() is not using kernel-doc.
-
-Just the ratcheting of 'add a comment' eventually leading to 'put it in kernel-doc'
-once the comment becomes sufficiently long.
-
-
->>   * resctrl_exit() - Remove the resctrl filesystem and free resources.
->>   *
->> + * Called by the architecture code in response to a fatal error.
->> + * Removes resctrl files and structures from kernfs to prevent further
->> + * configuration.
->> + *
->>   * When called by the architecture code, all CPUs and resctrl domains must be
->>   * offline. This ensures the limbo and overflow handlers are not scheduled to
->>   * run, meaning the data structures they access can be freed by
->>   * resctrl_mon_resource_exit().
->> + *
->> + * After this function has returned, the architecture code should return an
-
-> nit: "After this function has returned," -> "After resctrl_exit() returns, "
-
-Sure,
-
-> "should return an" -> "should return an error"?
-
-Fixed, thanks!
-
-
->> + * from all resctrl_arch_ functions that can do this.
->> + * resctrl_arch_get_resource() must continue to return struct rdt_resources
->> + * with the correct rid field to ensure the filesystem can be unmounted.
-
-> Is this to get through set_mba_sc() and the for_each_alloc_capable_rdt_resource(r)
-> loop in rdt_kill_sb() or is there something more subtle?
-
-The for_each walkers, which may also get used by the arch code. I don't have an example of
-where this would go wrong, but felt it was worth noting that resctrl_arch_get_resource()
-should not return NULL for all possible resources in this case - resctrl doesn't expect
-that for any entry in the enum. Adding that error handling was too noisy, given that today
-x86 has all the resources.
-
-Tony suggested that get changed to searching a list if the list of possible resources
-starts to grow.
-
-
->>   */
->>  void __exit resctrl_exit(void)
->>  {
->>  	cpus_read_lock();
->>  	WARN_ON_ONCE(resctrl_online_domains_exist());
->> +
->> +	mutex_lock(&rdtgroup_mutex);
->> +	resctrl_fs_teardown();
->> +	mutex_unlock(&rdtgroup_mutex);
->> +
->>  	cpus_read_unlock();
->>  
->>  	debugfs_remove_recursive(debugfs_resctrl);
->> +	debugfs_resctrl = NULL;
->>  	unregister_filesystem(&rdt_fs_type);
->> -	sysfs_remove_mount_point(fs_kobj, "resctrl");
->> +
->> +	/*
->> +	 * Do not remove the sysfs mount point added by resctrl_init() so that
->> +	 * it can be used to umount resctrl.
->> +	 */
->>  
->>  	resctrl_mon_resource_exit();
->>  }
+>> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>> index 0a0ac5f6112e..159972c3fe73 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>> @@ -667,7 +667,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+>>  	u32 resid, evtid, domid;
 > 
-> Looks good to me.
+> I was expecting this to look differently after reading 
+> https://lore.kernel.org/lkml/a9008c2d-e83d-4bc6-8197-0753666a7ec2@arm.com/
+
+I changed the structure, but missed the usage here.
 
 
-Thanks!
+> I believe u32 was used for resid, evtid, and domid because of how they
+> used to be initialized from the bitfield within the union. With the switch to
+> a struct that now has the proper types these can also use proper types.
+> 
+> 	enum resctrl_res_level resid;
+> 	enum resctrl_event_id evtid;
+> 	int domid;
+> 
+> This highlights that the incorrect type propagated from rdtgroup_mondata_show()
+> to mon_event_read() where its "int evtid" parameter should also be
+> "enum resctrl_event_id evtid", which is a good complement to patch #14
+> that fixes the type used by functions called by mon_event_read().
+
+Fixed now.
+
+[...]
+
+>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> index eccdfcb1a6f5..7ef5cf0c4d1d 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> @@ -45,6 +45,12 @@ LIST_HEAD(rdt_all_groups);
+
+>> +/**
+>> + * mon_get_kn_priv() - Get the mon_data priv data for this event.
+>> + *
+>> + * The same values are used across the mon_data directories of all control and
+>> + * monitor groups for the same event in the same domain. Keep a list of
+>> + * allocated structures and re-use an existing one with the same values for
+>> + * @rid, @domid, etc.
+>> + *
+>> + * @rid:    The resource id for the event file being created.
+>> + * @domid:  The domain id for the event file being created.
+>> + * @mevt:   The type of event file being created.
+>> + * @do_sum: Whether SNC summing monitors are being created.
+>> + */
+>> +static struct mon_data *mon_get_kn_priv(int rid, int domid,
+> 
+> "int rid" -> "enum resctrl_res_level rid"
+
+Fixed.
+
+
+Thanks,
 
 James
 
