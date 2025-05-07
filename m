@@ -1,126 +1,194 @@
-Return-Path: <linux-kernel+bounces-638150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A88FAAE1E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0610AAE1F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F2FB23000
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:04:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB0397A5FC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA3128F958;
-	Wed,  7 May 2025 13:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB45290BAD;
+	Wed,  7 May 2025 13:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+gt/9wC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0Zp/SH5"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D601028F53F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE52820AC
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626055; cv=none; b=sFyVkIVccdL8WjvnnWkTfd64p+NZcee20rps70O6DvMEi9tymi1N2WuXFfp5qUidu2ujWWjhNWKqfUBGIB+BDVxh66UBb2icERFkqyRKWZWY/hs8v976G3epLQdmTaB4qUeDf6bQ7XUfl/qGoorHKUHXpWHdWYDWhfASGl9acgY=
+	t=1746626078; cv=none; b=o0o2Y8YI5N2zqYIbbk+fXVrhS2jEcFcuZGhNPK/hnDjOr0S5Au+CsjI61E1hs5Q3QEkRXErv7UjYxJHIqoEkZ9F+86qJizfw/SaXz3t4FBJ8f+890T+Am6pj4UkkvdxrT9XWOZc1o9cPiwmo+uenNacPk4yiOuACg47OjEF1EJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626055; c=relaxed/simple;
-	bh=vze+17XceRJoOoG/svFEL6SEfqk9yNIzPuCH+KkVmEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feEBI99DvKXE3lWVugUOhP4iIdDCC2hhYPIObA9sdAt0qX2zn4mFhe6shO8prMyE091uEP0SSzmLLJi0qUCQE6GhBJJ34SZCcgu0IQV8uimqDBnYrBs463mLPnZYo18zVkxxyTOrGlgSHWYkC2nw7xPC+jgnOkJy1F6AAFA5DWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+gt/9wC; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746626054; x=1778162054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vze+17XceRJoOoG/svFEL6SEfqk9yNIzPuCH+KkVmEw=;
-  b=S+gt/9wC48c2PHB4wZ0u/XYbO/42ibD/siHpSslmIrzNciPTRJIifSPF
-   QM7zllZnQBXdYE2cQBgdRmUVX8sU0DyJ1zgH0Edb1odUYmKDrbON/lFeS
-   nbPsfERSz4/5L++a7d78sEELdGkvO5nlJRcLRt0EqCx8RvtZzThh0DfwP
-   OgH3sTp8mGWUmsLFVm0rGOHFSBAOQ696yKpYCHRvz/WYqIAz1h6W78hzT
-   p1YlJpnqlU7H9giMGFcEYV0z2ms2cWrC+zRQKbu6uGq7XFTb6smyEhkNx
-   8tEHEKaDxzUoOOV/yaS6yOPoT6BQgFaJlgcUftDatCxHzJVwrf6zTS1W1
-   w==;
-X-CSE-ConnectionGUID: UtLgApf+TvmmsCkW+vqV7A==
-X-CSE-MsgGUID: y7nbrrl7Q/e9Jt6UuWL6ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59753294"
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="59753294"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:54:14 -0700
-X-CSE-ConnectionGUID: fim/3lfsRaizCn/2Drq8kg==
-X-CSE-MsgGUID: 0E13cpX1SpSHJ4YXES9ypg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="140720499"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:54:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uCfDr-00000003kMP-1t2w;
-	Wed, 07 May 2025 16:54:07 +0300
-Date: Wed, 7 May 2025 16:54:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Ashish Kalra <ashish.kalra@amd.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Denis Mukhin <dmukhin@ford.com>
-Subject: Re: [PATCH v1 0/6] x86/boot: Enable earlyprintk on MMIO (8-bit)
-Message-ID: <aBtl_zoWwuVC6Gyi@smile.fi.intel.com>
-References: <20250502123145.4066635-1-andriy.shevchenko@linux.intel.com>
- <47a4795427d11c7c2d7713edda36d0c63c585c8d.camel@infradead.org>
+	s=arc-20240116; t=1746626078; c=relaxed/simple;
+	bh=itAt5ZYEvM4Nq+DHO9tQKvflggHXi84k7N5HQprzLdI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r6UDpfacYxErsgmZDHxzFjBA8dCOLH3S2oYUe2Ekdt4dygc7Nm1waNe4ijXwcRDF6IXBlVdUUGUz+FJ5tO/J1oGVCTKEs5oQ3AvElAk5JnMIz0rVGAc8jiivOuisjnTwb5AtNlcz3mlHX0sD6aP8ZiFNzI8YPfzLaVHJxBj3ugU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0Zp/SH5; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso4687960f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746626075; x=1747230875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ska3QXhckdX3yExfYXkXUCA/LUNKWcEWdZm2KwgYfJw=;
+        b=B0Zp/SH5V3y6WEIItgsnZGcemdWtI7HRqR/fQUptcGRmEBPlFQBilLB7NQ4s21XgLO
+         QEuLo5+AZDXuNmUcfpSGLHvv2z9RGhntaZKJioCExndWaOiKL6wxi571ZE1XpDT4zL+1
+         8iJo8DCt+qI1VrHvPF/9tmv0fFjfYyr4zWOzAH/r/NJdvwmPUM+1rwVgnk0HZPhEj1Ge
+         HBV3gQeSlPaGJux+69HySfb4AirP8v92MIsHcHtBm++LyoDByBxsFSnfS1X/+IEzSQ4A
+         7+HSibJnfng+0LOSix/sHyqypaFZXJY6mwTA8K2bwEseTGXFhcJJQBZspzktJry6kqr1
+         kkvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746626075; x=1747230875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ska3QXhckdX3yExfYXkXUCA/LUNKWcEWdZm2KwgYfJw=;
+        b=P6xSK7a0IOBVhlwL6UNfxXivS+FCCIW1QdhD7uQbf3ZqfoZWrqgigkcGu8zn/li6sn
+         nEoDrCrga2BcHPezWf1VqKtLodoyMIttkG2z1R7fIUq3Lgapf4JvNMWEsEL4DCSDPcft
+         MYCfh+Ox9Y5pSssyNOqyRdlcazahSGKA1C0+vosILBQWzvFY3wLdGo+uHSde6u3ow3GX
+         db/Nw1MSzJxAkWg+Uwdek+KWJsUW8oMXQx0vmV+G54nRkadFzljFsYHHd5TZxHz/E2jm
+         WlZzyfwy3Y15mWEIlZOamzt65lSASCWtrucHd33cFHtKclehC5xRiVyoI4QNenzWQcZg
+         khBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLMzpsTkYy5AbWclCF9/MifXKknei8LR1EeDq0LpLL2l+RbMRECOKBP+3E4W3AXi2VVKC0sx78Z/bNPfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8WxOUeCPEH9a5akwC5h2+GcQjj7VMUxz6MUIASW/egIly74ID
+	n2VdBWa1S5XjC1YbGsM2MDdRny7yMnAlyvChI/lHXVBCjAbJl1hJ
+X-Gm-Gg: ASbGnctGgaiDreHvwFkgH8Gnzw3Vk/S37ZegJUxnBR7YtjfGAw21HV02m9w1CYZF/XT
+	ptCMwByZ3OwaVQ+tYIXTHgiQf55o5t8hC+bdqkOmJ6IdQ4QAKfuYboCDC2RKG+HLLzC9NbrWMTn
+	NjLojp7ymBosHRx87XJfOXAjsPn4oljyCEggGX3Qngzr4CvUr5RcVsEnW92h/BASkfJJzrEabLB
+	Ij7toJI6emYBnZPELlp+l8cRYUEgILTOLge1eJ53o1VNge9t2lWQPBTgM/AyHchK2xQa/12cKfO
+	36SOCh5W7xNlLe9IjmJPbAccP19rMDecsxZul3EGtg==
+X-Google-Smtp-Source: AGHT+IExbIFQjaVmp5loFH6GIiYgPa+YqsZli/oD2AgI0l1LNnu//2mp8pgD7S/LhBOcaNIASVqiUw==
+X-Received: by 2002:a5d:64ab:0:b0:3a0:b6b7:d06b with SMTP id ffacd0b85a97d-3a0b6b7d327mr1662314f8f.28.1746626075202;
+        Wed, 07 May 2025 06:54:35 -0700 (PDT)
+Received: from fedora.. ([94.73.35.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f1eesm1894295e9.9.2025.05.07.06.54.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:54:34 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v5 00/16] drm/vkms: Add configfs support
+Date: Wed,  7 May 2025 15:54:15 +0200
+Message-ID: <20250507135431.53907-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47a4795427d11c7c2d7713edda36d0c63c585c8d.camel@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 06, 2025 at 12:38:21PM -0700, David Woodhouse wrote:
-> On Fri, 2025-05-02 at 15:29 +0300, Andy Shevchenko wrote:
-> > Some of the platforms may have no legacy COM ports and only provide
-> > an MMIO accessible UART. Add support for such to earlyprintk for the
-> > boot phase of the kernel.
-> 
-> Aha, I understand now... you've added this *only* for the boot code,
-> and haven't added the corresponding support to the in-kernel
-> earlyprintk, in arch/x86/kernel/early_printk.c
+Hi everyone,
 
-Haven't added yet. This is part 1 only.
+This series allow to configure one or more VKMS instances without having
+to reload the driver using configfs.
 
-> The latter does already support MMIO but it only supports a 32-bit
-> stride, not 8-bit.
-> 
-> Please could you make that consistent, and ensure the earlyprintk=
-> arguments function the same for both phases? I'm happy to add the
-> kexec-debug parts on top of *that*.
+The series is structured in 3 blocks:
 
-It's not as easy as it looks like. I had done in the past the comparison table
-of what we have between all early*=... for serial consoles and it all so
-inconsistent to begin with. A big work needs to be fulfilled in order to put
-this mess in order. Hence this is just the first step.
+  - Patches 1..11: Basic device configuration. For simplicity, I kept the
+    available options as minimal as possible.
 
-> It would be really helpful if we could test this in QEMU; it shouldn't
-> be that hard to make it provide a 16550 on MMIO, along the lines of the
-> one-line hack I posted yesterday.
+  - Patches 12 and 13: New option to skip the default device creation and to-do
+    cleanup.
 
-I understand. But if no go for this series, I don't won't to spend time on
-the next part.
+  - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
+    part of the minimal set of options, but I included in this series so it can
+    be used as a template/example of how new configurations can be added.
 
-In any case, thanks for looking into this.
+The process of configuring a VKMS device is documented in "vkms.rst".
 
+Finally, the code is thoroughly tested by a collection of IGT tests [1].
+
+Best wishes,
+José Expósito
+
+[1] https://lists.freedesktop.org/archives/igt-dev/2025-February/086071.html
+
+Changes in v5:
+
+  - Added Reviewed-by tags, thanks Louis!
+  - Rebased on top of drm-misc-next
+  - Link to v4: https://lore.kernel.org/dri-devel/20250407081425.6420-1-jose.exposito89@gmail.com/
+
+Changes in v4:
+
+  - Since Louis and I worked on this together, set him as the author of some of
+    the patches and me as co-developed-by to reflect this joint effort.
+  - Rebased on top of drm-misc-next
+  - Link to v3: https://lore.kernel.org/all/20250307163353.5896-1-jose.exposito89@gmail.com/
+
+Changes in v3:
+
+  - Applied review comments by Louis Chauvet: (thanks!!)
+    - Use scoped_guard() instead of guard(mutex)(...)
+    - Fix a use-after-free error in the connector hot-plug code
+  - Rebased on top of drm-misc-next
+  - Link to v2: https://lore.kernel.org/all/20250225175936.7223-1-jose.exposito89@gmail.com/
+
+Changes in v2:
+
+  - Applied review comments by Louis Chauvet:
+    - Use guard(mutex)(...) instead of lock/unlock
+    - Return -EBUSY when trying to modify a enabled device
+    - Move the connector hot-plug related patches to the end
+  - Rebased on top of drm-misc-next
+  - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
+
+José Expósito (6):
+  drm/vkms: Expose device creation and destruction
+  drm/vkms: Allow to configure the default device creation
+  drm/vkms: Remove completed task from the TODO list
+  drm/vkms: Allow to configure connector status
+  drm/vkms: Allow to update the connector status
+  drm/vkms: Allow to configure connector status via configfs
+
+Louis Chauvet (10):
+  drm/vkms: Add and remove VKMS instances via configfs
+  drm/vkms: Allow to configure multiple planes via configfs
+  drm/vkms: Allow to configure the plane type via configfs
+  drm/vkms: Allow to configure multiple CRTCs via configfs
+  drm/vkms: Allow to configure CRTC writeback support via configfs
+  drm/vkms: Allow to attach planes and CRTCs via configfs
+  drm/vkms: Allow to configure multiple encoders via configfs
+  drm/vkms: Allow to attach encoders and CRTCs via configfs
+  drm/vkms: Allow to configure multiple connectors via configfs
+  drm/vkms: Allow to attach connectors and encoders via configfs
+
+ Documentation/gpu/vkms.rst                    | 100 ++-
+ drivers/gpu/drm/vkms/Kconfig                  |   1 +
+ drivers/gpu/drm/vkms/Makefile                 |   3 +-
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+ drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+ drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+ drivers/gpu/drm/vkms/vkms_configfs.c          | 833 ++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+ drivers/gpu/drm/vkms/vkms_connector.c         |  35 +
+ drivers/gpu/drm/vkms/vkms_connector.h         |   9 +
+ drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
+ 12 files changed, 1072 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
+
+
+base-commit: a6c0a91ccb257eaec2aee080df06863ce7601315
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
