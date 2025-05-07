@@ -1,172 +1,248 @@
-Return-Path: <linux-kernel+bounces-637399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E634BAAD8F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:51:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6248AAD8BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0087B3A93A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:47:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D1457ACE8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34B4221FB7;
-	Wed,  7 May 2025 07:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF7722D9EB;
+	Wed,  7 May 2025 07:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aXda1QDO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Nl4DgQbw"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7951C22D9F2;
-	Wed,  7 May 2025 07:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746603732; cv=none; b=REKS2d6gLbGjdzbZ1uUCS3hh5RFJB5vmw9PcGhEbOq3eM5mWIX/ADbb7LjZ9m7EK0CEav8sGh6VhnD+nMbnvbnt80/JtHtnNw93PlpiFXDNXD/WzRf7Al4SHOtrW1oMKKBnFmSAqIsUx0RhA1PZ5eyeJzMd8OZVlqzS8gVDZc2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746603732; c=relaxed/simple;
-	bh=IwzhpHikuKvOMW5dbENCNY+S4k9r5Kg51FWPS36yDKk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=mhT7REKU5C7iPmU95Yb0d6eBod5dyy0V0jRbjFgqvRkTShjhECOLLbJpqw05LbzhBP//th04m0j2RL51wyyJyny7Lm3nl0/8gkmlisc3dfvslzJVVsi7BtiXY2ZhwDuOqOn5JJU6t7Z6Tgo6NVjvMITxv8ClVjunVBzVjaIWeus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aXda1QDO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471HOm0025471;
-	Wed, 7 May 2025 07:42:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jF2joQfD46QXPfh+MX6feeOx8IOFOfj4RFSDsj4k46s=; b=aXda1QDObOoZ+1xy
-	e9TLEq13rE81uGOrX8ZfG2mNTZ0gvocxPyIKrevVnU8qbsDHw2eJi99/7CJWnNlJ
-	LzWCoPBQiCw8tQSAmuvYa6GZOKYZa7c3ltOBKQak9mZdQmmhBewSIeJhJ7Vbf2AA
-	/W3EpmD63MSN6/zd1WLdFX9wFSifVCqJwY5xxT6a9dAmnXTSHMzaXkxVQfAgB2B2
-	bPbEWfqS5ltwxLOQH/W3AYsEkTQ6fPHXKtbiqmo4VSiNPv7q/FEEJ9TMVIl2jECr
-	0Mg6bJRjojvbjhoubGROolq0dgMDk3ftI9Uy7/IMErquNgyRH4/nSSI3LiS8HXgW
-	1oX+HA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5w3cuf6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 07:42:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5477g7Ju002521
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 May 2025 07:42:07 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 7 May 2025 00:42:03 -0700
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Wed, 7 May 2025 13:09:56 +0530
-Subject: [PATCH v4 25/25] media: iris: Add codec specific check for VP9
- decoder drain handling
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1844222D780;
+	Wed,  7 May 2025 07:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746603730; cv=fail; b=MLNtBmpK1p2CnpIphAsLBuq49hlzpzp3rMr3Mvl9ZLX9qlNNGipwdQym287Dawd5jxq6SsCGaBPe4Ezw4YvQWhUDYMOiRAVQZNQPjbKZ0qPQ0GiSmZizkzmLXRfSQF5YRwAO8oxPATuywL9rzueEiiJiM2Dtg34ajm/BAOLy2eg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746603730; c=relaxed/simple;
+	bh=os3Is8MChh0V6GJttrY3/WVs1LO7eNDjZkRUyuBpu58=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qhuEHUHV20tEVbpNkJVU90Gw88q+8Q425K7U/KRdXK25uzSHyMlG7slK67Ne9Q0FGqccOwHD4raTzy7+myoM7h6QanzK+IjgMQrezLmL8m9XXDDvg8WYXHL8Zrbsm9HhV5XXg8relboA7jvIoNwcP5DSvr7bCB7iow9rPt0e9b4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Nl4DgQbw; arc=fail smtp.client-ip=40.107.92.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mycv2iQnS0HIoPzFQozYvtAVKXgY8xyNXZuh61qmFbT6shYFljuzdlrFEMNa5Ugn2ur2JFDgZSc5ztzO3B7kcFQzwLnk1QwKstozS36kTBkmORuRZMmrvcc3UP3UWJIqOWkO1zYAqtbfLReJJSqE49SrKvNyvzsF7wWeZa9NxAb7qMcBRkIA9HlG969JSdmE8HKDpKCiz2KTPovmp7CCzV3yoZ4JX/nfMUTlAdmDAzs7D0OjJNOHBvpZFepsswSrxYH17xouayvIpDRJeVHi/DiMXfsW8gAY2zKB4zao08KC2557hMSUbOK5k9tBrGDIFEKGyHAeC6/xNJUGMwdQrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SFmAdaqUJDVR9Ju5NFWxBHBuqOnnWh8nZe4rQupz6Zs=;
+ b=YaLTKKC7ZqkRhQqA+a+gaOeI5k2Qew/h41vSrrRZnRZsOmYQft1IaL9MW14ClDkHcw/+Npvam4K1EVYasZCaAjWGuqOKJSNhSecrdvb6MsAxGf1nRfRWvs9ZFhHHJ1TJ7/h17hqgT8bYnmy/2ZtJoC8QacBxSZWWsQ5ExtkyNp4x5E8GVwwnP2uiGI7Oqaxew2aj8BhxZzfCD12OH5VhYAXJR0RKUCrdEfldGuWBV3jn3/ezKukwxDxR9+cARLSIlkda2LUq1t5JzSOFU2jNyAEARugYYQJ7uODqUAJtKBONveNfe2GqfSlvTVZtlxjGn97YYW3msrw69eYobz9XbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SFmAdaqUJDVR9Ju5NFWxBHBuqOnnWh8nZe4rQupz6Zs=;
+ b=Nl4DgQbwoSGafJjy1knjXi+c4/frssBJ/tF4eMekSQf2M9jEQtCCuQBLxVq5QcAeaPRAovDTOUNSQSjXixID9H2r+T4sZA7HqcGY23L6KgLCS6+JLk9iBq1au7+uTBMvBUgZ8lmD52TRij0frlbxlvix6uwPK5026M8rZTas2H0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ DM4PR12MB6469.namprd12.prod.outlook.com (2603:10b6:8:b6::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8699.23; Wed, 7 May 2025 07:41:59 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8699.019; Wed, 7 May 2025
+ 07:41:59 +0000
+Message-ID: <eb0d3629-8663-45e9-b929-0c6edff31291@amd.com>
+Date: Wed, 7 May 2025 13:11:43 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/23] iommufd/viommu: Add IOMMUFD_CMD_VQUEUE_ALLOC
+ ioctl
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com, corbet@lwn.net,
+ will@kernel.org, bagasdotme@gmail.com, robin.murphy@arm.com,
+ joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
+ jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
+ nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
+ mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
+ iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+References: <cover.1746139811.git.nicolinc@nvidia.com>
+ <1ef2e242ee1d844f823581a5365823d78c67ec6a.1746139811.git.nicolinc@nvidia.com>
+ <6ffe5249-b429-435e-a780-ee90aeb3f0da@amd.com>
+ <20250506120114.GV2260709@nvidia.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20250506120114.GV2260709@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4PR01CA0095.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:2af::10) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250507-video-iris-hevc-vp9-v4-25-58db3660ac61@quicinc.com>
-References: <20250507-video-iris-hevc-vp9-v4-0-58db3660ac61@quicinc.com>
-In-Reply-To: <20250507-video-iris-hevc-vp9-v4-0-58db3660ac61@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746603611; l=2248;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=IwzhpHikuKvOMW5dbENCNY+S4k9r5Kg51FWPS36yDKk=;
- b=C8MCPcFEv0v2eBQ7rZyqu/8jAWov22vptV1XjLB5JHBhxyAcRPXW/BALJUoyQ1fw0aqFtdcvu
- g3orpTNg9RuAn2PXzb36fAY7fKrSyON+rFpVJjfVkiHKqQVoiFU4V92
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA3MCBTYWx0ZWRfX7GbUf9I/ebk8
- xjEkvY+C4BZb8jmbcyRIJgeEJSmt1w3Yy9y2Z2rUyiOrbfloLRKsRS3zuBmg5sK8A60Mb80CceN
- vD462QX/jvFlrc4qsYOr4srv068cBxxGwqbWvsjn/P9IOYZ9Cx83tqTPDGRJ6CAoud6iRZKwbhI
- Plu3fw3NRefPj6gLHL5WdkXcBJ5F+4p4qJQUxoJ9LLjGJ0Jl6WaxRVA5RJW+c7N4m8nbO+/hlGT
- rxx8OXxDLzunR3qHBaYGS2AljrD67R44zD2cXxAWPFDygRnWErzGbVH2Q3Hcs8wc2XSLscIBM1Z
- z4hTsju/R3+2MAaL8+s8xcOdB1NQAowehcqKdpuqP2nf6323EU3vj1SHiUIaLRmHks1bgajorp7
- fd+kAijkmH2elXg9jOpcUBWnwiRrzWW9OVNaH3405Z7mP7irM4/Hw6wnz0QcpELq5+dpy4uc
-X-Proofpoint-GUID: oeWSfgd4DxKsXqFH72XbmwJiZgkehtal
-X-Proofpoint-ORIG-GUID: oeWSfgd4DxKsXqFH72XbmwJiZgkehtal
-X-Authority-Analysis: v=2.4 cv=W+s4VQWk c=1 sm=1 tr=0 ts=681b0ed0 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=4-NhuqtsghaPV3yzw-AA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 clxscore=1015 adultscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505070070
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DM4PR12MB6469:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ae513f0-67b3-4fc2-026b-08dd8d3aa5cc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z3RBYkVhM2MxVHRrYWh5dndTVWZIZ2tpbkhXNVNDc3FUUE5iZ0pYOVZSUkUr?=
+ =?utf-8?B?WFJmTE9KcHBjNXMvQWVVY21STkcrQXhFbTNqWHFaU0I4ZzF5OFJsb2xrS2Rm?=
+ =?utf-8?B?eEt0Sm1SRXNDck8zWlNFL1hBMHpSZDF0bnZEMXV1LzVzaTRVVzlrMTBiNmF5?=
+ =?utf-8?B?SVFSQ3hrU05tbHh3V1d1TXNJYjZUS1FqNDJGNzZldlNiZTJYQjZyQWp2R0Vq?=
+ =?utf-8?B?NHM3cDFzc3c4YXp0UUtqRy9BNFZoMGtVRVEvWWFoZHlKU1A1VzVDTit1c08y?=
+ =?utf-8?B?MWVZWlJZK0ROU2NpcFU0RzFyRmw5Z2doSDE2a1E1TVl4YkNhU0dZeTdJS1JC?=
+ =?utf-8?B?TEhDbG83bGx1Uk03UG9ITmMvRHorYkpIbUZwaU9BazA1NFlPWWN0OTNBRW5p?=
+ =?utf-8?B?aU1qTWF5L0lRc2YvVEppK1VaTkxMaWxIOE01MlJOTVhOdVVRVlJHam1RbW43?=
+ =?utf-8?B?TTg1ZGRUb1M3MjI5RFVGQVBIWTB1NFRmNHYwckNDR1NjWmpSdzBKR1dtU25U?=
+ =?utf-8?B?TnN6Ylk1TlZHTWJkenRiTHRzV3MxNlpvSnF5UWV3c0lMTEc1WnF6a0d5N0hs?=
+ =?utf-8?B?TjJnWXJwVnNUZUlLMVRRaDBFeEpJa2ZsdncwOWVkNEw4cDZpS25yaDdXaVFM?=
+ =?utf-8?B?emJaU0lGbUJFbnQ0cXVYNWR4Y0RRSi83V1EwbzlYMHQ3S0VRTUxYOHd2N1BE?=
+ =?utf-8?B?WW5hdjkzSGNoNGM5aVkzYjlpV20wVFg5UDJXTm9YRG5IVzV0OUJJb3QzemtD?=
+ =?utf-8?B?VGJHaHlmcEUwNENDYnBRZTVPdzhYNmhrNHpLcXliYkNpL29DL0ZUU3dWNkJS?=
+ =?utf-8?B?VDNDN1dJQUJQRlNVUGdMbFVRLzMvRUpoWHV6N1FmN3p3UlZqc2xldjk3WTk4?=
+ =?utf-8?B?N2VteW9YODhWam94UnROZlVaYkJEUVUwcmVlN2JDRjlMMUlVNXZUL1BHMkx1?=
+ =?utf-8?B?WWlrNnpPQmFmT05WdGJTQ05FT3gvN3dFaXdqTnRVa2lEajhzcVZPQWxBenda?=
+ =?utf-8?B?eWZobmF1NGhzQjFiNzFHY0FHdEZ2Yjh4MldFNTQwN1NIQ0RjQW1hZDRTZUh1?=
+ =?utf-8?B?RVd3dlhCaUwvN0F0NG4rN3MvelN4QXlFTVk0b2NEb1Q5TXJxK1pmSmtVeElJ?=
+ =?utf-8?B?Ykw1akQwVlZKREpQZTZFd0t3dlpkV0VmczJzOEk4RFEwWm1JMVZtcTFlcGlC?=
+ =?utf-8?B?cm9rbTZzbThJVFBzcUFWRmk0U2tTcVdpZDBXVjRYOWRzR1dtRVRMZy9WZGRU?=
+ =?utf-8?B?L3g3dlJQbEt0TnMwS2J0aVZRWkdGNEc5aGZUYitHMFM1L21CU3dXMXRzNzMz?=
+ =?utf-8?B?NVdJcy9RUy9HVGtFcXdvd3pFcHVTZjZXaFVpUnJYT3RVTklJdmlOSVZ4NHVH?=
+ =?utf-8?B?NGRrc1hYTjB0YnhYRDN4U0VQcE9VYXUraEp6OVRQTjRJV1Y3WkVaN1NXbVc5?=
+ =?utf-8?B?aGZ2QVRUOXZiMHZxWSthUFc0Mzg4aXlxYUFDd3Mza1N1cWZNUG5HVkl1UTIw?=
+ =?utf-8?B?SGRTUnZZbXYwQjRsbW1ia2FEaUNEcEdWdUlNcTN0RHZHS0RaOUVMZWJ1Q0RU?=
+ =?utf-8?B?WGtXK0FTVGRwWEVqSUFFTUV3Vk8yQ0lwMm85eWxGZUJJbkpIVllxRy9VN0VE?=
+ =?utf-8?B?NmEwaWt0QVZ4VTlielhWK3k5b1ExYTEvN2NsSHlhdGcyOHord1NIQk9DN0FI?=
+ =?utf-8?B?L1R4RTJyanRMUzA3STlMSFJ3ZFl2bnVBdWJtVENHbE1CSlRHN3N1TzB2ZjZ1?=
+ =?utf-8?B?b2UyUTlWQXZZWUxJa2RKejE5YzJWRUVMUURuR2xWbGRTWi90YWJ2b0o0Skdt?=
+ =?utf-8?B?Qi9FbWU0U2M4Y2xxY2krSkNtZFJrK3BJbjFHaUlWNVZiZ0hsSndrNFRDdlVG?=
+ =?utf-8?B?cXQyV3QzZ0FyTWErUW5lRUxiTnQ0MDFadnFVekY4b0xpSUNBV2xBYS9BaDA3?=
+ =?utf-8?Q?9HV+wPhXXr4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NjZaT0ZlSys0ZzlYYmRVMXlVdmpMcW1lWm90Y24wWnZpS0h1YUdLb0IxYjRj?=
+ =?utf-8?B?NUIrTDV5aDhCZlFFdUFrR0djRzNYWTFVNjhEM0dUOGM0M1FMeHlibGtBOTA0?=
+ =?utf-8?B?VTB6dHRGblZidlJDQnBTTzRTdDNwdWlzV0U3dm1FNnlvYmZBK0UwRXhLMjVs?=
+ =?utf-8?B?MGE3Nm5NbEYvcERUR2h1bmVnRnprWmhrT2hQeDB3eHlPN0FmQW1vQWpsN1JJ?=
+ =?utf-8?B?SEg3dTkxdTA2dUE3YnlqdWFGOG15bWpNWHNwdnppaURGdlAraFBjMWhJdzNG?=
+ =?utf-8?B?V1Iwb2E3Y3oyck5mT21WMDN4di92L3duYjNIMTVQTWU1U3Y5RVMrMThGOEpw?=
+ =?utf-8?B?M1FudWY3QnRickpaRE1yR0hBT1c0U0ZwUjdIU2hkMHpKZXdCTVNyWHRJUVBt?=
+ =?utf-8?B?a0V0SW53NW04dWVsSlpCb3Jwcm1JNm8xSDBDQmh1RlNqU2Z1eE5EUVF0VlVN?=
+ =?utf-8?B?Y1F4K1ZOZUxOTjM0ZGpOL2RaZEw2UW8zeTdRNjQxVGtlQ1h3elVyZFdOSWZ1?=
+ =?utf-8?B?U2p4ZTB4aXgyVnBUb3RBMmNVSnF3MkMyRzc1SHZ4M2dxSTY5ZXZtNndTeFRO?=
+ =?utf-8?B?bWtNbklEc2NETmduaS9EdEJ0ZG56QTN3Um1NV0lKK2phbGJNbzVZczZnYjVW?=
+ =?utf-8?B?dmJKNlBwR3hRaXlaVGFBcmphVmRIMFJKNllYclM4dGk2NVVvVzhiMG9lUXlu?=
+ =?utf-8?B?cEk3UGVPTnBKSVZGcmlUempMY0V1SzZYZ3pxKzNCbjYwdnNSSzdjSFd6Q3JJ?=
+ =?utf-8?B?ZGp5ZzNMTmpuQXFCUlBWYUNYUkNYaS9HRXAzMmU5MlJQeGlBZFNEd2tsdTVp?=
+ =?utf-8?B?KzBKSlMzQnBrTUZHYmt5WDBGYjBWS0lRcTJiRGFQUzU3ck9rbkJRNnFDNE5T?=
+ =?utf-8?B?ZS9tRmVFTzYrRFUyTlc4MmZCaFN0VGo3OHpDWldYSFlaRWZFZFRQYlhyNUwx?=
+ =?utf-8?B?ZTBMb1BaWUhBSHBCMDhFV1FnWTR1NDFTaGR6cW54eTRhZnpFVjFvZm1wTjFN?=
+ =?utf-8?B?NjJabUhob0RtQmVyeDlMcU5reUtVeUJ2RFBhYUpHcWVtaUYwdkpmbytJdjVj?=
+ =?utf-8?B?bk9sWlJ6d3hSK0pFUVRxVCtDRUF5bGhndDgxdmthQkpFRmJ5YkJCUGVjUFdB?=
+ =?utf-8?B?SEN6Z3BiREVZcFV2SDc4V2FGR2RMK1hucWRoTGplM2ZDTThMNXhMQnQrVUFa?=
+ =?utf-8?B?U1pqYVoxUzl0OGxDa1NhTjl3aEdxMUxMTUtNYXJqRzd4cnhuMjFYbHlEOEl5?=
+ =?utf-8?B?V2s4TmVWTmJTT1d0bzJwNEZVNVh5dDM3UE9acGE3NXBZTk1MWVdpNTdiUC8w?=
+ =?utf-8?B?Qm04WjZ6SXJVNEtUdnpQSTA1elkvb2loODh1akQwcjNxYjVEcFp0QW1CWkQ1?=
+ =?utf-8?B?YVpUeHhnNE5KTVR6ZWRsK1NHeVVYN3hGWHdTV1o5SkZuK3hFOCtFKzZuUmVE?=
+ =?utf-8?B?cmRxVVpieVJlTFprUWdHL0wwUncxM21KZE5JZzJSMEprNEtWZlRBMXllNWpF?=
+ =?utf-8?B?eGNJbExLK3RMZjVKMmZrejBXbDR5VktReldlVURjYmxCbEplOE1OWUJkS2o0?=
+ =?utf-8?B?TGl3SjMwejlYMEI3eEFIclpjS09IejFyK0UvQTVJWnluVE55TzNrVDhhcERn?=
+ =?utf-8?B?ZzNqajYrUkNtR1RqUGV6YURaMUNqd3lwUDl4b1FnTUhsUWdLSjdZQXFWVlIr?=
+ =?utf-8?B?elVtMHprb0hqWjBwR1NDbkUvc2VMUHpidGhLN3dwWFdOdE1Senk0OGNqamQx?=
+ =?utf-8?B?R1N0alAvTVdSd0xVSHpHbkFYQmtNdlhIOFFtYlBIVzNRTW9HM0M4RzJLV1dC?=
+ =?utf-8?B?OVVDblFxWnV4dndWOVpqaDd1MWNjR3pBTk4rNUhlUkMxQU9BN0Q1QXBqdVFh?=
+ =?utf-8?B?RUNWVXh6TjFwREdnYkVBdENWa211ZUkzYktDMmlTL2hYa05FMUo2endzSU1j?=
+ =?utf-8?B?alRzSmppYURUS0t2dXFWVEZtemdzWkpEMlI3Y3Evb0h3NGZSMkJkL3UvNzFy?=
+ =?utf-8?B?b1ZlSWhBQUVnMFNqUlUwZjRhRHN4YjJkNGVxUDJrQ2lLQ0F2ekhpeTJwdWVp?=
+ =?utf-8?B?TTI5TFFuYUlzS0JXYWRXdExtcnprNmMzTlNVQ2FGK1lSNXEza1JLSEsxNVNI?=
+ =?utf-8?Q?19x3pQ+FmJGxqmQRgCotQ0Bdb?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ae513f0-67b3-4fc2-026b-08dd8d3aa5cc
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 07:41:58.9777
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z5brLI0CWAgwTSlhr/t09SzcSmXNftQ4lIXrdFyO0guoRzT4fXAOHsMZmbY/sinZrVLUrJ4Z7xGrnyCPqylhBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6469
 
-Add a codec specific for the VP9 decoder to ensure that a non-null
-buffer is sent to the firmware during drain. The firmware enforces a
-check for VP9 decoder that the number of buffers queued and dequeued on
-the output plane should match. When a null buffer is sent, the firmware
-does not return a response for it, leading to a count mismatch and an
-assertion failure from the firmware.
+Hi Jason,
 
-Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c  | 2 ++
- drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c | 4 ++++
- 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-index 2e3f5a6b2ff11f273aecc4bae28399c260229af0..5fc30d54af4dc34616cfd08813940aa0b7044a20 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-@@ -401,6 +401,8 @@ static int iris_hfi_gen1_session_drain(struct iris_inst *inst, u32 plane)
- 	ip_pkt.shdr.hdr.pkt_type = HFI_CMD_SESSION_EMPTY_BUFFER;
- 	ip_pkt.shdr.session_id = inst->session_id;
- 	ip_pkt.flags = HFI_BUFFERFLAG_EOS;
-+	if (inst->codec == V4L2_PIX_FMT_VP9)
-+		ip_pkt.packet_buffer = 0xdeadb000;
- 
- 	return iris_hfi_queue_cmd_write(inst->core, &ip_pkt, ip_pkt.shdr.hdr.size);
- }
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-index 926acee1f48cc4fa8a4ebb3d83f51a45549b59a0..8d1ce8a19a45ebb2b29457e0fef7d72c1c0d9785 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-@@ -348,6 +348,10 @@ static void iris_hfi_gen1_session_etb_done(struct iris_inst *inst, void *packet)
- 	struct iris_buffer *buf = NULL;
- 	bool found = false;
- 
-+	/* EOS buffer sent via drain won't be in v4l2 buffer list */
-+	if (pkt->packet_buffer == 0xdeadb000)
-+		return;
-+
- 	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, m2m_buffer, n) {
- 		buf = to_iris_buffer(&m2m_buffer->vb);
- 		if (buf->index == pkt->input_tag) {
+On 5/6/2025 5:31 PM, Jason Gunthorpe wrote:
+> On Tue, May 06, 2025 at 02:45:00PM +0530, Vasant Hegde wrote:
+>>> +/**
+>>> + * struct iommu_vqueue_alloc - ioctl(IOMMU_VQUEUE_ALLOC)
+>>> + * @size: sizeof(struct iommu_vqueue_alloc)
+>>> + * @flags: Must be 0
+>>> + * @viommu_id: Virtual IOMMU ID to associate the virtual queue with
+>>> + * @type: One of enum iommu_vqueue_type
+>>> + * @index: The logical index to the virtual queue per virtual IOMMU, for a multi
+>>> + *         queue model
+>>> + * @out_vqueue_id: The ID of the new virtual queue
+>>> + * @addr: Base address of the queue memory in the guest physical address space
+>>> + * @length: Length of the queue memory in the guest physical address space
+>>> + *
+>>> + * Allocate a virtual queue object for a vIOMMU-specific HW-acceleration feature
+>>> + * that allows HW to access a guest queue memory described by @addr and @length.
+>>> + * It's suggested for VMM to back the queue memory using a single huge page with
+>>> + * a proper alignment for its contiguity in the host physical address space. The
+>>> + * call will fail, if the queue memory is not contiguous in the physical address
+>>> + * space. Upon success, its underlying physical pages will be pinned to prevent
+>>> + * VMM from unmapping them in the IOAS, until the virtual queue gets destroyed.
+>>> + *
+>>> + * A vIOMMU can allocate multiple queues, but it must use a different @index to
+>>> + * separate each allocation, e.g. VCMDQ0, VCMDQ1, ...
+>>
+>> This will handle multiple queues. But AMD vIOMMU needs to comunicate certain
+>> control bit setting which is not related to buffers like "Completion wait
+>> interrupt".
+>>
+>> How do we handle that? extend iommu_queue_alloc() or have different interface?
+> 
+> Do you need a modify queue operation?
 
--- 
-2.34.1
+We have two types of operations. One that impacts the queue, other set of bits
+which doesn't operate on qeueue.
+
+ex: Event log buffer
+  - We configure "MMIO Offset 0010h Event Log Base Address Register" with Base
+address and size
+
+  -  MMIO Offset 0018h IOMMU Control Register
+     EventLogEn: Event log enable
+       * When guest sets this bit, qemu will trap and will send queue_alloc
+       * When guest disables this bit, qemu will trap and send vqueue_destroy
+
+     This part is fine.
+
+     EventIntEn: Event log interrupt enable
+       * When guest sets this bit, qemu will trap
+       * this needs to be communicated to Host so that we can program VF Control
+BAR and enable the interrupt
+
+  - There is other bit "Completion wait interrupt enable"
+    This doesn't related to any buffer. Instead if we configure this for
+completion wait command it will generate interrupt.
+
+I am asking how do we handle above two steps? Should it be part of queue IOCTL
+or may be some other IOCTL which just passes these info to HW driver?
+
+-Vasant
 
 
