@@ -1,197 +1,307 @@
-Return-Path: <linux-kernel+bounces-637239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865ACAAD664
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C501AAD682
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAD798565E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8839E1BC13DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA10211A3F;
-	Wed,  7 May 2025 06:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9EC220F56;
+	Wed,  7 May 2025 06:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Le5lyCpN"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gQLkKhIF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEF3205E3E;
-	Wed,  7 May 2025 06:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CF92116F4;
+	Wed,  7 May 2025 06:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746600563; cv=none; b=uusGlUwlL67OaTeCGud9fMzkkFVbL/+eXa7AsdguFf10nwDgIdt07KWKLjLfewvZLqTG2eGqqfTR+pGxgYboplR2fWbZwirDOMrJ9GOUrloCzp4DZq/ZdTHilydCVTPlr9agNEayS8MUfkaFhxrF4AYQ/P+v6PqqMZVoSngFL8Q=
+	t=1746600696; cv=none; b=ghE2kGqLT8qqhCCL2B3fr9vUfodqzv8DxRDffGGcDDnRNpfPD/FqYA/Xms8G2PwJqis6Qe8xT5KazykftSRLn/B06I44ANwq+ZBlDVM9Xy0VXhGzXpWFSXBTFMQxU1Vel7ENv4JNKwnRwyfatjNFJtGxSc1hVa2c1jRKMBt7TCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746600563; c=relaxed/simple;
-	bh=8ugSN/Q++fFeHEFwZ8K/qUbkB7KehZljJdjvuuNIdSw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sH325H0h0RY0xco1KHoL9CL2e0IFkckhklMtVYHmLIYeAVb/Zty3wknbzPQscpk8LgRS9V2RC/BoLGSxFcJ5cKpZexjIZEwaP5WY7LP1Bzf6ObesD+ngFgCPDqyjFo5agKMcNj0yDYtIyhHi4k7+piktQTiewO/Af++QfyKSEuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Le5lyCpN; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso351580f8f.1;
-        Tue, 06 May 2025 23:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746600560; x=1747205360; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=txqfYmUpRqf0tzhQiLRxaSFOm23Kw9v4JDWZZtETggU=;
-        b=Le5lyCpNNKrQyxYnHwyGBIHSuRci0RZyICBDWShAFC7ufJlsYIcSMBp3LagWJwfJkB
-         qhBCqdFDajfWefgaXTPgdTt+4FFn5tGiSvGBhwtfsUS3M8RUMvNOgNav29T/MJ82z1CZ
-         dR9c9Pt1iu4b6VID+5cdKcnSNqEvbQ8eBPFfidWlM/WWZZnePxjE2e7KKGvpb1hQFXDe
-         Tod/fsqkJDlDXZE4EaChYmbXVYvcbnowfx7E9dT53myZ9+zNbzm0yxLAb8GvQQBwkP0n
-         rZ48bOBHx6Wf2tFnvhYDYpVjJG2OkKio2sNjQIsAQhe0ZLxiHVUiGeciYn+VMbOKIcFH
-         vd3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746600560; x=1747205360;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=txqfYmUpRqf0tzhQiLRxaSFOm23Kw9v4JDWZZtETggU=;
-        b=s7P28bo5ZuKdh/VAjSXZcuijARcTGMMFtIeKADtfiWuiGIhn1dLuXiN/exfTjPcuIV
-         FVkaQF4o3Xg6GORXOSUJi1duMnnRON1d+GtC7LxBm8Yr3frtIsdaeXkm3iHfshhUVKug
-         p0I3bvsVpYwX8xlJ2Fnyp9jFivRDUsfTWaicz1I4smVfL+fjLOmiYFXxRlloa5jPcZYZ
-         y35VtrZ9BUlDl31/jBxwq2CRKEApFL49mCJDZEorQPLdyOyf72jTOWxKuYnb8xSXFeiI
-         5v2PWOZLhsKjnyo1MczyIirVa4kzocGp39iF3sd3Ize1bSrQEqD0U2G2OlOHaDYaTn4L
-         fefw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVQXLWeR/VWBCHyZzK7Es+tGDFOYtDjInKl8FR5qIxWcvuTeWUBVnn0ROqcTZwYEznaRJj9xv0w7+fAniQXXJenfe1@vger.kernel.org, AJvYcCX5q9i4g61O/K2qR6OLCwgFpjfn6fISboXsL3M2OQtRTwrGBhJPICFut+mlj7wpKSbyyD3ljhg2PNNg5V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+T+/KLhpjirc8X+SfEUjIMKTM8Q22vc+uPfBYSIg0MCWucI3N
-	bIPfg4VEShRIW7QeyE7yuRmIFFJ32agXsylJ4LE85QdhrS/ugcIR
-X-Gm-Gg: ASbGncvHmgGnETeT6PsvavM5NWtSvINeQpt7tnvZgh3fICizpUbhKQ2Ntvpk0w9s9ke
-	eDIMg2+QdGbyStL3qRstgTeDLpZLGqHCff3/GW46c99ptuIjjY8iBRP6z7Kg6E7fWClCBOoN9L+
-	MAwKguYybIiLCDEnkyUq7FWkVM4Rz1FKcnhZrXpx6K7fq6/G/kweTl2VBRqeinMvapb+DvVDFmp
-	wcVXyoxs5e87Hm88N8mmRiHFbdonovuaTx8zfG1ogvOjCJhF6UVhPPOL4rwio++xPpQhalUED3l
-	IFNoAhib0pwbRoUV+lfzrVgorTRhQNQrjscrV/GuLMUu36AtJJUhStBaUYG5IykjJ54z+BgnqGC
-	j/xOaZ/bSDfs3LVwl2F7io8MAwzu7S72QLydwClBbeIMtGuVvca+dCRGQra8rOTzMqw40Hs2rpw
-	==
-X-Google-Smtp-Source: AGHT+IFoy0Mjb7OZG3tS9F/YAZ6Z+ylLZSL8zsjE8WRH4kHA8aG2EgKEizH30q+B2qwM1XzEXcEUgg==
-X-Received: by 2002:a05:6000:2403:b0:39c:30d8:32a4 with SMTP id ffacd0b85a97d-3a0b443f32bmr1800389f8f.26.1746600559533;
-        Tue, 06 May 2025 23:49:19 -0700 (PDT)
-Received: from ?IPv6:2a01:cb08:fd:9b00:540e:212e:2ac4:9aae? (2a01cb0800fd9b00540e212e2ac49aae.ipv6.abo.wanadoo.fr. [2a01:cb08:fd:9b00:540e:212e:2ac4:9aae])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0ca4sm16128355f8f.14.2025.05.06.23.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 23:49:19 -0700 (PDT)
-Message-ID: <d9ada0e159c130885dc43aaf3a672b2ea5a3b623.camel@gmail.com>
-Subject: Re: [PATCH v2 2/2] tracing: protect trace_probe_log with mutex
-From: Paul Cacheux <paulcacheux@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Paul Cacheux via B4 Relay
-	 <devnull+paulcacheux.gmail.com@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
-	 <mathieu.desnoyers@efficios.com>, Namhyung Kim <namhyung@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Date: Wed, 07 May 2025 08:49:18 +0200
-In-Reply-To: <20250502095025.1bc0426e@gandalf.local.home>
-References: <20250502-fix-trace-probe-log-race-v2-0-511ecc1521ec@gmail.com>
-		<20250502-fix-trace-probe-log-race-v2-2-511ecc1521ec@gmail.com>
-	 <20250502095025.1bc0426e@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42app2) 
+	s=arc-20240116; t=1746600696; c=relaxed/simple;
+	bh=ylNtMfjvu+q4orajowEjXHztUp21s4iaeJUauanM8oU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pv02+ntVJjM6fYKUnGoYXMBdwduiFPJKfl2r1SYBZkJ/yoFaLwFlUWfBE76GaIiNm3pja+0wLUVxlhLAmAzKVRXmhR/pliViFtuL9dFtwogbIEbAaSAJlYD/HvcIHemL+X9n/S7uqBBAISmpmE9s+kELo2e3gZER1bfKGxUazok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gQLkKhIF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471H4Fg021655;
+	Wed, 7 May 2025 06:51:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=l6vPSDr4+Mz2qLrL3AYZ67kUOJAkymZKwE8
+	6Gy8EOoY=; b=gQLkKhIFrGNO0TM3M3nb5nKDVb85gdqYOly41p8jTpoo/QJxstS
+	BjKg4Riwhwi1FWTS23w3+tjnBVLzjg+H/1oUcuqvJ2d/rbFyGL7MH3Ofhdcot5+Q
+	939U8qDhClHLo+TdUe8f6AYxTAPNtUXaX1RZv6TJfMKQmjuVPkqmrirmRW7WyGTR
+	Go+D7Gz+5jxKsEPKOUxBTKJO5Rkm/PGEWtBWtCR6BBTyXZq5y0WMfzbJKriX6R6B
+	pQlSmzqZqTrcru6znSRs8PYoLtetu8MumnlEjUvPunqxLMXGiuquvq4Z8keHm/C+
+	QjtIP6Qz5Ym6aiHDH8B0z2A8hzrGrWKHelQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fdwtug44-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 06:51:29 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5476pPn9009493;
+	Wed, 7 May 2025 06:51:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 46dc7ms9r6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 06:51:25 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5476pOCb009459;
+	Wed, 7 May 2025 06:51:24 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 5476pOus009451
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 06:51:24 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
+	id 3089B5AE; Wed,  7 May 2025 12:21:23 +0530 (+0530)
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel@quicinc.com, kernel@oss.qualcomm.com,
+        Wasim Nazir <quic_wasimn@quicinc.com>
+Subject: [PATCH 0/8] qcom: Refactor sa8775p/qcs9100 based ride boards
+Date: Wed,  7 May 2025 12:21:08 +0530
+Message-ID: <20250507065116.353114-1-quic_wasimn@quicinc.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=VPPdn8PX c=1 sm=1 tr=0 ts=681b02f1 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=RWzv-jsSoAz4CCN1Pp0A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: rr26_g_ZpBZTKxir5IxYisvRJXZH2fSg
+X-Proofpoint-ORIG-GUID: rr26_g_ZpBZTKxir5IxYisvRJXZH2fSg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA2MSBTYWx0ZWRfXxUuEkuwBm5qR
+ fI3q/Qtx/5kYesAVrsFjPZ5ddbZ7AM3gjLbfLtEoLhu5r+agtUqS8Fe8xYQE7GOHE3vkM1zxYqG
+ ERHB8ZFOD/Mejq13r1jqmdRTwQ4/jfdk5Rqe1TxxDJN+LuWMXyRFlD8dSbx5wqE/hgTtCyvWBMI
+ BWUBb+Z8Aiv5P5FzjXVBjSaEhELPHKix7/+mMvuG4RxqF7OSRibT8oGylSPa36Dl8T1GsiHSajX
+ 8umlL9ZncUrJsc5/evDXGuT67D3tCNZ0QvxCJakDzCLUnlJ1m2PaAypRxPJQFdkRizuEWYAhd1p
+ J2M/z61W75DB+aiO5BGIRR7J7KWVtggnUmyAcCVorHO27vgVevnD4jHWYWwoskLxIyiz3fJQ18f
+ leQESs7tqRV8IbPFx0Ay7rgY80Th3D6plxQH42QZv1uXAc8bccHKGZDiMfX/1XozCEJK+k/B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505070061
 
-On Fri, 2025-05-02 at 09:50 -0400, Steven Rostedt wrote:
-> On Fri, 02 May 2025 15:15:53 +0200
-> Paul Cacheux via B4 Relay <devnull+paulcacheux.gmail.com@kernel.org>
-> wrote:
->=20
-> > From: Paul Cacheux <paulcacheux@gmail.com>
-> >=20
-> > The shared trace_probe_log variable can be accessed and modified
-> > by multiple processes using tracefs at the same time, this new
-> > mutex will guarantee it's always in a coherent state.
-> >=20
-> > There is no guarantee that multiple errors happening at the same
-> > time will each have the correct error message, but at least this
-> > won't crash.
-> >=20
-> > Fixes: ab105a4fb894 ("tracing: Use tracing error_log with probe
-> > events")
-> >=20
->=20
-> No space needed between Fixes and SOB.
+This series redefine DT structure for sa8775p/qcs9100 based ride/ride-r3
+boards by introducing SOM for sa8775p, qcs9100.
+It also introduces ethernet dtsi with two variants of capabilities.
+It also refactor all common parts of ride boards to ride-common dtsi.
 
-Sorry about that, fixed in v3
+Below are detailed explaination on each type of HW variants supported:
 
->=20
-> > Signed-off-by: Paul Cacheux <paulcacheux@gmail.com>
-> > ---
-> > =C2=A0kernel/trace/trace_probe.c | 6 ++++++
-> > =C2=A01 file changed, 6 insertions(+)
-> >=20
-> > diff --git a/kernel/trace/trace_probe.c
-> > b/kernel/trace/trace_probe.c
-> > index
-> > 2eeecb6c95eea55502b83af6775b7b6f0cc5ab94..14a7a0b59cd20a8bc43e3e7c6
-> > 53e986081f924c8 100644
-> > --- a/kernel/trace/trace_probe.c
-> > +++ b/kernel/trace/trace_probe.c
-> > @@ -154,9 +154,11 @@ static const struct fetch_type
-> > *find_fetch_type(const char *type, unsigned long
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0static struct trace_probe_log trace_probe_log;
-> > +static DEFINE_MUTEX(trace_probe_log_lock);
->=20
-> Probably should add a comment here saying something like:
->=20
-> /*
-> =C2=A0* The trace_probe_log_lock only protects against the individual
-> =C2=A0* modification of the trace_probe_log. It does not protect against
-> =C2=A0* the log from producing garbage if two probes use it at the same
-> =C2=A0* time. That would only happen if two admins were trying to add
-> =C2=A0* probes simultaneously which they shouldn't be doing.
-> =C2=A0*/
+# Ride HW information
+-----------------------------
+Ride is a modular hardware system with several smaller daughter cards
+connected to single backplane board and each daughter card is stacked on
+top of each other. I will try to explain each daughter card with HW
+components and how it is connected to construct the ride-hw.
 
-I sent a v3 with the space removed and this comment added, thank you
-for the review.
+Backplane board:
+  - It contains an MCU (Aurix TC397), CAN/LIN transceiver,
+    Audio/GNSS/IMU-I2C signals, Fan header
+  - It holds & connects all the daughter cards.
 
->=20
-> -- Steve
->=20
->=20
-> > =C2=A0
-> > =C2=A0void trace_probe_log_init(const char *subsystem, int argc, const
-> > char **argv)
-> > =C2=A0{
-> > +	guard(mutex)(&trace_probe_log_lock);
-> > =C2=A0	trace_probe_log.subsystem =3D subsystem;
-> > =C2=A0	trace_probe_log.argc =3D argc;
-> > =C2=A0	trace_probe_log.argv =3D argv;
-> > @@ -165,11 +167,13 @@ void trace_probe_log_init(const char
-> > *subsystem, int argc, const char **argv)
-> > =C2=A0
-> > =C2=A0void trace_probe_log_clear(void)
-> > =C2=A0{
-> > +	guard(mutex)(&trace_probe_log_lock);
-> > =C2=A0	memset(&trace_probe_log, 0, sizeof(trace_probe_log));
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0void trace_probe_log_set_index(int index)
-> > =C2=A0{
-> > +	guard(mutex)(&trace_probe_log_lock);
-> > =C2=A0	trace_probe_log.index =3D index;
-> > =C2=A0}
-> > =C2=A0
-> > @@ -178,6 +182,8 @@ void __trace_probe_log_err(int offset, int
-> > err_type)
-> > =C2=A0	char *command, *p;
-> > =C2=A0	int i, len =3D 0, pos =3D 0;
-> > =C2=A0
-> > +	guard(mutex)(&trace_probe_log_lock);
-> > +
-> > =C2=A0	if (!trace_probe_log.argv)
-> > =C2=A0		return;
-> > =C2=A0
-> >=20
+SOC card:
+  - It contains:
+    - SOM:
+      - One of QCS9100M/QAM8775p SOM.
+      - Each SOM is composed of either qcs9100/sa8775p SOC,
+        along with DDR & PMICs.
+      - Each SOM can be mounted to same SOC-daughter card of ride-hw.
+    - In addition to SOM, it also has
+      - 4x UART, 2x USB 3.1 & 1x USB 2.0
+      - Memory: 1x OSPI, 2x UFS-3.1
+      - Debug: JTAG/QDSS header
+      - PCIe0, PCIe1 & Display signals
+      - Reset button
+  - It is connected to backplain board via B2B connector.
 
-Best regards,
+Display card:
+  - It contains:
+    - 4 eDP ports & 2 DSI-DP bridge
+    - I2C GPIO expander & I2C switch
+  - It is connected to SOC-card via B2B connector.
 
-Paul Cacheux
+Camera card:
+  - It contains:
+    - 4 Quad DE-serializer, each supporting 4 MIPI CSI inputs
+    - Total upto 16 Cameras ports are supported.
+  - It is connected to backplain board via B2B connector.
+
+Ethernet card:
+  - There are two variants of ethernet card each with different capabilities:
+    - [Ethernet-v1] card contains:
+      - 2x 1G RGMII phy, 2x 1G SGMII phy(enabled currently)
+      - Total 4 phy supported, only 2 phy are enabled and it is used in ride.
+    - [Ethernet-v2] card contains:
+      - 2x 1G RGMII phy, 2x 2.5G HSGMII(enabled currently) & 10G PCIe
+        based MAC+PHY controller
+      - Total 5 phy supported, only 2 phy are enabled and it is used
+        in ride-r3.
+  - Either [Ethernet-v1] or [Ethernet-v2] is connected to backplain
+    board via B2B connector.
+
+PCIe card:
+  - It contains:
+    - PCIe connections to SOC-card
+    - NVME, 2x WLBT module QCA6696/QCA6698 (Wi-Fi & bluetooth solution)
+      & GNSS module
+  - It is connected to backplain board via B2B connector & PCIe signals
+    are connected to SOC card via flyover cables.
+
+Sensor Card:
+  - It contains 3-Axix compass & 6-Axis 3D IMU (accel/gyro) module which
+    are communicating via I2C
+  - It is connected to backplain board via B2B connector.
+
+Front panel card:
+  - It does not contain any active circuitry, only ports are available
+    - Audio-in/out ports
+    - USB hub ports
+    - CAN/LIN ports
+    - 12V power off switch
+  - It is connected to backplain board via ribbon cable.
+
+
+Considering outlined h/w description, following are ride configuration
+variation each platform supporting:
+
+Between qcs9100 & sa8775p ride/ride-r3 boards, SOM is changing; And between
+ride & ride-r3 ethernet is changing.
+Excluding these differences all other cards i.e SOC, display, camera,
+PCIe, sensor, front & backplain are same and are refactored in ride-common.
+If any variant of these cards comes up in future we need to refactor
+ride-common accordingly.
+
+Since we don't have a document yet which formally describes qcs9100 ride
+board with [Ethernet-v1] card, I am removing the board and we can re-enable
+after complete documentation is available.
+
+Considering current outlines of all daughter cards, following defines
+ride/ride-r3 variant boards:
+  - sa8775p ride    : QAM8775p SOM + [Ethernet-v1] + other daughter cards
+  - sa8775p ride-r3 : QAM8775p SOM + [Ethernet-v2] + other daughter cards
+  - qcs9100 ride-r3 : QCS9100M SOM + [Ethernet-v2] + other daughter cards
+
+Below is the pictorial diagram for updated DT structure depicting all our HW.
+- SOM dtsi:
+  - qam8775p-som.dtsi specifying sa8775p based SOM having SOC, PMICs,
+    Memory-map.
+  - qcs9100-som.dtsi specifying QCS9100M based SOM having SOC, PMICs, Memory-map
+    updates.
+- sa8775p-ride-common.dtsi specifying ride common daughter cards for all ride
+  boards. This include SOC-card, display, camera, PCIe, sensor, front &
+  backplain cards.
+- Ethernet variants dtsi:
+  - sa8775p-ride-ethernet-88ea1512.dtsi specifying ethernet card which
+    uses 2x 1G - SGMII (Marvell 88EA1512-B2) phy in Main-domain
+  - sa8775p-ride-ethernet-aqr115c.dtsi specifying ethernet card which
+    uses 2x 2.5G - HSGMII (Marvell AQR115c) phy in Main-domain
+
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|                        sa8775p.dtsi                                                               |
+|                             |                                                                     |
+|                 +-----------------------+                                                         |
+|                 |                       |                                                         |
+|                 v                       v                                                         |
+|          qam8775p-som.dtsi        qcs9100-som.dtsi                                                |
+|                 |                       |                                                         |
+|                 v                       v                                                         |
+|              (AUTO)                   (IOT)                                                       |
+|                 |                       |                                                         |
+|                 |                       |                                                         |
+|                 |                       |                                                         |
+|                 | +-----------------------+---------------< sa8775p-ride-ethernet-aqr115c.dtsi    |
+|                 | |                     | |                                                       |
+|                 | | +-----------------------+----------+--< sa8775p-ride-common.dtsi              |
+|                 | | |                   | | |          |                                          |
+|       +---------+ | |                   | | |          |                                          |
+|       |         | | |                   | | |          |                                          |
+|       |         v v v                   v v v          |                                          |
+|       |   sa8775p-ride-r3.dts    qcs9100-ride-r3.dts   |                                          |
+|       |                                                |                                          |
+|       | +----------------------------------------------+                                          |
+|       | |                                                                                         |
+|       | | +------------------------------------------------< sa8775p-ride-ethernet-88ea1512.dtsi  |
+|       | | |                                                                                       |
+|       v v v                                                                                       |
+| sa8775p-ride.dts                                                                                  |
+|                                                                                                   |
++---------------------------------------------------------------------------------------------------+
+
+This series provides code refactoring changes for sa8775p/qcs9100
+ride/ride-r3 boards from previous discussion [1] excluding any new
+features or boards.
+
+No functional impact, and it is verified with comparing decompiled DTB
+(dtx_diff and fdtdump+diff).
+The only difference is that *-som compatibility has been added in all boards
+and qcs9100-ride board is removed.
+
+[1] https://lore.kernel.org/all/20241229152332.3068172-1-quic_wasimn@quicinc.com/
+
+---
+
+Wasim Nazir (8):
+  dt-bindings: arm: qcom: Remove bindings for qcs9100 ride
+  arm64: dts: qcom: qcs9100: Remove qcs9100 ride board
+  arm64: dts: qcom: sa8775p: Add ethernet card for ride & ride-r3
+  arm64: dts: qcom: sa8775p: Create ride common file
+  dt-bindings: arm: qcom: Add bindings for qam8775p SOM
+  arm64: dts: qcom: sa8775p: Introduce QAM8775p SOM
+  dt-bindings: arm: qcom: Add bindings for QCS9100M SOM
+  arm64: dts: qcom: qcs9100: Introduce QCS9100M SOM
+
+ .../devicetree/bindings/arm/qcom.yaml         |   3 +-
+ arch/arm64/boot/dts/qcom/Makefile             |   1 -
+ arch/arm64/boot/dts/qcom/qam8775p-som.dtsi    |   9 +
+ arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts  |  10 +-
+ arch/arm64/boot/dts/qcom/qcs9100-ride.dts     |  11 -
+ arch/arm64/boot/dts/qcom/qcs9100-som.dtsi     |   9 +
+ ...75p-ride.dtsi => sa8775p-ride-common.dtsi} | 169 +--------------
+ .../qcom/sa8775p-ride-ethernet-88ea1512.dtsi  | 205 ++++++++++++++++++
+ .../qcom/sa8775p-ride-ethernet-aqr115c.dtsi   | 205 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts  |  42 +---
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts     |  42 +---
+ 11 files changed, 450 insertions(+), 256 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/qam8775p-som.dtsi
+ delete mode 100644 arch/arm64/boot/dts/qcom/qcs9100-ride.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9100-som.dtsi
+ rename arch/arm64/boot/dts/qcom/{sa8775p-ride.dtsi => sa8775p-ride-common.dtsi} (86%)
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-ethernet-88ea1512.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-ethernet-aqr115c.dtsi
+
+
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+--
+2.49.0
+
 
