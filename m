@@ -1,163 +1,127 @@
-Return-Path: <linux-kernel+bounces-638069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6363AAE10B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:45:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D92AAE122
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD18F1BC81A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84DA01893510
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE86B28A1ED;
-	Wed,  7 May 2025 13:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C673D28B7CD;
+	Wed,  7 May 2025 13:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZDx/veKb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4j15gMTk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmvpqyfj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348D1289829;
-	Wed,  7 May 2025 13:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157FF28B410;
+	Wed,  7 May 2025 13:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625452; cv=none; b=ITbulZcXZBNDHU9KV3T0kBT9NxBlaFlmZxqJMZARWOTCU5bBlFburcauWLoczey6XWy+Yu+mkQnM8LGfpWGdqzmNEOWIzZ1x4vzdfhGQiB03rPbdy0meNGM5XGIA/vRTcADRJw9YKYbora7S9upE8LwbjpfZCfKB6TfAt2JMMlA=
+	t=1746625461; cv=none; b=iGdwaq6iWg/YTKWlWveqaCaEr6odgzLobCLKa2ywKz4h1Zzld53f8Fzv40qbcIE0AStddgM87zoswEwq7jje4RvOS7rVcHwd6Ior+kAPF5ct7LHJ6dzT74dMYldeWXByYXPS0ytPOksjhQ6kaJ+9nEawRLAq04m3qvggYKI+4s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625452; c=relaxed/simple;
-	bh=2u0/oCW9gEKcUkBdAZp4vn2KKFZlA35wHasQ+x3brUU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=U4Kmc+B5ylY7WiEQvsogCdlULrlKK+kCq7cyqHTkOY+kKrX3ziAME7fUAq3+UFl1Cqq8ELZxe2sGJ7M80X82xHd7925Zh5XmMC8ur0344PSKiMI5phOukRIrOtxBoDyNXM7I7vyl6u5wWe9mtig9/OUxFTUyApVFyZNOsrl/CBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZDx/veKb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4j15gMTk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 07 May 2025 13:44:08 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746625449;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T/Waob+t7BuQkmpXrtobaRKE3jdbfnmsISjdUz4aads=;
-	b=ZDx/veKbSn5yBPBQiDWJv5AGSzp4WY6v7aRgtTYLLBy3x1xdU/q7gzU/ArF8SGUDjdoXhq
-	rZ6Sft9upJa3g7OHkQisiizhOfbc77Gbd+JlRcS4N235jwPKiBvyufBGl7WfbbFUAS6P/J
-	7abiyWcJ7h7OaG7MecutYUqBJNo+K4DuXIu9ZszTaUCUTRD8ijtRvebW8nk5/No4mMHqgc
-	iiYPiDD7oOhSMujaN3AOxtfCbVFUvUugldknzhOqDwM5WKPFsHrnOh2rMuotM6ZbKYLIEx
-	E3gmMMj0534EL3xAEs16cnFGk3AB0WTv/EsMs9nMrNLR62InAtvT+wLgqTNBcw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746625449;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T/Waob+t7BuQkmpXrtobaRKE3jdbfnmsISjdUz4aads=;
-	b=4j15gMTkCdWR9ziRoiiMTZS7v81twVbVxFG8gniWCRy8vHRpPo1gbEzVp5YfKKK6KQocw2
-	6A4ZLAKVIlpwtKDQ==
-From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/cleanups] irqdomain: Drop irq_linear_revmap()
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250319092951.37667-50-jirislaby@kernel.org>
-References: <20250319092951.37667-50-jirislaby@kernel.org>
+	s=arc-20240116; t=1746625461; c=relaxed/simple;
+	bh=rSpURVrjit/mrzrwpNmEyjo2cuH8soOOQFNb9VBvgGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFJpWS8nLCxDwWyChLyJXvkGMRoo+45tYrRZY7TETl0CESsFzZ5wuVWK9nqIiF/53DewTBZEnrq9YGKOjITThWPn5z3aB8CPiI8A47/6t13fXeoQ0ecUlJ+zvxPDxCL5Qfv9IqUq90EhC9Gc7ryz4iJB7xiAibYCvJztWpOvXFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmvpqyfj; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746625459; x=1778161459;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rSpURVrjit/mrzrwpNmEyjo2cuH8soOOQFNb9VBvgGc=;
+  b=gmvpqyfjsBqbTYA4e1HAQ9kwmRAUwJchjJLnTkZ9OK7IUL5bjCLCXRhS
+   OSPzLupdukAWA/voUtnP7uEIUtNGUW1Wh5d3DfpcfSvcbdFL64La5Ewga
+   nFvtYFe90IyPutmG0EKCCn6TtSU0t6Namm1zjJ8/Ktx7RF4ycPg9L8+gy
+   NNBcrHY+SAIfil1nSylRkpWgbc/Z6Zr30Ubb8Cd2GM+BifXVN5aIPm/mS
+   md4bSRUnHrAajKALeXvRafEFTa9PSe0yC0PJ4PwvGGTDE4Wl+nZDAY59o
+   osk+fWEa1iJ4RLvtDc0mfVh7my8RAjf1lm2AFMPHnZJgVa2/gLTv8f7Mq
+   A==;
+X-CSE-ConnectionGUID: tbKPqzJ6SE6IHi9rs+InfA==
+X-CSE-MsgGUID: qFWHwrqMR9WPnDyTccTK8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48435696"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="48435696"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:44:18 -0700
+X-CSE-ConnectionGUID: s43Q+yhGTJykE/94v+uJpQ==
+X-CSE-MsgGUID: 9GJaQoJrRRK3YdsAg7QJ9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="141159330"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:44:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uCf4D-00000003kDn-3fUr;
+	Wed, 07 May 2025 16:44:09 +0300
+Date: Wed, 7 May 2025 16:44:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Eason Yang <j2anfernee@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	javier.carrasco.cruz@gmail.com, alisadariana@gmail.com,
+	olivier.moysan@foss.st.com, tgamblin@baylibre.com,
+	eblanc@baylibre.com, antoniu.miclaus@analog.com,
+	gstols@baylibre.com, ramona.nechita@analog.com,
+	matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
+	chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+	yhyang2@nuvoton.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/2] iio: adc: add support for Nuvoton NCT7201
+Message-ID: <aBtjqYNTJ_kFGd2a@smile.fi.intel.com>
+References: <20250505092600.962675-1-j2anfernee@gmail.com>
+ <20250505092600.962675-3-j2anfernee@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174662544871.406.4567040363856903773.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505092600.962675-3-j2anfernee@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The following commit has been merged into the irq/cleanups branch of tip:
+On Mon, May 05, 2025 at 05:26:00PM +0800, Eason Yang wrote:
+> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+> 
+> NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up
+> to 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins
+> for independent alarm signals, and all the threshold values could be set
+> for system protection without any timing delay. It also supports reset
+> input RSTIN# to recover system from a fault condition.
+> 
+> Currently, only single-edge mode conversion and threshold events are
+> supported.
 
-Commit-ID:     4d90cc80aa1f48a01ef31a936e68dcca22430de0
-Gitweb:        https://git.kernel.org/tip/4d90cc80aa1f48a01ef31a936e68dcca224=
-30de0
-Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Wed, 19 Mar 2025 10:29:42 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 07 May 2025 15:39:42 +02:00
+...
 
-irqdomain: Drop irq_linear_revmap()
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/delay.h>
+> +#include <linux/dev_printk.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
 
-irq_linear_revmap() is deprecated and unused now. So remove it.
++ time.h
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250319092951.37667-50-jirislaby@kernel.org
+> +#include <linux/types.h>
+> +#include <linux/unaligned.h>
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
----
- Documentation/core-api/irq/irq-domain.rst                    | 2 --
- Documentation/translations/zh_CN/core-api/irq/irq-domain.rst | 2 --
- include/linux/irqdomain.h                                    | 6 ------
- 3 files changed, 10 deletions(-)
-
-diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-a=
-pi/irq/irq-domain.rst
-index 7624607..c365c3e 100644
---- a/Documentation/core-api/irq/irq-domain.rst
-+++ b/Documentation/core-api/irq/irq-domain.rst
-@@ -62,8 +62,6 @@ variety of methods:
-   mapping.
- - irq_find_mapping() returns a Linux IRQ number for a given domain and
-   hwirq number, and 0 if there was no mapping
--- irq_linear_revmap() is now identical to irq_find_mapping(), and is
--  deprecated
- - generic_handle_domain_irq() handles an interrupt described by a
-   domain and a hwirq number
-=20
-diff --git a/Documentation/translations/zh_CN/core-api/irq/irq-domain.rst b/D=
-ocumentation/translations/zh_CN/core-api/irq/irq-domain.rst
-index 913c3ed..4a2d3b2 100644
---- a/Documentation/translations/zh_CN/core-api/irq/irq-domain.rst
-+++ b/Documentation/translations/zh_CN/core-api/irq/irq-domain.rst
-@@ -60,8 +60,6 @@ irq_domain=E5=92=8C=E4=B8=80=E4=B8=AAhwirq=E5=8F=B7=E4=BD=
-=9C=E4=B8=BA=E5=8F=82=E6=95=B0=E3=80=82 =E5=A6=82=E6=9E=9Chwirq=E7=9A=84=E6=
-=98=A0=E5=B0=84=E8=BF=98=E4=B8=8D=E5=AD=98=E5=9C=A8=EF=BC=8C=EF=BF=BD
-=20
- - irq_find_mapping()=E8=BF=94=E5=9B=9E=E7=BB=99=E5=AE=9A=E5=9F=9F=E5=92=8Chw=
-irq=E7=9A=84Linux IRQ=E5=8F=B7=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=B2=A1=E6=9C=89=
-=E6=98=A0=E5=B0=84=E5=88=99=E8=BF=94=E5=9B=9E0=E3=80=82
-=20
--- irq_linear_revmap()=E7=8E=B0=E4=B8=8Eirq_find_mapping()=E7=9B=B8=E5=90=8C=
-=EF=BC=8C=E5=B7=B2=E8=A2=AB=E5=BA=9F=E5=BC=83=E3=80=82
--
- - generic_handle_domain_irq()=E5=A4=84=E7=90=86=E4=B8=80=E4=B8=AA=E7=94=B1=
-=E5=9F=9F=E5=92=8Chwirq=E5=8F=B7=E6=8F=8F=E8=BF=B0=E7=9A=84=E4=B8=AD=E6=96=AD=
-=E3=80=82
-=20
- =E8=AF=B7=E6=B3=A8=E6=84=8F=EF=BC=8Cirq=E5=9F=9F=E7=9A=84=E6=9F=A5=E6=89=BE=
-=E5=BF=85=E9=A1=BB=E5=8F=91=E7=94=9F=E5=9C=A8=E4=B8=8ERCU=E8=AF=BB=E4=B8=B4=
-=E7=95=8C=E5=8C=BA=E5=85=BC=E5=AE=B9=E7=9A=84=E4=B8=8A=E4=B8=8B=E6=96=87=E4=
-=B8=AD=E3=80=82
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 712c662..c8e55cd 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -492,12 +492,6 @@ static inline unsigned int irq_find_mapping(struct irq_d=
-omain *domain,
- 	return 0;
- }
-=20
--static inline unsigned int irq_linear_revmap(struct irq_domain *domain,
--					     irq_hw_number_t hwirq)
--{
--	return irq_find_mapping(domain, hwirq);
--}
--
- extern const struct irq_domain_ops irq_domain_simple_ops;
-=20
- /* stock xlate functions */
 
