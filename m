@@ -1,202 +1,343 @@
-Return-Path: <linux-kernel+bounces-637371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07631AAD872
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:41:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB919AAD650
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7EA3BD63F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6621B68A1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AF2220F27;
-	Wed,  7 May 2025 07:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A895D2116EE;
+	Wed,  7 May 2025 06:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m794G3VT"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="SSAA6PFZ"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2098.outbound.protection.outlook.com [40.107.21.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8945A2144CF;
-	Wed,  7 May 2025 07:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746603529; cv=none; b=UiN1SOdkhu/Yub8nCtX3MnV3GARlLPa1CgG1aTWGYKWc41DyDgpiSq2wL4YGgg9Lmo9S8wFUI64y1mmQIuMHayc9QAnijwASjWUUmvw0Gsy6zze05oea6gZjQMjgQ3BABRKuGup1GYUS+3XaKGu41v2sZtgE0wIhk5GOn3P4gVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746603529; c=relaxed/simple;
-	bh=LUbeHMzIFsOzUSMB2htO29hpRr03KwAvpfp2sAuDens=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SaZ88yI1Lkyb01lMMjLBDyCWOYhEdn9NVRcxLwR17nA6FI2d6SOtQXq5gN55MfnKwrUGff/Vq7CM383hD+/y5zy2vQ06UrUCG1AGOTyxaXuA+JanEkjBKMPe3TB/E/l657I72wrRAGjrKG441bsi+ozcxOQtDLo6SzBMCbQdxNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m794G3VT; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a0b6aa08e5so106601f8f.1;
-        Wed, 07 May 2025 00:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746603524; x=1747208324; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LUbeHMzIFsOzUSMB2htO29hpRr03KwAvpfp2sAuDens=;
-        b=m794G3VTeuhMlKp8TdId3looqhtQiyGgYcAx5KjDR3+jxVx5fqHJxM4frZT9SXULq9
-         n05Q0+/GAAoQEPu/GnImg4eF3jGy3n4oCr77MZAvp+F7DdyNzw1lk4fh9PLX4fBGG0ki
-         NmCg4qVOMlPFBzZjscxd/LPdkJN1kbUNHDuBcBcv5IHzaWHBDZdKpyVNZ4qteEYCQXDm
-         py3p0AFSiGBSToDOk+Ews7cMrzYSXgDHeEoUnyjHSvVYKT2rql1txA/xNVbfLBiXRdoy
-         yZt09FBi4Dw98Mh1MQaW76u+im9SZUC2KpcenqaBYsezBbwO/WiCSu0/KYpVNSeh1Ytn
-         WHFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746603524; x=1747208324;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LUbeHMzIFsOzUSMB2htO29hpRr03KwAvpfp2sAuDens=;
-        b=rMOXXrjSZQ7OgVQAuIQRuK4B9SSwEdn1djeHvU9wS3mJ+OC3KiAZg5ZBt2YP/zolYj
-         bFPL4rvI+u5YrxhbaXrG6bUnHUWiEOzge19ori/81/s9Nt7yg/l4BMlKEGVwfhU4mclY
-         jveUug+9aXiR0doPNKGqXOtutfw58dtZSpgNkoKWBwkT23sO1MRpAZkVt4M+D+ahSJl2
-         T5bP/uhXOOgj2d782yZ3EXmpUogSy1t2UbA2VI+DHnh1gbRpltCDkE8O03ahzwhUX6va
-         NrKpoAj7Q2Rb1FgzR5HYPDiy/H8mTJfftOffSAtc73dP1nJQkfqP0TlMQKYNZIuDieHe
-         6ujg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIVniUtIduXOhzNeK9SbOKZ0KXbq6i+fA1PqRJJKiDUkWA6zfw2qFY92qh9T0xAqMONhqmtLcX30WIbB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiM6S0qiqFTrr+GV3Q/sineoL/ntdYTZrMDxw9YQhOCXhXp1kj
-	Gp57ZfIHH6jMl0dvwn/u0mEoK3hWH0XeSrU26gRPTmAOxXCUb3qR
-X-Gm-Gg: ASbGnctrbxZdo8QsymSM9ld2CrCqo7wp8LTbxr1A0CyNZxmj3tBVMmFE9QocssCq06U
-	5h3pjgO5QcaxZsfCGF37ehWqzHIoPOZjePYWOKYAReumMCKXKNP+OFAM/f5TiloeCGmUPZvqinS
-	SjYg9oaR3v5uuL3DtfsCd1oB/GXHUkxqBrN/7KMCTilaK+ifCGtSEUeSSuc6OlRTrqVTy09tjDc
-	sUcYb7YkIWq6qsh/0xBG3l1Twise1dHFkXAA1mvfkgJhhmFspMRQ4UP+7EKfDaF70hlEEjXwNrk
-	PFy+lQj29WG7iJ1uGeKSk7LrFugXnROFhQ0pVOrX7i4r5PtIlsgfmoItuAia+LdfQP8jQRNZmog
-	hUer6jceir97TXgc=
-X-Google-Smtp-Source: AGHT+IFcrfJVgjIHTQQ2WPmB67RGJPQ8xi7u9h/v5miFvmeP2RpN+ZcyLqGtFi9WsQS7CkgsL5VSLw==
-X-Received: by 2002:a5d:64ad:0:b0:39e:cbca:74cf with SMTP id ffacd0b85a97d-3a0b53a06bfmr1636435f8f.6.1746603523625;
-        Wed, 07 May 2025 00:38:43 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b17748sm15851404f8f.100.2025.05.07.00.38.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 00:38:43 -0700 (PDT)
-Message-ID: <ec7c00c640b0b359bfd98d460d067aee64ca069f.camel@gmail.com>
-Subject: Re: [PATCH v5 0/7] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Eugen Hristev
- <eugen.hristev@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Trevor Gamblin <tgamblin@baylibre.com>
-Date: Wed, 07 May 2025 07:39:07 +0100
-In-Reply-To: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
-References: 
-	<20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223AF20B218;
+	Wed,  7 May 2025 06:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746600052; cv=fail; b=nfnHS6za3BBHN6/9m32GQgYCbhLv02tHsPhubaVwq2eXAsI/XwLc2SQ2zpokqMTL/bDWyaev66Oxkh01ZIwpEF+V5ZEzAlHCiHyREeiKxVQPNZMwN9OrxHcCBy5KTIq5j1Q2JlkqRGeIisgOv6xmflKLZ8GwisBhK2bLzWWBQ2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746600052; c=relaxed/simple;
+	bh=LuTvQzd+5KPwyma/WR80UakJqhzjwu3SfahZ+96zPE8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dessCluvytVpVbnMTkBoyy0OWsPKYqk0kfYdPEZ1R9S4zFXVlx1lviwKdMpYN068dG8Ai+jJjbeDlewWse/+KKvNWqgjj2RxlPd4BaLxjB1vdrHBTdQF4X5+uYIBeT/QnD5Isj9n2dq651tYKCFA2xHqhKN9CoqblQoZXc2bbvo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=SSAA6PFZ; arc=fail smtp.client-ip=40.107.21.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eayBEsNsJV0sj0o7LtHhqA7zRVr8t8NSdtXq9OVv6mj7Rg290qgdNgGXmeoC9EyZxNvMvQLXne4JJlYPk5qxJ/hAfBVkvTboIuTPl/5DiupMDmn6+edxhXxLQ78rMU0FXjA0IqsuZfMrJCwavrGr6Idv+TpcEYpBNrPc3Hw3hdOYjHVsasxBcd0om1a8e+V4DhJGdYYklVYqP2w88KdvKvLzYwd7UK1yI+gK003V1E6kAdlaUDKt+2e+lVCFZ991/nESWiwLIL9ItaJBgn3QQm/xI16JurrWLzVaVNNfjaUBxvT/VFtkQ+WYBVdgQCNPnXCtLHjp6ZNJN3CjuiPP3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dTxbh3CFnaqxraYDZh3AF08L51VzwlwyDP0LsqRDink=;
+ b=i85rR2oMzeXYgjNb6c6SJIVJvcL3rV5SAx37kVDKkqGA3HBvUxauOFTb+xgyx0VIQL+Nn2lLDQ3+d0KoWy2u3u6tfqwnjWRV4bWHfyizVeSCazPyb1fSoGFHZ+g5ywmI6998MOQ7o8so1wF/o1GosCP93+nX2m35N3e8185JaDFcewGgMr/PDh5JZKhZTcgG1IUPQKixOax77+dckAFENeUAjI5vkWvV00sy24ABYoMl7I4O+sgYrfho7ZDO8/sxKJPCqEKKNjlGpUnO7SYCC9ZE4kIBSxN1tWAkbEYPkCwMlhmuSlTTs9BYxrNrr9s+5aiV4XC9KaBG1mehe96JHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=phytec.de; dmarc=pass action=none header.from=phytec.de;
+ dkim=pass header.d=phytec.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dTxbh3CFnaqxraYDZh3AF08L51VzwlwyDP0LsqRDink=;
+ b=SSAA6PFZanK9pIFMt3xS6PCn1VZZm2o8oy9BLbNprOo3B1PcRDs6JZM+EESAS1RMYIQ3Mvwp0nJuqZFmTn8nWu55zEFiQgqN58jZTJqpDesONJCCesZDBwXD4PUmNERbF2xb9Z2Y2h72GYbBxyefWMXtJciY5d92zPxtC07an/XqcqNTxeUVoWZkCCMxjmOW0rFLzjvSuW7lc8+DbPbr+hHIGjsmjXn4SKwjq0AFBHc7Zi/Lcrz0RCj9VnEgyCo5ZyesbOWG+kEp14CMpXrYjfFtLPMI1qj9Rdo9c1i7X0Drzxa4FUwsKpr9LJfm1QCiJeHHDQSRNqdlEDYwU8ib2A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=phytec.de;
+Received: from VI0P195MB2484.EURP195.PROD.OUTLOOK.COM (2603:10a6:800:248::6)
+ by DBAP195MB1066.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:1ca::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 7 May
+ 2025 06:40:44 +0000
+Received: from VI0P195MB2484.EURP195.PROD.OUTLOOK.COM
+ ([fe80::24f:8371:2871:5981]) by VI0P195MB2484.EURP195.PROD.OUTLOOK.COM
+ ([fe80::24f:8371:2871:5981%6]) with mapi id 15.20.8722.018; Wed, 7 May 2025
+ 06:40:44 +0000
+Message-ID: <ea2a681d-bd5b-4f8f-b861-dd93424c95e3@phytec.de>
+Date: Wed, 7 May 2025 08:40:34 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: ti: k3-am62a-phycore-som: Enable
+ Co-processors
+To: Andrew Davis <afd@ti.com>, nm@ti.com, vigneshr@ti.com, kristo@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: upstream@lists.phytec.de, w.egorov@phytec.de
+References: <20250506133604.294920-1-d.schultz@phytec.de>
+ <20250506133604.294920-3-d.schultz@phytec.de>
+ <8ffefea3-e458-4a9e-968b-89b7541d3b5e@ti.com>
+Content-Language: en-US
+From: Daniel Schultz <d.schultz@phytec.de>
+In-Reply-To: <8ffefea3-e458-4a9e-968b-89b7541d3b5e@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR04CA0182.namprd04.prod.outlook.com
+ (2603:10b6:303:86::7) To VI0P195MB2484.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:800:248::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI0P195MB2484:EE_|DBAP195MB1066:EE_
+X-MS-Office365-Filtering-Correlation-Id: b849f92d-e465-45e3-cd99-08dd8d32175f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|7416014|366016|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2laa1I0MExVK2tkTDJDZUpIVE9NcldldVM5YUFxaUhXY2JrYStVVmNoaEVE?=
+ =?utf-8?B?RmpVVmNSNVlvQVdMTzUvZlU2MjlDYUVVNG1mUnJ3eXBMQUJpWFlXWk03WTBr?=
+ =?utf-8?B?UjlKS3p3dXNBc2U1dmJvQjFER1IwMzJlTlhDM0NLVkpOS0Y3MUpqUHdmZkVG?=
+ =?utf-8?B?ZTZiK0I4djExVWdtbWwwWkdQY3dtTmVRSmlUeTJKSjZNRUk5WFA4aDkxZ3JB?=
+ =?utf-8?B?dWRWRldGb09TVXJoWEwybFFkaGxZYXp6RjlONjQyMW1lOE9IWDZJNUlLdVgz?=
+ =?utf-8?B?QjRSNHM2Mm9CV2IvVTdKUXgvQUYzV2NWNStzZHlYbE1tdDVWd1JiMlMxMkVB?=
+ =?utf-8?B?WDd4V0RxSGkzbFJUdEcvOHU3WTd2TDJHUWpvQzJ6VUc3WnQ2eGREWlkyVXNF?=
+ =?utf-8?B?Q29MY3pkUDBHcGtMT0xHeWdHVnNHMlA5RThtWXY4WWxrKy9IVnUvNVI5VDZw?=
+ =?utf-8?B?ciswYXBtUlU1VHoyWEtmd0RQeXpudmx4L1gzc2FJRzdXL1FNellLZnp2MlBL?=
+ =?utf-8?B?dnRiQ1RQbU9kbEN1OC9aanJzODhadXl0azVnTmJmdW1UemVlV3dtaW1MVkpY?=
+ =?utf-8?B?cDZ5VU9oMVFQT2NUcFE0aEUvditQY242UUp4ZW4yRWVkVXZJV2JpZTltNHhC?=
+ =?utf-8?B?dnBHdHFxaTgzMmJZZjlzZTZvcnlDTlo0eUVxRkkwM3JWSCtiN25hMlRPYy90?=
+ =?utf-8?B?MXlvdVF5OUdQYWpJSnNQRzlFV3VEa29lT3JtZ2pBT2ZhbmlBR1I5d0JBV3lI?=
+ =?utf-8?B?b0hBWUt6R212TTE5WG5ZSFpHSjJGUmxEK0pwNnI4bHA4VEkwVjNtMUg1R21r?=
+ =?utf-8?B?Z0JQNUpiWWxjQkxoam1uQzkxMnNmenEwT1lzZkFJUEhyKzRNYXdrL0JzTERu?=
+ =?utf-8?B?Q1FLcFl0N3l6TmpVaW5NdE5ERmloWjZ4am9VOG00QlpnWEZPSFFLUzVDeWRa?=
+ =?utf-8?B?eEFDTGdCMG9YeUlNRlJoRVo1RmZ5QnNCRksxTkxxK09WNTR4T1pLOEhrUUVL?=
+ =?utf-8?B?RnN2VWhoUzlVVHRZY3FVRlJlYVlhTitZRUlZOTBkZ0ZkVEJzbmRjR21kSHB0?=
+ =?utf-8?B?RGFpZnFyTjhRM0w0c25CQmtuQnlOeTlpaWlJdm5rZlZRSUNZNCs1emZxemw4?=
+ =?utf-8?B?eHJ5TjFxblZzRDJlSXBEVlJDWjdGb0x5dUVxTVVHLzlQNHNzNjZRZ2pLOXBk?=
+ =?utf-8?B?S0lLbkRlN01BZ29Vc0NRWGRlejVuQmdKVFVySDdxcE9GRm9lUFh4TWFVTXRl?=
+ =?utf-8?B?Z2pCZ04ycjl0UHVWVjRHeWRWOW5iUVl4b0QrQVVoSkZkeXBQOWsvZVlUZGgv?=
+ =?utf-8?B?UFkyNzYza0NKZkF2RU41Ukd4N0ZTTVc3MG5xSUxTUVpsZXFYbWlmdjZyYWZo?=
+ =?utf-8?B?d3ZIQmorTWRGbm85SHp6bU1lR0tuNHhFUHZSTVVSVTdYZDZiSURlTEhoVXc4?=
+ =?utf-8?B?T2tUYnpoU0pPTy8vR1N5M25uY1ZORjc1blRkZkdFTDhaWXEzK0taNDVYYWZF?=
+ =?utf-8?B?RU9IUjNOb0hrZW1QR0tqbkEzYjNXU3hwbi9yVUo1RFBMUDhIQTRVR2xsdzhv?=
+ =?utf-8?B?UGVIN2J0VlkveDlzUStRcWFUNm5CN2Z0S1hOcnArZWZHbFFwTnc4TGhPdm4x?=
+ =?utf-8?B?UEgxWExqWXZqZTh2eEg1TEtVQ1E3d1RPMUFCUkxnS080QUlvYVNWSzFIeGhQ?=
+ =?utf-8?B?eUEyRzNRdlJ2V0I2ZEdqSXlqdjUxdSt2aTYwOHA5N2dYTUNuek5qTVJYZTF3?=
+ =?utf-8?B?b3QwUk43NlZ5YytlVzhNR0dYR2xnckdBNXk5em9KOTQ2bGEyU0lWVGR5SDFX?=
+ =?utf-8?B?YmdQWng2ajlzOEVibll1cElHeEZOYzdHOXFLT09xMFh3aTg4ZmhVa1FNSUo3?=
+ =?utf-8?B?NXNiYlk3KzlHN2N2alpOQUtjVXZwU3NLelc0ZUZJQ2NENFFLRCtqOGVtd0ZK?=
+ =?utf-8?B?MExxOFlnbDNrUHJTVzRoVkUvSmIvUjB2bmFDcDFPeXk1QlNSS09KYXRldTdJ?=
+ =?utf-8?B?RThKWTRKUjFnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0P195MB2484.EURP195.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(366016)(376014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Zm9BaElxWTVZNWo2MGU4K0xmUkR5K1NtS01XSEJ0NDhYMVliajkyYVd4ckZB?=
+ =?utf-8?B?MGZJaGZzUjFtaW5vTXVEM1dab0RxaU1NTTNMeFI5N3ZPTDBVdTJFWnRiQm15?=
+ =?utf-8?B?cG93YWVkWXk5TUNSVWhuY08xNnFGRTh2M1NCcXFvSGhJcmh3dmE1c3BBZXFO?=
+ =?utf-8?B?L2xlaEdtTXZFTTBqbW9NTll0OXlhYzVWZTVsdkIxckJhaXg0b3NlSkpob0I4?=
+ =?utf-8?B?TGV6aHpMdGo5M0pjcjU5bFltL3ArVnI2d0M3QWNDYzdRQnJkSVUxRDJzMGw1?=
+ =?utf-8?B?RnplUWQ2NEhCRHdEWGZKMTNVUG80eDk4TUVQc2xxd0R4UE4xUGJmSVRjSEZ5?=
+ =?utf-8?B?aEplNkZieWFkaWVkNmtwSWlaaExjZDBPT2lZcXpaNStXU3hYTTBTU1M4a3VW?=
+ =?utf-8?B?Z1pPd3FXN3ltbWVUdE1GMC9ROFNXdVhOTnpLODdiOTlvTnBvWnlnNTNydmNw?=
+ =?utf-8?B?b012YUc3ZWltbGJBZ1Q0bU9lcjNWZmlNb3hjR05zcGhZeDhDZ2ovTnArN1JZ?=
+ =?utf-8?B?ZUFZWlVqbW5UOE1VbW44MFdRb1N4eUhndW9PVmRNL2UwNThnY0dVTm5GQWsr?=
+ =?utf-8?B?bFZPWnhrNUR5UktRakZyVVJJbGxteGhzTTJhMzAxZy9QdndUQVkvWFJESElp?=
+ =?utf-8?B?RFF6NnBXL2l0TGlwK3FXZXlqNUVUb0pVendwMHBXcnMzdG05N1lxSlVCZ2Rr?=
+ =?utf-8?B?L1c1ZXBSTDRtYkV1bnFlaGdLdHVid0hlWG1CZU9CV2MyU0plT1QxcXBWNSt6?=
+ =?utf-8?B?S1pjSWlyaG1yS3pYVXZ0QkhPTVBMK2RzdDR4dGVyRlV4MndIMm1QSjFZYm5o?=
+ =?utf-8?B?dGRSeUFNNE5kUW5tdkF1ZWNRUFh1L2VLemE5U3JHZGwxY0RmSTgzRHhEL2dv?=
+ =?utf-8?B?YytzWXAveXg4RTc4b1FuZmltYnUvYTlyWko3M2dBK0t0b3BGQ3kxcFlaTTdw?=
+ =?utf-8?B?Yi91TFRPVjVlNFRCckd3enZnSXVyaHBvT0tZRm8zdEIrZkROL3crV1ZWanJP?=
+ =?utf-8?B?bS82bHZJS21jWUdmR09nRU5haHB2WStWU2U3Y0RYNHJrMldWQlN4a3lpWkFt?=
+ =?utf-8?B?WGdVTERXYUxIb2RNdzkzMDBTVEU2NFRseXZZSlM2aVdTcDhsdDZuanJ5VFU4?=
+ =?utf-8?B?RThKaDRKNE00VGMzRWxSVFRYV3Y4djhnVi9IVVN5RTNSS0k3TnpCd0puRDll?=
+ =?utf-8?B?ZEFTalpPOHZnUzhCRGNMNTdzOGp1TjVlNE5IbkV2UG5sSnV4QWxWRi9ERVFC?=
+ =?utf-8?B?blVaeFp6aHMzSnlubnVPa0Z5V09oMEh4QlZ0RUpZWlQvczgzVmkvWjQvd0g0?=
+ =?utf-8?B?aWEzbWFNT1ZGcndWWmg1TVc5VW1vYldPc2lSOUhuN0pKMDFOcXBSakIxTm41?=
+ =?utf-8?B?TFhHUjlpTWhNVUVHSDM4U3NSKzFlZWIxRUN0WGhabUVXbXNsR3V5ekNKblFB?=
+ =?utf-8?B?ZjRZODdTSjMraWNTenc5M0tvbjA3clk2b09vMjZEZG81V3B0ZkIybW9NNENn?=
+ =?utf-8?B?ZTBpa0s0NFFISUpCYXBGRmNMQmwrQk5ia0dqSytiQWRjU0ZCUFczVUtGMTFh?=
+ =?utf-8?B?dWduZ2N2LzRWdWk4RHNxZEhVMmxLcXdvdzJmUks0NGlnZFo5OWdFck9rektS?=
+ =?utf-8?B?bm9FaUxxVnhmbzBFQ0YwNDVDSTNxVitZRjgwZHdCQzRGb2xTYjFLSlpSQmI3?=
+ =?utf-8?B?OTR0Y0VMWkk1ZVUwazFiK0xOYmViR2NLOFRVdi91bXdxUTRTMmF5ODMzZ294?=
+ =?utf-8?B?MlZ4cnRJZW4vbG4wZWdDNVdpMSsrdmxiR3pMTjh2U2VUTDlla3JuK05yY01U?=
+ =?utf-8?B?bHNLZERHelphaTZNcmN1U0VFc3k5b0xjSnBzQStQZFZxN3VRZUVGZjZtVmNB?=
+ =?utf-8?B?dUJvNGlpaXJtU0tVLzArMzAzbkF4VUtyc1h6Um1JSkd6QnhWMzJjaDJhak9G?=
+ =?utf-8?B?VkRHejNJaUVRdk05WkEzZCtGK1czQUwzd0sxN2VCaUVVU3JkMEI1WGY4Zkwz?=
+ =?utf-8?B?cTdNN1Nnc3ZVYTlEYjA1d1FITy9yQ2JPU1ZtejBCSVhvMnpVSFpjVGpGcndI?=
+ =?utf-8?B?L0tQa2oyaEJSL0xHd2d3TCtoUGZ2SGhyZHpaTHFYOXNZQzRsMlI5NDlOaUNN?=
+ =?utf-8?B?bS9PY2g4b255T2ppY0p0SkRWWmxVTGhPSTErUjA4WGkyclF6VzJ0NGUzS1hs?=
+ =?utf-8?Q?U8iLqKj5P4x1EccOYf5Zl2SZZg/k5EZhg1AdkNsi4tTn?=
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: b849f92d-e465-45e3-cd99-08dd8d32175f
+X-MS-Exchange-CrossTenant-AuthSource: VI0P195MB2484.EURP195.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 06:40:44.0500
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YV/gOWeUTfWadQMgtJnShWbAACeR/xeDE8Ty9NxAvt11B5XvOWTh0n/vPcvBEu+nBspu/MQohaVlObWJh92FeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAP195MB1066
 
-On Mon, 2025-05-05 at 11:31 -0500, David Lechner wrote:
-> Creating a buffer of the proper size and correct alignment for use with
-> iio_push_to_buffers_with_ts() is commonly used and not easy to get
-> right (as seen by a number of recent fixes on the mailing list).
->=20
-> In general, we prefer to use this pattern for creating such buffers:
->=20
-> struct {
-> =C2=A0=C2=A0=C2=A0 u16 data[2];
-> =C2=A0=C2=A0=C2=A0 aligned_s64 timestamp;
-> } buffer;
->=20
-> However, there are many cases where a driver may have a large number of
-> channels that can be optionally enabled or disabled in a scan or the
-> driver might support a range of chips that have different numbers of
-> channels or different storage sizes for the data. In these cases, the
-> timestamp may not always be at the same place relative to the data. To
-> handle these, we allocate a buffer large enough for the largest possible
-> case and don't care exactly where the timestamp ends up in the buffer.
->=20
-> For these cases, we propose to introduce new macros to make it easier
-> it easier for both the authors to get it right and for readers of the
-> code to not have to do all of the math to verify that it is correct.
->=20
-> I have just included a few examples of drivers that can make use of this
-> new macro, but there are dozens more.
->=20
-> ---
 
-LGTM
+On 5/6/25 16:20, Andrew Davis wrote:
+> On 5/6/25 8:36 AM, Daniel Schultz wrote:
+>> For every remote processor, set up dedicated memory regions and
+>> associate the required mailbox channels. Allocate two memory areas
+>> per remote core: one 1MB region for vring shared buffers, and
+>> another for external memory used by the remote processor for its
+>> resource table and trace buffer.
+>>
+>> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+>> ---
+>>   .../boot/dts/ti/k3-am62a-phycore-som.dtsi     | 96 +++++++++++++++++--
+>>   1 file changed, 90 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi 
+>> b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
+>> index 147d56b87984..049aa358e796 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
+>> @@ -59,6 +59,42 @@ linux,cma {
+>>               linux,cma-default;
+>>           };
+>>   +        c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
+>> +            compatible = "shared-dma-pool";
+>> +            reg = <0x00 0x99800000 0x00 0x100000>;
+>> +            no-map;
+>> +        };
+>> +
+>> +        c7x_0_memory_region: c7x-memory@99900000 {
+>> +            compatible = "shared-dma-pool";
+>> +            reg = <0x00 0x99900000 0x00 0xf00000>;
+>> +            no-map;
+>> +        };
+>> +
+>> +        mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
+>> +            compatible = "shared-dma-pool";
+>> +            reg = <0x00 0x9b800000 0x00 0x100000>;
+>> +            no-map;
+>> +        };
+>> +
+>> +        mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
+>> +            compatible = "shared-dma-pool";
+>> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
+>> +            no-map;
+>> +        };
+>> +
+>> +        wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
+>> +            compatible = "shared-dma-pool";
+>> +            reg = <0x00 0x9c800000 0x00 0x100000>;
+>> +            no-map;
+>> +        };
+>> +
+>> +        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+>> +            compatible = "shared-dma-pool";
+>> +            reg = <0x00 0x9c900000 0x00 0xf00000>;
+>> +            no-map;
+>> +        };
+>> +
+>>           secure_tfa_ddr: tfa@9e780000 {
+>>               reg = <0x00 0x9e780000 0x00 0x80000>;
+>>               alignment = <0x1000>;
+>> @@ -70,12 +106,6 @@ secure_ddr: optee@9e800000 {
+>>               alignment = <0x1000>;
+>>               no-map;
+>>           };
+>> -
+>> -        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+>> -            compatible = "shared-dma-pool";
+>> -            reg = <0x00 0x9c900000 0x00 0x01e00000>;
+>> -            no-map;
+>> -        };
+>>       };
+>>         vcc_5v0_som: regulator-vcc-5v0-som {
+>> @@ -170,6 +200,13 @@ AM62AX_IOPAD(0x1f4, PIN_INPUT, 0) /* (D16) 
+>> EXTINTn */
+>>       };
+>>   };
+>>   +&c7x_0 {
+>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
+>> +    memory-region = <&c7x_0_dma_memory_region>,
+>> +            <&c7x_0_memory_region>;
+>> +    status = "okay";
+>> +};
+>> +
+>>   &cpsw3g {
+>>       pinctrl-names = "default";
+>>       pinctrl-0 = <&main_rgmii1_pins_default>;
+>> @@ -200,6 +237,33 @@ &fss {
+>>       status = "okay";
+>>   };
+>>   +&mailbox0_cluster0 {
+>> +    status = "okay";
+>> +
+>> +    mbox_r5_0: mbox-r5-0 {
+>> +        ti,mbox-rx = <0 0 0>;
+>> +        ti,mbox-tx = <1 0 0>;
+>> +    };
+>> +};
+>> +
+>> +&mailbox0_cluster1 {
+>> +    status = "okay";
+>> +
+>> +    mbox_c7x_0: mbox-c7x-0 {
+>> +        ti,mbox-rx = <0 0 0>;
+>> +        ti,mbox-tx = <1 0 0>;
+>> +    };
+>> +};
+>> +
+>> +&mailbox0_cluster2 {
+>> +    status = "okay";
+>> +
+>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
+>> +        ti,mbox-rx = <0 0 0>;
+>> +        ti,mbox-tx = <1 0 0>;
+>> +    };
+>> +};
+>> +
+>>   &main_i2c0 {
+>>       pinctrl-names = "default";
+>>       pinctrl-0 = <&main_i2c0_pins_default>;
+>> @@ -315,6 +379,16 @@ &main_pktdma {
+>>       bootph-all;
+>>   };
+>>   +&mcu_r5fss0 {
+>> +    status = "okay";
+>> +};
+>> +
+>> +&mcu_r5fss0_core0 {
+>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
+>
+> These mboxes items should be combined as they are both part of a single
+> two-element item, not a big deal for now as the output DTB is the same,
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Yes, I can do that. Heads up this is copied from the recent k3-am62a7-sk 
+update. You might wanna consider updating this board too.
 
-> Changes in v5:
-> - Add new patch to set minimum alignment to 8 for IIO_DMA_MINALIGN.
-> - Adjust IIO_DECLARE_DMA_BUFFER_WITH_TS() macro for above change.
-> - Drop one ad4695 patch that was already applied.
-> - Link to v4:
-> https://lore.kernel.org/r/20250428-iio-introduce-iio_declare_buffer_with_=
-ts-v4-0-6f7f6126f1cb@baylibre.com
->=20
-> Changes in v4:
-> - Dropped static_assert()s from the first patch.
-> - Handle case when IIO_DMA_MINALIGN < sizeof(timestamp).
-> - Added one more patch for ad4695 to rename a confusing macro.
-> - Link to v3:
-> https://lore.kernel.org/r/20250425-iio-introduce-iio_declare_buffer_with_=
-ts-v3-0-f12df1bff248@baylibre.com
->=20
-> Changes in v3:
-> - Fixed a few mistakes, style issues and incorporate other feedback (see
-> =C2=A0 individual commit message changelogs for details).
-> - Link to v2:
-> https://lore.kernel.org/r/20250422-iio-introduce-iio_declare_buffer_with_=
-ts-v2-0-3fd36475c706@baylibre.com
->=20
-> Changes in v2:
-> - Add 2nd macro for case where we need DMA alignment.
-> - Add new patch for ad4695 to convert buffer from u8 to u16 before
-> =C2=A0 making use of the new macro.
-> - Drop the bmp280 patch since it was determined to have a better
-> =C2=A0 alternative not using these macros.
-> - Add a few more examples to show the non-DMA case, both in a struct and
-> =C2=A0 stack allocated.
-> - Link to v1:
-> https://lore.kernel.org/r/20250418-iio-introduce-iio_declare_buffer_with_=
-ts-v1-0-ee0c62a33a0f@baylibre.com
->=20
-> ---
-> David Lechner (7):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: make IIO_DMA_MINALIGN minimum of 8 by=
-tes
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: introduce IIO_DECLARE_BUFFER_WITH_TS =
-macros
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad4695: use IIO_DECLARE_DMA_BUFF=
-ER_WITH_TS
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad4695: rename AD4695_MAX_VIN_CH=
-ANNELS
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7380: use IIO_DECLARE_DMA_BUFF=
-ER_WITH_TS
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: accel: sca3300: use IIO_DECLARE_BUFFE=
-R_WITH_TS
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: at91-sama5d2: use IIO_DECLARE_BU=
-FFER_WITH_TS
->=20
-> =C2=A0drivers/iio/accel/sca3300.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 18 ++--------------
-> =C2=A0drivers/iio/adc/ad4695.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 11 +++++-----
-> =C2=A0drivers/iio/adc/ad7380.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +--
-> =C2=A0drivers/iio/adc/at91-sama5d2_adc.c | 13 ++----------
-> =C2=A0include/linux/iio/iio.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 42 ++++++++++++++++++++++++++++++++++++++
-> =C2=A05 files changed, 52 insertions(+), 35 deletions(-)
-> ---
-> base-commit: 7e9a82ab5b861d3c33c99a22c1245a5b262ee502
-> change-id: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
->=20
-> Best regards,
+- Daniel
 
+>
+> Reviewed-by: Andrew Davis <afd@ti.com>
+>
+>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>> +            <&mcu_r5fss0_core0_memory_region>;
+>> +};
+>> +
+>>   &ospi0 {
+>>       pinctrl-names = "default";
+>>       pinctrl-0 = <&ospi0_pins_default>;
+>> @@ -343,3 +417,13 @@ &sdhci0 {
+>>       bootph-all;
+>>       status = "okay";
+>>   };
+>> +
+>> +&wkup_r5fss0 {
+>> +    status = "okay";
+>> +};
+>> +
+>> +&wkup_r5fss0_core0 {
+>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
+>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>> +            <&wkup_r5fss0_core0_memory_region>;
+>> +};
 
