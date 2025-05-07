@@ -1,262 +1,224 @@
-Return-Path: <linux-kernel+bounces-637100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874F6AAD4B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:58:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B9EAAD4B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D3547A4944
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102461C06EF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9721DD9AD;
-	Wed,  7 May 2025 04:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCD01DE2BD;
+	Wed,  7 May 2025 04:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nv7c+6Jn"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kvO7oVJ3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4A31DF265;
-	Wed,  7 May 2025 04:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC57D19F120;
+	Wed,  7 May 2025 04:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746593903; cv=none; b=TGjwQ3IesAiM+rSQct8r6ltY+nKCqYfycm4oXX/WpmqRala0nBwVPxtG0ipwYVOlbJ7ug62RsRiYonhhTCK6VaxLwbbBsGmjYdBGVH0e/vqmVRzbtPukpASdRoZhSCgAxjPXI2qEMq/qxbBl1uueWkXGUhjDgkNDjUiq8aGJl7Q=
+	t=1746593948; cv=none; b=B0E8nTc+Hphb9aSeCgcGDcR/SCYSA7yem0cSs+hwrlb1CnSTfgy7bfN2HwoSBVAdEZTFWz42Zw2mAIZqnyGLBUwWyP+PAm1bPbSNw7zuw3lPsYYbss1dEF0aB9Gbve8hVNGee1jIHGYwKh8IXdXoTzzNhoDYB/JohqlIdBTvYZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746593903; c=relaxed/simple;
-	bh=R3BeY5y8gh/r0wH5u5tbT7hSme6I1qiOGTHfI8yxsMs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FrCpmh+oEXOV5G6565cWhPYSLkZvY29bLb9RyH0xRu/DWMafntoyktrG3nV/eJx9m00zoXvhyrV57eOuYBx1peJW1+62f+cziOkgvgnfOjbVzfeRXYMmKpSLzkArqS4dIdNPoAneH0Gwjh2RfjlNCvNnzy7oUnQG/8Mo6xH1sAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nv7c+6Jn; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22c33ac23edso69662915ad.0;
-        Tue, 06 May 2025 21:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746593901; x=1747198701; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gp8EMudo+l8hHuGJwav45n96UcZGrxVsrevK5zrEmwM=;
-        b=Nv7c+6Jnl66skABgW2VHV/SBP3KPiZ6+sJLz+RzuCvMRcLeAP9BGYcAs5+ECgJUnTi
-         UDu7KJHkK768fw6GEIsMuol46QDF+mNa2v6jywcUoOILcbRUydZqyk9FiFwgyqB84TRU
-         eAb7xLynMxpVT2YRCPoZwhyPvaIX+QdAnKdAMlmYSANcBBEz0kcvTHW4M7P/RTSMlYoK
-         7Ioc6HP213dSeLyOQaPT0s0xFwV6b2f6jVRuyrLY9SgWVJjxW/lknqs805BVCzwZyUwC
-         GCju3WW6mqRUOlgy+PmadPWVrq6qze5X+BNgKgSj3HNGVcLVWHOgsI2uZ/Cso8dEKeNn
-         6fcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746593901; x=1747198701;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gp8EMudo+l8hHuGJwav45n96UcZGrxVsrevK5zrEmwM=;
-        b=cR8Wnlyvkmg85xvm3NgxKITZXpykYIqjhJLsH/ece4JK395KG9Z4xRlU9pAA2bWhYB
-         cD1Uso2rZ/90BJdS75sOZfoi4nDOyxZtR+FheYKn7reZRI9QzXU4PGSrqML5Dmo/3pCV
-         NFaut1XdCgU25qzzZoZdxRnBKKlQyQZqJerf0DyK4HLC7d62ffRJSj3egsPkyM35kiOB
-         GI6G3V4HAyjCiRM+NROOW9R1xYeFWF9aOD4EouEeku38mQ2k2sY2K/PyCtGERpmC+9/m
-         xJsN9dCPU10T0mZFD6vvkaqCjtxgAIJKKjR8s53yyJLQE8Z7xvDMYkh2ZTKqqR6vbmGJ
-         pg4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJni1rur0gnoWUJQoVGmq9jsi8G8iuULoqX6nPjJ/mq52qt9PBDoxJQ3ZGf7ujFA+kTIscng7NRKrQ@vger.kernel.org, AJvYcCULhSa+bvhXxxOMZRaJbt1OcMSrPGpniE73g4zuzP5Ec6fKPhHxSDxc7rIST12DnWNMhasJBSfRwRbjH20g@vger.kernel.org, AJvYcCXV/osQ+02znYfz9w9ADwOEPTMlAgmOFJX2nG0LeHbM7CyMRBBEOjfWom/dKd4L4mLnZ3LR5Y6As5cwJDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf+sLLih+ra830wjrWmvpFThsqY6CCxeeigBhe2BmjIeABor8l
-	HJGo/HJLopj1TGpviqbljlJyMJkIcPzpgBC/BeCBgK/GC9NOxNqBSAQmG9Kx
-X-Gm-Gg: ASbGncsXqVUCY6ZlpHfbH+4rERBY/L+TflHzLcPQHqE2onGJbzfNpyCWG1/u0SwRW+i
-	29dxy/j3wrcgp3i5r82C/1LmwdOdiaScznQ7N6jnIbnfAdS/vWrRFxF4uCXzVtB866V0Ew9by3g
-	tQ/4oGg28WTCFu067MSsHYyOHXHyfbIDpqOAWjHtger2rPVFiiigCjBeUzGV8uD9vLMVbRP6Gva
-	OJH7j/O1rI9Nkqi5fUXZBJ8ZY4zkFEqbJt4p/xiO6WpPYFW9nRxbeASvIj+ZHxu/8ghRU+RVOdD
-	fZ3qXMueKB00nZFU1JVctZi1+dyNoKbWk8hlmEx4E+7haH790jCpubYLSXsiuA==
-X-Google-Smtp-Source: AGHT+IFzi/hDZOXFzqno4SLNlk6HwNaZM+JUmfFyAeb+L2b/PyXhuJZsMzw1R9UcMW1WC7fwLGWsaw==
-X-Received: by 2002:a17:903:2a83:b0:224:a74:28cd with SMTP id d9443c01a7336-22e5ea91fb0mr27861065ad.31.1746593901320;
-        Tue, 06 May 2025 21:58:21 -0700 (PDT)
-Received: from Black-Pearl. ([122.162.204.119])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22e1521fd12sm84261505ad.127.2025.05.06.21.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 21:58:20 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Wed, 07 May 2025 04:57:34 +0000
-Subject: [PATCH v4 2/2] dt-bindings: dma: nvidia,tegra20-apbdma: convert
- text based binding to json schema
+	s=arc-20240116; t=1746593948; c=relaxed/simple;
+	bh=bJOPeGGSh2Hw2WYlIOpZFbgaiLdVuE2W8tajBVDaQy0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZHOLwXZKElwxC7wMx39vTRF9JRMDPkZkMjojqmLSIXwvgaBpXqwOa4e+OWLaTJyeM+Pxl7FiFOBwP/FNLaD4Ri/4Cu0YIQGkyjp9+a6T/2FIqYsEn8kByxBql/lA0dj7dmNi7cwkYbO2vFQSBO8aYQp3smmYg+SkPYd6TQmfnKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kvO7oVJ3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471H92D018448;
+	Wed, 7 May 2025 04:58:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=2Om2K7NlYvLRzOhsIO8jYO
+	3DWzMyXxpUINZ4XmAMLyc=; b=kvO7oVJ3njDlZ1TxIs0M2Z5Wyxou6ZXBhhpzgo
+	U/7aUVWZrjx51MP+f95H6ZrFOkfJQ2aZonLfFnfwfDBHVkAdF0XeIS04h3u1f0qx
+	FG/daGRFFGUVr1uldnoclsOzRv7z9nD4wcY7rXn4wl1oEUcZQBo96bXCsOfZOV0P
+	U18v2EYnWvClmDLNF3e3pOTcPb2+sQLMc7MUv+mkDOPhT6a9pqwQikJ0dRDoe3QM
+	aQDZ/ADfCwWxWbYIflzedDNANh89j8gOFUpYfs4tgalXnJQdW/lPUrYAwxu2ySmg
+	t71uKEJNgKtOicEmnQtuRp/60Ha0rO3IeO2nGYHIjn0fvIxQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5tbcem0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 May 2025 04:58:27 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5474wQcL024060
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 May 2025 04:58:26 GMT
+Received: from hyiwei-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 6 May 2025 21:58:18 -0700
+From: Huang Yiwei <quic_hyiwei@quicinc.com>
+To: <will@kernel.org>, <rafael@kernel.org>, <lenb@kernel.org>,
+        <james.morse@arm.com>, <tony.luck@intel.com>, <bp@alien8.de>
+CC: Huang Yiwei <quic_hyiwei@quicinc.com>, <xueshuai@linux.alibaba.com>,
+        <quic_aiquny@quicinc.com>, <quic_satyap@quicinc.com>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@quicinc.com>,
+        <kernel@oss.qualcomm.com>
+Subject: [PATCH v2] firmware: SDEI: Allow sdei initialization without ACPI_APEI_GHES
+Date: Wed, 7 May 2025 12:57:57 +0800
+Message-ID: <20250507045757.2658795-1-quic_hyiwei@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-nvidea-dma-v4-2-6161a8de376f@gmail.com>
-References: <20250507-nvidea-dma-v4-0-6161a8de376f@gmail.com>
-In-Reply-To: <20250507-nvidea-dma-v4-0-6161a8de376f@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GLsHI0RIUWKu5gdmYMBz8SANGRwsj428
+X-Proofpoint-GUID: GLsHI0RIUWKu5gdmYMBz8SANGRwsj428
+X-Authority-Analysis: v=2.4 cv=doXbC0g4 c=1 sm=1 tr=0 ts=681ae873 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=dt9VzEwgFbYA:10 a=SRrdq9N9AAAA:8 a=COk6AnOGAAAA:8
+ a=fApEDmPMNfUvMO555Z0A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA0NCBTYWx0ZWRfX6Rn8YeXmmXlh
+ 8GpKTqm0o0g3oJnIqsBw6tDxkPEc5S/AhFbfATzlTfFODfY9J+SOQsbHwKp2wcPhVwM1Ef/76mw
+ sJ3IWTHtCxzADK8ZOvz3XOpZQc64M4AAkEmSvcSf3DR0rCIA4pwAP9A5A7un16hIiKhqSrCK7zN
+ vJ+sk43RiOfAfB6MzfMNYBy+IC5fGgfqzky50CUkkzQ5YBRkGyF+tZUrerFnAKYgEyBROwYefmM
+ EzzWBwmEEvhdKKsi/igvIw7suB+WNh0Hops4sbqEBLKvnD/Dp4cTF6Pk/2VEWgaQfcpGwvuiGWx
+ fbCKcXAFgH+82iA/xnLqa8xa+Skr87yIAReETKbeJRN4xoR88ctHp/yLEa8XG9MvlqEp4dJMjzB
+ WyrihCYGNNEL8MdyZ+JYsEvU89n0HJADbBH1Yk9JREVL2h1CpnASDc6qGBHvweO9W+PPn+pD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_01,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=540 impostorscore=0 clxscore=1015 mlxscore=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505070044
 
-Update text binding to YAML.
-Changes during conversion:
-- Add a fallback for "nvidia,tegra30-apbdma" as it is
-  compatible with the IP core on "nvidia,tegra20-apbdma".
-- Update examples and include appropriate file directives to resolve
-  errors identified by `dt_binding_check` and `dtbs_check`.
+SDEI usually initialize with the ACPI table, but on platforms where
+ACPI is not used, the SDEI feature can still be used to handle
+specific firmware calls or other customized purposes. Therefore, it
+is not necessary for ARM_SDE_INTERFACE to depend on ACPI_APEI_GHES.
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+In commit dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES
+in acpi_init()"), to make APEI ready earlier, sdei_init was moved
+into acpi_ghes_init instead of being a standalone initcall, adding
+ACPI_APEI_GHES dependency to ARM_SDE_INTERFACE. This restricts the
+flexibility and usability of SDEI.
+
+This patch corrects the dependency in Kconfig and splits sdei_init()
+into two separate functions: sdei_init() and acpi_sdei_init().
+sdei_init() will be called by arch_initcall and will only initialize
+the platform driver, while acpi_sdei_init() will initialize the
+device from acpi_ghes_init() when ACPI is ready. This allows the
+initialization of SDEI without ACPI_APEI_GHES enabled.
+
+Fixes: dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES in apci_init()")
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>
+Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
 ---
- .../bindings/dma/nvidia,tegra20-apbdma.txt         | 44 -----------
- .../bindings/dma/nvidia,tegra20-apbdma.yaml        | 90 ++++++++++++++++++++++
- 2 files changed, 90 insertions(+), 44 deletions(-)
+ drivers/acpi/apei/Kconfig   |  1 +
+ drivers/acpi/apei/ghes.c    |  2 +-
+ drivers/firmware/Kconfig    |  1 -
+ drivers/firmware/arm_sdei.c | 11 ++++++++---
+ include/linux/arm_sdei.h    |  4 ++--
+ 5 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt
-deleted file mode 100644
-index 447fb44e7abeaa7ca3010b9518533e786cce56a8..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--* NVIDIA Tegra APB DMA controller
--
--Required properties:
--- compatible: Should be "nvidia,<chip>-apbdma"
--- reg: Should contain DMA registers location and length. This should include
--  all of the per-channel registers.
--- interrupts: Should contain all of the per-channel DMA interrupts.
--- clocks: Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--- resets : Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names : Must include the following entries:
--  - dma
--- #dma-cells : Must be <1>. This dictates the length of DMA specifiers in
--  client nodes' dmas properties. The specifier represents the DMA request
--  select value for the peripheral. For more details, consult the Tegra TRM's
--  documentation of the APB DMA channel control register REQ_SEL field.
--
--Examples:
--
--apbdma: dma@6000a000 {
--	compatible = "nvidia,tegra20-apbdma";
--	reg = <0x6000a000 0x1200>;
--	interrupts = < 0 136 0x04
--		       0 137 0x04
--		       0 138 0x04
--		       0 139 0x04
--		       0 140 0x04
--		       0 141 0x04
--		       0 142 0x04
--		       0 143 0x04
--		       0 144 0x04
--		       0 145 0x04
--		       0 146 0x04
--		       0 147 0x04
--		       0 148 0x04
--		       0 149 0x04
--		       0 150 0x04
--		       0 151 0x04 >;
--	clocks = <&tegra_car 34>;
--	resets = <&tegra_car 34>;
--	reset-names = "dma";
--	#dma-cells = <1>;
--};
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..a2ffd5209b3bf3f2171b55351a557a6e2085987d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
-@@ -0,0 +1,90 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/nvidia,tegra20-apbdma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
+index 3cfe7e7475f2..070c07d68dfb 100644
+--- a/drivers/acpi/apei/Kconfig
++++ b/drivers/acpi/apei/Kconfig
+@@ -23,6 +23,7 @@ config ACPI_APEI_GHES
+ 	select ACPI_HED
+ 	select IRQ_WORK
+ 	select GENERIC_ALLOCATOR
++	select ARM_SDE_INTERFACE if ARM64
+ 	help
+ 	  Generic Hardware Error Source provides a way to report
+ 	  platform hardware errors (such as that from chipset). It
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 289e365f84b2..0f3c663c1b0a 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1715,7 +1715,7 @@ void __init acpi_ghes_init(void)
+ {
+ 	int rc;
+ 
+-	sdei_init();
++	acpi_sdei_init();
+ 
+ 	if (acpi_disabled)
+ 		return;
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index aadc395ee168..7df19d82aa68 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -31,7 +31,6 @@ config ARM_SCPI_PROTOCOL
+ config ARM_SDE_INTERFACE
+ 	bool "ARM Software Delegated Exception Interface (SDEI)"
+ 	depends on ARM64
+-	depends on ACPI_APEI_GHES
+ 	help
+ 	  The Software Delegated Exception Interface (SDEI) is an ARM
+ 	  standard for registering callbacks from the platform firmware
+diff --git a/drivers/firmware/arm_sdei.c b/drivers/firmware/arm_sdei.c
+index 3e8051fe8296..71e2a9a89f6a 100644
+--- a/drivers/firmware/arm_sdei.c
++++ b/drivers/firmware/arm_sdei.c
+@@ -1062,13 +1062,12 @@ static bool __init sdei_present_acpi(void)
+ 	return true;
+ }
+ 
+-void __init sdei_init(void)
++void __init acpi_sdei_init(void)
+ {
+ 	struct platform_device *pdev;
+ 	int ret;
+ 
+-	ret = platform_driver_register(&sdei_driver);
+-	if (ret || !sdei_present_acpi())
++	if (!sdei_present_acpi())
+ 		return;
+ 
+ 	pdev = platform_device_register_simple(sdei_driver.driver.name,
+@@ -1081,6 +1080,12 @@ void __init sdei_init(void)
+ 	}
+ }
+ 
++static int __init sdei_init(void)
++{
++	return platform_driver_register(&sdei_driver);
++}
++arch_initcall(sdei_init);
 +
-+title: NVIDIA Tegra APB DMA Controller
-+
-+description:
-+  The NVIDIA Tegra APB DMA controller is a hardware component that
-+  enables direct memory access (DMA) on Tegra systems. It facilitates
-+  data transfer between I/O devices and main memory without constant
-+  CPU intervention.
-+
-+maintainers:
-+  - Jonathan Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra20-apbdma
-+      - items:
-+          - const: nvidia,tegra30-apbdma
-+          - const: nvidia,tegra20-apbdma
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#dma-cells":
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Should contain all of the per-channel DMA interrupts in
-+      ascending order with respect to the DMA channel index.
-+    minItems: 1
-+    maxItems: 32
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: dma
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#dma-cells"
-+  - clocks
-+  - interrupts
-+  - resets
-+  - reset-names
-+
-+allOf:
-+  - $ref: dma-controller.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/reset/tegra186-reset.h>
-+    dma-controller@6000a000 {
-+        compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
-+        reg = <0x6000a000 0x1200>;
-+        interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car 34>;
-+        resets = <&tegra_car 34>;
-+        reset-names = "dma";
-+        #dma-cells = <1>;
-+    };
-+...
-
+ int sdei_event_handler(struct pt_regs *regs,
+ 		       struct sdei_registered_event *arg)
+ {
+diff --git a/include/linux/arm_sdei.h b/include/linux/arm_sdei.h
+index 255701e1251b..f652a5028b59 100644
+--- a/include/linux/arm_sdei.h
++++ b/include/linux/arm_sdei.h
+@@ -46,12 +46,12 @@ int sdei_unregister_ghes(struct ghes *ghes);
+ /* For use by arch code when CPU hotplug notifiers are not appropriate. */
+ int sdei_mask_local_cpu(void);
+ int sdei_unmask_local_cpu(void);
+-void __init sdei_init(void);
++void __init acpi_sdei_init(void);
+ void sdei_handler_abort(void);
+ #else
+ static inline int sdei_mask_local_cpu(void) { return 0; }
+ static inline int sdei_unmask_local_cpu(void) { return 0; }
+-static inline void sdei_init(void) { }
++static inline void acpi_sdei_init(void) { }
+ static inline void sdei_handler_abort(void) { }
+ #endif /* CONFIG_ARM_SDE_INTERFACE */
+ 
 -- 
-2.43.0
+2.25.1
 
 
