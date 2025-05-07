@@ -1,105 +1,167 @@
-Return-Path: <linux-kernel+bounces-637033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99874AAD3B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BA0AAD3D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E1D4C8218
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7C43BC49B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 03:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DAF1A8F84;
-	Wed,  7 May 2025 03:04:48 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F62E1DF97F;
+	Wed,  7 May 2025 03:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OY0lCZNq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3035E18C31;
-	Wed,  7 May 2025 03:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2E41DE2BA
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 03:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746587088; cv=none; b=og3bpLh6g8QPqUbIzOOc+g83pu1WtNFs7etUs5ALB5/k+rvwvG2qAB8crkJOfOrzQvCjiX7qAbWdBbFcbnXLJGm+45XmW433ZS9wl/UC8gwNhLzuiQshgVP7XbfIFEJy6c69NBHxeEHg7AmgyBQfPlnf7Dvjxsf1z4dzG8vDPuM=
+	t=1746587449; cv=none; b=br/w4mW0BzBaZvVevVMHAUYTdSqXCupGMeRklgw23vHRDh8pdSpFVUB4TyVlrWPbKMML7mCPaAfKokvBvNnQleX7aSFmegTBoMi+aGCB4SJ7waQpDl2YtIsiIhlqRX7JnpFtSHPMRYtdynbNjDB5MTNMuKf5e2C7pDVC/Z5QfV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746587088; c=relaxed/simple;
-	bh=QwIKkKxpNb7iwHp9WW3P27A3tZtJzLdwiQneLX2HKs8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VIW2KJLx+WXKpDW8Xv4fcVreocee8UjX3JMJuOxcUrRhn5fqfGTRlm0rc3zhC78kdIU0D+4htrS+BSFfBxNZk0vFi2g7Ume7cQXrnydFhJSx1S9lpdNikXzfPfxz5d2aTs/2x/tofnPWTZgNSVhev3B/27XWkFUjCjWWwDs34U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 02df348c2af011f0b29709d653e92f7d-20250507
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:d7deef24-acd2-4a9a-86d8-db3bb7a87288,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:eba71daf2742749ccda461fe3bf9477b,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 02df348c2af011f0b29709d653e92f7d-20250507
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1610368035; Wed, 07 May 2025 11:04:37 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 6E096B804EBC;
-	Wed,  7 May 2025 11:04:37 +0800 (CST)
-X-ns-mid: postfix-681ACDC5-199025431
-Received: from localhost.localdomain (unknown [10.42.12.16])
-	by node2.com.cn (NSMail) with ESMTPA id 87482B80758A;
-	Wed,  7 May 2025 03:04:36 +0000 (UTC)
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: tangchengchang@huawei.com
-Cc: huangjunxian6@hisilicon.com,
-	jgg@ziepe.ca,
-	leon@kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH] RDMA/hns: fix trace TRACE_INCLUDE_PATH
-Date: Wed,  7 May 2025 11:04:33 +0800
-Message-Id: <20250507030433.599021-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1746587449; c=relaxed/simple;
+	bh=Gg21LHsk2DA/gAZ+3TgrOAdIP9cGG3SLUbHO658YwX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vf6Uj2seA9+Sw/mXghiK/r/xsFZuCkpo0HJcdvuWXamcouc4LN4tgnOVRlKvmnzYy+pgJ0ymIOjTkKHU4Xnyr002Hly3SbpuSTiCSko2rdXMLtaGTEP8dEOC4+96mU0JBY+Q3UjQOzRSyVK2xyyq7KVYO3fKZ7qrN0IZ4+oLhKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OY0lCZNq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746587445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDP5SJyu1HM2jy5Jk+I9deDo8NdSHT65dpnO1OhhUms=;
+	b=OY0lCZNqH4gFdgWxhwePg1l3Il4NuSu9znjaUFUDW3BMv3sA918PVVT9eJjbOeNCNMvmQC
+	L2HThMvpI/8cHu/p8yo9DWMOajlMkrg4zqBe22t2wzukl7dhz4QtJeS8JOEMDu3Rfn9MqQ
+	Xhxs+TlEBY1zxrca0ery+K4dAqdKFN4=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-y-7KwQbcMeeI1HwSkXyskg-1; Tue, 06 May 2025 23:10:40 -0400
+X-MC-Unique: y-7KwQbcMeeI1HwSkXyskg-1
+X-Mimecast-MFC-AGG-ID: y-7KwQbcMeeI1HwSkXyskg_1746587440
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22e3abea7e8so14698225ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 20:10:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746587440; x=1747192240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zDP5SJyu1HM2jy5Jk+I9deDo8NdSHT65dpnO1OhhUms=;
+        b=gWThVbCbnVeDihjUW09zyCFajC1GuMzhsjV7jQnrDeXLuQyPcWSOe2uwjrt+Lry3gD
+         8mNvO2jMHaRjYOnFbVQZ+xE3Za52ho/9qY3gWm6wK+myXU0iT3lqYN9G1mLoz8AS3sFI
+         GQGHG7vM2dDWUuetTKQ9HaYYWFmZDDChJrsPgbIqjhdaOG0YWRxmQyJY6n+tPsdvY7CG
+         64zT+rA89gO0+OqXGEUA/lVvgr9mobfUsPWwhIynSIa3k8lyM0sOgsQg6ePeKONm1PY5
+         244C5DZrywJwnlrBut5/00rNjSUKU6F6/mVUfyYNgESuiJykp1GeEUu8C8ITg6WlAg4j
+         WbJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhOwYcDDHNivk9VdrJvn1j9+hZHSJ4W1ABpAvcee1GNveGJWPeK0hAA9IoXugUpY/BZckcVRx9gl89IVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJAd8JaY+Y5IFm9V3NVSQYv7zy4aWu01a1I4QZ0aLrgfYLHNyk
+	9WFLR5z8lcHs2EURiWXc5o1Oz7rLKpG3aHmjBKcW+138+J1GgTIbuAzO/ga9CtMPe2JKGynR+Cv
+	xLJFW/8K6/LGSMY/7ocNuqSmda5DZ3EV2hqPCNc5VSQOorzClFIo0AHE7B6yvpA==
+X-Gm-Gg: ASbGncvB2SzQBUu6YsHjjmtQKqHMgTW01pyrYkgeD0M1UsP9Nv9WkgozHFWijfTcx5J
+	2H+LGXLLmmzH5GdD2kxur0K2ZHfwYvx0hLK8vw14I5xOVJy0VnZ2Uo8tIqhYgcgDPvCLXIE9r64
+	pd0WoZE/VhnZF7So5Kdo5p3+di+CcXZGnMr21MC795ANXVRJwXuCb52OCidbYQCvdPhBGkOb1cL
+	Yywf0XhXjtDta9yLFnE6ytXRHw1jA9UTt7aafYdfsh4U2z3cS1xwrR7eZ4Z89kAHSX4OsM7PiSp
+	bC8=
+X-Received: by 2002:a17:902:f789:b0:224:1001:6787 with SMTP id d9443c01a7336-22e5ea2e466mr24846955ad.4.1746587439739;
+        Tue, 06 May 2025 20:10:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0UfEi+55Sr/HmVL17k/pyRle1Z4csFmmJpk2KYXZvLlD0HVZ1oUcDI55EPbEuyt069E4aHg==
+X-Received: by 2002:a17:902:f789:b0:224:1001:6787 with SMTP id d9443c01a7336-22e5ea2e466mr24846475ad.4.1746587439348;
+        Tue, 06 May 2025 20:10:39 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e151e98d0sm82766195ad.80.2025.05.06.20.10.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 20:10:39 -0700 (PDT)
+Date: Wed, 7 May 2025 11:05:27 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
+	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
+	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
+	Pingfan Liu <kernelfans@gmail.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Arnaud Lefebvre <arnaud.lefebvre@clever-cloud.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v9 6/8] Revert "x86/mm: Remove unused __set_memory_prot()"
+Message-ID: <idxxt5vwxx65n73rau2pr72bnw4nopyxi67otivqdzrlnt6tnn@7uygzqael66u>
+References: <20250502011246.99238-1-coxu@redhat.com>
+ <20250502011246.99238-7-coxu@redhat.com>
+ <20250503234605.94d954b6ca70ea09c0aa8004@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250503234605.94d954b6ca70ea09c0aa8004@linux-foundation.org>
 
-TRACE_INCLUDE_PATH should be a path relative to define_trace.h, not the
-file including it. (See the comment in include/trace/define_trace.h.)
+On Sat, May 03, 2025 at 11:46:05PM -0700, Andrew Morton wrote:
+>On Fri,  2 May 2025 09:12:40 +0800 Coiby Xu <coxu@redhat.com> wrote:
+>
+>> This reverts commit 693bbf2a50447353c6a47961e6a7240a823ace02 as kdump
+>> LUKS support (CONFIG_CRASH_DM_CRYPT) depends on __set_memory_prot.
+>>
+>
+>x86_64 allmodconfig:
+>
+>In file included from drivers/gpu/drm/i915/gt/intel_ggtt.c:6:
+>./arch/x86/include/asm/set_memory.h:40:57: error: unknown type name 'pgprot_t'
+>   40 | int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
+>      |                                                         ^~~~~~~~
+>
+>I did this:
+>
+>
+>From: Andrew Morton <akpm@linux-foundation.org>
+>Subject: revert-x86-mm-remove-unused-__set_memory_prot-fix
+>Date: Sat May  3 11:38:32 PM PDT 2025
+>
+>x86 set_memory.h needs pgtable_types.h for pgprot_t.  Obtain it via the
+>higher-level pgtable.h.
+>
+>Cc: Baoquan He <bhe@redhat.com>
+>Cc: Coiby Xu <coxu@redhat.com>
+>Cc: "Daniel P. Berrange" <berrange@redhat.com>
+>Cc: Dave Hansen <dave.hansen@intel.com>
+>Cc: Dave Young <dyoung@redhat.com>
+>Cc: Jan Pazdziora <jpazdziora@redhat.com>
+>Cc: Liu Pingfan <kernelfans@gmail.com>
+>Cc: Milan Broz <gmazyland@gmail.com>
+>Cc: Ondrej Kozina <okozina@redhat.com>
+>Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+>Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>---
+>
+> arch/x86/include/asm/set_memory.h |    1 +
+> 1 file changed, 1 insertion(+)
+>
+>--- a/arch/x86/include/asm/set_memory.h~revert-x86-mm-remove-unused-__set_memory_prot-fix
+>+++ a/arch/x86/include/asm/set_memory.h
+>@@ -4,6 +4,7 @@
+>
+> #include <asm/page.h>
+> #include <asm-generic/set_memory.h>
+>+#include <asm/pgtable.h>
+>
+> #define set_memory_rox set_memory_rox
+> int set_memory_rox(unsigned long addr, int numpages);
+>_
 
-Fixes build error found with CONFIG_INFINIBAND_HNS_HIP08=3Dm:
-  CC [M]  drivers/infiniband/hw/hns/hns_roce_hw_v2.o
-In file included from drivers/infiniband/hw/hns/hns_roce_trace.h:213,
-                 from drivers/infiniband/hw/hns/hns_roce_hw_v2.c:53:
-./include/trace/define_trace.h:110:42: fatal error: ./hns_roce_trace.h: N=
-o such file or directory
-  110 | #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+Thanks for catching this issue and providing a clean fix! I'll make sure
+future patches pass allmodconfig. And also thanks for pulling the patch
+set into -mm tree!
 
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
----
- drivers/infiniband/hw/hns/hns_roce_trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_trace.h b/drivers/infinib=
-and/hw/hns/hns_roce_trace.h
-index 23cbdbaeffaa..19bd3c0eec47 100644
---- a/drivers/infiniband/hw/hns/hns_roce_trace.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_trace.h
-@@ -209,5 +209,5 @@ DEFINE_EVENT(cmdq, hns_cmdq_resp,
- #undef TRACE_INCLUDE_FILE
- #define TRACE_INCLUDE_FILE hns_roce_trace
- #undef TRACE_INCLUDE_PATH
--#define TRACE_INCLUDE_PATH .
-+#define TRACE_INCLUDE_PATH ../../drivers/infiniband/hw/hns
- #include <trace/define_trace.h>
---=20
-2.25.1
+-- 
+Best regards,
+Coiby
 
 
