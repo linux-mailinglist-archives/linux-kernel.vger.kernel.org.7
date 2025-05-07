@@ -1,142 +1,102 @@
-Return-Path: <linux-kernel+bounces-637347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06E6AAD810
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1319AAD615
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D0D1884728
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9381D983954
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F1321E0A8;
-	Wed,  7 May 2025 07:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7D020F093;
+	Wed,  7 May 2025 06:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjZPvZpg"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N/q9UBbW"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A533E21481D;
-	Wed,  7 May 2025 07:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13B514A4CC
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746602961; cv=none; b=IsWSJGzv8nlNA+kHiF1GhhXrIm+q4blaUBoeLQkJUsOOkyJJu69Lmo4I3MbuBZJ/XaNKBGPzCFr8vso59s935Kq66lNGdpPU8dnQ1NScbJUYVU1yHUpZZrp72RajBtepoxxeGFDboujQM6X9L7xohfNdxcxLExOXZ5R1icbUnR8=
+	t=1746599530; cv=none; b=GkvzdOnQ79BXWaIAdNVP6K+RkkiV6dIcDQZMikbKpyLmzeVyAtLLPC2i/dx+ZcPNj6clF3nhdaZBhnRtJjjEJCAp3+mrJDqj1Z4onwUdNygtKaUm2Ut05CT5XGWBoT/HGkq2l+Wl8W98hhxQ7SJG27WckonXLIB8Wrs+eyZpS20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746602961; c=relaxed/simple;
-	bh=yHf9/ftT8R0NcVDJ1hfNI2qi/CtPmDvZv+p8tcq8me0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XOc36Hsteyj9fM8eCUEsZxaFPquWi1I5YpVmj0wb3Js5tcTLvehyW+79kFJYbLCnCJEHJXZIvVykfE/U/KIgFYUWbXFOsvJ0Io5MX2hpRcH1RKvObt5E+raTTWNJUQxONiRPA9nmONv7onM17x10kGTSB1YkLR+PFjP1tQd6RaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XjZPvZpg; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-441d1ed82faso10350625e9.0;
-        Wed, 07 May 2025 00:29:19 -0700 (PDT)
+	s=arc-20240116; t=1746599530; c=relaxed/simple;
+	bh=exbcRCBcXP75cDIPN2zF7G/kZPfJqnrNFxp1zshUZ+8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uHZjTKCWfh2ydditDGKIRHolhYiSE85PUbHySuaTDGT9B0Zb38EWoRfL8INX3a2AxdmP7HZPuLCFa7JdbDeIzFsrMTuz2avifrk9mwRrVmBOtLtdbwroOxddJopT451VmMqVs7R+QZZR9ihiz+oXMBDINM+8SFCy0nfgkddV7ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N/q9UBbW; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-441c96c1977so21870335e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 23:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746602958; x=1747207758; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iR2zA0EdcdHsgk0AyQDnICvVvY4Gi25oEb1LErzmdKk=;
-        b=XjZPvZpg7JD4Zf/3eRDQfL/MUu1skKioHGszV4yuHYq9oCsAxdinM7IDlcAJj0Rc9B
-         EuBXQcQCFpKqNAfOJ0bYBKs9ChJOvmGwURjZ6vA7D77HBtIEBPFiVutXwXT94iYw6lIL
-         lHe1ZBawghwTxjZK/1bYmkzRYDWseV3NX9asCLwkiQvV1oM1AjY227QI7X76/LvgFpvk
-         8rwpgIYTMsd4FoZ5XAYpN1unEs/nBNA8sD4Jn+/x/aRUSMJCxHsV5zgL0T33eViJGQh7
-         diDMAZ2jt8uumBd+00rhXwQd8xiP8m3nlYiSupIHdWdZJljnsR7wwCHpm457m3aEv35j
-         DVqQ==
+        d=google.com; s=20230601; t=1746599527; x=1747204327; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L8GCAFg1aaYXlvR66YXUtPzPYdtJZ6yf/ekYSx+SpVs=;
+        b=N/q9UBbWqYRUZ9PU5CLprdk2AnnJln+hsMshsMXsG/QAytTP4mYtZzhCbtHTo9wv/j
+         XrUr4ABk2zBk9UTZuZnmMDm0t/akwcqgrU75VnJoV/YFE+oLGHWFM/9LreKO6d/05hrA
+         o+fhxnnQmk59Qdx3QTJbxCr164prmf1oCTH6mHVY7DYg+HNG+0DGa3449GI69EtaPx76
+         7tdQDeGbm47k2pNgNzCPUeWzj/FiBqLXDdbbYwBm9ZbEPlPVniyJ+FBfbz0btKy4EZd/
+         /yCherlFcG/JWYP8Vm0LdzbcCJU+pgoLcqUCHj7K042jlZ8wVYkIEjgnRnxqDR9SV85J
+         YCTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746602958; x=1747207758;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iR2zA0EdcdHsgk0AyQDnICvVvY4Gi25oEb1LErzmdKk=;
-        b=e2XuukMX4W7BGunHQ8tS2cnDWP03qCrWbeYEbMAOXwnkH5O9t8eT7wW0J4fnXs19U2
-         HJPfldWsEbwVfajjN9j+5Y9wk4ss6NT8aijLtk+akejO64PWhvK978OaplZJzEENmSBf
-         77unrS6u/NY8Z9mvdEEcBursRq1a4fCEVHZ/DFPFYzPxYH0U4BG8ofe331z78IQE4s1t
-         /T6wB/yR1A5c3sfEDGF6JO2lPdQSSvzy4qyG0zqL+fl5vwrDaM/7Ud8B1NepFJSJxExW
-         bPut1Te22LK98qq4uJqbS85a/wPrJcBbIKQz4XYf3yi6Dou6i7oAdq3JKFoN/QhGczCq
-         DanQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJUHFDLCMu3shMfiOkHIwAhLAVH//GG9URKrTjey3OJxjBbtuDBhR8T1irwcq/3ozsObbMSx7wM2Y=@vger.kernel.org, AJvYcCXSZI3Y+YyO8t4uWdE55MI1zQyC8q/IuAJkGTr9b5eal5KHLiMqP2Vq5s7HO3l2625btdmGR6Dblfnty/eR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1RFrq5RfhHqfIsKPCZHiSi4K+XkQCF7DOJWqMwZd+rGupXKSw
-	xVMtZpS3YCXnxbWtAeOAou0DBSuR4DRM35FVPmvrfqgoZ0cdiGao
-X-Gm-Gg: ASbGncu2ebgaC48THC/FHLnuTDbg1EFV/vkdnSVvXoHrcFfK3e/lhzlbLTclxWNI5Ni
-	WR1iTmZjgoRdRUzuOnVxUfVjqbxNYQWdF336d6ba9IQU2hnViyOl1PYN4hN89I9FT6LRtyUTu8P
-	XDPnQ+KH+AjtC2yjFIei3eTToKA7trw7doa3TFHre6CUvEY41ozYd62+VJdp2IkLQOZuVBlFvuA
-	R8flgGXQpUxNZjTB4uQRG1ryA9L712xUjr5GBeZ4CINl1vsYIsjKeVX77yg5ovXVtkbn+27imVf
-	JtOG+mNa3yQA8V/ygxOSrpJosaTdnk6lyYxmdfZh2ewjX2sQm6QYw9c12Nx8hQiWS6RjkhABjYi
-	m7H37EWQoQUCGtHE=
-X-Google-Smtp-Source: AGHT+IGGaL+rl/74nMAHw73kbNQ4stZN3O4aJfmM7No/pxs2x5k2i6dSgRLIWAu6ib9gbXsfdqUuwA==
-X-Received: by 2002:a05:600c:1d8f:b0:43d:2230:303b with SMTP id 5b1f17b1804b1-441d44dd262mr13902825e9.20.1746602957701;
-        Wed, 07 May 2025 00:29:17 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d43d0b41sm20443695e9.11.2025.05.07.00.29.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 00:29:17 -0700 (PDT)
-Message-ID: <dd7dda31525f2947060386a2b605300cf02677f2.camel@gmail.com>
-Subject: Re: [PATCH] iio: adc: ad7944: max high bits on direct read
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Wed, 07 May 2025 07:29:41 +0100
-In-Reply-To: <20250505-iio-adc-ad7944-max-high-bits-on-direct-read-v1-1-b173facceefe@baylibre.com>
-References: 
-	<20250505-iio-adc-ad7944-max-high-bits-on-direct-read-v1-1-b173facceefe@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        d=1e100.net; s=20230601; t=1746599527; x=1747204327;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L8GCAFg1aaYXlvR66YXUtPzPYdtJZ6yf/ekYSx+SpVs=;
+        b=tU0ZlD5V6SarPof4eYnV0+a3g3OhKyHqHzZX1kubn/cA6FaLHX6V+Xi3VRYCx6r1Rt
+         I/V9WAB2Y8RzJY8FLAurgcVkTybCmlVmblZuQ7lpE7yWz2+sg5pYzSecxpJJaKUS9twE
+         zckJkiEC4tEQU4amlw3YheBzD8Iffp615LJGgsXElwg9sjwGINFm6aRCRGA6VCRl6tpw
+         oswtLo+wDVnkkTgXFNGRHT/rEZ5zwiARMz4OqcTkf02pXE0bRZ+5QcfNqUVyn/U0ekRn
+         CATGvFrrfc9E6mRJ8DrhN3JYzLVdLtyB5f68mGGva0eJ5YooiyPRdc2GaXwm6V6OAScH
+         glOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTw4+aPhZqoM5Isq4fvjzm60nPyiyhmASkboco29OVR6fQRK7PRLRGxNu1rUEKQ+VjO+aGAemcjKr51mA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCgHzBiwzM5dySU5PNUl1FtFerzJQXcyuFVVcKZOdrzoZf2ONr
+	f5CeE9zH+5X8NeybBI4vOz/XFnBnlNmblDerUfuhBhU6/TmnkcGQo6NCq4oT7ENbOCfzYa2LhPd
+	rcNJQ3GGpvxZKVQ==
+X-Google-Smtp-Source: AGHT+IErajDqfwcZTf8rFmNjgBY75jdYeqJxRWcm3VL9E4WUwCBuF8N519b5ETfv2d2sPP/taqAt/46bX7Ge2ro=
+X-Received: from wmbhj13.prod.google.com ([2002:a05:600c:528d:b0:43d:58c9:bb51])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1d08:b0:43c:fffc:7855 with SMTP id 5b1f17b1804b1-441d44c7d8cmr15872725e9.15.1746599527327;
+ Tue, 06 May 2025 23:32:07 -0700 (PDT)
+Date: Wed, 7 May 2025 06:32:05 +0000
+In-Reply-To: <D9POL1CR89RN.2OOMXJAOR4XAK@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250502-vec-methods-v5-0-06d20ad9366f@google.com>
+ <20250502-vec-methods-v5-6-06d20ad9366f@google.com> <D9POJZ60ZCYQ.1XBNZSXOQ9UJS@nvidia.com>
+ <D9POL1CR89RN.2OOMXJAOR4XAK@nvidia.com>
+Message-ID: <aBr-ZZMBPyy0KfZH@google.com>
+Subject: Re: [PATCH v5 6/7] rust: alloc: add Vec::remove'
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 2025-05-05 at 13:28 -0500, David Lechner wrote:
-> Apply a mask to the raw value received over the SPI bus for unsigned
-> direct reads. As we found recently, SPI controllers may not set unused
-> bits to 0 when reading with bits_per_word !=3D {8,16,32}. The ad7944 uses
-> bits_per_word of 14 and 18, so we need to mask the value to be sure we
-> returning the correct value to userspace during a direct read.
->=20
-> Fixes: d1efcf8871db ("iio: adc: ad7944: add driver for AD7944/AD7985/AD79=
-86")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> The sign_extend32() already takes care of signed reads in case that
-> isn't obvious - it overwrites the unknown bits with the sign bit.
-> ---
+On Wed, May 07, 2025 at 02:32:10PM +0900, Alexandre Courbot wrote:
+> On Wed May 7, 2025 at 2:30 PM JST, Alexandre Courbot wrote:
+> > On Fri May 2, 2025 at 10:19 PM JST, Alice Ryhl wrote:
+> >> +    /// Removes the element at the given index.
+> >> +    ///
+> >> +    /// # Panics
+> >> +    ///
+> >> +    /// Panics if the index is out of bounds.
+> >
+> > According to the commit log (and the code of the method) I think this
+> > panic section is not valid anymore?
+> 
+> Oops never mind, I didn't notice Danilo already pointed this out. >_<
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Thanks for taking a look!
 
-> =C2=A0drivers/iio/adc/ad7944.c | 2 ++
-> =C2=A01 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
-> index
-> 2f949fe5587318957f2e423029294ced0a6f803d..37a137bd83571b055e970a8cd483d87=
-26972d637
-> 100644
-> --- a/drivers/iio/adc/ad7944.c
-> +++ b/drivers/iio/adc/ad7944.c
-> @@ -377,6 +377,8 @@ static int ad7944_single_conversion(struct ad7944_adc=
- *adc,
-> =C2=A0
-> =C2=A0	if (chan->scan_type.sign =3D=3D 's')
-> =C2=A0		*val =3D sign_extend32(*val, chan->scan_type.realbits - 1);
-> +	else
-> +		*val &=3D GENMASK(chan->scan_type.realbits - 1, 0);
-> =C2=A0
-> =C2=A0	return IIO_VAL_INT;
-> =C2=A0}
->=20
-> ---
-> base-commit: b72f1157bfb9b92b0439e11469f7f94e47363460
-> change-id: 20250505-iio-adc-ad7944-max-high-bits-on-direct-read-b358289d0=
-337
->=20
-> Best regards,
-
+Alice
 
