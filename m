@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-637621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923A3AADB35
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:19:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54231AADB2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DC81BC5D57
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401EB4E63D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5D523A9B3;
-	Wed,  7 May 2025 09:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F85F231A30;
+	Wed,  7 May 2025 09:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="R6Oht6xM"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b="NbjeaoSq"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E078239E90;
-	Wed,  7 May 2025 09:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C0D231A3B
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609298; cv=none; b=V20AQHPKDALtsoKMWNXUh8QtucU18yBFNmh/WrM//RCRV1XYJYPun7K22cb8ZL0fW/e7/y9t5GZC7OCVfPStpFaaiMRPhaVO+4ztB76XSN5gZg/y87fDpPCjAtKSbmPyqDzcIR/cJUQQYqjEaB7njOI9VZOrEQxVkqteWLoesGA=
+	t=1746609256; cv=none; b=oFxrmvhD3mpvYeoHs+UV4UuhoupE/sQp3AsiPLg0fRQoP2ahBq26Qi0XH3I34Gy3cEgsq3FYC/z5uoMX0BofNeDbTfdjP78303URqxjz2GHbt1rq2vixzeFQqK302Q3PrSMyJXYOn2HkFWGxrrbg5JNjNN9JADsUUrLNpDKw1hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609298; c=relaxed/simple;
-	bh=MwgFJKN7l7kFdYNY6suwGldRZuE0owjh8S7GL/kNLcQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lr3IWDJXYWRoprA8AJt8yl3Kil1h5zYi2HaXmOJmGgaPCYvaPJHSEwjxXPqhWsyW3ev79DrVLkYgq9RWTA68DePqWFppNtjWb+I/Fr3uRAgQrp1j5fCA+7j9KH3pmbS6yc/sqUhngk1js1JLLDVierotY6mBmxF9F2vGKS/gBo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=R6Oht6xM; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1746609244;
-	bh=TmJE6Xzc8x7k0lHbsb8PJi+nXReCRhz9/VASnE1oJO0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=R6Oht6xMeZ0HP2auyNRlqHFur4zyU0+3CG4LJnz+t5Nrhw1E8RHZRYYvf02UZCSKT
-	 PzHrDj5RkZ974fF/SnjCCoaHi1EeR1BFzh6sNHPMa+dgykTOg2xMw6QEHO4NzARRsZ
-	 5Uc/ZvIJP5OgDvj6PZWLhfK+BfpE+udBEGvmSbas=
-X-QQ-mid: zesmtpip2t1746609232t4ca7945c
-X-QQ-Originating-IP: npKWDtNpgAvnhADZiJ4Q8/K/84jJsngOlV8SX2izEwk=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 07 May 2025 17:13:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7718231128625625772
-EX-QQ-RecipientCnt: 10
-From: WangYuli <wangyuli@uniontech.com>
-To: masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas.schier@linux.dev
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	m.seyfarth@gmail.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] kbuild: Disable -Wdefault-const-init-var-unsafe
-Date: Wed,  7 May 2025 17:13:40 +0800
-Message-ID: <7331A23DB8786121+20250507091340.276092-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746609256; c=relaxed/simple;
+	bh=5I48oKIcAHh2GX/ijoBH8labwdpNZfuRysT+WXcajI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Za3bImDanhrNDj5Q/Jl40dOVOt/Tyl9UFMyfR+ge4pz026DfsRGZCoCfhJ9wom51EKZqfgH1JqBiP5zPRXS9K3TbzV0QwIqls7bPmUsQ2OQkR9lTaisTkT3zCwTDG7tkrth/V4o3X4qmEq7avEtr8RxUejlcblbesEtIROYeWPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com; spf=pass smtp.mailfrom=isovalent.com; dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b=NbjeaoSq; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isovalent.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a0b308856fso744321f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=isovalent.com; s=google; t=1746609253; x=1747214053; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ENAdlxNQCNsPp1Cx5U8ECxKNHpix70L4dcI8KPfbfOg=;
+        b=NbjeaoSqEClPkNMCmliMvm9U3cL8CMVHTSSTKQfp4idXY9xotgO2RsiLjHNLDQ5d7z
+         mXByncE4JOiTRaqSyyc8Oj5nmGxVxa7Atcwc/gbj3+NidFUeAr8SLD9Th+FB8sjC1oeY
+         qepsYXxQLAj9tD2cdshlzHldZTRZBeEbcTHiFnHzhoJmKjH4rAKQNaIscblBBy0Gi0xj
+         MbLwb0Bnfxg2ThfYemtwhJ999YePEaQEj6P4kPVLpxHCjgyww5oB8h4qs2pX8FfAScWe
+         frJWKIXVBvIIkzL/zB5Uyz7sgEZyjXxcO+aR74KJWczcsrRhpkimnPZQ2ArpFwIqUMXN
+         RnYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746609253; x=1747214053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ENAdlxNQCNsPp1Cx5U8ECxKNHpix70L4dcI8KPfbfOg=;
+        b=tqOpcM1PcsERekjEuWUKO1YoU9LwsBwMTNvIiwyhS2DBvn7etFXiGBiPrJW5EWpR4P
+         x05/KZSXqJKDpnkI+hEWRy131UEZfULRpGiapZ3KVUOErhTQ8o1RwWAGL+LwAMVsMymG
+         YYe1Ny86EEDEqWczC0hPUiCl/GQnsicJ0iMAA+LDK1aVwsxdOIWdpzJAqhBcsXYHHEM2
+         IkHeEOJNqaRBgqkOZecsS8ioR0FxxDPtsfmjqaghp6DRMYUBiTMkjOWz04RGjkGQ8BjX
+         3p53FZo0t3j+y/WkkBpYTOyrGYoISkVxMm76hUpZAVVR9yQWn2WfZVkwFqRp/TT1Pii1
+         tMpA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6OYtJL6JhynIDsCo28hUy8rVnpoAZjB39iP+BRIh3A8qcLPsSQqHoEFv1C2YDhty0SngGo04hspkGS1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRdgUiD0ZmWquhyjotaJF9QGoOdSsLTlktNGZ78fwlG3u0wa0C
+	Gx8AtXDl6sjQ8OmbHVWfzBmdNUPb4REVbcqN/TrIfTcF+6Ul3OoLiUx5woFY7rFzBwDRfphHNJi
+	4oZhtqMa+eYOBWQnM9AsZ2V4sl6Z1HIYFuf8UFg==
+X-Gm-Gg: ASbGnctzKoVPyoEYMEJl5EJouz/1L6yMb9WT1+ixx7Sqqy0WH4xV/X8W0xuyNfKiewC
+	iRD34qjIdwGLe1G7X8NuQo0WxPAZOpaGrsjn4TXCGtA2sgPLAU0m4f1dXuiD9PfQrGw6hDCHncM
+	fQBn+/K8ZFgtDNaJiGQdulqJTK961rMcPNN+A=
+X-Google-Smtp-Source: AGHT+IG55r4ND4dVvtN1+EUD95gs+uLnOj8rk8ZPFKEZxOHPG2ZvKCFr/wsjoTjPwlfHjBOMB6jQXJeqBT+RbwDRfOw=
+X-Received: by 2002:a5d:64e8:0:b0:39c:1257:ccae with SMTP id
+ ffacd0b85a97d-3a0b4a1c722mr1959843f8f.57.1746609253168; Wed, 07 May 2025
+ 02:14:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NGX5+lQVxpC+4pTvz3/eN6omZ4UFI4WqwtTK9sHvLj+ldY0PR1+wWZh5
-	PmG6811Tle7rlSt7UNpsBJK5Z4quW+Ha4/0eRJ036uHvvHy/BWewr3b0+RiVKGqocdSlN96
-	sMmLw+EUNuHFnhRavUBLClq5Sb7mVNCJcWSA7dvFUkHJhmN1zsIGe/TKENh00WpOpD//rSA
-	AA/ccUSGgSFOuWPMPxF1/Pi6xXUbx+z1VF8VP2PqYJi4CL9Pm2CQ2EQQ3Jzz7vcnRufPw3h
-	+owfsBkxfppIZvFDJOnTqnYIIrHJdtt/EvU3dQe9qFskY1AedS981R9fJZKg6d1NZWFACAy
-	tTUOkeKEVyHrWE23b5Dot0vX6PTIT8kJ5RMqs+LqeKxwLVsprEO8NoHEdUrHn4TLV/eThiB
-	ZECES5jMrQ+MJsblV3LLtN16Sd1Hr9MbQlFPvULeZ7OzB7VYfs44YH13J9Jha6YNbltMPoI
-	RxsbTSmzcnbpKgKarXvwiB3jrQ+Rg7KQamiNv2ofa8KsmX6WvGsmEjfjTqNoVAS/8fjyXXs
-	yYH0tQD3CNltjC4yw+CNdsPn2NX71JEb2U9ZMbZgcRff8O5dQy2QZN20UVrkheTX32yn5Pf
-	bEOChw/G/JwVTcAvqvS0XWIFNGeehdWnlNVC3g8oCOH8odB5VBee9h+aTn86eQSYnYD/2RC
-	hgoNYyZ7gjmgMarEP6Zf4zRgz4HcbgANnhJoQg6x9ZS2AXeTXTf3bILgjaSarLh8pN8o+Pl
-	vfoyN/sfJ1wz0tKpP7Am+SMtXMREIMKlF7Gs4kV3hso+2s5WGkmgvEB67SXnIwt0cwiLIR4
-	ysQuMrrZSnPeyp23thqRQr7hHnZGnnfbIVBjGTKaIEZB8VAymozwK+VwDYsYEbdaBaTP2/f
-	+BsJPgtOCe5oGViMMWF5SPbxzw69nF8WDjahppgL3XwCCHxdALPl70vjysBaiA1pORozjEN
-	PwIKesn8AMFWWiXEt6+DYA3wBAGh+mwY02jLUQMAwTsjKF0uKC7Vr2hWFW3U4hPVxtFTO2B
-	lE4E3OxN+q299tUZjFhs6lTq0sshqucxPknieRFg==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <20250505-vmlinux-mmap-v3-0-5d53afa060e8@isovalent.com>
+ <20250505-vmlinux-mmap-v3-2-5d53afa060e8@isovalent.com> <CAEf4BzboH-au2bNCWYk1nYbQ61kGbUXuvTxftDPAEGF1Pc=TLw@mail.gmail.com>
+In-Reply-To: <CAEf4BzboH-au2bNCWYk1nYbQ61kGbUXuvTxftDPAEGF1Pc=TLw@mail.gmail.com>
+From: Lorenz Bauer <lmb@isovalent.com>
+Date: Wed, 7 May 2025 10:14:02 +0100
+X-Gm-Features: ATxdqUE4g8lO60eqVT-NBjEfrxMu9rtdzVq9hr1BOEdsu4jEty7BLc1dL2Y9oKc
+Message-ID: <CAN+4W8gcquJRkZw+Knt=vqwR4YM8w5RbRNO-XyfE+DAyiEWANw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 2/3] selftests: bpf: add a test for mmapable
+ vmlinux BTF
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Similar to ("kbuild: Disable -Wdefault-const-init-field-unsafe")
-from list, -Wdefault-const-init-var-unsafe need to be disabled too.
+On Tue, May 6, 2025 at 10:39=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 
-While I haven't found this warning triggered in the kernel code
-itself (my testing covers just a tiny fraction), it's clearly
-something that should be disabled for the same reason.
+> > +       raw_data =3D mmap(NULL, end, PROT_READ, MAP_PRIVATE, fd, 0);
+> > +       if (!ASSERT_NEQ(raw_data, MAP_FAILED, "mmap_btf"))
+>
+> ASSERT_OK_PTR()?
 
-Additionally, because dkms uses kernel compile parameters, some
-out-of-tree modules might also hit this warning, like the Mucse
-network driver.
+Don't think that mmap follows libbpf_get_error conventions? I'd keep
+it as it is.
 
-Fix follow error with -Werror:
-  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c:6126:11: error: default initialization of an object of type 'const u8[6]' (aka 'const unsigned char[6]') leaves the object uninitialized and is incompatible with C++ [-Werror,-Wdefault-const-init-var-unsafe]
-   6126 |         const u8 target_addr[ETH_ALEN];
-        |                  ^
-  1 error generated.
+> > +       btf =3D btf__new_split(raw_data, btf_size, base);
+> > +       if (!ASSERT_NEQ(btf, NULL, "parse_btf"))
+>
+> ASSERT_OK_PTR()
 
-Link: https://lore.kernel.org/all/20250501-default-const-init-clang-v1-0-3d2c6c185dbb@kernel.org/
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- scripts/Makefile.extrawarn | 1 +
- 1 file changed, 1 insertion(+)
+Ack.
 
-diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-index a7b680df5b24..14e22310fbbf 100644
---- a/scripts/Makefile.extrawarn
-+++ b/scripts/Makefile.extrawarn
-@@ -44,6 +44,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format-truncation-non-kprintf)
- # the field is within a union with other non-const members, or the containing
- # object is not const so the field can be modified via memcpy() / memset().
- KBUILD_CFLAGS += $(call cc-disable-warning, default-const-init-field-unsafe)
-+KBUILD_CFLAGS += $(call cc-disable-warning, default-const-init-var-unsafe)
- else
- 
- # gcc inanely warns about local variables called 'main'
--- 
-2.49.0
+> Do you intend to add more subtests? if not, why even using a subtest stru=
+cture
 
+The original intention was to add kmod support, but that didn't pan
+out, see my discussion with Alexei. I can drop the subtest if you
+want, but I'd probably keep the helper as it is.
 
