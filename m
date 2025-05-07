@@ -1,270 +1,302 @@
-Return-Path: <linux-kernel+bounces-638657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9516BAAE911
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D67AAE919
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7071BC8C60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C764E51CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABA828DF3A;
-	Wed,  7 May 2025 18:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE3528E575;
+	Wed,  7 May 2025 18:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZnVHLRFW"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2066.outbound.protection.outlook.com [40.107.212.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+JuVX5/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5CA28691;
-	Wed,  7 May 2025 18:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746642636; cv=fail; b=JlmjB5gTN1KEsR6+ZSA33ksEwrprRRX0XpR1QxMiFgCXgpmoR4E/NNFENkiLzOK6SeT2phLyLQKOo1AviG2Cn/oL9wNAwUJyXF9Usn5+7tcGKsHBZZX3FJtoHR+72pN8xQp2boPTWmb0LZQlinxZ/YUCkwHG7WTMNWg4NAVj+sI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746642636; c=relaxed/simple;
-	bh=juTLy3oQQokPxtRzIfP7SDvMZLGwDHaU702cUddRTsw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fHznv5PwQAo8FCNQj30jIDs7+wTiBRZ0yZMbqrPtwiZ7oWG6MVbK1a1pA5WR4FJxz6LlLLEzIKOQ3YyWd3ROc4BIL883L0Mm0JQvdWQn1/sBqN1I7WpIB/vN1W9lfSg8lM+01cNOghpn1/4c29ytKJHyHpMQBRbNDR6Kw+LckwI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZnVHLRFW; arc=fail smtp.client-ip=40.107.212.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yzOr1XgLRVEZ8cLoVSMkTs09jI0xtpKSrjfwkgKMjkjt2qSOiR+6lriC1haRbjh4tfFiwBU62jdfcQ5Twp/Vsw7yySHOMITMIId1F5/lOTHhNPnZ4RWTMuI9jogNXRxkzVckCweQKrmnNdENcJZnpWugpkHJwrtq2wzKOrDTot18uHW05wqa0q04EgCQeVhisXc8NQNBPG3/oAJT9hlSFU0ECXKy+groEEH1SZIwrm/GA0STmVwIIF19XaK+bPeEL/ojDIzbcDytZg5ot6MrJQY2s9lIloMLoutxl1XDn3IIgvDWv8/DPgCwUFqEwTTQ1MoWUrRI+sfc4lT4eyymbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=juTLy3oQQokPxtRzIfP7SDvMZLGwDHaU702cUddRTsw=;
- b=UHxCoRhfBuPV5OD/7VQjVqYyfPizMN65ykRyuu+ZzhukqzV6xdNBTzBWxI4dAhCIm5ShTua95O59QCh7Izz6B1NPJC83TD+H03dH5ylRgbvD/40gCy2h4EOgZMb48x11ERtT8blYTI1wdc2R3kZM30mblfGJY77IWbgR6KfyLzEbqWlPZMMj4sGttz8aWszs32WCFxcHdqsqEmhvRC9TDof9eEoUeCKjCbZk5pMjQ8IvuPUifRqvYxCOse2vFWIEynSXTtB2eMsyEAy/vfAFOVNkMjuCItAD+BVU026szWhy7W5m1yZeEhEXAwr2gxs3HXazJimgh0595KvxjPWdsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=juTLy3oQQokPxtRzIfP7SDvMZLGwDHaU702cUddRTsw=;
- b=ZnVHLRFWZE2NoWbX0rWLfy0AxDZpvjyZfX9oprqbN0NJ9AFwvp79o3GpQTz29PezRxfq60g7UvFi/Uv9lWaDOWITYnu1Tl/uNunp5rIRg4Z0sysaUK640gPBpHzvGp0YwDbluEwtn3+UXPqQooeAxXD7g0mVGq6PHjOoGLlBKKg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- CH8PR12MB9741.namprd12.prod.outlook.com (2603:10b6:610:27a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Wed, 7 May
- 2025 18:30:29 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%5]) with mapi id 15.20.8699.019; Wed, 7 May 2025
- 18:30:29 +0000
-Message-ID: <1c742bcb-4296-465e-a811-79d256d2a919@amd.com>
-Date: Wed, 7 May 2025 13:30:26 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 11/16] cxl/pci: Unifi CXL trace logging for CXL
- Endpoints and CXL Ports
-To: Shiju Jose <shiju.jose@huawei.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
- "dave@stgolabs.net" <dave@stgolabs.net>,
- "dave.jiang@intel.com" <dave.jiang@intel.com>,
- "alison.schofield@intel.com" <alison.schofield@intel.com>,
- "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
- "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "mahesh@linux.ibm.com" <mahesh@linux.ibm.com>,
- "ira.weiny@intel.com" <ira.weiny@intel.com>,
- "oohall@gmail.com" <oohall@gmail.com>,
- "Benjamin.Cheatham@amd.com" <Benjamin.Cheatham@amd.com>,
- "rrichter@amd.com" <rrichter@amd.com>,
- "nathan.fontenot@amd.com" <nathan.fontenot@amd.com>,
- "Smita.KoralahalliChannabasappa@amd.com"
- <Smita.KoralahalliChannabasappa@amd.com>, "lukas@wunner.de"
- <lukas@wunner.de>, "ming.li@zohomail.com" <ming.li@zohomail.com>,
- "PradeepVineshReddy.Kodamati@amd.com" <PradeepVineshReddy.Kodamati@amd.com>
-References: <20250327014717.2988633-1-terry.bowman@amd.com>
- <20250327014717.2988633-12-terry.bowman@amd.com>
- <20250423174442.000039b0@huawei.com>
- <c21ab32695484da996df84988dddbd0d@huawei.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <c21ab32695484da996df84988dddbd0d@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR10CA0027.namprd10.prod.outlook.com
- (2603:10b6:806:a7::32) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D271C84D7;
+	Wed,  7 May 2025 18:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746642684; cv=none; b=dGVfirq4ZMoHpB+auX14HQSCBiMi/wNFs+2RortcIoqDH2htYZcI/4UU7j1JT+da21gb9IYz7i42BmEPUMSST/3ZloCMGYOJLUL0wMUjxLZacFWQS03cr/lMMbZSuv3DjKl1uvt8olA8Q9VRzfsSFIm6PtXpeMKPhP6X0qb+Uac=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746642684; c=relaxed/simple;
+	bh=SGMXgAXcsM1NyUQI3wXCgHNlUXq03+m075KqbY4kOcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mul1Frmuuwfx6+PSKxsDFzyDuN+IbAvc7rO6qT9qTxmON7sKhIeS57MJJ5uGTCaxf1fC+8aNvohZDCZGJDaMwqKtm+JKNacQgGtdT1yZiALg7LOHdFQe+vuTTVbsmKeZMxDq6FOK3Ilx4Q1VRstvh1cKpSlySoJtODf4Qmba1ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+JuVX5/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD32AC4CEE2;
+	Wed,  7 May 2025 18:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746642684;
+	bh=SGMXgAXcsM1NyUQI3wXCgHNlUXq03+m075KqbY4kOcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f+JuVX5/GtoB4CH7l2pG0Dr+0ufWnisu3lbDByGcim1yRxks0K5LxFG6OPblV1fIJ
+	 dh2Tds03xvmUEdMk6WFLkb6Gp0tOqV289h8y0QRjXMBbMPOL6cqY5uhbwtXfbcRNu0
+	 baZ1L5IM8MrFyP9yneaXX3WqP3rajYRoDSWFVx8wcz+ewStsajveVJS5L7tuoYrYdG
+	 RxOHemsj9WquZbPkR+70XL5G8sdge+DUS39JKSAKzn7BT9WOsA/LLTHhwZ/jaMEb+7
+	 KqBwFlgq8fa9gyMhAHSPeBypuMelhwynm8GEY2lVCmQ0H05KFiwq2g/s8i1Av9p0Jc
+	 Mx/pynPRpVlZQ==
+Date: Wed, 7 May 2025 19:31:16 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tanmay Jagdale <tanmay@marvell.com>
+Cc: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, bbhushan2@marvell.com, bhelgaas@google.com,
+	pstanner@redhat.com, gregkh@linuxfoundation.org,
+	peterz@infradead.org, linux@treblig.org,
+	krzysztof.kozlowski@linaro.org, giovanni.cabiddu@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rkannoth@marvell.com, sumang@marvell.com,
+	gcherian@marvell.com
+Subject: Re: [net-next PATCH v1 15/15] octeontx2-pf: ipsec: Add XFRM state
+ and policy hooks for inbound flows
+Message-ID: <20250507183116.GI3339421@horms.kernel.org>
+References: <20250502132005.611698-1-tanmay@marvell.com>
+ <20250502132005.611698-16-tanmay@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|CH8PR12MB9741:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3fe2e43-804d-488b-7f78-08dd8d953e76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SmN3YzZYYlBnMWxPUmhTcUE0S0xmdklaWkNaZ2hQWkJUWTY4eHRiQ2orRTM1?=
- =?utf-8?B?U3JVODlpZllaUWZScW0yWGprSEpCeWtkK2E1RjR3MHRSQUZJcDZlMDdFUkJa?=
- =?utf-8?B?Wk1PaTBWa2tRSlNvSnFQR2c0ejVxNDhNTGMyZnFCSFBNTS8zQXp4ZExsVk8r?=
- =?utf-8?B?SnpMdmhhVW96TURabXNlV3lSWUtheUZiU3dJVWJlbGFHSTZIK1pJa1V3WkdB?=
- =?utf-8?B?NTFGam5NQW9zaFhiSThxVUFKcXkvdWFXV1I2aURzSUpXMEw0RlhDaUpQWHgy?=
- =?utf-8?B?cXY3dG0rZTNTMERMcjcyM2NSaUdSaCthSGE0ZE0yUkd6cThVaFB1cUZPb2lp?=
- =?utf-8?B?RjhwQ3FKRUYrakd5TXd2SnMxSitrNStyc3JES3RmWEt6S1JqRHlIL1ZtemRK?=
- =?utf-8?B?bmJlZEdEcXNjeGRGbDNqOGV5Z3ljUkZYVytHKzNXL3RUUHdFN2dlUnNVUkxs?=
- =?utf-8?B?TzBFQ3RPb1dpeXNvVVptdWV0M2o2VHZpcmVmSnhlY0RqYnM1TjJOWUpSM2xX?=
- =?utf-8?B?YkNMV2FNOWIvV0FGWlRoMWI2MkI4NG1pL2F4MGdSL21RU0I2NnZNZ1VHZnFS?=
- =?utf-8?B?RGJyWXJkaWNlajBpY0hWWEFFYVdLQVVVYktjYi9UZ3p3b0JCT014Wnh5U28y?=
- =?utf-8?B?Z0FHVS9XdldiQlkxcnNxT2JUNHQxUGpWZXFrTHBqN0Fac245MEMrZ0FEZkQ1?=
- =?utf-8?B?MzAwTTA3Y3VCV1c1djRSOC8yNXRjYUZXUTliem9aTEhCcmZzZnVDTGhBaytW?=
- =?utf-8?B?ZkJQd0Y2dHN2VnpyZmtzKytSMUlHcUIvdTNlU1AxY2s3WmplVlhXSUxaWDVs?=
- =?utf-8?B?ZjhUTzZVYjNRd2FaRk9SR3NBZm9hcGpJK1JtT0lTejRWTE1oUEtVSVZZbk5R?=
- =?utf-8?B?YXNtb2NGQkZYZmVGV0JpOGZCSDRLV3ZFK1Vyazd0cGw1WHI2SFgyc1dBeG5y?=
- =?utf-8?B?Z1VvWWFNejZKZ3BrNUxydktWRzRqdnpwZ0xVbTdZVnpDNVhNL1hrZEt4K1Rr?=
- =?utf-8?B?L1RIdHhyaHpoQVVDTjhqUEt1TUVDREpnalQvUmtDK0hUamJGNGFPVk9ma2Rp?=
- =?utf-8?B?aU44UkpIempFbW8wTnR6YWozOTNtWllDekRqZVVLYkpYZEN5QUxmNHFXU2lz?=
- =?utf-8?B?aUt2ZUtCWG9TTUNyaTB5aUNSMzdERVlHSlVXeFFXdGlMUWFrR013aUc2VCtQ?=
- =?utf-8?B?MXU0Qmc3eE9sVWEzQmFUSHdYdFQzWVh6dndhczFrVERlVzA2cVc4dU83d3VL?=
- =?utf-8?B?Lzg2V252bkFZSWVIVkxiY0s0cDlLVXpKeXkwaWJjaTM0dDBlc09JNTc2SS9r?=
- =?utf-8?B?bjVuS1Y0NjBJTlNuKzE5Tk9wRVdvanhOTXloWk81SFpMNnlhQjN1NHoxVXlJ?=
- =?utf-8?B?aFIzN2hWc1lLbkdJZ1V2SlVWUmZtSXJiRG1sUjlRVkFIcno2am05akhLNEYr?=
- =?utf-8?B?UWNCM0dCWTRzV2ZmWXdkRUdaZlRzeDNRdW8rK0FlR0RyR3MwdFNUMzBmTy9H?=
- =?utf-8?B?VVNmWlJsa2VXSktjL2k4ZktCejU0OE41OXNrMEJvdWEvZ2lnc1hheC9Xa05j?=
- =?utf-8?B?YWVkZWNOSVlyZWkyQzJ2eGZGQXpMWVFlbUQ4QmluTkdFdFR4bTdSbjJOWVBU?=
- =?utf-8?B?WHVKWW92cytMYkZDNHFMcGxZZVNhSkdxTmk0VVRXblNNV0JQT3p3MmFGbC90?=
- =?utf-8?B?VVdpT08rYnRCLzdFbCsrWXcvV1NFbWVzMm8weUpjQXNZYVkyd2JZVWE3eld0?=
- =?utf-8?B?UjVGNTBsNUxTWjZUYmpkdng4MHViTENDakhuVjhtaTBnNWxWWnZvWFJaUDZK?=
- =?utf-8?B?RmFIa2Z5RXgxZ2w4NmxwTWk5UWE2WVNpQ0pJVjJSZExiVVRZeThjS1RyeG5T?=
- =?utf-8?B?Umxmb0ZpSHNIakFLdHY4UjYvMDE5bGY5N2ZBS2xqNHNSK1pxdDlhaGg2eFQ3?=
- =?utf-8?Q?ktvB0fom8rA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?REtUNWw0eUYvMVNkT05sSWxNbEhkWWk3ZmRWTklaanhDQ0NYakdSUFdNbms5?=
- =?utf-8?B?QUd0WHdzS2JENlFROTFQd04rTkRzMDFxa0JabmhweVo2TkNHbndnaHovclh0?=
- =?utf-8?B?YlMrbm4ybC9QZWtVMHA1dUV3NDlXTWprWTZNVlBPdDgyYzdXQzFydTd2RzFI?=
- =?utf-8?B?WDQ4NjZIK0dSVlg1SllaYWtrSi9RUEFlL1hOanlNczNqSHNmbk5WN2pPOERQ?=
- =?utf-8?B?YTNBVkxIR05vSnlNVGl2aXlJVFFBa1FsZlhQMWg4aWo4S0FKUGxIWnd0RXVq?=
- =?utf-8?B?c1V3YXVNbkdYTGdGVVBTOE5LVmJnakhiQWVURW1rblIvNGFwdkVUNG1JcUty?=
- =?utf-8?B?b3pkR0twQWxLREVMUVUzdEovSXdoR08zaVNBdzBHTzFBY21JNXlPb3lzSlBs?=
- =?utf-8?B?bHkrWS9STnlBRDBBci9wMnFKSDVCV1ZLd2o5MFRodVNxV0pTU2QzeWZISWIz?=
- =?utf-8?B?QlFTaE9pS1RMSEppVGVEWTNRZ2pvYTlzenlBUlhCYnBsbFFjS3NqRWdManBV?=
- =?utf-8?B?dndqaFRyaVZCSFBrK3lxQmFNbEJrc3k2OFZJQjBOOHZlTDVhdnVHRmlsYnNQ?=
- =?utf-8?B?S1pHcStFOW5UZ3gxdTdxR2VPa3FLV2xzQ3g4a3VoMnY1dFJua3Q4Z2thc1pq?=
- =?utf-8?B?U2JJRDFKVzFyUEFnelN6TlBUVTV6Q3JFaVFGNWlaRTNnUW9aTmthZnBVdmpT?=
- =?utf-8?B?enk1ZGJ5eVhTK2Rrdm5hajBhZWxaVWtOWUZHbnRaVy9aL1FOV29JUEN5Y3ZE?=
- =?utf-8?B?QzBreDlvVXE2aTJjTkh6cWtoSUpQMjJRWnZGZkJxKzNtRjdMZXo4MUtsMlky?=
- =?utf-8?B?MVB5b3dmNDFIZCtvcnovODZOVVBoNldHTm5VUjlBM25WWXRYSWUwbS80SStB?=
- =?utf-8?B?enF3WlhZakVlcG5vcGZ6b0xSWkg1WG50bXo1NVNvd1hMNXdScUVqQVg1ZUZs?=
- =?utf-8?B?UnRhSW0xVERwQ1hFYjNMbG5GbXAwZkIwNGQrTm5VWnFtYW13V2FZcjhPTi9p?=
- =?utf-8?B?YXk5MnhVT0JOc2pDWXUvUWRCNFlzUjQ3SEU5VVR5Y25PdVhYcTUxMWkvNmlz?=
- =?utf-8?B?enhteTFId2ZaeWdhb2xGK08wc3BSQVplUmxMOFd3MkhjcjFHWUkxZlBTS1FQ?=
- =?utf-8?B?V1pDbCtJZHdLajJhTVlzQjN5bjBFUWVlRHQ1aGpGRW5DM2FZcTFmUjV3TEQz?=
- =?utf-8?B?VFdGVlFxd0ZQU0tzME9rczRjNm4zV2VZUHJmOEs3TFM2dHArcGVoQTlEeTBy?=
- =?utf-8?B?a1NwZXpsY3NHOUpGeTYwb2pXdGxDUWxSRWJPQ1RaekdBT0VKR2Ivc1c4UEJh?=
- =?utf-8?B?TlBZZm1STjZPUWhlcklSYjBpZ2FYdTcxTGR0WmZ0T2lsVmdmNVhpUWxjMk1r?=
- =?utf-8?B?NlJTeTk1MEtud01xVmtPTWZIRXpJSkFmd1MraU0xR0Z5KzJ0WFZyZXd1MThP?=
- =?utf-8?B?NG5QZVF5V0taT3c3TWhBV3lsR2l1d014Z2tzbDA5aUE5Q0FIR3d6bUlYd0Z2?=
- =?utf-8?B?Nm9laitVQmZkeHpQUFI2M25NdVc4MGZyK1dleG0vNjMvcjJzT3RWQUJ6Ukw2?=
- =?utf-8?B?SmE5aWJvd1Jvdlp3S3BPTXp2aG9pUUs0YlM5cXJ0T3RsT0I5eXE5ZmxCakZZ?=
- =?utf-8?B?UlU2SFlRNStqcE5UUlFlMHI3Z0xjeFIrSE9hcFlMd09zRFhOdnE4VEs0eFMw?=
- =?utf-8?B?eWJDL0pBbHNyK3R1eFp6RlFaWHVmOFNjSmozcnFlc0FSVmVVQ1JNMzFLV1dT?=
- =?utf-8?B?ZDNRbmhEdXhJTmRBaWU1dFBVL2hRd283Rm9sRmd3TSs3ZDUyVVVUY25xWGo1?=
- =?utf-8?B?K25yaERhblJDTXRtWExyZkhPUVQ2ZFF6aExnRllYMno4UVpYV2RnWUNFZklE?=
- =?utf-8?B?YkV2KzhvcVBTZmY3SW9kV2EzUEVieVZSdExNY1BObkdsQXdDTGRsS0NBaXha?=
- =?utf-8?B?UWZ1WjNJWDYySDBjS1hiNHVpTWNiclZWWEw3UE9xZCt0TUhONjcvNGI2RzhD?=
- =?utf-8?B?TUpMMCsreGhIUVJ5VFJMM0RMTXgzYlh4V25xcWRJeklFMm9UZjd1YlE0MkRD?=
- =?utf-8?B?TGlVSUVlcU50YlNkSmJyeDJoa01KZ3RLZk82OGRENUJlTkNVUlR5cWlyeDRm?=
- =?utf-8?Q?kS7YZ5qwU0d1rznLg6hvJGt8a?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3fe2e43-804d-488b-7f78-08dd8d953e76
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 18:30:29.5356
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NGDqDYLRL/Hl5DKOHnt+hBMaK+1UP1qCrr4ybk6cSnYCMnMJG9i5uvBHcE47TDF7nXDdGfCzcdV5QU+eBrPoIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9741
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502132005.611698-16-tanmay@marvell.com>
+
+On Fri, May 02, 2025 at 06:49:56PM +0530, Tanmay Jagdale wrote:
+> Add XFRM state hook for inbound flows and configure the following:
+>   - Install an NPC rule to classify the 1st pass IPsec packets and
+>     direct them to the dedicated RQ
+>   - Allocate a free entry from the SA table and populate it with the
+>     SA context details based on xfrm state data.
+>   - Create a mapping of the SPI value to the SA table index. This is
+>     used by NIXRX to calculate the exact SA context  pointer address
+>     based on the SPI in the packet.
+>   - Prepare the CPT SA context to decrypt buffer in place and the
+>     write it the CPT hardware via LMT operation.
+>   - When the XFRM state is deleted, clear this SA in CPT hardware.
+> 
+> Also add XFRM Policy hooks to allow successful offload of inbound
+> PACKET_MODE.
+> 
+> Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
+> ---
+>  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 449 ++++++++++++++++--
+>  1 file changed, 419 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> index bebf5cdedee4..6441598c7e0f 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> @@ -448,7 +448,7 @@ static int cn10k_inb_alloc_mcam_entry(struct otx2_nic *pfvf,
+>  	return err;
+>  }
+>  
+> -static int cn10k_inb_install_flow(struct otx2_nic *pfvf, struct xfrm_state *x,
+> +static int cn10k_inb_install_flow(struct otx2_nic *pfvf,
+>  				  struct cn10k_inb_sw_ctx_info *inb_ctx_info)
+>  {
+>  	struct npc_install_flow_req *req;
+> @@ -463,14 +463,14 @@ static int cn10k_inb_install_flow(struct otx2_nic *pfvf, struct xfrm_state *x,
+>  	}
+>  
+>  	req->entry = inb_ctx_info->npc_mcam_entry;
+> -	req->features |= BIT(NPC_IPPROTO_ESP) | BIT(NPC_IPSEC_SPI) | BIT(NPC_DMAC);
+> +	req->features |= BIT(NPC_IPPROTO_ESP) | BIT(NPC_IPSEC_SPI);
+>  	req->intf = NIX_INTF_RX;
+>  	req->index = pfvf->ipsec.inb_ipsec_rq;
+>  	req->match_id = 0xfeed;
+>  	req->channel = pfvf->hw.rx_chan_base;
+>  	req->op = NIX_RX_ACTIONOP_UCAST_IPSEC;
+>  	req->set_cntr = 1;
+> -	req->packet.spi = x->id.spi;
+> +	req->packet.spi = inb_ctx_info->spi;
+
+I think this should be:
+
+	req->packet.spi = cpu_to_be32(inb_ctx_info->spi);
+
+Flagged by Sparse.
+
+Please also take a look at other Sparse warnings added by this patch (set).
+
+>  	req->mask.spi = 0xffffffff;
+>  
+>  	/* Send message to AF */
+
+...
+
+> +static int cn10k_inb_write_sa(struct otx2_nic *pf,
+> +			      struct xfrm_state *x,
+> +			      struct cn10k_inb_sw_ctx_info *inb_ctx_info)
+> +{
+> +	dma_addr_t res_iova, dptr_iova, sa_iova;
+> +	struct cn10k_rx_sa_s *sa_dptr, *sa_cptr;
+> +	struct cpt_inst_s inst;
+> +	u32 sa_size, off;
+> +	struct cpt_res_s *res;
+> +	u64 reg_val;
+> +	int ret;
+> +
+> +	res = dma_alloc_coherent(pf->dev, sizeof(struct cpt_res_s),
+> +				 &res_iova, GFP_ATOMIC);
+> +	if (!res)
+> +		return -ENOMEM;
+> +
+> +	sa_cptr = inb_ctx_info->sa_entry;
+> +	sa_iova = inb_ctx_info->sa_iova;
+> +	sa_size = sizeof(struct cn10k_rx_sa_s);
+> +
+> +	sa_dptr = dma_alloc_coherent(pf->dev, sa_size, &dptr_iova, GFP_ATOMIC);
+> +	if (!sa_dptr) {
+> +		dma_free_coherent(pf->dev, sizeof(struct cpt_res_s), res,
+> +				  res_iova);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	for (off = 0; off < (sa_size / 8); off++)
+> +		*((u64 *)sa_dptr + off) = cpu_to_be64(*((u64 *)sa_cptr + off));
+> +
+> +	memset(&inst, 0, sizeof(struct cpt_inst_s));
+> +
+> +	res->compcode = 0;
+> +	inst.res_addr = res_iova;
+> +	inst.dptr = (u64)dptr_iova;
+> +	inst.param2 = sa_size >> 3;
+> +	inst.dlen = sa_size;
+> +	inst.opcode_major = CN10K_IPSEC_MAJOR_OP_WRITE_SA;
+> +	inst.opcode_minor = CN10K_IPSEC_MINOR_OP_WRITE_SA;
+> +	inst.cptr = sa_iova;
+> +	inst.ctx_val = 1;
+> +	inst.egrp = CN10K_DEF_CPT_IPSEC_EGRP;
+> +
+> +	/* Re-use Outbound CPT LF to install Ingress SAs as well because
+> +	 * the driver does not own the ingress CPT LF.
+> +	 */
+> +	pf->ipsec.io_addr = (__force u64)otx2_get_regaddr(pf, CN10K_CPT_LF_NQX(0));
+
+I suspect this indicates that io_addr should have an __iomem annotation.
+And users should be updated accordingly.
+
+> +	cn10k_cpt_inst_flush(pf, &inst, sizeof(struct cpt_inst_s));
+> +	dmb(sy);
+> +
+> +	ret = cn10k_wait_for_cpt_respose(pf, res);
+> +	if (ret)
+> +		goto out;
+> +
+> +	/* Trigger CTX flush to write dirty data back to DRAM */
+> +	reg_val = FIELD_PREP(GENMASK_ULL(45, 0), sa_iova >> 7);
+> +	otx2_write64(pf, CN10K_CPT_LF_CTX_FLUSH, reg_val);
+> +
+> +out:
+> +	dma_free_coherent(pf->dev, sa_size, sa_dptr, dptr_iova);
+> +	dma_free_coherent(pf->dev, sizeof(struct cpt_res_s), res, res_iova);
+> +	return ret;
+> +}
+> +
+> +static void cn10k_xfrm_inb_prepare_sa(struct otx2_nic *pf, struct xfrm_state *x,
+> +				      struct cn10k_inb_sw_ctx_info *inb_ctx_info)
+> +{
+> +	struct cn10k_rx_sa_s *sa_entry = inb_ctx_info->sa_entry;
+> +	int key_len = (x->aead->alg_key_len + 7) / 8;
+> +	u8 *key = x->aead->alg_key;
+> +	u32 sa_size = sizeof(struct cn10k_rx_sa_s);
+> +	u64 *tmp_key;
+> +	u32 *tmp_salt;
+> +	int idx;
+> +
+> +	memset(sa_entry, 0, sizeof(struct cn10k_rx_sa_s));
+> +
+> +	/* Disable ESN for now */
+> +	sa_entry->esn_en = 0;
+> +
+> +	/* HW context offset is word-31 */
+> +	sa_entry->hw_ctx_off = 31;
+> +	sa_entry->pkind = NPC_RX_CPT_HDR_PKIND;
+> +	sa_entry->eth_ovrwr = 1;
+> +	sa_entry->pkt_output = 1;
+> +	sa_entry->pkt_format = 1;
+> +	sa_entry->orig_pkt_free = 0;
+> +	/* context push size is up to word 31 */
+> +	sa_entry->ctx_push_size = 31 + 1;
+> +	/* context size, 128 Byte aligned up */
+> +	sa_entry->ctx_size = (sa_size / OTX2_ALIGN)  & 0xF;
+> +
+> +	sa_entry->cookie = inb_ctx_info->sa_index;
+> +
+> +	/* 1 word (??) prepanded to context header size */
+> +	sa_entry->ctx_hdr_size = 1;
+> +	/* Mark SA entry valid */
+> +	sa_entry->aop_valid = 1;
+> +
+> +	sa_entry->sa_dir = 0;			/* Inbound */
+> +	sa_entry->ipsec_protocol = 1;		/* ESP */
+> +	/* Default to Transport Mode */
+> +	if (x->props.mode == XFRM_MODE_TUNNEL)
+> +		sa_entry->ipsec_mode = 1;	/* Tunnel Mode */
+> +
+> +	sa_entry->et_ovrwr_ddr_en = 1;
+> +	sa_entry->enc_type = 5;			/* AES-GCM only */
+> +	sa_entry->aes_key_len = 1;		/* AES key length 128 */
+> +	sa_entry->l2_l3_hdr_on_error = 1;
+> +	sa_entry->spi = cpu_to_be32(x->id.spi);
+> +
+> +	/* Last 4 bytes are salt */
+> +	key_len -= 4;
+> +	memcpy(sa_entry->cipher_key, key, key_len);
+> +	tmp_key = (u64 *)sa_entry->cipher_key;
+> +
+> +	for (idx = 0; idx < key_len / 8; idx++)
+> +		tmp_key[idx] = be64_to_cpu(tmp_key[idx]);
+> +
+> +	memcpy(&sa_entry->iv_gcm_salt, key + key_len, 4);
+> +	tmp_salt = (u32 *)&sa_entry->iv_gcm_salt;
+> +	*tmp_salt = be32_to_cpu(*tmp_salt);
+
+Maybe I messed it up, but this seems clearer to me:
+
+	void *key = x->aead->alg_key;
+
+	...
+
+	sa_entry->iv_gcm_salt = be32_to_cpup(key + key_len);
 
 
+> +
+> +	/* Write SA context data to memory before enabling */
+> +	wmb();
+> +
+> +	/* Enable SA */
+> +	sa_entry->sa_valid = 1;
+> +}
+> +
+>  static int cn10k_ipsec_get_hw_ctx_offset(void)
+>  {
+>  	/* Offset on Hardware-context offset in word */
 
-On 5/7/2025 11:28 AM, Shiju Jose wrote:
->> -----Original Message-----
->> From: Jonathan Cameron <jonathan.cameron@huawei.com>
->> Sent: 23 April 2025 17:45
->> To: Terry Bowman <terry.bowman@amd.com>
->> Cc: linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> pci@vger.kernel.org; nifan.cxl@gmail.com; dave@stgolabs.net;
->> dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com;
->> dan.j.williams@intel.com; bhelgaas@google.com; mahesh@linux.ibm.com;
->> ira.weiny@intel.com; oohall@gmail.com; Benjamin.Cheatham@amd.com;
->> rrichter@amd.com; nathan.fontenot@amd.com;
->> Smita.KoralahalliChannabasappa@amd.com; lukas@wunner.de;
->> ming.li@zohomail.com; PradeepVineshReddy.Kodamati@amd.com; Shiju Jose
->> <shiju.jose@huawei.com>
->> Subject: Re: [PATCH v8 11/16] cxl/pci: Unifi CXL trace logging for CXL Endpoints
->> and CXL Ports
->>
->> On Wed, 26 Mar 2025 20:47:12 -0500
->> Terry Bowman <terry.bowman@amd.com> wrote:
->>
->> Unify.
->>
->>
->>> CXL currently has separate trace routines for CXL Port errors and CXL
->>> Endpoint errors. This is inconvnenient for the user because they must
->>> enable 2 sets of trace routines. Make updates to the trace logging
->>> such that a single trace routine logs both CXL Endpoint and CXL Port
->>> protocol errors.
->>>
->>> Also, CXL RAS errors are currently logged using the associated CXL
->>> port's name returned from devname(). They are typically named with
->>> 'port1', 'port2', etc. to indicate the hierarchial location in the CXL topology.
->>> But, this doesn't clearly indicate the CXL card or slot reporting the
->>> error.
->>>
->>> Update the logging to also log the corresponding PCIe devname. This
->>> will give a PCIe SBDF or ACPI object name (in case of CXL HB). This
->>> will provide details helping users understand which physical slot and
->>> card has the error.
->>>
->>> Below is example output after making these changes.
->>>
->>> Correctable error example output:
->>> cxl_port_aer_correctable_error: device=port1 (0000:0c:00.0) parent=root0
->> (pci0000:0c) status='Received Error From Physical Layer'
->>> Uncorrectable error example output:
->>> cxl_port_aer_uncorrectable_error: device=port1 (0000:0c:00.0) parent=root0
->> (pci0000:0c) status: 'Memory Byte Enable Parity Error' first_error: 'Memory
->> Byte Enable Parity Error'
->>
->> I'm not sure the pcie parent is adding much... Why bother with that?
->>
->> Shiju, is this going to affect rasdaemon handling?
-> Hi Jonathan,
->
-> Yes. Renaming the existing fields in the trace events will result failure
-> while parsing the fields in the rasdaemon.
->
->> I'd assume we can't just rename fields in the tracepoints and combining them
->> will also presumably make a mess?
->>
->> Jonathan
->>
-> [...]
-> Thanks,
-> Shiju
->
-Shiju and Jonathan,
+...
 
-I will remove the parent field.
+> @@ -1316,8 +1450,96 @@ static int cn10k_ipsec_validate_state(struct xfrm_state *x,
+>  static int cn10k_ipsec_inb_add_state(struct xfrm_state *x,
+>  				     struct netlink_ext_ack *extack)
+>  {
 
--Terry
+...
+
+> +	netdev_dbg(netdev, "inb_ctx_info: sa_index:%d spi:0x%x mcam_entry:%d"
+> +		   " hash_index:0x%x way:0x%x\n",
+
+Please don't split strings. It makes searching for them more difficult.
+This is an exception to the 80 column line length rule.
+Although you may want to consider making the string shorter.
+
+...
 
