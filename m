@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-638201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8430DAAE29A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:22:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB6AAAE299
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3438D524CFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A017B28220
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA6D28AB10;
-	Wed,  7 May 2025 14:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6D428B40D;
+	Wed,  7 May 2025 14:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3pozz7c"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIv2mKAD"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F032628A1FD
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA0928AB02
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627100; cv=none; b=H97UK439zJXV/A1Q0slN3/jZgSv5pgtXypeQ1ZDPPAZykngCkL6pTofaniKbBTKtyBzEarsCJSOzg8271fIpjCwncXH2rOIz4tDA1WnL3rbue7uJWB017DyrNm9SwVZCMUSUrltgOHBlhcG2oy1hLi5CzaABPvlni9gZPvl3FKo=
+	t=1746627103; cv=none; b=Pat4vXq8y7K2QEDWb7NXvN7NOOZatPW6WzfiYGvtJE8k9JujX9v6r7DZgHyI1+uG4ulTRpS+03GnZEiX+x/TZksOtxOKavWVa179dIZbATmDG78TstJZvJLFClcbi0KB1ibxiUnB5XV7848AJXa7YFpJ0umX+H60uWVVRb5s7JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627100; c=relaxed/simple;
-	bh=3SOOQfF2JKHZmEoRqtYoAy8369hkoCjgbrAUAp8RKaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XlXIQMX18CXv7RJSHLE0G4R3ocnO6JjrlYpKPHWTcGg2CqvsMmipucxtTlIqrvN4K7fJx9AV6DpAspFkbtukClF0Kh0exNUlNZprOYnf6V8GgJzOjc/9sm+SHIFVBc7sxdkIbTAhRoZNCyxoOTPzsMxNUkGAw3HEsKsctJBrxCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3pozz7c; arc=none smtp.client-ip=209.85.219.48
+	s=arc-20240116; t=1746627103; c=relaxed/simple;
+	bh=kNIUnyY7I7AidhcUXozXbROl/6d+pnP47+GQOBUIrrg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SAHnmzWcYhcR5foEngQii2HPmhl/carcg3N5HSQvF+4vVqJayv4qDGAXSQw+lqlRSLo1N4/4Qj+3I9crFpltY5d+lT2KLtmLAidgQ6k5reflt1tdjSDl1fSe5cA8M2jRtAgd1NpqLqZOljTeb5AVgrGWW/NxJNHk4dMIyyDe/SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIv2mKAD; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f2c45ecaffso66675156d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:11:38 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f2c45ecaffso66675336d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746627098; x=1747231898; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HnjZkBRVEGg6RMQCwW+FP47UVOcstV38TzY2od/qixs=;
-        b=Z3pozz7cCsepOy/h1dj/WXpclbV43CXIlB4jKaaXFdWp3F6sI6VNofVoNcmi9GNr0a
-         1BYZc6lFV88k26+wgKVqvkK3ogtC+hTGs9PfqbBL86vKMEpHGDbtwF3z2FJDlWNpxlFe
-         Ro+5u5QRKs1a/H2RDJzYv6QTpjRuv2YOADPlcOrIuEYt0o+m/MWIFNKUzF8m9FCp7qGE
-         O6fdCcvTDyFYwFrVVojsXnpfOCXrfy6xPxMbblo+t517uBZqe4zTNtlXjyaytGu1+r6H
-         PSgx1XSjJHqBFEVgz37Oo2qMaBdABky2L+//FqCL207gKPkMRnf+8+62E3I4svJLgoOV
-         gaTg==
+        d=gmail.com; s=20230601; t=1746627099; x=1747231899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vm+MHUBv09afGPstqZ6g33kZoaoECt43wozuRnFS1ks=;
+        b=jIv2mKAD2yiVkpJltOvd5pB/68nxF57oDPf2gYLzQa4v4LvGo6E53yOF59IZhZiRFt
+         1XjhXMFxI8Mz3lAWOPMd4esZn9Ax8e/7NZl1cSbpofuMpFx76QjbTuwYswlODeY+2uhG
+         N/HbsUqUXULpWJ34DoBXnn12Legr/vgSMilpnOk9hEbKtNA73uWYSQ1sQOJRzPT/VIcU
+         0CRUuKLrwCLXEdHwauPHhKwSMl+1kpf88OHMKZJ74RQSyIJaa+eMqwkWcatC/lKmp4r4
+         2F85C+jvpRrqzAumdtaBQK1hWMNlyviOt4vIipiX0lVlc3SmMCnJZAHkY8fsqZkreKB8
+         X68A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746627098; x=1747231898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HnjZkBRVEGg6RMQCwW+FP47UVOcstV38TzY2od/qixs=;
-        b=frSvtWqiZaRKurXKAMTza4nCT+aBaM3X857sBdYbEFglGrBYF0ywJgpNb9SGA90k+j
-         NyKn0sUmhweLmgRmfq/ZPIkLHRr9ph4d43tflu64yvff4qGvjxNa51Y4avCNgZ96KlBw
-         DX6WL4D8puM9oZhs016JwEN6M20JHHXTwI8XiKGIdSANfYgwN2l/ZP54UMf6VoSRToxK
-         yFnpOdOpcM9TnZSpJCGFAY51Pf/AKQ1efYgSJ7akKYFIekQcXXyq4wNl6d0OsQBmnVsd
-         kztnDg6/oCS0/3865oibhXWX9sVFbWoWW2EE39KrqTVqYFlPr24A/Ezkx8+KBTlqLlBu
-         lhvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU13htRiUWclW7RgUVKt7VIf78YvgT4MEsRmzfJ1ZRXAmfYBaQX1eCjYLeewyNl+nFyLA0dKDM9ONBvKbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDCYPb28MGZe9ufsSgANUwjxOpTzVxNMcdJgDzmZkeWsrdIE+/
-	Aa4i9gw3yJ8AHu8ZWJB/3ZrVS6PYEHsITh7RYDBl2uwjuCnHpm64
-X-Gm-Gg: ASbGnctppUAckfS5rWa0WoWIGsc18JKGGXona5lHuMW1Z08DjC5nI7pMnp4xng+pCzo
-	bzxoc9Flaf9lbfuJSw+gGl3pCSQhnUpfJr0gY+uFnmXKoD5GWbp5HJjIgy2XUQOICV7D812XBJO
-	1oh4+a+VMUd9vfBU+BhIG7sBSoIMGwnY9l7R5wHzsxVzTEDTxoEv2r+curB8sIxU4vpvaaEFgjO
-	1CBT4Af3ltr/U8hzbhtFg1wqA7V7WLfKU2qdzicX4rvlMmkFw8RFk3ACm5HRCrwdUPDG3fKhhes
-	etAaNvIXiyc55htdTTHV7YYB1NRovnaH8/O8hdQqVrgBmmWV
-X-Google-Smtp-Source: AGHT+IG6yf1DLKd9RBqBzhmjs+vsqWMxZMxsOyEVpIx2HZ0YwcmkSl4odD1JjuxgVA3Jl74sl+M1Ug==
-X-Received: by 2002:a05:6214:226a:b0:6e4:4011:9df7 with SMTP id 6a1803df08f44-6f542a1dcf7mr48827996d6.16.1746627097378;
-        Wed, 07 May 2025 07:11:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746627099; x=1747231899;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vm+MHUBv09afGPstqZ6g33kZoaoECt43wozuRnFS1ks=;
+        b=sFieUv5+O8q36G7Zj8g9gyTGmVDVEygK4xY29EeTdViI2Gtw8H1LKa3tLkVMBvH4sW
+         O5mynzfrC+HUij8DmWQJ2Bav1hMQYwLHvS8f0iqU984XnIgcWzrrx2Yglqf5ZlZse39K
+         lY4GJ+r+ByshBxx4KgEfC5dFjvmcoGKKRr1Oq0hH33di+sl5xkjKmKy2ShzF2rkCByKd
+         aehC/5acERR+peugL5IfJzAg8nWMtu662I5ZUSm0c4CgmXJQ04SLhmTuPUdv637jXxHZ
+         FA2QdR8K6pABQlun2VBj2h+Zwu77INyBH/5FuaI5vkjmvtLHP2vaMw3ryjeymjsHVJUJ
+         tztA==
+X-Forwarded-Encrypted: i=1; AJvYcCVk3Nq5Wf/0PZZ8WgIJNkhjfe3uJDQjPo0kH5JjuPKn0Gp6s9KEEko1cZgvQX2T/tGpOthi/41Z3cg98Y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJTnAciSd3uiAfgpqNFLf4UcpD49JBx7F59gwprbWnRtq7KSjw
+	5yPpf06gdB1GoY1u2HYvSsZYfodqarZx5fH4z20cFvxKmB/f8lS1
+X-Gm-Gg: ASbGncvkLo8mJTJ1PT3hMQwFppUd+4FqiGonmUueYcn3rNb3VyyGHwKoBFurbakIRvx
+	dBfm03nwZ6PSzTBV/NWWSOH+3TNMUwmkVxbvFQRmu8wo7E8jAKRG9dqNrLJPhANkYKGa3QWy2dl
+	jfyPcPCH4+6fScxn1HOLVUd2OiK1l/Lb0vVCGWDyeSyh4XKGzlB1ulG1BZM2GXlGQCe4ZpRaiT+
+	zz8yZ4bj+UF2A4BsMc8YW0mr5zWyjiO07NxDxZonIaogbJqkP69d552qqUWZlC78Sls9HA5d7ry
+	xB/LOQ58kzMuhAgLi/SRGqaxuTHO+NNOcdS64Q==
+X-Google-Smtp-Source: AGHT+IGJu/VKlLDFa89vNWFcY6rHfDrXU1rIHuIP4kHVkuFiNxpZM5MMjkM5oXVKvn4vhVXHF/ryzA==
+X-Received: by 2002:a05:6214:c6b:b0:6e8:f4d3:e8a5 with SMTP id 6a1803df08f44-6f5429f60c4mr53500276d6.15.1746627098583;
+        Wed, 07 May 2025 07:11:38 -0700 (PDT)
 Received: from localhost ([2a03:2880:20ff:7::])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f542780ecfsm14100776d6.86.2025.05.07.07.11.36
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f542623f1esm14529706d6.8.2025.05.07.07.11.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 07:11:37 -0700 (PDT)
+        Wed, 07 May 2025 07:11:38 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	david@redhat.com,
@@ -85,10 +87,12 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH 0/1] prctl: allow overriding system THP policy to always
-Date: Wed,  7 May 2025 15:00:33 +0100
-Message-ID: <20250507141132.2773275-1-usamaarif642@gmail.com>
+Subject: [PATCH 1/1] prctl: allow overriding system THP policy to always per process
+Date: Wed,  7 May 2025 15:00:34 +0100
+Message-ID: <20250507141132.2773275-2-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250507141132.2773275-1-usamaarif642@gmail.com>
+References: <20250507141132.2773275-1-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,100 +103,15 @@ Content-Transfer-Encoding: 8bit
 
 Allowing override of global THP policy per process allows workloads
 that have shown to benefit from hugepages to do so, without regressing
-workloads that wouldn't benefit. This will allow such types of
-workloads to be run/stacked on the same machine.
+workloads that wouldn't benefit. This will allow such types of workloads
+to be run/stacked on the same machine.
 
 It also helps in rolling out hugepages in hyperscaler configurations
-for workloads that benefit from them, where a single THP policy is
-likely to be used across the entire fleet, and prctl will help override it.
+for workloads that benefit from them, where a single THP policy is likely
+to be used across the entire fleet, and prctl will help override it.
 
-An advantage of doing it via prctl vs creating a cgroup specific
-option (like /sys/fs/cgroup/test/memory.transparent_hugepage.enabled) is
-that this will work even when there are no cgroups present, and my
-understanding is there is a strong preference of cgroups controls being
-hierarchical which usually means them having a numerical value.
-
-
-The output and code of test program is below:
-
-[root@vm4 vmuser]# echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
-[root@vm4 vmuser]# echo inherit > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
-[root@vm4 vmuser]# ./a.out
-Default THP setting:
-THP is not set to 'always'.
-PR_SET_THP_ALWAYS = 1
-THP is set to 'always'.
-PR_SET_THP_ALWAYS = 0
-THP is not set to 'always'.
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/prctl.h>
-
-#define PR_SET_THP_ALWAYS 78
-#define SIZE 12 * (2 * 1024 * 1024) // 24 MB
-
-void check_smaps(void) {
-    FILE *file = fopen("/proc/self/smaps", "r");
-    if (!file) {
-        perror("fopen");
-        return;
-    }
-
-    char line[256];
-    int is_hugepage = 0;
-    while (fgets(line, sizeof(line), file)) {
-        // if (strstr(line, "AnonHugePages:"))
-        //     printf("%s\n", line);
-        if (strstr(line, "AnonHugePages:") && strstr(line, "24576 kB"))
-{
-            // printf("%s\n", line);
-            is_hugepage = 1;
-            break;
-        }
-    }
-    fclose(file);
-    if (is_hugepage) {
-        printf("THP is set to 'always'.\n");
-    } else {
-        printf("THP is not set to 'always'.\n");
-    }
-}
-
-void test_mmap_thp(void) {
-    char *buffer = (char *)mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
-                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (buffer == MAP_FAILED) {
-        perror("mmap");
-        return;
-    }
-    // Touch the memory to ensure it's allocated
-    memset(buffer, 0, SIZE);
-    check_smaps();
-    munmap(buffer, SIZE);
-}
-
-int main() {
-    printf("Default THP setting: \n");
-    test_mmap_thp();
-    printf("PR_SET_THP_ALWAYS = 1 \n");
-    prctl(PR_SET_THP_ALWAYS, 1, NULL, NULL, NULL);
-    test_mmap_thp();
-    printf("PR_SET_THP_ALWAYS = 0 \n");
-    prctl(PR_SET_THP_ALWAYS, 0, NULL, NULL, NULL);
-    test_mmap_thp();
-
-    return 0;
-}
-
-
-Usama Arif (1):
-  prctl: allow overriding system THP policy to always per process
-
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+---
  include/linux/huge_mm.h                          |  3 ++-
  include/linux/mm_types.h                         |  7 ++-----
  include/uapi/linux/prctl.h                       |  3 +++
@@ -201,6 +120,101 @@ Usama Arif (1):
  .../perf/trace/beauty/include/uapi/linux/prctl.h |  3 +++
  6 files changed, 29 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 2f190c90192d..0587dc4b8e2d 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -293,7 +293,8 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 		if (vm_flags & VM_HUGEPAGE)
+ 			mask |= READ_ONCE(huge_anon_orders_madvise);
+ 		if (hugepage_global_always() ||
+-		    ((vm_flags & VM_HUGEPAGE) && hugepage_global_enabled()))
++		    ((vm_flags & VM_HUGEPAGE) && hugepage_global_enabled()) ||
++		    test_bit(MMF_THP_ALWAYS, &vma->vm_mm->flags))
+ 			mask |= READ_ONCE(huge_anon_orders_inherit);
+ 
+ 		orders &= mask;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index e76bade9ebb1..9bcd72b2b191 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1704,11 +1704,8 @@ enum {
+ #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
+ #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
+ 
+-/*
+- * This one-shot flag is dropped due to necessity of changing exe once again
+- * on NFS restore
+- */
+-//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
++/* override inherited page sizes to always for the entire process */
++ #define MMF_THP_ALWAYS	18
+ 
+ #define MMF_HAS_UPROBES		19	/* has uprobes */
+ #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 15c18ef4eb11..22c526681562 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -364,4 +364,7 @@ struct prctl_mm_map {
+ # define PR_TIMER_CREATE_RESTORE_IDS_ON		1
+ # define PR_TIMER_CREATE_RESTORE_IDS_GET	2
+ 
++#define PR_SET_THP_ALWAYS	78
++#define PR_GET_THP_ALWAYS	79
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index c434968e9f5d..ee56b059ff1f 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2658,6 +2658,22 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			clear_bit(MMF_DISABLE_THP, &me->mm->flags);
+ 		mmap_write_unlock(me->mm);
+ 		break;
++	case PR_GET_THP_ALWAYS:
++		if (arg2 || arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = !!test_bit(MMF_THP_ALWAYS, &me->mm->flags);
++		break;
++	case PR_SET_THP_ALWAYS:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		if (mmap_write_lock_killable(me->mm))
++			return -EINTR;
++		if (arg2)
++			set_bit(MMF_THP_ALWAYS, &me->mm->flags);
++		else
++			clear_bit(MMF_THP_ALWAYS, &me->mm->flags);
++		mmap_write_unlock(me->mm);
++		break;
+ 	case PR_MPX_ENABLE_MANAGEMENT:
+ 	case PR_MPX_DISABLE_MANAGEMENT:
+ 		/* No longer implemented: */
+diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
+index 35791791a879..f5f6cff42b3f 100644
+--- a/tools/include/uapi/linux/prctl.h
++++ b/tools/include/uapi/linux/prctl.h
+@@ -328,4 +328,7 @@ struct prctl_mm_map {
+ # define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
+ # define PR_PPC_DEXCR_CTRL_MASK		0x1f
+ 
++#define PR_GET_THP_ALWAYS	78
++#define PR_SET_THP_ALWAYS	79
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/prctl.h b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+index 15c18ef4eb11..680996d56faf 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/prctl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+@@ -364,4 +364,7 @@ struct prctl_mm_map {
+ # define PR_TIMER_CREATE_RESTORE_IDS_ON		1
+ # define PR_TIMER_CREATE_RESTORE_IDS_GET	2
+ 
++#define PR_GET_THP_ALWAYS	78
++#define PR_SET_THP_ALWAYS	79
++
+ #endif /* _LINUX_PRCTL_H */
 -- 
 2.47.1
 
