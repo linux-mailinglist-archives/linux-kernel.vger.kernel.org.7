@@ -1,166 +1,198 @@
-Return-Path: <linux-kernel+bounces-638745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B4BAAED2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:41:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0286BAAED3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841EE1C42B18
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF84E9E0AC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD93128F948;
-	Wed,  7 May 2025 20:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8789B290089;
+	Wed,  7 May 2025 20:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQ4hamnD"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xc9ioAvn"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DE51DE3DB
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 20:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140E428FFE1
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 20:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746650458; cv=none; b=P66bLa0tsEeTMC1sS3yLPBYFCjcy1/3hx3FUvu9pXli/QBCjur1y37v0MsXjmAQFeRORCcXjAUvvdlluhEE8C3S191YYZ5YTZEUy5TM/x9IJ7djVMWxTFmxc53jjVsxuxAjf4j4gIOA78ksVs4AgZIi3/gA9JDYVo/s+toV/yJU=
+	t=1746650632; cv=none; b=d5u4CN79pxaHBqmkCgjhooqPNZhOhGjx/7NTnK0cDtGCUYpe58ZQiSpCPiUU9yFmckksmROfXZXJHf+VRsDDeVx6pZJhDyWFIG3pdce9SZnKyFDeTOf2XME0VDVJme6WfVvpjPQhU5xYv3stn1xJ9RRu9phsbAEWQAHt110ec6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746650458; c=relaxed/simple;
-	bh=pFUOXHHvrXkhPQiHUuiZOBGAlIl+wM2tlUei87nvFis=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ofc3yPPPNGIbjWZcfkqkxLOSAvM7LJT+Kf9s7ogdZyoIzluF9+17f2hl1I89HO9SgTLQp1JcLmxzRwSBp+e/8WMmSYMy9mgimWBdM6cyG2OxsbjMKMMIXj6O0xp9hFVzWLPiBSG0Vz6pl5Vxj3SR9HLPNf5ipE1Llmzt+z5cLB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQ4hamnD; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3995ff6b066so175797f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 13:40:56 -0700 (PDT)
+	s=arc-20240116; t=1746650632; c=relaxed/simple;
+	bh=Lg4SA4pn1vW9GdQo7AmI2OXd4PURSfvMzZplZ0zuKts=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PZOeHUhlIj+qXKdoaO763Szy4f5e8rhQFR2sLoCndwsIQzGxAXCH1S6/tMFBy7te39layhS4c0+Xs9l/jc/QfbZtC/SDMVDrd8GqeJumZ6QSHuw8gy+u8XLZJJdjNROE+qgw2T8XdF2A7Cu1Fe2X07qPH7MnZ2N9H5iIXTkLn1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xc9ioAvn; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d7f111e9e1so2093845ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 13:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746650455; x=1747255255; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vc93lrG0Hw2SjNwVZqM3dgp0VFSmvwCyoXXVfnOTYQs=;
-        b=VQ4hamnDIY9Xw5mUB2y9A/c5G0q9tNQqRiklG4Nd/28ioz45D7euL22wp/riejZd72
-         bU0/N1Zk17N/fUP7hB9+IV2T2FTdF+OcpUt4FJto7M8/NKh+sRXuB/bCW+1gkIByg7g7
-         B5kqLckSc2mp8Xe1gJrJPmq6y1hX83+Fp1RakjqHbJK3NJhWBQvdxbf7DnppYY+O3xqh
-         tUf+hFXqlR96gmEKuVUsuz0bu+UX5cwuUUk4HprEpe1Zqij9g7SsFRMNh67OJY7WROD6
-         qXYYy3nA/ypmnREItmdyCEBs6UwQ+0vN+nv78C7j/OEaz1+dCV7qQ8UWDAbnQRkNjzyq
-         zreA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746650630; x=1747255430; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ea7uCdhGnEj8qcXLckX/RL8NIFSONfFcF7ytuzsLJww=;
+        b=xc9ioAvniuXAlQklN468NANnZRcuyPnYcWAk4QCbmUNYrqY465uBi9UVLrxUZD0uyl
+         nh91ljtTaH6VTR94CNueJvngkST+IQI+6+mDcWIs9O7PLZgoNkZn2UWDY2skDGvjv3vF
+         HMYO0KSQY2EfLTP9FlAKwJV8Jxz4LJ0UpdbMqrbtjb5KVoPfOeVujJrTnUEjeWkai+CD
+         w4ejmMI9Ov+hrmuAl1oOzIePmIu0eitocIS6CwpWMDPumD23+bWzYBj9rtMxXr+O8Pim
+         lYjX2JM6xuCcsXWPkrFgczFC82wKRh3yaRtW2pwlZr6Pp7XEnYHXPLZM6iRc7ZCDeuRm
+         EO3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746650455; x=1747255255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vc93lrG0Hw2SjNwVZqM3dgp0VFSmvwCyoXXVfnOTYQs=;
-        b=XxJk9eSOFgXy8LNMtOIX8Ug99oHJsBjSQADYbiGTz8ISBTHe4/F+uU8kevWrRXDw+l
-         z4ErDWfpkmTk9pQRAbdALpzRAhMnxovXSN2ptGE46KGtECJHNR+3NvddEFlb5v2Trc89
-         MtUY6KuICQDpQlcOOAFzGVkRz3MrSSpSUm1GxbRNaFqjUZuFFjfJzmPqW3BDvbEhszAZ
-         NZeX8QBbvn9nOqcnYuOPJes3sxz6Rj1q3c8WZc3cDzpeJERjzcsBoTatA8Amdfxb4WU6
-         YiwJDLx8o+wlnpOqbvUQwThW/tdcBnJoVNgvnS8DkPtHH2Wh04PRZNRH/o8qm1H6NjLw
-         8W6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlhQaf+sMfTmylkhJIJOs+2sbL28GzZMNlcenNGwPbSL7ZaunASxCLRC/ST0Fgt5dTAu6h7pDkky+iTUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTsppjq3kejTrj+UbQYxAvt9L2ElmxUHmveUajxamcAyeeWOhk
-	/iHUadvuTGblJW/Uy0gU0mdkbKrk0c8wlH8bnAxOY6jmXUFu4jvFhb3RKA==
-X-Gm-Gg: ASbGnctAKvWvrlVmaci2NwtFqxc2mpjI9mdToZZQPd8oBTI8vDWcWih33yGPGShTfnI
-	sxLuIqPjzYndMfGjKkHSACYbSjdFVRblC7gBXSZumG36a5lG7uTOvDq2Uf95FvMfWULnBPvWe7u
-	Sz70bS7XJNeLzOVWEO37FmoREiH+9Z3R3T7MlZDXzCvQ8mtO3flBAc/hkqIoblwsTGeI6PzzEQL
-	274yOj5jOyZViVZhUrtjG65IKLVIsYvHF13O/pCKWUVs1hlymo5QQBrsfxKEyyqWvj7EL97bXzG
-	s7uPVyXyLCHhAMttULpg0dTa0iB95ts6OZ+d1N9mGPoJPKq9dUMvh4bJMbCPbfdntBKLn29/M+L
-	SbTw=
-X-Google-Smtp-Source: AGHT+IF7lnGYz8tX2qUOl403YDquvjWN2znFm05K0wGqllT1vIoVkF8GUXKgNAbIhOBhsKkvnOQoNw==
-X-Received: by 2002:a05:6000:402b:b0:38f:4f60:e669 with SMTP id ffacd0b85a97d-3a0b4a244a4mr4112259f8f.29.1746650454667;
-        Wed, 07 May 2025 13:40:54 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0cafsm18120171f8f.19.2025.05.07.13.40.54
+        d=1e100.net; s=20230601; t=1746650630; x=1747255430;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ea7uCdhGnEj8qcXLckX/RL8NIFSONfFcF7ytuzsLJww=;
+        b=mcwmyfKiVDQ0EeZ2P7MNJlcYNBZciO5BlAbSC6w2+kAju4+miK+ifdEaqqD7fdSYTM
+         MnZ82qGgXmOGJ1hO5QSFBEpNi5wCIroehxOFnnTykqkQC2A4aFhHwMbintKPqSpIp9Dc
+         hQ2X1cWsK9wDZihAPkMBeYT4WHAo0mWsl+yPKtma01X1mjzbt2dQ8noOBf1PWOGOEGEa
+         g9/IwBq010LB7EzYdIrNuJZ+OSOackh4xlZFAAVZpf4ipYheLN/Ds0q9uGfNFe43WFZc
+         QVHXK1ut0wzVt5Q8YEOBVJcTcCQJS1AudwuKd/PeSS3ifQ5LOYVt3h5HRQ/6Da19bz4X
+         nQGA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/FCoQQd+HQrIjfWRtUMYslTuiurf2IZJFih1T8XxhC6MS9Lv5NjC+OZZc6849p1d+Tutw4rA4ee0i2Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxInftoWkw72vYUs+xFtl3y8031lOY478rIbjhEyWOZPedPNWke
+	EtSRdn0pfwpDKM4rn9xbrAodCy60ICcvjF1NpbJN3Vwsm4VbMaHrDLmm010X+LYY/VQ9N5jiELG
+	r
+X-Gm-Gg: ASbGncvNuKUVyw8zv3UwAmrGbIb61ZZXAxLUWPT5KbAlwcx+YjjgHd/dIIkfiDvSnQ5
+	FZUIAAsHQvFMpD/cmU786qbNj9WEpayUiZoSU5IaEc0pS2xrnYa5Ca0sYbma2xqzz7HfhjLqAD1
+	9gDP6No4hOJAjW2Kd1pAK/heuw7N650wVrBsmgs65FYmchc7YZNOUF+NF09pleQcXiyhImm9uv/
+	euDVGOLwXUvDURdX+v/6MoR//luT/MjwtMzy3bj/4m7CJsqgl2ehf9wqxLcH+ZK5RMQb99SpPw6
+	9UvBcQF1xaf3qd2/aOU/D7mdsrzLuSg95O1knuCZrJReXw==
+X-Google-Smtp-Source: AGHT+IHOWRSdg3a/2AZGQ7l833TO2pNrBV9BWQuruB0TiAOKL0pY4WL4XdsmCG0EFCkuCjZMiTzKKw==
+X-Received: by 2002:a05:6870:8895:b0:288:2906:6882 with SMTP id 586e51a60fabf-2db818b658amr766018fac.29.1746650619421;
+        Wed, 07 May 2025 13:43:39 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:3356:f6f6:bf76:a32])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2db5cd716d3sm898642fac.21.2025.05.07.13.43.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 13:40:54 -0700 (PDT)
-Date: Wed, 7 May 2025 21:40:53 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, yuzhao@google.com, stevensd@chromium.org,
- kaleshsingh@google.com, zhanjun@uniontech.com, niecheng1@uniontech.com,
- guanwentao@uniontech.com, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2] mm: vmscan: Avoid signedness error for GCC 5.4
-Message-ID: <20250507214053.42c90b11@pumpkin>
-In-Reply-To: <62726950F697595A+20250507040827.1147510-1-wangyuli@uniontech.com>
-References: <62726950F697595A+20250507040827.1147510-1-wangyuli@uniontech.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 07 May 2025 13:43:38 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v6 0/7] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
+Date: Wed, 07 May 2025 15:42:39 -0500
+Message-Id: <20250507-iio-introduce-iio_declare_buffer_with_ts-v6-0-4aee1b9f1b89@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL/FG2gC/53QzWrEIBSG4VsZXNeiR6Ohq95HKcGfcxphGgeTS
+ TsMufea2TSUbFJcvWfxfOCdjVgSjuzldGcF5zSmPNQwTycWejd8IE+xNgMBjdCy5Sllnoap5Hg
+ NuFYXMZxdwc5fibB0X2nqu2nkQK21imx00bDKXQpS+n5Mvb3X7tM45XJ7LM9yvf5jZJZccEQRD
+ DilnKBX727n5As+h/zJ1p0ZNjbAARuqrSgqo20TrDA7ttrazQFbVZskRJKeCHS7Y+utfeRPdLU
+ NWTISDMngd+zm167vgN1Uu5XaW/AyOFR/7GVZfgDiAqsJUwIAAA==
+X-Change-ID: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3770; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=Lg4SA4pn1vW9GdQo7AmI2OXd4PURSfvMzZplZ0zuKts=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoG8XFf7OJQjk4XzTL7Gi/BDJ4Zxv9Du5DjtNat
+ 5HHapaBrt+JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaBvFxQAKCRDCzCAB/wGP
+ wPp2B/45XuzuB8PxMSO68COi3/YnHDlzMOyQdiruBMJdAoTO+6qXwmD/hAE1+WC+GnrpCHoNjh1
+ hY8J/XDoIAKlv16uFNH7AOCMLmM0HaTGUcSlPL7V4Fp4xhvO7VJIlQ1Vfp46VvpAQQYjorP7Aek
+ RHeL1klVqL7nhkHYrBgKW75GKALooI50FD7YJcBm5EtUJYSzVQDVX2bwU1AjYf6EnNa2Rd3jX2v
+ Mo+H58YCX+O9oCx/T0xzGk3ppy9T5ZznHe+2XM2Uvr63GVgxHDPIkwvcX1JR+dXOXlQJsn64qx4
+ jIYvhcSoHwAB4Kye7yND7rdWEFvGR1JsS56ueH1iw5YV21dv
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Wed,  7 May 2025 12:08:27 +0800
-WangYuli <wangyuli@uniontech.com> wrote:
+Creating a buffer of the proper size and correct alignment for use with
+iio_push_to_buffers_with_ts() is commonly used and not easy to get
+right (as seen by a number of recent fixes on the mailing list).
 
-> To the GCC 5.4 compiler, (MAX_NR_TIERS - 1) (i.e., (4U - 1)) is
-> unsigned, whereas tier is a signed integer.
+In general, we prefer to use this pattern for creating such buffers:
 
-That is true for all version of the compiler.
-The warning depends on whether the function is inlined or not.
+struct {
+    u16 data[2];
+    aligned_s64 timestamp;
+} buffer;
 
->=20
-> Then, the __types_ok check within the __careful_cmp_once macro failed,
-> triggered BUILD_BUG_ON.
->=20
-> Use min_t instead of min to circumvent this compiler error.
+However, there are many cases where a driver may have a large number of
+channels that can be optionally enabled or disabled in a scan or the
+driver might support a range of chips that have different numbers of
+channels or different storage sizes for the data. In these cases, the
+timestamp may not always be at the same place relative to the data. To
+handle these, we allocate a buffer large enough for the largest possible
+case and don't care exactly where the timestamp ends up in the buffer.
 
-It isn't a compiler error, it is a coding error.
+For these cases, we propose to introduce new macros to make it easier
+it easier for both the authors to get it right and for readers of the
+code to not have to do all of the math to verify that it is correct.
 
-The correct fix is to change tier to be unsigned.
-(and probably 'i' at the same time.)
+I have just included a few examples of drivers that can make use of this
+new macro, but there are dozens more.
 
->=20
-> Fix follow error with gcc 5.4:
->   mm/vmscan.c: In function =E2=80=98read_ctrl_pos=E2=80=99:
->   mm/vmscan.c:3166:728: error: call to =E2=80=98__compiletime_assert_887=
-=E2=80=99 declared with attribute error: min(tier, 4U - 1) signedness error
->=20
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Fixes: 37a260870f2c ("mm/mglru: rework type selection")
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
-> Changelog:
->  *v1->v2:
->     1. Fix commit msg.
->     2. Use min_t instead of min.
-> ---
->  mm/vmscan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 3783e45bfc92..8d9a82621c4f 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -3163,7 +3163,7 @@ static void read_ctrl_pos(struct lruvec *lruvec, in=
-t type, int tier, int gain,
->  	pos->gain =3D gain;
->  	pos->refaulted =3D pos->total =3D 0;
-> =20
-> -	for (i =3D tier % MAX_NR_TIERS; i <=3D min(tier, MAX_NR_TIERS - 1); i++=
-) {
-> +	for (i =3D tier % MAX_NR_TIERS; i <=3D min_t(int, tier, MAX_NR_TIERS - =
-1); i++) {
+---
+Changes in v6:
+- Rework IIO_DMA_MINALIGN to work around clang compiler issue.
+- Link to v5: https://lore.kernel.org/r/20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com
 
-That loop is atrocious.
-There are two types of call to the function.
-Either 'tier' is a constant 0, a variable 1..3 or a constant 4.
-You really don't want it not inlined.
-When inlined gcc tracks the domain of 'tier' and knows it is positive.
-That stops the error from min().
-If not inlined you get terrible code and the warning.
+Changes in v5:
+- Add new patch to set minimum alignment to 8 for IIO_DMA_MINALIGN.
+- Adjust IIO_DECLARE_DMA_BUFFER_WITH_TS() macro for above change.
+- Drop one ad4695 patch that was already applied.
+- Link to v4: https://lore.kernel.org/r/20250428-iio-introduce-iio_declare_buffer_with_ts-v4-0-6f7f6126f1cb@baylibre.com
 
-For the loop case (and that includes the 0, then 1..3 loop) you probably
-want to ensure the [hist] and [type] array indexes are only done once.
-I suspect gcc can't do that for you.
+Changes in v4:
+- Dropped static_assert()s from the first patch.
+- Handle case when IIO_DMA_MINALIGN < sizeof(timestamp).
+- Added one more patch for ad4695 to rename a confusing macro.
+- Link to v3: https://lore.kernel.org/r/20250425-iio-introduce-iio_declare_buffer_with_ts-v3-0-f12df1bff248@baylibre.com
 
-	David
+Changes in v3:
+- Fixed a few mistakes, style issues and incorporate other feedback (see
+  individual commit message changelogs for details).
+- Link to v2: https://lore.kernel.org/r/20250422-iio-introduce-iio_declare_buffer_with_ts-v2-0-3fd36475c706@baylibre.com
 
->  		pos->refaulted +=3D lrugen->avg_refaulted[type][i] +
->  				  atomic_long_read(&lrugen->refaulted[hist][type][i]);
->  		pos->total +=3D lrugen->avg_total[type][i] +
+Changes in v2:
+- Add 2nd macro for case where we need DMA alignment.
+- Add new patch for ad4695 to convert buffer from u8 to u16 before
+  making use of the new macro.
+- Drop the bmp280 patch since it was determined to have a better
+  alternative not using these macros.
+- Add a few more examples to show the non-DMA case, both in a struct and
+  stack allocated.
+- Link to v1: https://lore.kernel.org/r/20250418-iio-introduce-iio_declare_buffer_with_ts-v1-0-ee0c62a33a0f@baylibre.com
+
+---
+David Lechner (7):
+      iio: make IIO_DMA_MINALIGN minimum of 8 bytes
+      iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+      iio: adc: ad4695: use IIO_DECLARE_DMA_BUFFER_WITH_TS
+      iio: adc: ad4695: rename AD4695_MAX_VIN_CHANNELS
+      iio: adc: ad7380: use IIO_DECLARE_DMA_BUFFER_WITH_TS
+      iio: accel: sca3300: use IIO_DECLARE_BUFFER_WITH_TS
+      iio: adc: at91-sama5d2: use IIO_DECLARE_BUFFER_WITH_TS
+
+ drivers/iio/accel/sca3300.c        | 18 ++---------------
+ drivers/iio/adc/ad4695.c           | 11 +++++-----
+ drivers/iio/adc/ad7380.c           |  3 +--
+ drivers/iio/adc/at91-sama5d2_adc.c | 13 ++----------
+ include/linux/iio/iio.h            | 41 +++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 50 insertions(+), 36 deletions(-)
+---
+base-commit: 7e9a82ab5b861d3c33c99a22c1245a5b262ee502
+change-id: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
