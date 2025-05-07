@@ -1,96 +1,65 @@
-Return-Path: <linux-kernel+bounces-638420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3469BAAE5DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:04:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BB6AAE5BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63B43B2202E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52CB189D7F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523B328B7F4;
-	Wed,  7 May 2025 15:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BF128B7DA;
+	Wed,  7 May 2025 15:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="pMMiuLN9"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/h1ebp0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD890283C9E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 15:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE844D599;
+	Wed,  7 May 2025 15:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746633441; cv=none; b=Z3qi+T2bHVvk6BPyLp3ljBEXgAcLHg0cfpmhKgAWA0MV4QFn3R+3TZm8jyT4csTKCLNO1u4gtGI+bTPaUKff9cafDQ2ei15G27vHaFQJKTAug+TTCR9XFZ6+OdLxWhoU4OwQwI8JXVmC7dZCsWN2oKACzAvpUU0XKM5/Pj1E6aA=
+	t=1746633503; cv=none; b=dpH9XxHrZed+qV2nEjzeOiJJnFfXVn/woFpHBixf+hyeYpG4pUfNQu+h6ZWq63ASF+UrrWvZbhKXjyih+/W6Ac5uNK9UyHHsgRvHbcWHEctk+W+/yZT5cEq13Rvx71lswdFjo+8NIQm6iGJCjc6yACtYtiepdGyPYsfDyaL4New=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746633441; c=relaxed/simple;
-	bh=9eQK4QAEow732KG9bEcHB4AIdULBpH4BjFf16UDvexI=;
+	s=arc-20240116; t=1746633503; c=relaxed/simple;
+	bh=9OTKdflDOR50qS6aHZW+uyRKI0CdXdUacM8H5zHJItI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLK4wdSLCtd8IczWMKzMhvYNx8u8c5C/0IcaSdw5yttlWNJcbJxiJyZk2u7fqJKZDJzmysswtEy0dv0UvdMwmIkg/GFNRS7/rAJ8/wacLdVuaZHlqzA2JEzGbOGEwR4ZgDf0+jx1N8/1Ree5Iq+PTcMKE7BI7KAYFo65Gz1RElc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=pMMiuLN9; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6f545ae3c59so748016d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 08:57:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1746633438; x=1747238238; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMpiX2oAeFJGOcPhonwGxFO2XwnOZnyIjVcioz4mPT0=;
-        b=pMMiuLN9H8GWT9vgzKYdR2gLTVWIFxsAPrza74Z+IKJxwhCwbVzAEhxno6En0vVE+U
-         fSWIn89yoWGU4CEhBbhWoEnUmIIOPshVAJNRmO2e34u+ogdwu5VPk3bYZTLcCktKGeiC
-         nAF/kf9byW9C0LA/nlQipWOIunYDWmHpcgi+pAcCyRM+swVAB8RUz8fEi9nkvbDCDHIZ
-         OU4O3KAixHSM0SSsQoY125K3M+RHqS+E/BPeS8R30Ll7XP68Om1jesuZU5ElAI/dRlCg
-         S0oFb/vn0K7RJddNEHQmi1YXPBTTjVWn9etvytPLAcUy9D6At6A2v7VLxcXyn0l4tRS+
-         I2Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746633438; x=1747238238;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oMpiX2oAeFJGOcPhonwGxFO2XwnOZnyIjVcioz4mPT0=;
-        b=Z4emAc5SeY/PXGF95aeuGAYYZjLNsaU2XFhnE5eWWrva5imlTUVW4vCUS1YKRka6iK
-         ImKiyJWIMWT/68H7tOouAnhqaFQ+ZXlkn8XGaHfZhmZ8JDJEADxkgExRyXVF7VPUGj+S
-         9gC6oCid3AAedcUFct+PlVftJCyAz6Fcd5q5eakrVo1juWt1mMVxbCF9o8U6O/OuYqdo
-         E0t3w/JQKTmnfgqRSZrcfy7hh6R0Q96OowZ/byRQ+HIPQGRSuxnTRD8lw1o/NAR6lcLc
-         DUCOOpAjWkQUGhGktjK+2QMPkNng/8wGu7FJNp1YJ0RZe0VTPsPjnAugZqg4MujITFTm
-         8/Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyfnUyDtf3YJDTZCAqfXdbIIkEuDJ1JOV8b7PCuGGJzTngR1vI3f3ps4OZ2MXfy91AXhcZclqP8X7VAnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVBqqCi+C+0UfaJNZUecyzkqep8DLN35bqmuPRocncrRRaWoJG
-	FUVy94lx4EVUIWWK6hdE216eiJ5iWXBZuXAkUbFfJvujTY0ZFUXfWG0k1txP2o0=
-X-Gm-Gg: ASbGncv1chdfoyW8YgKXuF26hMm819EURMl/rqPQv0dhTdL025tLqlDfIPwAigGAVHS
-	A8Cq7c5lOUsXEEdkiAEiuLYUIFRzOChsOuP2d9uo5gmoRIuBxBBPzBbkSGBxyq+XRmPgQnJyfIN
-	ZP1/XftsbVfMb/iLVCjVYPSWLaZLfkrBw1C9EikLSrKb/4BJ+c6HLmvtaLAzfkoDIG5/vTN1p5C
-	+g1wPc0u6vxxnKk8Ep2xLtbpIdmC1aL3Vm5p8S3YRHYGEv5qUHi/gr7LMGuRIxNfAAeE20dCWxt
-	EVKawBb2H5flueLiiTTAmGx1CS0WRqjTTJRxTlreuD58XOwdZVcl5/JhEC+RLeftuhUejBzKIXt
-	XkCUuG4i4DbyI9bD9oRxlfOmOdVJmCg==
-X-Google-Smtp-Source: AGHT+IGY3INDtooQYmwyNQCIEwpt7xooKZ7sy3RzrPyXtK9PFRJuzWNKcBsIXTsgY0x3k40zEUppng==
-X-Received: by 2002:a05:6214:e49:b0:6f5:106a:271e with SMTP id 6a1803df08f44-6f542b03fd6mr64088116d6.38.1746633438616;
-        Wed, 07 May 2025 08:57:18 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f5427b31a0sm15299126d6.113.2025.05.07.08.57.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 08:57:18 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uCh93-00000001CGI-2d0i;
-	Wed, 07 May 2025 12:57:17 -0300
-Date: Wed, 7 May 2025 12:57:17 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>, Kevin Tian <kevin.tian@intel.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Joao Martins <joao.m.martins@oracle.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] iommu/io-pgtable-arm: Add quirk to quiet WARN_ON()
-Message-ID: <20250507155717.GD33739@ziepe.ca>
-References: <20250507142953.269300-1-robdclark@gmail.com>
- <20250507144038.GC33739@ziepe.ca>
- <8965ec0a-97d4-423b-97b9-7848454045d0@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUCAbwnindWehWeKJQ7IbQRvEbjaCmgIe25yQtPDykMkXxZzLV34vJeKQvxxv2lxhQx6VQmgu4MIWbTy/eOucp5nD3JDmxMO4K2TDUd+bwD7UQ4IeH7o1NstNfEcv02BdGuh1o3mVztmDMRKjeLgy9YFZxQ3aBxLhFz5zbIjn4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/h1ebp0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD71C4CEE2;
+	Wed,  7 May 2025 15:58:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746633501;
+	bh=9OTKdflDOR50qS6aHZW+uyRKI0CdXdUacM8H5zHJItI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/h1ebp0eNDJHb8V1zpv2hW1ydgmCNDe6rxjCI6ep4mRjUs6kUSsLfFZ7T5pjf0AE
+	 xCq82YI0wQ8f8zzextQGxkj5gg5g/aEc1pQYEbprFIfNS7Ae+Hcc5fIXd1gl/tvnwY
+	 eLUpaZkc1Lqwx4O3P5aPAtG8clad+ReDG7LFJplrGLorNcKS53T8S1adKIu+4LY7vh
+	 9ZmhvQ37oX9h/vK1Mq+63z4xclfIa8fx3C3FiKIQgQPWifkrhhsBDNpC6xdd2h8w9L
+	 rjZkWEmk9sXtZNmz19kDni2aw+tUcmxiWfVY/xrzOBnIySqacmREDu09t43vH+RiSb
+	 /htHEMjuOXTOw==
+Date: Wed, 7 May 2025 16:58:14 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tanmay Jagdale <tanmay@marvell.com>
+Cc: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, bbhushan2@marvell.com, bhelgaas@google.com,
+	pstanner@redhat.com, gregkh@linuxfoundation.org,
+	peterz@infradead.org, linux@treblig.org,
+	krzysztof.kozlowski@linaro.org, giovanni.cabiddu@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rkannoth@marvell.com, sumang@marvell.com,
+	gcherian@marvell.com
+Subject: Re: [net-next PATCH v1 13/15] octeontx2-pf: ipsec: Manage NPC rules
+ and SPI-to-SA table entries
+Message-ID: <20250507155814.GG3339421@horms.kernel.org>
+References: <20250502132005.611698-1-tanmay@marvell.com>
+ <20250502132005.611698-14-tanmay@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,51 +68,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8965ec0a-97d4-423b-97b9-7848454045d0@arm.com>
+In-Reply-To: <20250502132005.611698-14-tanmay@marvell.com>
 
-On Wed, May 07, 2025 at 04:09:47PM +0100, Robin Murphy wrote:
-> On 07/05/2025 3:40 pm, Jason Gunthorpe wrote:
-> > On Wed, May 07, 2025 at 07:29:51AM -0700, Rob Clark wrote:
-> > > From: Rob Clark <robdclark@chromium.org>
-> > > 
-> > > In situations where mapping/unmapping sequence can be controlled by
-> > > userspace, attempting to map over a region that has not yet been
-> > > unmapped is an error.  But not something that should spam dmesg.
-> > > 
-> > > Now that there is a quirk, we can also drop the selftest_running
-> > > flag, and use the quirk instead for selftests.
-> > > 
-> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > ---
-> > > Sending v2 stand-alone, since I'm not quite ready to send a new
-> > > iteration of the full VM_BIND series.  And with selftest_running
-> > > removed, I think this patch stands on it's own.  (And maybe there
-> > > is still time to sneak this in for v6.16, removing an iommu dep
-> > > for the VM_BIND series in v6.17?)
-> > 
-> > You should just remove the warn on completely, no other driver does this.
+On Fri, May 02, 2025 at 06:49:54PM +0530, Tanmay Jagdale wrote:
+> NPC rule for IPsec flows
+> ------------------------
+> Incoming IPsec packets are first classified for hardware fastpath
+> processing in the NPC block. Hence, allocate an MCAM entry in NPC
+> using the MCAM_ALLOC_ENTRY mailbox to add a rule for IPsec flow
+> classification.
 > 
-> What do you mean "no other driver"?
-
-The server drivers.
- 
-> From a quick look, these IOMMU drivers have some sort of visible warning
-> related to the state of an existing PTE during map/unmap:
-
-Many of them are just using this code.
-
-> while these IOMMU drivers do not:
+> Then, install an NPC rule at this entry for packet classification
+> based on ESP header and SPI value with match action as UCAST_IPSEC.
+> Also, these packets need to be directed to the dedicated receive
+> queue so provide the RQ index as part of NPC_INSTALL_FLOW mailbox.
+> Add a function to delete NPC rule as well.
 > 
-> amd
-> intel
-> mtk_iommu_v1
-> omap-iommu
-> riscv
-> sprd-iommu
-> tegra-smmu
-> virtio-iommu
+> SPI-to-SA match table
+> ---------------------
+> NIX RX maintains a common hash table for matching the SPI value from
+> in ESP packet to the SA index associated with it. This table has 2K entries
+> with 4 ways. When a packet is received with action as UCAST_IPSEC, NIXRX
+> uses the SPI from the packet header to perform lookup in the SPI-to-SA
+> hash table. This lookup, if successful, returns an SA index that is used
+> by NIXRX to calculate the exact SA context address and programs it in
+> the CPT_INST_S before submitting the packet to CPT for decryption.
+> 
+> Add functions to install the delete an entry from this table via the
+> NIX_SPI_TO_SA_ADD and NIX_SPI_TO_SA_DELETE mailbox calls respectively.
+> 
+> When the RQs are changed at runtime via ethtool, RVU PF driver frees all
+> the resources and goes through reinitialization with the new set of receive
+> queues. As part of this flow, the UCAST_IPSEC NPC rules that were installed
+> by the RVU PF/VF driver have to be reconfigured with the new RQ index.
+> 
+> So, delete the NPC rules when the interface is stopped via otx2_stop().
+> When otx2_open() is called, re-install the NPC flow and re-initialize the
+> SPI-to-SA table for every SA context that was previously installed.
+> 
+> Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
+> ---
+>  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 201 ++++++++++++++++++
+>  .../marvell/octeontx2/nic/cn10k_ipsec.h       |   7 +
+>  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |   9 +
+>  3 files changed, 217 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
 
-Which I think proves we don't need it and shouldn't have it.
+...
 
-Jason
+> +static int cn10k_inb_install_flow(struct otx2_nic *pfvf, struct xfrm_state *x,
+> +				  struct cn10k_inb_sw_ctx_info *inb_ctx_info)
+> +{
+> +	struct npc_install_flow_req *req;
+> +	int err;
+> +
+> +	mutex_lock(&pfvf->mbox.lock);
+> +
+> +	req = otx2_mbox_alloc_msg_npc_install_flow(&pfvf->mbox);
+> +	if (!req) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	req->entry = inb_ctx_info->npc_mcam_entry;
+> +	req->features |= BIT(NPC_IPPROTO_ESP) | BIT(NPC_IPSEC_SPI) | BIT(NPC_DMAC);
+> +	req->intf = NIX_INTF_RX;
+> +	req->index = pfvf->ipsec.inb_ipsec_rq;
+> +	req->match_id = 0xfeed;
+> +	req->channel = pfvf->hw.rx_chan_base;
+> +	req->op = NIX_RX_ACTIONOP_UCAST_IPSEC;
+> +	req->set_cntr = 1;
+> +	req->packet.spi = x->id.spi;
+> +	req->mask.spi = 0xffffffff;
+
+I realise that the value is isomorphic, but I would use the following
+so that the rvalue has an endian annotation that matches the lvalue.
+
+	req->mask.spi = cpu_to_be32(0xffffffff);
+
+Flagged by Sparse.
+
+> +
+> +	/* Send message to AF */
+> +	err = otx2_sync_mbox_msg(&pfvf->mbox);
+> +out:
+> +	mutex_unlock(&pfvf->mbox.lock);
+> +	return err;
+> +}
+
+...
+
+> +static int cn10k_inb_delete_spi_to_sa_match_entry(struct otx2_nic *pfvf,
+> +						  struct cn10k_inb_sw_ctx_info *inb_ctx_info)
+
+gcc-14.2.0 (at least) complains that cn10k_inb_delete_spi_to_sa_match_entry
+is unused.
+
+Likewise for cn10k_inb_delete_flow and cn10k_inb_delete_spi_to_sa_match_entry.
+
+I'm unsure of the best way to address this but it would be nice
+to avoid breaking build bisection for such a trivial reason.
+
+Some ideas:
+* Maybe it is possible to squash this and the last patch,
+  or bring part of the last patch into this patch, or otherwise
+  rearrange things to avoid this problem.
+* Add temporary __maybe_unusd annotations.
+  (I'd consider this a last resort.)
+
+  ...
 
