@@ -1,194 +1,124 @@
-Return-Path: <linux-kernel+bounces-638866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F287AAEF14
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 01:11:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BF7AAEF32
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 01:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4457B1BC55B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:12:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2D7A7AF5D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E760291864;
-	Wed,  7 May 2025 23:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lr6U282C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C619528E59F;
+	Wed,  7 May 2025 23:16:53 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC871ACEC8;
-	Wed,  7 May 2025 23:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AFE7260E;
+	Wed,  7 May 2025 23:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746659502; cv=none; b=ZxpOYfRKouaSOFcFrN/lo0XCbdmDi3QASX8QumjjDVDWWhMxYVaJt5n5EkMvM3TpHP/25ecpnY8IRtS0V3+JwEfs6Y+VSdYrkCK2GR2s7NP5g3eYAW/CuP3yUZ28fmrnMrSlrd69bXPkYQukjQQV2UpfWN14kaVo7811vr8LyTY=
+	t=1746659813; cv=none; b=AA8Q5oC9UVwMoH2qk2LtGg0e9u/UyQuLIDCg0Ig3d+dHF043Q1Rg/ssmhMsFBhrcCRQP5ZWXmjdTVn6r+UM+gqqattC9fDrXtW/gGMT6Sd7JJ4ggTPKQ7Ggr3oPE0JlGs24DFvqcrmpBtbRjzjcGSmQ/8CaNfV0FxGD2Txxke2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746659502; c=relaxed/simple;
-	bh=RGS6xqwf+eAFdkFQCJRyKL1JWrMRM7+MAR2zJd5Lnyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nuyjMIMXHIUZysZ0Qxym8/omqBmgiNLX4qXUvv6z8ey0zF7hU3QS1f4D6ZaaN+EEHa+CsF6NkpASes7cOF6B/l90orNgYtXvwwscZCvzR+CGvtYALSNbMQwYEaKbl2s/L9ZvRC4c1FqSO7wzeviQcRlhUgI8CHvaKYV38pMBj5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lr6U282C; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746659502; x=1778195502;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RGS6xqwf+eAFdkFQCJRyKL1JWrMRM7+MAR2zJd5Lnyw=;
-  b=Lr6U282Cl5q18ymFBHgPqR/bb2ExnxDV+pjgkWlMyhJ+ESQ49vzmfTAo
-   ApXLQ9H1OXu5qbWaRA5kWOKzsjfWNtyCvInSWonCdBhHzCkjFConu/SVk
-   BSJqa32Pwmsf0AjI2hoA0WqX3a3smOeCsBqd8SMPLhe5IEXZAXEZsuXKv
-   z1cCNDc47OXvlUJq1+1Xn2dgAK8Jt6C+BccHHwNL6ohye+C1QyRs/qhWE
-   9mFsHQAU/JQ7rcANSf+9vrSLlUc5hQVyNWjsY/tD35oTfdgZ3pIP1Q4CV
-   Syg36cG5hMXe8mPIClsoax4IzqSNiIE+79NctEcd5H3o/1oDxSp7NMea+
-   A==;
-X-CSE-ConnectionGUID: 9cGpP0jrS+KNldGkpP5KhQ==
-X-CSE-MsgGUID: 2IoEb77HRE6Ryy6YmEVCsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52073731"
-X-IronPort-AV: E=Sophos;i="6.15,270,1739865600"; 
-   d="scan'208";a="52073731"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 16:11:40 -0700
-X-CSE-ConnectionGUID: n53kvqjfRue9GsXfCUf8fg==
-X-CSE-MsgGUID: A89NqrmXRgahO1BXhRqWfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,270,1739865600"; 
-   d="scan'208";a="136042291"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 16:11:38 -0700
-Date: Wed, 7 May 2025 16:16:45 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 04/13] dt-bindings: x86: Add CPU bindings for x86
-Message-ID: <20250507231644.GB28763@ranerica-svr.sc.intel.com>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
- <20250503191515.24041-5-ricardo.neri-calderon@linux.intel.com>
- <20250504-happy-spoonbill-of-radiance-3b9fec@kuoka>
- <20250506045235.GB25533@ranerica-svr.sc.intel.com>
- <20250506-alluring-beaver-of-modernism-65ff8a@kuoka>
+	s=arc-20240116; t=1746659813; c=relaxed/simple;
+	bh=KEJ5IX9gnIkoWzzGKeKugwgnHRS6mR6NHFzr1X4CnSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RiskhOej+PRh1aWPt3ihBEkZrmJza1cBCd65I8s02QUIKGSf2CBsvhJvtDT7gSa+z3W9VC/fn6RA/+aCRnjjrdoFe3EPzrOwDRO2wXiB9T/KO6HunIH4+mmWkQ0cBfn8khOaxHqD4Rxe1SGFmwn1wTRpALF2JiP2vA67728wUyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B47CC4CEE2;
+	Wed,  7 May 2025 23:16:52 +0000 (UTC)
+Date: Wed, 7 May 2025 19:17:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v2] tracing: Add a helper function to handle the dereference
+ arg in verifier
+Message-ID: <20250507191703.5dd8a61d@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506-alluring-beaver-of-modernism-65ff8a@kuoka>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 06, 2025 at 09:25:59AM +0200, Krzysztof Kozlowski wrote:
-> On Mon, May 05, 2025 at 09:52:35PM GMT, Ricardo Neri wrote:
-> > On Sun, May 04, 2025 at 06:45:59PM +0200, Krzysztof Kozlowski wrote:
-> > > On Sat, May 03, 2025 at 12:15:06PM GMT, Ricardo Neri wrote:
-> > > > Add bindings for CPUs in x86 architecture. Start by defining the `reg` and
-> > > 
-> > > What for?
-> > 
-> > Thank you for your quick feedback, Krzysztof!
-> > 
-> > Do you mean for what reason I want to start bindings for x86 CPUs? Or only
-> 
-> Yes. For which devices, what purpose.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Sure, I could expand on this.
+Add a helper function called handle_dereference_arg() to replace the logic
+that is identical in two locations of test_event_printk().
 
-> 
-> > the `reg` property? If the former, it is to add an enable-method property to
-> > x86 CPUs. If the latter, is to show the relationship between APIC and `reg`.
-> > 
-> > > 
-> > > > `enable-method` properties and their relationship to x86 APIC ID and the
-> > > > available mechanisms to boot secondary CPUs.
-> > > > 
-> > > > Start defining bindings for Intel processors. Bindings for other vendors
-> > > > can be added later as needed.
-> > > > 
-> > > > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > > > ---
-> > > 
-> > > Not really tested so only limited review follows.
-> > 
-> > Sorry, I ran make dt_binding_check but only on this schema. I missed the
-> > reported error.
-> > 
-> > > 
-> > > >  .../devicetree/bindings/x86/cpus.yaml         | 80 +++++++++++++++++++
-> > > >  1 file changed, 80 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/x86/cpus.yaml
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/x86/cpus.yaml b/Documentation/devicetree/bindings/x86/cpus.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..108b3ad64aea
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/x86/cpus.yaml
-> > > > @@ -0,0 +1,80 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/x86/cpus.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: x86 CPUs
-> > > > +
-> > > > +maintainers:
-> > > > +  - Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > > > +
-> > > > +description: |
-> > > > +  Description of x86 CPUs in a system through the "cpus" node.
-> > > > +
-> > > > +  Detailed information about the CPU architecture can be found in the Intel
-> > > > +  Software Developer's Manual:
-> > > > +    https://intel.com/sdm
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    enum:
-> > > > +      - intel,x86
-> > > 
-> > > That's architecture, not a CPU. CPUs are like 80286, 80386, so that's
-> > > not even specific instruction set. I don't get what you need it for.
-> > 
-> > Am I to understand the the `compatible` property is not needed if the
-> > bindings apply to any x86 CPU?
-> 
-> Every device needs compatible. Its meaning is explained:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#compatible
-> 
-> If you add here a device representing CPU, then look at existing
-> bindings for CPUs how they do it.
-> 
-> It again feels like you add DT for platform which is not a real thing.
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20250424151021.44b68ba8@gandalf.local.home
 
-That is correct. I struggle to enumerate specific CPUs because the `intel,
-wakeup-mailbox` enable method is implemented in the platform firmware and
-is not tied to a given processor model as required by the rules of the
-`compatible` property.
+- Fixed order of parameters in handle_dereference_arg() as len and
+  string_flags were reversed, causing it to fail on pretty much all events!
+  I did post v1 because it was sitting in my repo and I needed to do more
+  work on other things in that repo, but I obviously never tested it!
 
-> If you use DT, you do not get different rules, therefore read all
-> standard guides and tutorials (there were many, quite comprehensive).
+ kernel/trace/trace_events.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-I went through various materials. Perhaps I needed to understand the rules
-better.
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 069e92856bda..13cb899ba4fc 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -400,6 +400,20 @@ static bool process_string(const char *fmt, int len, struct trace_event_call *ca
+ 	return true;
+ }
+ 
++static void handle_dereference_arg(const char *arg_str, u64 string_flags, int len,
++				   u64 *dereference_flags, int arg,
++				   struct trace_event_call *call)
++{
++	if (string_flags & (1ULL << arg)) {
++		if (process_string(arg_str, len, call))
++			*dereference_flags &= ~(1ULL << arg);
++	} else if (process_pointer(arg_str, len, call))
++		*dereference_flags &= ~(1ULL << arg);
++	else
++		pr_warn("TRACE EVENT ERROR: Bad dereference argument: '%.*s'\n",
++			len, arg_str);
++}
++
+ /*
+  * Examine the print fmt of the event looking for unsafe dereference
+  * pointers using %p* that could be recorded in the trace event and
+@@ -563,11 +577,9 @@ static void test_event_printk(struct trace_event_call *call)
+ 			}
+ 
+ 			if (dereference_flags & (1ULL << arg)) {
+-				if (string_flags & (1ULL << arg)) {
+-					if (process_string(fmt + start_arg, e - start_arg, call))
+-						dereference_flags &= ~(1ULL << arg);
+-				} else if (process_pointer(fmt + start_arg, e - start_arg, call))
+-					dereference_flags &= ~(1ULL << arg);
++				handle_dereference_arg(fmt + start_arg, string_flags,
++						       e - start_arg,
++						       &dereference_flags, arg, call);
+ 			}
+ 
+ 			start_arg = i;
+@@ -578,11 +590,9 @@ static void test_event_printk(struct trace_event_call *call)
+ 	}
+ 
+ 	if (dereference_flags & (1ULL << arg)) {
+-		if (string_flags & (1ULL << arg)) {
+-			if (process_string(fmt + start_arg, i - start_arg, call))
+-				dereference_flags &= ~(1ULL << arg);
+-		} else if (process_pointer(fmt + start_arg, i - start_arg, call))
+-			dereference_flags &= ~(1ULL << arg);
++		handle_dereference_arg(fmt + start_arg, string_flags,
++				       i - start_arg,
++				       &dereference_flags, arg, call);
+ 	}
+ 
+ 	/*
+-- 
+2.47.2
 
-I realize now the DeviceTree is about describing hardware not firmware and
-DT bindings are a suitable vehicle for this.
-
-Thanks for the time you spent reviewing this patchset!
-
-BR,
-Ricardo
 
