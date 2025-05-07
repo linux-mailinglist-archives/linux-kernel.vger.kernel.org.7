@@ -1,105 +1,142 @@
-Return-Path: <linux-kernel+bounces-637210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDB3AAD603
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDDCAAD7F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E49F98304E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE53E1883C84
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D040C20C00E;
-	Wed,  7 May 2025 06:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55696217F40;
+	Wed,  7 May 2025 07:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dICMRTfx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCNCYdR7"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8041D432D;
-	Wed,  7 May 2025 06:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA81D433AC;
+	Wed,  7 May 2025 07:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599195; cv=none; b=HLoaW1qt2rq+Zn/zCrYp2ffDf3FvOjbRj4Egdjr+KLF40Nkgid0NuAc7FN5oRLPTwsSSkvDGTCPiPhEuIoperlc76sIvtqEw00S9XKziTSQB8MwdEifrPzV5vXL2F9nHrr1lBp9RzKjj+XdTQoNgGKJUQEs2r6U+R2fgfexb3B8=
+	t=1746602871; cv=none; b=hqaP8Rg3oVIqQJtK3ZuqLzoPMHg9JzmIfK/2woNJ5p6IQg3oD7OBjHcuTh5vetR8o0l8ywk4ciM+ME820gRsoTgAuB5Y7weuCG82Fh7U2XgYTQC5lurvtosEG31Tj3VlOdLWPBrNOhldFwu0SQd3mZx7IZebwN88X4JPZkSu/bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599195; c=relaxed/simple;
-	bh=GaA/zJXRvdyzWhvBvSQORxWGe7IYP25MXqgGd/qtJd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UrGhourTA9XAT1G2BXb4T8cPB0bRM7to0h2ihajN/mqJHWya8vDC1WJZ+/8lQ9wYcYyafO9tZE4r6RzuM5I4qg26EC5XaD9uZR+wZGPMPgEL7NTBFx7Sgl0o0SsQjpTTUKSU6rxmr0B8ufFDFoCoegqwpkggI4nNPjS2OeLNo/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dICMRTfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA21C4CEEF;
-	Wed,  7 May 2025 06:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746599193;
-	bh=GaA/zJXRvdyzWhvBvSQORxWGe7IYP25MXqgGd/qtJd4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dICMRTfxofPY2kTbGCvmkRmicrGpiedx3MsMAhN5m8kr4HSy13nbYE/SPIJYr71/E
-	 N33TTNdB6ASTnsleY7JRYZ3nRLIk6Zs1bvJubEr8/UbG2IfPTqW4sSCS7tBIEJgwLf
-	 nqfCxcZwSkOgO9s4y/KKGBimU0MYh1h2vctEMjOSJjH32wrATWZgIvjnP1VFpoiD/+
-	 NzrSAk3uPD0oP0/i3bnAokgZFjaOSrZrKnBFKtbt8vkB5FbrLxJ17iYCEmiBEPDoeY
-	 EYgpBv7ohLEsMbiLKP5GMYj1SCE0TvCyTSpHBirSCJ/8Hn13lFs4n6fgmBVgPCulqE
-	 RUWoCKnTMjQhQ==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-40337dd3847so3646217b6e.0;
-        Tue, 06 May 2025 23:26:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL0HaWWyyQvZ9T6aO92PeQBF6EnSAD1v7Lbv/pRnYC+BYcOCNSw+PbUQydIo3+EjxSjM+okWETUgeo8ODV@vger.kernel.org, AJvYcCVm8YyqquM2BK6EBADs3J/FOL5L79NWE1hnkTSUYfkqYxljcQ3PJo4ynW23ssk2Ofb97hg7FCxmQK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrnN3aGpEE4gYP1dK273lEl4ookg1qfednbWGtxRgVv+qjduzr
-	Np6hUomd3bHi3Otu1IttX7PWHVIW6htiVlutjF2qcEiCmGxsMPlD5u7lZNiSMaEN4UOwDt3uegj
-	PLtpVYSFuFgAkKt+lD95Vjw4GK/k=
-X-Google-Smtp-Source: AGHT+IE6OoQBQFNIo2RMuI36yMDwzxZHGLigZ5rk40AM8etZx9c58IROyGc/jRXUBwa/wPABVFxm/WCKiib7VV1jN8w=
-X-Received: by 2002:a05:6214:529b:b0:6e8:9e8f:cfb with SMTP id
- 6a1803df08f44-6f542a5f62dmr30383316d6.24.1746599182795; Tue, 06 May 2025
- 23:26:22 -0700 (PDT)
+	s=arc-20240116; t=1746602871; c=relaxed/simple;
+	bh=Zt4lyMWlCZvfxvpYPOWhlNYq6Oo260i86wLpnf82PRo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uEz3O2e7L3CcZUB1iuyrkF3G6hoCdS1/LhJX25biBwg4xfNsD5mYz2fNYOFdLC2eK9mtdftAheHTNilaVJxN78ciqbo55HDPjdKzmA+AFtGzFJcRy4LsLj7wFKBfVpJTqJwj+BXOpJsRvm21c1LUcQud3/3hunQpBcNR4NwHvas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCNCYdR7; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c266c1389so4842061f8f.1;
+        Wed, 07 May 2025 00:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746602868; x=1747207668; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Zt4lyMWlCZvfxvpYPOWhlNYq6Oo260i86wLpnf82PRo=;
+        b=SCNCYdR7AASwLQDidSpUbbuXjFwoDXp4pDiDjegs5dJRwbaZe7Vqelslt0h+UXP4rC
+         Fb0bbL4oqj/quck0oK8YtjT6YwqjPsHqPnfNq4GWfFvyXwnU6SM8yKcpIeWLov/0fe5N
+         65oP/npe/l28gAQ4HEjTg75MJRCVwGfWhzenBUsNNguC/jxpkn9kiHSnUrIwvnVWch5s
+         lX1/UCuWS31Gn8mlIchjNmtZtQfPpGTDibG0ljYdn1WY08xsKfI6l3sQ043pndPwMk2E
+         o+YqhYyCb5ieQ+FP8DHfX4ak9YgEPWW02ckfPC/FmXu3s60QbIh8bTw6xh3V9lVRMi10
+         ncPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746602868; x=1747207668;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zt4lyMWlCZvfxvpYPOWhlNYq6Oo260i86wLpnf82PRo=;
+        b=JwX+S9xI0Ykw2GdJfQKqD59IO57rxJwQWqPLKoww7thmGBA2LSLpljkchCzuoDYdTh
+         y4kEXLzkS1OHfZBjgbj/kUapwCz49k3/m7DMaZy+e9SYN+y7XHWFnSTAbwI87ij1Lz/H
+         iOUfALLma3EB/Urb81p8jHo1nPuQ/9IdG7WHuz9zBmUAbnE+0E1b6UwZufBC7SqlqUh/
+         7/UrSMmQ+86aF9kta7eLq49ncU+Y2GS292+d622P0KkwsCNmnE91PYJQFgn8TcM2k9Qs
+         Tn0/nzLjgfI4RDeHCfOa4j1HEMxObSC20pOvpzr/27LcQW8a+jxjZkIhLBRtoqHdE352
+         /Zqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+0UIBzLb18ezysDxPCZlJX4gdysO15lVqau19KLkHHI59iPuTD/U6EnkQHXTa2JlVXT9JGwnVXWIqCSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK7N8u9epHnbAXt7WkFY6fVt6viXle+iPOsKNS8j6daA66d9m+
+	gdCtHXZRCej6jVgNwGdYyGIeMu+IbrGih9+/HZSe74F6QmhHpBWY
+X-Gm-Gg: ASbGncsB0fpP5Ysn47ZJJvfi1tkxr3FZP2BfrxY6KhtKmJcX/LkyGatuGVph1Qhm7IE
+	AKZB+cXhq/GLmFbao/si6oHiol6oEHGmo0hy9i7a8IYibF4/cLkg9z9GVbqLJi5J5flY601pHaa
+	/jx7OEkzrkc0gokCt9ClXwASGDzcMCFFVYJ2RYzvPd8NWcNu2OCQWIsdz79l5QdB69pwt+El3vo
+	vx7gOlRlhGLjJtNhhkSsIQmBu/TyQenlv0IpvBR61wesV+L6z9DjrW2vOGZI/6rLF4lA7tk+8ng
+	jOdAwFtOnWj3sSIWF7E3fiz9i1vBYW00RLcF9hrMl69/SjPLDSKr3ExbuVzSaCxzj2mplEbx62V
+	EHiBLVB/JTqK6dGw=
+X-Google-Smtp-Source: AGHT+IHsyfUCqeQE65FIXjr5nnb+qaLtdMQz0T+sGnB0udi/PuCsCIBRxM92n/0nRon016TTE8LIyQ==
+X-Received: by 2002:a05:6000:186d:b0:3a0:b392:c2f with SMTP id ffacd0b85a97d-3a0b4a191a4mr1609739f8f.44.1746602868044;
+        Wed, 07 May 2025 00:27:48 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae7bb3sm16183337f8f.51.2025.05.07.00.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 00:27:47 -0700 (PDT)
+Message-ID: <4678d4f0c5634f8709f84745054ae16484617b8d.camel@gmail.com>
+Subject: Re: [PATCH 00/14] iio: remove bits_per_word = 8 assignments
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Esteban Blanc
+ <eblanc@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko
+ <andy@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+ kernel@pengutronix.de, Song Qiang <songqiang1304521@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 May 2025 07:28:12 +0100
+In-Reply-To: <20250505-iio-remove-bits_per_word-8-v1-0-341f85fcfe11@baylibre.com>
+References: 
+	<20250505-iio-remove-bits_per_word-8-v1-0-341f85fcfe11@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506143254.718647-1-maxime.belair@canonical.com> <20250506143254.718647-2-maxime.belair@canonical.com>
-In-Reply-To: <20250506143254.718647-2-maxime.belair@canonical.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 6 May 2025 23:26:11 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
-X-Gm-Features: ATxdqUEG2jVvCzrgMgUy-LTFDpzXf-8Zg-TeGO0jYs2AI_kPt5jR1N9qESQfZXI
-Message-ID: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net, 
-	kees@kernel.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, 
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 6, 2025 at 7:40=E2=80=AFAM Maxime B=C3=A9lair
-<maxime.belair@canonical.com> wrote:
->
-> Add support for the new lsm_manage_policy syscall, providing a unified
-> API for loading and modifying LSM policies without requiring the LSM=E2=
-=80=99s
-> pseudo-filesystem.
->
-> Benefits:
->   - Works even if the LSM pseudo-filesystem isn=E2=80=99t mounted or avai=
-lable
->     (e.g. in containers)
->   - Offers a logical and unified interface rather than multiple
->     heterogeneous pseudo-filesystems.
+T24gTW9uLCAyMDI1LTA1LTA1IGF0IDE0OjIwIC0wNTAwLCBEYXZpZCBMZWNobmVyIHdyb3RlOgo+
+IFdoaWxlIGdyZXBwaW5nIHRoZSBJSU8gc3Vic3lzdGVtIGZvciBkcml2ZXJzIHRoYXQgc2V0IGJp
+dHNfcGVyX3dvcmQgdG8KPiB1bnVzdWFsIHZhbHVlcyB0byBjaGVjayBmb3IgcG90ZW50aWFsIGJ1
+Z3MsIEkgZm91bmQgaXQgdG8gYmUgYSBiaXQgb2YgYQo+IG51aXNhbmNlIHRoYXQgMi8zcyBvZiB0
+aGUgbWF0Y2hlcyB3ZXJlIHNldHRpbmcgaXQgdG8gdGhlIGRlZmF1bHQgdmFsdWUKPiBvZiA4LiBT
+byBoZXJlIGlzIGEgc2VyaWVzIHJlbW92aW5nIHRoZSB1bm5lY2Vzc2FyeSBhc3NpZ25tZW50cy4K
+PiAKPiAtLS0KCkxHVE0sCgpSZXZpZXdlZC1ieTogTnVubyBTw6EgPG51bm8uc2FAYW5hbG9nLmNv
+bT4KCj4gRGF2aWQgTGVjaG5lciAoMTQpOgo+IMKgwqDCoMKgwqAgaWlvOiBhZGM6IGFkNDAzMDog
+cmVtb3ZlIGJpdHNfcGVyX3dvcmQgPSA4Cj4gwqDCoMKgwqDCoCBpaW86IGFkYzogdGktdHNjMjA0
+NjogcmVtb3ZlIGJpdHNfcGVyX3dvcmQgPSA4Cj4gwqDCoMKgwqDCoCBpaW86IGNoZW1pY2FsOiBi
+bWU2ODBfc3BpOiByZW1vdmUgYml0c19wZXJfd29yZCA9IDgKPiDCoMKgwqDCoMKgIGlpbzogZGFj
+OiBhZDU3NjE6IHJlbW92ZSBiaXRzX3Blcl93b3JkID0gOAo+IMKgwqDCoMKgwqAgaWlvOiBkYWM6
+IGFkNTc2NjogcmVtb3ZlIGJpdHNfcGVyX3dvcmQgPSA4Cj4gwqDCoMKgwqDCoCBpaW86IGRhYzog
+YWQ1NzkxOiByZW1vdmUgYml0c19wZXJfd29yZCA9IDgKPiDCoMKgwqDCoMKgIGlpbzogZGFjOiBs
+dGMyNjg4OiByZW1vdmUgYml0c19wZXJfd29yZCA9IDgKPiDCoMKgwqDCoMKgIGlpbzogZ3lybzog
+YWR4cnM0NTA6IHJlbW92ZSBiaXRzX3Blcl93b3JkID0gOAo+IMKgwqDCoMKgwqAgaWlvOiBpbXU6
+IGFkaXM6IHJlbW92ZSBiaXRzX3Blcl93b3JkID0gOAo+IMKgwqDCoMKgwqAgaWlvOiBtYWduZXRv
+bWV0ZXI6IGhtYzU4NDNfc3BpOiByZW1vdmUgYml0c19wZXJfd29yZCA9IDgKPiDCoMKgwqDCoMKg
+IGlpbzogbWFnbmV0b21ldGVyOiBybTMxMDAtc3BpOiByZW1vdmUgYml0c19wZXJfd29yZCA9IDgK
+PiDCoMKgwqDCoMKgIGlpbzogcHJlc3N1cmU6IGJtcDI4MC1zcGk6IHJlbW92ZSBiaXRzX3Blcl93
+b3JkID0gOAo+IMKgwqDCoMKgwqAgaWlvOiBwcmVzc3VyZTogbXM1NjExX3NwaTogcmVtb3ZlIGJp
+dHNfcGVyX3dvcmQgPSA4Cj4gwqDCoMKgwqDCoCBpaW86IHByZXNzdXJlOiB6cGEyMzI2X3NwaTog
+cmVtb3ZlIGJpdHNfcGVyX3dvcmQgPSA4Cj4gCj4gwqBkcml2ZXJzL2lpby9hZGMvYWQ0MDMwLmPC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgNCAtLS0tCj4gwqBkcml2ZXJzL2lpby9hZGMv
+dGktdHNjMjA0Ni5jwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxIC0KPiDCoGRyaXZlcnMvaWlvL2No
+ZW1pY2FsL2JtZTY4MF9zcGkuY8KgwqDCoMKgwqAgfCA4IC0tLS0tLS0tCj4gwqBkcml2ZXJzL2lp
+by9kYWMvYWQ1NzYxLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMiAtLQo+IMKgZHJp
+dmVycy9paW8vZGFjL2FkNTc2Ni5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDIgLS0K
+PiDCoGRyaXZlcnMvaWlvL2RhYy9hZDU3OTEuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+fCAyIC0tCj4gwqBkcml2ZXJzL2lpby9kYWMvbHRjMjY4OC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfCAyIC0tCj4gwqBkcml2ZXJzL2lpby9neXJvL2FkeHJzNDUwLmPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHwgNSAtLS0tLQo+IMKgZHJpdmVycy9paW8vaW11L2FkaXMuY8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgOSAtLS0tLS0tLS0KPiDCoGRyaXZlcnMvaWlvL2ltdS9h
+ZGlzX2J1ZmZlci5jwqDCoMKgwqDCoMKgwqDCoMKgIHwgMyAtLS0KPiDCoGRyaXZlcnMvaWlvL21h
+Z25ldG9tZXRlci9obWM1ODQzX3NwaS5jIHwgMSAtCj4gwqBkcml2ZXJzL2lpby9tYWduZXRvbWV0
+ZXIvcm0zMTAwLXNwaS5jwqAgfCAxIC0KPiDCoGRyaXZlcnMvaWlvL3ByZXNzdXJlL2JtcDI4MC1z
+cGkuY8KgwqDCoMKgwqAgfCA4IC0tLS0tLS0tCj4gwqBkcml2ZXJzL2lpby9wcmVzc3VyZS9tczU2
+MTFfc3BpLmPCoMKgwqDCoMKgIHwgMSAtCj4gwqBkcml2ZXJzL2lpby9wcmVzc3VyZS96cGEyMzI2
+X3NwaS5jwqDCoMKgwqAgfCAxIC0KPiDCoDE1IGZpbGVzIGNoYW5nZWQsIDUwIGRlbGV0aW9ucygt
+KQo+IC0tLQo+IGJhc2UtY29tbWl0OiA3ZTlhODJhYjViODYxZDNjMzNjOTlhMjJjMTI0NWE1YjI2
+MmVlNTAyCj4gY2hhbmdlLWlkOiAyMDI1MDUwNS1paW8tcmVtb3ZlLWJpdHNfcGVyX3dvcmQtOC1k
+YjgwNjU0YjFjMTcKPiAKPiBCZXN0IHJlZ2FyZHMsCgo=
 
-These two do not feel like real benefits:
-- Not working in containers is often not an issue, but a feature.
-- One syscall cannot fit all use cases well...
-
->   - Avoids overhead of other kernel interfaces for better efficiency
-
-.. and it is is probably less efficient, because everything need to
-fit in the same API.
-
-Overall, this set doesn't feel like a good change to me.
-
-Thanks,
-Song
 
