@@ -1,180 +1,262 @@
-Return-Path: <linux-kernel+bounces-638507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600F0AAE6D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:36:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A6FAAE6D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 198377B7579
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:35:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D2F3AC614
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485C128BABF;
-	Wed,  7 May 2025 16:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B09028B7ED;
+	Wed,  7 May 2025 16:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4xVl3aS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="aNUubDDJ"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BED428BA82;
-	Wed,  7 May 2025 16:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FD228A73F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746635784; cv=none; b=dWTZJP/t5z/BOf19xmjo7ZxzhaKpOIqhorig7shEMWR+DczbPbflmlG34BcgGjvIdV9uRtHUKxuZPC6d1Y1VjkNhlKJn0Hxn6bxmE28d6V4IA85DCowUgRkeTLZnqgMGt2uufGRI2R2ilZDaqoWngagxWfBxs9Im0NwN57h29fw=
+	t=1746635903; cv=none; b=aIfmTi2AEYvVXmcehw+ucGwNTM6I/w7n+DPW5Ovhkd65mAVXvbRlau/lMH5pxT9R+YEVmuDEbyUCBXKjbiR3M699kSvP7S1tL8om7KxhDAiLo+8pEjv0woaUwL6iDruelIfPQiqk5NCe6WuraRu5yAJ7IbcGVCTjCzF3yNTXucY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746635784; c=relaxed/simple;
-	bh=cjO4ygzINjwIC1ncU+oe4aI5LkAeIM5Tar8FVF/MIo8=;
+	s=arc-20240116; t=1746635903; c=relaxed/simple;
+	bh=Pjs80y8eHu5bjBIh65bwbOhNCtjNmJR7kP6EndofUzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIuor3st3po05pquCMC7EtSpuGpZ6OAR/oq0sGPP4Wu/zuwu5s2c0Xsg3Jj9E/8WEVu8yzyO2J+9bJolYThUf20su6P11jl0ag1s4EvRdu05IAeCT8fMPF7blMIn+k0NbLgbEl9s8aU9Zh7r2LXB4eY0QdM0v/Somh594MtA6cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4xVl3aS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5089C4CEE2;
-	Wed,  7 May 2025 16:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746635784;
-	bh=cjO4ygzINjwIC1ncU+oe4aI5LkAeIM5Tar8FVF/MIo8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W4xVl3aSH4fNvgokVYKqSMtjFz8SUI1ZllOCWtTjUmLBm+mzmmK79sTUQgS/Z7/8h
-	 vUR24xkBtrdqW6gDOYL/p/7PhStwZupg3enNxZoAiEfJ5rrfJHqKjElqf1+gxfbxOC
-	 sklrsBJ7ynRb7IfS6eHq0aWNLlqY1MiE4ngk6mhc8wBhQUVbhihA7ZiMdIqKl7lbbE
-	 jnhNQvqZJrEqEdsTzAzoTgKh+HWWiWn65umxq8q4ezBMENpkAyX5bx0vAAP3LT/W1c
-	 YXGglVvg3MoiU+ZDLlk+bOZXdsT+CLuWhLATlFRubj/lFyAqFngYhVzmu+7i06CAO/
-	 lSfNYb9vACEQA==
-Received: by pali.im (Postfix)
-	id 8C20E5F1; Wed,  7 May 2025 18:36:20 +0200 (CEST)
-Date: Wed, 7 May 2025 18:36:20 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org,
-	yue.wang@Amlogic.com, neil.armstrong@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 3/3] PCI: aardvark: Remove redundant MPS configuration
-Message-ID: <20250507163620.53v5djmhj3ywrge2@pali>
-References: <20250506173439.292460-1-18255117159@163.com>
- <20250506173439.292460-4-18255117159@163.com>
- <20250506174110.63ayeqc4scmwjj6e@pali>
- <8a6adc24-5f40-4f22-9842-b211e1ef5008@163.com>
- <ff6abbf6-e464-4929-96e6-16e43c62db06@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ns/V56GauuFVtvns71tT8J3bz1qslXF//HasJkvRu3u7ZBBT2X+z6y+ntrAYgdpionEgQbUPm4UGXc5VdYHMGciU9qDvHHfjfEXzaoZdaDjW2sz+5bSgU23pBR2kGWBfg1kKgCeBTAVyL4m5H9QTOJmtS2RWEIJD596LtY3OjVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=aNUubDDJ; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c559b3eb0bso3775785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1746635901; x=1747240701; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FNwnXaMBa9hDs8yRXt3IkZX2NwxNzCzlBs/R2yeu/pc=;
+        b=aNUubDDJEaeYr82EseATTD0fiGIH1nopOS7mLkeA5Jh2dQ9KvOtRFfRQLE9yK0wzbx
+         ANktdUA3CSC6L++L9C8b9uggtSK0nHoZKykikhhsZ9gmOqAtKOXXYLnQAEXDxNWblGuD
+         t2SiojHv9qsM+SMpiznoCsr9vqsSaDTuHqhqZ1Tyc7OFX6lStT0SW0EmTgFnHbpCwo/s
+         xx7gBiw6ttfPwx2Y3UrHCGKER49aBOjtdOb7GZErkAxC31t5AExD/knUsUqEyky5A+tM
+         jION/haVKHDgQUqUVp9Jqu56+JmxJl/PdU7FrJTrZM6VZFrDSACCLSBwS2IqDeZBJPmO
+         k+Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746635901; x=1747240701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FNwnXaMBa9hDs8yRXt3IkZX2NwxNzCzlBs/R2yeu/pc=;
+        b=bYo+U0W2BLhWIsp1EuTbIinf8hZBfmjZxZbIk2ygOBUhpqUI3ZmSEaJDDJwFvuz7Qa
+         B6khL6BVUr75jmqxXzHARFD0SeswLKwR0n++fsJAcZ3mZaChB7TvvWL1S7jSe7hTIb0n
+         6illVlzMNM/1pAnoLVQvn80vwZRH+6G5p9zm+1LGZGqEx+qIiuUevuFl5vffuUEZM0i+
+         tHQOoXy4kmtJ+cMDJUfpi4C/l+hmbTXQl3JJoqFk5o2Qdz1LSln2xZSPY6C5UD4wWC9d
+         ZYqmRek4vc3yxO3s0Hx3pyn0+QWVMHrKN2elJBbLNFU4VEaGt/a7gcwc8ou5z5XT0IU1
+         GTxw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1tPoWTawOdx94RiVHd4sT+itzrDAE85LHR/HiWCdmOfMBpzY6JuF7LZVGjKsdvmbTgZlKbQbEce6zCaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/3zLeeUC7ouf+D2MsCehQEAjlnkNcj0UClAuxYjsbRvP8vzAH
+	lFg5+E9c0X6tzvDb4Azid7vME+RMjKA3JuD/ehb3tQOw9mJA1cxtFw8ZN0mcrcs=
+X-Gm-Gg: ASbGncs2RWfEuWBNumxL8Dl7hyhmA/k1eu3uI4tSPBURj3TUBl7wH6VVeRb0V/Bt9/Z
+	8R10zrTjDcb58mtSes888S7k44r6bboFEvmtaKMOsW5WMjCiVAfvepfvLfjKdTB12RHNuXCq8Of
+	eUEpyYQBYdT+Yf4GsjpBy6yW1bWpmJByx4p5gFFhotLXlqV+f6Tot7gGYIbvmobgv9TSpmnqGmx
+	XPUidQxRiap1q363Qrj8MV+xTBT1mGYd8czzP9IentGRH0Sa9wS3QLvq0uH0FPRVOLQkRVXpI5c
+	EWnvrCoQYDBfKUVJtgBrDnDyl7Ru1gZwGxbNhvYNsW/pj/Vv0sVB3XsJ55/k3zSmcHZvoH7JInF
+	JFQgiPkt/JloPe1+a75Av
+X-Google-Smtp-Source: AGHT+IF0xHUJtr97towfcTvdfSOQ4JyJPdVT4WVEd27PBR1E81nlMSzfNE409MAkSdrttE1G0v49TQ==
+X-Received: by 2002:a05:620a:4621:b0:7c7:a5c9:d109 with SMTP id af79cd13be357-7caf74188e8mr542999885a.50.1746635900579;
+        Wed, 07 May 2025 09:38:20 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7caf75b8841sm171484285a.69.2025.05.07.09.38.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 09:38:20 -0700 (PDT)
+Date: Wed, 7 May 2025 12:38:18 -0400
+From: Gregory Price <gourry@gourry.net>
+To: rakie.kim@sk.com
+Cc: joshua.hahnjy@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	dan.j.williams@intel.com, ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com, honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in
+ weighted interleave
+Message-ID: <aBuMet_S1ONS1pOT@gourry-fedora-PF4VCD3F>
+References: <20250507093517.184-1-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff6abbf6-e464-4929-96e6-16e43c62db06@163.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20250507093517.184-1-rakie.kim@sk.com>
 
-On Wednesday 07 May 2025 23:06:51 Hans Zhang wrote:
-> On 2025/5/7 23:03, Hans Zhang wrote:
-> > On 2025/5/7 01:41, Pali Rohár wrote:
-> > > On Wednesday 07 May 2025 01:34:39 Hans Zhang wrote:
-> > > > The Aardvark PCIe controller enforces a fixed 512B payload size via
-> > > > PCI_EXP_DEVCTL_PAYLOAD_512B, overriding hardware capabilities and PCIe
-> > > > core negotiations.
-> > > > 
-> > > > Remove explicit MPS overrides (PCI_EXP_DEVCTL_PAYLOAD and
-> > > > PCI_EXP_DEVCTL_PAYLOAD_512B). MPS is now determined by the PCI core
-> > > > during device initialization, leveraging root port configurations and
-> > > > device-specific capabilities.
-> > > > 
-> > > > Aligning Aardvark with the unified MPS framework ensures consistency,
-> > > > avoids artificial constraints, and allows the hardware to operate at
-> > > > its maximum supported payload size while adhering to PCIe
-> > > > specifications.
-> > > > 
-> > > > Signed-off-by: Hans Zhang <18255117159@163.com>
-> > > > ---
-> > > >   drivers/pci/controller/pci-aardvark.c | 2 --
-> > > >   1 file changed, 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/pci-aardvark.c
-> > > > b/drivers/pci/controller/pci-aardvark.c
-> > > > index a29796cce420..d8852892994a 100644
-> > > > --- a/drivers/pci/controller/pci-aardvark.c
-> > > > +++ b/drivers/pci/controller/pci-aardvark.c
-> > > > @@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct
-> > > > advk_pcie *pcie)
-> > > >       reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
-> > > >       reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
-> > > >       reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
-> > > > -    reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> > > >       reg &= ~PCI_EXP_DEVCTL_READRQ;
-> > > > -    reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
-> > > >       reg |= PCI_EXP_DEVCTL_READRQ_512B;
-> > > >       advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
-> > > > -- 
-> > > > 2.25.1
-> > > > 
-> > > 
-> > > Please do not remove this code. It is required part of the
-> > > initialization of the aardvark PCI controller at the specific phase,
-> > > as defined in the Armada 3700 Functional Specification.
-> > > 
-> > > There were reported more issues with those Armada PCIe controllers for
-> > > which were already sent patches to mailing list in last 5 years. But
-> > > unfortunately not all fixes were taken / applied yet.
-> > 
-> > Hi Pali,
-> > 
-> > I replied to you in version v2.
-> > 
-> > Is the maximum MPS supported by Armada 3700 512 bytes?
+On Wed, May 07, 2025 at 06:35:16PM +0900, rakie.kim@sk.com wrote:
+> Hi Gregory, Joshua,
+> 
+> I hope this message finds you well. I'm writing to discuss a feature I
+> believe would enhance the flexibility of the weighted interleave policy:
+> support for per-socket weighting in multi-socket systems.
+> 
+> ---
+> 
+> <Background and prior design context>
+> 
+> While reviewing the early versions of the weighted interleave patches,
+> I noticed that a source-aware weighting structure was included in v1:
+> 
+>   https://lore.kernel.org/all/20231207002759.51418-1-gregory.price@memverge.com/
+> 
+> However, this structure was removed in a later version:
+> 
+>   https://lore.kernel.org/all/20231209065931.3458-1-gregory.price@memverge.com/
+> 
+> Unfortunately, I was unable to participate in the discussion at that
+> time, and I sincerely apologize for missing it.
+> 
+> From what I understand, there may have been valid reasons for removing
+> the source-relative design, including:
+> 
+> 1. Increased complexity in mempolicy internals. Adding source awareness
+>    introduces challenges around dynamic nodemask changes, task policy
+>    sharing during fork(), mbind(), rebind(), etc.
+> 
+> 2. A lack of concrete, motivating use cases. At that stage, it might
+>    have been more pragmatic to focus on a 1D flat weight array.
+> 
+> If there were additional reasons, I would be grateful to learn them.
+>
 
-IIRC yes, 512-byte mode is supported. And I think in past I was testing
-some PCIe endpoint card which required 512-byte long payload and did not
-worked in 256-byte long mode (not sure if the card was not able to split
-transaction or something other was broken, it is quite longer time).
+x. task local weights would have required additional syscalls, and there
+   was insufficient active users to warrant the extra complexity.
 
-> > What are the default values of DevCap.MPS and DevCtl.MPS?
+y. numa interfaces don't capture cross-socket interconnect information,
+   and as a result actually hides "True" bandwidth values from the
+   perspective of a given socket.
 
-Do you mean values in the PCI-to-PCI bridge device of PCIe Root Port
-type?
+As a result, mempolicy just isn't well positioned to deal with this
+as-designed, and introducing the per-task weights w/ the additional
+extensions just was a bridge too far.  Global weights are sufficient
+if you combine cpusets/core-pinning and a nodemask that excludes
+cross-socket nodes (i.e.: Don't use cross-socket memory).
 
-Aardvark controller does not have the real HW PCI-to-PCI bridge device.
-There is only in-kernel emulation drivers/pci/pci-bridge-emul.c which
-create fake kernel PCI device in the hierarchy to make kernel and
-userspace happy. Yes, this is deviation from the PCIe standard but well,
-buggy HW is also HW.
+For workloads that do scale up to use both sockets and both devices,
+you either want to spread it out according to global weights or use
+region-specific (mbind) weighted interleave anyway.
 
-And same applies for the pci-mvebu.c driver for older Marvell PCIe HW.
-
-> > Because the default value of DevCtl.MPS is not 512 bytes, it needs to be
-> > configured here, right?
-> > 
-> > If it's my guess, RK3588 also has the same requirements as you, just
-> > like the first patch I submitted.
-> > 
-> > Please take a look at the communication history:
-> > https://patchwork.kernel.org/project/linux-pci/patch/20250416151926.140202-1-18255117159@163.com/
-> And this:
-> https://patchwork.kernel.org/project/linux-pci/patch/20250425095708.32662-2-18255117159@163.com/
-
-These changes are referring the to root ports PCI devices, which are not
-applicable for aardvark PCIe controller.
-
-> > 
-> > Please test it using patch 1/3 of this series. If there are any
-> > problems, please let me know.
-> > 
-> > 
-> > Best regards,
-> > Hans
+> ---
+> 
+> Scenario 1: Adapt weighting based on the task's execution node
+> 
+> Many applications can achieve reasonable performance just by using the
+> CXL memory on their local socket. However, most workloads do not pin
+> tasks to a specific CPU node, and the current implementation does not
+> adjust weights based on where the task is running.
 > 
 
-Sorry, but I stopped doing any testing of the aardvark driver with the
-mainline kernel after PCI maintainers stopped taking fixes for the
-driver and stopped responding.
+"Most workloads don't..." - but they can, and fairly cleanly via
+cgroups/cpusets.
 
-I'm not going to debug same issues again, which I have analyzed,
-prepared fixes, sent patches and see no progress there.
+> If per-source-node weighting were available, the following matrix could
+> be used:
+> 
+>          0     1     2     3
+>      0   3     0     1     0
+>      1   0     3     0     1
+>
+> This flexibility is currently not possible with a single flat weight
+> array.
 
-Seems that there is a status quo, and I'm not going to change it.
+This can be done with a mempolicy that omits undesired nodes from the
+nodemask - without requiring any changes.
+
+> 
+> Scenario 2: Reflect relative memory access performance
+> 
+> Remote memory access (e.g., from node0 to node3) incurs a real bandwidth
+> penalty. Ideally, weights should reflect this. For example:
+> 
+> Bandwidth-based matrix:
+> 
+>          0     1     2     3
+>      0   6     3     2     1
+>      1   3     6     1     2
+> 
+> Or DRAM + local CXL only:
+> 
+>          0     1     2     3
+>      0   6     0     2     1
+>      1   0     6     1     2
+> 
+> While scenario 1 is probably more common in practice, both can be
+> expressed within the same design if per-socket weights are supported.
+> 
+
+The core issue here is actually that NUMA doesn't have a good way to
+represent the cross-socket interconnect bandwidth - and the fact that it
+abstracts all devices behind it (both DRAM and CXL).
+
+So reasoning about this problem in terms of NUMA is trying to fit a
+square peg in a round hole.  I think it's the wrong tool - maybe we need
+a new one.  I don't know what this looks like.
+
+> ---
+> 
+> <Proposed approach>
+> 
+> Instead of removing the current sysfs interface or flat weight logic, I
+> propose introducing an optional "multi" mode for per-socket weights.
+> This would allow users to opt into source-aware behavior.
+> (The name 'multi' is just an example and should be changed to a more
+> appropriate name in the future.)
+> 
+> Draft sysfs layout:
+> 
+>   /sys/kernel/mm/mempolicy/weighted_interleave/
+>     +-- multi         (bool: enable per-socket mode)
+>     +-- node0         (flat weight for legacy/default mode)
+>     +-- node_groups/
+>         +-- node0_group/
+>         |   +-- node0  (weight of node0 when running on node0)
+>         |   +-- node1
+>         +-- node1_group/
+>             +-- node0
+>             +-- node1
+> 
+
+This is starting to look like memory-tiers.c, which is largely useless
+at the moment.  Maybe we implement such logic in memory-tiers, and then 
+extend mempolicy to have a MPOL_MEMORY_TIER or MPOL_F_MEMORY_TIER?
+
+That would give us better flexibility to design the mempolicy interface
+without having to be bound by the NUMA infrastructure it presently
+depends on.  We can figure out how to collect cross-socket interconnect
+information in memory-tiers, and see what issues we'll have with
+engaging that information from the mempolicy/page allocator path.
+
+You'll see in very very early versions of weighted interleave I
+originally implemented it via memory-tiers.  You might look there for
+inspiration.
+
+> <Additional implementation considerations>
+> 
+> 1. Compatibility: The proposal avoids breaking the current interface or
+>    behavior and remains backward-compatible.
+> 
+> 2. Auto-tuning: Scenario 1 (local CXL + DRAM) likely works with minimal
+>    change. Scenario 2 (bandwidth-aware tuning) would require more
+>    development, and I would welcome Joshua's input on this.
+> 
+> 3. Zero weights: Currently the minimum weight is 1. We may want to allow
+>    zero to fully support asymmetric exclusion.
+>
+
+I think we need to explore different changes here - it's become fairly
+clear when discussing tiering at LSFMM that NUMA is a dated abstraction
+that is showing its limits here.  Lets ask what information we want and
+how to structure/interact with it first, before designing the sysfs
+interface for it.
+
+~Gregory
 
