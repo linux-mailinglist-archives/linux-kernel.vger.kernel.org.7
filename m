@@ -1,131 +1,180 @@
-Return-Path: <linux-kernel+bounces-638092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FFFAAE137
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:50:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD4BAAE1A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5366D1C07879
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFFA4B21674
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBF228C852;
-	Wed,  7 May 2025 13:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105CB289836;
+	Wed,  7 May 2025 13:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fNfJl1p5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I5Jm2o/1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="L1CM2kf9"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A7128C2D7;
-	Wed,  7 May 2025 13:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D141C259498;
+	Wed,  7 May 2025 13:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625469; cv=none; b=Qe9R7sIORCovk4zZXPQNlAbNXaiQySSmYsbOvayNdLNsLBndx4bdpkAUIVT7Eoz3PrQmFwex5spVbldfcu1qPRAPQx8sZTgQPyMqs2VNtCku0GtIA5j73Zb5cq/doKUXtWG1iTx7BWqHG7NbP9dlkVViK/pNm3LYrXJK7Xbre/o=
+	t=1746625529; cv=none; b=p/MWWKocaqdk+a3/3OhjkYBUFyeHyILgMGKKJS2Dx2o8TDKUGAZEGg+pCVabDgbaBGLhH8gklRGSNKSwW/HgmLhfGu7dcggFFS+P9Jz1V9i2+gAa5MFatoTNGhewP/wO3u8NcgvlDAuxTp7C88Ueu3iNrr3hQXalyyI+8V3w5ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625469; c=relaxed/simple;
-	bh=ufKXPIVXxRXY/5QmFDlRs9SpH3wPRRA5XprJQCQKvVY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hXML99BNwjHG+nRBDcDSHmzEE2w4ApeWA1PV2o67CMqwm01gjRZTJVG/OA9UhKuVkMkhzYIt1sB3INLzbIv5AQtZE5GdqMbZEYIGxDkgFlHRvJC6ubYrDrnyQurepkeWAp5/9YwWrOLW8N5WLyum0vL0NrLkzcEkrUjxwIIUf2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fNfJl1p5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I5Jm2o/1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 07 May 2025 13:44:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746625466;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EzG7T1arbPvQsw9hbpyRV3ZIJuUKGKcEwMIp+TDOPuk=;
-	b=fNfJl1p5ScUame0/jPU/foWAh+/to70hefrfYNo4MOQqpVlasmA1dVGH2VOoVe9CBmMtvo
-	NsfxfDKNfWXlsjyNiypLkzvDyXZ8WzQkMh6EBl1DVbiMub+3Wd5cVBR1x9K0tS+NCCb/yE
-	xsrrQZxz3NA2IgKCWrcF/zLQLdZNxbwaNane17Kz+/8emj/BbuC/jp4kb6gZN2xOZAMVEa
-	MJnAVax9tB4sYm3EiTde/PfE92isp9OwUCwgLTD11vYxA0h438lVrfW0D4q/piWxT9YKP/
-	Jq5PyrfZdZRM4uPN2d4h6JEXemw/jiFKm5Po+mM3X4E60l9FPhHr2tocMFPM5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746625466;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EzG7T1arbPvQsw9hbpyRV3ZIJuUKGKcEwMIp+TDOPuk=;
-	b=I5Jm2o/1PCBzhpSRt0YEUn4+uiNnXZ57udb52yL/HbxwslJ0BJesZSxxBJXCEFaeqSHTG4
-	GF8JdK6QynVHpMDw==
-From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/drivers] irqchip/irq-vt8500: Switch to irq_domain_create_*()
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250319092951.37667-22-jirislaby@kernel.org>
-References: <20250319092951.37667-22-jirislaby@kernel.org>
+	s=arc-20240116; t=1746625529; c=relaxed/simple;
+	bh=Y1VnxbOU4sYjS1myJYO1mNIJBsXDF6YtXnqekAg6IRY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gxMFlxZFwxHUviNbmJFNXlmAkSZ9M5mmACntiSglrKTmLgPbEDZMth1R0N/SH1Z9ZRbMF2+sRPtLg6BO3z9BuJ5HnzlTkyXY27rD6tQfp8o+drFM83pjTIOsXXwwXEdyofq+0+tcbPhr9S/THpi1E0WuGY0pM2tQI8aR0VfhHfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=L1CM2kf9; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 34A91DBBB9;
+	Wed,  7 May 2025 15:45:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1746625518; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=PF2ufsspbUyVXcyj52+f3BIvslTKbWkBdC0SAWy4kPQ=;
+	b=L1CM2kf9iVEkWz5MAbbCF21OykDRYZF39ogC6VUkflOl4FY3iD5PggXE7eu3Qw1HiL6jGe
+	NxoWoqzjvwidjj9H8RvsMDHZwVfIIr9WKLN5Vy+8xbf7Wk3JvtDGlepVBtKqARlsbOJAOS
+	SPrMw5u+w7484QVvR/EqGdsEYmyq8X+odj8hMYqCgpLH7djQnOyOP6751CXAPdKAdlFRHK
+	3pCPOmE74bgrcciaEpt0Fxep+N73x4vETTPF9jC10xj894KjTeKpw+MUzcnnZEJwQj/qYd
+	tXBglMgBaJPkTbDARIKkxwGhzw7PJ/AfZ74QpGmi/D1rO1T1hsGVVkUQtYzKXA==
+From: Caleb James DeLisle <cjd@cjdns.fr>
+To: linux-mips@vger.kernel.org
+Cc: tglx@linutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de,
+	daniel.lezcano@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	benjamin.larsson@genexis.eu,
+	linux-mediatek@lists.infradead.org,
+	cjd@cjdns.fr
+Subject: [PATCH v5 0/7] Add EcoNet EN751221 MIPS platform support
+Date: Wed,  7 May 2025 13:44:53 +0000
+Message-Id: <20250507134500.390547-1-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174662546512.406.9049404596433242775.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The following commit has been merged into the irq/drivers branch of tip:
+EcoNet MIPS SoCs are big endian machines based on 34Kc and 1004Kc
+processors. They are found in xDSL and xPON modems, and contain PCM
+(VoIP), Ethernet, USB, GPIO, I2C, SPI (Flash), UART, and PCIe.
 
-Commit-ID:     15568ffd59d4e7d8c39286a7159880afe327216d
-Gitweb:        https://git.kernel.org/tip/15568ffd59d4e7d8c39286a7159880afe327216d
-Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Wed, 19 Mar 2025 10:29:14 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 07 May 2025 15:36:56 +02:00
+The EcoNet MIPS SoCs are divided broadly into two families, the
+EN751221 family based on the 34Kc, and the EN751627 family based on
+the 1004Kc. Individual SoCs within a family are very similar, only
+with different peripherals.
 
-irqchip/irq-vt8500: Switch to irq_domain_create_*()
+This patchset adds basic "boots to a console" support for the EN751221
+family and adds SmartFiber XP8421-B, a low cost commercially available
+board that is useful for testing and development.
 
-irq_domain_add_*() interfaces are going away as being obsolete now.
-Switch to the preferred irq_domain_create_*() ones. Those differ in the
-node parameter: They take more generic struct fwnode_handle instead of
-struct device_node. Therefore, of_fwnode_handle() is added around the
-original parameter.
+Note that Airoha (AN7523, AN7581) is similar to EcoNet in terms of
+peripherals, and for historical reasons Airoha chips are sometimes
+referred to with the EN75xx prefix. However this is a different
+platform because Airoha chips are ARM based.
 
-Note some of the users can likely use dev->fwnode directly instead of
-indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
-guaranteed to be set for all, so this has to be investigated on case to
-case basis (by people who can actually test with the HW).
+This patchset is against mips-next.
 
-[ tglx: Split out from combo patch to avoid merge conflicts ]
+v4 -> v5
+* 2/7 clocksource/drivers: Add EcoNet Timer HPT driver:
+  * Improve explanation of HPT timer in changelog
+  * Move pr_info to pr_debug per recommendation
+  * Remove pointless debug on spurious interrupt
+  * Small code-style change
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250319092951.37667-22-jirislaby@kernel.org
----
- drivers/irqchip/irq-vt8500.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+v3 -> v4
+* Rebase to 3b3704261e851e25983860e4c352f1f73786f4ab
+* Omit already accepted patches (thanks guys!):
+  - https://patchwork.kernel.org/project/linux-mips/patch/20250330170306.2584136-2-cjd@cjdns.fr/
+  - https://patchwork.kernel.org/project/linux-mips/patch/20250330170306.2584136-3-cjd@cjdns.fr/
+  - https://patchwork.kernel.org/project/linux-mips/patch/20250330170306.2584136-4-cjd@cjdns.fr/
 
-diff --git a/drivers/irqchip/irq-vt8500.c b/drivers/irqchip/irq-vt8500.c
-index 40c2cff..3b74259 100644
---- a/drivers/irqchip/irq-vt8500.c
-+++ b/drivers/irqchip/irq-vt8500.c
-@@ -214,10 +214,8 @@ static int __init vt8500_irq_init(struct device_node *node,
- 		goto err_free;
- 	}
- 
--	intc->domain = irq_domain_add_linear(node,
--					     64,
--					     &vt8500_irq_domain_ops,
--					     intc);
-+	intc->domain = irq_domain_create_linear(of_fwnode_handle(node), 64,
-+						&vt8500_irq_domain_ops, intc);
- 	if (!intc->domain) {
- 		pr_err("%s: Unable to add irq domain!\n", __func__);
- 		ret = -ENOMEM;
+v2 -> v3
+* econet,en751221-timer.yaml -> Improve code style
+* vendor-prefixes.yaml -> Correct alphabetic order
+* en751221.dtsi
+  - interrupt-controller code style
+  - serial: Explain reason for clock-frequency = <1843200>
+* v3->v3 diff provided for reference
+  - https://gist.github.com/cjdelisle/21c9f0cd225f499bdff3c574c7f185f2
+* CC: linux-mediatek@lists.infradead.org who may be interested.
+
+v1 -> v2
+* Codestyle
+  - Apply codestyle from "The tip tree handbook" and recommendations
+  - Remove "_rai" and "_m" symbol suffixes which are not standard
+* irq-econet-en751221.c
+  - Use cleanup.h _guard() and _free()
+  - Separate irq_domain_ops from irq_chip, eliminating econet_intc struct
+  - Remove irqsave in econet_wreg, irqs are already disabled in mask/unmask
+  - Add explainatory comments
+  - Refactor shadow logic for clarity, e.g. INTC_NO_SHADOW -> NOT_PERCPU
+  - Improve error handling in case of invalid DTS
+* econet,timer-hpt.yaml
+  - Rename to econet,timer-en751221.yaml
+  - Impose rule: "reg" must have 1 item on EN751221 and 2 on EN751627
+* timer-econet-hpt.c
+  - Rename to timer-econet-en751221.c to follow naming scheme from DT
+* econet,en751221-intc.yaml
+  - Fix validation error from required: interrupt-parent
+  - shadow-interrupts -> switch to uint32-matrix for list of pairs
+* MAINTAINERS -> Fixed accidental F: MAINTAINERS
+* Replace "test image" with device SmartFiber-XP8421-B
+* Restructure arch/mips/econet/Kconfig per arch/mips/ralink example
+* v1->v2 diff is offered for reference:
+  - https://gist.github.com/cjdelisle/bb3acab78b5f70dcdfe5dd6338293efe
+
+
+Caleb James DeLisle (7):
+  dt-bindings: timer: Add EcoNet EN751221 "HPT" CPU Timer
+  clocksource/drivers: Add EcoNet Timer HPT driver
+  dt-bindings: mips: Add EcoNet platform binding
+  mips: Add EcoNet MIPS platform support
+  dt-bindings: vendor-prefixes: Add SmartFiber
+  mips: dts: Add EcoNet DTS with EN751221 and SmartFiber XP8421-B board
+  MAINTAINERS: Add entry for newly added EcoNet platform.
+
+ .../devicetree/bindings/mips/econet.yaml      |  26 +++
+ .../bindings/timer/econet,en751221-timer.yaml |  80 +++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |  12 +
+ arch/mips/Kbuild.platforms                    |   1 +
+ arch/mips/Kconfig                             |  25 ++
+ arch/mips/boot/compressed/uart-16550.c        |   5 +
+ arch/mips/boot/dts/Makefile                   |   1 +
+ arch/mips/boot/dts/econet/Makefile            |   2 +
+ arch/mips/boot/dts/econet/en751221.dtsi       |  67 ++++++
+ .../econet/en751221_smartfiber_xp8421-b.dts   |  19 ++
+ arch/mips/econet/Kconfig                      |  48 ++++
+ arch/mips/econet/Makefile                     |   2 +
+ arch/mips/econet/Platform                     |   5 +
+ arch/mips/econet/init.c                       |  78 +++++++
+ drivers/clocksource/Kconfig                   |   8 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-econet-en751221.c   | 216 ++++++++++++++++++
+ 18 files changed, 598 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mips/econet.yaml
+ create mode 100644 Documentation/devicetree/bindings/timer/econet,en751221-timer.yaml
+ create mode 100644 arch/mips/boot/dts/econet/Makefile
+ create mode 100644 arch/mips/boot/dts/econet/en751221.dtsi
+ create mode 100644 arch/mips/boot/dts/econet/en751221_smartfiber_xp8421-b.dts
+ create mode 100644 arch/mips/econet/Kconfig
+ create mode 100644 arch/mips/econet/Makefile
+ create mode 100644 arch/mips/econet/Platform
+ create mode 100644 arch/mips/econet/init.c
+ create mode 100644 drivers/clocksource/timer-econet-en751221.c
+
+-- 
+2.39.5
+
 
