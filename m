@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-637159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A75AAAD57C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D58AAD583
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08D4466D8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DFD3B4D26
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D777D1F4629;
-	Wed,  7 May 2025 05:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20ED1C84BF;
+	Wed,  7 May 2025 05:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foLBNRiE"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXwqnIC0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73921C84BF;
-	Wed,  7 May 2025 05:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AB11FDE3D;
+	Wed,  7 May 2025 05:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746596945; cv=none; b=FKp279G/DRlRZ499Qr8k3n7K/QgAZ+mKT9C7FBGXUYktJjAz4Nd/SClmYk/pe8fX2Ti/7nLUVzjMHErZi3I8xPmVB3c5AecssgUcZ2x/J5yKlMxmj2oHLR8xkYga5HpRLhyPw3t/N8O/eF9Obu6xjQshM5Ojh/TYneVF4drcDPA=
+	t=1746596996; cv=none; b=W0/Hd8Z5fN8xMOZOnSG6drYaWa3SGXZ0ns/rKMyiAWv3mOX80c0ezEnlBWUKbmDy11/9SbmicATmjiwYzcgoTFni24p+qwWS5TmOo2ibFolzMoEqR5lUI0g0XXvsjpsShXLMP1u4RsE+01UIpduK61ijMCknTdkYv22P0pXKJ1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746596945; c=relaxed/simple;
-	bh=wcg08Kt1C+xZgbC0SDxeuZMP4Sa/aGcldOCUz7tMn50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pf1r8EAjxDqof8JInxYPPII34J3QWZO5CfS83fnMM0V/M5YscA/ZrXg9Ew/6aNjDPu0Y/0MsVOdF36rERN/Q1APyPS3v4soAbkeeWNgRoe5INgI9M7NSZ5rR5ScStCSjRwuo/gcazkDyMiBWRUUf2SflozKWrAxormSn9JYdRiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=foLBNRiE; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476b4c9faa2so93171471cf.3;
-        Tue, 06 May 2025 22:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746596942; x=1747201742; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7JdJMsLzfDGeRvx+Emk46r8xhmMRITfWllQfaK4Duwk=;
-        b=foLBNRiER075wcSuuAjGaH9EtJxa2yLUu/aH5rbHtIikDNGvfQHwOZ3WLRh/U3woYx
-         VoOdN9blD6hrojbz/ogUrwhhTQkUreP/1nXybfMN9CDFf+ndqHO2Hi1+KGloy/7KkTTk
-         2c4ffleWfzIefGPo0nU1GexU7E3ywNahIq6y5Fv8fAxWd0x3zk2lRC7eRzp5eA8DAcrc
-         DCO37D/ih/WUqbAkFURFmGufxgWPOYgMPOD/cDvZxEItnfYkwa1eenGaY3dzGWOJbaa4
-         4QHaof1rr+FijwDGqef1JE5KXc/0ryxf/Gkp5+9sDrJnu3ADUYRHEIHjhdWRwqdKdM5c
-         SZuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746596942; x=1747201742;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7JdJMsLzfDGeRvx+Emk46r8xhmMRITfWllQfaK4Duwk=;
-        b=BK2sWNa4HuW9r+x4ht/xBFTZlUlgovK9pe+pFKt320YaeySvFZHUqpE3k4/M7ULzLY
-         TGxbNtvsZVveHFxCbsneYy/8Fqg2wN3NRhagjdrh4j0VieUH6iFcSBF+EJ2WwiZYggqh
-         BFYS9ceBBwD2pe4vMBjVSV01P9hxAawS4DlN0eIJVyPha1tNFVx8lH2TD8+EE1g1vUMh
-         p9OjEduJ8QSTiLtenHjHPkewwHmN/yOUu0GUcMMKUZVIwaPWBCIUYHs7L+JUvMceRkki
-         tnyzIR+W6Pwg/YS7bONyydclxw4kObqmQ/JGUUArfzEfDtRgYSf5bOPkewo5LzmZkl+a
-         P5OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDqavBGdaAq42YRcV/FolpEDTWhuUxk8prBvQD53whCglAtfbl3+Z369OPRJxlJNS5erjbp6ujSXRk@vger.kernel.org, AJvYcCXGo+IUdTb1pLJg8Wto9j3CylPkgLw3wC++sahoWV/jCrDr7D/dJZFddGdMcB3W1yLHk4Y9b/IzW970bEk6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuzGDegvjRMV0L+UW7GFu1KvaPOobeGjot6kUZ4FkhX0qOk2Dm
-	yzvNy3kTqs6WsTlXFC39gAjr/6GdOv4ZHl/8dUAEveRtDCXu53U3K6vfeNZ+KW9xTAdqNo08dvq
-	Au9OSCrap4xA6sQxSAlq/HXyduP0BGq3tsb4zLkYi
-X-Gm-Gg: ASbGncukGW2Ejm+XEQ05PySJzgk64dMBSlcWCqaxVVGfwHxzCY+BGsCz4egSujrJ6f0
-	HQhCxVtMphx3HycDNNVDeeJe0tdccm7lfUI5HFMpWTNNqZ51d70rPHrVk6y62qbNngNE4G+jv1b
-	hr7gUcPCHo0miujJC1IuV0FtK9ig0IhrE=
-X-Google-Smtp-Source: AGHT+IF7vvrjUXrQ8Ma7pGYyWlbfTrxCvT38VXq6TtbN5SNAo7OxWdmxVFlZHyYkepkkFVBGOS2HmDQU3+iLDdcpFsM=
-X-Received: by 2002:a05:622a:5588:b0:477:41c3:3c59 with SMTP id
- d75a77b69052e-492278663f1mr28654201cf.40.1746596942669; Tue, 06 May 2025
- 22:49:02 -0700 (PDT)
+	s=arc-20240116; t=1746596996; c=relaxed/simple;
+	bh=gMWKuqiccB/vdz3+zeg5KDOgnOnUHr7QCke6tYWkzNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqwUSADVvC4x9jFHoB5okG118ghZvHrmrg0l3l3VdZAu7dOTSnXmkD8xdzyGS0CbwRlU2Tler3qDO38GeABEW+v9/eLij+VaTgaTRbjXXCf9ev07XSuC0IWMGMCwhw8A/cAF5dYEXhloVpVEB82+Y/WJFNgN/OvvKTsQn4ixd8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXwqnIC0; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746596995; x=1778132995;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gMWKuqiccB/vdz3+zeg5KDOgnOnUHr7QCke6tYWkzNo=;
+  b=jXwqnIC0wApU3zanhUvbLY4fTgQ0TDXwaqh/Eyw1NZELALRY0IDSkLBe
+   hUGYvY2skOvCQx7JJb6cbXxix7//BJhnRqDnILMhWUYvMUJmx1vD4G0+r
+   6TtFm8FlOCyJtQ/kULkSz9F4pF7i49wpmZRjs0iMsaXbcvbmWfXPL67Vs
+   tf1CLpuY1y/6y9rMXcAuUOudOb/pg9tlx2zvZx5FIaim7H+veNaKaxOUM
+   hvT6WAJxcmaWBa2dMZNvLU7Ri5Lju4wr7ZHJRucXGGjkKo/3dRPOCmV5C
+   WUu0raPBw6Ug/THsffUzckGWHXQBAraLjXl8i4FAn7kePgRbpkvpRT0QU
+   g==;
+X-CSE-ConnectionGUID: kNBOOjn7T+msxKcJRZe8kw==
+X-CSE-MsgGUID: mWI2RPv+QGO0XTlA4REeQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52120539"
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="52120539"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:49:54 -0700
+X-CSE-ConnectionGUID: Dng6zhbARaqwORnXV3pdkg==
+X-CSE-MsgGUID: o/PsYAEDSKS8dWxiGvu4sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="140580415"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 06 May 2025 22:49:49 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCXf8-00077Q-1d;
+	Wed, 07 May 2025 05:49:46 +0000
+Date: Wed, 7 May 2025 13:49:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Praveen Talari <quic_ptalari@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, psodagud@quicinc.com, djaggi@quicinc.com,
+	quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+	quic_arandive@quicinc.com, quic_mnaresh@quicinc.com,
+	quic_shazhuss@quicinc.com
+Subject: Re: [PATCH v3 4/9] soc: qcom: geni-se: Enable QUPs on SA8255p
+ Qualcomm platforms
+Message-ID: <202505071326.jjvv4tTv-lkp@intel.com>
+References: <20250502031018.1292-5-quic_ptalari@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507-vt8500-timer-updates-v1-0-6b76f7f340a6@gmail.com>
- <20250507-vt8500-timer-updates-v1-3-6b76f7f340a6@gmail.com> <8d3c2ab5-dfc0-4a65-94c8-48a94c850aba@kernel.org>
-In-Reply-To: <8d3c2ab5-dfc0-4a65-94c8-48a94c850aba@kernel.org>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 7 May 2025 09:48:51 +0400
-X-Gm-Features: ATxdqUFKht2xkkVskEfWLYN789ACQMJmDtBSHahlN1jQVzEb-f__uuxu03cTVZ8
-Message-ID: <CABjd4YxjC13H9G+ZpQO7EcmA4quu-9OMYjc5z6W5z+f=pwkTbw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: vt8500: list all four timer interrupts
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502031018.1292-5-quic_ptalari@quicinc.com>
 
-On Wed, May 7, 2025 at 8:32=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 06/05/2025 22:06, Alexey Charkov wrote:
-> > VIA/WonderMedia SoC timer can generate up to four interrupts correspond=
-ing
-> > to four timer match registers (firing when the 32-bit freerunning clock
-> > source counter matches either of the match registers, respectively).
-> >
-> > List all four interrupts in device trees.
-> >
-> > This also enables the system event timer to use a match register other
-> > than 0, which can then in turn be used as a system watchdog (watchdog
-> > function is not available on other channels)
-> >
-> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/vt8500/vt8500.dtsi | 2 +-
-> >  arch/arm/boot/dts/vt8500/wm8505.dtsi | 2 +-
-> >  arch/arm/boot/dts/vt8500/wm8650.dtsi | 2 +-
-> >  arch/arm/boot/dts/vt8500/wm8750.dtsi | 2 +-
-> >  arch/arm/boot/dts/vt8500/wm8850.dtsi | 2 +-
-> >  5 files changed, 5 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/vt8500/vt8500.dtsi b/arch/arm/boot/dts/v=
-t8500/vt8500.dtsi
-> > index 2ba021585d4889f29777a12473964c29f999f3a0..d1dd37220d41becece5d24f=
-bb19aa71b01723e35 100644
-> > --- a/arch/arm/boot/dts/vt8500/vt8500.dtsi
-> > +++ b/arch/arm/boot/dts/vt8500/vt8500.dtsi
-> > @@ -111,7 +111,7 @@ clkuart3: uart3 {
-> >               timer@d8130100 {
-> >                       compatible =3D "via,vt8500-timer";
-> >                       reg =3D <0xd8130100 0x28>;
-> > -                     interrupts =3D <36>;
-> > +                     interrupts =3D <36>, <37>, <38>, <39>;
->
-> You need to update the binding, preferably first convert it to DT schema.
+Hi Praveen,
 
-The binding change [1] has been reviewed by Rob and is pending merge.
-Shall I fold it into this series when I send v2?
+kernel test robot noticed the following build warnings:
 
-[1] https://lore.kernel.org/all/20250506-via_vt8500_timer_binding-v3-1-8845=
-0907503f@gmail.com/
+[auto build test WARNING on 3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7]
 
-Best regards,
-Alexey
+url:    https://github.com/intel-lab-lkp/linux/commits/Praveen-Talari/opp-add-new-helper-API-dev_pm_opp_set_level/20250502-111540
+base:   3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7
+patch link:    https://lore.kernel.org/r/20250502031018.1292-5-quic_ptalari%40quicinc.com
+patch subject: [PATCH v3 4/9] soc: qcom: geni-se: Enable QUPs on SA8255p Qualcomm platforms
+config: arc-randconfig-002-20250502 (https://download.01.org/0day-ci/archive/20250507/202505071326.jjvv4tTv-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071326.jjvv4tTv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505071326.jjvv4tTv-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/soc/qcom/qcom-geni-se.c:109 struct member 'geni_se_rsc_init' not described in 'geni_se_desc'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
