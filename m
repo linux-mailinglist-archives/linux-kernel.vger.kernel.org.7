@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-637333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09455AAD80F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:30:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDB3AAD603
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19423B0E25
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E49F98304E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187602153CB;
-	Wed,  7 May 2025 07:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D040C20C00E;
+	Wed,  7 May 2025 06:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK45uTdw"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dICMRTfx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA17620C48D;
-	Wed,  7 May 2025 07:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8041D432D;
+	Wed,  7 May 2025 06:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746602672; cv=none; b=GwaEyPXnI11tu++7SdLAQimoiWxh1YIjkzBWgI0M9uqBJmT7haxgewYWnD92CmfICVStk98NzKym2mGtUbplC7J36qTN2+eSW0GLrupKQZRUe76FCpzXP+BhonbzdXRcz1moAWQYrUnODgAk3PQ3wobqhg3jpkvRMtQ7qVB1FIc=
+	t=1746599195; cv=none; b=HLoaW1qt2rq+Zn/zCrYp2ffDf3FvOjbRj4Egdjr+KLF40Nkgid0NuAc7FN5oRLPTwsSSkvDGTCPiPhEuIoperlc76sIvtqEw00S9XKziTSQB8MwdEifrPzV5vXL2F9nHrr1lBp9RzKjj+XdTQoNgGKJUQEs2r6U+R2fgfexb3B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746602672; c=relaxed/simple;
-	bh=eL+3ZL1xhHCfwrllCnsVU7U/Mj3B44v54kzTtHbql9g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fR13Uw+N4T7HnGMyDArxtr+v8U21MLTyzBe6IBIUyQzwrk8mhrat6atobPeFhiU398vn2ZIKKAXz8SOUYW1LjzfDfWH0hll2xDOrMu36JqPOYvxu66TZXDMIoetxQvVfIAirZd6eP1bayYyOuVaZZuV7dgBkFQTC+/kATmroSa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CK45uTdw; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so4332945e9.1;
-        Wed, 07 May 2025 00:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746602669; x=1747207469; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XbGOM+5j9DljoawcsNITwWaLqQVpAIHR+pSXDo1606Q=;
-        b=CK45uTdwl6NLOqo3SV8MYlwdDIz6fuEoUK++MPBTj4G5aQNbzfO+4pJF6A2MnIAD81
-         DILIdxPEB3TuwGONWpSIrlIUuV1nIcjYu1eIQKgGcEZJ5Qa9ewigc/Y+pFA0z9kb6DYI
-         wk0Y45vMtRJjyRD8WkuJKF5G9dUCZ2QoB0Lqi2TAQPZyNTopOyp7RaKtHipZeCtLPLR5
-         zN2X23pokiQvgCkq1a/8mPQcAfRnqunFXQvkL+iXY2QD9BPAiZyDxTmM0UWKsrvuRl95
-         VICLhbga6yQhzqy2s15gPXNqeote+xNqsT68d6O/LIYiFPj0T9BOB+LmULtD66oAo23S
-         TuLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746602669; x=1747207469;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XbGOM+5j9DljoawcsNITwWaLqQVpAIHR+pSXDo1606Q=;
-        b=gpea6y5MErMyKpjSyyVRF9j5m9IkES/dPmfXXnAXZ3BFgHFOn9JFKg48Gc5LiBfEoX
-         UqLiFsGdkFRLHU5R4/ZR/7CufDFeyzmSiQ+BmW+nPxKPWSN3lCbNuUkkLsSAtuhD8SXI
-         4KqRn2b+n5mshmYENFM+PRZHJs0XUPPJjWjTbYHp9WlsuZMht3/WC3GrIb3pfeGYOfgu
-         hIGMB1f0qgU6Qct4HrMIrIZcCHuu6GmPo+PrXx59zKwmBn9yymIndjQiG6zePmfI23hx
-         3msCJZXEEk4NEE8ga1Ci5PTPKoAnAqVx5kHBfVI+D5j2g8qWOYcEj947u6rByHy38cvJ
-         DpvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0CYBRJoPtJ/gYmvMT9V5uPbYoyH49FeRtFc0B2ipc7QyIEyQGeLv8SIDys39j99wY7UVBxC/B9I8=@vger.kernel.org, AJvYcCXrQvEGhGMJ8dzZjC5l4B18B6t6gscePIWgXqdRuc5cZl7TMfc5W43v2QwIzdxAku088X6TnQzXpSzJyI6G@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXrOLyeUu4jJz9eEfyBPBE9ma2Z91zJFZkaTsDetHMMHB/tPRn
-	UBtPzeh3S+CgZsHNR5NMbkg/IOFOkmBh1R+6MOkwHs1IgWPH80ox
-X-Gm-Gg: ASbGnctnsVjale82Tl0it8ZcMvNSLiJHz/fkTE/8qO2jnowlfl3jPg2EzkcwUdRgRSH
-	U/rwTmOXfDqy+XjbfeFACkfl9GgJM19IcGI0bU9Auuvu7RiDyx8dMWoNICLOOMB6o7uOjOD0Fsq
-	c7FKl/N3uOif16v8/hUAer9un218qi/dniRG3pSxoroknx7M4Yew4xumrRa6tSuLfDjx8QWQDpM
-	W+XRfq86bpCdQnmdwebEQg5GA4mWg1bbgehIooo8LznwNt1hFfnCDfyORTUrEbZmq+fawpuv2jM
-	+NzmFfYu6VWffdn7bo1vT5r6qm3N0QeWk1YyI1lriCtKuMBGrUqTVmHW+ccO5hzsy18VnAsrxSu
-	zmHMS68926WI0sys=
-X-Google-Smtp-Source: AGHT+IHmtJRYo7J1NRPVLlws65MS91lxXsFbUL0vBq7K20lHdwXV2pWj4OoYN2xYkz2zzIKMVRp2/Q==
-X-Received: by 2002:a05:600c:2e52:b0:43c:ec72:3daf with SMTP id 5b1f17b1804b1-441d3a78febmr17516365e9.14.1746602668754;
-        Wed, 07 May 2025 00:24:28 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d433e9efsm21630205e9.3.2025.05.07.00.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 00:24:28 -0700 (PDT)
-Message-ID: <4dad5856ae822e2f6dc5786846e4347668434863.camel@gmail.com>
-Subject: Re: [PATCH] iio: bmp280: zero-init buffer
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org, Dan Carpenter
- <dan.carpenter@linaro.org>
-Date: Wed, 07 May 2025 07:24:52 +0100
-In-Reply-To: <20250506-iio-pressure-bmp280-zero-init-buffer-v1-1-0935c31558ac@baylibre.com>
-References: 
-	<20250506-iio-pressure-bmp280-zero-init-buffer-v1-1-0935c31558ac@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1746599195; c=relaxed/simple;
+	bh=GaA/zJXRvdyzWhvBvSQORxWGe7IYP25MXqgGd/qtJd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UrGhourTA9XAT1G2BXb4T8cPB0bRM7to0h2ihajN/mqJHWya8vDC1WJZ+/8lQ9wYcYyafO9tZE4r6RzuM5I4qg26EC5XaD9uZR+wZGPMPgEL7NTBFx7Sgl0o0SsQjpTTUKSU6rxmr0B8ufFDFoCoegqwpkggI4nNPjS2OeLNo/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dICMRTfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA21C4CEEF;
+	Wed,  7 May 2025 06:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746599193;
+	bh=GaA/zJXRvdyzWhvBvSQORxWGe7IYP25MXqgGd/qtJd4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dICMRTfxofPY2kTbGCvmkRmicrGpiedx3MsMAhN5m8kr4HSy13nbYE/SPIJYr71/E
+	 N33TTNdB6ASTnsleY7JRYZ3nRLIk6Zs1bvJubEr8/UbG2IfPTqW4sSCS7tBIEJgwLf
+	 nqfCxcZwSkOgO9s4y/KKGBimU0MYh1h2vctEMjOSJjH32wrATWZgIvjnP1VFpoiD/+
+	 NzrSAk3uPD0oP0/i3bnAokgZFjaOSrZrKnBFKtbt8vkB5FbrLxJ17iYCEmiBEPDoeY
+	 EYgpBv7ohLEsMbiLKP5GMYj1SCE0TvCyTSpHBirSCJ/8Hn13lFs4n6fgmBVgPCulqE
+	 RUWoCKnTMjQhQ==
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-40337dd3847so3646217b6e.0;
+        Tue, 06 May 2025 23:26:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUL0HaWWyyQvZ9T6aO92PeQBF6EnSAD1v7Lbv/pRnYC+BYcOCNSw+PbUQydIo3+EjxSjM+okWETUgeo8ODV@vger.kernel.org, AJvYcCVm8YyqquM2BK6EBADs3J/FOL5L79NWE1hnkTSUYfkqYxljcQ3PJo4ynW23ssk2Ofb97hg7FCxmQK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrnN3aGpEE4gYP1dK273lEl4ookg1qfednbWGtxRgVv+qjduzr
+	Np6hUomd3bHi3Otu1IttX7PWHVIW6htiVlutjF2qcEiCmGxsMPlD5u7lZNiSMaEN4UOwDt3uegj
+	PLtpVYSFuFgAkKt+lD95Vjw4GK/k=
+X-Google-Smtp-Source: AGHT+IE6OoQBQFNIo2RMuI36yMDwzxZHGLigZ5rk40AM8etZx9c58IROyGc/jRXUBwa/wPABVFxm/WCKiib7VV1jN8w=
+X-Received: by 2002:a05:6214:529b:b0:6e8:9e8f:cfb with SMTP id
+ 6a1803df08f44-6f542a5f62dmr30383316d6.24.1746599182795; Tue, 06 May 2025
+ 23:26:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250506143254.718647-1-maxime.belair@canonical.com> <20250506143254.718647-2-maxime.belair@canonical.com>
+In-Reply-To: <20250506143254.718647-2-maxime.belair@canonical.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 6 May 2025 23:26:11 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
+X-Gm-Features: ATxdqUEG2jVvCzrgMgUy-LTFDpzXf-8Zg-TeGO0jYs2AI_kPt5jR1N9qESQfZXI
+Message-ID: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
+Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net, 
+	kees@kernel.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, 
+	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-05-06 at 13:49 -0500, David Lechner wrote:
-> Zero-initialize the buffer used with iio_push_to_buffers_with_ts(). The
-> struct used for the buffer has holes in it, so we need to make sure that
-> the holes are zeroed out rather than containing uninitialized data from
-> the stack.
->=20
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-iio/aBoBR5D1UMjsSUfZ@stanley.mounta=
-in/
-> Fixes: 4e6c3c4801a6 ("iio: pressure: bmp280: drop sensor_data array")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> The patch this fixes is currently in iio/togreg, so no need for stable
-> backport, etc.
-> ---
+On Tue, May 6, 2025 at 7:40=E2=80=AFAM Maxime B=C3=A9lair
+<maxime.belair@canonical.com> wrote:
+>
+> Add support for the new lsm_manage_policy syscall, providing a unified
+> API for loading and modifying LSM policies without requiring the LSM=E2=
+=80=99s
+> pseudo-filesystem.
+>
+> Benefits:
+>   - Works even if the LSM pseudo-filesystem isn=E2=80=99t mounted or avai=
+lable
+>     (e.g. in containers)
+>   - Offers a logical and unified interface rather than multiple
+>     heterogeneous pseudo-filesystems.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+These two do not feel like real benefits:
+- Not working in containers is often not an issue, but a feature.
+- One syscall cannot fit all use cases well...
 
-> =C2=A0drivers/iio/pressure/bmp280-core.c | 3 +++
-> =C2=A01 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bm=
-p280-
-> core.c
-> index
-> 5728cc18cced223284a2c41dc6dec6f47169c797..f37f20776c89173b0b2a8e28be0ef9a=
-a30ceea53
-> 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -1237,6 +1237,9 @@ static irqreturn_t bme280_trigger_handler(int irq, =
-void *p)
-> =C2=A0	} buffer;
-> =C2=A0	int ret;
-> =C2=A0
-> +	/* Don't leak uninitialized stack to userspace. */
-> +	memset(&buffer, 0, sizeof(buffer));
-> +
-> =C2=A0	guard(mutex)(&data->lock);
-> =C2=A0
-> =C2=A0	/* Burst read data registers */
->=20
-> ---
-> base-commit: 7a175d9667b21b2495913ec7496a6c20aa7a4a89
-> change-id: 20250506-iio-pressure-bmp280-zero-init-buffer-942dd4f48719
->=20
-> Best regards,
+>   - Avoids overhead of other kernel interfaces for better efficiency
 
+.. and it is is probably less efficient, because everything need to
+fit in the same API.
+
+Overall, this set doesn't feel like a good change to me.
+
+Thanks,
+Song
 
