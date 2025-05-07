@@ -1,231 +1,287 @@
-Return-Path: <linux-kernel+bounces-638225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2262AAE2E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:29:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEA1AAE2DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA10F505537
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF995527567
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1467D28937B;
-	Wed,  7 May 2025 14:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AE720330;
+	Wed,  7 May 2025 14:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NLKDcr3K"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2077.outbound.protection.outlook.com [40.107.236.77])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iSCSiHbF"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81347289372;
-	Wed,  7 May 2025 14:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627379; cv=fail; b=YpPGFW3vIo5bJ0a0rn2OrmjrJxMaB3VmIShQr3BeRnOscTxhsxaOIAFwOJIcYuqyCv8/3zKgXW76/GlanYoRRilC3bReGr4TKySk6pgoajEpqv+uCOlHUSB6uV7hlEXlWqNOO689N+m1LpmneZyScyNWJ1A6GAN5k7tf1BecPKk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627379; c=relaxed/simple;
-	bh=UbNQDOpFDWiNHxTATPHFUZ/XOypXRpqMWdC2WrlLGXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bBPoWO2KG3kBXgngMUnaaCLmJwiteIETzSU8XK/V+jzQ9O37KX1+qMUppJZ2PFsAFvD6J7PkxJ0WnzZ9oH0Ce9kfnFlTKlHP0QLUU19B8SUOD63ycEKk4n1ukN+kJcuMQ+MRt3LdGIswNdRjxhs7VwpfeKP6kCN7Dz7E5wu5X8g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NLKDcr3K; arc=fail smtp.client-ip=40.107.236.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TyNUR+rcMnB+nOxbNkngNhvQcn1zTDbHg/VjNLdPzbarGylPj83x81hNgHajFj/qHeCyyEKUpm3e8NbPQFklrA0FwZU6qImnNk4kWwbS/eYVZ3eluofnKJYOPvrVuuXVHvsXZKTSiswdeN1fdEgVTZGvvVEwKEg/2eG0aqAaZA4vQc0U77QztUgMA8PD2p1jEKLi6/6FQkCeO/BkCrL2/ZpLau6g8to00hoUpo7flLIYXPC1XOGuCnfZksCeuxvnxAAgxN3m2IH2Amic3BUVGVKvxiX6Va8z9D+ztQ/aWir/CH/f97dy52p9n4a1omHPh3OCW80rrStLmyWkdEgOaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uXJ8CCsNS1QaMcsfn0m+y5P6NyFMLI02JABXfdkwrY0=;
- b=JhW+UrIwO1H2jKbXvGi0HjIbxPplNl4f1l++FACt8Lk8W/0huqkY5REk98ZtKdZ4BskdOp9t4mQ0/jjElrZfi7tZAojKZyzkDRWAtyXNJ9RIcy1KU9GQZZHD+oXwTdwCEK1TAwUw3wdjze4jjKIbN8JXm2/pWGngVA0fuQJRTrI8V4qcxMTrMEzc9uZWGDtaQyEJa/u5xdUsZDadQ2Vo0Yx8P15Q4fzA3pPjLx/OhzRjHGT4UTwYVFHolhPxdwC/Yb9Mhl69Dwusk29yix8j3CBeDr8reotrbSFvYp3kBzLO+V1dPj1AWc3MrIM89WAOihcQLmDCHLmw3fbdtkA2yg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uXJ8CCsNS1QaMcsfn0m+y5P6NyFMLI02JABXfdkwrY0=;
- b=NLKDcr3KGA9jkafoNrvDy7iLmh9RE6JWfDqjw43hbUzIWxOoDG4ZyU+nnGqItQ4O1kPLt7ZcT2qf4VnFADIyPjwhsfQ38t2UJGjpKx5GK9ayL3pjEb35XBPw+eysvKMjA6/wZsDSi9o9yvDHDPZF3nACRYZVPw4WegOvkBhO6/c=
-Received: from SJ0PR13CA0233.namprd13.prod.outlook.com (2603:10b6:a03:2c1::28)
- by CY8PR12MB8265.namprd12.prod.outlook.com (2603:10b6:930:72::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 7 May
- 2025 14:16:05 +0000
-Received: from SA2PEPF000015C6.namprd03.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::ac) by SJ0PR13CA0233.outlook.office365.com
- (2603:10b6:a03:2c1::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.19 via Frontend Transport; Wed,
- 7 May 2025 14:16:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SA2PEPF000015C6.mail.protection.outlook.com (10.167.241.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Wed, 7 May 2025 14:16:05 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 May
- 2025 09:16:04 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 May
- 2025 09:16:03 -0500
-Received: from [172.18.31.235] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 7 May 2025 09:16:03 -0500
-Message-ID: <6452909d-94f8-4df3-87fc-d8ee0bdba01a@amd.com>
-Date: Wed, 7 May 2025 10:16:03 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E692820A6
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746627455; cv=none; b=WLBB4N3liwjLu1eUYJbpK4EBDVBjtELHQdAa0xFFostrNaZgMa4xWWrdSNFGLqGowbaNVH5c5YvhWl1AUtfeUVZrZzMCzj1G3xO8Tk23lM2iqpMgWR4R4jmAdWcTDGWweHPDfbpdM+WmNTSayis/UqQ5jwIDeD87C+3b3pcb28A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746627455; c=relaxed/simple;
+	bh=IxupcJPlYRhD2UqkmorA3DMzhd32rJ1yoT6/PHsqJoU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q7clgCy7gSsxEIliMIcNnrVPFwyjMJGuERNjd6uOkeILyT2ETf+dWu19w0uesDJDSpjs2RBlXORFrJtFf2Tlr5UWWUJQuemrOpRuBJ4C0rimnaStUxbsn7jNd/qhzFTACX0mjkPLn8eO4a3vDGuFfK+5dfjvyyI1rV27LOrxSnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iSCSiHbF; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746627449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pH7UmPvS4rp26O6yU59fxdXGcFqjDChPqNvKXLI8EQU=;
+	b=iSCSiHbFUehvqLfQa0NoeuKVcsAi8xvPf1wG6uFk+LxnoSW6V7ecBgD0xAqgzvfZMb9Sw2
+	jalSpqCLDKxjyJ1Sd7CYf9c3EhDay7ygvNrEKny9/PDuybVoxIo5upbrosz0lqxOPPFrRS
+	c6CfRUqEUZUiKK6KNaeTMQH8zKMfG8k=
+From: Dawei Li <dawei.li@linux.dev>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dawei.li@linux.dev,
+	set_pte_at@outlook.com
+Subject: [PATCH 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Date: Wed,  7 May 2025 22:17:09 +0800
+Message-Id: <20250507141712.4276-1-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xenbus: Use kref to track req lifetime
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
-	<marmarek@invisiblethingslab.com>, <stable@vger.kernel.org>,
-	<xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
-References: <20250506210935.5607-1-jason.andryuk@amd.com>
- <6b17cb41-a4f1-4055-966a-54301493085c@suse.com>
-Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <6b17cb41-a4f1-4055-966a-54301493085c@suse.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C6:EE_|CY8PR12MB8265:EE_
-X-MS-Office365-Filtering-Correlation-Id: 782e647a-322d-42aa-67f2-08dd8d71b468
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGJnMnZ5S1dOeS9tMkhrcTA0WVBVS2xReHV5SXNwcTJCYXNpcHlEZ0tpY0p3?=
- =?utf-8?B?ZkExMlhGeWJidlpOQS8rNmNsWjM3WUdaWitQVXpUUndQZG45MkdsVnd4Vlgw?=
- =?utf-8?B?TGt6NXhLMEJEQ3hwamFlc01Jd0dXTTJ5Um5LM2xxQkhuMFBiUGY1QXJyWnho?=
- =?utf-8?B?bXpqZnowaFUyUmtLUmlkY1lPREFHNnluM2lwZGRtQVd3NGFaZjYvRmM4Z1VY?=
- =?utf-8?B?bEk4RXU3bjBNU2dKOUlFYUV4SWdmOEE0TjR2RTF4YVNZT2ltNm5ITi9SODhi?=
- =?utf-8?B?N09lWGhIV0lpREVwRWY5NC92THNwMWtTUFoxMUtEQ25kenZ4dkJSM25MRFlC?=
- =?utf-8?B?QTVwTXBFNG5YRk9HSVFLditTRGhnL3p0NFZxQzJLRmFyT0Ixc0MzdHptSkxp?=
- =?utf-8?B?bTZnOUNHOWFEdEVVUjU1aDAvY2tqNDZKaTJUbHBMTXh5ZzhFNXJ1Ry9Odytr?=
- =?utf-8?B?R3p0TmpQeWpXdVlPckgzM1BMT3JMQTlIbGVMUVRjNXdaK3JPS09JdS9VQVlp?=
- =?utf-8?B?YmJoKzBiQ09pcGNlUzE0M2RaQkFRcy83ek1nbGNxbE5qRHZyMm90aXJJSEVK?=
- =?utf-8?B?ZjFvQ05RRktGRGhYK0N0MzdGVGNIV0VwRlQ1ZDdrT0NGQ3VIT2o5Wm8yQ0s4?=
- =?utf-8?B?L2M4OTJQZzQyRlJleUNlN2p2cjA5WGFJdnNjQ09FRTUxcDB4b05jSTdZZkNp?=
- =?utf-8?B?VXUrbmlaVm90YUxtZkxDN2psMUNNWFBBTnhRckwzbmxHRXVDV2ppWHpiZk1n?=
- =?utf-8?B?dm81a1hrdjljeVQvYzh6d2xNUnUzNmxhMEdxekwycDhjUEVmNStZTnJwa2tV?=
- =?utf-8?B?NWpRNlBnSk5TVUFVQis3MHZGR09tMnozWWdKNXJ6ZUMwTTdtMmhoRU1ya3NF?=
- =?utf-8?B?bHhkWGpPSENGaVdIYWV0QThrZmp3dFNhNG82alhmQTYrRDdQUC9VZm9OUlo1?=
- =?utf-8?B?V3dXd2svSGpvNjNmWERLNlBsMGxYWUdyQlpYZmNnamxRamxCeGsrQlZNNW5U?=
- =?utf-8?B?eXJHalNSVmtOWGQ5SnRDenBMRGlkaGdLTzh5THFPK0VCUmZFT21IZWJvQ3VB?=
- =?utf-8?B?T2lkdE5abzZ3Nm1ZcmN6ek8ycVFMTjEyMCtYUk5DS2tYY0xVU2lqbmFRYnlm?=
- =?utf-8?B?alRwckFhZ1hNWEZZQXNzM0szY2VQM01LN1NhVUtTbGdJcmgwN1ZZQ2RBMWZ2?=
- =?utf-8?B?V1pOaHN5b21kc2daejNVcHVkWTh2U3RTWmxHbVFSTlFscUEvT0RhSllqTk9K?=
- =?utf-8?B?LzNTZjVhY0cwTFJlNktvSVJMNmpzUnlJWk1DZ0ZxZzFSaTQ1bGFBRDgwYWh0?=
- =?utf-8?B?WHBISEhVVlhienk5Y1ZOU2hwTjV6dlA5aTZyTThYNzU5S1JiQTZCekIwWHVC?=
- =?utf-8?B?ZnNJZEpSRjIzYmhPTkJJNXdhVW83VVcrRnBCRFF1NTBOaWpBSEUrMUxtdEx5?=
- =?utf-8?B?Ukg4WUVVMUtidko5K3JyZXYxVHIrSkhBUjd6ZmJsR3FuMnlNNmFFUzN2VW96?=
- =?utf-8?B?MGJUcDhobjBhNW11ZTFraFNZdTBMSTlPRmh5Sm03L0c0T1NSQWhTZmluUVVW?=
- =?utf-8?B?TUJJVVNDcVJrcFFva0U5MWVNVEpjOTB5RjRLQmE0QytkY2M3QStFN1hRTkR5?=
- =?utf-8?B?L2NhNW9nKzNiU3dnbFRVRDdqRlNCelJkWDRDTkFWNWJSSUlKOFFuRUxyNVE5?=
- =?utf-8?B?NjVZcTczNjVWUUdKeVBVdkt1NFNSYWYrU2FEQXMzSnJHN2taL092bno3SnI0?=
- =?utf-8?B?YU1iaXg0UU42QVpJWUZ5T3hNbXJyRGZnWW1kOWZxVUlnUVZDYVFQVERmbEJL?=
- =?utf-8?B?U21jWVF2RXc3Y1ExcUluTXFjU3JZQm1VZUJsZHNScjdVZkl5UUowNjFGeisy?=
- =?utf-8?B?V21QZ2dBZUZ6T2Raa1czZTJNTnJRQklCbnRiZ1BKMDdHNEp1L2dYTWFHRmlM?=
- =?utf-8?B?aWhOZ2VqcTFkVEJTZEtIVE4waHJwVVhISnhjMENLZ3VSeTk3OUcwaHlCNnI4?=
- =?utf-8?B?bFJnWGUrYTVlaHR1QW4xdFpNaWtieUpzcEh0TTIrUGsrbEpqRStmemxDR1h3?=
- =?utf-8?B?OHVFbElzUC9UTkdTcWFvU3puM3lGeEFOVkRaQT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 14:16:05.3321
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 782e647a-322d-42aa-67f2-08dd8d71b468
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C6.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8265
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-05-07 05:27, Jürgen Groß wrote:
-> On 06.05.25 23:09, Jason Andryuk wrote:
->> Marek reported seeing a NULL pointer fault in the xenbus_thread
->> callstack:
->> BUG: kernel NULL pointer dereference, address: 0000000000000000
->> RIP: e030:__wake_up_common+0x4c/0x180
->> Call Trace:
->>   <TASK>
->>   __wake_up_common_lock+0x82/0xd0
->>   process_msg+0x18e/0x2f0
->>   xenbus_thread+0x165/0x1c0
->>
->> process_msg+0x18e is req->cb(req).  req->cb is set to xs_wake_up(), a
->> thin wrapper around wake_up(), or xenbus_dev_queue_reply().  It seems
->> like it was xs_wake_up() in this case.
->>
->> It seems like req may have woken up the xs_wait_for_reply(), which
->> kfree()ed the req.  When xenbus_thread resumes, it faults on the zero-ed
->> data.
->>
->> Linux Device Drivers 2nd edition states:
->> "Normally, a wake_up call can cause an immediate reschedule to happen,
->> meaning that other processes might run before wake_up returns."
->> ... which would match the behaviour observed.
->>
->> Change to keeping two krefs on each request.  One for the caller, and
->> one for xenbus_thread.  Each will kref_put() when finished, and the last
->> will free it.
->>
->> This use of kref matches the description in
->> Documentation/core-api/kref.rst
->>
->> Link: https://lore.kernel.org/xen-devel/ZO0WrR5J0xuwDIxW@mail-itl/
->> Reported-by: "Marek Marczykowski-Górecki" 
->> <marmarek@invisiblethingslab.com>
->> Fixes: fd8aa9095a95 ("xen: optimize xenbus driver for multiple 
->> concurrent xenstore accesses")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
-> 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
+Hi,
 
-Thanks
+This series introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL) for rpmsg
+subsystem.
 
->> ---
->> Kinda RFC-ish as I don't know if it fixes Marek's issue.  This does seem
->> like the correct approach if we are seeing req free()ed out from under
->> xenbus_thread.
-> 
-> I think your analysis is correct. When writing this code I didn't think
-> of wake_up() needing to access req->wq _after_ having woken up the waiter.
+Current uAPI implementation for rpmsg ctrl & char device manipulation is
+abstracted in procedures below:
+- fd = open("/dev/rpmsg_ctrlX")
+- ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+  generated.
+- fd_ep = open("/dev/rpmsgY", O_RDWR) 
+- operations on fd_ep(write, read, poll ioctl)
+- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+- close(fd_ep)
+- close(fd)
 
-Yes, this was tricky.
+This /dev/rpmsgY abstraction is less favorable for:
+- Performance issue: It's time consuming for some operations are
+invovled:
+  - Device node creation.
+    Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+    overhead is based on coordination between DEVTMPFS and userspace
+    tools such as udev and mdev.
 
-One other thing that makes me think this is correct.  If this is the 
-same underlying issue: 
-https://lore.kernel.org/xen-devel/Z_lJTyVipJJEpWg2@mail-itl/
+  - Extra kernel-space switch cost.
 
-The failure is in the unlock:
+  - Other major costs brought by heavy-weight logic like device_add().
 
-pvqspinlock: lock 0xffff8881029af110 has corrupted value 0x0!
-WARNING: CPU: 1 PID: 118 at kernel/locking/qspinlock_paravirt.h:504 
-__pv_queued_spin_unlock_slowpath+0xdc/0x120
+- /dev/rpmsgY node can be opened only once. It doesn't make much sense
+    that a dynamically created device node can be opened only once.
 
-Which makes me think the req was fine entering wake_up(), and it's only 
-found to be corrupt on the way out.
+- For some container application such as docker, a client can't access
+  host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+  is generated dynamically and whose existence is unknown for clients in
+  advance, this uAPI based on device node doesn't fit well.
 
-Regards,
-Jason
+An anon inode based approach is introduced to address the issues above.
+Rather than generating device node and opening it, rpmsg code just make
+a anon inode representing eptdev and return the fd to userspace.
+
+# Performance demo
+
+An simple C application is tested to verify performance of new uAPI.
+
+$ cat test.c
+
+#include <linux/rpmsg.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/time.h>
+
+#define N (1 << 20)
+
+int main(int argc, char *argv[])
+{
+	int ret, fd, ep_fd, loop;
+	struct rpmsg_endpoint_info info; 
+	struct rpmsg_endpoint_fd_info fd_info; 
+	struct timeval start, end;
+	int i = 0;
+	double t1, t2;
+
+	fd = -1;
+	ep_fd = -1;
+	loop = N;
+
+	if (argc == 1) {
+		loop = N;
+	} else if (argc > 1) {
+		loop = atoi(argv[1]);
+	}
+
+	printf("loop[%d]\n", loop);
+
+	strcpy(info.name, "epx");
+	info.src = -1;
+	info.dst = -1;
+
+	strcpy(fd_info.name, "epx");
+	fd_info.src = -1;
+	fd_info.dst = -1;
+	fd_info.fd = -1;
+
+	while (fd < 0) {
+		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+		if (fd < 0) {
+			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+		}
+	}
+
+	gettimeofday(&start, NULL);
+
+	while (loop--) {
+		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		ep_fd = -1;
+		i = 0;
+
+		while (ep_fd < 0) {
+			ep_fd = open("/dev/rpmsg0", O_RDWR);
+			if (ep_fd < 0) {
+				i++;
+				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+			}
+		}
+
+		//printf("Number of open failed[%d]\n", i);
+
+		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("old ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d], errno[%d]\n",
+				ret, errno);
+		}
+
+		close(ep_fd);
+	}
+	
+	gettimeofday(&end, NULL);
+
+	printf("time for old way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+
+	if (argc == 1) {
+		loop = N;
+	} else if (argc > 1) {
+		loop = atoi(argv[1]);
+	}
+
+	printf("loop[%d]\n", loop);
+
+	gettimeofday(&start, NULL);
+
+	while (loop--) {
+		fd_info.fd = -1;
+		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+		if (ret < 0 || fd_info.fd < 0) {
+			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		close(fd_info.fd);
+	}
+	
+	gettimeofday(&end, NULL);
+
+	printf("time for new way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+
+	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+
+	close(fd);
+}
+
+# Performance benchmark 
+
+- Legacy means benchmark based on old uAPI
+- New means benchmark based on new uAPI(the one this series introduce)
+- Time are in units of us(10^-6 s)
+
+Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+1	1000	203227			2533		80.2	
+2	1000	196501			2384		82.4
+3	1000	213619			2518		84.8
+4	1000	215898			2515		85.8
+5	1000	211340			2417		87.4
+6	1000	217008			2545		85.2
+7	1000	213591			2478		86.1
+8	1000	214618			2351		91.2
+9	1000	208021			2505		83.0
+10	1000	217092			2716		79.9	
+11	10000	2040802			26765		76.2
+12	10000	2027708			26867		75.4
+13	10000	1986117			27151		73.1
+14	10000	1992956			26301		75.7
+15	10000	1980262			25808		76.7
+16	10000	1925883			27926		68.9	
+17	10000	1957518			27100		72.2
+18	10000	1980626			28020		70.6
+19	10000	1990349			27351		72.7
+20	10000	1979087			27563		71.8
+21	100000	20266414		256170		79.1
+22	100000	19732259		259883		75.9
+23	100000	19878399		253710		78.3	
+24	100000	19788886		257199		76.9
+25	100000	19937663		258865		77.0
+26	100000	19602512		256771		76.3
+27	100000	19599214		257088		76.2
+28	100000	19795920		261488		75.7
+29	100000	19719341		263299		74.8
+30	100000	19871390		258465		76.8
+
+Dawei Li (3):
+  rpmsg: char: Reuse eptdev logic for anon device
+  rpmsg: char: Implement eptdev based on anon inode
+  rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+
+ drivers/rpmsg/rpmsg_char.c | 124 ++++++++++++++++++++++++++++++-------
+ drivers/rpmsg/rpmsg_char.h |  19 ++++++
+ drivers/rpmsg/rpmsg_ctrl.c |  37 ++++++++---
+ include/uapi/linux/rpmsg.h |  19 ++++++
+ 4 files changed, 167 insertions(+), 32 deletions(-)
+
+---
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+
+Thanks,
+
+	Dawei
+-- 
+2.25.1
+
 
