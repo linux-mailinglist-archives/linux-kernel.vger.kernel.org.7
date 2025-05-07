@@ -1,102 +1,130 @@
-Return-Path: <linux-kernel+bounces-638593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9020EAAE7F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3689AAE7FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA55981965
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBBD1C4272D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D2628D82B;
-	Wed,  7 May 2025 17:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186B128D84F;
+	Wed,  7 May 2025 17:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5gBcLx/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qyJQwsFB"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBAA1C84AA;
-	Wed,  7 May 2025 17:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA072147F8
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 17:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746639417; cv=none; b=t0S0dYXut9YhQIfOzBcoFPtelYOUW1XiMSH9dJH7YkOdLOvJ+R8n6gb64aTlELtO+VGz0bOBOUS0WbHlkjmmG56W7TIw12Ga3KqizMBf1QvSCvwsvO/H2vYCGngLOm3nCoZYYgfZMZVi7CIbP26JOQ7x/HOJscAYlxyTVSgPJSs=
+	t=1746639437; cv=none; b=KI9eoJ1J/T3scV7zf+KTSUDouunWOtJIvlCzZt0Z3caMwL+ss/oKr5qnw8ju/x9bLnvfkZFieSTbqTn/ymENhs2AOFgTxOB722663+76dWnPRLgUx5KtGYR0sej5cSUG1YMGXXQQivhQGOyi2+q3zNO6MgrvKsGNEqCKJVJwAk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746639417; c=relaxed/simple;
-	bh=cZgHgbEMslEH7d4qnp23P8CWCIcdt5/T8snXdHQXoIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFcFyI67v/2baMh6+UbNa1kUMB5ETskJyUr65POruMmD0sWJaLibSmpEENzCMQt33FkLx50RvhhDiYwC8cOK465zIkmU08rHKpmoIpSIDdnIq0779VEhf1q5230O5AqQ1YdgMVIn43qUt2mmE/MdVrwgd8ldDmqRl8eeCyEiip0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5gBcLx/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724C9C4CEE9;
-	Wed,  7 May 2025 17:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746639416;
-	bh=cZgHgbEMslEH7d4qnp23P8CWCIcdt5/T8snXdHQXoIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i5gBcLx/+W4OrIiWZ5mEORzBu+/MwAyuxa6sW1iOveMt1AbVE409oWBLaBe9YFT6L
-	 +BJmwOuTwy475nvJMOzU2yOj5Hq6UBEFzSeoP4Ug7AdjqzknAB3YSydz9nlR0xUtIh
-	 tPRgayVVB3L/rPkmPej9ZFQRBKHkVp5kyl+FkbcbfKPQcLB21rcVDj4HYs9SaegsFW
-	 Dm86+RQGjxIklt//kN0qITbrcCli74syRXK80c2pQIC5N5+n9RMI7EFYas36hWE+ML
-	 /XjfNG6TPa23jkpJ8JdWBhEFvqAeb3kffuOw//VVv2rwAtdnAITjB/KmfaO5SiBT7k
-	 ctJ0PuZ6PUrnw==
-Date: Wed, 7 May 2025 07:36:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Xi Wang <xii@google.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Chen Yu <yu.c.chen@intel.com>, Kees Cook <kees@kernel.org>,
-	Yu-Chun Lin <eleanor15x@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	jiangshanlai@gmail.com
-Subject: Re: [RFC/PATCH] sched: Support moving kthreads into cpuset cgroups
-Message-ID: <aBuaN-xtOMs17ers@slm.duckdns.org>
-References: <20250506183533.1917459-1-xii@google.com>
- <aBqmmtST-_9oM9rF@slm.duckdns.org>
- <CAOBoifh4BY1f4B3EfDvqWCxNSV8zwmJPNoR3bLOA7YO11uGBCQ@mail.gmail.com>
- <aBtp98E9q37FLeMv@localhost.localdomain>
- <CAOBoifgp=oEC9SSgFC+4_fYgDgSH_Z_TMgwhOxxaNZmyD-ijig@mail.gmail.com>
+	s=arc-20240116; t=1746639437; c=relaxed/simple;
+	bh=bQHhiJb/IfsuDYo0XF1+Y57pCH6WG6CKDTT1nxeWSmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cEFQRrTXaAA60Mh8yO3s4UVhMG+sKLaj6eqoVVNazgOlxVp9DCjq+z5XpS9bnhSjt4uQap26jnNVaDyPrQKbIRGA0IdvFmSAyuLVlA/Bpo3X8hwGYo/ob3fMjAjkm8d0Yc8+35Rc4r1lSfdmPYrBzcMeqox9rgUaWrGCIATv/dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qyJQwsFB; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso4785e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 10:37:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746639434; x=1747244234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bQHhiJb/IfsuDYo0XF1+Y57pCH6WG6CKDTT1nxeWSmE=;
+        b=qyJQwsFBjgtBNhkB9GBEU/vDwiCPenXS6NhmT3V9TSs/k+WfB8H+j+8eMGcGBNUqoJ
+         YaGP261J7cYfyLhzBEx+uyCmydH+psw9Jk07U55xu5hhyumtYlQi26hNl6cIpDFl/oXS
+         g/bBUJGsh/6vPsudxtX4g6FgvKs/V4fho/lfXquPAOO3NSnp/frlUanUXQnsj1hw2VLk
+         mLC/zjEGeRgaBuTWVIcd5vpNKxOjvk8JAVzJYpEi0HGj3BIg+Jn2bQS5s1Pe64sfoBNd
+         /BfJna7/eVlg53MwqmZZAIULCInqmcts/ezxre5VQm6AWlY7M5L7pwk+iU7TWqKt8SCw
+         oVNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746639434; x=1747244234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bQHhiJb/IfsuDYo0XF1+Y57pCH6WG6CKDTT1nxeWSmE=;
+        b=ijLiKkA33bYar0SmiOpYRn+LwkisUOawm7xt0kRaFNbXxjAWFPkz+oEgjgoakpLPn/
+         i3hsbb8UclhJTWsVnKaxyAT/F6po2eM388rK4Bj5MF/RBS5DmtjjcbrmTlqVN1Jcw0nj
+         QY+L0AQYQq1vAZbtAX64TNQKYbQfxr7dDW9XYozhzkbWio3Y5z8mNQxFs4Q6BFDtc3x+
+         Z/HiV6eIv8N89BU1bXAkroOpCAIhI1RhGgJVAP2agxahPQnvFOyflGbsImJUaGKhB2BZ
+         zwjcN7AVBtaWvmzf3MEZJW5Z9vXGTVM1k0W6x89UeRvXlF58P7DuOV4PjM16bE/xX4U2
+         kV9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW0wuRnTNF82haau9yTxwZpicBpZGE9As5vxPu262NXOwqmYoujNYVAVRUcW2OlOhW6TcjotK8+XFN1WrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBWQxAMaAa1+igQVW1Dm+NDA1lDtgTFkLmH62GJMbQQJID85ZE
+	WURz/K47vPv8Gz7/kUGpX2Ins6kw0qZUoZEWypeChSH/7YOIRfJ+9UFbiiZAnk7fdJ2poFVz8kG
+	F+27o0WFi5yMwq1WeR5V/xgLq+cYGKn/aXVPw
+X-Gm-Gg: ASbGnctOGmojOFJmftI5lVMmye9YpD1ufBUr0IY+uPPf/Tj28a8ok8EN6YnqOlwsX/H
+	ndLA3ey/pmzib4t5WgsFoZligjpskHUHjX+r2mfTO1XdfcFVrLuaUQKUJ309Hbv2x6wXXN3CCpM
+	/gs2QNmz/z4gDDRP5S8Z8lbVWhxd13hSSuwwlhBJzDyAtuweI0i5g=
+X-Google-Smtp-Source: AGHT+IGhDsyDC4rx4Jh4KPoVriF6uM/2LMAigWo/dJgJXOk4tdHRjlokfIMBEcSr4ZZiHUTQp//vG2FjpjSJlL89x3c=
+X-Received: by 2002:a05:600c:4448:b0:43b:c2cc:5075 with SMTP id
+ 5b1f17b1804b1-441d4d4b8d4mr1462165e9.5.1746639433809; Wed, 07 May 2025
+ 10:37:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOBoifgp=oEC9SSgFC+4_fYgDgSH_Z_TMgwhOxxaNZmyD-ijig@mail.gmail.com>
+References: <20250507001036.2278781-1-tjmercier@google.com>
+ <20250507001036.2278781-3-tjmercier@google.com> <CAADnVQL2i87Q4NEX-4rXDBa_xpTWnh=VY-sMCJzK+nY0qogeqw@mail.gmail.com>
+In-Reply-To: <CAADnVQL2i87Q4NEX-4rXDBa_xpTWnh=VY-sMCJzK+nY0qogeqw@mail.gmail.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Wed, 7 May 2025 10:37:01 -0700
+X-Gm-Features: ATxdqUGvlgXnJv15CWumpdguGu0hVB25voP1FwyUGSqp8OgHDoPOAE5CsZeJmPA
+Message-ID: <CABdmKX15i760AKT3e6BL-mOUgOjNfX7ugYJQmy_J6YD1TeNEfw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 2/5] bpf: Add dmabuf iterator
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, android-mm@google.com, simona@ffwll.ch, 
+	Eduard <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, May 7, 2025 at 7:14=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, May 6, 2025 at 5:10=E2=80=AFPM T.J. Mercier <tjmercier@google.com=
+> wrote:
+> >
+> > +/**
+> > + * get_first_dmabuf - begin iteration through global list of DMA-bufs
+> > + *
+> > + * Returns the first buffer in the global list of DMA-bufs that's not =
+in the
+> > + * process of being destroyed. Increments that buffer's reference coun=
+t to
+> > + * prevent buffer destruction. Callers must release the reference, eit=
+her by
+> > + * continuing iteration with get_next_dmabuf(), or with dma_buf_put().
+> > + *
+> > + * Returns NULL If no active buffers are present.
+> > + */
+>
+> kdoc wants to see 'Return:'.
+>
+> See errors in BPF CI.
+>
+> And patch 5 shouldn't be using /** for plain comments.
 
-On Wed, May 07, 2025 at 10:23:24AM -0700, Xi Wang wrote:
-> Overall I think your arguments depend on kernel and application threads are
-> significantly different for cpu affinity management, but there isn't enough
-> evidence for it. If cpuset is a bad idea for kernel threads it's probably not
-> a good idea for user threads either. Maybe we should just remove cpuset from
-> kernel and let applications threads go with boot time global variables and
-> set their own cpu affinities.
+Thanks, I found the CI errors, fixed, and verified with
+scripts/kernel-doc. I didn't receive emails about them though, not
+sure if I should have.
 
-I can't tell whether you're making a good faith argument. Even if you are,
-you're making one bold claim without much substance and then jumping to the
-other extreme based on that. This isn't a productive way to discuss these
-things.
-
-Thanks.
-
--- 
-tejun
+> pw-bot: cr
 
