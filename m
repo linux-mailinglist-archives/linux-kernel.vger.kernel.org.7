@@ -1,116 +1,155 @@
-Return-Path: <linux-kernel+bounces-637792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6532CAADD29
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:22:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFA6AADD5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEB81BA2D03
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6545171B4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CF121ABB2;
-	Wed,  7 May 2025 11:22:10 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8698D20CCED
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A96214A77;
+	Wed,  7 May 2025 11:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bPXDLx8j"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5F76FC5;
+	Wed,  7 May 2025 11:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746616929; cv=none; b=Wuu8DN5GjA+7dVu36akhnO1U9+1pZYE2zsC7pGALwDz6Jh+dNOu2oqpFvY3PFIAofImfQY6e1DvIYpNjQIlaXQMjXoklNFEbOeu9Ixco0j1AkASXtSNwBfkiSEO2lC1t5yYZ6OxVlQjVw0LjmgZCOTpMRzVHdolH2S26fxHibqY=
+	t=1746617449; cv=none; b=Pa6KQAfW1qa3ezgx6yCr11ckmsTes7iUFarrOVCa1elJiKPqnDfQ0br6Rt8l2LKs9lLhm9gOrSUGMu+446pGtGzKiUCNf2WCXx0s8Ej6xKhMuhhQAbGqLwTff/jhuboCCXZfYOsek00P4r7iS0bCvppUSPFhJ+QsyR+fZH2zd3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746616929; c=relaxed/simple;
-	bh=NNo8O3O7I8xKI9r4pwRS0x6i00//1Wj7e63uNSkMrU4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cxDnlUZKHSiFKuGgFBAUJuIZjPUdCT5+3G1bplJIYvGafQRYf6/ksV36zuIKXm8xmZlVh0EQ5G84D267d+42vhuF7K9+r96vQIArFNqTBcazRG07sinsVjTewWkxNF8qUyMy23WdaXVC0+SMCypuv+9oULU1OEdi/ZkLoEQnm84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso30862385e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:22:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746616925; x=1747221725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZWC9bs3J+fotQKN+Pvu1nWrnqjUtpAFHf8gyq7Cydsg=;
-        b=W5kleO2+HESCyZlc97EtZgi7pcf+QRvwGvOlc0Fc3z7sjOr1Uii/t/WP19b6QZEc6m
-         WRGVh6faK99UBtu5dfHULHazHZWj6IrbqdTq+G0Iu2VGtAyUN6DbEZ7mqxphAUn7r0gY
-         FkS84TXhQSsHFxjEY0QDRUCeB1q/oswB+zj3YJouq0BPm1rd5z+DwWI6SZJSyp1BFb6S
-         BZ+o1vBZ3RThq7uZ3z5RaT2Ddtm3U2DCy5MWiDQ7HcspMBKF+/B8D6bHr1ikEIM8S4rX
-         E86UAuWnQlQZCvWib1KaVdpmSiHtmjX1vD/2Sse8eC2tel2k2/8m38z+fdYeAR0RBaFT
-         DDuA==
-X-Gm-Message-State: AOJu0Yyv2lU6vGINtVa3MbWjY14OpbbRx7k6gLwIoXIJsmNpU9aHs59X
-	qORAu5aPdrlUeYI9fR/rE6gE9nh3y3NoTLgCnaJ5vBkQnzOGwZeu2QB5HQ==
-X-Gm-Gg: ASbGnctH9hdGWtYtzQsYTVxgmHtKwXY/AWen0BkbBeToDPH5Oqp+S04m2c55P1JPDTk
-	n0tHcypwa8EBjNF6GBS5Y3sG2p/HLH1THP6J75RBGRFfXl2Hn/+zi+lIlVyBVPIzN7Xkanmomk0
-	V8GUrc5oRdfRY0le0BcrNJ5eAsCd4s5wKFQjkHQPUo4ba32KGN1fCQ0xpwWwU9NZf5i1+AhaEJK
-	5Io5y5jy8qHB1opIg1k2lJ6e1XdnTZuA8o2NM3YUoq2IomGks8fBLgRv5UlpeReSNGDMirV1aKH
-	PLSeUrErzW46WSNHsnu53YeB/l5np/zIWKPWG/5qMMFZSmRjR0aYFD2+FIyrwyNZ1rhdJG3s3Sn
-	vFg==
-X-Google-Smtp-Source: AGHT+IGRWvY8rXW6dhn155ZAXsXvmGuf7LheNdjj6dzmGatIJg0UzjRGoVu2EsyA9CH4JuUihSF83g==
-X-Received: by 2002:a05:600c:35cf:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-441d44c4642mr21809675e9.14.1746616924512;
-        Wed, 07 May 2025 04:22:04 -0700 (PDT)
-Received: from ramallet.home (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d43a802csm28373955e9.39.2025.05.07.04.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 04:22:04 -0700 (PDT)
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-To: linux-kernel@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/etnaviv: Fix flush sequence logic
-Date: Wed,  7 May 2025 13:21:30 +0200
-Message-ID: <20250507112131.3686966-1-tomeu@tomeuvizoso.net>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746617449; c=relaxed/simple;
+	bh=BT5flKrqdULW+U+spcOhTaxlNK6ECqi3PjYzjthRMyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BENMtcagZ1fW5Et6iUtDbhVVd1Pui0ltCc2xbSwNNihCYB4Dy5LXtgE9SLtr9SyZZBzYC3yLZhCc79qTDZggX003PxcUrGyHswUiO9N9TfabRsRxZUC+yXeHfwYM7II4v47SAj1aAl1BDv/LoeSFW+E3birFCtfRfNhXEcDCpJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bPXDLx8j; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.218.35] (unknown [4.194.122.170])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E944E21180CA;
+	Wed,  7 May 2025 04:21:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E944E21180CA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1746616916;
+	bh=YqDRKtZG+1qSllTV6hrI3N5y77O1WF8OhkPzBs8Ho3A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bPXDLx8jx7FJJIDSCZ7NsGBFopGHWZmbDslW+Q7oSJR9Gro2OQosggYFSZ7uNaIcr
+	 KeG8tJHb2PO6dKajP7Lxseu72h6RVyd0Z95E24sQNYIxXep4bSdskBlDXbj9eYpVgj
+	 Jci8uIVErP+W+D1/HJJIvNN0Gl38fMCUW83SRRcE=
+Message-ID: <be04a26f-866d-43e6-9a0b-15b91405503e@linux.microsoft.com>
+Date: Wed, 7 May 2025 16:51:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
+To: Saurabh Singh Sengar <ssengar@microsoft.com>,
+ KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
+Cc: Roman Kisel <romank@linux.microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+References: <20250506084937.624680-1-namjain@linux.microsoft.com>
+ <KUZP153MB1444BE7FD66EA9CA9B4B9A97BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <KUZP153MB1444BE7FD66EA9CA9B4B9A97BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We should be comparing the last submitted sequence number with that of
-the address space we may be switching to.
 
-And we should be using the latter as the last submitted sequence number
-afterwards.
 
-Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
----
- drivers/gpu/drm/etnaviv/etnaviv_buffer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 5/7/2025 3:49 PM, Saurabh Singh Sengar wrote:
+>> Provide an interface for Virtual Machine Monitor like OpenVMM and its
+>> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
+>> Expose devices and support IOCTLs for features like VTL creation,
+>> VTL0 memory management, context switch, making hypercalls,
+>> mapping VTL0 address space to VTL2 userspace, getting new VMBus
+>> messages and channel events in VTL2 etc.
+>>
+>> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>>
+>> OpenVMM :
+>> https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fopenv
+>> mm.dev%2Fguide%2F&data=05%7C02%7Cssengar%40microsoft.com%7Ce3b
+>> 0a61c2c72423aa33408dd8c7af2e9%7C72f988bf86f141af91ab2d7cd011db47%
+>> 7C1%7C0%7C638821181946438191%7CUnknown%7CTWFpbGZsb3d8eyJFbXB
+>> 0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFp
+>> bCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=uYUgaqKTazf0BL8ukdeUEor
+>> d9hN8NidMLwE19NdprlE%3D&reserved=0
+>>
+>> ---
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_buffer.c b/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
-index b13a17276d07..865b07b14b38 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
-@@ -347,7 +347,7 @@ void etnaviv_buffer_queue(struct etnaviv_gpu *gpu, u32 exec_state,
- 	u32 link_target, link_dwords;
- 	bool switch_context = gpu->exec_state != exec_state;
- 	bool switch_mmu_context = gpu->mmu_context != mmu_context;
--	unsigned int new_flush_seq = READ_ONCE(gpu->mmu_context->flush_seq);
-+	unsigned int new_flush_seq = READ_ONCE(mmu_context->flush_seq);
- 	bool need_flush = switch_mmu_context || gpu->flush_seq != new_flush_seq;
- 	bool has_blt = !!(gpu->identity.minor_features5 &
- 			  chipMinorFeatures5_BLT_ENGINE);
-@@ -399,6 +399,7 @@ void etnaviv_buffer_queue(struct etnaviv_gpu *gpu, u32 exec_state,
- 			struct etnaviv_iommu_context *old_context = gpu->mmu_context;
- 
- 			gpu->mmu_context = etnaviv_iommu_context_get(mmu_context);
-+			gpu->flush_seq = new_flush_seq;
- 			etnaviv_iommu_context_put(old_context);
- 		}
- 
--- 
-2.49.0
+<snip>
 
+>> +		return -EINVAL;
+>> +	if (copy_from_user(payload, (void __user *)message.payload_ptr,
+>> +			   message.payload_size))
+>> +		return -EFAULT;
+>> +
+>> +	return hv_post_message((union
+> 
+> This function definition is in separate file which can be build as independent module, this will cause
+> problem while linking . Try building with CONFIG_HYPERV=m and check.
+> 
+> - Saurabh
+
+Thanks for reviewing Saurabh. As CONFIG_HYPERV can be set to 'm'
+and CONFIG_MSHV_VTL depends on it, changing CONFIG_MSHV_VTL to tristate
+and a few tweaks in Makefile will fix this issue. This will ensure that
+mshv_vtl is also built as a module when hyperv is built as a module.
+
+I'll take care of this in next version.
+
+here is the diff for reference:
+diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+index 57dcfcb69b88..c7f21b483377 100644
+--- a/drivers/hv/Kconfig
++++ b/drivers/hv/Kconfig
+@@ -73,7 +73,7 @@ config MSHV_ROOT
+           If unsure, say N.
+
+  config MSHV_VTL
+-       bool "Microsoft Hyper-V VTL driver"
++       tristate "Microsoft Hyper-V VTL driver"
+         depends on HYPERV && X86_64
+         depends on TRANSPARENT_HUGEPAGE
+         depends on OF
+diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
+index 5e785dae08cc..c53a0df746b7 100644
+--- a/drivers/hv/Makefile
++++ b/drivers/hv/Makefile
+@@ -15,9 +15,11 @@ hv_vmbus-$(CONFIG_HYPERV_TESTING)    += hv_debugfs.o
+  hv_utils-y := hv_util.o hv_kvp.o hv_snapshot.o hv_utils_transport.o
+  mshv_root-y := mshv_root_main.o mshv_synic.o mshv_eventfd.o mshv_irq.o \
+                mshv_root_hv_call.o mshv_portid_table.o
++mshv_vtl-y := mshv_vtl_main.o
+
+  # Code that must be built-in
+  obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o
+-obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o mshv_common.o
+-
+-mshv_vtl-y := mshv_vtl_main.o mshv_common.o
++obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o
++ifneq ($(CONFIG_MSHV_ROOT) $(CONFIG_MSHV_VTL),)
++    obj-y += mshv_common.o
++endif
+
+Regards,
+Naman
 
