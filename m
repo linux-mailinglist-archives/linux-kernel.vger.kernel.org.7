@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-638365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF119AAE51B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:42:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF54AAE51A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A458D1C2865C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAAC4A84E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D0B28B509;
-	Wed,  7 May 2025 15:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E588828B7DA;
+	Wed,  7 May 2025 15:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTV07ZyL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayKxudTy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C17B28B4EF;
-	Wed,  7 May 2025 15:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD8028B7C9;
+	Wed,  7 May 2025 15:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632519; cv=none; b=mrtcFKe+zCCA7OBVMtjVWfSmLh+uZ91RxgMeKyuDTL1+nA+pOjmhyXFoMf4mxvt1B/p5IpZ0uzd8V9H7PYwrePtDqzLPKBgKpAS0pEs1bbPOZwHyiXI+xBlaqEPFqI7+87IbNhFcTrAej6QmYbuG3v7nY0mhz4uGD4wN0dHPG0U=
+	t=1746632521; cv=none; b=mG3SW4GraCAw15Jm8erAtjED/ah6w8ilaOB9eSdombMPBkXcJWATmvyndPVk+XOYo4XIjwxIU11mJDEFqulDlYRoXl1W5f6+AK8X6RPQQ18x3nAuRP5OYaC2yhv0DEKDQWI64N270gf197XCwYHi34IVDEJ7DvaIxXH4RxyA6Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632519; c=relaxed/simple;
-	bh=V499VMv+rPex1wvscWee8vau59a5tTXRvhSZFocwZ3E=;
+	s=arc-20240116; t=1746632521; c=relaxed/simple;
+	bh=NCun+NhTWH48hbEa1EuIT6DCqQ2vujaGUcGfgfPDYNY=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=lBuQR7Kyrm/+vFivDUGPoADWuYI4JhJ4IZUBerITualpVR02qLSa/+iY75zVRdPBssWJvfXQEXIgzlV/+3U+ElXL0nlchILrARoZh2K6HPngxCShQAToMBVjqJZipL+V4WyfpkPTG27JgqV8vhJ23Vf5vc0Y2hDPRwG1JO/SbWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTV07ZyL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A014C4CEE2;
-	Wed,  7 May 2025 15:41:58 +0000 (UTC)
+	 Message-Id:Subject; b=EPQG9N3do1cInBgmeEkJlr1mjegTpJGvgDFTX/wxErDj5GBMMlUjcbj9yFmNJ2VhmzdYV8MMDxxrLRMntqgARA5jNJezMMQNfJsdNW+gmWuO4XjhxEB/bpe1UapDDHj8wh8tIm/bbsyJbocGgdrFsopA67+tCDW4k8hpesMPA1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayKxudTy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF742C4CEE2;
+	Wed,  7 May 2025 15:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746632519;
-	bh=V499VMv+rPex1wvscWee8vau59a5tTXRvhSZFocwZ3E=;
+	s=k20201202; t=1746632521;
+	bh=NCun+NhTWH48hbEa1EuIT6DCqQ2vujaGUcGfgfPDYNY=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=eTV07ZyLYysTTRFH5wy8M0Lo9JSlivRghPHy5tjGP8qJSAZJm7GP6MKpMuW54FCbV
-	 PjHS+VFoQOAbVhrqtrFVIy3LSPw78UCySupjxCMTfVafeGD1DiammW+4IKZogrUYB3
-	 h34qbfMbIp5yNhyeR1+Woc7wfhHd9VP36wM9lHfXYIbiXB5wizPwTIdr4fgtLUOsqb
-	 ln2Zc5Anun9B6RDd0KeiDxOfJCt4bSg4aywKioxwhLSlaf16szGuGkP48EuzjPKh60
-	 08F9O82Aa2tVq8Mhssf4EwsRAX2U+u8UiibCv7Wg/a0WZ40zjmae3sUjxGIEUbSboq
-	 7j2mV9ltnvqSA==
-Date: Wed, 07 May 2025 10:41:57 -0500
+	b=ayKxudTyJcemB7oHNmsFytdZuHFwII5dxe9hw71MFdX6RFZfnqI7hoW/oeJZ/+s6k
+	 y2r1mzFoeZ7y+wVeQgCiXzAHinHNjme4Fv85kDtClkWiR+PBulywwOzGUTwno9IsCh
+	 wyZx7ffJtIwiDDNxTMlc5zAzoxCmdGdBcB13tXlh6eB4Qy4ezREtGFTbkpzv7Orv7p
+	 1+jxID5G7BYRYp+bg8GTlYqUPp2Gqjk7acNRtI+QeJB9lHl2JkKYe1pmdXhnyJCJfL
+	 CdymfmqRxNZO2fU8s9/5PQdBhjgVKM2LTRB5c8/ANA4ycRpc5MLEJcgqYVG6oPQ/aC
+	 ZTWONnpz2AElQ==
+Date: Wed, 07 May 2025 10:41:59 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,39 +50,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, 
- linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de, 
- devicetree@vger.kernel.org, robertcnelson@gmail.com, kristo@kernel.org, 
- vigneshr@ti.com, w.egorov@phytec.de, nm@ti.com, 
- francesco.dolcini@toradex.com, linux-kernel@vger.kernel.org
+Cc: conor+dt@kernel.org, nm@ti.com, vigneshr@ti.com, w.egorov@phytec.de, 
+ linux-arm-kernel@lists.infradead.org, kristo@kernel.org, 
+ devicetree@vger.kernel.org, upstream@lists.phytec.de, 
+ linux-kernel@vger.kernel.org, krzk+dt@kernel.org
 To: Daniel Schultz <d.schultz@phytec.de>
-In-Reply-To: <20250507050847.912756-1-d.schultz@phytec.de>
-References: <20250507050847.912756-1-d.schultz@phytec.de>
-Message-Id: <174663232933.1557435.12503360883036162870.robh@kernel.org>
-Subject: Re: [PATCH 1/4] arm64: dts: ti: k3-am62-thermal: Add Files for
- each Temp. Grade
+In-Reply-To: <20250507070008.1231611-1-d.schultz@phytec.de>
+References: <20250507070008.1231611-1-d.schultz@phytec.de>
+Message-Id: <174663232992.1557549.10416633655094198343.robh@kernel.org>
+Subject: Re: [PATCH v3 0/4] {am62,am62a}-phycore-som: Add R5F and C7xv
+ device nodes
 
 
-On Tue, 06 May 2025 22:08:44 -0700, Daniel Schultz wrote:
-> The AM62x SoC supports three temperature ranges:
-> * A: -40 to 105C - Extended Industrial
-> * H:   0 to  95C - Commercial
-> * I: -40 to 125C - Automotive
+On Wed, 07 May 2025 00:00:04 -0700, Daniel Schultz wrote:
+> This patch series is based on [1] and adds these R5F and C7xv device nodes
+> to the am62- and am62a-phycore-som device-trees. It also reserves main_timer2
+> as well as main_rti4 for the C7 DSP firmware.
 > 
-> Add device tree include files to adjust the alert and critical trip
-> points in k3-am62-thermal based on the temperature grade.
+> 1: https://lore.kernel.org/linux-arm-kernel/20250502220325.3230653-1-jm@ti.com/T/#t
 > 
-> Passive trip points are always set 10C below critical.
+> Changes in v2:
+>   * Rebased to latest master branch.
 > 
-> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-> ---
->  .../dts/ti/k3-am62-thermal-automotive.dtsi    | 20 +++++++++++++++++++
->  .../dts/ti/k3-am62-thermal-commercial.dtsi    | 20 +++++++++++++++++++
->  .../dts/ti/k3-am62-thermal-industrial.dtsi    | 20 +++++++++++++++++++
->  3 files changed, 60 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62-thermal-automotive.dtsi
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62-thermal-commercial.dtsi
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62-thermal-industrial.dtsi
+> Changes in v3:
+>   * Added Reviewed-by
+>   * Merged mboxes items for c7x and wkup+mcu rf5 nodes.
+> 
+> Daniel Schultz (4):
+>   arm64: dts: ti: k3-am62-phycore-som: Enable Co-processors
+>   arm64: dts: ti: k3-am62a-phycore-som: Enable Co-processors
+>   arm64: dts: ti: k3-am62a-phycore-som: Reserve main_rti4 for C7x DSP
+>   arm64: dts: ti: k3-am62a-phycore-som: Reserve main_timer2 for C7x DSP
+> 
+>  .../boot/dts/ti/k3-am62-phycore-som.dtsi      |  35 +++++-
+>  .../boot/dts/ti/k3-am62a-phycore-som.dtsi     | 106 +++++++++++++++++-
+>  2 files changed, 129 insertions(+), 12 deletions(-)
+> 
+> --
+> 2.25.1
+> 
+> 
 > 
 
 
@@ -102,29 +109,30 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/v6.15-rc1-6-gf1aff4bc199c (exact match)
+ Base: tags/v6.15-rc1-35-gd16e7d34352c (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250507050847.912756-1-d.schultz@phytec.de:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250507070008.1231611-1-d.schultz@phytec.de:
 
-Error: arch/arm64/boot/dts/ti/k3-am62a-thermal-industrial.dtsi:6.1-13 Label or path main0_alert not found
-Error: arch/arm64/boot/dts/ti/k3-am62a-thermal-industrial.dtsi:14.1-13 Label or path main1_alert not found
-Error: arch/arm64/boot/dts/ti/k3-am62a-thermal-industrial.dtsi:22.1-13 Label or path main2_alert not found
+Error: arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi:203.1-7 Label or path c7x_0 not found
+Error: arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi:392.1-12 Label or path mcu_r5fss0 not found
+Error: arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi:396.1-18 Label or path mcu_r5fss0_core0 not found
+Error: arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi:431.1-13 Label or path wkup_r5fss0 not found
+Error: arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi:435.1-19 Label or path wkup_r5fss0_core0 not found
 FATAL ERROR: Syntax error parsing input tree
 make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb] Error 1
 make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/ti] Error 2
 make[2]: Target 'arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb' not remade because of errors.
 make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: ti/k3-am62a7-phyboard-lyra-rdk.dtb] Error 2
-arch/arm64/boot/dts/ti/k3-am62a7-sk.dts:14:10: fatal error: k3-am62a-thermal-automative.dtsi: No such file or directory
-   14 | #include "k3-am62a-thermal-automative.dtsi"
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb] Error 1
+Error: arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi:403.1-13 Label or path wkup_r5fss0 not found
+Error: arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi:407.1-19 Label or path wkup_r5fss0_core0 not found
+FATAL ERROR: Syntax error parsing input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb] Error 1
 make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/ti] Error 2
-make[2]: Target 'arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: ti/k3-am62a7-sk.dtb] Error 2
+make[2]: Target 'arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: ti/k3-am625-phyboard-lyra-rdk.dtb] Error 2
 make: *** [Makefile:248: __sub-make] Error 2
 make: Target 'ti/k3-am625-verdin-wifi-ivy.dtb' not remade because of errors.
 make: Target 'ti/k3-am625-verdin-wifi-dahlia.dtb' not remade because of errors.
@@ -141,6 +149,7 @@ make: Target 'ti/k3-am6528-iot2050-basic-pg2.dtb' not remade because of errors.
 make: Target 'ti/k3-am68-sk-base-board.dtb' not remade because of errors.
 make: Target 'ti/k3-am62p5-sk.dtb' not remade because of errors.
 make: Target 'ti/k3-am6528-iot2050-basic.dtb' not remade because of errors.
+make: Target 'ti/k3-am62-pocketbeagle2.dtb' not remade because of errors.
 make: Target 'ti/k3-am6548-iot2050-advanced-m2.dtb' not remade because of errors.
 make: Target 'ti/k3-am654-base-board.dtb' not remade because of errors.
 make: Target 'ti/k3-am6548-iot2050-advanced.dtb' not remade because of errors.
@@ -152,6 +161,7 @@ make: Target 'ti/k3-j721e-beagleboneai64.dtb' not remade because of errors.
 make: Target 'ti/k3-am642-phyboard-electra-rdk.dtb' not remade because of errors.
 make: Target 'ti/k3-am69-sk.dtb' not remade because of errors.
 make: Target 'ti/k3-am6548-iot2050-advanced-pg2.dtb' not remade because of errors.
+make: Target 'ti/k3-am68-phyboard-izar.dtb' not remade because of errors.
 make: Target 'ti/k3-am642-hummingboard-t-pcie.dtb' not remade because of errors.
 make: Target 'ti/k3-j7200-common-proc-board.dtb' not remade because of errors.
 make: Target 'ti/k3-am62-lp-sk.dtb' not remade because of errors.
