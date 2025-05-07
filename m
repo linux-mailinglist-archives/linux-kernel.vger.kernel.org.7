@@ -1,135 +1,92 @@
-Return-Path: <linux-kernel+bounces-637810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FA8AADD5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:29:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97323AADD89
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977C91BC2535
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C190D1BC88A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994C823496F;
-	Wed,  7 May 2025 11:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB5E2343B6;
+	Wed,  7 May 2025 11:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MP6Qgwtg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="bn00OwN1"
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2C221B9F1;
-	Wed,  7 May 2025 11:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B35921CC45
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746617350; cv=none; b=QuKdOlQNpBxzokehgIOBPOEs/9q1MlLgtBpxK1+hBoFQhudswRAxj6N5dx9eZ3u1H3ouKTxKGFeO7o8oSAjjUmq1JZvXD1Z6ZFNFTD4YUmPpI+nmIzVHCHIg+OhfFE6CqPA4qGdhxLb+BLJOJ6lO57Kd6hvp5tVaMs5DoZDeKfM=
+	t=1746617945; cv=none; b=WyBoT5l8YgSv4j/vR3h5ByXv5Ic6E1xssCevW0NBtCoZGezf8+PJ/UUEqoX75Vy3bXqeMAMCXj9e8L2OflgE8/gGMLUpPj7ojT7rHMM/T5QhtELkQT/2UDfq8KhyNwVZn0y8Sp8awYaQjHAwkKBjfttriUj89jQpj0MKUZUt9vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746617350; c=relaxed/simple;
-	bh=Nj51xk3On+TtmHT8qaq83NkgnSPFnqdrPPmzZbTtP/4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=XoEKW0Q212oPinaX8th/+ffmggMp1g4PYAupC+VWqsS78uXTyqAXlWnFPZJ+DXlHIwcRYaknHC2Rp1+W6YCjcQbOcPa22HGin2HBE51912paVTpJ8EDFztEcBFc2x1z2ndWXZrC95kq8rIlcwqI+1gcfhvJr3G9WDjYrUeyRgac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MP6Qgwtg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F3FC4CEE7;
-	Wed,  7 May 2025 11:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746617349;
-	bh=Nj51xk3On+TtmHT8qaq83NkgnSPFnqdrPPmzZbTtP/4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=MP6QgwtgiwX43sT7HLeQtFhX4UvOm3pfA5NjzhEmHrtcG1WpDWnR9FsK44Cw6Mwbc
-	 IrbkWyqM2EdUXMyT1YfzSSIR65I9aWdkds5pEYnyO7ft2hS6VrXb8IT7KQVBhoia18
-	 Li1EnuAptFTtN7q0RUTMBFKKtzg7aNeLSLESS3YgmCaVDKnWPj51Ivr3X1jOc6ZRYN
-	 xuymiZQ815+y/q+Hm4Gr1/zOHnIxI0yA7J3OHoxXSf2Z+AlvCiHsU9p5by5ZMGECVT
-	 sFlhOICs4r8Xaj+SHSsJ9SP3W5MuqTXMBI2n8vB5ImcClRrgJypm6Q/yxf2LfZJYsl
-	 0hhxurz8WW7+A==
+	s=arc-20240116; t=1746617945; c=relaxed/simple;
+	bh=oRAa5mnOrowLtFslmNlY4yDQXQYBw9BfKvTiAtzpUMA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=mKZTj31aSaHjxH+9EMQjXsdD1kA4fKHQ7gKfi16AlidkFfNjZUv87crreP2gVHy6BXQ/OrBGMz6UiKdq3ZuPoQ3R+kkjlubhmUxHq2qY/diHe0dKnyP1rVX48GiGsNbkvmBXbhkuKPmqiKdUL1xMDuLjjgHVZ4i9xBQ/omOBzhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=bn00OwN1; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1746617933; bh=Ch1JB0gV+OI9f2n8oy7YDjOdh6rDxEJQw7f3tYeima8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=bn00OwN1kwSnTFyfZL5v1ZyhZgJ2lpGwoG7vS7cpM+quHPRgmvFwUan0RuEwbgYu4
+	 1k0DrIokVe8kZkWvq0kh0Ltc5yQ0KjuJwBsXOJvy4Ai1kBmMFqoIzGWvms7f7F2XWa
+	 HRD6EacCCZwps+MRytruqsNc7HBUOcdkIJMgaGWs=
+Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 79F908FB; Wed, 07 May 2025 19:30:31 +0800
+X-QQ-mid: xmsmtpt1746617431ta5bzkia6
+Message-ID: <tencent_06AC9518E9DAEE02CC847A366C002D4D6C0A@qq.com>
+X-QQ-XMAILINFO: MTl9YqPIt7/7P1fYDcitxioCnVxmJiurzwb1WhbbjSrGpUSDzVm7djq8EhRwXu
+	 o80PFGGmRV1DpZaMOt6zpPD0mTURker4KWhRnEKCnblbI8EAodLGMZioCF3iYrrIwhzkZL/Lm281
+	 Mk2seKjaYSjoO4tVbSfT+j0R6s95JrZyhU+4k+Mz5eLH+u+TIwJ2yuBNfMFkPzaNg1jE3r1xxNtL
+	 /gtnVw5PjUrH98MAoOS9nYPQimIKwoWPcykx9EzUQ5EHOaDTpmftF7EOzX3AYB9DQYVx/V1vZXi7
+	 sx58vzts3dRHzmjMu4aUUcewIuhDpp50ZQVxQS+q2ylG8PMaBAJNjlvVqzm6E7CrRrQoL6jcZF7L
+	 AyKU1oZ/S4JeB6rlcfkibcPUbLhmewXKu7ndZuelgxm8gQYdz9e82fLtDntFUZeIEKywvcjY6Wa0
+	 mgvDeGC8fniqkbinDtZ/DhRCiqxRqtIlFArXZW2PWNbmK/h2Btb348rMahWWp1PT+YfZfk3ic0kB
+	 HjmaNCn+9n3bTC4608GrhcdwU70nDhOt24BH7MCUlvpSH9SNwuZhRv8n8htmaV6Q0bnI1t39RNaK
+	 ICbH0mL1r52jeegfze7WK49M1Y1gQn/CHwsW9AYlvGmOiK5F4r6E4/7PlwfMiEwcKPRWlws04hFj
+	 e+bCPmeg/vbQx92RCgle6Q1pFPHZcBuWff1Ikyv3MQicX5RPk6HH6JTwKje7K5ZAL4avk/X30XmS
+	 bBefrzM6ZCV44yQEU0N6GV2f9/eNlX5QdsalGO8Dxr2LaaDX0FOBAdP8eskRkslP8JhvIEObItvp
+	 Oo73YfAYbbo5qgmeIGfcEcyxCDPnje1HErePTLStcnpKhVPg9IkZivTGz1XaJEp5ZmZHNdIVop8R
+	 Ld1W+FfkP4gpboN6keUHvvsDUILqWv/i7wlGClQYxUrREM1s4vF/X1DN31yPBBgQ==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+Date: Wed,  7 May 2025 19:30:32 +0800
+X-OQ-MSGID: <20250507113031.3246094-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
+References: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 07 May 2025 13:29:03 +0200
-Message-Id: <D9PW6AGXCWM8.31IPHEJLS9SNZ@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>, "Alice
- Ryhl" <aliceryhl@google.com>, "Masahiro Yamada" <masahiroy@kernel.org>,
- "Nathan Chancellor" <nathan@kernel.org>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>, "Nicolas Schier"
- <nicolas.schier@linux.dev>, "Trevor Gross" <tmgross@umich.edu>, "Adam
- Bratschi-Kaye" <ark.email@gmail.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>, "Petr
- Pavlu" <petr.pavlu@suse.com>, "Sami Tolvanen" <samitolvanen@google.com>,
- "Daniel Gomez" <da.gomez@samsung.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Greg KH" <gregkh@linuxfoundation.org>, "Fiona
- Behrens" <me@kloenk.dev>, "Daniel Almeida" <daniel.almeida@collabora.com>,
- <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v12 1/3] rust: str: add radix prefixed integer parsing
- functions
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org>
- <20250506-module-params-v3-v12-1-c04d80c8a2b1@kernel.org>
- <UfD3pllWu8O_qAKsi04IMH1WGszkDe31KpLs7oMvDsUC-tryEbrYKmtDAPj5w-BO2CyZ8_S_G5lWBE2Ud72n8w==@protonmail.internalid> <D9PSYQMCW74W.39JB3NDCWB2H3@kernel.org> <87ldr8pys8.fsf@kernel.org>
-In-Reply-To: <87ldr8pys8.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed May 7, 2025 at 11:15 AM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
->> On Tue May 6, 2025 at 3:02 PM CEST, Andreas Hindborg wrote:
->>> +    pub trait ParseInt: private::FromStrRadix + TryFrom<u64> {
->>> +        /// Parse a string according to the description in [`Self`].
->>> +        fn from_str(src: &BStr) -> Result<Self> {
->>> +            match src.deref() {
->>> +                [b'-', rest @ ..] =3D> {
->>> +                    let (radix, digits) =3D strip_radix(rest.as_ref())=
-;
->>> +                    // 2's complement values range from -2^(b-1) to 2^=
-(b-1)-1.
->>> +                    // So if we want to parse negative numbers as posi=
-tive and
->>> +                    // later multiply by -1, we have to parse into a l=
-arger
->>> +                    // integer. We choose `u64` as sufficiently large.
->>> +                    //
->>> +                    // NOTE: 128 bit integers are not available on all
->>> +                    // platforms, hence the choice of 64 bits.
->>> +                    let val =3D u64::from_str_radix(
->>> +                        core::str::from_utf8(digits).map_err(|_| EINVA=
-L)?,
->>> +                        radix,
->>> +                    )
->>> +                    .map_err(|_| EINVAL)?;
->>> +
->>> +                    if val > Self::abs_min() {
->>> +                        return Err(EINVAL);
->>> +                    }
->>> +
->>> +                    if val =3D=3D Self::abs_min() {
->>> +                        return Ok(Self::MIN);
->>> +                    }
->>> +
->>> +                    // SAFETY: We checked that `val` will fit in `Self=
-` above.
->>> +                    let val: Self =3D unsafe { val.try_into().unwrap_u=
-nchecked() };
->>> +
->>> +                    Ok(val.complement())
->>
->> You're allowing to parse `u32` with a leading `-`? I'd expect an error
->> in that case. Maybe `complement` should be named `negate` and return a
->> `Result`?
->
-> You would get `Err(EINVAL)` in that case, hitting this:
->
->   if val > Self::abs_min() {
->       return Err(EINVAL);
->   }
+#syz test
 
-Ah, I think I asked this in a previous version already... Thanks.
+diff --git a/net/mac80211/main.c b/net/mac80211/main.c
+index 741e6c7edcb7..6842c3011a99 100644
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -1353,6 +1353,8 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
+ 	hw->wiphy->interface_modes |= BIT(NL80211_IFTYPE_MONITOR);
+ 	hw->wiphy->software_iftypes |= BIT(NL80211_IFTYPE_MONITOR);
+ 
++	if (!channels)
++		return -EINVAL;
+ 
+ 	local->int_scan_req = kzalloc(sizeof(*local->int_scan_req) +
+ 				      sizeof(void *) * channels, GFP_KERNEL);
 
----
-Cheers,
-Benno
 
