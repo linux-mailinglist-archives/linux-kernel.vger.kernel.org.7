@@ -1,193 +1,182 @@
-Return-Path: <linux-kernel+bounces-640053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AF0AAFFDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:04:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED5EAB0060
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A939C4D80
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88993B9752
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA74127B4E1;
-	Thu,  8 May 2025 16:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999CE2798E2;
+	Thu,  8 May 2025 16:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVr/W2MB"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="TRggdLXE"
+Received: from mail60.out.titan.email (mail60.out.titan.email [209.209.25.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703D727AC43
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFC9221263
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.209.25.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746720282; cv=none; b=Zavhw4RmTxeOjfBzQmasHqZHkM9W4rbUBY2qYOi8O8l4tJyhT6ndl9S7fZFOmdPlwn4/XWhIwIpISDCHA/VMsDcKZKw83Hrthe1xbHxjRq0uLfWR1iUdDeBUxIkf60f3vrbG5Ao918jftNwniWLDmoax60KDP3UVYrOT5rZK97A=
+	t=1746721504; cv=none; b=qSfSBEzQ+MD9TMhDl4wo+A0pkjdwl3VSM0vdh/yuvoLhIwCSxjmC9PybfVBUDwOWoZh6LaKI0r5wM+DwrCoha/v975WA+CDF9g5S4mSPAewGNhzz5PdUHGJpL8V78t3t084GenuyhFSo82gLz+MjxFMMO1c9SwpjS5vk+nDCVoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746720282; c=relaxed/simple;
-	bh=n95ctjnl7uL95H3gv5tvslMNDvekJAc0nb9x0/pTPzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PrAp1A9JbUEgsE57i2ArBQAyRLD6e9GZjjmnDWSVI6K2lMeFmgecoLXpA0YqQ0j1o5lTa7H9gA6iBDb1BiCvL8uAjmtCHyU9+PvpYjDnHXcettQvDno2P5+2RLGXxErq3fgWqIL6Hig4Mqkmg+UpV9GkKxZYax5Rm8OZjJHcr3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVr/W2MB; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fbfa0a7d2cso1908664a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 09:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746720279; x=1747325079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3NfzdIk19HfLe8jO397hSvRiahTxGsvjTzWdnQRt7+4=;
-        b=VVr/W2MBIfi514DvjQHP8esxhudIIoS0K5RffXpxb9qHvg6JWzW2EFyq0/g23WH07p
-         q7l2cX8zSi+hj+TTcFJw6u8t/rBfgcWu2yQm7t0fcZJ89ODSgbdlpGJSX1tz8Ju1F4ZJ
-         6jCKrkfg1mtmsIVRvj/49bWzy4TdS0yKAYbzenv1KORI6X4I8dQFIlo2huS6MCYU4dHV
-         FaZ9kJeT41ItrYhEzOjADR3bPTmhxRD9JiOgGCL9u7sSD5YKo8RC7cwEe2iuLBo8wxoG
-         Kb+OQI3A0wZnAb+fs4ZYL3GoF47DJmTwJgxZGSbv7oQlHrByk9attNqelmuhWV/SGxHf
-         2aow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746720279; x=1747325079;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3NfzdIk19HfLe8jO397hSvRiahTxGsvjTzWdnQRt7+4=;
-        b=vfys81TMQ5gtzWthKRe0hAj7JT0k0nvsSK4OaDz5zBkfIe2gRmFPtldSJZ+YOhCC0r
-         fWt6NtfuOO3Ai5E3KRvucF1UwrFLdK46z6rTBOGSJdFX03nIeucLBYYYcaDbhoIVbkfT
-         tc7EIY4hQwHxhiTn5S65EJF/79gb9xOa7bOb5uJh9gNYQmODzQJCCZgU71CPENMS8LQZ
-         owIC3gB+1VSrWlTxX1M/Etir7Fp6fX6RWrUcZN6oxDn9PBkCsfkchxshx9dXUQ3Vz/3Y
-         cjaJR/ukRVR7caiTksx9nDXNzL1y0jBxkcxHxwsMTCWRInErz1fVprznQ2c1LqXVbBfx
-         yFTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGuTdMBEj2vPpYeAeUkaf8iYo4L/g/xkmSfCVChG849jXbwgOHmmEddkF2BTC/nwCtg7eHZttSEZ2+LuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwJs79Jr4Ljta3qXv/0/0iZoNiXjm60QDTNmgcBp5S2jvlLu0K
-	fS5BFqbkYMOHSvFK0olFOOAN/Bjp8rd47hpOE5V/IPKW10cjY3Jh
-X-Gm-Gg: ASbGnctSV67mkaloicT1ZW6p1nRS5tAIm+efnKdR7Wj1N9VxHCYuRSx7Z1c2IOa8z4d
-	AUOI3GafHtaCUksyUdzCCrF/DoyiN3WBCxEXfW8qK/9Dn3NI9WycqvEtsAEm3sRho+bTG5vCLZI
-	t15vMDLtr0NNQ1ieSEJnRvRJMDyyg4I4lS9pJbtX06JD8Beel3ZKTKjm9EuFLgbW/9TNLriUoUQ
-	XdfAuBMcUjAylIr2dJ1kDRIQa/SARoPxganJpivvNu707fCFf00S3JCNRTMC8OZ5qCIXKIxqRkN
-	N6UZORm86H8Kr2L9vmFOURCPhcH5uBXSd/a4UxN5SanAwG9FKF5eLkb0xBtpNNNPJQZCyjXD2hn
-	MVLskaxulYfPvzg==
-X-Google-Smtp-Source: AGHT+IHLN+yYME7DS+0cirQlXVdwmlw/zhTFQRUFhBY7O4cmjucGQDGtj/TXxFDZXTkcJTkX91TH1A==
-X-Received: by 2002:a17:907:c201:b0:ace:3643:1959 with SMTP id a640c23a62f3a-ad218ea8227mr22607266b.7.1746720278239;
-        Thu, 08 May 2025 09:04:38 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f7:eab6:23d5:4cab? ([2620:10d:c092:500::7:80fe])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2192cf5casm6729666b.2.2025.05.08.09.04.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 09:04:37 -0700 (PDT)
-Message-ID: <ebfca8f2-40e5-485a-a060-621aa3a22376@gmail.com>
-Date: Thu, 8 May 2025 17:04:37 +0100
+	s=arc-20240116; t=1746721504; c=relaxed/simple;
+	bh=T2DTGsDRdArRCaS2FN2J3QoGWbMHNQsTYpTibzEj6bg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=f8uAxq0FTwEL5vQ18O1MRG5GkjoRwrzlxWj38o1sIzqk3NLEUbac90EaaCZqd1qThICKKyZ9lUC8er/NiVyQ5YO/M3Vp13y/Q1mp5WrHNj9PfU0tIWzbia2/9P+jFD4DCPkuM8L1ME06jRhka/L2y6D07BH+ycYiXm5LjaPQ+38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=TRggdLXE; arc=none smtp.client-ip=209.209.25.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id CAE4EE0107;
+	Thu,  8 May 2025 16:00:00 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=u/FvevRsgL+DZjKgVYLFKDjkbcSxXS1/GItuAGT1qp8=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=to:from:message-id:mime-version:in-reply-to:cc:references:subject:date:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1746720000; v=1;
+	b=TRggdLXEEw7SpF9o7r3kJf1ovOK1sc1y79Qk7u19BT7lneNnSsdiieYhoQ97/5slu6qX1QqK
+	vlaKALallZUUEB7Bk9b1j/y7hzrkfseMleCnghqx07WyIqkJ1FOt35Y+bihMj28C3wTDPkX6R0e
+	m7O0X4FXALP/UhAFXD9Zc7/Q=
+Received: from smtpclient.apple (unknown [141.11.218.23])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id 2C61FE0314;
+	Thu,  8 May 2025 15:59:56 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] prctl: allow overriding system THP policy to always
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
- david@redhat.com, linux-mm@kvack.org, hannes@cmpxchg.org,
- shakeel.butt@linux.dev, riel@surriel.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20250507141132.2773275-1-usamaarif642@gmail.com>
- <293530AA-1AB7-4FA0-AF40-3A8464DC0198@nvidia.com>
- <96eccc48-b632-40b7-9797-1b0780ea59cd@gmail.com>
- <8E3EC5A4-4387-4839-926F-3655188C20F4@nvidia.com>
- <279d29ad-cbd6-4a0e-b904-0a19326334d1@gmail.com>
- <CALOAHbCxhL=VM=E5UzNvQYZsrF4zdcQ1-49iEJ1UYvLsurtxCw@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CALOAHbCxhL=VM=E5UzNvQYZsrF4zdcQ1-49iEJ1UYvLsurtxCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v2] md/bcache: Mark __nonstring look-up table
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+In-Reply-To: <202505080844.DD7F50F0A@keescook>
+Date: Thu, 8 May 2025 23:59:43 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ linux-bcache@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <02B98CCF-15A9-46EE-AD00-C5EDCAE774F0@coly.li>
+References: <20250418202130.it.887-kees@kernel.org>
+ <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
+ <851B250D-A22C-4B47-BBAC-55284B5B5790@coly.li>
+ <202505080844.DD7F50F0A@keescook>
+To: Kees Cook <kees@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1746720000629225916.26132.7404258459398680928@prod-use1-smtp-out1004.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=O7TDvA9W c=1 sm=1 tr=0 ts=681cd500
+	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8
+	a=LN1WO8SOcHLxaujQaaAA:9 a=QEXdDO2ut3YA:10 a=K3YW7E1MVtJkPNdb1KoQ:22
 
 
 
-On 08/05/2025 06:41, Yafang Shao wrote:
-> On Thu, May 8, 2025 at 12:09 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>
->>
->> On 07/05/2025 16:57, Zi Yan wrote:
->>> On 7 May 2025, at 11:12, Usama Arif wrote:
->>>
->>>> On 07/05/2025 15:57, Zi Yan wrote:
->>>>> +Yafang, who is also looking at changing THP config at cgroup/container level.
-> 
-> Thanks
-> 
->>>>>
->>>>> On 7 May 2025, at 10:00, Usama Arif wrote:
->>>>>
->>>>>> Allowing override of global THP policy per process allows workloads
->>>>>> that have shown to benefit from hugepages to do so, without regressing
->>>>>> workloads that wouldn't benefit. This will allow such types of
->>>>>> workloads to be run/stacked on the same machine.
->>>>>>
->>>>>> It also helps in rolling out hugepages in hyperscaler configurations
->>>>>> for workloads that benefit from them, where a single THP policy is
->>>>>> likely to be used across the entire fleet, and prctl will help override it.
->>>>>>
->>>>>> An advantage of doing it via prctl vs creating a cgroup specific
->>>>>> option (like /sys/fs/cgroup/test/memory.transparent_hugepage.enabled) is
->>>>>> that this will work even when there are no cgroups present, and my
->>>>>> understanding is there is a strong preference of cgroups controls being
->>>>>> hierarchical which usually means them having a numerical value.
->>>>>
->>>>> Hi Usama,
->>>>>
->>>>> Do you mind giving an example on how to change THP policy for a set of
->>>>> processes running in a container (under a cgroup)?
->>>>
->>>> Hi Zi,
->>>>
->>>> In our case, we create the processes in the cgroup via systemd. The way we will enable THP=always
->>>> for processes in a cgroup is in the same way we enable KSM for the cgroup.
->>>> The change in systemd would be very similar to the line in [1], where we would set prctl PR_SET_THP_ALWAYS
->>>> in exec-invoke.
->>>> This is at the start of the process, but you would already know at the start of the process
->>>> whether you want THP=always for it or not.
->>>>
->>>> [1] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/src/core/exec-invoke.c#L5045
->>>
->>> You also need to add a new systemd.directives, e.g., MemoryTHP, to
->>> pass the THP enablement or disablement info from a systemd config file.
->>> And if you find those processes do not benefit from using THPs,
->>> you can just change the new "MemoryTHP" config and restart the processes.
->>>
->>> Am I getting it? Thanks.
->>>
->>
->> Yes, thats right. They would exactly the same as what we (Meta) do
->> for KSM. So have MemoryTHP similar to MemroryKSM [1] and if MemoryTHP is set,
->> the ExecContext->memory_thp would be set similar to memory_ksm [2], and when
->> that is set, the prctl will be called at exec_invoke of the process [3].
->>
->> The systemd changes should be quite simple to do.
->>
->> [1] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/man/systemd.exec.xml#L1978
->> [2] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/src/core/dbus-execute.c#L2151
->> [3] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4ade7c6ab7be29a/src/core/exec-invoke.c#L5045
-> 
-> This solution carries a risk: since prctl() does not require any
-> capabilities, the task itself could call it and override your memory
-> policy. While we could enforce CAP_SYS_RESOURCE to restrict this, that
-> capability is typically enabled by default in containers, leaving them
-> still vulnerable.
-> 
-> This approach might work for Kubernetes/container environments, but it
-> would require substantial code changes to implement securely.
-> 
+> 2025=E5=B9=B45=E6=9C=888=E6=97=A5 23:58=EF=BC=8CKees Cook =
+<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Thu, May 08, 2025 at 11:01:34AM +0800, Coly Li wrote:
+>>=20
+>>> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 11:55=EF=BC=8CColy Li <i@coly.li> =
+=E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>>>=20
+>>>=20
+>>>> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 04:21=EF=BC=8CKees Cook =
+<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>>>>=20
+>>>> GCC 15's new -Wunterminated-string-initialization notices that the =
+16
+>>>> character lookup table "zero_uuid" (which is not used as a =
+C-String)
+>>>> needs to be marked as "nonstring":
+>>>>=20
+>>>> drivers/md/bcache/super.c: In function 'uuid_find_empty':
+>>>> drivers/md/bcache/super.c:549:43: warning: initializer-string for =
+array of 'char' truncates NUL terminator but destination lacks =
+'nonstring' attribute (17 chars into 16 available) =
+[-Wunterminated-string-initialization]
+>>>> 549 |         static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>>>>    |                                           =
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>=20
+>>>> Add the annotation (since it is not used as a C-String), and switch =
+the
+>>>> initializer to an array of bytes.
+>>>>=20
+>>>> Signed-off-by: Kees Cook <kees@kernel.org>
+>>>> ---
+>>>> v2: use byte array initializer (colyli)
+>>>> v1: =
+https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
+>>>> Cc: Coly Li <colyli@kernel.org>
+>>>> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+>>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>>> Cc: linux-bcache@vger.kernel.org
+>>>> ---
+>>>> drivers/md/bcache/super.c | 3 ++-
+>>>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>=20
+>>>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>>>> index e42f1400cea9..a76ce92502ed 100644
+>>>> --- a/drivers/md/bcache/super.c
+>>>> +++ b/drivers/md/bcache/super.c
+>>>> @@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct =
+cache_set *c, const char *uuid)
+>>>>=20
+>>>> static struct uuid_entry *uuid_find_empty(struct cache_set *c)
+>>>> {
+>>>> - static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>>>> + static const char zero_uuid[] __nonstring =3D
+>>>=20
+>>=20
+>> Hi Kees,
+>>=20
+>>> I notice zero_uuid[16] changes to zero_uuid[], then the element =
+number information is removed.
+>>>=20
+>>> Is it OK for GCC 15 to only add __nonstring and keep zero_uuid[16]?
+>=20
+> Either way is fine. I can update the patch to use the "[16]" again if
+> you'd like?
+>=20
 
-You can already change the memory policy with prctl, for e.g. PR_SET_THP_DISABLE
-already exists and the someone could use this to slow the process down. So the
-approach this patch takes shouldn't be anymore of a security fix then what is already
-exposed by the kernel. I think as you mentioned, if prctl is an issue CAP_SYS_RESOURCE
-should be used to restrict this. 
+Yes please. Thanks in advance.
 
-In terms of security vulnerability of prctl, I feel like there are a lot of others
-that can be a much much bigger issue? I just had a look and you can change the
-seccomp, reset PAC keys(!) even speculation control(!!), so I dont think the security
-argument would be valid.
+Coly Li
 
+
+>=20
+>> Ping ?
+>>=20
+>> You are expert here, I need your opinion.
+>>=20
+>> Thanks.
+>>=20
+>> Coly Li
+>>=20
+>>=20
+>>=20
+>>>> + { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+>>>>=20
+>>>> return uuid_find(c, zero_uuid);
+>>>> }
+>>>> --=20
+>>>> 2.34.1
+>>=20
+>>=20
+>=20
+> --=20
+> Kees Cook
 
 
