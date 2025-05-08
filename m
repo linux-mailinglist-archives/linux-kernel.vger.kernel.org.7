@@ -1,261 +1,480 @@
-Return-Path: <linux-kernel+bounces-639736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D942AAFB76
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:34:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2C2AAFB7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B9B24E525E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:34:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB23A1C2290E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB1B22A807;
-	Thu,  8 May 2025 13:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B479A22CBF4;
+	Thu,  8 May 2025 13:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YfbTnJED"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEVtiQVx"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3A2215F46;
-	Thu,  8 May 2025 13:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746711289; cv=fail; b=V0KiTOyZ9l7DMXQcEtYVZeKlM1PQd2rxgeLF5pEOgFslxgXyDSGg/sdTAVA1TGugS6lzKVOcNyslX1Ezj+pz/Kt4p0iDHpRvhT/HOz7WsDtQfI0zg14qKytZEWVq1vEyg/UmOaQ9dEYwzv6+sEd9TWWQKFEamTDnDH5MukmVMWA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746711289; c=relaxed/simple;
-	bh=/x2IIfVjaIzmFNvG728C5I63pwnPKbtQAQxwejWUSiU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bUtuQDVYMTOVryS7UC8IUeb35CU1PTknpw7a1LELEe/YIIyMc2DnteSM1WaJOnAGxC554lCrxnYfi0GqSfrHrxYsrINAll93n88n3mGStePK7oNzBY6mnQV1FxAAN9eFm4UH13TeNae0kf5h2UzOptvJ2EYLnPXC29sP6bJYFVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YfbTnJED; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746711287; x=1778247287;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=/x2IIfVjaIzmFNvG728C5I63pwnPKbtQAQxwejWUSiU=;
-  b=YfbTnJEDF4CQc+4MndIqpvxkkv4icHhQ4jLFPwAZswAgTjA4zL3+MKAo
-   25h2kdfuM0VFieGhGjOMM/vrmQ13CGOjc8RJr0HcJf+70fO0JkoR8ayuq
-   RJOMxnEBa0ZtSnAegPM8pN7TlyJ4dlM4CZEREBqtrEoCVlEP4lMch7Vwd
-   kU1opQic+NyE77YZep7G8yhtiLJgs2Me2vQbG4z4FAlu5cOEUOF4NpacX
-   RLgwawg28rx65xCGwL4SX7Dw9/QQ3RvCbio0ZJatGRFr+MMle761WGi8a
-   yW4QlvwWHiQFrY2C/biJBSLA7jv1D6libMN8cjDCjT8B3ScxV2d4ZgcqW
-   Q==;
-X-CSE-ConnectionGUID: nO/tTCLyS8OI66Ep3pgpWA==
-X-CSE-MsgGUID: K2ogwhIDTcS3s1DymQbr+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="66029765"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="66029765"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 06:34:47 -0700
-X-CSE-ConnectionGUID: itlNUD4XRnO3IAKGb0cv6g==
-X-CSE-MsgGUID: 5BUscXdoTO2rzhNh09qJsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="141192903"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 06:34:46 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 8 May 2025 06:34:46 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 8 May 2025 06:34:46 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 8 May 2025 06:34:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b+m7lrCi+ZUDDzTK+G0IhdncDJlOKUgPfEaqmFbNHQA9kek/lJkdwsXblQdI6FUam6egB0CKvJ6Hv0tBAfqawii6RNVrkU0GVB9LK8OAV+N1h6JRK0H7nWQQuz6DlDM0ra74/BvQMCjqJoo1QZ06jtVijb4GFZF5CbEonNOelGHlOoJsxDHGvKdHSDcI+ebJT2iC50f2OTUGjthuwcKlNYwi/MzQCLeUhnoJMnVI5N/HW7GzPKjXjCvs/4c5VDTT4bbyX5xGJpzO2L2MMicANvEjARNBz3rGuGIEKIFwozE2Og8hjg6r2N+dZBwAw+Tuyvfi7wqRulf6d3ak9DUN2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SHhvGi7yy449fkQcH5c/KWcAJ2XQZQPD9H8jVVrsOFU=;
- b=CIhYZfnCVMkCaBF2/mPPtgSgmr67oswAoxFPVeUi0WhsZhjR2EtLYuKA7Jc6ml32XGy+2FsoLmCKHYUg/A6/SqsAMdxMQQo4dgRJ+5/IXO98h3hFEvJaIHp8ZYOA4CFp5+R1F7bIfyLYdoWuLhU31a0+EXknzr69gLC4xfXRPKLetrJn4i8MvuiAoNZCMzTkiYt96AkM+UrILFA2rcmADLHdJ87mR4T60L0a/hSa3497QnJAhPXCVxtRAXvHm/4iUKKmv+Hk9cbGCEIepKKNHBm4wrQzo87T5XlEAC/fn0U8h/RcH00W7E6D176pXAm41RCJbGFBrQTVrpXTow6CXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by SJ0PR11MB4911.namprd11.prod.outlook.com (2603:10b6:a03:2ad::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.23; Thu, 8 May
- 2025 13:34:20 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8699.026; Thu, 8 May 2025
- 13:34:20 +0000
-Date: Thu, 8 May 2025 08:35:05 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Fan Ni <nifan.cxl@gmail.com>, Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 02/19] cxl/mem: Read dynamic capacity configuration
- from the device
-Message-ID: <681cb309a86e5_2d40892946f@iweiny-mobl.notmuch>
-References: <20250413-dcd-type2-upstream-v9-0-1d4911a0b365@intel.com>
- <20250413-dcd-type2-upstream-v9-2-1d4911a0b365@intel.com>
- <aBubH5ZDVPEE8N98@lg>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aBubH5ZDVPEE8N98@lg>
-X-ClientProxiedBy: MW4PR04CA0127.namprd04.prod.outlook.com
- (2603:10b6:303:84::12) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629A7215F46
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 13:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746711328; cv=none; b=GuZfq6i3mljeU9tAbuHgxr7RRUX4lSC5oSB9z0OCAuVeULbUnTzBoZZEPaw56N3MMJ4S36XZhtFjQMiHFyRu/OR/6/W4+asYxdCRRCoxo92wA9OQVohy2eFnrmnKP5oPvCswt3UOCWW297PNKRzc6ho4NSZ0ybhAcRK0WxFHFVs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746711328; c=relaxed/simple;
+	bh=So4f+jJaLPqD+D7bvApVfhV4eSpPtqn3tyyYtKpK7mc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CB/B2bKqL+uCvtUMDVIDn17jSqvCuxNhrjpuSz/A3Cryc62Mjg5BMr2hgXcYRqAIPrKK6umGNoNj9uOPSh4mNhXOzW8ppVqTIlFmPV6mI8645aLAAu4/z1A41Q8lCWMFsXhTQwJCdgHIcMtpk+pZBxnZ+PyLkPjwi52pkzIgAhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEVtiQVx; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22e033b0f1aso10718085ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 06:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746711325; x=1747316125; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=umXRL51odZ+U28adyG5IqbnLQh785NI+zLPkHmpwwsU=;
+        b=WEVtiQVx5EGc2ArbBqlRweIG7s6180by/wZtX6eQz2K4kLwqCxUGQnghG3l+eitmdn
+         yTJ4onq7O2aH3mtMKJsGgXPO7xuy/nONg8IiYgoxsSeBJMz9vqcLyx8zru4lucChgYAv
+         TrGcJSA/PuaH4hAV1hp8m9un/50SD30TM8z1XRMhO2lO/JnoWHRuUMjkHqDrDrIwb6L1
+         1wK3VOpqMz5/aeFIISAR3jb5utDaZ0JRL5L6T5w/OAvwauMO6s0Hajzc/RAQMLawnrdQ
+         axovyqMRTNSnFUz5kApbko+nm2jLwm53IlyXrgS19yDcA/WPpG++ryf4Ca1xvZnac20j
+         0q0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746711325; x=1747316125;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=umXRL51odZ+U28adyG5IqbnLQh785NI+zLPkHmpwwsU=;
+        b=tvM2dfjRB0QVGbbjidHttWfVQjk8ZuSMZKqYrL/86CNwWiRjF64k+JGAV9XFz6ttve
+         cLtlc+rFJBdMSSzQYwOc/OKhi4Hft3lhHSJ5U+s4OW/yVgbKW6vPTwurIMHzg45rRzma
+         B6GxrRutmn63JkR+zwtlMk6163dOWANLNT1CT1p17qaZ3poJm3JB5DZyma5vtBLw/0sh
+         AzcvZfZmnwugjpwVs/I6OgRInz/dNs2grFd+kSFweVv96wFn3IQVOdHSKF5QUPDAgfiP
+         zzdf9jgfkQHNIc7wdU+B5kk9w8jhlFjzRk1nRmOqGEWnz/HuNJHpTG7l22umB9b+3zEF
+         sb9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUUxhQJ+tLZJNZsXpF0ly3TqAnRTqaOP883LuXGxuG0/D3t0TDRixMkGNLemkUhUOQ6reR4D6atKGyC2aA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtbuVUSfVj8AWMr1dmGmuG9CI8HGqMBVNoCz3BvhzO20IXJSpT
+	8ZavIcCaARY3zm1GHIwbBW27C0Fc5Ht52k2cizWwkArxPTSzjhL3crTB/kMAgPh2PFW6gjOkLvq
+	DNA==
+X-Google-Smtp-Source: AGHT+IGujTTizBC2NO5GtsoKrNA2DFFypxeWr+gCQllfmd13bBZQH9bmWcxSzOrS7mlhLhKrB6brjIgvzMA=
+X-Received: from plrr12.prod.google.com ([2002:a17:902:c60c:b0:223:225b:3d83])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:fa7:b0:220:d257:cdbd
+ with SMTP id d9443c01a7336-22e8a7fe95cmr50782475ad.48.1746711325460; Thu, 08
+ May 2025 06:35:25 -0700 (PDT)
+Date: Thu, 8 May 2025 06:35:22 -0700
+In-Reply-To: <aBvmxjxUrXEBa3sc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SJ0PR11MB4911:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e64030e-a806-47ca-e005-08dd8e3509b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?C16/RHa5fOhZSmtH2YVUwPVxr85K3jLSryk6/Pnxens92yu6Xa/f4PUVmTyX?=
- =?us-ascii?Q?dR61VpiZT8E+ZLyui0NqcFXBYkmtmCMH/O0mDpXRnmTdKyX53VpTT3tvmv52?=
- =?us-ascii?Q?k+fanQdwh8zESCOp5VnJw157WgJt+4A8w6YJPH+040c7WKDbRbfDX9fwrCnc?=
- =?us-ascii?Q?amGN4nWVy2+uWDVxWCWtOsmRV/ug0hoLH8NXLxY1t/208N7/NQQxlbgFbPQf?=
- =?us-ascii?Q?tuR2iNBg/On0/qUr5IK5onYIfbP4j98r3iuThoIXLZ8aIZzZ5u5m8W4AmCqK?=
- =?us-ascii?Q?zwpFT0bSsnnXMx+CsRQcCkMw+WXXLm+yf3WLOxhlj0YhGhdqKSdnebJ5IyVu?=
- =?us-ascii?Q?2Tf6McYkn8GiNwSfWj4fr1h0xO42s/gX8kg/Ddju1AYYiN1jg1jjXGusOM10?=
- =?us-ascii?Q?ux4O3DhNrodRYbRT/Xn++71aNlnNhHSYcKdO5zWV7kcAITyy3+wj+VKHMPZ5?=
- =?us-ascii?Q?W1gHLnma/5RsiYn/hbaOHQVCgk8Sip4J6W8XNG5GYNcqXwYBO2bGFew48MH1?=
- =?us-ascii?Q?bYjNNHrAu8Ny6Hlyt1obKCwZvs7F3330lhmKBzD6KxDC0xEv5wL1ajV5wMir?=
- =?us-ascii?Q?/kfkZPlUz9g8GW2wvfOABGWNPh6OS1KrTlEzJXObgV/bEzil689zOg5YdZFq?=
- =?us-ascii?Q?/i+viUBIUTNzwthIWCzHuMmCXjAbtwUn2woJOFX36BcgFxIB4B/9AxSh2vYN?=
- =?us-ascii?Q?jeIcQaGtzhWlsZaBAvLI+4xvyZYRIzubpgsTVI/XeE3W0eY8/mfYusALiapR?=
- =?us-ascii?Q?Pma5GUjdFJikK0oAf4e0g7ZsKxQhYUASJZp3sCDBFzSJxmJWPuZR/p6QKwwP?=
- =?us-ascii?Q?Ak+Bqem70z5oWHA3DwPSDgh4GnfUrvmsIO7XwFspN/Zd/Xr33AJrw11glYmv?=
- =?us-ascii?Q?W2w1VFVgTsbu2dH+ygoKLPLt7gQZg5cAKNJvbLuKmtT1LsSHp7S1IYo0SC9k?=
- =?us-ascii?Q?ocTMhT9hLROTb4fNh41ujzR0eZCws6g95BokYfqaitbIGzFaalxHJ8OMcQRC?=
- =?us-ascii?Q?NNKlg4ah6SCBoIsJh0IfyIINS0+P7t6Q61Qyf0zL9AgWCSrqr/CeLuFAApQD?=
- =?us-ascii?Q?gjBoM20vuDVVp4HBcVW03wz2ShOPb9kNxpzGllcet3nbv70Etze0qoKpBRD8?=
- =?us-ascii?Q?knnKBUymANVe2FOlc/ciu0V4BZxZmacot5iUfZLOw3KFluNcv3S87b3BT5mY?=
- =?us-ascii?Q?Unei8fD9EvOdOB/GDmG0rvkh+Eivbk019T7o6QxYpV/4TsZaSr7FXRQn6xf1?=
- =?us-ascii?Q?kkvTsL0Zs7dl/8fFGwqB3/0LQzNgzC0s/P0g7Fpcv42GHVY1swuR9I0Gi4RY?=
- =?us-ascii?Q?WHPcV+WXRtN3wal1xRsMgLgP/tMatxTmNxQk0lnOzPTWGGOni4DyP37HAkyg?=
- =?us-ascii?Q?moWz9nOx+dGg6IiUD6D6nhdaKhIk8t7DxCFGr+7QrwNy0YBho/9OpqnBEHgq?=
- =?us-ascii?Q?AeXAFwVQD1A=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xdrSLF4iHDJXk5SO2lfUxuuMghVVAQCKzkJ45gomAupdATuydX7hym9Vq5fv?=
- =?us-ascii?Q?clwCR8Xl5otmAcmwKivNVbCOq1KdbkGZeJjpI7IytILh2HdViFduzbD0tUF8?=
- =?us-ascii?Q?hkXlJZtZnlqngMabi5UZ6QVONB4lHfK4TF/8/mKCq9itjtHxRLNS1O418Nl/?=
- =?us-ascii?Q?KMuzkBvfRiu04PsVQqSc/xqlYjBB46HZ8P1xGZmRSptJLGvgxSAGpoIWCngP?=
- =?us-ascii?Q?SGhTa3/Wct08z+mgyFAHZaLeT9LHzM0P+QoPXPMuhRSRo1Vkmh266YBEZqGi?=
- =?us-ascii?Q?yiHl/uj4FV4cIiYVk+giM+Z7eXCQA9Yu1DqKQmFvE1rFUDEVaMbiGXH0Wy3K?=
- =?us-ascii?Q?J/FXHaAFmdWPpBs4Q4rnSLgCUrWWq6jW2l0eqLkDcmrCGcl0dgbNGPPChy8W?=
- =?us-ascii?Q?b5INZ5auCvNcngHL64tkgNNIjJV02QUyIv4PHXU1zSVn3OoCii7pNBVQ6afS?=
- =?us-ascii?Q?xL4RYxVrxxLqTMLBZJy9C3GqKkGql+YYhpCz+UbhJka3K203Nrk9MZgo1wr2?=
- =?us-ascii?Q?0QvGOyKj8dDPx+VvuZksgr1DpXqj+NsuoMUTnSWlLWJEeLG332FUvanCutjd?=
- =?us-ascii?Q?/99Wn4EXpfpCP91EeOBLglK4HJ+ssyzaGa31TGtLZdlBY7j+O4ac5gd7O7h0?=
- =?us-ascii?Q?vIs1z3aweUvyEo4AFS4Da2r2Ybm/kjt+LeVAJKwgFRV8lrLgsA0bjlt1sSIi?=
- =?us-ascii?Q?syWGbVeUOzL4sTVvebxwdWV92BkeEKzSt73mMDwl4IsaTqloDxi5wZkGUNCK?=
- =?us-ascii?Q?Rjkk5XpapAPZuMYb0YBDSOlDAJM7E9Kd5iK2fCd7CnSQ31WqtxivCdFwTChO?=
- =?us-ascii?Q?/dBJ9jmvrcN+1zSm/1h/+12mqfjq4H0UDZPu8ZgO9j+fQqHxMXcBjPjArxGa?=
- =?us-ascii?Q?Ggq9k24ewxTgjMwAHcWMVozhrNvJPZDmrUEKMuPe0vHXBt4FH9XgS6Q2mC7A?=
- =?us-ascii?Q?Q4aM+aFM9Hd5S6dapxz8AubF2fUsRtFm2zgG+P83YYU3jxjRlsSriw1K+UJC?=
- =?us-ascii?Q?ICEKQnmV9aCnPVwlgc1Mcfndptz1zPhAFKyCFuLTsfL3B8GI8bIYQgcYTBDt?=
- =?us-ascii?Q?zwzITthZF0E2VXrMKNWdQbTBkLHQYZSYYLVXf4imnsNNMDCcq3N+U5nVsMHX?=
- =?us-ascii?Q?dwp6oGcnaAFxQvi24hygsFFEx9rlZnSvg9299ncAW5BAmUFM7rUzo6hQtgYI?=
- =?us-ascii?Q?0inB5EAtvUOjhwpd741NQHtzwkDdObVHQfSL9gStqj6Vldm2lb6kzRpBf7WL?=
- =?us-ascii?Q?Y4Lo5XDR5JAyD0B1E493nYauEN3uqZVGE6L8Reb6xS7DSKPkcXZmZ9OAHOeR?=
- =?us-ascii?Q?KxIdvGGSQBxbt7bfyT793Cr+AsPLxynqMiurlyED1ZEtQ+EcMWgaePhQLeLz?=
- =?us-ascii?Q?1ORXDym9M5dXSfQDFZNL/y7JBMRNj8nXfvE6m/i9B79iaRQy3mlMbejhbuah?=
- =?us-ascii?Q?osYXkxHYgfkDwT6kePQXobkZZbiuKOUasVwW+HPmrHZi1SOoftOnfw46SvWX?=
- =?us-ascii?Q?s7tQe05w/wRFa6y57H4ckgQO83G6m3UE2euA3SSPgWYzjfEo6V9wMWpaR/LM?=
- =?us-ascii?Q?JjuiZrmW08VhhFvItwczxi/oRazoon/B3o5fIXIV?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e64030e-a806-47ca-e005-08dd8e3509b5
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 13:34:20.6359
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wmdQP1lf96q62VFl1KdCtcGZwRyrcQqqWTVXGi0v1xvjduHPw9lyXDFNeS/th4FOX8TkKkbVkLmIpT+uArIHcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4911
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+References: <20250416002546.3300893-1-mlevitsk@redhat.com> <20250416002546.3300893-4-mlevitsk@redhat.com>
+ <aAgpD_5BI6ZcCN29@google.com> <2b1ec570a37992cdfa2edad325e53e0592d696c8.camel@redhat.com>
+ <71af8435d2085b3f969cb3e73cff5bfacd243819.camel@redhat.com> <aBvmxjxUrXEBa3sc@google.com>
+Message-ID: <aByzGilzBiTa-43C@google.com>
+Subject: Re: [PATCH 3/3] x86: KVM: VMX: preserve host's DEBUGCTLMSR_FREEZE_IN_SMM
+ while in the guest mode
+From: Sean Christopherson <seanjc@google.com>
+To: mlevitsk@redhat.com
+Cc: kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: multipart/mixed; charset="UTF-8"; boundary="MlINIt/uc2Bhy9cL"
 
-Fan Ni wrote:
-> On Sun, Apr 13, 2025 at 05:52:10PM -0500, Ira Weiny wrote:
-> > Devices which optionally support Dynamic Capacity (DC) are configured
-> > via mailbox commands.  CXL 3.2 section 9.13.3 requires the host to issue
-> > the Get DC Configuration command in order to properly configure DCDs.
-> > Without the Get DC Configuration command DCD can't be supported.
+
+--MlINIt/uc2Bhy9cL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, May 07, 2025, Sean Christopherson wrote:
+> On Thu, May 01, 2025, mlevitsk@redhat.com wrote:
+> > Any ideas on how to solve this then? Since currently its the common code that
+> > reads the current value of the MSR_IA32_DEBUGCTLMSR and it doesn't leave any
+> > indication about if it changed I can do either
 > > 
-> > Implement the DC mailbox commands as specified in CXL 3.2 section
-> > 8.2.10.9.9 (opcodes 48XXh) to read and store the DCD configuration
-> > information.  Disable DCD if an invalid configuration is found.
+> > 1. store old value as well, something like 'vcpu->arch.host_debugctl_old' Ugly IMHO.
 > > 
-> > Linux has no support for more than one dynamic capacity partition.  Read
-> > and validate all the partitions but configure only the first partition
-> > as 'dynamic ram A'.  Additional partitions can be added in the future if
-> > such a device ever materializes.  Additionally is it anticipated that no
-> > skips will be present from the end of the pmem partition.  Check for an
-> > disallow this configuration as well.
+> > 2. add DEBUG_CTL to the set of the 'dirty' registers, e.g add new bit for kvm_register_mark_dirty
+> > It looks a bit overkill to me
 > > 
-> > Linux has no use for the trailing fields of the Get Dynamic Capacity
-> > Configuration Output Payload (Total number of supported extents, number
-> > of available extents, total number of supported tags, and number of
-> > available tags).  Avoid defining those fields to use the more useful
-> > dynamic C array.
+> > 3. Add new x86 callback for something like .sync_debugctl(). I vote for this option.
 > > 
-> > Based on an original patch by Navneet Singh.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > ---
-> > Changes:
-> > [iweiny: rebase]
-> > [iweiny: Update spec references to 3.2]
-> > [djbw: Limit to 1 partition]
-> > [djbw: Avoid inter-partition skipping]
-> > [djbw: s/region/partition/]
-> > [djbw: remove cxl_dc_region[partition]_info->name]
-> > [iweiny: adjust to lack of dcd_cmds in mds]
-> > [iweiny: remove extra 'region' from names]
-> > [iweiny: remove unused CXL_DYNAMIC_CAPACITY_SANITIZE_ON_RELEASE_FLAG]
-> > ---
-> >  drivers/cxl/core/hdm.c  |   2 +
-> >  drivers/cxl/core/mbox.c | 179 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/cxl/cxl.h       |   1 +
-> >  drivers/cxl/cxlmem.h    |  54 ++++++++++++++-
-> >  drivers/cxl/pci.c       |   3 +
-> >  5 files changed, 238 insertions(+), 1 deletion(-)
-> ...
-> >  /* Set Timestamp CXL 3.0 Spec 8.2.9.4.2 */
-> >  struct cxl_mbox_set_timestamp_in {
-> >  	__le64 timestamp;
-> > @@ -845,9 +871,24 @@ enum {
-> >  int cxl_internal_send_cmd(struct cxl_mailbox *cxl_mbox,
-> >  			  struct cxl_mbox_cmd *cmd);
-> >  int cxl_dev_state_identify(struct cxl_memdev_state *mds);
-> > +
-> > +struct cxl_mem_dev_info {
-> > +	u64 total_bytes;
-> > +	u64 volatile_bytes;
-> > +	u64 persistent_bytes;
-> > +};
+> > What do you think/prefer?
 > 
-> Defined, but never used.
+> I was going to say #3 as well, but I think I have a better idea.
+> 
+> DR6 has a similar problem; the guest's value needs to be loaded into hardware,
+> but only somewhat rarely, and more importantly, never on a fastpath reentry.
+> 
+> Forced immediate exits also have a similar need: some control logic in common x86
+> needs instruct kvm_x86_ops.vcpu_run() to do something.
+> 
+> Unless I've misread the DEBUGCTLMSR situation, in all cases, common x86 only needs
+> to a single flag to tell vendor code to do something.  The payload for that action
+> is already available.
+> 
+> So rather than add a bunch of kvm_x86_ops hooks that are only called immediately
+> before kvm_x86_ops.vcpu_run(), expand @req_immediate_exit into a bitmap of flags
+> to communicate what works needs to be done, without having to resort to a field
+> in kvm_vcpu_arch that isn't actually persistent.
+> 
+> The attached patches are relatively lightly tested, but the DR6 tests from the
+> recent bug[*] pass, so hopefully they're correct?
+> 
+> The downside with this approach is that it would be difficult to backport to LTS
+> kernels, but given how long this has been a problem, I'm not super concerned about
+> optimizing for backports.
+> 
+> If they look ok, feel free to include them in the next version.  Or I can post
+> them separately if you want.
 
-Shoot...  That was from a previous version of work on type2...
+And of course I forgot to attach the patches...
 
-Thanks for the catch!
-Ira
+--MlINIt/uc2Bhy9cL
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-KVM-x86-Convert-vcpu_run-s-immediate-exit-param-into.patch"
 
-[snip]
+From edaa5525a228bc8711c4cefca391b436e6b18803 Mon Sep 17 00:00:00 2001
+From: Sean Christopherson <seanjc@google.com>
+Date: Wed, 7 May 2025 13:46:03 -0700
+Subject: [PATCH 1/2] KVM: x86: Convert vcpu_run()'s immediate exit param into
+ a generic bitmap
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/include/asm/kvm_host.h |  6 +++++-
+ arch/x86/kvm/svm/svm.c          |  4 ++--
+ arch/x86/kvm/vmx/main.c         |  6 +++---
+ arch/x86/kvm/vmx/tdx.c          |  3 ++-
+ arch/x86/kvm/vmx/vmx.c          |  3 ++-
+ arch/x86/kvm/vmx/x86_ops.h      |  4 ++--
+ arch/x86/kvm/x86.c              | 11 ++++++++---
+ 7 files changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 4c27f213ea55..62137a777f33 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1673,6 +1673,10 @@ static inline u16 kvm_lapic_irq_dest_mode(bool dest_mode_logical)
+ 	return dest_mode_logical ? APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
+ }
+ 
++enum kvm_x86_run_flags {
++	KVM_RUN_FORCE_IMMEDIATE_EXIT	= BIT(0),
++};
++
+ struct kvm_x86_ops {
+ 	const char *name;
+ 
+@@ -1754,7 +1758,7 @@ struct kvm_x86_ops {
+ 
+ 	int (*vcpu_pre_run)(struct kvm_vcpu *vcpu);
+ 	enum exit_fastpath_completion (*vcpu_run)(struct kvm_vcpu *vcpu,
+-						  bool force_immediate_exit);
++						  u64 run_flags);
+ 	int (*handle_exit)(struct kvm_vcpu *vcpu,
+ 		enum exit_fastpath_completion exit_fastpath);
+ 	int (*skip_emulated_instruction)(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 5f8c571cbe7c..79b14fe4e3d8 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4311,9 +4311,9 @@ static noinstr void svm_vcpu_enter_exit(struct kvm_vcpu *vcpu, bool spec_ctrl_in
+ 	guest_state_exit_irqoff();
+ }
+ 
+-static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+-					  bool force_immediate_exit)
++static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ {
++	bool force_immediate_exit = run_flags & KVM_RUN_FORCE_IMMEDIATE_EXIT;
+ 	struct vcpu_svm *svm = to_svm(vcpu);
+ 	bool spec_ctrl_intercepted = msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL);
+ 
+diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+index d1e02e567b57..fef3e3803707 100644
+--- a/arch/x86/kvm/vmx/main.c
++++ b/arch/x86/kvm/vmx/main.c
+@@ -175,12 +175,12 @@ static int vt_vcpu_pre_run(struct kvm_vcpu *vcpu)
+ 	return vmx_vcpu_pre_run(vcpu);
+ }
+ 
+-static fastpath_t vt_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
++static fastpath_t vt_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ {
+ 	if (is_td_vcpu(vcpu))
+-		return tdx_vcpu_run(vcpu, force_immediate_exit);
++		return tdx_vcpu_run(vcpu, run_flags);
+ 
+-	return vmx_vcpu_run(vcpu, force_immediate_exit);
++	return vmx_vcpu_run(vcpu, run_flags);
+ }
+ 
+ static int vt_handle_exit(struct kvm_vcpu *vcpu,
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index b952bc673271..7dbfad28debc 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1020,8 +1020,9 @@ static void tdx_load_host_xsave_state(struct kvm_vcpu *vcpu)
+ 				DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI | \
+ 				DEBUGCTLMSR_FREEZE_IN_SMM)
+ 
+-fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
++fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ {
++	bool force_immediate_exit = run_flags & KVM_RUN_FORCE_IMMEDIATE_EXIT;
+ 	struct vcpu_tdx *tdx = to_tdx(vcpu);
+ 	struct vcpu_vt *vt = to_vt(vcpu);
+ 
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 9ff00ae9f05a..e66f5ffa8716 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7317,8 +7317,9 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
+ 	guest_state_exit_irqoff();
+ }
+ 
+-fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
++fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ {
++	bool force_immediate_exit = run_flags & KVM_RUN_FORCE_IMMEDIATE_EXIT;
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	unsigned long cr3, cr4;
+ 
+diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
+index b4596f651232..0b4f5c5558d0 100644
+--- a/arch/x86/kvm/vmx/x86_ops.h
++++ b/arch/x86/kvm/vmx/x86_ops.h
+@@ -21,7 +21,7 @@ void vmx_vm_destroy(struct kvm *kvm);
+ int vmx_vcpu_precreate(struct kvm *kvm);
+ int vmx_vcpu_create(struct kvm_vcpu *vcpu);
+ int vmx_vcpu_pre_run(struct kvm_vcpu *vcpu);
+-fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit);
++fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags);
+ void vmx_vcpu_free(struct kvm_vcpu *vcpu);
+ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
+ void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu);
+@@ -133,7 +133,7 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
+ void tdx_vcpu_free(struct kvm_vcpu *vcpu);
+ void tdx_vcpu_load(struct kvm_vcpu *vcpu, int cpu);
+ int tdx_vcpu_pre_run(struct kvm_vcpu *vcpu);
+-fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit);
++fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags);
+ void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu);
+ void tdx_vcpu_put(struct kvm_vcpu *vcpu);
+ bool tdx_protected_apic_has_interrupt(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 75c0a934556d..d2ad83621595 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -10777,6 +10777,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 		dm_request_for_irq_injection(vcpu) &&
+ 		kvm_cpu_accept_dm_intr(vcpu);
+ 	fastpath_t exit_fastpath;
++	u64 run_flags;
+ 
+ 	bool req_immediate_exit = false;
+ 
+@@ -11021,8 +11022,11 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 		goto cancel_injection;
+ 	}
+ 
+-	if (req_immediate_exit)
++	run_flags = 0;
++	if (req_immediate_exit) {
++		run_flags |= KVM_RUN_FORCE_IMMEDIATE_EXIT;
+ 		kvm_make_request(KVM_REQ_EVENT, vcpu);
++	}
+ 
+ 	fpregs_assert_state_consistent();
+ 	if (test_thread_flag(TIF_NEED_FPU_LOAD))
+@@ -11059,8 +11063,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 		WARN_ON_ONCE((kvm_vcpu_apicv_activated(vcpu) != kvm_vcpu_apicv_active(vcpu)) &&
+ 			     (kvm_get_apic_mode(vcpu) != LAPIC_MODE_DISABLED));
+ 
+-		exit_fastpath = kvm_x86_call(vcpu_run)(vcpu,
+-						       req_immediate_exit);
++		exit_fastpath = kvm_x86_call(vcpu_run)(vcpu, run_flags);
+ 		if (likely(exit_fastpath != EXIT_FASTPATH_REENTER_GUEST))
+ 			break;
+ 
+@@ -11072,6 +11075,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 			break;
+ 		}
+ 
++		run_flags = 0;
++
+ 		/* Note, VM-Exits that go down the "slow" path are accounted below. */
+ 		++vcpu->stat.exits;
+ 	}
+
+base-commit: 94da2b969670d100730b5537f20523e49e989920
+-- 
+2.49.0.1015.ga840276032-goog
+
+
+--MlINIt/uc2Bhy9cL
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0002-KVM-x86-Drop-kvm_x86_ops.set_dr6-in-favor-of-a-new-K.patch"
+
+From fdb106317c1a743f79014157c13728ea021ad0b1 Mon Sep 17 00:00:00 2001
+From: Sean Christopherson <seanjc@google.com>
+Date: Wed, 7 May 2025 14:00:39 -0700
+Subject: [PATCH 2/2] KVM: x86: Drop kvm_x86_ops.set_dr6() in favor of a new
+ KVM_RUN flag
+
+Instruct vendor code to load the guest's DR6 into hardware via a new
+KVM_RUN flag, and remove kvm_x86_ops.set_dr6(), whose sole purpose was to
+load vcpu->arch.dr6 into hardware when DR6 can be read/written directly
+by the guest.
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/include/asm/kvm-x86-ops.h |  1 -
+ arch/x86/include/asm/kvm_host.h    |  2 +-
+ arch/x86/kvm/svm/svm.c             | 10 ++++++----
+ arch/x86/kvm/vmx/main.c            |  9 ---------
+ arch/x86/kvm/vmx/vmx.c             |  9 +++------
+ arch/x86/kvm/x86.c                 |  2 +-
+ 6 files changed, 11 insertions(+), 22 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+index 8d50e3e0a19b..9e0c37ea267e 100644
+--- a/arch/x86/include/asm/kvm-x86-ops.h
++++ b/arch/x86/include/asm/kvm-x86-ops.h
+@@ -49,7 +49,6 @@ KVM_X86_OP(set_idt)
+ KVM_X86_OP(get_gdt)
+ KVM_X86_OP(set_gdt)
+ KVM_X86_OP(sync_dirty_debug_regs)
+-KVM_X86_OP(set_dr6)
+ KVM_X86_OP(set_dr7)
+ KVM_X86_OP(cache_reg)
+ KVM_X86_OP(get_rflags)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 62137a777f33..18be7835fb73 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1675,6 +1675,7 @@ static inline u16 kvm_lapic_irq_dest_mode(bool dest_mode_logical)
+ 
+ enum kvm_x86_run_flags {
+ 	KVM_RUN_FORCE_IMMEDIATE_EXIT	= BIT(0),
++	KVM_RUN_LOAD_GUEST_DR6		= BIT(1),
+ };
+ 
+ struct kvm_x86_ops {
+@@ -1727,7 +1728,6 @@ struct kvm_x86_ops {
+ 	void (*get_gdt)(struct kvm_vcpu *vcpu, struct desc_ptr *dt);
+ 	void (*set_gdt)(struct kvm_vcpu *vcpu, struct desc_ptr *dt);
+ 	void (*sync_dirty_debug_regs)(struct kvm_vcpu *vcpu);
+-	void (*set_dr6)(struct kvm_vcpu *vcpu, unsigned long value);
+ 	void (*set_dr7)(struct kvm_vcpu *vcpu, unsigned long value);
+ 	void (*cache_reg)(struct kvm_vcpu *vcpu, enum kvm_reg reg);
+ 	unsigned long (*get_rflags)(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 79b14fe4e3d8..ffa10c448efa 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4360,10 +4360,13 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ 	svm_hv_update_vp_id(svm->vmcb, vcpu);
+ 
+ 	/*
+-	 * Run with all-zero DR6 unless needed, so that we can get the exact cause
+-	 * of a #DB.
++	 * Run with all-zero DR6 unless the guest can write DR6 freely, so that
++	 * KVM can get the exact cause of a #DB.  Note, loading guest DR6 from
++	 * KVM's snapshot is only necessary when DR accesses won't exit.
+ 	 */
+-	if (likely(!(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT)))
++	if (unlikely(run_flags & KVM_RUN_LOAD_GUEST_DR6))
++		svm_set_dr6(vcpu, vcpu->arch.dr6);
++	else if (likely(!(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT)))
+ 		svm_set_dr6(vcpu, DR6_ACTIVE_LOW);
+ 
+ 	clgi();
+@@ -5171,7 +5174,6 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+ 	.set_idt = svm_set_idt,
+ 	.get_gdt = svm_get_gdt,
+ 	.set_gdt = svm_set_gdt,
+-	.set_dr6 = svm_set_dr6,
+ 	.set_dr7 = svm_set_dr7,
+ 	.sync_dirty_debug_regs = svm_sync_dirty_debug_regs,
+ 	.cache_reg = svm_cache_reg,
+diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+index fef3e3803707..c85cbce6d2f6 100644
+--- a/arch/x86/kvm/vmx/main.c
++++ b/arch/x86/kvm/vmx/main.c
+@@ -489,14 +489,6 @@ static void vt_set_gdt(struct kvm_vcpu *vcpu, struct desc_ptr *dt)
+ 	vmx_set_gdt(vcpu, dt);
+ }
+ 
+-static void vt_set_dr6(struct kvm_vcpu *vcpu, unsigned long val)
+-{
+-	if (is_td_vcpu(vcpu))
+-		return;
+-
+-	vmx_set_dr6(vcpu, val);
+-}
+-
+ static void vt_set_dr7(struct kvm_vcpu *vcpu, unsigned long val)
+ {
+ 	if (is_td_vcpu(vcpu))
+@@ -943,7 +935,6 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+ 	.set_idt = vt_op(set_idt),
+ 	.get_gdt = vt_op(get_gdt),
+ 	.set_gdt = vt_op(set_gdt),
+-	.set_dr6 = vt_op(set_dr6),
+ 	.set_dr7 = vt_op(set_dr7),
+ 	.sync_dirty_debug_regs = vt_op(sync_dirty_debug_regs),
+ 	.cache_reg = vt_op(cache_reg),
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index e66f5ffa8716..49bf58ca9ffd 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5604,12 +5604,6 @@ void vmx_sync_dirty_debug_regs(struct kvm_vcpu *vcpu)
+ 	set_debugreg(DR6_RESERVED, 6);
+ }
+ 
+-void vmx_set_dr6(struct kvm_vcpu *vcpu, unsigned long val)
+-{
+-	lockdep_assert_irqs_disabled();
+-	set_debugreg(vcpu->arch.dr6, 6);
+-}
+-
+ void vmx_set_dr7(struct kvm_vcpu *vcpu, unsigned long val)
+ {
+ 	vmcs_writel(GUEST_DR7, val);
+@@ -7364,6 +7358,9 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ 		vmcs_writel(GUEST_RIP, vcpu->arch.regs[VCPU_REGS_RIP]);
+ 	vcpu->arch.regs_dirty = 0;
+ 
++	if (run_flags & KVM_RUN_LOAD_GUEST_DR6)
++		set_debugreg(vcpu->arch.dr6, 6);
++
+ 	/*
+ 	 * Refresh vmcs.HOST_CR3 if necessary.  This must be done immediately
+ 	 * prior to VM-Enter, as the kernel may load a new ASID (PCID) any time
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index d2ad83621595..d8ae62f49bd7 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -11044,7 +11044,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 		set_debugreg(vcpu->arch.eff_db[3], 3);
+ 		/* When KVM_DEBUGREG_WONT_EXIT, dr6 is accessible in guest. */
+ 		if (unlikely(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT))
+-			kvm_x86_call(set_dr6)(vcpu, vcpu->arch.dr6);
++			run_flags |= KVM_RUN_LOAD_GUEST_DR6;
+ 	} else if (unlikely(hw_breakpoint_active())) {
+ 		set_debugreg(0, 7);
+ 	}
+-- 
+2.49.0.1015.ga840276032-goog
+
+
+--MlINIt/uc2Bhy9cL--
 
