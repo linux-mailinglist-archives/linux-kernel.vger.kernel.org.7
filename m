@@ -1,198 +1,412 @@
-Return-Path: <linux-kernel+bounces-639393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0216FAAF6C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:29:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D1FAAF6CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76F49E1050
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B239E14A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BDC2641E8;
-	Thu,  8 May 2025 09:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D496B20B80C;
+	Thu,  8 May 2025 09:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aJMWhhW3"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36388212B3A;
-	Thu,  8 May 2025 09:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m1ttq6Bo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pi3WmXj6";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m1ttq6Bo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pi3WmXj6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80C85A79B
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 09:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746696566; cv=none; b=WfQN4OblPTp9KJ/UGmvt13KNBpGCcZDOokxvOROEXXHBDJ0XNpYoM7A13uVDUFsUBIPxOFGm9yggcAcZuF9dxWgiNoC3KBnSvtmJrVOGldPbjUMspUMHxJ+sPIkiUsFvaSBPaZ9jm7y4U8UxnL3+vygTgYHqHxcjM49g5wzRDJI=
+	t=1746696650; cv=none; b=KQ4PTpF7a9jJRzQIcProS/Wk4qrxVs8KWA3r09hbJrAJxHxj10uI2IEymVXpMl6qiD1/dnr6Nn1pQTXhMFUqTWDsMP91kFNw6O8M7kz6MffMeLFPUC/+eaiksHHXkzApnixJFw6fM53r1z52+5+IqX+Bg/ZnhZCBA3I7w6kYOa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746696566; c=relaxed/simple;
-	bh=sngpcCVtwhKVcH/6x4CjcHof55f+rqXMxRQja6DBVg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lc4wcSbAZsK/wUMeusVsz839rwN8FeWf2Lh6Fcyl06dGLmLwB2Gq4/fveEtAwgf6iHFfdyCSqVbmsU4aKsrgKBz3sv3rF5/qyViz48Rx7VL6oeWT2Evi4xlZIWsaqtUrnoPp365eyJv3evSpqkBn1KCRI5QL0VdJI2L9MnJmX1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aJMWhhW3; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 7CE162115DCD; Thu,  8 May 2025 02:29:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7CE162115DCD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746696564;
-	bh=k10D7q/lt/KA5HXrM1tVZYWcIvRW+BWcwZ+HO7w2oy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aJMWhhW3RGlwa6IAL36Xcwx0fuoweyGLgDQkjVwBDSJDLj6WJzxfYOrPSysf9Fx73
-	 VofAcu12/1GnG0N3rfckSR3fQhZKF2W3/b6qHhMNnXR/5th2UKwM9eDzKjiYmAEuqc
-	 98DiRy4tM/3gVAz/2aFczVNOptnQaPkv0DRbM1Lw=
-Date: Thu, 8 May 2025 02:29:24 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	decui@microsoft.com, stephen@networkplumber.org, kys@microsoft.com,
-	paulros@microsoft.com, olaf@aepfle.de, vkuznets@redhat.com,
-	davem@davemloft.net, wei.liu@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, leon@kernel.org,
-	longli@microsoft.com, ssengar@linux.microsoft.com,
-	linux-rdma@vger.kernel.org, daniel@iogearbox.net,
-	john.fastabend@gmail.com, bpf@vger.kernel.org, ast@kernel.org,
-	hawk@kernel.org, tglx@linutronix.de, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: mana: Add handler for hardware servicing
- events
-Message-ID: <20250508092924.GA2081@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1746633519-17549-1-git-send-email-haiyangz@microsoft.com>
+	s=arc-20240116; t=1746696650; c=relaxed/simple;
+	bh=S4Q+GfVAd4eh///GSISGHgMpLX7nsFjgfbNXw/mE9e8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j2d0CLNcYU4n9jxWOA1yIwgx9niFX+xrInzKuuxj9QJK8seDhbp6HnJCuMKRG5eAtuMM8lkGOFAyvKhEUT9jA2HOnOaNPBXTuD40Z4SPSqUxFgoZlhQSae2R5Yz8fBa5D5pZzvksskwl5/2G6U6VIok1EsJap1f901oh9/trn70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m1ttq6Bo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pi3WmXj6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m1ttq6Bo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pi3WmXj6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B1F821212;
+	Thu,  8 May 2025 09:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746696640; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uv02PMz+WP7UJuv4Uqj1sGaorAILsG0RtLuM9fNYqpc=;
+	b=m1ttq6BonT2m6WJrqqN65L9LAfGiwGPdLVLMGha7PUYZqoY1HgULXKRIm5Mdk4iDwS96kW
+	AwYmRpJYqloos/yDe/c/74pVlr965MT8emIeH53qTB8QKbKzq7+rmsyVbUWQueQOTrJaGk
+	ff0NDjGFCVHNlzS/ueV+wUVe90wsAgA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746696640;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uv02PMz+WP7UJuv4Uqj1sGaorAILsG0RtLuM9fNYqpc=;
+	b=pi3WmXj61BNGHR+JHrA0yTRRapPrRJbU1Vr+Ywh6uSiO0KlkwaVzw9oFwDzNieA7BSbNEq
+	XTwoRx43fhRMvGBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746696640; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uv02PMz+WP7UJuv4Uqj1sGaorAILsG0RtLuM9fNYqpc=;
+	b=m1ttq6BonT2m6WJrqqN65L9LAfGiwGPdLVLMGha7PUYZqoY1HgULXKRIm5Mdk4iDwS96kW
+	AwYmRpJYqloos/yDe/c/74pVlr965MT8emIeH53qTB8QKbKzq7+rmsyVbUWQueQOTrJaGk
+	ff0NDjGFCVHNlzS/ueV+wUVe90wsAgA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746696640;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uv02PMz+WP7UJuv4Uqj1sGaorAILsG0RtLuM9fNYqpc=;
+	b=pi3WmXj61BNGHR+JHrA0yTRRapPrRJbU1Vr+Ywh6uSiO0KlkwaVzw9oFwDzNieA7BSbNEq
+	XTwoRx43fhRMvGBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3B1E13A30;
+	Thu,  8 May 2025 09:30:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nOs2Nr95HGgscQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 08 May 2025 09:30:39 +0000
+Message-ID: <9eb1bdbb-6a0c-4771-ae61-4ba9bd7fbd14@suse.de>
+Date: Thu, 8 May 2025 11:30:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1746633519-17549-1-git-send-email-haiyangz@microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] drm/shmem-helper: Import dmabuf without mapping
+ its sg_table
+To: oushixiong1025@163.com, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>,
+ Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250507094728.603302-1-oushixiong1025@163.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250507094728.603302-1-oushixiong1025@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[163.com,amd.com];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,poorly.run,redhat.com,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
 
-On Wed, May 07, 2025 at 08:58:39AM -0700, Haiyang Zhang wrote:
-> To collaborate with hardware servicing events, upon receiving the special
-> EQE notification from the HW channel, remove the devices on this bus.
-> Then, after a waiting period based on the device specs, rescan the parent
-> bus to recover the devices.
-> 
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Hi
+
+Am 07.05.25 um 11:47 schrieb oushixiong1025@163.com:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+>
+> [WHY]
+> 1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
+>     DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
+>     sg_table import.
+>     They only need dma_buf_vmap() to access the shared buffer's
+>     kernel virtual address.
+>
+> 2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
+>     trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
+>     restricts the maximum DMA streaming mapping memory, resulting in
+>     errors like:
+>
+>     ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
+>
+> [HOW]
+> Provide a gem_prime_import implementation without sg_table mapping
+> to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do not
+> require sg_table can adopt this.
+>
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 > ---
->  .../net/ethernet/microsoft/mana/gdma_main.c   | 61 +++++++++++++++++++
->  include/net/mana/gdma.h                       |  5 +-
->  2 files changed, 65 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-> index 4ffaf7588885..aa2ccf4d0ec6 100644
-> --- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-> +++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-> @@ -352,11 +352,52 @@ void mana_gd_ring_cq(struct gdma_queue *cq, u8 arm_bit)
->  }
->  EXPORT_SYMBOL_NS(mana_gd_ring_cq, "NET_MANA");
->  
-> +#define MANA_SERVICE_PERIOD 10
-> +
-> +struct mana_serv_work {
-> +	struct work_struct serv_work;
-> +	struct pci_dev *pdev;
-> +};
-> +
-> +static void mana_serv_func(struct work_struct *w)
+> v1->v2:
+>          Patch rebase.
+> v2->v3:
+>          Rename the import callback function.
+>          Remove drm_gem_shmem_prime_export() and separate some codes
+>          to drm_gem_prime_import_self().
+>
+>   drivers/gpu/drm/drm_gem_shmem_helper.c | 51 ++++++++++++++++++++++++++
+>   drivers/gpu/drm/drm_prime.c            | 46 +++++++++++++++++------
+>   include/drm/drm_gem_shmem_helper.h     | 15 ++++++++
+>   include/drm/drm_prime.h                |  3 ++
+>   4 files changed, 104 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index aa43265f4f4f..85900ec1954a 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -800,6 +800,57 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
+>   }
+>   EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
+>   
+> +/**
+> + * drm_gem_shmem_prime_import_no_sgt - Import dmabuf without mapping its sg_table
+> + * @dev: Device to import into
+> + * @dma_buf: dma-buf object to import
+> + *
+> + * Drivers that use the shmem helpers but also wants to import dmabuf without
+> + * mapping its sg_table can use this as their &drm_driver.gem_prime_import
+> + * implementation.
+> + */
+> +struct drm_gem_object *drm_gem_shmem_prime_import_no_sgt(struct drm_device *dev,
+> +							 struct dma_buf *dma_buf)
 > +{
-> +	struct mana_serv_work *mns_wk = container_of(w, struct mana_serv_work, serv_work);
-> +	struct pci_dev *pdev = mns_wk->pdev;
-> +	struct pci_bus *bus, *parent;
+> +	struct dma_buf_attachment *attach;
+> +	struct drm_gem_shmem_object *shmem;
+> +	struct drm_gem_object *obj;
+> +	size_t size;
+> +	int ret;
 > +
-> +	if (!pdev)
-> +		goto out;
+> +	obj = drm_gem_prime_import_self(dev, dma_buf);
+> +	if (obj)
+> +		return obj;
 > +
-> +	bus = pdev->bus;
-> +	if (!bus) {
-> +		dev_err(&pdev->dev, "MANA service: no bus\n");
-> +		goto out;
+> +	attach = dma_buf_attach(dma_buf, dev->dev);
+> +	if (IS_ERR(attach))
+> +		return ERR_CAST(attach);
+> +
+> +	get_dma_buf(dma_buf);
+> +
+> +	size = PAGE_ALIGN(attach->dmabuf->size);
+> +
+> +	shmem = __drm_gem_shmem_create(dev, size, true, NULL);
+> +	if (IS_ERR(shmem)) {
+> +		ret = PTR_ERR(shmem);
+> +		goto fail_detach;
 > +	}
 > +
-> +	parent = bus->parent;
-> +	if (!parent) {
-> +		dev_err(&pdev->dev, "MANA service: no parent bus\n");
-> +		goto out;
-> +	}
+> +	drm_dbg_prime(dev, "size = %zu\n", size);
 > +
-> +	pci_stop_and_remove_bus_device_locked(bus->self);
+> +	shmem->base.import_attach = attach;
+> +	shmem->base.resv = dma_buf->resv;
 > +
-> +	msleep(MANA_SERVICE_PERIOD * 1000);
+> +	return &shmem->base;
 > +
-> +	pci_lock_rescan_remove();
-> +	pci_rescan_bus(parent);
-> +	pci_unlock_rescan_remove();
+> +fail_detach:
+> +	dma_buf_detach(dma_buf, attach);
+> +	dma_buf_put(dma_buf);
 > +
-> +out:
-> +	kfree(mns_wk);
-
-Shouldn't gc->in_service be set to false again?
-
+> +	return ERR_PTR(ret);
 > +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_no_sgt);
 > +
->  static void mana_gd_process_eqe(struct gdma_queue *eq)
->  {
->  	u32 head = eq->head % (eq->queue_size / GDMA_EQE_SIZE);
->  	struct gdma_context *gc = eq->gdma_dev->gdma_context;
->  	struct gdma_eqe *eq_eqe_ptr = eq->queue_mem_ptr;
-> +	struct mana_serv_work *mns_wk;
->  	union gdma_eqe_info eqe_info;
->  	enum gdma_eqe_type type;
->  	struct gdma_event event;
-> @@ -400,6 +441,26 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
->  		eq->eq.callback(eq->eq.context, eq, &event);
->  		break;
->  
-> +	case GDMA_EQE_HWC_FPGA_RECONFIG:
-> +	case GDMA_EQE_HWC_SOCMANA_CRASH:
-
-may be we also add a log(dev_dbg) to indicate if the servicing is for
-FPGA reconfig or socmana crash.
-
-> +		if (gc->in_service) {
-> +			dev_info(gc->dev, "Already in service\n");
-> +			break;
+>   MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
+>   MODULE_IMPORT_NS("DMA_BUF");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index d828502268b8..1e43b6022329 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -910,6 +910,38 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
+>   }
+>   EXPORT_SYMBOL(drm_gem_prime_export);
+>   
+> +
+> +/**
+> + * drm_gem_prime_import_self - Import a DMA-BUF exported from the same DRM device.
+> + * @dev: drm_device to check against
+> + * @dma_buf: dma-buf object to import
+> + *
+> + * This function checks if the DMA-BUF was exported from a GEM object belonging
+> + * to @dev. If so, it increments the GEM object's refcount and returns it directly.
+> + *
+> + * Return: GEM object if it belongs to @dev, NULL otherwise.
+> + */
+> +struct drm_gem_object *drm_gem_prime_import_self(struct drm_device *dev,
+> +						 struct dma_buf *dma_buf)
+> +{
+> +	struct drm_gem_object *obj;
+> +
+> +	if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
+> +		obj = dma_buf->priv;
+> +		if (obj->dev == dev) {
+> +			/*
+> +			 * Importing dmabuf exported from our own gem increases
+> +			 * refcount on gem itself instead of f_count of dmabuf.
+> +			 */
+> +			drm_gem_object_get(obj);
+> +			return obj;
 > +		}
+> +	}
 > +
-> +		mns_wk = kzalloc(sizeof(*mns_wk), GFP_ATOMIC);
-> +		if (!mns_wk) {
-> +			dev_err(gc->dev, "Fail to alloc mana_serv_work\n");
-> +			break;
-> +		}
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(drm_gem_prime_import_self);
 > +
-> +		dev_info(gc->dev, "Start MANA service\n");
-> +		gc->in_service = true;
-> +		mns_wk->pdev = to_pci_dev(gc->dev);
-> +		INIT_WORK(&mns_wk->serv_work, mana_serv_func);
-> +		schedule_work(&mns_wk->serv_work);
-> +		break;
+
+I feel this helper is doing too much. Rather separate the test from the 
+policy. Do something like
+
+bool drm_gem_prime_exported_dma_buf(dev, dma_buf)
+{
+     obj = dma_buf->priv;
+
+     return (dma_buf->ops == drm_gem_prime_dmabuf_ops) && (obj->dev == dev)
+}
+
+and in the callers do
+
+   if (drm_gem_prime_exported_dma_buf(dev, dma_buf)) {
+    /* ... */
+     obj = dma_buf->obj;
+     get(obj);
+     return obj;
+   }
+
+>   /**
+>    * drm_gem_prime_import_dev - core implementation of the import callback
+>    * @dev: drm_device to import into
+> @@ -933,17 +965,9 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
+>   	struct drm_gem_object *obj;
+>   	int ret;
+>   
+> -	if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
+> -		obj = dma_buf->priv;
+> -		if (obj->dev == dev) {
+> -			/*
+> -			 * Importing dmabuf exported from our own gem increases
+> -			 * refcount on gem itself instead of f_count of dmabuf.
+> -			 */
+> -			drm_gem_object_get(obj);
+> -			return obj;
+> -		}
+> -	}
+> +	obj = drm_gem_prime_import_self(dev, dma_buf);
+> +	if (obj)
+> +		return obj;
+>   
+>   	if (!dev->driver->gem_prime_import_sg_table)
+>   		return ERR_PTR(-EINVAL);
+> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+> index b4f993da3cae..6e8e907bc43e 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -287,6 +287,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
+>   				    struct sg_table *sgt);
+>   int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>   			      struct drm_mode_create_dumb *args);
+> +struct drm_gem_object *drm_gem_shmem_prime_import_no_sgt(struct drm_device *dev,
+> +							 struct dma_buf *buf);
+>   
+>   /**
+>    * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
+> @@ -298,4 +300,17 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>   	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
+>   	.dumb_create		   = drm_gem_shmem_dumb_create
+>   
+> +/**
+> + * DRM_GEM_SHMEM_DRIVER_OPS_FOR_VMAP - shmem GEM operations
+> + * 				       without mapping sg_table on
+> + * 				       imported buffer.
+> + *
+> + * This macro provides a shortcut for setting the shmem GEM operations in
+> + * the &drm_driver structure for drivers that do not require a sg_table on
+> + * imported buffers. Only vmap is supported on imported buffer.
+
+That final sentence is misleading. It would still be possible to 
+pin/unpin and mmap the buffer. Only direct access from DMA-capable 
+hardware is not. (Right?)
+
+> + */
+> +#define DRM_GEM_SHMEM_DRIVER_OPS_FOR_VMAP \
+
+Rather call this DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT please. Calling it 
+_FOR_VMAP seems misleading to me. Best regards Thomas
+> +	.gem_prime_import       = drm_gem_shmem_prime_import_no_sgt, \
+> +	.dumb_create            = drm_gem_shmem_dumb_create
 > +
->  	default:
->  		break;
->  	}
-> diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-> index 228603bf03f2..13cfbcf67815 100644
-> --- a/include/net/mana/gdma.h
-> +++ b/include/net/mana/gdma.h
-> @@ -58,8 +58,9 @@ enum gdma_eqe_type {
->  	GDMA_EQE_HWC_INIT_EQ_ID_DB	= 129,
->  	GDMA_EQE_HWC_INIT_DATA		= 130,
->  	GDMA_EQE_HWC_INIT_DONE		= 131,
-> -	GDMA_EQE_HWC_SOC_RECONFIG	= 132,
-> +	GDMA_EQE_HWC_FPGA_RECONFIG	= 132,
->  	GDMA_EQE_HWC_SOC_RECONFIG_DATA	= 133,
-> +	GDMA_EQE_HWC_SOCMANA_CRASH	= 135,
->  	GDMA_EQE_RNIC_QP_FATAL		= 176,
->  };
->  
-> @@ -388,6 +389,8 @@ struct gdma_context {
->  	u32			test_event_eq_id;
->  
->  	bool			is_pf;
-> +	bool			in_service;
+>   #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
+> diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
+> index fa085c44d4ca..b5179a9cde93 100644
+> --- a/include/drm/drm_prime.h
+> +++ b/include/drm/drm_prime.h
+> @@ -100,6 +100,9 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
+>   unsigned long drm_prime_get_contiguous_size(struct sg_table *sgt);
+>   
+>   /* helper functions for importing */
+> +struct drm_gem_object *drm_gem_prime_import_self(struct drm_device *dev,
+> +						 struct dma_buf *dma_buf);
 > +
->  	phys_addr_t		bar0_pa;
->  	void __iomem		*bar0_va;
->  	void __iomem		*shm_base;
-> -- 
-> 2.34.1
+>   struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
+>   						struct dma_buf *dma_buf,
+>   						struct device *attach_dev);
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
