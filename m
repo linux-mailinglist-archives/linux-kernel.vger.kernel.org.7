@@ -1,279 +1,134 @@
-Return-Path: <linux-kernel+bounces-638993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE5CAAF188
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB50AAF198
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176AC1C02AA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 03:25:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB8D1C02B3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 03:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634F81F181F;
-	Thu,  8 May 2025 03:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772D720D4E2;
+	Thu,  8 May 2025 03:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KFp/GX24"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duGg0xtR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15072AE90;
-	Thu,  8 May 2025 03:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F851F181F;
+	Thu,  8 May 2025 03:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746674718; cv=none; b=nE5JJFatKTmUe+BZPeclRT/VqXtCyM5AqeCFUmm59z/TVI6kSLIhclUmh2BGA7QEtov2mdc5pf+TDNX7hs9n/p1eojFFcuK0rZMOhtYgJDmOoEVhh1h7bMsv5iZcbd63heaYY9E2lwER5+N/UNKMs52YBkZmZk7wDtidZi9iI1Q=
+	t=1746674754; cv=none; b=frY2dmc8ZurF9W0cm3N3j5mxu17KwYunXqouDALHGqJI0u91TPP3wH6tf3XDx4vOa9Aq+4R4qN0nDZaBZWiLAwhRABFL1OgaxH+rn6uQPWwZzTPYQSssji57EY8mAKEtZRvBXUyDAJJJMPAyUUtqPBfe/f0+oOuNEGqKr+PgVDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746674718; c=relaxed/simple;
-	bh=oamHO/+rh+Yf/azxupnezS+7RwfHm0i6EHnHXW8htgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ls0/aesAYHvb4Sknfksa+mXfDXr16kAbYm/3hXUDfJhSy2SG+LaJ4UvBxyfp2qC9BGTrDooj0poSeQMwDbjXR+Bgy+KNKc4XGL3EdirMOjvhbJHw8DrYd8dWbMAYPeOcoTUFzonLy6DsZlXK4wYVvHKai8dJ6XoXeJcs3yBEpD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KFp/GX24; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1746674701;
-	bh=F3SmnObXDIw29iBy0rIvhuVqwcl9dtw97tqeyALjVmI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KFp/GX24duDBknV+evjFDqwEfccHZB048wvi9+c4tMum5DY/WdHp0+ZlHVjXd3a8e
-	 sZumjJlgDtC9khytaW7KxlyX9wkoWd+EGc1Fqet1rzXmCsf5Gmmbm9FQaZZeuCJSME
-	 ig1PNNP5I5UpWkSRerNX5ZMYS3ppsFUcv3KvjFwaSuECVPdEO7Pvh2F5GlN3Mpn3xe
-	 36HT9qKyVkIE3es3220OKMzCZ8GVPcMRKaIRco6bFlf1ATx0U2FtPk5SasOJbeoSuv
-	 WDmgLJBh2Ubd+8GNMX76XkXmFwR4TNDBzRibX6aCyvz9hUwiimvqT5g07t8zqLLYcQ
-	 zOCUZBt4m91Qw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZtHZ52vmmz4x8P;
-	Thu,  8 May 2025 13:25:01 +1000 (AEST)
-Date: Thu, 8 May 2025 13:24:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the iwlwifi-next tree with Linus'
- tree
-Message-ID: <20250508132459.04bd8e70@canb.auug.org.au>
-In-Reply-To: <3d5761da40d0ddf4109d10d6f3c3d2538c4d89d4.camel@sipsolutions.net>
-References: <20250506114402.2f440664@canb.auug.org.au>
-	<f53576b21774ab6ba8294c5d1954f0528764f2fb.camel@sipsolutions.net>
-	<20250507111026.4700e392@canb.auug.org.au>
-	<3d5761da40d0ddf4109d10d6f3c3d2538c4d89d4.camel@sipsolutions.net>
+	s=arc-20240116; t=1746674754; c=relaxed/simple;
+	bh=0pcAJu24LCSnOoE0alnDTb7LX09SzOwDg3pSbDn2Ii8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hUvq6yFYyW7X9R6ve05ci+9ztMIBD/cn48ACHYMOyJZ4arUeoHEHEQFvmSiFZZT7Dt/zwbp4+0Adp3VkYOS1ESd16yhNEnxWnTns8KUzZ+Tbm8hjbD0WVfK4sN8WZmN3l3UNRT0URJ2+jAKiShXxM9wT9pBV3bH9uwxY5UqpnIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duGg0xtR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C5EDC4CEE8;
+	Thu,  8 May 2025 03:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746674754;
+	bh=0pcAJu24LCSnOoE0alnDTb7LX09SzOwDg3pSbDn2Ii8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=duGg0xtRQEpaxG6c6mCX25iD6rC2FR+xj4+oipUaBBVhbxyxITe9bG/y2bevlP4ae
+	 8vtC8bVnyGYeM0PO0zT1eeduO/Nhq56/CB2okOt092JIzf+TzNjGzi54FfR+nLhZDM
+	 wKX6oj/i0bKzEuDHStC3dhzA2tIKQwkYtG3KfQaida8Sqtoh79XkDZScCmBNsVFCFV
+	 XoDgRat0ny7aOPtyCkbvWUpzuv9sjx1vxpddsPS+njZVfdBlBN/lvCIpram1/e+GLc
+	 Uek36gM8Wt2uF7qgIJpR4VRf5F9hR7P5TPoVbHO8mqDCVdfXR4dJ6oq0JBpgYi+Uqv
+	 9+n+04TuEIxCA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB86C3ABBE;
+	Thu,  8 May 2025 03:25:53 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v6 0/3] PCI: tegra: Allow building as a module
+Date: Wed, 07 May 2025 22:25:51 -0500
+Message-Id: <20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/r2y7vj6hlDKtpg+JURmkHh1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD8kHGgC/4XPQW7CMBAF0KsgrzEajz2x01XvUXUxdpxgiRDk0
+ KgVyt3rwKIUIrH8X5r3NRcxxpziKN42F5HjlMY0HEuothsR9nzsokxNyQIBCbTS8hSSPMcus+y
+ H5usQpQ2+UYGiBW5FOTvl2KbvK/nxWfI+jech/1wXJrW0N8wgPGOTkiADsGpdGSPD713P6bALQ
+ y8WbMJ7wK0AuABKsfG1QmOqR0D/AQS4AugCEFVsaquxsfAImHuAVgBTAHDOE2EwXj29QK8AKoB
+ Dy8yhrp3/B8zz/AuxzBD0tAEAAA==
+X-Change-ID: 20250313-pci-tegra-module-7cbd1c5e70af
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746674753; l=1783;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=0pcAJu24LCSnOoE0alnDTb7LX09SzOwDg3pSbDn2Ii8=;
+ b=5vI6/OkRPTKlzXe3vVbMLbMax/WLtUua8eriSFeb3LmCylg7E0sqz4CFjwIwr0huTUaKGwQA6
+ x5guMxskE33BGyaQTk/iUqrLiuhTyRck/5TsXnB7nfr24uc/0wnRJ+y
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
---Sig_/r2y7vj6hlDKtpg+JURmkHh1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Johannes,
-
-On Wed, 07 May 2025 07:37:46 +0200 Johannes Berg <johannes@sipsolutions.net=
-> wrote:
->
-> > So, at your suggestion, I just used the latter versions of these files,
-> > but I then got the following build failure: =20
->=20
-> Ouch, sorry about that. That sounds like it's due to the duplicate
-> commits you had pointed out, which Miri dropped from iwlwifi-next now.
->=20
-> On the plus side, I'm going to be the one who has to resolve these
-> conflicts (soon) :)
-
-There are real conficts (see below).
-
-> > So, today I have merged the iwlwifi-next tree from next-20250505 (which
-> > was effectively empty).  You may want to try merging the iwlwifi tree
-> > into the iwlwifi-next tree and resolve any conflicts yourself (now that
-> > the iwlwifi tree has been merged into Linus' tree). =20
->=20
-> Not sure what you mean by "iwlwifi tree", I think iwlwifi-next/fixes was
-> empty, so perhaps you meant "wireless tree" instead?
-
-Yeah, that or just commit 175e69e33c66 (which has been merged into
-Linus' tree).
-
-> But yeah, I know what all the code is and what's going on, though
-> evidently less than I thought after the recent updates.
-
-So today, I have applied the following clean up patch, but it does mean
-that the 2 commits mentioned from Linus' tree have been reverted in
-linus-next.  This means that linux-next builds today with the
-iwlwifi-next tree merged.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 8 May 2025 12:26:09 +1000
-Subject: [PATCH] iwlwifi: remove the left over bits of 2 commits from Linus=
-' tree
-
-Commits
-
-  d49437a6afc7 ("wifi: iwlwifi: back off on continuous errors")
-  15220a257319 ("wifi: iwlwifi: don't warn if the NIC is gone in resume")
-
-were partly removed by just taking the MERGE_HAD versions of
-
-  drivers/net/wireless/intel/iwlwifi/cfg/sc.c
-  drivers/net/wireless/intel/iwlwifi/iwl-config.h
-  drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-  drivers/net/wireless/intel/iwlwifi/iwl-trans.c
-  drivers/net/wireless/intel/iwlwifi/iwl-trans.h
-  drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-  drivers/net/wireless/intel/iwlwifi/tests/devinfo.c
-
-This removes the rest.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- .../net/wireless/intel/iwlwifi/pcie/internal.h   |  9 ++++-----
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c  | 16 ++++------------
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c     |  2 +-
- 3 files changed, 9 insertions(+), 18 deletions(-)
+Changes in v6:
+- Remove unused debugfs cleanup function, as caught by kernel ci
+- Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h b/drivers/n=
-et/wireless/intel/iwlwifi/pcie/internal.h
-index b5368b256e20..8adeddeb0e4c 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-@@ -542,10 +542,10 @@ void iwl_trans_pcie_free(struct iwl_trans *trans);
- void iwl_trans_pcie_free_pnvm_dram_regions(struct iwl_dram_regions *dram_r=
-egions,
- 					   struct device *dev);
-=20
--bool __iwl_trans_pcie_grab_nic_access(struct iwl_trans *trans, bool silent=
-);
--#define _iwl_trans_pcie_grab_nic_access(trans, silent)		\
-+bool __iwl_trans_pcie_grab_nic_access(struct iwl_trans *trans);
-+#define _iwl_trans_pcie_grab_nic_access(trans)			\
- 	__cond_lock(nic_access_nobh,				\
--		    likely(__iwl_trans_pcie_grab_nic_access(trans, silent)))
-+		    likely(__iwl_trans_pcie_grab_nic_access(trans)))
-=20
- void iwl_trans_pcie_check_product_reset_status(struct pci_dev *pdev);
- void iwl_trans_pcie_check_product_reset_mode(struct pci_dev *pdev);
-@@ -1101,8 +1101,7 @@ void iwl_trans_pcie_set_bits_mask(struct iwl_trans *t=
-rans, u32 reg,
- int iwl_trans_pcie_read_config32(struct iwl_trans *trans, u32 ofs,
- 				 u32 *val);
- bool iwl_trans_pcie_grab_nic_access(struct iwl_trans *trans);
--void __releases(nic_access_nobh)
--iwl_trans_pcie_release_nic_access(struct iwl_trans *trans);
-+void iwl_trans_pcie_release_nic_access(struct iwl_trans *trans);
-=20
- /* transport gen 1 exported functions */
- void iwl_trans_pcie_fw_alive(struct iwl_trans *trans);
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/=
-wireless/intel/iwlwifi/pcie/trans.c
-index 799d651ddd8a..4d281c702eec 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -2333,8 +2333,7 @@ void iwl_trans_pcie_reset(struct iwl_trans *trans, en=
-um iwl_reset_mode mode)
- 	struct iwl_trans_pcie_removal *removal;
- 	char _msg =3D 0, *msg =3D &_msg;
-=20
--	if (WARN_ON(mode < IWL_RESET_MODE_REMOVE_ONLY ||
--		    mode =3D=3D IWL_RESET_MODE_BACKOFF))
-+	if (WARN_ON(mode < IWL_RESET_MODE_REMOVE_ONLY))
- 		return;
-=20
- 	if (test_bit(STATUS_TRANS_DEAD, &trans->status))
-@@ -2388,7 +2387,7 @@ EXPORT_SYMBOL(iwl_trans_pcie_reset);
-  * This version doesn't disable BHs but rather assumes they're
-  * already disabled.
-  */
--bool __iwl_trans_pcie_grab_nic_access(struct iwl_trans *trans, bool silent)
-+bool __iwl_trans_pcie_grab_nic_access(struct iwl_trans *trans)
- {
- 	int ret;
- 	struct iwl_trans_pcie *trans_pcie =3D IWL_TRANS_GET_PCIE_TRANS(trans);
-@@ -2440,11 +2439,6 @@ bool __iwl_trans_pcie_grab_nic_access(struct iwl_tra=
-ns *trans, bool silent)
- 	if (unlikely(ret < 0)) {
- 		u32 cntrl =3D iwl_read32(trans, CSR_GP_CNTRL);
-=20
--		if (silent) {
--			spin_unlock(&trans_pcie->reg_lock);
--			return false;
--		}
--
- 		WARN_ONCE(1,
- 			  "Timeout waiting for hardware access (CSR_GP_CNTRL 0x%08x)\n",
- 			  cntrl);
-@@ -2476,7 +2470,7 @@ bool iwl_trans_pcie_grab_nic_access(struct iwl_trans =
-*trans)
- 	bool ret;
-=20
- 	local_bh_disable();
--	ret =3D __iwl_trans_pcie_grab_nic_access(trans, false);
-+	ret =3D __iwl_trans_pcie_grab_nic_access(trans);
- 	if (ret) {
- 		/* keep BHs disabled until iwl_trans_pcie_release_nic_access */
- 		return ret;
-@@ -2485,8 +2479,7 @@ bool iwl_trans_pcie_grab_nic_access(struct iwl_trans =
-*trans)
- 	return false;
- }
-=20
--void __releases(nic_access_nobh)
--iwl_trans_pcie_release_nic_access(struct iwl_trans *trans)
-+void iwl_trans_pcie_release_nic_access(struct iwl_trans *trans)
- {
- 	struct iwl_trans_pcie *trans_pcie =3D IWL_TRANS_GET_PCIE_TRANS(trans);
-=20
-@@ -2513,7 +2506,6 @@ iwl_trans_pcie_release_nic_access(struct iwl_trans *t=
-rans)
- 	 * scheduled on different CPUs (after we drop reg_lock).
- 	 */
- out:
--	__release(nic_access_nobh);
- 	spin_unlock_bh(&trans_pcie->reg_lock);
- }
-=20
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c b/drivers/net/wir=
-eless/intel/iwlwifi/pcie/tx.c
-index f142b8beb396..c876912e9aaf 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-@@ -1018,7 +1018,7 @@ static int iwl_pcie_set_cmd_in_flight(struct iwl_tran=
-s *trans,
- 	 * returned. This needs to be done only on NICs that have
- 	 * apmg_wake_up_wa set (see above.)
- 	 */
--	if (!_iwl_trans_pcie_grab_nic_access(trans, false))
-+	if (!_iwl_trans_pcie_grab_nic_access(trans))
- 		return -EIO;
-=20
- 	/*
---=20
-2.47.2
+Changes in v5:
+- Copy commit message exactly word for word on patch 1, as required by reviewer
+- Delete remove callback in patch 3, per request
+- Don't clean up debugfs, per request, which drops patch 4 entirely
+- Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com
 
---=20
-Cheers,
-Stephen Rothwell
+Changes in v4:
+- Updated commit messages for patches 1 and 2, per review
+- Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com
 
---Sig_/r2y7vj6hlDKtpg+JURmkHh1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Changes in v3:
+- Add patch to drop remove callback, per request
+- Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c11a4b912446@gmail.com
 
------BEGIN PGP SIGNATURE-----
+Changes in v2:
+- Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
+  building pci-tegra as a module for arm
+- Drop module exit to prevent module unloading, as requested
+- Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgcJAsACgkQAVBC80lX
-0GzjPQf/dr4ZL+j+tt6hu+B76FCI5H23szLlDs+Vd7iiemGgZ0RqNYcw3m0MSvUj
-gv+mZbtK6lZYqB50NbNSuRIOH5S2vQNEy/96hd/AXahuK4l6D2nkINTsneEoiWgL
-UXREksUPMpdDdE0aKO1VuOoxDNYu2dFo1SBw18HRmCaZinb5AIWJPEC1DVdbWhGT
-uvsYoA7DeBvlMQmxHpJIKeoXwCBtPgsuy3bCwkEGSIJDyYnEoQ82DHPDtQeXiGFL
-ahSTPiYTTwkPv0OLBMLLYkBlVJe9tOkMoQgUI4bH8fkJ0IB7KyzYartFGprRlqTC
-IzKqimSNXiBMtOLNW6+mKJZxpA0ahg==
-=XjJy
------END PGP SIGNATURE-----
+---
+Aaron Kling (3):
+      irqdomain: Export irq_domain_free_irqs
+      cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+      PCI: tegra: Allow building as a module
 
---Sig_/r2y7vj6hlDKtpg+JURmkHh1--
+ drivers/cpuidle/cpuidle-tegra.c    |  1 +
+ drivers/pci/controller/Kconfig     |  2 +-
+ drivers/pci/controller/pci-tegra.c | 35 ++++-------------------------------
+ kernel/irq/irqdomain.c             |  1 +
+ 4 files changed, 7 insertions(+), 32 deletions(-)
+---
+base-commit: 18352e73612d60b81790d2437845276ae499b64a
+change-id: 20250313-pci-tegra-module-7cbd1c5e70af
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
