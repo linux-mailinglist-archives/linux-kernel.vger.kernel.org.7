@@ -1,122 +1,163 @@
-Return-Path: <linux-kernel+bounces-639172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E353AAAF3BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:29:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DFEAAF3C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 324F91BC596C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B597F9C1663
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964BA21ABA7;
-	Thu,  8 May 2025 06:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBB2218AC3;
+	Thu,  8 May 2025 06:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ASRF76rU"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X+a+Df11"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28234218AC3
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11691E1A3B
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746685770; cv=none; b=PAAK/zet7WkLNOQAlQbxWCuTteqRVqxcEVkozFPIfY8FRz45FgBF5AnsIA7IaJQ3Z2sWrQrJ/7CalbC09eurl3zZuODbhyE6vBIjpAZLizbxqq+XMkGKUQu24BY0uuAVgLOLWg88RpK5RRictIJI8m+yLAtE2egQQJ0lAzpK2hk=
+	t=1746685811; cv=none; b=izAK/6akKsV1trNkz9OXSxB/RRh4CcHZNBw3s7JZfnWoLYee2X+yFzvfpt3pjApYUn6cRTfodGRrO+WVYMFABy7kpzF5ng7pxCZQ+whTcZJX8vT76hmW6uINnRp8EcNYtrlWknRDSjmjW6lue+HpEmVetj4wGRm6kBf2uZyV9Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746685770; c=relaxed/simple;
-	bh=nvAOftu8RZvdo9jR+7uDcoM7mg78LNDiZJ9RZTqBFTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SMaqtkzWC2iFnDzpJeHcdFTJIAcQ+KKjhfEM0Z/BOieaGL3LAdlFwH99+qhNIU0ZGgBzDaqKTrgfTuSRixmnzIVPw98ohd7Tcke3oXPPwiHYrL01uIwoUR9Nqr5wP8OQrmoeRtpNgO29mBXEK3Jy9sqR5lr2qg0mJmhMP8kxipQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ASRF76rU; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so380019f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 23:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746685766; x=1747290566; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2/4bzmi3WeEDbTzTrWnva98EY9qxtiVDbKUh9os0Wng=;
-        b=ASRF76rU+oOGWhmnMMxRGZPnXK3rtLnBpRXUFejEdLp/KYAJz7st/87ui6hKnwKPGM
-         36BW+WiFnPeDBVY2OqpmuvgKQqXQhCV/7zEFMsADo2SWml1qUuQQrkZCse7aM6dHEgT6
-         Os90z5dDV/Clw+nbCQ+MQXP0FUACBP30g3XpaPqfwV713B7mjxY5LvDP181TOVlGtYKH
-         +8SFcxinreTVILfiLJ+46xvvKZJ7I8Ex2/wcgNY297BjX7DSl9k8KGvzL/EwLJyDFEck
-         Sa6OuiWz+4QbQqCd/3jguzgK3ile1yzNkYT9RB0Tf9tOBKFxl53vAZONNZGcQWAmJv+B
-         neLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746685766; x=1747290566;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2/4bzmi3WeEDbTzTrWnva98EY9qxtiVDbKUh9os0Wng=;
-        b=bbdjUFT7jEprQmxBUcjzfOQO72gYuj550R2mmhudg5J3jaeZR9wbdPaLJy5YZBC77J
-         FV/Sw/03zgPZPOmB5Opgc0tyIEyBoJGdZaa78JVkVWiRWadnaYYcaDp+UKpHiJ3fkCWF
-         x4/zZHQ8sO/eRUBcXFfd5nCixZxi6CCOZxbOoIumAjW+6XeBxlw3YS+6cYnmdcLgSzJy
-         aELgr4ltk14jbYwinIC6vuaG8siAy4F1vOhQkyLvisF/Gxa95NR6rFuAYc3mNBllwxgB
-         m7oTjhp+gVobZICxiU4Kw0raJu0B5KXcQ0KO1/kVzZrD7ezK+uOnrEFUukl/Bs16zHel
-         pMVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMt2sjDQHH7Agfx5lW8/U/60ksPKE5BV/HqLAANU2WLZ4gCqIKJ0hM2zI+SstOxn/gekMC5obbqneEzQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypjjqrAf46m3cJx57nf3AmCCVK4xvdGGVIPH5P5PQfbJRx2SBW
-	INKojlcZB5hISCaOrKB+fXxKC5eH9GVT+ij95WZf2RCQ9qpopf8cC58iRzwGaP8=
-X-Gm-Gg: ASbGnctJIcZRWZQvydoMnfGq3txiUDkO/YdKjNbfCbuMWzIUI8QsmXRegHISdFvmWkB
-	CJqKLqdi9DNGUEXqi3uiadNGMBERn16AEkujGfG7DVZBj3arxKGZmyuktZfHcU6vWFJtvheA5bY
-	ksFMx8VBsp1oRNa5DHIlKgvF5N04oqf34YMHT8exUXE/ahF1pHF8fNMhpvMi3coBn083P2l1Q+8
-	E8N45o9jFKPjTstNLXy2khaulq7KajuOLJGaz2/M0Y/7WU9G3Tp3pC9DuT0YalchwaEJxPmvorr
-	dK4tGbXKc/bm8arc1+w38nsNhPjAyjIy2pbHaVYzgsCA+w==
-X-Google-Smtp-Source: AGHT+IED9IVqI1ICbHb0y7mZgDW+1JcDLNkQqI9Ufmww05m3kDmPH3IE5qhfjUZINH4pYQlMToViTA==
-X-Received: by 2002:a05:6000:430d:b0:3a0:b8b0:4418 with SMTP id ffacd0b85a97d-3a0b8b045f4mr2297566f8f.50.1746685766494;
-        Wed, 07 May 2025 23:29:26 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0b81a1b9asm2527467f8f.0.2025.05.07.23.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 23:29:26 -0700 (PDT)
-Date: Thu, 8 May 2025 09:29:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Niklas Cassel <niklas.cassel@linaro.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] pmdomain: core: Fix error checking in
- genpd_dev_pm_attach_by_id()
-Message-ID: <aBxPQ8AI8N5v-7rL@stanley.mountain>
+	s=arc-20240116; t=1746685811; c=relaxed/simple;
+	bh=6DN0saKY1Q39ZgR8PGRQckXGZe7quH1aGpqb1tmGs4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bIuDj867SfIm3NG9s1NJJOLoKixktgMbiJz9HY9GpzpmkU29ri/vm4h4kMcO0jJgzLPiE8GokSO7qpSqV57NUSkNI4szDPbTcuP4J61w6g2qzBrqbokGqg2eNYEbZud+571PWj3dn+umDHGGfIyECi+Tc6y/tw1juJuO+efYu+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X+a+Df11; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547KKL0r030803;
+	Thu, 8 May 2025 06:29:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=kiw00c+FQf9PuZ92J0vgUrj2gmOIz1soi9KXE46SO
+	7U=; b=X+a+Df115Luf5l52uz7DKUhDmfQHX/Mxn31plWC9Qw/3zmBDd2unC+R9h
+	VCDkxCD1Ezsay+PGEQmQxWuawSrBQXk+HCTx+fVYJpWJO74NoD0u4bgU0mnWuMzY
+	SvnDFj+IGiJoYYAI4akiyTNRTEataMKH8+O5Ta9y2wJMjgpoiXD6FXromyqIYIjP
+	TX3iGqUh7Lw0iROf1qlJ6FOCFK+yb3J9lix0ZgMMg6p3eJklcwSbVmtRL3AuMv/X
+	dYqGVxMCDZrgelpfUqiaHIeaMSOYFspfyWJ91A2SnGDhXj9Nw6DpYQL3A9rEIf70
+	QrdnkN/sgt1v1A+f1FThZCg5lxI3Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46g5yrvyhk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 06:29:46 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5486QnJL001469;
+	Thu, 8 May 2025 06:29:46 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46g5yrvyhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 06:29:46 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5486FW8I014097;
+	Thu, 8 May 2025 06:29:45 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46dypkv87s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 06:29:45 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5486TfhN17563970
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 May 2025 06:29:41 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 659AF20083;
+	Thu,  8 May 2025 06:29:41 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D06F20081;
+	Thu,  8 May 2025 06:29:39 +0000 (GMT)
+Received: from ltcblue8v9-lp1.aus.stglabs.ibm.com (unknown [9.40.192.91])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  8 May 2025 06:29:39 +0000 (GMT)
+From: Narayana Murty N <nnmlinux@linux.ibm.com>
+To: mahesh@linux.ibm.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org,
+        gwshan@linux.vnet.ibm.com, benh@kernel.crashing.org, agraf@suse.de,
+        vaibhav@linux.ibm.com
+Subject: [PATCH v1] powerpc/eeh: Fix missing PE bridge reconfiguration during VFIO EEH recovery
+Date: Thu,  8 May 2025 02:29:28 -0400
+Message-ID: <20250508062928.146043-1-nnmlinux@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=cuybk04i c=1 sm=1 tr=0 ts=681c4f5a cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=kQooW1NXP8U1ZRCmC6MA:9
+X-Proofpoint-GUID: OOn9rtTk_GJjBsPQHlC66v5VrFle9GtV
+X-Proofpoint-ORIG-GUID: ULABqiSJb1CND9jVcnFkcBaB5PVJqc3C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDA1MSBTYWx0ZWRfX4suI3pv/rKHb GV1A7p6kKUG7iD0/ZTGEDSDqRmW7BQrC3/775faUCGi+HbwPd9ByPl2xe2XlQCg4PV9cKhtHQN4 Ix2smk3qn5JJyS2rYTYhh62w2gFFctvPRp0zxyPbSqmGhawAmMz6tgAszZk050UcSQ3clWh983w
+ tq1cmz3TMdPmZ+vVJbJYmFynpMjOP07lKLsetLv8i9KStEv/PEYYfGZ5USGmkQIkO5Pz7UcJJ+h YooW3q4nksNjqwBs6zpCSzqvpb3nVAF+bIdAR+Wl1IyI4E/flfHRtOOh8KyjVfdRB0PLz8mHvfI YEr4JUrwN0PAK0GXky3nFE8i5/vXiWwDDH0dEidSZaX1gjqKZxy62qYOlCmBqLIa0plXBz6wIaC
+ KlEuUglwtPNGJvYisqhGeHrGsQUZF+M5+q2g0JKwnbYpO2jpTe9J6v7HGPFARfYMLTSMY+Zv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-08_02,2025-05-07_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 spamscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505080051
 
-The error checking for of_count_phandle_with_args() does not handle
-negative error codes correctly.  The problem is that "index" is a u32 so
-in the condition "if (index >= num_domains)" negative error codes stored
-in "num_domains" are type promoted to very high positive values and
-"index" is always going to be valid.
+VFIO EEH recovery for PCI passthrough devices fails on PowerNV and pseries
+platforms due to missing host-side PE bridge reconfiguration. In the
+current implementation, eeh_pe_configure() only performs RTAS or OPAL-based
+bridge reconfiguration for native host devices, but skips it entirely for
+PEs managed through VFIO in guest passthrough scenarios.
 
-Test for negative error codes first and then test if "index" is valid.
+This leads to incomplete EEH recovery when a PCI error affects a
+passthrough device assigned to a QEMU/KVM guest. Although VFIO triggers the
+EEH recovery flow through VFIO_EEH_PE_ENABLE ioctl, the platform-specific
+bridge reconfiguration step is silently bypassed. As a result, the PE's
+config space is not fully restored, causing subsequent config space access
+failures or EEH freeze-on-access errors inside the guest.
 
-Fixes: 3ccf3f0cd197 ("PM / Domains: Enable genpd_dev_pm_attach_by_id|name() for single PM domain")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This patch fixes the issue by ensuring that eeh_pe_configure() always
+invokes the platform's configure_bridge() callback (e.g.,
+pseries_eeh_phb_configure_bridge) even for VFIO-managed PEs. This ensures
+that RTAS or OPAL calls to reconfigure the PE bridge are correctly issued
+on the host side, restoring the PE's configuration space after an EEH
+event.
+
+This fix is essential for reliable EEH recovery in QEMU/KVM guests using
+VFIO PCI passthrough on PowerNV and pseries systems.
+
+Tested with:
+- QEMU/KVM guest using VFIO passthrough (IBM Power9,(lpar)Power11 host)
+- Injected EEH errors with pseries EEH errinjct tool on host, recovery
+  verified on qemu guest.
+- Verified successful config space access and CAP_EXP DevCtl restoration
+  after recovery
+
+Fixes: 212d16cdca2d ("powerpc/eeh: EEH support for VFIO PCI device")
+Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
 ---
- drivers/pmdomain/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/eeh.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index cd4429653093..ff5c7f2b69ce 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -3176,7 +3176,7 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
- 	/* Verify that the index is within a valid range. */
- 	num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
- 						 "#power-domain-cells");
--	if (index >= num_domains)
-+	if (num_domains < 0 || index >= num_domains)
- 		return NULL;
- 
- 	/* Allocate and register device on the genpd bus. */
--- 
-2.47.2
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 83fe99861eb1..ca7f7bb2b478 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1509,6 +1509,8 @@ int eeh_pe_configure(struct eeh_pe *pe)
+ 	/* Invalid PE ? */
+ 	if (!pe)
+ 		return -ENODEV;
++	else
++		ret = eeh_ops->configure_bridge(pe);
+
+ 	return ret;
+ }
+--
+2.48.1
 
 
