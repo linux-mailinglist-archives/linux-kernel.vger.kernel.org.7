@@ -1,74 +1,79 @@
-Return-Path: <linux-kernel+bounces-639944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C110EAAFEA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:13:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BEBAAFEA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747503B7139
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:11:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 875BBB40005
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196BA286D72;
-	Thu,  8 May 2025 15:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7ED28368E;
+	Thu,  8 May 2025 15:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o3pZSYpy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fQ6ytKvd"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C76A27AC3E;
-	Thu,  8 May 2025 15:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03A527991C
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746716815; cv=none; b=tCykZ+lLUsPkq/2Wbu+zKEjTm4VKPxZYjqnVzyxt9+T/mZbIemChxA3//6XkIwUBMxAUgcDIj8eCiD3AfTBC72uWIsw3DD8JWvUndoN+zqUVq1ll+wscfZtnyzWR68TAZ+U1IVwdHEnIdZ14g175EtuT7xSByuev7ohH5CWN+WM=
+	t=1746716764; cv=none; b=ddcIFkGEY3SSllGuGkuPiYjsApPnLAhoSctSIqr0m4CaMuTu2T7+gPMAVPJwURYLWxbBfsUhqzkkPlVHQLjvgDKRFFOjJeoOqawd0TuWk9CdSle2JDrvqYcAPvoUn2DE/wJtXU8f9SKVAaYAoduCGseuwzvlLcwvPeaCPFJ7TRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746716815; c=relaxed/simple;
-	bh=hbTb4Ycr/d1ecNihiUJ856JR7dFexe12ufHLYP7hyIs=;
+	s=arc-20240116; t=1746716764; c=relaxed/simple;
+	bh=x18HZDpO4/AfOTYMyI2T7MVF84ndUzJ8OmJycvJGKxY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpHOScAio6IPrh61xK+KjX/TVDc2kbzoVubNkDBNRuVfujltHO1lOk0aJvvrbo9vNJ+FkFFQ8fXkmDCgNNYqMcQPiZfXkev3UDxkIZPpQh4XJ/+ncdXsOWUuq54qzmzVeapXZhREQdl35D2XPDjF9fhaNF3S/IFC8rqlfCLJFRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o3pZSYpy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548AfMCG013187;
-	Thu, 8 May 2025 15:06:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=BSmgeN
-	5HB91N9M1jV8w7LDYBEzoqBnjFqxH7vD60Jig=; b=o3pZSYpyppVLqGAAUptfXc
-	bvJG4AHVxvooB+S7GP3sZxoyJyvNIZRSXhA9MFfULyvu7wIv/UiBiwvp32mP4T9i
-	fWP1juZkev8fWrVPpkKJjC+PU8xjQxdXVzK3jLEAWDGzjncaphwrVWHGOsbibSfs
-	/FWGM1y/BRa7oNJfQq9Uw8zsXniPxup2Yb7NQH/0s87A3uTkaoM4uCSQiJH8qOts
-	zYRD2esuvznadVpOFfagXVL+z6/Yc2eyMcMec6oJCMURt+WZseJ9Dk/w4eWGI/MZ
-	JI5hx4ArMFt3yHkr9ZHF+9dxAuWaPq2GNj+iVu/Cusy01ynwiPhxGNxHZ1vGz74Q
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46gu2t1a0b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 May 2025 15:06:10 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 548B03tu013880;
-	Thu, 8 May 2025 15:05:52 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46e062nyg9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 May 2025 15:05:52 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 548F5qlA27918960
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 8 May 2025 15:05:52 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0B47358055;
-	Thu,  8 May 2025 15:05:52 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F37EA58043;
-	Thu,  8 May 2025 15:05:49 +0000 (GMT)
-Received: from [9.61.251.83] (unknown [9.61.251.83])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  8 May 2025 15:05:49 +0000 (GMT)
-Message-ID: <1d2c2fdc-5c36-4d4e-8b25-8289b865726d@linux.ibm.com>
-Date: Thu, 8 May 2025 20:35:48 +0530
+	 In-Reply-To:Content-Type; b=XZPKvZKmThx3wJbnV+N2BqE8G8vh+FYUQgfL++qihREYOGwW1huZFOKgx/I4k1BV6+1HhybPZNMqIY8H0ozhmGOuB8yrVw1zAc8ibxK7YrFI/JaveIMHBVVLkO4XjWdE83Sek1d1DdV2k8PCVu6ol3i9+MrB8S+RKtEDQQbkhJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fQ6ytKvd; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-861d7a09c88so18581039f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 08:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746716761; x=1747321561; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oojzGy2rPvyvD3fwspYiXamOJIatZnX+so2HECZ/CEE=;
+        b=fQ6ytKvde5cHfbxuQhzY3NOWWNJn0115HhfkcanhmqYiWQCjSLSJiIP0ruP1G5I0/d
+         9a++YxZaEapN8H32KSnXTdrJITeAl+qZTw4Wcg2tO/svEflDHlyK84wWaXuocrVotWAD
+         Zakd10w7wf6VSlFbhCpftKFehKyMK84EqSP0Fd76+Cyi7t5wdu2tlbrnd3Co0jxHy5wk
+         xr8tYRYgZ6ro4BSs8pdHupVKCTxm2ZHPe+GZcCyKLOf3G/9H77RgXiOMaf9CVP+Tm3KK
+         5wLyJRb3Xca0TPKLFwOowhu2n4jdSruoFkPsj9bcf1LdeBTAxOTZKtqyMGVVOSpMmSkg
+         9LDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746716761; x=1747321561;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oojzGy2rPvyvD3fwspYiXamOJIatZnX+so2HECZ/CEE=;
+        b=uaYzxYWPSAT2xUn8AllBEGB9v3+MPKEBaweY4Gdb2VrBlSz7dxP5IPpRLF72FcVsnm
+         AuPpZOlKvKEqchhqQumWmgPylabMTtrLiotE/+1o+SFLeIHITUy0In6AmpJ1b5urqVrh
+         KD9yT3ivh9L40ED/VXbJvoxSsABwbBoadpKUVfInuo3xByO3loWP4opIu1/Ajeb0jSJn
+         jqCG+hG/NXFmVa12yTQ8D2L9VDaFDCzmyhrMPdkmDMhe3jtigVGvnBbRmXGc1UdgTmVJ
+         H+8DRYNZO7ErKicZdqLBuwMtIjJLvRUDCSt4s0BDjvaxmLVFlhhqguloWKBImFlviqll
+         GJYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdPDLVza/LS1Rk4AHPFPIkS3AG6IZyqvYwybzWvfDL+FiLUrrhnzeyJYnZgA+pEEXehBBO2K3DZvthD/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrCg8UzeaWOLp5AGZVl3fkQ2hPAuQYzTpBMVE8nLKBkTzSUnuz
+	CZGZiBAwdu0cxVgBlvJUjoRNFOQTDvBIBC/chZ43b3+XYF80RzBDVJSt5ox/MwdQGBuwvKty4c5
+	G
+X-Gm-Gg: ASbGnctBuDOo+3mousuHuU8tsjsKaNSGQvPs5aF6Zb8qalO/LdaMnZnbMOEV4w74H6N
+	BHMlHt4IVA/74T8uX6MdhLcrlqTjDKDVdM2KiYOhN8+EHQt2HkftyI8S8uVRYi1HVpVZIU1RX+A
+	f3ZJwyTblrgDEQlb8uwOYoOK2andENQHWaiSywnSCBG1/L5c3XDl+RwfmVDtNTO2Fq0zMVyPdqe
+	bVUofDmZebMGskG9GAopxKSukPhlEWs/ua+kiYxE8uy1t2GYOPojfAWnipSPVr+Q41TqssH9dI+
+	ipi0N5FetuNaSbmQ6akecomKIjbPmGgSPpY9evRnesB//Xc=
+X-Google-Smtp-Source: AGHT+IEfGrAt/nAymBQqANABYk4MXHhBbOjqWMik/FGHnukDHhPjKhYplTKB9EqvQxT+gtj+Y0dYfA==
+X-Received: by 2002:a05:6602:3422:b0:85a:eecd:37b with SMTP id ca18e2360f4ac-867479246d9mr889219339f.11.1746716760884;
+        Thu, 08 May 2025 08:06:00 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88aa59313sm3117407173.103.2025.05.08.08.06.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 08:06:00 -0700 (PDT)
+Message-ID: <89253238-9c01-4ff1-97aa-6b9bccd65991@kernel.dk>
+Date: Thu, 8 May 2025 09:05:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,87 +81,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: powerpc/poly1305 - Restore crypto_simd_usable
- test
-Content-Language: en-GB
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <cover.1745815528.git.herbert@gondor.apana.org.au>
- <915c874caf5451d560bf26ff59f58177aa8b7c17.1745815528.git.herbert@gondor.apana.org.au>
- <242ebbf1-4ef0-41c3-83cb-a055c262ba4a@leemhuis.info>
- <aBtF2jVZQwxGiHVk@gondor.apana.org.au>
- <37cf099e-d5c2-40d8-bc31-77e1f9623b1c@linux.ibm.com>
- <aByX_Y64C6lVRR8M@gondor.apana.org.au>
- <f66620e2-77e3-4713-a946-ddb2c8a0bccb@linux.ibm.com>
- <aByiNZNxqyTerdYG@gondor.apana.org.au>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <aByiNZNxqyTerdYG@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] Fix Hybrid Polling initialization issue
+To: hexue <xue01.he@samsung.com>, asml.silence@gmail.com,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: peiwei.li@samsung.com
+References: <CGME20250508021828epcas5p21b9313ec7c9e0da2e7e49db36854aa22@epcas5p2.samsung.com>
+ <20250508021822.1781033-1-xue01.he@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250508021822.1781033-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=NLnV+16g c=1 sm=1 tr=0 ts=681cc862 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=FNyBlpCuAAAA:8 a=48bIoUrBYIooDiy4U3IA:9 a=QEXdDO2ut3YA:10
- a=RlW-AWeGUCXs_Nkyno-6:22
-X-Proofpoint-ORIG-GUID: FP_6_i-DOA52SaRGfd5Doiu48ydWtB-2
-X-Proofpoint-GUID: FP_6_i-DOA52SaRGfd5Doiu48ydWtB-2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDEzMCBTYWx0ZWRfXz90klTix6jhx 4ku7tsJP+/6Ssabv4huefVsKUMqL+8l6vB6qri0KCBidPVx6gqu7f7tBsyI5nMBNvdpseExL5Yz tcmbxR/9gdwOtJgylYYTqOGcUZ/OwyC6Kf3oGi4u3ABRL2rt0Hny+CHnbTUtG8uFoFN/6Mt3cKD
- zke5EIrb7r8lX3jHSdl5rNYmVxucnfYb7JcKr7sqXc500enzJti9+6oWQVj0mR3I+ROyzyEOCAD NSWT204LLoJgH1Z9m8tBUQSPRBY2bWgQ9MhJ3kA4r1lR7sfTN57mm0K+fKGsH90QaCBCZ6MaTgq MXzI+j6+wzRYsvN1HanlCJ9X1/hH/mBUeCim/ZTLDkT2p6pUnFCQNrYKD9hD+GISBzW3ZvNMXCp
- CqrhKnQPYt5ndNmfFzbI+IhHViXLZfaNE4jwX5QFlxf9lohHV57EppSoH6TMX3bzckrX+9Bf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-08_05,2025-05-07_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- mlxlogscore=909 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505080130
 
+On 5/7/25 8:18 PM, hexue wrote:
+> Modify the defect that the timer is not initialized during IO transfer
+> when passthrough is used with hybrid polling to ensure that the program
+> can run normally.
 
-On 08/05/25 5:53 pm, Herbert Xu wrote:
-> On Thu, May 08, 2025 at 05:27:13PM +0530, Venkat Rao Bagalkote wrote:
->> Yes, its was on the same machine, next-20250506 passed.
-> OK I found one bug in my patches, I incorrectly removed the simd
-> tests for powerpc.  Does this patch help?
->
-> ---8<---
-> Restore the crypto_simd_usable test as powerpc needs it.
->
-> Fixes: 14d31979145d ("crypto: powerpc/poly1305 - Add block-only interface")
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
->
-> diff --git a/arch/powerpc/lib/crypto/poly1305-p10-glue.c b/arch/powerpc/lib/crypto/poly1305-p10-glue.c
-> index 7cea0ebcc6bc..154eced0bf9e 100644
-> --- a/arch/powerpc/lib/crypto/poly1305-p10-glue.c
-> +++ b/arch/powerpc/lib/crypto/poly1305-p10-glue.c
-> @@ -6,6 +6,7 @@
->    */
->   #include <asm/switch_to.h>
->   #include <crypto/internal/poly1305.h>
-> +#include <crypto/internal/simd.h>
->   #include <linux/cpufeature.h>
->   #include <linux/jump_label.h>
->   #include <linux/kernel.h>
-> @@ -51,7 +52,7 @@ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
->   	if (!static_key_enabled(&have_p10))
->   		return poly1305_blocks_generic(state, src, len, padbit);
->   	vsx_begin();
-> -	if (len >= POLY1305_BLOCK_SIZE * 4) {
-> +	if (crypto_simd_usable() && len >= POLY1305_BLOCK_SIZE * 4) {
->   		poly1305_p10le_4blocks(state, src, len);
->   		src += len - (len % (POLY1305_BLOCK_SIZE * 4));
->   		len %= POLY1305_BLOCK_SIZE * 4;
+Patch title should be:
 
+io_uring/uring_cmd: fix hybrid polling initialization issue
 
-Unfortunately, above patch dosent fix the boot warning.
+and then you need a Fixes line and a stable tag, if appropriate.
 
-
-Regards,
-
-Venkat.
+-- 
+Jens Axboe
 
 
