@@ -1,79 +1,116 @@
-Return-Path: <linux-kernel+bounces-639317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69452AAF5E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:40:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA95AAF5D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A919C21EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F24A5B215E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C4A262FE2;
-	Thu,  8 May 2025 08:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D5F2620DE;
+	Thu,  8 May 2025 08:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QSrrnWQS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dERj47/e"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26154262FCA;
-	Thu,  8 May 2025 08:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38782627F5
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693582; cv=none; b=IFLlbhOJWPE+ROPrJrU9k1HqkIkp4WcDvXOlfMcQwMTIK4DzYpLcbdHvnPYcL9AGz8ok6Tri1BKehJ7rlfZ6GWlb23ZD1uLOabuZt2+7+2HDxsAZ7jtE2fiA+n6OOE6djWT6Pd2OToMWnm0m/5IFdPR4Cp3KOo9l9vWD5V6RgbI=
+	t=1746693493; cv=none; b=IooBL2e3iAFAcAIM5bxTvNMlZYBdGYGMT4XPSv+2yP83qnmuqaVRdJVyOUOc2ixSBcvHSKK0skXXy+iLvb13suJYP7TkH3oQp3TTi9JZZVIOVyqtRT8MPRreC+EUmsodhAs1lDVjJcP/dihWzr+Q8Zpp53mZtZHtiQZ3Cjr0L/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693582; c=relaxed/simple;
-	bh=J1quForL1AyV+mxiU/+Tx5j7sIP7VxLUjzVH0JaG5GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MeejwEoU00GlEecbDv7ABmXG4hKbcwEgVyASj1h9BTjp1gWOn6Abew60JnBOd2ovTdExG6/qaBSMbRNArNgfNvB/GXjS7CADH1j1aqyQ/3x8IO381wv2+6U7R59d3OKyII0v+RZ6QyIXVEMlHWrg+zG7bihXyLYT9/tIZIZn76U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QSrrnWQS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746693581; x=1778229581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J1quForL1AyV+mxiU/+Tx5j7sIP7VxLUjzVH0JaG5GA=;
-  b=QSrrnWQSGrInAW3NtGyF6D76MKdc0eXAq4tOuM58MXVCvbwoCkpfnJ0a
-   5kfdA8KquZc3JaNNFI9R++53yTniJcyDq/ZqwZ7U64GvKZwuGUsT6NBJd
-   7hB7iHRnVvcVexRpp0Qcf80eYww/IHQ5Br+fAwqQyFL6uMNigH9OYqTKT
-   yjpHWJvUER6ULDPYGOnuM9wYTFrzfSjJmteEls8zVcoSgh7sURquB/rJQ
-   eI3jS+ULYRKC6M5tpYPwwqnWst1rAr0jekBA7ZLhfAU+Y7uwDnhuZXdTX
-   8zmHo4lconP/2+SrLI1ojztv0do8+Ldjkgr4Cp8jmqjTZQ0uEAIq73IKL
-   w==;
-X-CSE-ConnectionGUID: bMF9fXM5Sc6osACjPjPBkw==
-X-CSE-MsgGUID: bXwVuhQeR9Wym7qZtrLSqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52273876"
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="52273876"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 01:39:40 -0700
-X-CSE-ConnectionGUID: oQrkPq5kQgifWHGyg4j/xQ==
-X-CSE-MsgGUID: Pw0GmgEXRM65MOnUpmGxqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="135925309"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 08 May 2025 01:39:36 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCwn0-000AnH-04;
-	Thu, 08 May 2025 08:39:34 +0000
-Date: Thu, 8 May 2025 16:39:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Schultz <d.schultz@phytec.de>, nm@ti.com, vigneshr@ti.com,
-	kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robertcnelson@gmail.com, francesco.dolcini@toradex.com
-Cc: oe-kbuild-all@lists.linux.dev, upstream@lists.phytec.de,
-	w.egorov@phytec.de, Daniel Schultz <d.schultz@phytec.de>
-Subject: Re: [PATCH 4/4] arm64: dts: ti: k3-am62a7-*: Specify Temperature
- Grade
-Message-ID: <202505081648.oRdmP2QV-lkp@intel.com>
-References: <20250507050847.912756-4-d.schultz@phytec.de>
+	s=arc-20240116; t=1746693493; c=relaxed/simple;
+	bh=a2qUKyHbD7wFrfHoQBkc3lrz78v9ti8SashhJopPeDk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iYdTdXvPlfA4hruYHA2f/GckvJcb4Ahp84yRO7bg2DO41GBmGpQzB83KvGZcAIN8Wi1Zr7oJVzRJ6KwV07lq8U4OTgs9GXK0kvEljvrxYVPMWCpDsls5KbL27/HNl3pbz/62YtsVIEyKVLpDcLN0JcHxghCSco3v7bBNWmWHIHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dERj47/e; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so86810266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 01:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746693490; x=1747298290; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TN5BLghxBo/9cI/M/eSHpoxUXcqkl+83toZkzInNZmw=;
+        b=dERj47/eNtz5wa+JqEixrFHavwf/WQ3VS0m2xznrZvc+dNPjZtiidmwrXDMnDviH8p
+         aUcZQ23WuzdOBsvRKBLApTJaeLHZddHq9c5Ltu+hQ/AhZVyDwgnbtVGdwOREvznqmFMH
+         0gPr+iVlfNozzeZrl7BY+EmMP23nwosnn3E83oIZGkYmLhjCyw2B433AnWykzDtSC50P
+         sRnAKeWvo1uwiZTv5ijTqUQmUK+X+/FeoIkv3tETo6mu9WQCqtFlGuEcMHAGUq8Fwwtg
+         n1nHJZg9BxOJ4w2AOScTuVHvpMLXOK487GmRHGW3t0rpn96pNXjLu4ePtUv2wdsw/hsb
+         WiZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746693490; x=1747298290;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TN5BLghxBo/9cI/M/eSHpoxUXcqkl+83toZkzInNZmw=;
+        b=Zzh9KLXtRYxHqRCR/m+yVpqGAPKMLQmJq30Bt+As/LFS+EMTyBCdxEgrlngrQOgNh9
+         ZCs81tagFxxTcKw2kEFpDYBE2OOh2KCw2AlTqTEocTLbrbAerV9SH5OJRZkNxpLwrW4I
+         INt2PZE6pvuyOuUvdfLqwOz6+SCPm25o2I7ILEM8OWWJIByr1kwcHhUETFfCa/RBWuoJ
+         6OkkXICUkjr7zLh3uhWkLMA45pWY2om1qIit2oWKJSqXeBzwJ//ie8pwgshsmeWej+VW
+         xZYeEKGv7GeXWKv2sfQdkFE1/aWDys5SdOq0m/twg/Qk5aNwJ90oF0GPjUD2OLMmpH/k
+         VpRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVW9qg1g7LQtDQGPEw2SXSi2BBf+ktzaPfIvy8WlxKurFtSMo+JngI2TAERG4L9v/SihlD7M6ZZ0I0nyVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdy4dbx5joAmSN8hn61/OW4Wp/ja06bq9HtVw6t+BavHPsHBxJ
+	Nu73n2hTfSIiRnWPgqRxUn4t0P9F9VbtferkgXxYgCugXWKzGlMja7EKo/q4hs8=
+X-Gm-Gg: ASbGncvtxh68ovDlc/sw6hwqyNpIoR348YBXPjmnieRv0xG30MPfie72tGsvjukd9JH
+	mkQdsYmrtx+Fe+Hb4EM5efdEIFOvkEglIxICWo9oCIKCr4wFGb2LYmMIEDfGxHCaZZ02IlLbYUp
+	Oe39ZGD1S8WYqMSxiiP6uhQbKh50VUl+aWME5y/kv6kAdCd0ZBx424Nc+zgg8sb+tpIduSX+Nbv
+	EkPSwgpeED1WLs8vxrCshbm/jc3T82QetCR0VrDva98GTv8KNPn/3A/GNaEjugIICGOPl6fKDQ+
+	qpH3fFnL5jSTk84iGtpI4WSkXbTUH6G2nhJvMLf8TREwUJFJ6Y+SzupVccZZO6l3Y9z+owQfPyi
+	VDeGJAA==
+X-Google-Smtp-Source: AGHT+IFAz0hpCdqZar4HwvS30xYrKUVB/5CH1AYDISg2ZQz4Cx3c/u+PhQRq6xHbtI2Pon4FDK1RKg==
+X-Received: by 2002:a17:907:d7cb:b0:ac3:48e4:f8bb with SMTP id a640c23a62f3a-ad1fe947a69mr204692566b.41.1746693489868;
+        Thu, 08 May 2025 01:38:09 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a3f0fsm1059881366b.58.2025.05.08.01.38.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 01:38:09 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 8 May 2025 10:39:38 +0200
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
+Subject: Re: [PATCH v9 -next 04/12] clk: rp1: Add support for clocks provided
+ by RP1
+Message-ID: <aBxtyvI3LUaM3P00@apocalypse>
+References: <cover.1745347417.git.andrea.porta@suse.com>
+ <e8a9c2cd6b4b2af8038048cda179ebbf70891ba7.1745347417.git.andrea.porta@suse.com>
+ <aBprHfQ7Afx1cxPe@apocalypse>
+ <8513c30f597f757a199e4f9a565b0bf5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,50 +119,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250507050847.912756-4-d.schultz@phytec.de>
+In-Reply-To: <8513c30f597f757a199e4f9a565b0bf5@kernel.org>
 
-Hi Daniel,
+Hi Stephen,
 
-kernel test robot noticed the following build errors:
+On 12:44 Wed 07 May     , Stephen Boyd wrote:
+> Quoting Andrea della Porta (2025-05-06 13:03:41)
+> > Hi Stephen,
+> > 
+> > On 20:53 Tue 22 Apr     , Andrea della Porta wrote:
+> > > RaspberryPi RP1 is an MFD providing, among other peripherals, several
+> > > clock generators and PLLs that drives the sub-peripherals.
+> > > Add the driver to support the clock providers.
+> > 
+> > Since subsequent patches in the set depends on this one and as the next
+> > merge window is approaching, assuming there are no blockers can I kindly ask
+> > if you can merge it on your tree for the upcoming pull request?
+> > 
+> > This patch should apply cleanly to your clk-next branch except for some fuzz
+> > lines on MAINTAINERS. Please let me know if you want me to adjust it.
+> > 
+> 
+> I need to take the dt-binding header as well so it compiles. What's the
+> plan there? Do you want me to provide a branch with the clk driver and
+> binding header? Or do you want to send a PR to clk tree with the clk
+> driver and the binding header and then base your DTS patches on the
+> binding header and send that to the soc maintainers? I'm also happy to
+> give a Reviewed-by tag if that works for you and then you can just take
+> it through the soc tree.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.15-rc5 next-20250507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Any of those would work for me, but I agree with you, we need a plan
+because this patchset is crossing the border of several subsystems, and
+as such there's also other dependencies between patches that will inevitably
+led to conflicts.
+The only decoupled pacthes are the pinctrl driver and its bindings, which 
+I guess could be taken by Linus Walleij, but all others have dependencies
+on either the bindings (clk driver) or dts (misc driver which embeds the
+dt overlay, and should be taken by Greg).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Schultz/arm64-dts-ti-k3-am625-Specify-Temperature-Grade/20250507-131122
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250507050847.912756-4-d.schultz%40phytec.de
-patch subject: [PATCH 4/4] arm64: dts: ti: k3-am62a7-*: Specify Temperature Grade
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505081648.oRdmP2QV-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505081648.oRdmP2QV-lkp@intel.com/reproduce)
+So if Florian is willing to take the bindings and since it's already 
+taking many of the patches, it could be reasonable if he takes the
+entire patchset.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505081648.oRdmP2QV-lkp@intel.com/
+I guess the final decision is up to Florian. Whatever you choose, I'll
+adjust the patches accordingly but be warned that there will be some
+(minor) conflicts down the merge path: one being the fact that linux-next
+bcm2712-rpi-5-b.dts has pcie nodes while Florian's devicetree/next has not.
+I'll do my best to help fixing those.
 
-All errors (new ones prefixed by >>):
+Many thanks,
+Andrea
 
->> arch/arm64/boot/dts/ti/k3-am62a7-sk.dts:14:10: fatal error: k3-am62a-thermal-automative.dtsi: No such file or directory
-      14 | #include "k3-am62a-thermal-automative.dtsi"
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-
-
-vim +14 arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-
-     9	
-    10	#include <dt-bindings/leds/common.h>
-    11	#include <dt-bindings/gpio/gpio.h>
-    12	#include <dt-bindings/net/ti-dp83867.h>
-    13	#include "k3-am62a7.dtsi"
-  > 14	#include "k3-am62a-thermal-automative.dtsi"
-    15	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- 
 
