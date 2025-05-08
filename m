@@ -1,498 +1,161 @@
-Return-Path: <linux-kernel+bounces-640403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD18AB042F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:58:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2335CAB043A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432B4501264
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:58:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACB77BDB77
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7902728BAA4;
-	Thu,  8 May 2025 19:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF71428AB07;
+	Thu,  8 May 2025 19:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SA+Z9q0p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3Efg+UQ"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3714B21D5B6;
-	Thu,  8 May 2025 19:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D612F28A1CF;
+	Thu,  8 May 2025 19:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746734291; cv=none; b=t68k5XYwuJI0L2v1+hDii6PGpejF+UM4JB1dyAvEm9794duob4yR6sMEAUbt9Hz2zMyLj1xF/5uEnMoGJ/oCT0h2wG9p6LwcIBpPuN5lOn52G7IiyKz58yBlP4hZc71TdKcdCE7Ri97TWXtrV/Tqk2c6Njxoim2hzHiSrRpOikw=
+	t=1746734372; cv=none; b=PEYNYMU7psenBTUgt0reY9jfB6jLsb0L4XthgwDNmBc4vaoztwARNIuH6I+S3aeRzfbBtdQSc0euDeoDPkSbiLYcx3YBlKUXIGbuLgxbCMpzXxWL5XYXdETJ1BIBmEqMPfZaTRgZIi0ezjDVMLfNGIHQC17O6mVEr6rwRFgZUnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746734291; c=relaxed/simple;
-	bh=cX0ijYbAQ+RscVslDuBRhN2LzfDx/NyKdCWEk55yOYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjzHM2L1mTYV1n4TmJQWAamoxjEXEXRdwDdWZVk0F2Jea+ovXOubhf22XUdCDxbe3i3OfiDeCLBjtU4ZwAguRNlYhuxn3BFQ5J4U1Ht+fVcb3KiDKXlK33/HXWK8Ytsabb36oHwBjvKyHkHJFiAAFMainwvLNtlErMFfM2u9+uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SA+Z9q0p; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746734289; x=1778270289;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cX0ijYbAQ+RscVslDuBRhN2LzfDx/NyKdCWEk55yOYA=;
-  b=SA+Z9q0pwExhS2+j8Rg+ETmoYtYtV9SemQMEkGa7pyd3MTXXDVtu/wd0
-   cHBvAXimu73a/0Uhjc5frZNr0TRmVZrxqufxCLIAsBRAvWu4KIQPVTDjj
-   Es7e/SDRuXTsK/MTIL9rSfKzYiWaXHQE5UfvSNd5KOULW5z361BJVoVLk
-   7dETlmGdQvQpQKWSjAqBMIZf/0HDP76ZwC/SFQArZ5x9PR1bpydj/NI7m
-   rK018F61gw1zzS6yM7qspqS/tvZrqYfwuIRo2La03h2Ix+7086Iz7WVs8
-   bL57s+TbtsgubOA0p7aLEVvHwb0K6sNCXAFLjofSQB3/ulxwmfSpMaRKD
-   A==;
-X-CSE-ConnectionGUID: 8gppIe6xTjWJC8NXLIzZnA==
-X-CSE-MsgGUID: 57EqjIebTke+a5KN9+olhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="73920285"
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="73920285"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 12:58:08 -0700
-X-CSE-ConnectionGUID: ys8CgkrtQ1iUZnAxSO2j/w==
-X-CSE-MsgGUID: IFMB8yhiTTWjBiadaZrodg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="137392231"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 12:58:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uD7NZ-00000004DZJ-2Wxa;
-	Thu, 08 May 2025 22:58:01 +0300
-Date: Thu, 8 May 2025 22:58:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, lars@metafoo.de,
-	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
-	muditsharma.info@gmail.com, perdaniel.olsson@axis.com,
-	emil.gedenryd@axis.com, mgonellabolduc@dimonoff.com,
-	arthur.becker@sentec.com, clamor95@gmail.com,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: light: add support for veml6046x00 RGBIR
- color sensor
-Message-ID: <aB0MycGnGRxJT7Pd@smile.fi.intel.com>
-References: <20250505202313.205522-1-ak@it-klinger.de>
- <20250505202313.205522-3-ak@it-klinger.de>
+	s=arc-20240116; t=1746734372; c=relaxed/simple;
+	bh=D0eTZcDHThj7wFmuGHzLws3kPES381HlOCH3BoO5xv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=itNiVnKwapISUp8+GYu7ZCwcPTdp+9oxIwCGbWiC5gxzUlR2wGNBc5BQZ7TiGT7U4y6BkcedXg3VCKlLCME6hjRB+uys1exaQGEJRAGk10ZRoQ9ncq2RAoHejgsZO5RVJP0tPhWwzmOoCheu7kgKqUiHmCKmnsrSDhbi+oFvnBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3Efg+UQ; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3081f72c271so1467806a91.0;
+        Thu, 08 May 2025 12:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746734370; x=1747339170; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=XZ1A/jnQKBKmbW0+4UxhQaDHonKrklw/WpsEqGyizjs=;
+        b=V3Efg+UQbYphzzW43+Izuhfaw9bISJQetzyDGa7/3SI27WGYb1lhJ81ICOm1x1z5WY
+         B1mVUSG320yE6yA9naxFMIG3PXNDgKTVLGhjIgHeeN8GVej0I0K/pzfE29sh6YVGcsqO
+         aX04ImTjGhZuV7Lk42z+abNDpPBObKpEVIi2t7XAoQUw1/ucbet4I/ylZDILxhERihHe
+         JA8XGEfYENgonmms58DC4ZW87P5CXX9Zz2JN8wIpsQTEvqQlkbxqwgi2IjAMtzgzj53e
+         uHjxMOskGIN+JZfHgHeGrCuvq1lonJpWGMA6FRbPHTdwjR0LbYN+KTlOY969vUjFb5n1
+         8TaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746734370; x=1747339170;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XZ1A/jnQKBKmbW0+4UxhQaDHonKrklw/WpsEqGyizjs=;
+        b=j1s9Kp71nJJHeHMKzjvjAhPGUrwBCegRttMrzbLK+iujsOfZhI//WrevBxxqurDcVD
+         k09rGok8WOV+ST0LiJB2oi+owg/l2JfdatHoq2lgHH/XlkhLLgKHdZcn1BZudJfoL0Z1
+         IOhiXlo6pNJNpWNahADjphKV5BnwIOBfKeTZSOi3qhYoDRf+7UO9WTFl7KBeDg//wRXQ
+         AlRf2uUhcm71aao0TJ+V9PbhTO8kgbu5s3HePbiQWcvtiaEVGbDMGyCY2SQowSX9L7cQ
+         Z0+o2IJ7u+Hsbp+SCgL3emUm3lGmUTtg5IOzpSXbNp4Rj2R78Z/CI+LHO1og1S1ehM5K
+         foQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhgS66y79TGCEatyl/Bdb1Ek9i7LwoZE0YcPDMCXZu7VX+/vTpMGZmtKpeXRO/bDIfk0DSl5tx@vger.kernel.org, AJvYcCW2bc198w6JxtfQi8Vl6GRQQcMFS7gLLAjEs/ECumwU9BCqEssmkxZSLgOPquY15XOzzmVnDcXJcuF5RGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtTdXrlJL2bhrhmc9RO4cjVmb2AXYnl/rOD/rDYsQfFpQ3guU1
+	9Q4OWnGMqj6stmN+auxDXhceLLBNQE7rdGLGkfcdUGZkyNtSSxal
+X-Gm-Gg: ASbGncuvw38EPfVq1rntaOuXGC+TiSuPe1HKw1nkAXMN/JGZKbYmR0LiTOHEmpeF2iU
+	pEhoWBKmk9ndJeBWfOM4ZUCVuvn8GWT2sHC1yd7Hof37WFJXBTfHYFznAIiUCM/yUOTzVN6unzY
+	+pxVOQ2k+H9H/qfVgdlgVYYdqaUKqHzYdvavkEwG4lbCoqVdzfvbi/tZm9zkk6cxlIfXjnSP6FZ
+	NIezEppEn418qZISqmFtJjx+op596gto79KdX/iRpvf47ZgfupeX9H/fBiCC6OVHOhkV5saBbB6
+	Zrh103dt8KrYO0qY3aZYMH7jvNN44NmZJONCEsE04bPsfRDTULj8CE9SNSnStYkZpp4j+yz1CYI
+	ND+vy5Wv8maCvwfQ=
+X-Google-Smtp-Source: AGHT+IFVUh9N3HJOvnWcBK/H0I50OtcuVSPhl3G26tmbv8P7V/BrHlWrxEtmYbS8nKEssB5lL23tpw==
+X-Received: by 2002:a17:90b:1dc1:b0:2fe:9581:fbea with SMTP id 98e67ed59e1d1-30c3d6580famr1139524a91.29.1746734369785;
+        Thu, 08 May 2025 12:59:29 -0700 (PDT)
+Received: from [192.168.1.177] (46.37.67.37.rev.sfr.net. [37.67.37.46])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4d2f3f3sm2635327a91.12.2025.05.08.12.59.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 12:59:29 -0700 (PDT)
+Message-ID: <34c70ab9-bbc3-4e1e-8840-8ce8eec1d68a@gmail.com>
+Date: Thu, 8 May 2025 21:59:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505202313.205522-3-ak@it-klinger.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/97] 6.1.138-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250508112609.711621924@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250508112609.711621924@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 05, 2025 at 10:23:12PM +0200, Andreas Klinger wrote:
-> Add Vishay VEML6046X00 high accuracy RGBIR color sensor.
+
+
+On 5/8/2025 1:30 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.138 release.
+> There are 97 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> This sensor provides three colour (red, green and blue) as well as one
-> infrared (IR) channel through I2C.
+> Responses should be made by Sat, 10 May 2025 11:25:44 +0000.
+> Anything received after that time might be too late.
 > 
-> Support direct and buffered mode.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.138-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> An optional interrupt for signaling green colour threshold underflow or
-> overflow is not supported so far.
+> thanks,
+> 
+> greg k-h
 
-...
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels build tested on 
+BMIPS_GENERIC:
 
-> +#include <linux/bitfield.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/types.h>
-> +#include <linux/units.h>
-> +#include <linux/pm_runtime.h>
-
-+ blank line
-
-and keep each group sorted.
-
-There are missing inclusions as well.
-
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/iio/trigger_consumer.h>
-> +#include <linux/iio/triggered_buffer.h>
-
-> +/* Bit masks for specific functionality */
-> +#define VEML6046X00_CONF0_ON_0      BIT(0)
-> +#define VEML6046X00_CONF0_INT       BIT(1)
-> +#define VEML6046X00_CONF0_AF_TRIG   BIT(2)
-> +#define VEML6046X00_CONF0_AF        BIT(3)
-> +#define VEML6046X00_CONF0_IT        GENMASK(6, 4)
-> +#define VEML6046X00_CONF1_CAL       BIT(0)
-> +#define VEML6046X00_CONF1_PERS      GENMASK(2, 1)
-> +#define VEML6046X00_CONF1_GAIN      GENMASK(4, 3)
-> +#define VEML6046X00_CONF1_PD_D2     BIT(6)
-> +#define VEML6046X00_CONF1_ON_1      BIT(7)
-> +#define VEML6046X00_INT_TH_H        BIT(1)
-> +#define VEML6046X00_INT_TH_L        BIT(2)
-> +#define VEML6046X00_INT_DRDY        BIT(3)
-
-+ bits.h
-
-...
-
-> +#define VEML6046X00_INT_MASK        (VEML6046X00_INT_TH_H | \
-> +				VEML6046X00_INT_TH_L | VEML6046X00_INT_DRDY)
-
-Better formatting is
-
-#define VEML6046X00_INT_MASK						     \
-	(VEML6046X00_INT_TH_H | VEML6046X00_INT_TH_L | VEML6046X00_INT_DRDY)
-
-
-> +/* Autosuspend delay */
-> +#define VEML6046X00_AUTOSUSPEND_MS  3000
-
-(3 * MSEC_PER_SEC)
-
-(will require time.h to be included)
-
-...
-
-> +struct veml6046x00_data {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-
-Isn't dev the same as in regmap?
-Why to have both?
-
-> +	struct iio_trigger *trig;
-> +	struct veml6046x00_rf rf;
-> +};
-
-...
-
-> +struct veml6046x00_scan_buf {
-> +	__le16 chans[4];
-> +	aligned_s64 timestamp;
-> +};
-
-This is only used in one function, move it there like other drivers do.
-
-...
-
-> + * Columns:
-> + * x0.25 x0.33 x0.5 x0.66 x1 x2
-> + * Rows:
-> + * 3.125 6.25 12.5 25 50 100 200 400ms
-
-Better to have these as comments
-
-...
-
-> +static const u32 veml6046x00_it_gains[][6][2] = {
-
-Also indentation is wrong.
-
-> +{{5, 376000}, {4,  72700}, {2, 688000}, {2,  36400}, {1, 344000}, {0, 672000}},
-
-	/* 3.125 */
-	{
-		{ 5, 376000 },		/* 0.25 */
-		{ 4,  72700 },
-		...
-	},
-
-
-> +{{2, 688000}, {2,  36350}, {1, 344000}, {1,  18200}, {0, 672000}, {0, 336000}},
-> +{{1, 344000}, {1,  18175}, {0, 672000}, {0, 509100}, {0, 336000}, {0, 168000}},
-> +{{0, 672000}, {0, 509087}, {0, 336000}, {0, 254550}, {0, 168000}, {0,  84000}},
-> +{{0, 336000}, {0, 254543}, {0, 168000}, {0, 127275}, {0,  84000}, {0,  42000}},
-> +{{0, 168000}, {0, 127271}, {0,  84000}, {0,  63637}, {0,  42000}, {0,  21000}},
-> +{{0,  84000}, {0,  63635}, {0,  42000}, {0,  31818}, {0,  21000}, {0,  10500}},
-> +{{0,  42000}, {0,  31817}, {0,  21000}, {0,  15909}, {0,  10500}, {0,   5250}},
-> +};
-
-Yes, it will be much longer, but much easier to read and check.
-
-...
-
-> +static int veml6046x00_power_on(struct veml6046x00_data *data)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_clear_bits(data->regmap, VEML6046X00_REG_CONF0,
-> +						VEML6046X00_CONF0_ON_0);
-
-Wrong indentation. Same applies to more places in the code.
-
-> +	if (ret) {
-> +		dev_err(data->dev, "Failed to set bit for power on %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return regmap_clear_bits(data->regmap, VEML6046X00_REG_CONF1,
-> +						VEML6046X00_CONF1_ON_1);
-> +}
-
-...
-
-> +	/* register value is identical with index of array */
-> +	if ((reg >= 0) && (reg < ARRAY_SIZE(veml6046x00_it)))
-> +		return reg;
-> +
-> +	return -EINVAL;
-
-Invert the conditional to check for errors.
-
-...
-
-> +static int veml6046x00_get_it_usec(struct veml6046x00_data *data, int *it_usec)
-> +{
-> +	int ret, reg;
-> +
-> +	ret = regmap_field_read(data->rf.it, &reg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if ((reg >= 0) && (reg < ARRAY_SIZE(veml6046x00_it)))
-> +		*it_usec = veml6046x00_it[reg][1];
-
-> +	else
-
-Redundant. (See above how to fix)
-
-> +		return -EINVAL;
-> +
-> +	return IIO_VAL_INT_PLUS_MICRO;
-> +}
-
-...
-
-> +static int veml6046x00_set_it(struct iio_dev *iio, int val, int val2)
-> +{
-> +	struct veml6046x00_data *data = iio_priv(iio);
-> +	int i;
-
-Why signed?
-
-> +	for (i = 0; i < ARRAY_SIZE(veml6046x00_it); i++) {
-> +		if ((veml6046x00_it[i][0] == val) &&
-> +		    (veml6046x00_it[i][1] == val2))
-> +			return regmap_field_write(data->rf.it, i);
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int veml6046x00_get_val_gain_idx(struct veml6046x00_data *data, int val,
-> +								int val2)
-> +{
-> +	int i;
-
-Ditto. And so on...
-
-> +	int it_idx;
-> +
-> +	it_idx = veml6046x00_get_it_index(data);
-> +	if (it_idx < 0)
-> +		return it_idx;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(veml6046x00_it_gains[it_idx]); i++) {
-> +		if ((veml6046x00_it_gains[it_idx][i][0] == val) &&
-> +		    (veml6046x00_it_gains[it_idx][i][1] == val2)) {
-> +			return i;
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-
-...
-
-> +static int veml6046x00_wait_data_available(struct iio_dev *iio, int usecs)
-> +{
-> +	struct veml6046x00_data *data = iio_priv(iio);
-> +	int ret, reg;
-> +	int cnt = 2;
-> +	int i;
-> +
-> +	for (i = 0; i < cnt; i++) {
-> +		ret = regmap_read(data->regmap, VEML6046X00_REG_INT_H, &reg);
-> +		if (ret) {
-> +			dev_err(data->dev,
-> +					"Failed to read interrupt register %d\n", ret);
-> +			return -EIO;
-> +		}
-> +
-> +		if (reg & VEML6046X00_INT_DRDY)
-> +			return 1;
-
-> +		if (i < cnt)
-
-Always true, no?
-
-> +			fsleep(usecs);
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	/* integration time + 10 % to ensure completion */
-> +	fsleep(it_usec + (it_usec / 10));
-
-Unneeded parentheses.
-
-...
-
-> +	ret = veml6046x00_wait_data_available(iio, it_usec * 10);
-> +	if (ret == 1) {
-> +		dev_dbg(data->dev, "data ready\n");
-
-> +	} else {
-
-Redundant 'else'.
-
-> +		dev_warn(data->dev, "no data ready ret: %d\n", ret);
-> +		goto no_data;
-> +	}
-
-...
-
-> +static irqreturn_t veml6046x00_trig_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *iio = pf->indio_dev;
-> +	struct veml6046x00_data *data = iio_priv(iio);
-> +	int ret;
-> +	struct veml6046x00_scan_buf scan;
-> +
-> +	memset(&scan, 0, sizeof(scan));
-> +
-> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_R_L, &scan.chans,
-> +						sizeof(scan.chans));
-
-Wrong indentation.
-
-> +	if (ret)
-> +		goto done;
-> +
-> +	iio_push_to_buffers_with_timestamp(iio, &scan, iio_get_time_ns(iio));
-> +
-> +done:
-> +	iio_trigger_notify_done(iio->trig);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-...
-
-> +static int veml6046x00_validate_part_id(struct veml6046x00_data *data)
-> +{
-> +	int part_id, ret;
-> +	__le16 reg;
-> +
-> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_ID_L, &reg, sizeof(reg));
-
-Remove _L from the definitions for the registers that you access with bulk IO.
-
-> +	if (ret)
-> +		return dev_err_probe(data->dev, ret, "Failed to read ID\n");
-> +
-> +	part_id = le16_to_cpu(reg);
-> +	if (part_id != 0x0001)
-> +		dev_info(data->dev, "Unknown ID %#02x\n", part_id);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int veml6046x00_probe(struct i2c_client *i2c)
-> +{
-> +	struct device *dev = &i2c->dev;
-> +	struct veml6046x00_data *data;
-> +	struct iio_dev *iio;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap = devm_regmap_init_i2c(i2c, &veml6046x00_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return dev_err_probe(dev, PTR_ERR(regmap),
-> +				     "Failed to set regmap\n");
-
-One line.
-
-> +	iio = devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!iio)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(iio);
-> +	i2c_set_clientdata(i2c, iio);
-> +	data->dev = dev;
-> +	data->regmap = regmap;
-> +
-> +	ret = veml6046x00_regfield_init(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to init regfield\n");
-> +
-> +	ret = devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable regulator\n");
-> +
-> +	/* bring device in a known state and switch device on */
-> +	ret = veml6046x00_setup_device(iio);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(dev, veml6046x00_shutdown_action, data);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to add shut down action\n");
-> +
-> +	ret = pm_runtime_set_active(dev);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to activate PM runtime\n");
-> +
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable PM runtime\n");
-> +
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, VEML6046X00_AUTOSUSPEND_MS);
-> +	pm_runtime_use_autosuspend(dev);
-> +
-> +	ret = veml6046x00_validate_part_id(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to validate device ID\n");
-> +
-> +	iio->name = "veml6046x00";
-> +	iio->channels = veml6046x00_channels;
-> +	iio->num_channels = ARRAY_SIZE(veml6046x00_channels);
-> +	iio->modes = INDIO_DIRECT_MODE;
-> +
-> +	iio->info = &veml6046x00_info_no_irq;
-> +
-> +	ret = devm_iio_triggered_buffer_setup(dev, iio, NULL,
-> +					      veml6046x00_trig_handler,
-> +					      &veml6046x00_buffer_setup_ops);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to register triggered buffer");
-> +
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	ret = devm_iio_device_register(dev, iio);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to register iio device");
-> +
-> +	return 0;
-> +}
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Florian
 
 
