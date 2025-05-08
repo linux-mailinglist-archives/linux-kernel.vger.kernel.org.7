@@ -1,170 +1,243 @@
-Return-Path: <linux-kernel+bounces-639149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D125AAF37B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:11:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A375AAF37D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CD04C3616
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C308217E06B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CCB216E05;
-	Thu,  8 May 2025 06:10:28 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66222135A6;
+	Thu,  8 May 2025 06:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dg+4dTfp"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE3B21420E;
-	Thu,  8 May 2025 06:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851A528E17
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746684628; cv=none; b=uhGimfxiIHWWtzKWG6Ak+emU37RR5IOKY9kyl4vscyQnQ2EDgmbpb3SEAqqu9A7DXsw9xXQhxeUe97RZdtOuJwovbC0ysyJ3f6sWfDFZq5+VfywysVIq6sFHVur4njHfCOjg+puWI9bluIUHM+9GvpGPJJ5FisEC64YrO8oTaso=
+	t=1746684706; cv=none; b=Z8BJgoU1HqOOskJ6cbSDKV02dRRiI8lLW1gEpAx+RjcAxNgwmZkFetwcBeLJQthk293ghUYc9ZcQMlY2OVe5+ie6AFpLgTxEL3Ip+6l6esG4h+oAaIBlba1AHXMhA6vYqNBEsb88yy0lHVl87jbVDBBtU/o1Z6IQP7DmjH/QdbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746684628; c=relaxed/simple;
-	bh=K7oe0A7BgP4WD1oC62x+ywHGsTyFcCeJEXTseV/4mnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXl3eGwVaNNYpXZFd1Jw2JVn7SMkEENZGflOvPpGwVAEBFoajW77pGPGC5mbLGbF+ALevJxdIADJSJ2pDzQWlio9nW5dMNX4VAGLmllheyip3dVLeo6qckLdxNb7VdEgAiI2b3UmVvqauSLSCrx2M17Kow8UOn+yPeLGsF6W8bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.147.253])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id BBFE9343097;
-	Thu, 08 May 2025 06:10:22 +0000 (UTC)
-Date: Thu, 8 May 2025 06:10:12 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Haylen Chu <heylenay@4d2.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Alex Elder <elder@riscstar.com>
-Subject: Re: [PATCH v8 5/6] riscv: dts: spacemit: Add clock tree for SpacemiT
- K1
-Message-ID: <20250508061012-GYB505240@gentoo>
-References: <20250416135406.16284-1-heylenay@4d2.org>
- <20250416135406.16284-6-heylenay@4d2.org>
- <aBxF81yqPgHP5oA_@ketchup>
+	s=arc-20240116; t=1746684706; c=relaxed/simple;
+	bh=HNlrRjCNOjc5GdSXFJpo7t8flSSy3sbT8m43LZIPYi4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VOxXxRvCH2XXYnN+u6N0oDH8I4r5veDkMenF4aYLoL8yrUYmAkeg8Sc1c9t12mALYhosoAk6qtHAlIY30Uw1WrTocPg4UfEg4gsscAM5t0vipK09Mx1DRAfCRfD+9f1RzE+D0be8oELd4tS0vIf/RhayvysnL7dXux6RNoOD1aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dg+4dTfp; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52413efd0d3so203756e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 23:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746684702; x=1747289502; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggMc/YSVOlg35VFXf+FUJX550Oig9VDbKmjq2DpIEkc=;
+        b=Dg+4dTfp4Q6OaQc7A2Q/OjtPBgSZGG23OGqfSwfEdhvXYHX7+ah/SJkE2kIZm7lYho
+         aTbOvi3iimWlaWZtX4lXz3jsV9kv8lBmQZGvTeEU5KX0aeKB+jQVMsog/Lxs6ZFJNK3m
+         w12W1finm3weTsXnBmppicpnkD2B6vPcQwTmRJJdSA288DFXpDC/Sm6h/Zx3R6FLZ9Xi
+         V9hVu70ObTa4mZLv3UdIvdf+8utj8apP3HjY2+r75riIibTZ4UhMrDHo/OF6chxLSiAs
+         jQ4ru/TiNuGGiKWfmYCK7lgwHRa/xgEXcsSijYUzXFhmBD1j/LvJnXp8LSWe1i9Stri2
+         sNkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746684702; x=1747289502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ggMc/YSVOlg35VFXf+FUJX550Oig9VDbKmjq2DpIEkc=;
+        b=CVBDuC3TEL3aep8ksSzNUw0E8XpNHnS5bMDlOAOKKgDWE0dBWabtqmVEV4CepmeJ5Z
+         qUZ8FMCARCOxVJWrGJj68O8KpVPHE3rMRyTeWpTyn5PlEb0limFB9N2zu4nUQ/uMhmrr
+         8kcaOd+lE+PGnVS/gMHetuX3B/2IuQSDkJ+8rZQEbntHeY7rNEJqJlnr19DC0Xzr66v2
+         NCrL1ZW1isVGVwHTdlGF3EM7AjLtByBSozTTXQDC/2fSeneHhphuC3MrmBVLYhu00SHS
+         qqSRlpP5vCIxXqXw/S80L0BGvdh0vJRaKviqW/s/p9LmwwIUOL5ybfoiU/tT9lZepOZr
+         pEuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN2NsNdvUlWbwZ9tLsyX5+XbzxlbIw6G2TFgrQ/Fou6qGuC9jSfEmBWr4KCzU5n2nb8qy3TmMVjEOEugI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlOh1uBqyOLbB9jhtNHWYrCKnGYrf0Jkiick5fgzLsta/zg13M
+	w7mhZYeVUl9FzOhIEEkl7++N+GPeQOqR7u43wnZHNkTj9BAmOF0d+LJibgFAR5FvTKh3XWv0MFT
+	CkKwYxVVMLQaeLy+MD5PcqPIMfs7tsEJMjW11og==
+X-Gm-Gg: ASbGncvp6A3dAFkaQBjQFAnc6aiETmDhjMSG+iC3RstFCcJK1eASdNyFDtfKK0VQprz
+	Uf+dC9N0M7iOXRDfZQirl1rROHVTR41skVjxqQodtxeeH4c7lUduhJJ2KOkL5OB0uy8vTohxtgG
+	CU3GAh1rmruLFWvw5Pei1z+VWkHMaLThCGTbHHsC3rOcNcmFJomdcFE/w=
+X-Google-Smtp-Source: AGHT+IHh1VPsRTRDZ2dn9jqEZVR7nhxOdrq9O1N3MFuKEl9DNw9pdy3hMg0M/QVEHJaNyq7CBuGIzNYaFBmzdy7XPLM=
+X-Received: by 2002:a05:6122:da2:b0:50a:c70b:9453 with SMTP id
+ 71dfb90a1353d-52c37ad82c4mr3961698e0c.10.1746684702342; Wed, 07 May 2025
+ 23:11:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBxF81yqPgHP5oA_@ketchup>
+References: <20250507183824.682671926@linuxfoundation.org>
+In-Reply-To: <20250507183824.682671926@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 8 May 2025 11:41:29 +0530
+X-Gm-Features: ATxdqUFiT7jV4WQv4sxEiShVmVt-yfuXvsnQMML01LrKbK5pYcwqRGc7voz-_xU
+Message-ID: <CA+G9fYt-o_p7hYKsAyC5j5kX7zOmCn3UX8njkAMQco5ARUmGuA@mail.gmail.com>
+Subject: Re: [PATCH 6.14 000/183] 6.14.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Haylen,
+On Thu, 8 May 2025 at 00:20, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.14.6 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 09 May 2025 18:37:41 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.14.6-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On 05:49 Thu 08 May     , Haylen Chu wrote:
-> Hi Yixun,
-> 
-> On Wed, Apr 16, 2025 at 01:54:05PM +0000, Haylen Chu wrote:
-> > Describe the PLL and system controllers that're capable of generating
-> > clock signals in the devicetree.
-> > 
-> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> > Reviewed-by: Alex Elder <elder@riscstar.com>
-> > Reviewed-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> >  arch/riscv/boot/dts/spacemit/k1.dtsi | 75 ++++++++++++++++++++++++++++
-> >  1 file changed, 75 insertions(+)
-> > 
-> > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > index c670ebf8fa12..584f0dbc60f5 100644
-> > --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> 
-> I found that I forgot to make the nodenames of syscons consistent:
-> both "system-control" and "system-controller" are used, and pll should
-> be named as "clock-controller" instead.
-> 
-> Could you please drop the SoC devicetree patch then I could rework on
-> it and correct the mistake? 
-Sure, I can drop previous DT patch, and re-apply, thanks
 
-> Or I could follow up a clean up patch if
-> dropping isn't easy or doesn't follow the convention.
-> 
-> Thanks for your work,
-> Haylen Chu
-> 
-> > @@ -314,6 +346,17 @@ soc {
-> >  		dma-noncoherent;
-> >  		ranges;
-> >  
-> > +		syscon_apbc: system-control@d4015000 {
-> > +			compatible = "spacemit,k1-syscon-apbc";
-> > +			reg = <0x0 0xd4015000 0x0 0x1000>;
-> > +			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
-> > +				 <&vctcxo_24m>;
-> > +			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
-> > +				      "vctcxo_24m";
-> > +			#clock-cells = <1>;
-> > +			#reset-cells = <1>;
-> > +		};
-> > +
-> >  		uart0: serial@d4017000 {
-> >  			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> >  			reg = <0x0 0xd4017000 0x0 0x100>;
-> > @@ -409,6 +452,38 @@ pinctrl: pinctrl@d401e000 {
-> >  			reg = <0x0 0xd401e000 0x0 0x400>;
-> >  		};
-> >  
-> > +		syscon_mpmu: system-controller@d4050000 {
-> > +			compatible = "spacemit,k1-syscon-mpmu";
-> > +			reg = <0x0 0xd4050000 0x0 0x209c>;
-> > +			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
-> > +				 <&vctcxo_24m>;
-> > +			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
-> > +				      "vctcxo_24m";
-> > +			#clock-cells = <1>;
-> > +			#power-domain-cells = <1>;
-> > +			#reset-cells = <1>;
-> > +		};
-> > +
-> > +		pll: system-control@d4090000 {
-> > +			compatible = "spacemit,k1-pll";
-> > +			reg = <0x0 0xd4090000 0x0 0x1000>;
-> > +			clocks = <&vctcxo_24m>;
-> > +			spacemit,mpmu = <&syscon_mpmu>;
-> > +			#clock-cells = <1>;
-> > +		};
-> > +
-> > +		syscon_apmu: system-control@d4282800 {
-> > +			compatible = "spacemit,k1-syscon-apmu";
-> > +			reg = <0x0 0xd4282800 0x0 0x400>;
-> > +			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
-> > +				 <&vctcxo_24m>;
-> > +			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
-> > +				      "vctcxo_24m";
-> > +			#clock-cells = <1>;
-> > +			#power-domain-cells = <1>;
-> > +			#reset-cells = <1>;
-> > +		};
-> > +
-> >  		plic: interrupt-controller@e0000000 {
-> >  			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
-> >  			reg = <0x0 0xe0000000 0x0 0x4000000>;
-> > -- 
-> > 2.49.0
-> > 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
--- 
-Yixun Lan (dlan)
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.14.6-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: a33747967783a6e6a8ab7c22905712408f5b8eef
+* git describe: v6.14.5-184-ga33747967783
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14=
+.5-184-ga33747967783
+
+## Test Regressions (compared to v6.14.3-550-g25b40e24731f)
+
+## Metric Regressions (compared to v6.14.3-550-g25b40e24731f)
+
+## Test Fixes (compared to v6.14.3-550-g25b40e24731f)
+
+## Metric Fixes (compared to v6.14.3-550-g25b40e24731f)
+
+## Test result summary
+total: 138622, pass: 114363, fail: 5571, skip: 18324, xfail: 364
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 56 total, 55 passed, 1 failed
+* i386: 18 total, 16 passed, 2 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 40 passed, 0 failed
+* riscv: 25 total, 22 passed, 3 failed
+* s390: 22 total, 22 passed, 0 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 42 passed, 7 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
