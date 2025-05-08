@@ -1,188 +1,184 @@
-Return-Path: <linux-kernel+bounces-639183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560A1AAF3F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7692CAAF3F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381AE3A7820
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2653AEBE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5218B21A931;
-	Thu,  8 May 2025 06:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBIlYedY"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D42E21ADD1;
+	Thu,  8 May 2025 06:43:46 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3895D218EB7;
-	Thu,  8 May 2025 06:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E603621A44B;
+	Thu,  8 May 2025 06:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746686605; cv=none; b=vFl6rhbI6qqaL8HTB+zuVafQ5CoC+GNVqBZ6uBsvpH9y5r9ns0bce3qEGpFEMbpg9W1MVyL7CijIk4VO4trfZWiASuwlSccQ9J/v4TAWQsR5hcc423bY5hbPaGqRqqlBNvM8E8bgnuJyERJewilHsykPbRp23RsLuxaAMWztFXY=
+	t=1746686626; cv=none; b=XD5w5iB3mmSPGv9DwSFXayrdFMTgmzG84TDH+7FvCPgRS7u0XUS5Du8I8A/QXLGoI0J3duAO068WPRIDFbHjf6DtCovE5gRCAV7y01q/p4KHeup7slVpMfFxFinWbB0e9WuzIaNiQJbmQTdhzMOYtOb/EYbE6ZsVkxh1SC6jMxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746686605; c=relaxed/simple;
-	bh=+/YH4Ykm0Br/gWU2mNE6fJ0JRyLQW7ZvlvtpcQYTTKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k8oDFfeOA+X6uQd2RDqpBe7te+po3yY7eulTenysmRMPkmzStGs/vBr6KT+xnSQs0UZC6X9SjOsDzNT07ihyOZr8G6wPNVycmX86T82I6sPL2CkEZhoX4czwTto57W7yEhdwr6CadqrM0jfDhfIREXa7u1VgKkBUMe8BcUe4Th0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBIlYedY; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30ab344a1d8so668684a91.3;
-        Wed, 07 May 2025 23:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746686603; x=1747291403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v3vd+nr4/md7mLkaiDNilczJy6QhOL5CAcFpVz4SHQ8=;
-        b=SBIlYedYMvJaJhr+Nob22KBDXxARnqyy54osAkgayfhwvR49a9NgE+gkImNc4e34V5
-         PhXerpHwZv37JzhCtmc6oXT0Qmg48Uo5YFJCbTE3g38rEW6kRZ7axul7dZ6mKF4Cj8QK
-         AovICAHMhCaZMn/neauOU4+YQdlzR5AiP150GXI74e1N5E8H7j5+ZyfQKIPEz35Z0eR5
-         Q0akmr8AAbF+Ok+nl+5jisZf1ijKhUsg9nC2iJiOb+UrPsgzdTFNwzRBarAtLVFWSgw0
-         uWdL9qiF0aQ7sIXxiwI/iSc1oJBBmhd/CbFS9ml/Kiof1zNc92YZ8yzODF1Gr9kL/zge
-         Q/DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746686603; x=1747291403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v3vd+nr4/md7mLkaiDNilczJy6QhOL5CAcFpVz4SHQ8=;
-        b=AN6M/nlS2MHTYV0Oxj2iwSIYYS91diErb7H/A72rxmZmFLkKo8wPN+rHIOVGc1GnJ5
-         0MtkszGiE+XFJyyL/DD+qWTm8Qz6jtLtMym3wiypeRwd1PWyrJbCalBPQbYZ9kLnecpq
-         GdBtM8cYbl5KdJ4QW6MFuCmndpQPLwL2bo3k+8EWwN7MjxF/y5OK0k6W7jC4crNLLZlD
-         r16Z4AfsGfYKzVh530IUhQxlPrSyoniNcnyNrOTC+/qQYfDulDDrIHzgmtpkKQ3CvfS0
-         E5mPNR7sJSOxHziQ3gu2jZpCGHI4jr+HkfxdFY7SNN48gxM4h3nTrluPnbfP8SI/K0Ft
-         xCeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8X3usP/pskaISySlBT1vOqGoLx/x0Uk7RP1EJx4KLP7cBRNhs/QxEKE8VBXm7U1TvIIT+@vger.kernel.org, AJvYcCVQPXgLLsx3Yh3UwfzNzgr5ULCVx4d7LTy7nN2w/+vrM3Mqzl38M7vSl9VEXJmBLqCEoHA0C5cwIeoIddM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcy/8D0iaO+MWpn936xXTghW5kL6/JwZnbcUfzk7v0UiByLcsk
-	H4LrTc3EnaGoVS3+WXS2RjhmkiTPGA10imTZW1sMc88no9ILSRBdbXM8Oi0MsANJh5rItM2emfG
-	uja7AkhzkCWzbi0f35pjrP2ksev8=
-X-Gm-Gg: ASbGncuZWUNDGAneHXbLvlpTqnJvWL/cAe03hcjHsuIZMvQhGKAs73+MXVtvJUaafRW
-	X9Oe9CS9wlEMWqEelOnN/ZsnpbRcpfQ+TEzBWtWiz28Lt9Do3XbW2VYV7xaH7XlPA+Z9zY0IpN8
-	epdpWnMkX7GMSCHv7aCxEr7z4=
-X-Google-Smtp-Source: AGHT+IHs0+G6cnOMbkhmEl2R3v8x6Wpv8AqOpmwjAOEsQWYOqj+oCa9TUpu5N7X1n0YVeShQ8G5nVSehLEilduQ+Dc4=
-X-Received: by 2002:a17:90b:3c07:b0:2f9:c144:9d13 with SMTP id
- 98e67ed59e1d1-30b3a6d3433mr3156049a91.24.1746686603369; Wed, 07 May 2025
- 23:43:23 -0700 (PDT)
+	s=arc-20240116; t=1746686626; c=relaxed/simple;
+	bh=ALXW81uUrisfgcjtb0ouK01mwUo3Mqd/ZMmNS0XeX2U=;
+	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
+	 Content-Type; b=gZobe1A5PhVNPheCtWBuUSkurStd2+MUvqqDHNTXn9mdA62q+uEpIV3EopTsazPaw+1jMm6xtqPLkMq4ar14OATDQng9WcjXxTUZ66VAQ13eLNbB4EbNWKn0WtkMzWn6pwglk0p3+dHo4CKsH6rOVkCAJyYQQsf8Z5BAWwU0Vcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+X-QQ-mid: esmtpsz18t1746686588t2685c14f
+X-QQ-Originating-IP: QnHYIOYg0Zm3iyQW04mhygOyD/ALwlNoRQFHJOpkG2g=
+Received: from DESKTOP-SUAVFFI ( [118.249.225.48])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 08 May 2025 14:43:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7358442712510008102
+EX-QQ-RecipientCnt: 13
+Date: Thu, 8 May 2025 14:43:37 +0800
+From: "liudalin@kylinos.com.cn" <liudalin@kylinos.com.cn>
+To: zhoubinbin <zhoubinbin@loongson.cn>, 
+	=?UTF-8?B?5YiY6L6+5p6X?= <liudalin@kylinsec.com.cn>, 
+	alexandre.belloni <alexandre.belloni@bootlin.com>, 
+	wangming01 <wangming01@loongson.cn>
+Cc: chenhuacai <chenhuacai@kernel.org>, 
+	gaojuxin <gaojuxin@loongson.cn>, 
+	git <git@xen0n.name>, 
+	jiaxun.yang <jiaxun.yang@flygoat.com>, 
+	keguang.zhang <keguang.zhang@gmail.com>, 
+	lixuefeng <lixuefeng@loongson.cn>, 
+	linux-rtc <linux-rtc@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	zhoubb.aaron <zhoubb.aaron@gmail.com>
+Subject: Re: Re: [PATCH] rtc: loongson: Add missing alarm notifications for ACPI RTC events
+References: <20250429062736.982039-1-liudalin@kylinsec.com.cn>, 
+	<2fa3740a-9181-40bf-9b1a-eeb6ffc6f23f@loongson.cn>
+X-Priority: 3
+X-GUID: D242E433-C5E1-45A1-886C-7C52DDA20DA9
+X-Has-Attach: no
+X-Mailer: Foxmail 7.2.21.453[cn]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250507112605.20910-1-qiang.zhang1211@gmail.com>
- <20250507112605.20910-2-qiang.zhang1211@gmail.com> <aBuJi3jhcp4dCbSY@localhost.localdomain>
-In-Reply-To: <aBuJi3jhcp4dCbSY@localhost.localdomain>
-From: Z qiang <qiang.zhang1211@gmail.com>
-Date: Thu, 8 May 2025 14:43:11 +0800
-X-Gm-Features: ATxdqUH2wLg29BGAZrqR2MNZ_QdKuosI9csOwke_G2Is7of6WmLuP4ITBol-kTc
-Message-ID: <CALm+0cWyWrEcsYx+6nDT9XjMdLBDwx27SmAXTPUFLB59TbEc3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] rcu/nocb: Add Safe checks for access offloaded rdp
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
-	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Message-ID: <2F2C4ADAA7F0A3F4+2025050814433635296030@kylinos.com.cn>
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz8a-0
+X-QQ-XMAILINFO: OR0QjYVUcDVNvOOaCbe6Nak+QFq9iNmlRzYuRMRStNVlOmN04L7SscBy
+	1IyUFLjX42PSAs7BCYmM6baXJac27KYSeEnui/TDP50Ob4QUQGrhXqoCT/dw2BOr1K7LaeG
+	3N6oDK2XmNn4TMV1CWTK07vCHO5lvaEHmOvQXixfeS6WFnGvp1ahPGnJLowr+ym7FGoJUsY
+	4m2T8d+9Rw0JFgqBXaiWR3et5WXwPkOijhrd89hYXwnMfYaONE44nMcVXVU7K7WPuuQzyEr
+	lBQZVEgAlqqacCscek3fqe1VOvlEXy8VJGaAjfgbTOLiZF/5Cyrpp8H2e/n4LpnkN771sXp
+	koZB6n0eYt81FWETU+fJSOHFmOv6Qhxj1CtqI2ICLKW9plmR9t62qq0ijSpeY9O1EdBJPvg
+	TcJvVdxwKwzwc3U9DZ8CK2ftOrv0z9Bif7nUcwuiUCLOlpG7bA0q+IW+fOaPiWwDyGNWh0G
+	6B5do/Zn3aFS7HkYEv9x/uPxaKRGk55XoByZZ+KPFqq1385bz2ogQ9aiy1+UVY5XNNpX6ZP
+	gPcxDA+gcPHFWfUn3RvrN+RQc627+eVbDj4B0feXrqe6tJrqdINT+U8OYP/2fWOfRVDS4Z6
+	OiUjzd9yCerSTyKhCkpGWrRaiq2z/2Xaag4lHIF7LX9WmqUq9Q+MFFDsUyaG9al6L2reg5g
+	UJntnNVtYERXSXSFviHlSCuBH3yBkR7cV9VJeXphtvAq2fqK6JkqBiyRXXd4AYGtXVY3ao0
+	+eBivdhChTN/PhWI0CVOnpTXDfDgcDGs1aic89j3nZ8FgmkQxkKPYPsENovPonEWXC51Ec2
+	R4hv/CWSKaEKXDeyvjAv4wjSYzEnETd0BDiqal+e5fAFykwLnwyCoEIiQwsrncsdpeXLfw3
+	7FW2tcAN3pfOeoyw5vBrTYCQAhydbGwc7w7qJgleqxkT/JfNrNIbxeJmTMX2LRPh0zKVurP
+	1hUjFxsdv5rCvEp42OH3hg6wIQEoH3kxFCAyL8U99uLILXrs6Y+nkERMOBablPlqzAEDUvy
+	grBfxlIwdYixKiomaUQbpKwiVCvm6ppAu+dlt7SyidfQuMfNtP+QjziOrQp/0=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Thu, May 8, 2025 at 12:25=E2=80=AFAM Frederic Weisbecker <frederic@kerne=
-l.org> wrote:
->
-> Le Wed, May 07, 2025 at 07:26:04PM +0800, Zqiang a =C3=A9crit :
-> > For built with CONFIG_PROVE_RCU=3Dy and CONFIG_PREEMPT_RT=3Dy kernels,
-> > Disable BH does not change the SOFTIRQ corresponding bits in
-> > preempt_count(), but change current->softirq_disable_cnt, this
-> > resulted in the following splat:
-> >
-> > WARNING: suspicious RCU usage
-> > kernel/rcu/tree_plugin.h:36 Unsafe read of RCU_NOCB offloaded state!
-> > stack backtrace:
-> > CPU: 0 UID: 0 PID: 22 Comm: rcuc/0
-> > Call Trace:
-> > [    0.407907]  <TASK>
-> > [    0.407910]  dump_stack_lvl+0xbb/0xd0
-> > [    0.407917]  dump_stack+0x14/0x20
-> > [    0.407920]  lockdep_rcu_suspicious+0x133/0x210
-> > [    0.407932]  rcu_rdp_is_offloaded+0x1c3/0x270
-> > [    0.407939]  rcu_core+0x471/0x900
-> > [    0.407942]  ? lockdep_hardirqs_on+0xd5/0x160
-> > [    0.407954]  rcu_cpu_kthread+0x25f/0x870
-> > [    0.407959]  ? __pfx_rcu_cpu_kthread+0x10/0x10
-> > [    0.407966]  smpboot_thread_fn+0x34c/0xa50
-> > [    0.407970]  ? trace_preempt_on+0x54/0x120
-> > [    0.407977]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> > [    0.407982]  kthread+0x40e/0x840
-> > [    0.407990]  ? __pfx_kthread+0x10/0x10
-> > [    0.407994]  ? rt_spin_unlock+0x4e/0xb0
-> > [    0.407997]  ? rt_spin_unlock+0x4e/0xb0
-> > [    0.408000]  ? __pfx_kthread+0x10/0x10
-> > [    0.408006]  ? __pfx_kthread+0x10/0x10
-> > [    0.408011]  ret_from_fork+0x40/0x70
-> > [    0.408013]  ? __pfx_kthread+0x10/0x10
-> > [    0.408018]  ret_from_fork_asm+0x1a/0x30
-> > [    0.408042]  </TASK>
-> >
-> > Currently, triggering an rdp offloaded state change need the
-> > corresponding rdp's CPU goes offline, and at this time the rcuc
-> > kthreads has already in parking state. this means the corresponding
-> > rcuc kthreads can safely read offloaded state of rdp while it's
-> > corresponding cpu is online.
-> >
-> > This commit therefore add softirq_count() check for
-> > Preempt-RT kernels.
-> >
-> > Suggested-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-> > ---
-> >  kernel/rcu/tree_plugin.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > index 003e549f6514..a91b2322a0cd 100644
-> > --- a/kernel/rcu/tree_plugin.h
-> > +++ b/kernel/rcu/tree_plugin.h
-> > @@ -29,7 +29,7 @@ static bool rcu_rdp_is_offloaded(struct rcu_data *rdp=
-)
-> >                 (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_held=
-()) ||
-> >                 lockdep_is_held(&rdp->nocb_lock) ||
-> >                 lockdep_is_held(&rcu_state.nocb_mutex) ||
-> > -               (!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible()) &=
-&
-> > +               ((!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible()) =
-|| softirq_count()) &&
-> >                  rdp =3D=3D this_cpu_ptr(&rcu_data)) ||
->
-> On a second thought, isn't "rdp =3D=3D this_cpu_ptr(&rcu_data)" enough?
+SGkgQmluYmluOgogICBUaGUgZGVzY3JpYmVkIGlzc3VlIGRvZXMgbm90IGhhcHBlbmVkICB3aXRo
+IG9yIHdpdGhvdXQgdGhlIHBhdGNoIGJ5IHRlc3QsIGFzIHRoZSBpbnRlcnJ1cHQgaXMgbWFuYWdl
+ZCBieSBhY3BpLiAKCiAgIFRoZSBkZXZpY2UgaW5mbyBhbmQgdGVzdCByZXN1bHQgYXJlIGFzIGZv
+bGxvd3MuCgoxLiBEZXZpY2UgaW5mbwpb57O757uf5pyq5r+A5rS7XVtyb290QG1haWwgdGVzdF0j
+IGRtaWRlY29kZSAtcQpCSU9TIEluZm9ybWF0aW9uCiAgICAgICAgVmVuZG9yOiBaRC1URUNICiAg
+ICAgICAgVmVyc2lvbjogVjA5CiAgICAgICAgUmVsZWFzZSBEYXRlOiAwNi8xNS8yMDIyCiAgICAg
+ICAgUk9NIFNpemU6IDggTUIKICAgICAgICBDaGFyYWN0ZXJpc3RpY3M6CiAgICAgICAgICAgICAg
+ICBQQ0kgaXMgc3VwcG9ydGVkCiAgICAgICAgICAgICAgICBCSU9TIGlzIHVwZ3JhZGVhYmxlCiAg
+ICAgICAgICAgICAgICBCSU9TIHNoYWRvd2luZyBpcyBhbGxvd2VkCiAgICAgICAgICAgICAgICBC
+b290IGZyb20gQ0QgaXMgc3VwcG9ydGVkCiAgICAgICAgICAgICAgICBTZWxlY3RhYmxlIGJvb3Qg
+aXMgc3VwcG9ydGVkCiAgICAgICAgICAgICAgICBCSU9TIFJPTSBpcyBzb2NrZXRlZAogICAgICAg
+ICAgICAgICAgU2VyaWFsIHNlcnZpY2VzIGFyZSBzdXBwb3J0ZWQgKGludCAxNGgpCiAgICAgICAg
+ICAgICAgICBVU0IgbGVnYWN5IGlzIHN1cHBvcnRlZAogICAgICAgICAgICAgICAgRnVuY3Rpb24g
+a2V5LWluaXRpYXRlZCBuZXR3b3JrIGJvb3QgaXMgc3VwcG9ydGVkCiAgICAgICAgICAgICAgICBV
+RUZJIGlzIHN1cHBvcnRlZAogICAgICAgIEJJT1MgUmV2aXNpb246IDQuMAogICAgICAgIEZpcm13
+YXJlIFJldmlzaW9uOiAwLjQKClN5c3RlbSBJbmZvcm1hdGlvbgogICAgICAgIE1hbnVmYWN0dXJl
+cjogR0VJVAogICAgICAgIFByb2R1Y3QgTmFtZTogVVQ2MDAwLUxCNQogICAgICAgIFZlcnNpb246
+IDEuMAogICAgICAgIFNlcmlhbCBOdW1iZXI6IFRCRCBieSBPRU0KICAgICAgICBVVUlEOiAwMDEx
+MjIzMy00NDU1LTY2NzctODg5OS1hYWJiY2NkZGVlZmYKICAgICAgICBXYWtlLXVwIFR5cGU6IFBv
+d2VyIFN3aXRjaAogICAgICAgIFNLVSBOdW1iZXI6IExvb25nc29uX1NLVQogICAgICAgIEZhbWls
+eTogVHlwZTFGYW1pbHkKCkJhc2UgQm9hcmQgSW5mb3JtYXRpb24KICAgICAgICBNYW51ZmFjdHVy
+ZXI6IEdFSVQKICAgICAgICBQcm9kdWN0IE5hbWU6IEdHLTNBNTAwMC0wMgogICAgICAgIFZlcnNp
+b246IDEuMAogICAgICAgIFNlcmlhbCBOdW1iZXI6IENoYXNzaXMgQm9hcmQgU2VyaWFsI1RvIEJl
+IEZpbGxlZCBCeSBPLkUuTQogICAgICAgIEFzc2V0IFRhZzogVHlwZTIgLSBCb2FyZCBBc3NldCBU
+YWcKICAgICAgICBGZWF0dXJlczoKICAgICAgICAgICAgICAgIEJvYXJkIGlzIGEgaG9zdGluZyBi
+b2FyZAogICAgICAgICAgICAgICAgQm9hcmQgaXMgcmVwbGFjZWFibGUKICAgICAgICBMb2NhdGlv
+biBJbiBDaGFzc2lzOiBUeXBlMiAtIEJvYXJkIENoYXNzaXMgTG9jYXRpb24KICAgICAgICBUeXBl
+OiBNb3RoZXJib2FyZAouLi4KCjIuIFRoZSBzeXN0ZW0gZXhoaWJpdHMgYSB0aW1lb3V0IGVycm9y
+IHdoZW4gd2FpdGluZyBmb3IgYWxhcm0gc2lnbmFsIHJlc3BvbnNlIHdpdGhvdXQgdGhlIHBhdGNo
+Lgpb57O757uf5pyq5r+A5rS7XVtyb290QG1haWwgdGVzdF0jIGNhdCAvcHJvYy9pbnRlcnJ1cHRz
+IHxncmVwIGFjcGkKMjE6ICAgICAgICAgIDMgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAg
+IDAgICBQQ0ggUElDICAgMSAgYWNwaQpb57O757uf5pyq5r+A5rS7XVtyb290QG1haWwgdGVzdF0j
+Clvns7vnu5/mnKrmv4DmtLtdW3Jvb3RAbWFpbCB0ZXN0XSMgLi9ydGMwMQpSVEMgUkVBRCBURVNU
+OgpSVEMgUkVBRCBURVNUIFBhc3NlZApDdXJyZW50IFJUQyBkYXRlL3RpbWUgaXMgOC01LTIwMjUs
+IDA1OjUwOjA1LgpSVEMgQUxBUk0gVEVTVCA6QWxhcm0gdGltZSBzZXQgdG8gMDU6NTA6MTAuCldh
+aXRpbmcgNSBzZWNvbmRzIGZvciB0aGUgYWxhcm0uLi4KVGltZWQgb3V0IHdhaXRpbmcgZm9yIHRo
+ZSBhbGFybQpSVEMgVVBEQVRFIElOVEVSUlVQVFMgVEVTVCA6ClJUQ19VSUVfT04gbm90IHN1cHBv
+cnRlZApSVEMgVGVzdHMgRG9uZSEKW+ezu+e7n+acqua/gOa0u11bcm9vdEBtYWlsIHRlc3RdIwpb
+57O757uf5pyq5r+A5rS7XVtyb290QG1haWwgdGVzdF0jIGNhdCAvcHJvYy9pbnRlcnJ1cHRzIHxn
+cmVwIGFjcGkKMjE6ICAgICAgICAgIDQgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAgIDAg
+ICBQQ0ggUElDICAgMSAgYWNwaQpb57O757uf5pyq5r+A5rS7XVtyb290QG1haWwgdGVzdF0jCgoz
+LiBUaGVyZSBpcyBubyBlcnJvciB3aXRoIHRoZSBwYXRjaCBhcHBsaWVkIGFuZCB0aGUgaW50ZXJy
+dXB0cyBhcmUgdHJpZ2dlcmVkIG9rClvns7vnu5/mnKrmv4DmtLtdW3Jvb3RAbWFpbCB0ZXN0XSMg
+Y2F0IC9wcm9jL2ludGVycnVwdHMgfGdyZXAgYWNwaQoyMTogICAgICAgICAgMCAgICAgICAgICAw
+ICAgICAgICAgIDAgICAgICAgICAgMCAgIFBDSCBQSUMgICAxICBhY3BpClvns7vnu5/mnKrmv4Dm
+tLtdW3Jvb3RAbWFpbCB0ZXN0XSMKW+ezu+e7n+acqua/gOa0u11bcm9vdEBtYWlsIHRlc3RdIyAu
+L3J0YzAxClJUQyBSRUFEIFRFU1Q6ClJUQyBSRUFEIFRFU1QgUGFzc2VkCkN1cnJlbnQgUlRDIGRh
+dGUvdGltZSBpcyA4LTUtMjAyNSwgMDY6MDk6MDMuClJUQyBBTEFSTSBURVNUIDpBbGFybSB0aW1l
+IHNldCB0byAwNjowOTowOC4KV2FpdGluZyA1IHNlY29uZHMgZm9yIHRoZSBhbGFybS4uLgpBbGFy
+bSByYW5nLgpSVEMgQUxBUk0gVEVTVCBQYXNzZWQKUlRDIFVQREFURSBJTlRFUlJVUFRTIFRFU1Qg
+OgpSVENfVUlFX09OIG5vdCBzdXBwb3J0ZWQKUlRDIFRlc3RzIERvbmUhClvns7vnu5/mnKrmv4Dm
+tLtdW3Jvb3RAbWFpbCB0ZXN0XSMKW+ezu+e7n+acqua/gOa0u11bcm9vdEBtYWlsIHRlc3RdIyBj
+YXQgL3Byb2MvaW50ZXJydXB0cyB8Z3JlcCBhY3BpCjIxOiAgICAgICAgICAxICAgICAgICAgIDAg
+ICAgICAgICAgMCAgICAgICAgICAwICAgUENIIFBJQyAgIDEgIGFjcGkKW+ezu+e7n+acqua/gOa0
+u11bcm9vdEBtYWlsIHRlc3RdIwoKCgoKCkZyb206wqBCaW5iaW4gWmhvdQoKCgpEYXRlOsKgMjAy
+NS0wNS0wOMKgMTE6MTIKCgoKVG86wqBMaXUgRGFsaW47IGFsZXhhbmRyZS5iZWxsb25pOyB3YW5n
+bWluZzAxCgoKCkNDOsKgY2hlbmh1YWNhaTsgZ2FvanV4aW47IGdpdDsgamlheHVuLnlhbmc7IGtl
+Z3Vhbmcuemhhbmc7IGxpeHVlZmVuZzsgbGludXgtcnRjOyBsaW51eC1rZXJuZWw7IHpob3ViYi5h
+YXJvbgoKCgpTdWJqZWN0OsKgUmU6IFtQQVRDSF0gcnRjOiBsb29uZ3NvbjogQWRkIG1pc3Npbmcg
+YWxhcm0gbm90aWZpY2F0aW9ucyBmb3IgQUNQSSBSVEMgZXZlbnRzCgoKCkhpIERhbGluOgoKCgrC
+oAoKCgpUaGFua3MgZm9yIHlvdXIgcGF0Y2guCgoKCsKgCgoKCk9uIDIwMjUvNC8yOSAxNDoyNywg
+TGl1IERhbGluIHdyb3RlOgoKCgo+IFdoZW4gYW4gYXBwbGljYXRpb24gc2V0cyBhbmQgZW5hYmxl
+cyBhbiBhbGFybSBvbiBMb29uZ3NvbiBSVEMgZGV2aWNlcywKCgoKPiB0aGUgYWxhcm0gbm90aWZp
+Y2F0aW9uIGZhaWxzIHRvIHByb3BhZ2F0ZSB0byB1c2Vyc3BhY2UgYmVjYXVzZSB0aGUKCgoKPiBB
+Q1BJIGV2ZW50IGhhbmRsZXIgb21pdHMgY2FsbGluZyBydGNfdXBkYXRlX2lycSgpLgoKCgo+CgoK
+Cj4gQXMgYSByZXN1bHQsIHByb2Nlc3NlcyB3YWl0aW5nIHZpYSBzZWxlY3QoKSBvciBwb2xsKCkg
+b24gUlRDIGRldmljZQoKCgo+IGZpbGVzIGZhaWwgdG8gcmVjZWl2ZSBhbGFybSBub3RpZmljYXRp
+b25zLgoKCgo+CgoKCj4gRml4ZXM6IDFiNzMzYTllYmMzZCAoInJ0YzogQWRkIHJ0YyBkcml2ZXIg
+Zm9yIHRoZSBMb29uZ3NvbiBmYW1pbHkgY2hpcHMiKQoKCgo+IFNpZ25lZC1vZmYtYnk6IExpdSBE
+YWxpbiA8bGl1ZGFsaW5Aa3lsaW5zZWMuY29tLmNuPgoKCgo+IC0tLQoKCgo+wqDCoCBkcml2ZXJz
+L3J0Yy9ydGMtbG9vbmdzb24uYyB8IDIgKysKCgoKPsKgwqAgMSBmaWxlIGNoYW5nZWQsIDIgaW5z
+ZXJ0aW9ucygrKQoKCgo+CgoKCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcnRjL3J0Yy1sb29uZ3Nv
+bi5jIGIvZHJpdmVycy9ydGMvcnRjLWxvb25nc29uLmMKCgoKPiBpbmRleCA5N2U1NjI1YzA2NGMu
+LjBjNTczZjE5OGY2MyAxMDA2NDQKCgoKPiAtLS0gYS9kcml2ZXJzL3J0Yy9ydGMtbG9vbmdzb24u
+YwoKCgo+ICsrKyBiL2RyaXZlcnMvcnRjL3J0Yy1sb29uZ3Nvbi5jCgoKCj4gQEAgLTEyOSw2ICsx
+MjksOCBAQCBzdGF0aWMgdTMyIGxvb25nc29uX3J0Y19oYW5kbGVyKHZvaWQgKmlkKQoKCgo+wqDC
+oCB7CgoKCj7CoMKgIHN0cnVjdCBsb29uZ3Nvbl9ydGNfcHJpdiAqcHJpdiA9IChzdHJ1Y3QgbG9v
+bmdzb25fcnRjX3ByaXYgKilpZDsKCgoKPsKgwqAKCgoKPiArIHJ0Y191cGRhdGVfaXJxKHByaXYt
+PnJ0Y2RldiwgMSwgUlRDX0FGIHwgUlRDX0lSUUYpOwoKCgo+ICsKCgoKV2hpbGUgdGVzdGluZyB0
+aGUgcGF0Y2gsIEkgbm90aWNlZCB0aGF0IGludGVycnVwdHMgYXJlIHRyaWdnZXJlZAoKCgptdWx0
+aXBsZSB0aW1lcyAoL3Byb2MvaW50ZXJydXB0KSwgbm90IHN1cmUgaWYgeW91IGhhdmUgdGhlIHNh
+bWUgaXNzdWUuCgoKCsKgCgoKCkkgdGhpbmsgd2UgbmVlZCBhIHNpbWlsYXIgb3BlcmF0aW9uIHRv
+IGxvb25nc29uX3J0Y19pc3IoKSB0byBjbGVhciB0aGUKCgoKaW50ZXJydXB0OgoKCgpyZWdtYXBf
+d3JpdGUocHJpdi0+cmVnbWFwLCBUT1lfTUFUQ0gwX1JFRywgMCk7CgoKCj7CoMKgIHNwaW5fbG9j
+aygmcHJpdi0+bG9jayk7CgoKCj7CoMKgIC8qIERpc2FibGUgUlRDIGFsYXJtIHdha2V1cCBhbmQg
+aW50ZXJydXB0ICovCgoKCj7CoMKgIHdyaXRlbChyZWFkbChwcml2LT5wbV9iYXNlICsgUE0xX0VO
+X1JFRykgJiB+UlRDX0VOLAoKCgpUaGFua3MuCgoKCkJpbmJpbgoKCgrCoAoKCgrCoAoKCgrCoAoK
+Cg==
 
-If the CONFIG_DEBUG_PREEMPT=3Dy, the following code will cause
-a warning in rcuop kthreads:
 
-WARN_ON_ONCE(!rcu_rdp_is_offloaded(rdp))
 
-> The offloaded state can only change if the CPU is completely offline.
-> But if the current CPU is looking at the local rdp, it means it is online
-> and the rdp can't be concurrently [de]offloaded, right?
-
-yes
-
-Thanks
-Zqiang
-
->
-> Thanks.
->
-> >                 rcu_current_is_nocb_kthread(rdp)),
-> >               "Unsafe read of RCU_NOCB offloaded state"
-> > --
-> > 2.17.1
-> >
-> >
->
-> --
-> Frederic Weisbecker
-> SUSE Labs
 
