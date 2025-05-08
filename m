@@ -1,169 +1,80 @@
-Return-Path: <linux-kernel+bounces-639600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFB8AAF998
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:17:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9CCAAF9A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88674C37B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8261C20C83
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1A0223DC4;
-	Thu,  8 May 2025 12:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CED9226888;
+	Thu,  8 May 2025 12:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="k3w/widk"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVwP7JDu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4621DF25C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 12:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E45A1DE4C4;
+	Thu,  8 May 2025 12:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706639; cv=none; b=tPopZ6wK8oKjvRwIVT07EhSJ7Ta/VOtvwwVd4zgd4LQiCsVSVE2Q3+JTuv7Q9yZ7eq3L5sEqtUpl3Vr/vUfsrZSmSmeS1cdIVbOxCOTogIwfgC8FOyd6BbDZrfPS8x9YN2SqnHGK6qr7CiGORjz5OXxnFJcAc2q3nNkN/qtUpis=
+	t=1746706650; cv=none; b=bxt40BlR6ZcturMe/AgV/qn3lbngWie3+y60b95lgI7sUqI8gI6GG7W58Dr05vq1b1HZPPWsSbi/x23vVhGOLFFyHp0tzEXdUB0rydoxgZN2WPvKJQ5pkZs+y4wUVAEHC5chqiHEVqk4wtsWIurUtD0slzF/eg+B8zhhZ0k9/hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706639; c=relaxed/simple;
-	bh=gI9+15/uiqpn2T7b42r1EP83YhqQAQmZi3IavWEk6Js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DISiw90Q+VW71ux6XSpXTJ+1KRjCSQrDiz/fEM7BID+yFhvpmYknEimgEgMUUvw+nsjgcQPO0zEIaPOLwFK2cWbahw4vA6f3SfHVVvuQG2fBVYyYKClKajxuhReWnuUOqLZDFmONlZ96UKFHjLFBzuGz4+rjUgAIm0VRIR7zQto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=k3w/widk; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85b3f92c8f8so86695239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 05:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746706636; x=1747311436; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ITsof7vKMaX3jP45vYP8VvBDvnD7ar/ly91W1po1fYs=;
-        b=k3w/widkR97bsDT61lsM4hK+UnsGe+OLVgb5KbiBJQYmL7Idof7dIWDZQ5Aj5LJrKV
-         bZpxNWRFsDQtVkJC4jRsuxXKcunGSpiy691CTRdWzD9pnGhizU9V4lf5zD/14wKzk2Na
-         ShQCKJzCBKRFn1+nPMy0b7mZuEIsZ8Rb9OIV0VR4oAt/AFyhgMaGF+QBrhbS9+WCWaYv
-         lYZ8IVJTGxULjIswSIhurxkME4u6UUmu4o4daWrZD6OS7l7Ub7nlAtxsoumelTadM6m2
-         quwsUd9lD8NdnnkWHea/Z4sZI6S6bkE9QCLhSWXYePs+1Cb9XY+gggvcYO/s8IwnlfYD
-         eFqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746706636; x=1747311436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ITsof7vKMaX3jP45vYP8VvBDvnD7ar/ly91W1po1fYs=;
-        b=Ubgq1oKImMgKYm7V0PjYr+lyMqmcKFZc/XFyW7JFf1aLQZonwrK6hVmAxIQeiV2WTz
-         MoDIn448Qt/Uo5OjQs8MKSwspoZ2OcfbPP4uX85sdUut0U685wDGGKYVu5x+hr3Aa2wb
-         nbahPEPLk0ofJig1wt0ay3TZA4EJQP6AHcyuI7BDv+cczdL+AfHsDDG3AAFZk4cUuN+i
-         V53YYgMAJXJvRz9rra5ia+SewSQ6d/kyiMmYUbCXkSjjsxNYtJ1tVzQ1zNXBvR+6nX5y
-         hZJIDpEw/vpJWTGeUQuFU/5BSxwdZP1asCJ7IbSsfqlk6+ayBfYIaQ/j1LW9D76a1r24
-         BctA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVDfF3cLk+QdiuT9PtZv7xEoYF2zdQhGWYnZgeSPh5Ov/EFzKMeShmzypRnfa9FDQGkzfTIQqgHJHq0DE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7lxWU0Rdx6W6McwpkfKYMQA9cOB+yzsTOCzaRBFKwuWE6QDb0
-	/d26/SM0qpvl/n/H6vLy2148zBlxPw1T0qK+JM8frU58HzEptGrbniUGoWgAhPg=
-X-Gm-Gg: ASbGncum5xDPpU8+fo1/7hRPShP2fWS+QRpCeisorj2qNXu9dihDXi054SRQ5m9yzXi
-	TBXX0Yu3bNAS8ICxLtbqlW3WVzJ9myiHdVrm2DLRG3t5OjclVPREJl5KnGcmG0blkL2l4g1akgD
-	TKf8BwpJqpeIlqPXY6X4vHOGj+8+5IlpPA0XCEKXV8ZCKwcNUC99EPKimJSYdHaWFCfVbnbGx9b
-	waxyyYNdzY/j27Cfz1huUkHzmDvwbeMmGsFtEmcHb1CMc2fZjFIrlNy3OgK2OjN5YRR9X0B8JcE
-	gpZBavuyzZjsSgh/QG32bGTFgHymG+XV7LjWar8raP2EtLXZqBAE7/jb0xVD8u26jxWVupWJeqK
-	pYnxT
-X-Google-Smtp-Source: AGHT+IEpsfxrAkflVw0/hRABTEz4CwO/hvBuswU8lzk6t7nrXFnCj3fyA636Nq30np0oFo7xbeEBJA==
-X-Received: by 2002:a05:6602:3f85:b0:867:3e9e:89db with SMTP id ca18e2360f4ac-867473170e3mr934513939f.8.1746706636487;
-        Thu, 08 May 2025 05:17:16 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864aa2bb1bdsm294250539f.7.2025.05.08.05.17.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 05:17:15 -0700 (PDT)
-Message-ID: <1521c828-31f3-4e45-a651-750ce2e37364@riscstar.com>
-Date: Thu, 8 May 2025 07:17:14 -0500
+	s=arc-20240116; t=1746706650; c=relaxed/simple;
+	bh=X09kpoC2cYWElAOM5zUAu13xi0FNAuNy6V6g/+7RQ8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eh5uJA+rj33AiEIhhsATRcV4+Xi34rzqK9o9sUgjWDdIHz/T1KYnjxlpGzSkSwbpy8xn3iS6tAMfejlN1OVkKffMzWAq2UxUt4Eam54NJKxjnmTQchK2a1863bUZpZPstcySWU9MsQdQy+tocOge1n9kVQucW9ljLuZIDFcMHSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVwP7JDu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 310A5C4CEE7;
+	Thu,  8 May 2025 12:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746706649;
+	bh=X09kpoC2cYWElAOM5zUAu13xi0FNAuNy6V6g/+7RQ8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MVwP7JDuLgdhcFC47yVaiHpl+m9tnhdBU7VJa33L5UZ3bzbo1d9gg1zOJgiX8ZhPZ
+	 vWUccB3Z7eKykUxxJWt9aAXOQrMy/RPSzarmsHB7Py6Dc1MkPtBjKMFX1CXWyw0Wpe
+	 GKe0LenHznUZvUA7Ikd1WtXsdFED7efCiqSvnJfU26f6nEHnp4EqEyk4aFXWXOO4Jq
+	 A7WELwulFYWquVkg0iFM/hPWAPUVBtmkMYqzdjnvZ2vcUs+63NFPD7mnAsJMlKrSrY
+	 y+5w3D3ZYIGXZt6mDBs9qmaXP5vyfqDTBJzUWBQo37qE2iKMyR8SYm8dHjnuxboa3f
+	 TY+Q4BIWlpoLw==
+Date: Thu, 8 May 2025 14:17:24 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, kthota@nvidia.com, mmaddireddy@nvidia.com,
+	sagar.tv@gmail.com
+Subject: Re: [PATCH V4] PCI: dwc: tegra194: Broaden architecture dependency
+Message-ID: <aByg1GUBno3Gzf4w@ryzen>
+References: <20250417074607.2281010-1-vidyas@nvidia.com>
+ <20250508051922.4134041-1-vidyas@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/6] dt-bindings: soc: spacemit: define spacemit,k1-ccu
- resets
-To: Krzysztof Kozlowski <krzk@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
- guodong@riscstar.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250506210638.2800228-1-elder@riscstar.com>
- <20250506210638.2800228-2-elder@riscstar.com>
- <20250507223554-GYA505240@gentoo>
- <22b7b5fc-6f5a-4ce8-ae12-a7423925c113@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <22b7b5fc-6f5a-4ce8-ae12-a7423925c113@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508051922.4134041-1-vidyas@nvidia.com>
 
-On 5/8/25 7:02 AM, Krzysztof Kozlowski wrote:
-> On 08/05/2025 00:35, Yixun Lan wrote:
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - spacemit,k1-syscon-apbc
->>> +              - spacemit,k1-syscon-apmu
->>> +              - spacemit,k1-syscon-mpmu
->>> +    then:
->>> +      required:
->>> +        - clocks
->>> +        - clock-names
->>> +        - "#clock-cells"
->>>   
->>>   additionalProperties: false
->>>   
->>> diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
->>> index 35968ae982466..f5965dda3b905 100644
->>> --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
->>> +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
->> would it be better to move all reset definition to its dedicated dir?
->> which like: include/dt-bindings/reset/spacemit,k1-syscon.h?
+On Thu, May 08, 2025 at 10:49:22AM +0530, Vidya Sagar wrote:
+> Replace ARCH_TEGRA_194_SOC dependency with a more generic ARCH_TEGRA
+> check for the Tegra194 PCIe controller, allowing it to be built on
+> Tegra platforms beyond Tegra194. Additionally, ensure compatibility
+> by requiring ARM64 or COMPILE_TEST.
 > 
-> Please kindly trim the replies from unnecessary context. It makes it
-> much easier to find new content.
-> 
-> 
-> I don't get why such comments are appearing so late - at v6. There was
-> nothing from you about this in v1, v2 and v3, which finally got reviewed.
+> Link: https://patchwork.kernel.org/project/linux-pci/patch/20250128044244.2766334-1-vidyas@nvidia.com/
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
 
-Stephen Boyd said "please rework this to use the auxiliary driver
-framework" on version 5 of the series; it was otherwise "done" at
-that point.
+Looks good to me, but there will need coordination between the
+PHY and PCI maintainers for this to not cause a kernel test bot
+build failure, if the PCI patch is merged before the PHY patch.
 
-Doing this meant there was a much clearer separation of the clock
-definitions from the reset definitions.  And Yixun's suggestion
-came from viewing things in that context.
-
-Given the rework, I considered sending this as v1 of a new series
-but did not.
-
-> I just feel people wait for maintainers to review and only after they
-> will add their 2 cents of nitpicks or even some more important things
-> potentially invalidating the review. Lesson for me: do not review
-> people's work before it reaches v10, right?
-
-That's not what happened here--or at least, it's not as simple
-as that.  Your quick review was very much appreciated.
-
-Yixun:  Krzysztof was satisfied with things the way they're
-defined here.  Do you feel strongly I should make your suggested
-change?  Or are you OK with me just keeping things defined this
-way for the next version?  I'd like this question resolved before
-I send the next version.
-
-Thank you.
-
-					-Alex
-
-> Best regards,
-> Krzysztof
-
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
 
