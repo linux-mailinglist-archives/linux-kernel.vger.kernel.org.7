@@ -1,319 +1,187 @@
-Return-Path: <linux-kernel+bounces-639157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBDEAAF38F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07ECAAF399
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B049E0748
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EEB69E1C02
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA21110E0;
-	Thu,  8 May 2025 06:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D307E2147EB;
+	Thu,  8 May 2025 06:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="j7sQqUYp"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p1EIz/YB"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE0D1CB31D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D011CB31D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746685095; cv=none; b=BNcbgVVmtpPrLGPE2vRiDqcL+XOZGiGFWyi0fPB6BnyaKuxrl0ANIXr1A+IMzorRIi77V8gX3/LKKH5yZkE45pRhkaPNzLs3QEvAoRRZwpBDgIiz7Nz12tG3IXM/Rs4p51ZyDyA3D3fn6MlUsvL+sixLk88jaRnqx2jdFFG9MDs=
+	t=1746685181; cv=none; b=cyiVVLPaodqVUl11ExEr3IhEd/ylnLHLkOFRsAk4qBzMTvup65ZfF+8XJfXQtqF8fEY7ZHG6uTPcZn6Aa8rEDGVqQg8svYWnVx9BFcSU8ainPKcoMfdlWgrsjJo+8d8r7IILILbS2xFGXs9saOGaS9A0f9blGN32yBvpqArK9KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746685095; c=relaxed/simple;
-	bh=Bbkq/RYcxs1x98iS+sh1uTieG+gNR4+QIdZyuTIdfr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qVgXawwqzQxleVwpW8pHvK3QCnRnrpIG7rIs11fQuoVKuiIg+hHU4BMG31qjzOGTa+HMzKlHU6MHv9rLnCKybZfu9NgFVDc5jQrGgLvaZuZ3x+I+1HHvU7xJYtoOLSa0qY2jCoFXwtaXe0F4Ic3ns82a3TcZ86XNTUWyenXq+mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=j7sQqUYp; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86135af1045so68557039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 23:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746685091; x=1747289891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ss9yl8sXdOiHdkgttMG6M1WflUBd6V/PJ9963b+7AH0=;
-        b=j7sQqUYp6tm5t6gJ7ptNSmWB2SFDGLhFy9p8HOy4/lE9p7cg8DXjXHYzcHTaWBppoN
-         JvFvaEZTxI3H6DpKaEWRH2uhTTgm8+d6xRYrsmPl0K+mKNYEgIerLZB5rzaDSg//tKlo
-         u4uMsvZmFoR0pg6meXDOi94FzE7zym/AT/x1WfZJuKvx4sw3oS7a5To95WRq7mvZIC+u
-         DcyDnmg9NZeAGpyfSqwvUB3ew8aKAI7qc5xe1HDNCXGsM/yE1AYDYeeLAkM+2rG8WXN9
-         c9zuS+dQJlM+4TA8BtiGvvTrkEMd4h7UkH3DnvXtVO69BK8Ol5A/IqkzRsZjcQKVPMWP
-         NU6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746685091; x=1747289891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ss9yl8sXdOiHdkgttMG6M1WflUBd6V/PJ9963b+7AH0=;
-        b=axsL6zv0baUlwatKWmNZpolnmRFBvTUEKscCWdp1o0rfDdVW5sPCX3P8jT96+XYSoS
-         Zjbv6X4DE++wVOYOdLaOpiTy4J+2cUVjnKvnJxE/0RY2md1A9ymhZHDb/TEGD32yIuq5
-         NGhWVEY6x+AF5cfRRF1Nd0tXu9oupIafi82+5PsjRb/zYZy9nbKt7M+F1zbtbbz51sBL
-         C6CXoV/IWIydWET8dvzpa5uYweruaHDpsfcbmyyKPSF1CZXAkAZ0Sm3YsbNXUi73Szhs
-         2W3+bqjdxF6vz2A30AnrGaDGCiB8nU4hMGP1GD+Wwhtm3g7WH2hBftb/cPjWWHlg2YxE
-         dREQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcbsUsD+HOibIWgbYMwV7vQ3H1upymXu6mt7elOud7R5/M09V1if6N3yQ/qCld8cOlIA/FbKkjXt2orG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylSDil7Wfyug6s7Pe55UlObPZvau8anTcLxGoSm1lWAM1y8lou
-	A9VhUAMLW18lGqOL08cWBLxBbIHsH+K+w2Z54nRBpp/Sf2FIMOcE3Fi4BthLkKekOiSs9ITsguf
-	q73h6SXRIeLScHpYkhR371ayGi9/xmvhLUdFP+A==
-X-Gm-Gg: ASbGncv6GN4N12OvyhicI2UzzkQcHSuPjenB8iGV7s8kbnR+lZXW3uL1wIMQa2WOPgr
-	n87wftB3b+Bn2LWvhF84CRYO2F73TTEDeMNNDNRKxREdr6x8f7+AOeSUSSdx3ZmfguluefoA84p
-	cCxF6qttld/n+EDeXeZi+bxAM=
-X-Google-Smtp-Source: AGHT+IH2Ky4AFIJnI3fge0BtYV7Dksetv4YSLA/pbKoTobhDZ77LmyQiPq5k0ylButekku7Ka+EjOBB/t3SlisqxLk0=
-X-Received: by 2002:a05:6e02:3498:b0:3d8:1cba:1854 with SMTP id
- e9e14a558f8ab-3da7854d65bmr34465065ab.1.1746685091168; Wed, 07 May 2025
- 23:18:11 -0700 (PDT)
+	s=arc-20240116; t=1746685181; c=relaxed/simple;
+	bh=DtYmFysUlSJqt4dIK+BH0UUapcZkTkGEqj05JbxIk9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qzAq7rldBRZF1KvSQWr8rxBPPi0aIK7TVmSRlRu/L+EScyw0Irfd1aC7gvnfr0e+5lbfSeh9YnAJ/EX2Jkb4x+6oNtI/8Hz0qh+xDmN63DiMN+M/PlUi6Yv6zpqi92KlbQkTPY8OVlkHq3ID59hTkIe3rQQIAizrspq41gTpZBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p1EIz/YB; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746685166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JQOF4qJClLbpwilGN0tAlFNmWOxZLphtkwR7tYlHPGI=;
+	b=p1EIz/YBzmUGRmku30gPRdKcF4rMdist4JBJuy1Rk3g5iqXwIarl1t9ye/MaAQs/vV8Bf8
+	GYMPUtdEwDDsWDse2hvlXAiPUJbGIl0rpw+kA2gonqUMrxcbYgTX0C7OoJyUOr/tPSmIUd
+	8ewKtI7F8lLTuW/HKL/nMP9TrC12g5s=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Michal Luczaj <mhal@rbox.co>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Cong Wang <cong.wang@bytedance.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v5] bpf, sockmap: avoid using sk_socket after free when sending
+Date: Thu,  8 May 2025 14:18:25 +0800
+Message-ID: <20250508061825.51896-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com> <20250403112522.1566629-6-rkrcmar@ventanamicro.com>
-In-Reply-To: <20250403112522.1566629-6-rkrcmar@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 8 May 2025 11:48:00 +0530
-X-Gm-Features: ATxdqUFfRqun2viiJMiaaVjkyhvi75M7M8EY7NCPCcyFAS9GGQ49YwBXAaDX928
-Message-ID: <CAAhSdy3y0-hz59Nrqvvhp=+cWJe1s50K7EpuZmKBqfy-XQFd1Q@mail.gmail.com>
-Subject: Re: [PATCH 3/5] KVM: RISC-V: remove unnecessary SBI reset state
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar=
-@ventanamicro.com> wrote:
->
-> The SBI reset state has only two variables -- pc and a1.
-> The rest is known, so keep only the necessary information.
->
-> The reset structures make sense if we want userspace to control the
-> reset state (which we do), but I'd still remove them now and reintroduce
-> with the userspace interface later -- we could probably have just a
-> single reset state per VM, instead of a reset state for each VCPU.
->
-> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
+The sk->sk_socket is not locked or referenced in backlog thread, and
+during the call to skb_send_sock(), there is a race condition with
+the release of sk_socket. All types of sockets(tcp/udp/unix/vsock)
+will be affected.
 
-Queued this patch for Linux-6.16
+Race conditions:
+'''
+CPU0                               CPU1
 
-Thanks,
-Anup
+backlog::skb_send_sock
+  sendmsg_unlocked
+    sock_sendmsg
+      sock_sendmsg_nosec
+                                   close(fd):
+                                     ...
+                                     ops->release() -> sock_map_close()
+                                     sk_socket->ops = NULL
+                                     free(socket)
+      sock->ops->sendmsg
+            ^
+            panic here
+'''
 
-> ---
->  arch/riscv/include/asm/kvm_aia.h  |  3 --
->  arch/riscv/include/asm/kvm_host.h | 12 ++++---
->  arch/riscv/kvm/aia_device.c       |  4 +--
->  arch/riscv/kvm/vcpu.c             | 58 +++++++++++++++++--------------
->  arch/riscv/kvm/vcpu_sbi.c         |  9 +++--
->  5 files changed, 44 insertions(+), 42 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_aia.h b/arch/riscv/include/asm/kv=
-m_aia.h
-> index 1f37b600ca47..3b643b9efc07 100644
-> --- a/arch/riscv/include/asm/kvm_aia.h
-> +++ b/arch/riscv/include/asm/kvm_aia.h
-> @@ -63,9 +63,6 @@ struct kvm_vcpu_aia {
->         /* CPU AIA CSR context of Guest VCPU */
->         struct kvm_vcpu_aia_csr guest_csr;
->
-> -       /* CPU AIA CSR context upon Guest VCPU reset */
-> -       struct kvm_vcpu_aia_csr guest_reset_csr;
-> -
->         /* Guest physical address of IMSIC for this VCPU */
->         gpa_t           imsic_addr;
->
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
-vm_host.h
-> index 0e9c2fab6378..0c8c9c05af91 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -193,6 +193,12 @@ struct kvm_vcpu_smstateen_csr {
->         unsigned long sstateen0;
->  };
->
-> +struct kvm_vcpu_reset_state {
-> +       spinlock_t lock;
-> +       unsigned long pc;
-> +       unsigned long a1;
-> +};
-> +
->  struct kvm_vcpu_arch {
->         /* VCPU ran at least once */
->         bool ran_atleast_once;
-> @@ -227,12 +233,8 @@ struct kvm_vcpu_arch {
->         /* CPU Smstateen CSR context of Guest VCPU */
->         struct kvm_vcpu_smstateen_csr smstateen_csr;
->
-> -       /* CPU context upon Guest VCPU reset */
-> -       struct kvm_cpu_context guest_reset_context;
-> -       spinlock_t reset_cntx_lock;
-> +       struct kvm_vcpu_reset_state reset_state;
->
-> -       /* CPU CSR context upon Guest VCPU reset */
-> -       struct kvm_vcpu_csr guest_reset_csr;
->
->         /*
->          * VCPU interrupts
-> diff --git a/arch/riscv/kvm/aia_device.c b/arch/riscv/kvm/aia_device.c
-> index 39cd26af5a69..43e472ff3e1a 100644
-> --- a/arch/riscv/kvm/aia_device.c
-> +++ b/arch/riscv/kvm/aia_device.c
-> @@ -526,12 +526,10 @@ int kvm_riscv_vcpu_aia_update(struct kvm_vcpu *vcpu=
-)
->  void kvm_riscv_vcpu_aia_reset(struct kvm_vcpu *vcpu)
->  {
->         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
-r;
-> -       struct kvm_vcpu_aia_csr *reset_csr =3D
-> -                               &vcpu->arch.aia_context.guest_reset_csr;
->
->         if (!kvm_riscv_aia_available())
->                 return;
-> -       memcpy(csr, reset_csr, sizeof(*csr));
-> +       memset(csr, 0, sizeof(*csr));
->
->         /* Proceed only if AIA was initialized successfully */
->         if (!kvm_riscv_aia_initialized(vcpu->kvm))
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 2fb75288ecfe..b8485c1c1ce4 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -51,13 +51,40 @@ const struct kvm_stats_header kvm_vcpu_stats_header =
-=3D {
->                        sizeof(kvm_vcpu_stats_desc),
->  };
->
-> -static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
-> +static void kvm_riscv_vcpu_context_reset(struct kvm_vcpu *vcpu)
->  {
->         struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
-> -       struct kvm_vcpu_csr *reset_csr =3D &vcpu->arch.guest_reset_csr;
->         struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
-> -       struct kvm_cpu_context *reset_cntx =3D &vcpu->arch.guest_reset_co=
-ntext;
-> +       struct kvm_vcpu_reset_state *reset_state =3D &vcpu->arch.reset_st=
-ate;
->         void *vector_datap =3D cntx->vector.datap;
-> +
-> +       memset(cntx, 0, sizeof(*cntx));
-> +       memset(csr, 0, sizeof(*csr));
-> +
-> +       /* Restore datap as it's not a part of the guest context. */
-> +       cntx->vector.datap =3D vector_datap;
-> +
-> +       /* Load SBI reset values */
-> +       cntx->a0 =3D vcpu->vcpu_id;
-> +
-> +       spin_lock(&reset_state->lock);
-> +       cntx->sepc =3D reset_state->pc;
-> +       cntx->a1 =3D reset_state->a1;
-> +       spin_unlock(&reset_state->lock);
-> +
-> +       /* Setup reset state of shadow SSTATUS and HSTATUS CSRs */
-> +       cntx->sstatus =3D SR_SPP | SR_SPIE;
-> +
-> +       cntx->hstatus |=3D HSTATUS_VTW;
-> +       cntx->hstatus |=3D HSTATUS_SPVP;
-> +       cntx->hstatus |=3D HSTATUS_SPV;
-> +
-> +       /* By default, make CY, TM, and IR counters accessible in VU mode=
- */
-> +       csr->scounteren =3D 0x7;
-> +}
-> +
-> +static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
-> +{
->         bool loaded;
->
->         /**
-> @@ -72,16 +99,10 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcp=
-u)
->
->         vcpu->arch.last_exit_cpu =3D -1;
->
-> -       memcpy(csr, reset_csr, sizeof(*csr));
-> -
-> -       spin_lock(&vcpu->arch.reset_cntx_lock);
-> -       memcpy(cntx, reset_cntx, sizeof(*cntx));
-> -       spin_unlock(&vcpu->arch.reset_cntx_lock);
-> +       kvm_riscv_vcpu_context_reset(vcpu);
->
->         kvm_riscv_vcpu_fp_reset(vcpu);
->
-> -       /* Restore datap as it's not a part of the guest context. */
-> -       cntx->vector.datap =3D vector_datap;
->         kvm_riscv_vcpu_vector_reset(vcpu);
->
->         kvm_riscv_vcpu_timer_reset(vcpu);
-> @@ -113,8 +134,6 @@ int kvm_arch_vcpu_precreate(struct kvm *kvm, unsigned=
- int id)
->  int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->  {
->         int rc;
-> -       struct kvm_cpu_context *cntx;
-> -       struct kvm_vcpu_csr *reset_csr =3D &vcpu->arch.guest_reset_csr;
->
->         spin_lock_init(&vcpu->arch.mp_state_lock);
->
-> @@ -134,24 +153,11 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->         /* Setup VCPU hfence queue */
->         spin_lock_init(&vcpu->arch.hfence_lock);
->
-> -       /* Setup reset state of shadow SSTATUS and HSTATUS CSRs */
-> -       spin_lock_init(&vcpu->arch.reset_cntx_lock);
-> -
-> -       spin_lock(&vcpu->arch.reset_cntx_lock);
-> -       cntx =3D &vcpu->arch.guest_reset_context;
-> -       cntx->sstatus =3D SR_SPP | SR_SPIE;
-> -       cntx->hstatus =3D 0;
-> -       cntx->hstatus |=3D HSTATUS_VTW;
-> -       cntx->hstatus |=3D HSTATUS_SPVP;
-> -       cntx->hstatus |=3D HSTATUS_SPV;
-> -       spin_unlock(&vcpu->arch.reset_cntx_lock);
-> +       spin_lock_init(&vcpu->arch.reset_state.lock);
->
->         if (kvm_riscv_vcpu_alloc_vector_context(vcpu))
->                 return -ENOMEM;
->
-> -       /* By default, make CY, TM, and IR counters accessible in VU mode=
- */
-> -       reset_csr->scounteren =3D 0x7;
-> -
->         /* Setup VCPU timer */
->         kvm_riscv_vcpu_timer_init(vcpu);
->
-> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-> index f58368f7df1d..3d7955e05cc3 100644
-> --- a/arch/riscv/kvm/vcpu_sbi.c
-> +++ b/arch/riscv/kvm/vcpu_sbi.c
-> @@ -159,11 +159,10 @@ void kvm_riscv_vcpu_sbi_system_reset(struct kvm_vcp=
-u *vcpu,
->  void kvm_riscv_vcpu_sbi_request_reset(struct kvm_vcpu *vcpu,
->                                        unsigned long pc, unsigned long a1=
-)
->  {
-> -       spin_lock(&vcpu->arch.reset_cntx_lock);
-> -       vcpu->arch.guest_reset_context.sepc =3D pc;
-> -       vcpu->arch.guest_reset_context.a0 =3D vcpu->vcpu_id;
-> -       vcpu->arch.guest_reset_context.a1 =3D a1;
-> -       spin_unlock(&vcpu->arch.reset_cntx_lock);
-> +       spin_lock(&vcpu->arch.reset_state.lock);
-> +       vcpu->arch.reset_state.pc =3D pc;
-> +       vcpu->arch.reset_state.a1 =3D a1;
-> +       spin_unlock(&vcpu->arch.reset_state.lock);
->
->         kvm_make_request(KVM_REQ_VCPU_RESET, vcpu);
->  }
-> --
-> 2.48.1
->
+The ref of psock become 0 after sock_map_close() executed.
+'''
+void sock_map_close()
+{
+    ...
+    if (likely(psock)) {
+    ...
+    // !! here we remove psock and the ref of psock become 0
+    sock_map_remove_links(sk, psock)
+    psock = sk_psock_get(sk);
+    if (unlikely(!psock))
+        goto no_psock; <=== Control jumps here via goto
+        ...
+        cancel_delayed_work_sync(&psock->work); <=== not executed
+        sk_psock_put(sk, psock);
+        ...
+}
+'''
+
+Based on the fact that we already wait for the workqueue to finish in
+sock_map_close() if psock is held, we simply increase the psock
+reference count to avoid race conditions.
+
+With this patch, if the backlog thread is running, sock_map_close() will
+wait for the backlog thread to complete and cancel all pending work.
+
+If no backlog running, any pending work that hasn't started by then will
+fail when invoked by sk_psock_get(), as the psock reference count have
+been zeroed, and sk_psock_drop() will cancel all jobs via
+cancel_delayed_work_sync().
+
+In summary, we require synchronization to coordinate the backlog thread
+and close() thread.
+
+The panic I catched:
+'''
+Workqueue: events sk_psock_backlog
+RIP: 0010:sock_sendmsg+0x21d/0x440
+RAX: 0000000000000000 RBX: ffffc9000521fad8 RCX: 0000000000000001
+...
+Call Trace:
+ <TASK>
+ ? die_addr+0x40/0xa0
+ ? exc_general_protection+0x14c/0x230
+ ? asm_exc_general_protection+0x26/0x30
+ ? sock_sendmsg+0x21d/0x440
+ ? sock_sendmsg+0x3e0/0x440
+ ? __pfx_sock_sendmsg+0x10/0x10
+ __skb_send_sock+0x543/0xb70
+ sk_psock_backlog+0x247/0xb80
+...
+'''
+
+Reported-by: Michal Luczaj <mhal@rbox.co>
+Fixes: 799aa7f98d53 ("skmsg: Avoid lock_sock() in sk_psock_backlog()")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+
+---
+This patch is extracted from my previous v4 patchset that contained
+multiple fixes, and it remains unchanged. Since this fix is relatively
+simple and easy to review, we want to separate it from other fixes to
+avoid any potential interference.
+---
+ net/core/skmsg.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 276934673066..34c51eb1a14f 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -656,6 +656,13 @@ static void sk_psock_backlog(struct work_struct *work)
+ 	bool ingress;
+ 	int ret;
+ 
++	/* Increment the psock refcnt to synchronize with close(fd) path in
++	 * sock_map_close(), ensuring we wait for backlog thread completion
++	 * before sk_socket freed. If refcnt increment fails, it indicates
++	 * sock_map_close() completed with sk_socket potentially already freed.
++	 */
++	if (!sk_psock_get(psock->sk))
++		return;
+ 	mutex_lock(&psock->work_mutex);
+ 	while ((skb = skb_peek(&psock->ingress_skb))) {
+ 		len = skb->len;
+@@ -708,6 +715,7 @@ static void sk_psock_backlog(struct work_struct *work)
+ 	}
+ end:
+ 	mutex_unlock(&psock->work_mutex);
++	sk_psock_put(psock->sk, psock);
+ }
+ 
+ struct sk_psock *sk_psock_init(struct sock *sk, int node)
+-- 
+2.47.1
+
 
