@@ -1,181 +1,107 @@
-Return-Path: <linux-kernel+bounces-638904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4695EAAEFF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 02:24:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5D9AAEFFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 02:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECAD37AFBCC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 00:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BF0165174
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 00:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D9880034;
-	Thu,  8 May 2025 00:24:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C104C84A3E;
+	Thu,  8 May 2025 00:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="IzuUtQV2"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F2E3C26;
-	Thu,  8 May 2025 00:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB0F29A1
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 00:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746663876; cv=none; b=ZOPHAEuerkX29UaxXz6w4nraFLYc/L0H1yCf5yX4ExVQB2wEN77VlpYE0JAJfHYFg4b0jm5v3IyuXnrE6bSpTCQXHUW4uDeHxm6YZbzbfEe3SNl78e1s3S+3pe4GG8iDExJdTENWFAg57auXp0ZTl2vQUB2Gf+WBVHl9p6D63wg=
+	t=1746664132; cv=none; b=OY1JmzU+/BMSwN2KW+B+yE9bigBvaIHzSdC+LFq/5EfXGhve+HRQqWlfSy83weZYm+vtAAl0df1T1DJdhX7lH4u3wOnSkOtzSJloha7phBh1w1/m6SQWx4+2D+0jp8VqH01vIj2x+TRiJrqORw1Ekucb1JlWSAN5nbQQo4vXyRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746663876; c=relaxed/simple;
-	bh=mDH+ZL79YTMq+Jv0bVy+9Pty09ZB23vy1luG3tCeplI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YDAMg+fBwkeSPfQNIh0Q8SzaoNTOZkbgx2SqTGAGYtTFCsIQyhgWsHi1U7nO9YhAdbcIfna+SaKGk0+NkhAlFVCxbvf9A+EvQOB4s2GjYuuyop1w+Ntbw1nxt+8BYvykb65wU4bviuKpxuizpUmWoAMQOzzPIoBz2IFxyM/2afU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F3CC4CEE2;
-	Thu,  8 May 2025 00:24:33 +0000 (UTC)
-Date: Wed, 7 May 2025 20:24:44 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- jstultz@google.com, qperret@google.com, will@kernel.org,
- kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/24] tracing: Introduce trace remotes
-Message-ID: <20250507202444.43963c84@gandalf.local.home>
-In-Reply-To: <20250506164820.515876-3-vdonnefort@google.com>
-References: <20250506164820.515876-1-vdonnefort@google.com>
-	<20250506164820.515876-3-vdonnefort@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746664132; c=relaxed/simple;
+	bh=Y07RstIIdvctXcvte/3/DiHgKlO8xbZ2zrIyQ+Rhzc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGANkZGTdUhRgriOKdSsYEoFuavkjUfc+oL/u0dFVaFfhyUSBvBHdtPt+g7H4ltAnuHr7woWLb1jPGzyEGv1ZkEbzgngr5MFnChOagBbyXBioaIrxoh/T/AuUJ9Bbi2hsHa5BzsxEmwO+dmBnPPYv1Y3RVNkFwMfZV481E5Y/7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=IzuUtQV2; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b03bc416962so235863a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 17:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1746664130; x=1747268930; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rS+U0/mqHWG5lfLT69s9lUlVJUsqGvVjuXAMIKBkTLc=;
+        b=IzuUtQV2D+KvusyTsCg0RRjiH0oymygHK5REhctS2DwK04dlM2Fgx+XBSygC2sv40x
+         egW/f9gQncUtse0uXP94engJshUcOm1rmPf8CDr0LUkPFoZXI7ewTFAxXiYU85fIGpw9
+         BfhKeyi0Vax7IkttGLb4Gd9QUwgCw5rlZb6sEUZrCq3NomImz3Nlq56syCLLetTgcaJk
+         lmB93oYOjBd9lN4VF95G4HzD27nRwzs8PGFNnfmatHDkCYNW4GDb/vDfoTUQXSwWScbw
+         t1KGn3hq73SqhQHmeeDt0K7Zgn/TnFYTvSmVfVIKwUWixzP6Ym8NWYHustxsueoflREm
+         0w6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746664130; x=1747268930;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rS+U0/mqHWG5lfLT69s9lUlVJUsqGvVjuXAMIKBkTLc=;
+        b=NgbKWL5dfErF8ShLhIpOuHfZbkrMKH0UlbubB+qcwVtNSR7639LvG58OMlOmqraxCz
+         jn5CdZ4LClQZ6TJxlib0olOzmuRggfW3M71pOEsqvpQqJGszOtA+sUSxE6Z4h9FBfeal
+         lXCBa0VZGfXoQCLWBb/qWvxRqdXCsYFdDNfbeE6UCiNYU+yNgdc3jlp68naS3ibhBKTV
+         mLl1e8tf4bEmLFZi9RYce0oG2WgYs/L5lQGnkMu4UOhpyhCfx8VGJydGabPVg7qTdAeX
+         6nXSxVtH9+JlaIQBuFrjFmGkJltV5EnNwm+gD5ildNe3W8MuCs4GDHFxk7s9Ky9qTKdG
+         9APg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrioGjBjqs7XsHR0wHJVFNSXrNi6hEETKfF1THDlP2D/ErRGU5VhE4DPShnGznpLg03g/+43WjcUuUtHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzrhw/TJq46qS6/1G9xxGwQhRKqlnoF2i0WbuaaUv9zHlXvVoc
+	PAgcMKJJtLX6TGFPU29yRxfYgxapddKoQhUt9nfjRn6aiAGBijZ11dXCNWXBuv8=
+X-Gm-Gg: ASbGncsgpHVESlmQ/NGdRcVOaeBgL01JvMMqI9zcNODs7YlvKdDxN8WpKUySrQ/eEcn
+	DHOqncV2RUjasovRutdpYLP/9jAAFWNNq2bcuxUg/hbq4Yr6nUQMneg8ZtYz08IcKp3RHLblX26
+	F9G6mndHhw492X67PtUi5wkl+9j6v7DTlNjfN0lx1STSfNrlWoO4ol0lcxMg3XuBNRTZUN0FiyS
+	Moe+48Qey5p2WQwqUE27VIYrq0krAG9rLtzpwaqSNQ51Fzh2tGW6271X3G9A3YB9z1+SOcpNJe4
+	GJ4bry0vgvjanJXTTCld9BggQG/U2Yp6giePkUxXmRhN/V0=
+X-Google-Smtp-Source: AGHT+IFq0W9eeoSq5bUfXHKxOZPIOOgjmxfCPv6cQ0U1CNtWqAfBDIHNsC+ZooZnSpv7K8wTVnRshg==
+X-Received: by 2002:a17:90b:4c88:b0:2ff:796b:4d05 with SMTP id 98e67ed59e1d1-30aac19c279mr8525757a91.11.1746664129934;
+        Wed, 07 May 2025 17:28:49 -0700 (PDT)
+Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad474a05bsm900814a91.2.2025.05.07.17.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 17:28:49 -0700 (PDT)
+Date: Wed, 7 May 2025 17:28:47 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: Re: Add thead clk tree to linux-next
+Message-ID: <aBv6v5mVX3ofsRyG@x1>
+References: <aBvsGRZqbz11HPwM@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBvsGRZqbz11HPwM@x1>
 
-On Tue,  6 May 2025 17:47:58 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+On Wed, May 07, 2025 at 04:26:17PM -0700, Drew Fustini wrote:
+> Hi Stephen,
+> 
+> I'm the maintainer of T-Head SoCs like the TH1520 and I've just created
+> new branches for T-Head clk patches. Please add these to linux-next:
+> 
+> thead-clk-fixes git https://github.com/pdp7/linux.git#thead-clk-fixes
+> thead-clk for-next git https://github.com/pdp7/linux.git#thead-clk-for-next
 
-> +
-> +static bool trace_remote_loaded(struct trace_remote *remote)
-> +{
-> +	return remote->trace_buffer;
-> +}
-> +
-> +static bool trace_remote_busy(struct trace_remote *remote)
+Apologies for typo 'thead-clk for-next'. Please use this:
 
-Can you add comments to what these functions are doing?
+thead-clk-fixes git https://github.com/pdp7/linux.git#thead-clk-fixes
+thead-clk-for-next git https://github.com/pdp7/linux.git#thead-clk-for-next
 
-Doesn't need to be kerneldoc (it actually shouldn't be), but describe why
-they would return true and why they would return false.
-
-> +{
-> +	return trace_remote_loaded(remote) &&
-> +		(remote->nr_readers || remote->tracing_on ||
-> +		 !ring_buffer_empty(remote->trace_buffer));
-> +}
-> +
-> +static int trace_remote_load(struct trace_remote *remote)
-> +{
-> +	struct ring_buffer_remote *rb_remote = &remote->rb_remote;
-> +
-> +	lockdep_assert_held(&remote->lock);
-> +
-> +	if (trace_remote_loaded(remote))
-> +		return 0;
-> +
-> +	remote->trace_buffer_desc = remote->cbs->load_trace_buffer(remote->trace_buffer_size,
-> +								   remote->priv);
-> +	if (!remote->trace_buffer_desc)
-> +		return -ENOMEM;
-
-The error may not be -ENOMEM, have the load_trace_buffer return an ERR_PTR
-and then you can return:
-
-	if (IS_ERR(remote->trace_buffer_desc)
-		return PTR_ERR(remote->trace_buffer_desc);
-
-
-> +
-> +	rb_remote->desc = remote->trace_buffer_desc;
-> +	rb_remote->swap_reader_page = remote->cbs->swap_reader_page;
-> +	rb_remote->priv = remote->priv;
-> +	remote->trace_buffer = ring_buffer_remote(rb_remote);
-> +	if (!remote->trace_buffer) {
-
-Same here.
-
-> +		remote->cbs->unload_trace_buffer(remote->trace_buffer_desc, remote->priv);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void trace_remote_unload(struct trace_remote *remote)
-> +{
-> +	lockdep_assert_held(&remote->lock);
-> +
-> +	if (!trace_remote_loaded(remote) || trace_remote_busy(remote))
-> +		return;
-
-Can this cause leaks? Should trace_remote_unload() return an error value to
-let the caller know it wasn't unloaded?
-
-> +
-> +	ring_buffer_free(remote->trace_buffer);
-> +	remote->trace_buffer = NULL;
-> +	remote->cbs->unload_trace_buffer(remote->trace_buffer_desc, remote->priv);
-> +}
-> +
-
-Short description of what trace_remote_start does.
-
-> +static int trace_remote_start(struct trace_remote *remote)
-> +{
-> +	int ret;
-> +
-> +	lockdep_assert_held(&remote->lock);
-> +
-> +	if (remote->tracing_on)
-> +		return 0;
-> +
-> +	ret = trace_remote_load(remote);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = remote->cbs->enable_tracing(true, remote->priv);
-> +	if (ret) {
-> +		trace_remote_unload(remote);
-> +		return ret;
-> +	}
-> +
-> +	remote->tracing_on = true;
-> +
-> +	return 0;
-> +}
-> +
-
-Same for stop.
-
--- Steve
-
-> +static int trace_remote_stop(struct trace_remote *remote)
-> +{
-> +	int ret;
-> +
-> +	lockdep_assert_held(&remote->lock);
-> +
-> +	if (!remote->tracing_on)
-> +		return 0;
-> +
-> +	ret = remote->cbs->enable_tracing(false, remote->priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ring_buffer_poll_remote(remote->trace_buffer, RING_BUFFER_ALL_CPUS);
-> +	remote->tracing_on = false;
-> +	trace_remote_unload(remote);
-> +
-> +	return 0;
-> +}
+Thanks,
+Drew
 
