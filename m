@@ -1,257 +1,127 @@
-Return-Path: <linux-kernel+bounces-639328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95381AAF60D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:53:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1ADAAF617
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9870F7B0D91
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:51:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F8E7BAE66
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A0924BC1A;
-	Thu,  8 May 2025 08:52:42 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496B5265CBF;
+	Thu,  8 May 2025 08:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IZNjBkw3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530CE239E95
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8759239E7A
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746694362; cv=none; b=mOO9phGh+wlN/UW7c57/57nO2TvUvU3j3K1A7yfm99RUg3QS8B47wSqNyh2L8ymY0lIe+55tM1F2unvCnLbxqHJ0Mkl7RKmK1Vej34rhdf+nUHOUgBXxO+5ozdy3VJtaYSSAJX18TDngH5Vp7pnLq5bovmYEcHJSimj6nxwKB44=
+	t=1746694394; cv=none; b=uMTSFF39yVtExBmG+sVhzvjBBWAuh9d5+5PB4dCdMGjITMqvd0JuRn29k9HH4DwG/oKphGLVs+KH8M+i/LytYEsWAC7eM/apjNwLWoo91dPC3P4TMODWeBql7brxV0dTErX+QNQlvFr90pk34NTZbNYkSFbVGBTylxmuzj4E8uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746694362; c=relaxed/simple;
-	bh=Y5OoOFqzBwXhZcTP5+FQKVU18wxPEnZPvWFKQRerFRk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tHSXCDS4vNQS7+XQWcci5kQKA9xRxW8K8mr8+sBn6257EiHikYp1ipuH75o75UEBuYQrAxYYkHj9mIJel0V+fA6W5IU01vBvU/vWPRFMBEn6angu2d2DmicPiP+IWHeqLsDagGaR3GurXqngkUQkU+AKvppW4OPF7NKk8OhzXfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3da741bcf90so7066635ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 01:52:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746694359; x=1747299159;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nCLNC4atFd3LqE75nIlkkiMnyAwzhYa/SNx//fNd3fc=;
-        b=hoA6TXQcVN1WkE5KyL82cs3moj4xLtduBLm+5IazFWGLAzCusi7dRZrlD9Q0qEZb8+
-         Im+ZYvTuDb4HMe8Ews6vO7SnWZdURyYY0FTkvQXtCTPrxGdM5lqnAMYIvJzJF+CeqX2E
-         kAfsYpuYmuDyqu3nHSjJ8aDEBoJtHf/tGM8v8W05ZZlkjgUddBm5h/9gU1YX2VvQ9ixW
-         UDaTx/CaJHt7isTA4l35I/QhJLcwAIoRZuiPbRifGEdevl2dMHl+u5yJtwpT+oDlPaQd
-         7HUVQiGWmR6Bf4K8jBcv7mE96+Xf+Th4tMl7gFNpbDZ0v8YfE4y8LKosls8SJ9PdOW24
-         /usA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKqM3kBBF0m+f8Unj85aPPWjEsgG34s27a61j0zPdx6ZIceyg/P67uuGT7PkqLyD5lMBY5PJ5HrPuhMJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUhoucA2d8ahrIDQ5x2hM8u3kQj9NmCqqi7Vo0lZd4Jtf9v8U9
-	tuAH2ukVpmX9zeGX5zNTUW7g1+z7AeSRUoZht0QVGJZH0KXc9L33su+tZ5qpexmDGFYkQQq8W/V
-	973a1KK3FgHbRLlRhiGKdv+mfnuhllz+N+LzuT1OwUywlDTIanhHCnP0=
-X-Google-Smtp-Source: AGHT+IEdBijYqwvtFUTFAnBGsdYw02iX9YG/qYh3jDOPB2xOeZhHpAN5PvNSYzBNSzZEkgUB1MI+pQuCWcPjXgDZowcHeWnpciFZ
+	s=arc-20240116; t=1746694394; c=relaxed/simple;
+	bh=6gyI/W0MslTW+djiko89d4ipLYeSmrx1kpehxFoOwT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kIli8eJe2bwOgVNcH4c2gd6OfJfalApnuuDmf1DOmBomhb5eQh83s6IT7n1nICxCMSnxYlaYfI06tEpROX6oKhcJhksjucqQfaKg2ySniRLWyHbE7kF5p0PvYxsc27dXs35xwroni/JT5b1c3J04+r40uxvkdUadiCYqNZ/FH1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IZNjBkw3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746694391;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XjnlXfHduLY+rrmKH9+0EuauvU+FcYu+CLRTJgWmNn0=;
+	b=IZNjBkw3wXPpFEZzxgs8BBwvdFgY60RtJ/GkjJBDFmDu03vinj2z/HlVow70nUT0BeM8Ff
+	9qHeJV1PQFyjuItbcV7hlesRweAu8B9zTyJqPu+eqfLWvySJOzircoAiuzzYPIYMKMbLOB
+	qlRLUuqTzbcyze+dzuiFqzEDgbnb74g=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-kdACPehFNBSx2-OB9Bo3hQ-1; Thu,
+ 08 May 2025 04:53:08 -0400
+X-MC-Unique: kdACPehFNBSx2-OB9Bo3hQ-1
+X-Mimecast-MFC-AGG-ID: kdACPehFNBSx2-OB9Bo3hQ_1746694386
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3168C1956086;
+	Thu,  8 May 2025 08:53:06 +0000 (UTC)
+Received: from gshan-thinkpadx1nanogen2.rmtau.csb (unknown [10.64.136.14])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C5DC19560B4;
+	Thu,  8 May 2025 08:52:59 +0000 (UTC)
+From: Gavin Shan <gshan@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	anshuman.khandual@arm.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	gshan@redhat.com,
+	peterx@redhat.com,
+	joey.gouly@arm.com,
+	yangyicong@hisilicon.com,
+	shan.gavin@gmail.com
+Subject: [PATCH v2] arm64: mm: Drop redundant check in pmd_trans_huge()
+Date: Thu,  8 May 2025 18:52:51 +1000
+Message-ID: <20250508085251.204282-1-gshan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c04:b0:3cf:bc71:94f5 with SMTP id
- e9e14a558f8ab-3da785a4da8mr32339985ab.22.1746694359494; Thu, 08 May 2025
- 01:52:39 -0700 (PDT)
-Date: Thu, 08 May 2025 01:52:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <681c70d7.050a0220.a19a9.00c7.GAE@google.com>
-Subject: [syzbot] [ntfs3?] possible deadlock in ntfs_unlink_inode (2)
-From: syzbot <syzbot+dab475abf94f7513eb9f@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hello,
+pmd_val(pmd) is redundant because a positive pmd_present(pmd) ensures
+a positive pmd_val(pmd) according to their definitions like below.
 
-syzbot found the following issue on:
+  #define pmd_val(x)       ((x).pmd)
+  #define pmd_present(pmd) pte_present(pmd_pte(pmd))
+  #define pte_present(pte) (pte_valid(pte) || pte_present_invalid(pte))
+  #define pte_valid(pte)   (!!(pte_val(pte) & PTE_VALID))
+  #define pte_present_invalid(pte) \
+          ((pte_val(pte) & (PTE_VALID | PTE_PRESENT_INVALID)) == PTE_PRESENT_INVALID)
 
-HEAD commit:    2a239ffbebb5 Merge tag 'sound-6.15-rc5' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=157fe0f4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a42a9d552788177b
-dashboard link: https://syzkaller.appspot.com/bug?extid=dab475abf94f7513eb9f
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+pte_present() can't be positive unless either of the flag PTE_VALID or
+PTE_PRESENT_INVALID is set. In this case, pmd_val(pmd) should be positive
+either.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+So lets drop the redundant check pmd_val(pmd) and no functional changes
+intended.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/39057b073d40/disk-2a239ffb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c82b778f8922/vmlinux-2a239ffb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/000bd0cd2b5e/bzImage-2a239ffb.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dab475abf94f7513eb9f@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.15.0-rc4-syzkaller-00291-g2a239ffbebb5 #0 Not tainted
-------------------------------------------------------
-syz-executor/11002 is trying to acquire lock:
-ffff88805a314318 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ni_lock fs/ntfs3/ntfs_fs.h:1105 [inline]
-ffff88805a314318 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ntfs_unlink_inode+0x273/0x6a0 fs/ntfs3/inode.c:1728
-
-but task is already holding lock:
-ffff88805a3125b8 (&ni->ni_lock/6){+.+.}-{4:4}, at: ni_lock_dir fs/ntfs3/ntfs_fs.h:1110 [inline]
-ffff88805a3125b8 (&ni->ni_lock/6){+.+.}-{4:4}, at: ntfs_rmdir+0xb6/0xf0 fs/ntfs3/namei.c:222
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&ni->ni_lock/6){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
-       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
-       __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:746
-       ni_lock_dir fs/ntfs3/ntfs_fs.h:1110 [inline]
-       ntfs_unlink+0xb6/0xf0 fs/ntfs3/namei.c:177
-       vfs_unlink+0x391/0x650 fs/namei.c:4579
-       do_unlinkat+0x350/0x560 fs/namei.c:4643
-       __do_sys_unlinkat fs/namei.c:4684 [inline]
-       __se_sys_unlinkat fs/namei.c:4677 [inline]
-       __x64_sys_unlinkat+0xd3/0xf0 fs/namei.c:4677
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&sb->s_type->i_mutex_key#26){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
-       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:867 [inline]
-       ntfs_file_mmap+0x525/0x730 fs/ntfs3/file.c:397
-       call_mmap include/linux/fs.h:2243 [inline]
-       mmap_file mm/internal.h:167 [inline]
-       __mmap_new_file_vma mm/vma.c:2353 [inline]
-       __mmap_new_vma mm/vma.c:2417 [inline]
-       __mmap_region mm/vma.c:2519 [inline]
-       mmap_region+0x103b/0x1e50 mm/vma.c:2597
-       do_mmap+0xc68/0x1100 mm/mmap.c:561
-       vm_mmap_pgoff+0x31b/0x4c0 mm/util.c:579
-       ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
-       __might_fault+0xcc/0x130 mm/memory.c:7151
-       _inline_copy_to_user include/linux/uaccess.h:192 [inline]
-       _copy_to_user+0x2c/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:225 [inline]
-       fiemap_fill_next_extent+0x1c0/0x390 fs/ioctl.c:145
-       ni_fiemap+0x89c/0xbf0 fs/ntfs3/frecord.c:2007
-       ntfs_fiemap+0xda/0x130 fs/ntfs3/file.c:1380
-       ioctl_fiemap fs/ioctl.c:220 [inline]
-       do_vfs_ioctl+0x1638/0x1eb0 fs/ioctl.c:840
-       __do_sys_ioctl fs/ioctl.c:904 [inline]
-       __se_sys_ioctl+0x82/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ni->ni_lock#3/5){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3166 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3285 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3909
-       __lock_acquire+0xaac/0xd20 kernel/locking/lockdep.c:5235
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
-       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
-       __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:746
-       ni_lock fs/ntfs3/ntfs_fs.h:1105 [inline]
-       ntfs_unlink_inode+0x273/0x6a0 fs/ntfs3/inode.c:1728
-       ntfs_rmdir+0xc1/0xf0 fs/ntfs3/namei.c:224
-       vfs_rmdir+0x3b7/0x520 fs/namei.c:4454
-       do_rmdir+0x2ac/0x630 fs/namei.c:4509
-       __do_sys_unlinkat fs/namei.c:4683 [inline]
-       __se_sys_unlinkat fs/namei.c:4677 [inline]
-       __x64_sys_unlinkat+0xc2/0xf0 fs/namei.c:4677
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ni->ni_lock#3/5 --> &sb->s_type->i_mutex_key#26 --> &ni->ni_lock/6
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ni->ni_lock/6);
-                               lock(&sb->s_type->i_mutex_key#26);
-                               lock(&ni->ni_lock/6);
-  lock(&ni->ni_lock#3/5);
-
- *** DEADLOCK ***
-
-4 locks held by syz-executor/11002:
- #0: ffff88803057a420 (sb_writers#18){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:556
- #1: ffff88805a312850 (&type->i_mutex_dir_key#10/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:902 [inline]
- #1: ffff88805a312850 (&type->i_mutex_dir_key#10/1){+.+.}-{4:4}, at: do_rmdir+0x1b2/0x630 fs/namei.c:4501
- #2: ffff88805a3145b0 (&type->i_mutex_dir_key#10){++++}-{4:4}, at: inode_lock include/linux/fs.h:867 [inline]
- #2: ffff88805a3145b0 (&type->i_mutex_dir_key#10){++++}-{4:4}, at: vfs_rmdir+0xf7/0x520 fs/namei.c:4443
- #3: ffff88805a3125b8 (&ni->ni_lock/6){+.+.}-{4:4}, at: ni_lock_dir fs/ntfs3/ntfs_fs.h:1110 [inline]
- #3: ffff88805a3125b8 (&ni->ni_lock/6){+.+.}-{4:4}, at: ntfs_rmdir+0xb6/0xf0 fs/ntfs3/namei.c:222
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 11002 Comm: syz-executor Not tainted 6.15.0-rc4-syzkaller-00291-g2a239ffbebb5 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/29/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2079
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2211
- check_prev_add kernel/locking/lockdep.c:3166 [inline]
- check_prevs_add kernel/locking/lockdep.c:3285 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3909
- __lock_acquire+0xaac/0xd20 kernel/locking/lockdep.c:5235
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
- __mutex_lock_common kernel/locking/mutex.c:601 [inline]
- __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:746
- ni_lock fs/ntfs3/ntfs_fs.h:1105 [inline]
- ntfs_unlink_inode+0x273/0x6a0 fs/ntfs3/inode.c:1728
- ntfs_rmdir+0xc1/0xf0 fs/ntfs3/namei.c:224
- vfs_rmdir+0x3b7/0x520 fs/namei.c:4454
- do_rmdir+0x2ac/0x630 fs/namei.c:4509
- __do_sys_unlinkat fs/namei.c:4683 [inline]
- __se_sys_unlinkat fs/namei.c:4677 [inline]
- __x64_sys_unlinkat+0xc2/0xf0 fs/namei.c:4677
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f21ac98df47
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 07 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffff76a6458 EFLAGS: 00000207 ORIG_RAX: 0000000000000107
-RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 00007f21ac98df47
-RDX: 0000000000000200 RSI: 00007ffff76a7600 RDI: 00000000ffffff9c
-RBP: 00007f21aca1089d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000100 R11: 0000000000000207 R12: 00007ffff76a7600
-R13: 00007f21aca1089d R14: 000000000006bff7 R15: 00007ffff76a97c0
- </TASK>
-
-
+Signed-off-by: Gavin Shan <gshan@redhat.com>
+Reviewed-by: Dev Jain <dev.jain@arm.com>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1: https://lore.kernel.org/linux-arm-kernel/4e5941f8-7e61-4a63-a669-bee1601093a6@arm.com/T/#u
+v2: Improved commit log per Anshuman
+---
+ arch/arm64/include/asm/pgtable.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index d3b538be1500..2599b9b8666f 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -739,8 +739,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
+ 	 * If pmd is present-invalid, pmd_table() won't detect it
+ 	 * as a table, so force the valid bit for the comparison.
+ 	 */
+-	return pmd_val(pmd) && pmd_present(pmd) &&
+-	       !pmd_table(__pmd(pmd_val(pmd) | PTE_VALID));
++	return pmd_present(pmd) && !pmd_table(__pmd(pmd_val(pmd) | PTE_VALID));
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+-- 
+2.49.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
