@@ -1,171 +1,345 @@
-Return-Path: <linux-kernel+bounces-639597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C0FAAF98B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:16:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C9AAAF992
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02E901790D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AA44C37E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBEB2253EA;
-	Thu,  8 May 2025 12:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD8B1FE47D;
+	Thu,  8 May 2025 12:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hbvaA7DU"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uT2VNFOt"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47E6136A;
-	Thu,  8 May 2025 12:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498C8136A;
+	Thu,  8 May 2025 12:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706567; cv=none; b=EGNwwA3KnrJ+zEHf8CSZcf0J2rKc+ecFVYvKe8NLRhe8cofLjmbzF/1+CDZEokCh2utmKweSGA7ogqlqspqgDrztWRuToYW3iS0VwYWkZJKcQAxSKco3hQjRjV4AXB1J38NiYVXqeY513lnuVnsfaEYeThCeOdLeKd/BDFSTeCo=
+	t=1746706592; cv=none; b=coBrK3lu5dHrpduocahlgrCd8HVHlVOhB6f8xmuicBz39TZaVpZXWaJhl/MV0QwHf178DzXxjBbe0Djl3a5fcqF+hUK2ulcDaDfHrs4wErQhWmvPl/5klq1HyPf7OHlvPNqPTVC9aCLBTMX0AiWH3qdzhCKuEg8041sy9S+a4qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706567; c=relaxed/simple;
-	bh=Sld0Gmq2W3ac2adnW1x7WQNzxebTEB2s99xXHqcK4/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIsJjdS0XN35Y0GnfT59sFyQa1MfFMwXxvfLhlg5ghpULaUJOxXZXkRsC0DM/axTFJtGhE9dr8AM2Gh3HV5IYPqBJjgPauLOJu9jba+vJEe6YInRtGoxxUUu91Q6fvMqohygRthWVFg62yeGrKw6VfH2OxDpVWxucJ7XDC6+kO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hbvaA7DU; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9BWvRgIIiJKpl7FhGWRbkXSkt9i/d2nayBtfYXn3Jwk=; b=hbvaA7DU/b99tEN1KDtOOXAkrg
-	Zj5jUSd3xWjUl1g265LOT2rDJfRSpkC9lsM3sLH/cCc8YVVCs9Y3XgKezsYU/I3f9i3sZOy5FS9w1
-	rswzlSYPYHlbUb1Xg9PLpi5KNGOYMxTEpISZ29emDYUSWLXF1Xi+ihBkMla/nFBwatK6jzkqyYaTI
-	9PkMkS7YxlTOtq52GJKdfA1kStxvWfJmkx96ZqMkzbUUHGpoaFtTkp6pTFvlu5t4F/679WCK6MeU9
-	a3HIs+DMfWv1QrcKcdgRWBHOGnP4m20NQoR7auIr4QkijR4QISNUthlIVTGPKRmAe6o7cX+cOunAV
-	8QOLkavA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uD0AD-0000000G28P-1dAj;
-	Thu, 08 May 2025 12:15:45 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C254130026A; Thu,  8 May 2025 14:15:44 +0200 (CEST)
-Date: Thu, 8 May 2025 14:15:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Andi Kleen <ak@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-perf-users@vger.kernel.org, linux-edac@vger.kernel.org,
-	kvm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/9] x86/nmi: Add support to handle NMIs with source
- information
-Message-ID: <20250508121544.GH4439@noisy.programming.kicks-ass.net>
-References: <20250507012145.2998143-1-sohil.mehta@intel.com>
- <20250507012145.2998143-6-sohil.mehta@intel.com>
- <20250507091442.GB4439@noisy.programming.kicks-ass.net>
- <55527575-e3b8-4cf6-b09c-b81437e0c892@intel.com>
+	s=arc-20240116; t=1746706592; c=relaxed/simple;
+	bh=/+MyKa2c23H6IuarHPujtgb7pa8hC7CWUMxIaIlmEDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mxytEVYsvzjfBTXZ0zetIF347zlRl/X3c0TPPFnHMfugwT0bZKijSZH0AggsBV2QLx7xx/o5t6xJj2vwokA30KZVAXWYYSs74P7vDmjTBUd8G0rGQwBS3hyhjgC4adwGCZM5gRWvnfT4z+jC9xbd3j2ax9DZqYndkcwxdTsG7Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uT2VNFOt; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 548CGENn1091456
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 May 2025 07:16:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746706574;
+	bh=15aok1oCi+ow5KG3/DT3pU2ISBdSkGTBhBS/f9pFazw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=uT2VNFOtKoniv3xYTs8+bgmIt7UaDyl1H9flqDZSGyO2Ms0lVwp4VmNCFdwuwKDFW
+	 2jTD3OIU/npASKwQmi/e0rswcm31BzqByY0UJTdHnc799fstLlakBfmSZ9yuVZ4Nq2
+	 sM1IZlGoaPtQQCD5+oVWfzmHjUItGVTHB3vTSM2I=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 548CGDsv024274
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 May 2025 07:16:14 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ May 2025 07:16:11 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 May 2025 07:16:11 -0500
+Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 548CG7qW009348;
+	Thu, 8 May 2025 07:16:07 -0500
+Message-ID: <9cb4f94e-00e8-43d5-be7a-85dc1188e856@ti.com>
+Date: Thu, 8 May 2025 17:46:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55527575-e3b8-4cf6-b09c-b81437e0c892@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI
+ OV5640
+To: "Kumar, Udit" <u-kumar1@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <vaishnav.a@ti.com>, <r-donadkar@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <jai.luthra@linux.dev>,
+        <linux-kernel@vger.kernel.org>
+References: <20250505115700.500979-1-y-abhilashchandra@ti.com>
+ <20250505115700.500979-3-y-abhilashchandra@ti.com>
+ <a6329e9d-409e-4f62-b26d-c4d0e49d772c@ti.com>
+Content-Language: en-US
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <a6329e9d-409e-4f62-b26d-c4d0e49d772c@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, May 07, 2025 at 02:48:34PM -0700, Sohil Mehta wrote:
-> On 5/7/2025 2:14 AM, Peter Zijlstra wrote:
-> > On Tue, May 06, 2025 at 06:21:41PM -0700, Sohil Mehta wrote:
-> >>
-> >> diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-> >> index a1d672dcb6f0..183e3e717326 100644
-> >> --- a/arch/x86/kernel/nmi.c
-> >> +++ b/arch/x86/kernel/nmi.c
-> > 
-> >>  static int nmi_handle(unsigned int type, struct pt_regs *regs)
-> >>  {
-> >>  	struct nmi_desc *desc = nmi_to_desc(type);
-> >> +	unsigned long source_bitmap = 0;
-> > 
-> > 	unsigned long source = ~0UL;
-> > 
-> 
-> Thanks! This makes the logic even simpler by getting rid of
-> match_nmi_source(). A minor change described further down.
-> 
-> Also, do you prefer "source" over "source_bitmap"? I had it as such to
-> avoid confusion between source_vector and source_bitmap.
+Hi Udit,
+Thanks for the review.
 
-Yeah, I was lazy typing. Perhaps just call it bitmap then?
+On 07/05/25 13:50, Kumar, Udit wrote:
+> Hello Vaishnav/Abhilash
+> 
+> Thanks for patch
+> 
+> On 5/5/2025 5:27 PM, Yemike Abhilash Chandra wrote:
+>> From: Vaishnav Achath <vaishnav.a@ti.com>
+>>
+>> TechNexion TEVI OV5640 camera is a 5MP camera that can be used with
+>> J722S EVM through the 22-pin CSI-RX connector. Add a reference overlay
+>> for quad TEVI OV5640 modules on J722S EVM.
+>>
+>> Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
+>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/Makefile               |   4 +
+>>   .../k3-j722s-evm-csi2-quad-tevi-ov5640.dtso   | 358 ++++++++++++++++++
+>>   2 files changed, 362 insertions(+)
+>>   create mode 100644 
+>> arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/Makefile 
+>> b/arch/arm64/boot/dts/ti/Makefile
+>> index 829a3b028466..76b750e4b8a8 100644
+>> --- a/arch/arm64/boot/dts/ti/Makefile
+>> +++ b/arch/arm64/boot/dts/ti/Makefile
+>> @@ -123,6 +123,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-pcie1-ep.dtbo
+>>   dtb-$(CONFIG_ARCH_K3) += k3-am67a-beagley-ai.dtb
+>>   dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
+>>   dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
+>> [..]
+>> diff --git 
+>> a/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso 
+>> b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
+>> new file mode 100644
+>> index 000000000000..537224ea60e3
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
+>> @@ -0,0 +1,358 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+>> +/*
+>> + * 4 x TEVI OV5640 MIPI Camera module on RPI camera connector.
+>> + *
+>> + * Copyright (C) 2024 Texas Instruments Incorporated - 
+>> https://www.ti.com/
+>> + */
+>> +
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include "k3-pinctrl.h"
+>> +
+>> +&{/} {
+>> +    clk_ov5640_fixed: clock-24000000 {
+>> +        compatible = "fixed-clock";
+>> +        #clock-cells = <0>;
+>> +        clock-frequency = <24000000>;
+>> +    };
+>> +
+> 
+> Please check once , this is clock is 25M or 24M .
+> 
+> As I see CDC6CE025000ADLXT/U28 is marked as 25M OSC
+> 
 
-> >>  	nmi_handler_t ehandler;
-> >>  	struct nmiaction *a;
-> >>  	int handled=0;
-> >> @@ -148,16 +164,40 @@ static int nmi_handle(unsigned int type, struct pt_regs *regs)
-> >>  
-> >>  	rcu_read_lock();
-> >>  
-> >> +	/*
-> >> +	 * Activate NMI source-based filtering only for Local NMIs.
-> >> +	 *
-> >> +	 * Platform NMI types (such as SERR and IOCHK) have only one
-> >> +	 * handler registered per type, so there is no need to
-> >> +	 * disambiguate between multiple handlers.
-> >> +	 *
-> >> +	 * Also, if a platform source ends up setting bit 2 in the
-> >> +	 * source bitmap, the local NMI handlers would be skipped since
-> >> +	 * none of them use this reserved vector.
-> >> +	 *
-> >> +	 * For Unknown NMIs, avoid using the source bitmap to ensure all
-> >> +	 * potential handlers have a chance to claim responsibility.
-> >> +	 */
-> >> +	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL)
-> >> +		source_bitmap = fred_event_data(regs);
-> > 
-> > 	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL) {
-> > 		source = fred_event_data(regs);
-> > 		if (source & BIT(0))
-> > 			source = ~0UL;
-> > 	}
-> > 
-> 
-> Looks good, except when fred_event_data() returns 0. I don't expect it
-> to happen in practice. But, maybe with new hardware and eventually
-> different hypervisors being involved, it is a possibility.
-> 
-> We can either call it a bug that an NMI happened without source
-> information. Or be extra nice and do this:
-> 
-> if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL) {
-> 	source = fred_event_data(regs);
-> 	if (!source || (source & BIT(0)))
-> 		source = ~0UL;
-> }
+This is the crystal clock with in the sensor.
 
-Perhaps also WARN about the !source case?
+>> +    reg_2p8v: regulator-2p8v {
+>> +        compatible = "regulator-fixed";
+>> +        regulator-name = "2P8V";
+>> +        regulator-min-microvolt = <2800000>;
+>> +        regulator-max-microvolt = <2800000>;
+>> +        vin-supply = <&vdd_sd_dv>;
+>> +        regulator-always-on;
+>> +    };
+>> +
+>> +    reg_1p8v: regulator-1p8v {
+>> +        compatible = "regulator-fixed";
+>> +        regulator-name = "1P8V";
+>> +        regulator-min-microvolt = <1800000>;
+>> +        regulator-max-microvolt = <1800000>;
+>> +        vin-supply = <&vdd_sd_dv>;
+>> +        regulator-always-on;
+>> +    };
+>> +
+>> +    reg_3p3v: regulator-3p3v {
+>> +        compatible = "regulator-fixed";
+>> +        regulator-name = "3P3V";
+>> +        regulator-min-microvolt = <3300000>;
+>> +        regulator-max-microvolt = <3300000>;
+>> +        vin-supply = <&vdd_sd_dv>;
+>> +        regulator-always-on;
+>> +    };
+> 
+> Sorry but on connector QSH-020-01-L-D-DP-A-K/J27, I see only 3v3 available.
+> 
+> May be I am missing something here but how you are getting 1v8 and 2v8 
+> supply
+> 
+
+Yes, 3.3V is provided as the main input supply to the sensor.
+However, required 1.8V and 2.8V rails from the 3.3V input.
+Please refer to [1] for detailed information.
+
+> 
+>> +};
+>> +
+>> +
+>> +&main_pmx0 {
+>> +    cam0_reset_pins_default: cam0-default-reset-pins {
+>> +        pinctrl-single,pins = <
+>> +            J722S_IOPAD(0x03c, PIN_OUTPUT, 7)
+>> +        >;
+>> +    };
+>> +
+> 
+> Please mark GPIO you are using for this in comment
+> 
+> example
+> 
+> J722S_IOPAD(0x1dc, PIN_INPUT, 0) /* (C22) MCAN0_RX */
+> 
+
+Sure. Will do that.
+
+> 
+>> +    cam1_reset_pins_default: cam1-default-reset-pins {
+>> +        pinctrl-single,pins = <
+>> +            J722S_IOPAD(0x044, PIN_OUTPUT, 7)
+>> +        >;
+>> +    };
+>> +
+>> +    cam2_reset_pins_default: cam2-default-reset-pins {
+>> +        pinctrl-single,pins = <
+>> +            J722S_IOPAD(0x04c, PIN_OUTPUT, 7)
+>> +        >;
+>> +    };
+>> +
+>> +    cam3_reset_pins_default: cam3-default-reset-pins {
+>> +        pinctrl-single,pins = <
+>> +            J722S_IOPAD(0x054, PIN_OUTPUT, 7)
+>> +        >;
+>> +    };
+>> +};
+>> +
+>> +&exp1 {
+>> +    p06-hog{
+>> +        /* P06 - CSI01_MUX_SEL_2 */
+>> +        gpio-hog;
+>> +        gpios = <6 GPIO_ACTIVE_HIGH>;
+>> +        output-high;
+>> +        line-name = "CSI01_MUX_SEL_2";
+> 
+> As per table on page 29
+> 
+> CSI01_MUX_SEL_2 as low means, INPUT<-- A Port [CSI2 Connector]
+> 
+> Please check, if you want to drive this line high or low
+
+These are RPI connectors, It should be high.
+
+> 
+>> +    };
+>> +
+>> +    p07-hog{
+>> +        /* P01 - CSI23_MUX_SEL_2 */
+>> +        gpio-hog;
+>> +        gpios = <7 GPIO_ACTIVE_HIGH>;
+>> +        output-high;
+>> +        line-name = "CSI23_MUX_SEL_2";
+>> +    };
+> 
+> Same as for CSI01_MUX_SEL_2, table on page-30
+> 
+> 
+>> +};
+>> +
+>> +&main_gpio0 {
+>> +    p15-hog {
+>> +        /* P15 - CSI2_CAMERA_GPIO1 */
+>> +        gpio-hog;
+>> +        gpios = <15 GPIO_ACTIVE_HIGH>;
+>> +        output-high;
+>> +        line-name = "CSI2_CAMERA_GPIO1";
+>> +    };
+>> +
+>> +    p17-hog {
+>> +        /* P17 - CSI2_CAMERA_GPIO2 */
+>> +        gpio-hog;
+>> +        gpios = <17 GPIO_ACTIVE_HIGH>;
+>> +        output-high;
+>> +        line-name = "CSI2_CAMERA_GPIO2";
+>> +    };
+>> +
+>> +    p19-hog {
+>> +        /* P19 - CSI2_CAMERA_GPIO3 */
+>> +        gpio-hog;
+>> +        gpios = <19 GPIO_ACTIVE_HIGH>;
+>> +        output-high;
+>> +        line-name = "CSI2_CAMERA_GPIO3";
+>> +    };
+>> +
+>> +    p21-hog {
+>> +        /* P21 - CSI2_CAMERA_GPIO4 */
+>> +        gpio-hog;
+>> +        gpios = <21 GPIO_ACTIVE_HIGH>;
+>> +        output-high;
+>> +        line-name = "CSI2_CAMERA_GPIO4";
+>> +    };
+> 
+> Please check once if P21 and rest above are pin number of SOC ?
+> 
+
+Yes
+
+> 
+>> +};
+>> +
+>> +&pca9543_0 {
+>> +    #address-cells = <1>;
+>> +    #size-cells = <0>;
+>> +
+>> +    i2c@0 {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +        reg = <0>;
+>> +
+>> +        ov5640_0: camera@3c {
+>> +            compatible = "ovti,ov5640";
+>> +            reg = <0x3c>;
+>> +            clocks = <&clk_ov5640_fixed>;
+>> +            clock-names = "xclk";
+>> +
+>> +            AVDD-supply = <&reg_2p8v>;
+>> +            DOVDD-supply = <&reg_1p8v>;
+>> +            DVDD-supply = <&reg_3p3v>;
+>> +
+>> +            pinctrl-names = "default";
+>> +            pinctrl-0 = <&cam0_reset_pins_default>;
+> 
+> do you think, you should have reset-gpios as property for this ov5640 
+> and other nodes too ?
+> 
+
+Thanks for pointing this out. I will add that in the next revision.
+
+Thanks and Regards
+Yemike Abhilash Chandra
+
+
+[1]:https://www.technexion.com/wp-content/uploads/2023/09/product-brief_tevi-ov5640.pdf
+
+> 
+>> +
+>> [..]
 
