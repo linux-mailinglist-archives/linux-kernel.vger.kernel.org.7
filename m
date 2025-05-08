@@ -1,171 +1,198 @@
-Return-Path: <linux-kernel+bounces-639299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AD2AAF5AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:30:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AD0AAF5B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD1417B2B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928981BA434A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B4B221260;
-	Thu,  8 May 2025 08:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d0KjAlMM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878E7220F5B;
+	Thu,  8 May 2025 08:30:50 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2120.outbound.protection.partner.outlook.cn [139.219.146.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE4D215160
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693023; cv=none; b=WFeaSwIPEkEwgQvPCnqFNvlEB6D8a1cocW09/kquOyZ5OrHJHUvHYPEOYe2TtdUW6+2j/ZcBpP8Rqv3DmeMFwzrqc77kMjmv+boYrtRSDKrU3a7CDj+7csBZsIF3gcge1LMfpiB6XkcHAwLq3ucpGbeK4B7J0z0hOX6VpX29MZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693023; c=relaxed/simple;
-	bh=in6Xftw6EKPo/jRQnio8/s1iBPrQsUKAwRitlVo38tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tt/UrY9hG9erBphBLhylTSdVKIOmKiTACOULd7bkRAjG6EWQYFWjGyrNbpTKo1hnNiDVuUUpS13htLRFL10zuAy7IlnJX8eel+RyyA+YpaNQbU4+aU1WDqdxjFkDQRLQ1681fPl4/DqOPIzsjxy5vr8BT4y3nlRzVFfULlq/7Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d0KjAlMM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746693019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=S3YJj1plrTRSl+mrN0Cfy53gKkAtD6eDXaFNCZ9ZGYo=;
-	b=d0KjAlMMAfxdIFaoxW6NuzLcGF5U5ZtJgosUjPmiFaDKA7LCCWZXUS+sdTyCUdM6WaEmsV
-	iC1MY1++WFJsmfnm73bHj95CRXn8OTIe5W6htbcP3quJwNOMFfEopPkyX91xplDQKopAAL
-	zE/DhG5WAfJDf8IrOH2McaCWceQ3ySI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-115-IIgR56_eOIipgz9qXb3M8Q-1; Thu, 08 May 2025 04:30:18 -0400
-X-MC-Unique: IIgR56_eOIipgz9qXb3M8Q-1
-X-Mimecast-MFC-AGG-ID: IIgR56_eOIipgz9qXb3M8Q_1746693017
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a0db717b55so104582f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 01:30:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746693017; x=1747297817;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S3YJj1plrTRSl+mrN0Cfy53gKkAtD6eDXaFNCZ9ZGYo=;
-        b=Hl/+4Ag4rPEWj5LmCcuSgDaL5g9kXci3tliMyFgEgnC5Bbc/GtSeHVaMB1jc9h7Pjt
-         1ARVyDr61laam0NTYshRuTZ65Ufe7cEuP8ZrVvZN34Bd/hCb7lVd1Vwj8y0tOmfHKzGX
-         VGJvHgA8mo7y+0tMOqzzlXzK+QIIuM/enUqJUa1JWbDsAAkL7UgRMRP+hstN7qiOQVkJ
-         G8SNHOazVgl299byiRwlXFTN+bJbR+pgfAQfCjE4gWC/ag+S4sGSxkC52Xk+C6/rJdAV
-         lMUUCJi7IYsiz0GnVScxlBK+cQldMJd6NxwPDGVTizSBktYyQvvmzM2+YILmz+TeEopd
-         QeFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPu7GTQZG4I95aZQbbQDLbgyoa3WR3H72frRgD9A/ncvLDhfjFlG2zAUwC7Aq+nswLPQgSjOQ+nCT2tpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz25qsWTQi/tTNRyLa0N33LwsOo/VaDVBBKFeV6Q/3HzawIX580
-	S3mdwsjpwKHpmKWkS82XHEtagIvVqJRMY0jXcEh3vbRSUTiuvWCMFd4mjgzH6dMd6h1KFSCB0QG
-	lMPfjfiimp1GJlnF72i8rlt/waKzOxjUuFyupqMSFB2jXgxYmvFJPJJ+uKJrE+g==
-X-Gm-Gg: ASbGnculZn7XAldJHqU1Jn6zl8tFSEmJk/YNx8nImHJL2nXqfdDbuqYOcq8xOul91Kg
-	oSvqMtdSM1YM9X5GkobdNk+JXjDTbECYbvgs995u6ksGrLA7FAr3sqn1YmP0L/K8xQgf2GiyGAH
-	RVS1LRFl/TXI9bAVMdsYLwVFhMoEtBi1wyYiL2KfhnfG1nDw22Cxm+RzfwrEGl9hXYqGwB5k57B
-	bQ3wayDE7WA+PMXHxFfqV8iQe0TXFh32VZVOE8hb7DP85/KFLAbx0X4nIi0QCzFmgQNsiG1lbNs
-	LsNo8T0PkkBtsDhxkLIjZU+8KcP4h9NzLIgv3nTRl2xWWLPAQPd6eucoajJaEjI3M0lf0//NBLH
-	iAogct89b5Pb3YxEA92CLyYBb0M7BKkT0Auw2FQs=
-X-Received: by 2002:a5d:588a:0:b0:39a:ca05:54a9 with SMTP id ffacd0b85a97d-3a0ba0b5d2amr1612262f8f.29.1746693016878;
-        Thu, 08 May 2025 01:30:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPEfSGLX3TwEoxNfZJbO9Ox4TNvEJL0HvMxUzohlgBpzLEJFqOj02p/IWIhsaaDiRsZfMIbQ==
-X-Received: by 2002:a5d:588a:0:b0:39a:ca05:54a9 with SMTP id ffacd0b85a97d-3a0ba0b5d2amr1612241f8f.29.1746693016527;
-        Thu, 08 May 2025 01:30:16 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c? (p200300d82f3e590027aa5f4ab65c3d3c.dip0.t-ipconnect.de. [2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b3331cb0sm6212182f8f.65.2025.05.08.01.30.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 01:30:16 -0700 (PDT)
-Message-ID: <9ada79ec-f2b4-42bc-84f9-3f7b461ad829@redhat.com>
-Date: Thu, 8 May 2025 10:30:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08742222CC;
+	Thu,  8 May 2025 08:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746693050; cv=fail; b=NwH/ttntDq2zzNRYucZp9+wh0/IF768avyaTQyAahRDqGKbpE2Dz1TuHz3mco+MZB6EiyondB7CTbPt7uULA8cw159D3q5ySuUZJ0SvSOZ4oBjKY+0R4XX8o+fpNQ3W5hqc/3ck/Ll4A5i4O7g5nlcyijM6IAQgHjaqoS0OKza0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746693050; c=relaxed/simple;
+	bh=xWIH2wYfRtYSFvNXwcOhMGDJrwqXMBw8fL9MGXNWPsw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fJbIgVIBNhJf0HSeYJvj0w/SpBwkK8aHbQDHR2ph4byEWtFiJVHgRu1fxxpZwRcoI/DYO26vWMe83WaPh6f7p+G9vkfdIXvOOy/n5PFwjssgWIyEjg8wnQEo2mGbDb5XR8m4VduhGI0d4hVv3wHcQP9YtTJnmCBL62Eb1NnJO8k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iCk7TUXjb/8IcXhVNopoyJDt4OC5sHdCCvYw6sjis+N67yetIWavo4nJFEYWVuCGhQnI1nz2xgJwWsFLImd8P906M4Ok8mNxxv+6H6QUQMPxDqjknHCsMjhC/1yH63ME7CsR51LmNOKGZk0idjgLhzf4596UjL6B5xCTTxj0mdAbjyteQ1E+xzGcwOkoZqtyHdtKuup8BC104REqgMGVBkWxI+02uaiWA6PX5DM5IyH4gno9wpHUI6GRLOc9rBEM4EYH9bOq6FxkYN37vDL6OWGgZfJs8SxOlRHi28eZMXSRF9wzimx0oqwz8XE4PamKWnmJM9i7e2qqZh81cFEneA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nhpy9w0VogWJGQoPNq4P3KtHrFL7EUKf8OM84ulLXoQ=;
+ b=asgYDJh/VGPLx/jRBxllJCG0jAK1Qv87InW1PYbNwNYoPP+1Mw4eJZiK5p1zKUQAs7yqSiwh3euSSkHHWDZfXG77ffCwjnUL6VHkhNbQlHi90vPnambqhqLVpwku/Z1CrB/Te7cxSx49JwrX/RsuxKRorXugwfthhz535Y8wSMEYjSmQj0UAr66CCa9lDeQGE/6Z2JlMFk6uc6WdIE5MSS+oC6hXDAXIdQ1/DSS0dgunx1bViCqkrwR3c5leZmv0UUC5tcmuVcs6geQ90MIfRo5dp5Rn0SC0XBuQSKKIc53Phk53ESGmMUAZJV9FWtk/qQBYS8fCqraQR1Eo+XRdIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::7) by NTZPR01MB1131.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:1::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.40; Thu, 8 May
+ 2025 08:30:27 +0000
+Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e1c4:5bb3:adc:97f5]) by NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e1c4:5bb3:adc:97f5%5]) with mapi id 15.20.8678.039; Thu, 8 May 2025
+ 08:30:27 +0000
+From: EnDe Tan <ende.tan@starfivetech.com>
+To: Andi Shyti <andi.shyti@kernel.org>, Jarkko Nikula
+	<jarkko.nikula@linux.intel.com>
+CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+	"jsd@semihalf.com" <jsd@semihalf.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	"endeneer@gmail.com" <endeneer@gmail.com>
+Subject: RE: [1/1] i2c: designware: Ensure runtime suspend is invoked during
+ rapid slave unregistration and registration
+Thread-Topic: [1/1] i2c: designware: Ensure runtime suspend is invoked during
+ rapid slave unregistration and registration
+Thread-Index: AQHbq1NZxeBeZwmSbU+ZT1PgQ+QN37OkxeGAgAciiECAE2SWgIAFa0GAgAPVa5A=
+Date: Thu, 8 May 2025 08:30:27 +0000
+Message-ID:
+ <NTZPR01MB1018FD0E9913437D4B34E751F88B2@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+References: <20250412023303.378600-1-ende.tan@starfivetech.com>
+ <6e155241-3403-49df-8f0d-5aa63e2e74ab@linux.intel.com>
+ <NTZPR01MB10182E9F6E50D679A6EAC3B4F8B92@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+ <6a3b756f-6fbd-4ee5-b511-c5a32e4a6a34@linux.intel.com>
+ <2l2tpeictfp3o2kcq5fquqkm3nyjijq65ejanafrshh7icc5c4@guynosug2ve7>
+In-Reply-To: <2l2tpeictfp3o2kcq5fquqkm3nyjijq65ejanafrshh7icc5c4@guynosug2ve7>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NTZPR01MB1018:EE_|NTZPR01MB1131:EE_
+x-ms-office365-filtering-correlation-id: 18ddaf1b-8ba6-47ae-da3d-08dd8e0a95f8
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|41320700013|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ gkann0DeqNZvgsRHH9DOWGeus4CMag3hJH+RSQkH4i+23+LT1WYh0/w0nzmf16DE3bkaFSf2yDBy04TcbFw+gqrPj+2Fo6YItqJn4+8521Ej8pnIIgO3RDjWEn2JiFCOTStuxVIJ4eE9htKviThQ5GyffqIGH2Aw18De+ITiYtoDyDORI/8c3h2EBAZ8mUMocEG0OJzR/vbjkgdTMZJA9xoIMIT6Bb1mD9Z9FhTrWTKY1/uIRvxZwajI2k4jCqkMZ79mpQa9dBPDXI3D/Vg4oDJ3rRxaPiO+4FMywqMZSWZSjgGihGrZqds7F1HAR2Xq6d+OJqW7lc1h1qTcFaqv4xrM1dFFZ+rLOJ+IV4e/HctLpyfzWGgrM3ki4IzkfCEwXFADndhr0L+N5aTApLnWHz3ckeGCmMorU2k6iCD1osWH9VQs3KWNqXevzlul3mKHBW0h23sLdIXJcf5O1txeWa3FWEX8j+zhYjWqcQYXzLNjMVJXfl9vz8MyeOWJ22zqe+SJhUohvzprfxon3+ojE7PO4YnLglF3bKNa0A8vrJutduaehoaz/2lY99HbVdgSdmp2mf0cceWICmH9JxZYLSiqy7e5qnc60m+hGaUuRkQ=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(41320700013)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?agNdEySI9UoUTRbKBedLgewFHFVPxCoS4xz1WAwTGOdSBKGmJCFBa/tndjDe?=
+ =?us-ascii?Q?zZZ6mXnE9E8qyh6C+UmSxXYS6biGSLRMZkFBoQHMaeqECdQOALVi3QF8eKDB?=
+ =?us-ascii?Q?St2egcebAqYk7Ld2fuWJ6sKm30eGNJnI5zNRlXL3NRx1rwQc3IV6uV0KF/zJ?=
+ =?us-ascii?Q?de/DXf4o6ZozxnsaCI+X3W1F/bOGLq/OW+OezouqGb+3ectuqD8uGXfIo7I9?=
+ =?us-ascii?Q?zd2QiwfzDnqBe2IPGKi7hxCyCpLJN12FnY+4HBXXxTvim77EfB6hxoQQFyWl?=
+ =?us-ascii?Q?xRAAnOunFGhJe65tpB6DJqLH8fRne4G+sSxKSy5Y9oakGaOvkmuNZStN7vaV?=
+ =?us-ascii?Q?2uDdYhgjbJVPjE6HdWsZxX4yqKjoxk/+YyLvZXIr6Kpear2BYODMeC96GS83?=
+ =?us-ascii?Q?pYsvzMx2vJGRox9jE9kSKI/Ft93XA9KhWC6nZoLQwhO492+slgJQlIusGyxU?=
+ =?us-ascii?Q?1Qm4/XLwBXyKBcfhLY+Zk1619G23tKB03kqWZSfaGTlMT061EmYeWasAQBGx?=
+ =?us-ascii?Q?CWEk2siqT/0Imay/4hY4Wg3f/GNBcm0vm62SRqIFe1om2Ze4BJihOqsk84Av?=
+ =?us-ascii?Q?0mmPdROGZ+n7gDq/n/fOSH6dy3zMhtFgffQvOQUVg/qj2lblRPkwolnSZQAC?=
+ =?us-ascii?Q?96KFlZF6LCltKGzygqDffg4WvFX7/Hj/h69ALmfiscw32C+Npb601+l34wns?=
+ =?us-ascii?Q?hwxo5gr6ZqgCRFogu3fyrTa9+VKGM6z0B7sT1AeGOVeD+x5CTuuh9vkLZmQN?=
+ =?us-ascii?Q?Bs6p23CGMLvSduzS3WYP+cod4bSg+qjre6paBYzT09D4qJJ3sTS8Z6577WSN?=
+ =?us-ascii?Q?YFZzh+WEtIKLM9iBzURwZUqtues9VaSVPY6Z37y+sWuP776YBLvw07qFwJov?=
+ =?us-ascii?Q?d8aNcDJV219WMLok6AvMYrgpt47PdWdHNk843zXCZkHlqOyKrXA+E2Kc80EL?=
+ =?us-ascii?Q?zn9RFpR7iC+evJCNLTcKmRLpbU/3GGJZfiMM/XgNMHbwL1U96/gYDpqYYs4M?=
+ =?us-ascii?Q?A7xdzy8k7qE+OgCI8C34ydt/MowRTsAYu2h0VrtNbfDKYmKBRlwbtYEzWqRp?=
+ =?us-ascii?Q?UsrLruLC6V3CDrZLpLwT941prvCR5Z040RSnyGOv9HeYr/JfZDfQhea3uhgr?=
+ =?us-ascii?Q?p8ahthw9EByUYNmcrPfM+c2S/aVv7J2s4d9hzWUQQcYP/yzFgdkvrPSy/XxI?=
+ =?us-ascii?Q?bEb31Gha9p2B8RjXgkqk21Y+oKm7m0mNwTAc9GIW2jDQF+q49r0Kg7kP9dwE?=
+ =?us-ascii?Q?O3RiKi0pLi7mkdobacJs6wa0nULwtxNxGU6FAR6xpccPEFRk3iSec/uaAxq2?=
+ =?us-ascii?Q?iQ/4DAdqU9N4HpzalyRbib/h6lai2qhe/DjIFHCnh9VsCQ4w9UPPigQokQrQ?=
+ =?us-ascii?Q?TpvXFaVoPxBv1Jok58GFUu56Htr5yaxO8OhxTttm/EVT5n94SkZQUeP77MDm?=
+ =?us-ascii?Q?mdaETCXNpNzhvXsv0Rj+5REoe7kOfPxOmQiwhvHdhUSCCZ9/AvZDGPioeCiF?=
+ =?us-ascii?Q?d1GiwHyOkdLrzSACcU6wXh7WufxevhYhYQVfEM4A8V7peZhunAMBHKFOZB/9?=
+ =?us-ascii?Q?N8gfISz0qbXLTH/QuJo7ihtvEesT2isbRKcMZHMJ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] arm64/mm: Optimize loop to reduce redundant operations
- of contpte_ptep_get
-To: Xavier Xia <xavier_qy@163.com>, 21cnbao@gmail.com, ryan.roberts@arm.com,
- dev.jain@arm.com, ioworker0@gmail.com
-Cc: akpm@linux-foundation.org, catalin.marinas@arm.com, gshan@redhat.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- will@kernel.org, willy@infradead.org, ziy@nvidia.com
-References: <CAGsJ_4xVFDioe4G9wtjfRCKZMLBu94GaFG1z5j0YrHs3j1PkAw@mail.gmail.com>
- <20250508070353.2370826-1-xavier_qy@163.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250508070353.2370826-1-xavier_qy@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18ddaf1b-8ba6-47ae-da3d-08dd8e0a95f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2025 08:30:27.2820
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vKEtUm0BEu+/K7m5n0CP7tQx/E2s+igfnKprTYzKchcKMgtkdeCCptY5+7OPz+cLwKFAmBiYrho/cwh82RTAAeyNEhCE2OxhFHVSiU5dii4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1131
 
-On 08.05.25 09:03, Xavier Xia wrote:
-> This commit optimizes the contpte_ptep_get and contpte_ptep_get_lockless
-> function by adding early termination logic. It checks if the dirty and
-> young bits of orig_pte are already set and skips redundant bit-setting
-> operations during the loop. This reduces unnecessary iterations and
-> improves performance.
-> 
-> In order to verify the optimization performance, a test function has been
-> designed. The function's execution time and instruction statistics have
-> been traced using perf, and the following are the operation results on a
-> certain Qualcomm mobile phone chip:
+Hi Andi and Jarkko, thank you for the feedback.
 
-For the future, please don't post vN+1 as reply to vN.
+> -----Original Message-----
+> From: Andi Shyti <andi.shyti@kernel.org>
+> Sent: Tuesday, 6 May, 2025 5:49 AM
+> To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> Cc: EnDe Tan <ende.tan@starfivetech.com>; linux-i2c@vger.kernel.org;
+...
+> > Good explanation and could you add it the commit log together with the
+> > example?
+>=20
+> If you want you can paste the new commit log as reply to this e-mail.
 
--- 
-Cheers,
+Here is the new commit log, feel free to let me know if further changes are=
+ required:
 
-David / dhildenb
+Replaced pm_runtime_put() with pm_runtime_put_sync_suspend() to ensure
+the runtime suspend is invoked immediately when unregistering a slave.
+This prevents a race condition where suspend was skipped when
+unregistering and registering slave in quick succession.
 
+For example, consider the rapid sequence of
+`delete_device -> new_device -> delete_device -> new_device`.
+In this sequence, it is observed that the dw_i2c_plat_runtime_suspend() mig=
+ht
+not be invoked after `delete_device` operation.
+
+This is because after `delete_device` operation, when the
+pm_runtime_put() is about to trigger suspend, the following `new_device`
+operation might race and cancel the suspend.
+
+If that happens, during the `new_device` operation,
+dw_i2c_plat_runtime_resume() is skipped (since there was no suspend), which
+means `i_dev->init()`, i.e. i2c_dw_init_slave(), is skipped.
+Since i2c_dw_init_slave() is skipped, i2c_dw_configure_fifo_slave() is
+skipped too, which leaves `DW_IC_INTR_MASK` unconfigured. If we inspect
+the interrupt mask register using devmem, it will show as zero.
+
+Example shell script to reproduce the issue:
+```
+  #!/bin/sh
+
+  SLAVE_LADDR=3D0x1010
+  SLAVE_BUS=3D13
+  NEW_DEVICE=3D/sys/bus/i2c/devices/i2c-$SLAVE_BUS/new_device
+  DELETE_DEVICE=3D/sys/bus/i2c/devices/i2c-$SLAVE_BUS/delete_device
+
+  # Create initial device
+  echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
+  sleep 2
+
+  # Rapid sequence of
+  # delete_device -> new_device -> delete_device -> new_device
+  echo $SLAVE_LADDR > $DELETE_DEVICE
+  echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
+  echo $SLAVE_LADDR > $DELETE_DEVICE
+  echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
+
+  # Using devmem to inspect IC_INTR_MASK will show as zero
+```
 
