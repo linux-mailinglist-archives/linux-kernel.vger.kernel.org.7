@@ -1,90 +1,175 @@
-Return-Path: <linux-kernel+bounces-639606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D0CAAF9AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B297DAAF9DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35A33AB8F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1D824C6ED5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC0F2253EA;
-	Thu,  8 May 2025 12:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4439A225A47;
+	Thu,  8 May 2025 12:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTfEhYpf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTMBHg7M"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C7136A;
-	Thu,  8 May 2025 12:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEC714A4C7;
+	Thu,  8 May 2025 12:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706842; cv=none; b=AAN4PSwvny4xTJY2F7bwejJYVCtqZbL1EI2lDs76z4+cC0r2gYok6/BzzrvjiOAZ9kSu4u+v07P0Wi0R3b0fWqVS78096MGOGAUxBP4s6Ej9rvZ1L2QvoR6Hcf55REy1m7OMQdP2QlAjj6WTulNLxDm2Rg88FjJTj38y69ENSO4=
+	t=1746707246; cv=none; b=msWbITtU2s73NARQ+5/CfivSEs1uZDNO7ysBCR6SfqRoBjF+xBr50F52lxxRYL9fQhbzsfb83ebXn6yrceEw5oaaR5HKv46Nh4yOtLJDtxbtsac+/Wr0sDoaigCKRP6PAlBicBovISy5dzo/xIL6leZE0R8yb2iRE076lMSvKYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706842; c=relaxed/simple;
-	bh=jStuEGl1AI28cwqNnsX1wNCPdcM0C6jQhveYa2VC1ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gek8oLPBYUwTjnTmUSEpPXCmmUXBjmar8S5o1guNZaxjOaiwmGepCqhqT8xi5YxGeWJ2sdv6YiBdN2IeIFfc1caVU8lwvg6+SHuUgKXBWGVIgZmxFfVQZE9t9zoaBwmyxRnNYYxSSoWtudbnsEe1jQwo6z5iAFeFGcIAAquoj7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTfEhYpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933C5C4CEE7;
-	Thu,  8 May 2025 12:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746706841;
-	bh=jStuEGl1AI28cwqNnsX1wNCPdcM0C6jQhveYa2VC1ok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTfEhYpfnSt2HnvR7QlQEi6JGzde7YqgQybZkZ8uDw0xnZLPhk12KiBTrn/Nn+PMu
-	 1e2qMl9AH3/BYo4lcItR2/aT8QSCgS1JfgROd8pKbuawGNfxurebu8MDvEmhsE8lZF
-	 2U9fycOuqylLkNBa1mexSvsB8UI31xHB6GyAtdRwVLYOaU64RsyF580B42NTDX0Pg1
-	 Zqy6F0drGPbkhMmfTViTC2OUneqbP3FiGa8sQSwJzqf3nvqbas69ywkVr1KlxUOCUn
-	 skWT6MTwhme2BCp+gH8YgbLajWfDc1JDlVL4kFymQtULj6//MbV3wn9LWf+F/cezXe
-	 Ln8emFfBQXFXw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uD0Ew-000000003fn-2BI5;
-	Thu, 08 May 2025 14:20:39 +0200
-Date: Thu, 8 May 2025 14:20:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
-	konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
-	quic_nkela@quicinc.com, quic_psodagud@quicinc.com,
-	abel.vesa@linaro.org
-Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
-Message-ID: <aByhln4CpobzSz3s@hovoldconsulting.com>
-References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1746707246; c=relaxed/simple;
+	bh=6GjyiTfn5SI4PebBO0uNWjR6eASjOV4bUgJNv0Jed3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RYeJFwj7kk4ZzISeUakvDU1LiWzWoYbHPqZv/M2akaQsd+Eg3oxVE4hnsV8ng2IuqFHmFcBbKehuusVgwfmelVbRh+24svGQD3wD4+cAV2gt672rM892f5N3kKngceRTlI/msl1C49E5lWfsa3yPFy6Iow8iL55gklz3cPPsY84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTMBHg7M; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746707245; x=1778243245;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6GjyiTfn5SI4PebBO0uNWjR6eASjOV4bUgJNv0Jed3A=;
+  b=VTMBHg7M6pffPze0+emr06uAUjZG8/KntYsoEEF6FSlNyWoC4hywLHMR
+   lWyO+pw1NxlETUeYzuqj+1OCZZa5QmJlXgsIXsJWlVq1dZVf9IEhK2oXO
+   zNGLi5kSl+bf4R5RgH7To9WHHgtMzsk2CqWQdOezQIY3WapMpyVSYjaLF
+   6jfK0y9b4B8NZgvI1gtpz3lYAJlb3GgyGBxOl2OmA/+81a54c2ALND6gP
+   EXFr8tyT6o4Y1OcuxR2GKOUL+QoWyoxXsDVaz6VRzC56BjscHdPKVOyLT
+   57SOrw/oH92JM8xJMetDGKVFG7YyMdaIYwppgWvT7wC4hpEtpe3LB6UUn
+   w==;
+X-CSE-ConnectionGUID: Nw0o8fcMQUePT2Gr5uknRg==
+X-CSE-MsgGUID: q2nApTZASEWdUgoPlVOVUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="36115102"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="36115102"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 05:27:25 -0700
+X-CSE-ConnectionGUID: 65W7j38jRyO6Pv3w4+EBiA==
+X-CSE-MsgGUID: fsyGWW4PQO+5/tmgOs6e+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="136772854"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 05:27:19 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	vadim.fedorenko@linux.dev,
+	jiri@resnulli.us,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	jonathan.lemon@gmail.com,
+	richardcochran@gmail.com,
+	aleksandr.loktionov@intel.com,
+	milena.olech@intel.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-rdma@vger.kernel.org,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net-next v3 0/3]  dpll: add all inputs phase offset monitor
+Date: Thu,  8 May 2025 14:21:25 +0200
+Message-Id: <20250508122128.1216231-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030130840.2890904-1-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Sibi and Bjorn,
+Add dpll device level feature: phase offset monitor.
 
-On Wed, Oct 30, 2024 at 06:38:38PM +0530, Sibi Sankar wrote:
-> This series enables CPUFreq support on the X1E SoC using the SCMI perf
-> protocol. This was originally part of the RFC: firmware: arm_scmi:
-> Qualcomm Vendor Protocol [1]. I've split it up so that this part can
-> land earlier. Warnings Introduced by the series are fixed by [2]
+Phase offset measurement is typically performed against the current active
+source. However, some DPLL (Digital Phase-Locked Loop) devices may offer
+the capability to monitor phase offsets across all available inputs.
+The attribute and current feature state shall be included in the response
+message of the ``DPLL_CMD_DEVICE_GET`` command for supported DPLL devices.
+In such cases, users can also control the feature using the
+``DPLL_CMD_DEVICE_SET`` command by setting the ``enum dpll_feature_state``
+values for the attribute.
 
-With the SCMI perf quirk for the Qualcomm firmware merged for 6.16, we
-can now finally get this one merged.
+Implement feature support in ice driver for dpll-enabled devices.
 
-There appears to be a trivial conflict due to a context change (the new
-watchdog node) however.
+Verify capability:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --dump device-get
+[{'clock-id': 4658613174691613800,
+  'id': 0,
+  'lock-status': 'locked-ho-acq',
+  'mode': 'automatic',
+  'mode-supported': ['automatic'],
+  'module-name': 'ice',
+  'type': 'eec'},
+ {'clock-id': 4658613174691613800,
+  'id': 1,
+  'lock-status': 'locked-ho-acq',
+  'mode': 'automatic',
+  'mode-supported': ['automatic'],
+  'module-name': 'ice',
+  'phase-offset-monitor': 'disable',
+  'type': 'pps'}]
 
-Can you fix that up when applying, Bjorn, or do you want Sibi to send a
-v8?
+Enable the feature:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do device-set --json '{"id":1, "phase-offset-monitor":"enable"}'
 
-Johan
+Verify feature is enabled:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --dump device-get
+[
+ [...]
+ {'capabilities': {'all-inputs-phase-offset-monitor'},
+  'clock-id': 4658613174691613800,
+  'id': 1,
+ [...]
+  'phase-offset-monitor': 'enable',
+ [...]]
+
+v3:
+- removed patch 1/4:
+  "dpll: use struct dpll_device_info for dpll registration"
+
+
+Arkadiusz Kubalewski (3):
+  dpll: add phase-offset-monitor feature to netlink spec
+  dpll: add phase_offset_monitor_get/set callbacks
+  ice: add phase offset monitor for all PPS dpll inputs
+
+ Documentation/driver-api/dpll.rst             |  16 ++
+ Documentation/netlink/specs/dpll.yaml         |  24 +++
+ drivers/dpll/dpll_netlink.c                   |  76 ++++++-
+ drivers/dpll/dpll_nl.c                        |   5 +-
+ .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  20 ++
+ drivers/net/ethernet/intel/ice/ice_common.c   |  26 +++
+ drivers/net/ethernet/intel/ice/ice_common.h   |   3 +
+ drivers/net/ethernet/intel/ice/ice_dpll.c     | 191 +++++++++++++++++-
+ drivers/net/ethernet/intel/ice/ice_dpll.h     |   6 +
+ drivers/net/ethernet/intel/ice/ice_main.c     |   4 +
+ include/linux/dpll.h                          |   8 +
+ include/uapi/linux/dpll.h                     |  12 ++
+ 12 files changed, 386 insertions(+), 5 deletions(-)
+
+
+base-commit: 46431fd5224f7f3bab2823992ae1cf6f2700f1ce
+-- 
+2.38.1
+
 
