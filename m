@@ -1,207 +1,169 @@
-Return-Path: <linux-kernel+bounces-639293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA49AAF5A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0A3AAF5C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4509E2142
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:24:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1AAC463216
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4525335E;
-	Thu,  8 May 2025 08:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66672627E5;
+	Thu,  8 May 2025 08:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuniF+NQ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y3ligE1m"
+Received: from mailout1.w2.samsung.com (mailout1.w2.samsung.com [211.189.100.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021F424E4AD;
-	Thu,  8 May 2025 08:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F8C262FDE
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.189.100.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746692705; cv=none; b=ToF4ErM88h4L4QKl0yYIdf7jmR7OHMZJuHHhB50w7P99JKgmTh2c/ZyY+E63/RcEs6lq2oJ6KbEoUe/sIdqW6g8WIPc7hKkMYMSGFNfih0oZ2nl/vVpyyGm0RWkAijD2bU/w66Io9FLCppjmYxypeobqHOVzcXLN9hyKXjBXckc=
+	t=1746693299; cv=none; b=oyq+aGmc7Ck7Cwrhb+h/Q3EMK3FTfNcv4DXolOYPSAgmo4qSAB3kRAkzSge6ucunbvTOzJSt3kraF4P9MpJl9U1jLfy4f4ZUWlre3nb+3nbWVh3pcMvYoJZiMRnO1BymgePMjj66JB8iwkh677T31ll9GE0fyws0T2TvPev3g7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746692705; c=relaxed/simple;
-	bh=S3MwescSxZa6+qZIjhvT+wXpq74A4dumep68eA2m3pw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JROlJ03QZWy9wdQRI9i5JlGhLRcG6y193lSeXp1khZH/esbD+S4MYEg2Vrz3wLv2pK1eblLdiI8ud4jt3fUgg/hBW1LaD4uazMz7vxgKd/xtyP+cIDZbAMkupmml+nuS2exkwz9VPde1xwIf6sUb2APrvMr+jJJSGRwm7vNJPoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DuniF+NQ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac339f53df9so118318066b.1;
-        Thu, 08 May 2025 01:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746692702; x=1747297502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7/VZe1/Vs9df0KRAk3DjKWjsF3dPnM34RI9z9rdQPgU=;
-        b=DuniF+NQDJ0o1ScS4Hndwi1i26yF2nvkmHVdmnzIIrgIqVcfJChVm7ED6BQwMg8vtG
-         vxrzqdkW9Qy/7UdJk/CbYLuMfHjbFao5ufBHY62Xu7xzY65xIKsjFKQwNNrgeloOt1Vl
-         QEu6ee3AayNbOFgIf+erYnMpUErjT5rMzSL575br7nsKrdMnNDYu0Kaa/NMn7qRU77TS
-         +yvLRZFiNYhL5OcXUepgUuLGugLTWmrqsJI1C6NtaJtvBG+EuJXlBhcNGnkQNp2ka9Oj
-         6LtmG3ggE+h/aX08sXen0D2opjBMbpU2U+jaENSuT6Sa7MqEcUao8tPoof85ifroF5y/
-         Z8ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746692702; x=1747297502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7/VZe1/Vs9df0KRAk3DjKWjsF3dPnM34RI9z9rdQPgU=;
-        b=Xj0UoN7v811I2KbJ079bvDFNq704raTGZjbXw+ayXzWYYLnj6Q8ZtuQVwEpq2yDlHI
-         EQ3PmNP2trs38rjh+5aO/JgiU4JPGrPauZzjKzIvS9atUcfmg3zU1nOrjRXvDsa7mQ1g
-         5+HGNtwAW3y579KiPqUnYl5XaHGhCIvNo/rvsuIGbJIfZQeMxQ59IemzYlRjcxhaYFH/
-         28wpPu8j1cyi7/v2ca46AkRqqAysoMbwA4xRaRkLmQjHY3XwWWfBDFctfqTKzsD1AlEy
-         nTFGZhk/aobGbnD3msR3DHtWsVA2Z2aFZU5i5M5hmolhgLHGpwxSih5a/VlVeBWr5zIY
-         w8rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdH4ppvuq2qBQ4resKbbvLjAj9J6Z6sS6d0lzVpWkoiZIxSD5GiqYeMlTeA8nTgWokG+6KlIb6aN6t@vger.kernel.org, AJvYcCV5DR65JCTZwUYlm2exkJ1xpfH5+UoQlSByNv92Jv2XYAD85TjZJzj12zCxm77E/TksoroRj+mP9R7wOD9e@vger.kernel.org, AJvYcCXpk11wSa16d6KhV85Bb44ax3jh9MrXS9PfqH/dqlyyh6rggkbc6ZImf8ytib+JyPI480PIw7dnNNWu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLp4Uf1qu9aIP80t/lGJiqBrIAQEXt4rdTALoUYcR1JuU3KMh3
-	zmXi97s9wREfML+wKyNLUYcEwuiXSQ7cfX3rm9xNzz7ENgRtBrs4qlmjBYgrOtlWQ8dA84tzQ6D
-	+bf+lFSEHvYYYd3XCP8sIfZXvLck=
-X-Gm-Gg: ASbGnctsBnnV8GRII8Hw1FchK6hP2apKH+j/a9ONOdELSdL/CRwhVNE+1ol5IEfIL6K
-	qc3LHocYTL3L8wMx3qgNF/TjcG7aV0vJqUNYhSY58THFioT2nqpAcRCzu74lUEzI7+AE9jeZtC/
-	D7d1zP53qhJjeWjExrJXVkdg==
-X-Google-Smtp-Source: AGHT+IHwGMRcQLUDAqsmMU26u5DhOM2YTtzvThxyZ+rgbVdUJgzYB6yoguHQmu+X3sFn89zGRaz0RDjcWnop9JbvZfo=
-X-Received: by 2002:a17:907:9814:b0:ac7:391b:e688 with SMTP id
- a640c23a62f3a-ad1e8d08543mr701795566b.58.1746692701962; Thu, 08 May 2025
- 01:25:01 -0700 (PDT)
+	s=arc-20240116; t=1746693299; c=relaxed/simple;
+	bh=fPq1khtFjMqgEkGiH2cq56ZqZMoJRgVj0jQyxNs8Puw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Jnrh5clXVVI1UWF+88q8zpaR/zcpB9uWbDCvoP2LwJ1gQX7U44hLlfzVfB3C5CnDbtCe7bRjAck8GnYCHRtpQLRXWlXdRIlwd8JNLN/JnM8v0xXtSNTfiww1opqgAGTlCocf738paJ2W7tEJy0m7oNILfaaPPYeh8GfmvhvlRx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y3ligE1m; arc=none smtp.client-ip=211.189.100.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
+Received: from uscas1p2.samsung.com (unknown [182.198.245.207])
+	by mailout1.w2.samsung.com (KnoxPortal) with ESMTP id 20250508082455usoutp0112b6fa97ed05e55b44f1e5b3cc683d13~9f8CDpCqE0052200522usoutp01h;
+	Thu,  8 May 2025 08:24:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w2.samsung.com 20250508082455usoutp0112b6fa97ed05e55b44f1e5b3cc683d13~9f8CDpCqE0052200522usoutp01h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746692695;
+	bh=xFWdlrWsOanX/NVVNVan2uCPYqrJFZdos0xlcyL5mUY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Y3ligE1mVdi0oLVYyHkkKGO4q0YE6QtQf9y4FkwyTxjUNj3LbzHuupM4T9Jk+RO4N
+	 hkCrb15Q5bx/JvRn/aFXpSFlrZYv1jWC+EHqZyaSVcZ7KWBoWCK5FE+63KS0/V4sKs
+	 R35qrHSNYGiBzwbsnNkyDuwNd0+zIJfhUMp83UFQ=
+Received: from ussmtxp1.samsung.com (u136.gpu85.samsung.co.kr
+	[203.254.195.136]) by uscas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250508082454uscas1p29b50ff4d2f31a53e732cebf11535a549~9f8BAo3ls1112411124uscas1p2B;
+	Thu,  8 May 2025 08:24:54 +0000 (GMT)
+Received: from ATXPVPPTAGT04.sarc.samsung.com (unknown [105.148.161.8]) by
+	ussmtxp1.samsung.com (KnoxPortal) with ESMTP id
+	20250508082453ussmtxp18e1b1380fd7c17414cdb8bad396b2f53~9f8A1OPYH1568415684ussmtxp1X;
+	Thu,  8 May 2025 08:24:53 +0000 (GMT)
+Received: from pps.filterd (ATXPVPPTAGT04.sarc.samsung.com [127.0.0.1]) by
+	ATXPVPPTAGT04.sarc.samsung.com (8.18.1.2/8.18.1.2) with ESMTP id
+	54876rUv037957; Thu, 8 May 2025 03:24:53 -0500
+Received: from webmail.sarc.samsung.com ([172.30.39.9]) by
+	ATXPVPPTAGT04.sarc.samsung.com (PPS) with ESMTP id 46df5w3mty-1; Thu, 08 May
+	2025 03:24:53 -0500
+Received: from sarc.samsung.com (105.148.145.5) by
+	au1ppexchange01.sarc.samsung.com (105.148.32.81) with Microsoft SMTP Server
+	(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+	15.2.1544.4; Thu, 8 May 2025 03:24:51 -0500
+Date: Thu, 8 May 2025 11:24:43 +0300
+From: Pantelis Antoniou <p.antoniou@partner.samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Artem Krupotkin
+	<artem.k@samsung.com>, Charles Briere <c.briere@samsung.com>, "Wade
+ Farnsworth" <wade.farnsworth@siemens.com>
+Subject: Re: [PATCH 0/1] Fix zero copy I/O on __get_user_pages allocated
+ pages
+Message-ID: <20250508112443.49ff0414@sarc.samsung.com>
+In-Reply-To: <20250507145018.385c0a090a0d61c06e985ad9@linux-foundation.org>
+Organization: SARC
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHp75VcVmTwS-zw=o5=m1-x0XC67BKBVWae2mMKZQH=qLCxZwg@mail.gmail.com>
- <20250507164219.10083-1-trannamatk@gmail.com>
-In-Reply-To: <20250507164219.10083-1-trannamatk@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 8 May 2025 11:24:25 +0300
-X-Gm-Features: ATxdqUH7vjwoyrUt6a0OgSJkXwTvjGyp-fL_PAaQ_hH-HiCBVj3EHH4LiW0KdPU
-Message-ID: <CAHp75VcNuXouL25ZRiym97AjR9249=ENMPFDQ7imZ_ZoeKc3Ng@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
- LED driver
-To: Nam Tran <trannamatk@gmail.com>, Lee Jones <lee@kernel.org>
-Cc: andy@kernel.org, geert@linux-m68k.org, pavel@ucw.cz, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, christophe.jaillet@wanadoo.fr, 
-	corbet@lwn.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
+X-ClientProxiedBy: au1ppexchange04.sarc.samsung.com (105.148.32.84) To
+	au1ppexchange01.sarc.samsung.com (105.148.32.81)
+X-CFilter-Loop: Reflected
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: 4PeEZ1aymWH1pEADgeqC-xh1MxcKHdE7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDA3MyBTYWx0ZWRfXwC7v/t1idwe7
+	xe0rUmgQIin4dSxD3sdt8qMjeej6uOx7+D84agRnXQeM4q13fSM2DeCbzgjnY7hsvn1w7uKvgyP
+	mWNyrwpMH8GJiKdbveBHTQyePuQ5a8kVc2adKAPmafRneMhtz3kZx66UcayTujKVFaeMiGdizFg
+	1YcMNpXJgwz38+OVbA1DDtI180Cr/Tf1LmfzkNVZ+CvRrJ/FGpin8fO+PwQC7ClBCdwSKHYIOFT
+	O7Mn39zhBbauGyFdKLhRWQwbjcdf9srM2ReYgtg7+87kATYEMDBJK8OZz9T/vpjVY7Ioufzoesj
+	VTd8XfUS/UdJLA/A8iOWgyPoGbqJqbdotgoZLwAa4oVu0dEpndd6AuI/uZTrIG7U2FpGFeoXH9w
+	qtcMf2/5
+X-Proofpoint-ORIG-GUID: 4PeEZ1aymWH1pEADgeqC-xh1MxcKHdE7
+X-Proofpoint-Virus-Version: vendor=baseguard
+	engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+	definitions=2025-05-08_02,2025-05-07_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam
+	score=0 spamscore=0 adultscore=0 mlxscore=0 malwarescore=0 bulkscore=0
+	priorityscore=1501 impostorscore=0 suspectscore=0 mlxlogscore=809
+	lowpriorityscore=0 phishscore=0 clxscore=1015 classifier=spam adjust=0
+	reason=mlx scancount=1 engine=8.12.0-2504070000 definitions=main-2505080073
+X-CMS-MailID: 20250508082454uscas1p29b50ff4d2f31a53e732cebf11535a549
+X-CMS-RootMailID: 20250507154119uscas1p2a4055d14ab111fdb94a6378789c38d9d
+References: <CGME20250507154119uscas1p2a4055d14ab111fdb94a6378789c38d9d@uscas1p2.samsung.com>
+	<20250507154105.763088-1-p.antoniou@partner.samsung.com>
+	<20250507145018.385c0a090a0d61c06e985ad9@linux-foundation.org>
 
-First of all, I just noticed that you excluded Lee from the
-distribution list. Don't do that as he is a stakeholder here as well
-since it has not been decided yet where to go with your stuff.
+On Wed, 7 May 2025 14:50:18 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-On Wed, May 7, 2025 at 7:42=E2=80=AFPM Nam Tran <trannamatk@gmail.com> wrot=
-e:
-> On Tue, 29 Apr 2025 Andy Shevchenko wrote:
-> > On Tue, Apr 29, 2025 at 8:02=E2=80=AFPM Nam Tran <trannamatk@gmail.com>=
- wrote:
-> > > On Mon, 28 Apr 2025 Pavel Machek wrote:
-> > > > > On Mon, 28 Apr 2025 Geert Uytterhoeven wrote:
-> > > >
-> > > > > > > > > - Move driver to drivers/auxdisplay/ instead of drivers/l=
-eds/.
-> > > > > > > > > - Rename files from leds-lp5812.c/.h to lp5812.c/.h.
-> > > > > > > > > - Move ti,lp5812.yaml binding to auxdisplay/ directory,
-> > > > > > > > >   and update the title and $id to match new path.
-> > > > > > > > > - No functional changes to the binding itself (keep Revie=
-wed-by).
-> > > > > > > > > - Update commit messages and patch titles to reflect the =
-move.
-> > > > > > > > > - Link to v7: https://lore.kernel.org/linux-leds/20250422=
-190121.46839-1-trannamatk@gmail.com/
-> > > > > > > >
-> > > > > > > > Out of sudden without discussing with auxdisplay maintainer=
-s/reviewers?
-> > > > > > > > Thanks, no.
-> > > > > > > > Please, put into the cover letter the meaningful summary of=
- what's
-> > > > > > > > going on and why this becomes an auxdisplay issue. Brief re=
-view of the
-> > > > > > > > bindings sounds more likely like LEDS or PWM subsystems.
-> > > > > > >
-> > > > > > > It is 4x3 matrix. That means it is not suitable for LEDs. I d=
-on't
-> > > > > > > believe it is suitable for PWM, either -- yes, it is 36 PWM o=
-utputs,
-> > > > > > > but...
-> > > > > >
-> > > > > > Is it intended to be used as a 4x3 matrix, or is this just an i=
-nternal
-> > > > > > wiring detail, and should it be exposed as 12 individual LEDs i=
-nstead?
-> > > > >
-> > > > > The 4=C3=973 matrix is a real and fundamental aspect of the LP581=
-2=E2=80=99s operation.
-> > > > > It is not just an internal wiring detail.
-> > > > > The device adopts a Time-Cross-Multiplexing (TCM) structure, wher=
-e 4 output
-> > > > > pins control 12 LED dots individually through scanning. Each pin =
-includes
-> > > > > both high-side and low-side drive circuits, meaning matrix multip=
-lexing is
-> > > > > required for proper operation =E2=80=94 it cannot be treated as 1=
-2 completely
-> > > > > independent LEDs.
-> > > >
-> > > > Scanning is really a detail.
-> > > >
-> > > > If this is used as rectangular 4x3 display, then it goes to auxdisp=
-lay.
-> > > >
-> > > > If this is used as a power LED, SD activity LED, capslock and numlo=
-ck
-> > > > ... placed randomly all around the device, then it goes LED subsyst=
-em.
-> > >
-> > > The LP5812 is used for LED status indication in devices like smart sp=
-eakers,
-> > > wearables, and routers, not as a structured rectangular display.
-> > >
-> > > Given that, it seems to match the LED subsystem better than auxdispla=
-y, doesn't it?
-> >
-> > I have mixed feelings about all this. As per hardware organisation it
-> > sounds more like a matrix (for example. keyboard), where all entities
-> > are accessed on a scanline, but at the same time each of the entities
-> > may have orthogonal functions to each other. Have you checked with DRM
-> > for the sake of completeness?
-> > Personally I lean more to the something special, which doesn't fit
-> > existing subsystems. Auxdisplay subsystem more or less about special
-> > alphanumeric displays (with the exception of some FB kinda devices,
-> > that were even discussed to have drivers be removed). Also maybe FB
-> > might have something suitable, but in any case it looks quite
-> > non-standard...
->
-> I understand your mixed feelings about where the LP5812 fits within
-> the existing subsystems.
->
-> While the LP5812 uses a matrix-based structure for controlling LEDs,
-> it is not intended for displaying structured text or graphics. Instead,
-> it controls up to 4 RGB LEDs for status indication, where each RGB LED
-> consists of 3 individual color LEDs: red, green, and blue. Based on this,
+> On Wed, 7 May 2025 10:=E2=80=8A41:=E2=80=8A04 -0500 Pantelis Antoniou <p.=
+=E2=80=8Aantoniou@
+> partner.=E2=80=8Asamsung.=E2=80=8Acom> wrote: > Updates to network filesy=
+stems
+> enabled zero copy I/O by using the > netfslib common accessors.
+> Updates by whom? Are all the people who=20
+> On Wed, 7 May 2025 10:41:04 -0500 Pantelis Antoniou
+> <p.antoniou@partner.samsung.com> wrote:
+>=20
+> > Updates to network filesystems enabled zero copy I/O by using the
+> > netfslib common accessors.
+>=20
+> Updates by whom?  Are all the people who need to know about this being
+> cc'ed here?
+>=20
 
-So, you probably should have started with this. As I read above that
-this has to reside in drivers/leds/rgb for colour ones which seems to
-me closest to your case. On top you might add an upper level
-management to prevent users from using patterns whenever the LEDs are
-requested individually. So, this driver should represent 4 RGB leds
-and, possibly, the upper layer with those fancy stuff like breathing.
+I think the first cover letter contains that information.
 
-At least, based on the above it's my formal NAK from an auxdisplay perspect=
-ive.
+> > One example of that is the 9p filesystem which is commonly used in
+> > qemu based setups for sharing files with the host.
+> >=20
+> > In our emulation environment we have noticed failing writes when
+> > performing I/O from a userspace mapped DRM GEM buffer object.
+> > The platform does not use VRAM, all graphics memory is regular DRAM
+> > memory, allocated via __get_free_pages
+>=20
+> We should identify which kernel version(s) should be patched, please.=20
+> 6.16-rc1?  6.15?  -stable?
+>=20
 
-> I think it aligns more closely with the LED subsystem rather than DRM or =
-FB.
+The first occurance of the bug was on internal kernel tree that was
+based on 6.8.
 
-Right.
+This patch is against 6.15-rc5.
 
---=20
-With Best Regards,
-Andy Shevchenko
+> I often make these decisions but in this case I have far too little
+> information to be able to do that.
+>=20
+
+No worries.
+
+I see that this is picked up for mm unstable as is? Do you want
+me to generate a single patch merging the info of the cover letter
+and the single patch?
+
+The reason for the split is that I was not sure if you needed to
+have all the sordid details included in the applied patch.
+
+FWIW, we also have a buildroot patch that exhibits the problem
+in a much simplified way that what the original bug report came about.
+I don't think its appropriate content for the list, but I can
+share if anyone is curious about it.
+
+> Thanks.
+
+Regards
+
+-- Pantelis
 
