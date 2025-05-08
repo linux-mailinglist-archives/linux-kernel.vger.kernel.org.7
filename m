@@ -1,185 +1,133 @@
-Return-Path: <linux-kernel+bounces-640206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814B4AB01BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681E7AB01BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 045367A327A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44941B62CC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB2F2857C7;
-	Thu,  8 May 2025 17:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E486286D5C;
+	Thu,  8 May 2025 17:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="NQZjXSyd"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="g7HvV+0b"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8A627470
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EB628468D;
+	Thu,  8 May 2025 17:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746726530; cv=none; b=knnujjfnWdKE1ViHxS/Xl16r6o8I4dkSz43IndyWVokEZC4KBhSn2N5YgeG7az6nWYH7WFVwo65G671LPQca8QbL2+D2mXpVN2rfYY/p355cLYv/kGuVzEmtTzHkamv/tgKZhx3lvwzqRw2dCJM7NnuyvkHONGAt8EuFp+B/6yw=
+	t=1746726557; cv=none; b=GKHARCSNGeMYdukor4WdCvG64J2ydGKvolKNlyjIb6/CJQqXoS077pTZRkJPYMm8m76KmT2cbh7y2gq0MlhZmXUTeSym7Jx4SiEacA4zRxqDFGC15zTyLeye1C3nPZMYwKyQAlUo2OJoGytTYns7sVLHL1tXGm1ndrxKsNcD6OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746726530; c=relaxed/simple;
-	bh=Mn0ibbYww6nu7ChoXnb/V8up93JjOP9PQag24UPnr/s=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=LfLL5lv2jkLR0n2bO4XNHA2rprAkOdQe7ZTtGrMtwm+zn8jei8UoX0JI39haRMiHxZKdcqh49AstPQV6dMjkAAzgabD1YA93DbYbPJ5oplfT38zltoW9uAmodUNONb5uSLEiEC5cplhTvg/jYUw1QXK1EsbSh1LiSkgrpAEosxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=NQZjXSyd; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22e6a088e16so10377095ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 10:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1746726527; x=1747331327; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DYqLmfWWYnfjqyKiU4qtxry5bO8L2HemS6Lj3IB5Ozo=;
-        b=NQZjXSydwdMJMfOkGNMzs6nMKqE18ZiUXo6xOMyEoXLYC1G6ieZHRLWqRgVq/HyJRo
-         D4Tfikc2mryfpwlO1y3vb+M213/yWQe6626KwUxtinGVSWFtJfToTuchQpqnqYMM5yRL
-         WKRVx4N+M3soPOyOlvBVd9Ph3ovLHqbCQVrSP92UbN0yyrvmWjz3PcukGArHY90iCYD3
-         mZGIcDTCboyOJ/bzWUE+fX6a54/c1gurwUc5rvw/RzytMYLgazV1+FX2hBa+kBiqii+3
-         dL8UgfiWg7IbyAKRX/ANTBY6OKafsCLyCoa91ceZxMgqHKv3jcXM7D716X1bwkRfQ6Rz
-         bB0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746726527; x=1747331327;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DYqLmfWWYnfjqyKiU4qtxry5bO8L2HemS6Lj3IB5Ozo=;
-        b=HqArnp+EDaVzqai3mKusOUgssEZNCquAkyqIdXIFd8ENWgwAZssxBb4yOcq5aX39oT
-         cT0bwGOfRnrW9lojTv/26GB3EzE/D6RJMCLd+fs+Z4L70/ek2fOk3Tct8lEv8uzngnGZ
-         bDE3NYCAdHZ2qabR70w1FOZFmwoNoXXJb+2tVx8SH/s1wpMrF9v6zqzOd3GcsEcigd7O
-         q6zuaLrqKtE70YuNgUGpGhTC4H8wp5d+HmwXJk157qTeXC0LrRF2VWgi6ldR6FfrfVgU
-         /BssYC73sJixLOIxDx1Zw3Kvk4ailTihvCAayfYAfYnfRYwLY8wFVb0cjgNw96ASe4HD
-         ZzzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAQZqY0fAPoZlnfo2fC2OjFgxGzG4MhANC3HvBf51syRyNWOMDXW11nkjnnXP88sI+QCe07BPVuYgwRTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNtKlnx9skbXvxz5J7S6mAYZpnvYQl5pJGc6hObffcSY0VOb++
-	BjOyuAykmJhl8mo0yuL1Ci2bBPIaV91//EHSBnnnel/jCIrG3OAY3W73NiBJj3I=
-X-Gm-Gg: ASbGncvuNVW+zUlcQACmcmBY1mJgAXSr1VptJY8LfZcAQVw168hA8KQDmUxcfb7gJuZ
-	4uEovUUbDpyKc3DmBtamS/7TppRK3nA3D/JvXZxuvijOfsQwpU8CsY7qV5qxxCsfWqvEl0lHKz6
-	sC1JghKmi8uZQENRviJ8KWQkAqu0QvCJEqp5eCUGoQSoVfNJhWMbDEnuk3u0PORQQAcafe7CuKa
-	d0+BnmMBGQ+wGz5TtDr9+YsyFuBJTScmjn4RlNO2+xttd+nsbOis50Xxedy+U41xVE6EpvGFEUj
-	n2luV0mPQRLm6qg2EWMqLVTk/N4DVNk5AmyjoYKCg8eC
-X-Google-Smtp-Source: AGHT+IH82nPRzsrk8rYddBvn02C0V4vxqNATQ/FAfbV0gyTYbn992YmIneFZFLQQNKd12/Qa8kEAyA==
-X-Received: by 2002:a17:903:8cc:b0:223:517a:d4ed with SMTP id d9443c01a7336-22fc938ca63mr1882425ad.15.1746726527509;
-        Thu, 08 May 2025 10:48:47 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7547838sm2322225ad.18.2025.05.08.10.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 10:48:46 -0700 (PDT)
-Date: Thu, 08 May 2025 10:48:46 -0700 (PDT)
-X-Google-Original-Date: Thu, 08 May 2025 10:48:45 PDT (-0700)
-Subject:     Re: [PATCH] riscv: add Andes SoC family Kconfig support
-In-Reply-To: <Z8rMKZoDYmpNosSj@atctrx.andestech.com>
-CC: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, alex@ghiti.fr,
-  tim609@andestech.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: ben717@andestech.com
-Message-ID: <mhng-d0a8012c-c5c9-4309-ac08-bcb1dab85b26@palmer-ri-x1c9a>
+	s=arc-20240116; t=1746726557; c=relaxed/simple;
+	bh=NAfI4J5LptvSmMZm3C5+baXygHpHYNG+mAVX5QfCyZg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jFWf4hWwdifM+jqkcz5MwW+/HtGBTzos3cT5WXuSFnpJISvjm2KEz9JBN1TizxjXXnrf1scoHIBjUGVm/lMgAwX4TKqrZ/qy/G79xh3vTz4cUqTXLRL2Htupswa71pERSCrUhN8tYqE0xUKD4zwBtKHu7RH7o+7QjMyvfEu+IMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=g7HvV+0b; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746726547;
+	bh=NAfI4J5LptvSmMZm3C5+baXygHpHYNG+mAVX5QfCyZg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=g7HvV+0bL/+rYrmQeg8+mr+fYR0QVGhyS3lrX8dgdgV5qke/DE47+z2nASEU26q60
+	 wd67GQCLu5zIXsqXZpzQ1B6GwTGtMNcrSRUE/yydkv0nQt5F7FKnNSB0NyULVB7ByT
+	 42iM1uLL5lnPRp95IwNQDHWQj2B1qTIPwFiDKszivgJnFJSP7uefYVdT3VJwPS+ITp
+	 UNePn9/Mwe5irQA/rObiOcM2/uRCXuN/obQ2AVWX8jHfa0/6yyuNVAoVCUc9zsg6LI
+	 dw50P3qTuAe6sqGpwcu67e11Zgf3TJlorc+ot7FEyils7AcaQAhJgfQBA7rKlpqfXh
+	 V0gLTK+7fHuOw==
+Received: from jupiter.universe (dyndsl-091-248-213-080.ewe-ip-backbone.de [91.248.213.80])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C03DF17E0630;
+	Thu,  8 May 2025 19:49:07 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 6ED26480038; Thu, 08 May 2025 19:49:07 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v2 0/5] arm64: dts: rockchip: add ROCK 5B+ support
+Date: Thu, 08 May 2025 19:48:49 +0200
+Message-Id: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIHuHGgC/4WNQQ6CMBBFr0Jm7Zi2WBVW3sOwoHQKDUrJFImG9
+ O5WLuDyveS/v0Ek9hShLjZgWn30YcqgDgV0Qzv1hN5mBiWUFqU6IYdu1GZGFxhfc1yY2ic6e9V
+ GCKOr0kCezkzOv/fsvck8+LgE/uwvq/zZP8FVosCzkheyTmojq9tIPNHjGLiHJqX0BQTCuTi5A
+ AAA
+X-Change-ID: 20250324-rock5bp-for-upstream-fd85b00b593b
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, kernel@collabora.com, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ FUKAUMI Naoki <naoki@radxa.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1633; i=sre@kernel.org;
+ h=from:subject:message-id; bh=NAfI4J5LptvSmMZm3C5+baXygHpHYNG+mAVX5QfCyZg=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGgc7pNYkSuDchJEatNd0kHih4w1E1FNCi8z8
+ J+oZc53rkitRYkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJoHO6TAAoJENju1/PI
+ O/qaTG4P/AlMrxTqbu1Tjv6uZNdRO9KwvrMXSdO7m4r8hbdXMAkFgzBGfF3hH3S7ByBrmpRyKCC
+ 028JlVG31cMO6LXLn7GASt1VX6kJbg/G0e/DA0FzaIiRiZrs3AgDm9buHNetyFDOdnDnn2Skry2
+ 2vCY/YORkR+mqQMJk995wVKYhNcP4sPTTK8QhjpawOTcVaNkQwuSZJSW5YfY2/xyniF1Z10W/Ah
+ R1DRLsIBVY67mZfUJkVB32tR/vgbTtYPk0RbA+H4liHCM34pDhdB0Ktwj7zY2s4Cg+d/MFZWyrZ
+ FGOshr312YAJZO8wUGVvWpIChXX04BPhH4P7fHi8on29YXFiHwwtac7mqxNEauCkUOa8Fru3kHx
+ bfD+B3YTYgqP4FqIQwdPkL6KTS0PC5oDjAJRRScvZHZpDCgPU1DLu4bo+Yk+iAzluXvQiIC8r9i
+ CUu5KJjc88RLWOpme7eBtJTWOApr5L++MGFYh/w7kI1XXLO9TqTaifj4a+OYa7NRcmW9Gov+lXa
+ l1duk50ZautlA3Ht+dFgkrDaYHW2admPvp93mzadJbTnDSg+04OxBIiv//YtZECzr53CdbvJrx8
+ UEvjECeUNP4OoTNpeMdCveSprCqLthW4cln9XlXF9iVKGQv8ADzVi558mZjZD7S53MOUy6LVY64
+ B3GZgKXHEj8LBw6wmh1Irbw==
+X-Developer-Key: i=sre@kernel.org; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On Fri, 07 Mar 2025 02:36:25 PST (-0800), ben717@andestech.com wrote:
-> On Thu, Mar 06, 2025 at 04:40:49PM +0000, Conor Dooley wrote:
->> [EXTERNAL MAIL]
->
->> Date: Thu, 6 Mar 2025 16:40:49 +0000
->> From: Conor Dooley <conor@kernel.org>
->> To: Ben Zong-You Xie <ben717@andestech.com>
->> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
->>  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
->>  alex@ghiti.fr
->> Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
->>
->> On Wed, Mar 05, 2025 at 11:05:26AM +0800, Ben Zong-You Xie wrote:
->> > The first SoC in the Andes series is QiLai. It includes a high-performance
->> > quad-core RISC-V AX45MP cluster and one NX27V vector processor.
->>
->> I'd expect a config option like this to come with the user, which in
->> this case is the dts etc for a board using the QiLai SoC or drivers for
->> the SoC. Without dts or drivers, there's no reason to ever enable this,
->> so where are those patches?
->>
->> Cheers,
->> Conor.
->>
->
-> Hi Conor,
->
-> We are still preparing those patches for upstream, and we will add them
-> in the next patch series.
+This series adds support for the ROCK 5B+, which (as the name suggests)
+is an improved version of the ROCK 5B. It also adds initial USB-C
+support for both the ROCK 5B and the 5B+.
 
-This is still "Needs Ack" in patchwork, so
+Changes in PATCHv2:
+ - Link to v1: https://lore.kernel.org/r/20250324-rock5bp-for-upstream-v1-0-6217edf15b19@kernel.org
+ - Replaced DT binding patch with the version from NAOKI
+ - Dropped unused pinctrl for vcc5v0_host_en from the shared DT
+ - Moved USB-C SBU DC pins to board specific files, since they differ
+   between Rock 5B and Rock 5B+
+ - Added pinmux for SBU DC pins
+ - Rebased to latest version of Heiko's for-next branch
+ - Disable USB-C on Rock 5B for now
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+FUKAUMI Naoki (1):
+      dt-bindings: arm: rockchip: Add Radxa ROCK 5B+
 
-Though like Conor says, we need the rest of the code to do anything 
-here, so that's really just a way to get it out of my queue ;)
+Sebastian Reichel (4):
+      arm64: dts: rockchip: move rock 5b to include file
+      arm64: dts: rockchip: move rock 5b to include file
+      arm64: dts: rockchip: add Rock 5B+
+      arm64: dts: rockchip: add USB-C support for ROCK 5B+
 
->
-> Thanks,
-> Ben
->
->> >
->> > For further information, refer to [1].
->> >
->> > [1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
->> >
->> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
->> > ---
->> >  arch/riscv/Kconfig.errata | 2 +-
->> >  arch/riscv/Kconfig.socs   | 9 +++++++++
->> >  2 files changed, 10 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
->> > index e318119d570d..be76883704a6 100644
->> > --- a/arch/riscv/Kconfig.errata
->> > +++ b/arch/riscv/Kconfig.errata
->> > @@ -12,7 +12,7 @@ config ERRATA_ANDES
->> >
->> >  config ERRATA_ANDES_CMO
->> >  	bool "Apply Andes cache management errata"
->> > -	depends on ERRATA_ANDES && ARCH_R9A07G043
->> > +	depends on ERRATA_ANDES && (ARCH_R9A07G043 || ARCH_ANDES)
->> >  	select RISCV_DMA_NONCOHERENT
->> >  	default y
->> >  	help
->> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
->> > index 1916cf7ba450..b89b6e0d1bc9 100644
->> > --- a/arch/riscv/Kconfig.socs
->> > +++ b/arch/riscv/Kconfig.socs
->> > @@ -1,5 +1,14 @@
->> >  menu "SoC selection"
->> >
->> > +config ARCH_ANDES
->> > +	bool "Andes SoCs"
->> > +	depends on MMU && !XIP_KERNEL
->> > +	select ERRATA_ANDES
->> > +	select ERRATA_ANDES_CMO
->> > +	select AX45MP_L2_CACHE
->> > +	help
->> > +	  This enables support for Andes SoC platform hardware.
->> > +
->> >  config ARCH_MICROCHIP_POLARFIRE
->> >  	def_bool ARCH_MICROCHIP
->> >
->> > --
->> > 2.34.1
->> >
->> >
->> > _______________________________________________
->> > linux-riscv mailing list
->> > linux-riscv@lists.infradead.org
->> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+ .../devicetree/bindings/arm/rockchip.yaml          |    5 +
+ arch/arm64/boot/dts/rockchip/Makefile              |    1 +
+ .../boot/dts/rockchip/rk3588-rock-5b-plus.dts      |  129 +++
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    |  970 +-----------------
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi   | 1082 ++++++++++++++++++++
+ 5 files changed, 1247 insertions(+), 940 deletions(-)
+---
+base-commit: b7caeb9545db25649eda36ce593b70cc2aa804ab
+change-id: 20250324-rock5bp-for-upstream-fd85b00b593b
+
+Best regards,
+-- 
+Sebastian Reichel <sre@kernel.org>
+
 
