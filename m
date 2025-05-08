@@ -1,562 +1,322 @@
-Return-Path: <linux-kernel+bounces-639623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B59AAF9EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:28:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4352FAAF9B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C3187BD137
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8CB4C5859
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6661E226D19;
-	Thu,  8 May 2025 12:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DF02253EA;
+	Thu,  8 May 2025 12:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQ4xLq35"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wr3QonHA"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2083.outbound.protection.outlook.com [40.107.244.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482EF22689C;
-	Thu,  8 May 2025 12:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746707262; cv=none; b=habYZKtlzHTfCXVj2hs2dKu4ZJ8p6DwF77U09CnQpD5FFR1X5QrNcdwgc4xDBrF1kcQgogVNDmMy+A61GodAT4pYq0EWlWqYQo963GiklG9CJ+9lfNe7Rjg8PszMz7vZV9vJGucPLjb93h+qZepDlF6BcV1VjYM+RtgclFzXfrU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746707262; c=relaxed/simple;
-	bh=hYsDW7jg5jb93mLqXqsS807mTXoAcJIj5fRkqLuKi44=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jXnrMPkMX0dxp3E/HT2ncKfp22J2irmR/NkHja5rnn6ck/coeES3VELn/Q+E5IPtCJ6QG2ClwsuUsVt2t/ULpiFMYqLVsfPjFAyfe47BPm2GMFy62NrT5GGtzYowRUnrVrmPJbouXhtZklbVwvFOhK1wtfpAPCg0Ee5bWYRifCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQ4xLq35; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746707261; x=1778243261;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hYsDW7jg5jb93mLqXqsS807mTXoAcJIj5fRkqLuKi44=;
-  b=GQ4xLq35S8rURnm2FufelwUDZr0nz2NX95Bca6b+X3p3Tm5FtN8AbkC+
-   y8I4xVBtENkXQqO/U1zUyc7NW9XVOW/qgzhDJT9Q+Xttady4ASQsRgcCn
-   /4e/86yyhnoOi37SAQf1V3ZHby8B1hBivgI0cO3ZbiHF4luNyKbopi7KC
-   ifgO+5jN8VZ8z4LKDpYuB9EN2D858YOxnvMAJsirC3f7sBYWYoVX4dIZ/
-   Q7yo9IdOmunch/3qSJ2KVN5gAmfFMbgmPAJVnihbdbZLFCCMUkMF4N7ON
-   k6HWdWXT+DS2iwmtS3aunh8AyIGPvGKjY10oZAkbr4SG+tYaTZEylBzaf
-   A==;
-X-CSE-ConnectionGUID: /arKSzMMTGOUgRzDyfiLfw==
-X-CSE-MsgGUID: foYzRTdkStKHHYjUvhhsTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="36115168"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="36115168"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 05:27:40 -0700
-X-CSE-ConnectionGUID: iF4uzfG0QTG/QZfhlISzKQ==
-X-CSE-MsgGUID: OQmWa2N8SuaGBz72RpeCpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="136772869"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 05:27:35 -0700
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: donald.hunter@gmail.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	vadim.fedorenko@linux.dev,
-	jiri@resnulli.us,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	tariqt@nvidia.com,
-	jonathan.lemon@gmail.com,
-	richardcochran@gmail.com,
-	aleksandr.loktionov@intel.com,
-	milena.olech@intel.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-rdma@vger.kernel.org,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Subject: [PATCH net-next v3 3/3] ice: add phase offset monitor for all PPS dpll inputs
-Date: Thu,  8 May 2025 14:21:28 +0200
-Message-Id: <20250508122128.1216231-4-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250508122128.1216231-1-arkadiusz.kubalewski@intel.com>
-References: <20250508122128.1216231-1-arkadiusz.kubalewski@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B57215184;
+	Thu,  8 May 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746706903; cv=fail; b=quCOOb4/waA0UMETGSBgoricZaZfcT1B7/N5TDaX8zT8gFj59a2LVQkey7U0K1gRhb0dPkSw+10YKR9z4FP4nupnq+3DqXOm2p+xnPCZITv0vUxvgdl0Vem5W7p+KBn9JeVCsGZTueRi72lj3rLInSzv+jwcJdqiDnFzQPpBuLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746706903; c=relaxed/simple;
+	bh=ZH3ZhaAQ5QRZpwwnfrRr4vVAvUfW7JVutxeH4R1Km/U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ge20pAs0Pi+hZQFlpPoPaTHk7e/qodNvyUKK4oA7u0Cbd7CS96WTHCiZAJ3rauv1Ts2pUmya8kF+KvvxmqSkk/Gm9OCIqomq7fY1pPD+iyXMKf6sN241q3FwxzKIKZgtzQaudakhpwxacpsyY7K+KT+FdjIqKFqkNWa6XeZDNBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wr3QonHA; arc=fail smtp.client-ip=40.107.244.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mfk7MAbA1ID5IL7XU9keEFAWNBZCkTKPYNKQMTt/SsQS5jt/VBAj53FEwSvNoKsBR5G7J2YVSjR77psILdaY8nsnDTII1OXRuCWmb5djJPaqvw7eI5b5/NVGnG3mfBv+Ee+OzJx+YTDL0SP4APT/R1uiLytiUrymm7zWAnEQ9+8seYhQNrB1D82OW+gvlsn2NJ3DNa4vqAPk1Kr+S/ln8VchWmoDCpYY9vruA7f1snd0vyaFmOXL7blNInRzWWSpboFGZNjRw2eKgJrRr4nZqqyVjknfv0k6q8iGSZE9xCoSiRuzjSy1S9SpG6HRmvSbHAgj3jp+JzecBjm/Q5D2ZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pp14etD8rlGNWx0qnC7wQ+Lxi1miN9iDvkmNCzx/Gek=;
+ b=Ty2hYmtq/7YY+edI62yPd2yg8itKjvGpqd7BZ69udFSfYrR4DazEO4j4Zh64uWDnP+T9KHuCCOln6AsocKuyhrZV856eY5yak9srklGny3PSjrTSAhNWDMi4D8rmWsus1Ix20a5CAsgRIlKJylRIClld8G51fMUIaQzP0ykAQDFii6dxCgAb7gUbjSpmOwbpM5kOrGxnemYl0rCapV0o1LDZt7Eqs79mC+ppcIqU+Z+mmp+PmDIsJh8tJYRaFNJadGJSAzKWz78aOPynl5YTiyn4G//MLT7Be8FCxtMBo8EkbsCpJUgtT2GHRYB8neV5RWis5EHGbacgG8H78VPY6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pp14etD8rlGNWx0qnC7wQ+Lxi1miN9iDvkmNCzx/Gek=;
+ b=Wr3QonHAWTDqTvq6dA3aOhf+AXzAKM1wYm+NDTw7VM/WmulPzbTcLBB13/Wjeye/csNlvy91Fs7+C4TP4rLayHL1Fs+jPXbvXyd/uVBLQ42PPGPWA9IQQLrwMUPFJqpMZ1ltGvU22NCwFyRjkmlFlupy2jSNSRjuS3tQ1IvpZUVO/dUuB8rKN2qvDhSTiV/2yDfpgyrMgmc+XCfQzcAPgS/q58e2c/nLb6DrAb2RiHY5BnBgMpAalLsjB3hIjMtLoxHBvHqYbtIaDpehr8Tgdo8kqJvps1u0FGsviowbcoFxz7w71c84vyWG0rFpS5rGHxSCVCZmZd447SHbVr91Jg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by IA0PR12MB8373.namprd12.prod.outlook.com (2603:10b6:208:40d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Thu, 8 May
+ 2025 12:21:37 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8699.022; Thu, 8 May 2025
+ 12:21:37 +0000
+Message-ID: <7fdfbbf7-cc9e-4a3c-a41b-c0fe161dd8f4@nvidia.com>
+Date: Thu, 8 May 2025 13:21:30 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/97] 6.1.138-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org
+References: <20250507183806.987408728@linuxfoundation.org>
+ <864a7a10-ed68-4507-a67c-60344c57753a@rnnvmail203.nvidia.com>
+ <2a83d6a6-9e80-4c78-94a6-5dedd3326367@nvidia.com>
+ <55d3cdaf-539f-4d5b-8bf1-a2c5f917e81d@nvidia.com>
+ <2025050819-acquaint-guidable-5e97@gregkh>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <2025050819-acquaint-guidable-5e97@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO6P123CA0030.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:313::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|IA0PR12MB8373:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7549724-a55e-41b2-c05f-08dd8e2ae10f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eHpjVW56RG10SWJkRHlYQjN3eEMyTHUzeVEyMW1iWVZScFBGTUsrVzQ1c2JE?=
+ =?utf-8?B?a3NoeFcwak10Y2F6eHdtRHBTeVo4UlBtT2R4eU5lQVFVTFZBMEUyVWMzKytn?=
+ =?utf-8?B?eDRJSVRnaWpDVFowLzR5c0ptOC84WEYrQ3NhLzg3eDJyUXV4NWU2QnNrTnAy?=
+ =?utf-8?B?QS9jWHYyS2FHcytuWlVBT1R2dFlWWUFPY2I4U1F5S05VS2VGZFkrSWRxMlpW?=
+ =?utf-8?B?dVlYL3BCN1J4a0NXL0JDU2Z1b251cy9jTk5xYjJtWndSOEdvK1hmR1RZeDZi?=
+ =?utf-8?B?bzRYaHltaE5ISGVNbit6ZnZ4c0Y5WEVEalVGR3NpUXRoN1BDSnhWZDdLbDBq?=
+ =?utf-8?B?RmxBbE9QdFRHc1gxOXZWU1lrVFNNcW9oQm1oa2NIU2VkTWFHS3dWbGVnTUx1?=
+ =?utf-8?B?TVJvWDF1WkZNWENLQnMrcVk4ZlVxS3RxTjRsSUtQTXVzNFJ5TFB6NjR4Z0Fl?=
+ =?utf-8?B?M0ovNkwzTnd3MUxwTS8vb1huV2pScHllam15Z3dCK2hlWFBXR0ZNZFA2bmti?=
+ =?utf-8?B?SGR5d0tUSWtuMTRpZTI2MlVGNUlHd2Qzd3VyWGVjZHN6T0FhNG5ncGRDYUxu?=
+ =?utf-8?B?ZEgyVUEzV0t3bldzMXNObWpteG9NQ0hXUmFSTUtHK243SldsRkNGTEhlVGkz?=
+ =?utf-8?B?VHBaK25oTE92TGJydlVlUjVYZzBlSm5BSjcyaHFBTmtBbzJodXIzQytTNExz?=
+ =?utf-8?B?MjgzdW9KNTZILzh3dzQzK3gvUjRTeHR2bisrSHlEeUltWFdKNXluZmNMa2c4?=
+ =?utf-8?B?NndCcGl4MHJzQjFhbEhZTS9YdVJneVpydzlDeTNtS3dBaFRQWDk4T293cFNi?=
+ =?utf-8?B?WWhhMEd6SnQ3N29EUjNXOE5laERmeUNRWEhPTjkxUkR5SmtSUXgxcjdUelRw?=
+ =?utf-8?B?WXRFYkZ4VUs4NTBidjcwV3pTMk0ya2ZuUEljZkdtWHU5M05TSTdEcldyeEs4?=
+ =?utf-8?B?Ty9CUjJWVXhKbHptZVlMRVRWbjJyV2NCQ1IrYzE2dkQ1OUswYmNjUTJrVWQ0?=
+ =?utf-8?B?aHU4d2ptRTlidVlFLzRKdjVTeW1vNHZpTnFyRW5TaitqUEFlbjk5OGQwR1ho?=
+ =?utf-8?B?Z0NxcVRUbmp4VU0wY2pSUEdPeVV5clRNZEozWTg1SG53TGhxZGRhSGpwQm8z?=
+ =?utf-8?B?Qk9vdTBrTXBsRFdEVjk0ejkxK1F3YVgwQklXODhnYk1OeUxMSUdENEhvR3Rk?=
+ =?utf-8?B?eWhvOW1WRUd1VUtabVFjZklaL3cvaTFScllkVm1oaGR2NXdIaW9Ca0llSDFZ?=
+ =?utf-8?B?WFdwZ0k4MVdQbTNzUkJldzQ3SHBWTGlOVHJvYTdOZzBpaE9aQWZWcXljWGlK?=
+ =?utf-8?B?bG9neG1YOURrcHlQRTBNQWFoSEh4SHNTKzQ1TjZkSjhiR3BRbTBTS0gydzMr?=
+ =?utf-8?B?VVNsdkJPRHFYLzZkK2xlYTBwazNiM0JBcHJEVjJYUERUTDY0MVp5Q3REaWY1?=
+ =?utf-8?B?c3hNN2dIako2clFTQ3hXandWZm04OE81NW83R2krak15eXYyRGpzb3JRbUFa?=
+ =?utf-8?B?dURKTHRZb05VaGJBY2dMbkdSem9TK0pTVE1QWkhkZ1E2M2dLa0JLWllhb21n?=
+ =?utf-8?B?RU1VcmZaRWtrY3lVU0RaRkpzdkMrUkpERnpwdXZ5Wk02bVpVSENYWjUyYlRY?=
+ =?utf-8?B?VEJkUXhCNTRMMHoyMHZqWmZrbDdNaHpoODRZUGpMOGcvbHd4VzJmWmJkdDgy?=
+ =?utf-8?B?YnFUR2FjTnFpQ0FIK0FWa2cwTnFxZHl5eGNaM01XSHVBVnhicHZXRTlDUDVv?=
+ =?utf-8?B?dW5vUGFtMlh2K0VBNjYyVi9IbjFWYUU5RzRJM09PdE9MWWo1TGVETnpxdFds?=
+ =?utf-8?B?WFUzWlZnWGxObit3blhET2VOZDNlQ3FjYWpYSWVvZm1wZDRzOURYQVMzUG41?=
+ =?utf-8?B?N1kwUldQdXhoeFVndVFiaHlsMVFvTVF4WjRpMFU1cHE5emE5c2d4N0JubXZz?=
+ =?utf-8?Q?Dhm10+UUfAg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a0FoSDQrNmt4Y1c2aFhmNUdPZ2pmUlphRzdYd1dPdU0vcmJOT1dTendzWGJ3?=
+ =?utf-8?B?TWR0VTNXSUw0dUx3bmlVM2hQVzdYUlBHbHVOckc1Sm1oUG1FUDdjYVlsSExL?=
+ =?utf-8?B?UkV0dzA4QzJhV3hmbG1SVTFFcnQzbHF6b1loSVhMSUgvM2hlNGhJSk4wUzJz?=
+ =?utf-8?B?TWxvRDd4eXZvTmd5Vy9KTHRLMlV2QVc2TEJYMXpvS1d1ZjN3amtNQWRwSTcw?=
+ =?utf-8?B?Z1hjZW5sRC80dVhGWTc5VFhqMDNaSUlJclB3aUw2aWNiUkdCNkF3UE1FMXFT?=
+ =?utf-8?B?YVRjcG11cGZaRGhuRDB3cDB0bi9PWEJCYlV6NnFuNlpMN0dMR0FRU0lJSDdh?=
+ =?utf-8?B?bHJHUE1PekM5Rm9uMTFoREs2bnJZQUg5dkladHR1TVhkc0pRUzRodE9OTzdy?=
+ =?utf-8?B?MzZKcC9YQU1qOVVaL2Q0U0RTMlMwQmFwanZDREJvL1pOdjNBUjFndGovWHVC?=
+ =?utf-8?B?bGpPczhoMzhMY2s4c1BSMEFWdy83NUc0dmdlRlBFcHFXT256d243RFl5QlVD?=
+ =?utf-8?B?VkZzZDcxTVlZaEVFZngxaXBTUk5zU2swWnNKZEYvell5Mzh4d1RjRW5PSXR3?=
+ =?utf-8?B?ZVdXemNKTnpod1NUVzZla1R6bVdJZEM5UU83US8vMmFDQTZjT0lqR1MwVVh6?=
+ =?utf-8?B?S2llOVV3VHE5LzhLU0cvOXJmYk01WmcrOXJhRzZXMnJ2Q2tjdWtrb3dtcjFo?=
+ =?utf-8?B?TGN3ZzFFcCtsVzFyT09mN0tuTllKWmxSd2hxbGZyMGFLOVBrTXVENlZmSUxi?=
+ =?utf-8?B?dUFrT3BJMG5TcGhLY25CUnJyQktDN2RMbWsxVFB4d3h1U3hneWxMaUR0ZG03?=
+ =?utf-8?B?TWpVQUc1b3N6b3hkL252Wk0yU0g5SklMOUxrUmhIckZUUXNmKzl2enpGRklI?=
+ =?utf-8?B?eFc4RnpYaTIwUmd3VkZIbXI0aEdsYUtUU2FwQ21PZHJRcVN5SnlHZXE0ZFJR?=
+ =?utf-8?B?aGNWajRMekNoSzJpUXZ4SDU1R2wrTHJtdEFVVWhXbktOTHhadDcrN2c0Ynlj?=
+ =?utf-8?B?Ni9aZmVFQnlhcjFJWFlJeGlIQTNTYnVVTXhOT0MzbnNFMDJKakhrZkNYZFUx?=
+ =?utf-8?B?a2s4YnQwcjVpTmppN2p3VEs2dnp4QWw1TitQV0ZKMEFxc3crNTY2dUZoQnhZ?=
+ =?utf-8?B?VmJKSUp4ZGt6bHNDUW92QWRPQjVIcEdDNnZTQTZEN2lUdlV0Uy9GNWJGR3NJ?=
+ =?utf-8?B?bUgvVVN1L0hZeFQ0T0laUmJEYzZKZ1RWOURHTlMrVXBsdGdtbFdmREZSdXkv?=
+ =?utf-8?B?a1RhV2x0UlZ2a1Bxd1lleHBoZmtCZ1V2ZGYyZVFoeFdYS0dlSWlPWVpZeERL?=
+ =?utf-8?B?cW9HUy91UUQwUkY2S1dxUjRMVDBZbnpQS1d0U1NqRXN3eUVvWmM0Y2RkUDlz?=
+ =?utf-8?B?VFdGdVJUZUMwa2tiL2FwVFRlUHZrQ1h5K21TUGJDQmFXemRSMzNpdk8xSExF?=
+ =?utf-8?B?aTh3cUpFQjVyY0VyYVJOOXY1ZW80RUNvN0JDandGbU5FZXhqRHpzY1ZhQjRk?=
+ =?utf-8?B?d3dJTGR3UkV1SmZEM0ozZWtIakppNzJUaUxkZGx6MkhuRGg1ZmZJaHMzbXlN?=
+ =?utf-8?B?ZEhKUFU3czN3ZVE3UmwvbmZML1dyK2JPRGh6ZVRMT2VNdmlLVmFxb2dkcmJm?=
+ =?utf-8?B?eUpiS05KbmcyL1JsMHBxWWlaTkUrOU1LcSs2Q0g4bkFSQnh2UENqaDFXd0Fw?=
+ =?utf-8?B?OW9vdnV0dkhtVEpCVFdHdkVDZk8vWVVRcjVlTGdoWkVqRjltY2hYWU9ENmFV?=
+ =?utf-8?B?ekFOempTUENqMkR2eTFaRlAzRGFNV1FNRDR3UGkwVkJ3SkNubHNlT2w2QkM4?=
+ =?utf-8?B?c3RSSkVpQlh6bmp3blRQenZuSVVLY3hPMjY3RnZJdFlzTjY1Z1NOcjcwSmY4?=
+ =?utf-8?B?NlU2WUZ0Nzk5SjlPbjl6dGFXRGhKSTVFY01TbVpvUkRhd3VoM2lEdHQ4cVdn?=
+ =?utf-8?B?OEEzWkdmRXBrWmx0bXNJMk1xRWoyMjRqcUpZWVhEZFh6Uk5vSDZWYzJMZVNm?=
+ =?utf-8?B?Z0ZwY0d4c0w1TWdvdVJ3WVp4ZzFIdHRuZ0JVdFlwWnN6UVo0cElGUTl3WEZa?=
+ =?utf-8?B?RkdMMUNUUFFSM2dXdXJZYWtPOHdIVEdRT3RpVzJxQndxTWRySGo5YkJFVjh4?=
+ =?utf-8?B?RzNtSDNxRmxiMExCZ2hUbEZ5VVYvQWZxY3Z5RkttNXdkd0hLRU92bGRGVmxQ?=
+ =?utf-8?B?Z0E9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7549724-a55e-41b2-c05f-08dd8e2ae10f
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 12:21:37.5616
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wex4fOZz4PHZo7ljMvGY+njARIpjUOd4e99GZ00nuMcL/x8j1Zgo/l0eXhTtTC/b2AmwKeeQ5mCQFt4hTyAV2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8373
 
-Implement a new admin command and helper function to handle and obtain
-CGU measurements for input pins.
 
-Add new callback operations to control the dpll device-level feature
-"phase offset monitor," allowing it to be enabled or disabled. If the
-feature is enabled, provide users with measured phase offsets and
-notifications.
+On 08/05/2025 12:24, Greg Kroah-Hartman wrote:
+> On Thu, May 08, 2025 at 10:52:59AM +0100, Jon Hunter wrote:
+>>
+>> On 08/05/2025 10:48, Jon Hunter wrote:
+>>> Hi Greg,
+>>>
+>>> On 08/05/2025 10:45, Jon Hunter wrote:
+>>>> On Wed, 07 May 2025 20:38:35 +0200, Greg Kroah-Hartman wrote:
+>>>>> This is the start of the stable review cycle for the 6.1.138 release.
+>>>>> There are 97 patches in this series, all will be posted as a response
+>>>>> to this one.  If anyone has any issues with these being applied, please
+>>>>> let me know.
+>>>>>
+>>>>> Responses should be made by Fri, 09 May 2025 18:37:41 +0000.
+>>>>> Anything received after that time might be too late.
+>>>>>
+>>>>> The whole patch series can be found in one patch at:
+>>>>>      https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/
+>>>>> patch-6.1.138-rc1.gz
+>>>>> or in the git tree and branch at:
+>>>>>      git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-
+>>>>> stable-rc.git linux-6.1.y
+>>>>> and the diffstat can be found below.
+>>>>>
+>>>>> thanks,
+>>>>>
+>>>>> greg k-h
+>>>>
+>>>> Failures detected for Tegra ...
+>>>>
+>>>> Test results for stable-v6.1:
+>>>>       10 builds:    10 pass, 0 fail
+>>>>       28 boots:    28 pass, 0 fail
+>>>>       115 tests:    109 pass, 6 fail
+>>>>
+>>>> Linux version:    6.1.138-rc1-gca7b19b902b8
+>>>> Boards tested:    tegra124-jetson-tk1, tegra186-p2771-0000,
+>>>>                   tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+>>>>                   tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+>>>>                   tegra210-p2371-2180, tegra210-p3450-0000,
+>>>>                   tegra30-cardhu-a04
+>>>>
+>>>> Test failures:    tegra186-p2771-0000: cpu-hotplug
+>>>>                   tegra194-p2972-0000: pm-system-suspend.sh
+>>>>                   tegra210-p2371-2180: cpu-hotplug
+>>>>                   tegra210-p3450-0000: cpu-hotplug
+>>>
+>>>
+>>> I am seeing some crashes like the following ...
+>>>
+>>> [  212.540298] Unable to handle kernel NULL pointer dereference at
+>>> virtual address 0000000000000000
+>>> [  212.549130] Mem abort info:
+>>> [  212.552008]   ESR = 0x0000000096000004
+>>> [  212.555822]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>> [  212.561151]   SET = 0, FnV = 0
+>>> [  212.564213]   EA = 0, S1PTW = 0
+>>> [  212.567361]   FSC = 0x04: level 0 translation fault
+>>> [  212.572246] Data abort info:
+>>> [  212.575137]   ISV = 0, ISS = 0x00000004
+>>> [  212.578980]   CM = 0, WnR = 0
+>>> [  212.581945] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000103824000
+>>> [  212.588394] [0000000000000000] pgd=0000000000000000,
+>>> p4d=0000000000000000
+>>> [  212.595199] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>>> [  212.601465] Modules linked in: snd_soc_tegra210_mixer
+>>> snd_soc_tegra210_ope snd_soc_tegra186_asrc snd_soc_tegra210_adx
+>>> snd_soc_tegra210_amx snd_soc_tegra210_mvc snd_soc_tegra210_sfc
+>>> snd_soc_tegra210_admaif snd_soc_tegra186_dspk snd_soc_tegra210_dmic
+>>> snd_soc_tegra_pcm snd_soc_tegra210_i2s tegra_drm drm_dp_aux_bus cec
+>>> drm_display_helper drm_kms_helper snd_soc_tegra210_ahub tegra210_adma
+>>> drm snd_soc_tegra_audio_graph_card snd_soc_audio_graph_card crct10dif_ce
+>>> snd_soc_simple_card_utils at24 tegra_bpmp_thermal tegra_aconnect
+>>> snd_hda_codec_hdmi snd_hda_tegra snd_hda_codec snd_hda_core tegra_xudc
+>>> host1x ina3221 ip_tables x_tables ipv6
+>>> [  212.657003] CPU: 0 PID: 44 Comm: kworker/0:1 Tainted: G
+>>> S                 6.1.138-rc1-gca7b19b902b8 #1
+>>> [  212.666306] Hardware name: NVIDIA Jetson TX2 Developer Kit (DT)
+>>> [  212.672221] Workqueue: events work_for_cpu_fn
+>>> [  212.676588] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS
+>>> BTYPE=--)
+>>> [  212.683546] pc : percpu_ref_put_many.constprop.0+0x18/0xe0
+>>> [  212.689036] lr : percpu_ref_put_many.constprop.0+0x18/0xe0
+>>> [  212.694520] sp : ffff80000a5fbc70
+>>> [  212.697832] x29: ffff80000a5fbc70 x28: ffff800009ba3750 x27:
+>>> 0000000000000000
+>>> [  212.704970] x26: 0000000000000001 x25: 0000000000000028 x24:
+>>> 0000000000000000
+>>> [  212.712105] x23: ffff8001eb1a1000 x22: 0000000000000001 x21:
+>>> 0000000000000000
+>>> [  212.719240] x20: 0000000000000000 x19: 0000000000000000 x18:
+>>> ffffffffffffffff
+>>> [  212.726376] x17: 00000000000000a1 x16: 0000000000000001 x15:
+>>> fffffc0002017800
+>>> [  212.733510] x14: 00000000fffffffe x13: dead000000000100 x12:
+>>> dead000000000122
+>>> [  212.740645] x11: 0000000000000001 x10: 00000000f0000080 x9 :
+>>> 0000000000000000
+>>> [  212.747780] x8 : ffff80000a5fbc98 x7 : 00000000ffffffff x6 :
+>>> ffff80000a19c410
+>>> [  212.754914] x5 : ffff0001f4d44750 x4 : 0000000000000000 x3 :
+>>> 0000000000000000
+>>> [  212.762048] x2 : ffff8001eb1a1000 x1 : ffff000080a48ec0 x0 :
+>>> 0000000000000001
+>>> [  212.769184] Call trace:
+>>> [  212.771628]  percpu_ref_put_many.constprop.0+0x18/0xe0
+>>> [  212.776769]  memcg_hotplug_cpu_dead+0x60/0x90
+>>> [  212.781127]  cpuhp_invoke_callback+0x118/0x230
+>>> [  212.785574]  _cpu_down+0x180/0x3b0
+>>> [  212.788981]  __cpu_down_maps_locked+0x18/0x30
+>>> [  212.793339]  work_for_cpu_fn+0x1c/0x30
+>>> [  212.797086]  process_one_work+0x1cc/0x320
+>>> [  212.801097]  worker_thread+0x2c8/0x450
+>>> [  212.804846]  kthread+0x10c/0x110
+>>> [  212.808075]  ret_from_fork+0x10/0x20
+>>> [  212.811657] Code: 910003fd f9000bf3 aa0003f3 97f9c873 (f9400260)
+>>> [  212.817745] ---[ end trace 0000000000000000 ]---
+>>>
+>>> I will kick off a bisect now.
+>>
+>>
+>> I wonder if it is this old chestnut again ...
+>>
+>> Shakeel Butt <shakeel.butt@linux.dev>
+>>      memcg: drain obj stock on cpu hotplug teardown
+>>
+>> I will try that first.
+> 
+> Argh, that one keeps slipping back in.  I'll go drop it from here, and
+> 6.6.y as I don't see what would have fixed it from before.
 
-Initialize PPS DPLL with new callback operations if the feature is
-supported by the firmware.
+Thanks! Reverting that does fix it.
 
-Reviewed-by: Milena Olech <milena.olech@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
-v3:
-- align implementation with v3 changes of the dpll subsystem patches
----
- .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  20 ++
- drivers/net/ethernet/intel/ice/ice_common.c   |  26 +++
- drivers/net/ethernet/intel/ice/ice_common.h   |   3 +
- drivers/net/ethernet/intel/ice/ice_dpll.c     | 191 +++++++++++++++++-
- drivers/net/ethernet/intel/ice/ice_dpll.h     |   6 +
- drivers/net/ethernet/intel/ice/ice_main.c     |   4 +
- 6 files changed, 249 insertions(+), 1 deletion(-)
+Jon
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h b/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-index bdee499f991a..0ae7387e0599 100644
---- a/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-+++ b/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-@@ -2272,6 +2272,22 @@ struct ice_aqc_get_pkg_info_resp {
- 	struct ice_aqc_get_pkg_info pkg_info[];
- };
- 
-+#define ICE_CGU_INPUT_PHASE_OFFSET_BYTES	6
-+
-+struct ice_cgu_input_measure {
-+	u8 phase_offset[ICE_CGU_INPUT_PHASE_OFFSET_BYTES];
-+	__le32 freq;
-+} __packed __aligned(sizeof(__le16));
-+
-+#define ICE_AQC_GET_CGU_IN_MEAS_DPLL_IDX_M	ICE_M(0xf, 0)
-+
-+/* Get CGU input measure command response data structure (indirect 0x0C59) */
-+struct ice_aqc_get_cgu_input_measure {
-+	u8 dpll_idx_opt;
-+	u8 length;
-+	u8 rsvd[6];
-+};
-+
- #define ICE_AQC_GET_CGU_MAX_PHASE_ADJ	GENMASK(30, 0)
- 
- /* Get CGU abilities command response data structure (indirect 0x0C61) */
-@@ -2721,6 +2737,7 @@ struct ice_aq_desc {
- 		struct ice_aqc_add_get_update_free_vsi vsi_cmd;
- 		struct ice_aqc_add_update_free_vsi_resp add_update_free_vsi_res;
- 		struct ice_aqc_download_pkg download_pkg;
-+		struct ice_aqc_get_cgu_input_measure get_cgu_input_measure;
- 		struct ice_aqc_set_cgu_input_config set_cgu_input_config;
- 		struct ice_aqc_get_cgu_input_config get_cgu_input_config;
- 		struct ice_aqc_set_cgu_output_config set_cgu_output_config;
-@@ -2772,6 +2789,8 @@ enum ice_aq_err {
- 	ICE_AQ_RC_OK		= 0,  /* Success */
- 	ICE_AQ_RC_EPERM		= 1,  /* Operation not permitted */
- 	ICE_AQ_RC_ENOENT	= 2,  /* No such element */
-+	ICE_AQ_RC_ESRCH		= 3,  /* Bad opcode */
-+	ICE_AQ_RC_EAGAIN	= 8,  /* Try again */
- 	ICE_AQ_RC_ENOMEM	= 9,  /* Out of memory */
- 	ICE_AQ_RC_EBUSY		= 12, /* Device or resource busy */
- 	ICE_AQ_RC_EEXIST	= 13, /* Object already exists */
-@@ -2927,6 +2946,7 @@ enum ice_adminq_opc {
- 	ice_aqc_opc_get_pkg_info_list			= 0x0C43,
- 
- 	/* 1588/SyncE commands/events */
-+	ice_aqc_opc_get_cgu_input_measure		= 0x0C59,
- 	ice_aqc_opc_get_cgu_abilities			= 0x0C61,
- 	ice_aqc_opc_set_cgu_input_config		= 0x0C62,
- 	ice_aqc_opc_get_cgu_input_config		= 0x0C63,
-diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
-index 4fedf0181c4e..48ff515d7c61 100644
---- a/drivers/net/ethernet/intel/ice/ice_common.c
-+++ b/drivers/net/ethernet/intel/ice/ice_common.c
-@@ -4970,6 +4970,32 @@ ice_dis_vsi_rdma_qset(struct ice_port_info *pi, u16 count, u32 *qset_teid,
- 	return status;
- }
- 
-+/**
-+ * ice_aq_get_cgu_input_pin_measure - get input pin signal measurements
-+ * @hw: pointer to the HW struct
-+ * @dpll_idx: index of dpll to be measured
-+ * @meas: array to be filled with results
-+ * @meas_num: max number of results array can hold
-+ *
-+ * Get CGU measurements (0x0C59) of phase and frequency offsets for input
-+ * pins on given dpll.
-+ *
-+ * Return: 0 on success or negative value on failure.
-+ */
-+int ice_aq_get_cgu_input_pin_measure(struct ice_hw *hw, u8 dpll_idx,
-+				     struct ice_cgu_input_measure *meas,
-+				     u16 meas_num)
-+{
-+	struct ice_aqc_get_cgu_input_measure *cmd;
-+	struct ice_aq_desc desc;
-+
-+	ice_fill_dflt_direct_cmd_desc(&desc, ice_aqc_opc_get_cgu_input_measure);
-+	cmd = &desc.params.get_cgu_input_measure;
-+	cmd->dpll_idx_opt = dpll_idx & ICE_AQC_GET_CGU_IN_MEAS_DPLL_IDX_M;
-+
-+	return ice_aq_send_cmd(hw, &desc, meas, meas_num * sizeof(*meas), NULL);
-+}
-+
- /**
-  * ice_aq_get_cgu_abilities - get cgu abilities
-  * @hw: pointer to the HW struct
-diff --git a/drivers/net/ethernet/intel/ice/ice_common.h b/drivers/net/ethernet/intel/ice/ice_common.h
-index 64c530b39191..c70f56d897dc 100644
---- a/drivers/net/ethernet/intel/ice/ice_common.h
-+++ b/drivers/net/ethernet/intel/ice/ice_common.h
-@@ -229,6 +229,9 @@ void ice_replay_post(struct ice_hw *hw);
- struct ice_q_ctx *
- ice_get_lan_q_ctx(struct ice_hw *hw, u16 vsi_handle, u8 tc, u16 q_handle);
- int ice_sbq_rw_reg(struct ice_hw *hw, struct ice_sbq_msg_input *in, u16 flag);
-+int ice_aq_get_cgu_input_pin_measure(struct ice_hw *hw, u8 dpll_idx,
-+				     struct ice_cgu_input_measure *meas,
-+				     u16 meas_num);
- int
- ice_aq_get_cgu_abilities(struct ice_hw *hw,
- 			 struct ice_aqc_get_cgu_abilities *abilities);
-diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
-index bce3ad6ca2a6..4aeb5a7168b4 100644
---- a/drivers/net/ethernet/intel/ice/ice_dpll.c
-+++ b/drivers/net/ethernet/intel/ice/ice_dpll.c
-@@ -11,6 +11,8 @@
- #define ICE_DPLL_RCLK_NUM_PER_PF		1
- #define ICE_DPLL_PIN_ESYNC_PULSE_HIGH_PERCENT	25
- #define ICE_DPLL_PIN_GEN_RCLK_FREQ		1953125
-+#define ICE_DPLL_INPUT_REF_NUM			10
-+#define ICE_DPLL_PHASE_OFFSET_PERIOD		2
- 
- /**
-  * enum ice_dpll_pin_type - enumerate ice pin types:
-@@ -587,6 +589,67 @@ static int ice_dpll_mode_get(const struct dpll_device *dpll, void *dpll_priv,
- 	return 0;
- }
- 
-+/**
-+ * ice_dpll_phase_offset_monitor_set - set phase offset monitor state
-+ * @dpll: registered dpll pointer
-+ * @dpll_priv: private data pointer passed on dpll registration
-+ * @state: feature state to be set
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Enable/disable phase offset monitor feature of dpll.
-+ *
-+ * Context: Acquires and releases pf->dplls.lock
-+ * Return: 0 - success
-+ */
-+static int ice_dpll_phase_offset_monitor_set(const struct dpll_device *dpll,
-+					     void *dpll_priv,
-+					     enum dpll_feature_state state,
-+					     struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll *d = dpll_priv;
-+	struct ice_pf *pf = d->pf;
-+
-+	mutex_lock(&pf->dplls.lock);
-+	if (state == DPLL_FEATURE_STATE_ENABLE)
-+		d->phase_offset_monitor_period = ICE_DPLL_PHASE_OFFSET_PERIOD;
-+	else
-+		d->phase_offset_monitor_period = 0;
-+	mutex_unlock(&pf->dplls.lock);
-+
-+	return 0;
-+}
-+
-+/**
-+ * ice_dpll_phase_offset_monitor_get - get phase offset monitor state
-+ * @dpll: registered dpll pointer
-+ * @dpll_priv: private data pointer passed on dpll registration
-+ * @state: on success holds current state of phase offset monitor
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Provides current state of phase offset monitor
-+ * features on dpll device.
-+ *
-+ * Context: Acquires and releases pf->dplls.lock
-+ * Return: 0 - success
-+ */
-+static int ice_dpll_phase_offset_monitor_get(const struct dpll_device *dpll,
-+					     void *dpll_priv,
-+					     enum dpll_feature_state *state,
-+					     struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll *d = dpll_priv;
-+	struct ice_pf *pf = d->pf;
-+
-+	mutex_lock(&pf->dplls.lock);
-+	if (d->phase_offset_monitor_period)
-+		*state = DPLL_FEATURE_STATE_ENABLE;
-+	else
-+		*state = DPLL_FEATURE_STATE_DISABLE;
-+	mutex_unlock(&pf->dplls.lock);
-+
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_pin_state_set - set pin's state on dpll
-  * @pin: pointer to a pin
-@@ -1093,12 +1156,15 @@ ice_dpll_phase_offset_get(const struct dpll_pin *pin, void *pin_priv,
- 			  const struct dpll_device *dpll, void *dpll_priv,
- 			  s64 *phase_offset, struct netlink_ext_ack *extack)
- {
-+	struct ice_dpll_pin *p = pin_priv;
- 	struct ice_dpll *d = dpll_priv;
- 	struct ice_pf *pf = d->pf;
- 
- 	mutex_lock(&pf->dplls.lock);
- 	if (d->active_input == pin)
- 		*phase_offset = d->phase_offset * ICE_DPLL_PHASE_OFFSET_FACTOR;
-+	else if (d->phase_offset_monitor_period)
-+		*phase_offset = p->phase_offset * ICE_DPLL_PHASE_OFFSET_FACTOR;
- 	else
- 		*phase_offset = 0;
- 	mutex_unlock(&pf->dplls.lock);
-@@ -1459,6 +1525,13 @@ static const struct dpll_device_ops ice_dpll_ops = {
- 	.mode_get = ice_dpll_mode_get,
- };
- 
-+static const struct dpll_device_ops ice_dpll_pom_ops = {
-+	.lock_status_get = ice_dpll_lock_status_get,
-+	.mode_get = ice_dpll_mode_get,
-+	.phase_offset_monitor_set = ice_dpll_phase_offset_monitor_set,
-+	.phase_offset_monitor_get = ice_dpll_phase_offset_monitor_get,
-+};
-+
- /**
-  * ice_generate_clock_id - generates unique clock_id for registering dpll.
-  * @pf: board private structure
-@@ -1503,6 +1576,110 @@ static void ice_dpll_notify_changes(struct ice_dpll *d)
- 	}
- }
- 
-+/**
-+ * ice_dpll_is_pps_phase_monitor - check if dpll capable of phase offset monitor
-+ * @pf: pf private structure
-+ *
-+ * Check if firmware is capable of supporting admin command to provide
-+ * phase offset monitoring on all the input pins on PPS dpll.
-+ *
-+ * Returns:
-+ * * true - PPS dpll phase offset monitoring is supported
-+ * * false - PPS dpll phase offset monitoring is not supported
-+ */
-+static bool ice_dpll_is_pps_phase_monitor(struct ice_pf *pf)
-+{
-+	struct ice_cgu_input_measure meas[ICE_DPLL_INPUT_REF_NUM];
-+	int ret = ice_aq_get_cgu_input_pin_measure(&pf->hw, DPLL_TYPE_PPS, meas,
-+						   ARRAY_SIZE(meas));
-+
-+	if (ret && pf->hw.adminq.sq_last_status == ICE_AQ_RC_ESRCH)
-+		return false;
-+
-+	return true;
-+}
-+
-+/**
-+ * ice_dpll_pins_notify_mask - notify dpll subsystem about bulk pin changes
-+ * @pins: array of ice_dpll_pin pointers registered within dpll subsystem
-+ * @pin_num: number of pins
-+ * @phase_offset_ntf_mask: bitmask of pin indexes to notify
-+ *
-+ * Iterate over array of pins and call dpll subsystem pin notify if
-+ * corresponding pin index within bitmask is set.
-+ *
-+ * Context: Must be called while pf->dplls.lock is released.
-+ */
-+static void ice_dpll_pins_notify_mask(struct ice_dpll_pin *pins,
-+				      u8 pin_num,
-+				      u32 phase_offset_ntf_mask)
-+{
-+	int i = 0;
-+
-+	for (i = 0; i < pin_num; i++)
-+		if (phase_offset_ntf_mask & (1 << i))
-+			dpll_pin_change_ntf(pins[i].pin);
-+}
-+
-+/**
-+ * ice_dpll_pps_update_phase_offsets - update phase offset measurements
-+ * @pf: pf private structure
-+ * @phase_offset_pins_updated: returns mask of updated input pin indexes
-+ *
-+ * Read phase offset measurements for PPS dpll device and store values in
-+ * input pins array. On success phase_offset_pins_updated - fills bitmask of
-+ * updated input pin indexes, pins shall be notified.
-+ *
-+ * Context: Shall be called with pf->dplls.lock being locked.
-+ * Returns:
-+ * * 0 - success or no data available
-+ * * negative - AQ failure
-+ */
-+static int ice_dpll_pps_update_phase_offsets(struct ice_pf *pf,
-+					     u32 *phase_offset_pins_updated)
-+{
-+	struct ice_cgu_input_measure meas[ICE_DPLL_INPUT_REF_NUM];
-+	struct ice_dpll_pin *p;
-+	s64 phase_offset, tmp;
-+	int i, j, ret;
-+
-+	*phase_offset_pins_updated = 0;
-+	ret = ice_aq_get_cgu_input_pin_measure(&pf->hw, DPLL_TYPE_PPS, meas,
-+					       ARRAY_SIZE(meas));
-+	if (ret && pf->hw.adminq.sq_last_status == ICE_AQ_RC_EAGAIN) {
-+		return 0;
-+	} else if (ret) {
-+		dev_err(ice_pf_to_dev(pf),
-+			"failed to get input pin measurements dpll=%d, ret=%d %s\n",
-+			DPLL_TYPE_PPS, ret,
-+			ice_aq_str(pf->hw.adminq.sq_last_status));
-+		return ret;
-+	}
-+	for (i = 0; i < pf->dplls.num_inputs; i++) {
-+		p = &pf->dplls.inputs[i];
-+		phase_offset = 0;
-+		for (j = 0; j < ICE_CGU_INPUT_PHASE_OFFSET_BYTES; j++) {
-+			tmp = meas[i].phase_offset[j];
-+#ifdef __LITTLE_ENDIAN
-+			phase_offset += tmp << 8 * j;
-+#else
-+			phase_offset += tmp << 8 *
-+				(ICE_CGU_INPUT_PHASE_OFFSET_BYTES - 1 - j);
-+#endif
-+		}
-+		phase_offset = sign_extend64(phase_offset, 47);
-+		if (p->phase_offset != phase_offset) {
-+			dev_dbg(ice_pf_to_dev(pf),
-+				"phase offset changed for pin:%d old:%llx, new:%llx\n",
-+				p->idx, p->phase_offset, phase_offset);
-+			p->phase_offset = phase_offset;
-+			*phase_offset_pins_updated |= (1 << i);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_update_state - update dpll state
-  * @pf: pf private structure
-@@ -1589,14 +1766,19 @@ static void ice_dpll_periodic_work(struct kthread_work *work)
- 	struct ice_pf *pf = container_of(d, struct ice_pf, dplls);
- 	struct ice_dpll *de = &pf->dplls.eec;
- 	struct ice_dpll *dp = &pf->dplls.pps;
-+	u32 phase_offset_ntf = 0;
- 	int ret = 0;
- 
- 	if (ice_is_reset_in_progress(pf->state))
- 		goto resched;
- 	mutex_lock(&pf->dplls.lock);
-+	d->periodic_counter++;
- 	ret = ice_dpll_update_state(pf, de, false);
- 	if (!ret)
- 		ret = ice_dpll_update_state(pf, dp, false);
-+	if (!ret && dp->phase_offset_monitor_period &&
-+	    d->periodic_counter % dp->phase_offset_monitor_period == 0)
-+		ret = ice_dpll_pps_update_phase_offsets(pf, &phase_offset_ntf);
- 	if (ret) {
- 		d->cgu_state_acq_err_num++;
- 		/* stop rescheduling this worker */
-@@ -1611,6 +1793,9 @@ static void ice_dpll_periodic_work(struct kthread_work *work)
- 	mutex_unlock(&pf->dplls.lock);
- 	ice_dpll_notify_changes(de);
- 	ice_dpll_notify_changes(dp);
-+	if (phase_offset_ntf)
-+		ice_dpll_pins_notify_mask(d->inputs, d->num_inputs,
-+					  phase_offset_ntf);
- 
- resched:
- 	/* Run twice a second or reschedule if update failed */
-@@ -2011,8 +2196,12 @@ ice_dpll_init_dpll(struct ice_pf *pf, struct ice_dpll *d, bool cgu,
- 	}
- 	d->pf = pf;
- 	if (cgu) {
-+		const struct dpll_device_ops *ops = &ice_dpll_ops;
-+
-+		if (type == DPLL_TYPE_PPS && ice_dpll_is_pps_phase_monitor(pf))
-+			ops =  &ice_dpll_pom_ops;
- 		ice_dpll_update_state(pf, d, true);
--		ret = dpll_device_register(d->dpll, type, &ice_dpll_ops, d);
-+		ret = dpll_device_register(d->dpll, type, ops, d);
- 		if (ret) {
- 			dpll_device_put(d->dpll);
- 			return ret;
-diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.h b/drivers/net/ethernet/intel/ice/ice_dpll.h
-index c320f1bf7d6d..290babeef58f 100644
---- a/drivers/net/ethernet/intel/ice/ice_dpll.h
-+++ b/drivers/net/ethernet/intel/ice/ice_dpll.h
-@@ -19,6 +19,7 @@
-  * @prop: pin properties
-  * @freq: current frequency of a pin
-  * @phase_adjust: current phase adjust value
-+ * @phase_offset: monitored phase offset value
-  */
- struct ice_dpll_pin {
- 	struct dpll_pin *pin;
-@@ -31,6 +32,7 @@ struct ice_dpll_pin {
- 	struct dpll_pin_properties prop;
- 	u32 freq;
- 	s32 phase_adjust;
-+	s64 phase_offset;
- 	u8 status;
- };
- 
-@@ -47,6 +49,7 @@ struct ice_dpll_pin {
-  * @input_prio: priorities of each input
-  * @dpll_state: current dpll sync state
-  * @prev_dpll_state: last dpll sync state
-+ * @phase_offset_monitor_period: period for phase offset monitor read frequency
-  * @active_input: pointer to active input pin
-  * @prev_input: pointer to previous active input pin
-  */
-@@ -64,6 +67,7 @@ struct ice_dpll {
- 	enum dpll_lock_status dpll_state;
- 	enum dpll_lock_status prev_dpll_state;
- 	enum dpll_mode mode;
-+	u32 phase_offset_monitor_period;
- 	struct dpll_pin *active_input;
- 	struct dpll_pin *prev_input;
- };
-@@ -80,6 +84,7 @@ struct ice_dpll {
-  * @num_inputs: number of input pins available on dpll
-  * @num_outputs: number of output pins available on dpll
-  * @cgu_state_acq_err_num: number of errors returned during periodic work
-+ * @periodic_counter: counter of periodic work executions
-  * @base_rclk_idx: idx of first pin used for clock revocery pins
-  * @clock_id: clock_id of dplls
-  * @input_phase_adj_max: max phase adjust value for an input pins
-@@ -97,6 +102,7 @@ struct ice_dplls {
- 	u8 num_inputs;
- 	u8 num_outputs;
- 	int cgu_state_acq_err_num;
-+	u32 periodic_counter;
- 	u8 base_rclk_idx;
- 	u64 clock_id;
- 	s32 input_phase_adj_max;
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index 1fbe13ee93a8..9abc179e1bd3 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -7914,6 +7914,10 @@ const char *ice_aq_str(enum ice_aq_err aq_err)
- 		return "ICE_AQ_RC_EPERM";
- 	case ICE_AQ_RC_ENOENT:
- 		return "ICE_AQ_RC_ENOENT";
-+	case ICE_AQ_RC_ESRCH:
-+		return "ICE_AQ_RC_ESRCH";
-+	case ICE_AQ_RC_EAGAIN:
-+		return "ICE_AQ_RC_EAGAIN";
- 	case ICE_AQ_RC_ENOMEM:
- 		return "ICE_AQ_RC_ENOMEM";
- 	case ICE_AQ_RC_EBUSY:
 -- 
-2.38.1
+nvpublic
 
 
