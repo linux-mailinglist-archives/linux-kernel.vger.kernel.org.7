@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-640301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA06AB0304
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:39:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DAEAB0307
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C971C07DE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:39:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEF69B207CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DAB2874ED;
-	Thu,  8 May 2025 18:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDAbB5eE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCF3287506;
+	Thu,  8 May 2025 18:39:47 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C214C286D68;
-	Thu,  8 May 2025 18:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063CB286D61;
+	Thu,  8 May 2025 18:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746729561; cv=none; b=QeaU8O96S/1ynALkxZarBjAqI+kJ3aDzZG7G2HVQk15fPi/FN60AbJMP0gMSp4Kpu9/hu9V4uahoqfasC0Io72A4YgWSwniUG5tpaoUdih7CLAl0lVr94n60yYPTRqewTS6SWOodHKAJZRxJceV66XH1TQklThGD5qV6NCl4RGg=
+	t=1746729587; cv=none; b=UPEQl7bfOUv2cYUPyR/wgD1ZR0Ap3rB7BtsjX54VKweaThxfHqSlU56dFH1M3cHp8c/YnzYkpsIsTk8LaPxOg5ApE8vFQVTWKcsndTKcLoizHb/mVD+t9qaxl3Hz0AOq70rwPVsVuIU3J1VfOttCBrrihw72i1+b8GV0JFxwSfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746729561; c=relaxed/simple;
-	bh=aSLCvMPJiFtdHctPooEDdmXbWiWznln96hcDJ8bZEhQ=;
+	s=arc-20240116; t=1746729587; c=relaxed/simple;
+	bh=XijhJI+zS6x49k5yeDbJQm7J5mBLadnfpbOoE7T0cAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2vhewlj0Wef16GPulNYXqRotoNhN2cGIlBdSyPeSpHedzQxi3CEXt8efK5XcbhNEyhoLP+WwHJZgGD3RNVsOQ2Y1mz/6zAZAQDOJD6RHSqUL8BmPHI2pqb7YfOvWFbsV4PpJYYvXjzKZNfGeXdFWl6Xos90DrOrfafGwHURDcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDAbB5eE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A3E0C4CEE7;
-	Thu,  8 May 2025 18:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746729560;
-	bh=aSLCvMPJiFtdHctPooEDdmXbWiWznln96hcDJ8bZEhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QDAbB5eEujHm6EsEQZ9Z2k6629vZYnNcpL9OF3ut5SmCuCYYISa3Y5t+XSFz29nCN
-	 kvIWRQin3ExBhrCgC9dsYnwFTRdaNIWUJIeWEaxhhxq8Mk6h1gxKCnaAsG2bbkU/qD
-	 HOtK2L3xeCDILApkH+n0wO3TRIUDct4pcW4ZeTCpS8BEYnNEGwPf31obEANEhf1JiQ
-	 YYMezgKwpRMzKMbv4uCEhukggb58k/Zkf6mqHMT4iq0qo0F+g8brAZC3Dlt4MDpBqD
-	 KhEu9C4/CzFYc/NiMKXTAYpUW8VHA51KkvKDl1WOkaG5qH5rO2maQVoYwptapRwDn2
-	 V6KBCR1Y5vI7w==
-Date: Thu, 8 May 2025 18:39:18 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: ardb@kernel.org, bp@alien8.de, brgerst@gmail.com,
-	dave.hansen@linux.intel.com, decui@microsoft.com,
-	dimitri.sivanich@hpe.com, gautham.shenoy@amd.com,
-	haiyangz@microsoft.com, hpa@zytor.com, imran.f.khan@oracle.com,
-	jacob.jun.pan@linux.intel.com, jpoimboe@kernel.org,
-	justin.ernst@hpe.com, kprateek.nayak@amd.com, kyle.meyer@hpe.com,
-	kys@microsoft.com, lenb@kernel.org, mhklinux@outlook.com,
-	mingo@redhat.com, nikunj@amd.com, papaluri@amd.com,
-	patryk.wlazlyn@linux.intel.com, peterz@infradead.org,
-	rafael@kernel.org, russ.anderson@hpe.com, sohil.mehta@intel.com,
-	steve.wahl@hpe.com, tglx@linutronix.de, thomas.lendacky@amd.com,
-	tiala@microsoft.com, wei.liu@kernel.org, yuehaibing@huawei.com,
-	linux-acpi@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, bperkins@microsoft.com,
-	sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next 0/2] arch/x86, x86/hyperv: Few fixes for the
- AP startup
-Message-ID: <aBz6Vuv9w4uRjaG_@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-References: <20250507182227.7421-1-romank@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9rHOEsgP+yRb5wKsULjCSIp9qMPq7uRWUKQIxNNcv4p4VS0KNnGZfvaNeXgWeNk9RBycpX6GpRdmDRlaLwtREE8G8CGCATHt/JIpNwRo296/6m63/FDgsogvYh1FvtOmvBEoiDl4yV11E9Ro1ioKBibQj1jAqJJ0C+b2KdnAus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: vJRmdyLwS1qP5DKFV9naaA==
+X-CSE-MsgGUID: PUd5gPIuQQ2R3697Jx6qVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="58748091"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="58748091"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 11:39:45 -0700
+X-CSE-ConnectionGUID: FXSPScreQhqUZAukaZ7+HQ==
+X-CSE-MsgGUID: JAmpC+y1QTqKYbV4vkHXXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="167321959"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 11:39:41 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1uD69i-00000004CG8-44NK;
+	Thu, 08 May 2025 21:39:38 +0300
+Date: Thu, 8 May 2025 21:39:38 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] iio: adc: ad7606: add offset and phase
+ calibration support
+Message-ID: <aBz6am83scKywvkn@smile.fi.intel.com>
+References: <20250508-wip-bl-ad7606-calibration-v4-0-91a3f2837e6b@baylibre.com>
+ <20250508-wip-bl-ad7606-calibration-v4-3-91a3f2837e6b@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,52 +71,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250507182227.7421-1-romank@linux.microsoft.com>
+In-Reply-To: <20250508-wip-bl-ad7606-calibration-v4-3-91a3f2837e6b@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, May 07, 2025 at 11:22:24AM -0700, Roman Kisel wrote:
-> This patchset combines two patches that depend on each other and were not applying
-> cleanly:
->   1. Fix APIC ID and VP index confusion in hv_snp_boot_ap():
->     https://lore.kernel.org/linux-hyperv/20250430204720.108962-1-romank@linux.microsoft.com/
->   2. Provide the CPU number in the wakeup AP callback:
->     https://lore.kernel.org/linux-hyperv/20250430204720.108962-1-romank@linux.microsoft.com/
+On Thu, May 08, 2025 at 12:06:07PM +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
 > 
-> I rebased the patches on top of the latest hyperv-next tree and updated the second patch
-> that broke the linux-next build. That fix that, I made one non-functional change:
-> updated the signature of numachip_wakeup_secondary() to match the parameter list of
-> wakeup_secondary_cpu().
+> Add support for offset and phase calibration, only for
+> devices that support software mode, that are:
 > 
-> Roman Kisel (2):
->   x86/hyperv: Fix APIC ID and VP index confusion in hv_snp_boot_ap()
->   arch/x86: Provide the CPU number in the wakeup AP callback
+> ad7606b
+> ad7606c-16
+> ad7606c-18
 
-I queue these up.
+...
 
-Just so you know I'm experimenting a new setup. These have been applied
-to hyperv-next-staging. It will take some time for them to propagate to
-hyperv-next.
+> +static int ad7606_get_calib_offset(struct ad7606_state *st, int ch, int *val)
+> +{
+> +	int ret;
+> +
+> +	ret = st->bops->reg_read(st, AD7606_CALIB_OFFSET(ch));
+> +	if (ret < 0)
+> +		return ret;
 
-Thanks,
-Wei.
+> +	*val = st->chip_info->calib_offset_avail[0] + ret *
+> +		st->chip_info->calib_offset_avail[1];
 
-> 
->  arch/x86/coco/sev/core.c             | 13 ++-----
->  arch/x86/hyperv/hv_init.c            | 33 +++++++++++++++++
->  arch/x86/hyperv/hv_vtl.c             | 54 ++++------------------------
->  arch/x86/hyperv/ivm.c                | 11 ++++--
->  arch/x86/include/asm/apic.h          |  8 ++---
->  arch/x86/include/asm/mshyperv.h      |  7 ++--
->  arch/x86/kernel/acpi/madt_wakeup.c   |  2 +-
->  arch/x86/kernel/apic/apic_noop.c     |  8 ++++-
->  arch/x86/kernel/apic/apic_numachip.c |  2 +-
->  arch/x86/kernel/apic/x2apic_uv_x.c   |  2 +-
->  arch/x86/kernel/smpboot.c            | 10 +++---
->  include/hyperv/hvgdk_mini.h          |  2 +-
->  12 files changed, 76 insertions(+), 76 deletions(-)
-> 
-> 
-> base-commit: 9b0844d87b1407681b78130429f798beb366f43f
-> -- 
-> 2.43.0
-> 
+You are too fast with new versions... As I pointed out, this is not a logical
+split. My only concern was the column, i.e. to be as
+
+	*val = st->chip_info->calib_offset_avail[0] +
+	       ret * st->chip_info->calib_offset_avail[1];
+
+> +	return 0;
+> +}
+
+...
+
+> +	val -= start_val;
+> +	val /= step_val;
+
+Hmm...
+
+To me the
+
+	val = (val - start_val) / step_val;
+
+looks better as it immediately gives an idea of the initial content of the val.
+Ideally I would even add a new temporary variable for this, so the operand and
+the assignee won't be the same variable.
+
+> +	return st->bops->reg_write(st, AD7606_CALIB_OFFSET(ch), val);
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
