@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-640569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD171AB068E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC296AB0690
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6531B680B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CC99886B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEC423816C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC83023817D;
 	Thu,  8 May 2025 23:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6WEkkw7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIqmAPuO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA4122DF84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9C72153ED
 	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 23:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746747217; cv=none; b=HKf5c9SXKVBBcYycqDfiTPFH8Cf4aYat4Qm4S33A2u7dCK15etQpqmtQg8i2liur7usmJMuj5cHQe1JGPAIurjzrGowFGqdLuAYcVeRdH2pZ4XUMk9MvnbI+lt6FBg7dcUm4TaIQT6jfS/Mhs9waFho06yd/yg6vHo1mC6jrvSs=
+	t=1746747217; cv=none; b=NnvevZbXHNH4cDLLu3VCCmGnVY+uYm+y7uuXqQlpc3yAUOek+DWeoBeeLH84mGmGHDCGn0NkyyvuDw1vNxvxXQ+5vbzcsfx4NrpE7hBwlqsAvvYEjzElTIx/EnaoBfH40v5v0zXWSg3iqn/z6zQp4aj1QBNhV+ZwUBe5zZRy3nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746747217; c=relaxed/simple;
-	bh=/+i4NOmtNmiJBCyQ4d45E7T91BkwFjUY+T60jMduKPo=;
+	bh=ntY2Sw3SfTBZAtAeM3adbzynb7JDNJCcwtct5/GAXqc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VzcJwJqd2F+PSJOtak5mkBipFtj7rwFrvyZXYJIdWNPSjIhJ6tXjJFswviM0RhADqu1ScfUs9chPR2ERPQMcIaQXjMpYwz/fVoJmt2OwWMKlWhCRRhvirXcZfKlgRL9Wbx6vMtK5ycLmXROjps/+c88X2d/kxdlMiQyAHg0g/9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6WEkkw7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B40EC4CEF4;
+	 MIME-Version; b=C44J0UiqGJCF0XgXAeIFsGPU1FrSFEII7fgQxVD6ko+YrRsGj+jMsRx7TIO3tjoMxhATHdjl55J+ubb+HWCjIoTGKPxt1JRSZReXrURE9MKkEWUtasOMxUemfyYRwzYPcr7/g/Bvntuiw5kWqRMBvj5FhH6lAy5UJ0F9+zOf7Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIqmAPuO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5AAC4CEF5;
 	Thu,  8 May 2025 23:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746747217;
-	bh=/+i4NOmtNmiJBCyQ4d45E7T91BkwFjUY+T60jMduKPo=;
+	bh=ntY2Sw3SfTBZAtAeM3adbzynb7JDNJCcwtct5/GAXqc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G6WEkkw7BA8evc1W2mq2ur18opVPk8sCZiZgAK0qj597cAWEsk0F3QplYYWcFHz01
-	 GjQgP0PJtuLp49oY8tUcyw6Lff5abAjvbiqHtgv9icdiShkjjCSCRijtS9a/uoH/At
-	 N6NifAXOQ0oL8ecyKtGhAoSFnVD5uaxVcyu+YMBOYw616MZb5QeFRYSUPj3lEHtHAg
-	 LIJhRMnYCSEsj1Ku6Kg9HmazsdoPEfFz1o4nej/9p64g1VWvf5HTDJ1vgn/A/qPMZ7
-	 7prrbYGXMxLOT0g+sy+SngaEW0jzPvM/X89/Z40zLTjSvXlne5tPClzZb5GMvMroru
-	 h+9b6+eJEUCLg==
+	b=TIqmAPuOGY5ijLqa8wv4PirHncJn45vXFlOTP2x4xA0WYF38LRQC/tSOhA280zvxr
+	 z/IJyafDxJuOejRkZvQ3klQVjKGKM2sQvZHMOP9/sz3ap7E9xOnKhq8O45KfNpbUYe
+	 dfQEFCAUYnt4gXONCZDynsxNcnju8yosUWkMBCJ0/T8JmbElTbRZ2V4pb1/8ys+9y5
+	 kAZMltQdO4lX/yLiCBzGNkBO4792XZoOxLbk4gPeN1M7YTAEwtZ7CP5c5/k42o6/Ex
+	 k2OcwR+VkroBWyJSHeq58KlBJGGsBeSBUZSIL/RXY4n7OhS2t0o1lfG2eXzvYVj77+
+	 n60H9Vcl91EZA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6EF2DCE12A5; Thu,  8 May 2025 16:33:36 -0700 (PDT)
+	id 71E6BCE12A6; Thu,  8 May 2025 16:33:36 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -55,10 +55,10 @@ Cc: kernel-team@meta.com,
 	Jon Pan-Doh <pandoh@google.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v5 07/21] ratelimit: Avoid jiffies=0 special case
-Date: Thu,  8 May 2025 16:33:21 -0700
-Message-Id: <20250508233335.1996059-7-paulmck@kernel.org>
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH v5 08/21] ratelimit: Reduce ___ratelimit() false-positive rate limiting
+Date: Thu,  8 May 2025 16:33:22 -0700
+Message-Id: <20250508233335.1996059-8-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
 References: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
@@ -70,23 +70,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The ___ratelimit() function special-cases the jiffies-counter value of zero
-as "uninitialized".  This works well on 64-bit systems, where the jiffies
-counter is not going to return to zero for more than half a billion years
-on systems with HZ=1000, but similar 32-bit systems take less than 50 days
-to wrap the jiffies counter.  And although the consequences of wrapping the
-jiffies counter seem to be limited to minor confusion on the duration of
-the rate-limiting interval that happens to end at time zero, it is almost
-no work to avoid this confusion.
+From: Petr Mladek <pmladek@suse.com>
 
-Therefore, introduce a RATELIMIT_INITIALIZED bit to the ratelimit_state
-structure's ->flags field so that a ->begin value of zero is no longer
-special.
+Retain the locked design, but check rate-limiting even when the lock
+could not be acquired.
 
+Link: https://lore.kernel.org/all/Z_VRo63o2UsVoxLG@pathway.suse.cz/
 Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
 Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Cc: Petr Mladek <pmladek@suse.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
 Cc: Mateusz Guzik <mjguzik@gmail.com>
@@ -94,52 +88,120 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- include/linux/ratelimit.h       | 2 +-
- include/linux/ratelimit_types.h | 1 +
- lib/ratelimit.c                 | 4 +++-
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ include/linux/ratelimit.h       |  2 +-
+ include/linux/ratelimit_types.h |  2 +-
+ lib/ratelimit.c                 | 51 ++++++++++++++++++++++++---------
+ 3 files changed, 40 insertions(+), 15 deletions(-)
 
 diff --git a/include/linux/ratelimit.h b/include/linux/ratelimit.h
-index c78b92b3e5cd8..adfec24061d16 100644
+index adfec24061d16..7aaad158ee373 100644
 --- a/include/linux/ratelimit.h
 +++ b/include/linux/ratelimit.h
-@@ -43,7 +43,7 @@ static inline void ratelimit_state_reset_interval(struct ratelimit_state *rs, in
- 
+@@ -44,7 +44,7 @@ static inline void ratelimit_state_reset_interval(struct ratelimit_state *rs, in
  	raw_spin_lock_irqsave(&rs->lock, flags);
  	rs->interval = interval_init;
--	rs->begin = 0;
-+	rs->flags &= ~RATELIMIT_INITIALIZED;
- 	rs->printed = 0;
+ 	rs->flags &= ~RATELIMIT_INITIALIZED;
+-	rs->printed = 0;
++	atomic_set(&rs->rs_n_left, rs->burst);
  	ratelimit_state_reset_miss(rs);
  	raw_spin_unlock_irqrestore(&rs->lock, flags);
+ }
 diff --git a/include/linux/ratelimit_types.h b/include/linux/ratelimit_types.h
-index d21fe82b67f67..ef6711b6b229f 100644
+index ef6711b6b229f..b19c4354540ab 100644
 --- a/include/linux/ratelimit_types.h
 +++ b/include/linux/ratelimit_types.h
-@@ -11,6 +11,7 @@
+@@ -18,7 +18,7 @@ struct ratelimit_state {
  
- /* issue num suppressed message on exit */
- #define RATELIMIT_MSG_ON_RELEASE	BIT(0)
-+#define RATELIMIT_INITIALIZED		BIT(1)
- 
- struct ratelimit_state {
- 	raw_spinlock_t	lock;		/* protect the state */
+ 	int		interval;
+ 	int		burst;
+-	int		printed;
++	atomic_t	rs_n_left;
+ 	atomic_t	missed;
+ 	unsigned int	flags;
+ 	unsigned long	begin;
 diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 19ad3cdbd1711..bd6e3b429e333 100644
+index bd6e3b429e333..90c9fe57eb422 100644
 --- a/lib/ratelimit.c
 +++ b/lib/ratelimit.c
-@@ -49,8 +49,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+@@ -39,12 +39,22 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 		return 1;
+ 
+ 	/*
+-	 * If we contend on this state's lock then almost
+-	 * by definition we are too busy to print a message,
+-	 * in addition to the one that will be printed by
+-	 * the entity that is holding the lock already:
++	 * If we contend on this state's lock then just check if
++	 * the current burst is used or not. It might cause
++	 * false positive when we are past the interval and
++	 * the current lock owner is just about to reset it.
+ 	 */
+ 	if (!raw_spin_trylock_irqsave(&rs->lock, flags)) {
++		unsigned int rs_flags = READ_ONCE(rs->flags);
++
++		if (rs_flags & RATELIMIT_INITIALIZED && burst) {
++			int n_left;
++
++			n_left = atomic_dec_return(&rs->rs_n_left);
++			if (n_left >= 0)
++				return 1;
++		}
++
+ 		ratelimit_state_inc_miss(rs);
  		return 0;
  	}
- 
--	if (!rs->begin)
-+	if (!(rs->flags & RATELIMIT_INITIALIZED)) {
+@@ -52,27 +62,42 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 	if (!(rs->flags & RATELIMIT_INITIALIZED)) {
  		rs->begin = jiffies;
-+		rs->flags |= RATELIMIT_INITIALIZED;
-+	}
+ 		rs->flags |= RATELIMIT_INITIALIZED;
++		atomic_set(&rs->rs_n_left, rs->burst);
+ 	}
  
  	if (time_is_before_jiffies(rs->begin + interval)) {
- 		int m = ratelimit_state_reset_miss(rs);
+-		int m = ratelimit_state_reset_miss(rs);
++		int m;
++
++		/*
++		 * Reset rs_n_left ASAP to reduce false positives
++		 * in parallel calls, see above.
++		 */
++		atomic_set(&rs->rs_n_left, rs->burst);
++		rs->begin = jiffies;
+ 
++		m = ratelimit_state_reset_miss(rs);
+ 		if (m) {
+ 			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
+ 				printk_deferred(KERN_WARNING
+ 						"%s: %d callbacks suppressed\n", func, m);
+ 			}
+ 		}
+-		rs->begin   = jiffies;
+-		rs->printed = 0;
+ 	}
+-	if (burst && burst > rs->printed) {
+-		rs->printed++;
+-		ret = 1;
+-	} else {
+-		ratelimit_state_inc_miss(rs);
+-		ret = 0;
++	if (burst) {
++		int n_left;
++
++		/* The burst might have been taken by a parallel call. */
++		n_left = atomic_dec_return(&rs->rs_n_left);
++		if (n_left >= 0) {
++			ret = 1;
++			goto unlock_ret;
++		}
+ 	}
++
++	ratelimit_state_inc_miss(rs);
++	ret = 0;
++
++unlock_ret:
+ 	raw_spin_unlock_irqrestore(&rs->lock, flags);
+ 
+ 	return ret;
 -- 
 2.40.1
 
