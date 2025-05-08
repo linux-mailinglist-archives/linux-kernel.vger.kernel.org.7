@@ -1,115 +1,170 @@
-Return-Path: <linux-kernel+bounces-639329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF99AAF611
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:53:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB38AAF609
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BF6E4C75F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715181C0608B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2B8262FE3;
-	Thu,  8 May 2025 08:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C6823A997;
+	Thu,  8 May 2025 08:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKQSi/RW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SZnBWmGW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01991239E95;
-	Thu,  8 May 2025 08:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A350A21D3D1;
+	Thu,  8 May 2025 08:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746694372; cv=none; b=Q75JjVRER5R/UFOf8TEs0LxnrUulp+rcAlpEJooLXf3zMZfn2pV1Q7K4qFl//DxRbq4dNPz/ilgQh4+oTzGJRerEDiTHRW6LY/VvzmUB4NUa4X/uHBGkCfKKdTIv3uXO/uM0zwoure30bAkN4IHWm7+rXoLnHGzUkFdFyfg6j1w=
+	t=1746694346; cv=none; b=CmCauG12gPGZbsub2Chi2hQQgel8GaEQZTX0ncokmdCGkxqckYNAhVGZiLc666cBJat73H/0gFfxxcCfsmYWGqkVGS+58FqbEz59H00MHVLAAY2WNXOfnrAsiqzZ4QVn64VzhbBeFasPb1DQNEiIRnsm4ufiMNs55yJktBlZEAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746694372; c=relaxed/simple;
-	bh=znt+9wtzzRAcAOqqt9JwNgOU5Ajvi3gapCMlcDgxZ1U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PPUKoe4A2Ewi0gjcgItAKrTuG1pU9VX/HJ/DSKPsuTBlSyV9DM8i1VOSRVKbkQX7nKsEHm8VgrfRTiiJognFIRdTBMBvJcl1KUGqINRhwfQqZbMt4jgOfRWI6QobB1ttHJImd50C56PfXRToKXU5oOY8lT2xEWCDSL1SXfbdS9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKQSi/RW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C16C4CEEB;
-	Thu,  8 May 2025 08:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746694371;
-	bh=znt+9wtzzRAcAOqqt9JwNgOU5Ajvi3gapCMlcDgxZ1U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IKQSi/RWEXCNhb6G1V7+tfTHmK14VNAZP6kpeR82wdGTqn8Zc0VK1BU06s6t8ajUR
-	 boT3hXSu3ZHKqwxy6DoF9Ogno40s5H/d70gHNvFyqVBhl83Bev8ycm20yjmuFtrkVA
-	 ZeMf41S31jJQr1Ne/NnJdCGROsyU/QJol1vqmesoHdy4zikDCkcXHHCqswhJUKq29F
-	 7ZyjyonooSqD2D+F+NYKQ7W0Nd6ldmiVlcSKAoB4I+3CDZlbjRrQ8tyCOdp0YHxbj1
-	 9b/jPzomAbEgH5oIozwALyliGbnFOwBBG/FgF0i6AF0cvdKvzuj6I+JfqsUBztDQw5
-	 2AN1FyWXrSZuw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Thu, 08 May 2025 10:52:11 +0200
-Subject: [PATCH v8 3/3] MAINTAINERS: add configfs Rust abstractions
+	s=arc-20240116; t=1746694346; c=relaxed/simple;
+	bh=2JybxVuhzZ1IxMkumntzYATbXHx8Z2iVbmnLFMb4mQE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=H2xmJOfAckBGdAxOH/OuaI2nCQILwYb86t0do9F8nP2xbdm5C3J8C/x/EDtcALq/KxcmOl4he7b79+6WqJSWmLDRTvrMSTg6JkKijeum5yJwv1Riu3AGSrLVk9lTT3jR8erE+qb+VoiXbhns13+otfJolPRViwPgL0Y0J1gOzq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SZnBWmGW; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746694344; x=1778230344;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=2JybxVuhzZ1IxMkumntzYATbXHx8Z2iVbmnLFMb4mQE=;
+  b=SZnBWmGWaxosLSGy818VTgtaWmnSqs5gT8rnFVGh4pHaSqTcKIuU7WD4
+   k2TTL19eV369MePj+zqq0dDwLqeNCcv4SK5xwdHQma+gMoccL5+Eo68z6
+   BxshMmfVwa9Uli6FgfGlZCLox2Dkeou97fF2kooyY9a2MEbeASpBrkIVW
+   P9UQNYNb+ZqVcDd91ZU10U25ue78vxKXADq9om11+5wqsY43UGTq9oZRL
+   HVIyz/qqOPFqyUEubU+DqvSPfHFkHj962BhGRy4Mo/D1oaSI+AYAt+GLN
+   tW8rRAXh51cObl5RhxnbeQ36PKHaIdaRfOjttBMNv9hrvFKy7oj4fs1SG
+   g==;
+X-CSE-ConnectionGUID: K9bJBWP2TzCU2HUy7/1cHQ==
+X-CSE-MsgGUID: BX4T05E7QOKaCMycizrI+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48331424"
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="48331424"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 01:52:24 -0700
+X-CSE-ConnectionGUID: rVVnqN1XShi7MVNcvLZmnQ==
+X-CSE-MsgGUID: EzX8bqWkSNisWk974qym3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="137215311"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.196])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 01:52:20 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 8 May 2025 11:52:17 +0300 (EEST)
+To: "Nirujogi, Pratap" <pnirujog@amd.com>
+cc: Ilya K <me@0upti.me>, Pratap Nirujogi <pratap.nirujogi@amd.com>, 
+    Hans de Goede <hdegoede@redhat.com>, W_Armin@gmx.de, 
+    mario.limonciello@amd.com, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, benjamin.chan@amd.com, bin.du@amd.com, 
+    gjorgji.rosikopulos@amd.com, king.li@amd.com, dantony@amd.com
+Subject: Re: [PATCH v12] platform/x86: Add AMD ISP platform config for
+ OV05C10
+In-Reply-To: <019c9a4d-f8e5-4345-95df-255a04e5c34e@amd.com>
+Message-ID: <c98e9dd5-69e1-0a20-dcc7-f9f7fa40762a@linux.intel.com>
+References: <20250505171302.4177445-1-pratap.nirujogi@amd.com> <9061d5a7-c1f6-47ad-b60a-226e48021d62@0upti.me> <21c9d764-4945-4837-93dc-ab58f22f8668@linux.intel.com> <019c9a4d-f8e5-4345-95df-255a04e5c34e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250508-configfs-v8-3-8ebde6180edc@kernel.org>
-References: <20250508-configfs-v8-0-8ebde6180edc@kernel.org>
-In-Reply-To: <20250508-configfs-v8-0-8ebde6180edc@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Joel Becker <jlbec@evilplan.org>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
- Fiona Behrens <me@kloenk.dev>, 
- Charalampos Mitrodimas <charmitro@posteo.net>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Breno Leitao <leitao@debian.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=710; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=znt+9wtzzRAcAOqqt9JwNgOU5Ajvi3gapCMlcDgxZ1U=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoHHDLcHwWDmgp1BsPK3/vcBdMMl7ofZKYVNOQg
- GtiaUzXpbuJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaBxwywAKCRDhuBo+eShj
- d2VZEAC4BrY+NlOiyYVhM+jOYNC097mS697letHGY2EqWh9lrIwGRwA3CiICUag2ndkYzM1w8Nn
- ThqTHMnJEvFW3g6Jav7UG7LL3VlGyoOuY6IzE6UgQDQ3kg3mzHHzSJmtK7Xg7gKU6y1ojWayvOY
- wdYFiuYVBDqOzLZ7/BSo96xmactGjWwauODkZTF6qV0D2hZ0yPscPpJnad/7Ld2+lYAnO8ZquuD
- Bjj8ZToxV/O65PGazzOr6y3vZ3tLjMJetZWxeBZzU4uhPHoSV4g9ZwG/YNCnWGLY2bzQzJ47cyO
- IEHy2PSWYwlO0eMO8Qf4MXcYyR3DuibRagdpmQ7MZ1viu/qRqolyq9Xz9bwOUuxVFiducoFuT3s
- SR3Vj+ApduAp5L9lLxQVHkq7eZxCBf2IyhtbfobWmx2Hy25Ex5gfeTf9OK61d0u3MJOXLHdXYVc
- OiD42fbu7TcHhHvO281co9BrZKHsO6GuVBQ6cAmKzZ6TzqVL1u2oUy3+d55sKasmGY6h4KIh7NT
- JtvMsl3MS8Bk1bZqihGQAJKpYHOw8Ywf4NjVuTt3q2qC/Weh29gTvGNFRkSHxjCpR2IbMd23t19
- pfToa8vniza1oA4U9DH8fsfuxHdhDGpOrnH1cOoBcn39W5FNFVFc4s8zPjEQUWES3tOeN1IppxY
- rOfQzOb+KxMOO/w==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Type: multipart/mixed; boundary="8323328-1072942574-1746694337=:922"
 
-Add rust files to configfs MAINTAINERS entry.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+--8323328-1072942574-1746694337=:922
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3cbf9ac0d83f619ef873833b26a3aa3f29ff4161..5ccf04e1eb1fd02e7906e94cb5b0acd49e334d98 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5982,7 +5982,9 @@ S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git configfs-next
- F:	fs/configfs/
- F:	include/linux/configfs.h
-+F:	rust/kernel/configfs.rs
- F:	samples/configfs/
-+F:	samples/rust/rust_configfs.rs
- 
- CONGATEC BOARD CONTROLLER MFD DRIVER
- M:	Thomas Richard <thomas.richard@bootlin.com>
+On Wed, 7 May 2025, Nirujogi, Pratap wrote:
+> On 5/6/2025 8:53 AM, Ilpo J=C3=A4rvinen wrote:
+> > Caution: This message originated from an External Source. Use proper ca=
+ution
+> > when opening attachments, clicking links, or responding.
+> >=20
+> >=20
+> > On Tue, 6 May 2025, Ilya K wrote:
+> >=20
+> > > > +#define AMDISP_OV05C10_I2C_ADDR            0x10
+> > > > +#define AMDISP_OV05C10_PLAT_NAME   "amdisp_ov05c10_platform"
+> > > > +#define AMDISP_OV05C10_HID         "OMNI5C10"
+> > > > +#define AMDISP_OV05C10_REMOTE_EP_NAME      "ov05c10_isp_4_1_1"
+> > > > +#define AMD_ISP_PLAT_DRV_NAME              "amd-isp4"
+> > >=20
+> > > Hey folks, I know v12 might be a bit too late for this one, but I've =
+got
+> > > another device here (Asus GZ302EA tablet) with a very similar camera
+> > > setup, but a different sensor (OV13B10), and it looks like this drive=
+r
+> > > just assumes a certain hardcoded configuration... I wonder if it make=
+s
+> > > sense to reorganize the code so that more sensor configurations can b=
+e
+> > > added without making a separate module? I'd be happy to help with
+> > > refactoring/testing/etc, if people are interested.
+> >=20
+> > v12 is not too late, and besides, v9..v12 has happened within 5 days
+> > which is rather short time (hint to the submitter that there's no need
+> > to burn patch series version numbers at that speed :-)).
+> >=20
+> > I'll give folks some time to sort this out if you need to add e.g., som=
+e
+> > driver_data instead.
+> >=20
+> > --
+> >   i.
+> >=20
+> Hi Ilya, Ilpo,
+>=20
+> I agree with the suggestion, but how about taking-up the refactoring part=
+ in a
+> separate patch. Yes this patch focussed on supporting OV05C10 and even th=
+e
+> code review proceeded with this understanding. Refactoring now for generi=
+c
+> support would require changes that would undo some of the recent review
+> feedback (especially related to global variables usage). Please let us kn=
+ow
+> what do you think.
 
--- 
-2.47.2
+Hi,
 
+If you refer to comments given to v7 that resulted in removal of swnodes=20
+field from struct amdisp_platform (and some other fields along with it), I=
+=20
+don't think the comment was given to mean that you could not have=20
+platform info structure (const struct amdisp_platform_info that never was=
+=20
+been there) but that it should be separate struct from the runtime one=20
+(struct amdisp_platform). The runtime struct can have a pointer to the=20
+info struct if it's content is needed after probe.
 
+When the platform info struct exists, pointer to it can be put into=20
+driver_data in amdisp_sensor_ids. I don't expect you to necessarily add=20
+the other sensor there but I'd like to see this adapted such that it can=20
+be relatively easily added which likely requires having that separate=20
+struct for platform info.
+
+So in a sense, it undoes some of the changes done after v7 but looking
+into history of this patch, it looks the post v7 patches went slightly
+into wrong direction which makes adding next device harder than it needs=20
+to be (I'm sorry I didn't realize this sooner). TBH, I don't think adding=
+=20
+the info struct is that much extra effort for you given what you had in=20
+v7, the info just needs another struct separate from struct=20
+amdisp_platform but the ingrediments kind of where there already.
+
+--=20
+ i.
+
+--8323328-1072942574-1746694337=:922--
 
