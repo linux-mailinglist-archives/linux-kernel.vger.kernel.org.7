@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-640083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF07AB006F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C35AB0076
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DBE4162824
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7381E1C0259C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D0828314E;
-	Thu,  8 May 2025 16:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDB5284B37;
+	Thu,  8 May 2025 16:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKhuGYf1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU+rjwtk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B03270ED0;
-	Thu,  8 May 2025 16:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C66928469E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746721792; cv=none; b=SNwGms7Bi8sytDRBYV/VE7ndufp4vx/W2JPWo79cld4pENeT+WELmGVxB8eivujrgTAG6rakAsaMmZIUJdg7PP6QeD7h/clE6Jvp5JHcbmYwBYrbzmim3FARensyJsUHgbuGMMZnKEUItZ7VYl6fz2ps9vyEgqsaP8DWABGCd2k=
+	t=1746721796; cv=none; b=OVzC7SrM2w2RzpV71XEt4OkZVWLAuM8fICrAvL1ssBRe0dcdaYQJzaBA5MNnb/u7JlFP2knN6Zl2CcvVuQhC/BbWVJBe0ZajWqpHtmCdKhWq39jJd88kUlZaxrPg5jofL0ujhD1cPmSEXHQA6hNfdZxF+xU1vBFlrVCb0+Irea0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746721792; c=relaxed/simple;
-	bh=c05nwsF/Xsj3ZZ0udY2Gc5dtMsXMs8vJzGIq6HHgV7o=;
+	s=arc-20240116; t=1746721796; c=relaxed/simple;
+	bh=emnJpzLvbQJrpPs3WoUmBKPR9xHTU7DnXmw4yOQRzLI=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YWiOMHM2bRqWvgtwt/yrMKHR5fFKzrV3i4FQrgX1b7bODoPgK3bmT4/8rz8+JkDAV9acYxyc2eLRZFi337k5zyjuIcT+xeCSWiDATplKMjhKz5qreMo1hzswXNiGZiEuKAG1sH4eFob0WpGBY+N0RlZSsdtZsXJXWx4cOEPLLaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKhuGYf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9057BC4CEE7;
-	Thu,  8 May 2025 16:29:51 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=pOU+0g7aA34AcuZNHTqmbHeGoGP4lBV9RVbFprg+0+1vKz0aAjWIO3BBhJdZ+ZJS6iVb6IXpXCxv/ylHFBV+qvdsxvnxLIcCmRoe4Q9fBm0MtPDYMkPAQ24bePUxKGbmde/tGkgdiAC7Qvs+Qm1UGeZLCYnDsNj77jQd0Bcbjbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU+rjwtk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E446C4CEE7;
+	Thu,  8 May 2025 16:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746721791;
-	bh=c05nwsF/Xsj3ZZ0udY2Gc5dtMsXMs8vJzGIq6HHgV7o=;
+	s=k20201202; t=1746721796;
+	bh=emnJpzLvbQJrpPs3WoUmBKPR9xHTU7DnXmw4yOQRzLI=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GKhuGYf1nw/QHswWp155Zar4n0RUfca1/0d160veT51Bc0tnKmcOitaBDKdMt8k8d
-	 EXGdTkOugUgON7hRkQLqdFfPhOCWn26q8kBcHVdnMCYphP+Pu1niHNjT5eF28hBG53
-	 jCpEIXiPLvcp104roIEFnMQ/dtrK/bzzXTweT/s3PkL6mlFmL4uBQ3Ix1ILrDgTdWL
-	 Ak7eVihTMyLa8OlczX74d3rKdAN/fsL7VHKkzgC9xo+Mc+fUdMATqChBQcrbdwRs5H
-	 FIlFs6k/IH6gM0JqSXDCNKpholTu6CrRs6b4+PDN07eacUgnAeEu+f21N+gl8CsTOc
-	 s7IBciTEmxKnw==
+	b=tU+rjwtk17GU2wRRyE/SFme6MQYTwywF9tNYFSPdYwEtrmfYdmVRFir3yozKw9hDT
+	 LLsYip1ZNfh0d9Flxat3o7ppXslLx7LJ0Vo6ux48bJa71fh8xQmdp+ZgaQA5XdOVea
+	 mxwjJPZnnk8ZqNdpCaBy+se/VgtMMa6ToG5qiIUlb1BEmzEGgmeG7OGEqYMq1gV6bH
+	 99N92c8ghBRYZPAMLIzKdE4Hn2i+Oey2pv7RpNj30MZQ3Y45cYXru2MvQNlfq0tZne
+	 zjgZFST/5saA4SC4dMQkRxJp58ecGg6loX1xOqURBtKin2ArpaZIPcCPExWYrbaDfU
+	 VF0LoWmACrF4g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7118D380AA70;
-	Thu,  8 May 2025 16:30:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFDD380AA70;
+	Thu,  8 May 2025 16:30:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,53 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH 1/6] f2fs: fix to return correct error number in
- f2fs_sync_node_pages()
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: return bool from
+ __f2fs_write_meta_folio
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <174672183025.2971823.13421016836031371111.git-patchwork-notify@kernel.org>
-Date: Thu, 08 May 2025 16:30:30 +0000
-References: <20250508051520.4169795-2-hch@lst.de>
-In-Reply-To: <20250508051520.4169795-2-hch@lst.de>
+ <174672183439.2971823.3514035495469424112.git-patchwork-notify@kernel.org>
+Date: Thu, 08 May 2025 16:30:34 +0000
+References: <20250505092613.3451524-2-hch@lst.de>
+In-Reply-To: <20250505092613.3451524-2-hch@lst.de>
 To: Christoph Hellwig <hch@lst.de>
 Cc: jaegeuk@kernel.org, chao@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+ linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu,  8 May 2025 07:14:27 +0200 you wrote:
-> From: Chao Yu <chao@kernel.org>
+On Mon,  5 May 2025 11:25:58 +0200 you wrote:
+> __f2fs_write_meta_folio can only return 0 or AOP_WRITEPAGE_ACTIVATE.
+> As part of phasing out AOP_WRITEPAGE_ACTIVATE, switch to a bool return
+> instead.
 > 
-> If __write_node_folio() failed, it will return AOP_WRITEPAGE_ACTIVATE,
-> the incorrect return value may be passed to userspace in below path,
-> fix it.
-> 
-> - sync_filesystem
->  - sync_fs
->   - f2fs_issue_checkpoint
->    - block_operations
->     - f2fs_sync_node_pages
->      - __write_node_folio
->      : return AOP_WRITEPAGE_ACTIVATE
-> 
-> [...]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/f2fs/checkpoint.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,1/6] f2fs: fix to return correct error number in f2fs_sync_node_pages()
-    https://git.kernel.org/jaegeuk/f2fs/c/43ba56a043b1
-  - [f2fs-dev,2/6] f2fs: return bool from __f2fs_write_meta_folio
+  - [f2fs-dev,1/4] f2fs: return bool from __f2fs_write_meta_folio
     https://git.kernel.org/jaegeuk/f2fs/c/39122e454419
-  - [f2fs-dev,3/6] f2fs: remove wbc->for_reclaim handling
-    https://git.kernel.org/jaegeuk/f2fs/c/402dd9f02ce4
-  - [f2fs-dev,4/6] f2fs: always unlock the page in f2fs_write_single_data_page
-    https://git.kernel.org/jaegeuk/f2fs/c/84c5d16711a3
-  - [f2fs-dev,5/6] f2fs: simplify return value handling in f2fs_fsync_node_pages
-    https://git.kernel.org/jaegeuk/f2fs/c/0638f28b3062
-  - [f2fs-dev,6/6] f2fs: return bool from __write_node_folio
-    https://git.kernel.org/jaegeuk/f2fs/c/80f31d2a7e5f
+  - [f2fs-dev,2/4] f2fs: don't return AOP_WRITEPAGE_ACTIVATE from f2fs_write_single_data_page
+    (no matching commit)
+  - [f2fs-dev,3/4] f2fs: simplify return value handling in f2fs_fsync_node_pages
+    (no matching commit)
+  - [f2fs-dev,4/4] f2f2: return bool from __write_node_folio
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
