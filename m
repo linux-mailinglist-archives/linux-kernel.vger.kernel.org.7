@@ -1,132 +1,202 @@
-Return-Path: <linux-kernel+bounces-640080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EC3AB0067
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:27:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF41DAB006C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C519E6C9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99A516C90E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8872820B3;
-	Thu,  8 May 2025 16:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8B528368F;
+	Thu,  8 May 2025 16:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HXOpzNVQ"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hLuoQ3L3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6781522AE65
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2F5283122;
+	Thu,  8 May 2025 16:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746721650; cv=none; b=nq3KJWuLBAbWkfTDtHc9LJpUYPgV7qDgON9Stc6+qsvWa9/3IwbM/UNq9aVcgawGoZ9AFe/7N47QFEhhhCeTJn+6TuXRtNFZheOIR+vBx+f1NsLvZuJyFvgCNMFy/zIe7mDmasE7/M1gB5OwlPZT6Ij/dlhe6t32sUPZnugbsk8=
+	t=1746721729; cv=none; b=tMdm/4hzaGw3AXZaR6BZ58vgUdx/qg0yaDdrzLDBNZPMZcqusbQJhH563pS8Yu9qKsrZM49il+8qGdtPFFx1ImAlHDwYaVpOe/k8FErwmbM40EZg1If7AzmjV8tStl92TDXdionr+0gPKAgGryrOZM7Yit5ycfCU8VAyjnCnM+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746721650; c=relaxed/simple;
-	bh=CvBD8xXamqMZ4Sf6TOaEzYmjkLmyIoNTOncSFvoxwrY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=s20ZkCBqwvNHCQiUVoK06X+HEFJfsRJTIFNbqeF4wYPtMleFCBX34+TxsvCBGKB194VABUL16kj/u4P+nOsdq02yPDNVp4g+NkNI2f9Sifj982R7KyX+bioKudPozQ+0juWARQpfbEuL+v4d9IOSrZIAHmVal9MERZgSdvOSvoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HXOpzNVQ; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7303d9d5edeso384322a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 09:27:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746721647; x=1747326447; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/zGq17fficf6pUhy1rwRv7tegMGj776Ql9FSXPgf0TI=;
-        b=HXOpzNVQ5rCP4wyKCX9xAI6KrPO86YNPW7iMSgQtuwYNSFqSLWEEAwGTU+9xhad//K
-         C8tFVG2xQlhEnUJZa58lSIiuEgSFlh86QZ5ePFF7Rsy8k/b6wxByrJApX53wNVN7eN5V
-         VT1rwq4ZdyDCGzlytfU73hxqcnICPpqPfkTIPJGIQyLgaRWinmP/CkNyqyfzxz4Ra0Eg
-         1qXdIEtvGNa4eEmdrERPW4mL7wOtbwFvq163afDD9ELMBlcewkbKZ53ZvUBAswEjq5Do
-         AHcoTWOd1fn2NTEwd/RUTafv9HNFI9z9xIKSPNxONnRLAfqdCzt2+BA7QtyHt5hfvdoI
-         EQtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746721647; x=1747326447;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zGq17fficf6pUhy1rwRv7tegMGj776Ql9FSXPgf0TI=;
-        b=rSRQRBZkyGVnTuetwemxRQJvJhpuq9v45/I2pDOHkdhPhpQ82OS9JUp4J+MlwhEkfF
-         2lVcJYnKoNbd3jVlnksDq3PkE3diBgjL38UyVh5Lk7WyzmWiJ61yBXhehLuc7YXfhuAM
-         z4wKesr+8nl70AU5hgeqASGdAZTD74wweDywsTcULIbpmYPeMMGn+bEKaaC/BTYD9QaT
-         SEPv/cVGVgtlI2/BujA+zGkXP6N2E+ZWX3G+xKGYGx71Wd5Ffg3/sEmG81b3fRz+0IPw
-         Om1aiZ31Tw1bzDc5Qpg3n7jfoqb6JEiFRpRgOHDEC9K7KuReEFArlTkh9kC9hgu8NRYE
-         wV1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWCAhSBW3/K9tUV3CSfSaiuhQ6w/uHAC2OXyPwuHREQL9pb+fmNe3gM0RVTRxGKJ5wdX6qGVkfOW0aOKek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Tri4LhK2F0XDomcXUzvGdu9g/xYCq2ZC7mADVyKhp4BH8uyy
-	4MEbNfD7lHjz3HZlEzd0tgtU+dqOroVZ/yM20NU5ZT8EbmUEsm+BkFgng7jf7qxw0WzvY4hxYOn
-	R
-X-Gm-Gg: ASbGncsP3odhQg/dmn7rSsm5bl5pb9Pfo669Lz0N9Cg88MA00SOHCWGiVJ+3Fnl4PoN
-	t57hPlyDzQF3VTEWn8f2B6q0kK9nmEoiao6KFtZ05Nz2I8AztvQhSu59xLlTRizDpzXKyGpM/Fb
-	miE5tR2S2PC0mm7ivoaf3Jbzuusg4kU3easGHkihS9L/3kYhxevBQPr+//XLF7ghGJQmq/H0j1i
-	ff8WBbiYtpPrWQ2pKabbPWP75Dnk+4eFfjpjF7PT+J6JxqgD7r9RmJFtLrZnVhinIbk7y9uUYCR
-	aUV1TH2/H1uexFUiYjmXgaiXFHtbPRy6BIrR6DircxWI43w9IkJ6Z3Jwibs2OFHIHcllVNEcNX8
-	ll5tJGnkB2ryk+v9ZjyCY1yVkO4Ce
-X-Google-Smtp-Source: AGHT+IEFvELOr2XApDegFF1x2e/Ed/z5Mpe1PLXgT1R2E948sZk6yNyIDi3QfjQ4eU+q5GNDjwjlzQ==
-X-Received: by 2002:a05:6830:d12:b0:727:3664:ca25 with SMTP id 46e09a7af769-73226823edamr329483a34.0.1746721647420;
-        Thu, 08 May 2025 09:27:27 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e? ([2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732264d59e1sm89110a34.34.2025.05.08.09.27.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 09:27:27 -0700 (PDT)
-Message-ID: <720e300f-f6e0-4c47-8e72-b3ab0a50fbed@baylibre.com>
-Date: Thu, 8 May 2025 11:27:26 -0500
+	s=arc-20240116; t=1746721729; c=relaxed/simple;
+	bh=s9JXcmjaFF6UWimWMrjQo/Shp4EuldhXxeaRTElLLGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKw7dEPdQqlLSlTCG9Z//kPBXuqkw/2dTZHyUEWpGPl7rOebhQry7thO0vd031kJhsukEux7MSSqjMeZcwlcGJz/3bkGTzMnz42/KAh8S/uuaEsUxyWK4lomVL0xgQoMocN0dDVbBSKiluym39Lk9dalKTHgD6nFaG5UiMR7ayw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hLuoQ3L3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2001:861:3a80:3300:7c3b:c7bf:b733:fa1b])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3524D22A;
+	Thu,  8 May 2025 18:28:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1746721712;
+	bh=s9JXcmjaFF6UWimWMrjQo/Shp4EuldhXxeaRTElLLGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hLuoQ3L3nUCwvWIE8HUEgdZ/O1OEG4sAYgJuSzlRz+75DXdlHlz/P1Dhuz/Cz6eo/
+	 1rYV/H462Zq/GY3FH0MViRNQ5gc1bRT++Z1fyM3DAuz/YbfWkjpx4tlKCLhlEFq80h
+	 5g1KjpfimF1Yn1g4PZNdALTD3/7RiepbDkfDlohs=
+Date: Thu, 8 May 2025 18:28:41 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: keke.li@amlogic.com, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
+	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com, jacopo.mondi@ideasonboard.com
+Subject: Re: [PATCH v9 08/10] media: platform: Add C3 ISP driver
+Message-ID: <3ee2qcz3ckhcvd6v5mt6cjbqdysipucqokpud76meilhplhcso@im62bwviw7x4>
+References: <20250427-c3isp-v9-0-e0fe09433d94@amlogic.com>
+ <20250427-c3isp-v9-8-e0fe09433d94@amlogic.com>
+ <aBzRb8ZKuGI3E_cu@valkosipuli.retiisi.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] iio: adc: ad7606: add gain calibration support
-From: David Lechner <dlechner@baylibre.com>
-To: Angelo Dureghello <adureghello@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com>
- <20250506-wip-bl-ad7606-calibration-v3-5-6eb7b6e72307@baylibre.com>
- <c999800bb5f6c1f2687ff9b257079dcf719dd084.camel@gmail.com>
- <qaiqdak4pieewavl2ff4mpr2ywhw2bvnoob55buiinkisacar5@q6jhlb5klcf6>
- <7f5f75c1-7750-4966-9362-2a46c5e5ba3e@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <7f5f75c1-7750-4966-9362-2a46c5e5ba3e@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aBzRb8ZKuGI3E_cu@valkosipuli.retiisi.eu>
 
-On 5/8/25 8:50 AM, David Lechner wrote:
-> On 5/8/25 4:16 AM, Angelo Dureghello wrote:
->> Hi all,
->> On 07.05.2025 07:14, Nuno Sá wrote:
->>> On Tue, 2025-05-06 at 23:03 +0200, Angelo Dureghello wrote:
->>>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>>
+Hi Sakari
 
-...
+On Thu, May 08, 2025 at 03:44:47PM +0000, Sakari Ailus wrote:
+> Hi Keke, Jacopo,
+>
+> On Sun, Apr 27, 2025 at 02:27:16PM +0800, Keke Li via B4 Relay wrote:
+> > diff --git a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
+> > new file mode 100644
+> > index 000000000000..0e0b5d61654a
+> > --- /dev/null
+> > +++ b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
+>
+> ...
+>
+> > +static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
+> > +{
+> > +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+> > +	struct c3_isp_params_buffer *buf = to_c3_isp_params_buffer(vbuf);
+> > +	struct c3_isp_params *params = vb2_get_drv_priv(vb->vb2_queue);
+> > +	struct c3_isp_params_cfg *cfg = buf->cfg;
+> > +	struct c3_isp_params_cfg *usr_cfg = vb2_plane_vaddr(vb, 0);
+> > +	size_t payload_size = vb2_get_plane_payload(vb, 0);
+> > +	size_t header_size = offsetof(struct c3_isp_params_cfg, data);
+> > +	size_t block_offset = 0;
+> > +	size_t cfg_size;
+> > +
+> > +	/* Payload size can't be greater than the destination buffer size */
+> > +	if (payload_size > params->vfmt.fmt.meta.buffersize) {
+> > +		dev_dbg(params->isp->dev,
+> > +			"Payload size is too large: %zu\n", payload_size);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Payload size can't be smaller than the header size */
+> > +	if (payload_size < header_size) {
+> > +		dev_dbg(params->isp->dev,
+> > +			"Payload size is too small: %zu\n", payload_size);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Use the internal scratch buffer to avoid userspace modifying
+> > +	 * the buffer content while the driver is processing it.
+> > +	 */
+> > +	memcpy(cfg, usr_cfg, payload_size);
+> > +
+> > +	/* Only v0 is supported at the moment */
+> > +	if (cfg->version != C3_ISP_PARAMS_BUFFER_V0) {
+> > +		dev_dbg(params->isp->dev,
+> > +			"Invalid params buffer version: %u\n", cfg->version);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Validate the size reported in the parameter buffer header */
+> > +	cfg_size = header_size + cfg->data_size;
+> > +	if (cfg_size != payload_size) {
+> > +		dev_dbg(params->isp->dev,
+> > +			"Data size %zu and payload size %zu are different\n",
+> > +			cfg_size, payload_size);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Walk the list of parameter blocks and validate them */
+> > +	cfg_size = cfg->data_size;
+> > +	while (cfg_size >= sizeof(struct c3_isp_params_block_header)) {
+> > +		const struct c3_isp_params_block_header *block;
+> > +		const struct c3_isp_params_handler *handler;
+> > +
+> > +		block = (struct c3_isp_params_block_header *)
+> > +			&cfg->data[block_offset];
+> > +
+> > +		if (block->type >= ARRAY_SIZE(c3_isp_params_handlers)) {
+> > +			dev_dbg(params->isp->dev,
+> > +				"Invalid params block type\n");
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if (block->size > cfg_size) {
+> > +			dev_dbg(params->isp->dev,
+> > +				"Block size is greater than cfg size\n");
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if ((block->flags & (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
+> > +				     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) ==
+> > +		    (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
+> > +		     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) {
+> > +			dev_dbg(params->isp->dev,
+> > +				"Invalid parameters block flags\n");
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		handler = &c3_isp_params_handlers[block->type];
+> > +		if (block->size != handler->size) {
+> > +			dev_dbg(params->isp->dev,
+> > +				"Invalid params block size\n");
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		block_offset += block->size;
+> > +		cfg_size -= block->size;
+> > +	}
+> > +
+> > +	if (cfg_size) {
+> > +		dev_dbg(params->isp->dev,
+> > +			"Unexpected data after the params buffer end\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+>
+> The above looks very much like rkisp1_params_prepare_ext_params() in the
 
->>>> +		ret = fwnode_property_read_u32(child, "reg", &reg);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +
->>>> +		/* channel number (here) is from 1 to num_channels */
->>>> +		if (reg < 1 || reg > num_channels) {
->>>> +			dev_warn(dev, "wrong ch number (ignoring): %d\n", reg);
->>>> +			continue;
->>>> +		}
->>>> +
->>>
->>> Sorry Angelo, just realized this now. Any reason for not treating the above as a real
->>> invalid argument? It's minor and not a big deal but odd enough...
->>>
-Ah, I see what you fixed now in v4. All is OK.
+slightly similar, yes :)
 
+> Rockchip ISP driver. Instead of copying all this non-trivial code in
+> verbatim here, could you instead refactor this so both the drivers could
+> use the same implementation?
+>
+
+Yeah, that's the plan.
+
+We have more drivers in the pipeline using extensible parameters and this
+code (and possibily other parts) will certainly be factored out.
+
+My plan is to add at one more user in and the do move common parts to
+the framework. Would this work for you ?
+
+
+> The types are different so macros will be likely needed.
+>
+> --
+> Regards,
+>
+> Sakari Ailus
 
