@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-639658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18458AAFA64
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:48:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651EEAAFA71
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8233F4E5EDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8D31BC6579
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98615227B8C;
-	Thu,  8 May 2025 12:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3844B22A4F1;
+	Thu,  8 May 2025 12:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7CRbjQR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5M0omu2"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA72066CF;
-	Thu,  8 May 2025 12:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E81227EAC;
+	Thu,  8 May 2025 12:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708508; cv=none; b=HqM8X2vJeXe29p2+BwdjxZ2WOGS4E0kJGmwJCD+FJUyHr0GlPL45ysqWNGHijgBh626/bZ5Fesc5d5n2Yi4NVR/0Y9HLEEumT5ZQkd+XevUuGWB5oVpERQm01ckN0iAmgVnwlqxfZ8P7xCBjSgKWa4Cp0+4zko0At6bFIN5amns=
+	t=1746708572; cv=none; b=tdGUOkJJr6Z175NJyhCXxQGC/h1oqmrtYXlOSTadp4pUc3SBEWhTSEncwr+mJu5OmXW4goAoSgJlnGxT2uiW/DsTewsfJihRD7tjlDHSc8Jc+W11KETjfGBzIi5vfokbW58vtR7vlbrBaTv979YloGFs2vbi64hiqi7w/d3yXFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708508; c=relaxed/simple;
-	bh=K1JcDkyymVY9Ta8SYRATFg4KegkMDnSgEyDqpkv3p00=;
+	s=arc-20240116; t=1746708572; c=relaxed/simple;
+	bh=58sdXjoEMjFVCflGE7ncCGuTV1pF4ageHSg4rQYhGrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xt2Fg+xNlBBMQwU1kHXylyUTPkDpMSTN8H5M2BBz6OUDB3QOe8/yuep7IgA3W3JJpkozApflXS+HSlKQBRgX1dRQyfTQBLOckyBVbUQKKqE8CQhYsTzt6atjzkiJTZCbITJbsESBoHEogHsRQCDlZ6q4rYMaCtahyyXyak22sFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7CRbjQR; arc=none smtp.client-ip=209.85.128.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=HSNyITYz7CGCpJFS7KTu2r5YBJCca7f+ZRimiaYe6JCKIj1bxWUXJKUazxnHyAQ7Neo5pT6IH8haOYeW72h9r32PjITXPnhngGcJLAbdyhjL83EF4XZu9XvZYtnhpQS4Jn7TXayU7Nk/5cyngI4puWJj54aur+IhyRF+tLnJ51s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5M0omu2; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-440685d6afcso10734195e9.0;
-        Thu, 08 May 2025 05:48:26 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a108684f90so293807f8f.1;
+        Thu, 08 May 2025 05:49:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746708504; x=1747313304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K1JcDkyymVY9Ta8SYRATFg4KegkMDnSgEyDqpkv3p00=;
-        b=W7CRbjQRlAfxEHN3J+Lhvatrn8mvYSExWgZ6ymQc4dT3OXXC+8Gf3chPOUbeRtuB4n
-         pjXC+3oHZTgnzQXDAdKO5FwCar2xiHMjXoZ44lw6Hj4h+4JO2MjFXKIJRFwweR+l6PRn
-         DsxhL5gS0tFSdYWi4dTmtJ2kwp4kI6z8RTJHqq+CohllObI88nA7HW6GEwIw6GaMvgF3
-         1HKl9oKNbE0WAeigV7G/Lz0rymX8jnuY7QzSZkPL6rPaKixwHwhAp2IRqU7tbOVmNz04
-         Ff+4FlgbPI/6bCmv8vJNGMpotaW/FqrvOilbpbby+Fx9gLUDV5MFIbejG3Z+kxpci/SV
-         Kr6w==
+        d=gmail.com; s=20230601; t=1746708569; x=1747313369; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g/Zo3idQAmdiJtBVtWzs8q7ppnKXkar6x4EUIEKDs8I=;
+        b=d5M0omu2vkB3KvgD++IKFDTQZ35W4vGmPS+dqvFOamNs4hJs096kVq+DgVeh8+o8u/
+         eRzsAT4jD++hQP6eBPxXcGdXFNJklvs2vvY8a3m9cTy4vV6aPzfSrHLpE/qwOqAkeH7y
+         rFc1GESkwpeuLbSjbUNBTft6iwU5vqBOqMYCCg8w673OR13Hlqgi/FyRUCfUJezLjpF+
+         8Q8TGSk6QSFx17ZoqOhpHIacG9sj+skaqcaYHA5ENy267TiV6oXeL8ekVazxXcpWDkj3
+         gAwsNABAUe870H09/hd1MoxiPaQPA9NhBYjTKjsAW7o5m6yU1KKnQ9BM28v02D0z9QtJ
+         hAeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746708504; x=1747313304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K1JcDkyymVY9Ta8SYRATFg4KegkMDnSgEyDqpkv3p00=;
-        b=W1tLAHTsxOzw85OfTr+7y7K7YG9RsMUYnchwuCTHCvZuKYeFIktJDpIx1tGWF3EIBm
-         +svU5GP3SGIfEW2MSBXsY1A41pDhRmwsu5G2TspIYDQ09cMl3KpzaVwffVCgW3PZbxPF
-         mL+vlXb+8jX0Y1RehR62VaB6CsWhmvMWwOPf1N3YYkOJnS/YQiD3ww33HUFmKIvQ+FIt
-         aNo6ulGbYQ09W88GrsR+SmOuc1cB5Q/G+wwDnkhTY63qxAD842t4RgLiEYeWpmjm5xzK
-         8pPuQ49WLAW+g60tq15OWBqoJfTEej8KGAgQ09j5jLExEotK8okwzLTyMz+Dy6vrDmoq
-         S8Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ol6BXYK/J4cPTyBECCx0Emz4igcz0UWxqNyHxEH07aVYw64ZhJVTuabmGsYDFJcTQAh7p/8EboelYxaJ@vger.kernel.org, AJvYcCVwdybWhWaKOEVVikaDAH+o5RPxB/esuCFM12ajl5vCNObqz0ZKBbI3Z8E0KdFUwqlN2OYdlfWHpGkC@vger.kernel.org, AJvYcCWP2FpB2lfYx/Mj555xtenQnuxu9VAFKBtPTZ04cOTaA0kJS5fvUnnku1L5QaojLffLOCb2FBwCq06kPGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYz8JkP9uGmhrk7yyRVxFbQYXO03MiloxTmV1Mr54cQ9vXO0FP
-	897rt3j5Q+s87UeEx+G3Ihz3hVa1T1Td4ULS9Nts2vgzKrM87ohd
-X-Gm-Gg: ASbGncuZuWTfOUpD4ClTu577E04H7e4KA8QrDkPMtR5/bLsmSRqRc5I8CCPHhw4eZbO
-	agCf/qBU1M5cDsiiCYn8bt40rCKBuvURXu6vkm8CD/2pqjUFYNCBcgPs4UvPYwTjMJGU1N7+J2Y
-	xQZCrIvD+c6SnudkryWZqmX/cX6VPUZo2JZTpXUO1vlmfBbEC/OxITSektgpxbX8p3jisEw7K2T
-	ns+i+OC8lUmFvDH+FBhXuy8PAG2rNoWfdGsf22ggfkT9xY/w8to4S0iAUzFP9Tyavt8NPlmyDX+
-	VFsg2YMD9iGJ0Wywo+exTzMnY5hPjEGz6exOqI+GRxWRMtoLxyd73psfbmCyELwjpq3xX196cOv
-	qHrjK9CSOERQuXe9E/vhQl9hqKUQ=
-X-Google-Smtp-Source: AGHT+IHSVvOwM76//qmn73kAnoUTmj/CnRUBRA7zQwSUPHrkrhEv1jw1uHjVkLixP24yaZc89bJizA==
-X-Received: by 2002:a05:600c:37c6:b0:43d:1b74:e89a with SMTP id 5b1f17b1804b1-441d44c3933mr66198845e9.9.1746708504289;
-        Thu, 08 May 2025 05:48:24 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd328455sm37086045e9.2.2025.05.08.05.48.22
+        d=1e100.net; s=20230601; t=1746708569; x=1747313369;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/Zo3idQAmdiJtBVtWzs8q7ppnKXkar6x4EUIEKDs8I=;
+        b=cJU52rJTRCscDycfBSOPIzNZ5H/6or9Yo3oEo682OtzdiXHn3iCjFmhmJCK14rb0OQ
+         TNc0gLBO+D/LZM5qvvAHYbMzie5H+gXJgQ7hCqdJ8S+e87O6SbmlGcR3LpOgw71shq3V
+         jyocIQgVU8z09Lxxdxj2x8CqTk/C6yk19Wdsd5g/r2smv0Uy5kxDiD+yEwOCaQHiR7jo
+         NLhXM0I16fsqTi4nbY6nXF0RXJXdJSwOhi6mUK85r1jP9GwtQnOPBN77cr349bLsaLTZ
+         LAS3jrCntQnzg1RrHv9/DrSu5EgIV4KpY1kH04m0UABOQgIBwqObOomUtEp4AESLkFz3
+         O2PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdXxzBV8QVo/icTeZWvvxi1bXzAHcKdS5vvw0PjOiA4Z/oDEmet67Fv7QT7BHz+hEXCUhJ29MFOoTM2uqO@vger.kernel.org, AJvYcCXAk3ByXSOM+2szYpubj2ii4sBPnrHyTWVM0Y/J7d2Zvr8ZTauEpnh0/C3RQdnu96fU18uCn6hN6IxW3lw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2h3lbCIs09aMBk85njbEuGf1dUXSUDTl1wcNfWIzVCvOw874S
+	LtEOGIEQpe4XlxhS5Y2DMPgwJbzXW+w5c8qAExMKyKCcfFURxHRw
+X-Gm-Gg: ASbGncti9HsNksL7hIqAUGj9p8NPBLwM+l2ExEwZkc4YqhS6OYeSUeBq16UnrkJqpVi
+	caNDYoQkgTe7NtuiUyuO7dhv7KM19HG4NFgje6QlpCdWNidE4AXzcapVuJpizOA7AYK6P0RBsNu
+	fla+dnhPCQcX6MVY64i9vkiLYKBNt6zgDa579IR0Sy5y4SLHmB4cwUxh4DSxo8+j2yf5QVYREZo
+	oyhEaZAaZy76wrovrCjkrWqtNuA4t1e2nk5cvlnQFV+Y+G15b4VML2+VmW0wHI0m1aKwBZ36Fx3
+	m8JlgQTpdYIeZz+RySRKU8ILd8B94inyUjYyk1B3KA==
+X-Google-Smtp-Source: AGHT+IE4V0eQOUc88VL5le6hnYa/WX1pFmGHFpO8rruXlZMME8banCaS9znDvFn5HounZoV3whgt2w==
+X-Received: by 2002:a05:6000:2207:b0:3a0:90c3:eb0f with SMTP id ffacd0b85a97d-3a0ba098e52mr1870423f8f.12.1746708568626;
+        Thu, 08 May 2025 05:49:28 -0700 (PDT)
+Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a0b9af4ba1sm2879628f8f.59.2025.05.08.05.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 05:48:23 -0700 (PDT)
-Date: Thu, 8 May 2025 14:48:21 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-Message-ID: <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy>
-References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
- <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
- <CALHNRZ-q7W9CfeD4ipmwFVqHm7oGfTgJpwNoVhfbSXFPDxF91Q@mail.gmail.com>
- <eba00bd5-fa1a-4cad-bb41-b395011235e1@kernel.org>
- <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
+        Thu, 08 May 2025 05:49:27 -0700 (PDT)
+Date: Thu, 8 May 2025 14:49:26 +0200
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
+	Romain Perier <romain.perier@gmail.com>
+Subject: Re: [v2 PATCH] crypto: marvell/cesa - Do not chain submitted requests
+Message-ID: <aByoVvwNq2DMw1oi@Red>
+References: <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
+ <ZwePSPG8aWm6mwKK@gondor.apana.org.au>
+ <15fadc356b73a1e8e24183f284b5c0a44a53e679.camel@gmail.com>
+ <Zw31JIEyh28vK9q7@gondor.apana.org.au>
+ <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
+ <Zw9AsgqKHJfySScx@gondor.apana.org.au>
+ <aBoMSHEMYj6FbH8o@gondor.apana.org.au>
+ <aBsdTJUAcQgW4ink@gondor.apana.org.au>
+ <aBt5Mxq1MeefwXGJ@Red>
+ <aBw-C_krkNsIoPlT@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7hulawnxj67g4v62"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aBw-C_krkNsIoPlT@gondor.apana.org.au>
 
+Le Thu, May 08, 2025 at 01:15:55PM +0800, Herbert Xu a écrit :
+> On Wed, May 07, 2025 at 05:16:03PM +0200, Corentin Labbe wrote:
+> >
+> > I tested this patch and my armada-388-clearfog-pro panic with:
+> 
+> Thanks for testing! I didn't realise that you had one of these.
 
---7hulawnxj67g4v62
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-MIME-Version: 1.0
+I have started a bot which try to build/boot automaticly all patches touching hardware I own.
+And for the moment it handles only linux-sunxi and crypto patches.
+Happy it found something.
 
-On Thu, May 08, 2025 at 07:27:52AM -0500, Aaron Kling wrote:
-[...]
-> The devices I'm talking about are not yet end of life, so it is
-> physically possible for them to get a bootloader update to conform to
-> the existing mainline model. But I'm just one guy trying to do 3rd
-> party support for these devices, I can't affect what Nvidia does with
-> the signed bootloader on these devices. I'd love to be able to swap
-> out an open source bootloader on these, but the secure boot setup
-> prevents that.
+> So just out of curiosity, does this driver actually pass the
+> self-tests before this patch with CRYPTO_MANAGER_EXTRA_TESTS?
+> 
+> Is your system SMP? How many CPUs?
+> 
 
-I've reached out to our Android team internally to see if there's
-anything we can realistically do about this.
+It fails to pass selftest on 6.14.4.
+It has 2 CPU
 
-Thierry
-
---7hulawnxj67g4v62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcqBUACgkQ3SOs138+
-s6FseA//dsjUgo5pq8qp+c6KgtZoXZsobQIJS+p23RqDrJ0vTBDlP1gkR03kkOiD
-o3POI2fzjsN2i90Ic+mv/N4R1w7Wwa/zjtdms+xLWNiHu4D/wCkHdiU/X4vd7MWX
-cIMOn1AvXLsXuUbK3KJdp1LVYauqva5psI5JmJBlu/FppBFplY9b9chcgDVf+Foh
-tMab7xWM0XeUHxoJvVCP+YD7XVeuX437wvhzT4pyIXm/Bl+YQhCzUBPiQetKX6Ui
-z0a8hw1v9nMIoz4C0GWmDLNs4pnQ31s8RN+oVQurMZtDBveP4r31QRvZ1DGirOLk
-mQ/iJOpJqHf5kbIEcHvep6BZKH3bEjotjF2N99YX2TYyHOgANUQO5OqD3Fh7ttCJ
-WmmPlVCJsdYtQQMF2kBJiQAcRrv5r0+ZzHmKm7S7vGeFjQiMegLZVPLOm2X+0aUS
-NCMPPiHG7+gKIOHHYsdyVF4z6Qv8ATU7BA+6ggR5UoqRLJ/Pilp3VKLj76nms/TX
-T0GMmJJU5/WAmLBawlWswKuoGIAWrgiYsmwqpt+SMFrgIwwMNV/ToxfbyCu8L64X
-I0IXCV0XDr8gvpitpAwA33GxP8VhFvxqSysvCr9BBgQkDmoITGhVAn4reJfoz6tj
-F8Fizop1NQzBwNFJMAwl8aUfJZoh95P5hC4uPKUS75Xg/zRR0hA=
-=YCXe
------END PGP SIGNATURE-----
-
---7hulawnxj67g4v62--
 
