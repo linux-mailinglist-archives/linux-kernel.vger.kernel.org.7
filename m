@@ -1,187 +1,181 @@
-Return-Path: <linux-kernel+bounces-639657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9BDAAFA61
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C080BAAFA66
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCBE1BC6517
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4053B0CD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C8722577D;
-	Thu,  8 May 2025 12:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3476227563;
+	Thu,  8 May 2025 12:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0Gy0hFUn";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="j9Rxn0Nn"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NdmNRcmw"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2060.outbound.protection.outlook.com [40.107.22.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269482066CF;
-	Thu,  8 May 2025 12:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708486; cv=none; b=rx7Rm3rZBI8CmdLkpBNLCciR/8a/es28md8ZPLdrqU7nNgYUb+tJdKQIflAbneF+ZcySxGEZO30WGKDUfmOXQveSTRGAMljEWtFtqZEZgX3ekjEdZQmBblXp5k4PN9qI3hPn4bN9ygBeor7ZIen6Gv0P5UDji+jmZ4AvEoQjy+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708486; c=relaxed/simple;
-	bh=32CtRKmrPA7nB/+f8XmyUNlfkbdkgk0lazsLdNElUp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVDT7dakbJ8eOFd8NcNWHv9YPoWqTPc8i+Z5gTgOui8aa0gaBJs0htZToXb6JONCJ1vOqTyQsATwXIU2eWiBIdZ11vQFS+WIknBD3ai5vTCea25gOl83ZXGP2ExXUwvXcn0VONjnc+/pd6/aIp3IP4Cs/u+xb67npaXJwT6f8hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0Gy0hFUn; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=j9Rxn0Nn; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 157CF12FB439;
-	Thu, 08 May 2025 05:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1746708483; bh=32CtRKmrPA7nB/+f8XmyUNlfkbdkgk0lazsLdNElUp8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0Gy0hFUnJwW7W4VikxFm8zEYloYZjmlt56duf6SD/a1jKj2920kTub7a76TU4Xtpl
-	 8jtcYMFREVMr/r3tjrwO5V3rc3m2QYKKydHPSauHppvE6+eKuSzUEXNPPw3utZT5Nw
-	 wx1CyQxTbqSwOJoJkCAhzyToVXy2ne2U8NOPAyO9njuJZHrtYJraIxkykswX9g8+KX
-	 kbcfIK1xVTon+U1au/0jl8vOpIN154S4SRdlPYXhg7KkPpIc1IvHa/pDpIBFib3giU
-	 KeXe1eNwcDCEdinqd/+qEaefNGzePho0FGbnAaNtF1DqvmJ1dy8vY8MCFHC1ur1P5j
-	 5mLLm1dCj6LYA==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id Ylu42rJHkAyE; Thu,  8 May 2025 05:47:27 -0700 (PDT)
-Received: from ketchup (unknown [183.217.82.204])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id B177312FB404;
-	Thu, 08 May 2025 05:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1746708446; bh=32CtRKmrPA7nB/+f8XmyUNlfkbdkgk0lazsLdNElUp8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9Rxn0NnDtxFBNTZXaVNbdMlSNpg2FVTn1w7cyn9yZpuTnSC3saa0N6MeOBzX1uGD
-	 M5V5CqijL2FQCjQLOfl4w885XKxkR65CLQenF20WoJB+QFBcRHu0aWeYBqzsjm/MxA
-	 gTsZRNeRlk21Qg9K+213efdRner3P7bzuijDM1Itdjrls9SQlfSAys5wxq8tl+kZ9i
-	 aG4Z+DLuU1KOEiiJPdzokK9bBrA4MNlFji0bmN8K9t82TNBoBjyU49vMoAvn2VjnFR
-	 iE46+EBTQngIMS0MPAy8S4PJNhQs2OKApoHSHHXuEk7KnI8pN8s+rsTqPSVpRpkXvm
-	 0+MTId2zsOavg==
-Date: Thu, 8 May 2025 12:47:19 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/6] reset: spacemit: add support for SpacemiT CCU
- resets
-Message-ID: <aByn187aRWyrzzF4@ketchup>
-References: <20250506210638.2800228-1-elder@riscstar.com>
- <20250506210638.2800228-5-elder@riscstar.com>
- <aBxDQ1_2xJjGlwNf@ketchup>
- <d2614363-1dab-4ea3-b79a-5d3c02c4bc17@riscstar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A20146A72;
+	Thu,  8 May 2025 12:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746708520; cv=fail; b=rrL1kg+3l7SR7LsgoUscz5+2eKi6j0AAwjrxtSdTPugnvJu4unnN5BDsBmHyll7AworgrIdcj+ePthDKG0FxWhtizFBtEIXpEiecFJiWuKA6Tpgpzc8n3N8Z9OHccapc1Hk4gWDhleVIAF4Diq7RJGy055D/yqu+whX46LmeMhs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746708520; c=relaxed/simple;
+	bh=nae/PHrKuZpCJApdQfL1oIxWv0Pxr8p2mj9fVoSMA7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gVQsHiCMREWoXq9aWewcUayzZKtPHuCpDij5IL4xR8Iq6qWUaWGfcTvXMjVmrXzrmJnfu3h7OAuQqThCphBKnuw4TrgxJnVpjz3OWu8Szx5C4SviKVhLLjoKIuB0yfF/KElvELsYlS/7YpvcDjo2hTziu1ykiUvBhb6P/NGwDnk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NdmNRcmw; arc=fail smtp.client-ip=40.107.22.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P+NSNzXn4HYJgIpGgbn1zOLw5hSAiy/pLRrf3sTpBdzMOBj+wMDN/FB84q8Sog/u6WxPIT2gwIlpt/+aOuLWn0WkNVttyyknjEphqAK/qg6k/0wsrImcXb+bxJt2h3r43N7ydigmIieA8D9kg5VV5sROwbRnFlZj3Suk6AkWOw+NbNruUj+aMFx2SMpsU+SglKNVJurhNACfGnzp0Exd8Jbsc387KjjNJtjFC2Q1nTQYTICjjOpOtT2Pcr69Uehz8Upk3/00Zw8F4FdHLaeNAlSK8J17LDK/MRxWXgyJnIADDmRi9a7ouSD378xw4S7CzEHB6srCj8NqLozs9I675Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qu0Rmzz+ot3mRqv4Ac8Z8c/2CJslM2H60JEBkMmhBCw=;
+ b=N3vMlKs/+5/JT+xUin/uO079mNewQP7cnvshFxYwq5paQyEJTVcpE8Y3598m2EwF2mTQXkBBPEBVJDmR9Af00HkvYEC3QQJv8JacXrnMA5fNrGqlswjUQfnMalkSeJc3pPb+S3O6/HKT0U0Uca3z/N3tQCcH9M3oghZO4oAx3r9TznIh6CaA47aOu4RKpG0AOLiWbWx4QJuRjZFXnvIMnub9jJ5L3FPagbzjRVvp0UreDbUfJ/O3zzdMhX1yT6zziBP6rrk46mqFF2WTrEsoQuPSpH4V0ApPMbeNpOewAHoJ6rqcCPtE9Aa8GhwCDuwtcCHSzm8Bce/X83wyCtVcoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qu0Rmzz+ot3mRqv4Ac8Z8c/2CJslM2H60JEBkMmhBCw=;
+ b=NdmNRcmw3J2gND/1G2BIu6FCMxEdyFVJCHWfB0QrnF540Vmf95vRUQe+QtbaWMz/RvCnXOnJ0U9+0eUunrWWtureTegF92BJXkDGr15fJc5nb9lhO5Z/cir0PDYO0cL9HJZcl/HGiKXyJmUVwjIXoUs7ruzKUgaWTbAHoGiNBPet2aeYeGf97zgfctDG/JuS/gOPmraPh7eq2yTLMBnMXT0PqPZOFj6Sa8sto/AJvEajVPKA2Nz6i8lSgyR4aCXuUhq9bsr3ljjFD8YAa7fCwVUZ3KERk0BnG9RSQKYzN4PI2o3bEq7SpybkfQKfo0648q3hKgDBJy4TJQAHQ8zTYQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA1PR04MB10398.eurprd04.prod.outlook.com (2603:10a6:102:44d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Thu, 8 May
+ 2025 12:48:36 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%4]) with mapi id 15.20.8722.020; Thu, 8 May 2025
+ 12:48:36 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/3] dpaa_eth conversion to ndo_hwtstamp_get() and ndo_hwtstamp_set()
+Date: Thu,  8 May 2025 15:47:50 +0300
+Message-ID: <20250508124753.1492742-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VI1PR07CA0157.eurprd07.prod.outlook.com
+ (2603:10a6:802:16::44) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2614363-1dab-4ea3-b79a-5d3c02c4bc17@riscstar.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA1PR04MB10398:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf4196f4-637b-47c9-538e-08dd8e2ea606
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sKZ1Ks79VGDtfa/4ckNC6Nk7ida8ap5HL+TUfYfdLEITQc6hBMW9Qd+M1LVB?=
+ =?us-ascii?Q?WDMCH0NULkOFRgBs7E4Y4KJzNalgUvTqQ2T+rnsPzObUDFoEPEXjlVgq6doc?=
+ =?us-ascii?Q?PuYEtyyRNyxgLbQu4Uv7TRJV87EfLsqhlu2Hja5OJKeliVyzQZ9sSjaDvNBE?=
+ =?us-ascii?Q?I9vHa02FHGCn8jY9IC6s13D2IrtBnbOso8qOhFdbOFFrg5qr1UwqT3mO9os5?=
+ =?us-ascii?Q?8h5KREOr2vYLuFRtYt1rdYpWBANCV/lQXhoYWMMgRQaChkHF9fi6WxWI4W10?=
+ =?us-ascii?Q?Wd+AhGJXX/agurcpDfknd+TLrj9xJp+NkG1Ee7VP/5NIyh1QLih+rdr8qYPX?=
+ =?us-ascii?Q?XYFaC0pYgvXY+NYZV1vMGGHVlV+VOATSTQYnydK59B6d990HLq/vorBhQBRY?=
+ =?us-ascii?Q?gTv0YRMzfDzW61e7VvE1XF8rw/A+u2/ILgL1/ASZWOuneSElSY2er2jBh1i9?=
+ =?us-ascii?Q?XHWYg1t9Nlu6ydCj6gyD6RMkqFbBRj5cNb6s0/Q6zs4XZ0f5AXIgHujnrp5z?=
+ =?us-ascii?Q?lwZECTPy3M0hyCrCUQmOBKGgsM+YfY9ohGoENxwIc1BYbYe3WFeVs3oPobAF?=
+ =?us-ascii?Q?7jvVhHQDlyaFIE+JvgeVbKZjLbjQpcB3+lYfQAgCWBZfaAhowr928AeolUyK?=
+ =?us-ascii?Q?MSrOwZzPSLUeE9et6jkONVeha6+Xj2leOVGON7xmLmzi7oeCjyi2Jxkyo5q/?=
+ =?us-ascii?Q?Wac/ds+7rdrie2OAu/MXrbKzcRZ4ZFerVbQoFz/uEC0qzPz7dLPC4Bz2z7tA?=
+ =?us-ascii?Q?LUERdXObroJsQvyjTXR5JW04Ryid4aU702yazcgwguzfz3KffGKt+zuGkHVh?=
+ =?us-ascii?Q?QRjEBV21ZtyUboKp7UO2x2prlQ3TS6VeApqwHe7PmagxIm28R4Hnd4o0csJ7?=
+ =?us-ascii?Q?PaGyJqeTsSLpVEWNQY2reyyBjqDMx7euQWoZoYu5uEgIpfOkYXqMP1M+GmX3?=
+ =?us-ascii?Q?5YmxqgpFjUi2/P4NDJK/s0jCeMyb2KdbqEYtCvkBTRp/mwnBd/RcO5w0IxNy?=
+ =?us-ascii?Q?yzybsMxvCnve923pgI1ngosIOiBADUl0M8SOLgncuIJIIG1htWBzU3XB8RtY?=
+ =?us-ascii?Q?LK8LFud/43iuHCevl5WgUUKFkXQKk20hbwRdZfupFylD3jnXE6uYc9SwzuEp?=
+ =?us-ascii?Q?rMRICedqE10Y0Xe+KPhLtjwqCkVXBlRMsorKKdNiO+cRGknb+Lyt2LA81Pyz?=
+ =?us-ascii?Q?SHCKjzzx2+JuxcLtLgdgBkTfgTFzIw6OuSsdA02k4kXDu38Qn4jx+OHfrLGa?=
+ =?us-ascii?Q?5CWyU/BWIRfIqVrBQo3V6rV3UBvEbjk12XrM+SmqgkPV1IijMj9ovl0D2Zvs?=
+ =?us-ascii?Q?LpPOpjK4kusLhFkiDFMo199pyZCYQntoZIBj3J7rirBxbJwcPRsFbg7AfVCE?=
+ =?us-ascii?Q?5hcKzcKbgzizftXQ7tlZg2q3gY+s8yamF1EsdWmWTvClOb8N6RaZ+9Qxmg85?=
+ =?us-ascii?Q?rTRgnrWKDWgmGC/TEoQnLtiE3oJ9F1N08JpnXebrfbuzB5zAxOHXpw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AZemec2XqmvKQzSVgeHYiD4xM/0jyy0JKyqBSvKraBMMVSvjiFJCiXRzwzf1?=
+ =?us-ascii?Q?ENqDC4Jhyqn/wIJrjJE5CAwKnje+gt/X9oE8NiTXhyOdDudR38sXAajdPNxZ?=
+ =?us-ascii?Q?FF10MPGeXptLA+BXLUluq1TLqfADA6hNUsvY4W/pHomynMF6Ny2A/+blPLkc?=
+ =?us-ascii?Q?zgfopf2kEsKkQUpg8fMhwv2ChMNS/D+ZmyP1MNyuGc75MRhpD/116N2mPNyz?=
+ =?us-ascii?Q?MJdHz4xpPejFFdKmgbh1Sdt1BLBhnq54na+PTiDYtOMZSdVHKUTekHR7VD5g?=
+ =?us-ascii?Q?lcYmiiKgw1IVJ3BCUKFCVKk2aLDqNo9+2TzSZz/fucJZj4s9jkZh0Wnqnl6Y?=
+ =?us-ascii?Q?BeUFiCfLVYpFOh4Uht4OQhsaU0P6MYcIvuX/w9JHqWY2OUkCmjMmcj2SXcFe?=
+ =?us-ascii?Q?jBnjHTfTUjNI7JNg6EqXwe5PZRqC8jogwvTiLybfgjgWV/kXnyFKAtZdJ28g?=
+ =?us-ascii?Q?knFrmHR/jxRk5JGBkWkWr8nDtAFT0maNA9ruhnw9N/bc/bSQXTL6ecCYWHlM?=
+ =?us-ascii?Q?WIVwXTRbEe5AjNJC0IWG0kVe4GLtOreyuXzBwr7w3NlFNqqZ7RZll86D3DxK?=
+ =?us-ascii?Q?YQV+TrkwhJCgEO2w7Ctlkx+gNL392yCP1Y5cbaupfCP/0hLThO4D5YSksaUm?=
+ =?us-ascii?Q?Gwg09WwPwFubryzIsi6t1eJE8MqIPpB1QQijeS2Mmi71vOb7RPZiQOkWQ6Ta?=
+ =?us-ascii?Q?ypz8xPxgUA+kKjcT8e8ijMwgaWe3gHBinPin+wDDEiMgTeyRhJeI+dtxW6oJ?=
+ =?us-ascii?Q?Fj5EI9zBL6PTv9cxYkuerW5S6LaaxwbbafDjD2z+BCEKYjj66eV2HTmreywE?=
+ =?us-ascii?Q?/yzlBFY9GG9kBEkMBUFrWz6LuMvIvreeEzz7KgaMsFbMIyJZF/tlcotnHXUq?=
+ =?us-ascii?Q?dG2Gj6zRh/7pyYDy4ZIKsWAPJxbiN0qaObc1YX0TcW6EQXbEqg2m0aSgNCcF?=
+ =?us-ascii?Q?8/Zrffv+bzDDSVJDJB1++t2qgVjZQOan9810KZE+ieSCjFxhBCCr0HF++RuS?=
+ =?us-ascii?Q?iif3yNgLYvWDqNkdKlvoZw8MT3WGFmz4XaMA5jdT37e2K0B2SKjOBXWgaMJd?=
+ =?us-ascii?Q?qwSQN8st4xOrpwnTo4aWm1JeFMbbFPOTt3Av7cWeYiPAr5ntX2nXbkaah+dJ?=
+ =?us-ascii?Q?VQN+kAUjjVc+bcaYKo3MIMcHzW5ULRkaZeI1r8pUwyEYvKLHtqn8FjL+rPyv?=
+ =?us-ascii?Q?7jP0ZTcLZKvrae+QGDghXSVRMs6KdebUnMnMizJitstIJc5MnXefoc4xkaXj?=
+ =?us-ascii?Q?DlrofXTDtwOvCDyApBRt2dZPm90pt9MWBmWP2WEK8C5GuB02vcDIP86LwiTx?=
+ =?us-ascii?Q?+Yksl7ufaBWKW3PsEwy2QheN6sT5S1EC5StTsdyyayRsaIvtHYhNXRNixxEP?=
+ =?us-ascii?Q?kyxWtVHjMCwSCvPNC7AOKwZ/oqCqSX52I7XrgBcDW7koWS9Gpgtq/ZHRHry+?=
+ =?us-ascii?Q?EMDIqKTVlj2p4/7jrSMvF8s/tEF2j3IxMxcCbFk9Pq7+j0BtqblzKr2ZK3G0?=
+ =?us-ascii?Q?ZtlIGmB2M5txOQI44+L135sEkZuLsUSFkFx80ne/1g+na46Fpb5Z6ZCNrxtz?=
+ =?us-ascii?Q?g9cVK51DfY+EOuZawuRE1dRMAULyn4BvjkNokLY48+dF0cFIKa1arvLHW/bo?=
+ =?us-ascii?Q?2g=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf4196f4-637b-47c9-538e-08dd8e2ea606
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 12:48:36.3877
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1zpTZvj7VyFAakbEC96xM6GiyDzCDaqT9EpZAHH1IUhUT9/+0OO5xb+d3YnIj9TjculoI8gmjpSVcD7TKc6lzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10398
 
-On Thu, May 08, 2025 at 06:55:17AM -0500, Alex Elder wrote:
-> On 5/8/25 12:38 AM, Haylen Chu wrote:
-> > On Tue, May 06, 2025 at 04:06:35PM -0500, Alex Elder wrote:
-> > > Implement reset support for SpacemiT CCUs.  The code is structured to
-> > > handle SpacemiT resets generically, while defining the set of specific
-> > > reset controllers and their resets in an SoC-specific source file.  A
-> > > SpacemiT reset controller device is an auxiliary device associated with
-> > > a clock controller (CCU).
-> > > 
-> > > This initial patch defines the reset controllers for the MPMU, APBC, and
-> > > MPMU CCUs, which already defined clock controllers.
-> > > 
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > >   drivers/reset/Kconfig           |   1 +
-> > >   drivers/reset/Makefile          |   1 +
-> > >   drivers/reset/spacemit/Kconfig  |  12 +++
-> > >   drivers/reset/spacemit/Makefile |   7 ++
-> > >   drivers/reset/spacemit/core.c   |  61 +++++++++++
-> > >   drivers/reset/spacemit/core.h   |  39 +++++++
-> > >   drivers/reset/spacemit/k1.c     | 177 ++++++++++++++++++++++++++++++++
-> > >   7 files changed, 298 insertions(+)
-> > >   create mode 100644 drivers/reset/spacemit/Kconfig
-> > >   create mode 100644 drivers/reset/spacemit/Makefile
-> > >   create mode 100644 drivers/reset/spacemit/core.c
-> > >   create mode 100644 drivers/reset/spacemit/core.h
-> > >   create mode 100644 drivers/reset/spacemit/k1.c
-> > > 
-> > 
-> > ...
-> > 
-> > > diff --git a/drivers/reset/spacemit/Kconfig b/drivers/reset/spacemit/Kconfig
-> > > new file mode 100644
-> > > index 0000000000000..4ff3487a99eff
-> > > --- /dev/null
-> > > +++ b/drivers/reset/spacemit/Kconfig
-> > > @@ -0,0 +1,12 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > +
-> > > +config RESET_SPACEMIT
-> > > +	bool
-> > > +
-> > > +config RESET_SPACEMIT_K1
-> > > +	tristate "SpacemiT K1 reset driver"
-> > > +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> > > +	select RESET_SPACEMIT
-> > > +	default ARCH_SPACEMIT
-> > > +	help
-> > > +	  This enables the reset controller driver for the SpacemiT K1 SoC.
+This is part of the effort to finalize the conversion of drivers to the
+dedicated hardware timestamping API.
 
-...
+In the case of the DPAA1 Ethernet driver, a bit more care is needed,
+because dpaa_ioctl() looks a bit strange. It handles the "set" IOCTL but
+not the "get", and even the phylink_mii_ioctl() portion could do with
+some cleanup.
 
-> > > diff --git a/drivers/reset/spacemit/Makefile b/drivers/reset/spacemit/Makefile
-> > > new file mode 100644
-> > > index 0000000000000..3a064e9d5d6b4
-> > > --- /dev/null
-> > > +++ b/drivers/reset/spacemit/Makefile
-> > > @@ -0,0 +1,7 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +obj-$(CONFIG_RESET_SPACEMIT)			+= reset_spacemit.o
-> > 
-> > As RESET_SPACEMIT is defined as bool, the reset driver will never be
-> > compiled as a module... so either the RESET_SPACEMIT_K1 should be
-> > limited to bool as well or you could take an approach similar to the
-> > clock driver.
-> 
-> I'm not sure I understand this statement, at least in this
-> context.  This pattern is used to define a single module
-> "reset_spacemit.o" out of several source files.
+Vladimir Oltean (3):
+  net: dpaa_eth: convert to ndo_hwtstamp_set()
+  net: dpaa_eth: add ndo_hwtstamp_get() implementation
+  net: dpaa_eth: simplify dpaa_ioctl()
 
-The problem is that RESET_SPACEMIT could only evaluate to N or Y (it's a
-bool entry), thus reset_spacemit.o will always be built into the kernel,
-regardless whether RESET_SPACEMIT_K1 is set to Y or M.
+ .../net/ethernet/freescale/dpaa/dpaa_eth.c    | 41 ++++++++++---------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
 
-In the clock driver, the platform config entry (SPACEMIT_CCU, bool type)
-is used to hide SoC-specific entries instead of being really used in
-Makefile.
+-- 
+2.43.0
 
-> But I think you're saying that RESET_SPACEMIT and
-> RESET_SPACEMIT_K1 should both be bool, or both be
-> tristate.  I will resolve that question before I
-> send the next version.
-
-This isn't necessary, but making both of them bool will definitely
-simplify your work, although I'd like to see the reset driver able to
-be built as module, just like the clock one :)
-
-> > > +reset_spacemit-y				:= core.o
-> > > +
-> > > +reset_spacemit-$(CONFIG_RESET_SPACEMIT_K1)	+= k1.o
-
-Regards,
-Haylen Chu
 
