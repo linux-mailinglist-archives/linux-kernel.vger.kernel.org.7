@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-640224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2B5AB01E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:55:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68430AB01E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B461BA75AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E811BA75E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0873A288503;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23C1288524;
 	Thu,  8 May 2025 17:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dWFgAlKE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OvdAV5wE"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AhshGo1m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vR/GBmYl"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBAB2874E5;
-	Thu,  8 May 2025 17:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8770728751C;
+	Thu,  8 May 2025 17:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746726875; cv=none; b=hArDr4ZvlQ89M5PLl1dRtFJdMZCrXFQMuZkPg3vgicBU44lLgT0EXl7NAKW6pmGxEj+QusmQ7nN2kfjVxL6dVlKqiCwClqXvG7zar9lbMKF7FGUzzOiXZwdubHjkurQxK7AkzrI+bXVi0LlTiQLQudv+fpxgDHKsGUxq8OHGF3Y=
+	t=1746726876; cv=none; b=WE+PWSzFTESaIMSk14YpzLiCBwvjftnKL09GxRLXdHL6kk9iVH57oj2dbhnwgyEy5glaWY1VwFmzzRRrI4XktSCIRHUBm2Y9qO070vS3WB+hG/+cn9nGkpbRSqLs+7zgTD0fYHTXzdY3dkDGvIJXkNZHLMVU49gPvmLUPLFbDmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746726875; c=relaxed/simple;
-	bh=/J/qm6Mq2xk2tTG9Sjso5JpHkPdlM/37UeQjnx9hCB4=;
+	s=arc-20240116; t=1746726876; c=relaxed/simple;
+	bh=WCdPHCoivE2+aMkIKGGm3XR7eRTvD42TJNiovr7z4qE=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=m3zyO8zPrXjmIio4GmVJwJkveLNDFBVv8XI8j3yXD90dDEfHTWol2AY0gUjLLVAqmdGjUXOjluYzlV0fo6/zkpBqbdKXZe/mrDfpktRl56UyHntehVX1me4oLMkMabof6eO+QlHe0EM3ANgvcV1g0cpmvHbj6FtAztx71WBOGsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dWFgAlKE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OvdAV5wE; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=H4MAfn9yx+5UNmgnztTfHvwzehm3ndfC/bcKltBImTSNceQ7LC9pmYmokiqcuAwBvNSp03+TnKavtH6d0CrNp7zTtbvvAMKFAomkMOSbcebHUkxWm7XZtBjvzzFDL5YK2W5Sw7hi07Z2EY4t6YfVBCVy8gyca+SAYS/sfLY6kaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AhshGo1m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vR/GBmYl; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 May 2025 17:54:30 -0000
+Date: Thu, 08 May 2025 17:54:31 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746726871;
+	s=2020; t=1746726872;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PzDLtzkwsHBDfrK9JKxAtI5eeO/q75EJOup57fCHF7o=;
-	b=dWFgAlKE9veFOeH5r2DX+0LTXTyZij7mOY3F4aj0VRIw1ULdf8d16Cz5OK3+fYxm+m8oyo
-	Hwun/z2bT/6DmIcRypC0FmHBmXLu59oecXUj+YeybYbTC7AxLbSxLvIOmsAKXQUkZa5R+q
-	zNRkt9XpdugkbUcyfJMbKbMhvuh60sqD2jBwgnhtQDso6UW7GgTbKNwgyG/hOQa/evHkny
-	1oWUnADKaFAVLzCI48ZWCA++243N329hINf8L29IOze4yeftfXdgDvjVMwcl6jtNklxXR9
-	wQWDtN0U3SFJBZ7YxHFQ+KFj/QBxTtHkm6rHzF/Is5Cr3qgudCQQ85quFi9OqQ==
+	bh=On3L0UWBgupKmXfrySYaiDB41N/dWp/Uvys4jj5LUac=;
+	b=AhshGo1mr9yxSGgK2LlLQmmYsJEsJe0qYE6EE3nf3ARXYJnG/zxzNL/pbPelWKMlVKIdQN
+	XYxiprwo+Ci/ZqiQiRDSOriyQbPYpqfFfXIRG3/sGhFLEoAz08SerMn/MGsf+Zl7a9lvJ3
+	4t0R2SvWPG5QN72ko+6GuchkubdJGWTBqXyc5GrvtM2MeqU//wlWEN84z0RpytElSpVLYh
+	TUPPTShEpiQxwHG+fanH0XPSUm8VyPyMtNwFEFVaRdK0IcJnIE+osLLUUZoNkTQk1fahyk
+	KiovogePsVfiBasdEgKmbUzbaTberldSkhbNKNP8n5BjPSRnaW4lUokBOUrL2A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746726871;
+	s=2020e; t=1746726872;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PzDLtzkwsHBDfrK9JKxAtI5eeO/q75EJOup57fCHF7o=;
-	b=OvdAV5wEfuKGx5vpOmQDsFVttaBN234SmGAf0KLrdH3BJiu0xZYDHL+tdohyphMeD9k+af
-	Sdg/ohkahJuoZeCw==
+	bh=On3L0UWBgupKmXfrySYaiDB41N/dWp/Uvys4jj5LUac=;
+	b=vR/GBmYlhRb4Pc5Pg4EcWa9sRs5boHSj6N28IJf02z0gNQ9vDvyURFDfTOJYIHrEHcFSHW
+	Q5DYDGco4F5HBhBQ==
 From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: timers/cleanups] timers: Rename __init_timer() as __timer_init()
+ [tip: timers/cleanups] timers: Rename init_timer_key() as timer_init_key()
 Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250507175338.672442-5-mingo@kernel.org>
-References: <20250507175338.672442-5-mingo@kernel.org>
+In-Reply-To: <20250507175338.672442-3-mingo@kernel.org>
+References: <20250507175338.672442-3-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174672687050.406.11934732105180814170.tip-bot2@tip-bot2>
+Message-ID: <174672687198.406.14307092634177417220.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,68 +81,98 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/cleanups branch of tip:
 
-Commit-ID:     9505215b6b3233d38c5ee65cfd47b6a5a36adab9
-Gitweb:        https://git.kernel.org/tip/9505215b6b3233d38c5ee65cfd47b6a5a36adab9
+Commit-ID:     e86e43907f945e7f2e48d1c5c9105801ca2b11b7
+Gitweb:        https://git.kernel.org/tip/e86e43907f945e7f2e48d1c5c9105801ca2b11b7
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 07 May 2025 19:53:32 +02:00
+AuthorDate:    Wed, 07 May 2025 19:53:30 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 08 May 2025 19:49:33 +02:00
+CommitterDate: Thu, 08 May 2025 19:49:32 +02:00
 
-timers: Rename __init_timer() as __timer_init()
+timers: Rename init_timer_key() as timer_init_key()
 
-Move this API to the canonical __timer_*() namespace.
+Move this API to the canonical timer_*() namespace.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250507175338.672442-5-mingo@kernel.org
+Link: https://lore.kernel.org/all/20250507175338.672442-3-mingo@kernel.org
 
 ---
- include/linux/timer.h     | 6 +++---
- include/linux/workqueue.h | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/timer.h | 8 ++++----
+ kernel/time/timer.c   | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/timer.h b/include/linux/timer.h
-index 31127e8..11e1fac 100644
+index 10596d7..0c1c3aa 100644
 --- a/include/linux/timer.h
 +++ b/include/linux/timer.h
-@@ -88,7 +88,7 @@ static inline void timer_init_key_on_stack(struct timer_list *timer,
+@@ -67,7 +67,7 @@
+ /*
+  * LOCKDEP and DEBUG timer interfaces.
+  */
+-void init_timer_key(struct timer_list *timer,
++void timer_init_key(struct timer_list *timer,
+ 		    void (*func)(struct timer_list *), unsigned int flags,
+ 		    const char *name, struct lock_class_key *key);
+ 
+@@ -83,7 +83,7 @@ static inline void init_timer_on_stack_key(struct timer_list *timer,
+ 					   const char *name,
+ 					   struct lock_class_key *key)
+ {
+-	init_timer_key(timer, func, flags, name, key);
++	timer_init_key(timer, func, flags, name, key);
+ }
  #endif
  
- #ifdef CONFIG_LOCKDEP
--#define __init_timer(_timer, _fn, _flags)				\
-+#define __timer_init(_timer, _fn, _flags)				\
+@@ -91,7 +91,7 @@ static inline void init_timer_on_stack_key(struct timer_list *timer,
+ #define __init_timer(_timer, _fn, _flags)				\
  	do {								\
  		static struct lock_class_key __key;			\
- 		timer_init_key((_timer), (_fn), (_flags), #_timer, &__key);\
-@@ -101,7 +101,7 @@ static inline void timer_init_key_on_stack(struct timer_list *timer,
- 					#_timer, &__key);		 \
+-		init_timer_key((_timer), (_fn), (_flags), #_timer, &__key);\
++		timer_init_key((_timer), (_fn), (_flags), #_timer, &__key);\
+ 	} while (0)
+ 
+ #define __init_timer_on_stack(_timer, _fn, _flags)			\
+@@ -102,7 +102,7 @@ static inline void init_timer_on_stack_key(struct timer_list *timer,
  	} while (0)
  #else
--#define __init_timer(_timer, _fn, _flags)				\
-+#define __timer_init(_timer, _fn, _flags)				\
- 	timer_init_key((_timer), (_fn), (_flags), NULL, NULL)
+ #define __init_timer(_timer, _fn, _flags)				\
+-	init_timer_key((_timer), (_fn), (_flags), NULL, NULL)
++	timer_init_key((_timer), (_fn), (_flags), NULL, NULL)
  #define __init_timer_on_stack(_timer, _fn, _flags)			\
- 	timer_init_key_on_stack((_timer), (_fn), (_flags), NULL, NULL)
-@@ -118,7 +118,7 @@ static inline void timer_init_key_on_stack(struct timer_list *timer,
-  * be used and must be balanced with a call to destroy_timer_on_stack().
-  */
- #define timer_setup(timer, callback, flags)			\
--	__init_timer((timer), (callback), (flags))
-+	__timer_init((timer), (callback), (flags))
+ 	init_timer_on_stack_key((_timer), (_fn), (_flags), NULL, NULL)
+ #endif
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 4d915c0..5efed36 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -904,7 +904,7 @@ static void do_init_timer(struct timer_list *timer,
+ }
  
- #define timer_setup_on_stack(timer, callback, flags)		\
- 	__init_timer_on_stack((timer), (callback), (flags))
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index b0dc957..985f69f 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -316,7 +316,7 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
- #define __INIT_DELAYED_WORK(_work, _func, _tflags)			\
- 	do {								\
- 		INIT_WORK(&(_work)->work, (_func));			\
--		__init_timer(&(_work)->timer,				\
-+		__timer_init(&(_work)->timer,				\
- 			     delayed_work_timer_fn,			\
- 			     (_tflags) | TIMER_IRQSAFE);		\
- 	} while (0)
+ /**
+- * init_timer_key - initialize a timer
++ * timer_init_key - initialize a timer
+  * @timer: the timer to be initialized
+  * @func: timer callback function
+  * @flags: timer flags
+@@ -912,17 +912,17 @@ static void do_init_timer(struct timer_list *timer,
+  * @key: lockdep class key of the fake lock used for tracking timer
+  *       sync lock dependencies
+  *
+- * init_timer_key() must be done to a timer prior to calling *any* of the
++ * timer_init_key() must be done to a timer prior to calling *any* of the
+  * other timer functions.
+  */
+-void init_timer_key(struct timer_list *timer,
++void timer_init_key(struct timer_list *timer,
+ 		    void (*func)(struct timer_list *), unsigned int flags,
+ 		    const char *name, struct lock_class_key *key)
+ {
+ 	debug_init(timer);
+ 	do_init_timer(timer, func, flags, name, key);
+ }
+-EXPORT_SYMBOL(init_timer_key);
++EXPORT_SYMBOL(timer_init_key);
+ 
+ static inline void detach_timer(struct timer_list *timer, bool clear_pending)
+ {
 
