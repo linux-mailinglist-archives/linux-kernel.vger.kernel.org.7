@@ -1,155 +1,178 @@
-Return-Path: <linux-kernel+bounces-639665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BB9AAFA80
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:51:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3580DAAFA87
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25ED1895A77
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0E8464B7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3A6227E9B;
-	Thu,  8 May 2025 12:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3316EEAA;
+	Thu,  8 May 2025 12:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxXfurJY"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nS06MZyG"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6109B1F9ED2;
-	Thu,  8 May 2025 12:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18677227E82
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 12:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708703; cv=none; b=DvaAza6IrhMiuaG3Yx73dDz5EpC0CRZUgm7HACtddOzS4hVsaKO5Zq83RWpDX/p0u/kcGqCzj1nqQk2VKfKxvU5O8xuRLQ7v2khKn8dNbb8ZVVkt90auqWp/ljkbecYnbyR9S7xq7CrcZGn+AT0pND1g58ISiNFrDSkCF2jBVak=
+	t=1746708743; cv=none; b=pKNDUeQy5qRPgM8/J4BxynZtlJV0BU3ti6Eg1UXPDoUnLOdLW51CaRJvDl0tCagUO+N2eBrMLS6NxKQHTizbF0yl/dqCutpFpEsox5oZvp4Q/eJ9JMHFN/MwMscbuwTqK/6NXVtWniOF/TFOdPRwFwDJQew6Zq8EEYBZ2lV0OCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708703; c=relaxed/simple;
-	bh=yIiNkKLReloXickrnQEpD87aT447ViZNb8D5a9BKc9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUdGmm5qiMV2if7gvp7wVr06K88k+h4/wbaAFelHpLrXjIsGUapnyqUNAz7v0ai6o4EwM4w43zccBehjAebW1yb1Rgl2G5p5u+v7+fKkP9UiuplsQg7K+9JXA1swUit1SUgJZTXiCWLRX1O55XCzBPy3xNrXNLDpMzo6D7Eemyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxXfurJY; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so10096955e9.1;
-        Thu, 08 May 2025 05:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746708700; x=1747313500; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yIiNkKLReloXickrnQEpD87aT447ViZNb8D5a9BKc9M=;
-        b=cxXfurJY/O4NHDAhRbj83PNLHIHkdhXuEAHUDaHIxr7bRFu6Mj5ZE2qtTHBr/vutCT
-         mGWM01juhiBw9Ub/0nXWsbjTfm/Krmsw/xrr9nQ6Ngda5CZ6LoDlFcgPnlViahQ/hnzK
-         niFCP2bXK9bmFdn9JfBMEqIlRyaPTg1enKR4k4YgnJw38l7bB5VeVBN5bH1O5IuUdQiN
-         InpC6UyTT952xyzrcTcLF9dm7BD3iF1h83tetn0iKxuvJZyGwvbm1A3fv4yBWRadsJWf
-         kxR7olcX7TSzlDtJfYJ/lElDC78ajvPpOfWq1CpTSZUjriGIEvMUwOCH/h86o/Pvevsw
-         F24g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746708700; x=1747313500;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yIiNkKLReloXickrnQEpD87aT447ViZNb8D5a9BKc9M=;
-        b=AdnzPrAbHXXkINunFUAjRztG0wWNlHdBecPSYn4AMOj8xIiyAQ1b34Mtoy5X8IQtJ8
-         7mZ8TXiENF6/IV7TgWS+zsJIhUuGnLGJ4hkLMWv8K8RZV0jnBBLB3hQItDzHduxNmb/A
-         C8jvi4dxczMyNULRZuWPmqhlQ75nPcFhHTu4aZc2y5sCH76/zOplrtHX74b8JkINjEWl
-         mqcRN5+mi33QebM4v7TcA8IvBCEf0FBp0OZSkqZXW2YIMpBDjOlHqx3EpB+r/u/51cjC
-         kI2st3b2QKsh4gVW660otDQfuhXH6rzeu9rmXKLCXjYkiJNK44YIaGhrHKcjYDuKR2S9
-         e04A==
-X-Forwarded-Encrypted: i=1; AJvYcCXY3CMuyKAiGKE+Lq1qtenjanZuSFaCaqQQwAiqmsUrBjRwtpSkrdzLNNcFlxN57DgWFTqLpK9ny4zI@vger.kernel.org, AJvYcCXe7q2cXzcQoYseWrtDoBOdkt2qDgANHUzoC9BmrWWkLP4wObr+EnB9fhYvtzZi/cVP+1GPFYoE+pD+CPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2uwQNiu4ekKs7Cqf/XQ+4obdTDdkRIfyTPKGNk0J6NRrUtHMN
-	0SjXlK7Fgj0k88dLkW51HWjkwoccrSdfj7OjCL0g9icp1rgxvrM8
-X-Gm-Gg: ASbGncugzh5QwLMQohJ2UcovSqpiZd52HDR8q/av4CFxF28ffttwfsHi7CdcVun5ow/
-	eYmd4yGJhTaoizu6CHi1M/AP7BvhW7ZCJihURKKiCg+dnGhJYg4RE9j+Cj/IJ1YmNETVGNP3ls3
-	dLwvZMgjZUSgJPcH5aNJLIwhbg+hy0U3qdfGsMej+mayaNzaD/4tbfU24IkJQ8p+GiiUUc1WYY/
-	BHD5YBQchCr2zMkDIEYIAQD5XEySsdL48+VZwvnFAcLYpnzFj1loEnEv6P5fZ5xAbBXsEg7TY8k
-	7Dj1DQvZRO1rVGzeKCG52jpB5z6sBMWHDTeeLeh44C435y1ujFadQNLD2beq3k1JIOrx3zAY6Ji
-	9N0kLB4SvT1IQxzIQjYXLS8xGVt2ZMglI0Y51gQ==
-X-Google-Smtp-Source: AGHT+IFjClLBCOma1v7TfMk1NMdg04DnrdjRWX/Qf1fUQBkDZqHHKJ2StSz0Exx3dnqkzaAGiHyhRA==
-X-Received: by 2002:a05:600c:a00f:b0:43d:ac5:11e8 with SMTP id 5b1f17b1804b1-442d033a3fdmr24244835e9.21.1746708699394;
-        Thu, 08 May 2025 05:51:39 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd33331bsm36163885e9.14.2025.05.08.05.51.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 05:51:38 -0700 (PDT)
-Date: Thu, 8 May 2025 14:51:36 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Vidya Sagar <vidyas@nvidia.com>, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, kthota@nvidia.com, 
-	mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4] PCI: dwc: tegra194: Broaden architecture dependency
-Message-ID: <a6dx377rhakpl3gvvyofdbui5sbccf3fhw6o2qb55fmmx4v4fv@ifvzdjep2kp5>
-References: <20250417074607.2281010-1-vidyas@nvidia.com>
- <20250508051922.4134041-1-vidyas@nvidia.com>
- <aByg1GUBno3Gzf4w@ryzen>
+	s=arc-20240116; t=1746708743; c=relaxed/simple;
+	bh=4EEv/VR+O6eQtRtSYNR1r7VhlLlFGzV6XXC+IypFeGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4BdfnWmnnBS7/AeYi02Ji1V5jaJHmffOqUaJx07rsirjRqYmAgLZLcp0L4QL664wLwWF1C7dNrX7E5xTQhv6igyNkax28SSV6bMLktIGI3pp96IHcIXG5FEUztJpTQq/zfvpl1vZTDy+4WqiW3GziOWl8dAjiN1GDQjNrrN8fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nS06MZyG; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MFGXgXVhRIMsvtkmQGMYgyfxAd9uaycap/esRlGZ1eo=; b=nS06MZyGHnra3A68B5FRn4AtR1
+	Cd3pq19j82mhaAHYfWb0QsWsfLA9NRRKS3BjHEfqE6NPklGG/8BbONBp82ekODxR27Wbc3zztqhAu
+	Vwcisfvmsrh2GB7Dr64L08kEOCrej+B+KjhuO/AxlUuNc2xU0KAM/l53MLjBsfAlKgn7nKhONZGtZ
+	nXrkWm6ZL/+mk4QbVrci56toprJf9nIRGqhOxtpBWorqI7nWcfBz456kvx68SPDmVL10kwu+UubkW
+	+T5kJemrd3fKy3s9dmW293+3cCWuumNY0DU9ExkboR55as797QPcmRUiIdUulx+osy1kmpnwAHsT+
+	x1XH1H1A==;
+Received: from [81.79.92.254] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uD0eu-005Daq-FW; Thu, 08 May 2025 14:51:44 +0200
+Message-ID: <a1c9c680-2927-428c-95e9-2e79d14cec58@igalia.com>
+Date: Thu, 8 May 2025 13:51:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="s5xgpf6bsu2ar5wd"
-Content-Disposition: inline
-In-Reply-To: <aByg1GUBno3Gzf4w@ryzen>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] drm/sched: Port unit tests to new cleanup design
+To: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250424095535.26119-2-phasta@kernel.org>
+ <20250424095535.26119-8-phasta@kernel.org>
+ <894cf4cdb7e14b2a21dcf87bfeac4776cb695395.camel@mailbox.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <894cf4cdb7e14b2a21dcf87bfeac4776cb695395.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---s5xgpf6bsu2ar5wd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V4] PCI: dwc: tegra194: Broaden architecture dependency
-MIME-Version: 1.0
+Hi Philipp,
 
-On Thu, May 08, 2025 at 02:17:24PM +0200, Niklas Cassel wrote:
-> On Thu, May 08, 2025 at 10:49:22AM +0530, Vidya Sagar wrote:
-> > Replace ARCH_TEGRA_194_SOC dependency with a more generic ARCH_TEGRA
-> > check for the Tegra194 PCIe controller, allowing it to be built on
-> > Tegra platforms beyond Tegra194. Additionally, ensure compatibility
-> > by requiring ARM64 or COMPILE_TEST.
-> >=20
-> > Link: https://patchwork.kernel.org/project/linux-pci/patch/202501280442=
-44.2766334-1-vidyas@nvidia.com/
-> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > ---
->=20
-> Looks good to me, but there will need coordination between the
-> PHY and PCI maintainers for this to not cause a kernel test bot
-> build failure, if the PCI patch is merged before the PHY patch.
->=20
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+On 08/05/2025 12:03, Philipp Stanner wrote:
+> On Thu, 2025-04-24 at 11:55 +0200, Philipp Stanner wrote:
+>> The unit tests so far took care manually of avoiding memory leaks
+>> that
+>> might have occurred when calling drm_sched_fini().
+>>
+>> The scheduler now takes care by itself of avoiding memory leaks if
+>> the
+>> driver provides the callback
+>> drm_sched_backend_ops.kill_fence_context().
+>>
+>> Implement that callback for the unit tests. Remove the manual cleanup
+>> code.
+> 
+> @Tvrtko: On a scale from 1-10, how much do you love this patch? :)
 
-Either the PCI or PHY maintainers would need to provide an Acked-by so
-these can go through the same tree.
+Specific patch aside, it is the series as a whole I would like to be 
+sure there isn't a more elegant way to achieve the same end result.
 
-Alternatively, since these are only platform-related Kconfig changes, I
-could pick this up into the Tegra tree if I get Acked-bys from both
-subsystems.
+Like that sketch of a counter proposal I sent for the reasons listed 
+with it. Which were, AFAIR, to avoid needing to add more state machine, 
+to avoid mandating drivers have to keep an internal list, and to align 
+better with the existing prototypes in the sched ops table (where 
+everything operates on jobs).
 
-Either way is fine, and in case it helps:
+Regards,
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Tvrtko
 
---s5xgpf6bsu2ar5wd
-Content-Type: application/pgp-signature; name="signature.asc"
+>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>> ---
+>>   .../gpu/drm/scheduler/tests/mock_scheduler.c  | 34 ++++++++++++-----
+>> --
+>>   1 file changed, 21 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>> index f999c8859cf7..a72d26ca8262 100644
+>> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>> @@ -228,10 +228,30 @@ static void mock_sched_free_job(struct
+>> drm_sched_job *sched_job)
+>>   	/* Mock job itself is freed by the kunit framework. */
+>>   }
+>>   
+>> +static void mock_sched_fence_context_kill(struct drm_gpu_scheduler
+>> *gpu_sched)
+>> +{
+>> +	struct drm_mock_scheduler *sched =
+>> drm_sched_to_mock_sched(gpu_sched);
+>> +	struct drm_mock_sched_job *job;
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&sched->lock, flags);
+>> +	list_for_each_entry(job, &sched->job_list, link) {
+>> +		spin_lock(&job->lock);
+>> +		if (!dma_fence_is_signaled_locked(&job->hw_fence)) {
+>> +			dma_fence_set_error(&job->hw_fence, -
+>> ECANCELED);
+>> +			dma_fence_signal_locked(&job->hw_fence);
+>> +		}
+>> +		complete(&job->done);
+>> +		spin_unlock(&job->lock);
+>> +	}
+>> +	spin_unlock_irqrestore(&sched->lock, flags);
+>> +}
+>> +
+>>   static const struct drm_sched_backend_ops drm_mock_scheduler_ops = {
+>>   	.run_job = mock_sched_run_job,
+>>   	.timedout_job = mock_sched_timedout_job,
+>> -	.free_job = mock_sched_free_job
+>> +	.free_job = mock_sched_free_job,
+>> +	.kill_fence_context = mock_sched_fence_context_kill,
+>>   };
+>>   
+>>   /**
+>> @@ -300,18 +320,6 @@ void drm_mock_sched_fini(struct
+>> drm_mock_scheduler *sched)
+>>   		drm_mock_sched_job_complete(job);
+>>   	spin_unlock_irqrestore(&sched->lock, flags);
+>>   
+>> -	/*
+>> -	 * Free completed jobs and jobs not yet processed by the DRM
+>> scheduler
+>> -	 * free worker.
+>> -	 */
+>> -	spin_lock_irqsave(&sched->lock, flags);
+>> -	list_for_each_entry_safe(job, next, &sched->done_list, link)
+>> -		list_move_tail(&job->link, &list);
+>> -	spin_unlock_irqrestore(&sched->lock, flags);
+>> -
+>> -	list_for_each_entry_safe(job, next, &list, link)
+>> -		mock_sched_free_job(&job->base);
+>> -
+>>   	drm_sched_fini(&sched->base);
+>>   }
+>>   
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcqNgACgkQ3SOs138+
-s6G94g/9EYpEju+sw29ZHmw7J6bxE0T+wHJHQXMv8l8jo8DZVHyfZeGioqb2PjNw
-PCt2Rd8DhNSj5jZuiJyNMBp2kirlKJxI+zuKQ7hA7OLSdXp2+xQhaYAIXEKf9cdN
-0joxct/6B6AvAA4ccXb7LM4GcqbHX039+use52o12wTgZqoeumFuZk0Tmyvf3kCr
-3HWgBY7xIN7B2nyiOS1jWhtzURmf7zDO1bgMMQ5h+iT033Pr4Px9DiWV6/NkolT4
-ZD0D7svrTiYr/VDs5162CsIR9zeL+AdbNhqBxYcjXFFVS/U0QelD95sUIvMunjNp
-HkJBfnIDou4nrzsb7qUFapG0Tr4Rtfsa4T24KlLZhg2egDrSZIvDAGmLd4QI1G2A
-LldOxBh7ND8mZGh16LvxI4XBF8jxrALzVJs7pYTYr2k+XO9jYznXDoQFFoV1ktYZ
-+7CarzTC6aEQkc6FuWETnWeBADj5tbwL4yR/IsC/AORyASrrPuQvTyPhg9+W2k+Z
-cUlLMJcR6JY8mMvjaroAyQ7ez6qewcJyNEsEI7GJ3WEAy9dwUy0OcfOapyGjN4cE
-/p0wIUw2FntyKfr00/XAQhpMI5z33AQNLJRJj4TTpelOG12LVFVhEr9qc8jP+yqY
-37h1efVocLcm7ioar5UX3t/Ony4zl89RTWrTtFequ1FxSkY4FE4=
-=gVmM
------END PGP SIGNATURE-----
-
---s5xgpf6bsu2ar5wd--
 
