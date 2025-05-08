@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-640603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79444AB06C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:50:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FD9AB06CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F807BF8B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3393B34A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A81C235362;
-	Thu,  8 May 2025 23:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233D1233133;
+	Thu,  8 May 2025 23:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ki+sy1Uu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UMI2FZIG"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66E3235346;
-	Thu,  8 May 2025 23:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4B528E0F;
+	Thu,  8 May 2025 23:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746748191; cv=none; b=t0vNlicwTHs04eyMMjOdfJqCXwigVT9gfdP8L2lKD8v5npb0y/dlWLDHVPjEZIhWBhheQLkVgKfeOPB2cvR43+QsGy8indo7y6AXJrDWLgf/4QkINLquoROZRX3UgF9gzEzreXwgHzoVEs6+UyASCgLCsSNqexxYwhFQ779mFDg=
+	t=1746748273; cv=none; b=A9zl1GBIUPyptJ7shwrbxHmC1pRocd6L+t2unS6zkT9TtAxCABj2nILvVDa2dxhVpFEXlfq3Q+YfqgPQ483xl+vKxLjTcGTPsTZFJ/QbEMqxd1W6o8+kzJMTYH7kLP7j1hnH6cM7ySd5Z2D9/m/kAewJdWzxHtmuGFBHPhnX5Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746748191; c=relaxed/simple;
-	bh=lL0EFNIiIcqpQh3uUwyWJQ72+MbHAoPc+7fJeD9cv2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jy/7gHtU8kAwn+5VORaJ0nLoLSRFRrIpJ3EpHoegss1QSUDWPwlhGp0NoHAQqi/OFmHHP0ab8fKXCStdaDjNiHx7StB2X3745l3B+YJBfxUpOMoA4GP6KrxODioS/cnui7PQPpaYYVyMVVGM//i6Jy2dC8MMBcAhDXdRcuHQzJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ki+sy1Uu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF69C4CEE7;
-	Thu,  8 May 2025 23:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746748190;
-	bh=lL0EFNIiIcqpQh3uUwyWJQ72+MbHAoPc+7fJeD9cv2c=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=ki+sy1Uu2mXoOb83Es1O9jlyKZ8DOL5O0FDVjqRzJmVmYO7bClLEoK6+rf9tFDJHX
-	 989tcSDKrbrHzZzAo5OWaQ6GJvf03NNSAuLrVc7MQvE58SmV0BDuK40VyiX8d5MJRT
-	 1ZpTD71OCSKNh4YvbtcnnZfoC8MGtzB11rOARYhwUOm9ZTZypsrhssky7XfS0KjdtY
-	 6RNPBpk/wX31icPWOmX+K7Gc6UP8cMe+JdICUVlskLdPgzh6FYmp89nRiANVywY1uQ
-	 aXctuEnz28hfbZspPODTfbmUDeTsIY7JM6K2S2qrWsiO98iQ3WUH8jWOn0MMCoOXR0
-	 oGh9PDqIQcdWQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 53BB8CE11A4; Thu,  8 May 2025 16:49:50 -0700 (PDT)
-Date: Thu, 8 May 2025 16:49:50 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH] rcu: Protect ->defer_qs_iw_pending from data race
-Message-ID: <e43b1a5c-1f26-491b-b3cb-b69fdbea153a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1746748273; c=relaxed/simple;
+	bh=XLtXSV3YB2wMR3rf8YoNwOysDSGP/edc5e4gRMcZF9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tVb+8a8f00AVPFbDHkenIKxoFLjvBDtI8RVgffGKeQ0yYINPmZHMScxBTQYc3Pil7oPAPbIJ39Muhxcyi4dZg0Ko6p8phMU6EDjcRyH0jdLMkcbL4o3qwWx9wds00e59vM1x5DPKhqZwGLCpNnrK1qrMsQcNEG2AtJwKK94wStQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UMI2FZIG; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-30a8cfa713fso1564433a91.1;
+        Thu, 08 May 2025 16:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746748270; x=1747353070; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2tNz5T37bIUq+s38EPZp+Fj62nX8tr4TvbgzvkpBsJ8=;
+        b=UMI2FZIGgN1/Z+bcFlzdoM7jP5wnYpzT/cxuOZNn+5d3gCFnQgHvCfNXUzwL8EdHVK
+         Z+F6T77CBcjyDbQ+YE98Riew15JFo3ET/W5CE6iZsq7cG2AUAj5+Sj5aZTRbz/4aUjkd
+         1wByixmXkhXJjnA694KsxqaPsiGrnpxmasBGM8xTPAOPSEWIhgHN37KKMR2N9P2efoeG
+         1E//6BKe3a4F0CZl2Pc5a8IwMN1agNxoW8Pxaml80X3bb9ZK0TYZgeoSmT9hxv5NmXUB
+         4uHk2e55rsLdZLxXJKvivnclIdbtrWzubJy6hhCUJSD+eGuZVYc5P52cuJq1Wccm9PCi
+         zg5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746748270; x=1747353070;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2tNz5T37bIUq+s38EPZp+Fj62nX8tr4TvbgzvkpBsJ8=;
+        b=IEUc1UH3vsJpfaGXNRtu5VXK3hkefPKkiK7qyH+LRheIDKc/d1E984y610JMpccq8N
+         FIx4NQQ/gxdSKYCnBdWj/80e227ZZ8rly3PU/QNKHhzLE3q2tiwf84RIGgSdTgryBznx
+         uXeIlB05pej45PfK1ZRHEdhx1v6nFqucGfTGpApnN8U3ZbBR2Y0Cy8ZgRPjv/PZUY9EV
+         Eiy3c/z376a5ipljgYZdSDXNq9FeOnsNuWm0GC0k0E8JAErw7C6nMod8rWvK8pKYm8B2
+         xQO8anflVvJ9TK6Xs1qKrYvBgjWDhbfC2XnZgaSclDZGlgoPN5u6sPbZJY9GkYJDbDyf
+         N8BA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgaWjE0A/kq3KWGjIyaf7Q00dNNkkmgDIv5GSGtVfLnb8Sm9w1HLUASDgxEO5/oolIcTqs9gkpn1/sNg==@vger.kernel.org, AJvYcCXZOcqKfL3Le8F78wDMTi4IGKmLsfWrd7VYH7iJtq/XSopfKQ0UiMEqLTP+YrQXTaeKjs8mll9nKwrQylc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbh5A6TLTBlhuSN+kA843etBm/PcUvd0aFoRdifv6TjJ2FQgg2
+	qvSS4jyXXyRZDwzV9QiijbPJ6CIXby0uQQFSO2XCPpSTLHfrQAvC6Pbt
+X-Gm-Gg: ASbGncsdbursV5zsqOpeDCERL09gSn9yjxzAjziPQK0VGpwqFD//SOzLIAKV14Ki7GV
+	Xjr4y6Alt1Mc0iEAqFedgRMn6lejz43eONuD10PC5O5DVIUuW9WV1rZgsVcnaFkwhix5t1NPVvu
+	Aiunkjqz43ibBzeISLb6ygSRETpnksO63TqWnI+Ff1YvVT1t9futSleJmkhknzoyDL+GRjQ37vq
+	5lD6XegwFZnGT7tjJaJogYUSIlslqKAwDs0Tp7JQ/2CXqjE36v+iTvNYAgqH6K5Cm/Ys7p7kSBq
+	zcMT7xw3KCUZ/fm51uPbHuASzhDm3Pr4Irckg1PiZN7xgxJDpLnkTlWRihsvldn5gXqELYINn9I
+	EbA==
+X-Google-Smtp-Source: AGHT+IF5UwdT+dpyOFkrKM1cBtO+e3lXz9lyiUr9349apmbudXoYjrOoYfqNfHfAt4QrANmb7fjJQA==
+X-Received: by 2002:a17:90b:55c4:b0:305:5f32:d9f0 with SMTP id 98e67ed59e1d1-30c3d3e1da0mr1974700a91.19.1746748270474;
+        Thu, 08 May 2025 16:51:10 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b2351b7afeasm416158a12.73.2025.05.08.16.51.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 16:51:10 -0700 (PDT)
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	saeedm@nvidia.com,
+	tariqt@nvidia.com,
+	andrew+netdev@lunn.ch,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	leon@kernel.org,
+	Jason Xing <kerneljasonxing@gmail.com>
+Subject: [PATCH net-next v2] net/mlx5: support software TX timestamp
+Date: Thu,  8 May 2025 16:51:09 -0700
+Message-ID: <20250508235109.585096-1-stfomichev@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On kernels built with CONFIG_IRQ_WORK=y, when rcu_read_unlock() is
-invoked within an interrupts-disabled region of code [1], it will invoke
-rcu_read_unlock_special(), which uses an irq-work handler to force the
-system to notice when the RCU read-side critical section actually ends.
-That end won't happen until interrupts are enabled at the soonest.
+Having a software timestamp (along with existing hardware one) is
+useful to trace how the packets flow through the stack.
+mlx5e_tx_skb_update_hwts_flags is called from tx paths
+to setup HW timestamp; extend it to add software one as well.
 
-In some kernels, such as those booted with rcutree.use_softirq=y, the
-irq-work handler is used unconditionally.
+Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
+---
+v2: rename mlx5e_tx_skb_update_hwts_flags (Tariq & Jason)
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c | 1 +
+ drivers/net/ethernet/mellanox/mlx5/core/en_tx.c      | 7 ++++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-The per-CPU rcu_data structure's ->defer_qs_iw_pending field is
-updated by the irq-work handler and is both read and updated by
-rcu_read_unlock_special().  This resulted in the following KCSAN splat:
-
-------------------------------------------------------------------------
-
-BUG: KCSAN: data-race in rcu_preempt_deferred_qs_handler / rcu_read_unlock_special
-
-read to 0xffff96b95f42d8d8 of 1 bytes by task 90 on cpu 8:
- rcu_read_unlock_special+0x175/0x260
- __rcu_read_unlock+0x92/0xa0
- rt_spin_unlock+0x9b/0xc0
- __local_bh_enable+0x10d/0x170
- __local_bh_enable_ip+0xfb/0x150
- rcu_do_batch+0x595/0xc40
- rcu_cpu_kthread+0x4e9/0x830
- smpboot_thread_fn+0x24d/0x3b0
- kthread+0x3bd/0x410
- ret_from_fork+0x35/0x40
- ret_from_fork_asm+0x1a/0x30
-
-write to 0xffff96b95f42d8d8 of 1 bytes by task 88 on cpu 8:
- rcu_preempt_deferred_qs_handler+0x1e/0x30
- irq_work_single+0xaf/0x160
- run_irq_workd+0x91/0xc0
- smpboot_thread_fn+0x24d/0x3b0
- kthread+0x3bd/0x410
- ret_from_fork+0x35/0x40
- ret_from_fork_asm+0x1a/0x30
-
-no locks held by irq_work/8/88.
-irq event stamp: 200272
-hardirqs last  enabled at (200272): [<ffffffffb0f56121>] finish_task_switch+0x131/0x320
-hardirqs last disabled at (200271): [<ffffffffb25c7859>] __schedule+0x129/0xd70
-softirqs last  enabled at (0): [<ffffffffb0ee093f>] copy_process+0x4df/0x1cc0
-softirqs last disabled at (0): [<0000000000000000>] 0x0
-
-------------------------------------------------------------------------
-
-The problem is that irq-work handlers run with interrupts enabled, which
-means that rcu_preempt_deferred_qs_handler() could be interrupted,
-and that interrupt handler might contain an RCU read-side critical
-section, which might invoke rcu_read_unlock_special().  In the strict
-KCSAN mode of operation used by RCU, this constitutes a data race on
-the ->defer_qs_iw_pending field.
-
-This commit therefore disables interrupts across the portion of the
-rcu_preempt_deferred_qs_handler() that updates the ->defer_qs_iw_pending
-field.  This suffices because this handler is not a fast path.
-
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 3c0bbbbb686fe..003e549f65141 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -624,10 +624,13 @@ notrace void rcu_preempt_deferred_qs(struct task_struct *t)
-  */
- static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
- {
-+	unsigned long flags;
- 	struct rcu_data *rdp;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+index fdf9e9bb99ac..e399d7a3d6cb 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1689,6 +1689,7 @@ int mlx5e_ethtool_get_ts_info(struct mlx5e_priv *priv,
+ 		return 0;
  
- 	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
-+	local_irq_save(flags);
- 	rdp->defer_qs_iw_pending = false;
-+	local_irq_restore(flags);
+ 	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
++				SOF_TIMESTAMPING_TX_SOFTWARE |
+ 				SOF_TIMESTAMPING_RX_HARDWARE |
+ 				SOF_TIMESTAMPING_RAW_HARDWARE;
+ 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+index 4fd853d19e31..55a8629f0792 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+@@ -337,10 +337,11 @@ static void mlx5e_sq_calc_wqe_attr(struct sk_buff *skb, const struct mlx5e_tx_at
+ 	};
  }
  
- /*
+-static void mlx5e_tx_skb_update_hwts_flags(struct sk_buff *skb)
++static void mlx5e_tx_skb_update_ts_flags(struct sk_buff *skb)
+ {
+ 	if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP))
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
++	skb_tx_timestamp(skb);
+ }
+ 
+ static void mlx5e_tx_check_stop(struct mlx5e_txqsq *sq)
+@@ -392,7 +393,7 @@ mlx5e_txwqe_complete(struct mlx5e_txqsq *sq, struct sk_buff *skb,
+ 	cseg->opmod_idx_opcode = cpu_to_be32((sq->pc << 8) | attr->opcode);
+ 	cseg->qpn_ds           = cpu_to_be32((sq->sqn << 8) | wqe_attr->ds_cnt);
+ 
+-	mlx5e_tx_skb_update_hwts_flags(skb);
++	mlx5e_tx_skb_update_ts_flags(skb);
+ 
+ 	sq->pc += wi->num_wqebbs;
+ 
+@@ -625,7 +626,7 @@ mlx5e_sq_xmit_mpwqe(struct mlx5e_txqsq *sq, struct sk_buff *skb,
+ 	mlx5e_dma_push(sq, txd.dma_addr, txd.len, MLX5E_DMA_MAP_SINGLE);
+ 	mlx5e_skb_fifo_push(&sq->db.skb_fifo, skb);
+ 	mlx5e_tx_mpwqe_add_dseg(sq, &txd);
+-	mlx5e_tx_skb_update_hwts_flags(skb);
++	mlx5e_tx_skb_update_ts_flags(skb);
+ 
+ 	if (unlikely(mlx5e_tx_mpwqe_is_full(&sq->mpwqe))) {
+ 		/* Might stop the queue and affect the retval of __netdev_tx_sent_queue. */
+-- 
+2.49.0
+
 
