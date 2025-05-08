@@ -1,156 +1,154 @@
-Return-Path: <linux-kernel+bounces-639438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DB0AAF76E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A427AAF7AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E8147A8539
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E364E2664
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EE21C8616;
-	Thu,  8 May 2025 10:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F9C1F5433;
+	Thu,  8 May 2025 10:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CgHnebkp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aJZl9/A/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CgHnebkp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aJZl9/A/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SiHnXDhR"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0534C1C5D59
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D93A927;
+	Thu,  8 May 2025 10:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746698810; cv=none; b=CH02hunaz1bgjGhOj3URnBubnM0tAk3bSCoPJqc23yeHuCWy9UTQFSJl8JqHkzCzoW9OdpUjvNUETJQWU7IGwG32inCIAj0bqC4fUWnZz/61hiv37OC8HpY3114BmkvXM/trPTE+VMzRngVv16RtbhI5DpAU0bQ46VkEU9qlJN8=
+	t=1746699627; cv=none; b=oVyGVzN+8tBJstPnxuJDeCFdGGPius8Y4+pK0xcfcpaELsxmRKqKrAHA4TI1kZhJqqFYebQa6Mr31h3NhVyXu4lo49RVYGQ28UT2Nx4iJfo7wrgCahJ0haKHNQx1KoaLjVLMElH+miJ+8Ck/yII3Pef7cJru1Z47997A+kNjIAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746698810; c=relaxed/simple;
-	bh=9OFgkLwwQYyFgmgcN/DCjENMz0bPLUCBiHGhJdS/TZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvYKX5ressPTxp8jNWPa+ePdGC5pT8Xw+aWZg1ZXHgaBaYZ8uipKl/kj32vB6LFTjtvmQ86Or0lzd1AuBCf7RhVhDWq3gJra+XXW85l9Nuv3Cxvg9+smbzxFfdVhIoNNRyU4tzHIWmqPCWM9p1Zrbl9y9NqIn1ugMJwnuf7w82E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CgHnebkp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aJZl9/A/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CgHnebkp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aJZl9/A/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F0D31F452;
-	Thu,  8 May 2025 10:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746698807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2XZBC61pHArRi7h5c8bT0ngPckaZRAV64bLjA0KsKBA=;
-	b=CgHnebkpMOqj3Wr2Ei2GbHvl5OyOCxnyKedTJt8gWaflco2MCYS5YDPIPcc5AkkjHBPPpz
-	68II6zJzxQHI6qA05g37rOiF+C0tLcZdsRJNPowQyP8z0btXYwM/5YVt5aOAp+tlwdQg3C
-	vWV7x6L99RrYHIzA4upxVmT8e54bOq8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746698807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2XZBC61pHArRi7h5c8bT0ngPckaZRAV64bLjA0KsKBA=;
-	b=aJZl9/A/0fxTusS6J6SsxYISvjp41x0XBqwtEn9fcE/C7P+zGgB60FPq2V0iNLgak1Q51B
-	S/vT7dk4qPs2I1BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746698807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2XZBC61pHArRi7h5c8bT0ngPckaZRAV64bLjA0KsKBA=;
-	b=CgHnebkpMOqj3Wr2Ei2GbHvl5OyOCxnyKedTJt8gWaflco2MCYS5YDPIPcc5AkkjHBPPpz
-	68II6zJzxQHI6qA05g37rOiF+C0tLcZdsRJNPowQyP8z0btXYwM/5YVt5aOAp+tlwdQg3C
-	vWV7x6L99RrYHIzA4upxVmT8e54bOq8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746698807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2XZBC61pHArRi7h5c8bT0ngPckaZRAV64bLjA0KsKBA=;
-	b=aJZl9/A/0fxTusS6J6SsxYISvjp41x0XBqwtEn9fcE/C7P+zGgB60FPq2V0iNLgak1Q51B
-	S/vT7dk4qPs2I1BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3D2913712;
-	Thu,  8 May 2025 10:06:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zOBvNTaCHGjeewAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Thu, 08 May 2025 10:06:46 +0000
-Date: Thu, 8 May 2025 12:06:46 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, 
-	James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 01/14] nvmet-fcloop: track ref counts for nports
-Message-ID: <a42eca0f-8a13-443e-a380-86609d88b4ee@flourine.local>
-References: <20250507-nvmet-fcloop-v6-0-ca02e16fb018@kernel.org>
- <20250507-nvmet-fcloop-v6-1-ca02e16fb018@kernel.org>
- <4d262ac0-f27c-44d4-82c0-f50b31be606e@suse.de>
+	s=arc-20240116; t=1746699627; c=relaxed/simple;
+	bh=gIgafhy5zWc3M8O8oMA9ZYhwYnZoLDMjRm43UpOFRuY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PkUj+/O4ztwVY/pfcSwO4PjGB/SwKw1OycbTorEwH0jhcficOW5gHqYrtHmR5fWCOt6AFgWTTF0al2wWGPWvwGfObWoNm4zqz57I3F+dhMnGX5PSqv1ZJxnWMrrBZxtMJNlPC65o4f8E58ayqsUwqXw0xoSY9DpO5/VIZ9Vldzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SiHnXDhR; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 548AKF6K1067278
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 May 2025 05:20:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746699615;
+	bh=77i1XLR+zAF1WeatUhe0e2qwafkiomWLSZPAwCtDIto=;
+	h=From:To:CC:Subject:Date;
+	b=SiHnXDhRSVN1dzvV8tg8FcRFE2WZuGsYdQBWOnHTB35Vm8/55GdtfhVrDDEC6GK/x
+	 Bh42Gk9qF0iV0WKEgjjM+eRGFm6L0CqSu27QRu+P26hvTjvSKmrmvKHvl6hbXBlaM8
+	 QUiReaA71hfo57l6Ycpy/6ylADv8gJ206HC9i1Xw=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 548AKF4g032093
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 May 2025 05:20:15 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ May 2025 05:20:14 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 May 2025 05:20:14 -0500
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 548AKDAr008495;
+	Thu, 8 May 2025 05:20:14 -0500
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: T Pratham <t-pratham@ti.com>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kamlesh
+ Gurudasani <kamlesh@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth
+ Bajjuri <praneeth@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: [PATCH v4 0/2] Add support for Texas Instruments DTHE V2 crypto accelerator
+Date: Thu, 8 May 2025 15:37:39 +0530
+Message-ID: <20250508101723.846210-2-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d262ac0-f27c-44d4-82c0-f50b31be606e@suse.de>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, May 07, 2025 at 03:50:30PM +0200, Hannes Reinecke wrote:
-> > +	spin_lock_irqsave(&fcloop_lock, flags);
-> > +	tport = __unlink_target_port(nport);
-> >   	spin_unlock_irqrestore(&fcloop_lock, flags);
-> > -	if (!nport)
-> > -		return -ENOENT;
-> > +	if (!tport) {
-> > +		ret = -ENOENT;
-> > +		goto out_nport_put;
-> > +	}
-> >   	ret = __targetport_unreg(nport, tport);
-> 
-> The lock needs to extend across both lookup and unlink,
-> ie don't drop the lock in between.
+This series adds support for TI DTHE V2 crypto accelerator. DTHE V2 is a
+new crypto accelerator which contains multiple crypto IPs [1].
+This series implements support for ECB and CBC modes of AES for the AES
+Engine of the DTHE, using skcipher APIs of the kernel.
 
-No, this wont wor. There will be a nested lock in
-nvmet_fc_unregister_targetport. The lock only protects the list
-insert/delete/iterate operations not anything else.
+Tested with:
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
 
-FWIW, this is hasn't changed the unregister step was already done uside
-the lock.
+and tcrypt,
+sudo modprobe tcrypt mode=500 sec=1
 
-BTW, I've played with turning the spin lock into a mutex as there
-doesn't seem to be any necessity to use a spin lock then we could in
-theory keep the lock over the whole section but this is something I
-would leave for the future.
+Signed-off-by: T Pratham <t-pratham@ti.com>
+---
+[1]: Section 14.6.3 (DMA Control Registers -> DMASS_DTHE)
+Link: https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
+
+Change log:
+v4:
+ - Corrected dt-bindings example indentation
+ - Simplified dt-bindings example, removing the node surrounding crypto
+ - Fixed typo in dthev2-common.h header guard
+ - Removed unused ctx field in dev_data struct
+ - Moved per-op data into request context
+v3:
+ - Corrected dt-bindings reg length is too long error
+ - Converted AES driver code to use crypto_engine APIs for using
+   internal crypto queue instead of mutex.
+ - Removed calls to skcipher_request_complete in paths not returning
+   -EINPROGRESS before.
+ - Added missing KConfig import, which was accidentally removed in v2.
+
+v2:
+ - Corrected dt-bindings syntax errors and other review comments in v1.
+ - Completely changed driver code structure, splitting code into
+   multiple files
+
+Link to previous versions:
+v3: https://lore.kernel.org/all/20250502121253.456974-2-t-pratham@ti.com/
+v2: https://lore.kernel.org/all/20250411091321.2925308-1-t-pratham@ti.com/
+v1: https://lore.kernel.org/all/20250206-dthe-v2-aes-v1-0-1e86cf683928@ti.com/
+---
+T Pratham (2):
+  dt-bindings: crypto: Add binding for TI DTHE V2
+  crypto: ti: Add driver for DTHE V2 AES Engine (ECB, CBC)
+
+ .../bindings/crypto/ti,am62l-dthev2.yaml      |  50 ++
+ MAINTAINERS                                   |   7 +
+ drivers/crypto/Kconfig                        |   1 +
+ drivers/crypto/Makefile                       |   1 +
+ drivers/crypto/ti/Kconfig                     |  13 +
+ drivers/crypto/ti/Makefile                    |   3 +
+ drivers/crypto/ti/dthev2-aes.c                | 428 ++++++++++++++++++
+ drivers/crypto/ti/dthev2-common.c             | 220 +++++++++
+ drivers/crypto/ti/dthev2-common.h             | 111 +++++
+ 9 files changed, 834 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/ti,am62l-dthev2.yaml
+ create mode 100644 drivers/crypto/ti/Kconfig
+ create mode 100644 drivers/crypto/ti/Makefile
+ create mode 100644 drivers/crypto/ti/dthev2-aes.c
+ create mode 100644 drivers/crypto/ti/dthev2-common.c
+ create mode 100644 drivers/crypto/ti/dthev2-common.h
+
+-- 
+2.43.0
+
 
