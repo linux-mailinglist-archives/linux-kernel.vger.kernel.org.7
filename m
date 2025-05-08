@@ -1,137 +1,256 @@
-Return-Path: <linux-kernel+bounces-639254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD34AAF506
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:56:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7EEAAF4D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B8C3A3D29
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:55:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 094B37B5A16
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDF9221576;
-	Thu,  8 May 2025 07:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goosey.org header.i=@goosey.org header.b="AIWXG5oT";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="d4SpLLzi"
-Received: from e240-7.smtp-out.eu-north-1.amazonses.com (e240-7.smtp-out.eu-north-1.amazonses.com [23.251.240.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA2E22154B;
+	Thu,  8 May 2025 07:39:31 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA051205E3E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.240.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAC01DDC23;
+	Thu,  8 May 2025 07:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746690965; cv=none; b=UuuhiZ2E1V9jOpLBa76ZcNujyqB8fJCNe5QPVWUiKtstZRTzyl/k+/tEokrNYWnbQ59JK5fdVISGKX8etOzfTk0WumnSjuxkkAB+2Y86THetCZyi/z0cXiX++1OGeUMSTKKqAX442NG2bD+6nB1uvZ2B1uoB8lm+HH9twQcLMbw=
+	t=1746689970; cv=none; b=FONHadyob53xKuHjiLjGyRpYAleUp9gbTdHdmefpGdB/TXzWQpFpaYzkHorHbYzlrGBAJ7mpmk5/DPdBfxOWIRydWFRDns++Wa/WG3KWiHzkkHz9vn0lErNuCDekTYxQfriizX84f+yxrU1jYaLo9RjSkL27pa0abMFdDfJ0qcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746690965; c=relaxed/simple;
-	bh=qLDSuqLDnn9gUERCxMtLaLOPaPwHsG3xsxRw8hu6dFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S5gd9jtvihlP2JmHidZ0gRUKBbaup34QivFPEOp8MIlVLXv2bOlYvpZ1N5x04+YosH5chkxSjwR7bOniQE2zQKKhMEdVHlBj2VaqsfB5xobAIXdDwM1Rkt/0wbwFrED5UMEgBk+uFNUeSRYsuFYkw3v23YSNYGMF8laRx8ofeS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goosey.org; spf=pass smtp.mailfrom=eu-north-1.amazonses.com; dkim=pass (2048-bit key) header.d=goosey.org header.i=@goosey.org header.b=AIWXG5oT; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=d4SpLLzi; arc=none smtp.client-ip=23.251.240.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goosey.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eu-north-1.amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=iuunfi4kzpbzwuqjzrd5q2mr652n55fx; d=goosey.org; t=1746690961;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=qLDSuqLDnn9gUERCxMtLaLOPaPwHsG3xsxRw8hu6dFA=;
-	b=AIWXG5oTKiKzDzK99kDPlSQh+++1OXty7+xeBzsrISSFpJ2jdXaopcpiwZ4gGym7
-	o7fayg5/w5cnpMaGPH/P3INsJlvpYjuH7sK5EoaVtYwvHccTsQkPl98sHIvkBaK7UUy
-	iouI4O2IM/RbbnC8L/TSfaycjtlChkt/wtjU2/AJPOKoFHCJo+NYHpWiWvdlRwLs2SX
-	478za0hkzdffsnIF0z44nhYIOvoDebKDXltqBo+qdcEZBY+i3WQHZ4LqH4wQKaxbVjo
-	15gZSnajplOnkMX7nBrxpV+aYUceliITbJjzDl2Q8uaV8xP3LPDUNtUINXsptJ+aglA
-	rNQDehFChA==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=bw45wyq3hkghdoq32obql4uyexcghmc7; d=amazonses.com; t=1746690961;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=qLDSuqLDnn9gUERCxMtLaLOPaPwHsG3xsxRw8hu6dFA=;
-	b=d4SpLLziG8v0oEmedqiC8fuLrVvNWTo0Sh5VoAnJYTSAvuYTcv8mmSHSOqEN1ntN
-	h+6mKposUz4GvmXcBxjaNUJYyiLxRmZkl/w+9N28UugRcrR/mdJujp8fYWvXzrUknyN
-	HChE7rA9jnZaCvTpBbiCxyg+uQ+pwUol0Y9clhx4=
-X-Forwarded-Encrypted: i=1; AJvYcCWqGfkuXYBWaqB9sA5Hs6rY/0EFHX2Ge5whSl9kpuU1DKGb0/FUhImlhsW8y0gFz/4+p4LSuMfM3kIrWTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzAt4SR82FqhQB8tpXpaksFpzlcfIwZUpGhmm94v04y1/bGAGg
-	tZnCT+USN1KHGNDk21QHYY9elGRhSA0nVH2HNVEj4TXb/IvPPJB/uzHI1B9POn8/lJOEgSO08uV
-	DA90zyLyFKWNoX9tfba4d6lHIFsM=
-X-Google-Smtp-Source: AGHT+IE0WQ0NmOhk617CPniN3Q5Ev3kxPSUYvNkyL6aiheUQ6qDeRZnMU/o6VRn2ThWI6M/aNObwFC9YOCfv7w993BA=
-X-Received: by 2002:a17:903:22ca:b0:21c:fb6:7c3c with SMTP id
- d9443c01a7336-22e5ea78834mr91634215ad.17.1746690958567; Thu, 08 May 2025
- 00:55:58 -0700 (PDT)
+	s=arc-20240116; t=1746689970; c=relaxed/simple;
+	bh=iwshjshchRv7Y/2BDCydnzDw5INFJq1LJCEHROTNVX8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O3jPBnsZOAHaKaGhfbHcuNWxZeerbtrlMj6fGARCl2tz2j3s1g408Ib1xLj4xknFBdfEfWVa+lNJybMiaGHlGWwLkTbjm4IB1JnyxZBj/6l+c5m2XL6UVpuOXf1Lmi2X1TiZReFvk58AK7P7ctJcGtNwvu+fiYTosLj4f6hLv7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZtP8k17Lhz6H6mv;
+	Thu,  8 May 2025 15:36:54 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id B55FC1402C8;
+	Thu,  8 May 2025 15:39:23 +0800 (CST)
+Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 8 May
+ 2025 09:39:12 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: Gur Stavi <gur.stavi@huawei.com>, Fan Gong <gongfan1@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh
+	<sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Joe
+ Damato <jdamato@fastly.com>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v14 0/1] net: hinic3: Add a driver for Huawei 3rd gen NIC
+Date: Thu, 8 May 2025 10:56:46 +0300
+Message-ID: <cover.1746689795.git.gur.stavi@huawei.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507142552.9446-1-aha310510@gmail.com> <20250507153325.48726051dbbff4f3936a83ff@linux-foundation.org>
- <CAO9qdTEL1xhBOXbSR4KHgmh0vpEeiia5ii9Ae959ahFHLVycRQ@mail.gmail.com>
-In-Reply-To: <CAO9qdTEL1xhBOXbSR4KHgmh0vpEeiia5ii9Ae959ahFHLVycRQ@mail.gmail.com>
-From: Ozgur Kara <ozgur@goosey.org>
-Date: Thu, 8 May 2025 07:56:00 +0000
-X-Gmail-Original-Message-ID: <CADvZ6Er478rF=4dy027Ykja_ZBTarFno+yqJvj60vchPCujCig@mail.gmail.com>
-X-Gm-Features: ATxdqUGDygGB01JmmID4n9NBdwwuJ-xu2d0184zhFq2fVSzhlR3fGQyrw7etQsU
-Message-ID: <01100196aee4ede3-0997795d-f545-4c3d-9d05-5f8a955561ca-000000@eu-north-1.amazonses.com>
-Subject: Re: [PATCH v3] mm/vmalloc: fix data race in show_numa_info()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com, 
-	edumazet@google.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Feedback-ID: ::1.eu-north-1.jZlAFvO9+f8tc21Z4t7ANdAU3Nw/ALd5VHiFFAqIVOg=:AmazonSES
-X-SES-Outgoing: 2025.05.08-23.251.240.7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-Jeongjun Park <aha310510@gmail.com>, 8 May 2025 Per, 07:47 tarihinde =C5=9F=
-unu yazd=C4=B1:
->
-> Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed,  7 May 2025 23:25:52 +0900 Jeongjun Park <aha310510@gmail.com> =
-wrote:
-> >
-> > > The following data-race was found in show_numa_info():
-> > >
-> > > ...
-> > >
-> > >
-> > > According to this report, there is a read/write data-race because m->=
-private
-> > > is accessible to multiple CPUs. To fix this, instead of allocating th=
-e heap
-> > > in proc_vmalloc_init() and passing the heap address to m->private,
-> > > show_numa_info() should allocate the heap.
-> > >
-> > > One thing to note is that show_numa_info() is called in a critical se=
-ction
-> > > of a spinlock, so it must be allocated on the heap with GFP_ATOMIC fl=
-ag.
-> >
-> > GFP_ATOMIC is unfortunate.  Can vmalloc_info_show() allocate the
-> > storage outside the lock and pass that pointer into show_numa_info()?
-> > That way will be more efficient also, less allocating and freeing.
-> >
-> >
->
-> That's good idea! Definitely, if you modify vmalloc_info_show() to
-> allocate the heap before taking the spinlock and initialize the heap
-> to 0 at the beginning of the loop, we don't need to use GFP_ATOMIC,
-> and we only need to allocate the heap once, which is much more efficient.
->
-> I'll send you v4 patch that reflects this right away.
->
+This is the 1/3 patch of the patch-set described below.
 
-Hello,
+The patch-set contains driver for Huawei's 3rd generation HiNIC
+Ethernet device that will be available in the future.
 
-I think so but i'm not sure if it will work because i just thought of
-it as an idea because we need to check if v is null or not.
+This is an SRIOV device, designed for data centers.
+Initially, the driver only supports VFs.
 
-Regards,
+Following the discussion over RFC01, the code will be submitted in
+separate smaller patches where until the last patch the driver is
+non-functional. The RFC02 submission contains overall view of the entire
+driver but every patch will be posted as a standalone submission.
 
-Ozgur
+Changes:
 
-> Regards,
->
-> Jeongjun Park
->
->
->
+RFC V01: https://lore.kernel.org/netdev/cover.1730290527.git.gur.stavi@huawei.com
+
+RFC V02: https://lore.kernel.org/netdev/cover.1733990727.git.gur.stavi@huawei.com
+* Reduce overall line of code by removing optional functionality.
+* Break down into smaller patches.
+
+PATCH 01 V01: https://lore.kernel.org/netdev/cover.1734599672.git.gur.stavi@huawei.com
+* Documentation style and consistency fixes (from Bjorn Helgaas)
+* Use ipoll instead of custom code (from Andrew Lunn)
+* Move dev_set_drvdata up in initialization order (from Andrew Lunn)
+* Use netdev's max_mtu, min_mtu (from Andrew Lunn)
+* Fix variable 'xxx' set but not used warnings (from Linux patchwork)
+
+PATCH 01 V02: https://lore.kernel.org/netdev/cover.1735206602.git.gur.stavi@huawei.com
+* Add comment regarding usage of random MAC. (Andrew Lunn)
+* Add COMPILE_TEST to Kconfig (Jakub Kicinski)
+
+PATCH 01 V03: https://lore.kernel.org/netdev/cover.1735735608.git.gur.stavi@huawei.com
+* Rephrase Kconfig comment (Jakub Kicinski)
+* Kconfig: add 'select AUXILIARY_BUS' (Kernel test robot)
+* ARCH=um: missing include 'net/ip6_checksum.h' (Kernel test robot)
+
+PATCH 01 V04: https://lore.kernel.org/netdev/cover.1737013558.git.gur.stavi@huawei.com
+* Improve naming consistency, missing hinic3 prefixes (Suman Ghosh)
+* Change hinic3_remove_func to void (Suman Ghosh)
+* Add adev_event_unregister (Suman Ghosh)
+* Add comment for service types enum (Suman Ghosh)
+
+PATCH 01 V05: https://lore.kernel.org/netdev/cover.1740312670.git.gur.stavi@huawei.com
+* Fix signed-by signatures (Przemek Kitszel)
+* Expand initials in documentation (Przemek Kitszel)
+* Update copyright messages to 2025 (Przemek Kitszel)
+* Sort filenames in makefile (Przemek Kitszel)
+* Sort include statements (Przemek Kitszel)
+* Reduce padding in irq allocation struct (Przemek Kitszel)
+* Replace memset of zero with '= {}' init (Przemek Kitszel)
+* Revise mbox API to avoid using same pointer twice (Przemek Kitszel)
+* Use 2 underscores for header file ifdef guards (Przemek Kitszel)
+* Remove 'Intelligent' from Kconfig (Przemek Kitszel)
+* Documentation, fix line length mismatch to header (Simon Horman)
+
+PATCH 01 V06: https://lore.kernel.org/netdev/cover.1740487707.git.gur.stavi@huawei.com
+* Add hinic3 doc to device_drivers/ethernet TOC (Jakub Kicinski)
+
+PATCH 01 V07: https://lore.kernel.org/netdev/cover.1741069877.git.gur.stavi@huawei.com
+* Remove unneeded conversion to bool (Jakub Kicinski)
+* Use net_prefetch and net_prefetchw (Joe Damato)
+* Push IRQ coalescing and rss alloc/free to later patch (Joe Damato)
+* Pull additional rx/tx/napi code from next patch (Joe Damato)
+
+PATCH 01 V08: https://lore.kernel.org/netdev/cover.1741247008.git.gur.stavi@huawei.com
+* Fix build warning following pulling napi code from later patch (patchwork)
+* Add missing net/gro.h include for napi_gro_flush (patchwork)
+
+PATCH 01 V09: https://lore.kernel.org/netdev/cover.1742202778.git.gur.stavi@huawei.com
+* Maintain non-error paths in the main flow (Simon Horman)
+* Rename Pcie to PCIe in debug messages (Simon Horman)
+* Remove do-nothing goto label (Simon Horman)
+* Remove needless override of error value (Simon Horman)
+
+PATCH 01 V10: https://lore.kernel.org/netdev/cover.1744286279.git.gur.stavi@huawei.com
+* Poll Tx before polling Rx (Jakub Kicinski)
+* Use napi_complete_done instead of napi_complete (Jakub Kicinski)
+* Additional napi conformance fixes.
+* Rename goto labels according to target rather than source (Jakub Kicinski)
+* Call netif_carrier_off before register_netdev (Jakub Kicinski)
+
+PATCH 01 V11: https://lore.kernel.org/netdev/cover.1745221384.git.gur.stavi@huawei.com
+* Delete useless fallback to 32 bit DMA (Jakub Kicinski)
+
+PATCH 01 V12: https://lore.kernel.org/netdev/cover.1745411775.git.gur.stavi@huawei.com
+* Remove unneeded trailing coma (Christophe JAILLET)
+* Use kcalloc for array allocations (Christophe JAILLET)
+* Use existing goto label, avoid duplicating code (Christophe JAILLET)
+
+PATCH 01 V13: https://lore.kernel.org/netdev/cover.1746519748.git.gur.stavi@huawei.com
+* Use page_pool for rx buffers (Jakub Kicinski)
+* Wrap lines at 80 chars (Jakub Kicinski)
+* Consistency: rename buff to buf
+* Remove unneeded numeric suffixes: UL, ULL, etc.
+
+PATCH 01 V14:
+* Use proper api for rx frag allocation (Jakub Kicinski)
+* Use napi_alloc_skb instead of netdev_alloc_skb_ip_align (Jakub Kicinski)
+
+Fan Gong (1):
+  hinic3: module initialization and tx/rx logic
+
+ .../device_drivers/ethernet/huawei/hinic3.rst | 137 ++++
+ .../device_drivers/ethernet/index.rst         |   1 +
+ MAINTAINERS                                   |   7 +
+ drivers/net/ethernet/huawei/Kconfig           |   1 +
+ drivers/net/ethernet/huawei/Makefile          |   1 +
+ drivers/net/ethernet/huawei/hinic3/Kconfig    |  20 +
+ drivers/net/ethernet/huawei/hinic3/Makefile   |  21 +
+ .../ethernet/huawei/hinic3/hinic3_common.c    |  53 ++
+ .../ethernet/huawei/hinic3/hinic3_common.h    |  27 +
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    |  25 +
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |  53 ++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  32 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 113 +++
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  24 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.h |  81 +++
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  58 ++
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   |  53 ++
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   | 414 +++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_lld.h   |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  | 357 +++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  |  15 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |  13 +
+ .../huawei/hinic3/hinic3_mgmt_interface.h     | 105 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         |  78 ++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 233 ++++++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  41 ++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  89 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_io.c    |  21 +
+ .../ethernet/huawei/hinic3/hinic3_nic_io.h    | 120 ++++
+ .../huawei/hinic3/hinic3_queue_common.c       |  68 ++
+ .../huawei/hinic3/hinic3_queue_common.h       |  54 ++
+ .../net/ethernet/huawei/hinic3/hinic3_rx.c    | 341 +++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  90 +++
+ .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 678 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    | 131 ++++
+ .../net/ethernet/huawei/hinic3/hinic3_wq.c    |  29 +
+ .../net/ethernet/huawei/hinic3/hinic3_wq.h    |  76 ++
+ 40 files changed, 3731 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/huawei/hinic3.rst
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/Kconfig
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/Makefile
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_common.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_common.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_intf.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwif.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwif.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_lld.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_main.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mbox.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mbox.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_io.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_io.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_queue_common.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_queue_common.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rx.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_tx.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_wq.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_wq.h
+
+
+base-commit: 836b313a14a316290886dcc2ce7e78bf5ecc8658
+-- 
+2.45.2
+
 
