@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-640169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660B5AB0155
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:24:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C24AB015A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93D8B21F31
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AECB1C42642
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62FD28C2B3;
-	Thu,  8 May 2025 17:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F8D286D57;
+	Thu,  8 May 2025 17:21:03 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75A3286D4B
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327C228C5C3
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746724859; cv=none; b=Mn320lN79rr7MaszFlbPrdmAlT4kXANueeEdXM0sZHcqtvbFUvOOJAOkiKcI6SHHuQdLLu9ssAEzU3qVbxKv21jF1qVOjVXbYm1KSVCOuJIAZqn3HJiuq3E/PkEKhWCpSLIDAHeXvrZq4WfB/Cy76EhAlfs9mFYii+tmdentbYs=
+	t=1746724862; cv=none; b=gzhtVxcJXqBdswH3VnpKvVveRcz40MpHs/sKq4Tgvn5mwdG5/nApbunP3Qizs+9AgmgpYCpPruGurHzPlLzehj/w33fY547RxY448KrTbtxy4ema/rlgc4887GWkeJTo6StLyHSeoJTrTYWYJgdyjRni7C5Bqy63BQexPlBUiOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746724859; c=relaxed/simple;
-	bh=kzRjOxq0KYW1JIXTA4u5ZM4N2ue8GPmkCtPtKVTq3tg=;
+	s=arc-20240116; t=1746724862; c=relaxed/simple;
+	bh=rGswDzSe5JGqnbD3yrim4qf81OAx0fUoFdSP4ZMfRHg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mJBr7JqEinv0x34cqt8yky/t9FSFpOK6LUxRW5i7az7bBRoVklKtBcX4JxUNTdSHd0FBE+iAnV/aOer5siaCxcz8QlUaxR38cKorw08mqc56OoOeMNbkwjWhR38jLo8HpI/lBUW9L3OEq/1p7LGSDH9Rl/fXziafSFherL30VCM=
+	 MIME-Version; b=NMcWLBCz9DWISgh5O6gzCsGtskdu5W0j9gmpfHeGjtimkgKUC8RniRdy0ZQRPBHsHkA9PwiVVLOcYfUmgCqsdLv/hxIGSQ0KI+gdvkYvbDWOOtYr0kWH7P1NxsyjXxElDLOtA8QQ91+QrVHkI4cLduf44DKo19+lNEk5U4/NWeU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92D3025E4;
-	Thu,  8 May 2025 10:20:46 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B58225E9;
+	Thu,  8 May 2025 10:20:50 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B22873F58B;
-	Thu,  8 May 2025 10:20:53 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C1D73F58B;
+	Thu,  8 May 2025 10:20:57 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -60,11 +60,11 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Koba Ko <kobak@nvidia.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
 	fenghuay@nvidia.com,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Babu Moger <babu.moger@amd.com>
-Subject: [PATCH v10 26/30] x86,fs/resctrl: Remove duplicated trace header files
-Date: Thu,  8 May 2025 17:18:54 +0000
-Message-Id: <20250508171858.9197-27-james.morse@arm.com>
+	Babu Moger <babu.moger@amd.com>,
+	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Subject: [PATCH v10 27/30] fs/resctrl: Remove unnecessary includes
+Date: Thu,  8 May 2025 17:18:55 +0000
+Message-Id: <20250508171858.9197-28-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250508171858.9197-1-james.morse@arm.com>
 References: <20250508171858.9197-1-james.morse@arm.com>
@@ -76,116 +76,176 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The copy-pasting python script creates some empty trace point header
-files. These can cause a build warning from ftrace.
+When splitting and moving the resctrl code to live in fs/resctrl and
+arch/x86, some code was duplicated. This was done to keep the parser
+in the script that does the moving simple. This results in unnecessary
+includes in the arch and filesystem code.
 
 Remove them.
 
 Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Peter Newman <peternewman@google.com>
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
-Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
 Tested-by: Babu Moger <babu.moger@amd.com>
+Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 ---
-Changes since v8:
- * Removed stale CFLAGS_monitor.o for ftrace from arch/x86's Makefile.
+Changes since v7:
+ * Expanded the scope, removed many more includes.
 ---
- arch/x86/kernel/cpu/resctrl/Makefile        |  1 -
- arch/x86/kernel/cpu/resctrl/monitor.c       |  4 ----
- arch/x86/kernel/cpu/resctrl/monitor_trace.h | 17 -----------------
- fs/resctrl/pseudo_lock.c                    |  4 ----
- fs/resctrl/pseudo_lock_trace.h              | 17 -----------------
- 5 files changed, 43 deletions(-)
- delete mode 100644 arch/x86/kernel/cpu/resctrl/monitor_trace.h
- delete mode 100644 fs/resctrl/pseudo_lock_trace.h
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 4 ----
+ arch/x86/kernel/cpu/resctrl/internal.h    | 5 -----
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 3 ---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 7 -------
+ fs/resctrl/internal.h                     | 2 --
+ fs/resctrl/monitor.c                      | 3 ---
+ fs/resctrl/pseudo_lock.c                  | 6 ------
+ fs/resctrl/rdtgroup.c                     | 2 --
+ 8 files changed, 32 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
-index 909be78ec6da..d8a04b195da2 100644
---- a/arch/x86/kernel/cpu/resctrl/Makefile
-+++ b/arch/x86/kernel/cpu/resctrl/Makefile
-@@ -5,4 +5,3 @@ obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 0164d769aeca..1189c0df4ad7 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -16,10 +16,6 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
  
- # To allow define_trace.h's recursive include:
- CFLAGS_pseudo_lock.o = -I$(src)
--CFLAGS_monitor.o = -I$(src)
+ #include <linux/cpu.h>
+-#include <linux/kernfs.h>
+-#include <linux/seq_file.h>
+-#include <linux/slab.h>
+-#include <linux/tick.h>
+ 
+ #include "internal.h"
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 521db28efb3f..5e3c41b36437 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -3,11 +3,6 @@
+ #define _ASM_X86_RESCTRL_INTERNAL_H
+ 
+ #include <linux/resctrl.h>
+-#include <linux/sched.h>
+-#include <linux/kernfs.h>
+-#include <linux/fs_context.h>
+-#include <linux/jump_label.h>
+-#include <linux/tick.h>
+ 
+ #define L3_QOS_CDP_ENABLE		0x01ULL
+ 
 diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index bec251dcd581..c0a04fe2bcd9 100644
+index c0a04fe2bcd9..3936bab81411 100644
 --- a/arch/x86/kernel/cpu/resctrl/monitor.c
 +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -27,10 +27,6 @@
+@@ -18,10 +18,7 @@
+ #define pr_fmt(fmt)	"resctrl: " fmt
  
+ #include <linux/cpu.h>
+-#include <linux/module.h>
+ #include <linux/resctrl.h>
+-#include <linux/sizes.h>
+-#include <linux/slab.h>
+ 
+ #include <asm/cpu_device_id.h>
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index 99c34a0610a4..241d0d7e1cb5 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -12,17 +12,10 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/cacheflush.h>
+-#include <linux/cacheinfo.h>
+ #include <linux/cpu.h>
+-#include <linux/cpumask.h>
+-#include <linux/debugfs.h>
+-#include <linux/kthread.h>
+-#include <linux/mman.h>
+ #include <linux/perf_event.h>
+ #include <linux/pm_qos.h>
+ #include <linux/resctrl.h>
+-#include <linux/slab.h>
+-#include <linux/uaccess.h>
+ 
+ #include <asm/cpu_device_id.h>
+ #include <asm/perf_event.h>
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index bfa9bfe070fe..ed7dfc071e6c 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -3,10 +3,8 @@
+ #define _ASM_X86_RESCTRL_INTERNAL_H
+ 
+ #include <linux/resctrl.h>
+-#include <linux/sched.h>
+ #include <linux/kernfs.h>
+ #include <linux/fs_context.h>
+-#include <linux/jump_label.h>
+ #include <linux/tick.h>
+ 
+ #define CQM_LIMBOCHECK_INTERVAL	1000
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index a76bfaa8d43e..bde2801289d3 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -18,13 +18,10 @@
+ #define pr_fmt(fmt)	"resctrl: " fmt
+ 
+ #include <linux/cpu.h>
+-#include <linux/module.h>
+ #include <linux/resctrl.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ 
+-#include <asm/cpu_device_id.h>
+-
  #include "internal.h"
  
--#define CREATE_TRACE_POINTS
--
--#include "monitor_trace.h"
--
- /*
-  * Global boolean for rdt_monitor which is true if any
-  * resource monitoring is enabled.
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor_trace.h b/arch/x86/kernel/cpu/resctrl/monitor_trace.h
-deleted file mode 100644
-index b5a142dd0f0e..000000000000
---- a/arch/x86/kernel/cpu/resctrl/monitor_trace.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#undef TRACE_SYSTEM
--#define TRACE_SYSTEM resctrl
--
--#if !defined(_FS_RESCTRL_MONITOR_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _FS_RESCTRL_MONITOR_TRACE_H
--
--#include <linux/tracepoint.h>
--
--#endif /* _FS_RESCTRL_MONITOR_TRACE_H */
--
--#undef TRACE_INCLUDE_PATH
--#define TRACE_INCLUDE_PATH .
--
--#define TRACE_INCLUDE_FILE monitor_trace
--
--#include <trace/define_trace.h>
+ #define CREATE_TRACE_POINTS
 diff --git a/fs/resctrl/pseudo_lock.c b/fs/resctrl/pseudo_lock.c
-index 29682dd46871..7305b232384e 100644
+index 7305b232384e..ccc2f9213b4b 100644
 --- a/fs/resctrl/pseudo_lock.c
 +++ b/fs/resctrl/pseudo_lock.c
-@@ -30,10 +30,6 @@
- #include "../../events/perf_event.h" /* For X86_CONFIG() */
+@@ -11,23 +11,17 @@
+ 
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
+-#include <linux/cacheflush.h>
+ #include <linux/cacheinfo.h>
+ #include <linux/cpu.h>
+ #include <linux/cpumask.h>
+ #include <linux/debugfs.h>
+ #include <linux/kthread.h>
+ #include <linux/mman.h>
+-#include <linux/perf_event.h>
+ #include <linux/pm_qos.h>
+ #include <linux/resctrl.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ 
+-#include <asm/cpu_device_id.h>
+-#include <asm/perf_event.h>
+-
+-#include "../../events/perf_event.h" /* For X86_CONFIG() */
  #include "internal.h"
  
--#define CREATE_TRACE_POINTS
--
--#include "pseudo_lock_trace.h"
--
  /*
-  * Major number assigned to and shared by all devices exposing
-  * pseudo-locked regions.
-diff --git a/fs/resctrl/pseudo_lock_trace.h b/fs/resctrl/pseudo_lock_trace.h
-deleted file mode 100644
-index 7a6a1983953a..000000000000
---- a/fs/resctrl/pseudo_lock_trace.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#undef TRACE_SYSTEM
--#define TRACE_SYSTEM resctrl
--
--#if !defined(_X86_RESCTRL_PSEUDO_LOCK_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _X86_RESCTRL_PSEUDO_LOCK_TRACE_H
--
--#include <linux/tracepoint.h>
--
--#endif /* _X86_RESCTRL_PSEUDO_LOCK_TRACE_H */
--
--#undef TRACE_INCLUDE_PATH
--#define TRACE_INCLUDE_PATH .
--
--#define TRACE_INCLUDE_FILE pseudo_lock_trace
--
--#include <trace/define_trace.h>
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index b86309a9df8f..ec28228f6a8d 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -21,10 +21,8 @@
+ #include <linux/resctrl.h>
+ #include <linux/seq_buf.h>
+ #include <linux/seq_file.h>
+-#include <linux/sched/signal.h>
+ #include <linux/sched/task.h>
+ #include <linux/slab.h>
+-#include <linux/task_work.h>
+ #include <linux/user_namespace.h>
+ 
+ #include <uapi/linux/magic.h>
 -- 
 2.39.5
 
