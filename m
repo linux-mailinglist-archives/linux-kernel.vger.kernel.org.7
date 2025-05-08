@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-639907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CC2AAFDFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8474AAFE00
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4BC5006D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A7F4E6947
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D54427A13B;
-	Thu,  8 May 2025 14:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAbuPQB9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B47027A903;
+	Thu,  8 May 2025 14:56:35 +0000 (UTC)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3455278169;
-	Thu,  8 May 2025 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A810279799
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 14:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746716161; cv=none; b=VjP7tY69YhzsYmmgxtxwiHilHRtozXDvuAhBbELSfEYn5zbBCVgUF+dr3qKvAnFmJmYJpNxV9XkAwZKI2Pw+Ur+gWtO57jH89V1kIznNjK449f2mNOOfbZ8h5XfrMLTqKidMJlPR4RVkXMCaIdAbP+AK95TM6LHnnryINbI8W3s=
+	t=1746716195; cv=none; b=uJ6IH+XfOEUA2GFDE/ZDTBBMDvM9ByA5Idi1RH+y1Zb+rJ1er9Pd+7WTbmrmcNQG3kDYRilxrV3kpC7Ke52zM3tmh+z43JHFNsAfE2IrUpwaPbPYwGGbkKs3BeL4sqCzR5IOenyOaqroI+1ddrnFdp/xx6VnTe5RCbDHcGXKap0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746716161; c=relaxed/simple;
-	bh=3sph70K7tbu8/YzMrRwGcqavagjwvO/xYYwjATmmdXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIDC8bzhb2e1JbB1YLL96gqGcJPkd+zQZEB332vcYlIWd8rauoSzUXeO0DvWdId67bXxJ6Ld8ftM/Mmywz19orCa1zFRsFYwvM22H+tj7h9vy6a+Y/cCvJwDDcQQPxqIuvj5hgrAcPTh5uDPAueLmcgJ69d7RXZAZxCpVpfOmT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAbuPQB9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CC4C4CEED;
-	Thu,  8 May 2025 14:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746716160;
-	bh=3sph70K7tbu8/YzMrRwGcqavagjwvO/xYYwjATmmdXg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AAbuPQB9LmgaEoA8iWd4ABBrgsumCnyQWKSp8TzmXJGRnx2RcjOcFM9gmT4KP+gZM
-	 7MXlN3jJSTDLQUBXh3Tn8CZSxHHV+nO76VVc6YYayZ8wvcy6xR+cXJIQO91kVpTwo4
-	 66W/qtJD58QJvEmarBqimUgq5t1lMoRSGTTUQn3z+tdFG5boh5hrAaklcN9BSGHfrZ
-	 6o4xanrubBikkDhmoM8UHTqdEVAvzPmXaZm+vcDfJMWZB3UD78tNW7LyRatjm3xJXl
-	 pqIuA6IKZ7XdC9fyql5kjJCsZo+7qgpIqyTy5/FhPhRbDQHlphsNaYS+vlf0sXXP/T
-	 gHLzzKMoXx/Ww==
-Date: Thu, 8 May 2025 15:55:55 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joyce Ooi <joyce.ooi@intel.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Move altr,msi-controller to
- interrupt-controller directory
-Message-ID: <20250508-donut-radiator-66d06a36e8e8@spud>
-References: <20250507154253.1593870-1-robh@kernel.org>
+	s=arc-20240116; t=1746716195; c=relaxed/simple;
+	bh=vIt4H13vYrxEeHPxoOrOPzgl94oSAHaWdzBbLbiZ9cM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JHvjd4ZGmv3hOK3xbVcYk4ek0k2AcpHJjTCS91DV4UmBJjAz0D6NQla+Br8Uh0RFRgi8A76l8IaD08hQrv8d61Orqx86Dd6v0wdpfwzeu4IdgcK51u5yoTk35YlEVK+FzHFvoJeLJJK0/EC4QUckddfxqFKP7euRWqAg7KcTWqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a1d8c09683so181743f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 07:56:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746716191; x=1747320991;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PAXhugNVBzhAs5NSGlFV7iMObTrBcT1YtpJjyksIfZQ=;
+        b=eonuBWi6yLG3eS/r4CxL5g86Y7xxe5V01mK9ZXi7SJ3h0anquyeV28dSYDm95KFh/F
+         RKde77zyCRY+QJ17zQAt804IpO1LxKp7mKqxHTQx+f5u/g75XMgM9vhvNzumYTfrFSeB
+         LzKGwlYo4K2psmsZePmbZAP2RhT5URlyXfgjnSo+CBf+kjzK2yeaIzvXTJgDb+R5XpsC
+         MTKuRxP07AEmdzKOgQaTrqjivzsb6mMsR9mYaQW4/SUK7YPE6e8Wkv5P9FpPn63n0zqw
+         GX0JVhgOfuqOduWrjHOlKDqk/2wIFDx2wwHcZ7AJQULioBmhdAOF7qK2cDXPsIz9UFuZ
+         Dg0A==
+X-Gm-Message-State: AOJu0Yw4IlUVDS0OA71VfUUIiI2PTH8AvWPlb7ORE3kfuRslf4XlGFmu
+	bpZYG3xDcGELXuplLBE6QoUX4CGBRszFyEltHis8C820DqMOrIP5CjWV0Q==
+X-Gm-Gg: ASbGncvw0dXXO7wYPPUX7/U8zQMHwqsuGn/QWyHOJ3bw84ra+SsTKVYfMPeroY/hNrJ
+	p8jzxiDshO6ur2BPCthFuPKS+8YQptfrfMNj9mmZLt3GWzLkGo9ymdDZQya7gPBweGesZ+mJWhI
+	YOxQLLw5wE3DF5/WWUAZ2Vf6T8dH42RQz60gf88PfLHBqu5HrYeN/4as9Ht6FpIxlPbPrA/WdLH
+	fbiNu9n/zVucNVjt3R1GhX2CkanZSuiBjGD8lqPkY1FHzxZYIF5YMlut/+9Jfgip9y9mHt3a4fb
+	i9/43Xayz5OIlAkG460s9o4kF7oMapvQc1HMxx04Dfv7JQCsk1V8aai0VKLeXMXKYgdWYwGStXA
+	/4JRLS9PTtyzD
+X-Google-Smtp-Source: AGHT+IF269wFqFSm/Gi0kxASaxcdFYL/XYvfXmeP4TxCmAIkirqSrOd0grvMy+PpSaQMMRGOulPk+g==
+X-Received: by 2002:a05:6000:40e1:b0:38f:2678:d790 with SMTP id ffacd0b85a97d-3a0ba0b9c09mr3141852f8f.33.1746716191050;
+        Thu, 08 May 2025 07:56:31 -0700 (PDT)
+Received: from ramallet.home (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f2fc4sm205018f8f.56.2025.05.08.07.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 07:56:30 -0700 (PDT)
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+To: linux-kernel@vger.kernel.org
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	=?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+	etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] drm/etnaviv: Fix flush sequence logic
+Date: Thu,  8 May 2025 16:56:24 +0200
+Message-ID: <20250508145624.4154317-1-tomeu@tomeuvizoso.net>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250507112131.3686966-1-tomeu@tomeuvizoso.net>
+References: <20250507112131.3686966-1-tomeu@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MPh2K4ynGn9ngJl9"
-Content-Disposition: inline
-In-Reply-To: <20250507154253.1593870-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+We should be comparing the last submitted sequence number with that of
+the address space we may be switching to.
 
---MPh2K4ynGn9ngJl9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 27b67278e007 ("drm/etnaviv: rework MMU handling")
+Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, May 07, 2025 at 10:42:53AM -0500, Rob Herring (Arm) wrote:
-> While altr,msi-controller is used with PCI, it is not a PCI host bridge
-> and is just an MSI provider. Move it with other MSI providers in the
-> 'interrupt-controller' directory.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_buffer.c b/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
+index b13a17276d07..88385dc3b30d 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_buffer.c
+@@ -347,7 +347,7 @@ void etnaviv_buffer_queue(struct etnaviv_gpu *gpu, u32 exec_state,
+ 	u32 link_target, link_dwords;
+ 	bool switch_context = gpu->exec_state != exec_state;
+ 	bool switch_mmu_context = gpu->mmu_context != mmu_context;
+-	unsigned int new_flush_seq = READ_ONCE(gpu->mmu_context->flush_seq);
++	unsigned int new_flush_seq = READ_ONCE(mmu_context->flush_seq);
+ 	bool need_flush = switch_mmu_context || gpu->flush_seq != new_flush_seq;
+ 	bool has_blt = !!(gpu->identity.minor_features5 &
+ 			  chipMinorFeatures5_BLT_ENGINE);
+-- 
+2.49.0
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---MPh2K4ynGn9ngJl9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBzF+wAKCRB4tDGHoIJi
-0hx6AP9MH4cTQdoahYIWy4tKS1Uo3KGmbcyM5IZnCm2u05kBbAD9GLxG0FsIniey
-CsrB+KAm76x/ZHArBtB2OU0tQ6KOWw8=
-=/Kh0
------END PGP SIGNATURE-----
-
---MPh2K4ynGn9ngJl9--
 
