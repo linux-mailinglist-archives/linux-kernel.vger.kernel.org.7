@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-639116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D033CAAF31B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AA5AAF32B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681F9171943
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9F34E4B40
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C031B215041;
-	Thu,  8 May 2025 05:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31664215771;
+	Thu,  8 May 2025 05:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YqOJ6Iw1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0A513C3F2;
-	Thu,  8 May 2025 05:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="lFB3y/9s"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084108C1E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 05:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746683333; cv=none; b=Mt3z2ywP+ZaNYT9TXNv29dcINXGAbf0ko3+DOpU7z44e9eMQMxW7JA2Hh7QCLDJPx652GMNMHsZS1hZdvEi4qjThNPV8UiIRG0RV0wbLS6wifn6gB9ouz9vrB8WGd/dTX3aYtYF/uj0q2J0sc4OEJ0YY24S0mCsHe8aGkH1IDRE=
+	t=1746683534; cv=none; b=P54Sx9/Eor1Rj5hOi1gVHcG+XfqDPB7sn4FxaPGLV73lC4scxWNUxTgjkEhYv99aTFzA+ctrfGaRcenVp8zJZv6N6KWCyVw13f5HiK8q5R64syeV22KezMbn9eveHjKNx+8WjG3uWhrwuNXm9vSRfFCy/azXIiKl4zeDxoK67Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746683333; c=relaxed/simple;
-	bh=WTLxIZISKQ6r/iRWMpniCKmmt76wtZFqrwv2HUarfMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Td/2PaKolYuoKg/FOmxnTxUpljUiGRysuVvb2h2FOBFIsevdPyT0KDxU0km+e99Ru2njpix9HhY8cMpAYPHLvdFfR1A97NRLNNYLVa2SOJH7Lkycs6dmR8aopCHAhZ844OQiTKGnU1qYJUi5T5xzYbUYKiArBKWWo4k1eSI9+54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YqOJ6Iw1; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746683332; x=1778219332;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WTLxIZISKQ6r/iRWMpniCKmmt76wtZFqrwv2HUarfMo=;
-  b=YqOJ6Iw1Ay3bIfkvRbYSwth2SKb6pRlndd04Z1843Q1Y8prkgJXraudD
-   kbSJGgO49f2E7DmtGUStYb75pOG2OgczJs6KYGDLINWykt8nUiKSPZ0pj
-   VlfpuwA9BLb41cDRKTeW6st/96oI8A4/osN42XbR0E10Xf/5DI5R4zaxm
-   6U6a2tfeAgZe65rooOCdmsfRIT1EqJgtEcAhO52epUxxYLxCgufMlfJSw
-   FHd//UlI8bDlJg7Sh5SV1UOS6z3gdJopY9UK0oE7nEReziYhgG/KU710X
-   DX0uQZkbko41aaOL0j7BOaz8en4J4iL0QCh2rcFUk9nxqAWXneN8waAjI
-   A==;
-X-CSE-ConnectionGUID: DJiH6/O4QGeLNLH3eodJ0g==
-X-CSE-MsgGUID: rFqQbI13RJylGGdOP/SlPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59799870"
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="59799870"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 22:48:51 -0700
-X-CSE-ConnectionGUID: 7cR3leNdS2quoRx2H/Z67A==
-X-CSE-MsgGUID: VM2nM5rmRLqeNp0tkRjgVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="136700143"
-Received: from dprybysh-mobl.ger.corp.intel.com (HELO [10.245.246.107]) ([10.245.246.107])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 22:48:47 -0700
-Message-ID: <71d1f2a1-e2ab-4327-bc6a-ff0aa7dbc19c@linux.intel.com>
-Date: Thu, 8 May 2025 08:49:59 +0300
+	s=arc-20240116; t=1746683534; c=relaxed/simple;
+	bh=Bz3RK3w8Iqotrfm+jiRfcCmjyO9GogSAsriwYpQb9gs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=R+EoSxXn6rBjZWwljcrL0exVid4zaH/f5YXLVg1HjJxQFJ8WhuD2w65yzT6bVQHhMr3TbuNNOwRmtjynluTIDe1/XkkAVEAlN1vOhDXQARmVZHemCogCm3ruVmleGx8rcfar709D2U8QAqI4hknNpuwZPLnAbh4evchVoYZD3LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=lFB3y/9s reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=n0B34arbIHUnRtwFWU1yjtd7WuKCdlVvJWIjrc5VsAM=; b=l
+	FB3y/9sBMvCyHlIM7cHnOiOa23KzIAlU8Ui0PJGmwsRl53M77VyPOoUSEQggtVLw
+	cz8Q08M4j3vcaPdw9uMCnH6wxs8IG04khk8pYsNMXkJQbaGddR0rJ+773Gf5oCK7
+	XNHTwA9S/h/RFj5zjSgs9sPEzxmN2gjKauI1ZcF034=
+Received: from 00107082$163.com ( [111.35.191.17] ) by
+ ajax-webmail-wmsvr-40-130 (Coremail) ; Thu, 8 May 2025 13:51:48 +0800 (CST)
+Date: Thu, 8 May 2025 13:51:48 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Kent Overstreet" <kent.overstreet@linux.dev>
+Cc: "Suren Baghdasaryan" <surenb@google.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alloc_tag: avoid mem alloc and iter reset when reading
+ allocinfo
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <52tsrapmkfywv4kkdpravtfmxkhxchyua4wttpugihld4iws3r@atfgtbd5wwhx>
+References: <20250507175500.204569-1-00107082@163.com>
+ <a0ebf2e.b422.196abf97373.Coremail.00107082@163.com>
+ <CAJuCfpFAUdqqvFPfe_OLR76c0bX_ngwG=JKC42pVB+WAeX4w0w@mail.gmail.com>
+ <nubqzts4e6n3a5e7xljdsql7mxgzkobo7besgkfvnhn4thhxk3@reob3iac3psp>
+ <289b58f1.352d.196addbf31d.Coremail.00107082@163.com>
+ <y6egptcxlbzgboykjorh3syxwy4wu37eolmjtwuwu36gtbfhgf@o3o34qii4gmq>
+ <1ed4c8f7.3e12.196adf621a2.Coremail.00107082@163.com>
+ <52tsrapmkfywv4kkdpravtfmxkhxchyua4wttpugihld4iws3r@atfgtbd5wwhx>
+X-NTES-SC: AL_Qu2fBPqTvE0r7iGZZekZnEYQheY4XMKyuPkg1YJXOp80mCXtyiAPZ25CNnXs0fmtIgemoQmaTyB17uBjdqV9RrrWGvturAP36k/33cU5ijBT
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ASoC: SOF: Intel: hda: Fix UAF when reloading module
-To: Tavian Barnes <tavianator@tavianator.com>
-Cc: linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- sound-open-firmware@alsa-project.org, linux-kernel@vger.kernel.org
-References: <fb47a18bdea9e9f86d6fccf1d881434cda3cd5f0.1746627007.git.tavianator@tavianator.com>
- <40ac692b-2a97-4b4c-a9f5-47601571f6f3@linux.intel.com>
- <CABg4E-moQf62Mm+Dv62yLwQaHfKHcrH54Gud1vj6bn6D7mvKJw@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <CABg4E-moQf62Mm+Dv62yLwQaHfKHcrH54Gud1vj6bn6D7mvKJw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <e1cc19.5287.196ae733594.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:gigvCgCXX0p1RhxoYkupAA--.15361W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gNHqmgcKSWmQwALsq
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-
-On 07/05/2025 20:06, Tavian Barnes wrote:
->>> -                     hda_mach = snd_soc_acpi_intel_hda_machines;
->>> +                     /* make a copy so we can modify it below */
->>> +                     hda_mach = devm_kmemdup(sdev->dev,
->>> +                                             snd_soc_acpi_intel_hda_machines,
->>> +                                             sizeof(*hda_mach),
->>> +                                             GFP_KERNEL);
->>
->> We need to copy 2x the size as the snd_soc_acpi_intel_hda_machines[] has
->> two entries, the second is the sentinel (all 0).
-> 
-> Do we?  I recognize that snd_soc_acpi_intel_hda_machines is an array,
-> but I don't see anywhere that hda_mach or *mach are used as an array,
-> at least in hda.c.
-> 
-> I'm no expert though, if we need the sentinel I can send a v4.  Thanks
-> for the review!
-
-Yes, we need to preserve the sentinel. When dealing with the
-snd_soc_acpi_mach all code looks for the sentinel at the end to break
-the loops. The size of the arrays are unknown outside where they are
-defined.
-
--- 
-Péter
-
+CkF0IDIwMjUtMDUtMDggMTI6MDc6NDAsICJLZW50IE92ZXJzdHJlZXQiIDxrZW50Lm92ZXJzdHJl
+ZXRAbGludXguZGV2PiB3cm90ZToKPk9uIFRodSwgTWF5IDA4LCAyMDI1IGF0IDExOjM1OjExQU0g
+KzA4MDAsIERhdmlkIFdhbmcgd3JvdGU6Cj4+IAo+PiAKPj4gQXQgMjAyNS0wNS0wOCAxMTozMTox
+MiwgIktlbnQgT3ZlcnN0cmVldCIgPGtlbnQub3ZlcnN0cmVldEBsaW51eC5kZXY+IHdyb3RlOgo+
+PiA+T24gVGh1LCBNYXkgMDgsIDIwMjUgYXQgMTE6MDY6MzVBTSArMDgwMCwgRGF2aWQgV2FuZyB3
+cm90ZToKPj4gPj4gVGhhbmtzIGZvciB0aGUgZmVlZGJhY2t+Cj4+ID4+IEkgYWdyZWUgdGhhdCBt
+ZW1vcnkgYWxsb2NhdGlvbiBub3JtYWxseSBkb3NlIG5vdCB0YWtlIG1ham9yIHBhcnQgb2YgYSBw
+cm9maWxpbmcgcmVwb3J0LAo+PiA+PiBldmVuIHByb2ZpbGluZyBhIGZpbyB0ZXN0LCBrbWVtX2Nh
+Y2hlX2FsbG9jIG9ubHkgdGFrZXMgfjElIHBlcmYgc2FtcGxlcy4KPj4gPj4gCj4+ID4+IEkgZG9u
+J3Qga25vdyB3aHkgSSBoYXZlIHRoaXMgInRoZSBsZXNzIG1lbW9yeSBhbGxvY2F0aW9uLCB0aGUg
+YmV0dGVyJyBtaW5kc2V0LCAgbWF5YmUKPj4gPj4gSSB3YXMgd29ycnlpbmcgYWJvdXQgbWVtb3J5
+IGZyYWdtZW50YXRpb24sIG9yIHNvbWV0aGluZyBlbHNlIEkgIGxlYXJuZWQgb24gc29tZSAidGV4
+dGJvb2siLAo+PiA+PiBUbyBiZSBob25lc3QsIEkgIGhhdmUgbmV2ZXIgaGFkIHJlYWwgZXhwZXJp
+ZW5jZSB3aXRoIHRob3NlIHdvcnJpZXMuLi4uCj4+ID4KPj4gPkl0J3MgYSBjb21tb24gYmlhcy4g
+Ik1lbW9yeSBhbGxvY2F0aW9ucyIgdGFrZSB1cCBhIGxvdCBvZiBjb25jZXB0dWFsCj4+ID5zcGFj
+ZSBpbiBvdXIgaGVhZHMsIGFuZCBnZW5lcmFsbHkgZm9yIGdvb2QgcmVhc29uIC0gaS5lLiBoYW5k
+bGluZyBtZW1vcnkKPj4gPmFsbG9jYXRpb24gZXJyb3JzIGlzIG9mdGVuIGEgbWFqb3IgY29uY2Vy
+biwgYW5kIHlvdSBkbyBhbHdheXMgd2FudCB0byBiZQo+PiA+YXdhcmUgb2YgbWVtb3J5IGxheW91
+dC4KPj4gPgo+PiA+QnV0IHRoaXMgY2FuIHR1cm4gaW50byBhbiBhdmVyc2lvbiB0aGF0J3MgZW50
+aXJlbHkgZGlzcHJvcG9ydGlvbmF0ZSAtCj4+ID5lLmcuIHVzaW5nIGxpbmtlZCBsaW5rZWQgbGlz
+dHMgYW5kIGZpeGVkIHNpemUgYXJyYXlzIGluIHdheXMgdGhhdCBhcmUKPj4gPmVudGlyZWx5IGlu
+YXBwcm9wcmlhdGUsIGluc3RlYWQgb2YgdmVjdG9ycyBhbmQgb3RoZXIgYmV0dGVyIGRhdGEKPj4g
+PnN0cnVjdHVyZXM7IGdvb2QgZGF0YSBzdHJ1Y3R1cmVzIGFsd2F5cyByZXF1aXJlIGFsbG9jYXRp
+b25zLgo+PiA+Cj4+ID5Qcm9maWxlLCBwcm9maWxlLCBwcm9maWxlLCBhbmQgcmVtZW1iZXIgeW91
+ciBiYXNpYyBDUyAoYmlnIE8gbm90YXRpb24pIC0KPj4gPjkwJSBvZiB0aGUgdGltZSwgc2ltcGxl
+IGNvZGUgd2l0aCBnb29kIGJpZyBPIHJ1bm5pbmcgdGltZSBpcyBhbGwgeW91Cj4+ID5uZWVkLgo+
+PiAKPj4gY29weSB0aGF0fiEKPgo+QW5vdGhlciB0aGluZyB0byBub3RlIGlzIHRoYXQgbWVtb3J5
+IGxheW91dCAtIGF2b2lkaW5nIHBvaW50ZXIgY2hhc2luZyAtCj5pcyBodWdlbHkgaW1wb3J0YW50
+LCBidXQgaXQnbGwgYWxtb3N0IG5ldmVyIHNob3cgdXAgYXMgYWxsb2NhdG9yIGNhbGxzLgo+Cj5U
+byBnaXZlIHlvdSBzb21lIGV4YW1wbGVzLCBtZW1wb29scyBhbmQgYmlvc2V0cyB1c2VkIHRvIGJl
+IHNlcGFyYXRlbHkKPmFsbG9jYXRlZC4gVGhpcyB3YXMgbWFpbmx5IHRvIG1ha2UgZXJyb3IgcGF0
+aHMgaW4gb3V0ZXIgb2JqZWN0Cj5jb25zdHJ1Y3RvcnMvZGVzdHJ1Y3RvcnMgZWFzaWVyIGFuZCBz
+YWZlcjogaW5zdGVhZCBvZiBrZWVwaW5nIHRyYWNrIG9mCj53aGF0J3MgaW5pdGlhbGl6ZWQgYW5k
+IHdoYXQncyBub3QsIGlmIHlvdSd2ZSBnb3QgYSBwb2ludGVyIHRvIGEKPm1lbXBvb2wvYmlvc2V0
+IHlvdSBjYWxsICpfZnJlZSgpIG9uIGl0Lgo+Cj4oUGVvcGxlIGhhZG4ndCB5ZXQgY2x1ZWQgdGhh
+dCB5b3UgY2FuIGp1c3Qga3phbGxvYygpIHRoZSBlbnRpcmUgb3V0ZXIKPm9iamVjdCwgYW5kIHRo
+ZW4gaWYgdGhlIGlubmVyIG9iamVjdCBpcyB6ZXJvZWQgaXQgd2Fzbid0IGluaXRpYWxpemVkKS4K
+Pgo+QnV0IHRoYXQgbWVhbnMgeW91J3JlIGFkZGluZyBhIHBvaW50ZXIgY2hhc2UgdG8gZXZlcnkg
+bWVtcG9vbF9hbGxvYygpCj5jYWxsLCBhbmQgc2luY2UgYmlvc2V0IGl0c2VsZiBoYXMgbWVtcG9v
+bHMgYWxsb2NhdGluZyBiaW9zIGhhZCBfdHdvXwo+dW5uZWNlc3NhcnkgcG9pbnRlciBkZXJlZnMu
+IFRoYXQncyBkZWF0aCBmb3IgcGVyZm9ybWFuY2Ugd2hlbiB5b3UncmUKPnJ1bm5pbmcgY2FjaGUg
+Y29sZCwgYnV0IHNpbmNlIGV2ZXJ5b25lIGJlbmNobWFya3MgY2FjaGUtaG90Li4uCj4KPihJIHdh
+cyB0aGUgb25lIHdobyBmaXhlZCB0aGF0KS4KPgo+QW5vdGhlciBiaWcgb25lIHdhcyBnZW5lcmlj
+X2ZpbGVfYnVmZmVyZWRfcmVhZCgpLiBNYWluIGJ1ZmZlcmVkIHJlYWQKPnBhdGgsIGV2ZXJ5b25l
+IHdhbnRzIGl0IHRvIGJlIGFzIGZhc3QgYXMgcG9zc2libGUuCj4KPkJ1dCB0aGUgY29yZSBpcyAo
+d2FzKSBhIGxvb3AgdGhhdCB3YWxrcyB0aGUgcGFnZWNhY2hlIHJhZGl4IHRyZWUgdG8gZ2V0Cj50
+aGUgcGFnZSwgdGhlbiBjb3BpZXMgNGsgb2YgZGF0YSBvdXQgdG8gdXNlcnNwYWNlICh0aGVyZSBn
+b2VzIGwxKSwgdGhlbgo+cmVwZWF0cyBhbGwgdGhhdCBwb2ludGVyIGNoYXNpbmcgZm9yIHRoZSBu
+ZXh0IDRrLiBQcmUgbGFyZ2UgZm9saW9zLCBpdAo+d2FzIGhvcnJpZmljLgo+Cj5Tb2x1dGlvbiAt
+IHZlY3Rvcml6ZSBpdC4gTG9vayB1cCBhbGwgdGhlIHBhZ2VzIHdlJ3JlIGNvcHlpbmcgZnJvbSBh
+bGwgYXQKPm9uY2UsIHN0dWZmIHRoZW0gaW4gYSAoZHluYW1pY2FsbHkgYWxsb2NhdGVkISBmb3Ig
+ZWFjaCByZWFkISkgdmVjdG9yLAo+YW5kIHRoZW4gZG8gdGhlIGNvcHlpbmcgb3V0IHRvIHVzZXJz
+cGFjZSBhbGwgYXQgb25jZS4gTWFzc2l2ZQo+cGVyZm9ybWFuY2UgZ2Fpbi4KPgo+T2YgY291cnNl
+LCB0byBkbyB0aGF0IEkgZmlyc3QgaGFkIHRvIGNsZWFuIHVwIGEgdGFuZ2xlZCAyNTArIGxpbmUK
+Pm1vbnN0cm9zaXR5IG9mIGhhbGYgYmFrZWQsIHBvb3JseSB0aG91Z2h0IG91dCAib3B0aW1pemF0
+aW9ucyIgKHRoZSB3b3JzdAo+c3BhZ2hldHRpIG9mIGdvdG9zIHlvdSdkIGV2ZXIgc2VlbikgYW5k
+IHR1cm4gaXQgaW50byBzb21ldGhpbmcKPm1hbmFnZWFibGUuLi4KPgo+U28gLSBrZWVwIHRoaW5n
+cyBzaW1wbGUsIGRvbid0IG92ZXJ0aGluayB0aGUgbGl0dGxlIHN0dWZmLCBzbyB5b3UgY2FuCj5z
+cG90IGFuZCB0YWNrbGUgdGhlIGJpZyBhbGdvcml0aG1pYyB3aW5zIDopCkkgd2lsbCBrZWVwIHRo
+aXMgaW4gbWluZH4hIDopCgpBbmQgdGhhbmtzIGZvciB0aGUgZW5saWdodGVuaW5nIG5vdGVzfiEh
+IAoKVGhvdWdoIEkgY291bGQgbm90IHF1aXRlIGNhdGNoIHVwIHdpdGggdGhlIGZpcnN0IG9uZSwg
+IEkgdGhpbmsgSSBnb3QgdGhlIHBvaW50Ogphdm9pZCB1bm5lY2Vzc2FyeSBwb2ludGVyIGNoYXNp
+bmcgYW5kICBrZWVwIHRoZSBwb2ludGVyIGNoYXNpbmcgYXMgc2hvcnQoYmFsYW5jZWQpIGFzIHBv
+c3NpYmxlfiAKClRoZSBzZWNvbmQgb25lLCBhYm91dCBjb3B5IDRrIGJ5IDRrLCBzZWVtcyAgcXVp
+dGUgc2ltaWxhciB0byBzZXFfZmlsZSwgYXQgbGVhc3QgdGhlICI0ayIgcGFydCwgbGl0ZXJhbGx5
+LgpzZXFfZmlsZSByZWFkKCkgIGRlZmF1bHRzIHRvIGFsbG9jIDRrIGJ1ZmZlciwgYW5kIHJlYWQg
+ZGF0YSB1bnRpbCBFT0Ygb3IgdGhlIDRrIGJ1ZmZlciBpcyBmdWxsLCAgIGFuZCBzdGFydCBvdmVy
+CmFnYWluIGZvciB0aGUgbmV4dCByZWFkKCkuICAgCk9uZSBzb2x1dGlvbiBjb3VsZCBiZSBtYWtl
+IGNoYW5nZXMgdG8gc2VxX2ZpbGUsIGRvIG5vdCBzdG9wIHVudGlsIHVzZXIgYnVmZmVyIGlzIGZ1
+bGwgZm9yIGVhY2ggcmVhZC4Ka2luZCBvZiBzaW1pbGFyIHRvIHlvdXIgc2Vjb25kIG5vdGUsIGlu
+IGEgc2VxdWVudGlhbCBzdHlsZSwgIEkgdGhpbmsuCklmICB1c2VyIHJlYWQgd2l0aCAxMjhLIGJ1
+ZmZlciwgIGFuZCBzZXFfZmlsZSBmaWxsIHRoZSBidWZmZXIgNGsgYnkgNGssIGl0IHdvdWxkIG9u
+bHkgbmVlZCB+MyByZWFkIGNhbGxzIGZvciBhbGxvY2luZm8uCihJIGRpZCBwb3N0IGEgcGF0Y2gg
+Zm9yIHNlcV9maWxlIHRvIGZpbGwgdXNlciBidWZmZXIsIGJ1dCBzdGFydC9zdG9wIHN0aWxsIGhh
+cHBlbnMgYXQgIDRrIGJvdW5kYXJ5ICwgc28gbm8gaGVscCBmb3IgCnRoZSBpdGVyYXRvciByZXdp
+bmRpbmcgd2hlbiByZWFkIC9wcm9jL2FsbG9jaW5mbyB5ZXQuCmh0dHBzOi8vbG9yZS5rZXJuZWwu
+b3JnL2xrbWwvMjAyNDEyMjAxNDA4MTkuOTg4Ny0xLTAwMTA3MDgyQDE2My5jb20vICkKVGhlIHNv
+bHV0aW9uIGluIHRoaXMgcGF0Y2ggaXMga2VlcGluZyB0aGUgaXRlcmF0b3IgYWxpdmUgYW5kIHZh
+bGlkIGNyb3NzIHJlYWQgYm91bmRhcnksIHRoaXMgY2FuICBhbHNvIGF2b2lkIHRoZSBjb3N0IGZv
+ciAKZWFjaCBzdGFydCBvdmVyLgoKCgpEYXZpZAoK
 
