@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-639919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5A9AAFE13
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C60DBAAFE1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C61627ACED4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:59:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F106EB272D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06F22777E8;
-	Thu,  8 May 2025 15:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A904E278E6A;
+	Thu,  8 May 2025 15:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XU7Akxis"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdyC1MXO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9BF1C860C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADFF1A239F;
+	Thu,  8 May 2025 15:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746716452; cv=none; b=YFrxXPF52ipWQ9TrNp5pErlVh0hx5xlonJnsLBjj+3By8YiKwBfzcYGr7Ev9CQ8PwyzywG/Vv81X3HtDLPsDOTMWIyn2FDZI+Wi1uYKEgeZUtfh7upgk4HCaYw5ZsxwLheIeElRiB4/Mp5zc0W9+uOThNI0G6TxSkQqcT6Hk4p4=
+	t=1746716507; cv=none; b=sEw232yGG/BkdriNYat0KjnVTo19gUizAnkCxzCFrcHxs7h5NzEzWqNuRdtN4NLk1Tn9MFsvrPOaHDTS/mLTTnURbLxJpMrwzJhaKkYxeonsg0J3rGoHXIjJLssWVSJ3eZk9MXbXFJfi/UZ4GOGGCu9fQNUiWOlgGbAYyyWEKEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746716452; c=relaxed/simple;
-	bh=bE/GlSLGGPFXT36aFU4gchBsyjqq28AacvXawkAxJyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LEZ2jyqgpCDZlDgAX69qAyONPLJtbunJE+cdtt1HhMDvEPnXJEzNCRG7DnPk4ZOlm3PgcnMsTUcUEvQL5tRrvNn7wH4YzzDlsF//DYyAPZqCsRovtBTHvduNHy+PpRiSDckT50Lo3h7NtfqUOrUHmFzkre5zzJM8yUCXWHsmUwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XU7Akxis; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d948ce7d9dso3802445ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 08:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746716448; x=1747321248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CaDQuSmU6yJ5IUs4m+YlbKlu2TNPWtfrQAZlJGyILvk=;
-        b=XU7AkxisVBjGZZho99hmhk3vt17JTGWS+zcqzyysYSZjHukpu+b3vNHlH8NQsBrLQ6
-         sBezNvFuqq2vkZzhpsDrC7zlMzn5+9OWvKYQCjoY80iSmHgrA/RothEe3zbfkI41MUXb
-         im5yUG+UpC5wxT0sw2yI3FRe71quTDIlFQpzc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746716448; x=1747321248;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CaDQuSmU6yJ5IUs4m+YlbKlu2TNPWtfrQAZlJGyILvk=;
-        b=hhO/OBuBet4dkgx4WDWt+wK09IoYEgxPDTqj5o2bw6ziv+eLFwc86sfVu5L0jmzT8a
-         2DQJD+DCkPdlF/1Z+ionaaciBIRxHyXQ+RBAaI8OeKz3V6JSuItrKoRrfWPeqbCw1Aff
-         KNqDql7SiEkW+rr7fwRcgpIZAb9JuCh+OufRLfhLg9o7pTOPjUu+gozuatuijTnYg14O
-         4Dx6AFWsH6JkgzbBrwvDqCkYjqvZVEnJi7h/Kv/EWJDHgdVD4PDOVBtiOFknULOcCL3M
-         N5B6AInM9IHpvFhE1Env4Y7CtmcsQvKHyP8oEkBIT6GCC1zK65I5ZH7WaKEhVJu52oC8
-         JnEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwH+kRCtPctrcAnHzhViNCoWMq3IB1fnctYuzAq4lnElMfrIKNmPSRWu1BhS1e3mVqfQYr+qW9UmlwhrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzShqnTBH1d/4dcLVMbAVZfv83QUyhhkHD3z1UlpyqJqlaSbkl2
-	m3bpZ8wVSY5Bcu6JRJ4iB/CTniPQxiNakMONnYBetXXZhO1fLT0S419tkzRbvq4=
-X-Gm-Gg: ASbGncthUqK8mkuOfe3uzzpaHM2XVIpFc22UP4VgInXVbtl+HdLfGNIhq6a4GDRwmmO
-	TI1CVHSu4lWlW1tncHIPBrqahpFO2YYbsoINYNPzgWTCmXPylu9HTCElDkd+XriCXKa0TXe4UVJ
-	VanZpFw3uregECuadTDAQKCK/ixb5AcATIDhhV7Zamleh9PQ4xTriIUtJRglw77H9EPIfNjp4YO
-	6acwiMmoxcGVZOmB/z45zb00a2xqtlUiePNmV3gmFafuoHKHHjrd6H5vHsAiPYi0yHpVepKbQ5I
-	z6/BdOb0viqhTqfC+ytwzIY0roviOvk4+Jl5qLLa3zLwcFqyppA=
-X-Google-Smtp-Source: AGHT+IE/XgtNYN0EtpMRL67XznMJq44ZZbXSNS4qg3wRIrU5gb+loCCKNTbLb3TOZ1VVWtQF37EIyg==
-X-Received: by 2002:a05:6e02:3c87:b0:3d8:1a87:89ce with SMTP id e9e14a558f8ab-3da7854d5b7mr52089525ab.3.1746716444166;
-        Thu, 08 May 2025 08:00:44 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da721e7e92sm11526345ab.60.2025.05.08.08.00.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 08:00:43 -0700 (PDT)
-Message-ID: <2f15967d-0bc8-4f91-9924-6312caa63036@linuxfoundation.org>
-Date: Thu, 8 May 2025 09:00:42 -0600
+	s=arc-20240116; t=1746716507; c=relaxed/simple;
+	bh=UCL8T8OKT2PHy7pDRaffVOpXZolm4PC/BuT7xeYhR0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTde4rL8LoqahMH9p2CBk727GladJh8RCZkrhR7SEJ3SElk5vCvHmsQAplmDx3GL9oxWZtdKwLp6pRBDGp+9tpN9J4VUCD+0Qx3e6vvoEryIVDzcEd4S64D76TBxWmzOiA9E5Mk2yS7hUpJ1T3iioNr0LVYMUKFs7Xih5ZH/Zhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdyC1MXO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EEE2C4CEE7;
+	Thu,  8 May 2025 15:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746716506;
+	bh=UCL8T8OKT2PHy7pDRaffVOpXZolm4PC/BuT7xeYhR0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UdyC1MXOScXQQbTzI2b26rBkqoWxPE9uMO5DoT0rIVU220CuEWMgYwd7uRUnHNEkK
+	 A9CmAMN6aItLxDbL3vvAqpyQ/mZAFPQ/+TZdPqBnKdpxSqSPl3DevAL6cxaDETyswn
+	 2kqzwwaxpT+O7IZzg4HkTBSEMCODvn9kDYz1TcYUkguw17csLhR5xRtV5q8uFUl8JL
+	 vhnieXUkQmVEXiA/TC8yWo8YE6E+cguuhXQsiDhFOzlsxaUF3DY/U7JlnqCaWw2rTC
+	 FwIh6P9hRa+V6Lgp5j+KFqF/hyEFW/vhJgb2hbEEto+UcE820vy9wPYVOe4j0PKhzo
+	 AMPwuVwacdy1Q==
+Date: Thu, 8 May 2025 16:01:40 +0100
+From: Lee Jones <lee@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Nam Tran <trannamatk@gmail.com>, andy@kernel.org, geert@linux-m68k.org,
+	pavel@ucw.cz, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, christophe.jaillet@wanadoo.fr, corbet@lwn.net,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
+ LED driver
+Message-ID: <20250508150140.GS3865826@google.com>
+References: <20250508132659.GL3865826@google.com>
+ <20250508142648.7978-1-trannamatk@gmail.com>
+ <CAHp75VcquXy11+mXW8eKgE0ndg3k0y6i=yKQ9_3N2Uh0viZKQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/97] 6.1.138-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250507183806.987408728@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250507183806.987408728@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VcquXy11+mXW8eKgE0ndg3k0y6i=yKQ9_3N2Uh0viZKQg@mail.gmail.com>
 
-On 5/7/25 12:38, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.138 release.
-> There are 97 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 09 May 2025 18:37:41 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.138-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Thu, 08 May 2025, Andy Shevchenko wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> On Thu, May 8, 2025 at 5:27 PM Nam Tran <trannamatk@gmail.com> wrote:
+> > On Thu, 8 May 2025 Lee Jones wrote:
+> > > On Thu, 08 May 2025, Andy Shevchenko wrote:
+> > > > On Wed, May 7, 2025 at 7:42 PM Nam Tran <trannamatk@gmail.com> wrote:
+> 
+> ...
+> 
+> > > > At least, based on the above it's my formal NAK from an auxdisplay perspective.
+> > >
+> > > This is fine.
+> > >
+> > > Just be aware, before you submit to LEDs again, that you need to use
+> > > what is available in the LEDs subsystem to it's fullest, before
+> > > hand-rolling all of your own APIs.  The first submission didn't use a
+> > > single LED API.  This, as before, would be a big NACK also.
+> >
+> > Thanks for the clarification.
+> >
+> > Just to confirm — the current version of the driver is customized to allow
+> > user space to directly manipulate LP5812 registers and to support the
+> > device’s full feature set. Because of this, it doesn’t follow the standard
+> > LED interfaces.
+> 
+> But why? What's wrong with the LED ABI? (see also below question
+> before answering to this one)
+> 
+> > Given that, would it be acceptable to submit this driver under the misc subsystem instead?
+> 
+> But these are LEDs in the hardware and you can access them as 4
+> individual LEDs, right?
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Right.  Please work with the API you are offered in the first instance.
+My first assumption is always that this driver isn't as special as you
+think it might be.
 
-thanks,
--- Shuah
+-- 
+Lee Jones [李琼斯]
 
