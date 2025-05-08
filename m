@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-639046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858AEAAF21D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7903EAAF224
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A68E27B2435
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A357F1C05A5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB5B20C012;
-	Thu,  8 May 2025 04:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525B7207A27;
+	Thu,  8 May 2025 04:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aybba2EK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="a8cdUKc7"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918D415A858;
-	Thu,  8 May 2025 04:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D72B8C1E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 04:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746678647; cv=none; b=G63HwzjClq9o9qz0h/kqpkShtOX067VNakWZvaYgvViPXSH3UFqezjC1fSzCnch1NJfxwifLesO6DCfPwlWdI/ug5BKFuwwrcAkR91zYE+0CEAjOl2GLmY5GP3xzdnkvXysdT3Hg86UCVL7lBYdbjKNZr7STW4aeQQlJOs17lxU=
+	t=1746679125; cv=none; b=d6dDhuEz+q52BpbtVAHOQuNPuq2XPLIjEQwM9i8tZODDReVY3cLXjnr+wEnTfex3e5dls+d/NWUKVuhW3XZwZRN9ea4yTmZqFnFCdlH0TYZf7DbEfZKmY+i4Rt8Ab1/RQmsrSM1LrsFqQhmGj5pxexBCarxgZU/+4/gyRrFVZJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746678647; c=relaxed/simple;
-	bh=R3lZPq8jE1TfODDLc9DGRZGgvVALUs6gab1xXc8C0LY=;
+	s=arc-20240116; t=1746679125; c=relaxed/simple;
+	bh=25F9Wk1wh0L/9vN7D2CO1XgDgsiHRMiJDSvxCKq+tfo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=in1SX2Bjc4A2ebTWxkcabb91psevjmmqCiEp8NEiMDj6SNFypmfChH0M25TzQaPxzVb9IyUlBf08X1gyBhFrKKtidtviVXngL9qXlA3+ASXkJFTUsz5zSa5k5fD3OZl1GZnS1I+xYBajkjlQrVTcVS6227aJEfeIJ3YIlEbSmgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aybba2EK; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746678646; x=1778214646;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=R3lZPq8jE1TfODDLc9DGRZGgvVALUs6gab1xXc8C0LY=;
-  b=Aybba2EKnty+KLPABO17ThiLSv2/QgJ+gfv7RVWum8GXqDgGM5YOe3yn
-   T2ymu4NA0MIjs+Ru5tnuLDZS4tjlQ9gUPXHcpH2Mx9MLDdUvl1lTBI2mZ
-   96YvEQ+UdAorn6W0OUvwmngzAk5XLupBC4KAPXglbDFnHtpcrYSWYie68
-   i+o4WkkcZNTVAMZufF215lvJzJkT6sLDJ9d//27nxWTIoGplm04BTYaP6
-   ccMfieEkZFD4jbCpaCqbucN2rtJNAR444UCIpKBkE8l4HDQzNjE5xHrXf
-   aiOf9hXafgGYkoW9QS/y5ASdPMfpYEHgN6dMlNnpZbdN0G+WjNPDQaBG/
-   g==;
-X-CSE-ConnectionGUID: FUqSlr9AQJmp4p77LM7VZA==
-X-CSE-MsgGUID: uZaE8ZnHTlaBGsggryripg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48550265"
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="48550265"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 21:30:45 -0700
-X-CSE-ConnectionGUID: Va7iEmHhSoCglHAPudVm/g==
-X-CSE-MsgGUID: Kkd+uZjLRWCCCIPj+DQSDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="136105721"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 07 May 2025 21:30:43 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCsu8-000A3j-1d;
-	Thu, 08 May 2025 04:30:40 +0000
-Date: Thu, 8 May 2025 12:30:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] fanotify: Avoid a couple of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <202505081249.CUDWsu7Z-lkp@intel.com>
-References: <aBqdlxlBtb9s7ydc@kspp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1mBF/1xGe6vH41nTv6/PIIFaJcNhmAc2acaPumYhKWcFyzz388/WvaEBQS4fwPuvDmr6kkDO+OrOSsROCHWdfKxd1oTWBDJPN8v2q87igw4u3QhLJUoFXUEeoVlanSUf5fjPU+9ZJy9s5nPDNQU/XWMRP8sQOwuN0J7OpOc8wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=a8cdUKc7; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476977848c4so7238711cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 21:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1746679121; x=1747283921; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1cqTOyiEDcgpIamZxdiHYiIDNncwGcTc3EyIyp1gE8o=;
+        b=a8cdUKc74UP9w7hrFJmTjT0OasiGADdJDJ+Z6ypO8liUbD+rwE6B4RQfUeqO5XLfrN
+         0IMxpuUGFkO+xqa/N4nvXNZKvF9T0M09otnKrj7KeWphgTHHOkwlWYtv+5AApMPM4hpA
+         Fsg14cNNfy71uxgRLOb2W+IQ+FKW2lF6MwYcD8mlCMN5GGfZUL9GwoWaBlnJfYG1svDe
+         Y5AVh2Z/msv+b0PejxDfb3twQjZAUjMVsAgLOouDtNMys84A0KAlOGi8CyKNkZcDtOz8
+         NdCzN2JBrnfD2hjK5RsqYdpPsxJbY7C5dyM7bkMEOe9r248OSdg2GjR/UA6MbGl0fKYp
+         Pnzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746679121; x=1747283921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1cqTOyiEDcgpIamZxdiHYiIDNncwGcTc3EyIyp1gE8o=;
+        b=PV+vb6RbrbYB3B/F6KlbJiwyNwrG7is2L2rk7SojWZLmAKdpQWicBW5b5PXFlCqKSC
+         TtQHCgGBz61h7c19FbFWSL9g/UP3P673RxM4fpWcEikqsd5SyYf2W92VQiwI1rGP+ytq
+         duQqItkQ3UT0yFy8vcS8FiV7L+SUskRKTZ9dGh+jnWKw7dkKKIwXDMovU7QQI/nNZogb
+         Skc7S9gafnsODdh4GQyyeGuIwRVlj6tyQxdgSh9RLlybd64MrT3LGTx2iXONEGKajQe2
+         ngDjTmCaulf0giMSu07X3Q01AZgNf8V9LhRvLz9dlOpR+u3QrdvBCCzDHeg1ghegPKrw
+         h5XA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/bph0eSL9vzJxBSP1PWyblCokFN6FplpZNJSR7lp+ZAT2taXBb3hyrrl0W4NJn53LH0Ko5kkuBL/0JOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwweioWA1B3ZZfTpcP+nrcNyIgmk6ykYxDYea70MPCsYO69yM3e
+	OrABqGK5yAJ84L7yKQwQeYDhP2jNZDkaf/Cc43PEd+cbhvTVzRJvbHOLPWr+Tcg=
+X-Gm-Gg: ASbGncvj5ca7mJAjDs+DP9M66qoh4bT70nBK2JiemdfooPxwnMQL3hUg68DoLtQ4pK/
+	wuocPVQX+VWFl+6lXB+kllF/l8KXhwxIliwldzaolDPYepcXQS6ECyCevqFDURhKNd1MKzfU67V
+	CeOX7tBV8mq4waaUiWXHNmZXpsmQI8mikhNWtBbIDI7LO0k49r7szeB1AMbKBsrJte0mP3+JsEc
+	ISsCVGxdR4Ja4k+AbiECjObuHaBESRJSPxcZKcSwIFq3gdQj1caOUvjOI+TH85MOt7HnDBbSw7L
+	2g1BTvblv44N3klp+3IAbPA53aBPRut1gUedRC8=
+X-Google-Smtp-Source: AGHT+IG9SXx3+szVrANw7iRh1ucZW6wHm68iT4qY9p9QukDYzSxLw6oMm5attLANpOpVo2taKiUizw==
+X-Received: by 2002:a05:622a:354:b0:476:8296:17e5 with SMTP id d75a77b69052e-494495ba88fmr28566081cf.17.1746679120854;
+        Wed, 07 May 2025 21:38:40 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-49223457d50sm27837941cf.71.2025.05.07.21.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 21:38:40 -0700 (PDT)
+Date: Thu, 8 May 2025 00:38:35 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Richard Chang <richardycc@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Make MIGRATE_ISOLATE a standalone bit
+Message-ID: <20250508043835.GA320498@cmpxchg.org>
+References: <20250507211059.2211628-1-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,60 +95,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBqdlxlBtb9s7ydc@kspp>
+In-Reply-To: <20250507211059.2211628-1-ziy@nvidia.com>
 
-Hi Gustavo,
+On Wed, May 07, 2025 at 05:10:55PM -0400, Zi Yan wrote:
+> 
+> Hi Johannes,
+> 
+> I incorporated all your feedback on v2 (see Changelog below), except the
+> "decoupling enum migratetype from the pageblock bits" one[1], since all
+> 5 migratetypes (not MIGRATE_ISOLATE) are just values and
+> "#define PB_migratetype_bits MIGRATE_TYPE_BITS" would take 5 bits
+> for migratetypes, which only requires 3 bits. Let me know if I
+> misunderstand your suggestion. Thanks.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on jack-fs/fsnotify]
-[also build test WARNING on linus/master v6.15-rc5 next-20250507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Gustavo-A-R-Silva/fanotify-Avoid-a-couple-of-Wflex-array-member-not-at-end-warnings/20250507-074110
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-patch link:    https://lore.kernel.org/r/aBqdlxlBtb9s7ydc%40kspp
-patch subject: [PATCH][next] fanotify: Avoid a couple of -Wflex-array-member-not-at-end warnings
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505081249.CUDWsu7Z-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505081249.CUDWsu7Z-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505081249.CUDWsu7Z-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from fs/notify/fdinfo.c:17:
->> fs/notify/fanotify/fanotify.h:280:16: warning: alignment 1 of 'union <anonymous>' is less than 4 [-Wpacked-not-aligned]
-     280 |         struct fanotify_fh name;                                                      \
-         |                ^~~~~~~~~~~
-   fs/notify/fanotify/fanotify.h:287:9: note: in expansion of macro 'FANOTIFY_INLINE_FH'
-     287 |         FANOTIFY_INLINE_FH(object_fh, FANOTIFY_INLINE_FH_LEN);
-         |         ^~~~~~~~~~~~~~~~~~
->> fs/notify/fanotify/fanotify.h:280:16: warning: alignment 1 of 'union <anonymous>' is less than 4 [-Wpacked-not-aligned]
-     280 |         struct fanotify_fh name;                                                      \
-         |                ^~~~~~~~~~~
-   fs/notify/fanotify/fanotify.h:315:9: note: in expansion of macro 'FANOTIFY_INLINE_FH'
-     315 |         FANOTIFY_INLINE_FH(object_fh, MAX_HANDLE_SZ);
-         |         ^~~~~~~~~~~~~~~~~~
-
-
-vim +280 fs/notify/fanotify/fanotify.h
-
-b8a6c3a2f0ae4d Amir Goldstein          2020-07-08  275  
-2c5069433a3adc Gabriel Krisman Bertazi 2021-10-25  276  #define FANOTIFY_INLINE_FH(name, size)						      \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  277  union {										      \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  278  	/* Space for object_fh and object_fh.buf[] - access with fanotify_fh_buf() */ \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  279  	unsigned char _inline_fh_buf[struct_size_t(struct fanotify_fh, buf, size)];   \
-1758cd2e95d31b Alexey Dobriyan         2023-10-10 @280  	struct fanotify_fh name;						      \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  281  } __packed
-2c5069433a3adc Gabriel Krisman Bertazi 2021-10-25  282  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Right, it's better to stick with enum values. My main worry was that
+PB_migratetype_bits *usually* correspond to an enum migratetype, and
+MIGRATE_ISOLATE being the precarious exception. But I think it's much
+clearer with the special-casing in get/set_pageblock_migratetype()
+instead of the lower pfnmask functions. Thanks for moving that!
 
