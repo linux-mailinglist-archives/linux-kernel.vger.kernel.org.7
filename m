@@ -1,300 +1,131 @@
-Return-Path: <linux-kernel+bounces-639315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B57AAF5DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69452AAF5E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030564C5AEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A919C21EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD60262FED;
-	Thu,  8 May 2025 08:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C4A262FE2;
+	Thu,  8 May 2025 08:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tR4VSj2F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QSrrnWQS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A942627F9;
-	Thu,  8 May 2025 08:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26154262FCA;
+	Thu,  8 May 2025 08:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693572; cv=none; b=bvdDMtqmRG9Bf1nNy5PwJmED+EvPwLm4p7nSserHQ7WwrdMB7yp5l+ld8DeREHkQZwFEuH1+jzDvHUK8U1eg8br7shUFvxeISxu4JgnEvjDcw2Nx/faSbYAPGYxCAFsD/TL8/nazrVCsU5IJsT+SPExV75TsV9NjcLVzBI5MLYU=
+	t=1746693582; cv=none; b=IFLlbhOJWPE+ROPrJrU9k1HqkIkp4WcDvXOlfMcQwMTIK4DzYpLcbdHvnPYcL9AGz8ok6Tri1BKehJ7rlfZ6GWlb23ZD1uLOabuZt2+7+2HDxsAZ7jtE2fiA+n6OOE6djWT6Pd2OToMWnm0m/5IFdPR4Cp3KOo9l9vWD5V6RgbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693572; c=relaxed/simple;
-	bh=MYodl63oUOljxj6damBOvFAO30dZBMEQaoMzfKiCR00=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O4BYPIORZajAnT90TPTnJr6XCgNPcmULnhlULnrvs/SJ4oG6B5HkwqREqKAbDxYUPDQQr3yO9WjKIA/Js4AjdjBIhz8FGegpB/6nTozACZ9+PUQaVKFZ8enzRDOZv/fL7nkwARTtomQnUrJ8YoPkObDWYfY+7fHdMUzwfqfP7r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tR4VSj2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 113FEC4CEF0;
-	Thu,  8 May 2025 08:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746693572;
-	bh=MYodl63oUOljxj6damBOvFAO30dZBMEQaoMzfKiCR00=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=tR4VSj2F/AvdRgmJ+WOB/PiIRmbpHvcZa1duu7AdzqFCcXgyWNVyfiITcA767VdPn
-	 6ukP1Iw3U0N7Es5STtoRYzQ2PD0R5Zq+NeS4oRboL+dEpLDizFVAcktQUM3BV2FLHO
-	 SBFvIkonFKfNH1TdIVzkRPQsIcF7v2Z0hr2BSVd1cFyQyLfXQV9xtpgB7MfSPph9xu
-	 V3oC7VTYtOt89eAPAONJ0PpG20B4tupklKNKuE+jUt5TvuOJxVHW5bzuLgKObXZPBw
-	 M8cCcgzm46ySJKS9ZVIfAozK4m3/CXI7l4YCdg0tp36FCjfL1vZrXUk7nVJzuuPQok
-	 irIpZACjKKqjw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02856C3ABCB;
-	Thu,  8 May 2025 08:39:32 +0000 (UTC)
-From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Thu, 08 May 2025 08:38:54 +0000
-Subject: [PATCH v2 3/3] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
+	s=arc-20240116; t=1746693582; c=relaxed/simple;
+	bh=J1quForL1AyV+mxiU/+Tx5j7sIP7VxLUjzVH0JaG5GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MeejwEoU00GlEecbDv7ABmXG4hKbcwEgVyASj1h9BTjp1gWOn6Abew60JnBOd2ovTdExG6/qaBSMbRNArNgfNvB/GXjS7CADH1j1aqyQ/3x8IO381wv2+6U7R59d3OKyII0v+RZ6QyIXVEMlHWrg+zG7bihXyLYT9/tIZIZn76U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QSrrnWQS; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746693581; x=1778229581;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J1quForL1AyV+mxiU/+Tx5j7sIP7VxLUjzVH0JaG5GA=;
+  b=QSrrnWQSGrInAW3NtGyF6D76MKdc0eXAq4tOuM58MXVCvbwoCkpfnJ0a
+   5kfdA8KquZc3JaNNFI9R++53yTniJcyDq/ZqwZ7U64GvKZwuGUsT6NBJd
+   7hB7iHRnVvcVexRpp0Qcf80eYww/IHQ5Br+fAwqQyFL6uMNigH9OYqTKT
+   yjpHWJvUER6ULDPYGOnuM9wYTFrzfSjJmteEls8zVcoSgh7sURquB/rJQ
+   eI3jS+ULYRKC6M5tpYPwwqnWst1rAr0jekBA7ZLhfAU+Y7uwDnhuZXdTX
+   8zmHo4lconP/2+SrLI1ojztv0do8+Ldjkgr4Cp8jmqjTZQ0uEAIq73IKL
+   w==;
+X-CSE-ConnectionGUID: bMF9fXM5Sc6osACjPjPBkw==
+X-CSE-MsgGUID: bXwVuhQeR9Wym7qZtrLSqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52273876"
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="52273876"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 01:39:40 -0700
+X-CSE-ConnectionGUID: oQrkPq5kQgifWHGyg4j/xQ==
+X-CSE-MsgGUID: Pw0GmgEXRM65MOnUpmGxqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="135925309"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 08 May 2025 01:39:36 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCwn0-000AnH-04;
+	Thu, 08 May 2025 08:39:34 +0000
+Date: Thu, 8 May 2025 16:39:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Schultz <d.schultz@phytec.de>, nm@ti.com, vigneshr@ti.com,
+	kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robertcnelson@gmail.com, francesco.dolcini@toradex.com
+Cc: oe-kbuild-all@lists.linux.dev, upstream@lists.phytec.de,
+	w.egorov@phytec.de, Daniel Schultz <d.schultz@phytec.de>
+Subject: Re: [PATCH 4/4] arm64: dts: ti: k3-am62a7-*: Specify Temperature
+ Grade
+Message-ID: <202505081648.oRdmP2QV-lkp@intel.com>
+References: <20250507050847.912756-4-d.schultz@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250508-virtio-msg-ffa-v2-3-ed84f8053965@google.com>
-References: <20250508-virtio-msg-ffa-v2-0-ed84f8053965@google.com>
-In-Reply-To: <20250508-virtio-msg-ffa-v2-0-ed84f8053965@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, arve@android.com, lpieralisi@kernel.org, 
- qwandor@google.com, jean-philippe@linaro.org, james.morse@arm.com, 
- perl@immunant.com, tabba@google.com, kernel-team@android.com, 
- armellel@google.com, qperret@google.com, sebastianene@google.com, 
- ahomescu@google.com, Per Larsen <perlarsen@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746693571; l=6782;
- i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=IGMQIIrUrHG9Da+sVqUyprEmAlWez8rBv29B3RzV3og=;
- b=XZvdV1OUGgx7Sv1wa4rmaJQAuCcvIoOhh+OOXn/0sOBOvenTaWZVMJsf/w/XburA6om+Rh+mO
- qk5zng3THLGByuCONoKycEDMkV0Jre8taVX6hLE5dZpmFhruhHgsaNS
-X-Developer-Key: i=perlarsen@google.com; a=ed25519;
- pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
-X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
- auth_id=402
-X-Original-From: Per Larsen <perlarsen@google.com>
-Reply-To: perlarsen@google.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507050847.912756-4-d.schultz@phytec.de>
 
-From: Per Larsen <perlarsen@google.com>
+Hi Daniel,
 
-FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-in the host ffa handler.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Per Larsen <perlarsen@google.com>
-Signed-off-by: Per Larsen <perl@immunant.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 114 +++++++++++++++++++++++++++++++++++++++++-
- include/linux/arm_ffa.h       |   2 +
- 2 files changed, 114 insertions(+), 2 deletions(-)
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.15-rc5 next-20250507]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 3fa5d1ae26c40fb96ad2deb834882bb3e0af5637..5ffbc0d496fca830a5f3af5bd9edd63b8e79b028 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -79,6 +79,14 @@ static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
- 	};
- }
- 
-+static void ffa_to_smccc_1_2_error(struct arm_smccc_1_2_regs *regs, u64 ffa_errno)
-+{
-+	*regs = (struct arm_smccc_1_2_regs) {
-+		.a0	= FFA_ERROR,
-+		.a2	= ffa_errno,
-+	};
-+}
-+
- static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
- {
- 	if (ret == FFA_RET_SUCCESS) {
-@@ -89,11 +97,24 @@ static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
- 	}
- }
- 
-+static void ffa_to_smccc_1_2_regs_prop(struct arm_smccc_1_2_regs *regs, int ret, u64 prop)
-+{
-+	if (ret == FFA_RET_SUCCESS)
-+		*regs = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
-+						      .a2 = prop };
-+	else
-+		ffa_to_smccc_1_2_error(regs, ret);
-+}
-+
- static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
- {
- 	ffa_to_smccc_res_prop(res, ret, 0);
- }
- 
-+static void ffa_to_smccc_1_2_regs(struct arm_smccc_1_2_regs *regs, int ret)
-+{
-+	ffa_to_smccc_1_2_regs_prop(regs, ret, 0);
-+}
- 
- static void ffa_set_retval(struct kvm_cpu_context *ctxt,
- 			   struct arm_smccc_res *res)
-@@ -136,6 +157,29 @@ static void ffa_set_retval(struct kvm_cpu_context *ctxt,
- 	}
- }
- 
-+static void ffa_set_retval_smccc_1_2(struct kvm_cpu_context *ctxt,
-+			   struct arm_smccc_1_2_regs *regs)
-+{
-+	cpu_reg(ctxt, 0) = regs->a0;
-+	cpu_reg(ctxt, 1) = regs->a1;
-+	cpu_reg(ctxt, 2) = regs->a2;
-+	cpu_reg(ctxt, 3) = regs->a3;
-+	cpu_reg(ctxt, 4) = regs->a4;
-+	cpu_reg(ctxt, 5) = regs->a5;
-+	cpu_reg(ctxt, 6) = regs->a6;
-+	cpu_reg(ctxt, 7) = regs->a7;
-+	cpu_reg(ctxt, 8) = regs->a8;
-+	cpu_reg(ctxt, 9) = regs->a9;
-+	cpu_reg(ctxt, 10) = regs->a10;
-+	cpu_reg(ctxt, 11) = regs->a11;
-+	cpu_reg(ctxt, 12) = regs->a12;
-+	cpu_reg(ctxt, 13) = regs->a13;
-+	cpu_reg(ctxt, 14) = regs->a14;
-+	cpu_reg(ctxt, 15) = regs->a15;
-+	cpu_reg(ctxt, 16) = regs->a16;
-+	cpu_reg(ctxt, 17) = regs->a17;
-+}
-+
- /* Call SMC64 using SMCCC 1.2 if hyp negotiated FF-A 1.2 falling back to 1.1 */
- static void arm_smccc_1_x_smc(u64 func_id, u64 a1, u64 a2, u64 a3,
- 			      u64 a4, u64 a5, u64 a6, u64 a7,
-@@ -696,7 +740,6 @@ static bool ffa_call_supported(u64 func_id)
- 	case FFA_NOTIFICATION_GET:
- 	case FFA_NOTIFICATION_INFO_GET:
- 	/* Unimplemented interfaces added in FF-A 1.2 */
--	case FFA_MSG_SEND_DIRECT_REQ2:
- 	case FFA_MSG_SEND_DIRECT_RESP2:
- 	case FFA_CONSOLE_LOG:
- 	case FFA_PARTITION_INFO_GET_REGS:
-@@ -707,6 +750,21 @@ static bool ffa_call_supported(u64 func_id)
- 	return true;
- }
- 
-+/*
-+ * Must a given FFA function use the SMC calling convention v1.2?
-+ */
-+static bool ffa_call_needs_smccc_1_2(u64 func_id)
-+{
-+	switch (func_id) {
-+	case FFA_MSG_SEND_DIRECT_REQ2:
-+	case FFA_MSG_SEND_DIRECT_RESP2:
-+	case FFA_PARTITION_INFO_GET_REGS:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool do_ffa_features(struct arm_smccc_res *res,
- 			    struct kvm_cpu_context *ctxt)
- {
-@@ -865,9 +923,47 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
- 	hyp_spin_unlock(&host_buffers.lock);
- }
- 
-+static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-+			       struct kvm_cpu_context *ctxt,
-+			       u64 vm_handle)
-+{
-+	DECLARE_REG(u32, func_id, ctxt, 0);
-+	DECLARE_REG(u32, endp, ctxt, 1);
-+	DECLARE_REG(u64, uuid_lo, ctxt, 2);
-+	DECLARE_REG(u64, uuid_hi, ctxt, 3);
-+	DECLARE_REG(u64, x4, ctxt, 4);
-+	DECLARE_REG(u64, x5, ctxt, 5);
-+	DECLARE_REG(u64, x6, ctxt, 6);
-+	DECLARE_REG(u64, x7, ctxt, 7);
-+	DECLARE_REG(u64, x8, ctxt, 8);
-+	DECLARE_REG(u64, x9, ctxt, 9);
-+	DECLARE_REG(u64, x10, ctxt, 10);
-+	DECLARE_REG(u64, x11, ctxt, 11);
-+	DECLARE_REG(u64, x12, ctxt, 12);
-+	DECLARE_REG(u64, x13, ctxt, 13);
-+	DECLARE_REG(u64, x14, ctxt, 14);
-+	DECLARE_REG(u64, x15, ctxt, 15);
-+	DECLARE_REG(u64, x16, ctxt, 16);
-+	DECLARE_REG(u64, x17, ctxt, 17);
-+
-+	if (FIELD_GET(FFA_SRC_ENDPOINT_MASK, endp) != vm_handle) {
-+		ffa_to_smccc_1_2_regs(regs, FFA_RET_INVALID_PARAMETERS);
-+		return;
-+	}
-+
-+	struct arm_smccc_1_2_regs args = {
-+		func_id, endp, uuid_lo, uuid_hi,
-+		 x4,  x5,  x6,  x7,  x8,  x9, x10,
-+		x11, x12, x13, x14, x15, x16, x17
-+	};
-+
-+	arm_smccc_1_2_smc(&args, regs);
-+}
-+
- bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- {
- 	struct arm_smccc_res res;
-+	struct arm_smccc_1_2_regs regs;
- 
- 	/*
- 	 * There's no way we can tell what a non-standard SMC call might
-@@ -923,14 +1019,28 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- 	case FFA_PARTITION_INFO_GET:
- 		do_ffa_part_get(&res, host_ctxt);
- 		goto out_handled;
-+	case FFA_MSG_SEND_DIRECT_REQ2:
-+		hyp_spin_lock(&version_lock);
-+		if (hyp_ffa_version >= FFA_VERSION_1_2) {
-+			do_ffa_direct_msg2(&regs, host_ctxt, HOST_FFA_ID);
-+			hyp_spin_unlock(&version_lock);
-+			goto out_handled;
-+		}
-+
-+		hyp_spin_unlock(&version_lock);
-+		goto out_not_supported;
- 	}
- 
- 	if (ffa_call_supported(func_id))
- 		return false; /* Pass through */
- 
-+out_not_supported:
- 	ffa_to_smccc_error(&res, FFA_RET_NOT_SUPPORTED);
- out_handled:
--	ffa_set_retval(host_ctxt, &res);
-+	if (ffa_call_needs_smccc_1_2(func_id))
-+		ffa_set_retval_smccc_1_2(host_ctxt, &regs);
-+	else
-+		ffa_set_retval(host_ctxt, &res);
- 	return true;
- }
- 
-diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
-index c0dd6183d956043192114a522b7eef465e7078ac..82a35a3b22de426f7e9a8894e76fdf1e933b3d6b 100644
---- a/include/linux/arm_ffa.h
-+++ b/include/linux/arm_ffa.h
-@@ -269,6 +269,8 @@ bool ffa_partition_check_property(struct ffa_device *dev, u32 property)
- 	(ffa_partition_check_property(dev, FFA_PARTITION_DIRECT_REQ2_RECV) && \
- 	 !dev->mode_32bit)
- 
-+#define FFA_SRC_ENDPOINT_MASK	GENMASK(31, 16)
-+
- /* For use with FFA_MSG_SEND_DIRECT_{REQ,RESP} which pass data via registers */
- struct ffa_send_direct_data {
- 	unsigned long data0; /* w3/x3 */
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Schultz/arm64-dts-ti-k3-am625-Specify-Temperature-Grade/20250507-131122
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250507050847.912756-4-d.schultz%40phytec.de
+patch subject: [PATCH 4/4] arm64: dts: ti: k3-am62a7-*: Specify Temperature Grade
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505081648.oRdmP2QV-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505081648.oRdmP2QV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505081648.oRdmP2QV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/arm64/boot/dts/ti/k3-am62a7-sk.dts:14:10: fatal error: k3-am62a-thermal-automative.dtsi: No such file or directory
+      14 | #include "k3-am62a-thermal-automative.dtsi"
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +14 arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+
+     9	
+    10	#include <dt-bindings/leds/common.h>
+    11	#include <dt-bindings/gpio/gpio.h>
+    12	#include <dt-bindings/net/ti-dp83867.h>
+    13	#include "k3-am62a7.dtsi"
+  > 14	#include "k3-am62a-thermal-automative.dtsi"
+    15	
 
 -- 
-2.49.0.987.g0cc8ee98dc-goog
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
