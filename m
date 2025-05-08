@@ -1,167 +1,102 @@
-Return-Path: <linux-kernel+bounces-639228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C189AAF495
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40278AAF474
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8261BC5813
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DD8C189E806
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D258E21E0BD;
-	Thu,  8 May 2025 07:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="OU6BkEnn"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B0F22068A;
+	Thu,  8 May 2025 07:13:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B14205E3E;
-	Thu,  8 May 2025 07:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47321CA16
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746688807; cv=none; b=phlDMVngz1Qz4OqjKO5+FilxxD8ScgTSqO6t4RFV7KN5hEknVjenRsmkgPsFv8qRRnNSVRv/0TbvBevHSMRs3GO2T2wIfzqDD8M7cP9lXPTvpuADl5qbXH2zB1agGyOwbmH/WKPawSXt1NeFKqnw3NpkF6d+0EGMjygDNp81cNc=
+	t=1746688385; cv=none; b=HIPyhi1QBvkktKWPHDuAHsfnwoSguao3U6ngUIXZva5PFRYshu50pDszcuf3Zbhd5XuqyNEQcYU9hjGpUerXv1cjJSy4w8PmySFsKDcH1WbpEX5cVWRfMiGicFx52sBbF3H+Chy2p2txg8G7E0pDf4XJUo1kDrkamcRRkSPxgvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746688807; c=relaxed/simple;
-	bh=n5jzGuU8/00LKxmGX4Dj+y1Sgr6j75rNrEi3iQ0hWWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ldS8PoJ/Z8rsejWN4f9cR2xHU+ubXenQcpnU6oysUeTeOgOJKhK4DH10dMoB7zRQFDvf4i1nXFiCXrugfYpFs2DyWXao8UZodOK/60KtUMZofmAsmPalMf1Vt/cQsC3d76pnLMAh9J/pHzLRsDbLtQNj+nAQH3xOPMEVCs8pRuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=OU6BkEnn; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.101.3.5] (unknown [213.157.19.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C471A3FDE7;
-	Thu,  8 May 2025 07:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746688381;
-	bh=YQhnn+kRn85AxiqKoin5sojaq0xB+1V3eXIEwuwJYFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=OU6BkEnni+yO4T8h3ZetVYvIywFircaRxnJJDhR4CI6B+a7piARIhadYvF3RzbZUR
-	 enMidxv6+1t1rQHwW82CWHomHVjbwuOVjfb7VGMmo2hqnbieT0Iu557AFC1YkVNd1V
-	 BaBYjzGQzJ41Li+WCND8yj+gFPOMhNnCyOoz3CNn616oyBdGoJCy3aAb70qsxoa7E7
-	 yUizlTDEs06qImwOFLdptH+ZmLvyTjmczuPpMRjgQEWH6DPDoTnGQ39YPiTd9o2xGD
-	 ifXRNaTVWdgZWlH5eaV3Lk+rA6ca17+xg4b2L38LP+93bEPdcZSxQKNMyLyTV1HBHm
-	 SSjAm4GB/R85g==
-Message-ID: <48b5512b-5e38-405a-80e7-64be43bf04e8@canonical.com>
-Date: Thu, 8 May 2025 00:12:58 -0700
+	s=arc-20240116; t=1746688385; c=relaxed/simple;
+	bh=wzd2oN78a5f/c5RFfKUvSeNBcAm+s56MJoEcP0uJOJ8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qxuQpx5wwURqk3C8tX7ERahiltXxbztb5BphzOThZS7R16F95srw+uBNdu6Iro+J51qtl7YIPbt7US6K9WbUL4jxLP8/dvCUKMkD/eJ6cjGtEqNJJIThGf5P0xbQabN/h89sRx9NkAHtPnuu0Q8tlveIezudsN+tILYw9dA05ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d91a0d3e15so7532395ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 00:13:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746688383; x=1747293183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aG8nEEjrmEeVt+FMIpArijkqqoSXM+l5mTr89aXDaco=;
+        b=tQ4EyVC6WksGKy7C1UOg/volq60gVgpj9mwzo9Tk2ja+Y3nEoK44nBqd2DILjECn16
+         6n1XSaufbuoviSuJ7OZDH/Nxi2uvzzC44t0Y/ucNlueM9HAkomyJIRyKJTo7K1kjxYWE
+         gmPFG4kt9cDUi8JQs04qYTDNvbuoMtt/3xo0R4buPh7bzyNywoic5s35PJ6+vaf9yCDz
+         hmJMzEHc0YyiFeiY3GcRJVPwhzPjfWj+Pz1rS0gzafflDT2LwaEtO97hLMN0a5wKqWRR
+         K+pFELd3JmZxD7/Ea+vCMs6zkklu/ShGs1vCMheERZBvwZHbN5g/OkhBxon5WgA4s+GY
+         YORQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiedqBqwGQFI4DlBgHtX/42alqk9pCilZoN2aEEFmEdWW3KjWlJhpwygHBSpqAe5aQXHs6CISvKnuMXyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz33oL974sibUTPSe27uZWRzjuNlwDDHVjDu7Qwv7TZ4lrr9fh9
+	6zeqTsUfjUFl4kZ1rDGwrpx+X7I+MbgrKisUBNeAx20bf0s5g9XpB6/6DtO8HMy7FJVNEDI0FpX
+	cXDM6tpkXfj5bAaVJxk7jHpiJQuj3Awb8gsyQoFdtA8RqE96GBqI5nis=
+X-Google-Smtp-Source: AGHT+IGwtuBYqtqyXs7WRh4r9OmvUUEzOExCVcEqx0h1T1Y13Uv2G2YCBtq+f/KGXA4sXFhBQN7tN/Kda77poO16j+d/OJj+D8XX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-To: Song Liu <song@kernel.org>, =?UTF-8?Q?Maxime_B=C3=A9lair?=
- <maxime.belair@canonical.com>
-Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, mic@digikod.net, kees@kernel.org,
- stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
- takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp,
- linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-2-maxime.belair@canonical.com>
- <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a67:b0:3d9:36a8:3da0 with SMTP id
+ e9e14a558f8ab-3da7854d64emr31349925ab.2.1746688383016; Thu, 08 May 2025
+ 00:13:03 -0700 (PDT)
+Date: Thu, 08 May 2025 00:13:03 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <681c597f.050a0220.a19a9.00bd.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, elic@nvidia.com, haoluo@google.com, 
+	hdanton@sina.com, jasowang@redhat.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kafai@fb.com, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	lkp@intel.com, llvm@lists.linux.dev, martin.lau@linux.dev, 
+	mathieu.desnoyers@efficios.com, memxor@gmail.com, mhiramat@kernel.org, 
+	michal.kukowski@infogain.com, michal.switala@infogain.com, mst@redhat.com, 
+	netdev@vger.kernel.org, norbert.kaminski@igglobal.com, 
+	norbert.kaminski@infogain.com, norkam41@gmail.com, 
+	oe-kbuild-all@lists.linux.dev, parav@nvidia.com, rostedt@goodmis.org, 
+	sdf@fomichev.me, sdf@google.com, song@kernel.org, songliubraving@fb.com, 
+	syzkaller-bugs@googlegroups.com, wojciech.gladysz@infogain.com, yhs@fb.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/6/25 23:26, Song Liu wrote:
-> On Tue, May 6, 2025 at 7:40 AM Maxime Bélair
-> <maxime.belair@canonical.com> wrote:
->>
->> Add support for the new lsm_manage_policy syscall, providing a unified
->> API for loading and modifying LSM policies without requiring the LSM’s
->> pseudo-filesystem.
->>
->> Benefits:
->>    - Works even if the LSM pseudo-filesystem isn’t mounted or available
->>      (e.g. in containers)
->>    - Offers a logical and unified interface rather than multiple
->>      heterogeneous pseudo-filesystems.
-> 
-> These two do not feel like real benefits:
-> - Not working in containers is often not an issue, but a feature.
+syzbot suspects this issue was fixed by commit:
 
-and the LSM doesn't have to allow the syscall to function in a container
-where appropriate. Its up to the LSM if the syscall is supported and
-what kind of permissions are needed.
+commit 47979314c0fe245ed54306e2f91b3f819c7c0f9f
+Author: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date:   Sun Mar 16 04:05:37 2025 +0000
 
-However having the ability to function in a container and not having to
-mount securityfs, or procfs into a container. similar to what landlock
-gets with its syscall can be beneficial.
+    bpf: Convert lpm_trie.c to rqspinlock
 
-> - One syscall cannot fit all use cases well...
-> 
-of course not, and for those other use cases new syscalls can be added.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=140598f4580000
+start commit:   c2933b2befe2 Merge tag 'net-6.14-rc1' of git://git.kernel...
+git tree:       net-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d033b14aeef39158
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108e1724580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177035f8580000
 
->>    - Avoids overhead of other kernel interfaces for better efficiency
-> 
-> .. and it is is probably less efficient, because everything need to
-> fit in the same API.
-> 
-no not everything, just what fits into the syscall. Nor does an LSM
-have to use the syscall it is still use what works for it.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-This could be a little more efficient than the current fs interface
-used by apparmor/selinux/smack but I don't think efficiency is going
-to be a huge win for this.
+#syz fix: bpf: Convert lpm_trie.c to rqspinlock
 
-
-> Overall, this set doesn't feel like a good change to me.
-> 
-> Thanks,
-> Song
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
