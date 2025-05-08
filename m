@@ -1,187 +1,133 @@
-Return-Path: <linux-kernel+bounces-639454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B69BAAF7A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544D9AAF7AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C894E20CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389119E0926
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86D91F03D2;
-	Thu,  8 May 2025 10:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA642045B1;
+	Thu,  8 May 2025 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PC0AygGp"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmZtDPx0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E377A957
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1548F1FDA8E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746699586; cv=none; b=WeTs+QcTbDTTibFd8IPwicsRrYSSyEhWMhV4ewrkUG5Pje0OdmcYqT1t3q4zP9ORFDNyxwXgaB3bVllRrPKP3vbxzAzqq/bvv0wcySpTnBURIG+AhVNuXIdpMx9AB2mDYZAQrg63w6Ah8KSeGBYmvKSvQ4sharwwyrWYIhNFnLg=
+	t=1746699629; cv=none; b=CDLNeLPSlzv2ZpTgfZpcbyzIV/kUhIP8ljdHzqwr+l6JqP3rFylA4cIGH1yT24uOYsAJIhXbD7Fjsetrd+1UG9ohO3BBY0ASoDRHEwKfVIkU+4kQFA7/Gq0inUmlSABy9Ihaik0YvtI5+GB9lCYAOt8lCdQfIV/haVWQtEOQPe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746699586; c=relaxed/simple;
-	bh=sP2VTvgEobbv3CXl+n4BZ8qjaHLld7o5UloKkZ+9cC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lzcGM0ncJlfVCKylE2v3m9f7tWBZT29Hyb2chEk7UlrqfmnGyrtC9R0KPrWzsJdNbCa3NlFFGZVKCVTxTXt0v+MBdbH69eidlHIKiBT/r1x+cNenAqvRZbfhlc8h+W/gSiHPYMdUV/Wwi1XTQ+16l1FCwQosLy/DH+L65dIm6fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PC0AygGp; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c2504fa876so380358fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746699582; x=1747304382; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fvv70pMgCJ3FiwAsjSiNoU6Z16zsSHQiIGX3w5dV3qE=;
-        b=PC0AygGpyjoT9fVSU24as7HpCzXAN68CtFy4FRz3K82WpvH2eLse5pP+nAt6iuYMbc
-         x7Pd8YAK7RBgrqT1JusHvlHr1Fm4pt2T97KU8iTYTmuON7p645x3MD9uX8t4pQL2a26t
-         nUco00AjqV2/9KP04u7C7c3FS75UcWmlIgJhaDW2VtJmw3OAQPMItzhpQrBgXhmVAbb7
-         kuNxJUMF0qd0OaxtfQN3HfD5uL8JEJIICjdSeLvwj5SImMvG+QQm5Rhd9ys1IaRknut0
-         NmKuACd77K0dRPfkWjASfwFa8jsJ/Pz0Dziadqqz+/xpe6ZK07NqAPoX9iFXYcqTbyn+
-         md1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746699582; x=1747304382;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fvv70pMgCJ3FiwAsjSiNoU6Z16zsSHQiIGX3w5dV3qE=;
-        b=W0R77T3mQhPV40J+fIOXwcN8vIW4SWS34j6yAesfykTAKQ+sM4/8GC2V0dP2XGbWuw
-         gtAWjBT6OUcB+bbwHNPagwf3Twqu/66hrzi8JSbE0MSeR2LrjLiZRYUhpyJ0fxzyo8I6
-         h54XwQUKFHK5VngyldYtsR4In1kN+2dKiJHi232Ai+k4jC5RD04pOUV/oiA8dWesro9Q
-         GkAF38ojujYRlVD/SkDJvpGCBhhq/9bUYmq38eYSnSiLjmuvBKK+tzos8XxW4OfcVChw
-         LRt6kOc/iBocWz+Wn3M05md0I+siYaIOTFAPEh8ySnhuYKJbgj8r1S4PZRCa16I6XLoY
-         bXSA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7rBh4w7w+EyZz4a/SxRWkd/6hSYx2WhdQAIVnkUakR2JmrFC0dVdAvA6AkPmY8GaCc2PmqLCxQNkiJ9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrE2TiE4p9PJEDOB0zixWnWyOdsBziK8XhEK+yz4COIbQv11bS
-	1/qBS8XaNfNExxKqGJtCmr65LdWI/hxSNcN8x+mw5VkaEzYDYPRB0BoqlXez0iodz7r2aANotb1
-	VDv50i1rQlHcxf/SNRBkFvhBGKKQ1cqaQSCDDDQ==
-X-Gm-Gg: ASbGncsEb2xI1NFd5vqRTRIBNtMQT9oCjz2uQs25aDlL6i/2llwjHtEzr/vMEveU6LI
-	3hsg5QMDv3XEkGJtwPK7+m46tPFzIcEgw3LVYFFrqeBWPhRAoq/PpcB30j7ACw7e+CnUejye+XN
-	t9Tz9P3fboCGHNoOok8hh0tbY=
-X-Google-Smtp-Source: AGHT+IF520N+kx+oR9rt9xJhtNWjWu/wTkoOchusiLD7WoO6maRQXw9xMSqaOd3WIebwagelwsLLqkPIqfbMN6EVIXc=
-X-Received: by 2002:a05:6870:7020:b0:2c2:2f08:5e5b with SMTP id
- 586e51a60fabf-2db5be3141amr4180433fac.13.1746699582240; Thu, 08 May 2025
- 03:19:42 -0700 (PDT)
+	s=arc-20240116; t=1746699629; c=relaxed/simple;
+	bh=EKC1MDZgWrXQlaptwmHFpj1K0dZR4L3pRVAVi3OGh3g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Uomzr8JAqFD5bRfxceg06bH9AJKYHN07W+lIOO5dCjdFIkeXMyEj/rGsd30pZ26GWkr/bY3CLu0AGYBpGyRh6ZkUgYocpkS4wQQsDe0HmBK5beD2YUcQ0zA4RJcW4FFPlN60C0SHqPb0dIicMIR3rC+lcpjhdgKAr0gqqXiWjEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmZtDPx0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7CF15C4CEE9;
+	Thu,  8 May 2025 10:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746699628;
+	bh=EKC1MDZgWrXQlaptwmHFpj1K0dZR4L3pRVAVi3OGh3g=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ZmZtDPx0UYHhqyOZvTCFRafPrgyp3NpA/za8Qyht092GGbwuXvcdGdqTSa4aMDno+
+	 MyOLuQWMpkvTIVdpLDsddNm2u4Bx3ZIF+eqV8ERFaS4FbPNbRMpxojd7usHcvNLVca
+	 pMkxthIHhcmbfLCUjS3ROkBd08gd8bikTVkNgfRxPrzwEHCzDx3btVXwQ+7hpIWPZz
+	 Bh1VIuY8Bvr37qupJOfHMVkrMIMgnJ00pCkIslQtyYQMxh2lGjLZZ2V0RChSJLzA1V
+	 2w62dIOkqNoLmeXLxckuOBxCTCTATVTsUKRB3WGFH5nqAJK0vd91N0ommKPMmjtLoe
+	 ZANEmp9/GYu2Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D3CC3ABBE;
+	Thu,  8 May 2025 10:20:28 +0000 (UTC)
+From: Ignacio Moreno Gonzalez via B4 Relay <devnull+Ignacio.MorenoGonzalez.kuka.com@kernel.org>
+Date: Thu, 08 May 2025 12:20:27 +0200
+Subject: [PATCH] mm: madvise: make MADV_NOHUGEPAGE a no-op if !THP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402233407.2452429-1-willmcvicker@google.com> <20250402233407.2452429-6-willmcvicker@google.com>
-In-Reply-To: <20250402233407.2452429-6-willmcvicker@google.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 8 May 2025 11:19:30 +0100
-X-Gm-Features: ATxdqUFInfzL-Wd6UFpfOdOxzv03B4za9dTc_DPavO3LtoEQp9Xr8GSGsSU8UXU
-Message-ID: <CADrjBPpDs_itymvGckRYeuJDkMSOo5bc60tYTeRBtAu6Tm8O6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] clocksource/drivers/exynos_mct: Fix uninitialized
- irq name warning
-To: Will McVicker <willmcvicker@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan <saravanak@google.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Donghoon Yu <hoony.yu@samsung.com>, 
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Youngmin Nam <youngmin.nam@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250508-madvise-nohugepage-noop-without-thp-v1-1-e7ceffb197f3@kuka.com>
+X-B4-Tracking: v=1; b=H4sIAGqFHGgC/x2NwQqFIBBFfyVm3YAZUb1febSwnHQWqai9F0T/n
+ rU7Bw73npAoMiX4VCdE+nFi74o0dQWLVc4Qsi4OUshOdGLATelSETpvd0NBmQd9wD9n6/eM2QY
+ k0ctmHvtWDxLKUoi08vG+fKfrugGPv6WIdQAAAA==
+X-Change-ID: 20250508-madvise-nohugepage-noop-without-thp-e0721b973d82
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: yang@os.amperecomputing.com, willy@infradead.org, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, 
+ Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746699627; l=1782;
+ i=Ignacio.MorenoGonzalez@kuka.com; s=20220915; h=from:subject:message-id;
+ bh=WkzJ0m077QxoI+DJujIZqVZ01oTbN6BGwiqxdFPO/Rw=;
+ b=HOKlWk8Cdb9oLxFnVCfZg9m12ukVQDxIoiovVUj19FPzBgRmFxHHXyOSU5Q53OjwdQhCgF4zV
+ awvIV6P9FYcCxg4MhvNDpGrgPL5lXCBVucnaF5yKAtHrhHwQSEiMk/F
+X-Developer-Key: i=Ignacio.MorenoGonzalez@kuka.com; a=ed25519;
+ pk=j7nClQnc5Q1IDuT4eS/rYkcLHXzxszu2jziMcJaFdBQ=
+X-Endpoint-Received: by B4 Relay for
+ Ignacio.MorenoGonzalez@kuka.com/20220915 with auth_id=391
+X-Original-From: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+Reply-To: Ignacio.MorenoGonzalez@kuka.com
 
-Hi Will,
+From: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
 
-On Thu, 3 Apr 2025 at 00:34, Will McVicker <willmcvicker@google.com> wrote:
->
-> The Exynos MCT driver doesn't set the clocksource name until the CPU
-> hotplug state is setup which happens after the IRQs are requested. This
-> results in an empty IRQ name which leads to the below warning at
-> proc_create() time. When this happens, the userdata partition fails to
-> mount and the device gets stuck in an endless loop printing the error:
->
->   root '/dev/disk/by-partlabel/userdata' doesn't exist or does not contain a /dev.
->
-> To fix this, we just need to initialize the name before requesting the
-> IRQs.
->
-> Warning from Pixel 6 kernel log:
->
-> [  T430] name len 0
-> [  T430] WARNING: CPU: 6 PID: 430 at fs/proc/generic.c:407 __proc_create+0x258/0x2b4
-> [  T430] Modules linked in: dwc3_exynos(E+)
-> [  T430]  ufs_exynos(E+) phy_exynos_ufs(E)
-> [  T430]  phy_exynos5_usbdrd(E) exynos_usi(E+) exynos_mct(E+) s3c2410_wdt(E)
-> [  T430]  arm_dsu_pmu(E) simplefb(E)
-> [  T430] CPU: 6 UID: 0 PID: 430 Comm: (udev-worker) Tainted:
->          ... 6.14.0-next-20250331-4k-00008-g59adf909e40e #1 ...
-> [  T430] Tainted: [W]=WARN, [E]=UNSIGNED_MODULE
-> [  T430] Hardware name: Raven (DT)
-> [...]
-> [  T430] Call trace:
-> [  T430]  __proc_create+0x258/0x2b4 (P)
-> [  T430]  proc_mkdir+0x40/0xa0
-> [  T430]  register_handler_proc+0x118/0x140
-> [  T430]  __setup_irq+0x460/0x6d0
-> [  T430]  request_threaded_irq+0xcc/0x1b0
-> [  T430]  mct_init_dt+0x244/0x604 [exynos_mct ...]
-> [  T430]  mct_init_spi+0x18/0x34 [exynos_mct ...]
-> [  T430]  exynos4_mct_probe+0x30/0x4c [exynos_mct ...]
-> [  T430]  platform_probe+0x6c/0xe4
-> [  T430]  really_probe+0xf4/0x38c
-> [...]
-> [  T430]  driver_register+0x6c/0x140
-> [  T430]  __platform_driver_register+0x28/0x38
-> [  T430]  exynos4_mct_driver_init+0x24/0xfe8 [exynos_mct ...]
-> [  T430]  do_one_initcall+0x84/0x3c0
-> [  T430]  do_init_module+0x58/0x208
-> [  T430]  load_module+0x1de0/0x2500
-> [  T430]  init_module_from_file+0x8c/0xdc
->
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> ---
+VM_NOHUGEPAGE is a no-op if CONFIG_TRANSPARENT_HUGEPAGE is disabled. So
+it makes no sense to return an error when calling madvise() with
+MADV_NOHUGEPAGE in that case.
 
-You could additionally consider adding a Fixes: tag and CC stable if
-you want this to land in LTS tree's.
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+---
+https://lore.kernel.org/linux-mm/20250502-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v1-1-113cc634cd51@kuka.com
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Here it is presented as a separate thread to avoid mixing stable and
+non-stable patches.
 
->  drivers/clocksource/exynos_mct.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index a5ef7d64b1c2..62febeb4e1de 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -465,8 +465,6 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
->                 per_cpu_ptr(&percpu_mct_tick, cpu);
->         struct clock_event_device *evt = &mevt->evt;
->
-> -       snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
-> -
->         evt->name = mevt->name;
->         evt->cpumask = cpumask_of(cpu);
->         evt->set_next_event = exynos4_tick_set_next_event;
-> @@ -567,6 +565,14 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
->         for (i = MCT_L0_IRQ; i < nr_irqs; i++)
->                 mct_irqs[i] = irq_of_parse_and_map(np, i);
->
-> +       for_each_possible_cpu(cpu) {
-> +               struct mct_clock_event_device *mevt =
-> +                   per_cpu_ptr(&percpu_mct_tick, cpu);
-> +
-> +               snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d",
-> +                        cpu);
-> +       }
-> +
->         if (mct_int_type == MCT_INT_PPI) {
->
->                 err = request_percpu_irq(mct_irqs[MCT_L0_IRQ],
-> --
-> 2.49.0.472.ge94155a9ec-goog
->
+This change makes calling madvise(addr, size, MADV_NOHUGEPAGE) on !THP
+kernels to return 0 instead of -EINVAL.
+---
+ include/linux/huge_mm.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index e893d546a49f464f7586db639fe216231f03651a..5fca742dc5ba784ffccea055b07247707d16cc67 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -509,6 +509,8 @@ bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
+ 
+ #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
++#include <uapi/asm/mman.h>
++
+ static inline bool folio_test_pmd_mappable(struct folio *folio)
+ {
+ 	return false;
+@@ -598,6 +600,9 @@ static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
+ static inline int hugepage_madvise(struct vm_area_struct *vma,
+ 				   unsigned long *vm_flags, int advice)
+ {
++	/* On a !THP kernel, MADV_NOHUGEPAGE is a no-op, but MADV_NOHUGEPAGE is not supported */
++	if (advice == MADV_NOHUGEPAGE)
++		return 0;
+ 	return -EINVAL;
+ }
+ 
+
+---
+base-commit: fc96b232f8e7c0a6c282f47726b2ff6a5fb341d2
+change-id: 20250508-madvise-nohugepage-noop-without-thp-e0721b973d82
+
+Best regards,
+-- 
+Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+
+
 
