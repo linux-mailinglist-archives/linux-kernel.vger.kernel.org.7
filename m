@@ -1,164 +1,602 @@
-Return-Path: <linux-kernel+bounces-639236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652F2AAF4BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9183DAAF4C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8562D1C026AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F364980701
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D31E220F2A;
-	Thu,  8 May 2025 07:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC14220F41;
+	Thu,  8 May 2025 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN5tUL8c"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HpLBcwAr"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378AE195FE8;
-	Thu,  8 May 2025 07:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C96195FE8
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689814; cv=none; b=jsHFSs6o2b4Op+Tfg1/SClvwjZHsVxq6eeeIhCMrDWF5V8oMdYhk+SeU0xXtYmNE3rqpz+gCa0Q9HAdhMTzGk4ttrfiwYIdw+rF8dLx44oVJq1EnAVYFf1R8QpG+6JGsSbl597L7n68y76cvkeQiaBTd60DQizQOtucR/HmGabA=
+	t=1746689823; cv=none; b=IcKbEPxEc647yJF0hSVxkK3wi+EI5ZMtQJhaMQiEkFhu0okMxuNJsgfQkdgm+k9mzbaRatGKU1sPiM/7IdMTPjC8L6JujOg4+U1VOc4iveTgJrgVFb9Z5msUeWGlBd0jAlVIpzYnWaOD+Mf6HUYMC8YW+GjQlW/WFWgZOCT2tIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689814; c=relaxed/simple;
-	bh=hGAbVqQFT69FqQTzOmATV5AJRMzSHoqIT19dRWp0pMY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=No7bORQbKVoNFQRmfVS8XERRDKoBR4K4iKqTufeTwS2ynMxkwBIlPfFK3B1eKzC90Hg1gWmiMa4DvrfN1XIYbAYsK20fy2T++IYQZ81opWl6JFJ67s8wf9bsknowYAo+V6OBN1zWOjHyct9+La01aoA41+nbaA06xZZHYvpup6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN5tUL8c; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-736aa9d0f2aso923815b3a.0;
-        Thu, 08 May 2025 00:36:52 -0700 (PDT)
+	s=arc-20240116; t=1746689823; c=relaxed/simple;
+	bh=GSCB/+JYZBPPpZiX1f3WS5bBGvWo2ZfMzvEaH7RtyE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qETtBXbWqUNSTLaUSBfkwq8SSnmwjbHCaONc/tY57z7ms77a1a+kUySaCIGFXz+JPjLx+tKDeeC3Bc8cZLf94iA3YoFU/VI0EtUs83ORxtBx0vcbCMdTVmqCPaqrSDM8soSM+jdUHloDhAR5tAJgJl251/DonElhEffq/BSN+m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HpLBcwAr; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7410c18bb00so111645b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 00:37:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746689812; x=1747294612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9fwr70jRROQnhTfVJ4M+ZZqp2+Z1EXWKMCwGS7IUNFQ=;
-        b=eN5tUL8cw61K/XSDIC6pxdrSPAOQUjUBpquKJHe/HksTNiQyJusL+WtXSA4JCHvYWA
-         ipKjYsDfnf08flMtPoixHV3817Xnx0PDiauiwgyA98fuEVI4IqoG5GuVqaFqM7RWMP7b
-         mNBk8RkmpzoGgbTdqKvI8yjkcQzFEG2K4O+h/sHIe0/xAJctU7sag3/iYaduq3tMfeua
-         8f1OVj45WXcqaItAeMBj6nLNdTGPnyD7eJQO0HJ2ZpyJBL/ODEmHKOUYaAfgXa+/Tm1g
-         dn6FdfP8nXHsfrfI9XHie2xzjahOYadBFfh812jwmyWtKUnbABQfbqZIrOyQ5aRbT4Zq
-         hgyg==
+        d=broadcom.com; s=google; t=1746689819; x=1747294619; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wk4dCc2q9E8YzNIUIgghlTWJtgsuOL0UvwmTTfcvNg8=;
+        b=HpLBcwArtPpn3zvgU+NlZx3/K1bXEzQLPDT5ie/bdkvxpOmkItLhstNtGgE+jUFqsY
+         Sh9os3cHauXSBPlxw458D2AT5HoeBSf5wZFufBEPlNens16lDdFmCbfeUP3aWkFdHslV
+         stysYwyqz6Ko+3dvam6pwN5jU33h7mYCQfvJI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746689812; x=1747294612;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1746689819; x=1747294619;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9fwr70jRROQnhTfVJ4M+ZZqp2+Z1EXWKMCwGS7IUNFQ=;
-        b=xIbHNAyAaw0/ac7meL1xjST1tRpPWdTYvTBn+dKldy+S6pZoweQ2rdri5Og9hpTHKl
-         /cFreIVmaoJjJBnVO2RPAatWJ1rw7v+rUd3K4UIoeb1xjnLeUrrJPrJPaZ/M1t+PuIsm
-         DYwyvTjt4oPd3NgiUGWv22YldSfX1joz1dwflNlUNpeOcL1AfIZAww2G8aDUyXHVl2lf
-         pyiixw5lqSvib1A93gnn4fgzru2fNg0KaQD6egeWHG4h70aLakOIjgByIKVJZtRrnnGL
-         oF9xeOtVc81pe/68jRD15RyFEnHlweDFN5cz93w/p5LLuSw97u6bfVHVDCoNsIBcAupr
-         JhjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0BCViFDxfwbadwsMFLkDimSJcB6IKOfRhQWeCbLB8uAdwIFnu6BUtSI699T3oismnLDEiAM+h@vger.kernel.org, AJvYcCUzB3SrwZXrVVHjHFj9hI3QV5guIzDHauFkfpDWAnuM1FTBRYH1suFZCnjMhayHatxVWhZSvPsl+A+wmZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcESY9YllYiU2rPnEUTys/WMReIDTax0Kg9uEnqE0btS6rSzcp
-	fknddi2IPahcKa7lqfvG7mLYW3hhYHAUDNP6BhcH/+cZlopDe/tt
-X-Gm-Gg: ASbGncvfpv+TGJ1X1kJdviCMlgN77pyGWtO8tb6PTo5ImpBCSWQSYskLpa+j/Moo1nE
-	HIhJW/Ty6gA/lefLttT5eotWvfPlLBDSykaadQHEgfDPyDMvwsrkb7QQcZKmwcmoCBhTXm2+G3k
-	pxeKPX+q3UehYdwCUpD4BSOulL1p51YYJm5oTG9CXu9iuqzDLcYHbe5Q3qSknYeqZdXMjlzmB69
-	fZF6CXbeXMyCW9JifEWyHBR2hIaKqcWh5/30qr6Y6gEvMJiiWL4dOZ/CBSIqRB717JqkeOCqGk2
-	EB7Bq/f4868JlEndyGNDIgTJlEsGV7CSP9xl3jxHXtD2n+6hdIf3ESdEyfH53FCwDTZxfA==
-X-Google-Smtp-Source: AGHT+IHPnNoxLhV7GIw/VlymXwTFp+WFlPFIfHMoS/t+AGVcolUKDOh9qji1dI06No4oykb/YQlDeA==
-X-Received: by 2002:a05:6a20:2d2b:b0:1f5:59e5:8ada with SMTP id adf61e73a8af0-2148b81f041mr10087427637.4.1746689812362;
-        Thu, 08 May 2025 00:36:52 -0700 (PDT)
-Received: from tom-QiTianM540-A739.. ([124.127.236.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405905d16asm12570475b3a.127.2025.05.08.00.36.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 00:36:51 -0700 (PDT)
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-To: sean.wang@mediatek.com,
-	vkoul@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Qiu-ji Chen <chenqiuji666@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_status()
-Date: Thu,  8 May 2025 15:36:33 +0800
-Message-Id: <20250508073634.3719-1-chenqiuji666@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=wk4dCc2q9E8YzNIUIgghlTWJtgsuOL0UvwmTTfcvNg8=;
+        b=ALhs/t5pulngCzCsZDeraT6tghD341RptrFs/TKHX+0VJSMwaqnyz9oh0lyNGXXZlF
+         ylPDeCUP7lGOzxqUNZBNhJOurliiiWAGdN1qToooUgGtwI76xkNwluOr/vnzaygZ9Xmp
+         lXhsobF8tD32j7VzgjXEZ52H2gMe4PQPrwSWfYi6GbSFiFgvoZKpn34KDNpbzOkLyJzV
+         Cu8nkfAlPbKx7akC6gG7h+eimJueQJ6r6oXZ8IsWlPu/WWdfln9HC57uFv/yDr4/GcoJ
+         suog7i0IjoSzcrscr5Xr+WAVr04c+gK747D8xVbVjf3IKNQ4E3UcBnF0Y43LYkY03gKd
+         /iLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUP3Hif9uKbmse5TSlPDg7EKZ9Md+giP2o80M2r+vJZeWPYPEl9X9OBZrMVAGLpqEyfnYMOGVb79rM0MYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5VfzyiV+W/48cZZUsqQk+2AD1V4kBbBHkQZ+pdyo3HyMpxLUc
+	Pm1GjN6yvyOHkGED+AZp4OkL637k88UWPzpvTfexvIvs+obtvl/1hRZFNz8iKqaIgKpuK8Nw2UF
+	Wa8bg2ur86bdhlFWh01diLbKiXtLTV2eJzOAX
+X-Gm-Gg: ASbGncuhp9eGfzxzgI2ZEoZYK0/kBt4rtJh1CIXVxeNl+2moag7HabsdWOK1EwDmKXG
+	G40ZkaHKFKml8t8tKK9v9i52l85Kqe6P0R1E68G+KMlxGfUz2ngnyvJEJYrkU3Tt4e/HqiwTGzT
+	rOfuuMb56Z/7uu526AkaLk
+X-Google-Smtp-Source: AGHT+IFB8JkFGRlbnlOVYykX7v/f06YcLbeGlLW2aAxnTBsvwBu08mIWRTh3ZelYym01WYd+YNsc/0ZnZEOLCsunXrY=
+X-Received: by 2002:aa7:9316:0:b0:736:2a73:6756 with SMTP id
+ d2e1a72fcca58-7409cfef303mr9062460b3a.21.1746689819508; Thu, 08 May 2025
+ 00:36:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250508045957.2823318-1-abhijit.gangurde@amd.com> <20250508045957.2823318-9-abhijit.gangurde@amd.com>
+In-Reply-To: <20250508045957.2823318-9-abhijit.gangurde@amd.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Thu, 8 May 2025 13:06:47 +0530
+X-Gm-Features: ATxdqUGhazH4PlIoFulZVFyin8xyWDgso205DYpeeWHlQh8sghrJfFsB8Owk4B0
+Message-ID: <CAH-L+nM86KduwFfEUDdGOSx865Dq=YHaVfUZU8GRqb2C3tq7dQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/14] RDMA/ionic: Register auxiliary module for ionic
+ ethernet adapter
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: shannon.nelson@amd.com, brett.creeley@amd.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net, 
+	jgg@ziepe.ca, leon@kernel.org, andrew+netdev@lunn.ch, allen.hubbe@amd.com, 
+	nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Boyer <andrew.boyer@amd.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000003f22f006349aea7a"
 
-Fix a potential deadlock bug. Observe that in the mtk-cqdma.c
-file, functions like mtk_cqdma_issue_pending() and
-mtk_cqdma_free_active_desc() properly acquire the pc lock before the vc
-lock when handling pc and vc fields. However, mtk_cqdma_tx_status()
-violates this order by first acquiring the vc lock before invoking
-mtk_cqdma_find_active_desc(), which subsequently takes the pc lock. This
-reversed locking sequence (vc → pc) contradicts the established
-pc → vc order and creates deadlock risks.
+--0000000000003f22f006349aea7a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix the issue by moving the vc lock acquisition code from
-mtk_cqdma_find_active_desc() to mtk_cqdma_tx_status(). Ensure the pc lock
-is acquired before the vc lock in the calling function to maintain correct
-locking hierarchy. Note that since mtk_cqdma_find_active_desc() is a
-static function with only one caller (mtk_cqdma_tx_status()), this
-modification safely eliminates the deadlock possibility without affecting
-other components.
+On Thu, May 8, 2025 at 10:33=E2=80=AFAM Abhijit Gangurde
+<abhijit.gangurde@amd.com> wrote:
+>
+> Register auxiliary module to create ibdevice for ionic
+> ethernet adapter.
+>
+> Co-developed-by: Andrew Boyer <andrew.boyer@amd.com>
+> Signed-off-by: Andrew Boyer <andrew.boyer@amd.com>
+> Co-developed-by: Allen Hubbe <allen.hubbe@amd.com>
+> Signed-off-by: Allen Hubbe <allen.hubbe@amd.com>
+> Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
+> ---
+> v1->v2
+>   - Removed netdev references from ionic RDMA driver
+>   - Moved to ionic_lif* instead of void* to convey information between
+>     aux devices and drivers.
+>
+>  drivers/infiniband/hw/ionic/ionic_ibdev.c   | 135 ++++++++++++++++++++
+>  drivers/infiniband/hw/ionic/ionic_ibdev.h   |  21 +++
+>  drivers/infiniband/hw/ionic/ionic_lif_cfg.c | 121 ++++++++++++++++++
+>  drivers/infiniband/hw/ionic/ionic_lif_cfg.h |  65 ++++++++++
+>  4 files changed, 342 insertions(+)
+>  create mode 100644 drivers/infiniband/hw/ionic/ionic_ibdev.c
+>  create mode 100644 drivers/infiniband/hw/ionic/ionic_ibdev.h
+>  create mode 100644 drivers/infiniband/hw/ionic/ionic_lif_cfg.c
+>  create mode 100644 drivers/infiniband/hw/ionic/ionic_lif_cfg.h
+>
+> diff --git a/drivers/infiniband/hw/ionic/ionic_ibdev.c b/drivers/infiniba=
+nd/hw/ionic/ionic_ibdev.c
+> new file mode 100644
+> index 000000000000..ca047a789378
+> --- /dev/null
+> +++ b/drivers/infiniband/hw/ionic/ionic_ibdev.c
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (C) 2018-2025, Advanced Micro Devices, Inc. */
+> +
+> +#include <linux/module.h>
+> +#include <linux/printk.h>
+> +#include <net/addrconf.h>
+> +
+> +#include "ionic_ibdev.h"
+> +
+> +#define DRIVER_DESCRIPTION "AMD Pensando RoCE HCA driver"
+> +#define DEVICE_DESCRIPTION "AMD Pensando RoCE HCA"
+> +
+> +MODULE_AUTHOR("Allen Hubbe <allen.hubbe@amd.com>");
+> +MODULE_DESCRIPTION(DRIVER_DESCRIPTION);
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("NET_IONIC");
+> +
+> +static const struct auxiliary_device_id ionic_aux_id_table[] =3D {
+> +       { .name =3D "ionic.rdma", },
+> +       {},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(auxiliary, ionic_aux_id_table);
+> +
+> +static void ionic_destroy_ibdev(struct ionic_ibdev *dev)
+> +{
+> +       ib_unregister_device(&dev->ibdev);
+> +       ib_dealloc_device(&dev->ibdev);
+> +}
+> +
+> +static struct ionic_ibdev *ionic_create_ibdev(struct ionic_aux_dev *ioni=
+c_adev)
+> +{
+> +       struct ib_device *ibdev;
+> +       struct ionic_ibdev *dev;
+> +       int rc;
+> +
+> +       rc =3D ionic_version_check(&ionic_adev->adev.dev, ionic_adev->lif=
+);
+> +       if (rc)
+> +               goto err_dev;
+You can return directly from here
+> +
+> +       dev =3D ib_alloc_device(ionic_ibdev, ibdev);
+> +       if (!dev) {
+> +               rc =3D -ENOMEM;
+> +               goto err_dev;
+You can return directly from here
+> +       }
+> +
+> +       ionic_fill_lif_cfg(ionic_adev->lif, &dev->lif_cfg);
+> +
+> +       ibdev =3D &dev->ibdev;
+> +       ibdev->dev.parent =3D dev->lif_cfg.hwdev;
+> +
+> +       strscpy(ibdev->name, "ionic_%d", IB_DEVICE_NAME_MAX);
+> +       strscpy(ibdev->node_desc, DEVICE_DESCRIPTION, IB_DEVICE_NODE_DESC=
+_MAX);
+> +
+> +       ibdev->node_type =3D RDMA_NODE_IB_CA;
+> +       ibdev->phys_port_cnt =3D 1;
+> +
+> +       /* the first two eq are reserved for async events */
+> +       ibdev->num_comp_vectors =3D dev->lif_cfg.eq_count - 2;
+> +
+> +       addrconf_ifid_eui48((u8 *)&ibdev->node_guid,
+> +                           ionic_lif_netdev(ionic_adev->lif));
+> +
+> +       rc =3D ib_device_set_netdev(ibdev, ionic_lif_netdev(ionic_adev->l=
+if), 1);
+> +       if (rc)
+> +               goto err_admin;
+> +
+> +       rc =3D ib_register_device(ibdev, "ionic_%d", ibdev->dev.parent);
+> +       if (rc)
+> +               goto err_register;
+> +
+> +       return dev;
+> +
+> +err_register:
+Unnecessary label
+> +err_admin:
+> +       ib_dealloc_device(&dev->ibdev);
+> +err_dev:
+> +       return ERR_PTR(rc);
+> +}
+> +
+> +static int ionic_aux_probe(struct auxiliary_device *adev,
+> +                          const struct auxiliary_device_id *id)
+> +{
+> +       struct ionic_aux_dev *ionic_adev;
+> +       struct ionic_ibdev *dev;
+> +
+> +       ionic_adev =3D container_of(adev, struct ionic_aux_dev, adev);
+> +       dev =3D ionic_create_ibdev(ionic_adev);
+> +       if (IS_ERR(dev))
+> +               return dev_err_probe(&adev->dev, PTR_ERR(dev),
+> +                                    "Failed to register ibdev\n");
+> +
+> +       auxiliary_set_drvdata(adev, dev);
+> +       ibdev_dbg(&dev->ibdev, "registered\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static void ionic_aux_remove(struct auxiliary_device *adev)
+> +{
+> +       struct ionic_ibdev *dev =3D auxiliary_get_drvdata(adev);
+> +
+> +       dev_dbg(&adev->dev, "unregister ibdev\n");
+> +       ionic_destroy_ibdev(dev);
+> +       dev_dbg(&adev->dev, "unregistered\n");
+> +}
+> +
+> +static struct auxiliary_driver ionic_aux_r_driver =3D {
+> +       .name =3D "rdma",
+> +       .probe =3D ionic_aux_probe,
+> +       .remove =3D ionic_aux_remove,
+> +       .id_table =3D ionic_aux_id_table,
+> +};
+> +
+> +static int __init ionic_mod_init(void)
+> +{
+> +       int rc;
+> +
+> +       rc =3D auxiliary_driver_register(&ionic_aux_r_driver);
+> +       if (rc)
+> +               goto err_aux;
+> +
+> +       return 0;
+> +
+> +err_aux:
+> +       return rc;
+You can simplify this function as "return
+auxiliary_driver_register(&ionic_aux_r_driver);"
+> +}
+> +
+> +static void __exit ionic_mod_exit(void)
+> +{
+> +       auxiliary_driver_unregister(&ionic_aux_r_driver);
+> +}
+> +
+> +module_init(ionic_mod_init);
+> +module_exit(ionic_mod_exit);
+> diff --git a/drivers/infiniband/hw/ionic/ionic_ibdev.h b/drivers/infiniba=
+nd/hw/ionic/ionic_ibdev.h
+> new file mode 100644
+> index 000000000000..e13adff390d7
+> --- /dev/null
+> +++ b/drivers/infiniband/hw/ionic/ionic_ibdev.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (C) 2018-2025, Advanced Micro Devices, Inc. */
+> +
+> +#ifndef _IONIC_IBDEV_H_
+> +#define _IONIC_IBDEV_H_
+> +
+> +#include <rdma/ib_verbs.h>
+> +#include <ionic_api.h>
+> +
+> +#include "ionic_lif_cfg.h"
+> +
+> +#define IONIC_MIN_RDMA_VERSION 0
+> +#define IONIC_MAX_RDMA_VERSION 2
+> +
+> +struct ionic_ibdev {
+> +       struct ib_device        ibdev;
+> +
+> +       struct ionic_lif_cfg    lif_cfg;
+> +};
+> +
+> +#endif /* _IONIC_IBDEV_H_ */
+> diff --git a/drivers/infiniband/hw/ionic/ionic_lif_cfg.c b/drivers/infini=
+band/hw/ionic/ionic_lif_cfg.c
+> new file mode 100644
+> index 000000000000..a02eb2f5bd45
+> --- /dev/null
+> +++ b/drivers/infiniband/hw/ionic/ionic_lif_cfg.c
+> @@ -0,0 +1,121 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (C) 2018-2025, Advanced Micro Devices, Inc. */
+> +
+> +#include <linux/kernel.h>
+> +
+> +#include <ionic.h>
+> +#include <ionic_lif.h>
+> +
+> +#include "ionic_lif_cfg.h"
+> +
+> +#define IONIC_MIN_RDMA_VERSION 0
+> +#define IONIC_MAX_RDMA_VERSION 2
+> +
+> +static u8 ionic_get_expdb(struct ionic_lif *lif)
+> +{
+> +       u8 expdb_support =3D 0;
+> +
+> +       if (lif->ionic->idev.phy_cmb_expdb64_pages)
+> +               expdb_support |=3D IONIC_EXPDB_64B_WQE;
+> +       if (lif->ionic->idev.phy_cmb_expdb128_pages)
+> +               expdb_support |=3D IONIC_EXPDB_128B_WQE;
+> +       if (lif->ionic->idev.phy_cmb_expdb256_pages)
+> +               expdb_support |=3D IONIC_EXPDB_256B_WQE;
+> +       if (lif->ionic->idev.phy_cmb_expdb512_pages)
+> +               expdb_support |=3D IONIC_EXPDB_512B_WQE;
+> +
+> +       return expdb_support;
+> +}
+> +
+> +void ionic_fill_lif_cfg(struct ionic_lif *lif, struct ionic_lif_cfg *cfg=
+)
+> +{
+> +       union ionic_lif_identity *ident =3D &lif->ionic->ident.lif;
+> +
+> +       cfg->lif =3D lif;
+> +       cfg->hwdev =3D &lif->ionic->pdev->dev;
+> +       cfg->lif_index =3D lif->index;
+> +       cfg->lif_hw_index =3D lif->hw_index;
+> +
+> +       cfg->dbid =3D lif->kern_pid;
+> +       cfg->dbid_count =3D le32_to_cpu(lif->ionic->ident.dev.ndbpgs_per_=
+lif);
+> +       cfg->dbpage =3D lif->kern_dbpage;
+> +       cfg->intr_ctrl =3D lif->ionic->idev.intr_ctrl;
+> +
+> +       cfg->db_phys =3D lif->ionic->bars[IONIC_PCI_BAR_DBELL].bus_addr;
+> +
+> +       if (IONIC_VERSION(ident->rdma.version, ident->rdma.minor_version)=
+ >=3D
+> +           IONIC_VERSION(2, 1))
+> +               cfg->page_size_supported =3D
+> +                   cpu_to_le64(ident->rdma.page_size_cap);
+> +       else
+> +               cfg->page_size_supported =3D IONIC_PAGE_SIZE_SUPPORTED;
+> +
+> +       cfg->rdma_version =3D ident->rdma.version;
+> +       cfg->qp_opcodes =3D ident->rdma.qp_opcodes;
+> +       cfg->admin_opcodes =3D ident->rdma.admin_opcodes;
+> +
+> +       cfg->stats_type =3D cpu_to_le16(ident->rdma.stats_type);
+> +       cfg->npts_per_lif =3D le32_to_cpu(ident->rdma.npts_per_lif);
+> +       cfg->nmrs_per_lif =3D le32_to_cpu(ident->rdma.nmrs_per_lif);
+> +       cfg->nahs_per_lif =3D le32_to_cpu(ident->rdma.nahs_per_lif);
+> +
+> +       cfg->aq_base =3D le32_to_cpu(ident->rdma.aq_qtype.qid_base);
+> +       cfg->cq_base =3D le32_to_cpu(ident->rdma.cq_qtype.qid_base);
+> +       cfg->eq_base =3D le32_to_cpu(ident->rdma.eq_qtype.qid_base);
+> +
+> +       /*
+> +        * ionic_create_rdma_admin() may reduce aq_count or eq_count if
+> +        * it is unable to allocate all that were requested.
+> +        * aq_count is tunable; see ionic_aq_count
+> +        * eq_count is tunable; see ionic_eq_count
+> +        */
+> +       cfg->aq_count =3D le32_to_cpu(ident->rdma.aq_qtype.qid_count);
+> +       cfg->eq_count =3D le32_to_cpu(ident->rdma.eq_qtype.qid_count);
+> +       cfg->cq_count =3D le32_to_cpu(ident->rdma.cq_qtype.qid_count);
+> +       cfg->qp_count =3D le32_to_cpu(ident->rdma.sq_qtype.qid_count);
+> +       cfg->dbid_count =3D le32_to_cpu(lif->ionic->ident.dev.ndbpgs_per_=
+lif);
+> +
+> +       cfg->aq_qtype =3D ident->rdma.aq_qtype.qtype;
+> +       cfg->sq_qtype =3D ident->rdma.sq_qtype.qtype;
+> +       cfg->rq_qtype =3D ident->rdma.rq_qtype.qtype;
+> +       cfg->cq_qtype =3D ident->rdma.cq_qtype.qtype;
+> +       cfg->eq_qtype =3D ident->rdma.eq_qtype.qtype;
+> +       cfg->udma_qgrp_shift =3D ident->rdma.udma_shift;
+> +       cfg->udma_count =3D 2;
+> +
+> +       cfg->max_stride =3D ident->rdma.max_stride;
+> +       cfg->expdb_mask =3D ionic_get_expdb(lif);
+> +
+> +       cfg->sq_expdb =3D
+> +           !!(lif->qtype_info[IONIC_QTYPE_TXQ].features & IONIC_QIDENT_F=
+_EXPDB);
+> +       cfg->rq_expdb =3D
+> +           !!(lif->qtype_info[IONIC_QTYPE_RXQ].features & IONIC_QIDENT_F=
+_EXPDB);
+> +}
+> +
+> +struct net_device *ionic_lif_netdev(struct ionic_lif *lif)
+> +{
+> +       return lif->netdev;
+> +}
+> +
+> +int ionic_version_check(const struct device *dev, struct ionic_lif *lif)
+> +{
+> +       union ionic_lif_identity *ident =3D &lif->ionic->ident.lif;
+> +       int rc;
+local variable "rc" is not needed here, you can return directly.
+> +
+> +       if (ident->rdma.version < IONIC_MIN_RDMA_VERSION ||
+> +           ident->rdma.version > IONIC_MAX_RDMA_VERSION) {
+> +               rc =3D -EINVAL;
+> +               dev_err_probe(dev, rc,
+> +                             "ionic_rdma: incompatible version, fw ver %=
+u\n",
+> +                             ident->rdma.version);
+> +               dev_err_probe(dev, rc,
+> +                             "ionic_rdma: Driver Min Version %u\n",
+> +                             IONIC_MIN_RDMA_VERSION);
+> +               dev_err_probe(dev, rc,
+> +                             "ionic_rdma: Driver Max Version %u\n",
+> +                             IONIC_MAX_RDMA_VERSION);
+> +               return rc;
+> +       }
+> +
+> +       return 0;
+> +}
+> diff --git a/drivers/infiniband/hw/ionic/ionic_lif_cfg.h b/drivers/infini=
+band/hw/ionic/ionic_lif_cfg.h
+> new file mode 100644
+> index 000000000000..b095637c54cf
+> --- /dev/null
+> +++ b/drivers/infiniband/hw/ionic/ionic_lif_cfg.h
+> @@ -0,0 +1,65 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (C) 2018-2025, Advanced Micro Devices, Inc. */
+> +
+> +#ifndef _IONIC_LIF_CFG_H_
+> +
+> +#define IONIC_VERSION(a, b) (((a) << 16) + ((b) << 8))
+> +#define IONIC_PAGE_SIZE_SUPPORTED      0x40201000 /* 4kb, 2Mb, 1Gb */
+> +
+> +#define IONIC_EXPDB_64B_WQE    BIT(0)
+> +#define IONIC_EXPDB_128B_WQE   BIT(1)
+> +#define IONIC_EXPDB_256B_WQE   BIT(2)
+> +#define IONIC_EXPDB_512B_WQE   BIT(3)
+> +
+> +struct ionic_lif_cfg {
+> +       struct device *hwdev;
+> +       struct ionic_lif *lif;
+> +
+> +       int lif_index;
+> +       int lif_hw_index;
+> +
+> +       u32 dbid;
+> +       int dbid_count;
+> +       u64 __iomem *dbpage;
+> +       struct ionic_intr __iomem *intr_ctrl;
+> +       phys_addr_t db_phys;
+> +
+> +       u64 page_size_supported;
+> +       u32 npts_per_lif;
+> +       u32 nmrs_per_lif;
+> +       u32 nahs_per_lif;
+> +
+> +       u32 aq_base;
+> +       u32 cq_base;
+> +       u32 eq_base;
+> +
+> +       int aq_count;
+> +       int eq_count;
+> +       int cq_count;
+> +       int qp_count;
+> +
+> +       u16 stats_type;
+> +       u8 aq_qtype;
+> +       u8 sq_qtype;
+> +       u8 rq_qtype;
+> +       u8 cq_qtype;
+> +       u8 eq_qtype;
+> +
+> +       u8 udma_count;
+> +       u8 udma_qgrp_shift;
+> +
+> +       u8 rdma_version;
+> +       u8 qp_opcodes;
+> +       u8 admin_opcodes;
+> +
+> +       u8 max_stride;
+> +       bool sq_expdb;
+> +       bool rq_expdb;
+> +       u8 expdb_mask;
+> +};
+> +
+> +int ionic_version_check(const struct device *dev, struct ionic_lif *lif)=
+;
+> +void ionic_fill_lif_cfg(struct ionic_lif *lif, struct ionic_lif_cfg *cfg=
+);
+> +struct net_device *ionic_lif_netdev(struct ionic_lif *lif);
+> +
+> +#endif /* _IONIC_LIF_CFG_H_ */
+> --
+> 2.34.1
+>
+>
 
-This possible bug is found by an experimental static analysis tool
-developed by our team. This tool analyzes the locking APIs to extract
-function pairs that can be concurrently executed, and then analyzes the
-instructions in the paired functions to identify possible concurrency bugs
-including deadlocks, data races and atomicity violations.
 
-Fixes: b1f01e48df5a ("dmaengine: mediatek: Add MediaTek Command-Queue DMA controller for MT6765 SoC")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
----
-V2:
-Revised the fix approach and updated the description to address the
-reduced protection scope of the vc lock in the V1 solution.
----
- drivers/dma/mediatek/mtk-cqdma.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+--=20
+Regards,
+Kalesh AP
 
-diff --git a/drivers/dma/mediatek/mtk-cqdma.c b/drivers/dma/mediatek/mtk-cqdma.c
-index d5ddb4e30e71..e35271ac1eed 100644
---- a/drivers/dma/mediatek/mtk-cqdma.c
-+++ b/drivers/dma/mediatek/mtk-cqdma.c
-@@ -422,13 +422,10 @@ static struct virt_dma_desc *mtk_cqdma_find_active_desc(struct dma_chan *c,
- 	struct virt_dma_desc *vd;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&cvc->pc->lock, flags);
- 	list_for_each_entry(vd, &cvc->pc->queue, node)
- 		if (vd->tx.cookie == cookie) {
--			spin_unlock_irqrestore(&cvc->pc->lock, flags);
- 			return vd;
- 		}
--	spin_unlock_irqrestore(&cvc->pc->lock, flags);
- 
- 	list_for_each_entry(vd, &cvc->vc.desc_issued, node)
- 		if (vd->tx.cookie == cookie)
-@@ -452,9 +449,11 @@ static enum dma_status mtk_cqdma_tx_status(struct dma_chan *c,
- 	if (ret == DMA_COMPLETE || !txstate)
- 		return ret;
- 
-+	spin_lock_irqsave(&cvc->pc->lock, flags);
- 	spin_lock_irqsave(&cvc->vc.lock, flags);
- 	vd = mtk_cqdma_find_active_desc(c, cookie);
- 	spin_unlock_irqrestore(&cvc->vc.lock, flags);
-+	spin_unlock_irqrestore(&cvc->pc->lock, flags);
- 
- 	if (vd) {
- 		cvd = to_cqdma_vdesc(vd);
--- 
-2.34.1
+--0000000000003f22f006349aea7a
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcN
+AQkEMSIEIDgR1CvKUA/YJ9TaZgbXzZS0o/ciG1B2oj/8Su/KrNyBMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDUwODA3MzY1OVowXAYJKoZIhvcNAQkPMU8wTTAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBABk5PFg28mfGH4Yogmgxa1whmS1z
+GsieMJFtSKO3NPCYcTEfRrh/HvoXgxW+7cNtNO0fp3+MZe4Y8SSGeDza7VnvZyMQEQvKdue7pEw/
+PDFELuNUiqPDAQh/3n/R6kpTDECPQ2MV5IM7hRUgibfMQCyKBnCPrD9Ixdsto8Q3YX0k+JMDR1aN
++Bm3G1dEI8P4/WgwpebdbuYRVTZNAjlWtfg+j8W32NnuFUXKBG9p7cP6qBreGkgGJjirV3d5Hieh
+IvkWILfMh2KymQelQB9abh2bVVWAbmkt+yG49Wx3CqXVeOll4KbLYip1reFPIBQAebv7YoZvfKcR
+DJAeDEy0hKo=
+--0000000000003f22f006349aea7a--
 
