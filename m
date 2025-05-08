@@ -1,227 +1,186 @@
-Return-Path: <linux-kernel+bounces-639608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED416AAF9B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:22:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7004FAAF9C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94FB1C20F27
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842E11C2158F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A85225776;
-	Thu,  8 May 2025 12:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0242226D19;
+	Thu,  8 May 2025 12:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fvg8W6fF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TI3lhddp"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BF7222568;
-	Thu,  8 May 2025 12:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0872225415
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 12:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706925; cv=none; b=ENq4ZPN9nAGj6QxjC8DoAx2BgDGC4uND3w/NZuYlj+Atg38LuUa4YA7tCzShep0zB/y5DUnGF9tDeA3PMgrVKhrqSxvSEydW6YeMTxkAcelflyKRLCLn9WPMIDwxkiAI8Q3MJf0BPtELQZNlxwGHQcBIaKlIeVuT5T9sT4E5daI=
+	t=1746707007; cv=none; b=CUafOw8lkrlHFA2ErBBYCF8fi6EBTSXfbVZFBckFUytWR4l/YVUklKzUKmSN9espJLrJd2qKcdFP5Kx2pyj/lIEwjbePvOfCPfPL7IqWIDJxI2OJ/k56d9WaPjx689j1Ju46PAsvANqiUtqEfNCEnPAPM0zzkMbVITl3QGE4IkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706925; c=relaxed/simple;
-	bh=2B1VAFopbYwqp+cWfaNd09XKHhaCO5pZWfe0iB09SgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ol/vA+3ZYfV7ZlluZ5pnzRGu5SLJZlWh8gnZTLlOVXILX2Qomb1nyoDXfROiQK4etJ2DfURMOXey1K0EgrMqYVQSv//lUQD+uWCN4soffuuSImVZg912VpiLsxMY6oFaaWUvSiOqS3AP5dKdeSoX2nIf2zDT1k8IQDreBuyboYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fvg8W6fF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746706923; x=1778242923;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2B1VAFopbYwqp+cWfaNd09XKHhaCO5pZWfe0iB09SgM=;
-  b=fvg8W6fFX0jCwofd3cAD9yDFMcGxUA6kK1Fov4/d9PhhksbjxEFLDKs1
-   hqBJ0yxvVtcdqXQIeb+UolfnA+rB3BDAhLmebjnFv7F7Zl9hTTsvxFaBg
-   t1i5x48yVFIIbmDHG/tl3bKwXDDVYVolyrHgIEUQRCzSI+fCKrnyUvHtM
-   60LpBs/76HvWVR/1m9g8cfqrjNWOIXN7NjCvFTik2lINHzIUo854lsWQl
-   qzBJk2bQy4sZvDvfXaJ+O4QtzuQQbwXPCEKLyxl/VMqOjRy+ikGUH70ZX
-   3aMHqlXA2hcf0kFEQdDLHfRA9PhyGijE4/1sMQlp8KISL29wH7H/rLZAs
-   Q==;
-X-CSE-ConnectionGUID: taG/2HaDQx2mYpNdL15sIw==
-X-CSE-MsgGUID: iCP6sg5HRq2qV1yxpLJC/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59883099"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="59883099"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 05:22:02 -0700
-X-CSE-ConnectionGUID: M/O0ahs2QSSbInJwpZqolg==
-X-CSE-MsgGUID: 18OfEl75RnKfUN8GeVzMFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="141492373"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 08 May 2025 05:21:56 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uD0G9-000Ax1-2X;
-	Thu, 08 May 2025 12:21:53 +0000
-Date: Thu, 8 May 2025 20:21:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, bhupesh@igalia.com,
-	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	oliver.sang@intel.com, lkp@intel.com, laoar.shao@gmail.com,
-	pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
-	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
-	mgorman@suse.de
-Subject: Re: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm'
- to a more safer implementation
-Message-ID: <202505082038.A5ejhbR4-lkp@intel.com>
-References: <20250507110444.963779-3-bhupesh@igalia.com>
+	s=arc-20240116; t=1746707007; c=relaxed/simple;
+	bh=n1DaNBSAbwSjqMNiKl3ZhnzGUtTOnVJb3kD0pUQSCf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCmWPKbJIivNsnYjeCh+cl1ZvrXFYJsQV4xn7IYngagCeweEj92Z1ujMg2RUbSn45ha3/hZYDWkLpZ1gO90uKpBSAJ/bHNMOcz/MMiFE9BOyKUFZxB6yUDiiGTuER3+8DtZq7AI4taNFCICoFo1t6fgUe/YQbHc8zxbMV6LtFnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TI3lhddp; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b1fcb97d209so1841969a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 05:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746707004; x=1747311804; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YHzGR2TH3f5PkiaDuIeNupqLtaLoSxh32TBcttsiE58=;
+        b=TI3lhddpzOnan2Fj4PlAoxEtdyJhilTH0aEryFC51JWmDuTJqRXV9M9IpaZ+0Bi+Vj
+         W4IclAy3ed3oqSMRsFsQ/7rDqJHPHn6hDmRpvatvoz76F3ImVAIbE/b/2fDJjw/x6QcL
+         3O/1m4LuvMiwZncuB8KnqTiSYuh0wLDUyMZzOtiRaeUXJyb1BuhHSG0B9o050imPA/jx
+         /oD8Sj9+JsdcdPoyuu4mBZ2icyKxv4pQutD0UucwckkYnO1t0lN1NezzwlhggBGxt8jN
+         XyMZDkQwIe7C7pddABjhAdfBNSvfEtF4plZ2v0nLH43gPd7YW12ARPAGdV9pw9cUJSgE
+         QDcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746707004; x=1747311804;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YHzGR2TH3f5PkiaDuIeNupqLtaLoSxh32TBcttsiE58=;
+        b=TD3emsCGCABeEwO81UsHhjYqDe/JoLJWu5Xu2NtpgOH4vUs3x6MQzASWe8JXJ1PgV8
+         +Iy2eOZIsVxGMcCUkq35wx/4s4aQ+fdgSH/KaH3TzLhfGpKp1IcNVEAxLmF4GnrYfPIL
+         N5beHJY8b+qqjJsg4EFDwcyGutVQNTpHz43ANUov2pueuapOkKJg7ZvCwxJoO9lA0cdC
+         uo/obM3j1/sTZmTGhxf0js3j42aQQ+eNO2lCipA5ISe6wHtAQQsLSmlPJKszcqL2+To9
+         XSzpYGGfQGx+TCadR61mX97Wpxexmo26Ug+NrjyW7IqUbaKvWe9h8UHZH+zHeOn8uuNo
+         iWDw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Pa9QSPkrVRYb7OY8uCIcVnA+SavxE5hv2nJJ5PlunSV90f4AyTEUCpTGMP6S4s+5S9PpM18UPREYGzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdO5NMvWw6At9Ch32XjX4vUmwkXEDJwyp8s6q19r9hotZPBuSq
+	tmM3qGvXJH0bVHsmtrKx2wt8icFvE8WvdwFMjRohpmai1Yl7f7S1RklqfZHFyv2P6NkDNQ6D8wQ
+	XVOg0cu4MiJKb629m73F/M6mSO838CZcaLstz
+X-Gm-Gg: ASbGncv4y74+Q2rMPIVWaaJHGyKwOP79pHju51wlRtdFERTibA59vaXh+86LMIk8c73
+	HchLTmtLppLyM1nUkmoDzq3+SxleNZl6+SLYjSOyMNdk4vGCCpjTJS2q6QrD+ydEghaGswr6P+R
+	b1uJTUtI/BZlYZ9WwWBwpDq2Pyk9W7k/WjGkvjNI7bCbtLfJbXSNXiYd7+O9iqVv4=
+X-Google-Smtp-Source: AGHT+IGuazhS9joimxHTMGiamVK9GxUm2CRwvQi3+Gq6fqxsbfAnr7up4McbBtUROkgn62zEFRcy/K/C2EzHqfHG+xw=
+X-Received: by 2002:a17:90b:4b8c:b0:2fa:1d9f:c80 with SMTP id
+ 98e67ed59e1d1-30adbf6d05amr4939913a91.17.1746707003520; Thu, 08 May 2025
+ 05:23:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507110444.963779-3-bhupesh@igalia.com>
+References: <20250507180852.work.231-kees@kernel.org> <20250507181615.1947159-2-kees@kernel.org>
+In-Reply-To: <20250507181615.1947159-2-kees@kernel.org>
+From: Marco Elver <elver@google.com>
+Date: Thu, 8 May 2025 14:22:47 +0200
+X-Gm-Features: ATxdqUHttH2gHvJKzLvMz7fkEuSC2xFFktBrniyRJYj71k93n_Rm8LTTobDJ7fU
+Message-ID: <CANpmjNPcYPvnQzMT3p+Vc2=EiEbR1WnykUEjuYc0bH2HOFi6HQ@mail.gmail.com>
+Subject: Re: [PATCH 2/8] init.h: Disable sanitizer coverage for __init and __head
+To: Kees Cook <kees@kernel.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Aleksandr Nogikh <nogikh@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	kasan-dev@googlegroups.com, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	sparclinux@vger.kernel.org, llvm@lists.linux.dev, 
+	syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Bhupesh,
++Cc KCOV maintainers
 
-kernel test robot noticed the following build errors:
+On Wed, 7 May 2025 at 20:16, Kees Cook <kees@kernel.org> wrote:
+>
+> While __noinstr already contained __no_sanitize_coverage, it needs to
+> be added to __init and __head section markings to support the Clang
+> implementation of CONFIG_STACKLEAK. This is to make sure the stack depth
+> tracking callback is not executed in unsupported contexts.
+>
+> The other sanitizer coverage options (trace-pc and trace-cmp) aren't
+> needed in __head nor __init either ("We are interested in code coverage
+> as a function of a syscall inputs"[1]), so this appears safe to disable
+> for them as well.
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on tip/sched/core akpm-mm/mm-everything linus/master v6.15-rc5 next-20250508]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+@ Dmitry, Aleksandr - Will this produce some unwanted side-effects for
+syzbot? I also think it's safe, but just double checking.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250507-190740
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250507110444.963779-3-bhupesh%40igalia.com
-patch subject: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm' to a more safer implementation
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505082038.A5ejhbR4-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505082038.A5ejhbR4-lkp@intel.com/reproduce)
+> Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/kcov.c?h=v6.14#n179 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505082038.A5ejhbR4-lkp@intel.com/
+Acked-by: Marco Elver <elver@google.com>
 
-All errors (new ones prefixed by >>):
-
-   In file included from include/trace/define_trace.h:119,
-                    from include/trace/events/sched.h:856,
-                    from kernel/sched/core.c:84:
-   include/trace/events/sched.h: In function 'do_trace_event_raw_event_sched_switch':
->> include/trace/events/sched.h:245:24: error: 'struct trace_event_raw_sched_switch' has no member named 'comm'
-     245 |                 __entry->comm[TASK_COMM_LEN - 1] = '\0';
-         |                        ^~
-   include/trace/trace_events.h:427:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
-     427 |         { assign; }                                                     \
-         |           ^~~~~~
-   include/trace/trace_events.h:435:23: note: in expansion of macro 'PARAMS'
-     435 |                       PARAMS(assign), PARAMS(print))                    \
-         |                       ^~~~~~
-   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
-      40 |         DECLARE_EVENT_CLASS(name,                              \
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
-      44 |                              PARAMS(assign),                   \
-         |                              ^~~~~~
-   include/trace/events/sched.h:224:1: note: in expansion of macro 'TRACE_EVENT'
-     224 | TRACE_EVENT(sched_switch,
-         | ^~~~~~~~~~~
-   include/trace/events/sched.h:243:9: note: in expansion of macro 'TP_fast_assign'
-     243 |         TP_fast_assign(
-         |         ^~~~~~~~~~~~~~
-   In file included from include/trace/define_trace.h:120,
-                    from include/trace/events/sched.h:856,
-                    from kernel/sched/core.c:84:
-   include/trace/events/sched.h: In function 'do_perf_trace_sched_switch':
->> include/trace/events/sched.h:245:24: error: 'struct trace_event_raw_sched_switch' has no member named 'comm'
-     245 |                 __entry->comm[TASK_COMM_LEN - 1] = '\0';
-         |                        ^~
-   include/trace/perf.h:51:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
-      51 |         { assign; }                                                     \
-         |           ^~~~~~
-   include/trace/perf.h:67:23: note: in expansion of macro 'PARAMS'
-      67 |                       PARAMS(assign), PARAMS(print))                    \
-         |                       ^~~~~~
-   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
-      40 |         DECLARE_EVENT_CLASS(name,                              \
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
-      44 |                              PARAMS(assign),                   \
-         |                              ^~~~~~
-   include/trace/events/sched.h:224:1: note: in expansion of macro 'TRACE_EVENT'
-     224 | TRACE_EVENT(sched_switch,
-         | ^~~~~~~~~~~
-   include/trace/events/sched.h:243:9: note: in expansion of macro 'TP_fast_assign'
-     243 |         TP_fast_assign(
-         |         ^~~~~~~~~~~~~~
-
-
-vim +245 include/trace/events/sched.h
-
-   225	
-   226		TP_PROTO(bool preempt,
-   227			 struct task_struct *prev,
-   228			 struct task_struct *next,
-   229			 unsigned int prev_state),
-   230	
-   231		TP_ARGS(preempt, prev, next, prev_state),
-   232	
-   233		TP_STRUCT__entry(
-   234			__array(	char,	prev_comm,	TASK_COMM_LEN	)
-   235			__field(	pid_t,	prev_pid			)
-   236			__field(	int,	prev_prio			)
-   237			__field(	long,	prev_state			)
-   238			__array(	char,	next_comm,	TASK_COMM_LEN	)
-   239			__field(	pid_t,	next_pid			)
-   240			__field(	int,	next_prio			)
-   241		),
-   242	
-   243		TP_fast_assign(
-   244			memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
- > 245			__entry->comm[TASK_COMM_LEN - 1] = '\0';
-   246			__entry->prev_pid	= prev->pid;
-   247			__entry->prev_prio	= prev->prio;
-   248			__entry->prev_state	= __trace_sched_switch_state(preempt, prev_state, prev);
-   249			memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-   250			__entry->next_comm[TASK_COMM_LEN - 1] = '\0';
-   251			__entry->next_pid	= next->pid;
-   252			__entry->next_prio	= next->prio;
-   253			/* XXX SCHED_DEADLINE */
-   254		),
-   255	
-   256		TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
-   257			__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
-   258	
-   259			(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
-   260			  __print_flags(__entry->prev_state & (TASK_REPORT_MAX - 1), "|",
-   261					{ TASK_INTERRUPTIBLE, "S" },
-   262					{ TASK_UNINTERRUPTIBLE, "D" },
-   263					{ __TASK_STOPPED, "T" },
-   264					{ __TASK_TRACED, "t" },
-   265					{ EXIT_DEAD, "X" },
-   266					{ EXIT_ZOMBIE, "Z" },
-   267					{ TASK_PARKED, "P" },
-   268					{ TASK_DEAD, "I" }) :
-   269			  "R",
-   270	
-   271			__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
-   272			__entry->next_comm, __entry->next_pid, __entry->next_prio)
-   273	);
-   274	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+> Cc: Marco Elver <elver@google.com>
+> Cc: Andrey Konovalov <andreyknvl@gmail.com>
+> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: <x86@kernel.org>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: Sami Tolvanen <samitolvanen@google.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: <kasan-dev@googlegroups.com>
+> ---
+>  arch/x86/include/asm/init.h | 2 +-
+>  include/linux/init.h        | 4 +++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
+> index 8b1b1abcef15..6bfdaeddbae8 100644
+> --- a/arch/x86/include/asm/init.h
+> +++ b/arch/x86/include/asm/init.h
+> @@ -5,7 +5,7 @@
+>  #if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
+>  #define __head __section(".head.text") __no_sanitize_undefined __no_stack_protector
+>  #else
+> -#define __head __section(".head.text") __no_sanitize_undefined
+> +#define __head __section(".head.text") __no_sanitize_undefined __no_sanitize_coverage
+>  #endif
+>
+>  struct x86_mapping_info {
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index ee1309473bc6..c65a050d52a7 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -49,7 +49,9 @@
+>
+>  /* These are for everybody (although not all archs will actually
+>     discard it in modules) */
+> -#define __init         __section(".init.text") __cold  __latent_entropy __noinitretpoline
+> +#define __init         __section(".init.text") __cold __latent_entropy \
+> +                                               __noinitretpoline       \
+> +                                               __no_sanitize_coverage
+>  #define __initdata     __section(".init.data")
+>  #define __initconst    __section(".init.rodata")
+>  #define __exitdata     __section(".exit.data")
+> --
+> 2.34.1
+>
 
