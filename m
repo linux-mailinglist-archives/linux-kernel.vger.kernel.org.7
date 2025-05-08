@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-639890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAAEAAFDCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E43AAFDD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0D4F4E0767
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9444E5A95
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408E82749EB;
-	Thu,  8 May 2025 14:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3348C278E6F;
+	Thu,  8 May 2025 14:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egLbwTX5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K5JwIVyr"
+Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9E726F478;
-	Thu,  8 May 2025 14:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BDE2741CB;
+	Thu,  8 May 2025 14:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746715932; cv=none; b=rT5evFXbKDlwMc9FuPTFarNWxejP0VeuN9JNDrK9aa3otcQlOCEdZ+0F/mT9oOgdnCWaMjgjd/31rVo6hIneXRwdE/utdkf+npSCWVa66PwIcB6ig1AuyjbCqkqTas2yusZ9aTaS7itk6Ea2mUZA3unBcXpxlS/pbEciP6ancfc=
+	t=1746716064; cv=none; b=Pz+Ny7IsqS3iI76F9DR+sJ8vlpdIM4834FiUcGDfcFDGXsLktIJRLdhTMpsWy8QOazbITbtvtv06L5Ukf6aZGvUWh2cA+Z2SoEHQiA3LY6NgnLsKS1LJFE5hJgydhEZxEaQz+DyGN30MSmm/ug/RqYfSfXl6IO3EJQujgvx3O+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746715932; c=relaxed/simple;
-	bh=m9+dvvH99WOk1Q+YGo6PeA3k97JBnWhonrMgm9Unthw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sgohs6XQjd9Bs5++dPxZZ/EgXIkuvQQ8vSiXW445rdlwHjIsnXkPFaU53h2Rr9UTzMNrqZJ4V24m8TdO8ftZh8CKGOmGNZdo17cxAMfjsspeADLdSIjctjeU0LVKg0bjdeTBb+8aQkKHk8RqzONZumhp9USrcH28e4Omg4Hg/+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egLbwTX5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842CDC4CEE7;
-	Thu,  8 May 2025 14:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746715932;
-	bh=m9+dvvH99WOk1Q+YGo6PeA3k97JBnWhonrMgm9Unthw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=egLbwTX5kYtcWDxF3pn+h6VTXTWbSAcexEh4T80EqMnZT8K3dD1DxveyRZl8dNWHF
-	 Bz8R0Tg7S0i3FFwyhV/YeWbXb5cmQbTumgVquKzqw8nALHHvpOJUQuyYOoaCOMT/k4
-	 DX13/JrDQOJpswCP4htG77iiUDstsLiVySJCsLY6ODNro4Co8VT8Y2A/6aehoLmfCN
-	 kGYElrH+djZQtFrObp8ha3Mj5tZ2nNkmEkULAq2XaFq1NUgFqe7Y3Ay343zkv0bC+v
-	 h3y6Pd38S5ty9c60ENFNakD/iCe0bPvjOV3xtB4pgesMSFWLWthUhpRdI/nMu8LI+c
-	 J+n+vAShgBMWA==
-Date: Thu, 8 May 2025 11:52:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf trace: Fix some more memory leaks
-Message-ID: <aBzFGKKubskQDLrs@x1>
-References: <20250401202715.3493567-1-irogers@google.com>
+	s=arc-20240116; t=1746716064; c=relaxed/simple;
+	bh=1ONmakleqe1plbdupt6Kh9XABBF1Eeb8V1otE18wMtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Br5ugbvAn1z8sICMUcVTAYMRVaqJd5Q8ClUdHurmsE08pemezTUKJCJP7KM/pOkP9dZVBBY6xtQxx5Dj3YN4gVmuEKDP2bIqZeqs64jDW3wOUv7HCADn1vBoQhcofVj8py6pK7Qp2vdV7Aev/qcF0IGTTKQNMJk1dUa8tHSL+cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=K5JwIVyr; arc=none smtp.client-ip=80.12.242.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id D2cYuomdl816KD2cYuwCQe; Thu, 08 May 2025 16:53:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746715992;
+	bh=vArwvLV+DEZKEL8y1k44EnYo/gsnysUUsECWxXjPHCQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=K5JwIVyrFl6zcwMB6BQ36dIsDj2X5gjjP4iZB+SlpYmP2JtaxFRgYzcbuoxDx1kMf
+	 QLsUE9nuRN4/kfeaOUkxWp9QjFslP7RYi0QCKfkVL8uaHvkszJcd8FH3S+B56O17L0
+	 KzhGx6eyeL9rpqlvzvfh8mkXyQ7CYuMdw5sk6J2DiaQ+8XvshmxNa+0MsWQ4p+yfGF
+	 2ECs5s8RVo4S1Qq5oMu9neMacarqYYtV7I+HJ1nFMw4TSOh9IeeOD537YlRCJwMFIq
+	 GL1qcyEJUg1GFSwHDD5PzXriZSLsDQ2DTF9pGQ1CVtlbNEMv96yhLfyf67tWowAdXX
+	 bMubNTgI5UJ3Q==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 08 May 2025 16:53:12 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 1/4] net: airoha: Fix an error handling path in airoha_alloc_gdm_port()
+Date: Thu,  8 May 2025 16:52:25 +0200
+Message-ID: <5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250401202715.3493567-1-irogers@google.com>
 
-On Tue, Apr 01, 2025 at 01:27:15PM -0700, Ian Rogers wrote:
-> The files.max is the maximum valid fd in the files array and so
-> freeing the values needs to be inclusive of the max value.
-> 
-> Add missing thread__put of the found parent thread in
-> thread__e_machine.
+If register_netdev() fails, the error handling path of the probe will not
+free the memory allocated by the previous airoha_metadata_dst_alloc() call
+because port->dev->reg_state will not be NETREG_REGISTERED.
 
-Split it into:
+So, an explicit airoha_metadata_dst_free() call is needed in this case to
+avoid a memory leak.
 
-⬢ [acme@toolbx perf-tools-next]$ git log --oneline -2
-7900938850645ed4 (HEAD -> perf-tools-next) perf trace: Add missing thread__put() in thread__e_machine()
-8830091383b03498 perf trace: Free the files.max entry in files->table
-⬢ [acme@toolbx perf-tools-next]$ 
+Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes in v2:
+  - New patch
 
-So that git --oneline is more descriptive, etc.
+Compile tested only.
+---
+ drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Thanks, applied to perf-tools-next,
-
-- Arnaldo
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+index 16c7896f931f..af8c4015938c 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.c
++++ b/drivers/net/ethernet/airoha/airoha_eth.c
+@@ -2873,7 +2873,15 @@ static int airoha_alloc_gdm_port(struct airoha_eth *eth,
+ 	if (err)
+ 		return err;
  
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-trace.c | 3 ++-
->  tools/perf/util/thread.c   | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 58a2ce3ff2db..c02ea4e8b270 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -1657,7 +1657,7 @@ static const size_t trace__entry_str_size = 2048;
->  
->  static void thread_trace__free_files(struct thread_trace *ttrace)
->  {
-> -	for (int i = 0; i < ttrace->files.max; ++i) {
-> +	for (int i = 0; i <= ttrace->files.max; ++i) {
->  		struct file *file = ttrace->files.table + i;
->  		zfree(&file->pathname);
->  	}
-> @@ -1703,6 +1703,7 @@ static int trace__set_fd_pathname(struct thread *thread, int fd, const char *pat
->  
->  	if (file != NULL) {
->  		struct stat st;
-> +
->  		if (stat(pathname, &st) == 0)
->  			file->dev_maj = major(st.st_rdev);
->  		file->pathname = strdup(pathname);
-> diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-> index 89585f53c1d5..415c0e5d1e75 100644
-> --- a/tools/perf/util/thread.c
-> +++ b/tools/perf/util/thread.c
-> @@ -471,6 +471,7 @@ uint16_t thread__e_machine(struct thread *thread, struct machine *machine)
->  
->  		if (parent) {
->  			e_machine = thread__e_machine(parent, machine);
-> +			thread__put(parent);
->  			thread__set_e_machine(thread, e_machine);
->  			return e_machine;
->  		}
-> -- 
-> 2.49.0.504.g3bcea36a83-goog
-> 
+-	return register_netdev(dev);
++	err = register_netdev(dev);
++	if (err)
++		goto free_metadata_dst;
++
++	return 0;
++
++free_metadata_dst:
++	airoha_metadata_dst_free(port);
++	return err;
+ }
+ 
+ static int airoha_probe(struct platform_device *pdev)
+-- 
+2.49.0
+
 
