@@ -1,150 +1,167 @@
-Return-Path: <linux-kernel+bounces-639508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792CBAAF840
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18657AAF848
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FEFF3A8E22
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C21E3BF40B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFE221B90B;
-	Thu,  8 May 2025 10:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C92221D88;
+	Thu,  8 May 2025 10:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="czI43x1K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BAN4lPKD"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03B94B1E78
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA96221703;
+	Thu,  8 May 2025 10:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746701094; cv=none; b=KRo3jopPrs0MsQGjhqQPSLIys4afqoeaO7tkiNtrI1Q+Ov2lbGwIpV3Sl7StLOX8tpMuGrw3W084pLLS9YzQf4rADkbT6mcJb0j86ZdshaLIy8LqS+AjyCUSL3fBCluIsmnRAkv9Qkz9QcvtsavqixtklWBw0iKTP6jpHyDPi/s=
+	t=1746701116; cv=none; b=gbX64r24J28nUYT/v6yu7oekrzTkSSS8FOAu7y8WHtSmokVZ+KiP0hn6myL8HTFRurL3Q2q2M4MrdgEylDKNT5ZNmx7UH69+KhpKxhbVyKqqvCpgDeACCTUeFKX/HtfAn0aHRGgdQ6I23d7+VxLOQ6RsmZUOcdJqHVcu4XTe2Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746701094; c=relaxed/simple;
-	bh=Fn/Bg797RXtejcknSS+9IWDalUH7spovGht6Hnt9Dzc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iqvvbyr5TPTGv8DXMD6AC+gvpP6HhUZcMIbobcgvtqLcnPrC2w0F/E6itCDysZ/VK45JFgOT3BqDWDMIj46x10sjzj5Y6T46pZUzEc9jv355HeqLbPrBOSbEQsWzHCbxuJ+qy4otrbOys+Bb9rTEH+heqLeJESk6Q73RoKVUd8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=czI43x1K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746701091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg0VQN380cNy38+THmalJtzeh1gOYnZWm93pCjMLjOk=;
-	b=czI43x1KLzE1GTC6pGdE1IS6CahfZGETeALu1S+fndNyyplNe+SQNSInZgYiMnwXvzn+F0
-	1V7r/rn0XAJ8N+0HNpFU5RwrVJX+9YRWgmw5rcJPl3khzdG8PshZytfLebh0VcUAe8PBHo
-	RqruxctLPAE3YNBuc0ut/Mnr69fr4k0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-mw9JlpWgPPOke-ngKQT7xw-1; Thu, 08 May 2025 06:44:50 -0400
-X-MC-Unique: mw9JlpWgPPOke-ngKQT7xw-1
-X-Mimecast-MFC-AGG-ID: mw9JlpWgPPOke-ngKQT7xw_1746701089
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-442cd12d151so5026055e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:44:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746701089; x=1747305889;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kg0VQN380cNy38+THmalJtzeh1gOYnZWm93pCjMLjOk=;
-        b=esXS0JMuKYD6V24KjL/Tx3nSYIKFmqtnb0kIr/XXzPDEyXMY3RLS4b/OiZyIL9XXYs
-         vartBmqa8YK6TM7NNarhugZFDHPmJYUmNOFE/2V0EPfP6qiRJp5TEUHSuwOOYB4EUDsb
-         aFTOwRuzEI4+2mSkWRhXLtoKMaTd6inTrHo68qBkQ/zJLwLk+PPsflRIQjjycGecfW09
-         NbNE8VuJPI2xJubwtsX65YxuDTkp0emiB5mLxqiFx9eE3SUgDC4UQg9kJ1kkHeVpAE9/
-         8J4bBB4x47qGLZ4FTwxfgkuoUiMEFM7+FnjHVphxxD24YSs8E81eIl1oE3avB5GWAm1K
-         lE1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsTcrPp3fL2qIzCgYVaRZBY+XhUOI3QrlTATZALGl0M789NBjMyvRwKFcZLlTwc3nZ7QkY2MtV+cubUhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCHODzAyWqr9k5P+eyuupdlvKMYVpuxGIJMGud5NmE6X9lWEgS
-	xgvl0/x9A+TC93zO7uFVQtYWWnZHi5SGcJpaUq6Q+yrzYLlKL/ybIaz9JYTUN21wAED8jCB4V6x
-	MUjUwjaUKW+MPnyKDeFalaHlg2GTJYveKqYZYgv3Y5AJ9Xmxqcbq/jdCtMtFA6w==
-X-Gm-Gg: ASbGncvcDEkhkMac7B8/vtF/6l8lXQko6SkYcSlssXs34q+f+vbgy4vI2SBVVUPIQoW
-	g2TMuqRpdMGM6LWvLH1bEFztCb9sMRU9QvGdIx6ycGKUN5zns5EsbwMQpzXvMA0yYMtQvPKan6I
-	SNsJG8JU0AXGzlRWDoCqM/fZICQE0PG+O2/7mBQjgxu8BxS/z8kgALqOMrvr+MpwMFKCl0ds2Mz
-	i6nFyZsFA1B2N0/jP75cG6fI+OeV5jfEaC7rC8nJnpqMISxV8ULfeDrzqyHNdEMd5zppBHJzyYc
-	jmyIT3Ans9EpZpb6j6XOs7S/neCyarwT+gIgRHXeOpvof/OHmWPd576l0Rp3mlMQwLwvIg==
-X-Received: by 2002:a05:600c:5027:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-441d44c41a5mr60707235e9.8.1746701089368;
-        Thu, 08 May 2025 03:44:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKWHQImK0mQVYX3JJhEVaBoNakORu3NGB6ausgRqlBfk0NSvqhDkPdCLTMr4AX1Nn44y4TLQ==
-X-Received: by 2002:a05:600c:5027:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-441d44c41a5mr60706975e9.8.1746701089048;
-        Thu, 08 May 2025 03:44:49 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d14e6d74sm23818755e9.21.2025.05.08.03.44.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 03:44:48 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Philipp Stanner <phasta@mailbox.org>, Philipp Stanner
- <phasta@kernel.org>, Dave Airlie <airlied@redhat.com>, Gerd Hoffmann
- <kraxel@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>,
- Arnd Bergmann <arnd@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>, Jeff Johnson
- <jeff.johnson@oss.qualcomm.com>
-Cc: virtualization@lists.linux.dev, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/cirrus: Use non-hybrid PCI devres API
-In-Reply-To: <6d46103afab9fc8e843e5681226f7db34a4ca57d.camel@mailbox.org>
-References: <20250417094009.29297-2-phasta@kernel.org>
- <87frhzc1a9.fsf@minerva.mail-host-address-is-not-set>
- <6d46103afab9fc8e843e5681226f7db34a4ca57d.camel@mailbox.org>
-Date: Thu, 08 May 2025 12:44:46 +0200
-Message-ID: <87a57ns7oh.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1746701116; c=relaxed/simple;
+	bh=lk0sPxS4gacLL86cVRDct6/Ku6vptvmSrgGVVGw/c0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RFCkVsvmOivKT7T6+fQ2v0VG2GHoKQVHKBVVBwg42LQnSFvmrXqlTx7c+3ICbimaEpvTNRGHnLZ2KZ2aR6KyhwDBb8IUfqHZc2ZRHho5fN6mr5eMePUgQmM1P+H/0daeO/Uo21CDfs3FU75VE9heeMiQ+tzR6jhTv6/4P9jfgAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BAN4lPKD; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548A45F8025931;
+	Thu, 8 May 2025 10:45:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=nJT2gg
+	n7bwVZKUtfsOL3vHC4YrRX+weBD8PdIk3jUbE=; b=BAN4lPKDfzNrtN7N1qreHq
+	oj+zW4LR5LNwEbZOQ/sjDe9iJlH0iAtEh6VjpZ5fYTO+yRwQKai2Y8VOXfnTZFhH
+	hytj1oqqY+pwDM9+vhPPNqs7XUGHAoJONp8nRXyHK2cSTqXj4IVLMYWJBhIwvgKS
+	V97Rb69yRLtIQd/T40D4rnCIjvkJhQ9wV9QUkdnitF8st/mTu4dU5Kgk/5Xm31oj
+	/VamKRaZihxaGmDoMIn0cR+aqKw1bXdtjWWFWFSXHWDB5xJXOCwq6XWG952iCVIk
+	D+e3RMVTo//Dmw76/ZmnyILisTPftHmDuvwyNi6HPyydeHEO+C26FfVelU8YfQKg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46gthk85b9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 10:45:03 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 548AbfG0003017;
+	Thu, 8 May 2025 10:45:03 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46gthk85b2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 10:45:03 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5488uGZD025807;
+	Thu, 8 May 2025 10:45:02 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwv05h3n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 10:45:02 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 548Aj14227591198
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 May 2025 10:45:01 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0523E58055;
+	Thu,  8 May 2025 10:45:01 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C73B458043;
+	Thu,  8 May 2025 10:44:57 +0000 (GMT)
+Received: from [9.61.251.83] (unknown [9.61.251.83])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  8 May 2025 10:44:57 +0000 (GMT)
+Message-ID: <3096704a-84ec-4709-89ed-43ab1ed2b7c1@linux.ibm.com>
+Date: Thu, 8 May 2025 16:14:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250320][btrfs] Kernel OOPs while running btrfs/108
+Content-Language: en-GB
+To: dsterba@suse.cz, Filipe Manana <fdmanana@kernel.org>
+Cc: quwenruo.btrfs@gmx.com, linux-btrfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.ibm.com, ritesh.list@gmail.com, disgoel@linux.ibm.com,
+        David Sterba <dsterba@suse.com>
+References: <0B1A34F5-2EEB-491E-9DD0-FC128B0D9E07@linux.ibm.com>
+ <CAL3q7H7PqVRnDuooSr6OhvUQ3G5V2gq6VEDpqTqNX9jHmq97aw@mail.gmail.com>
+ <20250507141409.GG9140@suse.cz>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <20250507141409.GG9140@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDA5MiBTYWx0ZWRfXxZhfHbnLKTGo MXT51QjgtpNO+loqTo6x0GPLrojfW+GV6YRxUeASgKgpyMpyrYTdBPy7Gc5phmLQyjMTl0lMBcn 4StsZ4S7V8zdihm3gHi5QMYhmArsuzKtpbJiyhRvFqBrE1osufXcinPahgeN3B0o1KFvramrLoL
+ 3QdgFJJeUuGTX1Ss1HvnrxP5rlqswzPah9CdXkUygT5AvZiS3JiIZGBZyEt1arWgSYP6F3JhyIQ Zpsblq1uM/QzDOZCOwx83YQmH+q70iIs83/pdQqypoSeUm1V80+tP7ak4LmVKIed6Rq4VZpWyx/ ZSTlgUvXJyzPJ4RfutbGZqZvD+Qg3uCR6BnpdeYquzrSMRxeDGF/plKFoJHYxp4A9t1Azdd66pb
+ S9NLrRMymYupF1TbvKLnxM4GNlmmRbw/cpku1HLNainoQeODh1t3ufOVrcurgjSTrEBgOqrq
+X-Proofpoint-ORIG-GUID: EJxHnfxn_acDMBKrqGIdfu36KiRKjQW0
+X-Authority-Analysis: v=2.4 cv=PvCTbxM3 c=1 sm=1 tr=0 ts=681c8b2f cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=7YfXLusrAAAA:8 a=VnNF1IyMAAAA:8 a=Zg4ZsEA-DVCyg4mgyWsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=SLz71HocmBbuEhFRYD3r:22
+X-Proofpoint-GUID: 4jh3IAg_uquEpSCTg-CSJYtPhnNB950_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-08_03,2025-05-07_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505080092
 
-Philipp Stanner <phasta@mailbox.org> writes:
 
-Hello Philipp,
+On 07/05/25 7:44 pm, David Sterba wrote:
+> On Wed, May 07, 2025 at 02:04:47PM +0100, Filipe Manana wrote:
+>> On Wed, May 7, 2025 at 10:02 AM Venkat <venkat88@linux.ibm.com> wrote:
+>>> +Disha,
+>>>
+>>> Hello Qu,
+>>>
+>>> I still see this failure on next-20250505.
+>>>
+>>> May I know, when will this be fixed.
+>> The two patches pointed out before by Qu are still being added to linux-next.
+>> Qu reported this on the thread for the patches:
+>>
+>> https://lore.kernel.org/linux-btrfs/0146825e-a1b1-4789-b4f5-a0894347babe@gmx.com/
+>>
+>> There was no reply from the author and David added them again to
+>> for-next/linux-next.
+Added again, was this removed? Can you please point me to patch or 
+commit id. I was under impression, it never got removed.
+>>
+>> David, can you drop them out from for-next? Why are they being added
+>> again when there were no changes since last time?
+> The patches have been there for like 4 -rc kernels without reported
+> problems. I will remove them again.
 
-> On Tue, 2025-04-22 at 23:51 +0200, Javier Martinez Canillas wrote:
->> Philipp Stanner <phasta@kernel.org> writes:
->> 
->> Hello Philipp,
->> 
->> > cirrus enables its PCI device with pcim_enable_device(). This,
->> > implicitly, switches the function pci_request_regions() into
->> > managed
->> > mode, where it becomes a devres function.
->> > 
->> > The PCI subsystem wants to remove this hybrid nature from its
->> > interfaces. To do so, users of the aforementioned combination of
->> > functions must be ported to non-hybrid functions.
->> > 
->> > Replace the call to sometimes-managed pci_request_regions() with
->> > one to
->> > the always-managed pcim_request_all_regions().
->> > 
->> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
->> > ---
->> 
->> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
->> 
->
-> Who's in charge of applying this? Any objections with me just putting
-> it into drm-misc-next?
->
 
-Sure, go ahead.
+David,
 
-> P.
->
 
--- 
-Best regards,
+While reverting those patches, please add below tags. And really 
+appriciate, if you can keep me in CC.
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+
+Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+
+Reported-by: Disha Goel <disgoel@linux.ibm.com>
+
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+
+Closes: 
+https://lore.kernel.org/all/e4b1ccf8-c626-4683-82db-219354a27e61@linux.ibm.com/
+
+
+
+Regards,
+
+Venkat.
 
 
