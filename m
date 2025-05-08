@@ -1,166 +1,95 @@
-Return-Path: <linux-kernel+bounces-640555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953B5AB0665
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:13:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403F4AB066D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13021BA81F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB731BA81E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2725D22F3A8;
-	Thu,  8 May 2025 23:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A8E22F750;
+	Thu,  8 May 2025 23:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ZWSyrQuD"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muucR9EJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DD122DF83;
-	Thu,  8 May 2025 23:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C322A811;
+	Thu,  8 May 2025 23:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746746027; cv=none; b=URt795rffurzBFyncRJRfYfdfchDXbsQBeHxRc+sl3HpDuL//w7YCvZtyaJEfzOYIvMwluE4dDf1ivwKPVY9n5+W18CljniRUkX7ZeFDs7vN7aQk1haqLnSVAtKeu0f9DVXE4WU2zrTQ+++EH1YPYZltlxLhPpwj600fQNVC4tE=
+	t=1746746093; cv=none; b=HLKdOnlwSwg+5+3AApBxpwWgMFAlntFl+YJF/ZidFnauZtDOEXPhSSqgbA//NhdR6sqi7wcstm0XuZ4rUTJNuGvxe2sW5I32z+z1Nf+IWW+zRmaWu3bIhm5u8tK7ysmQDPQYwXQFULyzgzZqWb6VhZDD1sreWz+QQHkZGGybPM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746746027; c=relaxed/simple;
-	bh=bB3j8fb6z811VpRpryPJkvawI3jg6GwtmMHB9Bn3MXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6V1bL1GHyKK/OmTdNx4JWk/uHC0mJsy2twH5cneD7SfbHkBkREp9iuwTLLTbLj/VDkFOML5V3q2fUZoFvc3bbq63dYb8mO4usFVnPAlk6Kptw8WhKSJnxIpnEHp/F76a9rssBi0skIh3xO9GcXNQWa8Z9pljB7vEUbJr/swtRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ZWSyrQuD; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5FCE826161;
-	Fri,  9 May 2025 01:13:42 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id HQQXvO6tkiyE; Fri,  9 May 2025 01:13:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746746021; bh=bB3j8fb6z811VpRpryPJkvawI3jg6GwtmMHB9Bn3MXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZWSyrQuDh5IumxGz2OmiGWHrjY9wXY9i2F/vkQhU93LaOxvGebq9SifRwzhWk1e+a
-	 /BCMa9uycuIDQiRlie6FoiyqeYGEwyz9K5Qb/etHmQJ8F0BBbTEd9B1eu/0GPen1Je
-	 40bE/cwhkhAWP3IM91TNH0Py/q1Bqxcda/4stYi3S9RoI3C5WgLXHOfzMmdfTetG1N
-	 Wthk5CuMo78/PHYXtNtaO9hu/BLtEphcec5uWxKm06pAJbgSqKT3jCSnFom9XsFgTK
-	 nyMKN+AGLKfcErTnNtuBj61JeG8QwuQcjvayOpIn+mhVaj9U9RHCj48njfqS8jCbwq
-	 BXHAC7VmzKmuA==
-Date: Thu, 8 May 2025 23:13:25 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Chukun Pan <amadeus@jmu.edu.cn>, Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] phy: rockchip: naneng-combphy: Add RK3528 support
-Message-ID: <aB06lQs9d0q8pMU_@pie.lan>
-References: <20250508134332.14668-2-ziyao@disroot.org>
- <20250508135307.14726-1-ziyao@disroot.org>
- <5349721.GXAFRqVoOG@phil>
+	s=arc-20240116; t=1746746093; c=relaxed/simple;
+	bh=b/rZbBu/kd8miGQyME180cFglbDpC6omgZiTM3EgZvE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EUG9bGXE3jCFG3i1Eka7WxUfCy8029GbjhnWgPFqAKu1c6mQ4PO8CtWsYSO1kZWVfUD3mlbHxGz8u4fQY5w2qak8GTi0JRHfGLS493TX/zYmtQavhX/hN9yYPfAMNONvT8n+QOZneJt7mer20YVwVIOQvO/pKcineLrG6dZlYdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muucR9EJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58903C4CEE7;
+	Thu,  8 May 2025 23:14:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746746092;
+	bh=b/rZbBu/kd8miGQyME180cFglbDpC6omgZiTM3EgZvE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=muucR9EJAc7m4NJf2H9VIUt1waSHNztv2dI0HxkkiYDyNzgZ20+vhc/hLIi7SplRQ
+	 G/ZPN5ry52zgZV+Vy47H0TIG4563fxjhHcXUBYyAYxlAjqhbcgRqxvlyD1DGFPaAjH
+	 nETZt1r3fGNF266oTJ4K9isd8g//Ojqy5xKqH8OqZtCMOzhr+KtQ31IFHTQp9E02u3
+	 2MtaMfiq0j0cxwK5ApE6IbFR6GxooQJ6iLlPTNt9NXt8sjoFhsphLeZFhltN1du7CH
+	 cj74y0Cb8lHczM05duqYh5D9W4mwdas5K17oxFuno1yqYfSgDDRfCE3lht3rlTwQH8
+	 BPK+YOn1pH/qw==
+Date: Thu, 8 May 2025 16:14:49 -0700 (PDT)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Christoph Hellwig <hch@infradead.org>
+cc: Stefano Stabellini <sstabellini@kernel.org>, 
+    John Ernberg <john.ernberg@actia.se>, Juergen Gross <jgross@suse.com>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    Catalin Marinas <catalin.marinas@arm.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, 
+    "iommu@lists.linux.dev" <iommu@lists.linux.dev>, 
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+    "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
+In-Reply-To: <aBwvrLKD_VJapYkB@infradead.org>
+Message-ID: <alpine.DEB.2.22.394.2505081614450.3879245@ubuntu-linux-20-04-desktop>
+References: <20250502114043.1968976-1-john.ernberg@actia.se> <20250502114043.1968976-3-john.ernberg@actia.se> <alpine.DEB.2.22.394.2505021007460.3879245@ubuntu-linux-20-04-desktop> <75266eb7-66a4-4477-ae8a-cbd1ebbee8db@actia.se>
+ <alpine.DEB.2.22.394.2505071602570.3879245@ubuntu-linux-20-04-desktop> <aBwvrLKD_VJapYkB@infradead.org>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5349721.GXAFRqVoOG@phil>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, May 08, 2025 at 07:26:13PM +0200, Heiko Stuebner wrote:
-> Am Donnerstag, 8. Mai 2025, 15:53:06 Mitteleuropäische Sommerzeit schrieb Yao Zi:
-> > Rockchip RK3528 integrates one naneng-combphy that is able to operate in
-> > PCIe and USB3 mode. The control logic is similar to previous variants of
-> > naneng-combphy but the register layout is apperantly different from the
-> > RK3568 one.
+On Wed, 7 May 2025, Christoph Hellwig wrote:
+> On Wed, May 07, 2025 at 04:09:15PM -0700, Stefano Stabellini wrote:
+> > > This mapping is not for a RAM backed address. In the eDMA case for the 
+> > > iMX8QXP the `phys` coming in here is the address of a register.
 > > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  .../rockchip/phy-rockchip-naneng-combphy.c    | 180 +++++++++++++++++-
-> >  1 file changed, 179 insertions(+), 1 deletion(-)
+> > Ok, this information is important :-)
 > > 
-> > diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > index 1d1c7723584b..7c92f7ac3c7f 100644
-> > --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > @@ -20,7 +20,40 @@
-> >  #define REF_CLOCK_25MHz			(25 * HZ_PER_MHZ)
-> >  #define REF_CLOCK_100MHz		(100 * HZ_PER_MHZ)
-> >  
-> > -/* COMBO PHY REG */
-> > +/* RK3528 COMBO PHY REG */
-> > +#define RK3528_PHYREG6				0x18
-> > +#define  RK3528_PHYREG6_PLL_KVCO		GENMASK(12, 10)
-> > +#define   RK3528_PHYREG6_PLL_KVCO_VALUE		0x2
-> > +#define  RK3528_PHYREG6_SSC_DIR			GENMASK(5, 4)
-> > +#define   RK3528_PHYREG6_SSC_UPWARD		0
-> > +#define   RK3528_PHYREG6_SSC_DOWNWARD		1
-> > +#define RK3528_PHYREG40				0x100
-> > +#define  RK3528_PHYREG40_SSC_EN			BIT(20)
-> > +#define  RK3528_PHYREG40_SSC_CNT		GENMASK(10, 0)
-> > +#define   RK3528_PHYREG40_SSC_CNT_VALUE		0x17d
-> > +#define RK3528_PHYREG42				0x108
-> > +#define  RK3528_PHYREG42_CKDRV_CLK_SEL		BIT(29)
-> > +#define   RK3528_PHYREG42_CKDRV_CLK_PLL		0
-> > +#define   RK3528_PHYREG42_CKDRV_CLK_CKRCV	1
-> > +#define  RK3528_PHYREG42_PLL_LPF_R1_ADJ		GENMASK(10, 7)
-> > +#define   RK3528_PHYREG42_PLL_LPF_R1_ADJ_VALUE	0x9
-> > +#define  RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ	GENMASK(6, 4)
-> > +#define   RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ_VALUE 0x7
-> > +#define  RK3528_PHYREG42_PLL_KVCO_ADJ		GENMASK(2, 0)
-> > +#define   RK3528_PHYREG42_PLL_KVCO_ADJ_VALUE	0x0
-> > +#define RK3528_PHYREG80				0x200
-> > +#define  RK3528_PHYREG80_CTLE_EN		BIT(17)
-> > +#define RK3528_PHYREG81				0x204
-> > +#define  RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X	BIT(5)
-> > +#define  RK3528_PHYREG81_SLEW_RATE_CTRL		GENMASK(2, 0)
-> > +#define   RK3528_PHYREG81_SLEW_RATE_CTRL_SLOW	0x7
-> > +#define RK3528_PHYREG83				0x20c
-> > +#define  RK3528_PHYREG83_RX_SQUELCH		GENMASK(2, 0)
-> > +#define   RK3528_PHYREG83_RX_SQUELCH_VALUE	0x6
-> > +#define RK3528_PHYREG86				0x218
-> > +#define  RK3528_PHYREG86_RTERM_DET_CLK_EN	BIT(14)
+> > I am not certain whether the map_resource interface can only be called
+> > for MMIO addresses or if it can also be called for RAM-backed addresses
+> > with a size > PAGE_SIZE. In the latter case, we could run into the issue
+> > I was describing.
 > 
-> I'd think staying with one layout would be best, so not doing this
-> indentation here. Instead maybe follow the other ones like
+> map_resource is intended for MMIO regions, although those could be >
+> PAGE_SIZE.  It must not be called on RAM.
 
-Though seems more clear, it's reasonable to keep the style consistent.
+In that case, John, you can just use dma_direct_map_resource().
 
-Will change it in v2, thanks.
+That's because MMIO regions:
+- are 1:1 mapped on ARM
+- are 1:1 mapped on x86 for PV Dom0
+- might not be 1:1 mapped on x86 for PVH Dom0, but in this case we rely
+  on the IOMMU to do address translation
 
-> #define RK3528_PHYREG6				0x18
-> #define RK3528_PHYREG6_PLL_KVCO		GENMASK(12, 10)
-> #define RK3528_PHYREG6_PLL_KVCO_VALUE		0x2
-> #define RK3528_PHYREG6_SSC_DIR			GENMASK(5, 4)
-> #define RK3528_PHYREG6_SSC_UPWARD		0
-> #define RK3528_PHYREG6_SSC_DOWNWARD		1
-> 
-> #define RK3528_PHYREG40				0x100
-> #define RK3528_PHYREG40_SSC_EN			BIT(20)
-> #define RK3528_PHYREG40_SSC_CNT		GENMASK(10, 0)
-> #define RK3528_PHYREG40_SSC_CNT_VALUE		0x17d
-> 
-> ...
-> 
-> i.e. register + bits + blank line
-> 
-> other than that
-> 
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> 
-
-Best regards,
-Yao Zi
+In none of these cases xen_phys_to_dma would give us any interesting
+results.  It would be the same as calling phys_to_dma.
 
