@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-640501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39507AB0577
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:44:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE89DAB0584
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF1552380D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D0B1BC7E10
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B04E224224;
-	Thu,  8 May 2025 21:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF1F22423C;
+	Thu,  8 May 2025 21:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XY9OZrvV"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="IC0yX2kZ"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8327322256E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 21:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F425CB8;
+	Thu,  8 May 2025 21:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746740663; cv=none; b=mgP+tT++48IQ0pFfto9h85EyutG3pPE8Q2mc+IS2reuc269aCz1Tchqcag9ztEP/1tfbGri4hVmgkXn1slfGZwRsAtB2/leywaxOhVX0inU6dAzvU0ady/P85s1s8iyXPrJGh6WIF6etGJyIvHDg3tGCGlxm5H6gcF/884hq99s=
+	t=1746740951; cv=none; b=PS3SFVqFA9tz58PfQFgSD4E6qfi64quEwwmBI9xdMWzBXWa8KLWBHnRNfs512kQ4mStrTDTaHQAU4FXFLO6DZFhY6XVXiFOarGXzF7aUZb47Y/WYlxI27CiGdgxA4+pCv9a6KDwDgl/z1SA/mM5CwpE4N5RnSzTVNArdGKVmrSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746740663; c=relaxed/simple;
-	bh=aQSC+E0Fahye6dbTTPMAX+cp14yGUn51SmoB/H8LWhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+B3GHQFcHtDih7zq685BXzKG2U4LtUa6KqbrHKp8x+yHa+m6k4K6M5u8ms6cyipw2fLKoyYAhUk5lh8WGG50M3YL8zLuzMH4pPSShlG+Po7uL6WNtrOcRXm1qE6fmnu4i7K+mMCDicn+vTdK+E5+gS20wRHyU6TJl2b0lRagP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XY9OZrvV; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-72c16e658f4so845522a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 14:44:20 -0700 (PDT)
+	s=arc-20240116; t=1746740951; c=relaxed/simple;
+	bh=H0urki9LI3KNRa5Q+wG6DOyvCUCtfMf7YdnpvEjI7T0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FBJzI2LgtFhSgqZft0kXJpjA1FsBT7yzecnL5sCbF9CziQQoaP+GWgfo43PWCb24f8p+/rH40hq1iz0AgvtKq9pofPDrpduHf7t5KOR4ex2twZd5lwz+cGvIWQV4OYuWORMIk31dgl4dyelfeMWxSg0iyD42asTVPHDBGnQ9KFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=IC0yX2kZ; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746740659; x=1747345459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r4rrgleRHs8E8J9lRvZx/vc/Mrq/nsr1SKG+kIWRs0Y=;
-        b=XY9OZrvVhJ5RnUKGOAKMhJln9Wf+2Ent5Ugrs6jrd/N/CkyDFqvpWoeKC9p83TcBMs
-         N2PL1eFYDsnoDqX4Lh5nUwQ80+4Fv7MV3nwQ7R0p9tnQ7KYofK34+BpIngEiDp94jvvg
-         s2nMZfrZShOvgPpStWlwZhvRKqYcugmwISPgsR6P2tF5AIo61x18E1G6ccawGGtDkdCf
-         Ngei1DP4P31Lj5nIFolFZKowX/ehWnL8SxqgggV15cS2Qg0udiMf7lRB1QppHADDD05U
-         coMxow0F9jVoB5ZWpXUrA6j3R6Bjz1nKxXF+6J5P2/EOnqYR4pAI1dvYYtXd0Gs3Je4w
-         AYHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746740659; x=1747345459;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r4rrgleRHs8E8J9lRvZx/vc/Mrq/nsr1SKG+kIWRs0Y=;
-        b=BvGeasfU2CFgBnt90/lQI4Ehe68EXlWn668YHdjYwhqDWNUYlH4Rml0gycad6FYz6J
-         iL4o5h8wHsJz/lfocYOycG3rdTrkUj8gfDyMFDiXPQKseFQGwAHpSHeAJVbA2QbnnJUK
-         wzro+7y6wtyZyhuBqJedwHCSZhODkb2OOHmsbnAJw0AIN6HtyTEW/RajXjhh7kke1wtu
-         38iH4lH6QdKRPlgVatKYzqbKadDyRf3EyNp4AAw3wn9n4ID/Su85bTLffcpHhkflkqoa
-         NDJZO4gYGRBJlm63MbPGzQcpXgktRqtyODm5n6qtiesB0IZNJ1/GsSmsCJW42o58Ynlp
-         Xqzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXINe0vWz8gCTUvKk3nyn55AiU7QdN97lyynGHAHWXGLifwBFrSiUBUOORag+y5JsI0aoFa0prQ2saPhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCBS7bJYzjt820zJMdNEZc0x680dCrVrIEkWV3hyNuTkZGd2wJ
-	yc+nuKy70Bqnm/A0s+gcdAQP3yNimypdud8PIwzzbn2cXbJJPirj5agfW4HBbZY=
-X-Gm-Gg: ASbGncu2byM0xAt8JklXwzibmTD0AmXtrA/pbDiYXj12D1E5Sdkx+1GpiPlsmvTExG3
-	Uv3LFClXKC8v9VoGk/9lVdFtHp7j+2jqb13MXB8C95TftrFSUxpDGpmmdhUkZwCBZAMHCbfVagt
-	Xhj0ijoD0OIB8L890aQo0NhVnHzekicf/o9nD5QJSy898c0he4GizZs5vLQym7tMIrtPMqQq9Vl
-	9JW8JZGANwvqng+TSPUqg6YmYYJZfxlqRvlBcTjWBGFpprnn/aPdzDcEHsRfk+jJVJUSTHeh8Mq
-	OVPHFRHK9unvhDgaHf4PXwf2bJcGdXrwYvq0c8Y5oC62yUhM9Ub4c+hPqKume9D0gJs3LsaFUon
-	5ks52GrqoX74/zQ0TiQ==
-X-Google-Smtp-Source: AGHT+IEWxrdM7guJzCtW5zB5Io/5M/nAEqa1rWAlUXg+L9OfIUY/bZAREYTnD85qHAKnzpkD1d9V+g==
-X-Received: by 2002:a05:6830:380c:b0:72a:45bf:18d6 with SMTP id 46e09a7af769-73226ab0459mr938322a34.18.1746740659405;
-        Thu, 08 May 2025 14:44:19 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e? ([2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732264b479asm273544a34.27.2025.05.08.14.44.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 14:44:19 -0700 (PDT)
-Message-ID: <43fd5216-9577-4773-86c3-e3035f3934b7@baylibre.com>
-Date: Thu, 8 May 2025 16:44:18 -0500
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1746740950; x=1778276950;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=XMr3FDaYMjbSHc+Mc/4xTQjKYDslKxhh7yEkIw02wOc=;
+  b=IC0yX2kZV4gdyzBgWqgvI3hRxa1hF0/wwVgz2f20jrl5YLIzMcBpyJBZ
+   j57NLL6K+ytVlBQeB6IwOJNl1wLkM6V4PfxFcPG17MGA7YNLMc+1Obu/P
+   rqgNKug2dnxRMarx/w322VM5R9MBjI5PjwvsqLydXD6v2swx9FR/cpvEf
+   pkpKJ45V8/2ImRpjWpGy8kanjL3Pe7JmkaYNVPFAk6rIdw8hBdsr/sUm+
+   GfRmX5iaXvykO6amPbKZDCByk6ZLHDX3I1xeMSQaWvVzlj8y89uomqjdS
+   K+BoVcvKvXIvayaZbGESWpCG0Osh5gInieRVqGXdoF2NP/q/NhyrpYZIl
+   A==;
+X-IronPort-AV: E=Sophos;i="6.15,273,1739836800"; 
+   d="scan'208";a="91374175"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 21:49:05 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:8301]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.10.32:2525] with esmtp (Farcaster)
+ id 8e2af0a3-db14-4683-9fa1-2122160a051f; Thu, 8 May 2025 21:49:04 +0000 (UTC)
+X-Farcaster-Flow-ID: 8e2af0a3-db14-4683-9fa1-2122160a051f
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 8 May 2025 21:49:03 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.100.30) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 8 May 2025 21:48:59 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <brauner@kernel.org>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <daan.j.demeyer@gmail.com>,
+	<davem@davemloft.net>, <david@readahead.eu>, <edumazet@google.com>,
+	<horms@kernel.org>, <jack@suse.cz>, <jannh@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <lennart@poettering.net>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH v4 04/11] net: reserve prefix
+Date: Thu, 8 May 2025 14:47:45 -0700
+Message-ID: <20250508214850.62973-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250508-vorboten-herein-4ee71336e6f7@brauner>
+References: <20250508-vorboten-herein-4ee71336e6f7@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] iio: make IIO_DMA_MINALIGN minimum of 8 bytes
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Eugen Hristev <eugen.hristev@linaro.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
- <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-1-814b72b1cae3@baylibre.com>
- <20250508223959.70e909d2@pumpkin>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250508223959.70e909d2@pumpkin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWB001.ant.amazon.com (10.13.138.33) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 5/8/25 4:39 PM, David Laight wrote:
-> On Mon, 05 May 2025 11:31:42 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+From: Christian Brauner <brauner@kernel.org>
+Date: Thu, 8 May 2025 08:16:29 +0200
+> On Wed, May 07, 2025 at 03:45:52PM -0700, Kuniyuki Iwashima wrote:
+> > From: Christian Brauner <brauner@kernel.org>
+> > Date: Wed, 07 May 2025 18:13:37 +0200
+> > > Add the reserved "linuxafsk/" prefix for AF_UNIX sockets and require
+> > > CAP_NET_ADMIN in the owning user namespace of the network namespace to
+> > > bind it. This will be used in next patches to support the coredump
+> > > socket but is a generally useful concept.
+> > 
+> > I really think we shouldn't reserve address and it should be
+> > configurable by users via core_pattern as with the other
+> > coredump types.
+> > 
+> > AF_UNIX doesn't support SO_REUSEPORT, so once the socket is
+> > dying, user can't start the new coredump listener until it's
+> > fully cleaned up, which adds unnecessary drawback.
 > 
->> Add a condition to ensure that IIO_DMA_MINALIGN is at least 8 bytes.
->> On some 32-bit architectures, IIO_DMA_MINALIGN is 4. In many cases,
->> drivers are using this alignment for buffers that include a 64-bit
->> timestamp that is used with iio_push_to_buffers_with_ts(), which expects
->> the timestamp to be aligned to 8 bytes. To handle this, we can just make
->> IIO_DMA_MINALIGN at least 8 bytes.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>  include/linux/iio/iio.h | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
->> index 638cf2420fbd85cf2924d09d061df601d1d4bb2a..7e1e3739328d103262071bd34ba5f6631163c122 100644
->> --- a/include/linux/iio/iio.h
->> +++ b/include/linux/iio/iio.h
->> @@ -775,8 +775,18 @@ static inline void *iio_device_get_drvdata(const struct iio_dev *indio_dev)
->>   * to in turn include IIO_DMA_MINALIGN'd elements such as buffers which
->>   * must not share  cachelines with the rest of the structure, thus making
->>   * them safe for use with non-coherent DMA.
->> + *
->> + * A number of drivers also use this on buffers that include a 64-bit timestamp
->> + * that is used with iio_push_to_buffer_with_ts(). Therefore, in the case where
->> + * DMA alignment is not sufficient for proper timestamp alignment, we align to
->> + * 8 bytes instead.
->>   */
->> +#if ARCH_DMA_MINALIGN < sizeof(s64)
->> +#define IIO_DMA_MINALIGN sizeof(s64)
->> +#else
->>  #define IIO_DMA_MINALIGN ARCH_DMA_MINALIGN
->> +#endif
+> This really doesn't matter.
 > 
-> Did you actually test this?
-> You can't use sizeof() in a pre-processor conditional.
+> > The semantic should be same with other types, and the todo
+> > for the coredump service is prepare file (file, process, socket)
+> > that can receive data and set its name to core_pattern.
+> 
+> We need to perform a capability check during bind() for the host's
+> coredump socket. Otherwise if the coredump server crashes an
+> unprivileged attacker can simply bind the address and receive all
+> coredumps from suid binaries.
 
-Pretty sure I did, but maybe I was asleep at the wheel. Anyway, this got caught
-by a build bot and I realized the mistake.
+As I mentioned in the previous thread, this can be better
+handled by BPF LSM with more fine-grained rule.
+
+1. register a socket with its name to BPF map
+2. check if the destination socket is registered at connect
+
+Even when LSM is not availalbe, the cgroup BPF prog can make
+connect() fail if the destination name is not registered
+in the map.
 
 > 
-> 	David
-> 
->> +
->>  struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv);
->>  
->>  /* The information at the returned address is guaranteed to be cacheline aligned */
->>
-> 
+> This is also a problem for legitimate coredump server updates. To change
+> the coredump address the coredump server must first setup a new socket
+> and then update core_pattern and then shutdown the old coredump socket.
 
+So, for completeness, the server should set up a cgroup BPF
+prog to route the request for the old name to the new one.
+
+Here, the bpf map above can be reused to check if the socket
+name is registered in the map or route to another socket in
+the map.
+
+Then, the unprivileged issue below and the non-dumpable issue
+mentioned in the cover letter can also be resolved.
+
+The server is expected to have CAP_SYS_ADMIN, so BPF should
+play a role.
+
+
+> 
+> Now an unprivileged attacker can rebind the old coredump socket address
+> but there's still a crashing task that got scheduled out after it copied
+> the old coredump server address but before it connected to the coredump
+> server. The new server is now up and the old server's address has been
+> reused by the attacker. Now the crashing task gets scheduled back in and
+> connects to the unprivileged attacker and forwards its suid dump to the
+> attacker.
+> 
+> The name of the socket needs to be protected. This can be done by prefix
+> but the simplest way is what I did in my earlier version and to just use
+> a well-known name. The name really doesn't matter and all it adds is
+> potential for subtle bugs. I want the coredump code I have to maintain
+> to have as little moving parts as possible.
+> 
+> I'm happy to drop the patch to reserve the prefix as that seems to
+> bother you. But the coredump socket name won't be configurable. It'd be
+> good if we could just compromise here. Without the capability check on
+> bind we can just throw this all out as that's never going to be safe.
 
