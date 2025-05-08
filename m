@@ -1,84 +1,91 @@
-Return-Path: <linux-kernel+bounces-640286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C83AB02BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B74E6AB02C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4D51B6779B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8373B1B67E64
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29597202980;
-	Thu,  8 May 2025 18:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E07D287509;
+	Thu,  8 May 2025 18:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wdPTfFww"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="OaPDzJii"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D0C4B1E7D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 18:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6314F1C84BF;
+	Thu,  8 May 2025 18:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746729039; cv=none; b=HISJs+cx6Hx3/VBJ7FgOoRiWs6/hLy8jTh430UciG3hp67MeA98L6kiD+ThrjUIs9GRftdCcpiy2mvReQ4igS4mipsPZxjkOZWi6XxVn09Zg7t0CL19u2H107TyzfVfS2q3G4caHFzMhBjlQfBtJFiv3+TnK5xZyumTzlA/YQ0Y=
+	t=1746729069; cv=none; b=meP6ogWzUMOdvugNcfrAG6s28tB+68h8kDdGK0DtVtzyt8yBGRRauah2gHjMbSeVk6ncY9Q3BpxzkiBMpxufMW69h/6q/1JdFeUKmGZrSRObtyk7ez+qiZbBwzxQLAzVtHk0A9/6JAhXNsAL40H8htNRhEY8q5eEPUYI0kpNErQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746729039; c=relaxed/simple;
-	bh=V17CjNbh5XszcwExhM4NzjUKeGuYpBfGx6I3FYFrMuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhxMVO6EOWBEpQVFS0GKfR5FS5vatdIKRknPFwnWrOpo66HjkVSdB5ryl6xOCjzybJF+rEra4ruSC0gGcZjK7cKVabJBBS4ZjRIAEfYAEa6U1LxvsEOK6gcrA3//f4c7926n+qOP/51hDVRXCY2UvgBeN+oTGc6Hqy3ZoS+PfWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wdPTfFww; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 8 May 2025 11:30:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746729034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/nJPl8Ge2IvLFiCs6/TB1SsXH6mxOfrpnBplVM574lI=;
-	b=wdPTfFww2nBK5xA9DQCStl8WWWi9mvVQIVqDN8OD9zMBpIUDikFVbgnIr5CKWjSptR7J9D
-	SpAp7DqbjbREW2SVL+JaRxTYLk3KxevyU0G8krN8FFoxThuOpyrYrgVsPWOq08bDOns1C7
-	C9LZ/KNlPd+F72/ErChko+lE2G/5cIA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
-	Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add mm reclaim section
-Message-ID: <mhnz33dwwd3npj2re7dn7invntzk6dk7u75ue2pzg35vdappjd@tgqlccmoydar>
-References: <20250508173735.173502-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1746729069; c=relaxed/simple;
+	bh=ScCrgY66NWXVaZDOykxTT2JOn6uAsfZm64O1fUbmNxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZLpok8q8qzs4cdP7qzM9NndeWvzpHIABmjNPNNll5U3pI8y9aU+LmYlF4aqNum2kZ0H2Zj1+ERgBxta/Q285O1RF3iNlyAVyOUHwHUs0ejXR6OP/T2ajQbcxWRGpnFM3Wr+eKycKE59uRxgr0pc9tL+T/WmhnUS7YJieJEWNMbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=OaPDzJii; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=T7KUB66ex20KKbW6a9zIjBnH56YYjFLFeSIV7Lf5sII=; b=OaPDzJii2050EtK1qhFtB8+nCi
+	X8I6PNRJgiMH3Ia5j9jJPVVCXT8ETlBAiKH/V47JhXbMmI61aeY6X19BfeQ4YV+cxZHGNzo5jQ59E
+	ynD3GdidrsNiGXoEvD/zs2lOAhMSWrtHb5yeeyK45PGFvMr04hPtt+onaCPXPXSX4QTGzCXBAQpew
+	0K2NpV0XDD9VWn1pnXzqG1g3V0IBVLrZDj6b1giKCan5m4dNQodoiH2MplrWjy97fcZEOmeDgzkJl
+	bBAn/qXRrdutShJN5xFCw+qB8nBMls1P9zu0f63sluAgoQsAjLww2ZSClqy5RCs5gZednLNC0n4IY
+	sOdScCyw==;
+Received: from [61.8.144.177] (helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uD61J-0000vi-Qa; Thu, 08 May 2025 20:30:57 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/1] arm64: dts: rockchip: rk3568: Move PCIe3 MSI to use GIC ITS
+Date: Thu,  8 May 2025 20:30:44 +0200
+Message-ID: <174672902820.1927548.18239697985612657696.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250308093008.568437-2-amadeus@jmu.edu.cn>
+References: <20250308093008.568437-1-amadeus@jmu.edu.cn> <20250308093008.568437-2-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250508173735.173502-1-lorenzo.stoakes@oracle.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 08, 2025 at 06:37:35PM +0100, Lorenzo Stoakes wrote:
-> In furtherance of ongoing efforts to ensure people are aware of who
-> de-facto maintains/has an interest in specific parts of mm, as well trying
-> to avoid get_maintainers.pl listing only Andrew and the mailing list for mm
-> files - establish a reclaim memory management section and add relevant
-> maintainers/reviewers.
-> 
-> This is a key part of memory management so sensibly deserves its own
-> section.
-> 
-> This encompasses both 'classical' reclaim and MGLRU and thus reflects this
-> in the reviewers from both, as well as those who have contributed
-> specifically on the memcg side of things.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Seems fine to me, though I would put Johannes as M (if he is fine with
-it).
+On Sat, 08 Mar 2025 17:30:08 +0800, Chukun Pan wrote:
+> Following commit b956c9de9175 ("arm64: dts: rockchip: rk356x: Move
+> PCIe MSI to use GIC ITS instead of MBI"), change the PCIe3 controller's
+> MSI on rk3568 to use ITS, so that all MSI-X can work properly.
+> 
+> 
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Applied, thanks!
+
+[1/1] arm64: dts: rockchip: rk3568: Move PCIe3 MSI to use GIC ITS
+      commit: fbea35a661ed100cee2f3bab8015fb0155508106
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
