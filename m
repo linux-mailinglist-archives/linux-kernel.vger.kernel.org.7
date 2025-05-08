@@ -1,139 +1,156 @@
-Return-Path: <linux-kernel+bounces-639267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D514AAF53C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF8BAAF548
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86581BC7BE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B81616E2CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757C3226CF3;
-	Thu,  8 May 2025 08:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E00422DF8D;
+	Thu,  8 May 2025 08:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A52oFjrq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dYIkN4t7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5B26F073;
-	Thu,  8 May 2025 08:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5653821ABC8;
+	Thu,  8 May 2025 08:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746692093; cv=none; b=OwJ58Ru+hXZEAH7JO7k0Udc7Q1e47h/qb4Lq4VVSH8hpslBSfq43ssIaeQ4kGiSMkMFU/jXO36ajO1/QRVT2dwsvQu264QoCFtZvHCKWol/aUo3F06ZMPOLl2rUIT3mlkWM/RjtREhh6wHpyIdBgz7dSrThzCWqjtRT54jXHygY=
+	t=1746692155; cv=none; b=r0YWWuCrLscMsxigkf2KHJh8wRhURi0qkPCeP+6TRylAUboupFoHoiYHQgvzJa4UWaHmhz1Y06C2wF/X5g2/9pTr+40ksJjLJmkjlH6tHyVxIZs4eeFZO4NHt8X1jrdgItgByBs1TfaXnzHqi2H29v4/72OwyhtypYR8gLFN3qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746692093; c=relaxed/simple;
-	bh=a90R/RVtpbilNz7s62Jg8u91/OCcf1dJCeMzvHKzX2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r8cucbhY2pj246KOILhTuE+Al1zbXmxYlbdncwSxRdwOhG3zkGfoHmakb2GAHD743jAsp0yFZGDP+lsFpeT+NT4qYqW2Pv74S8LJlf11hiEbxITDNWbjNgncse4uJFWn2mFs1dGIt/5MVcsX7nBz0zVdI7GduXl8/nraT53EJHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A52oFjrq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 486EBC4AF09;
-	Thu,  8 May 2025 08:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746692093;
-	bh=a90R/RVtpbilNz7s62Jg8u91/OCcf1dJCeMzvHKzX2o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A52oFjrqemalMSdOL5Jmf+c40wj1sXuWYLl3QItkyf8Aqq/xG84ltalPNi2KEG/fq
-	 ABli4aqrCKNLjztj/+3aUSi9l+2nt/WM6JzKW4nKCDdxi3YEPTXXrxPhPHVBjH68Ql
-	 Ri2XOSRQxtmhtCmCLya0Hp11BXH8gJ/hZHf3u8a96PiTaJSp4JwsxXIZQkErTJ2E0g
-	 Xy4LgLvC4i/ZOKRMlEdcvIRN5jBO/kNIaNBZ6DOcXfFkf7IOuSYm/K6GeoT/a8BO7T
-	 aEG/E4OMKhoe3/ngc8pHwi5btrsjtQjEqJ8mkiuyn4PouIID1ct9uWjprupBP2SyG5
-	 YvHfgMoFzbtNQ==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-326bb1d3e34so4023311fa.3;
-        Thu, 08 May 2025 01:14:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjLDvCYRQE+ee7mamAmV8GSDBpIRZwyKM69oD/iQj5tO4y9MHz05Ibf7i5FkdosKDB1lJfirJM6Y51qhoT@vger.kernel.org, AJvYcCVAYWfcvPhe+NoSfGkFXwjQvM5vAuPw8ujRRQuJqlwE0k+c0Tf10KklSN0aIHpwx/zci8pgYerKxU0EiEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2o1kmrFzeLycqe0GYInCO5UiY14gSeV0QHsUVWLwie45VC9aH
-	9laEd46kAZpezP9dX9iHLeOyid8kx0UKmWqLt2+8LewufDZunG5dRbgXqsu2yrfkYQc+keOJqao
-	F0k4xvlNdNiaZovxGvJzNvdcS1LM=
-X-Google-Smtp-Source: AGHT+IG5/r3K74rrgmP4jjN2TrL5tduvKzUd/NyUq1PVkJzbIiLe5Exi6qlai9lYrJkj3vGsc13NepVCII6zThmGhHQ=
-X-Received: by 2002:a2e:a9ab:0:b0:31b:4770:4957 with SMTP id
- 38308e7fff4ca-326ad15e61amr23735871fa.3.1746692091963; Thu, 08 May 2025
- 01:14:51 -0700 (PDT)
+	s=arc-20240116; t=1746692155; c=relaxed/simple;
+	bh=/Ip66Tz+23274kIDtequxZdP52nIgtue5he9KEReO/E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MZMVQ8U5+JgifzelbNY7K7ZHbw7g3lSeLDOP9LhQjByc70vToYFVYL7fRNr1oZ5ET3KplVAkc18LSgXN3gLh/OkQ0n2zVEEFaHI97dOuOArAviNJtU9tKw8DOiq0QBUe7LwiipEg9Rt1VFdg0Ot99QG41YWG1Kk1xC7ASikQkPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dYIkN4t7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5484XEF1009418;
+	Thu, 8 May 2025 08:15:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=ARiW1L4tiT5iBYOOQbCx0ZDmWGO3FEV9285
+	jooej9Js=; b=dYIkN4t78AWUQTqDyDoir8+ic1Zcz99PzSJDdu8VmSKah8VjRKK
+	/5xPU89w52dqKD7tj74RBnMyzukw4yRWRofqe1UEeDWRLrlI+ob7pD2kE0at1PyK
+	WKxsULdzkZO11/6F7+V5tqbeMp4T3nErCds6TBixl6vwIDAqwU9O+6Y+lXcE+A75
+	Qya/OlRN4Eevr7XJFa7VZ6HTW0Bn6Pm8Qb7y6MW1Oyig/n0avwjCAZ0uJ2PUw1VR
+	eBsdHCFxXT1VEe74BiC6u4iubu8Q46ruT877R9AnDW0+S7i6PageGwNT70k7DEXJ
+	g5Bk/SFzlc08tWutvm874CUTowldef0XpNA==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnperh5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 08:15:34 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5488FVjD015212;
+	Thu, 8 May 2025 08:15:31 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 46dc7mq5f2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 08:15:31 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5488FV2t015199;
+	Thu, 8 May 2025 08:15:31 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5488FUvP015198
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 08:15:31 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
+	id CBF9540CFD; Thu,  8 May 2025 16:15:28 +0800 (CST)
+From: Wenbin Yao <quic_wenbyao@quicinc.com>
+To: catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, kishon@kernel.org, sfr@canb.auug.org.au,
+        linux-phy@lists.infradead.org
+Cc: krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_mrana@quicinc.com, quic_cang@quicinc.com, quic_qianyu@quicinc.com,
+        quic_wenbyao@quicinc.com
+Subject: [PATCH v3 0/5] arm64: qcom: x1e80100-qcp: Add power supply and sideband signals for PCIe RC
+Date: Thu,  8 May 2025 16:15:09 +0800
+Message-Id: <20250508081514.3227956-1-quic_wenbyao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507074936.486648-1-masahiroy@kernel.org> <9ec50ce0-f60b-4d87-bc44-adaf2a1a97a1@linuxfoundation.org>
- <b1e4e83c0965e10f2fe59826d19eaf131ec7aef9.camel@sipsolutions.net> <CAMuHMdUwE7btR+ebG8-gvPb8GPnxUGPWw3yKR4qM4Uc_mYcHhg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUwE7btR+ebG8-gvPb8GPnxUGPWw3yKR4qM4Uc_mYcHhg@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 8 May 2025 17:14:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT_m+R3Keyys2NpmQWRmZzHNv9FM_ALv=vn_WMzTSWhyw@mail.gmail.com>
-X-Gm-Features: ATxdqUFvuCFG5NyS8UC8wsCetGd3jkgaQucz2-cP5mFw3Psg07oK3WaW20XowMg
-Message-ID: <CAK7LNAT_m+R3Keyys2NpmQWRmZzHNv9FM_ALv=vn_WMzTSWhyw@mail.gmail.com>
-Subject: Re: [PATCH] um: let 'make clean' properly clean underlying SUBARCH as well
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Richard Weinberger <richard@nod.at>, 
-	linux-um@lists.infradead.org, David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDA3MiBTYWx0ZWRfX9Rl2cXH2JA+e
+ gS5hPybH3+FlvOLrpRNHOJiFwppLc9Y+i5+X2nD3jcXQDEyntulxKHq89z1t5nZldbdNuwoZJfD
+ MgY+5wZELbGcakg9zSeZtWKOYCn1pJfSETexwEv1VZ7GmjnpmUXBS1wD7e8Afe/s9rIPL93RXmE
+ hNFMdO03CqKHYi1PL1TcuiQ5gNDEHsSRbjGJM51dcITZ7bjRoYbg966jC2FlNHtWXl8gijEPNUu
+ LvuxRlfcB/zDmYwqj7kulMseHOMZkKPWHaOyzRgHgtSMMBzefPZ17svWK/Y43y29gIInAy1zskq
+ BSAwd6H6hUsLDt+8g0efBs7uEz4urD9O30UlgbLgq2Wc1lhp6RgQAIbkUAmEZYz67KzQMTFZ91P
+ 38+i1IGPxU6O9iwWS3U8bywyIMg0R9qYhqCTLKyaolHJYfGQ3Ai2CbG+B1DblqmbaPDE0rU6
+X-Proofpoint-ORIG-GUID: dxZEV0NnWuBV0HwtqCE43qcJprTz0pQm
+X-Proofpoint-GUID: dxZEV0NnWuBV0HwtqCE43qcJprTz0pQm
+X-Authority-Analysis: v=2.4 cv=Yt4PR5YX c=1 sm=1 tr=0 ts=681c6826 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=gQCXtSsaVPIGO4BefbEA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-08_02,2025-05-07_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxscore=0 adultscore=0 spamscore=0 impostorscore=0
+ phishscore=0 lowpriorityscore=0 mlxlogscore=872 suspectscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505080072
 
-On Thu, May 8, 2025 at 4:38=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Johannes,
->
-> On Thu, 8 May 2025 at 07:29, Johannes Berg <johannes@sipsolutions.net> wr=
-ote:
-> > On Wed, 2025-05-07 at 15:38 -0600, Shuah Khan wrote:
-> > > My workflow:
-> > >
-> > > - Build kernel on x86_64 with CONFIG_AMD_MEM_ENCRYPT enabled
-> > >
-> > > - Check for arch/x86/realmode/rm/pasyms.h
-> > >    ls arch/x86/realmode/rm/pasyms.h
-> > >       arch/x86/realmode/rm/pasyms.h
-> > >
-> > > - make ARCH=3Dum O=3D/linux/build
-> > >
-> > >    This patch cleans the source tree, but doesn't remove
-> > >    arch/x86/realmode/rm/pasyms.h
-> > >
-> > > - ls arch/x86/realmode/rm/pasyms.h
-> > >       arch/x86/realmode/rm/pasyms.h
-> >
-> > Is that even _expected_ to work? If you have x86 built first, I'd almos=
-t
-> > expect you to have to do "make ARCH=3Dx86 mrproper" before building
-> > another ARCH. I don't see how ARCH=3Dum would know how to do a full cle=
-an
-> > up of ARCH=3Dx86, unless this is somehow arch-independent?
-> >
-> > Or maybe that's not an issue with other architectures because UML is
-> > special in that it uses parts of x86?
->
-> Probably.
-> I only use my linux-next source tree for fixing reported build issues on
-> various architectures, and I never use make clean/mrproper.  Works fine.
->
-> > Though I guess the patch here should make it do that, more or less, but
-> > it can't, likely because you're also switching from in-tree build to O=
-=3D
-> > build?
->
-> Yeah, mixing in-tree and out-of-tree builds causes issues.
-> Never build in-tree in a source tree you use with O=3D (except for
-> e.g. "make tags").
->
+The first patch enables the PCI Power Control driver to control the power
+state of PCI slots. The second patch adds the bus topology of PCIe domain 3
+on x1e80100 platform. The third patch adds perst, wake and clkreq sideband
+signals, and describe the regulators powering the rails of the PCI slots in
+the devicetree for PCIe3 controller and PHY device. The fourth patch adds
+qref supply in dts nodes of PCIe PHYs. The fifth patch requests qref supply
+for PCIe PHYs.
 
-I argue this.
+The patchset has been modified based on comments and suggestions.
 
-You can start out-of-tree builds after running 'make mrproper'
-for the architecture you want to build the kernel for.
+Changes in v3:
+- Replace PCI_PWRCTL_SLOT with PCI_PWRCTRL_SLOT in Patch 1/5.
+- Kepp the order of pinctrl-0 before pinctrl-names in Patch 3/5.
+- Add Patch 5/5 to request qref supply for PCIe PHYs.
+- Link to v2: https://lore.kernel.org/all/20250425092955.4099677-1-quic_wenbyao@quicinc.com/
 
-Hence, Kbuild suggests to do so when it determines
-the source tree is not clean enough.
+Changes in v2:
+- Select PCI_PWRCTL_SLOT by ARCH_QCOM in arch/arm64/Kconfig.platforms in
+  Patch 1/4.
+- Add an empty line before pcie3port node in Patch 2/4.
+- Rename regulator-pcie_12v regulator-pcie_3v3_aux and regulator-pcie_3v3
+  in Patch 3/4.
+- Add Patch 4/4 to describe qref supply of PCIe PHYs.
+- Link to v1: https://lore.kernel.org/all/20250320055502.274849-1-quic_wenbyao@quicinc.com/
 
-Unfortunately, "make mrproper ARCH=3Dum" did not clean the tree
-deeply enough.   Hence, this patch.
+Qiang Yu (5):
+  arm64: Kconfig: enable PCI Power Control Slot driver for QCOM
+  arm64: dts: qcom: x1e80100: add bus topology for PCIe domain 3
+  arm64: dts: qcom: x1e80100-qcp: enable pcie3 x8 slot for X1E80100-QCP
+  arm64: dts: qcom: x1e80100-qcp: Add qref supply for PCIe PHYs
+  phy: qcom: qmp-pcie: add x1e80100 qref supplies
+
+ arch/arm64/Kconfig.platforms              |   1 +
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 121 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    |  11 ++
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c  |  37 ++++++-
+ 4 files changed, 165 insertions(+), 5 deletions(-)
 
 
---=20
-Best Regards
-Masahiro Yamada
+base-commit: 0a00723f4c2d0b273edd0737f236f103164a08eb
+-- 
+2.34.1
+
 
