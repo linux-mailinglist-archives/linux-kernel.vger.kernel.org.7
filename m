@@ -1,197 +1,478 @@
-Return-Path: <linux-kernel+bounces-640538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5DEAB063D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:57:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C533AB0641
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF023B88C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 22:57:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A904C52A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF5022DF84;
-	Thu,  8 May 2025 22:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61F922A81D;
+	Thu,  8 May 2025 23:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hoEElJK4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m2iEmm2m"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD26B172BD5
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 22:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739451DD525
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 23:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746745071; cv=none; b=a7okgDGfbmiGxM1jA0X0GAigusLVZUp4PGEAARQRVTl+ewxvxsXoJzDeVh7QYYK4Lus9OB5+XU2nlsMekTIw9lgtNuQFsFeEokLPWEORzwMRYxNiIbaXqfdF4JLmv4tGpBljF8SZ0r7RAhOOYQRFfNvIP43Ap0pQQxubLitkJ/U=
+	t=1746745234; cv=none; b=uHAfwDlZs0vEa91ZUaKZohZgKdHcByiiPgDjjzVKutZACaFCKoXZk3xxZ37ePXfBHjEmpIDLkt9eM3Et1/t8qrNGR9pRFNRQUiAMYZLPo3hO84ubSWiQXtXSkVz4+giIVy8PCeEUhmn9uw2x8EUs4lTB+3Ofi+/nkwbVGDz/kP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746745071; c=relaxed/simple;
-	bh=B2SbnoaVXsgvl3TP0ClbBFtCJLQ4Op6iWjB4E3/WFYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HxJYoa37qOs/5DZKYa6j+tr+a8IiKBvg/e8hSNoA11xBhec/C7OHGZCRJBwt/Iq40Q8ks0gE+auePfg8XTAJHxFn6iqFIlng8UDyjxzzRgV77x4vwDaOapdu3QvhxCLs4riKBuGlOb+8NaCZx+6Baj3JvU5ls7w5Ye+qZ3eiL/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hoEElJK4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548DKc1G016419
-	for <linux-kernel@vger.kernel.org>; Thu, 8 May 2025 22:57:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cg/tISJIMaT0Gm0WnDpcV1xCOuL4/CvFo6caXG5lllY=; b=hoEElJK4411CYouu
-	nmvVX5tBkg1ik//LkkXsWpVxWVi7bZ2h8hLTX6Ak15I+iMfdng2MPI7hbrTKihIM
-	omtWC8PNaGF+EyBcwlEOy+hvj+UQwZr5f+AnQcyivP77m4BpqcjlLDQ0H0cULzrC
-	308WxUxpI0cIKJgOJKVHHrpkCwos0J9KvHsnbccm+7i+iccOGV6+bCB/B+ckp6Hp
-	tSGCrp6HuxZP0fDIUZsi63wASoKilR7Sxk7H/6X7K0ZxFpqJfQoq/4EeZEGK08CA
-	ZaaHjkraZcjwvPxFNbiHy/ZFLS+1NINScjNg3Sjzrjd+FjSoMuQMeSGIKF/OXDR8
-	5be5Vw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp8trnh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 22:57:48 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f5466289bdso2159556d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 15:57:48 -0700 (PDT)
+	s=arc-20240116; t=1746745234; c=relaxed/simple;
+	bh=fMmw7OIovbFo5qKQquhjY8dK2KzaNwruMuVDAEtq/aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUnf2MRbCIASUsGuBFlrLhhwwzJKOZP46eCbVM84KnNeKIvNRvmKT7npFI61wTQvI0bR/xJjxSMH+cfzG69TkYPyyV+YWubKnlhKkEJfX9lF3cYt1JThni2axPBe4zYb/GE0eueWSjFZmemyC4VjFwNvJA8b0u11e9q5dywoyoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m2iEmm2m; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso1597099276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 16:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746745230; x=1747350030; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+bapZu+7+8ii9uaxEr00bkaFLq2Btk4QlNw3sk4w/X8=;
+        b=m2iEmm2mJ6EuWnAurBQbTlNnlP3VGhL0Qz80c9T3bOrVOPhfeX+Uq9GWlU+Bc7N0BF
+         20ODGOH5Sux/o0RjnvtO7f7ASA+WzwLqQWY+e1QXxZflq0o2M7Ub1AR9z7jvSPCKEc59
+         JkwnwnOhAkgk5XUaYBbiX4y8mCahEmU2nWYZhyCDyUMrQA1DZzn3W+DoD3e58+09qJ5G
+         qXybVtb8ZwfebjqfNUJX3LB9mrhgHIlPNKigBVx9O/Kl3BkXVZNiyFehLbupBGckIfeq
+         Y81F2U4vId6hd9OUBNComYcFCLv1uemzTsR/0KfCn5kk8fmi54yHe6u8dEtBixdOWJYX
+         E0mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746745068; x=1747349868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cg/tISJIMaT0Gm0WnDpcV1xCOuL4/CvFo6caXG5lllY=;
-        b=DeVruCG5rmjHCV3aie2njCr3JyE81QMQ2aS5ZABlu3OKk4KmJ4Mf8S/Cadz3ENcFYk
-         Gi6tgKVgLQgnf8tcX/9Pj6JOrBuZBkbEK7CYvgym2QIdBpNdaL6Bb7MvbETpTsWOG0zT
-         5/Ni9KcWRESUtjfBQaqi3Vo5iEbHcYimJAOwdlh3RCPyxUGfqz77HC2GNC9MvieTQNX6
-         /SnOd2JkEuSNO/ML9L6VgMLcOz4fln0LxXaDMielHtliTYHkaU7KZuhEOmzCPluR4kSl
-         y1/QW1mKiV81vkYsVU3MoFJukuHd6AmuXo6jNJV8wesh/SC4ZdRvKMo0FA1jQtyhqhI3
-         5YTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgh7WA8rDvXuAeAgxDS+0+hN4NDCEBokrum9vyz6U8T5dpsbLDXUr0NBts4VU5LxQV2zwPXqOCwhZXVh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzZ268RgpFuak1xIf9RD/cGi8HAE/f5RsVZap+ipy0JP3sDeH1
-	v1no60CbIlU0IkE5SvUowRYwSNHKZhrUuRJmfoE9XO/it0sJuAcurj2VKLjROz0U37T1ljiw48v
-	R7yrQO6ifsc9t9z8OxV5cPOFQQ+d7S7zpoOUhke4RMN1MJvJpgRz6KIcYJVRVssQ=
-X-Gm-Gg: ASbGncvao4TrHW+jdXCKJggMyiNkPnLwZIp4X7AAXFh9xF2EV2LbEcUldqCzC/G9Rbq
-	v9uourqaRDMPy7wfp6YFO6OcJBpTk7W6WaT/z1d5ez32YV2ozrSfWHQ/4MQTtAdyP9FvS15mGhJ
-	7gvV6EN3cIp8foJ3plrf2DZrmQ4hbF46gdOusJgOm/saQhGKwqO4uo+mblHhgKpszDVmOG4ar07
-	folXOwxybI74NB3txTQXcgvg5jOpvcEM6SeR3CYF9jbRqzZ8VOl5towW8iSF3RK7WZnk79Hfw9Y
-	M74ZxBZ82e4qCoYMPFa3TrkbQiSio4QQz5vPeCRGs31mtDa9H8aKtggImfXg+QGdeS8=
-X-Received: by 2002:a05:620a:2452:b0:7c5:9ab7:3012 with SMTP id af79cd13be357-7cd0114145fmr84450885a.11.1746745067685;
-        Thu, 08 May 2025 15:57:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2s+oB6HkxxT4d0lM7bmLSmPrIM683EN2m3B/pSVjMRkJKV/JUPOChZeDLpjtb0iG/hd4+vQ==
-X-Received: by 2002:a05:620a:2452:b0:7c5:9ab7:3012 with SMTP id af79cd13be357-7cd0114145fmr84449185a.11.1746745067288;
-        Thu, 08 May 2025 15:57:47 -0700 (PDT)
-Received: from [192.168.65.105] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad219746072sm52582966b.112.2025.05.08.15.57.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 15:57:46 -0700 (PDT)
-Message-ID: <3c0fea8d-0715-40e6-bed9-e0961bf034e0@oss.qualcomm.com>
-Date: Fri, 9 May 2025 00:57:44 +0200
+        d=1e100.net; s=20230601; t=1746745230; x=1747350030;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+bapZu+7+8ii9uaxEr00bkaFLq2Btk4QlNw3sk4w/X8=;
+        b=Im6bagUWZdT5cnPHm60/E/vieN+d9YSP0wDOs4/JAHG6xgaOrs2UPbjhqgKNmBP8PA
+         l4fNLXdlYuN/ZpyDGXfPgHJ1w8DN723kffwR+447QIVV0wAXNdzP6pID+VggzQW1EZyJ
+         OwD+PcqXmuerRkwZyB/P3CIUGcOl0JNjoE+AZ0qUZCKEtuyhrz9/iTKvhGY6ixdCJojV
+         BF3Q1HW+ykeUHhqXSKmP78hmYqBUb9gUGfNHY07Y7dfAobELq0vWszz43Hk9eeBEv0RU
+         l9Y536c3cm67W/ILurql/oxMO2kyLYR43xHA2c867QeHa3LlmYqPMLI40DyccOhZJvkc
+         +E9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWGW9OXdUtY5+lh7IPZOG7YWnIHopVIGqjZyavb+epgZCKsgySZlbNJ06KABlFGI300bC9m/ynN6xpXo1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ2317ci2EhIw2z6Q+RSYns1NXOMrP95vOmjDGQJ47H+H52Gdn
+	g5j4be3+Cfbh5zhjVH3t9iyA3uBwOiIccdg7YxrwgPv/fLvS0k0ttzt2PDDSbK7yC3CLV6OyeFR
+	G2NUcEnjzNf9qi2zvV7DN4dxYwUT9GnQCBVDpwg==
+X-Gm-Gg: ASbGncvUGO93a9nXIkE8eXYPPqj39hDWmMdynIEgFbQSB80dOKVbknjO03ZtXyi1OyC
+	M6VsGdfC87VW+cl+HR5YAVVjCBSgBi4UJ2N09ShFlkXadCa9Kxvy6NDJYy3eYvwfHpx8U67P8MZ
+	tHCreVHYj4qGyRKVqzmsvzhSg=
+X-Google-Smtp-Source: AGHT+IFBK34kEw6k9Gbs7tpztCZHQCppLlMyx6P7FSEVBCzMKhZuqQC6LR0YjDuCIV/mZwKmjxcJETe3mXUTbTSis8M=
+X-Received: by 2002:a05:6902:490e:b0:e75:bea4:5ea4 with SMTP id
+ 3f1490d57ef6-e78fdda3cd1mr1712002276.46.1746745230131; Thu, 08 May 2025
+ 16:00:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8750: Add adsp fastrpc support
-To: Alexey Klimov <alexey.klimov@linaro.org>, andersson@kernel.org,
-        konradybcio@kernel.org, linux-arm-msm@vger.kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        srini@kernel.org, quic_ekangupt@quicinc.com,
-        krzysztof.kozlowski@linaro.org
-References: <20250502011539.739937-1-alexey.klimov@linaro.org>
- <10f69da3-6f94-4249-a8f3-459dc48fa5e1@oss.qualcomm.com>
- <D9R4NCKH46WP.14C8F7W4M58ZQ@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <D9R4NCKH46WP.14C8F7W4M58ZQ@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: rJqSaeQafhEYDTFst298rImuBKu40ydN
-X-Proofpoint-ORIG-GUID: rJqSaeQafhEYDTFst298rImuBKu40ydN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDIwOSBTYWx0ZWRfX6EWLnl15wSxO
- 8dUKtJSqTQvN7Z/6TcWzH8ylKSzfFsTQRvKXa5sD/96dITGBr4JbDMQMfmsX6oB2UYLvDFNAQ8E
- cNz/DCw4XwIdvHO3toLWsqSGvirh+A4UW2bE0MJzOR3MAVQQDRZr2wxjqxGxus2fl2beRtM55Lc
- fd7+jP2VumUSmyMt8iqx44tbdOrg94cwZIegTm+YojaNLoFnXB5NueGXhghGh3e54hQ4S3/UAAL
- J1feNoO/yoKW17LnmMJKAzeGA4YEKzxrls4gi7ZsN2DNF0dxHq21zoXJ/3i6i5P386SiUnVwxjx
- L5govZoVx2saRSZc2FIv47nFWuNmSZyDc5wB8J+0u0iZtXyww0jr68MP/NISeNUME77nvwMnGq4
- jExuQ4bsi34TaawqLiYeqJuVhu6ytx0SQIsyhbiJe2jOMuaI21+a4I3iWzSyXUc/g8XD3bcI
-X-Authority-Analysis: v=2.4 cv=e/4GSbp/ c=1 sm=1 tr=0 ts=681d36ec cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=zwkf0SmHCyEPBq45FFAA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-08_07,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 adultscore=0 phishscore=0 clxscore=1015
- mlxlogscore=981 spamscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505080209
+References: <20250506095118.2239459-1-o.rempel@pengutronix.de> <20250506095118.2239459-2-o.rempel@pengutronix.de>
+In-Reply-To: <20250506095118.2239459-2-o.rempel@pengutronix.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 9 May 2025 00:59:54 +0200
+X-Gm-Features: ATxdqUHVSpTTECsTQ-EyBxjlXRV1bMtNFM8zH5maGVUUJfC8dy1QtleF_mwdIhY
+Message-ID: <CAPDyKFqa3Fh4UB1LuSk=i9ri_odZHyv289jQT98uCoW1jZT+bA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] mmc: core: Handle undervoltage events and register
+ regulator notifiers
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>, 
+	Christian Loehle <christian.loehle@arm.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Avri Altman <Avri.Altman@sandisk.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/9/25 12:20 AM, Alexey Klimov wrote:
-> On Fri May 2, 2025 at 10:38 AM BST, Konrad Dybcio wrote:
->> On 5/2/25 3:15 AM, Alexey Klimov wrote:
->>> While at this, also add required memory region for fastrpc.
->>>
->>> Tested on sm8750-mtp device with adsprpdcd.
->>>
->>> Cc: Ekansh Gupta <quic_ekangupt@quicinc.com>
->>> Cc: Srinivas Kandagatla <srini@kernel.org>
->>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 70 ++++++++++++++++++++++++++++
->>>  1 file changed, 70 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> index 149d2ed17641..48ee66125a89 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> @@ -7,6 +7,7 @@
->>>  #include <dt-bindings/clock/qcom,sm8750-gcc.h>
->>>  #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
->>>  #include <dt-bindings/dma/qcom-gpi.h>
->>> +#include <dt-bindings/firmware/qcom,scm.h>
->>>  #include <dt-bindings/interconnect/qcom,icc.h>
->>>  #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
->>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> @@ -523,6 +524,14 @@ llcc_lpi_mem: llcc-lpi@ff800000 {
->>>  			reg = <0x0 0xff800000 0x0 0x800000>;
->>>  			no-map;
->>>  		};
->>> +
->>> +		adsp_rpc_remote_heap_mem: adsp-rpc-remote-heap {
->>> +			compatible = "shared-dma-pool";
->>> +			alloc-ranges = <0x0 0x00000000 0x0 0xffffffff>;
->>> +			alignment = <0x0 0x400000>;
->>> +			size = <0x0 0xc00000>;
->>> +			reusable;
->>> +		};
->>>  	};
->>>  
->>>  	smp2p-adsp {
->>> @@ -2237,6 +2246,67 @@ q6prmcc: clock-controller {
->>>  						};
->>>  					};
->>>  				};
->>> +
->>> +				fastrpc {
->>> +					compatible = "qcom,fastrpc";
->>> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
->>> +					label = "adsp";
->>> +					memory-region = <&adsp_rpc_remote_heap_mem>;
->>
->> IIUC the driver only considers this on the sensor DSP
-> 
-> Memory region is required for audio protection domain + adsprpdcd as far as I know.
+On Tue, 6 May 2025 at 11:51, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>
+> Extend the MMC core to handle undervoltage events by implementing
+> infrastructure to notify the MMC bus about voltage drops.
+>
+> Background & Decision at LPC24:
+>
+> This solution was proposed and refined during LPC24 in the talk
+> "Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
+> Embedded Systems," which aimed to address how Linux should handle power
+> fluctuations in embedded devices to prevent data corruption or storage
+> damage.
+>
+> At the time, multiple possible solutions were considered:
+> 1. Triggering a system-wide suspend or shutdown: when undervoltage is
+>    detected, with device-specific prioritization to ensure critical
+>    components shut down first.
+>    - This approach was disliked by Greg Kroah-Hartman, as it introduced
+>      complexity and was not suitable for all use cases.
+>
+> 2. Notifying relevant devices through the regulator framework: to allow
+>    graceful per-device handling.
+>    - This approach was agreed upon as the most acceptable by participants
+>      in the discussion, including Greg Kroah-Hartman, Mark Brown,
+>      and Rafael J. Wysocki.
+>    - This patch implements that decision by integrating undervoltage
+>      handling into the MMC subsystem.
+>
 
-next-20250508
+It is certainly nice to get all this information when reviewing, but
+for a commit message, I think it may be a bit too much.
 
-rmem_node = of_parse_phandle(rdev->of_node, "memory-region", 0);
-if (domain_id == SDSP_DOMAIN_ID && rmem_node) {
-	// ...
-}
+Would you mind trying to focus on describing what patch does in more
+detail instead?
 
-maybe some driver changes are still pending?
+I would appreciate it if the above information could be put as general
+information instead, along with the version information below "---".
 
-Konrad
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+The above said, from a top level point of view I think the approach
+makes perfect sense. Thanks for working on this!
+
+> ---
+> changes v3:
+> - filter supported cards at early stage
+> - add locking in mmc_handle_regulator_event()
+> - claim/release host in mmc_handle_undervoltage()
+> ---
+>  drivers/mmc/core/core.c      |  30 +++++++++
+>  drivers/mmc/core/core.h      |   2 +
+>  drivers/mmc/core/regulator.c | 124 +++++++++++++++++++++++++++++++++++
+>  include/linux/mmc/host.h     |   8 +++
+>  4 files changed, 164 insertions(+)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index a0e2dce70434..c502d83417cc 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -1399,6 +1399,36 @@ void mmc_power_cycle(struct mmc_host *host, u32 ocr)
+>         mmc_power_up(host, ocr);
+>  }
+>
+> +/**
+> + * mmc_handle_undervoltage - Handle an undervoltage event on the MMC bus
+> + * @host: The MMC host that detected the undervoltage condition
+> + *
+> + * This function is called when an undervoltage event is detected on one of
+> + * the MMC regulators.
+> + *
+> + * Returns: 0 on success or a negative error code on failure.
+> + */
+> +int mmc_handle_undervoltage(struct mmc_host *host)
+> +{
+> +       int ret;
+> +
+> +       mmc_claim_host(host);
+
+Rather than claiming the host we need to make sure we don't race with
+card/host removal, which are those paths that may clear the
+host->bus_ops.
+
+In other words, I think we should call __mmc_stop_host() here, to
+avoid a card being removed.
+
+Moreover we need to extend mmc_stop_host() to unregister the regulator
+notifier to make sure host removal doesn't race with a call to
+mmc_handle_undervoltage().
+
+Or potentially we could use mmc_add|remove_card() for where the
+registering|unregistering the regulator notifier, let me think about
+it some more, it's getting late over here.
+
+> +
+> +       if (!host->bus_ops->handle_undervoltage) {
+> +               mmc_release_host(host);
+> +               return 0;
+> +       }
+> +
+> +       dev_warn(mmc_dev(host), "%s: Undervoltage detected, initiating emergency stop\n",
+> +                mmc_hostname(host));
+> +
+> +       ret = host->bus_ops->handle_undervoltage(host);
+> +
+> +       mmc_release_host(host);
+> +
+> +       return ret;
+> +}
+> +
+>  /*
+>   * Assign a mmc bus handler to a host. Only one bus handler may control a
+>   * host at any given time.
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index 622085cd766f..31e5918f6e95 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -31,6 +31,7 @@ struct mmc_bus_ops {
+>         int (*sw_reset)(struct mmc_host *);
+>         bool (*cache_enabled)(struct mmc_host *);
+>         int (*flush_cache)(struct mmc_host *);
+> +       int (*handle_undervoltage)(struct mmc_host *host);
+>  };
+>
+>  void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
+> @@ -59,6 +60,7 @@ void mmc_power_off(struct mmc_host *host);
+>  void mmc_power_cycle(struct mmc_host *host, u32 ocr);
+>  void mmc_set_initial_state(struct mmc_host *host);
+>  u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
+> +int mmc_handle_undervoltage(struct mmc_host *host);
+>
+>  static inline void mmc_delay(unsigned int ms)
+>  {
+> diff --git a/drivers/mmc/core/regulator.c b/drivers/mmc/core/regulator.c
+> index 3dae2e9b7978..1074567e242f 100644
+> --- a/drivers/mmc/core/regulator.c
+> +++ b/drivers/mmc/core/regulator.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/err.h>
+>  #include <linux/log2.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/workqueue.h>
+>
+>  #include <linux/mmc/host.h>
+>
+> @@ -262,6 +263,107 @@ static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
+>
+>  #endif /* CONFIG_REGULATOR */
+>
+> +static void mmc_undervoltage_workfn(struct work_struct *work)
+
+So devm_regulator_register_notifier() doesn't provide us with an
+asynchronous notification-interface. In this way, it becomes the
+notified consumer's responsibility to know what fits best on a case by
+case basis, possibly delaying others. I guess this has been discussed
+earlier?
+
+Don't get me wrong, I think the async/workqueue fits well with MMC.
+Yet, it seems like it would be nice to have an async interface too.
+
+> +{
+> +       struct mmc_supply *supply;
+> +       struct mmc_host *mmc;
+> +
+> +       supply = container_of(work, struct mmc_supply, uv_work);
+> +       mmc = container_of(supply, struct mmc_host, supply);
+> +
+> +       mmc_handle_undervoltage(mmc);
+> +}
+> +
+> +static int mmc_handle_regulator_event(struct mmc_host *mmc,
+> +                                     const char *regulator_name,
+> +                                     unsigned long event)
+> +{
+> +       unsigned long flags;
+> +
+> +       switch (event) {
+> +       case REGULATOR_EVENT_UNDER_VOLTAGE:
+> +               /* Currently we support only MMC cards */
+> +               spin_lock_irqsave(&mmc->lock, flags);
+> +               if (mmc->undervoltage || !mmc->card ||
+> +                   !mmc_card_mmc(mmc->card)) {
+> +                       spin_unlock_irqrestore(&mmc->lock, flags);
+> +                       return NOTIFY_OK;
+> +               }
+> +
+> +               mmc->undervoltage = true;
+> +               spin_unlock_irqrestore(&mmc->lock, flags);
+
+Rather than having to do the above checks, how about instead
+registering the notifier only in cases when it makes sense? For eMMC
+for example. In this way we would need to do anything here, but only
+queue the work.
+
+Another option is to defer to let mmc_handle_undervoltage() bail out,
+if the bus_ops->handle_undervoltage() has not been assigned for the
+card type. That should be good enough too, I think. Right?
+
+> +
+> +               queue_work(system_highpri_wq, &mmc->supply.uv_work);
+> +               break;
+> +       default:
+> +               return NOTIFY_DONE;
+> +       }
+> +
+> +       return NOTIFY_OK;
+> +}
+> +
+> +static int mmc_vmmc_notifier_callback(struct notifier_block *nb,
+> +                                     unsigned long event, void *data)
+> +{
+> +       struct mmc_supply *supply;
+> +       struct mmc_host *mmc;
+> +
+> +       supply = container_of(nb, struct mmc_supply, vmmc_nb);
+> +       mmc = container_of(supply, struct mmc_host, supply);
+> +
+> +       return mmc_handle_regulator_event(mmc, "vmmc", event);
+> +}
+> +
+> +static int mmc_vqmmc_notifier_callback(struct notifier_block *nb,
+> +                                      unsigned long event, void *data)
+> +{
+> +       struct mmc_supply *supply;
+> +       struct mmc_host *mmc;
+> +
+> +       supply = container_of(nb, struct mmc_supply, vqmmc_nb);
+> +       mmc = container_of(supply, struct mmc_host, supply);
+> +
+> +       return mmc_handle_regulator_event(mmc, "vqmmc", event);
+> +}
+> +
+> +static int mmc_vqmmc2_notifier_callback(struct notifier_block *nb,
+> +                                       unsigned long event, void *data)
+> +{
+> +       struct mmc_supply *supply;
+> +       struct mmc_host *mmc;
+> +
+> +       supply = container_of(nb, struct mmc_supply, vqmmc2_nb);
+> +       mmc = container_of(supply, struct mmc_host, supply);
+> +
+> +       return mmc_handle_regulator_event(mmc, "vqmmc2", event);
+> +}
+
+Looks a bit too much to have one callback per regulator type. Please
+convert into using one function.
+
+> +
+> +static void
+> +mmc_register_regulator_notifier(struct mmc_host *mmc,
+> +                               struct regulator *regulator,
+> +                               struct notifier_block *nb,
+> +                               int (*callback)(struct notifier_block *,
+> +                                               unsigned long, void *),
+> +                               const char *name)
+> +{
+> +       struct device *dev = mmc_dev(mmc);
+> +       int ret;
+> +
+> +       nb->notifier_call = callback;
+> +       ret = devm_regulator_register_notifier(regulator, nb);
+> +       if (ret)
+> +               dev_warn(dev, "Failed to register %s notifier: %pe\n", name,
+> +                        ERR_PTR(ret));
+> +}
+> +
+> +static void mmc_undervoltage_work_cleanup(void *data)
+> +{
+> +       struct mmc_supply *supply = data;
+> +
+> +       /* Ensure the work is canceled or flushed here */
+> +       cancel_work_sync(&supply->uv_work);
+> +}
+> +
+>  /**
+>   * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
+>   * @mmc: the host to regulate
+> @@ -281,6 +383,13 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
+>         mmc->supply.vqmmc = devm_regulator_get_optional(dev, "vqmmc");
+>         mmc->supply.vqmmc2 = devm_regulator_get_optional(dev, "vqmmc2");
+>
+> +       INIT_WORK(&mmc->supply.uv_work, mmc_undervoltage_workfn);
+
+Probably better to add this in mmc_alloc_host().
+
+> +
+> +       ret = devm_add_action_or_reset(dev, mmc_undervoltage_work_cleanup,
+> +                                      &mmc->supply);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "Failed to add cleanup action\n");
+> +
+>         if (IS_ERR(mmc->supply.vmmc)) {
+>                 if (PTR_ERR(mmc->supply.vmmc) == -EPROBE_DEFER)
+>                         return dev_err_probe(dev, -EPROBE_DEFER,
+> @@ -293,6 +402,11 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
+>                         mmc->ocr_avail = ret;
+>                 else
+>                         dev_warn(dev, "Failed getting OCR mask: %d\n", ret);
+> +
+> +               mmc_register_regulator_notifier(mmc, mmc->supply.vmmc,
+> +                                               &mmc->supply.vmmc_nb,
+> +                                               mmc_vmmc_notifier_callback,
+> +                                               "vmmc");
+
+As I indicated earlier, I think we should register this far later
+during card-init. Somewhere *after* we have assigned the
+host->bus_ops. So in mmc_attach_mmc() or possibly in mmc_add_card() -
+if we want to make it more generic for SD/SDIO too.
+
+Also note that SD cards may support a graceful power-off via
+sd_poweroff_notify().
+
+>         }
+>
+>         if (IS_ERR(mmc->supply.vqmmc)) {
+> @@ -301,12 +415,22 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
+>                                              "vqmmc regulator not available\n");
+>
+>                 dev_dbg(dev, "No vqmmc regulator found\n");
+> +       } else {
+> +               mmc_register_regulator_notifier(mmc, mmc->supply.vqmmc,
+> +                                               &mmc->supply.vqmmc_nb,
+> +                                               mmc_vqmmc_notifier_callback,
+> +                                               "vqmmc");
+
+vqmmc is for signal (I/O) voltage for eMMC and SD/SDIO. Do we need
+really a notifier for this?
+
+>         }
+>
+>         if (IS_ERR(mmc->supply.vqmmc2)) {
+>                 if (PTR_ERR(mmc->supply.vqmmc2) == -EPROBE_DEFER)
+>                         return -EPROBE_DEFER;
+>                 dev_dbg(dev, "No vqmmc2 regulator found\n");
+> +       } else {
+> +               mmc_register_regulator_notifier(mmc, mmc->supply.vqmmc2,
+> +                                               &mmc->supply.vqmmc2_nb,
+> +                                               mmc_vqmmc2_notifier_callback,
+> +                                               "vqmmc2");
+>         }
+
+vqmmc2 is at this point only used for SD UHS-II cards and there are no
+proper power-management in regards to graceful power-down support
+implement for this yet.
+
+I suggest we ignore vqmmc2 for now in regards to the notifiers.
+
+>
+>         return 0;
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 68f09a955a90..4e147ad82804 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/device.h>
+>  #include <linux/fault-inject.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/workqueue.h>
+>
+>  #include <linux/mmc/core.h>
+>  #include <linux/mmc/card.h>
+> @@ -342,6 +343,12 @@ struct mmc_supply {
+>         struct regulator *vmmc;         /* Card power supply */
+>         struct regulator *vqmmc;        /* Optional Vccq supply */
+>         struct regulator *vqmmc2;       /* Optional supply for phy */
+> +
+> +       struct notifier_block vmmc_nb;          /* Notifier for vmmc */
+> +       struct notifier_block vqmmc_nb;         /* Notifier for vqmmc */
+> +       struct notifier_block vqmmc2_nb;        /* Notifier for vqmmc2 */
+> +
+> +       struct work_struct uv_work;             /* Undervoltage work */
+>  };
+>
+>  struct mmc_ctx {
+> @@ -493,6 +500,7 @@ struct mmc_host {
+>         unsigned int            retune_crc_disable:1; /* don't trigger retune upon crc */
+>         unsigned int            can_dma_map_merge:1; /* merging can be used */
+>         unsigned int            vqmmc_enabled:1; /* vqmmc regulator is enabled */
+> +       unsigned int            undervoltage:1;  /* Undervoltage state */
+>
+>         int                     rescan_disable; /* disable card detection */
+>         int                     rescan_entered; /* used with nonremovable devices */
+> --
+> 2.39.5
+>
+
+Kind regards
+Uffe
 
