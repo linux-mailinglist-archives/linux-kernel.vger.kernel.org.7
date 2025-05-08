@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-639036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A534AAF1FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:09:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1F5AAF201
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E57E1BC6943
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F4C4E1885
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F958204090;
-	Thu,  8 May 2025 04:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C2420D4E3;
+	Thu,  8 May 2025 04:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="efspxjNn"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHBl9B5h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9BA20299E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 04:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE381DF99C;
+	Thu,  8 May 2025 04:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746677386; cv=none; b=qutu9hfZbT89UejLhQaAL4bsDsaW61iam6G8hJZK1urNzHZ/EymHlIKnIzd0w4pCAMvxXcPcnTpM5DLiEjtez25ERic2vshp32m7z4fTEw+y6y1rFrqhX8VnXPHYTqLL/6adBO1sivdg/8U33sS/Z2kWV+MLfSQIFBXBxnItE9g=
+	t=1746677444; cv=none; b=GmyMCT1F+i0Bp10NyVC3ulFpcFpp+LehVu/vkFnTMbvN6rrVKrqB/xVLKO+PMdQoWarFbCigwI3f5VY5pQJkZJJBnuNLWCr3kXQSu+azGiz4YUpRmiA6hZQohDJ/UqpofJWDqwWy7ushOozFUkjOpSPWjXlk6uWGlOHpKg/4hvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746677386; c=relaxed/simple;
-	bh=x28gEEIvJkfbmw1RZ/L4ZvpuQyWRWSv/riFIO9MGc8g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJFriTaZZP5KcqUTGhNDkSSg6C3cM+Mo4GYCPwEHOCLqrshQU8pRNGH5xItGGjlYC50/9ygxk9KEmF2eVEZ5RT89ljHzzj7L+pfvUK8s5X4Pwy8oy7W3cG4sUOGEM+RhzlkRvHZEuMxHlR5lFN2KFafIYpFC8spLQj7CjAzomus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=efspxjNn; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1746677376; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=UGP4SdAGpL+u7FxUuxhPuYPqxiJA4339HAssaexHvLE=;
-	b=efspxjNncRJRCKaKU07ITa+HMnJcF6BL22oOCWG4IoD1TZTd8zuwGH9Kt8y+Zf7u0nINn5/yyh4ReOH2OChzoPiZaRSrQdHDgtiGWLFu/+K0XxBIKGgOvmUlCMEqp347+5r4nLWHRfNGwaSioma6FYOiFkz0+NxI/EKNBgwQDyo=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WZzDCrr_1746677374 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 08 May 2025 12:09:35 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com
-Cc: 21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1746677444; c=relaxed/simple;
+	bh=4t0VL9wIhyMoUDpMaY3vKPF5EPbXzkRT87RGiJt5LO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRks5APvUvnqiWZhzX2nxYVuQ8FqMK1Eg/8sgLofZstqUgb1UM07LDROQgq+XOPD7GxgErwFSf8duXM080ncjogWEnvcLGCqsIjQAYtfO1BU0sUW/g8NmoDS8zEXOq+RGLincpAKdXm9+C1uMm6KuZH+QH1MioHct5QgngngSPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHBl9B5h; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746677443; x=1778213443;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4t0VL9wIhyMoUDpMaY3vKPF5EPbXzkRT87RGiJt5LO0=;
+  b=QHBl9B5hIdMZc/qBSYC1o1HcVgNDpOTmkMe7uarHsE4ArLvRdBNhxwm9
+   ImrtEDHeziyA9NFxf83SAtyZUs0Xb8ZlcR0d3QYRDgug9TkNaIdLdMgmr
+   eT2qsu7XeG7hMb1mA0jA30343nC9+qeD/8i99ULzt4qZBgN24WJ+wKMFe
+   VI8+HUMSzEBH+9aKrqaD8G0JENPLuglv5/iz76SZQNXWUVkzk116X1G6N
+   D6qOPi4kuMzm4VIonvA5UugJkj+Yf9Q/EccdzwhoCsJ9P/eeZfygvzZ/t
+   EWhU0xFDCUBbOScQj2Lh0us2vcJ2Ktgug+1R+/+xpOb0HGQyQ6mXJh25q
+   w==;
+X-CSE-ConnectionGUID: rMC5IcL7Qzu0VIavATSPiw==
+X-CSE-MsgGUID: wlig+MXXQRKpsTzreOov0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48348656"
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="48348656"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 21:10:42 -0700
+X-CSE-ConnectionGUID: ag5YoI4LQxWU0p7NVqgzzw==
+X-CSE-MsgGUID: X/nnoFYxTgiCfx3a/XUv7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="137089745"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 07 May 2025 21:10:37 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCsag-0009xr-1I;
+	Thu, 08 May 2025 04:10:34 +0000
+Date: Thu, 8 May 2025 12:09:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, heylenay@4d2.org,
+	inochiama@outlook.com, guodong@riscstar.com,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm: mincore: use pte_batch_bint() to batch process large folios
-Date: Thu,  8 May 2025 12:09:27 +0800
-Message-ID: <e89f3af69104c18e45362c6c48058edd2bddf501.1746677237.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+Subject: Re: [PATCH v6 3/6] clk: spacemit: set up reset auxiliary devices
+Message-ID: <202505081113.CwKtDYbs-lkp@intel.com>
+References: <20250506210638.2800228-4-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506210638.2800228-4-elder@riscstar.com>
 
-When I tested the mincore() syscall, I observed that it takes longer with
-64K mTHP enabled on my Arm64 server. The reason is the mincore_pte_range()
-still checks each PTE individually, even when the PTEs are contiguous,
-which is not efficient.
+Hi Alex,
 
-Thus we can use pte_batch_hint() to get the batch number of the present
-contiguous PTEs, which can improve the performance. I tested the mincore()
-syscall with 1G anonymous memory populated with 64K mTHP, and observed an
-obvious performance improvement:
+kernel test robot noticed the following build errors:
 
-w/o patch		w/ patch		changes
-6022us			549us			+91%
+[auto build test ERROR on cb9c3aeae509b36afbdf46942a7a0a0dfc856ce7]
 
-Moreover, I also tested mincore() with disabling mTHP/THP, and did not
-see any obvious regression for base pages.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Elder/dt-bindings-soc-spacemit-define-spacemit-k1-ccu-resets/20250507-051019
+base:   cb9c3aeae509b36afbdf46942a7a0a0dfc856ce7
+patch link:    https://lore.kernel.org/r/20250506210638.2800228-4-elder%40riscstar.com
+patch subject: [PATCH v6 3/6] clk: spacemit: set up reset auxiliary devices
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250508/202505081113.CwKtDYbs-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505081113.CwKtDYbs-lkp@intel.com/reproduce)
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
-Changes from v1:
- - Change to use pte_batch_hint() to get the batch number, per Ryan.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505081113.CwKtDYbs-lkp@intel.com/
 
-Note: I observed the min_t() can introduce a slight performance regression
-for base pages, so I change to add a batch size check for base pages,
-which can resolve the performance regression issue.
----
- mm/mincore.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index 832f29f46767..2e6a9123305e 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -21,6 +21,7 @@
- 
- #include <linux/uaccess.h>
- #include "swap.h"
-+#include "internal.h"
- 
- static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
- 			unsigned long end, struct mm_walk *walk)
-@@ -105,6 +106,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	pte_t *ptep;
- 	unsigned char *vec = walk->private;
- 	int nr = (end - addr) >> PAGE_SHIFT;
-+	int step, i;
- 
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
-@@ -118,16 +120,23 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 		walk->action = ACTION_AGAIN;
- 		return 0;
- 	}
--	for (; addr != end; ptep++, addr += PAGE_SIZE) {
-+	for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
- 		pte_t pte = ptep_get(ptep);
- 
-+		step = 1;
- 		/* We need to do cache lookup too for pte markers */
- 		if (pte_none_mostly(pte))
- 			__mincore_unmapped_range(addr, addr + PAGE_SIZE,
- 						 vma, vec);
--		else if (pte_present(pte))
--			*vec = 1;
--		else { /* pte is a swap entry */
-+		else if (pte_present(pte)) {
-+			unsigned int batch = pte_batch_hint(ptep, pte);
-+
-+			if (batch > 1)
-+				step = min_t(unsigned int, batch, nr);
-+
-+			for (i = 0; i < step; i++)
-+				vec[i] = 1;
-+		} else { /* pte is a swap entry */
- 			swp_entry_t entry = pte_to_swp_entry(pte);
- 
- 			if (non_swap_entry(entry)) {
-@@ -146,7 +155,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- #endif
- 			}
- 		}
--		vec++;
-+		vec += step;
- 	}
- 	pte_unmap_unlock(ptep - 1, ptl);
- out:
+>> drivers/clk/spacemit/ccu-k1.c:998:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     998 |         kfree(to_spacemit_ccu_adev(adev));
+         |         ^
+   1 error generated.
+
+
+vim +/kfree +998 drivers/clk/spacemit/ccu-k1.c
+
+   993	
+   994	static void spacemit_cadev_release(struct device *dev)
+   995	{
+   996		struct auxiliary_device *adev = to_auxiliary_dev(dev);
+   997	
+ > 998		kfree(to_spacemit_ccu_adev(adev));
+   999	}
+  1000	
+
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
