@@ -1,119 +1,174 @@
-Return-Path: <linux-kernel+bounces-639306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFACAAF5C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:34:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD10AAF5C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53DBB9C2EA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5DB463536
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B41262D29;
-	Thu,  8 May 2025 08:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A827262F;
+	Thu,  8 May 2025 08:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lvHX6Jfr"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="dYi8D3PM"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8124B21D011;
-	Thu,  8 May 2025 08:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A0F4B1E57
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693292; cv=none; b=aWjN+SMyXZNRiLO1MApFm8dexQ/0+TaxJ2TWkLfZZOhboslJNe9c69E5sVAhb4yWGUW9nK5IGBZtzVeyBu3LNA6+mtuAHKCZfS+vk4CsjihkdorMhagCwDOidNKzhKInnoPtED++3iyDYHuNcncYy7i+As35c6mqz9blo5/Cv7g=
+	t=1746693438; cv=none; b=jHTQN9wUlNSapOXISEY6DxYNDflBK9fvaLmOZQdYdtWwFeHbYsh6+MK5SNq/lPKNV2uQ3UGmv/4rZgcMLEolmuVJ5p6XJvu5zMdGJtBnx8nuTD9nt3juZ1qngEtyAjfmjF/r6A4NceZJcUEliiv2whCPhS7BuWiBhIvfqhhdoMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693292; c=relaxed/simple;
-	bh=/yn0vOBSqs1gT1qgFskCzgf8UxOw44a5QvWI6DwYPmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XqWjmCZcuSebtqHMqKckFs06lt6i6PKcKSxl3wPCqr6zMjCCc9VQQVrIxkkqlmmQ3tmBViN7W3xVL9AFmc369pFVotNstvU2wWUcRqGJL2YNgN1XqmtajIIVCsFwr5+HqZNq2zJd5XA3Px8KO5EiCNtThPoQdxXsbpCV64LzQEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lvHX6Jfr; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746693287;
-	bh=/yn0vOBSqs1gT1qgFskCzgf8UxOw44a5QvWI6DwYPmM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lvHX6Jfr7OJ3b9RU2pr9vKKmVzcczO72O3biC5VnlBbkLBYBi4j80YJi2EahlHN1c
-	 6I9FwWK2rI9vTlfgY0vX59fGYaiqUGpGcxReA8po/KwPkXIJBEPYgbVoK27U8P4nkQ
-	 X4QD/QaGCH6DAVicsxmX8fpMRCdFt6D/fag3nmUd43PN/6uB7xi1I6h2Cgt/WTqLpq
-	 SZEaWRHihGqfwPDfI/lIhJzyu9FoTR2A8LrpgfmZCRkdBpb7sSHMCQ9F4OpeDxNYKz
-	 VId7swgQvxQGPbEbgdeQEvtYfy088uRJpCZWNsQMmZX2KRcEXgt4abxmz6xz2/sV+O
-	 wA2RMcDIF2HaA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 62D3417E02BE;
-	Thu,  8 May 2025 10:34:46 +0200 (CEST)
-Message-ID: <ff8da58b-9e87-46d9-b4d2-4059ef05780d@collabora.com>
-Date: Thu, 8 May 2025 10:34:45 +0200
+	s=arc-20240116; t=1746693438; c=relaxed/simple;
+	bh=UnZgUVt+Cd48H6Gxupey/FinooCxbbBTr4OCkTqyW30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IS9Giy3JsLp4mTCT9RwhMd7AHL+AaS5b/rZvglcAZR5+hCeMSHzu87Oz1/nNl7uoOH75EssiVJah2X28bQ1Crjg6Nwboi0JiNxQDRAfGB70J+/kpRSSWz7TrHM7IRcNoEfbXKI3h5JoQ6E0Jwc3iSZ6yCPXrCCmZdZtdG2EKotw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=dYi8D3PM; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5fbe7a65609so1171456a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 01:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1746693435; x=1747298235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3yAv0PhhoFlOwGT9Vpb8yBJ5ZFaUviPQ0VRAAnAe30=;
+        b=dYi8D3PMm9u03zbJ2xkM1aeEq5sC2l6LudzCBqzFOYwTOJFMKs8E0GXVjJj8gLVGmx
+         ananJVYqURdhtLtXtkM2FSxGb/SGzbQOjWhKnBWJT42ksg142tEwEOtIc+WhJA/RAcba
+         6nQwE3IjBBk/BdjzCp07AxlphFrpje3DCy9JmL4woZMzX4Ua7hyIyMXqlkz9tQXM+QXI
+         Bj0Sud5RrFi5UsBc6DAB04jzvan25J4js5eJnkgZSfVtMRlbzH8/n9IuENIl3725T2Jq
+         ojG/HIngbRA3PVBTuEh09Fy+sH50D0IXSnBpqp0Ha7eqYgOY+Zij6fkFnmvsDh2W0Fey
+         Qnyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746693435; x=1747298235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3yAv0PhhoFlOwGT9Vpb8yBJ5ZFaUviPQ0VRAAnAe30=;
+        b=UFf2oBB3GzcYPKmpMMP/NNt1xvojoZc1IKDTmLdKjlCEZpDQS1KryhLisSHRPJpiiS
+         bKCX6pNCEBaq6+qwP9dhCVZiijrFhdW5mer8CUUz4at/lmMByBPkMvIhAdBnmdfHMGpp
+         5gx26axucan5HwUD6mWOYuETUyAoXaerdwAnuobs/GS11P7NHSACT4fGlxrfiVteeiIN
+         HgckRvEbcW5ZVMMXItKDzTo4OjWUpMrx2hdIQuWMsshSirANUJsyNlmBdsZzcxBCv/I/
+         HxsyyPHWNDUTZUhUqtfZO1ySFeOdVFbBTXdpEtFQEjO7SKXqAPB15/IB0cA0tBVWb29m
+         628w==
+X-Forwarded-Encrypted: i=1; AJvYcCX9sfpw2ig2CzL6lSKwS0UmjVt2T3TZMjon7ZlHs7cSG5ZtSqT/RfbZ09i7F4P1BvZ7ijMacrXxcoZ21gk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzspt6Gh0fYKYaFQicbOeY5JfzJ7aH34YfhRLil3IIzgxW8wssC
+	1DGiM21BSQFAFWaXNZkLbbwff+Fm3ThWYk0vOhDevAFtQK/3jmVfgAA9y2HbLWSEYYNuoxiY6WG
+	97q6yKbkNwtkeVuv8jAs7wnmWmvHEZyQA+2XsWQ==
+X-Gm-Gg: ASbGncux433vzq94WTiOFK2q21oU+bxNIy26CIuoGLJMQ17MyjpresCyOcs5Wbs9Adh
+	quQP39JNCk6sD2imV8RYX/98Ol7fwF2XvWaQ7l0kWx4N7iK9U9kiSm8uY1nrM+YyuzfFTeyBmHT
+	YZIh1hOge7MLbQhzVmfWjj8DTQISD0KpdNcc7Md5e8kBZuo/s7UuI=
+X-Google-Smtp-Source: AGHT+IHZ2rhB+iv4wHWS2kFS9398kogCHfihOoXvOhDhqZc6h3WfEVMvj050CiBlPWaNyledskveiDEA3cZvZP72aAk=
+X-Received: by 2002:a17:906:c10d:b0:ace:d66f:e2ed with SMTP id
+ a640c23a62f3a-ad1e8bf55e8mr654880966b.25.1746693434806; Thu, 08 May 2025
+ 01:37:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: iommu: mediatek: mt8195 Accept up to 5
- interrupts
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
- <nfraprado@collabora.com>, Hui Liu <hui.liu@mediatek.com>,
- Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, iommu@lists.linux.dev
-References: <20250505-mt8395-dtb-errors-v1-0-9c4714dcdcdb@collabora.com>
- <20250505-mt8395-dtb-errors-v1-2-9c4714dcdcdb@collabora.com>
- <baeae909-4d12-4cbd-a063-7ad165304b96@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <baeae909-4d12-4cbd-a063-7ad165304b96@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+ <20250309151907.GA178120@mail.hallyn.com> <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
+ <20250506132158.GA682102@mail.hallyn.com> <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
+ <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
+ <CAKPOu+_=ocLeEqcaSMjb5qqrvi6KAu3GYJa19Fqz_dm3a5F77w@mail.gmail.com> <CACmP8UJmC22+59RcHu_X3xpdUYP-i93rjdVQvZn6_Haj-F8tPw@mail.gmail.com>
+In-Reply-To: <CACmP8UJmC22+59RcHu_X3xpdUYP-i93rjdVQvZn6_Haj-F8tPw@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 8 May 2025 10:37:04 +0200
+X-Gm-Features: ATxdqUF3az4N3FOazSPMnBdAataIURztGU21AUNdHQXvyCKx5MItY1Zad7HyxIE
+Message-ID: <CAKPOu+8+1uVrDJHwmHJd2d46-N6AwjR4_bbtoSJS+sx6J=rkjg@mail.gmail.com>
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
+To: "Andrew G. Morgan" <morgan@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com, 
+	jmorris@namei.org, kees@kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 08/05/25 08:03, Krzysztof Kozlowski ha scritto:
-> On 05/05/2025 15:23, Julien Massot wrote:
->>
->> Fixes: 3b5838d1d82e3 ("arm64: dts: mt8195: Add iommu and smi nodes")
->> Signed-off-by: Julien Massot <julien.massot@collabora.com>
->> ---
->>   Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
->> index 75750c64157c868725c087500ac81be4e282c829..035941c2db32170e9a69a5363d8c05ef767bb251 100644
->> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
->> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
->> @@ -97,7 +97,8 @@ properties:
->>       maxItems: 1
->>   
->>     interrupts:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 5
->>   
-> Every iommu or just some (as described in commit msg) can have 5
-> interrupts? Looks you miss here proper constraints per variant.
-> 
-Technically, all of the IOMMUs can have more than one interrupt - but it's not
-clear which one and why, as documentation is lacking.
+On Thu, May 8, 2025 at 5:32=E2=80=AFAM Andrew G. Morgan <morgan@kernel.org>=
+ wrote:
+> See the "bprm_set_creds" paragraph. My concern is that there is an
+> exploit vector associated with an abuser setting LD_LIBRARY_PATH=3D to
+> something nefarious, and then invoking a setuid program that happens
+> to re-exec itself for some reason. The first invocation will be as
+> before, but when the binary re-exec's itself, I am concerned that this
+> could cause the privileged binary to load an exploit.
 
-Let's restrict this discussion to MT8195 anyway, as it's the only one declaring
-those 5 interrupts...
-...all of the IOMMUs declare just one, and mediatek,mt8195-iommu-infra declares 5.
+Let's talk about this potential vulnerability again. Consider the
+following code:
 
-P.S.: Nice catch!
+ #include <stdio.h>
+ #include <sys/prctl.h>
+ #include <unistd.h>
+ int main(int argc, char **argv) {
+   printf("ruid=3D%d euid=3D%d\n", getuid(), geteuid());
+   if (argc > 1) {
+     printf("setting NO_NEW_PRIVS\n");
+     prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+   }
+   if (**argv) {
+     printf("re-exec\n");
+     execl(*argv, "", NULL);
+     perror("exec");
+   }
+ }
 
-Cheers,
-Angelo
+Without my patch:
+
+ $ /reexec
+ ruid=3D1000 euid=3D0
+ re-exec
+ ruid=3D1000 euid=3D0
+ $ /reexec 1
+ ruid=3D1000 euid=3D0
+ setting NO_NEW_PRIVS
+ re-exec
+ ruid=3D1000 euid=3D1000
+
+Without NO_NEW_PRIVS, the re-exec keeps the real/effective, but also
+gains setuid again, but the suid is no-op; the euid is already 0.
+With NO_NEW_PRIVS, the re-exec drops the euid=3D0, and doesn't regain it
+- the setuid bit is ignored.
+
+With my patch:
+
+ $ /reexec
+ ruid=3D1000 euid=3D0
+ re-exec
+ ruid=3D1000 euid=3D0
+ $ /reexec 1
+ ruid=3D1000 euid=3D0
+ setting NO_NEW_PRIVS
+ re-exec
+ ruid=3D1000 euid=3D0
+
+Same without NO_NEW_PRIVS (but internally, the re-exec is not
+considered "secureexec" because the setuid bit is effectively a
+no-op).
+With NO_NEW_PRIVS, the setuid bit is ignored, but the process is
+allowed to keep the euid=3D0 - which is the whole point of my patch.
+Indeed, no new privs are gained - just like NO_NEW_PRIVS is
+documented!
+
+Back to your LD_LIBRARY_PATH example: with my patch, glibc ignores
+LD_LIBRARY_PATH because effective!=3D=3Dreal (still).
+
+But without my patch, with the vanilla kernel, glibc does use
+LD_LIBRARY_PATH (effective=3D=3Dreal because effective was reset) and
+you're actually vulnerable! It seems to be quite opposite of what you
+have been assuming?
+(Don't get confused that the kernel has reverted the euid to 1000;
+this is a privileged superuser process with a full set of
+capabilities!)
+
+Am I missing something obvious, or is NO_NEW_PRIVS+reexec is a serious
+Linux kernel vulnerability? (And it is fixed by my patch)
+
+Max
 
