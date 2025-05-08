@@ -1,130 +1,185 @@
-Return-Path: <linux-kernel+bounces-639984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7C2AAFF41
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:31:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41201AAFF10
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1609C7A2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A0D1886E1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF6727979B;
-	Thu,  8 May 2025 15:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="J8CnUdJw"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285AA26FD88;
+	Thu,  8 May 2025 15:21:51 +0000 (UTC)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA181223DC6;
-	Thu,  8 May 2025 15:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B171DB366;
+	Thu,  8 May 2025 15:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746718236; cv=none; b=FtUZcClhy40DljnTW0jso3/9bvR9KsMqoYtOu+Ng/+2uU8mI0UhotnMX61FfOUGkUo/AXv23QlCMwM1mRGZWZZ10OB/N+jPN+DkF9VuXUheDU7KR2DS5L2npxOKaWKI1Xg4XomxEXs1BByOxqbdPOaYXqc54O9UY8w1CKpULTSs=
+	t=1746717710; cv=none; b=qQ0abl3iitIPSqxrDzejCbQTDJvKR0OWor8PUZLQamtgxHO0NSqUGEgP1OOcwCWXHAm+2e2tUb2xwXW8VwvCeCH6fLGaI842C04/63ycSac+pd3K7UTMyYHBWpHKlclN4Jw85XwE7fh7j320sDsVVTRZThgKqecnAFhkqeM/gXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746718236; c=relaxed/simple;
-	bh=OHuyuDzawYwtMUYkiddu3AdB4z1CVCUAKplQq5a1zUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eigmheckstDw02r+t4ZASevacibXHQ99KzR3haGy2ZjgNd+Way9p5plaW9Ef0xmXqCO9ldBQ+St/p8hJ7MYMImET3UkhkLBiVKc5GPLWSpjeLEBCH02uK1YT2XD6qpETXYt7nOCsnnnw0/xNDIL9RWIwexVCQ9/y7QPYByPp34k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=J8CnUdJw; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id D33cuMejiCaH2D33cu8B4q; Thu, 08 May 2025 17:21:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1746717671;
-	bh=/aqOR78xCKbgwFiDVPw/MgZTZLn+uIVqWHT4kXJ4tLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=J8CnUdJwFn5FHAXlFR8ZkPazq64kfzu6rxQfO3bp4oYWlJR9yw7QZga+jkcHw8Lj3
-	 59DlKyXiWVDflM4F3pjSXbdRl8J3n4nmEYwk6cij3i9lBC2dXOv4jHAUS2x2ZLZ4At
-	 J4p289z8w3uB1RTTguqgEIONbMC3RwaVIU9BF5f6yRT56eUo4yOpO14QaYnwU4YTkX
-	 xPEanpuM6dKRpcweXAnz5a4iL6lmWQQtAowORrji8ha6QsrSzbCgwdJ3PXv+Nhbahj
-	 xG+HeZ7o5pMxM3CKoEseHRZwwSATlEKc2RmRq3qwY1HcWszZvxZkLh8zuz9rMTfdU5
-	 R0AYedfcV2qqQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 08 May 2025 17:21:11 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <23517507-bf1a-47fa-9a96-b27922e1e05f@wanadoo.fr>
-Date: Thu, 8 May 2025 17:21:08 +0200
+	s=arc-20240116; t=1746717710; c=relaxed/simple;
+	bh=J4hQFIAH8iSUB1xC+68EL9S54+Y8bMpThg+Dd4PNpwE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=loegcFdROgWqV67LWImXt306zaZqlKAr5wPLkLTxs6/au44G5gOf9H1wbbUXmKtlFRe4OU8x4fnuSC/6sgJqt35Erbb5LW+BtRKuTy6EZtR4mJ8NNkWCAyTs78/teXnvQLBmT3y/VwVCxSWtUOtgIa15vKv2gse/JWetVi5ANN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c5e1b40f68so129548385a.1;
+        Thu, 08 May 2025 08:21:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746717707; x=1747322507;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cxr5tCREFP+E8VP7VSkBTdq6NYCvsCRxcmgngaOeapc=;
+        b=EF+wdy/mJaFUW6I1i55MiutJP99HSTGNq+TMGG2GusoMKbUorMwn4CG9AxQ46X2WN/
+         /PLXkRizbxAQSr8tLDnXZnSAFtGHWxA/JRIRwR7Drq57vgtKivmdSg/NVDw9UDOxEnRt
+         1Hu/HkvM1YwZ+xROaEWobQ6i/zNsiuwlbwczzpHeqRK/Ll3gCTyTkQtz6N+M/B0vsLSc
+         Y3BmoHKtfW/PSxqcaYB5AvvAffGLqoqzOj8kpaiOatJ1cW+lx86ZLcGV3TGQr7Kwxs97
+         2zJhGbnaQ6t+bX1126OOqKD9vKLW7ei/Wqzk2nihhXYR1Zi5nuvsD95rUCK81AxljyIc
+         xWSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvqEzu8ddXi3KZ2FWcAP9AbFaPxoUAZG/GKb9atB/v0AM61UM0qoUu4VY00A4KZqe6n5AuXqzgzfTLH9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3C76tcH0XC+sK5z9Ya69+TRnP5GdUDbAYMe16n+w0+ONmXrqb
+	xY4+VOnLNkVf+fCYClb/4Z8HM0/jIlkzixwsKMAMu989IdSNbibkWmPWPWltrMM=
+X-Gm-Gg: ASbGncto3GVq/dXR+WkchIo2sib/lri9MQoKSkBRI0iqeyPhtStEXKhn4vkviULIcC3
+	DbiiG1pCBgCHA9lXWF6xjM54SQHNH8ayqHOrc2ibEU+5qpV7UNu1RIGoJKhly7HjwVF4tg39L6n
+	HB3gMHs4oLGrr+u/SIpXMVcLYhdEr4MhFsTqRb0gubcrL5x7bkPI5Koxt4PM/kxUpjXpeiOyHLA
+	DpMLBGv/8cZC0Q+42jS1uEZDr2BZ23ivJwf0Prwjz+NGZIpDv5BdAXhktNmDxU/iWj798SAbRYD
+	OfQwlYACmGXejFDThICIkZOoOv/cSTs5TRSW3N+RNbgIP4IsBhvHZS3JPhAcu36fenQ=
+X-Google-Smtp-Source: AGHT+IEOf4yY9mCawQTy8uiId+9jX3Wx1QkLhnX80v5PFgkSl2YYWwNEXEi1e+S4NpyTCw/p6r5PfQ==
+X-Received: by 2002:a05:620a:4112:b0:7c5:4738:8a0f with SMTP id af79cd13be357-7cd010f7224mr11933585a.15.1746717707391;
+        Thu, 08 May 2025 08:21:47 -0700 (PDT)
+Received: from tachyon.tail92c87.ts.net ([192.159.180.233])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00ed3cb4sm6031785a.0.2025.05.08.08.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 08:21:46 -0700 (PDT)
+From: Tavian Barnes <tavianator@tavianator.com>
+To: linux-sound@vger.kernel.org
+Cc: Tavian Barnes <tavianator@tavianator.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	sound-open-firmware@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] ASoC: SOF: Intel: hda: Fix UAF when reloading module
+Date: Thu,  8 May 2025 11:21:19 -0400
+Message-ID: <832255bf606f9ddcf45167d3f066d603d707731a.1746713571.git.tavianator@tavianator.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] net: airoha: Fix an error handling path in
- airoha_probe()
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr>
- <3791c95da3fa3c3bd2a942210e821d9301362128.1746715755.git.christophe.jaillet@wanadoo.fr>
- <aBzJZCIvE9u_IAM-@lore-desk>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aBzJZCIvE9u_IAM-@lore-desk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+hda_generic_machine_select() appends -idisp to the tplg filename by
+allocating a new string with devm_kasprintf(), then stores the string
+right back into the global variable snd_soc_acpi_intel_hda_machines.
+When the module is unloaded, this memory is freed, resulting in a global
+variable pointing to freed memory.  Reloading the module then triggers
+a use-after-free:
 
-Le 08/05/2025 à 17:10, Lorenzo Bianconi a écrit :
->> If an error occurs after a successful airoha_hw_init() call,
->> airoha_ppe_deinit() needs to be called as already done in the remove
->> function.
->>
->> Fixes: 00a7678310fe ("net: airoha: Introduce flowtable offload support")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Changes in v2:
->>    - Call airoha_ppe_init() at the right place in the error handling path
->>      of the probe   [Lorenzo Bianconi]
->>
->> Compile tested only.
->> ---
->>   drivers/net/ethernet/airoha/airoha_eth.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
->> index af8c4015938c..d435179875df 100644
->> --- a/drivers/net/ethernet/airoha/airoha_eth.c
->> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
->> @@ -2967,6 +2967,7 @@ static int airoha_probe(struct platform_device *pdev)
->>   error_napi_stop:
->>   	for (i = 0; i < ARRAY_SIZE(eth->qdma); i++)
->>   		airoha_qdma_stop_napi(&eth->qdma[i]);
->> +	airoha_ppe_init(eth);
-> it was actually a typo in my previous email but this should be clearly
-> airoha_ppe_deinit().
+BUG: KFENCE: use-after-free read in string+0x48/0xe0
 
-My bad!
-Sorry for not spotting myself it.
+Use-after-free read at 0x00000000967e0109 (in kfence-#99):
+ string+0x48/0xe0
+ vsnprintf+0x329/0x6e0
+ devm_kvasprintf+0x54/0xb0
+ devm_kasprintf+0x58/0x80
+ hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
+ sof_probe_work+0x7f/0x600 [snd_sof]
+ process_one_work+0x17b/0x330
+ worker_thread+0x2ce/0x3f0
+ kthread+0xcf/0x100
+ ret_from_fork+0x31/0x50
+ ret_from_fork_asm+0x1a/0x30
 
-We can really trust no one, nowadays ! :)
+kfence-#99: 0x00000000198a940f-0x00000000ace47d9d, size=64, cache=kmalloc-64
 
-The good news is that my cocci script would have spotted it the next 
-time I would have run it, because it would still find a 
-airoha_ppe_deinit() in the remove function, but none in the probe.
+allocated by task 333 on cpu 8 at 17.798069s (130.453553s ago):
+ devm_kmalloc+0x52/0x120
+ devm_kvasprintf+0x66/0xb0
+ devm_kasprintf+0x58/0x80
+ hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
+ sof_probe_work+0x7f/0x600 [snd_sof]
+ process_one_work+0x17b/0x330
+ worker_thread+0x2ce/0x3f0
+ kthread+0xcf/0x100
+ ret_from_fork+0x31/0x50
+ ret_from_fork_asm+0x1a/0x30
 
-I give you some time to review the other patches, and I'll a v3 later.
+freed by task 1543 on cpu 4 at 141.586686s (6.665010s ago):
+ release_nodes+0x43/0xb0
+ devres_release_all+0x90/0xf0
+ device_unbind_cleanup+0xe/0x70
+ device_release_driver_internal+0x1c1/0x200
+ driver_detach+0x48/0x90
+ bus_remove_driver+0x6d/0xf0
+ pci_unregister_driver+0x42/0xb0
+ __do_sys_delete_module+0x1d1/0x310
+ do_syscall_64+0x82/0x190
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-CJ
+Fix it by copying the match array with devm_kmemdup_array() before we
+modify it.
 
->
-> Regards,
-> Lorenzo
->
->>   error_hw_cleanup:
->>   	for (i = 0; i < ARRAY_SIZE(eth->qdma); i++)
->>   		airoha_hw_cleanup(&eth->qdma[i]);
->> -- 
->> 2.49.0
->>
+Fixes: 5458411d7594 ("ASoC: SOF: Intel: hda: refactoring topology name fixup for HDA mach")
+Suggested-by: Péter Ujfalusi" <peter.ujfalusi@linux.intel.com>
+Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
+---
+v4: Copy the whole array, including the sentinel.
+
+v3: Copy the whole machine struct instead so we can safely modify it
+    (instead of storing the name in pdata->tplg_filename, breaking other
+    fixups).  The problem with v2 was pointed out by Bard Liao, with the
+    alternative fix suggested by Péter Ujfalusi.
+
+v2: Typo fix.
+
+ sound/soc/sof/intel/hda.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index b34e5fdf10f1..13ecb9473eb6 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -1049,7 +1049,21 @@ static void hda_generic_machine_select(struct snd_sof_dev *sdev,
+ 		if (!*mach && codec_num <= 2) {
+ 			bool tplg_fixup = false;
+ 
+-			hda_mach = snd_soc_acpi_intel_hda_machines;
++			/*
++			 * make a local copy of the match array since we might
++			 * be modifying it
++			 */
++			hda_mach = devm_kmemdup_array(sdev->dev,
++					snd_soc_acpi_intel_hda_machines,
++					2 /* we have one entry + sentinel in the array */,
++					sizeof(snd_soc_acpi_intel_hda_machines[0]),
++					GFP_KERNEL);
++			if (!hda_mach) {
++				dev_err(bus->dev,
++					"%s: failed to duplicate the HDA match table\n",
++					__func__);
++				return;
++			}
+ 
+ 			dev_info(bus->dev, "using HDA machine driver %s now\n",
+ 				 hda_mach->drv_name);
+-- 
+2.49.0
+
 
