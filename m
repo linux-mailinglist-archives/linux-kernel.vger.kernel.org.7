@@ -1,315 +1,242 @@
-Return-Path: <linux-kernel+bounces-639348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4427AAF642
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30B5AAF63D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 985279E0CA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C801BC54B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D3F2641E8;
-	Thu,  8 May 2025 09:02:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66697256D;
+	Thu,  8 May 2025 09:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ur2Qs21g"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878FB25744D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 09:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE9023BCF2
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 09:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746694944; cv=none; b=jqoFkTPuEgWesTAT+ktEej/Aw4PAl8lUNcpUMfAMZvh3DZivhb8Y+1800XDrBBO0aP1eRQNLBOWwOZUPhNwgtpDACHOs/jOBXZXqW99g9zADDQr7qTAzDITntoobJg/ra/b/23uXsBfr8rfhPPo3JK36l7z4Y8+bOGegdl27A04=
+	t=1746694939; cv=none; b=eXT7ueVFsUxKIy/Zi+DT5SoCk2FJkTiyjR/QsCtq0+Z9O6mmqKzhK3Qzbl0kp8EZgGdcJIhU2/dxKy0AvJBLQOQxRql9cC2uDoIfOWAowbmaSxF0bFxDGm8+78jpfrmiGXkRADb9y72wVCKS9JNTReI5w4ivgBmadld5gNxd+00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746694944; c=relaxed/simple;
-	bh=IGe+U/YH/iUPaG05eqrCD/ah/1kOmm9NRWUhqyUdTJM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=usvm7aeU5WxHci4zeY5zTlg5fOpGzH8qdG2HxGFQu/wZQ3dDVoYVRtAQjQgg9TIu+cYJZmsb6QqS21ZhblEGymdE4Ma9vCCO9TcKmmYAjrT9olZxf7zWJm+El6irNP92yKmLk/RePytBZnGmLDKEv+t8H7elWrsAeqcXaFMP1Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uCx8b-0008Qf-0D; Thu, 08 May 2025 11:01:53 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uCx8Z-001hI1-0c;
-	Thu, 08 May 2025 11:01:51 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uCx8Z-0003Eh-0J;
-	Thu, 08 May 2025 11:01:51 +0200
-Message-ID: <8b5d8045041f2f07b68066e4e541d5e42282fa9b.camel@pengutronix.de>
-Subject: Re: [PATCH v6 4/6] reset: spacemit: add support for SpacemiT CCU
- resets
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr,  dlan@gentoo.org
-Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev,  linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 08 May 2025 11:01:50 +0200
-In-Reply-To: <20250506210638.2800228-5-elder@riscstar.com>
-References: <20250506210638.2800228-1-elder@riscstar.com>
-	 <20250506210638.2800228-5-elder@riscstar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1746694939; c=relaxed/simple;
+	bh=YtBocN+mwqpRE/bEBJJe0JKe/8z8Pk07h5hjKIC/bAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TtOrfhy0j/c6OHsRpEC3LYH9jpZW0FrzkfiXk9cOFDEx3SNeAH7iQUEr6t5sp26dqZtUpTIp3hxZtQHyTjrkK1K3JcRJiULHBrQefNMDLA+XSr+cheO13CQ4qqNO1JrDSBH3hgV77PR+1aK0tN2AA1y7FUtpWmuAz/TvZqU6rlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ur2Qs21g; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a0adcc3e54so434536f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 02:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746694935; x=1747299735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TxV/4ni6q0aC0NPRBzz2zpqrQ+HPJcgTCYdiRIa1Dqk=;
+        b=ur2Qs21gvQCFXb03IikNwewtTRMRjuUm1Ap/ehmsJJ6EQm6ZBl/1LrZtU7hMJWfpGi
+         JEs1FziSUNUdVNUyDMmZusNAK7Ak1Yjxg5Sr5DSbqHg415Xy7WD8Pn15BxsMWaHcyhL5
+         agTy+yMBSEEC+JDfWqDtyYSms06tjJiDAbG7Etczdxp3m5Tv3xOFEd/5ojy/Ia5xUHc7
+         2yryeZSBoqIr29fmCHx1NLU8gvRgTskkEHz9AFcpIyO/OxiAkTv0U9G9WawXIKMTKTJX
+         PY5/NN7taYjtbXsTVxKZ89MEy03UaKZ4HOtz/3n5VmRXqEQ8vRKdVQKacgg2F98xlkOT
+         7Ifg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746694935; x=1747299735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxV/4ni6q0aC0NPRBzz2zpqrQ+HPJcgTCYdiRIa1Dqk=;
+        b=NAD2wKK9KJwQsk+Iv5BQVif0/d1UD6z1HIl2gtD2Vx/bFDjyHWcaaeuvTCPbTJLCqE
+         Z6pLD4SVbOYSVZkdJRpWA1WP16EKCbMgsHSi1Vvd+9JYBRi5bnbRqnBFrNdLRiMrSGiY
+         zx4SZtuj5UZUwfS2TYkxxttdGjf9xFyzrQZEn3KgjZvThYEVL/aR0681CHU6PjyqGZ1Q
+         uFrCbDGmKaMLfVa+QgWBUKFHKb6VXzm5Gn074ibrl2mv0U4X9QxjIZ7MBfBGfeDf0NBk
+         d5DEWcnMxGFQNkOU6qaSGsuEbCchf3/1ePi/wDQL6PROq2f/yjhQgBD2rH1pPkL4ru12
+         7Kgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAQCywlXGZBdwXCjacEoDT2PXu4flEDJOJTxLVXbyI9GavToWzyYhCZP86jlRkV2z0FDSVZWR/GugEjaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC20/QrPEd4uOlJAc5TqsBh/BW+S8NV9cChWsr15Oyu4V2LHGw
+	091jIZ0PgDaje8VlLD4oovAoBW3UvgMKcga4Prn40NJQqPYE1j2YxzrNwx+E/9g=
+X-Gm-Gg: ASbGncu0MXM0A849TxRnnB874OqzGDCurFer+sILW/PcA/9isY8lVCMowOVb/0xvSYH
+	6zS5Rf6Jy0N1Dp4fWRej1JPWl5TxiKMDnekCrAuqWaPtvNWqP01MoF3AWeI0zqamD3tcDmuTWzK
+	dtf6QsMWDYY/SGx6EsApcHIsb5VVq0boFu2SU0WyK4lLifZZCSUrs48Si3t+eu27Hidy/t9tW1f
+	dK6dUcP7n309Ymn8nmoArcieej8I3glCyyQ9OWf1P/ZRCnteuiUAE5aWX4+ybGp3GaY7aIQzIcL
+	Z5643e6BCaVbs0RvqXqSiBdkYGjifMF0f8UchbteZuI=
+X-Google-Smtp-Source: AGHT+IGND12jBuwGb9fbCT8AT3eW6atqvX53aTSi7rk1Y/3WdjX/LgXU1BNPBra4UmXrAyxLW1UlqQ==
+X-Received: by 2002:a5d:47a6:0:b0:391:4873:7943 with SMTP id ffacd0b85a97d-3a0b4a29c0dmr4950605f8f.32.1746694934826;
+        Thu, 08 May 2025 02:02:14 -0700 (PDT)
+Received: from [192.168.1.3] ([77.81.75.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b44ad93asm5693275f8f.91.2025.05.08.02.02.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 02:02:14 -0700 (PDT)
+Message-ID: <dee41e51-879d-491a-a330-9876660befa9@linaro.org>
+Date: Thu, 8 May 2025 10:02:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] perf: Allocate non-contiguous AUX pages by default
+To: Yabin Cui <yabinc@google.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Liang Kan <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>
+References: <20250507181346.1892103-1-yabinc@google.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250507181346.1892103-1-yabinc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Alex,
 
-On Di, 2025-05-06 at 16:06 -0500, Alex Elder wrote:
-> Implement reset support for SpacemiT CCUs.  The code is structured to
-> handle SpacemiT resets generically, while defining the set of specific
-> reset controllers and their resets in an SoC-specific source file.
 
-Are you confident that future SpacemiT CCUs will be sufficiently
-similar for this split to make sense? This feels like it could be a
-premature abstraction to me.
-
-> A SpacemiT reset controller device is an auxiliary device associated with
-> a clock controller (CCU).
->=20
-> This initial patch defines the reset controllers for the MPMU, APBC, and
-> MPMU CCUs, which already defined clock controllers.
->=20
-> Signed-off-by: Alex Elder <elder@riscstar.com>
+On 07/05/2025 7:13 pm, Yabin Cui wrote:
+> perf always allocates contiguous AUX pages based on aux_watermark.
+> However, this contiguous allocation doesn't benefit all PMUs. For
+> instance, ARM SPE and TRBE operate with virtual pages, and Coresight
+> ETR allocates a separate buffer. For these PMUs, allocating contiguous
+> AUX pages unnecessarily exacerbates memory fragmentation. This
+> fragmentation can prevent their use on long-running devices.
+> 
+> This patch modifies the perf driver to be memory-friendly by default,
+> by allocating non-contiguous AUX pages. For PMUs requiring contiguous
+> pages (Intel BTS and some Intel PT), the existing
+> PERF_PMU_CAP_AUX_NO_SG capability can be used. For PMUs that don't
+> require but can benefit from contiguous pages (some Intel PT), a new
+> capability, PERF_PMU_CAP_AUX_PREFER_LARGE, is added to maintain their
+> existing behavior.
+> 
+> Signed-off-by: Yabin Cui <yabinc@google.com>
 > ---
->  drivers/reset/Kconfig           |   1 +
->  drivers/reset/Makefile          |   1 +
->  drivers/reset/spacemit/Kconfig  |  12 +++
->  drivers/reset/spacemit/Makefile |   7 ++
->  drivers/reset/spacemit/core.c   |  61 +++++++++++
->  drivers/reset/spacemit/core.h   |  39 +++++++
->  drivers/reset/spacemit/k1.c     | 177 ++++++++++++++++++++++++++++++++
->  7 files changed, 298 insertions(+)
->  create mode 100644 drivers/reset/spacemit/Kconfig
->  create mode 100644 drivers/reset/spacemit/Makefile
->  create mode 100644 drivers/reset/spacemit/core.c
->  create mode 100644 drivers/reset/spacemit/core.h
->  create mode 100644 drivers/reset/spacemit/k1.c
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 99f6f9784e686..b1f1af50ca10b 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -354,6 +354,7 @@ source "drivers/reset/amlogic/Kconfig"
->  source "drivers/reset/starfive/Kconfig"
->  source "drivers/reset/sti/Kconfig"
->  source "drivers/reset/hisilicon/Kconfig"
-> +source "drivers/reset/spacemit/Kconfig"
->  source "drivers/reset/tegra/Kconfig"
-> =20
->  endif
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 31f9904d13f9c..6c19fd875ff13 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -2,6 +2,7 @@
->  obj-y +=3D core.o
->  obj-y +=3D amlogic/
->  obj-y +=3D hisilicon/
-> +obj-y +=3D spacemit/
->  obj-y +=3D starfive/
->  obj-y +=3D sti/
->  obj-y +=3D tegra/
-> diff --git a/drivers/reset/spacemit/Kconfig b/drivers/reset/spacemit/Kcon=
-fig
-> new file mode 100644
-> index 0000000000000..4ff3487a99eff
-> --- /dev/null
-> +++ b/drivers/reset/spacemit/Kconfig
-> @@ -0,0 +1,12 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +config RESET_SPACEMIT
-> +	bool
-> +
-> +config RESET_SPACEMIT_K1
-> +	tristate "SpacemiT K1 reset driver"
-> +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> +	select RESET_SPACEMIT
-> +	default ARCH_SPACEMIT
-> +	help
-> +	  This enables the reset controller driver for the SpacemiT K1 SoC.
+> Changes since v3:
+> Add comments and a local variable to explain max_order value
+> changes in rb_alloc_aux().
+> 
+> Changes since v2:
+> Let NO_SG imply PREFER_LARGE. So PMUs don't need to set both flags.
+> Then the only place needing PREFER_LARGE is intel/pt.c.
+> 
+> Changes since v1:
+> In v1, default is preferring contiguous pages, and add a flag to
+> allocate non-contiguous pages. In v2, default is allocating
+> non-contiguous pages, and add a flag to prefer contiguous pages.
+> 
+> v1 patchset:
+> perf,coresight: Reduce fragmentation with non-contiguous AUX pages for
+> cs_etm
+> 
+>   arch/x86/events/intel/pt.c  |  2 ++
+>   include/linux/perf_event.h  |  1 +
+>   kernel/events/ring_buffer.c | 33 ++++++++++++++++++++++++---------
+>   3 files changed, 27 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+> index fa37565f6418..25ead919fc48 100644
+> --- a/arch/x86/events/intel/pt.c
+> +++ b/arch/x86/events/intel/pt.c
+> @@ -1863,6 +1863,8 @@ static __init int pt_init(void)
+>   
+>   	if (!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries))
+>   		pt_pmu.pmu.capabilities = PERF_PMU_CAP_AUX_NO_SG;
+> +	else
+> +		pt_pmu.pmu.capabilities = PERF_PMU_CAP_AUX_PREFER_LARGE;
+>   
+>   	pt_pmu.pmu.capabilities		|= PERF_PMU_CAP_EXCLUSIVE |
+>   					   PERF_PMU_CAP_ITRACE |
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 0069ba6866a4..56d77348c511 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -301,6 +301,7 @@ struct perf_event_pmu_context;
+>   #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
+>   #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
+>   #define PERF_PMU_CAP_AUX_PAUSE			0x0200
+> +#define PERF_PMU_CAP_AUX_PREFER_LARGE		0x0400
+>   
+>   /**
+>    * pmu::scope
+> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+> index 5130b119d0ae..69c90ea1b79a 100644
+> --- a/kernel/events/ring_buffer.c
+> +++ b/kernel/events/ring_buffer.c
+> @@ -679,7 +679,19 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>   {
+>   	bool overwrite = !(flags & RING_BUFFER_WRITABLE);
+>   	int node = (event->cpu == -1) ? -1 : cpu_to_node(event->cpu);
+> -	int ret = -ENOMEM, max_order;
+> +	/*
+> +	 * True if the PMU needs a contiguous AUX buffer (CAP_AUX_NO_SG) or
+> +	 * prefers large contiguous pages (CAP_AUX_PREFER_LARGE).
+> +	 */
+ > +	bool use_contiguous_pages = event->pmu->capabilities & (> +	 
+PERF_PMU_CAP_AUX_NO_SG | PERF_PMU_CAP_AUX_PREFER_LARGE);
 
-Does the size of the K1 specific parts even warrant this per-SoC
-Kconfig option? I suggest to only have a user visible tristate
-RESET_SPACEMIT option.
+Reviewed-by: James Clark <james.clark@linaro.org>
 
-> diff --git a/drivers/reset/spacemit/Makefile b/drivers/reset/spacemit/Mak=
-efile
-> new file mode 100644
-> index 0000000000000..3a064e9d5d6b4
-> --- /dev/null
-> +++ b/drivers/reset/spacemit/Makefile
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +obj-$(CONFIG_RESET_SPACEMIT)			+=3D reset_spacemit.o
-> +
-> +reset_spacemit-y				:=3D core.o
-> +
-> +reset_spacemit-$(CONFIG_RESET_SPACEMIT_K1)	+=3D k1.o
-> diff --git a/drivers/reset/spacemit/core.c b/drivers/reset/spacemit/core.=
-c
-> new file mode 100644
-> index 0000000000000..5cd981eb3f097
-> --- /dev/null
-> +++ b/drivers/reset/spacemit/core.c
-> @@ -0,0 +1,61 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/* SpacemiT reset driver core */
-> +
-> +#include <linux/container_of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/types.h>
-> +
-> +#include "core.h"
-> +
-> +static int spacemit_reset_update(struct reset_controller_dev *rcdev,
-> +				 unsigned long id, bool assert)
-> +{
-> +	struct ccu_reset_controller *controller;
-> +	const struct ccu_reset_data *data;
-> +	u32 mask;
-> +	u32 val;
-> +
-> +	controller =3D container_of(rcdev, struct ccu_reset_controller, rcdev);
-> +	data =3D &controller->data->reset_data[id];
-> +	mask =3D data->assert_mask | data->deassert_mask;
-> +	val =3D assert ? data->assert_mask : data->deassert_mask;
-> +
-> +	return regmap_update_bits(controller->regmap, data->offset, mask, val);
-> +}
-> +
-> +static int spacemit_reset_assert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	return spacemit_reset_update(rcdev, id, true);
-> +}
-> +
-> +static int spacemit_reset_deassert(struct reset_controller_dev *rcdev,
-> +				   unsigned long id)
-> +{
-> +	return spacemit_reset_update(rcdev, id, false);
-> +}
-> +
-> +static const struct reset_control_ops spacemit_reset_control_ops =3D {
-> +	.assert		=3D spacemit_reset_assert,
-> +	.deassert	=3D spacemit_reset_deassert,
-> +};
-> +
-> +/**
-> + * spacemit_reset_controller_register() - register a reset controller
-> + * @dev:	Device that's registering the controller
-> + * @controller:	SpacemiT CCU reset controller structure
-> + */
-> +int spacemit_reset_controller_register(struct device *dev,
-> +				       struct ccu_reset_controller *controller)
-> +{
-> +	struct reset_controller_dev *rcdev =3D &controller->rcdev;
-> +
-> +	rcdev->ops =3D &spacemit_reset_control_ops;
-> +	rcdev->owner =3D THIS_MODULE;
-> +	rcdev->of_node =3D dev->of_node;
-> +	rcdev->nr_resets =3D controller->data->count;
-> +
-> +	return devm_reset_controller_register(dev, &controller->rcdev);
-> +}
-> diff --git a/drivers/reset/spacemit/core.h b/drivers/reset/spacemit/core.=
-h
-> new file mode 100644
-> index 0000000000000..a71f835ccb779
-> --- /dev/null
-> +++ b/drivers/reset/spacemit/core.h
-> @@ -0,0 +1,39 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +
-> +/* SpacemiT reset driver core */
-> +
-> +#ifndef __RESET_SPACEMIT_CORE_H__
-> +#define __RESET_SPACEMIT_CORE_H__
-> +
-> +#include <linux/device.h>
+Minor nit: this comment is a bit verbose IMO, and it's only describing 
+what rather than why. But the other one is ok.
 
-This include can be replaced by forward declarations for struct device
-and struct regmap.
+> +	/*
+> +	 * Initialize max_order to 0 for page allocation. This allocates single
+> +	 * pages to minimize memory fragmentation. This is overriden if
+> +	 * use_contiguous_pages is true.
+> +	 */
+> +	int max_order = 0;
+> +	int ret = -ENOMEM;
+>   
+>   	if (!has_aux(event))
+>   		return -EOPNOTSUPP;
+> @@ -689,8 +701,8 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>   
+>   	if (!overwrite) {
+>   		/*
+> -		 * Watermark defaults to half the buffer, and so does the
+> -		 * max_order, to aid PMU drivers in double buffering.
+> +		 * Watermark defaults to half the buffer, to aid PMU drivers
+> +		 * in double buffering.
+>   		 */
+>   		if (!watermark)
+>   			watermark = min_t(unsigned long,
+> @@ -698,16 +710,19 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>   					  (unsigned long)nr_pages << (PAGE_SHIFT - 1));
+>   
+>   		/*
+> -		 * Use aux_watermark as the basis for chunking to
+> -		 * help PMU drivers honor the watermark.
+> +		 * If using contiguous pages, use aux_watermark as the basis
+> +		 * for chunking to help PMU drivers honor the watermark.
+>   		 */
+> -		max_order = get_order(watermark);
+> +		if (use_contiguous_pages)
+> +			max_order = get_order(watermark);
+>   	} else {
+>   		/*
+> -		 * We need to start with the max_order that fits in nr_pages,
+> -		 * not the other way around, hence ilog2() and not get_order.
+> +		 * If using contiguous pages, we need to start with the
+> +		 * max_order that fits in nr_pages, not the other way around,
+> +		 * hence ilog2() and not get_order.
+>   		 */
+> -		max_order = ilog2(nr_pages);
+> +		if (use_contiguous_pages)
+> +			max_order = ilog2(nr_pages);
+>   		watermark = 0;
+>   	}
+>   
 
-> +#include <linux/reset-controller.h>
-> +#include <linux/types.h>
-> +
-> +struct ccu_reset_data {
-> +	u32 offset;
-> +	u32 assert_mask;
-> +	u32 deassert_mask;
-> +};
-> +
-> +#define RESET_DATA(_offset, _assert_mask, _deassert_mask)	\
-> +	{							\
-> +		.offset		=3D (_offset),			\
-> +		.assert_mask	=3D (_assert_mask),		\
-> +		.deassert_mask	=3D (_deassert_mask),		\
-> +	}
-> +
-> +struct ccu_reset_controller_data {
-> +	const struct ccu_reset_data *reset_data;	/* array */
-> +	size_t count;
-> +};
-> +
-> +struct ccu_reset_controller {
-> +	struct reset_controller_dev rcdev;
-> +	const struct ccu_reset_controller_data *data;
-> +	struct regmap *regmap;
-> +};
-> +
-> +extern int spacemit_reset_controller_register(struct device *dev,
-> +			      struct ccu_reset_controller *controller);
-
-Drop the extern keyword.
-
-> +
-> +#endif /* __RESET_SPACEMIT_CORE_H__ */
-> diff --git a/drivers/reset/spacemit/k1.c b/drivers/reset/spacemit/k1.c
-> new file mode 100644
-> index 0000000000000..19a34f151b214
-> --- /dev/null
-> +++ b/drivers/reset/spacemit/k1.c
-> @@ -0,0 +1,177 @@
-[...]
-> +static int spacemit_k1_reset_probe(struct auxiliary_device *adev,
-> +				   const struct auxiliary_device_id *id)
-> +{
-> +	struct spacemit_ccu_adev *rdev =3D to_spacemit_ccu_adev(adev);
-> +	const void *data =3D (void *)id->driver_data;
-> +	struct ccu_reset_controller *controller;
-> +	struct device *dev =3D &adev->dev;
-> +
-> +	controller =3D devm_kzalloc(dev, sizeof(*controller), GFP_KERNEL);
-> +	if (!controller)
-> +		return -ENODEV;
-
--ENOMEM, this is a failed memory allocation.
-
-regards
-Philipp
 
