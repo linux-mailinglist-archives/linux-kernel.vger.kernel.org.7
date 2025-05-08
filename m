@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-639598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31315AAF994
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:16:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEA5AAF9A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5BB3AB6BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142D89C0B00
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8471DF25C;
-	Thu,  8 May 2025 12:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dyPwIgM6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422A222541C;
+	Thu,  8 May 2025 12:17:31 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABFD1FF1D1;
-	Thu,  8 May 2025 12:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C01DF25C;
+	Thu,  8 May 2025 12:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706591; cv=none; b=gdFG6iyMxgPSOSjZxvm4ZKSjN37Py74gUhvWsDo3TDsDlIeyhYpUNtdZXameyKpizkWTp3uCkHB8UUK22EODCsmZFjxbRwgZoQWjaA22ja5z8E3kVutk8p9bDmpWB5DweNoNIAt/rBcht7cG6pi1xfRkuw752QEHlN5FBmOBnwA=
+	t=1746706650; cv=none; b=h+1XRrkUJuwDGHI0RyMtuUuTBIyb0I3H6YGCoGlzWCGooK2dsfjxhqmhsXEn/9MlWq/aUSpHpHh9F77TG9o4xd+sGFMI223jIk6PTBYlyyym/4HB22YxxUU0JXZJjAnZSHjdj3CunW0ZMFV5a/3EniBuzx4hGrbC0SQCDe2sdjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706591; c=relaxed/simple;
-	bh=Djcg18yMQCKOd2P1yzVFKWVY4SUB0DOptBmvsDrjuUg=;
+	s=arc-20240116; t=1746706650; c=relaxed/simple;
+	bh=7xiyatHuEYO5siH784i+66R6gDk//PcjZEueVmEeyvo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W36vnd9twosRsZGTrItee9AbXUpNOVqIWUoqyVSftxhxrW7k91FhcP2r4H2PdmkS1HW+Le4JqedFplAXVm4LmcTo6z/RQbO/oIp3M9f35qfvspRGX2f5JNOu/32MlU9SZUACm9JPEdTlQBZ0LmYMedz2O3qtuy5wmhwyRsVaz6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dyPwIgM6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12359C4CEE7;
-	Thu,  8 May 2025 12:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746706590;
-	bh=Djcg18yMQCKOd2P1yzVFKWVY4SUB0DOptBmvsDrjuUg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dyPwIgM6dLRpPwAGJB+P+A0Tg46C/1980i9Ej2fwtdxfbsYKAlYxmgll9hE96OF3k
-	 BnMDLVvFRsoOlgR2Swvl/k5iX3dwwhj0HTQ0T/AC+KuEa6pH0PCkrRvwBlYmz0gPCV
-	 iUZEdqnQXr0nONr0dmRuwOitS/hhvjB9R7Vaht9lMlQPZtz2ktgc1yIU14q/g3WHM+
-	 E+dQ1HAKz4kW0myk5O5BGjMFOgBBud1y657kja9Mn2h/RW+R01zfyb5E44iVmfgHPt
-	 1IfQhKZ9efpI2F7gSt5p+jdYvZ3bktsxYhFG33WV9uK3T/A4C/wGNbLkKHeke04xU0
-	 Fmj4xuFCkVm0w==
-Message-ID: <32b295ae-4186-4d37-9bfb-15b81afaa5ec@kernel.org>
-Date: Thu, 8 May 2025 14:16:26 +0200
+	 In-Reply-To:Content-Type; b=FFfBF6u0J0thAeMNIaUgD7DmEwnGOk+zJb1u+E9v7Gu4Mu932+SvZIyNm+BjexwkSF2OKhOTV1YtNKNP9QIwaJZZc8TYMofOSZiQwQ0RlIm3vQgnocSsjDxOv/UVfiTfDYr9ZnwkSMHCpvDeZX0jdMdolV5zWNdP2WWO8FLslTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZtWNH1XsWzYQtwc;
+	Thu,  8 May 2025 20:17:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 86C091A1A7E;
+	Thu,  8 May 2025 20:17:18 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDnSl_KoBxoXus0Lw--.707S3;
+	Thu, 08 May 2025 20:17:16 +0800 (CST)
+Message-ID: <68172a9e-cf68-4962-8229-68e283e894e1@huaweicloud.com>
+Date: Thu, 8 May 2025 20:17:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +46,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] dt-bindings: iio: magnetometer: qst: Add QMC5883L
- device tree binding
-To: Brajesh Patil <brajeshpatil11@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, marcelo.schmitt1@gmail.com,
- dlechner@baylibre.com
-References: <20250508120846.114262-1-brajeshpatil11@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, john.g.garry@oracle.com,
+ bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+ brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+ <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
+ <20250505132208.GA22182@lst.de> <20250505142945.GJ1035866@frogsfrogsfrogs>
+ <c7d8d0c3-7efa-4ee6-b518-f8b09ec87b73@huaweicloud.com>
+ <20250506043907.GA27061@lst.de>
+ <64c8b62a-83ba-45be-a83e-62b6ad8d6f22@huaweicloud.com>
+ <20250506121102.GA21905@lst.de>
+ <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
+ <20250508050147.GA26916@lst.de>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250508120846.114262-1-brajeshpatil11@gmail.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250508050147.GA26916@lst.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnSl_KoBxoXus0Lw--.707S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF43ZFW3Zry3Aw48Kw1xKrg_yoWrtrWDpF
+	W8WF1jkF4DKr13Cw1v9w4Igrn0vFs3AF15C39Ykr48Cw45XF13KFnaga40yF9rXryxZayD
+	tFZ0kFyUZa1Iy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 08/05/2025 14:08, Brajesh Patil wrote:
-> Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
+On 2025/5/8 13:01, Christoph Hellwig wrote:
+> On Wed, May 07, 2025 at 03:33:23PM +0800, Zhang Yi wrote:
+>> On 2025/5/6 20:11, Christoph Hellwig wrote:
+>>> On Tue, May 06, 2025 at 07:16:56PM +0800, Zhang Yi wrote:
+>>>> Sorry, but I don't understand your suggestion. The
+>>>> STATX_ATTR_WRITE_ZEROES_UNMAP attribute only indicate whether the bdev
+>>>> and the block device that under the specified file support unmap write
+>>>> zeroes commoand. It does not reflect whether the bdev and the
+>>>> filesystems support FALLOC_FL_WRITE_ZEROES. The implementation of
+>>>> FALLOC_FL_WRITE_ZEROES doesn't fully rely on the unmap write zeroes
+>>>> commoand now, users simply refer to this attribute flag to determine
+>>>> whether to use FALLOC_FL_WRITE_ZEROES when preallocating a file.
+>>>> So, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES doesn't
+>>>> have strong relations, why do you suggested to put this into the ext4
+>>>> and bdev patches that adding FALLOC_FL_WRITE_ZEROES?
+>>>
+>>> So what is the point of STATX_ATTR_WRITE_ZEROES_UNMAP?
+>>
+>> My idea is not to strictly limiting the use of FALLOC_FL_WRITE_ZEROES to
+>> only bdev or files where bdev_unmap_write_zeroes() returns true. In
+>> other words, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES
+>> are not consistent, they are two independent features. Even if some
+>> devices STATX_ATTR_WRITE_ZEROES_UNMAP are not set, users should still be
+>> allowed to call fallcoate(FALLOC_FL_WRITE_ZEROES). This is because some
+>> devices and drivers currently cannot reliably ascertain whether they
+>> support the unmap write zero command; however, certain devices, such as
+>> specific cloud storage devices, do support it. Users of these devices
+>> may also wish to use FALLOC_FL_WRITE_ZEROES to expedite the zeroing
+>> process.
+> 
+> What are those "cloud storage devices" where you set it reliably,
+> i.e.g what drivers?
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
+I don't have these 'cloud storage devices' now, but Ted had mentioned
+those cloud-emulated block devices such as Google's Persistent Desk or
+Amazon's Elastic Block Device in. I'm not sure if they can accurately
+report the BLK_FEAT_WRITE_ZEROES_UNMAP feature, maybe Ted can give more
+details.
 
-...
+https://lore.kernel.org/linux-fsdevel/20250106161732.GG1284777@mit.edu/
 
-> +
-> +  mount-matrix:
-> +    description: |
-> +      A 3x3 rotation matrix describing how the magnetometer is mounted
-> +      on the device. This is used to orient the sensor measurements
-> +      to match the device's coordinate system.
-No supplies?
+> 
+>> Therefore, I think that the current point of
+>> STATX_ATTR_WRITE_ZEROES_UNMAP (possibly STATX_WRITE_ZEROES_UNMAP) should
+>> be to just indicate whether a bdev or file supports the unmap write zero
+>> command (i.e., whether bdev_unmap_write_zeroes() returns true). If we
+>> use standard SCSI and NVMe storage devices, and the
+>> STATX_ATTR_WRITE_ZEROES_UNMAP attribute is set, users can be assured
+>> that FALLOC_FL_WRITE_ZEROES is fast and can choose to use
+>> fallocate(FALLOC_FL_WRITE_ZEROES) immediately.
+> 
+> That's breaking the abstracton again.  An attribute must say something
+> about the specific file, not about some underlying semi-related feature.
 
-Best regards,
-Krzysztof
+OK.
+
+> 
+>> Would you prefer to make STATX_ATTR_WRITE_ZEROES_UNMAP and
+>> FALLOC_FL_WRITE_ZEROES consistent, which means
+>> fallcoate(FALLOC_FL_WRITE_ZEROES) will return -EOPNOTSUPP if the block
+>> device doesn't set STATX_ATTR_WRITE_ZEROES_UNMAP ?
+> 
+> Not sure where the block device comes from here, both of these operate
+> on a file.
+
+I am referring to the block device on which the filesystem is mounted.
+The support status of the file is directly dependent on this block
+device.
+
+> 
+>> If so, I'd suggested we need to:
+>> 1) Remove STATX_ATTR_WRITE_ZEROES_UNMAP since users can check the
+>>    existence by calling fallocate(FALLOC_FL_WRITE_ZEROES) directly, this
+>>    statx flag seems useless.
+> 
+> Yes, that was my inital thought.
+> 
+>> 2) Make the BLK_FEAT_WRITE_ZEROES_UNMAP sysfs interface to RW, allowing
+>>    users to adjust the block device's support state according to the
+>>    real situation.
+> 
+> No, it's a feature and not a flag.
+> 
+
+I am a bit confused about the feature and the flag, I checked the other
+features, and it appears that features such as BLK_FEAT_ROTATIONAL allow
+to be modified, is this flexibility due to historical reasons or for the
+convenience of testing?
+
+Think about this again, I suppose we should keep the
+BLK_FEAT_WRITE_ZEROES_UNMAP as read-only and add a new flag,
+BLK_FALG_WRITE_ZEROES_UNMAP_DISABLED, to disable the
+FALLOC_FL_WRITE_ZEROES. Since the Write Zeroes does not guarantee
+performance, and some devices may claim to support **UNMAP** Write Zeroes
+but exhibit extremely slow write-zeroes speeds. Users may want be able to
+disable it. Thoughts？
+
+Thanks,
+Yi.
+
 
