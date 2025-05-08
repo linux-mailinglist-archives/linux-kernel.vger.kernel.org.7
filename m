@@ -1,126 +1,140 @@
-Return-Path: <linux-kernel+bounces-639493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C06AAF814
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:39:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A4FAAF818
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3EB4165C16
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:39:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AC8B2021E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B62221F3E;
-	Thu,  8 May 2025 10:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6A8238D42;
+	Thu,  8 May 2025 10:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IzePWVWp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="caONFTq3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zor5QPT2"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D5E221FA1;
-	Thu,  8 May 2025 10:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89333221FA0;
+	Thu,  8 May 2025 10:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746700471; cv=none; b=r2gHGrLKkGNkd7TZSiO+AZo88y/sWKttXkhBLSPsbGjaB2tksG+cSTS0gq4eqMOgCO4v5qYQD8YuBWi7QQKA82InihpywQTX37qad3diDrtU1lX/ACrHVwHRthv8VOpvelg9u/o5ak/cxDWBwOw+RsxV/c3erUngcZ1oOnX/g4I=
+	t=1746700473; cv=none; b=VJbCeDqMoyrjy2PISPQ9GoBNqJNwRxNzkEk8ag+oOsdODWnmhV3klhG2VMrSMXwQpc70rTs7Zmp7p4UnkjqPkWNcpY5Z9onGX9ODS4cZLvhGwv1oBDrh+aHcxZe5Zq7YkppFY9uF+2jru47YA44nnTRYYCLucnFjwLaPaYqh5nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746700471; c=relaxed/simple;
-	bh=5LiML9Ijqi/i3YhbwMzk6qGTWOXAVqGDL+6j0A9oL2I=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tAX+l1Y1s5LUzmQzOIgZH4Ra7EQsGai8wD423EWLL/remRn7tHnexTrNTxRG9nNHevX6JN5NYBbTCxgg/BlYkcjStt4GbIEQMkYmwXzVU+xIHXBvrd5UHI2RXsYeaMpJEqgiKbDYAkjSkBhDqDGtsbu54mVzlfkA2dZscW1kGfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IzePWVWp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=caONFTq3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 May 2025 10:34:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746700468;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NDSSoZ0GooGOAcSnrwig99WmPFQ3Q4NQkHSH3X8s1Hw=;
-	b=IzePWVWpsi9jG4WUqciAxkVmcqAfDoTWOqdYzn7gzlBWZML4NdUDxE1lOha+fxeglRtTWK
-	5Uw+T2RCJSQGukUZPkeW6wejHQ28fD4cbJoF+lGZ6iKA9mqXbOjGebVBtj9EOgUyNue8DN
-	2sTAtZLgPG7Chu1XZVp/K1YmbcZkVH6Ja+eZ3I3vuf5o+GGUySAD5x7I1z5P2oUV1zus0n
-	R4TEUUgAU30GdZFxWHBswfxjihOBTWzyMjhrkhdkWZRmT3kb2+IkzwXRkdj5CcZ18PNiU+
-	J7kpcN4SC4Ts1cjdRhNkXXZFpXED78PcVTuAvtZinNcXBi/TavCHKHF5Cb408A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746700468;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NDSSoZ0GooGOAcSnrwig99WmPFQ3Q4NQkHSH3X8s1Hw=;
-	b=caONFTq3kK5t7WBS2qICbxv6OZzb8UwFO3uB5Yn2PFwbeH/v//QR/sbL9zyk7ySVmekyHz
-	Cx16JYvGd26b2LDw==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf: Fix confusing aux iteration
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250424161128.29176-5-frederic@kernel.org>
-References: <20250424161128.29176-5-frederic@kernel.org>
+	s=arc-20240116; t=1746700473; c=relaxed/simple;
+	bh=KuKPBoDjHDPZ4zNZNAc7e3c9x+J+qxdFTx8dGtAK3ss=;
+	h=Message-ID:Date:From:To:CC:Subject:References:Content-Type:
+	 MIME-Version; b=nVG3BZdpnqMt6kNBIvi3R7TmN6Bp2fmhh5JZ/TVDAF5ZEPlJ8kfU3XDIpiEAFQplYVOjlv93yxiUiixrR4+ktyG1KSNkyWqOkfV0GgOLMZy0sXr7rJCDsH2D/yD1LFx66R0ilvjwBcvjrHauxy8QPSNzGLkAsCpWKrMXyO4uuPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zor5QPT2; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf680d351so11064265e9.0;
+        Thu, 08 May 2025 03:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746700470; x=1747305270; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:references:subject:cc:to
+         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xizeysbD+2cKLonCxb9Ikg/JQWMKPiH+tr5vKFbIOfM=;
+        b=Zor5QPT2m5SKi6/mOJ61pDqc9bqaX6SlsOKripywQ+UZ4EinkQI27MI8eSfvYP6/8a
+         qr1UhsuCfflC5vwlnvVrT07eVx7pfJ7NGYTtF0ZJgAe3tg+shKJGcTHd8u+gCK++uftP
+         Kq4nd9A3tDxH7XMGdnz9ZluKNy661YH39LaumWZMazVKLZc57DNV45Eq7HGMzGgSY3vz
+         oKetOV4j7Q/BXvIwrfhfHL8vVNtgA6sekI59pM8FM44m7JOoNXbjRWnCnnRwu6DqBCCM
+         DVMobZq0/OgAUQGWuf8RarqCr5/e1yA/wD+wWLYpFxtVpp0aISn/yXrn4icyAUyPJJKr
+         cf7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746700470; x=1747305270;
+        h=mime-version:content-transfer-encoding:references:subject:cc:to
+         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xizeysbD+2cKLonCxb9Ikg/JQWMKPiH+tr5vKFbIOfM=;
+        b=qO8IwWV1hA4V5PQ5i0zJN/ZWHhhbk8HQXc9o44V/liBlJz3DzPpyulz420VWSiM76q
+         MuUx81eo/eecwdPVe1GvyFyKphZm9yJGqzKy+M/Zo+mcGVIN3qxY4hev5tYD5TsOgHOF
+         uwvvnZKRuxNleXDeksmnUWmucAz2ALgjZGN0Psk6sIl70UES8Y3KbG6L+S+sZNgXl1C7
+         HMl07DOXu9ZK28CAlUp047c7PbDn+ek7zOJq70LoEBAqLhQ6N+5f9QjCbN0bliVTOOnL
+         lpheYlVqc3HPl2cD7iYB4ONeTXKizd1FFRfkAWG5DRx4Z84DP9owN9+sOZjVO5YAvDTR
+         MZcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFVMeE+3vYPTdEIVGqsUlEUQtmdkc0mPjau850sXJ2p+oz0Od/y+7NKf8AW6alGF0fPPW8BT0xCO9yev4=@vger.kernel.org, AJvYcCVpZeiFYJIiIO22jrdUV0DsiJfzibAeHLXO2+EB0M+XLsNay70oEwCpUuImdRKGerTUXfwocSUm@vger.kernel.org, AJvYcCXKQAH1AVA890mwyd3l1ITcuVwDFWK7nzaHOoRA8q5BWdRKXFtMgAG2mN3/9RrpVCb4xPL3RwazTowz3eE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlXJWoT1OMmw52rqVYm9EAVY4o/13mTrQwm3hyP4YNApkfO1Ek
+	pwyMyaemb60t3pNfIPQN17fR4UTcHJlcLg70aA1Jzl7CTWUoMwuKO8mi4g==
+X-Gm-Gg: ASbGncvYdyyDWexakk0Pw2rxX0FizyhOdwnYsdG+jbtbRIMRqVVYTh1OmeBgYSfLAoV
+	99KY8NKoxw0hXMx+vN1MBXBQjgf+ZGw2UtMtqmrlFIgOP6kpiRXtv4+mrmCAZGvPS892iLJTyxB
+	iRFNdcz7qXZhhExr4TZkZjjQ7BcAF0KsvHs+cgBxw2We00Tv5y08g1T3PXeYjWzBG3Dqjl4nyUd
+	6KJDsh14FCL5GRAOWo6GKQ8qe525ABm0WKQNk6aF9vo8v5h7sJLPU9RF5+r2CoOhnVbdqF0CI7h
+	6tWLqRDnhFr8XdQZ9xHupPrMQtJ7pVda26FD3id8wg3vrl/m2fafciSxazq2
+X-Google-Smtp-Source: AGHT+IH0a9roXZBmBGMXIYr5UBAYL9NEGf0Evua2N7Ei76fP3u0l/UvqfgyhZORZuaF/Pyun04enog==
+X-Received: by 2002:a05:600c:818d:b0:439:9737:675b with SMTP id 5b1f17b1804b1-442d02e7047mr27334675e9.7.1746700469388;
+        Thu, 08 May 2025 03:34:29 -0700 (PDT)
+Received: from red.local ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a0bc2e17a3sm1668728f8f.62.2025.05.08.03.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 03:34:28 -0700 (PDT)
+Message-ID: <681c88b4.df0a0220.27ca51.39ec@mx.google.com>
+Date: Thu, 08 May 2025 03:34:28 -0700 (PDT)
+From: clabbe.montjoie@gmail.com
+To: ldewangan@nvidia.com,broonie@kernel.org,thierry.reding@gmail.com,jonathanh@nvidia.com,devnull+webgeek1234.gmail.com@kernel.org
+CC: linux-spi@vger.kernel.org,linux-tegra@vger.kernel.org,linux-kernel@vger.kernel.org,stable@vger.kernel.org,webgeek1234@gmail.com
+Subject: Re: [PATCH] spi: tegra114: Use value to check for invalid delays
+References: <20250506-spi-tegra114-fixup-v1-1-136dc2f732f3@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174670046772.406.3650445834841658682.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the perf/core branch of tip:
+> From: Aaron Kling <webgeek1234@gmail.com>
+>=20
+> A delay unit of 0 is a valid entry, thus it is not valid to check for
+> unused delays. Instead, check the value field; if that is zero, the
+> given delay is unset.
+>=20
+> Fixes: 4426e6b4ecf6 ("spi: tegra114: Don't fail set_cs_timing when delays a=
+re zero")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  drivers/spi/spi-tegra114.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+> index 2a8bb798e95b954fe573f1c50445ed2e7fcbfd78..795a8482c2c700c3768bd50bf59=
+971256893a486 100644
+> --- a/drivers/spi/spi-tegra114.c
+> +++ b/drivers/spi/spi-tegra114.c
+> @@ -728,9 +728,9 @@ static int tegra_spi_set_hw_cs_timing(struct spi_device=
+ *spi)
+>  	u32 inactive_cycles;
+>  	u8 cs_state;
+> =20
+> -	if ((setup->unit && setup->unit !=3D SPI_DELAY_UNIT_SCK) ||
+> -	    (hold->unit && hold->unit !=3D SPI_DELAY_UNIT_SCK) ||
+> -	    (inactive->unit && inactive->unit !=3D SPI_DELAY_UNIT_SCK)) {
+> +	if ((setup->value && setup->unit !=3D SPI_DELAY_UNIT_SCK) ||
+> +	    (hold->value && hold->unit !=3D SPI_DELAY_UNIT_SCK) ||
+> +	    (inactive->value && inactive->unit !=3D SPI_DELAY_UNIT_SCK)) {
+>  		dev_err(&spi->dev,
+>  			"Invalid delay unit %d, should be SPI_DELAY_UNIT_SCK\n",
+>  			SPI_DELAY_UNIT_SCK);
+>=20
+> ---
+> base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+> change-id: 20250506-spi-tegra114-fixup-dbf6730db087
+>=20
+> Best regards,
+> --=20
+> Aaron Kling <webgeek1234@gmail.com>
+>=20
+>=20
+>=20
+>=20
 
-Commit-ID:     dd0987d6358ef52bac886c5fe8287c12f47a7656
-Gitweb:        https://git.kernel.org/tip/dd0987d6358ef52bac886c5fe8287c12f47a7656
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Thu, 24 Apr 2025 18:11:28 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 02 May 2025 12:40:41 +02:00
+Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+Tested-on: tegra124-jetson-tk1
 
-perf: Fix confusing aux iteration
-
-While an event tears down all links to it as an aux, the iteration
-happens on the event's group leader instead of the group itself.
-
-If the event is a group leader, it has no effect because the event is
-also its own group leader. But otherwise there would be a risk to detach
-all the siblings events from the wrong group leader.
-
-It just happens to work because each sibling's aux link is tested
-against the right event before proceeding. Also the ctx lock is the same
-for the events and their group leader so the iteration is safe.
-
-Yet the iteration is confusing. Clarify the actual intent.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250424161128.29176-5-frederic@kernel.org
----
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e0ca4a8..b846107 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2171,7 +2171,7 @@ static void perf_put_aux_event(struct perf_event *event)
- 	 * If the event is an aux_event, tear down all links to
- 	 * it from other events.
- 	 */
--	for_each_sibling_event(iter, event->group_leader) {
-+	for_each_sibling_event(iter, event) {
- 		if (iter->aux_event != event)
- 			continue;
- 
+Thanks
+Regards
 
