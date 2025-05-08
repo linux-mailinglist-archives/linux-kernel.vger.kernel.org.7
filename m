@@ -1,55 +1,86 @@
-Return-Path: <linux-kernel+bounces-639970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C36AAFF1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:25:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BD8AAFE76
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D6837BE87B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:20:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F4BAB40BCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A220267728;
-	Thu,  8 May 2025 15:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E68278E68;
+	Thu,  8 May 2025 15:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="faLioyyP"
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XU4oLeqQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC0B1BD4F7;
-	Thu,  8 May 2025 15:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA961A239F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746717701; cv=none; b=Ea1PhgvK0l4C1mVuLVYEG+5R8+i/KUyRLo7TMJvaSQ6MOT4Nacnd/DJ4lMASVeuxjLNHxcEGeQBjH00zlbQQ9v+Z1+AOBOyUNdjW4+TSwV0ZzSwBCHnlnh8oo7Fj6cuahJJBLkSASiV/cWhp2eiX1ueFcLqqo/q2f81ikiPP7+Q=
+	t=1746716634; cv=none; b=bXJoiAN+cxVrLIplkNaKbiMUoEV5GxfLbqU+7fED8FLNks3w/Diy495m0PoMzL4goJC0GEsKI7HhB0nAcMUNmstmkBHdFre/4TTXxMXxZXTnlbYnISq4ix+R6+kNh/TA0Yn1CCEobKdP7kA+duqn5D27xeeIiMW24CTe4JPEfd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746717701; c=relaxed/simple;
-	bh=UK1pyBSP6cnOEUNhCJEzF4QCBjLicUgO5zbNc1oDH28=;
+	s=arc-20240116; t=1746716634; c=relaxed/simple;
+	bh=Te3Rp66uIuDKAYOuy9D6T8Qi0yB9d4NQxWotSp9mZVE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l2axoB1sfS7Mh/eKvPv6nwbMBkfk1LWAwHeEabY4tQWo1jSHmgu9fCmHb1nWatw1YWxmBf5mczNxVdNXdHAgkfRrCI8k2O1q5N/nNaw5WtxGeiShpJ7t2Bl/MsIdqAdA4fdugRPK0QbLMRCSo0amg22Z1ubVlQuv9HMdqJXnQQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=faLioyyP; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LA0jiwSe+AcbAnMB83EVPyLYZNhKqox30NsMzUL+r88=; b=faLioyyPDxhoxxZkhwpRhpq+CE
-	r7crjGoLIywBtaGfSkiDc4FGJUGvfAsH3DxMBSP39qT+d6vgLuUwrRX1RvdD48TwsoLhnwlLMWQVh
-	Z7pB0/yc+ZivFyN1E49ZpQfEE13xxKOqK5b+0IgCr1UtgCH0xwoYvGwA2A7VlcCwSXPU/PBS45fuP
-	U3U5rVvYT8oTE9u7vnYFhdCSNh1RsE81Qq7eIUvoQ5h6ZVPUyikNX5r+Uc1P6lGuXxbT5sI5pacm5
-	mCy/UDnvWFO7ph5dlWE/7ZbevL9ecaIlTb0F2YNwlkVUQ2L3Hz4G5zbAVZw2onlAyryCpc//fprwI
-	G5R1GqVg==;
-Received: from [2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e] (port=48630)
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <david@lechnology.com>)
-	id 1uD2p3-0000000024m-0AGg;
-	Thu, 08 May 2025 11:03:12 -0400
-Message-ID: <037fc605-3401-4e68-b452-b5e4882d56bc@lechnology.com>
-Date: Thu, 8 May 2025 10:03:09 -0500
+	 In-Reply-To:Content-Type; b=JDHXwN9npXX6gBvNzz8A8vqKw/Jo00IyayN69/7PKszpoIJ7Q1y4PXMGizmlEP0XXrChCSh5zwja/cwgLyYAHlJX3kLZamsGaXjbYahkNiX7k4fC4BKoXRLnDWthQalbYPJ8kjumPxN2cKSPDftm7N+JPKw0iTAveQRg5YtobLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XU4oLeqQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746716631;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0A3k4r7gW5UVXrE6QQjqPyS0bUfFQ+JNzCXgzNYHnZo=;
+	b=XU4oLeqQ/ZhIdGDDOX+NYkkwq5muKvTmPThv/snaR4dROBnXXDexhj33RPnCjtrghYBVTU
+	dPWkytPH4GMieRN9YY+ddLRVPZ4ILF9bN9Li4WcDHwaRyuFNWoUNj4wXy0gTFn2HgEbwvl
+	jg+qf0CbsYQ+bnruDLybms5juL8uJfA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-209-knwAw2XPOeqQAgtNlXuLKg-1; Thu, 08 May 2025 11:03:50 -0400
+X-MC-Unique: knwAw2XPOeqQAgtNlXuLKg-1
+X-Mimecast-MFC-AGG-ID: knwAw2XPOeqQAgtNlXuLKg_1746716629
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a064c45f03so501299f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 08:03:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746716629; x=1747321429;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0A3k4r7gW5UVXrE6QQjqPyS0bUfFQ+JNzCXgzNYHnZo=;
+        b=i1VfDMZkU3wk60OttODHEJrfeqP8io8/rNsCog4JH2oWixobhwo/pa+uIC80xIwW7v
+         fMf6bQfo2hCDg2ZtpE8S8wVtJ07OI56ebO57Y/YsYWeBEw0zIBlBUxrvHrtFCZFWf/lk
+         eitbXvTR3hzMOkD7i5IKyP8CwB+XgzcMwqegKlvPH2m26mQ/BImnej1AsguG/84SQFIm
+         6yzvX9s3vkRVqI1aYrTbxkN5uM4iBE1uvuNRk16NUmSWESkrA3q+J1eVkrudsaW2mz1s
+         ANp88eVBdPKaJCLWt2dbU+s/WoXnSVrPd6OMEm8O2ehUfDZtIOAIilJ4uqspnqwr01mO
+         Z7hg==
+X-Gm-Message-State: AOJu0YwgWJGUiTj/+DKNx8teVbfd7TPsnIkjia2Nf0gqYA+kE2XUa1sM
+	641VKx+kasVk/c892n44+3JK3FNmKjtFHL02x7cAHmw4S3Qq8VcYnr/XyW9sMvmgjId4VKQmBI0
+	r53EPkXvxwyhjslprb6pKjC2P/QJZny0mz9cdF9QeRFqO2cQ5DqbD7Xbh5X2/vw==
+X-Gm-Gg: ASbGncueHrG/p4oQo4zhUE2PwpgF8/D8bCR6Y+qrD49XPv6FE2ksDVT92bHA2/8Tsao
+	xDyJ4aaaikqtWQdRiWW+ke9/3ZO/kE8J8tRzc7hGQhzPt7cnArhKy7PFIr+zhoR+LD4mAC3hNCJ
+	cg6aylzw3PTpzQA55GMl0NDDMTSY0Hj/Cb7dZ78AIssREM9B828YPMHVHcrrUQIoLK9YPvjqecs
+	tIvv3CkhrMJnFarF4TMc1vw6owFOaUwWZ0zrF4K5RgKWpbNqnmVyfAcOo+sM6T04nRL6HnMI30E
+	NjugeHUOt032NaSbANEW3BW7PFJwD3okdHSWb38fO3NoNBA+krdU+Zw0Y2vOPno/DG8WB/fzM+t
+	FVX54X+T0bLYjov3CS5dqY12ubqEJ7e1aN5U87i0=
+X-Received: by 2002:a05:6000:2a7:b0:3a0:8c01:d463 with SMTP id ffacd0b85a97d-3a0b990e2b2mr3562903f8f.9.1746716628728;
+        Thu, 08 May 2025 08:03:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx8yXNIhT1hUz4xWiwQQ29Va0Sgz3iLNOyvxn9tuUzOatsvNXpRv8L6O8svQ44smramfRUxQ==
+X-Received: by 2002:a05:6000:2a7:b0:3a0:8c01:d463 with SMTP id ffacd0b85a97d-3a0b990e2b2mr3562840f8f.9.1746716628057;
+        Thu, 08 May 2025 08:03:48 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c? (p200300d82f3e590027aa5f4ab65c3d3c.dip0.t-ipconnect.de. [2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f2f58sm215860f8f.49.2025.05.08.08.03.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 08:03:47 -0700 (PDT)
+Message-ID: <99ed92b7-c1b2-4e12-a7ee-776a7f890b47@redhat.com>
+Date: Thu, 8 May 2025 17:03:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,126 +88,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: uleds: fix unchecked copy_to_user() in uleds_read()
-To: Lee Jones <lee@kernel.org>, Ivan Stepchenko <sid@itb.spb.ru>
-Cc: Pavel Machek <pavel@kernel.org>,
- Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-References: <20250505081342.3855-1-sid@itb.spb.ru>
- <20250508143451.GQ3865826@google.com>
-From: David Lechner <david@lechnology.com>
+Subject: Re: [PATCH 1/1] Fix zero copy I/O on __get_user_pages allocated pages
+To: Pantelis Antoniou <p.antoniou@partner.samsung.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Artem Krupotkin <artem.k@samsung.com>,
+ Charles Briere <c.briere@samsung.com>,
+ Wade Farnsworth <wade.farnsworth@siemens.com>, Peter Xu <peterx@redhat.com>
+References: <20250507154105.763088-1-p.antoniou@partner.samsung.com>
+ <CGME20250507154119uscas1p17799fe7589e4f1bd53d2d3dc7f44cb8c@uscas1p1.samsung.com>
+ <20250507154105.763088-2-p.antoniou@partner.samsung.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20250508143451.GQ3865826@google.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250507154105.763088-2-p.antoniou@partner.samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-On 5/8/25 9:34 AM, Lee Jones wrote:
-> On Mon, 05 May 2025, Ivan Stepchenko wrote:
-> 
->> The copy_to_user() is annotated with __must_check, indicating that
->> its return value must be checked by the caller. Currently, uleds_read()
->> ignores it. If the userspace buffer is invalid and copy_to_user() fails,
->> the userspace application may assume it has received fresh data, while
->> in fact copying has failed. This can leave applications out of sync
->> with the actual device state.
->>
->> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>
->> Fixes: e381322b0190 ("leds: Introduce userspace LED class driver")
->> Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
->> ---
->>  drivers/leds/uleds.c | 11 +++++++----
->>  1 file changed, 7 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
->> index 374a841f18c3..41bfce43136c 100644
->> --- a/drivers/leds/uleds.c
->> +++ b/drivers/leds/uleds.c
->> @@ -147,10 +147,13 @@ static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
->>  		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
->>  			retval = -EAGAIN;
->>  		} else if (udev->new_data) {
->> -			retval = copy_to_user(buffer, &udev->brightness,
->> -					      sizeof(udev->brightness));
->> -			udev->new_data = false;
->> -			retval = sizeof(udev->brightness);
->> +			if (copy_to_user(buffer, &udev->brightness,
->> +					 sizeof(udev->brightness))) {
-> 
-> This is not good.
-> 
-> Please store the result into a variable and return that instead.
+On 07.05.25 17:41, Pantelis Antoniou wrote:
 
-Every other caller of copy_to_user() in the kernel I've seen ignores the actual
-return value and returns -EFAULT, so I thought this looked correct and it was
-just a quirk of copy_to_user().
+Hi,
+
+> Recent updates to net filesystems enabled zero copy operations,
+> which require getting a user space page pinned.
+> 
+> This does not work for pages that were allocated via __get_user_pages
+> and then mapped to user-space via remap_pfn_rage.
+
+Right. Because the struct page of a VM_PFNMAP *must not be touched*. It 
+has to be treated like it doesn't exist.
 
 > 
->> +				retval = -EFAULT;
->> +			} else {
->> +				udev->new_data = false;
->> +				retval = sizeof(udev->brightness);
->> +			}
->>  		}
->>  
->>  		mutex_unlock(&udev->mutex);
->> -- 
->> 2.39.5
->>
+> remap_pfn_range_internal() will turn on VM_IO | VM_PFNMAP vma bits.
+> VM_PFNMAP in particular mark the pages as not having struct_page
+> associated with them, which is not the case for __get_user_pages()
 > 
+> This in turn makes any attempt to lock a page fail, and breaking
+> I/O from that address range.
+> 
+> This patch address it by special casing pages in those VMAs and not
+> calling vm_normal_page() for them.
+> 
+> Signed-off-by: Pantelis Antoniou <p.antoniou@partner.samsung.com>
+> ---
+>   mm/gup.c | 22 ++++++++++++++++++----
+>   1 file changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 84461d384ae2..e185c18c0c81 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -833,6 +833,20 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
+>   	return !userfaultfd_pte_wp(vma, pte);
+>   }
+>   
+> +static struct page *gup_normal_page(struct vm_area_struct *vma,
+> +		unsigned long address, pte_t pte)
+> +{
+> +	unsigned long pfn;
+> +
+> +	if (vma->vm_flags & (VM_MIXEDMAP | VM_PFNMAP)) {
+> +		pfn = pte_pfn(pte);
+> +		if (!pfn_valid(pfn) || is_zero_pfn(pfn) || pfn > highest_memmap_pfn)
+> +			return NULL;
+> +		return pfn_to_page(pfn);
+> +	}
+> +	return vm_normal_page(vma, address, pte);
+
+I enjoy seeing vm_normal_page() checks in GUP code.
+
+I don't enjoy seeing what you added before that :)
+
+If vm_normal_page() tells you "this is not a normal", then we should not 
+touch it. There is one exception: the shared zeropage.
+
+
+So, unfortunately, this is wrong.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
