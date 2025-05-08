@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-639264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E505AAF52E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63268AAF529
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8546E4E700D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2DC3AB460
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26487226D1A;
-	Thu,  8 May 2025 08:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MurQgMPM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD6B221F37;
+	Thu,  8 May 2025 08:08:23 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858EE221F15;
-	Thu,  8 May 2025 08:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D16F073;
+	Thu,  8 May 2025 08:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746691719; cv=none; b=FlZ/uO51OmJ4st4/jnZs+LcplHDN+orxXAEj+wx0uPumQ2i5KLT5zd8tTkEMIhwB3VwAYkQhqttMHFuZpJ8ecp6xFn7QP62hvH4RF2NUjIylEjHy4dmNQvS3e8kynQ2kthZspN2ucplUwAwHLPz0Ew9kDVFQZhu4e6fDatz4yaY=
+	t=1746691703; cv=none; b=oBRr/wOckIxAmQnFJUNDPkAxAFzFQlY/RW27spu+UgErI5CVE36cGazCbnRvJLQsbYgOPixl3MEtpp2HoqIbnfCXK2yOfAw0phmjir71n6l1LybjNyAalkdD6GWDOXdXdBjHUHdN8QSGCOQcBsGfBnmwnoyy+fzhIUOUl7Zl/m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746691719; c=relaxed/simple;
-	bh=jYdN33+CJ/NGBhRXvU2A5aABgKMcpgRwc9o3lmxpjCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7xmnZF8lAegRRpMtErlFge61AuqcCBZX9QSAuiMwUpQCGPEshjyyoGpySIR/bXwtl+0V83BSRgqW2DRNsDJE4GOGdPeX9P1DOIVOiQUnHu6jq+oT40tgyDtf4yUk349in/AXng/J9VP0vlVtfqPWOikTgosy9OCPFteMmFh/04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MurQgMPM; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746691717; x=1778227717;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jYdN33+CJ/NGBhRXvU2A5aABgKMcpgRwc9o3lmxpjCk=;
-  b=MurQgMPM+nPguPnVXulki9gt1df10uKCo2hwTSHs04LT3C0v2sT8bRRG
-   D/4Pf++JEF7vgNR+LVSQm41hwvt+L4ADEruvyp0WJL3O76lT5FgPwVAec
-   sAucgwNnkns106EieOAe2NSJt1OWj9qIkgtnQ1J18eRT8hXqf79aImYSX
-   CJALWc2mpt6/kb5J/O5rBRXRq6lXYzo8+A3mvTZPgyfeJZJDCY6Z2JSUq
-   vk66T22PlF40uIxpsVm9cr6ItnSKbIcvGZLm7/shL/wzq4PcrmFfxctUx
-   NanhM2HO2GwDrJSoGqt9VSJzCm7H7CBXpSzZjQjM5mx8yk8XryjixFubb
-   w==;
-X-CSE-ConnectionGUID: n8nqQxq8QQepYV/oc+mjaQ==
-X-CSE-MsgGUID: y9k3D3xYQLKqAPPxKViqJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="47718460"
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="47718460"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 01:08:36 -0700
-X-CSE-ConnectionGUID: i36FOlqRRMSFknar2JOmnw==
-X-CSE-MsgGUID: prix0mQBSAG+iF7lVc6ohQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="136713973"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 01:08:34 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCwIx-000Am9-2e;
-	Thu, 08 May 2025 08:08:31 +0000
-Date: Thu, 8 May 2025 16:07:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, David Gow <davidgow@google.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH v2] printk: ringbuffer: Add KUnit test
-Message-ID: <202505081550.KMstgTUQ-lkp@intel.com>
-References: <20250506-printk-ringbuffer-test-v2-1-152200569eb1@linutronix.de>
+	s=arc-20240116; t=1746691703; c=relaxed/simple;
+	bh=+sJ+nOd93uoWClQE2mhYQO1xYIQfotIWKMU2W7nPB2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pwpvs1MkmZZO/eH6Kq5IbB73V9tRCViOswDdAFyb+wxoYtaP2GmGITf9c3ZnMdiEq1PmzSo+fgMcgwTPt9qqH0r/FzE3zvh2TIInocGtBS3l4vhZrOnpTXcSn5juMwU0BBI2NW0yBU4Hmx1cFrOvb1mv29xbH57j4Kcfjgb9DVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5241abb9761so238255e0c.1;
+        Thu, 08 May 2025 01:08:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746691697; x=1747296497;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5pyh88RLi7QBn3vHcG2jBCwxHsg3m1PlM26ESBfjfQk=;
+        b=JdVUV14WGk68/k1HNNJGKorvTY7Q8kr0nz2kJuiUsEQOn70dC6/VuX/LS0IuBcV3OV
+         /v5sgnoLF7ggsPuZEenIWHr1XT1KzVWNE/PMvtKbvNZtel0tcHCqNh2JhTg4bQEFThqx
+         QSvAVz8KeK6KbHiinIXfOFDiLA5SM5qqjLoeutHb2IyoRAKixPYKT7TsgiFOSzKlEBRy
+         XXOmGPeqPeUehJKh/gyag4Pn7HUuJc8EwecAA7QzvpPgkhjhRIMdPlj2MFzoUgozGUeO
+         OZMAkxwPBbWX2ydgmnpjvZprveH/RJkmoxCNkRqf1o/wzPz4JOMssRchcboys89crIjB
+         PtdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9w1Jt9qaJgT/KogH8Sehsd8x74zE5gcGXD8gM8y0B4sgPYREpIUahvrn2BB1o3boSloTaQ0vPX1J2EpW1C7CFmvw=@vger.kernel.org, AJvYcCWmA69ukN0pd6k5LJOhKObgTMu/q6J6qr/j4LbVMc8tmJOGkoX9RtbCOA3ujQzBIkiBXmjNEqQVtwE=@vger.kernel.org, AJvYcCWnKkIO9botPEul9Adv7i+FXZyXxeL6K5z+wLxI9l5ZJ1d5kYj55rFn1psMm9q8YzDpE7lPpCVPFkBkD2nk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRY/iSfJPFp3RdnMMXzU6xUnU80r6RpfxiHjZFDiQiankdG/ow
+	c51kzh2g1DdAsM2Wh3YOvDuixpSe/HPC7GYLzo9adtj9q1C/TNnLgyGPbbVR
+X-Gm-Gg: ASbGncsu4NRZ5Wlt741EbzMxhLBkQrnYaR7ciMvtQax7QZmiNO/wbW2sdAHz6m6uqdS
+	rDR7DO4eYy/4+9ViBRB1Z1hFf9RMoimHGP2CL0HmijA4m4A54Im+QhCMVaY4XXYmZt72BV+3k9p
+	AqeTYS4Ebz+9bI9KgmxCay85kXrkKwg+gb7FdyQvgjAjb+a/7OE9YGEgm1PCY8086s5WoinJkFx
+	Fwm/0VGxJxS8WzhYQJUPCx8WwXRXu7hAuIvsmeTnMv+/G6V7uvxX1WPKij/zokEhBWg6S/aO7N2
+	+UOGe5C70a1Qc6jbhaPFqRWD1T10jnItf43LZ89Oa2howKbTEQyWw1f4Xmf3ustiU9SWGQBYVYu
+	de7H3Sbo=
+X-Google-Smtp-Source: AGHT+IFaWIGOmB8cTBxOE+dYT4jEmG0XdjfXBvG0xeDCxKUTjA0Z0v02NnZ2wm1eKbLYbdO4+GchmA==
+X-Received: by 2002:a05:6122:7d0:b0:529:d14:67b6 with SMTP id 71dfb90a1353d-52c441af38fmr1708144e0c.7.1746691697402;
+        Thu, 08 May 2025 01:08:17 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae419c85csm2888631e0c.33.2025.05.08.01.08.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 01:08:17 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5262475372eso197650e0c.2;
+        Thu, 08 May 2025 01:08:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWERG2zKGAiRQQbsYKzmFdvBqDBG3fMORz0BTLJezVvidt2qZuvm2KyBxeg20ibfYakqXIqPFvSvEg=@vger.kernel.org, AJvYcCXP7qTdcNYgGPIqAm8VRHqVlVK/mkm5ETkeP5G+mKfEYMmUzzKbztJyW7Q6bmaQwYCMFrepPKxTaOTyR5Zv7TIPaUM=@vger.kernel.org, AJvYcCXjRkBa3ovT+r4jzo9wMSLt4kSxUcX90GCgg5bTvI9E/h8U4uz4MLZg9Aa9+UXw3fwdBzeHOr3bbKhaLOaf@vger.kernel.org
+X-Received: by 2002:a05:6122:3295:b0:529:2644:5eec with SMTP id
+ 71dfb90a1353d-52c441e2252mr1551202e0c.8.1746691696707; Thu, 08 May 2025
+ 01:08:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506-printk-ringbuffer-test-v2-1-152200569eb1@linutronix.de>
+References: <20250327151109.9648-1-tsogomonian@astralinux.ru>
+In-Reply-To: <20250327151109.9648-1-tsogomonian@astralinux.ru>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 May 2025 10:08:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUoZSXQwu6gZgbzUcFgjQh=ng7UZAGC5ke4GVB-zqqhqQ@mail.gmail.com>
+X-Gm-Features: ATxdqUHjjZXKNDvAcDrDPJ9dSfaDFZqswvwv39QmwuKKp-97On7DFcun-1asJ9A
+Message-ID: <CAMuHMdUoZSXQwu6gZgbzUcFgjQh=ng7UZAGC5ke4GVB-zqqhqQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] renesas: add zero check for prate variable
+To: Tigran Sogomonian <tsogomonian@astralinux.ru>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Thomas,
+Hi Tigran,
 
-kernel test robot noticed the following build errors:
+On Thu, 27 Mar 2025 at 16:13, Tigran Sogomonian
+<tsogomonian@astralinux.ru> wrote:
+> To avoid division by zero, a check was added to the prate
+> variable, since no guarantees were found that it could not
+> be equal to zero.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Signed-off-by: Tigran Sogomonian <tsogomonian@astralinux.ru>
 
-[auto build test ERROR on 0af2f6be1b4281385b618cb86ad946eded089ac8]
+Thanks for your patch!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/printk-ringbuffer-Add-KUnit-test/20250506-200133
-base:   0af2f6be1b4281385b618cb86ad946eded089ac8
-patch link:    https://lore.kernel.org/r/20250506-printk-ringbuffer-test-v2-1-152200569eb1%40linutronix.de
-patch subject: [PATCH v2] printk: ringbuffer: Add KUnit test
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250508/202505081550.KMstgTUQ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505081550.KMstgTUQ-lkp@intel.com/reproduce)
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -205,6 +205,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+>                                                   prate * zclk->fixed_div);
+>
+>         prate = req->best_parent_rate / zclk->fixed_div;
+> +       if (prate == 0)
+> +               return -EINVAL;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505081550.KMstgTUQ-lkp@intel.com/
+prate can never be zero, as req->best_parent_rate is always larger or
+equal than zclk->max_rate, and zclk->fixed_div is a very small number
+(2 or 4).
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+>         min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
+>         max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
+>         if (max_mult < min_mult)
+> diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+> index 31aa790fd003..4c9a7d699290 100644
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+> @@ -308,6 +308,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+>                                                   prate * zclk->fixed_div);
+>
+>         prate = req->best_parent_rate / zclk->fixed_div;
+> +       if (prate == 0)
+> +               return -EINVAL;
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/slub_kunit.o
->> ERROR: modpost: "prb_init" [kernel/printk/printk_ringbuffer_kunit_test.ko] undefined!
+Likewise.
+
+>         min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
+>         max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
+>         if (max_mult < min_mult)
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
