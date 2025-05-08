@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-639960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BEBAAFEF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:20:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F05AAFF1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508EEA02E40
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022389C6F90
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B907327AC26;
-	Thu,  8 May 2025 15:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFF92797A0;
+	Thu,  8 May 2025 15:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHdaHg/G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="UXmAMz62"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1385E27979B;
-	Thu,  8 May 2025 15:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8594F270EA7
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746717120; cv=none; b=iYUHvjI2HFnDZFp6bT13EF0vAMbUWoDZnEiF0YYMcNC3HkLRChbuXdn+g3UhricTwpHI3wf2tL8I7TU89A3N3rPtnqVWBhs7PMBcwmP35fhJ8J5gkXNToDpTAHtBcxhibE6OsDMkMv8gYFhQWGJWjVIS0VT4F+Pp8tISceVEJ/g=
+	t=1746717750; cv=none; b=gPJV3V7ECc5QH3j82qFKoPIbhjjNUvisVcD1YkGiK/yqfxt5IculV2a01qQJE9zq2wMuLCAmC8A6HHpl3GxNDErhdfULKfwY7TFw6FrAdDhtsuW6R9Je++nXvaAkl5jKaZS9LmarXs/p1EVwk+e7VLC/CEJUSj5JxMTtlF99DVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746717120; c=relaxed/simple;
-	bh=fztn7MttRqSxdvYoPCRXKYHR3iB8MxW14WSVwb+i/tA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3bC2eB5d3kod+hG9QFB1GHUdZLahTjPKDmA0MqCHafCo+v0Yae6YubwcC8jAADjyIGPz4pA6Lx18Rn1lSA1mHEgjd1ljPha9Dks/N2YRMY8g4SOV05uZLuAWpncPsJ74z8zsI9KdSuxqds7tursRQVKqa2YfCwfe1rw8DlUmYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHdaHg/G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A065C4CEE7;
-	Thu,  8 May 2025 15:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746717119;
-	bh=fztn7MttRqSxdvYoPCRXKYHR3iB8MxW14WSVwb+i/tA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lHdaHg/GNuL+WfvncI+0BryskX3dpDktrpQ5eh3jwU6ZYEbEmn+ALLfgGogl6wNYK
-	 Hu8Ues1ftHnlfmR+JR4sRgzCTL+dFY5mfi0yKNHJdWldWh+eBJVoankTkoPimC+7y8
-	 JhZvoahnMdPzWa4/ZGrduVT8hI9ZU7g7hJLPeC2RgltePCQs1xBv0Lc+gT9InZqbRH
-	 SvC/3FjcRl7WiAMuiLtbl/vBQlmthFIRTwJ6QLW0rpw03o4vznCbrKeTsruDKeAWsN
-	 z4afTxphyr+vd3RQLAOinh554V6yk1j7IZT5rRFspkT3duQxIyG9dGHhpsjVBbWqMW
-	 HyzvWjrOY9M6g==
-Date: Thu, 8 May 2025 16:11:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Birsan <cristian.birsan@microchip.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: Convert
- microchip,pic32mzda-evic to DT schema
-Message-ID: <20250508-blandness-curled-0bb5e3595eca@spud>
-References: <20250505144754.1291072-1-robh@kernel.org>
+	s=arc-20240116; t=1746717750; c=relaxed/simple;
+	bh=5/2pypVm4lwsU5ymbD+hU4e7DKfSVOUl3zhaH7yP1+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=taSPXxChmn8DBhu2CTfejQQ4Hfj6Hjmx47vm29UlFqR2qChCj43tWxnJd5ACh/EqlW652/wZqE8WkPlmqnyM2ADxIcJizDFJWVCmUVchm5TCSzoU7E2NbByczsgeb15P15GgoSRUO5gDIeKhJcbqg6bIgKZrI/RVUxGXeFjQVQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=UXmAMz62; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202505081512146c301d362802ec0e32
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 08 May 2025 17:12:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=uftzIXqC64HEGiRyuY9ElhNCZUYKd/Y/wyxroPYE6ng=;
+ b=UXmAMz626eeoPOPP7HQs6gkM8vahr/Lrzcclaj2AWesCVLhTpF0XOvnVLF38SU61ybw8l0
+ 8/br3R9xnAWyM/krI+kzelPavVfTte2RtGGre8djj9Q97Duvwm24B6d9pQHg1IyNEFgDpE5Z
+ WkZQRsKf1kvsRub3qDuwvHkMzkPMvhFON5XNkrAOb2MqrzDxtiw6FhnEMcF3EsShmc55nXNw
+ 3kBtksKGeIpRJpZWLRXg8IGpqyORLVEztcFEIXU57o5maF+Xj4tcw80oWkvgtP5PzOp+/hbh
+ IP6cei7gNvIARgg3EZQ1D5vRr/1UsshwKFvTevTZCENnP5K1R1Sq5Etg==;
+Message-ID: <0fb49864-9c93-482b-b016-150357d9b2a7@siemens.com>
+Date: Thu, 8 May 2025 16:12:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jBjbCEC2Z2qvjUxZ"
-Content-Disposition: inline
-In-Reply-To: <20250505144754.1291072-1-robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] watchdog: Add driver for Intel OC WDT
+From: Diogo Ivo <diogo.ivo@siemens.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com,
+ benedikt.niedermayr@siemens.com
+References: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
+ <20250317-ivo-intel_oc_wdt-v3-1-32c396f4eefd@siemens.com>
+ <daeedd95-1d4a-4d17-baa1-9c1580095de9@siemens.com>
+Content-Language: en-US
+In-Reply-To: <daeedd95-1d4a-4d17-baa1-9c1580095de9@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
+Hello,
 
---jBjbCEC2Z2qvjUxZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4/8/25 9:31 AM, Diogo Ivo wrote:
+> Hello,
+> 
+> On 3/17/25 10:55 AM, Diogo Ivo wrote:
+>> Add a driver for the Intel Over-Clocking Watchdog found in Intel
+>> Platform Controller (PCH) chipsets. This watchdog is controlled
+>> via a simple single-register interface and would otherwise be
+>> standard except for the presence of a LOCK bit that can only be
+>> set once per power cycle, needing extra handling around it.
+>>
+>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
+>> ---
+>> v2->v3:
+>>   - Collect R-b from Guenter
+>>
+>> v1->v2:
+>>   - Split v1 into two patches, adding the ACPI IDs in a separate patch
+>>   - Initialize hearbeat module parameter to zero
+>>   - Clarify wording around lock handling
+>>   - Properly print resource with %pR when failing to obtain it
+>>   - Enable compile testing and add dependency on HAS_IOPORT
+>>   - Drop unneeded ACPI_PTR() and MODULE_ALIAS()
+>> ---
+>> ---
+>>   drivers/watchdog/Kconfig        |  11 ++
+>>   drivers/watchdog/Makefile       |   1 +
+>>   drivers/watchdog/intel_oc_wdt.c | 233 ++++++++++++++++++++++++++++++ 
+>> ++++++++++
+>>   3 files changed, 245 insertions(+)
+>>
+> 
+> Gentle ping on this patch.
 
-On Mon, May 05, 2025 at 09:47:53AM -0500, Rob Herring (Arm) wrote:
-> Convert the Microchip PIC32 interrupt controller binding to schema
-> format. It's a straight-forward conversion of the typical interrupt
-> controller.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Another ping on this patch. Is there anything missing from my side
+blocking this?
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---jBjbCEC2Z2qvjUxZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBzJuwAKCRB4tDGHoIJi
-0trIAP4y5YqYxs+NB+g1vGgf1TUOtZmOl+uBGp+ME/3p0eIwQwEA4+u+bkGEJDb9
-hHR5CEspISBzZfs+yCzooC7F6CdYawI=
-=K2C6
------END PGP SIGNATURE-----
-
---jBjbCEC2Z2qvjUxZ--
+Best regards,
+Diogo
 
