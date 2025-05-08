@@ -1,116 +1,215 @@
-Return-Path: <linux-kernel+bounces-639210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6272AAF45A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:10:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24ABAAF462
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E4B46329E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A2A988760
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E3E223DF7;
-	Thu,  8 May 2025 07:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62A121D5BF;
+	Thu,  8 May 2025 07:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRKbXzjb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kkJgEV0p"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F2A2222C0;
-	Thu,  8 May 2025 07:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A9433FD
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746688201; cv=none; b=JrA/0JHfzTzBLeU2PALTBCKZs/gtMXH0iPC19i5Il05JaaPsi0CgzNo8yRlI6/g+jZdFy5I1dti+z7Tm5sOskx98ZJDs4dfc9rNNOzWhBErP80Jv/zLluelWSUcSZ1esJNlk0xEdwynHxTEnljVQGvsyc2cwbyZOXHlukcKLb68=
+	t=1746688239; cv=none; b=uSMr9zUE6hs+myw9dQ3XLDF0Vj8UCff3wKq7XKWmiV3JKu6hTQSb5Pk0lgc4Zu/UadFAferh7uJ/ETW6qMciwzdiHxDzyCQiWZMky1aL24LFmYspk8rwVO6qKAw3QHjxt5BJwVCNugBh3oieUOYuSfv7dVjqDVOQChmMwJCF3Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746688201; c=relaxed/simple;
-	bh=SPCMfBae4c32mBCIvKXGGN6phuuMewMdj5VLCcFNbi4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=PWrQPIfqwTIDPC34us2QH+3q/YOgJJ++6BMWs1GAlZOl5o+lH/bbHsohENMyaCEi9J1aGLMbxP3FBiY0ZCs+gskIYLSD4KN691Dprtp8jYbTdGkzaiAKFw2iJz8+NRD4hF/sogMHfAzYBXXI1On4iBF2i3GNAi07v5RW/KeOI90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRKbXzjb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 962B0C4CEED;
-	Thu,  8 May 2025 07:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746688200;
-	bh=SPCMfBae4c32mBCIvKXGGN6phuuMewMdj5VLCcFNbi4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=QRKbXzjb991/iETG77YEP2lCudXojwnfdPEM9H3CydmQrg0SKEwzNOYWErlKNbNbs
-	 UP/KeHE+DpSJjASyg6Aj/q+bpOMWQczFM/QxeOp5rUMW8t2xou/VoSQfEUW9Cxn8Km
-	 FeAFbMH4CKCfukpBD4RxTzu+v+NvAJgosv0poH0k192XYNbPbcOY560JYpSVrl9Bv7
-	 H2YpQOsjuwwUwBXslhdSCHUNHwzEHDjOKfk2HkLCs4VTAg9wOo2PgKoFd/KoR4GGZw
-	 eD8UCuU4GR0FTW/YuFL6LuuZhTnFHCZYQtr1PSVcBSw3Axo8RCb8Za9UQ278YSMf37
-	 44hCQRV8In2oQ==
-Date: Thu, 08 May 2025 02:09:59 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1746688239; c=relaxed/simple;
+	bh=LPKZpjoorPcJ0i3sy5Fe9gxmCowL7rHoa3+8Kx1k5I8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tNHKHzA65h6D5HfEtUIxxvELFjJ1h2hkSZDghKx8dI6Fr40tUPfvTK0YhIvqJKMZ2/oDly8Kvk8C32+DfWg3OyTpqwH0KhmJk2jwRvYdL49OgKbG1lOfWbaAoNrEn1VvqjNkZcCjBlg218P5GIxdNsPGfWUmkxXRhnwvdHI6M4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kkJgEV0p; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf848528aso5079775e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 00:10:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746688235; x=1747293035; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w00OFq+nWohxSjTOLQvg8WLpoA5EQgRX6xuwn6BkYyQ=;
+        b=kkJgEV0pR0ihy4xUsTYDA9ZXyy6Cp9DC0LfGODNFESVfmCcQueo37RGWYZdnk/uYuD
+         zL1W/bNtw/bjFBhMl/EvUjBCd6IR7Wri4tWKAoS7ZGi2R4iuAXRTSqWEe9U99Etg2Gi3
+         9T7NjO8i2TduGM/NsreOpPPzyMc5bMuV5qqO0xQpCi8+dU4qHQ5LC/CuMTFZhFx2Pj9U
+         JWcuV1H/6x7XGHJgbRuEDVejPEXFh/WmKdWQX2ycNuizwol9qpA26/1Pe3Gj1gr089sX
+         hY+BuvCPJ+VaHsJP5VpWVh2PZZfsi8p6SOf0E2bnq0UOE9kRRQa5NmXOPaGxvn6FD/4a
+         OQ4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746688235; x=1747293035;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w00OFq+nWohxSjTOLQvg8WLpoA5EQgRX6xuwn6BkYyQ=;
+        b=jhLEiysxidTeTZ1cdLRabkoSODf26haMws4pmZmZei0Zj4EN3KoNgofuHR8g4Wnca6
+         PTHKZq8o3SZM27AYbzjMAUKcacT+oscmrUghs5FCEOyKq6X2pgjb3jwK9XKegbtaEaPO
+         lAO6IAUVXP78YZSCBhxDzoZ629jCgKI0WdIwZ084K+jcg2Hdw50pKm5rh1B5P9nZr4rD
+         tQhM+dRpGMqjHKNNBKOqgK3m3KcjpUWzIL98qSPbbnWf2pTi6YHlOcyP+lnoMtUlcb4C
+         XQidyiE6BUvtmM9inETifai96rpVp5j2qKwc+rUNa1w1OP5gd1sX5b80aAXUzZLnS8NG
+         Dv3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUUwoa/2eexljRL1pAgISxOL2ce9uh5QnocDZAbHtmMrKnRy+s4xsp29bzYQl5xe6JaVSYcxlLOsd+noKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKRGZbkT/quh9JyZLRhtLwQiy+eoCbDyIsi0why4hXPJi5sTJ0
+	kL12V6/BzduE6ESD7UwQiUN3LfxOOxsZPAsUmBvznS6J6rKMOtLgESG7XiidMQ==
+X-Gm-Gg: ASbGncvejlnTXmN7r/LFqQwt5+u985UZxF9R3WCGsD71VwEwqQ8XttypvY1hEsBJL8z
+	06ft9wdgb/g/jlxl+eGNb1O+FU+lhpm8EFp8CwKh4Ze783qhU908yMjyAUz9+v+qN1aR9T+f1bA
+	4rqQJJBtcHWPb48FESfE6DEajMXR/yQqDkS1r7ey09TZfPlGEs9+ayYpI0ChVRlr3NrbzkggLbd
+	HfO7HdMtMXPls5u8RMDz72d0eqpRQtuKG8CgMnKYbQnBEGdwlEJ3gQ8NTCqk536VLNYppGNprkF
+	KI5xCV0ggfXAzyoiObbweb7Z+vWt008JCTD6wg47KMk1X9ZjMYnPsK/CxbH+SXdOBLzUD5PQUDJ
+	tXxVI3DRb4ijT0hD+orQITAiZIuc=
+X-Google-Smtp-Source: AGHT+IGyLqEV7FV8nWWqYY5qCj+3cSwPattjz/CT/mpsRNB9xus7yRn9kwCjspweE93CFzg64EvzTw==
+X-Received: by 2002:a05:600c:8205:b0:43c:ed61:2c26 with SMTP id 5b1f17b1804b1-441d44c7c7bmr63780445e9.17.1746688235432;
+        Thu, 08 May 2025 00:10:35 -0700 (PDT)
+Received: from [127.0.1.1] (cust-east-par-46-193-69-61.cust.wifirst.net. [46.193.69.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b178absm19500236f8f.97.2025.05.08.00.10.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 00:10:34 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 0/5] PCI: Add support for resetting the slots in a
+ platform specific way
+Date: Thu, 08 May 2025 12:40:29 +0530
+Message-Id: <20250508-pcie-reset-slot-v4-0-7050093e2b50@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, 
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>, 
- Dragan Simic <dsimic@manjaro.org>, Andy Yan <andy.yan@rock-chips.com>, 
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
- devicetree@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Chaoyi Chen <kernel@airkyi.com>
-In-Reply-To: <20250508064304.670-3-kernel@airkyi.com>
-References: <20250508064304.670-1-kernel@airkyi.com>
- <20250508064304.670-3-kernel@airkyi.com>
-Message-Id: <174668819101.3553983.10022669758074843982.robh@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: display: rockchip: Convert
- cdn-dp-rockchip.txt to yaml
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOZYHGgC/3XNSw6DIBCA4asY1qVh8AF01Xs0XSAdlMSIAUPaG
+ O9edGVjuvwnM98sJGJwGMmtWEjA5KLzY47qUhDT67FD6l65CWe8ZhWr6GQc0oARZxoHP1NRstZ
+ qATpvkHw1BbTuvYuPZ+7exdmHz/4gwTb9byWgjCqpaq5Atlax++BGHfzVh45sWOIHAJozwDOAF
+ kXTciENnIHyCIgzUGagVhqYBDCq4T/Auq5fm/p35DEBAAA=
+X-Change-ID: 20250404-pcie-reset-slot-730bfa71a202
+To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>, 
+ Will Deacon <will@kernel.org>, Robert Richter <rric@kernel.org>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc Zyngier <maz@kernel.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>
+Cc: dingwei@marvell.com, cassel@kernel.org, Lukas Wunner <lukas@wunner.de>, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+ linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4736;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=LPKZpjoorPcJ0i3sy5Fe9gxmCowL7rHoa3+8Kx1k5I8=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBoHFjoZn2Vau5rBgSkqFonGWIjBD9vXqMQSpvxQ
+ iz76V7WG0mJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaBxY6AAKCRBVnxHm/pHO
+ 9baVCACcMZ+oGHyyvjtszQkQwoCc4LQEhNyBVCLMAukrkzlHUKuJuUgMLxOaizVKaBzVqZ+ImAm
+ KFJDCmiXyQNskAOrCdFyEWeHP2rLBoNzxWKTODzgJ8uppEcksqBFWh1rEl5psqx7nS58ivJfwBF
+ 0IR7EBandYxRPofAprBmAyD/3pvvYcpIxlTilooBHNn2VzXduU0KYkSDDK5b4wJXryWat2+Mt8n
+ BCAblJUCeBFK49eRl8FOHziOW4nIj4aSgX4clBB2igJ2YPjOa8wv2Ubvw1u6kDAMRQ1cSqP3A4B
+ ktlGEOIB0nYlE+VSnH51tHJvblCq9bTJqJpTyBKZObEDWDGZ
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
+Hi,
 
-On Thu, 08 May 2025 14:43:04 +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> 
-> Convert cdn-dp-rockchip.txt to yaml.
-> 
-> Tested with:
-> 
-> 1. make ARCH=arm64 dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/rockchip/rockchip,cdn-dp.yaml
-> 
-> 2. make ARCH=arm64 dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/rockchip/rockchip,cdn-dp.yaml
-> 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> ---
->  .../display/rockchip/cdn-dp-rockchip.txt      |  74 ---------
->  .../display/rockchip/rockchip,cdn-dp.yaml     | 148 ++++++++++++++++++
->  2 files changed, 148 insertions(+), 74 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/cdn-dp-rockchip.txt
->  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,cdn-dp.yaml
-> 
+Currently, in the event of AER/DPC, PCI core will try to reset the slot and its
+subordinate devices by invoking bridge control reset and FLR. But in some
+cases like AER Fatal error, it might be necessary to reset the slots using the
+PCI host bridge drivers in a platform specific way (as indicated by the TODO in
+the pcie_do_recovery() function in drivers/pci/pcie/err.c). Otherwise, the PCI
+link won't be recovered successfully.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+So this series adds a new callback 'pci_host_bridge::reset_slot' for the host
+bridge drivers to reset the slot when a fatal error happens.
 
-yamllint warnings/errors:
+Also, this series allows the host bridge drivers to handle PCI link down event
+by resetting the slots and recovering the bus. This is accomplished by the
+help of a new API 'pci_host_handle_link_down()'. Host bridge drivers are
+expected to call this API (preferrably from a threaded IRQ handler) when a link
+down event is detected. The API will reuse the pcie_do_recovery() function to
+recover the link if AER support is enabled, otherwise it will directly call the
+reset_slot() callback of the host bridge driver (if exists).
 
-dtschema/dtc warnings/errors:
+For reference, I've modified the pcie-qcom driver to call
+pci_host_handle_link_down() after receiving LINK_DOWN global_irq event and
+populated the 'pci_host_bridge::reset_slot()' callback to reset the controller
+(there by slots). Since the Qcom PCIe controllers support only a single root
+port (slot) per controller instance, reset_slot() callback is going to be
+invoked only once. For multi root port controllers, this callback is supposed to
+identify the slots using the supplied 'pci_dev' pointer and reset them.
 
+NOTE
+====
 
-doc reference errors (make refcheckdocs):
+This series is a reworked version of the earlier series [1] that I submitted for
+handling PCI link down event. In this series, I've made use of the AER helpers
+to recover the link as it allows notifying the device drivers and also
+allows saving/restoring the config space.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250508064304.670-3-kernel@airkyi.com
+Testing
+=======
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+This series is tested on Qcom RB5 and SA8775p Ride boards by triggering the link
+down event manually by writing to LTSSM register. For the error recovery to
+succeed (if AER is enabled), all the drivers in the bridge hierarchy should have
+the 'err_handlers' populated. Otherwise, the link recovery will fail.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+[1] https://lore.kernel.org/linux-pci/20250221172309.120009-1-manivannan.sadhasivam@linaro.org
 
-pip3 install dtschema --upgrade
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Changes in v4:
+- Handled link down first in the irq handler
+- Updated ICC & OPP bandwidth after link up in reset_slot() callback
+- Link to v3: https://lore.kernel.org/r/20250417-pcie-reset-slot-v3-0-59a10811c962@linaro.org
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Changes in v3:
+- Made the pci-host-common driver as a common library for host controller
+  drivers
+- Moved the reset slot code to pci-host-common library
+- Link to v2: https://lore.kernel.org/r/20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org
+
+Changes in v2:
+- Moved calling reset_slot() callback from pcie_do_recovery() to pcibios_reset_secondary_bus()
+- Link to v1: https://lore.kernel.org/r/20250404-pcie-reset-slot-v1-0-98952918bf90@linaro.org
+
+---
+Manivannan Sadhasivam (5):
+      PCI/ERR: Remove misleading TODO regarding kernel panic
+      PCI/ERR: Add support for resetting the slots in a platform specific way
+      PCI: host-common: Make the driver as a common library for host controller drivers
+      PCI: host-common: Add link down handling for host bridges
+      PCI: qcom: Add support for resetting the slot due to link down event
+
+ drivers/pci/controller/Kconfig                    |   8 +-
+ drivers/pci/controller/dwc/Kconfig                |   1 +
+ drivers/pci/controller/dwc/pcie-hisi.c            |   1 +
+ drivers/pci/controller/dwc/pcie-qcom.c            | 112 ++++++++++++++++++++--
+ drivers/pci/controller/pci-host-common.c          |  64 ++++++++++++-
+ drivers/pci/controller/pci-host-common.h          |  17 ++++
+ drivers/pci/controller/pci-host-generic.c         |   2 +
+ drivers/pci/controller/pci-thunder-ecam.c         |   2 +
+ drivers/pci/controller/pci-thunder-pem.c          |   1 +
+ drivers/pci/controller/pcie-apple.c               |   2 +
+ drivers/pci/controller/plda/pcie-microchip-host.c |   1 +
+ drivers/pci/pci.c                                 |  13 +++
+ drivers/pci/pcie/err.c                            |   7 +-
+ include/linux/pci-ecam.h                          |   6 --
+ include/linux/pci.h                               |   1 +
+ 15 files changed, 212 insertions(+), 26 deletions(-)
+---
+base-commit: 08733088b566b58283f0f12fb73f5db6a9a9de30
+change-id: 20250404-pcie-reset-slot-730bfa71a202
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
 
