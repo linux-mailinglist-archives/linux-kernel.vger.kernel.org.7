@@ -1,183 +1,262 @@
-Return-Path: <linux-kernel+bounces-639260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EABAAF525
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:06:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ACCAAF51E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC9F97B299B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:05:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936734E6990
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A945221FCE;
-	Thu,  8 May 2025 08:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YfNJliM2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4385E21018F;
-	Thu,  8 May 2025 08:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD83221F06;
+	Thu,  8 May 2025 08:05:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6A915748F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746691595; cv=none; b=EO/wnQBIu6TuJRX23UibzhfwY9tbyG1bNkQnXGidL6BSpxAy/XzOiM29ehFApDuEEoxV43ihFE6JDveZlAmFouOUMQoAjA8ZWbEVtOL+AqKZpM2pqr+bKLh+G90jjnd5C3xMPoezu4VY0AdEX/euXyS+VvgM4NqPvuMsvoGQKn8=
+	t=1746691547; cv=none; b=YDvTOwO0h11qnFZMws3onjEBD5eDNcyNifsTxCCJQDBP0BEIlbr03nWsBYXmRm8X3bQQsnsJNxUhqqgd1P0eCRuquifYQJb0qyUOjz4SR1EYY1VRQ/rLSYvB0pRqC1/i74BqzfO9BLj5Pv8+0/ZMpwGtnNGLdF30csxeC7GpN5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746691595; c=relaxed/simple;
-	bh=SeaJFQyN+Jgqcbwwx1GEs6uyzWMNyfeHGNk0yvHFNes=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e7m/PdDt8cvD1h8Z+wj5RQHPoYEjEnqHLyBuhAjRyVJpS5A1x9p82GNOApJlpQYaK7bVHE1n2B9nRCmxENUi3MwuNnXP5qtfcH7s8ZsYL043TUkSsuPTxau8z8fAe9m0Q8+jEsfwCwgVwhpp9qnYPXlgWSIe5DFsOGTtwFv6g4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YfNJliM2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5484WnDI016860;
-	Thu, 8 May 2025 08:06:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=JZSYlY5LSq90+AfJ6VFESTbxi5r5XoyqRpM
-	YqEywCXQ=; b=YfNJliM23eHvxeIymvRBd2eKz1EZ2bpKmqLJImGV/kdsAdsoKlO
-	KmuaAqTYlEer/RS+V4oKawmA5RNz9d5kwg0KL/rr8/VrIfBtdnbOJWUjPr2h5mgQ
-	Rz6KiEBW/Bc4t54yq5A+CDY2oLbpPPeOS4hHI9Ju+cHkXvQEv2CyqoB2doXi7ben
-	Nro3k8HDsT/i6z3gO2oMywWburmngGicRi9F701Rlm0Ojy8q5zUrzGjwEhumbM28
-	YScbsvMehNZwdXCbO0ZVjqRKwOb4DHlgixP565ntAv4fd6DY+Zyeewof7cygb1t9
-	BA/0gsjuU0e4TQTI7P2whZVsajO689ccHNQ==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp68gfh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 May 2025 08:06:08 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 548866bB005123;
-	Thu, 8 May 2025 08:06:06 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 46dc7mq3u7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 May 2025 08:06:06 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 548866EF005114;
-	Thu, 8 May 2025 08:06:06 GMT
-Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 548865cj005106
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 May 2025 08:06:06 +0000
-Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 393357)
-	id C969C40D0D; Thu,  8 May 2025 16:06:03 +0800 (CST)
-From: Ziqi Chen <quic_ziqichen@quicinc.com>
-To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
-        beanhuo@micron.com, avri.altman@wdc.com, junwoo80.lee@samsung.com,
-        martin.petersen@oracle.com, quic_ziqichen@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_rampraka@quicinc.com, neil.armstrong@linaro.org,
-        luca.weiss@fairphone.com, konrad.dybcio@oss.qualcomm.com,
-        peter.wang@mediatek.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: ufs: core: skip UFS clkscale if host asynchronous scan in progress
-Date: Thu,  8 May 2025 16:05:00 +0800
-Message-Id: <20250508080503.3225174-1-quic_ziqichen@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746691547; c=relaxed/simple;
+	bh=ON13rB/iJwEpDBRoe8SyVr5Ee8tWIsCRvFM5kCpyTw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a/Jxek8TVJKIpk7sGaJipLZyRrAKv8jb4lEgTxXCaQZWVC4e+urkxBXinvR9tODoonzxFmYF869cjT831WkmjG70eDs/mEJQ3E6tgSWXe0Oj0DEgnnBs1NWNSuJHzZnwmxyuWCyRZFemJPxMhjG7M/EMPYzsxcOeQ74twzsMZZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F49B106F;
+	Thu,  8 May 2025 01:05:33 -0700 (PDT)
+Received: from [10.162.43.19] (K4MQJ0H1H2.blr.arm.com [10.162.43.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C74283F5A1;
+	Thu,  8 May 2025 01:05:36 -0700 (PDT)
+Message-ID: <f3f53c2a-7eb6-48c5-a04a-e5812a9e1b65@arm.com>
+Date: Thu, 8 May 2025 13:35:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDA3MCBTYWx0ZWRfX7blO2ID0jNEd
- XwCqJ3LWH1J3uwcoa67n3eYZRbUUQt0HJYgSOubWhuh6OvM57e/sbU70nEBN57dMkZ5vyuLwox0
- hksJQ1P2v2s+cXEybaNxFOygPZDBExYd96/NMDeC4PsawfiO8cZHEsBwUBbX8wn9gQv/fXMRaT5
- OQCtquWiiHYsYBnzxhj90sCw7sFNiTw5GvX7FI82h4ouuSdK5nu/5Y/8pDc7hRrzDPF3MnatgRw
- O9ORT/ZHDOTp69iwz+3w4dx+FNpKMIxchJm3bfU0lKWRAgJsGh/+cfAuMi9XrrFs6H1b4XajHdv
- bEg+mgCNaJLRhpY+G2IeBbGkAUV/pmSxJD6Ug2w04YxuAwc63Ky/NxaeabKjLCCLe9ui0v9l8/2
- RS/7ZTyWzi7N7r0gKea5LI7gZGh6V0ZK2DdtNxn1ojcZPYl6nUosYnO6tJLQ67Lq7t+EA9O2
-X-Proofpoint-GUID: oiHZqRBlZfi20E8qimhw2lrAG6Q4-LWn
-X-Proofpoint-ORIG-GUID: oiHZqRBlZfi20E8qimhw2lrAG6Q4-LWn
-X-Authority-Analysis: v=2.4 cv=BvGdwZX5 c=1 sm=1 tr=0 ts=681c65f1 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=avOu-EqILVl7MynqQNIA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-08_02,2025-05-07_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0 mlxscore=0
- spamscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505080070
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: Optimize mremap() by PTE batching
+To: Anshuman Khandual <anshuman.khandual@arm.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
+ ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
+ maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
+ willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com,
+ baolin.wang@linux.alibaba.com, ziy@nvidia.com, hughd@google.com
+References: <20250507060256.78278-1-dev.jain@arm.com>
+ <20250507060256.78278-3-dev.jain@arm.com>
+ <f8c21905-a03a-4e4b-b897-71beb6b8b393@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <f8c21905-a03a-4e4b-b897-71beb6b8b393@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When preparing for UFS clock scaling, the UFS driver will quiesce all sdevs
-queues on the UFS SCSI host tagset list and then unquiesce them when UFS
-clock scaling unpreparing. If the UFS SCSI host async scan is in progress
-at this time, some LUs may be added to the tagset list between UFS clkscale
-prepare and unprepare. This can cause two issues:
 
-1. During clock scaling, there may be IO requests issued through new added
-queues that have not been quiesced, leading to task abort issue.
 
-2. These new added queues that have not been quiesced will be unquiesced as
-well when UFS clkscale is unprepared, resulting in warning prints.
+On 08/05/25 12:46 pm, Anshuman Khandual wrote:
+> On 5/7/25 11:32, Dev Jain wrote:
+>> To use PTE batching, we want to determine whether the folio mapped by
+>> the PTE is large, thus requiring the use of vm_normal_folio(). We want
+>> to avoid the cost of vm_normal_folio() if the code path doesn't already
+>> require the folio. For arm64, pte_batch_hint() does the job. To generalize
+>> this hint, add a helper which will determine whether two consecutive PTEs
+>> point to consecutive PFNs, in which case there is a high probability that
+>> the underlying folio is large.
+>> Next, use folio_pte_batch() to optimize move_ptes(). On arm64, if the ptes
+>> are painted with the contig bit, then ptep_get() will iterate through all 16
+>> entries to collect a/d bits. Hence this optimization will result in a 16x
+>> reduction in the number of ptep_get() calls. Next, ptep_get_and_clear()
+>> will eventually call contpte_try_unfold() on every contig block, thus
+>> flushing the TLB for the complete large folio range. Instead, use
+>> get_and_clear_full_ptes() so as to elide TLBIs on each contig block, and only
+>> do them on the starting and ending contig block.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   include/linux/pgtable.h | 29 +++++++++++++++++++++++++++++
+>>   mm/mremap.c             | 37 ++++++++++++++++++++++++++++++-------
+>>   2 files changed, 59 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index b50447ef1c92..38dab1f562ed 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -369,6 +369,35 @@ static inline pgd_t pgdp_get(pgd_t *pgdp)
+>>   }
+>>   #endif
+>>   
+>> +/**
+>> + * maybe_contiguous_pte_pfns - Hint whether the page mapped by the pte belongs
+>> + * to a large folio.
+>> + * @ptep: Pointer to the page table entry.
+>> + * @pte: The page table entry.
+>> + *
+>> + * This helper is invoked when the caller wants to batch over a set of ptes
+>> + * mapping a large folio, but the concerned code path does not already have
+>> + * the folio. We want to avoid the cost of vm_normal_folio() only to find that
+>> + * the underlying folio was small; i.e keep the small folio case as fast as
+>> + * possible.
+>> + *
+>> + * The caller must ensure that ptep + 1 exists.
+>> + */
+>> +static inline bool maybe_contiguous_pte_pfns(pte_t *ptep, pte_t pte)
+>> +{
+>> +	pte_t *next_ptep, next_pte;
+>> +
+>> +	if (pte_batch_hint(ptep, pte) != 1)
+>> +		return true;
+>> +
+>> +	next_ptep = ptep + 1;
+>> +	next_pte = ptep_get(next_ptep);
+>> +	if (!pte_present(next_pte))
+>> +		return false;
+>> +
+>> +	return unlikely(pte_pfn(next_pte) - pte_pfn(pte) == 1);
+>> +}
+>> +
+>>   #ifndef __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
+>>   static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+>>   					    unsigned long address,
+>> diff --git a/mm/mremap.c b/mm/mremap.c
+>> index 0163e02e5aa8..9c88a276bec4 100644
+>> --- a/mm/mremap.c
+>> +++ b/mm/mremap.c
+>> @@ -170,6 +170,23 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+>>   	return pte;
+>>   }
+>>   
+>> +/* mremap a batch of PTEs mapping the same large folio */
+>> +static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigned long addr,
+>> +		pte_t *ptep, pte_t pte, int max_nr)
+>> +{
+>> +	const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>> +	struct folio *folio;
+>> +	int nr = 1;
+> 
+> A small nit - s/nr/nr_pages ?
 
-Therefore, use the flag host->async_scan to check whether the host async
-scan is in progress or not. Additionally, move ufshcd_devfreq_init() to
-after ufshcd_add_lus() to ensure this flag already be set before starting
-devfreq monitor.
+Well, all other places nr is being used, so I would like to keep it 
+simple and stick to convention :)
 
-Co-developed-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
----
- drivers/ufs/core/ufshcd.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+>> +
+>> +	if ((max_nr != 1) && maybe_contiguous_pte_pfns(ptep, pte)) {
+> 
+> Like mentioned earlier in v1, could maybe_contiguous_pte_pfns() here
+> add some additional cost for buffers that are actually not mapped to
+> contig physical pages.
+> 
+> The test case you have mentioned in the cover demonstrating performance
+> gains might have always been run just after boot, thus increasing the
+> probability of contiguous physical mapping, which will not be the case
+> on fragmented memory systems. In that case the proposed consecutive PFN
+> comparison will always happen unconditionally without any benefit ?
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 1c53ccf5a616..ce94fe4ab095 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1207,6 +1207,9 @@ static bool ufshcd_is_devfreq_scaling_required(struct ufs_hba *hba,
- 	if (list_empty(head))
- 		return false;
- 
-+	if (hba->host->async_scan)
-+		return false;
-+
- 	if (hba->use_pm_opp)
- 		return freq != hba->clk_scaling.target_freq;
- 
-@@ -8746,13 +8749,6 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
- 			&hba->pwr_info,
- 			sizeof(struct ufs_pa_layer_attr));
- 		hba->clk_scaling.is_allowed = true;
--
--		ret = ufshcd_devfreq_init(hba);
--		if (ret)
--			goto out;
--
--		hba->clk_scaling.is_enabled = true;
--		ufshcd_init_clk_scaling_sysfs(hba);
- 	}
- 
- 	/*
-@@ -9010,6 +9006,12 @@ static void ufshcd_async_scan(void *data, async_cookie_t cookie)
- 	/* Probe and add UFS logical units  */
- 	ret = ufshcd_add_lus(hba);
- 
-+	/* Initialize devfreq and start devfreq monitor */
-+	if (!ufshcd_devfreq_init(hba)) {
-+		hba->clk_scaling.is_enabled = true;
-+		ufshcd_init_clk_scaling_sysfs(hba);
-+	}
-+
- out:
- 	pm_runtime_put_sync(hba->dev);
- 
--- 
-2.34.1
+I think you mean to say that the underlying folio may not be actually 
+large but the buddy allocator distributed consecutive physical memory.
+Hmm...at this rate I am thinking that the overhead of vm_normal_folio() 
++ folio_test_large() is acceptable and is less churn :) Would like to 
+hear your thoughts.
+
+> 
+> Just curious.
+> 
+>  From V1
+> 
+> --------------------------------------------------------------------
+> maybe_contiguous_pte_pfns() cost will be applicable for memory
+> areas greater than a single PAGE_SIZE (i.e max_nr != 1) ? This
+> helper extracts an additional consecutive pte, ensures that it
+> is valid mapped and extracts pfn before comparing for the span.
+> 
+> There is some cost associated with the above code sequence which
+> looks justified for sequential access of memory buffers that has
+> consecutive physical memory backing. But what happens when such
+> buffers are less probable, will those buffers take a performance
+> hit for all the comparisons that just turn out to be negative ?
+> --------------------------------------------------------------------
+> 
+>> +		folio = vm_normal_folio(vma, addr, pte);
+>> +		if (folio && folio_test_large(folio))
+>> +			nr = folio_pte_batch(folio, addr, ptep, pte, max_nr,
+>> +					     flags, NULL, NULL, NULL);
+>> +	}
+>> +	return nr;
+>> +}
+>> +
+>>   static int move_ptes(struct pagetable_move_control *pmc,
+>>   		unsigned long extent, pmd_t *old_pmd, pmd_t *new_pmd)
+>>   {
+>> @@ -177,7 +194,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
+>>   	struct mm_struct *mm = vma->vm_mm;
+>>   	pte_t *old_ptep, *new_ptep;
+>> -	pte_t pte;
+>> +	pte_t old_pte, pte;
+>>   	pmd_t dummy_pmdval;
+>>   	spinlock_t *old_ptl, *new_ptl;
+>>   	bool force_flush = false;
+>> @@ -186,6 +203,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   	unsigned long old_end = old_addr + extent;
+>>   	unsigned long len = old_end - old_addr;
+>>   	int err = 0;
+>> +	int max_nr;
+> 
+> A small nit - s/max_nr/max_nr_pages ?
+> 
+>>   
+>>   	/*
+>>   	 * When need_rmap_locks is true, we take the i_mmap_rwsem and anon_vma
+>> @@ -236,12 +254,13 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   	flush_tlb_batched_pending(vma->vm_mm);
+>>   	arch_enter_lazy_mmu_mode();
+>>   
+>> -	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
+>> -				   new_ptep++, new_addr += PAGE_SIZE) {
+>> -		if (pte_none(ptep_get(old_ptep)))
+>> +	for (int nr = 1; old_addr < old_end; old_ptep += nr, old_addr += nr * PAGE_SIZE,
+>> +				   new_ptep += nr, new_addr += nr * PAGE_SIZE) {
+> 
+> 
+>> +		max_nr = (old_end - old_addr) >> PAGE_SHIFT;
+>> +		old_pte = ptep_get(old_ptep);
+>> +		if (pte_none(old_pte))
+>>   			continue;
+>>   
+>> -		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
+>>   		/*
+>>   		 * If we are remapping a valid PTE, make sure
+>>   		 * to flush TLB before we drop the PTL for the
+>> @@ -253,8 +272,12 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   		 * the TLB entry for the old mapping has been
+>>   		 * flushed.
+>>   		 */
+>> -		if (pte_present(pte))
+>> +		if (pte_present(old_pte)) {
+>> +			nr = mremap_folio_pte_batch(vma, old_addr, old_ptep,
+>> +						    old_pte, max_nr);
+>>   			force_flush = true;
+>> +		}
+>> +		pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr, 0);
+>>   		pte = move_pte(pte, old_addr, new_addr);
+>>   		pte = move_soft_dirty_pte(pte);
+>>   
+>> @@ -267,7 +290,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   				else if (is_swap_pte(pte))
+>>   					pte = pte_swp_clear_uffd_wp(pte);
+>>   			}
+>> -			set_pte_at(mm, new_addr, new_ptep, pte);
+>> +			set_ptes(mm, new_addr, new_ptep, pte, nr);
+>>   		}
+>>   	}
+>>   
 
 
