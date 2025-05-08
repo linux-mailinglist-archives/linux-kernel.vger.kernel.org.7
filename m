@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-640287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E91AB02C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DB5AB02C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81EC31B67F8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7DBB502AC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8E22874F0;
-	Thu,  8 May 2025 18:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7212882BA;
+	Thu,  8 May 2025 18:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tgYxyzAo"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="y7dGOpSa"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C16E212B28;
-	Thu,  8 May 2025 18:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59B4278E44;
+	Thu,  8 May 2025 18:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746729064; cv=none; b=VGz2jmKSKrwBUjnW1vh95/WT5VT/GfaAcwhnN88h1tdmmvEPRniTTpmljnROtCe15xXeAq0upzvk8DBbhAsnINZCSjXH6/Z3LimtJo9ViT5I8MpFdMb9/d7xuMV9l6TnK6MEqmalfDAGPE/539BgA5xaHZkStI0dsf7u3QExLV8=
+	t=1746729072; cv=none; b=F3qRBtIm1h6inaqyHvcPrnGEvOrXP4dUOypa4QYesgDJ8z/1JWPzfEA1YZnpuN/RpPfW4Uh6hfOb5a/F4RZWtUVnqtYbbriDYhck1uY9C8tri1X/Mk/7O/U+Zzbcce57bg14RnsOofyPaQjQOdmeSvJ0lCdTM0MmKQhPYLlA2ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746729064; c=relaxed/simple;
-	bh=iqi0t3Ha1t0lG8RPc7T1tta1XB48HjAdibQR2crG0NU=;
+	s=arc-20240116; t=1746729072; c=relaxed/simple;
+	bh=V5gf55hXPX0qq/TTam1PSJX1LbH9PfNYfCT1v2WldW4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YA7rI3Yn5q2JrgvVHEsX8WHSSrCuwEfqxk/qEhr4MMUZiBsiOhqb87spFpZnvhgNkD/0Gu/X3vF+aft+8ixoh+bqiF2t2TSi6WS0quEe+9DcX+G7xtaEp/m5k+voR35lWHM/g6BBc9mDpej0//StnBjoGPe6ym3SVp5XnUVn1M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tgYxyzAo; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=euVEZpNpuZb5dCIBctKjI2wcILvdGIoACO5Ha8YXJxwjgtRf/1oM5HHX/LNCvghiKTK90m4zsHfkWxUsNadKsmIC0PQ7UWG3fcCCIl4osN56sHOo7BAL8X1RoQJuLLY/WIIvGL+Qqfp/ki4XOeP7ldAMh5sFvfbSYoir2LZOzgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=y7dGOpSa; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,35 +35,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=NVNg8W4i0W6hja2INdKL3BkLpr6NjK1WYIGNB9EYZTs=; b=tgYxyzAoFJIkQjDHxpq1IA2mKj
-	QMmT3FjrrCGf1hmiQYDv4/FohIY9hi1jqzXV5qSNWTOMloLUICITIewfEAgiVQFGPVwrWe6N5Bzsy
-	PN4WaQTebkuPHB1NaRWd3pbEvMrr5mR9D4IifUiuF/92htZ7wUI0p8wiEMB5DNHpLxi8g1uX7YCmi
-	OtD3oxAl7zvNfnbGaTq/1NMb6A21ulTlxKGnZPL7NNRitvQ8DT4IOg8AseniXtvRLSm+lIYmEiePP
-	C75ley7LqjytEywyqhlZPZeRbYfXxZAaOE7q/s5c/5xh0w9vR8/GvLyUA2YsLQ8kia/kW7XJT4Hik
-	y46fSMFA==;
+	bh=mZvOWQHwZVwyJf6BVvOEiNtKPaJ2rgizuAGd5TEgutw=; b=y7dGOpSaTguEXKJjJT2GCbwAz1
+	RF10UCNO6oVUQkWcapDMzWaIp3xCxC/6ApPzPPXZEqtjTgK4hiShc0zDrHGbzYazGixvUr/xmxTV2
+	YrksQtRrKsCRkzJruR+BOuwyuo6xkDyaUVU6cWXRyI3Ol36uv7V8YtaAoTMMRaZTmR46gL2Q/cl8i
+	GkenBKWdoMfABDY3drgeAAZ6ubvfMRkA30bMqiEw59PKenfkzeZxVjhn1INTEyYUsBnORgsaQNQbm
+	87A+Wxe5hj1BlWVZcWh1uhmAIGI7uebz385DD1vSWPXmXZIJ+yxg87ZGftezCdNm2Ll1UB0XJGK4g
+	ApFqhayw==;
 Received: from [61.8.144.177] (helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uD61K-0000vi-Hc; Thu, 08 May 2025 20:30:58 +0200
+	id 1uD61M-0000vi-RN; Thu, 08 May 2025 20:31:00 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Yao Zi <ziyao@disroot.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] Correctly implemet the usb480m clock on rk3036
-Date: Thu,  8 May 2025 20:30:45 +0200
-Message-ID: <174672902827.1927548.11178117072822465092.b4-ty@sntech.de>
+	linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/5] Support SD/SDIO controllers on RK3528
+Date: Thu,  8 May 2025 20:30:47 +0200
+Message-ID: <174672902826.1927548.11499970123396406769.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250503202532.992033-1-heiko@sntech.de>
-References: <20250503202532.992033-1-heiko@sntech.de>
+In-Reply-To: <20250506092206.46143-1-ziyao@disroot.org>
+References: <20250506092206.46143-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,25 +82,63 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 03 May 2025 22:25:28 +0200, Heiko Stuebner wrote:
-> In the original clock driver the usb480m clock was "stubbed" as a fixed
-> factor clock, but instead it actually does have a mux-bit to switch
-> between the 24MHz osciallator and the actual 480MHz clock supplied
-> from the usb-phy.
+On Tue, 06 May 2025 09:22:01 +0000, Yao Zi wrote:
+> RK3528 features two SDIO controllers and one SD/MMC controller. This
+> series adds essential support for their tuning clocks and brings the
+> SD/MMC one up on Radxa E20C board. Both HS and SDR104 mode are verified.
 > 
-> Both the register layout, as well as the implementation is very similar
-> to the rk3128, which seems to be some sort of cousin to the rk3036.
+> - Changed from v4
+>   - rk3528 clock driver
+>     - Switch to auxiliary GRF
+>     - drop rockchip_clk_register_grf_branches
+>     - Rename branch_mmc_grf to branch_grf_mmc to make style consistent
+>       (with branch_grf_gate)
+>   - Link to v4: https://lore.kernel.org/all/20250417143647.43860-1-ziyao@disroot.org/
+> - Changed from v3
+>   - Drop applied binding patch of MMC controller
+>   - Rebase on top of linux-rockchip/for-next
+>   - Link to v3: https://lore.kernel.org/all/20250309055348.9299-1-ziyao@disroot.org/
+> - Changed from v2
+>   - Apply review tags
+>   - Rebase on top of linux-rockchip/for-next and drop applied patches
+>   - RK3528 devicetree
+>     - Fix accidentally dropped status property of saradc node
+>     - drop det and pwren pinctrls for SDIO{0,1} according to the
+>       reference design
+>     - Correct max-frequency for SDIO{0,1}
+>   - rk3528-radxa-e20c devicetree
+>     - Don't disable sdio for sdmmc as claimed in the hw design guide
+>   - Link to v2: https://lore.kernel.org/all/20250305194217.47052-1-ziyao@disroot.org/
+> - Changed from v1
+>   - Apply review tags
+>   - Rebase on top of linux-rockchip/for-next and saradc v2 series
+>   - rk3528 clock driver:
+>     - explicitly include minmax.h, replace MAX() with more robust max()
+>     - readability improvements
+>     - fix error checks: ERR_PTR(-ENODEV), instead of ERR_PTR(ENODEV), is
+>       returned when syscon_regmap_lookup_by_compatible() fails for missing
+>       such syscon
+>   - RK3528 devicetree
+>     - Add default pinctrl
+>     - Move the per-SoC property, rockchip,default-sample-phase, into the
+>       SoC devicetree
+>   - rk3528-radxa-e20c devicetree
+>     - Assign sdcard to mmc1
+>     - Add missing regulators
+>     - Apply no-sdio for the sdmmc controller
+>     - Sort nodes
+>   - Link to v1: https://lore.kernel.org/all/20250301104250.36295-1-ziyao@disroot.org/
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: rk3036: add SCLK_USB480M clock-id
-      commit: 6e06b641ca96c232e0b13f9b44b118742986bcd5
-[2/3] clk: rockchip: rk3036: fix implementation of usb480m clock mux
-      commit: 897adaf536ab01f130ce0b53a635a592733c0f24
-[3/3] clk: rockchip: rk3036: mark ddrphy as critical
-      commit: 596a977b34a722c00245801a5774aa79cec4e81d
+[1/5] dt-bindings: clock: Add GRF clock definition for RK3528
+      commit: 8a023e86f3d999007f2687952afe78ef34a6aa91
+[2/5] clk: rockchip: Support MMC clocks in GRF region
+      commit: 621ba4d9f6db560a7406fd732af1b495ff5aa103
+[3/5] clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region
+      commit: 306d2f5ddaa765f04ffb54fc9437a6318f904b53
 
 Best regards,
 -- 
