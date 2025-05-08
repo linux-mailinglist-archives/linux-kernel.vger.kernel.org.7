@@ -1,306 +1,163 @@
-Return-Path: <linux-kernel+bounces-640075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED79AB005D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABDCAB0061
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47413B1B2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA0E1C267CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12552820B3;
-	Thu,  8 May 2025 16:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246822820A8;
+	Thu,  8 May 2025 16:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k89WTFs3"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D89422B8DB
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="nxzou+QY"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4109F221263
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746721453; cv=none; b=b4jHwDTTDA9UYArPgvYuJSDNrZB0I2ZEGirebo3kAEpRUe5JsNtHtMkFgwyDguIKKrat3TTaE7mz+XQz6OjDFSa0WS6XxrzZvE4qjMCAlvYmz7ei6V5u/Ya8pbfWAhk9FyoM/LfdUce/1IidlI2srbEkAz9+c21NOh6t5C4fQwg=
+	t=1746721558; cv=none; b=dWmbBq6CX2Q2Uo7W38vRM+EnjNfPy4xlDhwLtUhf3Z5YZWWk6xKdomm6n+rfqt09To/Mbyu2C1pTkxOEMrsFtyr0U9IcmaylJwints/ggYd5PD0MJMuBrTaklOJ/QOQkWTh5UjyeGd3hYowT3BG8vA2XdRANAD1usexCKeCXXIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746721453; c=relaxed/simple;
-	bh=t3tn6uKOL50qsUsO1X85bUcdjubnWdIaq7pkM+3x/94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P+b1Ab6YqfffolEUON3xOyVVXiLQMUhfbn0eK930gjxPojexDBQNRf7uPBlaV8y8s5HJ0lMBBQ5wfLHyNEfAozvg++RTKAql908UojgZB0RQrbGe9JQKFfCaRM9AfMy6cYeUTN4sdM1dhlTOvsa5BrzOUxZlmymEf7v/nx9aT7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k89WTFs3; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2c76a1b574cso516438fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 09:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746721449; x=1747326249; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=siSVab6apiCbyEuP9nd4RY6Qv93d0GsyI0YfHMYsfRU=;
-        b=k89WTFs3FFEYIe1zmfVRYNS4+Eb4Ch0ACoXN1A3XhmCn0WHOqYl5XWjX//TbJxh53e
-         SEEOEYKtSC64r7sy7f93SjiqvsJHoLriEJhHVXBQU4IVNuoMR5/U3Len7J+04hcvzH+/
-         e+ebEh8p5AkFazPmu7bkRU2WzuzNKua58yRr6zZCCcQ1UY7kotEJ5EBqMVi/8fVoCdZv
-         MyZUIIT/yXNrS9wf6uMgzO/RLiX8QRmh3oBsC16O80NgyoOkFtdEm4q7dXEpsrbfEtwS
-         YRxWCM/VlgaUOKIX5NE8M2MJ9HRzuRHwIvD0WX7fgMmhgI6RWvITIFC8sCX35kLaDo3j
-         T0Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746721449; x=1747326249;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=siSVab6apiCbyEuP9nd4RY6Qv93d0GsyI0YfHMYsfRU=;
-        b=XXSsIKod15/KcF0OPR1X5LzztU3YI0DGUnldbm+Fa5PMu90I7RmBqhEYpw+gtplYGo
-         oXGctLqK31MVJdNWRRg920mBQ+H+e1lMazzkZUvScaSoGmAeRYPV/MURNv+j1Pa2UAb/
-         4GsbYraomxQfEzI2ukwScqUE+b/BYW8NEHh+8VV7nSTDhhngkPGRZnhL6CwjJkNcVNR4
-         Xx8hN7Nn69ELrgofPT53r6ZVGLZgrBmgX/txlDI62Nv4L5Dgo5OoBAl3kGz7MhUX7z+L
-         wXf4duLgz1o2TQnRPleurWjPVwVsBdb5B4LQH2sNHKQv/SCL7EtcOpwqva+NjdT/NFLy
-         H7KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXl1nQXOiBleW+dkOpn38BV5jDIYX4p4E2fUsXB8V/4GXcVzotAc10X33VCpY/MKlsKV61HEsD9BQy/gKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza2avoda76xc3xeYjc+5z3ht9pcKJtUmLHaotNCYQyr+aThIvM
-	cigaIZpPsd3gj/BntWaz/42GVFdwdnhLa8BqyxdSvjy2/i1MTDWKANhXLz9sd6U=
-X-Gm-Gg: ASbGnctHrazTM87M1LkPlq02cJF+Buk8PldnyTcuWIbSMX96N68R9sIfVMuFgfnT4lC
-	Aq5WY0EObvLCW4F8cp1xBlkQJo7B3r/arroYWAtyWh7pFn/0digFCY9w5FGybdEXI+jyDTkYf0V
-	JYSxUSNj+h11w9CcKqAYqdXiXLCC926Eix7PGuPi/NWivu/nSXO5P0UIoBS9c1Z7/n3wOMt1Jfl
-	jeurP7I69AXj+dc/PUjbw76AKIlgy9ZI9otAyJxBtKpD2iAw57728VZ2oJh4k2RTR7vy0KvgDM7
-	f+r+uQ071YgKrWVtHjXcd8lX0BRpxuW2yt3Pdrodl5Q8DdVdXFsHsLHnfD81AUcJOI6eOZ/VPOe
-	ghmxcjqhstykQ1ojejQ==
-X-Google-Smtp-Source: AGHT+IGLtpO6UhBgIcL3xiXd/cc2aOBHyXvNzemxDzdALjywytk8j9FQbKGayZ/TpFw4miZ9NDoJ+g==
-X-Received: by 2002:a05:6871:780d:b0:2d5:1232:b081 with SMTP id 586e51a60fabf-2dba44dcbfcmr49186fac.29.1746721449161;
-        Thu, 08 May 2025 09:24:09 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e? ([2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2dba06ff158sm122755fac.19.2025.05.08.09.24.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 09:24:08 -0700 (PDT)
-Message-ID: <3fdf8296-8839-4b44-8048-3720b0f45787@baylibre.com>
-Date: Thu, 8 May 2025 11:24:08 -0500
+	s=arc-20240116; t=1746721558; c=relaxed/simple;
+	bh=qJOOBhD4T1zy5xa0oFjprNl3lcSlCnZpVBpcfaWlR8E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ZoImcePf3IRjk7iT8/E5M56CfzRxOr78/c0IpfozWoCz6usHhPB1049Eae1vxchmIFFlBqHIkcPmnPbxCD0OrIpXkdgVdwSw2sQXfpNQUtAk6Ms5p0nxzXXD3tQYRfm2nRIYZBdxeo/DUqsgQKIheuEHoj/xH0KfLhSr3UxLMbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=nxzou+QY reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=UkwgHhshNrBIW5v26KrnXQWijc4ovCvqDKq7Gi3UGDQ=; b=n
+	xzou+QY962hYc8iqa/hXrmI7NxiP3bPXLF4fspwemiD8MBSYFO8F1mRTad3VD8kW
+	Urq6enpbvuZ0RFeTpjYplPZh3z+r7VPMnP//MbTqpvPHUPHZBAV8zcp+dtWCXFYY
+	HXRNvgCAmW7PD6PyzM4HrZRDq8NEZOeh49mb0u39kQ=
+Received: from 00107082$163.com ( [111.35.191.17] ) by
+ ajax-webmail-wmsvr-40-103 (Coremail) ; Fri, 9 May 2025 00:24:56 +0800 (CST)
+Date: Fri, 9 May 2025 00:24:56 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Kent Overstreet" <kent.overstreet@linux.dev>
+Cc: "Suren Baghdasaryan" <surenb@google.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alloc_tag: avoid mem alloc and iter reset when reading
+ allocinfo
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <y6d7vzvii5wvfby5446ukpvdmulwd5lzcyki6rpxckh432d6jz@xwtlwnkhztuo>
+References: <20250507175500.204569-1-00107082@163.com>
+ <a0ebf2e.b422.196abf97373.Coremail.00107082@163.com>
+ <CAJuCfpFAUdqqvFPfe_OLR76c0bX_ngwG=JKC42pVB+WAeX4w0w@mail.gmail.com>
+ <nubqzts4e6n3a5e7xljdsql7mxgzkobo7besgkfvnhn4thhxk3@reob3iac3psp>
+ <289b58f1.352d.196addbf31d.Coremail.00107082@163.com>
+ <y6egptcxlbzgboykjorh3syxwy4wu37eolmjtwuwu36gtbfhgf@o3o34qii4gmq>
+ <1ed4c8f7.3e12.196adf621a2.Coremail.00107082@163.com>
+ <52tsrapmkfywv4kkdpravtfmxkhxchyua4wttpugihld4iws3r@atfgtbd5wwhx>
+ <e1cc19.5287.196ae733594.Coremail.00107082@163.com>
+ <y6d7vzvii5wvfby5446ukpvdmulwd5lzcyki6rpxckh432d6jz@xwtlwnkhztuo>
+X-NTES-SC: AL_Qu2fBPuZvkwi4CKQZukXn0oTju85XMCzuv8j3YJeN500tSTu1xw5Zm9ZHnDfws6lOxmhoAi0Xj5Pz8ZQTIhae68ZSy/k9f1HCyoOhxg83gbW
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] iio: magnetometer: qmc5883l: add mount matrix,
- control features and power management
-To: Brajesh Patil <brajeshpatil11@gmail.com>, jic23@kernel.org,
- lars@metafoo.de
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- marcelo.schmitt1@gmail.com
-References: <20250508120900.114348-1-brajeshpatil11@gmail.com>
- <20250508120900.114348-3-brajeshpatil11@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250508120900.114348-3-brajeshpatil11@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <7bf1ee37.b6a4.196b0b6dce1.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZygvCgD3P+jZ2hxougYAAA--.393W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hhHqmgcyMqBEAAMsM
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 5/8/25 7:09 AM, Brajesh Patil wrote:
-> Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
-> ---
->  drivers/iio/magnetometer/qmc5883l.c | 89 +++++++++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
-> 
-> diff --git a/drivers/iio/magnetometer/qmc5883l.c b/drivers/iio/magnetometer/qmc5883l.c
-> index 07c65f193def..d26f959ab8c5 100644
-> --- a/drivers/iio/magnetometer/qmc5883l.c
-> +++ b/drivers/iio/magnetometer/qmc5883l.c
-> @@ -7,6 +7,7 @@
->  #include <linux/iio/trigger.h>
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
-> +#include <linux/pm.h>
->  #include <linux/regmap.h>
->  #include <linux/types.h>
-> 
-> @@ -54,6 +55,10 @@
->  #define QMC5883L_OSR_MASK           0xC0
->  #define QMC5883L_OSR_SHIFT          6
-> 
-> +#define QMC5883L_SOFT_RST           0x80
-> +#define QMC5883L_ROL_PNT            0x40
-> +#define QMC5883L_INT_ENB            0x01
-> +
->  static const char *const qmc5883l_modes[] = {
->  	"standby", "continuous"
->  };
-> @@ -80,12 +85,14 @@ static const int qmc5883l_odr_map[] = {
->   * @client: I2C client structure
->   * @lock: mutex to protect register access
->   * @regmap: register map of the device
-> + * @orientation: Sensor mounting orientation matrix
->   * @scan: buffer for triggered data reading
->   */
->  struct qmc5883l_data {
->  	struct i2c_client *client;
->  	struct mutex lock; /* Protects sensor read/write operations */
->  	struct regmap *regmap;
-> +	struct iio_mount_matrix orientation;
-> 
->  	struct {
->  		__le16 chans[3];
-> @@ -102,6 +109,9 @@ static ssize_t qmc5883l_show_scale_avail(struct device *dev,
->  					 struct device_attribute *attr, char *buf);
->  static ssize_t qmc5883l_show_status(struct device *dev,
->  				    struct device_attribute *attr, char *buf);
-> +static ssize_t qmc5883l_store_control(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf, size_t count);
-> 
->  static int qmc5883l_buffer_preenable(struct iio_dev *indio_dev)
->  {
-> @@ -357,6 +367,15 @@ static int qmc5883l_read_measurement(struct qmc5883l_data *data,
->  	return IIO_VAL_INT;
->  }
-> 
-> +static const struct iio_mount_matrix *
-> +qmc5883l_get_mount_matrix(const struct iio_dev *indio_dev,
-> +			  const struct iio_chan_spec *chan)
-> +{
-> +	struct qmc5883l_data *data = iio_priv(indio_dev);
-> +
-> +	return &data->orientation;
-> +}
-> +
->  static const struct iio_enum qmc5883l_mode_enum = {
->  	.items = qmc5883l_modes,
->  	.num_items = ARRAY_SIZE(qmc5883l_modes),
-> @@ -376,6 +395,7 @@ static const struct iio_chan_spec_ext_info qmc5883l_ext_info[] = {
->  	IIO_ENUM_AVAILABLE("mode", IIO_SHARED_BY_TYPE, &qmc5883l_mode_enum),
->  	IIO_ENUM("oversampling_ratio", IIO_SHARED_BY_TYPE, &qmc5883l_osr_enum),
->  	IIO_ENUM_AVAILABLE("oversampling_ratio", IIO_SHARED_BY_TYPE, &qmc5883l_osr_enum),
-> +	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, qmc5883l_get_mount_matrix),
->  	{ }
->  };
-> 
-> @@ -383,6 +403,8 @@ static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(qmc5883l_show_odr_avail);
->  static IIO_DEVICE_ATTR(scale_available, 0444, qmc5883l_show_scale_avail, NULL, 0);
->  static IIO_DEVICE_ATTR(data_ready, 0444, qmc5883l_show_status, NULL, 0);
->  static IIO_DEVICE_ATTR(overflow, 0444, qmc5883l_show_status, NULL, 0);
-> +static IIO_DEVICE_ATTR(soft_reset, 0200, NULL, qmc5883l_store_control, 0);
-> +static IIO_DEVICE_ATTR(pointer_rollover, 0200, NULL, qmc5883l_store_control, 0);
-
-More custom attribute that probably aren't needed or need some justification.
-
-A reset is usually only done on driver probe. Not sure what pointer rollover is.
-> 
->  static ssize_t qmc5883l_show_odr_avail(struct device *dev,
->  				       struct device_attribute *attr, char *buf)
-> @@ -416,6 +438,44 @@ static ssize_t qmc5883l_show_status(struct device *dev,
->  	return -EINVAL;
->  }
-> 
-> +/* Control attribute writes:
-> + * - soft_reset: performs device reset and re-init
-> + * - pointer_rollover: enables/disables rollover pointer
-> + */
-> +static ssize_t qmc5883l_store_control(struct device *dev, struct device_attribute *attr,
-> +				      const char *buf, size_t count)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct qmc5883l_data *data = iio_priv(indio_dev);
-> +	bool val;
-> +	int ret = 0;
-> +
-> +	ret = kstrtobool(buf, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (attr == &iio_dev_attr_soft_reset.dev_attr && val) {
-> +		mutex_lock(&data->lock);
-> +		ret = regmap_write(data->regmap, QMC5883L_CONTROL_REG_2,
-> +				   QMC5883L_SOFT_RST);
-> +		mutex_unlock(&data->lock);
-> +		msleep(50);
-> +
-> +		ret = qmc5883l_init(data);
-> +		if (ret < 0) {
-> +			dev_err(&data->client->dev, "Sensor Reinitialization Failed\n");
-> +			return ret;
-> +		}
-> +		dev_info(&data->client->dev, "Sensor successfully reinitialized\n");
-> +	} else if (attr == &iio_dev_attr_pointer_rollover.dev_attr) {
-> +		mutex_lock(&data->lock);
-> +		ret = regmap_update_bits(data->regmap, QMC5883L_CONTROL_REG_2,
-> +					 QMC5883L_ROL_PNT, val ? QMC5883L_ROL_PNT : 0);
-> +		mutex_unlock(&data->lock);
-> +	}
-> +	return ret ? ret : count;
-> +}
-> +
->  static int qmc5883l_read_raw(struct iio_dev *indio_dev,
->  			     struct iio_chan_spec const *chan, int *val, int *val2, long mask)
->  {
-> @@ -599,6 +659,8 @@ static struct attribute *qmc5883l_attributes[] = {
->  	&iio_dev_attr_scale_available.dev_attr.attr,
->  	&iio_dev_attr_data_ready.dev_attr.attr,
->  	&iio_dev_attr_overflow.dev_attr.attr,
-> +	&iio_dev_attr_soft_reset.dev_attr.attr,
-> +	&iio_dev_attr_pointer_rollover.dev_attr.attr,
->  	NULL
->  };
-> 
-> @@ -659,6 +721,27 @@ static const struct iio_info qmc5883l_info = {
-> 
->  static const unsigned long qmc5883l_scan_masks[] = {0x7, 0};
-> 
-> +static int qmc5883l_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct qmc5883l_data *data = iio_priv(indio_dev);
-> +
-> +	return qmc5883l_set_mode(data, QMC5883L_MODE_STANDBY);
-> +}
-> +
-> +static int qmc5883l_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct qmc5883l_data *data = iio_priv(indio_dev);
-> +
-> +	return qmc5883l_set_mode(data, QMC5883L_MODE_CONT);
-> +}
-
-The driver is currently only seting CONT mode when reading data, so having
-this in the suspend/resume doesn't make sense to me.
-
-> +
-> +static const struct dev_pm_ops qmc5883l_pm_ops = {
-> +	.suspend = qmc5883l_suspend,
-> +	.resume = qmc5883l_resume,
-> +};
-> +
->  static int qmc5883l_probe(struct i2c_client *client)
->  {
->  	struct regmap *regmap;
-> @@ -683,6 +766,10 @@ static int qmc5883l_probe(struct i2c_client *client)
->  	data->regmap = regmap;
->  	mutex_init(&data->lock);
-> 
-> +	ret = iio_read_mount_matrix(&client->dev, &data->orientation);
-> +	if (ret)
-> +		dev_warn(&client->dev, "Failed to read mount matrix: %d\n", ret);
-> +
->  	indio_dev->name = "qmc5883l";
->  	indio_dev->info = &qmc5883l_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> @@ -693,6 +780,7 @@ static int qmc5883l_probe(struct i2c_client *client)
->  	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev,
->  					      NULL, &qmc5883l_trigger_handler,
->  					      &qmc5883l_buffer_setup_ops);
-> +
->  	if (ret < 0) {
->  		dev_err(&client->dev, "Failed to setup triggered buffer: %d\n", ret);
->  		return ret;
-> @@ -730,6 +818,7 @@ static struct i2c_driver qmc5883l_driver = {
->  	.driver = {
->  		.name = "qmc5883l",
->  		.of_match_table = qmc5883l_of_match,
-> +		.pm = pm_sleep_ptr(&qmc5883l_pm_ops),
->  	},
->  	.id_table = qmc5883l_id,
->  	.probe = qmc5883l_probe,
-> --
-> 2.39.5
-> 
-
+QXQgMjAyNS0wNS0wOCAyMTozMzo1MCwgIktlbnQgT3ZlcnN0cmVldCIgPGtlbnQub3ZlcnN0cmVl
+dEBsaW51eC5kZXY+IHdyb3RlOgo+T24gVGh1LCBNYXkgMDgsIDIwMjUgYXQgMDE6NTE6NDhQTSAr
+MDgwMCwgRGF2aWQgV2FuZyB3cm90ZToKPj4gQXQgMjAyNS0wNS0wOCAxMjowNzo0MCwgIktlbnQg
+T3ZlcnN0cmVldCIgPGtlbnQub3ZlcnN0cmVldEBsaW51eC5kZXY+IHdyb3RlOgo+PiA+QW5vdGhl
+ciB0aGluZyB0byBub3RlIGlzIHRoYXQgbWVtb3J5IGxheW91dCAtIGF2b2lkaW5nIHBvaW50ZXIg
+Y2hhc2luZyAtCj4+ID5pcyBodWdlbHkgaW1wb3J0YW50LCBidXQgaXQnbGwgYWxtb3N0IG5ldmVy
+IHNob3cgdXAgYXMgYWxsb2NhdG9yIGNhbGxzLgo+PiA+Cj4+ID5UbyBnaXZlIHlvdSBzb21lIGV4
+YW1wbGVzLCBtZW1wb29scyBhbmQgYmlvc2V0cyB1c2VkIHRvIGJlIHNlcGFyYXRlbHkKPj4gPmFs
+bG9jYXRlZC4gVGhpcyB3YXMgbWFpbmx5IHRvIG1ha2UgZXJyb3IgcGF0aHMgaW4gb3V0ZXIgb2Jq
+ZWN0Cj4+ID5jb25zdHJ1Y3RvcnMvZGVzdHJ1Y3RvcnMgZWFzaWVyIGFuZCBzYWZlcjogaW5zdGVh
+ZCBvZiBrZWVwaW5nIHRyYWNrIG9mCj4+ID53aGF0J3MgaW5pdGlhbGl6ZWQgYW5kIHdoYXQncyBu
+b3QsIGlmIHlvdSd2ZSBnb3QgYSBwb2ludGVyIHRvIGEKPj4gPm1lbXBvb2wvYmlvc2V0IHlvdSBj
+YWxsICpfZnJlZSgpIG9uIGl0Lgo+PiA+Cj4+ID4oUGVvcGxlIGhhZG4ndCB5ZXQgY2x1ZWQgdGhh
+dCB5b3UgY2FuIGp1c3Qga3phbGxvYygpIHRoZSBlbnRpcmUgb3V0ZXIKPj4gPm9iamVjdCwgYW5k
+IHRoZW4gaWYgdGhlIGlubmVyIG9iamVjdCBpcyB6ZXJvZWQgaXQgd2Fzbid0IGluaXRpYWxpemVk
+KS4KPj4gPgo+PiA+QnV0IHRoYXQgbWVhbnMgeW91J3JlIGFkZGluZyBhIHBvaW50ZXIgY2hhc2Ug
+dG8gZXZlcnkgbWVtcG9vbF9hbGxvYygpCj4+ID5jYWxsLCBhbmQgc2luY2UgYmlvc2V0IGl0c2Vs
+ZiBoYXMgbWVtcG9vbHMgYWxsb2NhdGluZyBiaW9zIGhhZCBfdHdvXwo+PiA+dW5uZWNlc3Nhcnkg
+cG9pbnRlciBkZXJlZnMuIFRoYXQncyBkZWF0aCBmb3IgcGVyZm9ybWFuY2Ugd2hlbiB5b3UncmUK
+Pj4gPnJ1bm5pbmcgY2FjaGUgY29sZCwgYnV0IHNpbmNlIGV2ZXJ5b25lIGJlbmNobWFya3MgY2Fj
+aGUtaG90Li4uCj4+ID4KPj4gPihJIHdhcyB0aGUgb25lIHdobyBmaXhlZCB0aGF0KS4KPj4gPgo+
+PiA+QW5vdGhlciBiaWcgb25lIHdhcyBnZW5lcmljX2ZpbGVfYnVmZmVyZWRfcmVhZCgpLiBNYWlu
+IGJ1ZmZlcmVkIHJlYWQKPj4gPnBhdGgsIGV2ZXJ5b25lIHdhbnRzIGl0IHRvIGJlIGFzIGZhc3Qg
+YXMgcG9zc2libGUuCj4+ID4KPj4gPkJ1dCB0aGUgY29yZSBpcyAod2FzKSBhIGxvb3AgdGhhdCB3
+YWxrcyB0aGUgcGFnZWNhY2hlIHJhZGl4IHRyZWUgdG8gZ2V0Cj4+ID50aGUgcGFnZSwgdGhlbiBj
+b3BpZXMgNGsgb2YgZGF0YSBvdXQgdG8gdXNlcnNwYWNlICh0aGVyZSBnb2VzIGwxKSwgdGhlbgo+
+PiA+cmVwZWF0cyBhbGwgdGhhdCBwb2ludGVyIGNoYXNpbmcgZm9yIHRoZSBuZXh0IDRrLiBQcmUg
+bGFyZ2UgZm9saW9zLCBpdAo+PiA+d2FzIGhvcnJpZmljLgo+PiA+Cj4+ID5Tb2x1dGlvbiAtIHZl
+Y3Rvcml6ZSBpdC4gTG9vayB1cCBhbGwgdGhlIHBhZ2VzIHdlJ3JlIGNvcHlpbmcgZnJvbSBhbGwg
+YXQKPj4gPm9uY2UsIHN0dWZmIHRoZW0gaW4gYSAoZHluYW1pY2FsbHkgYWxsb2NhdGVkISBmb3Ig
+ZWFjaCByZWFkISkgdmVjdG9yLAo+PiA+YW5kIHRoZW4gZG8gdGhlIGNvcHlpbmcgb3V0IHRvIHVz
+ZXJzcGFjZSBhbGwgYXQgb25jZS4gTWFzc2l2ZQo+PiA+cGVyZm9ybWFuY2UgZ2Fpbi4KPj4gPgo+
+PiA+T2YgY291cnNlLCB0byBkbyB0aGF0IEkgZmlyc3QgaGFkIHRvIGNsZWFuIHVwIGEgdGFuZ2xl
+ZCAyNTArIGxpbmUKPj4gPm1vbnN0cm9zaXR5IG9mIGhhbGYgYmFrZWQsIHBvb3JseSB0aG91Z2h0
+IG91dCAib3B0aW1pemF0aW9ucyIgKHRoZSB3b3JzdAo+PiA+c3BhZ2hldHRpIG9mIGdvdG9zIHlv
+dSdkIGV2ZXIgc2VlbikgYW5kIHR1cm4gaXQgaW50byBzb21ldGhpbmcKPj4gPm1hbmFnZWFibGUu
+Li4KPj4gPgo+PiA+U28gLSBrZWVwIHRoaW5ncyBzaW1wbGUsIGRvbid0IG92ZXJ0aGluayB0aGUg
+bGl0dGxlIHN0dWZmLCBzbyB5b3UgY2FuCj4+ID5zcG90IGFuZCB0YWNrbGUgdGhlIGJpZyBhbGdv
+cml0aG1pYyB3aW5zIDopCj4+IEkgd2lsbCBrZWVwIHRoaXMgaW4gbWluZH4hIDopCj4+IAo+PiBB
+bmQgdGhhbmtzIGZvciB0aGUgZW5saWdodGVuaW5nIG5vdGVzfiEhIAo+PiAKPj4gVGhvdWdoIEkg
+Y291bGQgbm90IHF1aXRlIGNhdGNoIHVwIHdpdGggdGhlIGZpcnN0IG9uZSwgIEkgdGhpbmsgSSBn
+b3QKPj4gdGhlIHBvaW50OiBhdm9pZCB1bm5lY2Vzc2FyeSBwb2ludGVyIGNoYXNpbmcgYW5kICBr
+ZWVwIHRoZSBwb2ludGVyCj4+IGNoYXNpbmcgYXMgc2hvcnQoYmFsYW5jZWQpIGFzIHBvc3NpYmxl
+fiAKPgo+VG8gaWxsdXN0cmF0ZSAtIERSQU0gbGF0ZW5jeSBpcyAzMC03MG4uCj4KPkF0IDRHSHos
+IHRoYXQncyAxMjAtMjgwIGN5Y2xlcywgYW5kIGEgcHJvcGVybHkgZmVkIENQVSBjYW4gZG8gbXVs
+dGlwbGUKPmluc3RydWN0aW9ucyBwZXIgY2xvY2sgLSBzbyBhIGNhY2hlIG1pc3MgYWxsIHRoZSB3
+YXkgdG8gRFJBTSBjYW4gY29zdAo+eW91IGh1bmRyZWRzIG9mIGluc3RydWN0aW9ucy4KCk9oLCBJ
+IHVuZGVyc3RhbmQgY2FjaGUgbWlzcyBpcyBiYWQsIGl0IGlzIHRoZSAibWVtcG9vbHMgYW5kIGJp
+b3NldHMiIEkKdGhhdCBJIGhhdmUgaGFyZCB0aW1lIHRvIGNvbm5lY3QgZG90cyB3aXRoLCBkdWUg
+dG8gbGFjayBvZiBrbm93bGVkZ2UuLi4uLgoKCj4KPj4gVGhlIHNlY29uZCBvbmUsIGFib3V0IGNv
+cHkgNGsgYnkgNGssIHNlZW1zICBxdWl0ZSBzaW1pbGFyIHRvIHNlcV9maWxlLAo+PiBhdCBsZWFz
+dCB0aGUgIjRrIiBwYXJ0LCBsaXRlcmFsbHkuIHNlcV9maWxlIHJlYWQoKSAgZGVmYXVsdHMgdG8g
+YWxsb2MKPj4gNGsgYnVmZmVyLCBhbmQgcmVhZCBkYXRhIHVudGlsIEVPRiBvciB0aGUgNGsgYnVm
+ZmVyIGlzIGZ1bGwsICAgYW5kCj4+IHN0YXJ0IG92ZXIgYWdhaW4gZm9yIHRoZSBuZXh0IHJlYWQo
+KS4gICAKPj4KPj4gT25lIHNvbHV0aW9uIGNvdWxkIGJlIG1ha2UgY2hhbmdlcyB0byBzZXFfZmls
+ZSwgZG8gbm90IHN0b3AgdW50aWwgdXNlcgo+PiBidWZmZXIgaXMgZnVsbCBmb3IgZWFjaCByZWFk
+LiBraW5kIG9mIHNpbWlsYXIgdG8geW91ciBzZWNvbmQgbm90ZSwgaW4KPj4gYSBzZXF1ZW50aWFs
+IHN0eWxlLCAgSSB0aGluay4KPj4KPj4gSWYgIHVzZXIgcmVhZCB3aXRoIDEyOEsgYnVmZmVyLCAg
+YW5kIHNlcV9maWxlIGZpbGwgdGhlIGJ1ZmZlciA0ayBieQo+PiA0aywgaXQgd291bGQgb25seSBu
+ZWVkIH4zIHJlYWQgY2FsbHMgZm9yIGFsbG9jaW5mby4gKEkgZGlkIHBvc3QgYQo+PiBwYXRjaCBm
+b3Igc2VxX2ZpbGUgdG8gZmlsbCB1c2VyIGJ1ZmZlciwgYnV0IHN0YXJ0L3N0b3Agc3RpbGwgaGFw
+cGVucwo+PiBhdCAgNGsgYm91bmRhcnkgLCBzbyBubyBoZWxwIGZvciAKPj4gdGhlIGl0ZXJhdG9y
+IHJld2luZGluZyB3aGVuIHJlYWQgL3Byb2MvYWxsb2NpbmZvIHlldC4KPj4gaHR0cHM6Ly9sb3Jl
+Lmtlcm5lbC5vcmcvbGttbC8yMDI0MTIyMDE0MDgxOS45ODg3LTEtMDAxMDcwODJAMTYzLmNvbS8g
+KQo+PiBUaGUgc29sdXRpb24gaW4gdGhpcyBwYXRjaCBpcyBrZWVwaW5nIHRoZSBpdGVyYXRvciBh
+bGl2ZSBhbmQgdmFsaWQKPj4gY3Jvc3MgcmVhZCBib3VuZGFyeSwgdGhpcyBjYW4gIGFsc28gYXZv
+aWQgdGhlIGNvc3QgZm9yIGVhY2ggc3RhcnQKPj4gb3Zlci4KPgo+VGhlIGZpcnN0IHF1ZXN0aW9u
+IGlzIC0gZG9lcyBpdCBtYXR0ZXI/IElmIHRoZSBvcHRpbWl6YXRpb24gaXMganVzdCBmb3IKPi9w
+cm9jL2FsbG9jaW5mbywgd2hvJ3MgcmVhZGluZyBpdCBhdCBhIGhpZ2ggZW5vdWdoIHJhdGUgdGhh
+dCB3ZSBjYXJlPwo+Cj5JZiBpdCdzIG9ubHkgYmVpbmcgdXNlZCBpbnRlcmFjdGl2ZWx5LCBpdCBk
+b2Vzbid0IG1hdHRlci4gSWYgaXQncyBiZWluZwo+cmVhZCBhdCBhIGhpZ2ggcmF0ZSBieSBzb21l
+IHNvcnQgb2YgcHJvZmlsaW5nIHByb2dyYW0sIHdlJ2Qgd2FudCB0byBza2lwCj50aGUgdGV4dCBp
+bnRlcmZhY2UgZW50aXJlbHkgYW5kIGFkZCBhbiBpb2N0bCB0byByZWFkIHRoZSBkYXRhIG91dCBp
+biBhCj5iaW5hcnkgZm9ybWF0LgouLi5eX14sIEFjdHVhbGx5LCBJIGhhdmUgYmVlbiBydW5uaW5n
+IHRvb2xzIHBhcnNpbmcgL3Byb2MvYWxsb2NpbmZvIGV2ZXJ5IDUgc2Vjb25kcwosYW5kIGZlZWRp
+bmcgZGF0YSB0byBhIHByb21ldGhldXMgc2VydmVyIGZvciBhIHF1aXRlIGxvbmcgd2hpbGUuLi4K
+NSBzZWNvbmRzIHNlZW1zIG5vdCB0aGF0IGZyZXF1ZW50LCBidXQgSSBhbHNvIGhhdmUgYWxsIG90
+aGVyIHByb2MgZmlsZXMgdG8gcmVhZCwgCkkgd291bGQgbGlrZSBvcHRpbWl6YXRpb24gZm9yIGFs
+bCB0aGUgcHJvYyBmaWxlcy4uLi4uLgoKSW9jdGwgb3Igb3RoZXIgYmluYXJ5IGludGVyZmFjZXMg
+YXJlIGluZGVlZCBtb3JlIGVmZmljaWVudCwgYnV0IG1vc3QgYXJlCm5vdCB3ZWxsIGRvY3VtZW50
+ZWQsIHdoaWxlIG1vc3QgcHJvYyBmaWxlcyBhcmUgc2VsZi1kb2N1bWVudGVkLiBJZiBwcm9jIGZp
+bGVzCmFyZSBlZmZpY2llbnQgZW5vdWdoLCBJIHRoaW5rIEkgd291bGQgc3RheSB3aXRoIHByb2Mg
+ZmlsZXMgZXZlbiB3aXRoIGEgYmluYXJ5CmludGVyZmFjZSBhbHRlcm5hdGUgdGVucyBvZiBmb2xk
+IGZhc3Rlci4KCgo+Cj5UaGUgaWRlYSBvZiBjaGFuZ2luZyBzZXFfZmlsZSB0byBjb250aW51ZSB1
+bnRpbCB0aGUgdXNlciBidWZmZXIgaXMgZnVsbAo+LSB0aGF0J2QgYmUgYSBnb29kIG9uZSwgaWYg
+eW91J3JlIG1ha2luZyBjaGFuZ2VzIHRoYXQgYmVuZWZpdCBhbGwKPnNlcV9maWxlIHVzZXJzLgpJ
+IGRpZCBtYWtlIHRoYXQgcGF0Y2gsIEkgdGhpbmsgSSBhbSBzdGlsbCB3YWl0aW5nIGZlZWRiYWNr
+Li4uLi4uCgo=
 
