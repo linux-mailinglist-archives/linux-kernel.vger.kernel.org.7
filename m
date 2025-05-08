@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-639893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE3CAAFDD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:54:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405D3AAFDEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803F14E3C22
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9D91882DA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCE3279321;
-	Thu,  8 May 2025 14:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LVufCD7o"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934FB278E6D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 14:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEBD27C854;
+	Thu,  8 May 2025 14:54:45 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D544278775
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746716016; cv=none; b=p+sN32Ymj8B/zyP/tfw9l/hn9tXQTt5pZdj05A/Nh2cS5EF5PVjcMRzQnCR+9WWatKiiO+u391X5hy8SMMQoLFGArgRXWt9tqe79DUML41W8gfSLCEiKeCs5szVn2nF2X4ikxqeI1uAC5c6LqJDhpP3yt91w9Fhm3Ouc76loUQU=
+	t=1746716084; cv=none; b=CIN24tv0mhLb4e/JzBoe2MTlegmBYhYsb7YkdDuS2nYjfxvvSuwQs7bATDmmDcHsk1QQH8LYVtor3FAAzOjZLUtAyLO7AWSTqSgl4cnxCdNGc5qjA9yX+LLu42Pci/cYBOUpstVoqP5O24XKB8pZ/S9Ynu6bUVwsB6v31wdduFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746716016; c=relaxed/simple;
-	bh=odtgSXwh0bCzCfLwxDrlyXiDnmGY2jKlNaMTO9n4Odo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiNR1Zpks+G2j3mIRaGjrQ/nYeCfSt4zbNntZz4vAwPUwUIkjfCiKRhAdBN9i6PtKsXxsNLgRW+zMqG2Gxa5EB9tCf6aTcSgmmv4kKW2jC6/o9OdEZKHHfr19xGclIvQ5CmPGVy187d12H6KqGcX3l0gq8WMp/LzprtQYPNS1Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LVufCD7o; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-86135ac9542so42805439f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 07:53:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746716012; x=1747320812; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gWrVVNVJo/P+Yuo62NX1HsdonWLhPO6Bwy/uZRZodUc=;
-        b=LVufCD7oxqvo45XAn+KFDNfLyUt3OST1xWy4mL6JVYzjvbAqqPuH95oiE3fgC0L1q4
-         nhZAgRYtF8wxphb+wPJRgDgTXgt4XNJT+6a+4yVY9DU1MXXKdCzgqUXpbxOoBIX4oIBS
-         roeiTBU0WMr4RF+wbuvhxlMj36iDPldipV4WY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746716012; x=1747320812;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWrVVNVJo/P+Yuo62NX1HsdonWLhPO6Bwy/uZRZodUc=;
-        b=B5kaNx8EnbIpzRUZthpyT0UE0eK/tPnPf5V6ievEklm/rYUm+3gN7H81ypc/+DDDNW
-         gQuQmaHS7eYtUwgSGBDySrJcGvfUAaz8QvfPygPv4coaYp0argdGIW0BlA0bvvefaV/I
-         aJ/1pOlTOFlIbqxTjAIcqnezkjgN+d3fcqeCEX+YlDiJIsJV38LChQJbS9llcx+HOgP6
-         6AvJA12IFsgv0cgh8hrqFkFHa95fzNFFyAN0bnUUsqUqIRGzERqGzNs+pi+urwBB8mnq
-         IquAlFUgbINgrVNCOsWVI+uAGBg1zlrxHGu3VmB0Igno9yXyOhkXzp+O1RKRSRNSAouS
-         dQ1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXsnsSVxnhcBYoXiHhzu52ASc56Y2YNP5b1of8+jS84QYx2Oh/NH+v3lLQpbKcK56hPQq4nYkfixTD+wGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlIncF4n+22FHkKkyi2Hg2FVMIMu52IeOjjX/EYlH3PWu5Z7j/
-	qfMQRE4JKW6+/eR4ZjuE/Gq5vXCAdc2vK/Ysnxi/wwgy1LStbIrewmYZDAeNZhg=
-X-Gm-Gg: ASbGncu4p6WatmFt95dyVkbZ8C6Q1sjpHlFIAgf5MmYu6LoyNj+GEhR4JhU/52Y+VEY
-	6aMwOlnAv7YK1NWK0QPz6XETUfgStFP2dPVbEu26scPj5iV6HrMTwZqKhhUcv36WD6qaj3YnwGy
-	d9WVboV99fTcPLKpHSLujspxJ9Yu25pkQ3gvAQIIS8xU1UzATaaiSTxlrVwOeUJD1f+fVfywLfz
-	DMgAC+p/dqgkvJk0N+BW+/HErQJyB/Q5Rc43WO09Gh0LecIu9YPmRpAoK4Q79yCvg9HsiCCRvdz
-	KyfCCSWrh6RKhZHCeEN6uU+eZ4IKrQriH2msjLReCJ17Y0+/IAs=
-X-Google-Smtp-Source: AGHT+IEwWmhE/+y7H/n+FT285k0C9IJ/JV2prQ46n2CbFOH6T/B5DegUcSij7J/6yY3M2ZKgO7icBg==
-X-Received: by 2002:a05:6602:29c9:b0:85e:16e9:5e8d with SMTP id ca18e2360f4ac-867550e2fdemr524506239f.7.1746716012533;
-        Thu, 08 May 2025 07:53:32 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88a917564sm3250822173.49.2025.05.08.07.53.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 07:53:32 -0700 (PDT)
-Message-ID: <62541900-5287-4fe5-b2d7-7ae182d22331@linuxfoundation.org>
-Date: Thu, 8 May 2025 08:53:31 -0600
+	s=arc-20240116; t=1746716084; c=relaxed/simple;
+	bh=ERnxOn7Ui2iw4/oK7ARuw/higQNdBw+7jP5Yrcb601o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=T2mlRN50TAWKbGeXXZdknjHE8Kfepmuo+AjWBOsCq6NdK64m39s0CVZL6kGtzIBjmjMB93W8CGZ04WiO93T1P6OOzvHxQIpSRkaQpcJE/gY17qiIQeZF7kGC6cMXfp46QCg0YEMydIQvGqFZTGXuJAL/LKDYE7GMAYcFgFrRWoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 447CD92009C; Thu,  8 May 2025 16:54:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 3D45892009B;
+	Thu,  8 May 2025 15:54:42 +0100 (BST)
+Date: Thu, 8 May 2025 15:54:42 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: "H. Peter Anvin" <hpa@zytor.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+    Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+    "Ahmed S . Darwish" <darwi@linutronix.de>, 
+    Andrew Cooper <andrew.cooper3@citrix.com>, 
+    Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    John Ogness <john.ogness@linutronix.de>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: Re: [RFC PATCH 0/15] x86: Remove support for TSC-less and CX8-less
+ CPUs
+In-Reply-To: <A50E7745-759B-462D-BA7C-C9F747070F91@zytor.com>
+Message-ID: <alpine.DEB.2.21.2505062301010.21337@angie.orcam.me.uk>
+References: <20250425084216.3913608-1-mingo@kernel.org> <alpine.DEB.2.21.2505050944230.31828@angie.orcam.me.uk> <CAHk-=wicfBCyMj_x5BiL32o55jqXfnxgn=X5BZZjA-FFER82Jg@mail.gmail.com> <alpine.DEB.2.21.2505061104490.31828@angie.orcam.me.uk>
+ <A5AC3B8B-335C-4594-B0DC-D9247B286A37@zytor.com> <CAHk-=wjCiEk-kc-vOug2GKJdhHKce3vWALbqjybLPcKLHNmEbQ@mail.gmail.com> <A50E7745-759B-462D-BA7C-C9F747070F91@zytor.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/129] 6.6.90-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250507183813.500572371@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250507183813.500572371@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 5/7/25 12:38, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.90 release.
-> There are 129 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 09 May 2025 18:37:41 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.90-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue, 6 May 2025, H. Peter Anvin wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> An i486/i586 retroport can presumably also axe a bunch of things like 
+> side channel mitigations; most of them aren't applicable to the in-order 
+> i486/586 pipelines and the rest ... well, on a machine that slow, you 
+> are unlikely to be running the kind of workloads that care.
+> 
+> Similarly, you should be able to simply unsupport the things that make 
+> the entry/exit code a nightmare, like SYSENTER and fancy NMI hacks (the 
+> latter requires an APIC.)
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+ I do have a dual i586 with an APIC; used it to work on some NMI watchdog 
+stuff that landed in mainline 25+ years ago.  Back in the day such systems 
+were pretty common, built around the NX or later the HX chipset, so it's 
+not that APIC support is irrelevent could be dropped.  If we were to go 
+for a separate port, than stuff could potentially be resurrected too that 
+was previously removed, such as discrete i82489DX APIC support.
 
-thanks,
--- Shuah
+ NB that box actually still runs some server software I need for my lab 
+(MOP daemon, needed to netboot various DEC equipment) that I haven't 
+ported to POWER9 owing to higher priority items.
+
+> There is a huge gap then to the i686, with the i686 being the direct 
+> ancestor of the x86-64 systems in terms of systems architecture (APIC, 
+> PAE*, etc; SYSENTER in the second iteration; a general tightening of the 
+> ISA definition; PCI universal by then...)
+
+ I suspect eventually we'll want to drop all IA-32 support from mainline; 
+isn't it of no commercial relevance already?  Hasn't even the embedded x86 
+ecosystem switched to 64-bit Atom and the like?
+
+ Actually I think a project to maintain the whole IA-32 platform alive 
+rather than just the i486 subtarget might attract more attention and 
+people beyond just myself and Adrian.  So far I've committed to support 
+across the board (Linux where applicable and the GNU toolchain) for DEC 
+Alpha, MIPS and VAX platforms plus a couple of small pieces such as the 
+defxx driver and I can hardly cope already, so taking on another large 
+project just won't work if I were alone with it.
+
+> But again, this is all academic unless someone steps up and wants to 
+> take on such a project.
+
+ Correct, I just want to keep support to the minimum at the moment.
+
+  Maciej
 
