@@ -1,174 +1,207 @@
-Return-Path: <linux-kernel+bounces-639387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3150AAAF6B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E56BAAF6B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2101C20D16
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 737D03A7655
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2A8265CAF;
-	Thu,  8 May 2025 09:23:37 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C6123BCF2;
+	Thu,  8 May 2025 09:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EBICmJJq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1022638A6
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 09:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C254A33
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 09:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746696217; cv=none; b=k+Qp2qfxrsdsfZUvCpRp2VkECdmk1+LSNRliWs2CTQzldpzxI7x1Df7pt0t/vyA5orIRAS0S/e6hrnQRxb4rNJj8xR+t1QTuUCinG0faKeTeLQadMEYCrNZSiEZv4I46n1Fm0JLUnvWDarqFKw5knuzFAlfWuFoPbkvJkJvxcb0=
+	t=1746696283; cv=none; b=IlChvo167qwIRi3VihR31EgVPQTpfDU1kALOWzjMuj12p8nyrSS1qdqdXUr7B6zExjOsqLtIY8UAbsMHNuHPKtIpqIf1oLWtlUhjSEhWuWiQK9X64tvlZr2CScJYuKZgYUbFc1RfT5DiyxRc6BCLwlvAgkvvrhJ4ym2Ae1MhdGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746696217; c=relaxed/simple;
-	bh=2NYtZ6iKykthO3Q3ruUW98DyFpzJcQMHG0vXAHbCYNg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FnlGAdMP4jbc4LZtM2f7IVx71ivZDZhow8GLkQQg6l0uEDwxLeGUdiTkLG+BUPfKcU4cZwb70RsuhHzmbZ+8yEItVdHw32516XUwkLxOMWQDcU+j8NfGwxHznqns7IOQUU+lup/ktuFmfW2yi9Tc4hODIzaWYxEfCPhwcWwfsmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85b5e46a526so71248239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 02:23:35 -0700 (PDT)
+	s=arc-20240116; t=1746696283; c=relaxed/simple;
+	bh=GaqiCVOyHORd4kY5r0I19G8yYgj9xrHamtEhxHjqCEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xdytgnsd5zMVU3mvf+sIT7JruzivNvsxd8x3bRSmuu0asXje4u/yYHc6gePQE1QwHbPnV7pNYa/Ibbe6N7RiYpI/TuW4JVRdlMYfnZp5BC7bONHT5+C92HvsNbjA/UjSHOGE+zY2+DxZ1be6MljAClb0Fb4cP8i5N7wIr95/JqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EBICmJJq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746696279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/dlxqAxUZaAt7g7clMdPr7lyvtO4KusfnEelUIQBrfU=;
+	b=EBICmJJq11RxKnbsTJh5iUTGmk46MvdURVWfbSqVh+vrpoT0MBlHqckm70bKJX4TRmzkBK
+	tQIQIQ+VTJubqWvmz955LleUOTg1P98euAWldrzIGUqCh8vD1/ItA++Fe4PXq+8UhQo2qo
+	1/5Xi1xY8cuUk7ESRzt1kPDS1GSSGmA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-164-Gwj38Q4hM0aPdC2j3R0syA-1; Thu, 08 May 2025 05:24:38 -0400
+X-MC-Unique: Gwj38Q4hM0aPdC2j3R0syA-1
+X-Mimecast-MFC-AGG-ID: Gwj38Q4hM0aPdC2j3R0syA_1746696277
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-441c122fa56so3187165e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 02:24:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746696215; x=1747301015;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JYEXWX6MRhhWhREYCAKn0bDJMC/FKnQyCMlch9PdfDw=;
-        b=X+vYovyC8HucoxJ6oelfqJEsMss4SYFvikxNALc9eNDb8Gvd8OgFRq2wemDVEH18xi
-         ycjto7GAfSFdo5nRvcBWblD35jIK98PjbuOTsOBdsKv+Veroh0VJGcaMjxUvbZJs9W6z
-         8eM9l83VBpGHXBurvptKXINSWCauSdHyzCyagCsMXEiPOPrt7MvTZ1Q+5ZwwohdDrAiG
-         BKiNMsHX/UFAu9XwaGH3rrx46noGjbzjs/Ghi8GbHCh/xiz+RbdceX8yGbW+YdNWueg6
-         vz2p1X64vJeNAKfN5Nzahb5hB71QCskHX7zbG7ySWbozLLohBCTeTfYoLUc513WilofE
-         tOGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEaH7FrooB+Cx66oWNfRT+u75Q8H/zF9fT6dLdIJQhq9WlvDe3kDtap0trYXV6RQRQWa3JD+GGtFzYo30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx/Q/RAKkxssrR9zmuMeXK4HrwdZEzYsxNf/kniJ4ysuOoqxao
-	1eNtcDDBN2KxmYcKWlktmTX1Ga8BFAqb6y/6DrqKHDQumfxo3O4HX1ARW4r5AN3tm6F7RZTgO+4
-	ekEBUQDIoG79FKLDGCg5V9Db+Hp5Rj+/hIDHeoiQmV4yNn0qYCQ3rz+w=
-X-Google-Smtp-Source: AGHT+IG/l+5GX6itIPSidA3DYgMYQI5PVFztsjCqDmvT5Ws68/CkUn2XL8Gkp2QMeYwjbkf3+FcUKqBU8OeqZ3ezkEl+4IMCxECg
+        d=1e100.net; s=20230601; t=1746696277; x=1747301077;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/dlxqAxUZaAt7g7clMdPr7lyvtO4KusfnEelUIQBrfU=;
+        b=oTQ5hr/GvO5EPNxRADL0VjE9FYDKYBuT9Ud0w9Urw1NyQ9XtDrN9Z1H2BPwx0cp9vL
+         YrXbWMfcuMnXigSVV+ukcp7uACU+gSGC2IuKDg5O388f72ioD/wZa+/PXIHkmUWzKaoC
+         RgKVtDTTnVDzej7lQ1ODJ4h9BmvF3KKhQbP0H904UBTNEsP90dKODeLKpRKUCSseKau4
+         bRhrNskokkuSGYnBGWAUwZ4ATFz8042C14eXmwht/510WkSrKZ3S2SZkjmGRSBIIBlQ0
+         tJr4yNF6yRMu+hRH3GjtcTcoSBtZ+N051vk3YRNF6BdvuoPNqLo5qfsdzKDm2B6Ghyya
+         Gibg==
+X-Gm-Message-State: AOJu0YzxL0K1OtlDqKLPVWfEpnXbNkOQU1i/z0eeAH7R2fjeiqqw2Cjt
+	X2svh+VrmWVJjt88jljAnUOXq7eZjjqVlskt6lG2hBegzmtsOF944AlxeQwL2M8ZZ8KXSSJnOb2
+	PYH52NiVWz7RcfEEWzVczKsCIKAuNE//g5ApEev+3QeEiUr86BF4ZHGy3rmhKbQ==
+X-Gm-Gg: ASbGncuoVh3Fw1bB23DdukhuW3W+Iu+XRsMUMeDP7Pacu1zLw7clTV0xIueMkA5yh4j
+	C36Gyzhe7FXwWE14Nu1KejNn6olA3wbRi5nBb5H5D4EUx0O+bZvsJM0uBWoOvLcAUj8ENP7sZV0
+	BdYx0GmkpDcWWLchliuM9pKbiGiVDfAvfh8UZrBzF0OH89MbGY5RfdAEjc+kGKR/6HVvtaaKL9N
+	59ub/OqQAe1DelLmT0u1gzijh5q53JXX4fmKGD/iQ+C2Y+Hum3gAApqpOVX0WiUrCovQ5U9W8iR
+	OyGkmkVRWJyojrwiXf6VwOVVhE0yGgHOi9h7OMS+Sofl5aJIrq0/6ITlT6rTeitZHps4eyD3HI5
+	/o6lizMSPAA9APJik4JDOKfFhPavZXK/pmz+SNLI=
+X-Received: by 2002:a05:600c:8186:b0:442:ccf9:e6f2 with SMTP id 5b1f17b1804b1-442ccf9f153mr46315295e9.16.1746696277298;
+        Thu, 08 May 2025 02:24:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmkno/mhxrd9N4OZqFeNahYtTVQaRZNkJxl/ggkkKu2E6OOqDo4H2zrQWAIVF+FLCz9vkkNg==
+X-Received: by 2002:a05:600c:8186:b0:442:ccf9:e6f2 with SMTP id 5b1f17b1804b1-442ccf9f153mr46315005e9.16.1746696276924;
+        Thu, 08 May 2025 02:24:36 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c? (p200300d82f3e590027aa5f4ab65c3d3c.dip0.t-ipconnect.de. [2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd34bef4sm31036855e9.24.2025.05.08.02.24.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 02:24:36 -0700 (PDT)
+Message-ID: <0e00e429-01d8-4504-8238-565e1bca5ad3@redhat.com>
+Date: Thu, 8 May 2025 11:24:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1486:b0:861:6f49:626 with SMTP id
- ca18e2360f4ac-8674784110fmr823887239f.6.1746696214939; Thu, 08 May 2025
- 02:23:34 -0700 (PDT)
-Date: Thu, 08 May 2025 02:23:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <681c7816.050a0220.a19a9.00cd.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in nla_get_range_unsigned (3)
-From: syzbot <syzbot+01eb26848144516e7f0a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jiri@nvidia.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, saeedm@nvidia.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm: userfaultfd: correct dirty flags set for both
+ present and swap pte
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Peter Xu <peterx@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
+ Lokesh Gidra <lokeshgidra@google.com>
+References: <20250508090735.39756-1-21cnbao@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250508090735.39756-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 08.05.25 11:07, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
+> 
+> As David pointed out, what truly matters for mremap and userfaultfd
+> move operations is the soft dirty bit. The current comment and
+> implementation—which always sets the dirty bit for present PTEs
+> and fails to set the soft dirty bit for swap PTEs—are incorrect.
+> This patch updates the behavior to correctly set the soft dirty bit
+> for both present and swap PTEs in accordance with mremap.
+> 
+> Reported-by: David Hildenbrand <david@redhat.com>
+> Closes: https://lore.kernel.org/linux-mm/02f14ee1-923f-47e3-a994-4950afb9afcc@redhat.com/
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Lokesh Gidra <lokeshgidra@google.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>   mm/userfaultfd.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index e8ce92dc105f..bc473ad21202 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1064,8 +1064,13 @@ static int move_present_pte(struct mm_struct *mm,
+>   	src_folio->index = linear_page_index(dst_vma, dst_addr);
+>   
+>   	orig_dst_pte = folio_mk_pte(src_folio, dst_vma->vm_page_prot);
+> -	/* Follow mremap() behavior and treat the entry dirty after the move */
+> -	orig_dst_pte = pte_mkwrite(pte_mkdirty(orig_dst_pte), dst_vma);
+> +	/* Set soft dirty bit so userspace can notice the pte was moved */
+> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> +	orig_dst_pte = pte_mksoft_dirty(orig_dst_pte);
+> +#endif
+> +	if (pte_dirty(orig_src_pte))
+> +		orig_dst_pte = pte_mkdirty(orig_dst_pte);
+> +	orig_dst_pte = pte_mkwrite(orig_dst_pte, dst_vma);
+>   
+>   	set_pte_at(mm, dst_addr, dst_pte, orig_dst_pte);
+>   out:
+> @@ -1100,6 +1105,9 @@ static int move_swap_pte(struct mm_struct *mm, struct vm_area_struct *dst_vma,
+>   	}
+>   
+>   	orig_src_pte = ptep_get_and_clear(mm, src_addr, src_pte);
+> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> +	orig_src_pte = pte_swp_mksoft_dirty(orig_src_pte);
+> +#endif
+>   	set_pte_at(mm, dst_addr, dst_pte, orig_src_pte);
+>   	double_pt_unlock(dst_ptl, src_ptl);
 
-syzbot found the following issue on:
+Yeah, I think that should be the right thing to do.
 
-HEAD commit:    a7371be8c8f5 Merge branch 'devlink-sanitize-variable-typed..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10e284d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=734b5f968169d82b
-dashboard link: https://syzkaller.appspot.com/bug?extid=01eb26848144516e7f0a
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c9fa70580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e284d4580000
+-- 
+Cheers,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fc18e3222982/disk-a7371be8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/990dc6466006/vmlinux-a7371be8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d35dc62f5d06/bzImage-a7371be8.xz
+David / dhildenb
 
-The issue was bisected to:
-
-commit 429ac6211494c12b668dac59811ea8a96db6d757
-Author: Jiri Pirko <jiri@nvidia.com>
-Date:   Mon May 5 11:45:11 2025 +0000
-
-    devlink: define enum for attr types of dynamic attributes
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=116cb2bc580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=136cb2bc580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=156cb2bc580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+01eb26848144516e7f0a@syzkaller.appspotmail.com
-Fixes: 429ac6211494 ("devlink: define enum for attr types of dynamic attributes")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5836 at lib/nlattr.c:123 nla_get_range_unsigned+0xc8/0x4b0 lib/nlattr.c:122
-Modules linked in:
-CPU: 0 UID: 0 PID: 5836 Comm: syz-executor416 Not tainted 6.15.0-rc4-syzkaller-00808-ga7371be8c8f5 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/29/2025
-RIP: 0010:nla_get_range_unsigned+0xc8/0x4b0 lib/nlattr.c:122
-Code: 0f 85 71 03 00 00 41 0f b7 2c 24 31 ff 89 ee e8 4e a8 d3 fc 66 85 ed 0f 88 df 02 00 00 e8 a0 a4 d3 fc eb 09 e8 99 a4 d3 fc 90 <0f> 0b 90 4c 89 ed 48 c1 ed 03 42 80 7c 35 00 00 74 08 4c 89 ef e8
-RSP: 0018:ffffc900043073d0 EFLAGS: 00010293
-RAX: ffffffff84ec1e8f RBX: ffffffff8c808eb0 RCX: ffff88802da1bc00
-RDX: 0000000000000000 RSI: 0000000000008a3e RDI: 0000000000000000
-RBP: 0000000000008a3e R08: ffff88802da1bc00 R09: 0000000000000004
-R10: 0000000000000004 R11: 0000000000000000 R12: ffffffff8c808eba
-R13: ffffc900043075b0 R14: dffffc0000000000 R15: 1ffffffff19011d6
-FS:  0000555581b32380(0000) GS:ffff8881260c1000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000005b1e008 CR3: 000000007888a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __netlink_policy_dump_write_attr+0x565/0xdc0 net/netlink/policy.c:316
- netlink_policy_dump_write+0x1e1/0x6e0 net/netlink/policy.c:447
- ctrl_dumppolicy+0x6f4/0xb90 net/netlink/genetlink.c:1743
- genl_dumpit+0x108/0x1b0 net/netlink/genetlink.c:1027
- netlink_dump+0x64e/0xe70 net/netlink/af_netlink.c:2309
- netlink_recvmsg+0x67b/0xe00 net/netlink/af_netlink.c:1965
- sock_recvmsg_nosec net/socket.c:1017 [inline]
- sock_recvmsg+0x229/0x270 net/socket.c:1039
- __sys_recvfrom+0x1f6/0x340 net/socket.c:2230
- __do_sys_recvfrom net/socket.c:2245 [inline]
- __se_sys_recvfrom net/socket.c:2241 [inline]
- __x64_sys_recvfrom+0xde/0x100 net/socket.c:2241
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f082f5e79b9
-Code: ff e8 cb 01 00 00 66 2e 0f 1f 84 00 00 00 00 00 90 80 3d d1 56 07 00 00 41 89 ca 74 1c 45 31 c9 45 31 c0 b8 2d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 67 c3 66 0f 1f 44 00 00 55 48 83 ec 20 48 89
-RSP: 002b:00007ffd83e65928 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
-RAX: ffffffffffffffda RBX: 00007ffd83e659b4 RCX: 00007f082f5e79b9
-RDX: 0000000000001000 RSI: 00007ffd83e659a0 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd83e659a0
-R13: 0000000000000010 R14: 0000200000000048 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
