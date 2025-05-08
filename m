@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-639074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC93FAAF281
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:07:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75A3AAF286
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A405B16FF87
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FEDD16B6DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F1235C1E;
-	Thu,  8 May 2025 05:01:56 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AC8217736;
+	Thu,  8 May 2025 05:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="pHtgHv+w"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E041623498F;
-	Thu,  8 May 2025 05:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD56E2135A4
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 05:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746680516; cv=none; b=s5bCJSvaf8dr9oPPhvA+WuHfEHDJ5WoWefJAErZl/6ldl64Vu35D5VgECEJPy/mq1Wf6pW8uk3lPpC7Xo9boiYYRMe14z6vS7c4AQn9AW0Nuq04t2+Q/4rh6UJqBLUv3wdit0gKB7nWj9bFQ/rtJC1rn+kDa7NTXCOj8S3lbtMI=
+	t=1746680546; cv=none; b=NOVmirLq+uJ35Ku1HIilrrJZJEWuXpergLi2fR5RZdqKELcm1AQUZMQQ6LE1RhQnehrKmIKtukB68Uvc/T2aGx1x1MNO7ibg52LLXTmbOI1WlbrxG41AHtv1GeoMDKcmu/kYBp6YvVIpmTeO+lqFl1Tt2kEUGx4rdlU8/hHwRnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746680516; c=relaxed/simple;
-	bh=AwhhZ2wBTFfk+q7m2bEqg8jP8mcot7mr9qk1rjjHN4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUsJOTlO75FlF4utm5B09QRhU067zUvCUsJuxGHeBAx7xO6k8tbR2QRopwRT/VPaVJLJAwjwwD+eHvEPGJdG+EfrZ/JPJ9amV20oihCmIFSOcqADwwTmPcQ4yiMBeVRihWflV9vWbl5LS3wtADw8tzrA536OO8RfKLi/9Q4Acyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 7F69868B05; Thu,  8 May 2025 07:01:47 +0200 (CEST)
-Date: Thu, 8 May 2025 07:01:47 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, john.g.garry@oracle.com, bmarzins@redhat.com,
-	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
-	brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
-Message-ID: <20250508050147.GA26916@lst.de>
-References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com> <20250421021509.2366003-8-yi.zhang@huaweicloud.com> <20250505132208.GA22182@lst.de> <20250505142945.GJ1035866@frogsfrogsfrogs> <c7d8d0c3-7efa-4ee6-b518-f8b09ec87b73@huaweicloud.com> <20250506043907.GA27061@lst.de> <64c8b62a-83ba-45be-a83e-62b6ad8d6f22@huaweicloud.com> <20250506121102.GA21905@lst.de> <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
+	s=arc-20240116; t=1746680546; c=relaxed/simple;
+	bh=PBaYHCI3R5a14dKpofwQ0+w1aMgMX35JFi2xWoglqTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YrKXNjdxFOrb6C8vktvfhYOpbsMBThzbJfuUxkZ4VegiPebYpdaSs3yotolRrwwavvew+lZx1d25J9NiKZG/m5ewkLuT+twPkwBWO2Z+LfpGQgHPGmAoVO91aylFA4L+ESmTmyn2aatbmr3nrU/ROvafZhEud2fCrmti+LaEizw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=pHtgHv+w; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d8fc9dbce4so6571165ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 22:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746680544; x=1747285344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o4O7+nQ6u5XMVEZ9olWj3Ht9QPAgJnl5lq5fX/yAqRY=;
+        b=pHtgHv+wd9g1qYZKWnLIu7gkjzwY8BrrEU/Su6AYG9MwLpFhkYPnICAYp0T/Yho4F2
+         Lqa5ySPKFP/ezcGBayW5sWxic/4D3Bu4PTs6kv0wLz+zo5yRWdQoWBCYMIoztQFkWCFK
+         G+ZwHkJUmJ2JcJF7QqrjNwBLeQwMHYc16fNq2ncqwyesUc2F9awjpcfxsp8nsDK12kzm
+         YgSwB02N7/OS1nkpJjqgW8AdyDQyVOgAUKvM1eJ4xBsbPKqhQduexXyQqrktMM5Yz0C/
+         3OKfH1IORKGdlHpJOROM8i6MxRDX6Vd9gmKh9HAmM+R/NGqYWtOAvyVJdDJ+m50ZmVLd
+         61fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746680544; x=1747285344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o4O7+nQ6u5XMVEZ9olWj3Ht9QPAgJnl5lq5fX/yAqRY=;
+        b=r3Hax+U9k7Y4JlBD9l2uK6isiqcM3DrF5ZhzyBhKKLLF3oTnN/+Ocy3p+tjj2QOWnO
+         C8q3h/YNFcjmgbLFKzpMi8BrMFjzrwbhXzEoAlbFncOCsgP9xl/2/1Yx7Is45BCGL0z0
+         JM5/MinOKbn396Hmua3Qkt8VGSgO3AaYaHT95grmZs4rvpbFkF+wrmAp5BiJnpQ0gARw
+         yxX7ppD5D9DFP1/iMyhatDuv30MbE9CNU1WMyV/W6eGePLV57rWDXRXLbm14pk6PAnmH
+         Qgc1tnKjH6vHtF3tcntLKMKVVuFaBF2IfMbpqdndc86LyhWeWhtGtAyBtx8S1d3BC9ZS
+         HXbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGndN3bz6z6U2KuiTOBddR7Gzn+e5OQ7ywG2jyVJfVc6Q83DZXiaAv7jAp8MsqbwHEduC9QPXLnYhg4z4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgRKe4h7742vN0ihwgvRCIdewve1UtKqYeIymMkJEC4IYAIAfs
+	ejhBY7GGF3CgGLwNsA3kCURdn+2zpcnhglIia81ylA26mUjYtgI1eCsaNQ3EvqaXhnhX5/H7w0W
+	mFT+Nxi2N4Ya3i5dmkEXIzkuDYRhc1b1HqkNlLQ==
+X-Gm-Gg: ASbGncvnK57YktN/TK1ca/l7zjiWPKQ+v55fjm1a+c7jr4h59+8VRhYciXFjem+273y
+	SALCarKviUb6qhg1O98ZsSNqLhCxxhYPDR3yuUqtw0Bd1ji25+a0BUF0WXWHKrh9JYvDSJm1Jgo
+	0fd8XB2s2P4XQea7R2pUMW
+X-Google-Smtp-Source: AGHT+IECR9VWWp5sM9ekT0izdpJvnXGhLFrUYyeXvUgiyjcyi/z8ERS2MGNabEsCST5MXjtN+VKccxirLbFB93wPSAg=
+X-Received: by 2002:a05:6e02:33a1:b0:3d2:af0b:6e2a with SMTP id
+ e9e14a558f8ab-3da7854d904mr27339085ab.5.1746680543894; Wed, 07 May 2025
+ 22:02:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com>
+ <20250403112522.1566629-5-rkrcmar@ventanamicro.com> <CAAhSdy0v7Cw+aGF8DDWh1gjTBXA23=H01KRK8R2LTQHLRHo5Kw@mail.gmail.com>
+ <D9Q3TKPXTPMO.39LSPFEO587XO@ventanamicro.com>
+In-Reply-To: <D9Q3TKPXTPMO.39LSPFEO587XO@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 8 May 2025 10:32:13 +0530
+X-Gm-Features: ATxdqUHAtn3fdoGp6jzvIyBGtoq6BWz_b3EO39aBJbq4imtAWzXWd7ChbJprOwA
+Message-ID: <CAAhSdy0tb5Su_4ydBx1eSt6_1PPpgt1gE=nx53mwum=5DPzMRw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] KVM: RISC-V: refactor sbi reset request
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 07, 2025 at 03:33:23PM +0800, Zhang Yi wrote:
-> On 2025/5/6 20:11, Christoph Hellwig wrote:
-> > On Tue, May 06, 2025 at 07:16:56PM +0800, Zhang Yi wrote:
-> >> Sorry, but I don't understand your suggestion. The
-> >> STATX_ATTR_WRITE_ZEROES_UNMAP attribute only indicate whether the bdev
-> >> and the block device that under the specified file support unmap write
-> >> zeroes commoand. It does not reflect whether the bdev and the
-> >> filesystems support FALLOC_FL_WRITE_ZEROES. The implementation of
-> >> FALLOC_FL_WRITE_ZEROES doesn't fully rely on the unmap write zeroes
-> >> commoand now, users simply refer to this attribute flag to determine
-> >> whether to use FALLOC_FL_WRITE_ZEROES when preallocating a file.
-> >> So, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES doesn't
-> >> have strong relations, why do you suggested to put this into the ext4
-> >> and bdev patches that adding FALLOC_FL_WRITE_ZEROES?
-> > 
-> > So what is the point of STATX_ATTR_WRITE_ZEROES_UNMAP?
-> 
-> My idea is not to strictly limiting the use of FALLOC_FL_WRITE_ZEROES to
-> only bdev or files where bdev_unmap_write_zeroes() returns true. In
-> other words, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES
-> are not consistent, they are two independent features. Even if some
-> devices STATX_ATTR_WRITE_ZEROES_UNMAP are not set, users should still be
-> allowed to call fallcoate(FALLOC_FL_WRITE_ZEROES). This is because some
-> devices and drivers currently cannot reliably ascertain whether they
-> support the unmap write zero command; however, certain devices, such as
-> specific cloud storage devices, do support it. Users of these devices
-> may also wish to use FALLOC_FL_WRITE_ZEROES to expedite the zeroing
-> process.
+On Wed, May 7, 2025 at 10:58=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcma=
+r@ventanamicro.com> wrote:
+>
+> 2025-05-07T17:31:33+05:30, Anup Patel <anup@brainfault.org>:
+> > On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkr=
+cmar@ventanamicro.com> wrote:
+> >> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/includ=
+e/asm/kvm_vcpu_sbi.h
+> >> @@ -55,6 +55,8 @@ void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcp=
+u, struct kvm_run *run);
+> >>  void kvm_riscv_vcpu_sbi_system_reset(struct kvm_vcpu *vcpu,
+> >>                                      struct kvm_run *run,
+> >>                                      u32 type, u64 flags);
+> >> +void kvm_riscv_vcpu_sbi_request_reset(struct kvm_vcpu *vcpu,
+> >> +                                      unsigned long pc, unsigned long=
+ a1);
+> >
+> > Use tabs for alignment instead of spaces.
+>
+> Oops, I totally forgot that linux uses tabs even for alignment.
+>
+> > Otherwise, it looks good to me.
+> > I have taken care of the above comment at the time
+> > of merging this patch.
+>
+> Thanks, I'll post v2 without the three patches.
 
-What are those "cloud storage devices" where you set it reliably,
-i.e.g what drivers?
+Base your v2 upon riscv_kvm_queue branch at
+https://github.com/kvm-riscv/linux.git
 
-> Therefore, I think that the current point of
-> STATX_ATTR_WRITE_ZEROES_UNMAP (possibly STATX_WRITE_ZEROES_UNMAP) should
-> be to just indicate whether a bdev or file supports the unmap write zero
-> command (i.e., whether bdev_unmap_write_zeroes() returns true). If we
-> use standard SCSI and NVMe storage devices, and the
-> STATX_ATTR_WRITE_ZEROES_UNMAP attribute is set, users can be assured
-> that FALLOC_FL_WRITE_ZEROES is fast and can choose to use
-> fallocate(FALLOC_FL_WRITE_ZEROES) immediately.
-
-That's breaking the abstracton again.  An attribute must say something
-about the specific file, not about some underlying semi-related feature.
-
-> Would you prefer to make STATX_ATTR_WRITE_ZEROES_UNMAP and
-> FALLOC_FL_WRITE_ZEROES consistent, which means
-> fallcoate(FALLOC_FL_WRITE_ZEROES) will return -EOPNOTSUPP if the block
-> device doesn't set STATX_ATTR_WRITE_ZEROES_UNMAP ?
-
-Not sure where the block device comes from here, both of these operate
-on a file.
-
-> If so, I'd suggested we need to:
-> 1) Remove STATX_ATTR_WRITE_ZEROES_UNMAP since users can check the
->    existence by calling fallocate(FALLOC_FL_WRITE_ZEROES) directly, this
->    statx flag seems useless.
-
-Yes, that was my inital thought.
-
-> 2) Make the BLK_FEAT_WRITE_ZEROES_UNMAP sysfs interface to RW, allowing
->    users to adjust the block device's support state according to the
->    real situation.
-
-No, it's a feature and not a flag.
-
+Regards,
+Anup
 
