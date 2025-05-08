@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-639973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F05AAFF1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984FCAAFEEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022389C6F90
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8927F503728
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFF92797A0;
-	Thu,  8 May 2025 15:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC28E27B4E1;
+	Thu,  8 May 2025 15:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="UXmAMz62"
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ALR3RiSO"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8594F270EA7
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168D2278E6F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746717750; cv=none; b=gPJV3V7ECc5QH3j82qFKoPIbhjjNUvisVcD1YkGiK/yqfxt5IculV2a01qQJE9zq2wMuLCAmC8A6HHpl3GxNDErhdfULKfwY7TFw6FrAdDhtsuW6R9Je++nXvaAkl5jKaZS9LmarXs/p1EVwk+e7VLC/CEJUSj5JxMTtlF99DVU=
+	t=1746717172; cv=none; b=IUrFmKt43FiXTlp6Wc+/+F5dFJ4X9idadoY/ljTgmMzxoltMgj7MqLLrGwFZ/4hxHYG0pAJEWp57a/uKvD7LEzgjyRr0AtagYFtStoGzhC46RxbWeyy0YcvZNqFgb+SDBL/Pw3/r0kUXiCH5irbdqQ0R08rtKRYwBUeEZu5k3aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746717750; c=relaxed/simple;
-	bh=5/2pypVm4lwsU5ymbD+hU4e7DKfSVOUl3zhaH7yP1+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=taSPXxChmn8DBhu2CTfejQQ4Hfj6Hjmx47vm29UlFqR2qChCj43tWxnJd5ACh/EqlW652/wZqE8WkPlmqnyM2ADxIcJizDFJWVCmUVchm5TCSzoU7E2NbByczsgeb15P15GgoSRUO5gDIeKhJcbqg6bIgKZrI/RVUxGXeFjQVQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=UXmAMz62; arc=none smtp.client-ip=185.136.65.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202505081512146c301d362802ec0e32
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 08 May 2025 17:12:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=diogo.ivo@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=uftzIXqC64HEGiRyuY9ElhNCZUYKd/Y/wyxroPYE6ng=;
- b=UXmAMz626eeoPOPP7HQs6gkM8vahr/Lrzcclaj2AWesCVLhTpF0XOvnVLF38SU61ybw8l0
- 8/br3R9xnAWyM/krI+kzelPavVfTte2RtGGre8djj9Q97Duvwm24B6d9pQHg1IyNEFgDpE5Z
- WkZQRsKf1kvsRub3qDuwvHkMzkPMvhFON5XNkrAOb2MqrzDxtiw6FhnEMcF3EsShmc55nXNw
- 3kBtksKGeIpRJpZWLRXg8IGpqyORLVEztcFEIXU57o5maF+Xj4tcw80oWkvgtP5PzOp+/hbh
- IP6cei7gNvIARgg3EZQ1D5vRr/1UsshwKFvTevTZCENnP5K1R1Sq5Etg==;
-Message-ID: <0fb49864-9c93-482b-b016-150357d9b2a7@siemens.com>
-Date: Thu, 8 May 2025 16:12:13 +0100
+	s=arc-20240116; t=1746717172; c=relaxed/simple;
+	bh=uatJ3LjI7n/uabCAjuIYn6Er8jrNtyMyLiYlf1tPvgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ajoHUKDfWNKAmGzhWORpN8ovebEha0B0EZvHNHZpb04JAwfPgvtA8CVy6+G2reoGXzYPDQXjOXmllr2h6d0Oo5NoA4NT6kXRsZy7c3np5VU56mz+Bgzer6VOOe1aAziJiOnICnd5vGfp36HtcMBei6Fdcw83JEEn3kiL39jCPZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ALR3RiSO; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3fe83c8cbdbso428929b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 08:12:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1746717169; x=1747321969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0GcWz7M9jCTD3vQ092kn0pMggWzRsyQcje+pdvcvTyU=;
+        b=ALR3RiSOvovQUHBaxwz8WsqF7SzezW8W/FZBo/kj2mq31/wWkptzH0WBqK+FChs0za
+         bvL6pFukOeUfKFySaqaX8NadHsBIIuWVko8XLZC+KQQieV1o74vlXpZ09B6EXvovdR7M
+         xcdj9dtrEKZ2jCZeFakQCXeN+2AXVwrnVXg2gCLopY9V3IjuFqdlp7kAW/RwyaqQ+RvG
+         6343ZXRI1D46mjcxF+jcJB6G1BmDEocYVUFkp869JO3aCnbDDE8jmeNlTJLdC52QJQM6
+         hcdEDlRolzllAzdqRTM1e+1FN6+HsIvU5SZjgFalvguztRpj2KzjoiMd4qGAuPWYvING
+         XhiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746717169; x=1747321969;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0GcWz7M9jCTD3vQ092kn0pMggWzRsyQcje+pdvcvTyU=;
+        b=oikPoClPs0BQRprypGzTK3zgWTaZ0FBoyyBkyrOLJmbMCBgqEqmkQUEBnfPCBUND1I
+         iqCseyNNsGdPf7OAl51MiL9+LzFOT0ik6pvgOHSckSZUKW6d1+WAZso7CYW734V7R4hg
+         /f0DteU6VDzkZCbBLpYaY/KT/c64Zf1V3jQlxqPxmplHDRk7rgG4D5x1H+RjKxFnPPyT
+         cUXjSvfkqYgRNbulWjYsN+VPAqZIM0t8rMw0jLVNMeuwsJPvVXPxQ1uOmCDkIEwB1XO6
+         NBzP8orTCn9HhZlnN97m2s+r+rlFboJNOxHTl03RZxP/TduT6t193gpsZFBBoGUooXGP
+         hbsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS0LbIqJFEn5/Y38xfq/haX1B5jIMWnwzuTtja/DLEKIwLfYJVRLC+T1vS76PEMr+GwDJDmEBcWwzL0eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3OYTlKKcJmW1TnOj1dWZN07JEEE0CnOWxiQWTZCs0CxYyctrg
+	S3rsUCGAGNzJh/i6N5xKr2CU6NAxHwZ7OGV4VoyVVXyRveGjXjXxsqLSNMJObZbLUdOK+LuJmxG
+	3
+X-Gm-Gg: ASbGnct8nlxRkHA50JhOZSQeciQx3TiGrj0pxoRjZD9SvTpKgnplR2dNb1pnK4oUjW6
+	OvTDYZD3CPVCv3Z8lDxIX6yR+WUOqevC8yW2uyGBHkV/NcSrogucqMHY3BmQJ0CJEFvEJuvHRy/
+	TlGONBDfuIKFKcYk+7c2ZcrjE/0VEKWfSifUPDsREKEJxMPQRi6dRmcNLTtKMn8amBpheVE6D43
+	xisChnAwyb/CCMOn5MsaCcjrEDc4dt3S6DyUojngmBaMdKZCDdgUwLPH1gKBni6bdbTJtI5wF9y
+	aL399zni4OQ8fyfpZwDtZeoEAVqQacUpYqtn75r2PL9VUGfW8jijvIthqexk3TS1tA6yo6cZkes
+	D4LPnUvlCmK+WJadGQeyE
+X-Google-Smtp-Source: AGHT+IFrmotMhA/nMZAIEBB7GeHwIixjZIq4w08j6/K6MLvI6ZRzQvIIQBKip5mAFrzBQzYq229QKA==
+X-Received: by 2002:a05:6214:e8c:b0:6f5:e0c:b203 with SMTP id 6a1803df08f44-6f5429e89afmr115651736d6.11.1746717158264;
+        Thu, 08 May 2025 08:12:38 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6e3a60eaesm705496d6.122.2025.05.08.08.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 08:12:37 -0700 (PDT)
+Date: Thu, 8 May 2025 11:12:35 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: joshua.hahnjy@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	dan.j.williams@intel.com, ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com, honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in
+ weighted interleave
+Message-ID: <aBzJ42b8zIThYo1X@gourry-fedora-PF4VCD3F>
+References: <aBuMet_S1ONS1pOT@gourry-fedora-PF4VCD3F>
+ <20250508063042.210-1-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/2] watchdog: Add driver for Intel OC WDT
-From: Diogo Ivo <diogo.ivo@siemens.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com,
- benedikt.niedermayr@siemens.com
-References: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
- <20250317-ivo-intel_oc_wdt-v3-1-32c396f4eefd@siemens.com>
- <daeedd95-1d4a-4d17-baa1-9c1580095de9@siemens.com>
-Content-Language: en-US
-In-Reply-To: <daeedd95-1d4a-4d17-baa1-9c1580095de9@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328357:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508063042.210-1-rakie.kim@sk.com>
 
-Hello,
-
-On 4/8/25 9:31 AM, Diogo Ivo wrote:
-> Hello,
+On Thu, May 08, 2025 at 03:30:36PM +0900, Rakie Kim wrote:
+> On Wed, 7 May 2025 12:38:18 -0400 Gregory Price <gourry@gourry.net> wrote:
 > 
-> On 3/17/25 10:55 AM, Diogo Ivo wrote:
->> Add a driver for the Intel Over-Clocking Watchdog found in Intel
->> Platform Controller (PCH) chipsets. This watchdog is controlled
->> via a simple single-register interface and would otherwise be
->> standard except for the presence of a LOCK bit that can only be
->> set once per power cycle, needing extra handling around it.
->>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
->> ---
->> v2->v3:
->>   - Collect R-b from Guenter
->>
->> v1->v2:
->>   - Split v1 into two patches, adding the ACPI IDs in a separate patch
->>   - Initialize hearbeat module parameter to zero
->>   - Clarify wording around lock handling
->>   - Properly print resource with %pR when failing to obtain it
->>   - Enable compile testing and add dependency on HAS_IOPORT
->>   - Drop unneeded ACPI_PTR() and MODULE_ALIAS()
->> ---
->> ---
->>   drivers/watchdog/Kconfig        |  11 ++
->>   drivers/watchdog/Makefile       |   1 +
->>   drivers/watchdog/intel_oc_wdt.c | 233 ++++++++++++++++++++++++++++++ 
->> ++++++++++
->>   3 files changed, 245 insertions(+)
->>
+> The proposed design is completely optional and isolated: it retains the
+> existing flat weight model as-is and activates the source-aware behavior only
+> when 'multi' mode is enabled. The complexity is scoped entirely to users who
+> opt into this mode.
 > 
-> Gentle ping on this patch.
 
-Another ping on this patch. Is there anything missing from my side
-blocking this?
+I get what you're going for, just expressing my experience around this
+issue specifically.
 
-Best regards,
-Diogo
+The lack of enthusiasm for solving the cross-socket case, and thus
+reduction from a 2D array to a 1D array, was because reasoning about
+interleave w/ cross-socket interconnects is not really feasible with
+the NUMA abstraction.  Cross-socket interconnects are "Invisible" but
+have real performance implications.  Unless we have a way to:
+
+1) Represent the topology, AND
+2) A way to get performance about that topology
+
+It's not useful. So NUMA is an incomplete (if not wrong) tool for this.
+
+Additionally - reacting to task migration is not a real issue.  If
+you're deploying an allocation strategy, you probably don't want your
+task migrating away from the place where you just spent a bunch of time
+allocating based on some existing strategy.  So the solution is: don't
+migrate, and if you do - don't use cross-socket interleave.
+
+Maybe if we solve the first half of this we can take a look at the task
+migration piece again, but I wouldn't try to solve for migration.
+
+At the same time we were discussing this, we were also discussing how to
+do external task-mempolicy modifications - which seemed significantly
+more useful, but ultimately more complex and without sufficient
+interested parties / users.
+
+~Gregory
 
