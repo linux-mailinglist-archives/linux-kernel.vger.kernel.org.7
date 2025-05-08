@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-639049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63092AAF229
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:46:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607E4AAF230
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731024E6CF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACD3C9C5E7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F341F37C5;
-	Thu,  8 May 2025 04:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92967210F59;
+	Thu,  8 May 2025 04:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Wb5vANw1"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="SaC/IPrJ";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="GGIu25Jc"
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A7B79F2;
-	Thu,  8 May 2025 04:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C04520E005;
+	Thu,  8 May 2025 04:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746679594; cv=none; b=huGTRA3kqEvCgsMZTvPUbmTwkWFaeBRQMRNCzQVOE+wQIIaVNzQkN8QGQxXVELzlzQzb2MNtjo0+ipVq10buZZqAg+gdgSd6d52+8Z/voYczmQ6NRmbpwC30DYLrg7BB624On1RW1yZ++OvC1R6F16+fgyOOilgOz2R0F1Yf6ls=
+	t=1746679641; cv=none; b=cyTyS08ESAMqpzUJYbzPX3j+HNIseUZQbNt1Eo51+VlKXErL/l1o49Fg1QTF/8nJ33NQRUnLHVB7iRDYr/oEklpyThn2dG56ydJdBlfxawncafpnHh81wcEK9gMBgFGVM6HAuSnwwwKWX9/GcKW64b3U1MlgkoFvvbTank336Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746679594; c=relaxed/simple;
-	bh=iOwBhF2jWfxSznFO3EGfXN7A2okZzkQPd4jElYKwvcQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=f0yhJDw3jDzNvdvi+NTayliU0WrlUh1uwz/2XPR9HUWkjp42hf5ogJnUEZ8t2alv0wmcrbY4xSlmt0v5gf5J0X/bQ4PtAAXMu62KHXHmCdUBFvtLO8+6YfxNzxTVXjZZl0HBJg9yr2l59RY9VJKlAn7ej76PSIEBrmBJT431WbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Wb5vANw1; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1746679583;
-	bh=GMmUu/KwVYsXb2KtVn2/87+3MnBtGMcwkJMD5WiBllY=;
-	h=From:Date:Subject:To:Cc;
-	b=Wb5vANw1Ixzb/5PMbBiXMONaNULgnMNSVK6SM5bai/5pIV6ahRj3ou4emXCAxRTPF
-	 WQ8AvM+IQCBD2LcrD0SqQ9ecj0Vd22IRYow91mTAVVPx5E9HWMqCcEMJQljM2BQHDn
-	 JB9GhcWWtEqz6jMsxjqtdjH9qH6qbrhXoF/SMp5g2DgG84iOnAerTcwORPAbDTJWV6
-	 x36JAtGAEerrPEKftOi+kIJjvXdOerKKgVGORbS7qqdtBGayIHfF8h2rH2W0vjlvat
-	 LHCB16tS+JbC5VujFSU2GY6uLdcN43AZlGygkiwtYo0a58EXoPIbWE8tJiDKT/HKH8
-	 9uGzMXoV9eJxw==
-Received: from [127.0.1.1] (unknown [180.150.112.225])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E602F6449A;
-	Thu,  8 May 2025 12:46:21 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Date: Thu, 08 May 2025 14:16:00 +0930
-Subject: [PATCH net] net: mctp: Ensure keys maintain only one ref to
- corresponding dev
+	s=arc-20240116; t=1746679641; c=relaxed/simple;
+	bh=e/P4+/XU5LouXeXa4I9PIC8t3qnOxk9ewZlbp+f9Ilk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcNTFbYKU60OpkXeSeqcF0SvtAvXUrsBnKSa6SMYtK9WG1zrwBnQOZLLi/V5pEYRramFdr6GI/IEYwl18T5FdP4ffagEQr33c3vetegH+lLrZUw6pwNAnvmRmkkPRpNwNEtndV2hAcI0xHVBN109S2XUJk7V64Xvgh0TuhTP/70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=SaC/IPrJ; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=GGIu25Jc; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 81AD012FB439;
+	Wed, 07 May 2025 21:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746679637; bh=e/P4+/XU5LouXeXa4I9PIC8t3qnOxk9ewZlbp+f9Ilk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SaC/IPrJUbgxUydNlXnWfhnLn/BGT5g0SHchKvIIGbGAuk8PUnQBbQmIEypysBcSt
+	 0K1PSdXMOacxqBLILBaFqkRQ1T6jy0wBZ3moycRHp2JsUMU9Uw0a1o1KhOIK5VSjPA
+	 YDIHx/DbLphl87c7lRNFvLPD42qebdrjomqrM7ks/JiEX0JNaoWqAq97d0JwS3/ZoF
+	 zpoHl4KwK+nAFzaumgoHgAduv79zDZFvS4rRrIg0m1ZxH1kwLbLe36xqkcdRmuaawZ
+	 DYSKAOgtfVRW4uYrw4oVLwmJtvPaGki6oRTjSB74BQLVQuCaxeMP+EpqXlRhL8+E+6
+	 R4Huoj6O0eoYA==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id Cr6EuxlS-V20; Wed,  7 May 2025 21:46:40 -0700 (PDT)
+Received: from ketchup (unknown [183.217.82.204])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 62CCD12FB404;
+	Wed, 07 May 2025 21:46:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746679600; bh=e/P4+/XU5LouXeXa4I9PIC8t3qnOxk9ewZlbp+f9Ilk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GGIu25JcctzNnGEnFS2lVm5QZGmjFD6skk7MMUWRFgCumB/WY1axKqjUc4Wg+X8EE
+	 m7kroffJQhK1Da2qF/kmfGqFTw/oH3/sYsL1K02oPPp42jubzJ7pvDg8wy0moMVLe0
+	 d1Xlzul2oYZcXGsrOyAraYwKo5+KJZguNKol23J5dT6wK+XHz73QyUccV+6xf1DIce
+	 ky29BbLNb+zA/BclXtGKnfg5y9FIlBJu/n9Jt8PgmtrNoaHdJjfd+vqPbNX7+RBXj7
+	 roqKjR5o4GK3ttWym4bFIYSJe6WFBrufI212U7v9UGVh3DQzadcQ8+FLZDVVY5Jepg
+	 D4xg7uLXY7FoA==
+Date: Thu, 8 May 2025 04:46:32 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/6] clk: spacemit: set up reset auxiliary devices
+Message-ID: <aBw3KNwjMeCIfnNR@ketchup>
+References: <20250506210638.2800228-1-elder@riscstar.com>
+ <20250506210638.2800228-4-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250508-mctp-dev-refcount-v1-1-d4f965c67bb5@codeconstruct.com.au>
-X-B4-Tracking: v=1; b=H4sIAAc3HGgC/x2MQQqAIBAAvxJ7bsEMS/pKdAhdaw9pqEUg/T3pO
- AwzBRJFpgRTUyDSzYmDr9C1DZh99Rsh28oghVRCCY2HySdaujGSM+HyGWkYjZPaCaV6qN1ZDT/
- /cwZPGZb3/QC6QLrlaAAAAA==
-X-Change-ID: 20250508-mctp-dev-refcount-e67cf28f0553
-To: Jeremy Kerr <jk@codeconstruct.com.au>, 
- Matt Johnston <matt@codeconstruct.com.au>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506210638.2800228-4-elder@riscstar.com>
 
-mctp_flow_prepare_output() is called in mctp_route_output(), which
-places outbound packets onto a given interface. The packet may represent
-a message fragment, in which case we provoke an unbalanced reference
-count to the underlying device. This causes trouble if we ever attempt
-to remove the interface:
+On Tue, May 06, 2025 at 04:06:34PM -0500, Alex Elder wrote:
+> Add a new reset_name field to the spacemit_ccu_data structure.  If it is
+> non-null, the CCU implements a reset controller, and the name will be
+> used as the name for the auxiliary device that implements it.
+> 
+> Define a new type to hold an auxiliary device as well as the regmap
+> pointer that will be needed by CCU reset controllers.  Set up code to
+> initialize and add an auxiliary device for any CCU that implements reset
+> functionality.
+> 
+> Make it optional for a CCU to implement a clock controller.  This
+> doesn't apply to any of the existing CCUs but will for some new ones
+> that will be added soon.
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 85 +++++++++++++++++++++++++++++++----
+>  include/soc/spacemit/ccu_k1.h | 12 +++++
+>  2 files changed, 89 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index 9545cfe60b92b..6b1845e899e5f 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
 
-    [   48.702195] usb 1-1: USB disconnect, device number 2
-    [   58.883056] unregister_netdevice: waiting for mctpusb0 to become free. Usage count = 2
-    [   69.022548] unregister_netdevice: waiting for mctpusb0 to become free. Usage count = 2
-    [   79.172568] unregister_netdevice: waiting for mctpusb0 to become free. Usage count = 2
-    ...
+...
 
-Predicate the invocation of mctp_dev_set_key() in
-mctp_flow_prepare_output() on not already having associated the device
-with the key. It's not yet realistic to uphold the property that the key
-maintains only one device reference earlier in the transmission sequence
-as the route (and therefore the device) may not be known at the time the
-key is associated with the socket.
+> +static void spacemit_cadev_release(struct device *dev)
+> +{
+> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +
+> +	kfree(to_spacemit_ccu_adev(adev));
+> +}
 
-Fixes: 67737c457281 ("mctp: Pass flow data & flow release events to drivers")
-Acked-by: Jeremy Kerr <jk@codeconstruct.com.au>
-Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
----
-Exercising the USB MCTP transport under qemu via usbredir surfaced this
-issue on disconnect. Devices on other transports such as I2C and serial
-tend to be disconnected less often and so the bug remained hidden for
-some time.
----
- net/mctp/route.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+spacemit_ccu_adev structures are allocated with devm_kzalloc() in
+spacemit_ccu_reset_register(), which means its lifetime is bound to the
+driver and it'll be automatically released after driver removal; won't
+there be a possibility of double-free? I think the release callback
+could be simply dropped.
 
-diff --git a/net/mctp/route.c b/net/mctp/route.c
-index 4c460160914f0131f3191ca24dd51ec7a3fb8cc0..d9c8e5a5f9ce9aefbf16730c65a1f54caa5592b9 100644
---- a/net/mctp/route.c
-+++ b/net/mctp/route.c
-@@ -313,8 +313,10 @@ static void mctp_flow_prepare_output(struct sk_buff *skb, struct mctp_dev *dev)
- 
- 	key = flow->key;
- 
--	if (WARN_ON(key->dev && key->dev != dev))
-+	if (key->dev) {
-+		WARN_ON(key->dev != dev);
- 		return;
-+	}
- 
- 	mctp_dev_set_key(dev, key);
- }
+...
 
----
-base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
-change-id: 20250508-mctp-dev-refcount-e67cf28f0553
+> +static int spacemit_ccu_reset_register(struct device *dev,
+> +				       struct regmap *regmap,
+> +				       const char *reset_name)
+> +{
+> +	struct spacemit_ccu_adev *cadev;
+> +	struct auxiliary_device *adev;
+> +	static u32 next_id;
+> +	int ret;
+> +
+> +	/* Nothing to do if the CCU does not implement a reset controller */
+> +	if (!reset_name)
+> +		return 0;
+> +
+> +	cadev = devm_kzalloc(dev, sizeof(*cadev), GFP_KERNEL);
+
+Here spacemit_ccu_adev is allocated.
+
+> +	if (!cadev)
+> +		return -ENOMEM;
+> +	cadev->regmap = regmap;
+> +
+> +	adev = &cadev->adev;
+> +	adev->name = reset_name;
+> +	adev->dev.parent = dev;
+> +	adev->dev.release = spacemit_cadev_release;
+> +	adev->dev.of_node = dev->of_node;
+> +	adev->id = next_id++;
+> +
+> +	ret = auxiliary_device_init(adev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = auxiliary_device_add(adev);
+> +	if (ret) {
+> +		auxiliary_device_uninit(adev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(dev, spacemit_adev_unregister, adev);
+> +}
+> +
 
 Best regards,
--- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
-
+Haylen Chu
 
