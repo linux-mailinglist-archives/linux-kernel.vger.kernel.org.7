@@ -1,155 +1,110 @@
-Return-Path: <linux-kernel+bounces-640056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD49AAFFE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:06:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5474AAFFE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F954E043B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2873A5880
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8198B27CCF8;
-	Thu,  8 May 2025 16:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A8627CB18;
+	Thu,  8 May 2025 16:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ATwY6ABM"
-Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqeHmpOB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89A127AC47;
-	Thu,  8 May 2025 16:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369542741CF;
+	Thu,  8 May 2025 16:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746720402; cv=none; b=kwODx6550o+AoqadTZycxs9MYexyJ6Ov4BhEbfUmnUmvbEgDOlgVdwffBVbcH6QVXYXwEx9vkQBldcnJ1g7nUsXuWyBtbdji8uXAsxFDHr3h2Eel0u0K5CMhKBxKjed53Uff4S6Ie60Gb3sTghHtqb7k1jg8BnchRSO9G+iLqdM=
+	t=1746720333; cv=none; b=Nz7mD5+UHpoUaimzrnvjn+i/igWY8p3AL1jI+VWChilGS65Irif1tvnSKRZ+UNgBblsHXy08PM9KU2bs/Hg3SLIJvL6HAx6+T6z0ZFXUu96Bzsuj9+SqtC7dwl7x049OIwPhpB5QleCw2fpCvXbNlax9yPdLYHmf9L72pc8cgyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746720402; c=relaxed/simple;
-	bh=ZXF39FFw9bSaoaPc3UbH1V0LnHSE+53rFY6xbOMm1J8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hnI6xyUSom4D70YzdnXbgVurcvYzVLVDq2ag3xhxIdaoaUXLxmRANi4vJaFMYFlitQdborq2oGFettSJSbD4sEAaj64apsiwjMEsqMvoDBT+lMK23rZ/fdsWCJbEW6SiWuTGqL1VYC1RSkhJMOUas90o6DjKjsKANB4Tm6T7mMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ATwY6ABM; arc=none smtp.client-ip=80.12.242.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id D3kUuhiTn5oOhD3kUuQpGk; Thu, 08 May 2025 18:05:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1746720329;
-	bh=i3Zcprdv1SvQj0eiycKQXI51YCMEuANQ9KWCXytXxLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ATwY6ABMjL9h2bymt7e78pl9aKcyh+EW5/LzWCMpLnKdY3A2MnCK2IfN54Cblz188
-	 frUSBSmFo3Mlo+ZWoWEk6Gk6woIflGmSyUb+BEg9JuLGXjzvWEzbQnuhtX9xd8xDN3
-	 1HcGPT8iZJNsZH964+0wBxoS09nQ7HOhHtgS4XMixHUiF8qDVtN16RE8zjFEUeMmve
-	 l9oD4xuiMRY97u+tI1uWtlIPxAgUeGkX1KFYAfUQmJNZp/7IAeCnt6EPJpwUU34YfO
-	 /xiXGagHB/5+fIGOLgaCdeSONbXd0FhUslqS+faTY2gQ/df8VyzjbAtPlQZ4qoOPXS
-	 1G/utI/oMG2Kg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 08 May 2025 18:05:29 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <68149c51-ba75-4f0f-a86a-bd810d47d684@wanadoo.fr>
-Date: Thu, 8 May 2025 18:05:26 +0200
+	s=arc-20240116; t=1746720333; c=relaxed/simple;
+	bh=7qKKMZlG0QuZoiFYx7gS6XYcKRcAoqo6IoP4i1tWvJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RV4KAVjWDcvRyXFd/aHv9jw0g65s7ghv/GF8S70hoV6JBk9IBV27oMd8D+Dfno2m7b0Z8E78ZViuGcKjtTriiyCHY6XQ3qVuTz3PEagBNgk0cwusUSWVpK68WSdkiP/RkXFsu9bWwMPqu0SI9bo+AhMAqtwCR3I2RkiAssC0a04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqeHmpOB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B3EC4CEEE;
+	Thu,  8 May 2025 16:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746720332;
+	bh=7qKKMZlG0QuZoiFYx7gS6XYcKRcAoqo6IoP4i1tWvJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FqeHmpOBQqETvRlV5GVxhUmf/qQBptjCQLA9hn/rjJ8WgEOhuyCBSPu8PidtNbaOA
+	 7qpua65wZ9eHfBgm1JZO0XW/cTZ5PsU7l4i0VnqrODcSEGcuDy1lHaNvKzaVCQEWSG
+	 fzXNRK/lqmOVle7lLymH+6enSvpZYz+650ilKNDNTVYu5LvkCQoFY9Adc8zPNgW5OW
+	 DHrsi3psbMF+hbvEITF503hPk9whLjHTAdAiwAvE1DSrVv1+sstypkh14A6z2DkMYk
+	 Yvr/CnDaP9xYEQnXE6U91mMZJbQuCgRK2Z3UC5+u+svvEN76p5r2UftObYM5EiVa4/
+	 4VAypCjNmRP5A==
+Date: Thu, 8 May 2025 13:05:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Levi Yun <yeoreum.yun@arm.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Andi Kleen <ak@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Weilin Wang <weilin.wang@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] NMI warning and debug improvements
+Message-ID: <aBzWSTzjSW97FlBN@x1>
+References: <20250402201549.4090305-1-irogers@google.com>
+ <18c2fb33-2b3a-4ebe-ab26-8cebe0b6b94c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] net: airoha: Fix an error handling path in
- airoha_alloc_gdm_port()
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr>
- <aBzOaiU6Ac3ZTU-4@lore-desk>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aBzOaiU6Ac3ZTU-4@lore-desk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18c2fb33-2b3a-4ebe-ab26-8cebe0b6b94c@linux.intel.com>
 
-Le 08/05/2025 à 17:31, Lorenzo Bianconi a écrit :
->> If register_netdev() fails, the error handling path of the probe will not
->> free the memory allocated by the previous airoha_metadata_dst_alloc() call
->> because port->dev->reg_state will not be NETREG_REGISTERED.
->>
->> So, an explicit airoha_metadata_dst_free() call is needed in this case to
->> avoid a memory leak.
->>
->> Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Changes in v2:
->>    - New patch
->>
->> Compile tested only.
->> ---
->>   drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
->>   1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
->> index 16c7896f931f..af8c4015938c 100644
->> --- a/drivers/net/ethernet/airoha/airoha_eth.c
->> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
->> @@ -2873,7 +2873,15 @@ static int airoha_alloc_gdm_port(struct airoha_eth *eth,
->>   	if (err)
->>   		return err;
->>   
->> -	return register_netdev(dev);
->> +	err = register_netdev(dev);
->> +	if (err)
->> +		goto free_metadata_dst;
->> +
->> +	return 0;
->> +
->> +free_metadata_dst:
->> +	airoha_metadata_dst_free(port);
->> +	return err;
->>   }
->>   
->>   static int airoha_probe(struct platform_device *pdev)
->> -- 
->> 2.49.0
->>
+On Wed, Apr 02, 2025 at 04:33:25PM -0400, Liang, Kan wrote:
 > 
-> I have not tested it but I think the right fix here would be something like:
 > 
-> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
-> index b1ca8322d4eb..33f8926bba25 100644
-> --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> @@ -2996,10 +2996,12 @@ static int airoha_probe(struct platform_device *pdev)
->   	for (i = 0; i < ARRAY_SIZE(eth->ports); i++) {
->   		struct airoha_gdm_port *port = eth->ports[i];
->   
-> -		if (port && port->dev->reg_state == NETREG_REGISTERED) {
-> +		if (!port)
-> +			continue;
-
-I think it works.
-
-We can still have port non NULL and airoha_metadata_dst_alloc() which 
-fails, but airoha_metadata_dst_free() seems to handle it correctly.
-
-CJ
-
-
-> +
-> +		if (port->dev->reg_state == NETREG_REGISTERED)
->   			unregister_netdev(port->dev);
-> -			airoha_metadata_dst_free(port);
-> -		}
-> +		airoha_metadata_dst_free(port);
->   	}
->   	free_netdev(eth->napi_dev);
->   	platform_set_drvdata(pdev, NULL);
+> On 2025-04-02 4:15 p.m., Ian Rogers wrote:
+> > The NMI warning wouldn't fire even if all the events were for one PMU
+> > type. Remove a nearby, and no longer useful, mixed hardware event
+> > group function. Improve the evlist to string function and dump it in
+> > verbose mode after the reordered events warning.
+> > 
+> > As commonly happens legacy events like instructions will be uniquified
+> > to hybrid events like cpu_core/instructions/, even though the
+> > encodings differ. To make this correct either:
+> > https://lore.kernel.org/lkml/20250312211623.2495798-1-irogers@google.com/
+> > or:
+> > https://lore.kernel.org/linux-perf-users/20250109222109.567031-1-irogers@google.com/
+> > needs merging.
+> > 
+> > v3: Increase the verbose dump length from 1024 to 2048 as requested by
+> >     Kan Liang.
+> > 
+> > v2: Rename evlist__has_hybrid to evlist__has_hybrid_pmus and add a
+> >     max_length parameter to evlist__format_evsels as suggested by Kan
+> >     Liang.
+> > 
+> > Ian Rogers (5):
+> >   perf stat: Better hybrid support for the NMI watchdog warning
+> >   perf stat: Remove print_mixed_hw_group_error
+> >   perf evlist: Refactor evlist__scnprintf_evsels
+> >   perf evlist: Add groups to evlist__format_evsels
+> >   perf parse-events: Add debug dump of evlist if reordered
 > 
-> Regards,
-> Lorenzo
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
+Thanks, applied to perf-tools-next,
+
+- Arnaldo
 
