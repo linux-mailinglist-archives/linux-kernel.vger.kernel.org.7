@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-639752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14F9AAFBDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:45:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9924AAFBCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067D03B4425
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFE2189553C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2FA22DF8F;
-	Thu,  8 May 2025 13:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XEDdEjmv"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2C222D4DA;
+	Thu,  8 May 2025 13:43:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AE3227BA1;
-	Thu,  8 May 2025 13:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6141227BA1
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 13:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746711866; cv=none; b=OKRI5+U0TE7j3S5DzV16mS0DCwPMRyxY770Djy3LUKBBkKyOCee0rOB+b7tuiFnBvDFSmpi9TmZrzjzXgm6O+0cAo0V2fvDeoqoHLuGERpTnooVjntpAyCCS9hzVfEc5IJYFsfpDaqVsJBA8j604erxq8/FNQ5+xyxpRfwAsYog=
+	t=1746711817; cv=none; b=dnWKnR33ZlorLhbTtmZV/n3rC4gaH8BjcDrRM23ULxewBuYV/HziC6ml3XTWwA7lw5WFYBjhgKp9cPKOJCOhLYkrhOXA2A4ywpF3jnS7eA6HGi1Ab757twJlbXRFXpYvD/aBNDoVOpzDfDz60KtP3dZ2/eWjeVp6LbY358rUjF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746711866; c=relaxed/simple;
-	bh=vbK2zlww38wck9vMVg+gzO7EFS+YMqh3QyFokhlVYPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p+V/z1yU5lj30D29FKe42FBQZhX/CUPpl0JyRvW/UFn7XafTCDe/xQmFBm76aG84MQssWN4pzAHKoNTUcXxWFK9PRvbmI7YgIDeoW+1vBwt5cZ8UzvmtzGp7wvYE5q7/LF4PksHNy+yBjQOpGXLY4csDx2PSmK/EdVrDAnBhVc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XEDdEjmv; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 906A525C52;
-	Thu,  8 May 2025 15:44:23 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id lMjFUx90zjFi; Thu,  8 May 2025 15:44:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746711853; bh=vbK2zlww38wck9vMVg+gzO7EFS+YMqh3QyFokhlVYPk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XEDdEjmv+TFPMoZbsGPFMLUFPr3hv5wGVOsjsjMQTUgGxk5FaNTe2Fu7My9Rh88k+
-	 RUOVKcWm+67PqrZHn76PVs0tzCwx9modPkz7qznkABZI2UjyoTkLYv8+qNnlThjjRE
-	 TM9D6UHOlJWvMNqWKZcEuRSF+zDxe4QQBnex7qBLr1DAnXVIvgHnNZx8V8MnpDKQof
-	 pfh9oBipnyxIogtXdyz7n0zFBmvGx2fosjVZYIx2SZCLnuFh4fgduyk0XePlz8zzBD
-	 1Kd2jgxBeK6pvJDaLiGlJsv/9YFOApuTDUddmPC+McZFaGAANgnlz6G17CmGhL//51
-	 lHIcDT+Qrieyg==
-From: Yao Zi <ziyao@disroot.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Yao Zi <ziyao@disroot.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] dt-bindings: phy: rockchip: naneng-combphy: Add RK3528 variant
-Date: Thu,  8 May 2025 13:43:30 +0000
-Message-ID: <20250508134332.14668-4-ziyao@disroot.org>
-In-Reply-To: <20250508134332.14668-2-ziyao@disroot.org>
-References: <20250508134332.14668-2-ziyao@disroot.org>
+	s=arc-20240116; t=1746711817; c=relaxed/simple;
+	bh=Y55wLFIvvID7sOrwT7mRN800kTlffZtkYjyvo+A31sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C5XiYkOgB1yv7rNEOFJm/B7cPK1Wow3SWz1zrAv6r/ZUnyq9Dh4f6Rbm9Z9VhDpIyFWfYHfz30ue7SHMx9KsVeEKakEOiwAq79pZtTG2ItmJ1rJ5TRwkOeY3UFlR5ob4B/wn88DZw69abYyotcfEtG+hM1KN3lYv/8OU1pu+Q8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABFD2C4CEE7;
+	Thu,  8 May 2025 13:43:34 +0000 (UTC)
+Date: Thu, 8 May 2025 09:43:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Aaron Lu <ziqianlu@bytedance.com>, Florian Bezdeka
+ <florian.bezdeka@siemens.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, Ben
+ Segall <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo
+ Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Xi
+ Wang <xii@google.com>, linux-kernel@vger.kernel.org, Juri Lelli
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Mel
+ Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, Chuyi
+ Zhou <zhouchuyi@bytedance.com>, Clark Williams <clark.williams@gmail.com>,
+ daniel.wagner@suse.com, josephtsalisbury@gmail.com, lgoncalv@redhat.com,
+ Tom Zanussi <zanussi@kernel.org>, williams@redhat.com, dwagner@suse.de
+Subject: Re: [RFC PATCH v2 7/7] sched/fair: alternative way of accounting
+ throttle time
+Message-ID: <20250508094342.177ddf4d@gandalf.local.home>
+In-Reply-To: <ef402bac-3b41-4322-b5b2-224c874275e3@siemens.com>
+References: <20250409120746.635476-1-ziqianlu@bytedance.com>
+	<20250409120746.635476-8-ziqianlu@bytedance.com>
+	<099db50ce28f8b4bde37b051485de62a8f452cc2.camel@siemens.com>
+	<20250507090923.GA194948@bytedance>
+	<618bc3b199f19be916913301edb5ec832131e842.camel@siemens.com>
+	<20250508024525.GA628019@bytedance>
+	<ef402bac-3b41-4322-b5b2-224c874275e3@siemens.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Rockchip RK3528 ships one naneng-combphy which operates in either PCIe
-or USB 3 mode. Document its compatible string.
+On Thu, 8 May 2025 08:13:39 +0200
+Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- .../devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> On 08.05.25 04:45, Aaron Lu wrote:
+> > On Wed, May 07, 2025 at 11:33:42AM +0200, Florian Bezdeka wrote:  
+> >> To sum up: This series fixes (or seems to fix, let's wait for one more
+> >> week to be sure) a critical RT issue. Is there a chance that once we
+> >> made it into mainline that we see (official) backports? 6.12 or 6.1
+> >> would be nice.  
+> > 
+> > I don't think there will be official backports if this series entered
+> > mainline because stable kernels only take fixes while this series changed
+> > throttle behavior dramatically. Of course, this is just my personal
+> > view, and the maintainer will make the final decision.  
+> 
+> With 6.12 carrying RT in-tree and this patches serious fixing a hard
+> lock-up of that configuration, a backport to 6.12-stable would be
+> required IMHO. Backports beyond that should be a topic for the
+> (separate) rt-stable trees.
+>
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml b/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml
-index 888e6b2aac5a..bd064754e537 100644
---- a/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml
-+++ b/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml
-@@ -12,6 +12,7 @@ maintainers:
- properties:
-   compatible:
-     enum:
-+      - rockchip,rk3528-naneng-combphy
-       - rockchip,rk3562-naneng-combphy
-       - rockchip,rk3568-naneng-combphy
-       - rockchip,rk3576-naneng-combphy
-@@ -102,7 +103,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: rockchip,rk3588-naneng-combphy
-+            enum:
-+             - rockchip,rk3528-naneng-combphy
-+             - rockchip,rk3588-naneng-combphy
-     then:
-       properties:
-         resets:
--- 
-2.49.0
+Agreed, and I'm adding the stable RT maintainers as well in case this needs
+to go earlier than 6.12.
 
+Thanks,
+
+-- Steve
 
