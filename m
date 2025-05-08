@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-640500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6352CAB0576
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:44:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFAAAB057A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3E64C2244
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072D83ABFAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7FC214A8A;
-	Thu,  8 May 2025 21:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C6722425C;
+	Thu,  8 May 2025 21:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUDJQ7TM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GHYtCMHH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670EC1CAA6E;
-	Thu,  8 May 2025 21:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A852A2236EB;
+	Thu,  8 May 2025 21:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746740640; cv=none; b=h5wEi2Z6QbVWL1XNSdXBO1GWe+enme67MKMDsUcXWK/bG9+Aubu/wLgXb6zlFWkkMsRZsKje3cvfeYfI+J5Tmm39s6yd5GhV/YgjxSKO1OiQh6QkeZXr0CslCHKm5wOZKc9VaBLi91uJVLXX7TdpwWWsh29aGEzhnuuUuJGEEc8=
+	t=1746740669; cv=none; b=EQB1oQ3Ayqrri+A5V5jG0fARwxOZOk8oc9jg//WIdAFiTDkucniLLaZWYjrKt6s14D88iJ0DdD+L4QfocUQuz0HphPacEZRCqfqfSyifPcfMIgpiM31jVz+7cL/eXRfiewWwbugMPuq1fZGAjSMnJA5US5mmLdSxtnOL0KAsC+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746740640; c=relaxed/simple;
-	bh=2XM0ycqF9U6sa+FgoRGJnyBhv3k0LGN8UkGCg3UhoMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nn1pq8FvM/TVSflWNsVaZXyDeedCLmY8AS3iEL11y5zIQoCP83R3BU4DFdPiL1BEtlT9w5VDpIfLMUwv3y4Mgl2RJwJA5pbhiORzS5bxkk9kAOMEYq7TMIOJ2n5+ZYwK3WKRSevS86LfYkT3h/POawsOsSAbn5WSGQ4upipW1f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUDJQ7TM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED364C4CEE7;
-	Thu,  8 May 2025 21:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746740640;
-	bh=2XM0ycqF9U6sa+FgoRGJnyBhv3k0LGN8UkGCg3UhoMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aUDJQ7TMLaRB9cnLeSgzoWJEtdQBcpXGxXX3iQdgb/fgkky2ebvtCYpZLmdhci48l
-	 TmnoOj3mUAygZZYoVHtWPbVtJwha3ocNCa/+16PP4BWZOZW1jFnjzAOEKwhKUi5L2y
-	 5zWHAGai3TXN2tDplVbRSkVB5waYHoWYunAg1hrBW2YRVARQ0IcwrL/oEiIppnRDXV
-	 0Ukl+4He2OzrLJSIcN6FXMY4Qsf7zMhkPe1AD/fH/BtyfpPebsNz2SleZtTATnaFL+
-	 fxXp1GUBTm/t/5K6/IogD15G9TC1NKOE+7iJWNckXd3MPJc5pXgm41L9zNDVRo1RWm
-	 lGJFmu4+Ycc7Q==
-Date: Thu, 8 May 2025 23:43:57 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip: perf/core] perf: Fix irq work dereferencing garbage
-Message-ID: <aB0lnW68rLDtuCkZ@pavilion.home>
-References: <174670046919.406.15885032121099672652.tip-bot2@tip-bot2>
- <aB0B2xaHWkzCjC_s@pavilion.home>
- <20250508194605.GA8552@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1746740669; c=relaxed/simple;
+	bh=r60Q6oOHc13fi6kMuHzPHXQmB8KxMckKssS5xTywd4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=B6JBiCDW07dKnYArc3t5l1zpMfzHnolRl3ktNrVt7izaaW7nDrdtLrAFKWbEGDr+wpSfusoTl+YEtZfGu97lmtYrBh9CMkOQneqv3H2ks6yQLohcLX8g191vlX0Q1/zAJ4+XgmawwTFyKgqw42ABpuF5QASe2i7exAYIdr7U4ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GHYtCMHH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746740660;
+	bh=b30cAf0HlKZ41HJeMtOxc9R39dOx2HMgbAgXvchRW18=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GHYtCMHHdhaAl3PnGJL0FL4GJihWxFkOD2BAmc2EeIY7skbYPDoAquzhwWwPk6NWi
+	 RM5F2PMDHp5ZQq8G4BJYa1FjsM8hDyeWXnaXbtEricn7ATrLN/wKk/ZWnF1kxujdm9
+	 AQRrA4TIkj0gP2lKF1j4RgxVspkg5DFa8JMcAPYtoohdFJSwQfoo6UrOLuGeQqcR2S
+	 uQw4IbG3Wti6uUCrGqBIXR4jnuTUDNJ6XVzUQFFUYceGh/euhoHXGK0XAdpETL2GRY
+	 jE7CFqI0J34nBXINWMA4cK4A3cyRsx+/+VfkqcquuRRnM46voJ9tdZ/3EketjwSOPT
+	 imd2nx8P3lC6w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZtlyX0mbmz4wcr;
+	Fri,  9 May 2025 07:44:19 +1000 (AEST)
+Date: Fri, 9 May 2025 07:44:17 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: gldrk <me@rarity.fan>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the pm tree
+Message-ID: <20250509074417.1accacbd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250508194605.GA8552@noisy.programming.kicks-ass.net>
+Content-Type: multipart/signed; boundary="Sig_/HFzHmAC6eUSk6fyc_U+gicg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Le Thu, May 08, 2025 at 09:46:05PM +0200, Peter Zijlstra a écrit :
-> On Thu, May 08, 2025 at 09:11:23PM +0200, Frederic Weisbecker wrote:
-> > Le Thu, May 08, 2025 at 10:34:29AM -0000, tip-bot2 for Frederic Weisbecker a écrit :
-> > > The following commit has been merged into the perf/core branch of tip:
-> > > 
-> > > Commit-ID:     88d51e795539acd08bce028eff3aa78748b847a8
-> > > Gitweb:        https://git.kernel.org/tip/88d51e795539acd08bce028eff3aa78748b847a8
-> > > Author:        Frederic Weisbecker <frederic@kernel.org>
-> > > AuthorDate:    Mon, 28 Apr 2025 13:11:47 +02:00
-> > > Committer:     Peter Zijlstra <peterz@infradead.org>
-> > > CommitterDate: Fri, 02 May 2025 12:40:40 +02:00
-> > > 
-> > > perf: Fix irq work dereferencing garbage
-> > > 
-> > > The following commit:
-> > > 
-> > > 	da916e96e2de ("perf: Make perf_pmu_unregister() useable")
-> > > 
-> > > has introduced two significant event's parent lifecycle changes:
-> > > 
-> > > 1) An event that has exited now has EVENT_TOMBSTONE as a parent.
-> > >    This can result in a situation where the delayed wakeup irq_work can
-> > >    accidentally dereference EVENT_TOMBSTONE on:
-> > > 
-> > > CPU 0                                          CPU 1
-> > 
-> > This is missing the most important (and boring) part of the changelog :-)
-> > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > 
-> > And I suspect some automatic check will also yell at some point at missing Sob.
-> 
-> Doh, script fail :/
-> 
-> Let me go fix.
+--Sig_/HFzHmAC6eUSk6fyc_U+gicg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good, thanks!
+Hi all,
 
--- 
-Frederic Weisbecker
-SUSE Labs
+Commit
+
+  8979b0e76718 ("ACPICA: utilities: Fix overflow check in vsnprintf()")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HFzHmAC6eUSk6fyc_U+gicg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgdJbIACgkQAVBC80lX
+0GxAxwgAmNzdKj/fZeujhsoM9tKrWkuNKMQwFTjQVWEbuO4tI1AS2Z//fCzKR6PB
+O+yPGKoJpCRUHFf9opmdB+bkSznNxYka8D60pCvVQQZ5r5AW+MAL4GXJvOqjWe/p
+D1cB5JL9co03NCIXPf8dXTbWZhcP+0GoAwEMRZQH8Nq+0przq+vACYSYXnNLCmF3
+B4ES+TjcrzIsykAjez3Mi+UL9uA7UD3Gu+7q4T9sCtjxGwgDUCI9AkRM7fNPPFXs
+Kj/4KPdoM2igD0pugQT3DTwOFe5YEerQaEFfu7YmmzpGj7jMxvUG91MCjKdzrRcH
+oxpllwQGLOuKzl72txjUX3zARCTm3g==
+=s3U2
+-----END PGP SIGNATURE-----
+
+--Sig_/HFzHmAC6eUSk6fyc_U+gicg--
 
