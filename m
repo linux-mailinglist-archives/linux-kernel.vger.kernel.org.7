@@ -1,416 +1,205 @@
-Return-Path: <linux-kernel+bounces-640201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608B7AB01AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE49CAB01B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A799C6C5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343565020CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742F628468D;
-	Thu,  8 May 2025 17:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D72286D52;
+	Thu,  8 May 2025 17:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="IZZE0R//"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WrpuVVZS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4446020D50B
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECFB278E6D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746726343; cv=none; b=dwmuXLcQCP7rKBT8FEnuzNzqrZcAMbuSep//uzJqcZGIvdpiv4YIH7dxmWiZ+6VnNsnPf1Oq06boOCW4uZanE2wCBY/N1OkTkjnE14DkjVmxitXS51mXtzBxsctoEpwtoqrcMT/SZ3hS53RRDdlD5ytDtWZDCsZymYwIhFrn54A=
+	t=1746726375; cv=none; b=Ih+bCUi++3XYFC/7csY18AomJ73qbMrF44kc38z1+2phrYQojdXcl0MAwAkicSYVRdniWedzBXkPZ1PnB+hdh6tH/q1WnkP2gNUidFe8sRqwv+QXY4P/F0ZKofa5bPRlVLFut776v31aMWifj44gS4XnNSx7D+gYpvkDt1QIgGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746726343; c=relaxed/simple;
-	bh=0uONWRNF15Jv8uIv0B45XQKpseOb6seBoGqZpXZcw1s=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=E8paYyYo3+meAULQOgv7RyLl6CgdiplwFG86aLHXuCJrdj3TXUsGi1GQGs4xvIPeq9EmOslm3KuC0EVYo9DO6W90wFbicNKCAhz3WejUpsLCOvYOvjXHvYyXM5TNkIu31bfPiuXvNbO4ulri8GtrlwkOe5ZFQJMVB5QRthf5ZQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=IZZE0R//; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-30a99e2bdd4so1211691a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 10:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1746726340; x=1747331140; darn=vger.kernel.org;
-        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dEAIpsuCysn8s52UezknC02k+EhomijIPzdPSULwJfQ=;
-        b=IZZE0R//+7aiPGIhTrnZj55Zbew9EGCK+JHrwLw0KAa41v3/s6Z9jfamK0WzqYJPCv
-         hkBDSA4PSLhdP8O3HMMVsdxqvEaBi0ba6H1VJxQL/gRno0Vqs97M39ffN0gBRWzLBoD6
-         ANRjU5EnJLWzUPJTlKAHiHYdjLnve2Zqsq1z9xTq9wjbovVm+YWMyZ3h82cNP6UHUK45
-         e8IdrbxxoBo4Hiexx3/eIMv9RymfeiR6PbPYAHb4CQhHmwvthoJewJg4dFkXOGxwGlZe
-         mf43vhNp7OYZsXIIpV1IyjeRslZg9EnKguG1QYR96v7ETpGjPss0OaBIwdocX1FARb/0
-         fq6w==
+	s=arc-20240116; t=1746726375; c=relaxed/simple;
+	bh=w003YU9xFDtX8th5FrprcQ+2OIPdbMDpi8dif0gJMOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aVPoGgwYjKGbig7B2NxsYlzwT9Lnzoxc6kR9vEtLLoO13d7ilRlulV4HU2d9DVaaFg+WZTaXSyANoykrQGmErAn6IE+dOFJIVKnvDlHZQvy7tlLeBBgk0hMH+hzc9ME9YQYKDFKnEZozQnR4VyXFgpEHPzOiHKm+S/d2oxU0qRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WrpuVVZS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548DAEpT002489
+	for <linux-kernel@vger.kernel.org>; Thu, 8 May 2025 17:46:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0PMVomh58vUZ5beFSkyMxPogvfIP3QzcyNzI+dTinH4=; b=WrpuVVZS4znDT/HF
+	0IE1KdgVRWHVF3SmODomh1fmvopfOFuLf9/+ql4/1XzMFLwGDGEuWqw0qnuVWHBu
+	P/4dbUh2slIyi+ZvJknW7pvLfTFEs2yNPDNL4Cr6uOAM9/RKDT4rdBRSGSUrr65G
+	/yqDVE/b9nl0FEHojIPMXjHvK3dOz9LBqacfcHcn0AktiCnlC9VEg4/EpDA67aOo
+	f5CfcgBmvw0rYOlfRkZEGedD1FDgrt+VtKI25iBMhAtxLwh4g4ekJJkeEgkyivBh
+	dHBbrD52jquX1Z8Tms1AQAXUP35nJPBrnEJVT4B4ogsmGJ/F7loKbWJgzYgXJv2A
+	t80x+w==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp5a4a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 17:46:03 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f543e296e8so3261536d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 10:46:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746726340; x=1747331140;
-        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dEAIpsuCysn8s52UezknC02k+EhomijIPzdPSULwJfQ=;
-        b=lY9B1V1mDE9vL7IrTOBrs/KHuc9N+kUl1WlmYaIiGI7lpiz4rqg1nAFagZBeCQ5QbH
-         aOFMe3fQwm+WiYesltBcRBrzWE9P/Jyk/Ss7YG2nm8Lp2iRtsHIXr+vZ5NXxK1lfZ7l8
-         1+IAaDTR1/1AHMoY79in0bDJ2eVKa3LpAM3Q+3izuPmuMNanUdUXOUsiktUnP5oZfnUp
-         LlJ4JImMa4RonZXBqQF3EgkwggdZeud1WRwf/qFqIoEtME5E97uBT+AX6jiC9uYgFAOq
-         BtUzCI4f5m2+UKxrsDo0OC5LlD9R5mq8zUyc7g0NJBWsavRlUIsRgQl8JUn50zCuYqdC
-         6vPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN2Nze644/iqaHpURLq5n3JpLT2LQuUjlHAGMzulridpcxaAhVEt9gvlEMCJDq8eYmeZBWw4T+AGbCQsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDINQjv0nLnHk5WLrFYZxra1ciwDuAAgRtw+TKon0kBhEc9vhG
-	WzRN8IrZnxzGw1AiaN4WgJ4JcRf4lpyWE+U2Kgo82IWz9Kms3SqDTHj8KoSZBN8=
-X-Gm-Gg: ASbGncsWYL96N/SqwVNCm8CJ7uS0grELd2QmZIPrqcuqwIfRcOb2yOqiMLjIRD2MxTn
-	6VoEefNJsREbtqb65KR6EFhdapX1xyAHoST+GqUDBMIa28spwXYwvvzkHBmav+eJyFNu0pYxluB
-	WL2pleGcN0NYs/Tbd43Rd6t9AMYTGQyspf0y1RCMLl/sQKW4naIVTORaUdjugOrIWpfnOQWs4/K
-	ywDznTreKEit9KDgy/eHL+dSdAtaqG04KkFgwv4LGAObRdwghddsHsj9iQ4mLpuAwgHfmnbDoa/
-	egsv9Jz/65d/CrB6rLflAtR8uKMbUqjRJw==
-X-Google-Smtp-Source: AGHT+IHeD97pMTFuyKCP/YT5KvCO+fk1gqZ4VsKAgAj3Z3vrsQq843QhamFknnUEu4uFYy+vJhv0hg==
-X-Received: by 2002:a17:90b:3f04:b0:308:539d:7577 with SMTP id 98e67ed59e1d1-30c3b915960mr891237a91.0.1746726340334;
-        Thu, 08 May 2025 10:45:40 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30c39e6101dsm259626a91.36.2025.05.08.10.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 10:45:39 -0700 (PDT)
-Date: Thu, 08 May 2025 10:45:39 -0700 (PDT)
-X-Google-Original-Date: Thu, 08 May 2025 10:45:38 PDT (-0700)
-Subject:     Re: [PATCH v4 07/13] crypto: riscv/sha256 - implement library instead of shash
-In-Reply-To: <20250428170040.423825-8-ebiggers@kernel.org>
-CC: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-  linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-  linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, sparclinux@vger.kernel.org,
-  linux-s390@vger.kernel.org, x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Jason@zx2c4.com,
-  Linus Torvalds <torvalds@linux-foundation.org>
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: ebiggers@kernel.org
-Message-ID: <mhng-0b1a0c43-eff8-4ea0-9aaa-46727504555c@palmer-ri-x1c9a>
+        d=1e100.net; s=20230601; t=1746726363; x=1747331163;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0PMVomh58vUZ5beFSkyMxPogvfIP3QzcyNzI+dTinH4=;
+        b=a7eQp4z6Do5cn/TcsXd+4Ox03W3ajCw6TPgR4fjmSgpnMIj8bhwbJyExh2pKjdpMyy
+         eGeXKa6YZfwgYMsgLhy7MEEGU9HpdxNajQgoxXaE5kZh22ApBS3UPEnf/cVAg3Z3QM5c
+         TuMGVZk7tFUUaF9AeS/dYOq4iRC7Lv6fg4ng0Pziijja30IP0cj0THZKS+kzy+d5dCaO
+         5uDFiizvjolwf4CLPNi+HMnZUW+OoS8mEhnHFmbmkBR5ZnIO3gISx0c43VJIT1Mt7UZg
+         ek22zmZgcQima7mj0osT6V29bMDxZmYQU6CIlPal/A5/GnWmUla5ztT5CpjAC0LYqZyd
+         /f+g==
+X-Forwarded-Encrypted: i=1; AJvYcCV6umvLpy2KwoiChe9ZD6Nqi2UZ5/pG+FXJQaekBn4qqsNlFiPFFXi6zdadig9PdXdB5Mr/fyy47X8SQSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVJwdqVjMrE0vaiDArIkzPoSwO5Xejwi6dASHR9SHyTzbBseqJ
+	Lpvnty2XOo9T8Wguj6rzypLGb14WyoiPHuvOAWUWx1Ta1BMxgPnK60horejsMoUdiR7RKn3FG/E
+	U2oOu4wLnM6Wp20HqjxwjhPANuIJgEyqmsQ9GMOBYCi775Ds+7W9Fv3PtnIaWT+4=
+X-Gm-Gg: ASbGncvd/z98MGhD7W9qNTidMpjpwRUay0io3icGsjZKfJLuPKkvr3cMM+H1hdCym+T
+	BVSM9YUsZS904+okIzwuRpYPeXikzmF8Eqr1kpu3hfx4Q9fc3TGadnqUbpoY1g6/JRiCoCfegz7
+	9hfhmjIx0J3yHzWaULKdezeSHQbDPJ2D9+uLlvCPK66n1uoNMMmYlpfHh2yK+HHMmxJKqu3ifuc
+	ZicTTFg0jWLHk+7mH6dadA1KrbmV4Y+ieuYbJh9XFAz+dx6v8D6tz4A1a2fJ6VSLHlr8smh3eHL
+	W8RGo9ineF3eiaKYKX9beg0MPDQKG8vlSf3dWE7zYiwUAof3jk6SyUdbuccC4fX4Tv0=
+X-Received: by 2002:a05:620a:bcb:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7cd01106a47mr24446385a.7.1746726363102;
+        Thu, 08 May 2025 10:46:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8clsXOD1uC7oNiNun3OmM+46gt3lHglvyTV8F+OOv+jUYM+ZbwoXUOp6M03Tw5z5hkuz1dA==
+X-Received: by 2002:a05:620a:bcb:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7cd01106a47mr24444185a.7.1746726362501;
+        Thu, 08 May 2025 10:46:02 -0700 (PDT)
+Received: from [192.168.65.105] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2198b68e6sm16736266b.184.2025.05.08.10.46.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 10:46:01 -0700 (PDT)
+Message-ID: <6e65aa95-cd75-432e-98bd-a8a03e38a35a@oss.qualcomm.com>
+Date: Thu, 8 May 2025 19:46:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: qcm6490-idp: Add WSA8830
+ speakers and WCD9370 headset codec
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+References: <20250429092430.21477-1-quic_pkumpatl@quicinc.com>
+ <20250429092430.21477-7-quic_pkumpatl@quicinc.com>
+ <7322bb2c-5778-48cd-8661-91308ea8cfc8@oss.qualcomm.com>
+ <c8097899-42f6-4fa6-bee1-6af9208283d7@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <c8097899-42f6-4fa6-bee1-6af9208283d7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=XL0wSRhE c=1 sm=1 tr=0 ts=681ceddb cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=P-IC7800AAAA:8 a=COk6AnOGAAAA:8
+ a=DPA8SXBlki6BQVjMWBcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22 a=d3PnA9EDa4IxuAV0gXij:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: t-aqsB1yShHDgjqI7sRHgOV1-gRCkrhE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDE1NiBTYWx0ZWRfX/eQFOuGp8zYq
+ jwZ3EyWOXNpmxV5zNl+jDHI5j2cXQMHZkDy/0t4Yk3CJR0DseYT1SC2h3TfbYCjtTVY86AoCwjc
+ rEotyTXDjgJkvmglq4kph9FRnptefNPXyRqHuEbWunTVuGq2GblAivULAPz8QjGXanoGIvpUhJz
+ uB2gzh6QowsmlhsAo81ZsAJVXas+jIeUmIeg9p3kdJpz42nFGRRYzyAQaPQ3POB5P5h1MMEamft
+ Rixadd60cqa1RdNonPE6TGyc55qqvH26cdafpoNcfakQFBXAIm+5Rv3v5G0Ws6erblqfKAbgKjJ
+ gxD/8Ob9lmJuyKLddG23USptJvYw5tvR/kNgBHCn/+e6DiI9KBwV6pyNT28EyPHyIXO3e3wG5ji
+ 45rszCYp3v3yyR0M95C6P+dDFzkIjsGUWI7ULlJqRekruslao95MpOqlq/6+eTVNK6rskGIY
+X-Proofpoint-ORIG-GUID: t-aqsB1yShHDgjqI7sRHgOV1-gRCkrhE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-08_05,2025-05-08_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505080156
 
-On Mon, 28 Apr 2025 10:00:32 PDT (-0700), ebiggers@kernel.org wrote:
-> From: Eric Biggers <ebiggers@google.com>
->
-> Instead of providing crypto_shash algorithms for the arch-optimized
-> SHA-256 code, instead implement the SHA-256 library.  This is much
-> simpler, it makes the SHA-256 library functions be arch-optimized, and
-> it fixes the longstanding issue where the arch-optimized SHA-256 was
-> disabled by default.  SHA-256 still remains available through
-> crypto_shash, but individual architectures no longer need to handle it.
->
-> To match sha256_blocks_arch(), change the type of the nblocks parameter
-> of the assembly function from int to size_t.  The assembly function
-> actually already treated it as size_t.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  arch/riscv/crypto/Kconfig                     |  11 --
->  arch/riscv/crypto/Makefile                    |   3 -
->  arch/riscv/crypto/sha256-riscv64-glue.c       | 125 ------------------
->  arch/riscv/lib/crypto/Kconfig                 |   7 +
->  arch/riscv/lib/crypto/Makefile                |   3 +
->  .../sha256-riscv64-zvknha_or_zvknhb-zvkb.S    |   4 +-
->  arch/riscv/lib/crypto/sha256.c                |  62 +++++++++
->  7 files changed, 74 insertions(+), 141 deletions(-)
->  delete mode 100644 arch/riscv/crypto/sha256-riscv64-glue.c
->  rename arch/riscv/{ => lib}/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S (98%)
->  create mode 100644 arch/riscv/lib/crypto/sha256.c
->
-> diff --git a/arch/riscv/crypto/Kconfig b/arch/riscv/crypto/Kconfig
-> index 4863be2a4ec2f..cd9b776602f89 100644
-> --- a/arch/riscv/crypto/Kconfig
-> +++ b/arch/riscv/crypto/Kconfig
-> @@ -26,21 +26,10 @@ config CRYPTO_GHASH_RISCV64
->  	  GCM GHASH function (NIST SP 800-38D)
->
->  	  Architecture: riscv64 using:
->  	  - Zvkg vector crypto extension
->
-> -config CRYPTO_SHA256_RISCV64
-> -	tristate "Hash functions: SHA-224 and SHA-256"
-> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
-> -	select CRYPTO_SHA256
-> -	help
-> -	  SHA-224 and SHA-256 secure hash algorithm (FIPS 180)
-> -
-> -	  Architecture: riscv64 using:
-> -	  - Zvknha or Zvknhb vector crypto extensions
-> -	  - Zvkb vector crypto extension
-> -
->  config CRYPTO_SHA512_RISCV64
->  	tristate "Hash functions: SHA-384 and SHA-512"
->  	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
->  	select CRYPTO_SHA512
->  	help
-> diff --git a/arch/riscv/crypto/Makefile b/arch/riscv/crypto/Makefile
-> index 4ae9bf762e907..e10e8257734e3 100644
-> --- a/arch/riscv/crypto/Makefile
-> +++ b/arch/riscv/crypto/Makefile
-> @@ -5,13 +5,10 @@ aes-riscv64-y := aes-riscv64-glue.o aes-riscv64-zvkned.o \
->  		 aes-riscv64-zvkned-zvbb-zvkg.o aes-riscv64-zvkned-zvkb.o
->
->  obj-$(CONFIG_CRYPTO_GHASH_RISCV64) += ghash-riscv64.o
->  ghash-riscv64-y := ghash-riscv64-glue.o ghash-riscv64-zvkg.o
->
-> -obj-$(CONFIG_CRYPTO_SHA256_RISCV64) += sha256-riscv64.o
-> -sha256-riscv64-y := sha256-riscv64-glue.o sha256-riscv64-zvknha_or_zvknhb-zvkb.o
-> -
->  obj-$(CONFIG_CRYPTO_SHA512_RISCV64) += sha512-riscv64.o
->  sha512-riscv64-y := sha512-riscv64-glue.o sha512-riscv64-zvknhb-zvkb.o
->
->  obj-$(CONFIG_CRYPTO_SM3_RISCV64) += sm3-riscv64.o
->  sm3-riscv64-y := sm3-riscv64-glue.o sm3-riscv64-zvksh-zvkb.o
-> diff --git a/arch/riscv/crypto/sha256-riscv64-glue.c b/arch/riscv/crypto/sha256-riscv64-glue.c
-> deleted file mode 100644
-> index c998300ab8435..0000000000000
-> --- a/arch/riscv/crypto/sha256-riscv64-glue.c
-> +++ /dev/null
-> @@ -1,125 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-or-later
-> -/*
-> - * SHA-256 and SHA-224 using the RISC-V vector crypto extensions
-> - *
-> - * Copyright (C) 2022 VRULL GmbH
-> - * Author: Heiko Stuebner <heiko.stuebner@vrull.eu>
-> - *
-> - * Copyright (C) 2023 SiFive, Inc.
-> - * Author: Jerry Shih <jerry.shih@sifive.com>
-> - */
-> -
-> -#include <asm/simd.h>
-> -#include <asm/vector.h>
-> -#include <crypto/internal/hash.h>
-> -#include <crypto/internal/simd.h>
-> -#include <crypto/sha256_base.h>
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -
-> -/*
-> - * Note: the asm function only uses the 'state' field of struct sha256_state.
-> - * It is assumed to be the first field.
-> - */
-> -asmlinkage void sha256_transform_zvknha_or_zvknhb_zvkb(
-> -	struct crypto_sha256_state *state, const u8 *data, int num_blocks);
-> -
-> -static void sha256_block(struct crypto_sha256_state *state, const u8 *data,
-> -			 int num_blocks)
-> -{
-> -	/*
-> -	 * Ensure struct crypto_sha256_state begins directly with the SHA-256
-> -	 * 256-bit internal state, as this is what the asm function expects.
-> -	 */
-> -	BUILD_BUG_ON(offsetof(struct crypto_sha256_state, state) != 0);
-> -
-> -	if (crypto_simd_usable()) {
-> -		kernel_vector_begin();
-> -		sha256_transform_zvknha_or_zvknhb_zvkb(state, data, num_blocks);
-> -		kernel_vector_end();
-> -	} else
-> -		sha256_transform_blocks(state, data, num_blocks);
-> -}
-> -
-> -static int riscv64_sha256_update(struct shash_desc *desc, const u8 *data,
-> -				 unsigned int len)
-> -{
-> -	return sha256_base_do_update_blocks(desc, data, len, sha256_block);
-> -}
-> -
-> -static int riscv64_sha256_finup(struct shash_desc *desc, const u8 *data,
-> -				unsigned int len, u8 *out)
-> -{
-> -	sha256_base_do_finup(desc, data, len, sha256_block);
-> -	return sha256_base_finish(desc, out);
-> -}
-> -
-> -static int riscv64_sha256_digest(struct shash_desc *desc, const u8 *data,
-> -				 unsigned int len, u8 *out)
-> -{
-> -	return sha256_base_init(desc) ?:
-> -	       riscv64_sha256_finup(desc, data, len, out);
-> -}
-> -
-> -static struct shash_alg riscv64_sha256_algs[] = {
-> -	{
-> -		.init = sha256_base_init,
-> -		.update = riscv64_sha256_update,
-> -		.finup = riscv64_sha256_finup,
-> -		.digest = riscv64_sha256_digest,
-> -		.descsize = sizeof(struct crypto_sha256_state),
-> -		.digestsize = SHA256_DIGEST_SIZE,
-> -		.base = {
-> -			.cra_blocksize = SHA256_BLOCK_SIZE,
-> -			.cra_flags = CRYPTO_AHASH_ALG_BLOCK_ONLY |
-> -				     CRYPTO_AHASH_ALG_FINUP_MAX,
-> -			.cra_priority = 300,
-> -			.cra_name = "sha256",
-> -			.cra_driver_name = "sha256-riscv64-zvknha_or_zvknhb-zvkb",
-> -			.cra_module = THIS_MODULE,
-> -		},
-> -	}, {
-> -		.init = sha224_base_init,
-> -		.update = riscv64_sha256_update,
-> -		.finup = riscv64_sha256_finup,
-> -		.descsize = sizeof(struct crypto_sha256_state),
-> -		.digestsize = SHA224_DIGEST_SIZE,
-> -		.base = {
-> -			.cra_blocksize = SHA224_BLOCK_SIZE,
-> -			.cra_flags = CRYPTO_AHASH_ALG_BLOCK_ONLY |
-> -				     CRYPTO_AHASH_ALG_FINUP_MAX,
-> -			.cra_priority = 300,
-> -			.cra_name = "sha224",
-> -			.cra_driver_name = "sha224-riscv64-zvknha_or_zvknhb-zvkb",
-> -			.cra_module = THIS_MODULE,
-> -		},
-> -	},
-> -};
-> -
-> -static int __init riscv64_sha256_mod_init(void)
-> -{
-> -	/* Both zvknha and zvknhb provide the SHA-256 instructions. */
-> -	if ((riscv_isa_extension_available(NULL, ZVKNHA) ||
-> -	     riscv_isa_extension_available(NULL, ZVKNHB)) &&
-> -	    riscv_isa_extension_available(NULL, ZVKB) &&
-> -	    riscv_vector_vlen() >= 128)
-> -		return crypto_register_shashes(riscv64_sha256_algs,
-> -					       ARRAY_SIZE(riscv64_sha256_algs));
-> -
-> -	return -ENODEV;
-> -}
-> -
-> -static void __exit riscv64_sha256_mod_exit(void)
-> -{
-> -	crypto_unregister_shashes(riscv64_sha256_algs,
-> -				  ARRAY_SIZE(riscv64_sha256_algs));
-> -}
-> -
-> -module_init(riscv64_sha256_mod_init);
-> -module_exit(riscv64_sha256_mod_exit);
-> -
-> -MODULE_DESCRIPTION("SHA-256 (RISC-V accelerated)");
-> -MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@vrull.eu>");
-> -MODULE_LICENSE("GPL");
-> -MODULE_ALIAS_CRYPTO("sha256");
-> -MODULE_ALIAS_CRYPTO("sha224");
-> diff --git a/arch/riscv/lib/crypto/Kconfig b/arch/riscv/lib/crypto/Kconfig
-> index bc7a43f33eb3a..c100571feb7e8 100644
-> --- a/arch/riscv/lib/crypto/Kconfig
-> +++ b/arch/riscv/lib/crypto/Kconfig
-> @@ -4,5 +4,12 @@ config CRYPTO_CHACHA_RISCV64
->  	tristate
->  	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
->  	default CRYPTO_LIB_CHACHA
->  	select CRYPTO_ARCH_HAVE_LIB_CHACHA
->  	select CRYPTO_LIB_CHACHA_GENERIC
-> +
-> +config CRYPTO_SHA256_RISCV64
-> +	tristate
-> +	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
-> +	default CRYPTO_LIB_SHA256
-> +	select CRYPTO_ARCH_HAVE_LIB_SHA256
-> +	select CRYPTO_LIB_SHA256_GENERIC
-> diff --git a/arch/riscv/lib/crypto/Makefile b/arch/riscv/lib/crypto/Makefile
-> index e27b78f317fc8..b7cb877a2c07e 100644
-> --- a/arch/riscv/lib/crypto/Makefile
-> +++ b/arch/riscv/lib/crypto/Makefile
-> @@ -1,4 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->
->  obj-$(CONFIG_CRYPTO_CHACHA_RISCV64) += chacha-riscv64.o
->  chacha-riscv64-y := chacha-riscv64-glue.o chacha-riscv64-zvkb.o
-> +
-> +obj-$(CONFIG_CRYPTO_SHA256_RISCV64) += sha256-riscv64.o
-> +sha256-riscv64-y := sha256.o sha256-riscv64-zvknha_or_zvknhb-zvkb.o
-> diff --git a/arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S b/arch/riscv/lib/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
-> similarity index 98%
-> rename from arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
-> rename to arch/riscv/lib/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
-> index f1f5779e47323..fad501ad06171 100644
-> --- a/arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
-> +++ b/arch/riscv/lib/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
-> @@ -104,12 +104,12 @@
->  	sha256_4rounds	\last, \k1, W1, W2, W3, W0
->  	sha256_4rounds	\last, \k2, W2, W3, W0, W1
->  	sha256_4rounds	\last, \k3, W3, W0, W1, W2
->  .endm
->
-> -// void sha256_transform_zvknha_or_zvknhb_zvkb(u32 state[8], const u8 *data,
-> -//					       int num_blocks);
-> +// void sha256_transform_zvknha_or_zvknhb_zvkb(u32 state[SHA256_STATE_WORDS],
-> +//					       const u8 *data, size_t nblocks);
->  SYM_FUNC_START(sha256_transform_zvknha_or_zvknhb_zvkb)
->
->  	// Load the round constants into K0-K15.
->  	vsetivli	zero, 4, e32, m1, ta, ma
->  	la		t0, K256
-> diff --git a/arch/riscv/lib/crypto/sha256.c b/arch/riscv/lib/crypto/sha256.c
-> new file mode 100644
-> index 0000000000000..18b84030f0b39
-> --- /dev/null
-> +++ b/arch/riscv/lib/crypto/sha256.c
-> @@ -0,0 +1,62 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * SHA-256 (RISC-V accelerated)
-> + *
-> + * Copyright (C) 2022 VRULL GmbH
-> + * Author: Heiko Stuebner <heiko.stuebner@vrull.eu>
-> + *
-> + * Copyright (C) 2023 SiFive, Inc.
-> + * Author: Jerry Shih <jerry.shih@sifive.com>
-> + */
-> +
-> +#include <asm/simd.h>
-> +#include <asm/vector.h>
-> +#include <crypto/internal/sha2.h>
-> +#include <crypto/internal/simd.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +
-> +asmlinkage void sha256_transform_zvknha_or_zvknhb_zvkb(
-> +	u32 state[SHA256_STATE_WORDS], const u8 *data, size_t nblocks);
-> +
-> +static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_extensions);
-> +
-> +void sha256_blocks_arch(u32 state[SHA256_STATE_WORDS],
-> +			const u8 *data, size_t nblocks)
-> +{
-> +	if (static_branch_likely(&have_extensions) && crypto_simd_usable()) {
-> +		kernel_vector_begin();
-> +		sha256_transform_zvknha_or_zvknhb_zvkb(state, data, nblocks);
-> +		kernel_vector_end();
-> +	} else {
-> +		sha256_blocks_generic(state, data, nblocks);
-> +	}
-> +}
-> +EXPORT_SYMBOL(sha256_blocks_arch);
-> +
-> +bool sha256_is_arch_optimized(void)
-> +{
-> +	return static_key_enabled(&have_extensions);
-> +}
-> +EXPORT_SYMBOL(sha256_is_arch_optimized);
-> +
-> +static int __init riscv64_sha256_mod_init(void)
-> +{
-> +	/* Both zvknha and zvknhb provide the SHA-256 instructions. */
-> +	if ((riscv_isa_extension_available(NULL, ZVKNHA) ||
-> +	     riscv_isa_extension_available(NULL, ZVKNHB)) &&
-> +	    riscv_isa_extension_available(NULL, ZVKB) &&
-> +	    riscv_vector_vlen() >= 128)
-> +		static_branch_enable(&have_extensions);
-> +	return 0;
-> +}
-> +arch_initcall(riscv64_sha256_mod_init);
-> +
-> +static void __exit riscv64_sha256_mod_exit(void)
-> +{
-> +}
-> +module_exit(riscv64_sha256_mod_exit);
-> +
-> +MODULE_DESCRIPTION("SHA-256 (RISC-V accelerated)");
-> +MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@vrull.eu>");
-> +MODULE_LICENSE("GPL");
+On 5/8/25 7:01 PM, Prasad Kumpatla wrote:
+> 
+> 
+> On 4/29/2025 4:31 PM, Konrad Dybcio wrote:
+>> On 4/29/25 11:24 AM, Prasad Kumpatla wrote:
+>>> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>>>
+>>> Add nodes for WSA8830 speakers and WCD9370 headset codec
+>>> on qcm6490-idp board.
+>>>
+>>> Enable lpass macros along with audio support pin controls.
+>>>
+>>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>>> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>>> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 162 +++++++++++++++++++++++
+>>>   1 file changed, 162 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>>> index 7a155ef6492e..1a59080cbfaf 100644
+>>> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>>> @@ -18,6 +18,7 @@
+>>>   #include "pm7325.dtsi"
+>>>   #include "pm8350c.dtsi"
+>>>   #include "pmk8350.dtsi"
+>>> +#include "qcs6490-audioreach.dtsi"
+>>>     /delete-node/ &ipa_fw_mem;
+>>>   /delete-node/ &rmtfs_mem;
+>>> @@ -169,6 +170,30 @@
+>>>           regulator-min-microvolt = <3700000>;
+>>>           regulator-max-microvolt = <3700000>;
+>>>       };
+>>> +
+>>> +    wcd9370: audio-codec-0 {
+>>> +        compatible = "qcom,wcd9370-codec";
+>>> +
+>>> +        pinctrl-0 = <&wcd_reset_n>;
+>>> +        pinctrl-1 = <&wcd_reset_n_sleep>;
+>>> +        pinctrl-names = "default", "sleep";
+>>
+>> Does audio work for you? For inexplicable reasons, it didn't for me
+>> on rb2 when the sleep state was defined
+>>
+> For Qcm6490-IDP board Audio is working fine, Not sure about rb2, Could you please provide more details about rb2 ?
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+I just mentioned it as something to keep in mind. Someone else has taken
+over that work since.
 
-I assume you want to keep these all together somewhere, so I'm going to 
-drop it from the RISC-V patchwork.
+
+[...]
+
+>>> +    wcd_reset_n: wcd-reset-n-state {
+>>> +        pins = "gpio83";
+>>> +        function = "gpio";
+>>> +        drive-strength = <8>;
+>>
+>> Since the definition is otherwise identical to the sleep state,
+>> you should define the (other) bias type that should be set when
+>> active.
+>>
+> Taken the reference from sc7280, which is working fine.
+> Link for reference : https://elixir.bootlin.com/linux/v6.15-rc5/source/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi#L841
+> 
+> Will cross check and modify if required.
+
+sure it will work fine, but in the same spirit typing 147 as
+1+1+1+... will work fine as well, please doublecheck :D
+
+Konrad
 
