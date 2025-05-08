@@ -1,67 +1,83 @@
-Return-Path: <linux-kernel+bounces-639041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A926AAF206
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:15:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD644AAF223
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366DF1BC6A16
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 512939C6AC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94504204C07;
-	Thu,  8 May 2025 04:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E47720C012;
+	Thu,  8 May 2025 04:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="il6E3u2h"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="jt5SNyfo";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Jjm612SV"
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC461F561D;
-	Thu,  8 May 2025 04:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6AB8C1E;
+	Thu,  8 May 2025 04:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746677694; cv=none; b=f6aQEPbddmmWPig/rF6lmavwGDoueaXHrJ0IWeUiZPDDfGCebB+SAZgOVZgc8gGzGoaXcC1ZIxQAuiJLYyFGX4uNvpSJeuSS4xc0bEr2kRCTy3dUiKXbZs/Bph9/NL0UJxqD+jbL5919GQtxWiV5eraa3J8WLr3dFEGxwGD+Bdc=
+	t=1746679059; cv=none; b=h84ofrBzHh8Tgfkpd1L5dP+mj2RLD1EZ4xG8ZqWRJtdO4/kaNYkoXGJwlesa2KbODNoe29T0iPQeLofJxw69d6KS1CptM00/2ct+p1HVPvimZl5cqbXfkjhuV5rDGu0+GdydGOk5C5+PEq+uOPxxmFKf5uf0HY37T52qwp7gfKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746677694; c=relaxed/simple;
-	bh=w86OGc6RWIhtDYy5k5FLEKlIAUwpi/4GGh7PHA74FFc=;
+	s=arc-20240116; t=1746679059; c=relaxed/simple;
+	bh=0FChnJQPzz1KtzDEL5Eiax95pO/O1yR1baYM2Fap6x4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mb3cr1T6EboOVC5dyxakZY3ymYreuDXWAy+fUgydsZC2DMddQJL/b9gIcNVXDL/5gRPkg/ENKpaFLUQFCqvAyWicQHAsd1Qd3TwANXd6QoLhTX/zG6A40SvUPKQhlZv00cFYDL72/DWz4UYPlsuvHmJa+igNKGkYdQTGmRu4FEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=il6E3u2h; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=41y5a2fmLpkUVnjUrs+3spKKdWGJe+CFaj83hBx9tto=; b=il6E3u2hODnTYTdHGLvese8c4k
-	moZHoVqHVx9Mv3WchvyW0oJ9k2NMXgY+5X9tjKFn7cA9vt21hz7oDJW7uw+PrrxehnVWvrK004O68
-	bJ4+p3xV5IPwiv3dGKLczXIM4GPVqkBYvjUScsbDBcGBHg2oLTcs4N2xDXtIq+ZSSmkv4h+jE8Gmb
-	cqrLDED7/LnE4h9Yt8IilMzCzlDps8RAVHzWoTPO/AzxKfR4dp8rS2f6w6zOEZ2tYNjGBarV+gnyl
-	oCaJvmyAKhjtT+SuVOPqH3ZLM1fJ5Mt2yysevzIoCkfDmMs3PpP69DckYB5Sw/pwLSyRNMQHPpcyW
-	OWLzkU0A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCsea-0000000HGrC-1ecu;
-	Thu, 08 May 2025 04:14:36 +0000
-Date: Wed, 7 May 2025 21:14:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Stefano Stabellini <sstabellini@kernel.org>
-Cc: John Ernberg <john.ernberg@actia.se>, Juergen Gross <jgross@suse.com>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
-Message-ID: <aBwvrLKD_VJapYkB@infradead.org>
-References: <20250502114043.1968976-1-john.ernberg@actia.se>
- <20250502114043.1968976-3-john.ernberg@actia.se>
- <alpine.DEB.2.22.394.2505021007460.3879245@ubuntu-linux-20-04-desktop>
- <75266eb7-66a4-4477-ae8a-cbd1ebbee8db@actia.se>
- <alpine.DEB.2.22.394.2505071602570.3879245@ubuntu-linux-20-04-desktop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mh6PS8Ko7zfnlGqCmvHclVd+rDVSk3vwJbXpeBAeGRq28ODASr9U0og3DMvuv4TcpaFM2psm8FMttrn7grc9tv0wfsOZLhAP1fwiNO3yBt0iA6gDxPeNHcBczU3J8JDfOmMB/a1j+SZpy26LVPYGx1oAVdvYZ9dXLjMr40LaMFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=jt5SNyfo; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Jjm612SV; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 2D90112FB439;
+	Wed, 07 May 2025 21:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746677811; bh=0FChnJQPzz1KtzDEL5Eiax95pO/O1yR1baYM2Fap6x4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jt5SNyfodEi1ogDoJwe3JVlS0f9ZGc0hP+3ydAncgh4TPciIv+WHzCwS7EA8wgOq2
+	 ExSv5WIqFKleXikDRurQOpnO9sLKKj8Q/CP5fhJNZn5kUh2jDrU5XTu7To6LIhEawe
+	 WFDjblpoeXZwDN+Ldqm/FxOAzlQInbwgIJDAP4esF4uBqYxSCC65cKhPbsMvR0Y0dV
+	 2eWXhRjgfICEPOWW9pW+yT7GhGlS9HPvkT9ilnJPqNAr00waKTa/Xfhhk40aQaIrUy
+	 rKQJM1VJ8PhBwDQOmkR96jpecRuVwXY4mbAnRIUwfTW/8DmRPc+eUC3xhm/I6Vqe+5
+	 a3VwjXheJfa4Q==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id Fgf2V28gQU5G; Wed,  7 May 2025 21:16:14 -0700 (PDT)
+Received: from ketchup (unknown [183.217.82.204])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 5306A12FB404;
+	Wed, 07 May 2025 21:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746677774; bh=0FChnJQPzz1KtzDEL5Eiax95pO/O1yR1baYM2Fap6x4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jjm612SVbUIilb0k9QVvl0KVmSkGUikSuYuzbBvuBrSD+fnVAduVWKdebnCtcuPJS
+	 bOgSUhRzYaysNDP8XobasGJEG9gUQOPwQHRiysaB2L4RdM4mCDdLFKkD/DP0n6QBWm
+	 jtdMDoHluKfzN6CUl3jbvGPyi9z7FDSzt2K3FSqrjHf5qlKRqE8MCQrqbekSDULahk
+	 IOgfsFVcmz+2cXs/VEaIwmHDHYBzqylZjIp0rIg0NVDqocTjKGghXWegGWFPjRWR2W
+	 knFk9wGYe8h6H7KIIXOmNWK3T4/acDoX6Sow2npJ5medxWk0Cuv+FcPnY60vHHiJn2
+	 5mfxKRxbEIxGg==
+Date: Thu, 8 May 2025 04:16:05 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/6] soc: spacemit: create a header for clock/reset
+ registers
+Message-ID: <aBwwBSfnkw6XUOLA@ketchup>
+References: <20250506210638.2800228-1-elder@riscstar.com>
+ <20250506210638.2800228-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,21 +86,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.22.394.2505071602570.3879245@ubuntu-linux-20-04-desktop>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250506210638.2800228-3-elder@riscstar.com>
 
-On Wed, May 07, 2025 at 04:09:15PM -0700, Stefano Stabellini wrote:
-> > This mapping is not for a RAM backed address. In the eDMA case for the 
-> > iMX8QXP the `phys` coming in here is the address of a register.
+On Tue, May 06, 2025 at 04:06:33PM -0500, Alex Elder wrote:
+> Move the definitions of register offsets and fields used by the SpacemiT
+> K1 SoC CCUs into a separate header file, so that they can be shared by
+> the reset driver that will be found under drivers/reset.
 > 
-> Ok, this information is important :-)
-> 
-> I am not certain whether the map_resource interface can only be called
-> for MMIO addresses or if it can also be called for RAM-backed addresses
-> with a size > PAGE_SIZE. In the latter case, we could run into the issue
-> I was describing.
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 111 +--------------------------------
+>  include/soc/spacemit/ccu_k1.h | 113 ++++++++++++++++++++++++++++++++++
 
-map_resource is intended for MMIO regions, although those could be >
-PAGE_SIZE.  It must not be called on RAM.
+CCU is abbreviated from "clock controller unit" thus the filename seems
+a little strange to me. Will k1-syscon.h be a better name? We could put
+all syscon registers together when introducing the power-domain driver
+later, which could provide an overall view of register layout.
 
+>  2 files changed, 114 insertions(+), 110 deletions(-)
+>  create mode 100644 include/soc/spacemit/ccu_k1.h
+
+Best regards,
+Haylen Chu
 
