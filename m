@@ -1,146 +1,146 @@
-Return-Path: <linux-kernel+bounces-639505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE95AAF836
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:43:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E23BAAF83D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6811B1883879
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83E11883EAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45122153CE;
-	Thu,  8 May 2025 10:42:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1583B20C005;
-	Thu,  8 May 2025 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC38A213E6D;
+	Thu,  8 May 2025 10:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fh3Wp7Wc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iA9NkgaP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFE842AB0;
+	Thu,  8 May 2025 10:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746700972; cv=none; b=oJSTaN6+jAY7gFveGtHrhT6yUOu1MC1owSng7igJveLK0428gU/gJ1QI/OMrmDd6CQRMyAs3TiI/fJBtKRfeIjOq0ThoOdNOyCka7QpiplDPsKJKns/RVIeHCa1R2yn4dOupOei4yijwqz6F9z/lmfO6LoOkbg+SLRGG3D3Osjs=
+	t=1746701028; cv=none; b=igzpI2h0I4VGuVjN7Ei269fyXMf+PudRyrqBFlHSx9IE0DzXidlk6nUwTGXhsU4O88wjkupdmgafz28UVbGmlPsd7QQ4RgrkFpWY+DXQxb9bz5KgY2cuBL1+3QsGZvqTbolRshwAuRfs2cRHrfXN9I4xgQCqovFToGzLXoWSa0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746700972; c=relaxed/simple;
-	bh=RspmhIV+3nChPf+2TIf9e0WONsGhbGCCaCbivLAz0nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QUDhGvblKiFfCxgEmpXexjAcnNYd5E5TFbwsqOynH9gsDEFYE3RpVrkE+YG2jD/DCZyxLWOZFi0rZGELk3l9QXRBqXBRiss/45yXpkDS0P/heRV/SaOkStmD7zBJfAwd+eNGCwi8eNj/JPPhTZWHV4Ajsy//Ay6c4KZSFmPEP9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08547106F;
-	Thu,  8 May 2025 03:42:39 -0700 (PDT)
-Received: from [10.1.38.30] (e122027.cambridge.arm.com [10.1.38.30])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 901BE3F5A1;
-	Thu,  8 May 2025 03:42:47 -0700 (PDT)
-Message-ID: <9c0b95c8-bf2d-4689-ac1f-ccacba826060@arm.com>
-Date: Thu, 8 May 2025 11:42:46 +0100
+	s=arc-20240116; t=1746701028; c=relaxed/simple;
+	bh=SShU7eKVdBBt5Izkeo9ACVtPNcohKBaUf3Hy7WUnUwM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=e4Fq7MSPeBhTDE5E4xiNzQWw1XscR+HiADXveLWs4dPgEs5uaRUFshuQzI0BAw8pNGzcLKkIH8jjsZIbL9WgW9V8GCbcylUg1o1hnFblGmfM1C7IY53ndMBo/Doqocsbyf+jEWeA6Q/7xCDDKX+/Lyt+hMHMVLC1FWvifSqVe3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fh3Wp7Wc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iA9NkgaP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 08 May 2025 10:43:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746701024;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojcWYoOszSDt9bLipuu+MivUkZHGSkB8g3o9wb8+WPw=;
+	b=fh3Wp7Wck9pY6yoCHH+zBxnJwDr/0HqYin1nZ39xTvlDEhhJXvXPW1ab72gBH+Uq0NwLb3
+	f4cgeDBS3tdA0xs7ANG9MlkQlH8cOG3QYtvimwE8WA/Oj9ToJ9r+U0jA+KFcUJdEfJ9sR7
+	kPGremBhlb22n6gKssNlO+6N9QasnpQ4Kkn+hDPVU++pPaOcJv6LE2FmBgGb8oaU6Ou0Jx
+	QTIY2fzsYRaZkIxLLD9dEuPHXC6oClMEQZaWsfPqfk2es1oT9HZtJoGgw1IzSCl+a2nyio
+	qXCfA3Qj8hDDPQ9SKI9dCk6eAxaqR4B2Gz1FfgplDrYl6VH4mRpCqyl1/CHskQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746701024;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojcWYoOszSDt9bLipuu+MivUkZHGSkB8g3o9wb8+WPw=;
+	b=iA9NkgaPFfvJNfugePzQ1DgsHyDmOvMisMrUCKQt9gXFZOS5J45Tx6AA9FrDKAEXVpYJdQ
+	4gVb5d2gECg9khDQ==
+From: "tip-bot2 for John Stultz" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/core: Tweak wait_task_inactive() to force
+ dequeue sched_delayed tasks
+Cc: peter-yc.chang@mediatek.com, John Stultz <jstultz@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ K Prateek Nayak <kprateek.nayak@amd.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250429150736.3778580-1-jstultz@google.com>
+References: <20250429150736.3778580-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] drm/panfrost: show device-wide list of DRM GEM
- objects over DebugFS
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20250507160713.1363985-1-adrian.larumbe@collabora.com>
- <20250507160713.1363985-4-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250507160713.1363985-4-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174670102367.406.15930935491833687192.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 07/05/2025 17:07, Adrián Larumbe wrote:
-> This change is essentially a Panfrost port of commit a3707f53eb3f
-> ("drm/panthor: show device-wide list of DRM GEM objects over DebugFS").
-> 
-> The DebugFS file is almost the same as in Panthor, minus the GEM object
-> usage flags, since Panfrost has no kernel-only BO's.
-> 
-> Two additional GEM state flags which are displayed but aren't relevant
-> to Panthor are 'Purged' and 'Purgeable', since Panfrost implements an
-> explicit shrinker and a madvise ioctl to flag objects as reclaimable.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+The following commit has been merged into the sched/core branch of tip:
 
-Minor point, but you've used "ptdev" rather than "pfdev" several times 
-in this patch - it would be good to avoid this.
+Commit-ID:     b7ca5743a2604156d6083b88cefacef983f3a3a6
+Gitweb:        https://git.kernel.org/tip/b7ca5743a2604156d6083b88cefacef983f3a3a6
+Author:        John Stultz <jstultz@google.com>
+AuthorDate:    Tue, 29 Apr 2025 08:07:26 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 30 Apr 2025 14:45:41 +02:00
 
-I'm also seeing a splat when running this, see below. I haven't got my 
-head around how this is happening, but I see it when glmark quits at the 
-end of the test.
+sched/core: Tweak wait_task_inactive() to force dequeue sched_delayed tasks
 
-Steve
+It was reported that in 6.12, smpboot_create_threads() was
+taking much longer then in 6.6.
 
-[  399.505066] Unable to handle kernel NULL pointer dereference at virtual address 00000004 when write
-[  399.515519] [00000004] *pgd=00000000
-[  399.519541] Internal error: Oops: 805 [#1] SMP ARM
-[  399.524896] Modules linked in: panfrost gpu_sched drm_shmem_helper
-[  399.531817] CPU: 1 UID: 1000 PID: 316 Comm: glmark2-es2-drm Not tainted 6.15.0-rc5-00731-g9cc5b4d7da27 #1 NONE 
-[  399.543098] Hardware name: Rockchip (Device Tree)
-[  399.548350] PC is at panfrost_gem_free_object+0x8c/0x160 [panfrost]
-[  399.555371] LR is at trace_contention_end+0x4c/0xfc
-[  399.560822] pc : [<bf01a384>]    lr : [<c03d0170>]    psr: 60010013
-[  399.567823] sp : f22b1df8  ip : c2163e00  fp : c4b15800
-[  399.573658] r10: 00000009  r9 : c5f94c40  r8 : c4b15850
-[  399.579492] r7 : c4b15884  r6 : c7813614  r5 : c5f94f30  r4 : c7813400
-[  399.586784] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : c5f94f30
-[  399.594075] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[  399.602048] Control: 10c5387d  Table: 06c6c06a  DAC: 00000051
-[  399.608465] Register r0 information: slab kmalloc-1k start c5f94c00 pointer offset 816 size 1024
-[  399.618296] Register r1 information: NULL pointer
-[  399.623551] Register r2 information: NULL pointer
-[  399.628804] Register r3 information: NULL pointer
-[  399.634057] Register r4 information: slab kmalloc-1k start c7813400 pointer offset 0 size 1024
-[  399.643690] Register r5 information: slab kmalloc-1k start c5f94c00 pointer offset 816 size 1024
-[  399.653517] Register r6 information: slab kmalloc-1k start c7813400 pointer offset 532 size 1024
-[  399.663344] Register r7 information: slab kmalloc-1k start c4b15800 pointer offset 132 size 1024
-[  399.673171] Register r8 information: slab kmalloc-1k start c4b15800 pointer offset 80 size 1024
-[  399.682901] Register r9 information: slab kmalloc-1k start c5f94c00 pointer offset 64 size 1024
-[  399.692631] Register r10 information: non-paged memory
-[  399.698370] Register r11 information: slab kmalloc-1k start c4b15800 pointer offset 0 size 1024
-[  399.708101] Register r12 information: non-slab/vmalloc memory
-[  399.714521] Process glmark2-es2-drm (pid: 316, stack limit = 0x178bc4ea)
-[  399.722009] Stack: (0xf22b1df8 to 0xf22b2000)
-[  399.726874] 1de0:                                                       00000000 c4b15884
-[  399.736012] 1e00: c7813400 c4b15800 00000007 c4b15884 c4b15850 c6815000 00000009 c0bb3824
-[  399.745150] 1e20: 00000000 40086409 c7860800 c15fd008 00000008 c0bb588c c6815630 0000013c
-[  399.754288] 1e40: 0000e280 00000000 c1b35650 b235e000 f22b1f5c 00000008 f22b1e74 bec37550
-[  399.763426] 1e60: c6815630 c694ea00 c0bb47cc 00000051 00000000 00000007 00000000 00000000
-[  399.772564] 1e80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  399.781701] 1ea0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  399.790839] 1ec0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  399.799977] 1ee0: 00000000 00000000 00000000 00000000 00000000 356cc46f 00000000 40086409
-[  399.809115] 1f00: c694ea00 c03000c0 bec37550 c694ea00 c6815000 00000006 c4bf9b70 c058d694
-[  399.818253] 1f20: b2b47000 f22b1f50 00000001 c03002f0 00000000 c5f60900 00000000 b235e000
-[  399.827391] 1f40: 007e9000 c053d874 f22b1f50 00000001 f22b1f50 f22b1f50 004e0b14 c5f60940
-[  399.836528] 1f60: b235e000 b2b46fff c4abec0c b09e3000 b2bcffff 00000000 00000000 356cc46f
-[  399.845666] 1f80: 00000003 004e6b40 bec37550 40086409 00000036 c03002f0 c6815000 00000036
-[  399.854805] 1fa0: 01cb32a0 c03000c0 004e6b40 bec37550 00000006 40086409 bec37550 00000007
-[  399.863943] 1fc0: 004e6b40 bec37550 40086409 00000036 00000000 00000000 01cb2da0 01cb32a0
-[  399.873080] 1fe0: b6e4b08c bec37534 b6e3442f b6bb8f98 60010030 00000006 00000000 00000000
-[  399.882216] Call trace: 
-[  399.882222]  panfrost_gem_free_object [panfrost] from drm_gem_handle_delete+0x84/0xb0
-[  399.893813]  drm_gem_handle_delete from drm_ioctl+0x2b8/0x4f4
-[  399.900237]  drm_ioctl from sys_ioctl+0x428/0xe30
-[  399.905496]  sys_ioctl from ret_fast_syscall+0x0/0x1c
-[  399.911141] Exception stack(0xf22b1fa8 to 0xf22b1ff0)
-[  399.916783] 1fa0:                   004e6b40 bec37550 00000006 40086409 bec37550 00000007
-[  399.925922] 1fc0: 004e6b40 bec37550 40086409 00000036 00000000 00000000 01cb2da0 01cb32a0
-[  399.935058] 1fe0: b6e4b08c bec37534 b6e3442f b6bb8f98
-[  399.940702] Code: eb0018fa e5943218 e5942214 e1a00005 (e5823004) 
-[  399.947532] ---[ end trace 0000000000000000 ]---
+I narrowed down the call path to:
+ smpboot_create_threads()
+ -> kthread_create_on_cpu()
+    -> kthread_bind()
+       -> __kthread_bind_mask()
+          ->wait_task_inactive()
 
+Where in wait_task_inactive() we were regularly hitting the
+queued case, which sets a 1 tick timeout, which when called
+multiple times in a row, accumulates quickly into a long
+delay.
+
+I noticed disabling the DELAY_DEQUEUE sched feature recovered
+the performance, and it seems the newly create tasks are usually
+sched_delayed and left on the runqueue.
+
+So in wait_task_inactive() when we see the task
+p->se.sched_delayed, manually dequeue the sched_delayed task
+with DEQUEUE_DELAYED, so we don't have to constantly wait a
+tick.
+
+Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+Reported-by: peter-yc.chang@mediatek.com
+Signed-off-by: John Stultz <jstultz@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Link: https://lkml.kernel.org/r/20250429150736.3778580-1-jstultz@google.com
+---
+ kernel/sched/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 79692f8..a3507ed 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2283,6 +2283,12 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
+ 		 * just go back and repeat.
+ 		 */
+ 		rq = task_rq_lock(p, &rf);
++		/*
++		 * If task is sched_delayed, force dequeue it, to avoid always
++		 * hitting the tick timeout in the queued case
++		 */
++		if (p->se.sched_delayed)
++			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+ 		trace_sched_wait_task(p);
+ 		running = task_on_cpu(rq, p);
+ 		queued = task_on_rq_queued(p);
 
