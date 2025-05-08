@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-640174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D309FAB0159
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:25:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBC1AB0152
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7179E7B10
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:24:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F3C2B21E8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507B828C874;
-	Thu,  8 May 2025 17:21:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CB1286895
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536B12882B7;
+	Thu,  8 May 2025 17:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="msmxaoqQ"
+Received: from mail-43171.protonmail.ch (mail-43171.protonmail.ch [185.70.43.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941132882AE
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746724873; cv=none; b=ujtmwWPCeg3fmhx4MBeL9hmYYvZkXSauHgmWP2Xeb6QNCOy6k44/HgcgYNCX5TWQn4QQbEocTNIfANnjGgUY5VKnHGIoCtW5Rcc32LvXOyxijUeDThvU2t19st/Ft/RdqfUWDLJaNUIrPgzMCCxAKfoqab1PPc6T0BJhYGbMPkk=
+	t=1746724858; cv=none; b=iESe6DTkpCjEOvl+LfBbEMMqbgFYzwnTRbCiDVeQr1G3uXxXq88KOi0MXDMXFeGlEMFXSaaIoSDla2TjFI4FHBNgdC4o5sjsPdRsIshIp1JQ6QFPs1rARw2IsmYj3epCQZZf+flHEZ48XrMSOrLLjzyFVQ6mnvRkGPemAGd5xNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746724873; c=relaxed/simple;
-	bh=D+1dbxe88pe0IuA5+/nZTjIpSbyWaqVn84aTPN9m87M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mNllx5hnPa8r6hOhR20hAsdRwHahGH0Z1qk/59FSKmZadbD2Zhfmb6mgZdW/mKnv9IWl4RiWeEMc85P0a62XfwCr2H3n8FWf1JiaqzT9wZ2zpcRdi4r78KddNEbZvoo70dMu6jr2v8hs+cTFuzPB98Ll4OxoY4lPcSS480/KzKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17F992659;
-	Thu,  8 May 2025 10:21:01 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 508903F58B;
-	Thu,  8 May 2025 10:21:08 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	Dave Martin <Dave.Martin@arm.com>
-Subject: [PATCH v10 30/30] MAINTAINERS: Add reviewers for fs/resctrl
-Date: Thu,  8 May 2025 17:18:58 +0000
-Message-Id: <20250508171858.9197-31-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250508171858.9197-1-james.morse@arm.com>
-References: <20250508171858.9197-1-james.morse@arm.com>
+	s=arc-20240116; t=1746724858; c=relaxed/simple;
+	bh=nYR+JQeqFAQOAPg6YnoXR5XOJU0Ab0oloBQbSOVfKXw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qpbIleZP//KXeMRqvlCbxgyt0gBXG+zqG65gEg0xlWBR23u2iuhtw3WOx4gVSnerVT9M88h2VnLUnkvlX9SSncbxUpONGD4XMIXBf9jNBkNW0z1OrDIIXlDlW3UIBeeFBgBEnHqu8ADbKmtuL7457BbMkR6M8+bO0EWDIKRlWtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=msmxaoqQ; arc=none smtp.client-ip=185.70.43.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1746724844; x=1746984044;
+	bh=nYR+JQeqFAQOAPg6YnoXR5XOJU0Ab0oloBQbSOVfKXw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=msmxaoqQ+AUd0iRjBbdNZ6XykDoNqWIH2sho6943mX7XkLJfOwNOZi0pTwcJzclxi
+	 5zQ7iRaatcQDITryH81QQ9Ikw4Sz6iJro1ZBXtRqjS2DTep/oRpg0WTqu99oUw424s
+	 V/HoE0TZCYURVMmBFnJ6nXUVC+rXMaE9sRovKzYrCGSFyw9sRSuW4fJLba7pOVy5Op
+	 TeQBzlYTwcjYxBbzLoxGwajx+fHtJTkTkiMoag3kiSvQGFiKHPqNVCRDprnLjew4Lk
+	 MTA/H6OzQGphwXsGIzaOYbYhePw4Te2uf1L90Ljrfwu8J2gr05+l77M4LSkjYWHErq
+	 /B0bpyI0pZeFQ==
+X-Pm-Submission-Id: 4Ztf6M1WRfz4wx9Y
+From: Esben Haabendal <esben@geanix.com>
+To: "Matti Vaittinen" <mazziesaccount@gmail.com>
+Cc: "Liam Girdwood" <lgirdwood@gmail.com>,  "Mark Brown"
+ <broonie@kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: bd718x7: Ensure SNVS power state is used as
+ requested
+In-Reply-To: <54f3b79a-38d2-4760-ba1a-125172142255@gmail.com> (Matti
+	Vaittinen's message of "Mon, 05 May 2025 09:07:03 +0300")
+References: <20250501-bd718x7-snvs-reset-v1-1-1fcc7088200e@geanix.com>
+	<j3M49vfoxys9iFGLs2PwAULHoQsSQsHAKmaT1D2QCwyjUJNzjxXKESFYkXasW3_3owOakk-tXosNLIgfnMC6vQ==@protonmail.internalid>
+	<52221c62-689c-44d2-b65d-07a5301090b3@gmail.com>
+	<87tt638q7t.fsf@geanix.com>
+	<6JY6cJAFrLw-8XD2zgLh0lxzqzEVtz-49qgct8PAirT1ik1BU1glEyOJJg8lgYnivBWFz1vi7-faSRX_yCgmrQ==@protonmail.internalid>
+	<2996270f-d03e-45f7-9b6b-c5675c39515b@gmail.com>
+	<87ikmi82ut.fsf@geanix.com>
+	<0EMp5PpI517LdEsWqblAW-ZJ6PfGz88VnEcUGMml1jB3ztGKpkgTDWjcPUBE9Is3P3NErImIozuRketifUq9EQ==@protonmail.internalid>
+	<54f3b79a-38d2-4760-ba1a-125172142255@gmail.com>
+Date: Thu, 08 May 2025 19:20:42 +0200
+Message-ID: <87bjs3auj9.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-resctrl has existed for quite a while as a filesystem interface private to
-arch/x86. To allow other architectures to support the same user interface
-for similar hardware features, it has been moved to /fs/.
+"Matti Vaittinen" <mazziesaccount@gmail.com> writes:
 
-Add those with a vested interest in the common code as reviewers.
+> On 03/05/2025 12:23, Esben Haabendal wrote:
+>>
+>> What do you think, should we leave it in the current state, or can we
+>> figure out a way to allow the driver to actively change the watchdog
+>> reset to go to SNVS power state?
+>
+> I can't really think of a safe way other than adding a new property.
+>
+> The IC is oldish, and AFACS, quite widely used. People seem to have
+> found a way to make it work without (in-tree) feature for changing the
+> reset target to the SNVS. I wouldn't try to implement this unless we
+> have a use-case really requiring it. So, I'd suggest you to do it in
+> boot. Still, if you have a valid case for this to be done in the driver
+> - then I have no reason to object adding a new binding + support in the
+> driver.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
-Acked-by: Dave Martin <Dave.Martin@arm.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+I have now implemted the PMIC setup in U-Boot, so am fine with dropping
+the patch for now.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e54b9019e942..9584c0d493a8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20363,6 +20363,8 @@ F:	tools/testing/selftests/net/rds/
- RDT - RESOURCE ALLOCATION
- M:	Tony Luck <tony.luck@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
-+R:	Dave Martin <Dave.Martin@arm.com>
-+R:	James Morse <james.morse@arm.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	Documentation/filesystems/resctrl.rst
--- 
-2.39.5
+For anyone else finding this thread later on, the advice is to setup the
+PMIC in bootloader or by some other low-level method. But if that for
+some reason is not feasible, you can continue the work / discussion we
+have had here in order to add a new binding + support in the driver for
+it.
 
+/Esben
 
