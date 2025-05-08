@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-639573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85351AAF930
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B129AAF935
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C78C3B942E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:54:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BF7981A1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8A2221FD6;
-	Thu,  8 May 2025 11:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA79223719;
+	Thu,  8 May 2025 11:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="J33z0ra3"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="yj9IOSyo"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D829120B20A
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 11:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF5620C46F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 11:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746705290; cv=none; b=AM40iPMFHfoLensGdfioV3sARKxYhQ/9blOBuCYN1TqrPdsokq2Er2+HvR2RyBFCgSUyHTDJir4lm4QQXPlWA/LPY1vAWvyQVzhrnBV9nUNp77zDdShRmmaIvELgJaFKpcCsLEnmZL8/DojAMkt3pUqf8zxmbWGCZRE4EohhQt0=
+	t=1746705322; cv=none; b=nznYyZqimtD65OY9+B+00TfO9PL5ZmLrhE25GzMcOAg26QSq3RfHTFvnrggmfH2MtUUWxg2Ku36D8qj9ePeK6x8VPMFSG4chYf94Vc4wyxj8v2XMtwST70H17on8VFztbTfCYxZnVVtvyu4TmnXotvhOEDPvMUU+4/PghCe6g+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746705290; c=relaxed/simple;
-	bh=vBvEtiCuUrQw6cxYTqEPBmMcBNc/TgG+qB++L+wXBng=;
+	s=arc-20240116; t=1746705322; c=relaxed/simple;
+	bh=midlBCKcdFgiAxhf8+dL21uCfSmZow643JGt2nOszyQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jkpRVtKZiAe8vYJ6lF6VY4/E57lB97vnwktj7vfHT/lsKAqUbbAaogI82AJTIybOeGZ9qzvGXoST1/cLVmW0JHfkcyvI3s1GzO20dvzmBQxfEsVPYedla2DgfXoVqZK+hlOkcFIMHRV18ul5PrvPdbnNW7m3/mMCkrYJ94I/viM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=J33z0ra3; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22e76850b80so6644525ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 04:54:48 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=S5BoDXCvShs3znQYcBOWH+RoOpwQ3dOGFIMoil6jkjJEvbGEpK9jkcHhGiVcZIeXRcnGhRjmLk9NyZ6oVddtrcmaZu14AjzaFVcXDfvvPe9F5mqx0Kb6yTOdSKiA81FhV95tA3huQJAk271c2nst29hPMgK0++Hcy+b6bBHhbWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=yj9IOSyo; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-86135af1045so96323039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 04:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1746705288; x=1747310088; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746705319; x=1747310119; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NQ5nx7BEtPQhnhB8LNMmTDa+6EsEVgHuuZJiFmNN9Ms=;
-        b=J33z0ra3q7WlYYn9PIoa/L8m0ltJyHstsLAT/lCv4R2JHksEBrXhgHBumuXtnl8oFC
-         JHr84tqt0ZLsETPnnuWy40g1jNVQqFYI+VQJwBabSm2RddTmQtGtSyaOAPfbnZ7RlRDR
-         BTE+KsQ0nDeFHVx4df0VymZUM+1L0cA+fn4XgIu2By/AFUUw1wYJkp7KmZu8fDgR3u/h
-         FG8aHi0REtNT3SEyVOA5SNe6QEFsc8lLGgjoIUI3TgPInFGCjx4xyOXOATzVVzE+wIfo
-         xQest9XQJWwwx4+BQeyHfSlQmJoPZOmJbaNVz5Wm4gjL96tDf3s4B069QSyN05Xm9q4H
-         jFwg==
+        bh=vhDurVJcqA9s7Wksb9BxQ/qUoHZJHNjRKlauWc65nyw=;
+        b=yj9IOSyos/2saqVLEyGeLbQt/rUa9mYt3NhqDeAw8s6FsJd6+Zy5UMvAtrcivef0f5
+         sNT71id1s7dz+FPKwhUbbjs/FPo38v+ljrCtYfdyvPVkiAwtxtbb15fqqRlKFDFJyhLv
+         66mHNjmpWaYn1sxL3eQBnMwkmY339/rHm6n213OEa8Edu2c5j3vbFlSsI0PjC2RuVwMt
+         UjxT+DwYLEU8sghN3de80bBL44jiV53/a7d5+pLAyAVsgpu9FHk7BClPeSp74ujG7/JR
+         jSqOJ8tY0f8MrAL+m1+pHxls7MtbMZMg5175Sc+VXfshctXqN+M2rJywyYGPExFTXVpd
+         +osA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746705288; x=1747310088;
+        d=1e100.net; s=20230601; t=1746705319; x=1747310119;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NQ5nx7BEtPQhnhB8LNMmTDa+6EsEVgHuuZJiFmNN9Ms=;
-        b=J8OnsmF7TzzHzeYPWodv0Yjq9g82a9SN54D5fDxTLcZe0v6e9eCvAvWTJ3fGkWvzWo
-         gleFGiBIB8/Lb8DQWBZqqo8NAjBgXpBHZGeiRwI6hFaYjgLw0RAjGCT9Upx76k91rXuR
-         PX4MDJ7Ym8IBAso2YkP5pWurAmqSD3ETzkHCeQfDsuDZp9c4HuhF2rUBksPPWVavAKtr
-         NhQFr7bJjMTFw9GO9h0njj6EPf0mBCPE0kdP4NHcE/t+PyP664Ce8a5cdp973PT4KkUX
-         GEi6H0Erl50QKwOwQphAWOUWMdIeCyuxcpNOKQRV9j/+LmtjmF9QVNfR3buD+QHFl0hs
-         FNmg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8oLkBxi7H2E39Cs0Znv3hLRUHxweZ1PolTSpi/kb2bH0BKRhvWEG11FhDshs375nb+EMoOkfjJrq38MY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSirla8IHrGojJEQ/NC4HsppWZimvIs3SbHzPioubOXgqeRy64
-	YI7hfpyUZliXtNyehR2HS6hMI+j5rVZRIK/SV70fIv0FNsouGOYLoAJvXZlHgj8=
-X-Gm-Gg: ASbGncsLDMTPYba+rKf47iTdXJfTuynbJ4WH+mvgt7UrJHS7fZMlsHTylcliLwiN7FT
-	wuMfLf0nWJNzLkNqeP59Y31xNWL+D6RHc/ENEl81j0tHcRlH5mnfKrI+zeUyevlFCqBS9VgAPb+
-	bWN8IapVnxwpPKWeDfUYUBYdIsJUy6COOwHn2j1OSdnaCnIjlQDzulZbHGxTYcuVOcqPlHOkRor
-	xo04PnitdzZjHX3nOEFEElJI9ylOdOCPA30Wd0Eanop3GZP2FEkfWNOaP62877EW36MbhcdVPt+
-	Mbge8YToWZkAv5NLftMrUb7Yrg7ZUMwyWtKiOUcswBmrU+Co8tYiTg==
-X-Google-Smtp-Source: AGHT+IHNkr+cYmPtqEDKPUm8A/UvsVB8Ee40tnr1fJFsnH5tHlLIOarW/VG1HJ4MVlRL7k8EI2tcYQ==
-X-Received: by 2002:a17:903:22c9:b0:224:249f:9734 with SMTP id d9443c01a7336-22e85613e37mr50522725ad.4.1746705288109;
-        Thu, 08 May 2025 04:54:48 -0700 (PDT)
-Received: from [192.168.62.7] ([110.226.169.188])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e84956656sm14404295ad.79.2025.05.08.04.54.45
+        bh=vhDurVJcqA9s7Wksb9BxQ/qUoHZJHNjRKlauWc65nyw=;
+        b=tVlQvWQxYb/JRp3qpX82J3wE1mL2EmkwtCvjWCZ4/SdXO7yVenDRkMDCjyJeyYhcbI
+         HExbv0k7bz5v59a4QPHPD738CWC2Yd7GCaBo0h19WOUs8hkkB2gyPTUdwIsG2d8dNyuI
+         BU9BJYQw69VgKQHjuCINyCF5W83mF68HcrxAGYuDrAccBmtRqrIfCfmUA1PVz01DcIWA
+         3ZQufSBe9vUaJh/dnF94AaexFsaNuwySksVXvRdPLiiUNya94K9JGgn518SfRDWUKn1d
+         TeW9gfbpoMMTAdhfjj1KMcOef4zM7RQX2apoFHqb2V+yUeMOXrPoc3SzIKTea1ersyh1
+         xNrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtbP7qfbOauG0oxTWTzziI8eiXgOYG4b79bagv40pSMUIkwiJzkMk2pPd6keYonmAgns6HpYrHn0RXzlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztH1T4gij1uIxUU682ZItiTfdgOUE8QRgFCF5ZSw09J1Za+2g/
+	zU0QEyT4WjMEEEHcbRmsJfFnv5OcNkeNXnEjp5tShXTq/xg/FICJoaf/Gvi/19Y=
+X-Gm-Gg: ASbGncvQOHnFffm7YCF4vZuXpc+rVTUOMLN7Tm0wfqUbIMd62bbRFdYO9s4nQxzoOqm
+	pskX3elrtN9cw3SkQJzjhN2ZYREi8qRQkcJ+tVfUpKLH7KVja4OvNUHLg19eagP0XzCN1a6ZG/C
+	yWqLd3cor5gdJ9dRQMuxp6LgGn+n0WD+vxfGs5+LWNHtXjxYge5yei05ZkvI4VY9K8e69Qyk3fR
+	Wsg0Q6cO7aIvhVT6fQJj6rrmi33SlRIDBuyLCqnkKSrUmJ85TwNJph4lXuwDfMshEUuhDPIkL5f
+	T0Thppwll2MvAakmkP3lLlYW9or28Fx2SNM0n5Z2QuA6GUEbNL3tKzXqIGeFYQSMCtqMCjmbZ43
+	hBbX2
+X-Google-Smtp-Source: AGHT+IEh2FhuFJwVM0F6B9wDjDp9naJK3ymVtjg5UbqAxVbspiUli3XlMFk+hC4tqNPEL0TAprtw2A==
+X-Received: by 2002:a05:6602:140d:b0:85b:5494:5519 with SMTP id ca18e2360f4ac-8675502ea2bmr392308139f.5.1746705319163;
+        Thu, 08 May 2025 04:55:19 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88a91464csm3168549173.31.2025.05.08.04.55.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 04:54:47 -0700 (PDT)
-Message-ID: <57f163bb-1b4e-4f57-8f93-aee6ce1bd317@ventanamicro.com>
-Date: Thu, 8 May 2025 17:24:42 +0530
+        Thu, 08 May 2025 04:55:18 -0700 (PDT)
+Message-ID: <d2614363-1dab-4ea3-b79a-5d3c02c4bc17@riscstar.com>
+Date: Thu, 8 May 2025 06:55:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,190 +81,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] riscv: Introduce support for hardware
- break/watchpoints
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-References: <20240222125059.13331-1-hchauhan@ventanamicro.com>
- <20240222125059.13331-3-hchauhan@ventanamicro.com> <aBltPLLrvUNKR857@ghost>
- <014a66e3-1713-4450-a31b-a0619cca7bd3@ventanamicro.com>
- <aBvRacm66QK_UHXF@ghost>
+Subject: Re: [PATCH v6 4/6] reset: spacemit: add support for SpacemiT CCU
+ resets
+To: Haylen Chu <heylenay@4d2.org>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org
+Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250506210638.2800228-1-elder@riscstar.com>
+ <20250506210638.2800228-5-elder@riscstar.com> <aBxDQ1_2xJjGlwNf@ketchup>
 Content-Language: en-US
-From: Himanshu Chauhan <hchauhan@ventanamicro.com>
-In-Reply-To: <aBvRacm66QK_UHXF@ghost>
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aBxDQ1_2xJjGlwNf@ketchup>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 5/8/25 03:02, Charlie Jenkins wrote:
-> On Wed, May 07, 2025 at 04:58:56PM +0530, Himanshu Chauhan wrote:
->> Hi Charlie,
+On 5/8/25 12:38 AM, Haylen Chu wrote:
+> On Tue, May 06, 2025 at 04:06:35PM -0500, Alex Elder wrote:
+>> Implement reset support for SpacemiT CCUs.  The code is structured to
+>> handle SpacemiT resets generically, while defining the set of specific
+>> reset controllers and their resets in an SoC-specific source file.  A
+>> SpacemiT reset controller device is an auxiliary device associated with
+>> a clock controller (CCU).
 >>
->> On 5/6/25 07:30, Charlie Jenkins wrote:
->>> On Thu, Feb 22, 2024 at 06:20:59PM +0530, Himanshu Chauhan wrote:
->>>> RISC-V hardware breakpoint framework is built on top of perf subsystem and uses
->>>> SBI debug trigger extension to install/uninstall/update/enable/disable hardware
->>>> triggers as specified in Sdtrig ISA extension.
->>>>
->>>> Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
->>>> ---
->>>>    arch/riscv/Kconfig                     |   1 +
->>>>    arch/riscv/include/asm/hw_breakpoint.h | 327 ++++++++++++
->>>>    arch/riscv/include/asm/kdebug.h        |   3 +-
->>>>    arch/riscv/kernel/Makefile             |   1 +
->>>>    arch/riscv/kernel/hw_breakpoint.c      | 659 +++++++++++++++++++++++++
->>>>    arch/riscv/kernel/traps.c              |   6 +
->>>>    6 files changed, 996 insertions(+), 1 deletion(-)
->>>>    create mode 100644 arch/riscv/include/asm/hw_breakpoint.h
->>>>    create mode 100644 arch/riscv/kernel/hw_breakpoint.c
->>>>
->>> ...
->>>
->>>> diff --git a/arch/riscv/kernel/hw_breakpoint.c b/arch/riscv/kernel/hw_breakpoint.c
->>>> new file mode 100644
->>>> index 000000000000..7787123c7180
->>>> --- /dev/null
->>>> +++ b/arch/riscv/kernel/hw_breakpoint.c
->>>> +
->>>> +void clear_ptrace_hw_breakpoint(struct task_struct *tsk)
->>>> +static int __init arch_hw_breakpoint_init(void)
->>>> +{
->>>> +	unsigned int cpu;
->>>> +	int rc = 0;
->>>> +
->>>> +	for_each_possible_cpu(cpu)
->>>> +		raw_spin_lock_init(&per_cpu(ecall_lock, cpu));
->>>> +
->>>> +	if (!dbtr_init)
->>>> +		init_sbi_dbtr();
->>>> +
->>>> +	if (dbtr_total_num) {
->>>> +		pr_info("%s: total number of type %d triggers: %u\n",
->>>> +			__func__, dbtr_type, dbtr_total_num);
->>>> +	} else {
->>>> +		pr_info("%s: No hardware triggers available\n", __func__);
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	/* Allocate per-cpu shared memory */
->>>> +	sbi_dbtr_shmem = __alloc_percpu(sizeof(*sbi_dbtr_shmem) * dbtr_total_num,
->>>> +					PAGE_SIZE);
->>>> +
->>>> +	if (!sbi_dbtr_shmem) {
->>>> +		pr_warn("%s: Failed to allocate shared memory.\n", __func__);
->>>> +		rc = -ENOMEM;
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	/* Hotplug handler to register/unregister shared memory with SBI */
->>>> +	rc = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
->>> When using this, only hart 0 is getting setup. I think instead we want
->>> the following to have all harts get setup:
->>>
->>> 	for_each_online_cpu(cpu)
->>> 		arch_smp_setup_sbi_shmem(cpu);
->>>
->>> 	/* Hotplug handler to register/unregister shared memory with SBI */
->>> 	rc = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
->> cpuhp_setup_state() install the callbacks and invoke the @startup callback
->> (if not NULL) for all online CPUs. So there is no need to call
->> "arch_smp_setup_sbi_shmem" for each CPU and then install the hotplug
->> handler.
-> That's what I thought as well, but when testing that is not what was
-> happening.
-
-I see the initialization happening on all the CPUs. I am using OpenSBI 
-Top-of-line.
-
-Linux kernel is from https://github.com/ventanamicro/linux.git [branch: 
-dev-upstream]
-
-Part of boot log:
-
-[    0.267250] arch_hw_breakpoint_init: total number of type 6 triggers: 2
-[    0.268108] CPU 0: HW Breakpoint shared memory registered.
-[    0.268835] CPU 1: HW Breakpoint shared memory registered.
-[    0.269932] CPU 2: HW Breakpoint shared memory registered.
-[    0.270468] CPU 3: HW Breakpoint shared memory registered.
-[    0.276554] sse: SBI SSE extension detected
-[    0.308172] HugeTLB: allocation took 0ms with 
-hugepage_allocation_threads=1
-[    0.309682] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
-
-Can you please send me your config and bootlog?
-
-Regards
-
-Himanshu
-
-
->> If you are running this on QEMU, could you please share the qemu command you
->> are invoking? I will test at my end and update you.
-> This is my qemu command:
->
-> qemu-system-riscv64 -nographic -m 1G -machine virt -smp 4 \
->      -kernel arch/riscv/boot/Image -bios /home/charlie/opensbi/build/platform/generic/firmware/fw_dynamic.bin \
->      -append "root=/dev/vda rw earlycon console=ttyS0" \
->      -drive file=/home/charlie/buildroot/output/images/rootfs.ext2,format=raw,id=hd0,if=none \
->      -cpu rv64,zicond=true \
->      -device virtio-blk-device,drive=hd0 -gdb tcp::1234
->
-> - Charlie
->
->> Regards
+>> This initial patch defines the reset controllers for the MPMU, APBC, and
+>> MPMU CCUs, which already defined clock controllers.
 >>
->> Himanshu
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   drivers/reset/Kconfig           |   1 +
+>>   drivers/reset/Makefile          |   1 +
+>>   drivers/reset/spacemit/Kconfig  |  12 +++
+>>   drivers/reset/spacemit/Makefile |   7 ++
+>>   drivers/reset/spacemit/core.c   |  61 +++++++++++
+>>   drivers/reset/spacemit/core.h   |  39 +++++++
+>>   drivers/reset/spacemit/k1.c     | 177 ++++++++++++++++++++++++++++++++
+>>   7 files changed, 298 insertions(+)
+>>   create mode 100644 drivers/reset/spacemit/Kconfig
+>>   create mode 100644 drivers/reset/spacemit/Makefile
+>>   create mode 100644 drivers/reset/spacemit/core.c
+>>   create mode 100644 drivers/reset/spacemit/core.h
+>>   create mode 100644 drivers/reset/spacemit/k1.c
 >>
->>>
->>> However, I am testing against tip-of-tree opensbi and am hitting an
->>> issue during the setup on all harts:
->>>
->>> [    0.202332] arch_smp_setup_sbi_shmem: Invalid address parameter (18446744073709551611)
->>> [    0.202794] CPU 0: HW Breakpoint shared memory registered.
->>>
->>> Additionally, this seems like it should be a fatal error, but it
->>> continues on to print that the shared memory is registered because there
->>> is no check before printing this seemingly successful message.
->>>
->>> I know I am reviving an old thread, but do you have any insight into
->>> what might be happening?
->>>
->>> - Charlie
->>>
->>>> +			       "riscv/hw_breakpoint:prepare",
->>>> +			       arch_smp_setup_sbi_shmem,
->>>> +			       arch_smp_teardown_sbi_shmem);
->>>> +
->>>> +	if (rc < 0) {
->>>> +		pr_warn("%s: Failed to setup CPU hotplug state\n", __func__);
->>>> +		free_percpu(sbi_dbtr_shmem);
->>>> +		return rc;
->>>> +	}
->>>> + out:
->>>> +	return rc;
->>>> +}
->>>> +arch_initcall(arch_hw_breakpoint_init);
->>>> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
->>>> index a1b9be3c4332..53e1dfe5746b 100644
->>>> --- a/arch/riscv/kernel/traps.c
->>>> +++ b/arch/riscv/kernel/traps.c
->>>> @@ -277,6 +277,12 @@ void handle_break(struct pt_regs *regs)
->>>>    	if (probe_breakpoint_handler(regs))
->>>>    		return;
->>>> +#ifdef CONFIG_HAVE_HW_BREAKPOINT
->>>> +	if (notify_die(DIE_DEBUG, "EBREAK", regs, 0, regs->cause, SIGTRAP)
->>>> +	    == NOTIFY_STOP)
->>>> +		return;
->>>> +#endif
->>>> +
->>>>    	current->thread.bad_cause = regs->cause;
->>>>    	if (user_mode(regs))
->>>> -- 
->>>> 2.34.1
->>>>
->>>>
->>>> _______________________________________________
->>>> linux-riscv mailing list
->>>> linux-riscv@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+> ...
+> 
+>> diff --git a/drivers/reset/spacemit/Kconfig b/drivers/reset/spacemit/Kconfig
+>> new file mode 100644
+>> index 0000000000000..4ff3487a99eff
+>> --- /dev/null
+>> +++ b/drivers/reset/spacemit/Kconfig
+>> @@ -0,0 +1,12 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +config RESET_SPACEMIT
+>> +	bool
+>> +
+>> +config RESET_SPACEMIT_K1
+>> +	tristate "SpacemiT K1 reset driver"
+>> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+>> +	select RESET_SPACEMIT
+>> +	default ARCH_SPACEMIT
+>> +	help
+>> +	  This enables the reset controller driver for the SpacemiT K1 SoC.
+> 
+> With auxiliary bus introduced, Kconfig entries for both the reset and
+> clock should select AUXILIARY_BUS, or building defconfig will fail with
+> undefined references,
+
+Wow, I really should have made this v1 of a new series.  You point
+out several problems that came out of this using the auxiliary
+device framework, which I should have tested more thoroughly.
+
+Yes I will update this to select that, and will test it before
+my next version.
+
+> 
+>          riscv64-unknown-linux-musl-ld: drivers/clk/spacemit/ccu-k1.o: in function `k1_ccu_probe':
+>          ccu-k1.c:(.text+0x19c): undefined reference to `auxiliary_device_init'
+>          riscv64-unknown-linux-musl-ld: ccu-k1.c:(.text+0x226): undefined reference to `__auxiliary_device_add'
+>          riscv64-unknown-linux-musl-ld: drivers/reset/spacemit/k1.o: in function `spacemit_k1_reset_driver_init':
+>          k1.c:(.init.text+0x1a): undefined reference to `__auxiliary_driver_register'
+>          riscv64-unknown-linux-musl-ld: drivers/reset/spacemit/k1.o: in function `spacemit_k1_reset_driver_exit':
+>          k1.c:(.exit.text+0x10): undefined reference to `auxiliary_driver_unregister'
+> 
+>> diff --git a/drivers/reset/spacemit/Makefile b/drivers/reset/spacemit/Makefile
+>> new file mode 100644
+>> index 0000000000000..3a064e9d5d6b4
+>> --- /dev/null
+>> +++ b/drivers/reset/spacemit/Makefile
+>> @@ -0,0 +1,7 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +obj-$(CONFIG_RESET_SPACEMIT)			+= reset_spacemit.o
+> 
+> As RESET_SPACEMIT is defined as bool, the reset driver will never be
+> compiled as a module... so either the RESET_SPACEMIT_K1 should be
+> limited to bool as well or you could take an approach similar to the
+> clock driver.
+
+I'm not sure I understand this statement, at least in this
+context.  This pattern is used to define a single module
+"reset_spacemit.o" out of several source files.
+
+But I think you're saying that RESET_SPACEMIT and
+RESET_SPACEMIT_K1 should both be bool, or both be
+tristate.  I will resolve that question before I
+send the next version.
+
+>> +reset_spacemit-y				:= core.o
+>> +
+>> +reset_spacemit-$(CONFIG_RESET_SPACEMIT_K1)	+= k1.o
+> 
+> ...
+> 
+>> new file mode 100644
+>> index 0000000000000..19a34f151b214
+>> --- /dev/null
+>> +++ b/drivers/reset/spacemit/k1.c
+> 
+> ...
+> 
+>> +MODULE_DEVICE_TABLE(auxiliary, spacemit_k1_reset_ids);
+>> +
+>> +#undef K1_AUX_DEV_ID
+>> +
+>> +static struct auxiliary_driver spacemit_k1_reset_driver = {
+>> +	.probe          = spacemit_k1_reset_probe,
+>> +	.id_table       = spacemit_k1_reset_ids,
+>> +};
+>> +module_auxiliary_driver(spacemit_k1_reset_driver);
+>> -- 
+>> 2.45.2
+> 
+> If you're willing to make the reset driver buildable as a module, please
+> add MODULE_{LICENSE,DESCRIPTION} statements and possibly also
+> MODULE_AUTHOR(), or modpost will complain,
+
+OK, thank you.
+
+					-Alex
+
+> 
+> 	ERROR: modpost: missing MODULE_LICENSE() in drivers/reset/spacemit/reset_spacemit.o
+> 	WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/spacemit/reset_spacemit.o
+> 
+> Best regards,
+> Haylen Chu
+
 
