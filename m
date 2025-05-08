@@ -1,383 +1,271 @@
-Return-Path: <linux-kernel+bounces-640213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B234AB01C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:50:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32CEAB01BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8B43A902B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0A41654F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B152882DE;
-	Thu,  8 May 2025 17:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B6728688A;
+	Thu,  8 May 2025 17:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pydYdzAE"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbPZsZrg"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FB72874EF;
-	Thu,  8 May 2025 17:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E072147F5
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 17:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746726561; cv=none; b=fKRjZj1INVgazovQmnCdMxAM+cLJwaLtlnvdf0RoKQ7Afy/xWd/tcY4HYv/Ja36pWfFsW4KeDsvf3sCXU9HUaKzGdmY7jpL/U2b8Smb7RBvAz4KbKt7cb4MJKiXOeqUzHQfV/rqCms9MPic4gngC42RLWDlIkri3fP0EQAEPlj0=
+	t=1746726542; cv=none; b=E3kyRaLXNq+CCkOwjPKcw2dx3yzhyhNXr80MjCrGI2jfDRmZfDwBK8jC+XtXq3TeeEDkd5+4mKOpJ6fXaR0VGJBTRKaYEoKXrgx6ViwfZFVZqE8odWgk91ut8poGRFbtH9igCMOfzsWKg695almM2NxS39+6xlEhCS7ruY/kvIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746726561; c=relaxed/simple;
-	bh=ab6aAqtGy1bZZeuXPkx80OYbA7f4f4wlEr4vVLzuEQA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K2ISWXN+BKtg4t2eIqoIqs+lN9eIqOnNizL64QzZzul8HJzGa+x7n3mJli0086oepK086SSufGUZeltxKW6Sgapxz7AxkAOrBv3fAEU8iSaR3CALqBfVBZ2fnDt8uXWYuk0980HpE1UkQs9dxCVX0BGq4lwKHefRBKcZL0gH7gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pydYdzAE; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746726548;
-	bh=ab6aAqtGy1bZZeuXPkx80OYbA7f4f4wlEr4vVLzuEQA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pydYdzAEjiKwaBd8gLFfMW2E43xIPJ3hW4D8+iOvCLJr7dZ/F+a95XZrHx9lcAOBS
-	 SvSvyp0Lead+vJRGjRPf/BFuwBi8O3o00dtNHjs2T63YrDRSepQbB/6Ou+03SXLxH9
-	 2Ti9R9S/8nADRwfJQSIyG4Ei6webZqcsIOkiEBq7ah+12ZZ9Mgy6z6N2TtYD9tGdGF
-	 N4BMUs34HX6UZAGHSohCuS7pBE5vBBPuC6aRkflgCc6wdxJYNrcSjDHxwR/hKPkL2K
-	 nyibhoXytwp/YRMozFE/qHC6GsbFsvsDUvsmgjIlWVEou8wDgIvhYwePQhSdb3A+cv
-	 fvr2nw4kILYAw==
-Received: from jupiter.universe (dyndsl-091-248-213-080.ewe-ip-backbone.de [91.248.213.80])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4A5DB17E0811;
-	Thu,  8 May 2025 19:49:08 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 749F8480048; Thu, 08 May 2025 19:49:07 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Thu, 08 May 2025 19:48:54 +0200
-Subject: [PATCH v2 5/5] arm64: dts: rockchip: add USB-C support for ROCK
- 5B+
+	s=arc-20240116; t=1746726542; c=relaxed/simple;
+	bh=Pkvl0wtVMUyRk12ulSDqU5JmAJ9uj9cTrxAK/pbd3FE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axb8UEpHmRFtaGeKwpIHyWFiTWAUWPopx9Z2qC56o5Y+i4SX+wIdLUstNYxZPj5EFdqc3qYZFeMBhZ+x103Cex2eWU36Wy8Jzwv54ZCHMy1J3U89XOuXX1ffq+rNgT/AOyMukIemAWONF/+wqsxuuHZaI8Kbo4rBtCafVPOxn7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbPZsZrg; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b10956398so471932e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 10:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746726538; x=1747331338; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RLVpkrLXml6z3gsyisKKJHxZUHvDSbaVwN7SOYZwBDU=;
+        b=BbPZsZrg2RAyXm0X4MztXNI89u9U5U1wuH5RxkqApumZhl9wUyrRFyIdeSqREqxEDN
+         I+yGzqyfNcZy0lr+cKBVU//x4eG0xWIPGtLuTB5L8qGe7xDeQYWZl1RI0KeQh76R5ahD
+         c1rBkPNxeo4VJO+VfPpxQQcHLOk6TVgxMZwsnXz/l8RtL9tuOkiANqD3yQwz+m6jz/id
+         5y7XMZ1J6/g1k5Qbk1Rw5mgw4cb4En3ZoVSpFWU+zCswWWDotRyCtyu3A4Pr0CVh3RcL
+         xjQLhm2Lyc8vnRkLbBFzjYgJqHvkTrHA99/fL549lm0YaqeQd/QdBFcr67CuHP+fYX7k
+         4b5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746726538; x=1747331338;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RLVpkrLXml6z3gsyisKKJHxZUHvDSbaVwN7SOYZwBDU=;
+        b=XrVbypFHnHGAev8NBb5BHDK+yX322kKNwVI7+ElqCRQjwId8EyTlJEp9rAU4WLu+2m
+         QtV091W+e8RBaL3LTAGuo6zMOp19YkmmHesx7mmzFDq+NM1PLMK/d9iaO3vxVXqhkLmj
+         x5+u65LlsSXQnXlKC0XPkVyk6/WtQtD+se7gjqYg0gGIqiQgJiRG24AcrJ+MxEma/dCy
+         w5nuVHJoMSy+mACgayWpUVpUY6eF3nawYgRDo5waDJAyGbF240LqaSxFQco9FUn1WyVu
+         MrBpHgXv+rZe3cM8Y/ZarhfZ9ev7bPAai3wq+sLNLCAcXOViNNUoAQsXP2AhXEfwMF3x
+         5mig==
+X-Forwarded-Encrypted: i=1; AJvYcCUlcElieXYzLycTg9qFn9Ac4HIXtVNNhgCzEyZoO51xnYtE2bN1H0a8s4HF5AiyEpukEHbtvDZanr7LVns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS/anbcg1R/qMCsbgFGAYYWM6TEnO0R8NMkSV6ywj/h3Yy+L0K
+	iM3OnAe5yqYPe7DeQe5VhPPHUicrGJAa4/Hp1XF1Tmcn4L0caWAC
+X-Gm-Gg: ASbGncugTswhZwQ6eFjzWGDChshldGttcG78wqTuyx/QPmtu1rj7d4JlofNKXKMuqpJ
+	iSXPy5DRk0IJBPN5uz170oKhlDt/BHFcDUJzcH2zXrmb/+p7Vsjc+KykLgjJYTMdi+DSixljEIg
+	5FS4Z94iEV3+EoiErg0ixDx2DZwsUUx3l7Rc1WSgYlyap9uq5R6MLkWHRvYm/uv9LB22B72u8wQ
+	7vUy4OwvSC8Wo3G5sATwVw5cYc4c9uS23VVMdTgbBkSPcQQd3Ug+/wJWJYfFWfVi/5sO/QOiokA
+	lmJkwDYg5WeBimshQCWbTtEDFwqvEIAQsRUMOnFxxUbIqbW+DUs7xpaqXLmM76Uyh1aj
+X-Google-Smtp-Source: AGHT+IHezibg8GmkS41ZH1NUhSUyDp2pWTDD5Cr9WM1wZKs3IJpCD+KsI2JrnLwYW9i6Hc+A6f/zsw==
+X-Received: by 2002:a05:6512:6286:b0:549:4ca4:504a with SMTP id 2adb3069b0e04-54fc6758da9mr67120e87.4.1746726538038;
+        Thu, 08 May 2025 10:48:58 -0700 (PDT)
+Received: from pc636 (host-95-203-26-194.mobileonline.telia.com. [95.203.26.194])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64ce953sm30346e87.256.2025.05.08.10.48.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 10:48:57 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 8 May 2025 19:48:55 +0200
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: akpm@linux-foundation.org, urezki@gmail.com, edumazet@google.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] mm/vmalloc: fix data race in show_numa_info()
+Message-ID: <aBzuh0qb1UPrT86s@pc636>
+References: <20250508165620.15321-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250508-rock5bp-for-upstream-v2-5-677033cc1ac2@kernel.org>
-References: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
-In-Reply-To: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel@collabora.com, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7862; i=sre@kernel.org;
- h=from:subject:message-id; bh=ab6aAqtGy1bZZeuXPkx80OYbA7f4f4wlEr4vVLzuEQA=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGgc7pMbQcTDAcrfXIVmLGh2WY7Fc08UDMBsL
- MJMInhM7LYmzokCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJoHO6TAAoJENju1/PI
- O/qa5GQP/2kUyL6+9dqKxVJ286w782CmymK+LslLrNBBVUvuegbAx737nXymg1niQqZUv2qLiwC
- XL4B/erg+DqV6ccPD2Bd0JVKf+X8Wr5KYsKqk1lXt6jOOMLTsE2im8hk52JzsIhz8Gg6g8l1smg
- QYIB1AiDaAfBKPN00SUnN32C+UDqN7Z5VEVQDFjfXP61KmC+xmkOPrzZwlckoUWeyKAGHRRpUVb
- oPfn5Z083GSpm+4gy3Ltto/ESauVf/kQcwM/146++/yC8+3P/dTiKsFwHaeS0r0KODAufYUCArR
- b73MDjlFUeoAIEfNGFeTcIjmghUZVrJ9d6FYXgM/Fe4+UyslbTcFQZcMlmOB3g/6l2RrrRdHTAw
- IzufS14vVJYq/AVAuKobO0BTai+P9wIHTQjIeXNewPzWWNxIvWHWp89BB1vivxrGV8lGsI12T1U
- AB3CU11sFxvw+6Yk4H6nch5l25sMPOD7uIX7FkGpxNRxsDDsGdbqBQCnepmFTIoKtU7tVjo2Rnl
- ticuQ1rGKMGPxsRr1Owj1ijnuupJsaab8ziAvASSj4oZgH6WE0VoY5tTWSS2fEVBMj7cJtOisJ0
- 1E+5EfqNOHrZMVY8aawt2lyj7d3xLg5EUjLfoWGVeOPjED+cLK5NSJj29Xp6NdEsyOhOnvlkxHH
- S/wAnEj/wwdm8Hp7HltcspQ==
-X-Developer-Key: i=sre@kernel.org; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508165620.15321-1-aha310510@gmail.com>
 
-Add hardware description for the USB-C port in the Radxa ROCK 5 Model B+
-This describes the OHCI, EHCI and XHCI USB parts, but not yet the DisplayPort
-AltMode, since the bindings for that are not yet upstream.
+On Fri, May 09, 2025 at 01:56:20AM +0900, Jeongjun Park wrote:
+> The following data-race was found in show_numa_info():
+> 
+> ==================================================================
+> BUG: KCSAN: data-race in vmalloc_info_show / vmalloc_info_show
+> 
+> read to 0xffff88800971fe30 of 4 bytes by task 8289 on cpu 0:
+>  show_numa_info mm/vmalloc.c:4936 [inline]
+>  vmalloc_info_show+0x5a8/0x7e0 mm/vmalloc.c:5016
+>  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
+>  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
+> ....
+> 
+> write to 0xffff88800971fe30 of 4 bytes by task 8287 on cpu 1:
+>  show_numa_info mm/vmalloc.c:4934 [inline]
+>  vmalloc_info_show+0x38f/0x7e0 mm/vmalloc.c:5016
+>  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
+>  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
+> ....
+> 
+> value changed: 0x0000008f -> 0x00000000
+> ==================================================================
+> 
+> According to this report,there is a read/write data-race because m->private
+> is accessible to multiple CPUs. To fix this, instead of allocating the heap
+> in proc_vmalloc_init() and passing the heap address to m->private,
+> vmalloc_info_show() should allocate the heap.
+> 
+> Fixes: a47a126ad5ea ("vmallocinfo: add NUMA information")
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Suggested-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+> v6: Change CONFIG_NUMA to must be check before doing any work related to the counters array.
+> - Link to v5: https://lore.kernel.org/all/20250508160800.12540-1-aha310510@gmail.com/
+> v5: Change heap to be allocated only when CONFIG_NUMA is enabled
+> - Link to v4: https://lore.kernel.org/all/20250508065558.149091-1-aha310510@gmail.com/
+> v4: Change the way counters array heap is allocated, per Andrew Morton's suggestion.
+>     And fix it to call smp_rmb() in the correct location.
+> - Link to v3: https://lore.kernel.org/all/20250507142552.9446-1-aha310510@gmail.com/
+> v3: Following Uladzislau Rezki's suggestion, we check v->flags beforehand
+>     to avoid printing uninitialized members of vm_struct.
+> - Link to v2: https://lore.kernel.org/all/20250506082520.84153-1-aha310510@gmail.com/
+> v2: Refactoring some functions and fix patch as per Eric Dumazet suggestion
+> - Link to v1: https://lore.kernel.org/all/20250505171948.24410-1-aha310510@gmail.com/
+> ---
+>  mm/vmalloc.c | 63 +++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 35 insertions(+), 28 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 3ed720a787ec..c1ea9713a1c0 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3100,7 +3100,7 @@ static void clear_vm_uninitialized_flag(struct vm_struct *vm)
+>  	/*
+>  	 * Before removing VM_UNINITIALIZED,
+>  	 * we should make sure that vm has proper values.
+> -	 * Pair with smp_rmb() in show_numa_info().
+> +	 * Pair with smp_rmb() in vread_iter() and vmalloc_info_show().
+>  	 */
+>  	smp_wmb();
+>  	vm->flags &= ~VM_UNINITIALIZED;
+> @@ -4914,28 +4914,29 @@ bool vmalloc_dump_obj(void *object)
+>  #endif
+>  
+>  #ifdef CONFIG_PROC_FS
+> -static void show_numa_info(struct seq_file *m, struct vm_struct *v)
+> -{
+> -	if (IS_ENABLED(CONFIG_NUMA)) {
+> -		unsigned int nr, *counters = m->private;
+> -		unsigned int step = 1U << vm_area_page_order(v);
+>  
+> -		if (!counters)
+> -			return;
+> +/*
+> + * Print number of pages allocated on each memory node.
+> + *
+> + * This function can only be called if CONFIG_NUMA is enabled
+> + * and VM_UNINITIALIZED bit in v->flags is disabled.
+> + */
+> +static void show_numa_info(struct seq_file *m, struct vm_struct *v,
+> +				 unsigned int *counters)
+> +{
+> +	unsigned int nr;
+> +	unsigned int step = 1U << vm_area_page_order(v);
+>  
+> -		if (v->flags & VM_UNINITIALIZED)
+> -			return;
+> -		/* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
+> -		smp_rmb();
+> +	if (!counters)
+> +		return;
+>  
+> -		memset(counters, 0, nr_node_ids * sizeof(unsigned int));
+> +	memset(counters, 0, nr_node_ids * sizeof(unsigned int));
+>  
+> -		for (nr = 0; nr < v->nr_pages; nr += step)
+> -			counters[page_to_nid(v->pages[nr])] += step;
+> -		for_each_node_state(nr, N_HIGH_MEMORY)
+> -			if (counters[nr])
+> -				seq_printf(m, " N%u=%u", nr, counters[nr]);
+> -	}
+> +	for (nr = 0; nr < v->nr_pages; nr += step)
+> +		counters[page_to_nid(v->pages[nr])] += step;
+> +	for_each_node_state(nr, N_HIGH_MEMORY)
+> +		if (counters[nr])
+> +			seq_printf(m, " N%u=%u", nr, counters[nr]);
+>  }
+>  
+>  static void show_purge_info(struct seq_file *m)
+> @@ -4962,8 +4963,12 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
+>  	struct vmap_node *vn;
+>  	struct vmap_area *va;
+>  	struct vm_struct *v;
+> +	unsigned int *counters;
+>  	int i;
+>  
+> +	if (IS_ENABLED(CONFIG_NUMA))
+> +		counters = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
+> +
+>  	for (i = 0; i < nr_vmap_nodes; i++) {
+>  		vn = &vmap_nodes[i];
+>  
+> @@ -4979,6 +4984,11 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
+>  			}
+>  
+>  			v = va->vm;
+> +			if (v->flags & VM_UNINITIALIZED)
+> +				continue;
+> +
+> +			/* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
+> +			smp_rmb();
+>  
+>  			seq_printf(m, "0x%pK-0x%pK %7ld",
+>  				v->addr, v->addr + v->size, v->size);
+> @@ -5013,7 +5023,9 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
+>  			if (is_vmalloc_addr(v->pages))
+>  				seq_puts(m, " vpages");
+>  
+> -			show_numa_info(m, v);
+> +			if (IS_ENABLED(CONFIG_NUMA))
+> +				show_numa_info(m, v, counters);
+> +
+>  			seq_putc(m, '\n');
+>  		}
+>  		spin_unlock(&vn->busy.lock);
+> @@ -5023,19 +5035,14 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
+>  	 * As a final step, dump "unpurged" areas.
+>  	 */
+>  	show_purge_info(m);
+> +	if (IS_ENABLED(CONFIG_NUMA))
+> +		kfree(counters);
+>  	return 0;
+>  }
+>  
+>  static int __init proc_vmalloc_init(void)
+>  {
+> -	void *priv_data = NULL;
+> -
+> -	if (IS_ENABLED(CONFIG_NUMA))
+> -		priv_data = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
+> -
+> -	proc_create_single_data("vmallocinfo",
+> -		0400, NULL, vmalloc_info_show, priv_data);
+> -
+> +	proc_create_single("vmallocinfo", 0400, NULL, vmalloc_info_show);
+>  	return 0;
+>  }
+>  module_init(proc_vmalloc_init);
+> --
+LGTM:
 
-Support for the ROCK 5B is prepared, but not exposed at the moment,
-since it results in unreliable boot behavior due to hard resets killing
-the supply voltage. Some further investigation and fixes in the kernel's
-Type-C Port Manager (TCPM) state machine is needed before exposing the
-port. The ROCK 5B+ has a dedicated port for powering the board and thus
-is not affected.
+Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- .../boot/dts/rockchip/rk3588-rock-5b-plus.dts      |  16 +++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    |  23 ++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi   | 137 +++++++++++++++++++++
- 3 files changed, 176 insertions(+)
+Thank you!
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts
-index 74c7b6502e4dda4b774f43c704ebaee350703c0d..4096cd853f9a909e4233d2c61a1fe5ee83904c4c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts
-@@ -99,12 +99,28 @@ pcie3x2_rst: pcie3x2-rst {
- 	};
- 
- 	usb {
-+		usbc_sbu_dc: usbc-sbu-dc {
-+			rockchip,pins = <0 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
- 		vcc5v0_host_en: vcc5v0-host-en {
- 			rockchip,pins = <1 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
- };
- 
-+&usbc0 {
-+	status = "okay";
-+};
-+
-+&usbdp_phy0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc_sbu_dc>;
-+	sbu1-dc-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
-+};
-+
- &vcc5v0_host {
- 	enable-active-high;
- 	gpio = <&gpio1 RK_PA1 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index 9407a7c9910ada1f6c803d2e15785a9cbd9bd655..ab0c572ea9234f373af4a47db93fc1786f0e6fbf 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -36,8 +36,20 @@ &uart6 {
- 	status = "okay";
- };
- 
-+&usbdp_phy0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc_sbu_dc>;
-+	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-+};
-+
- &pinctrl {
- 	usb {
-+		usbc_sbu_dc: usbc-sbu-dc {
-+			rockchip,pins = <0 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
- 		vcc5v0_host_en: vcc5v0-host-en {
- 			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
-@@ -50,3 +62,14 @@ &vcc5v0_host {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&vcc5v0_host_en>;
- };
-+
-+/*
-+ * Do not yet offer USB-C support on the Rock 5B. The current U-Boot
-+ * Linux setup is quite unstable and for many power-supplies needs multiple
-+ * hard resets to boot to userspace. Let's enable this once the issues
-+ * in the TCPM kernel code have been solved. Without this any automated
-+ * boot tests will run into problems.
-+ */
-+/delete-node/ &usbc0;
-+/delete-node/ &usb_host0_xhci;
-+/delete-node/ &usbdp_phy0;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-index 6052787d2560978d2bae6cfbeea5fc1d419d583a..314fdc0c1c20b25b0fdc5254f3b090586c169a00 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/soc/rockchip,vop2.h>
-+#include <dt-bindings/usb/pd.h>
- #include "rk3588.dtsi"
- 
- / {
-@@ -92,6 +93,15 @@ rfkill-bt {
- 		shutdown-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	vcc12v_dcin: regulator-vcc12v-dcin {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc12v_dcin";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
- 	vcc3v3_pcie2x1l0: regulator-vcc3v3-pcie2x1l0 {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -146,6 +156,19 @@ vcc5v0_sys: regulator-vcc5v0-sys {
- 		regulator-boot-on;
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc12v_dcin>;
-+	};
-+
-+	vbus5v0_typec: vbus5v0-typec {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio2 RK_PB6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vbus5v0_typec_en>;
-+		regulator-name = "vbus5v0_typec";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc5v0_sys>;
- 	};
- 
- 	vcc_1v1_nldo_s3: regulator-vcc-1v1-nldo-s3 {
-@@ -309,6 +332,67 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4m1_xfer>;
-+	status = "okay";
-+
-+	usbc0: usb-typec@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <RK_PB4 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbc0_int>;
-+		vbus-supply = <&vbus5v0_typec>;
-+		/*
-+		 * When the board is starting to send power-delivery messages
-+		 * too late (5 seconds according to the specification), the
-+		 * power-supply reacts with a hard-reset. That removes the
-+		 * power from VBUS for some time, which resets te whole board.
-+		 */
-+		status = "fail";
-+
-+		usb_con: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			power-role = "sink";
-+			try-power-role = "sink";
-+			op-sink-microwatt = <1000000>;
-+			sink-pdos =
-+				<PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>,
-+				<PDO_VAR(5000, 20000, 5000)>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					usbc0_role_sw: endpoint {
-+						remote-endpoint = <&dwc3_0_role_switch>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					usbc0_orien_sw: endpoint {
-+						remote-endpoint = <&usbdp_phy0_orientation_switch>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					dp_altmode_mux: endpoint {
-+						remote-endpoint = <&usbdp_phy0_dp_altmode_mux>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -481,6 +565,16 @@ pcie3_vcc3v3_en: pcie3-vcc3v3-en {
- 			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	usb {
-+		usbc0_int: usbc0-int {
-+			rockchip,pins = <3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		vbus5v0_typec_en: vbus5v0-typec-en {
-+			rockchip,pins = <2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &pwm1 {
-@@ -866,6 +960,14 @@ &uart2 {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
- &u2phy1 {
- 	status = "okay";
- };
-@@ -893,6 +995,27 @@ &u2phy3_host {
- 	status = "okay";
- };
- 
-+&usbdp_phy0 {
-+	mode-switch;
-+	orientation-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy0_orientation_switch: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc0_orien_sw>;
-+		};
-+
-+		usbdp_phy0_dp_altmode_mux: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&dp_altmode_mux>;
-+		};
-+	};
-+};
-+
- &usbdp_phy1 {
- 	status = "okay";
- };
-@@ -905,6 +1028,20 @@ &usb_host0_ohci {
- 	status = "okay";
- };
- 
-+&usb_host0_xhci {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		dwc3_0_role_switch: endpoint {
-+			remote-endpoint = <&usbc0_role_sw>;
-+		};
-+	};
-+};
-+
- &usb_host1_ehci {
- 	status = "okay";
- };
-
--- 
-2.47.2
-
+--
+Uladzislau Rezki
 
