@@ -1,78 +1,105 @@
-Return-Path: <linux-kernel+bounces-640497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EBCAB0570
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:41:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6352CAB0576
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06BEE3A6AC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3E64C2244
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 21:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8C422423C;
-	Thu,  8 May 2025 21:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7FC214A8A;
+	Thu,  8 May 2025 21:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Amp97yM9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUDJQ7TM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FC622331E;
-	Thu,  8 May 2025 21:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670EC1CAA6E;
+	Thu,  8 May 2025 21:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746740465; cv=none; b=KOCItBetW1eGB48lC5fXlA1mxDRARkutD8zqWy47ch9eEDpRDfTMSscPKS3ZBxxmf61EeZY4lKaGZr57Xg3Puag58uvqpPD/BinKRNf+kQu5Re9gxpcwTHf9Cd4aH/O/uueluUeho4CysWMSQdQrGIUoS+RY8HWRFIeIZbWYfsY=
+	t=1746740640; cv=none; b=h5wEi2Z6QbVWL1XNSdXBO1GWe+enme67MKMDsUcXWK/bG9+Aubu/wLgXb6zlFWkkMsRZsKje3cvfeYfI+J5Tmm39s6yd5GhV/YgjxSKO1OiQh6QkeZXr0CslCHKm5wOZKc9VaBLi91uJVLXX7TdpwWWsh29aGEzhnuuUuJGEEc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746740465; c=relaxed/simple;
-	bh=eWLDivHb/Zs+9pB7oUXg8LbBxLoPvxtOqcSg0bj0akQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LDVKZcNHv1F5OemIIwJ7/z6geZCFoalx2czGMmVaPnjSW/2XSzukoEgIzME8rWu7Cu5cnnqN94qY5SSXK970Vo/Uk0wKTRKLEj//Oa06xEyjGbqU/3gPO2fIKwMyxE5sE95QKWy1zajmUV+RAxMEvqEr6QnCU3hgJP8crSfnq/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Amp97yM9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC3C2C4CEE7;
-	Thu,  8 May 2025 21:41:04 +0000 (UTC)
+	s=arc-20240116; t=1746740640; c=relaxed/simple;
+	bh=2XM0ycqF9U6sa+FgoRGJnyBhv3k0LGN8UkGCg3UhoMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nn1pq8FvM/TVSflWNsVaZXyDeedCLmY8AS3iEL11y5zIQoCP83R3BU4DFdPiL1BEtlT9w5VDpIfLMUwv3y4Mgl2RJwJA5pbhiORzS5bxkk9kAOMEYq7TMIOJ2n5+ZYwK3WKRSevS86LfYkT3h/POawsOsSAbn5WSGQ4upipW1f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUDJQ7TM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED364C4CEE7;
+	Thu,  8 May 2025 21:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746740464;
-	bh=eWLDivHb/Zs+9pB7oUXg8LbBxLoPvxtOqcSg0bj0akQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Amp97yM98EcKIJtug5LfW9weVRAZBgbS7ff8v6KVUVAypNuQhxEWbbz9spIGM24iI
-	 4WKpcR02nsis0Ls2i3ZUN7JnHEqJoKuXyAlgL2TuG/dCuOrCQLOcMOZ9mTccShU9nA
-	 iirYXv9JKPy+SmXlhXK9wEPVgWHdBlYgX30nBREwTyso5dCdcIPkL/oA7jGcGF27zY
-	 KCbEVTulxKkHsYWlCgFsImUJUTfNGHSgWQeBveSUH4PifUs0MSkYFXkgg9mnDvPVqO
-	 g/zws+2MR8jXhmdOi8httkWFgF9gHMQFRj62JoSi1Ibaf13PK3/HhHODcAROlWbNC6
-	 3aLG4ApShPOeQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE95380AA70;
-	Thu,  8 May 2025 21:41:44 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <pdixxswan4bhmajjvnczxa2nxh5tm52itlttopnuk3w6lzv3ms@inq7k7aws2rg>
-References: <pdixxswan4bhmajjvnczxa2nxh5tm52itlttopnuk3w6lzv3ms@inq7k7aws2rg>
-X-PR-Tracked-List-Id: <linux-bcachefs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <pdixxswan4bhmajjvnczxa2nxh5tm52itlttopnuk3w6lzv3ms@inq7k7aws2rg>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-08
-X-PR-Tracked-Commit-Id: 8e4d28036c293241b312b1fceafb32b994f80fcc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9c69f88849045499e8ad114e5e13dbb3c85f4443
-Message-Id: <174674050327.3050618.15775685558013664884.pr-tracker-bot@kernel.org>
-Date: Thu, 08 May 2025 21:41:43 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1746740640;
+	bh=2XM0ycqF9U6sa+FgoRGJnyBhv3k0LGN8UkGCg3UhoMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUDJQ7TMLaRB9cnLeSgzoWJEtdQBcpXGxXX3iQdgb/fgkky2ebvtCYpZLmdhci48l
+	 TmnoOj3mUAygZZYoVHtWPbVtJwha3ocNCa/+16PP4BWZOZW1jFnjzAOEKwhKUi5L2y
+	 5zWHAGai3TXN2tDplVbRSkVB5waYHoWYunAg1hrBW2YRVARQ0IcwrL/oEiIppnRDXV
+	 0Ukl+4He2OzrLJSIcN6FXMY4Qsf7zMhkPe1AD/fH/BtyfpPebsNz2SleZtTATnaFL+
+	 fxXp1GUBTm/t/5K6/IogD15G9TC1NKOE+7iJWNckXd3MPJc5pXgm41L9zNDVRo1RWm
+	 lGJFmu4+Ycc7Q==
+Date: Thu, 8 May 2025 23:43:57 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip: perf/core] perf: Fix irq work dereferencing garbage
+Message-ID: <aB0lnW68rLDtuCkZ@pavilion.home>
+References: <174670046919.406.15885032121099672652.tip-bot2@tip-bot2>
+ <aB0B2xaHWkzCjC_s@pavilion.home>
+ <20250508194605.GA8552@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250508194605.GA8552@noisy.programming.kicks-ass.net>
 
-The pull request you sent on Thu, 8 May 2025 15:58:00 -0400:
+Le Thu, May 08, 2025 at 09:46:05PM +0200, Peter Zijlstra a écrit :
+> On Thu, May 08, 2025 at 09:11:23PM +0200, Frederic Weisbecker wrote:
+> > Le Thu, May 08, 2025 at 10:34:29AM -0000, tip-bot2 for Frederic Weisbecker a écrit :
+> > > The following commit has been merged into the perf/core branch of tip:
+> > > 
+> > > Commit-ID:     88d51e795539acd08bce028eff3aa78748b847a8
+> > > Gitweb:        https://git.kernel.org/tip/88d51e795539acd08bce028eff3aa78748b847a8
+> > > Author:        Frederic Weisbecker <frederic@kernel.org>
+> > > AuthorDate:    Mon, 28 Apr 2025 13:11:47 +02:00
+> > > Committer:     Peter Zijlstra <peterz@infradead.org>
+> > > CommitterDate: Fri, 02 May 2025 12:40:40 +02:00
+> > > 
+> > > perf: Fix irq work dereferencing garbage
+> > > 
+> > > The following commit:
+> > > 
+> > > 	da916e96e2de ("perf: Make perf_pmu_unregister() useable")
+> > > 
+> > > has introduced two significant event's parent lifecycle changes:
+> > > 
+> > > 1) An event that has exited now has EVENT_TOMBSTONE as a parent.
+> > >    This can result in a situation where the delayed wakeup irq_work can
+> > >    accidentally dereference EVENT_TOMBSTONE on:
+> > > 
+> > > CPU 0                                          CPU 1
+> > 
+> > This is missing the most important (and boring) part of the changelog :-)
+> > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > 
+> > And I suspect some automatic check will also yell at some point at missing Sob.
+> 
+> Doh, script fail :/
+> 
+> Let me go fix.
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-08
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9c69f88849045499e8ad114e5e13dbb3c85f4443
-
-Thank you!
+Looks good, thanks!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Frederic Weisbecker
+SUSE Labs
 
