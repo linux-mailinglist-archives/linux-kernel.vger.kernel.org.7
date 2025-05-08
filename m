@@ -1,169 +1,121 @@
-Return-Path: <linux-kernel+bounces-639307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0A3AAF5C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EB2AAF5A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1AAC463216
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8899A466811
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66672627E5;
-	Thu,  8 May 2025 08:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497E0253959;
+	Thu,  8 May 2025 08:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y3ligE1m"
-Received: from mailout1.w2.samsung.com (mailout1.w2.samsung.com [211.189.100.11])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="P5aiKLZZ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F8C262FDE
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.189.100.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E57253942;
+	Thu,  8 May 2025 08:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693299; cv=none; b=oyq+aGmc7Ck7Cwrhb+h/Q3EMK3FTfNcv4DXolOYPSAgmo4qSAB3kRAkzSge6ucunbvTOzJSt3kraF4P9MpJl9U1jLfy4f4ZUWlre3nb+3nbWVh3pcMvYoJZiMRnO1BymgePMjj66JB8iwkh677T31ll9GE0fyws0T2TvPev3g7o=
+	t=1746692710; cv=none; b=RyjA7QWsiPVJJz4WtSkMTgIomBlJP1z6KWj8O4Uf0b/d1x2lNSXprntdcNGEt8zoQbXlJpYJNtNs9u0NLxaJQXJ6vAZ3sdrlawLKm6VaDOXcEgJ57FQS/sAZFzsH3mvEpNvTpwzWOU9bjuKgadscZ/UX3AHXKz8NBqH0H5PGSVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693299; c=relaxed/simple;
-	bh=fPq1khtFjMqgEkGiH2cq56ZqZMoJRgVj0jQyxNs8Puw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Jnrh5clXVVI1UWF+88q8zpaR/zcpB9uWbDCvoP2LwJ1gQX7U44hLlfzVfB3C5CnDbtCe7bRjAck8GnYCHRtpQLRXWlXdRIlwd8JNLN/JnM8v0xXtSNTfiww1opqgAGTlCocf738paJ2W7tEJy0m7oNILfaaPPYeh8GfmvhvlRx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y3ligE1m; arc=none smtp.client-ip=211.189.100.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
-Received: from uscas1p2.samsung.com (unknown [182.198.245.207])
-	by mailout1.w2.samsung.com (KnoxPortal) with ESMTP id 20250508082455usoutp0112b6fa97ed05e55b44f1e5b3cc683d13~9f8CDpCqE0052200522usoutp01h;
-	Thu,  8 May 2025 08:24:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w2.samsung.com 20250508082455usoutp0112b6fa97ed05e55b44f1e5b3cc683d13~9f8CDpCqE0052200522usoutp01h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746692695;
-	bh=xFWdlrWsOanX/NVVNVan2uCPYqrJFZdos0xlcyL5mUY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Y3ligE1mVdi0oLVYyHkkKGO4q0YE6QtQf9y4FkwyTxjUNj3LbzHuupM4T9Jk+RO4N
-	 hkCrb15Q5bx/JvRn/aFXpSFlrZYv1jWC+EHqZyaSVcZ7KWBoWCK5FE+63KS0/V4sKs
-	 R35qrHSNYGiBzwbsnNkyDuwNd0+zIJfhUMp83UFQ=
-Received: from ussmtxp1.samsung.com (u136.gpu85.samsung.co.kr
-	[203.254.195.136]) by uscas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250508082454uscas1p29b50ff4d2f31a53e732cebf11535a549~9f8BAo3ls1112411124uscas1p2B;
-	Thu,  8 May 2025 08:24:54 +0000 (GMT)
-Received: from ATXPVPPTAGT04.sarc.samsung.com (unknown [105.148.161.8]) by
-	ussmtxp1.samsung.com (KnoxPortal) with ESMTP id
-	20250508082453ussmtxp18e1b1380fd7c17414cdb8bad396b2f53~9f8A1OPYH1568415684ussmtxp1X;
-	Thu,  8 May 2025 08:24:53 +0000 (GMT)
-Received: from pps.filterd (ATXPVPPTAGT04.sarc.samsung.com [127.0.0.1]) by
-	ATXPVPPTAGT04.sarc.samsung.com (8.18.1.2/8.18.1.2) with ESMTP id
-	54876rUv037957; Thu, 8 May 2025 03:24:53 -0500
-Received: from webmail.sarc.samsung.com ([172.30.39.9]) by
-	ATXPVPPTAGT04.sarc.samsung.com (PPS) with ESMTP id 46df5w3mty-1; Thu, 08 May
-	2025 03:24:53 -0500
-Received: from sarc.samsung.com (105.148.145.5) by
-	au1ppexchange01.sarc.samsung.com (105.148.32.81) with Microsoft SMTP Server
-	(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
-	15.2.1544.4; Thu, 8 May 2025 03:24:51 -0500
-Date: Thu, 8 May 2025 11:24:43 +0300
-From: Pantelis Antoniou <p.antoniou@partner.samsung.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Artem Krupotkin
-	<artem.k@samsung.com>, Charles Briere <c.briere@samsung.com>, "Wade
- Farnsworth" <wade.farnsworth@siemens.com>
-Subject: Re: [PATCH 0/1] Fix zero copy I/O on __get_user_pages allocated
- pages
-Message-ID: <20250508112443.49ff0414@sarc.samsung.com>
-In-Reply-To: <20250507145018.385c0a090a0d61c06e985ad9@linux-foundation.org>
-Organization: SARC
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746692710; c=relaxed/simple;
+	bh=R/ujftTvDSxZT7SUxvwn8YUEzHNLlJJdNqXWC5s1sic=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BJTfu4RiZIJQQ2kBXqPB+qlCiwnfguWpbp70YEePHUEyzCzifGmLesFbcu+SUJnlbYvGm0yIymdTqpYdnFwmzFbio6vobRs8o3gvOD5TeOk1aFhGFeDmAHLG4CcWk+hSQ5lMiZsPZoKUQQRPH10PzMONOwgrdquUnixsFf8nh9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=P5aiKLZZ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746692705;
+	bh=tF2nSw6Rx1Cky8nje4G/+/NggWFUsobLRLaV2doiY9o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=P5aiKLZZP3eSSGF0b2FgYJep9PrebglpUC6ZW0tMRDzwyH9hHVceoiqLNVUsWDeYy
+	 uGWXZz0hw5ZxT6pGW07RPXcNLE721byJwBqN11gB9tBAeqQwNOmMGCtt5hEJKB1xWO
+	 xxLE7F1Lx0kgEzN7YgiAyj/EqQVOI1XiN/2PLHyDuVkRqKTRY7UFWRhLdBT/tyTKci
+	 20HunbA7xbeuWB8U3rQQMnosFNgTZ/1jylpE2trnx0vhhxdNs8Fd8JF91rSDhuU+/F
+	 djjvi/hEM3aQnQXnGLmDrbp2YXMk2AevnHCL1cIUTjZuhFhuSNoiz9gUbASCexk/y4
+	 yHpLjA2x0fbsQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZtQDK0pqLz4xQN;
+	Thu,  8 May 2025 18:25:04 +1000 (AEST)
+Date: Thu, 8 May 2025 18:25:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge all the trees
+Message-ID: <20250508182504.418552ef@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: au1ppexchange04.sarc.samsung.com (105.148.32.84) To
-	au1ppexchange01.sarc.samsung.com (105.148.32.81)
-X-CFilter-Loop: Reflected
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/urb/JcHdKde0NaKrQd9mbfD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/urb/JcHdKde0NaKrQd9mbfD
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: 4PeEZ1aymWH1pEADgeqC-xh1MxcKHdE7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDA3MyBTYWx0ZWRfXwC7v/t1idwe7
-	xe0rUmgQIin4dSxD3sdt8qMjeej6uOx7+D84agRnXQeM4q13fSM2DeCbzgjnY7hsvn1w7uKvgyP
-	mWNyrwpMH8GJiKdbveBHTQyePuQ5a8kVc2adKAPmafRneMhtz3kZx66UcayTujKVFaeMiGdizFg
-	1YcMNpXJgwz38+OVbA1DDtI180Cr/Tf1LmfzkNVZ+CvRrJ/FGpin8fO+PwQC7ClBCdwSKHYIOFT
-	O7Mn39zhBbauGyFdKLhRWQwbjcdf9srM2ReYgtg7+87kATYEMDBJK8OZz9T/vpjVY7Ioufzoesj
-	VTd8XfUS/UdJLA/A8iOWgyPoGbqJqbdotgoZLwAa4oVu0dEpndd6AuI/uZTrIG7U2FpGFeoXH9w
-	qtcMf2/5
-X-Proofpoint-ORIG-GUID: 4PeEZ1aymWH1pEADgeqC-xh1MxcKHdE7
-X-Proofpoint-Virus-Version: vendor=baseguard
-	engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
-	definitions=2025-05-08_02,2025-05-07_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam
-	score=0 spamscore=0 adultscore=0 mlxscore=0 malwarescore=0 bulkscore=0
-	priorityscore=1501 impostorscore=0 suspectscore=0 mlxlogscore=809
-	lowpriorityscore=0 phishscore=0 clxscore=1015 classifier=spam adjust=0
-	reason=mlx scancount=1 engine=8.12.0-2504070000 definitions=main-2505080073
-X-CMS-MailID: 20250508082454uscas1p29b50ff4d2f31a53e732cebf11535a549
-X-CMS-RootMailID: 20250507154119uscas1p2a4055d14ab111fdb94a6378789c38d9d
-References: <CGME20250507154119uscas1p2a4055d14ab111fdb94a6378789c38d9d@uscas1p2.samsung.com>
-	<20250507154105.763088-1-p.antoniou@partner.samsung.com>
-	<20250507145018.385c0a090a0d61c06e985ad9@linux-foundation.org>
 
-On Wed, 7 May 2025 14:50:18 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+Hi all,
 
-> On Wed, 7 May 2025 10:=E2=80=8A41:=E2=80=8A04 -0500 Pantelis Antoniou <p.=
-=E2=80=8Aantoniou@
-> partner.=E2=80=8Asamsung.=E2=80=8Acom> wrote: > Updates to network filesy=
-stems
-> enabled zero copy I/O by using the > netfslib common accessors.
-> Updates by whom? Are all the people who=20
-> On Wed, 7 May 2025 10:41:04 -0500 Pantelis Antoniou
-> <p.antoniou@partner.samsung.com> wrote:
->=20
-> > Updates to network filesystems enabled zero copy I/O by using the
-> > netfslib common accessors.
->=20
-> Updates by whom?  Are all the people who need to know about this being
-> cc'ed here?
->=20
+In my after merge build tests, today's linux-next build (htmldocs)
+failed like this:
 
-I think the first cover letter contains that information.
+make[1]: Entering directory '/home/sfr/next/htmldocs'
+  PARSE   include/uapi/linux/dvb/ca.h
+  PARSE   include/uapi/linux/dvb/dmx.h
+  PARSE   include/uapi/linux/dvb/frontend.h
+  PARSE   include/uapi/linux/dvb/net.h
+  PARSE   include/uapi/linux/videodev2.h
+  PARSE   include/uapi/linux/media.h
+  PARSE   include/uapi/linux/cec.h
+  PARSE   include/uapi/linux/lirc.h
+Using alabaster theme
+Using Python kernel-doc
+/home/sfr/next/next/Documentation/virt/kvm/x86/intel-tdx.rst:255: WARNING: =
+Footnote [1] is not referenced. [ref.footnote]
 
-> > One example of that is the 9p filesystem which is commonly used in
-> > qemu based setups for sharing files with the host.
-> >=20
-> > In our emulation environment we have noticed failing writes when
-> > performing I/O from a userspace mapped DRM GEM buffer object.
-> > The platform does not use VRAM, all graphics memory is regular DRAM
-> > memory, allocated via __get_free_pages
->=20
-> We should identify which kernel version(s) should be patched, please.=20
-> 6.16-rc1?  6.15?  -stable?
->=20
+Sphinx error:
+Sphinx is unable to load the master document (/home/sfr/next/next/Documenta=
+tion/index.rst). The master document must be within the source directory or=
+ a subdirectory of it.
+make[3]: *** [/home/sfr/next/next/Documentation/Makefile:123: htmldocs] Err=
+or 2
+make[2]: *** [/home/sfr/next/next/Makefile:1804: htmldocs] Error 2
+make[1]: *** [/home/sfr/next/next/Makefile:248: __sub-make] Error 2
+make[1]: Leaving directory '/home/sfr/next/htmldocs'
+make: *** [Makefile:248: __sub-make] Error 2
 
-The first occurance of the bug was on internal kernel tree that was
-based on 6.8.
+I have no idea what caued this :-(
 
-This patch is against 6.15-rc5.
+--=20
+Cheers,
+Stephen Rothwell
 
-> I often make these decisions but in this case I have far too little
-> information to be able to do that.
->=20
+--Sig_/urb/JcHdKde0NaKrQd9mbfD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-No worries.
+-----BEGIN PGP SIGNATURE-----
 
-I see that this is picked up for mm unstable as is? Do you want
-me to generate a single patch merging the info of the cover letter
-and the single patch?
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgcamAACgkQAVBC80lX
+0Gyzuwf+K1p0AKnitC3m4zxI0SxuMDDqtyes/ddwlPt5iTTq3MaR/0g8m3Vz0Vla
+S/m3t7hlLlH3YYCDo2pnzeczfoXoMFD01VV1IDGX9Z4r2znt7TgOghy0FJD2CCvu
+0x3I1ZdNm/rb0Ah8TAQqTqyCBL5CIkHHJygjYh60CMuIO/osm0/p/7ymrLoyXqVw
+Fg794Blt1ErhiQEYkBphjiT7oYMVyrb88i5sqRH0e+9e1resXIdu/dk1R0QiQR5E
+7aFRi6LVP4oQG5I0yx2gmm/kTZhFe/kZw4tXecd1ptRag3Q/gdt1p7yvzJOlGp3n
+CLwq6wVHnwI+6QFMU6wgBkG5sbpsDg==
+=8BZn
+-----END PGP SIGNATURE-----
 
-The reason for the split is that I was not sure if you needed to
-have all the sordid details included in the applied patch.
-
-FWIW, we also have a buildroot patch that exhibits the problem
-in a much simplified way that what the original bug report came about.
-I don't think its appropriate content for the list, but I can
-share if anyone is curious about it.
-
-> Thanks.
-
-Regards
-
--- Pantelis
+--Sig_/urb/JcHdKde0NaKrQd9mbfD--
 
