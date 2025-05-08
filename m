@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-640547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6168AB0652
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AAAAB0653
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732E79E7D61
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB1A3BC04E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19736235046;
-	Thu,  8 May 2025 23:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0658522A811;
+	Thu,  8 May 2025 23:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KaLkK3Pd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j3bMqfmx"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1C9230BD9;
-	Thu,  8 May 2025 23:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085191DD525
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 23:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746745379; cv=none; b=IptGYMfeMbKzSlAsdPPTZdYZgJejo0jTKgL61XTE5rA692pUgnK0r8x+sYqmmVrtruxHum4oquL8fzP3uZn/9+3od1/x9fepRK4MR+BzkB2iNpUB3KxJRHHlIuQpcDP5OqrMmDHKhGUrIQ5xL/R7I97lQhSVN9sgJcRZnbHSSyQ=
+	t=1746745461; cv=none; b=BALlyIm4Zh+kNL2jFP1DQxV5HpwqWmNmwIPzj7RobJEmnKoeRvzMVvxKxbEiSJOf4b5DOXt0kL8LffdDjjivq/u/GII3+8AXTMwhn+uajEA7XY0YdWv0VdQI+NNmFiuDkIHsn9hgZHegIVwWy0xum6fTlK5jJDolVlEwpRTtBXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746745379; c=relaxed/simple;
-	bh=0LewRqX/PJo7QMm4ckzta/aZaj92bTJPV6ejYkp+qf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HSm/K3U+QfYZOlPBA3GFZ9pWPkjn/mRrNXrDsEb2FQfA3oOzxm7vlBb6g2Ijl8sWMzdGSf5uk0oSktve2okCjjFjwbamo1BdKFVX9nCfhzYwd5ouSduTjvM3Mf0jdMtoh9gwz+HfSO2THtvFh93ROK1k/wOt/wNedCP2JNxogvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KaLkK3Pd; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746745379; x=1778281379;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0LewRqX/PJo7QMm4ckzta/aZaj92bTJPV6ejYkp+qf4=;
-  b=KaLkK3PdE+MvVJJqNiGvCXYPbHwpQmb2CJhR4r+m8Zf1SBzWBz9aM1bz
-   rROfpo8TSb3/RjW8vq7elrWMfrCKJKwYLnT0umJEEMGz4/pJ05Pp1UPrh
-   QPFsIL2VLHC0NsXPaPPQsAZT+mwC0uJQC5lWQGGmROgMmt42lto7CWAo2
-   kz+Uutt2MiS5LInSs55ajhwIJjZqvUHdSOr7yW1oFqBJmYJUPqAxCLgsz
-   3ClBf7e3Dko/SJ8fgzanyoxpSgvlVSlFW4JTEyzzSKU6Th28jnL/dQnAC
-   66PZlqFrBlW141PK27VkbLHl3sCwJxznw4xeyESLTze6wYs4Rx7ALvQHX
-   g==;
-X-CSE-ConnectionGUID: w3FKJealT+KLWeX5EQNZHg==
-X-CSE-MsgGUID: XP8JFaNsQZetPgfFKLWzBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="59552603"
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="59552603"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 16:02:54 -0700
-X-CSE-ConnectionGUID: 1f8XwX45QDiIaMMQzfGDGA==
-X-CSE-MsgGUID: mWNAqzexQkaT8vjhtoTZ6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="136931261"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 16:02:54 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v3 5/5] Documentation: admin-guide: pm: Add documentation for die_id
-Date: Thu,  8 May 2025 16:02:42 -0700
-Message-ID: <20250508230250.1186619-6-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250508230250.1186619-1-srinivas.pandruvada@linux.intel.com>
-References: <20250508230250.1186619-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1746745461; c=relaxed/simple;
+	bh=erJZlkOCNdbv/CM5/d8Y8YwzyG2lJFJShmUNyHD+VF4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=tZYqFNioNYTauyaUIeyUeXwQzUK7Pr9cJ4SKSwT5V3ZarIlTvVV9UPhzQx+hE7mjNYS3Rp/09R9HefiG+JZ4ObBPs5ecbcNIggKopGYABzKQxiH6kGZnTUvHsSkY2z7oPvkuHbWXcMwKFcE71UyAxiS8N3dsO9txYiu7S34Ddhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j3bMqfmx; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30ac9abbd4bso2341206a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 16:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746745459; x=1747350259; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SM2XJe47CN2ZOM/67xIABCaNM4TaX2ab0ZhL0Ce0aCM=;
+        b=j3bMqfmx5fU0R+dgFFAenFaArJlR8hbgChzkfW0iDpEPezHodQ+mI/fILf9ssToqqq
+         hrduayTltGi0O6QTcKX6pUvA8Hmvgan5JZYBXsAchEY0ZMtAr8fwAhBIuqCVm8fG5EdY
+         JRr7UuAaAKbfTRiQ58mCZzTqqrX3C1/1RAavRvBlwwwOwXxbfRY1wCoBhdMgdd8LYt8v
+         7ydndUJZlZPLsw+ZOLU643OuVZxqU5jj6lq3yXrC4mAsjHWmrf753vd2no+f+pnsdwn4
+         +8NI94MI6JfEcXsKmsC4kHsQRtro/m+H7n3dJUjFY9vki+uVmfeuRvLlpN7inBinLlE/
+         DeiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746745459; x=1747350259;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SM2XJe47CN2ZOM/67xIABCaNM4TaX2ab0ZhL0Ce0aCM=;
+        b=vQWvK67/BpCUYWljS734OKZ1bWSYNfxHKmOntdaqs2vNp4Lwpb+H8vFT6MdltppGTx
+         3RdiRXThKGhGAneVQwcA/WphqqLgyVzdYShANrsldz5mQ2MlQVeNYP9m+jeMQ8/EpU+S
+         GaBY6ZhvPInk/ufmVqLf+UMSJ/Oxb73H4XtzKFEmlmH0sId6QD49tuea4tuB6CrZDU/e
+         GGj7nMgp1MOLOCInz9E4hN+Wyuy42uFQ+b98p5gzOU1q9C9z06/kqKryR/2bRZh3eCC3
+         bW2wTu0LzoulE2BQ9V9zObnSYZNF7K4aUNNQKd91gHXfTeXmbDMYRL7RR4mSUaKpDTFc
+         5DEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnRrScSKfX3tGnGOuaS4+EVpHeuI8arh/rJqkUThPa4yTNtXgOQ8haXYC06PCe0eW9FBDRlxiRh7rYj1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBjdmuIvtP/+ur+8Adve4Dv1sDVEn4f5jVp8h/W8QEV67g9kuO
+	gXAJ9b+qUnWcUxmGFaouYiNWjvHl21RpV98ZI99uasjgHMlIDQTNEximGHl0Me+dFKLTcenGiJE
+	2tA==
+X-Google-Smtp-Source: AGHT+IF08fdBrYOn5rB4GiEOPUWwLd/6PgVtzInb7iYf7JX8cBQEQJ4TliUxH0+T2JuJCblZNQq5ljz3XKs=
+X-Received: from pjuw5.prod.google.com ([2002:a17:90a:d605:b0:301:4260:4d23])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3848:b0:2ff:6f88:b04a
+ with SMTP id 98e67ed59e1d1-30c3d3e8509mr2094760a91.15.1746745459276; Thu, 08
+ May 2025 16:04:19 -0700 (PDT)
+Date: Thu,  8 May 2025 16:04:09 -0700
+In-Reply-To: <20250506012251.2613-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250506012251.2613-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.49.0.1015.ga840276032-goog
+Message-ID: <174674537050.1513194.17959981986179733390.b4-ty@google.com>
+Subject: Re: [PATCH][v2] KVM: Remove obsolete comment about locking for kvm_io_bus_read/write
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lirongqing <lirongqing@baidu.com>
+Content-Type: text/plain; charset="utf-8"
 
-Add documentation to describe die_id attribute.
+On Tue, 06 May 2025 09:22:51 +0800, lirongqing wrote:
+> Nobody is actually calling these functions with slots_lock held, The
+> srcu_dereference() in kvm_io_bus_read/write() precisely communicates
+> both what is being protected, and what provides the protection. so the
+> comments are no longer needed
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
-v3:
-Remove spaces before "when" and replace with tab.
-v2:
-Change "attributes" to "attribute"
+Applied to kvm-x86 misc, thanks!
 
- .../admin-guide/pm/intel_uncore_frequency_scaling.rst        | 5 +++++
- 1 file changed, 5 insertions(+)
+[1/1] KVM: Remove obsolete comment about locking for kvm_io_bus_read/write
+      https://github.com/kvm-x86/linux/commit/37d8bad41d2b
 
-diff --git a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-index 84608dad84bd..d367ba4d744a 100644
---- a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-+++ b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-@@ -91,6 +91,11 @@ Attributes in each directory:
- ``domain_id``
- 	This attribute is used to get the power domain id of this instance.
- 
-+``die_id``
-+	This attribute is used to get the Linux die id of this instance.
-+	This attribute is only present for domains with core agents and
-+	when the CPUID leaf 0x1f presents die ID.
-+
- ``fabric_cluster_id``
- 	This attribute is used to get the fabric cluster id of this instance.
- 
--- 
-2.49.0
-
+--
+https://github.com/kvm-x86/linux/tree/next
 
