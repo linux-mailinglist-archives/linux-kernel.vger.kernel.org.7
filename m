@@ -1,52 +1,79 @@
-Return-Path: <linux-kernel+bounces-640680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CF2AB07C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B23AB07C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC17F4A125F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:06:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007949C379B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5BF24293C;
-	Fri,  9 May 2025 02:06:42 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429462AE96;
-	Fri,  9 May 2025 02:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DDE24293C;
+	Fri,  9 May 2025 02:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="uipV/5X4"
+Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E718F77
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746756402; cv=none; b=XZmfO0p6DzPkKDdavD9hRxj5Fp8/xtD1HZEpQlcPOZZd3upvwr+FNP95qWXLwdlQHi+pXrBvfBbzmUp83SrtC/pWAyZ+PdoxsxC0cdyej//W8MTGdjNgHvycZQWkjyld6Nl7LwpgMX9sXsaEp7bLpGaunPDgFPtZCZX07QbmPRU=
+	t=1746756893; cv=none; b=qqQd/sEh6w80pebcQeO66ZIs8FOYbtWLRBm+BR0QYRK50mJbwnmGMr0k7xa5MA7Oe4eTIodeixWLNruia0qzgavl7fDKZ16AV4erizP/T3WffwHmy2pOBq0HHysm36ayP/NTkvMFWWQxsS6j1kaXR8eOHN8iC0VEHAhfKWo4n0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746756402; c=relaxed/simple;
-	bh=eOG+6uPAgB6kk87jbQU1jozNIa3ia4nGj0etd0Lgu8Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qR/O+i8XR+6f7IPb0E+AF9IsbquFzsFDPq4oWGkZn473d8OreZGu2OS4QBL/zoY/nUPQaJbF9/vv7dH41tYja39wfcenTCB4OewlGR2Q/Pgu12oJveTnBC27kemnyjV7O+/QWJRTAzX3W5qyBPx5tM3mt2ssoedumXXCXhHXgjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8BxjawlYx1oktPaAA--.63242S3;
-	Fri, 09 May 2025 10:06:29 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMBxLscjYx1owBG_AA--.32426S2;
-	Fri, 09 May 2025 10:06:27 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org
-Cc: loongarch@lists.linux.dev,
-	linux-rt-devel@lists.linux.dev,
+	s=arc-20240116; t=1746756893; c=relaxed/simple;
+	bh=OiURoFFs9rTnjIw5kVIYCMyHlhDEDRxk1RK+YtbaD6A=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Tt0oqaeqO45EBY2vsfd6mBzs1nM76qInBPkQE46Gvg7UfMcuoEn8W9TqLp5aJKnCgPCCb/xA/8LoAAppwm4uLnhQQT054DlApiFZPtBQoTtWkdEVIXtbhLbYBMhuRjdPzw/zHe1/wwG/dHChZiLs59FjlGlQZtiJSZFSu50O73U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=uipV/5X4; arc=none smtp.client-ip=203.205.221.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1746756881; bh=50EMK0zUDIARn/oLsuMIxQe8WwQiSOJm3GVLZmYJKOE=;
+	h=From:To:Cc:Subject:Date;
+	b=uipV/5X4bPPcYcd5uKhb5dW71Dua44aIu6mzCY4khntPq7EWu48sS3TqkUbpgt0sA
+	 mhsjcnEsiHYSDEt1P4Gj71UHgmrltjf8YSFdUpkBnNwOCEAhGTF3bXFfCpNFJNwK5K
+	 W92TQPgJA19evf3KH1A1FMprOf5v+HvYrhJUVwwk=
+Received: from localhost.localdomain ([36.111.64.84])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id D7528072; Fri, 09 May 2025 09:53:53 +0800
+X-QQ-mid: xmsmtpt1746755633tdwraare5
+Message-ID: <tencent_0B227ECF6D12D91A3070FE8D41568AD10206@qq.com>
+X-QQ-XMAILINFO: Mi+38GKm5OhV9t8a0/uAavUtGEFxnOCpFpjWvoQBodd8QTqNiNcLLecILIzfeJ
+	 fL/YK7/m5IJc9LajBltU7nJBtO+FSt+rU6Ob4dYsJ4QedqPVkvCc0V5voAGaQb6XpuvqkABt6P1i
+	 lveBujYXJlDUoMehTLg62+b5NScTxRnPxTwQZkZNxtcVduK4y+D0Tu4F/5j9pheONmVp0XAwbXYK
+	 gthCgo1JgsD9FtzOwKpGR2znh04ZLJRG+PQj4PPNZrhmjX2MfkDXnxN2dGGeHfzm7ceUA6yee2WI
+	 qeboUzwSvFWWiGzRthsbHjPsmj0G4JKlQ/6RuaJdAOSwkMvofuQrGJPIgaiPJ5fF90F577E5jfkQ
+	 7WtzWpi1+gRL0Oh0af9skDolvjTA4XPJjL1rNupIiK2rroTnyLNNAnhMk4Bf9UdQyPTeVfa+Tucl
+	 Pa56oTt2kzTEMVwgEdwqYvl9C6t0OntACZ254gWQt4xONa0Aj/DjEiegv8w6N2cDmJd+tSPKwrBk
+	 zOBg617RjaTuC6Ik8Oa7Up2WHBgECrmrfjKpklHXs1v6s66OK2DS4AjylZVTjDSFVNf0ZpHYb0F7
+	 YjxgIzwE67tGraOa5sxc1Rl8HWpBGxhDRi3AuXTHz6i4E+Lg5w3ZtaL52O++kGF6pW8YdONBheub
+	 1LhAcmPDqkTw5XJqf2g0HeyKb3Urs0NpuGJDpZr/Ybkdqu0agnqG8M6ZWhOuHeW/SkGfLdFnCTIy
+	 kqf2hGIUIOEAj6aEaK2VKwXxbI/M1exZV85A/MtKoEeMUejzSk7loc7w5B2thjxc5n7sTZwTFcbB
+	 Lh6xdSyMpVc9QxJFJonbYHFpBeX+3nOzYjXiSD4PZpSUcXpdA3PTKB5EHRvepao5UakNHPdvUk8A
+	 /8Oi0D0sCNcoaADQNZI0CJO21qH3kdMz3ek8EUx8de14RaUjEaIFjrZQhxZGl/FryWugbehmKj4p
+	 xQO/b9UbaX+8mpb9hvbEv4Rzu+NPOFdvNJujbMmD4=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Feng Lee <379943137@qq.com>
+To: david@redhat.com,
+	baohua@kernel.org,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org,
+	mingo@kernel.org,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	peterx@redhat.com
+Cc: maobibo@loongson.cn,
+	trivial@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>,
-	stable@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] LoongArch: Prevent cond_resched() occurring within kernel-fpu
-Date: Fri,  9 May 2025 10:06:26 +0800
-Message-Id: <20250509020626.23414-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	lance.yang@linux.dev,
+	anshuman.khandual@arm.com,
+	Feng Lee <379943137@qq.com>
+Subject: [PATCH v2] mm: clean up redundant code
+Date: Thu,  8 May 2025 22:01:15 +0800
+X-OQ-MSGID: <20250508140115.2669-1-379943137@qq.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,103 +81,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxLscjYx1owBG_AA--.32426S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uryUKFyDXFyxuryDtr15WrX_yoW5Jr4Upr
-	yfur95tr4UJa4ava9rJw18Cry5Awn7G34xWa9xG34rA34Yqr18Xwn29r12qF12vFyIyFyS
-	vFnYqrWI93W5A3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
-	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
-	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcpBTUUUUU
 
-When CONFIG_PREEMPT_COUNT is not configured (i.e. CONFIG_PREEMPT_NONE/
-CONFIG_PREEMPT_VOLUNTARY), preempt_disable() / preempt_enable() merely
-acts as a barrier(). However, in these cases cond_resched() can still
-trigger a context switch and modify the CSR.EUEN, resulting in do_fpu()
-exception being activated within the kernel-fpu critical sections, as
-demonstrated in the following path:
+Remove pgd_offset_gate() completely and simply make the single
+caller use pgd_offset()
 
-dcn32_calculate_wm_and_dlg()
-    DC_FP_START()
-	dcn32_calculate_wm_and_dlg_fpu()
-	    dcn32_find_dummy_latency_index_for_fw_based_mclk_switch()
-		dcn32_internal_validate_bw()
-		    dcn32_enable_phantom_stream()
-			dc_create_stream_for_sink()
-			   kzalloc(GFP_KERNEL)
-				__kmem_cache_alloc_node()
-				    __cond_resched()
-    DC_FP_END()
+It appears that the gate area resides in the kernel-mapped segment
+exclusively on IA64. Therefore, removing pgd_offset_k is safe since
+IA64 is now obsolete.
 
-This patch is similar to commit d021985 (x86/fpu: Improve crypto
-performance by making kernel-mode FPU reliably usable in softirqs).  It
-uses local_bh_disable() instead of preempt_disable() for non-RT kernels
-so it can avoid the cond_resched() issue, and also extend the kernel-fpu
-application scenarios to the softirq context.
+Signed-off-by: Feng Lee <379943137@qq.com>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 ---
- arch/loongarch/kernel/kfpu.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Changes in v2:
+  - remove pgd_offset_gate completely
+  - remove pgd_offset_k from the get_gate_page function completely
+---
+ include/linux/pgtable.h | 4 ----
+ mm/gup.c                | 5 +----
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/arch/loongarch/kernel/kfpu.c b/arch/loongarch/kernel/kfpu.c
-index ec5b28e570c9..4e469b021cf4 100644
---- a/arch/loongarch/kernel/kfpu.c
-+++ b/arch/loongarch/kernel/kfpu.c
-@@ -18,11 +18,28 @@ static unsigned int euen_mask = CSR_EUEN_FPEN;
- static DEFINE_PER_CPU(bool, in_kernel_fpu);
- static DEFINE_PER_CPU(unsigned int, euen_current);
- 
-+static inline void fpregs_lock(void)
-+{
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+		local_bh_disable();
-+	else
-+		preempt_disable();
-+}
-+
-+static inline void fpregs_unlock(void)
-+{
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+		local_bh_enable();
-+	else
-+		preempt_enable();
-+}
-+
- void kernel_fpu_begin(void)
- {
- 	unsigned int *euen_curr;
- 
--	preempt_disable();
-+	if (!irqs_disabled())
-+		fpregs_lock();
- 
- 	WARN_ON(this_cpu_read(in_kernel_fpu));
- 
-@@ -73,7 +90,8 @@ void kernel_fpu_end(void)
- 
- 	this_cpu_write(in_kernel_fpu, false);
- 
--	preempt_enable();
-+	if (!irqs_disabled())
-+		fpregs_unlock();
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index b50447ef1c92..f1e890b60460 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1164,10 +1164,6 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
  }
- EXPORT_SYMBOL_GPL(kernel_fpu_end);
+ #endif
  
+-#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+-#define pgd_offset_gate(mm, addr)	pgd_offset(mm, addr)
+-#endif
+-
+ #ifndef __HAVE_ARCH_MOVE_PTE
+ #define move_pte(pte, old_addr, new_addr)	(pte)
+ #endif
+diff --git a/mm/gup.c b/mm/gup.c
+index f32168339390..0685403fe510 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1101,10 +1101,7 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
+ 	/* user gate pages are read-only */
+ 	if (gup_flags & FOLL_WRITE)
+ 		return -EFAULT;
+-	if (address > TASK_SIZE)
+-		pgd = pgd_offset_k(address);
+-	else
+-		pgd = pgd_offset_gate(mm, address);
++	pgd = pgd_offset(mm, address);
+ 	if (pgd_none(*pgd))
+ 		return -EFAULT;
+ 	p4d = p4d_offset(pgd, address);
 -- 
-2.20.1
+2.49.0
 
 
