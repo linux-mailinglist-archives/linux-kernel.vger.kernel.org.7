@@ -1,124 +1,158 @@
-Return-Path: <linux-kernel+bounces-640266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2C7AB026F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E187AB024A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76392505E36
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDEF49E54ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128C828A715;
-	Thu,  8 May 2025 18:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14928750C;
+	Thu,  8 May 2025 18:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRZtPlvK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6B32874E4;
-	Thu,  8 May 2025 18:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="T3jLATy5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303A52874EB;
+	Thu,  8 May 2025 18:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746728068; cv=none; b=frHa/LBEFEy4eN5CednVc5Iy+9phj/iNVNzZxORwfVYxixD5ROpBqz6U8TXz+gDT1FX0ZpIvkRU2G0i7oTHOj8FeuGkj2fjLaA33ZACC0PENmu8xqjVIfik/fN6zPFDdWHMMuRCuJPczrTcT0Pc/8RAZSd31FwihhKJoPnHKKTA=
+	t=1746728016; cv=none; b=fJx/VjlUrTZVpBySjecAaiKrJ2K2a+CCwokfxawF/Pbca0hSvJrEYmKZjrowe22rtitbfVH6dvJomaJR9BDlky/6/fucehEdHqUEzQ506i9TSAj2lmbDjXHBWBPoJnOMvpGSkLhB1xWgHmxkAHm3eyiCE4dM8YWczin0J1kBrN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746728068; c=relaxed/simple;
-	bh=u1ZebpgympfjFZvjfVb9tg/JxIpOvXahhTcaVs0MINU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iSB3tTwf41+Iw6gQYyFk73jWVlJlsb7iOX/V6VK0CNb9da3/LjPz1MjJ6LMuO35pV+WjnW2JBJfvQxsQMsgWPCu/NHGjT87UY7QTGnvGTZhg1ya4PN/BFT0qs71n5XzhCXFEEp0JMfJJarKe2UosCv7ISzvudSeE85wt4jNkoj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRZtPlvK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83948C4CEEE;
-	Thu,  8 May 2025 18:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746728067;
-	bh=u1ZebpgympfjFZvjfVb9tg/JxIpOvXahhTcaVs0MINU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=VRZtPlvKPdC6WIMNAsK6bCz/mLWr0CuqGSH88JIpumi+nWKqX3/S+nj4dlDXeP7hP
-	 dDanUZ2TPn05JY2CpkI1kTuEew5BDm6AvOvjPMmstpoccXYV7934tGlP/dht8Dw97D
-	 Nq6KBECE2xEW77qsByIdFpahBSh5Zs7x8nSPg2T3eopqjrkoQPDp8uwrMg19+uMNGG
-	 8/ZrNZXynqbk1YdlfEYSv8lo2IxOPU/hbh+aUaHsd47JNmdPkYYRlSMcTWVgrYlAqg
-	 aMHxf5zJyhoSjABA3PlQnHs3s3e9/0iu62yaXQHojDxznE65OPBGkGTBQKDUgjWgL7
-	 t/aiLjSTh98kg==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Thu, 08 May 2025 20:12:46 +0200
-Subject: [PATCH RFT 14/14] drm/msm/a5xx: Use UBWC data from the common UBWC
- config struct
+	s=arc-20240116; t=1746728016; c=relaxed/simple;
+	bh=7YNxL1Vm89Ly6NfdTnBUxIowWrliUwR2DRgb+MJjmrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdGs/0Bu3/IgIviWhr+jMkVSK7xAP91G7EzwEptTp7cJ3vOkXBDjSYDBUtEo5u+zsos7ctbuxzXN9kAqHuGDRlcA8qlJv9LBgNDngfj9PKh4oUjQyLe8ZTiB121icfAlKuYHr0zBCgu+vR57rYOYMk/KZCplMt88BL1R0MPHMC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=T3jLATy5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.1.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A1790209846A;
+	Thu,  8 May 2025 11:13:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A1790209846A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1746728013;
+	bh=LO/oU31zQKuZfvDv0dRtOXlLNZ7bEkZUhWrRkKEMaKI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T3jLATy5Kr4R+l+iK6j0Iu/2R+WKgl56UrzjK/gv7IYcJVlPswenenA+T9uT/4heJ
+	 oHEH8osYF+vn+GvUUVPPoTjl3rMNdO4Q3ckRQEVzhxPfPBztqFb349jUE5M7IdcHJ/
+	 2lOkAkozHsEubravHQF9lk8GnZSYVEuhks5mtfsE=
+Message-ID: <2cd63d5d-21af-408b-869a-b38118f4cad6@linux.microsoft.com>
+Date: Thu, 8 May 2025 11:13:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250508-topic-ubwc_central-v1-14-035c4c5cbe50@oss.qualcomm.com>
-References: <20250508-topic-ubwc_central-v1-0-035c4c5cbe50@oss.qualcomm.com>
-In-Reply-To: <20250508-topic-ubwc_central-v1-0-035c4c5cbe50@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Akhil P Oommen <quic_akhilpo@quicinc.com>, Sean Paul <sean@poorly.run>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746728002; l=1816;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=XnxaU3f47vZgMuLum+OH9TEi5T6gf69H/vEopBXcG1g=;
- b=nF5fxgbJlDwUvAwuyKD0AA2ANMcmgfwbA0I7uxVbogq7qOO9HQid8CBOtWj0FHvBprsyu4Aro
- s42z6Yphv2RC2LxSoC2UkPNZajzJldeRVjmdYZ1iN2LTyn2nAn1haFJ
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
+To: Wei Liu <wei.liu@kernel.org>
+Cc: Saurabh Singh Sengar <ssengar@microsoft.com>,
+ Naman Jain <namjain@linux.microsoft.com>, KY Srinivasan <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+References: <20250506084937.624680-1-namjain@linux.microsoft.com>
+ <KUZP153MB1444BE7FD66EA9CA9B4B9A97BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
+ <be04a26f-866d-43e6-9a0b-15b91405503e@linux.microsoft.com>
+ <29edc00e-9797-4f4a-83b3-0b4158c94a16@linux.microsoft.com>
+ <KUZP153MB14448028621F8148D5129D9FBE8BA@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
+ <1edea7f4-5ad2-4103-8eb5-9d5d9f0c7b0d@linux.microsoft.com>
+ <aBztdK82ZQQvnWsh@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <aBztdK82ZQQvnWsh@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Make use of the SSOT config database, this time including the HBB
-which doesn't seem to change between configurations.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+On 5/8/2025 10:44 AM, Wei Liu wrote:
+> On Thu, May 08, 2025 at 08:44:14AM -0700, Roman Kisel wrote:
+[...]
+>>
+>> You seem to know for whom it is broken, would be great to share this
+>> knowledge. When CONFIG_MSHV_VTL is set to "m", OpenHCL will break down
+>> without additional work. So why do we need to be able to build that
+>> as a module, to let someone build the firmware that doesn't work?
+>>
+>> So far the request comes off as absurd to me.
+>>
+> 
+> I don't think this is an absurd request.
+> 
+> While obviously Microsoft will only build the code as builtin, there are
+> bots that do randconfig build tests but never run the resulting binary.
 
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index 1344d461c16dfa942b0b65d747eadca507116806..691393e958cf164b69e7fe1a9df313f813473a35 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -1753,6 +1753,7 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
- 	struct msm_drm_private *priv = dev->dev_private;
- 	struct platform_device *pdev = priv->gpu_pdev;
- 	struct adreno_platform_config *config = pdev->dev.platform_data;
-+	const struct qcom_ubwc_cfg_data *common_cfg;
- 	struct a5xx_gpu *a5xx_gpu = NULL;
- 	struct adreno_gpu *adreno_gpu;
- 	struct msm_gpu *gpu;
-@@ -1789,15 +1790,12 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
- 	/* Set up the preemption specific bits and pieces for each ringbuffer */
- 	a5xx_preempt_init(gpu);
- 
--	/* Set the highest bank bit */
--	if (adreno_is_a540(adreno_gpu) || adreno_is_a530(adreno_gpu))
--		adreno_gpu->ubwc_config->highest_bank_bit = 2;
--	else
--		adreno_gpu->ubwc_config->highest_bank_bit = 1;
-+	/* Inherit the common config and make some necessary fixups */
-+	common_cfg = qcom_ubwc_config_get_data();
-+	if (IS_ERR(common_cfg))
-+		return ERR_PTR(-EINVAL);
- 
--	/* a5xx only supports UBWC 1.0, these are not configurable */
--	adreno_gpu->ubwc_config->macrotile_mode = 0;
--	adreno_gpu->ubwc_config->ubwc_swizzle = 0x7;
-+	*adreno_gpu->ubwc_config = *common_cfg;
- 
- 	adreno_gpu->uche_trap_base = 0x0001ffffffff0000ull;
- 
+Thanks, Wei, for the thorough explanation!
+
+> 
+> Thanks,
+> Wei.
+> 
+>>>
+>>> - Saurabh
+>>>
+>>>>
+>>>>>
+>>>>> here is the diff for reference:
+>>>>> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig index
+>>>>> 57dcfcb69b88..c7f21b483377 100644
+>>>>> --- a/drivers/hv/Kconfig
+>>>>> +++ b/drivers/hv/Kconfig
+>>>>> @@ -73,7 +73,7 @@ config MSHV_ROOT
+>>>>>              If unsure, say N.
+>>>>>
+>>>>>     config MSHV_VTL
+>>>>> -       bool "Microsoft Hyper-V VTL driver"
+>>>>> +       tristate "Microsoft Hyper-V VTL driver"
+>>>>>            depends on HYPERV && X86_64
+>>>>>            depends on TRANSPARENT_HUGEPAGE
+>>>>>            depends on OF
+>>>>> diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile index
+>>>>> 5e785dae08cc..c53a0df746b7 100644
+>>>>> --- a/drivers/hv/Makefile
+>>>>> +++ b/drivers/hv/Makefile
+>>>>> @@ -15,9 +15,11 @@ hv_vmbus-$(CONFIG_HYPERV_TESTING)    +=
+>>>>> hv_debugfs.o
+>>>>>     hv_utils-y := hv_util.o hv_kvp.o hv_snapshot.o hv_utils_transport.o
+>>>>>     mshv_root-y := mshv_root_main.o mshv_synic.o mshv_eventfd.o
+>>>>> mshv_irq.o \
+>>>>>                   mshv_root_hv_call.o mshv_portid_table.o
+>>>>> +mshv_vtl-y := mshv_vtl_main.o
+>>>>>
+>>>>>     # Code that must be built-in
+>>>>>     obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o -obj-$(subst
+>>>>> m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o mshv_common.o
+>>>>> -
+>>>>> -mshv_vtl-y := mshv_vtl_main.o mshv_common.o
+>>>>> +obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o ifneq
+>>>>> +($(CONFIG_MSHV_ROOT) $(CONFIG_MSHV_VTL),)
+>>>>> +    obj-y += mshv_common.o
+>>>>> +endif
+>>>>>
+>>>>> Regards,
+>>>>> Naman
+>>>>
+>>>> --
+>>>> Thank you,
+>>>> Roman
+>>>
+>>
+>> -- 
+>> Thank you,
+>> Roman
+>>
 
 -- 
-2.49.0
+Thank you,
+Roman
 
 
