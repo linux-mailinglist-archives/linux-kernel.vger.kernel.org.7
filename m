@@ -1,114 +1,183 @@
-Return-Path: <linux-kernel+bounces-640563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4A9AB0683
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:33:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52242AB0689
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46BB986A98
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4865F4C7A04
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5572E227E86;
-	Thu,  8 May 2025 23:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71EB233D64;
+	Thu,  8 May 2025 23:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Fu8ZXCYL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlB6mIKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01BD2153ED;
-	Thu,  8 May 2025 23:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335E7220F29
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 23:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746747188; cv=none; b=mKO1uCir8D6KuZfh40OdRazP65OrIR5+IT25PZahKFcvnlQOb1hDTgBBOiNJnjRH1W/AgcuU+W9DcfRQWjAUX6O6I4xm7U9Y6IWp778MptqhI3zHZ+nPDEGlDr6wsURSTKa+3qNS2vyZiaqVTbULEnkeDnynzQtoLQsayEzeUx0=
+	t=1746747217; cv=none; b=Lc5GT/ee+lAIw9h72PmvIixEP3i3kjs9YEVWDAKjHkq/GlkaYVJCjlSSbu/FJvqu7StMtsR/AYOFRT8ZV+4Peeb5TqzhfQaPFH8SO7NHnN0kYv2W/anRQ1j/szJ8PTeA/M1w4BeIak9XiSCinguM89AVOX8iExz5EO6/pNd9mxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746747188; c=relaxed/simple;
-	bh=M+74eJenX8RtxoAWRJk99DZySnYqroLoXj88m1cIHLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NVLz7EEq21a0A1erW8xJ4lEJ2H3+SmvQkG54j11DPwM0h6Km31TgZUP1C7pawHetXvaflt8OpH4J9mKIAKKpEf0Huo7NDO6D5w+dYV+/j8FOU/ffkHfctFVSTTURgpvRpFn0n+hw5Wz8xhcBJhkvpz1YNt9dZpzQpKhgEP5/2bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Fu8ZXCYL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1746747179;
-	bh=fbeboMrwAN2XrDwcUJlw1eeFAQ+G8DTbhaKCk7hlOMc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Fu8ZXCYLkqOYY9Mm4Np+H1jPNgZ7ZlsgGXuZTFT6dz+Q8nth5XEt8KuuyEU6AJv+A
-	 OrTVAuFNgEAYU9rJzgKQEhBK2mh4LxGfh9OI/IqHVcYpxCOHpqZngRTQKdY9AhYaZu
-	 ZdC8aL8vZKl2987HVeXrRjMK4Z5kiZv9JnGQ0lARl/pwbcvkLl6albIqBBvX8Jtt6c
-	 elymNu1IOzQvQSLyv+/kHoFAzl1oEWD+ZWT37XVKFfebM/xBnPxJ4swSxH5ER0gIYp
-	 Y4Umbyih3N1I0NyCxpm2mYs8sHlckOKECSlx/cIVMeQWH/hY8rPU3q/5rGiLP4ebKl
-	 2ZYkMBA93e+dw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZtpMv0Ztnz4xS0;
-	Fri,  9 May 2025 09:32:58 +1000 (AEST)
-Date: Fri, 9 May 2025 09:32:57 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Sterba <dsterba@suse.com>, Kairui Song <kasong@tencent.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the mm-unstable tree with Linus' tree
-Message-ID: <20250509093257.6f30ba58@canb.auug.org.au>
+	s=arc-20240116; t=1746747217; c=relaxed/simple;
+	bh=N3RIolT2/wwpsyp3qVL0vety09DWGenJ3HGIlVCg+P0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uDwv1GIMhJz/FjxHHvUf8++2VSFuQExVeMtiP2MP5l2PrOB/pdI+dwCOlPz/6HT0KFnWS9Lsk70uej14dka7xX++rDs1nvXaAnGx7V/+si0/geiwslQsu1HtGABXuzpjEezENByr6w/T8EbjuBESUvOyisuOVrssEWNqiDj81f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlB6mIKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A941FC4CEE7;
+	Thu,  8 May 2025 23:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746747216;
+	bh=N3RIolT2/wwpsyp3qVL0vety09DWGenJ3HGIlVCg+P0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WlB6mIKGvzzqxItE/Qxc+Zc/o/qLP12ui7/TpPLRyCC2VzuquNl1ZSzM+A+d4J7/8
+	 oVOOSgB1dy5Bbkjwb2rokj9obna2LaA7J/B6Igw5gupqs5BNrS0NAUHbyOoFLddOQH
+	 Xd78cioIVT64UekTNtSwtndQpOCzIqrO7F/T+C5SvuvX2obh3f8uHgxmHdZU38uJYD
+	 LSTkMzE7PJrmeA7GKGy8WhjW5ZasSUuZlFPhOiskvdf+kXr4iok9ZIs6T5ipN4ngdu
+	 pO5n7shSPZxtOBc+jzVd4aZtAjCmcRxP3u5k2G7iGejtc0q+g6qtdSsWMEZXsso/mJ
+	 0fQEY+u+TiAwA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5BC1BCE11A4; Thu,  8 May 2025 16:33:36 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@meta.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v5 01/21] ratelimit: Create functions to handle ratelimit_state internals
+Date: Thu,  8 May 2025 16:33:15 -0700
+Message-Id: <20250508233335.1996059-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
+References: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/79.o8MQXpJZ45fZVIErQSoB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/79.o8MQXpJZ45fZVIErQSoB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+A number of ratelimit use cases do open-coded access to the
+ratelimit_state structure's ->missed field.  This works, but is a bit
+messy and makes it more annoying to make changes to this field.
 
-Hi all,
+Therefore, provide a ratelimit_state_inc_miss() function that increments
+the ->missed field, a ratelimit_state_get_miss() function that reads
+out the ->missed field, and a ratelimit_state_reset_miss() function
+that reads out that field, but that also resets its value to zero.
+These functions will replace client-code open-coded uses of ->missed.
 
-Today's linux-next merge of the mm-unstable tree got a conflict in:
+In addition, a new ratelimit_state_reset_interval() function encapsulates
+what was previously open-coded lock acquisition and direct field updates.
 
-  fs/btrfs/extent_io.c
+[ paulmck: Apply kernel test robot feedback. ]
 
-between commit:
+Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
+Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ include/linux/ratelimit.h | 40 ++++++++++++++++++++++++++++++++++-----
+ lib/ratelimit.c           |  8 ++++----
+ 2 files changed, 39 insertions(+), 9 deletions(-)
 
-  38e541051e1d ("btrfs: open code folio_index() in btree_clear_folio_dirty_=
-tag()")
+diff --git a/include/linux/ratelimit.h b/include/linux/ratelimit.h
+index b17e0cd0a30cf..8400c5356c187 100644
+--- a/include/linux/ratelimit.h
++++ b/include/linux/ratelimit.h
+@@ -22,16 +22,46 @@ static inline void ratelimit_default_init(struct ratelimit_state *rs)
+ 					DEFAULT_RATELIMIT_BURST);
+ }
+ 
++static inline void ratelimit_state_inc_miss(struct ratelimit_state *rs)
++{
++	rs->missed++;
++}
++
++static inline int ratelimit_state_get_miss(struct ratelimit_state *rs)
++{
++	return rs->missed;
++}
++
++static inline int ratelimit_state_reset_miss(struct ratelimit_state *rs)
++{
++	int ret = rs->missed;
++
++	rs->missed = 0;
++	return ret;
++}
++
++static inline void ratelimit_state_reset_interval(struct ratelimit_state *rs, int interval_init)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&rs->lock, flags);
++	rs->interval = interval_init;
++	rs->begin = 0;
++	rs->printed = 0;
++	ratelimit_state_reset_miss(rs);
++	raw_spin_unlock_irqrestore(&rs->lock, flags);
++}
++
+ static inline void ratelimit_state_exit(struct ratelimit_state *rs)
+ {
++	int m;
++
+ 	if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE))
+ 		return;
+ 
+-	if (rs->missed) {
+-		pr_warn("%s: %d output lines suppressed due to ratelimiting\n",
+-			current->comm, rs->missed);
+-		rs->missed = 0;
+-	}
++	m = ratelimit_state_reset_miss(rs);
++	if (m)
++		pr_warn("%s: %d output lines suppressed due to ratelimiting\n", current->comm, m);
+ }
+ 
+ static inline void
+diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+index ce945c17980b9..85e22f00180c5 100644
+--- a/lib/ratelimit.c
++++ b/lib/ratelimit.c
+@@ -51,12 +51,12 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 		rs->begin = jiffies;
+ 
+ 	if (time_is_before_jiffies(rs->begin + interval)) {
+-		if (rs->missed) {
++		int m = ratelimit_state_reset_miss(rs);
++
++		if (m) {
+ 			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
+ 				printk_deferred(KERN_WARNING
+-						"%s: %d callbacks suppressed\n",
+-						func, rs->missed);
+-				rs->missed = 0;
++						"%s: %d callbacks suppressed\n", func, m);
+ 			}
+ 		}
+ 		rs->begin   = jiffies;
+-- 
+2.40.1
 
-from Linus' tree and commit:
-
-  88916e92c953 ("btrfs: drop usage of folio_index")
-
-from the mm-unstable tree.
-
-I fixed it up (basically the same change - I used the former) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/79.o8MQXpJZ45fZVIErQSoB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgdPykACgkQAVBC80lX
-0GyyzAf/WETY2qHzPUaplID+ThFhTJfr0c62q0+DdKTXdjdaEFYYGpopI+Kkbex/
-y2GKaBuMF3EfCUyHqCOHocMkXIY/eEP1aLk402OeReoOswyH2ry5i8w39V8S+OH5
-ZdYMKLXCirIzQqTKrf+GOKOPn5dLl9vaSRehYoUrkvDCiI63d0q0zPs9juSughF9
-+YjiQHgaF2SZxyIy5ysw53M9qCzR8lbFNXs16E2ErYBQxDv1iF8bJOavUjNimiHt
-sQvLAlkgLKyHTXa0O3CjZHQY3DqF7+9uHhDKnyxcRqE5JyPVpj+mBJ+RKmfIIS4h
-aAHZr4Mx/HLfBRb+LUhN9LhaEQMlmQ==
-=rikT
------END PGP SIGNATURE-----
-
---Sig_/79.o8MQXpJZ45fZVIErQSoB--
 
