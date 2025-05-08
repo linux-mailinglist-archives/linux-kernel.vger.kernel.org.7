@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-640084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08B5AB0074
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B385BAB007B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0616A9E6A81
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBDA81C02AB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861A4283FDB;
-	Thu,  8 May 2025 16:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B53286404;
+	Thu,  8 May 2025 16:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8yVftdY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGBaQZLA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94A22836A7;
-	Thu,  8 May 2025 16:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9512857CF;
+	Thu,  8 May 2025 16:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746721794; cv=none; b=dy6p1Ae4r7A5xV9Gcrpkgm7+sxnTkZ9qsjz6lz53kTL/IYbFCC+QSYerUdSIKGUqn0I1Wx2mAypXbxPane9x9H2mBsSqn5AWMYrScBDm1ediw5GjXbEPkVCg87luSYuIx0B+7+s+/qsyB8WBuOW0X+GRrcwSyAmDAaFGrGCQdhs=
+	t=1746721799; cv=none; b=SABQEaC/rU2x8oHx4jlLkKGSuZUdyCLCjawdHJSlTHKfl7We/kx5ADhVb4iwR57BI2UJOJIsVVfA/5tE92ptOlOLI4kc8J1o3xDE8HC8fxGrLypKzKQ3EGEiQR0Aa3tQtDM5Jx9qYtB95mgc2nsdvs96Vux5RdCFKKpfCrsIPlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746721794; c=relaxed/simple;
-	bh=td0/W1n9aOEtk0epnkPwUaZiByTowJBXnpm1ysKQLbM=;
+	s=arc-20240116; t=1746721799; c=relaxed/simple;
+	bh=1vpCh9ihCg/WzOyCbdfoGaYNCHPuP39TPqvdSshMM7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GM09O/JQl1vd0ne40J8HJ1yrHSh2CDjlSNtYWWYFWHArbJeVZ3BcocfF4TyZdJGCUZ2bpitvWwt+AU+QggDJOmchnumsaRhvPDxvKyIX63T7z159eY6cIKsMqMnV9sLT4Vu3P3nzVBtnMyTJGg+c5YYrEx2be8fPixT5G+PyfcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8yVftdY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575D7C4CEEB;
-	Thu,  8 May 2025 16:29:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNr2EwJ7YKfHBMd4G+iUa5P1vdnIQ3qztkz3XBXGrzzcDCGo9KG2NkOflIM4gqiuYqbWe3C0pfCku+PL5CmXRAb0MuC/FuTA+0nNEIWb9NYBNAoYgcEDp/DbAPsuuu1C8vxmwF4/L+99+o7fCYgkqMQe31Lz9Z7yaDDz9ORUWqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGBaQZLA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1C4C4CEF0;
+	Thu,  8 May 2025 16:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746721793;
-	bh=td0/W1n9aOEtk0epnkPwUaZiByTowJBXnpm1ysKQLbM=;
+	s=k20201202; t=1746721799;
+	bh=1vpCh9ihCg/WzOyCbdfoGaYNCHPuP39TPqvdSshMM7U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H8yVftdYn0Keq8UVjV3B31mLlJzlC/VdjbYSrnPZgX9bB5sLHwM3uJAM+wusIR2R7
-	 N8FHP7zm0LXVWL2BTs+spGkZRHcuAi9E9me72T90cxkcvlD/6UhrvwivbYiVVNEnj6
-	 cbaJRk89RE+6FBBXvhlMNQxep0axJwkaa3vowHzGLQBe7wiYIf5D3/ABf8MC2CGeqK
-	 FTOR3/Ij3Kb13VxjqNs/0sWcy8zacL5fyfcUkmGMs1Z071OpPUTv7kblhdnLmW+/k4
-	 KumLLr3FRRu8uIiXlxGzhgCjt1vw2dmSeccMukJ3XRp1pNQjBP/wM5Mvfz02oaaWCP
-	 1WAXwqdFmj5hQ==
-Date: Thu, 8 May 2025 09:29:50 -0700
-From: Kees Cook <kees@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Mostafa Saleh <smostafa@google.com>, kvmarm@lists.linux.dev,
-	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, will@kernel.org,
-	oliver.upton@linux.dev, broonie@kernel.org, catalin.marinas@arm.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	elver@google.com, andreyknvl@gmail.com, ryabinin.a.a@gmail.com,
-	akpm@linux-foundation.org, yuzenghui@huawei.com,
-	suzuki.poulose@arm.com, joey.gouly@arm.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas.schier@linux.dev
-Subject: Re: [PATCH v2 0/4] KVM: arm64: UBSAN at EL2
-Message-ID: <202505080929.95B2310@keescook>
-References: <20250430162713.1997569-1-smostafa@google.com>
- <202504301131.3C1CBCA8@keescook>
- <868qn8hfnp.wl-maz@kernel.org>
+	b=HGBaQZLAfsRJtEufa/W5rNxQ8tIrC32dooxk2WcCjtFCT4kBac14S8h2jmvEbgJJA
+	 WyQ1gJIz5L/9+l3KhH2/eSuRcrejQHCuetj7NkdmIWwurbq30u/B/TJkLws6HWM2Wy
+	 yjdNgDppOkY/TPburBW68+WYCgSeNoXMr9GmE1N4+73bLr4khrox2QpQYi+NFImiIJ
+	 5IfyqAlHTqdV/VNrFxF4DI7ICoPU1/a8PIhkEZXsHZ+WPRPveX/JKqeXM0uV7KN4eL
+	 VFpyO4V14hGZrjXCwwgLiLkn10xvqcDKWYbd032SsWInUmH8LwepCGqg45Fd6/JrsB
+	 2op/8bWGkg/YQ==
+Date: Thu, 8 May 2025 09:29:54 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Danny Tsen <dtsen@linux.ibm.com>
+Subject: Re: [PATCH] crypto: powerpc/poly1305 - Add missing poly1305_emit_arch
+Message-ID: <20250508162954.GB1218@sol>
+References: <cover.1745815528.git.herbert@gondor.apana.org.au>
+ <915c874caf5451d560bf26ff59f58177aa8b7c17.1745815528.git.herbert@gondor.apana.org.au>
+ <242ebbf1-4ef0-41c3-83cb-a055c262ba4a@leemhuis.info>
+ <aBtF2jVZQwxGiHVk@gondor.apana.org.au>
+ <37cf099e-d5c2-40d8-bc31-77e1f9623b1c@linux.ibm.com>
+ <aBx9OAyiDx7MYAVs@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,30 +67,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <868qn8hfnp.wl-maz@kernel.org>
+In-Reply-To: <aBx9OAyiDx7MYAVs@gondor.apana.org.au>
 
-On Wed, May 07, 2025 at 11:35:38AM +0100, Marc Zyngier wrote:
-> On Wed, 30 Apr 2025 19:32:23 +0100,
-> Kees Cook <kees@kernel.org> wrote:
-> > 
-> > On Wed, Apr 30, 2025 at 04:27:07PM +0000, Mostafa Saleh wrote:
-> > > Many of the sanitizers the kernel supports are disabled when running
-> > > in EL2 with nvhe/hvhe/proctected modes, some of those are easier
-> > > (and makes more sense) to integrate than others.
-> > > Last year, kCFI support was added in [1]
-> > > 
-> > > This patchset adds support for UBSAN in EL2.
-> > 
-> > This touches both UBSAN and arm64 -- I'm happy to land this via the
-> > hardening tree, but I expect the arm64 folks would rather take it via
-> > their tree. What would people like to have happen?
+On Thu, May 08, 2025 at 05:45:28PM +0800, Herbert Xu wrote:
+> On Thu, May 08, 2025 at 02:46:06PM +0530, Venkat Rao Bagalkote wrote:
+> >
+> > I tested this patch by applying on next-20250507, though it fixes the build
+> > issue, it has introduced a boot warning.
 > 
-> FWIW, I have now taken this in kvmarm/next. A stable branch is
-> available at [1] for anyone to pull and resolve potential conflicts.
+> Looking at the history of this code it was never used as lib/crypto
+> prior to commit 378a337ab40f88d63ba71d68ff578ead7f5ac8f1.  So either
+> this code simply doesn't work as lib/crypto for some reason, or my
+> subsequent blockhash change broke it.
+> 
+> Could you please revert back to commit 378a337ab40f and see if the
+> lib/crypto chacha20poly1305 self-test passes with that?
+> 
 
-Thanks!
+My patchsets "Remove per-architecture poly1305 shash glue code" and
+"Finish disentangling ChaCha, Poly1305, and BLAKE2s from CRYPTO", which included
+commit 378a337ab40f, passed testing with qemu-system-ppc64 with -M pseries and
+-cpu in [POWER7, POWER8, POWER9, Power10].  These issues, both the build failure
+and test failure, were introduced by your patchset
+"crypto: lib - Add partial block helper".
 
-
--- 
-Kees Cook
+- Eric
 
