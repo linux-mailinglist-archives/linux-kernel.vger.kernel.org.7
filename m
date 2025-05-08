@@ -1,113 +1,169 @@
-Return-Path: <linux-kernel+bounces-639302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C02AAF5B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8313AAF5BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89A5FB20C23
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:31:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB4C4C21E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C282620DE;
-	Thu,  8 May 2025 08:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1915C26388C;
+	Thu,  8 May 2025 08:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cb8mv6kJ"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="eyeiwUwD"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B7F1E766F;
-	Thu,  8 May 2025 08:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570C32638A6
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 08:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693134; cv=none; b=jv1TwiQYJrP6x1pKZa3PlH7XNbK97eDo56zVdz4IsymDOQoT7imrO+HK2wP2Xvc7qNKvEVdrzfsOmfaBkuy8KKsAa1GJiROXTYpB6ln47BBNpQNPvFLBzX2Gtq55prOA3Jy00WfSyWl6uKkAeTDLSE0qp5l8zAe0mZpNp57F3lQ=
+	t=1746693144; cv=none; b=in8/+/DssM4ndan15AQ7amvY9/RQEQGV7LxCKCbFsN+StOIWeeY7mLZxttPKnO8oXzc00IXs2t9nfUti9HN6KR50fe2YrS8OUOwnZACrdI6MPagGIAh+8r0L7DcNeVKnnIhJ+8nlBdUZPiT6jP8Rv86QJbmPE8t0AgJYl6nbVPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693134; c=relaxed/simple;
-	bh=34Tlq0bR/Itq3ABUj61hRwZ+7jK79J7TsoBbwyTc/6c=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Nk2iLwn6IG3KNCBEhScm3O9gHyMLMppHuZDUhC+QDrhxSilcNcLFQet516v7E/P+En1HKD0pNVjuQb7k7II3sHvfQdMI49xCqOIOsDCGjReY9lf5iFDWWUcBvJwhR8JqAzdoGM9E9arz0cVoKhVMUqcv+sMelqBs0Y4nhHshTDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cb8mv6kJ; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-acec5b99052so121957266b.1;
-        Thu, 08 May 2025 01:32:12 -0700 (PDT)
+	s=arc-20240116; t=1746693144; c=relaxed/simple;
+	bh=99sIuYQv9yyYPOuX4dWNyMjpDSYVT8a3hkLHdw7sW/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P6zubpHuh/Z4AJcEdt8HGOpsjY/tVGZO9T3VKii5iTAFkF84JaXSEtuss1ZGs0Js/tz1GZ4nzXJaxl+SssA7LNyCOBytnZD24F0qCYBLX1i0SeGjyAmPOzCcg96t7T8j5h9RQLcSfr4mNalJ7mxCvDFMqcXw38TJmrqUKhdfLnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=eyeiwUwD; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-70a23f4fe8bso6827697b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 01:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746693131; x=1747297931; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=34Tlq0bR/Itq3ABUj61hRwZ+7jK79J7TsoBbwyTc/6c=;
-        b=cb8mv6kJj9zw5YqwG/dj+92DoYqUFXeECviBzZrWSDjrY8B7Zixz4S/zR1ztn9MbjN
-         6zRLjjxUEaWT3yekh+iRKJLwrRxz8N6zWhGqzS64DKV2xQRjK7ZA8rzRQgJo7behkhBN
-         nihqvffM8QaYmNgErXhySd8ndaMIAnSMXaeDCAyJn5zAO6zvlOkDHcBoKG+FYwiC8HbA
-         8qvcVUbQLZASndRCshMXQ/VqDC52HP+e5YWnHsUXRN970kSZR2+ykwz4ljeAxratRiAM
-         UMLLYROLH7WtSa8rPai6ZPKiGRifu8LC01upMlHo/zbzD7DyyZyXPZxoxAhABhi7i+NR
-         JIbA==
+        d=amarulasolutions.com; s=google; t=1746693141; x=1747297941; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=quaZx11+VGNrggf88njtg5xLklc9eFfI7c4+X9LIJ5o=;
+        b=eyeiwUwDy8WmvUUrw6HR1/xH8hzDgSNjEqMPKS/pwC58tREEdgjfwtfdWOCMhSFzJc
+         DJW5XK9kF7Cs4+g7fCSv4YelbBxQIW9lF4pl8CaTJ0nsqbBOYRX8Ml0E0uSGE20vkK18
+         o7JWzEdbgFQn6ad3PwkgKzLmg/akNSClNnb6w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746693131; x=1747297931;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=34Tlq0bR/Itq3ABUj61hRwZ+7jK79J7TsoBbwyTc/6c=;
-        b=WtfQgnsOGRJNAh9jiBJZp+BMKIO8daMHxSbsZPElfFiRW/8U2xnMZ8IuX1WCA9rKCQ
-         lrS+4OHOzppuoa9a2KP4HjZNY5IzA9R9+atqjGmtQAkhh/qUlv8hNxFXDEmzUmr1ynYp
-         3DqsJERQKVJFCyaKEUJggTT7W1pST197WP5sLRSyjarIJyNYbf77Ry9Ho06jDTFwGUgJ
-         BhaZ5w5XLYHyjLn28bFveB/IUW/BfxItad1B9EJambQ6+JAjgv/ogd8f64df0MhAaau9
-         eCI5a2dbdeeRj62PT73GOzjqHfatibylYjNIBdzyRWTMmP1ufKfTdBazKOwzMTFgItIQ
-         vgxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWr1tLhEfoj+edqmn+3q21P8Qf+KpJEn2JP6RHDshEYjLWIzAJEKO1MOy01n8t0zM71YNMJjwDkvP07glg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmR2Czt39vpGQfMwC4CbN/hCZu7RjsFEqEuSsZWkBwPvUxPfA6
-	PZN97CiVKF6EF7p8BZ2vGqPH38d82aaexJ9g72pahYpoDDGFxoHUA1z2PlTqveL5kio56Enp/v0
-	MRxsWBo65wooCtgvAJ/ho5rBbd/Y=
-X-Gm-Gg: ASbGncvsx2csUrauuoXiCfuKad3ARQLYJ/WJ8iluVY7PrxjsbkVruat0zjzHY677BG1
-	i8ap+55tArmgUunUDvE9Sw9qf8QGtpWZLNYolSSMVeksUb91/fGvRuxIsoWdPxwsF1tkOkpjowd
-	hv+zIj1u71BTMYb/gYdDklCQ==
-X-Google-Smtp-Source: AGHT+IE0XhAHh8/ZLFi8+8bHBW3aCTYAVe/unFgg4Mfx3n6pSLNjSEMuWxmaD5dSMf22WaWo/NFc18jiUl0XskW0Yj8=
-X-Received: by 2002:a17:907:181a:b0:ac2:a50a:51ad with SMTP id
- a640c23a62f3a-ad1fe6be513mr208304566b.14.1746693130537; Thu, 08 May 2025
- 01:32:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746693141; x=1747297941;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=quaZx11+VGNrggf88njtg5xLklc9eFfI7c4+X9LIJ5o=;
+        b=r9vXvF5aPl23JFFmfNgREvtWl4FCcaKj5EFRPGap6SxUKCPEq3bzPwoxk6R3yk172P
+         SYxerDOqLEZIChgxy7+jaRcrDOkVBwttOW7VBQK5ZnL9he2z8JZpSRU2p6UoiHoeKYNM
+         jrZKFn0GNqnKmLRb+d2g4otePrZe/e/2RAKHf9AQSJB0ThvbyjuYxPO4DaJPXBk+fe7q
+         Frwybb13VVRvH4bF9lQgw5qBVlNcoEDIM3wzbwrcJPzarmkOqKpPsAQ1+giJ9rC7skhA
+         Z3gcwDWAv2XDBAvm+sEeRR3ytjGv1Lf/T7nxUoD5lxkxg5EcPX+Aqkk3pzT2BmKrQ9KO
+         jvbg==
+X-Gm-Message-State: AOJu0YxJQ4a+u247IGbYXRVw630s1OxEsaItFniecD5isKR93HuJvK0y
+	wfQexGgZaAMIc86MM65aIUGA+bdS08SYPtwu7MgpsK6xxlaA8/eZZQ16i1mUyoAKp8FrS+wC73D
+	lGgR97BHpm8PMmsnEaGiM7a6QgIHscb97Dvc4Kw==
+X-Gm-Gg: ASbGncsbZNtr8rMgz45vq1m1KJ+H6Xs7UG3xVBnxG2TOZLUlYuB/ocg0hffINofP26u
+	vSAxp2Gk7bvymVW0KjoamU9yY1WtWtoUdfazBB+CiFgbpiQAPqgzM1rNDiQVci/4Wx5W0VwpXLP
+	vrfo6cNec7CtfEyt7aB39a
+X-Google-Smtp-Source: AGHT+IE4CmJhrdoXRe32HoBH4jbtzbQ2hoNMjPwxRG6sk3WrTeunXaOWumwPqctZu6MIIYqzIKZAUd1PKmmcUuwqfyo=
+X-Received: by 2002:a05:690c:6085:b0:703:d7a6:6266 with SMTP id
+ 00721157ae682-70a1d9f9304mr89735297b3.10.1746693141277; Thu, 08 May 2025
+ 01:32:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-Date: Thu, 8 May 2025 16:31:56 +0800
-X-Gm-Features: ATxdqUHROIREOBTQNhd1V32wCcKcWok8wuIo5sqpaTlOB8IdUEj-gWxM4liGf08
-Message-ID: <CANgpojX70kVOFMoJn=Mu93JEqaYoYCM3d1LhWcP-JKN9bm0F0w@mail.gmail.com>
-Subject: [BUG] IB/rdmavt: Potential deadlocks in function rvt_ruc_loopback()
-To: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca, leon@kernel.org
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com
+References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com> <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
+In-Reply-To: <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 8 May 2025 10:32:10 +0200
+X-Gm-Features: ATxdqUGGoyMhD-TPgWfLjSDF0XqnBspVuNvo1SR1O8IpFOj15QasDBjp5hm1sY0
+Message-ID: <CABGWkvrkVLRocFsZs9JLni4KDZCDyYDZxMzwA9AzAwipmUyTzQ@mail.gmail.com>
+Subject: Re: (subset) [PATCH v12 00/19] Support spread spectrum clocking for
+ i.MX8M PLLs
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-amarula@amarulasolutions.com, 
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello maintainers,
+Hello Shawn,
 
-I would like to report a potential lock ordering issue in
-drivers/infiniband/sw/rdmavt/qp.c in the IB/rdmavt driver. This may
-lead to deadlocks under certain conditions.
+On Mon, May 5, 2025 at 9:52=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org> wro=
+te:
+>
+>
+> On Thu, 24 Apr 2025 08:21:30 +0200, Dario Binacchi wrote:
+> > This version keeps the version v9 patches that can be merged and
+> > removes the patches that will need to be modified in case Peng's
+> > PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
+> > The idea is to speed up the merging of the patches in the series
+> > that have already been reviewed and are not dependent on the
+> > introduction of the assigned-clocks-sscs property, and postpone
+> > the patches for spread spectrum to a future series once it becomes
+> > clear what needs to be done.
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [01/19] dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
+>         commit: 20e5d201b5d8f830e702d7d183f6b1b246b78d8a
+> [02/19] clk: imx8mm: rename video_pll1 to video_pll
+>         commit: 26a33196b5b68cf199b6c4283a254aa92d2aaf4b
+> [03/19] dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
+>         commit: 2d50415e2457c6f6621c2faa3b01b11150fb9c67
+> [04/19] clk: imx8mp: rename video_pll1 to video_pll
+>         commit: 21bb969f608cefd8d847cf6eb50a193d9f1fbb87
+> [05/19] dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
+>         commit: 2ba124053687c933031a6dc5b2e16ceaca250934
+> [10/19] clk: imx: add hw API imx_anatop_get_clk_hw
+>         commit: 17e3c1a272d97e49b4f3fbfe1f1b889e120d2be8
+> [11/19] clk: imx: add support for i.MX8MM anatop clock driver
+>         commit: 3cbc38cf42ca42d2dc9a93c949e0381ff919df71
+> [12/19] clk: imx: add support for i.MX8MN anatop clock driver
+>         commit: 80badb1d7264e83b512475898e7459f464a009c9
+> [13/19] clk: imx: add support for i.MX8MP anatop clock driver
+>         commit: 4c82bbe8b5437c7f16b2891ce33210c0f1410597
+> [14/19] clk: imx8mp: rename ccm_base to base
+>         commit: 1a77907dbbecfbe5e6a1aec28afd49a1dc184b7a
+> [16/19] dt-bindings: clock: imx8m-clock: add PLLs
+>         commit: 6a55647af3334f1d935ece67de4a838a864b53fc
+>
 
-The function rvt_ruc_loopback() acquires locks in a conflicting order:
+Please check the remaining patches, as they are required for correctly
+building the
+ones merged by Abel. The kernel test robot has already reported build error=
+s.
 
-1. First takes &sqp->s_lock
-2. Then takes &sqp->r_lock
+Thanks and regards,
+Dario
 
-This contradicts the established pattern in functions like
-rvt_rc_timeout() and rvt_modify_qp(), which typically:
+> Best regards,
+> --
+> Abel Vesa <abel.vesa@linaro.org>
 
-1. Acquire &sqp->r_lock first
-2. Then take &sqp->s_lock
 
-This reversed locking order creates potential deadlock scenarios when
-these code paths execute concurrently.
 
-The issue was introduced in version 4.20 and persists through current releases.
+--=20
 
-This issue was identified through static analysis. While I've verified
-the locking patterns through code review, I'm not sufficiently
-familiar with the driver's internals to propose a safe fix.
+Dario Binacchi
 
-Thank you for your attention to this matter.
+Senior Embedded Linux Developer
 
-Best regards,
-Qiu-Ji Chen
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
