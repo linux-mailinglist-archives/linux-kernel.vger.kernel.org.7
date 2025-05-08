@@ -1,134 +1,160 @@
-Return-Path: <linux-kernel+bounces-639502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1139AAF82F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A02AAF831
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C48C1BA214F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD8D166A67
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E3220E70F;
-	Thu,  8 May 2025 10:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85C21FC0E3;
+	Thu,  8 May 2025 10:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gQ3nfwgI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S4ak7ARX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E19B665;
-	Thu,  8 May 2025 10:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8852717A310
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746700858; cv=none; b=KrCXU8idISa1hsfCjJFL5S+Z+iGzUFNRFBrKeB2oFkuL/izKSfaE7+i5hZEDhYlRJ9hN42H3I13GidHFueBs8f7CyS+lZNu9yxBTQMYCCapaOT63NbQVLReF0WyeDSCwAhTfYTGvfrhzh7pIMvMtHvDXs26MlteAB1QdjFgWfPE=
+	t=1746700912; cv=none; b=dOiYYSAhF82vK2MvD+k/wfNdH2xETfYkG1fhTD9jLETMZ7grTLDrk20A5WppnMMgswKReeiibPRwZV1ymOtt3W+5W7qabA/Yl/sAkb4VGRpab1Py2H0JpM9n6vOvQJ6o64nadaT+j1uXsIHYr3qQu8HJwk2R6QHTm4j5sYPMXXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746700858; c=relaxed/simple;
-	bh=X8ilbw35HJyCoqhnaOgKCWUDN7IEqX7SCoCjtp+z0Zw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GsTKPbTfKfWqbDZWPMt2J26ibRu/3ifhqn514fI8Ti147FxuLCS96CUudiOYS9xpx9SvcPBYwVqY59VO8RfEb/GcRZrIbEyMetl8sHPhaNY0oEyUcvF7joQX5dyITbGTuJRC0ZLVoTmKKqLaTLZV7PdKN7XeCSvSXcNEhhDfefA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gQ3nfwgI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1746700850;
-	bh=ETN/ODreuFvhk3ZQ0uiL4zD9JN2rL3qe+sA+0JIiLk8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gQ3nfwgI8lev2R1pQhRlxZfAoyrnjC1+XHCG9yZX02bYhdJOWoMuHiGlzGPJWL3Ev
-	 Us3Yaxh8EkisCsn8Zm9qzh3BI1gJoCfdRzoeyjr1Rs9Q0UmSce7YkXKjujGNxiasqe
-	 7g4FZLHyzmq5HJvpm0P9FdksVMwka82e1jLU0PM5nZkypXY9H7BhNcrVuSuH7E55r/
-	 SZf74LPWsR5YS+qDIvuThzSiAFcmzJ0geXXqd4aSfX/heLvan27TEIakmjGNzkasPI
-	 6ByJLIDBuB74Qs8hcVXHsJ30V491eC8u6mRYYm9FbvwNfkCk08XvxpRoIVhKQCPWA/
-	 3RcMsW3b0cjIw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZtTDy2w8Zz4wcD;
-	Thu,  8 May 2025 20:40:50 +1000 (AEST)
-Date: Thu, 8 May 2025 20:40:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Drew Fustini <drew@pdp7.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
- <sboyd@kernel.org>
-Subject: Re: Add thead clk tree to linux-next
-Message-ID: <20250508204049.216eeb69@canb.auug.org.au>
-In-Reply-To: <aBv6v5mVX3ofsRyG@x1>
-References: <aBvsGRZqbz11HPwM@x1>
-	<aBv6v5mVX3ofsRyG@x1>
+	s=arc-20240116; t=1746700912; c=relaxed/simple;
+	bh=iAlRYTTGZcQx0Pz5PzT0TtZvd6vf0Sfw6AJBcQntYCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rm4exKAAVZBcIyexFohoRxhZnQWCvQsgwhO+uCdeWbuEv3sBMcCOT7k2sgZUfrZskEnjYQ2zBQ9LjhUCxb5xqfMzjGsDEUtdtBaYvjRLHY10KkndCkTqide2Qm3QGs+Skj+wCkRT5POWqc84CEiErdXMOxxCVaClBXht6PmwU8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S4ak7ARX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746700909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=06W9iI3yI3A7kyidvO1CnfJ/RGZiJQ1fcRyuEYIQr5A=;
+	b=S4ak7ARXbEEuVyoyGZaGHda0hkAh7bIzlqdu+VAgjeYE8JAWfCHosr9vJ6yNXg6rm1w4f2
+	grmYqhbmnfzSUJAINvDddyyqUR34DcBb1TYNJX3Boj3mwtshHIi71UUvA54xGge8jcpSXh
+	AVOegcGZmLJ8UMdxndTctehcjspQogI=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-127-Qz9W31YvPN-LMPNIQ5RTGA-1; Thu, 08 May 2025 06:41:48 -0400
+X-MC-Unique: Qz9W31YvPN-LMPNIQ5RTGA-1
+X-Mimecast-MFC-AGG-ID: Qz9W31YvPN-LMPNIQ5RTGA_1746700907
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-39c1b1c0969so519946f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:41:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746700907; x=1747305707;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=06W9iI3yI3A7kyidvO1CnfJ/RGZiJQ1fcRyuEYIQr5A=;
+        b=t5+oD3JlD6WM0yTePQx6LRySxtGBE4/z/hGNA0amRo6/r8HUB6IKvPHLjVdbHzalPp
+         7W7Vwjp2UQ8jSPvA3HKU9kCaCoJZxoUKC+AKs1Ezcp7Sw2weZkod3AK/C+2mX42c2+SG
+         1Tl+vgbmmKd3GvW1lV3EGRmTX1AGfHkPCZMMcO0hsBWxVLig6vnRDr7vwKrtC+IDIXfS
+         HHGE/R7Vie32mbUwB4jpKPqfbKrRAnD2ke/IiJlRaLzDJMvQEZmtI5HlN55fyCOJO2FK
+         V4lT8O5rDOaHuJTqDrqL3SPpTDzLAWRudqjhkZjWOSLNG/vGqNnhx4lpyeV512Ump0YQ
+         YuyA==
+X-Forwarded-Encrypted: i=1; AJvYcCV62MPKFz9km1TYhVRqS1jXSX7fU3Og1GAKDKELTblsEy3Nv+gQRIzj4KxKgX/86Eb4RSlmow2dCCxROsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIDexsFs+/Dp254ScTnyh4x6JWjyuAoCn5AR4v9cFJVDG73y/9
+	/0w6fbEHBkCwGkXpzA0bLXI1EnkFgQlVhXQ+KbiQxgu1CJD2/nqHVL85/8Pz10ejHKW5K18Q7JQ
+	rq8HOz+Q5j5Em6K7Lj1ogiiRZBBJrci0Qdd4dH85SBAkXGaDuTQvJ/fCcRIEWtw==
+X-Gm-Gg: ASbGncvoA1asQz6BPhQyIelBaf1cgOKsEKLv8wHPH09xS6awAW/QfrTLNVWfICi4rWX
+	amMNyDUv4sHRS3djJBShvSE7BiQsAwr2hilKOtngqvsY71hnSi1+VfYhhfn2k3d6weHhiXQizsy
+	cSetiqJ+RjmBgBhrCOQ0TeK5CT7xf4oF4WcKc+2dPWlEvDt2XSfSQgf3OWi5vScuJ1OWpjYLWV0
+	U1kqudBE/72ouJgidrqMAFEYciLNTdV3yYezUzxypuCZLXxd+z1t0N/f+2JBHVB6GugWEl/hKXs
+	2HMEbQfuew+sU6Jl
+X-Received: by 2002:a05:6000:1883:b0:39e:e75b:5cc with SMTP id ffacd0b85a97d-3a0b4a1856emr6570222f8f.16.1746700907323;
+        Thu, 08 May 2025 03:41:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzw7SZ/TOMN4QRjB2CTB/nANF+cPI/qY9ETolq9Ufd7U5MJbiRQptCsyXuxU8XSI4hHVVh+w==
+X-Received: by 2002:a05:6000:1883:b0:39e:e75b:5cc with SMTP id ffacd0b85a97d-3a0b4a1856emr6570198f8f.16.1746700907008;
+        Thu, 08 May 2025 03:41:47 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:244b:910::f39? ([2a0d:3344:244b:910::f39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0ca4sm20112152f8f.14.2025.05.08.03.41.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 03:41:46 -0700 (PDT)
+Message-ID: <14c78296-97a0-46b4-b2aa-0ac8fa026d59@redhat.com>
+Date: Thu, 8 May 2025 12:41:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=85dbOunXWVnKzH7MZVsglB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: cadence: macb: Fix a possible deadlock in
+ macb_halt_tx.
+To: Mathieu Othacehe <othacehe@gnu.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, anton.reding@landisgyr.com
+References: <20250507101231.12578-1-othacehe@gnu.org>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250507101231.12578-1-othacehe@gnu.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/=85dbOunXWVnKzH7MZVsglB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/7/25 12:12 PM, Mathieu Othacehe wrote:
+> There is a situation where after THALT is set high, TGO stays high as
+> well. Because jiffies are never updated, as we are in a context with
+> interrupts disabled, we never exit that loop and have a deadlock.
+> 
+> That deadlock was noticed on a sama5d4 device that stayed locked for days.
+> 
+> Use retries instead of jiffies so that the timeout really works and we do
+> not have a deadlock anymore.
+> 
+> Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
 
-Hi Drew,
+This looks like a fix that should target the net tree and include a
+fixes tag, see Documentation/process/maintainer-netdev.rst
 
-On Wed, 7 May 2025 17:28:47 -0700 Drew Fustini <drew@pdp7.com> wrote:
->
-> On Wed, May 07, 2025 at 04:26:17PM -0700, Drew Fustini wrote:
-> > Hi Stephen,
-> >=20
-> > I'm the maintainer of T-Head SoCs like the TH1520 and I've just created
-> > new branches for T-Head clk patches. Please add these to linux-next:
-> >=20
-> > thead-clk-fixes git https://github.com/pdp7/linux.git#thead-clk-fixes
-> > thead-clk for-next git https://github.com/pdp7/linux.git#thead-clk-for-=
-next =20
->=20
-> Apologies for typo 'thead-clk for-next'. Please use this:
->=20
-> thead-clk-fixes git https://github.com/pdp7/linux.git#thead-clk-fixes
-> thead-clk-for-next git https://github.com/pdp7/linux.git#thead-clk-for-ne=
-xt
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 1fe8ec37491b1..ffcf569c14f6a 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -997,20 +997,19 @@ static void macb_update_stats(struct macb *bp)
+>  
+>  static int macb_halt_tx(struct macb *bp)
+>  {
+> -	unsigned long	halt_time, timeout;
+> -	u32		status;
+> +	unsigned int delay_us = 250;
+> +	unsigned int retries = MACB_HALT_TIMEOUT / delay_us;
+> +	u32 status;
+>  
+>  	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(THALT));
+>  
+> -	timeout = jiffies + usecs_to_jiffies(MACB_HALT_TIMEOUT);
+>  	do {
+> -		halt_time = jiffies;
+>  		status = macb_readl(bp, TSR);
+>  		if (!(status & MACB_BIT(TGO)))
+>  			return 0;
+>  
+> -		udelay(250);
+> -	} while (time_before(halt_time, timeout));
+> +		udelay(delay_us);
+> +	} while (retries-- > 0);
 
-Added from tomorrow.  In the end I named then thead-clk and
-thead-clk-fixes (just for consistency).
+I think it would be better to use read_poll_timeout_atomic() instead of
+sort-of open-codying it.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+Thanks,
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Paolo
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/=85dbOunXWVnKzH7MZVsglB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgcijEACgkQAVBC80lX
-0Gx4QQf/RzQpzfCeueO5/DYbne7cRC/FJNQYSUXAlUNiH0zG8S9HB6VeSBQkWIUq
-tpSjrtvGdgKPXFa7Xe7RoUd7ToTlu2CeZvujidO55xSCajc2vdyrk8fMBsg14Fpw
-v1RpXOTFj+yhLCpG7u8AMKVBDXkMk8Jetieph+nSdqApIgBYAyWjxPdMSTfxUzM1
-R7zEZqoeIVD1H1BHPiUbtc67b7zZY+/t/ZiHeqosl8hGAeZ83nZNftkmjgVi9pwL
-nR/jvnnbNEXAbJEmmbGzQ2x/29VhvU7PPLJdqkZV+BheUTo4z/mvlcHKJ+e43Kyw
-/WORrYdFT2HoyjDaum8PhqVsccZjJw==
-=uiZk
------END PGP SIGNATURE-----
-
---Sig_/=85dbOunXWVnKzH7MZVsglB--
 
