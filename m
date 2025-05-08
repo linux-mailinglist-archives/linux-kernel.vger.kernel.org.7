@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-639237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D67AAF4BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 450CEAAF4C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513F81C063CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7830D1C0703D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D48C220F2A;
-	Thu,  8 May 2025 07:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894E322172E;
+	Thu,  8 May 2025 07:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QX9G3370"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cVK01zAJ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BED221717
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A44220F4F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689822; cv=none; b=Co6yKjUu5ZhVX2PEQ0bqhOC5+dS5ZP3mPNPomLTSIT+/oDuqOVeAZp8aH/yTbPX7o/KpwUmM65Tka7Jkm6M8hpLJzo57nZmfqMwVUXFQU8aKaKagPg8zwSjysMnjs6ERFhUE/l9rfziMFVRfEroInd0/ymYpcellPWFmY2HSB60=
+	t=1746689835; cv=none; b=YebCPEBcq6b7BQ0qiCQP+0cZeI58eTjJM06G+2Rhnr+UrDRHGHpXv34awGacV97LKEsZwcbDlixh1JOEdXWXLNGd9zQ3kZRmYJmc9UKam21d5YgitCEe/HbtPGPUjBGqWfyVipMqD+P7yLoFCEugnWZUF53bF/h4KM7G+t1Y4tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689822; c=relaxed/simple;
-	bh=UyudNj8jsYij4dkc08q2Csn7AOkH4eCsxDhrrTlIpiI=;
+	s=arc-20240116; t=1746689835; c=relaxed/simple;
+	bh=4Jaa4N0WTUpYbd8+QpfWfHEYKBJOovkD+RP+EaFRBhw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y2BNW9SIsRWbSSWdlf/JOtmvhLPLoHeczDGpkF3APQM9m4YIjfrZ7XV7LqHdzSc0LXhyqfNIc7CNa8s2wrG+ENyq+GgPLHsriOi7a3xwzV02bljU2zLEfCahsDaltGyEd0BqS9k5sttltm0VxAIy/YTJTaFrHJD9DdtAdJ5scmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QX9G3370; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=EKJRX9TK8cDPo+dzDeUndr7q2x6K53VlPOSshq5LPwTeYNX6ruYCyG+3NQE28OlvjfsCx2J5iBnFDzD/xkNrS1rt/jEQhJvdSo33eKqE6cvMDSQwYStnhkS3xuW9vC2dqZhf0G68qKCg/pMOKlAqkVone8ONFQ26z3cLTnxW4pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cVK01zAJ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746689819;
+	s=mimecast20190719; t=1746689833;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfpELmsMlIjDbBoLb7SKYzxZXv0bQCaJBscgT2aoxGA=;
-	b=QX9G3370slNY81uAol7tgdiS5fTCkhEXbBn1qKbdTt6885TbymPfazEUmK12Cb0AWkrOA1
-	mAf5T7CuNDN5zfccJhTIkjJecTUCJCGmGZlLPUGg0MUIWqD+5TEFqDTbRrwoV89Q5L8pnS
-	W13m4Rn7/jK7K/eHtDf9eadhZSw3wc0=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GezCcPBScg5KPaNeawmNmkgQU7p8LvvEy7wz0/a17Ms=;
+	b=cVK01zAJfjLdYRf1/is1gxU9soOm/Atexv82p75hofihcr/Fk6pcC1glH52o566Q3PtqKN
+	+8enKMGlY5zLTqUFj4/odqH7nwINV27uHD9L0HUgo7A7m7zm4fB/3RyFquafH2dA7CdGA/
+	Kz0ClooDNSuPwAGc/c8+VtqIzag+JMg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-gF2Td3PUNRa5yyRViRKjAw-1; Thu, 08 May 2025 03:36:58 -0400
-X-MC-Unique: gF2Td3PUNRa5yyRViRKjAw-1
-X-Mimecast-MFC-AGG-ID: gF2Td3PUNRa5yyRViRKjAw_1746689817
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22e7343c777so6702205ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 00:36:58 -0700 (PDT)
+ us-mta-374-BhNx_AZbML-55hTSGwiY8w-1; Thu, 08 May 2025 03:37:12 -0400
+X-MC-Unique: BhNx_AZbML-55hTSGwiY8w-1
+X-Mimecast-MFC-AGG-ID: BhNx_AZbML-55hTSGwiY8w_1746689831
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39d9243b1c2so246123f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 00:37:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746689817; x=1747294617;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qfpELmsMlIjDbBoLb7SKYzxZXv0bQCaJBscgT2aoxGA=;
-        b=m7iV+hfyEhCMbHb1eFk1v/p261fKNsreykVgoVSrIDf0X6E4K+RbJ6Awu0eull4v2r
-         7S1+7f6V/ZReiErXish1DF/qDTxEmIHmt9H8oRSyzL2teZblNh5h+VRTFfESG9+799Ia
-         jKG1ihzs1qSm51G3biHFbBswAeiZOeWN6UNlzuyJRFWBJ98Esx+9kvq5MTohW9tjJtN/
-         f0apbwe68Um5cwWCtVQ0UlPZfpUwsvyoojBjcpAxLtwuji1i2bd0+gHXPqhn4B3ZYOAs
-         Zs1tmPvR+Snb9MUYYvfnq662gkHrB5NhGX/YbRI5xgbzjScfxd3Li7/2Kw0Z2UXfAjqv
-         K9WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFI7oA2vvPJCx6QPQouzUJ+hwP4xzpnF9rxgwMyzol3/OnXhKwL65OEhsu7FyEq15AaXTwj5Aoz7bqs/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvKt3q+gk1llrdy0/4k0n7B5sLovAISP0QIQvimvpqvmqchOZM
-	+N9ZzJ0JnQ1rWRSJkPKx+cz9lh6kWAgfVZp9BXtnxzuxeGOwgW8dIfaiSnSCj7isU1bMtLSRgmq
-	lBPHhOLsN1Beymm1ZIe0yKv7qe34A+eVMmV3U/Dj+isqqLj/7QYMYvTjicN/xgA==
-X-Gm-Gg: ASbGncsYx07C+2en3eF38POg/r8lS3kpW48RKUALxTtsfeeT1nQvO6fveBq8GtGWqtW
-	mhYDTmxpidseU71iTuu8D5UShIiHzQdLI2WSsQEeLV9VrzxdfI7M+OP2fDA62X3gRhQCfSzn24v
-	YcNDsAy4Td7zD7sEP1gJvBGHVPTbTSsUsUS4c+KMSy8k2gouh+sqvPhK3NyZ8o3z/YvYGa6lmAU
-	cVxsJmdkrCa2Lw70D9HqEK4dBJTmwCcNqvte4afYHXm2crQ+WBiWlMxVNP5g8Hm3/GWU3WLcetz
-	+LS1pa/ZYtMvFLiKwg==
-X-Received: by 2002:a17:902:f552:b0:220:e156:63e0 with SMTP id d9443c01a7336-22e5ea1919bmr81060965ad.8.1746689817372;
-        Thu, 08 May 2025 00:36:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIp9mU4ALROa7MseJf7VbJ3xMqjgH+d2m1FTA51FX0ZMyejG1Jqn1rF0RHRIm4Vvn3E5OXEQ==
-X-Received: by 2002:a17:902:f552:b0:220:e156:63e0 with SMTP id d9443c01a7336-22e5ea1919bmr81060765ad.8.1746689816987;
-        Thu, 08 May 2025 00:36:56 -0700 (PDT)
-Received: from [10.72.120.7] ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e151e998bsm106310115ad.67.2025.05.08.00.36.50
+        d=1e100.net; s=20230601; t=1746689831; x=1747294631;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GezCcPBScg5KPaNeawmNmkgQU7p8LvvEy7wz0/a17Ms=;
+        b=TuEId0/pakyBTcjs/4U44rfwIl3SCvtfUiV0vuXZoj8BT/lMHJ26+tN9fVXKRuoxA3
+         gZ+WDxlNm5nNU84wBqIgaPopWi34PxkwOGD1SdAxYL9wVqUv9fpWN9pdo8g8sNh/ZmVM
+         ybYkgyKUZnExOUffbJndolaSNAbIikEumsSUj+gxVg35rv18xbaIt639ltm8WCarniLc
+         tjqEOj4Cz79tXwjcSU9wqaj2+q8KTCCZheUHNN969xg6G/RX3yC3UbyGWH5m4NrluO98
+         cQwaS9WSj6t5vx+K6LoAA/wdeboHeG7nxGZ7y875bkoowstS73+qmcwKZDOCd5A2u96a
+         54Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqEBR4g2Tnq7Mwr2kPp3DH5jyMJx2U1ksCDHI5MxLbFPJlqKh5aCfKHVJDo3f9DPuzTsBxJsbehWxwvfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSdz3VWsxnmyDzLI7TiPnm7YJCdACdlB47tWHIJLcLipHSUmOj
+	PPIMEPXZtAjVx5ljTfoytoyJTv/o8kP4XS+8O99aaHgmTTHjjufwyDMpcwCZlqXzQuTI/IpOMWb
+	DTiWfVgmoZ7Z5xxsGupuKTuhwzzS11gtI3eaeBfWhe0hdO4h52f/PAjEZNkZM1A==
+X-Gm-Gg: ASbGncsEndluwF6XMdx0OGt2u4nmFb+juGU3K+85iKEkH/FhRqar1LVOfHP1tsMgmzz
+	uANI4/JNdEuCpV5X+HPWxJsvvYyyPkdVB2ZBW4HpcL7FV5d5xT9nI1GfYzCFVysQ6jvE46nv3xP
+	5QYmvpydZEK/0cAAxczv2r0DCJ7VlGfJozBK/Pb4BSVLRgIsasXoip0ugaq+MriU88jiu9iAgj+
+	sQJv2f8pK0cS2oTKIfI+WMUEAGGHwHzs37KvmfEnwT1zR7LaSOMSI7dq0qlOEeRdFkURcEqIARK
+	vdGmHKpBOUUh5y/mhbAefak3/OkuyW8Zd//bv6L1Qsx2rVRiSq9vxeXuWWvpFHuyhgKTi5rUdQ6
+	fpbx/4WRkMolLwGrOB5088dDnifZRxlGo5bIVwio=
+X-Received: by 2002:a5d:64e8:0:b0:3a0:809f:1c95 with SMTP id ffacd0b85a97d-3a0b4a6868bmr5069696f8f.53.1746689830666;
+        Thu, 08 May 2025 00:37:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfpkNjKotxnV6NRi8jDftDtvx5wtIETdy3ab7NqN203hY3QPoExdZ1fDzVF1kh2LAVn+THHA==
+X-Received: by 2002:a5d:64e8:0:b0:3a0:809f:1c95 with SMTP id ffacd0b85a97d-3a0b4a6868bmr5069666f8f.53.1746689830299;
+        Thu, 08 May 2025 00:37:10 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c? (p200300d82f3e590027aa5f4ab65c3d3c.dip0.t-ipconnect.de. [2003:d8:2f3e:5900:27aa:5f4a:b65c:3d3c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae3ccdsm19537950f8f.38.2025.05.08.00.37.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 00:36:55 -0700 (PDT)
-Message-ID: <4c1b573b-7258-4086-af15-b220a91a5017@redhat.com>
-Date: Thu, 8 May 2025 15:36:48 +0800
+        Thu, 08 May 2025 00:37:09 -0700 (PDT)
+Message-ID: <0fd1bf14-a664-49c0-a239-fdc45b8e3a39@redhat.com>
+Date: Thu, 8 May 2025 09:37:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,183 +89,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/9] md: fix is_mddev_idle()
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, agk@redhat.com,
- song@kernel.org, hch@lst.de, john.g.garry@oracle.com, hare@suse.de,
- pmenzel@molgen.mpg.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250506124658.2537886-1-yukuai1@huaweicloud.com>
- <20250506124903.2540268-1-yukuai1@huaweicloud.com>
- <20250506124903.2540268-9-yukuai1@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-In-Reply-To: <20250506124903.2540268-9-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH 2/2] mm: convert do_set_pmd() to take a folio
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, ziy@nvidia.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
+ <a2faee74256c22cff2238487a86b154d5520c334.1746609191.git.baolin.wang@linux.alibaba.com>
+ <aBtNrQNlL7hjLrTZ@casper.infradead.org>
+ <88060373-d0b8-404a-b53b-9b5a54f5ba6f@linux.alibaba.com>
+ <aBuOjrH1UpyTf8I9@casper.infradead.org>
+ <569e592c-1c30-4c03-bcee-c1670ac4e159@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <569e592c-1c30-4c03-bcee-c1670ac4e159@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 08.05.25 04:23, Baolin Wang wrote:
+> 
+> 
+> On 2025/5/8 00:47, Matthew Wilcox wrote:
+>> On Wed, May 07, 2025 at 08:36:54PM +0800, Baolin Wang wrote:
+>>> On 2025/5/7 20:10, Matthew Wilcox wrote:
+>>>> Because I see nowhere in this patch that you initialise 'page'.
+>>>
+>>> Please look at the following code in do_set_pmd(), and the 'page' will be
+>>> initialized before using.
+>>>
+>>>           if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags))
+>>>                   return ret;
+>>>
+>>>           if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
+>>>                   return ret;
+>>>
+>>>           if (folio_order(folio) != HPAGE_PMD_ORDER)
+>>>                   return ret;
+>>>           page = &folio->page;
+>>
+>> Ah, fair, I missed that.
+>>
+>>>> And that's really the important part.  You seem to be assuming that a
+>>>> folio will never be larger than PMD size, and I'm not comfortable with
+>>>
+>>> No, I have no this assumption. But do_set_pmd() is used to establish PMD
+>>> mappings for the PMD-sized folios, and we already have PMD-sized checks to
+>>> validate the folio size:
+>>>
+>>>           if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
+>>>                   return ret;
+>>>
+>>>           if (folio_order(folio) != HPAGE_PMD_ORDER)
+>>>                   return ret;
+>>>
+>>>> that assumption.  It's a limitation I put in place a few years ago so we
+>>>> didn't have to find and fix all those assumptions immediately, but I
+>>>> imagine that some day we'll want to have larger folios.
+>>>>
+>>>> So unless you can derive _which_ page in the folio we want to map from
+>>>
+>>> IMO, for PMD mapping of a PMD-sized folio, we do not need to know _which_
+>>> page in the folio we want to map, because we'll always map the entire
+>>> PMD-sized folio.
+>>
+>> There's a difference between "Assert that the folio is PMD sized" inside
+>> the function because we know there are still problems, and "Change the
+>> interface so we can't specify which page inside the folio is the one
+>> we're actually interested in".
+> 
+> Fair enough. So how about adding a new 'folio' parameter to
+> do_set_pmd(), similar to the set_pte_range() function prototype?
+> 
+> vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct
+> page *page)
 
-在 2025/5/6 下午8:49, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> If sync_speed is above speed_min, then is_mddev_idle() will be called
-> for each sync IO to check if the array is idle, and inflight sync_io
-> will be limited if the array is not idle.
->
-> However, while mkfs.ext4 for a large raid5 array while recovery is in
-> progress, it's found that sync_speed is already above speed_min while
-> lots of stripes are used for sync IO, causing long delay for mkfs.ext4.
->
-> Root cause is the following checking from is_mddev_idle():
->
-> t1: submit sync IO: events1 = completed IO - issued sync IO
-> t2: submit next sync IO: events2  = completed IO - issued sync IO
-> if (events2 - events1 > 64)
->
-> For consequence, the more sync IO issued, the less likely checking will
-> pass. And when completed normal IO is more than issued sync IO, the
-> condition will finally pass and is_mddev_idle() will return false,
-> however, last_events will be updated hence is_mddev_idle() can only
-> return false once in a while.
->
-> Fix this problem by changing the checking as following:
->
-> 1) mddev doesn't have normal IO completed;
-> 2) mddev doesn't have normal IO inflight;
-> 3) if any member disks is partition, and all other partitions doesn't
->     have IO completed.
->
-> Also change rdev->last_events to unsigned long to cleanup type casting.
->
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/md.c | 81 ++++++++++++++++++++++++++-----------------------
->   drivers/md/md.h |  3 +-
->   2 files changed, 45 insertions(+), 39 deletions(-)
->
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 541151bcfe81..0fde115e921f 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -8625,50 +8625,55 @@ void md_cluster_stop(struct mddev *mddev)
->   	put_cluster_ops(mddev);
->   }
->   
-> -static int is_mddev_idle(struct mddev *mddev, int init)
-> +static bool is_rdev_holder_idle(struct md_rdev *rdev, bool init)
->   {
-> +	unsigned long last_events = rdev->last_events;
-> +
-> +	if (!bdev_is_partition(rdev->bdev))
-> +		return true;
-> +
-> +	/*
-> +	 * If rdev is partition, and user doesn't issue IO to the array, the
-> +	 * array is still not idle if user issues IO to other partitions.
-> +	 */
-> +	rdev->last_events = part_stat_read_accum(rdev->bdev->bd_disk->part0,
-> +						 sectors) -
-> +			    part_stat_read_accum(rdev->bdev, sectors);
-> +
-> +	return init || rdev->last_events <= last_events;
-> +}
-> +
-> +/*
-> + * mddev is idle if following conditions are matched since last check:
-> + * 1) mddev doesn't have normal IO completed;
-> + * 2) mddev doesn't have inflight normal IO;
-> + * 3) if any member disk is partition, and other partitions don't have IO
-> + *    completed;
-> + *
-> + * Noted this checking rely on IO accounting is enabled.
-> + */
-> +static bool is_mddev_idle(struct mddev *mddev, int init)
-> +{
-> +	unsigned long last_events = mddev->normal_io_events;
-> +	struct gendisk *disk;
->   	struct md_rdev *rdev;
-> -	int idle;
-> -	int curr_events;
-> +	bool idle = true;
->   
-> -	idle = 1;
-> -	rcu_read_lock();
-> -	rdev_for_each_rcu(rdev, mddev) {
-> -		struct gendisk *disk = rdev->bdev->bd_disk;
-> +	disk = mddev_is_dm(mddev) ? mddev->dm_gendisk : mddev->gendisk;
-> +	if (!disk)
-> +		return true;
->   
-> -		if (!init && !blk_queue_io_stat(disk->queue))
-> -			continue;
-> +	mddev->normal_io_events = part_stat_read_accum(disk->part0, sectors);
-> +	if (!init && (mddev->normal_io_events > last_events ||
-> +		      bdev_count_inflight(disk->part0)))
-> +		idle = false;
->   
-> -		curr_events = (int)part_stat_read_accum(disk->part0, sectors) -
-> -			      atomic_read(&disk->sync_io);
-> -		/* sync IO will cause sync_io to increase before the disk_stats
-> -		 * as sync_io is counted when a request starts, and
-> -		 * disk_stats is counted when it completes.
-> -		 * So resync activity will cause curr_events to be smaller than
-> -		 * when there was no such activity.
-> -		 * non-sync IO will cause disk_stat to increase without
-> -		 * increasing sync_io so curr_events will (eventually)
-> -		 * be larger than it was before.  Once it becomes
-> -		 * substantially larger, the test below will cause
-> -		 * the array to appear non-idle, and resync will slow
-> -		 * down.
-> -		 * If there is a lot of outstanding resync activity when
-> -		 * we set last_event to curr_events, then all that activity
-> -		 * completing might cause the array to appear non-idle
-> -		 * and resync will be slowed down even though there might
-> -		 * not have been non-resync activity.  This will only
-> -		 * happen once though.  'last_events' will soon reflect
-> -		 * the state where there is little or no outstanding
-> -		 * resync requests, and further resync activity will
-> -		 * always make curr_events less than last_events.
-> -		 *
-> -		 */
-> -		if (init || curr_events - rdev->last_events > 64) {
-> -			rdev->last_events = curr_events;
-> -			idle = 0;
-> -		}
-> -	}
-> +	rcu_read_lock();
-> +	rdev_for_each_rcu(rdev, mddev)
-> +		if (!is_rdev_holder_idle(rdev, init))
-> +			idle = false;
->   	rcu_read_unlock();
-> +
->   	return idle;
->   }
->   
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index b57842188f18..1982f1f18627 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -132,7 +132,7 @@ struct md_rdev {
->   
->   	sector_t sectors;		/* Device size (in 512bytes sectors) */
->   	struct mddev *mddev;		/* RAID array if running */
-> -	int last_events;		/* IO event timestamp */
-> +	unsigned long last_events;	/* IO event timestamp */
->   
->   	/*
->   	 * If meta_bdev is non-NULL, it means that a separate device is
-> @@ -520,6 +520,7 @@ struct mddev {
->   							 * adding a spare
->   							 */
->   
-> +	unsigned long			normal_io_events; /* IO event timestamp */
->   	atomic_t			recovery_active; /* blocks scheduled, but not written */
->   	wait_queue_head_t		recovery_wait;
->   	sector_t			recovery_cp;
+That's what I used for rmap functions. *Maybe* folio+idx is better: 
+might avoid having to lookup the page in some cases (probably in the 
+future).
 
+-- 
+Cheers,
 
-Looks good to me
-
-Reviewed-by: Xiao Ni <xni@redhat.com>
+David / dhildenb
 
 
