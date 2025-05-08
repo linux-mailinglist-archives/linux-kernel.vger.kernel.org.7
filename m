@@ -1,122 +1,169 @@
-Return-Path: <linux-kernel+bounces-640102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D706AB00A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:44:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151F9AB00AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43FF4A1F34
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD904E0CA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645B428468C;
-	Thu,  8 May 2025 16:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6846D285414;
+	Thu,  8 May 2025 16:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0c7wX7N"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VlFxXS1n"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1786B281526
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2503528468B;
+	Thu,  8 May 2025 16:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746722675; cv=none; b=dCmVYr4ixuCaBJ+FWfigjBQB24P2mTzLTEk4vSmH+qEi+sxI7y2T6IpoYOiemyInNcK7y5Bg0fm+MGy8Lj7dGFfRPxI/vOD7JY5SqCnIO23L1kdDM8eukAyUj4Qq580iwufCO0d1jyWLF8Zy6KYmXFmF5NBC7tKdPnD6gs3PkkQ=
+	t=1746722701; cv=none; b=EWBnCumiAXq2haEJHSgLAKJDm5RcIKAyTuw6Yd5A3NoHkGk9aHo8z2IvkmjZl6xxRnfgrzTDl1dK3vTzBL4Yo+U638hPVJrI4jdlau9rmzIOTVe1fcGg15MhUhUs9LQwpmjfHRP77NfmdRaVcGrYwzfEP+i7bMhC9eFOXYNd1Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746722675; c=relaxed/simple;
-	bh=X1nbJSmxcQuuOtNumA+SYFcQM0q4zJpxtssYnRhUnZM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UXtOvCCF9bOv13T27Z7UoAFj9r6zQnEJNOsBsREM1HDfzuPHvJOpjpJcrd/vB5aJb9gfPtjIHWpdg7+jm9kVsd7q4ewwrj/abKmeYzJECqzhGn6EN9AEIKz+dp1wnPMNa0jPWhfiJWw6Dm0PuUHJXrdYxjB73WJw5sg9+uexuWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0c7wX7N; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-548409cd2a8so1493440e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 09:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746722672; x=1747327472; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aHVG5Ewf3BsYnjta0/dgnDN7bGT14wd5wh/nwWQ9VDk=;
-        b=a0c7wX7N9vJsE1cBoJFZrEIqs7nB4wQAbgqNY7I/WFk9eK8plufJZVS7J5b8vCwrjN
-         IKSpzzbBkoQwclgicxNW3TgpbiArq0vYdSfefmo5SjZcwtzgSWdSMBsaHLvxfniPpy5A
-         FZfY39hi8JzV/YP7Y541E0ptxtWcpKwbSfN+1gVeXd7xKyEDNvTaJ26obp/yfpNcEFUd
-         HwKS0sNdsg2nwKBEpD2/iqtaTIvyt0i0wN4UtLYz4qNWcI1lDTFTbJ3DFFJI6rm9zQEr
-         Feo0fWPaxhZTOWZhIA5xmyZ63mVIgvAeJ1NDVV/oyxNprt86Dpv9/ll+hkF8S85DTA2D
-         hfMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746722672; x=1747327472;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHVG5Ewf3BsYnjta0/dgnDN7bGT14wd5wh/nwWQ9VDk=;
-        b=Za4rp99olQg0sZf6OusbDYNicOYln2iu6MP6uI5ZaaoPUmZkS0QOwEGAwnL6GT/53h
-         SwIldaxrPhbvGbgc5KElYP0Sv0p76eYbCE1fltI0rQIj05S5YBVsCumM8bvr4UuTLMSw
-         WmNN3Dqo3MiOY3Y9GADMAUMKN53P097eTINrDDl/+7zM5V8/k3rVusl7qsCD9/HwLub+
-         8OX8JY6r+BfZhHAfvlYK9qeJ88YW95wWK1JjhPSGPczziWMWdFHeEW+LnxjGYUGispLu
-         xk6ixdKK6SZL6xLlvCEu9XxPC0tZlwyTcpOrb5SJeKIf0YPzsczAIucGM6c6IKHSzDvw
-         K/vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWO3Y5uwe1Uqg4XR4x0odhza9bOaJ7GAHX8ocqONt0b1tDuHHL1+QE9ioRo3vjuS+bzjADc3Dl7RI0Y4AQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0L+WZXSkk+cHw/K/zh8D6emc2XImEcJBMxbruGC/g10iADJJN
-	iZlw/mgrtB6Unfa+FZg6JnE7wpvFaNIzhz6M3U56XEggu7vgbGa1kTksG6m5
-X-Gm-Gg: ASbGnctaYKJTU6gyOpnQ/BKQOGUYK8ZMJZO97/SWbbV4+rqbSP6+VugjJgmZ1e0Uqei
-	5aVqQlBWgk3ik5rodUKRvCwle3tmAlY7uC9YzF8+nNR82FwRCXBL8CZ6Javd3fTuXxETsveMRCB
-	6vJ0dwmmc/GjILxbTpM22ilrHtupE2eBjCYp8D2MziZdbPrhiMYBw591168ISppcvPrXBZ53xhv
-	4XyNsVsPclvXkkDVMuJ/IOYKjwWx82Kgybu8kpJCtgXHW/MR+PSEeuUdJ5pXFz8TMEuhUoP0Yfj
-	d6f8VuqimnaAdcuEAqf8+GEfrQUBO5Tg6D7cEWQiPjDQLv6qobra/9oFE3p3hyrgJNDsSZsouqy
-	ubZZPGGAPgcwSL+q2/Yn4yRK1KXy+56kZaqmwmkiK4LkD/CB2xdqWaHqOuw==
-X-Google-Smtp-Source: AGHT+IEtBpemjMlzkscWb7LegaY55jvRB8e3UcFOaQKUcEeSiywKzbE5iW366LOBbHh0ZlVzn+OfoQ==
-X-Received: by 2002:a05:6512:2381:b0:54a:cc73:1460 with SMTP id 2adb3069b0e04-54fb95edd94mr3095592e87.1.1746722671843;
-        Thu, 08 May 2025 09:44:31 -0700 (PDT)
-Received: from Lappari.v6.elisa-laajakaista.fi (nzckegfeyybu021f2us-1.v6.elisa-laajakaista.fi. [2001:99a:20b9:a000:e167:89b0:e98:2534])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64b6ee3sm14645e87.126.2025.05.08.09.44.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 09:44:31 -0700 (PDT)
-Date: Thu, 8 May 2025 19:44:30 +0300
-From: Heikki Huttu <heissendo88@gmail.com>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Subject: [PATCH v2] comedi: drivers: adl_pci9118.c: Edit file so that
- checkpatch.pl has 0 typo errors
-Message-ID: <aBzfbvF6YdaYDDYk@Lappari.v6.elisa-laajakaista.fi>
+	s=arc-20240116; t=1746722701; c=relaxed/simple;
+	bh=qS+fG1uY2qfrXxmPkhApBQLcFLFlfoSwkBrytx72YYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C26k3dPTL/aeklqLEmh2Uhl6LNYTIonVQdMLSPYgjuqGQBpavTzuwjKFBCk03wHcN4qcDfqOg0OU+qIUEhblYr/suzRnr6aDeQQYA69b5J2+e+Fh5PwVvvbkfGPiQmnaESBHpAnHvIYbzp9WFrH7VSnAlxj3hDp9xIptIKfk7ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VlFxXS1n; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548EGKp7016373;
+	Thu, 8 May 2025 16:44:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iJUZNKKB4R9qVDa1LsBb9kjHLjV8gYiJE/WYl+pHjPs=; b=VlFxXS1nD1g3Rt7l
+	UrepsmHmWgwzKLr1fZT/1PNktE10/Iu+Z/0uOBypn9DgZ3f3umGqR+7AWFTP5FAy
+	mUklNgWK5SNvmyqgFaubmDTIiZn9+qcbdeFL44NGMULNzhF8lYJ7Xd8tP9pbYDYg
+	emY69QqBq4bN4RX6vWhtHHfR5V6PqCg3D6cElzfenG9qZyIHbPv6FxXlDgULwbtg
+	1sxgOPKY/xYy4TGB7drdtGwrS+NTfWmmR3MApGTi3l7dwG0dHf2F12SrBwBEaRdD
+	gulUt/vgcWGArGpDv8KZHEvUXO079p/MMHE4h/hzf2o8cAeuxcMnSEvkAvD2fCqA
+	SQrn8A==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp8synu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 16:44:56 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 548GitZT017762
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 May 2025 16:44:55 GMT
+Received: from [10.216.33.253] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 May 2025
+ 09:44:50 -0700
+Message-ID: <e13d03e4-623b-43c6-b829-21b6cb8e3bf9@quicinc.com>
+Date: Thu, 8 May 2025 22:14:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] arm64: dts: qcom: qcs6490-rb3gen2: Add sound card
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@oss.qualcomm.com>, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+References: <20250429092430.21477-1-quic_pkumpatl@quicinc.com>
+ <20250429092430.21477-6-quic_pkumpatl@quicinc.com>
+ <cffa3374-c88f-4390-af7e-d6309a870b63@oss.qualcomm.com>
+Content-Language: en-US
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+In-Reply-To: <cffa3374-c88f-4390-af7e-d6309a870b63@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AcCwZKWpsD2mKxaxqSgN14GFZ4nqL4zy
+X-Proofpoint-ORIG-GUID: AcCwZKWpsD2mKxaxqSgN14GFZ4nqL4zy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDE0NiBTYWx0ZWRfX3cEEfERPWGPw
+ x6A7pabUIPxTwR+ek2uphyMiZlsIi6/xTXX5R2KMMhXHdzdARFNX6QvAT+1AC7EAToybpR6SMTr
+ XC9Q+fpCNvPlJBQBSIpI49ftAP3d5rZ5+6icO1Kivge/Ud4isksQLPL96qRcZ7RBWSe3F7nD5/I
+ H8T6sqLwhMI9YHr0JBtnE0y8CeMZsWdJq89WsjR2dzhpfV20xz43NI6QyCtdZ5b5TO4+UOm6MpN
+ vQhfqOVROJQK+UsBpOZ7W9YJqDkmIRvCQLceyV1jiSD2w8ZykY+17Q9NL46mvPL/E3fJlzzOg6Q
+ 1CsWem35KPej3WNcvGWK2RpDEzrVXODKml//YiIsc4dXI3EGUgCwDWn7Um0wSIdCo1O16XN4hr1
+ gsCW7o1h/Yd1Mxf6Y4+ZZ8DdmLzFTyglv2237aY8RK1ZlFPM7k0rp/ETDdb1twgzVBhSwxg7
+X-Authority-Analysis: v=2.4 cv=e/4GSbp/ c=1 sm=1 tr=0 ts=681cdf88 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=EkdEwCnvp131_jYCVQ4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-08_05,2025-05-08_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 adultscore=0 phishscore=0 clxscore=1015
+ mlxlogscore=875 spamscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505080146
 
-Fix errors produced by checkpath.pl about typos.
 
-Signed-off-by: Heikki Huttu <heissendo88@gmail.com>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
----
- drivers/comedi/drivers/adl_pci9118.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/comedi/drivers/adl_pci9118.c b/drivers/comedi/drivers/adl_pci9118.c
-index a76e2666d583..67c663892e48 100644
---- a/drivers/comedi/drivers/adl_pci9118.c
-+++ b/drivers/comedi/drivers/adl_pci9118.c
-@@ -32,7 +32,7 @@
-  * ranges).
-  *
-  * There are some hardware limitations:
-- * a) You cann't use mixture of unipolar/bipoar ranges or differencial/single
-+ * a) You can't use mixture of unipolar/bipolar ranges or differential/single
-  *  ended inputs.
-  * b) DMA transfers must have the length aligned to two samples (32 bit),
-  *  so there is some problems if cmd->chanlist_len is odd. This driver tries
-@@ -227,7 +227,7 @@ struct pci9118_private {
- 	struct pci9118_dmabuf dmabuf[2];
- 	int softsshdelay;		/*
- 					 * >0 use software S&H,
--					 * numer is requested delay in ns
-+					 * number is requested delay in ns
- 					 */
- 	unsigned char softsshsample;	/*
- 					 * polarity of S&H signal
--- 
-2.47.2
+On 4/29/2025 4:28 PM, Konrad Dybcio wrote:
+> On 4/29/25 11:24 AM, Prasad Kumpatla wrote:
+>> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>>
+>> Add the sound card node with tested playback over WSA8835 speakers
+>> and digital on-board mics.
+>>
+>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 49 ++++++++++++++++++++
+>>   1 file changed, 49 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> index 43cbdbe43afd..9cfe648e29bb 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> @@ -1078,6 +1078,55 @@
+>>   	status = "okay";
+>>   };
+>>   
+>> +&sound {
+>> +	compatible = "qcom,qcs6490-rb3gen2-sndcard";
+>> +	model = "qcs6490-rb3gen2-snd-card";
+>> +
+>> +	audio-routing =
+>> +		"SpkrLeft IN", "WSA_SPK1 OUT",
+> 
+> Please unbreak the line and align the entries
+> 
+> [...]
+Ack>
+>> +		"SpkrRight IN", "WSA_SPK2 OUT",
+>> +		"VA DMIC0", "vdd-micb",
+>> +		"VA DMIC1", "vdd-micb",
+>> +		"VA DMIC2", "vdd-micb",
+>> +		"VA DMIC3", "vdd-micb";
+>> +
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +	wsa-dai-link {
+>> +		link-name = "WSA Playback";
+>> +
+>> +		codec {
+>> +			sound-dai = <&left_spkr>, <&right_spkr>, <&swr2 0>,
+>> +					<&lpass_wsa_macro 0>;
+> 
+> Please align the <s
+Ack>
+> Konrad
 
 
