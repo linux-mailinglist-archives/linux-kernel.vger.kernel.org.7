@@ -1,109 +1,90 @@
-Return-Path: <linux-kernel+bounces-639604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3777AAF9A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:18:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D0CAAF9AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A9B1C04259
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35A33AB8F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0383222425B;
-	Thu,  8 May 2025 12:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC0F2253EA;
+	Thu,  8 May 2025 12:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cTTt7lAC"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTfEhYpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB50372635
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 12:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C7136A;
+	Thu,  8 May 2025 12:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706707; cv=none; b=qPCiaEfSmIBLxi9kg6/8hmS623Cw5fu8UEzrssYfeygrXIzNsOxwiyh4YOoF9BlpLy4diZ0WOjdelGRYZIXMKWkfqP6N6Lsyoq1sgdYyDovnTokSSioG0Zh7JG12pz0wV92bwtSN0PnxdLwZ9sWREjb+oVwtTKFYmqFKoVfMcmE=
+	t=1746706842; cv=none; b=AAN4PSwvny4xTJY2F7bwejJYVCtqZbL1EI2lDs76z4+cC0r2gYok6/BzzrvjiOAZ9kSu4u+v07P0Wi0R3b0fWqVS78096MGOGAUxBP4s6Ej9rvZ1L2QvoR6Hcf55REy1m7OMQdP2QlAjj6WTulNLxDm2Rg88FjJTj38y69ENSO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706707; c=relaxed/simple;
-	bh=BKDed28Ark4qkoKuZoBZ867pWA04x3aLFbnz95wymUs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J87PX2UbbFPgn5joFIRowe/JstAgZ/cr72QweFRzoJ3QqkBRY8cFhH2gWPR3lIiKyq+BTRScJZVVrcWMdPLfFRWsrg0WJ9HVr8wG8xgzagvLkGGemmYXhXPpHATMXC+fjTHYMuiWIgNFog5HKKY4WZ6NKXS9wSo0YO1PzMkQiZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cTTt7lAC; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-442d472cf84so1292075e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 05:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746706704; x=1747311504; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GjqECzM0xXdHzh2jZHRXI7ayViPuMFn0ZCC41M7pi0Q=;
-        b=cTTt7lAC1iomH9YBNxBGUtHnA3YmQa7LsC0mzy6YSxZmQoc06cpkxGW3nf+b2iqIVp
-         mp0J4n7P3199upD++xfW2lmbKWfpCN0to7u9shzddavJPOvr3gDGeucFo9FoZOmA54GL
-         nBxf3rKAbIUhgF7L/QX7KIl3iSteokkPLrJ73LUiStiJBwfXr6hMtSk9SRpOwsfnAPyb
-         XjgxWhQXHUq5NNRXtw6WDW+w4tZrpM5MGzBmthl/WrkUat+0EJwuMt4AW82dGbZTtpFc
-         gS9f2GZsmofdsRbxWx5mM9DwnsXkjFj2Txba8W6BM6wl0qOSqxUIAoF7dd9BIAUHJjPz
-         nbLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746706704; x=1747311504;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GjqECzM0xXdHzh2jZHRXI7ayViPuMFn0ZCC41M7pi0Q=;
-        b=tszK3Tckqb8MVo+EHwfCjEcYApzIW/Ps4WMRoLTs3b3/tuDuU/GP2WdZcuVLNcSLyC
-         C0WTa/8ldWQqxBHznegX3/61gGKXvlwTSohizGfzhXwTgrNw+SDXUPx3oc8q7sjbtAK5
-         MyCLexcZK0tnVVe1wZh01i7WS3nbE5M3u33GU6B7xkX046+kk9UyR3Sb28WvNU7ssa1l
-         l5YoL8wrnbozcV6N/HzC9bNlnTyUeJ2R7G5O3cps2SNPWqnbtBdjEnweTRXOdbY8j7Sl
-         8peM9Gik2mB4TNKYBFaKL5Pz1fL/ujbMvQopnwbk04RGiQmlLmrRTEJWnlUc3bbwcNvb
-         XnEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXCtX49dz6TBMBHOgF3eZSAv08VpLxZGmAmKvvanAuBf4jh9CkJtPCv9YBwbcxG5BRh68xRIiGZ5uFB6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP4QoVExrEFQhlU4fsxbwVC15c44HAH4sjY6E53zaE6VnrNrXh
-	jitTffP7WQ++r+8B4FPHR9AmYTsuDnTR28OdkQ2BHJo8mt/rfpWxX596w98SYgyVHGD9Mry0aVq
-	4ft1sz48Wdknf3Q==
-X-Google-Smtp-Source: AGHT+IEU6+k6ZMms5Qt9GQmX7fD+aX8PtD8q8I2nIMeqHz3kCS2UbIip5rEgZJznrONbm8k5k357hzP8cJok5fM=
-X-Received: from wma13.prod.google.com ([2002:a05:600c:890d:b0:442:c98d:df37])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3545:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-442d0225970mr32348305e9.0.1746706704107;
- Thu, 08 May 2025 05:18:24 -0700 (PDT)
-Date: Thu, 8 May 2025 12:18:21 +0000
-In-Reply-To: <20250505214306.3843294-3-ynaffit@google.com>
+	s=arc-20240116; t=1746706842; c=relaxed/simple;
+	bh=jStuEGl1AI28cwqNnsX1wNCPdcM0C6jQhveYa2VC1ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gek8oLPBYUwTjnTmUSEpPXCmmUXBjmar8S5o1guNZaxjOaiwmGepCqhqT8xi5YxGeWJ2sdv6YiBdN2IeIFfc1caVU8lwvg6+SHuUgKXBWGVIgZmxFfVQZE9t9zoaBwmyxRnNYYxSSoWtudbnsEe1jQwo6z5iAFeFGcIAAquoj7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTfEhYpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933C5C4CEE7;
+	Thu,  8 May 2025 12:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746706841;
+	bh=jStuEGl1AI28cwqNnsX1wNCPdcM0C6jQhveYa2VC1ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTfEhYpfnSt2HnvR7QlQEi6JGzde7YqgQybZkZ8uDw0xnZLPhk12KiBTrn/Nn+PMu
+	 1e2qMl9AH3/BYo4lcItR2/aT8QSCgS1JfgROd8pKbuawGNfxurebu8MDvEmhsE8lZF
+	 2U9fycOuqylLkNBa1mexSvsB8UI31xHB6GyAtdRwVLYOaU64RsyF580B42NTDX0Pg1
+	 Zqy6F0drGPbkhMmfTViTC2OUneqbP3FiGa8sQSwJzqf3nvqbas69ywkVr1KlxUOCUn
+	 skWT6MTwhme2BCp+gH8YgbLajWfDc1JDlVL4kFymQtULj6//MbV3wn9LWf+F/cezXe
+	 Ln8emFfBQXFXw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uD0Ew-000000003fn-2BI5;
+	Thu, 08 May 2025 14:20:39 +0200
+Date: Thu, 8 May 2025 14:20:38 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
+	konrad.dybcio@linaro.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+	quic_nkela@quicinc.com, quic_psodagud@quicinc.com,
+	abel.vesa@linaro.org
+Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
+Message-ID: <aByhln4CpobzSz3s@hovoldconsulting.com>
+References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250505214306.3843294-3-ynaffit@google.com>
-Message-ID: <aByhDepxNsCCr3rI@google.com>
-Subject: Re: [PATCH v2 1/2] binder: Refactor binder_node print synchronization
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tiffany Yang <ynaffit@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030130840.2890904-1-quic_sibis@quicinc.com>
 
-On Mon, May 05, 2025 at 09:42:32PM +0000, Tiffany Yang wrote:
-> +	if (node->proc)
-> +		binder_inner_proc_unlock(node->proc);
-> +	else
-> +		spin_unlock(&binder_dead_nodes_lock);
+Hi Sibi and Bjorn,
 
-I don't buy this logic. Imagine the following scenario:
+On Wed, Oct 30, 2024 at 06:38:38PM +0530, Sibi Sankar wrote:
+> This series enables CPUFreq support on the X1E SoC using the SCMI perf
+> protocol. This was originally part of the RFC: firmware: arm_scmi:
+> Qualcomm Vendor Protocol [1]. I've split it up so that this part can
+> land earlier. Warnings Introduced by the series are fixed by [2]
 
-1. print_binder_proc is called, and we loop over proc->nodes.
-2. We call binder_inner_proc_unlock(node->proc).
-3. On another thread, binder_deferred_release() is called.
-4. The node is removed from proc->nodes and node->proc is set to NULL.
-5. Back in print_next_binder_node_ilocked(), we now call
-   spin_lock(&binder_dead_nodes_lock) and return.
-6. In print_binder_proc(), we think that we hold the proc lock, but
-   actually we hold the dead nodes lock instead. BOOM.
+With the SCMI perf quirk for the Qualcomm firmware merged for 6.16, we
+can now finally get this one merged.
 
-What happens with the current code is that print_binder_proc() takes the
-proc lock again after the node was removed from proc->nodes, and then it
-exits the loop because rb_next(n) returns NULL when called on a node not
-in any rb-tree.
+There appears to be a trivial conflict due to a context change (the new
+watchdog node) however.
 
-Alice
+Can you fix that up when applying, Bjorn, or do you want Sibi to send a
+v8?
+
+Johan
 
