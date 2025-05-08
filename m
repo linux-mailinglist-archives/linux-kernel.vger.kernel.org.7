@@ -1,224 +1,233 @@
-Return-Path: <linux-kernel+bounces-639536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC32EAAF88F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:15:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34D5AAF89B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91A61B6625B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C3FF7AF2DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004AC1F7075;
-	Thu,  8 May 2025 11:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B86622154A;
+	Thu,  8 May 2025 11:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Lynq//np";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Lynq//np"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2046.outbound.protection.outlook.com [40.107.247.46])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Ry3d5bWe";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Vm8iKbXq"
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A235D477
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 11:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.46
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746702937; cv=fail; b=ZbpjWDp1uRqHb4hWBWMrukUOAW25duYwoXjGvdys6Pr2fgwnVLz1eq+KbKTL1hBEVrdTagv/a9Hxvqu9vA77jnGU7QXjjWYev3eknqbjFe2/rIr5czGEWSghcrPoG/IMdYwJqlr18swhFmAPCd5UiccmXaHqDjz1zZ4iZnMbIWQ=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746702937; c=relaxed/simple;
-	bh=aFjNGGAZ0tBnqeeuEl5aKv2GDDCGeY1Qh25V9XPOUdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rlN8LKKXR7yP9pz832rGUuAfpU2fF0YEPGnUy0UtpDAXhwr+7Cy6J6jlveA07szLpRhqZr2G7C1X21Q0U5GBH9oJqLvIMrflcH9PWp8z1S2TQ8RPM2kY68rNqzNOaGAUYu83wemWoIEsPaKqTABxJkfj9Q18KOybwUVUn6GZh64=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Lynq//np; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Lynq//np; arc=fail smtp.client-ip=40.107.247.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=uYhZJCzIMZeGAHJcRQx5ZFwxNy2uaLHaZh4soYqARdFnxlZq6KzTUwILqnJaPMGexAmvcGMB9CxkLYwszRu9t/9/JZmNo/mR8RcD6uwFZrcgxbjDW3TgMm2cvmauQVPoSQCANtVFhtJQOzCQ6ReGxlvBw1MstFBtyNgHwc0sHhJDRDqdnjvbLJYsulk1zJZeAL/MwgMlWNxDVcWEwn4yj43YK5qoHzrqH+lvPy06K5ECKh17yoTEvyib8ZVOHGCVkgmOYr0oGwKqv0W70pcR3XGg9yxIEGJ4/BeYgYObt0cLZfiefegQ+sXho40SyBmGjPoYVxF9B/DG97vLuJb53A==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aFjNGGAZ0tBnqeeuEl5aKv2GDDCGeY1Qh25V9XPOUdw=;
- b=H6uG7tjYFLoF6awpwztvwvTI2DbLPL5R1LKE7v4lI4NhXlwTbBe/vT4XoIGa0zMb7ga1BvfIg8WjckCp+5u7GkDuJePDVGcKazxMFm4bVYz26ViMOvSn19oCEwu7lYwi8Qa51Rq3StmQRyCZfZCYEdGMeIef104qA7b1ppaE95Xghlhl4Y7xGiGFSN4/98x3fyCC4dIxEHo1qgeQOqLZMM4c1eyIbY+orXFf0o0lZvXpp8cyqGIFCdda9XvdfR9W0Agqj5ikRu1rpSHDms+i9zTGYsjBwjmAuzB3KQGNoMCsK1XyTxA8jh1fqBkMYY7FbqaePyCA0nW+z+hB+zXvEw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=google.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aFjNGGAZ0tBnqeeuEl5aKv2GDDCGeY1Qh25V9XPOUdw=;
- b=Lynq//npQBcA2LuHlUFbEx08YIAikX2khhZ1dLNcyhO7nfreMS5pgva+V1ZuOL19H0PXdf4CcSTMMf3Nj3Lpb6fvfbQnk9Jtq4WBU3Z9SUYUPXpO7nfLscq5Yz4Q40uIzf+QSoYDwzn14aYDiIXxcTWpgd0XA68NNK2BiYPPhWM=
-Received: from DUZPR01CA0287.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b7::29) by GV2PR08MB9375.eurprd08.prod.outlook.com
- (2603:10a6:150:d0::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.23; Thu, 8 May
- 2025 11:15:29 +0000
-Received: from DU2PEPF00028CFD.eurprd03.prod.outlook.com
- (2603:10a6:10:4b7:cafe::9d) by DUZPR01CA0287.outlook.office365.com
- (2603:10a6:10:4b7::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.21 via Frontend Transport; Thu,
- 8 May 2025 11:15:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU2PEPF00028CFD.mail.protection.outlook.com (10.167.242.181) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.18
- via Frontend Transport; Thu, 8 May 2025 11:15:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sKGnckHvryr1JLxCgPziMfymJgS5jY558jwY7rxdzYCsQ0p4a6iBmZKWdoNKdc/ifhwlzKoc5olwRYH+hH7ilAEaKRjW/WB68A6NfNEZuRQ90g1+EcWN9E0aFKFmpdv+rFbln/TCKoF82JVVze2FmJ34Q5ABDY59HopMxxeeAM+TyyskzRYuR1ZzXdPKHjaK0TJSKISrLEssZ+UBVDImL+X6pf/K4Szbroji/CwMm8vXZLteDjukjaoN02lSj+xZYu75o/Lk8Jp+pYHsXONos6+cOFwG6STPssST1JsiW8uCh6DrtvRC7QhzIDQm4kgSIaPHaKuQ4llxX3tvl6J91w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aFjNGGAZ0tBnqeeuEl5aKv2GDDCGeY1Qh25V9XPOUdw=;
- b=txGcHxK+k9PzepzABPp7hlYR6XIpNWjx7O0rG+96J8bHzhaQdudpkF7ygTIT6z3R4SBP6vDEJvdMdTZOUQgTbu03pCyAX7L6MGV3EuN6FMELq5JusA/Ht6/ocqV25iqDRjukGIuSSgNODby19obqKV+8lL4fqYYa+p8TFPMGT1gCiRv1ZJtKaj/96JF8XitWdI/x59c+dW66IWRjDz0wpQ+FtDwI+kYBLyDbXiKoQr5thbrSZbO4IkxEXPmnF+D1QT7UsOFIkhSk/j4msM8GXFsvvABEJZFS88toSEOaO8S2pPzrt4bjyg7w51TQN2Ud8EC1SM/ulbGlbl8faazpLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aFjNGGAZ0tBnqeeuEl5aKv2GDDCGeY1Qh25V9XPOUdw=;
- b=Lynq//npQBcA2LuHlUFbEx08YIAikX2khhZ1dLNcyhO7nfreMS5pgva+V1ZuOL19H0PXdf4CcSTMMf3Nj3Lpb6fvfbQnk9Jtq4WBU3Z9SUYUPXpO7nfLscq5Yz4Q40uIzf+QSoYDwzn14aYDiIXxcTWpgd0XA68NNK2BiYPPhWM=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by DBBPR08MB10601.eurprd08.prod.outlook.com
- (2603:10a6:10:538::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.20; Thu, 8 May
- 2025 11:14:56 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%4]) with mapi id 15.20.8699.024; Thu, 8 May 2025
- 11:14:56 +0000
-Date: Thu, 8 May 2025 12:14:53 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH 0/3] arm64/boot: Forbid the use of BSS symbols in startup
- code
-Message-ID: <aBySLQ/MLhiXRqEl@e129823.arm.com>
-References: <20250503112137.1962910-5-ardb+git@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250503112137.1962910-5-ardb+git@google.com>
-X-ClientProxiedBy: LO4P123CA0434.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a9::7) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C531F37D3;
+	Thu,  8 May 2025 11:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746703044; cv=none; b=jHs9m4fiPDbXriAJXQCt8lndnWheIDQMzaQlcMymjDoJrXOLOiGg+DekytaFbZT62a40oy3j6a32ch2vCvAJi1NUPNMFlH8wD0URE4pB21y5evshvb+q8Hmts0+qV43FC29DNGkJoDVlKEyuXmhiYBDOloCcur5XlPk2ZDqHqjk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746703044; c=relaxed/simple;
+	bh=mm+CgjLs+rS3CPxZ9/r7vxj50BUPBgnFChiiDX6Gy/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P/wbnnU16sgPskbmCgtku5rPtBuSMKWKZIm3b7RbqtnpB0G+wW/lL3B9W8fQ+lKDF9PZEXN6rWmZZ9QZRLHUL1KJMlYsF8zPH1cGtvd65j7SGSZv+JFcLUmAglZiHFlFd1yOezingAG3XxYIejiW3gJUpfBFhXoXGOy90kNphVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Ry3d5bWe; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Vm8iKbXq; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 2983712FB439;
+	Thu, 08 May 2025 04:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746703039; bh=mm+CgjLs+rS3CPxZ9/r7vxj50BUPBgnFChiiDX6Gy/s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ry3d5bWea+7xauZVZ7ybL5zSOz7/4fJvWBShpHx5mgLg9qDH7mXQSZmvG7gU8RUvv
+	 3fP15KZxSGIdmRxajfgWhr19kZTmaCj4lbeGqNruqg5fzBheMkJBjygI2gFEwoPHZx
+	 bzsPhYLvwgrzBj0yKwUAOC+lMXeaLUX7IropKU9sFoxuo4ZheJrmO7UTA+GYYAWWUJ
+	 b2Wy0N49WVxuQNi3iRaLeDMbY4Q9orCCWUX3U5XhXcRwIYVltOv+aQVyePhu8xbibd
+	 BryUGRZAmf0VB7XdENQdYX8TnA0oBywpv7sI0ALne702UltzRKLHQZ7C4ZO9PdT38H
+	 LiH4sDxRWYgFg==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
+ header.d=4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id dQzszsTujUZg; Thu,  8 May 2025 04:16:43 -0700 (PDT)
+Received: from localhost.localdomain (unknown [183.217.82.204])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id BC78712FB404;
+	Thu, 08 May 2025 04:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746703003; bh=mm+CgjLs+rS3CPxZ9/r7vxj50BUPBgnFChiiDX6Gy/s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Vm8iKbXqVO8iIBwHm42a6OkEWN0tug+I8+ACFnx3/SCcwRI1azQqo3d99inSTlBBm
+	 9MdpWKLO7VMHinZlA5yezaHI0cvYGP0DrIH8jfZlKbgNeU7MGA0cWH7qSR+d/UztEH
+	 DcCDmgvebzSAzCjr1SRz9Ag7WB7Tdi4cjYkHRdJ5ZSTDkRTLPHZfQ8teLm7nAT/Yr3
+	 5Rw/PVNuqWGfzc4yDeOoP6CkZaMHMYX/C+YkK6OcvAxeBbsTifV071Z4olDY+Sn8uW
+	 O+SatnDWAvS0WwBMKkJ8bt6J8VdIvg+5GH6n3+rvakThmtJ+u7LLMjJYA1oCgougb4
+	 rFNFF2FlK5eeA==
+From: Haylen Chu <heylenay@4d2.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Haylen Chu <heylenay@4d2.org>,
+	Alex Elder <elder@riscstar.com>
+Subject: [PATCH v9] riscv: dts: spacemit: Add clock tree for SpacemiT K1
+Date: Thu,  8 May 2025 11:15:29 +0000
+Message-ID: <20250508111528.10508-2-heylenay@4d2.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|DBBPR08MB10601:EE_|DU2PEPF00028CFD:EE_|GV2PR08MB9375:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbfbe3eb-7d7d-4a44-710a-08dd8e21a3ff
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?3s+Xe0QMlnc39Ir3FWJKt0AQMybtdhfpepX/fw/KJdgX1TaS+8FBQgTDui0q?=
- =?us-ascii?Q?OgulhpUJWBjl1Lub2bTULmYUnEP7f9Ab+DZT2LpX+3SuJ7897QLAF6io11By?=
- =?us-ascii?Q?jKUyJVHZ2My8nAPOeN+cpqBnaI0AFtBNtEBqVSOtgVyAOApe49gp7JfF2WGO?=
- =?us-ascii?Q?WFGETBvxVzm33pBib+69tZytKOCnbHdcYXbInhJTQFeaiSEuMIHkmv3XAKQ4?=
- =?us-ascii?Q?aIoTdyNQXWKSGmS0bXFF83deBDU6KgL+blnu2MQmeQV8pGLvXotQ/RBz+0Iv?=
- =?us-ascii?Q?V5YRXzWAjCfgZEndB8lttDP6USZHdryIaZp/LFZd3pLCyegoScTGQB1GuRt0?=
- =?us-ascii?Q?HuvFIcs3l1BHOcWIZyG7wAdUlAKcIRDLTSigc3efHCZyEbPGbUrjY6ktTG5W?=
- =?us-ascii?Q?DSxvPVrJXLh7/cCVGdLqirlLeSH92E/xZPJq3BQpxRThxdX1vp/Xm6hg9kXt?=
- =?us-ascii?Q?npT6gEA/LImqI3jPglAnY7E6NFS53EFkl7Wot5fZe0EVwW1NA8kZk0bGSD+n?=
- =?us-ascii?Q?bIgdxhZMW6AoV6ED1xvGZ9yU2cvfc9KVG/kHApcb2SuhjlVmywdSSxkjY4Hs?=
- =?us-ascii?Q?7ILIUjZEmU77GBfeKM/990apJpaY1TNuLn85xTjyu+G9ixMzeXV0F4/dG5vp?=
- =?us-ascii?Q?d2wdw+P61aEVt/1sO4XuQ0pxkGhwqZmnYLA9qUIM9hmDH+JilsZY6xbkUTef?=
- =?us-ascii?Q?A5sjVze8NhaIiUEYfd5I/ckBhVhy8mPKb4bEGKtwkatzw+xwhtwcVE3taoO2?=
- =?us-ascii?Q?YgHKi4bsw8HJKqWP5lvSkBKlRs08SvPCrHOzUaKc4yaMlNVMbkgUNdKugNfh?=
- =?us-ascii?Q?lgpaGyYXtAc9P7iJyB03NxyRvO9T37FL7nZZbwe/VWLIM4f0q5CMl5sJIgnG?=
- =?us-ascii?Q?0MH9Q23GjLCn1jJg510COJszreVHJAav9A/9X1cd5iYx6fU5OjUtYgJNha1S?=
- =?us-ascii?Q?UKblWTvBElIzNWzG6Jlsj0MNkARcW4sQZwMpes8Wn7qSyXGbP2VB1qXW2Nd7?=
- =?us-ascii?Q?hZa3C1FuOzY2aQDH+lXKO724EIYq4f3YerCk5hnli6UExuYyjwg4Nw0eW8/d?=
- =?us-ascii?Q?eA4fVgS6Yj8y7MvBHqyd5I2m0jOoVq0fGZ6Znj5OFG5ARkrTKeZA1XkSPPtq?=
- =?us-ascii?Q?Ji68MheMSRjAwKLZzf7xZYbvZZDs5LeP7LpPA/qCHoPFRwGCx0la5Fq3YAFm?=
- =?us-ascii?Q?dopl2SN7DElu+ng/pBJSNljePhuFkpHbpnLLw/FmUvZuR79BQZypvQCxeSLA?=
- =?us-ascii?Q?GVtQ2UW846Q/tRTCTszcJ2JoTfaWrr1MvhUrDftii7/Yz9HaCPPtCWx8yXod?=
- =?us-ascii?Q?wWEwx3pBSeI0kCXtrySITWF+POkOaEwYiGAsuXIsIZorro8ke+iOLvb8k7T7?=
- =?us-ascii?Q?ciUBYQ3RPpHoHvEigzULPqKRG1Ch15JMd6KtcX1DxdImBr6jhuXknn3cAWUY?=
- =?us-ascii?Q?f8us8o7nvPc=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB10601
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU2PEPF00028CFD.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	47866c98-c69d-4eee-49d9-08dd8e219023
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|35042699022|36860700013|14060799003|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gYy95ir9XclDRcvy4GbpWWX17dZyFVu66p/8wW7l3YzDL1M3SjSEb5hAs0/5?=
- =?us-ascii?Q?nBNBlyLlUBC5fK0oYplqQRh1vIm+fhVqvjCxPTiRL3Gk5IJf9HhPw8JDYbS/?=
- =?us-ascii?Q?vRNzw3mkxbpTNp419cbPYmBgVcfjJ4uWXkPqgR0SbpgLSbx/O62R5MkObFJN?=
- =?us-ascii?Q?/BhH77oiikY6DEGLtD4KBHFOSf6hgRtY2rwbKHqDXhL+0z7MxCyOW8vMP/SL?=
- =?us-ascii?Q?EyMAV3AGTB+pNhfviVwBnMIutlefLs28eN0cYr6mz1OM+d7Pru9WtvsEy4xN?=
- =?us-ascii?Q?tOH7GDMmpu3K9heYCkyIcAf7X0yOUWDcEae3n4AjgwTjb+uLopUsT+o7J7Xk?=
- =?us-ascii?Q?FMAoY8jx/ldkpA0c70jnkfODofsBinp5uP9K3Tky4D5GuECdt/1s3MI4XMb6?=
- =?us-ascii?Q?NoFf1w3ePk9gDvr0bMgOWqax/J8KpZ83V3/i4bECPefugWZFTnZcSYyuUeRg?=
- =?us-ascii?Q?algR+6oOAJAPvIvZlVAbf5BH+ffCDghx/h2ZAfc+XuXa9Me5a9HumA0GwQlv?=
- =?us-ascii?Q?3GO35LNib2VfppqLd0CZjWFQ9/BFVgGf5yqxsaQal8FKv5CbPG6yLurtWCs8?=
- =?us-ascii?Q?HbZ0WrLBG4PVztZBXhwTU9OcqBoTvzt2IsORO+h9cfJWStI8xl63DZLsbSzU?=
- =?us-ascii?Q?PgX6wdBxIWDr/9ASAPA7kLMvSRce5TfJGBBjOBZllbPjL5ukwOSo/6cW5izG?=
- =?us-ascii?Q?0IGlkjeojV3D/7hOga0wFKKTdrAVU1LZXb4GalJRGqYVaYADTu4SU1G/5Zw8?=
- =?us-ascii?Q?32/vMsMDxg7G1mE1bymElgC7shGn0soDqlwNmkBVOM45Up8Sd3u7SAqABghV?=
- =?us-ascii?Q?UHFIcvp/u5Z/lV3crpaKpSb1k71YVgY7EpW3tHoZB3UqTU1tOeslD+himL4t?=
- =?us-ascii?Q?a/Y2pp1dAeWrRfGQxMDZFj1b9d5XkBebuUK7tdKAgqAbCi8iU0ncgEUvZ+aS?=
- =?us-ascii?Q?yVAVCBLR8/JCAt2/SHn6coFJNjH02u7rRCcoI0vprH8R1EQ0RzBVPidvD4nQ?=
- =?us-ascii?Q?mp2mw3aTuWd56bHH9Ght8d1y90Kw9Gr8zjBAfSh052BH5to/U0pHHZK5PXzi?=
- =?us-ascii?Q?ggdkOUSZTt2dPjSByE5xjlYv80ayW1+yQo/XScIDyfAbRDMjTvP0HlV7Nn+4?=
- =?us-ascii?Q?eYUe0ih7lndyRcpAtXNEeiRn5ln+N02a8TCzeXsl8/PBWtc70YWhhaJhPHta?=
- =?us-ascii?Q?YcS7tFnamwgho1cbKQMLU0XXPsywRxYCMG/nPY8PDPYQreJtL6td8z243KUg?=
- =?us-ascii?Q?Psnar4MeHGw/rdkwaiGvkP9zplcaYm9adhnPqr0EhWJe/WrDnFGKj0f+kfjl?=
- =?us-ascii?Q?bL3PbrDILJN7JfPRGZguJ6oq30j+vats8t8fK9onVv8PZyR88AP/NuvRMW47?=
- =?us-ascii?Q?GPjRmBpwq3Z3jDtKcWgxjOl3EeJaOrAueQDzFdwlp3jTx7oDce9OKps8up5W?=
- =?us-ascii?Q?jAxU1KRkRhE1mQknII8HCxZuHck32vJ1mdUcwWBzvmtEZw0hm52vqQxbAMHG?=
- =?us-ascii?Q?x2L+Sk2BG3qO8HjdAR/KQCwMkxEa+X2ei45Y?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(36860700013)(14060799003)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 11:15:29.1912
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbfbe3eb-7d7d-4a44-710a-08dd8e21a3ff
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF00028CFD.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB9375
+Content-Transfer-Encoding: 8bit
 
-Hi Ard,
+Describe the PLL and system controllers that're capable of generating
+clock signals in the devicetree.
 
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Move any variables accessed or assigned by the startup code out of BSS,
-> and into .data, so that we can forbid the use of BSS variables
-> altogether, by ASSERT()'ing in the linker script that each symbol made
-> available to the startup code lives before __bss_start in the linker
-> map.
->
-> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+Signed-off-by: Haylen Chu <heylenay@4d2.org>
+Reviewed-by: Alex Elder <elder@riscstar.com>
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
+---
 
-Thanks for ccing me and with the your fix it looks good to me.
-When you send the patch with fix, I'll test it.
+This originates the 5th patch from previous "Add clock controller
+support for SpacemiT K1" series[1] with node names of system
+controllers and PLL reworked[2].
 
-Thanks.
+The patch is based on linux-spacemit/k1/clk-for-6.16. Yixun, please drop
+the previous version and pick this patch instead. Thanks for your work!
 
---
-Sincerely,
-Yeoreum Yun
+[1]: https://lore.kernel.org/spacemit/20250416135406.16284-1-heylenay@4d2.org/
+[2]: https://lore.kernel.org/spacemit/aBxF81yqPgHP5oA_@ketchup/
+
+ arch/riscv/boot/dts/spacemit/k1.dtsi | 75 ++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+index c670ebf8fa12..85c9730dd082 100644
+--- a/arch/riscv/boot/dts/spacemit/k1.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+@@ -3,6 +3,8 @@
+  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+  */
+ 
++#include <dt-bindings/clock/spacemit,k1-syscon.h>
++
+ /dts-v1/;
+ / {
+ 	#address-cells = <2>;
+@@ -306,6 +308,36 @@ cluster1_l2_cache: l2-cache1 {
+ 		};
+ 	};
+ 
++	clocks {
++		vctcxo_1m: clock-1m {
++			compatible = "fixed-clock";
++			clock-frequency = <1000000>;
++			clock-output-names = "vctcxo_1m";
++			#clock-cells = <0>;
++		};
++
++		vctcxo_24m: clock-24m {
++			compatible = "fixed-clock";
++			clock-frequency = <24000000>;
++			clock-output-names = "vctcxo_24m";
++			#clock-cells = <0>;
++		};
++
++		vctcxo_3m: clock-3m {
++			compatible = "fixed-clock";
++			clock-frequency = <3000000>;
++			clock-output-names = "vctcxo_3m";
++			#clock-cells = <0>;
++		};
++
++		osc_32k: clock-32k {
++			compatible = "fixed-clock";
++			clock-frequency = <32000>;
++			clock-output-names = "osc_32k";
++			#clock-cells = <0>;
++		};
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&plic>;
+@@ -314,6 +346,17 @@ soc {
+ 		dma-noncoherent;
+ 		ranges;
+ 
++		syscon_apbc: system-controller@d4015000 {
++			compatible = "spacemit,k1-syscon-apbc";
++			reg = <0x0 0xd4015000 0x0 0x1000>;
++			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
++				 <&vctcxo_24m>;
++			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
++				      "vctcxo_24m";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		uart0: serial@d4017000 {
+ 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+ 			reg = <0x0 0xd4017000 0x0 0x100>;
+@@ -409,6 +452,38 @@ pinctrl: pinctrl@d401e000 {
+ 			reg = <0x0 0xd401e000 0x0 0x400>;
+ 		};
+ 
++		syscon_mpmu: system-controller@d4050000 {
++			compatible = "spacemit,k1-syscon-mpmu";
++			reg = <0x0 0xd4050000 0x0 0x209c>;
++			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
++				 <&vctcxo_24m>;
++			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
++				      "vctcxo_24m";
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		pll: clock-controller@d4090000 {
++			compatible = "spacemit,k1-pll";
++			reg = <0x0 0xd4090000 0x0 0x1000>;
++			clocks = <&vctcxo_24m>;
++			spacemit,mpmu = <&syscon_mpmu>;
++			#clock-cells = <1>;
++		};
++
++		syscon_apmu: system-controller@d4282800 {
++			compatible = "spacemit,k1-syscon-apmu";
++			reg = <0x0 0xd4282800 0x0 0x400>;
++			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
++				 <&vctcxo_24m>;
++			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
++				      "vctcxo_24m";
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		plic: interrupt-controller@e0000000 {
+ 			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
+ 			reg = <0x0 0xe0000000 0x0 0x4000000>;
+-- 
+2.49.0
+
 
