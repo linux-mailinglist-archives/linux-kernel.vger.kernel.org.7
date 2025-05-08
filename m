@@ -1,79 +1,123 @@
-Return-Path: <linux-kernel+bounces-639681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BEFAAFAAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:56:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5586AAFAB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D96D1B22110
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB7E3AA4E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D3422A1C0;
-	Thu,  8 May 2025 12:55:57 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A922B5AB;
+	Thu,  8 May 2025 12:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="XPlPcIC0"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56502224AF3
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 12:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655D922579B;
+	Thu,  8 May 2025 12:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708957; cv=none; b=AHnuxGhNR3xOijzrVWEL6LGja0NDK9fy9b8dzIKLeboY9vo87PQLWRylICiu+fV+dmxo2Yga4PSCO8vtqBMbsIXtY+Illslu0j2LRNZWHvTmdQIb44fm1gw/qa+FguE2mzs0LznWYbCsFe1/2Kjb+6HhyYhhCWCPjcdO7rqjbvc=
+	t=1746708958; cv=none; b=PoQM7Z6UljZiu7DconZGla7fFHfX1QR+lu+58EmZ9vPSrwWiSr7a+xkAHTtSF06ePoJj9taQLd3StKrUmp9Cg44YRPfzaYIyiPiOCOFdfXo4sEns69uXKxLwYVvC2siFVUK7MbawmMmJXfd7+oAJ5s43hidxbK/NE8QzuC1D3eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708957; c=relaxed/simple;
-	bh=VnYy99ctH9dGOn0PvoJ8+o42P5BdUgrrCJD+hHpOR5w=;
+	s=arc-20240116; t=1746708958; c=relaxed/simple;
+	bh=P2hkK24gIBpekWVgzbZvUT9UAOj3974Lm4QOgZm4MU4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jKelixy7YPbDZERf5rHI6tFdufoMPtnxU9IUbREIhRW9McDiZyKDYaHaBR5MQLE2siB7w2Zt3x/ak4BtmRFshz0P+Z57WXHujUSiTVrFhuEjskmZC1xZxnsQEKX8rozYniNhE2sdCru0Q3WkBNoYTfV2qJPTdDE6Jt64kmKiyT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 548CtjHW039304;
-	Thu, 8 May 2025 21:55:45 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 548Ctjkt039300
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 8 May 2025 21:55:45 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <75c0385c-b649-46b0-907f-903e2217f460@I-love.SAKURA.ne.jp>
-Date: Thu, 8 May 2025 21:55:45 +0900
+	 In-Reply-To:Content-Type; b=F9+fXCi42XBTkWYor+Tx1hGkZ3P98pAH+Rc8AHPDflIrT8YJdxXiIr6dCgy2PFTWUTvgdA5MIwBR0C8YA7BSBaxn1KONijQuewdiwODVDK04KVD0Vt3c+b/eVYHqkMnny9YrVquobVCwPMAjpHdXQZ1ZT37J/3vb/MuZWBtARO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=XPlPcIC0; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39ee5ac4321so1215691f8f.1;
+        Thu, 08 May 2025 05:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1746708954; x=1747313754; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p6AYNVAEWLWzZVYwdSbhFHON7qW08tK4r17ya22Q5uQ=;
+        b=XPlPcIC0Ng4UNTZiY1dUVjhVyMtIGmrfmrHqhcUfj/0CgSyWKAPhXUfICIFnLRCOCX
+         LBRsZ9AJ+z+SrJtuWv5+JB7Oq2dyB7s2VixxOwpf01bU9tMBNiJCRm9bZgVYDuOVCgGp
+         0DO4GiIZSK/mwtmK0YocxNijvsapPK7gvwAkPPZmetrHhvy7Cj1gBxLgb3Vxx62JbWY1
+         0nCzimV8vGy9RHgWlCR72yBXWnyOrIz1URka7aGgECf8pYek/m3AZguAuF0mWSqVG19A
+         m1I5XPpZVSU7uVmxvlebuQmppL9iPCr/3g+y34T3w20r6TebcSpDGyPFkSy035CSR6Tg
+         WpQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746708955; x=1747313755;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p6AYNVAEWLWzZVYwdSbhFHON7qW08tK4r17ya22Q5uQ=;
+        b=QAG39Mzoy+Nifa8y0wJlv3Sol2PlWpSuSq4Fb82MoRW/YNXOYlQXBVHqoRQ8q8Su9i
+         zSYEoqI4YO2uDGFMW5tMqWKzQocBK3FSxwCvd8g2H0SSJdoyWqW4sCnbdxKK3Htp3qh2
+         B0rBhV0jfYbB3Hepo9yU067K2z0sfE7g7YlapCLNBXFFZPLsTfL4ha1ZPg4YpYdGwDPj
+         iAdnxMVz5c7Ad39W/P+qvm4YtP25oHFq94yTLRTS0AFsqXmPJE5SJZBBGL/fx76Yazy9
+         m1wBub1VsA6jnYlN3Vm1wMLwA5axg2d01uLSeuHf4qF2uhTcH8tadplGaT93dehh8tMv
+         NWoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtw+KqCDUtJ7Rctd6bzmZKWImPwHbgYTOnUcjZtRm5Z+Fj74VVDUJS7FlOvFjeHEaQNn5a9+RDaK4v40o=@vger.kernel.org, AJvYcCXxZxXaXUSsrE6qBuSUmTu8prpjQ/iobTdgzF/+4cD1xF1b/QKToyhRTmTyLlZl8GkLjOb8c+74@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt8rKET4gviuYWO0vtjEHYYhk1pD3pwjyfog3lOWzPAjGYgUkz
+	qN7fXzuIH1rja8oLeEfOo9VSQSUKFEvGCRE/N6l4OTbYBIbMoNqhFE7z
+X-Gm-Gg: ASbGncsR8MyNHUc1DHQBF/yv4IlM7jo2lrlDas450zCDTs42Z4Jfkkqglq3JGElo0L4
+	btDckmWdaEXYM5vczRLZL8jF0e1occ032wefQJgBElJkXwWY+vwR9ZQg77+vXzgBG0gGbpqwt1i
+	cHNRj4dyJ1l7uU/mulcQbxxRJLMdhbxBx6kaWE0fYGoPFqUSQ5aG4rs8/RHcWi6rdKyqQX6L+oP
+	n92UMDz6geSxxAO7T+SAxNZIXLRSg9M30aV+EmghPce209Kqx6E1iTJTNCH/Csinyxo5LDXwwv1
+	ZivlyN6B9nnH343fDj+ZfOhbKamLganspQVtymmoL7BGAOIM1TsgquG4gWaa6CtnrQhvGhVXmt5
+	8T86YTgcrMDeNq1MIhg==
+X-Google-Smtp-Source: AGHT+IGTa2WWD3VgWj+uKDTBuDUhX771kiVc7NX3oQrzYhOmASsrPcy1MfhL6cDIuvZ78Xz9Lvk9Tg==
+X-Received: by 2002:a05:6000:184d:b0:39c:30d9:3b5c with SMTP id ffacd0b85a97d-3a0ba0efbf9mr2488623f8f.39.1746708954465;
+        Thu, 08 May 2025 05:55:54 -0700 (PDT)
+Received: from [192.168.1.3] (p5b05727d.dip0.t-ipconnect.de. [91.5.114.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b9af4ba1sm2897233f8f.59.2025.05.08.05.55.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 05:55:53 -0700 (PDT)
+Message-ID: <384739cf-4b2b-4c4c-81e6-19d4547dd395@googlemail.com>
+Date: Thu, 8 May 2025 14:55:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-To: John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
-        linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net,
-        kees@kernel.org, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <6d785712-6d8e-491c-86d4-1cbe5895778f@canonical.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <6d785712-6d8e-491c-86d4-1cbe5895778f@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 00/97] 6.1.138-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250508112609.711621924@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250508112609.711621924@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025/05/08 17:25, John Johansen wrote:
-> That is fine. But curious I am curious what the interface would look like to fit TOMOYO's
-> needs.
+Am 08.05.2025 um 13:30 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.138 release.
+> There are 97 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Stream (like "FILE *") with restart from the beginning (like rewind(fp)) support.
-That is, the caller can read/write at least one byte at a time, and written data
-is processed upon encountering '\n'.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
