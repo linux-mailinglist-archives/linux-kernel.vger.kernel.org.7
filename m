@@ -1,190 +1,170 @@
-Return-Path: <linux-kernel+bounces-640307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B17AB0319
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:45:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CC1AB0320
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A237A9D94
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:44:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14AF5076DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5449C2853E1;
-	Thu,  8 May 2025 18:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F0D2882D9;
+	Thu,  8 May 2025 18:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RTDH8MnA"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JIbJ3uCf"
+Received: from mail-vk1-f201.google.com (mail-vk1-f201.google.com [209.85.221.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA8E27875C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 18:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EF92147F7
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 18:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746729941; cv=none; b=q52dBjc9q84AL5B6Exr33nDeyPjwaGwAZ2ctlM1RwcOoDHWvgL9q1GxCxmiVUQCUshH/s7U52I6YgRC6pJigNNzqDLtsze89v5pLSWWsQ+XhBfOwwmTnrcjOz5oUK1WoYUfTR60T11CE0E3VYFuTvOPidNi6/jFaNIFOpxUPrVE=
+	t=1746730015; cv=none; b=KnNnbQK9Fen25AhxZ7h9IAAZN5WxQLDqfy4S1vRsnRW2kFaMGdTV1MtiN6SdDoFd/dFs1ZZMzLp/hPnCjKol1/xJcGa8D987LXt4bDSrVF+PYMO1A4C59ri4beXeT8LfklqPi0htrS9idqjjAtox8kHSsknFBm2WTLyki8XfyzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746729941; c=relaxed/simple;
-	bh=Uct7WpTbq1dVFAi32TSot7daA1ZweH7/AhYF2940CgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BdI6EuTjd/hjm9aqC6ENqQQx7IyRevZ3yvTgJOIVHHNiM8fbwHwsYOdH9qXESOGANMOpDZSTzasfD8bwJYRscjg3UO2Du5fegaHkrzHoalqaDWafatyv2FRm9UaQ80ed2/Ow/D2F0JQmUQBuCvXoGGrpQzjvGOi4G8QWWoD5Tfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RTDH8MnA; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c173211feso417044a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 11:45:39 -0700 (PDT)
+	s=arc-20240116; t=1746730015; c=relaxed/simple;
+	bh=cEYIzm/T90Mdhu+u61QCs2qDWMrrQfrENpbfSSHD5gw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QWiLdPa8SpQctxBHNpZIwE4LfKLo0Zud+UPI9sS3whuEnox4ZxFht1q6CMpL0FS26D77JNQ53jD+9L1asqWxv2wR9W7MOaa29X2UikLLQp8YExkwSXqb1NzVQAqUEUp2wg9dQ+cy29FUf82Iy8AjsgJk7bcJLsnVzjlonQdbnjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JIbJ3uCf; arc=none smtp.client-ip=209.85.221.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-vk1-f201.google.com with SMTP id 71dfb90a1353d-523dc97ebd6so882743e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 11:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746729938; x=1747334738; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7hks92hn75KYYjxsE5MEgCk2mRAPj5PUobg5bbR8tjA=;
-        b=RTDH8MnAtbEspuqAXR2hH9hYTlCrpWMqKSiY1PMVZ/5lX1oi8l9bYbETk9vHL9iB30
-         s/i1KDPIFeMNeUE/efK9FYSvA2C+xOg7OvyMorpf24oQ0qx2CcbC21KBQ/wyVsvrV9Uy
-         ZVWJ5SQMzctTw4uvJabU5FNwa9376WQznvvpIhMvStp92Kj94l7HPyQReUGL9Tj640ai
-         /WNNxzNPzMSNM1uDTHcrE5zr516/5wcwwJFYMDihUXPmTGgHd2KFmtm89D1/7C2OU0dO
-         b72JGo74bKZLs4XhusxjtPts6l8aum2URVcvGUna0lqfT0vAxUzXsvSY4c5/6vAk+FSR
-         XpdQ==
+        d=google.com; s=20230601; t=1746730011; x=1747334811; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3g5FPzsmLcEhVEHZ4NjqMXRkBxeDVnDHLfZENlQDEc0=;
+        b=JIbJ3uCfjNJQzgmefMvX91yvUuWXHYWehEJNPqN1S735BlUUw5sxVWYYL9gS/FHxcd
+         Ax6IuIV471u3kRJ/u9b9qEb4ZKmMceQI+zH259OHofF73+mkMjx5Yes+12Mt1tydJ766
+         ZRLx0bwBNkevU4RnCbd2+soBzCWWfeUG/fQdHAhL2D0x53bEKu11Upb5vfQlvXc361Qh
+         yVCBt3EHhVT0vLmaDS352tZNg7eIk6fx2j6azjjT5ZI4ZoedH4Bc6vxt/PcWsPArVdaS
+         Ak612jjN3QtnUQgsyfmGz7mbAcQwNFwpWxEOfEh6wy6M9Zbw8HBRJ0cwMe+q6Tq0GGk/
+         Pbtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746729938; x=1747334738;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hks92hn75KYYjxsE5MEgCk2mRAPj5PUobg5bbR8tjA=;
-        b=GkJalrO9J66NEd7mIkRa/UE/Htke7oKYg3QVx2deJUihsyFs1oYiGjjQho0W58ZcCy
-         ZSiRNYyPjN+UDTlKzG/f8hbzNGR7zt/eIEpp4N7Z+jumWKdpm2WBxLB3Q5FcrSRlyWtK
-         cLqSP9NgUrqCzmN1vXKCv1vIN69M+Oa2T7Ja8hY4LJVEYEWgE91hh/XMrTsBiDR6TCW8
-         xaUf4EWEwV4u0QWDAAxz6rBcfqFv8Oe4YKDLMhG95mkcBOB2dq6hG6mIuMRVG+UYpDXA
-         fEtlq3+sQbCYhRn3WBdb28OjDCnPyw21znfOeINzk22QiH+TzuIHZw3amwOkn2BlSstb
-         3n/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIFbP+1ekQNRqhO2lUwKlzS8h8BOu6jYqZdeO2Ii0/m1xMe8yHHC8ez9QjzandwZwD8Cm/oBt+rOd5GEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaTAnu3QdSbGBZwlCVx8g3jQr4Rz/4VYePLkknNwLScXDmX4Mz
-	cBrPJBoRFs1gZxMWhP4dVt6m823zbtH/6BSO7adiPksyYlNYXx6rw5V06U8MMwk=
-X-Gm-Gg: ASbGnct4lZwMW+0P3KpXlL6T2N+aBc/04AU31QRwzO5aG5XtEHbQFYMcnKnJHw0t2DB
-	6fLogaK+qTwyjUQIfcqmeAuWNnKEuLrEuF3wB/UWs20UGimTPQ2/HaTFmqssGEH93ITgq3rfadJ
-	7IRzbV9o4o/naRwW6f2uKSik4a7uvUTBYAjDvnhz8S9p36Vg4CWQ9bCAIuNyT86Y9GDIlYOdbF3
-	jJwO3F0kY0PwbjIqdlH8dzY0a5QoOHbt4sOp6utEODl5N9ZhOTKlnsACcQjXwVXFBJHzQHU/kPM
-	wz14bqLb9/mYdmFbIUCQyjjDuf0T8sCKkeGWHFpz3Pn4aIpDV5+xHCAiGkttNIV2ToFqTYnoWEN
-	kYrAMtxRzAFfAyhruSA2fXYF4/3Xt
-X-Google-Smtp-Source: AGHT+IEV7HHfBnOTMYTqZ03O7GNZheqbXVNvcqho/27ZV2olGwgw41vQ4kxYrohJ8syOgcp1dkfrgQ==
-X-Received: by 2002:a05:6830:2589:b0:72b:9bb3:67cf with SMTP id 46e09a7af769-732269ce7e8mr741252a34.9.1746729938430;
-        Thu, 08 May 2025 11:45:38 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e? ([2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732265ce4c4sm168093a34.48.2025.05.08.11.45.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 11:45:38 -0700 (PDT)
-Message-ID: <662fa2f9-b28c-4831-9f76-7d2af8267466@baylibre.com>
-Date: Thu, 8 May 2025 13:45:37 -0500
+        d=1e100.net; s=20230601; t=1746730011; x=1747334811;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3g5FPzsmLcEhVEHZ4NjqMXRkBxeDVnDHLfZENlQDEc0=;
+        b=mfnQICkuCbZX+1ElRA56jXCRVxGarps5v3xx2hqS3IiI72HbDAvByBHbN/BAUxnv+4
+         LXNf9uGzXbhbKzXgxz1DSvjey5SGG+Pm7F7Gb4qBb0b1ph9jZ3tnsf8VYn0yR5Nb2ys0
+         RveRht3SmxRlHkQiAEGe/ACWCyyhvAs/ujMKoHRQ0qhjc36pvmGio6h8CdMu5HLAFk00
+         bMi7FGNWxKNUqDgPfa9H8O6S/e671KJOkPkH9RKx7Zi1da3RFlNy3upogfEM0uXwXHBZ
+         gIo3QTfhnzgfDrtIKO2q+pXLxnRuud32j4Z/thk8gO+vm3QbqCBzHm5S4AmwE4eKi5ik
+         BA3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU58wUcxCKKQ2PP6l9L87bCIUd1V2/ZQk8EzrVlzvSq0akCiEMi9WpMmlbS2F0kZciiJMsIeVCdeILH/bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFO86iQAnIuCP/kYzV0BYEXBJ0KxELgucESnTCEye6/+W4XJen
+	/3R3Z06Od9PiZ6jjgpBeIY3psmqAToGFFonuMNxrumyv+SOvdPXcArktJlqm1MvuV+6wKCIFKtn
+	9MjM53R+Cdyd568cpWw==
+X-Google-Smtp-Source: AGHT+IFpkJbQ152C8gUuCHDjN7GlB0H2WXKBSGKbjiVxbzv2G9JOo14I0G4pGBVWjLQJVqTip5Gh+kIyA9M40mbh
+X-Received: from vkbaz27.prod.google.com ([2002:a05:6122:d1b:b0:52a:9a03:a241])
+ (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6122:828d:b0:520:62ce:98ed with SMTP id 71dfb90a1353d-52c53d2ff33mr1085749e0c.6.1746730010919;
+ Thu, 08 May 2025 11:46:50 -0700 (PDT)
+Date: Thu,  8 May 2025 18:46:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 09/12] iio: adc: ad7768-1: add support for
- Synchronization over SPI
-To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Cc: andy@kernel.org, nuno.sa@analog.com, Michael.Hennerich@analog.com,
- marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com,
- linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
- broonie@kernel.org, jonath4nns@gmail.com
-References: <cover.1746662899.git.Jonathan.Santos@analog.com>
- <b65b085b29dd08e4f24485f37e7063c463637475.1746662899.git.Jonathan.Santos@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <b65b085b29dd08e4f24485f37e7063c463637475.1746662899.git.Jonathan.Santos@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1015.ga840276032-goog
+Message-ID: <20250508184649.2576210-1-jthoughton@google.com>
+Subject: [PATCH v4 0/7] KVM: selftests: access_tracking_perf_test fixes for
+ NUMA balancing and MGLRU
+From: James Houghton <jthoughton@google.com>
+To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, mkoutny@suse.com, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, Yu Zhao <yuzhao@google.com>, 
+	David Matlack <dmatlack@google.com>, James Houghton <jthoughton@google.com>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/8/25 12:04 PM, Jonathan Santos wrote:
-> The synchronization method using GPIO requires the generated pulse to be
-> truly synchronous with the base MCLK signal. When it is not possible to
-> do that in hardware, the datasheet recommends using synchronization over
-> SPI, where the generated pulse is already synchronous with MCLK. This
-> requires the SYNC_OUT pin to be connected to the SYNC_IN pin.
-> 
-> Use trigger-sources property to enable device synchronization over SPI
-> and multi-device synchronization while replacing sync-in-gpios property.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+This series fixes some issues with access_tracking_perf_test when MGLRU
+or NUMA balancing are in use.
 
-...
+With MGLRU, touching a page doesn't necessarily clear the Idle flag.
+This has come up in the past, and the recommendation was to use MGLRU
+generation numbers[1], which this series does.
 
-> +static int ad7768_trigger_sources_get_sync(struct device *dev,
-> +					   struct ad7768_state *st)
-> +{
-> +	struct fwnode_reference_args args;
-> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> +	int ret;
-> +
-> +	/*
-> +	 * The AD7768-1 allows two primary methods for driving the SYNC_IN pin
-> +	 * to synchronize one or more devices:
-> +	 * 1. Using an external GPIO.
-> +	 * 2. Using a SPI command, where the SYNC_OUT pin generates a
-> +	 *    synchronization pulse that drives the SYNC_IN pin.
-> +	 */
-> +	if (!fwnode_property_present(fwnode, "trigger-sources")) {
-> +		/*
-> +		 * In the absence of trigger-sources property, enable self
-> +		 * synchronization over SPI (SYNC_OUT).
-> +		 */
-> +		st->en_spi_sync = true;
-> +		return 0;
-> +	}
-> +
-> +	ret = fwnode_property_get_reference_args(fwnode,
-> +						 "trigger-sources",
-> +						 "#trigger-source-cells",
-> +						 0,
-> +						 AD7768_TRIGGER_SOURCE_SYNC_IDX,
-> +						 &args);
-> +	if (ret)
-> +		return ret;
-> +
-> +	fwnode = args.fwnode;
-> +	/*
-> +	 * First, try getting the GPIO trigger source and fallback to
-> +	 * synchronization over SPI in case of failure.
-> +	 */
-> +	st->gpio_sync_in = ad7768_trigger_source_get_gpio(dev, fwnode);
-> +	if (!IS_ERR(st->gpio_sync_in))
-> +		goto out_put_node;
+With NUMA balancing, pages are temporarily mapped as PROT_NONE, so the
+SPTEs will be zapped, losing the Accessed bits. The fix here is, in the
+event we have lost access information to print a warning and continue
+with the test, just like what we do if the test is running a nested VM.
 
-I think we want to return the error in some cases here, e.g. deferred probe
-so rather:
+A flag is added for the user to specify if they wish for the test to
+always enforce or always skip this check.
 
-	st->gpio_sync_in = ad7768_trigger_source_get_gpio(dev, fwnode);
-	ret = PTR_ERR_OR_ZERO(st->gpio_sync_in);
-	if (ret != -EINVAL)
-		goto out_put_node;
+Based on kvm/next.
 
-	/*
-	 * EINVAL means that the trigger was not a gpio trigger and we should
-	 * try something else.
-	 */
+Changelog:
 
-This is assuming devm_fwnode_gpiod_get_index() doesn't return EINVAL which
-could be confused as the return value for ad7768_trigger_source_get_gpio().
+v3[4] -> v4:
+- Multiple fixes to access_tracking_perf_test:
+  1. Fix for software-managed A/D-bit configs.
+  2. Fix for expected number of pages when guest page size is >
+     PAGE_SIZE.
+  3. Properly check youngest generation when looking for pages.
+- Do an initial aging pass for MGLRU. This allows us to check that pages
+  move back to the youngest generation after the first access pass.
+- Add controller-root location logic in the cgroup utils, and use this
+  to make the test work for cgroup-v1 (thanks Sean!).
+- Some cleanup for access_tracking_perf_test code, comments, warning
+  messages, and the commit message (thanks Sean!).
 
-Or just inline ad7768_trigger_source_get_gpio() here and avoid that possibility.
+v2[3] -> v3:
+- Applied David's directory fix on patch 3.
+- Added SoB-by, R-by (patch 2, missed in v2), and A-by.
 
-> +
-> +	/*
-> +	 * TODO: Support the other cases when we have a trigger subsystem to
-> +	 * reliably handle other types of devices as trigger sources.
-> +	 *
-> +	 * For now, return an error message. For self triggering, omit the
-> +	 * trigger-sources property.
-> +	 */
-> +	ret = dev_err_probe(dev, -EOPNOTSUPP, "Invalid synchronization trigger source\n");
-> +
-> +out_put_node:
-> +	fwnode_handle_put(args.fwnode);
-> +	return ret;
-> +}
+v1[2] -> v2:
+- Re-add clone3_selftests.h for cgroup selftests (thanks Michal!)
+- Some comment fixes, patches 2 and 5 (thanks Maxim!).
+
+[1]: https://lore.kernel.org/all/CAOUHufZeADNp_y=Ng+acmMMgnTR=ZGFZ7z-m6O47O=CmJauWjw@mail.gmail.com/
+[2]: https://lore.kernel.org/kvm/20250327012350.1135621-1-jthoughton@google.com/
+[3]: https://lore.kernel.org/kvm/20250331213025.3602082-1-jthoughton@google.com/
+[4]: https://lore.kernel.org/kvm/20250414200929.3098202-1-jthoughton@google.com/
+
+James Houghton (3):
+  cgroup: selftests: Move cgroup_util into its own library
+  KVM: selftests: Build and link selftests/cgroup/lib into KVM selftests
+  KVM: selftests: access_tracking_perf_test: Use MGLRU for access
+    tracking
+
+Maxim Levitsky (1):
+  KVM: selftests: access_tracking_perf_test: Add option to skip the
+    sanity check
+
+Sean Christopherson (3):
+  KVM: selftests: Extract guts of THP accessor to standalone sysfs
+    helpers
+  cgroup: selftests: Move memcontrol specific helpers out of common
+    cgroup_util.c
+  cgroup: selftests: Add API to find root of specific controller
+
+ tools/testing/selftests/cgroup/Makefile       |  21 +-
+ .../selftests/cgroup/{ => lib}/cgroup_util.c  | 118 ++----
+ .../cgroup/{ => lib/include}/cgroup_util.h    |  13 +-
+ .../testing/selftests/cgroup/lib/libcgroup.mk |  19 +
+ .../selftests/cgroup/test_memcontrol.c        |  78 ++++
+ tools/testing/selftests/kvm/Makefile.kvm      |   4 +-
+ .../selftests/kvm/access_tracking_perf_test.c | 281 +++++++++++--
+ .../selftests/kvm/include/lru_gen_util.h      |  51 +++
+ .../testing/selftests/kvm/include/test_util.h |   1 +
+ .../testing/selftests/kvm/lib/lru_gen_util.c  | 386 ++++++++++++++++++
+ tools/testing/selftests/kvm/lib/test_util.c   |  42 +-
+ 11 files changed, 865 insertions(+), 149 deletions(-)
+ rename tools/testing/selftests/cgroup/{ => lib}/cgroup_util.c (88%)
+ rename tools/testing/selftests/cgroup/{ => lib/include}/cgroup_util.h (91%)
+ create mode 100644 tools/testing/selftests/cgroup/lib/libcgroup.mk
+ create mode 100644 tools/testing/selftests/kvm/include/lru_gen_util.h
+ create mode 100644 tools/testing/selftests/kvm/lib/lru_gen_util.c
+
+
+base-commit: 45eb29140e68ffe8e93a5471006858a018480a45
+-- 
+2.49.0.1015.ga840276032-goog
+
 
