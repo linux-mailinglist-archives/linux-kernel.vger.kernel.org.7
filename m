@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-639196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD09CAAF41C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:50:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F13AAF424
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AA03A8FD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4391BC79AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CE5218ABD;
-	Thu,  8 May 2025 06:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581211E2834;
+	Thu,  8 May 2025 06:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zvCxnK0s"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaIZcmSg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A7721931E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81B521B9FF;
+	Thu,  8 May 2025 06:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746687023; cv=none; b=tYZX/6cZW1FfUjIn+xYfofaOWfPfDVb7WM9oBLK+gSDzrX4jlg7hZwSlfifM6JVR13u9b4vsvwUPD1u6KhzIWrbjcLqb/rckuh7e5sphwBeAJsoH3yibhzewyZY1i/xyteRg2i4LC6+uIv4RNpblvqTgPS1nWjvayPScXwtAPFU=
+	t=1746687078; cv=none; b=kSiuuPUGkTEIWOXCJLgTaL6dvnsTkmofUIYUiL3IMDzX/YckQzYB+i1NKwP+uzEmGidNK6C3+BbWCLUUAxJJ7HrtT5DLOwvgBIifdFENqOpSODIL79ZGevOFGCIDSOssShycneCucSMCpeM0Sqe8w+HHxiteTUkmKagBtYUfVcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746687023; c=relaxed/simple;
-	bh=VkMWVX/SiY6jp7xQYEDQPhAzra4q9xN9l5OzXXCtRQs=;
+	s=arc-20240116; t=1746687078; c=relaxed/simple;
+	bh=6fnJ9jGwlkD8+oSN+9SAHKBF+vAgVZ3vIthZt+o0e9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgshBJimvqVoyjY1n95BvahyVfJa6KTmardmElw661UIxEiFUNjX2NfmCgIrcfIWdQ4L8Xx4o3+OnrIct7LKpleEEsgCso5h7N2BP04dmf2qUWBE0K7sNf/ptPWsrRFPxgH1AvDYx26uNbtE2Heq9OVzh6ruLRMAuQOGOGUby+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zvCxnK0s; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so6487315e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 23:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746687020; x=1747291820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sswvW9Qq2pJQk2SsX4r7xkXE6gJyDJCPnoM6S1kt3zo=;
-        b=zvCxnK0s6A4TMKeYk+qWdaYlOerjZgCOO1WTfcxDArPXLQ4QTIfo6XFiUKO1xJXw/B
-         Juh5oMzCCqJfb+YkFGYf5QHfd0blmu/T5ORSUaAuoBYNLaDZ/3U6P7Y/2WOfQgsU9c1J
-         5mgUB6O3CXfEK6PXOF1COP9fe/EdKA+Q5UPPROxrTDGmAvWQ56cvbidPXT8N6ZbJqtS7
-         wV4Q3KBeq5roDP2kQpKU3LZDPUr5bNJ3kH3ArhP7zCK5dVfMQRdIqXY+TrvQrQa7Xij8
-         dVEeUOU7xkhT4HZ3qv5V4krYClheMzXyfA0ZC3RBSCXHbMHI+c5L8FgiPcaX0sQn9x6N
-         Z6zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746687020; x=1747291820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sswvW9Qq2pJQk2SsX4r7xkXE6gJyDJCPnoM6S1kt3zo=;
-        b=wMuN73RaADceDRw1cOgu70Bjl2Q27y+n+4tr1E1lEtLjKT0k+HkOVyOsb/yTA/jMrV
-         9PKd04fcHpjNMbzO2LhVHg3qbWyZWo+zP0XGW/ZbzrXkKj84Jn6SWP7xes91xZvpOkKO
-         c9/RYWwhcnUzVdpqPdHqZOH0Z2BnIFMwtPN8ldy8AqHzpOj1gKcOdSKPtXpJDK4lqiFm
-         EOb+FpJ50GWDu88f67bwGvGtYSf9jLt7HWY2okZt6jKz5JtPpJ2sJqPVVJ36s7ek+mDD
-         IxkEgF3nHH6q9uGVoRVYW8lvcgqfJBp08T/XqPS5zDDCuobqdUyaZ3cqEaEs9T1avW0h
-         U3jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHeIH2cVJeSxPEsbUNbO1wV+5H1YU/PR6dManHdTFn1OqPs3GRcmQoyzHnNHFgku/vlaoxQnHA+O46j34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwArOtOHw2eBsrlWb6H7FfCyA+HV1ZS9x+ol/p6hkogbOfxWYWu
-	xe7XDqKSSbgHpTyDw6hQjMLIpMFQhjh14OJgo8ARjZzazRR0dep9t+HfX4Jcgkk=
-X-Gm-Gg: ASbGncsu99tPSG15OxWqzTunp7wKW5S6qa1hR7LHuP0G1Y3sUR02IfIn5avSfUgox68
-	RsYqvWL7Unj34YcoGzZmUiWnD5SS64dK5fU68KJmfP/QHHz7JemVxg4PLScPx7ziQiOPbZC1X5A
-	QVjWMmNUm4EadJeZmcJTnUZRYLrNpVZOoFERgmrv8yPRL/UTt36jjn3eLGr8fHCdJzbVLA8klPP
-	/nVeLbbA4cURZkO6qxfUAx5Ceo8PaRsdTgp87n7IXkbYa9nxHbkHNgU6DUGCvp9MFf8E9OLuXYC
-	HjW8zKcQAe5PIJpM8kOl0pWhOKjnhpNYqsMZ6pIOHr0aGw==
-X-Google-Smtp-Source: AGHT+IFSnH7/hk7YsAwIfMrID1Szme78bKEZ0xLGnBiKKY6ADD+OwDpp3cph0URuF50p1QHS0OhXXw==
-X-Received: by 2002:a05:600c:3d15:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-442d02eadb4mr20122025e9.14.1746687020047;
-        Wed, 07 May 2025 23:50:20 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442cd32f3c2sm26019325e9.15.2025.05.07.23.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 23:50:19 -0700 (PDT)
-Date: Thu, 8 May 2025 09:50:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Marek Vasut <marex@denx.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
- __qcom_smd_send()
-Message-ID: <aBxUKEpdszTDduMk@stanley.mountain>
-References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
- <aAkhvV0nSbrsef1P@stanley.mountain>
- <aBxR2nnW1GZ7dN__@stanley.mountain>
- <2025050852-refined-clatter-447a@gregkh>
- <aBxTwhiMelFjvrjP@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6BL8wEEVHD3kl19R+/9xeYDoJVY2IwVeOeA5U42eapTDl/bgzPf9NiS6Vu3mQKvQAHRBsYJITke281uXcM58BrG4/9vljvd+BetvVvkEvsenHEm7oSrMOEdMpgP1MhOvSEXgTZHk4nBJwFzxLerBNiuqLj9PbfIbREZ9rIumGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaIZcmSg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9794CC4CEEB;
+	Thu,  8 May 2025 06:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746687078;
+	bh=6fnJ9jGwlkD8+oSN+9SAHKBF+vAgVZ3vIthZt+o0e9g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SaIZcmSgUv2/V++rgg4TvDOa2n+fWexIMQaOqzTaj5YRRI2WNI3T+W5T85q9E/TZF
+	 dq+pHz/VAieDDGbh/iW9QtBdJfL0X9CQ6NKpRi4VpC0oiRUfYsSCALbH0ZQHN/pdEo
+	 /N+bBMNVDplf/U44JgXUPqVvHkTANPTLmUNwHOryimqLWCOhVhx/ZHsxvP8LlQWecT
+	 glPWIhjZX96UnCAVIQDp4Fzk7tvUW5r8pGH7HHTrHbv6TNFttBwLptuPAJUD3Mjpou
+	 oNSUdaKe8fKlRjuxiDqAlCYZ9MyM10H6qyaAPjmTO7LMiA9Q9VZbQzcebfrsKjfzR+
+	 m0N7N9RNhYz4A==
+Date: Thu, 8 May 2025 08:51:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bryan Brattlof <bb@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: arm: ti: Add binding for AM62L SoCs
+Message-ID: <20250508-splendid-rapid-sawfish-f1ee18@kuoka>
+References: <20250507-am62lx-v5-0-4b57ea878e62@ti.com>
+ <20250507-am62lx-v5-1-4b57ea878e62@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aBxTwhiMelFjvrjP@stanley.mountain>
+In-Reply-To: <20250507-am62lx-v5-1-4b57ea878e62@ti.com>
 
-On Thu, May 08, 2025 at 09:48:34AM +0300, Dan Carpenter wrote:
-> On Thu, May 08, 2025 at 08:46:04AM +0200, Greg Kroah-Hartman wrote:
-> > On Thu, May 08, 2025 at 09:40:26AM +0300, Dan Carpenter wrote:
-> > > Hi Greg,
-> > > 
-> > > I'm sorry I forgot to add the:
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > 
-> > > to this patch.  Could we backport it to stable, please?
-> > 
-> > What is the git id of it in Linus's tree?
-> > 
+On Wed, May 07, 2025 at 10:09:19PM GMT, Bryan Brattlof wrote:
+> Add the binding for TI's AM62L family of devices.
 > 
-> 77feb17c950e ("rpmsg: qcom_smd: Fix uninitialized return variable in __qcom_smd_send()")
->
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
+> ---
+> Changes in v1:
+>  - separated out devicetree bindings
+> ---
 
-Ugh.  Nope.  It hasn't hit Linus's tree yet.
+<form letter>
+This is a friendly reminder during the review process.
 
-regards,
-dan carpenter
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
 
