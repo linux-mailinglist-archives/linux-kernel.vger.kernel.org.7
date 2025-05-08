@@ -1,122 +1,173 @@
-Return-Path: <linux-kernel+bounces-639437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D22AAF76C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:06:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA53AAAF773
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC6F7A49A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9A21BC4252
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC6D1DE3BB;
-	Thu,  8 May 2025 10:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763611DE3DF;
+	Thu,  8 May 2025 10:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AHBosqfQ"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mycs1VwF"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B921DE3DF
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4ABF1C84CD
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746698780; cv=none; b=BYvUS5o6qvboB7oJFhGXzs3SQH31hEJT9EpioXjB/PxLVgPhD/REvbl4Jjf3uasE2lJ2R/HzKBOKCgw9hfXV4kJCNot7YSL54/NK/AHQU4sIqLsVdfiiQ3mXomPiLqqJNpb1ROsbNUHwmYTQyU98eJIg7HGn0rnlZOO+pY7i894=
+	t=1746698846; cv=none; b=i8zcHmPfIfwkxUrLVusfDLnn3N65yvQMglBxpBDhjkw4Y9kZ3mwVmZj/ZesIJe3afkFdzCq0zaf9+gfxmvM7gZV0S8hBKL+Fk0v7jCqnvN9dO3t0EybUEb5Az9y7ll5ggqV8RBveLEGxsaODBgGjZhLpLjMytMdkxFRM9ePfkwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746698780; c=relaxed/simple;
-	bh=q7yD9E+5FXTgiEn9PuCJp38Irfbdm8jMWmnkpBAIlqE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G1LnDG9lt13HYcQZoKCqivPINS+7KyLZfI7hxoACcF///B5vQndGHYEoYg8/K3QonWon9Nn5jYfQWgM5AhswoljT9UHog5dOtFUsugGYDMVWWTn20QJdXi17AlDlVtNmI9foglurz4r/od+iKPN343DLheq1Zl7PO47MMnES6kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AHBosqfQ; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e7387d4a334so721087276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:06:18 -0700 (PDT)
+	s=arc-20240116; t=1746698846; c=relaxed/simple;
+	bh=wbY05BM+oFyf5c7eesHOTO2O39mRvXwu5TpZihwG4+w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jnF0xtZVzkpL/aTbIM/w6eF2RDAike8cjtGcQ8ClQV3i5XxMeMH4eK8Qu2psSe62HiJJCDq8SMQhYQSxjlkJoNj+zziCONmcCmkKJTL4Fkbi2+dehnpWxwhW1NxuRff82u9JdA+AUMfItOFL6pcic7804txdZkdMso5gEVyh2mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mycs1VwF; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3995ff6b066so446324f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746698778; x=1747303578; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Dt6fILG0823sTCQVUZRbrKoEDN8bmv7wajBdn4+1Hc=;
-        b=AHBosqfQ1XmF3ojUJqbdIaMCu1+VPtMBv4K6utJsMzCY6LZh7l2Nana0VNsdl2SuSX
-         uGkAARdEdWry4Rj6l/o4JLN1Zr0CEwdaFcmHSD3so2b58Oc7G2OQKb6gMpZTxItzs7Wi
-         z5lRkdbx21hv4Uc1JdbHCpV5QohPjM1Ax81iwJ0B/MKHhTp6wliBDuqNbXM6Kq2BhL8i
-         UVDEKnsWObTVzUTe2rrmq6c2zOspt8I9vUM9rLv9Q2lXCGw+EDkRA5FNKIcFOsh1qTBh
-         wkO+Pd97tDsXZ0asJWkzGUcxittVQAhmVWMg4ic26Hpwo8sGwOUQIJemzjbQ2a8p+V+d
-         Fk2w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746698842; x=1747303642; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=njSz3ssZ9vsO3uOFmBi11IJ5TO4pFxRuIrUMYY6uL3s=;
+        b=mycs1VwFg9fkwu2HQ5152SgC/cvMV4LhrdLq372/E59zeD4/4yrXuae0VVHxMRQJfT
+         blOHlWjHxRilAP9+66/YZ3u3aXMo8JVuL1aRpSRinBZTx8cKZdsLe9Fb0ZWfpokUzmHU
+         TLVYucGGQ/SNhu/tdZpBjNYQDzk0c/qgc5GRtgxfQD3WxNxuMNquXdudqawp6PpWhcJw
+         ERyUFqfuY9DFz0T1sPvWTaKULafMQSS8gR/mklbS27jZ7tUaajqU3E9tzKhG2SH/w4IF
+         0xvAJ2SZNy6rNm0v2ed1K4FubepjMzEFPBys+2kFjxbkgPF7IAUAAaQHEZkQUM9br+ga
+         dIpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746698778; x=1747303578;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1746698842; x=1747303642;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0Dt6fILG0823sTCQVUZRbrKoEDN8bmv7wajBdn4+1Hc=;
-        b=ZXINvwbT/3R/Hes1iCxVRpvfpeVv48rhOxqZw1W5lisAtbxDMKggoeyYH4ojtLTrjY
-         0Mg5ri7fZZK77fhlXVtEUtVJTVukvpaEklQdkhxWFGRNc9opuCoOWRImotfBE+jzIItG
-         mqIxyVcHw0DghLagdF9/5BhBz96Ygbe7efBTLlY0EadlZ1BFlcS/RSfdPSXPeqAN7SJw
-         wqB240Xw/ubrsmMHmRfRtFspWUXoxl23OEBl/1rKfR2UbRVRtAuXa7FUd5DHznDo7dfY
-         62o/oASgFFaxtCQJ/NXKIY3jexYDeTUTCWnkpVSJ1Z5svPGnYSDGgTOvq9hGEbvQKMaG
-         sWCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy62eN9xjU7AyKzVUKBsOpdFJvPnX7UL137yRgs80nI0sfad49rBgdFQlWexOYJUCe6Rfux0H1vY217FI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaXVY1qIzMtK/UFpvQPepzX3mgqKX1Hi/HEQbdVKIkuirtFrOn
-	FGm9mCF2f0xBaGbsSBYrbcrizIJw5Zavbo414F5jx8tSRXxnKTF1KyRQBIKw+gA+/gDIYkunhTM
-	0oj8l6xl8bQxOk5NfAcsGVZc4Vuh2y03wcjV09g==
-X-Gm-Gg: ASbGncsGMvsZpLPgBKetXqJxWbWyC5j5ZFpdfqFvwT0ZscZ2hPojoVJNi783zvJM6r6
-	z28F87hFZqRfn2WVgqGijDO+hhKADz4LulRYoyEkLa6SuF+cD+WdkON6ON1uUaPbjOUvDfo1X+B
-	xAClhTpF+sOr6aVtdsl7GuZe4=
-X-Google-Smtp-Source: AGHT+IFLG8pqmlzvCqduNnPSERGgsArPUvpsmnVAsVQdb2qKBzJ4ictnEHeRy8JSqGPAm9xU4RfpdLw3POTBQQleFHg=
-X-Received: by 2002:a05:6902:238a:b0:e6b:8025:a9d2 with SMTP id
- 3f1490d57ef6-e78ef6612d3mr3061543276.24.1746698778096; Thu, 08 May 2025
- 03:06:18 -0700 (PDT)
+        bh=njSz3ssZ9vsO3uOFmBi11IJ5TO4pFxRuIrUMYY6uL3s=;
+        b=Hdo8pfdLXo/w3ekad12q7A/WXLQ5raoks9+5wsaVmnIilkQ8gkXQ0CcO5jEtzkUsQB
+         rdU6ylAlEykUF+NUhIAxbpq9Yj/qT8Ik4qRQMnqIBtBuWuOPYnkweIg5aDKFDkGwjtHO
+         py3plkuqlJftycrmzxifqNiqN6cqOSoWALqFiG+rs+dI6mHUkaP7rqZXHYRMaSiCQX7+
+         t3tYHEDwMFy42SZoMeztnoZnsEK4jQYQzwjOrZuxumF/v6/zeHEA6dzOqKAuA8eRDx8n
+         cXl1BFZKkuFV1QB55eqlVJNxZ7zjhi7k2+9XnIojXzO+QEhpZ9WGZFUTHPqN8F0LCq5D
+         3EDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqyuta5I8m0ZJxbw6OB4kjwNLzG2K5fgEVkXRYdyX1yeAaNAaiXcZPaRqIq3zjNwYXLmbADTbTc/5nYD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ3Iqmdf4eV+wL8vVD6iAAUaspC9v8aVP/jE2dKwyUFFzYa1uf
+	zF3PNiuS/gAjeAW61fOl4efivDzmovhLimBLUovzsRQbeBk6f7lvR58hwTpAHh8=
+X-Gm-Gg: ASbGnctc72KLTKgC/ubC2720o3vSZ4o5oY4D30D3tlu74f3eqk0v28LaDnIOVv702lQ
+	TXMGqqDP8LkfiqWYV8gmclx9JLbr89c300BMVVKTsSxddB+ZfZG4z8vQFD+mYAI3bvfY2wcohMr
+	LbCtOZ08EBEP9xHiF5VkQ6HJ3pny/FieMaWZU9py/3fjRggezuDzrzT2bY1I7Zc5+cSuhDT7yBy
+	S7HrF1N4+U3K7WFNDFHljy5i5hsp2u6e9rQRJgvZydclbjAf7pvjYn0q1EmITX0+vOCB4ls+3q3
+	v/vsA3qDOWALvOjV9ndLTPbQ6qm8PQQh6Lo7oi0xYDWFWqq7FgxwIrf2XfF6XrojO+SoWU8pZtC
+	4QeKmJA5VV4zP
+X-Google-Smtp-Source: AGHT+IG5LFa6Ck9ZYFbUs7yGsWs+SbJIJB7ULfi1cZg9Cm/5pQcWo8uOLaQcTk9BEl1Kfmx1cnsDLQ==
+X-Received: by 2002:a05:6000:40e0:b0:3a0:9f24:7742 with SMTP id ffacd0b85a97d-3a0b4a4b4d7mr5131493f8f.41.1746698842004;
+        Thu, 08 May 2025 03:07:22 -0700 (PDT)
+Received: from [192.168.0.2] (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd363940sm31699665e9.25.2025.05.08.03.07.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 03:07:21 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v4 0/5] iio: adc: add ad7606 calibration support
+Date: Thu, 08 May 2025 12:06:04 +0200
+Message-Id: <20250508-wip-bl-ad7606-calibration-v4-0-91a3f2837e6b@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250417142513.312939-1-ulf.hansson@linaro.org>
- <20250417142513.312939-8-ulf.hansson@linaro.org> <aBuJD1izaMqKUJ_s@stanley.mountain>
-In-Reply-To: <aBuJD1izaMqKUJ_s@stanley.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 8 May 2025 12:05:42 +0200
-X-Gm-Features: ATxdqUFYpoIU6GGp0joDEQyexOZbHsuxgOGeWCwXDFxBwA4ofoG0Bbeb0aHcVlg
-Message-ID: <CAPDyKFrxzg2V5qjcnXQ=SyudkW4-nmSWG-8TkMOim+sSWKfboA@mail.gmail.com>
-Subject: Re: [PATCH 07/11] pmdomain: core: Export a common ->sync_state()
- helper for genpd providers
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>, 
-	Peng Fan <peng.fan@oss.nxp.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAyCHGgC/43NQQ6CMBAF0KuYrq2ZTkurrryHcdGBQZuokEJQQ
+ ri7hY3GGOLy/8l/M4iGY+BG7FeDiNyFJlT3FMx6JfKLv59ZhiJlgYAZGNzJR6glXaUvnAUrc38
+ NFH2bVhLB6531FnSGIu3ryGV4zvbxlPIlNG0V+/lVp6b2H7VTEiSTKcwWFSmHB/L9dOZNXt3EB
+ Hf4xjLAJQwTppyhAnwJW0U/MP2J2SVMJ8wyObLsUIP7wsZxfAF9gpeqXwEAAA==
+X-Change-ID: 20250429-wip-bl-ad7606-calibration-20a396a60352
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2400;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=wbY05BM+oFyf5c7eesHOTO2O39mRvXwu5TpZihwG4+w=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYsiQaeK783VzWaW8tUYbW2vlTU2RvSetO+dn7z+042PbT
+ P+/3inpHaUsDGJcDLJiiix1iREmobdDpZQXMM6GmcPKBDKEgYtTACbiNYPhn/qOtfLPde4tjr5j
+ dT25m3OH0HEugc3PHKY0TJ9p9Fb8zSZGhptd/bN5ti7ZaSqfVvr8elahSO75ixMmecwoWPlad8u
+ GChYA
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On Wed, 7 May 2025 at 18:23, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> On Thu, Apr 17, 2025 at 04:25:05PM +0200, Ulf Hansson wrote:
-> > +void of_genpd_sync_state(struct device *dev)
-> > +{
-> > +     struct device_node *np = dev->of_node;
-> > +     struct generic_pm_domain *genpd;
-> > +
-> > +     if (!np)
-> > +             return;
-> > +
-> > +     mutex_lock(&gpd_list_lock);
-> > +     list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
-> > +             if (genpd->provider == &np->fwnode) {
->
-> Presumably this would be "== of_fwnode_handle(np)) {" as well...
+Add gain, offset and phase (as a delay) calibration support, for
+ad7606b, ad7606c16 and ad7606c18.
 
-Yes, in fact there are a whole bunch of them in genpd. I am making
-preparatory patch to change all of them.
+Calibration is available for devices with software mode capability. 
 
->
-> regards,
-> dan carpenter
+Offset and phase calibration is configurable by sysfs attributes, while
+gain calibration value in ohms must match the external RFilter value,
+when an external RFilter is available, so implemented through a specific
+devicetree "adi,rfilter-ohms" property.
 
-Thanks for reviewing!
+This patchset depends on:
+https://lore.kernel.org/linux-iio/20250505131544.0a7477a2@jic23-huawei/
 
-Kind regards
-Uffe
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Changes in v4:
+- fix ad7606_chan_calib_gain_setup appropriately to be called once.
+- Link to v3: https://lore.kernel.org/r/20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com
+
+Changes in v3:
+- fix dt_bindings,
+- change sysfs calib_delay to convdelay,
+- fix sysfs documentation accordingly,
+- used u32 for reg and r_gain,
+- used DIV_ROUND_CLOSEST for setting r_gain,
+- minor syntax fixes,
+- Link to v2: https://lore.kernel.org/r/20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com
+
+Changes in v2:
+- change phase_delay to calib_delay,
+- fix dt_bindings,
+- fix gain calibarion fdt parsing,
+- fix ad7606c-18 calib offset range,
+- fix calib offset calculation,
+- fix calib gain range,
+- Link to v1: https://lore.kernel.org/r/20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com
+
+---
+Angelo Dureghello (5):
+      Documentation: ABI: IIO: add calibconv_delay documentation
+      iio: core: add ADC delay calibration definition
+      iio: adc: ad7606: add offset and phase calibration support
+      dt-bindings: iio: adc: adi,ad7606: add gain calibration support
+      iio: adc: ad7606: add gain calibration support
+
+ Documentation/ABI/testing/sysfs-bus-iio            |  24 +++
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  29 +++
+ drivers/iio/adc/ad7606.c                           | 221 +++++++++++++++++++++
+ drivers/iio/adc/ad7606.h                           |  12 ++
+ drivers/iio/industrialio-core.c                    |   1 +
+ include/linux/iio/types.h                          |   1 +
+ 6 files changed, 288 insertions(+)
+---
+base-commit: 2f122cfb4c5d0ee7e44ed34ccb2d148d4146c0a5
+change-id: 20250429-wip-bl-ad7606-calibration-20a396a60352
+
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
+
 
