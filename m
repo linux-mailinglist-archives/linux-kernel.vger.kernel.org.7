@@ -1,116 +1,134 @@
-Return-Path: <linux-kernel+bounces-638965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E36AAF132
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:40:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15232AAF139
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680271B68A99
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 02:40:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF327A5C90
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 02:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7B41DE4DC;
-	Thu,  8 May 2025 02:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBEC1DE4DC;
+	Thu,  8 May 2025 02:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AC/vVkwj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ac3wSSl2"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E553C2CA9;
-	Thu,  8 May 2025 02:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58232CA9
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 02:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746672005; cv=none; b=FGZhQIRSkWK4IZ84P5IBtHl8UM+YYinp0TOdGmfGQldWePNns5np7b3rTB2diLjepWIi7+9VqCuKrUpYgMzSvkGb8gA1bGDQDlWHA4xhZ+reifhMWiIHiWg/6KiTWl/AtVr/lz6K7O0G4ysA+aPeIvEKxyiCd8Vt7DGkTrg5gDw=
+	t=1746672196; cv=none; b=nfQd5hisGWrPmTxzQDFDh3yjdjn4Et9KaHHZhrIWlBc0oU6gH4lgifmst73PQnZbMs3elGpHSeHuEXblJkF6ZnR5aO706dpmHCPqtLJwCmNHHYP8jkKQ+2zDX1wlPRwJcD2CURD0VQBpXQE4FUenVYCIRdhbBxsNGoM8JYK/3KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746672005; c=relaxed/simple;
-	bh=PPsSM14gHTW97fJBqtwnlogegPfFs55g12PqrVl+Eho=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BBXh7sZiPwvLQs+UDs/UqIAaC1fdzoa4DM3c1mKFsN9tfPYfxSsq6sjCfr1xir2TzXR9q4+XxKYSychzgYUMlng2inQRmKaxpn3TXzzTf88MFzBRK+WH4u9QMI4K27GLjZzRlRG0K8Uep3q51Y1I7qwmXrrDkhQltcwm02gk5fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AC/vVkwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C30C4CEE2;
-	Thu,  8 May 2025 02:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746672004;
-	bh=PPsSM14gHTW97fJBqtwnlogegPfFs55g12PqrVl+Eho=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AC/vVkwjFGcdbSI4+CeK7CpuwM5EqAyltxacJpTRwO3312wwVsCGl5zqi/POjiypU
-	 LKXPYYXcnJzJb8o98Pq2+pXBByOBITWt4fWVnBwy/pwnl6utFTjh+i4seOdEbbZbZq
-	 7i8KJpKVXqr1AwJiVish5Tfl4sLpzJBjL42vSrpYe45F9F0QJZuz/3aBrxHkEP/sh2
-	 omW52qKiWUL0u+C1j1Hg+gX4aPlcOaJPqLTggRhNCLT+bblbUcphodLXIc2aJt1J3s
-	 3wRk6B6iUKc6nDoh39PPexAtBVtCbNo136CbkzjLYzESUti4Fti3CADCw9au0KsMaH
-	 vkA/8jjr9Npgg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC0B380AA70;
-	Thu,  8 May 2025 02:40:43 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1746672196; c=relaxed/simple;
+	bh=8p6jGS4TZQI7rI9iRgaiegouvp+N/bSL5KFlRmDlY78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oW3RlYiBXoRICKwGDDcC2zUv5eItdweo8oRt5oTBnlsHenqZef+BIbwrU5+OgOUCcJVMX3LCG35r7dZ7U1gkQ9O2Q3F5/VW+AA0of0gvKbhReFzcG3/LF5+Bna8bwyPvdqlrF3VeOECrrNHmywJmMqsyi4DsXLLRFNs2aPaZTDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ac3wSSl2; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1b72364f-e997-4d41-89b1-5de3b82bc664@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746672186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AGdZqGDq7unsOjS9YY7VGbfeP6K3GMQsO4IbWDuMJY8=;
+	b=ac3wSSl2RZReHvZePXaYOpBuCxWBp9qhAv2452kfXxtlJSGP/SQoecK7yJCJmmcCpTB4TA
+	jnp+689Ze6cifqPcOcpkzE73tGJWkKBY9h2Or8CyL8iqeJT11Ma8b3XccAw9O2uYq2ov/O
+	qepMrN7XVFgUqiL2QdVNVtwHsB2AvNw=
+Date: Thu, 8 May 2025 10:42:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH 2/4] dt-bindings: LoongArch: Add CTCISZ Ninenine Pi
+To: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Aradhya Bhatia <a-bhatia1@ti.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Binbin Zhou <zhoubinbin@loongson.cn>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+References: <20250501044239.9404-2-ziyao@disroot.org>
+ <20250501044239.9404-4-ziyao@disroot.org>
+ <7e56091d-0e91-44ef-b314-facb102ee468@linux.dev> <aBsGozWwg_WQfe4R@pie>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <aBsGozWwg_WQfe4R@pie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 00/11] net: dsa: b53: accumulated fixes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174667204220.2431099.5916949487538340315.git-patchwork-notify@kernel.org>
-Date: Thu, 08 May 2025 02:40:42 +0000
-References: <20250429201710.330937-1-jonas.gorski@gmail.com>
-In-Reply-To: <20250429201710.330937-1-jonas.gorski@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: florian.fainelli@broadcom.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux@armlinux.org.uk, kurt@linutronix.de, f.fainelli@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 29 Apr 2025 22:16:59 +0200 you wrote:
-> This patchset aims at fixing most issues observed while running the
-> vlan_unaware_bridge, vlan_aware_bridge and local_termination selftests.
+在 5/7/25 3:07 PM, Yao Zi 写道:
+> On Tue, May 06, 2025 at 04:58:50PM +0800, Yanteng Si wrote:
+>> 在 5/1/25 12:42 PM, Yao Zi 写道:
+>>> Ninenine Pi is an Loongson 2K0300-based development board produced by
+>> I think "Ninenine Pi" doesn't make sense. I browsed
+>> <https://bbs.ctcisz.com/forum.php?mod=forumdisplay&fid=2> and found that the
+>> Chinese name of this development board is "久久派". Interestingly, its
+>> selling price is 99 yuan. In Chinese, the Roman numeral "9" has the same
+>> pronunciation as the Chinese character "久".
 > 
-> Most tests succeed with these patches on BCM53115, connected to a
-> BCM6368.
+>> It seems that you intended to name the development board after its
+>> selling price.
 > 
-> It took me a while to figure out that a lot of tests will fail if all
-> ports have the same MAC address, as the switches drop any frames with
-> DA == SA. Luckily BCM63XX boards often have enough MACs allocated for
-> all ports, so I just needed to assign them.
+> I've confirmed with the vendor that they call the board "99pi" in
+> English which is rewritten as "Ninenine Pi" to avoid possibly unexpected
+> problems with a name starting with digits. This has nothing to do with
+> the price.
+I searched on the Internet for a long time last night, but
+still couldn't find the source of Ninenine Pi. Can you
+provide the origin of the manufacturer's naming? Or transfer
+our offline discussion to an online platform.
+
+What are the possible unexpected problems that may be
+triggered? For example?
 > 
-> [...]
+>> But shouldn't it be
+>> "Ninety-nine Pi" in English? Or "99 Pi"? Perhaps "Jiujiu Pi" is a better
+>> option?
+> 
+> "Ninety-nine Pi" sounds too complicated for a board name and I don't
+> think "99" in "99pi" is meant to represent a number. Thus I'd like to
+> stick with "ninenine pi".
+Since 99 has nothing to do with the price, and you think that
+the 9 is not used to represent a number, then I'm curious. In
+the name of this development board, what does the 9 represent?
+Based on my research, I have already clarified that "99" has
+the same Chinese pronunciation as "久久 (long time)", so I
+think the naming should carry the implication of "lasting
+or a long time".
 
-Here is the summary with links:
-  - [net,01/11] net: dsa: b53: allow leaky reserved multicast
-    https://git.kernel.org/netdev/net/c/5f93185a757f
-  - [net,02/11] net: dsa: b53: keep CPU port always tagged again
-    https://git.kernel.org/netdev/net/c/425f11d4cc9b
-  - [net,03/11] net: dsa: b53: fix clearing PVID of a port
-    https://git.kernel.org/netdev/net/c/f48085198104
-  - [net,04/11] net: dsa: b53: fix flushing old pvid VLAN on pvid change
-    https://git.kernel.org/netdev/net/c/083c6b28c0cb
-  - [net,05/11] net: dsa: b53: fix VLAN ID for untagged vlan on bridge leave
-    https://git.kernel.org/netdev/net/c/a1c1901c5cc8
-  - [net,06/11] net: dsa: b53: always rejoin default untagged VLAN on bridge leave
-    https://git.kernel.org/netdev/net/c/13b152ae4049
-  - [net,07/11] net: dsa: b53: do not allow to configure VLAN 0
-    https://git.kernel.org/netdev/net/c/45e9d59d3950
-  - [net,08/11] net: dsa: b53: do not program vlans when vlan filtering is off
-    https://git.kernel.org/netdev/net/c/f089652b6b16
-  - [net,09/11] net: dsa: b53: fix toggling vlan_filtering
-    https://git.kernel.org/netdev/net/c/2dc2bd571115
-  - [net,10/11] net: dsa: b53: fix learning on VLAN unaware bridges
-    https://git.kernel.org/netdev/net/c/9f34ad89bcf0
-  - [net,11/11] net: dsa: b53: do not set learning and unicast/multicast on up
-    https://git.kernel.org/netdev/net/c/2e7179c628d3
+I have research on other similar development boards,
+such as Raspberry Pi, Orange Pi, Mango Pi... The English names
+of these development boards all have corresponding meanings.
+Why can't we come up with a good name?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Based on the above discussion, I don't accept the name "ninenine Pi" 
+which has no implied meaning.
 
-
+Thanks,
+Yanteng
+> 
+>>
+>>
+>> Thanks,
+>> Yanteng
+> 
+> Best regards,
+> Yao Zi
+> 
+>>
 
