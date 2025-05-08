@@ -1,246 +1,106 @@
-Return-Path: <linux-kernel+bounces-640055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAE6AAFFE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:06:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D378AAFFED
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF4887B6D85
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955961BC16BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0172527CCDB;
-	Thu,  8 May 2025 16:06:05 +0000 (UTC)
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFF927FB1B;
+	Thu,  8 May 2025 16:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="xPehbiMa"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A06927C84F;
-	Thu,  8 May 2025 16:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D14227AC47;
+	Thu,  8 May 2025 16:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746720364; cv=none; b=a9OyQHMzlJ/6eakirVhWTaK+pnDWoDRcNpSqgw3p2lgCvKH+RR1fQIx+Veusn7Bs/ICODGtvef1TG+Vx/bjXa6AciAMct4A5qZkqJXeEtqIPRUBVFmU7kLhtN5ciza1p9W5KVXwyGBHtNJzbIov0ZnERwjyLe8L/kvptx7mefEo=
+	t=1746720411; cv=none; b=F4jPC5QONamblWAxRYbhgRcmS/6Dz0T1p8EmdQdojRxGOqU9cKYPMicOPqBuAfrGgYuLYeA9m70tOpuzWLaYlGkOgQWK9Ax0Y6Mq0ZlyLdpx8unbTdIkeIQE8ikdLO60tjTQDOVRlJEINh9YHTrzoBdRkcI4Df9+Nl5pDZZjD6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746720364; c=relaxed/simple;
-	bh=ihkSVWywF9TjtlNw2Ii6Pmfbivd/sXdxO0jq1ulf6EY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iSM+815gwPOzO9y327IF/1EUwzqU6+70YJ3DAJyjc1k6Dfc5GTFwRO4Wa/wuh/7UZFyp4Q+vD2iByW103zHtvi5kSSbRkehordYvgl0J/sB0CQNymMXvKNQesC2va4u7l036HLGNlFKzNNMdpNMwjssz4QRP2xcPLG3WLJsIlUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2dab7a32fb7so795372fac.0;
-        Thu, 08 May 2025 09:06:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746720361; x=1747325161;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I9viKlCPHcZtiypyh4vkytWTu384jwtWko1AJgn/CLw=;
-        b=ZyWaf/9VGgZVdp+uBrQuSJHcSaMxTm2THYbX7AntHJgJXz6Sr9ag0dZontvZFlXKxM
-         QfIE0TMVWi3NKfMq5YUxTvvHM9HY5e6WFgs3/gnIMfj6/8Rx7fn/IDuNU5mgbjgisIS9
-         CdiIciLolMJRlnjZC07kFoaDbkUUpMJ/5Sf0djrF7bV6zastjsFdXY2Le5+Ijhmk22f4
-         xNRXA+zsfqo3o7W+yHMwV5O7x3NAtTwF5HbUtHLaKsF0XLYH+BpT2JUgOSIFOeLSmwtf
-         Mx07jcoXB4UC4ImTwHzS/q0hsgRXucAmcXrRztUqdH/VaGT8qNGGCHgK08ab5VVOA616
-         ftEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4C8SnRE005e3vLz24lp6kKh7pfZulp2nZOwiGWk5vTOYL0/6Lh9uTMN2V+o/KjKtpwsGgETLcs34844Qk@vger.kernel.org, AJvYcCUBI6OaKaE1Rx/Z1w9uTAKEu8BwKv0x62RfXYlYb86HGP3HBvE4TB5V2q1/xRlG71qFo173QjNU4Kg=@vger.kernel.org, AJvYcCW2trwzrR/kJ4KQoz7fXZzOPJMVSebssEsyJ2C3ZlWvM/Fxe2MXiN7T2Sm6856pACJEzVsA3xZ4oKTWIeIf8n0yr/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySKtk1rUt4p5BqPfYiG46Ja5BOwM+BXwhcCbxLdGH3zITsRGbb
-	gjfor7HEI3JRqC25sG0enn+lkUZfj8eOt5meARMp6Ua7zg36QMEoaRl34e4o
-X-Gm-Gg: ASbGnctjp705A3vbTNkiplfYO+o2ApNl6QDFPlURMyl8CX0iiT6u1ejyxoLNeHxDnAq
-	Dd9QI6FWwkWTgqJDcMHCbOifTAOBjQX5bpAaLSly/MGh2bFFc2LiUCFv6sHZfleGp8e0WUSTuEO
-	j7KWfU12xwwSWsezAP9gtZWXhYR5YarbUv1NrBOrkCuUwP7WBQU8veDa7CXelMbl86v9FcLr3Rq
-	xamSsPKzw//ucpiSilauehnM+WQ13pydtb4a/df6vPd63OgNd5dIMerBoS1q/YUtKFJYDH0m5ju
-	e8c5CVtllIGWu5Dj8JnKePGr+DTEgWac5tJ4VHZar1+m3XK/jlRtRauV6Lal3aN5eJ/V9lslR+t
-	0iBs6+v0=
-X-Google-Smtp-Source: AGHT+IGJoTeTItd0KvcACW3wZQbhBQPtChaLb9/GFTJIayGQvDMjEWln2CGN3UXeDUZDEANpfDMm4g==
-X-Received: by 2002:a05:6870:e999:b0:2c2:3ae9:5b9c with SMTP id 586e51a60fabf-2dba421429bmr29387fac.2.1746720360355;
-        Thu, 08 May 2025 09:06:00 -0700 (PDT)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2dba0b7f77csm100131fac.48.2025.05.08.09.06.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 09:06:00 -0700 (PDT)
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-403407e998eso876097b6e.0;
-        Thu, 08 May 2025 09:06:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUTSN+PdLKSb275Q6wz47ljGjPu7k0+bJh20tFOMHBPkVKq9yu9NSBvAYQ5TSfrUp0diq1kznrvUwqUP9T+U6s2UQ=@vger.kernel.org, AJvYcCUfKF3ZNKeb+T/AelzWynp/VUsebI7hrP+Kffmbcxi3UAceXf7gP+KD7Wt8YTA0uP1sWUUW4ao4K0+8MRQ6@vger.kernel.org, AJvYcCXCgTPpvmYal9SkjmCIuR2yuAFTjspqJyXt96OVzgK93yTyo+uKTU0J4AP8RXoZ3RYna5tstPBA2k4=@vger.kernel.org
-X-Received: by 2002:a05:6808:182a:b0:3f7:28ac:8068 with SMTP id
- 5614622812f47-4037fe39654mr163075b6e.13.1746720359868; Thu, 08 May 2025
- 09:05:59 -0700 (PDT)
+	s=arc-20240116; t=1746720411; c=relaxed/simple;
+	bh=OyskF42LM6Bxn6mh3FqN4hvTQ2IPXptkR5h/ItWp4+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfPhDw94MC1kZqCS9eXvYDgqS6PbhpuiDAVX9S624xgUgVWqyGRggGMjp2ikgP7yo+dYYIAA0Uu1aCoOPEH7iJ03G7TQOsrGdi0l8evJ0EX2Ev/7y6v97kHrLPRp3owm5XXTFOhpgR9dOy4frAbcdXT1938+Px4UVQJwaJA8G0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=xPehbiMa; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZtcT46L4Nzlnfx6;
+	Thu,  8 May 2025 16:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1746720405; x=1749312406; bh=CQV5mSzjgEnmWgEB9C9eBlg0
+	5iQfM1JglqUd5jyRaCM=; b=xPehbiMaEnzZjy25zBHGqux/ZU6vkcDWgggsvUH4
+	xzaNbUoLrhQE15jdntRDvLKjB1N+EtLzXi36iP+Hl7I8SxrwvzWaqEIVN7lFwSOJ
+	xBiEI5ypd4XWqllaQr8KAUjONPPKtxBe3HU8OokcRQFP8CUu6te1zdtsYM87nx7Q
+	f1TYgkPa3Cn+b3EHKp+z3iT96+3bqXEmqDGIFRIb2u+MLh+7YgAQNNzfIOoPE9+E
+	ssd/w1m2SCDZCEOipdGMYgFhmThf8Bvj8omZduRGTtCdsGD1cwnONWGpg7jGLEnG
+	HdST4kX/sWLK2NxvXGDHX2fs73YngPt8dE1bjkb2seFqRA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 2AIYu1_hzvfV; Thu,  8 May 2025 16:06:45 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZtcSj1w5wzlssn9;
+	Thu,  8 May 2025 16:06:28 +0000 (UTC)
+Message-ID: <fd13e179-f2d8-4085-86da-c6b0fce2de5b@acm.org>
+Date: Thu, 8 May 2025 09:06:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428184152.428908-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250428184152.428908-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250428184152.428908-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 May 2025 18:05:48 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVtQEEW3SU+f7qTDq6NVhy3LhrrwOgECdrZMfUk6vWQ2A@mail.gmail.com>
-X-Gm-Features: AX0GCFsA13ugezWQtaxo0RK9_3rwzM9bCee2PL_4fXMnTRxdT89qkKk9FaJflqw
-Message-ID: <CAMuHMdVtQEEW3SU+f7qTDq6NVhy3LhrrwOgECdrZMfUk6vWQ2A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: renesas: rzv2h-cpg: Skip monitor checks for
- external clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] scsi: ufs: core: skip UFS clkscale if host
+ asynchronous scan in progress
+To: Ziqi Chen <quic_ziqichen@quicinc.com>, quic_cang@quicinc.com,
+ mani@kernel.org, beanhuo@micron.com, avri.altman@wdc.com,
+ junwoo80.lee@samsung.com, martin.petersen@oracle.com,
+ quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
+ quic_rampraka@quicinc.com, neil.armstrong@linaro.org,
+ luca.weiss@fairphone.com, konrad.dybcio@oss.qualcomm.com,
+ peter.wang@mediatek.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250508093854.3281475-1-quic_ziqichen@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250508093854.3281475-1-quic_ziqichen@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Prabhakar,
+On 5/8/25 2:38 AM, Ziqi Chen wrote:
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 1c53ccf5a616..04f40677e76a 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -1207,6 +1207,9 @@ static bool ufshcd_is_devfreq_scaling_required(struct ufs_hba *hba,
+>   	if (list_empty(head))
+>   		return false;
+>   
+> +	if (hba->host->async_scan)
+> +		return false;
 
-On Mon, 28 Apr 2025 at 20:42, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Introduce support for module clocks that may be sourced from an external
-> clock rather than the on-chip PLL. Add two new fields `external_clk` and
-> `external_clk_mux_index` to `struct rzv2h_mod_clk` and `struct mod_clock`
-> to mark such clocks and record the mux index corresponding to the external
-> input.
->
-> Provide a new helper macro `DEF_MOD_MUX_EXTERNAL()` for concise declaration
-> of external-source module clocks.
->
-> In `rzv2h_mod_clock_is_enabled()`, detect when the parent mux selects the
-> external source (by comparing the current mux index against
-> `external_clk_mux_index`) and skip the normal CLK_MON register check in
-> that case. Update `rzv2h_cpg_register_mod_clk()` to populate the new fields
-> from the SoC info.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3:
-> - Renamed helper macro to `DEF_MOD_MUX_EXTERNAL()`.
-> - Added a new field `external_clk_mux_index` to `struct mod_clock` to
->   store the mux index corresponding to the external input.
-> - Updated the `rzv2h_mod_clock_is_enabled()` function to check if the
->   parent mux selects the external source by comparing the current mux
->   index against `external_clk_mux_index`.
-> - Updated the `rzv2h_cpg_register_mod_clk()` function to populate the new
->   fields from the SoC info.
-> - Updated commit description
+Testing a boolean is never a proper way to synchronize code sections.
+As an example, the SCSI core could set hba->host->async_scan after this
+check completed and before the code below is executed. I think we need a
+better solution.
 
-Thanks for the update!
-
-LGTM. But as I will not apply the second patch yet anyway, I am a
-little bit more pedantic with my comments below (no offense intended,
-though ;-)
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -119,6 +119,8 @@ struct pll_clk {
->   * @on_bit: ON/MON bit
->   * @mon_index: monitor register offset
->   * @mon_bit: monitor bit
-> + * @external_clk: Boolean flag indicating whether the parent clock can be an external clock
-> + * @external_clk_mux_index: Index of the clock mux selection when the source is an external clock
->   */
->  struct mod_clock {
->         struct rzv2h_cpg_priv *priv;
-> @@ -129,6 +131,8 @@ struct mod_clock {
->         u8 on_bit;
->         s8 mon_index;
->         u8 mon_bit;
-> +       bool external_clk;
-> +       u8 external_clk_mux_index;
-
-Perhaps combine these two fields into
-
-    s8 ext_clk_mux_index;
-
-with -1 indicating not valid, cfr. mon_bit?
-
-
->  };
->
->  #define to_mod_clock(_hw) container_of(_hw, struct mod_clock, hw)
-> @@ -567,10 +571,33 @@ static int rzv2h_mod_clock_is_enabled(struct clk_hw *hw)
->  {
->         struct mod_clock *clock = to_mod_clock(hw);
->         struct rzv2h_cpg_priv *priv = clock->priv;
-> +       bool skip_mon = false;
->         u32 bitmask;
->         u32 offset;
->
-> -       if (clock->mon_index >= 0) {
-> +       if (clock->mon_index >= 0 && clock->external_clk) {
-
-I think the first condition can be dropped, as clock->external_clk
-implies a valid mon_index.
-
-> +               struct clk_hw *parent_hw;
-> +               struct clk *parent_clk;
-> +               struct clk_mux *mux;
-> +               int index;
-> +               u32 val;
-> +
-> +               parent_clk = clk_get_parent(hw->clk);
-> +               if (IS_ERR(parent_clk))
-
-Can this actually happen?
-
-> +                       goto check_mon;
-> +
-> +               parent_hw = __clk_get_hw(parent_clk);
-> +               mux = to_clk_mux(parent_hw);
-> +
-> +               val = readl(mux->reg) >> mux->shift;
-> +               val &= mux->mask;
-> +               index = clk_mux_val_to_index(parent_hw, mux->table, 0, val);
-> +               if (index == clock->external_clk_mux_index)
-> +                       skip_mon = true;
-> +       }
-> +
-> +check_mon:
-> +       if (clock->mon_index >= 0 && !skip_mon) {
->                 offset = GET_CLK_MON_OFFSET(clock->mon_index);
->                 bitmask = BIT(clock->mon_bit);
->
-
-I am not so fond of the goto and the !skip_mon logic, and wonder
-if we can improve? Perhaps spin of the index obtaining logic into a
-parent_clk_mux_index() helper, and something like:
-
-    int mon_index = clock->mon_index;
-
-    if (clock->external_clk) {
-            if (parent_clk_mux_index(hw) == clock->external_clk_mux_index))
-                    mon_index = -1;
-    }
-
-    if (mon_index >= 0) {
-            // do it
-    }
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.h
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> @@ -192,6 +192,8 @@ enum clk_types {
->   * @on_bit: ON bit
->   * @mon_index: monitor register index
->   * @mon_bit: monitor bit
-> + * @external_clk: Boolean flag indicating whether the parent clock can be an external clock
-> + * @external_clk_mux_index: Index of the clock mux selection when the source is an external clock
->   */
->  struct rzv2h_mod_clk {
->         const char *name;
-> @@ -203,9 +205,12 @@ struct rzv2h_mod_clk {
->         u8 on_bit;
->         s8 mon_index;
->         u8 mon_bit;
-> +       bool external_clk;
-> +       u8 external_clk_mux_index;
-
-s8 ext_clk_mux_index
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bart.
 
