@@ -1,122 +1,150 @@
-Return-Path: <linux-kernel+bounces-639365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70F7AAF679
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:14:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B61AAF685
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 11:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D061C07240
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E8F1C20538
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B86262FE5;
-	Thu,  8 May 2025 09:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032872620C3;
+	Thu,  8 May 2025 09:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CIGqmhx5"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RdUttfMh"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4397E25487E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 09:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69369265615;
+	Thu,  8 May 2025 09:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746695665; cv=none; b=ckG53Bsa9HiwEk3K8jm1/R8Y1phriRPRHbBWtA/QUVou/dLmUdalJFnhljXAGEDdJkoIUb49L1vx82cIvLCucqbe6La0LROspwA6m/Dd2UgGac4SZedCJ7yW8W7aAyrSwzKXZG2PrboZXRYgsjyuMt1K/Zprpacfp5M6IxqFEgo=
+	t=1746695720; cv=none; b=n3oLoT1V+7Qz26LqryzPsBxUwBZvZYQmjwXuYQm7tGoXBPxT7TEfSUZn0+esYm2b16CBQ2LfrQ+RkU+K5iEWI2G3uywpxG797A3Lptl1jZqpkvGnabPcd5knkenyfTUH1bDnSXHlkcbkt5+2AUECH4fAoe7DdypPAvPhq413eTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746695665; c=relaxed/simple;
-	bh=2LdP/A4VnpSZ8Arqppmfa4jFk7aBo9TTHIHZC8kq8fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+aI5ZnfpHCFyqjpuL0CLe9U1+kNX+Tk+WVWbxcgTRgbmDzaJrRC5fLVpXfLImIO82PHK4bipuyGSJXG1X6YWnUbYINrvH2YsRMhE2qxEuawOyNrIgtjXju9uq9cK9PPtljwPfhGPb7KY7aZCFoi2qpTyHEF/98gYdc1xUIXK60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CIGqmhx5; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0618746bso5497565e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 02:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746695662; x=1747300462; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jtD1t5SqwVfSCPyTjNxq3c+2H14P2VPj1wlw+YRYZjE=;
-        b=CIGqmhx5vL5fqu1yATZFv0VZ58N3X9p2mnpm+RxoOfE2E/sKWC3SimKxPjDQSNOy78
-         kuW4q1OZWYz/54l0ZkWvyPA+AkJOKR2LJCJu91rImNHryJm5U86bJXhHiaXo4rI/5Pfy
-         qXhLWufic3L967jB3PV9NbQZDnEKJRdko6eIg6bF0pZuARSKDPk+AZ+6WgO5j8mwEfdS
-         U3GE6T484/kem3qM6y5Rj7280Ph3DgU0fY/TIcXloJfIpfZ0JufH9aB4GboZqCJ0SpC9
-         doSywFvyZVU4VDEpyG4C67moons+UdqbQ0WIETw/tsxY0tSq+shtyPhgUB6wQNc5zkSK
-         0kTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746695662; x=1747300462;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jtD1t5SqwVfSCPyTjNxq3c+2H14P2VPj1wlw+YRYZjE=;
-        b=WYKf2VPWxsnvZcguapBUO0k/bEEcCAcMEvDhObkNqeVndwZaqR4wUH0N7EJFxQpcVu
-         HH6qF+dDsCCvi8quVQeictYqi3iImS36+Y5dYx3WrMydR+iGgorXFwqVc4XXRcvHd9pb
-         uKm+JusecmRd+5illjd+9f/DV1xPVof/eAZudyPSFBFs6YII67/0Xl/pjf45vvQeb+XK
-         krZ+zPKOsPMqhxjtPw/4yZeSI7fXkegUk5WH/ckGdWcL84z1tKdqzXCT3H13ZhClfsRs
-         PywNBIJPrNhDtF04F3c4NrIjKp6EAG2QFiqrfwsZAei7RbDJnvcB8OzhxKjtXnoUPKAO
-         b71g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSc84rDum9J868womZQya82w+IyQ3Vq7hnHb7MWG7kjRXsR0msdRYkobUxc10nWcmm87uoAz9lqlt0CdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq2hso/icoUCVc39gMT59RRk2xDYQNVHupWtQr2ynYHCWlid81
-	fUfs86V2qa5Ovf8bCFU3nqLj143FhTzdZHeIvs4flMF7p7GIk2SY+UaTQ2ONsg==
-X-Gm-Gg: ASbGncsx8QgjgfzoZH6+XBQMXwDZCz0W//ewVfdnupiYXko4gqeeJzquC+Mam+QA8nh
-	/oHtC5xyrEA55nnE50JF15wAPxY81Z2okTBZwNpMBJ1Qrp1qzMpT+3CTnmWl0k2+bvHpxLn8p3E
-	ep61mAiVM/yDOkk0qTdS8+9uFzW8qFh23FCHL5uKXtc3yD/BWMdzKo1CIptKxZ6k4X7HfVnkd+l
-	kq3SteG7OtGKd+MDUBfknjLiWib1DJeurrGPRTftExWU9IhWOk1sW4Wrd7jEAYLkkTiPhSJOuK3
-	Vsx1iVwcbFl49RuI0+y2nTNqyiOT9xdTUCL5oNjPzmr/lxZRAlAdI73OAN/x9vtNmE7ir5qlij/
-	5BqzXKg==
-X-Google-Smtp-Source: AGHT+IF9SUYOnKs3lJu1vUeKHxmfYUfp4eeX4TzwT3TxRpgJ2RHbyMATX+EQtKICG97KoSCFK8KYGg==
-X-Received: by 2002:a05:600c:3e84:b0:43c:eeee:b70a with SMTP id 5b1f17b1804b1-441d44dd23dmr51647125e9.22.1746695662495;
-        Thu, 08 May 2025 02:14:22 -0700 (PDT)
-Received: from google.com (24.204.140.34.bc.googleusercontent.com. [34.140.204.24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd333326sm29694785e9.16.2025.05.08.02.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 02:14:22 -0700 (PDT)
-Date: Thu, 8 May 2025 10:14:18 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, jstultz@google.com,
-	qperret@google.com, will@kernel.org, kernel-team@android.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/24] tracing: Introduce trace remotes
-Message-ID: <aBx16qth045MwQJV@google.com>
-References: <20250506164820.515876-1-vdonnefort@google.com>
- <20250506164820.515876-3-vdonnefort@google.com>
- <20250507202444.43963c84@gandalf.local.home>
+	s=arc-20240116; t=1746695720; c=relaxed/simple;
+	bh=Sz+P8VUrjYWDsH77RFKtYsxSIw1Pbe/FMGn+UhFvkHQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BRgnyqmMedj5adWeF7bWbrRsBoil2IVD0HTQ6n8r5dP1ZwH3y33C5sXoUHU9Tid4nveW4gwGsa4BTly/HRz9wDS0tIVISLuuOPF79chBTlhJqGHngG3OdB3x/Ai+qhJ60qP/Rk11QQtX71IWSdYC4g09oV8T7jg/gk9ef6HXyG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RdUttfMh; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5489ErKI1632365
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 May 2025 04:14:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746695693;
+	bh=MyRaGoNoeSjypgIYgd0bWb96E1p/i2sZb3+1WmcOQYY=;
+	h=From:To:CC:Subject:Date;
+	b=RdUttfMhSD4iw2y9hv8OPdo+CNx4COkhoaf3fuk2/zTFme1caqs60NOn1FAOAh98h
+	 /0iqUsb96iTtDEKOh7Zlu6LO+skHwVqh61wZld2p/XnDGqtYXFhg6t5AL7W2zpV/Y5
+	 7/QHAlz3AwrBQIPgBXeD3MVDn1PhXTPgaVr0x5W0=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5489ErUM105930
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 May 2025 04:14:53 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ May 2025 04:14:52 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 May 2025 04:14:52 -0500
+Received: from localhost (ula0502350.dhcp.ti.com [172.24.227.38])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5489Eqd9110295;
+	Thu, 8 May 2025 04:14:52 -0500
+From: Paresh Bhagat <p-bhagat@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>
+Subject: [PATCH v3 0/3] Add support for AM62D2 SoC and EVM
+Date: Thu, 8 May 2025 14:44:19 +0530
+Message-ID: <20250508091422.288876-1-p-bhagat@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507202444.43963c84@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-[...]
-> > +		remote->cbs->unload_trace_buffer(remote->trace_buffer_desc, remote->priv);
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void trace_remote_unload(struct trace_remote *remote)
-> > +{
-> > +	lockdep_assert_held(&remote->lock);
-> > +
-> > +	if (!trace_remote_loaded(remote) || trace_remote_busy(remote))
-> > +		return;
-> 
-> Can this cause leaks? Should trace_remote_unload() return an error value to
-> let the caller know it wasn't unloaded?
+This patch series adds support for the AM62D SoC and its evaluation
+module (EVM) board. The AM62D SoC is a high-performance Digital
+Signal Processing (DSP) device with a quad-core Cortex-A53 cluster,
+dual Cortex-R5F cores, and a Cx7 DSP core with Matrix Multiplication
+Accelerator (MMA). It features a range of peripherals, including
+multichannel audio serial ports, Ethernet, UARTs, SPI, I2C, USB, and
+more.
 
-No risk of leak here. This acts a like a refcount to make sure the buffer is
-unloaded only when no one is reading and tracing_on=0.
+The EVM board is a low-cost, expandable platform designed for the AM62D2
+SoC, having 4GB LPDDR4 RAM, Gigabit Ethernet expansion connectors, audio
+jacks, USB ports, and more.
 
+This SoC is part K3 AM62x family, which includes the AM62A and AM62P
+variants. While the AM62A and AM62D are largely similar, the AM62D is
+specifically targeted for general-purpose DSP applications, whereas the
+AM62A focuses on edge AI workloads. A key distinction is that the AM62D
+does not include multimedia components such as the video encoder/decoder,
+MJPEG encoder, Vision Processing Accelerator (VPAC) for image signal
+processing, or the display subsystem. Additionally, the AM62D has a
+different pin configuration compared to the AM62A, which impacts embedded
+software development.
 
-[...]
+This patch series includes updates to the dts and dtsi files, device tree
+bindings, and pin control header files to support the AM62D SoC and EVM
+board.
+
+Bootlog-
+https://gist.github.com/paresh-bhagat12/1757cc54a39f1baf883341af2a383db6
+Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
+Schematics Link-https://www.ti.com/lit/zip/sprcal5
+
+Note: This patch series should be applied after the below series 
+has been merged.
+https://lore.kernel.org/all/20250415153147.1844076-1-jm@ti.com/
+
+Change Log:
+V2 -> V3:
+	-Added bootph-all property to essential device nodes.
+	-Updated reserved memory for ATF.
+	-Introduce common dtsi files for AM62A and AM62D.
+
+V1 -> V2: Fixed indentation and build errors.
+
+Paresh Bhagat (3):
+  dt-bindings: arm: ti: Add bindings for AM62D2 SoC
+  arm64: dts: ti: Add pinctrl entries for AM62D2 family of SoCs
+  arm64: dts: ti: Add support for AM62D2-EVM
+
+ .../devicetree/bindings/arm/ti/k3.yaml        |    6 +
+ arch/arm64/boot/dts/ti/Makefile               |    3 +
+ .../dts/ti/k3-am62a-am62d-common-main.dtsi    | 1013 +++++++++++++++++
+ ...cu.dtsi => k3-am62a-am62d-common-mcu.dtsi} |   26 +-
+ ...tsi => k3-am62a-am62d-common-thermal.dtsi} |    2 +-
+ ...dtsi => k3-am62a-am62d-common-wakeup.dtsi} |    2 +-
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     | 1005 ----------------
+ arch/arm64/boot/dts/ti/k3-am62a.dtsi          |    9 +-
+ arch/arm64/boot/dts/ti/k3-am62d.dtsi          |  123 ++
+ arch/arm64/boot/dts/ti/k3-am62d2-evm.dts      |  533 +++++++++
+ arch/arm64/boot/dts/ti/k3-am62d2.dtsi         |  155 +++
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           |    3 +
+ 12 files changed, 1846 insertions(+), 1034 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62a-am62d-common-main.dtsi
+ rename arch/arm64/boot/dts/ti/{k3-am62a-mcu.dtsi => k3-am62a-am62d-common-mcu.dtsi} (86%)
+ rename arch/arm64/boot/dts/ti/{k3-am62a-thermal.dtsi => k3-am62a-am62d-common-thermal.dtsi} (94%)
+ rename arch/arm64/boot/dts/ti/{k3-am62a-wakeup.dtsi => k3-am62a-am62d-common-wakeup.dtsi} (97%)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+
+-- 
+2.34.1
+
 
