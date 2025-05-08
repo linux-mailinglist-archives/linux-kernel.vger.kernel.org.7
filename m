@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-640568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52242AB0689
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92284AB0686
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4865F4C7A04
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:33:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA1C4C7A12
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71EB233D64;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7828233733;
 	Thu,  8 May 2025 23:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlB6mIKG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRkyaPPj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335E7220F29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334BE1DC98B
 	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 23:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746747217; cv=none; b=Lc5GT/ee+lAIw9h72PmvIixEP3i3kjs9YEVWDAKjHkq/GlkaYVJCjlSSbu/FJvqu7StMtsR/AYOFRT8ZV+4Peeb5TqzhfQaPFH8SO7NHnN0kYv2W/anRQ1j/szJ8PTeA/M1w4BeIak9XiSCinguM89AVOX8iExz5EO6/pNd9mxs=
+	t=1746747217; cv=none; b=PyGQchCSF+kvWoQU4oXDX2y2sx6pioGQpLIdGuzOUEfuNjqfHFc3xR5TF1aP4NYp3RjH9LWMY1eaGaFE8FjP5OaprwBJ7GFHTy35q6lD8G4JjhLmc/G03jgFBA1E72Sdkrpivqlgc2rFofm5JtNWWS41NxpJF8Ij4Wd3jplCI8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746747217; c=relaxed/simple;
-	bh=N3RIolT2/wwpsyp3qVL0vety09DWGenJ3HGIlVCg+P0=;
+	bh=gdsff1ewKdQFrckg4o6Eop2RJTaYEsK2lc1udsPqdD4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uDwv1GIMhJz/FjxHHvUf8++2VSFuQExVeMtiP2MP5l2PrOB/pdI+dwCOlPz/6HT0KFnWS9Lsk70uej14dka7xX++rDs1nvXaAnGx7V/+si0/geiwslQsu1HtGABXuzpjEezENByr6w/T8EbjuBESUvOyisuOVrssEWNqiDj81f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlB6mIKG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A941FC4CEE7;
+	 MIME-Version; b=F9LtmRibzMzQsGJ9oBcS11G52Q6yDgH8yTsiUvgo45Fzf1bLGm4vbAqRngBM+AKcdZPgcshXiKBZfw3fTzM3ygphkLWnyag4/33syBqvvY0xR1rW3/e0Jb3etuN+Ft+ILUGSAJ3Rv1PqK5oXncoOb3rOYUnO2my0n1ttQFqcRl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRkyaPPj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9BBBC4CEED;
 	Thu,  8 May 2025 23:33:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746747216;
-	bh=N3RIolT2/wwpsyp3qVL0vety09DWGenJ3HGIlVCg+P0=;
+	bh=gdsff1ewKdQFrckg4o6Eop2RJTaYEsK2lc1udsPqdD4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WlB6mIKGvzzqxItE/Qxc+Zc/o/qLP12ui7/TpPLRyCC2VzuquNl1ZSzM+A+d4J7/8
-	 oVOOSgB1dy5Bbkjwb2rokj9obna2LaA7J/B6Igw5gupqs5BNrS0NAUHbyOoFLddOQH
-	 Xd78cioIVT64UekTNtSwtndQpOCzIqrO7F/T+C5SvuvX2obh3f8uHgxmHdZU38uJYD
-	 LSTkMzE7PJrmeA7GKGy8WhjW5ZasSUuZlFPhOiskvdf+kXr4iok9ZIs6T5ipN4ngdu
-	 pO5n7shSPZxtOBc+jzVd4aZtAjCmcRxP3u5k2G7iGejtc0q+g6qtdSsWMEZXsso/mJ
-	 0fQEY+u+TiAwA==
+	b=bRkyaPPjA6ZYbic6lbmh/qPS8SadLyGMFuIvmTXnP6Cn6CbB1eN9oC3RX1tyDqkjn
+	 l058vCGU4gj2wp5rxE78gyTofgpeduw890mVjY/Ex1Tce1XWj/vjy8bDbCabqm/n2W
+	 +uA0jA6RfmS4Jhwr5f22RdxNYahAmbvIyFTMPCk9oCZA9e3tGFS/En6wxb9EkCJbTN
+	 6Lsl7Tqtd0sKTJjFYrDbbd0GxNlWnq2JD5Tg/eUYXucsxsNHw5GxDvOSYTTMqPQ1p+
+	 sXyeQhYLzOl4Ll+t6dtEDyyfhvMzYXzYRA4U5c+rAUxughU284eqN/WkRJccbYKCaF
+	 94SSE/NgYeWng==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5BC1BCE11A4; Thu,  8 May 2025 16:33:36 -0700 (PDT)
+	id 5F347CE11D3; Thu,  8 May 2025 16:33:36 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -55,10 +55,11 @@ Cc: kernel-team@meta.com,
 	Jon Pan-Doh <pandoh@google.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v5 01/21] ratelimit: Create functions to handle ratelimit_state internals
-Date: Thu,  8 May 2025 16:33:15 -0700
-Message-Id: <20250508233335.1996059-1-paulmck@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH v5 02/21] random: Avoid open-coded use of ratelimit_state structure's ->missed field
+Date: Thu,  8 May 2025 16:33:16 -0700
+Message-Id: <20250508233335.1996059-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
 References: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
@@ -70,113 +71,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A number of ratelimit use cases do open-coded access to the
-ratelimit_state structure's ->missed field.  This works, but is a bit
-messy and makes it more annoying to make changes to this field.
-
-Therefore, provide a ratelimit_state_inc_miss() function that increments
-the ->missed field, a ratelimit_state_get_miss() function that reads
-out the ->missed field, and a ratelimit_state_reset_miss() function
-that reads out that field, but that also resets its value to zero.
-These functions will replace client-code open-coded uses of ->missed.
-
-In addition, a new ratelimit_state_reset_interval() function encapsulates
-what was previously open-coded lock acquisition and direct field updates.
-
-[ paulmck: Apply kernel test robot feedback. ]
+The _credit_init_bits() function directly accesses the ratelimit_state
+structure's ->missed field, which works, but which also makes it
+more difficult to change this field.  Therefore, make use of the
+ratelimit_state_get_miss() and ratelimit_state_inc_miss() functions
+instead of directly accessing the ->missed field.
 
 Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
 Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+"Jason A. Donenfeld" <Jason@zx2c4.com>
 ---
- include/linux/ratelimit.h | 40 ++++++++++++++++++++++++++++++++++-----
- lib/ratelimit.c           |  8 ++++----
- 2 files changed, 39 insertions(+), 9 deletions(-)
+ drivers/char/random.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/ratelimit.h b/include/linux/ratelimit.h
-index b17e0cd0a30cf..8400c5356c187 100644
---- a/include/linux/ratelimit.h
-+++ b/include/linux/ratelimit.h
-@@ -22,16 +22,46 @@ static inline void ratelimit_default_init(struct ratelimit_state *rs)
- 					DEFAULT_RATELIMIT_BURST);
- }
- 
-+static inline void ratelimit_state_inc_miss(struct ratelimit_state *rs)
-+{
-+	rs->missed++;
-+}
-+
-+static inline int ratelimit_state_get_miss(struct ratelimit_state *rs)
-+{
-+	return rs->missed;
-+}
-+
-+static inline int ratelimit_state_reset_miss(struct ratelimit_state *rs)
-+{
-+	int ret = rs->missed;
-+
-+	rs->missed = 0;
-+	return ret;
-+}
-+
-+static inline void ratelimit_state_reset_interval(struct ratelimit_state *rs, int interval_init)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&rs->lock, flags);
-+	rs->interval = interval_init;
-+	rs->begin = 0;
-+	rs->printed = 0;
-+	ratelimit_state_reset_miss(rs);
-+	raw_spin_unlock_irqrestore(&rs->lock, flags);
-+}
-+
- static inline void ratelimit_state_exit(struct ratelimit_state *rs)
- {
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 38f2fab29c569..416dac0ab565d 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -726,6 +726,7 @@ static void __cold _credit_init_bits(size_t bits)
+ 	static DECLARE_WORK(set_ready, crng_set_ready);
+ 	unsigned int new, orig, add;
+ 	unsigned long flags;
 +	int m;
-+
- 	if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE))
+ 
+ 	if (!bits)
  		return;
+@@ -748,9 +749,9 @@ static void __cold _credit_init_bits(size_t bits)
+ 		wake_up_interruptible(&crng_init_wait);
+ 		kill_fasync(&fasync, SIGIO, POLL_IN);
+ 		pr_notice("crng init done\n");
+-		if (urandom_warning.missed)
+-			pr_notice("%d urandom warning(s) missed due to ratelimiting\n",
+-				  urandom_warning.missed);
++		m = ratelimit_state_get_miss(&urandom_warning);
++		if (m)
++			pr_notice("%d urandom warning(s) missed due to ratelimiting\n", m);
+ 	} else if (orig < POOL_EARLY_BITS && new >= POOL_EARLY_BITS) {
+ 		spin_lock_irqsave(&base_crng.lock, flags);
+ 		/* Check if crng_init is CRNG_EMPTY, to avoid race with crng_reseed(). */
+@@ -1466,7 +1467,7 @@ static ssize_t urandom_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
  
--	if (rs->missed) {
--		pr_warn("%s: %d output lines suppressed due to ratelimiting\n",
--			current->comm, rs->missed);
--		rs->missed = 0;
--	}
-+	m = ratelimit_state_reset_miss(rs);
-+	if (m)
-+		pr_warn("%s: %d output lines suppressed due to ratelimiting\n", current->comm, m);
- }
- 
- static inline void
-diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index ce945c17980b9..85e22f00180c5 100644
---- a/lib/ratelimit.c
-+++ b/lib/ratelimit.c
-@@ -51,12 +51,12 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 		rs->begin = jiffies;
- 
- 	if (time_is_before_jiffies(rs->begin + interval)) {
--		if (rs->missed) {
-+		int m = ratelimit_state_reset_miss(rs);
-+
-+		if (m) {
- 			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
- 				printk_deferred(KERN_WARNING
--						"%s: %d callbacks suppressed\n",
--						func, rs->missed);
--				rs->missed = 0;
-+						"%s: %d callbacks suppressed\n", func, m);
- 			}
- 		}
- 		rs->begin   = jiffies;
+ 	if (!crng_ready()) {
+ 		if (!ratelimit_disable && maxwarn <= 0)
+-			++urandom_warning.missed;
++			ratelimit_state_inc_miss(&urandom_warning);
+ 		else if (ratelimit_disable || __ratelimit(&urandom_warning)) {
+ 			--maxwarn;
+ 			pr_notice("%s: uninitialized urandom read (%zu bytes read)\n",
 -- 
 2.40.1
 
