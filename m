@@ -1,124 +1,158 @@
-Return-Path: <linux-kernel+bounces-639433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AB0AAF752
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE15AAF763
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8111D4E366A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B0DB4E0DE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FEC1E520A;
-	Thu,  8 May 2025 10:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5381CBE8C;
+	Thu,  8 May 2025 10:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OGKZ9AvX"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FAOKJki6"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314E21CAA6C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ED6145B16
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746698531; cv=none; b=Ia87J7u8XemP2As/yPsPb7rQYwZma+hPWhwyQkd21ZYwR0/1FnWg9csp9gRs+8U/+2woSEXoq/78vPOQRlw/d3dYvnmNQyQ/1fJZFuu7yHhRtzIXuR/DuRC4FtPEBOAGggiGLEp4QnF33uLvnFe8QB+h7r/w4bDVFPjGQARr0LA=
+	t=1746698653; cv=none; b=mLej7G34ecfKP2aFJVPFOUKKnuZMEa4fOX6sVUo26jlmuwkUdXPw8pOfR3rRKcX2lK1/Cl4s1RIoRCKNt4G/mb67DGtudVNOOeEJ+iLwdyb8SAl3/caTX15sC4smY6anlyTNzKYxPHcJA71I7YV42lJUNtrnv6HbUs3GQ6uWKR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746698531; c=relaxed/simple;
-	bh=dD3XhLv3aLEgd9xznXybGYKnL30+PEHqHxV9/ZWuREQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Gjg776GxZVfl5pw8vRPlQVit7h9QiaaFUWc5USWw3wmbCkd0b2Ng/2ENn5lnDoGtMjNiv7VQXy8CfyyH3iDVzdtOrV1AnQuN9K9Qs/4ZfFsMxebkZtQ+uMI4EirdS46EJWbWdyiPxTxxgg1E9rtC0BOWfaTiUfwx5pMiwRllPAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OGKZ9AvX; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a0b1808864so37838f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:02:09 -0700 (PDT)
+	s=arc-20240116; t=1746698653; c=relaxed/simple;
+	bh=nQWMS8zLodxQjA2tkoVMA2V3++BSV8DfYZl9qCc12q4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c9DJEeEcyI+ZWzfYxqJ3ne30Ft6/0FkYjlZ56EInrXRqjtQg1pvzuK+3ZuzS6y1szS3cyfYlDo3/g7ojoVbvrV+T/L2QgGcnpE2pMnGey2PJc5VOQfl6P6OPw5PCCKwqNBY6TvOGNXBnJDI3HXkA2CCaoQGTjS5BR7r/5DJFigM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FAOKJki6; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e78e38934baso891312276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:04:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1746698528; x=1747303328; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WBoYS0wz++EQw8/z3GxgW1EZr6KbY89jyHXnVjV8trs=;
-        b=OGKZ9AvXSCzPjBXsG0vy+i7kKicv94Ap26LZwjqrfS3n66x76yARcfYEIxpaY3l7Ux
-         jdDfhhluyw9f21EijLdI7mM/tGAbyIHL/g/kFmKGtl7U1tkt9r6xaEL+QKSPp4EuRCU0
-         ILWH+EwwH72PCEWam5B8nl9cUZ8j42vSuoxjjlzQa71eluP0BNecal7Cqnnqpml7GKfq
-         srckRmiZuEiAciHAUWnBQ+B+eV3CsKt9Aenj+Jo8K8eWVpMLToIW87SclAlb20ggM3EY
-         wCYSny06qk41PQnpKx3vxicu9v1b1GEHeWmBGXTO5NwxCkMVM+6SiJoGgENKEXPI9VrB
-         TH6g==
+        d=linaro.org; s=google; t=1746698649; x=1747303449; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+OMCAEKXt9Na5TVEs/wllXz+LY/w4SZyrDL1epmaZEU=;
+        b=FAOKJki6OBNOt28NYq+dOT0TCHWF0fCAIikha134jsYRFKMNvLFwu7bLmsDcBNq/0/
+         9JqUwi7qNK1yhW0QJiRh/+ri7vJ3BiP3y+tdBGmo8SESjHMpgvvponj7S+N12v3gPNLk
+         gxEnVSv6TwDiNYPiPRC9EaHSI6PCIKeimerfJQ2AGzNZ+w3yaww/TpfC5OOzzic+qAJD
+         1cm1bZd3lcTlWXu+gJeruukumXyJ/ecOlk8zOnyzdzfVL2I7znRXRNS0Sh0rokKONP9F
+         U2uFCuzZlwMNF31d1lWLdEh8322hCFFrmsV4U3B+j1eQukVXfvFGurI7vCG/Ek50zlMr
+         xxrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746698528; x=1747303328;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WBoYS0wz++EQw8/z3GxgW1EZr6KbY89jyHXnVjV8trs=;
-        b=OWE7Rc3Fh5OE5iyqsx+bw22Fkk0tLjhL9+0qRUo6cnTJo7bPRMosAIZw5Uuh3BraT+
-         GqIwgjHQ/QTT8O9RnKpmCxZbB9vDTdxxWXJNsTSPloLV6F/Wk9TgfkeZDDT6ausHFe1e
-         zH/iYiwFvfIGPYApPdsJBqRDl0YtjgAECv4gqzVnE2vemrs3BTYmgSX/NQ8b7+p5o2Ds
-         LTtPAK4ik2xQ4RTTMPWPiJ+yOGOar1Ln3TRYeDHqX4QaBbFXvlwE4wtxc/efnapbaGx2
-         5mKYCVuUe36FG/3TIut0LlajYvW1IJRTIn4gegNKE7WrVBSLQxx4STKbi97y+niJFRdu
-         K9zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSWNFSXJXbg7sAbr3nyYpIfIfjZ+2qIVkocodXhqJ+7XCvYkfs+VaKV1rvmprTrOZHbm3F65f3AQcElUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFnL3806MPVP8rURczybULPEkasy43Lo4uTzDpx+82NPpDq3R6
-	WZiZLK6FoYkuciCUH+TVygol7r38s6O2K4GMQnzJ/8nBkLo64aojAunhTNAB9NM=
-X-Gm-Gg: ASbGncuZfntugqgYiycbyOk1I0x2acJOGIbzrJcBdKJtp9cbmXgmJqB1qG0H8HLXlpG
-	XPVwOvWwRVibxwNRwgoOxf4TvsdsWmdgmK67YnU9AANKC7ajopNFA56xarRu4GTb/jW1G7lkjB9
-	ndTEUhXxNr+v5L1t8RTdwMo7o0RuMZ281AudM/06RKXoti+JSQFpthUEmHm4FUcpf0TDv9Ja9oD
-	0nxoAQpBMmI+o5HemdcbdQClBmTQUQPnFFsTU4bRFM5+j6KjBhXBG60WkKAj5iKAaHgZJCfSwEz
-	aNSJ58IlG9tMiL5iE5z/5jYWtvlWtbZNA5cleH8s3isA2dLoEOnFg2KqROA=
-X-Google-Smtp-Source: AGHT+IHUaQx/Mee6s3Ke3xU/t61RV8r367qD/26lQfVX2YZuAy0gm6pedVbgXrEeJfa8XZl3movr0A==
-X-Received: by 2002:a05:600c:1c97:b0:43d:301b:5508 with SMTP id 5b1f17b1804b1-441d44bc487mr21958065e9.2.1746698528415;
-        Thu, 08 May 2025 03:02:08 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:a451:a252:64ea:9a0e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae7caasm20004897f8f.54.2025.05.08.03.02.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 03:02:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746698649; x=1747303449;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+OMCAEKXt9Na5TVEs/wllXz+LY/w4SZyrDL1epmaZEU=;
+        b=Gkb2b21GC3wrbkITzI5bZKIy+cT+XFXnp7xrNQJotaHMnHdwzNC2BuUs9TyQ+uNRtW
+         F3mlYPuMiMuaW0wswMEt8j8Y6hkRT+QKjM9mQ+VWT6tKvKZ8LamzvxRM0Hrka5FcUh8n
+         YdsZMFCdquKC2HV1KGUN2UaldxaI1iLBM+y1iiYvy+Ec3PzzkdrydY0rRtF7lbUD4DVg
+         AqNprYiiA3+7B5m5fM4EOmAh4YnzppdsPO3eg9HVbcJ40sPTJomoqN6g85W+9vCJmHvN
+         BK/abkydOV0UyBg9S+BAbhA5Mtv8nsu+/tis88aD2BUS5oK8j0HxXbBR36m1CfvzhIZe
+         gvcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVch8PdpClflOAGVj2NquYMjRv28hvJct5/V6CCCQjepuSV+tUKHO3epX9MmRyXEtsT0vV9uVaYrwwJYww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFIp1ijVGFzehmJbJbdBrUZu00cunFujzit1gwvd8oL8fKM+gf
+	nz1vOC6GEaq2fWhhUvjk+8Bj8HUsjv1u1FPMJKsFx6FH5f3uyEgnw60sVPPnTaemRwpvolv5JV1
+	2UFz+TpcXBlBQIfR1j09vcsPm4jZkaOaIejua3A==
+X-Gm-Gg: ASbGncskWTCQw3KX/KpTxHbhDm9Js4G2BPA/d1BZN5QgozPgL12dioL4PbnnAe0upnL
+	tWmz+CDJZTMrTOHx0use8208IYPXC3ASA73xcvw8iUM4ftzctj4onEvf2l3JSkAw8rQ3FX2avAS
+	9++zFNogDKUEL282/KxstHiWQ=
+X-Google-Smtp-Source: AGHT+IEe4zp5EUGAPH2midu3NVbyBycrHIpRT+XUkbdIdzvQqiRxX8Kp0ZBPTG8H9R5eDjAreGEn66s7Qu9eZSe/884=
+X-Received: by 2002:a05:6902:2b0d:b0:e78:f1e2:8f25 with SMTP id
+ 3f1490d57ef6-e78f1e2907amr1705899276.0.1746698649338; Thu, 08 May 2025
+ 03:04:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 08 May 2025 12:02:07 +0200
-Message-Id: <D9QOY9TMQXSX.2VOEKVRCXKOO1@ventanamicro.com>
-Subject: Re: [PATCH 3/5] KVM: RISC-V: remove unnecessary SBI reset state
-Cc: <kvm-riscv@lists.infradead.org>, <kvm@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Atish
- Patra" <atishp@atishpatra.org>, "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Andrew Jones"
- <ajones@ventanamicro.com>, "Mayuresh Chitale" <mchitale@ventanamicro.com>
-To: "Anup Patel" <anup@brainfault.org>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com>
- <20250403112522.1566629-6-rkrcmar@ventanamicro.com>
- <CAAhSdy3y0-hz59Nrqvvhp=+cWJe1s50K7EpuZmKBqfy-XQFd1Q@mail.gmail.com>
-In-Reply-To: <CAAhSdy3y0-hz59Nrqvvhp=+cWJe1s50K7EpuZmKBqfy-XQFd1Q@mail.gmail.com>
+MIME-Version: 1.0
+References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
+In-Reply-To: <20250507160056.11876-4-hiagofranco@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 8 May 2025 12:03:33 +0200
+X-Gm-Features: ATxdqUFUvDJo4SEFGQh5UV_w7ICgnExMVykRp0SMxPXtgTPPo6OOJoK0tLhcWVM
+Message-ID: <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-2025-05-08T11:48:00+05:30, Anup Patel <anup@brainfault.org>:
-> On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcm=
-ar@ventanamicro.com> wrote:
->>
->> The SBI reset state has only two variables -- pc and a1.
->> The rest is known, so keep only the necessary information.
->>
->> The reset structures make sense if we want userspace to control the
->> reset state (which we do), but I'd still remove them now and reintroduce
->> with the userspace interface later -- we could probably have just a
->> single reset state per VM, instead of a reset state for each VCPU.
->>
->> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
+On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
 >
-> Queued this patch for Linux-6.16
+> From: Hiago De Franco <hiago.franco@toradex.com>
+>
+> When the remote core is started before Linux boots (e.g., by the
+> bootloader), the driver currently is not able to attach because it only
+> checks for cores running in different partitions. If the core was kicked
+> by the bootloader, it is in the same partition as Linux and it is
+> already up and running.
+>
+> This adds power mode verification through the SCU interface, enabling
+> the driver to detect when the remote core is already running and
+> properly attach to it.
+>
+> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> Suggested-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> suggested.
+> ---
+>  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 627e57a88db2..9b6e9e41b7fc 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+>                                 return -EINVAL;
+>
+> +                       /*
+> +                        * If remote core is already running (e.g. kicked by
+> +                        * the bootloader), attach to it.
+> +                        */
+> +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
+> +                                                               priv->rsrc_id);
+> +                       if (ret < 0)
+> +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
+> +                                       priv->rsrc_id, ret);
+> +
+> +                       if (ret == IMX_SC_PM_PW_MODE_ON)
+> +                               priv->rproc->state = RPROC_DETACHED;
+> +
+>                         return imx_rproc_attach_pd(priv);
 
-[5/5] was already applied, which means that [3/5] would be nicer with
+Why is it important to potentially set "priv->rproc->state =
+RPROC_DETACHED" before calling imx_rproc_attach_pd()?
 
-  memset(&vcpu->arch.smstateen_csr, 0, sizeof(vcpu->arch.smstateen_csr));
+Would it be possible to do it the other way around? First calling
+imx_rproc_attach_pd() then get the power-mode to know if
+RPROC_DETACHED should be set or not?
 
-in the new function (kvm_riscv_vcpu_context_reset) where we memset(0)
-the other csr context.
+The main reason why I ask, is because of how we handle the single PM
+domain case. In that case, the PM domain has already been attached
+(and powered-on) before we reach this point.
 
-Should I add a patch to do that in v2?
+>                 }
+>
+> --
+> 2.39.5
+>
 
-Thanks.
+Kind regards
+Uffe
 
