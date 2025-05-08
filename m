@@ -1,308 +1,271 @@
-Return-Path: <linux-kernel+bounces-640038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6F7AAFFBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A47DAAFFB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186C74A50DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:57:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CABB17A84D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4806027A47C;
-	Thu,  8 May 2025 15:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B025F27A477;
+	Thu,  8 May 2025 15:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QYrAi8gt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SB8DOljx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72C727935C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746719854; cv=fail; b=bKV38Mf//YxArBCIubqbasYWLrE+/omOZlnAUlxgKlTyjVUmMUSS/J1fgAMl2FgYKUNccpk9jJ4sdnyUkSQleSDQKTS8UdBScJJewHr/CpbE2864HBGGLKE5f5KgmJeTXq3Lndg1zGWZJzn9DElAjDpt2Cks8j2I0Raxt0PpLAg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746719854; c=relaxed/simple;
-	bh=IKhNQ7Wp7KoqZiY3T6nkpTfzROiIGpGNI2LycMwRIQA=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CgR0rz63ihwyKYWC4YV0UAVfympcqsEhBVhJ1Pvzw2AMt4+dPsAQ4alO+wZEqOenuLELm3p3kU9F8lBQuE+scgicl2YrqAWzyP+lqGPCKLArvUMN23aLaPJIfvFYQ8FsN6EA2yINstI9rs56qOIprKWh1hier+6v/C+xglDh92I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QYrAi8gt; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746719853; x=1778255853;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=IKhNQ7Wp7KoqZiY3T6nkpTfzROiIGpGNI2LycMwRIQA=;
-  b=QYrAi8gtTyY5BudnQZRm9u57pCEPZYdhxiFpUEsuDm9nbbWTIdgkzwM4
-   9f5/jWzPhJN4GRQSA/zLqPFs6JtNpNFA08JTsQaYFdJLbJUvCvU7KTA1H
-   PfXQcO1g3e9sOFHQQPe/fne7KTjqCu7K6zAEWrDlD/MnB3jNLc9iKPZ3b
-   Um5O2x6GEVs7zRJBgoPlkNDZld8Uzb6k395Sn3WMJohcZzYvPKds/YZYc
-   CtDmqkvaXomTSOj4/vFowdoaVCOF0UR3C8AkkReHdeiFGGXyNiV8hnk+/
-   ZVUo6V1jL0dWyC0wbBK2H3pElaJkYovyYwhi6YjtC5UPQem9bUXk0bzJS
-   g==;
-X-CSE-ConnectionGUID: 36/nvA4wQU67HikKkLurKw==
-X-CSE-MsgGUID: 1eG2VID2QU+enfwnwLMZqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48224215"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="48224215"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 08:57:32 -0700
-X-CSE-ConnectionGUID: +iXqUewoSQi3xK4XKrgL5w==
-X-CSE-MsgGUID: u05r+oQlSa+zeP5QhKHIsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="136296717"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 08:57:33 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 8 May 2025 08:57:31 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 8 May 2025 08:57:31 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 8 May 2025 08:57:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F5YxLtCQGEd30FsxhIvY5+G8H0lHnI8qF6GlYJHcs3S3ZSDpc+mft9kzovkFOmVKS1Drp5KRC6REEkcyB06WRjRgkbUeSk3aZiipJ/3HqvKHFYc4GMviyLqDXhoQuuDDF91fBzsDJoVnuawnQ+vqE5ZjAQf+1Z9FfuTrKPTTyACzTjDEiYtb+DgYW4tekotGMDwTxHm1tLAUxfKv7K9gqsQTlWv5+geIwwgXGux7QYl/9fRV0E+3fFJucy7qdF/0wngv3+WzLBL81nYVMwBXHJCBSKTAtLSr8t/ap1WGG8MCIROVLfexIQr7HfdWISijEpeWOC5nIFdonhOXLDa2VA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MiDEp21i0pSOeBjSlaPjFHpaA+djYCXjE8CIgRUF7es=;
- b=gHjQ4jbZ/aWbnGJD67TNWY7KnlQ6pMrQu44vsu73EsD7zJ48IVqLHidiu6O+dnHJCuDjKoKPYSwA6SqvgkjfR0V3rjnXJM3dLyOmd0bUSfFfpn8YJ0lrzZeJbcNJ/F9/zqqzLrSOIZhrCQCXNpgHRX2JtB+Wm3aEF0yRTlg004DOwv0dd+OLBMbprOwdvspphxYZ7e58nqIhyAAyKYp6CUK4FWTBHzShHEgvu0Kt12JNPQo0l5OS2LjHIsam8CSrivq0D9f+hJ4yZiVQtxMtJv8Gpiqw8v/WLkHBtWqJvWfIjBWlcCVPWldb4Nf4o9n3jn5G3rUh57uhdvW6Og/81Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SJ5PPF0D43D62C4.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::80b) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Thu, 8 May
- 2025 15:56:42 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.8722.021; Thu, 8 May 2025
- 15:56:42 +0000
-Message-ID: <4ff8267f-989a-48ce-b6b8-1df302d00d6d@intel.com>
-Date: Thu, 8 May 2025 08:56:40 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 20/31] x86/resctrl: Check for adequate MMIO space
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250429003359.375508-1-tony.luck@intel.com>
- <20250429003359.375508-21-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250429003359.375508-21-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0147.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::32) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0280253345;
+	Thu,  8 May 2025 15:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746719807; cv=none; b=s54+96zooJrrWfnExpibkJdY/aC62RI9zf1TtAmycIFARFrjGW0e6syMThJlaMjpfNYGDfKNkwUPmq4j4pxo64SkEMlXy9tWlsHtXeHsj1UL5keSefhgo2Q1TqJVA35ykqL5zuUdZkyFgWvBr3HckDM/4cizv7zZJ2/ZLudHF88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746719807; c=relaxed/simple;
+	bh=M28pVjPHrEv/rACw6iZSY40oD1Z45F5bY/GhP8fIzGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nev9pOLLPAexidYRzI9LuBDVup4plpv/zgnY2PAOOm3BeNsGPiphE5tqu93inWlA9pFAc3lXh6iuXNY4jUEk3QY0e/o1Ufh1iNARfStOYXF/ByYUpFSFD9Z2TlEQuIHjZVKrwom7WMLnARonOizm/HCcNBSF9PBObkAfBGa2HY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SB8DOljx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C06C4CEE7;
+	Thu,  8 May 2025 15:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746719805;
+	bh=M28pVjPHrEv/rACw6iZSY40oD1Z45F5bY/GhP8fIzGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SB8DOljx5L/gbsKgsDIJkdMGoXwtfwCdhXeS8geafJlSCe6ESXxMa+26O+Z4srap1
+	 NBToJBpic/fvQ2NdOX44kEsjJ8aZS9kiDpG4FXlqEpG/5kJUoS/bqD95Y31K3G0zyw
+	 O73HsnUCnug3uxjdygP95BZDeVw/9CI72sW/qlwfk2r/4cs2ntMcajnW0EmhHbUjO9
+	 wac3FnjEexTGTm/TYtHQ/FJE6RA8xZuWVq7frHC5Xj5KprzH3aahbsNTbDCEL57ASv
+	 zVbUlWCgJnyIEHfBpcL0Mh47/UdA78PDUWhErOvH0/aL3xAFSPgDhHlRCjVLGWVF6e
+	 2APLxub7qfgyA==
+Date: Thu, 8 May 2025 08:56:44 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Luis Henriques <luis@igalia.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>, 0@groves.net
+Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
+Message-ID: <20250508155644.GM1035866@frogsfrogsfrogs>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421013346.32530-14-john@groves.net>
+ <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
+ <20250424143848.GN25700@frogsfrogsfrogs>
+ <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
+ <20250428190010.GB1035866@frogsfrogsfrogs>
+ <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ5PPF0D43D62C4:EE_
-X-MS-Office365-Filtering-Correlation-Id: d806f373-399a-4c17-9e64-08dd8e48ed37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|13003099007|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZDBDbk45a2pUOVJHVlc4SytRWHJqb043UjdYWEZIOWtwTUJCZlZiL3d0UGwx?=
- =?utf-8?B?SUpNejY0YWpnNE5nb1ZqOHRTNzVscVlEV1ZScW13QzdVT1RQcjg0UzltdWJr?=
- =?utf-8?B?WnlPQ2JoSWhrbVBFZjA1dWJaQkxNS2FQaUx3b1FONkZQYTVrNU1hM0hvSU1B?=
- =?utf-8?B?a2FmWG9NSFEvZHZ4aWIzaWErNkhlTkJTdXFwa3VMcG9zSFJYZHNtOVZFL0xn?=
- =?utf-8?B?T0xTb0tCeG9BY3A2MFNuMHkrZ2FCaDNQV1ZYQmxIMEJibzlaRHkyZk1pT1Js?=
- =?utf-8?B?OXI1U0NiVDFFVWp1QWNnaVAveFdBMkhLbVc1UzRidDU2aWg2NEFJaW5qeG9T?=
- =?utf-8?B?Q1g3OWFtQXZ5Q25CQ3lwT0RGZnRyYkRPYlhaZGVzWndBR3ltSjJlVGN1ZGxm?=
- =?utf-8?B?c1BZUmNyc2p4bzQxT3RONzFoUm56c25xd1cwSmN4TlVaaVRwdEE3amZ2Qnpy?=
- =?utf-8?B?cUd2byt6YUloclZrU2hnd244R0Rsa2xOeHdnTWNNNFdaT3IyRUh2eWl1VFBj?=
- =?utf-8?B?eDRFNWlyeEJSMXAvSnVMa3oyM1JKbzVaa0drN29yWlp4VHRvbzRaNHhuMU9B?=
- =?utf-8?B?SElwYzVKV3ovdU5uUldocTk4UVYzcDFxQitmd0N1MXRVYTViNng0T1hwQ21V?=
- =?utf-8?B?QzV4SVhRNWhTOGVDUjNmcW5QZ0NmNjBnSDBTSzZUSWNJcFNKMEIwMlMweGFM?=
- =?utf-8?B?eEt0OHlpVDEyakNsb25VbkthaEhZcGVCK0NDWHZUNlBpOXZXSlRvZzgvb0Zu?=
- =?utf-8?B?Q3dnVFlzM2lDNXlkSitvemVVWS9Ga25ZQ0dSR1NoTEFXMlIyUmNZM1crNmJk?=
- =?utf-8?B?MkpEcW5rbVFrVythMUlMQ2F4NktrYVhrNW5VTHBwRFVWVWxLQkxpNCtDZldO?=
- =?utf-8?B?dXpwR2QvZ3BYVEN4RU1RSDhVbEtFL0dxZFdBcGEwVFR2R3cvMmsxS0JJQ1JI?=
- =?utf-8?B?RHE5QXI1eCtSQjZIY0V0dVIreUFkWU9GdGJVaG9aMVU4bVhUR2VSMjdWaEh5?=
- =?utf-8?B?bXlxaExEM0VmZjRLSTJJMEd2TXZJbVJhS1BSa3lzSjJadmp3Rk9aL2EwclFO?=
- =?utf-8?B?QUxUREZTVXZ2MCtvVVlKdFAyc1VXaHl2VkdDRUpzeDk5a1dPWmhXd3FjSjNp?=
- =?utf-8?B?UHpRT3ZKeE1mQS9HRS9QQkRsWERZK3I5TVZiUm5OTlV3RCtScXREY2xUOUdF?=
- =?utf-8?B?azRvUFU0MXJndE1SOHRQR2U1NGlkR0ZXOTlDd2lpOHFONnBLVkIxdzVzdDRW?=
- =?utf-8?B?L29BbWFzcXp3TFF2OEdBbHpYOGl4bjFxQVhCbEoweU1MdXB3blRxQnNSSjZL?=
- =?utf-8?B?WEtHYmsweTFYUjUzQ3BGUHBHVVZjTHBKYVNzNE13QmVKV3FBc3l1VjRMdTFL?=
- =?utf-8?B?UVpnWm5SQ1h6L0N1S0dKakthVUJ6OEtHRmlFUVBwL3RhYUhLOFoweGJ1KzdC?=
- =?utf-8?B?Wk16WnFtSFNWMllaYTRRWjRXaTYzY0kvcWk5QjNVWUFFK0hDQStLQmlCdHh6?=
- =?utf-8?B?ODdhUE9NU0V3Mjl4ZVdxdE0xemtZek83RjdBRllVR0dCdVBDeFBOMWNoT3Ew?=
- =?utf-8?B?cjFrWTdJZlduR0dMMXVmd2xwajhyWVdRZ3MxOXVYT3dYamN4WFJERy9FS2o1?=
- =?utf-8?B?aDZObUdlTHdXaTJlM2FWREt5NVhHN01pVEpKcTQyb21Ubm9ONjFGNGhja3Mw?=
- =?utf-8?B?QlFtUkRvcStkbjdBNHAxREE2OGhQYmxFalFHYlNXby9WVGJQZzA1eDhQMlJm?=
- =?utf-8?B?a0JmZ3I0MG0wdHZ1R2luUWlxVHNXWThrR25iOHlXc1NtODNCb1MzRUduaEh2?=
- =?utf-8?B?UEF4eGJDdmNOQ0UrRWtTdXoyZUFjOWFlMTI3VWdQV0xCSTdhNFRMS1ZvRUNo?=
- =?utf-8?B?Wm1pbXd4NWp2WHNrelZuS3hvVnBMRTdVRzNTM25lSlpHS3g5SEwvdUFwODVt?=
- =?utf-8?B?U2VvZmJtK2gvdlVTQlg2d3BYazF6SEZIS1NWSWJwKzdGT290SFJqN041ckhC?=
- =?utf-8?B?dE1tZTJBRjhBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(13003099007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TFJyYllOVEEyeFlRZFVwYVVNUE5XMTdqTkRpNjVyMzRuaElkU1FwdThRcjVa?=
- =?utf-8?B?akpVMlhnWEpyaFRyU0s3OXdaVUFmM2ZmQmdtMkkxbUZBeGZuWUxwZUVocDVj?=
- =?utf-8?B?YU11MXNubHBKMFczRGxhSG5ocUtybE4rUG5oRHFEeXlGUnJhcWd3VTc5bkY0?=
- =?utf-8?B?emhjREhONjBFUmk5OFI0MDRyY0luSXN6bzZ3b29pMlZOMnFGYVNWK1B0aldk?=
- =?utf-8?B?b0x1TWREVk83OHAxUHZicGk4bU5oaGx4aTBsc0xDc1NNM1Z3ek9qQjVSMXA4?=
- =?utf-8?B?YlBuOGhaeXFNd0NibmNIN1BpL2x2UFRSYjlTc3FkY2M1QUZvaTQxWG5tZ2Uv?=
- =?utf-8?B?cmE4Zmc1cit3eEY5Y3cwZE9MblFOSXdKdDRRS0dLODlsTFBzckxFQ1gxa2ha?=
- =?utf-8?B?c3ltTHd0V3JkL01xQzVZM2syUGNyUmFEemd0dmN2V1lxWVRwQnQ0S1hiSWRV?=
- =?utf-8?B?U1dDdmI0VW1BRnhadVhQM213TldGMW13UndHLy9nZitJR3VDVkR2N05MZ3hD?=
- =?utf-8?B?dlI5MWZIOGlhNkp6RGM1RDl1RzVmOGNKKy9QNTEyVlN0b2paMlM3RU1Xa2Qx?=
- =?utf-8?B?RG93UEc3RnNhSHpIeTJ4b05nbkRTRFlsZ1kvRDEzd1lkeGlvaDhqb3VPbjNM?=
- =?utf-8?B?RTR6b0pRQU8xM1cxcWIyaXduZkFyOGd2K3JBNWpTcXZ0OHZ2ZElZOEo4aFpw?=
- =?utf-8?B?NnB2UjNlYjZXaFJXMWdiM3hUcCtVYktiMnVnNG5OUE5wWDFaVVo5UFcrdDQ3?=
- =?utf-8?B?ZjBQaktGYVFNNFFibHRCYm1taHhTTWg5VjgrRG1oVFFRR3luL3VjM3FlckhF?=
- =?utf-8?B?am5kMXJINFBKbHZkNUtzZUVPbXpEdXl5WGtLLzg0RElxazEvLzJWZW13WmZD?=
- =?utf-8?B?RUM5eStZNXd4Q2Q1UWNKVFZ1TVBwRWQza00zZHFNUk9yY244akduUjY3OUhV?=
- =?utf-8?B?eE1ySkd1VUZMcXhzdjR6NkJ6enpkQkVJdnVydDRRRnJxSFRJQ1FaREwxL0E5?=
- =?utf-8?B?dEtzNE9zMVFaMzh5K2NXY3UrR3JoaVFQcmN3blU2YjhiOE9kbzl6R1lOSGU5?=
- =?utf-8?B?cXRkd3o3MUdCdFZXeFc4Q0dBU3VRUVZKaEpNRlpiTkJZUkNleExFT3pzK1Yz?=
- =?utf-8?B?bGZRdVRaQjZ3WjYxZEFsNzR2OUNldkdXcnhlWjFmcEt6M2dsTzZWUmNKME5q?=
- =?utf-8?B?ZUdnNTV4dGludGxHaUdrSzVVQ0dNNDNKOERvV3V3RnZiZG9RQld6NU5sU0U1?=
- =?utf-8?B?Y1luRHR6WFFkYXRtU2tTTUgwTjBZWWdTb1dMUExmdXFsOVpEcmNCc0hHbDEr?=
- =?utf-8?B?NkR0YS9YdlFFNnVCWjZuVm91eTFvRUE2USs1dGlTTzZRS0R0czBUeVFNZE5y?=
- =?utf-8?B?OVMrTEpDUm5vc0hjS0R6YllWSVB3bVoyRzJpVG8zb3c4L1A0WHMvUmJQbFB5?=
- =?utf-8?B?Z091Z3Q4UVpKcEExOTVzRlBWTjlRSldSck5UMUlXZDVOcG9sakJzenZmTjdT?=
- =?utf-8?B?bmZkRGM0b0lZVllOWG45SzkyM1dhTEJKSThKOWdZaWpydytBai9oODZnUWJU?=
- =?utf-8?B?Nm16V0FUSGo4SWZ1MDVuL25McUFzTDR4M0VPUjRNNDhpUmo4cmpCZnQ4T2Jr?=
- =?utf-8?B?RmlMUy9FMzVIMmg4c3QyVmVWTWlQdTdubDMwT0VIYzlHaFdjYlUvMmt3Rm5I?=
- =?utf-8?B?bTNWb3JBS2V1b3JzNXA4T0FocDFNUk8rNlFjdFhqUVlDVGpBU1Qvc29MdXIv?=
- =?utf-8?B?Qk5LR2RQRjVpZ3ExVlFuWEFHV0xEOUNURlF2TDIzelp4Zk9ZdnpSenY2a3A0?=
- =?utf-8?B?Q012M0dFeWRWaGFGVytNSG9OeXV5eDRnMHlDWkMwck8rbk41V0ptU3hUTzVL?=
- =?utf-8?B?RFRvTXlaUlNjN3hmZndINVpaVG52ZGxsb0lIS29aUTZBcjFVSGNnaXhrQ2Ju?=
- =?utf-8?B?eE5EM1BUS2xpZWtXUmRKZXRUSExjSGdPZ2FtV3Q0c1lua1NVYzYxSG9BSnlQ?=
- =?utf-8?B?WmFpTlpCaXY5aEw3M2RuTkNsY09FL0RyNmxaOVFCMmpCUVcvMndVOFFRd0h0?=
- =?utf-8?B?cEpRR21ZakJGK1VPTVNTSWVBbnZHRDJZN0xhSjJSc2tzUzcwaC9XQkRkbGpa?=
- =?utf-8?B?OWRPWmljUElnYThSYjNqUnE1SXVvOEpiUFZpd3pYQW4wbkd2T0h6azFkSmpx?=
- =?utf-8?B?RVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d806f373-399a-4c17-9e64-08dd8e48ed37
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 15:56:42.7064
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j1bSTzd8VZTeL7Jlii6mLDAQ8RXi8rMkgpubyY8oVOcPRmsmVRHUM68ufpJA1YgrLXmIGH4VnXngzGTh/1BUcxBFlXC/L6GofSh37oHTLVA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF0D43D62C4
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
 
-Hi Tony,
-
-On 4/28/25 5:33 PM, Tony Luck wrote:
-> The MMIO space for each telemetry aggregator is arranged as a array of
-
-"a array" -> "an array"
-
-> count registers for each event for RMID 0, followed by RMID 1, and so on.
-
-"count registers" -> "counter registers"?
-
-"followed by RMID 1" -> "followed by each event for RMID 1"?
-
-> After all event counters there are three status registers.  All registers
-> are 8 bytes each.
+On Tue, May 06, 2025 at 06:56:29PM +0200, Miklos Szeredi wrote:
+> On Mon, 28 Apr 2025 at 21:00, Darrick J. Wong <djwong@kernel.org> wrote:
 > 
-> The total size of MMIO space as described by the XML files is thus:
+> > <nod> I don't know what Miklos' opinion is about having multiple
+> > fusecmds that do similar things -- on the one hand keeping yours and my
+> > efforts separate explodes the amount of userspace abi that everyone must
+> > maintain, but on the other hand it then doesn't couple our projects
+> > together, which might be a good thing if it turns out that our domain
+> > models are /really/ actually quite different.
 > 
-> 	(NUM_RMIDS * NUM_COUNTERS + 3) * 8
+> Sharing the interface at least would definitely be worthwhile, as
+> there does not seem to be a great deal of difference between the
+> generic one and the famfs specific one.  Only implementing part of the
+> functionality that the generic one provides would be fine.
+
+Well right now my barely functional prototype exposes this interface
+for communicating mappings to the kernel.  I've only gotten as far as
+exposing the ->iomap_{begin,end} and ->iomap_ioend calls to the fuse
+server with no caching, because the only functions I've implemented so
+far are FIEMAP, SEEK_{DATA,HOLE}, and directio.
+
+So basically the kernel sends a FUSE_IOMAP_BEGIN command with the
+desired (pos, count) file range to the fuse server, which responds with
+a struct fuse_iomap_begin_out object that is translated into a struct
+iomap.
+
+The fuse server then responds with a read mapping and a write mapping,
+which tell the kernel from where to read data, and where to write data.
+As a shortcut, the write mapping can be of type
+FUSE_IOMAP_TYPE_PURE_OVERWRITE to avoid having to fill out fields twice.
+
+iomap_end is only called if there were errors while processing the
+mapping, or if the fuse server sets FUSE_IOMAP_F_WANT_IOMAP_END.
+
+iomap_ioend is called after read or write IOs complete, so that the
+filesystem can update mapping metadata (e.g. unwritten extent
+conversion, remapping after an out of place write, ondisk isize update).
+
+Some of the flags here might not be needed or workable; I was merely
+cutting and pasting the #defines from iomap.h.
+
+#define FUSE_IOMAP_TYPE_PURE_OVERWRITE	(0xFFFF) /* use read mapping data */
+#define FUSE_IOMAP_TYPE_HOLE		0	/* no blocks allocated, need allocation */
+#define FUSE_IOMAP_TYPE_DELALLOC	1	/* delayed allocation blocks */
+#define FUSE_IOMAP_TYPE_MAPPED		2	/* blocks allocated at @addr */
+#define FUSE_IOMAP_TYPE_UNWRITTEN	3	/* blocks allocated at @addr in unwritten state */
+#define FUSE_IOMAP_TYPE_INLINE		4	/* data inline in the inode */
+
+#define FUSE_IOMAP_DEV_SBDEV		(0)	/* use superblock bdev */
+
+#define FUSE_IOMAP_F_NEW		(1U << 0)
+#define FUSE_IOMAP_F_DIRTY		(1U << 1)
+#define FUSE_IOMAP_F_SHARED		(1U << 2)
+#define FUSE_IOMAP_F_MERGED		(1U << 3)
+#define FUSE_IOMAP_F_XATTR		(1U << 5)
+#define FUSE_IOMAP_F_BOUNDARY		(1U << 6)
+#define FUSE_IOMAP_F_ANON_WRITE		(1U << 7)
+
+#define FUSE_IOMAP_F_WANT_IOMAP_END	(1U << 15) /* want ->iomap_end call */
+
+#define FUSE_IOMAP_OP_WRITE		(1 << 0) /* writing, must allocate blocks */
+#define FUSE_IOMAP_OP_ZERO		(1 << 1) /* zeroing operation, may skip holes */
+#define FUSE_IOMAP_OP_REPORT		(1 << 2) /* report extent status, e.g. FIEMAP */
+#define FUSE_IOMAP_OP_FAULT		(1 << 3) /* mapping for page fault */
+#define FUSE_IOMAP_OP_DIRECT		(1 << 4) /* direct I/O */
+#define FUSE_IOMAP_OP_NOWAIT		(1 << 5) /* do not block */
+#define FUSE_IOMAP_OP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
+#define FUSE_IOMAP_OP_UNSHARE		(1 << 7) /* unshare_file_range */
+#define FUSE_IOMAP_OP_ATOMIC		(1 << 9) /* torn-write protection */
+#define FUSE_IOMAP_OP_DONTCACHE		(1 << 10) /* dont retain pagecache */
+
+#define FUSE_IOMAP_NULL_ADDR		-1ULL	/* addr is not valid */
+
+struct fuse_iomap_begin_in {
+	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
+	uint32_t reserved;
+	uint64_t ino;		/* matches st_ino provided by getattr/open */
+	uint64_t pos;		/* file position, in bytes */
+	uint64_t count;		/* operation length, in bytes */
+};
+
+struct fuse_iomap_begin_out {
+	uint64_t offset;	/* file offset of mapping, bytes */
+	uint64_t length;	/* length of both mappings, bytes */
+
+	uint64_t read_addr;	/* disk offset of mapping, bytes */
+	uint16_t read_type;	/* FUSE_IOMAP_TYPE_* */
+	uint16_t read_flags;	/* FUSE_IOMAP_F_* */
+	uint32_t read_dev;	/* FUSE_IOMAP_DEV_* */
+
+	uint64_t write_addr;	/* disk offset of mapping, bytes */
+	uint16_t write_type;	/* FUSE_IOMAP_TYPE_* */
+	uint16_t write_flags;	/* FUSE_IOMAP_F_* */
+	uint32_t write_dev;	/* FUSE_IOMAP_DEV_* */
+};
+
+struct fuse_iomap_end_in {
+	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
+	uint32_t reserved;
+	uint64_t ino;		/* matches st_ino provided iomap_begin */
+	uint64_t pos;		/* file position, in bytes */
+	uint64_t count;		/* operation length, in bytes */
+	int64_t written;	/* bytes processed */
+
+	uint64_t map_length;	/* length of mapping, bytes */
+	uint64_t map_addr;	/* disk offset of mapping, bytes */
+	uint16_t map_type;	/* FUSE_IOMAP_TYPE_* */
+	uint16_t map_flags;	/* FUSE_IOMAP_F_* */
+	uint32_t map_dev;	/* FUSE_IOMAP_DEV_* */
+};
+
+/* out of place write extent */
+#define FUSE_IOMAP_IOEND_SHARED		(1U << 0)
+/* unwritten extent */
+#define FUSE_IOMAP_IOEND_UNWRITTEN	(1U << 1)
+/* don't merge into previous ioend */
+#define FUSE_IOMAP_IOEND_BOUNDARY	(1U << 2)
+/* is direct I/O */
+#define FUSE_IOMAP_IOEND_DIRECT		(1U << 3)
+
+/* is append ioend */
+#define FUSE_IOMAP_IOEND_APPEND		(1U << 15)
+
+struct fuse_iomap_ioend_in {
+	uint16_t ioendflags;	/* FUSE_IOMAP_IOEND_* */
+	uint16_t reserved;
+	int32_t error;		/* negative errno or 0 */
+	uint64_t ino;		/* matches st_ino provided iomap_begin */
+	uint64_t pos;		/* file position, in bytes */
+	uint64_t addr;		/* disk offset of new mapping, in bytes */
+	uint32_t written;	/* bytes processed */
+	uint32_t reserved1;
+};
+
+> > (Especially because I suspect that interleaving is the norm for memory,
+> > whereas we try to avoid that for disk filesystems.)
 > 
-> Add an "mmio_size" field to the event_group structure and a sanity
-> check that the size reported in the telemetry_region structure obtained
-> from intel_pmt_get_regions_by_feature() is as large as expected.
+> So interleaved extents are just like normal ones except they repeat,
+> right?  What about adding a special "repeat last N extent
+> descriptions" type of extent?
+
+Yeah, I suppose a mapping cache could do that.  From talking to John
+last week, it sounds like the mappings are supposed to be static for the
+life of the file, as opposed to ext* where truncates and fallocate can
+appear at any time.
+
+One thing I forgot to ask John -- can there be multiple sets of
+interleaved mappings per file?  e.g. the first 32g of a file are split
+between 4 memory controllers, whereas the next 64g are split between 4
+different domains?
+
+> > > But the current implementation does not contemplate partially cached fmaps.
+> > >
+> > > Adding notification could address revoking them post-haste (is that why
+> > > you're thinking about notifications? And if not can you elaborate on what
+> > > you're after there?).
+> >
+> > Yeah, invalidating the mapping cache at random places.  If, say, you
+> > implement a clustered filesystem with iomap, the metadata server could
+> > inform the fuse server on the local node that a certain range of inode X
+> > has been written to, at which point you need to revoke any local leases,
+> > invalidate the pagecache, and invalidate the iomapping cache to force
+> > the client to requery the server.
+> >
+> > Or if your fuse server wants to implement its own weird operations (e.g.
+> > XFS EXCHANGE-RANGE) this would make that possible without needing to
+> > add a bunch of code to fs/fuse/ for the benefit of a single fuse driver.
 > 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  arch/x86/kernel/cpu/resctrl/intel_aet.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+> Wouldn't existing invalidation framework be sufficient?
+
+I'm a little confused, are you talking about FUSE_NOTIFY_INVAL_INODE?
+If so, then I think that's the wrong layer -- INVAL_INODE invalidates
+the page cache, whereas I'm talking about caching the file space
+mappings that iomap uses to construct bios for disk IO, and possibly
+wanting to invalidate parts of that cache to force the kernel to upcall
+the fuse server for a new mapping.
+
+(Obviously this only applies to fuse servers for ondisk filesystems.)
+
+--D
+
+> Thanks,
+> Miklos
 > 
-> diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> index 7e4f6a6672d4..37dd493df250 100644
-> --- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> +++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> @@ -49,6 +49,7 @@ struct pmt_event {
->   *                      retrieved from intel_pmt_get_regions_by_feature().
->   * @pfg:		The pmt_feature_group for this event group
->   * @guid:		Unique number per XML description file
-> + * @mmio_size:		Number of bytes of mmio registers for this group
-
-mmio -> MMIO
-Can append "(from XML file)".
-
->   * @pkginfo:		Per-package MMIO addresses
->   * @num_events:		Number of events in this group
->   * @evts:		Array of event descriptors
-> @@ -56,6 +57,7 @@ struct pmt_event {
->  struct event_group {
->  	struct pmt_feature_group	*pfg;
->  	int				guid;
-> +	int				mmio_size;
-
-Should this be size_t?
-
->  	struct mmio_info		**pkginfo;
->  	int				num_events;
->  	struct pmt_event		evts[] __counted_by(num_events);
-> @@ -64,6 +66,7 @@ struct event_group {
->  /* Link: https://github.com/intel/Intel-PMT xml/CWF/OOBMSM/RMID-ENERGY *.xml */
->  static struct event_group energy_0x26696143 = {
->  	.guid		= 0x26696143,
-> +	.mmio_size	= (576 * 2 + 3) * 8,
->  	.num_events	= 2,
->  	.evts				= {
->  		EVT(PMT_EVENT_ENERGY, 0),
-> @@ -74,6 +77,7 @@ static struct event_group energy_0x26696143 = {
->  /* Link: https://github.com/intel/Intel-PMT xml/CWF/OOBMSM/RMID-PERF *.xml */
->  static struct event_group perf_0x26557651 = {
->  	.guid		= 0x26557651,
-> +	.mmio_size	= (576 * 7 + 3) * 8,
->  	.num_events	= 7,
->  	.evts				= {
->  		EVT(PMT_EVENT_STALLS_LLC_HIT, 0),
-> @@ -134,6 +138,10 @@ static bool configure_events(struct event_group *e, struct pmt_feature_group *p)
->  			pr_warn_once("Bad package %d\n", tr->plat_info.package_id);
->  			continue;
->  		}
-> +		if (tr->size < e->mmio_size) {
-> +			pr_warn_once("MMIO space too small for guid 0x%x\n", e->guid);
-> +			continue;
-> +		}
->  		pkgcounts[tr->plat_info.package_id]++;
->  	}
->  
-> @@ -151,7 +159,8 @@ static bool configure_events(struct event_group *e, struct pmt_feature_group *p)
->  	/* Save MMIO address(es) for each aggregator in per-package structures */
->  	for (int i = 0; i < p->count; i++) {
->  		tr = &p->regions[i];
-> -		if (tr->guid != e->guid || tr->plat_info.package_id >= num_pkgs)
-> +		if (tr->guid != e->guid || tr->plat_info.package_id >= num_pkgs ||
-> +		    tr->size < e->mmio_size)
->  			continue;
->  		mmi = pkginfo[tr->plat_info.package_id];
->  		mmi->addrs[--pkgcounts[tr->plat_info.package_id]] = tr->addr;
-
-Reinette
-
 
