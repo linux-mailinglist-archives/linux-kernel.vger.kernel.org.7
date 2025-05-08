@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-639193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F47DAAF413
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:48:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405CBAAF418
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057BD4606D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:48:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295933A9C2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F389E1F8755;
-	Thu,  8 May 2025 06:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4068A21772B;
+	Thu,  8 May 2025 06:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BfsGDDSS"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSRptIu0"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8360B13AA3E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37331DE3C0
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746686921; cv=none; b=Scw8xH4OIaO1Jcp+L60Jayqp0hx4SNDXYxLTSpWnJt81Fu/94OJWL6T5v0n6IqfcuhR9mz0i9c9eRopRM1FCBjkUxMRa/s47WWoLp4eo6BOGh/bYlsDLv6WnKG+amxlnAXULlmtm167Ql7KDe/4SsQBHCJ6LYCyE/R68fvsUc4s=
+	t=1746686996; cv=none; b=pc6YCW9bNTyrgqAAsUSoyl6RsmKO6kU6yflhaXdGc5uRbnfDHsdTIi5QqmPLeYfo5PNexkkd0IdTydMl7pf1VULQoaRRGIS9CTkWFmIo4TNqK012xBqYPi0amfglIILAZlEMUcMk7wTFCGzeh+507XiJrJ13ViQO/zCgKHL604g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746686921; c=relaxed/simple;
-	bh=J+DaIgmJc2plhSf97aDyRcr9UEcA9j0U/cy24sN24Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXOguASO7hQoQbArGoeQ3GnMXXb/rkA71Ocf+sOJDTjhOHdoiOJQTTjSWCGwYFQ5t6+i7hURa3nBCpGCUQcIqQMOaGgwWtGo6WfqqIykteNaBweN00EsHpWnl4c5xU4zuSRuzuoCxXb5NKT2gQUaSkady1+x2pegS2kE372Cby0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BfsGDDSS; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3995ff6b066so329605f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 23:48:39 -0700 (PDT)
+	s=arc-20240116; t=1746686996; c=relaxed/simple;
+	bh=6Pdq8UjW7XUKf8ZU4jAAM9wQBDbZW9x9Erd2SUItiJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u3Suo7u2VW96wP3uSo9Rl/v79X5B4axU1k8pbKqkaz1aKgd2zUnfimlpdZwW1m5icqN6LdDd7/cMAm6aed5vyyBeCKJceJzKNJR5gYGSX4RU+wqjAcwEQNIEwN3U2Yns1uy86mgS6/wBtSDQMtbb/0Fe591i4dK1/Bx8zcGVi1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSRptIu0; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso96894666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 23:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746686918; x=1747291718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oN/u1yOXlCYt4DjjZZ0j855cjiGoWgslKBLO+dZCp3s=;
-        b=BfsGDDSSIvF4sf9pj3wrOBnzwCxvnw4Z3tjuMSabkpzOWXHI7xJz1H+7RxuBOTu795
-         CopYY/+ooRfrQOSxqR6teIeUtd+CFhyjym0H3Ia3s16qTd7/8ljwlocQ2KgLFtM4YUyH
-         UxPrHXGf6kuyR9vp+7/uYd4+98SsObsJd4J/O7YvuTamezH7IUHue3a0Pqpb90zYbOsP
-         OoWVWNgQo78pTaC7nItp631zoG+iXjEczMHIEaYZe+LQiVjt+a8AzPju+qOZ/NFi36Xv
-         CbG6hFK44mrrytI5Z1k9cxJerYV2twnxV9GyI4my5zqudFIlsDv/wwtDu39zOoEQTiTm
-         jF4Q==
+        d=gmail.com; s=20230601; t=1746686993; x=1747291793; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yENSIxJzlIHC39VpFA+sJfZvEm/2hEzXRCerTxBt7gY=;
+        b=cSRptIu06zgIuzatC00qTtOExMhiK91xOb8xfmVjm5bPhSMETb0Ve4a3maXBqMM+wx
+         YKJdH7F2IUjKn1DfRcYbZ0g5OJKiMkb7HYOWoGdvPol319oWirm5f2xd45gSktp67mjJ
+         MAprwXI2TR6ymA5rnV+fwmSfXC57gIrGDwaJdOpz7bu8LuaBPWH3cwVTvKrM+3+NeOa4
+         rxEgc09mR+vQpAUQh/JaaAC0+94nMieKV9uZrJVQ8FZJNmy1KCwrWqjA5mmgMb83HNkG
+         4c1T1N1bSWmiLnYlOAalEcFEqm60JlkgIcBsA5IxUPw1G3JUMNuK26DPg0HwHxvBOIb3
+         Ny4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746686918; x=1747291718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oN/u1yOXlCYt4DjjZZ0j855cjiGoWgslKBLO+dZCp3s=;
-        b=oXfiYltRnPseGp/C7o+VC3d0KIIPS9AoCSb90mUzaZpCds4slvMitAm5buAiJChLJb
-         xAoRE9PA9YmJr/uytOvij88sZlH/gOqI31w/6WF4cZiGCB1TF1zuFmjefzcU28A5fOqc
-         TidrLTjxQgjPDUq4LVOpjXa3D5sVbEgxt1QBt10dAD7uQXK9KYIuefTvBA1yTBaBM1zp
-         FV/LJNnSjPP7Y/1oKDaSXHLYzfA6mPUqivX1bt6gYjAp3Bj3/kEhfrB7PMGVDfxuc76C
-         3cU80Xc6v+C3MmV5E7YiKh4yhM5zl3gpDMnymCe4pAPQBP7SHS3kLjDzaHVseUsadWzQ
-         GhMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9r98lgjGGrTZry/EZCalRok9I+35he/uQup8MwZ4CZ9y2MwG1/GLDIILofKvMUvvsAXbpXEascLGC1WE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSPNPmjGVZEVySQnMyw/6kZLCRXcBBNz8aK7lzeWMGSfAsr434
-	e7IfZhIO68wWHxwQOSj1x3WS7lL54Ek05I6W/AytxHLFGnw3hXXnzGi1c5LxgeiiW4eSNYGzFdV
-	z
-X-Gm-Gg: ASbGncsNrJK3TFqvVdyWg8VCe/xyx04Q4ZgCoxQ8nUkgfNO4aCl9rlrpxTMKG9FNJ8V
-	rPOtB0F4GMr0VacypFnIjP/HtE6hftbF9a2yvRUOj1PynBZkcq7V+DOzHe6MkNIoJbzsYMFQWXS
-	YtZ41SO/oSZKtCjAeH8Vf2n2bf2lgzGmky9Fd8zXD3HUkKhZI8iDEkh5sLrBdpC2tnghI63CFqu
-	tBQBOL+B0GzYRwZ9D8p7NEytVj8qgQIqWT48d0ImWvA5wkzsJcw1WKNzpo54LXo2ONBHjem1gtq
-	87ywxBsIuqS7Qx4III0X1+E82aXEhZBoiD+qhuBPQs/te2hbEJdmdayF
-X-Google-Smtp-Source: AGHT+IGABSvZpPx8hobskr6H9QpVVUUq1xHoj+hrZLygN8wQiQyv3UOkrESVz2X/i1IQ9NOEjwb+4w==
-X-Received: by 2002:a5d:64e7:0:b0:39c:2692:4259 with SMTP id ffacd0b85a97d-3a0b4a19281mr4086914f8f.21.1746686917754;
-        Wed, 07 May 2025 23:48:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442cd38179csm25448035e9.39.2025.05.07.23.48.36
+        d=1e100.net; s=20230601; t=1746686993; x=1747291793;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yENSIxJzlIHC39VpFA+sJfZvEm/2hEzXRCerTxBt7gY=;
+        b=bBLAnnYiss/WViCXEV/gGt2c0ccrHErqJJ4otpWwDYpm/6OGV0gAI4vriXlzNzLQ1e
+         hgWlkW6SnDH6/jAEJRcNj6Gvc8jhB2gyrlRoJlHU3JUoEm4aYn7EXyvOQ6OtGRX635q6
+         EXaAclMwveLMRc4jICnm2iFXQ7flUAIqZb3ni07SWJ38OteUTMBUrjuh0H/1bH+clZJm
+         fO7tRgF2TYRce6jaIny0idfEqVwIPnOEAAegb0wlSsjsMJNxMf73eJRcKokVmVkQvEjc
+         lXa0YmffmtKWpMhf0Xft8ejle/RfIAK6lOF4BRwHUrJH4rQb14pJXL5+oG038yVj4VU8
+         Q7VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBNQSC0oABQsikMDQnHEDzDyk/Gi2pk7939uwaTzbGH2iy+2oGuj/MymzY0fjSd0jQTnMCzTZ9Q7Hv/g8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymiQyDW0DtQHfD6jdP1E8DlYss0df84xWKCdcpx2I86lOeJ7ki
+	w64ihpIMFJ7lzZkop1VvreKuMQb/U4BHr4EhrJFrvc8VNstT4/Yw
+X-Gm-Gg: ASbGnctM8VWBRSrjAmYOBGPP+MAjuVCTwXqnWI/rf+2nrrF23a/I+1ywcpFIU6gUloR
+	J0Zf+5TsjEo3EAXz9BGq8YHmvp8sEj+Vk0pekkE7SPmyl9jtESle6So3JiymyYV+KlJz/Gc7EkX
+	sX9/0ibW7vqrvZY064TQfUlOeTGPPJ0CHb5k/sx06ZKTYwXQGUIuYNARq6epEA9KxueSTz5KiHd
+	ieDzRwBoaIUOcxuXuABpim8lKbFzBQPUAesxGP7NBV3jheN+sSCpyjONTOxDNE7LCHFYPFIoxtD
+	RHYH0V8fp7p94DGnYWKmcSiZaIn4P1Ppxzd69jbeq7qHxTFEtqUX
+X-Google-Smtp-Source: AGHT+IFdZ0EwS+O5dKgeifxn/dGiIzxV2wWvJj5ioEzbl170vOFngtanfl3AHANA6AlZTfpgBP6LPw==
+X-Received: by 2002:a17:907:a4c1:b0:acb:8a2c:fcdb with SMTP id a640c23a62f3a-ad1e8d00e73mr716485266b.38.1746686992990;
+        Wed, 07 May 2025 23:49:52 -0700 (PDT)
+Received: from demon-pc.localdomain ([188.27.128.5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18914740esm1031227666b.31.2025.05.07.23.49.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 23:48:37 -0700 (PDT)
-Date: Thu, 8 May 2025 09:48:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Marek Vasut <marex@denx.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
- __qcom_smd_send()
-Message-ID: <aBxTwhiMelFjvrjP@stanley.mountain>
-References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
- <aAkhvV0nSbrsef1P@stanley.mountain>
- <aBxR2nnW1GZ7dN__@stanley.mountain>
- <2025050852-refined-clatter-447a@gregkh>
+        Wed, 07 May 2025 23:49:52 -0700 (PDT)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Watson Chow <watson.chow@avnet.com>,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [PATCH] regulator: max20086: fix invalid memory access
+Date: Thu,  8 May 2025 09:49:43 +0300
+Message-ID: <20250508064947.2567255-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025050852-refined-clatter-447a@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 08, 2025 at 08:46:04AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, May 08, 2025 at 09:40:26AM +0300, Dan Carpenter wrote:
-> > Hi Greg,
-> > 
-> > I'm sorry I forgot to add the:
-> > 
-> > Cc: stable@vger.kernel.org
-> > 
-> > to this patch.  Could we backport it to stable, please?
-> 
-> What is the git id of it in Linus's tree?
-> 
+max20086_parse_regulators_dt() calls of_regulator_match() using an
+array of struct of_regulator_match allocated on the stack for the
+matches argument.
 
-77feb17c950e ("rpmsg: qcom_smd: Fix uninitialized return variable in __qcom_smd_send()")
+of_regulator_match() calls devm_of_regulator_put_matches(), which calls
+devres_alloc() to allocate a struct devm_of_regulator_matches which will
+be de-allocated using devm_of_regulator_put_matches().
 
-regards,
-dan carpenter
+struct devm_of_regulator_matches is populated with the stack allocated
+matches array.
+
+If the device fails to probe, devm_of_regulator_put_matches() will be
+called and will try to call of_node_put() on that stack pointer,
+generating the following dmesg entries:
+
+max20086 6-0028: Failed to read DEVICE_ID reg: -121
+kobject: '\xc0$\xa5\x03' (000000002cebcb7a): is not initialized, yet
+kobject_put() is being called.
+
+Followed by a stack trace matching the call flow described above.
+
+Switch to allocating the matches array using devm_kcalloc() to
+avoid accessing the stack pointer long after it's out of scope.
+
+This also has the advantage of allowing multiple max20086 to probe
+without overriding the data stored inside the global of_regulator_match.
+
+Fixes: bfff546aae50 ("regulator: Add MAX20086-MAX20089 driver")
+Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+---
+ drivers/regulator/max20086-regulator.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/max20086-regulator.c b/drivers/regulator/max20086-regulator.c
+index 59eb23d467ec..198d45f8e884 100644
+--- a/drivers/regulator/max20086-regulator.c
++++ b/drivers/regulator/max20086-regulator.c
+@@ -132,7 +132,7 @@ static int max20086_regulators_register(struct max20086 *chip)
+ 
+ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+ {
+-	struct of_regulator_match matches[MAX20086_MAX_REGULATORS] = { };
++	struct of_regulator_match *matches;
+ 	struct device_node *node;
+ 	unsigned int i;
+ 	int ret;
+@@ -143,6 +143,11 @@ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+ 		return -ENODEV;
+ 	}
+ 
++	matches = devm_kcalloc(chip->dev, chip->info->num_outputs,
++			       sizeof(*matches), GFP_KERNEL);
++	if (!matches)
++		return -ENOMEM;
++
+ 	for (i = 0; i < chip->info->num_outputs; ++i)
+ 		matches[i].name = max20086_output_names[i];
+ 
+-- 
+2.49.0
 
 
