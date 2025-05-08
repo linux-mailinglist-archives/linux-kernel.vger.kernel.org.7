@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-639976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F26BAAFF30
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:28:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDCBAAFF2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 424A43B3FE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3791894042
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F271F181F;
-	Thu,  8 May 2025 15:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FE7270EB6;
+	Thu,  8 May 2025 15:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xtI/eprv"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hv35iCkO"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BB9270EA7
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 15:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6AB275857;
+	Thu,  8 May 2025 15:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746717979; cv=none; b=FxkrS/GAuP/kwRsB+NyDw6a7b4+c3BmX7p+xk/Lnz1l4Tg0Sge1I7QtxkANoEnI2NpH76QTUDbhtlMH1kxO2R8eC7XWBnTtwF3whXPIYtxLOacrxpxrNwtMGgGwPF/VdotGtmhJKiJx53u9tZnW5VGw1XauZVAsaBndKgioMpLA=
+	t=1746718039; cv=none; b=YwDfmE58uF8HWLEVG/1p9H/PXxlmX7zq1SmTzgAIACMlFkMp8Y34M1eCEC9NQLBcNP8k5XXUMdndENb4jWD50HG1Qno+UCiap8x5VO9a5Z5zWX5qEYPmXpgrsNw5LdLlhJax5NJ0EYd88z/WXyE6c+qWsReRnX0Q5J7krbUcJ68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746717979; c=relaxed/simple;
-	bh=tURl+tqmW8IFifp8JcV+tFaZyMpc3PdC/Qhg5W9UnpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ftvxF2P5GMAnDUwpsqGZWMoNjoCvOneJ/PYI9zf11Qlo7nZLQI9awRf88Fpxrq1I3khvv/yeB2g3r4TKVL+RqW4u9Cgl4wSC4arlTEUX28LdrY9sDL10ukpXelxkammMSZaVR+akmIPwBumi/uD3ZkgNnswS5EuDR9FPCCoUVlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xtI/eprv; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2db2149ffceso726140fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 08:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746717975; x=1747322775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bVI2JCzK/Honr6c714s7LjAw1g2LwnFaGSDmVmMruzc=;
-        b=xtI/eprvFwlQwXQCpfpyDAtyNs+gVhs3/Si95YWSVEOB3cUZQqUeN9YJBE86ZeNGJ5
-         +yuab4QYmwASvY9MAeQsNnSzc3rKYPbzX2oRLjAJHAHRQ5cikUUKG+H2dJ+/niST1rq6
-         i8Dd1J/N1Thf9OdGP+cfjTNf/rza1VzbZYWIjN7U1y6SSbDalS+UQwNEjwijjQzlJGbw
-         ZGJMQMiJ8hlV8Z7A3ytQyXkKPcY4BGkgZh9iO6DC/gbHSzVlbklQcFiyLBODZvzsCAba
-         dV8DfMpo8FKDaCuYLFHYUmU557SSDRjyfNrrqCnhukOBkSHMOe9gB08bwuTDNtOriy4g
-         mb9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746717975; x=1747322775;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bVI2JCzK/Honr6c714s7LjAw1g2LwnFaGSDmVmMruzc=;
-        b=LknnD9VRyz/S39goJyRMahMmwt3qGEWB1T9Kbipx9ZidBgH2e4UMxBAwHFDNP1C5/D
-         aWwWrVgvQX/jXzFvljESBjFJClPXzNs5/5BxdGC5p526V3v8ltMXhlvdy7pXtb11xNUG
-         7w1Mza5hwl/Co12/oCHahUdLQ3WZkx8wKInvLU7XyWtrrrVrXtBuIFPzkhhWlNdhDite
-         dJB9rD1WMlsoxXX9Q8wYBf30gSVO263rklk/ccNj704pAlatqLMzrgXIQmHcC6Fttanm
-         IGTVrhFHoAceZhwOG0cOW8aQAYymPe64XdXmcktuBsdQxfDJFtH88uotqmDsQumPevD4
-         BLcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBilk5tvU9iXvrfJh70/YP0n7TA0TVf3JfdvfZcwe42I9OahkSLzoI7+ostNk04uUJlruXfMzCnuqund8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiF3D27JbVIHRVdg2u78y0EhxXuLQ/2jDL5zW6zGm6ZBPSf1om
-	do12o0VDDjwPPXI0SUOm87G0R0Q0oSnvupSOCfAzq05pAq1kmSnMeYtuBrubnGs=
-X-Gm-Gg: ASbGncuMNKxQwZWvjQWibng42jcJf8n5uNRfk7N2UunQ6lQRDF6No5LEmajjFBWxSxG
-	iQKa1ao2cX9zc51zDPhI+UVcUT/gdA+yZfzbKYhxvraswTDGMuX+UQYcjT5D8OWAUvKXg3dqQGj
-	x479UrjnLX+eIi3mCa/Mvac5xO+nnE61Gv6AcJegmCYff0DtZ4zyAC9/lWXAYwPS2wZZr3ZiOG+
-	tcarLCFsHNluhdwVtQxAS59xWFtE0vM8/Y/hnbHP7bs+jFrhOFJJibjTIT0ymHNbF3MX+U4LGqc
-	BdbqUoQEdEFlNjDBXTK1n0JfbTxj4ZprBoJguwFFGUPhqL2Ev8Oa8rvx0MZTJaZih4/0nuGpbV/
-	YMafn6bC2F38iTpuiUA==
-X-Google-Smtp-Source: AGHT+IGj0MmV5mLbPBP0RWrxkG7fe3E5MPXh+/Rsosqd2Ao091UEuoKROB29QW8ZCVx98W2znSajqw==
-X-Received: by 2002:a05:6870:ec92:b0:2b8:e4b9:47a3 with SMTP id 586e51a60fabf-2db814c6076mr2410897fac.22.1746717974798;
-        Thu, 08 May 2025 08:26:14 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e? ([2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2dba077a498sm79086fac.23.2025.05.08.08.26.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 08:26:14 -0700 (PDT)
-Message-ID: <a0b305dd-8eb5-412c-b9c8-d2b274707f66@baylibre.com>
-Date: Thu, 8 May 2025 10:26:13 -0500
+	s=arc-20240116; t=1746718039; c=relaxed/simple;
+	bh=69n8YK/OegqqW3ok0Zwf8eP/XDNkx7VW6rcIJhLvhHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ce11gVPm26qFQI/8OpqA9kj6KrJMItRMN10YibhouKWEVywd/bnJzYu7MF3eepoafuxtn7JRhMM2oGk2oeoMB1H5UnLvUXrxQIAINC+eLkC4gWIKKNYiE/l0tg94xK3lpZA1yyvDlh3LO2A3o/8nJN8lqXHaxt2l/XfkrQbu+0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hv35iCkO; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/GRajNTedVVAy4K517WUpQHaiRINf22QncvsA8EHAMg=; b=Hv35iCkO64AB988beHRTqRa6sT
+	e/W4AucBIS13AkeV8/tnBxfuJSTKk/6UOaJd/dtq3nFM9oXx09a7c3G+oscqz5Ny4P+ZHS/CkmFIn
+	uaWgt7xGQAvtDjSq/xAZrSWjNZR6v3ph4i7c8GUKu07vfG86nuPrT6rWAhU3RUZ/mUi+o5HeWKiB/
+	UKz7HeWIFpBlWrDhoEfmGECNZfGDE+Cd51sACnGy+qjfhEaAv19Z3mAAa1ypWhEPCxVY9LYR48vcN
+	A5IRK1yD9TopdwzTrqPryV/9MVtpXU+EqCHORdeL/+Tpd5ibcgh2zeBZgmIYQs/ff9pL+ZpKGDjuL
+	wWcizIzw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uD39W-0000000G6jw-0swe;
+	Thu, 08 May 2025 15:27:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7F3A030050D; Thu,  8 May 2025 17:27:13 +0200 (CEST)
+Date: Thu, 8 May 2025 17:27:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: tip-bot2 for Rong Xu <tip-bot2@linutronix.de>,
+	linux-tip-commits@vger.kernel.org, Rong Xu <xur@google.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: Speed up SHT_GROUP reindexing
+Message-ID: <20250508152713.GI4439@noisy.programming.kicks-ass.net>
+References: <20250425200541.113015-1-xur@google.com>
+ <174601619410.22196.10353886760773998736.tip-bot2@tip-bot2>
+ <jj4fu243l7ap4bza5imrgjk5f5dhsoloxezgphdjwo7sb5iqsq@wkt46abbt45r>
+ <yrdh2fmzgqlrfe35wvxb3a2z7wdqod3liupdbriqzc5ihqjw5y@fsqeyi34cbgg>
+ <xb2rjui75xylasuihl7gdnovv2z6qxgsefmzhxvhntlcuw5ktb@zbstyytmzjag>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] iio: magnetometer: Add QMC5883L driver support
-To: Brajesh Patil <brajeshpatil11@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, marcelo.schmitt1@gmail.com
-References: <20250508120822.114060-1-brajeshpatil11@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250508120822.114060-1-brajeshpatil11@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xb2rjui75xylasuihl7gdnovv2z6qxgsefmzhxvhntlcuw5ktb@zbstyytmzjag>
 
-On 5/8/25 7:08 AM, Brajesh Patil wrote:
-> This series introduces support for the QST QMC5883L 3-axis magnetometer,
-> a magnetic sensor with I2C interface.
+On Wed, May 07, 2025 at 05:11:53PM -0700, Josh Poimboeuf wrote:
+> On Wed, May 07, 2025 at 05:11:03PM -0700, Josh Poimboeuf wrote:
+> > From 2a33e583c87e3283706f346f9d59aac20653b7fd Mon Sep 17 00:00:00 2001
+> > Message-ID: <2a33e583c87e3283706f346f9d59aac20653b7fd.1746662991.git.jpoimboe@kernel.org>
+> > From: Josh Poimboeuf <jpoimboe@kernel.org>
+> > Date: Wed, 7 May 2025 16:56:55 -0700
+> > Subject: [PATCH] objtool: Speed up SHT_GROUP reindexing
 > 
-> The implementation follows standard IIO conventions and includes:
-> 
-> Patch 1/5: dt-bindings: vendor-prefixes
-> - Adds 'qst' prefix for QST Corporation
-> 
-> Patch 2/5: dt-bindings: iio: magnetometer - Adds QMC5883L bindings
-> - Adds compatible string and required properties
-> - Includes example device tree node
-> 
-> Patch 3/5: iio: magnetometer - Base driver implementation
-> - Basic register access via regmap
-> - X/Y/Z axis and temperature readings
-> - Triggered buffer support
-> - Initialization and core functionality
-> 
-> Patch 4/5: Extended sysfs attributes and configuration
-> - ODR (10-200Hz) and FSR (±2G/±8G) control
-> - Mode selection (standby/continuous)
-> - Oversampling ratio configuration (512-64)
-> - Status monitoring (DRDY/OVL flags)
-> - Available scale and sampling frequency attributes
-> 
-> Patch 5/5: Advanced features and power management
-> - Mount matrix support for orientation compensation
-> - Power management (suspend/resume)
-> - Control register features (soft reset, pointer rollover)
+> Urgh, sorry about the patch formatting, the above can obviously be
+> dropped.
 
-This sort of information should be in the descriptions of the individual patches,
-not in the cover letter.
+No worries, my script did it almost right :-)
 
-> 
-> The driver has been tested on a Raspberry Pi 5 and all features have been verified.
-
-This info is good to have in the cover letter. Even better though would be to
-explain a bit about the actual methodology of how you tested it.
-
-Also, a v2 should have a link to v1 and describe the changes made since then.
-
-It look like v2 was sent the same day as v1. Generally, you should wait a week
-(or at least a few days) to give others time to review before sending a new
-version. 
-
-> 
-> Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
+Patch seems sane to me; I'll go stick it into objtool/core. Rong if you
+could verify your case still work correctly that would be appreciated.
 
 
