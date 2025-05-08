@@ -1,94 +1,163 @@
-Return-Path: <linux-kernel+bounces-639749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9924AAFBCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:43:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934D7AAFBE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 15:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFE2189553C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D64B4A049A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 13:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2C222D4DA;
-	Thu,  8 May 2025 13:43:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC36822D9F8;
+	Thu,  8 May 2025 13:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b7jNUa5h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6141227BA1
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 13:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B851B4223;
+	Thu,  8 May 2025 13:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746711817; cv=none; b=dnWKnR33ZlorLhbTtmZV/n3rC4gaH8BjcDrRM23ULxewBuYV/HziC6ml3XTWwA7lw5WFYBjhgKp9cPKOJCOhLYkrhOXA2A4ywpF3jnS7eA6HGi1Ab757twJlbXRFXpYvD/aBNDoVOpzDfDz60KtP3dZ2/eWjeVp6LbY358rUjF0=
+	t=1746711911; cv=none; b=UaAyKXjGn+rLEr6F9JB6YcbbM6uE9qV1H2hQBK5p2mdvMZk9oSoet1H+LJQeVByB6XzKoyHDSDNb1v5RY8T1/LsnCc7kFpmi3lSNGuX/z34Q0Z1uWEjJkcrSzf4g+IZEFFFVvxtJ93dv7AEq7BoEW1VEAAdzaH2Vuymeiw9MvmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746711817; c=relaxed/simple;
-	bh=Y55wLFIvvID7sOrwT7mRN800kTlffZtkYjyvo+A31sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C5XiYkOgB1yv7rNEOFJm/B7cPK1Wow3SWz1zrAv6r/ZUnyq9Dh4f6Rbm9Z9VhDpIyFWfYHfz30ue7SHMx9KsVeEKakEOiwAq79pZtTG2ItmJ1rJ5TRwkOeY3UFlR5ob4B/wn88DZw69abYyotcfEtG+hM1KN3lYv/8OU1pu+Q8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABFD2C4CEE7;
-	Thu,  8 May 2025 13:43:34 +0000 (UTC)
-Date: Thu, 8 May 2025 09:43:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Aaron Lu <ziqianlu@bytedance.com>, Florian Bezdeka
- <florian.bezdeka@siemens.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, Ben
- Segall <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Peter Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo
- Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Xi
- Wang <xii@google.com>, linux-kernel@vger.kernel.org, Juri Lelli
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Mel
- Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, Chuyi
- Zhou <zhouchuyi@bytedance.com>, Clark Williams <clark.williams@gmail.com>,
- daniel.wagner@suse.com, josephtsalisbury@gmail.com, lgoncalv@redhat.com,
- Tom Zanussi <zanussi@kernel.org>, williams@redhat.com, dwagner@suse.de
-Subject: Re: [RFC PATCH v2 7/7] sched/fair: alternative way of accounting
- throttle time
-Message-ID: <20250508094342.177ddf4d@gandalf.local.home>
-In-Reply-To: <ef402bac-3b41-4322-b5b2-224c874275e3@siemens.com>
-References: <20250409120746.635476-1-ziqianlu@bytedance.com>
-	<20250409120746.635476-8-ziqianlu@bytedance.com>
-	<099db50ce28f8b4bde37b051485de62a8f452cc2.camel@siemens.com>
-	<20250507090923.GA194948@bytedance>
-	<618bc3b199f19be916913301edb5ec832131e842.camel@siemens.com>
-	<20250508024525.GA628019@bytedance>
-	<ef402bac-3b41-4322-b5b2-224c874275e3@siemens.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746711911; c=relaxed/simple;
+	bh=5MkDSH5ThuLTr9W8JLlzUmF/famjo+LBEZSz44in2MU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S9UOok0RNT4egsytkiblZcw6ihp4lyrvmMvOz8yhB7/67bIKNCwnNgeNmaAUfyFi60Vz4dXa6s1srCrjvQM5RHF1mmXIk1QISNEcwklc5oxbpJN4nkFcx8C/9rTXaDLydNISVRzJm1ht+2YFTeRw3nJuIemAqMTk9aCfwbSOSS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b7jNUa5h; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746711909; x=1778247909;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5MkDSH5ThuLTr9W8JLlzUmF/famjo+LBEZSz44in2MU=;
+  b=b7jNUa5h8iCuV9boCQwrfHO/Ij7xM1LHnRwl7X5CDmgsOEecBOqCAA5G
+   tLVarwzWxq2Y+O+REy55SKM9w01h4Rgzhvx+5Xv48uUOx15u/Zi6zgorU
+   GTPwRCTMrHX0AVQefAXDXl04cwVgORDyRen+XI9XYrntRB/oFJz2c1a6n
+   pOKALn3Sx2wz8A9J9RnybdR0X5lu3MNnPqfoFn6LnvweIjhhUh9t/Z8Fj
+   X0T/r0iUAZuXpfGGsVccBkUEqCjAp5FuC1zIpN5wYlU7GNNBHjVxSfleP
+   hRL0z+EUg40b1MioqyhW8CJLsHRkfXKYrCu6azpl0O7IuGznHvuQ+rFfI
+   A==;
+X-CSE-ConnectionGUID: zLgb5kX6SMGuwh/NbWMXsw==
+X-CSE-MsgGUID: 9J9oHuiOQhOJJiuim51Kbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52302943"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="52302943"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 06:45:08 -0700
+X-CSE-ConnectionGUID: 6jntlPU5QESzMqsuAIk1Uw==
+X-CSE-MsgGUID: QrsHIgcPSdKX88yFohOkrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="167385076"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.124.222.200])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 06:45:05 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf/x86/intel: Fix segfault with PEBS-via-PT with sample_freq
+Date: Thu,  8 May 2025 16:44:52 +0300
+Message-ID: <20250508134452.73960-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
 
-On Thu, 8 May 2025 08:13:39 +0200
-Jan Kiszka <jan.kiszka@siemens.com> wrote:
+Currently, using PEBS-via-PT with a sample frequency instead of a sample
+period, causes a segfault.  For example:
 
-> On 08.05.25 04:45, Aaron Lu wrote:
-> > On Wed, May 07, 2025 at 11:33:42AM +0200, Florian Bezdeka wrote:  
-> >> To sum up: This series fixes (or seems to fix, let's wait for one more
-> >> week to be sure) a critical RT issue. Is there a chance that once we
-> >> made it into mainline that we see (official) backports? 6.12 or 6.1
-> >> would be nice.  
-> > 
-> > I don't think there will be official backports if this series entered
-> > mainline because stable kernels only take fixes while this series changed
-> > throttle behavior dramatically. Of course, this is just my personal
-> > view, and the maintainer will make the final decision.  
-> 
-> With 6.12 carrying RT in-tree and this patches serious fixing a hard
-> lock-up of that configuration, a backport to 6.12-stable would be
-> required IMHO. Backports beyond that should be a topic for the
-> (separate) rt-stable trees.
->
+ [  103.607823] BUG: kernel NULL pointer dereference, address: 0000000000000195
+ [  103.607876]  <NMI>
+ [  103.607879]  ? __die_body.cold+0x19/0x27
+ [  103.607885]  ? page_fault_oops+0xca/0x290
+ [  103.607891]  ? exc_page_fault+0x7e/0x1b0
+ [  103.607897]  ? asm_exc_page_fault+0x26/0x30
+ [  103.607901]  ? intel_pmu_pebs_event_update_no_drain+0x40/0x60
+ [  103.607903]  ? intel_pmu_pebs_event_update_no_drain+0x32/0x60
+ [  103.607905]  intel_pmu_drain_pebs_icl+0x333/0x350
+ [  103.607910]  handle_pmi_common+0x272/0x3c0
+ [  103.607919]  intel_pmu_handle_irq+0x10a/0x2e0
+ [  103.607922]  perf_event_nmi_handler+0x2a/0x50
 
-Agreed, and I'm adding the stable RT maintainers as well in case this needs
-to go earlier than 6.12.
+That happens because intel_pmu_pebs_event_update_no_drain() assumes all the
+pebs_enabled bits represent counter indexes, which is not always the case.
+In this particular case, bits 60 and 61 are set for PEBS-via-PT purposes.
 
-Thanks,
+The behaviour of PEBS-via-PT with sample frequency is questionable because
+although a PMI is generated (PEBS_PMI_AFTER_EACH_RECORD), the period is not
+adjusted anyway.
 
--- Steve
+Putting that aside, fix intel_pmu_pebs_event_update_no_drain() by passing
+the mask of counter bits instead of 'size'.  Note, prior to the Fixes
+commit, 'size' would be limited to the maximum counter index, so the issue
+was not hit.
+
+Fixes: 722e42e45c2f1 ("perf/x86: Support counter mask")
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ arch/x86/events/intel/ds.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index adb2e44761b2..8da1105a419f 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2469,8 +2469,9 @@ static void intel_pmu_drain_pebs_core(struct pt_regs *iregs, struct perf_sample_
+ 				setup_pebs_fixed_sample_data);
+ }
+ 
+-static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, int size)
++static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64 mask)
+ {
++	u64 pebs_enabled = cpuc->pebs_enabled & mask;
+ 	struct perf_event *event;
+ 	int bit;
+ 
+@@ -2481,7 +2482,7 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, int
+ 	 * It needs to call intel_pmu_save_and_restart_reload() to
+ 	 * update the event->count for this case.
+ 	 */
+-	for_each_set_bit(bit, (unsigned long *)&cpuc->pebs_enabled, size) {
++	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
+ 		event = cpuc->events[bit];
+ 		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
+ 			intel_pmu_save_and_restart_reload(event, 0);
+@@ -2516,7 +2517,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 	}
+ 
+ 	if (unlikely(base >= top)) {
+-		intel_pmu_pebs_event_update_no_drain(cpuc, size);
++		intel_pmu_pebs_event_update_no_drain(cpuc, mask);
+ 		return;
+ 	}
+ 
+@@ -2630,7 +2631,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+ 	       (hybrid(cpuc->pmu, fixed_cntr_mask64) << INTEL_PMC_IDX_FIXED);
+ 
+ 	if (unlikely(base >= top)) {
+-		intel_pmu_pebs_event_update_no_drain(cpuc, X86_PMC_IDX_MAX);
++		intel_pmu_pebs_event_update_no_drain(cpuc, mask);
+ 		return;
+ 	}
+ 
+-- 
+2.45.2
+
 
