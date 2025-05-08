@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-639461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC509AAF7BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA288AAF7C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F634E2F65
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57B114E1BF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36C31F9ED2;
-	Thu,  8 May 2025 10:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EB72045B1;
+	Thu,  8 May 2025 10:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKIn6lrB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+KPeXe/"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B4E4B1E5C;
-	Thu,  8 May 2025 10:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822C81F9ED2
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 10:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746699829; cv=none; b=ZeBFd1bzGgX5tM4YUmJgcqJih3oIRAM87xd2quMh2+vTrTd+nQTh05/fA9vJd/47dC5OU4nwCn0S/wg4kPWNuFL2snuysc/nDDgncjPDmEZ3TcffexoLgIikGsVgv4rL9oBfF/W20ytrJwvokGbYpmZHFaQ60ibk2n2ptQIJYDA=
+	t=1746700053; cv=none; b=Ty3RXhz2UWyucZPyN6Ulf64b+q9hT3ilsNnBDfU4DTETPmsaqLIFNdyCnoL/nYzyYKC46cALx0lRXfFdRfoMx/p4e8q2uz5gV4xJHm3M5JdJZp3ClrkQuhKjjzabjrPatTpBMen8d0JEsWAPb7gYrOojUcuf6dKcFzeuHwJCvj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746699829; c=relaxed/simple;
-	bh=ykl+qSE/o+ewTuX2K86dTy7zS4FJM7xNZq8Dik1n11U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=biGpKZVaRVrjsjti5z3HXRd2Tab9NYUAJp+Dh6aJ6lRPsuGooW6ucRekT1gFAN+V0L2t+S5cdr/lp38NKC2Hx5jdHIqqiWJV3Rf0bFE5Y5EaSJV8Vlc5V8tKY54b/oJDA/XjYuQpHup5O+KErkUnW9ccMRj/eukKApbPmuRU3f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKIn6lrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54FFBC4CEF1;
-	Thu,  8 May 2025 10:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746699828;
-	bh=ykl+qSE/o+ewTuX2K86dTy7zS4FJM7xNZq8Dik1n11U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JKIn6lrBZ6QeRchHyrOxTKyVra23g1y0Th2o1nowCAA6gGwrzOT5q9T3Hw7oXORqN
-	 1Ntcs0y/VQsEA/XOS2vJ/eS9rCTAkM9T25hAMl9NSdv4L7OQOXWYPI4z3AW2ozG62k
-	 hsBzFejsR1/8TC/83SMFDz+/w7PibrK2kzo05tUEa+TBa/omAgSaXOF9J7ComZ2rC2
-	 y18lK34rNESZBQhfjogKMiPJz0xsB/XkQB6W9/ZYSwbw2pMV+lfgvb1E60HawJZfy/
-	 5HzB/+BfnB7Gffb5nIhwgPBAgTDwV8QivD8dI4K1kBNnO+cuBOZAzAQH+EFXEzJhlU
-	 9PBxAsWIv2TVQ==
-Message-ID: <c3739ed3-353b-4901-a65e-ced3f41a7f02@kernel.org>
-Date: Thu, 8 May 2025 12:23:43 +0200
+	s=arc-20240116; t=1746700053; c=relaxed/simple;
+	bh=Wg1tIXtF7cdE4BVkY3U542fb6E3QI2pSyqedPkcT3kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLFWoi+6cdulR7AQ/E5Y6X/Po6IaXSCJJkNq1vN9+ia3mhFxpksSojPcQvqXj5O+z2mTd7Ikgu+l8Evy7qRD5HFoDCizGTTsCf8ZshvbKkeKV4JwWALSJndA4RZUqV6zyYmmqGC3CdYUmsjt60DlnM6s/dg32DGfHSb/8tP4YGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+KPeXe/; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a0b6aa08e5so1070879f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 03:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746700050; x=1747304850; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f3dXWdexBFnCh1V4T6e507rtdfn4YGQDtE6BBRQFdZA=;
+        b=a+KPeXe/9DHnfAFy4D/68GYC154UdUqFm46xqzdxZSw1NuAOVYOYqvFyFT2cis9Uo9
+         Gk29jFR8JpGHN4JL3WrXrKc7SiHR8RyP6qwn7TEprnt4r9OoKEbVGA5FMf7kolrzNNd8
+         zFDC6v4Y6fSoPeOSmT2/T91UlFODPQm+pplA3GAoVRYMm1L9u9GnruP/LxucRcqK+a2Q
+         pH4sfmg8IOERLd7ExCpgr4SLXilF8DGrGgt/dLbEnTor6BF983ZPG5NadqExVYcqk3Q9
+         8PTpBjC77/lp2X9BE+VuIdmvk6esXs+4vyd6bocPfBapyQwhfHrQBY1tLZ8a0MVABN5V
+         TXqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746700050; x=1747304850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3dXWdexBFnCh1V4T6e507rtdfn4YGQDtE6BBRQFdZA=;
+        b=mz0eSD0F4jJcm1MaO7ip7xvMtem4Afb0yYKQO8yn11oVFKKxsu5HBr8KM8kAYpV61M
+         3zivkAIIQG74sE/EuXNtFQ/CcEmO2Kg2wgex4uU9WV2Mv6cyI++3DjDYN3de9W4VFNY/
+         sPoRMmELd0JAtMmt803IXevWs3J9Cdtz9sDTZNjk2Nokku/LIFfhaI1ekRMxdNJYEKFo
+         mPABvNVN/x3BnAQhsJ2TQMxfDxqlUINe+AblCbEw98v069zEN4n6VB3MAJfvKB0hxQtt
+         BT2hYa7BKZvJLVyc+omOF7h9HljtSWBef2m4Pr2KH128Ze7O/8B4o8TludQhAWb94lUA
+         9ghg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHy1iSmmgzAul8hHlxZXbxy3ZSF4KOGlPaJ6EyUAZbJaGBs9Eu+NZ5NHqZ4P5/0vimyua6NuDpdGwJjIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHsH/rEL99ATbtt5hEoY6btEJ3LaX4nR7uVogG5e052KuSyqJr
+	UDJbFNisOZf3+UVhea0I2m5CA0j5r/tTjCk5yoh9lNBthx+tDwH+CUDTVqtFiaQ=
+X-Gm-Gg: ASbGncsz2U7kMCh490d/joJ89G7IsDjVpQCG9diK2PNzWOd36rZOPqaGq5J88MTq4AG
+	TZpDwEx+UxNwQIjEaa4IhPHZaWopgfJ6rQlkpK4whbt4M9N44B0PCm8aKbae3MZZogsayYdzuE1
+	5ZdAydtsm3ljcS71a5XUdVZsWFTVd+Izet3HoeSoEnC1Pm3Ch+g7m24Qo2Q++Tze2GXm7goJ1ZZ
+	W3luvh613Ta4qvOmDxZ76o8GYMtgnziW5Fy/ayBANoeoo5DAUv69E6F1mWjxSu1e04+J0mncRUe
+	v9W3k4q+2X5xZNP8tbyYWteNRDeBxhJp1l8p0ezWQIgdOw==
+X-Google-Smtp-Source: AGHT+IGr7hK3xCuRso8I/G034nZ8utNO2zmismBg2hsAW4Uj0bzVouwQ2BDVypLguNpWtEPItYf4BA==
+X-Received: by 2002:a05:6000:2ab:b0:38d:ba8e:7327 with SMTP id ffacd0b85a97d-3a0b990e086mr2368417f8f.8.1746700049750;
+        Thu, 08 May 2025 03:27:29 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0b47a8448sm5679359f8f.44.2025.05.08.03.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 03:27:29 -0700 (PDT)
+Date: Thu, 8 May 2025 13:27:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: rcar_jpu: remove redundant case statement
+ when c is zero
+Message-ID: <aByHDZyu0pptFUlK@stanley.mountain>
+References: <20250508100835.336240-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: crypto: Add binding for TI DTHE V2
-To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Kamlesh Gurudasani <kamlesh@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Manorit Chawdhry <m-chawdhry@ti.com>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250508101723.846210-2-t-pratham@ti.com>
- <20250508101723.846210-3-t-pratham@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250508101723.846210-3-t-pratham@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508100835.336240-1-colin.i.king@gmail.com>
 
-On 08/05/2025 12:07, T Pratham wrote:
-> Add DT binding for Texas Instruments DTHE V2 crypto accelerator.
+On Thu, May 08, 2025 at 11:08:35AM +0100, Colin Ian King wrote:
+> The case statement where c is zero is redundant because the previous
+> while loop will only exit if c is non-zero or non-0xff, so c can
+> never be zero by the time the switch statement is reaced. Clean up
+> the code by removing it.
 > 
-> DTHE V2 is introduced as a part of TI AM62L SoC and can currently be
-> only found in it.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/media/platform/renesas/rcar_jpu.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> Signed-off-by: T Pratham <t-pratham@ti.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+   612  
+   613          for (;;) {
+   614                  int c;
+   615  
+   616                  /* skip preceding filler bytes */
+   617                  do
+   618                          c = get_byte(&jpeg_buffer);
+   619                  while (c == 0xff || c == 0);
 
-Best regards,
-Krzysztof
+Unrelated to your commit, but get_byte() returns -1 for out of
+bounds.  I wish there were a explicit check for that.  We end
+up hitting one of the "return 0;" statements depending on if
+we've found a JPEG_MARKER_SOI.
+
+regards,
+dan carpenter
+
 
