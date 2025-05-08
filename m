@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-639080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42385AAF294
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:09:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3482AAF29E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3132E3B5692
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1ED7BCAEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 05:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5273D21019C;
-	Thu,  8 May 2025 05:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3A5211A3C;
+	Thu,  8 May 2025 05:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQ0XHQit"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uusqgq85"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E91386DA
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 05:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EC2770E2
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 05:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746680880; cv=none; b=Kf2FK+qof84t10NJr+okF/iHoQbyaMpa799Sle4F+R62NYdyvOIpXOexPCgOcPreEGylwNZQOJIrZgDl+D3phdQBuYowo+umTbATd/YWhPAQaWzbqeKfeQhuVRriyQIPw4f1lhK7w4kjqjGDZmDzekQbklQocH7T2fDesWKS0O8=
+	t=1746681102; cv=none; b=BfRNhpj0iE6CQUYJAuS3DtUTH1j4YCV9vFbR7RSSuZCzjzMIjx744D2kTSBlI7rXZ7g4N0rXoUDd0NpFv2qUqdKlJ5ArKb2nY1aEC0gLM2Mm7t4cwZKG+9M89kkCZ2qlvq1twWhd4jk/G6KhFaUiGMsKRAdUfGuLZDvnmwq7OkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746680880; c=relaxed/simple;
-	bh=762WzbtVDpriY6nKexgTUuobqBNCJcyYWb1XhpiJiRo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=HV2/BSKKUBEmFx/clJHHlDi4vZmuEELC5O3655ndvenoKDNE5sXFpldnah120pxNuzVUdWY1ZgFMyWRbS5NniBf0X3K1iMFtuEFmRHZxXtOV7wtgTp2kVEDB4leDu4Mu9gJoYgMFYjOEptdExuDCrvgZda0F7kjJkHmBwpU6aCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQ0XHQit; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746680879; x=1778216879;
-  h=date:from:to:cc:subject:message-id;
-  bh=762WzbtVDpriY6nKexgTUuobqBNCJcyYWb1XhpiJiRo=;
-  b=MQ0XHQitQ420uPWCUXgtk1d5xhi/4P+vX9gQSUhEXsDZi+H2rvczT8EA
-   KnP/W1Wds/IWM/IBSl6IhIwCvsEdzT4NnMOthSV55f744GPu4pK/K0fkM
-   4eFZHnvVnEtdev2Si2dI/+91GrL3mvuFRQ5BC3Tp2mmvdFUUNfhqCGljI
-   igUoZnN0CwrOOVpCOoSHQRCh7G/tCaG1ql38TppvxXMP+tNSrGwLeAzOM
-   KUVnua7VDj3mwCP347aMAHNawHDcl8EbVyO92YWdbWb1B1ioVA2rxmVHn
-   VJ6i25i/QqGYjr71Unwe/ulx26ZuKcuFYGoo/4fMG2mdY+1IqoeBlLDxW
-   w==;
-X-CSE-ConnectionGUID: O2PZK+RkQLCLyR36YCKY+A==
-X-CSE-MsgGUID: J10ApREsSVCYkxyixNfiJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59797087"
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="59797087"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 22:07:58 -0700
-X-CSE-ConnectionGUID: VUZCatPEQLGfL6fQt5k4fw==
-X-CSE-MsgGUID: HHe/F5l4S0i41I9uL7ntIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="141136581"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 07 May 2025 22:07:57 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCtUA-000AFQ-2j;
-	Thu, 08 May 2025 05:07:54 +0000
-Date: Thu, 08 May 2025 13:07:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/core] BUILD SUCCESS
- cdb7d2d68cde6145a06a56c9d5d5d917297501c6
-Message-ID: <202505081312.AflvJqSd-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1746681102; c=relaxed/simple;
+	bh=AQuEWPjekhThkflJFV9dZKxAkJmiFPkZ+D9N7nJgnOY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GgvHJJvA41wKxdnrWsi4VEjG6QCrHc6nxlhyuolecMKlQ1XPLHUXENFRDTnpZ8IkeQhQuxR4qwhpj7CovQSOhIG3RzK/Sj72Mq4dFRaDkT1YacrkeJZFKKw703x6RxlYV/RO8sPmE5DzLVWhVC8tG1xXbFUi9LqGLO4kMYpZ/uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uusqgq85; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30c14d46b55so467323a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 22:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746681100; x=1747285900; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+objnduDEdA6XgtoHIMnhtVVZlrAlpTMhfHb5uGFsAo=;
+        b=uusqgq85fZK7YMtOQd/EhhX5EO6PRytOwuUo4QpRjxRrFI/ItckZ3M0RYZmwwwR7xj
+         DbQfrKNX6oZXxbMjBdBbtp1FtK57uZzvY74KiLMW1dfrHyU1yPjBOETGxLqVAg/dqZtE
+         duurueQyr9IAHkypH3UrjD+i4LeHVMUbREFnfgnSQtqJXxkvksWCKD5SY4YXNwHcueE/
+         rHsQw3LeAy4f3kiJA7ec+CfbAONW9PK+7l8dDDyoc59sgA04mtXjGfabuktn58VsVfpI
+         BZt3Xj3kShFjLwcsxhbhI94DiEzpYfvyPGapJ3JVnc1/O/4+3j0TDdnr51NJauvwyg1H
+         3LMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746681100; x=1747285900;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+objnduDEdA6XgtoHIMnhtVVZlrAlpTMhfHb5uGFsAo=;
+        b=Epbo0PlSIlk4ihU5ab+3YvyAhZJEvQ9RVr5uzx9/1Lz1htKd/RRXnt/mBU2YbcnRCN
+         H9lgqs8ySUNEYqmJf+HXbH/0ZEWIavir0OtOQ/p1gtWEJYvHQm/shlOTft0ET1s+D2ME
+         +X/FSVtMBkL2YWo94DAUj1PlXaJ9dYBhAOdCmTkHz0zrH7XU7keUtyCxCToVHXQ1fMz3
+         US7twFMdt9k/gMilUipuxKeItn7LwezfQsF1W2HLGlXn56AnlUgXVlY0b2D4RjMOaHvy
+         BNGsE/x8gt9IrbFJ3CxH5r6NT+H8Xyq241GChTlO8g46o0EerT2PHz4fbo/k6XC9SoAZ
+         OHtA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1N7vOMA5ipnmaNWJxAd/tIlNfqPlf9JPe8J+dImnHGXj2Fa5+wMFyTqVZugZBNs0XZR/pOwOY1j1G+dA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRE73HtX/BNP816NoO+nYxEcFmNjjASCIZlsUHrRBEPXt+nxcv
+	1+9PKlqrXp+sH/EPEqQ6QfqRjEYl4j+SjKeQQEjHKqWBTgDFiNEwKetsTbZhK4JKtyD1laXUwai
+	o2w==
+X-Google-Smtp-Source: AGHT+IGGonQAPWDxdBzLe2Ueqgy+uFD50vWf7E5zkm1R2s+R8YnCic3HHOe1DuE+B2Hm8cJPIF79XW+rfBQ=
+X-Received: from pjj15.prod.google.com ([2002:a17:90b:554f:b0:2ef:95f4:4619])
+ (user=amitsd job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a89:b0:309:fd87:820e
+ with SMTP id 98e67ed59e1d1-30b3a6d7b70mr2372936a91.26.1746681100133; Wed, 07
+ May 2025 22:11:40 -0700 (PDT)
+Date: Wed,  7 May 2025 22:08:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.987.g0cc8ee98dc-goog
+Message-ID: <20250508050856.674782-1-amitsd@google.com>
+Subject: [PATCH v1 0/2] Add graph connections between tcpc & fg for Pixel 6
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: sre@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	peter.griffin@linaro.org
+Cc: andre.draszik@linaro.org, badhri@google.com, tudor.ambarus@linaro.org, 
+	alim.akhtar@samsung.com, dima.fedrau@gmail.com, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-branch HEAD: cdb7d2d68cde6145a06a56c9d5d5d917297501c6  locking/lockdep: Add number of dynamic keys to /proc/lockdep_stats
+max77759 Type-C controller supplies VBUS into & out of (depending on the
+charging mode) the battery in Pixel 6. In order to represent this
+relationship, we use graph to connect tcpc & fuel gauge.
 
-elapsed time: 2117m
+Link to USB connector binding that this patchset uses:
+ - https://lore.kernel.org/all/20250507-batt_ops-v2-1-8d06130bffe6@google.com/
 
-configs tested: 78
-configs skipped: 2
+This patchset depends on the following:
+ - https://lore.kernel.org/all/20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be/
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Amit Sunil Dhamne (2):
+  dt-bindings: power: supply: max17201: add port property
+  arm64: dts: exynos: gs101-pixel-common: add graph property to connect
+    tcpc & fg
 
-tested configs:
-alpha               allnoconfig    gcc-14.2.0
-alpha              allyesconfig    clang-19
-alpha                 defconfig    gcc-14.2.0
-arc                allmodconfig    clang-19
-arc                 allnoconfig    gcc-14.2.0
-arc                allyesconfig    clang-19
-arc                   defconfig    gcc-14.2.0
-arm                allmodconfig    clang-19
-arm                 allnoconfig    clang-21
-arm                 allnoconfig    gcc-14.2.0
-arm                allyesconfig    clang-19
-arm                   defconfig    gcc-14.2.0
-arm64              allmodconfig    clang-19
-arm64               allnoconfig    gcc-14.2.0
-arm64                 defconfig    gcc-14.2.0
-csky                allnoconfig    gcc-14.2.0
-csky                  defconfig    gcc-14.2.0
-hexagon            allmodconfig    clang-19
-hexagon             allnoconfig    clang-21
-hexagon             allnoconfig    gcc-14.2.0
-hexagon            allyesconfig    clang-19
-hexagon               defconfig    gcc-14.2.0
-i386               allmodconfig    clang-20
-i386                allnoconfig    clang-20
-i386               allyesconfig    clang-20
-i386                  defconfig    clang-20
-loongarch          allmodconfig    gcc-14.2.0
-loongarch           allnoconfig    gcc-14.2.0
-loongarch             defconfig    gcc-14.2.0
-m68k               allmodconfig    gcc-14.2.0
-m68k                allnoconfig    gcc-14.2.0
-m68k               allyesconfig    gcc-14.2.0
-m68k                  defconfig    gcc-14.2.0
-microblaze         allmodconfig    gcc-14.2.0
-microblaze          allnoconfig    gcc-14.2.0
-microblaze         allyesconfig    gcc-14.2.0
-microblaze            defconfig    gcc-14.2.0
-mips                allnoconfig    gcc-14.2.0
-nios2               allnoconfig    gcc-14.2.0
-nios2                 defconfig    gcc-14.2.0
-openrisc            allnoconfig    clang-21
-openrisc            allnoconfig    gcc-14.2.0
-openrisc           allyesconfig    gcc-14.2.0
-parisc             allmodconfig    gcc-14.2.0
-parisc              allnoconfig    clang-21
-parisc              allnoconfig    gcc-14.2.0
-parisc             allyesconfig    gcc-14.2.0
-parisc64              defconfig    gcc-14.2.0
-powerpc            allmodconfig    gcc-14.2.0
-powerpc             allnoconfig    clang-21
-powerpc             allnoconfig    gcc-14.2.0
-powerpc            allyesconfig    gcc-14.2.0
-riscv              allmodconfig    gcc-14.2.0
-riscv               allnoconfig    clang-21
-riscv               allnoconfig    gcc-14.2.0
-riscv              allyesconfig    gcc-14.2.0
-s390               allmodconfig    gcc-14.2.0
-s390                allnoconfig    clang-21
-s390               allyesconfig    gcc-14.2.0
-sh                 allmodconfig    gcc-14.2.0
-sh                  allnoconfig    gcc-14.2.0
-sh                 allyesconfig    gcc-14.2.0
-sparc              allmodconfig    gcc-14.2.0
-sparc               allnoconfig    gcc-14.2.0
-um                 allmodconfig    clang-19
-um                  allnoconfig    clang-21
-um                 allyesconfig    clang-19
-x86_64              allnoconfig    clang-20
-x86_64             allyesconfig    clang-20
-x86_64                defconfig    clang-20
-x86_64                    kexec    clang-20
-x86_64                 rhel-9.4    clang-20
-x86_64             rhel-9.4-bpf    clang-18
-x86_64      rhel-9.4-kselftests    clang-20
-x86_64           rhel-9.4-kunit    clang-18
-x86_64             rhel-9.4-ltp    clang-18
-x86_64            rhel-9.4-rust    clang-18
-xtensa              allnoconfig    gcc-14.2.0
+ .../bindings/power/supply/maxim,max17201.yaml      |  5 +++++
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 14 ++++++++++++++
+ 2 files changed, 19 insertions(+)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+prerequisite-patch-id: 74aa0a6fc4a5c56d870bb15375fad1fe41ffc1e9
+prerequisite-patch-id: 46f968300dcf5442e12d882ca23168494249d378
+prerequisite-patch-id: 3ad83a2782819bca215bb267d36a1ff04fe557b2
+prerequisite-patch-id: 86b5207d8f44255c36b1e600ecdf4f948c5da685
+prerequisite-patch-id: a15532888ff2572696d9fa6a14775e8ebf590391
+-- 
+2.49.0.987.g0cc8ee98dc-goog
+
 
