@@ -1,152 +1,164 @@
-Return-Path: <linux-kernel+bounces-639241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75321AAF4CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABAC9AAF4DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 09:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B28A27B5572
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91C03B4383
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 07:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC023220686;
-	Thu,  8 May 2025 07:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7B5221715;
+	Thu,  8 May 2025 07:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrL3BBrq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zc9NCs0i"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D81621A44B
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 07:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA0F220F41;
+	Thu,  8 May 2025 07:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689932; cv=none; b=HxJmhSkcuTw0wEUC726KBgEzi0sIZ7HJC+1WRvq51RWha4aGr7Ae6OrFUbNpJSNgyNQZc5txcWXLyedaQp0WeDdHeye4b8hdyTwtsssAzvHf4NYt2Nfg495b6BV9JTQmczKSILs5Cr6H1up05LRIgEImZqt0YJRK6c7juhk+0Pc=
+	t=1746690106; cv=none; b=kXwtt8aeFSSyOvII5sxNkOd4ZfgEhFASELKA3/o8VgjMyS3If8CvTGOQ7VG8cgjrYtqhJhksPjuLfA1iMhz0nGT3wxu0c3GphtfcdeZ51Dy/obSNPKNWAaNFsASu8flw+MygSPxPVPAnffqMMoEP7MNDV6UEeyUsbjL4JJzBBrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689932; c=relaxed/simple;
-	bh=k+C8E7fjxwPOS+3bQbBZwOzttwQoEn9g/Fznc0zc04s=;
+	s=arc-20240116; t=1746690106; c=relaxed/simple;
+	bh=LZMGa+sNdd/7ypFwlQIyhR4SJrCDbccCWGjTEkdyzqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcImeM5uY3ClsHkTzVePxMc8aLIzz8/euujuaHXUZywdY30AfBbKcIN4UVwaEgt5xxIHdxSkYrec0PfkF151gx6Nq/1+TN9P82a2DdbFY4u6uG+qXAga7vGbYFd5ONziPaOp0+2+UXunqi/NZ0TupEhIkSazTf7ZdvK8hDUI8nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrL3BBrq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746689929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NNm/GVsc/U/JM9udHFGbUagWNhhVtJjmOoQfrIgRWUM=;
-	b=KrL3BBrqXuRt5/H6gx4XljHC1avwG/fPr6DyEqUq+qr84JcM/fEJS4vRiYTgcnk/IWh6kn
-	XrlZlBD7qFwiDKTnWORmq9M00BK7jnhExKDN/DgIEnvijfoyW8VDr+Lbgrr9LKpCBRNg1m
-	m3n/mg711tFK7Yo7FRBQTISiJS+egxo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-10-6Xf9rjE3MSqDfkMdgcAf0Q-1; Thu,
- 08 May 2025 03:38:45 -0400
-X-MC-Unique: 6Xf9rjE3MSqDfkMdgcAf0Q-1
-X-Mimecast-MFC-AGG-ID: 6Xf9rjE3MSqDfkMdgcAf0Q_1746689925
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C88D6195608A;
-	Thu,  8 May 2025 07:38:44 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.8])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6FDC21955F24;
-	Thu,  8 May 2025 07:38:43 +0000 (UTC)
-Date: Thu, 8 May 2025 15:38:38 +0800
-From: Baoquan He <bhe@redhat.com>
-To: fuqiang wang <fuqiang.wang@easystack.cn>
-Cc: Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5] x86/kexec: fix potential cmem->ranges out of bounds
-Message-ID: <aBxfflkkQXTetmbq@MiWiFi-R3L-srv>
-References: <20240108130720.228478-1-fuqiang.wang@easystack.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAt+521ffd0TDohkQLzo2Wl8y+AaHDj9FoK4zEtwBSVzljUM/OkFul5d9GSLIX13OeqGhp/cYRSFALoVGeG6fSWnha84XY64eR4aWh24Y6CYAemDzrSlEqnmKhFJF9kZK707MMefCIZIkv7Xc6/j3VlCRjtZ0h0nuCrRmK/yDRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zc9NCs0i; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so6944245e9.3;
+        Thu, 08 May 2025 00:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746690103; x=1747294903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wInBD0+S8ogpBYTrt7N+Mqd0fIS7ldl/Cpzv19xsKvY=;
+        b=Zc9NCs0i/JidJwvhCc/1Cm33CArjbUaK/12tskdyiVqX62yrPUfG2Dc9H3RLMPZSJA
+         QDGAni1dMvIDQUO1CeCXo98CTJBRvjoxkBOMGN5Q0ZgvHMDuQwms+qVWhy7LQb5gyWQ/
+         pKQJ2haO21z4XG/9dd7wJGsBDMcd06viMW5lf+pagbtj4kfdrvdpNs8HOoDyXQMaEHRz
+         wqx2S1aNU50TEiVItrsbyMIpI5GpGAtpNXVCbyBoFU4hChv+HHhjhmunxyRUmYVAYsRy
+         di9AMdkcwBHzcgmy6+QX5k8pqjOnahkCZn4eprebCK0SRE/fiHbKqD2imFrO/JIBuQQ7
+         UAOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746690103; x=1747294903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wInBD0+S8ogpBYTrt7N+Mqd0fIS7ldl/Cpzv19xsKvY=;
+        b=ChEMU6ervM1Y4qo1C3NO1XBq0tquOsAsFLnsTjo/nYLAHZNTwv9NR/jWfqQA4VlkKb
+         pY6cAwLQNUYs+/4EHfbsf7PEABW2YL0QKT0bKNYLRNVA0CDDLzE34FX6XB0c9JThhEaS
+         OHfAxEb6wrU2bDqmGdNnTclUil5CRwvi5HCM6O4BmRkfUXDxdWx0XIeHntvedenuh5qX
+         WHsfRFmWwm5zg+WFyzKwLlSfuIC7rDT2mWDaYt/S+7qCSXYRrRcw2PXK8ZlBAjlBey/Z
+         auwwRNJ4ZqP31CmKgL2GIH3tlz30mqtMcqzs0pdwQ2oJqZ50rZmjUBZ2CqFaK/0o/2d3
+         TZFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2KyBVyQZfWZ517Swrjl6AZxjhB0sMf4Fj0q/m7hvd6KEiCq5o/y/vRuDPtnDjC6KJNsMdWdK4FtkJ@vger.kernel.org, AJvYcCVO+FNtrzqLp7KaxPzX5F6Waaa2QFIVGVC8uB7cWR0GgOjVVS5sA+YxP33I7oaYAHemX22oskra+BDj9afA@vger.kernel.org, AJvYcCWSUtwYL0LTkzhC2UIOPnHOz4vZ987puk852PPYXSqBlOugN2Yk4Z7rpQYpDVfhooyw5/gYSwlhHDMOOrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTsW2McPLIsuLAzhG3vQ53c4GtaUM15fJOg5ppREh4u+U5jWGO
+	zxMJ/bzPqxUjxgzSOXpu9Pn/0ajqUAdtzxEnTOG9qnPsu6x8o0Z2
+X-Gm-Gg: ASbGncvLD6dw57JPPgQqf5tBFnY1Yfaw96AqHOjtStEHGBYLl8ItPDC36pBsZOWfv07
+	W+xdeUd2HYZEtR5dh4fa89b8a4Cy77xfNVsv9KdksG2lWuXbCR5ljGS7RYauDWPk9lagsgWSWBs
+	Tjg1Hg5X7yDDZkDRDkAiQetHqY4f5eIxQHPLCTdTR0s2fpo2fh63oH3YMTsITRSWCnxMfD3JQZz
+	Oa/UN3Hx+pOhqbIuCsA62gbtSk12sdtS8LcdzGCqsoMCdx8UNoEXX//VMoOpm/AFq3PqS8qnDFV
+	ZydShI6h160itD+rtvhjzHHKj3jtb4/GrqvXMjy3V3XVLVtuWrJK6ZTYF6yUAtcVrL1JyWSakZ2
+	PrnXDfZ0ckVkWaZrLm1kdyI8F1DY=
+X-Google-Smtp-Source: AGHT+IFro/41EYrU+HOca/VbaYhbXNGLbd9BWBtPcwSmPCLoxLac9ReY2lvgtSDg9U8/P7DGSnih6A==
+X-Received: by 2002:a05:600c:3d15:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-442d02eadb4mr22081505e9.14.1746690102785;
+        Thu, 08 May 2025 00:41:42 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd333326sm26956295e9.16.2025.05.08.00.41.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 00:41:41 -0700 (PDT)
+Date: Thu, 8 May 2025 09:41:39 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: webgeek1234@gmail.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
+ Tables
+Message-ID: <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
+References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vrbfmczrdwlcxhxj"
 Content-Disposition: inline
-In-Reply-To: <20240108130720.228478-1-fuqiang.wang@easystack.cn>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
 
-In memmap_exclude_ranges(), elfheader will be excluded from crashk_res.
-In the current x86 architecture code, the elfheader is always allocated
-at crashk_res.start. It seems that there won't be a new split range.
-But it depends on the allocation position of elfheader in crashk_res. To
-avoid potential out of bounds in future, add a extra slot. And using
-random kexec_buf for passing dm crypt keys may cause a range split too,
-add another extra slot here.
 
-The similar issue also exists in fill_up_crash_elf_data(). The range to
-be excluded is [0, 1M], start (0) is special and will not appear in the
-middle of existing cmem->ranges[]. But in cast the low 1M could be
-changed in the future, add a extra slot too.
+--vrbfmczrdwlcxhxj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
+ Tables
+MIME-Version: 1.0
 
-Previously discussed link:
-[1] https://lore.kernel.org/kexec/ZXk2oBf%2FT1Ul6o0c@MiWiFi-R3L-srv/
-[2] https://lore.kernel.org/kexec/273284e8-7680-4f5f-8065-c5d780987e59@easystack.cn/
-[3] https://lore.kernel.org/kexec/ZYQ6O%2F57sHAPxTHm@MiWiFi-R3L-srv/
+On Thu, May 08, 2025 at 01:07:37AM -0500, Aaron Kling via B4 Relay wrote:
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v2:
+> - Add patch to describe the emc table bindings
+> - Add patch to allow a fallback compatible on the tegra210 emc device to
+>   match firmware expectations
+> - Add a patch to include the baseline emc tables on p2180
+> - Link to v1: https://lore.kernel.org/r/20250430-tegra210-emc-dt-v1-1-998=
+96fa69341@gmail.com
+>=20
+> ---
+> Aaron Kling (4):
+>       dt-bindings: memory-controllers: Describe Tegra210 EMC Tables
+>       dt-bindings: memory-controllers: tegra210: Allow fallback compatible
+>       arm64: tegra: Add EMC timings to P2180
+>       memory: tegra210-emc: Support Device Tree EMC Tables
+>=20
+>  .../nvidia,tegra21-emc-table.yaml                  |  1692 +
+>  .../memory-controllers/nvidia,tegra210-emc.yaml    |    44 +-
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180-emc.dtsi | 49749 +++++++++++++=
+++++++
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |     1 +
+>  drivers/memory/tegra/tegra210-emc-core.c           |   246 +-
+>  5 files changed, 51721 insertions(+), 11 deletions(-)
 
-Signed-off-by: fuqiang wang <fuqiang.wang@easystack.cn>
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
-v4->v5:
-- This is on top of Coiby's LUKS patchset in branch mm-nonmm-unstable of
-  akpm/mm.git. I did some adaption based on Coiby's patches.
-- [PATCH v9 0/8] Support kdump with LUKS encryption by reusing LUKS volume keys
+We've had discussions about this in the past, and I don't think this is
+going to go anywhere. Device tree maintainers have repeatedly said that
+they won't accept this kind of binding, which is, admittedly, a bit non-
+sensical. 50,000 lines of DT for EMC tables is just crazy.
 
- arch/x86/kernel/crash.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+The existing binary table bindings were created to avoid the need for
+this. I don't know how easy this is to achieve for all bootloaders, but
+the expectation was that these tables should be passed in their native
+format.
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index bcb534688dfe..749a60ce8b7f 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -165,8 +165,18 @@ static struct crash_mem *fill_up_crash_elf_data(void)
- 	/*
- 	 * Exclusion of crash region and/or crashk_low_res may cause
- 	 * another range split. So add extra two slots here.
-+	 *
-+	 * Exclusion of low 1M may not cause another range split, because the
-+	 * range of exclude is [0, 1M] and the condition for splitting a new
-+	 * region is that the start, end parameters are both in a certain
-+	 * existing region in cmem and cannot be equal to existing region's
-+	 * start or end. Obviously, the start of [0, 1M] cannot meet this
-+	 * condition.
-+	 *
-+	 * But in order to lest the low 1M could be changed in the future,
-+	 * (e.g. [stare, 1M]), add a extra slot.
- 	 */
--	nr_ranges += 2;
-+	nr_ranges += 3;
- 	cmem = vzalloc(struct_size(cmem, ranges, nr_ranges));
- 	if (!cmem)
- 		return NULL;
-@@ -313,10 +323,15 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	struct crash_mem *cmem;
- 
- 	/*
--	 * Using random kexec_buf for passing dm crypt keys may cause a range
--	 * split. So use two slots here.
-+	 * In the current x86 architecture code, the elfheader is always
-+	 * allocated at crashk_res.start. But it depends on the allocation
-+	 * position of elfheader in crashk_res. To avoid potential out of
-+	 * bounds in future, add an extra slot.
-+	 *
-+	 * And using random kexec_buf for passing dm crypt keys may cause a
-+	 * range split too, add another extra slot here.
- 	 */
--	nr_ranges = 2;
-+	nr_ranges = 3;
- 	cmem = vzalloc(struct_size(cmem, ranges, nr_ranges));
- 	if (!cmem)
- 		return -ENOMEM;
--- 
-2.41.0
+Thierry
 
+--vrbfmczrdwlcxhxj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcYDMACgkQ3SOs138+
+s6F3YxAAn9VDKgGgj3LaRyo7aobSxZQZ+pFtSQy6+5C/SD5DweYmFbhh/tMm0EZ+
+TgZO2HGhhxeBMBKiIuW0eV3koQ/Lt80DC6ZX9vvQGqTQ/9bRM8LBpD5xi8UlXM06
+oZfg0vC8EDNo+/4f9oMsjcHafopTnLmxyA8LUC6dE0SZ+sUN8X7ApnoA7oCFtTFD
+GXFDealI9c9DdIFu9dtsGD3EOWwaauM3d0RoQePR3d7tIeWGaJlEwxsxhJrFjNzX
+o+VcAbEykbDbtsqbiZIWl5i7VEt2SzjYycCmoP4w1Dk52L5fmv/0gPpZRvmRzPLT
+tupK6BJgRMl8etiH/j7hDMTaLHaT/yUMEnM6cO8qzBvuzEkHgwKiRAEXb/7JJMHK
+eKbZtF7vr1bBODUaydaIeL2t1dQ/TVLp6iy4+folI3JK7j4fulVSem5om2Db6kAZ
+AdZXYLRW1f+yDTk5NiYpfbz52Zpsdjy6GnxX7cooYAkyDUvMONuTldpHMH0+3g8Z
+GIn2IrWOjZyfz0iaMAyfajKy/ygALtRk+XZkXwhsUTuaMM1mlqDvQRHNX6E81NnO
+x6whhXaGFZWoL+K1SQZJjraym4vKxo1zWCIlXMrf1EpOtX2qpeOD0dDNbkcNsfUk
+5d5NLj4YX6Fpr3NRyQV2JFvfaqAGCBPcWj9miUwykEa9DxK0EhE=
+=0Egh
+-----END PGP SIGNATURE-----
+
+--vrbfmczrdwlcxhxj--
 
