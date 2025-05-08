@@ -1,126 +1,140 @@
-Return-Path: <linux-kernel+bounces-640585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C4CAB06A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9725AAB06AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0254D3A393B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675711BA3521
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE89231C8D;
-	Thu,  8 May 2025 23:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EDE23184E;
+	Thu,  8 May 2025 23:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2q29rpP"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN+Uhtc4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31C62101BD;
-	Thu,  8 May 2025 23:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06105233129;
+	Thu,  8 May 2025 23:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746747624; cv=none; b=ATk539xfdEM4o2IpRps3kq0KE5PWLBc8CKvqjEaMKIM3KfrWKgckkKOpKfS6v7yAUYl4WjQ1zHB6qQVameMKA2fGf+8enRc7Jb6pGwAUfq10mY3uOVNA7Us8L4133GBZCIKuwcLqFZcQECaNf+U2b9gopD9coN3zBclM8T2+6xU=
+	t=1746747777; cv=none; b=NOfRLceXacpbfuhbEJuERwc4RHSJW/BfWrfgn/PRPy0iu/YkT9IWoNGiyE9zzfxwcTlOwhytGOkAzbyr1amH/RZQCCx8qTTRVlZISzUq7u80TsmN8y3/cgTajnBng9NFq8Ns3rpH9EDmqDkGIuscIx/hiukdX7ZLY6K4sSwOS9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746747624; c=relaxed/simple;
-	bh=UUWwBn0rncdSTvqDy6og+SIyhjFFbURwK0mnp5D1754=;
+	s=arc-20240116; t=1746747777; c=relaxed/simple;
+	bh=0HUJOi3Q80Hprk30UXwi1aPiSk0vyf8b/ThO0wu7JTU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LBpgGYJYqBPYIZYxC0Gba9oep1J5hIhMAv41/DGQcuswrywTEPg9aN8h+F0TIgpYcxGXRiAud5UpNYuXuUxp/vDyNOeOPJ+Wn8jIvIB7zzluBsIvrPBWmVqnl3ZeMtIB6RJyrEpS1gyM0XLQCTVQ9egjUSmqxuVm5dlmqsyNgL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2q29rpP; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-ad221e3e5a2so3496366b.1;
-        Thu, 08 May 2025 16:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746747621; x=1747352421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XCAHAZpzbjMjFqk38iU3CCdfAml8ce6xfHMngiKe84=;
-        b=K2q29rpP5IMSzMzGbi3os3Lv3xzNurOKcWkOlmjo5FOfN33P7ppUjnEYrFoeDIsM96
-         7evP0kfifm8B1wf6XdpQy5l1lSO2tncDai9z4HZTheMQNaVW/3OBi2HkrcWW2vw2YkYZ
-         ORBj430/zcIMQIEuiWRbi1ISXycVT5/qKfq4DW84rmCm0pPsSLbCMM63T1OOzIOzcxgk
-         ZIJHrETQccD6o/3hpURDr3W0C8+FcBbfGr4QWnWcafrQrSVgZlTbvne6ts8Yn/eEok6z
-         jGMu9xfTteIXCJtqR3cdcItIZh3n6On7uTe3u7bf2N8bk//47hhg4X3dLvxlwMm8tiu0
-         3q6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746747621; x=1747352421;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4XCAHAZpzbjMjFqk38iU3CCdfAml8ce6xfHMngiKe84=;
-        b=W4dKP+Fqq0IIRptpLWw6haRK7QudZ6R5sG7tbjrNU18OtwinrpNq4ZwmbzYBFF2AlA
-         CNg/DBemjcJC0vdAVE7o1YIFPwLdIq2M70JlZcn/SR4XzbeLZhWC+JgBwT1GXrL5iJry
-         cN94jgVdnPYTARpVF9OOlqXevtSWZv7e5uHZs/tkO5+KGy7eyWhFMXhMV7yu+QYnhoiW
-         Afi68+q6k9JgoRwegEX4PoZYr8YI1TCW2eAWtIX5bHRfWlm1V6vSpwcFtHcVAkgFtb1/
-         UdBEmh6dgP1xIwU6UPBzN16OQ2fGwvjAO38FsEyJ7DZFgvSamnuNfMzz+Ij6MenhApqS
-         hJSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzMPMkFjbHOHX7UTRUXg85r/o1WRA48rMsPLMd9tMFk+/7ZmnN/3BC0kHjRhI/DX6ddtHg515S@vger.kernel.org, AJvYcCWB2miFDTH+1RRaQfx/lYdPxYu8rSzqXcTsahCz7w9KIeFMx2hH28XnTe9HkF8qqXUar7rXEQ26cEy1yrsl@vger.kernel.org, AJvYcCWNdU8pm8HlyvvwRdN36utzL4TSujF2gdP36loy85GDsVSRKITqOGvlTyfSYPTSETT4gWqAPn+S99fIo/2eFwdIUx4A@vger.kernel.org, AJvYcCX+rS488oWLf0qMIDuKdsljRj9YIruGGaqqxzfddUHNC480lM+siAWgzmFrq9iog7S3cng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXGekrwmil8ti0IHQ5BWiebiQsRfqWpq5tOnG9GSagawDsrBaf
-	YuDtsVIxQx2VuUr3LutpaLxTlUPpNL3lY0+uQSRtBEJHXgdD6Huqbma9RL3OnzcESUWPwrY7brx
-	MuR7Lw4FM4RWW9Cx/pRjS0civECM=
-X-Gm-Gg: ASbGncvdLCJJHKq5UeAkXEXEtuM+jvp5Wbxn3vHMd6iN2e0AblooYMzWbnS1LZxyIDQ
-	lt5WfuwfKw+qWUdH4HX+VcL1e39yKrKNuk1mwxLeRrJScEHd5anitaGLMQ8MnhnhNMgVrQDa78C
-	FSSH/7EbRbkf1dPkjgeTur26L8zpH/eOGy2K/zfdeBnvVnWI4O06WpEET9Q73Sf80R7zw=
-X-Google-Smtp-Source: AGHT+IHApQ5OFCfaQS1mUn74daoOJX19yzwZ3sgdO7xX9LpbyPb3Jm1cvNGKxG3HLWErcANGLvfkwfd4xsmogUZmAeU=
-X-Received: by 2002:a17:907:8b8b:b0:ace:6fa7:5ed3 with SMTP id
- a640c23a62f3a-ad218ea5b8emr158033066b.4.1746747621004; Thu, 08 May 2025
- 16:40:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=cZQf/BHGwyb4C477hueIAA7s1phBnFS2lHiDjdbQmLei1hLThcmW9cwVsW9GKiZ89hyaUBiWU8pgHpIbvN6dK4k/5ESwJnzpuAjyjap3uZH5n02890P/T8Fum+FzzkQbKbs3bPdPXRqH/66EnmOxK0xtGPShRiFSb+6urdpv/9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN+Uhtc4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E528C4CEEF;
+	Thu,  8 May 2025 23:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746747776;
+	bh=0HUJOi3Q80Hprk30UXwi1aPiSk0vyf8b/ThO0wu7JTU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nN+Uhtc462Hu+w/2C3kAAaTTRqv9Ak/xNFa/6zE1GtbE8Hid/gAx2Lx6ZYddSplug
+	 /oe6k6FGX+6ov8SIplmw+8dp6ccDDGtp7VkSmOMcoDRKrAKeIzXRre2QY0CT9GdyJX
+	 TsF/5N2bsa5FDw70uGkYZuti1nY610rqNOiWeli5a9gJu5ij2U1IFJZp5WMXfRqZJz
+	 Rrv8+ZS0x1l9+MyuXnXgvz3OPtgTQeLXwXsK3yzj0urs9fjPWGOwOXeoA9zLMuRPiY
+	 rNeTqq+cMGXtm7sBkHoAc7YqvSZDOmdwZH1ooMsuLld6UwPd6pwPUsr2LXlunSW7ii
+	 qOrUUDtKae7Mg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-326c77c40b7so910741fa.1;
+        Thu, 08 May 2025 16:42:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUte0B/ItH8UXSHaCnWF08wpHn+tJnjYxHCenqgMDiS3dMupdMtcI/NrCCMCnvj4dBiQHjzFV4BLrs8N7mF@vger.kernel.org, AJvYcCVq31QE4hXYGW7j9WO2ibGMRJNwjDrTe13QdyeaSUr3OrTpcd1pDGE/UfUEq37+lHyEaQHNRwtQ8ivWLhc=@vger.kernel.org, AJvYcCXWJY7mC8vZUaHjjGz+dhK6tkq3vEM93N0+894mcVEWwVi4Mq6sjhDGxClCnyoUYCiSd0GUtyV6W0we8jdRxw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMx0rTO9qVv2gVoyuOVXeqfZPycBregYKXouAtDRLdcWjx7ktd
+	trV/8pdZ7JCCcvT0YvRnXExcOgsP8XMHyIXNne1Tf7IgYtcq+Uag9OxemgFCT2yjaYSIjX/1wyw
+	2LrMJG6Ir4zNWdT1/zrmWXbfI2ls=
+X-Google-Smtp-Source: AGHT+IFutgJYGooy1gvSEVR+svX/xeEYLIPC6W5LG+HLCFIxGaiTojj5a8p3cZK/OwyE1rr2/SV0O4b5KV2idQTmwYM=
+X-Received: by 2002:a2e:a581:0:b0:30b:e3d9:37db with SMTP id
+ 38308e7fff4ca-326c46b0e3bmr5332311fa.26.1746747775141; Thu, 08 May 2025
+ 16:42:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000adb08b061413919e@google.com> <681c597f.050a0220.a19a9.00bd.GAE@google.com>
-In-Reply-To: <681c597f.050a0220.a19a9.00bd.GAE@google.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Fri, 9 May 2025 01:39:44 +0200
-X-Gm-Features: AX0GCFuVY9CBMsQxhMgZpZ1X-fEBQ2fptYrxdbELCJogxYT5Wfp2wwF916mNEpY
-Message-ID: <CAP01T7525zDpL8nhsLLULCK1Qzw8wVCmHuCX_81Z_HaQAs-q4g@mail.gmail.com>
-Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
-To: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, elic@nvidia.com, haoluo@google.com, 
-	hdanton@sina.com, jasowang@redhat.com, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kafai@fb.com, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	lkp@intel.com, llvm@lists.linux.dev, martin.lau@linux.dev, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	michal.kukowski@infogain.com, michal.switala@infogain.com, mst@redhat.com, 
-	netdev@vger.kernel.org, norbert.kaminski@igglobal.com, 
-	norbert.kaminski@infogain.com, norkam41@gmail.com, 
-	oe-kbuild-all@lists.linux.dev, parav@nvidia.com, rostedt@goodmis.org, 
-	sdf@fomichev.me, sdf@google.com, song@kernel.org, songliubraving@fb.com, 
-	syzkaller-bugs@googlegroups.com, wojciech.gladysz@infogain.com, yhs@fb.com, 
-	yonghong.song@linux.dev
+References: <20250507231403.377725-7-samitolvanen@google.com>
+In-Reply-To: <20250507231403.377725-7-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 9 May 2025 08:42:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATt2hgPZyp_MP8DN=vYJ_TuvUQjU-U33ekbeVsLosE5uQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFE3-GdXPp4I15WWFcPl25L6hm_U-yW6eCb7BzZSyDSLNfJ9cyOlThFr1E
+Message-ID: <CAK7LNATt2hgPZyp_MP8DN=vYJ_TuvUQjU-U33ekbeVsLosE5uQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] gendwarfksyms: Add more kABI rules
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz fix: bpf: Convert lpm_trie.c to rqspinlock
+On Thu, May 8, 2025 at 8:14=E2=80=AFAM Sami Tolvanen <samitolvanen@google.c=
+om> wrote:
+>
+> Hi,
+>
+> While looking deeper into the genksyms hacks that have been
+> needed during Android's 5.10 and 5.15 GKI lifecycles so far,
+> we found a few instances that are not covered by the existing
+> gendwarfksyms kABI stability rules. The first case involved
+> appending new members to a partially opaque data structure, and
+> the second case completely changing opaque types due to a large
+> backport that was necessary for both stability and security.
+>
+> These patches add rules that allow distribution maintainers
+> to deal with structure size changes, and as a last resort, to
+> completely override a type string used for version calculation.
 
-On Thu, 8 May 2025 at 09:21, syzbot
-<syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com> wrote:
+Applied to linux-kbuild.
+Thanks.
+
+
+> Sami
 >
-> syzbot suspects this issue was fixed by commit:
+> ---
 >
-> commit 47979314c0fe245ed54306e2f91b3f819c7c0f9f
-> Author: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-> Date:   Sun Mar 16 04:05:37 2025 +0000
+> v3:
+> - Added a patch to drop documentation section numbers based
+>   on Masahiro's suggestion.
 >
->     bpf: Convert lpm_trie.c to rqspinlock
+> v2: https://lore.kernel.org/r/20250505212401.3379699-6-samitolvanen@googl=
+e.com/
+> - Cleaned up type string parsing based on Petr's feedback.
 >
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=140598f4580000
-> start commit:   c2933b2befe2 Merge tag 'net-6.14-rc1' of git://git.kernel...
-> git tree:       net-next
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d033b14aeef39158
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108e1724580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177035f8580000
+> v1: https://lore.kernel.org/r/20250430214049.2658716-6-samitolvanen@googl=
+e.com/
 >
-> If the result looks correct, please mark the issue as fixed by replying with:
+> ---
 >
-> #syz fix: bpf: Convert lpm_trie.c to rqspinlock
+> Sami Tolvanen (5):
+>   gendwarfksyms: Clean up kABI rule look-ups
+>   gendwarfksyms: Add a kABI rule to override byte_size attributes
+>   gendwarfksyms: Add a kABI rule to override type strings
+>   Documentation/kbuild: Drop section numbers
+>   Documentation/kbuild: Add new gendwarfksyms kABI rules
 >
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>  Documentation/kbuild/gendwarfksyms.rst   | 141 +++++++++++++++++-----
+>  scripts/gendwarfksyms/dwarf.c            |  14 ++-
+>  scripts/gendwarfksyms/examples/kabi.h    |  21 +++-
+>  scripts/gendwarfksyms/examples/kabi_ex.c |   7 ++
+>  scripts/gendwarfksyms/examples/kabi_ex.h | 101 +++++++++++++++-
+>  scripts/gendwarfksyms/gendwarfksyms.h    |   2 +
+>  scripts/gendwarfksyms/kabi.c             | 143 ++++++++++++++---------
+>  scripts/gendwarfksyms/types.c            | 140 +++++++++++++++++++---
+>  8 files changed, 470 insertions(+), 99 deletions(-)
 >
+>
+> base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+> --
+> 2.49.0.987.g0cc8ee98dc-goog
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
