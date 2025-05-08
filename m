@@ -1,83 +1,112 @@
-Return-Path: <linux-kernel+bounces-640593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDCEAB06B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4B0AB06B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C7D4A6631
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE08B1BA3C0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24181231C87;
-	Thu,  8 May 2025 23:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B137231A3F;
+	Thu,  8 May 2025 23:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cz1Waep9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1sR/fq0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F870230BD0;
-	Thu,  8 May 2025 23:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317F233701;
+	Thu,  8 May 2025 23:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746747895; cv=none; b=R5oDGvmWWx7BdcbbWj48cWznwvA1XXIm1nszKMGtqodlJkmbuxS54faTs/81VgW2MRhHwCYJOGkJ1uw37QX3xI9tX/DDS88RowKYg0lqh7Iu/5lQkVLL2bjv8T7OciVljM39WZ/xlnjMvwiN57Rjl0XUYhN2edpgHgSmvqEiDiI=
+	t=1746747904; cv=none; b=HGVc7TtC5OOE8ixeXRTEmx7UNF0EMde1E8rkC3Dj6YwDQaIx1zqqWtkAzhvpQYcUf4ysqqvLWpBt6nJio9fQa4gXdIQyp7O7g0nlHqCmnjPkwCP84CFciW1EqFHHGS0FSTYBNZak/0e2xrc2crCi2L66odNzrdSEUNNJeXGNVFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746747895; c=relaxed/simple;
-	bh=GgaaZEfwWTni/AhkB94pMqIyAWLeWgFcqf0B/7AJi7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NdQgEydgM1/u36FToDLy4o9PxlBmFS69789x/LYfZhyYVRfxvnD+RG3Bde/Rz2x7A6RpZ3HqCgA9VolUMCcJ2W/Eace5G9zen7YiDAktbvwdndDcpMTmYP2sFDgj0nNfehNjCW+nF2qHor+kJNu0zfv9J/ljmIU/vAKZHI/zxmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cz1Waep9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D8CCC4CEE7;
-	Thu,  8 May 2025 23:44:55 +0000 (UTC)
+	s=arc-20240116; t=1746747904; c=relaxed/simple;
+	bh=aZVSh1sdTm/YNurWzN8SgnUsB5j4NFIIa9V88kYxZ+w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=S9agSYtUM/vU7MxNXAp3tfgVouu3XYVRuJhTRdC/wbWGeLI4QGMINX1JzNKRh0m8riwseKds+YZwdzJhQ1D45xj4tDShvi5CrJjFLu7AWFfQ7bc3k2vZ/CQO4jc7PeHSPgRK7uRZ9UhjcvMNIne9k1a9gNAQNVeK1qDvb+PJ6kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1sR/fq0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0602BC4CEE7;
+	Thu,  8 May 2025 23:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746747895;
-	bh=GgaaZEfwWTni/AhkB94pMqIyAWLeWgFcqf0B/7AJi7o=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=cz1Waep9xCEfNgpxu+9eDZHlCe/QJ4RIqnS7SYRYwiHamS4epBGTxRTsJZYpW3Ekz
-	 w4uyWSYk1XznJTbEp8Kwx4jYh8trDGMpbpCgR24Ihnnnu4vvlklEvcOzqXpFC5iWJj
-	 LM/VThovpxBMZ3E/V4xFSi6a2Xyroy7sAhd10rzq7tRs6L0fwa1UatIdqWfMlfST3w
-	 2Dk6+6BTe+OAJi00IyILIktYtDPfgNKhHZWfKgLiDsngp7uED/xArr/BlGG2Ukwku+
-	 bVDYuhwvy7kDJqzH+rvH+Ps07UQ/vx+84TyPWQmHl+0m3E8UWi5+1Gsjp5RtYvgQaI
-	 ppaOQY4iEsLqA==
+	s=k20201202; t=1746747904;
+	bh=aZVSh1sdTm/YNurWzN8SgnUsB5j4NFIIa9V88kYxZ+w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f1sR/fq0I3Q50GXZLCmkyR9Wb2vMv2ln/aT/gS1Ex5QDGL1+LCN+MgNC8KPmD45NN
+	 zH6YDOfkdYEk8tFLr7t+PJQ1aKZKSI1vOqbOeFU63SJgKEAT7JNkN9Wduu595IXPCj
+	 xWqOvHlLlVto8utkEXFUZxkJhdJlmg2WMj4owywePdgDiVNeGvrPRnKJErkq1D44FH
+	 0neKWNAnIRgvzUbznJo818zu5VXwqr8tuhhdm/Rw5n9qUFtcbxaLitmV73ZKtmG+xO
+	 AiKY5ziLpWuvdGOTct0ANrCM3Ub9c2ujkFJGJUiYm4wdof24ro7UYUDkRniiL/8KYd
+	 xRqyUuSMdOG/w==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E7593CE11A4; Thu,  8 May 2025 16:44:54 -0700 (PDT)
-Date: Thu, 8 May 2025 16:44:54 -0700
+	id AF67ACE11A4; Thu,  8 May 2025 16:45:03 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH 0/5] Miscellaneous rcutorture updates
-Message-ID: <a942066a-85cb-4932-b4de-0ee39287ab7d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH 1/5] torture: Suppress torture.sh "Zero time" messages for disabled tests
+Date: Thu,  8 May 2025 16:44:58 -0700
+Message-Id: <20250508234502.1996788-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <a942066a-85cb-4932-b4de-0ee39287ab7d@paulmck-laptop>
+References: <a942066a-85cb-4932-b4de-0ee39287ab7d@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+The torture.sh script prints " --- Zero time for locktorture, disabling"
+when the --duration parameter is too short to allow the test to run
+even when locktorture has been disabled, for example, via --do-none.
+The same is true for scftorture and rcutorture.
 
-This series provides miscellaneous rcutorture updates:
+This commit therefore suppresses this message when the corresponding
+test has been disabled.
 
-1.	Suppress torture.sh "Zero time" messages for disabled tests.
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ tools/testing/selftests/rcutorture/bin/torture.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-2.	Print number of RCU up/down readers and migrations.
+diff --git a/tools/testing/selftests/rcutorture/bin/torture.sh b/tools/testing/selftests/rcutorture/bin/torture.sh
+index e03fdaca89b35..c518de2968711 100755
+--- a/tools/testing/selftests/rcutorture/bin/torture.sh
++++ b/tools/testing/selftests/rcutorture/bin/torture.sh
+@@ -274,7 +274,7 @@ then
+ 	configs_rcutorture=CFLIST
+ fi
+ duration_rcutorture=$((duration_base*duration_rcutorture_frac/10))
+-if test "$duration_rcutorture" -eq 0
++if test "$duration_rcutorture" -eq 0 && test "$do_locktorture" = "yes"
+ then
+ 	echo " --- Zero time for rcutorture, disabling" | tee -a $T/log
+ 	do_rcutorture=no
+@@ -286,7 +286,7 @@ then
+ 	configs_locktorture=CFLIST
+ fi
+ duration_locktorture=$((duration_base*duration_locktorture_frac/10))
+-if test "$duration_locktorture" -eq 0
++if test "$duration_locktorture" -eq 0 && test "$do_locktorture" = "yes"
+ then
+ 	echo " --- Zero time for locktorture, disabling" | tee -a $T/log
+ 	do_locktorture=no
+@@ -298,7 +298,7 @@ then
+ 	configs_scftorture=CFLIST
+ fi
+ duration_scftorture=$((duration_base*duration_scftorture_frac/10))
+-if test "$duration_scftorture" -eq 0
++if test "$duration_scftorture" -eq 0 && test "$do_scftorture" = "yes"
+ then
+ 	echo " --- Zero time for scftorture, disabling" | tee -a $T/log
+ 	do_scftorture=no
+-- 
+2.40.1
 
-3.	Check for no up/down readers at task level.
-
-4.	Start rcu_torture_writer() after rcu_torture_reader().
-
-5.	Print only one rtort_pipe_count splat.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/kernel/rcu/rcutorture.c                           |   30 ++++++++++++++++----
- b/tools/testing/selftests/rcutorture/bin/torture.sh |    6 ++--
- kernel/rcu/rcutorture.c                             |   13 +++++---
- 3 files changed, 36 insertions(+), 13 deletions(-)
 
