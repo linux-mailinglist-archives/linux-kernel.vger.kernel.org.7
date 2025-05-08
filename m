@@ -1,154 +1,119 @@
-Return-Path: <linux-kernel+bounces-640243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A336AB021B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:04:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7489AB021E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516469E6179
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2279E5F2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD80286D4E;
-	Thu,  8 May 2025 18:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8F92882C6;
+	Thu,  8 May 2025 18:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZN6x7GW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="h/NKT0MV"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BC3207DEE;
-	Thu,  8 May 2025 18:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F0A286D62
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 18:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746727410; cv=none; b=rE5WIr74PF9VghaYNgukHSGKwu55ilXN4TPkbLgl1xZPB1AeEfpYdxUpNvsQQRqWgk+w+t7D2ah5hd2uTm4RPOIApC3tkSDeCSS52z24jZBarAINCuJtqT5XWu6FSVJO269wPA3BWipDYYsIl0ANsRaSdcvnSAl4ZfXXXKYJM88=
+	t=1746727430; cv=none; b=bYqbOspIGNFmmeGqQ0R1C0KoIR30MhppCwajL0EOj0e4al/A5O7j5h251A+yvULIILxpHXCVr6QiYZwPpDQKLu6wg6Nu6vBCSUejtY4+mBqw63IvGj5RknE0/2upgKzDVSieAcjXzJ0cCq307Xke0ayOsfGKvdPfeyd9w0t+Aa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746727410; c=relaxed/simple;
-	bh=keNapksh6o7sIDke7Z7TY0yJwQBMCFVXVOlG6PCsX8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lg5S5UHdPNa68V5sjgvUTLSAh79eEV5EuoAOkOJZE2d+BpSAZj9TYGtsLG6hP1psunIqjEGkTqbS7OreXUwfXiVfyWg78SPiilpmCWvuPF4x1l2si7SWN8jZL5jOsXZJJz1p/nr6gQMAk2b8eUyA12eKPhGuEUlqC/HC3CtjnLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZN6x7GW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C632C4CEE7;
-	Thu,  8 May 2025 18:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746727409;
-	bh=keNapksh6o7sIDke7Z7TY0yJwQBMCFVXVOlG6PCsX8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TZN6x7GWWTzQbQCFq27jKoBQEr5dYYcaOwLq8Faw33FpF4uA0vwXo/hzu+h9CNfWF
-	 XIGZD3oEPOjE21RmipQuoZ2aCKvwuXyX+SLeVKvBGe4oyVB3m+HtfD9LI2R1VSG9kz
-	 s86ZnChSIdG6c4XMJhjv6phGHTxELsMiWMbNvHO2RZ076ujIvJ5pRX8RZMRCmqa4ZY
-	 8xN+UXImo4E6aQ2dDpLFzyg1n2K6XAWG/1+/YCl8RUaMHuaDy5dyvQFgF50V2fG79Y
-	 SSn1XzwFrBmG05N9KdgDqdMacTINtBnWO1SeUlJU4fuGW3tKxNFswwrWbU5k7D+wTv
-	 IBXKfObQioO9w==
-Date: Thu, 8 May 2025 18:03:28 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Saurabh Singh Sengar <ssengar@microsoft.com>,
-	Naman Jain <namjain@linux.microsoft.com>,
-	KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
-Message-ID: <aBzx8HDwKakGG1tR@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-References: <20250506084937.624680-1-namjain@linux.microsoft.com>
- <KUZP153MB1444858108BDF4B42B81C2A0BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
- <8f83fbdb-0aee-4602-ad8a-58bbd22dbdc9@linux.microsoft.com>
+	s=arc-20240116; t=1746727430; c=relaxed/simple;
+	bh=BPaM3uBsQYkug/7fouL8TiZUFIRkQwryGGOrlftw3rI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=No4bf1XvMtgo7R/c5DMWa+93kpACTdWkrULTNay2BDGVUfCRAV+JrdPBQfpQAx5yxzb9Od4sojzRNJI4nN7D88dkWcJcTaFAbHDVkzeyhgXZtQEWVmKyfG0d3MlnczkHNe6n+CAVT8LngGJ8pDJ2aYRQ753N+1L3GfC76P/HyPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=h/NKT0MV; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6060167af73so758761eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 11:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746727428; x=1747332228; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eDIMXcUh+1t2oaHEL05AcYmEhaIiuHzLG4RdkwQs3gQ=;
+        b=h/NKT0MV3szo5YA+cTcEaMfm/g+f0KzQJ91PosONwMUNS0wToMj+tFls38jgaX1uPk
+         oOzMwrNE4VZBd+m2MuNC8R8iNS/DIQpoczEJb6rPaaX1jcu8CwuvfdP4yttusT6yyTfM
+         qPl21SWeECE2vCHispLqKCQZhaVar87SqRnOQtj1ZOcW9+2NRXWqhPPUJTBl5/2zFYfM
+         ay6NY5O9EN1S/u5TU8pkcohEr11mqVa1mTZXSizJxPXrnr8HD6/wQFoLXnvvAw3onxsU
+         7Mq+4mTzDcR8lB2ZQu3Fcy7MlIH3WZxucn6FVPqI/dKX4HZCGo0Oj30UwsFsBfG3HTXN
+         VfzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746727428; x=1747332228;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDIMXcUh+1t2oaHEL05AcYmEhaIiuHzLG4RdkwQs3gQ=;
+        b=nbY2KKNMstsyhu80N3BaoAMSZ/EaTjfuWcpMk8oeH0ZbXMLLg7ymHGVyxMSDn/Cprd
+         k+HYGno1kvbwNANtBxdnQW3NwxnNvUn8NcL4yXqE7bpyui7aEMROk1y4zIxCy2P/1XZR
+         7v2//EFE00qI29t4rhB1UEAhr2ayhCGK9s33/DoZfw7Bz8u3xaX7wqDibclsOQe3Fjcy
+         rN0NOCkKk+dvsKBPUCC7syASuxEf669CmAFS5xE/zMot/ACw98w7VIII6tE6LWljfswP
+         RdyOGWgdwM3nNhGjeOIenwgGNV17N0jsjfJ0r4VDFZ1tvTePt047kMYGvWMPJQWhsNTJ
+         oTJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwCPDX3Rmvhu571XR1ewq4V0Ie5SRGCRjR9cEVkdjtXdlOWBxq/G/EDHaV99xLBr/bDwsFYf5SXbojMTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxczLuYrarwey6TtIOf1HYApqkVJeOuteVT0zwVjmoTbOBW1/fN
+	9u+bHmoWrLei+YGj9Y6DXxuEl/0M+o8gxG1Z7oGhvx1bW6C4+Numl2jKroKhfEE=
+X-Gm-Gg: ASbGncv+H/ndcjgSXzdVkq0syL33gZBXdmEmRuoy6cEJR17tM6A3cNFY9D++e2jwpca
+	VgT/WVaj3aiM+Ztx/OthUG5Qdm2ALJ3FznGg1xJRSUpmqLx6IzYs73tnLetM/sLrf/exCxrJRxK
+	MjsLJo8UfYg5H3ys+SH9do4CAFNMwqU5R0+5XeddEdIt+6mRmRE5FabOR+tqNBoLH+ROwo0SzU3
+	mjIpR8vX93EFOJ/8zXNYIhDwBNg9wEXHtmOD/otaw7iiH3CDM9PVASKeVgWzn3exXWVWwWh3lwG
+	FKxI1Z9VBJaO4E98HXxFYrW4iX1zjeRsGEFw+HFRiCJiOC2EooKNngPq4oQRUpINnGcopi7CQ1S
+	g96RVtIE2nEiNcVv37g==
+X-Google-Smtp-Source: AGHT+IEf3U6aBnbW0K6M59yOkNClYiW3gx4S2YQp31BRyUSuIa+tQqcacAiU4K9X6FdN1TJqPPe90A==
+X-Received: by 2002:a05:6820:818d:b0:606:9ed9:c38 with SMTP id 006d021491bc7-6083fdc3f6cmr408574eaf.0.1746727427735;
+        Thu, 08 May 2025 11:03:47 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e? ([2600:8803:e7e4:1d00:1120:d1cf:c64a:ac7e])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-403803995e7sm60463b6e.46.2025.05.08.11.03.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 11:03:47 -0700 (PDT)
+Message-ID: <1f8e1576-a850-4ddc-9be1-16e59756c65a@baylibre.com>
+Date: Thu, 8 May 2025 13:03:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f83fbdb-0aee-4602-ad8a-58bbd22dbdc9@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 08/12] iio: adc: ad7768-1: add multiple scan types to
+ support 16-bits mode
+To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Cc: andy@kernel.org, nuno.sa@analog.com, Michael.Hennerich@analog.com,
+ marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com,
+ linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
+ broonie@kernel.org, jonath4nns@gmail.com,
+ David Lechner <dlechner@baylire.com>
+References: <cover.1746662899.git.Jonathan.Santos@analog.com>
+ <8b8f861422b15b1316a1513cd66abc544ab8c5bd.1746662899.git.Jonathan.Santos@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <8b8f861422b15b1316a1513cd66abc544ab8c5bd.1746662899.git.Jonathan.Santos@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 07, 2025 at 12:20:36PM -0700, Roman Kisel wrote:
+On 5/8/25 12:04 PM, Jonathan Santos wrote:
+> When the device is configured to decimation x8, only possible in the
+> sinc5 filter, output data is reduced to 16-bits in order to support
+> 1 MHz of sampling frequency due to clock limitation.
 > 
+> Use multiple scan types feature to enable the driver to switch
+> scan type at runtime, making it possible to support both 24-bit and
+> 16-bit resolution.
 > 
-> On 5/7/2025 6:02 AM, Saurabh Singh Sengar wrote:
-> > 
-> [..]
-> 
-> > > +	}
-> > > +
-> > > +	local_irq_save(flags);
-> > > +	in = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> > > +	out = *this_cpu_ptr(hyperv_pcpu_output_arg);
-> > > +
-> > > +	if (copy_from_user(in, (void __user *)hvcall.input_ptr,
-> > > hvcall.input_size)) {
-> > 
-> > Here is an issue related to usage of user copy functions when interrupt are disabled.
-> > It was reported by Michael K here:
-> > https://github.com/microsoft/OHCL-Linux-Kernel/issues/33
-> 
-> From the practical point of view, that memory will be touched by the
-> user mode by virtue of Rust requiring initialization so the a possible
-> page fault would be resolved before the IOCTL. OpenHCL runs without swap
-> so the the memory will not be paged out to require page faults to be
-> brought in back.
-> 
-> I do agree that might be turned into a footgun by the user land if
-> they malloc a page w/o prefaulting (so it's just a VA range, not backed
-> with the physical page), and then send its address straight over here
-> right after w/o writing any data to it. Perhaps likelier with the output
-> data. Anyway, yes, relying on the user land doing sane things isn't
-> the best approach to the kernel programming.
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> Reviewed-by: David Lechner <dlechner@baylire.com>
 
-Yep. We don't rely on user land software doing sane things to maintain
-correctness in kernel, so this needs to be fixed.
+Typo in my email: baylibre.com
 
-Thanks,
-Wei.
-
-> 
-> If we're inclined to fix this, I'd encourage to take an approach that
-> works for the confidential VMs as well so we don't have to fix that
-> again when start upstreaming what we have for SNP and TDX. The
-> allocation *must* be visible to the hypervisor in the confidential
-> scenarios.
-> 
-> Or, maybe we could avoid the allocations by reading the first byte
-> of the user land buffer to "pre-fault" the page outside of the
-> scope that disables interrupts. Why allocate if we can avoid that?
-> Could set up also the SMP remote calls to run this on the desired
-> CPU.
-> 
-> Summarizing for the case you want to change this:
-> 
-> 1. Keep interrupts disabled when reading/writing to/from the Hyper-V
->    driver allocated input and output pages.
-> 2. If you decide to allocate separate pages, make sure they are
->    visible to the hypervisor in the confidential scenarios. I know
->    we're not talking SNP and TDX here just yet but it would be
->    a waste of time imho to build something here and scrape that
->    later. The issues with allocations are:
->        a) If allocating on-demand, we might fail the hypercall
->           because of OOM. That's certainly bad as the whole VM
->           will break down.
->        b) If allocating for the whole lifetime of the VM,
->           let us remember that we avoid using hypercalls
->           due to their runtime cost. We'll be keeping around
->           2 pages per CPU for the few times we need them.
-> 3. Consider reading a byte from the user land buffers to make the page
->    fault happen outside of disabling interrupts. There is no
->    outswap (maybe could have disabling swap in Kconfig) so the page
->    will stay in the memory.
-> 
-> If you're not changing this, feel free to keep my "Reviewed-by".
-> 
-> > 
-> > - Saurabh
-> 
-> -- 
-> Thank you,
-> Roman
-> 
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
 
