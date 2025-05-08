@@ -1,216 +1,263 @@
-Return-Path: <linux-kernel+bounces-640556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019D2AB0669
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:14:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F72AB0664
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374BC1BA81C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D6EE7AC2A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 23:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F7222FF4C;
-	Thu,  8 May 2025 23:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F2E22E41D;
+	Thu,  8 May 2025 23:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X22twWfq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LIapA81s"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2089.outbound.protection.outlook.com [40.107.102.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D9A22E41D;
-	Thu,  8 May 2025 23:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746746037; cv=none; b=Ox02LLvexvXkdpd0aiazW8qI+/36FTJe0jIUD0dqAHB3lDZx+sBfqzDVo7v/IA4QaqrUZR1YHLNVwl0PdToRwALrvJ3aeYoOcv2bzBvF4/Vhj0pNTau8lyMOVV8hlo2Qo7/27kxY7gGc2O1zdCk6NKhnqPDxTmxMMoGr2k/lf1s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746746037; c=relaxed/simple;
-	bh=hjPlZNVH1QsTW+M1ibi+er/DnxeysWRGy0qKT0ckYOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hz2th+yhjSiIHVbDlGEPzuYlbhJKIzqU34smcllrw5wKbvYbmP63ZaGU8zpbKIN+3zjfe9jLyKuBKJlu/V4LhNsV6tsQ8JUGNMJDnfVlhn2njNDzp6Bt++Pk6Mi9napHJ3eBuUKcAhAfNh//FXx5HZalotYxGIgBteXzVPidxP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X22twWfq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64CC9C4AF0B;
-	Thu,  8 May 2025 23:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746746036;
-	bh=hjPlZNVH1QsTW+M1ibi+er/DnxeysWRGy0qKT0ckYOM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=X22twWfqpG/sexlXNvqcCxlAW9uJ79XhHp4dG+/sdAiHQso1qB7pv6RIgcn3pOoQp
-	 RpAacMWsrPVTImWA47j99b63RKUeobPa/JwWeBGiT1144He1IzOYBdA7SARMGmKrYX
-	 65EJZ7d90Cp6E9iiHwEs0z6T/BpU+q99yjhDPHIX6351IRF+mtGYIYJWJE72V5X3sN
-	 B0pLO92w7nyRLhjlVobOl5IPwEHUofH4wsG+hGsl92jVFuW9AhckxAmi3AO7unuZ73
-	 1Lgy2FbvbzB/tsRSxjQksdOMh7ZrVku6saq5wF7NZ4tUJuGJo4UkndrE8aZ5ZcIH0+
-	 4kzXGXA6VLbEw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54d65cb6e8aso1930584e87.1;
-        Thu, 08 May 2025 16:13:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3nMTR72MHBo9LEWcSWPn+u1eUuXTtzARiNdj2RoCQ//SexhOiHB2gEReV7cBVuf/2qWVBeXGcnf1Dlbcj1LQ=@vger.kernel.org, AJvYcCUT++TYQxQqw3HfC1RCsFSeqQba4jc2T6npHRhDtkzgSY9XI0CXnMywdtg1h9R+O3TIh+LvsaEGwAcVCQBB@vger.kernel.org, AJvYcCVyYKwT9WXTmrB7V8blFone1iSIIvjTB1g5RJUDDL5+N6GDj6JGQTWr48tCDjrChCQlSMsAIDIg+fAly0vk@vger.kernel.org
-X-Gm-Message-State: AOJu0YznBxj5fik5Qht+fI32CEPIQ9QK6aY6aHvuuyZ4ZfE0W8vs4X3y
-	MK+ZRTKyLnWE5lgf2iSKMySBPLW3KE+gdxFmfmg2kZmlTviCbKiGNeckk9ytKzxBuYodCbIHjuA
-	G3IKF5qeZPCvtgsA6C3RnXAO3epI=
-X-Google-Smtp-Source: AGHT+IEu52aNEDzMGo5FyZKwbvtEiRvPDMJolT/k9kW20bfY6GvKL48TekDncNdE3idOerShQ5l7uSs7KgVNI0hwK08=
-X-Received: by 2002:a05:6512:4201:b0:54e:81ec:2c83 with SMTP id
- 2adb3069b0e04-54fc67c2180mr349351e87.18.1746746035073; Thu, 08 May 2025
- 16:13:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972C621883C;
+	Thu,  8 May 2025 23:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746746010; cv=fail; b=kGpMe4mC0hbyB4ID4ARi3N3Fu/u9ltFh+y2jW3qC4OyR43hKduVUAiItY50e1xkGu413zZEuuIwNjXSk6t5x/arGejmi6mQ2zRJF0bF0vpxYlSoPYYulJpQHYW9DaS21NUfKD4TClg7fypsBpeRiOFVTE5S7F/PZIFQiA9V+qtM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746746010; c=relaxed/simple;
+	bh=zQ7FOHUKm83uFm8PPo4/DLR5H/+7TIxR2BW2BT3yFA0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pU94ES/5Ct+bKWsnPuhNQlbXj3OdBHAN2wn/kXAN0reC45HVaHeLxpKea/oLBO3YqSK6mPGfv7gZp3QuChzgoDtGqz+jHXaFKV9k29AB1F6VJhJu4NTQUSVez/WWY3T//PBNi3L5rXH9sxP6jV1jnwv8QQzjOAE5maJAhuYYyWg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LIapA81s; arc=fail smtp.client-ip=40.107.102.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s6KOeDQdN+Qud8GMAgQs+ULJGbI/B23YD3zMmIAkVLg9rbq2kIc8/+xqmThHZHb4setb697qNS6zaCwdoRLZeswdnronVQf9MRoxDGhf4a5bhZP3deg1MNy8IMd/MF14wMnOhhKvWbA753fil6XEiD698d9UruFAni1jX8ewv3VNgJpjOhf3releqZrRCEO9NnUsyGiO7anhXB70weVWeid1w8B6RdZyPMQmpR/Y+e0vinkozBhqo9P/yFxD+TSQ9jCaB9kRlkcl5bjnfhSBVpOwkXi3HkuTIwyXhuOwqkxBbzY4W/kL3o0PEOsrjSfVXE8WHYNSJ0PqSFhov809zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K7Ujvu/NWKEEBfggPFp7LsZV8ozz43A3iLoIgREiezQ=;
+ b=MNS4D9SWNQqXcKo6EH6m460S8RtEANG6M9uuEVdzRVo6TGdIDxsUX2+uXUuZxa6NXfJfc9jYRJBfVBby4xtQpdPYalO1G1soNmn8D+W0PcWvqJ4xF39OixIKWzAgr0bWOKw9NoX3ywc9j4Da3oh/ZFudNj3OgLrMiz8//3HtEma/b/0fgmkshZsQjOoTSZFC6eulhGMimk/Rb521CJEfZ+v7zpSPblGEbQtk4/iZLhbl6oO/Smmp+EBGBSkcI/Qhj0I77pZVjmdwgqAzib0BQCmxMx8Nz699UAQqtZe8K7k70p1s6fN1QV69M2O5Pi9CNQhk0+O9hzAHCJv4zxIU4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K7Ujvu/NWKEEBfggPFp7LsZV8ozz43A3iLoIgREiezQ=;
+ b=LIapA81saw/nyS34GpZvOKYBbAPvpeBgNvgWCRhZ4dutA17L7NjyQmfTQzYvYtVie8xK04SduwfN2d6awXxret+FLJjKA7ehXjBbHPun1IvPsw0J59MArq84x8wCah+BJbX2fZH4FToApV8Es7UzK8jeYtkEgDtwHVqBSsDf0Hk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6440.namprd12.prod.outlook.com (2603:10b6:8:c8::18) by
+ SJ0PR12MB6926.namprd12.prod.outlook.com (2603:10b6:a03:485::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.23; Thu, 8 May 2025 23:13:25 +0000
+Received: from DS0PR12MB6440.namprd12.prod.outlook.com
+ ([fe80::6576:7d84:1c66:1620]) by DS0PR12MB6440.namprd12.prod.outlook.com
+ ([fe80::6576:7d84:1c66:1620%5]) with mapi id 15.20.8678.028; Thu, 8 May 2025
+ 23:13:25 +0000
+Message-ID: <2a9ba94e-7985-4ba9-88c6-45b8cf4d001f@amd.com>
+Date: Thu, 8 May 2025 19:13:24 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12] platform/x86: Add AMD ISP platform config for OV05C10
+Content-Language: en-GB
+To: Sakari Ailus <sakari.ailus@iki.fi>, Hans de Goede <hdegoede@redhat.com>
+Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>, W_Armin@gmx.de,
+ ilpo.jarvinen@linux.intel.com, mario.limonciello@amd.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
+ king.li@amd.com, dantony@amd.com
+References: <20250505171302.4177445-1-pratap.nirujogi@amd.com>
+ <aBosuj_TbH7bzjfZ@valkosipuli.retiisi.eu>
+ <0d801367-da24-4596-83d9-08ccd89ca670@redhat.com>
+ <aBxalXYus1R6Xbrr@valkosipuli.retiisi.eu>
+From: "Nirujogi, Pratap" <pnirujog@amd.com>
+In-Reply-To: <aBxalXYus1R6Xbrr@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT3PR01CA0102.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:85::21) To DS0PR12MB6440.namprd12.prod.outlook.com
+ (2603:10b6:8:c8::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502224512.it.706-kees@kernel.org> <CAK7LNAQCZMmAGfPTr1kgp5cNSdnLWMU5kC_duU0WzWnwZrqt2A@mail.gmail.com>
- <202505031028.7022F10061@keescook> <CAK7LNAQehmFgB3kJtrkVhUKM1NEXGQrfJ3v3piToh7YV7-3ccw@mail.gmail.com>
- <202505080953.789B3381@keescook>
-In-Reply-To: <202505080953.789B3381@keescook>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 9 May 2025 08:13:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQpGXmWNhoE9wLoP01dn2o7KjhedoqHXm474CoCgwHp2Q@mail.gmail.com>
-X-Gm-Features: ATxdqUFSFahQS2gL_GajBAPbhaxcYoPZIWvSTLFfjfLaxGsmrigaOf0HpL69dgs
-Message-ID: <CAK7LNAQpGXmWNhoE9wLoP01dn2o7KjhedoqHXm474CoCgwHp2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Detect changed compiler dependencies for full rebuild
-To: Kees Cook <kees@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Justin Stitt <justinstitt@google.com>, Marco Elver <elver@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 9, 2025 at 1:56=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
->
-> On Fri, May 09, 2025 at 01:44:09AM +0900, Masahiro Yamada wrote:
-> > On Sun, May 4, 2025 at 2:37=E2=80=AFAM Kees Cook <kees@kernel.org> wrot=
-e:
-> > >
-> > > On Sat, May 03, 2025 at 06:39:28PM +0900, Masahiro Yamada wrote:
-> > > > On Sat, May 3, 2025 at 7:54=E2=80=AFAM Kees Cook <kees@kernel.org> =
-wrote:
-> > > > >
-> > > > >  v2:
-> > > > >   - switch from -include to -I with a -D gated include compiler-v=
-ersion.h
-> > > > >  v1: https://lore.kernel.org/lkml/20250501193839.work.525-kees@ke=
-rnel.org/
-> > > >
-> > > >
-> > > > What do you think of my patch as a prerequisite?
-> > > > https://lore.kernel.org/linux-kbuild/20250503084145.1994176-1-masah=
-iroy@kernel.org/T/#u
-> > > > Perhaps, can you implement this series more simply?
-> > > >
-> > > > My idea is to touch a single include/generated/global-rebuild.h
-> > > > rather than multiple files such as gcc-plugins-deps.h, integer-wrap=
-.h, etc.
-> > > >
-> > > > When the file is touched, the entire kernel source tree will be reb=
-uilt.
-> > > > This may rebuild more than needed (e.g. vdso) but I do not think
-> > > > it is a big deal.
-> > >
-> > > This is roughly where I started when trying to implement this, but I
-> > > didn't like the ergonomics of needing to scatter "touch" calls all ov=
-er,
-> > > which was especially difficult for targets that shared a build rule b=
-ut
-> > > may not all need to trigger a global rebuild. But what ultimately pus=
-hed
-> > > me away from it was when I needed to notice if a non-built source fil=
-e
-> > > changed (the Clang .scl file), and I saw that I need to be dependency
-> > > driven rather than target driven. (Though perhaps there is a way to
-> > > address this with your global-rebuild.h?)
-> > >
-> > > As far as doing a full rebuild, if it had been available last week, I
-> > > probably would have used it, but now given the work that Nicolas, you=
-,
-> > > and I have put into this, we have a viable way (I think) to make this
-> > > more specific. It does end up being a waste of time/resources to rebu=
-ild
-> > > stuff that doesn't need to be (efi-stub, vdso, boot code, etc), and t=
-hat
-> > > does add up when I'm iterating on something that keeps triggering a f=
-ull
-> > > rebuild. We already have to do the argument filtering for targets tha=
-t
-> > > don't want randstruct, etc, so why not capitalize on that and make th=
-e
-> > > rebuild avoid those files too?
-> >
-> >
-> > efi-stub, vdso are very small.
-> >
-> > Unless this turns out to be painful, I prefer
-> > a simpler implementation.
-> >
-> > You will see how .scl file is handled.
-> >
-> > See the below code:
-> >
-> >
-> > diff --git a/Kbuild b/Kbuild
-> > index f327ca86990c..85747239314c 100644
-> > --- a/Kbuild
-> > +++ b/Kbuild
-> > @@ -67,10 +67,20 @@ targets +=3D $(atomic-checks)
-> >  $(atomic-checks): $(obj)/.checked-%: include/linux/atomic/%  FORCE
-> >         $(call if_changed,check_sha1)
-> >
-> > +rebuild-$(CONFIG_GCC_PLUGINS)          +=3D $(addprefix
-> > scripts/gcc-plugins/, $(GCC_PLUGIN))
-> > +rebuild-$(CONFIG_RANDSTRUCT)           +=3D include/generated/randstru=
-ct_hash.h
->
-> These are in $(objtree)
-
-Yes.
-
-> > +rebuild-$(CONFIG_UBSAN_INTEGER_WRAP)   +=3D scripts/integer-wrap-ignor=
-e.scl
->
-> This is in $(srctree)
-
-Yes.
-
-> > +
-> > +quiet_cmd_touch =3D TOUCH   $@
-> > +      cmd_touch =3D touch $@
-> > +
-> > +include/generated/global-rebuild.h: $(rebuild-y)
-> > +       $(call cmd,touch)
->
-> Is this rule going to find the right versions of the dependencies?
-
-I think so, but please test it.
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6440:EE_|SJ0PR12MB6926:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0eebfc7c-8416-452a-7381-08dd8e85ef72
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RjNEOU96OGNNVDdXODJ3c2Zja28veUhLSmJyVGlUL3lGYllGTFVGcjQ5dTdQ?=
+ =?utf-8?B?SmIxckR3NWFvSEVXZnZ4YlhFd00wZUkxUTd4aHZtQzFUZGNiOEZnY3V3Zzl1?=
+ =?utf-8?B?Qm13d09xeVFiRUR4UHR6TlJabjltUlpzb3dVUDNBc3lneVRxOXR1dG4wdE9u?=
+ =?utf-8?B?TUhTaDBuSW0wc1drL096NDBhZ3lucEZIQ2lZK2pGSzllR2hwM1RDR0lZdEE4?=
+ =?utf-8?B?UTJEU2drWnZrTE5CWGNKdmdQenU1WEsybVhJdWc1Nk5jenVqc2QwRDR2Qk9W?=
+ =?utf-8?B?WEZoc2RrMS8ybHdKTjh4NS9FWUlkZStnYzVQZjlCWUJVYkxGZFd2U2h2V3A4?=
+ =?utf-8?B?UG1od3prZ3NNSHQ3azlTQXpORGM5aFpEUHovQ1YzV09IMDdvMy9kWjcrbnla?=
+ =?utf-8?B?RHJOc0x2RWtybFVhUTVSVjFIR2ZKRkdHaXRtVXVaK0VxMXZ6ZlY2dDM5UHNq?=
+ =?utf-8?B?M2Ywcld0R2pLcTdPdkVJdTEvQXl0bktNWkZpTDFmZ05HSUo2M0I0M1ZESjRH?=
+ =?utf-8?B?RzlPMDhsWkdBNFpqY3FRcG9DMnZVV3RMSjNHS2VpU24rS2FpL1M4MWN6YVNk?=
+ =?utf-8?B?VnBwZ1p5bG1obWEzcGxVMFFIVFJHc1F3SGpTL3grcmxITU9nTVlGSU1nUkZz?=
+ =?utf-8?B?VEQvWVA4ZHdtVFEza2JoYkVGaXliNnZsM2tJelR0V0x2eG02SjgyeVhSaWJv?=
+ =?utf-8?B?aE0vQ1kyNzI4bFJ0b1JiTW1kcUJGc1NpZTN3ekNnaGU0YUtSYjROOE0xQlJl?=
+ =?utf-8?B?VHZ4SGVFZ0Fka2ovcGl6UUJmR0UzUnpIQWg4bzNPUFhhc0ExQXlYNURabzdG?=
+ =?utf-8?B?VXlWSUVUaGwzUzFSQXhUd0FmREJZZ2lwb3F4OWZqWjU0cDNUWTU0TUlBSWFm?=
+ =?utf-8?B?Z2RVOS9jUW9IczFDMWF6TTQyazd4bzZra3Zna1hVYnZlZWMvci9NSEdjYmcr?=
+ =?utf-8?B?RmxJZ01CckNrSzRpQUdndm9WTVRiRmhtYmVZRHNQcGdodVg1TEFJZFRKT3hP?=
+ =?utf-8?B?dU5wajN5Q2dxclBMNUdxa1JHbnlqZkcwVjZxSVFQN3laQXZUZGdjM0hUU3pu?=
+ =?utf-8?B?VndvbDFrTCsreTM4cDRkNTJWTUhHM3piRkJPdkEvTlYvclZFNHdDdGtJS01C?=
+ =?utf-8?B?Q2pOcWIyTW5Uc0QzaGpGZFhPbjhobWpJYk02YjRlRlVNZVFDTG5LNDB3ZXBI?=
+ =?utf-8?B?WVFUYWl0aWJ3SHN6eUYyVTRNQ01VaEliS3MyOGRJcWdmRjlhYXhzZy8wc3VL?=
+ =?utf-8?B?R0RSQmxlc0dTbk9tWWVlVmxZaW92SnpYajVjNDdhM0Z3dHYxOXIyd1lqN3hj?=
+ =?utf-8?B?dTkrZUNaV1FXcUkyNElWNmcwdEUvamIyaW5TbVc2bC84TUpUWDZEd1Mweno3?=
+ =?utf-8?B?Qm5pblQ4UlYzMUtyWUhIa3Vod0VLQnNHL2YrWlBySjVhZEZRZndPR0VXaXBw?=
+ =?utf-8?B?SEtsUGRRY0lUWG05MWE5RGtpRzlUN0RzRXlwRDhJemFWVURlcVhpM1UrZzI3?=
+ =?utf-8?B?RzFxcjZkMWxxQzhrbEp5QTNZZWhxNFNURkN3MXV3RTk2SU1xNGY4eGhZbGgx?=
+ =?utf-8?B?T2NYM2xKd1ZNbENnTmZmNVhELzgxOFVwVTJCbmQzdVByV0htNWFadzdYMjl2?=
+ =?utf-8?B?czFIcnRGRmI2WUN0U2Ftc25TR2pWZXh4ZGo2WUFVVUVPZTFTSktCUEI5OXh5?=
+ =?utf-8?B?ZXYydnA3TEg2SWFWTzBWem45S2xQUCsyNVFwT0FQaHBINDJQV3VvRWJnQlR6?=
+ =?utf-8?B?aElPQTVGbVJySjB6R21JUW9MazE3WHJqdmNRTjUvQnhRWTVJQzZ5eGZvS0xx?=
+ =?utf-8?B?Ynp2ZjdDazFyTEhjK0NrVDk0S1d6eDNrKzVFUFYyK283cFBNNVNzdWtSL2FT?=
+ =?utf-8?B?T01nWUhOOWtiUU1LU3pSSkhXeFJsd2FNeG5WUkhETHdwLzEvK2YxYkNiY1FH?=
+ =?utf-8?Q?4c6zI87JIn0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6440.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MFZWZEk5eGZ0REYwUENGS1R3c1F6OUN5VU9wQkQzMGxyYW1sYThOQmNhZFZh?=
+ =?utf-8?B?ckhyUnR6TDRaSjAwRHI5STloUnQzdEk1OHZhVDB2ellOdE1jUUEza21OUm43?=
+ =?utf-8?B?Sy85WU9FdDRJTTZuZWMvQkZyL3NuOUhLc3ZRSHV4Y2JFNW5tV3dua2l3NXNl?=
+ =?utf-8?B?YzhSWkc1SmdjemgxaUROcjI4bllDN1ZHUjBnakZLMXVuYmYrQVNyNVFOQzhY?=
+ =?utf-8?B?cHhUR0ZhQlVwWHM5cFRtN1BuL2Q1NzlJTURDNTZWYVhvSzNHdzlUMndXa0ha?=
+ =?utf-8?B?Zy9HMDFDMEJFWEhGOC9mV1hOVWRxQ2UrRzBCNjdGVFZ5RmR6NTFRZGZhMXZH?=
+ =?utf-8?B?NHM5RXpuVGlGeEhBK0NUbytSNzZOSmY1T1VCeTVMamFNaEtwbXB6VExoWVVm?=
+ =?utf-8?B?a1BPeTNWZ1N1NjR5VFFyK2xidWRzMms2dVhLNjhOcnJuV3A5YmJ4N3J5VjVQ?=
+ =?utf-8?B?SGVRSlhkU2p3YnNrRTBsS0w3MjV6RUYvZTNoMFlZMDA5TTlhN1hHRTBhbEhJ?=
+ =?utf-8?B?cnUvVXpCZHJmaDIrRmgzVDBQRUJ5N2x0WFNLUFpyMDR4Nmx4eDI4UmhaNHFM?=
+ =?utf-8?B?MU9mUWh6blJEa3RIUXUyVmpqYlhRYWs0dStVQ0V4dEhiUzZSazF0Y1dyNVRz?=
+ =?utf-8?B?STJKQnNuaW40UnJGMEh2a2xZNDhtcE43THpXaXVITkVHOGpoeC9kTE9aU0di?=
+ =?utf-8?B?bzY2YmduV3g4OCtjSW5Lc1B3S2xsK3poSk9wUVE1bjQrUzlnZmV1TlZ1cXVY?=
+ =?utf-8?B?UXpNb3lFZVRSbTlrcE5sRFNueWNjcGg2UFltK2Y2WlhpWGNicEJvRXRGT1hE?=
+ =?utf-8?B?N0pCeVFWcFNtOHpGT0pwZGs5TGZIcGcvTnZZVUVBSHJPTTNGN2kwNUF2aDdN?=
+ =?utf-8?B?cVljL01sWDhxMnh5Vzc1dW9zVWtWZ0tHZW93aGhzOXo0VFdBek5HdDNXMHc4?=
+ =?utf-8?B?VUQxcmE0WVFaUVh5bnRRQkorVEI3YVh4QzBKTXFBeTFJeFZGSDhsZENLczV6?=
+ =?utf-8?B?V0sxVXM5ZFFkZ1kzeFloQjQ1QkZaeFJSWTEzKzBzSElIZFhBNHlIS1NxdWtD?=
+ =?utf-8?B?dE9tbU9rcDg3dTFaZjRMcEQxMzRRVnRjK0x2aEdzSHNmWXdCL0ljcEcvam9Z?=
+ =?utf-8?B?enI2MEladTEwakVVUnEwSktuLzh1RGJRSVFhQlpnSjZ6Y2hBSnpCN05yL1Z4?=
+ =?utf-8?B?ZkxkS0V3Y2NMYVlsOWVoaXcrSll2dGcwYTJkVGJwWTdMTlMwM2ZTOG1QZ1Na?=
+ =?utf-8?B?MUdqNDI1azNKNlJsK3RIYUgzTkRGUzk5aFQyQXNJY3JJZnA3cjNGMWdWU1Rh?=
+ =?utf-8?B?RFk3dmxuUVRVekNhUnFubSs0OFlTN0RTZjdCOWc0UmdublJvdUpLZ25rVURz?=
+ =?utf-8?B?UkF6QS9XK0FILzNTNVY0MFVXclBHSzhRZ25SWXlnN3QyYlErN25IMlFBbHJF?=
+ =?utf-8?B?SmhIcTBKWDNWWjJsVW9ROFNHNURLbVJ5MXNhY2N6ZmNCZ1U0cUkyT0pBV1VL?=
+ =?utf-8?B?WEFsQXNVODg0elVUQldVL05obHoxK015SS9pYXV1K3M1WnZ2TUF6bDZZT1dR?=
+ =?utf-8?B?cy8rdXZiWUR4dHczbERjZG4zV2dFR2VITFZvTk0raExaaXg1NEZEc2RHYnQ0?=
+ =?utf-8?B?dGNreVBScXBIVnNRQWNSVFNXVkVTVXROTDJnZHd1NzZON3hIMkRldGxHcUg5?=
+ =?utf-8?B?d3VLdVBDbDlLbkloRXJwQ2M5VmZBTkNXU29xWkptMXR6ZHJYYU82MzZkMHlM?=
+ =?utf-8?B?dGVRVVZsUXpHUnpnZElNNUJwbGRIZ1lTU3d6NUVpSmY0Ujhub2VzU3BielYx?=
+ =?utf-8?B?dDRDaUdJNS9jczAzUk8rcVpEMTM3bkRQQWs3L3N2Z0pmTDNhYzZoRldLYWtJ?=
+ =?utf-8?B?eG9hRVdQYkNNWXNjQzNsaCtuTlU4c1YwZ0FrSk83YVpHd3c4TWFORFNwSHRx?=
+ =?utf-8?B?SDZ5YXBqdFR4TFJxQVZGYWs0SW9wV3V3cEl5cjRNZEI3SkU0UytyZUNWcXBK?=
+ =?utf-8?B?TnRLQjhSRW9nUVowdlBFOERBRVdRbXd2V3c3dTNuT2FTaXdRb0VySGRlUnU1?=
+ =?utf-8?B?bWZMcEJkK3VadmlaMmtmYzRsNjE1M0FJZzdpWEZMWndySXF3Y1NJVkFNNFo4?=
+ =?utf-8?Q?KICQAHb4b0TmwbkVCBvGZ3yWX?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0eebfc7c-8416-452a-7381-08dd8e85ef72
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6440.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 23:13:25.7570
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: paMolVEmjhuRHHc+iAmKeJBE3budeM9iLhEZmIHQwBAPnsJbHsXpl/M9TCnem1togJEFPq3rYripyF0tlIlZIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6926
 
 
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -558,7 +558,8 @@ USERINCLUDE    :=3D \
-> >                 -I$(srctree)/include/uapi \
-> >                 -I$(objtree)/include/generated/uapi \
-> >                  -include $(srctree)/include/linux/compiler-version.h \
-> > -                -include $(srctree)/include/linux/kconfig.h
-> > +                -include $(srctree)/include/linux/kconfig.h \
-> > +                -include $(objtree)/include/generated/global-rebuild.h
->
-> Instead of adding a new file, why not just touch compiler-version.h?
 
-Because the compiler-version.h is in $(srctree), which might be
-in the read-only file system.
+On 5/8/2025 3:17 AM, Sakari Ailus wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+> Hi Hans,
+> 
+> On Wed, May 07, 2025 at 11:13:18PM +0200, Hans de Goede wrote:
+>> Hi Sakari,
+>>
+>> On 6-May-25 5:37 PM, Sakari Ailus wrote:
+>>> Hi Pratap,
+>>>
+>>> On Mon, May 05, 2025 at 01:11:26PM -0400, Pratap Nirujogi wrote:
+>>>> ISP device specific configuration is not available in ACPI. Add
+>>>> swnode graph to configure the missing device properties for the
+>>>> OV05C10 camera device supported on amdisp platform.
+>>>>
+>>>> Add support to create i2c-client dynamically when amdisp i2c
+>>>> adapter is available.
+>>>>
+>>>> Co-developed-by: Benjamin Chan <benjamin.chan@amd.com>
+>>>> Signed-off-by: Benjamin Chan <benjamin.chan@amd.com>
+>>>> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>>>> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>>>> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+>>>> ---
+>>
+>> <snip>
+>>
+>>>> +/*
+>>>> + * Remote endpoint AMD ISP node definition. No properties defined for
+>>>> + * remote endpoint node for OV05C10.
+>>>
+>>> How will this scale? Can you use other sensors with this ISP? Although if
+>>> you get little from firmware, there's not much you can do. That being said,
+>>> switching to DisCo for Imaging could be an easier step in this case.
+>>
+>> Note I've already talked to AMD about the way the camera setup
+>> is currently being described in ACPI tables is suboptimal and
+>> how they really should use proper ACPI description using e.g.
+>> a _CRS with an I2cSerialBus resource for the sensor.
+> 
+> That's one thing, yes, but it's not enough to get rid of the board code.
+> 
+>>
+>> Although I must admit I did not bring up the ACPI DisCo for imaging
+>> spec as something to also look at for future generations.
+> 
+> I think we should really try to get rid of the board code the raw cameras
+> on ACPI systems currently depend on, in future systems, instead of just
+> reducing it a little bit. MIPI DisCo for Imaging enables that.
+> 
+> I guess you're not very familiar with Intel-based ChromeOS systems in this
+> area? Maybe largely because they work out of the box. And there's no board
+> code for these systems in the kernel. These are based (albeit I'm not quite
+> sure about the latest ones) on older Linux-based definitions whereas newer
+> MIPI DisCo for Imaging spec is OS-independent.
+> 
+>>
+>> Note that there currently is hw shipping using the somewhat
+>> broken ACPI sensor description this glue driver binds to,
+>> so we're stuck with dealing with these ACPI tables as they
+>> are already out there in the wild.
+> 
+> I agree, there's little that can be done at this point.
+> 
+>>
+>> But yes for future hw generations it would be good to have
+>> a better description of the hw in ACPI.
+> 
+Hi Sakari, Hans,
 
+Thanks for your support and understanding. We will work internally and 
+ensure our future models adheres to MIPI DisCo Imaging spec.
 
-> But whatever the case, sure, I can live with this. :)
->
-> -Kees
->
+Thanks,
+Pratap
+
 > --
-> Kees Cook
+> Regards,
+> 
+> Sakari Ailus
 
-
-
---=20
-Best Regards
-Masahiro Yamada
 
