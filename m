@@ -1,167 +1,151 @@
-Return-Path: <linux-kernel+bounces-639310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C5BAAF5D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB81AAAF5E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 10:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E189C6E91
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:38:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239FB9C3313
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEC4262FCA;
-	Thu,  8 May 2025 08:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D37262FE2;
+	Thu,  8 May 2025 08:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="PrNROnZx"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8OzhZ1Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487E02620DE;
-	Thu,  8 May 2025 08:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5172620DE;
+	Thu,  8 May 2025 08:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693512; cv=none; b=oyZaHNws0FeSRhSncKXvy98pvp6C81qhBmBBnrj3mJuv/in0e1uCrAD+voYHgkCHMz/qCq/T51iUUQKwE61SIX4e6I+DmNg8PF9kuDCKyDKmhn3oXpW6pGbq4naqQIH0cioLlMApJF+iioIlJW5Acdhcxw47IHCu6937fMCtDSk=
+	t=1746693572; cv=none; b=IXwOZFotg2MWnCP9OYOe/9sIOTUBHVvnQNxLNYDCGdV1Vw2Pwuc8N/xpdH7Wn4epGRrmlavKkPPyeZbr6Mj/I8tB3gKSM/Kc2cK/dnT941+HkeFXIf6pFJRebjUSNReJ1j31x8B1dZdboNsY/fq70GCzKdxXmZMubYtcQDECrFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693512; c=relaxed/simple;
-	bh=k2Zp0OCJhicYzRUQR/Kgk6rk1liK2EZ01nmsvcrs+gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tW257IWPZRhxcxBoQtjIwXrFu9JmFLM5262uSXpAQUr1pr0h+KVPZMTUw6IzyCu3yhQzcVVTsig5C/bjAouG6h2vcEgq79GheYtVW4fbVAzxCDkku4ll54rld2MXL1dKLQ/QXhTnOEyJ+FpWI2X+SKOsfePuU237XlGFPgW6e9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=PrNROnZx; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 119011C00AB; Thu,  8 May 2025 10:38:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1746693506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckLCaz9JTwf1JWFkvqfAI949tTAoo5JbgEelAt8RQvk=;
-	b=PrNROnZxCeea0Jho3SCM2w2/XQ838ikowGDgqD5QtqDpcbs2e38VTtLBxxZMMMgBH106hN
-	ElEgO86ZtWA95vGDx4pxSfOv1o9I+6k7QtMEG7l7O3C1NTem1cc1t5S4b7wJXNH5bXaSdM
-	eWoeYLiJhf2uUsYUbdE6G4bbk2b6sMs=
-Date: Thu, 8 May 2025 10:38:25 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: andy@kernel.org, geert@linux-m68k.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	christophe.jaillet@wanadoo.fr, corbet@lwn.net,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
- LED driver
-Message-ID: <aBxtgZw6+BM36Rru@duo.ucw.cz>
-References: <aA/ineUBAM5IU79J@duo.ucw.cz>
- <20250429170220.8145-1-trannamatk@gmail.com>
+	s=arc-20240116; t=1746693572; c=relaxed/simple;
+	bh=yP9xdyLDn20icw2cXMc78rD9G2nlCYHASySS9/q/UWY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s2x7U4CWQgW7pNA1sgWC8vvJnj31wZyRT7nTe5PlGhjGTx+8RgR9/SUjEra8Z228maOVPFBxpwcHHlj9VGA0pYzL1FiPtFgshJZdZ+jmMdvNZBEpgbyRj/2QDu+cNB+0/KkObrOkZl2Fs0Oura8vtiUKS0YhjzCz2jeT4pz3q1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8OzhZ1Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0484C4CEEB;
+	Thu,  8 May 2025 08:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746693571;
+	bh=yP9xdyLDn20icw2cXMc78rD9G2nlCYHASySS9/q/UWY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=c8OzhZ1Zt1LdEDunQfxA0AbPbWBoY8rgntrXMh7h9KWi9r8TkOU3QirBvO7bAXcAr
+	 tAJsqliC+s/EUWOyXK2HlvKAUViLswals9YZT0CHnlboyIq/JUoAliN4Qsdcb5Hb7k
+	 lyZQ9K0AJvlcUo+C3cOKQ31GDtdUJihF6Vd8KggS64Ewil69fdIothcp0meS0+NFKc
+	 2Efp4XrTCE1qMGa3cHXY8aiso5mch13+ZCuE1Ufn0noCWaw5Xsu/bqlqxB9USx36rp
+	 FCjmgzkPklfNeN9g72d5U76p4dHOZ3ZjBfISika1yHUbqGkmt45CLKmwZBJwzH7+Nm
+	 j6K47UXiz5L+A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC484C3ABC0;
+	Thu,  8 May 2025 08:39:31 +0000 (UTC)
+From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
+Subject: [PATCH v2 0/3] KVM: arm64: Support FF-A 1.2 and SEND_DIRECT2 ABI
+Date: Thu, 08 May 2025 08:38:51 +0000
+Message-Id: <20250508-virtio-msg-ffa-v2-0-ed84f8053965@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DXdxuze0uvDm4WRw"
-Content-Disposition: inline
-In-Reply-To: <20250429170220.8145-1-trannamatk@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJttHGgC/03MPQ7CMAxA4atUnnGVug1/E/dADFFxWkskqZxQI
+ VW9OxET4ze8t0FmFc5wbTZQXiVLihV0aGCcXZwY5VkNZMgaa464ihZJGPKE3jskcv5E44U6a6B
+ Gi7KXz294f1R7TQHLrOz+N2RqYM5tTzT0Q4cdLqyvm4Twji6WdkwB9v0L5+hkpp0AAAA=
+X-Change-ID: 20250506-virtio-msg-ffa-22af72c92150
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, arve@android.com, lpieralisi@kernel.org, 
+ qwandor@google.com, jean-philippe@linaro.org, james.morse@arm.com, 
+ perl@immunant.com, tabba@google.com, kernel-team@android.com, 
+ armellel@google.com, qperret@google.com, sebastianene@google.com, 
+ ahomescu@google.com, Per Larsen <perlarsen@google.com>, 
+ Ayrton Munoz <ayrton@google.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746693571; l=2462;
+ i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
+ bh=yP9xdyLDn20icw2cXMc78rD9G2nlCYHASySS9/q/UWY=;
+ b=BcBWajvQYRyKmjeB5Yj6Zkxe9AeDkqG3prhNn9yzobQ+fCQtnj/x0tFJCYFQ1Oxyv0zXqEPWM
+ MY7RFpWic5iDyzSxgN/rDha05UcTIX/GW5slH1mzGzeNmIwCB5Ce9ja
+X-Developer-Key: i=perlarsen@google.com; a=ed25519;
+ pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
+X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
+ auth_id=402
+X-Original-From: Per Larsen <perlarsen@google.com>
+Reply-To: perlarsen@google.com
 
+Hi,
 
---DXdxuze0uvDm4WRw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The FF-A 1.2 specification introduces a new SEND_DIRECT2 ABI which
+allows registers x4-x17 to be used for the message payload. This patch
+set prevents the host from using a lower FF-A version than what has
+already been negotiated with the hypervisor. This is necessary because
+the hypervisor does not have the necessary compatibility paths to
+translate from the hypervisor FF-A version to a previous version.
 
-Hi!
+Support for FF-A 1.2 in the hypervisor is added as a precursor to the
+addition of the FFA_MSG_SEND_DIRECT_REQ2 messaging interface. The bulk
+of this change has to do with the upgrade to SMCCC 1.2 required by
+FF-A 1.2. Additionally, unimplemented FF-A 1.2 interfaces are added to
+the list of unsupported functions.
 
-> > > Thank you, Pavel, for the confirmation.
-> > > Thank you, Geert, for the review and the question.
-> > >=20
-> > > I would like to make it clearer.
-> > >=20
-> > > On Mon, 28 Apr 2025 Geert Uytterhoeven wrote:
-> > >=20
-> >=20
-> > > > > > > - Move driver to drivers/auxdisplay/ instead of drivers/leds/.
-> > > > > > > - Rename files from leds-lp5812.c/.h to lp5812.c/.h.
-> > > > > > > - Move ti,lp5812.yaml binding to auxdisplay/ directory,
-> > > > > > >   and update the title and $id to match new path.
-> > > > > > > - No functional changes to the binding itself (keep Reviewed-=
-by).
-> > > > > > > - Update commit messages and patch titles to reflect the move.
-> > > > > > > - Link to v7: https://lore.kernel.org/linux-leds/202504221901=
-21.46839-1-trannamatk@gmail.com/
-> > > > > >
-> > > > > > Out of sudden without discussing with auxdisplay maintainers/re=
-viewers?
-> > > > > > Thanks, no.
-> > > > > > Please, put into the cover letter the meaningful summary of wha=
-t's
-> > > > > > going on and why this becomes an auxdisplay issue. Brief review=
- of the
-> > > > > > bindings sounds more likely like LEDS or PWM subsystems.
-> > > > >
-> > > > > It is 4x3 matrix. That means it is not suitable for LEDs. I don't
-> > > > > believe it is suitable for PWM, either -- yes, it is 36 PWM outpu=
-ts,
-> > > > > but...
-> > > >=20
-> > > > Is it intended to be used as a 4x3 matrix, or is this just an inter=
-nal
-> > > > wiring detail, and should it be exposed as 12 individual LEDs inste=
-ad?
-> > >=20
-> > > The 4=C3=973 matrix is a real and fundamental aspect of the LP5812=E2=
-=80=99s operation.
-> > > It is not just an internal wiring detail.
-> > > The device adopts a Time-Cross-Multiplexing (TCM) structure, where 4 =
-output
-> > > pins control 12 LED dots individually through scanning. Each pin incl=
-udes
-> > > both high-side and low-side drive circuits, meaning matrix multiplexi=
-ng is
-> > > required for proper operation =E2=80=94 it cannot be treated as 12 co=
-mpletely
-> > > independent LEDs.
-> >=20
-> > Scanning is really a detail.
-> >=20
-> > If this is used as rectangular 4x3 display, then it goes to auxdisplay.
-> >=20
-> > If this is used as a power LED, SD activity LED, capslock and numlock
-> > ... placed randomly all around the device, then it goes LED subsystem.
->=20
-> The LP5812 is used for LED status indication in devices like smart speake=
-rs,
-> wearables, and routers, not as a structured rectangular display.
+Tested by booting Android under QEMU and loading Trusty as the guest
+VM and observing the SEND_DIRECT2 ABI being used successfully during
+guest boot.
 
-Show us one device where it is used, photo would be best. I suspect
-that the router use might indeed qualify for LED subsystem.
+Changes since v1:
+- 1/3: Simplify commit message; drop long comment in do_ffa_version
+- 2/3: Correct use of Co-developed-by: footer
+       s/arm_smccc_1_2_smc_fallback/arm_smccc_1_x_smc/
+       Always access hyp_ffa_version w/lock held
+       Remove superfluous comments in ffa_call_supported
+       Add and use FFA_FEAT_RXTX_MIN_SZ_MASK instead of constant
+       Add FFA_PARTITION_INFO_GET_REGS to calls that require SMCCC 1.2
+- 3/3: Always access hyp_ffa_version w/lock held
+       Correct formatting
 
-You described is at 4x3 display, but it is really used as 4xRGB?
+Thanks,
+Per Larsen
 
-> Given that, it seems to match the LED subsystem better than auxdisplay, d=
-oesn't it?
+Per Larsen (3):
+  KVM: arm64: Restrict FF-A host version renegotiation
+  KVM: arm64: Bump the supported version of FF-A to 1.2
+  KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in host handler
 
-Seems so, yes. From description, I assumed it was 4x3xRGB, not 4xRGB.
+ arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
+ arch/arm64/kvm/hyp/nvhe/ffa.c    | 203 +++++++++++++++++++++++++++++--
+ include/linux/arm_ffa.h          |   3 +
+ 3 files changed, 199 insertions(+), 8 deletions(-)
+
+--
+2.49.0
+
+---
+Per Larsen (3):
+      KVM: arm64: Restrict FF-A host version renegotiation
+      KVM: arm64: Bump the supported version of FF-A to 1.2
+      KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in host handler
+
+ arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
+ arch/arm64/kvm/hyp/nvhe/ffa.c    | 203 +++++++++++++++++++++++++++++++++++++--
+ include/linux/arm_ffa.h          |   3 +
+ 3 files changed, 199 insertions(+), 8 deletions(-)
+---
+base-commit: 01f95500a162fca88cefab9ed64ceded5afabc12
+change-id: 20250506-virtio-msg-ffa-22af72c92150
 
 Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
+-- 
+Per Larsen <perlarsen@google.com>
 
---DXdxuze0uvDm4WRw
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBxtgQAKCRAw5/Bqldv6
-8mN6AJwN7zf8tTTp+bxWAqTTF1AoTBaggQCbBSUYvVJF5PV+ahfMfUjtZcxAwkw=
-=EZPf
------END PGP SIGNATURE-----
-
---DXdxuze0uvDm4WRw--
 
