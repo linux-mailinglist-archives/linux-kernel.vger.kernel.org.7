@@ -1,135 +1,440 @@
-Return-Path: <linux-kernel+bounces-639054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7117AAF238
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:53:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10560AAF23E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1603A4E2972
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:53:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50C397B84B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF9720D519;
-	Thu,  8 May 2025 04:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JK1qOFm9"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447D320D51A;
+	Thu,  8 May 2025 04:57:32 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE3119D080;
-	Thu,  8 May 2025 04:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697E819D080;
+	Thu,  8 May 2025 04:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746680027; cv=none; b=tSJKbDvZm6MNWV3wM7zD0EcKHDqDYtp24OB1regZPd+ziM/k0L+JzP6oWH5kZ4FbqSOL23btzL00S++CVsSF4kZjKa2Mgr6MfUvpYzdTHDqWKN72+s2aK82uhi+RcOYmzjG3xwIenBoLKKt/XmHPf0qJ3JT0OaW89+uDUQuOePM=
+	t=1746680251; cv=none; b=ahaNpOngeHxgwQdbTM+WO+aEj2DzV8KCIG+789J80hqUDRtx2MO+48m4H9fnzoAXdFq/l2bwTGd3M1HgTjALL2Et1a6CDTa8JhaYFsTm8Z7D288vQkenGONRIUQ4XRMJqjMx4FcdMUWQhhzEE9NXmNrjBMJ2mpsY9sP5T10mFYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746680027; c=relaxed/simple;
-	bh=Rqlhl8scJWK1KFRqpMadZ1k19G5+0GHAMj4w2ohm/zY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+QyUD7rDJKj35W5pYfg1+EK1AQbwQAMgE9ZXnD0ob9ytBDm0BP5Aemtxay2ri9P9mkZyRWKPRFQ2YBgR1lWWYhyOsgKEXPms6clZB2HF+fL2OnBIc8b3fyirGqXM2Uru5zJgkhLDtbW9qD1C3Dp3q46YYDMhu/DYVusOhzgGiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JK1qOFm9; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22e70a9c6bdso10574875ad.3;
-        Wed, 07 May 2025 21:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746680025; x=1747284825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX+buwoA+SqSG7r/CEcjs5/GgQYEZL4oqoCzZ/o1bnQ=;
-        b=JK1qOFm9MrnBpyNHreQ+LXzI7/Go+N3vDZpbBXNeD3uhnD6+kpnoyfKUfiaSZ9phFB
-         sca+oAtzj5yrhEUYUAMZio8y16azdFy1nXGY9LC6XC0pQ2WN2WgrEW8+Usv1SxEiiIN7
-         z2AdtY2Fy/psFG8m+QSmWdymcyL8VnmkGcNzngixitcY4Xzn5w3f1cr4uclf7XfV9Ki+
-         XsfxRaEXWqKxigvwTEyc7cRZKRYunM3eKdCwM7F5PbpviAIJQgk//d2jbkMfiYcHdcFw
-         Eh15vmXiqiizPXZl271cd/BNvw2XePoOk6X/wpBbXw8KsMccC0i/CtyWOJanboC+Qt/I
-         kdrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746680025; x=1747284825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CX+buwoA+SqSG7r/CEcjs5/GgQYEZL4oqoCzZ/o1bnQ=;
-        b=GflK8yUrwhp+iWnWmenH0pa3HG/Sp35y15EhV/OPtF59/vxdtqunwkU4BtE2f83IJS
-         qiF7ktP67rqTDc+pgujSmzMSNw+qY0BDpz8StcpdbEMT4C3zT7XSbGN1pzHdNpDQTLyF
-         ygBpD1iV/hhb7NXqk+WP7IAAZ7/kUCfTekytNFr1zePp3v8vl8myvB5NOmULRdpaxGvW
-         jYhczAdV3lmeWNyT5sNOgkU93gK1fd/COd2MbD3R9F952Op6pr/m2AvMxnJDCFy2x0tU
-         vLOQe7QHJxMxETdgmpSBDsvGACJUt4NK6LFg7iXmXeHI+De5bY3pjktqgsRALJjWC3WS
-         kp7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUXGiLqz3ZDY8bzv5BK1u3JB+lSYUkB6rlhnCcSHw8IfNlTec0CiAWHHeWhz6V4YtvIpIpBqolWvBiBLE+h@vger.kernel.org, AJvYcCUwL0VIM/VrzWpRwXFNWMgMpqf3hqr+MGHh9TL1lbRSNxnkze/3UEg6mnC/glbU2m4TU+i5jfEQU99tVbSvecU=@vger.kernel.org, AJvYcCXofX0dylYCkvnC7qcef0Bp6Uj3iQ0QmTHwmqx2o8CAMy9iuJCRJ+Fv6H6iBgxqddaN09nPKtLSHlqm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR7BI4QfEmHW/qbmrLVLD5uhnwjRTJ2kvzMfOt8ThIK1DYFLDh
-	geh9GVlAvIpj1f14GIewXTgdIXbi2oEWH3etYhbvglSCw91veGxP
-X-Gm-Gg: ASbGncty4CRvGNmDFdMMGWiAGB/boRyarWb/z8T8zUVWCsWovZ+F5ohsr6nLLtkK2O0
-	x8KYfXfTUCelORpP3GyOuNyMEDw2JoCcoa4fH8kzfFzzOnKH9ch4dKCkkLqAQYyL8+AykR/ffy1
-	IWfwjTYmvmFjCvPrjVAzQlirtPc+mH3Hmjwzd604kDI+r5e4buKlBFLbq71//2ogam+GlpSwl8l
-	2lMhUyoIEqklAOai/xErHT9rENvXXoLb+iTayVpryOk7qaOvwA/xuwYgGs+ct36Xs/gp1IpS70k
-	pnWUwUDoFb2duw6c0if3
-X-Google-Smtp-Source: AGHT+IF3yfQ3vEhkvHrsH76UO8Q6p2XlUioNaCrv8r5owADj/fqe0m8eUgPdCq40yC+V8F8mtSG/gw==
-X-Received: by 2002:a17:902:ecc4:b0:224:24d3:6103 with SMTP id d9443c01a7336-22e5ecd1211mr101208945ad.35.1746680025350;
-        Wed, 07 May 2025 21:53:45 -0700 (PDT)
-Received: from lg ([2601:646:8f03:9fee:9548:d4f6:7b28:38bb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e459e1677sm41921675ad.257.2025.05.07.21.53.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 21:53:44 -0700 (PDT)
-From: fan <nifan.cxl@gmail.com>
-X-Google-Original-From: fan <fan@debian>
-Date: Wed, 7 May 2025 21:53:40 -0700
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cxl/hdm: Clean up a debug printk
-Message-ID: <aBw41HRNXEj3tgYG@lg>
-References: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+	s=arc-20240116; t=1746680251; c=relaxed/simple;
+	bh=8b3gtgqTOkIJN48aoVeSMxCiIVW+SUt8I210ZRFKtYY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T3o2dAakNxRYC7NUwWvigCKDmU+DGktg717WfAmhZTTe4tX0/TafSrjHfk0arsO5zHgvmgRm+omb84XSwC/qulSlJQTUCXvobmQhFY6K9s8+SOSanrKk/pO6cPRbVofcPawILMazhl9tKqsGvuHmu4109br3qiik3MAjffYwf1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8889B201D82;
+	Thu,  8 May 2025 06:57:22 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BC1F201D7D;
+	Thu,  8 May 2025 06:57:22 +0200 (CEST)
+Received: from lsv15573.swis.ro-buh01.nxp.com (lsv15573.swis.ro-buh01.nxp.com [10.172.0.77])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id F18BE202DC;
+	Thu,  8 May 2025 06:57:20 +0200 (CEST)
+From: Aman Kumar Pandey <aman.kumarpandey@nxp.com>
+To: linux-kernel@vger.kernel.org,
+	linux-i3c@lists.infradead.org,
+	alexandre.belloni@bootlin.com,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org
+Cc: vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com,
+	Frank.Li@nxp.com,
+	Aman Kumar Pandey <aman.kumarpandey@nxp.com>
+Subject: [PATCH v2 1/2] dt-bindings: i3c: Add NXP P3H2x4x i3c-hub support
+Date: Thu,  8 May 2025 07:57:10 +0300
+Message-Id: <20250508045711.2810207-1-aman.kumarpandey@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Thu, Feb 22, 2024 at 09:14:02AM +0300, Dan Carpenter wrote:
-> Smatch complains that %pa is for phys_addr_t types and "size" is a u64.
-> 
->     drivers/cxl/core/hdm.c:521 cxl_dpa_alloc() error: '%pa' expects
->     argument of type 'phys_addr_t*', argument 4 has type 'ullong*
-> 
-> Looking at this, to me it seems more useful to print the sizes as
-> decimal instead of hex.  Let's do that.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+Add bindings for the NXP P3H2x4x (P3H2440/P3H2441/P3H2840/P3H2841)
+multiport I3C hub family. These devices connect to a host via
+I3C/I2C/SMBus and allow communication with multiple downstream
+peripherals.
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+Signed-off-by: Aman Kumar Pandey <aman.kumarpandey@nxp.com>
+Signed-off-by: Vikash Bansal <vikash.bansal@nxp.com>
+---
+V1 -> V2: Cleaned up coding style and addressed review comments
+---
+ .../bindings/i3c/p3h2840-i3c-hub.yaml         | 332 ++++++++++++++++++
+ MAINTAINERS                                   |   8 +
+ 2 files changed, 340 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/p3h2840-i3c-hub.yaml
 
->  drivers/cxl/core/hdm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 7d97790b893d..0b1843631b26 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -518,9 +518,9 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
->  	}
->  
->  	if (size > avail) {
-> -		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
-> +		dev_dbg(dev, "%llu exceeds available %s capacity: %llu\n", size,
->  			cxled->mode == CXL_DECODER_RAM ? "ram" : "pmem",
-> -			&avail);
-> +			(u64)avail);
->  		rc = -ENOSPC;
->  		goto out;
->  	}
-> -- 
-> 2.43.0
-> 
+diff --git a/Documentation/devicetree/bindings/i3c/p3h2840-i3c-hub.yaml b/Documentation/devicetree/bindings/i3c/p3h2840-i3c-hub.yaml
+new file mode 100644
+index 000000000000..f3b5aabf5fe0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i3c/p3h2840-i3c-hub.yaml
+@@ -0,0 +1,332 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2025 NXP
++
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i3c/p3h2840-i3c-hub.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: P3H2X4X I3C HUB
++
++maintainers:
++  - Vikash Bansal <vikash.bansal@nxp.com>
++  - Aman Kumar Pandey <aman.kumarpandey@nxp.com>
++
++description: |
++  P3H2x4x (P3H2440/P3H2441/P3H2840/P3H2841) is a family of multiport I3C
++  hub devices that connect to:-
++  1. A host CPU via I3C/I2C/SMBus bus on upstream side and connect to multiple
++     peripheral devices on the downstream  side.
++  2. Have two Controller Ports which can support either
++     I2C/SMBus or I3C buses and connect to a CPU, BMC or SOC.
++  3. P3H2840/ P3H2841 are 8 port I3C hub with eight I3C/I2C Target Port.
++  4. P3H2440/ P3H2441 are 4 port I3C hub with four I3C/I2C Target Port.
++     Target ports can be configured as I2C/SMBus, I3C or GPIO and connect to
++     peripherals.
++
++allOf:
++  - $ref: i3c.yaml#
++
++properties:
++  $nodename:
++    pattern: "^hub@[@.*]+,[0-9a-f]+$"
++
++  Compatible:
++    const: nxp,p3h2x4x
++
++  cp0-ldo-enable:
++    type: boolean
++    description:
++      Enables the on-die LDO for controller Port 0.
++
++  cp1-ldo-enable:
++    type: boolean
++    description:
++      Enables the on-die LDO for controller Port 1.
++
++  tp0145-ldo-enable:
++    type: boolean
++    description:
++      Enables the on-die LDO for target ports 0/1/4/5.
++
++  tp2367-ldo-enable:
++    type: boolean
++    description:
++      Enables the on-die LDO for target ports 2/3/6/7.
++
++  cp0-ldo-microvolt:
++    description:
++      Selects the voltage for controller Port 0, in microvolts.
++    enum: [1000000, 1100000, 1200000, 1800000]
++    default: 1000000
++
++  cp1-ldo-microvolt:
++    description:
++      Selects the voltage for controller Port 1, in microvolts.
++    enum: [1000000, 1100000, 1200000, 1800000]
++    default: 1000000
++
++  tp0145-ldo-microvolt:
++    description:
++      Selects the voltage for target Port 0/1/4/5, in microvolts.
++    enum: [1000000, 1100000, 1200000, 1800000]
++    default: 1000000
++
++  tp2367-ldo-microvolt:
++    description:
++      Selects the voltage for target Port 2/3/6/7, in microvolts.
++    enum: [1000000, 1100000, 1200000, 1800000]
++    default: 1000000
++
++  tp0145-pullup-ohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Selects the pull up resistance for target Port 0/1/4/5, in ohms.
++    enum: [250, 500, 1000, 2000]
++    default: 500
++
++  tp2367-pullup-ohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Selects the pull up resistance for target Port 2/3/6/7, in ohms.
++    enum: [250, 500, 1000, 2000]
++    default: 500
++
++  cp0-io-strength-ohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Selects the IO drive strength for controller Port 0, in ohms.
++    enum: [20, 30, 40, 50]
++    default: 20
++
++  cp1-io-strength-ohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Selects the IO drive strength for controller Port 1, in ohms.
++    enum: [20, 30, 40, 50]
++    default: 20
++
++  tp0145-io-strength-ohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Selects the IO drive strength for target port 0/1/4/5, in ohms.
++    enum: [20, 30, 40, 50]
++    default: 20
++
++  tp2367-io-strength-ohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Selects the IO drive strength for target port 2/3/6/7, in ohms.
++    enum: [20, 30, 40, 50]
++    default: 20
++
++patternProperties:
++  "@[0-7]$":
++    type: object
++    additionalProperties: false
++    description:
++      I3C HUB Target Port child, should be named as target-port@<target-port-id>
++
++    properties:
++      reg:
++        description: |
++          The I3C HUB Target Port number.
++        minimum: 0
++        maximum: 0x07
++
++      mode:
++        enum: [i3c, smbus, i2c, gpio]
++        description:
++          I3C HUB Target Port mode setting to control Target Port functionality.
++          As per now it is oly supporting SMBus, i2c and i3c( i2c mode will work
++          with hub network).
++
++      pullup-enable:
++        type: boolean
++        description:
++          Enables the on-die pull-up for Target Port.
++
++      ibi-enable:
++        type: boolean
++        description:
++          Enables the IBI for Target Port.
++
++      local_dev:
++        $ref: /schemas/types.yaml#/definitions/uint8-array
++        description: |
++          SMBus Target Agent can discard transactions of downstream device and not generate an IBI to upstream I3C Hub
++          Controller Port. Up to 8 device (addresses) can be configured as local Devices.
++
++          This property is optional. If not provided, local device list will empty.
++
++      always-enable:
++        type: boolean
++        description:
++          Enables the hub network (Controller port -> target port).
++
++    patternProperties:
++      "@[0-9a-f]+$":
++        type: object
++        additionalProperties: false
++        description: |
++          I2C child, should be named: <device-type>@<i2c-address>
++
++        properties:
++          compatible:
++            description:
++              Compatible of the I2C/SMBus downstream device.
++
++          reg:
++            description: |
++              I2C address, Downstream device address which are connected to target port.
++            minimum: 0
++            maximum: 0x7f
++
++    required:
++      - compatible
++      - reg
++
++  "@[0-9a-f]+,[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++    description: |
++      I3C child, should be named: <device-type>@<static-i2c-address>,<i3c-pid>
++
++    properties:
++      reg:
++        items:
++          - items:
++              - description: |
++                  Encodes the static I2C address. Should be 0 if the device does
++                  not have one (0 is not a valid I2C address).
++                minimum: 0
++                maximum: 0x7f
++              - description: |
++                  First half of the Provisioned ID (following the PID
++                  definition provided by the I3C specification).
++
++                  Contains the manufacturer ID left-shifted by 1.
++              - description: |
++                  Second half of the Provisioned ID (following the PID
++                  definition provided by the I3C specification).
++
++                  Contains the ORing of the part ID left-shifted by 16,
++                  the instance ID left-shifted by 12 and extra information.
++
++      assigned-address:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0x1
++        maximum: 0xff
++        description: |
++          Dynamic address to be assigned to this device. In case static address is
++          present (first cell of the reg property != 0), this address is assigned
++          through SETDASA. If static address is not present, this address is assigned
++          through SETNEWDA after assigning a temporary address via ENTDAA.
++
++    required:
++      - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i3c {
++        #address-cells = <3>;
++        #size-cells = <0>;
++
++        hub@70,236153000c2{
++            #address-cells = <1>;
++            #size-cells = <0>;
++            reg = <0x70 0x236 0x3000c2>;
++            assigned-address = <0x50>;
++
++            cp0-ldo-microvolt = <1800000>;
++            cp1-ldo-microvolt = <1800000>;
++            tp0145-ldo-microvolt = <1800000>;
++            tp2367-ldo-microvolt = <1800000>;
++            tp0145-pullup-ohm = <1000>;
++            tp2367-pullup-ohm = <1000>;
++            cp0-io-strength-ohm = <50>;
++            cp1-io-strength-ohm = <50>;
++            tp0145-io-strength-ohm = <50>;
++            tp2367-io-strength-ohm = <50>;
++
++            target-port@0 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                reg = <0x0>;
++                mode = "smbus";
++                pullup-enable;
++
++                eeprom@57 {
++                    compatible = "atmel,24c32";
++                    reg = <0x57>;
++                    pagesize = <32>;
++                    wp-gpios = <&gpio2 2 0>;
++                    num-addresses = <8>;
++                };
++            };
++
++            target-port@2 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                reg = <0x2>;
++                mode = "i3c";
++                pullup-enable;
++
++                sensor@68,39200144004 {
++                  reg = <0x68 0x392 0x144004>;
++                  assigned-address = <0xa>;
++                };
++            };
++        };
++    };
++
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        hub@70 {
++            #address-cells = <1>;
++            #size-cells = <0>;
++            compatible = "nxp,p3h2x4x";
++            reg = <0x70>;
++
++            cp0-ldo-microvolt = <1800000>;
++            cp1-ldo-microvolt = <1800000>;
++            tp0145-ldo-microvolt = <1800000>;
++            tp2367-ldo-microvolt = <1800000>;
++            tp0145-pullup-ohm = <1000>;
++            tp2367-pullup-ohm = <1000>;
++            cp0-io-strength-ohm = <50>;
++            cp1-io-strength-ohm = <50>;
++            tp0145-io-strength-ohm = <50>;
++            tp2367-io-strength-ohm = <50>;
++
++            target-port@0 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                reg = <0x0>;
++                mode = "smbus";
++                pullup-enable;
++
++                eeprom@57 {
++                    compatible = "atmel,24c32";
++                    reg = <0x57>;
++                    pagesize = <32>;
++                    wp-gpios = <&gpio2 2 0>;
++                    num-addresses = <8>;
++                };
++            };
++
++            target-port@2 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                reg = <0x2>;
++                mode = "i2c";
++                pullup-enable;
++                always-enable;
++            };
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index af686e0bb6d7..38e197f20683 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17167,6 +17167,14 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+ F:	sound/soc/codecs/tfa989x.c
+ 
++NXP P3H2X4X I3C-HUB DRIVER
++M:	Vikash Bansal <vikash.bansal@nxp.com>
++M:	Aman Kumar Pandey <aman.kumarpandey@nxp.com>
++L:	linux-kernel@vger.kernel.org
++L:	linux-i3c-owner@lists.infradead.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
++
+ NZXT-KRAKEN2 HARDWARE MONITORING DRIVER
+ M:	Jonas Malaco <jonas@protocubo.io>
+ L:	linux-hwmon@vger.kernel.org
+-- 
+2.25.1
+
 
