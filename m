@@ -1,135 +1,156 @@
-Return-Path: <linux-kernel+bounces-638966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF97AAF134
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:41:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4EEDAAF122
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 964877A9238
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 02:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D404C494C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 02:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C501DB366;
-	Thu,  8 May 2025 02:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="gOaByPWR"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382392CA9
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 02:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AEB1D514F;
+	Thu,  8 May 2025 02:28:07 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FEB4B1E40;
+	Thu,  8 May 2025 02:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746672061; cv=none; b=YZdflAexm67kBRTsaGwXq62gHZ/4s86KheQQ0vC5ynZrrUXITwBfhvyoJbeCLn50Oamej8qgEofskUQXyEzYwra9s2+ETpb2UqqbOQa7V93khF/+CPBM9wBFaU5MRNDbtop82Zrmr450Pv3sJDfO7n8UBNTgev1edheTjmYzjXw=
+	t=1746671287; cv=none; b=rsf2ITQ1NxSYVkAEvvB3GVFTb1HdJqzf/XsrBAAJOXh7YL9IrMciDCIMWUKO5gxsQqHQwFXJCZDQqtkxfzRkI3iJttW9efRx1UVVUU/dgTOtQNnWDQ4f//a0lZmtcz3EMzfOMRlz/n4/4Q6IYpWgyR4GZyKIO3nbkhdGO4aSHA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746672061; c=relaxed/simple;
-	bh=VnpsO50CPhOp2HWeeEdpcY39S0L3XrM0y40y2KK/BVo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=gwcQnt6FghMHJLIlhHtdoxHnIhOBKllT15X2WSD0rGqsBv5EEEz3mawrCbCoY9Qy9vX+vN/nw7ZuCHX26wZIvuKZJaePE9Wb3yYiKcvBEmO3df8nXtRo5Gh+XPb85X0sQvo9XhDkh4I/i1BwXEGF5q4Jh7cAqvqpn4/Xzxoj79Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=gOaByPWR reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=VWEm5WKg8zaftzygDyDpLnRfJlPy7emQwfZ7p8GoLlE=; b=g
-	OaByPWRzWChH50jtR09Owbq9gN0zhPgOqnVhKhdd3x6EuGHiqn/g0SVyWjmtBsct
-	DSvYCSgrxGfTzdl2QMseSy2en97b+p3MWzWOfpBYOPoXcjBNcvQd2MB1ywv3o87L
-	yLIzljT86keaJXQEASN+PrphAtHTO6/mOLNHH3nzLA=
-Received: from 00107082$163.com ( [111.35.191.17] ) by
- ajax-webmail-wmsvr-40-127 (Coremail) ; Thu, 8 May 2025 10:24:55 +0800 (CST)
-Date: Thu, 8 May 2025 10:24:55 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Suren Baghdasaryan" <surenb@google.com>
-Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] alloc_tag: avoid mem alloc and iter reset when reading
- allocinfo
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <CAJuCfpFAUdqqvFPfe_OLR76c0bX_ngwG=JKC42pVB+WAeX4w0w@mail.gmail.com>
-References: <20250507175500.204569-1-00107082@163.com>
- <a0ebf2e.b422.196abf97373.Coremail.00107082@163.com>
- <CAJuCfpFAUdqqvFPfe_OLR76c0bX_ngwG=JKC42pVB+WAeX4w0w@mail.gmail.com>
-X-NTES-SC: AL_Qu2fBPqcvkgi4ySZbekZnEYQheY4XMKyuPkg1YJXOp80lyTS1i8PZ25IJ2Ls0fmBKwSmoQmJUCZj9eRhRIVjWqiZ0Jl9/nlmXEbSJ+Z+JFTt
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1746671287; c=relaxed/simple;
+	bh=GWLPABjtwDZJeM1JnHBCLTMLLT0BYqLu2MPCD63xbA0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kpDWw3TmBWdI9If87bVvqCB9/t4u2jM7E/qmY5Z6OjfakPPeRKEncEpoJfehGCQ66N6ouD1L+xY4nEyABBPdgnxFowXvkHTwzPkyEoYWpZtBQacZBJYPYqWinMYGOhdnpkaqkb/78W7w4o8wjhoh62AAQawrgRWbtCB4aG4Nv0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwCXnXmaFhxodjQtAw--.21536S2;
+	Thu, 08 May 2025 10:27:38 +0800 (CST)
+Received: from phytium.com.cn (unknown [123.150.8.50])
+	by mail (Coremail) with SMTP id AQAAfwAHmiOMFhxoV08ZAA--.6541S3;
+	Thu, 08 May 2025 10:27:25 +0800 (CST)
+From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+To: Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com,
+	rppt@kernel.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	akpm@linux-foundation.org,
+	alison.schofield@intel.com,
+	rrichter@amd.com,
+	bfaccini@nvidia.com,
+	haibo1.xu@intel.com,
+	david@redhat.com,
+	chenhuacai@kernel.org
+Cc: linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	chenbaozi@phytium.com.cn,
+	loongarch@lists.linux.dev,
+	Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Subject: [PATCH v3 1/1] mm: numa_memblks: introduce numa_add_reserved_memblk
+Date: Thu,  8 May 2025 10:27:19 +0800
+Message-Id: <20250508022719.3941335-1-wangyuquan1236@phytium.com.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4b78ebee.26dc.196adb5ce7e.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:fygvCgD3_6j4FRxoP3ymAA--.56913W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqAZGqmgb7oIe+QADs5
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAfwAHmiOMFhxoV08ZAA--.6541S3
+X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQADAWgaZs4InAAnsq
+Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=wangyuquan
+	1236@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXFW7Ar4xuF1kGw43CFy8Krg_yoW5CFW5pa
+	yUG3Z8Xa1xGw1xGw1xuryj9w1S93WrKr1DJFZrWrsxZF4rWry2vr48tFsxZr1DtrW7Zr1F
+	gr4vyw15uw1rAFUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+	UUUUU
 
-CgpBdCAyMDI1LTA1LTA4IDA3OjQyOjU2LCAiU3VyZW4gQmFnaGRhc2FyeWFuIiA8c3VyZW5iQGdv
-b2dsZS5jb20+IHdyb3RlOgo+T24gV2VkLCBNYXkgNywgMjAyNSBhdCA2OjE54oCvUE0gRGF2aWQg
-V2FuZyA8MDAxMDcwODJAMTYzLmNvbT4gd3JvdGU6Cj4+Cj4+IEhpLAo+PiBKdXN0IHdhbnQgdG8g
-c2hhcmUgaG93IEkgbm90aWNlIHRob3NlIG1lbW9yeSBhbGxvY2F0aW9uIGJlaGFpdm9yczogdGhl
-IGN1bXVsYXRpdmUgY291bnRlcnN+IQo+Pgo+PiBXaXRoIGN1bXVsYXRpdmUgY291bnRlcnMsIEkg
-Y2FuIGlkZW50aWZ5IHdoaWNoIG1vZHVsZSBrZWVwcyBhbGxvYy9mcmVlIG1lbW9yeSwgYnkgdGhl
-IHJhdGlvIGJldHdlZW4KPj4gIGN1bXVsYXRpdmUgY2FsbHMgYW5kIHJlbWFpbmluZyBjYWxscywg
-YW5kIG1heWJlIGFuIG9wdGltaXphdGlvbiBjb3VsZCBiZSBhcHBsaWVkLgo+PiBGb2xsb3dpbmcg
-aXMgdG9wMTYgSSBnb3Qgb24gbXkgc3lzdGVtOgo+Pgo+PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0t
-LS0tLS0tLS0tLS0rCj4+IHwgICAgICAgICAgICAgICAgICBhbGxvYyAgICAgICAgICAgICAgICAg
-IHwgY2FsbHMgfCBjdW11bGF0aXZlIGNhbGxzIHwgICAgICAgcmF0aW8gICAgICAgIHwKPj4gKy0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0rLS0tLS0tLS0t
-LS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tKwo+PiB8ICAgICAgICAgICAgZnMvc2VxX2Zp
-bGUuYzo1ODQgICAgICAgICAgICB8ICAgMiAgIHwgICAgIDE4MDY0ODI1ICAgICB8ICAgICA5MDMy
-NDEyLjUgICAgICB8Cj4+IHwgICAgICAgICAgICAgZnMvc2VxX2ZpbGUuYzozOCAgICAgICAgICAg
-IHwgICA1ICAgfCAgICAgMTgxNDgyODggICAgIHwgICAgIDM2Mjk2NTcuNiAgICAgIHwKPj4gfCAg
-ICAgICAgICAgICBmcy9zZXFfZmlsZS5jOjYzICAgICAgICAgICAgfCAgIDE1ICB8ICAgICAxODE1
-MzI3MSAgICAgfCAxMjEwMjE4LjA2NjY2NjY2NjcgfAo+PiB8ICAgICAgICAgIG5ldC9jb3JlL3Nr
-YnVmZi5jOjU3NyAgICAgICAgICB8ICAgOSAgIHwgICAgIDEwNjc5OTc1ICAgICB8IDExODY2NjMu
-ODg4ODg4ODg5ICB8Cj4+IHwgICAgICAgICAgbmV0L2NvcmUvc2tidWZmLmM6NjU4ICAgICAgICAg
-IHwgICAyMSAgfCAgICAgMTEwMTM0MzcgICAgIHwgIDUyNDQ0OS4zODA5NTIzODEgIHwKPj4gfCAg
-ICAgICAgICAgICBmcy9zZWxlY3QuYzoxNjggICAgICAgICAgICAgfCAgIDcgICB8ICAgICAyODMx
-MjI2ICAgICAgfCA0MDQ0NjAuODU3MTQyODU3MTYgfAo+PiB8ICAgICAgICAgICAgbGliL2FsbG9j
-X3RhZy5jOjUxICAgICAgICAgICB8ICAgMSAgIHwgICAgICAzNDA2NDkgICAgICB8ICAgICAgMzQw
-NjQ5LjAgICAgICB8ICA8LS0tIEhlcmUgSSBzdGFydGVkCj4+IHwgICAgICAgICAgIGtlcm5lbC9z
-aWduYWwuYzo0NTUgICAgICAgICAgIHwgICAxICAgfCAgICAgIDMwMDczMCAgICAgIHwgICAgICAz
-MDA3MzAuMCAgICAgIHwKPj4gfCBmcy9ub3RpZnkvaW5vdGlmeS9pbm90aWZ5X2Zzbm90aWZ5LmM6
-OTYgfCAgIDEgICB8ICAgICAgMjQ5ODMxICAgICAgfCAgICAgIDI0OTgzMS4wICAgICAgfAo+PiB8
-ICAgICAgICAgICAgZnMvZXh0NC9kaXIuYzo2NzUgICAgICAgICAgICB8ICAgMyAgIHwgICAgICA1
-MTk3MzQgICAgICB8IDE3MzI0NC42NjY2NjY2NjY2NiB8Cj4+IHwgICAgICAgZHJpdmVycy91c2Iv
-aG9zdC94aGNpLmM6MTU1NSAgICAgIHwgICA0ICAgfCAgICAgIDEyNjQwMiAgICAgIHwgICAgICAz
-MTYwMC41ICAgICAgIHwKPj4gfCAgICAgICAgICAgICAgZnMvbG9ja3MuYzoyNzUgICAgICAgICAg
-ICAgfCAgIDM2ICB8ICAgICAgOTg2OTU3ICAgICAgfCAyNzQxNS40NzIyMjIyMjIyMjMgfAo+PiB8
-ICAgICAgICAgICBmcy9wcm9jL2lub2RlLmM6NTAyICAgICAgICAgICB8ICAgMyAgIHwgICAgICA2
-Mzc1MyAgICAgICB8ICAgICAgMjEyNTEuMCAgICAgICB8Cj4+IHwgICAgICAgICAgICAgIGZzL3Bp
-cGUuYzoxMjUgICAgICAgICAgICAgIHwgIDEyMyAgfCAgICAgMjE0MzM3OCAgICAgIHwgMTc0MjUu
-ODM3Mzk4MzczOTg0IHwKPj4gfCAgICAgICAgICAgIG5ldC9jb3JlL3NjbS5jOjg0ICAgICAgICAg
-ICAgfCAgIDMgICB8ICAgICAgNDMyNjcgICAgICAgfCAxNDQyMi4zMzMzMzMzMzMzMzQgfAo+PiB8
-ICAgICAgICAgZnMva2VybmVsX3JlYWRfZmlsZS5jOjgwICAgICAgICB8ICAgMiAgIHwgICAgICAy
-NjkxMCAgICAgICB8ICAgICAgMTM0NTUuMCAgICAgICB8Cj4+ICstLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0t
-LS0tLS0tLS0tLS0tLSsKPj4KPj4gSSB0aGluayB0aGlzIGlzIGFub3RoZXIgImdvb2QiIHVzYWdl
-IGZvciBjdW11bGF0aXZlIGNvdW50ZXJzOiBpZiBhIG1vZHVsZSBqdXN0IGtlZXBzIGFsbG9jL2Zy
-ZWUgbWVtb3J5LAo+PiBtYXliZSBpdCBpcyBnb29kIHRvIG1vdmUgdGhlIG1lbW9yeSBhbGxvYy9m
-cmVlIHRvIHNvbWV3aGVyZSBsZXNzIGZyZXF1ZW50Lgo+Pgo+PiBJbiB0aGUgY2FzZSBvZiB0aGlz
-IHBhdGNoLCBhIG1lbW9yeSBhbGxvY2F0aW9uIGZvciBlYWNoIHJlYWQtY2FsbHMsIGNhbiBiZSBt
-b3ZlZCB0byBvcGFuLWNhbGxzLgo+Pgo+PiBJZiBpbnRlcmVzdGVkLCBJIGNhbiByZS1zZW5kIHRo
-ZSBwYXRjaCBmb3IgY3VtdWxhdGl2ZSBjb3VudGVycyBmb3IgZnVydGhlciBkaXNjdXNzaW9ucy4K
-Pgo+WWVhaCwgbXkgaXNzdWUgd2l0aCBjdW11bGF0aXZlIGNvdW50ZXJzIGlzIHRoYXQgd2hpbGUg
-dGhleSBtaWdodCBiZQo+dXNlZnVsIGZvciBzb21lIGFuYWx5c2VzLCBtb3N0IHVzZWNhc2VzIHdv
-dWxkIHByb2JhYmx5IG5vdCBiZW5lZml0Cj5mcm9tIHRoZW0gd2hpbGUgc2hhcmluZyB0aGUgcGVy
-Zm9ybWFuY2Ugb3ZlcmhlYWQuIE9UT0ggbWFraW5nIGl0Cj5vcHRpb25hbCB3aXRoIGEgc2VwYXJh
-dGUgQ09ORklHIHRoYXQgYWZmZWN0cyB0aGUgY29udGVudCBvZiB0aGUKPi9wcm9jL2FsbG9jaW5m
-byBzZWVtcyBsaWtlIGEgYmFkIGlkZWEgdG8gbWUuIFVzZXJzcGFjZSBwYXJzZXJzIG5vdwo+d291
-bGQgaGF2ZSB0byBjaGVjayBub3Qgb25seSB0aGUgZmlsZSB2ZXJzaW9uIGJ1dCBhbHNvIHdoZXRo
-ZXIgdGhpcwo+a2VybmVsIGNvbmZpZyBpcyBlbmFibGVkLCBvciBoYW5kbGUgYSBwb3NzaWJpbGl0
-eSBvZiBhbiBhZGRpdGlvbmFsCj5jb2x1bW4gaW4gdGhlIG91dHB1dC4gRG9lcyBub3Qgc2VlbSBs
-aWtlIGEgZ29vZCBzb2x1dGlvbiB0byBtZS4KClRoYW5rcyBmb3IgdGhlIHF1aWNrIGZlZWRiYWNr
-fiAKIEFncmVlIHRoYXQgdGhpcyB3b3VsZCBjYXVzZSB0cm91YmxlcyB0byB1c2Vyc3BhY2UgIHRv
-b2xzLAphbmQgYWxzbyBpdCBhZGQgbW9yZSBwZXJmb3JtYW5jZSBpbXBhY3QgZm9yIHByb2ZpbGlu
-Zy4KCkRhdmlkCgo+Cj5BbGwgdGhhdCBzYWlkLCBJJ20gb3BlbiB0byBzdWdnZXN0aW9ucyBpZiB0
-aGVyZSBpcyBhIHdheSB0bwo+aW5jb3Jwb3JhdGUgY3VtdWxhdGl2ZSBjb3VudGVycyB0aGF0IHdv
-dWxkIG5vdCB0YXggYWxsIG90aGVyIHVzZWNhc2VzCj50aGF0IGRvIG5vdCBuZWVkIHRoZW0uCj4K
-Pj4KPj4KPj4gRllJCj4+IERhdmlkCg==
+acpi_parse_cfmws() currently adds empty CFMWS ranges to numa_meminfo
+with the expectation that numa_cleanup_meminfo moves them to
+numa_reserved_meminfo. There is no need for that indirection when it is
+known in advance that these unpopulated ranges are meant for
+numa_reserved_meminfo in support of future hotplug / CXL provisioning.
+
+Introduce and use numa_add_reserved_memblk() to add the empty CFMWS
+ranges directly.
+
+Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+---
+
+Changes in v3 (Thanks to Dan & huacai):
+- The previous version failed to build on loongarch, now this issue is resolved.
+
+ drivers/acpi/numa/srat.c     |  2 +-
+ include/linux/numa_memblks.h |  1 +
+ mm/numa_memblks.c            | 22 ++++++++++++++++++++++
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+index 0a725e46d017..751774f0b4e5 100644
+--- a/drivers/acpi/numa/srat.c
++++ b/drivers/acpi/numa/srat.c
+@@ -453,7 +453,7 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (numa_add_memblk(node, start, end) < 0) {
++	if (numa_add_reserved_memblk(node, start, end) < 0) {
+ 		/* CXL driver must handle the NUMA_NO_NODE case */
+ 		pr_warn("ACPI NUMA: Failed to add memblk for CFMWS node %d [mem %#llx-%#llx]\n",
+ 			node, start, end);
+diff --git a/include/linux/numa_memblks.h b/include/linux/numa_memblks.h
+index dd85613cdd86..991076cba7c5 100644
+--- a/include/linux/numa_memblks.h
++++ b/include/linux/numa_memblks.h
+@@ -22,6 +22,7 @@ struct numa_meminfo {
+ };
+ 
+ int __init numa_add_memblk(int nodeid, u64 start, u64 end);
++int __init numa_add_reserved_memblk(int nid, u64 start, u64 end);
+ void __init numa_remove_memblk_from(int idx, struct numa_meminfo *mi);
+ 
+ int __init numa_cleanup_meminfo(struct numa_meminfo *mi);
+diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+index ff4054f4334d..541a99c4071a 100644
+--- a/mm/numa_memblks.c
++++ b/mm/numa_memblks.c
+@@ -200,6 +200,28 @@ int __init numa_add_memblk(int nid, u64 start, u64 end)
+ 	return numa_add_memblk_to(nid, start, end, &numa_meminfo);
+ }
+ 
++/**
++ * numa_add_reserved_memblk - Add one numa_memblk to numa_reserved_meminfo
++ * @nid: NUMA node ID of the new memblk
++ * @start: Start address of the new memblk
++ * @end: End address of the new memblk
++ *
++ * Add a new memblk to the numa_reserved_meminfo.
++ *
++ * Usage Case: numa_cleanup_meminfo() reconciles all numa_memblk instances
++ * against memblock_type information and moves any that intersect reserved
++ * ranges to numa_reserved_meminfo. However, when that information is known
++ * ahead of time, we use numa_add_reserved_memblk() to add the numa_memblk
++ * to numa_reserved_meminfo directly.
++ *
++ * RETURNS:
++ * 0 on success, -errno on failure.
++ */
++int __init numa_add_reserved_memblk(int nid, u64 start, u64 end)
++{
++	return numa_add_memblk_to(nid, start, end, &numa_reserved_meminfo);
++}
++
+ /**
+  * numa_cleanup_meminfo - Cleanup a numa_meminfo
+  * @mi: numa_meminfo to clean up
+-- 
+2.34.1
+
 
