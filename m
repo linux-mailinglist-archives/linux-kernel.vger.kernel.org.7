@@ -1,269 +1,156 @@
-Return-Path: <linux-kernel+bounces-640064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6568AAFFFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8DDAB0015
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E05B3B6AB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B758B1BC6B36
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 16:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633E327E7EF;
-	Thu,  8 May 2025 16:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7799281523;
+	Thu,  8 May 2025 16:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzJC0sk9"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XYqhZJxA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6B427D771
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 16:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B72422422D;
+	Thu,  8 May 2025 16:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746720829; cv=none; b=KZ3CR28p3x6TdpZ0+ohspE45fUdR/ryOB6p9EIIqjri6mNSYfGVKMBZcBuWSAZscFY/Aj274jTyNmvwCXP23aFyEh2yx94lvK7krTq3hYGlkfA2036jR8b3b87WsVnoyNfDl31M5EdaFQyzydd92IyG15YTYvlGRSIoi8BJ/Jwg=
+	t=1746721070; cv=none; b=kxvAo85pgAGz7YxF5eRMP+EuXC2EAf/B5QQPER8phSZHmW9RU0Q5UOhsnCQZq5eBP82KXLsEYg812G6ZNOguo7wjhgX8QW0xY3kVWgJzRN8snQP8g2tYtx8c9rQQgfZLEBwZ7a+SEorOgYbqU1Ruz2UlDa3ybqelk11Vc10itW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746720829; c=relaxed/simple;
-	bh=tfDOPvEPcClOn/dbpViJZAb89XmDcCZ3JOLot4c/T28=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIcOtrzbbf1kDnVKJGxFg+iJzsnbWF/qUBEivXwLT+RZrLMJGFrkD2vQnGLBGYqW+ULuZwxmp9nVyavKGtvUK3BR8GqWL4Zkoo57pnGMW7j+SRMydzTwPiLxNf3iYoNBUrPbF9doW5VZ8fmfQf7rqSf1EivMoNrDiuKSccNjbnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzJC0sk9; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499c5d9691so1386734e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 09:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746720826; x=1747325626; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFej/CPQ8o9iXNIiNBt2KYGS35drif/WrqoV7iS2MvI=;
-        b=RzJC0sk9+5He3UEzBSxcFieCBlugaLyztZLJmvp8LlvqI1zk0pJ+GWnw6kuRw33yuG
-         xYDK+GltPuXraXkCDHOZ10pshrKOhfDwAru6a2tb8YCKfZFm80ysOErjhFN48ttDwGf3
-         2obReDiqwsE9HempZ5nwZ63/Cgb/jUdxen1zbMp/4PoX3eYhupAsmrOF5b0YQEFjlqw/
-         IrjJs15phjFylWRJAPSJNitVo/s6t7TMliDhOUMGpE7HBhB3a9PNv99glGswX0q+Ib2+
-         6dNTL7DvxxVC6lsn+QI8aas5tuH6L4yG9UeeaCnekon4KhHVMeRzI8z3T93nU5DE70ou
-         F3zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746720826; x=1747325626;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GFej/CPQ8o9iXNIiNBt2KYGS35drif/WrqoV7iS2MvI=;
-        b=kQMBUE++4IzjU1mqgIj/5TSOGSZaSa4MQF7csweOEi2UvSB+LmUqLRPDGto4s5wC1w
-         3VfDvDasgCG/PHPy6CQ2N/larMHs4CCGTS5LXuf7EJkZhLO3C/MuRGaYWx/iZCOvBADQ
-         PwTncbLeSBlZvf47LkPjahvwIfTypIqz2bTJgZF96dhc/4jwm1cGFN0+vEhiXIg5zi2i
-         pkPuzKT2hLQu2fEOf5tQ3SnNS99mTHrKENx3jLdSgatF2LXO6k6iQ9f4Ake8hThH+wQH
-         JtWQSPLUhiaid+7upoCnVjXnPMeqyv+Ra/OukfDYHC08qDnhEpymrfAdp0KLinEX6XM5
-         fgQw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ONR5mhl4f9cMa9dRU/eJXUT+pTYhS1e1W5H/4qk2xDWq2J+oQ40S/CZhohhdEAgZ8ndLL5jHEJgNiUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR/ZQqrD4Y8KgVsIyqCl+UOoInp8p3nrIzX7X50mXv7OMgTwwL
-	LsdFeAmvgyJFFovWrXbAiHypNx8n16MpQeUxM6fglWUDw7sZSO9g
-X-Gm-Gg: ASbGncsKu2FGJVn4da2kxESJ/Tyrq1OrYx94DOpSmEnEqSS7El1vRuCh/OCL73zR/l7
-	xLipF53SywMScjP2dkP1x3zP5xLyLqqyzOwkVWBXE915hcf2aFSB9CULtg1JZrOiN7umqsqDCQ1
-	xxWCAbE+kA4ne2KE8/Fa1lCVfpeUD9j8cmeNalwbNRWHGZTZL7AbH1ZBc/c5kMs5AGkRPuZuoke
-	+wDrAqz9BT+mY7XwY/PyiI/b3LQ16Hi9QeRnSUU50Kfur27itIhbaH8IqccZ/IFoKLYB94E8i9e
-	NNkH+1lR8qvd5PUzQOgk+sCWi5b6VVziX/LE/damuHrlb1V0Cj/lORRbY0Kyf3RHDoeu
-X-Google-Smtp-Source: AGHT+IGgD65560HzL/6PBv9voSzw0VRFSOIhsSLY/0ISrjJf8HmXevLYzW7ZEZQnDyYOAqLc3LxiHw==
-X-Received: by 2002:ac2:4e0e:0:b0:545:ea9:1a1f with SMTP id 2adb3069b0e04-54fb95fc290mr2417920e87.25.1746720825317;
-        Thu, 08 May 2025 09:13:45 -0700 (PDT)
-Received: from pc636 (host-95-203-26-194.mobileonline.telia.com. [95.203.26.194])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc644fd0esm9428e87.6.2025.05.08.09.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 09:13:44 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 8 May 2025 18:13:42 +0200
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: akpm@linux-foundation.org, urezki@gmail.com, edumazet@google.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] mm/vmalloc: fix data race in show_numa_info()
-Message-ID: <aBzYNsvccLZVxcV5@pc636>
-References: <20250508160800.12540-1-aha310510@gmail.com>
+	s=arc-20240116; t=1746721070; c=relaxed/simple;
+	bh=xKozc2AyI4Ozi4tKehqZJqOm1IcKgyA6mO6jm2W3Dlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C07SnNjHxngOlDH1kiOJLEIqpDHXS4lqHt33sEfXYui3P6PSxsbhFrc65/2zH88p2aVjNyrkau6CFdxUk8kx/CxE0IVvTjm4U0DM0oIBfpmkbSCBRhU0MAnS/GwYu4rwvgoaqcbCpd6sGktLLqA4C9QaGXI89Oy6Q9fCaDEZ1Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XYqhZJxA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548Cx8fS008510;
+	Thu, 8 May 2025 16:17:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hmBt5QGrInahKQyH9SFM/gRA+WRj69T62PxletTU4jM=; b=XYqhZJxAkCwubs14
+	3FpDE9QNwg/dhL/qkcRSPOPIR8An3Bv0VGt77EXiK2A0x8va9RUb10Ej+jSY4oA2
+	MYu6qa0SrJmha+Pi3HjLQFwwqMJjvmsjDpJuHz7InmEolP+NhWyCCZbPQysYjsQs
+	iSSHt3CYEVRQQncO61rywx8kBVjM5odjJpOwkvo+qtUTyNSF6p34kfc60VrfG/vM
+	t8Q49tnJbfgRCzWbTNDHB6wTJeSloTI5qI3i8xwC5GLxC5xaAn/Z2W8fBNF7LqPa
+	yj7j9HbHviAwz0pqMXxSwKer3fj5CrF8QGHGeI7U6615dZIL+wtUwL2sYRO6Tq5E
+	x2cpeA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp59xem-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 16:17:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 548GHhXu019231
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 May 2025 16:17:43 GMT
+Received: from [10.216.33.253] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 May 2025
+ 09:17:39 -0700
+Message-ID: <547ec78c-3fb9-43ea-9e1d-f97070eea9b2@quicinc.com>
+Date: Thu, 8 May 2025 21:46:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250508160800.12540-1-aha310510@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] arm64: dts: qcom: qcs6490-audioreach: Add gpr node
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@oss.qualcomm.com>, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+References: <20250429092430.21477-1-quic_pkumpatl@quicinc.com>
+ <20250429092430.21477-2-quic_pkumpatl@quicinc.com>
+ <758047f5-e31a-4933-8560-56d988492d95@oss.qualcomm.com>
+Content-Language: en-US
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+In-Reply-To: <758047f5-e31a-4933-8560-56d988492d95@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Lu2Symdc c=1 sm=1 tr=0 ts=681cd928 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=EkdEwCnvp131_jYCVQ4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: YNSkxooh7XKR0l3vvHkpM6dOdRWUV4aA
+X-Proofpoint-ORIG-GUID: YNSkxooh7XKR0l3vvHkpM6dOdRWUV4aA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA4MDE0MiBTYWx0ZWRfX7d8Q3ws82c6j
+ byboy8G9OddeQCSlim0Bdt2fR77OodKE9sF84B33qXF1uEB04CQoWcSJ5067qwAQ+pUTgoh3pTx
+ 1C70V8YWxK3CkwunFwSnA7hsm+CtjETDhPiYdcEHoDiIl+0yOUteXrKiVq8RRTp2eaj0Zc9IWYD
+ 0rU6QRM8k3pIcsXcnWQlvC9EGRHwV0G3SJnZqQoe649jkmSns0fsFQUqjmJX9lYUMv1jQLCrrGw
+ gg9AcPHxJHasq+NxTHhtoWKg8qLUm/ESWiB0eiAlugZDKi6bURQ1Pk18O54rYBTD0eslr3/dDZb
+ pPP+3JcBGowP5mOIwIw4zIbWrI/EXai9nc4/V4YrqEsFhNwiIeN46NeBgfPzehbqcEI8xBR7g5m
+ PvmV35Jr1YEbw7s4gEf9hL5VVQL7nSwDhQgsYnyfumQQWST7aDQhcnl2XJWEB+sJEJaFw7Mf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-08_05,2025-05-08_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=603
+ priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505080142
 
-On Fri, May 09, 2025 at 01:07:59AM +0900, Jeongjun Park wrote:
-> The following data-race was found in show_numa_info():
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in vmalloc_info_show / vmalloc_info_show
-> 
-> read to 0xffff88800971fe30 of 4 bytes by task 8289 on cpu 0:
->  show_numa_info mm/vmalloc.c:4936 [inline]
->  vmalloc_info_show+0x5a8/0x7e0 mm/vmalloc.c:5016
->  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
->  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
-> ....
-> 
-> write to 0xffff88800971fe30 of 4 bytes by task 8287 on cpu 1:
->  show_numa_info mm/vmalloc.c:4934 [inline]
->  vmalloc_info_show+0x38f/0x7e0 mm/vmalloc.c:5016
->  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
->  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
-> ....
-> 
-> value changed: 0x0000008f -> 0x00000000
-> ==================================================================
-> 
-> According to this report,there is a read/write data-race because m->private
-> is accessible to multiple CPUs. To fix this, instead of allocating the heap
-> in proc_vmalloc_init() and passing the heap address to m->private,
-> vmalloc_info_show() should allocate the heap.
-> 
-> Fixes: a47a126ad5ea ("vmallocinfo: add NUMA information")
-> Suggested-by: Eric Dumazet <edumazet@google.com>
-> Suggested-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
-> v5: Change heap to be allocated only when CONFIG_NUMA is enabled
-> - Link to v4: https://lore.kernel.org/all/20250508065558.149091-1-aha310510@gmail.com/
-> v4: Change the way counters array heap is allocated, per Andrew Morton's suggestion.
->     And fix it to call smp_rmb() in the correct location.
-> - Link to v3: https://lore.kernel.org/all/20250507142552.9446-1-aha310510@gmail.com/
-> v3: Following Uladzislau Rezki's suggestion, we check v->flags beforehand
->     to avoid printing uninitialized members of vm_struct.
-> - Link to v2: https://lore.kernel.org/all/20250506082520.84153-1-aha310510@gmail.com/
-> v2: Refactoring some functions and fix patch as per Eric Dumazet suggestion
-> - Link to v1: https://lore.kernel.org/all/20250505171948.24410-1-aha310510@gmail.com/
-> ---
->  mm/vmalloc.c | 62 ++++++++++++++++++++++++++++------------------------
->  1 file changed, 34 insertions(+), 28 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 3ed720a787ec..866f18766dfc 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3100,7 +3100,7 @@ static void clear_vm_uninitialized_flag(struct vm_struct *vm)
->  	/*
->  	 * Before removing VM_UNINITIALIZED,
->  	 * we should make sure that vm has proper values.
-> -	 * Pair with smp_rmb() in show_numa_info().
-> +	 * Pair with smp_rmb() in vread_iter() and vmalloc_info_show().
->  	 */
->  	smp_wmb();
->  	vm->flags &= ~VM_UNINITIALIZED;
-> @@ -4914,28 +4914,29 @@ bool vmalloc_dump_obj(void *object)
->  #endif
->  
->  #ifdef CONFIG_PROC_FS
-> -static void show_numa_info(struct seq_file *m, struct vm_struct *v)
-> -{
-> -	if (IS_ENABLED(CONFIG_NUMA)) {
-> -		unsigned int nr, *counters = m->private;
-> -		unsigned int step = 1U << vm_area_page_order(v);
->  
-> -		if (!counters)
-> -			return;
-> +/*
-> + * Print number of pages allocated on each memory node.
-> + *
-> + * This function can only be called if CONFIG_NUMA is enabled
-> + * and VM_UNINITIALIZED bit in v->flags is disabled.
-> + */
-> +static void show_numa_info(struct seq_file *m, struct vm_struct *v,
-> +				 unsigned int *counters)
-> +{
-> +	unsigned int nr;
-> +	unsigned int step = 1U << vm_area_page_order(v);
->  
-> -		if (v->flags & VM_UNINITIALIZED)
-> -			return;
-> -		/* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
-> -		smp_rmb();
-> +	if (!counters)
-> +		return;
->  
-> -		memset(counters, 0, nr_node_ids * sizeof(unsigned int));
-> +	memset(counters, 0, nr_node_ids * sizeof(unsigned int));
->  
-> -		for (nr = 0; nr < v->nr_pages; nr += step)
-> -			counters[page_to_nid(v->pages[nr])] += step;
-> -		for_each_node_state(nr, N_HIGH_MEMORY)
-> -			if (counters[nr])
-> -				seq_printf(m, " N%u=%u", nr, counters[nr]);
-> -	}
-> +	for (nr = 0; nr < v->nr_pages; nr += step)
-> +		counters[page_to_nid(v->pages[nr])] += step;
-> +	for_each_node_state(nr, N_HIGH_MEMORY)
-> +		if (counters[nr])
-> +			seq_printf(m, " N%u=%u", nr, counters[nr]);
->  }
->  
->  static void show_purge_info(struct seq_file *m)
-> @@ -4962,8 +4963,12 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
->  	struct vmap_node *vn;
->  	struct vmap_area *va;
->  	struct vm_struct *v;
-> +	unsigned int *counters = NULL;
->  	int i;
->  
-> +	if (IS_ENABLED(CONFIG_NUMA))
-> +		counters = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
-> +
->  	for (i = 0; i < nr_vmap_nodes; i++) {
->  		vn = &vmap_nodes[i];
->  
-> @@ -4979,6 +4984,11 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
->  			}
->  
->  			v = va->vm;
-> +			if (v->flags & VM_UNINITIALIZED)
-> +				continue;
-> +
-> +			/* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
-> +			smp_rmb();
->  
->  			seq_printf(m, "0x%pK-0x%pK %7ld",
->  				v->addr, v->addr + v->size, v->size);
-> @@ -5013,7 +5023,9 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
->  			if (is_vmalloc_addr(v->pages))
->  				seq_puts(m, " vpages");
->  
-> -			show_numa_info(m, v);
-> +			if (counters)
-> +				show_numa_info(m, v, counters);
-> +
-Let's execute it for NUMA only.
 
->  			seq_putc(m, '\n');
->  		}
->  		spin_unlock(&vn->busy.lock);
-> @@ -5023,19 +5035,13 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
->  	 * As a final step, dump "unpurged" areas.
->  	 */
->  	show_purge_info(m);
-> +	kfree(counters);
-Let's execute it for NUMA only.
 
->  	return 0;
->  }
->  
->  static int __init proc_vmalloc_init(void)
->  {
-> -	void *priv_data = NULL;
-> -
-> -	if (IS_ENABLED(CONFIG_NUMA))
-> -		priv_data = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
-> -
-> -	proc_create_single_data("vmallocinfo",
-> -		0400, NULL, vmalloc_info_show, priv_data);
-> -
-> +	proc_create_single("vmallocinfo", 0400, NULL, vmalloc_info_show);
->  	return 0;
->  }
->  module_init(proc_vmalloc_init);
-> --
+On 4/29/2025 4:18 PM, Konrad Dybcio wrote:
+> On 4/29/25 11:24 AM, Prasad Kumpatla wrote:
+>> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>>
+>> Add GPR(Generic Pack router) node along with
+>> APM(Audio Process Manager) and PRM(Proxy resource
+>> Manager) audio services.
+>>
+>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> ---
+> 
+> [...]
+> 
+>> +&remoteproc_adsp_glink {
+>> +	/delete-node/ apr;
+>> +
+>> +	gpr {
+>> +		compatible = "qcom,gpr";
+>> +		qcom,glink-channels = "adsp_apps";
+>> +		qcom,domain = <GPR_DOMAIN_ID_ADSP>;
+>> +		qcom,intents = <512 20>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		q6apm: service@1 {
+>> +			compatible = "qcom,q6apm";
+>> +			reg = <GPR_APM_MODULE_IID>;
+>> +			#sound-dai-cells = <0>;
+> 
+> No `qcom,protection-domain` under either of the services?
 
-You are so fast :)
+With `qcom,protection-domain` facing some boot issue. Will check and 
+update in next versions.
 
---
-Uladzislau Rezki
+Thanks,
+Prasad>
+> Konrad
+
 
