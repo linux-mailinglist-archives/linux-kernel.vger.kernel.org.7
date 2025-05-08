@@ -1,157 +1,227 @@
-Return-Path: <linux-kernel+bounces-639165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD074AAF3A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:21:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE93AAF3AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 08:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD4A4E6F41
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2293AC853
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F1D20E314;
-	Thu,  8 May 2025 06:21:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63EB28E17
-	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E845D215070;
+	Thu,  8 May 2025 06:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j6vSFg8z"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05674747F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 06:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746685303; cv=none; b=uK9Fta/NJzMt/d7pOaw3D79nXGOvutjHugSaJABBv+bUaUk1Wvw4Tl6kq1UOezjV8mvqWWgT/ObJnK41VcPpkIN2vpgO2pRU0Ze3tSF71f0SyXBJ0oi5Dz4yEPIovC0iFgK9GzJ/QQcUxR2DFary0TXD1b0LUH2YUFMhbs7IIX8=
+	t=1746685493; cv=none; b=WjpcmYSHlHA93nGpnHOMMA1sz4ZpdfciqYolcecN/T4dAsKU+RBgbjdJDqd6pyL9g7Ko+sPRst2VjGwbt72p7a4ZrqvwVtGx7WoQdbirAEAGVoejRF8vdIN1tB6P6Cp0ajPyI4r9a7vyRiNVk450kzXl2FW+YaC0mDd5CfKB3UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746685303; c=relaxed/simple;
-	bh=qdf9fd0sJ+/v8/q6H7R5F/ZcMzS90/wjaLwdt2Zsv6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TCQZ5225U25IGJK7nMo/GLkh/doTA9SOvB5ZPOao5ojxr48r32+6COnIRiLNWGYiN2+ELAVTxinqL5VSzong0JidTkEB7IFi2PURGgVG+esImT33bH0CSVSWEzyKdqGnLthmC2urCR2/JFZDMa4cipyFAa/nbBU7RHUljvGw3SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 717CC106F;
-	Wed,  7 May 2025 23:21:29 -0700 (PDT)
-Received: from [10.163.54.182] (unknown [10.163.54.182])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 518303F5A1;
-	Wed,  7 May 2025 23:21:32 -0700 (PDT)
-Message-ID: <a61cb4ed-c284-4a5f-b722-4f97836d3a1a@arm.com>
-Date: Thu, 8 May 2025 11:51:28 +0530
+	s=arc-20240116; t=1746685493; c=relaxed/simple;
+	bh=p/VdULAVeF4K2Q+upl4+rwoadWVrqvXYpynC63s0o6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P+hsa+k5dRRMnb3arvrNo8g8g+Blr6okfDek9Sig2lYAB0sAVX+JfN7dMRhU8LOVTLooV2AlxPseEyOFF8mSK7OSzRM2Xu2SnUGs0j6nQkWHa6b3wPEBA8C7F9+zxq+JhOO3yqAqawtL5xm7cjuJ5Vx5JYpCrzhhqOLD9V+REgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j6vSFg8z; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746685478;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ei4PX0Vl85kv5sOEPUuFgHeGfJKMG2wW4+tzyXrfHA4=;
+	b=j6vSFg8zlUnRI+4FgIxe8tjodDfHTAMbx/eAL+u4pKT4ndQ5QNRHZ94lMh/TRF/Cqqbi+W
+	/bsYj5tiGWCmhD49SeWQOoH0x0IJc1GfOXvOr4eXAYeVCXciB4L2f90Ckd3Z5BRBfjQHtT
+	Cq3VhrozBKPGFLEp7qGa3tzyOtsrzRI=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Cong Wang <cong.wang@bytedance.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v1] bpf, sockmap: Fix concurrency issues between memory charge and uncharge
+Date: Thu,  8 May 2025 14:24:22 +0800
+Message-ID: <20250508062423.51978-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: Call pointers to ptes as ptep
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
- ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
- maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
- willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com,
- baolin.wang@linux.alibaba.com, ziy@nvidia.com, hughd@google.com
-References: <20250507060256.78278-1-dev.jain@arm.com>
- <20250507060256.78278-2-dev.jain@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250507060256.78278-2-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 5/7/25 11:32, Dev Jain wrote:
-> Avoid confusion between pte_t* and pte_t data types by suffixing pointer
-> type variables with p. No functional change.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->  mm/mremap.c | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 7db9da609c84..0163e02e5aa8 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -176,7 +176,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  	struct vm_area_struct *vma = pmc->old;
->  	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
->  	struct mm_struct *mm = vma->vm_mm;
-> -	pte_t *old_pte, *new_pte, pte;
-> +	pte_t *old_ptep, *new_ptep;
-> +	pte_t pte;
->  	pmd_t dummy_pmdval;
->  	spinlock_t *old_ptl, *new_ptl;
->  	bool force_flush = false;
-> @@ -211,8 +212,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  	 * We don't have to worry about the ordering of src and dst
->  	 * pte locks because exclusive mmap_lock prevents deadlock.
->  	 */
-> -	old_pte = pte_offset_map_lock(mm, old_pmd, old_addr, &old_ptl);
-> -	if (!old_pte) {
-> +	old_ptep = pte_offset_map_lock(mm, old_pmd, old_addr, &old_ptl);
-> +	if (!old_ptep) {
->  		err = -EAGAIN;
->  		goto out;
->  	}
-> @@ -223,10 +224,10 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  	 * mmap_lock, so this new_pte page is stable, so there is no need to get
->  	 * pmdval and do pmd_same() check.
->  	 */
-> -	new_pte = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &dummy_pmdval,
-> +	new_ptep = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &dummy_pmdval,
->  					   &new_ptl);
-> -	if (!new_pte) {
-> -		pte_unmap_unlock(old_pte, old_ptl);
-> +	if (!new_ptep) {
-> +		pte_unmap_unlock(old_ptep, old_ptl);
->  		err = -EAGAIN;
->  		goto out;
->  	}
-> @@ -235,12 +236,12 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  	flush_tlb_batched_pending(vma->vm_mm);
->  	arch_enter_lazy_mmu_mode();
->  
-> -	for (; old_addr < old_end; old_pte++, old_addr += PAGE_SIZE,
-> -				   new_pte++, new_addr += PAGE_SIZE) {
-> -		if (pte_none(ptep_get(old_pte)))
-> +	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
-> +				   new_ptep++, new_addr += PAGE_SIZE) {
-> +		if (pte_none(ptep_get(old_ptep)))
->  			continue;
->  
-> -		pte = ptep_get_and_clear(mm, old_addr, old_pte);
-> +		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
->  		/*
->  		 * If we are remapping a valid PTE, make sure
->  		 * to flush TLB before we drop the PTL for the
-> @@ -258,7 +259,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  		pte = move_soft_dirty_pte(pte);
->  
->  		if (need_clear_uffd_wp && pte_marker_uffd_wp(pte))
-> -			pte_clear(mm, new_addr, new_pte);
-> +			pte_clear(mm, new_addr, new_ptep);
->  		else {
->  			if (need_clear_uffd_wp) {
->  				if (pte_present(pte))
-> @@ -266,7 +267,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  				else if (is_swap_pte(pte))
->  					pte = pte_swp_clear_uffd_wp(pte);
->  			}
-> -			set_pte_at(mm, new_addr, new_pte, pte);
-> +			set_pte_at(mm, new_addr, new_ptep, pte);
->  		}
->  	}
->  
-> @@ -275,8 +276,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
->  		flush_tlb_range(vma, old_end - len, old_end);
->  	if (new_ptl != old_ptl)
->  		spin_unlock(new_ptl);
-> -	pte_unmap(new_pte - 1);
-> -	pte_unmap_unlock(old_pte - 1, old_ptl);
-> +	pte_unmap(new_ptep - 1);
-> +	pte_unmap_unlock(old_ptep - 1, old_ptl);
->  out:
->  	if (pmc->need_rmap_locks)
->  		drop_rmap_locks(vma);
+Triggering WARN_ON_ONCE(sk->sk_forward_alloc) by running the following
+command, followed by pressing Ctrl-C after 2 seconds:
+./bench sockmap -c 2 -p 1 -a --rx-verdict-ingress
+'''
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 40 at net/ipv4/af_inet.c inet_sock_destruct
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Call Trace:
+<TASK>
+__sk_destruct+0x46/0x222
+sk_psock_destroy+0x22f/0x242
+process_one_work+0x504/0x8a8
+? process_one_work+0x39d/0x8a8
+? __pfx_process_one_work+0x10/0x10
+? worker_thread+0x44/0x2ae
+? __list_add_valid_or_report+0x83/0xea
+? srso_return_thunk+0x5/0x5f
+? __list_add+0x45/0x52
+process_scheduled_works+0x73/0x82
+worker_thread+0x1ce/0x2ae
+'''
+
+Reason:
+When we are in the backlog process, we allocate sk_msg and then perform
+the charge process. Meanwhile, in the user process context, the recvmsg()
+operation performs the uncharge process, leading to concurrency issues
+between them.
+
+The charge process (2 functions):
+1. sk_rmem_schedule(size) -> sk_forward_alloc increases by PAGE_SIZE
+                             multiples
+2. sk_mem_charge(size)    -> sk_forward_alloc -= size
+
+The uncharge process (sk_mem_uncharge()):
+3. sk_forward_alloc += size
+4. check if sk_forward_alloc > PAGE_SIZE
+5. reclaim    -> sk_forward_alloc decreases, possibly becoming 0
+
+Because the sk performing charge and uncharge is not locked
+(mainly because the backlog process does not lock the socket), therefore,
+steps 1 to 5 will execute concurrently as follows:
+
+cpu0                                cpu1
+1
+                                    3
+                                    4   --> sk_forward_alloc >= PAGE_SIZE
+                                    5   --> reclaim sk_forward_alloc
+2 --> sk_forward_alloc may
+      become negative
+
+Solution:
+1. Add locking to the kfree_sk_msg() process, which is only called in the
+   user process context.
+2. Integrate the charge process into sk_psock_create_ingress_msg() in the
+   backlog process and add locking.
+3. Reuse the existing psock->ingress_lock.
+
+Fixes: 799aa7f98d53 ("skmsg: Avoid lock_sock() in sk_psock_backlog()")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+---
+ include/linux/skmsg.h |  7 +++++--
+ net/core/skmsg.c      | 37 +++++++++++++++++++++++++------------
+ 2 files changed, 30 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
+index 0b9095a281b8..3967b85ce1c0 100644
+--- a/include/linux/skmsg.h
++++ b/include/linux/skmsg.h
+@@ -378,10 +378,13 @@ static inline bool sk_psock_queue_empty(const struct sk_psock *psock)
+ 	return psock ? list_empty(&psock->ingress_msg) : true;
+ }
+ 
+-static inline void kfree_sk_msg(struct sk_msg *msg)
++static inline void kfree_sk_msg(struct sk_psock *psock, struct sk_msg *msg)
+ {
+-	if (msg->skb)
++	if (msg->skb) {
++		spin_lock_bh(&psock->ingress_lock);
+ 		consume_skb(msg->skb);
++		spin_unlock_bh(&psock->ingress_lock);
++	}
+ 	kfree(msg);
+ }
+ 
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 276934673066..77c698627b16 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -480,7 +480,7 @@ int sk_msg_recvmsg(struct sock *sk, struct sk_psock *psock, struct msghdr *msg,
+ 		msg_rx->sg.start = i;
+ 		if (!sge->length && (i == msg_rx->sg.end || sg_is_last(sge))) {
+ 			msg_rx = sk_psock_dequeue_msg(psock);
+-			kfree_sk_msg(msg_rx);
++			kfree_sk_msg(psock, msg_rx);
+ 		}
+ 		msg_rx = sk_psock_peek_msg(psock);
+ 	}
+@@ -514,16 +514,36 @@ static struct sk_msg *alloc_sk_msg(gfp_t gfp)
+ 	return msg;
+ }
+ 
+-static struct sk_msg *sk_psock_create_ingress_msg(struct sock *sk,
++static struct sk_msg *sk_psock_create_ingress_msg(struct sk_psock *psock,
++						  struct sock *sk,
+ 						  struct sk_buff *skb)
+ {
++	spin_lock_bh(&psock->ingress_lock);
+ 	if (atomic_read(&sk->sk_rmem_alloc) > sk->sk_rcvbuf)
+-		return NULL;
++		goto unlock_err;
+ 
+ 	if (!sk_rmem_schedule(sk, skb, skb->truesize))
+-		return NULL;
++		goto unlock_err;
++
++	/* This will transition ownership of the data from the socket where
++	 * the BPF program was run initiating the redirect to the socket
++	 * we will eventually receive this data on. The data will be released
++	 * from consume_skb whether in sk_msg_recvmsg() after its been copied
++	 * into user buffers or in other skb release processes.
++	 */
++	skb_set_owner_r(skb, sk);
++	spin_unlock_bh(&psock->ingress_lock);
+ 
++	/* sk_msg itself is not under sk memory limitations and we only concern
++	 * sk_msg->skb, hence no lock protection is needed here. Furthermore,
++	 * adding a ingress_lock would trigger a warning from lockdep about
++	 * 'softirq-safe to softirq-unsafe'.
++	 */
+ 	return alloc_sk_msg(GFP_KERNEL);
++
++unlock_err:
++	spin_unlock_bh(&psock->ingress_lock);
++	return NULL;
+ }
+ 
+ static int sk_psock_skb_ingress_enqueue(struct sk_buff *skb,
+@@ -585,17 +605,10 @@ static int sk_psock_skb_ingress(struct sk_psock *psock, struct sk_buff *skb,
+ 	 */
+ 	if (unlikely(skb->sk == sk))
+ 		return sk_psock_skb_ingress_self(psock, skb, off, len, true);
+-	msg = sk_psock_create_ingress_msg(sk, skb);
++	msg = sk_psock_create_ingress_msg(psock, sk, skb);
+ 	if (!msg)
+ 		return -EAGAIN;
+ 
+-	/* This will transition ownership of the data from the socket where
+-	 * the BPF program was run initiating the redirect to the socket
+-	 * we will eventually receive this data on. The data will be released
+-	 * from skb_consume found in __tcp_bpf_recvmsg() after its been copied
+-	 * into user buffers.
+-	 */
+-	skb_set_owner_r(skb, sk);
+ 	err = sk_psock_skb_ingress_enqueue(skb, off, len, psock, sk, msg, true);
+ 	if (err < 0)
+ 		kfree(msg);
+-- 
+2.47.1
+
 
