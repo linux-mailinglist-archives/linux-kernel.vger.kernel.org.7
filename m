@@ -1,195 +1,116 @@
-Return-Path: <linux-kernel+bounces-640277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF059AB02A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:24:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C97AB02A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F77C3A93A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE4E4A7DF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B22521D3F1;
-	Thu,  8 May 2025 18:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC4E286D4A;
+	Thu,  8 May 2025 18:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0UhHSeZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0vX34Bv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CFA2A1BB;
-	Thu,  8 May 2025 18:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6353281363;
+	Thu,  8 May 2025 18:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746728661; cv=none; b=Vx4d6IQiGc8Zcg2wbk37Y2bbN2llAhy1OVVY6aKOuVymga4CR2jeEfUIHftBsXfCbKpHf/OsDQPntBDwl3CyoN0LRnT6ip0g1J+XYFupMYJbt9I8lWQNEbIGiYqyEq/GeF+ygXYjCuzvJPAioBo/z57yRZAxqB4j1DIGDCSGl2Q=
+	t=1746728797; cv=none; b=bM0Ju1DoRnZzGaLbwXQMoDJyoxZQPJe5BSIa4qig8YhnGtPAknmIlcEN5HZ0KuexUupYszCf+OPxwsGqbu+M5AoGanaa4T0ov0/nRB2nGtQr8qdQmSBJdVwwuDbUXu/H1ygeXAIU6rTIEKznSvU4o/cHJpqyjDhNE+fO9bO4ktw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746728661; c=relaxed/simple;
-	bh=wy7Hm7WWE6KUctlNRNHdG2pofR8kbdBCRVqncmV5x1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ePQJ/zmea8+pKV2NI+qvQU8mGBSwoDV+U/k7fDXTG8RLjq0qFFWYmeVz81CBGoU0NNMIeEJHSNvcjGEUDjG8r0inOAvgSMoYZVPXo5dj6mt+QskdVD/48L9+pKXbitq77/J39wf0mKsF8jtcXstrBOu4zFZzBHxxPEHdKciAzI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0UhHSeZ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746728660; x=1778264660;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wy7Hm7WWE6KUctlNRNHdG2pofR8kbdBCRVqncmV5x1A=;
-  b=h0UhHSeZ4T2gG2v/e+5U7cm2gDwuYQpIAjOTc47pTNrx8U0E1G6kPO8v
-   bPvN1299qjiEcnJQsQxPVntzZeIgs6cWEv7hkZ9Etc5DRbtr3kBmMdpHp
-   gPUdJ7PhxDV972iES1qiG3Twqprgt+AliNFDuJJtuNf3BxeIKvFKuzNMR
-   GjSWibfbrWpBc2gG1UHpQnuZqOtf8r2YlJU5V3mN9QNNFn5I/RYQfiiZA
-   vVsH1jzdV/DzV9jVUaXFK3BKxqhPJmaGiaemIsZmTyIgtuV6MVD2p3+X0
-   5QvlF8BtmquhwJIFOmN6xM2EyNnmw1ETRiLZM7Ly5IwWse76OLAt7Euu6
-   w==;
-X-CSE-ConnectionGUID: lm/P4yWbR4WfjXCQrCxDMw==
-X-CSE-MsgGUID: IYrYpp4ySQ2cIANVcfbTBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="59528712"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="59528712"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 11:24:19 -0700
-X-CSE-ConnectionGUID: dqhiX814RE+mTzdjGP/elQ==
-X-CSE-MsgGUID: TxG6ibazRVKDkmcTOQouyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="136385923"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.246.123]) ([10.245.246.123])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 11:24:15 -0700
-Message-ID: <b3132bd1-7e00-4443-ba58-a3cbda275e5e@linux.intel.com>
-Date: Thu, 8 May 2025 21:25:25 +0300
+	s=arc-20240116; t=1746728797; c=relaxed/simple;
+	bh=TV/DfA1+9HMKHUzT+UR/gakV4+uuJ2aHJxXt+sNWNpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WC6gCe1+xZPm4I3Y0pZWF7dbzlmTJVJgSa35ec6gS3dGb4Sj8IHLGU/d9Wjz+y1szCG0FY9pfvAx8XozEo2IFayZsyWlZx/piAZeqhV1OR5sI1t2+YQzc1Lfo1yaDE5DdXlOPCs/HJRAtAPs6VpudKXQPvPNbpjYWDonhLPTdJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0vX34Bv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53773C4AF09;
+	Thu,  8 May 2025 18:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746728796;
+	bh=TV/DfA1+9HMKHUzT+UR/gakV4+uuJ2aHJxXt+sNWNpo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W0vX34BvhqERisc9pPDTrtpEzxpqUU7+fjntYQSiYl1vgqIrS7y455J4HVkP4tMiE
+	 9S5EC67d43f8FD2n3FGNXqXBY33xhNi6k5PiFNkIZ3S7GYaaOiwB88EmBPJYoSuo4p
+	 45+EwZUJPIyNEQBK2ZJwt6c/dPEW23FK1TWscFMq62I4dR5kl8r+pts0mDEUDiM9nR
+	 Aitf1znG+IiXkMTe6jqPCcMgPfxU3Nf0EfsdT5hMCNnpEQmloLPMm889X9nCgsz4pu
+	 99SJP0j5KjxL1DmNxwrJT8AJTAPYx8rAyriWW1hx5JXsMaywvQ9eDal1G8dUvBP0yL
+	 Iw3l+zBJiDN4A==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-72c7336ed99so400502a34.0;
+        Thu, 08 May 2025 11:26:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUhho5o1o7dDGGNx+FdfpQ9tS3eFhzM1HGKfxSzIK+mEVFF+2gIIFnoI5hqjb2uEJfKylbtXhEiI2GFtA7X@vger.kernel.org, AJvYcCV2TFowXXW77kIyynry+sreFJMZcQrK/8Ls7TIBchJlmRgR9eAtaCL8Clk2rS3SW307lNu+hLc9Y+My@vger.kernel.org, AJvYcCWbTKAnTxVFUpEF2InJu5OicVhb0oK1TFN1m0VPmxvSMhJFb5lzo7TopzcHqE6agymM1NzIRG8G@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT9B4j6vvYmjL5KTi3e5FV+kMpQAdfUnA8n+30T3zz6ToOjL0y
+	/fGnBFXLksRt0SdNvunZ6CyoY5lb2mx82cpn1rysJfLIXH706L6CCr/KnhPCYjH1+LZ3HWm9oXR
+	xnN0tjUYa9qcPxgbo66MbUIAo7v0=
+X-Google-Smtp-Source: AGHT+IF2Nf5Fasy7Qu/XU0O/UO9AwN3maQCBaHAFkTPwDHkgmNIXFD8BqrcDfV+OFXwTKgnDslsqpJLbbTA5+Cs/0HQ=
+X-Received: by 2002:a05:6830:6611:b0:730:da:1165 with SMTP id
+ 46e09a7af769-73226ae9d31mr741954a34.21.1746728795645; Thu, 08 May 2025
+ 11:26:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] ASoC: SOF: Intel: hda: Fix UAF when reloading module
-To: Tavian Barnes <tavianator@tavianator.com>, linux-sound@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- sound-open-firmware@alsa-project.org, linux-kernel@vger.kernel.org
-References: <832255bf606f9ddcf45167d3f066d603d707731a.1746713571.git.tavianator@tavianator.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <832255bf606f9ddcf45167d3f066d603d707731a.1746713571.git.tavianator@tavianator.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250508023025.1301030-1-jeremy.linton@arm.com> <20250508-abiding-enigmatic-mustang-ab3bd2@sudeepholla>
+In-Reply-To: <20250508-abiding-enigmatic-mustang-ab3bd2@sudeepholla>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 8 May 2025 20:26:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jOmeKy84N0My7o+PvAybjdaxv9ZS8HT=X0momY7rzTuQ@mail.gmail.com>
+X-Gm-Features: ATxdqUH9Pj_neQFHcxXdnSIxaBpGj_wzwhGGHZ5DpVN043u7sQCsmcbIF9wohLs
+Message-ID: <CAJZ5v0jOmeKy84N0My7o+PvAybjdaxv9ZS8HT=X0momY7rzTuQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: PPTT: Fix processor subtable walk
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>, rafael@kernel.org, lenb@kernel.org, 
+	jmeurin@google.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maximilian Heyne <mheyne@amazon.de>, Yicong Yang <yangyicong@hisilicon.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 8, 2025 at 11:13=E2=80=AFAM Sudeep Holla <sudeep.holla@arm.com>=
+ wrote:
+>
+> On Wed, May 07, 2025 at 09:30:25PM -0500, Jeremy Linton wrote:
+> > The original PPTT code had a bug where the processor subtable length
+> > was not correctly validated when encountering a truncated
+> > acpi_pptt_processor node.
+> >
+> > Commit 7ab4f0e37a0f4 ("ACPI PPTT: Fix coding mistakes in a couple of
+> > sizeof() calls") attempted to fix this by validating the size is as
+> > large as the acpi_pptt_processor node structure. This introduced a
+> > regression where the last processor node in the PPTT table is ignored
+> > if it doesn't contain any private resources. That results errors like:
+> >
+> >   ACPI PPTT: PPTT table found, but unable to locate core XX (XX)
+> >   ACPI: SPE must be homogeneous
+> >
+> > Furthermore, it fail in a common case where the node length isn't
+> > equal to the acpi_pptt_processor structure size, leaving the original
+> > bug in a modified form.
+> >
+> > Correct the regression by adjusting the loop termination conditions as
+> > suggested by the bug reporters. An additional check performed after
+> > the subtable node type is detected, validates the acpi_pptt_processor
+> > node is fully contained in the PPTT table. Repeating the check in
+> > acpi_pptt_leaf_node() is largely redundant as the node is already
+> > known to be fully contained in the table.
+> >
+> > The case where a final truncated node's parent property is accepted,
+> > but the node itself is rejected should not be considered a bug.
+> >
+>
+> Thanks for picking this up and describing the issue properly in the commi=
+t
+> message.
+>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
+Applied, but it is a bit too late to push it for -rc6, so I'll queue
+it up for -rc7.
 
-On 08/05/2025 18:21, Tavian Barnes wrote:
-> hda_generic_machine_select() appends -idisp to the tplg filename by
-> allocating a new string with devm_kasprintf(), then stores the string
-> right back into the global variable snd_soc_acpi_intel_hda_machines.
-> When the module is unloaded, this memory is freed, resulting in a global
-> variable pointing to freed memory.  Reloading the module then triggers
-> a use-after-free:
-> 
-> BUG: KFENCE: use-after-free read in string+0x48/0xe0
-> 
-> Use-after-free read at 0x00000000967e0109 (in kfence-#99):
->  string+0x48/0xe0
->  vsnprintf+0x329/0x6e0
->  devm_kvasprintf+0x54/0xb0
->  devm_kasprintf+0x58/0x80
->  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
->  sof_probe_work+0x7f/0x600 [snd_sof]
->  process_one_work+0x17b/0x330
->  worker_thread+0x2ce/0x3f0
->  kthread+0xcf/0x100
->  ret_from_fork+0x31/0x50
->  ret_from_fork_asm+0x1a/0x30
-> 
-> kfence-#99: 0x00000000198a940f-0x00000000ace47d9d, size=64, cache=kmalloc-64
-> 
-> allocated by task 333 on cpu 8 at 17.798069s (130.453553s ago):
->  devm_kmalloc+0x52/0x120
->  devm_kvasprintf+0x66/0xb0
->  devm_kasprintf+0x58/0x80
->  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
->  sof_probe_work+0x7f/0x600 [snd_sof]
->  process_one_work+0x17b/0x330
->  worker_thread+0x2ce/0x3f0
->  kthread+0xcf/0x100
->  ret_from_fork+0x31/0x50
->  ret_from_fork_asm+0x1a/0x30
-> 
-> freed by task 1543 on cpu 4 at 141.586686s (6.665010s ago):
->  release_nodes+0x43/0xb0
->  devres_release_all+0x90/0xf0
->  device_unbind_cleanup+0xe/0x70
->  device_release_driver_internal+0x1c1/0x200
->  driver_detach+0x48/0x90
->  bus_remove_driver+0x6d/0xf0
->  pci_unregister_driver+0x42/0xb0
->  __do_sys_delete_module+0x1d1/0x310
->  do_syscall_64+0x82/0x190
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Fix it by copying the match array with devm_kmemdup_array() before we
-> modify it.
-> 
-> Fixes: 5458411d7594 ("ASoC: SOF: Intel: hda: refactoring topology name fixup for HDA mach")
-> Suggested-by: Péter Ujfalusi" <peter.ujfalusi@linux.intel.com>
-> Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
-> ---
-> v4: Copy the whole array, including the sentinel.
-> 
-> v3: Copy the whole machine struct instead so we can safely modify it
->     (instead of storing the name in pdata->tplg_filename, breaking other
->     fixups).  The problem with v2 was pointed out by Bard Liao, with the
->     alternative fix suggested by Péter Ujfalusi.
-> 
-> v2: Typo fix.
-> 
->  sound/soc/sof/intel/hda.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-> index b34e5fdf10f1..13ecb9473eb6 100644
-> --- a/sound/soc/sof/intel/hda.c
-> +++ b/sound/soc/sof/intel/hda.c
-> @@ -1049,7 +1049,21 @@ static void hda_generic_machine_select(struct snd_sof_dev *sdev,
->  		if (!*mach && codec_num <= 2) {
->  			bool tplg_fixup = false;
->  
-> -			hda_mach = snd_soc_acpi_intel_hda_machines;
-> +			/*
-> +			 * make a local copy of the match array since we might
-> +			 * be modifying it
-> +			 */
-> +			hda_mach = devm_kmemdup_array(sdev->dev,
-> +					snd_soc_acpi_intel_hda_machines,
-> +					2 /* we have one entry + sentinel in the array */,
-
-I would prefer the comment after the comma.
-and I just noticed that my suggestion had it wrong as well, sorry.
-
-With that you can add my:
-Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-
-> +					sizeof(snd_soc_acpi_intel_hda_machines[0]),
-> +					GFP_KERNEL);
-> +			if (!hda_mach) {
-> +				dev_err(bus->dev,
-> +					"%s: failed to duplicate the HDA match table\n",
-> +					__func__);
-> +				return;
-> +			}
->  
->  			dev_info(bus->dev, "using HDA machine driver %s now\n",
->  				 hda_mach->drv_name);
-
--- 
-Péter
-
+Thanks!
 
