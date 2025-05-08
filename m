@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-639682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5586AAFAB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33780AAFAB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 14:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB7E3AA4E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF77E3A8E2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 12:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A922B5AB;
-	Thu,  8 May 2025 12:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF14922A4C2;
+	Thu,  8 May 2025 12:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="XPlPcIC0"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f8fhPjbf"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655D922579B;
-	Thu,  8 May 2025 12:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA18227B8C
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 12:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708958; cv=none; b=PoQM7Z6UljZiu7DconZGla7fFHfX1QR+lu+58EmZ9vPSrwWiSr7a+xkAHTtSF06ePoJj9taQLd3StKrUmp9Cg44YRPfzaYIyiPiOCOFdfXo4sEns69uXKxLwYVvC2siFVUK7MbawmMmJXfd7+oAJ5s43hidxbK/NE8QzuC1D3eA=
+	t=1746709077; cv=none; b=Fa+WkzdTtE5Vr7eAhOxJqKGd7ZNouxoSGlAq8+CzdXvYHriFeogNxv83ygklWg473KwG1KBLZBKwiVSXDgNkzD36CyKVrwXb+HgIiV2ZGz1S9M9UD8F2OoBQL3vJrvHQJlvcGBxkq6r3MCJQEz1jZaml013n3FjsCj1VpsN955Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708958; c=relaxed/simple;
-	bh=P2hkK24gIBpekWVgzbZvUT9UAOj3974Lm4QOgZm4MU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F9+fXCi42XBTkWYor+Tx1hGkZ3P98pAH+Rc8AHPDflIrT8YJdxXiIr6dCgy2PFTWUTvgdA5MIwBR0C8YA7BSBaxn1KONijQuewdiwODVDK04KVD0Vt3c+b/eVYHqkMnny9YrVquobVCwPMAjpHdXQZ1ZT37J/3vb/MuZWBtARO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=XPlPcIC0; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39ee5ac4321so1215691f8f.1;
-        Thu, 08 May 2025 05:55:56 -0700 (PDT)
+	s=arc-20240116; t=1746709077; c=relaxed/simple;
+	bh=h3od/OZUMN3oh5T0hUXF8qsNbZ6GG1EY18oqLAL5I5c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NGX0yiY3RersoZIvU6+yCsJz7i4ReFE0ksnRBDZkbLAh/bhFBhTsMqf0UuycEQDs1Ov8+OZsI4166RiAd9zVgnkY7mmaL91Gt2A5T4IPdfpI75SzRFACsFOjaHCsgzj3hrf24Cfx9SRSZvhYc+GWEL88NO5zAhO4XDPgBFcyLqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f8fhPjbf; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a0b201faedso144532f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 05:57:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1746708954; x=1747313754; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p6AYNVAEWLWzZVYwdSbhFHON7qW08tK4r17ya22Q5uQ=;
-        b=XPlPcIC0Ng4UNTZiY1dUVjhVyMtIGmrfmrHqhcUfj/0CgSyWKAPhXUfICIFnLRCOCX
-         LBRsZ9AJ+z+SrJtuWv5+JB7Oq2dyB7s2VixxOwpf01bU9tMBNiJCRm9bZgVYDuOVCgGp
-         0DO4GiIZSK/mwtmK0YocxNijvsapPK7gvwAkPPZmetrHhvy7Cj1gBxLgb3Vxx62JbWY1
-         0nCzimV8vGy9RHgWlCR72yBXWnyOrIz1URka7aGgECf8pYek/m3AZguAuF0mWSqVG19A
-         m1I5XPpZVSU7uVmxvlebuQmppL9iPCr/3g+y34T3w20r6TebcSpDGyPFkSy035CSR6Tg
-         WpQQ==
+        d=linaro.org; s=google; t=1746709073; x=1747313873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=41fQ9P7nrmZ9gEDUpXifgmNoxRJM6C9jPn3nPNbCsy0=;
+        b=f8fhPjbfnn2ANzdlY4xQ449xb/u7gjfEm6ervwAXJHH/ohSsauTBQxrnBK9OdhxbC/
+         dw7M23DqSS4hb3ZJhmpeqFsg5oSWPlM9tQh0MDfPu8W5Jzm3DTnc8puPFoq6CRcNIZrj
+         Oc9LSQpqkzUxsQXXht4UJ5nBxJuKhvoVRwT30OrMkmUtFEpN7xBySXuwdxvzrLoykh8l
+         KIhzjSde/CEtw6R9YEq9l4YyWoSmC69BAHJj853hkTPToDXUNLIC1k/Ate9sVBntcgbz
+         g6/asn/s8eBcW00PNlwnVaCWcJ5+ok8NHGLrSZCYJxd5W+EJRj/sqFbXJLYOeJb66CJ+
+         hhNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746708955; x=1747313755;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6AYNVAEWLWzZVYwdSbhFHON7qW08tK4r17ya22Q5uQ=;
-        b=QAG39Mzoy+Nifa8y0wJlv3Sol2PlWpSuSq4Fb82MoRW/YNXOYlQXBVHqoRQ8q8Su9i
-         zSYEoqI4YO2uDGFMW5tMqWKzQocBK3FSxwCvd8g2H0SSJdoyWqW4sCnbdxKK3Htp3qh2
-         B0rBhV0jfYbB3Hepo9yU067K2z0sfE7g7YlapCLNBXFFZPLsTfL4ha1ZPg4YpYdGwDPj
-         iAdnxMVz5c7Ad39W/P+qvm4YtP25oHFq94yTLRTS0AFsqXmPJE5SJZBBGL/fx76Yazy9
-         m1wBub1VsA6jnYlN3Vm1wMLwA5axg2d01uLSeuHf4qF2uhTcH8tadplGaT93dehh8tMv
-         NWoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtw+KqCDUtJ7Rctd6bzmZKWImPwHbgYTOnUcjZtRm5Z+Fj74VVDUJS7FlOvFjeHEaQNn5a9+RDaK4v40o=@vger.kernel.org, AJvYcCXxZxXaXUSsrE6qBuSUmTu8prpjQ/iobTdgzF/+4cD1xF1b/QKToyhRTmTyLlZl8GkLjOb8c+74@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt8rKET4gviuYWO0vtjEHYYhk1pD3pwjyfog3lOWzPAjGYgUkz
-	qN7fXzuIH1rja8oLeEfOo9VSQSUKFEvGCRE/N6l4OTbYBIbMoNqhFE7z
-X-Gm-Gg: ASbGncsR8MyNHUc1DHQBF/yv4IlM7jo2lrlDas450zCDTs42Z4Jfkkqglq3JGElo0L4
-	btDckmWdaEXYM5vczRLZL8jF0e1occ032wefQJgBElJkXwWY+vwR9ZQg77+vXzgBG0gGbpqwt1i
-	cHNRj4dyJ1l7uU/mulcQbxxRJLMdhbxBx6kaWE0fYGoPFqUSQ5aG4rs8/RHcWi6rdKyqQX6L+oP
-	n92UMDz6geSxxAO7T+SAxNZIXLRSg9M30aV+EmghPce209Kqx6E1iTJTNCH/Csinyxo5LDXwwv1
-	ZivlyN6B9nnH343fDj+ZfOhbKamLganspQVtymmoL7BGAOIM1TsgquG4gWaa6CtnrQhvGhVXmt5
-	8T86YTgcrMDeNq1MIhg==
-X-Google-Smtp-Source: AGHT+IGTa2WWD3VgWj+uKDTBuDUhX771kiVc7NX3oQrzYhOmASsrPcy1MfhL6cDIuvZ78Xz9Lvk9Tg==
-X-Received: by 2002:a05:6000:184d:b0:39c:30d9:3b5c with SMTP id ffacd0b85a97d-3a0ba0efbf9mr2488623f8f.39.1746708954465;
-        Thu, 08 May 2025 05:55:54 -0700 (PDT)
-Received: from [192.168.1.3] (p5b05727d.dip0.t-ipconnect.de. [91.5.114.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b9af4ba1sm2897233f8f.59.2025.05.08.05.55.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 05:55:53 -0700 (PDT)
-Message-ID: <384739cf-4b2b-4c4c-81e6-19d4547dd395@googlemail.com>
-Date: Thu, 8 May 2025 14:55:52 +0200
+        d=1e100.net; s=20230601; t=1746709073; x=1747313873;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=41fQ9P7nrmZ9gEDUpXifgmNoxRJM6C9jPn3nPNbCsy0=;
+        b=WRL7iho2Q/PUoSkGQCVOd2RsVZFw69Zm8PCoQSAaAPeB5mEwh2tKa4vkkIjsIdXvhP
+         0iPLU8DEbqKwCGp9heAxchuIDW6ffGIwmB2OEG5DehvKUPYJ4gkGulfJKVzswGu0H4PQ
+         B19w7Vs8cmUHltUjNQztJgfa4GPhtlpluCApUgqvqPuPu/aNHtM8Jx94TPWWB3iBZpIR
+         XgtFao9sXCAHiHWPaQSMaTEJLXcyYA0T18Ma3poYIpHMr/WRO+lMk6Ao+y0Poqho5RPh
+         78u0td1coK98hBL5C7WW/DBejABK+YFurwNYbGsmHM6hp8NfMD2WiLkKeU8dt1U9BPzA
+         QJAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWW+RJjDbUtKNcIKZWXLY3eYgBTLpSdLFJ1L0BIHGWIfyObcMOdnFPm5AjhyeBCfZvKfWKRbzb/hopGovY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/orj1qYKEO5P+cMOCN4ed9PKO+IZ0c2eqpqYFlW1fgo1ORruV
+	ENH2yXKb5jnoQMBriS489X/tKE78V58EX43/EPSjGFwjAhOOlVPV7Z58bne4jqx9o3EjMIWxYXw
+	y
+X-Gm-Gg: ASbGncuwEw3JbEJ03cnlNKqXctS5qDxN7qJXgpFWfWK7te9RqCcgV4fk8aW5n6JlOSa
+	4qZ1JN1pa9JzWeRYfAcYUP9WkGP/XCfbURQ7KcTep8TaNYvZBuabyDgBTERrcE9qHogaLhOC4Vn
+	iWaUJKnfYD834joWgraxzAD064nIqaRVOLS4x9O+/nRcWrN93UZ2vlrhRztJAX0pTggxtzqqmUW
+	WRETkgZi6XHeXwTNrRE9hN57luQ/sawYM1j+tXhp1l2eOn1nEJAU0Qb7R1K9MKLMQUrG61B5Dom
+	3Hm27eEzfGt7kdng/J5cCeNMhdzNYz7ycYbgVKhhSSYPesG9gdQFl2snHMs=
+X-Google-Smtp-Source: AGHT+IHkKn5DpCm2MDSIaZEFKIGhgLbqZ2SLsDQ/T7AcbdUeYu5WwW/A7NgfILFa57g/wXMpeGSoqg==
+X-Received: by 2002:a05:600c:3d0c:b0:43e:94fa:4aef with SMTP id 5b1f17b1804b1-441d44ed538mr25318955e9.8.1746709073277;
+        Thu, 08 May 2025 05:57:53 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd331221sm36183705e9.11.2025.05.08.05.57.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 05:57:52 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: peda@axentia.se, broonie@kernel.org, andersson@kernel.org, 
+ krzk+dt@kernel.org, srinivas.kandagatla@linaro.org
+Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com, 
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com, 
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+ perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com, 
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ johan+linaro@kernel.org
+In-Reply-To: <20250327100633.11530-2-srinivas.kandagatla@linaro.org>
+References: <20250327100633.11530-1-srinivas.kandagatla@linaro.org>
+ <20250327100633.11530-2-srinivas.kandagatla@linaro.org>
+Subject: Re: (subset) [PATCH v6 1/6] dt-bindings: mux: add optional
+ regulator binding to gpio mux
+Message-Id: <174670907131.90037.7280261510052841645.b4-ty@linaro.org>
+Date: Thu, 08 May 2025 14:57:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 00/97] 6.1.138-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250508112609.711621924@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250508112609.711621924@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Am 08.05.2025 um 13:30 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.138 release.
-> There are 97 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-Beste Grüße,
-Peter Schneider
+On Thu, 27 Mar 2025 10:06:28 +0000, srinivas.kandagatla@linaro.org wrote:
+> On some platforms to minimise pop and click during switching between
+> CTIA and OMTP headset an additional HiFi Mux Switch is used. Most common
+> case is that this switch is switched on by default, but on some
+> platforms this needs a regulator enable. One such platform is Lenovo
+> T14s.
+> 
+> This patch adds required bindings in gpio-mux to add such optional regulator.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/6] dt-bindings: mux: add optional regulator binding to gpio mux
+      https://git.kernel.org/krzk/linux/c/e9c695067b68da6b39e0d70cd4a061d0f70050d3
+
+Best regards,
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
