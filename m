@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-640212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89646AB01C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ACBAB01C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 19:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0299916B2E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27E816E0EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 17:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6CF286D57;
-	Thu,  8 May 2025 17:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B579A286D71;
+	Thu,  8 May 2025 17:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Gb+3btMl"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HCY8Nopt"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DE321D3F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E50279908;
 	Thu,  8 May 2025 17:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746726558; cv=none; b=hK/GrnUqi0SgM7h/wp0OrmDB5qFOxYMqfW6auH5ppbZb7rI9/VCDjhnAoeYwi2a/A6V5+3ctOGyn4WwmrokJJxgkA25xiFmAgn6s2FSp/YCmMwL8s0pVWG3h5Hd9fMR+Aa/vZlH5SAj2I95xV4n+Y1/FdqmvSIpgxPXP55ySD9U=
+	t=1746726558; cv=none; b=tCn9OICGwLkgoMnKo1D3m3ddP+B4wt9Kk3y1TV4Cy+s7SVHscumdsZ3VKVejxNuNCtjhkcWazVRYpP/IwdTTf1MrqEOY7lWA9kCvp380cSXN1Eun6aTelvDR8/YGAmgp3UflxjTjxSS7lqMQtOM/igO5lWfTIAjNkSKhXbEau5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746726558; c=relaxed/simple;
-	bh=oJteRPSyB7g/KEhdX4ew+DpLSvfNWA+O0sFgmeyciUs=;
+	bh=p1iaRjJi++EttsIqZp8D1e9XjdEQxDbNLYDz++43A88=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b7xhMOaG2qgxnsV9+Bx+gLu4B+DMv1g7/XcDBpxrp38C8Li8Z+6OoKvNPoi6HdSX4NNxMlbV1jjb5iGiQZ7+GV2EVJt8B5MFws/yag8nVzLfU7E63v8911DXg83ZZn/cD64/oD6p4ZAWfFp8LHaeQfreE36YO0/cjoyZ06q5H9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Gb+3btMl; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=ZK1qytbZIYKECAm6wNCvmtb4/OkEW9j+91S0Bu3kbgc8JHCj+V51Lj00wVQ5CcqKUw0ppuEN5aWzw6DiXLvaEb4bVEG9OvrJGdJp97dQH4Ml3FP2IbxtyfGSCKUTCs5N3rG7q//GdPnPAkFFrPA5cFqBgYTTu/sDV+ozOttdsng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HCY8Nopt; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1746726548;
-	bh=oJteRPSyB7g/KEhdX4ew+DpLSvfNWA+O0sFgmeyciUs=;
+	bh=p1iaRjJi++EttsIqZp8D1e9XjdEQxDbNLYDz++43A88=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Gb+3btMld3pFQlmCYskRxtF2FIKFquMIqIpXQrFmZLCUJd/PPs2LFopbPgomLLKdx
-	 ovJHJ6D6/g0y9A6uRUeyHxAtsxkg7voFlJmRoiHj3t2u4G980VUOckN5Wvur0lZKWY
-	 TO0NUscuWMm2KeR0AVSHsNNBKJ0d2v9iYM/P1DW8y/zrYPAYVvTlYSocs1XS3soMtq
-	 xGFvpGDonCMz7VL2sO+2YO2j4kPRqu4vBjGpRO3jaP5whGSDMHIrCKNEhI/2l5b/hU
-	 bKrPBpEppGe3zYiHmZxHhZL3/cnH5JJgAvWs7xE2QW0WKRCmwBSZw8GUUsafFKYyZ6
-	 y8vu94EltMKRw==
+	b=HCY8NoptGHlgyc/4ekwLnq77520THngO0TiY+xwQFZbCh13pszg+BODakuNpu27NQ
+	 4zGUGXpvlYfEaI+ITt4SthKFhKDwWOcXgWSnnTjyRnr2mpOO87LaPQN/qDFRm1SP96
+	 I/AnlCN8QjWd6+SuNz9xl/pMj/iaYNQyecvFep+7g/cx3GMMYIISMjgUQrTDYYu8Ud
+	 Lyd+7Cc4E2KagIyJulsHrD+WzpuHP78LF9AhV4NxdeySJAfSaT22F1gHQbFpYqkhAh
+	 8Jgw04Zy0303u8+kCGqYqdKe7shR5is48szx3rK6eW7bDxp2y9xV0Md8DuVtHuaz4Y
+	 HdxRc+GSCHZxQ==
 Received: from jupiter.universe (dyndsl-091-248-213-080.ewe-ip-backbone.de [91.248.213.80])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C201D17E078A;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D6DFD17E080D;
 	Thu,  8 May 2025 19:49:07 +0200 (CEST)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 70B0B480039; Thu, 08 May 2025 19:49:07 +0200 (CEST)
+	id 71B67480041; Thu, 08 May 2025 19:49:07 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Thu, 08 May 2025 19:48:51 +0200
-Subject: [PATCH v2 2/5] arm64: dts: rockchip: move rock 5b to include file
+Date: Thu, 08 May 2025 19:48:52 +0200
+Subject: [PATCH v2 3/5] dt-bindings: arm: rockchip: Add Radxa ROCK 5B+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250508-rock5bp-for-upstream-v2-2-677033cc1ac2@kernel.org>
+Message-Id: <20250508-rock5bp-for-upstream-v2-3-677033cc1ac2@kernel.org>
 References: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
 In-Reply-To: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
 To: Heiko Stuebner <heiko@sntech.de>
@@ -68,180 +68,54 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
  linux-kernel@vger.kernel.org, kernel@collabora.com, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ FUKAUMI Naoki <naoki@radxa.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4054; i=sre@kernel.org;
- h=from:subject:message-id; bh=oJteRPSyB7g/KEhdX4ew+DpLSvfNWA+O0sFgmeyciUs=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGgc7pNbxKNemZtyJxPJD3blLBvyrhuBg5vxD
- BHWCLxwDKebNokCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJoHO6TAAoJENju1/PI
- O/qafNYP/3xQOh+8NeGXo/mDFqevwRVm/vg1OzQqgy9MqdeTcnhruNBJnw+NkA/HIuE3vuTI+qa
- AJDxMpPTa33OBF+l8C0wTCTyLeBDCOhU8MDbpWQIWAe+aOHv0+/5DKnaQVTPmKxJwK/eKBS9nl3
- NR0RIyEXgvPcp7BfB7Yk2dRSqFki8eOvnNbRcAJTEReassZhTBRkRLdKMugzFci6o/IEQGteyyc
- hokYDUnEm0ggPrT+H1B+jhnzvcKuk9MQxkinH7TpEErCV5+KCr+oJiwK9qN6mao07BRpNMt/DD2
- ynPogpljeHoU5FIixF0nMQXYuBiDZM/b7FeXErU51jUr6hwcQ5XYepydRFYwyGolb8tA/sAggGU
- UiFCIKMPv0Y/ptD0E221fbA2MN9Hx0m4GJVrYtE/IpL6O8E1BLzjqH28epmaOtVMBBB8QyjEIjn
- o0W2S+XZcuKvsag+8dYHd4QqHzGubZ6x5/F7dhzSke3iOsUM1qCl7uCrzegNq8tJil0bmQ02XQR
- +v5XWWs15OeHGc6FsoYOLTfwpm2QpPNUiDS3qZrc5FM5T6nDpbWQi24bCaPx9vLlvQ0GnIiPZL0
- mdlJ8EkN+loIQDD4hqFMOcF426v19APhmLqRWIBnkK5Ljj+or5S/Zl3hZ3+RY56JzAcUlNownts
- jzQu8IGOmSCj6fBZ/3BMiUA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1029; i=sre@kernel.org;
+ h=from:subject:message-id; bh=V6ouydAMjeLLipqGubBKzuYUl73fH35Zk0yjK7db6K0=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGgc7pP/lcxUraZupIinulSaseR4T++TCK7mG
+ vRYSzu2XWhRRYkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJoHO6TAAoJENju1/PI
+ O/qavGYP/RkPQLOkNBmorCW9tusVBfKJORrobUzTjxPoNl97lWZfTiuAOuivXqGyO41aqftmMZy
+ BweHRYWm9iIGJa+woikrjQvQLyNZmhSqtAHL0ZqVB8Wd8bW5S/qZEqNOQ5/kkIOgG9oguuxa22B
+ VzNFv2Uz/f5My8y4AGwQCtLbjNWwoWq/npHfjtC/nYpXjiPZRnZFOaQiPED7Zldh0UgyeEilhfA
+ TvxIDy+KjEeam1IgxFkY/gk8ND8RRBRH1rEfKpP/QrQK2afsr9XGQwS8DYmnWQi0zXSzYZek0Bj
+ 8Em0f5BS1Rbv7o+KXutI+nfKpvDKWqNhQbyhBkW+mEBVsausPpdu+Fu6B2wImx5jlrV4cfdkTfO
+ XAinmqP44GVqe0zJHukc/LJUfEdRQze2wj+LyTgluPe+gg9b/YHRpM2j13Sig3eTZ+KxDCgUipi
+ xEemssYBY5HOYo/CUPcaxazd3nR7Ux9xGzv7VgiqCM6DeeHjJL2w9131ibXAwcZX5NdBVGkc0k0
+ 0sb41bu3oaLXr48YLQ4VsL5rzrDKp3zrP85bK+Vf+INRTXadSyqB4ef9CmFMM+x0WNtLCnhEVTJ
+ QvxYThhSFJg7PBcz5xzvO81KoGDQnieVoVjhkKDp1jG39ecU5QfEi/7X6gLQViaiIxyjH43H0LU
+ vqws8+kyuegFDBowHlYQs5Q==
 X-Developer-Key: i=sre@kernel.org; a=openpgp;
  fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-Radxa released some more boards, which are based on the original
-Rock 5B. Move its board description into an include file to avoid
-unnecessary duplication.
+From: FUKAUMI Naoki <naoki@radxa.com>
 
-NOTE: this should be merged with the previous commit to ensure
-bisectability. The rename happens in a separete commit during
-development because git does not properly detect the rename when
-the original filename is reused in the same commit. This means
+The Radxa ROCK 5B+ is an improved version of the ROCK 5B.
 
-1. it's a lot harder to review the changes
-2. it's a lot harder to rebase the patch series
-
+Signed-off-by: FUKAUMI Naoki <naoki@radxa.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts  | 52 ++++++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi | 40 ------------------
- 2 files changed, 52 insertions(+), 40 deletions(-)
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..9407a7c9910ada1f6c803d2e15785a9cbd9bd655
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+
-+#include "rk3588-rock-5b.dtsi"
-+
-+/ {
-+	model = "Radxa ROCK 5B";
-+	compatible = "radxa,rock-5b", "rockchip,rk3588";
-+};
-+
-+&sdio {
-+	max-frequency = <200000000>;
-+	no-sd;
-+	no-mmc;
-+	non-removable;
-+	bus-width = <4>;
-+	cap-sdio-irq;
-+	disable-wp;
-+	keep-power-in-suspend;
-+	wakeup-source;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc3v3_pcie2x1l0>;
-+	vqmmc-supply = <&vcc_1v8_s3>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdiom0_pins>;
-+	status = "okay";
-+};
-+
-+&uart6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	usb {
-+		vcc5v0_host_en: vcc5v0-host-en {
-+			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&vcc5v0_host {
-+	enable-active-high;
-+	gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vcc5v0_host_en>;
-+};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-index 17f4fd054cd3d1c4e23ccfe014a9c4b9d7ad1a06..6052787d2560978d2bae6cfbeea5fc1d419d583a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-@@ -8,9 +8,6 @@
- #include "rk3588.dtsi"
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 455fbb290b777bca5ae69ca8644bc41380b94272..8f324417a3bdb3f5e11b03c86d18df4b6f60a43c 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -946,6 +946,11 @@ properties:
+           - const: radxa,rock-5b
+           - const: rockchip,rk3588
  
- / {
--	model = "Radxa ROCK 5B";
--	compatible = "radxa,rock-5b", "rockchip,rk3588";
--
- 	aliases {
- 		mmc0 = &sdhci;
- 		mmc1 = &sdmmc;
-@@ -139,10 +136,6 @@ vcc5v0_host: regulator-vcc5v0-host {
- 		regulator-always-on;
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		enable-active-high;
--		gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&vcc5v0_host_en>;
- 		vin-supply = <&vcc5v0_sys>;
- 	};
- 
-@@ -488,12 +481,6 @@ pcie3_vcc3v3_en: pcie3-vcc3v3-en {
- 			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
--
--	usb {
--		vcc5v0_host_en: vcc5v0-host-en {
--			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
--		};
--	};
- };
- 
- &pwm1 {
-@@ -530,27 +517,6 @@ &sdmmc {
- 	status = "okay";
- };
- 
--&sdio {
--	max-frequency = <200000000>;
--	no-sd;
--	no-mmc;
--	non-removable;
--	bus-width = <4>;
--	cap-sdio-irq;
--	disable-wp;
--	keep-power-in-suspend;
--	wakeup-source;
--	sd-uhs-sdr12;
--	sd-uhs-sdr25;
--	sd-uhs-sdr50;
--	sd-uhs-sdr104;
--	vmmc-supply = <&vcc3v3_pcie2x1l0>;
--	vqmmc-supply = <&vcc_1v8_s3>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&sdiom0_pins>;
--	status = "okay";
--};
--
- &sfc {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&fspim2_pins>;
-@@ -566,12 +532,6 @@ flash@0 {
- 	};
- };
- 
--&uart6 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
--	status = "okay";
--};
--
- &spi2 {
- 	status = "okay";
- 	assigned-clocks = <&cru CLK_SPI2>;
++      - description: Radxa ROCK 5B+
++        items:
++          - const: radxa,rock-5b-plus
++          - const: rockchip,rk3588
++
+       - description: Radxa ROCK 5C
+         items:
+           - const: radxa,rock-5c
 
 -- 
 2.47.2
