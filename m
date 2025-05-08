@@ -1,158 +1,77 @@
-Return-Path: <linux-kernel+bounces-640254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E187AB024A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A9DAB0273
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 20:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDEF49E54ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC6733BF489
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 18:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14928750C;
-	Thu,  8 May 2025 18:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFF328850A;
+	Thu,  8 May 2025 18:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="T3jLATy5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303A52874EB;
-	Thu,  8 May 2025 18:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPPsWpKw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA99286D5F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 18:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746728016; cv=none; b=fJx/VjlUrTZVpBySjecAaiKrJ2K2a+CCwokfxawF/Pbca0hSvJrEYmKZjrowe22rtitbfVH6dvJomaJR9BDlky/6/fucehEdHqUEzQ506i9TSAj2lmbDjXHBWBPoJnOMvpGSkLhB1xWgHmxkAHm3eyiCE4dM8YWczin0J1kBrN8=
+	t=1746728076; cv=none; b=AojziiYzsge552SUrv7Fbg5imLxmkL1t8KZ4QeC1Ds8B/ySOx5it0wgTnfbxw7c3IsinLkrlAYNVL7m8kzfY92WN/nHv4giCcWEMtJ5JII2SJTmnWbBt0ODu44N430Ethvi/8Ct0CSOTDRNZpb40Tsqaae8Z0DDufpWALQImOpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746728016; c=relaxed/simple;
-	bh=7YNxL1Vm89Ly6NfdTnBUxIowWrliUwR2DRgb+MJjmrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LdGs/0Bu3/IgIviWhr+jMkVSK7xAP91G7EzwEptTp7cJ3vOkXBDjSYDBUtEo5u+zsos7ctbuxzXN9kAqHuGDRlcA8qlJv9LBgNDngfj9PKh4oUjQyLe8ZTiB121icfAlKuYHr0zBCgu+vR57rYOYMk/KZCplMt88BL1R0MPHMC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=T3jLATy5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.1.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A1790209846A;
-	Thu,  8 May 2025 11:13:33 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A1790209846A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746728013;
-	bh=LO/oU31zQKuZfvDv0dRtOXlLNZ7bEkZUhWrRkKEMaKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T3jLATy5Kr4R+l+iK6j0Iu/2R+WKgl56UrzjK/gv7IYcJVlPswenenA+T9uT/4heJ
-	 oHEH8osYF+vn+GvUUVPPoTjl3rMNdO4Q3ckRQEVzhxPfPBztqFb349jUE5M7IdcHJ/
-	 2lOkAkozHsEubravHQF9lk8GnZSYVEuhks5mtfsE=
-Message-ID: <2cd63d5d-21af-408b-869a-b38118f4cad6@linux.microsoft.com>
-Date: Thu, 8 May 2025 11:13:33 -0700
+	s=arc-20240116; t=1746728076; c=relaxed/simple;
+	bh=ZcHp72uGiDAuaKGt1kAckthPOdetYKzv0w1YWor/jNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YLHo0SEfpzrpxhz1OWOEQo9S6o715KUgde6hSa4keHwg8HJ+19U8s45qtjCJz0bn4up9dsMtvVw9TYflLESWkuLxH/+3hgQJe9LSclcswGdjMvMkxgJUG4mj74Szlk4GGdhRnutw1IDtQSL5ur7VbKO7wfW+cun65/euxr7XZ08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPPsWpKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8D6C4CEE7;
+	Thu,  8 May 2025 18:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746728074;
+	bh=ZcHp72uGiDAuaKGt1kAckthPOdetYKzv0w1YWor/jNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dPPsWpKw0BW5qILUxg8el0u/eIuFgn4h5y36errkvWwg3/SXzNwuvU8apfZInH7SM
+	 rvXjDdB5QJH5ojfP7yteHrpLK+/NxXnrDduqUMIt0oxLbGvADxSMVRDP304lVAtSfA
+	 FEd856BhfVsZ9CySI3aUnZ9YvIoLGJAkjm3I2o+83fDvlrbImNiwwiAs2L0plOaDO1
+	 RVEvQD/AB4xB6z6r7xClpFLvNZquxiaez2pxxQUm9ZkvcApJ2in7hCQLhiB83eZoNu
+	 KRJC+1/nqvluGQS4N9YhCYH1OGUhTPplbeARGULGsWNIUSToWlp5xq5/YY/kHznf5F
+	 teQflX6YwMzHw==
+Date: Thu, 8 May 2025 12:14:32 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@kernel.org>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] nvme-pci: lock per namespace in nvme_poll_irqdisable
+Message-ID: <aBz0iLWpLUQR4rtX@kbusch-mbp>
+References: <20250508-nvme-pci-polling-v2-1-0c7e1edad476@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Saurabh Singh Sengar <ssengar@microsoft.com>,
- Naman Jain <namjain@linux.microsoft.com>, KY Srinivasan <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250506084937.624680-1-namjain@linux.microsoft.com>
- <KUZP153MB1444BE7FD66EA9CA9B4B9A97BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
- <be04a26f-866d-43e6-9a0b-15b91405503e@linux.microsoft.com>
- <29edc00e-9797-4f4a-83b3-0b4158c94a16@linux.microsoft.com>
- <KUZP153MB14448028621F8148D5129D9FBE8BA@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
- <1edea7f4-5ad2-4103-8eb5-9d5d9f0c7b0d@linux.microsoft.com>
- <aBztdK82ZQQvnWsh@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <aBztdK82ZQQvnWsh@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508-nvme-pci-polling-v2-1-0c7e1edad476@kernel.org>
 
-
-
-On 5/8/2025 10:44 AM, Wei Liu wrote:
-> On Thu, May 08, 2025 at 08:44:14AM -0700, Roman Kisel wrote:
-[...]
->>
->> You seem to know for whom it is broken, would be great to share this
->> knowledge. When CONFIG_MSHV_VTL is set to "m", OpenHCL will break down
->> without additional work. So why do we need to be able to build that
->> as a module, to let someone build the firmware that doesn't work?
->>
->> So far the request comes off as absurd to me.
->>
+On Thu, May 08, 2025 at 04:57:06PM +0200, Daniel Wagner wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> I don't think this is an absurd request.
+> We need to lock this queue for that condition because the timeout work
+> executes per-namespace.
 > 
-> While obviously Microsoft will only build the code as builtin, there are
-> bots that do randconfig build tests but never run the resulting binary.
+> Reported-by: Hannes Reinecke <hare@kernel.org>
+> Closes: https://lore.kernel.org/all/20240902130728.1999-1-hare@kernel.org/
+> Fixes: a0fa9647a54e ("NVMe: add blk polling support")
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
 
-Thanks, Wei, for the thorough explanation!
+Looks good to me
 
-> 
-> Thanks,
-> Wei.
-> 
->>>
->>> - Saurabh
->>>
->>>>
->>>>>
->>>>> here is the diff for reference:
->>>>> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig index
->>>>> 57dcfcb69b88..c7f21b483377 100644
->>>>> --- a/drivers/hv/Kconfig
->>>>> +++ b/drivers/hv/Kconfig
->>>>> @@ -73,7 +73,7 @@ config MSHV_ROOT
->>>>>              If unsure, say N.
->>>>>
->>>>>     config MSHV_VTL
->>>>> -       bool "Microsoft Hyper-V VTL driver"
->>>>> +       tristate "Microsoft Hyper-V VTL driver"
->>>>>            depends on HYPERV && X86_64
->>>>>            depends on TRANSPARENT_HUGEPAGE
->>>>>            depends on OF
->>>>> diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile index
->>>>> 5e785dae08cc..c53a0df746b7 100644
->>>>> --- a/drivers/hv/Makefile
->>>>> +++ b/drivers/hv/Makefile
->>>>> @@ -15,9 +15,11 @@ hv_vmbus-$(CONFIG_HYPERV_TESTING)    +=
->>>>> hv_debugfs.o
->>>>>     hv_utils-y := hv_util.o hv_kvp.o hv_snapshot.o hv_utils_transport.o
->>>>>     mshv_root-y := mshv_root_main.o mshv_synic.o mshv_eventfd.o
->>>>> mshv_irq.o \
->>>>>                   mshv_root_hv_call.o mshv_portid_table.o
->>>>> +mshv_vtl-y := mshv_vtl_main.o
->>>>>
->>>>>     # Code that must be built-in
->>>>>     obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o -obj-$(subst
->>>>> m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o mshv_common.o
->>>>> -
->>>>> -mshv_vtl-y := mshv_vtl_main.o mshv_common.o
->>>>> +obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o ifneq
->>>>> +($(CONFIG_MSHV_ROOT) $(CONFIG_MSHV_VTL),)
->>>>> +    obj-y += mshv_common.o
->>>>> +endif
->>>>>
->>>>> Regards,
->>>>> Naman
->>>>
->>>> --
->>>> Thank you,
->>>> Roman
->>>
->>
->> -- 
->> Thank you,
->> Roman
->>
-
--- 
-Thank you,
-Roman
-
+Reviewed-by: Keith Busch <kbusch@kernel.org>
 
