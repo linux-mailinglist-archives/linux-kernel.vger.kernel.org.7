@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-639047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-639043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD644AAF223
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55170AAF20E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 06:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 512939C6AC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:37:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE693ABADA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 04:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E47720C012;
-	Thu,  8 May 2025 04:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1731ACED9;
+	Thu,  8 May 2025 04:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="jt5SNyfo";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Jjm612SV"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iKWyefy2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6AB8C1E;
-	Thu,  8 May 2025 04:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1833A78F37
+	for <linux-kernel@vger.kernel.org>; Thu,  8 May 2025 04:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746679059; cv=none; b=h84ofrBzHh8Tgfkpd1L5dP+mj2RLD1EZ4xG8ZqWRJtdO4/kaNYkoXGJwlesa2KbODNoe29T0iPQeLofJxw69d6KS1CptM00/2ct+p1HVPvimZl5cqbXfkjhuV5rDGu0+GdydGOk5C5+PEq+uOPxxmFKf5uf0HY37T52qwp7gfKA=
+	t=1746677922; cv=none; b=mQ4n7rXl64ZpaBxD6obSawP6kMXYCPJ3oDDP71BtwRHYkh5GWP1KigdrghrEzaKRL2Z2Eb1WXCkJyE2ZvJMglqpDWEVCn/bkjGqKNFlL+4l/oUUS1lZ6uLkg184GISpD7QCnR9fxFWRWzIMGzt9qe0Q/WmJcQtWry36VpIRzI0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746679059; c=relaxed/simple;
-	bh=0FChnJQPzz1KtzDEL5Eiax95pO/O1yR1baYM2Fap6x4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mh6PS8Ko7zfnlGqCmvHclVd+rDVSk3vwJbXpeBAeGRq28ODASr9U0og3DMvuv4TcpaFM2psm8FMttrn7grc9tv0wfsOZLhAP1fwiNO3yBt0iA6gDxPeNHcBczU3J8JDfOmMB/a1j+SZpy26LVPYGx1oAVdvYZ9dXLjMr40LaMFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=jt5SNyfo; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Jjm612SV; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 2D90112FB439;
-	Wed, 07 May 2025 21:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1746677811; bh=0FChnJQPzz1KtzDEL5Eiax95pO/O1yR1baYM2Fap6x4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jt5SNyfodEi1ogDoJwe3JVlS0f9ZGc0hP+3ydAncgh4TPciIv+WHzCwS7EA8wgOq2
-	 ExSv5WIqFKleXikDRurQOpnO9sLKKj8Q/CP5fhJNZn5kUh2jDrU5XTu7To6LIhEawe
-	 WFDjblpoeXZwDN+Ldqm/FxOAzlQInbwgIJDAP4esF4uBqYxSCC65cKhPbsMvR0Y0dV
-	 2eWXhRjgfICEPOWW9pW+yT7GhGlS9HPvkT9ilnJPqNAr00waKTa/Xfhhk40aQaIrUy
-	 rKQJM1VJ8PhBwDQOmkR96jpecRuVwXY4mbAnRIUwfTW/8DmRPc+eUC3xhm/I6Vqe+5
-	 a3VwjXheJfa4Q==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id Fgf2V28gQU5G; Wed,  7 May 2025 21:16:14 -0700 (PDT)
-Received: from ketchup (unknown [183.217.82.204])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 5306A12FB404;
-	Wed, 07 May 2025 21:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1746677774; bh=0FChnJQPzz1KtzDEL5Eiax95pO/O1yR1baYM2Fap6x4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jjm612SVbUIilb0k9QVvl0KVmSkGUikSuYuzbBvuBrSD+fnVAduVWKdebnCtcuPJS
-	 bOgSUhRzYaysNDP8XobasGJEG9gUQOPwQHRiysaB2L4RdM4mCDdLFKkD/DP0n6QBWm
-	 jtdMDoHluKfzN6CUl3jbvGPyi9z7FDSzt2K3FSqrjHf5qlKRqE8MCQrqbekSDULahk
-	 IOgfsFVcmz+2cXs/VEaIwmHDHYBzqylZjIp0rIg0NVDqocTjKGghXWegGWFPjRWR2W
-	 knFk9wGYe8h6H7KIIXOmNWK3T4/acDoX6Sow2npJ5medxWk0Cuv+FcPnY60vHHiJn2
-	 5mfxKRxbEIxGg==
-Date: Thu, 8 May 2025 04:16:05 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/6] soc: spacemit: create a header for clock/reset
- registers
-Message-ID: <aBwwBSfnkw6XUOLA@ketchup>
-References: <20250506210638.2800228-1-elder@riscstar.com>
- <20250506210638.2800228-3-elder@riscstar.com>
+	s=arc-20240116; t=1746677922; c=relaxed/simple;
+	bh=9lWJLN2w7Nt+NoDdYjkFSzmpt4jtiHztA/5KmT8x/og=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=eFn/5ff733dTXl0bopGrtfku6MLSST/FpnaySSHnGz2fKgfgWF21uVfH8baZbD7Dqz7Td2DMqR33NO3KkI7DkUZ20/Xsvyj/A0nBV4HIYt5RWLX6TZNKYuEmJxdwhiZQVHcS6cAL9ssVUMzSQrrjef3WjSAen6icZvuskiEatKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iKWyefy2; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746677920; x=1778213920;
+  h=date:from:to:cc:subject:message-id;
+  bh=9lWJLN2w7Nt+NoDdYjkFSzmpt4jtiHztA/5KmT8x/og=;
+  b=iKWyefy2QU6v661TiOx4u0AU0VrE2gElkMpzaD5PjOWPQ7tBE1PrFDvl
+   t0c5xaDKF+4r/Ho1UnH3kN4w/lDplVWajkBnL88pcfCXFoTCkwBjK4t69
+   yyXxFYspA/vfUN8+vtosV093HrKnJF7NKyF73B1OEI6paSZLf/9jQgEK7
+   K/e+NBNyDd18VAJ23EfE9ODQW92eGhNsz/P4inUs1/EF0LSylH+1laFop
+   Hyg7QoNgg6SXzWoECZwB+LkOZBjSed2ncHlTvRDCPw3aZUtEmqHxt9oMB
+   DDA9LBPuHZoJRo+6BAYZAd9eUl3Y6LQ7cz17wS1aU/Mc7AsfUnwU2MWbL
+   g==;
+X-CSE-ConnectionGUID: C0Kj/al/RiOKkDOlnFMLIg==
+X-CSE-MsgGUID: ilH5SdtSSRa8MKQKjMukGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48605015"
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="48605015"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 21:18:39 -0700
+X-CSE-ConnectionGUID: XajZkRodRIumOjhDJ8sRGg==
+X-CSE-MsgGUID: ppGwqY5pSwqHxRY7QZKEyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
+   d="scan'208";a="135864984"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 07 May 2025 21:18:39 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCsiS-000A0E-2D;
+	Thu, 08 May 2025 04:18:36 +0000
+Date: Thu, 08 May 2025 12:18:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20250506] BUILD SUCCESS
+ d3ce0f90b33a9f1fac9c84b4ca84839f08593b04
+Message-ID: <202505081220.TzNpjzfb-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506210638.2800228-3-elder@riscstar.com>
 
-On Tue, May 06, 2025 at 04:06:33PM -0500, Alex Elder wrote:
-> Move the definitions of register offsets and fields used by the SpacemiT
-> K1 SoC CCUs into a separate header file, so that they can be shared by
-> the reset driver that will be found under drivers/reset.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c | 111 +--------------------------------
->  include/soc/spacemit/ccu_k1.h | 113 ++++++++++++++++++++++++++++++++++
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250506
+branch HEAD: d3ce0f90b33a9f1fac9c84b4ca84839f08593b04  NFSD: Avoid multiple -Wflex-array-member-not-at-end warnings
 
-CCU is abbreviated from "clock controller unit" thus the filename seems
-a little strange to me. Will k1-syscon.h be a better name? We could put
-all syscon registers together when introducing the power-domain driver
-later, which could provide an overall view of register layout.
+elapsed time: 1849m
 
->  2 files changed, 114 insertions(+), 110 deletions(-)
->  create mode 100644 include/soc/spacemit/ccu_k1.h
+configs tested: 40
+configs skipped: 1
 
-Best regards,
-Haylen Chu
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha        allnoconfig    gcc-14.2.0
+alpha       allyesconfig    gcc-14.2.0
+arc          allnoconfig    gcc-14.2.0
+arm          allnoconfig    clang-21
+arm64        allnoconfig    gcc-14.2.0
+csky         allnoconfig    gcc-14.2.0
+hexagon     allmodconfig    clang-17
+hexagon      allnoconfig    clang-21
+hexagon     allyesconfig    clang-21
+i386        allmodconfig    gcc-12
+i386         allnoconfig    gcc-12
+i386        allyesconfig    gcc-12
+i386           defconfig    clang-20
+loongarch   allmodconfig    gcc-14.2.0
+loongarch    allnoconfig    gcc-14.2.0
+m68k        allmodconfig    gcc-14.2.0
+m68k         allnoconfig    gcc-14.2.0
+m68k        allyesconfig    gcc-14.2.0
+microblaze   allnoconfig    gcc-14.2.0
+mips         allnoconfig    gcc-14.2.0
+nios2        allnoconfig    gcc-14.2.0
+openrisc     allnoconfig    gcc-14.2.0
+parisc       allnoconfig    gcc-14.2.0
+powerpc      allnoconfig    gcc-14.2.0
+riscv        allnoconfig    gcc-14.2.0
+s390        allmodconfig    clang-18
+s390         allnoconfig    clang-21
+s390        allyesconfig    gcc-14.2.0
+sh          allmodconfig    gcc-14.2.0
+sh           allnoconfig    gcc-14.2.0
+sh          allyesconfig    gcc-14.2.0
+sparc       allmodconfig    gcc-14.2.0
+sparc        allnoconfig    gcc-14.2.0
+um          allmodconfig    clang-19
+um           allnoconfig    clang-21
+um          allyesconfig    gcc-12
+x86_64       allnoconfig    clang-20
+x86_64      allyesconfig    clang-20
+x86_64         defconfig    gcc-11
+xtensa       allnoconfig    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
