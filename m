@@ -1,249 +1,208 @@
-Return-Path: <linux-kernel+bounces-641614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB99AB13E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D0EAB1412
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356969815EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9071D982768
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91217290DA1;
-	Fri,  9 May 2025 12:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472482920B2;
+	Fri,  9 May 2025 12:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MvYZnUIi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DimXxpcf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ACC2900B5;
-	Fri,  9 May 2025 12:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795278; cv=fail; b=e06atdw2/q5hATHld//xRC5DzWhNRvooK2yl0tVOTrS5MynBAFOSV9i4VC4mxa1W02bYtVlNbzONduc/XWEykSguYaH+fVhg3dC6VCOqs6QduzV/G5f0YXcPzhpod1TT1jbJwOydfFaoIr8/dBl37HzGApGZ0CSSHR7xG1JDv3s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746795278; c=relaxed/simple;
-	bh=cIjKV23cLU+gwpXuoSwybyjTBwwrzjXK6uvB5gL6MSk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IT10gk9CLarW50wgS6vlTPdwHbzJEh86EZs1H9iYtMa9WvLOKevRQjpfbGxynsZr0u7/F2AreaCjoO1DU2AI1PgAIJdn6VrZT1Nl2tYp1LI/3Pu+mKcZ1KIfm3grIkB0bkEL77c/sfBrFirRl2pFtZLxWszBwsfvo30M5sHwWHc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MvYZnUIi; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746795277; x=1778331277;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=cIjKV23cLU+gwpXuoSwybyjTBwwrzjXK6uvB5gL6MSk=;
-  b=MvYZnUIi6IOEhd9XxxP2buGKQwX7GBRCVfTeqnB0rDX9p90fSuYzUUsh
-   kDHlBEHr2V1LinA7blL+XxjDM7+oh2zvZOXhNO5lMifoFpTTaQlZDIGH6
-   jhDQ1OZdU8+p0b/Qb5MYuaifhTC/YLWYLEi1a1i3OE9iI3A5ic96puAfb
-   PZUjjYpdTYu6n/IsVWdNY9UAPo/HbSyhtMqQWB7RagrG1HSfCddKd36P7
-   b0yk7xIMNES9qCJOIfuKOJ+CdFcCBSGQCZLjr+99B5x7JtlRjD6H5xv+H
-   Ohy5Uj9i8TtvMyocnyhdFhIChZnkHA/rH8qoodMUXMS+HOfGTyBJHgqri
-   w==;
-X-CSE-ConnectionGUID: zBxymOx4SPWWf9NoRVtWPA==
-X-CSE-MsgGUID: FnkH/oKhQrO/lttI1+A1Fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="47734789"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="47734789"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 05:54:28 -0700
-X-CSE-ConnectionGUID: Qr5OyFnWQA6N8MBoplH1EA==
-X-CSE-MsgGUID: F8fOK+zBT0yPZiDZyy4eIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="137606394"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 05:54:27 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 9 May 2025 05:54:27 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 9 May 2025 05:54:27 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.43) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 9 May 2025 05:54:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p6KR4ApF/R3JZK9Toteajcbmy5xjGloHSjf2t++T+aQcAEm00ilBv+X0eJ11Njuy3zC8sbv3AqOKuXfxQ1mIbYz0LceTxYgzCq6a2H85RkMSD6bPnavA/o2kLknMhyUArh7jM1zFAtvtZOVDoF7fVA/tvR4/o4iPGd5gkfUfJVtjBlQFjfd+SwJDyB3PSIIT+tw/mzyKV6aITRUzD3qZmXK7bYPXF2d1OZlkOEK5W0aAbRgDey3pwkfdRadNy4cW5cV95XBXcCK9ojZOxN9slbBBvEon+FYwh5H2FTRKhruY5HCjTTWVFHvADr76A97E0iFqhZc4AJhkFQ9hSKOB0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FOa+LuoSWc6j8wo5OjYajRdp7h2DB7B8z4UXIjpr0RE=;
- b=KdijbA7n04Qy7y0ebGIfV/FX6wrqQQ0a6mM8yslgT2TPY+r0YClml/DMP5qzWTq0jTcugRERtWD4kUNsfRZQmCJT/Ah4o39LOCBnZ03pme1sRY6O6Ikjk7X00cF3mUcruRu16icSWmgSCEW1IWOVcoo+vLxlUl/jjQCnLtyTg29FKBbgv1BhwvlfxUbaUUTt+dkgVCif02PLwfTkH98+Sxgy71p0b5aX/O5xJWGv6BYFfk4DxMjsX01kZ7Uu/HiT/d2KUKKR4R2gsz4WE98w9qtAhDlNwOqCi//auFJJUiCD3kw40DNkMW3qyOR70AXqxyXgZ9v4ZYaSt5lSNJLO5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ2PR11MB8452.namprd11.prod.outlook.com (2603:10b6:a03:574::22)
- by PH0PR11MB4984.namprd11.prod.outlook.com (2603:10b6:510:34::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
- 2025 12:54:05 +0000
-Received: from SJ2PR11MB8452.namprd11.prod.outlook.com
- ([fe80::d200:bfac:918a:1a38]) by SJ2PR11MB8452.namprd11.prod.outlook.com
- ([fe80::d200:bfac:918a:1a38%5]) with mapi id 15.20.8722.020; Fri, 9 May 2025
- 12:54:05 +0000
-From: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To: Simon Horman <horms@kernel.org>
-CC: "donald.hunter@gmail.com" <donald.hunter@gmail.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "Dumazet,
- Eric" <edumazet@google.com>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, "jiri@resnulli.us"
-	<jiri@resnulli.us>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "Loktionov, Aleksandr"
-	<aleksandr.loktionov@intel.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "Olech, Milena" <milena.olech@intel.com>
-Subject: RE: [PATCH net-next v1 2/3] dpll: add reference sync get/set
-Thread-Topic: [PATCH net-next v1 2/3] dpll: add reference sync get/set
-Thread-Index: AQHbri/dMvB2hhuzzUOgHfy3C3HefrOuJH0AgBxBwtA=
-Date: Fri, 9 May 2025 12:54:04 +0000
-Message-ID: <SJ2PR11MB845242A2D576433DE5252F2C9B8AA@SJ2PR11MB8452.namprd11.prod.outlook.com>
-References: <20250415175115.1066641-1-arkadiusz.kubalewski@intel.com>
- <20250415175115.1066641-3-arkadiusz.kubalewski@intel.com>
- <20250421132230.GE2789685@horms.kernel.org>
-In-Reply-To: <20250421132230.GE2789685@horms.kernel.org>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ2PR11MB8452:EE_|PH0PR11MB4984:EE_
-x-ms-office365-filtering-correlation-id: 854fa766-3221-4472-7b14-08dd8ef8947b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?2iYfq1NPB94x81+RN93UrX/qfGzHEKnPyZYtxhVsu2ZueZFI4k/hNV+rbG0b?=
- =?us-ascii?Q?q+mK3h3IcMCRCn7/MX05iCxPdvDphEdoxfNE3uE5nGLi2FTdqZOMr9PvPocX?=
- =?us-ascii?Q?0WaT/0F4wOSFUv/U/RwSc/i/8b93wFmVaUvJQXQOQWp+2aHKvxY/wvFUuEc9?=
- =?us-ascii?Q?9X+mk7zXJrfcUfmTJTro9kMPevmtzEB5iWxUEe8wlwJ9oHqLBZsus5ucOaWb?=
- =?us-ascii?Q?HMjTwzY9I6kDw/N9zvbsSyXlwId34rfN8nFZyYfmgGGfU9DWQVz2cNCnHexo?=
- =?us-ascii?Q?d6k3m8WUQW5DwhgBjg/lcUNjnpVuo3AxZdGVlnr0xYcY9KL1Cn4qySKOO9YO?=
- =?us-ascii?Q?kxs3lvyIoKfdjMWotKtS/Jv5VGTk+RNf1qj1x98M5AWwFYRqk1ITOLujIPQN?=
- =?us-ascii?Q?dIR/yml5yP0isLwVh4kwscTM4rwtfAMgzvq53k5AfxZUh7M6tRdDn+PyhOuW?=
- =?us-ascii?Q?2sv3617B7vxshOJVvNKBiMaECnezGV9VHZO/UW+bZ0XVq0nSEEcdwyoP9HXu?=
- =?us-ascii?Q?isW/Pd3n0IGWO7nm5dctbeaCz7noeDc7OXbvTch//L9EcXOVqpATqu1jzXCf?=
- =?us-ascii?Q?r3LISeCyuPejTdiDRsYV6WXRTqbhlGTHIOe/+MGa30JpymAof8ercU1L4L1B?=
- =?us-ascii?Q?gsKP/3wil3uRVJPC+vSrSsxspPV379Z6DmF6s4BYZYdS0ZFT3b9dkdSmYo5O?=
- =?us-ascii?Q?SxjpG9chpLcHgOrJ9DTYFZVaUib+DyBGlJ42HYuJM2bj51A1heJMVbSXXmnl?=
- =?us-ascii?Q?HoxGxjinOXjkU/h2t8qem7v5i6oUSlRJ5r8gcH9N6b/iByRWuXZtwwO6w2H/?=
- =?us-ascii?Q?BQHh8Ut0Ox0RLd9tmeBorPvqGAKem72Xu23hVo7wCgUS1qQTVYoNzxjHBRUw?=
- =?us-ascii?Q?drPVGQA4Huazbd3h2cb6q43dfReNOQ7OcZ/9co9uu7xfCu+D9Th1wNMb9e14?=
- =?us-ascii?Q?L/e8z+GFAeZ+nffehC6zJXmYtEwWUS5pHCzYkx+FVluP8yW1V31j9g34bvaB?=
- =?us-ascii?Q?C8c/qT/wsvptCtWS+bdyvwnVNfNNRKud2cZ7TDc2AlG+Q07qvrp8TBGtd4x+?=
- =?us-ascii?Q?JM6DGGLz1Myp2KLVDoC/sSFjWPd2cETXgvsRpaC3U5dZUayED5TyWGyj7sNf?=
- =?us-ascii?Q?kW4fYLk3hXR2qGTng+nejeKYW3TLhSJrtKNgqqN7mvdgotDuZbOuxxvWWjRy?=
- =?us-ascii?Q?7ygg72vQdY8dg7+iu75C0oAJd5l718EJE909e/ymkrQT3A1ZUE47i5b3mTyh?=
- =?us-ascii?Q?3csWo4F+Zs7DfDjH8MsBeB1f3EpeMTH7NhIfHMLuKbTEHxDAJiiiUuEBS1z9?=
- =?us-ascii?Q?aBKk+AsOAAolbl1Yc2HI88QSW0SHe7FiKmqycHU021LcVigHLl+QRCH/QHdo?=
- =?us-ascii?Q?rzmdC/fOOFUfI3B6EmDYuzI8pJ+wmBEYlMAu6GTD2uOUbt3MtGNuUiSaeTxl?=
- =?us-ascii?Q?+DZUEDM11/0xkgX8h+SV6CqtCqJRT+73k0R2gsKqC1Z9wjeSfZ46EA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB8452.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?QsSybKW8kALWi8jN28Wket/H7VRpSFNCzOmLe+fGTUZ3/H9zpk+ltohpP9h8?=
- =?us-ascii?Q?HqLGByXRCviTPl9cxOFjdIed0dKRhzK0O1kvY4vVZQEOCm/x7ta1vev5sROE?=
- =?us-ascii?Q?HB8N5RPzw/DtvxYll4PRNjfYgBaZkeT+sZvRldurFHpFdtkYb3sMQOcbAolZ?=
- =?us-ascii?Q?U1+0yZ6RC3a5cSOE6DnGvyWqWEHPd1VZgxLJIle9EsjICLVYTJP/PnvI07cc?=
- =?us-ascii?Q?uKHplNDXqHBjk1joARP09iRHepg0ccG8e0sO3/70nm9QLsD7JgsYgs7O3zX6?=
- =?us-ascii?Q?ankE+LMXEaL0zbOzVZQgchLKvvJ5H4+cM9iha5rK84OnrVSmAEMrWHgc+9Zx?=
- =?us-ascii?Q?w/wpX33jilLZERBX28okYxOZPD9Gh2hZtXGqtlp0BzjDNS3Y0Yp8qGW4ofD+?=
- =?us-ascii?Q?drkLEIc+t9+PZfyb8x9j5DW++ckJ8FNQRDmqTUple43HW7dqC/imo9IVh8hh?=
- =?us-ascii?Q?9+R3HrGKoxGwxNmq8orXJ4HzcCe+d7bMuQIHM5VxX8/B+5RlIPdozvcIw3Jt?=
- =?us-ascii?Q?gwbRwjk7GnaSXnmtKAEx63U361mV0amZQJal40GiMA/2pBEw/mfiH6CN5DOU?=
- =?us-ascii?Q?HVTcsDPC/QErEavs+N0UiNtXEEYmOY/aOZ7j9T6tOFTddrzPhcrmLaAzwMUM?=
- =?us-ascii?Q?RXTwiQaMrSQMtII9CsMNOXYIznAZzcm/uX4+6yZvPBNPJ1z3Tt8BO+TewqkI?=
- =?us-ascii?Q?5n2cwPEaNsWwwSGTQm9oGMuXlM95Kn0doXQZmKd6L+yNUKurBKDLJzk9T8r0?=
- =?us-ascii?Q?aEdWZYhRjNye+2+uJUdAti9GNHG9UcxyNYs4fASE245Vg6yvCiINfgVbcv/3?=
- =?us-ascii?Q?A5F/Kss5gwLtr1Mnvwk45Hg02ogRvCcpKsun4SBMaUHFLRvc/yykmhbY5GX1?=
- =?us-ascii?Q?ayX6LzfmDjm1UlkHHN2/dhw1blEecF4NNCVd2EelGM2GakzPdsQ8V8/rHj+I?=
- =?us-ascii?Q?IL424bJScGc3/PTu0R/m/BIdXolk88zpWHislW960rw7vtHgQLfq6+R4rMHy?=
- =?us-ascii?Q?K+E+rrg14VI8JfrpWIb6Yhsgx3lq7wmJ6JwKMS4f7+w7huEegdNxrrD6bsi6?=
- =?us-ascii?Q?Ib4hhxVYuO6i3VYSNQkNfZ4Wb8KP9KI9ChBHraP/1R5wFnPAsSM8xnAMiPHk?=
- =?us-ascii?Q?TcOtR929CEcptB1xP9talKiFqOaR/LmXFfcLUHd7Pd0eDakJh0gSt0petmdw?=
- =?us-ascii?Q?Dt36O3ICPSc7jcGb+n52GHGy257s7akfI+3BrldVupcdkj+dURXby5WQiG1j?=
- =?us-ascii?Q?ITV1nucjay+kYbi4pNQfHNt7ZQzRf5kA4PDfXdtt+dLy9cGAXECluA32pdTJ?=
- =?us-ascii?Q?zGLj/zGJZS6UBIDf1K+nzwg9I+Y8a5H5NaTTewPd1kSv7afyA+Buf8XHH0SK?=
- =?us-ascii?Q?mAUM4Hb4LhT9TBCglUyiAqE/E0sotKT+zYsn8Uw2njCDRMVtdrvbCSHaLN+l?=
- =?us-ascii?Q?cxsxavYDoG4kbA6RT+NAAFNTNQtaakWEDVZzqBdZXj9H/RbdDYxhmXJbPb20?=
- =?us-ascii?Q?Rwf0RIq6YQL36GWxy85PK0Uovu265A9ZyRBDFK1DbgEGRcyYaZsT4I2SaclR?=
- =?us-ascii?Q?3lspvm/Ajy/zZd8uTclqNo5t4peWDjcsEdY7wuFbFf9a9a/iXWtrya0pDzOO?=
- =?us-ascii?Q?EA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE3C290DA1;
+	Fri,  9 May 2025 12:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746795306; cv=none; b=myKgREclvvnouwGRfb81SdOKk7oOkIn2qS/K3Us8VVkCffu/475c8CoKr/65viw7PHRI0nZ+634TawXqLIi4QBNltKiE0lA01C+p99xahoq1Qlo7Djg/TmhkOvoJcF+6mY4rHDyNhGmkdqy7CBL1JT531CLVCQ+iAIiP41k1Q6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746795306; c=relaxed/simple;
+	bh=c3c94OjA1q5qb8EGSYnHVBVy8iOw9HUdPL9oEFYfxLk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jWRrFYex4iLboGjQKE+BTxDHzX8A1LYIMDmQ+NpYLYv9Xi9+iRKZqpIozh69p7nWL/ZVK8qfv/U4ms2z94pHA7grrM5p5cXhTFpJQYVUr0bEClayoDsdFsALZ+Y8Ed/EGj5CkNgoUlxEU7opaVzVv188Ix25r0Fo/s4ONKUQ/FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DimXxpcf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AC6E0C4CEEB;
+	Fri,  9 May 2025 12:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746795305;
+	bh=c3c94OjA1q5qb8EGSYnHVBVy8iOw9HUdPL9oEFYfxLk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DimXxpcfw4ebKQKH7DiK6f8PW/85zKA5OAFMbEXfxOrhT0N20cI4VMF5gYPrckgiU
+	 F7rXr8UXkQwhA81+Aj1F6DhsPHy3xi0bQoho7o4uFaBrof6zFimYIV+Pvg/9KSFriQ
+	 Vln4fCLIj70oiahJ7qOxo9+5Me4NpybqeRxX9Yz9bhzRhjOtGiKPsuXO5kygpU0RuW
+	 9VXrlGN/WOzNTqjoSB7/h8d3vsVOWF1NMa7BAr+7G4U03ZkNyEFZcF+k7wtLdW2uVu
+	 dBf5mLXoYU41w2aADbw5csR/3VdK6kbIvay2kxYMvuY14x9NQyrGCFbb5qt8Z/Pvga
+	 +7Do9GVd7Wj5g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C9DC3ABBC;
+	Fri,  9 May 2025 12:55:05 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH 00/12] sysctl: Move sysctls to their respective subsystems
+ (second batch)
+Date: Fri, 09 May 2025 14:54:04 +0200
+Message-Id: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB8452.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 854fa766-3221-4472-7b14-08dd8ef8947b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2025 12:54:05.0094
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: miEMNuQnhZ6jKNKe78v6UlEg/2/ld11v1iJK0bR7UCOEgr2z54x2RoEZYqq0fnnGTMsnbQsXnvdQnJy7Q/TxNAMe6yVGfTpQu/ZwK+Moz4c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4984
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO36HWgC/x3M3QpAQBBA4VfRXNtaI7ReRdJYg5G/djcpeXeby
+ +/inAc8O2EPdfKA40u8HHtEliZgZ9onVjJEA2osdKGNWmhS29XZsAbqV/adBHaoDGVVSTmiNQP
+ E+HQ8yv2Pm/Z9Pxv//uxoAAAA
+X-Change-ID: 20250509-jag-mv_ctltables_iter2-9a176a322c9d
+To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+ Waiman Long <longman@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+ Joel Fernandes <joel@joelfernandes.org>, 
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org, 
+ linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4502;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=c3c94OjA1q5qb8EGSYnHVBVy8iOw9HUdPL9oEFYfxLk=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGgd+xMW7Hzi52CWL9iWR+Z70SJ7b24h1VVTE
+ 9+RcZ6N+tkWRYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoHfsTAAoJELqXzVK3
+ lkFP/6IL/jqzfrkpLBdybK4gjSc6ouWp4ieAHXYsQp1S7DOTMfmtKoA3WGZiaS/e09VycqVxmV7
+ QL7bIphe5aOAGsKRfnzXH/Hw7gCvdsJ7wIDxjbXyoEZUvdZyAOe8ZXj/dvFWk1mTifku+SVY/tF
+ 0nAq1rIlLyFh8p7/3PU7knC9Chtj+lelUov03LWHsB7O1+aFpCDy2GRqkhDAeuYFPdE/iQes9mw
+ 2NJXuX6auIitRw64qZDDYLrbz2ZhcXKmYkc1m5h4tcIdJPhMOcI5jBaz+xT709w9P0ojGopy/I4
+ iRU6Cpv3crKjS07AYXf0mSucoF//u0OalGFPsTMJkN5usP8JcRovnwFrPa+cLE8uC09Z+WXtXIV
+ InsEjNTX8XjAZFZ07Z3Im0b4DJaT8bb0HUN1qHPR/smJbhD5qy6XjyWAZ6v1GgsYF1No+2YtLVm
+ 74Y6dZPLQqguGo8y7ok+l1LnUwN3yTYUlKz8oHZs4bVH3wIwcgGgmSjJ/E8AWrV+umAJ97WKW55
+ TI=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
->From: Simon Horman <horms@kernel.org>
->Sent: Monday, April 21, 2025 3:23 PM
->
->On Tue, Apr 15, 2025 at 07:51:14PM +0200, Arkadiusz Kubalewski wrote:
->> Define function for reference sync pin registration and callback ops to
->> set/get current feature state.
->>
->> Implement netlink handler to fill netlink messages with reference sync
->> pin configuration of capable pins (pin-get).
->>
->> Implement netlink handler to call proper ops and configure reference
->> sync pin state (pin-set).
->>
->> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->> Reviewed-by: Milena Olech <milena.olech@intel.com>
->> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->
->...
->
->> diff --git a/drivers/dpll/dpll_core.h b/drivers/dpll/dpll_core.h
->> index 2b6d8ef1cdf3..b77e021356ca 100644
->> --- a/drivers/dpll/dpll_core.h
->> +++ b/drivers/dpll/dpll_core.h
->> @@ -56,6 +56,7 @@ struct dpll_pin {
->>  	struct module *module;
->>  	struct xarray dpll_refs;
->>  	struct xarray parent_refs;
->> +	struct xarray sync_pins;
->
->nit: Please add sync_pins to the Kernel doc for struct dpll_pin.
->
+This series relocates sysctl tables from kern_table to their respective
+subsystems. It is mostly moves to core kernel subsystems but also
+includes mm/memory.c and 2 drivers (parisc and tty). With this series we
+are left with 8 ctl_tables out of the original 50 that existed within
+the kern_table array. With all this activity in kernel/sysctl.c, I took
+the liberty of removing unneeded include headers as well as outdated
+changelog comments.
 
-True, fixed in v2.
+By decentralizing sysctl registrations, subsystem maintainers regain
+control over their sysctl interfaces, improving maintainability and
+reducing the likelihood of merge conflicts. All this is made possible by
+the work done to reduce the ctl_table memory footprint in commit
+d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
+arrays").
 
->     And, separately, it would be quite nice if documentation
->     of the non-existent rclk_dev_name member removed too.
+A few comments on the process:
+1. If you see that the change is good and want to push it through a tree
+   different than sysctl, please tell me so I can remove it from this
+   series and try to avoid conflicts in linux-next.
+2. Apologies if you have received this in error. Please tell me if you
+   want to be removed from recipient list and note that it is difficult
+   to actually know who is interested in these "treewide" changes.
 
-Sure will try to submit separated commit for this.
+Testing done by running sysctl selftests on x86_64 and 0-day.
 
-Thank you!
-Arkadiusz
+You can find the first batch here [1], if you are curious.
 
->
->>  	struct dpll_pin_properties prop;
->>  	refcount_t refcount;
->>  	struct rcu_head rcu;
->
->...
+Comments are greatly appreciated
+
+[1] https://lore.kernel.org/20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org
+
+To: Luis Chamberlain <mcgrof@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+To: Sami Tolvanen <samitolvanen@google.com>
+To: Daniel Gomez <da.gomez@samsung.com>
+To: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@redhat.com>
+To: Will Deacon <will@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+To: Waiman Long <longman@redhat.com>
+To: Paul E. McKenney <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+To: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+To: Joel Fernandes <joel@joelfernandes.org>
+To: Josh Triplett <josh@joshtriplett.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+To: Zqiang <qiang.zhang1211@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+To: Helge Deller <deller@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-modules@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Joel Granados (12):
+      module: Move modprobe_path and modules_disabled ctl_tables into the module subsys
+      locking/rtmutex: Move max_lock_depth into rtmutex.c
+      rcu: Move rcu_stall related sysctls into rcu/tree_stall.h
+      mm: move randomize_va_space into memory.c
+      parisc/power: Move soft-power into power.c
+      fork: mv threads-max into kernel/fork.c
+      Input: sysrq: mv sysrq into drivers/tty/sysrq.c
+      sysctl: Move tainted ctl_table into kernel/panic.c
+      sysctl: move cad_pid into kernel/pid.c
+      sysctl: Move sysctl_panic_on_stackoverflow to kernel/panic.c
+      sysctl: Remove (very) old file changelog
+      sysctl: Remove superfluous includes from kernel/sysctl.c
+
+ drivers/parisc/power.c       |  20 +++-
+ drivers/tty/sysrq.c          |  38 +++++++
+ include/linux/kmod.h         |   1 -
+ include/linux/panic.h        |   2 -
+ include/linux/rtmutex.h      |   2 -
+ include/linux/sysctl.h       |   4 -
+ kernel/fork.c                |  20 +++-
+ kernel/locking/rtmutex.c     |  23 +++++
+ kernel/locking/rtmutex_api.c |   5 -
+ kernel/module/kmod.c         |  32 +++++-
+ kernel/panic.c               |  60 +++++++++++
+ kernel/pid.c                 |  32 ++++++
+ kernel/rcu/tree_stall.h      |  33 +++++-
+ kernel/sysctl.c              | 233 -------------------------------------------
+ mm/memory.c                  |  18 ++++
+ 15 files changed, 271 insertions(+), 252 deletions(-)
+---
+base-commit: 7a94ff386a4a0d9322c56c0e998dd20468d869b1
+change-id: 20250509-jag-mv_ctltables_iter2-9a176a322c9d
+
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
+
+
 
