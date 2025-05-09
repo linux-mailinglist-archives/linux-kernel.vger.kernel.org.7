@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-640887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAE1AB0A9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:32:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529B1AB0AB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2BC24E1C58
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2E49C7D36
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4587B26A1D9;
-	Fri,  9 May 2025 06:32:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C626AA8C;
+	Fri,  9 May 2025 06:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QIHK+o/X"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DACB267B9D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCB726A1A4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772361; cv=none; b=PPXt50TSXr72J2F0IUebNYQn1xOa62wKhyFcVTbKZ/dMPF12L/d2OgTvMT6tkpiLH7DKol/V7dKRbtiTsjqC+3Z+KV2KJdrIs0TOs4y1quiqXpHFEcUgYofzXBZqrPmUshyH89KqmpRBL1wFjWgQ2ztv6R2GAKR9Saz14uY4tvU=
+	t=1746772726; cv=none; b=KFzNPEgkWLgPrper+ISzFrLF3Cn0QxOaQBnR5Z38oXaE06rtw0kYtzqdLuG6OUd36QrpVKcxdqsx3RWraOkJOWM6s/IwnZ1SScqKJ74ZwMwnRyN+yM9NaqB1CNh2Iyi9DjY4xYZzdpEZznaK6JymvpEUSAIH+p6mmQ+HMMNpQhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772361; c=relaxed/simple;
-	bh=6yge8Z7fgMDQq1fOPrhoP43XME2PXCMdqXuEEXQnyPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqxFwXdux+hNaLgwz28jwl+LOCcvCux20OzKKTK511Qo4XJKFFX/elZ+Va1cgJ7Tr6/McDi+2E1Hufg2jbwxpzKH0hCyUXv1IzZTVvk9Hp09bQHlBuSL8GVvzX9feC5fjXvN4B7GweUiFV8zQWbH5WIiBDe0MBm+8Wbliv3VURQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uDHHR-00046g-Ca; Fri, 09 May 2025 08:32:21 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uDHHQ-001qPI-1J;
-	Fri, 09 May 2025 08:32:20 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uDHHQ-00CHwN-0v;
-	Fri, 09 May 2025 08:32:20 +0200
-Date: Fri, 9 May 2025 08:32:20 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Nishanth Menon <nm@ti.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: ti: k3-am625-sk: Add power/temperature
- sensors
-Message-ID: <aB2hdA8mfKGlk8d8@pengutronix.de>
-References: <20250505-am625-sk-sensors-v1-1-688fb928b390@pengutronix.de>
- <20250507120104.4mhuaabe5auukarn@banter>
+	s=arc-20240116; t=1746772726; c=relaxed/simple;
+	bh=tqTfw5w3gBFE81Wq66Z4kvtHMDDPTdQBKyw53km8jyk=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=XPajggEpGglBRcCaodqmJ8PZAfrLGSh0Eqn2NorJscBii4pC71aKRnzfuJO0mkJ2KFaZ3cbWPiKih4mimoF2Jj8UhqF3bYLxOAcCkzHwLh+tD1HopjPlzyQJCGXqzQttOUyEpeSq4oLdX3MMZUOakDld6ql4d+a9mlcHBv24DiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QIHK+o/X; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1746772416; bh=zcC3iLdUhpaRZBYC6QjDTYzoo+13lttMagIm/kwnQYE=;
+	h=From:To:Cc:Subject:Date;
+	b=QIHK+o/XDxz8g00n9b83XpEqBZ8LFTDkoQctX6WQ9iSegG4yOXO0GH2QRvuJmGk+r
+	 UvbDYW74QzxAe9zmdzH/6kwz5HbnjcGwUeHSZ2gPTsEI5WxITwECKuEkBXc4Qo1vw6
+	 xrLId+9r0GrCNWygVpK35XvYFx2Pxh7KzOwFeTgo=
+Received: from localhost.localdomain ([36.111.64.84])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 8499C82E; Fri, 09 May 2025 14:33:09 +0800
+X-QQ-mid: xmsmtpt1746772389tm243909u
+Message-ID: <tencent_503130C3CD56569191396268CF4D12F09A06@qq.com>
+X-QQ-XMAILINFO: NkHKfw09D6j8wNd9ItXDgQzl8XJUYVRbxokHX2cp8iKyEZpEuxu4VkG/bvyfZt
+	 VCzGUT4QAmxXOGm2Bmnt1NIc72I969xDf8DoVyUCRvPRer8uGLVTk1rdh2dPmC++QNMh2JZ0t9eX
+	 ZvS5I9uNDPE/iRMfvQGQ6mHPC7KnnSy10aoKkX/dAaKzkF6kqZkwK/TcuztpMDWAb0IMkbRP/mjf
+	 McGqg+xKmBw6hOYq9l1vA9ap8QpWJ/Cl2V/T6oTllozAxM4AuqE9Uh5a42tVNNUAh6VpqM8UN+or
+	 /+LibXhjGPnj25Es1eLtGYMU5EKtF+NMrldGEniuJdH6i5x++8X1Eh0ZcRTHVasU2WtZbWAksHF5
+	 yjsk4LjWGtI3YjSPrvFE+v6dLd1ZHS9hEcVqks2fumM6krY9nQWA9c+iGkTKazw25JeJdFsEh6sJ
+	 p6dwq1z1T9OY/4bA41Vvy/FzY3nEDaPJr928PmQ0APnCzF6GX1Avi6fLWT634bWePeLb4bTJuh+s
+	 Lfut5a8E+rSvYsDcbEfMRBU7WoTSoOETxDSdnuJJgEgPNR2Zdz5T37k6Mp7B7bM9eOyHb4LDJg5k
+	 yd/nr81NBRr8+HbqEl9Ggh82qXiNL8U3kHAFWgdq5wlltmDOg+JTRGij/y7ZkP7xlquAFZvJgTlv
+	 XHHe0q3Mh+soFbkb26s1JHY0p4AbsLb4NYyCzYE5GnTv4qccPtSI9YWvZYbk0qs7hcv2GmJFotPN
+	 s24fNMLR1Epijzrqy7dt2fyvpZQWzEI05/s0bOsHvrj4jheYpFjwdpbggfQk6gnayVVrzLuil8ie
+	 nYfeEj5yCzOrljqwoOClYQTEmcnJlm7ov1C7GdhapK7Xstk+hQTbA9tKyFkTfzIt2BmbnRSDUDTC
+	 04BAaPc5XhxpSq850zPBx3NhWWrbOV+1DSrPmaSnxFgrHFs1yuk2G9IcR3UByTemsJHYWnM5BaNd
+	 oLVMr+MxXfG5M1CeWmsxyfAiPzYxl70VV4ARJuQh4/ugYu6w+aB/CEKYoKqXacEwz3POViI8LIm9
+	 /wse2ugrJfdVTHlflDh6LnP5Wd0n0L+kkVqSRL0E3IpcNCVVN+
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Feng Lee <379943137@qq.com>
+To: david@redhat.com,
+	baohua@kernel.org,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org,
+	mingo@kernel.org,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	peterx@redhat.com
+Cc: maobibo@loongson.cn,
+	trivial@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lance.yang@linux.dev,
+	anshuman.khandual@arm.com,
+	Feng Lee <379943137@qq.com>
+Subject: [PATCH v3] mm: remove obsolete pgd_offset_gate()
+Date: Fri,  9 May 2025 14:32:30 +0800
+X-OQ-MSGID: <20250509063230.1742-1-379943137@qq.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507120104.4mhuaabe5auukarn@banter>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi Nishanth,
+Remove pgd_offset_gate() completely and simply make the single
+caller use pgd_offset().
 
-On Wed, May 07, 2025 at 07:01:04AM -0500, Nishanth Menon wrote:
-> On 15:24-20250505, Sascha Hauer wrote:
-> > The AM625-SK has six power sensors and two temperature sensors connected
-> > to I2C. Add them to the device tree.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > ---
-> > The AM625-SK has six power sensors and two temperature sensors connected
-> > to I2C. Add them to the device tree.
-> 
-> Sascha,
-> 
-> I suggest making this as overlay. The reason is as follows: AM625-SK
-> among other TI evms do have automated power measurement capability from
-> XDS110 (accessible via USB port for jtag - appears as a rudimentary
-> menu option). The way this works is that it uses TM4C1294NCPDT to use
-> I2C commands to control the INA226/231 depending on the evm.
-> 
-> This firmware should be flashed by default on production boards (if
-> not, starting up CCS[1], autodetects older firmware and updates - at
-> least to my understanding) - by the way, this firmware also does test
-> automation, such as boot mode switch control, reset control etc.
-> 
-> This is the primary framework meant to be used by test automation and
-> indeed it is the default inside TI.
-> 
-> Challenge here is this: if we make this default in Linux, the test
-> automation system configures the INA226/231 in a different sampling
-> mode depending on usecase etc Vs what Linux does (even though the
-> shunt and the bus voltage for a given INA is the same). And just like
-> Linux, the firmware power measurement logic has changed over the
-> years.
-> 
-> Anyways, while I know that the SoC and TM4C can both handle
-> multi-master, the challenge is the same INA controlled and
-> mix-configured by two masters (and there is no synchronization between
-> the two).
-> 
-> To avoid this entire conflict and headache, I suggest adding it as
-> overlay that can be applied depending on the preference of measurement
-> desired.
+It appears that the gate area resides in the kernel-mapped segment
+exclusively on IA64. Therefore, removing pgd_offset_k is safe since
+IA64 is now obsolete.
 
-Thanks for this explanation. I'll go for the overlay then.
+Signed-off-by: Feng Lee <379943137@qq.com>
 
-Sascha
+---
+Changes in v3:
+  - adopt more precise subject descriptions
+Changes in v2:
+  - remove pgd_offset_gate completely
+  - remove pgd_offset_k from the get_gate_page function completely
+---
+ include/linux/pgtable.h | 4 ----
+ mm/gup.c                | 5 +----
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index b50447ef1c92..f1e890b60460 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1164,10 +1164,6 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
+ }
+ #endif
+ 
+-#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+-#define pgd_offset_gate(mm, addr)	pgd_offset(mm, addr)
+-#endif
+-
+ #ifndef __HAVE_ARCH_MOVE_PTE
+ #define move_pte(pte, old_addr, new_addr)	(pte)
+ #endif
+diff --git a/mm/gup.c b/mm/gup.c
+index f32168339390..0685403fe510 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1101,10 +1101,7 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
+ 	/* user gate pages are read-only */
+ 	if (gup_flags & FOLL_WRITE)
+ 		return -EFAULT;
+-	if (address > TASK_SIZE)
+-		pgd = pgd_offset_k(address);
+-	else
+-		pgd = pgd_offset_gate(mm, address);
++	pgd = pgd_offset(mm, address);
+ 	if (pgd_none(*pgd))
+ 		return -EFAULT;
+ 	p4d = p4d_offset(pgd, address);
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.49.0
+
 
