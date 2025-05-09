@@ -1,230 +1,127 @@
-Return-Path: <linux-kernel+bounces-641024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C9BAB0C32
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:51:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E8AAB0C35
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823DD1C08EED
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CCC91C22092
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3527A27990E;
-	Fri,  9 May 2025 07:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6827427A44C;
+	Fri,  9 May 2025 07:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SxmgBHDe"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uf1RgzYa"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0D2278E62
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41A52798F1;
+	Fri,  9 May 2025 07:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746776849; cv=none; b=l0MONoValDlizG0uoDEppz4xb3Kzet9kGJ/SGnROGNfewR5rXks7s00D2Av/65XZ9X6WjEluk2Huaq8N7WcAdke7rzjDs38Ntzsiu7g7HtLGfA6PcjB2JoyKPe9/PG8GWpNZ6L0N92+jX9njwG9MUBic3R2dUGaN2LvIPVkLU9w=
+	t=1746776853; cv=none; b=QmteTqWaV9sTYKjXypyXEK7rjR8p91bTSNo0IZKiITLdTFD9WXml4uCqTujKHDAK+4OYjHpdzXs29lor9tPwMQ8syCL9mTA7nTm+PEJvRnSCrXHD/YEsyFmGtyQMgT2E1c51vgrmKtHZ/mJwAcGYFziDjUbnxePVZyPzzVQnzQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746776849; c=relaxed/simple;
-	bh=Mdc/oXeJi1I+adR9Ftm7JPGX/onfKA6xKKXhoBhE8sI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=A+txYql+2nDI73gh2Nug0zEsl/hzhrpluUOzsBKHtyK51BmLAubkDVO0SrCHGbAtzptCAHdmlrjMVkx5I9gSU9qkRhpx9cqUxugvthm2qaHRoL4KuUhheneMNG0sbq4iX/6MOBBMvRDwqqqwwBtS22pKcQVldSdh4pn9vpPOb+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SxmgBHDe; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22fd4e7ea48so3484815ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 00:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746776847; x=1747381647; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cA0yISDxPF9g5T2ZPfjTueF/jIC5Kq4+wTcKq9ODUXQ=;
-        b=SxmgBHDezhnAI25CIu8rxzvanWWsmpFdP4fusF+rEIOJ6lEa2BaBEINsoyX8bFOO/v
-         sB3L/9vSJ+sTHL7mWPqf9VNT6VeJYnPmFCraLlbqzBw2jppTid14tM8LtwiP+HbpNRZ/
-         Cahe6FrcIfCB41UcYCpniox+HB8Giw4ERNlwHFShthpwZBRecvh1r+ntibYabSicrMUO
-         VTwQrXV64/Uw0LV2kgnjwJJ67vH7+zFi+d82frgOtFssAZhFLzpZdAoOPcMXc1YYGmtj
-         CiMRpA13Gq8WsEOo+RZY6Z/aoVR12CV9Vn2fY3wf2MR7/hsSSciIUcNdp5SS2JzqLYoI
-         Onjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746776847; x=1747381647;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cA0yISDxPF9g5T2ZPfjTueF/jIC5Kq4+wTcKq9ODUXQ=;
-        b=B+8vP2zs4j/YwoCRlE245BwxU4P03ibyqtBit56C7hXcARHlg/O8u/xRv1VZZd8uYz
-         g9+I//vFxUcGqdibmhkUOlY0ivbknXYF9LYtOkA+4EEGTFEZ7WB+Vj2c/cr/RjPr2frU
-         vC7c6tYyQS/eZh0heJ8CIQ+0At5Fr0VCu7DxRQCjs6/YWntieXgilcG1jSwRV24Lxbh5
-         6mUHahrGP9SUssz5w7eBpePbbQxJ+CrO2CzJOAQLBM9mCzM7PQRsupR0l3v7eWGoc5Rd
-         QKfk1ilW1/fmNNJ7IO0BLZCxciMNu/6m/GcvlkucBGqX8Tl4zRcY2/YtjU8Vu0ejfMAp
-         9Rpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxvHaXt+0a9US4qQZokz0m7tFm9t55839q+Kbjq5TBTxYVIwHRfbaFkKwLYdFACjHIWeUdI5NnbMF3i4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxahG9BbZj8CQ8ygM6mSEFDEDAMyyb7OPaX/PdZieQK1hRq7hLz
-	T0IFKHyY3HffR6XqOieAepmoPNgnsyY3CeGJDR53gie3MjzuuK0osPWHeP0Kfwd5IZWHgHBsbO2
-	FoIJQRTgURtFe55QwVg==
-X-Google-Smtp-Source: AGHT+IFlDUYjFmNLjZAtgvspY6ix2dHys/RJQDHcQLdAfrz+DupB+ruuhonXRKp9ueOFjqDPInrpTwbWkYVKg2ph
-X-Received: from plle3.prod.google.com ([2002:a17:903:1663:b0:223:3b74:1b21])
- (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f68f:b0:223:66a1:4503 with SMTP id d9443c01a7336-22fc8b73d0emr28784975ad.30.1746776847032;
- Fri, 09 May 2025 00:47:27 -0700 (PDT)
-Date: Fri,  9 May 2025 00:46:35 -0700
-In-Reply-To: <20250509074635.3187114-1-changyuanl@google.com>
+	s=arc-20240116; t=1746776853; c=relaxed/simple;
+	bh=7hGSTJUJwWKBkskKKd6vjPVBNQk7e0mRaBKQ0dg9WkE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n4r+UgKsXE5VdXU2mVXL6/ANQEi3Hc+tmMHBFcy5h0rFXiHIbMqPuzFP+4OjCaj+LrnRm806IIuBdiHvRYacsdetE0hW0rVW6v51PYtkqzutUoyBQaThgoegTBW3oIcYCV7h9am3KYhpg8NpuIPSAEx1SbCbvE2uaUJkECb7Hvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uf1RgzYa; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=k66pmCI1pT3vfBJYih/fR8R6maFESHCnrlUq6lhyU7E=; b=uf1RgzYa1jurRkM4LRmh7M2nKi
+	X/tNKnrMcl9U3XpmbQXaWzo+GtVk2elzKzG+FacPEffuVMPfQzBsi4GYPHTJfh4wa3q8SS4uYbr5w
+	38D7UiS497Wv+KxKTttiN6YWS9Gi2SXLmG5gfxG0GyTADF+EUp7qGoiC0pBINFIsW6SjWr0vTVAPz
+	bH98GaqZTd6jGfDtZtFA8kexrzNPabyXJx9uekAdnvYdAWWixnZbkPqpObBteA5dPPAwxstxYIHMg
+	yTrJZ6pR+o/+4FED01z3iFhYKVPZ/UXHDyQg9McHn3Bb9ptOo9OWt68bZ8HyFq8IR3vsDgSKTWFIH
+	OItVOlXg==;
+Received: from i53875a1d.versanet.de ([83.135.90.29] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uDIRf-0007kz-JF; Fri, 09 May 2025 09:46:59 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Chaoyi Chen <kernel@airkyi.com>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Dragan Simic <dsimic@manjaro.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 2/2] dt-bindings: display: rockchip: Convert
+ cdn-dp-rockchip.txt to yaml
+Date: Fri, 09 May 2025 09:46:57 +0200
+Message-ID: <1824349.VLH7GnMWUR@diego>
+In-Reply-To: <5a4f6229-1450-4c96-bfac-5257f66b2ddf@rock-chips.com>
+References:
+ <20250509070247.868-1-kernel@airkyi.com>
+ <ccf4b15a-8399-4a7f-ae40-d01d0975921c@kernel.org>
+ <5a4f6229-1450-4c96-bfac-5257f66b2ddf@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250509074635.3187114-1-changyuanl@google.com>
-X-Mailer: git-send-email 2.49.0.1015.ga840276032-goog
-Message-ID: <20250509074635.3187114-18-changyuanl@google.com>
-Subject: [PATCH v8 17/17] Documentation: KHO: Add memblock bindings
-From: Changyuan Lyu <changyuanl@google.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, 
-	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com, 
-	corbet@lwn.net, dave.hansen@linux.intel.com, devicetree@vger.kernel.org, 
-	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, 
-	jgowans@amazon.com, kexec@lists.infradead.org, krzk@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, luto@kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
-	pasha.tatashin@soleen.com, pbonzini@redhat.com, peterz@infradead.org, 
-	ptyadav@amazon.de, robh@kernel.org, rostedt@goodmis.org, rppt@kernel.org, 
-	saravanak@google.com, skinsburskii@linux.microsoft.com, tglx@linutronix.de, 
-	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org, 
-	Changyuan Lyu <changyuanl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Am Freitag, 9. Mai 2025, 09:34:47 Mitteleurop=C3=A4ische Sommerzeit schrieb=
+ Chaoyi Chen:
+> Hi Krzysztof,
+>=20
+> On 2025/5/9 15:11, Krzysztof Kozlowski wrote:
+> > On 09/05/2025 09:02, Chaoyi Chen wrote:
+> >> +
+> >> +  clock-names:
+> >> +    items:
+> >> +      - const: core-clk
+> >> +      - const: pclk
+> >> +      - const: spdif
+> >> +      - const: grf
+> >> +
+> >> +  extcon:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> >> +    description:
+> >> +      Phandle to the extcon device providing the cable state for the =
+DP PHY.
+> >> +
+> >> +  interrupts:
+> >> +    maxItems: 1
+> >> +
+> >> +  phys:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > Just phandle. If this is an array (but why?), you need maxItems for
+> > outer and inner dimensions.
+>=20
+> I think it could be phandle or phandle-array. Since the RK3399 DP has=20
+> two PHYs, if we put in two PHYs here, the driver will pick one PHY port=20
+> that is already plugged into the DP for output. If we fill in only one=20
+> PHY here, then output is only allowed on the corresponding PHY.
+>=20
+> Will add restrictions and add more descriptions in v3.
 
-We introduced KHO into Linux: A framework that allows Linux to pass
-metadata and memory across kexec from Linux to Linux. KHO reuses fdt
-as file format and shares a lot of the same properties of firmware-to-
-Linux boot formats: It needs a stable, documented ABI that allows for
-forward and backward compatibility as well as versioning.
+Just looked that up in the documentation.
 
-As first user of KHO, we introduced memblock which can now preserve
-memory ranges reserved with reserve_mem command line options contents
-across kexec, so you can use the post-kexec kernel to read traces from
-the pre-kexec kernel.
+Only the rk3399 has used this controller at all so far. There is one
+cdn-dp controller on it, but two phys for the two type-c blocks on
+the soc.
 
-This patch adds memblock schemas similar to "device" device tree ones to
-a new kho bindings directory. This allows us to force contributors to
-document the data that moves across KHO kexecs and catch breaking change
-during review.
+The controller can then select which one to drive. So yep, there
+are two phys.
 
-Co-developed-by: Alexander Graf <graf@amazon.com>
-Signed-off-by: Alexander Graf <graf@amazon.com>
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Signed-off-by: Changyuan Lyu <changyuanl@google.com>
----
- .../kho/bindings/memblock/memblock.yaml       | 39 ++++++++++++++++++
- .../kho/bindings/memblock/reserve-mem.yaml    | 40 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 3 files changed, 80 insertions(+)
- create mode 100644 Documentation/core-api/kho/bindings/memblock/memblock.yaml
- create mode 100644 Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
 
-diff --git a/Documentation/core-api/kho/bindings/memblock/memblock.yaml b/Documentation/core-api/kho/bindings/memblock/memblock.yaml
-new file mode 100644
-index 0000000000000..d388c28eb91d1
---- /dev/null
-+++ b/Documentation/core-api/kho/bindings/memblock/memblock.yaml
-@@ -0,0 +1,39 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+title: Memblock reserved memory
-+
-+maintainers:
-+  - Mike Rapoport <rppt@kernel.org>
-+
-+description: |
-+  Memblock can serialize its current memory reservations created with
-+  reserve_mem command line option across kexec through KHO.
-+  The post-KHO kernel can then consume these reservations and they are
-+  guaranteed to have the same physical address.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - reserve-mem-v1
-+
-+patternProperties:
-+  "$[0-9a-f_]+^":
-+    $ref: reserve-mem.yaml#
-+    description: reserved memory regions
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    memblock {
-+      compatible = "memblock-v1";
-+      n1 {
-+        compatible = "reserve-mem-v1";
-+        start = <0xc06b 0x4000000>;
-+        size = <0x04 0x00>;
-+      };
-+    };
-diff --git a/Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml b/Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
-new file mode 100644
-index 0000000000000..10282d3d1bcdc
---- /dev/null
-+++ b/Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
-@@ -0,0 +1,40 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+title: Memblock reserved memory regions
-+
-+maintainers:
-+  - Mike Rapoport <rppt@kernel.org>
-+
-+description: |
-+  Memblock can serialize its current memory reservations created with
-+  reserve_mem command line option across kexec through KHO.
-+  This object describes each such region.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - reserve-mem-v1
-+
-+  start:
-+    description: |
-+      physical address (u64) of the reserved memory region.
-+
-+  size:
-+    description: |
-+      size (u64) of the reserved memory region.
-+
-+required:
-+  - compatible
-+  - start
-+  - size
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    n1 {
-+      compatible = "reserve-mem-v1";
-+      start = <0xc06b 0x4000000>;
-+      size = <0x04 0x00>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 72345ca65edda..d7bd49dae2e0c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15447,6 +15447,7 @@ M:	Mike Rapoport <rppt@kernel.org>
- L:	linux-mm@kvack.org
- S:	Maintained
- F:	Documentation/core-api/boot-time-mm.rst
-+F:	Documentation/core-api/kho/bindings/memblock/*
- F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	mm/mm_init.c
--- 
-2.49.0.1015.ga840276032-goog
+Heiko
+
 
 
