@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-642233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B031AB1C17
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1779BAB1C1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BBAA21E22
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76B74A23DEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D3A23CEF8;
-	Fri,  9 May 2025 18:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69A92192F3;
+	Fri,  9 May 2025 18:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tPjzhc3v"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6b/Qjnw"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16EE238C2F;
-	Fri,  9 May 2025 18:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BFB23958A;
+	Fri,  9 May 2025 18:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746814319; cv=none; b=idoJ8Bb5/dXVeNjzvFXRXc9kpsDyjvj9krIgkEIuyDzkItKPsN50q9LLg+bSEX3nn00QMsbjQTCmXKGoWOwD9nusjFyxQNpQtyeobI4+R5liiPdzEY3xshmuYnG7HXXPdVj1Rvu85c0s/OlbQo2dPersA8pOzfpJgCdJXVPvvmY=
+	t=1746814441; cv=none; b=mCCXTD9fqaqbLwv0b+RmlkNhHWDQciOStCNf8DgE33iTyeWmyvQvumWuLnqGbZ6biEFwdXqCrikiXVAX6D6HrgjjfFb3MFd51Rt53frq36067OOuYQyfepvjOjBLoWUme1usob8doaOosDfr+w8977p5doMc7WyEvOLIo2skw8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746814319; c=relaxed/simple;
-	bh=n7jAX/r3B0uhQeb4UEEWtNNEjzyibyLhe1W3jfz/SV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyWsnZbva+u1YQfl6KGIZe1G+oIUPd2N45luPmTd1p7N+hsApNku5EuF7N2Zov6QooLsoFbvUDaSpWfLMFm9e3psSr0n51Ya605u6z9IK4yJLdDtnKH5heghBjq3rsBWexdqG7QhhE/17+MjStfkSpFYpYSEkyVsb2WqpkKAVvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tPjzhc3v; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cspF8g0wB1UfIi4VlU1VP1raE/nG2FyTs+KY08D+XqM=; b=tPjzhc3vcRS833mSbFJ+ZdUcBj
-	quuCPKO2GsiEeiReDRqPkHH3MczAQ2wRkTiz/ISzztl9+He02NXoUep5QIlmlV6kyaSSVc48dKFTE
-	RLzuvGsm/yyHS9rWKYq0uAgbArYBhgFQQ3Ba5hUrZytSdEll0JwdmoKe9R2SYLGTkTDhANdC0wbel
-	4SzR7A+aYQGPVaviUcxbFtah9arShgkhPvDg4u4bzbAPQ6Ocvh+8kLYfWODUmge8S1nWpgr6lYf/+
-	kMIR6YcQ865znEVuhyv9etq48FnNN99PrHYVYEEQiPxu50X/DrXtF6E6RZ0KtqYh1sjH2Ez7zwOwd
-	/2vUh6dg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uDSC0-0000000DqAm-35Gg;
-	Fri, 09 May 2025 18:11:28 +0000
-Date: Fri, 9 May 2025 19:11:28 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Byungchul Park <byungchul@sk.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, kuba@kernel.org,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
-	vishal.moola@gmail.com
-Subject: Re: [RFC 19/19] mm, netmem: remove the page pool members in struct
- page
-Message-ID: <aB5FUKRV86Tg92b6@casper.infradead.org>
-References: <20250509115126.63190-1-byungchul@sk.com>
- <20250509115126.63190-20-byungchul@sk.com>
- <CAHS8izMoS4wwmc363TFJU_XCtOX9vOv5ZQwD_k2oHx40D8hAPA@mail.gmail.com>
+	s=arc-20240116; t=1746814441; c=relaxed/simple;
+	bh=q2efZcS2vewZvZvxX5GnQfpsm2S/1Rw+OXcdg72+AUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tq0zuZWNsVmFBwICVP3YLoxc25WHZm9iTwnu4Qg4fWLqeDNXfu2dyuxqzVU7i152QBiE4R9ZMbo6U609vSrL2XgsGjONbmsJUc1pb02tFAI+3GQSmYwpvCYQceJ+5qND40U5cUoocGjy5ClV1CoaStmnRfcQ23lm9cl5kiL57sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6b/Qjnw; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-309f3bf23b8so3043191a91.3;
+        Fri, 09 May 2025 11:13:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746814439; x=1747419239; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPj7I32OmBW3NmJfN6lCorE6OcW6uOYiL6FFTyzHkt4=;
+        b=f6b/QjnwuiXjZxusK5MCeLf/nPC6dJxCv23b5qmTQ3Kg/jViVbI6fbFWXpMQSCTe6h
+         9lgrWVmx7OIK0cnA4GlLWQYdZTBB/JpcZeTE7ldVzWgpCwxyzwfB7W49FIPbhvwAt0AQ
+         6pk1oLkAFTWh85V61/C9YWnT3lhyXm0huNoDXP+OHG3qsqI+Z5LoWN10fnL9jZhKnbnm
+         m2XvN/5TOJ3ROymcl4PGoOGyE0jtXTnST7hGA1pKmaOvdUVUyLmTtgQEd1l+UhWfodpq
+         w04zdlxWMKQZYVxvdr4fOFMZGGMvL01iJesaNSsCGjA6p1tGhe62j6kmeqCeeaayntFt
+         ZXtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746814439; x=1747419239;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FPj7I32OmBW3NmJfN6lCorE6OcW6uOYiL6FFTyzHkt4=;
+        b=nLGFWGN4lfcZd0PGR/P+vbrKoFEc0r69FrvoYUH2QfZMHhVsud+/ncidbYVmzPo2Ew
+         tIt6EPERSc6Ztb06mWKYeGgFCZ75U6z6QuMZe4C3M42RqJmh1wCE8LZYKeSxJSRu83Fl
+         DQGkXP6PW35rMdlw+9X4BRdg16Wt7jIlV8TsEjAcNNLdAEWPYl9aD0RgJCc+dIv7A1xy
+         FcXwYhgPxbNW55DPMCniSV6oh7uTxXnhIgKGy5uClS52kmoE8WOdKRgrC/eBoQm1Elpk
+         cdSqju1krhdgH9jE6tyCcMiuApCMOrfK8ooTLTv5pYKDaU7Wg013oP3q57p//0vcXWfM
+         Jj1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYNG3BjggWUSj8dks4og8jNHLoLwB5gwk1jam/lpzxfWpQNLyDFiTBRglzT48VuzvkRMFOpVHQRhcscsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYSRbYYXsLUFgEXklyVrCHlDVDMWyHR0Irqy7s26XgTurC7HfX
+	zpWer6o6jBIEi0nTfedMRsmu6/38veUu+9b9splCzUI9xPh4oiHiR3ZhJvll9QEVgQ==
+X-Gm-Gg: ASbGnctFI8CMNQrbzUEfkB5tuMES464BKiFrI7G/XX/WR9x9eaKko7vN7Wdh5kl6FXU
+	EDwbwk9ZsnxUHeieQknPp9JfJfzQohYxkWior7jNnvFL1eLQcQozq9DPfDikXfyB600iKoZP2s+
+	GfTMAWY49OhJrNHcVT0geZ8n6/aVNM0o4kg99HZ1C7zVlsnjxzkpNJQVLtrHgCspk/opLAv7hCt
+	kvoPMMn70PBl2I1Erg7z7KjaYjUe52xPPjd/S8eXxHnTUS13yV4U8VEGc4I49HESOdh1fywKNOA
+	422Wh0M8cuT0/3NE27jf60efVdPcWNzeDI4+yVU9WZ21SQCCvCti/ReEtp/DSw==
+X-Google-Smtp-Source: AGHT+IFfDKuX+Ogqxn1Bz7Jth7H250NjxWVtd3CHGpPWzJnTEpjnMQCpbk5yL8+PxsceCiC6uJchgw==
+X-Received: by 2002:a17:90a:dfd0:b0:2ff:6a5f:9b39 with SMTP id 98e67ed59e1d1-30c3d3eb4e3mr8275448a91.18.1746814438302;
+        Fri, 09 May 2025 11:13:58 -0700 (PDT)
+Received: from localhost.localdomain ([119.8.44.69])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30c39e61083sm2127309a91.30.2025.05.09.11.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 11:13:57 -0700 (PDT)
+From: Han Gao <rabenda.cn@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Guo Ren <guoren@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>,
+	sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Add Sophgo x8/x4 EVB Board support
+Date: Sat, 10 May 2025 02:13:26 +0800
+Message-ID: <cover.1746811744.git.rabenda.cn@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHS8izMoS4wwmc363TFJU_XCtOX9vOv5ZQwD_k2oHx40D8hAPA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 09, 2025 at 10:32:08AM -0700, Mina Almasry wrote:
-> Currently the only restriction on net_iov is that some of its fields
-> need to be cache aligned with some of the fields of struct page, but
+Sophgo x8/x4 EVB [1][2] is a prototype board based on SOPHON SG2042 [3].
+There are many of these two boards in the hands of developers.
 
-Cache aligned?  Do you mean alias (ie be at the same offset)?
+Currently supports serial port, sdcard/emmc, pwm, fan speed control.
 
-> What I would suggest here is, roughly:
-> 
-> 1. Add a new struct:
-> 
->                struct netmem_desc {
->                        unsigned long pp_magic;
->                        struct page_pool *pp;
->                        unsigned long _pp_mapping_pad;
->                        unsigned long dma_addr;
->                        atomic_long_t pp_ref_count;
->                };
-> 
-> 2. Then update struct page to include this entry instead of the definitions:
-> 
-> struct page {
-> ...
->                struct netmem_desc place_holder_1; /* for page pool */
-> ...
-> }
+Added ethernet support based on [4].
 
-No, the point is to move these fields out of struct page entirely.
+Thanks,
+Han
 
-At some point (probably this year), we'll actually kmalloc the netmem_desc
-(and shrink struct page), but for now, it'll overlap the other fields
-in struct page.
+[1]: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG2042-x8-EVB
+[2]: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG2042-x4-EVB
+[3]: https://en.sophgo.com/product/introduce/sg2042.html
+[4]: https://lore.kernel.org/all/20250506093256.1107770-5-inochiama@gmail.com/
 
-> 3. And update struct net_iov to also include netmem_desc:
-> 
-> struct net_iov {
->     struct netmem_desc desc;
->     struct net_iov_area *owner;
->     /* More net_iov specific fields in the future */
-> };
-> 
-> And drop patch 1 which does a rename.
-> 
-> Essentially netmem_desc can be an encapsulation of the shared fields
-> between struct page and struct net_iov.
+Han Gao (4):
+  dt-bindings: riscv: add Sophgo x8 EVB bindings
+  riscv: dts: sophgo: add Sophgo x8 EVB board device tree
+  dt-bindings: riscv: add Sophgo x4 EVB bindings
+  riscv: dts: sophgo: add Sophgo x4 EVB board device tree
 
-That is not the goal.
+ .../devicetree/bindings/riscv/sophgo.yaml     |   2 +
+ arch/riscv/boot/dts/sophgo/Makefile           |   2 +
+ .../boot/dts/sophgo/sg2042-sophgo-x4evb.dts   | 235 +++++++++++++++++
+ .../boot/dts/sophgo/sg2042-sophgo-x8evb.dts   | 247 ++++++++++++++++++
+ 4 files changed, 486 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/sophgo/sg2042-sophgo-x4evb.dts
+ create mode 100644 arch/riscv/boot/dts/sophgo/sg2042-sophgo-x8evb.dts
+
+
+base-commit: 550de367614f7a9a0c1d40d7e19764aa9305009a
+prerequisite-patch-id: 7a82e319b011e5d0486a6ef4216d931d671c9f53
+prerequisite-patch-id: 5a30fb99ec483c1f5a8dca97df862c3a042c9027
+prerequisite-patch-id: e0da79790a934916d9fc39c18e8e98c9596d27ab
+prerequisite-patch-id: 84d1e1637549f632729eaeb7cf935ca78a642fe3
+-- 
+2.47.2
+
 
