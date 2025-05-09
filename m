@@ -1,145 +1,283 @@
-Return-Path: <linux-kernel+bounces-641569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81DCAB135A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:29:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EE4AB1360
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F17517B9F52
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732873A895E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0604A290BAC;
-	Fri,  9 May 2025 12:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B3D290BC0;
+	Fri,  9 May 2025 12:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wc13+ol7"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="XOTWavjH"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF0628FFD8;
-	Fri,  9 May 2025 12:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5042900B7
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 12:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746793755; cv=none; b=aT0QXlY0+3tYS7gFGF9vLfisGpWY2Te6pNMbAbd2fR0tSTBy+NunWv0PC6f6uAmHTzSgBboW+enieGoJ03iZFWjzL5RztnZloQfHfdNCvo8TkkQ2r+AJX4kykBY29ihn1ZikhuuUkWmUboPyk9e9nCcRBzdLID+yT8dndowYEhY=
+	t=1746793785; cv=none; b=krBtzMdDN0taNTz0YnJlPSdpLPgbwOdcMBBECFLuuxorMpFjW6dR4AF9iH9Xz8kfMhmwffjNpelmSEb4bJjhqNTb5l3or75p9XpB2CF0SNqElC4iIYntSTg2xZfW/9UZdlyXjGgN7phyNswlPthO6xuf8dr7OE7VbSyZcjv3Okk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746793755; c=relaxed/simple;
-	bh=AUaHMoaWFUQ4iEYeil8536kyUZaoosXunY70b+YQh7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hrg8dhslgXD86KAC3w+4bhyVpG5Ee+f24lHiKs0Yg9kQqncMruAsnKBw18oQIKW+zi4Ry45gJ76TuTS2Y/u0IvdKCCn44UaKxxk9ruxEuKgMw5EbI9aeO0q11FLszT3wmQlBNFr4WPSHb48l7cWyLf8IFAlvZ7+Frbw+R/8IPCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wc13+ol7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pyrite.rasen.tech (unknown [IPv6:2001:861:3a80:3300:4f2f:8c2c:b3ef:17d4])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F12A48DB;
-	Fri,  9 May 2025 14:28:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1746793738;
-	bh=AUaHMoaWFUQ4iEYeil8536kyUZaoosXunY70b+YQh7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wc13+ol7l9WuIdWoCMeCe+l5jMDGEObMTCn9YtYSmkVqET8X+kyQqwt+cQJT2fOUv
-	 tJ8+3bweTC+8n5wvRT+vzN08eW12zIp0QmsKwzyVgzKSya9qy8w913ntmGfCJ0Mzcx
-	 gd5KTqvTVa0l23Ypasjl9T8tcQRy466VlsefrJD8=
-Date: Fri, 9 May 2025 14:29:06 +0200
-From: Paul Elder <paul.elder@ideasonboard.com>
-To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	stefan.klug@ideasonboard.com
-Subject: Re: [PATCH] RKISP1: correct histogram window size
-Message-ID: <aB31Eg6oRpcHHEsb@pyrite.rasen.tech>
-References: <m3tt5u9q7h.fsf@t19.piap.pl>
+	s=arc-20240116; t=1746793785; c=relaxed/simple;
+	bh=sFuyvUI2Q8wKOM1dcBqZnHhZp3tnHs1TQoRCszgMphg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AkRcBdINEPtYNme1/9XSGzrfAUFXaxnCfm1eIYMKhBmTRLCHnlCVY9DXFpBHkFtTrQWtvZ6MByR+Asae4cbb1Ewk+KDuEjHE5tedis93yk8060X03mh5ldVgFn1jen8FLhKwYIUq1/1qAAHENx9L112P5j/rUPiQhpwqSEpd2E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=XOTWavjH; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d81ca1d436so16853005ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 05:29:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746793783; x=1747398583; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AmSXbLbqCzPF90SNiwdHQn9vNmHfXn9lOr1cdvWu+qo=;
+        b=XOTWavjHRMf/uXjiaxu5UzOhIq/wXx0YhulXtt6hnFV+ZywF3tL7mva3DQtW7eS1aW
+         Hbo3NAjaswMz9Vp6kzyIVWbM2hO/sEdnScGkcQdtUhKDfsrkgMPlQAvUEYg03Mk4BT1C
+         NFmjXps9uWsHwAnqp5QDxueRQv86HvE/ZyJn3WriMC5UTFI7u9uc547g1oFtPvcb6ynx
+         pd4DfNe9UgNdYl02f0gIFIA2V2XszVjRFLHXlvKoCgkGTaxW8pwM+P5ozRQFrofhzmty
+         od2QeoD1/OsgrIcFQNt++bxOPzZw5hMGPw0Z95mcxjF4TclKojq85cinc0uw1V2u634Y
+         tG6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746793783; x=1747398583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AmSXbLbqCzPF90SNiwdHQn9vNmHfXn9lOr1cdvWu+qo=;
+        b=oBviCNUZTI8BER2WBkkbHAQdj/7vwZ1A9elWXtzsq5nNGun2lSxz4VJdB3yLVhobte
+         71Uva0URW72ruNRXzt6UKFKb8453cONEasrqKlj/VLyILOB8pZW/5378JCj40jOl0ll7
+         3+bVlqmAi6Ln15GyqelQXn2PeSb/joA63S3H1jNKqXMii62np5kyXYFBz5meSJ/gzkvD
+         SbhNmVzqsUQz+/Y8N6AK2JDR04M8/bmXceUv1NZM+bWYkEGmUc04xrbSsSOebWiLYYFe
+         my+hvAWFgqdCpLoIkgSS71eEsByIgEYMeoP8F3U+JQRQB+46169isNYOZnShtbt8VwnA
+         ODKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRU6mxSM3WS2t+MCwy6XmJ8lK2TqBnJ2bd6H/eoVSnbUsSj9FhL0afQg6HFCCH7HjqQ9YR1ntYnJgIk6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz8gkKj/bPrzbIuTap79MHMgDLAhG3WUyrufznqoYkvp+W3TVw
+	d1EReG9yzLHyMZ79dw8ovICx6OtpOSddaT+2fS+nV65Bz7mZaKGMNqFYFvrbFHjLt+YnHaTTWlZ
+	WIdyt0lySBhrXABzB99SC1M9Wenj1YvfFOWfDFg==
+X-Gm-Gg: ASbGncsC3r/EmPvudAYPRMtgxsE7FSfcp7q2wQWnzUvvQbZFcngegMFjxaYjqsjuumG
+	dw+YOOW8Qd9trovkDiHs6UiUFDeKCVJDrq0DIiLgUjyRANCjtxWorONVcXQP1CjA2YzNu5XAl3C
+	GtM+MNGC4FCJYiYMc8VonhzQ79fPIEmei03g==
+X-Google-Smtp-Source: AGHT+IHp3DAd3qnbQTzEXrr/AOZUFWtye6vkktK43JI1h3+333nR09AfAjWbSTrZebXAYTQjM4E8ILVD9YcJzu9MLfI=
+X-Received: by 2002:a05:6e02:1605:b0:3d0:239a:c46a with SMTP id
+ e9e14a558f8ab-3da7e1e6ff5mr39960875ab.9.1746793779664; Fri, 09 May 2025
+ 05:29:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <m3tt5u9q7h.fsf@t19.piap.pl>
+References: <20250508142842.1496099-2-rkrcmar@ventanamicro.com>
+ <20250508142842.1496099-4-rkrcmar@ventanamicro.com> <CAAhSdy2nOBndtJ46yHbdjc2f0cNoPV3kjXth-q57cXt8jZA6bQ@mail.gmail.com>
+ <D9RHYLQHCFP1.24E5305A5VDZH@ventanamicro.com> <CAAhSdy2U_LsoVm=4jdZQWdOkPkCH8c2bk6rsts8rY+ZGKwVuUg@mail.gmail.com>
+ <20250509-0811f32c1643d3db0ad04f63@orel>
+In-Reply-To: <20250509-0811f32c1643d3db0ad04f63@orel>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 9 May 2025 17:59:28 +0530
+X-Gm-Features: AX0GCFsIuiVVtRxrNte_DR3qLk13RCLnfai43T5xiVxY6FHBVScamxZ1lBQWA4g
+Message-ID: <CAAhSdy389g=cvi81e7SKAi=2KTC2y9bd17aHniTUr4RNY=Kokg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] RISC-V: KVM: add KVM_CAP_RISCV_MP_STATE_RESET
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Fri, May 9, 2025 at 5:49=E2=80=AFPM Andrew Jones <ajones@ventanamicro.co=
+m> wrote:
+>
+> On Fri, May 09, 2025 at 05:33:49PM +0530, Anup Patel wrote:
+> > On Fri, May 9, 2025 at 2:16=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkr=
+cmar@ventanamicro.com> wrote:
+> > >
+> > > 2025-05-09T12:25:24+05:30, Anup Patel <anup@brainfault.org>:
+> > > > On Thu, May 8, 2025 at 8:01=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 =
+<rkrcmar@ventanamicro.com> wrote:
+> > > >>
+> > > >> Add a toggleable VM capability to modify several reset related cod=
+e
+> > > >> paths.  The goals are to
+> > > >>  1) Allow userspace to reset any VCPU.
+> > > >>  2) Allow userspace to provide the initial VCPU state.
+> > > >>
+> > > >> (Right now, the boot VCPU isn't reset by KVM and KVM sets the stat=
+e for
+> > > >>  VCPUs brought up by sbi_hart_start while userspace for all others=
+.)
+> > > >>
+> > > >> The goals are achieved with the following changes:
+> > > >>  * Reset the VCPU when setting MP_STATE_INIT_RECEIVED through IOCT=
+L.
+> > > >
+> > > > Rather than using separate MP_STATE_INIT_RECEIVED ioctl(), we can
+> > > > define a capability which when set, the set_mpstate ioctl() will re=
+set the
+> > > > VCPU upon changing VCPU state from RUNNABLE to STOPPED state.
+> > >
+> > > Yeah, I started with that and then realized it has two drawbacks:
+> > >
+> > >  * It will require larger changes in userspaces, because for
+> > >    example QEMU now first loads the initial state and then toggles th=
+e
+> > >    mp_state, which would incorrectly reset the state.
+> > >
+> > >  * It will also require an extra IOCTL if a stopped VCPU should be
+> > >    reset
+> > >     1) STOPPED -> RUNNING (=3D reset)
+> > >     2) RUNNING -> STOPPED (VCPU should be stopped)
+> > >    or if the current state of a VCPU is not known.
+> > >     1) ???     -> STOPPED
+> > >     2) STOPPED -> RUNNING
+> > >     3) RUNNING -> STOPPED
+> > >
+> > > I can do that for v3 if you think it's better.
+> >
+> > Okay, for now keep the MP_STATE_INIT_RECEIVED ioctl()
+> >
+> > >
+> > > >>  * Preserve the userspace initialized VCPU state on sbi_hart_start=
+.
+> > > >>  * Return to userspace on sbi_hart_stop.
+> > > >
+> > > > There is no userspace involvement required when a Guest VCPU
+> > > > stops itself using SBI HSM stop() call so STRONG NO to this change.
+> > >
+> > > Ok, I'll drop it from v3 -- it can be handled by future patches that
+> > > trap SBI calls to userspace.
+> > >
+> > > The lack of userspace involvement is the issue.  KVM doesn't know wha=
+t
+> > > the initial state should be.
+> >
+> > The SBI HSM virtualization does not need any KVM userspace
+> > involvement.
+> >
+> > When a VCPU stops itself using SBI HSM stop(), the Guest itself
+> > provides the entry address and argument when starting the VCPU
+> > using SBI HSM start() without any KVM userspace involvement.
+> >
+> > In fact, even at Guest boot time all non-boot VCPUs are brought-up
+> > using SBI HSM start() by the boot VCPU where the Guest itself
+> > provides entry address and argument without any KVM userspace
+> > involvement.
+>
+> HSM only specifies the state of a few registers and the ISA only a few
+> more. All other registers have IMPDEF reset values. Zeros, like KVM
+> selects, are a good choice and the best default, but if the VMM disagrees=
+,
+> then it should be allowed to select what it likes, as the VMM/user is the
+> policy maker and KVM is "just" the accelerator.
 
-Thanks for the patch.
+Till now there are no such IMPDEF reset values expected. We will
+cross that bridge when needed. Although, I doubt we will ever need it.
 
-The code change looks sound, but I'm confused about the reasoning behind
-it.
+>
+> >
+> > >
+> > > >>  * Don't make VCPU reset request on sbi_system_suspend.
+> > > >
+> > > > The entry state of initiating VCPU is already available on SBI syst=
+em
+> > > > suspend call. The initiating VCPU must be resetted and entry state =
+of
+> > > > initiating VCPU must be setup.
+> > >
+> > > Userspace would simply call the VCPU reset and set the complete state=
+,
+> > > because the userspace exit already provides all the sbi information.
+> > >
+> > > I'll drop this change.  It doesn't make much sense if we aren't fixin=
+g
+> > > the sbi_hart_start reset.
+> > >
+> > > >> The patch is reusing MP_STATE_INIT_RECEIVED, because we didn't wan=
+t to
+> > > >> add a new IOCTL, sorry. :)
+> > > >>
+> > > >> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.c=
+om>
+> > > >> ---
+> > > >> If you search for cap 7.42 in api.rst, you'll see that it has a wr=
+ong
+> > > >> number, which is why we're 7.43, in case someone bothers to fix AR=
+M.
+> > > >>
+> > > >> I was also strongly considering creating all VCPUs in RUNNABLE sta=
+te --
+> > > >> do you know of any similar quirks that aren't important, but could=
+ be
+> > > >> fixed with the new userspace toggle?
+> > > >
+> > > > Upon creating a VM, only one VCPU should be RUNNABLE and all
+> > > > other VCPUs must remain in OFF state. This is intentional because
+> > > > imagine a large number of VCPUs entering Guest OS at the same
+> > > > time. We have spent a lot of effort in the past to get away from th=
+is
+> > > > situation even in the host boot flow. We can't expect user space to
+> > > > correctly set the initial MP_STATE of all VCPUs. We can certainly
+> > > > think of some mechanism using which user space can specify
+> > > > which VCPU should be runnable upon VM creation.
+> > >
+> > > We already do have the mechanism -- the userspace will set MP_STATE o=
+f
+> > > VCPU 0 to STOPPED and whatever VCPUs it wants as boot with to RUNNABL=
+E
+> > > before running all the VCPUs for the first time.
+> >
+> > Okay, nothing to be done on this front.
+> >
+> > >
+> > > The userspace must correctly set the initial MP state anyway, because=
+ a
+> > > resume will want a mp_state that a fresh boot.
+> > >
+> > > > The current approach is to do HSM state management in kernel
+> > > > space itself and not rely on user space. Allowing userspace to
+> > > > resetting any VCPU is fine but this should not affect the flow for
+> > > > SBI HSM, SBI System Reset, and SBI System Suspend.
+> > >
+> > > Yes, that is the design I was trying to change.  I think userspace
+> > > should have control over all aspects of the guest it executes in KVM.
+> >
+> > For SBI HSM, the kernel space should be the only entity managing.
+>
+> The VMM should always be the only manager. KVM can provide defaults in
+> order to support simple VMMs that don't have opinions, but VMMs concerned
+> with managing all state on behalf of their users' choices and to ensure
+> successful migrations, will want to be involved.
 
-On Fri, May 09, 2025 at 09:51:46AM +0200, Krzysztof Hałasa wrote:
-> Without the patch (i.MX8MP, all-white RGGB-12 full HD input from
-> the sensor, YUV NV12 output from ISP, full range, histogram Y mode).
-> HIST_STEPSIZE = 3 (lowest permitted):
+I think you misunderstood my comment. VMM is still the over manager
+but the VCPU SBI HSM states are managed by the kernel KVM.
 
-According to the datasheet, the histogram bins are 16-bit integer with a
-4-bit fractional part. To prevent overflowing the 16-bit integer
-counter, the step size should be 10.
+Regards,
+Anup
 
-Do you have any other information on this? Is it known that it's stable
-and consistent to use all 20 bits anyway?
-
-> isp_hist_h_size: 383 (= 1920 / 5 - 1)
-> isp_hist_v_size: 215 (= 1080 / 5 - 1)
-> histogram_measurement_result[16]: 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 229401
-> 
-> Apparently the histogram is missing the last column (3-pixel wide,
-> though only single pixels count) and the last (same idea) row
-> of the input image: 1917 * 1077 / 3 / 3 = 229401
-
-I don't quite understand this. With a sub-window width of
-1920 / 5 - 1 = 383, shouldn't the resulting total window width be
-383 * 5 = 1915? Same idea for the height.
-
-Also according to my understanding, the / 3 calculation is correct, but
-it comes from the step size and not about missing last column/row.
-Where does the missing last column/row come from?
-
-> 
-> with the patch applied:
-> isp_hist_h_size: 384 (= 1920 / 5)
-> isp_hist_v_size: 216 (= 1080 / 5)
-> histogram_measurement_result[16]: 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 230400
-> 
-> 1920 * 1080 / 3 / 3 = 230400
-
-The fix looks fine though. Although, I'm wondering if there's a reason
-why there was a -1 in the first place. Does anybody know?
-
-
-Thanks,
-
-Paul
-
-> Signed-off-by: Krzysztof Hałasa <khalasa@piap.pl>
-> 
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> index b28f4140c8a3..ca9b3e711e5f 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> @@ -819,8 +819,8 @@ static void rkisp1_hst_config_v10(struct rkisp1_params *params,
->  		     arg->meas_window.v_offs);
->  
->  	block_hsize = arg->meas_window.h_size /
-> -		      RKISP1_CIF_ISP_HIST_COLUMN_NUM_V10 - 1;
-> -	block_vsize = arg->meas_window.v_size / RKISP1_CIF_ISP_HIST_ROW_NUM_V10 - 1;
-> +		      RKISP1_CIF_ISP_HIST_COLUMN_NUM_V10;
-> +	block_vsize = arg->meas_window.v_size / RKISP1_CIF_ISP_HIST_ROW_NUM_V10;
->  
->  	rkisp1_write(params->rkisp1, RKISP1_CIF_ISP_HIST_H_SIZE_V10,
->  		     block_hsize);
-> 
-> -- 
-> Krzysztof "Chris" Hałasa
-> 
-> Sieć Badawcza Łukasiewicz
-> Przemysłowy Instytut Automatyki i Pomiarów PIAP
-> Al. Jerozolimskie 202, 02-486 Warszawa
+>
+> Thanks,
+> drew
+>
+> >
+> > >
+> > > Accelerating SBI in KVM is good, but userspace should be able to say =
+how
+> > > the unspecified parts are implemented.  Trapping to userspace is the
+> > > simplest option.  (And sufficient for ecalls that are not a hot path.=
+)
+> > >
+> >
+> > For the unspecified parts, we have KVM exits at appropriate places
+> > e.g. SBI system reset, SBI system suspend, etc.
+> >
+> > Regards,
+> > Anup
 
