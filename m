@@ -1,339 +1,191 @@
-Return-Path: <linux-kernel+bounces-642025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC10AB19BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:06:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF6AAB19C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7652A1885CC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF45E1BA1D8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9505E2367CD;
-	Fri,  9 May 2025 15:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E72238C2F;
+	Fri,  9 May 2025 16:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdcMPo6J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCj9cQ1J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B936C2367BB;
-	Fri,  9 May 2025 15:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9C923817A;
+	Fri,  9 May 2025 16:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746806385; cv=none; b=S4wapvAS85gWrMgJV+401yL6Hdx7jOygM63jXdOBhtzgplFWdML9gE+lUtf3QfVEkPIhU/9iv24pnq0Bapa3HGbciEg8VoJeg1yP/4exB10Fgo27bgs1bYihzQvPHsq/G+Ua9dn1S+DUiJiMChYfpJgv2y+LrHMKVgmUXoZ8GAQ=
+	t=1746806429; cv=none; b=X8PcavGUBf2AhA5DcWq5rblb1SKbhQKX1ZKrCsoxUmn8y3urdOhtHCp/27zMmq5ZTdiApxzLZhMm9NXGXQc4Rpcom1X8V9WMoK76WVkWfA/CSulF+pjwojMXnNNGpbaImCanmPymvEv+qwRbKyuZxvUO47rrEX19+W5w/9mypi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746806385; c=relaxed/simple;
-	bh=9DlzSx8QMm27dtWqYI6REOjt9N0R9jD4zaWWUdJN1i0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jl5BpyVMPtEuaBmmNEGpkYmNVc/b/rSUXQEU2YJ198Us9UkzqfXAuumkXHZic1kSfDZMGx4a8aloxMIiDbFmExzkFog4NKc4e5JUbZhbddXRqKyYEGNXENfH/wqpw+NWvprXKPzxnXEMZECZ1Hyc3Kq7CdsuJchmEAI4R7qX8jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdcMPo6J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB4FC4CEE4;
-	Fri,  9 May 2025 15:59:43 +0000 (UTC)
+	s=arc-20240116; t=1746806429; c=relaxed/simple;
+	bh=KfIHN/86orJ7nKka+FJYVTfaWZnIOh2Jd1eqQpCx/P4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJbtoHGjtaHrZiYqTdwhKhxOyDinls4NRiB6UsJkl6vnseUjN2uJYXAbFMkIcakFTS7whof51kIzoECw4SjYRehysQ13KyuAoKxOmaAZG8QaNlWOlGk8hQm+dQU4ozGOgiZz+e69DL3aFnWBNRffcIUpESHHwxE3aMpMzJG4uAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCj9cQ1J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE25DC4CEED;
+	Fri,  9 May 2025 16:00:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746806385;
-	bh=9DlzSx8QMm27dtWqYI6REOjt9N0R9jD4zaWWUdJN1i0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EdcMPo6JjEe+4DHAvKWIH8ZEIFFjFwW2qtcO1FnOoN3HCaduj33BHJ1ew37EIrlPj
-	 Scnom6jsDPekAhY9gCOzqdPt0v0INs2Wi4xY9E16TUPsONhiYitmnc/tlWAVWXXmKp
-	 0uiQ6L7pnAFXoNIjjKpfceXfyG1lQSDi3IwtRbjwwhJN1ekIyRMyvxtSChDpXUnB2u
-	 J66a5QSX2sJDV/QtrpbtAYIi1wOIsD5NbRf7jy0xVhMPGvmWTsEl8e8E93C9dYE9q3
-	 cfUU+PTqQv4wLqJ5Mb++iGnVFQM4SAFk5oO+FQ+dSJJim/eXtdJxQ60GXlaDiJzpC3
-	 0rja7JrjwPvRg==
-Message-ID: <907d0022-0512-4a60-9d57-26b48c986df0@kernel.org>
-Date: Fri, 9 May 2025 10:59:42 -0500
+	s=k20201202; t=1746806429;
+	bh=KfIHN/86orJ7nKka+FJYVTfaWZnIOh2Jd1eqQpCx/P4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mCj9cQ1JPMPcXPWQy0TEfXoK1zM7XOVSEknGtzYgKFW0dihIWuG8T5GXJIeZ1Cl4X
+	 QWchwoGNG/AFG1055je1pRe/sI54BBfWbUY4JcRmde66nwE9kEICBr3X2Z3vGrdCAw
+	 zC+VQP+ks+64VrrNv/WWrQg/IiuSu6sto9LjbMrtay1G+/0f4T9n/LO9gT1MVNcOTK
+	 L8NO8ACl2M2wMi3rM2Udq4AIpLrJL9jOPWp08PAS1x5yKlXZC7f7QX5dfjgq5QOsnK
+	 XZgsDJCO/pOkv0TNabWfltJFJA8fHdvIEvvv4d5atnHQOa34mPSVMw319kRyK6A9c7
+	 I0gNNFc3DfcJw==
+Received: by pali.im (Postfix)
+	id 00CDC5BA; Fri,  9 May 2025 18:00:25 +0200 (CEST)
+Date: Fri, 9 May 2025 18:00:25 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org, kw@linux.com,
+	bhelgaas@google.com, heiko@sntech.de, yue.wang@amlogic.com,
+	neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+	khilman@baylibre.com, jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 3/3] PCI: aardvark: Remove redundant MPS configuration
+Message-ID: <20250509160025.s65aw5ix6s7533b5@pali>
+References: <20250506173439.292460-1-18255117159@163.com>
+ <20250506173439.292460-4-18255117159@163.com>
+ <20250506174110.63ayeqc4scmwjj6e@pali>
+ <8a6adc24-5f40-4f22-9842-b211e1ef5008@163.com>
+ <ff6abbf6-e464-4929-96e6-16e43c62db06@163.com>
+ <20250507163620.53v5djmhj3ywrge2@pali>
+ <oy5wlkvp7nrg65hmbn6cwjcavkeq7emu65tsh4435gxllyb437@7ai23qsmpesy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/5] platform/x86: firmware_attributes_class: Add
- device initialization methods
-To: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Joshua Grisham <josh@joshuagrisham.com>,
- Mark Pearson <mpearson-lenovo@squebb.ca>, Armin Wolf <W_Armin@gmx.de>
-Cc: Antheas Kapenekakis <lkml@antheas.dev>,
- "Derek J. Clark" <derekjohn.clark@gmail.com>,
- Prasanth Ksr <prasanth.ksr@dell.com>, Jorge Lopez <jorge.lopez2@hp.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dell.Client.Kernel@dell.com
-References: <20250509-fw-attrs-api-v1-0-258afed65bfa@gmail.com>
- <20250509-fw-attrs-api-v1-1-258afed65bfa@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250509-fw-attrs-api-v1-1-258afed65bfa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <oy5wlkvp7nrg65hmbn6cwjcavkeq7emu65tsh4435gxllyb437@7ai23qsmpesy>
+User-Agent: NeoMutt/20180716
 
-On 5/9/2025 2:48 AM, Kurt Borja wrote:
-> From: Thomas Weißschuh <linux@weissschuh.net>
+On Friday 09 May 2025 12:38:48 Manivannan Sadhasivam wrote:
+> On Wed, May 07, 2025 at 06:36:20PM +0200, Pali Rohár wrote:
+> > On Wednesday 07 May 2025 23:06:51 Hans Zhang wrote:
+> > > On 2025/5/7 23:03, Hans Zhang wrote:
+> > > > On 2025/5/7 01:41, Pali Rohár wrote:
+> > > > > On Wednesday 07 May 2025 01:34:39 Hans Zhang wrote:
+> > > > > > The Aardvark PCIe controller enforces a fixed 512B payload size via
+> > > > > > PCI_EXP_DEVCTL_PAYLOAD_512B, overriding hardware capabilities and PCIe
+> > > > > > core negotiations.
+> > > > > > 
+> > > > > > Remove explicit MPS overrides (PCI_EXP_DEVCTL_PAYLOAD and
+> > > > > > PCI_EXP_DEVCTL_PAYLOAD_512B). MPS is now determined by the PCI core
+> > > > > > during device initialization, leveraging root port configurations and
+> > > > > > device-specific capabilities.
+> > > > > > 
+> > > > > > Aligning Aardvark with the unified MPS framework ensures consistency,
+> > > > > > avoids artificial constraints, and allows the hardware to operate at
+> > > > > > its maximum supported payload size while adhering to PCIe
+> > > > > > specifications.
+> > > > > > 
+> > > > > > Signed-off-by: Hans Zhang <18255117159@163.com>
+> > > > > > ---
+> > > > > >   drivers/pci/controller/pci-aardvark.c | 2 --
+> > > > > >   1 file changed, 2 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/pci/controller/pci-aardvark.c
+> > > > > > b/drivers/pci/controller/pci-aardvark.c
+> > > > > > index a29796cce420..d8852892994a 100644
+> > > > > > --- a/drivers/pci/controller/pci-aardvark.c
+> > > > > > +++ b/drivers/pci/controller/pci-aardvark.c
+> > > > > > @@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct
+> > > > > > advk_pcie *pcie)
+> > > > > >       reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
+> > > > > >       reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
+> > > > > >       reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
+> > > > > > -    reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> > > > > >       reg &= ~PCI_EXP_DEVCTL_READRQ;
+> > > > > > -    reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
+> > > > > >       reg |= PCI_EXP_DEVCTL_READRQ_512B;
+> > > > > >       advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
+> > > > > > -- 
+> > > > > > 2.25.1
+> > > > > > 
+> > > > > 
+> > > > > Please do not remove this code. It is required part of the
+> > > > > initialization of the aardvark PCI controller at the specific phase,
+> > > > > as defined in the Armada 3700 Functional Specification.
+> > > > > 
+> > > > > There were reported more issues with those Armada PCIe controllers for
+> > > > > which were already sent patches to mailing list in last 5 years. But
+> > > > > unfortunately not all fixes were taken / applied yet.
+> > > > 
+> > > > Hi Pali,
+> > > > 
+> > > > I replied to you in version v2.
+> > > > 
+> > > > Is the maximum MPS supported by Armada 3700 512 bytes?
+> > 
+> > IIRC yes, 512-byte mode is supported. And I think in past I was testing
+> > some PCIe endpoint card which required 512-byte long payload and did not
+> > worked in 256-byte long mode (not sure if the card was not able to split
+> > transaction or something other was broken, it is quite longer time).
+> > 
+> > > > What are the default values of DevCap.MPS and DevCtl.MPS?
+> > 
+> > Do you mean values in the PCI-to-PCI bridge device of PCIe Root Port
+> > type?
+> > 
+> > Aardvark controller does not have the real HW PCI-to-PCI bridge device.
+> > There is only in-kernel emulation drivers/pci/pci-bridge-emul.c which
+> > create fake kernel PCI device in the hierarchy to make kernel and
+> > userspace happy. Yes, this is deviation from the PCIe standard but well,
+> > buggy HW is also HW.
+> > 
+> > And same applies for the pci-mvebu.c driver for older Marvell PCIe HW.
+> > 
 > 
-> Currently each user of firmware_attributes_class has to manually set up
-> kobjects, devices, etc.
-> 
-> Provide this infrastructure out-of-the-box through the newly introduced
-> fwat_device_register().
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> Co-developed-by: Kurt Borja <kuurtb@gmail.com>
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/platform/x86/firmware_attributes_class.c | 165 +++++++++++++++++++++++
->   drivers/platform/x86/firmware_attributes_class.h |  44 ++++++
->   2 files changed, 209 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/firmware_attributes_class.c b/drivers/platform/x86/firmware_attributes_class.c
-> index 736e96c186d9dc6d945517f090e9af903e93bbf4..58ab1495ba3bd449cfe17de2827a57a0c5937788 100644
-> --- a/drivers/platform/x86/firmware_attributes_class.c
-> +++ b/drivers/platform/x86/firmware_attributes_class.c
-> @@ -2,7 +2,12 @@
->   
->   /* Firmware attributes class helper module */
->   
-> +#include <linux/device.h>
-> +#include <linux/device/class.h>
-> +#include <linux/kobject.h>
->   #include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
->   #include "firmware_attributes_class.h"
->   
->   const struct class firmware_attributes_class = {
-> @@ -10,6 +15,164 @@ const struct class firmware_attributes_class = {
->   };
->   EXPORT_SYMBOL_GPL(firmware_attributes_class);
->   
-> +static ssize_t fwat_attrs_kobj_show(struct kobject *kobj, struct attribute *attr,
-> +				    char *buf)
-> +{
-> +	const struct fwat_attribute *fattr = to_fwat_attribute(attr);
-> +	struct fwat_device *fadev = to_fwat_device(kobj);
-> +
-> +	if (!fattr->show)
-> +		return -ENOENT;
-> +
-> +	return fattr->show(fadev->dev, fattr, buf);
-> +}
-> +
-> +static ssize_t fwat_attrs_kobj_store(struct kobject *kobj, struct attribute *attr,
-> +				     const char *buf, size_t count)
-> +{
-> +	const struct fwat_attribute *fattr = to_fwat_attribute(attr);
-> +	struct fwat_device *fadev = to_fwat_device(kobj);
-> +
-> +	if (!fattr->store)
-> +		return -ENOENT;
-> +
-> +	return fattr->store(fadev->dev, fattr, buf, count);
-> +}
-> +
-> +static const struct sysfs_ops fwat_attrs_kobj_ops = {
-> +	.show	= fwat_attrs_kobj_show,
-> +	.store	= fwat_attrs_kobj_store,
-> +};
-> +
-> +static void fwat_attrs_kobj_release(struct kobject *kobj)
-> +{
-> +	struct fwat_device *fadev = to_fwat_device(kobj);
-> +
-> +	kfree(fadev);
-> +}
-> +
-> +static const struct kobj_type fwat_attrs_ktype = {
-> +	.sysfs_ops	= &fwat_attrs_kobj_ops,
-> +	.release	= fwat_attrs_kobj_release,
-> +};
-> +
-> +/**
-> + * fwat_device_register - Create and register a firmware-attributes class
-> + *			  device
-> + * @parent: Parent device
-> + * @name: Name of the class device
-> + * @data: Drvdata of the class device
-> + * @groups: Sysfs groups for the custom `fwat_attrs_ktype` kobj_type
-> + *
-> + * NOTE: @groups are attached to the .attrs_kobj of the new fwat_device which
-> + * has a custom ktype, which makes use of `struct fwat_attribute` to embed
-> + * attributes.
-> + *
-> + * Return: pointer to the new fwat_device on success, ERR_PTR on failure
-> + */
-> +struct fwat_device *
-> +fwat_device_register(struct device *parent, const char *name, void *data,
-> +		     const struct attribute_group **groups)
-> +{
-> +	struct fwat_device *fadev;
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	if (!parent || !name)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	fadev = kzalloc(sizeof(*fadev), GFP_KERNEL);
-> +	if (!fadev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	dev = device_create(&firmware_attributes_class, parent, MKDEV(0, 0),
-> +			    data, "%s", name);
-> +	if (IS_ERR(dev)) {
-> +		kfree(fadev);
-> +		return ERR_CAST(dev);
-> +	}
-> +
-> +	ret = kobject_init_and_add(&fadev->attrs_kobj, &fwat_attrs_ktype, &dev->kobj,
-> +				   "attributes");
-> +	if (ret)
-> +		goto out_kobj_put;
-> +
-> +	if (groups) {
-> +		ret = sysfs_create_groups(&fadev->attrs_kobj, groups);
-> +		if (ret)
-> +			goto out_kobj_unregister;
-> +	}
-> +
-> +	fadev->dev = dev;
-> +	fadev->groups = groups;
-> +
-> +	kobject_uevent(&fadev->attrs_kobj, KOBJ_ADD);
-> +
-> +	return fadev;
-> +
-> +out_kobj_unregister:
-> +	kobject_del(&fadev->attrs_kobj);
-> +
-> +out_kobj_put:
-> +	kobject_put(&fadev->attrs_kobj);
-> +	device_unregister(dev);
-> +
-> +	return ERR_PTR(ret);
-> +}
-> +EXPORT_SYMBOL_GPL(fwat_device_register);
-> +
-> +void fwat_device_unregister(struct fwat_device *fwadev)
-> +{
-> +	if (fwadev->groups)
-> +		sysfs_remove_groups(&fwadev->attrs_kobj, fwadev->groups);
-> +	kobject_del(&fwadev->attrs_kobj);
-> +	kobject_put(&fwadev->attrs_kobj);
-> +	device_unregister(fwadev->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(fwat_device_unregister);
-> +
-> +static void devm_fwat_device_release(void *data)
-> +{
-> +	struct fwat_device *fadev = data;
-> +
-> +	fwat_device_unregister(fadev);
-> +}
-> +
-> +/**
-> + * devm_fwat_device_register - Create and register a firmware-attributes class
-> + *			       device
-> + * @parent: Parent device
-> + * @name: Name of the class device
-> + * @data: Drvdata of the class device
-> + * @groups: Sysfs groups for the custom `fwat_attrs_ktype` kobj_type
-> + *
-> + * Device managed version of fwat_device_register().
-> + *
-> + * NOTE: @groups are attached to the .attrs_kobj of the new fwat_device which
-> + * has a custom ktype, which makes use of `struct fwat_attribute` to embed
-> + * attributes.
-> + *
-> + * Return: pointer to the new fwat_device on success, ERR_PTR on failure
-> + */
-> +struct fwat_device *
-> +devm_fwat_device_register(struct device *parent, const char *name, void *data,
-> +			  const struct attribute_group **groups)
-> +{
-> +	struct fwat_device *fadev;
-> +	int ret;
-> +
-> +	fadev = fwat_device_register(parent, name, data, groups);
-> +	if (IS_ERR(fadev))
-> +		return fadev;
-> +
-> +	ret = devm_add_action_or_reset(parent, devm_fwat_device_release, fadev);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return fadev;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_fwat_device_register);
-> +
->   static __init int fw_attributes_class_init(void)
->   {
->   	return class_register(&firmware_attributes_class);
-> @@ -23,5 +186,7 @@ static __exit void fw_attributes_class_exit(void)
->   module_exit(fw_attributes_class_exit);
->   
->   MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
-> +MODULE_AUTHOR("Thomas Weißschuh <linux@weissschuh.net>");
-> +MODULE_AUTHOR("Kurt Borja <kuurtb@gmail.com>");
->   MODULE_DESCRIPTION("Firmware attributes class helper module");
->   MODULE_LICENSE("GPL");
-> diff --git a/drivers/platform/x86/firmware_attributes_class.h b/drivers/platform/x86/firmware_attributes_class.h
-> index d27abe54fcf9812a2f0868eec5426bbc8e7eb21c..ad94bf91e5af30a2b8feb9abf224ee6f0d17600a 100644
-> --- a/drivers/platform/x86/firmware_attributes_class.h
-> +++ b/drivers/platform/x86/firmware_attributes_class.h
-> @@ -5,8 +5,52 @@
->   #ifndef FW_ATTR_CLASS_H
->   #define FW_ATTR_CLASS_H
->   
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
->   #include <linux/device/class.h>
-> +#include <linux/kobject.h>
-> +#include <linux/sysfs.h>
->   
->   extern const struct class firmware_attributes_class;
->   
-> +/**
-> + * struct fwat_device - The firmware-attributes device
-> + * @dev: The class device.
-> + * @attrs_kobj: The "attributes" root kobject.
-> + * @groups: Sysfs groups attached to the @attrs_kobj.
-> + */
-> +struct fwat_device {
-> +	struct device *dev;
-> +	struct kobject attrs_kobj;
-> +	const struct attribute_group **groups;
-> +};
-> +
-> +#define to_fwat_device(_k)	container_of_const(_k, struct fwat_device, attrs_kobj)
-> +
-> +/**
-> + * struct fwat_attribute - The firmware-attributes's custom attribute
-> + * @attr: Embedded struct attribute.
-> + * @show: Show method called by the "attributes" kobject's ktype.
-> + * @store: Store method called by the "attributes" kobject's ktype.
-> + */
-> +struct fwat_attribute {
-> +	struct attribute attr;
-> +	ssize_t (*show)(struct device *dev, const struct fwat_attribute *attr,
-> +			char *buf);
-> +	ssize_t (*store)(struct device *dev, const struct fwat_attribute *attr,
-> +			 const char *buf, size_t count);
-> +};
-> +
-> +#define to_fwat_attribute(_a) container_of_const(_a, struct fwat_attribute, attr)
-> +
-> +struct fwat_device * __must_check
-> +fwat_device_register(struct device *parent, const char *name, void *data,
-> +		     const struct attribute_group **groups);
-> +
-> +void fwat_device_unregister(struct fwat_device *fwadev);
-> +
-> +struct fwat_device * __must_check
-> +devm_fwat_device_register(struct device *parent, const char *name, void *data,
-> +			  const struct attribute_group **groups);
-> +
->   #endif /* FW_ATTR_CLASS_H */
-> 
+> Oh. Then this patch is not going to change the MPS setting of the root bus. But
+> that also means that there is a deviation in what the PCI core expects for a
+> root port and what is actually programmed in the hw.
 
+Yes, exactly this aardvark PCIe controller deviates from the PCIe spec
+in lot of things. That is why it is needed to be really careful about
+such changes.
+
+Same applies for pci-mvebu.c. Both are PCIe controllers on Marvell
+hardware, but it questionable from who both these IPs and hence source
+of the issues.
+
+Also these PCIe controllers have lot of HW bugs and documented and
+undocumented erratas (for things which should work, but does not).
+
+So it is not just as "enable or disable this bit and it would work". It
+is needed to properly check if such functionality is provided by HW and
+whether there is not some documented/undocumented errata for this
+feature which could say "its broken, do not try to set this bit".
+
+> Even in this MPS case, if the PCI core decides to scale down the MPS value of
+> the root port, then it won't be changed in the hw and the hw will continue to
+> work with 512B? Shouldn't the controller driver change the hw values based on
+> the values programmed by PCI core of the emul bridge?
+
+Marvell PCIe controllers has their own ways how to configure different
+things of PCIe HW via custom platform registers. This is something which
+needs to be properly understood and implemented as 1:1 mapping to kernel
+root port emulator. Drivers should do it but it is unfinished. And as I
+already said I stopped any development in this area years ago when PCIe
+maintainers stopped taking my fixes for these drivers. As I said I'm not
+going to spend my free time to investigate again issues there, prepare
+fixes for them and just let them dropped into trash as nobody is
+interested in them. I have other more useful things to do in my free
+time.
+
+> But until that is fixed, this patch should be dropped.
 
