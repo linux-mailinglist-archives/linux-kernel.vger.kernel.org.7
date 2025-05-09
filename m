@@ -1,168 +1,218 @@
-Return-Path: <linux-kernel+bounces-641654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CF0AB1479
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:12:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08827AB152F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A23FB2701A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:10:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80EB16C545
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E99229186E;
-	Fri,  9 May 2025 13:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89A62918C6;
+	Fri,  9 May 2025 13:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="zWGd0EQ+"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cXe4/vvP"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A751F291158
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274BE153BD9
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796321; cv=none; b=Zb6CLiJO+KIN9CSkS90pV20fbTmSRQZOQv4zae7DBWttLRIgMGDGMCJvkkPT2sLM0Tc4YV54smJxsSTF44ODGpJlftLbrBwZECdYkmACaK/OXJwIMoPOg29kFH5pNJaBw2T+T70ztcQZzd8rneD48oQ86pBVXukhGjvpx6D5908=
+	t=1746797236; cv=none; b=ilCtEUyevAW5N7KYN/EZled9bpfNJ0Meb6o2x4SzYSnoyliQcyE5Y7RSMoP2yt92D9jwZbSLSvnBbsUiIKqWuss5w4aHChB9401MLGZSfIxXmKXLU5rGNqZdKdEt4EhiYhVSTnTFJQ5Tt3ROj4/oR6yFGWNrpE2FYzGh6UzLN3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746796321; c=relaxed/simple;
-	bh=swVxJzXYBgibN2+WwRuJkr2E8ElbwunBdcTLYqq3KSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxT4aSJwmBnRa3mluhfdJjpRMkNYjsEAPtzrifYioGoOUkZ8Ypp7MOhxIo3dU+sHUSOX8ZynncgBzjHFqRAa/L8wDnisEuU58nYtobqcBBPLqSSRMXFE3mP2iLhjEnaX+CZo4qJZQZBCjTNq/11HJjRxgkP2bjLK0tsciIU5lcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=zWGd0EQ+; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Fri, 9 May 2025 09:11:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1746796317;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cODXcFGpa9GJFjzICuWLyHSlxQKolQxsmG+8RFxJT0o=;
-	b=zWGd0EQ+8vwKEEyyvYLpMj3w6+t+dVUvx+YxYEje5TTjAKGyvwHo56Dq0FM+ydfl4ear/w
-	Yazo/NFZdnpNRn2m/a8/IJ6uHYDqVOyPs03uuabxbB44XGKCfxdfrFy980HCw7O1XQ6bkA
-	dWzLb0cmlUch88AfOQa3fYufS22+gOk52D8iJ8P3KdA8UjT7cDLx8BceHL7N8Q7ugqlFcx
-	NkbpkaH9bnnpAQfiz1y24McCjKDUMHQziyz0CGiapGPtv6fbwOi7kl9LAtBMuuTf1RjUMS
-	nXp6fkLAaZ3FAB+fGva2BRQSBzkT1yutZQHb/moew7rpLTF4S4FGcJdJzmTcdw==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: sven@svenpeter.dev
-Cc: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
-	Hector Martin <marcan@marcan.st>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/9] dt-bindings: power: reboot: Add Apple Mac SMC
- Reboot Controller
-Message-ID: <aB3_GaSrJFKgxNXO@blossom>
-References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev>
- <20250503-smc-6-15-v4-2-500b9b6546fc@svenpeter.dev>
+	s=arc-20240116; t=1746797236; c=relaxed/simple;
+	bh=doZKpPxAQpxaBkO/YlN9rUxl+kd59lEXLwgpO7DZBAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=QfhL3qJ/E0BKqy4CN5m1s6IoM7aeXThtYi4gIdSbCMdYrq2MLQ4MMfpwl5T68gsjj4IN7cd6g1gBGRB0nTpMYs4IzkKqopL3cioO7/pjjxqLQ9Q7A4oRAhlisukFySN/OdPeaAKX8ahwrTHytPLHKskoX4UZTxaZf8dhU+nF5/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cXe4/vvP; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250509132712epoutp045bb495b2d92940092d149217744b87ac~93tPx5lkm2812728127epoutp04d
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:27:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250509132712epoutp045bb495b2d92940092d149217744b87ac~93tPx5lkm2812728127epoutp04d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746797232;
+	bh=e0Eu3ZZtuZQ0K6JhQyN7GxUowK7inRr+RYFTzz6V1gY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=cXe4/vvPDnsUyQ/zYa+6dRFdUBtEjIZxq97KBqyqwbHFw99YXPAKwTYEgu2gWDFLA
+	 aWEvcyV1dI1wFxRLWchs6w+n9FrogP/FCFyYellSveTB6+hMdaybGJ1iti4G3+stZE
+	 l5Cy+HYPYwKzo60c51a1z22udEajNYjqU/S3kmqg=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250509132711epcas5p2decb26bfdfcd376a21cd9ef17d7ea02f~93tPDhFaE1216212162epcas5p20;
+	Fri,  9 May 2025 13:27:11 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4Zv8tP5tbbz6B9m7; Fri,  9 May
+	2025 13:27:09 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62~93XoXd59A0846108461epcas5p3K;
+	Fri,  9 May 2025 13:02:26 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250509130226epsmtrp1f24d8b7de12cdf7a6cbea7e38cc19009~93XoWtUdw2431924319epsmtrp1Y;
+	Fri,  9 May 2025 13:02:26 +0000 (GMT)
+X-AuditID: b6c32a52-40bff70000004c16-64-681dfce2c039
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.FC.19478.2ECFD186; Fri,  9 May 2025 22:02:26 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250509130224epsmtip1e3878beea0dbc1db6802ec0f36e702e9~93XmiwAWx2265322653epsmtip1L;
+	Fri,  9 May 2025 13:02:24 +0000 (GMT)
+From: Raghav Sharma <raghav.s@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	mturquette@baylibre.com, sboyd@kernel.org, richardcochran@gmail.com,
+	alim.akhtar@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Raghav Sharma <raghav.s@samsung.com>
+Subject: [PATCH v1] clk: samsung: exynosautov920: add block hsi2 clock
+ support
+Date: Fri,  9 May 2025 18:42:10 +0530
+Message-Id: <20250509131210.3192208-1-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250503-smc-6-15-v4-2-500b9b6546fc@svenpeter.dev>
-X-Migadu-Flow: FLOW_OUT
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSnO6jP7IZBjMvGFg8mLeNzeL6l+es
+	FufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhbHFohZfF95h9HiyJkXzBaH37SzWvy7
+	tpHFgdfj/Y1Wdo+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwRXHZpKTmZJalFunbJXBlzPj/
+	n7FgvnLFwpcdLA2MR2S7GDk5JARMJG6dP8vUxcjFISSwnVFi0b8jjBAJCYl9/39D2cISK/89
+	Z4coesso8Wn7U7AEm4CWxJXt79hAEiICaxglPvbNB0swC5xhlJg5UQjEFhbwk2ic/J2li5GD
+	g0VAVWLVN3aQMK+AtcSZ3XNYIBbIS+w/eJYZIi4ocXLmExaIMfISzVtnM09g5JuFJDULSWoB
+	I9MqRtHUguLc9NzkAkO94sTc4tK8dL3k/NxNjODw1grawbhs/V+9Q4xMHIyHGCU4mJVEeJ93
+	ymQI8aYkVlalFuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MFm1FlRO
+	q7CN9rm8QjB/4uejCbul/tz7qf9TRTPyVPbDEHbXBdxi1QtYjN0ez2Lt8ntXU3BYa/l8a4ls
+	dh3frr63Hb+Z938y0X+U96Rzb+mlhnc2B1a8WJl14P8nkT9uMdbzNM48k9ye4LaIb397sFpM
+	zypWz9kF6jIxl7IFljw57WB6MCnh49LJ6w+baXx5HFk3lfOv8/yiCi1hi2eLNx1OLhGRWnfN
+	J8f9NFO4T6OM320ea4l0pbQ/Zc+1m5ni10yavKrrK9+Xx/ZCGncMNYW2PMozjzn3rnb1/muB
+	y77Vnr25LFEp/4lHx7OPFUye3YUSHj/ee3x89GmvZGOT3FYZa4dDCXW8yk2Wyfe5lFiKMxIN
+	tZiLihMBaYD+fN4CAAA=
+X-CMS-MailID: 20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62
+References: <CGME20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62@epcas5p3.samsung.com>
 
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Register compatible and cmu_info data to support clocks.
+CMU_HSI2, this provides clocks for HSI2 block
 
-Le Sat , May 03, 2025 at 10:06:49AM +0000, Sven Peter via B4 Relay a écrit :
-> From: Sven Peter <sven@svenpeter.dev>
-> 
-> On Apple Silicon machines a clean shutdown or reboot requires
-> talking to SMC and writing to NVMEM cells. Add a binding for
-> this MFD sub-device.
-> 
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> ---
->  .../bindings/power/reset/apple,smc-reboot.yaml     | 52 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 53 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/reset/apple,smc-reboot.yaml b/Documentation/devicetree/bindings/power/reset/apple,smc-reboot.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e55e524914c2f57f7acf239fdefcbdc7a993b69f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/reset/apple,smc-reboot.yaml
-> @@ -0,0 +1,52 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/reset/apple,smc-reboot.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple SMC Reboot Controller
-> +
-> +description: |
-> +  The Apple System Management Controller (SMC) provides reboot functionality
-> +  on Apple Silicon SoCs. It uses NVMEM cells to store and track various
-> +  system state information related to boot, shutdown, and panic events.
-> +
-> +maintainers:
-> +  - Sven Peter <sven@svenpeter.dev>
-> +
-> +properties:
-> +  compatible:
-> +    const: apple,smc-reboot
-> +
-> +  nvmem-cells:
-> +    items:
-> +      - description: Flag indicating shutdown (as opposed to reboot)
-> +      - description: Stage at which the boot process stopped (0x30 for normal boot)
-> +      - description: Counter for boot errors
-> +      - description: Counter for system panics
-> +      - description: Power management settings
-> +
-> +  nvmem-cell-names:
-> +    items:
-> +      - const: shutdown_flag
-> +      - const: boot_stage
-> +      - const: boot_error_count
-> +      - const: panic_count
-> +      - const: pm_setting
-> +
-> +required:
-> +  - compatible
-> +  - nvmem-cells
-> +  - nvmem-cell-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    reboot {
-> +      compatible = "apple,smc-reboot";
-> +      nvmem-cells = <&shutdown_flag>, <&boot_stage>,
-> +                    <&boot_error_count>, <&panic_count>, <&pm_setting>;
-> +      nvmem-cell-names = "shutdown_flag", "boot_stage",
-> +                         "boot_error_count", "panic_count", "pm_setting";
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7f91f0225133490607ba0d79ad4225892ef31a66..d85d9d9065db4dc5869788f8a81d9d9a425d7ce3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2282,6 +2282,7 @@ F:	Documentation/devicetree/bindings/nvmem/apple,spmi-nvmem.yaml
->  F:	Documentation/devicetree/bindings/pci/apple,pcie.yaml
->  F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
->  F:	Documentation/devicetree/bindings/power/apple*
-> +F:	Documentation/devicetree/bindings/power/reset/apple,smc-reboot.yaml
->  F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
->  F:	Documentation/devicetree/bindings/spi/apple,spi.yaml
->  F:	Documentation/devicetree/bindings/spmi/apple,spmi.yaml
-> 
-> -- 
-> 2.34.1
-> 
-> 
+Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+---
+ drivers/clk/samsung/clk-exynosautov920.c | 72 ++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+index f8168eed4a66..89d6ea10515d 100644
+--- a/drivers/clk/samsung/clk-exynosautov920.c
++++ b/drivers/clk/samsung/clk-exynosautov920.c
+@@ -26,6 +26,7 @@
+ #define CLKS_NR_MISC			(CLK_DOUT_MISC_OSC_DIV2 + 1)
+ #define CLKS_NR_HSI0			(CLK_DOUT_HSI0_PCIE_APB + 1)
+ #define CLKS_NR_HSI1			(CLK_MOUT_HSI1_USBDRD + 1)
++#define CLKS_NR_HSI2			(CLK_DOUT_HSI2_ETHERNET_PTP + 1)
+ 
+ /* ---- CMU_TOP ------------------------------------------------------------ */
+ 
+@@ -1752,6 +1753,74 @@ static const struct samsung_cmu_info hsi1_cmu_info __initconst = {
+ 	.clk_name		= "noc",
+ };
+ 
++/* ---- CMU_HSI2 --------------------------------------------------------- */
++
++/* Register Offset definitions for CMU_HSI2 (0x16b00000) */
++#define PLL_LOCKTIME_PLL_ETH                    0x0
++#define PLL_CON3_PLL_ETH			0x10c
++#define PLL_CON0_MUX_CLKCMU_HSI2_ETHERNET_USER  0x600
++#define PLL_CON0_MUX_CLKCMU_HSI2_NOC_UFS_USER   0x610
++#define PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_USER  0x630
++#define CLK_CON_MUX_MUX_CLK_HSI2_ETHERNET       0x1000
++#define CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET       0x1800
++#define CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET_PTP   0x1804
++
++static const unsigned long hsi2_clk_regs[] __initconst = {
++	PLL_LOCKTIME_PLL_ETH,
++	PLL_CON3_PLL_ETH,
++	PLL_CON0_MUX_CLKCMU_HSI2_ETHERNET_USER,
++	PLL_CON0_MUX_CLKCMU_HSI2_NOC_UFS_USER,
++	PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_USER,
++	CLK_CON_MUX_MUX_CLK_HSI2_ETHERNET,
++	CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET,
++	CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET_PTP,
++};
++
++static const struct samsung_pll_clock hsi2_pll_clks[] __initconst = {
++	/* CMU_HSI2_PLL */
++	PLL(pll_531x, FOUT_PLL_ETH, "fout_pll_eth", "oscclk",
++	    PLL_LOCKTIME_PLL_ETH, PLL_CON3_PLL_ETH, NULL),
++};
++
++/* List of parent clocks for Muxes in CMU_HSI2 */
++PNAME(mout_clkcmu_hsi2_noc_ufs_user_p) = { "oscclk", "dout_clkcmu_hsi2_noc_ufs" };
++PNAME(mout_clkcmu_hsi2_ufs_embd_user_p) = { "oscclk", "dout_clkcmu_hsi2_ufs_embd" };
++PNAME(mout_hsi2_ethernet_p) = { "fout_pll_eth", "mout_clkcmu_hsi2_ethernet_user" };
++PNAME(mout_clkcmu_hsi2_ethernet_user_p) = { "oscclk", "dout_clkcmu_hsi2_ethernet" };
++
++static const struct samsung_mux_clock hsi2_mux_clks[] __initconst = {
++	MUX(CLK_MOUT_HSI2_NOC_UFS_USER, "mout_clkcmu_hsi2_noc_ufs_user",
++	    mout_clkcmu_hsi2_noc_ufs_user_p, PLL_CON0_MUX_CLKCMU_HSI2_NOC_UFS_USER, 4, 1),
++	MUX(CLK_MOUT_HSI2_UFS_EMBD_USER, "mout_clkcmu_hsi2_ufs_embd_user",
++	    mout_clkcmu_hsi2_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_USER, 4, 1),
++	MUX(CLK_MOUT_HSI2_ETHERNET, "mout_hsi2_ethernet",
++	    mout_hsi2_ethernet_p, CLK_CON_MUX_MUX_CLK_HSI2_ETHERNET, 0, 1),
++	MUX(CLK_MOUT_HSI2_ETHERNET_USER, "mout_clkcmu_hsi2_ethernet_user",
++	    mout_clkcmu_hsi2_ethernet_user_p, PLL_CON0_MUX_CLKCMU_HSI2_ETHERNET_USER, 4, 1),
++};
++
++static const struct samsung_div_clock hsi2_div_clks[] __initconst = {
++	DIV(CLK_DOUT_HSI2_ETHERNET, "dout_hsi2_ethernet",
++	    "mout_hsi2_ethernet", CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET,
++	    0, 4),
++	DIV(CLK_DOUT_HSI2_ETHERNET_PTP, "dout_hsi2_ethernet_ptp",
++	    "mout_hsi2_ethernet", CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET_PTP,
++	    0, 4),
++};
++
++static const struct samsung_cmu_info hsi2_cmu_info __initconst = {
++	.pll_clks               = hsi2_pll_clks,
++	.nr_pll_clks            = ARRAY_SIZE(hsi2_pll_clks),
++	.mux_clks               = hsi2_mux_clks,
++	.nr_mux_clks            = ARRAY_SIZE(hsi2_mux_clks),
++	.div_clks               = hsi2_div_clks,
++	.nr_div_clks            = ARRAY_SIZE(hsi2_div_clks),
++	.nr_clk_ids             = CLKS_NR_HSI2,
++	.clk_regs               = hsi2_clk_regs,
++	.nr_clk_regs            = ARRAY_SIZE(hsi2_clk_regs),
++	.clk_name               = "noc",
++};
++
+ static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
+ {
+ 	const struct samsung_cmu_info *info;
+@@ -1779,6 +1848,9 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynosautov920-cmu-hsi1",
+ 		.data = &hsi1_cmu_info,
++	}, {
++		.compatible = "samsung,exynosautov920-cmu-hsi2",
++		.data = &hsi2_cmu_info,
+ 	},
+ 	{ }
+ };
+-- 
+2.34.1
+
 
