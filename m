@@ -1,152 +1,120 @@
-Return-Path: <linux-kernel+bounces-642324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E49DAB1D5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:37:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D22AB1D65
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E16F527448
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5F51C4233C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0539025DB1F;
-	Fri,  9 May 2025 19:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC1C25DCFC;
+	Fri,  9 May 2025 19:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I+cqH6DS"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CGHBQHWe"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DDD153BD9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 19:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099025DB17;
+	Fri,  9 May 2025 19:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746819432; cv=none; b=m5dY9/jgHM+tWk+Hd2GSFb8JT3IvA51+SHNfqf7EQ1Ox4Ya2Pxpxw7y6IaoiFpjQWlS/yDTRdwZxV2k1NXVThOcPh3HquN1asvDf/v5/UxksJNBWsa7XrQHgrS2o7bEVaJnLf0Y1xygEaQzMBJlhyKjeiU6tfTe9KiiUuvHxixA=
+	t=1746819465; cv=none; b=ki58WrVTVVhanzKQAcr9MMBr1X52QPx0r+j26WT+NQXNPAL7xelNIHId7wK+CQYMetA+OnqrZHggnz5F+v2FQcBK0PzTQSuqiIItRi9bfywuzeMVDJtuYzHwN5cs0gI/aSrVQcyCUQlk4jBJBYS8R5ztRX/+nOs2NtJgCnj9hag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746819432; c=relaxed/simple;
-	bh=Qvzebave4bb87r54HVfRq1tPLeB+K+3lDpKsRKaaZ3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z24eeo6lR7PxS7CRogK0lVHoQ4zIfzBgJuTjUus92aXb0rtUtX8gT5Nz5rQBwW7h9i0dl+qLSs4+rwfNuBE7v3FuhVLNGLTBXzucvkyiggzsByc5bI/2m4+uY+Juce9CNi2IeMdzd0/egvzeDnETaNflmydEJegumW60ZSMVcq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I+cqH6DS; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47e9fea29easo3271cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 12:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746819429; x=1747424229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3vTa7RtCHjxieC6hTOF42B8Cm9AsQcKEy9wOP2glWys=;
-        b=I+cqH6DS5PiTP+N2pFBa/YdTBkKW5ryrmlKK0vTaV9GFz4YRCUQnKuGNdNfZXoKDLC
-         CaA+VvsNE0rZsRmQp4xVQy4oN7+P0qfWiRUczbQn0HxZnJQdgteDJYEnaeqmXzpujWNv
-         s33/3c8XDZyEWJp0kw8RysD2IwYxQt45/SCpsMXQLqQF3e0s71Ht5sHhd4e6HdSLuUd5
-         I6tl/gS6+h6PcmItxST/fNOyjzxgaOc2AJ37muc0iKtW9cSUh6kQTfehPybWp81GF4w/
-         tocUMN6XvBZuyVREOhfpih67jcEq6ptP4LsTS2nQcxxDdc7O9oeeoGqvY+08ixZDxJIV
-         X28g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746819429; x=1747424229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3vTa7RtCHjxieC6hTOF42B8Cm9AsQcKEy9wOP2glWys=;
-        b=nNV2X+vDwcJe9OhhvWyTE12TxUt65BQrsp27tcFXgADG8sx7sNQzOjVqepMyyq+2M7
-         GnmUAvJCGn5YRMDw5DLkPURG4D8KIJ/W9X+zLVVRlGgSp4oewVgikboSO9McFtat1IwD
-         LA7hSxWU/KQzeelB341oeN0+4n8IpyIx6tSnuTZeBR3sO4jNCNBMaIOVFOojnyyfHWek
-         6Qsjh+ldAh+7qXroCMdHBrHlJHmQp66TAUJ2oqkfOFcvZu1IOkkcAAvTTu9TGzACIcQQ
-         cs30/64MV+iHIyTTyboGwDq6hPR4JkqkrQbEPnVelfV2hCc890qpjYimoxoqpzEKuwyp
-         onMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4OhsxocyjjXHXaYfx4O/jePxspbCTlaQIO9Ol7IoYvsPARl98drGanSnSToE5wpzPJlMl8OPdE3EXx38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZq9XYM7720GIi8WYKEf8+5OmQ6KPXt6hWP3ahT5cKCTAhDmDX
-	L4z3J+jg/RU7W8jlZo2g88Z1z3wVc+2+Kn64XCPRc1n/8Qb65SO9DtlwbEZbJv+M2fpa+gN/JJh
-	5kDFkc39ZXMgDQIawTi5SUEovu3lCyl74ymOS
-X-Gm-Gg: ASbGncv1LRjF8cj6yJIL2B9GllrNVBGuN8M+7tavjQF7av1LmXBryK5q+wL/8pZeMiZ
-	H++fKu8VgdfEjX8yfidwCu6D9fSr6kXgzZbQbCzXvRxFcfSiYRf6ZBmwqgdtNngVoo2SZAEmqmK
-	43C4bZB7oo1e6F2QsBEeeLMhdZMvkEj5g=
-X-Google-Smtp-Source: AGHT+IHxwdhepzhm9r4/VsjN1+OHVF5JZWVhbaKD3NJOFLFfHNJGUKeQRwNxPIm5hEZATtnjyhd24FOFu+BCJTxlq7k=
-X-Received: by 2002:ac8:5f85:0:b0:47d:cd93:5991 with SMTP id
- d75a77b69052e-494612f9bdemr576991cf.21.1746819429277; Fri, 09 May 2025
- 12:37:09 -0700 (PDT)
+	s=arc-20240116; t=1746819465; c=relaxed/simple;
+	bh=8ZVz+sM2e38LEUbul09GjJfrj5dzyu8vCUAhuzz5CWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bRLtdJ1rHXFkqpei6eRy42nNpM6FeX/e/Kq3Us/YVcwJJcoWUQ7PIohe6jMNrj7uZlELAppKz+bn5URc1yiO1nt4y/TjNC+v5L/64vfMVPEm5/BxQAcpWnl249Ad+OuNRIMhujybtgI9+e1J3YO3+WSy6H2j4wcPTb3IoyLKVs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CGHBQHWe; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 562C940E023E;
+	Fri,  9 May 2025 19:37:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1dJBXWql5nCj; Fri,  9 May 2025 19:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1746819455; bh=KZxuyNV+T/kC6I+JBt8h1fqec+RQznGYJxv2+6xlmsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CGHBQHWeU+grgUNGE19DOAdePgmdRhszVJUUO6w66pAkS/7NPngyEfaj7SvLSSRva
+	 cD5n7eVSVZ7h+h46SLWnGUfCaickXT48zxlik/5NEyUVhOzIhCbB19gJGucfln/Vzf
+	 Inr7FX2Y6JMg9rC/gFWqYL3uNlkM2Zkm7tSO9S04VZwebpazADz2+t4TiBKm+XC3l3
+	 PA2EjIjNVCbB2jkKHeKhqFUBhjKXrOEGDn6M/EdSbZMZ+6sp91AQRkmivnwlNY1JJI
+	 G+XgMYt1sWXcm5b2I2KIgak64p8yc88ffaKuQ0Ao5XIDv698o1sWNH2LWius7Rrj4+
+	 NNmUVajFmqBBtYVxlXbBpiyHE/kr+JZ7om32W+6yEpIZvyRiERDvCtvrEkTudzp4fR
+	 RaBVwpFd4ihgpDpVNH/vS0rVe0J8aYGT0nWgtae1K1GBUD8evjXZElS/oFFqGMIYRa
+	 OYPU3lJyWCYloRZtAeNCzb9Cbcb+vFTEd4NRUb0DhE7sM4j7qupLlUhxzBP54++kZY
+	 oyhA+aemGWarEbkQNgaS7OAa5hgedgJeBrK6m5gbbphZVFEn1MLe1HhykN+aO+8pOU
+	 ECpprSlFAsty8PZ0+qD5J5ACJH3I7LEOEtrt1uFcPCg2UnMUrUXxyhOIAbpvkxjlAW
+	 89x7Q7ohM5zzVbsQGEpD1Y5o=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E151E40E015E;
+	Fri,  9 May 2025 19:37:27 +0000 (UTC)
+Date: Fri, 9 May 2025 21:37:21 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Subject: Re: [PATCH v3 15/17] x86/mce/amd: Support SMCA Corrected Error
+ Interrupt
+Message-ID: <20250509193721.GRaB5ZccvAs9ST_3IM@fat_crate.local>
+References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
+ <20250415-wip-mca-updates-v3-15-8ffd9eb4aa56@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507175500.204569-1-00107082@163.com> <20250509173929.42508-1-00107082@163.com>
- <7f237574d9f08a9fa8dcaa60d2edf8d8e91441d4.camel@linux.intel.com>
-In-Reply-To: <7f237574d9f08a9fa8dcaa60d2edf8d8e91441d4.camel@linux.intel.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 9 May 2025 12:36:47 -0700
-X-Gm-Features: AX0GCFti7bNqGFrfEJY-DR9yB3WqRlM7xrBhfUKajVDVf17WhbO-8Pm_9O-kOeM
-Message-ID: <CAJuCfpHB8T8daanvE_wowRD9-sAo30rtCcFfMPZL_751+KSs5w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] alloc_tag: keep codetag iterator active between
- read() calls
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: David Wang <00107082@163.com>, kent.overstreet@linux.dev, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250415-wip-mca-updates-v3-15-8ffd9eb4aa56@amd.com>
 
-On Fri, May 9, 2025 at 11:33=E2=80=AFAM Tim Chen <tim.c.chen@linux.intel.co=
-m> wrote:
->
-> On Sat, 2025-05-10 at 01:39 +0800, David Wang wrote:
-> >
-> >
-> > Signed-off-by: David Wang <00107082@163.com>
+On Tue, Apr 15, 2025 at 02:55:10PM +0000, Yazen Ghannam wrote:
+> @@ -306,6 +306,11 @@ static void smca_configure(unsigned int bank, unsigned int cpu)
+>  			high |= BIT(5);
+>  		}
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+Yeah, the above statements explain in comments what they do so that we don't
+have to define the bits but use them straight "naked" with the BIT macro.
+I think you'd need to put something along the lines of that text...
 
-> > ---
-> >  lib/alloc_tag.c | 29 ++++++++++-------------------
-> >  1 file changed, 10 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> > index 25ecc1334b67..fdd5887769a6 100644
-> > --- a/lib/alloc_tag.c
-> > +++ b/lib/alloc_tag.c
-> > @@ -45,21 +45,16 @@ struct allocinfo_private {
-> >  static void *allocinfo_start(struct seq_file *m, loff_t *pos)
-> >  {
-> >       struct allocinfo_private *priv;
-> > -     struct codetag *ct;
-> >       loff_t node =3D *pos;
-> >
-> > -     priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
-> > -     m->private =3D priv;
-> > -     if (!priv)
-> > -             return NULL;
-> > -
-> > -     priv->print_header =3D (node =3D=3D 0);
-> > +     priv =3D (struct allocinfo_private *)m->private;
-> >       codetag_lock_module_list(alloc_tag_cttype, true);
-> > -     priv->iter =3D codetag_get_ct_iter(alloc_tag_cttype);
-> > -     while ((ct =3D codetag_next_ct(&priv->iter)) !=3D NULL && node)
-> > -             node--;
-> > -
-> > -     return ct ? priv : NULL;
-> > +     if (node =3D=3D 0) {
-> > +             priv->print_header =3D true;
-> > +             priv->iter =3D codetag_get_ct_iter(alloc_tag_cttype);
-> > +             codetag_next_ct(&priv->iter);
-> > +     }
->
-> Do you need to skip print header when *pos !=3D 0? i.e add
+> Check for the feature bit in the MCA_CONFIG register and confirm that
+> the MCA thresholding interrupt handler is already enabled. If successful,
+> set the feature enable bit in the MCA_CONFIG register to indicate to the
+> Platform that the OS is ready for the interrupt.
 
-Technically not needed since proc_create_seq_private() allocates
-seq->private using kzalloc(), so the initial value of
-priv->print_header is always false.
+... here.
 
->
->         } else {
->                 priv->print_header =3D false;
->         }
->
-> Tim
->
-> > +     return priv->iter.ct ? priv : NULL;
-> >  }
-> >
->
+<---
+
+> +		if ((low & BIT(10)) && data->thr_intr_en) {
+> +			__set_bit(bank, data->thr_intr_banks);
+> +			high |= BIT(8);
+> +		}
+> +
+>  		this_cpu_ptr(mce_banks_array)[bank].lsb_in_status = !!(low & BIT(8));
+>  
+>  		wrmsr(smca_config, low, high);
+> 
+> -- 
+> 2.49.0
+> 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
