@@ -1,244 +1,258 @@
-Return-Path: <linux-kernel+bounces-641781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D69AB15E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:55:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F155AB1623
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886E9188F401
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2470C3B5381
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299C32918EC;
-	Fri,  9 May 2025 13:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE95F29208B;
+	Fri,  9 May 2025 13:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPga8wPk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c51lr94F"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AE615E96;
-	Fri,  9 May 2025 13:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBBD290D87
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746798751; cv=none; b=SSKvg+J1fqQDdnSs3Ymthi9YHE+k9du0IftkDJ5r5VDdExvpz2+MfgyyGPenXzoPkB3JmXqIeOqottO3h78XvAt7O7MgCCjoCJ3sFbRNshdymmZavFVkXMlAZhj/RgkaVgmFcMJsL1YyD49Pd9nfnBfm3NaXl2s4cirSqBCxSew=
+	t=1746798768; cv=none; b=KiAkNbTNC04z/VtPWKxL/pxeK7WLlXT8Lnj3uJfmKWoZeTQnjx8jmMrNFaWktPmIbBNb1wwnlSi/0sLynEB/7MD2faTTGhFvDnALRk/GdJvhDDEm8aDSRtHWtJNTJrB7Ypp1sBBoQIU129aq9GAg5aT7RwuSY4t2Pgb5DMSaWiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746798751; c=relaxed/simple;
-	bh=08z/fA4ndGXl+5Zu9henL1jr4DrNeoyJNAHGe5fOiKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+f1MX5zqi/SNKrU6f2uGq61oOpNvAkQH4fetWg14Fo+8qsksF/n69KnkVpcsZ1zsHMDvf6X/i+fCcrQ1RDa01Sxzur0TkDQh7tbqVIA2gZvNjPAI3vLYbBphVRLGd900ft1OFBYGDJqkMKjSJVQ8MT9svXLzzEGmKovSGC5k4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPga8wPk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B3F8C4CEE4;
-	Fri,  9 May 2025 13:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746798750;
-	bh=08z/fA4ndGXl+5Zu9henL1jr4DrNeoyJNAHGe5fOiKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iPga8wPk30SBCjyT2PEUpAYxWoTbCCCa51yC3+AyjqVwUqmbgf8l5BZGzU50nqgKO
-	 T/SbQqEFoNjRGxPWMrUpgxEAUiuavHUVGS9kV4yQEJ/XhIdS89Bc2EN2IArxQcAxwJ
-	 +rcfywS+2pEzDvkl2yjYifY85o+FKATLxPkT6cuVESvyw7VmGs13D6MI7YEVWlcuvc
-	 T99kz01ZuvAObUCGDlslJ4D7PEfNSa98Yw9ZX+FGfp1Eq4BfgUUEg8RBWOD981D2C0
-	 qRZYPd1NmVpZ0b+Enh2uKqfOKs3j90id1gG9RjeCtFUuGpabtO/JLz3TOUX+gre7ja
-	 LB9GEVxkaxeog==
-Date: Fri, 9 May 2025 14:52:24 +0100
-From: Will Deacon <will@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Hildenbrand <david@redhat.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v4 5/5] mm/filemap: Allow arch to request folio size
- for exec memory
-Message-ID: <20250509135223.GB5707@willie-the-truck>
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-6-ryan.roberts@arm.com>
+	s=arc-20240116; t=1746798768; c=relaxed/simple;
+	bh=MGubqGeYpC0ja1MkjjJEf4XgAx5U8n0/6/HTY5IM2hw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MYHltwle7EYQxUuTwvlAxyi3GUC7twf8SAaegYfax+caRQNkBhcSVOOTEK0p62QUHNcCdDhNfvzo1rJ+C6Y4/AnEKTSBMOSiWbs/4ZfdIy9pUNiJ0DRfGUAS+VdfRZsYBzQOCFBMJy4ZBUoA95Kk6MyMI9NnItB6L5Ky4fgmFm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c51lr94F; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3fbc00143d6so1882306b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746798765; x=1747403565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vG/sdowqIMmjoKGncX6ih2QtRKdIX5Cx2o9iXTqzu6w=;
+        b=c51lr94FojXtkv6EESidmhw8j6pGGXwZ9OPs2q1Oi0BjUEiXr2N1aTmMkqgGYkjDyt
+         yMWyTu6AAlTXzqW7ESqIQ+GrHF/8E/8t3Pph6vDd+EF1mSbv4G8yWZ+PNaUvI6WwswxK
+         GMa5IEtSeyHSxwSZDskM/0fAMVYMsweWTtwmYYnNrnqQEcjOSmRwNxd5mSnfjQMVT1Wc
+         yhX3eSnvtQyzl7MCmcm9ecAHuLfmmnccU61aqoayXUzHznU0DLN0BkmJjdiGeqNh4Ekk
+         fk1aQqPOjir34L01IxtWtK1QFpnQDSDmIp8xmBPeMlgfWYLMOIfMrwIhaiRKTFgLgbfw
+         J8GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746798765; x=1747403565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vG/sdowqIMmjoKGncX6ih2QtRKdIX5Cx2o9iXTqzu6w=;
+        b=Zo50YP1FhpxP1vxxEK5weop+6xV4HZJgVdakIJ+QATAYQxW9rWsQGaPAxFwVcmmRf3
+         1T/08kTjFeuQlP3ZXv2mCrGgBwgTRjbGKLFKP07P5gQkv7kNeIm9hw8PggIBhyklbIZT
+         8ldgA2oZmZrvCLaw+IVSI0rlhFozAqaE9jJLQd7IL1tRjzQmy992TmqNe7nxH/poZ6Oc
+         +eUsQ9lkOiB1ig4zncsIYvWabtOsAPvyxc9fCBLRXkXGLfwB7fUC+nd9Lco9geEbcHl/
+         0qFlQDNhCU4G1qeQOBEKCRiSSMsCULgTyszP65031rtgk2TJt5I6hD359neuYE+bG5v7
+         jYSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWA1Pe8O+N+mFU+T+pHxbSXhNTx2VK8DwwKRNiZq+6kMgrbcAl2Tqg0fkOPN17WMUxqEfRcJlWf6DcyqDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQRvAU1+LdE+1uGIJC0ENoUvFrmdZpoom7a0GwC2WlJ01CD9uL
+	XVJjfBX0zn35HUqvGhEl54tY8zKJ6lzwvCjBBPxj8r/sF97Let80ta4+graD5zLy/VUhPcg3vET
+	Fgfdx29AiZLbGMUw0+jD7AWK3BbH/ZRwh9fFyjQ==
+X-Gm-Gg: ASbGncvoPAJQNRPhavIG5/yZqupja9CSuZpP6t/6QNwZiVQzcAjsYzNnCanWkwLtfVG
+	maWQmebCEUiWV+XkLZtxNDPpOr+Dn9PcaUR+l2ctUynP24H6AvX8/PE5110QAQHlj4zzecv3O8d
+	M9DtR93NqtnExq7TCLdwfLLg==
+X-Google-Smtp-Source: AGHT+IGfTYNQXb38Qd3XEblVwFr61ZWUCt+JRdOJ06/p2uEstoNfALhHpSjlt/PkHSMkxNxM78UZKpOwOfIpsf1xSn8=
+X-Received: by 2002:a05:6808:23d4:b0:3f8:c486:9b27 with SMTP id
+ 5614622812f47-4037fe522a5mr2143056b6e.22.1746798764909; Fri, 09 May 2025
+ 06:52:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430145920.3748738-6-ryan.roberts@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
+In-Reply-To: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 9 May 2025 14:52:34 +0100
+X-Gm-Features: ATxdqUFUdIagbNNE69FQ_bG89w8nhF65-rjxSwOObUqDQgd3C6_gz2Uofy98FnM
+Message-ID: <CADrjBPpZseD+9ZQ8BK+++VH=Zsgnn1fbjpiMKvC7XvD0wA7Cag@mail.gmail.com>
+Subject: Re: [PATCH v10 0/3] Maxim Integrated MAX77759 PMIC MFD-based drivers
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 30, 2025 at 03:59:18PM +0100, Ryan Roberts wrote:
-> Change the readahead config so that if it is being requested for an
-> executable mapping, do a synchronous read into a set of folios with an
-> arch-specified order and in a naturally aligned manner. We no longer
-> center the read on the faulting page but simply align it down to the
-> previous natural boundary. Additionally, we don't bother with an
-> asynchronous part.
-> 
-> On arm64 if memory is physically contiguous and naturally aligned to the
-> "contpte" size, we can use contpte mappings, which improves utilization
-> of the TLB. When paired with the "multi-size THP" feature, this works
-> well to reduce dTLB pressure. However iTLB pressure is still high due to
-> executable mappings having a low likelihood of being in the required
-> folio size and mapping alignment, even when the filesystem supports
-> readahead into large folios (e.g. XFS).
-> 
-> The reason for the low likelihood is that the current readahead
-> algorithm starts with an order-0 folio and increases the folio order by
-> 2 every time the readahead mark is hit. But most executable memory tends
-> to be accessed randomly and so the readahead mark is rarely hit and most
-> executable folios remain order-0.
-> 
-> So let's special-case the read(ahead) logic for executable mappings. The
-> trade-off is performance improvement (due to more efficient storage of
-> the translations in iTLB) vs potential for making reclaim more difficult
-> (due to the folios being larger so if a part of the folio is hot the
-> whole thing is considered hot). But executable memory is a small portion
-> of the overall system memory so I doubt this will even register from a
-> reclaim perspective.
-> 
-> I've chosen 64K folio size for arm64 which benefits both the 4K and 16K
-> base page size configs. Crucially the same amount of data is still read
-> (usually 128K) so I'm not expecting any read amplification issues. I
-> don't anticipate any write amplification because text is always RO.
-> 
-> Note that the text region of an ELF file could be populated into the
-> page cache for other reasons than taking a fault in a mmapped area. The
-> most common case is due to the loader read()ing the header which can be
-> shared with the beginning of text. So some text will still remain in
-> small folios, but this simple, best effort change provides good
-> performance improvements as is.
-> 
-> Confine this special-case approach to the bounds of the VMA. This
-> prevents wasting memory for any padding that might exist in the file
-> between sections. Previously the padding would have been contained in
-> order-0 folios and would be easy to reclaim. But now it would be part of
-> a larger folio so more difficult to reclaim. Solve this by simply not
-> reading it into memory in the first place.
-> 
-> Benchmarking
-> ============
-> TODO: NUMBERS ARE FOR V3 OF SERIES. NEED TO RERUN FOR THIS VERSION.
-> 
-> The below shows nginx and redis benchmarks on Ampere Altra arm64 system.
-> 
-> First, confirmation that this patch causes more text to be contained in
-> 64K folios:
-> 
-> | File-backed folios     |   system boot   |      nginx      |      redis      |
-> | by size as percentage  |-----------------|-----------------|-----------------|
-> | of all mapped text mem | before |  after | before |  after | before |  after |
-> |========================|========|========|========|========|========|========|
-> | base-page-4kB          |    26% |     9% |    27% |     6% |    21% |     5% |
-> | thp-aligned-8kB        |     4% |     2% |     3% |     0% |     4% |     1% |
-> | thp-aligned-16kB       |    57% |    21% |    57% |     6% |    54% |    10% |
-> | thp-aligned-32kB       |     4% |     1% |     4% |     1% |     3% |     1% |
-> | thp-aligned-64kB       |     7% |    65% |     8% |    85% |     9% |    72% |
-> | thp-aligned-2048kB     |     0% |     0% |     0% |     0% |     7% |     8% |
-> | thp-unaligned-16kB     |     1% |     1% |     1% |     1% |     1% |     1% |
-> | thp-unaligned-32kB     |     0% |     0% |     0% |     0% |     0% |     0% |
-> | thp-unaligned-64kB     |     0% |     0% |     0% |     1% |     0% |     1% |
-> | thp-partial            |     1% |     1% |     0% |     0% |     1% |     1% |
-> |------------------------|--------|--------|--------|--------|--------|--------|
-> | cont-aligned-64kB      |     7% |    65% |     8% |    85% |    16% |    80% |
-> 
-> The above shows that for both workloads (each isolated with cgroups) as
-> well as the general system state after boot, the amount of text backed
-> by 4K and 16K folios reduces and the amount backed by 64K folios
-> increases significantly. And the amount of text that is contpte-mapped
-> significantly increases (see last row).
-> 
-> And this is reflected in performance improvement:
-> 
-> | Benchmark                                     |          Improvement |
-> +===============================================+======================+
-> | pts/nginx (200 connections)                   |                8.96% |
-> | pts/nginx (1000 connections)                  |                6.80% |
-> +-----------------------------------------------+----------------------+
-> | pts/redis (LPOP, 50 connections)              |                5.07% |
-> | pts/redis (LPUSH, 50 connections)             |                3.68% |
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Hi Andr=C3=A9,
+
+On Fri, 9 May 2025 at 14:22, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Hi,
+>
+> This series improves support for the Maxim Integrated MAX77759
+> companion PMIC for USB Type-C applications using the MFD framework.
+>
+> This series must be applied in-order, due to interdependencies of some
+> of the patches:
+> * to avoid use of undocumented compatibles by the newly added drivers,
+>   the bindings are added first in this series
+> * patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
+>   new MAINTAINERS entry, including a wildcard match for the other
+>   bindings in this series
+> * patch 3 ("dt-bindings: mfd: add max77759 binding") references the
+>   bindings added in patch 1 and 2 and can not work if those aren't
+>   available
+> * patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
+>   the core MFD driver, which also exposes an API to its leaf drivers
+>   and is used by patches 5 and 6
+> * patches 5 and 6 won't compile without patch 4
+>
+> The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
+> sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+>
+> This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
+>
+> This series adds support for the top-level MFD device, the gpio, and
+> nvmem cells. Other components are excluded for the following reasons:
+>
+>     While in the same package, Fuel Gauge and TCPC have separate and
+>     independent I2C addresses, register maps, interrupt lines, and
+>     aren't part of the top-level package interrupt hierarchy.
+>     Furthermore, a driver for the TCPC part exists already (in
+>     drivers/usb/typec/tcpm/tcpci_maxim_core.c).
+>
+>     I'm leaving out temperature sensors and charger in this submission,
+>     because the former are not in use on Pixel 6 and I therefore can
+>     not test them, and the latter can be added later, once we look at
+>     the whole charging topic in more detail.
+>
+> To make maintainers' work easier, I am planning to send the relevant
+> DTS and defconfig changes via a different series, unless everything
+> is expected to go via Lee's MFD tree in one series?
+>
+> Cheers,
+> Andre'
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
->  arch/arm64/include/asm/pgtable.h |  8 +++++++
->  include/linux/pgtable.h          | 11 +++++++++
->  mm/filemap.c                     | 40 ++++++++++++++++++++++++++------
->  3 files changed, 52 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 2a77f11b78d5..9eb35af0d3cf 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -1537,6 +1537,14 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
->   */
->  #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
->  
-> +/*
-> + * Request exec memory is read into pagecache in at least 64K folios. This size
-> + * can be contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB
-> + * entry), and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base
-> + * pages are in use.
-> + */
-> +#define exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
-> +
->  static inline bool pud_sect_supported(void)
->  {
->  	return PAGE_SIZE == SZ_4K;
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index b50447ef1c92..1dd539c49f90 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -456,6 +456,17 @@ static inline bool arch_has_hw_pte_young(void)
->  }
->  #endif
->  
-> +#ifndef exec_folio_order
-> +/*
-> + * Returns preferred minimum folio order for executable file-backed memory. Must
-> + * be in range [0, PMD_ORDER). Default to order-0.
-> + */
-> +static inline unsigned int exec_folio_order(void)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  #ifndef arch_check_zapped_pte
->  static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
->  					 pte_t pte)
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index e61f374068d4..37fe4a55c00d 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3252,14 +3252,40 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	if (mmap_miss > MMAP_LOTSAMISS)
->  		return fpin;
->  
-> -	/*
-> -	 * mmap read-around
-> -	 */
->  	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> -	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
-> -	ra->size = ra->ra_pages;
-> -	ra->async_size = ra->ra_pages / 4;
-> -	ra->order = 0;
-> +	if (vm_flags & VM_EXEC) {
-> +		/*
-> +		 * Allow arch to request a preferred minimum folio order for
-> +		 * executable memory. This can often be beneficial to
-> +		 * performance if (e.g.) arm64 can contpte-map the folio.
-> +		 * Executable memory rarely benefits from readahead, due to its
-> +		 * random access nature, so set async_size to 0.
 
-In light of this observation (about randomness of instruction fetch), do
-you think it's worth ignoring VM_RAND_READ for VM_EXEC?
+For the series: -
 
-Either way, I was looking at this because it touches arm64 and it looks
-fine to me:
+Acked-by: Peter Griffin <peter.griffin@linaro.org>
 
-Acked-by: Will Deacon <will@kernel.org>
+Thanks,
 
-Will
+Peter
+
+
+> Changes in v10:
+> - collect tag for nvmem
+> - rebase against next-20250509
+> - drop already-merged bindings patches
+> - update a comment in core driver (Lee)
+> - Link to v9: https://lore.kernel.org/r/20250430-max77759-mfd-v9-0-639763=
+e23598@linaro.org
+>
+> Changes in v9:
+> - nvmem: drop superfluous max77759_nvmem_is_valid() (Srini)
+> - collect tags
+> - Link to v8: https://lore.kernel.org/r/20250429-max77759-mfd-v8-0-72d72d=
+c79a1f@linaro.org
+>
+> Changes in v8:
+> - gpio: switch to gpio_chip::set_rv() (Bartosz)
+> - gpio, nvmem: replace MODULE_ALIAS() with .id_table (Krzysztof)
+> - gpio, nvmem: drop previous tags due to above
+> - Link to v7: https://lore.kernel.org/r/20250428-max77759-mfd-v7-0-edfe40=
+c16fe8@linaro.org
+>
+> Changes in v7:
+> - rebased against next-20250424
+> - Link to v6: https://lore.kernel.org/r/20250325-max77759-mfd-v6-0-c0870c=
+a662ba@linaro.org
+>
+> Changes in v6:
+> - add one missing change in core driver
+> - Link to v5: https://lore.kernel.org/r/20250325-max77759-mfd-v5-0-69bd6f=
+07a77b@linaro.org
+>
+> Changes in v5:
+> - core: incorporate Lee's comments (hoping I didn't miss any :-)
+> - Link to v4: https://lore.kernel.org/r/20250312-max77759-mfd-v4-0-b908d6=
+06c8cb@linaro.org
+>
+> Changes in v4:
+> - collect tags
+> - mfd: add missing build_bug.h include
+> - mfd: update an irq chip comment
+> - mfd: fix a whitespace in register definitions
+> - Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627=
+d42526@linaro.org
+>
+> Changes in v3:
+> - collect tags
+> - mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
+>   child (Rob)
+> - gpio: drop duplicate init of 'handled' variable in irq handler
+> - gpio: use boolean with IRQ_RETVAL() (Linus)
+> - gpio: drop 'virq' variable inside irq handler to avoid confusion
+>   (Linus)
+> - gpio: drop assignment of struct gpio_chip::owner (Linus)
+> - Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe=
+2bc0a9@linaro.org
+>
+> Changes in v2:
+> - reorder bindings patches to avoid validation failures
+> - add dependency information to cover letter (Krzysztof)
+> - fix max77759_gpio_direction_from_control() in gpio driver
+> - gpio: drop 'interrupts' property from binding and sort properties
+>   alphabetically (Rob)
+> - nvmem: drop example from nvmem binding as the MFD binding has a
+>   complete one (Rob)
+> - nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
+> - mfd: add kernel doc
+> - mfd: fix an msec / usec typo
+> - mfd: error handling of devm_mutex_init (Christophe)
+> - whitespace fixes & tidy-ups (Christophe)
+> - Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36=
+f9d055@linaro.org
+>
+> ---
+> Andr=C3=A9 Draszik (3):
+>       mfd: max77759: add Maxim MAX77759 core mfd driver
+>       gpio: max77759: add Maxim MAX77759 gpio driver
+>       nvmem: max77759: add Maxim MAX77759 NVMEM driver
+>
+>  MAINTAINERS                    |   4 +
+>  drivers/gpio/Kconfig           |  13 +
+>  drivers/gpio/Makefile          |   1 +
+>  drivers/gpio/gpio-max77759.c   | 530 +++++++++++++++++++++++++++++++
+>  drivers/mfd/Kconfig            |  20 ++
+>  drivers/mfd/Makefile           |   1 +
+>  drivers/mfd/max77759.c         | 690 +++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/nvmem/Kconfig          |  12 +
+>  drivers/nvmem/Makefile         |   2 +
+>  drivers/nvmem/max77759-nvmem.c | 145 +++++++++
+>  include/linux/mfd/max77759.h   | 165 ++++++++++
+>  11 files changed, 1583 insertions(+)
+> ---
+> base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
+> change-id: 20250224-max77759-mfd-aaa7a3121b62
+>
+> Best regards,
+> --
+> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
 
