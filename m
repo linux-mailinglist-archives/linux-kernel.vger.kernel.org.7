@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-641677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4328DAB14A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA13AB14BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D131C44F7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8ED1527E78
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF5029552A;
-	Fri,  9 May 2025 13:13:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25692918C3;
+	Fri,  9 May 2025 13:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="fHb0Bf2F"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0D293725
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B56A29189D
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796381; cv=none; b=LUFQ2n5sC4WFsgvJO4M/RrB2xq2h/S/Z79tkhfhNoiHA1rKPoTA39ZRokdN/H1ljyIYC674tFijzlxgVtFSHXZKI/rbgXGh+30+BM7Kp0KxkA00QugahlenH9Pd5HgNKiXGSLC7PwfIgxxS7rWQJvsSnLiAZ2V+9KlP3SB8mqf4=
+	t=1746796407; cv=none; b=IMYnkF4g3yu5/59WV+zd8hwZse90DbxKBxPnHctYk/W0rB7QzCoOkVCBW8RsOAyC28YQyLl8TW/aT9R7TnOhxWFFZzLw1ek4ej/piZhlRPg+ZW2smhFf0JQdrQ5gLeggh2DxXZoNmLjFw3+PorZnEq9WBZMDySvFTp4Q/9brbs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746796381; c=relaxed/simple;
-	bh=IHAUeL2KBD9XuOVLlSBj9mntsqSOSSRKDRivd7fbx6E=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=DOco4QF2AEc5ECiPzwPery/3x2wNJtA0/+NmSRIp7NroN8oXEzH7c7AnuoGCo3VeYdNhn0XmpgSRt1z99c3TTvJnzxZqXQ6T5eBktNfbGgiQY8Nn6BFpAysci9QbgYg/vpErWTr5P+2rAwByACeRwODxt55ZqBOli2Dsej9S9MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C06C4CEF9;
-	Fri,  9 May 2025 13:13:01 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uDNXR-00000002byH-0b24;
-	Fri, 09 May 2025 09:13:17 -0400
-Message-ID: <20250509131316.991102877@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 09 May 2025 09:13:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 21/31] ring-buffer: Add ring_buffer_record_is_on_cpu()
-References: <20250509131249.340302366@goodmis.org>
+	s=arc-20240116; t=1746796407; c=relaxed/simple;
+	bh=nHcaS03T71iRXYf/Lf72eeVSXvyIQhWOCmpm1gIiLNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lp4WLTfVCPXogZ8lbfZ9t2Njxt+nCHgxDBcWWom3c0z48lc4dIk0fxoVRt2YFQrkQrfCXxam87DWW5OeUgaSIC+jTAGVI0gfPY+hluueKQUz9PKiJDQfrxYAw3Pr2HZj6amJWqvZ7WHBmKTfO2EmuekP2NsBfw/TrNLGvTa1OsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=fHb0Bf2F; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Fri, 9 May 2025 09:13:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1746796403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eHz2N90cxTQPl/n3ayGPjZiGdp6MpqFE6UdMTbgIZ0k=;
+	b=fHb0Bf2Fxn4XphXkw53yBQp5fKOoN8qXoC6co+TQnzQiXmREqHmMNMdXDJhiK9feEPkzCD
+	xNWNbVEx3i8gLAOOhU7AUKiMCpTPr5Xto7wkjd/etBl7peOIMinzO1dixZ7S9VJQaQxG7a
+	Qpi/uuYD73+Y+chNpJBTUMP32ykNHh8dd/cCqe8a5iOSeZxb+zvJMpFESvDXxX8wJHiCvQ
+	ESOT/Bs/K8+OnNz+02TwSK8SeaQxJfa8B9YkLFbrs2gskzUHOWn7Qrt90SrHDOLMaSKvz3
+	7vwXPIyawxCHxf7tco0+el4wfQjHSeNB5mDYOgB09LKMMIoi2wOuvrA25zlJwQ==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: sven@svenpeter.dev
+Cc: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+	Hector Martin <marcan@marcan.st>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 8/9] arm64: dts: apple: t8112: Add SMC node
+Message-ID: <aB3_Znc0dsDuByVJ@blossom>
+References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev>
+ <20250503-smc-6-15-v4-8-500b9b6546fc@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250503-smc-6-15-v4-8-500b9b6546fc@svenpeter.dev>
+X-Migadu-Flow: FLOW_OUT
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-Add the function ring_buffer_record_is_on_cpu() that returns true if the
-ring buffer for a give CPU is writable and false otherwise.
-
-Also add tracer_tracing_is_on_cpu() to return if the ring buffer for a
-given CPU is writeable for a given trace_array.
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20250505212236.059853898@goodmis.org
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/ring_buffer.h |  1 +
- kernel/trace/ring_buffer.c  | 18 ++++++++++++++++++
- kernel/trace/trace.h        | 15 +++++++++++++++
- 3 files changed, 34 insertions(+)
-
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index 56e27263acf8..cd7f0ae26615 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -192,6 +192,7 @@ void ring_buffer_record_off(struct trace_buffer *buffer);
- void ring_buffer_record_on(struct trace_buffer *buffer);
- bool ring_buffer_record_is_on(struct trace_buffer *buffer);
- bool ring_buffer_record_is_set_on(struct trace_buffer *buffer);
-+bool ring_buffer_record_is_on_cpu(struct trace_buffer *buffer, int cpu);
- void ring_buffer_record_disable_cpu(struct trace_buffer *buffer, int cpu);
- void ring_buffer_record_enable_cpu(struct trace_buffer *buffer, int cpu);
- 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index c0f877d39a24..1ca482955dae 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -4882,6 +4882,24 @@ bool ring_buffer_record_is_set_on(struct trace_buffer *buffer)
- 	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
- }
- 
-+/**
-+ * ring_buffer_record_is_on_cpu - return true if the ring buffer can write
-+ * @buffer: The ring buffer to see if write is enabled
-+ * @cpu: The CPU to test if the ring buffer can write too
-+ *
-+ * Returns true if the ring buffer is in a state that it accepts writes
-+ *   for a particular CPU.
-+ */
-+bool ring_buffer_record_is_on_cpu(struct trace_buffer *buffer, int cpu)
-+{
-+	struct ring_buffer_per_cpu *cpu_buffer;
-+
-+	cpu_buffer = buffer->buffers[cpu];
-+
-+	return ring_buffer_record_is_set_on(buffer) &&
-+		!atomic_read(&cpu_buffer->record_disabled);
-+}
-+
- /**
-  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
-  * @buffer: The ring buffer to stop writes to.
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 74f1fe5788d4..69c1ecfb2290 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -673,6 +673,21 @@ struct dentry *trace_create_file(const char *name,
- 				 void *data,
- 				 const struct file_operations *fops);
- 
-+
-+/**
-+ * tracer_tracing_is_on_cpu - show real state of ring buffer enabled on for a cpu
-+ * @tr : the trace array to know if ring buffer is enabled
-+ * @cpu: The cpu buffer to check if enabled
-+ *
-+ * Shows real state of the per CPU buffer if it is enabled or not.
-+ */
-+static inline bool tracer_tracing_is_on_cpu(struct trace_array *tr, int cpu)
-+{
-+	if (tr->array_buffer.buffer)
-+		return ring_buffer_record_is_on_cpu(tr->array_buffer.buffer, cpu);
-+	return false;
-+}
-+
- int tracing_init_dentry(void);
- 
- struct ring_buffer_event;
--- 
-2.47.2
-
-
+Le Sat , May 03, 2025 at 10:06:55AM +0000, Sven Peter via B4 Relay a écrit :
+> From: Hector Martin <marcan@marcan.st>
+> 
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Sven Peter <sven@svenpeter.dev>
+> ---
+>  arch/arm64/boot/dts/apple/t8112.dtsi | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
+> index e95711d8337f6cea898e88a3d564caf2c4f94404..861cf2f684a067d73f79d8f01447bc375136793d 100644
+> --- a/arch/arm64/boot/dts/apple/t8112.dtsi
+> +++ b/arch/arm64/boot/dts/apple/t8112.dtsi
+> @@ -839,6 +839,41 @@ rtc_offset: rtc-offset@f900 {
+>  			};
+>  		};
+>  
+> +		smc: smc@23e400000 {
+> +			compatible = "apple,t8112-smc", "apple,smc";
+> +			reg = <0x2 0x3e400000 0x0 0x4000>,
+> +				<0x2 0x3fe00000 0x0 0x100000>;
+> +			reg-names = "smc", "sram";
+> +			mboxes = <&smc_mbox>;
+> +
+> +			smc_gpio: gpio {
+> +				compatible = "apple,smc-gpio";
+> +				gpio-controller;
+> +				#gpio-cells = <2>;
+> +			};
+> +
+> +			smc_reboot: reboot {
+> +				compatible = "apple,smc-reboot";
+> +				nvmem-cells = <&shutdown_flag>, <&boot_stage>,
+> +					<&boot_error_count>, <&panic_count>, <&pm_setting>;
+> +				nvmem-cell-names = "shutdown_flag", "boot_stage",
+> +					"boot_error_count", "panic_count", "pm_setting";
+> +			};
+> +		};
+> +
+> +		smc_mbox: mbox@23e408000 {
+> +			compatible = "apple,t8112-asc-mailbox", "apple,asc-mailbox-v4";
+> +			reg = <0x2 0x3e408000 0x0 0x4000>;
+> +			interrupt-parent = <&aic>;
+> +			interrupts = <AIC_IRQ 499 IRQ_TYPE_LEVEL_HIGH>,
+> +				<AIC_IRQ 500 IRQ_TYPE_LEVEL_HIGH>,
+> +				<AIC_IRQ 501 IRQ_TYPE_LEVEL_HIGH>,
+> +				<AIC_IRQ 502 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "send-empty", "send-not-empty",
+> +				"recv-empty", "recv-not-empty";
+> +			#mbox-cells = <0>;
+> +		};
+> +
+>  		pinctrl_smc: pinctrl@23e820000 {
+>  			compatible = "apple,t8112-pinctrl", "apple,pinctrl";
+>  			reg = <0x2 0x3e820000 0x0 0x4000>;
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
