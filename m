@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-642444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6545CAB1E6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78481AB1E6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F873AEE68
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694043A7290
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1080D25FA0E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4BD2609C5;
 	Fri,  9 May 2025 20:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3jj09RF"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5GBUqnB"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DD525F785;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A73525F792;
 	Fri,  9 May 2025 20:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746822888; cv=none; b=mgye53wbeALWUBS6FjAjvnAvLFt7uWCyo7V/SbDP+6tzjkmjSHKHrExYNZwleN6b4AMmeu7i18+6S/J5r/jo1pQF4hljSG64BbzZPpO40nydQIRFKRcCFX9eTS+1mGJpGa/PYMtMz6ty6JlcqC+UmLG6g1G719BF++DHjIJOJkY=
+	t=1746822888; cv=none; b=tqBnXZAhVDXqQG+CIO3OkSj8jczLqXDH3t8rwNuqn/LHp+Y2ktF5i4chJdapL8Lqi509dT8lJnIIuhi3rUFdtmcuXn7cQ1DofMsYD0F5tJKLoSn/0YUUelTHnxWTipRJgVEsfUPoZOsYPKa8HW+W3CHVAuAu1p2k4BWqzJoE3mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746822888; c=relaxed/simple;
-	bh=kPFB/oDA/yPmG/oLic+MIvk+/TBR3j/A0nDTZGOZ9m8=;
+	bh=IoNLw1aOwx5IbcamgzEcj9P4jGAzaQAW47XMz8V0xXs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C14CJl6gO6VQlM7Lc1bFcToqc+/6SLpZNW4T1UVynfGGnJ/aK6/tr2L3DnNuf7bAYl3N/4VYIl8woAvM4ID/HTi6OXna8Xaq3tHcXrOxrtNedsWaxldqEmOKAvVmyBRuWtipWNFvOs4A/238Vg06+KnlEc5Fm0DsZijNW29Bro0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3jj09RF; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=rLO8Zalt2qLfuo+j+FyAXc0+zbxHvNnRZyKuWiK4Xc+iYqWDygNmbV35vFOEWbpE6rx5AdczOTnCOjQ+TxA5AtaRdPJA8CpZvSQWyFEnPOhJvRaxcCXde26SOkM1o2MZd29amW9981vcQ3f24rAKxLvgLPyWTpJc1MXvLzuwV8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5GBUqnB; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-acb615228a4so687401066b.0;
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acb415dd8faso422370566b.2;
         Fri, 09 May 2025 13:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1746822885; x=1747427685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S4boxaVVlC8FsLZlX9BFkSmjFeV9ooQQovdkGIoB3Ao=;
-        b=c3jj09RF46kqHe2HKup5tuANh4YR1YalnX222nZzBLtzOlMs3sjiq7whbDiANdKqsB
-         YijFaLRgeBeXUIyZaL31UQ6H+PITSDyN4vP/qxuuXOTuSaPk9+BdMcrsSdr/csmVEgkO
-         UBsoGA1XOq1Q4JoSZ9sYAk/VRwYwBCqKIninTvHzPPAhXohviLMJOoQSg79lptFwZIHK
-         JsSrti2TapOG29o+4k1pfFkEZEM/CR3ggQpISbK5sc9LR9Ez+DSdWYaapkekv2LPNRyY
-         OGlkEJnKlQUat8ZrN+iWJ7brYpwrKN8Arfr8vd/916xSN+D9GCpqqT50OSAJYGdFqsWC
-         dUxw==
+        bh=jn0mQgbwIKI0yXWXrQMmSDlanoxwH9IsJVP0trltX/o=;
+        b=E5GBUqnBReEUrg7M29QjDbPj5ZMZkiPRAZu/RFqxPaoBKH91S2Mj6sryTLyXa7w+kO
+         Z8jjWT9pAppwq1NQDV2/rgOJBPcjUWKwEGaFn53RC7fqhsQu9hmmzy8DA5LlA+kXLqn1
+         ia5bcsk1uvU3bMCzeiRek4CHMw+9Be186quHIId0PdAJvnXxRtZxUetDEpAi+OvnXpw6
+         aFQ9gYSSAuF5wlqSVNGEl+oheiOijoWrrKJ46n++p8JQIn3QC9hW2lq2R18MpJYicAQ1
+         YAUP53Li/ruURW02HHUZ/Ad3loguvTSDHipM8ZORqUny2cI2KOtZkiuo3DiI7tB7LIM3
+         ubrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1746822885; x=1747427685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S4boxaVVlC8FsLZlX9BFkSmjFeV9ooQQovdkGIoB3Ao=;
-        b=IFLopWKk2/R+rUJ7ungebAQPrLQ1uNiqjBcKiB6839WcIBcqoHbTmqbJgTEttfkaZo
-         HaPS6xsveIvDnIGTW81tUeqoZ2bq2fm2bKSboujtXGvbKyvJG3EfCH5qzPYAQ0ZEXL2F
-         ofaz52SAGjA1U+v7vYKPqmpVzI5b1VVH8+VIJZjksFLq71ro3W+9L+At4I1w6rpQzhim
-         NU0uvTqE31zYPLQAB1goXuXY7w4JPfqNkKQsTztlXDFoqxLk+Ts17ED1+fZgPthSsXni
-         UCYdu4pfIXVx5GWGvYiJwcmIKHCvFD9Bk9gEG741N+qDflR4V5AIybiKFoXs6empcD27
-         RhAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYeWtxD1Z2VrCoaWbh0g1e3lXz0Xp3pUsDeJ4IlyTQSlMMEZoCpffmWdXjNm9kooZ06GvDUObMgeJQCJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzifRxG5rkNYdtKdy34jXhw+Uo9P30UpghqJpd+4PuqSXSI6uIj
-	UUNiUKUWRZ1Et9yeYAY46C1/pG5UzU0LoNaWdzpSN/EerF4FHLDg0hYK
-X-Gm-Gg: ASbGncuk7Dsdor1JWyyTrC80sVADax44cjspXXIs+9KfaSfvQO7b8TqR680qcte40ui
-	rAAeiWlT/NZHSUDsFmxLaNMXSDU99oG4ZrCXK1LSTTv27hPvbvYMsVPrVVCm9/ypUKzoI2c6nxN
-	nDlXwCTOQH09ohB2/bVy2FvLW5ZjvawyvFIbnyA2lUxfeyb5XbN5D96Ex1EvM/I9WSgpUVASD6D
-	+CBaPhpHo+Z2uC/3hWs2QeYFEIKDAn9KdgBiUH/kA5NB1u1qbyP4gtyWO1khT6eV8eEE+rUFSGg
-	7hLEod0AFQpt8nX7xUuPvtJegu1aQSnP3G84sVnONq4WvobYq3qq9dHdifCHQXAw/uRHbCc=
-X-Google-Smtp-Source: AGHT+IFB5orfr+OVIXlyPi2PrLK141JqOtAQPPcIWvPEX2QMx7O6IOIMTbjy3dnyiR7URghN4134OA==
-X-Received: by 2002:a17:906:6205:b0:acb:37ae:619c with SMTP id a640c23a62f3a-ad21b21d279mr397950266b.15.1746822884523;
-        Fri, 09 May 2025 13:34:44 -0700 (PDT)
+        bh=jn0mQgbwIKI0yXWXrQMmSDlanoxwH9IsJVP0trltX/o=;
+        b=jW5Q2ehQ5SI9yEJ5ZL95B1OmZ3pU36Sq9ESNxcdRwS2nCFZ6YQZ4qb/u6ilglC+Lid
+         o0iwtwO74A1jHC2GBDPSCAfc8BCpufm+Oh7aWGNJTZjKSY3ZauC0ea3q2e42q2xhjq1P
+         Kb56QsdxBYfCAXahKzU3d099ZJovmbgkKY3VELZPD50WUD36FE9ZHfCtbC3AR2O7K7cN
+         IrnAMbTPJ7Z75VO5Cosl2zzhBVkhNnhVyJ+A56lq7iBwCsDWdfN1oyjlgvNEIOp0cdLu
+         qNUVYAZSsqqiyB+caQHQ+7vKKEW0bLy2EcH15TT8lUf4/a7M7NvkfbqwxMXiDqITuIsb
+         c9VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUorFsXb6EUBsc8d6v2+ot8Z7pHiQSIJHiwjz+f9Q0HQIUfThXuBUYRxjJ/WAU5/Bjbf7MxVtXCUUP3MV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxElK1COUQegJO5+FcHriHHjhBtXV0lnfILRF6xf8k2W0h79hdm
+	31zfVP/Jg1UOX4ilLu5YWZ7Ra8o4rC0kIgPexxcTakVkFwpKP03r8tAo
+X-Gm-Gg: ASbGncsxS7vdJt0DkxBi/e6D59fHx+H3CVOOE44XMkgtm9APeyjtEvWMQDC0oelK+FS
+	mSzSXWIwMugSKOQaY752AK0CUrIpQl+YaIVK1dX+g/fneVj/QDVP048BAWr/k55b6fXApvGRzP9
+	OU+EWUM6thT68OldKsZtsUHs7ufI7DjR8maOkYyIVYT3OXtsVS/kwtlXHnNri/21ho/J9fHcxxK
+	03GLJSSokAW9fBOpczO4deoAPf3DLm/Ix4aJ+FBdTMiAiATj2bzOzmPtLYDJZjumaFs97B8IPxV
+	vZBmNiqctY6ADurfaYNEusH6IKSqIF4HlpKtrLnRriAelAGp4Uer+b5UM1SJ
+X-Google-Smtp-Source: AGHT+IFlPURGNvT6TRGB9vImkCVDaW+TguoD6iVGw/w1ysOADK8GhDWlIuypNt764A42pCoSdTJu4A==
+X-Received: by 2002:a17:906:620a:b0:ad2:2d74:a1b with SMTP id a640c23a62f3a-ad22d74107dmr147591166b.45.1746822885264;
+        Fri, 09 May 2025 13:34:45 -0700 (PDT)
 Received: from localhost.localdomain ([46.53.251.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd219sm202255066b.141.2025.05.09.13.34.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd219sm202255066b.141.2025.05.09.13.34.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 09 May 2025 13:34:44 -0700 (PDT)
 From: Alexey Dobriyan <adobriyan@gmail.com>
@@ -76,9 +76,9 @@ To: corbet@lwn.net
 Cc: workflows@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH 4/9] CodingStyle: mention "typedef struct S {} S;" if typedef is used
-Date: Fri,  9 May 2025 23:34:25 +0300
-Message-ID: <20250509203430.3448-4-adobriyan@gmail.com>
+Subject: [PATCH 5/9] CodingStyle: institute better inline assembly formatting
+Date: Fri,  9 May 2025 23:34:26 +0300
+Message-ID: <20250509203430.3448-5-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250509203430.3448-1-adobriyan@gmail.com>
 References: <20250509203430.3448-1-adobriyan@gmail.com>
@@ -92,34 +92,63 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- Documentation/process/coding-style.rst | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ Documentation/process/coding-style.rst | 40 +++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 7 deletions(-)
 
 diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
-index ac9c1dbe00b7..5c5902a0f897 100644
+index 5c5902a0f897..63c41125e713 100644
 --- a/Documentation/process/coding-style.rst
 +++ b/Documentation/process/coding-style.rst
-@@ -443,6 +443,20 @@ EVER use a typedef unless you can clearly match one of those rules.
- In general, a pointer, or a struct that has elements that can reasonably
- be directly accessed should **never** be a typedef.
+@@ -1159,16 +1159,42 @@ You may need to mark your asm statement as volatile, to prevent GCC from
+ removing it if GCC doesn't notice any side effects.  You don't always need to
+ do so, though, and doing so unnecessarily can limit optimization.
  
-+If you must use ``typedef`` consider using identical names for both the type
-+and its alias so that the type can be forward declared if necessary:
+-When writing a single inline assembly statement containing multiple
+-instructions, put each instruction on a separate line in a separate quoted
+-string, and end each string except the last with ``\n\t`` to properly indent
+-the next instruction in the assembly output:
++Inline assembly statements are formatted as follows:
+ 
+ .. code-block:: c
+ 
+-	asm ("magic %reg1, #42\n\t"
+-	     "more_magic %reg2, %reg3"
+-	     : /* outputs */ : /* inputs */ : /* clobbers */);
++	asm [volatile] (
++		"insn1 r0, r1, r2\n\t"
++		"insn2 r0, 1\n\t"
++		: /* possibly empty output list */
++		: /* possibly empty input list */
++		: /* possibly empty clobber list */
++		[: goto label list]
++	);
++
++All keywords are placed on a single line.
++There is a space between ``asm``/``volatile`` and ``(`` so it looks nicer.
++
++Each assembly instruction is placed on a separate line as does
++output/input/clobber/label lists even if they are empty. This is done to
++a) prevent unnecessary reformatting if ``volatile`` is added/removed and
++b) to visually separate outputs from inputs from clobbers, so it's easier
++to understand what's going on.
++
++Each line of inline assembly statement except the first and the last is
++indented by 1 tab relative to the initial ``asm`` keyword.
++
++Each assembly instruction is ended by ``"\n\t"``. It looks ugly and distracting
++in the source code but keeps formatting of ``-S`` output consistent.
++
++Very short and simple inline assembly statements are permitted to be one-liners:
 +
 +.. code-block:: c
 +
-+	typedef struct S { ... } S;
-+	typedef union U { ... } U;
++	asm ("movdqa %%xmm0, %0" : "=m" (*buf));
 +
-+	struct S;
-+	union U;
-+	int f(struct S *s, union U *u);
-+
-+
-+Forward declaring by typedef'ed name doesn't work.
++Those are usually 1:1 wrappers around single CPU instruction.
++``"\n\t"`` suffix is unnecessary in this case as the compiler will insert it anyway.
  
- Functions
- ---------
+ 
+ Conditional Compilation
 -- 
 2.49.0
 
