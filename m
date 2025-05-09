@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-640846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 606F4AB0A08
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79F2AB0A13
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B3017CAA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA5AB2142D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C410269AFD;
-	Fri,  9 May 2025 05:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF6F269B0D;
+	Fri,  9 May 2025 05:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="vrokks9c";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="stGjpmFv"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBQh3ztp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DD117588;
-	Fri,  9 May 2025 05:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B570117588;
+	Fri,  9 May 2025 05:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746770035; cv=none; b=UZo0kL9SQLehmyYyJ8u1hp4mcbX0k/wIWDTjrlnwB8LGiCvYRCIos4RRQz3rrKPGx+zmu0xxXs7PN4NGrbrBPYu/5/fudMXJMNxBtX/+HOalBpEmpAM4KqNsqk2lp7BGHIzwvzmU760kV0tCU5wmTx5r8wR+po70JlMIg7XOTbM=
+	t=1746770090; cv=none; b=fE3pqXrfIiR4blqhC3ZouU2pZTan9logk4KhzLRo5v3dAQ0XaKp+GpHsDnCcW1/jfAPiPhVcMyGEDGYoCK9DWrJfQZ8x82oJ7gUOTqAqOgU/UmCh8JwsSa4jiSBpzcpXxLP3gv+X5UNfb9U6+Mj6/NwalkDav4W7g80PTP7Auk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746770035; c=relaxed/simple;
-	bh=oK8JOP0lWXtZNYpUC/KRKBCxijsLzFQJv7bsx9Ih8Bg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=YQGWZQrtP8UXvwMv2aQ2ikgmtKFUFZJQwqmQIvzUQ8dc4f9RaWNKCJ9ClyHH3h6pTAiKFNHli+DtW0hWDP67OR8THGIifQKIEkBjYN1GfAnctp4wPwbIUP8oBCibfaKlOU/eVmuGKs+nsYb/yiZItCElDMNU991MKE0Rk51Ej+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=vrokks9c; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=stGjpmFv; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id B029E13802A6;
-	Fri,  9 May 2025 01:53:52 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Fri, 09 May 2025 01:53:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1746770032;
-	 x=1746856432; bh=7hl72E2OIJN47yF5dCchC20sQYVZdiJuH3axvIrqn2E=; b=
-	vrokks9cFePzHSvLfvuqIlCUXXSdY848/MIkQyijE7Lt/kq/s58IIKLutrFPQZas
-	kHlycHUBnO9scaNn1YafO5feeKp5U+LibATLWx2WIIperaHxYnUZDGmRiTxawzJA
-	WDWc3bcH85RLIuyoQhHuLuHhT8LR3yi7pdTK7MepGa9SrKH1lOqkDtbuOhodadVy
-	23d0a5RxEyQrjcT4KhCiEmr/m8uVlx+mT8X6Ps/U/6IYgq7bJ8007DrcK0lvDChd
-	wgxmMLecGDclnogFjzPBFzm83dCv6TXC/A0k5duBUAwDcHpvpN/xdUfVAvDE1xiY
-	hnUWhSWe88UC1IeB3si40g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746770032; x=
-	1746856432; bh=7hl72E2OIJN47yF5dCchC20sQYVZdiJuH3axvIrqn2E=; b=s
-	tGjpmFvkfGy34RMMgRvTpPTzGxiehkpiMe2fSq53hcbbw9dgP+efddeuUDbFNA9Y
-	BxPjISf6kNWaQj6GYwaUIiszlLAZvIjk6HmNJfVJWzLukMDxC5npra1slQVqKskY
-	5s7I+Klda7Z1f3pr9jT07i8h/DnGfcjt3iRrLAa/0BIuP8SZxde+i3KyRa1TIdVQ
-	IEvCEQzLBuEnis4Ky8vDRRhjmQzKiO/ZemVoHTtXd639sBNoKFYD9HxQpB65nbF5
-	GC7ynYNKhgKeJU+yPAekW6+/T5QBAtkLOe02+mxRGzdAG/NKmpMi98cpfofnF3tW
-	6CIgSuACFbxSq4/KIBH2A==
-X-ME-Sender: <xms:cJgdaKlVU8mFUnO3mczd3O0VYcLbxaoFfkY2cwehktau7wBtq2CBEQ>
-    <xme:cJgdaB1rM2VSoEoH1vlGMOcpjpV-xhB6aZTpH_ws0ZI5qN9cGjSHBgz0hO_v_P3Nt
-    x5rqebEo9s7A_MpaV8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledukeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    vdekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghnihgvlhdrrghlmhgvih
-    gurgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihl
-    lhdrtghhpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtoh
-    eprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopegrlhgvgidrghgrhihn
-    ohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifjhgsrghllhgrnhgtvg
-    esghhmrghilhdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdr
-    tghomhdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhisehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:cJgdaIoBPSVCQqLjIsCqs5dhCl0aTVXxAhLCpPrIqa92QSIF4L-SVw>
-    <xmx:cJgdaOkPdwb87Zwz7XaRR4U4NhjlO2awHiuNpZBzBWRJjBBOFtvVNg>
-    <xmx:cJgdaI3gDK6SBVp8YylLJyyDslDhSFpW91-XIut-eaQ5Wr7tc-tuDg>
-    <xmx:cJgdaFvmHHauaPIS8aAELHUFHmGQ1TGeiZbhSsWY1VvWNx3Wwv2lQQ>
-    <xmx:cJgdaKLR0GZaqUpXNawDFLd1MBEdRODqfU8_-QeBcvjzv2oRnOuFjZY6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 13F081C20068; Fri,  9 May 2025 01:53:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1746770090; c=relaxed/simple;
+	bh=1tj/ncb9nuGvIlquscrVt2LrxWxbvv0mdKWP0lXEE0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AexJ9OB8wniG7+uiJoOpHvOfnbI7aEinOmEKWVHQqSHTyo3aV9zVtR48BzwTnTzlIFHsRFcY9knACqhKnwm418juMqM4oKdyiIJkFQ5hOwznRlhCNCqQ+Km9p6Dldu5McPQGm2bMnfyYHtaGnUksvu6AHYwCuBzIMFGVYmZOUXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBQh3ztp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE1CC4CEE4;
+	Fri,  9 May 2025 05:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746770090;
+	bh=1tj/ncb9nuGvIlquscrVt2LrxWxbvv0mdKWP0lXEE0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZBQh3ztpEfzxV2/DToP7PN64qDZwEp5EhhPNSWN9Waen9lYd/D+0aQBDPgLgoiH3D
+	 4k9+0fAVGO/Q3D/VxnOmuNpJZ5s2aa1wi+Tz6x5/EHGcxjljJvNUYBJGXnYvwJTnec
+	 uPbZBOt7ia3qLSrtX50A5+69iv872R/n/BI28oESY/5voKZPsGm9NbesCDyICbsnhd
+	 nq3zaex7ZjHaa+IBGSsPvxI3qKtIDBd0pnrzC/5t0Th33KjChCXuS+p1Zw2zjl3/Dn
+	 1rr6ZF+NBCd7MeihPBJm/Pr07ua1V9i0wYSq4m4BtMvgbAM2cgwlppu9WbmDtZ/c5V
+	 9TaYtTWMQsdKw==
+Date: Fri, 9 May 2025 07:54:43 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, jannh@google.com, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH v4 04/11] net: reserve prefix
+Message-ID: <20250509-leinwand-leiht-f1031edf9c71@brauner>
+References: <20250508-vorboten-herein-4ee71336e6f7@brauner>
+ <20250508214850.62973-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfcfb78bcf68431d5
-Date: Fri, 09 May 2025 07:53:31 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andrew Ballance" <andrewjballance@gmail.com>,
- "Danilo Krummrich" <dakr@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, bhelgaas@google.com,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- "Raag Jadav" <raag.jadav@intel.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, me@kloenk.dev,
- "FUJITA Tomonori" <fujita.tomonori@gmail.com>, daniel.almeida@collabora.com
-Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Message-Id: <ff526b49-a033-450d-9e48-699187167712@app.fastmail.com>
-In-Reply-To: <20250509031524.2604087-1-andrewjballance@gmail.com>
-References: <20250509031524.2604087-1-andrewjballance@gmail.com>
-Subject: Re: [PATCH 00/11] rust: add support for Port io
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250508214850.62973-1-kuniyu@amazon.com>
 
-On Fri, May 9, 2025, at 05:15, Andrew Ballance wrote:
-> currently the rust `Io` type maps to the c read{b, w, l, q}/write{b, w, l, q}
-> functions and have no support for port io.this is a problem for pci::Bar
-> because the pointer returned by pci_iomap is expected to accessed with
-> the ioread/iowrite api [0].
->
-> this patch series splits the `Io` type into `Io`, `PortIo` and `MMIo`.and,
-> updates pci::Bar, as suggested in the zulip[1], so that it is generic over
-> Io and, a user can optionally give a compile time hint about the type of io. 
+On Thu, May 08, 2025 at 02:47:45PM -0700, Kuniyuki Iwashima wrote:
+> From: Christian Brauner <brauner@kernel.org>
+> Date: Thu, 8 May 2025 08:16:29 +0200
+> > On Wed, May 07, 2025 at 03:45:52PM -0700, Kuniyuki Iwashima wrote:
+> > > From: Christian Brauner <brauner@kernel.org>
+> > > Date: Wed, 07 May 2025 18:13:37 +0200
+> > > > Add the reserved "linuxafsk/" prefix for AF_UNIX sockets and require
+> > > > CAP_NET_ADMIN in the owning user namespace of the network namespace to
+> > > > bind it. This will be used in next patches to support the coredump
+> > > > socket but is a generally useful concept.
+> > > 
+> > > I really think we shouldn't reserve address and it should be
+> > > configurable by users via core_pattern as with the other
+> > > coredump types.
+> > > 
+> > > AF_UNIX doesn't support SO_REUSEPORT, so once the socket is
+> > > dying, user can't start the new coredump listener until it's
+> > > fully cleaned up, which adds unnecessary drawback.
+> > 
+> > This really doesn't matter.
+> > 
+> > > The semantic should be same with other types, and the todo
+> > > for the coredump service is prepare file (file, process, socket)
+> > > that can receive data and set its name to core_pattern.
+> > 
+> > We need to perform a capability check during bind() for the host's
+> > coredump socket. Otherwise if the coredump server crashes an
+> > unprivileged attacker can simply bind the address and receive all
+> > coredumps from suid binaries.
+> 
+> As I mentioned in the previous thread, this can be better
+> handled by BPF LSM with more fine-grained rule.
+> 
+> 1. register a socket with its name to BPF map
+> 2. check if the destination socket is registered at connect
+> 
+> Even when LSM is not availalbe, the cgroup BPF prog can make
+> connect() fail if the destination name is not registered
+> in the map.
+> 
+> > 
+> > This is also a problem for legitimate coredump server updates. To change
+> > the coredump address the coredump server must first setup a new socket
+> > and then update core_pattern and then shutdown the old coredump socket.
+> 
+> So, for completeness, the server should set up a cgroup BPF
+> prog to route the request for the old name to the new one.
+> 
+> Here, the bpf map above can be reused to check if the socket
+> name is registered in the map or route to another socket in
+> the map.
+> 
+> Then, the unprivileged issue below and the non-dumpable issue
+> mentioned in the cover letter can also be resolved.
+> 
+> The server is expected to have CAP_SYS_ADMIN, so BPF should
+> play a role.
 
-Can you describe here why you want to support both "Io" and "PortIo"
-cases separately? I don't think we need to micro-optimize for
-legacy ISA devices any more, so I'd hope the "Io" path would be
-sufficient to cover the common outliers (ata, uart, vga, ipmi, ne2000)
-that need the iomap indirection and also the legacy devices that only
-need port I/O (floppy, x86 platform devices, ...).
+This has been explained by multiple people over the course of this
+thread already. It is simply not acceptable for basic kernel
+functionality to be unsafe without the use of additional separate
+subsystems. It is not ok to require bpf for a core kernel api to be
+safely usable. It's irrelevant whether that's for security or cgroup
+hooks. None of which we can require.
 
-Ideally we'd only need one set of I/O accessors at all, but I suspect
-there are x86 specific drivers that actually need readl/writel to be
-inline for performance when accessing on-chip registers rather than
-slow PCIe registers.
+I won't even get this past Linus for that matter because he will rightly
+NAK that hard and probably ask me whether I've paid any attention to
+basic kernel development requirements in the last 10 years. Let alone
+for coredumping which handles crashing suid binaries. I understand the
+urge to outsurce this problem to userspace but that's not ok.
 
-      Arnd
+Coredumping is a core kernel service and all options have to be safely
+usable by themselves. In fact, that goes for any kernel API and
+especially VFS apis.
+
+Using AF_UNIX sockets will be a major step forward in both simplicity
+and security. We've compromised on every front so far. It's not too much
+to ask for a basic permission check on a single well-known address
+that's exposed as a kernel-level service.
 
