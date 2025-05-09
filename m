@@ -1,146 +1,178 @@
-Return-Path: <linux-kernel+bounces-641372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09202AB10B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:30:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974D2AB10C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CC2A01CA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDFC41C250B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721C028F536;
-	Fri,  9 May 2025 10:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E1628F527;
+	Fri,  9 May 2025 10:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RjQrZQ84"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pAWqfbGD"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A761828ECF9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 10:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BA128EA45
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 10:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746786411; cv=none; b=mDkg09EYJcY8dtLyuZuzx2swGn70UN3te1Hmpgkky98Hz7FuCF7z3yGXoayBUe+mMKDxyCUreRc0nzHhU0EfGqdgiF0LLWDtFq7nIhWXvczpygR04nJPq7V7vNVczRf6xe/wZHex2rk0jpc+pUOtM2bCYxQJy7sOfoQfpgYh8nI=
+	t=1746786597; cv=none; b=c5e+9S6YTlBT6tV/BIX1o6LbOKkOxmVUVGcf4Y85EAYxUtI9HE4RdAadem37t4fkM5G+qGSOMCUDPz6aSPghmxt3LHVtnoXjs1SfPljLpI3QxlCw0XVW+9e+DzrQODfMJfSlI6MvDeyBXFos19THsgUGejMLyq7eT1qvMvFl/sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746786411; c=relaxed/simple;
-	bh=0hgLDBDBqIc+ajD8fKoIpxS6gijW76ZLX+VXrJUmh6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cz705DpCqW6z3yXbW57bIsYUQCKTHNhOBFkMxn182K7p8HHFvqV3scW1ZwD8whhg8BIt7hZlGbH5hJ0pxds/l4aMXZQHvOyvtXhCBPBhocDJkas7pZdSA60Qy8zkpOj0w41esmX3zRSQjQ5pmzoDos7pG2eeg4UI/al/xoWSb94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RjQrZQ84; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zv4tH4x3gzTkQ;
-	Fri,  9 May 2025 12:26:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1746786407;
-	bh=pwp7aGGfuXhGuWiZq4lEqOzbbcbhUTvngL3tCWRDYJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RjQrZQ84I4ZLCOPdNvJCURGqKw24PzdHcWdVgd05M27bNGowwta3gJdGFkot5l1MA
-	 2/1CrApRjcGtx+lCql7qGkrv+sp/lr26107uqBz/grlyqssmi7mARV8PDTSkxu7J5h
-	 un/axsBqZnfs98zrS9YGpjSwP6N483JDLSgFeRDc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zv4tH0ccfzFFD;
-	Fri,  9 May 2025 12:26:47 +0200 (CEST)
-Date: Fri, 9 May 2025 12:26:45 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, linux-security-module@vger.kernel.org, jmorris@namei.org, 
-	serge@hallyn.com, kees@kernel.org, stephen.smalley.work@gmail.com, 
-	takedakn@nttdata.co.jp, linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-Message-ID: <20250509.Chuecae0phoo@digikod.net>
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <CAHC9VhRKwB4quqBtYQyxRqCX2C6fCgTbyAP3Ov+NdQ06t1aFdA@mail.gmail.com>
- <120954c2-87b7-4bda-958b-2b4f0180a736@canonical.com>
- <efe5b15a-6141-424a-8391-9092e79e4acf@schaufler-ca.com>
+	s=arc-20240116; t=1746786597; c=relaxed/simple;
+	bh=Bgh8+VpXWqodyRXBeHA1Dsg9667GzQ82hiWcMQGPrYY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=e+OFRaaFrg/p8XseoILQz8dsuhUGL8D3Bz5yBK8G4lbDzG0c6UIATC9+gHHIzWAJCq/Qm3BK7IuqQIoVERqCVJ1Anjgut5oJeG7Z3uH4f3kfId6qP0+oBj/rpPqnvtSlnyrBjMxTuEqWdsFpdyb7oq6onvp3suq45FD0GIsFfN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pAWqfbGD; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso3561043a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 03:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1746786594; x=1747391394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OxDhZkSCewSzQX7ua1xIREYWkVFp8sJWfjRRBdflZuc=;
+        b=pAWqfbGDBnDsKif5iRYoKd+rCqJVTeWTw5agl7ZUAmb0ll2DBHJftcpc85EOBft4At
+         8D0GKs7rugetXjfHN+ZgNJC4F9GyA/aAsJeRBIEizbtesz5GCxl+/FeuaDHdDgjGYyt6
+         BylJ7vQN4d9dIXw7sVxyne6ZlNDYONQb6kTSRwY4jLOIUGGfg4t+0/nRkvDf2LSdaAoN
+         qb0XfEQiS/46bVmMHYXnPCUGXCt1L9cYR45nI7lAnem3hMc0kMH+WCLs78tZNDrhvNPo
+         GL/51m7uefnDXNemfwbUY/EV5YPNR3kRUN/DfLkmA6GZNu4f0FkCh0+HA8ZFtOqBkUuo
+         HtLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746786594; x=1747391394;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxDhZkSCewSzQX7ua1xIREYWkVFp8sJWfjRRBdflZuc=;
+        b=M5jxdgQY6hcbyW7oRuD8I1G2gmk1Ym0d2NpD7LPE8p2munBYMtKzO093Uob95hTux5
+         IckrNwadBd+dSO4sUL/ON58NHcviqQR27/eCnZ77nLlaNiysKR7ecTJkQpDvq7FUMQOx
+         3dSJ8p/R11I2Cdme6BBsMW4d5aIhOdqaqUp06I4W+aQ7+yD7Oh3s8bcJvoT7n9xBvo1V
+         vAg6cyni/xOjHDy+WiopgLr/pH5tUU3xDkTh95UGdADOsFDfE6sHuKAoAHtRDKXOGIaz
+         BBwGYdFmtKCwhDjJENV6C0kiWO5000AryH279l7maidTtDs57oGtsknYPHe4TAPFmXvF
+         /Wsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbGLf930AVkVMIoYSwjdGNfYqaDFOLr8m//JzM9P1qUspl0cBsBgBe55vT0VmRiCYAEPi6j/7aT1iABgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTcnOLFyfZzqZFhhj4h37nYSwgRD/MO5Vi9WAsYmwPke93aw5J
+	hID6f45fuD1XV+aqaZfr2TDa6x2nfD2Ldnj/4FedtJr0PkEklpNdfmQ0ZPx1yCFrpy8l13Eq2g+
+	i
+X-Gm-Gg: ASbGncvBXkJch3FjoyTZvntFpemN+M5ODS9ZJB8PPTFBOr65T2rUKwFie/UxQ2XzsqF
+	7xGMrgHhPmT0624k61We7PIbn8VdKWQsMUt3bXXcRj8Lb+jviS1cKjIV+hNXEJv1IAInIOXSGcJ
+	IZo1Ilz/Pzup4goPd7ZjJrtld4nOdA2gxKZGr5bBjcTrdzXp/qyE+ujnF7eA2Mxz2U+du5UUvLu
+	eC1qOtHY4Fx5jS+HtwsMNKlOsPiQf2WUaZp5YGNqSYP8wr6oR6AKgpQtfRCkPeNHnM5N6b9LlLD
+	AGFZdOmz+7FZrfjciQNf4bleoaKFCA8+hgSjPOOyxlgoJMRP
+X-Google-Smtp-Source: AGHT+IEJa8UJZWqTw9Q0EAr9PxAZseg++6SUc4a2N49f6rYLuvjP7U+hvo7avLnkTy2C6pjkRuSQbA==
+X-Received: by 2002:a17:906:c102:b0:acb:711d:36c8 with SMTP id a640c23a62f3a-ad219170decmr305473466b.38.1746786583223;
+        Fri, 09 May 2025 03:29:43 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd3easm129122566b.147.2025.05.09.03.29.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 03:29:42 -0700 (PDT)
+Message-ID: <869269a7-8267-45f3-9e4d-678de18c0888@tuxon.dev>
+Date: Fri, 9 May 2025 13:29:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <efe5b15a-6141-424a-8391-9092e79e4acf@schaufler-ca.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, saravanak@google.com,
+ p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250501201211.GA768334@bhelgaas>
+ <26bdfbd6-7bf5-4688-b793-5d0f613d340b@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <26bdfbd6-7bf5-4688-b793-5d0f613d340b@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 08, 2025 at 09:54:19AM -0700, Casey Schaufler wrote:
-> On 5/8/2025 1:29 AM, John Johansen wrote:
-> > On 5/7/25 13:25, Paul Moore wrote:
-> >> On Wed, May 7, 2025 at 6:41 AM Tetsuo Handa
-> >> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >>> On 2025/05/06 23:32, Maxime Bélair wrote:
-> >>>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> >>>> index dcaad8818679..b39e6635a7d5 100644
-> >>>> --- a/security/lsm_syscalls.c
-> >>>> +++ b/security/lsm_syscalls.c
-> >>>> @@ -122,5 +122,10 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user
-> >>>> *, ids, u32 __user *, size,
-> >>>>   SYSCALL_DEFINE5(lsm_manage_policy, u32, lsm_id, u32, op, void
-> >>>> __user *, buf, u32
-> >>>>                __user *, size, u32, flags)
-> >>>>   {
-> >>>> -     return 0;
-> >>>> +     size_t usize;
-> >>>> +
-> >>>> +     if (get_user(usize, size))
-> >>>> +             return -EFAULT;
-> >>>> +
-> >>>> +     return security_lsm_manage_policy(lsm_id, op, buf, usize,
-> >>>> flags);
-> >>>>   }
-> >>>
-> >>> syzbot will report user-controlled unbounded huge size memory
-> >>> allocation attempt. ;-)
-> >>>
-> >>> This interface might be fine for AppArmor, but TOMOYO won't use this
-> >>> interface because
-> >>> TOMOYO's policy is line-oriented ASCII text data where the
-> >>> destination is switched via
-> >>> pseudo‑filesystem's filename ...
-> >>
-> >> While Tetsuo's comment is limited to TOMOYO, I believe the argument
-> >> applies to a number of other LSMs as well.  The reality is that there
-> >> is no one policy ideal shared across LSMs and that complicates things
-> >> like the lsm_manage_policy() proposal.  I'm intentionally saying
-> >> "complicates" and not "prevents" because I don't want to flat out
-> >> reject something like this, but I think there needs to be a larger
-> >> discussion among the different LSM groups about what such an API
-> >> should look like.  We may not need to get every LSM to support this
-> >> new API, but we need to get something that would work for a
-> >> significant majority and would be general/extensible enough that we
-> >> would expect it to work with the majority of future LSMs (as much as
-> >> we can predict the future anyway).
-> >>
-> >
-> > yep, I look at this is just a starting point for discussion. There
-> > isn't going to be any discussion without some code, so here is a v1
-> > that supports a single LSM let the bike shedding begin.
+Hi, Bjorn,
+
+On 05.05.2025 14:26, Claudiu Beznea wrote:
+> Hi, Bjorn,
 > 
-> Aside from the issues with allocating a buffer for a big policy
-> I don't see a problem with this proposal. The system call looks
-> a lot like the other LSM interfaces, so any developer who likes
-> those ought to like this one. The infrastructure can easily check
-> the lsm_id and only call the appropriate LSM hook, so no one
-> is going to be interfering with other modules.
+> On 01.05.2025 23:12, Bjorn Helgaas wrote:
+>> On Wed, Apr 30, 2025 at 01:32:33PM +0300, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>> only as a root complex, with a single-lane (x1) configuration. The
+>>> controller includes Type 1 configuration registers, as well as IP
+>>> specific registers (called AXI registers) required for various adjustments.
+>>>
+>>> Other Renesas RZ SoCs (e.g., RZ/G3E, RZ/V2H) share the same AXI registers
+>>> but have both Root Complex and Endpoint capabilities. As a result, the PCIe
+>>> host driver can be reused for these variants with minimal adjustments.
+>>
+>> I guess this current driver only supports RZ/GS3 in Root Complex mode?
+> 
+> That's right.
+> 
+>> If so, I don't think this paragraph is necessary or really relevant.
+> 
+> OK, I'll drop it.
+> 
+>>
+>>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+>>> @@ -0,0 +1,1561 @@
+>>
+>> I can't figure out the line width you're using.  Generally code in
+>> drivers/pci/ is formatted to fit in 80 columns.  Much of this file is
+>> formatted for that, but there are many cases that seem to use 90 or
+>> 100 columns.
+> 
+> I formated it at 100 columns where the lines were longer. I wasn't aware
+> the PCI rule is to have line formated at 80 columns. I'll switch to it in
+> the next version.
+> 
+>>
+>> For single-line comments that are not a sentence or are a single
+>> sentence, it's typical to omit the period at end.
+> 
+> I'll follow this rule, too.
+> 
+>>
+>>> +static void rzg3s_pcie_update_bits(void __iomem *base, u32 offset, u32 mask, u32 val)
+>>> +{
+>>> +	u32 tmp;
+>>> +
+>>> +	tmp = readl(base + offset);
+>>> +	tmp &= ~mask;
+>>> +	tmp |= val & mask;
+>>> +	writel(tmp, base + offset);
+>>> +}
+>>
+>> Nothing rzg3s-specific here.
+>>
+>> I think u32p_replace_bits() (include/linux/bitfield.h) is basically this.
+> 
+> I wasn't aware of it. I'll use it in the next version. Thank for pointing it.
 
-We may not want to only be able to load buffers containing policies, but
-also to leverage file descriptors like Landlock does.  Getting a
-property from a kernel object or updating it is mainly about dealing
-with a buffer.  And the current LSM syscalls do just that.  Other kind
-of operations may require more than that though.
+I look into changing to u32p_replace_bits() but this one needs a mask that
+can be verified at build time. It cannot be used directly in this function.
+Would you prefer me to replace all the calls to rzg3s_pcie_update_bits() with:
 
-I don't like multiplexer syscalls because they don't expose a clear
-semantic and can be complex to manage and filter.  This new syscall is
-kind of a multiplexer that redirect commands to an arbitrary set of
-kernel parts, which can then define their own semantic.  I'd like to see
-a clear set of well-defined operations and their required permission.
-Even better, one syscall per operation should simplify their interface.
+tmp = readl();
+u32p_replace_bits(&tmp, ...)
+writel(tmp);
+
+or is it OK for you to keep it as is?
+
+Thank you,
+Claudiu
 
