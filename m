@@ -1,301 +1,159 @@
-Return-Path: <linux-kernel+bounces-642308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7304CAB1D2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:12:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E3BAB1D2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8AA50016B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A58E1C25517
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828DE254B0A;
-	Fri,  9 May 2025 19:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCC122AE59;
+	Fri,  9 May 2025 19:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KNocD2z9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="jgjuaADv"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58044254AFF;
-	Fri,  9 May 2025 19:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CAD25394B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 19:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746817914; cv=none; b=aKQfgj26xDGUNSO13cJZTUtaYOyqWlPTieBJ6kZZzPt+AJ6281F+58I95ctsMXW255bEvrAkNhRYl8OBE0oR4hPEUNcOnUhzOjRVQpTo5eSUgOK/bDeqQyR4mL9v+PUCW9Yp46Jy4mPJ6E4KPF9nCQqCT7Vbq7gJrwop5zPkswA=
+	t=1746817871; cv=none; b=i3uHD5ngEukdRGnEnZKSjClR3ubi9sjzCaScFvJ05YMEjfqB84Q9Iax6MjuIe8/r5/1soV7SXlahwWx5VIYtCqUr+jOPo8XmIg98gF/vnyTWQ1oHCpfwyGzuz919w18Gj6xh17EUrPHnSgE+4tP+V9TFNNcN7ZnUgTTS7EolFc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746817914; c=relaxed/simple;
-	bh=LiM82RC5VzqZIXYZK6AJ9EgWOvBAUSujh5mMx5KMKhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGKraZinbwHsqiWtP8i410noQRyOGqxC4jLmm5N+ASOgh4uZiqss8chjlmlse5IhEeqb2KUkBzNKjrVOe0HAQ3s2oitgf2WSGLIwGlRYwgkDswVDCYf+h76XA8bT6yEfoRleAVE0GYYqwMX6mzxjrey/0JcGVqByWB2LYb6rcKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KNocD2z9; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746817911; x=1778353911;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LiM82RC5VzqZIXYZK6AJ9EgWOvBAUSujh5mMx5KMKhw=;
-  b=KNocD2z9kQOjXeDN4Lk2B7UwZTXfpQ+fPM1ei85RwYqto6ALDMmF0z0h
-   kxoxJOLn88kefOjvww0wFRKTk4baXOZ+2GMhjkf883IImIa1mN4MMZF3m
-   FqSoKpf1vqlFP7mhovlMAeg2dovD5jyo7HF4Tm3jbUwolg2nDE927N+aC
-   djAFSVQoUzwmhBK8MwDWDpWbChXw5k0dVyCVxDUvwT6VD7eokjmufQ4Aw
-   LIrxbgKrDrMWYARPf/HPo1T7+hZwCgpedA0Q7nnhIXTIn4SOnCn7aBEb1
-   iq3R2C+priXbZhhAr9WxU1kDOV2TLenf3Jzr8dg3Qcrn+zEu6CdPHCXkO
-   g==;
-X-CSE-ConnectionGUID: qJ+YzW4/SIKOgkTRvhG+9g==
-X-CSE-MsgGUID: YRgRfmzISFaJAsT0zQth4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48663563"
-X-IronPort-AV: E=Sophos;i="6.15,276,1739865600"; 
-   d="scan'208";a="48663563"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 12:11:50 -0700
-X-CSE-ConnectionGUID: 485UEADqSAScjNa/Kz2FDg==
-X-CSE-MsgGUID: 4+/8bSBKQV6Asvtd6HtjkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,276,1739865600"; 
-   d="scan'208";a="136656603"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 09 May 2025 12:11:47 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDT8K-000COV-2P;
-	Fri, 09 May 2025 19:11:44 +0000
-Date: Sat, 10 May 2025 03:10:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Lechner <dlechner@baylibre.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for
- conditional locking
-Message-ID: <202505100206.85k3mymM-lkp@intel.com>
-References: <20250507072145.3614298-2-dan.j.williams@intel.com>
+	s=arc-20240116; t=1746817871; c=relaxed/simple;
+	bh=3oFbcPq/LmpRi6imEmgZsdbNy/2ZZrBkRnQhQopsbAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ldAR0X766UiUmt7JuM75JNuSRX4VB10Ruen8mFmFFH8Rz3uG/i0TF3cEhcHCwkfZgi96k4g4vlMrdbDQh4Ds56zbpj7m5cRJ5zn7GT0tXs40lj+LPCXXhUooO09H4XEqzBMZeT0MZFixVtkuzxErnkCLdet5WB1BnbkDqYxtdww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=jgjuaADv; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
+	by cmsmtp with ESMTPS
+	id DPB4u9czYiuzSDT7kuaCsT; Fri, 09 May 2025 19:11:08 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id DT7jusesMjrgqDT7juquKe; Fri, 09 May 2025 19:11:07 +0000
+X-Authority-Analysis: v=2.4 cv=PK7E+uqC c=1 sm=1 tr=0 ts=681e534b
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=efVMuJ2jJG67FGuSm7J3ww==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=1XWaLZrsAAAA:8 a=hSkVLCK3AAAA:8 a=dZbOZ2KzAAAA:8 a=stkexhm8AAAA:8
+ a=GZsA4xnBWax8gLnPL8AA:9 a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22
+ a=pIW3pCRaVxJDc-hWtpF8:22 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=unaJtBXX3ic/M7Mptke85HD19Mt1Q7wftiHK6u0Qhp0=; b=jgjuaADvBq5PnCf7F7GTxnqZqK
+	TZM3oe/5n40OE1mBxnyCqZQFECwsTY5oe7I3uInDIzJinDph/28wo+bENu1lsvj2ppPwq5rf8Viyo
+	OP1gsh8KmhTmLFIZ6VxZHhjF3YFJSaHpDS9CHZ4zv4c3+R6WReDbO8x44moCxD2zEf7tnTBt87DkJ
+	9U5j15rvWJENBHeeFM+dl9XoKTTP2dM3IjFmTmuNV13FO6MBP3UDYW8CSFL3vJQdOhvoTpDhqEmdC
+	v6U4J3TONYO/yIQQZc9ZyNfr/4Y8S/M4x/yY/Al5s7xUstGMGc4oy881wt1dtX1ImmlaEVsV2N0Uw
+	tEVCyzmA==;
+Received: from [177.238.17.151] (port=60388 helo=[192.168.0.102])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uDT7i-00000004KcA-0hDg;
+	Fri, 09 May 2025 14:11:06 -0500
+Message-ID: <12490f84-6b0c-41c0-9129-f02ccbeaa24c@embeddedor.com>
+Date: Fri, 9 May 2025 13:10:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507072145.3614298-2-dan.j.williams@intel.com>
-
-Hi Dan,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on b4432656b36e5cc1d50a1f2dc15357543add530e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Williams/cleanup-Introduce-DEFINE_ACQUIRE-a-CLASS-for-conditional-locking/20250507-152728
-base:   b4432656b36e5cc1d50a1f2dc15357543add530e
-patch link:    https://lore.kernel.org/r/20250507072145.3614298-2-dan.j.williams%40intel.com
-patch subject: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for conditional locking
-config: arm-randconfig-001-20250509 (https://download.01.org/0day-ci/archive/20250510/202505100206.85k3mymM-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250510/202505100206.85k3mymM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505100206.85k3mymM-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/linux/irqflags.h:17,
-                    from arch/arm/include/asm/bitops.h:28,
-                    from include/linux/bitops.h:68,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4defs.h:40,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:36,
-                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
-                    from arch/arm/boot/compressed/decompress.c:60:
-   include/linux/mutex.h: In function 'class_mutex_intr_acquire_destructor':
->> include/linux/cleanup.h:476:13: error: implicit declaration of function 'IS_ERR_OR_NULL' [-Werror=implicit-function-declaration]
-           if (!IS_ERR_OR_NULL(_T)) _unlock(&_T->_locktype), ({    \
-                ^~~~~~~~~~~~~~
-   include/linux/cleanup.h:246:18: note: in definition of macro 'DEFINE_CLASS'
-    { _type _T = *p; _exit; }      \
-                     ^~~~~
-   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
-    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
-    ^~~~~~~~~~~~~~
-   include/linux/mutex.h: In function 'class_mutex_intr_acquire_constructor':
->> include/linux/cleanup.h:481:24: error: implicit declaration of function 'ERR_PTR'; did you mean 'PERCPU_PTR'? [-Werror=implicit-function-declaration]
-             lock_result = ERR_PTR(ret);             \
-                           ^~~~~~~
-   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
-    { _type t = _init; return t; }
-                ^~~~~
-   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
-    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
-    ^~~~~~~~~~~~~~
->> include/linux/cleanup.h:481:22: warning: assignment to 'struct mutex_acquire *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-             lock_result = ERR_PTR(ret);             \
-                         ^
-   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
-    { _type t = _init; return t; }
-                ^~~~~
-   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
-    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
-    ^~~~~~~~~~~~~~
-   include/linux/mutex.h: In function 'class_mutex_try_acquire_constructor':
->> include/linux/cleanup.h:481:22: warning: assignment to 'struct mutex_acquire *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-             lock_result = ERR_PTR(ret);             \
-                         ^
-   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
-    { _type t = _init; return t; }
-                ^~~~~
-   include/linux/mutex.h:226:1: note: in expansion of macro 'DEFINE_ACQUIRE'
-    DEFINE_ACQUIRE(mutex_try_acquire, mutex, mutex_unlock,
-    ^~~~~~~~~~~~~~
-   In file included from include/linux/rwsem.h:17,
-                    from include/linux/mm_types.h:13,
-                    from include/linux/mmzone.h:22,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:38,
-                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
-                    from arch/arm/boot/compressed/decompress.c:60:
-   include/linux/err.h: At top level:
->> include/linux/err.h:39:35: error: conflicting types for 'ERR_PTR'
-    static inline void * __must_check ERR_PTR(long error)
-                                      ^~~~~~~
-   In file included from include/linux/irqflags.h:17,
-                    from arch/arm/include/asm/bitops.h:28,
-                    from include/linux/bitops.h:68,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4defs.h:40,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:36,
-                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
-                    from arch/arm/boot/compressed/decompress.c:60:
-   include/linux/cleanup.h:481:24: note: previous implicit declaration of 'ERR_PTR' was here
-             lock_result = ERR_PTR(ret);             \
-                           ^~~~~~~
-   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
-    { _type t = _init; return t; }
-                ^~~~~
-   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
-    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
-    ^~~~~~~~~~~~~~
-   In file included from include/linux/rwsem.h:17,
-                    from include/linux/mm_types.h:13,
-                    from include/linux/mmzone.h:22,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:38,
-                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
-                    from arch/arm/boot/compressed/decompress.c:60:
->> include/linux/err.h:82:33: error: conflicting types for 'IS_ERR_OR_NULL'
-    static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
-                                    ^~~~~~~~~~~~~~
-   In file included from include/linux/irqflags.h:17,
-                    from arch/arm/include/asm/bitops.h:28,
-                    from include/linux/bitops.h:68,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4defs.h:40,
-                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:36,
-                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
-                    from arch/arm/boot/compressed/decompress.c:60:
-   include/linux/cleanup.h:476:13: note: previous implicit declaration of 'IS_ERR_OR_NULL' was here
-           if (!IS_ERR_OR_NULL(_T)) _unlock(&_T->_locktype), ({    \
-                ^~~~~~~~~~~~~~
-   include/linux/cleanup.h:246:18: note: in definition of macro 'DEFINE_CLASS'
-    { _type _T = *p; _exit; }      \
-                     ^~~~~
-   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
-    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
-    ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mac80211: Set n_channels after allocating struct
+ cfg80211_scan_request
+To: Kees Cook <kees@kernel.org>, Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com,
+ Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250509184641.work.542-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250509184641.work.542-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.17.151
+X-Source-L: No
+X-Exim-ID: 1uDT7i-00000004KcA-0hDg
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.102]) [177.238.17.151]:60388
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfAkl9B58Q00DaDpD9EimL/8zj3/zfvwAu/1DxIcCLVkoMML9XjmSQk4My/9K5lulJloYn9qsUXZVEA7bzePwhO/Nxi3G4irPsuyHHxPITv0Y9gu5uq/K
+ bCPDa+nB5eYCUob+Oe2Y68/NMvHctaXjTSONlpEpoVeJ2Elmjc14MQi6ryqxDYmEjCJH20vzHheBhPb7+Ai7cmJJ8G6NM8xWmXIQ/VE7zAJMbolRdcyRMeVB
 
 
-vim +/IS_ERR_OR_NULL +476 include/linux/cleanup.h
 
-   416	
-   417	#define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
-   418		__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true);		\
-   419		EXTEND_CLASS(_name, _ext,					\
-   420			     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
-   421			        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
-   422				_t; }),						\
-   423			     typeof_member(class_##_name##_t, lock) l)		\
-   424		static inline void * class_##_name##_ext##_lock_ptr(class_##_name##_t *_T) \
-   425		{ return class_##_name##_lock_ptr(_T); }
-   426	
-   427	/*
-   428	 * DEFINE_ACQUIRE(acquire_class_name, lock_type, unlock, cond_lock):
-   429	 *	Define a CLASS() that instantiates and acquires a conditional lock
-   430	 *	within an existing scope. In contrast to DEFINE_GUARD[_COND](), which
-   431	 *	hides the variable tracking the lock scope, CLASS(@acquire_class_name,
-   432	 *	@lock) instantiates @lock as either an ERR_PTR() or a cookie that drops
-   433	 *	the lock when it goes out of scope. An "_acquire" suffix is appended to
-   434	 *	@lock_type to provide type-safety against mixing explicit and implicit
-   435	 *	(scope-based) cleanup.
-   436	 *
-   437	 * Ex.
-   438	 *
-   439	 * DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
-   440	 *                mutex_lock_interruptible)
-   441	 *
-   442	 *	int interruptible_operation(...)
-   443	 *	{
-   444	 *		...
-   445	 *		CLASS(mutex_intr_acquire, lock)(&obj->lock);
-   446	 *	     if (IS_ERR(lock))
-   447	 *			return PTR_ERR(lock);
-   448	 *		...
-   449	 *	} <= obj->lock dropped here.
-   450	 *
-   451	 * Attempts to perform:
-   452	 *
-   453	 * mutex_unlock(&obj->lock);
-   454	 *
-   455	 * ...fail because obj->lock is a 'struct mutex_acquire' not 'struct mutex'
-   456	 * instance.
-   457	 *
-   458	 * Also, attempts to use the CLASS() conditionally require the ambiguous
-   459	 * scope to be clarified (compiler enforced):
-   460	 *
-   461	 *	if (...)
-   462	 *		CLASS(mutex_intr_acquire, lock)(&obj->lock); // <-- "error: expected expression"
-   463	 *		if (IS_ERR(lock))
-   464	 *			return PTR_ERR(lock);
-   465	 *
-   466	 * vs:
-   467	 *
-   468	 *	if (...) {
-   469	 *		CLASS(mutex_intr_acquire, lock)(&obj->lock);
-   470	 *		if (IS_ERR(lock))
-   471	 *			return PTR_ERR(lock);
-   472	 *	} // <-- lock released here
-   473	 */
-   474	#define DEFINE_ACQUIRE(_name, _locktype, _unlock, _cond_lock)                \
-   475		DEFINE_CLASS(_name, struct _locktype##_acquire *,                    \
- > 476			     if (!IS_ERR_OR_NULL(_T)) _unlock(&_T->_locktype), ({    \
-   477				     struct _locktype##_acquire *lock_result;        \
-   478				     int ret = _cond_lock(&to_lock->_locktype);      \
-   479	                                                                             \
-   480				     if (ret)                                        \
- > 481					     lock_result = ERR_PTR(ret);             \
-   482				     else                                            \
-   483					     lock_result =                           \
-   484						     (struct _locktype##_acquire     \
-   485							      *)&to_lock->_locktype; \
-   486				     lock_result;                                    \
-   487			     }),                                                     \
-   488			     struct _locktype##_acquire *to_lock)
-   489	
+On 09/05/25 12:46, Kees Cook wrote:
+> Make sure that n_channels is set after allocating the
+> struct cfg80211_registered_device::int_scan_req member. Seen with
+> syzkaller:
+> 
+> UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:1208:5
+> index 0 is out of range for type 'struct ieee80211_channel *[] __counted_by(n_channels)' (aka 'struct ieee80211_channel *[]')
+> 
+> This was missed in the initial conversions because I failed to locate
+> the allocation likely due to the "sizeof(void *)" not matching the
+> "channels" array type.
+> 
+> Reported-by: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/680fd171.050a0220.2b69d1.045e.GAE@google.com/
+> Fixes: e3eac9f32ec0 ("wifi: cfg80211: Annotate struct cfg80211_scan_request with __counted_by")
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks!
+-Gustavo
+
+> ---
+> Cc: Edward Adam Davis <eadavis@qq.com>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: <linux-wireless@vger.kernel.org>
+> ---
+>   net/mac80211/main.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/mac80211/main.c b/net/mac80211/main.c
+> index 741e6c7edcb7..6b6de43d9420 100644
+> --- a/net/mac80211/main.c
+> +++ b/net/mac80211/main.c
+> @@ -1354,10 +1354,12 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
+>   	hw->wiphy->software_iftypes |= BIT(NL80211_IFTYPE_MONITOR);
+>   
+>   
+> -	local->int_scan_req = kzalloc(sizeof(*local->int_scan_req) +
+> -				      sizeof(void *) * channels, GFP_KERNEL);
+> +	local->int_scan_req = kzalloc(struct_size(local->int_scan_req,
+> +						  channels, channels),
+> +				      GFP_KERNEL);
+>   	if (!local->int_scan_req)
+>   		return -ENOMEM;
+> +	local->int_scan_req->n_channels = channels;
+>   
+>   	eth_broadcast_addr(local->int_scan_req->bssid);
+>   
+
 
