@@ -1,244 +1,301 @@
-Return-Path: <linux-kernel+bounces-642305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB58AB1D26
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7304CAB1D2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F343BB86B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8AA50016B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7367253956;
-	Fri,  9 May 2025 19:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828DE254B0A;
+	Fri,  9 May 2025 19:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A+tn1j0S"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KNocD2z9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EE3241697;
-	Fri,  9 May 2025 19:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746817657; cv=fail; b=DMSiIV6KaR1KKyRLeb0zwpPgk8Id0oBu2C6ZRZ1Ke0hkXRpYIyNDq2n3cCeYpXLKDvoxh14UxT/dSolrsSUzY3tP2jEeRE3PvUgR86PTfgM9iV/3RyoG0V2fCTqwOpWVIo49Ylu2Ay2lVHiXyYajZ7ITEB4xR+cZVWwvn8Dn9aw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746817657; c=relaxed/simple;
-	bh=zLHimvalki63b9Ndvyw9bQPjYnWFuWrK9hlFMrUksfQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mcDAJ2zDRNaj4mt0xyPNsNaY9suYdP14OMVAV91FZ3T+WrL+wa6IEOO5zW3SUO4tgGX9ruygZh6I/94C+/LWuVVxSGIW+76yU9RV5qOHbwxY8LvlbVxfZJQozBBNhHDo6yWB3sqH69IKnArVdLqem4hT4l5QD329T2Ln4P1mXA0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A+tn1j0S; arc=fail smtp.client-ip=40.107.94.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OYS9B9GWLuCPGfFrzuHrggezWn5PSAAg1W6TRk+0w7TBvHB94Ss3ynViT42J/bTCb7vpbvuxp6pzBMLTTlwB5ejC4yREv8nQ+D0cXJUhfXvS9rxAeX2xhPKHeTkUqr3AVWS+NmKrfKwhf7jvJpfp2XXcVDekeGyhT5aLjtZP1fIM/QQ+MhIl3ve3eRrdKbmNxCRpG9ri7MgAqGhvnk343koaXGoPWSwXABeF8sq2jvAbKCPK4ckPaDFPJwHgqmzo8iyY3jUsXlIjbzePp5CC1wKZDUMog9tkD9FgDg4p5iecPaqnsYAJHmQrDRKq6XfdbUouTnoEWpcwDwNQf6Jexg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uvb2ZBeo0Ua8Xtvgqn+JrP6tyMMn7nZPj+v6L/Ov9Cs=;
- b=WCU4ptVwAfXNlX1SyPnIqIuykQQraBjuE9Rd+iqGBoH+LmDWRdHx4dhnFASCs9kuXFnVY/b3mjG+3PYyUmgM5Fvjl0p5srWXMnwlOKXum/f9zWW0qr8fCM7JuNSYioCkSa74op3894hGOwoXab6oLJORYMz7Kzh/7k8IYxu68t7LjEOD6q45PatrhsEFPTL3F2ZhRx9AKrHF8gbwZb+eTUJOxr2SBBQWdeOg2clkCFqzbEBpDKTrlTgknZ5hZ69AA657AaBokN3Dqgc+HyzpupBI6QZPSII2TOGMLqbUF8S+Dstkj2HJEaUOYZWrZOMVoG41waqSajqGaHnR7I7ALQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uvb2ZBeo0Ua8Xtvgqn+JrP6tyMMn7nZPj+v6L/Ov9Cs=;
- b=A+tn1j0SPThBUoRC9L5nEhwpQw5DXsyLLjKX6yQ5n/8s7Iz7gDmtpxfCi0P7zYI/g9e5sTngjlsWNFzH8Ec+kIpZe4Xd6KhGeC9qxJF20x6Dl4liuQYWzeQGn3n61fPDEwlJ8GVkg0RXYvqBGj95655CLLhqJX+N/d+8haYznbXuofCGYWiH1mh6H/6TYwMfM1Ibb4iElmX+ce+zo2MNXGFULZVk0z2aOKgnEAXsNU2QAaELXJivm+k41DjWlV3tvDwAyIF4/Jhst9P2a92KJpXSu3UAeQe45omM5o4A/DRKyFYjim05cmx6Srx0ednuRWJ2jaXuz9fDTcAvnl6Adw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by PH7PR12MB6396.namprd12.prod.outlook.com (2603:10b6:510:1fc::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
- 2025 19:07:32 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.8699.035; Fri, 9 May 2025
- 19:07:32 +0000
-Message-ID: <23f488d7-d369-46f2-8da6-c5fd2af0f9d7@nvidia.com>
-Date: Fri, 9 May 2025 15:07:30 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rcu/nocb: Fix possible invalid rdp's->nocb_cb_kthread
- pointer access
-To: Zqiang <qiang.zhang1211@gmail.com>, paulmck@kernel.org,
- frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
- urezki@gmail.com, boqun.feng@gmail.com
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250507112605.20910-1-qiang.zhang1211@gmail.com>
- <20250507112605.20910-3-qiang.zhang1211@gmail.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <20250507112605.20910-3-qiang.zhang1211@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN0P222CA0019.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:208:531::25) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58044254AFF;
+	Fri,  9 May 2025 19:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746817914; cv=none; b=aKQfgj26xDGUNSO13cJZTUtaYOyqWlPTieBJ6kZZzPt+AJ6281F+58I95ctsMXW255bEvrAkNhRYl8OBE0oR4hPEUNcOnUhzOjRVQpTo5eSUgOK/bDeqQyR4mL9v+PUCW9Yp46Jy4mPJ6E4KPF9nCQqCT7Vbq7gJrwop5zPkswA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746817914; c=relaxed/simple;
+	bh=LiM82RC5VzqZIXYZK6AJ9EgWOvBAUSujh5mMx5KMKhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qGKraZinbwHsqiWtP8i410noQRyOGqxC4jLmm5N+ASOgh4uZiqss8chjlmlse5IhEeqb2KUkBzNKjrVOe0HAQ3s2oitgf2WSGLIwGlRYwgkDswVDCYf+h76XA8bT6yEfoRleAVE0GYYqwMX6mzxjrey/0JcGVqByWB2LYb6rcKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KNocD2z9; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746817911; x=1778353911;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LiM82RC5VzqZIXYZK6AJ9EgWOvBAUSujh5mMx5KMKhw=;
+  b=KNocD2z9kQOjXeDN4Lk2B7UwZTXfpQ+fPM1ei85RwYqto6ALDMmF0z0h
+   kxoxJOLn88kefOjvww0wFRKTk4baXOZ+2GMhjkf883IImIa1mN4MMZF3m
+   FqSoKpf1vqlFP7mhovlMAeg2dovD5jyo7HF4Tm3jbUwolg2nDE927N+aC
+   djAFSVQoUzwmhBK8MwDWDpWbChXw5k0dVyCVxDUvwT6VD7eokjmufQ4Aw
+   LIrxbgKrDrMWYARPf/HPo1T7+hZwCgpedA0Q7nnhIXTIn4SOnCn7aBEb1
+   iq3R2C+priXbZhhAr9WxU1kDOV2TLenf3Jzr8dg3Qcrn+zEu6CdPHCXkO
+   g==;
+X-CSE-ConnectionGUID: qJ+YzW4/SIKOgkTRvhG+9g==
+X-CSE-MsgGUID: YRgRfmzISFaJAsT0zQth4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48663563"
+X-IronPort-AV: E=Sophos;i="6.15,276,1739865600"; 
+   d="scan'208";a="48663563"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 12:11:50 -0700
+X-CSE-ConnectionGUID: 485UEADqSAScjNa/Kz2FDg==
+X-CSE-MsgGUID: 4+/8bSBKQV6Asvtd6HtjkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,276,1739865600"; 
+   d="scan'208";a="136656603"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 09 May 2025 12:11:47 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDT8K-000COV-2P;
+	Fri, 09 May 2025 19:11:44 +0000
+Date: Sat, 10 May 2025 03:10:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for
+ conditional locking
+Message-ID: <202505100206.85k3mymM-lkp@intel.com>
+References: <20250507072145.3614298-2-dan.j.williams@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH7PR12MB6396:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf69fed6-e252-4832-71c2-08dd8f2cc058
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WDcxRTVuZ1k2NVhVSGFrYkJPYm5aZWpOZEppZFhEcHdudjEyRi91VXp6cDEr?=
- =?utf-8?B?YzZYUHBoU001SFM3OW8zUXhOSmhHYTIzTklJVWwzMHJhV3puL0ZZK1FZRjRH?=
- =?utf-8?B?bnNqZ0g3ZE5rTUtwZXE1Uy9UaWZCV0pBN0lxWGFLeUpyN1NiZHdqVUVCMUJy?=
- =?utf-8?B?VXNMandZYis2RDVBblZGRVU1WVNxUEhVZlBGb1ZTMWRZV0JURmxyOThTSlBo?=
- =?utf-8?B?Vy9SNmUyTzZqbDJLSkk1bXRNYlNxWFYxbzZNR2hzcG9tK1Z0eDEyNG1hcXFU?=
- =?utf-8?B?QU5MaFhzYllFWnoxTlZSMG9FNGVVMHNiQmNZbXl3bDhicFozQVJOVWZCbWVE?=
- =?utf-8?B?MEhqNEY3VWQ5STduYWI2SjJJbFZ3UE9ENmorc1BtY0ptbW1uUktBT3hsL1B2?=
- =?utf-8?B?c05VeXNLODZpM3dKSFcyMWl3L01zSmdEaG9SQzZOWTFjWmVlU0VKZGRiUHNw?=
- =?utf-8?B?bUpIVTRsZWJLNVhiUXJWUkY0VmlmdEpxUDZRcWhwSXJSSEZWUVdQTFBXYWV6?=
- =?utf-8?B?SnpiTEFGdnUxSGdSQnVZb2pBRjJSb2JUQnFMR2x6L0FFSnlzRmhTQ3FGK0ZU?=
- =?utf-8?B?c2s0THJCelFlY1FFVVpjdzhnWFRDWUNvVWhFbGZlRjlzcGJaWURnQTRDa1NX?=
- =?utf-8?B?bFB0aWdwMGhPL2J4RDRtOVpJejQ5RWhnUHR3Z1RXVW9tWUlvNmVyQWpSWVZt?=
- =?utf-8?B?amVVamVjVWVsM3cwdi9zK2gwaVV2d1VkU2c2aEREQ2p1Nkl3VkNEeGtnTUdr?=
- =?utf-8?B?djVQNWhSVmZKWktvbGU4YnRJWml0UHdKTk04WFUveDhOZkNaL3Q4cTNDL3VP?=
- =?utf-8?B?bG1SSU10MjNPcUVjU0lQaldUSmNaNUY0d2ZlUVNKQlFoUnV4bFYxSDFiUnJW?=
- =?utf-8?B?UmdYbGhkTXAyQjRsV0paQ09iU1l4Qm5LclQ5d1AxT0Jxa1VRUHZZOHk5VDVG?=
- =?utf-8?B?UjZVZ1o0eVRkZzFmcjdicHRIVkFkNk5odG8zTVNpNlA3MnJ1RmNkUHNBckVC?=
- =?utf-8?B?RjFnTEJYQzB5UHErc29zOGc2Wk9aSlNOejd1VTZRMmZQZXVlMVRDRUdLVm5P?=
- =?utf-8?B?OTRFL2tnRVpQYkNxa2VwUEh1Z25JTTdMN3BnbTczMjlJVm16VHczLzlhRDNt?=
- =?utf-8?B?NWowVHNIWmZDTW85dTBNSUJxdklxZjJ1eGh0dllhN242UFhnZUZBWE93K1Np?=
- =?utf-8?B?MVkyeDFWUEpBOGtMd3NXOTlDa0piTmxhdkhzQzcyM2Z3dW10WnZSSUN1NlNU?=
- =?utf-8?B?N01lYXVLQzRhSCtBRHFacm4ySk1tVlIyd1FQeHV5eFU2VjYrWHFvOVFkeHhH?=
- =?utf-8?B?ejh2Q01NdGJFMUlQRXZYdWJ2cW94Q1gvdlhOVmFtSm42TUlrZUhWZkx4ZTNC?=
- =?utf-8?B?TU5ZS1ZjalFlamdZa1g5MHlQMWJvSklZSU15T2NiY2NSc211eXFJc010ZmNw?=
- =?utf-8?B?b3BRdTVOYnRXRHladEIvRldoUXFjTjEwT2lESkt2Mko0dWszNFo2d05iS1Nv?=
- =?utf-8?B?RU0yRm90Q25Jc2o1Skd0bUE4K3o4aWFaaWJyUEFoYWIyZVNYRFR0WGtTSkQv?=
- =?utf-8?B?a1JqcW1TRCtDSllCMEVTMzl2dTl4T1pEM0ZKZmwyWEtJWjZPTlRRczFqVFF5?=
- =?utf-8?B?aUxTbTJ1dndQV0p6U0hDbUtPc1A5N0o0WE9zVjlrZzZYSnRDbzNlbFhLb3VW?=
- =?utf-8?B?cVd1bHZBcldnakJPaGtmYVBZSGgya2JDc2lOMVppeS9EaFZQRHBZV3BYY0E1?=
- =?utf-8?B?ZzU2QW9BR3BUYXE5VUE4VnVXbHRPb01ibHYxMmtneGdsYWFMS21rOXpxbnZW?=
- =?utf-8?B?RzVNVFRBWE5peG12VW1HNXROdlo3YVptaGZ4OTNaS1oyeEIyekgvbXk2YjhB?=
- =?utf-8?B?dXd6bmRWZ2ZLaWJzdVBYamNqVi9PNkQxV2JJY1ZhZXc2T0IxdzFpQWpOVTgz?=
- =?utf-8?Q?b+1wVS/BeCw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RlQrWGpTOHJMWkh6Z3JaejNycDZ3N1FjY29PNzRIci9nREtNZXRKZkx6TE55?=
- =?utf-8?B?UUhUK1djREhxSmY4cVh6d2JFa3Y2SDlTT1h3VzlZcVg2ZjdvTk8veSt1Mjds?=
- =?utf-8?B?ZWlqWE13MHB6eUV4NzdQMXBWZk53amZQc2FmeUY1emNlcjR5aTdBWmZsV3lS?=
- =?utf-8?B?U01vN09ndHl0cUlGZnRVRFpZTlBndzJVSng3WllYTHljNTY5V0FFTFR3TFRm?=
- =?utf-8?B?azhCdUZXVHcwVllvMVJ1QnhyRnU3cHdneWJzamh4bXFYVFJoMmVJSW5wUFU1?=
- =?utf-8?B?VUpPTEpyYWdsSkNRaXh5TlQ1bGpFZk8rRG95TTZCVzF6NkJqSGlON3FSSnJW?=
- =?utf-8?B?bWdqR3U4dk43YTcranVlVU5BNllvZWlPOFpZVVhjZktJWkF3N0pEZmxOakky?=
- =?utf-8?B?MC9yeEw4aXhOUnRBa2E2dFNGUlZndkdab0w0djliMTV1RElCbTNLUm5yb0RN?=
- =?utf-8?B?Vm9HVEtNWm9FWWV1YXpURHg1RDZjMTh2SGpFY3I5eit1WC9xZkxGbGhpOVhn?=
- =?utf-8?B?MDBuWTU5UFJlVjJpME9oSEhyclhEcHhSeGovdW02YVRJQ0pidldwQWhsNm4x?=
- =?utf-8?B?b3haRERvcFo1K1ZkUFNrbmhkcTRxVjRCL3JGUjAwNmczOHFuckV6dDFVNUxn?=
- =?utf-8?B?NktVMm5YUXlIQXo5QUFlQUJ6bHdpMlNYZTNrM3VXL0dhSFdraVJMZmtudmtq?=
- =?utf-8?B?Y3BxMWc3dmF0RnR0ZGh3NytqcVYwcDBORzFRL0paZVNXRDBIcWdNKzVLUWg3?=
- =?utf-8?B?NjgzZXZCbGtNWWIzbGE5ZmlvQjZGTTZqQ1o4OEt6cThEdUo2WXB4MGV5MU11?=
- =?utf-8?B?Wm5zU0QvOXlBdjkzNmNURVRLRXFGemZ3TkNTUFVwUzFkK212YlBOWWVoVE53?=
- =?utf-8?B?Y1hKang4aXF2M0tkS0dPZHFRZmlNZC9kdC9adWNJQjFEcUloRXNDUlJxa2R1?=
- =?utf-8?B?dm5KSEwrRXFxNk9zRWZ0MWlVSmdvVGZ5aVQvVmN1bU1EZm1WYU1mSUwxUkhN?=
- =?utf-8?B?ekljNVB6dmF5KzlPUllveW1xbVEreWNGczZPNmpHajhyc2dtVEIxNnJEdis2?=
- =?utf-8?B?OUVqTkQ3NjhzdkpXSGpjVEVjZm1DcmZnWHg3QjVzVTFvQWNVVHhjNGZ2U3kx?=
- =?utf-8?B?NDFHM3pxQUlzRElnZDFlVnF0Y0ZVMVJiYkNjZ0NLSU9lUG5DcVhGRTBzT3l2?=
- =?utf-8?B?WmZSQzVFWG9SNkJrNjROVlFjMkZQRVV3emdUUmd1d1dhalRPTlpmbTVUa1ds?=
- =?utf-8?B?VkxheTJqa29yUk5KTzFVdzBHZzdRalFvRTdabExaYmhZc09XY0t1bjFPOWJW?=
- =?utf-8?B?a3FnNlRpYVZrdnpjUVNHSzRvVkFNVTJGWW1VSEUzYVcwdEVtVGRKQzZoNnVQ?=
- =?utf-8?B?Sityald2bDE5ME9rVW80amp5aXVzd3hrWUIvYWdXVjV4N2NiZUlCTFIwNVpB?=
- =?utf-8?B?NllTZEpveUd4Q0FhNk9DeisrdktRcWxpTWRwa2llL0hsU2QyL1dEU1Rjcnp1?=
- =?utf-8?B?RWZVbjBpRS9tMVY1eGtPWmVOSFNSNU9mNk1iUVNSV2VlQ1pRTnNaMHhNWXVw?=
- =?utf-8?B?QzlOaFYxVXhDUkRpRkc5VkhLYnJZdWR5Nk42VG1VaUlvTFZSS2krbm16Yk5G?=
- =?utf-8?B?N0ovak0zK0RIS0Vvem1YYW9jME15ajZzbHAyN21yV1ovNzFlZUVTaDNqbUJ1?=
- =?utf-8?B?SDR0T3I3SWlaekk1dm8yT1VXcHhJWE56Mmwyc1hRb0krV2RnbHpmVzE3YjZ6?=
- =?utf-8?B?RmNOK29XNk1IL0g2MDBqeVlVOUZNVDVZdnpxZ2M3Q3ZVTEpTSE1zWVkxSVR6?=
- =?utf-8?B?RHJncCtOWkRTcEJ2cUVvdXp4RjFoMXNINzR0SUZYeStlMWQrUm9xb1lHWWlF?=
- =?utf-8?B?Q3AxVDIyUitPaEZ4Y0ZTS1dxT2o3dGhBc3FkcUxoSjMraTNQYWVGRTNvNkt5?=
- =?utf-8?B?eUFqNHFoZHY0enY3ZHFxMWZnVkFSN3JacndBa3pGZm02aGdlWHo2MnczNjNZ?=
- =?utf-8?B?RWZwdW9OM2lzTzdRcmNMNXpkak5WOVJ5MzRjSE84RVFKM2krSlF3M3R3VlM4?=
- =?utf-8?B?TnljMnhLV1ROUEU2V0xRSVA5bkZraC82cENlYkFFMzhKbng4dFNTbURGZFQr?=
- =?utf-8?Q?Mf9lN+SyUFHEbCbCOvbqafMQj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf69fed6-e252-4832-71c2-08dd8f2cc058
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 19:07:32.6392
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uiFHAPrECB+evJOm/M0jE/NUNl8NFEqih1okafHtvXr2QRlkTsUE8AIQ8AgxBwM1Lj1GlvWrFyg8T2Ox/GuiRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6396
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507072145.3614298-2-dan.j.williams@intel.com>
+
+Hi Dan,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on b4432656b36e5cc1d50a1f2dc15357543add530e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Williams/cleanup-Introduce-DEFINE_ACQUIRE-a-CLASS-for-conditional-locking/20250507-152728
+base:   b4432656b36e5cc1d50a1f2dc15357543add530e
+patch link:    https://lore.kernel.org/r/20250507072145.3614298-2-dan.j.williams%40intel.com
+patch subject: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for conditional locking
+config: arm-randconfig-001-20250509 (https://download.01.org/0day-ci/archive/20250510/202505100206.85k3mymM-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250510/202505100206.85k3mymM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505100206.85k3mymM-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/irqflags.h:17,
+                    from arch/arm/include/asm/bitops.h:28,
+                    from include/linux/bitops.h:68,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4defs.h:40,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:36,
+                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
+                    from arch/arm/boot/compressed/decompress.c:60:
+   include/linux/mutex.h: In function 'class_mutex_intr_acquire_destructor':
+>> include/linux/cleanup.h:476:13: error: implicit declaration of function 'IS_ERR_OR_NULL' [-Werror=implicit-function-declaration]
+           if (!IS_ERR_OR_NULL(_T)) _unlock(&_T->_locktype), ({    \
+                ^~~~~~~~~~~~~~
+   include/linux/cleanup.h:246:18: note: in definition of macro 'DEFINE_CLASS'
+    { _type _T = *p; _exit; }      \
+                     ^~~~~
+   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
+    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
+    ^~~~~~~~~~~~~~
+   include/linux/mutex.h: In function 'class_mutex_intr_acquire_constructor':
+>> include/linux/cleanup.h:481:24: error: implicit declaration of function 'ERR_PTR'; did you mean 'PERCPU_PTR'? [-Werror=implicit-function-declaration]
+             lock_result = ERR_PTR(ret);             \
+                           ^~~~~~~
+   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
+    { _type t = _init; return t; }
+                ^~~~~
+   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
+    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
+    ^~~~~~~~~~~~~~
+>> include/linux/cleanup.h:481:22: warning: assignment to 'struct mutex_acquire *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+             lock_result = ERR_PTR(ret);             \
+                         ^
+   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
+    { _type t = _init; return t; }
+                ^~~~~
+   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
+    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
+    ^~~~~~~~~~~~~~
+   include/linux/mutex.h: In function 'class_mutex_try_acquire_constructor':
+>> include/linux/cleanup.h:481:22: warning: assignment to 'struct mutex_acquire *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+             lock_result = ERR_PTR(ret);             \
+                         ^
+   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
+    { _type t = _init; return t; }
+                ^~~~~
+   include/linux/mutex.h:226:1: note: in expansion of macro 'DEFINE_ACQUIRE'
+    DEFINE_ACQUIRE(mutex_try_acquire, mutex, mutex_unlock,
+    ^~~~~~~~~~~~~~
+   In file included from include/linux/rwsem.h:17,
+                    from include/linux/mm_types.h:13,
+                    from include/linux/mmzone.h:22,
+                    from include/linux/gfp.h:7,
+                    from include/linux/umh.h:4,
+                    from include/linux/kmod.h:9,
+                    from include/linux/module.h:17,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:38,
+                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
+                    from arch/arm/boot/compressed/decompress.c:60:
+   include/linux/err.h: At top level:
+>> include/linux/err.h:39:35: error: conflicting types for 'ERR_PTR'
+    static inline void * __must_check ERR_PTR(long error)
+                                      ^~~~~~~
+   In file included from include/linux/irqflags.h:17,
+                    from arch/arm/include/asm/bitops.h:28,
+                    from include/linux/bitops.h:68,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4defs.h:40,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:36,
+                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
+                    from arch/arm/boot/compressed/decompress.c:60:
+   include/linux/cleanup.h:481:24: note: previous implicit declaration of 'ERR_PTR' was here
+             lock_result = ERR_PTR(ret);             \
+                           ^~~~~~~
+   include/linux/cleanup.h:248:13: note: in definition of macro 'DEFINE_CLASS'
+    { _type t = _init; return t; }
+                ^~~~~
+   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
+    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
+    ^~~~~~~~~~~~~~
+   In file included from include/linux/rwsem.h:17,
+                    from include/linux/mm_types.h:13,
+                    from include/linux/mmzone.h:22,
+                    from include/linux/gfp.h:7,
+                    from include/linux/umh.h:4,
+                    from include/linux/kmod.h:9,
+                    from include/linux/module.h:17,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:38,
+                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
+                    from arch/arm/boot/compressed/decompress.c:60:
+>> include/linux/err.h:82:33: error: conflicting types for 'IS_ERR_OR_NULL'
+    static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
+                                    ^~~~~~~~~~~~~~
+   In file included from include/linux/irqflags.h:17,
+                    from arch/arm/include/asm/bitops.h:28,
+                    from include/linux/bitops.h:68,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4defs.h:40,
+                    from arch/arm/boot/compressed/../../../../lib/lz4/lz4_decompress.c:36,
+                    from arch/arm/boot/compressed/../../../../lib/decompress_unlz4.c:10,
+                    from arch/arm/boot/compressed/decompress.c:60:
+   include/linux/cleanup.h:476:13: note: previous implicit declaration of 'IS_ERR_OR_NULL' was here
+           if (!IS_ERR_OR_NULL(_T)) _unlock(&_T->_locktype), ({    \
+                ^~~~~~~~~~~~~~
+   include/linux/cleanup.h:246:18: note: in definition of macro 'DEFINE_CLASS'
+    { _type _T = *p; _exit; }      \
+                     ^~~~~
+   include/linux/mutex.h:216:1: note: in expansion of macro 'DEFINE_ACQUIRE'
+    DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
+    ^~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
+vim +/IS_ERR_OR_NULL +476 include/linux/cleanup.h
 
-On 5/7/2025 7:26 AM, Zqiang wrote:
-> In the preparation stage of CPU online, if the corresponding
-> the rdp's->nocb_cb_kthread does not exist, will be created,
-> there is a situation where the rdp's rcuop kthreads creation fails,
-> and then de-offload this CPU's rdp, does not assign this CPU's
-> rdp->nocb_cb_kthread pointer, but this rdp's->nocb_gp_rdp and
-> rdp's->rdp_gp->nocb_gp_kthread is still valid.
-> 
-> This will cause the subsequent re-offload operation of this offline
-> CPU, which will pass the conditional check and the kthread_unpark()
-> will access invalid rdp's->nocb_cb_kthread pointer.
-> 
-> This commit therefore use rdp's->nocb_gp_kthread instead of
-> rdp_gp's->nocb_gp_kthread for safety check.
-> 
-> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+   416	
+   417	#define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
+   418		__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true);		\
+   419		EXTEND_CLASS(_name, _ext,					\
+   420			     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
+   421			        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
+   422				_t; }),						\
+   423			     typeof_member(class_##_name##_t, lock) l)		\
+   424		static inline void * class_##_name##_ext##_lock_ptr(class_##_name##_t *_T) \
+   425		{ return class_##_name##_lock_ptr(_T); }
+   426	
+   427	/*
+   428	 * DEFINE_ACQUIRE(acquire_class_name, lock_type, unlock, cond_lock):
+   429	 *	Define a CLASS() that instantiates and acquires a conditional lock
+   430	 *	within an existing scope. In contrast to DEFINE_GUARD[_COND](), which
+   431	 *	hides the variable tracking the lock scope, CLASS(@acquire_class_name,
+   432	 *	@lock) instantiates @lock as either an ERR_PTR() or a cookie that drops
+   433	 *	the lock when it goes out of scope. An "_acquire" suffix is appended to
+   434	 *	@lock_type to provide type-safety against mixing explicit and implicit
+   435	 *	(scope-based) cleanup.
+   436	 *
+   437	 * Ex.
+   438	 *
+   439	 * DEFINE_ACQUIRE(mutex_intr_acquire, mutex, mutex_unlock,
+   440	 *                mutex_lock_interruptible)
+   441	 *
+   442	 *	int interruptible_operation(...)
+   443	 *	{
+   444	 *		...
+   445	 *		CLASS(mutex_intr_acquire, lock)(&obj->lock);
+   446	 *	     if (IS_ERR(lock))
+   447	 *			return PTR_ERR(lock);
+   448	 *		...
+   449	 *	} <= obj->lock dropped here.
+   450	 *
+   451	 * Attempts to perform:
+   452	 *
+   453	 * mutex_unlock(&obj->lock);
+   454	 *
+   455	 * ...fail because obj->lock is a 'struct mutex_acquire' not 'struct mutex'
+   456	 * instance.
+   457	 *
+   458	 * Also, attempts to use the CLASS() conditionally require the ambiguous
+   459	 * scope to be clarified (compiler enforced):
+   460	 *
+   461	 *	if (...)
+   462	 *		CLASS(mutex_intr_acquire, lock)(&obj->lock); // <-- "error: expected expression"
+   463	 *		if (IS_ERR(lock))
+   464	 *			return PTR_ERR(lock);
+   465	 *
+   466	 * vs:
+   467	 *
+   468	 *	if (...) {
+   469	 *		CLASS(mutex_intr_acquire, lock)(&obj->lock);
+   470	 *		if (IS_ERR(lock))
+   471	 *			return PTR_ERR(lock);
+   472	 *	} // <-- lock released here
+   473	 */
+   474	#define DEFINE_ACQUIRE(_name, _locktype, _unlock, _cond_lock)                \
+   475		DEFINE_CLASS(_name, struct _locktype##_acquire *,                    \
+ > 476			     if (!IS_ERR_OR_NULL(_T)) _unlock(&_T->_locktype), ({    \
+   477				     struct _locktype##_acquire *lock_result;        \
+   478				     int ret = _cond_lock(&to_lock->_locktype);      \
+   479	                                                                             \
+   480				     if (ret)                                        \
+ > 481					     lock_result = ERR_PTR(ret);             \
+   482				     else                                            \
+   483					     lock_result =                           \
+   484						     (struct _locktype##_acquire     \
+   485							      *)&to_lock->_locktype; \
+   486				     lock_result;                                    \
+   487			     }),                                                     \
+   488			     struct _locktype##_acquire *to_lock)
+   489	
 
-Is it possible that rdp_gp->nocb_gp_kthread is valid, but  rdp->nocb_cb_kthread
-is still invalid (because its creation failed?). This seems a bit fragile to me
-to assume that if rdp_gp->nocb_gp_kthread then rdp->nocb_cb_kthread is valid. Or
-is there a path that makes sure this invariant is always satisfied? If so, can
-we add additional warnings for checking this invariant?
-
-Also from the other thread, it sounds like there is more work to do here
-(related patches so I'd like to defer this to 6.17 - feel free to keep posting
-patches for this work though).
-
-Thanks!
-
- - Joel
-
-> ---
->  kernel/rcu/tree_nocb.h | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 1596812f7f12..6679140bb0b5 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-> @@ -1146,7 +1146,6 @@ static bool rcu_nocb_rdp_offload_wait_cond(struct rcu_data *rdp)
->  static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
->  {
->  	int wake_gp;
-> -	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
->  
->  	WARN_ON_ONCE(cpu_online(rdp->cpu));
->  	/*
-> @@ -1156,7 +1155,7 @@ static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
->  	if (!rdp->nocb_gp_rdp)
->  		return -EINVAL;
->  
-> -	if (WARN_ON_ONCE(!rdp_gp->nocb_gp_kthread))
-> +	if (WARN_ON_ONCE(!rdp->nocb_gp_kthread))
->  		return -EINVAL;
->  
->  	pr_info("Offloading %d\n", rdp->cpu);
-> @@ -1166,7 +1165,7 @@ static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
->  
->  	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
->  	if (wake_gp)
-> -		wake_up_process(rdp_gp->nocb_gp_kthread);
-> +		wake_up_process(rdp->nocb_gp_kthread);
->  
->  	swait_event_exclusive(rdp->nocb_state_wq,
->  			      rcu_nocb_rdp_offload_wait_cond(rdp));
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
