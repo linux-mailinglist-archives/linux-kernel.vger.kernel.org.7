@@ -1,237 +1,169 @@
-Return-Path: <linux-kernel+bounces-641386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660E5AB10F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:40:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B92AB10F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31767A06451
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:40:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2499E56CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FBB28ECCB;
-	Fri,  9 May 2025 10:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2828228ECDF;
+	Fri,  9 May 2025 10:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NYLSckKQ"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013042.outbound.protection.outlook.com [40.107.162.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jFsaMByV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC6421A434;
-	Fri,  9 May 2025 10:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746787241; cv=fail; b=ggRTHk5iaEutZsXafruiEOo65Jnq9gEneRHjeWJr+60psdOh260jMc9mB22MyNE1ixAZUaPZZ8eK/Kx9pZCf4iBu5ObN0sKOqxp+2HZusmNtO1S5I3vRXxvLeRBZSCldBltoCu2PMC+vSNp3Ifv1ugXXr/yvyGI3Y2RxQaiorJc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746787241; c=relaxed/simple;
-	bh=X9iJDbOs++a8sRv1zI+XY/0/W6818MwCr1ta0PiKfWY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YVAqUpVOXg1LygrXwuBGt6ZbGwH7qpEN6Itr5UpYNiSXGxbdERassmZhxGekF1a1+Q2zqA97hYht3fVRxI7L0oiE/bmKOBu3IoIRTScklCqrMBLgoHhIn1qODa660RHS0mxvrhiJWP0FNnBCLjsDVxMHDAyRmd2kZk4+ODPgzLY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NYLSckKQ; arc=fail smtp.client-ip=40.107.162.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ipubFdzC8cBoTO0KdlOedygDoz4BQfvPn0qBrb4nqHbsUOmAqku3DjJ/C6T+9+Fd89K15ZrB4MuSH36jQalTV3ObpqHlnndNQO0/S88qyCCItuO1D+TE+YfRsRtqmv6PsCbKf0sG4hbcLBs1w8CsLqP+fUI7T+klrMtp1Aces2UKHNlUGizX1lcJNh1fOH0k1dzQJKfUJ5LA8fSyjM5dSBAdo0zVDMj7XLj65HJ/JoJFsNB/BLh6gtPAvFkYopT9ABL3ETzYR/viEnDPRjE+P6ZEIscEsZBQe099qdMEhynwCOeVHz1k3sOVAcQjW8mIK6jD55i9Z6GBpWVnva+HTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bPmM1cj7w/fl9sDrJwpP30i1F1/CuevnmveT42xPXwA=;
- b=Oyhvf9SIIfFmCPMO8QI+TxmXYeq0wYfbk+mW9bcu4HZzyzS7zU1QBO72awEok9Jkt0j7qyGCCqEbTxW+qyD/diND07wHqU4hmePM5inyjO2SAOFEr3Gjz/tETdOuoTeJSUCa9cwcMZV9EHNo53QibC/JW/c/unsWdD/zFhSaAYl8vrlWf30FztAEbZBjXHINgQv39E7qqELwmx7oK5d4UgZSlebSIAs9+UJ78tOtakwqmUtYJ51Ps4ZJoVlDXpbDe7d55PkAfeMVNk+JWJ2QTkYJbdiWy6zLc9hmy+5R/dhh/RIkfCmCMqnytL6a8SA3j7N1KUoCFpYEQMJT1mkySw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bPmM1cj7w/fl9sDrJwpP30i1F1/CuevnmveT42xPXwA=;
- b=NYLSckKQSX4T4HOWB3qJ7aABTBtcNKsZC7M+G8VFFUg7OhDNmHPTuvcau86/fdyYCQ5LBhhjHji4M+bZv5LuXP57mWV2nH1IgzecK3G7ttVmvABpwzmKtYMpqHzhriVP6ka4u6DF9l4q6NBSyOpVrNcHnDAHILZv0wFcg3xw1qTCdZytQPQzoUVTKlcsSYeNpZGaSG5Vsc7QblubCMi1Ci8Gq9d+/uQACSgmpZHvUh0eDyTIyxaUTJRumfAqZeBXJkLpnpA2yzLqvgyfa7d66+26kh1zGHsw6dN+2V9UxCIQnWM7ujt2MWd+mLeIcMO0lW4YQYeVBR1bxlCzpi97mw==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI2PR04MB10571.eurprd04.prod.outlook.com (2603:10a6:800:278::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.33; Fri, 9 May
- 2025 10:40:33 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8722.020; Fri, 9 May 2025
- 10:40:33 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
-	<shawnguo2@yeah.net>, Dario Binacchi <dario.binacchi@amarulasolutions.com>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, dl-linux-imx
-	<linux-imx@nxp.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [GIT PULL] clk: imx: Updates for v6.16
-Thread-Topic: [GIT PULL] clk: imx: Updates for v6.16
-Thread-Index: AQHbv0yLszFJyZJDU0KnkvYkCs4ZB7PKHc9Q
-Date: Fri, 9 May 2025 10:40:33 +0000
-Message-ID:
- <PAXPR04MB8459F66A8036C86F124E4E5B888AA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20250507123528.585447-1-abel.vesa@linaro.org>
-In-Reply-To: <20250507123528.585447-1-abel.vesa@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI2PR04MB10571:EE_
-x-ms-office365-filtering-correlation-id: 1cb6370a-47f6-476b-9b24-08dd8ee5ed1b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?QYlRgQa9gVpBcO8mxNamJlbGqGvJkaXbryuxUyASGVrTS0rVeLvQyEEWOd9e?=
- =?us-ascii?Q?SAiZ4uxkTvh8gdnGRabR1m8fc5kN1OHrKjJKZCUwBbAaK8p+NjZFoG4bd1IR?=
- =?us-ascii?Q?JaW/wnoZoKiu3XlRUN++muFUTCVRZBXeoVZvH9SEtDTsA/4HKrG++n/u2xGg?=
- =?us-ascii?Q?SH/Kst4nlZ4XpWriYlBgW2SnedLldstlZ5ylmqvwd9YVw0r7ZC56WJ7UZ++M?=
- =?us-ascii?Q?2OgulSqxGuCSku35+EdCwSFwcxIVq79RIdJBJFPOSoP+dbhPI/Dmtpcf6Vas?=
- =?us-ascii?Q?UqGgro0AsLMoXan+hlb6VBkoB4mko2xAtOh9AQq9RBMxZIzp01V1ZNxJK+cR?=
- =?us-ascii?Q?U9ja0A/36Hlk/o2kDR9la8Ct33/3/9ooHz2GPOAkPI6xXBSTR/FQZ0b50If/?=
- =?us-ascii?Q?tEpnkZPxM24LMu5CGP+EzksGTmpqPTg9W/y3zGMEz2g71AghCtkzt7dqYsHB?=
- =?us-ascii?Q?tO+hjkET/2u0lxJA4t/KW8sX5JTMgCLl4W0KKtqSIRHSEqaiHSeZTkWXFlKX?=
- =?us-ascii?Q?6FhntOFvpeimT1gdILXcQ5XMy5/hja0vrxWchCvbU/Ps6Cu7ZDKOCwsQUhUF?=
- =?us-ascii?Q?4zJWeGqhLCXJ6OtL4w+bQtPzWvkhIlev8GxuIT+jmIkMEjfKCVVIoK6y81es?=
- =?us-ascii?Q?DojgAru8tza0TkZH/bXakQBwayFOrxvKCyskvS3JqcwgmDzMhMmfrMkSJbe9?=
- =?us-ascii?Q?SAxoEJHPu0K78E+rYt9abcEx/g+Wa0lF5oP6Dkxvh6fy8y4eC/94pdnBxEZ1?=
- =?us-ascii?Q?NqazhZJJeXaiDWd3ydOqx5khjTNq866160AK96BTLUaC17yyOXeg7r+Z8bPh?=
- =?us-ascii?Q?lWkIn7/01FbB7SgX7FHPNcasc3dbZECC49jDW7ICUnf2XYoqbTOpPfy14Wzc?=
- =?us-ascii?Q?lx+UJUtwpPDwYN3+4dTmNJvfUyBWFzq4C2ZajmBJSQ9st9gWQvne5UZ8g4b6?=
- =?us-ascii?Q?ciZ32Wfv6astNTfQCSrWAZZgpC7FUPdu2wKXYtqyvy3e6cMcDa3KxyuRzxGV?=
- =?us-ascii?Q?IT05w8I1czhDPGtp1mpcJHeM1GbUoaucPF30jtGxEeJsIwAZyFhQaNOL4xDy?=
- =?us-ascii?Q?LRCBvUrle0zN2fxx97I9HMukCddX/6+MkXWJlV/aE/GKhqKk6DxCYCNIC4Dl?=
- =?us-ascii?Q?UMu9nhKY1XncYkgOyRT8umW/mWpWtNTLoZjJcpWckKZU1bgQ4wTikXI3g6PJ?=
- =?us-ascii?Q?axlJNSkGvWhXXzvZzBV1x3DXtnXcd+2ITNODPt/1Bfxpv4BjpDLcgPLFdmy7?=
- =?us-ascii?Q?73D9WgKhDpcg+mcbfoUu8QOf+kloClyqixEPRyYsa8MLrPCHt4cjgMUtI0N5?=
- =?us-ascii?Q?zLFMsa1h1NbSL2McJHBQ/MTmIV8mSdMFKadM76iA8ABAsL3aMqSGgB0SGL45?=
- =?us-ascii?Q?aMQOmXJt3R8wyOSpfg+BVh2yw6v9rab/MCVc50/vjhOHN8k39z4ZdHIrHq2P?=
- =?us-ascii?Q?FgiO5KxQYGZ0ksk9aHHbSJ3QdXCaVuRGHyt2od8lEp0AglA+FfU0qMdzUjGh?=
- =?us-ascii?Q?5fKpLHKi5Kh+Npo=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?nnWTJsCA2JR33c6TXa6BPHlQ+6TRM+yuXiUD1wzQ5MgiyyfNHtsoTxK1ysel?=
- =?us-ascii?Q?R2oypRJV0xBNuNW+DJnubpfuKe30wPIQjcIHAqeRyQBZexs/fWJd1eWDhDXi?=
- =?us-ascii?Q?joXQmpH+op6LAeq5g56DckSbQFiHipEdI1KuNDgvwN45ZcbFG3uonlrRtXxU?=
- =?us-ascii?Q?Y9bVCO5IB3aJHBpNLvVZ/2FXUv0wioCcAp0Dzd73U35rboR7ScsROijFUK+J?=
- =?us-ascii?Q?qNMGE3l92aEDh1ngcmT3/mxZO/55fSXpLPj3+wmFlEgxXfdEwTd7COiev4zD?=
- =?us-ascii?Q?hG/XQqSgtA+/36sY1wQwDAQLVDO4ip9G+jWcSr5Eq9z6Hly2+7OP8pS/y0BA?=
- =?us-ascii?Q?zTBtV8eUDztbKw3nvx18nMiMRJo14c6Tb7sUNJLgLVqwi5Ope/0t79pIe1s0?=
- =?us-ascii?Q?vk+1/yw6IHKdqHR3st695cVWy0oL/93r47vEI+xsatGCLu2c25XJz8yVWJL/?=
- =?us-ascii?Q?oP70Sekj3W4ks42QwtcVSVhjOZm0B0ZPdMu6YfLbHFE+6j2p1f4AksWHPiZE?=
- =?us-ascii?Q?2V0ZUdPHeokJHeH/QaD97mbHpuxmIgwtkF0aNOl2/be9J6wF0eqo1sIFXc0t?=
- =?us-ascii?Q?4jplEglL3sTH3W93sHNb3k5d5N8770epOVOYF0m+Py3xGwwE9+6YhB1MOr5H?=
- =?us-ascii?Q?9B7uirIj29d8++tCzDEbA+FC5qaOlWsdB6QFj7hMiXsX30Mf2Gd5oxC4ckQ8?=
- =?us-ascii?Q?/ao97pJ/rSyc3qDvIfsYakPR5bZ+NPdwPSIkFuwvFGNUfh3OrPjDNnNhAwWc?=
- =?us-ascii?Q?tWLv+OD2I2DGwtjn26DzTzL/pXFIyBEtyGmd9KIRRvijM7xjcpzA9ubvPAuw?=
- =?us-ascii?Q?DXy2CEIXEhGjlWeET9qlFysvOv87+jiRc8acRyu3AmAjomeRxgJeCTuH8QNA?=
- =?us-ascii?Q?TU8CF38cPL5nQZmR/Creoeh3TyEGcLrmKab/mlf9rjWiWDOPFh4WVYLJ8Zui?=
- =?us-ascii?Q?4GQ+RZMYCUilhVUBSco3uYk5fCsMd9mTdhCTf3tIWTJTn+OaefRVP7nye+rT?=
- =?us-ascii?Q?lhJW9rlXqql2N3lZA7jgJyp7u2DotAaNEcXOIvJAp/p8l4n/Y70V6aJ/GlrC?=
- =?us-ascii?Q?MUejAI38KTw2MURTqNBmnCQcTzqRXz8VZxYo9K51SBAWRcZhnjhCgpqb7Wxm?=
- =?us-ascii?Q?p4g4TWHUgjI76hu9PTprjM+0h5OHB4x8c5OMFQELzhPX4XuPA6OrROWJR+nt?=
- =?us-ascii?Q?vPJkuPtp+a03vegQfwKwB5son7pBh+5HCUO4s65VmIKysWs+WoIsc2H5TJXv?=
- =?us-ascii?Q?XHOwpc18n91ZL9ROcEbEUURaCyUu3ay6YpF0eXHebiJ/fZf9fHAfZiBGc7je?=
- =?us-ascii?Q?5lf84U3lCT0Wo6Id1n4oQCwkyJyi+xKJ64DWjOGDZRaARPVfMxM57TSV4muG?=
- =?us-ascii?Q?2c7IzPi7yFkp5ck8MxNOkw6sgwQf5aqopJmsXv2XdUS9B93mSmSMpNKljPDX?=
- =?us-ascii?Q?7EXbM/2sMtk3tUx/Alo/wCfax9zJq6/oUuot/1IZ2ULTWq29HFon4ND/GK1L?=
- =?us-ascii?Q?HtHS9i7nxhK+0m+zcdldy3l8kLTOMPuVXROBYpHB3dN4pjYdSBZ2vrhrTO4z?=
- =?us-ascii?Q?7M/fnv4vuPt3neFcivg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4A617BCE;
+	Fri,  9 May 2025 10:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746787386; cv=none; b=PM7Bs8YB+NVBOLdRiHTS63qliDCka4TNqYUhPMXQttbcAgddnIPRqC+h+Bk1GBrlwJWQGqjxyoMlt5g+JXrmQYq8E4a5ueAFysJ0qvFDZ7Mnpx3sRhZ4hm1Rid/DgqxSi7Xt+lVJbQkEt8v7tQiIQTA9Q4nNCP8s/zf7ZR3BKBc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746787386; c=relaxed/simple;
+	bh=ahUuwjqGna+vJo0oCKdBCeSVplQwA69T4/kkfII8pms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5E0JxJaI/IrOBrgQxhXDr7jvFXLbtXXXVAAPZWLVIZh1BwK9E4U6P3Zvr+Rwxbpq+kPAjI/cPXKNcrZsrHrYUvXYTTVM1bRC1Z3stT5H5dVp6oEHd8PU2qTSM0UAeOKjDN3VPTb0AuUvrNuzQ0uy4UypByTXGlOnYCBObitxvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jFsaMByV; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746787385; x=1778323385;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ahUuwjqGna+vJo0oCKdBCeSVplQwA69T4/kkfII8pms=;
+  b=jFsaMByVmooNQjZ700lTpeu/B8E8Ggt4oJIvPlCS4Ei6uxUP3k2qPNPs
+   dyZda5U8JOZLmcEd3/2QsqRU7McWIEl11pI7FVkTIIXecxaeezCgsbSDK
+   57Zg/8nFdTZPiStrc2tOtDLJ+P8tNyiOP672h2gDpTd8gCcPx/foPItaq
+   P8JcOtKFzU3ua50dVOxnv6/Em6mTHaYOtRlDKkun4jVdIIdN7CYA6tjVM
+   hgpUBbHU3q7/7/I/yVp76l9TkT7JMSqwKC5EAvIGKSme+fMAqNCClRJmG
+   oIeLIVKxNEujbuAhb6NS39DWhgGv6QN23L9fvKZnmbsMVf/WtPzeteXMx
+   w==;
+X-CSE-ConnectionGUID: BO2S6kwDRDSVtuadEO96+Q==
+X-CSE-MsgGUID: ojt0IRDARqKJDaMzP8KSTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48524514"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="48524514"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 03:43:04 -0700
+X-CSE-ConnectionGUID: hIbvSYa8Q6a0Ki5hm2amaA==
+X-CSE-MsgGUID: UUXzAwMPTbeMMK3KQMIW6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="136288448"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 09 May 2025 03:43:00 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDLBx-000BxX-2k;
+	Fri, 09 May 2025 10:42:57 +0000
+Date: Fri, 9 May 2025 18:42:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zongmin Zhou <min_halo@163.com>, gregkh@linuxfoundation.org,
+	rafael@kernel.org, dakr@kernel.org, markgross@kernel.org,
+	arnd@arndb.de, eric.piel@tremplin-utc.net,
+	valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zongmin Zhou <zhouzongmin@kylinos.cn>
+Subject: Re: [PATCH 2/2] usbip: convert to use faux_device
+Message-ID: <202505091836.sxOEZiIt-lkp@intel.com>
+References: <2a327b520760271471717fff9b222cdc34967489.1746662386.git.zhouzongmin@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cb6370a-47f6-476b-9b24-08dd8ee5ed1b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2025 10:40:33.2668
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oZIAZ3YjiT20J1LWlzx7BjmLnQnvCQiFjKLOyKMxh623dplQE3DExpkK5OKxPxl+6BTyDeInkagKkuOK3xAZvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10571
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a327b520760271471717fff9b222cdc34967489.1746662386.git.zhouzongmin@kylinos.cn>
 
-Hi Abel,
+Hi Zongmin,
 
-> Subject: [GIT PULL] clk: imx: Updates for v6.16
->=20
-> The following changes since commit
-> 0af2f6be1b4281385b618cb86ad946eded089ac8:
->=20
->   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/
-> tags/clk-imx-6.16
->=20
-> for you to fetch changes up to
-> 6a55647af3334f1d935ece67de4a838a864b53fc:
->=20
->   dt-bindings: clock: imx8m-clock: add PLLs (2025-05-05 10:48:56
-> +0300)
->=20
-> ----------------------------------------------------------------
-> i.MX clock changes for 6.16
->=20
-> - Add video PLL clocks to both i.MX8MM and i.MX8MP
->   while dropping the numeral suffix.
-> - Add imx_anatop_get_clk_hw helper
-> - Add anatop clock providers for i.MX8M[MNP]
-> - Drop ccm_ prefix from base in i.MX8MP clock provider
-> - Document bindings for PLLs in imx8m-clock schema
->=20
-> ----------------------------------------------------------------
-> Dario Binacchi (11):
->       dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
->       clk: imx8mm: rename video_pll1 to video_pll
->       dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
->       clk: imx8mp: rename video_pll1 to video_pll
->       dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
->       clk: imx: add hw API imx_anatop_get_clk_hw
->       clk: imx: add support for i.MX8MM anatop clock driver
->       clk: imx: add support for i.MX8MN anatop clock driver
->       clk: imx: add support for i.MX8MP anatop clock driver
->       clk: imx8mp: rename ccm_base to base
->       dt-bindings: clock: imx8m-clock: add PLLs
+kernel test robot noticed the following build warnings:
 
-Sorry to raise here.
+[auto build test WARNING on usb/usb-testing]
+[also build test WARNING on usb/usb-next usb/usb-linus driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.15-rc5 next-20250508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Not sure whether Shawn will pick the DT part, otherwise
-there will be booting break as Mark replied.
+url:    https://github.com/intel-lab-lkp/linux/commits/Zongmin-Zhou/driver-core-add-device-s-platform_data-set-for-faux-device/20250508-171441
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/2a327b520760271471717fff9b222cdc34967489.1746662386.git.zhouzongmin%40kylinos.cn
+patch subject: [PATCH 2/2] usbip: convert to use faux_device
+config: x86_64-randconfig-002-20250509 (https://download.01.org/0day-ci/archive/20250509/202505091836.sxOEZiIt-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505091836.sxOEZiIt-lkp@intel.com/reproduce)
 
-If DT part not goes in 6.16, this PR should be delayed or
-redo the patchset to support old DTs to keep backwards
-compatibility supported.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505091836.sxOEZiIt-lkp@intel.com/
 
-Regards,
-Peng
+All warnings (new ones prefixed by >>):
 
->=20
->  .../bindings/clock/fsl,imx8m-anatop.yaml           |  53 +-
->  .../devicetree/bindings/clock/imx8m-clock.yaml     |  27 +-
->  drivers/clk/imx/Makefile                           |   6 +-
->  drivers/clk/imx/clk-imx8mm-anatop.c                | 287 +++++++++
->  drivers/clk/imx/clk-imx8mm.c                       | 262 ++++----
->  drivers/clk/imx/clk-imx8mn-anatop.c                | 283 +++++++++
->  drivers/clk/imx/clk-imx8mn.c                       | 183 +++---
->  drivers/clk/imx/clk-imx8mp-anatop.c                | 306 ++++++++++
->  drivers/clk/imx/clk-imx8mp.c                       | 672 ++++++++++-----=
-------
->  drivers/clk/imx/clk.c                              |  15 +
->  drivers/clk/imx/clk.h                              |   2 +
->  include/dt-bindings/clock/imx8mm-clock.h           |  76 ++-
->  include/dt-bindings/clock/imx8mn-clock.h           |  64 ++
->  include/dt-bindings/clock/imx8mp-clock.h           |  80 ++-
->  14 files changed, 1711 insertions(+), 605 deletions(-)  create mode
-> 100644 drivers/clk/imx/clk-imx8mm-anatop.c
->  create mode 100644 drivers/clk/imx/clk-imx8mn-anatop.c
->  create mode 100644 drivers/clk/imx/clk-imx8mp-anatop.c
+>> drivers/usb/usbip/vhci_hcd.c:1531:9: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+    1531 |         return ret;
+         |                ^~~
+   drivers/usb/usbip/vhci_hcd.c:1501:12: note: initialize the variable 'ret' to silence this warning
+    1501 |         int i, ret;
+         |                   ^
+         |                    = 0
+   drivers/usb/usbip/vhci_hcd.c:1418:12: warning: unused function 'vhci_hcd_suspend' [-Wunused-function]
+    1418 | static int vhci_hcd_suspend(struct faux_device *fdev, pm_message_t state)
+         |            ^~~~~~~~~~~~~~~~
+   drivers/usb/usbip/vhci_hcd.c:1462:12: warning: unused function 'vhci_hcd_resume' [-Wunused-function]
+    1462 | static int vhci_hcd_resume(struct faux_device *fdev)
+         |            ^~~~~~~~~~~~~~~
+   3 warnings generated.
+
+
+vim +/ret +1531 drivers/usb/usbip/vhci_hcd.c
+
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1498  
+0392bbb6f6af31 drivers/staging/usbip/vhci_hcd.c matt mooney        2011-05-19  1499  static int __init vhci_hcd_init(void)
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1500  {
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1501  	int i, ret;
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1502  
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1503  	if (usb_disabled())
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1504  		return -ENODEV;
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1505  
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1506  	if (vhci_num_controllers < 1)
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1507  		vhci_num_controllers = 1;
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1508  
+89a73d281fa4f5 drivers/usb/usbip/vhci_hcd.c     Yuyang Du          2017-06-08  1509  	vhcis = kcalloc(vhci_num_controllers, sizeof(struct vhci), GFP_KERNEL);
+89a73d281fa4f5 drivers/usb/usbip/vhci_hcd.c     Yuyang Du          2017-06-08  1510  	if (vhcis == NULL)
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1511  		return -ENOMEM;
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1512  
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1513  	for (i = 0; i < vhci_num_controllers; i++) {
+17d6b82d2d6d46 drivers/usb/usbip/vhci_hcd.c     Hongren Zheng      2023-10-14  1514  		void *vhci = &vhcis[i];
+1bcae4465d2818 drivers/usb/usbip/vhci_hcd.c     Zongmin Zhou       2025-05-08  1515  		char vhci_name[16];
+1bcae4465d2818 drivers/usb/usbip/vhci_hcd.c     Zongmin Zhou       2025-05-08  1516  
+1bcae4465d2818 drivers/usb/usbip/vhci_hcd.c     Zongmin Zhou       2025-05-08  1517  		snprintf(vhci_name, 16, "%s.%d", driver_name, i);
+b8aaf639b403f0 drivers/usb/usbip/vhci_hcd.c     Andy Shevchenko    2023-10-06  1518  
+1bcae4465d2818 drivers/usb/usbip/vhci_hcd.c     Zongmin Zhou       2025-05-08  1519  		vhcis[i].fdev = faux_device_create_with_groups(vhci_name, NULL, &vhci_driver, NULL, vhci);
+1bcae4465d2818 drivers/usb/usbip/vhci_hcd.c     Zongmin Zhou       2025-05-08  1520  		if (!vhcis[i].fdev) {
+b8aaf639b403f0 drivers/usb/usbip/vhci_hcd.c     Andy Shevchenko    2023-10-06  1521  			while (i--)
+1bcae4465d2818 drivers/usb/usbip/vhci_hcd.c     Zongmin Zhou       2025-05-08  1522  				faux_device_destroy(vhcis[i].fdev);
+dff3565b8e1c0b drivers/usb/usbip/vhci_hcd.c     Yuyang Du          2017-06-08  1523  			goto err_add_hcd;
+dff3565b8e1c0b drivers/usb/usbip/vhci_hcd.c     Yuyang Du          2017-06-08  1524  		}
+0775a9cbc694e8 drivers/usb/usbip/vhci_hcd.c     Nobuo Iwata        2016-06-13  1525  	}
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1526  
+b8aaf639b403f0 drivers/usb/usbip/vhci_hcd.c     Andy Shevchenko    2023-10-06  1527  	return 0;
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1528  
+dff3565b8e1c0b drivers/usb/usbip/vhci_hcd.c     Yuyang Du          2017-06-08  1529  err_add_hcd:
+89a73d281fa4f5 drivers/usb/usbip/vhci_hcd.c     Yuyang Du          2017-06-08  1530  	kfree(vhcis);
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09 @1531  	return ret;
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1532  }
+04679b3489e048 drivers/staging/usbip/vhci_hcd.c Takahiro Hirofuchi 2008-07-09  1533  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
