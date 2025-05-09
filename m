@@ -1,287 +1,241 @@
-Return-Path: <linux-kernel+bounces-641504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48175AB12AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AB4AB12B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 027A67BBFA8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2B81C437C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60EC293720;
-	Fri,  9 May 2025 11:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5472900B0;
+	Fri,  9 May 2025 11:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rRT6by3M"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pCXCQn0l"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196F128FAB1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746791507; cv=none; b=TTZe5smBBOKXYDPIDPCVAkZ1OgZU6FciRkQirw+PxYXXXaDsi83VIQ9ooHGoE0sdsjEISrdHtN91iOchBc4SwLZGyairQvsYQr7cUFOrRfH2MiDseapn8iJC6RfRejFW3yk4EthbVzA9EEnIhJJr6xmdgaLS0uRYcok0k/TogPw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746791507; c=relaxed/simple;
-	bh=94hSLVwahZL6uSGp/GCIw7ak3VmONi+Q3s+hjbITQj8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HNuT9k37k8n9CSdrD5U3F82KwDfpiXo2yAfa34HAiza3fEA8+/qNkeGh0WQRb4nqNaTaON8vtPFXt3XyOVkPzucoic3fnJi0oTsPa3+IOxJuirn0vJoCgkgJhZqwpL8ldIltj2zH9FmKcLGfGPdn5UL+A+UhnP5p2RIsCtx4zfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rRT6by3M; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5fc7edf00b2so2533324a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746791500; x=1747396300; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HcCUAVth4/4X0ivCD1jla215xTKz2P8JDpUcQkYuzX4=;
-        b=rRT6by3MuduwkSN/H4fHg3R3x+qWcNizG+URaLmW2ISNy7GYhh1fpzPFZ2G9ffPYyG
-         izXnmui2iSTjI7TCX9BMj3pUeYywAHM/XTvh6qShsaZv7ZCfu5a9LmdeEdkWdQqHieBL
-         885NsSYTtAVhqY4H/WcTuZLEhEu2Hs8NH69GoHtqgg9WVluFkkvlEjNo8US434zLjjE3
-         9b9lUJByaoj/bm96D6m7jyu11BYEwGfxmkreqcvheUE1HT6/3KG89LlLTNICJ9ZSBMup
-         vyXtV3ld8DkwKMs3j1IEaG9tbV8pTI6UDmLVZzJcr6fAofr+FdURv02Ky4LCzDjHihrF
-         rgJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746791500; x=1747396300;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HcCUAVth4/4X0ivCD1jla215xTKz2P8JDpUcQkYuzX4=;
-        b=cktRnXJSdCFIo2TnBkd7ZpH19PVn7/73uKnOCbph98McZh6IkExB4Stze/7lEwoBEP
-         2U7JySvRqYLPyi1LLjlXGWVwFuC4eGhXILYRKDdgd1Nqx7F03NHgMwrgTwQKR3tAnG3q
-         Zg8IZwy48pAl0CMR6CLazKM6Y10hX/fgFQuSfF3ShMB1Jz6SB+X93mp8BOxtgUY06P6y
-         f6FRtCyDQoeKZwHyPyfMwX9fo7r3JE7yIO6pomFCBVG1aYcLBDzJysNIP3zxxioi2x8N
-         LIuMVhr6GHzsW8YWxoRobmFdnuVhyQaGSQ1oQUFsd9q9lhnGdxm2pQyHgPS/7qczRNx6
-         KwaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhpfyANPuLvGkG2532FHGJ2v/g4WdNpSOB/DeXQj9VqoGP6Bfh4pYdIy35U8ccYm8SOoNRqfZhWj6oS7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNTk84x9EgNQ+tu2JTM3Auhi15w2KtHKyqMHEq7iP+vzUh4dG/
-	54ODULgKAymjXuhrtZeyUh9m9ArPtFUsc2E0CYGwSV78XR4HEsnR5/JJAODPfAs=
-X-Gm-Gg: ASbGncv0KJa968JqLDFAC5fB0RA5VILMpeXLkKt+Lb/oLvpkmlKyFDesde/GqCOKyln
-	VuhISCVn0ZW50YyOGbWRGCR4sY5UkyRbm0QuUXxK1cbTkDIlPdzh2lHRG0v3n2b0UO+8/0k1pQl
-	IbqjxEOHTLkjr73KbmCLxdBoNsBU6R4iB3VgiRlCRWBpWvUgxnqUTpXBI7iKHNmzIXcMIqs1tsH
-	TO3C072vM52+yNsyNzq+HqgVkrYXrfuKvHdKJ7U+4BGN6HtXfVpwT6XAHqUlQ5I5xuLUexX3VXA
-	xQgYy33cUSshOzdZ+JTIoFQZvhgsOkSRnOBa2a+aJGMwyGkO
-X-Google-Smtp-Source: AGHT+IFrGDRXG6FAVEd4uSESGaBsfaTJHvGQG8PV98kRwmaQFMuRJod0R5mnXx5DDPecf/kyISoRWw==
-X-Received: by 2002:a17:907:97d2:b0:ad1:77aa:503 with SMTP id a640c23a62f3a-ad219124207mr305429066b.36.1746791500229;
-        Fri, 09 May 2025 04:51:40 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bdd63sm138709266b.154.2025.05.09.04.51.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 04:51:39 -0700 (PDT)
-Message-ID: <95f5923f-7a8f-4947-b588-419525930bcb@tuxon.dev>
-Date: Fri, 9 May 2025 14:51:38 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CAE28FABC;
+	Fri,  9 May 2025 11:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746791553; cv=fail; b=YG64B+scdhUB0m/9CjNC96+x1h8oQo/n6qA4YlYPb5oICAJZhgaFmHeivI2u+ACTaAqjeRJrgNSX7VGGldgdt7HwT78zaJM6VoQdvDefEzQGA71Ghk8eymCdsq8T3Yoc5WXEwdClDjxuzYqa9XhvJpi+AC8h27WaqcicytFcJuI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746791553; c=relaxed/simple;
+	bh=AUX9CwqEms0/jGngPUIP0Z6HRajhxb0z9d+sE5agwgc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hYhJJ0lb7R0ActkYZE9XQPqguWJDZVOpiJstNzb14RLe1hIKhDL8rIIB5asGjeXH1wtkNf6cEO0HqP1N0JVOXjNzftVmq2+SGTkzpP9JwungaU7M7iHSX54gRR9uMMDWzoDfSeZuPE9dVLPVFbZCdVozO8+B2XZGNAewV0S+tOc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pCXCQn0l; arc=fail smtp.client-ip=40.107.220.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rGRiq0UptcwKAtHGqb9vYfsWPsnLMDOCyAvEHKQrTGaMkK7aC4gTbN7Hjqp1nry4Z/TX6Uy+oKAhRs61FS6oGvQw3KfcliGsRjkInwkRLXDNQILHm2gHMdnTM0x19v94B/gUmnP+MzaANBzGkXowCZVQpmvLhlqtvDeZIV4d0sD+5kanPLZrxj6WAZxlIZusCCkW8kg55bg0jROcxmZWSMCg61L3WlPwfOWQhk5s/NTa/N7USdFqlXsFlquzwFgfIa6pnO4rxO9MILeLfGZKTrVS2+B0KEOmykTgY5OHJzCfLqPrHRrOZeMxgg5VLOSrdAzC4BE2Wm4oHMX60O/wrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CqFfW66VWx4jY4GXqEE775um6+UKni7fSgS6G1Dc+dE=;
+ b=uRu4xoA4lNoYfce3xkyKPibjEuhEwxbVa+h3Pd6q0nO+JuJGU7PRgwW4fRb2bgI7ykJVqHTmOFGSpeUd6T86PqKWhLhZIPjZJ/T2MsghNPcUedHS9u74D121cu3g0Sgop9qf1XdQRJSq00xAxdWnzDbjfxP0CG0p6sEcXCpEw/2K55jr7CHU06Kahu3SpLSdeulUMXuxq1ewCLAADfn+KT9sJGxgE7Tl5JaHs5JJUXKd7fB/t3YPaZl1v0PF+iiOj4mw0D77xoftRnptFdRcDhSglGlP5o71gHs2esCAS8c3sEG4Yx+T2eB/k+5wl3TBjWH9oVjtKYdd2TeAt0Xm3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CqFfW66VWx4jY4GXqEE775um6+UKni7fSgS6G1Dc+dE=;
+ b=pCXCQn0lbmXDLCcHEYmNxg2RG87Rj0yQI7/tBM1XLUHO8ENR0LOtx/rT3V9Cb7qcZWGLZG+fV7eLkM9rbrtC52qPpLkD0bAw8FGYtU3PRSx+k+8OWEMJ68Y64MS0YOPtqGuQfM20nHoEbIVtF4Vnzv1J8uYAvPcJpt+n9GHcJ9A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ PH7PR12MB5853.namprd12.prod.outlook.com (2603:10b6:510:1d4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
+ 2025 11:52:29 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8722.020; Fri, 9 May 2025
+ 11:52:29 +0000
+Message-ID: <0bd5614d-81f7-4b06-9dc0-c757e6a401bf@amd.com>
+Date: Fri, 9 May 2025 17:22:13 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/23] iommufd/viommu: Add IOMMUFD_CMD_VQUEUE_ALLOC
+ ioctl
+To: Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+ bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+ peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+ praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
+ alok.a.tiwari@oracle.com,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+References: <cover.1746139811.git.nicolinc@nvidia.com>
+ <1ef2e242ee1d844f823581a5365823d78c67ec6a.1746139811.git.nicolinc@nvidia.com>
+ <6ffe5249-b429-435e-a780-ee90aeb3f0da@amd.com>
+ <20250506120114.GV2260709@nvidia.com>
+ <eb0d3629-8663-45e9-b929-0c6edff31291@amd.com>
+ <20250507123103.GC90261@nvidia.com>
+ <2356ff85-6651-47d9-90c7-f8cbf43b053b@amd.com> <aBxHgf4llBd7vA5w@nvidia.com>
+ <20250508121456.GB5657@nvidia.com> <aBzl+mn+N4bnUsPN@nvidia.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <aBzl+mn+N4bnUsPN@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0111.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:27::26) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: platform: Use devres group to free driver
- probe resources
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Jonathan Cameron <jic23@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, dakr@kernel.org,
- ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- geert@linux-m68k.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-References: <20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com>
- <2025021539-untrained-prompter-a48f@gregkh>
- <4bf01946-90e3-4169-91fa-10d9f90310e9@tuxon.dev>
- <8d83ea72-bb81-4c63-bf69-28cf5848ae20@tuxon.dev>
- <20250305140309.744866b2@jic23-huawei> <Z8k8lDxA53gUJa0n@google.com>
- <f74085be-7b14-4551-a0a7-779318a5dc70@tuxon.dev>
- <20250330163129.02f24afb@jic23-huawei>
- <5bca6dfd-fe03-4c44-acf4-a51673124338@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <5bca6dfd-fe03-4c44-acf4-a51673124338@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|PH7PR12MB5853:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a211b1d-fc67-4d22-626d-08dd8eeff935
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTJ5b2Z5cVU1V1Z3SGhsQmVMZmZOWVgvN2VBTnQ1alU5WjVwdExqVEtJYnRw?=
+ =?utf-8?B?cjluRjJXejRpaUZwL09ldFJkQUFJdmhBT1hZclZXcFczYVN5bXpzRjBzUS9r?=
+ =?utf-8?B?d2RDMENuRWl6S2V2Umk5MzJqT042QkhVWnhWUXlpcGduOHYrUUEvSW1vZGpS?=
+ =?utf-8?B?YnhXMVRsY0tXZjNiMjE5alZuMEw0WUtOeGx5S0RMcGszbjVOcFEzOVVrSHQx?=
+ =?utf-8?B?OVlpNElZZ3RBa1YrUVU3QzVNYVloeTYxV1VFYnBQUit3RWZOZElUcDlHNUFm?=
+ =?utf-8?B?OEo1emZRc0JEejlvV1VFK2FCVTI4VHdudm5OdUU2Nm5aWkxQeFE4Ym41eHZi?=
+ =?utf-8?B?NUJlRDJqOFhPMnptdzdWb2dTbWJvbTU3SjBzamJqbUcwVzBramdaNUVSVkdM?=
+ =?utf-8?B?dytWNWl6Rm9tNXVVVldETXZ6enlpV04yQll3c2xLMGVMK05FTi9VQVlTSEpI?=
+ =?utf-8?B?RnZtU21zdWd4NVlJNWVyWDJxZDdhdHJndSsrNFVrQks2bWk3WkFEajFzbEVN?=
+ =?utf-8?B?cGZJMmJocWh3SkZ2M3UzR0FVUzZheGxURDV4VHU0S0dQazh6KytPWTBoaCtl?=
+ =?utf-8?B?bHgxeW8wOEkrQStLWFA3SWIxR0JvWlpLa3psalBQZ2J6em1hK2JFWWtSTklI?=
+ =?utf-8?B?VmE4OFJtUldFV2d0bkZwZndDVkY4K05DKzcxejhOTHFqNXR6Tk8rVklIR1BJ?=
+ =?utf-8?B?bXNmaUxxcTlaaTBPUHU4dFI5TDZ2UUplZmRhN3BmTTJ2Wkh6bEZ2VmxoeGRF?=
+ =?utf-8?B?V3p6SWFEalVNTGtRUjJaMytTYU5ZWVRxeFFvRStjK0IrTDRwbVhHRDhpK2dX?=
+ =?utf-8?B?WnZZS012WDd3emVFZmowOThzSTBWKy9lNnB4bTJnSlJqaE0vQnpMWTN4OXda?=
+ =?utf-8?B?eC9jQVRMYnRoNTNPWEl4T2xtY2c4Y0dKSy8rdDdDRDdRM3VaaDJaL1BTR1NQ?=
+ =?utf-8?B?alJFOVpYOGNvL0F1aXplSUZKWGxUeVloc2hvRDVPWEpDaURaanNKZzRLbVpC?=
+ =?utf-8?B?dSt5ck12S3dxaWRtSk1RYnkxcytOT00xWmlyUnZQRzQ2S2oxOWt3QXVsV0ZP?=
+ =?utf-8?B?SGVQdExxZmxKRUcwcW82dFk5KzZieEUzeEVPRmFiM2pnVkpsVFkvYXkyRDFj?=
+ =?utf-8?B?bVlPUEtBQjd3RCtHNTVna00yRWdiMmJHeFB2b2g4alY5TmZvZjgrbUE0Vi9m?=
+ =?utf-8?B?UEJYRUZGZVROM3NJc2VueHFmU05BRTN3SFNWeWxyUnJ4cVdpRkphVkgwZWl1?=
+ =?utf-8?B?a09XSUplT1FKdnRFakp2d0VDanNaRTQyc3lrZTAzVzBUUDZKbmJ5VlMvdTVT?=
+ =?utf-8?B?MUVDWjZJWUhITnBsVG5lcCtiR3RZZlUvZjBTUEI2R1E1eW1JNVUvdHJBcXY4?=
+ =?utf-8?B?NElvNEJYcmhJS2JGbjZVZlRDWk13TlA3bm05UlpHL2dPRjBVTTROcGNpRytz?=
+ =?utf-8?B?STlUeUo0VnBBbHkwbnVrVGw1WS91clBkMmZDTEtDZkgzc3ZxRGU3bzVleWF4?=
+ =?utf-8?B?VkhDTUJFcGpaRFEvcTluUVVoZXR3T0xkMkhLaTdmcE9lMi8wdkpaZTAzdGRw?=
+ =?utf-8?B?RWJkaXZqOFdBcEhGSmRFYU0ya2E3UUh6NGtrbnl1dEpDUGoyQ0R5VEpTaDFW?=
+ =?utf-8?B?aW4vYUVRb0YrOEpVSU1yVWlacVNhYkE1d0Y5aUVsQWNFY1JFcVZUYUpLNXND?=
+ =?utf-8?B?VzZnWlF6cnlxSytLNUlFc1RsazBUTk1pc0liRFFDNDFnS1l1K0Y1K0RUQnlP?=
+ =?utf-8?B?VE5yVFF5dUt4WUdhb1ExSXBzejJpbFlRSkZQMG1oVlRWc3UvaG1TRGtoUG1z?=
+ =?utf-8?B?Um94NFNvcmJ5bEpaNk1ENHMwY1ZpUkpVOVhJcVRIV2FtSm12THNyUHN3Z0ps?=
+ =?utf-8?B?TDJ1czAyb2pWVjF4VVEwSnQyeFY5NHlSc1BXcitSdUxNcUQyQVBMeEU5b3Rq?=
+ =?utf-8?Q?G869z8YXaDo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L3BXRkhWK04vb2hFVHN3TFVXano2OXpURTIwUUZnZTV5cFRuemJnZ2NIQmhj?=
+ =?utf-8?B?dHF1NkFVTm40V2VYaWhQNzVqalQ2UXF2N3dOb2lraUZsS28yQnBhcDR1cnVV?=
+ =?utf-8?B?dmdTZVJLUnpkbjNuczFYN1BjU1pTQWorQnAzMytubnpjVUFvaTJnYXQyelkr?=
+ =?utf-8?B?bllZdFI4MUZDdGt1d1d6aGt3ZUd0MWtFa2JCbzF0bXBKZGpTdjI5Y1dmMitL?=
+ =?utf-8?B?ZmVOUkVqdnNqSjYzWkczc3ZWemtQcU5GaGV2dG85Y3BLS3ovcU9QZmIxU3VH?=
+ =?utf-8?B?ZVlhZmdCK0lzOERmNXdvVnZQRUQ0RDZwZk9aVnJFaHNMaTFsZERDVHM2SCtE?=
+ =?utf-8?B?RVNHaC9VK3JnckxoREJHRC9xWG1SUno3ME1OMXhDNzk5enVsbGJHMVAxc1hm?=
+ =?utf-8?B?TW5tNzlUTGNwWTVoZ0diaW5HVDdVN09lNlNCc202R1VUMER6TldKNXFQbEsy?=
+ =?utf-8?B?RHBNclNBNmdjUkJSb004NVc5RFpFdytsTi8xdVRVL1BUdnFsR1BSUmNKdXB2?=
+ =?utf-8?B?Y09CWDAzVXNkc1NGQUoybWgwUlRuNTdBTlIxc3l6cWtsQ3dCbVN4WUZTSGx0?=
+ =?utf-8?B?SytjakdyUkNQUzVpVzF6d2xyZm5OS1RtQzlMQlZEWVlkWGZtVEROWkNPYSt4?=
+ =?utf-8?B?NXZSRUU2V21MVThack11NGdsb3NXL2E0WjZxeFhqK3hDa1F6aDN3UjhGWjM2?=
+ =?utf-8?B?RStYZmhXaEJiT212Z1ZEdVF2R3JVTXNVWGxRSU1BWnpoanBTeVNqK2hqQ0pM?=
+ =?utf-8?B?WENMTlZLY1UrbTFwQVphQThkWnFra1BWcTRIdCtSVThjclBxODl1UC8rSTJl?=
+ =?utf-8?B?QWY4bTVwSyt4dXZWS2x3NWRWTGVnMG0vUmQ5R2lRY0V5dTlWbDF2VjFKSWVF?=
+ =?utf-8?B?Z3FrcE1Vak5pcVdlRjJVTXh4L09DSG1KdmYrdDYyQzJpVjhONTNTQWhTVi9l?=
+ =?utf-8?B?c1BaSlVMK2JlNVNybjdGMVVpQ1hKMHVjZDgrWXdITW1RK1FraDNFRDBnN2hy?=
+ =?utf-8?B?a2p4R1BZM0lIWUllSG9jMmJubFRNNm55OHgyOWR3UXFzUWVxNUNzdmhTM0lO?=
+ =?utf-8?B?Nk5sdWJwVlBEaUxScVZEZGgvU0xpR3l0MGpNNk9Kb1FIZGxIcTZqVmNYVTBS?=
+ =?utf-8?B?RmVVR3Jkb1FMZHZISEF2MXhMQlRBejBvMXNwUGFaVncySWF3aUtsbGE3eHox?=
+ =?utf-8?B?VUdRK3Yzc3hIemR5REozekNoMGhONTF2T3pPNW9oaU5kRnN0TVFjOW9rRnNp?=
+ =?utf-8?B?OUVGcUZvTi84clBKaUZCWTZZUno5bDZQYzArRHp4b2hEMEFvN2M2Y1FSWFNN?=
+ =?utf-8?B?bFJncmVjNC8rUndxTnRuU2c5ZkxydnJjSFR0Wk1SZFE2eDVGbVpIdUxjelBy?=
+ =?utf-8?B?ek16ZUg5TUsxUXh2MitJMDAwSGRudkZQWlBnRjVGU0luUWxQUDFyYVEwakQw?=
+ =?utf-8?B?Z2phVGZOZDc5bVNwRG4xdzl3L1AvbjhqM05EaG1EblNReHVYd29CNEtJOWJ5?=
+ =?utf-8?B?SjJCQzBiL1BJZUNpTCtta0EyOFNFdWRId0NyWnFkdjNFOWNSNXhQcXhKczg4?=
+ =?utf-8?B?UzZxelQ3eFUzSFRBRjAzNlg1bGM0dmYwSDFKM3N2K3UyRkZMd200MDNOSzlE?=
+ =?utf-8?B?d3ZicHc4NWdHUmhtWEdIQ05SaEZ2dkxTK2psVGZaOEkvbktnSjUzekJTWncw?=
+ =?utf-8?B?S1J3V1RmektUZThtRHBqOHJ4K25mbnhpcHZ6UEtXOW5rNWxkLzlheEFCbm5h?=
+ =?utf-8?B?YnNjNlprZGhzRnZoT01KR0VxcFlDcWxWRjJIaFh4NDM4TFBQdzVNUlFpVFI0?=
+ =?utf-8?B?NUcrL2F5OG82cUkxYm9iTjVJdFZPbWxsdkw1ZlNiYWF2ajJUcnFkREZWU2Iy?=
+ =?utf-8?B?M0IvRXV0VVBZRmM5Ykhia1g2Tk9NSXBwOWxyRldUNnRhTk53NDVUU0k4Y1dy?=
+ =?utf-8?B?aU4veitlTHdGOFRiZGh5a2taYzVSWFdTemF0b0h0TVQyQmhsZXVQd1NmTmpY?=
+ =?utf-8?B?elg1andlU0NWMDBUNGVMNkFPT2R5eWhhYms0UWVXWmFYTVdneXYrTy9Dci9M?=
+ =?utf-8?B?bFNSU1BrcEJKejR0ZUZzWlJTWjliZWM3WWRCckNTNkEybmVnd2gxV2MzaXk5?=
+ =?utf-8?Q?MpgN47XoTqnpb/0hxC8v0XCew?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a211b1d-fc67-4d22-626d-08dd8eeff935
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 11:52:29.0152
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PxTiBY9R9kiCljtkWk7VYhCLLEkitGJwFmc313NHK3jiTpHi8QNeV0FhZvWvsLiMDpowVn+BSK4+4zsXlHc8fg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5853
 
-Hi, Rafael, Ulf, PM list,
+Hi Nicolin, Jason,
 
 
-On 09.04.2025 19:12, Claudiu Beznea wrote:
-> Hi, Rafael,
+On 5/8/2025 10:42 PM, Nicolin Chen wrote:
+> On Thu, May 08, 2025 at 09:14:56AM -0300, Jason Gunthorpe wrote:
+>> On Wed, May 07, 2025 at 10:56:17PM -0700, Nicolin Chen wrote:
+>>
+>>> What I am not sure is if the HW allows setting the ComWaitIntEn bit
+>>> after CmdBufEn=1, which seems to be unlikely but the spec does not
+>>> highlight. If so, this would be an modification to the HW QUEUE, in
+>>> which case we could either do an relocation of the HW QUEUE (where
+>>> we can set the flag in the 2nd allocation) or add an new option via
+>>> IOMMUFD_CMD_OPTION (as Kevin suggested), and I think it should be
+>>> a per-HW_QUEUE option since it doesn't affect other type of queues
+>>> like Event/PRR Log Buffers.
+>>
+>> The main question is if the control is global to the entire VIOMMU and
+>> all its HW QUEUE's or local to a single HW QUEUE.
 > 
-> On 30.03.2025 18:31, Jonathan Cameron wrote:
->> On Thu, 27 Mar 2025 18:47:53 +0200
->> Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->>
->>> Hi, Rafael,
->>>
->>> On 06.03.2025 08:11, Dmitry Torokhov wrote:
->>>> On Wed, Mar 05, 2025 at 02:03:09PM +0000, Jonathan Cameron wrote:  
->>>>> On Wed, 19 Feb 2025 14:45:07 +0200
->>>>> Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->>>>>  
->>>>>> Hi, Daniel, Jonathan,
->>>>>>
->>>>>> On 15.02.2025 15:51, Claudiu Beznea wrote:  
->>>>>>> Hi, Greg,
->>>>>>>
->>>>>>> On 15.02.2025 15:25, Greg KH wrote:    
->>>>>>>> On Sat, Feb 15, 2025 at 03:08:49PM +0200, Claudiu wrote:    
->>>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>>>
->>>>>>>>> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
->>>>>>>>> clocks are managed through PM domains. These PM domains, registered on
->>>>>>>>> behalf of the clock controller driver, are configured with
->>>>>>>>> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
->>>>>>>>> clocks are enabled/disabled using runtime PM APIs. The power domains may
->>>>>>>>> also have power_on/power_off support implemented. After the device PM
->>>>>>>>> domain is powered off any CPU accesses to these domains leads to system
->>>>>>>>> aborts.
->>>>>>>>>
->>>>>>>>> During probe, devices are attached to the PM domain controlling their
->>>>>>>>> clocks and power. Similarly, during removal, devices are detached from the
->>>>>>>>> PM domain.
->>>>>>>>>
->>>>>>>>> The detachment call stack is as follows:
->>>>>>>>>
->>>>>>>>> device_driver_detach() ->
->>>>>>>>>   device_release_driver_internal() ->
->>>>>>>>>     __device_release_driver() ->
->>>>>>>>>       device_remove() ->
->>>>>>>>>         platform_remove() ->
->>>>>>>>> 	  dev_pm_domain_detach()
->>>>>>>>>
->>>>>>>>> During driver unbind, after the device is detached from its PM domain,
->>>>>>>>> the device_unbind_cleanup() function is called, which subsequently invokes
->>>>>>>>> devres_release_all(). This function handles devres resource cleanup.
->>>>>>>>>
->>>>>>>>> If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
->>>>>>>>> cleanup process triggers the action or reset function for disabling runtime
->>>>>>>>> PM. This function is pm_runtime_disable_action(), which leads to the
->>>>>>>>> following call stack of interest when called:
->>>>>>>>>
->>>>>>>>> pm_runtime_disable_action() ->
->>>>>>>>>   pm_runtime_dont_use_autosuspend() ->
->>>>>>>>>     __pm_runtime_use_autosuspend() ->
->>>>>>>>>       update_autosuspend() ->
->>>>>>>>>         rpm_idle()
->>>>>>>>>
->>>>>>>>> The rpm_idle() function attempts to resume the device at runtime. However,
->>>>>>>>> at the point it is called, the device is no longer part of a PM domain
->>>>>>>>> (which manages clocks and power states). If the driver implements its own
->>>>>>>>> runtime PM APIs for specific functionalities - such as the rzg2l_adc
->>>>>>>>> driver - while also relying on the power domain subsystem for power
->>>>>>>>> management, rpm_idle() will invoke the driver's runtime PM API. However,
->>>>>>>>> since the device is no longer part of a PM domain at this point, the PM
->>>>>>>>> domain's runtime PM APIs will not be called. This leads to system aborts on
->>>>>>>>> Renesas SoCs.
->>>>>>>>>
->>>>>>>>> Another identified case is when a subsystem performs various cleanups
->>>>>>>>> using device_unbind_cleanup(), calling driver-specific APIs in the process.
->>>>>>>>> A known example is the thermal subsystem, which may call driver-specific
->>>>>>>>> APIs to disable the thermal device. The relevant call stack in this case
->>>>>>>>> is:
->>>>>>>>>
->>>>>>>>> device_driver_detach() ->
->>>>>>>>>   device_release_driver_internal() ->
->>>>>>>>>     device_unbind_cleanup() ->
->>>>>>>>>       devres_release_all() ->
->>>>>>>>>         devm_thermal_of_zone_release() ->
->>>>>>>>> 	  thermal_zone_device_disable() ->
->>>>>>>>> 	    thermal_zone_device_set_mode() ->
->>>>>>>>> 	      struct thermal_zone_device_ops::change_mode()
->>>>>>>>>
->>>>>>>>> At the moment the driver-specific change_mode() API is called, the device
->>>>>>>>> is no longer part of its PM domain. Accessing its registers without proper
->>>>>>>>> power management leads to system aborts.
->>>>>>>>>
->>>>>>>>> Open a devres group before calling the driver probe, and close it
->>>>>>>>> immediately after the driver remove function is called and before
->>>>>>>>> dev_pm_domain_detach(). This ensures that driver-specific devm actions or
->>>>>>>>> reset functions are executed immediately after the driver remove function
->>>>>>>>> completes. Additionally, it prevents driver-specific runtime PM APIs from
->>>>>>>>> being called when the device is no longer part of its power domain.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>>> ---
->>>>>>>>>
->>>>>>>>> Hi,  
->>>>>
->>>>> Hi Claudiu, Greg,
->>>>>
->>>>> Sorry, I missed this thread whilst travelling and only saw it because
->>>>> of reference from the in driver solution.
->>>>>  
->>>>>>>>>
->>>>>>>>> Although Ulf gave its green light for the approaches on both IIO [1],
->>>>>>>>> [2] and thermal subsystems [3], Jonathan considered unacceptable the
->>>>>>>>> approaches in [1], [2] as he considered it may lead to dificult to
->>>>>>>>> maintain code and code opened to subtle bugs (due to the potential of
->>>>>>>>> mixing devres and non-devres calls). He pointed out a similar approach
->>>>>>>>> that was done for the I2C bus [4], [5].
->>>>>>>>>
->>>>>>>>> As the discussions in [1], [2] stopped w/o a clear conclusion, this
->>>>>>>>> patch tries to revive it by proposing a similar approach that was done
->>>>>>>>> for the I2C bus.
->>>>>>>>>
->>>>>>>>> Please let me know you input.    
->>>>>>>>
->>>>>>>> I'm with Jonathan here, the devres stuff is getting crazy here and you
->>>>>>>> have drivers mixing them and side affects happening and lots of
->>>>>>>> confusion.  Your change here is only going to make it even more
->>>>>>>> confusing, and shouldn't actually solve it for other busses (i.e. what
->>>>>>>> about iio devices NOT on the platform bus?)    
->>>>>
->>>>> In some cases they are already carrying the support as per the link
->>>>> above covering all i2c drivers.  I'd like to see a generic solution and
->>>>> I suspect pushing it to the device drivers rather than the bus code
->>>>> will explode badly and leave us with subtle bugs where people don't
->>>>> realise it is necessary. 
->>>>>
->>>>> https://lore.kernel.org/all/20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com/
->>>>> is a lot nastier looking than what we have here. I'll review that in a minute
->>>>> to show that it need not be that bad, but none the less not pleasant.
->>>>>
->>>>> +CC linux-iio to join up threads and Dmitry wrt to i2c case (and HID that does
->>>>> similar)  
->>>>
->>>> We should not expect individual drivers handle this, because this is a
->>>> layering violation: they need to know implementation details of the bus
->>>> code to know if the bus is using non-devres managed resources, and
->>>> adjust their behavior. Moving this into driver core is also not
->>>> feasible, as not all buses need it. So IMO this should belong to
->>>> individual bus code.
->>>>
->>>> Instead of using devres group a bus may opt to use
->>>> devm_add_action_or_reset() and other devm APIs to make sure bus'
->>>> resource unwinding is carried in the correct order relative to freeing
->>>> driver-owned resources.  
->>>
->>> Can you please let us know your input on the approach proposed in this
->>> patch? Or if you would prefer devm_add_action_or_reset() as suggested by
->>> Dmitry? Or if you consider another approach would fit better?
->>>
->>> Currently there were issues identified with the rzg2l-adc driver (driver
->>> based solution proposed in [1]) and with the rzg3s thermal driver (solved
->>> by function rzg3s_thermal_probe() from [2]).
->>>
->>> As expressed previously by Jonathan and Dimitry this is a common problem
->>> and as the issue is due to a call in the bus driver, would be better and
->>> simpler to handle it in the bus driver. Otherwise, individual drivers would
->>> have to be adjusted in a similar way.
->>>
->>
->> Rafael,
->>
->> Greg suggested we ask for your input on the right option:
->>
->> https://lore.kernel.org/all/2025032703-genre-excitable-9473@gregkh/
->> (that thread has the other option).
-> 
-> Can you please let us know your opinion on this?
-Can you please let us know if you have any suggestions for this?
+> Oh, that's right.. I recall AMD only has one Command Buffer,
+> but can have dual Event Log Buffers and dual PPR Log Buffers.
 
-Thank you,
-Claudiu
+Right.
+
+> 
+> And the EventIntEn or PprIntEn bit seem to be global for the
+> dual buffers..
+
+Yes. But there are other bit to configure dual buffers etc.
+(like DualEventLogEn).
+
+> 
+>> If it is global then some "modify viommu" operation should be used to
+>> change it.
+>>
+>> If it is local then some "modify hw queu" operation.
+>>
+>> IOMMUFD_CMD_OPTION could be used with an object_id == VIOMMU as a kind
+>> of modify..
+> 
+> Vasant can confirm. But looks like it should be a vIOMMU
+> option.
+
+I think CMD_OPTION will work. So something like below?
+
+if (cmd_option_id == IOMMU_OPTION_VIOMMU && cmd->object_id == viommu_id)
+	iommufd_viommu->ops->viommu_options() ?
+
+
+-Vasant
+
+
 
