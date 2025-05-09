@@ -1,231 +1,281 @@
-Return-Path: <linux-kernel+bounces-640691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351B6AB07D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:22:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449DDAB0823
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D70985926
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:22:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005F85059A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B42244668;
-	Fri,  9 May 2025 02:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qwp793p8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC20238C36;
+	Fri,  9 May 2025 03:00:28 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868B424290D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746757353; cv=none; b=gWD8zZ5/42TvhfOxoZ3zBZs30nGQNjdhUggt/7ELnaV/y/pf/cc7oNnW3CEhamZa2RhPko2AkRXVV7bMmmcEV5Hm1IhwyHywx82hZLBDhi7nqUXXAL7em8XS+Fpil9NIpSF/3rA3BjKECHaBf8qmJWWQ8OE0ByqVmp11N8PGSeA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746757353; c=relaxed/simple;
-	bh=Lnw5auLArtZOhIatGNwbk3W8GByv+4IzBJQn2/H6EeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRqD+8DH0tdjChsq319beMbeRIjFqnwA9O1kGYulw9fg1GP1QS/70bJWkn1UckhiP3tQt2bTKsX7sOMaYh8f2DtIHwtpnsya68KP9azl9G9Uevi0I4pRwQxIvVZSKkuk3cawUjcUmNB1FaiUrDvLwKLtNgqN8BOrBQpPThUz3RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qwp793p8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746757350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T3wQCin9HeB8txhWwzUBKyex+RK7rsIvnKnnr87lbKI=;
-	b=Qwp793p8hiR21xWekAHoXTBMHwCAgWq2HqrOWkMPd4zPyqIEGpaLxInTMlf07ECBD50o1i
-	gX2gUSH5IpuUgRppbT/k5T3CNpRfKL45JsrB41gYjRn1Ts1URdaWZqp0AV3vpGHQgoJQNU
-	qwxJy+rwj0qaLmBOL3ILYCUCXW8ROFY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-479-bllVoA_ENB2Ua9YfXuprIA-1; Thu,
- 08 May 2025 22:22:29 -0400
-X-MC-Unique: bllVoA_ENB2Ua9YfXuprIA-1
-X-Mimecast-MFC-AGG-ID: bllVoA_ENB2Ua9YfXuprIA_1746757346
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B1DD195608F;
-	Fri,  9 May 2025 02:22:26 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.120])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D8709180045B;
-	Fri,  9 May 2025 02:22:12 +0000 (UTC)
-Date: Fri, 9 May 2025 10:22:07 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <llong@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org, storagedev@microchip.com,
-	virtualization@lists.linux.dev,
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v6 7/9] lib/group_cpus: honor housekeeping config when
- grouping CPUs
-Message-ID: <aB1mz7a8tEZhVNIG@fedora>
-References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
- <20250424-isolcpus-io-queues-v6-7-9a53a870ca1f@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EFA8F77;
+	Fri,  9 May 2025 03:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746759628; cv=fail; b=RvouXOz11RBvwXkOcNfTYoQ46QOk8rmVrPLecpMg+YiBKOQv6348Zh9cZYxk9duWrpkUemtCDTRt3vUqFwvScdiQzFmb11V/eDhRsyvnDy2jtx18YF1KBIvG86gYdnGxZoXzdd0GtTf22oZZFwyVBz8Ve+MPcSjB6T648BGcu14=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746759628; c=relaxed/simple;
+	bh=hwrnLTZYrDjkawKmqleyfErTjJHMG7CARyWxMVScU3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MQdUwDkbqDst3jiqgkc6dZQmghzKO7YUuk6pklzVcrvyrkFLURKKd3InELf5aElOug8mffouk8qBlRQeATINTWfdegRs/Bv6YiuUUmXI5qGV/KBbGFI4GqSg7a5qLxXYt6LSm8Wy1ankrO2G6+C5KZnKxMV3YJPIQ9Cu4H6d+HE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eng.windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eng.windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5491auCe009035;
+	Thu, 8 May 2025 19:22:33 -0700
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2044.outbound.protection.outlook.com [104.47.55.44])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46dee3ep1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 May 2025 19:22:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MT2jZ+cYjVpKke4Tpw6mAi+hIdeNYeyw7JFoNmdJi3vZtuat40dGVz5AQvZSXwWMeDypg6groOk5nr6fXwFKy8oCpf3fDHBariCMa6RLruVD4WSrYc/BxEofFn8d74V/L4ScoBhRo5r3lJrDlqjytMEgmC59Jjlo24kMrkG83qiLD51orlMrFVubAh/OAaT1Q4Jq00hYSC9UF0N0IZW08Wta5VojVNsqEBuSVptJB3GmD5mHJKavgcJQGEdGBtv01eKsJEO/vkl74kcs3A2+kM4SqWWeTuJ0xPP+Oo1wYQcZplMOWo39YBmaDokD4rqtgy2awZMUFU9kaXioCB1+3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nquZu8StwxLh11s8bzPsKtO/Gk+SMMxvQfexFl/T9Ug=;
+ b=IeOIWclTttbgBXciE0fTf9lJ8EPhi8xY0QE0XsV+aeMADDx9jddwowoVGBpX8+uEbkAhRzPKUp5ZB5I+kyFT77c2gstH8oHQPC/wd2Xvc24Ik0a2lmW3Gy3fs+OmowE7kfVaRKktrdAMI6iDk9jQruRwmzvdrfqgz53EPASlZqgKbzlptUrV9hgOkr3qyPFTAmKxKK8wWZJl16lHgtROI/ilSkfFgoCS4JdH+Kjv3ASXvSNMwpDAYg7TR3SBOErxMXs/L21VGwRk+Gltub+sznlmvXU+rHDHNhv+n+Z/LoDm58Y30CpwO/xLv4VM/wkhMVl6bCCjXUtdqZ8paiETxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=eng.windriver.com; dkim=pass header.d=eng.windriver.com; arc=none
+Received: from BYAPR11MB3832.namprd11.prod.outlook.com (2603:10b6:a03:ff::18)
+ by MN2PR11MB4680.namprd11.prod.outlook.com (2603:10b6:208:26d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
+ 2025 02:22:26 +0000
+Received: from BYAPR11MB3832.namprd11.prod.outlook.com
+ ([fe80::83ab:15a8:cce6:b531]) by BYAPR11MB3832.namprd11.prod.outlook.com
+ ([fe80::83ab:15a8:cce6:b531%7]) with mapi id 15.20.8722.020; Fri, 9 May 2025
+ 02:22:25 +0000
+From: Zhi Yang <Zhi.Yang@eng.windriver.com>
+To: stable@vger.kernel.org, zack.rusin@broadcom.com
+Cc: xiangyu.chen@windriver.com, zhe.he@windriver.com,
+        bcm-kernel-feedback-list@broadcom.com, dri-devel@lists.freedesktop.org,
+        maaz.mombasawala@broadcom.com, martin.krastev@broadcom.com,
+        linux-graphics-maintainer@vmware.com, sroland@vmware.com,
+        airlied@linux.ie, daniel@ffwll.ch, sumit.semwal@linaro.org,
+        christian.koenig@amd.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: [PATCH 5.10.y] drm/vmwgfx: Fix a deadlock in dma buf fence polling
+Date: Fri,  9 May 2025 10:22:08 +0800
+Message-Id: <20250509022208.3027108-1-Zhi.Yang@eng.windriver.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0131.jpnprd01.prod.outlook.com
+ (2603:1096:400:26d::19) To BYAPR11MB3832.namprd11.prod.outlook.com
+ (2603:10b6:a03:ff::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424-isolcpus-io-queues-v6-7-9a53a870ca1f@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3832:EE_|MN2PR11MB4680:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed6f2ef7-ea34-49de-172b-08dd8ea0566e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ixYj37VkPBCNlBPuGf3cxMo/dF/uex1EL/qd60HEZWoGFnXSLXDyLlZ4Yd14?=
+ =?us-ascii?Q?jtIORj8MQvzxwcci4FySlgNvjSgtIK9ftOziQLCZoy6+DGgBs0+p9UbRGCOi?=
+ =?us-ascii?Q?vZfoUAs1W0KgSp2VhihKJkbD6Fy1B/l288tI+hsG4NlBLqK5bSzX43GamMjE?=
+ =?us-ascii?Q?0OICDJEA3A9/zDwqRuTqnXDzBdaF87igHpV0u5iRrGTmkuNTh0f7N84j2mhz?=
+ =?us-ascii?Q?3vwYcN8AgNIljWRmEXPZm4McLj/hKBu44E3FnrZ8dr4CNtDZJSieVg1esckE?=
+ =?us-ascii?Q?KV3UEDSlEFZKl+weFz6DGy0eNcLr82oTy3zB5ZnfNMQieNWr7o/102Sy2tw5?=
+ =?us-ascii?Q?t5CjgncJz7ypAJPysxBS71gceqsIsRN8+oT65dDWSwNOWDl3NYFo290kgQ71?=
+ =?us-ascii?Q?eOHxmP/oUMeSb/5h22pmDPpRm6xRUEZo+GycbWwueTZc26eRXLLquXbJx+jw?=
+ =?us-ascii?Q?dJOHG+EDay1d01ppQPUwEL2xkmff3ABwqICdFG4XWErXQY0Yxi02acoGOtgk?=
+ =?us-ascii?Q?MwCA3z4kzxd67Gp6O7BRvAvWvPJnYSrTnGSZ+IWXlG/QZJBfpHN8kGbh2Uu6?=
+ =?us-ascii?Q?FqegUbP5xeL03NmiufZlgLvVkwSnjPpX3DyFE3gkMStFkBXVGjynS+FiaxyI?=
+ =?us-ascii?Q?rlSM+taX7M1RaBiApiD0piIWWLMZfwh/na/JQQIFoJ8YVx+C5ye0zdG/2LVx?=
+ =?us-ascii?Q?WRzE+Ee3rnFQ9Dzjhu6gt2oewifQ2dWqdK9IZwZu2oXMaFcLj4eF4grcWN33?=
+ =?us-ascii?Q?xV1NezGvo3Ra2YWS0qejvGRURJINKCQCxrPk6hViUsPT3rN25Y6Woobzq6Pl?=
+ =?us-ascii?Q?VTtrDijqRa4osVja+Y5sXlAYBXUPr7g+amr2Y+bqGztxO5ITPbOTlUa5zbhJ?=
+ =?us-ascii?Q?eOFK/m179asIcZDoiEBnOmZIapqKDo7QtWHp/Upx7/f43J39eboSInSZyWwL?=
+ =?us-ascii?Q?7Zgm7WmNhr68I1sNqMgKl6BYbarYH7b+G15gnsmU4+f+VYxTkD8zTiZahzY7?=
+ =?us-ascii?Q?c9S3KjAkYhlLQvEkJWkBgcYhgDxcM/RnOtFSV7iWhH7nqa2jzHkeWAWhDAoo?=
+ =?us-ascii?Q?RG9zDXL9w25vfkHdt5DQfc/+txeUhxzbRnkcaz+8xKo4AWV1HYyBfvYWAD3k?=
+ =?us-ascii?Q?3fjyHV/ws7UCuZqpZOIPrYKpdSLNnGvoifv8HKR8T1FLeSAzjHbzWwsrodAd?=
+ =?us-ascii?Q?ysfGPcg5rVkhfRytJxktl9dY5CaXWv4UDh/CeAmB0dchSivdze3krm3sJxdE?=
+ =?us-ascii?Q?AE9jifFceBgZG5iihP/Jmlxgt7aw/tkNr9P+PT3UFrkcuipcoAXk6EzVPsDl?=
+ =?us-ascii?Q?RwH8yFvnXYcHX1vKpGsfhliKAh21Z3CWqi/q5vhoxwa+UULKIbgP5u8Z1wms?=
+ =?us-ascii?Q?fKEkDmiOO+pstxgO+E2VNmrjxk+gQR7ma9LIor/cyptwNg5ADyXz1RosSp36?=
+ =?us-ascii?Q?rIdR0mkkJxY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3832.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?31Q9JVrtUiueGmmaW9oFV4Hp/F+qXt9Q+UKKsgLwmcII4bFV3bbJGbUQg+xU?=
+ =?us-ascii?Q?oYUdSVc5HJvrNwfjgenrxoZNOmIPBeLTF3SwguHosE+IGxK9jSW+/N6T/EG6?=
+ =?us-ascii?Q?r2N5Jn1BPQQS3ubtzQt6d2HGEev3KqFrk9qAquFcJYCZrwSMka/TG5iGZWi8?=
+ =?us-ascii?Q?1XK+5BGDI0WqheNRbdY7h3g/j+JgjcsQuF6wwIhrUOtXnvwIPADssBTndmxT?=
+ =?us-ascii?Q?BQD+8OnIFtyB1RU6Tb7bRMEoqt5DsAnGFVhXdmzEeJmImVPnPdmUQ4+q6dqy?=
+ =?us-ascii?Q?omTooGXjX5BrTsl2us7CNVjGjTYFrzP5qN/6RtuqgSQ0DUJPUajAB8tOrRFr?=
+ =?us-ascii?Q?ropY3V29eY/iqzw5cXzSjfX75a1a1RZAJuh/Uam2vvGX6fGppNVvDqZazitQ?=
+ =?us-ascii?Q?H5muSoX7zbUUNzmmFCgDE0ON/b4ftLwx3k/ipzlnw61ursGtLttjwZWb50Vb?=
+ =?us-ascii?Q?lI4WCUqXfpKVyLPuLkj3Cdh+iNr7pN7KSb0jKiQ3hL01RqX0FGa23SAiHa6z?=
+ =?us-ascii?Q?bsvpr8MV1RbzGShL3lDS9FeMLO+9nquhcJNlPV7WNPOkjmqgwi+cfihyQnpz?=
+ =?us-ascii?Q?7ajFFqqYK8uOHOoP4oD6VczDHhbeyekrNCxu/Jo3PO8Oe14VZt7o5k5kaWF8?=
+ =?us-ascii?Q?0rwypwptv+GlPsCmsr4ssyJl7XyvA80o50b5cU2nrQV0IoQbPEisAHMabZHf?=
+ =?us-ascii?Q?oou1yRMclFCcnd9iNOoz9wpA/Fhv3aBrEw2IaIIyAXLg2dKa4j9P5EiMYgsb?=
+ =?us-ascii?Q?m9w/ZZ+GPz/O/BBB1mVm73h6bwrSCMjZnxR02/NwfhE8g28NwonnwxBWojRL?=
+ =?us-ascii?Q?CQBAup0w4y8hVEtrNcgzgGcrK496amrKJ0otyJy/chSpR95eBoaTW1GryOh0?=
+ =?us-ascii?Q?9LsivYweVWsNV+FAffQhV33pWNeksFTZPqFU/0UxNKVaJCdQr3AWrZqAArdx?=
+ =?us-ascii?Q?+/2effAo6BvrYochW7XZpjMyd6NT4kgkhT8888+gKsa14dNpMKWSvV04EcGc?=
+ =?us-ascii?Q?03XHC4OmvRhpF5E+XlSkRjUblUfUyyWkoxeSmPy7QOUw7Z2qE2vwFaLdsKgi?=
+ =?us-ascii?Q?ezo4e8cmLsK8upxAMVmMP3f97zyncbQC7oquWgwC+/8u0nFtLkGFrabIaP8G?=
+ =?us-ascii?Q?baBTEAFEhgSdu7/cWqk5hAymQPzh7WlvD0lUEtR3bHOBdA5s3mjQ1cO+xCZl?=
+ =?us-ascii?Q?U5bc2q0z1aTn73sErGnjkK6i6t7o0JUKAbBDkKUajmSxqidZ7FEH0ti1aDZX?=
+ =?us-ascii?Q?UphYhZ1dt7Nd3du6BgoBuEfW3Xe+hCD9R+0Fcgl/gnxI2zmdoqNO/0FOFkTS?=
+ =?us-ascii?Q?0IoKG3cvXaBIBnveINnUsNkMT3yVWAcsoDZmgUirK6WM+FXJ+LZCWCz3kc/Y?=
+ =?us-ascii?Q?/HnjhYeOP640ZCV4E/QkNx7FVLf3tY0FAi6PC7FYHuyh17cqfY+NCK+EVBbM?=
+ =?us-ascii?Q?M8m4tSdI2Nxfw+gLSe7oVqc7jPkkPhJ1kY/9SzqhRhgkN2v/SqW4xAsuJiEb?=
+ =?us-ascii?Q?ENqcI8W+WyI3yckDgY+XdhbGG7KNM68mVeiMvHJn3Om8TdhJki9jKpRvjTbv?=
+ =?us-ascii?Q?Y02SX3dpfnk3O5g3afTaRy06GUwm7xjrkJgpII8E?=
+X-OriginatorOrg: eng.windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed6f2ef7-ea34-49de-172b-08dd8ea0566e
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3832.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 02:22:25.7225
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NbAVyAD3CcyX+ERJKfF+qBMDMpUvE1NOxIKDd9ZLHAX7ZzVgA1A65m2Is3ps9O3SY+W1G1sH4p1sgxBIAyl3mg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4680
+X-Proofpoint-ORIG-GUID: PK_AmuhlCypCEG43kqYq1OshMkyomDu7
+X-Authority-Analysis: v=2.4 cv=Pd3/hjhd c=1 sm=1 tr=0 ts=681d66e8 cx=c_pps a=t4e0UQJdoJrPmzgCWb9hsw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10
+ a=e5mUnYsNAAAA:8 a=Q-fNiiVtAAAA:8 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=azflqpau20-cq16KAhMA:9 a=Vxmtnl_E_bksehYqCbjh:22 a=FdTzh2GWekK77mhwV6Dw:22 a=Omh45SbU8xzqK50xPoZQ:22
+X-Proofpoint-GUID: PK_AmuhlCypCEG43kqYq1OshMkyomDu7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDAyMSBTYWx0ZWRfX9aOdUK2Ia/RH deCJApwQA4GF0Iv+plke671upnLiwAoosRf7pOTpSOeJ72SyaTRVvX7a95cj/X0NpKn17f9FfWf OFFjhFezGA5YpHJeVhnYcpPVnFaVnLL0NRRl9HyCT5xCDdWyNeYBb08+1tgUgr08XUW3GHY586g
+ h4dwYAnQAkFL6uO7FurTZUkyNts5TNO/hisnzvA8vXV3boe/8qWtGTky0YRhq7UsXQb5CEOoPmg JzCP8V9s4LH4oD1f+ueMs0M9z5JJRpRGAU9sSvzj3ZyKb+Rf4rzlnQZCUsRfPyxQACYo7/GO/Gi zGmFc5onb442Hqnqp2yyDIndALbpCI2QyhF/dvAnQnRyXmqnpoJ5usliYX813eisKHCsXWkGJUm
+ GNZf8kO7pXykajLgnTP+8j59OijKSorcu0V00EeBWqwervYGRhHhk83PTPm1UXJaXuR8c33d
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-09_01,2025-05-08_04,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 clxscore=1011 mlxlogscore=999 phishscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
+ definitions=main-2505090021
 
-On Thu, Apr 24, 2025 at 08:19:46PM +0200, Daniel Wagner wrote:
-> group_cpus_evenly distributes all present CPUs into groups. This ignores
-> the isolcpus configuration and assigns isolated CPUs into the groups.
-> 
-> Make group_cpus_evenly aware of isolcpus configuration and use the
-> housekeeping CPU mask as base for distributing the available CPUs into
-> groups.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->  lib/group_cpus.c | 82 +++++++++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 79 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/group_cpus.c b/lib/group_cpus.c
-> index 016c6578a07616959470b47121459a16a1bc99e5..707997bca55344b18f63ccfa539ba77a89d8acb6 100644
-> --- a/lib/group_cpus.c
-> +++ b/lib/group_cpus.c
-> @@ -8,6 +8,7 @@
->  #include <linux/cpu.h>
->  #include <linux/sort.h>
->  #include <linux/group_cpus.h>
-> +#include <linux/sched/isolation.h>
->  
->  #ifdef CONFIG_SMP
->  
-> @@ -330,7 +331,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
->  }
->  
->  /**
-> - * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
-> + * group_possible_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
->   * @numgrps: number of groups
->   * @nummasks: number of initialized cpumasks
->   *
-> @@ -346,8 +347,8 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
->   * We guarantee in the resulted grouping that all CPUs are covered, and
->   * no same CPU is assigned to multiple groups
->   */
-> -struct cpumask *group_cpus_evenly(unsigned int numgrps,
-> -				  unsigned int *nummasks)
-> +static struct cpumask *group_possible_cpus_evenly(unsigned int numgrps,
-> +						  unsigned int *nummasks)
->  {
->  	unsigned int curgrp = 0, nr_present = 0, nr_others = 0;
->  	cpumask_var_t *node_to_cpumask;
-> @@ -427,6 +428,81 @@ struct cpumask *group_cpus_evenly(unsigned int numgrps,
->  	*nummasks = nr_present + nr_others;
->  	return masks;
->  }
-> +
-> +/**
-> + * group_mask_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
-> + * @numgrps: number of groups
-> + * @cpu_mask: CPU to consider for the grouping
-> + * @nummasks: number of initialized cpusmasks
-> + *
-> + * Return: cpumask array if successful, NULL otherwise. And each element
-> + * includes CPUs assigned to this group.
-> + *
-> + * Try to put close CPUs from viewpoint of CPU and NUMA locality into
-> + * same group. Allocate present CPUs on these groups evenly.
-> + */
-> +static struct cpumask *group_mask_cpus_evenly(unsigned int numgrps,
-> +					      const struct cpumask *cpu_mask,
-> +					      unsigned int *nummasks)
-> +{
-> +	cpumask_var_t *node_to_cpumask;
-> +	cpumask_var_t nmsk;
-> +	int ret = -ENOMEM;
-> +	struct cpumask *masks = NULL;
-> +
-> +	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
-> +		return NULL;
-> +
-> +	node_to_cpumask = alloc_node_to_cpumask();
-> +	if (!node_to_cpumask)
-> +		goto fail_nmsk;
-> +
-> +	masks = kcalloc(numgrps, sizeof(*masks), GFP_KERNEL);
-> +	if (!masks)
-> +		goto fail_node_to_cpumask;
-> +
-> +	build_node_to_cpumask(node_to_cpumask);
-> +
-> +	ret = __group_cpus_evenly(0, numgrps, node_to_cpumask, cpu_mask, nmsk,
-> +				  masks);
-> +
-> +fail_node_to_cpumask:
-> +	free_node_to_cpumask(node_to_cpumask);
-> +
-> +fail_nmsk:
-> +	free_cpumask_var(nmsk);
-> +	if (ret < 0) {
-> +		kfree(masks);
-> +		return NULL;
-> +	}
-> +	*nummasks = ret;
-> +	return masks;
-> +}
-> +
-> +/**
-> + * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
-> + * @numgrps: number of groups
-> + * @nummasks: number of initialized cpusmasks
-> + *
-> + * Return: cpumask array if successful, NULL otherwise.
-> + *
-> + * group_possible_cpus_evently() is used for distributing the cpus on all
+From: Zack Rusin <zack.rusin@broadcom.com>
 
-s/evently/evenly/
+commit e58337100721f3cc0c7424a18730e4f39844934f upstream.
 
-> + * possible cpus in absence of isolcpus command line argument.
+Introduce a version of the fence ops that on release doesn't remove
+the fence from the pending list, and thus doesn't require a lock to
+fix poll->fence wait->fence unref deadlocks.
 
-s/isolcpus/isolcpus=io_queue
+vmwgfx overwrites the wait callback to iterate over the list of all
+fences and update their status, to do that it holds a lock to prevent
+the list modifcations from other threads. The fence destroy callback
+both deletes the fence and removes it from the list of pending
+fences, for which it holds a lock.
 
-> + * group_mask_cpu_evenly() is used when the isolcpus command line
-> + * argument is used with managed_irq option. In this case only the
+dma buf polling cb unrefs a fence after it's been signaled: so the poll
+calls the wait, which signals the fences, which are being destroyed.
+The destruction tries to acquire the lock on the pending fences list
+which it can never get because it's held by the wait from which it
+was called.
 
-s/managed_irq/io_queue
+Old bug, but not a lot of userspace apps were using dma-buf polling
+interfaces. Fix those, in particular this fixes KDE stalls/deadlock.
 
-> + * housekeeping CPUs are considered.
+Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
+Fixes: 2298e804e96e ("drm/vmwgfx: rework to new fence interface, v2")
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v6.2+
+Reviewed-by: Maaz Mombasawala <maaz.mombasawala@broadcom.com>
+Reviewed-by: Martin Krastev <martin.krastev@broadcom.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240722184313.181318-2-zack.rusin@broadcom.com
+[Minor context change fixed]
+Signed-off-by: Zhi Yang <Zhi.Yang@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Build test passed.
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-I'd suggest to highlight the difference, which is one fundamental thing,
-originally all CPUs are covered, now only housekeeping CPUs are
-distributed.
-
-Otherwise, looks fine to me:
-
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-
-
-Thanks,
-Ming
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+index 6bacdb7583df..0505f87d13c0 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -32,7 +32,6 @@
+ #define VMW_FENCE_WRAP (1 << 31)
+ 
+ struct vmw_fence_manager {
+-	int num_fence_objects;
+ 	struct vmw_private *dev_priv;
+ 	spinlock_t lock;
+ 	struct list_head fence_list;
+@@ -113,13 +112,13 @@ static void vmw_fence_obj_destroy(struct dma_fence *f)
+ {
+ 	struct vmw_fence_obj *fence =
+ 		container_of(f, struct vmw_fence_obj, base);
+-
+ 	struct vmw_fence_manager *fman = fman_from_fence(fence);
+ 
+-	spin_lock(&fman->lock);
+-	list_del_init(&fence->head);
+-	--fman->num_fence_objects;
+-	spin_unlock(&fman->lock);
++	if (!list_empty(&fence->head)) {
++		spin_lock(&fman->lock);
++		list_del_init(&fence->head);
++		spin_unlock(&fman->lock);
++	}
+ 	fence->destroy(fence);
+ }
+ 
+@@ -250,7 +249,6 @@ static const struct dma_fence_ops vmw_fence_ops = {
+ 	.release = vmw_fence_obj_destroy,
+ };
+ 
+-
+ /**
+  * Execute signal actions on fences recently signaled.
+  * This is done from a workqueue so we don't have to execute
+@@ -353,7 +351,6 @@ static int vmw_fence_obj_init(struct vmw_fence_manager *fman,
+ 		goto out_unlock;
+ 	}
+ 	list_add_tail(&fence->head, &fman->fence_list);
+-	++fman->num_fence_objects;
+ 
+ out_unlock:
+ 	spin_unlock(&fman->lock);
+@@ -402,7 +399,7 @@ static bool vmw_fence_goal_new_locked(struct vmw_fence_manager *fman,
+ {
+ 	u32 goal_seqno;
+ 	u32 *fifo_mem;
+-	struct vmw_fence_obj *fence;
++	struct vmw_fence_obj *fence, *next_fence;
+ 
+ 	if (likely(!fman->seqno_valid))
+ 		return false;
+@@ -413,7 +410,7 @@ static bool vmw_fence_goal_new_locked(struct vmw_fence_manager *fman,
+ 		return false;
+ 
+ 	fman->seqno_valid = false;
+-	list_for_each_entry(fence, &fman->fence_list, head) {
++	list_for_each_entry_safe(fence, next_fence, &fman->fence_list, head) {
+ 		if (!list_empty(&fence->seq_passed_actions)) {
+ 			fman->seqno_valid = true;
+ 			vmw_mmio_write(fence->base.seqno,
+-- 
+2.34.1
 
 
