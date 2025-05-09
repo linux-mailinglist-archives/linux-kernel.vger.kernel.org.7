@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-642117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2896AB1AB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:40:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78757AB1ADF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2DF21889822
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:40:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977C47A8077
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42375236A79;
-	Fri,  9 May 2025 16:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jakerice-dev.20230601.gappssmtp.com header.i=@jakerice-dev.20230601.gappssmtp.com header.b="uI51Jk74"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE10238166;
+	Fri,  9 May 2025 16:49:12 +0000 (UTC)
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1E423504C
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 16:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976FC215175;
+	Fri,  9 May 2025 16:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746808828; cv=none; b=EgD+xDxCRVfzZDZnJNF3r4AKGlHY1VfDpf5HM9/O/Y6YwLNjO6LYkegvNxR4D/xbtPPsAzQ3Ym68uNUMpwBIykaDaTyoA9/lLRwuo15noVykLHn94G3LAqJ7bn14sN5+YtxRnA2sHuTXOQAP93fsNopdPgg02+RVcAo65O+/EoQ=
+	t=1746809352; cv=none; b=YExvOaLiIUD6UOQcnG+cDkDeVRcIbB5pt4I8EiAoobG1wMyqbJICv3WwZ3gBX1FUDG8m707IeG/nhNAElLDOh2chesaw7t9rdFhs/1dbqvzS9pgo4fmKKLH0e07E5whro43SxxU6sH30pbDB0mO8O1lP1606S50yXZjUBlaF/v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746808828; c=relaxed/simple;
-	bh=ZaydmkJ7eUryQN41xZ/nR0x6nuwulT7i+Qm7Ml1xIEE=;
+	s=arc-20240116; t=1746809352; c=relaxed/simple;
+	bh=Di562fRz1OvExNqlAtAa54+s7WlTDxKq+Rfaxv4PFbU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhFuUDgytp0EmghNC463h68aBnaayD79Et4WrXCvEh45Umu01OEKMl7roJmOd4BqbdudIabpkLyHWBj1tE/rkGoakxIOELRCXFcwovTSVo+J7xaNO5RZX7MLCvFatg+bzUjIr8K6A6yPLI2tATdjHS6B7pDWpaFSFP6njcuNV1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jakerice.dev; spf=pass smtp.mailfrom=jakerice.dev; dkim=pass (2048-bit key) header.d=jakerice-dev.20230601.gappssmtp.com header.i=@jakerice-dev.20230601.gappssmtp.com header.b=uI51Jk74; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jakerice.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jakerice.dev
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac6ed4ab410so336822766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 09:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jakerice-dev.20230601.gappssmtp.com; s=20230601; t=1746808824; x=1747413624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezkh/c9YOiEB4YMEXS/lI8snDUy5hokGtG1LLPTxPBk=;
-        b=uI51Jk74pPlUmJ5NVoQiWj/ik3Y922O7/eRxx/s11vB/sOPtLoG4W7P3e5VYeD6iax
-         YS21ykUCkCh6geqoc2cr51R6DkGUg7MhiW27lyov/zgvwk+B2GJG+JOoU9JnnZdHeb+A
-         +7Xn7FH+fjuvr3SGnDCd4IVRthXKbYGIjZZ7BYKNEKyoW71g6I/JEE0YE3Og+CP4r0Oz
-         NiaH6Up4J5JH47NFcmy6CUkxd9bfVe0IpOlbvBUHLkUG7ZjxLJ46PpA+/zxGMC6GLgDl
-         nOt6rShOhCh/PLzh1FKbLtPrN0HIuLEYYjHXEbwOQhOMrKnWpwNjf2iF9Xu2S8dtAAh5
-         dxbw==
+	 To:Cc:Content-Type; b=mkhWEsUF1it65fhFtQ9XB0WwErYHkqOO2OX0gRAXMVOa/ExDJA1tE57BscxXs+HqtMKqYgEic+QQDIAMkqCmkFAdpTiGvQVZWBDGq9Ll/kPWSfK9oObOGjc5w854vePiYDl2E5b9sfiuxu5s2AC4De8MXHbKW/mQQgnV3mpBGjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d81cba18e1so17764895ab.3;
+        Fri, 09 May 2025 09:49:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746808824; x=1747413624;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezkh/c9YOiEB4YMEXS/lI8snDUy5hokGtG1LLPTxPBk=;
-        b=FPu0aQlvww4DJqx+YSSVLexkBCc+hIBb6Lr0l5y7Auw/Dn7oUcBcw5L7N9anZxc+fU
-         RxtJYz04fKA3rYCYb51cPb7iHFYHf05cFfl3S7pKoJrLn/89XG95WcFzhHsWi7A3F3JL
-         EO1qgjOkeMCtla8O0zeIIMel++Tu6FHdrIAfDy+h8tcqsCG4dAxMFxvJCGTrCM3M4hbZ
-         Kfym/885IrkpF72Fbexfp0RTlD+OR7Ly/lTY+96DFanfsk8Zm1NZh4UExbw0BPEtcOYT
-         27LkeyxgiS5nNAMT5Hr79qWUSM5HbJFoLGhJwLxS5lwPGYRiecwRyReeiDronUw9b0XD
-         iJ+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXsjeOBzzoluIZPnpIyWGdh8sXclQYuxQdSCQSLS9JVwWYGkFPcrRUUJfEiCjik+n2LCnDC2LYhXKp7P2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz97KI7/VTSMyn9RpmOpR7VUPU8NReB2RPxrrkZ6zFQbj9icYGW
-	aj+KNK2gfnTcGllH0X87ZzGSAfznEroU4EYvFIk4RnULKLXhubyabrUY4y+8h7VshzKLemXReNP
-	bHEBop8iU8x7sSWZ2RdveSZ06REHLDeYd5H/IbA==
-X-Gm-Gg: ASbGnct/UrV9FGcGKg+T9WgYWCCpDuVG3DJqExMYcPwsyI7+HbJZJmqeAsCMlVZ4dDZ
-	MLwwJ+1Cv5FMxB4mpSU5qK+FVZ+ZSJq+V7iYtHEikd9D9LOiYr2vkzLaaLU3u4ienQp+2YYReTc
-	7Z+Yj3wcyU+uKlxrO48W2L2A==
-X-Google-Smtp-Source: AGHT+IELHOq+p1zsugnV+VNzt/Afocg2GfsLFr0ysmipqQxyw3r6Btx8j/xS4gE6FCiiWPehP3G6zP+mSkQ6SxfrKOM=
-X-Received: by 2002:a17:907:6a13:b0:ac7:81b0:62c8 with SMTP id
- a640c23a62f3a-ad218f8b0b6mr473399366b.31.1746808824446; Fri, 09 May 2025
- 09:40:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746809349; x=1747414149;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+1jGam034RLLI89DszcNU83DPB5ZENGVlOfv4Pt5+Fo=;
+        b=m5kfhIwG4Gue00Y8Hk1Dw56NnX158gG8Y0GqNhPfsu+lLtvVYP457gxfs55/1uxYKp
+         Ae20K9VrDrH3cpYqKJ6tpBEFMir1WfB3iD1zQW/HpWkQ43v/ahrV4bGQaMH6spkNI/94
+         ge8uAp65m9kbQG9FOZuCPCiKpTq/243OoxcwAw4lxy6zUT12zARCJWi6Ldqj5UiDsuci
+         yUZWMsVTHXnRTVppzSiw/N+q+DvcBN07XY6HhU2kCuII3hjd/wX9KAAs0wW1YMbTz4wV
+         /TU7392MDNqsXjOjauv/+88Z+NKOjQ8IfscvC6Gl2Tj34tg5WzM9R2dZzUdjS9BubhS9
+         AkyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZTJLNNrUVie/iDDv4OQe9MJ+xCJrrJ6YyhYQusBIVnFIbeHKNv1lcja+s4Ypewjl+q2BAb4DZQpbRifLfSnIAqQiPG7dP@vger.kernel.org, AJvYcCVd1oMh/jGo0uv0kcxgClOzTKEWqIs/CqSNv2NezXps110EDnnTQZFeJ1MBv90SkVO+kfFjA9GrDhr4qC8=@vger.kernel.org, AJvYcCWul2eQ2Z+avxXy7xJDuxnFk2MzKKo2UO2gpfCIMFo7ErvbY6Ze1J1FAcgpFciDLh5LvCzoW2wn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoRrbspMw6AkNQ7Hs53qh72cC2xt13ljA29w30/iZxvmtxay1m
+	cFD4a1ddIDEmekbez9NS5Cv9Z5kcy7Qd0q8rHLShX7CZZCAmTUUxP7p8TbMaOa0=
+X-Gm-Gg: ASbGnct1oM5dKZcW6eTKaR7m2yrQkV7/E0GIyS6qYC6Vwnbv+HnTRWJmsiIsivU18Vw
+	DDCzti38QgIYtkGHkyq0MpQBoIjT4va5UJEpQHW13hvT7pYbZuj01vbe5ULuUN+2akrVVnI6ibh
+	ywh3W9NR+//iFxgQaPtv2DPGNXfcUweQ4oVuWiPVzTtPjSwVK3N54sHwuzNOjK2QUmTE1Q3Oog7
+	stBQRccSQzaTMLbZFZXzqGEyFQAzqtcS3lXxwcqYWoH7P20BS5u0WCE/6iD2VnBw9ieiWm9c8tH
+	20sp4Q2+mKheW1RhoLrWSuuHso/yO1wf28YNGVAe2VWp/sutVBetqC/nwUEkp1KiTNAVcvw1jgQ
+	+21XZ01Mr
+X-Google-Smtp-Source: AGHT+IHdg/R/QrVZLR+WXIOgB7KjmmeIfv68t+B7smmef4Z6fMnXeo5csmcYo+9r/+iYCD8wo3luKQ==
+X-Received: by 2002:a05:6e02:1a27:b0:3d8:1d7c:e192 with SMTP id e9e14a558f8ab-3da7e1e305bmr57365965ab.7.1746809349474;
+        Fri, 09 May 2025 09:49:09 -0700 (PDT)
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa2249ef8asm488408173.5.2025.05.09.09.49.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 09:49:09 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85e46f5c50fso198628139f.3;
+        Fri, 09 May 2025 09:49:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUM8zkbMrx0RsUxxTRXFru70RxLRYPKCeLyBETm0aRCK2JVyFxt1/Vz899GmbFUivWooyYLdfFEE8Pgf9DsWolhgEAb6tyS@vger.kernel.org, AJvYcCVMEqwlTflQrYHERZe+BfsyWfth4kz7OcsL8iLhPQRpyaD4VaKtdrz8CxcjTxc40IquaqumTgZ3@vger.kernel.org, AJvYcCXmEO3/21V9e67t+nbj0rL5ixgIc806uVs/1JJad5Fo7Nfz7XgC+yybCPtfqj77dnNPChQl5i6khEucDVI=@vger.kernel.org
+X-Received: by 2002:a05:6902:2204:b0:e78:7b0c:db8e with SMTP id
+ 3f1490d57ef6-e78fdd2e11bmr5146920276.30.1746808864760; Fri, 09 May 2025
+ 09:41:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506191531.3326-1-jake@jakerice.dev> <2025050927-bring-gusty-e850@gregkh>
-In-Reply-To: <2025050927-bring-gusty-e850@gregkh>
-From: Jake Rice <jake@jakerice.dev>
-Date: Fri, 9 May 2025 12:40:13 -0400
-X-Gm-Features: ATxdqUEOyTvQSEbd8Zcyxyv61W3TtwQMih5pSG6mXb-VTjDsGPOoVYP3FimSY2w
-Message-ID: <CAFd_ZdCmqfj_Y80ZJih5G5Zn1nW0pE-R+gRFBMWRULjN7SNCkA@mail.gmail.com>
-Subject: Re: [RFC PATCH] usb: storage: Add blockbuffer ptr to info struct of
- sddr09 driver
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, stern@rowland.harvard.edu, 
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
+References: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
+ <20250509-work-coredump-socket-v5-4-23c5b14df1bc@kernel.org> <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
+In-Reply-To: <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
+From: Luca Boccassi <bluca@debian.org>
+Date: Fri, 9 May 2025 17:40:53 +0100
+X-Gmail-Original-Message-ID: <CAMw=ZnQJ6wxz76+30jmPO=DD6_fufxO0qEU2jrP+jhMQWUYDKQ@mail.gmail.com>
+X-Gm-Features: ATxdqUHtnACv76Evvurm-jfNa0b2HAMH4VT6zOSLDIbIKwAAAJW5b477sDWlbeU
+Message-ID: <CAMw=ZnQJ6wxz76+30jmPO=DD6_fufxO0qEU2jrP+jhMQWUYDKQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/9] coredump: add coredump socket
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 9, 2025 at 10:45=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
+On Fri, 9 May 2025 at 16:40, Christian Brauner <brauner@kernel.org> wrote:
 >
-> On Tue, May 06, 2025 at 03:15:31PM -0400, Jake Rice wrote:
-> > Hi all,
+> > Userspace can set /proc/sys/kernel/core_pattern to:
 > >
-> > This patch updates the sddr09 driver to allocate a reusable block
-> > buffer. Unfortunately, I don't have access to the SDDR-00 hardware
-> > (which I know is pretty ancient), so I'm requesting testing from anyone=
- who does.
-> > Please let me now if the patch causes any issues or improves performanc=
-e.
-> >
-> > Best,
-> > Jake
-> >
-> > ---
-> > Currently, upon every write the block buffer is allocated and freed whi=
-ch is
-> > computationally expensive. With this implementation, a buffer pointer
-> > is added as a member to the info struct and allocated when the card
-> > information is read. The buffer is freed during desconstruction if
-> > necessary.
+> >         @linuxafsk/coredump_socket
 >
-> As Alan said, this is really slow hardware so I doubt allocating/free
-> the buffer will even be noticeable.  Why make this change at all if you
-> don't have access to the hardware to test it?
+> I have one other proposal that:
 >
-> thanks,
+> - avoids reserving a specific address
+> - doesn't require bpf or lsm to be safe
+> - allows for safe restart and crashes of the coredump sever
 >
-> greg k-h
-Alan and Greg,
+> To set up a coredump socket the coredump server must allocate a socket
+> cookie for the listening socket via SO_COOKIE. The socket cookie must be
+> used as the prefix in the abstract address for the coredump socket. It
+> can be followed by a \0 byte and then followed by whatever the coredump
+> server wants. For example:
+>
+> 12345678\0coredump.socket
+>
+> When a task crashes and generates a coredump it will find the provided
+> address but also compare the prefixed SO_COOKIE value with the socket
+> cookie of the socket listening at that address. If they don't match it
+> will refuse to connect.
+>
+> So even if the coredump server restarts or crashes and unprivileged
+> userspace recycles the socket address for an attack the crashing process
+> will detect this as the new listening socket will have gotten either a
+> new or no SO_COOKIE and the crashing process will not connect.
+>
+> The coredump server just sets /proc/sys/kernel/core_pattern to:
+>
+>         @SO_COOKIE/whatever
+>
+> The "@" at the beginning indicates to the kernel that the abstract
+> AF_UNIX coredump socket will be used to process coredumps and the
+> indicating the end of the SO_COOKIE and the rest of the name.
+>
+> Appended what that would look like.
 
-I apologize, I was learning about the usb subsystem/usb drivers and
-saw the TODO for this and figured it was a quick implementation. I
-should have waited until I got the hardware before submitting the
-change. It won't happen again.
-
-In any case, thank you, I appreciate the feedback. I ordered the
-device to test this. If I find a significant performance improvement,
-I will re-submit.
-
-Best,
-Jake
+We set the core pattern via sysctl, so personally I'd prefer if it
+remained fixed rather than being dynamic and have to be set at
+runtime, so that it doesn't require anything to run and it continues
+to be activated on triggers only
 
