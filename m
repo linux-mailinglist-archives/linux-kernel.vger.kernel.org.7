@@ -1,111 +1,193 @@
-Return-Path: <linux-kernel+bounces-641539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045D9AB1319
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DB2AB131E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F1A1C03822
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:15:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595B43A6780
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC67A28FFF0;
-	Fri,  9 May 2025 12:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C71E27FD57;
+	Fri,  9 May 2025 12:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlnPJ3BQ"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="q3GWjd5m"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2104.outbound.protection.outlook.com [40.107.21.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1372900B7;
-	Fri,  9 May 2025 12:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746792928; cv=none; b=bA37NcD0XO3kruUU3cy5KV19iAyumt9arRDq9jq6NgF8gGkpAimo+DTT6IB5qnDN0312PfjjPQPoysGUY/olkgAEXI/+olm37ABZEYtiIRxVq+HMI6Jv7EX9cvoXUOdGCtoDXRr+jncODNMD9drQ5BkGOTHuROJFpbTW6cQG42A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746792928; c=relaxed/simple;
-	bh=jdDwlEDN05U0AGWNi15ITRXxy0SmyKbmQQzX7OkEV4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRyIHW6ry8CMsL6yFVmNlg4p1hIdvsF/ipnwd9+j+9idiICr21UidcyiR9xF8wgpn0918TNSpJv/9UMcIrDIu43FCT1iCyXjIa5bxckEs/ROyU60i/zD7RjJ6lSTG7YE2tAvnPhnN4TbkY7mIEdmYw/W8aH9fNVM/G7XLRjaRgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QlnPJ3BQ; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f5440fcf81so37147776d6.0;
-        Fri, 09 May 2025 05:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746792925; x=1747397725; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PgRuZAJGVmPbGddsW8s6rmMSC40r4mQ4B4GOLIObhOw=;
-        b=QlnPJ3BQbgZjG9KDrEiayKhnn0Nz/QTRSnYRrPefUpE4W30OJlv/Lua/zKvrdFJe4q
-         PaqkllKGsTB6LLi+oel2jqzb77WbulAM6iuaqYgc81D7cl3l7Ujeo0YUCi3YFyr3BV+G
-         afxZLysvEx57AbcwLoGoUpSXEUibeFJQReBQCzHnchx+SiNeuymGb3mkhyFZsSCqvwGs
-         QsTEDSIbI3m2eInddvvlHCIDVTill7qkA1xIBwodRJjvur7if5NDVBfKbRALugBrjx1s
-         VmT+qnuJw4G10E5xL0jdyfLidOH3G7K+tXYDQpzWAYv6W+jihVfaqoYRAGkjufR0qb2f
-         LvZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746792925; x=1747397725;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PgRuZAJGVmPbGddsW8s6rmMSC40r4mQ4B4GOLIObhOw=;
-        b=g5zNkzi5YWIbn3hdxCHD5fH+MkkAVWB7jzdPFx9fsiqWEwSSw9yE98Ejb/fnTZ1oQO
-         i0KiRFu/gbag4fMVrFI8hJkNLu0Ik6mf5teNsletYrijSjLSUs/4GMF8TShczyd86ULN
-         AbN1LkJUH0zLeOgi8ORHA84A1tdYXnyjwpfNaCYq4wl8ZIZR11QWUGmkfMs2xV3vuI24
-         ZUBfgyUJwQixoeJd9KGLIzHIYrbt7nIbUdSlaeklN7Jim46rvBW72JbHdmYFVvj+QIXl
-         5qPwpircZY+GTZbPWHjongsZ0Dx2kf7zLCemYv20f8gyvNsP/fAanCfsefRHxLQ/H9Op
-         2Glw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKO67sOtQEyUAryFXqCSURCgtWcHpDtPrSGvv6lHb2tvVS3qdw30u2v9lT6yjTFZcJdBua/U3HnLv9hUjN@vger.kernel.org, AJvYcCVi7qqKe9B0rRk1F0OzHg9oaiaoGd8Jjl4ENN/sYy1A6qBOlBt2rt/xhOOn67zFdb751ZG1Ts7ssK9V@vger.kernel.org, AJvYcCXMDmVkiBj69vJheCwwyz9liLtwjzmvKHVpv1Ob1ML9/1Fyz8drnCwZy7zyFTtOyLqP/7ODs8692v19@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR6KrQxzYjExzAGHhExmQD52+rnpwER8NUG2jFK1zylZBBO14c
-	AKJdmPaKT7Ktzm7zYsqt5OhM8sdFONej0f3LY3p2nZIy2LRBT/bk
-X-Gm-Gg: ASbGncsRqnOhU9OwMgauv0SYaoaaUAAG7Grf5862h4CI6RwOaXfTEzVpeJD7JO5breQ
-	zM9oNDHCrvPp5xCL4E3k0Ygd161RbPUcO1unzr2EHRDzJNYbkmMbjf33AuzJVqMOBOpAEavtWHO
-	jDCNOHO3r7uBsIS9F8lpPQdsfUQCmiJ+vet+rrharPy2KAWYhJgC+DQsuIDSONXhfUHGsgtl5G8
-	ixPDa/BP6Hzu4aCpbxfWAyDilMepf9HyLKDJE/sjdl1YvXZCng+rVY9RcWAT1yHPwJIWVhMW0dD
-	uvFMQZx+SxmCKYpx
-X-Google-Smtp-Source: AGHT+IGlDl+KwhD+opMZqZ8CkvISLydM7AoDmJhojnTg5u8fwNB+nRJ38uGYL7LaCFZ4Cmf7wUWC6w==
-X-Received: by 2002:ad4:5aa5:0:b0:6e8:ff2a:a658 with SMTP id 6a1803df08f44-6f6e47cafc3mr44984176d6.5.1746792925233;
-        Fri, 09 May 2025 05:15:25 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f6e3a472b3sm12728456d6.77.2025.05.09.05.15.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 05:15:24 -0700 (PDT)
-Date: Fri, 9 May 2025 20:14:57 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Jingbao Qiu <qiujingbao.dlmu@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v8 0/2] riscv: pwm: sophgo: add pwm support for CV1800
-Message-ID: <sfqdke7xkxg3sr2acber6kjzbcnoay6bnu3enda2xe5wzdi6id@eqiqmkdeovlb>
-References: <20250509-pwm_sophgo-v8-0-cfaebeb8ee17@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E347821CA10;
+	Fri,  9 May 2025 12:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746792970; cv=fail; b=ecHKFrrsnhKpxlk+rRTBq6Rusexlz+jUC1QE837G7/I0vI1bHiecVA7iJ++E8qYejZlNoS2o0uiZNst0N5xpcvn4kOCt8Y7kB9YN7tYmMb+/WGimwBBXQ7Em7btbyQkFvQA29OWcI5ii9XUZaG3maoZKbZaWGL7iLT4yue/RHf0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746792970; c=relaxed/simple;
+	bh=v4l4I6sqC8qDwtMxjZEq/V2u5TK5A8buTqGqNmkCyME=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=XF293XL/lfY1Zlsn6p/+EvJwHzNs2Knz/2pnfVoS4sSvYI7zZNzTFkRtGR6XwyacQ2y8oauE8/ue+sVTzaKsiw7PnkgUlhTfebOmQog2c88JZKFEjcmm+6XRfw6VCBjTGGEvFQBUkRwtEWeoIWHKdMsyoNEzaPNpQvrE2GoS9+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=q3GWjd5m; arc=fail smtp.client-ip=40.107.21.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LxHwPPj74spXDa3mvrEO7iKTzZwdQAXg4BpSm62Ixth+54pSj1QdlTlkHIePl5GJzro77nDp0Ma9HWxdcw7uPer2Qt7xhabui1L+LWq4q46VnrFHAMk+gg2MKF6s4IxKFVZaJcFDj2YFcuQwzscdcJHjFvuWEvUnHyyZYs6Y5a94D/GxCoIMeUXwampZ2s2jZtpqLUVDPa5B3HuDznbec62Oymldrc/Ch0hdlJUz92+H2RyaoO+0WzgpgzU+m95m9pIzN/9JxV9RIGWfAgsqtguECA/GRHDL7ZcLv/L/qSGUJcnkSqA8npeqhLwmKYPzxvZ7Zaq/4Msn8qM62FD3vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dQ5BEjDGUl5wwPg7TwY134gEflFu9akbPnu9IdlAY2k=;
+ b=LuthuNwlcWg67uh5hP6J1eHfjFnqsWAGEF52LUQUNN0tGuWrhc6VXBkETTYf1eF4tjCiEhIwbGJItTwDX90Moaoz/nFs8nx4PaQPJdyngliLL3yK0LWuN6IRRqA1QwEVxz+anpvUaMTlDkpMceoT4HBTi7dJK3Ol/G/q0cGSWzPDrT11aKCaoHCoTY0fxJqDxQvBNUdkDTsLrII7dIuoyN6X6ri3eOLWenR11kl+nA/dZ/eP2hND6uhcGy+mF252WFRpJBoRFPy1XF1UQ5MNDxhZcSaviZq8gw0uVjEUrjJ4Se6jQSZJphjufSahLhgw6AqnYpNVXMkQIvAPouONeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 91.26.50.189) smtp.rcpttodomain=arm.com smtp.mailfrom=phytec.de;
+ dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=phytec.de; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dQ5BEjDGUl5wwPg7TwY134gEflFu9akbPnu9IdlAY2k=;
+ b=q3GWjd5mWNxbyjedKM6JFKKbUpeTrgBkLs5CHKrvSsc9MXgyDZC7BZ/A12g2nYuebIbLzFESA5nrjmP9IX72cmN+WpAvdFhkiLIF9CsJoYRfyfQIeMrWVmpZ1Qnc8WRYxOnKhCMpzWS/D/5KqxjWLQaQWsq1tP0n0rmCwgrJd/e+oeiJ2CWuexGeOLLOo8UacpkXhztO+AYuKFl3KfwVEPokeM3QApoTqAmizV87wgO1lu6hVg8lx0sGSpMfH8AeSSL6gwfgI/zjvuw6i0QwqwjzyMwBxMEBtLX/403Y20VkckFXNa0ttxtTyC8WyOO5IqIM5brU2gkigxBRTcSMFw==
+Received: from PAZP264CA0131.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1f8::17)
+ by PR3P195MB0505.EURP195.PROD.OUTLOOK.COM (2603:10a6:102:38::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.20; Fri, 9 May
+ 2025 12:16:01 +0000
+Received: from AMS1EPF00000049.eurprd04.prod.outlook.com
+ (2603:10a6:102:1f8:cafe::89) by PAZP264CA0131.outlook.office365.com
+ (2603:10a6:102:1f8::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.23 via Frontend Transport; Fri,
+ 9 May 2025 12:16:01 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ phytec.de discourages use of 91.26.50.189 as permitted sender)
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ AMS1EPF00000049.mail.protection.outlook.com (10.167.16.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 12:16:01 +0000
+Received: from Florix.phytec.de (172.25.0.13) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 9 May
+ 2025 14:16:00 +0200
+Received: from augenblix2.phytec.de (172.25.0.51) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 9 May
+ 2025 14:16:00 +0200
+From: Yannic Moog <y.moog@phytec.de>
+Subject: [PATCH v2 0/2] Add new imx imx95-libra-rdk-fpsc SBC
+Date: Fri, 9 May 2025 14:15:49 +0200
+Message-ID: <20250509-wip-y-moog-phytec-de-imx95-libra-v2-0-b241a915f2be@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509-pwm_sophgo-v8-0-cfaebeb8ee17@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPXxHWgC/4WNQQ6CMBBFr0K6dkxbOkFceQ/DAtoRJhFKWoIQw
+ t2tcACX7+fnvU1ECkxR3LNNBJo5sh8S6EsmbFcPLQG7xEJLjdIohA+PsELvfQtjt05kwaVPv5Q
+ Ib25CDbqwpSVEbEolkmYM9OLlSDyrxB3HyYf1KM7qt55ylMV/+axAgmmK/Gby2hnrHufv6khU+
+ 75/AVAGEZnQAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+CC: <upstream@lists.phytec.de>, Benjamin Hahn <b.hahn@phytec.de>, "Teresa
+ Remmet" <t.remmet@phytec.de>, Yashwanth Varakala <y.varakala@phytec.de>, "Jan
+ Remmet" <j.remmet@phytec.de>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, Conor Dooley
+	<conor.dooley@microchip.com>, Yannic Moog <y.moog@phytec.de>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: Diagnostix.phytec.de (172.25.0.14) To Florix.phytec.de
+ (172.25.0.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS1EPF00000049:EE_|PR3P195MB0505:EE_
+X-MS-Office365-Filtering-Correlation-Id: de5dd24a-4d29-42c1-fed1-08dd8ef3434e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cVI2aFFBalJKWnRNVU1TWXFzcGJCYlorNmlGeGhITFZkOTZqNU1rRzRvQ1BV?=
+ =?utf-8?B?bEw1U2hLM2FJNnMwMWpPdWhzT2RBNXF1UmlVQjZtTGJmWUNTUEhTUE1iUFBp?=
+ =?utf-8?B?ejdFSXNzNjJISlhpZEdOb2dHOHZ4R1R2Y3I1bkllMFFGUTlHanNabnYwbnFw?=
+ =?utf-8?B?enRTN1V0U05jWkZlbEc5cUVjT0g2ank0cGJjcFJ6MENtNTFOZHdKZmQrS0tL?=
+ =?utf-8?B?b1EyUDRVVWlsekJmdE1iRFAzaVBPZG43MVJmM2FQZFMxRWNMNThPNmpIV05a?=
+ =?utf-8?B?ZzdkVlpYTlg5dTllZExUWDhnWU01SEViZE8wWGZvcGUwRGhNSFdLS2lvQkdP?=
+ =?utf-8?B?VlZkODBjRWd2MnQwTlZ5WlhPdUdzZlhzN2EwN1VBUlBBd1RsZ25ZKzdvQ2wr?=
+ =?utf-8?B?cm93YkhwRnJoQTFDM1Rnd3RmVEFGWmlLTldHajlQYzAzSFYwNFVyLzlxUDB5?=
+ =?utf-8?B?V0ExMmQ3MEhVaHRwR1JpdVg5Y1VFVnlCdXMzZUpTUHJCT2hycHkwMzQyYnBG?=
+ =?utf-8?B?ck1zYnFlS3NoVFlzZ3h1VGFxcUNmQys2bzkyeUF0TDlTNTVYUUo3VVd0eFRU?=
+ =?utf-8?B?UVhVMVpXbnpTQjNwTTBlbStSajNEZEJkME9iV1FHMnF5dk5nV3QwRm9SWEkz?=
+ =?utf-8?B?Y3pGcG5wY0g0NG0veFVyK0lEam5rUlQzWWFsMFdZbVNwQUdQSk5YTzR5WjZU?=
+ =?utf-8?B?WWdvNHl5L3ZUQ1I5RmxBYXJROVNhU1BwRnZWQzJJRlNOT01pNTFPZTY4b1Nk?=
+ =?utf-8?B?cGtVZ0dFUHB3QzFoYTVaUkNBWERWREVoOGRXUklxWlQ1clNOOCtXOXdxaG1P?=
+ =?utf-8?B?N0xCOXViYXQ3Y3c0RUZ1ZDM5YmhVaWlXNjVzdGt2eExYWURMbGNZTGUwN0Yw?=
+ =?utf-8?B?SzJ1bS9QdDh6YStPajhnNnBDRXlFWG1abkdFUitYZUxHOU1pcjJPdkFOallQ?=
+ =?utf-8?B?aDNUTGtCenBSdE1lL1Y5b1ltRlRlam82V1IvSkxtQUlHRFVxMGdoUkZSU2Yr?=
+ =?utf-8?B?U21nSHBzSmNYQVZyanFGVnZUZGY1WmpJMnY3YnVHQkhhTFl6Q050TjQxNWNn?=
+ =?utf-8?B?VXpFSXlXOUoyTmtlOGNnYTh5R2xXcUV6Rk9mQVBDckIzS20yNjdFaVl2Sy9P?=
+ =?utf-8?B?S0RPR0VSM0o3L2cxOHBVcjNiajBEdUV1N0p6SFd4Y2JDQUhVbU9XYmNCTkVz?=
+ =?utf-8?B?Um94UFB3QXBKbXMyeU10aUUyeWtPTDJyLy92alNteHo5TjZ1UTJlaVp3Ykll?=
+ =?utf-8?B?Z3NRekRDa3Q3R1UvWlphV1JuYzBGWlVMbHJGYnE3WHJOQjBXdlpqa3RVMGs1?=
+ =?utf-8?B?S05UeDhna1J2KzZ4enJUUzFmTHVZU1VPd1cxdkFiUG5mQXVUK096b2xHVXlt?=
+ =?utf-8?B?V2kzcjBIUFRaVWZqd0VMRWRyS1pSbzNQRDBPT2M1aTljdkFEa0o4Z3Nrb0x0?=
+ =?utf-8?B?TXFaZFNHdC9vVTc0VURDaGZIVldrMmR0VENZTTdaUHVCUGRYK04rd2pOdlR1?=
+ =?utf-8?B?RnhVT2FOU3pna3hvbklBeHZ0VjVHYVVxalRYMVV2U2RhOEw5T0Jyd0VwdGRk?=
+ =?utf-8?B?SGg1dWxYdWZUVmtvNTNoY2NHODlnMzE2WTI3RFloM3pwcXVVOTJGK2g2ek9L?=
+ =?utf-8?B?MGt4b2JySUliRG5ZaitGMnFHR1FQQ2xrWFhGenlQNmMwQjFlaVorQTJtR2lu?=
+ =?utf-8?B?Z3VyRW9aa0VpNXY0S084aWtiWm1PNjh5ZUZJSVVHWUJqVE5aZlNHQnhLcTlx?=
+ =?utf-8?B?eTNzZmRuQVMvVmFFWlY3L0NQeHFwTHpKY3pIa3BOVEhuQTcyR054dk0xbU9J?=
+ =?utf-8?B?L1RZS1lNMEs4MGsvb1p4R2E0eXVUa0x0VEtVbTJyOEUyd1kwUks5dzRSYW4y?=
+ =?utf-8?B?YUI0dGFUUUdyRy9BYWtEMkM5YVR3U2NHOElTSTZKZnhHUUQ5K1dwdnlST2hR?=
+ =?utf-8?B?ZkJMaUpTdm9uVFp4eGU5ZC80cmU2RUt1UU5tck1LcDdVZDJic1VGMFN0Yk8z?=
+ =?utf-8?B?cFJjUVVDWUFCTjRSSzhkY1MzTTg2ajhaZXNZcEx1dnlxVWpBTDZtYXd2NDNT?=
+ =?utf-8?B?cVU4bGx2ZUxvWTdMMmp4aGpGQlVpNGhLNGFBQT09?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 12:16:01.3477
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: de5dd24a-4d29-42c1-fed1-08dd8ef3434e
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS1EPF00000049.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P195MB0505
 
-On Fri, May 09, 2025 at 11:45:42AM +0200, Thomas Bonnefille wrote:
-> The Sophgo CV1800 chip provides a set of four independent
-> PWM channel outputs.
-> This series adds PWM controller support for Sophgo cv1800.
-> 
-> Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-> [Thomas since v8]
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> ---
+The Libra i.MX 95 is a SBC that consists of the Libra base board
+and the phyCORE i.MX 95 FPSC SoM.
+This series adds its binding and device trees.
 
-As now we have pwm support for SG2042, I suggest sharing driver code and
-binding file with SG2042.
+---
+Changes in v2:
+- fix indentation error in bindings
+- align alias naming with FPSC enumeration
+- Link to v1: https://lore.kernel.org/r/20250507-wip-y-moog-phytec-de-imx95-libra-v1-0-4b73843ad4cd@phytec.de
 
-Regards,
-Inochi
+---
+Yannic Moog (2):
+      dt-bindings: add imx95-libra-rdk-fpsc
+      arm64: dts: add imx95-libra-rdk-fpsc board
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   7 +
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ .../boot/dts/freescale/imx95-libra-rdk-fpsc.dts    | 327 ++++++++++
+ .../boot/dts/freescale/imx95-phycore-fpsc.dtsi     | 656 +++++++++++++++++++++
+ fitImage                                           | Bin 0 -> 14928380 bytes
+ fitImage.its                                       |   1 +
+ 6 files changed, 992 insertions(+)
+---
+base-commit: 9bfe32fed9a8c17000f7cd6bc59ce8348aefe5e9
+change-id: 20250415-wip-y-moog-phytec-de-imx95-libra-27c9ce555b91
+
+Best regards,
+-- 
+Yannic Moog <y.moog@phytec.de>
+
 
