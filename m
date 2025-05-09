@@ -1,202 +1,122 @@
-Return-Path: <linux-kernel+bounces-640954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022B7AB0B51
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:12:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCA4AB0B5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614F3170FF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D350C1C22818
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C4D26FDA3;
-	Fri,  9 May 2025 07:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=technexion.onmicrosoft.com header.i=@technexion.onmicrosoft.com header.b="H54SZG9e"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022089.outbound.protection.outlook.com [40.107.75.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F18926FD80;
-	Fri,  9 May 2025 07:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746774763; cv=fail; b=FfoXpNSlW/ychihsYlrUKcMP3LjK85wqx2+U89HaQk6om9Y5kogDaWcm3Ji/M95NnTIF5Rt2C0hdIOVkkAI+alIKE/tthZFqTAuFMfIt+RzaqHsSBgW8Q78JYiWqn0gAz+zoA5AA+fpMY5wDN9DawLrrQuYZylDEfTmhG5rN0lA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746774763; c=relaxed/simple;
-	bh=8ze0n7fx3kaFhUbDfJ5A6RmabwElvcaM9msB6sBG5Fk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Wslqpfbd1dPj2ZiQgJY3IlAUJIrSE0+4ZfAKtHClXYGUjhEFZEhxcLRqYUBa61bG6bB8cRhiyxS/q0OzDsyrAylqwJjAT7n1ulIRUUv019r7/PGe59FR6ckTHYgJQeIeH8Ko2EkKwMzPLkExoo/Q9kq5DJ6FWi+JkhCq5/G+4Jg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=technexion.com; spf=pass smtp.mailfrom=technexion.com; dkim=pass (1024-bit key) header.d=technexion.onmicrosoft.com header.i=@technexion.onmicrosoft.com header.b=H54SZG9e; arc=fail smtp.client-ip=40.107.75.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=technexion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=technexion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ved1WHOJykHwlN2Zo89vBf0oD9rWg69e+LP/LIMRejaL8nOlvk/AORr/lLDaSnMoEso1lN3r/wM7Z1XUQl+jvZugcZaWtwVJ0RQ7A84tLBpvk1dffz+Q9hBPSxjfFZfkRCP6HqLLpGoPug0neZUrnfCW7WjyeOPF2Z+v+KvrAY7qvJjQi/5H3uf0ociv0uVaKGbI+eglgjCA9vvgSOegB/fa/oEPFEXcYhV2mW9hjsvNKn2bvicNFv6rkCviha802bPq7pYKoX0RQQXryeshXtp/pRvc0OsujpJFlFZvJrSafYTB1bh+jjbsiUyb54/reipYAXC7w24CFsyjaAv6Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MiJTcMMwinBMQTDfCJDBJCoZDrHG7/QN18P26txZKZY=;
- b=eQxHamXk3AFq0C7syjkr/RcGqrbC8IG4Kxb5RPC8oiD9aVB9X/t0lJnbBFJzvXfObr6hlV56jniC9RUAVU7nAPaMla96xDZUTWMQml7HFcR9HMsNMhkLG/Vy0irsVd0A9WjlsqSzm6x0nqahVKkfHtHc99movuFP/dYIs60M8ShbSD3aoQfRp5cw5GwIKaA+HKQ5fbkDIJmN31ht/6uSGyNMq2OTMr8o1VUsR1jMRHKVFkcSu4YUrjwht4U8yUXTkgFdhcZ91GBNvj6y63fk/oRse6EB+RcAIkcaAf9IFvx+1GA8stTpfV5/fMggCAayG3s13q6a4f9PHy4mnKBwWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=technexion.com; dmarc=pass action=none
- header.from=technexion.com; dkim=pass header.d=technexion.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=technexion.onmicrosoft.com; s=selector2-technexion-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MiJTcMMwinBMQTDfCJDBJCoZDrHG7/QN18P26txZKZY=;
- b=H54SZG9eXI6UrkSDY1nfakWzkVguIypYdB5f5XY3upWeY/TdATpQhimwd5adk2wWBec4rGwSsixokmLNAWW1rEgQG98k+KJeb2KwBO6qbIdjdamzDsx1gH91atJkBftUfQxJ70C2X4Wy26AzUURmltZJebjbxHRJg+TwhsC+Fsc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=technexion.com;
-Received: from KL1PR03MB7454.apcprd03.prod.outlook.com (2603:1096:820:ed::7)
- by TYSPR03MB8719.apcprd03.prod.outlook.com (2603:1096:405:8f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.23; Fri, 9 May
- 2025 07:12:38 +0000
-Received: from KL1PR03MB7454.apcprd03.prod.outlook.com
- ([fe80::980e:3c71:3a5b:6404]) by KL1PR03MB7454.apcprd03.prod.outlook.com
- ([fe80::980e:3c71:3a5b:6404%4]) with mapi id 15.20.8722.021; Fri, 9 May 2025
- 07:12:38 +0000
-From: Richard Hu <richard.hu@technexion.com>
-To: shawnguo@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	peng.fan@nxp.com,
-	marex@denx.de,
-	joao.goncalves@toradex.com,
-	tharvey@gateworks.com,
-	mwalle@kernel.org,
-	frieder.schrempf@kontron.de,
-	festevam@denx.de,
-	hs@denx.de,
-	andreas@kemnade.info,
-	francesco.dolcini@toradex.com,
-	Max.Merchel@ew.tq-group.com,
-	alexander.stein@ew.tq-group.com,
-	ray.chang@technexion.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Richard Hu <richard.hu@technexion.com>
-Subject: [PATCH 1/2] dt-bindings: arm: fsl: Add EDM-G-IMX8M-PLUS SOM and WB-EDM-G carrier board
-Date: Fri,  9 May 2025 15:12:22 +0800
-Message-ID: <20250509071222.12083-1-richard.hu@technexion.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TP0P295CA0012.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:910:2::16) To KL1PR03MB7454.apcprd03.prod.outlook.com
- (2603:1096:820:ed::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0F5270EBD;
+	Fri,  9 May 2025 07:13:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A9226FDB5;
+	Fri,  9 May 2025 07:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746774787; cv=none; b=bNqLEKz1JW2hGrMn8fc2V8qZTCsHp7aqxhZI05zawx/1Nl765xMvkphIf1Dstsvgm9hKOS9B18qFGpIZuKsY+vQHK/HYbW7qdcSA2UzrL75sDB9yEdaVXV14hiYoa7mKQBY2QE7BVNiPeY+8rLCKM70dNvHccxBs/45jXKz2bqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746774787; c=relaxed/simple;
+	bh=qrCMcqWAKjQxhYBoAj3QbI/9b30dAvJ0gYLe6zdSglM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q2I9yoS6aUQZ+znL5dJV/WBleiHJ/g4pacz/vUgMNcjwk7+/bP1Q5So1450I7MvTu4XH3Uypnm6Z2MMXQkgpW0PmwyywkBI7uLmeIuCHFEzMFjNU5GPLysSobP0djU820Dyi3aQA7lGduUwmppgyHrcW6bKTb53yQhUW9AAe6Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.186])
+	by gateway (Coremail) with SMTP id _____8AxWXHyqh1oXivbAA--.31837S3;
+	Fri, 09 May 2025 15:12:50 +0800 (CST)
+Received: from [127.0.0.1] (unknown [223.64.68.186])
+	by front1 (Coremail) with SMTP id qMiowMDxDcfnqh1oDLy_AA--.52511S2;
+	Fri, 09 May 2025 15:12:42 +0800 (CST)
+Message-ID: <3c8eddda-ecce-4fdf-8773-3cfe8a09f237@loongson.cn>
+Date: Fri, 9 May 2025 15:12:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB7454:EE_|TYSPR03MB8719:EE_
-X-MS-Office365-Filtering-Correlation-Id: eaf85a58-5dcb-47d4-d57e-08dd8ec8e13d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?h/HsE6RjUuRykuitRCeDQ42DMg3o43O2rk+2skdersTLoi10IUHz0kXnnBrB?=
- =?us-ascii?Q?VsFzUxMpKWyFPu3LzhMDXmw2C/CV9P2eYjBc4E2NzqROdet3VNTvLtkwswPr?=
- =?us-ascii?Q?WECfPGaWaXIyD+fno4xkCdkL202OxwQiWEJXMypG0Mw5t0aM0zHw8+g7WiFF?=
- =?us-ascii?Q?zznBx3P6JgCvz2mK6fyDI1PmBtmYjsJKQsriAd3bMtUijzSPTV4DNPyHbHzF?=
- =?us-ascii?Q?kMe6ktHoCnEgKcg8mUJkfgAR5P2qbJdc5xPFv3YYhhFAH0UMyMi3QEqqyymg?=
- =?us-ascii?Q?pall33tlPPEtE7jYNhUVrKaYlEHoAPBGeubFFIydKK2khC68GdCe+T2TPGBx?=
- =?us-ascii?Q?ZA+SZJ4vWzLP4ATfyLIgbM2zGAG4pDuKs80+Rj22dbi8D1Qf7R0zbHQBw2PZ?=
- =?us-ascii?Q?bSlsXkrJT+sqwigmMqB7dOEIJclXEhzJbjb+Eg1qAUYkwwLM7kkjbboqUA8x?=
- =?us-ascii?Q?DtcvnneT7IwQVv9V6YPkgf3K5dpBml6fNtHg3OZui4z7ey7a7nIyT3YWS1Oh?=
- =?us-ascii?Q?REmvOL9nr+mjYSnKOY4L+2wi7ngji3YVXWMq7N1MYTaARxn1CFPyLUBX4riL?=
- =?us-ascii?Q?1RrON4bkyAWU1MvQVsodBdVx2N/cfJE4IWQBbu2laoR/pfrIBvh0RyW/R4q0?=
- =?us-ascii?Q?lroT2kDLS8Mjq20MIJQ4PIkeXdTQfanmlEiQnj+NKuUU7XG1noDhVK7W1cdT?=
- =?us-ascii?Q?q9gYziDt7TstJXqa957hRyP8HpYtSDI5zoI2fHZYqinonxek3zrZckfdT4BG?=
- =?us-ascii?Q?32J0hOVEMEDqtkqhcPZ/szRbpty4iZfzLtKWrn19FoMs9OjLmGlKmRNNt/Ne?=
- =?us-ascii?Q?URpB3z5Wqw9hsjHMgBHU0LA+eEpNL7W58/XMjEhJimCQGEbr/Da0GdOoFr6E?=
- =?us-ascii?Q?ULuG234egyWbv3TjZT8oHD1dl/83NPcCm8R4/gLQeT8QBWmWu2Hcd2bYxGX5?=
- =?us-ascii?Q?tmmJJ/YJJAdte3dYGYFfyFSDK2GnfTZjX+Fi0IUvfJxnnIe0D0ubb64PYYRh?=
- =?us-ascii?Q?GOf8MtT9mgLNGHfuapXXMVYgZEXf/4t68bZTJIU0fMnjfikgrb3f6g/WfpTl?=
- =?us-ascii?Q?WF2iEV0GR7TBsvx0jkfZBqRvbwMFrGedVqytw3aTt+y8Qy3beIvGjjTZogDJ?=
- =?us-ascii?Q?Y1Wm7/9ge8KBNuNvYyBg1KzNekOWK4qqe2+Tw6s6iH8ZhtcKi20rMWbSbfW6?=
- =?us-ascii?Q?3oC+a3Hc6Q88aot361nsrOWlAuwXRNZxnBBDOeuvmMrDlq56rx3telu45UBx?=
- =?us-ascii?Q?oQa/DddUj+hN9PucpwNouSPBxOqD5+NH/sX9wc2P4pU3TnqwvSV/GcwYMuxL?=
- =?us-ascii?Q?hwFhG+Mm6BQoL8jV+Re1ySWdtBxOHh3iS76bksLSQ18UG7UhQiLzeiHJieGc?=
- =?us-ascii?Q?L7pDAHXIBekrzUpOec2qydCO3nHp0s1jmAQVj1qcFIZDTpItgO669jiTMEy6?=
- =?us-ascii?Q?sBhpNB9gC/GfWHnH602DmzK4Qig1Ml/JMPhXDys8SmdcJpcUc/jOvA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7454.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7vpo+SnD/JMPX1Dzqd+16gfjIcT1+WPB0TPt2UlYqEVSHFHBhPyXGyb/IV/U?=
- =?us-ascii?Q?u/CNblJdsTdsY4csGwiEV4wzuuHwIBv32pmCBlzBGFFP4eg4wiLHaNv2d86d?=
- =?us-ascii?Q?MgKEMKGxVz5SlmSb6b9WfEslj25Yeyzjf9h1XT3Cw7fXnOfhBB/tHtnI8/IP?=
- =?us-ascii?Q?SXyjYs+JEyFaNXotSwvtTtNDCgUaJx+SzV1a0O66tjITjYIK5o7SvOiGSaYQ?=
- =?us-ascii?Q?DmAKcbCUSearLEbN2TI//ICC8VAL6KXP1fiAbFinCuN8Qa49CUztqrOQzyG2?=
- =?us-ascii?Q?tipWKUetFFgB5Y1yySTTG3RDiOixJw13HX1fYaKlUWYw329VRDYUOfsgJf0w?=
- =?us-ascii?Q?F9I3PI69Aki/hDCNrbS/6Bwv/G67e+nQAWmQmluhsERub0Y/H2CnTAqYhTK5?=
- =?us-ascii?Q?u+Qwf5ICpdaMBurDTH7PxhkJivo37DSQXZirv3RbfHoH8bBo/PlvIr3xe7K9?=
- =?us-ascii?Q?pwiF6N0Nz8KZ1DpqxbOh8xJlRAMcWSa7Owq7QZ9vyyZwaEHk+kfJfhsZIF99?=
- =?us-ascii?Q?p7FyvrgpKbMlAkNhbqJ+cao2ZjWyv9yr/AzGE7SurskWWcTwhq5/soqI/wR7?=
- =?us-ascii?Q?uZuOWt0SWYBjwTkVMqqe20uN5PqTLpGsamLJGuuE2sum9wx75oIsljfbR7kx?=
- =?us-ascii?Q?YoiX27/uJVMO6xo8wLC8mrHgW57D7J9IECcNfRXAlG0tU43gDfWKG43+RAGY?=
- =?us-ascii?Q?9hsiIJlG1En1/HvDq5lM/4XIddG2Ke2Ie1hAxq679EDv8ZcI3aIqQIz7Qgz0?=
- =?us-ascii?Q?T263fNHxGMO8AR+AVVJBEM8e4iBQiWa/Ja2ptyv3KzCFaG8jpWmW74u1SJCo?=
- =?us-ascii?Q?gKX6Yz3Wi6CesXeIhZLkOU4YP1Ro0NpB8h1udcbkJ9/lnnmiC36wHX2s184X?=
- =?us-ascii?Q?FATwgwxWSh115ZuZQmIdNeqUhPyApBv+BXkV8pAmZquynpqmCzATM9OjOTh/?=
- =?us-ascii?Q?T75Fkgllhj8Nzi6BpMkmWzRtqZFPebwSLczYTHuVPek4dm86YWWHy4P9FE85?=
- =?us-ascii?Q?OlTjfEsapNHlXnj7b4Q1ZF6zi2qzHi8u6gFijEA64blhlY0FVVEblutVPdq9?=
- =?us-ascii?Q?gnDOridH6hDEh254wGqQRhtKiIXuNwAgwbocsc11Usn3V0KrE/MFPMidb0YK?=
- =?us-ascii?Q?cv/c/EnZLvSc94I2iKjp+u0kcnt1160TZ3AUrgV7jMlX48AtFQxlXxYGO94I?=
- =?us-ascii?Q?Tp26NYHExS8YBQfdWvIIB3ypEXeEGlB12qnW3gdevOrj+SLo7cEwpMqUuDaM?=
- =?us-ascii?Q?9RSHLESelUcjKzdHhoWVBzhkje005nKJBks33Uu5Y43sj3TUkd882qnSony1?=
- =?us-ascii?Q?TaEvNVs5QK/vacZCE7uCV+rvNMxlISTUBK+QfG1EnRxrPbY91DfjLnkR2vPq?=
- =?us-ascii?Q?miJw+uh67NbuAwR2zf8+q7chudvf2UAO9nvF1uHkcRCIKez34+SFVuFC6uca?=
- =?us-ascii?Q?GecAZSGwm54Nt0qm1jszukFEJ9fbDWRg2KteSfJ/86u4BXq8p9O3t4ZDu+18?=
- =?us-ascii?Q?X9jfqR7Sjmdv9psY0WJ/vCZGdIR1kzh3o47EqXT+FN4sLtwaVrncR7CRWiP6?=
- =?us-ascii?Q?m9mhD4hpCBl4+5LHfobKawQAbTb1zA+puk87/xDErTYe1S/7MxP2R8cRWXIU?=
- =?us-ascii?Q?Wg=3D=3D?=
-X-OriginatorOrg: technexion.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaf85a58-5dcb-47d4-d57e-08dd8ec8e13d
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7454.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 07:12:38.2905
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5ee19679-b9a6-4497-8ed2-1eda849e753b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mae1/mvx7sVMIwYuLlSeAbuVpP4qi04HQPsLTpaHTnNYBr3MKNTgXAMtFYIozW06FaGDmtk7YMAgx6H8fIVWVuL1tN7gYxqY32fzNUHitbU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR03MB8719
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] rtc: loongson: Add missing alarm notifications for
+ ACPI RTC events
+To: Liu Dalin <liudalin@kylinsec.com.cn>, alexandre.belloni@bootlin.com,
+ wangming01@loongson.cn
+Cc: chenhuacai@kernel.org, gaojuxin@loongson.cn, git@xen0n.name,
+ jiaxun.yang@flygoat.com, keguang.zhang@gmail.com, lixuefeng@loongson.cn,
+ linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429062736.982039-1-liudalin@kylinsec.com.cn>
+ <20250509014046.7399-1-liudalin@kylinsec.com.cn>
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <20250509014046.7399-1-liudalin@kylinsec.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMDxDcfnqh1oDLy_AA--.52511S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tw1kKr1DAw1xJF4DAF4DZFc_yoW8Xw43pF
+	s8C3Z0kFs5tr4Uu3WDJ34Uur13uayfGrWDWFsrtasY9Fn0y3Z7WrWrtFy8JF4kurZ8Ja1a
+	qwnFkFW3G3Wq93gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1l
+	x2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14
+	v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IY
+	x2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87
+	Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZF
+	pf9x07jepB-UUUUU=
 
-From: Ray Chang <ray.chang@technexion.com>
+Hi:
 
-Add support for the TechNexion EDM-G-IMX8M-PLUS SOM and the WB-EDM-G carrier board.
+On 2025/5/9 09:40, Liu Dalin wrote:
+> When an application sets and enables an alarm on Loongson RTC devices,
+> the alarm notification fails to propagate to userspace because the
+> ACPI event handler omits calling rtc_update_irq().
+>
+> As a result, processes waiting via select() or poll() on RTC device
+> files fail to receive alarm notifications.
+>
+> Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
+> Signed-off-by: Liu Dalin <liudalin@kylinsec.com.cn>
+Technically I don't think this is a compliant patch, firstly this patch 
+should be V2 and also you should add "Changlog" for describing the 
+differences from the previous patch.
+Anyway, it's good to me.
 
-Signed-off-by: Ray Chang <ray.chang@technexion.com>
-Signed-off-by: Richard Hu <richard.hu@technexion.com>
----
- Documentation/devicetree/bindings/arm/fsl.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 1b90870958a2..ca0bc46a6f8b 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -1176,6 +1176,13 @@ properties:
-           - const: polyhex,imx8mp-debix-som-a       # Polyhex Debix SOM A
-           - const: fsl,imx8mp
- 
-+      - description: TechNexion EDM-G-IMX8M-PLUS SoM based boards
-+        items:
-+          - enum:
-+              - technexion,edm-g-imx8mp-wb          # TechNexion EDM-G-IMX8MP SOM on WB-EDM-G
-+          - const: technexion,edm-g-imx8mp          # TechNexion EDM-G-IMX8MP SOM
-+          - const: fsl,imx8mp
-+
-       - description: Toradex Boards with Verdin iMX8M Plus Modules
-         items:
-           - enum:
--- 
-2.43.0
+> ---
+>   drivers/rtc/rtc-loongson.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
+> index 97e5625c064c..2ca7ffd5d7a9 100644
+> --- a/drivers/rtc/rtc-loongson.c
+> +++ b/drivers/rtc/rtc-loongson.c
+> @@ -129,6 +129,14 @@ static u32 loongson_rtc_handler(void *id)
+>   {
+>   	struct loongson_rtc_priv *priv = (struct loongson_rtc_priv *)id;
+>   
+> +	rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
+> +
+> +	/*
+> +	 * The TOY_MATCH0_REG should be cleared 0 here,
+> +	 * otherwise the interrupt cannot be cleared.
+> +	 */
+> +	regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
+> +
+>   	spin_lock(&priv->lock);
+>   	/* Disable RTC alarm wakeup and interrupt */
+>   	writel(readl(priv->pm_base + PM1_EN_REG) & ~RTC_EN,
+Thanks.
+Binbin
 
 
