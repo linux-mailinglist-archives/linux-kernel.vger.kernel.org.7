@@ -1,431 +1,165 @@
-Return-Path: <linux-kernel+bounces-640620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9ACAB0700
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:22:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFD5AB0708
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6BD9C3714
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:22:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13551BC7D72
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8A09444;
-	Fri,  9 May 2025 00:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC041FB3;
+	Fri,  9 May 2025 00:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZnMgvKw9"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="S/yhTzFa"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B781FB3;
-	Fri,  9 May 2025 00:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928C3C148
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 00:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746750133; cv=none; b=XNUBP69HqMY4NZ3tHm3zW1QB77Mge6U7DTpWgZYWtAtboeMDNHFt4ahG2cH9ywfhWQT/lyFQAsGEW5biT4tVwoNFmws1uCqrMUjbH6GEdSnFvcUgWZn9B3XTuCZnFc29Mm+7r2t35M7yeF6WC0GgzgoLtKohu1y37TCkfVu7IkA=
+	t=1746750473; cv=none; b=CaH/Rf02fJGMjZhkvd0HOvIcE2RB+S6DYGK+l8LPsHBNzcIaONn0inS3m0/ye4E6jO9FzyrEH1ZJasm+iRAQ0E6qmu0YCfdPiLNPVehS5wBz23JbTXMTc4rNtetecx7x2QjJiENMX3Nvidhj+E05TsSkhuiiqO9iSi/qu4sTo88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746750133; c=relaxed/simple;
-	bh=/SCglJLxpclzucDU3yiJFF1ubIuRBF0QgtKl9rIrLbE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWGPEUTotpSp2o5cdcspRZl/VRknTHFuzpZmnXSoAsSQPY577GFicVY6BvTNL3C4Gk+j0JQRR5Ho1A29X7Q0XIhvQ/gq9Ee60UANfFUg1XtOgZU27jgCreeLSRxxBEcQPxqM6ad5eOxuKhxadgmlVF9IYv/h1dWCX4S5/uTzJP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZnMgvKw9; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5490M1R81793366
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 8 May 2025 19:22:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746750121;
-	bh=KgLuOiarV7Aw/Z8jvsxdJySYwSWkOMiQwkRmin6WCk8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=ZnMgvKw9fa2F31qOl8FAARz8V0VRLoW9PgbPnwv9BLH9WdtVULXrhSsYZIWQIp8nX
-	 qrWPoqATZDq0A8h+hVTkhG8OX+ma6506eiNBSO1X/EV5HqXP9o7AmXz3CQFzJFVmxg
-	 yQ+jbg8mW3nh1JYrYlryouKkYWlW8JFGOKJNwpzQ=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5490M1eA018622
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 May 2025 19:22:01 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- May 2025 19:22:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 May 2025 19:22:01 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5490M1FS066139;
-	Thu, 8 May 2025 19:22:01 -0500
-Date: Thu, 8 May 2025 19:22:01 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Paresh Bhagat <p-bhagat@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
-        <afd@ti.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: ti: Add support for AM62D2-EVM
-Message-ID: <20250509002201.g2db6cf5w4mtow6k@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20250508091422.288876-1-p-bhagat@ti.com>
- <20250508091422.288876-4-p-bhagat@ti.com>
+	s=arc-20240116; t=1746750473; c=relaxed/simple;
+	bh=4U0PtOTgyWwUYIgRnQyiflVPdeK7IJmEHyq/L90BZ88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WTWW7mEM6iinH7nCsvSRFuGUOJEG1L00RM1T4m5FSGsKqV52VO/HdJYwk43nEYJ8hwPElhVMbtHkFK8lXdMkInIswiBbBw+07e6s96emDDjH6eoy5yPGGWxYQxBQMkydKJ/MWNnZUMabusGGjuh9qErSmJbuax7lQDbGyocT070=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=S/yhTzFa; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a34e5893-0b7e-47e7-a655-a49e3472e0e9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746750469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=focIGU9K6baIuUHoMWczpC1FYpctMA9LpP3THjX0tv8=;
+	b=S/yhTzFakjdfMXIvQjosSdkUsGCK+8PEHBvMHiTyVuN7hXwQ0YNKGjTbLAvgLRrcw3avQY
+	pduZN1V4KocO2xdemEmx1q1Huf/v1qISawu5FABFATS3F53m1xBxyHSFTO2wCmRWTZQBnq
+	23VctDWhLqEMU7OCy3cyW5hPtb9dUTQ=
+Date: Thu, 8 May 2025 17:26:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+Subject: Re: [PATCH v6 11/14] RISC-V: KVM: add SBI extension init()/deinit()
+ functions
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-kselftest@vger.kernel.org
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+ Andrew Jones <ajones@ventanamicro.com>, Deepak Gupta <debug@rivosinc.com>
+References: <20250424173204.1948385-1-cleger@rivosinc.com>
+ <20250424173204.1948385-12-cleger@rivosinc.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <20250424173204.1948385-12-cleger@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250508091422.288876-4-p-bhagat@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Migadu-Flow: FLOW_OUT
 
-On May  8, 2025 thus sayeth Paresh Bhagat:
-> AM62D-EVM evaluation module (EVM) is a low-cost expandable platform board
-> designed for TI’s AM62D2 SoC. It supports the following interfaces:
+On 4/24/25 10:31 AM, ClÃ©ment LÃ©ger wrote:
+> The FWFT SBI extension will need to dynamically allocate memory and do
+> init time specific initialization. Add an init/deinit callbacks that
+> allows to do so.
 > 
-> * 4 GB LPDDR4 RAM
-> * x2 Gigabit Ethernet expansion connectors
-> * x4 3.5mm TRS Audio Jack Line In
-> * x4 3.5mm TRS Audio Jack Line Out
-> * x2 Audio expansion connectors
-> * x1 Type-A USB 2.0, x1 Type-C dual-role device (DRD) USB 2.0
-> * x1 UHS-1 capable µSD card slot
-> * 32 GB eMMC Flash
-> * 512 Mb OSPI NOR flash
-> * x4 UARTs via USB 2.0-B
-> * XDS110 for onboard JTAG debug using USB
-> * Temperature sensors, user push buttons and LEDs
-> 
-> AM62A7 and AM62D2 SoCs share several peripherals in wakeup, mcu, thermal,
-> and portions of the main domain. To improve reuse and reduce duplication,
-> common *-wakeup.dtsi, *-mcu.dtsi, *-thermal.dtsi, and *-main.dtsi files
-> have been introduced. Each board will have a dedicated DTS file that
-> includes both the shared and SoC-specific .dtsi files.
-> 
-> Schematics Link - https://www.ti.com/lit/zip/sprcal5
-> 
-> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 > ---
->  arch/arm64/boot/dts/ti/Makefile               |    3 +
->  .../dts/ti/k3-am62a-am62d-common-main.dtsi    | 1013 +++++++++++++++++
->  ...cu.dtsi => k3-am62a-am62d-common-mcu.dtsi} |   26 +-
->  ...tsi => k3-am62a-am62d-common-thermal.dtsi} |    2 +-
->  ...dtsi => k3-am62a-am62d-common-wakeup.dtsi} |    2 +-
->  arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     | 1005 ----------------
->  arch/arm64/boot/dts/ti/k3-am62a.dtsi          |    9 +-
->  arch/arm64/boot/dts/ti/k3-am62d.dtsi          |  123 ++
->  arch/arm64/boot/dts/ti/k3-am62d2-evm.dts      |  533 +++++++++
->  arch/arm64/boot/dts/ti/k3-am62d2.dtsi         |  155 +++
->  10 files changed, 1837 insertions(+), 1034 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62a-am62d-common-main.dtsi
->  rename arch/arm64/boot/dts/ti/{k3-am62a-mcu.dtsi => k3-am62a-am62d-common-mcu.dtsi} (86%)
->  rename arch/arm64/boot/dts/ti/{k3-am62a-thermal.dtsi => k3-am62a-am62d-common-thermal.dtsi} (94%)
->  rename arch/arm64/boot/dts/ti/{k3-am62a-wakeup.dtsi => k3-am62a-am62d-common-wakeup.dtsi} (97%)
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62d.dtsi
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+>   arch/riscv/include/asm/kvm_vcpu_sbi.h |  9 +++++++++
+>   arch/riscv/kvm/vcpu.c                 |  2 ++
+>   arch/riscv/kvm/vcpu_sbi.c             | 26 ++++++++++++++++++++++++++
+>   3 files changed, 37 insertions(+)
 > 
-
-So this diff was kinda a slog and I'm not sure I went through everything 
-but I called out some things I saw.
-
-I'll let others chime in here with their opinions but we should probably 
-find a way to split this up a little more next time if possible.
-
-...
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-am62d-common-main.dtsi 
-> b/arch/arm64/boot/dts/ti/k3-am62a-am62d-common-main.dtsi
-> new file mode 100644
-> index 000000000000..570a6413165d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a-am62d-common-main.dtsi
-> @@ -0,0 +1,1013 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree file for the MAIN domain peripherals shared by AM62A and AM62D
-> + *
-> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-
-My thinking is this is a new file so we should probably update the 
-copyright year while we're here
-
-...
-
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a.dtsi b/arch/arm64/boot/dts/ti/k3-am62a.dtsi
-> index 4d79b3e9486a..e9f28343a4c1 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a.dtsi
-> @@ -118,10 +118,13 @@ cbass_wakeup: bus@b00000 {
->  		};
->  	};
->  
-> -	#include "k3-am62a-thermal.dtsi"
-> +	#include "k3-am62a-am62d-common-thermal.dtsi"
-
-I know we're trying to reduce the boilerplate for very similar chips but 
-I think a better way to split this would be to have an industrial and 
-automotive qualified thermal #include here rather than a 62D/62A
-
-I'm assuming from the marketing material this will be the same 
-automotive qualified AMB package so we could call it something along 
-those lines if we want.
-
-...
-
->  
->  /* Now include the peripherals for each bus segments */
-> +#include "k3-am62a-am62d-common-main.dtsi"
-> +#include "k3-am62a-am62d-common-mcu.dtsi"
-> +#include "k3-am62a-am62d-common-wakeup.dtsi"
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> index 4ed6203cdd30..bcb90757b149 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -49,6 +49,14 @@ struct kvm_vcpu_sbi_extension {
+>   
+>   	/* Extension specific probe function */
+>   	unsigned long (*probe)(struct kvm_vcpu *vcpu);
 > +
-> +/* Include AM62P specific peripherals */
-
-    s/AM62P/AM62D/
-
-...
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62d.dtsi b/arch/arm64/boot/dts/ti/k3-am62d.dtsi
-> new file mode 100644
-> index 000000000000..606da1c1f1bc
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am62d.dtsi
-> @@ -0,0 +1,123 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for AM62D SoC Family
-> + *
-> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-			 2025
-> + */
+> +	/*
+> +	 * Init/deinit function called once during VCPU init/destroy. These
+> +	 * might be use if the SBI extensions need to allocate or do specific
+> +	 * init time only configuration.
+> +	 */
+> +	int (*init)(struct kvm_vcpu *vcpu);
+> +	void (*deinit)(struct kvm_vcpu *vcpu);
+>   };
+>   
+>   void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcpu, struct kvm_run *run);
+> @@ -69,6 +77,7 @@ const struct kvm_vcpu_sbi_extension *kvm_vcpu_sbi_find_ext(
+>   bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx);
+>   int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run);
+>   void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
+> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
+>   
+>   int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu, unsigned long reg_num,
+>   				   unsigned long *reg_val);
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 60d684c76c58..877bcc85c067 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -185,6 +185,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+>   
+>   void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+>   {
+> +	kvm_riscv_vcpu_sbi_deinit(vcpu);
 > +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/soc/ti,sci_pm_domain.h>
+>   	/* Cleanup VCPU AIA context */
+>   	kvm_riscv_vcpu_aia_deinit(vcpu);
+>   
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index d1c83a77735e..3139f171c20f 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -508,5 +508,31 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu)
+>   		scontext->ext_status[idx] = ext->default_disabled ?
+>   					KVM_RISCV_SBI_EXT_STATUS_DISABLED :
+>   					KVM_RISCV_SBI_EXT_STATUS_ENABLED;
 > +
-> +#include "k3-pinctrl.h"
+> +		if (ext->init && ext->init(vcpu) != 0)
+> +			scontext->ext_status[idx] = KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
+> +	}
+> +}
 > +
-> +/ {
-> +	model = "Texas Instruments K3 AM62D SoC";
-> +	compatible = "ti,am62d2";
-> +	interrupt-parent = <&gic500>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
+> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm_vcpu_sbi_context *scontext = &vcpu->arch.sbi_context;
+> +	const struct kvm_riscv_sbi_extension_entry *entry;
+> +	const struct kvm_vcpu_sbi_extension *ext;
+> +	int idx, i;
 > +
-> +	chosen { };
-
-No need for this
-
-...
-
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
-> new file mode 100644
-> index 000000000000..0873c2523607
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
-> @@ -0,0 +1,533 @@
-
-...
-
+> +	for (i = 0; i < ARRAY_SIZE(sbi_ext); i++) {
+> +		entry = &sbi_ext[i];
+> +		ext = entry->ext_ptr;
+> +		idx = entry->ext_idx;
 > +
-> +	chosen {
-> +		stdout-path = "serial2:115200n8";
-> +	};
-
-Look at the 62P and how we used a &phandle for this.
-
-...
-
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
+> +		if (idx < 0 || idx >= ARRAY_SIZE(scontext->ext_status))
+> +			continue;
 > +
-> +		/* global cma region */
-> +		linux,cma {
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +			size = <0x00 0x2000000>;
-> +			alloc-ranges = <0x00 0xc0000000 0x00 0x2000000>;
-> +			linux,cma-default;
-> +		};
+> +		if (scontext->ext_status[idx] == KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE ||
+> +		    !ext->deinit)
+> +			continue;
 > +
-> +		c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x99800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		c7x_0_memory_region: c7x-memory@99900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x99900000 0x00 0xf00000>;
-> +			no-map;
-> +		};
-> +
-> +		mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9b800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9b900000 0x00 0xf00000>;
-> +			no-map;
-> +		};
-> +
-> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9c800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9c900000 0x00 0xf00000>;
-> +			no-map;
-> +		};
-> +
-> +		secure_tfa_ddr: tfa@80000000 {
-> +			reg = <0x00 0x80000000 0x00 0x80000>;
+> +		ext->deinit(vcpu);
+>   	}
+>   }
 
-Just a nit pick but while we're respinning this series could you sort 
-this? It just makes our lives easier when we inevitably changes this 
-when we want to experiment with some other firmware or try to move 
-things when someone wants to use a smaller DDR part
-
-> +			alignment = <0x1000>;
-> +			no-map;
-> +		};
-> +
-> +		secure_ddr: optee@9e800000 {
-> +			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
-> +			alignment = <0x1000>;
-> +			no-map;
-> +		};
-> +	};
-
-...
-
-> +
-> +&mcu_pmx0 {
-> +	bootph-all;
-
-Look at how the 62P does this. Newer U-Boot versions are smart enough to 
-only prune things if none of their children have an appropriate bootph-* 
-flag. So as long as we have a bootph-all flag in this following
-&wkup_uart0_pins_default the &mcu_pmx0 will not be pruned
-
-It makes things much cleaner and avoids us having to pull in SoC.dtsi 
-stuff here to make the bootloaders happy
-
-> +
-> +	wkup_uart0_pins_default: wkup-uart0-default-pins {
-> +		pinctrl-single,pins = <
-> +			AM62DX_MCU_IOPAD(0x0024, PIN_INPUT, 0) /* (C9) WKUP_UART0_RXD */
-> +			AM62DX_MCU_IOPAD(0x0028, PIN_OUTPUT, 0) /* (E9) WKUP_UART0_TXD */
-> +			AM62DX_MCU_IOPAD(0x002c, PIN_INPUT, 0) /* (C10) WKUP_UART0_CTSn */
-> +			AM62DX_MCU_IOPAD(0x0030, PIN_OUTPUT, 0) /* (C8) WKUP_UART0_RTSn */
-> +		>;
-> +		bootph-all;
-> +	};
-> +};
-> +
-> +/* WKUP UART0 is used for DM firmware logs */
-> +&wkup_uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&wkup_uart0_pins_default>;
-> +	status = "reserved";
-> +	bootph-all;
-> +};
-> +
-> +&main_pmx0 {
-> +	bootph-all;
-
-same here
-
-...
-
-> +&secure_proxy_main {
-> +	bootph-all;
-> +};
-
-So this is where things get weird. The only way U-Boot's R5 SPL will 
-talk to TIFS is via the secure proxy thread. It's a requirement of any 
-board that uses both the 62A and 63D chip well all the 62* really.
-
-So rather than defining this on every board we should probably just 
-throw it in with the &secure_proxy_main node rather than calling it out 
-here.
-
-> +
-> +&dmsc {
-> +	bootph-all;
-> +};
-> +
-> +&k3_pds {
-> +	bootph-all;
-> +};
-> +
-> +&k3_clks {
-> +	bootph-all;
-> +};
-> +
-> +&k3_reset {
-> +	bootph-all;
-> +};
-> +
-> +&wkup_conf {
-> +	bootph-all;
-> +};
-> +
-> +&chipid {
-> +	bootph-all;
-> +};
-
-Same with these. The chipid, clocks, power domains will all be needed 
-for booting the SoC regardless of how someone wires the chip. These 
-should just go in their respective nodes and be done with it rather than 
-each board calling this out.
-
-...
-
-> +
-> +&k3_reset {
-> +	bootph-all;
-> +};
-> +
-> +&dmsc {
-> +	bootph-all;
-> +};
-
-I've already snipped this email quite a bit, but I know I've seen these 
-duplicates. Double check we're not defining things multiple times. 
-
-...
-
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2.dtsi b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> new file mode 100644
-> index 000000000000..47566fea4157
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> @@ -0,0 +1,155 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for AM62D2 SoC family in Quad core configuration
-> + *
-> + * TRM: https://www.ti.com/lit/zip/spruj16
-> + *
-> + * Copyright (C) 2020-2024 Texas Instruments Incorporated - https://www.ti.com/
-
-    s/2024/2025
-
-~Bryan
-
+LGTM.
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
