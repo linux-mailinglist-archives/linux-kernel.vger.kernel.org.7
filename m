@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-641329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B27AB1016
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F399AB1044
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB25A0640E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567C91C2536E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B889528ECD9;
-	Fri,  9 May 2025 10:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5D28ECF9;
+	Fri,  9 May 2025 10:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Uhvy36Lo"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63FC28DF5C;
-	Fri,  9 May 2025 10:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nMT5GQ0h"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF7928DF5C;
+	Fri,  9 May 2025 10:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746785571; cv=none; b=b/k1vgo8kjjvmeZ7ByzULfhdPka0HKeprzJPnct8BYTLQQ7gPiD1as2Ri9RiBMJGG7kgabhGA6ypDoDRFmKCSPpTDv4xzLZlkSWSKDsPzrlc2P5Q1WLfYTcyEghl2+zkeTnsJh3NtDOyKj4J2k0qpArwu5Te5f3IIlQ8/Dfri70=
+	t=1746785673; cv=none; b=M1JFHRe7p/9Ih2piv9HDgVKPLEojZM4FvpRu6xWMboImES2wALFZeAdz28rHisoF0UxcfCpajMYhYqFOEtXp8gj2SFjMDW1ekSJRP3PhqYUyVd78dPg6FEwDFCpS+ri2/GN3rfM+Eqd3xRThAxqFmJgecvB40MTHbOqCqd8bUhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746785571; c=relaxed/simple;
-	bh=M0yJLi3YltfIlr+h+JY5iRrqytF1C8+FeHZfC+leV/8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=chF0aD8DwxRudho0S8vJ4iB+omO3dpnJV6AwfZWOpldd92knBE68pTN92xmA1PAehjkMtgKyXo8WMkv9GqIqU10ismXJv8ODDBcIUISENt3sqUg1oga3fgJpOi1CGGJ7fVVc+eWF/HHps6ZUaBpIxu02URf4QQExGqXwYuT/ibs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Uhvy36Lo; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 1C4AF2098462; Fri,  9 May 2025 03:12:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1C4AF2098462
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746785569;
-	bh=e/tm+t3vcAkUXIvSagvF7PotT61S98sNQtc1m6Q+83g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Uhvy36Lowt7migeLLbpUOqA5gwxEeVXpC6AqBqo3BVEP4Wat/qlwAK1nXZnIIoXR0
-	 u6+DwI4ljiKEOOv1Q/4fvRv7i29zPARyW6z+WtfIwjtpiKgEf3aFEa8ZmVtVVd3oBS
-	 8o8gOMydUHgKVsz6Q4oHrx7ewqn3XgGbvs/mM/CU=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: 
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Long Li <longli@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=EF=BF=BD=7EDski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Paul Rosswurm <paulros@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH v3 0/4] Allow dyn MSI-X vector allocation of MANA
-Date: Fri,  9 May 2025 03:12:46 -0700
-Message-Id: <1746785566-4337-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1746785673; c=relaxed/simple;
+	bh=tC3yerrzg8rWelNEn6xwDuErAgY2oEHyEk9X9qlwnaA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pENLFkrkJHiDgTAKUMugoAYBxiOq2+c4gGOdOjHjKtVW9NRbLCBWP0Qm5FuakMNc7cUlg6QUnnol+r/92c+Em9N5un+2pKKPlmIXOHDmvIxSsxmIaoblMY4TpEA/1fyHiPG0w5QmNLI/hfsNZ8RTXEuOMR+Pkls8vk6R9fFUdFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nMT5GQ0h; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746785669;
+	bh=tC3yerrzg8rWelNEn6xwDuErAgY2oEHyEk9X9qlwnaA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nMT5GQ0h5zoIckKo02quXQRW07wwO9O4bAqPovy04mWZsKKVBh18dIr03I0G16P8z
+	 xUSNTbWP/JOQk7G0z/qUgAgm+eXTRQvyGmNThHsCzppuqHhe+uFw0bUsTsOsP8tTY9
+	 XtvPqqkBA7OvW/NHxJOLcYIbH5id58dOboiUYrMgpSk22Lp5dxV+1l/sh1EZVbDJMH
+	 2+Hz8v8HchkjdVlKVJoVjOO5m1LAwazY2llYdnIVm5n0/f28ldlbvqm17w3BrTVOVn
+	 yPme61YfEEzNu71hPAGJZVBhgrL33pIqIoiz0SUdOEePgM7lHjQMFPkMfaW5acemn3
+	 Hq7g9JiPshkjQ==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5E1A417E05A6;
+	Fri,  9 May 2025 12:14:28 +0200 (CEST)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Fri, 09 May 2025 12:12:47 +0200
+Subject: [PATCH v6 1/5] dt-bindings: gpu: mali-bifrost: Add compatible for
+ MT8370 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250509-mt8370-enable-gpu-v6-1-2833888cb1d3@collabora.com>
+References: <20250509-mt8370-enable-gpu-v6-0-2833888cb1d3@collabora.com>
+In-Reply-To: <20250509-mt8370-enable-gpu-v6-0-2833888cb1d3@collabora.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Steven Price <steven.price@arm.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746785666; l=1599;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=tC3yerrzg8rWelNEn6xwDuErAgY2oEHyEk9X9qlwnaA=;
+ b=SUudfoxKoIM1mIWdH3VYBxGXNrCkLcyx4HTJkoy72azrPYoyGg9GUVAiccsh/5z+E1hMTi3Dg
+ CYZ/mD8RwEEBdTdsbet60itRzyJ4bdk+N8iEgxENE9LwjJoZ8OH+DwA
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-In this patchset we want to enable the MANA driver to be able to
-allocate MSI-X vectors in PCI dynamically
+Add a compatible for the MediaTek MT8370 SoC, with an
+integrated ARM Mali G57 MC2 GPU (Valhall-JM, dual core).
+None of the already existing SoC specific compatibles is usable as
+fallback, as those either do not match the number of cores (and number
+of power domains), or are for a different GPU architecture.
 
-The first patch exports pci_msix_prepare_desc() in PCI to be able to
-correctly prepare descriptors for dynamically added MSI-X vectors
-
-The second patch adds the support of dynamic vector allocation in
-pci-hyperv PCI controller by enabling the MSI_FLAG_PCI_MSIX_ALLOC_DYN
-flag and using the pci_msix_prepare_desc() exported in first patch.
-
-The third patch is a preparation patch for mana changes to support
-dynamic IRQ allocation. It contains changes in irq_setup() to allow
-skipping first sibling CPU sets, in case certain IRQs are already
-affinitized to them.
-
-The fourth patch has the changes in MANA driver to be able to allocate
-MSI-X vectors dynamically. If the support does not exist it defaults to
-older behavior.
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 ---
- Changes in v3
- * split the 3rd patch into preparation patch around irq_setup() and
-   changes in mana driver to allow dynamic IRQ allocation
- * Add arm64 support for dynamic MSI-X allocation in pci_hyperv
-   controller
----
- Changes in v2
- * split the first patch into two(exporting the preapre_desc
-   func and using the function and flag in pci-hyperv)
- * replace 'pci vectors' by 'MSI-X vectors'
- * Change the cover letter description to align with changes made
----
-Shradha Gupta (4):
-  PCI/MSI: Export pci_msix_prepare_desc() for dynamic MSI-X alloc
-  PCI: hv: Allow dynamic MSI-X vector allocation
-  net: mana: Allow irq_setup() to skip cpus for affinity
-  net: mana: Allocate MSI-X vectors dynamically
+ Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- .../net/ethernet/microsoft/mana/gdma_main.c   | 264 +++++++++++++++---
- drivers/pci/controller/pci-hyperv.c           |   7 +-
- drivers/pci/msi/irqdomain.c                   |   5 +-
- include/linux/msi.h                           |   2 +
- include/net/mana/gdma.h                       |   8 +-
- 5 files changed, 235 insertions(+), 51 deletions(-)
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+index 019bd28a29f19bb4f7a9c32434b208b6d04db221..5726b79fd0f9de8914f724929f462409e088ec31 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+@@ -40,6 +40,7 @@ properties:
+           - enum:
+               - mediatek,mt8188-mali
+               - mediatek,mt8192-mali
++              - mediatek,mt8370-mali
+           - const: arm,mali-valhall-jm # Mali Valhall GPU model/revision is fully discoverable
+ 
+   reg:
+@@ -221,7 +222,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: mediatek,mt8186-mali
++            enum:
++              - mediatek,mt8186-mali
++              - mediatek,mt8370-mali
+     then:
+       properties:
+         power-domains:
 
 -- 
-2.34.1
+2.49.0
 
 
