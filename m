@@ -1,185 +1,343 @@
-Return-Path: <linux-kernel+bounces-640772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB00AB08EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C659AB08EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F183ADE71
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458993BF311
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A3323AE60;
-	Fri,  9 May 2025 03:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE46B23A9AE;
+	Fri,  9 May 2025 03:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j9bIKj4I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqCc3rYm"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E655F4964E;
-	Fri,  9 May 2025 03:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F002397A4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746761665; cv=none; b=TFqLmePzPDmWZqFzh+NFOSeolRRAln+lZkZ1lZZmT4djOHXv0ukhVOmuPOJLzfeaEKk7ghe9eu86ND4rIM8j4EkdWqkAdV+bPHZ3rftv0bSfVotdFC6cRQEZiwP88kW991KO9CJ/EoQN3cVhtc+8G1e+j17R1hT+tO9Gi91AF/Q=
+	t=1746762105; cv=none; b=Dv+NRvR4BtEAcppTZOR74+obuNBJQhASYa2YU8jAgHSNzcxMRlq5xm/ARgfhyGzMyWhRC7ncSsuZaobC3onAZKIx/Nj2vRZozVDyAyw4weAomOtoJMt7DbzXIHKdSlewXWDaFY8OOB3m09bspeFEMnn5uDoqtNZudRPQMVBvVu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746761665; c=relaxed/simple;
-	bh=YCgZ4EmtM1kqBGsyn395LmBrCpWTYHWfQgzhyYcGRZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbVQZFjnzueTmoKZ5MCAKqlwsmXR2mo/heZHCSS53JiZc+gZggiM3gPmGu7kVhn7wsgiGZJZ4WlpQvuWnkyICveiROYN8IcQG39pfWkQXF/PoC0pPdabunG9KnJomndVjhYD7xm5EPbT7BRx6wcPQyrVWTNvQxZSsg+EYGlcLqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j9bIKj4I; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746761665; x=1778297665;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YCgZ4EmtM1kqBGsyn395LmBrCpWTYHWfQgzhyYcGRZ8=;
-  b=j9bIKj4I0e8yth4EB0PTVQMTUzUx9rvR62LpznqFyUEAG5Ze3L/yUAFU
-   K6wKvEWj35J6SHfV/Se21YmqyeXxH8L6jx+3QIZw3K8qa+Ti+LyaUgCpy
-   DX8vy5pd01Nhfbq0OLHYKQDqZD9ecBCuPyr0BhiP4k0BGK7gz3BvV5XSg
-   PXEnstiynFU/5LRlqz7NLnhWWEmL/kJxQnRpos5iXhBPK9clrrfDG03dt
-   aZ7Qtt9t/ORBQDw8X4ZPbxflqFPHy1Kwm/ry9eth/LOEpeS/COF7Qxety
-   DC1eOhAOh8pazULW9ZoiWuSW1rv5zvHIjUzyhJbLSi/5bqQe6HURGVtK0
-   g==;
-X-CSE-ConnectionGUID: rBUfTvW9T6GEK/rLBAfOHQ==
-X-CSE-MsgGUID: 7FdGuy5ZSo6k3qNRaFnnOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48483754"
-X-IronPort-AV: E=Sophos;i="6.15,274,1739865600"; 
-   d="scan'208";a="48483754"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 20:34:24 -0700
-X-CSE-ConnectionGUID: QD+cWyvyQn+XNLNUU53Muw==
-X-CSE-MsgGUID: NJ4z7ZqrSxOD44aNuGeZCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,274,1739865600"; 
-   d="scan'208";a="167432410"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 08 May 2025 20:34:18 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDEV6-000BdH-0t;
-	Fri, 09 May 2025 03:34:16 +0000
-Date: Fri, 9 May 2025 11:33:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lorenz Bauer <lmb@isovalent.com>, Arnd Bergmann <arnd@arndb.de>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Lorenz Bauer <lmb@isovalent.com>
-Subject: Re: [PATCH bpf-next v3 1/3] btf: allow mmap of vmlinux btf
-Message-ID: <202505091116.jHtyWJW4-lkp@intel.com>
-References: <20250505-vmlinux-mmap-v3-1-5d53afa060e8@isovalent.com>
+	s=arc-20240116; t=1746762105; c=relaxed/simple;
+	bh=ARB54YDrGslElmmieC1dWlSnereaS+9XpQlvMSdPz+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AgDK2UbJlHvDbPEibA426Jn4GiEBNuQFpmBe3DBnWpNuF0gdF8OMzf6U2PgusFxVNOAllAWUTpHgGVfDWwn5+LU8wYkwICga6l1cn5VRWmX+Gj0x2NPq/a4KoqGT0OyJUN9D3Jf62v/i3MP7+xPdxm6dMWEMcukXOGcAtp0zE7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqCc3rYm; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4def13d3f01so33598137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 20:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746762102; x=1747366902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TD4r662HPGkqrB2RFNkD8ouqrc7R9+3ahwBRVHPxv5g=;
+        b=lqCc3rYmtWKstZ0zAmY2Nm3DZpyWOsiOysc1drMP99bO97yOGRXVgCYdGb2I3EfaqF
+         8C/2T8jPXEGAgllFjbqSzlGo8Q5D/bv+Mrsh+AfCvwfZUOOyxznP3oopQ9Gd5w66pSen
+         5D6WVbrS8J2w9mXCKNIOQeVikc1LFUFeVkJDklY0jLc5xnXvSL9EMCRySONwMVjL/C68
+         MvcAkqTV5XECBrwC7w5a9Xwfxf0N0ieVDHYWoyS5pGJGuj01mxvsW0ImmlgErsB6KrOB
+         xBGHdlsI4Afa3DOopxA+1IyFLM+dYRTYln03bLIfqCHxGXiyzpJ4Ltu8NGD7Yt3BIpN1
+         VyUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746762102; x=1747366902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TD4r662HPGkqrB2RFNkD8ouqrc7R9+3ahwBRVHPxv5g=;
+        b=X+dsVO6dOemAlXmc1wySUMzsa9f094mf2vf0mos7mwiOVzHkSNXYkPQSztCLHBjz6r
+         O9tlupmujD3cATArCN4wI48Mf8RKAAHf+a7rgwIrWoBPe63k2aMDQkTuRndOSJXgot3p
+         aYjuSCBh7M7TlEFCSXAIhUUkwRfcFWqM+FxS378kdM8UaCvEIVwnGUDhlYfe6/WmB6OJ
+         yMAeThfdnQ0YLL7EkWg4qs6WvPlyPf0XOjwuznMh52SGsMsGduQxQyKebatta9s1/NsB
+         0u2NIWEUtUMf6wly3cmd9ZN7EjSEPB8RYQ4U9pKkgm1537uxDRc5CeNONiNXKlTUCI0z
+         DFOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWT6FeHuB1qWYcBr7aRxO44wf1X7el3GeH9eLUFgRm8oAVy45MI35o8T0HGJbJRbhYuvI4TJIlLddBctf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNwo3SYh8G/P2raatdo0SSHrLCtT1KI+5hTQuYnaqpYePn6TdK
+	hdiCMuim6tmE6IDlXXIoAhp6XSPtVxGQ/+N6x5oSOF7EK4+glkSL+qpyf4QMc+HtAISXlV/fW+S
+	eJ2QTbHXgP06d75S5zETg6FiDWrA=
+X-Gm-Gg: ASbGncv1FJzy9/aGY/4/5wfKzv591uSjH/7vZESGFWp/eL2bfgv8dI2iIc9xnUijzOg
+	CX3h+AUbYDf2Lpbn2d1cstSeUcsJXvFLo/N31JlgM8FRl0sD7xFRaMgSoa7CYyQKQ1jX96GvWGh
+	wj0PdsZPLYF2KSw/fTubTmFw==
+X-Google-Smtp-Source: AGHT+IF75RwFThbsKChym3aI6TPaEKrrBkh65O/mRqjgySJ6N255FnbhHv2Tuj5RoLaSA5qsxj64wjTEvR+uUZ2L4V8=
+X-Received: by 2002:a05:6102:5e97:b0:4c5:1c2e:79f5 with SMTP id
+ ada2fe7eead31-4deed3cbab5mr1849166137.16.1746762102023; Thu, 08 May 2025
+ 20:41:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505-vmlinux-mmap-v3-1-5d53afa060e8@isovalent.com>
+References: <20250509020238.3378396-1-xiaqinxin@huawei.com> <20250509020238.3378396-3-xiaqinxin@huawei.com>
+In-Reply-To: <20250509020238.3378396-3-xiaqinxin@huawei.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 9 May 2025 15:41:31 +1200
+X-Gm-Features: AX0GCFuB48vrcdnnCZmO_2nSDqx3mdCAtJEfsOiM6mmty92yGKXhbSGyZ9OWbMY
+Message-ID: <CAGsJ_4xmC5wP9ut7X6cj72xq1qNGdVCC==8c9FQpd3SbCQ-iNw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] dma-mapping: benchmark: modify the framework to
+ adapt to more map modes
+To: Qinxin Xia <xiaqinxin@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>
+Cc: yangyicong@huawei.com, hch@lst.de, iommu@lists.linux.dev, 
+	jonathan.cameron@huawei.com, prime.zeng@huawei.com, fanghao11@huawei.com, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lorenz,
+On Fri, May 9, 2025 at 2:02=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> wr=
+ote:
+>
+> In some service scenarios, the performance of dma_map_sg needs to be
+> tested to support different map modes for benchmarks. This patch adjusts
+> the DMA map benchmark framework to make the DMA map benchmark framework
+> more flexible and adaptable to other mapping modes in the future.
+> By abstracting the framework into four interfaces:prepare, unprepare,
+> do_map, and do_unmap.The new map schema can be introduced more easily
+> without major modifications to the existing code structure.
+>
+> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
 
-kernel test robot noticed the following build warnings:
+- stable@vger.kernel.org
++ Marek
++ Robin,
 
-[auto build test WARNING on 38d976c32d85ef12dcd2b8a231196f7049548477]
+Once the minor issues below are addressed, feel free to add:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lorenz-Bauer/btf-allow-mmap-of-vmlinux-btf/20250506-024103
-base:   38d976c32d85ef12dcd2b8a231196f7049548477
-patch link:    https://lore.kernel.org/r/20250505-vmlinux-mmap-v3-1-5d53afa060e8%40isovalent.com
-patch subject: [PATCH bpf-next v3 1/3] btf: allow mmap of vmlinux btf
-config: arc-randconfig-r073-20250508 (https://download.01.org/0day-ci/archive/20250509/202505091116.jHtyWJW4-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505091116.jHtyWJW4-lkp@intel.com/reproduce)
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505091116.jHtyWJW4-lkp@intel.com/
+> ---
+>  include/linux/map_benchmark.h |   8 ++-
+>  kernel/dma/map_benchmark.c    | 122 +++++++++++++++++++++++++++-------
+>  2 files changed, 106 insertions(+), 24 deletions(-)
+>
+> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.=
+h
+> index 2ac2fe52f248..5294dfd1870f 100644
+> --- a/include/linux/map_benchmark.h
+> +++ b/include/linux/map_benchmark.h
+> @@ -15,6 +15,11 @@
+>  #define DMA_MAP_TO_DEVICE       1
+>  #define DMA_MAP_FROM_DEVICE     2
+>
+> +enum {
+> +       DMA_MAP_SINGLE_MODE,
+> +       DMA_MAP_MODE_MAX
+> +};
 
-All warnings (new ones prefixed by >>):
+Using a more specific namespace=E2=80=94such as DMA_MAP_BENCH_SINGLE_MODE
+and DMA_MAP_BENCH_MODE_MAX=E2=80=94would help avoid potential naming
+conflicts.
 
-   In file included from arch/arc/include/asm/page.h:136,
-                    from arch/arc/include/asm/thread_info.h:16,
-                    from include/linux/thread_info.h:60,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/arc/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/spinlock.h:56,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
-                    from kernel/bpf/sysfs_btf.c:6:
-   kernel/bpf/sysfs_btf.c: In function 'btf_sysfs_vmlinux_mmap':
->> kernel/bpf/sysfs_btf.c:43:51: warning: passing argument 1 of 'virt_to_pfn' makes pointer from integer without a cast [-Wint-conversion]
-      43 |                                      virt_to_page(addr));
-         |                                                   ^~~~
-         |                                                   |
-         |                                                   long unsigned int
-   include/asm-generic/memory_model.h:18:46: note: in definition of macro '__pfn_to_page'
-      18 | #define __pfn_to_page(pfn)      (mem_map + ((pfn) - ARCH_PFN_OFFSET))
-         |                                              ^~~
-   kernel/bpf/sysfs_btf.c:43:38: note: in expansion of macro 'virt_to_page'
-      43 |                                      virt_to_page(addr));
-         |                                      ^~~~~~~~~~~~
-   arch/arc/include/asm/page.h:123:53: note: expected 'const void *' but argument is of type 'long unsigned int'
-     123 | static inline unsigned long virt_to_pfn(const void *kaddr)
-         |                                         ~~~~~~~~~~~~^~~~~
+> +
+>  struct map_benchmark {
+>         __u64 avg_map_100ns; /* average map latency in 100ns */
+>         __u64 map_stddev; /* standard deviation of map latency */
+> @@ -27,6 +32,7 @@ struct map_benchmark {
+>         __u32 dma_dir; /* DMA data direction */
+>         __u32 dma_trans_ns; /* time for DMA transmission in ns */
+>         __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a ti=
+me */
+> -       __u8 expansion[76];     /* For future use */
+> +       __u8  map_mode; /* the mode of dma map */
+> +       __u8 expansion[75];     /* For future use */
+>  };
+>  #endif /* _KERNEL_DMA_BENCHMARK_H */
+> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+> index cc19a3efea89..47a06b891db8 100644
+> --- a/kernel/dma/map_benchmark.c
+> +++ b/kernel/dma/map_benchmark.c
+> @@ -5,6 +5,7 @@
+>
+>  #define pr_fmt(fmt)    KBUILD_MODNAME ": " fmt
+>
+> +#include <linux/cleanup.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+> @@ -31,17 +32,99 @@ struct map_benchmark_data {
+>         atomic64_t loops;
+>  };
+>
+> +struct map_benchmark_ops {
+> +       void *(*prepare)(struct map_benchmark_data *map);
+> +       void (*unprepare)(void *mparam);
+> +       int (*do_map)(void *mparam);
+> +       void (*do_unmap)(void *mparam);
+> +};
+> +
+> +struct dma_single_map_param {
+> +       struct device *dev;
+> +       dma_addr_t addr;
+> +       void *xbuf;
+> +       u32 npages;
+> +       u32 dma_dir;
+> +};
+> +
+> +static void *dma_single_map_benchmark_prepare(struct map_benchmark_data =
+*map)
+> +{
+> +       struct dma_single_map_param *params __free(kfree) =3D kzalloc(siz=
+eof(*params),
+> +                                                                   GFP_K=
+ERNEL);
+> +       if (!params)
+> +               return NULL;
+> +
+> +       params->npages =3D map->bparam.granule;
+> +       params->dma_dir =3D map->bparam.dma_dir;
+> +       params->dev =3D map->dev;
+> +       params->xbuf =3D alloc_pages_exact(params->npages * PAGE_SIZE, GF=
+P_KERNEL);
+> +       if (!params->xbuf)
+> +               return NULL;
+> +
+> +       /*
+> +        * for a non-coherent device, if we don't stain them in the
+> +        * cache, this will give an underestimate of the real-world
+> +        * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
+> +        * 66 means evertything goes well! 66 is lucky.
+> +        */
+> +       if (params->dma_dir !=3D DMA_FROM_DEVICE)
+> +               memset(params->xbuf, 0x66, params->npages * PAGE_SIZE);
+> +
+> +       return_ptr(params);
+> +}
+> +
+> +static void dma_single_map_benchmark_unprepare(void *mparam)
+> +{
+> +       struct dma_single_map_param *params =3D mparam;
+> +
+> +       free_pages_exact(params->xbuf, params->npages * PAGE_SIZE);
+> +       kfree(params);
+> +}
+> +
+> +static int dma_single_map_benchmark_do_map(void *mparam)
+> +{
+> +       struct dma_single_map_param *params =3D mparam;
+> +       int ret =3D 0;
+> +
+> +       params->addr =3D dma_map_single(params->dev, params->xbuf,
+> +                                     params->npages * PAGE_SIZE, params-=
+>dma_dir);
+> +       if (unlikely(dma_mapping_error(params->dev, params->addr))) {
+> +               pr_err("dma_map_single failed on %s\n", dev_name(params->=
+dev));
+> +               ret =3D -ENOMEM;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static void dma_single_map_benchmark_do_unmap(void *mparam)
+> +{
+> +       struct dma_single_map_param *params =3D mparam;
+> +
+> +       dma_unmap_single(params->dev, params->addr,
+> +                        params->npages * PAGE_SIZE, params->dma_dir);
+> +}
+> +
+> +static struct map_benchmark_ops dma_single_map_benchmark_ops =3D {
+> +       .prepare =3D dma_single_map_benchmark_prepare,
+> +       .unprepare =3D dma_single_map_benchmark_unprepare,
+> +       .do_map =3D dma_single_map_benchmark_do_map,
+> +       .do_unmap =3D dma_single_map_benchmark_do_unmap,
+> +};
+> +
+> +static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_MODE_MAX]=
+ =3D {
+> +       [DMA_MAP_SINGLE_MODE] =3D &dma_single_map_benchmark_ops,
+> +};
+> +
+>  static int map_benchmark_thread(void *data)
+>  {
+> -       void *buf;
+> -       dma_addr_t dma_addr;
+>         struct map_benchmark_data *map =3D data;
+> -       int npages =3D map->bparam.granule;
+> -       u64 size =3D npages * PAGE_SIZE;
+> +       __u8 map_mode =3D map->bparam.map_mode;
+>         int ret =3D 0;
+>
+> -       buf =3D alloc_pages_exact(size, GFP_KERNEL);
+> -       if (!buf)
+> +       struct map_benchmark_ops *mb_ops =3D dma_map_benchmark_ops[map_mo=
+de];
+> +       void *mparam =3D mb_ops->prepare(map);
+> +
+> +       if (!mparam)
+>                 return -ENOMEM;
+>
+>         while (!kthread_should_stop())  {
+> @@ -49,23 +132,10 @@ static int map_benchmark_thread(void *data)
+>                 ktime_t map_stime, map_etime, unmap_stime, unmap_etime;
+>                 ktime_t map_delta, unmap_delta;
+>
+> -               /*
+> -                * for a non-coherent device, if we don't stain them in t=
+he
+> -                * cache, this will give an underestimate of the real-wor=
+ld
+> -                * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
+> -                * 66 means evertything goes well! 66 is lucky.
+> -                */
+> -               if (map->dir !=3D DMA_FROM_DEVICE)
+> -                       memset(buf, 0x66, size);
+> -
+>                 map_stime =3D ktime_get();
+> -               dma_addr =3D dma_map_single(map->dev, buf, size, map->dir=
+);
+> -               if (unlikely(dma_mapping_error(map->dev, dma_addr))) {
+> -                       pr_err("dma_map_single failed on %s\n",
+> -                               dev_name(map->dev));
+> -                       ret =3D -ENOMEM;
+> +               ret =3D mb_ops->do_map(mparam);
+> +               if (ret)
+>                         goto out;
+> -               }
+>                 map_etime =3D ktime_get();
+>                 map_delta =3D ktime_sub(map_etime, map_stime);
+>
+> @@ -73,7 +143,8 @@ static int map_benchmark_thread(void *data)
+>                 ndelay(map->bparam.dma_trans_ns);
+>
+>                 unmap_stime =3D ktime_get();
+> -               dma_unmap_single(map->dev, dma_addr, size, map->dir);
+> +               mb_ops->do_unmap(mparam);
+> +
+>                 unmap_etime =3D ktime_get();
+>                 unmap_delta =3D ktime_sub(unmap_etime, unmap_stime);
+>
+> @@ -108,7 +179,7 @@ static int map_benchmark_thread(void *data)
+>         }
+>
+>  out:
+> -       free_pages_exact(buf, size);
+> +       mb_ops->unprepare(mparam);
+>         return ret;
+>  }
+>
+> @@ -209,6 +280,11 @@ static long map_benchmark_ioctl(struct file *file, u=
+nsigned int cmd,
+>
+>         switch (cmd) {
+>         case DMA_MAP_BENCHMARK:
+> +               if (map->bparam.map_mode >=3D DMA_MAP_MODE_MAX) {
+> +                       pr_err("invalid map mode\n");
+> +                       return -EINVAL;
+> +               }
+> +
+>                 if (map->bparam.threads =3D=3D 0 ||
+>                     map->bparam.threads > DMA_MAP_MAX_THREADS) {
+>                         pr_err("invalid thread number\n");
+> --
+> 2.33.0
+>
 
-
-vim +/virt_to_pfn +43 kernel/bpf/sysfs_btf.c
-
-    17	
-    18	static int btf_sysfs_vmlinux_mmap(struct file *filp, struct kobject *kobj,
-    19					  const struct bin_attribute *attr,
-    20					  struct vm_area_struct *vma)
-    21	{
-    22		unsigned long pages = PAGE_ALIGN(attr->size) >> PAGE_SHIFT;
-    23		size_t vm_size = vma->vm_end - vma->vm_start;
-    24		unsigned long addr = (unsigned long)attr->private;
-    25		int i, err = 0;
-    26	
-    27		if (addr != (unsigned long)__start_BTF || !PAGE_ALIGNED(addr))
-    28			return -EINVAL;
-    29	
-    30		if (vma->vm_pgoff)
-    31			return -EINVAL;
-    32	
-    33		if (vma->vm_flags & (VM_WRITE | VM_EXEC | VM_MAYSHARE))
-    34			return -EACCES;
-    35	
-    36		if (vm_size >> PAGE_SHIFT > pages)
-    37			return -EINVAL;
-    38	
-    39		vm_flags_mod(vma, VM_DONTDUMP, VM_MAYEXEC | VM_MAYWRITE);
-    40	
-    41		for (i = 0; i < pages && !err; i++, addr += PAGE_SIZE)
-    42			err = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
-  > 43					     virt_to_page(addr));
-    44	
-    45		if (err)
-    46			zap_vma_pages(vma);
-    47	
-    48		return err;
-    49	}
-    50	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+Barry
 
