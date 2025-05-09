@@ -1,365 +1,228 @@
-Return-Path: <linux-kernel+bounces-640681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FBAAB07C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625D9AB07C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06F24A4B72
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:09:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821AD1BA4874
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FF8242936;
-	Fri,  9 May 2025 02:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCD0242D6D;
+	Fri,  9 May 2025 02:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFXIGG+y"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9L4kgY7"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C265F8F77
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86483C30
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746756585; cv=none; b=COnf8TGIJSdruD0qHXns9RMR16IRtEj2xJKzxfGFF4KvLWk+2PPwsOG2Ku9aLH0T2Glw+FaLDQ3q4bmqDdZ8PiobIub5ovhbvj0QWIZvurraScTU8jp9JvLBG4VYypn4Trz65TW+uzi5qqJfiHvBA3I5f8IFqTl/jE0vhoq4hJ8=
+	t=1746756957; cv=none; b=QlWtjr55FRIwN7dX1+ZmnCP0/cIYlwtfu9aJI/QDXr/Ol3retH8cQHlwM/zs0liewDIrO3Zfd/+Sp41GOQkEdZzh/li8I0uUXReyBEOWqgsFZMoYaO1byGT0/UfwBYDPPHQ2At3D8YrNjA3gxuv0SaOoRXisl6vp0lZu1nO3Flk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746756585; c=relaxed/simple;
-	bh=1z/uPz1LW73dA7dxDwr4kLQymfjy+GoBANeMMPLQGrg=;
+	s=arc-20240116; t=1746756957; c=relaxed/simple;
+	bh=OUZzF1GMc7pPrd91LkBIIsb0Tc+00pKXpIBgeZ8sEe0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gVlUu5OGJNxRKtVSSDN9gpkuh0KL0UBhorRB651DphNiAtqToTigK+sdqC3W3HnML/gHOpR8jtWHXj6Z0RTJeosw94n2tVWHLrMBfxyi2B6iK5WGAdCpaTDCo6VyXX0CMoySQTlB3LnglJCezDvBZc3dd/PIWtFNh2BuRdmPEr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aFXIGG+y; arc=none smtp.client-ip=209.85.219.45
+	 To:Cc:Content-Type; b=X8WCvYRnPRxRMtybxfHn5COqltvPHA3qBZO9WSloUV9Njf8Y41rUXvTJEQXOIVIIJO/ks8myPE93v5KMHKztqkJuC97oKcyi6Nf38nVlv4fMm3qLcTm37TjS7zLRbKlDRKEFoIBbRD6oa8YssVXY4zTnX/495l9GK9DmBdtAdyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9L4kgY7; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f54079e54bso13805146d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 19:09:43 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f0c30a1cf8so31487566d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 19:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746756582; x=1747361382; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746756955; x=1747361755; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yJWILqSuQUqMcjyRYENm/e5hp/+befMiV/pFyfxyYOw=;
-        b=aFXIGG+y875msMSCQ4f0oehwvQYIXHbVB9cdDAnS+leYT6e7uQYGVDBxg4Lv9n5x3S
-         H2PNYxYbunx74y5j7S+F6g8UsMa4a+WsxCtl21fn8AIreTdzn116QRsoRkNbh5rdvBHL
-         zz1BgUhZ+AaQaqlH1xvqEXyG5qSOKmd/w3bmDnEWyIQCQPWFB7beLMAyHouoL8nw3IyD
-         FNuiVXj7D899VPmwVsy5FnzOP3a8wQ/lDcrCg/gG0tCk0aUn6q9E1hvRTSWfdO5Lgzb4
-         OSSqk4cbuXhlaeyyAP1P3IWrpb1H6tcziLMJjr2LzY3qwpxN/e+ak12f0Nw6pFDLI+wP
-         OE+g==
+        bh=OUZzF1GMc7pPrd91LkBIIsb0Tc+00pKXpIBgeZ8sEe0=;
+        b=T9L4kgY7ebU/RHW1lF2ef3wint9VZIhQx/qpoayZEWqoXE2UB284POjFrsXZu1em8I
+         8wiN8VylBxEwsdtfceSrAqjWBuDH2MKbz8+vCcOLfQTL1nOQEeKZ0+PEVq6FTOcM57rI
+         nGZUrzVUyNddGlvib+XkloXr2hgluJyRWDhTQX/ATLEFk0IerGlHlfv4dtIaO8F1IdCs
+         2cRCEAiLJtiu6fyuOvxeF0S+TRSEKPWBVIRV+j8R/KiO8/BF1KZbVVicZcjTP3n2u+9s
+         5HrykykSHZry81D37L7eGrxc9cqRpty57tm4hcbwPPMp4igFh3LK5TkQmEHoAzQWEe+m
+         QxmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746756582; x=1747361382;
+        d=1e100.net; s=20230601; t=1746756955; x=1747361755;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yJWILqSuQUqMcjyRYENm/e5hp/+befMiV/pFyfxyYOw=;
-        b=ShKhf4aydgunElEue3/CuYj/FpgWbilp9/7E3r8Iho7QvBIRgAzdMoe5SCmw2Mt8Yb
-         V1a9k1OuLfLpMw5JE0tVmKjfP2HBCoTQsbSLqcaLfAHstLHxtxCOvhH5NeJbzaL3YzgL
-         caMqe9hCdRRnejT3MsL6JXIhiZUHsYywrWdt0vadhtKojcVpLQsamkFTWMfApc9eRoI2
-         9XgashL45K4oxTmSt71YJ35d4bjgmYfiuPFobP9FdrIcmH1FTo38kIxnr1Y1KhpWbNAV
-         xvM7/o80xgS67ikRSSpUz4AYJieFhoE2PZSd0eEb1biXmp7NBesGOhOj6FAa35DImVim
-         EO2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXd/ZEKdV8LBIh+p/PkovlNJzK5j8QV2QZevK1gt+KS4kdPHmlCcx+GZrxU/VksTtm5BTQa8NQd3vGSM/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+oeIjoIAAQGx/F6LYZJ/+3RAY93LlgzH3TviYJRqoFvn2JU2v
-	iPDK2yWE51tdeaLS9uQVXAb3aQftUWszFaMbZo2bRd7iVmDCUcvhZVJxXQ63e1hZa2O6DvCRQug
-	ZVsWIxZJAJd96AcVS/mV2YnyANm7ucmUo
-X-Gm-Gg: ASbGncuQzaNWmPOEHfJ41dCQGAGn5JQ0pZ4picaOZSxjGDTgB3yU9vh6Z7HC3+5dIXp
-	hD7G2p9woq7aEwMZJ/s8l0uFIyA8dUwuFKSm817qkeMTRyJ3BBDWtzDto8r4CVpQEP5YFqQXKNM
-	dNOf6QlRQ/Ne6IHrXhQFimmiX8UZB+uP0H
-X-Google-Smtp-Source: AGHT+IHnDz0AopexNXOEOqaKPyIa2CirpYwBoeddjpfAfctDH6n6tzTj0r1o3P1bA5PLo6dWzzL84x+IkacDuDaZbA8=
-X-Received: by 2002:a05:6102:3fa9:b0:4de:ed21:480a with SMTP id
- ada2fe7eead31-4deed404d57mr1682001137.25.1746756572306; Thu, 08 May 2025
- 19:09:32 -0700 (PDT)
+        bh=OUZzF1GMc7pPrd91LkBIIsb0Tc+00pKXpIBgeZ8sEe0=;
+        b=ZaaYF2rTiOpsz2DtZy0X3nwI80QwPdXAM/M4SYyF0+xlX9JnKcnmJ1vzwUtSJgGv3s
+         E8cg20xThXWbrk7ue2vNWiUi6Xtw9TxYxgUagig+ouq2T0mv+uEmMytU2cF+uBZn8Uf0
+         vJ7Y3P0uXAO8iUmxg1gxUK4rIHSn3bZ85uSxk7RnFf4tEAdgJJ6iUXgyRvX5Ncw8BYHJ
+         QBc+4+D6RFNsbksitEPkkpcZyBCsQwNEC71BbEDB1ZWt3zumlBDWRD/NtZf/U1Fcb29E
+         bfswa9ddN/L0UIrwnAp0G9vzYqHNDSRUWWWdTUh6g0dUHt7GfASlppJgcvu9SIEc4+Bf
+         b63Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWaa6W+6kv3yTbtJ3B68zucEWRtin4SkzVSx1bylNAVB1ENqGOiX4gCk5JUfOAa2g/KnPznAbK4Y1zbiNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkRF7fL5h2S7hfmTwCQX/knAu7sHRHX2KrAdioHa4720wBk9zS
+	e4sxR1XfvC4VcLCAGEACkvrdqnpUWHUz55301PBtAY5/3TFoY4Kjp+kY3A2FOB6yyikI2NjTg+3
+	C+9PIuLZTMo5W3mnOGXKw7KColWt4KRpLGrA=
+X-Gm-Gg: ASbGncu3CQefecWJSrAQgP/J82vsN8lOpkwyYa1WbiiMI6tgCA3JfEIyC0Ns6Vu+1lr
+	DI6fwTjhtIbj7Sb/mOZQRvp9jjzOjRIgduW8qI1CgKS/G+4FiF3rgZ+xTMy8mLXJgRcFmdmiJA7
+	MSIhfJrgjwAZHTh+Gax5ijhLk=
+X-Google-Smtp-Source: AGHT+IGVTRp4pCU6b4pOnJGKOvcrK5tsM/hmu5yadLe4Xoc6rkOBSiYHgUq51P6Nj4Te4xvaRZFDJla5klVmaEyKrxE=
+X-Received: by 2002:a05:6214:300e:b0:6cb:ee08:c1e8 with SMTP id
+ 6a1803df08f44-6f6e47fa918mr27085726d6.23.1746756944581; Thu, 08 May 2025
+ 19:15:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGsJ_4xVFDioe4G9wtjfRCKZMLBu94GaFG1z5j0YrHs3j1PkAw@mail.gmail.com>
- <20250508070353.2370826-1-xavier_qy@163.com>
-In-Reply-To: <20250508070353.2370826-1-xavier_qy@163.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 9 May 2025 14:09:21 +1200
-X-Gm-Features: AX0GCFucevbRFctKcPJOmiahNkLZmoUip90mOFFWmStQgaEASz-Ses9gLPs8cN4
-Message-ID: <CAGsJ_4y9tC-=8dv7W1Q=D+bBA2Qr=TLiMDJ-TGv506w=iGe42w@mail.gmail.com>
-Subject: Re: [PATCH v4] arm64/mm: Optimize loop to reduce redundant operations
- of contpte_ptep_get
-To: Xavier Xia <xavier_qy@163.com>
-Cc: ryan.roberts@arm.com, dev.jain@arm.com, ioworker0@gmail.com, 
-	akpm@linux-foundation.org, catalin.marinas@arm.com, david@redhat.com, 
-	gshan@redhat.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, will@kernel.org, willy@infradead.org, 
-	ziy@nvidia.com
+References: <20250507141132.2773275-1-usamaarif642@gmail.com>
+ <293530AA-1AB7-4FA0-AF40-3A8464DC0198@nvidia.com> <96eccc48-b632-40b7-9797-1b0780ea59cd@gmail.com>
+ <8E3EC5A4-4387-4839-926F-3655188C20F4@nvidia.com> <279d29ad-cbd6-4a0e-b904-0a19326334d1@gmail.com>
+ <CALOAHbCxhL=VM=E5UzNvQYZsrF4zdcQ1-49iEJ1UYvLsurtxCw@mail.gmail.com> <ebfca8f2-40e5-485a-a060-621aa3a22376@gmail.com>
+In-Reply-To: <ebfca8f2-40e5-485a-a060-621aa3a22376@gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Fri, 9 May 2025 10:15:08 +0800
+X-Gm-Features: AX0GCFtM1_z184WFg9l7GMhprKo3jxyNYmE2HFC1s-2rlbQQJ4PB6bv2Ytrs_Rw
+Message-ID: <CALOAHbDesDGyokKFSSr3hA1_WnFciQPXe_nboPq9v8OUPLv47g@mail.gmail.com>
+Subject: Re: [PATCH 0/1] prctl: allow overriding system THP policy to always
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, david@redhat.com, 
+	linux-mm@kvack.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
+	riel@surriel.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 8, 2025 at 7:04=E2=80=AFPM Xavier Xia <xavier_qy@163.com> wrote=
-:
+On Fri, May 9, 2025 at 12:04=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
 >
-> This commit optimizes the contpte_ptep_get and contpte_ptep_get_lockless
-> function by adding early termination logic. It checks if the dirty and
-> young bits of orig_pte are already set and skips redundant bit-setting
-> operations during the loop. This reduces unnecessary iterations and
-> improves performance.
 >
-> In order to verify the optimization performance, a test function has been
-> designed. The function's execution time and instruction statistics have
-> been traced using perf, and the following are the operation results on a
-> certain Qualcomm mobile phone chip:
 >
-> Test Code:
+> On 08/05/2025 06:41, Yafang Shao wrote:
+> > On Thu, May 8, 2025 at 12:09=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> >>
+> >>
+> >>
+> >> On 07/05/2025 16:57, Zi Yan wrote:
+> >>> On 7 May 2025, at 11:12, Usama Arif wrote:
+> >>>
+> >>>> On 07/05/2025 15:57, Zi Yan wrote:
+> >>>>> +Yafang, who is also looking at changing THP config at cgroup/conta=
+iner level.
+> >
+> > Thanks
+> >
+> >>>>>
+> >>>>> On 7 May 2025, at 10:00, Usama Arif wrote:
+> >>>>>
+> >>>>>> Allowing override of global THP policy per process allows workload=
+s
+> >>>>>> that have shown to benefit from hugepages to do so, without regres=
+sing
+> >>>>>> workloads that wouldn't benefit. This will allow such types of
+> >>>>>> workloads to be run/stacked on the same machine.
+> >>>>>>
+> >>>>>> It also helps in rolling out hugepages in hyperscaler configuratio=
+ns
+> >>>>>> for workloads that benefit from them, where a single THP policy is
+> >>>>>> likely to be used across the entire fleet, and prctl will help ove=
+rride it.
+> >>>>>>
+> >>>>>> An advantage of doing it via prctl vs creating a cgroup specific
+> >>>>>> option (like /sys/fs/cgroup/test/memory.transparent_hugepage.enabl=
+ed) is
+> >>>>>> that this will work even when there are no cgroups present, and my
+> >>>>>> understanding is there is a strong preference of cgroups controls =
+being
+> >>>>>> hierarchical which usually means them having a numerical value.
+> >>>>>
+> >>>>> Hi Usama,
+> >>>>>
+> >>>>> Do you mind giving an example on how to change THP policy for a set=
+ of
+> >>>>> processes running in a container (under a cgroup)?
+> >>>>
+> >>>> Hi Zi,
+> >>>>
+> >>>> In our case, we create the processes in the cgroup via systemd. The =
+way we will enable THP=3Dalways
+> >>>> for processes in a cgroup is in the same way we enable KSM for the c=
+group.
+> >>>> The change in systemd would be very similar to the line in [1], wher=
+e we would set prctl PR_SET_THP_ALWAYS
+> >>>> in exec-invoke.
+> >>>> This is at the start of the process, but you would already know at t=
+he start of the process
+> >>>> whether you want THP=3Dalways for it or not.
+> >>>>
+> >>>> [1] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28d=
+d4ade7c6ab7be29a/src/core/exec-invoke.c#L5045
+> >>>
+> >>> You also need to add a new systemd.directives, e.g., MemoryTHP, to
+> >>> pass the THP enablement or disablement info from a systemd config fil=
+e.
+> >>> And if you find those processes do not benefit from using THPs,
+> >>> you can just change the new "MemoryTHP" config and restart the proces=
+ses.
+> >>>
+> >>> Am I getting it? Thanks.
+> >>>
+> >>
+> >> Yes, thats right. They would exactly the same as what we (Meta) do
+> >> for KSM. So have MemoryTHP similar to MemroryKSM [1] and if MemoryTHP =
+is set,
+> >> the ExecContext->memory_thp would be set similar to memory_ksm [2], an=
+d when
+> >> that is set, the prctl will be called at exec_invoke of the process [3=
+].
+> >>
+> >> The systemd changes should be quite simple to do.
+> >>
+> >> [1] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4=
+ade7c6ab7be29a/man/systemd.exec.xml#L1978
+> >> [2] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4=
+ade7c6ab7be29a/src/core/dbus-execute.c#L2151
+> >> [3] https://github.com/systemd/systemd/blob/2e72d3efafa88c1cb4d9b28dd4=
+ade7c6ab7be29a/src/core/exec-invoke.c#L5045
+> >
+> > This solution carries a risk: since prctl() does not require any
+> > capabilities, the task itself could call it and override your memory
+> > policy. While we could enforce CAP_SYS_RESOURCE to restrict this, that
+> > capability is typically enabled by default in containers, leaving them
+> > still vulnerable.
+> >
+> > This approach might work for Kubernetes/container environments, but it
+> > would require substantial code changes to implement securely.
+> >
 >
->         #define PAGE_SIZE 4096
->         #define CONT_PTES 16
->         #define TEST_SIZE (4096* CONT_PTES * PAGE_SIZE)
->         #define YOUNG_BIT 8
->         void rwdata(char *buf)
->         {
->                 for (size_t i =3D 0; i < TEST_SIZE; i +=3D PAGE_SIZE) {
->                         buf[i] =3D 'a';
->                         volatile char c =3D buf[i];
->                 }
->         }
->         void clear_young_dirty(char *buf)
->         {
->                 if (madvise(buf, TEST_SIZE, MADV_FREE) =3D=3D -1) {
->                         perror("madvise free failed");
->                         free(buf);
->                         exit(EXIT_FAILURE);
->                 }
->                 if (madvise(buf, TEST_SIZE, MADV_COLD) =3D=3D -1) {
->                         perror("madvise free failed");
->                         free(buf);
->                         exit(EXIT_FAILURE);
->                 }
->         }
->         void set_one_young(char *buf)
->         {
->                 for (size_t i =3D 0; i < TEST_SIZE; i +=3D CONT_PTES * PA=
-GE_SIZE) {
->                         volatile char c =3D buf[i + YOUNG_BIT * PAGE_SIZE=
-];
->                 }
->         }
->
->         void test_contpte_perf() {
->                 char *buf;
->                 int ret =3D posix_memalign((void **)&buf, CONT_PTES * PAG=
-E_SIZE,
->                                 TEST_SIZE);
->                 if ((ret !=3D 0) || ((unsigned long)buf % CONT_PTES * PAG=
-E_SIZE)) {
->                         perror("posix_memalign failed");
->                         exit(EXIT_FAILURE);
->                 }
->
->                 rwdata(buf);
->         #if TEST_CASE2 || TEST_CASE3
->                 clear_young_dirty(buf);
->         #endif
->         #if TEST_CASE2
->                 set_one_young(buf);
->         #endif
->
->                 for (int j =3D 0; j < 500; j++) {
->                         mlock(buf, TEST_SIZE);
->
->                         munlock(buf, TEST_SIZE);
->                 }
->                 free(buf);
->         }
->
->         Descriptions of three test scenarios
->
-> Scenario 1
->         The data of all 16 PTEs are both dirty and young.
->         #define TEST_CASE2 0
->         #define TEST_CASE3 0
->
-> Scenario 2
->         Among the 16 PTEs, only the 8th one is young, and there are no di=
-rty ones.
->         #define TEST_CASE2 1
->         #define TEST_CASE3 0
->
-> Scenario 3
->         Among the 16 PTEs, there are neither young nor dirty ones.
->         #define TEST_CASE2 0
->         #define TEST_CASE3 1
->
-> Test results
->
-> |Scenario 1         |       Original|       Optimized|
-> |-------------------|---------------|----------------|
-> |instructions       |    37912436160|     18731580031|
-> |test time          |         4.2797|          2.2949|
-> |overhead of        |               |                |
-> |contpte_ptep_get() |         21.31%|           4.80%|
->
-> |Scenario 2         |       Original|       Optimized|
-> |-------------------|---------------|----------------|
-> |instructions       |    36701270862|     36115790086|
-> |test time          |         3.2335|          3.0874|
-> |Overhead of        |               |                |
-> |contpte_ptep_get() |         32.26%|          33.57%|
->
-> |Scenario 3         |       Original|       Optimized|
-> |-------------------|---------------|----------------|
-> |instructions       |    36706279735|     36750881878|
-> |test time          |         3.2008|          3.1249|
-> |Overhead of        |               |                |
-> |contpte_ptep_get() |         31.94%|          34.59%|
->
-> For Scenario 1, optimized code can achieve an instruction benefit of 50.5=
-9%
-> and a time benefit of 46.38%.
-> For Scenario 2, optimized code can achieve an instruction count benefit o=
-f
-> 1.6% and a time benefit of 4.5%.
-> For Scenario 3, since all the PTEs have neither the young nor the dirty
-> flag, the branches taken by optimized code should be the same as those of
-> the original code. In fact, the test results of optimized code seem to be
-> closer to those of the original code.
->
-> It can be proven through test function that the optimization for
-> contpte_ptep_get is effective. Since the logic of contpte_ptep_get_lockle=
-ss
-> is similar to that of contpte_ptep_get, the same optimization scheme is
-> also adopted for it.
->
-> Signed-off-by: Xavier Xia <xavier_qy@163.com>
-> ---
->  arch/arm64/mm/contpte.c | 71 +++++++++++++++++++++++++++++++++++------
->  1 file changed, 62 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> index bcac4f55f9c1..e9882ec782fc 100644
-> --- a/arch/arm64/mm/contpte.c
-> +++ b/arch/arm64/mm/contpte.c
-> @@ -169,17 +169,41 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->         for (i =3D 0; i < CONT_PTES; i++, ptep++) {
->                 pte =3D __ptep_get(ptep);
->
-> -               if (pte_dirty(pte))
-> +               if (pte_dirty(pte)) {
->                         orig_pte =3D pte_mkdirty(orig_pte);
-> -
-> -               if (pte_young(pte))
-> +                       for (; i < CONT_PTES; i++, ptep++) {
-> +                               pte =3D __ptep_get(ptep);
-> +                               if (pte_young(pte)) {
-> +                                       orig_pte =3D pte_mkyoung(orig_pte=
-);
-> +                                       break;
-> +                               }
-> +                       }
-> +                       break;
-> +               }
-> +
-> +               if (pte_young(pte)) {
->                         orig_pte =3D pte_mkyoung(orig_pte);
-> +                       i++;
-> +                       ptep++;
-> +                       for (; i < CONT_PTES; i++, ptep++) {
-> +                               pte =3D __ptep_get(ptep);
-> +                               if (pte_dirty(pte)) {
-> +                                       orig_pte =3D pte_mkdirty(orig_pte=
-);
-> +                                       break;
-> +                               }
-> +                       }
-> +                       break;
-> +               }
->         }
->
->         return orig_pte;
->  }
->  EXPORT_SYMBOL_GPL(contpte_ptep_get);
->
-> +#define CHECK_CONTPTE_CONSISTENCY(pte, pfn, prot, orig_prot) \
-> +       (!pte_valid_cont(pte) || pte_pfn(pte) !=3D pfn || \
-> +               pgprot_val(prot) !=3D pgprot_val(orig_prot))
+> You can already change the memory policy with prctl, for e.g. PR_SET_THP_=
+DISABLE
+> already exists and the someone could use this to slow the process down. S=
+o the
+> approach this patch takes shouldn't be anymore of a security fix then wha=
+t is already
+> exposed by the kernel. I think as you mentioned, if prctl is an issue CAP=
+_SYS_RESOURCE
+> should be used to restrict this.
 
-maybe make it a static inline function to improve readability. Also,
-the name appears to
-be not good: CHECK_CONTPTE_CONSISTENCY is actually checking for inconsisten=
-cy,
-not consistency.
+I believe we should at least require CAP_SYS_RESOURCE to enable THP,
+since it overrides global system settings. Alternatively,
+CAP_SYS_ADMIN might be even more appropriate, though I'm not entirely
+certain.
 
-it might be:
-
-static inline bool contpte_is_consistent(...)
-{
-        return pte_valid_cont(pte) && pte_pfn(pte) =3D=3D pfn &&
-               pgprot_val(prot) =3D=3D pgprot_val(orig_prot);
-}
-
-or another better name.
-
-> +
->  pte_t contpte_ptep_get_lockless(pte_t *orig_ptep)
->  {
->         /*
-> @@ -221,16 +245,45 @@ pte_t contpte_ptep_get_lockless(pte_t *orig_ptep)
->                 pte =3D __ptep_get(ptep);
->                 prot =3D pte_pgprot(pte_mkold(pte_mkclean(pte)));
 >
-> -               if (!pte_valid_cont(pte) ||
-> -                  pte_pfn(pte) !=3D pfn ||
-> -                  pgprot_val(prot) !=3D pgprot_val(orig_prot))
-> +               if (CHECK_CONTPTE_CONSISTENCY(pte, pfn, prot, orig_prot))
->                         goto retry;
->
-> -               if (pte_dirty(pte))
-> +               if (pte_dirty(pte)) {
->                         orig_pte =3D pte_mkdirty(orig_pte);
-> -
-> -               if (pte_young(pte))
-> +                       for (; i < CONT_PTES; i++, ptep++, pfn++) {
-> +                               pte =3D __ptep_get(ptep);
-> +                               prot =3D pte_pgprot(pte_mkold(pte_mkclean=
-(pte)));
-> +
-> +                               if (CHECK_CONTPTE_CONSISTENCY(pte, pfn, p=
-rot, orig_prot))
-> +                                       goto retry;
-> +
-> +                               if (pte_young(pte)) {
-> +                                       orig_pte =3D pte_mkyoung(orig_pte=
-);
-> +                                       break;
-> +                               }
-> +                       }
-> +                       break;
-> +               }
-> +
-> +               if (pte_young(pte)) {
->                         orig_pte =3D pte_mkyoung(orig_pte);
-> +                       i++;
-> +                       ptep++;
-> +                       pfn++;
-> +                       for (; i < CONT_PTES; i++, ptep++, pfn++) {
-> +                               pte =3D __ptep_get(ptep);
-> +                               prot =3D pte_pgprot(pte_mkold(pte_mkclean=
-(pte)));
-> +
-> +                               if (CHECK_CONTPTE_CONSISTENCY(pte, pfn, p=
-rot, orig_prot))
-> +                                       goto retry;
-> +
-> +                               if (pte_dirty(pte)) {
-> +                                       orig_pte =3D pte_mkdirty(orig_pte=
-);
-> +                                       break;
-> +                               }
-> +                       }
-> +                       break;
-> +               }
->         }
->
->         return orig_pte;
-> --
-> 2.34.1
->
+> In terms of security vulnerability of prctl, I feel like there are a lot =
+of others
+> that can be a much much bigger issue? I just had a look and you can chang=
+e the
+> seccomp, reset PAC keys(!) even speculation control(!!), so I dont think =
+the security
+> argument would be valid.
 
-Thanks
-barry
+I was surprised to discover that none of these operations require any
+capabilities to execute.
+
+--=20
+Regards
+Yafang
 
