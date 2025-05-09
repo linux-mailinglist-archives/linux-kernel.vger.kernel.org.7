@@ -1,130 +1,81 @@
-Return-Path: <linux-kernel+bounces-641605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6572DAB13CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1127AB1451
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADFE31C28170
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6D51C02938
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625A4290D9E;
-	Fri,  9 May 2025 12:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10CB2918DA;
+	Fri,  9 May 2025 13:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XKPz6Mj1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="uQo2FFZH"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA56139B;
-	Fri,  9 May 2025 12:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C43290D8F;
+	Fri,  9 May 2025 13:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795018; cv=none; b=jwDFJq8u9I4pEos8bri2klLl7U3oOBmnv/hn2xqx/jLf9P+mVponYhBOQlJe1CrjF0QFVnJiFcY3YjVg3FEq3SlPUWENuI0n0XruEA5hkpM+4vYUw8nz8uVCxVUQ9WusPoI+qxVVib1nOgrfoerve1ug8+9RBoG3r3sEGsRjVE0=
+	t=1746795855; cv=none; b=kTY8xuIOBnD/C1PjTBRMwYkXOHJ0Gq8Ylap0nxifzJhy+sIeWxT1JQ4pBig4EVoS23Drnn6JSIcOD7Sih/7mf6OOZ7BljO+1zRuD8YG5R2OP+m5564vRtyFlHq7k/xsdJf5ioZHPZ+G9tR7FE+5XtKr60oZQ9GxMFQUy9q8HIus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746795018; c=relaxed/simple;
-	bh=fnDyeYcUpoqrbSOCi2sjTmd6cIjqVA+Zh5TB8SQPjQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kg4nKiS1kVPpcSkD+EXJJoasNs3SjnXpQksGla7MF0fyAPwk6aQRcdvOExPIdK5bSVHEP5QeBg9V3C3L2BqzRo3q8BA2agPJVthzBW2xA2hJgnF2ZzCQzjm8avzbDjH8oOB+8mKURJmarjx96VmQTjElecuaEo8f5rjxn8xAXEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XKPz6Mj1; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746795017; x=1778331017;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fnDyeYcUpoqrbSOCi2sjTmd6cIjqVA+Zh5TB8SQPjQI=;
-  b=XKPz6Mj1fjIPZ79M+EZzMTZLpyY/EM34tbmcjTRjLaRHLSB1SpjNf+yI
-   MbRUbix1IwUci25QhU5DnTk6E2sp2YoSed2hG6ym/oqoP6YVHfO4K6YBC
-   7Y+XUa9jsW/822EyxkkSIajMTI2YdTq4LcELzj6Bp7aC9cn+/8uVVE1bS
-   u8YZSidvj3LSFYcyvqoMu2Hgrq3uJcC8wzHrRjU7Lur/2oQYFb2zpG7t+
-   KzJnjtY2JV7FT5s27XclcUgUPysVYUOE9eM2TnXYVIURwUyVqevd19lFo
-   83z/953RBBe4w1DmNIdhhX3kceo8UIB21MHlOF+6wsuhFXE3i0LPkB4CF
-   w==;
-X-CSE-ConnectionGUID: M93uQD7lSwWeRrJKp22bPw==
-X-CSE-MsgGUID: t79fLzXPQ2GoELf4JmYkAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="52273402"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="52273402"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 05:50:17 -0700
-X-CSE-ConnectionGUID: MvJmEGOHRk+FrunGlOFqxg==
-X-CSE-MsgGUID: knNqLrorTzWFiC1IS8AnwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="136631082"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 09 May 2025 05:50:13 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDNB4-000C5f-2p;
-	Fri, 09 May 2025 12:50:10 +0000
-Date: Fri, 9 May 2025 20:49:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
-	bhelgaas@google.com, manivannan.sadhasivam@linaro.org,
-	ilpo.jarvinen@linux.intel.com, kw@linux.com
-Cc: oe-kbuild-all@lists.linux.dev, cassel@kernel.org, robh@kernel.org,
-	jingoohan1@gmail.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hans Zhang <18255117159@163.com>
-Subject: Re: [PATCH v11 4/6] PCI: dwc: Use common PCI host bridge APIs for
- finding the capabilities
-Message-ID: <202505092036.Sw8SstSY-lkp@intel.com>
-References: <20250505163420.198012-5-18255117159@163.com>
+	s=arc-20240116; t=1746795855; c=relaxed/simple;
+	bh=4GBgrzvvN+4kJ+ed+nVHWU+vFzchSbWl69PMneh6zI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DKB36EfNlqohFYSxoDVjUjRfWb7uZWIYFWK5CIOr86R2CFCHcuITCuv35hsvfhs6ita44pi1Do43c2+7kK2mitPbdxxW1+1WkwOofiffcXhFNeRW2bT+2HrP9j87xRyOu6L3qq5pgo5VH9G6oqVbkzfF8a3pS6zxo7hHiUsJq/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=uQo2FFZH; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [217.114.34.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0B4C8666CB6;
+	Fri,  9 May 2025 15:04:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1746795845;
+	bh=4GBgrzvvN+4kJ+ed+nVHWU+vFzchSbWl69PMneh6zI8=;
+	h=From:Subject:Date;
+	b=uQo2FFZHPIayu0Frg80ym2MiZdkqShKX3nhF67L8uRLzv+w6zP3QfS/v6KzushWMy
+	 eMVcxKDW5e2vuL2Ffff6/swNAT0T3awLdt/Gu8FbfIWp94YmfG03QFrzqj1UbS1zbz
+	 0JyahHtItK9Es5EWcKmT+4dii5CKynrxsWobuZMuKiiwMOln4FCK26tmLKd93b5/Bt
+	 aAr5q7eqiDSs96N2mwKzresYg/QKg0WE7SnwyEVOIrplmpEwkC6V+/lQ4UtYG7e+ET
+	 EIDktwfkjMLPgmm3qFLb96zuup1Z47uLVj/XhvVUUDSbl4t0vBYw6MyvSjKXTbCLTM
+	 2DTxqRIIuDhdw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v1 0/3] PM: sleep: Updates related to pm_suspend_target_state
+Date: Fri, 09 May 2025 14:49:59 +0200
+Message-ID: <5903743.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505163420.198012-5-18255117159@163.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 217.114.34.19
+X-CLIENT-HOSTNAME: 217.114.34.19
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledvieelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepffffffekgfehheffleetieevfeefvefhleetjedvvdeijeejledvieehueevueffnecukfhppedvudejrdduudegrdefgedrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedruddugedrfeegrdduledphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepfedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=3 Fuz1=3 Fuz2=3
 
-Hi Hans,
+Hi Everyone,
 
-kernel test robot noticed the following build warnings:
+This allows PM debug messages to be printed during hibernation (again) in
+patch [1/3], adds pm_suspend_in_progress() for checking if a system suspend
+transition is in progress (which does not cover hibernation) on top of that
+(patch [2/3]), and adds pm_sleep_transition_in_progress() covering both
+system suspend and hibernation (patch [3/3]).
 
-[auto build test WARNING on ca91b9500108d4cf083a635c2e11c884d5dd20ea]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Introduce-generic-bus-config-read-helper-function/20250506-004221
-base:   ca91b9500108d4cf083a635c2e11c884d5dd20ea
-patch link:    https://lore.kernel.org/r/20250505163420.198012-5-18255117159%40163.com
-patch subject: [PATCH v11 4/6] PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
-config: parisc-randconfig-r063-20250509 (https://download.01.org/0day-ci/archive/20250509/202505092036.Sw8SstSY-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505092036.Sw8SstSY-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505092036.Sw8SstSY-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In function 'dw_pcie_read_cfg',
-       inlined from 'dw_pcie_find_capability' at drivers/pci/controller/dwc/pcie-designware.c:219:9:
->> drivers/pci/controller/dwc/pcie-designware.c:212:14: warning: write of 32-bit data outside the bound of destination object, data truncated into 8-bit [-Wextra]
-     212 |         *val = dw_pcie_read_dbi(pci, where, size);
-         |         ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Thanks!
 
 
-vim +212 drivers/pci/controller/dwc/pcie-designware.c
 
-   207	
-   208	static int dw_pcie_read_cfg(void *priv, int where, int size, u32 *val)
-   209	{
-   210		struct dw_pcie *pci = priv;
-   211	
- > 212		*val = dw_pcie_read_dbi(pci, where, size);
-   213	
-   214		return PCIBIOS_SUCCESSFUL;
-   215	}
-   216	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
