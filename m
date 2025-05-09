@@ -1,47 +1,52 @@
-Return-Path: <linux-kernel+bounces-641665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA253AB148A
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE64AB1489
 	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D591C432E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DBBA0547E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64948293452;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EE5293459;
 	Fri,  9 May 2025 13:13:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46612918FE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D629029188D
 	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796379; cv=none; b=W0qLhBDUQM0aAiHOayjUmbSIvf3Umlx6RbDsYtyssEAGHrFU09D8vtowXugu4LfpwwvHbA/RmH4jtktrEm78Ef+/Xeqhjg62C9e4CJx4R8GafVOaCk3pYRQLXHfqIE3dx9jpE6zIjYV0lKppnLhI0QSseXfZNvyYHoOCAOcAolw=
+	t=1746796379; cv=none; b=h63BbaC3pjj0xpnGLXagiql5ZEebtLnu6ScWVZpknMNswE5C8Ak4VppRLU4HVcn4L2+I88Xv8W/2QYlwUo2Z5muQz5Xjnp4sOsGxxKsrXatit1DdS3rf9OxdB7olLvRq7owSrQCz7MRNzSLIY1ZvDxyENbxLKY5zP7QEdZrGD9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746796379; c=relaxed/simple;
-	bh=6O9ZY+vRjaugem8TgG5YHfcqQ/Puh0suiIv1HEG/R7g=;
+	bh=FySwLMTTHapApbkpXbk0tTrB6EUHbUQ9d5aoxVDHLMs=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=GjRZrMidcE6VTQLubgKKgvYDShVMz+sUXmBd628k+uf1HLTpUTtmLEXX6/ZTFS6sSgp1R4jVADIiOEWqx8Rty4ikTGL5k557PpQCSdcKOJnV4mzrpZ/Mha+cWChNAY58u/BZsmcnY17aFW7dQd/bprlRCTG5q1HNA+JFoUh4uA8=
+	 Content-Type; b=Jla3xLhd2uY9Hbmeqo7klcwHeCpKWlKCNC9U7RZXyhkYRdhPR5OsmceeIpPj4cMJ3WJzeGmw0qR8jfyulqKQqErf4C1cYSfXVCFiFZWq+aS+rpUsGMwdmcdEKXg2IsNUHUUord3XNDcbV4/R8NC3ombr+cbKvG9LN1A0hwzcpQg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E761C4CEF0;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4D6C4CEEE;
 	Fri,  9 May 2025 13:12:59 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uDNXP-00000002bsF-0Pdd;
+	id 1uDNXP-00000002bsk-17f0;
 	Fri, 09 May 2025 09:13:15 -0400
-Message-ID: <20250509131314.948496900@goodmis.org>
+Message-ID: <20250509131315.118353893@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 09 May 2025 09:12:58 -0400
+Date: Fri, 09 May 2025 09:12:59 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 09/31] ftrace: Show subops in enabled_functions
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Ilya Leoshkevich <iii@linux.ibm.com>
+Subject: [for-next][PATCH 10/31] ftrace: Expose call graph depth as unsigned int
 References: <20250509131249.340302366@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,125 +56,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-The function graph infrastructure uses subops of the function tracer.
-These are not shown in enabled_functions. Add a "subops:" section to the
-enabled_functions line to show what functions are attached via subops. If
-the subops is from the function_graph infrastructure, then show the entry
-and return callbacks that are attached.
-
-Here's an example of the output:
-
-schedule_on_each_cpu (1)                tramp: 0xffffffffc03ef000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60     subops: {ent:trace_graph_entry+0x0/0x20 ret:trace_graph_return+0x0/0x150}
+Depth is stored as int because the code uses negative values to break
+out of iterations. But what is recorded is always zero or positive. So
+expose it as unsigned int instead of int.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250410153830.5d97f108@gandalf.local.home
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Link: https://lore.kernel.org/20250412221847.17310-3-iii@linux.ibm.com
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- include/linux/ftrace.h |  2 ++
- kernel/trace/fgraph.c  |  2 ++
- kernel/trace/ftrace.c  | 38 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 42 insertions(+)
+ kernel/trace/trace_entries.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index fbabc3d848b3..fc939ca2ff66 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -328,6 +328,7 @@ ftrace_func_t ftrace_ops_get_func(struct ftrace_ops *ops);
-  * DIRECT - Used by the direct ftrace_ops helper for direct functions
-  *            (internal ftrace only, should not be used by others)
-  * SUBOP  - Is controlled by another op in field managed.
-+ * GRAPH  - Is a component of the fgraph_ops structure
-  */
- enum {
- 	FTRACE_OPS_FL_ENABLED			= BIT(0),
-@@ -349,6 +350,7 @@ enum {
- 	FTRACE_OPS_FL_PERMANENT                 = BIT(16),
- 	FTRACE_OPS_FL_DIRECT			= BIT(17),
- 	FTRACE_OPS_FL_SUBOP			= BIT(18),
-+	FTRACE_OPS_FL_GRAPH			= BIT(19),
- };
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index 4ef4df6623a8..de294ae2c5c5 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -97,11 +97,11 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
+ 	F_STRUCT(
+ 		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
+ 		__field_packed(	unsigned long,	graph_ent,	func		)
+-		__field_packed(	int,		graph_ent,	depth		)
++		__field_packed(	unsigned int,	graph_ent,	depth		)
+ 		__field_packed(	unsigned long,	graph_ent,	retaddr		)
+ 	),
  
- #ifndef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 8d925cbdce3a..c5b207992fb4 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1382,6 +1382,8 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 	/* Always save the function, and reset at unregistering */
- 	gops->saved_func = gops->entryfunc;
+-	F_printk("--> %ps (%d) <- %ps", (void *)__entry->func, __entry->depth,
++	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
+ 		(void *)__entry->retaddr)
+ );
  
-+	gops->ops.flags |= FTRACE_OPS_FL_GRAPH;
-+
- 	ret = ftrace_startup_subops(&graph_ops, &gops->ops, command);
- 	if (!ret)
- 		fgraph_array[i] = gops;
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 6981830c3128..014cd2cedae3 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4373,6 +4373,42 @@ static inline int print_rec(struct seq_file *m, unsigned long ip)
- }
- #endif
+@@ -124,13 +124,13 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
+ 		__field_struct(	struct ftrace_graph_ret,	ret	)
+ 		__field_packed(	unsigned long,	ret,		func	)
+ 		__field_packed(	unsigned long,	ret,		retval	)
+-		__field_packed(	int,		ret,		depth	)
++		__field_packed(	unsigned int,	ret,		depth	)
+ 		__field_packed(	unsigned int,	ret,		overrun	)
+ 		__field(unsigned long long,	calltime		)
+ 		__field(unsigned long long,	rettime			)
+ 	),
  
-+static void print_subops(struct seq_file *m, struct ftrace_ops *ops, struct dyn_ftrace *rec)
-+{
-+	struct ftrace_ops *subops;
-+	bool first = true;
-+
-+	list_for_each_entry(subops, &ops->subop_list, list) {
-+		if (!((subops->flags & FTRACE_OPS_FL_ENABLED) &&
-+		      hash_contains_ip(rec->ip, subops->func_hash)))
-+			continue;
-+		if (first) {
-+			seq_printf(m, "\tsubops:");
-+			first = false;
-+		}
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+		if (subops->flags & FTRACE_OPS_FL_GRAPH) {
-+			struct fgraph_ops *gops;
-+
-+			gops = container_of(subops, struct fgraph_ops, ops);
-+			seq_printf(m, " {ent:%pS ret:%pS}",
-+				   (void *)gops->entryfunc,
-+				   (void *)gops->retfunc);
-+			continue;
-+		}
-+#endif
-+		if (subops->trampoline) {
-+			seq_printf(m, " {%pS (%pS)}",
-+				   (void *)subops->trampoline,
-+				   (void *)subops->func);
-+			add_trampoline_func(m, subops, rec);
-+		} else {
-+			seq_printf(m, " {%pS}",
-+				   (void *)subops->func);
-+		}
-+	}
-+}
-+
- static int t_show(struct seq_file *m, void *v)
- {
- 	struct ftrace_iterator *iter = m->private;
-@@ -4425,6 +4461,7 @@ static int t_show(struct seq_file *m, void *v)
- 						   (void *)ops->trampoline,
- 						   (void *)ops->func);
- 					add_trampoline_func(m, ops, rec);
-+					print_subops(m, ops, rec);
- 					ops = ftrace_find_tramp_ops_next(rec, ops);
- 				} while (ops);
- 			} else
-@@ -4437,6 +4474,7 @@ static int t_show(struct seq_file *m, void *v)
- 			if (ops) {
- 				seq_printf(m, "\tops: %pS (%pS)",
- 					   ops, ops->func);
-+				print_subops(m, ops, rec);
- 			} else {
- 				seq_puts(m, "\tops: ERROR!");
- 			}
+-	F_printk("<-- %ps (%d) (start: %llx  end: %llx) over: %d retval: %lx",
++	F_printk("<-- %ps (%u) (start: %llx  end: %llx) over: %u retval: %lx",
+ 		 (void *)__entry->func, __entry->depth,
+ 		 __entry->calltime, __entry->rettime,
+ 		 __entry->depth, __entry->retval)
+@@ -146,13 +146,13 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
+ 	F_STRUCT(
+ 		__field_struct(	struct ftrace_graph_ret,	ret	)
+ 		__field_packed(	unsigned long,	ret,		func	)
+-		__field_packed(	int,		ret,		depth	)
++		__field_packed(	unsigned int,	ret,		depth	)
+ 		__field_packed(	unsigned int,	ret,		overrun	)
+ 		__field(unsigned long long,	calltime		)
+ 		__field(unsigned long long,	rettime			)
+ 	),
+ 
+-	F_printk("<-- %ps (%d) (start: %llx  end: %llx) over: %d",
++	F_printk("<-- %ps (%u) (start: %llx  end: %llx) over: %u",
+ 		 (void *)__entry->func, __entry->depth,
+ 		 __entry->calltime, __entry->rettime,
+ 		 __entry->depth)
 -- 
 2.47.2
 
