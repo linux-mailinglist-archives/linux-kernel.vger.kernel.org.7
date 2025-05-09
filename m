@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-640773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492F8AB08ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B55AB08D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109153BE272
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C45B3BFD79
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF5E239E85;
-	Fri,  9 May 2025 03:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C3D237717;
+	Fri,  9 May 2025 03:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pAVs/++R"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1605F507
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FcadZueP"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBFD221299
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746761815; cv=none; b=S2ygTkT0MCQYM+RSmoSRUSr+N+5VaMlgDFdTxejyCcGabeA65mUZqrhLSxy4H+IdTpEDgfM0uzeBARfizTgmL65txsarZijaO7FyT0lGJpiII0bzoE0L9qgmoq+ccSIu+69EQJbKvyI730cDzkEgffu//3xD+U7I7OlHSewM/Rw=
+	t=1746760907; cv=none; b=Nx7Xr1lQ/bWPnLbftFgbwErxDG+/NCMwzaGTipS+PdoH3MdOCwmoFeptVvqE/XnMSzIRJr/LwZnzBWjl2PlzMOroqmdwXUF+KsKE9e61holLvN6U7CSvCOhnWUGzmNXWARVcXkxYAVyCBtSPq5F2ZTCJkzT87Y8kXCFBzP/cxYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746761815; c=relaxed/simple;
-	bh=K/+fOBkcgKY49K4p66gzZun3tBynXrNsVIDrp0j2+nA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FwUXd28d7IgtZVdXS4I6eU+aLHUcpiphVUtsI8LYiEa9LBTa4vCA2aWsRndNJDS4yQ0JSKQhUwQUqrU6XssIXCmEO3sgARwINkAGLQLxpWrPm2XxW/F0eQiOcRwk9xTIflMYj2Imdop6dbn4yvCdxC6Q2GaxxZ7FoGexpEvObFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pAVs/++R; arc=none smtp.client-ip=117.135.210.3
+	s=arc-20240116; t=1746760907; c=relaxed/simple;
+	bh=+on8D93+NbwIPaFwicB40yIh6rKPIGjUUp3vhVPTcAE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hwmXt2lAaLauPXfE6wu61Xv3Moht1aIj6CSWkMMXQ3fnV/X+hnYz7bhIOm+uylphilbpdEoroeWcF9oxzcsJ38eByNdtDiWn1P5CDZRpjpgS3PCoFouPSJ6Tbix3iJwr1RTieczdT4Q6Sr5ZeR/o7iFYlvHo2Q4kArhbfFEkZBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FcadZueP; arc=none smtp.client-ip=117.135.210.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Bh
-	Uw7rxgmDTaFu1ZdyXygSiSwcDEDULentCxZPvFIqA=; b=pAVs/++Rm6bF78LPts
-	Kz/np45QMZi0IEyYqRbNtEOOzriGOi4/oBTFO2nUjeaO0Bs/b/7bbtwo++U0o1Xg
-	top/wSCnN6b3VuWwT/J+aBI27rX7LwsG0wlK4YBd4Ese7FWuAMNPb6hU/CKKhh0f
-	yEr/VRD7Ea1UdZIcvRi22EnHM=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=OU
+	uau8ngN3Zu4awKzPJSl+JZSPqgEV0KCFfOgXmVNvA=; b=FcadZuePXv6SjtdK57
+	H5CJCZbrk/m+HEOCGGR7jc8hPOYbDRCn5ksANRi9Okkz5Nu1JdGeiTMNRooVHBfy
+	VcoCqWBfTh4WTVzyAYyCniBYkHiImmCMNa+8WqcT9v6BxY551fKcRMzfq0JogBet
+	D8yTnzQLfOK0WY4E3iwxzd/pA=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAXdfCKdB1o2Hx1AA--.7654S2;
-	Fri, 09 May 2025 11:20:43 +0800 (CST)
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAXdfCKdB1o2Hx1AA--.7654S3;
+	Fri, 09 May 2025 11:20:44 +0800 (CST)
 From: oushixiong1025@163.com
 To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -48,10 +49,12 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v4 1/3] drm/shmem-helper: Import dmabuf without mapping its sg_table
-Date: Fri,  9 May 2025 11:20:38 +0800
-Message-Id: <20250509032040.185730-1-oushixiong1025@163.com>
+Subject: [PATCH v4 2/3] drm/ast: use DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS
+Date: Fri,  9 May 2025 11:20:39 +0800
+Message-Id: <20250509032040.185730-2-oushixiong1025@163.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250509032040.185730-1-oushixiong1025@163.com>
+References: <20250509032040.185730-1-oushixiong1025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,220 +62,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXdfCKdB1o2Hx1AA--.7654S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtryrZFyUGFy8ZryDXw4xZwb_yoWxtw4kpF
-	sxAryUtrW5tFWqg393Awn7Zas09w409a1Iq3yfJw4Y93WktF1qkFn5Ar90vFyUAryDJF1S
-	qFyDAFyrCryjkF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnPEfUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXBFID2gdc4IbigAAsf
+X-CM-TRANSID:_____wAXdfCKdB1o2Hx1AA--.7654S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWfCrWfKr15Gw4rXw1fZwb_yoW3uFbE9F
+	10q3Z3WFWDua4Duw1Iyay5ZFyIvF1rurZ3JF1Utasxtw47tr4UZ34v9rWIvF1j9F4fZF98
+	Aw17WF43CFsakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU88-PUUUUUU==
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQ9ID2gdcFh0AwAAs-
 
 From: Shixiong Ou <oushixiong@kylinos.cn>
 
-[WHY]
-1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
-   DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
-   sg_table import.
-   They only need dma_buf_vmap() to access the shared buffer's
-   kernel virtual address.
-
-2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
-   trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
-   restricts the maximum DMA streaming mapping memory, resulting in
-   errors like:
-
-   ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
-
-[HOW]
-Provide a gem_prime_import implementation without sg_table mapping
-to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do not
-require sg_table can adopt this.
+Import dmabuf without mapping its sg_table to avoid issues likes:
+  ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
 
 Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 ---
-v1->v2:
-	Patch rebase.
-v2->v3:
-	Rename the import callback function.
-	Remove drm_gem_shmem_prime_export() and separate some codes
-	to drm_gem_prime_import_self(). 
-v3->v4:
-	Separate the test from the policy.
-	Rename the macro.
+ drivers/gpu/drm/ast/ast_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpu/drm/drm_gem_shmem_helper.c | 57 ++++++++++++++++++++++++++
- drivers/gpu/drm/drm_prime.c            | 36 ++++++++++++----
- include/drm/drm_gem_shmem_helper.h     | 15 +++++++
- include/drm/drm_prime.h                |  3 ++
- 4 files changed, 102 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index aa43265f4f4f..8fa160c3635e 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -800,6 +800,63 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
- }
- EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
+diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
+index 6fbf62a99c48..8efb8ec89f50 100644
+--- a/drivers/gpu/drm/ast/ast_drv.c
++++ b/drivers/gpu/drm/ast/ast_drv.c
+@@ -64,7 +64,7 @@ static const struct drm_driver ast_driver = {
+ 	.minor = DRIVER_MINOR,
+ 	.patchlevel = DRIVER_PATCHLEVEL,
  
-+/**
-+ * drm_gem_shmem_prime_import_no_sgt - Import dmabuf without mapping its sg_table
-+ * @dev: Device to import into
-+ * @dma_buf: dma-buf object to import
-+ *
-+ * Drivers that use the shmem helpers but also wants to import dmabuf without
-+ * mapping its sg_table can use this as their &drm_driver.gem_prime_import
-+ * implementation.
-+ */
-+struct drm_gem_object *drm_gem_shmem_prime_import_no_sgt(struct drm_device *dev,
-+							 struct dma_buf *dma_buf)
-+{
-+	struct dma_buf_attachment *attach;
-+	struct drm_gem_shmem_object *shmem;
-+	struct drm_gem_object *obj;
-+	size_t size;
-+	int ret;
-+
-+	if (drm_gem_prime_exported_dma_buf(dev, dma_buf)) {
-+		/*
-+		 * Importing dmabuf exported from our own gem increases
-+		 * refcount on gem itself instead of f_count of dmabuf.
-+		 */
-+		obj = dma_buf->priv;
-+		drm_gem_object_get(obj);
-+		return obj;
-+	}
-+
-+	attach = dma_buf_attach(dma_buf, dev->dev);
-+	if (IS_ERR(attach))
-+		return ERR_CAST(attach);
-+
-+	get_dma_buf(dma_buf);
-+
-+	size = PAGE_ALIGN(attach->dmabuf->size);
-+
-+	shmem = __drm_gem_shmem_create(dev, size, true, NULL);
-+	if (IS_ERR(shmem)) {
-+		ret = PTR_ERR(shmem);
-+		goto fail_detach;
-+	}
-+
-+	drm_dbg_prime(dev, "size = %zu\n", size);
-+
-+	shmem->base.import_attach = attach;
-+	shmem->base.resv = dma_buf->resv;
-+
-+	return &shmem->base;
-+
-+fail_detach:
-+	dma_buf_detach(dma_buf, attach);
-+	dma_buf_put(dma_buf);
-+
-+	return ERR_PTR(ret);
-+}
-+EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_no_sgt);
-+
- MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
- MODULE_IMPORT_NS("DMA_BUF");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index d828502268b8..5bcf483520b8 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -910,6 +910,26 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
- }
- EXPORT_SYMBOL(drm_gem_prime_export);
+-	DRM_GEM_SHMEM_DRIVER_OPS,
++	DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT,
+ 	DRM_FBDEV_SHMEM_DRIVER_OPS,
+ };
  
-+
-+/**
-+ * drm_gem_prime_exported_dma_buf -
-+ * checks if the DMA-BUF was exported from a GEM object belonging to @dev.
-+ * @dev: drm_device to check against
-+ * @dma_buf: dma-buf object to import
-+ *
-+ * Return: true if the DMA-BUF was exported from a GEM object belonging
-+ * to @dev, false otherwise.
-+ */
-+
-+bool drm_gem_prime_exported_dma_buf(struct drm_device *dev,
-+				    struct dma_buf *dma_buf)
-+{
-+	struct drm_gem_object *obj = dma_buf->priv;
-+
-+	return (dma_buf->ops == &drm_gem_prime_dmabuf_ops) && (obj->dev == dev);
-+}
-+EXPORT_SYMBOL(drm_gem_prime_exported_dma_buf);
-+
- /**
-  * drm_gem_prime_import_dev - core implementation of the import callback
-  * @dev: drm_device to import into
-@@ -933,16 +953,14 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
- 	struct drm_gem_object *obj;
- 	int ret;
- 
--	if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
-+	if (drm_gem_prime_exported_dma_buf(dev, dma_buf)) {
-+		/*
-+		 * Importing dmabuf exported from our own gem increases
-+		 * refcount on gem itself instead of f_count of dmabuf.
-+		 */
- 		obj = dma_buf->priv;
--		if (obj->dev == dev) {
--			/*
--			 * Importing dmabuf exported from our own gem increases
--			 * refcount on gem itself instead of f_count of dmabuf.
--			 */
--			drm_gem_object_get(obj);
--			return obj;
--		}
-+		drm_gem_object_get(obj);
-+		return obj;
- 	}
- 
- 	if (!dev->driver->gem_prime_import_sg_table)
-diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
-index b4f993da3cae..9ee697ff52ea 100644
---- a/include/drm/drm_gem_shmem_helper.h
-+++ b/include/drm/drm_gem_shmem_helper.h
-@@ -287,6 +287,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
- 				    struct sg_table *sgt);
- int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
- 			      struct drm_mode_create_dumb *args);
-+struct drm_gem_object *drm_gem_shmem_prime_import_no_sgt(struct drm_device *dev,
-+							 struct dma_buf *buf);
- 
- /**
-  * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
-@@ -298,4 +300,17 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
- 	.dumb_create		   = drm_gem_shmem_dumb_create
- 
-+/**
-+ * DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT - shmem GEM operations
-+ *                                   without mapping sg_table on
-+ *                                   imported buffer.
-+ *
-+ * This macro provides a shortcut for setting the shmem GEM operations in
-+ * the &drm_driver structure for drivers that do not require a sg_table on
-+ * imported buffers.
-+ */
-+#define DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT \
-+	.gem_prime_import       = drm_gem_shmem_prime_import_no_sgt, \
-+	.dumb_create            = drm_gem_shmem_dumb_create
-+
- #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
-diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
-index fa085c44d4ca..ec83f1c077a4 100644
---- a/include/drm/drm_prime.h
-+++ b/include/drm/drm_prime.h
-@@ -100,6 +100,9 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
- unsigned long drm_prime_get_contiguous_size(struct sg_table *sgt);
- 
- /* helper functions for importing */
-+bool drm_gem_prime_exported_dma_buf(struct drm_device *dev,
-+				    struct dma_buf *dma_buf);
-+
- struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
- 						struct dma_buf *dma_buf,
- 						struct device *attach_dev);
 -- 
 2.17.1
 
