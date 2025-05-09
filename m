@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-642356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1928AB1DA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:03:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F86FAB1DAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71AAA25FFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0462A5220C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0528025E83D;
-	Fri,  9 May 2025 20:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0D725EF8C;
+	Fri,  9 May 2025 20:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvGlyerw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iy/5oKN4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540B623E342;
-	Fri,  9 May 2025 20:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5CE25E836;
+	Fri,  9 May 2025 20:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746821029; cv=none; b=tp7aUPiVuo1gFKyInyVnUdSx1akLY0n5iXCbNSv1GNn77eA9/wcgLVc1LvaasCOcQDm2Cu0bRaOTC8qYwsBxlE4hL6rWA6RM7XvsHuIgIzbxMjk8KF8x1UpM9hYDm6QsRCSyfaMKDYsg8ZgHiw9sIY1ulH5ZPiPGbGiljTEX5v0=
+	t=1746821211; cv=none; b=He+R67R1Y2yFR1GE0UE4YjsK42M+vJQ8LufZsH1fYOW+IW98bP94t1HQ6e+I57xQvTfm5PaEZWoXe6OHGAn5eZWwV+LfE1DT1MN016SOCEVjHUs4PQVC3I8BmZtiyFxPyOaBlWfz3Ohni1lyOgfjeY+CLzq9BfFUnl50HUzEZoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746821029; c=relaxed/simple;
-	bh=Tlb5MDgotIsmFC5l0enuv4HrkZGo1UYHZBpeu4qlZeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+T4McVwDcQZl0CdrDP0WRJKYKWcuxVomZrqYSkZEe+hUUZ9QCrFaBGrvCUn+QzCCJ4hgMfRyq3pHInKx/x3F4mSAmw6X8Y/8VoTuQuXsf6BOOknkqttFAnpV3IG3ivC9+lD4Q6vhVZdYPVTHhcmy6a6MUeZYaBoBUvl8ITZXkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvGlyerw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C93EC4CEE4;
-	Fri,  9 May 2025 20:03:48 +0000 (UTC)
+	s=arc-20240116; t=1746821211; c=relaxed/simple;
+	bh=c4N2IUsmCh9moub2+ZGNMBv0CyfWrRcXPTvqAC6Ij/I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rGAE/rpiyqlm4cG7jEhKnMmSAh37aIsqSMIyC3l+vpgpCJVU29ikvNTgY0WwFfGKnWDgt1bKHp5H80iEqLxy+2OlkzX8vCireSdGLi0juH+w8UlMGAFOD4pEAhUZR3BqMITQLWKMnzg4aHgHwHsg6pATeuIZS1UB6FYQsLIwrWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iy/5oKN4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04EB6C4CEE4;
+	Fri,  9 May 2025 20:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746821028;
-	bh=Tlb5MDgotIsmFC5l0enuv4HrkZGo1UYHZBpeu4qlZeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pvGlyerwXRkpmzHnBUeKJCpK7IgRxYieKDXWZmfUv9CHHNUsCb3nkvKF/XJDfrQWF
-	 3wgyQenDD0gaD/MlO4dJQsuhnPfIpkktj/eIJJI2iJHaRj9yX4HxjJnFRgjp01Qc9X
-	 yGP70dk5ivyzPzXzv4//Q4p/psZm/EjidykT8dC+Ib/EwPVYuxdqZmQyEfNMXYQ7Y2
-	 zxIqeW5PzHb7mTFRNUJXk6wqM6MB3B+ncevEScmIOSkcM6LH1ntjkbFw3+v4r1myTL
-	 ybqP1/yuWmHJ/XlorLsIJ36Jw7TNYOR9NOxAlnYJDJxtOdmkCFU2AR58L3Gchw9LeC
-	 DmwGIhDobDmtg==
-Date: Fri, 9 May 2025 17:03:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev,
-	Daniel Xu <dxu@dxuuu.xyz>, Ariel Ben-Yehuda <ariel.byd@gmail.com>
-Subject: Re: [PATCH v2 0/6] Use rustc-demangle for Rust demangling
-Message-ID: <aB5fog7c-Ucs6dAN@x1>
-References: <20250430004128.474388-1-irogers@google.com>
+	s=k20201202; t=1746821211;
+	bh=c4N2IUsmCh9moub2+ZGNMBv0CyfWrRcXPTvqAC6Ij/I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iy/5oKN4Rax6mwtekgtc7DQfTrvQ+wam5Jjx0PiEo57N2FQa4laN6F5Pf713nTxcz
+	 rJEKhMVmFHqunx+dD0tttYsmVTr3ljhtZkRRXt72Eyp6MN40bBWGnd7jPE51VFcuy0
+	 i7gZuoE0yo8pyIk39tDuTrZhCRcj6Eef1sSRKhrUiN8a5ZXpazJ7IgDWPySCEmQLHJ
+	 MPbITL1LhxUGGm/K+byLzshRh6tfymDBT3+MV8td9nOUqPPHF2aV8LZdCkhjTvjYoq
+	 T1y0I6GYGXjkCfNWD6FfzmSHmMSfr9Cf/S1pIjYJdyfeipJ60e9WNd90d6m0jzRCif
+	 kAwjMTPHPtD2g==
+From: Kees Cook <kees@kernel.org>
+To: Simona Vetter <simona@ffwll.ch>
+Cc: Kees Cook <kees@kernel.org>,
+	syzbot+a7d4444e7b6e743572f7@syzkaller.appspotmail.com,
+	Helge Deller <deller@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Shixiong Ou <oushixiong@kylinos.cn>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Qianqiang Liu <qianqiang.liu@163.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Zsolt Kajtar <soci@c64.rulez.org>,
+	linux-kernel@vger.kernel.org,
+	syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] fbdev: fbcon: Make sure modelist not set on unregistered console
+Date: Fri,  9 May 2025 13:06:47 -0700
+Message-Id: <20250509200643.work.355-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2305; i=kees@kernel.org; h=from:subject:message-id; bh=c4N2IUsmCh9moub2+ZGNMBv0CyfWrRcXPTvqAC6Ij/I=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlyCWH//WaueRBfJHD5a+nhDd/L42/f/L542tUJ0+wrn q/LdFl3oKOUhUGMi0FWTJElyM49zsXjbXu4+1xFmDmsTCBDGLg4BWAiy3IY/vsXvG2+e+HLYqtZ s3c+nt0XKsTc77J8XhOHfXjeZU7Ody4M/2v/VTEwFcQLZcqcWP5U1fes1kHGJ0HbGN4e2f3j5/e p/rwA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250430004128.474388-1-irogers@google.com>
 
-On Tue, Apr 29, 2025 at 05:41:22PM -0700, Ian Rogers wrote:
-> Discussion of improved Rust demangling started with:
-> https://lore.kernel.org/lkml/jgxfnphfo3nzlfipnuuzdlfc4ehbr2tnh2evz3mdhynd6wvrsu@fcz6vrvepybb/
-> that led to implementing a Rust v0 demangler:
-> https://lore.kernel.org/lkml/20250129193037.573431-1-irogers@google.com/
-> Discussion on that patch series led to the rust-lang issue:
-> https://github.com/rust-lang/rust/issues/60705
-> where the pre-existing Rust C demangler, authored by Ariel Ben-Yehuda
->  <ariel.byd@gmail.com>, was mentioned. There wasn't progress on that
-> issue and so I've pulled that work into perf as discussed on the
-> issue.
-> 
-> v2: Changes to references from arielb1 to "Ariel Ben Yehuda
->     <ariel.byd@gmail.com>", license tidying as suggested by Miguel
->     Ojeda" <ojeda@kernel.org>. Don't change from alternate demangling
->     flag from false to true in the test change, make it true from the
->     beginning (patch 2).
-> 
-> Ian Rogers (6):
->   perf demangle-rust: Add rustc-demangle C demangler
->   perf symbol-elf: Integrate rust-v0 demangling
->   perf demangle-rust: Remove previous legacy rust decoder
->   perf test demangle-rust: Add Rust demangling test
->   perf test demangle-java: Switch to using dso__demangle_sym
->   perf test demangle-ocaml: Switch to using dso__demangle_sym
+It looks like attempting to write to the "store_modes" sysfs node will
+run afoul of unregistered consoles:
 
-I'm fixing these up, ok?
+UBSAN: array-index-out-of-bounds in drivers/video/fbdev/core/fbcon.c:122:28
+index -1 is out of range for type 'fb_info *[32]'
+...
+ fbcon_info_from_console+0x192/0x1a0 drivers/video/fbdev/core/fbcon.c:122
+ fbcon_new_modelist+0xbf/0x2d0 drivers/video/fbdev/core/fbcon.c:3048
+ fb_new_modelist+0x328/0x440 drivers/video/fbdev/core/fbmem.c:673
+ store_modes+0x1c9/0x3e0 drivers/video/fbdev/core/fbsysfs.c:113
+ dev_attr_store+0x55/0x80 drivers/base/core.c:2439
 
-  ✗ BADSIG: DKIM/google.com
+static struct fb_info *fbcon_registered_fb[FB_MAX];
+...
+static signed char con2fb_map[MAX_NR_CONSOLES];
+...
+static struct fb_info *fbcon_info_from_console(int console)
+...
+        return fbcon_registered_fb[con2fb_map[console]];
+
+If con2fb_map contains a -1 things go wrong here. Instead, return NULL,
+as callers of fbcon_info_from_console() are trying to compare against
+existing "info" pointers, so error handling should kick in correctly.
+
+Reported-by: syzbot+a7d4444e7b6e743572f7@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/679d0a8f.050a0220.163cdc.000c.GAE@google.com/
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
-Total patches: 6
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Helge Deller <deller@gmx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Shixiong Ou <oushixiong@kylinos.cn>
+Cc: <linux-fbdev@vger.kernel.org>
+Cc: <dri-devel@lists.freedesktop.org>
 ---
-Cover: ./v2_20250429_irogers_use_rustc_demangle_for_rust_demangling.cover
- Link: https://lore.kernel.org/r/20250430004128.474388-1-irogers@google.com
- Base: applies clean to current tree
-       git checkout -b v2_20250429_irogers_google_com HEAD
-       git am ./v2_20250429_irogers_use_rustc_demangle_for_rust_demangling.mbx
-⬢ [acme@toolbx perf-tools-next]$        git am ./v2_20250429_irogers_use_rustc_demangle_for_rust_demangling.mbx
-Applying: perf demangle-rust: Add rustc-demangle C demangler
-.git/rebase-apply/patch:1098: trailing whitespace.
-    
-.git/rebase-apply/patch:1363: trailing whitespace.
-    
-.git/rebase-apply/patch:1474: trailing whitespace.
-    default: 
-.git/rebase-apply/patch:1791: trailing whitespace.
-        { NULL }, 
-.git/rebase-apply/patch:1814: trailing whitespace.
-        // From here on, inner contains a pointer to the next element, rest[:len] to the current one        
-warning: squelched 4 whitespace errors
-warning: 9 lines add whitespace errors.
-Applying: perf symbol-elf: Integrate rust-v0 demangling
-Applying: perf demangle-rust: Remove previous legacy rust decoder
-Applying: perf test demangle-rust: Add Rust demangling test
-Applying: perf test demangle-java: Switch to using dso__demangle_sym
-Applying: perf test demangle-ocaml: Switch to using dso__demangle_sym
-⬢ [acme@toolbx perf-tools-next]$
+ drivers/video/fbdev/core/fbcon.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index ac3c99ed92d1..2df48037688d 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -117,9 +117,14 @@ static signed char con2fb_map_boot[MAX_NR_CONSOLES];
+ 
+ static struct fb_info *fbcon_info_from_console(int console)
+ {
++	signed char fb;
+ 	WARN_CONSOLE_UNLOCKED();
+ 
+-	return fbcon_registered_fb[con2fb_map[console]];
++	fb = con2fb_map[console];
++	if (fb < 0 || fb >= ARRAY_SIZE(fbcon_registered_fb))
++		return NULL;
++
++	return fbcon_registered_fb[fb];
+ }
+ 
+ static int logo_lines;
+-- 
+2.34.1
 
-- Arnaldo
 
