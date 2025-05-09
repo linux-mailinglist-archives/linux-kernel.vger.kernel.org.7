@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-640614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA54AB06EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:03:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE70AB06F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534281BC4B4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:04:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5392F7AB2AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6228FA55;
-	Fri,  9 May 2025 00:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7CF6AD3;
+	Fri,  9 May 2025 00:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IyePLuzm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="le26n8XI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ECF366;
-	Fri,  9 May 2025 00:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B801373;
+	Fri,  9 May 2025 00:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746749025; cv=none; b=UqDcHVwAurK9Q8f/Nk/D3EM2G3LgyQONhywUZL35m3aM68QVJ0EUFH815L1OBszoEcbrHRYFWXJK5It92KuoSZlhlnAm3mkhS1x6inqNIFTTHXHO5O13+nZEX83ViDoYnAjPrwUKA4GaBH6KLzzSiAoGneNCYiSd4iJ7I+vHcGU=
+	t=1746749058; cv=none; b=u6RJD+q5hCOula3RtEunVF+96dIdduOiV7GgnEOZvUoFF5pAnI0VFuiTyXg+Ewlh8iR6Av+v5pzAN+uRCEmYk+l3NPnMiLWEeq7FIUcuYbKfyN5KI9GobVN7sbOuGuHkZXrUjgQHZ0JD4YZGhZiqGVpRy/wTll9ObNk9FaQwWlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746749025; c=relaxed/simple;
-	bh=PQt8e1xAFZ8eIKrfvNojjNPt2OTrvDfKuaMser2n6k4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rjec0756fMjIcD+H0Hh2SUagzL3U0wPsseewE77nu+gvX4uozPQl8N6/xEOmB2GqcRUUfMtThM2QfKG5aoNYCLkQbMzI84VWIvCR7JRQY5KR7YT20tLsEIZtYcMJh4CaHe5nCs1RgWxoSg5KX+s/ny7mW/UXl2G7cvNy5jCFXsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IyePLuzm; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746749025; x=1778285025;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PQt8e1xAFZ8eIKrfvNojjNPt2OTrvDfKuaMser2n6k4=;
-  b=IyePLuzmV/XUM0M/q30dbyXrotndfSoMVl0SoXJzsTkUjmG8bklREgLM
-   UDacE1xFhWstlSof5MrPYCU57aiI0J0FCwBh/l/K++fI5v3lJPrhnOpbk
-   ws1xwf24qZCE04nK2UGsQ/63aLL7KIkfn/v/SoJnxiJVCldJaVJMvYtCV
-   1fzs2xWz7pV7u1jEdsg6wRbgUoMKHz+DphsifTA1iBfA5cLNZRt5zR4Fo
-   g5mXTICwvdQxL1oAW82tLUDsqZk+u2vucBmpz9e812pauZR9Wrq1N/wo4
-   4MZHnuIVYAdD4rraiSvSzy/ec2K+aXUHJFyGU1OZ7uxQMUYwNtA8+P0fJ
-   w==;
-X-CSE-ConnectionGUID: tnjfghglRaCRVxMj1ANeiQ==
-X-CSE-MsgGUID: bP5KMTTrRcSxFcy7seF0bg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48718299"
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="48718299"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 17:03:44 -0700
-X-CSE-ConnectionGUID: j4ukEc3GQXiSFLuNX15uVg==
-X-CSE-MsgGUID: Qfbdvj+GQPecG3llgt2W5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="140494561"
-Received: from sunyi-station (HELO sunyi-station..) ([10.239.96.51])
-  by fmviesa003.fm.intel.com with ESMTP; 08 May 2025 17:03:41 -0700
-From: Yi Sun <yi.sun@intel.com>
-To: dave.jiang@intel.com,
-	vinicius.gomes@intel.com,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yi.sun@intel.com,
-	anil.s.keshavamurthy@intel.com,
-	gordon.jin@intel.com
-Subject: [PATCH] dmaengine: idxd: Check availability of workqueue allocated by idxd wq driver before using
-Date: Fri,  9 May 2025 08:03:04 +0800
-Message-ID: <20250509000304.1402863-1-yi.sun@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746749058; c=relaxed/simple;
+	bh=57Np20SdFeVQE9PtU0KXWCY9OLkd7sjux9udzUUqAks=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cVY4jsiRctv/AbceO5cXlcKuwnF3q7Bcgpgn1ufTWtBMEaiXFbcQZZfgQreYb8BNRXng9nO/Ql+jhbETlVc9uIzfpXvK28mJk7xC0h2nl97VVyXKTNLaLM45eGtNFJlgZBDYycH74IWDRSidVsfb9u6AHeKxTZI6ExkW/SOjtGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=le26n8XI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C651C4CEE7;
+	Fri,  9 May 2025 00:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746749057;
+	bh=57Np20SdFeVQE9PtU0KXWCY9OLkd7sjux9udzUUqAks=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=le26n8XIJXnC4by02F2+wZLbMGQw1Rvl8TzVb6et4zlhefBCjxKD9UuliOLZ8OaG5
+	 1SOjpOMXQj64xJ/19EnD7RaQvZYVkiqr6EkKwHlAJuTQchXVPeKygZlkIl3omgyd6i
+	 efEFVRzigh9LiPP3LR1w4HzztqGZISOvWk+cVkgdkI+oHO1XleNuGjqLQH8mIL6FXu
+	 I1St7gnZiOzlwNEKqRNdxXuhatBi9NF1U/2OCP9fpOOnK24ltDi2xiEBFkqtjPBrQJ
+	 a3e1wwPf3gzOXqQ7AeqIIhRoOEO1IgXZ6r+Gn/PtJi35Pj24B20bib3DCBaJEIbvNP
+	 7z5noJe3Nu36Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E08C3ABBE;
+	Fri,  9 May 2025 00:04:17 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v4 0/2] Support building tegra124-cpufreq as a module
+Date: Thu, 08 May 2025 19:04:13 -0500
+Message-Id: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH1GHWgC/4XOSw6CMBCA4auQrq1ph+HlynsYF7VMoYk8LNhoC
+ He3EBdETVz+k8w3M7GBnKWBHaKJOfJ2sF0bAncR07VqK+K2DM1AQCJQSD5S5ZQE5Lq/G0c3bso
+ C0ZSaUtAsrPWOjH2s5OkcurbD2LnnesHLZfrGQHxjXnLBhcLMkIRUFPJYNcpe97pr2IJ52AI/v
+ vEQADASc01Gocw/gfgfEAegSEhdVJHmmGZbYJ7nF4xzpOoyAQAA
+X-Change-ID: 20250401-tegra124-cpufreq-fd944fdce62c
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746749056; l=1390;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=57Np20SdFeVQE9PtU0KXWCY9OLkd7sjux9udzUUqAks=;
+ b=JuqRJq7vMFUtK4ZbxKkFFgQ6PSAQpueCmTe6GdZROXOGFE/WfKaQhYHoND47mWrNgLIlshy0V
+ CE/Tf7s/CBEA23K7ZytwKZmYLGQxALudy4VnVWlOmSLAZit7C+Z19Hq
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Running IDXD workloads in a container with the /dev directory mounted can
-trigger a call trace or even a kernel panic when the parent process of the
-container is terminated.
+This adds remove and exit routines that were not previously needed when
+this was only available builtin. It also converts use of an unexported
+function to a more sane alternative.
 
-This issue occurs because, under certain configurations, Docker does not
-properly propagate the mount replica back to the original mount point.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v4:
+- Move clock puts to remove instead of exit
+- Link to v3: https://lore.kernel.org/r/20250421-tegra124-cpufreq-v3-0-95eaba968467@gmail.com
 
-In this case, when the user driver detaches, the WQ is destroyed but it
-still calls destroy_workqueue() attempting to completes all pending work.
-It's necessary to check wq->wq and skip the drain if it no longer exists.
+Changes in v3:
+- In patch 1, set cpufreq_dt_pdev to an error after unregister on fail
+  to prevent a potential double unregister on remove
+- In patch 2, clean up clocks on exit
+- Link to v2: https://lore.kernel.org/r/20250421-tegra124-cpufreq-v2-0-2f148cefa418@gmail.com
 
-Signed-off-by: Yi Sun <yi.sun@intel.com>
+Changes in v2:
+- Replace patch 1 with a patch to not use the unexported function
+- Update patch 2 to add remove and exit routines
+- Link to v1: https://lore.kernel.org/r/20250420-tegra124-cpufreq-v1-0-0a47fe126091@gmail.com
 
-diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-index ff94ee892339..a202fe4937a7 100644
---- a/drivers/dma/idxd/cdev.c
-+++ b/drivers/dma/idxd/cdev.c
-@@ -349,7 +349,9 @@ static void idxd_cdev_evl_drain_pasid(struct idxd_wq *wq, u32 pasid)
- 			set_bit(h, evl->bmap);
- 		h = (h + 1) % size;
- 	}
--	drain_workqueue(wq->wq);
-+	if (wq->wq)
-+		drain_workqueue(wq->wq);
-+
- 	mutex_unlock(&evl->lock);
- }
- 
+---
+Aaron Kling (2):
+      cpufreq: tegra124: Remove use of disable_cpufreq
+      cpufreq: tegra124: Allow building as a module
+
+ drivers/cpufreq/Kconfig.arm        |  2 +-
+ drivers/cpufreq/tegra124-cpufreq.c | 41 +++++++++++++++++++++++++++++++++-----
+ 2 files changed, 37 insertions(+), 6 deletions(-)
+---
+base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+change-id: 20250401-tegra124-cpufreq-fd944fdce62c
+
+Best regards,
 -- 
-2.43.0
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
