@@ -1,256 +1,312 @@
-Return-Path: <linux-kernel+bounces-641518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23AAAB12BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193A5AB12BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7251DA07424
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F57189C6D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BC9290BBA;
-	Fri,  9 May 2025 11:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F030E28FFE7;
+	Fri,  9 May 2025 11:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ncH4M4RJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7NIeZ26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67F028FABC;
-	Fri,  9 May 2025 11:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D8D28F94C;
+	Fri,  9 May 2025 11:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746791836; cv=none; b=qwGi4tQ4/7623lWi0rUnxrZ4sNhR9ifhZqSuQvK1Xn/OTGCIb6CzqrksJffZ/Tb7QkWyMwty4VOTq2uWWD2ymdX85Mqv2FMk+OIRihhYuUGwPm+SQiOTm1g/6MfdLv4SmlOWNE5+nySZWy4kOj1iFxXDZ4TIiF8BFeTVt+h3mjU=
+	t=1746791929; cv=none; b=avITQLhIko1n34LQr5doqIEX+HsHoatJtDbUSXnDjjiJx0aBppSNg3ff0Kb1wGH5iS7lAsnfzwC5GJUY0OVXg+Bn8CJ5+MGqk+BI88kKbk/EW6789Dm4p8zhOZCJrzLtR4zmaVABM5He8zVCyct9wszcHHVC1t8OEFPQqI8H3z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746791836; c=relaxed/simple;
-	bh=nneM42ftNf3W9eCqj0oF7myaBx5QhI8te/vlDu4AEA4=;
+	s=arc-20240116; t=1746791929; c=relaxed/simple;
+	bh=NCtLhYAHWoi/uYTZ/aBGFcs5EKhZrKwMb9yH3wrLyrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oam8DGCl9yM/4OG6ng48wg6MivbyY2PSFtHm2kGOKHdagjuCiVc6wiXHhpDnI1Y3Fyd1qEOZYBELDSZFPWq6iN0D9PyTLwHc94WmdMoA2+M/33XkoJUNnfk6UnwmebWKbUH8lslQDmmylph6aMYsr7Z8qLMbmsTC3IV6bHzSzwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ncH4M4RJ; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746791834; x=1778327834;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nneM42ftNf3W9eCqj0oF7myaBx5QhI8te/vlDu4AEA4=;
-  b=ncH4M4RJ2KX5bS0Jw7Mvz/0rYputq8fnqr1MMYddGee3KvNBiXct4w6y
-   lvHGUw7GjHhE5apLG/fCqoCA3mISw5p6z4SnUNQC/K8LIdOkgqDKRUEm0
-   sx4j7zUrKLYpGl/zLXhgPa0X9rYwd7Jgz93KEN4XnCCp94DEnFc7AXuJV
-   08nRcESKUBSZ+Y6MDsfA+TCnqfUVQbcQ1Wlp9BCVU3F/80W74E12YaVu+
-   tWU3k60eN0BmbcyAYFDINiliVABVurc7IcRdWBhkynOHowdGFq2mWMztn
-   pnGQ166ZUryXpEhRIv5kq+Bl+SRSeO44etnZzIWeei392vNSz3KouU4FH
-   A==;
-X-CSE-ConnectionGUID: J1hbgMAOSrKl456U4oEGcw==
-X-CSE-MsgGUID: shTH6Z9GQZGT+HOfDp/q9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48776045"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="48776045"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 04:57:13 -0700
-X-CSE-ConnectionGUID: CvWz7RQGRRSOCk4M2XPC7g==
-X-CSE-MsgGUID: uozSwc/uRNikMEe1RoxKqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="140655720"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 09 May 2025 04:57:07 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDMLh-000C2N-1E;
-	Fri, 09 May 2025 11:57:05 +0000
-Date: Fri, 9 May 2025 19:56:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	broonie@kernel.org, yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com, liaochang1@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: Re: [PATCH v3 4/7] arm64: probes: Add GCS support to bl/blr/ret
-Message-ID: <202505091926.PBPRfjKb-lkp@intel.com>
-References: <20250504233203.616587-5-jeremy.linton@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhSKCStvUvkqSpLt+O6yrnvIiE8g0SFRRi3ObqJ2LWomqToMx4bcGAn+XZ/cTQOYPx1eYgRUAC/UQPS/t5S9a1G4g8rzyMgGQFJhtI6+yxQu4JeYtv3dRklqzYjiLGke51XSxUdvGvsRRkWIOqD0BiO+NpSEhDVdmH452MSC3gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7NIeZ26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78CB0C4CEE4;
+	Fri,  9 May 2025 11:58:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746791928;
+	bh=NCtLhYAHWoi/uYTZ/aBGFcs5EKhZrKwMb9yH3wrLyrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I7NIeZ269XV59LW9/W5Kjhzx1z/3bV/cS2nu5mvuVAwgoG35Ew8AU790+wdk+Stnf
+	 exoOqYV4Q2WFBGeGtS/ePa5N0ouamt3oZVnn/QcS+VDc+/87Q3ne6B+b+WRpcUlwzj
+	 7SUhFzLC8RawXUJpVdHPe96jsN5EpRkZ8+97vIF6XfKebmRqRl58Q93yvC0tdnQjLG
+	 v4X9UxLfXQjyQVMiXQWzqLgvClSHg96w5JDl6mMiNlsmmwR1c4h53erkE+zdvkyXuV
+	 Vhx3jMbmj2mY8vQXT6k0JE2U3pSAgWozB3EfIoz7e9P0FKDssmhubMVlaQVaLQ0GqF
+	 6303Fs5iimfIg==
+Date: Fri, 9 May 2025 12:58:42 +0100
+From: Srinivas Kandagatla <srini@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v9 6/6] nvmem: max77759: add Maxim MAX77759 NVMEM driver
+Message-ID: <aB3t8vw9PO5hRpXg@srini-hackbase>
+References: <20250430-max77759-mfd-v9-0-639763e23598@linaro.org>
+ <20250430-max77759-mfd-v9-6-639763e23598@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250504233203.616587-5-jeremy.linton@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250430-max77759-mfd-v9-6-639763e23598@linaro.org>
 
-Hi Jeremy,
+On Wed, Apr 30, 2025 at 10:03:13AM +0100, André Draszik wrote:
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
+> 
+> This driver exposes the non volatile memory using the platform device
+> registered by the core MFD driver.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-kernel test robot noticed the following build errors:
+If the plan is to take this series via mfd here is my Ack
 
-[auto build test ERROR on arm64/for-next/core]
-[also build test ERROR on perf-tools-next/perf-tools-next tip/perf/core perf-tools/perf-tools linus/master v6.15-rc5 next-20250508]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Acked-by: Srinivas Kandagatla <srini@kernel.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-gcs-task_gcs_el0_enable-should-use-passed-task/20250505-122838
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-patch link:    https://lore.kernel.org/r/20250504233203.616587-5-jeremy.linton%40arm.com
-patch subject: [PATCH v3 4/7] arm64: probes: Add GCS support to bl/blr/ret
-config: arm64-randconfig-001-20250509 (https://download.01.org/0day-ci/archive/20250509/202505091926.PBPRfjKb-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505091926.PBPRfjKb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505091926.PBPRfjKb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/arm64/kernel/probes/simulate-insn.c: In function 'update_lr':
->> arch/arm64/kernel/probes/simulate-insn.c:58:3: error: implicit declaration of function 'push_user_gcs'; did you mean 'task_user_tls'? [-Werror=implicit-function-declaration]
-      push_user_gcs(addr + 4,  &err);
-      ^~~~~~~~~~~~~
-      task_user_tls
-   arch/arm64/kernel/probes/simulate-insn.c: In function 'simulate_ret':
->> arch/arm64/kernel/probes/simulate-insn.c:162:14: error: implicit declaration of function 'pop_user_gcs'; did you mean 'pin_user_pages'? [-Werror=implicit-function-declaration]
-      ret_addr = pop_user_gcs(&err);
-                 ^~~~~~~~~~~~
-                 pin_user_pages
-   cc1: some warnings being treated as errors
-
-
-vim +58 arch/arm64/kernel/probes/simulate-insn.c
-
-    52	
-    53	static inline void update_lr(struct pt_regs *regs, long addr)
-    54	{
-    55		int err = 0;
-    56	
-    57		if (user_mode(regs) && task_gcs_el0_enabled(current)) {
-  > 58			push_user_gcs(addr + 4,	 &err);
-    59			if (err) {
-    60				force_sig(SIGSEGV);
-    61				return;
-    62			}
-    63		}
-    64		procedure_link_pointer_set(regs, addr + 4);
-    65	}
-    66	
-    67	static bool __kprobes check_cbz(u32 opcode, struct pt_regs *regs)
-    68	{
-    69		int xn = opcode & 0x1f;
-    70	
-    71		return (opcode & (1 << 31)) ?
-    72		    (get_x_reg(regs, xn) == 0) : (get_w_reg(regs, xn) == 0);
-    73	}
-    74	
-    75	static bool __kprobes check_cbnz(u32 opcode, struct pt_regs *regs)
-    76	{
-    77		int xn = opcode & 0x1f;
-    78	
-    79		return (opcode & (1 << 31)) ?
-    80		    (get_x_reg(regs, xn) != 0) : (get_w_reg(regs, xn) != 0);
-    81	}
-    82	
-    83	static bool __kprobes check_tbz(u32 opcode, struct pt_regs *regs)
-    84	{
-    85		int xn = opcode & 0x1f;
-    86		int bit_pos = ((opcode & (1 << 31)) >> 26) | ((opcode >> 19) & 0x1f);
-    87	
-    88		return ((get_x_reg(regs, xn) >> bit_pos) & 0x1) == 0;
-    89	}
-    90	
-    91	static bool __kprobes check_tbnz(u32 opcode, struct pt_regs *regs)
-    92	{
-    93		int xn = opcode & 0x1f;
-    94		int bit_pos = ((opcode & (1 << 31)) >> 26) | ((opcode >> 19) & 0x1f);
-    95	
-    96		return ((get_x_reg(regs, xn) >> bit_pos) & 0x1) != 0;
-    97	}
-    98	
-    99	/*
-   100	 * instruction simulation functions
-   101	 */
-   102	void __kprobes
-   103	simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs)
-   104	{
-   105		long imm, xn, val;
-   106	
-   107		xn = opcode & 0x1f;
-   108		imm = ((opcode >> 3) & 0x1ffffc) | ((opcode >> 29) & 0x3);
-   109		imm = sign_extend64(imm, 20);
-   110		if (opcode & 0x80000000)
-   111			val = (imm<<12) + (addr & 0xfffffffffffff000);
-   112		else
-   113			val = imm + addr;
-   114	
-   115		set_x_reg(regs, xn, val);
-   116	
-   117		instruction_pointer_set(regs, instruction_pointer(regs) + 4);
-   118	}
-   119	
-   120	void __kprobes
-   121	simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
-   122	{
-   123		int disp = bbl_displacement(opcode);
-   124	
-   125		if (opcode & (1 << 31))
-   126			update_lr(regs, addr);
-   127	
-   128		instruction_pointer_set(regs, addr + disp);
-   129	}
-   130	
-   131	void __kprobes
-   132	simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs)
-   133	{
-   134		int disp = 4;
-   135	
-   136		if (aarch32_opcode_cond_checks[opcode & 0xf](regs->pstate & 0xffffffff))
-   137			disp = bcond_displacement(opcode);
-   138	
-   139		instruction_pointer_set(regs, addr + disp);
-   140	}
-   141	
-   142	void __kprobes
-   143	simulate_br_blr(u32 opcode, long addr, struct pt_regs *regs)
-   144	{
-   145		int xn = (opcode >> 5) & 0x1f;
-   146	
-   147		/* update pc first in case we're doing a "blr lr" */
-   148		instruction_pointer_set(regs, get_x_reg(regs, xn));
-   149	
-   150		if (((opcode >> 21) & 0x3) == 1)
-   151			update_lr(regs, addr);
-   152	}
-   153	
-   154	void __kprobes
-   155	simulate_ret(u32 opcode, long addr, struct pt_regs *regs)
-   156	{
-   157		u64 ret_addr;
-   158		int err = 0;
-   159		unsigned long lr = procedure_link_pointer(regs);
-   160	
-   161		if (user_mode(regs) && task_gcs_el0_enabled(current)) {
- > 162			ret_addr = pop_user_gcs(&err);
-   163			if (err || ret_addr != lr) {
-   164				force_sig(SIGSEGV);
-   165				return;
-   166			}
-   167		}
-   168	
-   169		instruction_pointer_set(regs, lr);
-   170	}
-   171	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+thanks,
+Srini
+> ---
+> v9:
+> * drop superfluous max77759_nvmem_is_valid() (Srini)
+> 
+> v8:
+> * replace MODULE_ALIAS() with .id_table (Krzysztof)
+> * drop previous tags
+> 
+> v5:
+> * follow API updates of max77759 core driver
+> 
+> v2:
+> * align sentinel in max77759_nvmem_of_id[] with other max77759 drivers
+>  (Christophe)
+> ---
+>  MAINTAINERS                    |   1 +
+>  drivers/nvmem/Kconfig          |  12 ++++
+>  drivers/nvmem/Makefile         |   2 +
+>  drivers/nvmem/max77759-nvmem.c | 145 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 160 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0db5e1fe64930e85265913e6a7dd2669c645cf42..b821502afc48f95d48fb8c6ac6941d1dd8e63582 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14670,6 +14670,7 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
+>  F:	drivers/gpio/gpio-max77759.c
+>  F:	drivers/mfd/max77759.c
+> +F:	drivers/nvmem/max77759-nvmem.c
+>  F:	include/linux/mfd/max77759.h
+>  
+>  MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
+> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+> index 8671b7c974b933e147154bb40b5d41b5730518d2..3de07ef524906ad24a89e58abdfe93529a83c80f 100644
+> --- a/drivers/nvmem/Kconfig
+> +++ b/drivers/nvmem/Kconfig
+> @@ -154,6 +154,18 @@ config NVMEM_LPC18XX_OTP
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called nvmem_lpc18xx_otp.
+>  
+> +config NVMEM_MAX77759
+> +	tristate "Maxim Integrated MAX77759 NVMEM Support"
+> +	depends on MFD_MAX77759
+> +	default MFD_MAX77759
+> +	help
+> +	  Say Y here to include support for the user-accessible storage found
+> +	  in Maxim Integrated MAX77759 PMICs. This IC provides space for 30
+> +	  bytes of storage.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called nvmem-max77759.
+> +
+>  config NVMEM_MESON_EFUSE
+>  	tristate "Amlogic Meson GX eFuse Support"
+>  	depends on (ARCH_MESON || COMPILE_TEST) && MESON_SM
+> diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
+> index 5b77bbb6488bf89bfb305750a1cbf4a6731a0a58..a9d03cfbbd27e68d40f8c330e72e20378b12a481 100644
+> --- a/drivers/nvmem/Makefile
+> +++ b/drivers/nvmem/Makefile
+> @@ -34,6 +34,8 @@ obj-$(CONFIG_NVMEM_LPC18XX_EEPROM)	+= nvmem_lpc18xx_eeprom.o
+>  nvmem_lpc18xx_eeprom-y			:= lpc18xx_eeprom.o
+>  obj-$(CONFIG_NVMEM_LPC18XX_OTP)		+= nvmem_lpc18xx_otp.o
+>  nvmem_lpc18xx_otp-y			:= lpc18xx_otp.o
+> +obj-$(CONFIG_NVMEM_MAX77759)		+= nvmem-max77759.o
+> +nvmem-max77759-y			:= max77759-nvmem.o
+>  obj-$(CONFIG_NVMEM_MESON_EFUSE)		+= nvmem_meson_efuse.o
+>  nvmem_meson_efuse-y			:= meson-efuse.o
+>  obj-$(CONFIG_NVMEM_MESON_MX_EFUSE)	+= nvmem_meson_mx_efuse.o
+> diff --git a/drivers/nvmem/max77759-nvmem.c b/drivers/nvmem/max77759-nvmem.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c9961ad0e232e152e924b5b06d7d93172760ac3a
+> --- /dev/null
+> +++ b/drivers/nvmem/max77759-nvmem.c
+> @@ -0,0 +1,145 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +//
+> +// Copyright 2020 Google Inc
+> +// Copyright 2025 Linaro Ltd.
+> +//
+> +// NVMEM driver for Maxim MAX77759
+> +
+> +#include <linux/dev_printk.h>
+> +#include <linux/device.h>
+> +#include <linux/device/driver.h>
+> +#include <linux/err.h>
+> +#include <linux/mfd/max77759.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-provider.h>
+> +#include <linux/overflow.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/string.h>
+> +
+> +#define MAX77759_NVMEM_OPCODE_HEADER_LEN 3
+> +/*
+> + * NVMEM commands have a three byte header (which becomes part of the command),
+> + * so we need to subtract that.
+> + */
+> +#define MAX77759_NVMEM_SIZE (MAX77759_MAXQ_OPCODE_MAXLENGTH \
+> +			     - MAX77759_NVMEM_OPCODE_HEADER_LEN)
+> +
+> +struct max77759_nvmem {
+> +	struct device *dev;
+> +	struct max77759 *max77759;
+> +};
+> +
+> +static int max77759_nvmem_reg_read(void *priv, unsigned int offset,
+> +				   void *val, size_t bytes)
+> +{
+> +	struct max77759_nvmem *nvmem = priv;
+> +	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
+> +		    MAX77759_NVMEM_OPCODE_HEADER_LEN);
+> +	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
+> +		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
+> +	int ret;
+> +
+> +	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_READ;
+> +	cmd->cmd[1] = offset;
+> +	cmd->cmd[2] = bytes;
+> +	rsp->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
+> +
+> +	ret = max77759_maxq_command(nvmem->max77759, cmd, rsp);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (memcmp(cmd->cmd, rsp->rsp, MAX77759_NVMEM_OPCODE_HEADER_LEN)) {
+> +		dev_warn(nvmem->dev, "protocol error (read)\n");
+> +		return -EIO;
+> +	}
+> +
+> +	memcpy(val, &rsp->rsp[MAX77759_NVMEM_OPCODE_HEADER_LEN], bytes);
+> +
+> +	return 0;
+> +}
+> +
+> +static int max77759_nvmem_reg_write(void *priv, unsigned int offset,
+> +				    void *val, size_t bytes)
+> +{
+> +	struct max77759_nvmem *nvmem = priv;
+> +	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
+> +		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
+> +	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
+> +		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
+> +	int ret;
+> +
+> +	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_WRITE;
+> +	cmd->cmd[1] = offset;
+> +	cmd->cmd[2] = bytes;
+> +	memcpy(&cmd->cmd[MAX77759_NVMEM_OPCODE_HEADER_LEN], val, bytes);
+> +	cmd->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
+> +	rsp->length = cmd->length;
+> +
+> +	ret = max77759_maxq_command(nvmem->max77759, cmd, rsp);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (memcmp(cmd->cmd, rsp->rsp, cmd->length)) {
+> +		dev_warn(nvmem->dev, "protocol error (write)\n");
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int max77759_nvmem_probe(struct platform_device *pdev)
+> +{
+> +	struct nvmem_config config = {
+> +		.dev = &pdev->dev,
+> +		.name = dev_name(&pdev->dev),
+> +		.id = NVMEM_DEVID_NONE,
+> +		.type = NVMEM_TYPE_EEPROM,
+> +		.ignore_wp = true,
+> +		.size = MAX77759_NVMEM_SIZE,
+> +		.word_size = sizeof(u8),
+> +		.stride = sizeof(u8),
+> +		.reg_read = max77759_nvmem_reg_read,
+> +		.reg_write = max77759_nvmem_reg_write,
+> +	};
+> +	struct max77759_nvmem *nvmem;
+> +
+> +	nvmem = devm_kzalloc(&pdev->dev, sizeof(*nvmem), GFP_KERNEL);
+> +	if (!nvmem)
+> +		return -ENOMEM;
+> +
+> +	nvmem->dev = &pdev->dev;
+> +	nvmem->max77759 = dev_get_drvdata(pdev->dev.parent);
+> +
+> +	config.priv = nvmem;
+> +
+> +	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
+> +}
+> +
+> +static const struct of_device_id max77759_nvmem_of_id[] = {
+> +	{ .compatible = "maxim,max77759-nvmem", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, max77759_nvmem_of_id);
+> +
+> +static const struct platform_device_id max77759_nvmem_platform_id[] = {
+> +	{ "max77759-nvmem", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, max77759_nvmem_platform_id);
+> +
+> +static struct platform_driver max77759_nvmem_driver = {
+> +	.driver = {
+> +		.name = "max77759-nvmem",
+> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> +		.of_match_table = max77759_nvmem_of_id,
+> +	},
+> +	.probe = max77759_nvmem_probe,
+> +	.id_table = max77759_nvmem_platform_id,
+> +};
+> +
+> +module_platform_driver(max77759_nvmem_driver);
+> +
+> +MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
+> +MODULE_DESCRIPTION("NVMEM driver for Maxim MAX77759");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.49.0.901.g37484f566f-goog
+> 
 
