@@ -1,101 +1,215 @@
-Return-Path: <linux-kernel+bounces-640758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9FFAB08C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:19:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F026BAB08CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2961520561
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:19:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A29B188E307
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C65239E63;
-	Fri,  9 May 2025 03:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FF623A58B;
+	Fri,  9 May 2025 03:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="JqtZjoxF"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="2llTUcHZ"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6916021E094;
-	Fri,  9 May 2025 03:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE7B21E094
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746760773; cv=none; b=QVuTTfmBFjqmvirtHsyyBxPu2qVHCUxlgCbpXt1IAYkZ/qx2PPg023hdphaOsDLdytqLOGx0pVbQJR4FQJKxJrYw2GW4U7DspVn+DrS1RysiDtQbtcLjjj4ZpbJv0XoVyWbFRkgcZkuxn7ATWrq+ICJLGg1/J5/7DahZJXK0EtA=
+	t=1746760838; cv=none; b=tnFefTnQo4EMaxBLOCFFU+0ONTAEjQGbY6dZ0BMEulNCQLimcBx9+eQI+AhmT0P2ttAvDvyuk0rEQLMcNZUPKOJ0x+TD/czC29lS5jx9mJHeu1lj0iF31pLY3ajOMzmwSST23jA80zu3b9GJfW7Hn4wKMij7LadQs3jU4a1SMDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746760773; c=relaxed/simple;
-	bh=orWV0KwImVaIe1Pg1GNgaP87AmVSYay0c+IU0+2Y2iI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dN+BvhFvOFoqvn3E+u08Aqx8put4ereWCBO5oY/DcoykymxL89kaFNvpByrCZ2CRjkIPsj3ykwm0mwFPj3t9aWJuXvAM2wSTp59+i4pBdt87ZKwZn5ixlJjoymHvf4FHj7MSkoznc2gkf0mgl48TnAseyTbNPpJWCnxf9EZIkkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=JqtZjoxF; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=dE7KsY3C69gRveUcK9458KB7m3NHQralEt4kxp669RU=; b=JqtZjoxFaHNb7nB2mMWLV1uOZC
-	3BrNBdJRfR76KqHBqGWU8ir/hwBsVUKSLPy5W8eiUplGCjtGXdlVaBFd+gxDGGI69iEIDnEbBZGS4
-	m1mEJW/I7OB5QIi2ieSaLgYcqYQa5ft1SJo88FNjCdtNqA/3phTkiu4QaQqa6j6baUUo3WUFZv5Fu
-	6oP9hBvOQ3WynYwUF2SH+P2qtXISd8N5K7sAfRQskPBT0ncza+SPNFmEtKS7vi78E3fQy2foN+kwS
-	ti3LTEUB2gY2OAUzuux85m/OeF6bojizQ0/l/8y1vYkwSdzFp0J0A1UZr9VNOKaVE1Vxy7n6cM/lK
-	dgI/8Y4A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uDEGk-004kX5-1M;
-	Fri, 09 May 2025 11:19:27 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 09 May 2025 11:19:26 +0800
-Date: Fri, 9 May 2025 11:19:26 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
-	Romain Perier <romain.perier@gmail.com>
-Subject: Re: [v3 PATCH] crypto: marvell/cesa - Do not chain submitted requests
-Message-ID: <aB10PqZNk0L-ly70@gondor.apana.org.au>
-References: <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
- <Zw9AsgqKHJfySScx@gondor.apana.org.au>
- <aBoMSHEMYj6FbH8o@gondor.apana.org.au>
- <aBsdTJUAcQgW4ink@gondor.apana.org.au>
- <aBt5Mxq1MeefwXGJ@Red>
- <aBw-C_krkNsIoPlT@gondor.apana.org.au>
- <aBw_iC_4okpiKglQ@gondor.apana.org.au>
- <aBypVwhHHzmqqN5K@Red>
- <aBytNdRyd5Ywh1Pq@gondor.apana.org.au>
- <aBy06xyzh5kKC48a@Red>
+	s=arc-20240116; t=1746760838; c=relaxed/simple;
+	bh=QxYt6I37j8Y2FWScFRIV2InQ82omXNQYJHqU/dkoDOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rL+Lj9GS3fuHJ5LziXzvYAF63+U0cGKjMWPAU9UzMbaBA+O1bd5ZzEP/op/ni4bPW7yYvjAwMUsDaoNjWXARiNGQwKXHAkWR5gUL088mGP7ybE8Q4PWcnLDXb+qNqNk7WUO9PcyijHO8jEPLTEKPc+CFu8XRv905JGNAvJAT+28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=2llTUcHZ; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d9189e9a06so7772685ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 20:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1746760836; x=1747365636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SnqKcVSyirwFx4wEXZIT0zJRplLj4a3hbHksAZ3+SSo=;
+        b=2llTUcHZLw6lkdSaA7SZ26rQk0pvWBtXZGqOKYRe+hJw77S5vZ4SUYziUG/BmQFSnH
+         iAUW8p5quXkXaUI4KY36MXOxO6lDGF7CL/HUA1EA3WoKIaMc5xP4KUF/BL6BeLQQ29mS
+         DjRzLbOIN0Uu0W+NQimB+37BjrZ/p9xeFkSLhEzlQZbwFj5Us6uOYqmOJqITUCn5Cz7t
+         t0dzXGWvjO/gNfMK1CLqTXcu7YfppmCE3ryhiyrIqAGmoPszKdQg07Z2FVC3FbOGwuOM
+         oKRCDaVz45uuFiK6a6+whegrPpMFa8ajXuNS36JA90h/Z8ojcvw/SL/P7oseeMYUNuCu
+         10Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746760836; x=1747365636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SnqKcVSyirwFx4wEXZIT0zJRplLj4a3hbHksAZ3+SSo=;
+        b=GdNKXd8DWzWP3pGpMpIzKjBxuJCxXRcwwYknRiIMuIqHoOE/y1kBK3OYH7xzI0eukg
+         lZa59wK5a+WRcZdDuy8Hw4B9j6QB9Ns1vU36qIYQ+ntE04iw1ge/CaPKR9QV401rdGlU
+         PCupihIwM+iH7NDw2XI5SjHaSrPQ16iRCicY4pvkPDxqAjQ18S08TfXs27TuoeVqDU90
+         EBdgZh7ZmMoi7DToLfNwZEHHS5BWp2/szL59J9ShYIagR81ToIYqrks5J5CBtJvMTlTJ
+         +0izNxWVxETALtD2yTOQlOQRtAnZXb6BfNT0H8SVRHuwBRqF7f8XcYXlYN6Me/zK0g+c
+         u6ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWl7ClT3gL0Nn62CwRAbZ6aKFbCCYsntMmU/S1Gpz8LjLQ6+1Y21RJEQ6nR0T+fpKX9PJFDqeWA0uSZ7ZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy88DXGPLLGwTfb/pYB27Rto/MyFlsOrfFgDo8bdZFmyg9w/GHd
+	qEFfBPhj28evoyOhSudT4si3L9pXywxMozxCus1sI800GbIJHFgXjAL3ebZWwgQ2L8FFYFTdSR5
+	HzMqxqwQqYlJXgx/Bm3xESk2PmGjKVpsD7UA4wA==
+X-Gm-Gg: ASbGncv5qV5bB9vYcBcYszdqzy0UbKLtUhPBQ294ROkcwVSun+/8zdA5nVzeB30LLwE
+	PRaFgjvmyeY1XLx614KESMrIkjYkrvo62E0esNQ/dgaySwgacrXWVe7zA5FGG6J5q6/jnbViXQr
+	+4Rx6zqmShGoYXSaEuAFDOD8k=
+X-Google-Smtp-Source: AGHT+IGxJSJOfj/uPGDX0l9BVY/KPaOwcW52GGJrD6j3FDNArn7ULaOwfHRemocw3j7KZ3LWZVqMGaPpDr7hAfyxnxs=
+X-Received: by 2002:a05:6e02:2292:b0:3d6:cd54:ba53 with SMTP id
+ e9e14a558f8ab-3da7e21658cmr27127695ab.22.1746760835694; Thu, 08 May 2025
+ 20:20:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBy06xyzh5kKC48a@Red>
+References: <20250424173204.1948385-12-cleger@rivosinc.com> <mhng-0c7b576b-882d-4020-996d-adb1b2bbcc4b@palmer-ri-x1c9a>
+In-Reply-To: <mhng-0c7b576b-882d-4020-996d-adb1b2bbcc4b@palmer-ri-x1c9a>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 9 May 2025 08:50:24 +0530
+X-Gm-Features: ATxdqUHBve2EeFlPYflmLTkAF_hrOfFokX5MPn_gLZXF6fdS6VEfyoAB6lvQ_MY
+Message-ID: <CAAhSdy1JspaC6aYjkMQn_fvjc1eFakdu2JMTQFuCzrh4h4o_3w@mail.gmail.com>
+Subject: Re: [PATCH v6 11/14] RISC-V: KVM: add SBI extension init()/deinit() functions
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Atish Patra <atishp@rivosinc.com>, cleger@rivosinc.com, 
+	Paul Walmsley <paul.walmsley@sifive.com>, atishp@atishpatra.org, shuah@kernel.org, 
+	corbet@lwn.net, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-kselftest@vger.kernel.org, samuel.holland@sifive.com, 
+	ajones@ventanamicro.com, debug@rivosinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 08, 2025 at 03:43:07PM +0200, Corentin Labbe wrote:
+Hi Palmer,
+
+On Thu, May 8, 2025 at 10:57=E2=80=AFPM Palmer Dabbelt <palmer@dabbelt.com>=
+ wrote:
 >
-> 6.14.4 boot log at http://kernel.montjoie.ovh/477911.log
+> On Thu, 24 Apr 2025 10:31:58 PDT (-0700), cleger@rivosinc.com wrote:
+> > The FWFT SBI extension will need to dynamically allocate memory and do
+> > init time specific initialization. Add an init/deinit callbacks that
+> > allows to do so.
+> >
+> > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> > ---
+> >  arch/riscv/include/asm/kvm_vcpu_sbi.h |  9 +++++++++
+> >  arch/riscv/kvm/vcpu.c                 |  2 ++
+> >  arch/riscv/kvm/vcpu_sbi.c             | 26 ++++++++++++++++++++++++++
+> >  3 files changed, 37 insertions(+)
+>
+> There's 4 KVM patches in here without an Ack from Atish or Anup.
+> They're all tied up in the SBIv3 stuff, so just LMK if you want me to
+> take them into that staging branch or if you want me to wait.
+>
+> For now I'm going to go look at other stuff, no rush on my end.
 
-What's interesting is that the skcipher tests are failing during
-the random tests which means that they'd already passed all the
-static test vectors.
+The 4 KVM patches of this series should go through the KVM RISC-V
+tree to avoid conflicts when it reaches Linus. I am okay doing a shared
+tag for the first 10 patches.
 
-Looking at the driver modprobe code, the skciphers get registered
-before the ahash algorithms.  so their tests would have started
-sooner.
+Regards,
+Anup
 
-I wonder if the skcipher code is corrupting the ahash state when
-run concurrently (and chained together).
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+>
+> >
+> > diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include=
+/asm/kvm_vcpu_sbi.h
+> > index 4ed6203cdd30..bcb90757b149 100644
+> > --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> > +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> > @@ -49,6 +49,14 @@ struct kvm_vcpu_sbi_extension {
+> >
+> >       /* Extension specific probe function */
+> >       unsigned long (*probe)(struct kvm_vcpu *vcpu);
+> > +
+> > +     /*
+> > +      * Init/deinit function called once during VCPU init/destroy. The=
+se
+> > +      * might be use if the SBI extensions need to allocate or do spec=
+ific
+> > +      * init time only configuration.
+> > +      */
+> > +     int (*init)(struct kvm_vcpu *vcpu);
+> > +     void (*deinit)(struct kvm_vcpu *vcpu);
+> >  };
+> >
+> >  void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcpu, struct kvm_run =
+*run);
+> > @@ -69,6 +77,7 @@ const struct kvm_vcpu_sbi_extension *kvm_vcpu_sbi_fin=
+d_ext(
+> >  bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx);
+> >  int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *ru=
+n);
+> >  void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
+> > +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
+> >
+> >  int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu, unsigned lon=
+g reg_num,
+> >                                  unsigned long *reg_val);
+> > diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> > index 60d684c76c58..877bcc85c067 100644
+> > --- a/arch/riscv/kvm/vcpu.c
+> > +++ b/arch/riscv/kvm/vcpu.c
+> > @@ -185,6 +185,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu=
+)
+> >
+> >  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+> >  {
+> > +     kvm_riscv_vcpu_sbi_deinit(vcpu);
+> > +
+> >       /* Cleanup VCPU AIA context */
+> >       kvm_riscv_vcpu_aia_deinit(vcpu);
+> >
+> > diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> > index d1c83a77735e..3139f171c20f 100644
+> > --- a/arch/riscv/kvm/vcpu_sbi.c
+> > +++ b/arch/riscv/kvm/vcpu_sbi.c
+> > @@ -508,5 +508,31 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu=
+)
+> >               scontext->ext_status[idx] =3D ext->default_disabled ?
+> >                                       KVM_RISCV_SBI_EXT_STATUS_DISABLED=
+ :
+> >                                       KVM_RISCV_SBI_EXT_STATUS_ENABLED;
+> > +
+> > +             if (ext->init && ext->init(vcpu) !=3D 0)
+> > +                     scontext->ext_status[idx] =3D KVM_RISCV_SBI_EXT_S=
+TATUS_UNAVAILABLE;
+> > +     }
+> > +}
+> > +
+> > +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu)
+> > +{
+> > +     struct kvm_vcpu_sbi_context *scontext =3D &vcpu->arch.sbi_context=
+;
+> > +     const struct kvm_riscv_sbi_extension_entry *entry;
+> > +     const struct kvm_vcpu_sbi_extension *ext;
+> > +     int idx, i;
+> > +
+> > +     for (i =3D 0; i < ARRAY_SIZE(sbi_ext); i++) {
+> > +             entry =3D &sbi_ext[i];
+> > +             ext =3D entry->ext_ptr;
+> > +             idx =3D entry->ext_idx;
+> > +
+> > +             if (idx < 0 || idx >=3D ARRAY_SIZE(scontext->ext_status))
+> > +                     continue;
+> > +
+> > +             if (scontext->ext_status[idx] =3D=3D KVM_RISCV_SBI_EXT_ST=
+ATUS_UNAVAILABLE ||
+> > +                 !ext->deinit)
+> > +                     continue;
+> > +
+> > +             ext->deinit(vcpu);
+> >       }
+> >  }
 
