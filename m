@@ -1,48 +1,51 @@
-Return-Path: <linux-kernel+bounces-641675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE02AB14A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:17:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F22AB14A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA3E528141
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:15:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C0917D57E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1949295512;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF895295511;
 	Fri,  9 May 2025 13:13:03 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B53D293454
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88317293462
 	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796381; cv=none; b=oF6QY9fDeEHOr3H81HFcu3kl5lsWYOFqR3XD3je4g/ZZFnE22RHM0JeSOY6LFLmdaJcel2k3S0biyUHmbTII/mnqERgrdvEED4Eena5qA4rOUAAjTPdMJGvZaeIDo+Dysjymp34D1P1S4Zwjr005aMS0aAgyqGwaE/DgmtEavow=
+	t=1746796381; cv=none; b=HgSDydkCZlm1hgugZmHkcyr0gUZNhjXRsT7veXBgn/Jdcbndol1aAS7NPG53gve3fmpT9c5LrM9mSu6bCZiNBAlDDJ45gRcr1w+oDNXx6hhzBBqMtDqXdPNxOrg1CbTtv2bwAX8ht9cKIEeddBVdBGbx/PcAt2ovW4+gGnJZeJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746796381; c=relaxed/simple;
-	bh=xwQUJHkXERbxk/si81Gpn8n1YOu4O5M9Z89z+7M7IpQ=;
+	bh=M4oC3js/6GRG4hCXpowDgVIbV4NBdtJSRz/ZIWx5O3c=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=gWu7pUs9Hxhd0zijDX4dY/korgGxMfAXGq7J+wmGnDwLX7MHkZEOwWdEa8agj6yiM82FE+EbHi5oamaM1WG9eCvjjvNyresW44768iKmgtE6J6o5rijHdzuOxSdvKtcZBBdqyimGQgmde8ymA8Mv1OnJrzgM8Z/alARtvk7B4+M=
+	 Content-Type; b=ZLIfVdBAKrkXIAyQgsB0v0vL1RUwBUQT5YL6z/oYkkn6evFd+l1HuGKEF+anNuaRmLzvvSpHDv3blucwuuMIXDcSwSX1b/hl+Dk6uzEDlQdvl8McTkIczirJXsqc8DVm9ElGHsrP9v+h1+b8n4DhEomwTRu1Vv8uwvUxuQcml4g=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D40C4CEEE;
-	Fri,  9 May 2025 13:13:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A955C4CEF2;
+	Fri,  9 May 2025 13:13:01 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uDNXQ-00000002bwH-1vyP;
+	id 1uDNXQ-00000002bwl-2ev3;
 	Fri, 09 May 2025 09:13:16 -0400
-Message-ID: <20250509131316.315091499@goodmis.org>
+Message-ID: <20250509131316.483054226@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 09 May 2025 09:13:06 -0400
+Date: Fri, 09 May 2025 09:13:07 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 17/31] tracing: Use tracer_tracing_disable() instead of "disabled" field for
- ftrace_dump_one()
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jason Wessel <jason.wessel@windriver.com>,
+ Daniel Thompson <danielt@kernel.org>,
+ Douglas Anderson <dianders@chromium.org>
+Subject: [for-next][PATCH 18/31] tracing: kdb: Use tracer_tracing_on/off() instead of setting per CPU
+ disabled
 References: <20250509131249.340302366@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,59 +62,60 @@ the tracing subsystem was first created. Today, the ring buffer
 infrastructure has its own way to disable tracing. In fact, things have
 changed so much since 2008 that many things ignore the disable flag.
 
-The ftrace_dump_one() function iterates over all the current tracing CPUs and
+The kdb_ftdump() function iterates over all the current tracing CPUs and
 increments the "disabled" counter before doing the dump, and decrements it
 afterward.
 
 As the disabled flag can be ignored, doing this today is not reliable.
-Instead use the new tracer_tracing_disable() that calls into the ring
-buffer code to do the disabling.
+Instead, simply call tracer_tracing_off() and then tracer_tracing_on() to
+disable and then enabled the entire ring buffer in one go!
 
+Cc: Jason Wessel <jason.wessel@windriver.com>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20250505212235.381188238@goodmis.org
+Cc: Daniel Thompson <danielt@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Link: https://lore.kernel.org/20250505212235.549033722@goodmis.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ kernel/trace/trace_kdb.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index b691af1c1b5a..bb514e988f22 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10484,7 +10484,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
- 	static struct trace_iterator iter;
- 	unsigned int old_userobj;
- 	unsigned long flags;
--	int cnt = 0, cpu;
-+	int cnt = 0;
+diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
+index 1e72d20b3c2f..d7b135de958a 100644
+--- a/kernel/trace/trace_kdb.c
++++ b/kernel/trace/trace_kdb.c
+@@ -98,7 +98,6 @@ static int kdb_ftdump(int argc, const char **argv)
+ 	long cpu_file;
+ 	int err;
+ 	int cnt;
+-	int cpu;
  
- 	/*
- 	 * Always turn off tracing when we dump.
-@@ -10501,9 +10501,8 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
- 	/* Simulate the iterator */
- 	trace_init_iter(&iter, tr);
+ 	if (argc > 2)
+ 		return KDB_ARGCOUNT;
+@@ -120,9 +119,7 @@ static int kdb_ftdump(int argc, const char **argv)
+ 	trace_init_global_iter(&iter);
+ 	iter.buffer_iter = buffer_iter;
  
 -	for_each_tracing_cpu(cpu) {
 -		atomic_inc(&per_cpu_ptr(iter.array_buffer->data, cpu)->disabled);
 -	}
-+	/* While dumping, do not allow the buffer to be enable */
-+	tracer_tracing_disable(tr);
++	tracer_tracing_disable(iter.tr);
  
- 	old_userobj = tr->trace_flags & TRACE_ITER_SYM_USEROBJ;
+ 	/* A negative skip_entries means skip all but the last entries */
+ 	if (skip_entries < 0) {
+@@ -135,9 +132,7 @@ static int kdb_ftdump(int argc, const char **argv)
  
-@@ -10562,9 +10561,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
- 
- 	tr->trace_flags |= old_userobj;
+ 	ftrace_dump_buf(skip_entries, cpu_file);
  
 -	for_each_tracing_cpu(cpu) {
 -		atomic_dec(&per_cpu_ptr(iter.array_buffer->data, cpu)->disabled);
 -	}
-+	tracer_tracing_enable(tr);
- 	local_irq_restore(flags);
- }
++	tracer_tracing_enable(iter.tr);
+ 
+ 	kdb_trap_printk--;
  
 -- 
 2.47.2
