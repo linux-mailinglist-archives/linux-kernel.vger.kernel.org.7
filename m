@@ -1,89 +1,73 @@
-Return-Path: <linux-kernel+bounces-640841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F864AB0A00
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:52:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BC9AB0A01
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C218DB201F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E635057F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FB526A096;
-	Fri,  9 May 2025 05:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBF126A0EC;
+	Fri,  9 May 2025 05:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="P8HoKr3T"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hpXJ06Rn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC74269D09
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 05:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40110269AFD
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 05:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746769805; cv=none; b=BuBmDHATqMq0Mwd7y+ql8A3AA2a1721BpHb0ZoBLEYk4VJ63imcaDCWCne+rCAdSDK3JHf51iYFpYfyokIRju4lcdCEtNNKiD4j+1w4qTMq3W5ECm4j8nRnCCoSNa8XOIKNDUhsxztX404XP1fE+5GzoOcVEUscgApM7VMQd8OY=
+	t=1746769834; cv=none; b=pKi1PMKaVXCCcOXYWRAkwvcN9vtESj0qz/m3A/j4aO96HLwIV4/9dCZhQLeqqqStdP9bZ9L9U4fRnzTT+eg/HUoEj7Bq81/J0ru0iSHu7JZmaMj/INydvssb/EMsarhw7WO23SND2RdNmcCz3fueHE1ue6kuXukyeaKSvSRLU9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746769805; c=relaxed/simple;
-	bh=ZA0MrnVqPmGqRqvds91nIAY/X0tkAPwaQfeJInh43CA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YXx4U7mvogCPM9ePRhXYNC1mbL8dhQZKcQrEZBeVKeLqrko6FLFAOeHC6mLcI3OWUY8kXxP251YvzDnkpk+QJRAAxKlYiDemzdfRuarfQHrhvKB/JwFdTQFqcsmB8RLqymxLu9Cyeti9dd+dxTKgRBfzCDzLwL0H8rQgJlqKHh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=P8HoKr3T; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c54b651310so261466385a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 22:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1746769802; x=1747374602; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cz9N1KWOckoEyD/I2Q+cFcf/PqZ2i2IlArKDvKjy79k=;
-        b=P8HoKr3TDkxDKvKFyXTUpyUgQPCyhENcwzxSGt25Oco4ltNmU1cmIJhJDaDhHYkNZI
-         VkM8ggnvadlB9dO0lls49cF/t8tAe8mduFziFSx3jrriXSRMJeJYQfC8xdkCebMKq3AE
-         cLH9v2GkVRIibhoU5Yc/VsYNOICWQajnbGYCeWm+R1XL2oV2Ud8BSYpL25ILGsZTOvqn
-         l2bjMFLLbdMhq23HmpE5sCnjmvn67drs9IsazKa7qry9nNAHjcIJ+5ZD6oE1C/plGgmG
-         2lEi75NXeLcVV6NAHphVxgGDjLYrvLFils1N5AsOP4+pY1uo9q0KMygo8YqHt4vTIuhy
-         6Bpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746769802; x=1747374602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cz9N1KWOckoEyD/I2Q+cFcf/PqZ2i2IlArKDvKjy79k=;
-        b=amrwFN7q/8QMLcRl6xpKDzADwa5y4tq1lr1R7IsxPdY329EZpp/Ly53vZ8DuVcZwEi
-         TH9RgBqPOGOeyoWPMS9JewQd86AdpWTkH0oGbwoasZXgbpKG0t+M7UtCu3q6EATqHSo4
-         r51E9OFpljdkfnywrWslXkp6tVxJHrfX286Zrsl2JRSvGh+W6n+c8KFan91GNwejMObh
-         Brr1T7UfyI/GdP9SYSovMVCcb1CE4TpThZTiPZhJe0xuZaah2CbIQX3jm0BiilahKzsQ
-         PAsKE5+YSbC0CvgbiUsMyRYOT+v5/wpBAEMXCdFsCSTQp9LGA1rvCP7kKYuLdTP5pA6y
-         tRXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpvT+Px6N/bLLpJtmL6KxWGmFO+H1vTnynlNP5o4Rg8PK4szphwFnetPpzOYgxhFKWpUZ+Rz3FTFhIbmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrnklP/Ub7VXuzN+WqsZWQMWq1fThn5Km2iGlZoQ2qRqfVmJGc
-	3hTNkEZSMmVqlODCOnNUoiyGEyu1VuPCnBnI/isMkf7xE6SqeyswKHeCQH82FyJFhQBjkowSaqv
-	w
-X-Gm-Gg: ASbGncu84SiLHTRzyRHrSbEXUIWZi1kKpDSupxAJyKCl0F3rsp8ETIb4qfqz2UzxDoC
-	FjChFs2BWBwud3WyFuFZA9vRdapMaPS3dQhGzNNG15Mu+FlLE0KQrjsNZN0jUkv28NMDTWg7VfR
-	E/qgTp6D59DhrwTyK1+L3vm+dytOJ60cIyFuxNr4A2Aheo1O2VOFcwBBKB8tQV5SvyK4rBwIfU9
-	Fb10EMrnUjfrqgUUFRreKPDpKzv5mQFQazXjfS1bMzTW4V9/oE98182FBwcbGx0rRJ51J1xyTHv
-	/6/IL8jDqKVZvMfJKmsb8sFBne9Kya7NiletXwPkJoTXi3oJmwRcDIE4rVLbXwd71nR1kvqQDm1
-	D+ZNXvDTrJV75iqbR8Swi
-X-Google-Smtp-Source: AGHT+IElqWip8aE/2idz6dfBS7ZlxOEMPHoBzrDhBd78If8/KiDXUWfsyQmB3CNHzKfet4ro2QMMdA==
-X-Received: by 2002:a05:620a:319e:b0:7ca:e971:8335 with SMTP id af79cd13be357-7cd010d51ecmr362007285a.8.1746769802047;
-        Thu, 08 May 2025 22:50:02 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00f4e1a5sm94081385a.13.2025.05.08.22.50.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 22:50:01 -0700 (PDT)
-Date: Fri, 9 May 2025 01:49:59 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: joshua.hahnjy@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	dan.j.williams@intel.com, ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com, honggyu.kim@sk.com, yunjeong.mun@sk.com
-Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in
- weighted interleave
-Message-ID: <aB2Xh4jEqpSTuvsi@gourry-fedora-PF4VCD3F>
-References: <aBzJ42b8zIThYo1X@gourry-fedora-PF4VCD3F>
- <20250509023032.235-1-rakie.kim@sk.com>
+	s=arc-20240116; t=1746769834; c=relaxed/simple;
+	bh=COd8PkeAsFo4HSPp0LPOHY/QegXh/DLqQXiVxo41jZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f8JVnjJDIlsZKSC8kT8mrdxsOZww/zU0BJK5BL3T5f9N+Igz/68BeNlFcfVQy2NEH9R3qD5wnEXZtV6qVubkk2ITpBhihALNceNWOZbmOiPWR0oOd58aCi7To9W4bP85l+Nutg1DIZpIuRLsgz5uiAZP1ryzTGUn8RytKWCz700=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hpXJ06Rn; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746769832; x=1778305832;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=COd8PkeAsFo4HSPp0LPOHY/QegXh/DLqQXiVxo41jZ8=;
+  b=hpXJ06RnEFe93t2XjPjgwEYMJwsCsK4sS7fMUPTNBCySIj3cHnPx58iH
+   Gvnu0oqWNIsrWCteGyIyYTxwYSyg38FB2JHFPj9P3fM2uL3BJQFQ2yyOQ
+   A8MILrPs4bh0KjaErYhZYdYmeroLPYTvDMjsE5dHA3g06yExA15q6b8VL
+   qRV3uFRbBm3STV9SFJhKZYEGjA/hfIDhXJ+ByrKVeHTavFSpJFDHhtQtD
+   MxHnlGWj++Mnq6/iB8iydgdHp0eMGWouw3TMU16UzW0NY0SKK1oKUkhDc
+   OPZSnuONWqhOuwdAXUT1SSVrdepVBrheOqFhJFP9qJ9DuM8g+Tjc0S90x
+   w==;
+X-CSE-ConnectionGUID: t7CcMjSnQYeM4u4G1Xgelw==
+X-CSE-MsgGUID: gPDoTd84Qey8ALq45mo0Ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="47840635"
+X-IronPort-AV: E=Sophos;i="6.15,274,1739865600"; 
+   d="scan'208";a="47840635"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 22:50:32 -0700
+X-CSE-ConnectionGUID: VfLkEeFRQxyJEdro7R0OcA==
+X-CSE-MsgGUID: XgkQyyz+Ri29WzgrlqRQBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,274,1739865600"; 
+   d="scan'208";a="167455943"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 08 May 2025 22:50:30 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDGct-000BhP-1e;
+	Fri, 09 May 2025 05:50:27 +0000
+Date: Fri, 9 May 2025 13:50:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stafford Horne <shorne@gmail.com>, Rong Xu <xur@google.com>
+Subject: (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26
+ against `no symbol'
+Message-ID: <202505091345.bUlAO0vS-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,68 +76,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509023032.235-1-rakie.kim@sk.com>
 
-On Fri, May 09, 2025 at 11:30:26AM +0900, Rakie Kim wrote:
-> 
-> Scenario 1: Adapt weighting based on the task's execution node
-> A task prefers only the DRAM and locally attached CXL memory of the
-> socket on which it is running, in order to avoid cross-socket access and
-> optimize bandwidth.
-> - A task running on CPU0 (node0) would prefer DRAM0 (w=3) and CXL0 (w=1)
-> - A task running on CPU1 (node1) would prefer DRAM1 (w=3) and CXL1 (w=1)
-... snip ...
-> 
-> However, Scenario 1 does not depend on such information. Rather, it is
-> a locality-preserving optimization where we isolate memory access to
-> each socket's DRAM and CXL nodes. I believe this use case is implementable
-> today and worth considering independently from interconnect performance
-> awareness.
-> 
+Hi Masahiro,
 
-There's nothing to implement - all the controls exist:
+FYI, the error/warning still remains.
 
-1) --cpunodebind=0
-2) --weighted-interleave=0,2
-3) cpuset.mems
-4) cpuset.cpus
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9c69f88849045499e8ad114e5e13dbb3c85f4443
+commit: a412f04070e52e6d6b5f6f964b9d9644de16bb81 openrisc: place exception table at the head of vmlinux
+date:   5 months ago
+config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20250509/202505091345.bUlAO0vS-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505091345.bUlAO0vS-lkp@intel.com/reproduce)
 
-You might consider maybe something like "--local-tier" (akin to
---localalloc) that sets an explicitly fallback set based on the local
-node.  You'd end up doing something like
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505091345.bUlAO0vS-lkp@intel.com/
 
-current_nid = memtier_next_local_node(socket_nid, current_nid)
+All errors (new ones prefixed by >>):
 
-Where this interface returns the preferred fallback ordering but doesn't
-allow cross-socket fallback.
+   arch/openrisc/kernel/head.o: in function `_dispatch_do_ipage_fault':
+>> (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   (.head.text+0xa00): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   arch/openrisc/kernel/head.o: in function `exit_with_no_dtranslation':
+>> (.init.text+0x21bc): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   arch/openrisc/kernel/head.o: in function `exit_with_no_itranslation':
+   (.init.text+0x2264): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   init/main.o: in function `trace_event_raw_event_initcall_level':
+   main.c:(.text+0x28c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strlen' defined in .text section in lib/string.o
+   init/main.o: in function `initcall_blacklisted':
+   main.c:(.text+0x6f4): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strcmp' defined in .text section in lib/string.o
+   init/main.o: in function `trace_initcall_finish_cb':
+   main.c:(.text+0x818): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
+   main.c:(.text+0x83c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
+   main.c:(.text+0x87c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
+   main.c:(.text+0x8a8): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
+   init/main.o: in function `do_one_initcall':
+   main.c:(.text+0xec0): additional relocation overflows omitted from the output
 
-That might be useful, i suppose, in letting a user do:
-
---cpunodebind=0 --weighted-interleave --local-tier
-
-without having to know anything about the local memory tier structure.
-
-> > At the same time we were discussing this, we were also discussing how to
-> > do external task-mempolicy modifications - which seemed significantly
-> > more useful, but ultimately more complex and without sufficient
-> > interested parties / users.
-> 
-> I'd like to learn more about that thread. If you happen to have a pointer
-> to that discussion, it would be really helpful.
-> 
-
-https://lore.kernel.org/all/20231122211200.31620-1-gregory.price@memverge.com/
-https://lore.kernel.org/all/ZV5zGROLefrsEcHJ@r13-u19.micron.com/
-https://lore.kernel.org/linux-mm/ZWYsth2CtC4Ilvoz@memverge.com/
-https://lore.kernel.org/linux-mm/20221010094842.4123037-1-hezhongkun.hzk@bytedance.com/
-There are locking issues with these that aren't easy to fix.
-
-I think the bytedance method uses a task_work queueing to defer a
-mempolicy update to the task itself the next time it makes a kernel/user
-transition.  That's probably the best overall approach i've seen.
-
-https://lore.kernel.org/linux-mm/ZWezcQk+BYEq%2FWiI@memverge.com/
-More notes gathered prior to implementing weighted interleave.
-
-~Gregory
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
