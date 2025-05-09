@@ -1,204 +1,150 @@
-Return-Path: <linux-kernel+bounces-642408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C44AB1E23
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC20AB1DC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44FA3B22A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:25:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F11D1C202CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66EF298CD7;
-	Fri,  9 May 2025 20:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx+VTOuN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E500C25EF88;
+	Fri,  9 May 2025 20:17:19 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1843E298CBE;
-	Fri,  9 May 2025 20:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAA778F40;
+	Fri,  9 May 2025 20:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746821896; cv=none; b=ZN1egAaihfyLsc3zioLx8wlJ/15zm9KsXAREGXX2L6U4ftK2uIhdIExcxGtoSe++ZpWlnZjDnxMyPuPIIFby2yxKVCTHjSXKiws07gHfk7CmEPDsGJ/cYMfOxmLEzlUSiCBp8FAx+duuv41eV4e2x2AHCCge+kDfhksdTV09tbU=
+	t=1746821839; cv=none; b=nQ6B9urdkkV0Jl+HSvf3kU8ivGLTQ/liWC37NUKfNnYElrY6iIrqceEGF9brFk9hWhOM4wnuLe8sKU/yntZpNs38sERFpm5aU4tJ2KeZGVCAmhirAqPTx5beILo8UDM80nQ1o7lTEz3QtdDQ4hEd/ctyWK1PURmFztH2fUOqrBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746821896; c=relaxed/simple;
-	bh=WrGEyNHSSw7Wx3DQ3criX7+p62Pve6p0318/Ksge9cQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jzKGUPZDP94oTjbzP97cYt18MyQJZiJQuHjFhFG1Fayr+N1yFj5PVLsA8koHe2hQtR6AbSgu7LPU3R7XDQWmpDgargSj3EHuOGKN1WJ8IyV8J6DOpuqHzacGElFteKbGBluRJMhhqbBHqnfhqpyO0DjKGZRdAPmu3YOQaNf7HFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx+VTOuN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3EFC4CEEF;
-	Fri,  9 May 2025 20:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746821896;
-	bh=WrGEyNHSSw7Wx3DQ3criX7+p62Pve6p0318/Ksge9cQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tx+VTOuNeOAdNveLRr8D1TBDpGlVVTpewtqyC5XNZaf65xWLv9JRKOVIQrQwl2BnS
-	 kZt7OsU+avOREH80V0YaZFvgP5suwYeruN5UtG9oJDRzTWEtpeBkSExPmirmza81yt
-	 KQMQSpYcIGLggP0DOAOTyuMltPXcUI0Vu7jih6D3C1LFafvON+dMy5TPGoN9i+iI1q
-	 4f9yS1wCDLWqv14zB/2+ZEpNgm0wZa8VUbZMNCY3AugEX2L7TK8pnOvUYWKVAjR/PK
-	 01rbpGbAcJpuzJblDPaQZjNE27p7ZTIxwYOZC6APKV7hAqqS20VhYAYRXSk1oFtgjG
-	 941II6UNRIcSQ==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>
-Subject: [PATCH v2 44/62] x86/jump_label: Define ELF section entry size for jump table
-Date: Fri,  9 May 2025 13:17:08 -0700
-Message-ID: <e5a4ef67a5c65d1686e4d0ce1887e045d56ffa41.1746821544.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1746821544.git.jpoimboe@kernel.org>
-References: <cover.1746821544.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1746821839; c=relaxed/simple;
+	bh=G8/CFf9ZO+i2PIjLZ8xby/5gBn5P22+n8NyIA/gSLSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+oCgi0UGlObAMThiwjpqhhVwsYzOwAui8Z/StIZNmQqpbTzl1+fnI3YHU5vvM53q8WReUPQIRnkDIHh3kk73rTqQ6VDO72kvS9aps14pbC5A+IdyRJlqFAHK1YQe2WEkyqMAIP2TFUlZAQ41DWyYLDrHBXOOMpEoc01p7g93+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 56608617; Fri,  9 May 2025 15:17:09 -0500 (CDT)
+Date: Fri, 9 May 2025 15:17:09 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, sergeh@kernel.org,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com,
+	jmorris@namei.org, kees@kernel.org, morgan@kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
+ identical
+Message-ID: <20250509201709.GA708015@mail.hallyn.com>
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+ <20250309151907.GA178120@mail.hallyn.com>
+ <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
+ <20250506132158.GA682102@mail.hallyn.com>
+ <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
+ <aB0sVcjFZaCVEirH@lei>
+ <CAKPOu+89=+SFk1hKGLheMtPq+K47E9FRCo1DBQo9zGMwW=Tr2w@mail.gmail.com>
+ <87h61t7siv.fsf@email.froward.int.ebiederm.org>
+ <CAKPOu+8uw6SCO_hhOy_Kc_XihTDvJGoPrC1ujAHPYuiBghUb1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+8uw6SCO_hhOy_Kc_XihTDvJGoPrC1ujAHPYuiBghUb1g@mail.gmail.com>
 
-In preparation for the objtool klp diff subcommand, define the entry
-size for the __jump_table section in its ELF header.  This will allow
-tooling to extract individual entries.
+On Fri, May 09, 2025 at 06:53:11PM +0200, Max Kellermann wrote:
+> On Fri, May 9, 2025 at 4:45 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> > In particular __is_setuid or __is_setgid being true guarantees
+> > that has_identical_uids_gids will be false.
+> 
+> Sorry, no, that's completely wrong!
+> 
+> __is_setXid() compares effective with real.
+> has_identical_uids_gids() compares effective with effective, real with real etc.
+> 
+> See the difference?
+> 
+> > Which means has_identical_uids_gids adds nothing, and the patch is
+> > pointless.
+> 
+> Also wrong. If that were correct, then my patch would not have an
+> observable effect. But it does. Try it, try the small program I
+> posted!
+> 
+> It seems your whole email is based on this misunderstanding. Please reconsider.
+> 
+> > If your concern is LD_PRELOAD and the like please don't play with
+> > the uids/gids and instead just make certain bprm->secureexec gets
+> > set.
+> 
+> LD_PRELOAD is not my concern at all. I just observed that the current
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- arch/x86/include/asm/jump_label.h | 32 +++++++++++++++++--------------
- include/linux/jump_label.h        | 20 +++++++++++--------
- 2 files changed, 30 insertions(+), 22 deletions(-)
+Right, it is an aside, though an important one.
 
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index cd21554b3675..6081c33e1566 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -12,29 +12,31 @@
- #include <linux/stringify.h>
- #include <linux/types.h>
- 
--#define JUMP_TABLE_ENTRY(key, label)			\
--	".pushsection __jump_table,  \"a\"\n\t"		\
--	_ASM_ALIGN "\n\t"				\
--	".long 1b - . \n\t"				\
--	".long " label " - . \n\t"			\
--	_ASM_PTR " " key " - . \n\t"			\
-+#define JUMP_TABLE_ENTRY(key, label, size)				\
-+	".pushsection __jump_table, \"aM\", @progbits, " size "\n\t"	\
-+	_ASM_ALIGN "\n\t"						\
-+	".long 1b - . \n\t"						\
-+	".long " label " - . \n\t"					\
-+	_ASM_PTR " " key " - . \n\t"					\
- 	".popsection \n\t"
- 
- /* This macro is also expanded on the Rust side. */
- #ifdef CONFIG_HAVE_JUMP_LABEL_HACK
--#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-+#define ARCH_STATIC_BRANCH_ASM(key, label, size)	\
- 	"1: jmp " label " # objtool NOPs this \n\t"	\
--	JUMP_TABLE_ENTRY(key " + 2", label)
-+	JUMP_TABLE_ENTRY(key " + 2", label, size)
- #else /* !CONFIG_HAVE_JUMP_LABEL_HACK */
--#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-+#define ARCH_STATIC_BRANCH_ASM(key, label, size)	\
- 	"1: .byte " __stringify(BYTES_NOP5) "\n\t"	\
--	JUMP_TABLE_ENTRY(key, label)
-+	JUMP_TABLE_ENTRY(key, label, size)
- #endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
- 
- static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
- {
--	asm goto(ARCH_STATIC_BRANCH_ASM("%c0 + %c1", "%l[l_yes]")
--		: :  "i" (key), "i" (branch) : : l_yes);
-+	asm goto(ARCH_STATIC_BRANCH_ASM("%c[key] + %c[branch]", "%l[l_yes]", "%c[size]")
-+		 : : [key] "i" (key), [branch] "i" (branch),
-+		     [size] "i" (sizeof(struct jump_entry))
-+		 : : l_yes);
- 
- 	return false;
- l_yes:
-@@ -45,8 +47,10 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
- {
- 	asm goto("1:"
- 		"jmp %l[l_yes]\n\t"
--		JUMP_TABLE_ENTRY("%c0 + %c1", "%l[l_yes]")
--		: :  "i" (key), "i" (branch) : : l_yes);
-+		JUMP_TABLE_ENTRY("%c[key] + %c[branch]", "%l[l_yes]", "%c[size]")
-+		: : [key] "i" (key), [branch] "i" (branch),
-+		    [size] "i" (sizeof(struct jump_entry))
-+		: : l_yes);
- 
- 	return false;
- l_yes:
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index fdb79dd1ebd8..9ff1ecc8e7a8 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -110,16 +110,20 @@ struct static_key {
- #endif /* __ASSEMBLY__ */
- 
- #ifdef CONFIG_JUMP_LABEL
--#include <asm/jump_label.h>
--
--#ifndef __ASSEMBLY__
--#ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
- 
-+#if defined(CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE) && !defined(__ASSEMBLY__)
-+/* Must be defined before including <asm/jump_label.h> */
- struct jump_entry {
- 	s32 code;
- 	s32 target;
- 	long key;	// key may be far away from the core kernel under KASLR
- };
-+#endif
-+
-+#include <asm/jump_label.h>
-+
-+#ifndef __ASSEMBLY__
-+#ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
- 
- static inline unsigned long jump_entry_code(const struct jump_entry *entry)
- {
-@@ -138,7 +142,7 @@ static inline struct static_key *jump_entry_key(const struct jump_entry *entry)
- 	return (struct static_key *)((unsigned long)&entry->key + offset);
- }
- 
--#else
-+#else /* !CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE */
- 
- static inline unsigned long jump_entry_code(const struct jump_entry *entry)
- {
-@@ -155,7 +159,7 @@ static inline struct static_key *jump_entry_key(const struct jump_entry *entry)
- 	return (struct static_key *)((unsigned long)entry->key & ~3UL);
- }
- 
--#endif
-+#endif /* !CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE */
- 
- static inline bool jump_entry_is_branch(const struct jump_entry *entry)
- {
-@@ -184,8 +188,8 @@ static inline int jump_entry_size(struct jump_entry *entry)
- #endif
- }
- 
--#endif
--#endif
-+#endif /* !__ASSEMBLY__ */
-+#endif /* CONFIG_JUMP_LABEL */
- 
- #ifndef __ASSEMBLY__
- 
--- 
-2.49.0
+> kernel behavior can annul the LD_PRELOAD/suid protection as
+> implemented in glibc.
 
+Hm, but no, it doesn't annul glibc's protection, right?
+
+The concern is that:
+a. musl doesn't implement LD_PRELOAD clearing
+b. with NNP, setuid-exec followed by setting NNP followed by exec,
+   will lead to different behavior from non-NNP.  In non-NNP,
+   you'll continue to have euid=0, ruid=1000, and caps.  With NNP,
+   you'll have euid=ruid=1000, and still full caps.
+
+So, if someone is using NNP believing that it is a safe way to
+execute untrusted code with privilege, because they see they
+are now uid 1000, they will be confused.  Worse, they are
+subject with musl to LD_PRELOAD from the user before setuid-root.
+
+So two things we can do are
+
+1. have NNP drop privilege.
+2. have NNP not force euid to be ruid.
+
+(1) sort of makes sense since you've bothered to use NNP, but
+as Max, who is a user of NNP, says, that is not the behavior
+that would be useful to him.  It also leaves the non-NNP and
+NNP exec behavior - which is already - obviously - far too
+complicated - with yet more cases.
+
+(2) is concerning because it is a change in behavior for NNP
+users, but on the other hand, it leaves us with fewer special
+cases.
+
+At this point I'm kind of leaning towards (2), though with the
+obvious modification Max has already found should be added (for
+secureexec).
+
+> > I see no evidence
+> > in this conversation that anyone has surveyed the users of NO_NEW_PRIVS
+> > and verified how anyone actually uses it.  Without such evidence we
+
+Max is such a user.  I don't know what we can do to get input from
+more users.  Perhaps scan the debian codebase results at
+
+  https://codesearch.debian.net/search?q=NO_NEW_PRIVS&literal=1
+
+I'll take a look through those in a bit.
+
+> > have to assume that userspace depends upon the current behavior.
+> 
+> That's fine for me. But this behavior should be documented, because it
+> is rather surprising.
+> 
+> (In any case, we will keep the patch in our kernel fork because we
+> need this part of the kernel to work properly. Our machines don't run
+> any code that depends on the buggy behavior.)
+> 
+> Max
 
