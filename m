@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-641807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BE9AB1696
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFC3AB16AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5ECD4E267E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914E01B650FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DC3296D32;
-	Fri,  9 May 2025 13:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D07D292912;
+	Fri,  9 May 2025 13:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0mT9CnF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1/vIMK0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA494296D14;
-	Fri,  9 May 2025 13:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF318632C;
+	Fri,  9 May 2025 13:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746799039; cv=none; b=gFtoPFsROW4n2OGT+dySm/RhwBnS4uMtfXbg79F6bX6rI++gKh6vuiX17hTolZQYtdo9PJgqkvotrdAUAYetRXK9B44WVXwkLC3/xL0VPhh8/VWJKfC1aH2vCRYlykuMy9SuTfmzTJFA8pv+fHi8+wP7cFek4ICNbTZC9iPYRts=
+	t=1746799116; cv=none; b=up8dRlyk8DVe7fGgMomBydKi58d3pk/G8HY2SZxeP8ECPgJ3iFdmjD7cHq8v8Nfpn5HZr78nW0vad5dXHXZzawAWYndm/NGAfRusAtXdVLL/Nk7Iw62Mn0efuf7DY3pcGuhEddtzlURv1+9ai+b1OJtuvWTiECQ8eMhJABwFsQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746799039; c=relaxed/simple;
-	bh=eG96Ecaz3EGbtHv71aQ64bQQroLICepbuKl03kCL2Hk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMSB0apOyn584pYITaUHGrkb8sZymY6ZatkvDO6Y3yT2ZOofLrIaGO2P4rbXlK++kPbtTIvgmma+M/LE9KEyQAi+EKJzwqhUnOz7IGwnNGO69nCPJgAZ1/NAygMvRLVEU6kHaW+goHh6uZPRfk/loLteM+7xDBNRaTlsQQkh8h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0mT9CnF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14B49C4CEF0;
-	Fri,  9 May 2025 13:57:13 +0000 (UTC)
+	s=arc-20240116; t=1746799116; c=relaxed/simple;
+	bh=kFfI6NFI2qn9hLhLb0djmamcL+D1qmHdJ/GleHQAon0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ayK0Nu+vv7S/H/jQVJwl8Ok2B7nDrEs9J7yVd3OxxlJiTtGE5+CWV3chmrWrajoI+/H2efCVkbSbhMDznTMAYwOrCysOEK+d8cjgzcsJUMW/ZPXuJIYjnajPGIi+cLOyyYfyGDkf9wFjCZRAbbKhh5xLhA1jxvZJCsgiWkx7xDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1/vIMK0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41612C4CEE4;
+	Fri,  9 May 2025 13:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746799039;
-	bh=eG96Ecaz3EGbtHv71aQ64bQQroLICepbuKl03kCL2Hk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a0mT9CnFzWT/ajfWgesNI3y0bC1QDOwwnqmYbge5zzVDuRoJwuLMxzcgMn0oKskRW
-	 u0Cw1X9C7qJiSCR/2K8XltPcD0NYiViSeSV8C2Ggtj9VbSvxlTv2ruS4cVw82dlUhC
-	 qFHohAPMxZiRJxNXSfPljYy4Q0IJ8+S0gjTCbwCz+Q1S6jg0sQkZvQDfl0ZlrHOd5l
-	 Q/zPdk8hSKcHdzfL56zgNVeoO1eTgd0E0+P/ztubjjo4e7gNBloAdHYDhxqT0g7FP2
-	 DZnYYGJ9b5IBEqcneLXun258id/TeDqJcB4E8X1PNuhCirdST81hH2hgdlwhOLEfH7
-	 E0bMz4dWJKcNA==
-Message-ID: <c8d39184-f98b-4dea-bd32-8948f98ab2d4@kernel.org>
-Date: Fri, 9 May 2025 15:57:12 +0200
+	s=k20201202; t=1746799116;
+	bh=kFfI6NFI2qn9hLhLb0djmamcL+D1qmHdJ/GleHQAon0=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Y1/vIMK0MIBm781M+e38/Lr+QCQm//QoeefNAmmM2JBdxznyMQKZVXnziat+dmLQm
+	 5BzS8PHyQQi+GUgbNi8kTLJPFbbUe9X83Ai0cKjFrV08NBJhETh8E3eJR1AAmqJV2y
+	 HLviSBl9bfuSmJ75Mngh6VGq/5YYJBU9jwn3HSvVPARRm+s/cpHN/AADIBApIhf4qW
+	 cmPQPjQ8mktColAbAh2pcGTyHA333MR+MAenqawxqRpncMTm7qZPeYv2S8sMZIhMxv
+	 QhcpHSflFvfeBRPcZ6lWFlztDI6IIrAOY2VoAEDXBgj5+p7KGEOhydwm44D5LSM4cb
+	 /w1BXT4JeJUvw==
+Message-ID: <83401d0a-ca96-4cfd-9016-13a8604beb9c@kernel.org>
+Date: Fri, 9 May 2025 15:58:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/14] arm64: dts: Add DSPI entries for S32G platforms
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- James Clark <james.clark@linaro.org>, Vladimir Oltean <olteanv@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, larisa.grigore@nxp.com, arnd@linaro.org,
- andrei.stefanescu@nxp.com, dan.carpenter@linaro.org
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "Radu Pirea (NXP OSS)" <radu-nicolae.pirea@oss.nxp.com>
-References: <20250509-james-nxp-spi-v1-0-32bfcd2fea11@linaro.org>
- <20250509-james-nxp-spi-v1-14-32bfcd2fea11@linaro.org>
- <3ddde799-76b5-43f9-971e-a52ec322e9b1@kernel.org>
- <16e91572-b132-4246-9fa9-8e8bc4c24f40@gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: imx8mp: Add TechNexion EDM-G-IMX8M-PLUS
+ SoM on WB-EDM-G carrier board
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Hu <richard.hu@technexion.com>, sascha.hauer@pengutronix.de,
+ Shawn Guo <shawnguo@kernel.org>
+Cc: imx@lists.linux.dev, ray.chang@technexion.com,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250509071242.12098-1-richard.hu@technexion.com>
+ <8173a798-b5d7-485c-8ce3-b46f4a097d83@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,30 +103,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <16e91572-b132-4246-9fa9-8e8bc4c24f40@gmail.com>
+In-Reply-To: <8173a798-b5d7-485c-8ce3-b46f4a097d83@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/05/2025 14:54, Matti Vaittinen wrote:
->>
->>
->> Node names should be generic. See also an explanation and list of
->> examples (not exhaustive) in DT specification:
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->>
->>
->>> +		compatible = "rohm,dh2228fv";
->>
->>
->> Nah, I really doubt. That's not the device you have there. It's
->> possible, though, so can you share schematics?
+On 09/05/2025 15:21, Krzysztof Kozlowski wrote:
 > 
-> Actually, not even possible. There is no DH2228FV from ROHM. There is 
-> BH2228FV though:
-> https://www.rohm.com/products/data-converter/d-a-converters/8bit-d-a/bh2228fv-product
+> No, that's not a spi controller.
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> 
+>> +		compatible = "rohm,dh2228fv";
+> 
+> I doubt that. Drop the node or fix the compatible.
 
-
-So that's a totally made up device node.
+... especially that dh2228fv does not exist. There is no such device
+from ROHM. If you claim otherwise, please share this imaginary device
+datasheet.
 
 Best regards,
 Krzysztof
