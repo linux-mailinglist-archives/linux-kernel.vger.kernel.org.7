@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-642184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DA0AB1B87
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B4FAB1B91
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585A51C4640D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0717179C9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EAA239E9F;
-	Fri,  9 May 2025 17:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C6B23AE60;
+	Fri,  9 May 2025 17:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Aq4RSGKN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7G5iLCm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C840621CC60
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 17:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD96A22CBF6;
+	Fri,  9 May 2025 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746811620; cv=none; b=odrNZ4UErymuikLAGoiF/tUQJAK8/stmt4z9+SNhotFiXXso2w6u4Oj/FhmZdWC0FabKZDh4Z8jinkDQJp9y7FK7UnvSvkrQ0U6oKonsunnZixDPCrQVbpxLlXapyxFQNnlA8pxDHyQOWb9FVQ0Usni7bOWCkvrI6UX45PAt5RM=
+	t=1746811819; cv=none; b=Dez0emfn467879TcMhrWVUnYZy5vbCIoF110TZkzBbq19V/N+ChJb5Y1IJagV7AFt9KvPNr/IbZ/Sy42WZk8EPBlblIkADG+qS/vxs62lfLyhDwp8r41VcarjbebMIenbjeuTgC9V7EpURBR2DvQpwS2lYm6qg6C+22FywVubuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746811620; c=relaxed/simple;
-	bh=Tv51iCifaNwhYZxM7lUUyAfZ76kxlBfYATAgonwaBA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pwpV8TLZ8uWXlZjRpcLyPlCE5vgfgMTQQ2H27T33MFbwtYRkKxWI4HRm0GPoBD6VgxgT0nL6Ok77VxwAQH+fWrhqFH1l5sgnjWhVVuWbcWlSQqEnkBzSLOy7Eg6ZgM22l52RO22SwQ/gbEB+CaIWxcsBrUPpAfdWNcgHnNa9fvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Aq4RSGKN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549BDwEK010134
-	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 17:26:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1wUapQOrEwYp132n33ZM87lG9BL1ZkFAOuhX9RAXCbY=; b=Aq4RSGKNLykYMGhb
-	WB1R461DbyFBxyBfcmhQwSxqHNxGy+pFCuY1W8P9s4hbOleP/H952SCIo6J/w1XJ
-	bOvMxwWaYWl176wqbjc5VEsv2Iebf4jpgNjmBzUMSe4BL60nVk0+qwFG6rKUjz2J
-	nnYVQLDbTCkeOuxTX90+7W6zTvu1LggPip8JM2HkyJ+DgwjIl+2ao6uYZUvPTAPJ
-	fH0U1lRLMiA/QKbPLMTYw8FLNWog6j6zPhukOsy3bEVxxO7jpVDWV0R0ktDDKBRQ
-	D+1KBYUcIyfaidBCArg+VtwU7R2BlBjv8zTtsoOn1Lfm+EGnBbgxJTurPomu4gfq
-	5b/MIw==
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp7dfxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 17:26:58 +0000 (GMT)
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85b418faf73so366043939f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 10:26:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746811617; x=1747416417;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1wUapQOrEwYp132n33ZM87lG9BL1ZkFAOuhX9RAXCbY=;
-        b=o6o/UZ19Pd1Hut2DVCo7GNcc1Ofn2imu8EOZ+T4W9eaebRCgXWcVWMGqqdDFhSieEM
-         86bYXbO/Zr7p6M6CaPCqhwCaAFxprIHOWFnGD+BlR98nUeRuOk/R4FipEpamX25JSUvt
-         e0nquPbIvHRytpJOcfcX1vNIOd5V12NZdkYemHkvrK5xWislUFhl7vxsKV/Xa6eL4tgG
-         NkBYbuUR0VEwLo9Hnf2GCw0Aj7SmzeOzfVeOAk7+CHjUh763upIb2k0ezHZlb5ItdgU/
-         +BzhHS3d/6xLrAPpuhyvJAPAijVK5wYVKB/GIPrjBK81T71LzQ1AnZ3OBjRFvd4Rj7iU
-         wfZA==
-X-Gm-Message-State: AOJu0YwpMCOCLCWNZYa0ct2X8sh6B3F/SMNGBsK2g8gcD9/juZqeUHtm
-	G5lYlaVccg0xLaBHgpaIAaqVkc82VWxvoi3qVbCWeKdLXGIA/OdcVq6J1j8kt9l83kOmn0n6PMc
-	IGyi/6YQxfIcIH8Bq3Yv1KyBX+dptc8nfheK7EM/8pPou5VNTRhjtWqHEiVPZJhY+j8r4bf0=
-X-Gm-Gg: ASbGncsRME3ZLi7Gz32Yv/8U3fOuNYUk1VTqG32+j/2/SBYgaLG+z1arSbCIiFgSWLI
-	fBCza8WRoyDz+N4MkScN8UNUK1ipmViLA0OQwrBL9kPyt/MYf4t0GS0APZvK1Zze1CqVtmZ/3zE
-	CQQDRIPcFMRpf0Ran/9gXZ3mOs1U1wUSB4ReAqHvNA9Rop2gy90rR0/anRA6WJr6y5DHBo3Y9OJ
-	EtRKWV8rheoZUpJIpxq141xjGD2NhAzy2ClG4+SafhrDtVH47ox4vR+6kjSKrhfbSIdhYbWLIVv
-	0Ob5oAwTH0l9uobcpSJufC3rVSY+OaEIGte4XT6C7YzcRlg7GEWjMa2BkUpZJyB5JoYWzJDNHFH
-	YkDj6
-X-Received: by 2002:a92:ca4f:0:b0:3d9:6cd9:5079 with SMTP id e9e14a558f8ab-3da7e203652mr43047205ab.14.1746811617045;
-        Fri, 09 May 2025 10:26:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE07AB4b/+Pf4nyMGbIX4jP3EQyt3RqCUIg7THoH1pbvrDKMFpM29PCxiYGbZo0g5pPaPC2Bw==
-X-Received: by 2002:a17:903:32d2:b0:220:e5be:29c7 with SMTP id d9443c01a7336-22fc91a1e83mr53377865ad.39.1746811606037;
-        Fri, 09 May 2025 10:26:46 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4ffb42fsm4697857a91.40.2025.05.09.10.26.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 10:26:45 -0700 (PDT)
-Message-ID: <a3d69b71-d204-4e4f-b6bd-d7e80bf7b546@oss.qualcomm.com>
-Date: Fri, 9 May 2025 10:26:44 -0700
+	s=arc-20240116; t=1746811819; c=relaxed/simple;
+	bh=mW7Q4WOzI5YU1FYLOgmozqSQi3IAzhyUp6jsc2gvljI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSKfsrOPwMvd90r+WXKIYepS4apUtvi/XRx/qpc/1zE+GLgeoyhugSxa4jNqGqFn2GWW6mJ5IaDRGirpXsj4K6mIpudg3RVCXKnelf5+JQ0NY1pHy/QJObLkF/8ta2PI7IKt7B9l89qSuJX6Wn6txg1Zcl8IDidyRDx5f0xdgeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7G5iLCm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7BEC4CEE4;
+	Fri,  9 May 2025 17:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746811818;
+	bh=mW7Q4WOzI5YU1FYLOgmozqSQi3IAzhyUp6jsc2gvljI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7G5iLCmXAjHqnDymoGSMYCHKt0FGONZ2280C13jjahlcYvubNWIgN9NnDcCqdQnu
+	 AEO58bEaRAqF14/wxZDzBySNJp3+LSN0Y74nNO7YDkmqh7EqPV2ge7s3dXT0BUhSaq
+	 VGZLa6RVkWQv2g+dTRak/4qnig5LDJfO1RV6ibSJdYly7zm6+P0W4xbCfk5vZC+GzO
+	 2m7mL+xResoyVFbcavHB6yjSJYO+FMm+HYOCMjo6ikq2vwh868xV2zec2bzWmTz+D3
+	 0nYEDHor6jzucViInfWQJ32KQ6OdKkkEzpLZt2R+zg3SKxemCNK26WyuLt8ELwxxad
+	 7iqtTUsTqya+w==
+Date: Fri, 9 May 2025 18:30:14 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ozgur Kara <ozgur@goosey.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: ethernet: Fixe issue in nvmem_get_mac_address()
+ where invalid mac addresses
+Message-ID: <20250509173014.GQ3339421@horms.kernel.org>
+References: <01100196adabd19e-0056f10b-0ffb-4076-8a6b-779f87c327b6-000000@eu-north-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: issue wth ath12k in ath12k_dbring_buffer_release_event
-To: "Colin King (gmail)" <colin.i.king@gmail.com>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        ath12k@lists.infradead.org
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <e26e4e8b-90d5-4543-af0a-ba5cebf516d8@gmail.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <e26e4e8b-90d5-4543-af0a-ba5cebf516d8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDE3NCBTYWx0ZWRfX8GO19PVfUNTp
- w8ks2vQ3A3qQTDFpZcVjeZmXllx2/323u6ZlJXBlPIbsv6LkFTp8aKjL3ETfWcLC27TXwanQbpr
- sEHc5zxeF34D16kUF47rLoEQo4P/eUi4G/ZYgMsctx07+CXlTlOiJRrqNNwAvfbcd5FCcmT4MkT
- l5g9g6Qpyu0mhaeCKlZMCt6aQvl5us1giHO3KyJWk3Hdaq2xJgnyA4iCXXTr0Od8I8OlVz6UkuZ
- 1fq+JlAbRRwsxvq50uwECNLlmcTNAyZQ9Fc3F2pdi0dOHd5jEdi5xxQy7qToJbiYRSeZMFtFXoP
- nj/AjIi8heYP5c3MUcezr7mGZqYVm/xwi1ZeTlJ7oXaBqBY/nNBAOUI7GKtEJvtm0iLeNqdHiLU
- xULRRHqhwo4PFlY29/e7Fk2oFkgH1LADpFuXRWHpzH/ydam4SDhmapVEYeRbwrBBOH3csGcG
-X-Proofpoint-GUID: X305oZZvgS09CatHMOHkokYWR284HANq
-X-Authority-Analysis: v=2.4 cv=B/G50PtM c=1 sm=1 tr=0 ts=681e3ae2 cx=c_pps
- a=x6q9Wowz3da5qcMoR2tSzg==:117 a=e70TP3dOR9hTogukJ0528Q==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=UYGBsdy-ktPGMqgawXkA:9
- a=QEXdDO2ut3YA:10 a=TsFzuV67ciA61D7d30EA:22
-X-Proofpoint-ORIG-GUID: X305oZZvgS09CatHMOHkokYWR284HANq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_06,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- mlxlogscore=824 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505090174
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01100196adabd19e-0056f10b-0ffb-4076-8a6b-779f87c327b6-000000@eu-north-1.amazonses.com>
 
-On 5/8/2025 4:00 AM, Colin King (gmail) wrote:
-> Hi,
+On Thu, May 08, 2025 at 02:14:00AM +0000, Ozgur Kara wrote:
+> From: Ozgur Karatas <ozgur@goosey.org>
 > 
-> In drivers/net/wireless/ath/ath12k/dbring.c function 
-> ath12k_dbring_buffer_release_event() there is a large hunk of code that 
-> is never executed because ring is NULL.  The code that is never executed 
-> is a fairly large part of the functionality of the code, so I this looks 
-> like a bug to me.
+> it's necessary to log error returned from
+> fwnode_property_read_u8_array because there is no detailed information
+> when addr returns an invalid mac address.
 
-The features which use this functionality have not yet landed in the upstream
-version of ath12k.
+Maybe "useful" would be better wording than "necessary".
+Logging doesn't seem to be a hard requirement to me.
 
-/jeff
+Moreover, I'm not sure that logging is appropriate.
+E.g. fwnode_get_mac_addr() is called by fwnode_get_mac_address(),
+which is in turn called by acpi_get_mac_address(), which logs if call
+fails.
+
+> kfree(mac) should actually be marked as kfree((void *)mac) because mac
+> pointer is of type const void * and type conversion is required so
+> data returned from nvmem_cell_read() is of same type.
+
+It seems to me that nvmem_cell_read returns void *.
+So a good approach would be to change type of mac to void *.
+In any case I don't think casting away const is the right approach;
+what is the point of const if it is selectively ignored?
+
+Also, I think this should be a separate patch to the logging change:
+one patch per issue. If there is more than one patch then I would
+suggest collecting them together in a patch-set with a cover letter.
+
+> 
+> This patch fixes the issue in nvmem_get_mac_address() where invalid
+> mac addresses could be read due to improper error handling.
+
+I don't see any changes to the program flow for error handling in this patch.
+It doesn't seem like a fix to me.
+
+> 
+> Signed-off-by: Ozgur Karatas <ozgur@goosey.org>
+
+-- 
+pw-bot: changes-requested
 
