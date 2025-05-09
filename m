@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-642229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D61AB1C0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:10:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB33AAB1C12
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7473C1C45777
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5903A413B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1942123CF12;
-	Fri,  9 May 2025 18:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD2823BF9B;
+	Fri,  9 May 2025 18:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUjpqbbF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="T26jt3K+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hggC5kD2"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A00022B8C5;
-	Fri,  9 May 2025 18:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBBC221555
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 18:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746814193; cv=none; b=rgeN0iMjgh/RX7I4H47QQtrw93rbAwYjTWxxsuoh+/TLMvm8JizG0CAMEeodLbaM7SXPIMgy+Zx3Gs4YSLSHg3KKxhocWAy/H+vibkaNtoAS256wNmFPZgfRirhnhO00FCqcFVRhp/V0bxK6r4Ux/973cWKLRNlxfT+JHUvltLk=
+	t=1746814268; cv=none; b=dYnpaaVPut/y5L+/asToR2+cgNSLcoZR1bfdMkS62umxAovWExtIN8C8qwxuAtTeA/O6AfaP4guoBObTnp1zieV0y9686SycKU/Mj11YBRC5zl4gG49AxgydNwnjMlhrC47deHA/HLvrsR6ncLAuvggLApxgvJGC5KYkk0FDC2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746814193; c=relaxed/simple;
-	bh=fDzciSBzJ9oWWmkY1tCDRVGmRWNKQ+dk5VcIIEfRcrE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SiPfl8JBOvzpTI/vy12TmovcduvGPYssds9M20gucxTMcYYRUd1qJsAjA9pOSe5LIsjTDvU6vx9g2lL+FVHUHStD0j+hUs2cAH05w7BkpSf4PxCv+1cDsdv0VGC6cIWPnnOrvH4694YsDYYmMWkCFFTn1Tf2J7CvYqSxkwyHzT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUjpqbbF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9905C4CEE4;
-	Fri,  9 May 2025 18:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746814192;
-	bh=fDzciSBzJ9oWWmkY1tCDRVGmRWNKQ+dk5VcIIEfRcrE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FUjpqbbFRIoJvQnBaU7m8YiPBY1xIyksWKNRGZgUZcguSIQt26qXHv9CrL4xTNlNM
-	 qimf/lJAyQje9Qb4sFnVY7mfasY/r+YfjWpWhMMGKcbzetfM8fh2j1e8s7rTHmzxze
-	 FW721gDwtwWAn9zfjH+Dweu2ZOVmmPBb1hAtwZ4dnbhc91aK63uZcyNZKKxal7d4BW
-	 fheZ+epGzERt7UO8P0PzEDHsQ+IOfgCMSI2T7wqup/si/T+S6iHrrYuAg1YIG6f6xC
-	 DqkiHNTlD3MVgEoynWTpqmMb1OdP24alrdUwHhx++KoeQ+WM7f1AHpIGx+uNw13vR7
-	 rPmu9BcAw2BCg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F09380DBCB;
-	Fri,  9 May 2025 18:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1746814268; c=relaxed/simple;
+	bh=IHswMfD/4h9FJlWmDNxxkF3W1uRzW83XyGTRs96hBXs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BL0t6AsQpPSqPoy0XQccdiTt7JwGeqmlHX7RCVhp0BzYQklawAEYFwnW9e8LaeYro2w8SNxpWL0Arx1lQpGISCkDmChtII2JagdalF7uicYXhSv6Pi5rVMZRuvS9ZZrjsm8yiL1HwjqdS6O7y3aMaJ0Rz7w9n4GvA9bizrK+sh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=T26jt3K+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hggC5kD2; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 056D6138023B;
+	Fri,  9 May 2025 14:11:06 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Fri, 09 May 2025 14:11:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1746814266;
+	 x=1746900666; bh=hCyr4hHLMIL/WvQboLwqBJI2QWQKbpJLuuDWaopC16U=; b=
+	T26jt3K+nJqRjpV04LNtgjKrpWkgy7B/IOleT/Xjzss/UNiSjYkt/GKnB8QXfVE/
+	MGG1gMQqadJ/R5WSMlOxcDMno5Wdvm8Ivu+rKhyukw0l/nYOYOL81syofu8IlqtQ
+	7KSwzFLA+B5+G/oazNPUgXmoI3vwizxgt/hUZqgG038LCrsczLhKSiDyUauq5K5F
+	H67ua4HNidIHOuRlCOz1aBNTkIPF+yP+yCsvJa5u7JNNSC/AC3CGlKXNgPV+VipS
+	gOq+Cr/cCOUH+dcU0pU4UnPAawQlO43KUpUlz5TDVKrss1vUwApaJStEgy2E7Sfb
+	Bc8FWkEx6vgw+GM/BuVfVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746814266; x=
+	1746900666; bh=hCyr4hHLMIL/WvQboLwqBJI2QWQKbpJLuuDWaopC16U=; b=h
+	ggC5kD2h3PGKu95dLQkXVXKIixnzz8jeAWlVi7EzUVxSEOPq6w/Nt76v3vwwkup0
+	eMimIbxQkb4uei7orv9Mm41zERgY2Ge2ThsRpYul6HggDmHDQ1hxTZl521lb8CqB
+	WNtuvQsG+HH/WIaBIuqFY0MQkH3d71bQ6Z8g2uRD9EiYGAYUwvWPU9Ky1qfM8OXr
+	bfWcW6+Tvp3Z7vxbrC3GDAgFdRHCgBJbE/80Sz8tKbriSWZcKay4xyYecoWb5qU0
+	0K6RG/1SkpRO7CeyBbCSmRPu7G6yVi47kkz+nLNPV3PWHVshJtUpniGhFMyKJ1a0
+	Z795zbnNivFsFGLWEXGzw==
+X-ME-Sender: <xms:OUUeaFJbirSW1SJtlcGW388AkqSvcWTlOoUNKvv5irjqmj1NunWLQA>
+    <xme:OUUeaBKqgsC9JXQntiKQ1Xz20v4NxP5dVSTcgIl-JOnEe5-BCIG76eUWSYSww8WMj
+    qYaODsKlpZucMTmDDM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvleeffedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    uddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+    dprhgtphhtthhopegufihmfiesrghmrgiiohhnrdgtohdruhhkpdhrtghpthhtohepphgv
+    thgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehtohhrvhgrlh
+    gusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepmhhitghh
+    rghlrdhlkhhmlhesmhgrrhhkohhvihdrnhgvthdprhgtphhtthhopehvkhhuiihnvghtsh
+    esrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:OUUeaNvtZrheHiYfzq11eTUktMhtF1WCIu9mUNdUE_x_TWpZtIhRqw>
+    <xmx:OUUeaGZ0TXKfjC_DFuyWn9Lr_Ad_B36NXU09B2DixHJhlSQP5fVQsA>
+    <xmx:OUUeaMb32T-gwwGzumf6SnTQY77y9YJt8eEQlU9k1C72k9RwcokNng>
+    <xmx:OUUeaKD_2KPsWsGRXG_dU6lttjD2IJE0M24TNcsQyt18Guss0pByvw>
+    <xmx:OUUeaOAKwpZegxld4ZVA8hOPmfu9pSsZDj8FcIv_mydP0xGQLGYaVsZ0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 475A81C20067; Fri,  9 May 2025 14:11:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 bpf-next 0/2] bpf: Allow some trace helpers for all prog
- types
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174681423125.3706849.17756143734628096783.git-patchwork-notify@kernel.org>
-Date: Fri, 09 May 2025 18:10:31 +0000
-References: <20250506061434.94277-1-yangfeng59949@163.com>
-In-Reply-To: <20250506061434.94277-1-yangfeng59949@163.com>
-To: Feng Yang <yangfeng59949@163.com>
-Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, davem@davemloft.net, tj@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org
+X-ThreadId: Tac3cca25115b04a4
+Date: Fri, 09 May 2025 20:10:44 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ingo Molnar" <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Borislav Petkov" <bp@alien8.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vitaly Kuznetsov" <vkuznets@redhat.com>, "Ard Biesheuvel" <ardb@kernel.org>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Masahiro Yamada" <yamada.masahiro@socionext.com>,
+ "Michal Marek" <michal.lkml@markovi.net>
+Message-Id: <0591fcab-fb19-451f-a27b-1b449b2af4b9@app.fastmail.com>
+In-Reply-To: <20250506170924.3513161-4-mingo@kernel.org>
+References: <20250506170924.3513161-1-mingo@kernel.org>
+ <20250506170924.3513161-4-mingo@kernel.org>
+Subject: Re: [PATCH 03/15] x86/kconfig: Rename x86_64_defconfig to defconfig.x86_64 and
+ i386_defconfig to defconfig.i386
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue, May 6, 2025, at 19:09, Ingo Molnar wrote:
+> Editing the defconfigs with shell filename completion is unnecessarily
+> hard due to bad naming: if one remembers 'arch/x86/config/defconfig',
+> it won't lead to the right files, because the defconfigs are
+> prefixed with $(ARCH)_.
+>
+> Under the principle of 'higher order names should go first', prefix
+> them with 'defconfig' and postfix them with .$(ARCH), and thus make
+> all x86 configs match the arch/x86/config/defconfig.* pattern.
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+I think this patch should be dropped completely, it as it causes
+multiple problems:
 
-On Tue,  6 May 2025 14:14:32 +0800 you wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
-> 
-> This series allow some trace helpers for all prog types.
-> 
-> if it works under NMI and doesn't use any context-dependent things,
-> should be fine for any program type. The detailed discussion is in [1].
-> 
-> [...]
+- it breaks existing scripts that use 'make x86_64_defconfig'
+- it breaks 'make help' automatically printing the names
+  of the defconfigs
+- it's inconsistent with the other architectures
 
-Here is the summary with links:
-  - [v3,bpf-next,1/2] bpf: Allow some trace helpers for all prog types
-    https://git.kernel.org/bpf/bpf-next/c/ee971630f20f
-  - [v3,sched_ext,2/2] sched_ext: Remove bpf_scx_get_func_proto
-    https://git.kernel.org/bpf/bpf-next/c/8c112a428b94
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+       Arnd
 
