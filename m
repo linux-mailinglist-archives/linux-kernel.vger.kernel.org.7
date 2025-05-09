@@ -1,86 +1,205 @@
-Return-Path: <linux-kernel+bounces-641845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12519AB1728
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:19:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3A1AB170C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE54527086
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0DC8523D6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F58B221F3D;
-	Fri,  9 May 2025 14:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82DA211A35;
+	Fri,  9 May 2025 14:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="SSkA9rzG"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccrr7mhG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8469621324D;
-	Fri,  9 May 2025 14:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2959E21322B;
+	Fri,  9 May 2025 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800252; cv=none; b=PNJlzrdafNeL65+Vj7TE69+6w89tRaOB+0KpBgkQNBxuXqyGoXYjcQeN/t/SKWLmI8HMZAcxQIDz0ElVCz1AaxUVT/NiqfFMwpNnfu9Gh5LEGwprvAR1Rpa38Fu5I/JxdkLtqqd3gBhUGdgBzuK54keKb1BqxOfu3ISKHH/qnK4=
+	t=1746800212; cv=none; b=Q1Ci22taBD+KmGMpP1z71A85pub+yL6xKxwAwcZsXLjDgNtW3tGRZSuzq7tNhGlsmx+n40W1dFUsuQiij6M1fcCpNyErBSkTPkUYLv5jUpB5v5qE0loVkvCZc5mTyRMJrZAzSODt/flyXsa0kX7OdoFok32G4XKvLRl/F2Am3cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800252; c=relaxed/simple;
-	bh=8YpPIiJRES6y9U9nDUVsp0fNxxDECRqz8HdY8Iy5l9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lH7mhSh1eNUZ3F8EGG+6bp0PX/QQdUj9bYLlQrRx7qaxcilFhw2uxyO7vPLlQ2P1uYTUnXBO8SZlHjKSexfpoKSLydbFKrMMnXgCp0I0DnAvhaeBEuwy1uMsiPLtfJ6/egcjAfL4UXgMnuSiFa2Dv2bTVJtPtP90oP3+GIGvufk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=SSkA9rzG; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Kg1lOsicIGwMurHHg1lsBFSLBs1lOtH7DCGaQFmSoc4=;
-	b=SSkA9rzGzQPYLCmZq3aIZxQoDYOHXIIkCeFrJsIqAmFW1LByq3EGP4MrFBeYD/
-	xNj44kpFFaqkqBEvtsiUciWqUrgnVuTLwb+qqUUAkNWpUY9S6/X3SbQCVdyf49eJ
-	FOXSMjluCBPH6r+Ma45DCZmyLC4QNvMX16DqwHTgH/4iU=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCnB_pEDh5oyTOqAA--.49231S3;
-	Fri, 09 May 2025 22:16:38 +0800 (CST)
-Date: Fri, 9 May 2025 22:16:35 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Markus Niebel <Markus.Niebel@tq-group.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux@ew.tq-group.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: add TQMa8XxS boards
-Message-ID: <aB4OQ+sVXz1Qima0@dragon>
-References: <20250424075533.1266435-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1746800212; c=relaxed/simple;
+	bh=vMVUJZu9yYRGIoVM8aKfqXn5nkHn4uhH6yrt76qg8Bo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=S1Z8Ed1Jz5sjxqALvNl2whpxZOOhPAAik77X9gxUY40az2gOwNWolt+BDzit4GOD0ll5+pPQKrfKQRaxM5CZXEYEoudtss3QJ45RSJ1uhJ7l6ODg77Jqs6DOvDBxVWftQI+9tbQm72pfclxwwkLOFzfMzlXoSXH3ZqVdTHYHJxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccrr7mhG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A6F4C4CEE4;
+	Fri,  9 May 2025 14:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746800211;
+	bh=vMVUJZu9yYRGIoVM8aKfqXn5nkHn4uhH6yrt76qg8Bo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ccrr7mhG0MUfhAyaZklvA7LfwZOJnA0way4Qf/VXo+XXV5znPdMuiKRnRaghQfLph
+	 fq2Vhqf0OSAMuTO1bec60sjVOHQVSeb220o4P2U1wFWLl4qofUL86KOHqLGWpdgLGx
+	 RZZKQ0LMuPtjKKQoPywZk1dUAw+hBy4SR/9uQedk3QD8g6lnBG0fqjZ4D6Akjy8FNy
+	 I/JOGXJ9bb7hE+8DOp6lkaaPGn1dNhWB/L52aTz93Gy4tnlyenMYjso8/oAA10exqk
+	 KtqBDlUcbyHoSjv91c7Efxsj4WnqvqT8YhN6q4NA+kD2LLV095FC7iMxi1cZ6E/yZm
+	 BWiMcR8pzW3hg==
+Date: Fri, 09 May 2025 09:16:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424075533.1266435-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Mc8vCgCnB_pEDh5oyTOqAA--.49231S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYD73DUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBFIZWgd-c1QIAAAsN
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Nishanth Menon <nm@ti.com>, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
+To: Bryan Brattlof <bb@ti.com>
+In-Reply-To: <20250507-am62lx-v5-0-4b57ea878e62@ti.com>
+References: <20250507-am62lx-v5-0-4b57ea878e62@ti.com>
+Message-Id: <174679984762.3368109.6575241416894070817.robh@kernel.org>
+Subject: Re: [PATCH v5 0/3] arm64: dts: ti: introduce basic support for the
+ AM62L
 
-On Thu, Apr 24, 2025 at 09:55:29AM +0200, Alexander Stein wrote:
-> From: Markus Niebel <Markus.Niebel@tq-group.com>
-> 
-> TQMa8XxS is a SOM series featuring NXP i.MX8X SoC.
-> They are called TQMa8XQPS and TQMa8XDPS respectively.
-> MB-SMARC-2 is a carrier reference design.
-> 
-> Signed-off-by: Markus Niebel <Markus.Niebel@tq-group.com>
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Applied both, thanks!
+On Wed, 07 May 2025 22:09:18 -0500, Bryan Brattlof wrote:
+> Hello Everyone,
+> 
+> This small series adds the initial support (currently just a UART) for
+> TI's AM62L SoC family.
+> 
+> The AM62L is a lite, low power and performance optimized family of
+> application processors that are built for Linux application development.
+> AM62L is well suited for a wide range of general-purpose applications
+> with scalable ARM Cortex-A53 core performance and embedded features such
+> as: Multimedia DSI/DPI support, integrated ADC on chip, advanced lower
+> power management modes, and extensive security options for IP protection
+> with the built-in security features.
+> 
+> Additionally, the AM62Lx devices includes an extensive set of
+> peripherals that make it a well-suited for a broad range of industrial
+> applications while offering intelligent features and optimized power
+> architecture as well. In addition, the extensive set of peripherals
+> included in AM62Lx enables system-level connectivity, such as: USB,
+> MMC/SD, OSPI, CAN-FD and an ADC.
+> 
+> AM62L is a general purpose processor, however some of the applications
+> well suited for it include: Human Machine Interfaces (HMI), Medical
+> patient monitoring , Building automation, Smart secure gateways, Smart
+> Thermostats, EV charging stations, Smart Metering, Solar energy and
+> more.
+> 
+> Some highlights of AM62L SoC are:
+>  - Single to Dual 64-bit Arm® Cortex®-A53 microprocessor subsystem up to
+>    1.25GHz Integrated Giga-bit Ethernet switch supporting up to a total
+>    of two external
+>  - 16-bit DDR Subsystem that supports LPDDR4, DDR4 memory types.
+>  - Display support: 1x display support over MIPI DSI (4 lanes DPHY) or
+>    DPI (24-bit RGB LVCMOS)
+>  - Multiple low power modes support, ex: Deep sleep and Standby
+>  - Support for secure boot, Trusted Execution Environment (TEE) &
+>    Cryptographic Acceleration
+> 
+> For more information check out our Technical Reference Manual (TRM)
+> which is located here:
+> 
+> 	https://www.ti.com/lit/pdf/sprujb4
+> 
+> Happy Hacking
+> ~Bryan
+> 
+> Changes in v1:
+>  - switched to non-direct links so TRM updates are automatic
+>  - fixed indentation issues with a few nodes
+>  - separated bindings into a different patch
+>  - removed current-speed property from main_uart0{}
+>  - removed empty reserved-memory{} node
+>  - removed serial2 from aliases{} node
+>  - corrected the main_uart0{} pinmux
+>  - Link: https://lore.kernel.org/all/20241117-am62lx-v1-0-4e71e42d781d@ti.com/
+> 
+> Changes in v2:
+> - alphabetized phandles
+> - corrected macro and node names for main_uart0 pinmux
+> - Link to v2: https://lore.kernel.org/r/20250108-am62lx-v2-0-581285a37d8f@ti.com
+> 
+> Changes in v3:
+> - added more nodes which have been validated
+> - added link to data sheet which is now public
+> - Link to v3: https://lore.kernel.org/r/20250109-am62lx-v3-0-ef171e789527@ti.com
+> 
+> Changes in v4:
+> - corrected copyright date
+> - used the ranges property for the fss{} node
+> - converted control MMR's space into a syscon{} node
+> - Link to v4: https://lore.kernel.org/r/20250407-am62lx-v4-0-ce97749b9eae@ti.com
+> 
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
+> ---
+> Bryan Brattlof (1):
+>       dt-bindings: arm: ti: Add binding for AM62L SoCs
+> 
+> Vignesh Raghavendra (2):
+>       arm64: dts: ti: k3-am62l: add initial infrastructure
+>       arm64: dts: ti: k3-am62l: add initial reference board file
+> 
+>  Documentation/devicetree/bindings/arm/ti/k3.yaml |   6 +
+>  arch/arm64/boot/dts/ti/Makefile                  |   3 +
+>  arch/arm64/boot/dts/ti/k3-am62l-main.dtsi        | 673 +++++++++++++++++++++++
+>  arch/arm64/boot/dts/ti/k3-am62l-thermal.dtsi     |  25 +
+>  arch/arm64/boot/dts/ti/k3-am62l-wakeup.dtsi      | 133 +++++
+>  arch/arm64/boot/dts/ti/k3-am62l.dtsi             | 121 ++++
+>  arch/arm64/boot/dts/ti/k3-am62l3-evm.dts         | 294 ++++++++++
+>  arch/arm64/boot/dts/ti/k3-am62l3.dtsi            |  67 +++
+>  arch/arm64/boot/dts/ti/k3-pinctrl.h              |   2 +
+>  9 files changed, 1324 insertions(+)
+> ---
+> base-commit: ed6f779e213070572e53e9801e4a6e510d7bc208
+> change-id: 20241220-am62lx-ca9498efd87e
+> 
+> Best regards,
+> --
+> Bryan Brattlof <bb@ti.com>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit ed6f779e213070572e53e9801e4a6e510d7bc208
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250507-am62lx-v5-0-4b57ea878e62@ti.com:
+
+arch/arm64/boot/dts/ti/k3-am62l3-evm.dtb: serial@0 (ti,am64-uart): clock-names:0: 'fclk' was expected
+	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
+arch/arm64/boot/dts/ti/k3-am62l3-evm.dtb: syscon@43000000 (syscon): compatible: ['syscon', 'simple-mfd'] is too short
+	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+arch/arm64/boot/dts/ti/k3-am62l3-evm.dtb: syscon@9000000 (syscon): compatible: ['syscon', 'simple-mfd'] is too short
+	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+arch/arm64/boot/dts/ti/k3-am62l3-evm.dtb: syscon@9000000 (syscon): 'reg' is a required property
+	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+arch/arm64/boot/dts/ti/k3-am62l3-evm.dtb: spi@fc40000 (ti,am654-ospi): '#address-cells' is a dependency of '#size-cells'
+	from schema $id: http://devicetree.org/schemas/reg.yaml#
+
+
+
+
 
 
