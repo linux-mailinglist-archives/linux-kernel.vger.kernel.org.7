@@ -1,96 +1,208 @@
-Return-Path: <linux-kernel+bounces-641484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D35AB1268
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:42:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6BAAB1265
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695C69E8082
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C4A170639
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23832868B5;
-	Fri,  9 May 2025 11:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A27E1;
+	Fri,  9 May 2025 11:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UIddWNpX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qu8Rma97"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ayri1AN/"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B744B22CBFA
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E966D219319
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746790949; cv=none; b=GOZ8DRQYtfkRgKUA5iFx6eeApC1vDismppTv5EyrgJxc2tOF7c6MiVwiMzfECP2DKfGX9tMU1snukwruG5evWTaXwUUM+8mZs0OH2M2ntZy4GR5+0hR7OVf8Zdok18Jb1R3Zbyedp/bCYNrGcDOlMLbfpl/891SGDUc1vUWvI34=
+	t=1746790911; cv=none; b=FMbBRtV5iy9jdSGc29KkvRsAe6eKqi8aslQHvhcufndfC2IG8wH2CxzgdLDfBuuO0zRljDUsAmOKeC6hriRcZECaEwSWYKjGerhxoLb7eRyzy2qnJpDk429Kd7H7ibOBzplN3gQ//wG5Lxdmj9ikMr92BBmEWdHZL0DY8qBCuAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746790949; c=relaxed/simple;
-	bh=iK2diWWL7SEKJTvivh0AhIesSNavfkhZunYjEvgYPoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z+rYm04+WAzj707YYLDpScJpJghXBvfOYcqJz9JnJJ/f5n8pPS+8/AIPZi4YJQqSYFpo2ZIc+v3bx8XdOmg3bUTxAKG0ZjEKul+aphdssKa+12tvxSXwb5rrrtcOlUTam1rkC5B1udU9GZa0WmYWqfJ2pvMPc+Nil+/VSy1GOqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UIddWNpX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qu8Rma97; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 9 May 2025 13:41:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746790945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=snQGn3xkyfkLKxl270cjn9zJAlwW6Miuy7BG3qnc0b4=;
-	b=UIddWNpX+tQFvNsJ7wKQUOZXz6yVrsTTZTVDB1na2HLLLfuXF8NL7/oaFKvjt1XSvpKJ/Y
-	KlSEu3Ln9Wt8EDWDISVq6sR/QDdz11neT5rZCEEjNi9jjGPc7czNlwj7RIdI0ddYUj47W8
-	NU3z1RjNz3B36G2xTMxBk5sbEvcSzDwlu1tM/YnM8UxtT+HPmeA0zOysaPgi5GY2WIBnjG
-	KgGdCg5qRZiL8Plw1vyAJekrYhFG5/b538k5yPARS0SZOIqoKsyoM/ju9rZmt+JYFG9ZR0
-	lbKGIwl1C+VFnjaj9He7yXSChnDkEH0gawH9cpzmpFJIVnrAh6ZN8hPW8RPs8Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746790945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=snQGn3xkyfkLKxl270cjn9zJAlwW6Miuy7BG3qnc0b4=;
-	b=Qu8Rma97oz0zQ19GvOE/G4qR6LspFZ/V58cFLIEzQdurLhq0dAHiaeBmoRu1mF4e4h3HrK
-	+Ub9MXvWI3gdKOCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v12 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-Message-ID: <20250509114105.HZdDPPO5@linutronix.de>
-References: <20250416162921.513656-1-bigeasy@linutronix.de>
- <20250416163142.aKBzQeqK@linutronix.de>
- <20250502194807.GD24078@noisy.programming.kicks-ass.net>
- <20250503100905.GG4356@noisy.programming.kicks-ass.net>
- <20250505073036.ikHE6K4T@linutronix.de>
- <20250506073611.GH4198@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1746790911; c=relaxed/simple;
+	bh=21R4CdsJlxo6ZIUB4aWnLHQhzIqhbI+E6wdmGGSh4zs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YQKSPA5VAhRYaQrcBHw9lKg42nOnRLsdqpUGOB6iBpIUFwBJbLZVOvRyNWkcgB7dBIylBcYjyGCHHTwPxjLva3UjDSpLv1FEsoTXayJI9g8Hdww3Iwi8uWOCRX+c3+PYPBIF8SCl+nEzKC+MlUJaW6Np4whZ9zXufpRjiorp95c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ayri1AN/; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-acae7e7587dso292953166b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1746790907; x=1747395707; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xqSqgdbr6mkrFUbRKHE1fLZLEEIHfO7KWsMJjVuS+q4=;
+        b=ayri1AN/SeBgJ2RHWOluJm//i1J26QV+grwv7cw760nXkqFlLPeqM3zfaIicoUnJQV
+         nR0ZkT2odUUfKWb61TYl5guqeewzxnJ9UpeOyzbuCRZq3DJltHrP/pBowx17XdQZ/+TM
+         bAYDL0AILCtYvyS+Hmq1aBlwNDmX5EknHeVUbG7SFjK6fDzCpNjhg4YxMlpkFfK7intx
+         5D9LEFukgf9Stu+h2kwp8wr9NIWnCYb4SyCCYZyvegjMqOGFnf/jHJ0+ghsaKYwkmoO/
+         rXLA0I5xGaS+lf9mnzuuHTw4q5BlxuBV4kJ/9/tMjl8hNqgZLskHGWJ2fKi0YE8s5yKI
+         tvEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746790907; x=1747395707;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xqSqgdbr6mkrFUbRKHE1fLZLEEIHfO7KWsMJjVuS+q4=;
+        b=h93kkb3PJNesNqfYlpgz8TvFtJdK02rMCC4PWQYUOHQVt6OQ9DTAlw/y9NRbNuNdI/
+         ouxdcX9ds6S+iUEaAshlOtQKHzVDcZdspuMDjTDN745QfuigTsLLfbknTw61rX7yN5Gp
+         NMXSOmVivRn5+J1jvDeIOLNGLqLm/YDQ1yBOzXGDE7qJfKjlslRajX3mfmsLBW6N3lcy
+         U6oyupM6JglKrO0NOb5UJqH1kuNYrX6sSzGPj1GSoa/f4H1GoX+l9g19VGytblUVSrhn
+         V7pfpka0D81fGgL8gzkfu1KvhmQxVZfZ2PyDXb2jE4PFM54EZ2sJpxgBvX4ZVeLlTrnl
+         Mrhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoFEiXy+rm0WQzHHloUDHlBeA8odhWIjIlb5CwmN4qRIeUYuCx6UOZQ4YFMsYfViFK38K/u5PCF49ntww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrIhZCmd7alwHFsf5A39lLftsQjYxRguxzAc1icJY5LjG6oLSX
+	6KGDRcxtGdUBu0VLM0CJDv/vC2sBeDjVV2fAaAGSADc00YbcLfbrHFUJXuJ8E4M=
+X-Gm-Gg: ASbGnct5Nol63tWe/VHMNkz2unapJK4wgnsbiLpvUqlyFMofGCXc9TSmspDuphxQmCJ
+	4rze3LwBryK/ZWkwW68gVCsQ2auB1nHJpFf/L5X1CNO7VkotUVpcQ2G21ORhtyrGaxnBCRXNG9b
+	d3J7LF+xlcOrUEmtGcOaZQH28uslFRKHXBXU8ZuYl4NZZINQW/YePItZZoq5d7r6DKLkbhRr+Jg
+	mt77GPj+i5dDVpZoQXsy8wH9wejMtUrgUtONkxdZdpeiXSj+/Ch/HvHqiHP0P0LcwaD9MyBjkjF
+	dVGSaevv3vri5EwVGQc1Yuo3FaT758j/O8BJ+VgA8ZaVUQSP
+X-Google-Smtp-Source: AGHT+IG2j0Pea0l+03cwVMYbfwrcANbL1huFvD6sD/j4JhDPCTCSj3oUMBeHqG1csVa7s5Hq/oxNxw==
+X-Received: by 2002:a17:907:1907:b0:ac2:cae8:e153 with SMTP id a640c23a62f3a-ad218ea823fmr310536466b.4.1746790907122;
+        Fri, 09 May 2025 04:41:47 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd2a8sm138611966b.145.2025.05.09.04.41.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 04:41:46 -0700 (PDT)
+Message-ID: <b4771b63-3198-47c8-a83d-5133ba80d39b@tuxon.dev>
+Date: Fri, 9 May 2025 14:41:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250506073611.GH4198@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+To: Philipp Zabel <p.zabel@pengutronix.de>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, saravanak@google.com
+Cc: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250430103236.3511989-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250430103236.3511989-6-claudiu.beznea.uj@bp.renesas.com>
+ <42a5119e547685f171be6f91e476a9b595599cf9.camel@pengutronix.de>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <42a5119e547685f171be6f91e476a9b595599cf9.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-05-06 09:36:11 [+0200], Peter Zijlstra wrote:
-> Well, if you do stupid things, you get to keep the pieces or something
-> along those lines. Same as when userspace goes scribble the node value
-> while another thread is waiting and all that.
+Hi, Philipp,
+
+On 09.05.2025 13:51, Philipp Zabel wrote:
+> Hi Claudiu,
 > 
-> Even with the unconditional write back you're going to have a problem
-> with concurrent wait on the same futex.
+> On Mi, 2025-04-30 at 13:32 +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>> only as a root complex, with a single-lane (x1) configuration. The
+>> controller includes Type 1 configuration registers, as well as IP
+>> specific registers (called AXI registers) required for various adjustments.
+>>
+>> Other Renesas RZ SoCs (e.g., RZ/G3E, RZ/V2H) share the same AXI registers
+>> but have both Root Complex and Endpoint capabilities. As a result, the PCIe
+>> host driver can be reused for these variants with minimal adjustments.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  MAINTAINERS                              |    8 +
+>>  drivers/pci/controller/Kconfig           |    7 +
+>>  drivers/pci/controller/Makefile          |    1 +
+>>  drivers/pci/controller/pcie-rzg3s-host.c | 1561 ++++++++++++++++++++++
+>>  4 files changed, 1577 insertions(+)
+>>  create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
+>>
+> [...]
+>> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+>> new file mode 100644
+>> index 000000000000..c3bce0acd57e
+>> --- /dev/null
+>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+>> @@ -0,0 +1,1561 @@
+> [...]
+>> +static int rzg3s_pcie_resets_bulk_set(int (*action)(int num, struct reset_control_bulk_data *rstcs),
+>> +				      struct reset_control **resets, u8 num_resets)
+>> +{
+>> +	struct reset_control_bulk_data *data __free(kfree) =
+>> +		kcalloc(num_resets, sizeof(*data), GFP_KERNEL);
+>> +
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	for (u8 i = 0; i < num_resets; i++)
+>> +		data[i].rstc = resets[i];
+>> +
+>> +	return action(num_resets, data);
+>> +}
+> 
+> What is the purpose of this? Can't you just store struct
+> reset_control_bulk_data in struct rzg3s_pcie_host and call
+> reset_control_bulk_assert/deassert() directly?
 
-We could add a global lock for the write back case to ensure there is
-only one at a time. However let me document the current behaviour of the
-new pieces and tick it off ;)
+Yes, I can. I was trying to avoid storing also the reset_control_bulk_data
+in struct rzg3s_pcie_host since all that is needed can be retrieved from
+the already parsed in probe cfg_resets and power_resets.
 
-Sebastian
+> 
+>> +static int
+>> +rzg3s_pcie_resets_init(struct device *dev, struct reset_control ***resets,
+>> +		       struct reset_control *(*action)(struct device *dev, const char *id),
+>> +		       const char * const *reset_names, u8 num_resets)
+>> +{
+>> +	*resets = devm_kcalloc(dev, num_resets, sizeof(struct reset_control *), GFP_KERNEL);
+>> +	if (!*resets)
+>> +		return -ENOMEM;
+>> +
+>> +	for (u8 i = 0; i < num_resets; i++) {
+>> +		(*resets)[i] = action(dev, reset_names[i]);
+>> +		if (IS_ERR((*resets)[i]))
+>> +			return PTR_ERR((*resets)[i]);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> 
+> Why not use devm_reset_control_bulk_get_exclusive() directly?
+
+I wasn't able to find a bulk_get_exclusive_deasserted() kind of API.
+
+This IP needs particular sequence for configuration. First, after power on,
+the following resets need to be de-asserted:
+
+	const char * const power_resets[] = {
+		"aresetn", "rst_cfg_b", "rst_load_b",
+	};
+
+then, after proper values are written into the configuration registers, the
+rest of the resets need to be de-asserted:
+
+	const char * const cfg_resets[] = {
+		"rst_b", "rst_ps_b", "rst_gp_b", "rst_rsm_b",
+	};
+
+So I was trying to get and de-assert the power_resets in probe and just get
+the cfg_resets in the 1st step of the initialization, and later to
+de-assert the cfg_resets as well.
+
+Now, after you pointed it out, maybe you are proposing to just
+get_exclusive everything in one shot and then to de-assert what is needed
+at proper moments with generic reset control APIs?
+
+Thank you for your review,
+Claudiu
 
