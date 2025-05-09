@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-641493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEC2AB1281
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:51:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66FFAB1294
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73C44A5097
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:51:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94CAF7B8FA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B6F28FABC;
-	Fri,  9 May 2025 11:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P2NFZNQi"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E517D255F22;
-	Fri,  9 May 2025 11:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721EA290D90;
+	Fri,  9 May 2025 11:51:45 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9927E28ECD8;
+	Fri,  9 May 2025 11:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746791467; cv=none; b=ODyr8ow1moIrY5/eFG9zAbOwL065PkwZZv1Tq5SUW8glfrlBZ6CUgBG1m3brzt4tk7LJBx5GTR3sDBfqUg91c2D2+C0g9otQEj6UX/z1zcdqKklZpLmoukclMs7E+csaAVdV5wSHzJddlh9q2PbkJ+2LEHqvMdoh3U9WZKDcJ3c=
+	t=1746791504; cv=none; b=lx579mM2O8vJbEKZALHEvp6bR9yabhugpvjlCuLnHxyLYsW5+JNcXFtYapwuzLvAwZV1KBjD6XO5wGvCdCoSfnW6c1HC2k618MmIT8XSqncvz4PzEotJeKtj8qNhn5Yj5oGrO5zTV8+d9zu616bwM6350SRQxrXFfA+ATdXd9rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746791467; c=relaxed/simple;
-	bh=xWAVJ7WXntaXs6R6b/9gxW02yhTWzLotIqYjdIhWdpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hPHVu/IUX0hMHk3So7sbYbUy5nLBTnDQ1oYAGBrhk6GYJa/Cl0xR0IIUNAaZG1BLShXa/Fu2T81xQRyc4q7IsdSMjybPiIRU57NMkaZ0K9wFof4Xd8EbpOe6wYS2TlWdmnWDkWPpT2gA5n3R5B/5+PQ1L1+/JCeAbRdhRssUl2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P2NFZNQi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549BOjgC011683;
-	Fri, 9 May 2025 11:50:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/wcjyC4RU0XzRhe03o9O3Yoll6G1rZmCSFvV0iAa+k0=; b=P2NFZNQiPeg6rBnl
-	apvrkTjvEkEWeX7mlYc62KKmAquKX3ChxF0FtRZEmDBPm0qgzxGNFj6jQ7nxdwc5
-	GEMoVTKOaejFavPOROH+rwO2kZ0YC9ZtexH70/1pbEF7jYtIqc7xlIhr8ZMnv2Sz
-	feSLhKQnzxCs44/BxhNy2ENtPoL7ceCqlMBeE0KI+igmTsvI5iHdjW31+qAPYU4F
-	0nZShgM1HOVpgvB9U8E3f/hm2rY0SEgm2jG5WEp4e1RkdhG3zN4CvhQfy9wSsiZG
-	dPoq0V1O/3/n8tkDd1KSbNLSeua6ZOld2Yn3kDGQe4HrYTuhAu/Plpd0ntOFFnjw
-	3V6ijQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnpmmhsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 11:50:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 549BoibW009832
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 May 2025 11:50:44 GMT
-Received: from [10.216.32.234] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 May 2025
- 04:50:38 -0700
-Message-ID: <584c9160-165c-467a-9ef0-1b6fd0441012@quicinc.com>
-Date: Fri, 9 May 2025 17:20:33 +0530
+	s=arc-20240116; t=1746791504; c=relaxed/simple;
+	bh=ahRvGyDp/0glVQdyyjcRPGs0TtGVJN5Yys2SjqBdLGg=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=jYStlKyFw3AllEGuA6J21WWMU7scTqCGlFbkyMc1g8y16MbbfUf7pkA2S1hOHxLrOPTyBTceoDn5PYHuFp9xJAEAa4B7InwmiwsKGFY22O2H1d+iM2FvRKIHmkU2S2yEYognZ5jDchjS7vjnZONHMFH0XSjcIVFRGiGzuxdmHw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-26-681dec488b68
+From: Byungchul Park <byungchul@sk.com>
+To: willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel_team@skhynix.com,
+	kuba@kernel.org,
+	almasrymina@google.com,
+	ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com,
+	hawk@kernel.org,
+	akpm@linux-foundation.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	john.fastabend@gmail.com,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	vishal.moola@gmail.com
+Subject: [RFC 00/19] Split netmem from struct page
+Date: Fri,  9 May 2025 20:51:07 +0900
+Message-Id: <20250509115126.63190-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsXC9ZZnoa7nG9kMgzfPWCzmrF/DZrH6R4XF
+	8gc7WC2+/LzNbrF44TdmiznnW1gsnh57xG5xfxlQ2Z727cwWvS2/mS2adqxgsriwrY/V4vKu
+	OWwW99b8Z7U4tkDM4tvpN4wW6/fdYLX4/WMOm4OQx5aVN5k8ds66y+6xYFOpx+YVWh5dNy4x
+	e2xa1cnmsenTJHaPO9f2sHmcmPGbxWPnjs9MHh+f3mLxeL/vKpvH501yAbxRXDYpqTmZZalF
+	+nYJXBnPFjxnKrgmW3F+TQtrA+MKsS5GDg4JAROJu6dkuhg5wcxFS7+zg9hsAuoSN278ZAax
+	RQQMJT4/Os7SxcjFwSywkFniyuKfYEXCAkYSl2Y1MoLYLAKqEtcmzwWL8wqYSqzvPMAMMVRe
+	YvUGEJsLyH7OJrFo+h5WiISkxMEVN1gmMHIvYGRYxSiUmVeWm5iZY6KXUZmXWaGXnJ+7iREY
+	1Mtq/0TvYPx0IfgQowAHoxIPr8Vz2Qwh1sSy4srcQ4wSHMxKIrzPO2UyhHhTEiurUovy44tK
+	c1KLDzFKc7AoifMafStPERJITyxJzU5NLUgtgskycXBKNTC2fZr8+MCl43p2HluFon31V26z
+	31j13pA9J9owrEM7vynmxYW7B/bI6Qv+25J2VnKVjWOGb6yi8lnz2cnn7GZVvRNqKJlcc2K5
+	0O1GnxczbiTyznKImfJ7Dn+9RcGZXb1uSq/2S0XcUlb1ZufhPb+CV7BvOctip1d8xfIyV5WS
+	jrCujXcKvKLEUpyRaKjFXFScCACqmHYCZgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsXC5WfdrOvxRjbDYPpfE4s569ewWaz+UWGx
+	/MEOVosvP2+zWyxe+I3ZYs75FhaLp8cesVvcX/aMxWJP+3Zmi96W38wWTTtWMFkcnnuS1eLC
+	tj5Wi8u75rBZ3Fvzn9Xi2AIxi2+n3zBarN93g9Xi9485bA7CHltW3mTy2DnrLrvHgk2lHptX
+	aHl03bjE7LFpVSebx6ZPk9g97lzbw+ZxYsZvFo+dOz4zeXx8eovF4/2+q2wei198YPL4vEku
+	gC+KyyYlNSezLLVI3y6BK+PZgudMBddkK86vaWFtYFwh1sXIySEhYCKxaOl3dhCbTUBd4saN
+	n8wgtoiAocTnR8dZuhi5OJgFFjJLXFn8E6xIWMBI4tKsRkYQm0VAVeLa5LlgcV4BU4n1nQeY
+	IYbKS6zecIB5AiPHAkaGVYwimXlluYmZOaZ6xdkZlXmZFXrJ+bmbGIFBuqz2z8QdjF8uux9i
+	FOBgVOLhtXgumyHEmlhWXJl7iFGCg1lJhPd5p0yGEG9KYmVValF+fFFpTmrxIUZpDhYlcV6v
+	8NQEIYH0xJLU7NTUgtQimCwTB6dUA2PRj46qU44VK5mOLPNqucitmi+kce6fqtIVoTPbhDat
+	qH4qsc412FRw6fRdHiUSdxrV9QKmz9fOevNgosyKnldteRXTaw8Xrf4fP08gbr4A8/f7Sws5
+	W2UqOc+cibTe+zO0R+g4b0HhvM/szmb6x810+fROJxXI5TZ/ffh/M/8FoZO1xy9bzVFiKc5I
+	NNRiLipOBABTo7tITgIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 11/11] scsi: ufs: qcom: Prevent calling phy_exit before
- phy_init
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <manivannan.sadhasivam@linaro.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-        <bvanassche@acm.org>, <andersson@kernel.org>,
-        <neil.armstrong@linaro.org>
-CC: <quic_rdwivedi@quicinc.com>, <quic_cang@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-References: <20250503162440.2954-1-quic_nitirawa@quicinc.com>
- <20250503162440.2954-12-quic_nitirawa@quicinc.com>
- <104e863f-a5c6-432d-8f65-0fd87602b288@oss.qualcomm.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <104e863f-a5c6-432d-8f65-0fd87602b288@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=TpjmhCXh c=1 sm=1 tr=0 ts=681dec14 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=IgDchYdROQb07t49yvYA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 7GUXL9fFmOILJ7u6gsJL1VsLiBh9R1dg
-X-Proofpoint-GUID: 7GUXL9fFmOILJ7u6gsJL1VsLiBh9R1dg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDExNCBTYWx0ZWRfXxFnx14iNA0W2
- ZtlgknrmvaXtajTYoq0RWWHYb3Q67e3x6P0SR7AwVCz5pfTAaI6dpxLMnm+/rh8VvPJA4LkcHWv
- fXUw3RVN3zT+T3ElvN21TlP9fR+wUlkDOSBJQ1TgoASSNUQTbHtnw6I+weDxwjgdVlw47yoD4I2
- vBDmMa0iU6ONl9mrkcgGb867p7NkQQiQLyIVcPStQJzSF7S1DuwW/vSN1TNUScNb22DwCVwl6cq
- bT6I+HA6rZPMe1SWxxQxrL/mXJ301Ln99yo4apjeLWQnxp5h055ZCoItKysYP171bkh82+fSSJE
- x6YjfNIDsREEGPYoitl0d7oqfCl8tQNokOzxHAfuLHAB8vDeibU6zD1s6e4JfFBfXBSCUWMNzEa
- d5Q6KZ2u7SivGupjYRf+hQpsczQW/kvrRWT6VhRowZLgBqxWj0QsLvSwUA0380UfUY0troG/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_04,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 suspectscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 mlxscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505090114
+
+The MM subsystem is trying to reduce struct page to a single pointer.
+The first step towards that is splitting struct page by its individual
+users, as has already been done with folio and slab.  This patchset does
+that for netmem which is used for page pools.
+
+Matthew Wilcox tried and stopped the same work, you can see in:
+
+   https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
+
+Mina Almasry already has done a lot fo prerequisite works by luck, he
+said :).  I stacked my patches on the top of his work e.i. netmem.
+
+I focused on removing the page pool members in struct page this time,
+not moving the allocation code of page pool from net to mm.  It can be
+done later if needed.
+
+There are still a lot of works to do, to remove the dependency on struct
+page in the network subsystem.  I will continue to work on this after
+this base patchset is merged.
+
+This patchset is based on mm tree's mm-unstable branch.
+
+Byungchul Park (19):
+  netmem: rename struct net_iov to struct netmem_desc
+  netmem: introduce netmem alloc/put API to wrap page alloc/put API
+  page_pool: use netmem alloc/put API in __page_pool_alloc_page_order()
+  page_pool: rename __page_pool_alloc_page_order() to
+    __page_pool_alloc_large_netmem()
+  page_pool: use netmem alloc/put API in __page_pool_alloc_pages_slow()
+  page_pool: rename page_pool_return_page() to page_pool_return_netmem()
+  page_pool: use netmem alloc/put API in page_pool_return_netmem()
+  page_pool: rename __page_pool_release_page_dma() to
+    __page_pool_release_netmem_dma()
+  page_pool: rename __page_pool_put_page() to __page_pool_put_netmem()
+  page_pool: rename __page_pool_alloc_pages_slow() to
+    __page_pool_alloc_netmems_slow()
+  mlx4: use netmem descriptor and API for page pool
+  netmem: introduce page_pool_recycle_direct_netmem()
+  page_pool: expand scope of is_pp_{netmem,page}() to global
+  mm: page_alloc: do not directly access page->pp_magic but use
+    is_pp_page()
+  mlx5: use netmem descriptor and API for page pool
+  netmem: use _Generic to cover const casting for page_to_netmem()
+  netmem: remove __netmem_get_pp()
+  page_pool: make page_pool_get_dma_addr() just wrap
+    page_pool_get_dma_addr_netmem()
+  mm, netmem: remove the page pool members in struct page
+
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c    |  46 ++++----
+ drivers/net/ethernet/mellanox/mlx4/en_tx.c    |   8 +-
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |   4 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en.h  |   4 +-
+ .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  18 +--
+ .../net/ethernet/mellanox/mlx5/core/en/xdp.h  |   2 +-
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |  15 ++-
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  66 +++++------
+ include/linux/mm_types.h                      |  13 +--
+ include/linux/skbuff.h                        |  18 ++-
+ include/net/netmem.h                          |  88 +++++----------
+ include/net/netmem_type.h                     |  22 ++++
+ include/net/page_pool/helpers.h               |  17 ++-
+ include/net/page_pool/memory_provider.h       |   6 +-
+ include/net/page_pool/types.h                 |   2 +
+ io_uring/zcrx.c                               |  42 +++----
+ mm/page_alloc.c                               |   5 +-
+ net/core/devmem.c                             |  14 +--
+ net/core/devmem.h                             |  24 ++--
+ net/core/page_pool.c                          | 106 ++++++++++--------
+ net/core/skbuff.c                             |   5 -
+ net/ipv4/tcp.c                                |   2 +-
+ 22 files changed, 272 insertions(+), 255 deletions(-)
+ create mode 100644 include/net/netmem_type.h
 
 
-
-On 5/9/2025 5:08 PM, Konrad Dybcio wrote:
-> On 5/3/25 6:24 PM, Nitin Rawat wrote:
->> Prevent calling phy_exit before phy_init to avoid abnormal power
->> count and the following warning during boot up.
->>
->> [5.146763] phy phy-1d80000.phy.0: phy_power_on was called before phy_init
->>
->> Fixes: 7bac65687510 ("scsi: ufs: qcom: Power off the PHY if it was already powered on in ufs_qcom_power_up_sequence()")
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> ---
->>   drivers/ufs/host/ufs-qcom.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
->> index a7e9e06847f8..db51e1e7d836 100644
->> --- a/drivers/ufs/host/ufs-qcom.c
->> +++ b/drivers/ufs/host/ufs-qcom.c
->> @@ -482,7 +482,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->>
->>   	if (phy->power_count) {
->>   		ufs_qcom_phy_power_off(hba);
->> -		phy_exit(phy);
->>   	}
-> 
-> You can also remove the {} now
-Sure will review while posting next patchset.
-> 
-> since this is a fix for existing issues, which I don't think has any dependencies
-> on your other changes, please post it as the first patch so that the maintainer
-> can pick it up more easily
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Konrad
+base-commit: fd93b3350b4314eebd8fbf0fea3ca7fe48d777e3
+-- 
+2.17.1
 
 
