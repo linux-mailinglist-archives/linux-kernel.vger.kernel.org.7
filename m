@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-641082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88578AB0CC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:13:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B7DAB0CCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC10A7BDCC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:11:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D78731BC4185
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5652741CF;
-	Fri,  9 May 2025 08:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465972750E3;
+	Fri,  9 May 2025 08:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rb3fJrpJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bBOiLAH0"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tcj2rByD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UR2e70C0"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3482701A2;
-	Fri,  9 May 2025 08:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0F2274640;
+	Fri,  9 May 2025 08:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746778364; cv=none; b=N/LGoDPDI5RyVYGE8Sk9UCiw9QWSd+YNIIzTEjzbqzvvi/4dMbzQUj+pim9DOlE2LtYLRkpIZl3vQj7naRexEq8F2vWiiPF5qChigFZoePjvynHnguCtKP3G6wfnaTFT/csX5+S1iknc/Q8jBRkxud1AydqWi9LxiMxXKVzAjvs=
+	t=1746778367; cv=none; b=g4mN5Bcla0v1tLAJni0BcmR25IDINzNFx2ipFi/eBm3HhqugLh5kxF+v/Gl/xgUWe3als//y8P7nSht7PyPBsQ0UbhZXZZ3eEFKVLs7YPurKgJ53txNGYMrhbU4uXWhFGSrte5v+KSiAfHcU3Ugj2SdmygEpfmlV1Z7gjdkFbKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746778364; c=relaxed/simple;
-	bh=hL7b/xXg10Dfkx+0PsERN/Ui/0bOajowYdyXKw7TjCc=;
+	s=arc-20240116; t=1746778367; c=relaxed/simple;
+	bh=1tyueKVzM1VJ1WDma6WPKB1nQNEG95uHkefHtTlXLuY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SBu0D1qs5FB5rdS+x+Ieyq3+bFwJ/FTwa9/BpNC8tUzwJJtmnWUngSCWlLjYemh7UijT8JrU55znDQ82tJm9+elDK/kdJbR16ow67Tad26UQQED11oVAXoR1UELY0GYFukbBYGjVJBpkguEfq47FNpSTTvzbPACH7ZlaDWLEqfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rb3fJrpJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bBOiLAH0; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=Rz8R+j71fdwNQOdGqxhP+YsUpGdSQqxVeWt9uYQiBorwD/7sLE84tacI/Jx+WgKSpNcWhHn5oV02WRw+wxsKfrqHI/DPQHalkhH0PB8CqSffR3lTYWEsap+wRQ0+ozjkLkt0Pdm/tY2IdX3D67WR9ujGofdBiXoXRj8mULfWhu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tcj2rByD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UR2e70C0; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,32 +38,30 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=swzZzE/IydoeSu7ayZIO1fbNfCOTSHYQhYBtDqPAPwY=;
-	b=rb3fJrpJpRelji2lZlzdBQLt2+Kc5WsvmRXwTpLf0QsrfgGRhbEohUDdsY5gw1JGkJLsVA
-	06wQJP+4vapksmV2sBckIM+0F8XG6pt/ojoRnqYlTTjP+pX8lvcj37CigiYxqi6qvQ350C
-	a9wi5UQme+oz0zGRx9mJ5H8bA8Y12VPKtkm2Pep2ua9thQc2HlNkoK3AmjfMsmA3hU82+g
-	pnE1a/kBqzK5UgFGaBtkxedDO37jGQS10fU1nlzyv8l7EaaiiBswUDGOaL5+A5b/ZMPFOg
-	YeSc9M5GDu0s9l8cw1sK+tJ5Mou1dnZoh3U9QQOw2P4+N10ux0cJjfXlQ4G+hA==
+	bh=quxmvFOpWEdlDXGAnbEr+RnyianRn/nmBROLE3F3T+I=;
+	b=tcj2rByDdRTDnh3kSMBf2l4oceAcOgtYp75Us5E4sTtQiBEO8QiBrIhUgZS2PheNqsPAnk
+	mjHTILZHNb3xUslwSYAvemwR57Rldkq67OAi0T9yecQMpc25C2Nhfb4XKho2y8Os9ek8PF
+	4ajtd7+iarBsrCbkCqCoexeG2IPDQ1Jy42MqZouYageK3Am+ZZAJite0FoaW/BS+5npNSF
+	k6SopZHHW1NvOMhDibIFmcpLfH5aHX3Fp6ya2kP8vthxH99hYuuSU67SrK6KnkTv6RbfnK
+	OSZNCDxutY47jVHyWIe+HqAz4GijAuDz95ZjUuqyT32EK22GS6Pl+izHj7u1zQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1746778361;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=swzZzE/IydoeSu7ayZIO1fbNfCOTSHYQhYBtDqPAPwY=;
-	b=bBOiLAH0mQ6kJLydUv8KrzKV8MIggNHV6122lVtxCNZWOFv6D/AOMFXNa1+p2UwpZYwpAP
-	5BqNzwgKeCqkIOBQ==
+	bh=quxmvFOpWEdlDXGAnbEr+RnyianRn/nmBROLE3F3T+I=;
+	b=UR2e70C0pz5/36ZPD/Fk2PBlEmip88izoSbgE6d55vQvjL9xI7yoyE9rTiykUoqpP9Or/l
+	dtRYGzNMJcEiPPBg==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: john.ogness@linutronix.de,
-	Nam Cao <namcao@linutronix.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v7 04/22] rv: Let the reactors take care of buffers
-Date: Fri,  9 May 2025 10:12:03 +0200
-Message-Id: <a2e40a965189ab082af7f985102dde2f72fd83fe.1746776116.git.namcao@linutronix.de>
+	Nam Cao <namcao@linutronix.de>
+Subject: [PATCH v7 05/22] verification/dot2k: Make a separate dot2k_templates/Kconfig_container
+Date: Fri,  9 May 2025 10:12:04 +0200
+Message-Id: <ad8c0a233c0dfd167530231f2f828d0d5a6af5c9.1746776116.git.namcao@linutronix.de>
 In-Reply-To: <cover.1746776116.git.namcao@linutronix.de>
 References: <cover.1746776116.git.namcao@linutronix.de>
 Precedence: bulk
@@ -74,198 +72,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Each RV monitor has one static buffer to send to the reactors. If multiple
-errors are detected simultaneously, the one buffer could be overwritten.
+A generated container's Kconfig has an incorrect line:
 
-Instead, leave it to the reactors to handle buffering.
+    select DA_MON_EVENTS_IMPLICIT
+
+This is due to container generation uses the same template Kconfig file as
+deterministic automaton monitor.
+
+Therefore, make a separate Kconfig template for container which has only
+the necessaries for container.
 
 Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Alternatively, we could also modify the Python scripts. I tried both and
+this solution seems cleaner.
 ---
- include/linux/rv.h               |  9 +++++--
- include/rv/da_monitor.h          | 45 +++++++-------------------------
- kernel/trace/rv/reactor_panic.c  |  8 ++++--
- kernel/trace/rv/reactor_printk.c |  8 ++++--
- kernel/trace/rv/rv_reactors.c    |  2 +-
- 5 files changed, 30 insertions(+), 42 deletions(-)
+ tools/verification/dot2/dot2k.py                          | 3 ++-
+ tools/verification/dot2/dot2k_templates/Kconfig_container | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+ create mode 100644 tools/verification/dot2/dot2k_templates/Kconfig_contain=
+er
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 3452b5e4b29e..9428e62eb8e9 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -38,7 +38,7 @@ union rv_task_monitor {
- struct rv_reactor {
- 	const char		*name;
- 	const char		*description;
--	void			(*react)(char *msg);
-+	__printf(1, 2) void	(*react)(const char *msg, ...);
- };
- #endif
+diff --git a/tools/verification/dot2/dot2k.py b/tools/verification/dot2/dot=
+2k.py
+index 745d35a4a379..dd4b5528a4f2 100644
+--- a/tools/verification/dot2/dot2k.py
++++ b/tools/verification/dot2/dot2k.py
+@@ -35,6 +35,7 @@ class dot2k(Dot2c):
+             self.states =3D []
+             self.main_c =3D self.__read_file(self.monitor_templates_dir + =
+"main_container.c")
+             self.main_h =3D self.__read_file(self.monitor_templates_dir + =
+"main_container.h")
++            self.kconfig =3D self.__read_file(self.monitor_templates_dir +=
+ "Kconfig_container")
+         else:
+             super().__init__(file_path, extra_params.get("model_name"))
 =20
-@@ -50,7 +50,7 @@ struct rv_monitor {
- 	void			(*disable)(void);
- 	void			(*reset)(void);
- #ifdef CONFIG_RV_REACTORS
--	void			(*react)(char *msg);
-+	__printf(1, 2) void	(*react)(const char *msg, ...);
- #endif
- };
-=20
-@@ -64,6 +64,11 @@ void rv_put_task_monitor_slot(int slot);
- bool rv_reacting_on(void);
- int rv_unregister_reactor(struct rv_reactor *reactor);
- int rv_register_reactor(struct rv_reactor *reactor);
-+#else
-+static inline bool rv_reacting_on(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_RV_REACTORS */
-=20
- #endif /* CONFIG_RV */
-diff --git a/include/rv/da_monitor.h b/include/rv/da_monitor.h
-index 510c88bfabd4..15f9ed4e4bb6 100644
---- a/include/rv/da_monitor.h
-+++ b/include/rv/da_monitor.h
-@@ -19,45 +19,22 @@
- #ifdef CONFIG_RV_REACTORS
-=20
- #define DECLARE_RV_REACTING_HELPERS(name, type)							\
--static char REACT_MSG_##name[1024];								\
--												\
--static inline char *format_react_msg_##name(type curr_state, type event)		=
-	\
--{												\
--	snprintf(REACT_MSG_##name, 1024,							\
--		 "rv: monitor %s does not allow event %s on state %s\n",			\
--		 #name,										\
--		 model_get_event_name_##name(event),						\
--		 model_get_state_name_##name(curr_state));					\
--	return REACT_MSG_##name;								\
--}												\
--												\
--static void cond_react_##name(char *msg)							\
-+static void cond_react_##name(type curr_state, type event)					\
- {												\
--	if (rv_##name.react)									\
--		rv_##name.react(msg);								\
--}												\
--												\
--static bool rv_reacting_on_##name(void)								\
--{												\
--	return rv_reacting_on();								\
-+	if (!rv_reacting_on() || !rv_##name.react)						\
-+		return;										\
-+	rv_##name.react("rv: monitor %s does not allow event %s on state %s\n",		=
-	\
-+			#name,									\
-+			model_get_event_name_##name(event),					\
-+			model_get_state_name_##name(curr_state));				\
- }
-=20
- #else /* CONFIG_RV_REACTOR */
-=20
- #define DECLARE_RV_REACTING_HELPERS(name, type)							\
--static inline char *format_react_msg_##name(type curr_state, type event)		=
-	\
--{												\
--	return NULL;										\
--}												\
--												\
--static void cond_react_##name(char *msg)							\
-+static void cond_react_##name(type curr_state, type event)					\
- {												\
- 	return;											\
--}												\
--												\
--static bool rv_reacting_on_##name(void)								\
--{												\
--	return 0;										\
- }
- #endif
-=20
-@@ -170,8 +147,7 @@ da_event_##name(struct da_monitor *da_mon, enum events_=
-##name event)				\
- 		return true;									\
- 	}											\
- 												\
--	if (rv_reacting_on_##name())								\
--		cond_react_##name(format_react_msg_##name(curr_state, event));			\
-+	cond_react_##name(curr_state, event);							\
- 												\
- 	trace_error_##name(model_get_state_name_##name(curr_state),				\
- 			   model_get_event_name_##name(event));					\
-@@ -202,8 +178,7 @@ static inline bool da_event_##name(struct da_monitor *d=
-a_mon, struct task_struct
- 		return true;									\
- 	}											\
- 												\
--	if (rv_reacting_on_##name())								\
--		cond_react_##name(format_react_msg_##name(curr_state, event));			\
-+	cond_react_##name(curr_state, event);							\
- 												\
- 	trace_error_##name(tsk->pid,								\
- 			   model_get_state_name_##name(curr_state),				\
-diff --git a/kernel/trace/rv/reactor_panic.c b/kernel/trace/rv/reactor_pani=
-c.c
-index 0186ff4cbd0b..74c6bcc2c749 100644
---- a/kernel/trace/rv/reactor_panic.c
-+++ b/kernel/trace/rv/reactor_panic.c
-@@ -13,9 +13,13 @@
- #include <linux/init.h>
- #include <linux/rv.h>
-=20
--static void rv_panic_reaction(char *msg)
-+__printf(1, 2) static void rv_panic_reaction(const char *msg, ...)
- {
--	panic(msg);
-+	va_list args;
-+
-+	va_start(args, msg);
-+	vpanic(msg, args);
-+	va_end(args);
- }
-=20
- static struct rv_reactor rv_panic =3D {
-diff --git a/kernel/trace/rv/reactor_printk.c b/kernel/trace/rv/reactor_pri=
-ntk.c
-index 178759dbf89f..2dae2916c05f 100644
---- a/kernel/trace/rv/reactor_printk.c
-+++ b/kernel/trace/rv/reactor_printk.c
-@@ -12,9 +12,13 @@
- #include <linux/init.h>
- #include <linux/rv.h>
-=20
--static void rv_printk_reaction(char *msg)
-+__printf(1, 2) static void rv_printk_reaction(const char *msg, ...)
- {
--	printk_deferred(msg);
-+	va_list args;
-+
-+	va_start(args, msg);
-+	vprintk_deferred(msg, args);
-+	va_end(args);
- }
-=20
- static struct rv_reactor rv_printk =3D {
-diff --git a/kernel/trace/rv/rv_reactors.c b/kernel/trace/rv/rv_reactors.c
-index 9501ca886d83..740603670dd1 100644
---- a/kernel/trace/rv/rv_reactors.c
-+++ b/kernel/trace/rv/rv_reactors.c
-@@ -490,7 +490,7 @@ void reactor_cleanup_monitor(struct rv_monitor_def *mde=
-f)
- /*
-  * Nop reactor register
-  */
--static void rv_nop_reaction(char *msg)
-+__printf(1, 2) static void rv_nop_reaction(const char *msg, ...)
- {
- }
-=20
+@@ -44,7 +45,7 @@ class dot2k(Dot2c):
+             self.monitor_type =3D MonitorType
+             self.main_c =3D self.__read_file(self.monitor_templates_dir + =
+"main.c")
+             self.trace_h =3D self.__read_file(self.monitor_templates_dir +=
+ "trace.h")
+-        self.kconfig =3D self.__read_file(self.monitor_templates_dir + "Kc=
+onfig")
++            self.kconfig =3D self.__read_file(self.monitor_templates_dir +=
+ "Kconfig")
+         self.enum_suffix =3D "_%s" % self.name
+         self.description =3D extra_params.get("description", self.name) or=
+ "auto-generated"
+         self.auto_patch =3D extra_params.get("auto_patch")
+diff --git a/tools/verification/dot2/dot2k_templates/Kconfig_container b/to=
+ols/verification/dot2/dot2k_templates/Kconfig_container
+new file mode 100644
+index 000000000000..a606111949c2
+--- /dev/null
++++ b/tools/verification/dot2/dot2k_templates/Kconfig_container
+@@ -0,0 +1,5 @@
++config RV_MON_%%MODEL_NAME_UP%%
++	depends on RV
++	bool "%%MODEL_NAME%% monitor"
++	help
++	  %%DESCRIPTION%%
 --=20
 2.39.5
 
