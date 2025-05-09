@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-642131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48127AB1AE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:50:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C899AB1A52
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C59500F18
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E8B18882F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145C7237163;
-	Fri,  9 May 2025 16:50:37 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22A2356B9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 16:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0042367DE;
+	Fri,  9 May 2025 16:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuKjVZbX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9B9235BF1;
+	Fri,  9 May 2025 16:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746809436; cv=none; b=M2KIa0S5ezb7OF2pUU3SyFZiIp3M65KzG3PtLIZH5ueqMukm78FRMkxMb+c6RZSV1vT+deLwTUBgJNlNT3sBuq73A0ufDEDNM36FLlRFq9j06Y7MGfcJZuq7ItTagAVccgebv1Ppr+X+gUQCITD3qLEGDrS4vrgGei74xRtR6eE=
+	t=1746807413; cv=none; b=m/koeOlRhnUGoNQP0Fp3369sPMmQCEJ/frBmh4l/7ZAul2gz3WOrligCQUoqvWbZgVWqwJoaJMzVer2vAv0sVhFHBIe27PaTN5kIAy+cDd1Q/mOi2eAcKK98oNyCVJ1NgQeDrz//PJ8s9xxmdQcJE72IG+viiX7qautGWb/4P9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746809436; c=relaxed/simple;
-	bh=1jT1yorK6spsB2LsqYn5aVHCdjls6dUPcNPyt5eG2BY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nXE0a2a3OcJVcAaEOTsrffw1hj6Ieu2OMilBvNtMNdU15DvCg4CLxJtj5hp5azWRvCUS/rCmRhhwi8wbkLaWCq0U0k9zZu4LCYiaGkbZMhpOomqzsug3sV/LXaftCLKMHAvghjm3SwL1TTHXrGzrjnkqFN16ELiSz/N01+LFhI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4ZvDfC6QXQz9s36;
-	Fri,  9 May 2025 18:16:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id bmZ_rCyi93iu; Fri,  9 May 2025 18:16:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZvDfC5bgPz9s2l;
-	Fri,  9 May 2025 18:16:51 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B57FD8B776;
-	Fri,  9 May 2025 18:16:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id tsIaKHYPXzrZ; Fri,  9 May 2025 18:16:51 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 353888B768;
-	Fri,  9 May 2025 18:16:51 +0200 (CEST)
-Message-ID: <40ccd7fb-a1c8-4fb0-8813-0575c4afe505@csgroup.eu>
-Date: Fri, 9 May 2025 18:16:50 +0200
+	s=arc-20240116; t=1746807413; c=relaxed/simple;
+	bh=9LQ7U1q484EMBGzcv2NLb3WZTde10mn4MnfvrW94KnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCmUVtgQZ8Mhq7Ijy88yQFv/XeznBgowKrxYF07erIVCRP4xMuXJWvlTtGseH4ZkwdWLXiPnrIfsir+tCZg1J0OFEuUO+lwcwm8k0o6QAFE8vGeJBvhNBIQAKOg/lsXzmOJk3yW7C3qCmUypTfFrkVZJNxkD3fUzpUtXk1ogD48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuKjVZbX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0EDC4CEE4;
+	Fri,  9 May 2025 16:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746807412;
+	bh=9LQ7U1q484EMBGzcv2NLb3WZTde10mn4MnfvrW94KnQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VuKjVZbX3m+XkLcmmq4SMw/O6/AcM7cZmvVJNNInHmmG4amWUIEefBJ2vTCf9fMVh
+	 EA14kx+EoQty/caFt2uvocikYqE2iddJOAbSOfYghvOzUfsuOUbpunu5sqvNKU7dQt
+	 vjs3XFiaJMAMCRXRv54Ral5dkbC7r0ekW6r196GTUol0WaSf+lKNAa13I7zoxh7Iiq
+	 XZvMx7WJZyNipq7abnxLWuAkzGFn5CZ3o1SIMA95HkXCG5se/r6kSNOOjciBKi6lSE
+	 49XjDBgOQhM/8but/tkucCB36MVG+zKfUkH3QBFAMuibGgyitbJopW8NuEhNkA9b31
+	 EIDAKh8qJ4i5A==
+Date: Fri, 9 May 2025 09:16:50 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-mm@kvack.org,
+	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 04/12] mm: move randomize_va_space into memory.c
+Message-ID: <aB4qclsUbZVVs9xq@bombadil.infradead.org>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-4-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] soc: fsl: qe: remove unused qe_ic_from_irq function
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, qiang.zhao@nxp.com,
- leoyang.li@nxp.com, nathan@kernel.org,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Tom Rix <trix@redhat.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20230320125202.1721775-1-trix@redhat.com>
- <174680087395.258053.1870729490363422870.b4-ty@linaro.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <174680087395.258053.1870729490363422870.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-4-d0ad83f5f4c3@kernel.org>
 
-
-
-Le 09/05/2025 à 16:28, Krzysztof Kozlowski a écrit :
+On Fri, May 09, 2025 at 02:54:08PM +0200, Joel Granados wrote:
+> Move the randomize_va_space variable together with all its sysctl table
+> elements into memory.c. Register it to the "kernel" directory by
+> adding it to the subsys initialization calls
 > 
-> On Mon, 20 Mar 2023 08:52:02 -0400, Tom Rix wrote:
->> clang with W=1 reports
->> drivers/soc/fsl/qe/qe_ic.c:235:29: error: unused function
->>    'qe_ic_from_irq' [-Werror,-Wunused-function]
->> static inline struct qe_ic *qe_ic_from_irq(unsigned int virq)
->>                              ^
->> The use of this function was removed with
->> commit d7c2878cfcfa ("soc: fsl: qe: remove unused qe_ic_set_* functions")
->>
->> [...]
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kernel/sysctl.c.
 > 
-> 
-> Commit from 2021:
-> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2F1619002613-18216-1-git-send-email-jiapeng.chong%40linux.alibaba.com%2F&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cd5ee085f1ff64e69aec608dd8f05d608%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638823977413929827%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=kaeZGwikWMhIhz9iC6ZEVs%2Ffbd9UsZHJz7vBbODUHgg%3D&reserved=0
-> 
-> did not apply, but this applies.
-> 
-> I am annoying hitting this warning on every W=1 build, so:
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-
-
-> 
-> Applied, thanks!
-> 
-> [1/1] soc: fsl: qe: remove unused qe_ic_from_irq function
->        https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fkrzk%2Flinux-dt%2Fc%2Fd47f1233374597c348696c3da2142cc92a36fc90&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cd5ee085f1ff64e69aec608dd8f05d608%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638823977413952218%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=HzwgkKFqffwtkmoskS9Y1OhlXShSW%2B%2BZLKxc3k3fCpA%3D&reserved=0
-> 
-> Best regards,
-
+  Luis
 
