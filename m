@@ -1,107 +1,127 @@
-Return-Path: <linux-kernel+bounces-641843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F12AB1729
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AD6AB1730
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73D991C4405D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725161C439E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D19219A71;
-	Fri,  9 May 2025 14:17:31 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3F02144DE;
+	Fri,  9 May 2025 14:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="hewAkBeu"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B572139B5
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 14:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA50A1E5B82;
+	Fri,  9 May 2025 14:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800251; cv=none; b=AxttvDDsNQjJouL0Y0OPPeWzcP51nPQ+55m9d8S7MG1cvZqxbitW8JS46hPjVnFJs4ylqxPhVf00b1oCdlDXY0y3wfOXh5w5q/LBbGI2Ml7P4WQKW0xTTGWUodUg/xB+ZgP7tV0MVSVhXBhOCO9fkwXjNK1mgRdjkAUTXRYz/8s=
+	t=1746800328; cv=none; b=f7DqV+bgijkh/7+8KDUQMmbPRANVU5SlRGLbLFHxewFO0b+kIziIaGoQU5ySoiE4DIFOUhhFnzkG63PT+zeCI4d9P9otC2o2zdcQhAK0Auar1B0noa+CvZQnkh1OWFREB7FlGD9RL52qzyh5gHrLsuY25H7UOIupPEdwka9Bg+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800251; c=relaxed/simple;
-	bh=OtQKOG7VhTI3zdW6+rNp3Aflv3idF1yielCwycvSK7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNKcDRQZkIdWJ9lRM0WCa38bHMQHpTXX+zSH2J0ypWflXyL0LZqUavJLg22vyOX+mICwnB22r4/5YcuXfUW+jW7qJZrAKygSwwl4J7Vadb+KslSXEwzG25bEs5XlvpneuivmHosu+rYbtn4tdWWNn5VWl6BgYgK/VDPn8axhcy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-148.bstnma.fios.verizon.net [173.48.82.148])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 549EHFtw028787
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 May 2025 10:17:16 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id CFDAE2E00E1; Fri, 09 May 2025 10:17:15 -0400 (EDT)
-Date: Fri, 9 May 2025 10:17:15 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Attila Szasz <szasza.contact@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>, Greg KH <gregkh@linuxfoundation.org>,
-        cve@kernel.org, linux-cve-announce@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
- filesystems with manually crafted filesystem
-Message-ID: <20250509141715.GC92783@mit.edu>
-References: <2025040820-REJECTED-6695@gregkh>
- <20250509072033.1335321-1-dvyukov@google.com>
- <2025050940-marrow-roundish-8b98@gregkh>
- <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
- <2025050924-marmalade-overfill-fc5a@gregkh>
- <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
- <20250509121036.GA92783@mit.edu>
- <6191c255-84cc-4721-91d1-1884472989f7@gmail.com>
+	s=arc-20240116; t=1746800328; c=relaxed/simple;
+	bh=K/Qfs3+JXPjQFxdXIhUR3acZ/8Eb5wwetSO8CwTUPJ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vAaY+lJP23CXoEfjSklucd8o11c5s4BUCfo/DHB0kv8nFjsyrdWDW1iCCB3XL98HtAOSjBu7VtbtyuxjPzszxypFy2Cq6QNBKRh3FnePzmnzpxGMHgb+sidooEhdn2s/ADdmrndfXxZopB9HzgyKAP+gAqlVBy1bs7mIwTRap7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=hewAkBeu; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 7250722206;
+	Fri,  9 May 2025 16:18:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1746800324;
+	bh=WiABciZh5JeYfdXWgF7so0KTIPIEJer4ove2V2q8QQI=; h=From:To:Subject;
+	b=hewAkBeuJ/GBJorEuaZV7kTk3/dGRf/27fx6mM11wyI2t4CFdRNLQEUNE2k2tOCHv
+	 fhZDttEFj04i1OHoJ5pOgUM/m2gwn8+iwuXQGvMqqfxbH6k/FWcenBg4khGwpduwBI
+	 ozCGUv+EPGklAZWX3gDsEkL1Gj4vQqdeFgV8WMIURJ8BEKGcT/jTd1tyqAp7Zcx1gx
+	 6ld1+xt0Tz+xNCnPfkwklyEWevf7wVvObsbsSK6KJF+0KP7xr85JPeNRqDIbSJmaY0
+	 9fNuzPQRoopUviExzdX3Y8uExJafjosb1JmnGL5JUzT2yKRxjAyGK2U6vjLLWu4I3+
+	 PG4VJFXCcgtxA==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	stable@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v2] gpio: pca953x: fix IRQ storm on system wake up
+Date: Fri,  9 May 2025 16:18:28 +0200
+Message-Id: <20250509141828.57851-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6191c255-84cc-4721-91d1-1884472989f7@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 09, 2025 at 03:18:19PM +0200, Attila Szasz wrote:
-> 
-> Since then, I saw Canonical folks mention that they wanted to
-> allocate a new one but needed to obfuscate the description so it no
-> longer sounds like a kernel bug.
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-Sure, it's an automounter bug; or an fsck bug, assuming that their
-system is running fsck -y on the file system before trying to mount
-the file system.
+If an input changes state during wake-up and is used as an interrupt
+source, the IRQ handler reads the volatile input register to clear the
+interrupt mask and deassert the IRQ line. However, the IRQ handler is
+triggered before access to the register is granted, causing the read
+operation to fail.
 
-> Which, incidentally, is not quite true either, it *is* a kernel bug.
-> 
-> Since then I checked, and 5.4 LTS (any<=5.6) had been vulnerable without
-> the need to ever mount an untrusted/malformed FS just by systematically
-> corrupting a vanilla fs's B-trees with normal operations.
+As a result, the IRQ handler enters a loop, repeatedly printing the
+"failed reading register" message, until `pca953x_resume` is eventually
+called, which restores the driver context and enables access to
+registers.
 
-So if you can come up with a reproducer that *starts* with a valid
-file system which passes fsck, and then using normal, non-root
-operations, you can corrupt the file system and then trigger a kernel
-crash or some vulnerability, then that's a valid security bug in my
-opinion.  I'll certainly treat it that way for ext4.
+Fix by disabling the IRQ line before entering suspend mode, and
+re-enabling it after the driver context is restored in `pca953x_resume`.
 
-But you need to demonstrate this using a reproducer that doesn't start
-with a fuzzed file system.  In my experience, this rules out 99% of
-syzbot bugs reported against ext4.  But if you can come up with such a
-reproducer, send the POC to the file system developer, and ask them to
-address it.  If it's against ext4, I'll get on it right away.
+An irq can be disabled with disable_irq() and still wake the system as
+long as the irq has wake enabled, so the wake-up functionality is
+preserved.
 
-> There was also a logic issue I wrote about that hasn't been
-> patched, since hfs_brec_find() can return with -ENOENT, and
-> hfsplus_create_attr did not treat ENOENT as a problem when
-> inserting records, resulting in a flow completely missing the
-> only boundary checks that were present earlier. With the issue
-> that commit 25efb2f patched upstream and another issue I found,
-> the condition for the rejection is no longer true.
-> The image to begin with is not even corrupt.
+Fixes: b76574300504 ("gpio: pca953x: Restore registers after suspend/resume cycle")
+Cc: stable@vger.kernel.org
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+v1 -> v2
+ - Instead of calling PM ops with disabled interrupts, just disable the
+   irq while going in suspend and re-enable it after restoring the
+   context in resume function.
+---
+ drivers/gpio/gpio-pca953x.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Great, but that's not this CVE.  Note that it was entitled "... with
-manually crafted filesystem"
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index ab2c0fd428fb..b852e4997629 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -1226,6 +1226,8 @@ static int pca953x_restore_context(struct pca953x_chip *chip)
+ 
+ 	guard(mutex)(&chip->i2c_lock);
+ 
++	if (chip->client->irq > 0)
++		enable_irq(chip->client->irq);
+ 	regcache_cache_only(chip->regmap, false);
+ 	regcache_mark_dirty(chip->regmap);
+ 	ret = pca953x_regcache_sync(chip);
+@@ -1238,6 +1240,10 @@ static int pca953x_restore_context(struct pca953x_chip *chip)
+ static void pca953x_save_context(struct pca953x_chip *chip)
+ {
+ 	guard(mutex)(&chip->i2c_lock);
++
++	/* Disable IRQ to prevent early triggering while regmap "cache only" is on */
++	if (chip->client->irq > 0)
++		disable_irq(chip->client->irq);
+ 	regcache_cache_only(chip->regmap, true);
+ }
+ 
+-- 
+2.39.5
 
-						- Ted
 
