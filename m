@@ -1,201 +1,207 @@
-Return-Path: <linux-kernel+bounces-641245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396A6AB0ECE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8F0AB0ED9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F667520FD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:22:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2E51B64D11
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEEC18E02A;
-	Fri,  9 May 2025 09:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB5C27A913;
+	Fri,  9 May 2025 09:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gbx46zna"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE12277031
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 09:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="WrPoyFx5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584FA27A11E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 09:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746782449; cv=none; b=WheFj1tTNOuAIpIXmcTgTY8rjPb6WEWTq8kjCESgcY4LsNdj/qdrFKa1+7xMjKa/I3PmXBtYLi0W7GgEKiZf+zpmiV0l1Bm9BoDD7QZngFnZ4vG8L7uBa9S1sA6VzZ+H9IAKNVKEEyVweYqv/7q0K4BYweMqjLypMWy/FZrO6ds=
+	t=1746782502; cv=none; b=IBaso0KUFyAkWv3w9S2X8RZK6lqy13KLeI+qxFPEoI/EnHfmJmrupOLG4LOVRlh55zYvguIAwd7/Fbh8PBBoTvy9jBwnXUPfbt5ayJeyhDPgrWjDHLkOr7cjIxDoo1suKRvtZzhyipT4WwjhlIFtXWczxPqw/e0BJOzc9eij/ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746782449; c=relaxed/simple;
-	bh=92OJhgzUjFkOtbE9HWjk9mos4q0J9p13l5+gly9O6B4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HHZuEcbtxeKwY+DybwSRpM2WV7iJjQfOZGLGTn5fcTFi7gwx5O0ndnbt2Utsn7rsbrBBxMHKH+LwL2d5RPSPxpeA5u0+3gurfvug+Z5ybQfsz9jbF7CCENxHRlJHAeS767300/rRJeWCDMgBDG/x7IMkH68B9YvNdPcBU5ljW5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gbx46zna; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so8679355e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 02:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746782445; x=1747387245; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xse/MuumvZWNGL7RhYB2Lqx5Phv6lYmDCP0vNNVPW4s=;
-        b=Gbx46znatBKppDSSJrbY8DcvVYpZjP2il5nvZxjJRfdz74KtY8cHN2nXOj0Wucxgly
-         xEKJfvZ6qKGE3G4+YA74EDnFs/8+HYfNQGSWCGJsgc/J/PYdUEydiDvvPE5wTVBelMT6
-         328zO7eNT/KijI9ZoXzkjtaZZTPlI2UQnFx9hS9nj0TA9qE0y2UUdV3pccmEr+2q2/cd
-         s50fqaDcyQw0TlA3btx3lt1epVONL743LZLrbToLbZx3mKZe76Cqu0eIgJNwnpRvQLTk
-         ul/021zO9eN4gKhFyvpV3qPhFVkdjvLBM9v8M+rQdqVoIUcSSUXPbHylzmpP79MyJOfN
-         8HUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746782445; x=1747387245;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xse/MuumvZWNGL7RhYB2Lqx5Phv6lYmDCP0vNNVPW4s=;
-        b=ZZUACczuRAXbWZ4Hme57cMa9VY79PnBsS8m2yZ6MGXZ7ogR46GJIQ6jiIZkAkMv5PP
-         c8Cfy+4i+t05v0YpIwx6fxd8kYcTs/K8A7u+kb3dlLQ+tcnX3yXhRS+Czog5Ja6CVeXC
-         OyrzVDaqvRxSGWJT6PFZNQHi301peWNyjiFwFw7XEJfQ9qtAXO7Ej8VpyG2Hq9LK5uCW
-         EDgP2AV614olFyYB3DcRGeQmhpv0ZCw/GMwZXLnxdLHb5vcab7NfFe2fyUA8QdDpUOib
-         Yu8VjUswvZjaXnZ6uQe/bf4U8tsTau/JhKHQhxPCjKxQBupS1Bmj+X3eTH5nm19mBQWj
-         Qf/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX7tPS6UuEN3Pb6B/XoMcJIpF3dh1NCbUWPGtMqmuNa2W54tCqKEaSJf57HXvTTLqE2YZIOVAFC+r1u8Gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+czgneBbMWNDRnN2EGIMsFhm6MbUN/W4um6mDduiGdIBY2Cog
-	rUDl7souevaNIzZTh5Vcjpyd5S1Z+d93d7uJpsDSF20vll66fptzD2KNj0QrBVgL2RLzn9NR46V
-	2FPS1U63Y1GFAiQ==
-X-Google-Smtp-Source: AGHT+IEfB4RX5z3hIuO5Du+V62ZdH6yKf3Q/8br7x4OG7oxYICZrWu8v/yGtMoMSgvs+ViJU/R9zsW+6x08prmc=
-X-Received: from wmbfk10.prod.google.com ([2002:a05:600c:cca:b0:440:5d4e:87])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:6612:b0:440:54ef:dfdc with SMTP id 5b1f17b1804b1-442d6d448c9mr18690195e9.8.1746782445453;
- Fri, 09 May 2025 02:20:45 -0700 (PDT)
-Date: Fri, 9 May 2025 09:20:43 +0000
-In-Reply-To: <aB2aAEELa3253nBh@gmail.com>
+	s=arc-20240116; t=1746782502; c=relaxed/simple;
+	bh=STH4XXXp7ndNI4FTSMP+AXcEDKv6ThCt+8fnnP47H6g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=lHbk58SHkQ9tzsrYXSwcc5bUmiwbaAGR3I3tWJtMThPMLMtisWO+/gj0KOBv68epa1x60H7Kft+NvAJXk7JquYQJnD9gTVIMMGMco5qN+ov+EaDIeR6P/P3a0wpz0h+fs71Ls3KigpXnhpAkrnVuVYVgyti+ZRq51ZwiYjFXAcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=WrPoyFx5 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=+tBWtoJBc50hPv+rGsubSvrwA8cmYtc8XTsV4cxJSGo=; b=W
+	rPoyFx5uJDmZkKltXv8Ks/F2oyGmUS8J68Q8p3zS4n5i7TP/A+hdDRCrekY3xxsu
+	pV8PZFYoOgVEnCGW71x7WlPe4LLNKFyajVAX0i9g6Nb6R8KthGpjAHTMRwcrVEoT
+	VW7lYCSBogc7HFMrH9viuisgAY+0LRR5nKfflfRY/M=
+Received: from xavier_qy$163.com ( [103.126.24.24] ) by
+ ajax-webmail-wmsvr-40-140 (Coremail) ; Fri, 9 May 2025 17:20:51 +0800 (CST)
+Date: Fri, 9 May 2025 17:20:51 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: "Barry Song" <21cnbao@gmail.com>
+Cc: ryan.roberts@arm.com, dev.jain@arm.com, ioworker0@gmail.com,
+	akpm@linux-foundation.org, catalin.marinas@arm.com, david@redhat.com,
+	gshan@redhat.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org, willy@infradead.org,
+	ziy@nvidia.com
+Subject: Re: [PATCH v4] arm64/mm: Optimize loop to reduce redundant
+ operations of contpte_ptep_get
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <CAGsJ_4y9tC-=8dv7W1Q=D+bBA2Qr=TLiMDJ-TGv506w=iGe42w@mail.gmail.com>
+References: <CAGsJ_4xVFDioe4G9wtjfRCKZMLBu94GaFG1z5j0YrHs3j1PkAw@mail.gmail.com>
+ <20250508070353.2370826-1-xavier_qy@163.com>
+ <CAGsJ_4y9tC-=8dv7W1Q=D+bBA2Qr=TLiMDJ-TGv506w=iGe42w@mail.gmail.com>
+X-NTES-SC: AL_Qu2fBPuTvUwu5ymQY+kfmkgWgus/WcW2u/Qj3IRSO5FwjB/o6ioBZXtMF2nw19+OOxmBrheYYTVKy/xaWZFUcrobwJ3Qo8nTx9KYYL0KIf15gg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250506045843.51258-1-boqun.feng@gmail.com> <20250506045843.51258-5-boqun.feng@gmail.com>
- <aB2aAEELa3253nBh@gmail.com>
-Message-ID: <aB3I62o8hWSULGBm@google.com>
-Subject: Re: [PATCH 4/5] sched/core: Add __might_sleep_precision()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Tamir Duberstein <tamird@gmail.com>, Kunwu Chan <kunwu.chan@hotmail.com>, 
-	Mitchell Levy <levymitchell0@gmail.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Borys Tyran <borys.tyran@protonmail.com>, Christian Brauner <brauner@kernel.org>, 
-	Panagiotis Foliadis <pfoliadis@posteo.net>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	Daniel Almeida <daniel.almeida@collabora.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Message-ID: <39423a07.8f48.196b458f91a.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:jCgvCgDnD_v0yB1oNdMAAA--.7308W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiTR9IEGgdwSzvVwACso
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, May 09, 2025 at 08:00:32AM +0200, Ingo Molnar wrote:
-> 
-> * Boqun Feng <boqun.feng@gmail.com> wrote:
-> 
-> > From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> > 
-> > Add __might_sleep_precision(), Rust friendly version of
-> > __might_sleep(), which takes a pointer to a string with the length
-> > instead of a null-terminated string.
-> > 
-> > Rust's core::panic::Location::file(), which gives the file name of a
-> > caller, doesn't provide a null-terminated
-> > string. __might_sleep_precision() uses a precision specifier in the
-> > printk format, which specifies the length of a string; a string
-> > doesn't need to be a null-terminated.
-> > 
-> > Modify __might_sleep() to call __might_sleep_precision() but the
-> > impact should be negligible. When printing the error (sleeping
-> > function called from invalid context), the precision string format is
-> > used instead of the simple string format; the precision specifies the
-> > the maximum length of the displayed string.
-> > 
-> > Note that Location::file() providing a null-terminated string for
-> > better C interoperability is under discussion [1].
-> > 
-> > [1]: https://github.com/rust-lang/libs-team/issues/466
-> > 
-> > Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > Link: https://lore.kernel.org/r/20250410225623.152616-2-fujita.tomonori@gmail.com
-> > ---
-> >  include/linux/kernel.h |  2 ++
-> >  kernel/sched/core.c    | 62 ++++++++++++++++++++++++++++--------------
-> >  2 files changed, 43 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> > index be2e8c0a187e..086ee1dc447e 100644
-> > --- a/include/linux/kernel.h
-> > +++ b/include/linux/kernel.h
-> > @@ -87,6 +87,7 @@ extern int dynamic_might_resched(void);
-> >  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-> >  extern void __might_resched(const char *file, int line, unsigned int offsets);
-> >  extern void __might_sleep(const char *file, int line);
-> > +extern void __might_sleep_precision(const char *file, int len, int line);
-> 
-> Ugh.
-> 
-> Firstly, '_precision' is really ambiguous in this context and suggests 
-> 'precise sleep' or something like that, which this is not about at all. 
-> So the naming here is all sorts of bad already.
-> 
-> But more importantly, this is really a Rust problem. Does Rust really 
-> have no NUL-terminated strings? It should hide them in shame and 
-> construct proper, robust strings, instead of spreading this disease to 
-> the rest of the kernel, IMHO ...
-
-Rust does have NUL-terminated strings, but they aren't the default. In
-most circumstances, obtaining a NUL-terminated string is possible, but
-we can't do it in this particular case.
-
-Specifically, it's because we're relying on the #[track_caller] language
-feature. When this annotation is placed on a function, it implicitly
-adds an extra hidden argument to the function signature containing a
-pointer to a location struct that holds the file, line, and column of
-the caller. This works recursively until it hits a function without the
-annotation, so code like this:
-
-#[track_caller]
-fn schedule() {
-     might_sleep();
-     // Call into C implementation of schedule.
-     unsafe { bindings::schedule() };
-}
-
-would report a line number in the *caller* of schedule() rather than
-just reporting the line number inside the schedule() function.
-
-The problem is that the location struct is generated by the compiler,
-and we don't have any control over how its generated. Unfortunately, the
-compiler does not place a NUL terminator in the file name.
-
-> Rust is supposed to be about increased security, right? How does extra, 
-> nonsensical complexity for simple concepts such as strings achieve 
-> that? If the Rust runtime wants to hook into debug facilities of the 
-> Linux kernel then I have bad news: almost all strings used by kernel 
-> debugging facilities are NUL-terminated.
-> 
-> So I really don't like this patch. Is there no other way to do this?
-
-I filed a proposal to add a NUL-terminator to the file names used by
-rustc-generated location structs:
-
-https://github.com/rust-lang/libs-team/issues/466
-
-But I have not had success with landing it, unfortunately.
-
-Alice
+CgpBdCAyMDI1LTA1LTA5IDEwOjA5OjIxLCAiQmFycnkgU29uZyIgPDIxY25iYW9AZ21haWwuY29t
+PiB3cm90ZToKPk9uIFRodSwgTWF5IDgsIDIwMjUgYXQgNzowNOKAr1BNIFhhdmllciBYaWEgPHhh
+dmllcl9xeUAxNjMuY29tPiB3cm90ZToKPj4KPj4gVGhpcyBjb21taXQgb3B0aW1pemVzIHRoZSBj
+b250cHRlX3B0ZXBfZ2V0IGFuZCBjb250cHRlX3B0ZXBfZ2V0X2xvY2tsZXNzCj4+IGZ1bmN0aW9u
+IGJ5IGFkZGluZyBlYXJseSB0ZXJtaW5hdGlvbiBsb2dpYy4gSXQgY2hlY2tzIGlmIHRoZSBkaXJ0
+eSBhbmQKPj4geW91bmcgYml0cyBvZiBvcmlnX3B0ZSBhcmUgYWxyZWFkeSBzZXQgYW5kIHNraXBz
+IHJlZHVuZGFudCBiaXQtc2V0dGluZwo+PiBvcGVyYXRpb25zIGR1cmluZyB0aGUgbG9vcC4gVGhp
+cyByZWR1Y2VzIHVubmVjZXNzYXJ5IGl0ZXJhdGlvbnMgYW5kCj4+IGltcHJvdmVzIHBlcmZvcm1h
+bmNlLgo+Pgo+PiBJbiBvcmRlciB0byB2ZXJpZnkgdGhlIG9wdGltaXphdGlvbiBwZXJmb3JtYW5j
+ZSwgYSB0ZXN0IGZ1bmN0aW9uIGhhcyBiZWVuCj4+IGRlc2lnbmVkLiBUaGUgZnVuY3Rpb24ncyBl
+eGVjdXRpb24gdGltZSBhbmQgaW5zdHJ1Y3Rpb24gc3RhdGlzdGljcyBoYXZlCj4+IGJlZW4gdHJh
+Y2VkIHVzaW5nIHBlcmYsIGFuZCB0aGUgZm9sbG93aW5nIGFyZSB0aGUgb3BlcmF0aW9uIHJlc3Vs
+dHMgb24gYQo+PiBjZXJ0YWluIFF1YWxjb21tIG1vYmlsZSBwaG9uZSBjaGlwOgo+Pgo+PiBUZXN0
+IENvZGU6Cj4+Cj4+ICAgICAgICAgI2RlZmluZSBQQUdFX1NJWkUgNDA5Ngo+PiAgICAgICAgICNk
+ZWZpbmUgQ09OVF9QVEVTIDE2Cj4+ICAgICAgICAgI2RlZmluZSBURVNUX1NJWkUgKDQwOTYqIENP
+TlRfUFRFUyAqIFBBR0VfU0laRSkKPj4gICAgICAgICAjZGVmaW5lIFlPVU5HX0JJVCA4Cj4+ICAg
+ICAgICAgdm9pZCByd2RhdGEoY2hhciAqYnVmKQo+PiAgICAgICAgIHsKPj4gICAgICAgICAgICAg
+ICAgIGZvciAoc2l6ZV90IGkgPSAwOyBpIDwgVEVTVF9TSVpFOyBpICs9IFBBR0VfU0laRSkgewo+
+PiAgICAgICAgICAgICAgICAgICAgICAgICBidWZbaV0gPSAnYSc7Cj4+ICAgICAgICAgICAgICAg
+ICAgICAgICAgIHZvbGF0aWxlIGNoYXIgYyA9IGJ1ZltpXTsKPj4gICAgICAgICAgICAgICAgIH0K
+Pj4gICAgICAgICB9Cj4+ICAgICAgICAgdm9pZCBjbGVhcl95b3VuZ19kaXJ0eShjaGFyICpidWYp
+Cj4+ICAgICAgICAgewo+PiAgICAgICAgICAgICAgICAgaWYgKG1hZHZpc2UoYnVmLCBURVNUX1NJ
+WkUsIE1BRFZfRlJFRSkgPT0gLTEpIHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgcGVycm9y
+KCJtYWR2aXNlIGZyZWUgZmFpbGVkIik7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgIGZyZWUo
+YnVmKTsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgZXhpdChFWElUX0ZBSUxVUkUpOwo+PiAg
+ICAgICAgICAgICAgICAgfQo+PiAgICAgICAgICAgICAgICAgaWYgKG1hZHZpc2UoYnVmLCBURVNU
+X1NJWkUsIE1BRFZfQ09MRCkgPT0gLTEpIHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgcGVy
+cm9yKCJtYWR2aXNlIGZyZWUgZmFpbGVkIik7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgIGZy
+ZWUoYnVmKTsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgZXhpdChFWElUX0ZBSUxVUkUpOwo+
+PiAgICAgICAgICAgICAgICAgfQo+PiAgICAgICAgIH0KPj4gICAgICAgICB2b2lkIHNldF9vbmVf
+eW91bmcoY2hhciAqYnVmKQo+PiAgICAgICAgIHsKPj4gICAgICAgICAgICAgICAgIGZvciAoc2l6
+ZV90IGkgPSAwOyBpIDwgVEVTVF9TSVpFOyBpICs9IENPTlRfUFRFUyAqIFBBR0VfU0laRSkgewo+
+PiAgICAgICAgICAgICAgICAgICAgICAgICB2b2xhdGlsZSBjaGFyIGMgPSBidWZbaSArIFlPVU5H
+X0JJVCAqIFBBR0VfU0laRV07Cj4+ICAgICAgICAgICAgICAgICB9Cj4+ICAgICAgICAgfQo+Pgo+
+PiAgICAgICAgIHZvaWQgdGVzdF9jb250cHRlX3BlcmYoKSB7Cj4+ICAgICAgICAgICAgICAgICBj
+aGFyICpidWY7Cj4+ICAgICAgICAgICAgICAgICBpbnQgcmV0ID0gcG9zaXhfbWVtYWxpZ24oKHZv
+aWQgKiopJmJ1ZiwgQ09OVF9QVEVTICogUEFHRV9TSVpFLAo+PiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIFRFU1RfU0laRSk7Cj4+ICAgICAgICAgICAgICAgICBpZiAoKHJldCAhPSAw
+KSB8fCAoKHVuc2lnbmVkIGxvbmcpYnVmICUgQ09OVF9QVEVTICogUEFHRV9TSVpFKSkgewo+PiAg
+ICAgICAgICAgICAgICAgICAgICAgICBwZXJyb3IoInBvc2l4X21lbWFsaWduIGZhaWxlZCIpOwo+
+PiAgICAgICAgICAgICAgICAgICAgICAgICBleGl0KEVYSVRfRkFJTFVSRSk7Cj4+ICAgICAgICAg
+ICAgICAgICB9Cj4+Cj4+ICAgICAgICAgICAgICAgICByd2RhdGEoYnVmKTsKPj4gICAgICAgICAj
+aWYgVEVTVF9DQVNFMiB8fCBURVNUX0NBU0UzCj4+ICAgICAgICAgICAgICAgICBjbGVhcl95b3Vu
+Z19kaXJ0eShidWYpOwo+PiAgICAgICAgICNlbmRpZgo+PiAgICAgICAgICNpZiBURVNUX0NBU0Uy
+Cj4+ICAgICAgICAgICAgICAgICBzZXRfb25lX3lvdW5nKGJ1Zik7Cj4+ICAgICAgICAgI2VuZGlm
+Cj4+Cj4+ICAgICAgICAgICAgICAgICBmb3IgKGludCBqID0gMDsgaiA8IDUwMDsgaisrKSB7Cj4+
+ICAgICAgICAgICAgICAgICAgICAgICAgIG1sb2NrKGJ1ZiwgVEVTVF9TSVpFKTsKPj4KPj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgbXVubG9jayhidWYsIFRFU1RfU0laRSk7Cj4+ICAgICAgICAg
+ICAgICAgICB9Cj4+ICAgICAgICAgICAgICAgICBmcmVlKGJ1Zik7Cj4+ICAgICAgICAgfQo+Pgo+
+PiAgICAgICAgIERlc2NyaXB0aW9ucyBvZiB0aHJlZSB0ZXN0IHNjZW5hcmlvcwo+Pgo+PiBTY2Vu
+YXJpbyAxCj4+ICAgICAgICAgVGhlIGRhdGEgb2YgYWxsIDE2IFBURXMgYXJlIGJvdGggZGlydHkg
+YW5kIHlvdW5nLgo+PiAgICAgICAgICNkZWZpbmUgVEVTVF9DQVNFMiAwCj4+ICAgICAgICAgI2Rl
+ZmluZSBURVNUX0NBU0UzIDAKPj4KPj4gU2NlbmFyaW8gMgo+PiAgICAgICAgIEFtb25nIHRoZSAx
+NiBQVEVzLCBvbmx5IHRoZSA4dGggb25lIGlzIHlvdW5nLCBhbmQgdGhlcmUgYXJlIG5vIGRpcnR5
+IG9uZXMuCj4+ICAgICAgICAgI2RlZmluZSBURVNUX0NBU0UyIDEKPj4gICAgICAgICAjZGVmaW5l
+IFRFU1RfQ0FTRTMgMAo+Pgo+PiBTY2VuYXJpbyAzCj4+ICAgICAgICAgQW1vbmcgdGhlIDE2IFBU
+RXMsIHRoZXJlIGFyZSBuZWl0aGVyIHlvdW5nIG5vciBkaXJ0eSBvbmVzLgo+PiAgICAgICAgICNk
+ZWZpbmUgVEVTVF9DQVNFMiAwCj4+ICAgICAgICAgI2RlZmluZSBURVNUX0NBU0UzIDEKPj4KPj4g
+VGVzdCByZXN1bHRzCj4+Cj4+IHxTY2VuYXJpbyAxICAgICAgICAgfCAgICAgICBPcmlnaW5hbHwg
+ICAgICAgT3B0aW1pemVkfAo+PiB8LS0tLS0tLS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18
+LS0tLS0tLS0tLS0tLS0tLXwKPj4gfGluc3RydWN0aW9ucyAgICAgICB8ICAgIDM3OTEyNDM2MTYw
+fCAgICAgMTg3MzE1ODAwMzF8Cj4+IHx0ZXN0IHRpbWUgICAgICAgICAgfCAgICAgICAgIDQuMjc5
+N3wgICAgICAgICAgMi4yOTQ5fAo+PiB8b3ZlcmhlYWQgb2YgICAgICAgIHwgICAgICAgICAgICAg
+ICB8ICAgICAgICAgICAgICAgIHwKPj4gfGNvbnRwdGVfcHRlcF9nZXQoKSB8ICAgICAgICAgMjEu
+MzElfCAgICAgICAgICAgNC44MCV8Cj4+Cj4+IHxTY2VuYXJpbyAyICAgICAgICAgfCAgICAgICBP
+cmlnaW5hbHwgICAgICAgT3B0aW1pemVkfAo+PiB8LS0tLS0tLS0tLS0tLS0tLS0tLXwtLS0tLS0t
+LS0tLS0tLS18LS0tLS0tLS0tLS0tLS0tLXwKPj4gfGluc3RydWN0aW9ucyAgICAgICB8ICAgIDM2
+NzAxMjcwODYyfCAgICAgMzYxMTU3OTAwODZ8Cj4+IHx0ZXN0IHRpbWUgICAgICAgICAgfCAgICAg
+ICAgIDMuMjMzNXwgICAgICAgICAgMy4wODc0fAo+PiB8T3ZlcmhlYWQgb2YgICAgICAgIHwgICAg
+ICAgICAgICAgICB8ICAgICAgICAgICAgICAgIHwKPj4gfGNvbnRwdGVfcHRlcF9nZXQoKSB8ICAg
+ICAgICAgMzIuMjYlfCAgICAgICAgICAzMy41NyV8Cj4+Cj4+IHxTY2VuYXJpbyAzICAgICAgICAg
+fCAgICAgICBPcmlnaW5hbHwgICAgICAgT3B0aW1pemVkfAo+PiB8LS0tLS0tLS0tLS0tLS0tLS0t
+LXwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLS0tLXwKPj4gfGluc3RydWN0aW9ucyAgICAg
+ICB8ICAgIDM2NzA2Mjc5NzM1fCAgICAgMzY3NTA4ODE4Nzh8Cj4+IHx0ZXN0IHRpbWUgICAgICAg
+ICAgfCAgICAgICAgIDMuMjAwOHwgICAgICAgICAgMy4xMjQ5fAo+PiB8T3ZlcmhlYWQgb2YgICAg
+ICAgIHwgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgIHwKPj4gfGNvbnRwdGVfcHRlcF9n
+ZXQoKSB8ICAgICAgICAgMzEuOTQlfCAgICAgICAgICAzNC41OSV8Cj4+Cj4+IEZvciBTY2VuYXJp
+byAxLCBvcHRpbWl6ZWQgY29kZSBjYW4gYWNoaWV2ZSBhbiBpbnN0cnVjdGlvbiBiZW5lZml0IG9m
+IDUwLjU5JQo+PiBhbmQgYSB0aW1lIGJlbmVmaXQgb2YgNDYuMzglLgo+PiBGb3IgU2NlbmFyaW8g
+Miwgb3B0aW1pemVkIGNvZGUgY2FuIGFjaGlldmUgYW4gaW5zdHJ1Y3Rpb24gY291bnQgYmVuZWZp
+dCBvZgo+PiAxLjYlIGFuZCBhIHRpbWUgYmVuZWZpdCBvZiA0LjUlLgo+PiBGb3IgU2NlbmFyaW8g
+Mywgc2luY2UgYWxsIHRoZSBQVEVzIGhhdmUgbmVpdGhlciB0aGUgeW91bmcgbm9yIHRoZSBkaXJ0
+eQo+PiBmbGFnLCB0aGUgYnJhbmNoZXMgdGFrZW4gYnkgb3B0aW1pemVkIGNvZGUgc2hvdWxkIGJl
+IHRoZSBzYW1lIGFzIHRob3NlIG9mCj4+IHRoZSBvcmlnaW5hbCBjb2RlLiBJbiBmYWN0LCB0aGUg
+dGVzdCByZXN1bHRzIG9mIG9wdGltaXplZCBjb2RlIHNlZW0gdG8gYmUKPj4gY2xvc2VyIHRvIHRo
+b3NlIG9mIHRoZSBvcmlnaW5hbCBjb2RlLgo+Pgo+PiBJdCBjYW4gYmUgcHJvdmVuIHRocm91Z2gg
+dGVzdCBmdW5jdGlvbiB0aGF0IHRoZSBvcHRpbWl6YXRpb24gZm9yCj4+IGNvbnRwdGVfcHRlcF9n
+ZXQgaXMgZWZmZWN0aXZlLiBTaW5jZSB0aGUgbG9naWMgb2YgY29udHB0ZV9wdGVwX2dldF9sb2Nr
+bGVzcwo+PiBpcyBzaW1pbGFyIHRvIHRoYXQgb2YgY29udHB0ZV9wdGVwX2dldCwgdGhlIHNhbWUg
+b3B0aW1pemF0aW9uIHNjaGVtZSBpcwo+PiBhbHNvIGFkb3B0ZWQgZm9yIGl0Lgo+Pgo+PiBTaWdu
+ZWQtb2ZmLWJ5OiBYYXZpZXIgWGlhIDx4YXZpZXJfcXlAMTYzLmNvbT4KPj4gLS0tCj4+ICBhcmNo
+L2FybTY0L21tL2NvbnRwdGUuYyB8IDcxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNjIgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlv
+bnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvbW0vY29udHB0ZS5jIGIvYXJjaC9h
+cm02NC9tbS9jb250cHRlLmMKPj4gaW5kZXggYmNhYzRmNTVmOWMxLi5lOTg4MmVjNzgyZmMgMTAw
+NjQ0Cj4+IC0tLSBhL2FyY2gvYXJtNjQvbW0vY29udHB0ZS5jCj4+ICsrKyBiL2FyY2gvYXJtNjQv
+bW0vY29udHB0ZS5jCj4+IEBAIC0xNjksMTcgKzE2OSw0MSBAQCBwdGVfdCBjb250cHRlX3B0ZXBf
+Z2V0KHB0ZV90ICpwdGVwLCBwdGVfdCBvcmlnX3B0ZSkKPj4gICAgICAgICBmb3IgKGkgPSAwOyBp
+IDwgQ09OVF9QVEVTOyBpKyssIHB0ZXArKykgewo+PiAgICAgICAgICAgICAgICAgcHRlID0gX19w
+dGVwX2dldChwdGVwKTsKPj4KPj4gLSAgICAgICAgICAgICAgIGlmIChwdGVfZGlydHkocHRlKSkK
+Pj4gKyAgICAgICAgICAgICAgIGlmIChwdGVfZGlydHkocHRlKSkgewo+PiAgICAgICAgICAgICAg
+ICAgICAgICAgICBvcmlnX3B0ZSA9IHB0ZV9ta2RpcnR5KG9yaWdfcHRlKTsKPj4gLQo+PiAtICAg
+ICAgICAgICAgICAgaWYgKHB0ZV95b3VuZyhwdGUpKQo+PiArICAgICAgICAgICAgICAgICAgICAg
+ICBmb3IgKDsgaSA8IENPTlRfUFRFUzsgaSsrLCBwdGVwKyspIHsKPj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBwdGUgPSBfX3B0ZXBfZ2V0KHB0ZXApOwo+PiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGlmIChwdGVfeW91bmcocHRlKSkgewo+PiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JpZ19wdGUgPSBwdGVfbWt5b3VuZyhvcmlnX3B0
+ZSk7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKPj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9Cj4+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIH0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICsgICAgICAgICAgICAg
+ICB9Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIGlmIChwdGVfeW91bmcocHRlKSkgewo+PiAgICAg
+ICAgICAgICAgICAgICAgICAgICBvcmlnX3B0ZSA9IHB0ZV9ta3lvdW5nKG9yaWdfcHRlKTsKPj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgaSsrOwo+PiArICAgICAgICAgICAgICAgICAgICAgICBw
+dGVwKys7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGZvciAoOyBpIDwgQ09OVF9QVEVTOyBp
+KyssIHB0ZXArKykgewo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHB0ZSA9IF9f
+cHRlcF9nZXQocHRlcCk7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKHB0
+ZV9kaXJ0eShwdGUpKSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBvcmlnX3B0ZSA9IHB0ZV9ta2RpcnR5KG9yaWdfcHRlKTsKPj4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+PiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIH0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgfQo+PiArICAgICAgICAgICAgICAg
+ICAgICAgICBicmVhazsKPj4gKyAgICAgICAgICAgICAgIH0KPj4gICAgICAgICB9Cj4+Cj4+ICAg
+ICAgICAgcmV0dXJuIG9yaWdfcHRlOwo+PiAgfQo+PiAgRVhQT1JUX1NZTUJPTF9HUEwoY29udHB0
+ZV9wdGVwX2dldCk7Cj4+Cj4+ICsjZGVmaW5lIENIRUNLX0NPTlRQVEVfQ09OU0lTVEVOQ1kocHRl
+LCBwZm4sIHByb3QsIG9yaWdfcHJvdCkgXAo+PiArICAgICAgICghcHRlX3ZhbGlkX2NvbnQocHRl
+KSB8fCBwdGVfcGZuKHB0ZSkgIT0gcGZuIHx8IFwKPj4gKyAgICAgICAgICAgICAgIHBncHJvdF92
+YWwocHJvdCkgIT0gcGdwcm90X3ZhbChvcmlnX3Byb3QpKQo+Cj5tYXliZSBtYWtlIGl0IGEgc3Rh
+dGljIGlubGluZSBmdW5jdGlvbiB0byBpbXByb3ZlIHJlYWRhYmlsaXR5LiBBbHNvLAo+dGhlIG5h
+bWUgYXBwZWFycyB0bwo+YmUgbm90IGdvb2Q6IENIRUNLX0NPTlRQVEVfQ09OU0lTVEVOQ1kgaXMg
+YWN0dWFsbHkgY2hlY2tpbmcgZm9yIGluY29uc2lzdGVuY3ksCj5ub3QgY29uc2lzdGVuY3kuCj4K
+Pml0IG1pZ2h0IGJlOgo+Cj5zdGF0aWMgaW5saW5lIGJvb2wgY29udHB0ZV9pc19jb25zaXN0ZW50
+KC4uLikKPnsKPiAgICAgICAgcmV0dXJuIHB0ZV92YWxpZF9jb250KHB0ZSkgJiYgcHRlX3Bmbihw
+dGUpID09IHBmbiAmJgo+ICAgICAgICAgICAgICAgcGdwcm90X3ZhbChwcm90KSA9PSBwZ3Byb3Rf
+dmFsKG9yaWdfcHJvdCk7Cj59Cj4KPm9yIGFub3RoZXIgYmV0dGVyIG5hbWUuCj4KCllvdSdyZSBy
+aWdodC4gV2hhdCdzIGJlaW5nIGNoZWNrZWQgaGVyZSBpcyB0aGUgaW5jb25zaXN0ZW5jeS4gSSB3
+aWxsIG1ha2UgdGhlIG1vZGlmaWNhdGlvbgppbiB0aGUgbmV4dCB2ZXJzaW9uLiBUaGFuayB5b3Ug
+Zm9yIHlvdXIgc3VnZ2VzdGlvbi4KCi0tCgpUaGFua3MsClhhdmllcg==
 
