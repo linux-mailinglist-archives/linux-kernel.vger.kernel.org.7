@@ -1,256 +1,176 @@
-Return-Path: <linux-kernel+bounces-640893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7842AB0AAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:35:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F2AAB0AAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E799E7878
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E744E340E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF1C2746C;
-	Fri,  9 May 2025 06:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C692326B2C7;
+	Fri,  9 May 2025 06:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OR5/PAA1"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="md0l8X+l"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CAB26A0DB
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653F928F4;
+	Fri,  9 May 2025 06:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772544; cv=none; b=LW0RYgN83+t9Yt+pUi22RAJU0gzVvSp2LONjIps3tMvz6j0HJWCSO+EmZ2qaSb2Fl935Yzmbd4pGs/4EPTxrtr4uNImwXHtfmNspK87KMcLwy8UQT352u26v2qGpgSYsoVxt6af5mjzUBIJvCQp4EFEh01iHDdwPgJXb15/dq1U=
+	t=1746772674; cv=none; b=JovIxK2YEwbbs1CSzvWzwnz13hiFeQ2eun0GO1ZDKaZiHIWMAxBSU8NmWTpdffLmXm1Qaol6oxAh3pZKGDwra+e2mUVFLIKKM57tMWVsJme39begHvGCjE8kwImeYX2+pNNLKCDmQjTKcxsKKuQxk+FqmQQ4GC9j5KY5iSJfgmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772544; c=relaxed/simple;
-	bh=gkEafuegoJQXN//t3DWSiAZe46ykr2HSI4qLffwkIl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdxgalRRbZYLuwAlnf3mpf6JxMVRCBweFHj9aRA94Uw5ZITJct1luP+Owp915aAgidDhQHqEEz1qNM1K4fe+gmgmErUUWMPffzhlMeds90qdwyxKdpXrEyqHc/pfH6SFa2ZuHRfKdHzhDT+evnuKXymBV3ZmGUgVkdXzlnjnt14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OR5/PAA1; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1746772532; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=SkhD2IxpaDCRBkEhJPn7Xyzv7yN9xhPQIe/Iee2HJxM=;
-	b=OR5/PAA1bCSCteU4nMHlIJqCKM2ka9ITTipAjx5BfDyzlqBTRsG/yglmSouBggJHLYOG47ZBnDzTQQRWCezxf2z1L3g5TSJznXg/sPZCGSbX7LZkH7tgu7H5W8sRituRyEJv4aLBwtVdC2ongvZz2YbUJjzxAtZI3XBZGlZAML0=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wa2I1pb_1746772531 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 09 May 2025 14:35:31 +0800
-Date: Fri, 9 May 2025 14:35:30 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	llong@redhat.com, mhiramat@kernel.org, amaindex@outlook.com
-Subject: Re: [PATCH RFC 2/3] kernel/hung_task: add option to dump system info
- when hung task detected
-Message-ID: <aB2iMoAR7AiZZnPK@U-2FWC9VHC-2323.local>
-References: <20250507104322.30700-1-feng.tang@linux.alibaba.com>
- <20250507104322.30700-3-feng.tang@linux.alibaba.com>
- <6eb27fe4-9dad-4ea5-afd0-a5d1e3f60acb@linux.dev>
- <aBxE6jXwjIDRdr1z@U-2FWC9VHC-2323.local>
- <d98c6c9f-b50d-4818-848f-326f6ab01439@linux.dev>
+	s=arc-20240116; t=1746772674; c=relaxed/simple;
+	bh=s4pQVEjbJ40eu1L5qoBwYrySDn9uGLHKDWxlDMpxxfI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MsAolH0elgyIXeqTeBXTecA67A2jklwzk/CsoGbwqBSTbPqKSLzUg3auVlAyFdfa2kX746Jsc7584qJ2Wl0REo/JZkyVgEH7gJS7IIfjg6EHjoVtE2sOjn1g1XbMSxlGkMSnc89YiJ/gJ2UsNdlf/DEVdNGWo6J0UhXjHJl8Hqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=md0l8X+l; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a0b9303998so824320f8f.0;
+        Thu, 08 May 2025 23:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746772670; x=1747377470; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OqmG3BJjsmTUqEq8AZgWfba3ERYP+7PeG6T0Jf+wIRU=;
+        b=md0l8X+lNNcLI7x1Z/mEodFVk5O0O5Zx0aELUtkcfmq1DHR/ZWcQA3Ud8SfqlwnBLd
+         ExLLnNSTEgIqKngz0RRgoeGT4i8wa1Va2Jigwpgp3f7bnOad3xsYyZgG0ernflH+nn2/
+         Fa3C4QO3x3uKeGhKh7iLpL+ROVvmsv3lOc4/On+qQZqTFCnsCD5/K8t3AwtB2r8k6AzQ
+         veH4IsR27tT3H0QAnnvcZruGuyfst5sjInkBSR4/qubgrVJtCKYq+XPLBs65PKIVl0HN
+         xcEmhPIOImHx+GM86oxcuSnilBOZDKzbBaRZuj1SAYLUnU2AZn8QWYcHprXZRkLmWxLm
+         uf1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746772670; x=1747377470;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OqmG3BJjsmTUqEq8AZgWfba3ERYP+7PeG6T0Jf+wIRU=;
+        b=JJB8axmCp0Nc+t3SylFtnwJRrorsYK6gCavwREJlBatd+HRyhrygDYP+kdvkHOd+7x
+         AsS16NkeMriuGtHTGc8qp8V+/L0w5a2KZTS1UFqVaqTYQrPDSA+qSXwmRXaCTbg7vBN/
+         CTkpOgKKKK2U6PH6J8x1iCNWR/iK+jDlNmdomNBofYgq8xre+OT7K3BDdNnbDVrpzmKN
+         eDH0fw3aXIEjTHEa/I3P7Ezf60DLYeAZ7US5FIWyhgg31YSJfLwtYUsb5mwFPYN75kMn
+         yMzs3xBuWcE/a7PTkEC5WrS23Pz9c53sZfa7M72FPWsOntorXy1pcQVyeTvPuyA8MoZL
+         H1fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXt6s/jwj31tC5t5daSRT+0NnvFLaOW6oeAEnu2Jzk20Q2xJFjpqfUjvYqu5XTfE0jw5hTVvABmc8iUGaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjndE2hOFJ4kLl0bvSjY685P1oT1Cb1RUUmuPRAsUfqS1M4J+B
+	fe1o4CM4LZZEh4mRY0qbEmVrRub/Y3pAiFnSekUpXVcLsJSZ/Opq/Dish/DN
+X-Gm-Gg: ASbGncuPtW9UDOO41lMQ03n7fWsQGDO6QjXwhBpJ0YPkKgIaE2+5VI6+Jpx9DjI+TNx
+	/C6T3sVvy3FPKWeK4OJaTpZu8W8BsPFqroP1Tw199V+2OImRJtR+sdtwaIGbqqpRiVzLoquabUf
+	Vox3gSheEcH5As4OTjkvH9DR+cbVeRC7oDeT3+4DJ6VwSjmS21QC7asxkg7SQ7RC7Db7gpZsQCX
+	VtmJG71lH09E1NtMxBRRaAUpD0riCRcjGS2XdPxkZ9o/80aJZs6ZE6mHHt3d5YoXaa8pdpgV5A5
+	05TY6yDpskWRN62sbGMwbVUPIuKkQXaMhBaEeWgmTW5ztTxhxTZkUO4g9XcsK7uTlw==
+X-Google-Smtp-Source: AGHT+IHw06gGDN3zr31JLWJ1Q/qbSH1hi3YVW8+/TRJJ4XJQ/05RFm9FjdAFuvESuwnntbNjmEV+Mg==
+X-Received: by 2002:a05:6000:2011:b0:3a1:f653:26a with SMTP id ffacd0b85a97d-3a1f6530370mr1712267f8f.16.1746772670183;
+        Thu, 08 May 2025 23:37:50 -0700 (PDT)
+Received: from localhost.localdomain ([213.74.214.99])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d687ae5asm18325745e9.36.2025.05.08.23.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 23:37:49 -0700 (PDT)
+From: Can Ayberk Demir <ayberkdemir@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Can Ayberk DEMIR <ayberkdemir@gmail.com>
+Subject: [PATCH v2] drivers: net: axienet: safely drop oversized RX frames
+Date: Fri,  9 May 2025 09:37:27 +0300
+Message-Id: <20250509063727.35560-1-ayberkdemir@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250508150421.26059-1-ayberkdemir@gmail.com>
+References: <20250508150421.26059-1-ayberkdemir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d98c6c9f-b50d-4818-848f-326f6ab01439@linux.dev>
 
-On Fri, May 09, 2025 at 12:44:14PM +0800, Lance Yang wrote:
-> 
-> 
-> On 2025/5/8 13:45, Feng Tang wrote:
-> > Hi Lance,
-> > 
-> > Many thanks for the review!
-> > 
-> > On Thu, May 08, 2025 at 11:02:22AM +0800, Lance Yang wrote:
-> > > Hi Feng,
-> > > 
-> > > Thanks for the patch series!
-> > > 
-> > > On 2025/5/7 18:43, Feng Tang wrote:
-> > > > Kernel panic code utilizes sys_show_info() to dump needed system
-> > > > information to help debugging. Similarly, add this debug option for
-> > > > task hung case, and 'hungtask_print' is the knob to control what
-> > > > information should be printed out.
-> > > > 
-> > > > Also clean up the code about dumping locks and triggering backtrace
-> > > > for all CPUs. One todo may be to merge this 'hungtask_print' with
-> > > > some sysctl knobs in hung_task.c.
-> > > > 
-> > > > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> > > > ---
-> > > >    kernel/hung_task.c | 29 ++++++++++++++++-------------
-> > > >    1 file changed, 16 insertions(+), 13 deletions(-)
-> > > > 
-> > > > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> > > > index dc898ec93463..8229637be2c7 100644
-> > > > --- a/kernel/hung_task.c
-> > > > +++ b/kernel/hung_task.c
-> > > > @@ -58,12 +58,20 @@ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
-> > > >    static int __read_mostly sysctl_hung_task_warnings = 10;
-> > > >    static int __read_mostly did_panic;
-> > > > -static bool hung_task_show_lock;
-> > > >    static bool hung_task_call_panic;
-> > > > -static bool hung_task_show_all_bt;
-> > > >    static struct task_struct *watchdog_task;
-> > > > +/*
-> > > > + * A bitmask to control what kinds of system info to be printed when a
-> > > > + * hung task is detected, it could be task, memory, lock etc. Refer panic.h
-> > > > + * for details of bit definition.
-> > > > + */
-> > > > +unsigned long hungtask_print;
-> > > > +core_param(hungtask_print, hungtask_print, ulong, 0644);
-> > > 
-> > > how about lockup_debug_print_mask?
-> 
-> Oops, typo: hungtask_* (not lockup_*)
-> 
-> > 
-> > The 3/3 patch has a 'lockup_print' as it is for soft/hard lockup :).
-> > The name follows the existing 'panic_print', and indeed it's actually
-> > a bitmask, how about 'hung_print_mask'?
-> 
-> Yep, we should be following ’panic_print‘ pattern like 'hungtask_print',
-> but I‘d rather go with 'hungtask_print_mask' ;)
+From: Can Ayberk DEMIR <ayberkdemir@gmail.com>
 
-OK, will change to it.
+This patch addresses style issues pointed out in v1.
 
-> 
-> > 
-> > > 
-> > > It could be useful for debugging, but there are a few concerns:
-> > > 
-> > > 1) SYS_PRINT_* vs. hung_task_* priority conflict
-> > > - If SYS_PRINT_ALL_CPU_BT is set on the command line but
-> > > hung_task_all_cpu_backtrace is disabled, which one wins?
-> > > - Or should SYS_PRINT_ALL_CPU_BT force-enable hung_task_all_cpu_backtrace?
-> > 
-> > With this patch, the 'hungtask_print' and hung_task_all_cpu_backtrace
-> > will be ORed, so yes, if user sets SYS_PRINT_ALL_CPU_BT explicitly, the
-> > all-cpu-backtrace will be printed.
-> > 
-> > While the default value for hungtask_print is 0, and no system info will
-> > be dumped by default.
-> > 
-> > Long term wise, I'm not sure if sysctl_hung_task_all_cpu_backtracemay
-> > could be removed as its function can be covered by this print_mask knob.
-> 
-> Afraid we cannot remove that knob — it would break user-space. Note that
-> hungtask_print_mask should act as an extension (to provide more details
-> when investigating hangs), and it must still follow hung-task detector's
-> rules, IIUC.
+In AXI Ethernet (axienet) driver, receiving an Ethernet frame larger
+than the allocated skb buffer may cause memory corruption or kernel panic,
+especially when the interface MTU is small and a jumbo frame is received.
 
-Right.
+Signed-off-by: Can Ayberk DEMIR <ayberkdemir@gmail.com>
+---
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 46 +++++++++++--------
+ 1 file changed, 27 insertions(+), 19 deletions(-)
 
-
-> Hmm... SYS_PRINT_ALL_CPU_BT is a bit tricky here. Maybe we can directly
-> enable hung_task_all_cpu_backtrace when SYS_PRINT_ALL_CPU_BT is set in
-> hungtask_print_mask, while still allowing manual disabling to dump
-> backtraces for all CPUs via hung_task_all_cpu_backtrace. This way, we
-> keep its original semantics ;)
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 1b7a653c1f4e..2b375dd06def 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1223,28 +1223,36 @@ static int axienet_rx_poll(struct napi_struct *napi, int budget)
+ 			dma_unmap_single(lp->dev, phys, lp->max_frm_size,
+ 					 DMA_FROM_DEVICE);
  
-Sounds goot to me, thanks for the suggestion!
+-			skb_put(skb, length);
+-			skb->protocol = eth_type_trans(skb, lp->ndev);
+-			/*skb_checksum_none_assert(skb);*/
+-			skb->ip_summed = CHECKSUM_NONE;
+-
+-			/* if we're doing Rx csum offload, set it up */
+-			if (lp->features & XAE_FEATURE_FULL_RX_CSUM) {
+-				csumstatus = (cur_p->app2 &
+-					      XAE_FULL_CSUM_STATUS_MASK) >> 3;
+-				if (csumstatus == XAE_IP_TCP_CSUM_VALIDATED ||
+-				    csumstatus == XAE_IP_UDP_CSUM_VALIDATED) {
+-					skb->ip_summed = CHECKSUM_UNNECESSARY;
++			if (unlikely(length > skb_tailroom(skb))) {
++				netdev_warn(ndev,
++					    "Dropping oversized RX frame (len=%u, tailroom=%u)\n",
++					    length, skb_tailroom(skb));
++				dev_kfree_skb(skb);
++				skb = NULL;
++			} else {
++				skb_put(skb, length);
++				skb->protocol = eth_type_trans(skb, lp->ndev);
++				/*skb_checksum_none_assert(skb);*/
++				skb->ip_summed = CHECKSUM_NONE;
++
++				/* if we're doing Rx csum offload, set it up */
++				if (lp->features & XAE_FEATURE_FULL_RX_CSUM) {
++					csumstatus = (cur_p->app2 &
++							XAE_FULL_CSUM_STATUS_MASK) >> 3;
++					if (csumstatus == XAE_IP_TCP_CSUM_VALIDATED ||
++					    csumstatus == XAE_IP_UDP_CSUM_VALIDATED) {
++						skb->ip_summed = CHECKSUM_UNNECESSARY;
++					}
++				} else if (lp->features & XAE_FEATURE_PARTIAL_RX_CSUM) {
++					skb->csum = be32_to_cpu(cur_p->app3 & 0xFFFF);
++					skb->ip_summed = CHECKSUM_COMPLETE;
+ 				}
+-			} else if (lp->features & XAE_FEATURE_PARTIAL_RX_CSUM) {
+-				skb->csum = be32_to_cpu(cur_p->app3 & 0xFFFF);
+-				skb->ip_summed = CHECKSUM_COMPLETE;
+-			}
+ 
+-			napi_gro_receive(napi, skb);
++				napi_gro_receive(napi, skb);
+ 
+-			size += length;
+-			packets++;
++				size += length;
++				packets++;
++			}
+ 		}
+ 
+ 		new_skb = napi_alloc_skb(napi, lp->max_frm_size);
+-- 
+2.39.5 (Apple Git-154)
 
-> > 
-> > > 2) Duplicate prints
-> > > With SYS_PRINT_BLOCKED_TASKS enabled, processes in D state will be printed
-> > > twice, right?
-> > 
-> > Good point. As sys_show_info() is a general API helper, the user may chose
-> > not to set SYS_PRINT_BLOCKED_TASKS when debugging task hung.
-> > 
-> > In one recent bug we debugged with this patch, when the first "task hung" was
-> > shown, there were already dozens of tasks were in D state, which just hadn't
-> > hit the 120 seconds limit yet, and dumping them all helped in that case.
-> 
-> Makes sense to me. Right, SYS_PRINT_BLOCKED_TASKS doesn’t duplicate prints,
-> and
-> catches all D-state tasks - even the ones not yet timed out.
-> 
-> > 
-> > > Also, we really should document how those command-line parameters work ;)
-> > 
-> > Exactly! It currently just said 'refer panic.h' in code comment, maybe I
-> > should copy those definitions here as comments. How do you think?
-> 
-> Yes. Both comments and kernel-doc are needed ;)
-
-Sure. Seems kernel-parameters.txt is the good place for core parameters.
-
-Thanks,
-Feng
-
-> 
-> Thanks,
-> Lance
-> 
-> > 
-> > Thanks,
-> > Feng
-> > 
-> > > Thansk,
-> > > Lance
-> > > 
-> > > > +
-> > > > +static unsigned long cur_hungtask_print;
-> > > > +
-> > > >    #ifdef CONFIG_SMP
-> > > >    /*
-> > > >     * Should we dump all CPUs backtraces in a hung task event?
-> > > > @@ -163,11 +171,12 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-> > > >    	 */
-> > > >    	sysctl_hung_task_detect_count++;
-> > > > +	cur_hungtask_print = hungtask_print;
-> > > >    	trace_sched_process_hang(t);
-> > > >    	if (sysctl_hung_task_panic) {
-> > > >    		console_verbose();
-> > > > -		hung_task_show_lock = true;
-> > > > +		cur_hungtask_print |= SYS_PRINT_LOCK_INFO;
-> > > >    		hung_task_call_panic = true;
-> > > >    	}
-> > > > @@ -190,10 +199,10 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-> > > >    			" disables this message.\n");
-> > > >    		sched_show_task(t);
-> > > >    		debug_show_blocker(t);
-> > > > -		hung_task_show_lock = true;
-> > > > +		cur_hungtask_print |= SYS_PRINT_LOCK_INFO;
-> > > >    		if (sysctl_hung_task_all_cpu_backtrace)
-> > > > -			hung_task_show_all_bt = true;
-> > > > +			cur_hungtask_print |= SYS_PRINT_ALL_CPU_BT;
-> > > >    		if (!sysctl_hung_task_warnings)
-> > > >    			pr_info("Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings\n");
-> > > >    	}
-> > > > @@ -242,7 +251,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
-> > > >    	if (test_taint(TAINT_DIE) || did_panic)
-> > > >    		return;
-> > > > -	hung_task_show_lock = false;
-> > > > +	cur_hungtask_print = 0;
-> > > >    	rcu_read_lock();
-> > > >    	for_each_process_thread(g, t) {
-> > > >    		unsigned int state;
-> > > > @@ -266,14 +275,8 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
-> > > >    	}
-> > > >     unlock:
-> > > >    	rcu_read_unlock();
-> > > > -	if (hung_task_show_lock)
-> > > > -		debug_show_all_locks();
-> > > > -
-> > > > -	if (hung_task_show_all_bt) {
-> > > > -		hung_task_show_all_bt = false;
-> > > > -		trigger_all_cpu_backtrace();
-> > > > -	}
-> > > > +	sys_show_info(cur_hungtask_print);
-> > > >    	if (hung_task_call_panic)
-> > > >    		panic("hung_task: blocked tasks");
-> > > >    }
 
