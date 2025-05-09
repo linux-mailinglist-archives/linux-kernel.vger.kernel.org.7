@@ -1,153 +1,143 @@
-Return-Path: <linux-kernel+bounces-640677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44B4AB07B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 680CDAB07BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431C4980B38
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEFA9811D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55ED1242D8C;
-	Fri,  9 May 2025 02:02:47 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CE122D4DA;
+	Fri,  9 May 2025 02:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2nhecG5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CE013D52F;
-	Fri,  9 May 2025 02:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9631AA782
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746756167; cv=none; b=AClvPklZ7445j1Or8ZuZrfxBi6Gi9arXN10wfNoY7l0IuDufdCFhAibr0Nvn9Cgtd05EVQwjH/QLDUY44JLs/FDlT14cfaKZcTypx6mkaPE9mz7w8QNWhGR9MrwXhD+ZvTIhYPaM/mf1PJmoh2SG/uM11OgUHvUMGVnEH631RpU=
+	t=1746756286; cv=none; b=m2M5Uer1XyyulTkcC70yYMW9POuko9wUpeg/P4gM5fkCUL1sJQ7QZdzkDlR8oGEIgqX1lOvZ+TpWOVrdUetV/PhacL5la8vCfCK1g4EcXmXGBX91Pi/xR5+LNjKPzDQpmwQ+iXzS1WjzpoT8moRnhzxIBqI43cPgU9KhIxbsFn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746756167; c=relaxed/simple;
-	bh=OvePDz61hU89iP6mjSJW/9XhetJ3HI8k3T4tIuDg20o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A6P11KaA/zSfaBngvL8MGcUKZ5b7CsICHC0V1/0PckBXG+OtYEAz3eUiy+sMioY3yke2lxWzWOiLUWoCsyJU9ao9ms78mTZpOaCOfEmhR3BI8ztpdcPBi5oDd8Nd6kSXme7eILhsX2irjIl+A4+PSxbIUw9aGfeHXNdiI2jHaGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZtsjX4xMwz27hZY;
-	Fri,  9 May 2025 10:03:28 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 68CDF1A0188;
-	Fri,  9 May 2025 10:02:42 +0800 (CST)
-Received: from localhost.huawei.com (10.90.30.45) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 May 2025 10:02:41 +0800
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: <21cnbao@gmail.com>, <xiaqinxin@huawei.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH v3 4/4] selftests/dma: Add dma_map_sg support
-Date: Fri, 9 May 2025 10:02:38 +0800
-Message-ID: <20250509020238.3378396-5-xiaqinxin@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250509020238.3378396-1-xiaqinxin@huawei.com>
-References: <20250509020238.3378396-1-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1746756286; c=relaxed/simple;
+	bh=+qfZDALLUhrJhLp9Y8tdMpOzOUBGedANZ5WjS6Kpy/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSNqUUsoNDJdXE7sMl+wI0cDOhkOJZ+QtqC8dg6p40v5F9yGHg3trG5GZ+ItUwkZx20us9kYi8/YLX6C5l+f9h3AFUe0XVBDpzkUavJy6OjSr076PaQl6CYFT2T162qGIxTN7xQMagvwLIMUKH5bt/h6Z+DhCYqw6EmyqIHa22s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2nhecG5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746756284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xmiJGCWH2hP12TenpYZdFu2FrjT+vq7C54lLFOzY/dY=;
+	b=A2nhecG53IxTMARtdqGYE/0p4nEGG+qrE0wkwSaDoxOKhezUZY9xQClcEYxiDQOJc6pN8J
+	q/4qOloLhQZJC/98zG2htCsoqP7l6Z2g+KMTDiSlJ9G3q3Vn+9ABda4srDJGFKlkodNZdu
+	GPtoihclY53nUozzjyTFp6OjUEWFXVw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-47-Zis-y8ssOV-_Ywxk8Qv7Cw-1; Thu,
+ 08 May 2025 22:04:40 -0400
+X-MC-Unique: Zis-y8ssOV-_Ywxk8Qv7Cw-1
+X-Mimecast-MFC-AGG-ID: Zis-y8ssOV-_Ywxk8Qv7Cw_1746756278
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D32241956080;
+	Fri,  9 May 2025 02:04:37 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.120])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24C4A180049D;
+	Fri,  9 May 2025 02:04:23 +0000 (UTC)
+Date: Fri, 9 May 2025 10:04:18 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Daniel Wagner <dwagner@suse.de>
+Cc: Hannes Reinecke <hare@suse.de>, Daniel Wagner <wagi@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <llong@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org, storagedev@microchip.com,
+	virtualization@lists.linux.dev,
+	GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v6 6/9] isolation: introduce io_queue isolcpus type
+Message-ID: <aB1iolILQcvvHDE9@fedora>
+References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
+ <20250424-isolcpus-io-queues-v6-6-9a53a870ca1f@kernel.org>
+ <2db989db-4849-46a9-9bad-0b67d85d1650@suse.de>
+ <dd4719dc-5ac4-44d9-bccb-e867d322864e@flourine.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd4719dc-5ac4-44d9-bccb-e867d322864e@flourine.local>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Support for dma_map_sg, add option '-m' to distinguish mode.
+On Fri, Apr 25, 2025 at 09:32:16AM +0200, Daniel Wagner wrote:
+> On Fri, Apr 25, 2025 at 08:26:22AM +0200, Hannes Reinecke wrote:
+> > On 4/24/25 20:19, Daniel Wagner wrote:
+> > > Multiqueue drivers spreading IO queues on all CPUs for optimal
+> > > performance. The drivers are not aware of the CPU isolated requirement
+> > > and will spread all queues ignoring the isolcpus configuration.
+> > > 
+> > > Introduce a new isolcpus mask which allows the user to define on which
+> > > CPUs IO queues should be placed. This is similar to the managed_irq but
+> > > for drivers which do not use the managed IRQ infrastructure.
+> > > 
+> > > Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> > > ---
+> > >   include/linux/sched/isolation.h | 1 +
+> > >   kernel/sched/isolation.c        | 7 +++++++
+> > >   2 files changed, 8 insertions(+)
+> > > 
+> > Reviewed-by: Hannes Reinecke <hare@suse.de>
+> 
+> Just realized I forgot to also add some document on this new argument:
+> 
+> 			io_queue
+> 			  Isolate from IO queue work caused by multiqueue
+> 			  device drivers. Restrict the placement of
+> 			  queues to housekeeping CPUs only, ensuring that
+> 			  all IO work is processed by a housekeeping CPU.
+> 
+> 			  Note: When an isolated CPU issues an IO, it is
+> 			  forwarded to a housekeeping CPU. This will
+> 			  trigger a software interrupt on the completion
+> 			  path.
+> 
+> 			  Note: It is not possible to offline housekeeping
+> 			  CPUs that serve isolated CPUs.
 
-i) Users can set option '-m' to select mode:
-   DMA_MAP_SINGLE_MODE=0, DMA_MAP_SG_MODE:=1
-   (The mode is also show in the test result).
-ii) Users can set option '-g' to set sg_nents
-    (total count of entries in scatterlist)
-    the maximum number is 1024. Each of sg buf size is PAGE_SIZE.
-    e.g
-    [root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
-    dma mapping mode: DMA_MAP_SG_MODE
-    dma mapping benchmark: threads:8 seconds:30 node:-1
-    dir:FROM_DEVICE granule/sg_nents: 8
-    average map latency(us):1.4 standard deviation:0.3
-    average unmap latency(us):1.3 standard deviation:0.3
-    [root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
-    dma mapping mode: DMA_MAP_SINGLE_MODE
-    dma mapping benchmark: threads:8 seconds:30 node:-1
-    dir:FROM_DEVICE granule/sg_nents: 8
-    average map latency(us):1.0 standard deviation:0.3
-    average unmap latency(us):1.3 standard deviation:0.5
+This patch adds kernel parameter only, but not apply it at all, the above
+words just confuses everyone, so I'd suggest to not expose the kernel
+command line & document until the whole mechanism is supported.
 
-Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- tools/testing/selftests/dma/dma_map_benchmark.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+Especially 'irqaffinity=0 isolcpus=io_queue' requires the application
+to offline CPU in order, which has to be documented:
 
-diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
-index b12f1f9babf8..036ddb5ac862 100644
---- a/tools/testing/selftests/dma/dma_map_benchmark.c
-+++ b/tools/testing/selftests/dma/dma_map_benchmark.c
-@@ -27,6 +27,7 @@ int main(int argc, char **argv)
- 	int fd, opt;
- 	/* default single thread, run 20 seconds on NUMA_NO_NODE */
- 	int threads = 1, seconds = 20, node = -1;
-+	int map_mode = DMA_MAP_SINGLE_MODE;
- 	/* default dma mask 32bit, bidirectional DMA */
- 	int bits = 32, xdelay = 0, dir = DMA_MAP_BIDIRECTIONAL;
- 	/* default granule 1 PAGESIZE */
-@@ -34,7 +35,7 @@ int main(int argc, char **argv)
- 
- 	int cmd = DMA_MAP_BENCHMARK;
- 
--	while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:")) != -1) {
-+	while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:m:")) != -1) {
- 		switch (opt) {
- 		case 't':
- 			threads = atoi(optarg);
-@@ -57,11 +58,20 @@ int main(int argc, char **argv)
- 		case 'g':
- 			granule = atoi(optarg);
- 			break;
-+		case 'm':
-+			map_mode = atoi(optarg);
-+			break;
- 		default:
- 			return -1;
- 		}
- 	}
- 
-+	if (map_mode >= DMA_MAP_MODE_MAX) {
-+		fprintf(stderr, "invalid map mode, DMA_MAP_SINGLE_MODE:%d, DMA_MAP_SG_MODE:%d\n",
-+			DMA_MAP_SINGLE_MODE, DMA_MAP_SG_MODE);
-+		exit(1);
-+	}
-+
- 	if (threads <= 0 || threads > DMA_MAP_MAX_THREADS) {
- 		fprintf(stderr, "invalid number of threads, must be in 1-%d\n",
- 			DMA_MAP_MAX_THREADS);
-@@ -111,13 +121,15 @@ int main(int argc, char **argv)
- 	map.dma_dir = dir;
- 	map.dma_trans_ns = xdelay;
- 	map.granule = granule;
-+	map.map_mode = map_mode;
- 
- 	if (ioctl(fd, cmd, &map)) {
- 		perror("ioctl");
- 		exit(1);
- 	}
- 
--	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule: %d\n",
-+	printf("dma mapping mode: %d\n", map_mode);
-+	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule/sg_nents: %d\n",
- 			threads, seconds, node, dir[directions], granule);
- 	printf("average map latency(us):%.1f standard deviation:%.1f\n",
- 			map.avg_map_100ns/10.0, map.map_stddev/10.0);
--- 
-2.33.0
+https://lore.kernel.org/all/cc5e44dd-e1dc-4f24-88d9-ce45a8b0794f@flourine.local/
+
+Thanks,
+Ming
 
 
