@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-641475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BBBAB124E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:36:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CD1AB1238
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E1CD7A9970
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20DF3B0F3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1233928F942;
-	Fri,  9 May 2025 11:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cwi.nl header.i=@cwi.nl header.b="zAKr9bw7"
-Received: from fester.cwi.nl (fester.cwi.nl [192.16.191.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A728ECD8;
-	Fri,  9 May 2025 11:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.16.191.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293D928ECC8;
+	Fri,  9 May 2025 11:29:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2C9228C99
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746790575; cv=none; b=NrgEp2DgnMhHRkCyGYGAUNSoBqyiX+JcINeod+LhkhWeKqgK4BQeti9jzlqN9fJlXNzYT+VGsJQDo/yq9OaMugyLulXy6cDbYBVpfhSZwOUSDLorsgMxFhuIx14TOuRGcuVY6NwpoT9DSZrNnSNUkNzTfx7YawZuODCtTHO7wSw=
+	t=1746790180; cv=none; b=pIhGcX5dd/T638D/Q+QbivjjJYWLjHUwky/9z2rbMeFR8tbpXLpaG+QVsVW10rpWAulM0MkHmiFRB8CSqT6/UY6oS03VRR3tCJ3J81ClEeEJHKvBkDLlhtrx8R7LfJ3jPfQgJWI4AUNbJ5tjJDr9bMfE/UcauiFjURspMZcwInI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746790575; c=relaxed/simple;
-	bh=Dpm4YNg5M0hipHDCrxWIpuQhnO6t8yrhT2g8ZtZdqT4=;
+	s=arc-20240116; t=1746790180; c=relaxed/simple;
+	bh=mupdWM95kpiTxu8Y1ChYWah5iJPDALut4pvXu7JfoUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gkhosvom6qsCF8+ePWGUe3AsF1SIjd64VIUixdY5AUcVcOzj/EQS5TAxjfP8og078W0bg4OD69Ex+yXDashxXfY3ATahVEJFlbQ7i5zLr1fdsqpmLGc1h5ihxzorkYgWZlV5fzjqiL6k47tTnSunH/zLX5me47O4gEPC4w7r6xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cwi.nl; spf=pass smtp.mailfrom=cwi.nl; dkim=fail (1024-bit key) header.d=cwi.nl header.i=@cwi.nl header.b=zAKr9bw7 reason="signature verification failed"; arc=none smtp.client-ip=192.16.191.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cwi.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cwi.nl
-Received: from localhost (37-251-114-171.fixed.kpn.net [37.251.114.171])
-	(authenticated bits=0)
-	by fester.cwi.nl (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTPSA id 549BQRtH028076
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 9 May 2025 13:26:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=cwi.nl; s=default;
-	t=1746789988; bh=Dpm4YNg5M0hipHDCrxWIpuQhnO6t8yrhT2g8ZtZdqT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zAKr9bw7FQlEQ9BDl4tn9ctk7sQpW65cf6kUtenSk+oF3xILc8cWfSrxJaLsr3UiT
-	 rmWiqZiAaEzT4bNVPucs8An3PBc9RqPEumUhwRtXzvTLG2tvuriU6+Gy+nh49FnFuS
-	 IGIhWaop1Q2wdDpjnGoI5kjNIBpE8O0axwrV89Aw=
-Date: Fri, 9 May 2025 13:26:27 +0200
-From: "Andries E. Brouwer" <aeb@cwi.nl>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org,
-        libc-alpha@sourceware.org
-Subject: Re: man-pages-6.14 released
-Message-ID: <20250509112627.GA924923@if>
-References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM89ou3xRr5YrUZOocHpXlbPxqaK26aiZ9BiF9LaFewbVSP2qp8PGrH1jMa7hdVfq/zs+H43WaG0o7b5WtZsdxOk6fFg5HymLXSNxL0i9/AXeTANF6Vp8Jnv4FxkGH4RRUYtHK9r6r7qAbFpNpC12tDiR2CkU142SMaLWfLjr6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2B541595;
+	Fri,  9 May 2025 04:29:26 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0E623F58B;
+	Fri,  9 May 2025 04:29:35 -0700 (PDT)
+Date: Fri, 9 May 2025 12:29:28 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v4 13/31] fs/resctrl: Add support for additional monitor
+ event display formats
+Message-ID: <aB3nGDzW6pNNkYTB@e133380.arm.com>
+References: <20250429003359.375508-1-tony.luck@intel.com>
+ <20250429003359.375508-14-tony.luck@intel.com>
+ <4aa0904d-9332-4796-90d6-d858711fc611@intel.com>
+ <aB0T_Ep2lJzfwjv5@agluck-desk3>
+ <2a19f63a-f9b4-4632-bca2-2f64f6fed57b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,54 +59,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+In-Reply-To: <2a19f63a-f9b4-4632-bca2-2f64f6fed57b@intel.com>
 
-On Fri, May 09, 2025 at 01:15:06AM +0200, Alejandro Colomar wrote:
-> Gidday!
+Hi,
+
+(Backtrace retained for context -- see my comment at the end.)
+
+Cheers
+---Dave
+
+[...]
+
+On Thu, May 08, 2025 at 04:45:21PM -0700, Reinette Chatre wrote:
+> Hi Tony,
 > 
-> I'm proud to announce:
+> On 5/8/25 1:28 PM, Luck, Tony wrote:
+> > On Thu, May 08, 2025 at 08:49:56AM -0700, Reinette Chatre wrote:
+> >> On 4/28/25 5:33 PM, Tony Luck wrote:
+> >>> Resctrl was written with the assumption that all monitor events
+> >>> can be displayed as unsigned decimal integers.
+> >>>
+> >>> Some telemetry events provide greater precision where architecture code
+> >>> uses a fixed point format with 18 binary places.
+> >>>
+> >>> Add a "display_format" field to struct mon_evt which can specify
+> >>> that the value for the event be displayed as an integer for legacy
+> >>> events, or as a floating point value with six decimal places converted
+> >>> from the fixed point format received from architecture code.
+> >>
+> >> There was no discussion on this during the previous version.
+> >> While this version addresses the issue of architecture changing the
+> >> format it does not address the issue of how to handle different
+> >> architecture formats. With this change any architecture that may
+> >> want to support any of these events will be required to translate
+> >> whatever format it uses into the one Intel uses to be translated
+> >> again into format for user space. Do you think this is reasonable? 
+> >>
+> >> Alternatively, resctrl could add additional file that contains the
+> >> format so that if an architecture in the future needs to present data
+> >> differently, an interface will exist to guide userspace how to parse it.
+> >> Creation of such user interface cannot be delayed until the time
+> >> it is needed since then these formats would be ABI.
+> > 
+> > What if resctrl filesystem allows architecture to supply the number
+> > of binary places for fixed point values when enabling an event?
 > 
-> 	man-pages-6.14 - manual pages for GNU/Linux
+> This sounds good. I do not think we are in a position to come up with
+> an ideal solution. That would require assumptions of what another
+> architecture may or may not do and thus we do not have complete information.
 > 
+> > 
+> > That would allow h/w implementations to pick an appropriate precision
+> > for each new event. Different implementations of the same event
+> > (e.g. "core_energy") may pick different precision across architectures
+> > or between generations of the same architecture.
+> > 
+> > File system code can then do:
+> > 
+> > 	if (binary_places == 0)
+> > 		display as integer
+> > 	else
+> > 		convert to floating point (with one decimal place per
+> > 		three binary places)
 > 
-> Global changes
-> --------------
+> I do not think this problem needs to be solved in this work but there needs
+> to be a plan for how other architectures can be supported. When similar
+> enabling needs to be done for that hypothetical architecture then it can
+> be implemented ... if it is still valid based on what that architecture actually
+> supports.
+> It may be sufficient for the "plan" (as above) to be in comments.
 > 
-> -  CREDITS, *
->    -  Move in-source contribution records to a new CREDITS file, and
->       update copyright notices to be uniform across the project.
+> > 
+> > Existing events are all integers and won't change (it would be weird
+> > for an architecture to report "mbm_local_bytes" with a fixed point
+> > rather than integer value).
+> > 
+> > New events may report in either integer or floating point format
+> > with varying amounts of precision. But I'm not sure that would be
+> 
+> Partly this will depend on the unit of measurement that should form part of
+> the definition of the event. For example, events reporting cycles or ticks
+> should only be integer, no?
+> 
+> > a burden for writing tools that can run on different architectures.
+> 
+> Maybe just a comment in the docs then ... and now I see that you did
+> so already. My apologies, I did not get to the last four patches.
+> 
+> Reinette
 
-Good morning!
+Just a thought, but I think that while it's not possible to be fully
+generic, a parameter model along the lines of
 
-I wonder about the legal status of such a change.
-There is ownership of the pages, and a license that allows
-others to do certain things.
+	quantity = raw_value * ((double)multiplier / divisor) * BASE_UNIT
 
-If I pick a random page, man2/unlink.2, then it used to start
+would cover most things that we have or can reasonably foresee,
+including memory bandwidth control values.
+raw_value, multiplier and divisor would all be integers.
 
-.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
-.\"             and Copyright (C) 1993 Ian Jackson
-.\"             and Copyright (C) 2006, 2014 Michael Kerrisk.
-.\"
-.\" Permission is granted to make and distribute verbatim copies of this
-.\" manual provided the copyright notice and this permission notice are
-.\" preserved on all copies.
-.\"
-.\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
-.\" Modified 1996-09-08 by Arnt Gulbrandsen <agulbra@troll.no>
-.\" Modified 1997-01-31 by Eric S. Raymond <esr@thyrsus.com>
-.\" Modified 2001-05-17 by aeb
-.\" Modified 2004-06-23 by Michael Kerrisk <mtk.manpages@gmail.com>
+Since raw_integer can be the value used by the hardware, its precision
+can probably be fixed at 1, though we could still report it explicitly.
 
-Today I read
+Fundamental base units would be things like "byte", "bytes per second"
+and "none" (i.e., dimensionless quantities).  (Are there others?)
 
-.\" Copyright, The contributors to the Linux man-pages project
-.\"
-.\" SPDX-License-Identifier: Linux-man-pages-copyleft
 
-I no longer find the information about who owns this page.
-The old permission notice does not seem to allow distribution
-without this information.
+Since we cannot guess for certain what userspace wants to do with the
+values, it feels better to let userspace do any scaling calculations
+itself, rather than trying to prettify the interface.
 
-Andries
+For example: scaling memory bandwidth percentages for MPAM is a
+nuisance because the hardware uses fixed-point values scaled by a power
+of 2, not by 100: the two scales can never match up anywhere except at
+multiples of 25%, leading to irregular increments when rounded to an
+integer percentage value and uncertainty about what the bandwidth_gran
+parameter means.  Round-trip conversions between the two
+representations become error-prone due to repeated rounding -- this
+proved quite fiddly to get right.  Precision beyond 1% increments may
+also be available in the hardware, but is not accessible through the
+resctrl interface.
+
+For backwards compatibility we probably shouldn't change that
+particular interface, but if we can avoid new instances of the same
+kind of problem then that would be a benefit: i.e., explicitly tell
+userspace how to scale a given parameter.
+
+Cheers
+---Dave
 
