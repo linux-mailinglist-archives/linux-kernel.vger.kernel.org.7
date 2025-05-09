@@ -1,240 +1,266 @@
-Return-Path: <linux-kernel+bounces-641608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EB5AB13D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:52:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400C8AB13E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B524317C393
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:52:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77EA27B3161
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF22221286;
-	Fri,  9 May 2025 12:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E569291147;
+	Fri,  9 May 2025 12:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VM7q8w0D"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Qs9CY6NC"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002B123184E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 12:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A74290D80;
+	Fri,  9 May 2025 12:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795145; cv=none; b=FcUs1a6NAi8IZjDpjEpK0cT0FdeNOISDcSSC1lYpS2zlz9DnXkl7TocWOA+xadfkdGGgpxLMD4bqtQkPWhGEANpvN1apML7kVQ5CzjxMPXxXGZl0ZkQfjE2aqh10XVxIiKiFgGl0j91W5cGUE0ofaVUpViU6HTNHVX5KBIuGPwo=
+	t=1746795251; cv=none; b=jcfp33Y/Yv6dVmawAbm9pXnJ8y1+lcXfg2W10ObNdNN5DzvgZSsaT1q981CsTLqPh4k+nNqEN8u8wl2nfcYaIO3iYqar/grkYHhikopmmy6/frRI7XxCNWQPKGLfQ8+hRcKnpLKLwzhICMmh1eVIQl55krpGndhBsXmcLbNcsfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746795145; c=relaxed/simple;
-	bh=h/N09pbexzYE+qk2m7nfdm7xlx2BYT1NlbACj5xI9lU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pu89OnF9y7Dk7g5oiDLWal/lGatSDl1Iipr13Rm8UImdNI/MTMob8YX3HhsXX4WGoMfXS+ivoJ3hvmOM1FadzxUNq2Zk54D8z/8JS+D3ENP65V3h8Z2JHO2RlX5UKjM2iTTm/vnnUu58JXqG04A89O5u5Uql7QKyBn2dIq32SrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VM7q8w0D; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8a6fc2de-a2aa-497c-9938-ff66f18ef097@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746795130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EganV1pOL8M2SSHAnKvcj8ajVnaVjVE4HDPaqbaAc40=;
-	b=VM7q8w0D43/CF/jbWDcht+Wv3+3/IpTgz+yUNA0IOhhYl9Y8HafuY9ddSULS2rP8cNIdxt
-	uZZmH6HJNHSD2B15ib4Ct41LAN9nwVYM3eo5rVI7XiKT2RPd1mmkVuw5HiiIPl7zBeazb0
-	OKk8dgqKyw+0mzWMTeWRORUVJYX7Sss=
-Date: Fri, 9 May 2025 14:52:08 +0200
+	s=arc-20240116; t=1746795251; c=relaxed/simple;
+	bh=DcwkRXNgEvRvHOzSApJNgPnA4OWWt5LOWujrHc8SEQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SNWC685IzMu5Mzb23T0DPD6BpO9W0csMwFBeteK/y13YZGXKknjdiWwSIclQ/H+idIT4NtxI8EcbKQAz6Q5BJaILRSIUrokjlqsGsnDaXODa6uuP4UoePypgjYwbDRgXcM+iWJOpeBULIYsVaZDucF4TN8OGyzSOmYR75ldwSH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Qs9CY6NC; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=R7GJ7qvzsdrqnYobrx3s7aB7m2F5mPpRtkMxGcl8bYk=; b=Qs9CY6NCsFtAMSdALPcnM0RY2S
+	hVgMAFTAAEUXMZyhGOpCuicXYXbd+xpjtl+ZKbBmx18g+7UDSQMqnBCod+UOoDm02c0WmB3srf0YP
+	Yq/WlJ74jJ8+4Ci62cu+ELaeTFc7b+w4jJKuDCQZwZyF5TrOSmBN9iMruMsxb7rsMkuvR9bw+CBwG
+	XVim9lAnfXCwTGnBezG8zdJlIvYirt6kBoHhxj2dv3ldAjIC3PatC8rHzgET+OSU/fHBCVu1ztqYq
+	AKSa8RmV1pSYSH6pCb1yDSdUkzdRFmIf9n88dSQEbCtgU39Rqf1gfOjYXZnhPTY5YGx8N4PGmAbxY
+	UGmKiKgw==;
+Received: from i53875a1d.versanet.de ([83.135.90.29] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uDNEn-0005A8-SH; Fri, 09 May 2025 14:54:01 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v2 2/5] arm64: dts: rockchip: move rock 5b to include file
+Date: Fri, 09 May 2025 14:54:00 +0200
+Message-ID: <2653568.Lt9SDvczpP@diego>
+In-Reply-To: <D9RN1HZAXH1M.3H228KWQJ9CR0@cknow.org>
+References:
+ <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
+ <20250508-rock5bp-for-upstream-v2-2-677033cc1ac2@kernel.org>
+ <D9RN1HZAXH1M.3H228KWQJ9CR0@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-next v2 2/2] RDMA/rxe: Enable asynchronous prefetch
- for ODP MRs
-To: Daisuke Matsuda <dskmtsd@gmail.com>, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com
-References: <20250503134224.4867-1-dskmtsd@gmail.com>
- <20250503134224.4867-3-dskmtsd@gmail.com>
- <dbc1bcdf-144d-44d2-8fc8-77bc2ad58b51@linux.dev>
- <2a6081b8-1772-4064-97d8-70d636b1868e@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <2a6081b8-1772-4064-97d8-70d636b1868e@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 09.05.25 14:19, Daisuke Matsuda wrote:
-> 
-> 
-> On 2025/05/06 0:25, Zhu Yanjun wrote:
->> On 03.05.25 15:42, Daisuke Matsuda wrote:
->>> Calling ibv_advise_mr(3) with flags other than IBV_ADVISE_MR_FLAG_FLUSH
->>> invokes asynchronous requests. It is best-effort, and thus can safely be
->>> deferred to the system-wide workqueue.
->>>
->>> Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
->>
->> I have made tests with rdma-core after applying this patch series. It 
->> seems that it can work well.
->> I read through this commit. Other than the following minor problems, I 
->> am fine with this commit.
->>
->> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
->>
->>> ---
->>>   drivers/infiniband/sw/rxe/rxe_odp.c | 81 ++++++++++++++++++++++++++++-
->>>   1 file changed, 80 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c 
->>> b/drivers/infiniband/sw/rxe/rxe_odp.c
->>> index e5c60b061d7e..d98b385a18ce 100644
->>> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
->>> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
->>> @@ -425,6 +425,73 @@ enum resp_states rxe_odp_do_atomic_write(struct 
->>> rxe_mr *mr, u64 iova, u64 value)
->>>       return RESPST_NONE;
->>>   }
->>> +struct prefetch_mr_work {
->>> +    struct work_struct work;
->>> +    u32 pf_flags;
->>> +    u32 num_sge;
->>> +    struct {
->>> +        u64 io_virt;
->>> +        struct rxe_mr *mr;
->>> +        size_t length;
->>> +    } frags[];
->>> +};
->>
->> The struct prefetch_mr_work should be moved into header file? IMO, it 
->> is better to move this struct to rxe_loc.h?
-> 
-> This struct is not likely to be used in other files.
-> I think leaving it here would be easier for other developers to 
-> understand because relevant codes are gathered.
-> If there is any specific reason to move, I will do so.
-> 
->>
->>> +
->>> +static void rxe_ib_prefetch_mr_work(struct work_struct *w)
->>> +{
->>> +    struct prefetch_mr_work *work =
->>> +        container_of(w, struct prefetch_mr_work, work);
->>> +    int ret;
->>> +    u32 i;
->>> +
->>> +    /* We rely on IB/core that work is executed if we have num_sge 
->>> != 0 only. */
->>> +    WARN_ON(!work->num_sge);
->>> +    for (i = 0; i < work->num_sge; ++i) {
->>> +        struct ib_umem_odp *umem_odp;
->>> +
->>> +        ret = rxe_odp_do_pagefault_and_lock(work->frags[i].mr, 
->>> work->frags[i].io_virt,
->>> +                            work->frags[i].length, work->pf_flags);
->>> +        if (ret < 0) {
->>> +            rxe_dbg_mr(work->frags[i].mr, "failed to prefetch the 
->>> mr\n");
->>> +            continue;
->>> +        }
->>> +
->>> +        umem_odp = to_ib_umem_odp(work->frags[i].mr->umem);
->>> +        mutex_unlock(&umem_odp->umem_mutex);
->>
->> Obviously this function is dependent on the mutex lock umem_mutex. So 
->> in the beginning of this function, it is better to  add 
->> lockdep_assert_held(&umem_odp->umem_mutex)?
-> 
-> The mutex **must not** be locked at the beginning, so
-> perhaps we can add lockdep_assert_not_held() instead at the beginning,
-> but this one is not used frequently, and we can do without that.
-> 
-> umem_mutex is locked in rxe_odp_do_pagefault_and_lock() in the for loop.
-> The function calls ib_umem_odp_map_dma_and_lock(), which locks the mutex 
-> only when pagefault is successful.
+Am Freitag, 9. Mai 2025, 14:44:57 Mitteleurop=C3=A4ische Sommerzeit schrieb=
+ Diederik de Haas:
+> Hi,
+>=20
+> On Thu May 8, 2025 at 7:48 PM CEST, Sebastian Reichel wrote:
+> > Radxa released some more boards, which are based on the original
+> > Rock 5B. Move its board description into an include file to avoid
+> > unnecessary duplication.
+>=20
+> Aren't you moving it *out of* an/the include file?
+> If so, the patch Subject and the above line should be updated so that
+> they correctly reflect what is changed in this patch.
+>=20
+> The above text is correct (and the same ...) as patch 1, but in this
+> patch you move things out of the dtsi which are unique per board.
+>=20
+> > NOTE: this should be merged with the previous commit to ensure
+> > bisectability. The rename happens in a separete commit during
+> > development because git does not properly detect the rename when
+> > the original filename is reused in the same commit. This means
+> >
+> > 1. it's a lot harder to review the changes
+> > 2. it's a lot harder to rebase the patch series
+>=20
+> Or did I fall prey to the exact thing you described here?
 
-Sure. umem_mutex is locked in other functions. It is not necessary to 
-use lockdep_assert_held at the beginning of this function.
+I think Sebastian's idea  is, that I squash both patches when applying.
+This split makes it easy(er) to review because patch1 is just a rename.
 
-Zhu Yanjun
+And merging them when applying then makes it again not break bisectability.
 
-> If ib_umem_odp_map_dma_and_lock() fails, an error is returned and then 
-> the mutex is not locked.
-> 
-> Daisuke
-> 
->>
->> Zhu Yanjun
->>
->>> +    }
->>> +
->>> +    kvfree(work);
->>> +}
->>> +
->>> +static int rxe_init_prefetch_work(struct ib_pd *ibpd,
->>> +                  enum ib_uverbs_advise_mr_advice advice,
->>> +                  u32 pf_flags, struct prefetch_mr_work *work,
->>> +                  struct ib_sge *sg_list, u32 num_sge)
->>> +{
->>> +    struct rxe_pd *pd = container_of(ibpd, struct rxe_pd, ibpd);
->>> +    u32 i;
->>> +
->>> +    INIT_WORK(&work->work, rxe_ib_prefetch_mr_work);
->>> +    work->pf_flags = pf_flags;
->>> +
->>> +    for (i = 0; i < num_sge; ++i) {
->>> +        struct rxe_mr *mr;
->>> +
->>> +        mr = lookup_mr(pd, IB_ACCESS_LOCAL_WRITE,
->>> +                   sg_list[i].lkey, RXE_LOOKUP_LOCAL);
->>> +        if (IS_ERR(mr)) {
->>> +            work->num_sge = i;
->>> +            return PTR_ERR(mr);
->>> +        }
->>> +        work->frags[i].io_virt = sg_list[i].addr;
->>> +        work->frags[i].length = sg_list[i].length;
->>> +        work->frags[i].mr = mr;
->>> +
->>> +        rxe_put(mr);
->>> +    }
->>> +    work->num_sge = num_sge;
->>> +    return 0;
->>> +}
->>> +
->>>   static int rxe_ib_prefetch_sg_list(struct ib_pd *ibpd,
->>>                      enum ib_uverbs_advise_mr_advice advice,
->>>                      u32 pf_flags, struct ib_sge *sg_list,
->>> @@ -478,6 +545,8 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd 
->>> *ibpd,
->>>                        u32 flags, struct ib_sge *sg_list, u32 num_sge)
->>>   {
->>>       u32 pf_flags = RXE_PAGEFAULT_DEFAULT;
->>> +    struct prefetch_mr_work *work;
->>> +    int rc;
->>>       if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH)
->>>           pf_flags |= RXE_PAGEFAULT_RDONLY;
->>> @@ -490,7 +559,17 @@ static int rxe_ib_advise_mr_prefetch(struct 
->>> ib_pd *ibpd,
->>>           return rxe_ib_prefetch_sg_list(ibpd, advice, pf_flags, 
->>> sg_list,
->>>                              num_sge);
->>> -    /* Asynchronous call is "best-effort" */
->>> +    /* Asynchronous call is "best-effort" and allowed to fail */
->>> +    work = kvzalloc(struct_size(work, frags, num_sge), GFP_KERNEL);
->>> +    if (!work)
->>> +        return -ENOMEM;
->>> +
->>> +    rc = rxe_init_prefetch_work(ibpd, advice, pf_flags, work, 
->>> sg_list, num_sge);
->>> +    if (rc) {
->>> +        kvfree(work);
->>> +        return rc;
->>> +    }
->>> +    queue_work(system_unbound_wq, &work->work);
->>>       return 0;
->>>   }
->>
-> 
+
+Heiko
+
+
+> Cheers,
+>   Diederik
+>=20
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts  | 52 ++++++++++++++++=
+++++++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi | 40 ----------------=
+=2D-
+> >  2 files changed, 52 insertions(+), 40 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm=
+64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..9407a7c9910ada1f6c803d2=
+e15785a9cbd9bd655
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > @@ -0,0 +1,52 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "rk3588-rock-5b.dtsi"
+> > +
+> > +/ {
+> > +	model =3D "Radxa ROCK 5B";
+> > +	compatible =3D "radxa,rock-5b", "rockchip,rk3588";
+> > +};
+> > +
+> > +&sdio {
+> > +	max-frequency =3D <200000000>;
+> > +	no-sd;
+> > +	no-mmc;
+> > +	non-removable;
+> > +	bus-width =3D <4>;
+> > +	cap-sdio-irq;
+> > +	disable-wp;
+> > +	keep-power-in-suspend;
+> > +	wakeup-source;
+> > +	sd-uhs-sdr12;
+> > +	sd-uhs-sdr25;
+> > +	sd-uhs-sdr50;
+> > +	sd-uhs-sdr104;
+> > +	vmmc-supply =3D <&vcc3v3_pcie2x1l0>;
+> > +	vqmmc-supply =3D <&vcc_1v8_s3>;
+> > +	pinctrl-names =3D "default";
+> > +	pinctrl-0 =3D <&sdiom0_pins>;
+> > +	status =3D "okay";
+> > +};
+> > +
+> > +&uart6 {
+> > +	pinctrl-names =3D "default";
+> > +	pinctrl-0 =3D <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
+> > +	status =3D "okay";
+> > +};
+> > +
+> > +&pinctrl {
+> > +	usb {
+> > +		vcc5v0_host_en: vcc5v0-host-en {
+> > +			rockchip,pins =3D <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&vcc5v0_host {
+> > +	enable-active-high;
+> > +	gpio =3D <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+> > +	pinctrl-names =3D "default";
+> > +	pinctrl-0 =3D <&vcc5v0_host_en>;
+> > +};
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi b/arch/ar=
+m64/boot/dts/rockchip/rk3588-rock-5b.dtsi
+> > index 17f4fd054cd3d1c4e23ccfe014a9c4b9d7ad1a06..6052787d2560978d2bae6cf=
+beea5fc1d419d583a 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
+> > @@ -8,9 +8,6 @@
+> >  #include "rk3588.dtsi"
+> > =20
+> >  / {
+> > -	model =3D "Radxa ROCK 5B";
+> > -	compatible =3D "radxa,rock-5b", "rockchip,rk3588";
+> > -
+> >  	aliases {
+> >  		mmc0 =3D &sdhci;
+> >  		mmc1 =3D &sdmmc;
+> > @@ -139,10 +136,6 @@ vcc5v0_host: regulator-vcc5v0-host {
+> >  		regulator-always-on;
+> >  		regulator-min-microvolt =3D <5000000>;
+> >  		regulator-max-microvolt =3D <5000000>;
+> > -		enable-active-high;
+> > -		gpio =3D <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+> > -		pinctrl-names =3D "default";
+> > -		pinctrl-0 =3D <&vcc5v0_host_en>;
+> >  		vin-supply =3D <&vcc5v0_sys>;
+> >  	};
+> > =20
+> > @@ -488,12 +481,6 @@ pcie3_vcc3v3_en: pcie3-vcc3v3-en {
+> >  			rockchip,pins =3D <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+> >  		};
+> >  	};
+> > -
+> > -	usb {
+> > -		vcc5v0_host_en: vcc5v0-host-en {
+> > -			rockchip,pins =3D <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+> > -		};
+> > -	};
+> >  };
+> > =20
+> >  &pwm1 {
+> > @@ -530,27 +517,6 @@ &sdmmc {
+> >  	status =3D "okay";
+> >  };
+> > =20
+> > -&sdio {
+> > -	max-frequency =3D <200000000>;
+> > -	no-sd;
+> > -	no-mmc;
+> > -	non-removable;
+> > -	bus-width =3D <4>;
+> > -	cap-sdio-irq;
+> > -	disable-wp;
+> > -	keep-power-in-suspend;
+> > -	wakeup-source;
+> > -	sd-uhs-sdr12;
+> > -	sd-uhs-sdr25;
+> > -	sd-uhs-sdr50;
+> > -	sd-uhs-sdr104;
+> > -	vmmc-supply =3D <&vcc3v3_pcie2x1l0>;
+> > -	vqmmc-supply =3D <&vcc_1v8_s3>;
+> > -	pinctrl-names =3D "default";
+> > -	pinctrl-0 =3D <&sdiom0_pins>;
+> > -	status =3D "okay";
+> > -};
+> > -
+> >  &sfc {
+> >  	pinctrl-names =3D "default";
+> >  	pinctrl-0 =3D <&fspim2_pins>;
+> > @@ -566,12 +532,6 @@ flash@0 {
+> >  	};
+> >  };
+> > =20
+> > -&uart6 {
+> > -	pinctrl-names =3D "default";
+> > -	pinctrl-0 =3D <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
+> > -	status =3D "okay";
+> > -};
+> > -
+> >  &spi2 {
+> >  	status =3D "okay";
+> >  	assigned-clocks =3D <&cru CLK_SPI2>;
+>=20
+>=20
+
+
+
 
 
