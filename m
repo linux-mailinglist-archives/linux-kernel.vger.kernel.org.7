@@ -1,230 +1,99 @@
-Return-Path: <linux-kernel+bounces-640934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C121CAB0B2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:06:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682C3AB0B3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB49D3AC6FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:06:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362F44A5F00
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F2826FD91;
-	Fri,  9 May 2025 07:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ADB26FDBD;
+	Fri,  9 May 2025 07:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWrqIGtA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="c+b8oXRZ"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEF026FA5C;
-	Fri,  9 May 2025 07:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A5E26FD83;
+	Fri,  9 May 2025 07:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746774376; cv=none; b=mCS3+CdGx5rWHEl639wVVK3XhlvpyK5bSe63w9fiLJ2y+Q8fYI5kAVAQWO7atkvSt/rNoUEL2WPoph+sUZ83r2UdXu3KbV/DJx+Kf2/P0TtpybmfHTl5k15S4mcf6tfaVb4S9rV8TmtBAZ6qi6mJkThA4XTb/xX8Jb0O0pcw+OY=
+	t=1746774461; cv=none; b=O+dRh1tbnQC9LhgsKxCGmq7OWiY0IQn/fYzf9TnK3JAmBm480gslbEOrxgJ4u7qwiLNLI4JYUo6wkmBu86eRvHQB3P1lHLmL0XP+FBVNJPbMi/Lh9WIPrNkFDcG4DbuGZ6gEpQla30rOGECYTC7TwtbA6hDr0p9SuVOFMNCWm0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746774376; c=relaxed/simple;
-	bh=ttmv5irzEpM/ynDKw1BjJl4iEmL2XL36+Ltiqs40NgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pnRg6wCFQYthkiqiRZNuU2bsKLQLEowurS8PmwKmqiqgQb4woBODKFU6nqjBPP/UtcIYvIX7oQvGgvHu/TbSmyM4o0S4rZrU/uAV/SzNvi24pI7mpbnTr8cl/5wA+K9+U2JNEusmYR9vlVl08Lj9C8130Pnck+wgQjMnuRLpD30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWrqIGtA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D2CC4CEE4;
-	Fri,  9 May 2025 07:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746774376;
-	bh=ttmv5irzEpM/ynDKw1BjJl4iEmL2XL36+Ltiqs40NgE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KWrqIGtAvO+ToVnYjbCjHXwsEKPVzjIXUOGPZjSX+isoT9rJwk8zzb9xkGaoSx9Bk
-	 NlT1dMtCOwLZGMId09yd2cc9F6DFmyVy5lWNIEsJk0MQu85R70+PnpziYH7r2VIoCd
-	 ehsNorlDth4la1Ne0hekH0TKn9ee2sB2pGILxj0kGReqRg2izzVuXr+CrRKWEzH51s
-	 zwYCDVojZ7z0uZqqEN690mn/kDjgesi8E3yCpkrBMMJOVEVHCtqLWbnEsYTzw1pCWp
-	 U4oVMy+YQ9XUZfyWCPDTIaXqexdCbD4SgYCxhAQV8J78JcLf90v5FhMmiLssUbYg4S
-	 HEK5R68WKdLjA==
-Message-ID: <84c85750-18b2-46c4-b0cc-7bb663d03783@kernel.org>
-Date: Fri, 9 May 2025 09:06:10 +0200
+	s=arc-20240116; t=1746774461; c=relaxed/simple;
+	bh=q1d4rES5n4/72LB6mNetdqrwKcaJ811NKB0G5vo83gc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G+SWzowITkbmd7qTUcyqBdPERQzEGQLuhTrmeZnGk9VUkneCI1nDWifAhiu/oLhb7kdPuG7VEgqezUY1y8GO4zaH/S92dIzKv84eFu7emisi0fsW+AynLk26f7XFgpMk0HcGBXxwQgZ5cAVcMebvtgaRvXqkaBGLwsBHVXEi5CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=c+b8oXRZ; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1746774440;
+	bh=A4E2WkZBTupHcyT4KzgNgZwpVs0PSeZDi1MEZdWNEIY=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=c+b8oXRZxAzhf8fa64B4b15eIVdZvWAoxvtxARI8Tlz537LXze1aaYksi4YkhgZVW
+	 ZfDv/aClOsYX8IpZ+K8Jjp4ys7+J4A2IzxogxcSyckVJkf8QTQbngEp21qI67J2aok
+	 6luTXJUCFCNbYFcKC0RoekwWog0RR/ICSHR3p90U=
+X-QQ-mid: zesmtpip3t1746774434t01fc51ae
+X-QQ-Originating-IP: fIVEk/qcaQB4lBbnGcMb5v96AIQWxOerCTDhaK7zj0c=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 09 May 2025 15:07:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6606146849622476455
+From: raoxu <raoxu@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH V6] usb:xhci: Add debugfs support for xHCI port bandwidth
+Date: Fri,  9 May 2025 15:07:12 +0800
+Message-Id: <20250509070712.276578-1-raoxu@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] hwmon: pmbus: mpq8785: Add support for MPM3695
- family
-To: Pawel Dembicki <paweldembicki@gmail.com>, linux-hwmon@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Noah Wang <noahwang.wang@outlook.com>, Fabio Estevam <festevam@gmail.com>,
- Michal Simek <michal.simek@amd.com>,
- Naresh Solanki <naresh.solanki@9elements.com>,
- Grant Peltier <grantpeltier93@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Peter Zijlstra <peterz@infradead.org>, Shen Lichuan <shenlichuan@vivo.com>,
- Greg KH <gregkh@linuxfoundation.org>, Charles Hsu <ythsu0511@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250509065237.2392692-1-paweldembicki@gmail.com>
- <20250509065237.2392692-4-paweldembicki@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250509065237.2392692-4-paweldembicki@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: MfzJ8BZ3qEI38t5aKMquBbk2QEVL9ujIK57Kjc+thNxTrphxbxrHeFg8
+	/D09dvamKLYPMk7Vl3YYLDzrJCyif1f59hfah+lOyZoVQxo28NbQcSoGR3tSN8+xl2FFi5y
+	igPAr2vHkhpCw+PWVcQxViCEzs56iCRhFNJQYDWVnZeO72Dq0lH+4TAEjYTNRG38m6/NOUS
+	OUl7Vwnm5gUg1KR6mQPQH77K+3RhIIOxW2UNfQhxSTbBqtQxLbiKayFEIcbcRygr/Nl7wHs
+	4WWn3CnTb2wkBLnIdqys9xRV4Jaf3vUQPIJZQdjqV8iAcbeUXX/qqiLPrjles3ecWgPX592
+	UcEY7e7dDuj2lLdAXC+HdGJjwDe2azKsRu2cHceCCq2KOkbGFbunQ7S3tBcsXBnfeddK/Fs
+	a1iye9iu7BUti8RY02vnRQoBhOSYu4y3Esp+BWE0R014qqD/8mg8/eHDGyG7uDpQkzqKxLi
+	YWdAV770AHJeCAUxNiXNK+wsVsu29OYk0tY2xlRgVTe6+3CY3Q8Qwbf1D37xFdJ0VvHG6i4
+	IaN48gXOhMxiNNGA09otAC3/pY4isf6GCWhWW/vl5B2+P1WMhGcPMX2x2BFgS4kRStfwBdR
+	v/Fk4d0KXbG7eXFlX847tttSXw2RqKDbeAmjqsj/IRBhraUluSpVXB7ltjWMkHIktb5UM/U
+	bSE0jcxaCdWjnSBKquViXTgqFR8tweMCT1m1tXWqJFBDEL5pLVay1PpW9Jy8ccujp7oKFur
+	+7utqq/TTwaW2d2OLUL3O+O+U/WLo7FORsIv+HCaqmRcWRW+lbzc3N1feZOP8Twap9Adzze
+	SyZFn0mf4pjZWx+NKxQqQGyhhodAdB+t0SpEZK7jlzfIaDOqN7OeaPUWkmWnG3xqlMM5cxs
+	iz4AVtDI+pTqpbVcwTy6RK+Ni34+3fIEBMc5Dzym8W4XVUymxM77FZB7Z67hojtDBX4j2my
+	rvwSb2MTZ0QKx3R5BnML899WibLqaWdW8rvMqfmxFc1vJgTSrCdN/DQ6hG86gRU8pNLVR1s
+	4IWiLSi8supS6ERuS3rg2MTIbYcZ5PFODQDxXMuLutHUPA9AlIXHNKLxJxWFukL0/14pmRt
+	A==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On 09/05/2025 08:51, Pawel Dembicki wrote:
-> Add support for the Monolithic Power Systems MPM3695 family.
-> It contains four devices with suffixes: -10, -20, -25 and -100.
-> The device is PMBus compliant and shares characteristics with the
-> MPM82504.
-> 
-> MPM3695-25 has different VOLTAGE_SCALE_LOOP register size [11:0]
-> and it needs to be separated because it will be configured in the next
-> commit.
+Hi
 
-This should be *this* commit. Add proper support for a device in one
-commit. Not half-broken commit, being fixed later.
+On 2025/4/2 20:31, Mathias Nyman  wrote:
+> We are currently in the middle of the merge window.
+> I'll try this series out on top of 6.15-rc1 once its released, and
+> then send it forward if everything works as expected
 
-> 
-> Tested with device tree based matching (MPM3695-10).
-> 
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-> 
-> ---
-> v2:
->   - Added whole MPM3695 family
-> ---
->  Documentation/hwmon/mpq8785.rst | 13 +++++++++----
->  drivers/hwmon/pmbus/mpq8785.c   |  8 +++++++-
->  2 files changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/hwmon/mpq8785.rst b/Documentation/hwmon/mpq8785.rst
-> index be228ee58ce2..7093e4db4f55 100644
-> --- a/Documentation/hwmon/mpq8785.rst
-> +++ b/Documentation/hwmon/mpq8785.rst
-> @@ -7,6 +7,7 @@ Supported chips:
->  
->    * MPS MPQ8785
->    * MPS MPM82504
-> +  * MPS MPM3695 family
->  
->      Prefix: 'mpq8785'
->  
-> @@ -29,6 +30,14 @@ The device can also operate in parallel with the MPM3695-100 and additional
->  MPM82504 devices to provide a higher output current. The MPM82504 operates
->  at high efficiency across a wide load range.
->  
-> +The MPM3695 family is a scalable, ultra-thin, fully integrated power module with
-> +a PMBus interface. It offers a complete power solution that achieves up to
-> +10A (-10 variant), 20A (-25 variant), 25A (-20 variant), 100A (-100 variant)
-> +of output current with excellent load and line regulation across a wide input
-> +voltage range. It operates at high efficiency over a wide load range, and can
-> +be parallled to deliver higher current. Variants -10,-20 and -100 have different
-> +voltage scale configuration register range (10 bits) than -25 version (11 bits).
-> +
->  The PMBus interface provides converter configurations and key parameters
->  monitoring.
->  
-> @@ -42,10 +51,6 @@ Fully integrated protection features include over-current protection (OCP),
->  over-voltage protection (OVP), under-voltage protection (UVP), and
->  over-temperature protection (OTP).
->  
-> -All supported modules require a minimal number of readily available, standard
-> -external components. The MPQ8785 is available in a TLGA (5mmx6mm) package
-> -and the MPM82504 is available in a BGA (15mmx30mmx5.18mm) package.
-> -
->  Device compliant with:
->  
->  - PMBus rev 1.3 interface.
-> diff --git a/drivers/hwmon/pmbus/mpq8785.c b/drivers/hwmon/pmbus/mpq8785.c
-> index 9a4a211b2aeb..34245d0d2125 100644
-> --- a/drivers/hwmon/pmbus/mpq8785.c
-> +++ b/drivers/hwmon/pmbus/mpq8785.c
-> @@ -10,7 +10,7 @@
->  
->  #define PMBUS_READ_TEMPERATURE_1_SIGN	BIT(9)
->  
-> -enum chips { mpq8785, mpm82504 };
-> +enum chips { mpq8785, mpm82504, mpm3695, mpm3695_25 };
->  
->  static int mpq8785_identify(struct i2c_client *client,
->  			    struct pmbus_driver_info *info)
-> @@ -79,6 +79,8 @@ static struct pmbus_driver_info mpq8785_info = {
->  static const struct i2c_device_id mpq8785_id[] = {
->  	{ "mpq8785", mpq8785 },
->  	{ "mpm82504", mpm82504 },
-> +	{ "mpm3695", mpm3695 },
-> +	{ "mpm3695-25", mpm3695_25 },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(i2c, mpq8785_id);
-> @@ -86,6 +88,8 @@ MODULE_DEVICE_TABLE(i2c, mpq8785_id);
->  static const struct of_device_id __maybe_unused mpq8785_of_match[] = {
->  	{ .compatible = "mps,mpq8785", .data = (void *)mpq8785 },
->  	{ .compatible = "mps,mpm82504", .data = (void *)mpm82504 },
-> +	{ .compatible = "mps,mpm3695", .data = (void *)mpm3695 },
-> +	{ .compatible = "mps,mpm3695-25", .data = (void *)mpm3695_25 },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, mpq8785_of_match);
-> @@ -110,6 +114,8 @@ static int mpq8785_probe(struct i2c_client *client)
->  		info->identify = mpq8785_identify;
->  		break;
->  	case mpm82504:
-> +	case mpm3695:
-> +	case mpm3695_25:
+thanks Mathias Nyman,
+Is there any problems with the patch? If you find any problems
+during testing,please let me know so I can optimize and update
+the patch.
 
-So are these fully compatible? Looks like, so why aren't you expressing
-it in the binding and here? No need for these redundant ID table entries.
-
->  		info->format[PSC_VOLTAGE_OUT] = direct;
->  		info->m[PSC_VOLTAGE_OUT] = 8;
->  		info->b[PSC_VOLTAGE_OUT] = 0;
-
-
-Best regards,
-Krzysztof
+Thanks
+raoxu
 
