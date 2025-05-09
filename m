@@ -1,187 +1,414 @@
-Return-Path: <linux-kernel+bounces-641474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C108AB124D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2390CAB1253
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32EB33B25A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:36:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309F89E7645
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D5B28FA91;
-	Fri,  9 May 2025 11:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AE128FAA7;
+	Fri,  9 May 2025 11:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W17HQEZf"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Fb1GzcD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O0YlHRfD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04220221D94
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38B828F95E;
+	Fri,  9 May 2025 11:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746790568; cv=none; b=IvPZGmiAhyY9N/WLicbfn5zq4XrnWBO5oVlU04mPovjYKoVdotryd1X5ZhFlz3GQ87uLyqm7aSdvyOzuL6o3JMh2uoCbCaUOskNnXHf8DPciysLOtkmb++rpYohweF50lR3hjOAG5546qGaridLoWlKRC2syqaIB/i+pgD1ecBA=
+	t=1746790638; cv=none; b=METX9uGfioF2Cwmur1rKPRGTmUdls9SWgj3eb8eGUMrXhNbfapkiDqKgiZ1rNEcenk1x3FxPOJfi/bhBOrGU8thnS/sMGzivzrNJt5lTKCfmSvdHt0u38ZVPcWXDOoy3ruRcXN6ebglYDEPc1C+dxXqmYLB5TZLs1LogdYkmbGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746790568; c=relaxed/simple;
-	bh=xBU++8c6J4fZ4GQ8du/8VqKT/VdxBXVcSwhpuUJudOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f1sD/h7Nmo12ftVWr624lTMFgDK6iMvPXBIXNegemmoMS12Wfy8IJa1sUNLga1Z7I6HBM7qGfOAUi89BhlJ3bARMvJUDk0Q9MFWC69ZKkCcopxz4Chi/Om8vonphOEp+Yca+Dw7rOV5Yk8VMv+sWAoMhpas6nPtYF+JvPabXmnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W17HQEZf; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-442cd12d28cso348245e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:36:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746790564; x=1747395364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tPnQGbJY6qzXsG54dxOhAsZfcJwhZhWhqpOSIo2IWUY=;
-        b=W17HQEZfKtSyM+JorV5hh8Q+JHQmwajr9KWKaQ5c2PU7SPi46ygPZQ7UGt5rOEP+0w
-         26s39da+4ESD2nuTRWFfTRxO0D4yrukmWIu4KR5opDKXJXNVdrFHzuxkMczwPEutqibv
-         uy3TAvj/Bk/ZHsvbB4qRYAptifuAjSAj+1Ck1nOL1PfxnqKU1x7oOD/8ORAxtvrB+bCk
-         dRPXF0nBiebU691AnEtp/kBWduba5xcs/mK9IYYfB2O1nH+6gl05euiueR9CeMrLUCzy
-         E2YDd0EdenCiYE6DpdI4/48oKmed4M755SE7V8UCI4YppXepMo1kES14gkObs3ROixRy
-         pu8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746790564; x=1747395364;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tPnQGbJY6qzXsG54dxOhAsZfcJwhZhWhqpOSIo2IWUY=;
-        b=gVmkaSRmeaIKUHahroXW65pBP7YR2fujY0I06yqKVDLnoHGihJRoErzHyyIYMPlR3m
-         SF3WZAFnAGoGbvZlt8tMgAei6g31ScDdeY6CQNixm3t3aN0Sb+SmRoyP0l+U6uIAnfJg
-         5WeEbYpyVXLpI+4LktILbRx0+iIghv2Or2WZDAHGz0V/dI2ewOnhttQucyQk4vwdqUje
-         /HOyVyLlV9mP/kopAonZhe5COW4Jkd+6u/JG0bKGJJU4uPzofVWrM80o3G6bHhpdDQOv
-         kAnjdjbaL02bHirw0hK18jsOkl64xmZBPINmKQR0xQ5dy16kdGdLqhxBjSvtMDbVjSK5
-         iNsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3PRYfiicBcXuzpolJ9y8M8IYXTwPD/nv+HrSlJpcSHvnLTpqF7XCI1YfgjMi0a+4AvlbRKIle1yWBiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA24pA4XqYC3HR2tDVg0Bsd4uVt5MGaDxD9shI1MqZ6DJ6gycT
-	9Osu/Q5FYPli2KsnR9I34EAOcgFvjOsAZl+YrVETCRn3Frp82UsG6Yj/TJDH1mw=
-X-Gm-Gg: ASbGncsdCZsdCZGqIEGe3IgKlhHp0y0wY+TEoyZfLRFGzaTCtTliVPM7xpBOFierYKU
-	Pmy91WMR9QGGJAIkzd4PuVdCqwJego55/Fj37NTFiZ/EeBjBr3EGhfBwgAymtJDLrK0pO7Z3m5S
-	t6s7uJcoMKf8wfXYfoVPSB1jkrF28SQZ55XDEwaHJ62hKhaycDTQUxXCkHVUSEc0sWxs9htpVhm
-	L+dhxG0FOfi8sBEzGo2z/xwYYU4RHljy7C4nAeWWea8f1R+cnYin/O8akeCkEIhMwvvB5ISCrh9
-	8iR4a9YWo5DwRmz87IS0WynMnccZ2ReHmlUv6fCOS2lsP1KOJxuom8SNPLc=
-X-Google-Smtp-Source: AGHT+IEgrPuM7S4VVAaNtLdBoJxKXTA/1M96VqclVtrFn/BtmxjJuTsUGVTrZ8ByY2d+iylVicPD5A==
-X-Received: by 2002:a05:600c:5118:b0:439:88bb:d00b with SMTP id 5b1f17b1804b1-442d6dc560cmr7713535e9.5.1746790564255;
-        Fri, 09 May 2025 04:36:04 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f3c2sm69392795e9.15.2025.05.09.04.36.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 04:36:03 -0700 (PDT)
-Message-ID: <4f7b44f0-128c-4615-96cf-2d9d8bc54cdb@linaro.org>
-Date: Fri, 9 May 2025 13:36:01 +0200
+	s=arc-20240116; t=1746790638; c=relaxed/simple;
+	bh=BMMKmsh7jALcR9d8p8pcOqhFrG9V0KdUnyt27YcWkZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NuHYrbbuTv2G+hztolHa39M3K57HlckVt/+R8dYTzNTPQKL4LCxwCkTV/Y5ptZQWO0pomtzgxN8fQMbUZ//JwDcemiptrCB8gJVDARkXd25r7VpdGzatNeb8fSXU3ZteFWRyuMZCpQYZGcHT1QVthS6wfrxzGZlqgfXgBax7uhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Fb1GzcD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O0YlHRfD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 9 May 2025 13:36:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746790627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yvtS7kd50QsaqELn/OuDxgR43pdbT8W33w5y3DGqq7Y=;
+	b=1Fb1GzcDZId7FE75wc/vg9ARviSgbywT0LZwIKUKk8GsWuBqRznMD5bgSK9KPJ/uVjjnmJ
+	+h7e5bgDpI/xnAEBHaIosjj3QecjQkdao2oSrd7U/A7SpZv7N+1p8yRlJJ9a6qrNZtQ3zZ
+	3MzzyA+VRuMbPPAZv7RDbEZBYG/zU0bBB616zETOksqsAMEvwOVSapUw4M97ZWsa3m9zh6
+	6+bo0lgOUf79M0mlTT8iD3epRCL1rsVnQgz26+FDCHtwCoZpH8rNHWc4bBLX2Ol8tqU46Y
+	rCigUcfbeunXLBoK6Wqps3gSnTHkiIeG6u5lVAd2k9aE0OMTnVXuAWbjvaLpLw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746790627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yvtS7kd50QsaqELn/OuDxgR43pdbT8W33w5y3DGqq7Y=;
+	b=O0YlHRfDgQvzS3KYU1OSvvJ8dRJJ4a3nb4znxs06f5B/yNdYl/ZEEsLhNO4ObYhL+gcDGs
+	EyxyYfe5EAGeHbCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, mingo@kernel.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org,
+	jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com,
+	joe.lawrence@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2] sched,livepatch: Untangle cond_resched() and live-patching
+Message-ID: <20250509113659.wkP_HJ5z@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASPEED: bmc: Add device tree for Meta(Facebook) Clemente
- compute-tray.
-To: leo.jt.wang@gmail.com, robh+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, keescook@chromium.org, tony.luck@intel.com,
- gpiccoli@igalia.com, geert+renesas@glider.be, magnus.damm@gmail.com,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, george.kw.lee@fii-foxconn.com,
- leo.jt.wang@fii-foxconn.com
-References: <681dc3eb.170a0220.1fd80.c9ce@mx.google.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <681dc3eb.170a0220.1fd80.c9ce@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 09/05/2025 10:59, leo.jt.wang@gmail.com wrote:
-> From: Leo Wang <leo.jt.wang@fii-foxconn.com>
-> 
-> Signed-off-by: Leo Wang <leo.jt.wang@fii-foxconn.com>
+=46rom: Peter Zijlstra <peterz@infradead.org>
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
+With the goal of deprecating / removing VOLUNTARY preempt, live-patch
+needs to stop relying on cond_resched() to make forward progress.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Instead, rely on schedule() with TASK_FREEZABLE set. Just like
+live-patching, the freezer needs to be able to stop tasks in a safe /
+known state.
 
-You CC-ed an address, which suggests you do not work on mainline kernel
-or you do not use get_maintainers.pl/b4/patman. Please rebase and always
-work on mainline or start using mentioned tools, so correct addresses
-will be used.
+Compile tested only.
 
+[bigeasy: use likely() in __klp_sched_try_switch() and update comments]
 
-...
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1=E2=80=A6v2: https://lore.kernel.org/all/20250324134909.GA14718@noisy.pro=
+gramming.kicks-ass.net/
+  - Updated comments in __klp_sched_try_switch()
+  - Replaced unlikely with likely in __klp_sched_try_switch()
+  - Dropped RFC
 
-> +&io_expander13 {
-> +	gpio-line-names =
-> +		"rmc_en_dc_pwr_on","",
-> +		"","",
-> +		"","",
-> +		"","",
-> +		"leak_config_0","leak_config_1",
-> +		"leak_config_2","leak_config_3",
-> +		"mfg_led_test_mode_l","small_leak_err_inj",
-> +		"large_leak_err_inj","";
-> +};
-> \ No newline at end of file
+ include/linux/livepatch_sched.h | 14 ++++-----
+ include/linux/sched.h           |  6 ----
+ kernel/livepatch/transition.c   | 52 ++++++++++-----------------------
+ kernel/sched/core.c             | 50 +++++--------------------------
+ 4 files changed, 29 insertions(+), 93 deletions(-)
 
-You have patch warning.
+diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sche=
+d.h
+index 013794fb5da08..065c185f27638 100644
+--- a/include/linux/livepatch_sched.h
++++ b/include/linux/livepatch_sched.h
+@@ -3,27 +3,23 @@
+ #define _LINUX_LIVEPATCH_SCHED_H_
+=20
+ #include <linux/jump_label.h>
+-#include <linux/static_call_types.h>
++#include <linux/sched.h>
+=20
+ #ifdef CONFIG_LIVEPATCH
+=20
+ void __klp_sched_try_switch(void);
+=20
+-#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAM=
+IC_CALL)
+-
+ DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
+=20
+-static __always_inline void klp_sched_try_switch(void)
++static __always_inline void klp_sched_try_switch(struct task_struct *curr)
+ {
+-	if (static_branch_unlikely(&klp_sched_try_switch_key))
++	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
++	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
+ 		__klp_sched_try_switch();
+ }
+=20
+-#endif /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+-
+ #else /* !CONFIG_LIVEPATCH */
+-static inline void klp_sched_try_switch(void) {}
+-static inline void __klp_sched_try_switch(void) {}
++static inline void klp_sched_try_switch(struct task_struct *curr) {}
+ #endif /* CONFIG_LIVEPATCH */
+=20
+ #endif /* _LINUX_LIVEPATCH_SCHED_H_ */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac19828934..b98195991031c 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -44,7 +44,6 @@
+ #include <linux/seqlock_types.h>
+ #include <linux/kcsan.h>
+ #include <linux/rv.h>
+-#include <linux/livepatch_sched.h>
+ #include <linux/uidgid_types.h>
+ #include <linux/tracepoint-defs.h>
+ #include <asm/kmap_size.h>
+@@ -2089,9 +2088,6 @@ extern int __cond_resched(void);
+=20
+ #if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC=
+_CALL)
+=20
+-void sched_dynamic_klp_enable(void);
+-void sched_dynamic_klp_disable(void);
+-
+ DECLARE_STATIC_CALL(cond_resched, __cond_resched);
+=20
+ static __always_inline int _cond_resched(void)
+@@ -2112,7 +2108,6 @@ static __always_inline int _cond_resched(void)
+=20
+ static inline int _cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	return __cond_resched();
+ }
+=20
+@@ -2122,7 +2117,6 @@ static inline int _cond_resched(void)
+=20
+ static inline int _cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	return 0;
+ }
+=20
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index ba069459c1017..25b9372a4b66f 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -29,22 +29,13 @@ static unsigned int klp_signals_cnt;
+=20
+ /*
+  * When a livepatch is in progress, enable klp stack checking in
+- * cond_resched().  This helps CPU-bound kthreads get patched.
++ * schedule().  This helps CPU-bound kthreads get patched.
+  */
+-#if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC=
+_CALL)
+-
+-#define klp_cond_resched_enable() sched_dynamic_klp_enable()
+-#define klp_cond_resched_disable() sched_dynamic_klp_disable()
+-
+-#else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+=20
+ DEFINE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
+-EXPORT_SYMBOL(klp_sched_try_switch_key);
+=20
+-#define klp_cond_resched_enable() static_branch_enable(&klp_sched_try_swit=
+ch_key)
+-#define klp_cond_resched_disable() static_branch_disable(&klp_sched_try_sw=
+itch_key)
+-
+-#endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
++#define klp_resched_enable() static_branch_enable(&klp_sched_try_switch_ke=
+y)
++#define klp_resched_disable() static_branch_disable(&klp_sched_try_switch_=
+key)
+=20
+ /*
+  * This work can be performed periodically to finish patching or unpatchin=
+g any
+@@ -365,27 +356,20 @@ static bool klp_try_switch_task(struct task_struct *t=
+ask)
+=20
+ void __klp_sched_try_switch(void)
+ {
++	/*
++	 * This function is called from __schedule() while a context switch is
++	 * about to happen. Preemption is already disabled and klp_mutex
++	 * can't be acquired.
++	 * Disabled preemption is used to prevent racing with other callers of
++	 * klp_try_switch_task(). Thanks to task_call_func() they won't be
++	 * able to switch to this task while it's running.
++	 */
++	lockdep_assert_preemption_disabled();
++
++	/* Make sure current didn't get patched */
+ 	if (likely(!klp_patch_pending(current)))
+ 		return;
+=20
+-	/*
+-	 * This function is called from cond_resched() which is called in many
+-	 * places throughout the kernel.  Using the klp_mutex here might
+-	 * deadlock.
+-	 *
+-	 * Instead, disable preemption to prevent racing with other callers of
+-	 * klp_try_switch_task().  Thanks to task_call_func() they won't be
+-	 * able to switch this task while it's running.
+-	 */
+-	preempt_disable();
+-
+-	/*
+-	 * Make sure current didn't get patched between the above check and
+-	 * preempt_disable().
+-	 */
+-	if (unlikely(!klp_patch_pending(current)))
+-		goto out;
+-
+ 	/*
+ 	 * Enforce the order of the TIF_PATCH_PENDING read above and the
+ 	 * klp_target_state read in klp_try_switch_task().  The corresponding
+@@ -395,11 +379,7 @@ void __klp_sched_try_switch(void)
+ 	smp_rmb();
+=20
+ 	klp_try_switch_task(current);
+-
+-out:
+-	preempt_enable();
+ }
+-EXPORT_SYMBOL(__klp_sched_try_switch);
+=20
+ /*
+  * Sends a fake signal to all non-kthread tasks with TIF_PATCH_PENDING set.
+@@ -508,7 +488,7 @@ void klp_try_complete_transition(void)
+ 	}
+=20
+ 	/* Done!  Now cleanup the data structures. */
+-	klp_cond_resched_disable();
++	klp_resched_disable();
+ 	patch =3D klp_transition_patch;
+ 	klp_complete_transition();
+=20
+@@ -560,7 +540,7 @@ void klp_start_transition(void)
+ 			set_tsk_thread_flag(task, TIF_PATCH_PENDING);
+ 	}
+=20
+-	klp_cond_resched_enable();
++	klp_resched_enable();
+=20
+ 	klp_signals_cnt =3D 0;
+ }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c81cf642dba05..2a973d0e414a3 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -66,6 +66,7 @@
+ #include <linux/vtime.h>
+ #include <linux/wait_api.h>
+ #include <linux/workqueue_api.h>
++#include <linux/livepatch_sched.h>
+=20
+ #ifdef CONFIG_PREEMPT_DYNAMIC
+ # ifdef CONFIG_GENERIC_ENTRY
+@@ -6668,6 +6669,8 @@ static void __sched notrace __schedule(int sched_mode)
+ 	if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
+ 		hrtick_clear(rq);
+=20
++	klp_sched_try_switch(prev);
++
+ 	local_irq_disable();
+ 	rcu_note_context_switch(preempt);
+=20
+@@ -7328,7 +7331,6 @@ EXPORT_STATIC_CALL_TRAMP(might_resched);
+ static DEFINE_STATIC_KEY_FALSE(sk_dynamic_cond_resched);
+ int __sched dynamic_cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	if (!static_branch_unlikely(&sk_dynamic_cond_resched))
+ 		return 0;
+ 	return __cond_resched();
+@@ -7500,7 +7502,6 @@ int sched_dynamic_mode(const char *str)
+ #endif
+=20
+ static DEFINE_MUTEX(sched_dynamic_mutex);
+-static bool klp_override;
+=20
+ static void __sched_dynamic_update(int mode)
+ {
+@@ -7508,8 +7509,7 @@ static void __sched_dynamic_update(int mode)
+ 	 * Avoid {NONE,VOLUNTARY} -> FULL transitions from ever ending up in
+ 	 * the ZERO state, which is invalid.
+ 	 */
+-	if (!klp_override)
+-		preempt_dynamic_enable(cond_resched);
++	preempt_dynamic_enable(cond_resched);
+ 	preempt_dynamic_enable(might_resched);
+ 	preempt_dynamic_enable(preempt_schedule);
+ 	preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7518,8 +7518,7 @@ static void __sched_dynamic_update(int mode)
+=20
+ 	switch (mode) {
+ 	case preempt_dynamic_none:
+-		if (!klp_override)
+-			preempt_dynamic_enable(cond_resched);
++		preempt_dynamic_enable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_disable(preempt_schedule);
+ 		preempt_dynamic_disable(preempt_schedule_notrace);
+@@ -7530,8 +7529,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+=20
+ 	case preempt_dynamic_voluntary:
+-		if (!klp_override)
+-			preempt_dynamic_enable(cond_resched);
++		preempt_dynamic_enable(cond_resched);
+ 		preempt_dynamic_enable(might_resched);
+ 		preempt_dynamic_disable(preempt_schedule);
+ 		preempt_dynamic_disable(preempt_schedule_notrace);
+@@ -7542,8 +7540,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+=20
+ 	case preempt_dynamic_full:
+-		if (!klp_override)
+-			preempt_dynamic_disable(cond_resched);
++		preempt_dynamic_disable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_enable(preempt_schedule);
+ 		preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7554,8 +7551,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+=20
+ 	case preempt_dynamic_lazy:
+-		if (!klp_override)
+-			preempt_dynamic_disable(cond_resched);
++		preempt_dynamic_disable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_enable(preempt_schedule);
+ 		preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7576,36 +7572,6 @@ void sched_dynamic_update(int mode)
+ 	mutex_unlock(&sched_dynamic_mutex);
+ }
+=20
+-#ifdef CONFIG_HAVE_PREEMPT_DYNAMIC_CALL
+-
+-static int klp_cond_resched(void)
+-{
+-	__klp_sched_try_switch();
+-	return __cond_resched();
+-}
+-
+-void sched_dynamic_klp_enable(void)
+-{
+-	mutex_lock(&sched_dynamic_mutex);
+-
+-	klp_override =3D true;
+-	static_call_update(cond_resched, klp_cond_resched);
+-
+-	mutex_unlock(&sched_dynamic_mutex);
+-}
+-
+-void sched_dynamic_klp_disable(void)
+-{
+-	mutex_lock(&sched_dynamic_mutex);
+-
+-	klp_override =3D false;
+-	__sched_dynamic_update(preempt_dynamic_mode);
+-
+-	mutex_unlock(&sched_dynamic_mutex);
+-}
+-
+-#endif /* CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+-
+ static int __init setup_preempt_mode(char *str)
+ {
+ 	int mode =3D sched_dynamic_mode(str);
+--=20
+2.49.0
 
-Best regards,
-Krzysztof
 
