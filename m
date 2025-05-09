@@ -1,138 +1,154 @@
-Return-Path: <linux-kernel+bounces-641059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E750BAB0C92
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2F0AB0CAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24B937A5C5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:04:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A127B6FE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDE9270ECA;
-	Fri,  9 May 2025 08:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3E2741DD;
+	Fri,  9 May 2025 08:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fhPRxT2C"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="YlaJVlDD"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76EF26A1DA;
-	Fri,  9 May 2025 08:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9CE2749F4;
+	Fri,  9 May 2025 08:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746777944; cv=none; b=QO5dOV4BjxHm8HBVs8bXCcdWGoKNv+7OAaQE5ISRlgGJEArpM8PNIRTF7dSkOWg/a24z4K5/uTzbNUDL2HhD8jMppNRiioMKgLz+amOxGfoQuS1LOdRaqeA4NsGyrJ8hLBUsSLx0PTZx9bmShX/SYKtv1lva1+Zn+cmhf/ZxNfY=
+	t=1746778030; cv=none; b=d/iJIIPFCebFWfoJ3bP28aUT4SHfuLzAJtAHOLnOO5wAqHs0Z1/hFkTsjzwIyezYIK5t36FpE7JrcvDg7JZZyCIYki6gF17RV4D2WDy0/C4ZLFceFTUgGDWF/FZXDvhzZpZSx9rbDWCVW9XYkzJa82BKwuBmhMOYJ65LV6h3E3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746777944; c=relaxed/simple;
-	bh=WHM+7QSkADPwouihR3kxeKC2Rp2Nl+hApzRG6PEQ5zI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KfTfkKr+OflTsg4cVJKMV/4LlhlCOZ6XHA/q11W0SEuq4Ovso5QpNg5C9+GUJwVhwYlH9Su8IQIl/R2bOadp7IXIaHy3Yn3UxNaVUtmWOTEf31YkDNjMIWWuuVLBbmf/7t6Si9xep8a7e7oPFEp76XurUS/PrCRYjA+xQfC1KIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fhPRxT2C; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1746777936;
-	bh=SCv+knZHxvT6YM0mguSr1nEuEIMHrbnm24UlJJbmTSk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fhPRxT2CTkZxpODVfwdGhRQDLS6WmrssavqbVAA7I10g9fL8F9hH9OwYaB422Nm1T
-	 swRz8DkylHZYB5kYQVZW0KGgEAbnjHjysl9tStWssZFfExtMtqBthFa7m18gS3YZmx
-	 4fQ2MgSUvxnToyacIimd6G2yW8RQRJMJLtWXkjKXHwahXFT1rGf4bcPsOJiULFiNDt
-	 T8Std+iMo3gL9bAnK6cs8gec93NwJ+R58x6FfF1rNMe/2q8yazWJ8glqgeIwpRj1gT
-	 oqZB0l0d2nNlQ96mRXcdR62prc5ZJy+csu7oNYZBGAUc1454SO1VxsmmknezDRxpL0
-	 Y6ASQmV6SbCfA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zv1lN2PSkz4x3q;
-	Fri,  9 May 2025 18:05:36 +1000 (AEST)
-Date: Fri, 9 May 2025 18:05:35 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Rob Herring
- <robh@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski
- <krzk@kernel.org>
-Cc: Alexey Charkov <alchark@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the pwm tree with the i2c-host,
- devicetree trees
-Message-ID: <20250509180535.01c4c249@canb.auug.org.au>
+	s=arc-20240116; t=1746778030; c=relaxed/simple;
+	bh=GmgLDcYQyIw/YSz839e+qQM5KL6RDCNHqO2F1hLqyEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTTYVpcvavIavLy/N6sLkAX97EMQ1dcFldiqWJUmvVOhyy8oXWFkkQICa67sygkunlmNX+fe58G9kkGjb+jMSPM58pE74+tsXhuDmthbaQLs38BlpZyqvc5oiP4gTg+5OchlDGGD6fz9VQxpiSv3MepIy/ucTtMQBXbydwTs3t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=YlaJVlDD; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=NayRbH+Za6jxrlNZRjNmkKSqs2Xv5DXjaUGWLMkJCjA=;
+	b=YlaJVlDDmaVnGqHNZVFamQwncF6km7Bx+FItRKfR6TspwW098A0Gi/STDfSGNh
+	53Jc+stXuN+KoneyrNrCEGUJYaSHct5O1gKM4V/8paX/mrQQK8FptEj0dGhKgrMk
+	IhxHMPaESFJinRDI0mdIYQLMs87pgjUJ5lC4zD6SpatFs=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAnPuNhtx1ojC+mAA--.27459S3;
+	Fri, 09 May 2025 16:05:55 +0800 (CST)
+Date: Fri, 9 May 2025 16:05:52 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: maudspierings@gocontroll.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v6 2/8] arm64: dts: imx8mp: Add pinctrl config definitions
+Message-ID: <aB23YOkCMnA4F3hV@dragon>
+References: <20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com>
+ <20250417-initial_display-v6-2-3c6f6d24c7af@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//yHdG6MxoZi2TSwhkKipw6o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417-initial_display-v6-2-3c6f6d24c7af@gocontroll.com>
+X-CM-TRANSID:Mc8vCgAnPuNhtx1ojC+mAA--.27459S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAFW5XF1kWrWrGryUuF45ZFb_yoW5Gw43pF
+	yqkry3Zr18tF47Gw1Sv3Wayrs0v3Z3XF47u3y7WrW5tF4DAw18XF1Ygw4Ygr1Yqrsag3yF
+	9F1qvw1I93sxGrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeE__UUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgVIZWgdtb4IEAAAsc
 
---Sig_//yHdG6MxoZi2TSwhkKipw6o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Apr 17, 2025 at 12:14:03PM +0200, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
+> 
+> Currently to configure each IOMUXC_SW_PAD_CTL_PAD the raw value of this
+> register is written in the dts, these values are not obvious. Add defines
+> which describe the fields of this register which can be or-ed together to
+> produce readable settings.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+> This patch has already been sent in a different group of patches: [1]
+> It was requested there to submit it along with a user, this series also
+> includes some users for it.
+> 
+> [1]: https://lore.kernel.org/all/20250218-pinctrl_defines-v2-2-c554cad0e1d2@gocontroll.com/
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h | 33 ++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
+> index 0fef066471ba607be02d0ab15da5a048a8a213a7..19a23d148246f4fb990050a9d06d20b6e769f254 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
+> @@ -6,6 +6,39 @@
+>  #ifndef __DTS_IMX8MP_PINFUNC_H
+>  #define __DTS_IMX8MP_PINFUNC_H
+>  
+> +/* Drive Strength */
+> +#define MX8MP_DSE_X1 0x0
+> +#define MX8MP_DSE_X2 0x4
+> +#define MX8MP_DSE_X4 0x2
+> +#define MX8MP_DSE_X6 0x6
+> +
+> +/* Slew Rate */
+> +#define MX8MP_FSEL_FAST 0x10
+> +#define MX8MP_FSEL_SLOW 0x0
+> +
+> +/* Open Drain */
+> +#define MX8MP_ODE_ENABLE 0x20
+> +#define MX8MP_ODE_DISABLE 0x0
+> +
+> +#define MX8MP_PULL_DOWN 0x0
+> +#define MX8MP_PULL_UP 0x40
+> +
+> +/* Hysteresis */
+> +#define MX8MP_HYS_CMOS 0x0
+> +#define MX8MP_HYS_SCHMITT 0x80
+> +
+> +#define MX8MP_PULL_ENABLE 0x100
+> +#define MX8MP_PULL_DISABLE 0x0
+> +
+> +/* SION force input mode */
+> +#define MX8MP_SION 0x40000000
 
-Hi all,
+Can we have all these indents aligned on the same column using tabs?
 
-Today's linux-next merge of the pwm tree got a conflict in:
+> +
+> +/* long defaults */
+> +#define MX8MP_USDHC_DATA_DEFAULT (MX8MP_FSEL_FAST | MX8MP_PULL_UP | \
+> +								  MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
 
-  MAINTAINERS
+Can we indent like this?
 
-between commits:
+#define MX8MP_USDHC_DATA_DEFAULT (MX8MP_FSEL_FAST | MX8MP_PULL_UP | \
+				  MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
 
-  785eb0bca34b ("dt-bindings: i2c: i2c-wmt: Convert to YAML")
-  2b18eda58c86 ("dt-bindings: interrupt-controller: via,vt8500-intc: Conver=
-t to YAML")
-  47cbd5d8693d ("ARM: vt8500: MAINTAINERS: Include vt8500 soc driver in mai=
-ntainers entry")
+Shawn
 
-from the i2c-host, devicetree and dt-krzk trees and commit:
+> +#define MX8MP_I2C_DEFAULT (MX8MP_DSE_X6 | MX8MP_PULL_UP | MX8MP_HYS_SCHMITT | \
+> +						   MX8MP_PULL_ENABLE | MX8MP_SION)
+> +
+>  /*
+>   * The pin function ID is a tuple of
+>   * <mux_reg conf_reg input_reg mux_mode input_val>
+> 
+> -- 
+> 2.49.0
+> 
+> 
 
-  b6b5683e9692 ("dt-bindings: pwm: vt8500-pwm: Convert to YAML")
-
-from the pwm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index a7e1980b6b15,26ef29a0c9bf..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -3469,9 -3427,8 +3469,10 @@@ M:	Alexey Charkov <alchark@gmail.com
-  M:	Krzysztof Kozlowski <krzk@kernel.org>
-  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-  S:	Odd Fixes
- -F:	Documentation/devicetree/bindings/i2c/i2c-wmt.txt
- +F:	Documentation/devicetree/bindings/hwinfo/via,vt8500-scc-id.yaml
- +F:	Documentation/devicetree/bindings/i2c/wm,wm8505-i2c.yaml
- +F:	Documentation/devicetree/bindings/interrupt-controller/via,vt8500-intc=
-.yaml
-+ F:	Documentation/devicetree/bindings/pwm/via,vt8500-pwm.yaml
-  F:	arch/arm/boot/dts/vt8500/
-  F:	arch/arm/mach-vt8500/
-  F:	drivers/clocksource/timer-vt8500.c
-
---Sig_//yHdG6MxoZi2TSwhkKipw6o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgdt08ACgkQAVBC80lX
-0GxA9gf+Nm/F0OxKAVgwnfwQIlbBNUeN46TNSdvUcJBc/U3UDObB3jyOFao9AAad
-Kojxcmkh8fOhARGIOfckSpsvfVEA3IlZ3O6PxBnZA47l4GdCVfsyw5fHPfG4v70W
-5MNuCfga6W6OmGHWbp/IU1Qj4Yq/Chz4M9bgIb4HbnEO4fs915Ljm/WPE5gXwFWZ
-5auk/SrSNgfAImSF5jxseO1Cd8Vc9uCeDt37Vtx/adfmRTiffCfe33d+oo/R5aQz
-SAiy9JJMmB6V7t7Xnh65zfe4E0RFAy7vSbcNyu6PQBvCEuqapzldJXXhYyGduzqM
-p8/6Bq6vd7j9j4gIpOx6yUdUU3i6Rg==
-=9ZAs
------END PGP SIGNATURE-----
-
---Sig_//yHdG6MxoZi2TSwhkKipw6o--
 
