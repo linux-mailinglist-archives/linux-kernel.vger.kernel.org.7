@@ -1,241 +1,184 @@
-Return-Path: <linux-kernel+bounces-640983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0E9AB0BB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:32:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F83AB0BCF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3B94E197E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:32:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A96E4E67F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC226FDAF;
-	Fri,  9 May 2025 07:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1AB2701B0;
+	Fri,  9 May 2025 07:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YuEmT79N"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NqMo78rL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AC920A5E5
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F4226FD95
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746775917; cv=none; b=bepj+QjZwKhepEUrtEgeBNMdL13/iPHoyustOwoOqgm6v1LEr2G/SzbH4jGE6Hbq0AjS2ADGtWYKx0sks5sj3iNa/NNIvj4J6Pt/hLLIcOV+7TkBoCsyYlPTmTDKMYoqM5/NpYVIQ7JTS4a0P327kl+i1mqCV7TKZWEvtqxC7dU=
+	t=1746776027; cv=none; b=ft9sXkiCxJ7tQQqRZRvDcKLwCG+StuMMy9xGW1MWjuDY2jP6B4BRDb6D8k5K2PQU3WjQSzwE6CSXiWt4yNCk1D5SkoNZD4bBCw5whZQjH2FHu+OxwPFUEyg7pQ0/SIfyvUgF7ddBAqyzaj45E7+c1za4qtVIHIeuOlywp7jwEjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746775917; c=relaxed/simple;
-	bh=IYpWmw9D1wZ91hkZi5sTi8f4M3xDQe0S28DvEhKqlT4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=WYnnhtZYhB23gXN+lrU8udfx7KWbeqrNW32M0uTjCItIgWkZ1lR0vje166jQNSPZs58cpx6tO8DTdbOrBqoBadZTjANmlxwDn2GD7iLAPqSBlL9rc0qhVBAz881AV46kqpkd9tG0IVvTBItmUXFPJLRbA7gKq/GPevRInWul1V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YuEmT79N; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2c663a3daso349434566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 00:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746775911; x=1747380711; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tNm4dzYjL0hNtY0TgZJ2Uq8YBkIqeHB8LTvt0QE8KZw=;
-        b=YuEmT79Nr2UDQR9mwjKxzHBAa3TVSs3/9Tw/sXtYdwX7FEdLLMIyff3Ov75o/8xYP2
-         88oIfmXOr3ok2a/JF6HBdOTWHpT3gVL7Jr2fDyilIjfSy1pLQREkvtxzOMT0i29n5FJN
-         B3wkmHCYhxH5ldUdHxRx9rbZG3J7Id1w01Sa1VIPYefEXzXCZI0grmEjsLmzZ5YUh5wH
-         yM4uYEosWeIrxYmFANaX+zl7sKq1AmDZI/2mvs1cyk07OAOkHzLuhBjvyaKGnPQ7OgHj
-         RLlceDexBFEaMNqn+5JDZ0gTy4xlshaKoVjd5QxcgLuqxiZ7NXkbwwyrubGqHD905mJ7
-         QDWw==
+	s=arc-20240116; t=1746776027; c=relaxed/simple;
+	bh=FWyuxhoonZwohLikNd7BSVrApuwXrx4iVj+WWJE6P+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=apAvbpAwg08LWo+hNblmQLZyblnkpv7bxxmpsQUkjpKxJKeqYLLUqpfu6ouP1bbRsrHMQQKBxV2N0IxFIka6MH94EdtrN8rGHuNV7SRCL6FyKUhrtmpg1FM3YtDjblS6t4/MzDTrN1HkQUy5p8BOiJ/GdZLSzKxfn+uqtajixR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NqMo78rL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746776024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VpG7PvH0UplrJjw105ZtScpJjsINX/Nh8S8T5pYtBeg=;
+	b=NqMo78rLEop9adMqbY1hkrc5avVgSNUkKvVLpEJO6C8HANhn16uORfmy6TbKeQETU6xMw6
+	Bw/uZXE3PvDiNalqeSmU8e9RB/AOjrqBJtc1e6j81lHOmgK1WQwyhHyPnCahe9fSS+8XkT
+	Mu6N3NUVb6hNQIquUmg9JC4zt3uLn+4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-Ch1BYn7kMLaIE58Cbj6CqQ-1; Fri, 09 May 2025 03:33:42 -0400
+X-MC-Unique: Ch1BYn7kMLaIE58Cbj6CqQ-1
+X-Mimecast-MFC-AGG-ID: Ch1BYn7kMLaIE58Cbj6CqQ_1746776022
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a0b2e56da1so727164f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 00:33:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746775911; x=1747380711;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tNm4dzYjL0hNtY0TgZJ2Uq8YBkIqeHB8LTvt0QE8KZw=;
-        b=VKhqWGwEvAXRXw39GKqZf03j/RPwT1oAfu9rf+VraSMVcQTDwO5MPwNS/e45/2LbI3
-         e2EbQRAyY1mgSOGGWTFKTq2jIiwOuoQIu19DrF4MHhGQ/54wHuwUrA3h1E1kD/623aAz
-         RsDa8HyufQ9zoLPmHP00n/zmD+KHzbU+245hji5Rxgh5LMOCaDAtfNJS75lgDi/dzO83
-         wZ+tQKr7SZxNGMdIJOkTWCNRoSy3TSb0GBMgHivhfjSlCg2G4mJn6g3+lttitys85lXr
-         x1viTNBPo09I9S9eqgY4ZIWyP/gPnc5LyBuWdqE8RHqjed9GcgaI0Gnx4BVzOLILw3Mz
-         7fow==
-X-Forwarded-Encrypted: i=1; AJvYcCV6oC6mJh2RQNJCE8ajd+KpTawfustVtS/D3GeNcAsdTwwxlH1ZV0zBKtuEYp+fxfcdzoEc8pux0mEf+6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT1h9pYnT+q+3f/ybdl4YbTqAvpwhr7dZqLlGXWYiHVFXhxKzc
-	Xc8pi2vSr1T7HvXF4SkV1CNO0MANWDSCtKwvhkA0BtUSVf49sP7pI1ChmifDRl8=
-X-Gm-Gg: ASbGncuQL0+SqlN1xbbZG2I9rfhj+KLJsK7RvRc9iVDr4O3C2ieq8szZ8EdfxQIyWm5
-	SHYc1UwrnI1v2m3MvCR5Mt+XDPwvSGt24pW8SuK0Iwjn0FUKpljGjNkzro2togcDgSGeiQsqhe2
-	FLyyEjgm+Z8PW6rWPIx8f9nZ2DZpnY5Xt9OqWE10jiN9iDtxg8hearKttUyyU/QQtwq5TLwJFv7
-	HjrNxvh5XuunqPR7z0nkKLWyZ46tNQioGYZLAR4G68WVjaXq8Jb8J1dmkffrH88W/z8zqaR55HQ
-	b8C2AJN/gQ+vcRnIm2cAfpcVDI+gxy9ioFnObPlNDwitUg==
-X-Google-Smtp-Source: AGHT+IEBRTCI9kTr2GaMmpOwf42xSL7WvOji9iBJAETgoGhwFplwSkmVArxI7pFy/yaqzpELkNP5Hg==
-X-Received: by 2002:a17:906:4796:b0:ad1:e672:271f with SMTP id a640c23a62f3a-ad218f4ca71mr253684166b.18.1746775911001;
-        Fri, 09 May 2025 00:31:51 -0700 (PDT)
-Received: from localhost ([2001:4090:a244:802a:8179:d45a:7862:147])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad219855beasm107999666b.171.2025.05.09.00.31.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 00:31:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746776021; x=1747380821;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VpG7PvH0UplrJjw105ZtScpJjsINX/Nh8S8T5pYtBeg=;
+        b=RZX4IPCX9XH/QDqLMRLO8k1YO+m4lUNruMfub+Cq0s4v3Dt+giasP8MpGzOsnCKOsP
+         tuPLX099lQBbYmIDMF4fqg7W5LFSEjtRj2NgGgICfASlr+VCeP0aHDTcQIgKygZVVkns
+         KnR3rYbqy0XCuqhZhBc/YvxL+dhU180e28gokgnHIgcQqxouMnOGQf4YW4C3Gm6N4HH4
+         80Gj/hXCct1wnPIhP7bmatxH6aSiGepRKIBHbhoLU5AjEu5+XyUFBp9ibhAPJLAV39R5
+         PPnVZaE0DmK588pKu3/GVMHE8LwAxZCxNLWI/MoEZ3kBbuZzin/3wpvHnMwkLran9zsG
+         73Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dRa0aVbNN/UeaOAY9od0dU6nP6e0LUgW0hGbH7BUZR0/F87ONmiuYBL8l7XWqAYrco/ZEJPvspFbDiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8fjdMJNKXppvVFUVzkA6dgt9SepQGfmt/Dwk6u9zCD25HNkTn
+	6EQjRXjrDl+9K2m9mKMmzNaT/5fYuk7i/RoVIc4OCq9TTVnE1AdUTtPWjitTEON5tgaU8eIB4q2
+	MsgzTmXWejov4HiGzefqwnSa0fKE8FJo2IWxfcZKmoO3CtIuu1DJr3EgbTh1TkA==
+X-Gm-Gg: ASbGncsL0fsxKoiJ9cmUNrLjJprcm8DVqJIGvfdbTVWldsdFcHcaPRMC3IGEHesu6K/
+	UOofGqhUcwLHzhAAug67aiZqjnTCucVMh02LsMC4rI82ZoRY0ZmHpEg0QAYjkjQRErSOuqEPHr2
+	n7h9sYASPxOkB4hDd9kmyIdfAe3jzivIClG+os0aXy/P36ae/NREYu2Zs7kGRPEYlSJodriyobb
+	+Ti4bNXCgl1Ewb5TPIsHqwbxYwIpGuc3SceQGoMjh/pMxL624gWSqLroq1QTo51HrqCGamA517S
+	1PVXb2FQ3UVndAawLEH1AIASA6FL9VauZrxBpc2AaA8qBooX8Ia2Kesrr2PK7xKzCWkdIgLUsnG
+	krMB02UU9vOKtM46roQUE8WHovswYmTLm3Wf9oWk=
+X-Received: by 2002:a05:6000:2ce:b0:3a0:b7e7:1076 with SMTP id ffacd0b85a97d-3a1f646d9ecmr1609195f8f.11.1746776021675;
+        Fri, 09 May 2025 00:33:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLJJiTiA7hsFL7Ee2bBJr6joX3bZAuOsH7kejhhjJDWeCmlPlWcMLLBoFlmQYM8P+6GnsmoQ==
+X-Received: by 2002:a05:6000:2ce:b0:3a0:b7e7:1076 with SMTP id ffacd0b85a97d-3a1f646d9ecmr1609184f8f.11.1746776021306;
+        Fri, 09 May 2025 00:33:41 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f45:5500:8267:647f:4209:dedd? (p200300d82f4555008267647f4209dedd.dip0.t-ipconnect.de. [2003:d8:2f45:5500:8267:647f:4209:dedd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32835dsm62966135e9.6.2025.05.09.00.33.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 00:33:40 -0700 (PDT)
+Message-ID: <d91f6f10-a17e-4bbc-94a1-41b43b41c1ec@redhat.com>
+Date: Fri, 9 May 2025 09:33:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=06cfbbe9f92dcc8b1f71cc9bc0c83b1518c968538f5e87fe30c24b0e071e;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Fri, 09 May 2025 09:31:39 +0200
-Message-Id: <D9RGDM0LGOTW.2X74PNAIA5N3F@baylibre.com>
-Subject: Re: [PATCH 6/7] arm64: dts: ti: k3-am62a7-sk: Set wakeup-source
- system-states
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Kendall Willis" <k-willis@ti.com>, "Nishanth Menon" <nm@ti.com>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vishal Mahaveer" <vishalm@ti.com>, "Kevin
- Hilman" <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin
- Francis" <sebin.francis@ti.com>, "Akashdeep Kaur" <a-kaur@ti.com>
-X-Mailer: aerc 0.20.1
-References: <20250421-topic-am62-dt-partialio-v6-15-v1-0-6ced30aafddb@baylibre.com> <20250421-topic-am62-dt-partialio-v6-15-v1-6-6ced30aafddb@baylibre.com> <d4f21cdc-bb0c-4c78-aeea-f6e5c75fa5f1@ti.com>
-In-Reply-To: <d4f21cdc-bb0c-4c78-aeea-f6e5c75fa5f1@ti.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] selftests/mm: add simple VM_PFNMAP tests based on
+ mmap'ing /dev/mem
+To: Dev Jain <dev.jain@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Ingo Molnar
+ <mingo@redhat.com>, Peter Xu <peterx@redhat.com>
+References: <20250508222041.1647645-1-david@redhat.com>
+ <ecd0bc7e-8af5-40d6-b118-1604d2851f6b@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ecd0bc7e-8af5-40d6-b118-1604d2851f6b@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---06cfbbe9f92dcc8b1f71cc9bc0c83b1518c968538f5e87fe30c24b0e071e
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On 09.05.25 07:35, Dev Jain wrote:
+> 
+> 
+> On 09/05/25 3:50 am, David Hildenbrand wrote:
+>> Let's test some basic functionality using /dev/mem. These tests will
+>> implicitly cover some PAT (Page Attribute Handling) handling on x86.
+>>
+>> These tests will only run when /dev/mem access to the first two pages
+>> in physical address space is possible and allowed; otherwise, the tests
+>> are skipped.
+> 
 
-On Wed May 7, 2025 at 6:56 PM CEST, Kendall Willis wrote:
-> On 4/21/25 03:14, Markus Schneider-Pargmann wrote:
->> The CANUART pins of mcu_mcan0, mcu_mcan1, mcu_uart0 and wkup_uart0 are
->> powered during Partial-IO and IO+DDR and are capable of waking up the
->> system in these states. Specify the states in which these units can do a
->> wakeup on this board.
->>=20
->> Note that the UARTs are not capable of wakeup in Partial-IO because of
->> of a UART mux on the board not being powered during Partial-IO.
->>=20
->> Add pincontrol definitions for mcu_mcan0 and mcu_mcan1 for wakeup from
->> Partial-IO. Add these as wakeup pinctrl entries for both devices.
->>=20
->> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
->> ---
->>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 76 +++++++++++++++++++++++++=
-++++++++
->>   1 file changed, 76 insertions(+)
->>=20
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/d=
-ts/ti/k3-am62a7-sk.dts
->> index 1c9d95696c839a51b607839abb9429a8de6fa620..724d9a6f3c575fe35496fdd9=
-e17d6d8e33869f92 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> @@ -741,3 +741,79 @@ dpi1_out: endpoint {
->>   		};
->>   	};
->>   };
->> +
->> +&mcu_mcan0 {
->> +	pinctrl-names =3D "default", "wakeup";
->> +	pinctrl-0 =3D <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_defaul=
-t>;
->> +	pinctrl-1 =3D <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_wakeup=
->;
->> +	wakeup-source =3D <&system_partial_io>,
->> +			<&system_io_ddr>,
->> +			<&system_deep_sleep>,
->> +			<&system_mcu_only>,
->> +			<&system_standby>;
->> +	status =3D "okay";
->> +};
->> +
->> +&mcu_mcan1 {
->> +	pinctrl-names =3D "default", "wakeup";
->> +	pinctrl-0 =3D <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_defaul=
-t>;
->> +	pinctrl-1 =3D <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_wakeup=
->;
->> +	wakeup-source =3D <&system_partial_io>,
->> +			<&system_io_ddr>,
->> +			<&system_deep_sleep>,
->> +			<&system_mcu_only>,
->> +			<&system_standby>;
->> +	status =3D "okay";
->> +};
->> +
->> +&mcu_uart0 {
->> +	wakeup-source =3D <&system_io_ddr>,
->> +			<&system_deep_sleep>,
->> +			<&system_mcu_only>,
->> +			<&system_standby>;
->> +};
->> +
->> +&wkup_uart0 {
->> +	wakeup-source =3D <&system_io_ddr>,
->> +			<&system_deep_sleep>,
->> +			<&system_mcu_only>,
->> +			<&system_standby>;
->> +};
-> Hi Markus,
->
-> I noticed wkup_uart0 is already referenced earlier in the dts. Could the=
-=20
-> wakeup-source property be added into the first reference?
->> +
->> +&mcu_pmx0 {
-> Same thing with mcu_pmx0. Is there a reason for separating it from when=
-=20
-> it was referenced originally?
->> +	mcu_mcan0_tx_pins_default: mcu-mcan0-tx-default-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x034, PIN_OUTPUT, 0) /* (D6) MCU_MCAN0_TX */
->> +		>;
->> +	};
->> +
->> +	mcu_mcan0_rx_pins_default: mcu-mcan0-rx-default-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x038, PIN_INPUT, 0) /* (B3) MCU_MCAN0_RX */
->> +		>;
->> +	};
->> +
->> +	mcu_mcan0_rx_pins_wakeup: mcu-mcan0-rx-wakeup-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x038, PIN_INPUT | WKUP_EN, 0) /* (B3) MCU_MCAN0_RX */
->> +		>;
->> +	};
->> +
->> +	mcu_mcan1_tx_pins_default: mcu-mcan1-tx-default-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x03c, PIN_OUTPUT, 0) /* (E5) MCU_MCAN1_TX */
->> +		>;
->> +	};
->> +
->> +	mcu_mcan1_rx_pins_default: mcu-mcan1-rx-default-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x040, PIN_INPUT, 0) /* (D4) MCU_MCAN1_RX */
->> +		>;
->> +	};
->> +
->> +	mcu_mcan1_rx_pins_wakeup: mcu-mcan1-rx-wakeup-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x040, PIN_INPUT | WKUP_EN, 0) /* (D4) MCU_MCAN1_RX */
->> +		>;
->> +	};
->> +};Additionally, this patch does not apply cleanly to linux-next and nee=
-ds=20
-> to be fixed and rebased.
+Hi Dev,
 
-Thank you, I will fix your points and rebase once the dt-schema
-idle-state-name question is resolved.
+> Some generic comments:
+> 1. I think you should also update .gitignore?
 
-Best
-Markus
+I wonder if we could add a checkpatch warning for that, it keeps on 
+happening :)
 
---06cfbbe9f92dcc8b1f71cc9bc0c83b1518c968538f5e87fe30c24b0e071e
-Content-Type: application/pgp-signature; name="signature.asc"
+> 2. You can use ksft_exit_fail_perror() for wherever you want to print
+> strerror(errno).
 
------BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaB2vXREcbXNwQGJheWxp
-YnJlLmNvbQAKCRCFwVZpkBVKU+IQAP4nYmMI1mFLobgy/oXSnCX2D+tGGACd+6+h
-bR5vzYUiagD8CelMTAx7Q4zlt086hjOX+Nk+R4ub5YtvyvU/1iO8rAc=
-=Do60
------END PGP SIGNATURE-----
+Makes sense, thanks!
 
---06cfbbe9f92dcc8b1f71cc9bc0c83b1518c968538f5e87fe30c24b0e071e--
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
