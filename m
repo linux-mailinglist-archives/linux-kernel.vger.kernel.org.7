@@ -1,228 +1,128 @@
-Return-Path: <linux-kernel+bounces-641852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C593BAB174E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E14AB1751
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEDFC169139
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:24:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F10168FA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEBA214A81;
-	Fri,  9 May 2025 14:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D12218584;
+	Fri,  9 May 2025 14:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdiQzP7Y"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qx8gIq78"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B172110;
-	Fri,  9 May 2025 14:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06D02110;
+	Fri,  9 May 2025 14:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800637; cv=none; b=FIa0DD16Ly3YYI5czjAfnWJi6yY6Kro18XNDxGU6z1TcnqEO8B/yOkeHSVyLpgxIuvolWUeboCYVJ2pkYu9A+IhQFGSAXLK+uRxKQ1DL47MZEf4cRD/7fXx6ZmTS9Zz8K22LFacEgBgmu+RGytgCsaumpSc4bCMFLDLkRAco/5w=
+	t=1746800771; cv=none; b=KyyEmQT6MhZ14KXOVzYFm3Jezg/6MCuUnIq4IyInt1Ky7QLLl7olql2uKR3bgkTTH/07jhlRnktAjDBlCKLjt6t5tltBwVgfpF93X41Kx+WaFwcZZsxBaqW8tfc1a7GLJb6DL3IkUpbI6GMwmff48yP79w5XsbZOgzzGfRfHVXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800637; c=relaxed/simple;
-	bh=mKXdWzLrmsTTnENNjShW0XhnUXX8RfpTZL/UWCfCqlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=M26h9w0FshqM+KQsphFcg8VeLs7tqjrcCx+UmnpfMXpzKLT9b5urMs988qAFakb7nlExdMNC3SepGwo3oQpyx108a/t+EKqwmLFoE+UsPPvXRIuKoqtljmYloBb0EaYE42bqns/3OMz2z0+KaFPq2T0yq9F0PKcLNT0c5+63NpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdiQzP7Y; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549b159c84cso2597563e87.3;
-        Fri, 09 May 2025 07:23:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746800634; x=1747405434; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MoaHVq8f5uoSyjjX75HEcA9MREgvZcIUuW4iFJxdZ4A=;
-        b=jdiQzP7Y1xT51wHqo8sE/9TtyP6qj5QA3e24pRsUmyWOeoSGesTrRSULKV4OmEy5qL
-         cF0BojXBsKkC5orJu6A3qRXHqpvJsYFGp/Y/evHPVtx67ni6ouoWP2Q3xnZB+XpdLnqM
-         bSg69TPuwGbjI/SxXm0io8KQ2HkDhVYsnl+gbGE2MnqDtxWfu5HvBnQyjyUA0hf+Tgfm
-         wk7Bqm7qkFrGijm2ttzuwX2m+U4TdWsYkxBsjptQHRoZGP0UYmJy7q831yQF+fuKCH8z
-         tBTtBo2/8uQx9XKmDKgDCiMFuVXo74fwMH/kMtr0WZwoIgz0mg1GQF5aSezV0eBhvQWj
-         UdVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746800634; x=1747405434;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MoaHVq8f5uoSyjjX75HEcA9MREgvZcIUuW4iFJxdZ4A=;
-        b=qA5VraabM6e4E8n7sAqo9oPbEU5+S63NgRiE60/yYynUxBTLf3ry+wZNVNBQxdSnjl
-         ZGPvtdl+p0HSQQiDsEd691CNbPbjSHfn7nf5BkGDd68RQZijnY/fTs3fnC5Yxa8H/OGz
-         ShnhgekO9Sh5NNSG4ieo+PWyN6z/a0iVqZTEEYJZP5CGgtyCzGYxsfLXSq7AdZZ790KF
-         ccDaB3iOdLIcGa/GXZxOR2h9n/HwTqFPwgbJ6EU6F3nTgpmzM2od4CmgDACLA/M94UxH
-         BsIJBNcd4vAeNmUS299Rak8CLRI/du2lHrRmYeIpF0jXxpky+4RjndYBZ09ndBksQy2Z
-         eXnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu0P5J/mPO9IUDa8movOeFCjvRZ78hPBMzoOsrrkxaUCLV5CKvk/jMIKntB8tOFMDKTkVeIC1jvVsM@vger.kernel.org, AJvYcCVRhUdT5nxyZVXjxkTVubXffvmLoEVeJ2Fm6vT+IHQffldHnWN4/F52YG67U2CsAgxueK37O5KaDE8b@vger.kernel.org, AJvYcCXiyQ+dBN21H0ULDmehkrUlAwneBICKZFy9Z5SwEU4afcPdtK04+gjOFfR428BcPAnF4B9jopyP6BNDeWkF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCnIesFAgQ9wKeNYiwk08wmvhSo097dPY8xgsw1mpPGGGJ8vp+
-	OFh72yc9Kr3r7BFYBuQnBIYGFKO+tybfwR7W6LiDlX+TBU1mmigT/DFdneZZhM8=
-X-Gm-Gg: ASbGncuYxKRjD8KmmkbUhfyCAuuZYMHh6sfs8I0UKl/n4383YgfIb2gOeLMIwGERBKs
-	kfjp60QpobU0n3cEeG+1BrrQ6G0BiM1uNz03XgzE7rECDAmOHyAuk7NWlKC84afNags9ggNX8vD
-	BV8StQKqfASshI/OoVCYGil/fcp6MYXSxrtsFum+x+iwMDQNk9RZOrqOUXBLLg43AcPY4dKRiCB
-	dzw2SUZw3LPbtmq/u1DV2AZKnOkf4si62+xu0apyUnMcoANjyecLIadGPT6pBTv0LkkhabzxYrt
-	mt94wOLJnyvmjng5AvlHUcNxxrx9vSr3u1E5w4tydEIpmrxuFiQOgk+WHTg0wwqUhq+bAXqI/0J
-	Zke7MRdFbzc2pAydv+WSAuvigtmb08q9V4MgHXe8w7C3LOD+kt6zpQ5Z+Xk0d/b6YYVLxJzPe
-X-Google-Smtp-Source: AGHT+IEiqJIsmXnH9dNxGfVEY7/IBx5BdjSAyjSugSQ904/Pvglv5wzXp+SHaqKYougS4EZvpuYKRw==
-X-Received: by 2002:a05:6512:2913:b0:54a:cc75:3d81 with SMTP id 2adb3069b0e04-54fc67b4624mr1116687e87.4.1746800633673;
-        Fri, 09 May 2025 07:23:53 -0700 (PDT)
-Received: from ?IPV6:2001:999:701:52e0:b498:b01c:c3ac:ae69? (n7kenj77twmhzm8jtyh-1.v6.elisa-mobile.fi. [2001:999:701:52e0:b498:b01c:c3ac:ae69])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64b6ebesm289857e87.137.2025.05.09.07.23.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 07:23:53 -0700 (PDT)
-Message-ID: <e823a43e-20a8-4142-875f-a3575cbb0d0b@gmail.com>
-Date: Fri, 9 May 2025 17:25:06 +0300
+	s=arc-20240116; t=1746800771; c=relaxed/simple;
+	bh=4ufOcVydqxVVIvINctf2UypbLRoZqZIntPZ1NEBHHrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOKGAcqAA/DNNr2e439wFj84tpddW1+Hq6ebfObLxOw00P73vKa2W+HhtsQT1Oj8UPSTaUdSTVoShxYC7WLv+NyJ0OQkx5ldexkfQEUUxoERaXST+ALe2/AxrcYz3QcRnE4iXslITn/Je6deFXQzrX9E71XF/cTFfXm0ydZXZ44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qx8gIq78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFF2C4CEE4;
+	Fri,  9 May 2025 14:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746800770;
+	bh=4ufOcVydqxVVIvINctf2UypbLRoZqZIntPZ1NEBHHrg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qx8gIq78juITgvNr32N9pAP36xz7pzHCx6hrpnzvO7iOFM6Qn5T9hwASFaiE5lju6
+	 VsOn5n1SU6c4kbXZFPaSG1PPegaNoe0kUu6Ih6dIw6h4SBo4ZWuAwqapL6tbsvsDMH
+	 tR2s0WP+2LKnLJjOm22BQLSz/cbNUeAjty1AZ2Ub5knDzN42IqmaNpRwpvjBPr7HaU
+	 +6xFYQVmzimfaBIHIWVTAAAbGtIGwPe56mljfmwMc3omkMKPYlpgJkqseH3sPhdtmL
+	 66FE7PSPa1sg13pc3xnIjA/VfPFnXDfNHNHIWqimfFuDgPrtOOeiVA6zAxMPHPhpe8
+	 tXbR7h+SwutaA==
+Date: Fri, 9 May 2025 15:26:04 +0100
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v10 0/3] Maxim Integrated MAX77759 PMIC MFD-based drivers
+Message-ID: <20250509142604.GF2492385@google.com>
+References: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] drivers: dma: ti: Refactor TI K3 UDMA driver
-To: Sai Sree Kartheek Adivi <s-adivi@ti.com>, vkoul@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com,
- ssantosh@kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- praneeth@ti.com, vigneshr@ti.com, u-kumar1@ti.com, a-chavda@ti.com
-References: <20250428072032.946008-1-s-adivi@ti.com>
- <20250428072032.946008-4-s-adivi@ti.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20250428072032.946008-4-s-adivi@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
 
-Hi,
+On Fri, 09 May 2025, André Draszik wrote:
 
-On 28/04/2025 10:20, Sai Sree Kartheek Adivi wrote:
-> Refactors and split the driver into common and device
-> specific parts. There are no functional changes.
+> Hi,
 > 
-> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
-> ---
->  drivers/dma/ti/Makefile         |    2 +-
->  drivers/dma/ti/k3-udma-common.c | 2909 ++++++++++++++++++++++++
->  drivers/dma/ti/k3-udma.c        | 3751 ++-----------------------------
+> This series improves support for the Maxim Integrated MAX77759
+> companion PMIC for USB Type-C applications using the MFD framework.
+> 
+> This series must be applied in-order, due to interdependencies of some
+> of the patches:
+> * to avoid use of undocumented compatibles by the newly added drivers,
+>   the bindings are added first in this series
+> * patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
+>   new MAINTAINERS entry, including a wildcard match for the other
+>   bindings in this series
+> * patch 3 ("dt-bindings: mfd: add max77759 binding") references the
+>   bindings added in patch 1 and 2 and can not work if those aren't
+>   available
+> * patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
+>   the core MFD driver, which also exposes an API to its leaf drivers
+>   and is used by patches 5 and 6
+> * patches 5 and 6 won't compile without patch 4
+> 
+> The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
+> sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+> 
+> This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
+> 
+> This series adds support for the top-level MFD device, the gpio, and
+> nvmem cells. Other components are excluded for the following reasons:
+> 
+>     While in the same package, Fuel Gauge and TCPC have separate and
+>     independent I2C addresses, register maps, interrupt lines, and
+>     aren't part of the top-level package interrupt hierarchy.
+>     Furthermore, a driver for the TCPC part exists already (in
+>     drivers/usb/typec/tcpm/tcpci_maxim_core.c).
+> 
+>     I'm leaving out temperature sensors and charger in this submission,
+>     because the former are not in use on Pixel 6 and I therefore can
+>     not test them, and the latter can be added later, once we look at
+>     the whole charging topic in more detail.
+> 
+> To make maintainers' work easier, I am planning to send the relevant
+> DTS and defconfig changes via a different series, unless everything
+> is expected to go via Lee's MFD tree in one series?
+> 
+> Cheers,
+> Andre'
 
-I'm affraid you do need to break this one up a bit. It might be doing it
-correctly, but it is impossible to check with the churn, like ....
+Okay, this (and the DT bindings) has been applied and submitted for
+testing.  Once successful, I'll get a PR out for the other maintainers
+to pull from.
 
->  drivers/dma/ti/k3-udma.h        |  548 ++++-
->  4 files changed, 3700 insertions(+), 3510 deletions(-)
->  create mode 100644 drivers/dma/ti/k3-udma-common.c
+Note to self: ib-mfd-gpio-nvmem-6.16
 
-...
-
-> -static bool udma_is_chan_running(struct udma_chan *uc)
-> -{
-> -	u32 trt_ctl = 0;
-> -	u32 rrt_ctl = 0;
-> -
-> -	if (uc->tchan)
-> -		trt_ctl = udma_tchanrt_read(uc, UDMA_CHAN_RT_CTL_REG);
-> -	if (uc->rchan)
-> -		rrt_ctl = udma_rchanrt_read(uc, UDMA_CHAN_RT_CTL_REG);
-> -
-> -	if (trt_ctl & UDMA_CHAN_RT_CTL_EN || rrt_ctl & UDMA_CHAN_RT_CTL_EN)
-> -		return true;
-> -
-> -	return false;
-> -}
-> -
->  static bool udma_is_chan_paused(struct udma_chan *uc)
->  {
->  	u32 val, pause_mask;
-> @@ -643,189 +88,73 @@ static bool udma_is_chan_paused(struct udma_chan *uc)
->  	return false;
->  }
->  
-> -static inline dma_addr_t udma_get_rx_flush_hwdesc_paddr(struct udma_chan *uc)
-> +static void udma_decrement_byte_counters(struct udma_chan *uc, u32 val)
-
-
-These sort of diffs.
-
->  {
-> -	return uc->ud->rx_flush.hwdescs[uc->config.pkt_mode].cppi5_desc_paddr;
-> +	if (uc->desc->dir == DMA_DEV_TO_MEM) {
-> +		udma_rchanrt_write(uc, UDMA_CHAN_RT_BCNT_REG, val);
-> +		udma_rchanrt_write(uc, UDMA_CHAN_RT_SBCNT_REG, val);
-> +		if (uc->config.ep_type != PSIL_EP_NATIVE)
-> +			udma_rchanrt_write(uc, UDMA_CHAN_RT_PEER_BCNT_REG, val);
-> +	} else {
-> +		udma_tchanrt_write(uc, UDMA_CHAN_RT_BCNT_REG, val);
-> +		udma_tchanrt_write(uc, UDMA_CHAN_RT_SBCNT_REG, val);
-> +		if (!uc->bchan && uc->config.ep_type != PSIL_EP_NATIVE)
-> +			udma_tchanrt_write(uc, UDMA_CHAN_RT_PEER_BCNT_REG, val);
-> +	}
->  }
->  
-> -static int udma_push_to_ring(struct udma_chan *uc, int idx)
-> +static void udma_reset_counters(struct udma_chan *uc)
->  {
-
-...
-
-> +struct udma_dev {
-> +	struct dma_device ddev;
-> +	struct device *dev;
-> +	void __iomem *mmrs[MMR_LAST];
-> +	const struct udma_match_data *match_data;
-> +	const struct udma_soc_data *soc_data;
-> +
-> +	struct udma_tpl bchan_tpl;
-> +	struct udma_tpl tchan_tpl;
-> +	struct udma_tpl rchan_tpl;
-> +
-> +	size_t desc_align; /* alignment to use for descriptors */
-> +
-> +	struct udma_tisci_rm tisci_rm;
-> +
-> +	struct k3_ringacc *ringacc;
-> +
-> +	struct work_struct purge_work;
-> +	struct list_head desc_to_purge;
-> +	spinlock_t lock;
-> +
-> +	struct udma_rx_flush rx_flush;
-> +
-> +	int bchan_cnt;
-> +	int tchan_cnt;
-> +	int echan_cnt;
-> +	int rchan_cnt;
-> +	int rflow_cnt;
-> +	int tflow_cnt;
-> +	unsigned long *bchan_map;
-> +	unsigned long *tchan_map;
-> +	unsigned long *rchan_map;
-> +	unsigned long *rflow_gp_map;
-> +	unsigned long *rflow_gp_map_allocated;
-> +	unsigned long *rflow_in_use;
-> +	unsigned long *tflow_map;
-> +
-> +	struct udma_bchan *bchans;
-> +	struct udma_tchan *tchans;
-> +	struct udma_rchan *rchans;
-> +	struct udma_rflow *rflows;
-> +
-> +	struct udma_chan *channels;
-> +	u32 psil_base;
-> +	u32 atype;
-> +	u32 asel;
-> +
-> +	int (*udma_start)(struct udma_chan *uc);
-> +	int (*udma_stop)(struct udma_chan *uc);
-> +	int (*udma_reset_chan)(struct udma_chan *uc, bool hard);
-> +	bool (*udma_is_desc_really_done)(struct udma_chan *uc, struct udma_desc *d);
-> +	void (*udma_decrement_byte_counters)(struct udma_chan *uc, u32 val);
-
-You can drop the udma_ prefix, it is clear that they are for udma..
-
-> +};
 -- 
-Péter
-
+Lee Jones [李琼斯]
 
