@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-642348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63991AB1D98
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:01:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F34AAB1D93
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D331B66A3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35AF3B0B62
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A8325F792;
-	Fri,  9 May 2025 20:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DB425DD02;
+	Fri,  9 May 2025 20:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QcULRaeW"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TYRuy/vq"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9272E25E815;
-	Fri,  9 May 2025 20:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28B9220F56;
+	Fri,  9 May 2025 20:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746820851; cv=none; b=HzRxpGRb1nvZZOFz/AgJTB5O8gBgW3UdC4t9Ii7pzAmVlYir4NWutwySwOcl61+oDsJ2MiCtEmUU3ukTP6PbPWSRrvhaReCpOt3gkWrqjDB/xIbisstbDzlCNBlbJZCXy693HjNnesGHK+8ulMk50ZHNNxgt37HoZ3AkTaGxO0A=
+	t=1746820843; cv=none; b=mxHQEQfzOgPfT3IP2D/p5kKVgHx4IeZyf4QNywyWPQU8DJnqcWGNNire4RA8y5GhJjPf4NKDlNmZ0zjt+LnSSStMk+Ft1htYivtbbzw1+02Zb8IlEDFRk5DEUpwDRLIr1gBM+BtARjWOnOlCMjBSC6JkQyIdE5EFyFev+Ts74QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746820851; c=relaxed/simple;
-	bh=wiOVd+vFk5rdFuhZzV/kyvgEtuq/lWI8M+zV5v2Leo0=;
+	s=arc-20240116; t=1746820843; c=relaxed/simple;
+	bh=s805KXzf1YcWivCU9B8DwY6MQ5X0zCl298WP4agv7us=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NizXUbKOE3QvOlU4vkRPZrCqDGmMh41Hu/thMoM2x7Py5kCrbzf8lr9vL8hr1zP+sJwdo0G+QqWe5NEK2Tesz7mQ9djbVX5cKHCQJweowfgodpg5gEQEIrHJefHfsVxep1vX5Bcwpnq4xkXGeazFVosC2mkjdx25JrPy30Ti+uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QcULRaeW; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=uKMw1WiQX5R7YqULPyGDLYfXBzGQ/JuqeUKSvDgTO5LZYzeEDU4Jogx7Izr1H2PigU96iwg6Fia49VpoPQ6Fa1AThHKL5jTjy84zQcO+cR3XIiIAJ4EzBsAL++7OZew0+PyTn9OTt+8NzothwqIran8sAdcQmY1IX2tmKwkWWi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TYRuy/vq; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,48 +35,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=i0QTL6OGoLDoSHo02DwPWhUp/ii7lcgusrtzJi+Dd24=; b=QcULRaeWBG0HypA38YARbZ+MZa
-	G6dGDhQkzY7/zF+XtNGvIp/ww5yqiwJLRB0FK+PINYJ02h3JUqHF83wiqKovAiKWqnArwx6HLlJPh
-	BI+llkEE50dJACP4dsvkvpG8e2LOSj1FxghJyq988noOvadB+tOWDChqo48ty/S7iDExNzaSG+Hmw
-	/ajS7q8HPClfKXcmASay4oV35JwGIVo69BgeX7ErikyYIjWFL5WR7XrDnlBr/w+c96Vxfho6SN3Zw
-	i4FI0SgUKa4B2BLKoMi7F8oOPqMUcyRRIG4qIg3MAimo4NrUvRvfIVmHpQhuszVZU7bUdKDsC/3m3
-	e3PRuT2w==;
+	bh=sUACwQMdDJ75lG0pGjfTnKwjnJF++bZxZNoTnQ2fhcI=; b=TYRuy/vqOjUpiRaH09BEgokIQQ
+	PsFDF5hMwGNEdTqks5SLF/5XSbnIT2Pb2w5I3pqagDPpgG8AF2xjG2m0l9GFNorzEXTunkye/Qejg
+	/w1T/hGQ2kkjtLdE75Na9jKMZHxPaPGdZn2P+Iu4KKNW1IlEpElTszk5x4ax/POSWHPe80cq3sZkl
+	jQPUALICeso7KIr7hcq31YMwJnIH711JlJZgHRQos2Ju5hAKiSdApSD5BzjiSzFvwAT6ELUdrbcm1
+	qiKJN51269Gxllfs8OWjIqsu6BYk5gjEkKkAaJVhimbSKUyhK2Xa3+vMJfyUBGhckcEbSU/kDScAB
+	WI7ZfXlQ==;
 Received: from i53875a1d.versanet.de ([83.135.90.29] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uDTta-0004Jo-N8; Fri, 09 May 2025 22:00:34 +0200
+	id 1uDTtb-0004Jo-6g; Fri, 09 May 2025 22:00:35 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com,
-	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] Add RK3576 SAI Audio Controller Support
-Date: Fri,  9 May 2025 22:00:21 +0200
-Message-ID: <174682074864.2029046.1413189234015489546.b4-ty@sntech.de>
+	kernel@collabora.com,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v2 0/5] arm64: dts: rockchip: add ROCK 5B+ support
+Date: Fri,  9 May 2025 22:00:22 +0200
+Message-ID: <174682074870.2029046.8482000655658409755.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250506-rk3576-sai-v4-0-a8b5f5733ceb@collabora.com>
-References: <20250506-rk3576-sai-v4-0-a8b5f5733ceb@collabora.com>
+In-Reply-To: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
+References: <20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,28 +75,37 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 06 May 2025 12:42:39 +0200, Nicolas Frattaroli wrote:
-> This series adds support for Rockchip's Serial Audio Interface (SAI)
-> controller, found on SoCs such as the RK3576. The SAI is a flexible
-> controller IP that allows both transmitting and receiving digital audio
-> in the I2S, TDM and PCM formats. Instances of this controller are used
-> both for externally exposed audio interfaces, as well as for audio on
-> video interfaces such as HDMI.
+On Thu, 08 May 2025 19:48:49 +0200, Sebastian Reichel wrote:
+> This series adds support for the ROCK 5B+, which (as the name suggests)
+> is an improved version of the ROCK 5B. It also adds initial USB-C
+> support for both the ROCK 5B and the 5B+.
+> 
+> Changes in PATCHv2:
+>  - Link to v1: https://lore.kernel.org/r/20250324-rock5bp-for-upstream-v1-0-6217edf15b19@kernel.org
+>  - Replaced DT binding patch with the version from NAOKI
+>  - Dropped unused pinctrl for vcc5v0_host_en from the shared DT
+>  - Moved USB-C SBU DC pins to board specific files, since they differ
+>    between Rock 5B and Rock 5B+
+>  - Added pinmux for SBU DC pins
+>  - Rebased to latest version of Heiko's for-next branch
+>  - Disable USB-C on Rock 5B for now
 > 
 > [...]
 
 Applied, thanks!
 
-[1/5] arm64: dts: rockchip: Add RK3576 SAI nodes
-      commit: 3dfeccdd3cc88792e631539792a1ecc37a9581dc
-[2/5] arm64: dts: rockchip: Add RK3576 HDMI audio
-      commit: 7f1561d82e3d3589038782f75faa50c65d9cdd42
-[3/5] arm64: dts: rockchip: Add analog audio on RK3576 Sige5
-      commit: f4a9c9fbf02c8948029846aba63c65c0425cb275
-[4/5] arm64: dts: rockchip: Enable HDMI audio on Sige5
-      commit: fcdeb39bb5615c4bb36f69d2ec11f25b54168304
-[5/5] arm64: defconfig: Enable Rockchip SAI and ES8328
-      commit: bd088836a10e418aaf7dbda4a1db9da864f09fb8
+[1/5] arm64: dts: rockchip: move rock 5b to include file
+      commit: aadfbdcf7e1e7f3892e0e4bdcc3c9c7c9adfb723
+[2/5] arm64: dts: rockchip: move rock 5b to include file
+      commit: aadfbdcf7e1e7f3892e0e4bdcc3c9c7c9adfb723
+
+The two above squashed together as intended and talked about
+on IRC.
+
+[3/5] dt-bindings: arm: rockchip: Add Radxa ROCK 5B+
+      commit: 874c1117621d441e0ef4a609665f228a4b8a1932
+[4/5] arm64: dts: rockchip: add Rock 5B+
+      commit: 376cb9696298df2028afb620a9dc6c4b10a18605
 
 Best regards,
 -- 
