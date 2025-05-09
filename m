@@ -1,185 +1,162 @@
-Return-Path: <linux-kernel+bounces-641290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA92AAB0F7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:45:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39086AB0F92
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7241D503AC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 270109E327B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA414221DB5;
-	Fri,  9 May 2025 09:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D765F28DB68;
+	Fri,  9 May 2025 09:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e2tLwoeA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VaNxtUL1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8C228D831
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 09:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8097528D8FD
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 09:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746783953; cv=none; b=d4NjeQ95Es2fDvi5B+5LOOz5E+PFA3ul98uPwzP5iidWBwttsO2SS+yBcP5ndrjO3EY/beMmgorGBdwEkyZlEBEiUqCmxaWI/QVcz1CNKV2sZ1vwwGRYH6SY8TbUfBpOxFn/Du1t5R9dKKm0Xmo0bWAnMd8myFOu18epMRAmVL4=
+	t=1746784141; cv=none; b=mPM082FyCxrJjeAjJFal7uNVxcFWZE4rk46GEkqr4cv+yG0W1Ygko0VrEdgGIO9OOtW6gxlMSdUjY/lmlJblZC85IgJOo5ujnR9T/WL9TNx2Rtu6qkS9prw4+rpMHVlFGUC1zFvM9FAnH4Ygj1SWhU+j4x06lKRFVgr8BjdvxvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746783953; c=relaxed/simple;
-	bh=vEzeCbOr7rTbW3vMJ3X1Zk3anzpiN0GrGnLgFbq6fqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jnCNJObYxQIslDu5fcLwoX3ponJpm1KAEBsvJBLoQ8DehLE6FkFSlN2y9vuX2L/6pv55gFOvHTaJHkhWcaSwWbfBoT+tocQK2lWtx2iFerKoXAxh+pxrWnxNUccDuLVpGTWIaVFPOzgda5euR8QF3+hQvfbJLbQf5KRSqlJDufs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e2tLwoeA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746783950;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bu/8JLoeCoD1WqiQs57tUFU7TywIqe2UBHBIdfA/PFw=;
-	b=e2tLwoeA/CSp3LNGIdBOhtqMdyVUDJY2F/Thxi03Q+CWIV+BtSPEmLgChVLF0us0khwwOf
-	MvaEhkIN40bnU/n1hM6iYEaDIGq2lUpX2ssIefZpBg024b3ZBjkKI0/D2YzTnCApYhYrly
-	nh3ChDVdao9f3UsZEi0HdYjeg/V9WjY=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-654-BH4aIRRZNAyDXfgJ3YC9pQ-1; Fri, 09 May 2025 05:45:48 -0400
-X-MC-Unique: BH4aIRRZNAyDXfgJ3YC9pQ-1
-X-Mimecast-MFC-AGG-ID: BH4aIRRZNAyDXfgJ3YC9pQ_1746783947
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39c1b1c0969so1148142f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 02:45:48 -0700 (PDT)
+	s=arc-20240116; t=1746784141; c=relaxed/simple;
+	bh=jMWjHD1rTFP9aLEdaVnBGZKpupXl27qmoo3tPrPAil0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ciRBO6VcCnDn6Wy0/83h+YgQZdh0xaU7S3ohnjWf5DsjjinWAabGOnXwO7diINUnqenDSXwdTcvyOvvnLN54mGkNrJ54VQIGZuu7+PImB3S2dLSRXs8739qx6lG6YSjP+sH3Ag4W35diNqZnFuPoI9eu7I7AU44YGjQYSvAzHQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VaNxtUL1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5491VFJq014411
+	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 09:48:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5TZMgewoxR5IAJtnCtwQR+2k
+	wH5UKsrPDtd/6+1VrS0=; b=VaNxtUL1oVsr1dhcXJ2it5zo0ih7756dwy5nCFJO
+	iCeFWm22nhDmGndU8XM7nGAwb4X0RZxxlMA32BujW6AXWQkbqKlyu9xqAlGP0XRU
+	jjWF7+jY3XYvTVLP4FhQMWWapRHprrxzB9GqPO2ieM8kYLeZl6uI6vlG1OPy4lb5
+	oQt4y2m3yB+64ItM2hJubRcusZuwUJV7l0ak4Okdg1FVem+8hjZvPjvXa3UMKlFS
+	yyEfJlCSk+/UV+wdcJvOOjXtcDmy8y6KjbzwJfNJlQoqkkf/GkV7t2nte15mYhpE
+	RBBAVTkZPJImHp4wbZTwYjJCGeYBuHIVmxpkHSclSHWGlw==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp4m734-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 09:48:57 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b00e4358a34so1276612a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 02:48:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783947; x=1747388747;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bu/8JLoeCoD1WqiQs57tUFU7TywIqe2UBHBIdfA/PFw=;
-        b=sJu2LW4UnJgNOMQtlThhqapxE4XRhP1QxRXHwJ9ZvgXbcmazfYLncWkVvEsnMdirhS
-         6uYFR/TQqj8k8KD+TD3PcoZZ+K8M6IXSpm+xm+SNejp8+Kf8mCDjpOOqyQahfyAmC+yR
-         yigO0Sqb8X7Ci6WzqeNQDRjZJ9QRS+ifvCRb/u6JSZf82J3Chcv21tSoLFBgJHK/r1Es
-         WnqKGaqVBPHMafl4U7iH1pm7UN1Ocsc+IJqs3jX4yT1/CIE3h9whddByrXxpiccM6kbq
-         tltSo10xoz7+MlfY1cH0pNkNEbPtfEOlnQ/BXezTZK3C33l7CTvHX9HVupQ78PZu9Rmk
-         2uFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnqnURUPBpE7ZoxqYllz8gD0HYJlRr+n3C1MFndDuF/uQg3a5QiRCSMLzX+06BW7fC8SYeIYhRAfNp/i8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAkr5QPgz7x8eW2GtC9xKo8IhALSZ19zDUmBJD5sx28u2rUDYS
-	KUNZHiGMuMr2nKahafA4TIPiQA61mIJxhVJzu8FvTQyY51GFSs5h1clpm9FDm4sznSjhnmdacnk
-	Ma+j4Vuw2xQK4KVC1V6MnKcAPXfY2eVQs9aMGehY6GTD8LkrPb3XfUZbvRLKWLg==
-X-Gm-Gg: ASbGnctDohyBuR5jzPJeciS/tpkv7i1bpHnWDgE+YClaqymqNNCYfoi8hoD8hRNTXQh
-	mYQGoc9z/IrEkDzmkaxNp4Yhaa9xI8XAeNV6vphaOkCTDfGnpDX0BVPR16suzOFIr1X6FMdBU0e
-	nFyFBWhKOJnSVNj7+u1OVJs7rEKB/6yaEXtGOTJ18uRbjSlnr7IZ/NxxBD52bO1LM+V86KULqmS
-	mcDMIX3wVNgF39K99l5OH2UcxMD3u3NMzkn5dBQeN3GSjJvS7zqvLwv4KzcWiyQ3pBC/I206IHt
-	200QIjvPjOd5CBMrS9pTcRAbCVaNThYB3RWoILMHqVCh059SL6wN3t4IwmlfyB68dec4MFYEFo1
-	1pxKjqYtVPVj1diqNEGtOFqdgapM7cSRE1BciSNE=
-X-Received: by 2002:a05:6000:3107:b0:39e:db6a:4744 with SMTP id ffacd0b85a97d-3a1f646d9abmr2212125f8f.32.1746783947559;
-        Fri, 09 May 2025 02:45:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqWyAH3LOt/3cZP9Rvihrl0+ejLa3IRZjY7TLv9wiabkFRe6nuDbo+0JpbmOS1yW5BiT5eqA==
-X-Received: by 2002:a05:6000:3107:b0:39e:db6a:4744 with SMTP id ffacd0b85a97d-3a1f646d9abmr2212107f8f.32.1746783947216;
-        Fri, 09 May 2025 02:45:47 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f45:5500:8267:647f:4209:dedd? (p200300d82f4555008267647f4209dedd.dip0.t-ipconnect.de. [2003:d8:2f45:5500:8267:647f:4209:dedd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57de087sm2762774f8f.16.2025.05.09.02.45.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 02:45:46 -0700 (PDT)
-Message-ID: <71cb8335-ad53-409a-b947-d7ded8a3ef02@redhat.com>
-Date: Fri, 9 May 2025 11:45:45 +0200
+        d=1e100.net; s=20230601; t=1746784137; x=1747388937;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5TZMgewoxR5IAJtnCtwQR+2kwH5UKsrPDtd/6+1VrS0=;
+        b=vJvTJVHn24Wpr7g1N/qhssExAklU5/XV9SOX6GUwAzDEVbaB2bfcBBE2iK3BB/nOBU
+         BHxvhTyHqf3Vin8sOlKpZlzUdkRluBwm37yNBk3CGJeywt8PWzQ9+JdP7lmzEh06qX6Y
+         sO/l7NseUbz287vrVKfpPi2ln4mP0y8uNhojycTQ6Z/9Uvc5s33nwuTWuovSSpAGaMLD
+         ntyjcYCyd+8UyiKKyelRQD/IkFeEIjG8/AphKOirSmfXP8FkUohK8jTtFd1cOMX+MBGP
+         DxcN4m7rbAbTzRkaGfU3HMkYmWmbpgP1LH5xc5T7CmYTMxmY5cTOqF0uMbQeIACFtHW3
+         8uYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUxe0j33tDX69cyu+0Smara09XWB1WqB+GNTOBDNr2HuRuBVkl1es+uEPPoxIVCUkoEPWr/UcG9cCXqVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXZUZLhU+9K7QfvHIFUvaAu6d4XzIsbqop49NPnllHnrAeQBKf
+	gG1Sa43yPObiAkrtHh7WHfKGXEHILM7JsA6qHEUYtBWm1UZVPDFWLxT2BRRZi9vIU8lhL8KrM1S
+	l9iNEPD3vSfXfe7zBWWHvr3IXwdGCCiKiGBh1HBGSTymnkRegAp2zvAyBU7eI9AU=
+X-Gm-Gg: ASbGnctd8a5IzcGbq+CmY4SY65aOyed6yZTjd/doloGwOni/YF1fahq7ICD4e8iymc2
+	q9rh1abZ9wnxDw4n56gjgr7L6KnT/BfzEu7Ictrix1Vc5OrtyzPJ2UyoZFlCSd0oqA82oIhuDrG
+	fPElFDdifSaSJYoOVlkd8oaV+pvfejGAGgmB0gmlaXE6Cv9OmLvCXtznfb5RYjXF34Bvq+l7SmD
+	ZMVSSzIpgvjC4/rlqom78cU7AAlVPHvgaSfQ7a8cmP1/YTS/ruIEY0jOyRLPDaoGZk8/ssBNHgK
+	mosB3J0uq+ElXMHBqpc9mR7v8VgT
+X-Received: by 2002:a17:90b:4c81:b0:2ee:ab29:1a63 with SMTP id 98e67ed59e1d1-30c3cb19ac0mr4286938a91.3.1746784136707;
+        Fri, 09 May 2025 02:48:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQi8+RQd67W36NgGcktMBBwIUKFCg/Vc4iwo6NQv7JDqt7T8xUwe8qLgeEJmPVVbmD8JtrUA==
+X-Received: by 2002:a17:90b:4c81:b0:2ee:ab29:1a63 with SMTP id 98e67ed59e1d1-30c3cb19ac0mr4286910a91.3.1746784136320;
+        Fri, 09 May 2025 02:48:56 -0700 (PDT)
+Received: from hu-pkondeti-hyd ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4fe239csm3624195a91.32.2025.05.09.02.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 02:48:55 -0700 (PDT)
+Date: Fri, 9 May 2025 15:18:51 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
+        Prasad Sodagudi <prasad.sodagudi@oss.qualcomm.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>
+Subject: Re: [PATCH v6 2/3] firmware: qcom_scm: Support multiple waitq
+ contexts
+Message-ID: <a1aefddb-6914-42b8-9ba9-8eb27a0ce2f4@quicinc.com>
+References: <20250425-multi_waitq_scm-v6-0-cba8ca5a6d03@oss.qualcomm.com>
+ <20250425-multi_waitq_scm-v6-2-cba8ca5a6d03@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mm/vma: remove mmap() retry merge
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>
-References: <cover.1746615512.git.lorenzo.stoakes@oracle.com>
- <e18be1070e9fcd7a43cd72ac45f19cf1080e73b5.1746615512.git.lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <e18be1070e9fcd7a43cd72ac45f19cf1080e73b5.1746615512.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425-multi_waitq_scm-v6-2-cba8ca5a6d03@oss.qualcomm.com>
+X-Proofpoint-GUID: nY8xgNzeqWFeT6n_7D18xaxDNVLF2T9y
+X-Authority-Analysis: v=2.4 cv=E5XNpbdl c=1 sm=1 tr=0 ts=681dcf8a cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=u9c1M-ofyWthsBcQn4sA:9
+ a=CjuIK1q_8ugA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDA5NCBTYWx0ZWRfX/5+IKARSWtrd
+ yYyda15f0grMn52bbT5oorPfWiKZ+mBbACMAapH651y+aZNpjwpsNbN8rczNVd+Jq1ljK44bnzM
+ cBt323HtbeqnpEu+PdWJbnO7EE+dMChYSsnnti/huOOaLoK4BldF+QMfI0bZX8+vCLYV51YYOVN
+ 4pczyVU0bvqNWesOCSnyvZg7I3czmTfpK4073nVy2TYLW9VNFuQOvT4cQelmpZQnQFJwDnBGFEj
+ Alj3PbHVWh7KW5GNtjLjM6aPCnevh7u1vCGTaUPStWEb5fdLVdm/Ynfp1NiRwAdDfC9We+iE8UK
+ mwo+et72EuSWpM6WEMvfutOkD5yCA7JZKil2IgMmZFDVBCzzvQk61vGABqWBRFORVef2QT+EGGe
+ CFxP2aWlKzQqTjdrvvDIHkNvSlCw+wkhb6hPKUW5hoXfI+luDGoAeOsZic98KmHeCO9Y/dPC
+X-Proofpoint-ORIG-GUID: nY8xgNzeqWFeT6n_7D18xaxDNVLF2T9y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-09_03,2025-05-08_04,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 suspectscore=0 adultscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 phishscore=0 spamscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505090094
 
-On 07.05.25 13:03, Lorenzo Stoakes wrote:
-> We have now introduced a mechanism that obviates the need for a reattempted
-> merge via the mmap_prepare() file hook, so eliminate this functionality
-> altogether.
-> 
-> The retry merge logic has been the cause of a great deal of complexity in
-> the past and required a great deal of careful manoeuvring of code to ensure
-> its continued and correct functionality.
-> 
-> It has also recently been involved in an issue surrounding maple tree
-> state, which again points to its problematic nature.
-> 
-> We make it much easier to reason about mmap() logic by eliminating this and
-> simply writing a VMA once. This also opens the doors to future optimisation
-> and improvement in the mmap() logic.
-> 
-> For any device or file system which encounters unwanted VMA fragmentation
-> as a result of this change (that is, having not implemented .mmap_prepare
-> hooks), the issue is easily resolvable by doing so.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Fri, Apr 25, 2025 at 04:48:02PM -0700, Unnathi Chalicheemala wrote:
+>  
+> +static int qcom_scm_query_waitq_count(struct qcom_scm *scm)
+> +{
+> +	int ret;
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_WAITQ,
+> +		.cmd = QCOM_SCM_WAITQ_GET_INFO,
+> +		.owner = ARM_SMCCC_OWNER_SIP
+> +	};
+> +	struct qcom_scm_res res;
+> +
+> +	if (!__qcom_scm_is_call_available(scm->dev, QCOM_SCM_SVC_WAITQ, QCOM_SCM_WAITQ_GET_INFO)) {
+> +		dev_info(scm->dev, "Multi-waitqueue support unavailable\n");
+> +		return 1;
+> +	}
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+I am testing this patch on SM8750 and found that we are returning from
+here, do you know why it is happening? The first patch in this series
+does not check if scm call is available or not and I see scm returns the
+hwirq properly. I have commented out this block and able to see waitq
+count as 2, which is inline with what would be overlayed in the device
+tree.
 
--- 
-Cheers,
+> +
+> +	ret = qcom_scm_call_atomic(scm->dev, &desc, &res);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return res.result[0] & GENMASK(7, 0);
+> +}
+> +
 
-David / dhildenb
-
+Thanks,
+Pavan
 
