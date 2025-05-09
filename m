@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-640777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A224EAB08F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:43:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229A6AB08A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DC1980346
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CD74C4B64
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07CE23D290;
-	Fri,  9 May 2025 03:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000D3239E85;
+	Fri,  9 May 2025 03:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Rbk1b0vu"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brzNU2Hv"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094FB23D29F;
-	Fri,  9 May 2025 03:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B596164A8F;
+	Fri,  9 May 2025 03:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746762198; cv=none; b=sfo0blfn3x43MnfzJBMzspMuGCZqn7CBKs1FNVA1jn9TKIeCuAUowNJrtPHwKhle8uiJoPvbeSHy9zv+BSiBO2zmKp/BGiqPL2hu9RphhQTICuhQp4fwJhrPT+Hx2TWb1LIMFKyDBR36/lKw6fdoimN1iVQZKcrJ6jnG40o785M=
+	t=1746760571; cv=none; b=d25Udfux4xR8exqu+QtFOUv8RoKlgpaIkMiJaLKyiMQN8pAWDOQkLOmvpWJ0fybIkrs1F/1k9Tt6pWm1A0UtRZ+RyCKh/K3BLqGlbYWNdY/k17jpHa2rrdatso6Z0iHxZtPCCAPwgtqXpLJe4Wy0BQ86qDfa1VZiy1MTYrlWaCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746762198; c=relaxed/simple;
-	bh=dkgAWJ0H7e2FQVD5K7M0InW6zg3HUvA18Kt1Cavcnfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hiA5BVDYHWThF3SZeNHDNG20Bk4wGRWJnZEDZnb0msesO1M7jii2oNICMYJRuxaLLeU8GuzbUyOOUxha39RLS4k2aWpymp/dWppS1C2XVWJZ6Cn0gRe1tMbgEq9f4/3xgFUP9msWoYAIv5qXqpEu+PHbptw1MfQqtTbTpy8961c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Rbk1b0vu; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MgvkC7w5PYOeAubPmZHQ++5Bvo20B7PfGo6lMa0hvMU=; b=Rbk1b0vuTIPNlmgnw4AX5MTcUc
-	YFbjecLfSx9qZo8sdS3KQJG7Qpk7Gt0blMUB65/6JKWviwb+FuH1MnDZ8SwXiH5ZMT8FpAhXMN9lC
-	79tLEG91NQlAW8G97ERVpk/c/JfV/R+O6gBpwQIEzdzqT6tmduGO0dvzl35xFxxB89fd2x8BEJGhP
-	VEniirdHGbLSndSSf0NxvYZWAfgimLaNvz+Ssoep0di2aY06CjKx82uT95nHhaPRLW4YD7VSOPIu/
-	SKAhO0CnIG/3FDL/cZEzfPPoHvBG0/Dz7jCPvABMypIrape4Ow3pgZRckyTSmekwZCWLBUBrIJCc8
-	+4Qr4lAg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uDEBP-004kTa-2W;
-	Fri, 09 May 2025 11:13:56 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 09 May 2025 11:13:55 +0800
-Date: Fri, 9 May 2025 11:13:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, regressions@lists.linux.dev,
+	s=arc-20240116; t=1746760571; c=relaxed/simple;
+	bh=rME6fzb4OQsE0xWRpVdtPyAh60eWclIfOsYbwHQ4eI4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N5hXlmiLvmyclWLvGkdhqT2aOYFRnew8oJQWU/98hsDukmJvzFRQnqLGrE1JgD+8LzRzVdM+lIMI5JqAmIDRHPnzLqn8ZpoYHFDsUEv1Vy4duqZOVtyoaRqaFVubSuCZgjnu9Xv9qnt9lZ7DisvI8eAUqHxGdw9iBiO2704pAZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=brzNU2Hv; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-606668f8d51so1105174eaf.0;
+        Thu, 08 May 2025 20:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746760568; x=1747365368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTOwig8lTDkxPKMgyzizdRYq4XG3E64o3g/lB7m6NZU=;
+        b=brzNU2Hv8Vea5DBuhpgOWQA7u4zQjQ5vVTwRaS9/YOuqJmlOCFSzXyobyNHPrTURAc
+         wbWZC6jIQZukCEZqCLfOpt45Ova9xtMsg08ODerpmtYQ5xcqSg6TRexO3vfJlXHGkb0c
+         JOQIi9DB4Q6Ope3lxOudAnoYwlWJN/YvvUvfGqtdWJUZlWjxjxmBDbagXfq3vvaNsgLl
+         XyE4lrBWb18VdAdyZCi6rcg+BbpS0APFqs6bHMvas0Zjn6BrQMP0+AaubLEPWX0YSF8H
+         qD7vjpwPLueL99QHBF95MscY5rCCPTXNBBWJaRZX0EBNcbYncnMvfnaMKKdRcdzv3+X5
+         jsWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746760568; x=1747365368;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sTOwig8lTDkxPKMgyzizdRYq4XG3E64o3g/lB7m6NZU=;
+        b=JtVjsx2W6YuE22QNw16jEkbTcbw3qKI3N6C9bSK5GEOOga7Yhfg/dsK93049k002VE
+         x7sxTwGm5QH6mSk/8EYUF7gllZeQJh2n5zFznqCXK8bv2HV/7AZi5YAzuL4zeUqR8U8G
+         X4tMLUqLK9tzcGShat3VrGRmbBrojF90+qI5AZ3dh1KGNvpoqs7j1OSJJjYHY6TED+UY
+         bEHmOFoqdAav9VdCejQmOa3DZRajO2nhQAKaUezjRFWN+bi1pXSt9TzWrYXe3Ks4f6mi
+         tfIvpjgKfnnoCCr/p4QMIv12g+XufSRYhQ1fEmhTbkNWbA7jGE9Poi9OdW/36hsK6CBa
+         sMNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmO2bZKS0Dg66dWBZdyEkI9yGlUDa7hlWpLPqHaRDCQ4w0f4QQdc6qkRcNVQYY5hIujRrcdNo13ocj5YkWXjg=@vger.kernel.org, AJvYcCW76x7fWaxS9Hlv3Ye3UgrbllA87Lmw1QhP2jdwBQAGco5WVTi34tDfQmHlSrvP8xGnyo+6wIGzXdzYejw=@vger.kernel.org, AJvYcCX/o6oNns/fxr6/G88KDh4H0a2v2MfdMfGNQd48ULWpVst/+nDTZcVeIx2juYXczXUL7nnioyCKsC0v@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx808yq/Dy5Mxh5//NSf6t3PgkvwhmUu3fv0vK2dPioeV9TKsQR
+	5TjWXtslHPmw1Pt1DXhnTsgAN2CSwwKfoR3yrwFCTHZXA4TIxxUS
+X-Gm-Gg: ASbGnctNlHRgu4WWI5UdtnTZ3a7kGGeteiqXzojzT97FXDnqq+O13U0JE5BTW5Ww6Pp
+	t6ohQI/bD5dXFCNezb8NKc8t03OwNJsNEsYHpjhq/FyGYOo5G0OWZHeGaa4c0+4HiB9PwyTVtYZ
+	djlNj1mi3m3EBg74YOga4h97a37JaNmp7/Prx4dx9QJrQ1DIuYap2WNM0uQRED4KRNH4M59sO5I
+	pQ1TRt63qPbrsBXb4SugA5CGpTr2ClLDaOhz7Uk8UFwJwSJmtLtDpI1598Me+0vRxqDXwO11e7F
+	vtMx5P+4LGzJK2W/W9/wbHG4Wf7oIhYv7QMoBgQtSjTaCSelwG85nvK8J8DaDxJUNCzefu9oQf1
+	8Lyp510yt66Zs
+X-Google-Smtp-Source: AGHT+IFabaKG5IMI4f6lw/FzmXhfD/qA1aN2NZHwCsMXYiRNwWJ9KzD39S8IFVi2DsYvBD60grQSJw==
+X-Received: by 2002:a05:6820:208c:b0:604:99a6:4e90 with SMTP id 006d021491bc7-60868ad8738mr995531eaf.0.1746760568573;
+        Thu, 08 May 2025 20:16:08 -0700 (PDT)
+Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
+        by smtp.googlemail.com with ESMTPSA id 006d021491bc7-60842b096desm303745eaf.30.2025.05.08.20.16.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 20:16:07 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: dakr@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	akpm@linux-foundation.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	bhelgaas@google.com,
+	kwilczynski@kernel.org,
+	raag.jadav@intel.com,
+	andriy.shevchenko@linux.intel.com,
+	arnd@arndb.de,
+	me@kloenk.dev,
+	andrewjballance@gmail.com,
+	fujita.tomonori@gmail.com,
+	daniel.almeida@collabora.com
+Cc: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
-	Romain Perier <romain.perier@gmail.com>
-Subject: Re: [v3 PATCH] crypto: marvell/cesa - Do not chain submitted requests
-Message-ID: <aB1y8_T5uEEZhyrp@gondor.apana.org.au>
-References: <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
- <Zw9AsgqKHJfySScx@gondor.apana.org.au>
- <aBoMSHEMYj6FbH8o@gondor.apana.org.au>
- <aBsdTJUAcQgW4ink@gondor.apana.org.au>
- <aBt5Mxq1MeefwXGJ@Red>
- <aBw-C_krkNsIoPlT@gondor.apana.org.au>
- <aBw_iC_4okpiKglQ@gondor.apana.org.au>
- <aBypVwhHHzmqqN5K@Red>
- <aBytNdRyd5Ywh1Pq@gondor.apana.org.au>
- <aBy06xyzh5kKC48a@Red>
+	rust-for-linux@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH 00/11] rust: add support for Port io
+Date: Thu,  8 May 2025 22:15:13 -0500
+Message-ID: <20250509031524.2604087-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aBy06xyzh5kKC48a@Red>
 
-On Thu, May 08, 2025 at 03:43:07PM +0200, Corentin Labbe wrote:
-> Le Thu, May 08, 2025 at 09:10:13PM +0800, Herbert Xu a écrit :
->
-> > Do you have a boot log without this patch to compare? You seem
-> > to be getting skcipher failures as well as hash failures while
-> > the original report only had hash failures.
-> > 
-> 
-> 6.14.4 boot log at http://kernel.montjoie.ovh/477911.log
+currently the rust `Io` type maps to the c read{b, w, l, q}/write{b, w, l, q}
+functions and have no support for port io.this is a problem for pci::Bar
+because the pointer returned by pci_iomap is expected to accessed with
+the ioread/iowrite api [0].
 
-OK so it looks like on your machine the skcipher ENOMEM failures
-were always there.
+this patch series splits the `Io` type into `Io`, `PortIo` and `MMIo`.and,
+updates pci::Bar, as suggested in the zulip[1], so that it is generic over
+Io and, a user can optionally give a compile time hint about the type of io. 
 
-Let me stare at this a bit more.
+Link: https://docs.kernel.org/6.11/driver-api/pci/pci.html#c.pci_iomap [0]
+Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/.60IoRaw.60.20and.20.60usize.60/near/514788730 [1]
 
-Thanks,
+Andrew Ballance (6):
+  rust: io: add new Io type
+  rust: io: add from_raw_cookie functions
+  rust: pci: make Bar generic over Io
+  samples: rust: rust_driver_pci: update to use new bar and io api
+  gpu: nova-core: update to use the new bar and io api
+  rust: devres: fix doctest
+
+Fiona Behrens (5):
+  rust: helpers: io: use macro to generate io accessor functions
+  rust: io: Replace Io with MMIo using IoAccess trait
+  rust: io: implement Debug for IoRaw and add some doctests
+  rust: io: add PortIo
+  io: move PIO_OFFSET to linux/io.h
+
+ drivers/gpu/nova-core/driver.rs |   4 +-
+ drivers/gpu/nova-core/regs.rs   |   1 +
+ include/linux/io.h              |  13 +
+ lib/iomap.c                     |  13 -
+ rust/helpers/io.c               | 132 +++---
+ rust/kernel/devres.rs           |   4 +-
+ rust/kernel/io.rs               | 753 +++++++++++++++++++++++++-------
+ rust/kernel/pci.rs              |  88 +++-
+ samples/rust/rust_driver_pci.rs |   6 +-
+ 9 files changed, 731 insertions(+), 283 deletions(-)
+
+
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.49.0
+
 
