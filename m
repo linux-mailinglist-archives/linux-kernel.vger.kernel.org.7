@@ -1,98 +1,95 @@
-Return-Path: <linux-kernel+bounces-640898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC16AB0AB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:39:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563BEAB0ABA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D5E09E3FB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A0916FC0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB3826B096;
-	Fri,  9 May 2025 06:39:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D3C26B966;
+	Fri,  9 May 2025 06:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="HRPH0sdR"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AB128F4
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F7326C380
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772752; cv=none; b=ojZatmRzdJvzR9znIT7J88EbG+DDncBAhFYArHGb+HdgNoQdi2ePnRzD3XAPZobWnrowKylC0/bX5JkQHXq0jmKO5Xw3WLx0yVfJ7EN3Ma1ItiO67fKN/1uEmfPssMm5QWg8MWafOaVtyiE64jF8SX0xvQp6c1pjBkhb8pp2eGs=
+	t=1746772761; cv=none; b=vAGuo9cg+7ATTBw1q8+pDEwgYUrn+qj7sbUjhCqA1bvN7wwp+Jd5pLTKDK5MODylWycrBltrpwhF/+r5nJ3gj/reZZiNxV+/EJ6gRsbKNpatetXpt5GrHAXDLcb2+HbPL0ChFQg3FfpbnMx7wVzDt3vJGKnP4YcV8RpsE3nkneQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772752; c=relaxed/simple;
-	bh=clCX27/fIBn0JblGudpRe406eUIho5ef0nUbxHjkW50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5sqtFOHark2tGS8kCul2QaPREdvacHkF2Pf3B9uEnjyREGFboMUTK6FtHoIkYv5EoEEPKWW7u9xfl5stTqRRi1EOVMfREV5pXaOAvIZwtKogGH10t8j9PC89MpDZcbMAp7z8xcv6c9jIrBTOM77+/vKA+dl+L4ly9h2g/o+oSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uDHNu-00059m-Eq; Fri, 09 May 2025 08:39:02 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uDHNu-001qUP-03;
-	Fri, 09 May 2025 08:39:02 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uDHNt-00CHz5-2t;
-	Fri, 09 May 2025 08:39:01 +0200
-Date: Fri, 9 May 2025 08:39:01 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@pengutronix.de,
-	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v4 0/3] clk: add support for TI CDCE6214
-Message-ID: <aB2jBapQ5NdSa6HR@pengutronix.de>
-References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de>
+	s=arc-20240116; t=1746772761; c=relaxed/simple;
+	bh=+3Cx4Rb8aolns0GsK5RoTi+ZhoenOsry2wQ5+MveQS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZiOCCifz7+LpGWWMnwez0LCfKPI8/zJHlapQSTB52xJYUvsm9rLQVbaDm9h6ok0QUMFa4Pd6pccSTM7k0mjz3kLvJfLXv2a7a4+UaWljgDQ9o+BzCg0AhkUDTtz7/dybM79l4i7c5mPtLX1lhHA3+oojTW402wj1/6EyndHW0h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=HRPH0sdR; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1746772757;
+ bh=RGGUWsD6mE/MPYlXlrelAUBFwk7Si62HhFTya0QjVbo=;
+ b=HRPH0sdRWcqEoqOzbCIdHeWVcCrGprThINHV1cWThucwfABNZOhteQKZCrMMmOOr8g903NHhM
+ D/pFpcfdVG69AhyRpXRcusHYuILPQTEGNUjxeAyz5XFCVCCoHB4kXrspp5gHVzhA7yBs0udeNxW
+ kwPDyICSqF3nude6txsIobps5GXnY0+F4y1HtrL1Lc3vJGNSCfS//TDqrLIM83Neo0WkqC8G9fI
+ iq9EnKzCRlRg/MxBTsnAKOag/5nZVHq0UTjWJZ0ibBLJTpUNi+Kyjmh2xV25gd5MtkeEiGdq0D2
+ r+tD8dihqaLOPrbpHkFwBBdkPnve422PuYbQjF04weuw==
+X-Forward-Email-ID: 681da3124a62bf69f80b0c57
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.0.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <77c35f99-eb71-4d64-a2e1-e9cf9f6ffa4f@kwiboo.se>
+Date: Fri, 9 May 2025 08:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+To: Yao Zi <ziyao@disroot.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250508234829.27111-2-ziyao@disroot.org>
+ <20250508234829.27111-4-ziyao@disroot.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250508234829.27111-4-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 30, 2025 at 11:01:33AM +0200, Sascha Hauer wrote:
-> The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-> Differential Outputs, Two Inputs, and Internal EEPROM.
+On 2025-05-09 01:48, Yao Zi wrote:
+> SD-card is available on Radxa E20C board.
 > 
-> This series adds a common clk framework driver for this chip along with
-> the dt-bindings document and a small fix needed for the common clk
-> framework.
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
 
-As 95% of the comments I received for this series are about the binding
-for the pin configuration and it's still not clear what the preferred
-binding is, I'll drop the pin configuration for the next round to get
-the driver upstream. The pin configuration can be done with the
-integrated EEPROM, so the driver is still useful without it. It can be
-added later when needed.
+This has not changed since v4, so this is still [1]:
 
-Sascha
+Reviewed-by: Jonas Karlman <jonas@kwiboo.se>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+[1] https://lore.kernel.org/r/f19f11f7-c020-44a3-84fa-eb9ca48ed11f@kwiboo.se/
+
+Regards,
+Jonas
+
+> ---
+>  .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 +++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+
+[snip]
+
 
