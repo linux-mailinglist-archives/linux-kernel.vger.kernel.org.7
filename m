@@ -1,340 +1,168 @@
-Return-Path: <linux-kernel+bounces-641599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA95AB13BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:46:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E009AB13C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC10A23BB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC0B5227CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37533290DA1;
-	Fri,  9 May 2025 12:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BC828ECDC;
+	Fri,  9 May 2025 12:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ta79ctUq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UhWVPitU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6E428FFC9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 12:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CB31DA5F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 12:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746794745; cv=none; b=FkJr0ITcP78uQDv21B0o8yU/nQApQNcRIS827ce4qPxvfF9+Crbs4CSVFuJ38gYWGubeOUGszeDdWNerKDMibD0husTz5dfFBW9Yv58szl2Y3yOQxXRhNeZu2VSczof6bFa6RIEn7xORPCiCEheBnaXMQAIbO0c8zCG0A8dgtKQ=
+	t=1746794756; cv=none; b=Ixwo+mYL2xV2JB61N9bBQ7ZROXcRhsVJDCDUTmTXx6k6CC8F/khfRrcPXk9Bxa8pr1cmO3pw4uYV3qeqk91TZtj4eplrGxzOZFch6/UrNKFuGlQdG/J5GN1bgAGRO6milAr1DrLfHQ3RnChN40zcRMNbNOXh1HCXlnhvoUDeLqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746794745; c=relaxed/simple;
-	bh=fafBjPFckJBsy+LXj+8XoakBi3lyvCE3X2Xb47nw2KE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NE9J4JTri9oefKkWtVGBNjeUWO+BMCo9YBTgcGLQIbTGDCDr6/Bbyuq9YkjwUgcKD5VONBuEjeFbwB8HiYwau7ptbZmr1EpsInz1lXuudn0UwQeuOf9Tsz97Pxs04CUw0liGaxjjf9hf/5xfMOP6JepZIFu+nRNBcRuu9ekuHNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ta79ctUq; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746794742; x=1778330742;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=fafBjPFckJBsy+LXj+8XoakBi3lyvCE3X2Xb47nw2KE=;
-  b=Ta79ctUq1Ic1a2O6Z3dHnJSZ560LcBr5hpkU+RvP2ZHzh0XfCyUdeAka
-   KqTGthIOmg9ttU//dTPP+8OxX8tSJTfYDQ3/goQsDFx2yplMkKj9LmKxT
-   ItxVqIx4eL92VhiIdT/rhIhdFVWBQ+YEdt09/8kD5QajF9ljAdbZZjzC1
-   HcCBnklXyr78w4COMVK+1ayBgTkPjjGwb0VY5YYoRHsHkvSVtfhdFMQqj
-   IMJTS94V7QfwRLVBrZ6iL2hpVRzoS7Z4rS3VzBE+pf/2pWG5kpVWU9lUx
-   5NmBzIdiucoIPCi9Eh1eDSwELAFN+SYN2St+UZaUpYBsSrUOnOZoFSrPG
-   Q==;
-X-CSE-ConnectionGUID: vcoOCbemS9ym1ROrnAQAnw==
-X-CSE-MsgGUID: TsrMS7K5TTSHrstX0rUGlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="58841264"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="58841264"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 05:45:41 -0700
-X-CSE-ConnectionGUID: K1pihnn7T86fJPAFsE+GSA==
-X-CSE-MsgGUID: eFy/w32cTfGh3U1Ym5Vldg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="137104760"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.201])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 05:45:38 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Anusha Srivatsa <asrivats@redhat.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-In-Reply-To: <20250509-rapid-flounder-of-devotion-6b26bb@houat>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com>
- <20250331-b4-panel-refcounting-v4-2-dad50c60c6c9@redhat.com>
- <87y0vkw8ll.fsf@intel.com>
- <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
- <87o6wfwcef.fsf@intel.com> <20250505-slim-bizarre-marten-a674ac@houat>
- <CAN9Xe3RLazpAXdxxJmyF2QAShDtMSgdoxMdo6ecdYd7aZiP9kA@mail.gmail.com>
- <874ixvtbxy.fsf@intel.com>
- <20250509-rapid-flounder-of-devotion-6b26bb@houat>
-Date: Fri, 09 May 2025 15:45:36 +0300
-Message-ID: <87r00yj6kv.fsf@intel.com>
+	s=arc-20240116; t=1746794756; c=relaxed/simple;
+	bh=GHvUROcQdkdkWDU1lkpfy6WFUoPAavG+aosHcF65eV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LNeh1PN4pndhHZJ79abY80uvOYBV7j9MV4RtMd0cZmM2tiVNsOORA7f3h3PDpCaSHJ6lgXBxheu0mN/XGkPVcFNIbWqItwho4vjvn/roxdiGb175ZhAmtdQg3eVv8iND6+SeBiOkxWZWEL+iyGNSHMKZpuERZGNFuWAmA8JCQr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UhWVPitU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549C6jEe002323
+	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 12:45:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AWQynAaZdyP1BwCe0FmFpLhAGkNvtkQ5JL4l2VsgwRk=; b=UhWVPitUSRA7HncY
+	sy/jnNE7ycinfKCQQaQ6408d/qaG0KYj9QsEr7ca75/hdwxTRkkX2Tfd7vqMhGxU
+	YNgVocrPrcmv/hMTI3ptSOhqVGqCwQy3lkiDg0/sDj9UZif/OV+PK0W3lASVW0gf
+	btSA35yhKCsrlO8fJeOWUQW1t0DnDVzUCreCF42Tp/ypRUNC/601WU0N9qyZ15tk
+	2JtNgtX+LVE+9pXOyd88VYNqNoN4yn6HDT9NDBWck36H3yQERaoRmFLISQ/FFrti
+	RfxaozIlBC3ZwsFfXsXj0eWHt1W5n6S52GnDROUnSzRWXCHdoNEnY7rQWshQMk26
+	aKcU0w==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp5cn9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 12:45:53 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5af539464so54507885a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 05:45:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746794752; x=1747399552;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AWQynAaZdyP1BwCe0FmFpLhAGkNvtkQ5JL4l2VsgwRk=;
+        b=GRdrm5PYcOCZWQZqD97OOqEl5aegbHXVPbPFA9ia3LEy48H6Aqpu44ApphOWAO9nLo
+         jGhpfC4+XChJM0EWJnoX6RrfMB6PHgZDdmmOi4r2iyHztagc67AYMzZ8TzTWs395/GhT
+         VB0V/dC2BWo1S2+pYACI5ZUXmx46AEPC/Sm/hftXnE5enQM1NF1o0yqOLdaROiQqVMRk
+         EMXYdugzTJZCAc7iR6ZgezUL1CDv2hZ/JHclhDQFxdt0EPJBVZbs4hsVQ9pvqsdHP+wL
+         XfqZZLqqeFXRqBP9BCi+Yd62e9O7HQ9AeG2BdMcSx57Va0C88O1MiwTCllyZuYOvI5TP
+         PRjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJVRSSxJ6b23g3KaCVVnHNwzAjdFRriZKuhXKCtWZZIcETggtEKnC2EGMweKCyIUx0gDL58eN9g7xwVRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1u8icI43L4qptKrb7eeq2JQn1UF7KsNVGZDgUawqkfNBWjvxA
+	gF7QMEAgh7mfFFhKVxIunx0fjvFmDKAZ50h7ULfwjFGzucqEOZPeyaET2UZT/8pjky/9PTTniMt
+	4/fm6H8AtJH5fMEhe8FkRgnpQRt9u7er9rtT1JAhKsW3HluLq3Mrtq7g6j0eTZrc=
+X-Gm-Gg: ASbGncuot53TYwiPOTocD+6MRD/Ztkia/PxhFBhxaH87Q5s0421sJnrh6MFvgL9KEMY
+	E8fHhm9/T/zQkFsBC4Xml0iOQnbSE+isqzO52Wp7iQ6ijq/Uo2GNSnngX/AfhTa4GVGrF6BHn0k
+	STvq+xTDYS8KZlgo9ircWwuCpxU2l2VtcWkqPdv1pPSuI3akRLzGntlqhJG583bJtJTCWJRa2Y0
+	+X/Zxv9OAsL9noDtApKUGFgOrL3cWWz6rITbi9XodRD5GHq58MkCGL40E3PllE4tUDzFTzcjVEY
+	p3xRLVfqmgOai2H/3knSqOnA2R+p1J+pc8kkZQsj/fA3WskgD0v7dvUwJLtSsx8nphA=
+X-Received: by 2002:a05:620a:1708:b0:7ca:e392:2a1b with SMTP id af79cd13be357-7cd01284a67mr201895585a.10.1746794752021;
+        Fri, 09 May 2025 05:45:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/01j/klFD9hnBlTgtkHmbIC4d1TarpECZjk82ft0PbRbQixnKSn2HYkL9AbA+mBnoAh6gVw==
+X-Received: by 2002:a05:620a:1708:b0:7ca:e392:2a1b with SMTP id af79cd13be357-7cd01284a67mr201892785a.10.1746794751615;
+        Fri, 09 May 2025 05:45:51 -0700 (PDT)
+Received: from [192.168.65.105] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd525sm145972066b.144.2025.05.09.05.45.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 05:45:51 -0700 (PDT)
+Message-ID: <c4921bf8-5eb5-458e-8afa-eeb86d5b5f34@oss.qualcomm.com>
+Date: Fri, 9 May 2025 14:45:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT 10/14] drm/msm/a6xx: Stop tracking macrotile_mode
+ (again)
+To: Connor Abbott <cwabbott0@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250508-topic-ubwc_central-v1-0-035c4c5cbe50@oss.qualcomm.com>
+ <20250508-topic-ubwc_central-v1-10-035c4c5cbe50@oss.qualcomm.com>
+ <CACu1E7EFK7dzR=hm-J58jz77pMxn2SoJVrfQvV0RHiESi1mkzA@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CACu1E7EFK7dzR=hm-J58jz77pMxn2SoJVrfQvV0RHiESi1mkzA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=XL0wSRhE c=1 sm=1 tr=0 ts=681df901 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=dD46bHw1nIv95-N93oQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: lznkK1P31n3erZgHbQcb8XLOgxmAT32o
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDEyNCBTYWx0ZWRfXzsG5vBuaDpAZ
+ s9rllXgfJk6jJ0fTNldPsWzsX+zGcVoi0D+gGhvGrrlh+YosCd/A2z9LVeR7WYTZGgz+DCBjJN9
+ WdCzKVACuOu7HJWE4LLmzkaWtCGf3jUxQbK3gvKrml+zydbCRBawiPeXclNCYkhtXqlweFYK9GM
+ v5S5BOiUqieVZXKKvl1JlbKBf3aAl0VJNUuXe66xuorER9myjBurlrBu6cW/231vneqYrh/A21R
+ Dfsm5g58NOjUjmZjoB2SGwLc51faJ+DTM6u6vLWZ+dwC9bnkSdum1VkE1Sk9lMZDjZSRhihz6q1
+ s5+kpw7kjG7DCu8wKm4/TCM7Z9Pi8eyE3b3V4IDfA+9oawvEUL43I6OlAte/HKXR3SQmKB9eSEE
+ 0ruAH2I1nANHsupHBVTzyy9Y/Wgu29SeFCqYal3OtgYJTbOFYYhgNaP27fEI5wDyoLMa2BcG
+X-Proofpoint-ORIG-GUID: lznkK1P31n3erZgHbQcb8XLOgxmAT32o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-09_05,2025-05-08_04,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505090124
 
-On Fri, 09 May 2025, Maxime Ripard <mripard@kernel.org> wrote:
-> On Thu, May 08, 2025 at 05:27:21PM +0300, Jani Nikula wrote:
->> On Mon, 05 May 2025, Anusha Srivatsa <asrivats@redhat.com> wrote:
->> > On Mon, May 5, 2025 at 2:54=E2=80=AFAM Maxime Ripard <mripard@kernel.o=
-rg> wrote:
->> >
->> >> Hi Jani,
->> >>
->> >> On Tue, Apr 29, 2025 at 12:22:00PM +0300, Jani Nikula wrote:
->> >> > On Tue, 29 Apr 2025, Maxime Ripard <mripard@kernel.org> wrote:
->> >> > > Hi Jani,
->> >> > >
->> >> > > On Mon, Apr 28, 2025 at 07:31:50PM +0300, Jani Nikula wrote:
->> >> > >> On Mon, 31 Mar 2025, Anusha Srivatsa <asrivats@redhat.com> wrote:
->> >> > >> > Allocate panel via reference counting. Add _get() and _put() h=
-elper
->> >> > >> > functions to ensure panel allocations are refcounted. Avoid use
->> >> after
->> >> > >> > free by ensuring panel pointer is valid and can be usable till=
- the
->> >> last
->> >> > >> > reference is put.
->> >> > >> >
->> >> > >> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->> >> > >> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
->> >> > >> > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
->> >> > >> >
->> >> > >> > ---
->> >> > >> > v4: Add refcounting documentation in this patch (Maxime)
->> >> > >> >
->> >> > >> > v3: Add include in this patch (Luca)
->> >> > >> >
->> >> > >> > v2: Export drm_panel_put/get() (Maxime)
->> >> > >> > - Change commit log with better workding (Luca, Maxime)
->> >> > >> > - Change drm_panel_put() to return void (Luca)
->> >> > >> > - Code Cleanups - add return in documentation, replace bridge =
-to
->> >> > >> > panel (Luca)
->> >> > >> > ---
->> >> > >> >  drivers/gpu/drm/drm_panel.c | 64
->> >> ++++++++++++++++++++++++++++++++++++++++++++-
->> >> > >> >  include/drm/drm_panel.h     | 19 ++++++++++++++
->> >> > >> >  2 files changed, 82 insertions(+), 1 deletion(-)
->> >> > >> >
->> >> > >> > diff --git a/drivers/gpu/drm/drm_panel.c
->> >> b/drivers/gpu/drm/drm_panel.c
->> >> > >> > index
->> >> bdeab5710ee324dc1742fbc77582250960556308..7b17531d85a4dc3031709919564=
-d2e4d8332f748
->> >> 100644
->> >> > >> > --- a/drivers/gpu/drm/drm_panel.c
->> >> > >> > +++ b/drivers/gpu/drm/drm_panel.c
->> >> > >> > @@ -355,24 +355,86 @@ struct drm_panel *of_drm_find_panel(const
->> >> struct device_node *np)
->> >> > >> >  }
->> >> > >> >  EXPORT_SYMBOL(of_drm_find_panel);
->> >> > >> >
->> >> > >> > +static void __drm_panel_free(struct kref *kref)
->> >> > >> > +{
->> >> > >> > +        struct drm_panel *panel =3D container_of(kref, struct
->> >> drm_panel, refcount);
->> >> > >> > +
->> >> > >> > +        kfree(panel->container);
->> >> > >> > +}
->> >> > >> > +
->> >> > >> > +/**
->> >> > >> > + * drm_panel_get - Acquire a panel reference
->> >> > >> > + * @panel: DRM panel
->> >> > >> > + *
->> >> > >> > + * This function increments the panel's refcount.
->> >> > >> > + * Returns:
->> >> > >> > + * Pointer to @panel
->> >> > >> > + */
->> >> > >> > +struct drm_panel *drm_panel_get(struct drm_panel *panel)
->> >> > >> > +{
->> >> > >> > +        if (!panel)
->> >> > >> > +                return panel;
->> >> > >> > +
->> >> > >> > +        kref_get(&panel->refcount);
->> >> > >> > +
->> >> > >> > +        return panel;
->> >> > >> > +}
->> >> > >> > +EXPORT_SYMBOL(drm_panel_get);
->> >> > >> > +
->> >> > >> > +/**
->> >> > >> > + * drm_panel_put - Release a panel reference
->> >> > >> > + * @panel: DRM panel
->> >> > >> > + *
->> >> > >> > + * This function decrements the panel's reference count and f=
-rees
->> >> the
->> >> > >> > + * object if the reference count drops to zero.
->> >> > >> > + */
->> >> > >> > +void drm_panel_put(struct drm_panel *panel)
->> >> > >> > +{
->> >> > >> > +        if (panel)
->> >> > >> > +                kref_put(&panel->refcount, __drm_panel_free);
->> >> > >> > +}
->> >> > >> > +EXPORT_SYMBOL(drm_panel_put);
->> >> > >> > +
->> >> > >> > +/**
->> >> > >> > + * drm_panel_put_void - wrapper to drm_panel_put() taking a v=
-oid
->> >> pointer
->> >> > >> > + *
->> >> > >> > + * @data: pointer to @struct drm_panel, cast to a void pointer
->> >> > >> > + *
->> >> > >> > + * Wrapper of drm_panel_put() to be used when a function taki=
-ng a
->> >> void
->> >> > >> > + * pointer is needed, for example as a devm action.
->> >> > >> > + */
->> >> > >> > +static void drm_panel_put_void(void *data)
->> >> > >> > +{
->> >> > >> > +        struct drm_panel *panel =3D (struct drm_panel *)data;
->> >> > >> > +
->> >> > >> > +        drm_panel_put(panel);
->> >> > >> > +}
->> >> > >> > +
->> >> > >> >  void *__devm_drm_panel_alloc(struct device *dev, size_t size,
->> >> size_t offset,
->> >> > >> >                               const struct drm_panel_funcs *fu=
-ncs,
->> >> > >> >                               int connector_type)
->> >> > >> >  {
->> >> > >> >          void *container;
->> >> > >> >          struct drm_panel *panel;
->> >> > >> > +        int err;
->> >> > >> >
->> >> > >> >          if (!funcs) {
->> >> > >> >                  dev_warn(dev, "Missing funcs pointer\n");
->> >> > >> >                  return ERR_PTR(-EINVAL);
->> >> > >> >          }
->> >> > >> >
->> >> > >> > -        container =3D devm_kzalloc(dev, size, GFP_KERNEL);
->> >> > >> > +        container =3D kzalloc(size, GFP_KERNEL);
->> >> > >> >          if (!container)
->> >> > >> >                  return ERR_PTR(-ENOMEM);
->> >> > >> >
->> >> > >> >          panel =3D container + offset;
->> >> > >> > +        panel->container =3D container;
->> >> > >> >          panel->funcs =3D funcs;
->> >> > >> > +        kref_init(&panel->refcount);
->> >> > >>
->> >> > >> Hi Anusha, this should be done in drm_panel_init() instead.
->> >> > >>
->> >> > >> There are many users of drm_panel that don't use
->> >> devm_drm_panel_alloc()
->> >> > >> but allocate separately, and call drm_panel_init() only.
->> >> > >
->> >> > > That wouldn't really work, because then drivers would have alloca=
-ted
->> >> the
->> >> > > panel with devm_kzalloc and thus the structure would be freed whe=
-n the
->> >> > > device is removed, no matter the reference counting state.
->> >> > >
->> >> > >> They'll all have refcount set to 0 instead of 1 like kref_init()=
- does.
->> >> > >>
->> >> > >> This means all subsequent get/put pairs on such panels will lead=
- to
->> >> > >> __drm_panel_free() being called! But through a lucky coincidence=
-, that
->> >> > >> will be a nop because panel->container is also not initialized...
->> >> > >>
->> >> > >> I'm sorry to say, the drm refcounting interface is quite broken =
-for
->> >> such
->> >> > >> use cases.
->> >> > >
->> >> > > The plan is to convert all panel drivers to that function, and An=
-usha
->> >> > > already sent series to do. It still needs a bit of work, but it s=
-hould
->> >> > > land soon-ish.
->> >> > >
->> >> > > For the transitional period though, it's not clear to me what you=
- think
->> >> > > is broken at the moment, and / or what should be fixed.
->> >> > >
->> >> > > Would you prefer an explicit check on container not being 0, with=
- a
->> >> > > comment?
->> >> >
->> >> > I'm looking at what it would take to add drm_panel support to i915 =
-so
->> >> > that you could have drm_panel_followers on it. There are gaps of co=
-urse,
->> >> > but initially it would mean allocating and freeing drm_panel oursel=
-ves,
->> >> > not via devm_drm_panel_alloc() nor devm_kzalloc(), because none of =
-the
->> >> > other stuff is allocated that way. drm_panel would just sit as a
->> >> > sub-struct inside struct intel_panel, which is a sub-struct of stru=
-ct
->> >> > intel_connector, which has its own allocation...
->> >>
->> >> I'm not entirely sure why you would need to allocate it from i915? The
->> >> drm_panel structure is only meant to be allocated by panel drivers, a=
-nd
->> >> afaik no panel interface controller is allocating it.
->>=20
->> I'm looking into a use case involving drm_panel_follower, which requires
->> a drm_panel. I don't really need any of the other stuff in drm_panel.
->>=20
->> And basically you'd have one drm_panel per connector that is connected
->> to a panel, within the same driver.
->
-> That answers why you need a drm_panel pointer, but not really why the
-> i915 needs to allocate it itself. The whole point of panel drivers it to
-> decouple panel drivers from the connector driver (and everything
-> upstream).
->
-> drm_panel is always allocated by the panel driver itself. I don't really
-> see a good reason to change that.
->
-> If you don't have a panel descriptor in the ACPI tables, then you can
-> always allocate a panel-edp driver or whatever from i915 and getting its
-> drm_panel?
+On 5/8/25 8:33 PM, Connor Abbott wrote:
+> On Thu, May 8, 2025 at 2:14 PM Konrad Dybcio <konradybcio@kernel.org> wrote:
+>>
+>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> SC8180X (A680) and SA8775P (A663) require a write to that register,
+>> while other SKUs are fine with the default value. Don't overwrite it
+>> needlessly, requiring the developer to read the value back from
+>> hardware just to put it in the driver again, introducing much more room
+>> for error.
+> 
+> I'm not sure I understand that last sentence. The original reason I
+> always wrote it was that for host image copy we need to know the value
+> of macrotile_mode, so again the value exposed to userspace must match
+> what's set in the HW. We can't read the value from the HW and send it
+> to userspace, because userspace queries this when creating the
+> physical device during device enumeration and we really don't want to
+> spuriously turn on the device then. That means the safest thing is to
+> always program it, guaranteeing that it always matches. Otherwise we
+> just have to hope that the default value matches what we expect it to
+> be.
+> 
+> I know you're copying this from kgsl, but kgsl doesn't expose the
+> macrotile_mode to userspace. I expect that HIC was added afterwards
+> and only works via hacks there (if it's even supported at all on the
+> relevant SoCs).
 
-The thing is, absolutely none of our hardware/firmware/software stack
-was designed in a way that would fit the drm_panel model. (Or, arguably,
-drm_panel wasn't designed in a way that would fit our stack, in the
-chronology of things.)
+Alright, I think I'll include it in the common UBWC config (even though
+it only concerns the GPU), as IIUC it may differ between platforms
+implementing the same GPU SKU
 
-It's all one PCI device. All in the same MMIO space. The VBT (Video BIOS
-Tables) contain all the information for the panels, as well as for
-absolutely everything else about our display hardware. It's not separate
-in any meaningful way.
-
-Having a separate panel driver would get in the way. Having panel-edp
-would get in the way. That's why there isn't a single x86 user for
-drm_panel, AFAICT.
-
-Yes, we only really need the drm_panel handle, to play ball with the
-things that were built around it, specifically drm_panel_follower.
-
-And we do need to allocate drm_panel ourselves. We're both the host and
-the panel driver at the same time, and there's no benefit in trying to
-articially change that. DRM infrastructure should provide frameworks
-that are usable for everyone, instead of trying to force everyone into
-the same model, whether it makes sense or not.
-
-
-BR,
-Jani.
-
---=20
-Jani Nikula, Intel
+Konrad
 
