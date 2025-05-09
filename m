@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-640854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299C7AB0A28
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:58:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A669AB0A32
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902244C380C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6535A1BC37B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC79726B094;
-	Fri,  9 May 2025 05:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oYwmTfq/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B726D269898;
+	Fri,  9 May 2025 06:01:04 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98AC266592;
-	Fri,  9 May 2025 05:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC2266B4E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746770275; cv=none; b=rb9fSbW2LiLu1fB7Ea2RF6iQLFPt2U4pKUUBRKtO26M5KU1/PTa+s4bXIFVT5Zhc3QGE55yTWv3/WYkSldwFzLBNkW0b3E0pYcc1sgWa5FopykkCkaqof2UH9FJ8azNN/bhmW3nUHdMsAgU/3UbQQEEBqwrX8V+ADZ2e8w3Ii20=
+	t=1746770464; cv=none; b=RxO1d0yCZSosGei3sHdO6Xe8pWn8HPw+PMwdHOcUtjSG+sHSZbcYMzOYO2M1xvVlbUprZHtVBSTG6JeX7hQnvWdSwpfB7cz/GXDhKMmL8V0ruuTasMj47+j5F6Dsp57Zg0e2rVCW8/76dIwSb0OpXsc0+PFVm4iP0E8I82S0XUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746770275; c=relaxed/simple;
-	bh=zbvnlFVWj0XKZR0nvcVIWzHP+vCohCj3wb6obVt2udg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=n5vQtqqfuqqnLrrIpnp4SQbgciHOZh+XMBAqAWgmqaNlLunPfU5Pz74HRQyN6gVOP0Q0k5BuLaV7Jybr7+JO7w+mvzv2O3LZBIJry+cRAwDbUv6v/iAUo4PoVy4zMW2Vic4U5yaPIqsFsK5mpiEU0vyjbf0VB5UA3JRQe9Pts14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oYwmTfq/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5492E458010135;
-	Fri, 9 May 2025 05:57:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0i+DaVo6pdGgXdnezJYZ73V9TZmxM2s3l3IAPHGSMRI=; b=oYwmTfq/BSj1pD/u
-	CKkScnySY71YqaghhtUofNfy75A6L2PvJd70/KpSHC+CnZexTZTuRG91MHTnmWo4
-	Yk1aN/0lqW2vqNPbFf/Wx0KgcnMi6wcLR7rUE08hCj9y3eHQA8lQQv9K89MqoZvB
-	YL81Q5wBYWIoaDeScdjdNyrl8yMxB4k/3OR3x5YV+QPvWuUpmvfsLMrGh9BQC+xA
-	FcP5svSJg9NcUwwwkm1c2E5B/C9UjyYkBSwqmHK/EkTt3ngSYxuerDFOxjQQBbQo
-	Jqm2PUuoWIbY6E6MvFxdLIQuChwhyk4MGrvTWMlMnSPBh68Yv1+N9JqfgbYwjumw
-	psryXg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp7bm10-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 05:57:50 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5495vnw6002137
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 May 2025 05:57:49 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 8 May 2025 22:57:45 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Fri, 9 May 2025 11:26:50 +0530
-Subject: [PATCH v3 4/4] arm64: dts: qcom: Add camera clock controller for
- sc8180x
+	s=arc-20240116; t=1746770464; c=relaxed/simple;
+	bh=iMC+wmxymIFqPTNdVrLvdX+TjkSiglWerKKQ9Lw+V1Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFl+Q3Doikk835j2LBU6hIWDP/tobKkzulh8NOP6INylBXiyWuYMB6c1X1HbZba91VLugsNu67qrOxK7qQGm6doUYLp9ztJNZStCw1GmG8MwnTvbh3pBMJurDJTTvUVpstDeoLB4kaJamV+1WE5XnoFf3G9yM48YiHiV0xANorU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 54960Bnb078767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Fri, 9 May 2025 14:00:14 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 May
+ 2025 14:00:11 +0800
+Date: Fri, 9 May 2025 14:00:11 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Conor Dooley <conor@kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>, <aou@eecs.berkeley.edu>,
+        <alex@ghiti.fr>, <tim609@andestech.com>
+Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
+Message-ID: <aB2Z6zq+pQ1LxQ47@atctrx.andestech.com>
+References: <Z8rMKZoDYmpNosSj@atctrx.andestech.com>
+ <mhng-d0a8012c-c5c9-4309-ac08-bcb1dab85b26@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,102 +55,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250509-sc8180x-camcc-support-v3-4-409ca8bfd6b8@quicinc.com>
-References: <20250509-sc8180x-camcc-support-v3-0-409ca8bfd6b8@quicinc.com>
-In-Reply-To: <20250509-sc8180x-camcc-support-v3-0-409ca8bfd6b8@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDA1NSBTYWx0ZWRfX2OW9RINUe3Nf
- TUBvpSXIwlAecTwTDVNpRret8AcF5/a/FqbBoBdXk99+tA5HvQdMNno75gNewTq4ItpJTiIcy62
- drJE4EIMHXEAlhn49ZSnmAkw2lGK9Z6W0rEbWGxQfECy4FrpHhhcd/t3AVkGDFi+jQZ5H+suGIY
- AJOqx9+tiNlAdyLhJEpcEMeDMvxvAdhw78O5IeNRjDT7SaxF1dvSNbfuJ2uIbWtD/kgQBpH4rm9
- 2f4lAndzP5j8emtqT2XI7GjCFAypUPfaCmdiKyfCSs7AVQ08DH8FZDEHG3Fu0BUOF0TUHfVskuZ
- YkAnfsjoGc35uRjXFRyRS7qtlHZHVT9T4PVz8ygO9fYEAPDC1zT23kcjtPB60seO0o9J4LOH8eJ
- 88MRGHV6O8d1tNabNfj16qXx8xjI4h9B502jJFppo17C9BhxmOcyQ+LxOM0h3f6RNK2vgFiR
-X-Proofpoint-GUID: nFGm7j77eKGO5sjlc-Iql6RrJJgi3c82
-X-Authority-Analysis: v=2.4 cv=B/G50PtM c=1 sm=1 tr=0 ts=681d995e cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=fv2zVKLHILqpzYTyU3AA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: nFGm7j77eKGO5sjlc-Iql6RrJJgi3c82
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_02,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- mlxlogscore=852 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505090055
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <mhng-d0a8012c-c5c9-4309-ac08-bcb1dab85b26@palmer-ri-x1c9a>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 54960Bnb078767
 
-Add device node for camera clock controller on Qualcomm
-SC8180X platform.
+On Thu, May 08, 2025 at 10:48:46AM -0700, Palmer Dabbelt wrote:
+> [EXTERNAL MAIL]
+> 
+> On Fri, 07 Mar 2025 02:36:25 PST (-0800), ben717@andestech.com wrote:
+> > On Thu, Mar 06, 2025 at 04:40:49PM +0000, Conor Dooley wrote:
+> > > [EXTERNAL MAIL]
+> > 
+> > > Date: Thu, 6 Mar 2025 16:40:49 +0000
+> > > From: Conor Dooley <conor@kernel.org>
+> > > To: Ben Zong-You Xie <ben717@andestech.com>
+> > > Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+> > >  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+> > >  alex@ghiti.fr
+> > > Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
+> > > 
+> > > On Wed, Mar 05, 2025 at 11:05:26AM +0800, Ben Zong-You Xie wrote:
+> > > > The first SoC in the Andes series is QiLai. It includes a high-performance
+> > > > quad-core RISC-V AX45MP cluster and one NX27V vector processor.
+> > > 
+> > > I'd expect a config option like this to come with the user, which in
+> > > this case is the dts etc for a board using the QiLai SoC or drivers for
+> > > the SoC. Without dts or drivers, there's no reason to ever enable this,
+> > > so where are those patches?
+> > > 
+> > > Cheers,
+> > > Conor.
+> > > 
+> > 
+> > Hi Conor,
+> > 
+> > We are still preparing those patches for upstream, and we will add them
+> > in the next patch series.
+> 
+> This is still "Needs Ack" in patchwork, so
+> 
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> 
+> Though like Conor says, we need the rest of the code to do anything
+> here, so that's really just a way to get it out of my queue ;)
+>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+I have not added the remaining code in the next version of this patch series.
+Instead, I’ve submitted a new patch series [1] that incorporates this patch.
+Maybe add your Acked-by tag to the new series and disregard this patch.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index b84e47a461a014871ef11e08d18af70bec8e2d63..e53c242fda12b2b53a27e549e2e2e2ead9e88cf1 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/clock/qcom,gcc-sc8180x.h>
- #include <dt-bindings/clock/qcom,gpucc-sm8150.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sc8180x-camcc.h>
- #include <dt-bindings/interconnect/qcom,icc.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sc8180x.h>
-@@ -2934,6 +2935,19 @@ usb_sec_dwc3_ss: endpoint {
- 			};
- 		};
- 
-+		camcc: clock-controller@ad00000 {
-+			compatible = "qcom,sc8180x-camcc";
-+			reg = <0 0x0ad00000 0 0x20000>;
-+			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&sleep_clk>;
-+			power-domains = <&rpmhpd SC8180X_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mdss: mdss@ae00000 {
- 			compatible = "qcom,sc8180x-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
+[1] https://patchwork.kernel.org/project/linux-riscv/cover/20250503151829.605006-1-ben717@andestech.com/
 
--- 
-2.25.1
+Thanks,
+Ben
 
+> > 
+> > Thanks,
+> > Ben
+> > 
+> > > >
+> > > > For further information, refer to [1].
+> > > >
+> > > > [1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
+> > > >
+> > > > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+> > > > ---
+> > > >  arch/riscv/Kconfig.errata | 2 +-
+> > > >  arch/riscv/Kconfig.socs   | 9 +++++++++
+> > > >  2 files changed, 10 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+> > > > index e318119d570d..be76883704a6 100644
+> > > > --- a/arch/riscv/Kconfig.errata
+> > > > +++ b/arch/riscv/Kconfig.errata
+> > > > @@ -12,7 +12,7 @@ config ERRATA_ANDES
+> > > >
+> > > >  config ERRATA_ANDES_CMO
+> > > >    bool "Apply Andes cache management errata"
+> > > > -  depends on ERRATA_ANDES && ARCH_R9A07G043
+> > > > +  depends on ERRATA_ANDES && (ARCH_R9A07G043 || ARCH_ANDES)
+> > > >    select RISCV_DMA_NONCOHERENT
+> > > >    default y
+> > > >    help
+> > > > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> > > > index 1916cf7ba450..b89b6e0d1bc9 100644
+> > > > --- a/arch/riscv/Kconfig.socs
+> > > > +++ b/arch/riscv/Kconfig.socs
+> > > > @@ -1,5 +1,14 @@
+> > > >  menu "SoC selection"
+> > > >
+> > > > +config ARCH_ANDES
+> > > > +  bool "Andes SoCs"
+> > > > +  depends on MMU && !XIP_KERNEL
+> > > > +  select ERRATA_ANDES
+> > > > +  select ERRATA_ANDES_CMO
+> > > > +  select AX45MP_L2_CACHE
+> > > > +  help
+> > > > +    This enables support for Andes SoC platform hardware.
+> > > > +
+> > > >  config ARCH_MICROCHIP_POLARFIRE
+> > > >    def_bool ARCH_MICROCHIP
+> > > >
+> > > > --
+> > > > 2.34.1
+> > > >
+> > > >
+> > > > _______________________________________________
+> > > > linux-riscv mailing list
+> > > > linux-riscv@lists.infradead.org
+> > > > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
