@@ -1,43 +1,79 @@
-Return-Path: <linux-kernel+bounces-641726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6865EAB1525
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A9BAB1513
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4541EA278EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC94A2625B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F4D2951D0;
-	Fri,  9 May 2025 13:23:06 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026A3293735;
+	Fri,  9 May 2025 13:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YTssG2cX"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95F52951C7;
-	Fri,  9 May 2025 13:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C21829293A
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796985; cv=none; b=dspl2WFd9T0NKBH3zejbd0E0QS9X8MkkCrYpHQVTF5cH3X3GxggRzJcLti35bFXXoyNQE2qOJcLYn/eYvb9zGOueAkr0Du8P4PrYV7HS0kBeHZw/ZjVSHzJoAD4/T2z7TgDp+z8fRq2HiBHEqGVSXPK7e5sB1le6EizdJ9WzAsQ=
+	t=1746796966; cv=none; b=Rvyao2HBIkebRJj4ZMif65ipSNwRMtOHpUIzs7lSGPUJ1+vYfcXco527PgIFRc41l9M4vtgdrjZTTwiuqAANV/YOf1EEpxj6GAi7fluhvzxoJgLYuhlzT3LS7Eaqkk5TsNMT5buWENp2rWj8nRDLhzIvlIQalzPHiHYD0BuFmek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746796985; c=relaxed/simple;
-	bh=ss6A0cMegpa82rQJU8Hlo5WPApCaBlRCZs/q4ad02q0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D3NZ6+cdLFG9U1Vw2QZeTsO1A7+QysIIxHh6G2QbFC+LH2ucga6RWh2BVRcA+lEuWlPRHxPQUIuX9D4vh7S3mke4pKQPD5DQ4KzzeUPsVUmDtnvcW9GBo5wDHJHLIH+P+LAkjnxWmNkjmJe1lCM3+16asLprIkdcrOIFPvLOJ2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [116.232.147.96])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 32D36343014;
-	Fri, 09 May 2025 13:22:57 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Fri, 09 May 2025 21:22:12 +0800
-Subject: [PATCH v3 2/2] mmc: sdhci-of-k1: add support for SpacemiT K1 SoC
+	s=arc-20240116; t=1746796966; c=relaxed/simple;
+	bh=ulCybTioPfppe4R4TtApa6DBt+CNMCqsqrBOJRG2OXo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=exTlhwSe76Lx4ICSm3DctMHGfzuRrw3T4PsmvYSaxA1OOzyEepyRVYmjvYu01Hm7yDrgqa2Sc8ytW/oNPAdwpxwV2Saf3Skk42kZekrlVNyxePJMQvM0l9d48nblxkHh0Y29a0fZnofc63SHIUQ0lKzKUn3gzC17aB9ndaBmk14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YTssG2cX; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad1e8e2ad6bso419618366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746796962; x=1747401762; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4vZm6ZTX/GNv3NmqUNFFgVoy98eQ+Gy2jzvvvvSHnPE=;
+        b=YTssG2cX4LH5Zk0jXnXMNFXpXq7CjLjr1vvNClbWOWcDGvIEhPlAQiK6BiOMYerfLB
+         xxaxb6TTDMFoEObyhVudzZk6+n04QhSvsaIWhk/+U5pbxc1ct1MnwlCXmAouYOj20Oo3
+         y3BtoWhw6VLV/eNjHqQfYxvYWRV23VE0KASZ5QxiFy20MSVhNsBkwhSqmEGf4ZRhN6pq
+         Ix2KEFwFDkqm7O2/oCzH9JToNoGVMajMVGG6DJ1PgllY216eWHIvthInBQcYwhxhLwOH
+         KdqhhSugYGcTL7Kk9dz3VYV5aYeZAszHhKyzZ9YODdif/fw3p4TaAhihmePyyvXg9sad
+         VBbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746796962; x=1747401762;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4vZm6ZTX/GNv3NmqUNFFgVoy98eQ+Gy2jzvvvvSHnPE=;
+        b=TqEvGwWimKY5TJj9AGUzKLPZWNwJgRG3fKI6YpulDKN4y+UQDRIQpLvRLUbIFJszcD
+         PuDm/LLamTOSmNjgLdxzzTdrUKlZilGqu3TVPq6TgGWf9Qii7zo3+1rNq2O4vS+wIyAC
+         fcIkNLxn5bRdrwVebAeNlCaQi+yFFQ7o66/tBBB94ogVCPn8Xg9Hc+LnIBTgLc3eNBEa
+         MVgTWZEL7EV9bLzw4H1r/Mkrh/0Rl9bmZ7PeOjMc87jPSjzbheM/9jj6HN2ah9Rus/Af
+         pjbnexaV/jyywk1/W5hboseDaI78aBrA7orKqDm4gnJHzFR4U6neTfuZcLP0VwoGpihW
+         PlyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWueMmOB9Ni0dyfy+EkL5wClpvnXoDHgfscvXwLFAKmBpBqrJUR4vThXeUZbxnIaDR1pUCLA86pafZwDwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgXIVJ1Oc9iVvYf7zZnz9h5hZtYEJf40dKnG06VTN+bx7kBU5+
+	W+aFC8uytuhebwu/vkbEJ6T8Yn+0gZbdv1eBBmfcg5ugsNS5knNszJTC3+1WbCY=
+X-Gm-Gg: ASbGncvZ9AWMxw26lWcVcbn+GLkLWaqToxitS3HS+POhH38G0DyaNVfLjlkDuLat5tX
+	LCMvyxX8gJ98cEo48PhyfvYDV32UmcLkhXO5cFdE89MlgusTq0HgKq+AHdkeCF3vqH/eKCBypYh
+	ZKIMN0fHAAhV+k7NW9fiM2W7o/ErWDAkvTq3Kfr77A3qGWImCSmBMdR/GhS4Z553PWDlWaJxlH9
+	p9l+s9gj/9J1LWjwjfPmIF2U3+tHAiocxOG0fi91pZo1GyCLEAThjuaCmqrdEQNa5BDo+nbvM95
+	GXcxzWrgTAdj/asilu6z4EpA+lpl58J/S12KY3dq0/soOlkKjtvh4mcVIH5cqubRG2qNH40l3Ei
+	yjfzWihiRFfOmznFW/uIu7p4i
+X-Google-Smtp-Source: AGHT+IElF34czXrgd/ETSd6RK4arhdgSAG0WjsAxoXZ19B3iyixaSPqa8Uzjt2JeA7O1/51p0++srg==
+X-Received: by 2002:a17:907:d9e:b0:ad1:dbec:44d3 with SMTP id a640c23a62f3a-ad218f79625mr408598766b.27.1746796962170;
+        Fri, 09 May 2025 06:22:42 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21947abcasm149041966b.84.2025.05.09.06.22.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 06:22:41 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v10 0/3] Maxim Integrated MAX77759 PMIC MFD-based drivers
+Date: Fri, 09 May 2025 14:22:38 +0100
+Message-Id: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,399 +81,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250509-20-k1-sdhci-v3-2-526c35feaa20@gentoo.org>
-References: <20250509-20-k1-sdhci-v3-0-526c35feaa20@gentoo.org>
-In-Reply-To: <20250509-20-k1-sdhci-v3-0-526c35feaa20@gentoo.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJ4BHmgC/33Pz2rDMAwG8FcpPi9DlmPJ3mnvMXbw39awNiMZo
+ aPk3ef00ixmA10k+H3iu4kpjSVN4uVwE2Oay1SGS10kPB1EOLnLMXUl1oNAQA2IfXd2V2bWtjv
+ n2Dnn2CmJ0hOKSj7HlMv1nvf2XvdTmb6G8fseP8v1+kfQLDvo0OesKNsIWr9+lIsbh+dhPIo1a
+ catpp3Gqh3p5BP6AM42Wm212WlVNQRFyLFHjdTo/qFr2Z3uq/YWTCSgYIJvtN5o1DutqybrI2V
+ gx9xq+k9T1QEMQ3BE6F2j+aH7pjdXnWJOPQRJOZlGm622O22qZox1Alsnc6PtRivYabv2VpZJJ
+ VTa/v69LMsPPAzJ2ZoCAAA=
+X-Change-ID: 20250224-max77759-mfd-aaa7a3121b62
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, 
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11280; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=ss6A0cMegpa82rQJU8Hlo5WPApCaBlRCZs/q4ad02q0=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoHgGZSnyr4SIrIbIPpm0Itgkjk4rUIz64Yplqv
- iYynJFURQmJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaB4BmV8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277W+2D/9NCmI0BEz0np8hC/
- 2XP5z6v9PKuEYH9tOBkH3U/9fgw8tdH9UEY8o5U1960HUiydCt5UquIbcmcAngM3/ZT4RjY29PH
- 3qL4sGoURt9u1lgb+iXBWNuL3P9/iWNqdGGq8rGfpjFZGA08xbm6w2jz0YoTFdEzEULsjdgEm0q
- 2OmlQX+4/5Kt6G/0T1Ir+ud2gqIBz6SRqulPM16jZb80ADo4lc0zu8zPK0myi98CkB10WlcCPJT
- FCKMyt/zSKsmurZepn1YnSOF76A/PMdVF7y1r4+d4ZaKagaexbuuyzxONbGCfmszbq5prMPyT+d
- jig+29zARpSk1a/E+i6f/1lm38k6vFwVyNp7SvXZiO4BpwzzfuA4WapT4cvLj9Pa1MciJ2GgYZc
- Fy1Xeh1wpD5gb/9QECcxARvZ7p+pave8Ri020ptp6IIWnH2lBY2Sn0ipvaaQweWehz0XfrpdEp4
- TCxuH7l8Bv/+Gki2cwtlu7G5+zRwUd+sQZbMGCcL54rvFxxeoKZ/3g8QohHMl73+erOWMNVn6JN
- qD3rRNu0Sz7V862ucvpjeiH3DVjqF2SgaG8D/c9Jfzt2igfaiLpzm+m79KtnlB8RBhmyhLMPE15
- XMh2uyZt7yNPyDq0mQALJGFSfEWuMi8efWQWLj25gcP1ARAId078dG3Hsinagh+MlmVg==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
 
-The SDHCI controller found in SpacemiT K1 SoC features SD,
-SDIO, eMMC support, such as:
+Hi,
 
-- Compatible for 4-bit SDIO 3.0 UHS-I protocol, up to SDR104
-- Compatible for 4-bit SD 3.0 UHS-I protocol, up to SDR104
-- Compatible for 8bit eMMC5.1, up to HS400
+This series improves support for the Maxim Integrated MAX77759
+companion PMIC for USB Type-C applications using the MFD framework.
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
+This series must be applied in-order, due to interdependencies of some
+of the patches:
+* to avoid use of undocumented compatibles by the newly added drivers,
+  the bindings are added first in this series
+* patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
+  new MAINTAINERS entry, including a wildcard match for the other
+  bindings in this series
+* patch 3 ("dt-bindings: mfd: add max77759 binding") references the
+  bindings added in patch 1 and 2 and can not work if those aren't
+  available
+* patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
+  the core MFD driver, which also exposes an API to its leaf drivers
+  and is used by patches 5 and 6
+* patches 5 and 6 won't compile without patch 4
+
+The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
+sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+
+This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
+
+This series adds support for the top-level MFD device, the gpio, and
+nvmem cells. Other components are excluded for the following reasons:
+
+    While in the same package, Fuel Gauge and TCPC have separate and
+    independent I2C addresses, register maps, interrupt lines, and
+    aren't part of the top-level package interrupt hierarchy.
+    Furthermore, a driver for the TCPC part exists already (in
+    drivers/usb/typec/tcpm/tcpci_maxim_core.c).
+
+    I'm leaving out temperature sensors and charger in this submission,
+    because the former are not in use on Pixel 6 and I therefore can
+    not test them, and the latter can be added later, once we look at
+    the whole charging topic in more detail.
+
+To make maintainers' work easier, I am planning to send the relevant
+DTS and defconfig changes via a different series, unless everything
+is expected to go via Lee's MFD tree in one series?
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/mmc/host/Kconfig       |  14 ++
- drivers/mmc/host/Makefile      |   1 +
- drivers/mmc/host/sdhci-of-k1.c | 304 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 319 insertions(+)
+Changes in v10:
+- collect tag for nvmem
+- rebase against next-20250509
+- drop already-merged bindings patches
+- update a comment in core driver (Lee)
+- Link to v9: https://lore.kernel.org/r/20250430-max77759-mfd-v9-0-639763e23598@linaro.org
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 6824131b69b188cae58c8f48076715ca647ca28c..0ce78f22c33cfff916a2d4d680c79e9d19637e0e 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -250,6 +250,20 @@ config MMC_SDHCI_OF_DWCMSHC
- 	  If you have a controller with this interface, say Y or M here.
- 	  If unsure, say N.
- 
-+config MMC_SDHCI_OF_K1
-+	tristate "SDHCI OF support for the SpacemiT K1 SoC"
-+	depends on ARCH_SPACEMIT || COMPILE_TEST
-+	depends on MMC_SDHCI_PLTFM
-+	depends on OF
-+	depends on COMMON_CLK
-+	help
-+	  This selects the Secure Digital Host Controller Interface (SDHCI)
-+	  found in the SpacemiT K1 SoC.
-+
-+	  If you have a controller with this interface, say Y or M here.
-+
-+	  If unsure, say N.
-+
- config MMC_SDHCI_OF_SPARX5
- 	tristate "SDHCI OF support for the MCHP Sparx5 SoC"
- 	depends on MMC_SDHCI_PLTFM
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 5147467ec825ffaef3a7bd812fad80545e52b180..75bafc7b162b9e1d4c6c050f5d28b9d7cb582447 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -88,6 +88,7 @@ obj-$(CONFIG_MMC_SDHCI_OF_AT91)		+= sdhci-of-at91.o
- obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)	+= sdhci-of-esdhc.o
- obj-$(CONFIG_MMC_SDHCI_OF_HLWD)		+= sdhci-of-hlwd.o
- obj-$(CONFIG_MMC_SDHCI_OF_DWCMSHC)	+= sdhci-of-dwcmshc.o
-+obj-$(CONFIG_MMC_SDHCI_OF_K1)		+= sdhci-of-k1.o
- obj-$(CONFIG_MMC_SDHCI_OF_SPARX5)	+= sdhci-of-sparx5.o
- obj-$(CONFIG_MMC_SDHCI_OF_MA35D1)	+= sdhci-of-ma35d1.o
- obj-$(CONFIG_MMC_SDHCI_BCM_KONA)	+= sdhci-bcm-kona.o
-diff --git a/drivers/mmc/host/sdhci-of-k1.c b/drivers/mmc/host/sdhci-of-k1.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..6880d3e9ab620dab5e5fea239cf1a78e1afe0d7c
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-of-k1.c
-@@ -0,0 +1,304 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023-2025 SpacemiT (Hangzhou) Technology Co. Ltd
-+ * Copyright (c) 2025 Yixun Lan <dlan@gentoo.org>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/iopoll.h>
-+#include <linux/init.h>
-+#include <linux/mmc/card.h>
-+#include <linux/mmc/host.h>
-+#include <linux/mmc/mmc.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "sdhci.h"
-+#include "sdhci-pltfm.h"
-+
-+#define SDHC_MMC_CTRL_REG		0x114
-+#define  MISC_INT_EN			BIT(1)
-+#define  MISC_INT			BIT(2)
-+#define  ENHANCE_STROBE_EN		BIT(8)
-+#define  MMC_HS400			BIT(9)
-+#define  MMC_HS200			BIT(10)
-+#define  MMC_CARD_MODE			BIT(12)
-+
-+#define SDHC_TX_CFG_REG			0x11C
-+#define  TX_INT_CLK_SEL			BIT(30)
-+#define  TX_MUX_SEL			BIT(31)
-+
-+#define SDHC_PHY_CTRL_REG		0x160
-+#define  PHY_FUNC_EN			BIT(0)
-+#define  PHY_PLL_LOCK			BIT(1)
-+#define  HOST_LEGACY_MODE		BIT(31)
-+
-+#define SDHC_PHY_FUNC_REG		0x164
-+#define  PHY_TEST_EN			BIT(7)
-+#define  HS200_USE_RFIFO		BIT(15)
-+
-+#define SDHC_PHY_DLLCFG			0x168
-+#define  DLL_PREDLY_NUM			GENMASK(3, 2)
-+#define  DLL_FULLDLY_RANGE		GENMASK(5, 4)
-+#define  DLL_VREG_CTRL			GENMASK(7, 6)
-+#define  DLL_ENABLE			BIT(31)
-+
-+#define SDHC_PHY_DLLCFG1		0x16C
-+#define  DLL_REG1_CTRL			GENMASK(7, 0)
-+#define  DLL_REG2_CTRL			GENMASK(15, 8)
-+#define  DLL_REG3_CTRL			GENMASK(23, 16)
-+#define  DLL_REG4_CTRL			GENMASK(31, 24)
-+
-+#define SDHC_PHY_DLLSTS			0x170
-+#define  DLL_LOCK_STATE			BIT(0)
-+
-+#define SDHC_PHY_PADCFG_REG		0x178
-+#define  PHY_DRIVE_SEL			GENMASK(2, 0)
-+#define  RX_BIAS_CTRL			BIT(5)
-+
-+struct spacemit_sdhci_host {
-+	struct clk *clk_core;
-+	struct clk *clk_io;
-+};
-+
-+/* All helper functions will update clr/set while preserve rest bits */
-+static inline void spacemit_sdhci_setbits(struct sdhci_host *host, u32 val, int reg)
-+{
-+	sdhci_writel(host, sdhci_readl(host, reg) | val, reg);
-+}
-+
-+static inline void spacemit_sdhci_clrbits(struct sdhci_host *host, u32 val, int reg)
-+{
-+	sdhci_writel(host, sdhci_readl(host, reg) & ~val, reg);
-+}
-+
-+static inline void spacemit_sdhci_clrsetbits(struct sdhci_host *host, u32 clr, u32 set, int reg)
-+{
-+	u32 val = sdhci_readl(host, reg);
-+
-+	val = (val & ~clr) | set;
-+	sdhci_writel(host, val, reg);
-+}
-+
-+static void spacemit_sdhci_reset(struct sdhci_host *host, u8 mask)
-+{
-+	sdhci_reset(host, mask);
-+
-+	if (mask != SDHCI_RESET_ALL)
-+		return;
-+
-+	spacemit_sdhci_setbits(host, PHY_FUNC_EN | PHY_PLL_LOCK, SDHC_PHY_CTRL_REG);
-+
-+	spacemit_sdhci_clrsetbits(host, PHY_DRIVE_SEL,
-+				  RX_BIAS_CTRL | FIELD_PREP(PHY_DRIVE_SEL, 4),
-+				  SDHC_PHY_PADCFG_REG);
-+
-+	if (!(host->mmc->caps2 & MMC_CAP2_NO_MMC))
-+		spacemit_sdhci_setbits(host, MMC_CARD_MODE, SDHC_MMC_CTRL_REG);
-+}
-+
-+static void spacemit_sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned int timing)
-+{
-+	if (timing == MMC_TIMING_MMC_HS200)
-+		spacemit_sdhci_setbits(host, MMC_HS200, SDHC_MMC_CTRL_REG);
-+
-+	if (timing == MMC_TIMING_MMC_HS400)
-+		spacemit_sdhci_setbits(host, MMC_HS400, SDHC_MMC_CTRL_REG);
-+
-+	sdhci_set_uhs_signaling(host, timing);
-+
-+	if (!(host->mmc->caps2 & MMC_CAP2_NO_SDIO))
-+		spacemit_sdhci_setbits(host, SDHCI_CTRL_VDD_180, SDHCI_HOST_CONTROL2);
-+}
-+
-+static void spacemit_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	struct mmc_host *mmc = host->mmc;
-+
-+	if (mmc->ios.timing <= MMC_TIMING_UHS_SDR50)
-+		spacemit_sdhci_setbits(host, TX_INT_CLK_SEL, SDHC_TX_CFG_REG);
-+	else
-+		spacemit_sdhci_clrbits(host, TX_INT_CLK_SEL, SDHC_TX_CFG_REG);
-+
-+	sdhci_set_clock(host, clock);
-+};
-+
-+static void spacemit_sdhci_phy_dll_init(struct sdhci_host *host)
-+{
-+	u32 state;
-+	int ret;
-+
-+	spacemit_sdhci_clrsetbits(host, DLL_PREDLY_NUM | DLL_FULLDLY_RANGE | DLL_VREG_CTRL,
-+				  FIELD_PREP(DLL_PREDLY_NUM, 1) |
-+				  FIELD_PREP(DLL_FULLDLY_RANGE, 1) |
-+				  FIELD_PREP(DLL_VREG_CTRL, 1),
-+				  SDHC_PHY_DLLCFG);
-+
-+	spacemit_sdhci_clrsetbits(host, DLL_REG1_CTRL,
-+				  FIELD_PREP(DLL_REG1_CTRL, 0x92),
-+				  SDHC_PHY_DLLCFG1);
-+
-+	spacemit_sdhci_setbits(host, DLL_ENABLE, SDHC_PHY_DLLCFG);
-+
-+	ret = readl_poll_timeout(host->ioaddr + SDHC_PHY_DLLSTS, state,
-+				 state & DLL_LOCK_STATE, 2, 100);
-+	if (ret == -ETIMEDOUT)
-+		dev_warn(mmc_dev(host->mmc), "fail to lock phy dll in 100us!\n");
-+}
-+
-+static void spacemit_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	if (!ios->enhanced_strobe) {
-+		spacemit_sdhci_clrbits(host, ENHANCE_STROBE_EN, SDHC_MMC_CTRL_REG);
-+		return;
-+	}
-+
-+	spacemit_sdhci_setbits(host, ENHANCE_STROBE_EN, SDHC_MMC_CTRL_REG);
-+	spacemit_sdhci_phy_dll_init(host);
-+}
-+
-+static unsigned int spacemit_sdhci_clk_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+
-+	return clk_get_rate(pltfm_host->clk);
-+}
-+
-+static int spacemit_sdhci_pre_select_hs400(struct mmc_host *mmc)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	spacemit_sdhci_setbits(host, MMC_HS400, SDHC_MMC_CTRL_REG);
-+	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
-+
-+	return 0;
-+}
-+
-+static void spacemit_sdhci_post_select_hs400(struct mmc_host *mmc)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	spacemit_sdhci_phy_dll_init(host);
-+	host->mmc->caps &= ~MMC_CAP_WAIT_WHILE_BUSY;
-+}
-+
-+static void spacemit_sdhci_pre_hs400_to_hs200(struct mmc_host *mmc)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	spacemit_sdhci_clrbits(host, PHY_FUNC_EN | PHY_PLL_LOCK, SDHC_PHY_CTRL_REG);
-+	spacemit_sdhci_clrbits(host, MMC_HS400 | MMC_HS200 | ENHANCE_STROBE_EN, SDHC_MMC_CTRL_REG);
-+	spacemit_sdhci_clrbits(host, HS200_USE_RFIFO, SDHC_PHY_FUNC_REG);
-+
-+	udelay(5);
-+
-+	spacemit_sdhci_setbits(host, PHY_FUNC_EN | PHY_PLL_LOCK, SDHC_PHY_CTRL_REG);
-+}
-+
-+static inline int spacemit_sdhci_get_clocks(struct device *dev,
-+					    struct sdhci_pltfm_host *pltfm_host)
-+{
-+	struct spacemit_sdhci_host *sdhst = sdhci_pltfm_priv(pltfm_host);
-+
-+	sdhst->clk_core = devm_clk_get_enabled(dev, "core");
-+	if (IS_ERR(sdhst->clk_core))
-+		return -EINVAL;
-+
-+	sdhst->clk_io = devm_clk_get_enabled(dev, "io");
-+	if (IS_ERR(sdhst->clk_io))
-+		return -EINVAL;
-+
-+	pltfm_host->clk = sdhst->clk_io;
-+
-+	return 0;
-+}
-+
-+static const struct sdhci_ops spacemit_sdhci_ops = {
-+	.get_max_clock		= spacemit_sdhci_clk_get_max_clock,
-+	.reset			= spacemit_sdhci_reset,
-+	.set_bus_width		= sdhci_set_bus_width,
-+	.set_clock		= spacemit_sdhci_set_clock,
-+	.set_uhs_signaling	= spacemit_sdhci_set_uhs_signaling,
-+};
-+
-+static const struct sdhci_pltfm_data spacemit_sdhci_k1_pdata = {
-+	.ops = &spacemit_sdhci_ops,
-+	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-+		  SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
-+		  SDHCI_QUIRK_32BIT_ADMA_SIZE |
-+		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-+		  SDHCI_QUIRK_BROKEN_CARD_DETECTION |
-+		  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL,
-+	.quirks2 = SDHCI_QUIRK2_BROKEN_64_BIT_DMA |
-+		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+};
-+
-+static const struct of_device_id spacemit_sdhci_of_match[] = {
-+	{ .compatible = "spacemit,k1-sdhci" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, spacemit_sdhci_of_match);
-+
-+static int spacemit_sdhci_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct spacemit_sdhci_host *sdhst;
-+	struct sdhci_pltfm_host *pltfm_host;
-+	struct sdhci_host *host;
-+	struct mmc_host_ops *mops;
-+	int ret;
-+
-+	host = sdhci_pltfm_init(pdev, &spacemit_sdhci_k1_pdata, sizeof(*sdhst));
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	pltfm_host = sdhci_priv(host);
-+
-+	ret = mmc_of_parse(host->mmc);
-+	if (ret)
-+		goto err_pltfm;
-+
-+	sdhci_get_of_property(pdev);
-+
-+	if (!(host->mmc->caps2 & MMC_CAP2_NO_MMC)) {
-+		mops = &host->mmc_host_ops;
-+		mops->hs400_prepare_ddr	= spacemit_sdhci_pre_select_hs400;
-+		mops->hs400_complete	= spacemit_sdhci_post_select_hs400;
-+		mops->hs400_downgrade	= spacemit_sdhci_pre_hs400_to_hs200;
-+		mops->hs400_enhanced_strobe = spacemit_sdhci_hs400_enhanced_strobe;
-+	}
-+
-+	host->mmc->caps |= MMC_CAP_NEED_RSP_BUSY;
-+
-+	if (spacemit_sdhci_get_clocks(dev, pltfm_host))
-+		goto err_pltfm;
-+
-+	ret = sdhci_add_host(host);
-+	if (ret)
-+		goto err_pltfm;
-+
-+	return 0;
-+
-+err_pltfm:
-+	sdhci_pltfm_free(pdev);
-+	return ret;
-+}
-+
-+static struct platform_driver spacemit_sdhci_driver = {
-+	.driver		= {
-+		.name	= "sdhci-spacemit",
-+		.of_match_table = spacemit_sdhci_of_match,
-+	},
-+	.probe		= spacemit_sdhci_probe,
-+	.remove		= sdhci_pltfm_remove,
-+};
-+module_platform_driver(spacemit_sdhci_driver);
-+
-+MODULE_DESCRIPTION("SpacemiT SDHCI platform driver");
-+MODULE_LICENSE("GPL");
+Changes in v9:
+- nvmem: drop superfluous max77759_nvmem_is_valid() (Srini)
+- collect tags
+- Link to v8: https://lore.kernel.org/r/20250429-max77759-mfd-v8-0-72d72dc79a1f@linaro.org
 
+Changes in v8:
+- gpio: switch to gpio_chip::set_rv() (Bartosz)
+- gpio, nvmem: replace MODULE_ALIAS() with .id_table (Krzysztof)
+- gpio, nvmem: drop previous tags due to above
+- Link to v7: https://lore.kernel.org/r/20250428-max77759-mfd-v7-0-edfe40c16fe8@linaro.org
+
+Changes in v7:
+- rebased against next-20250424
+- Link to v6: https://lore.kernel.org/r/20250325-max77759-mfd-v6-0-c0870ca662ba@linaro.org
+
+Changes in v6:
+- add one missing change in core driver
+- Link to v5: https://lore.kernel.org/r/20250325-max77759-mfd-v5-0-69bd6f07a77b@linaro.org
+
+Changes in v5:
+- core: incorporate Lee's comments (hoping I didn't miss any :-)
+- Link to v4: https://lore.kernel.org/r/20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org
+
+Changes in v4:
+- collect tags
+- mfd: add missing build_bug.h include
+- mfd: update an irq chip comment
+- mfd: fix a whitespace in register definitions
+- Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
+
+Changes in v3:
+- collect tags
+- mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
+  child (Rob)
+- gpio: drop duplicate init of 'handled' variable in irq handler
+- gpio: use boolean with IRQ_RETVAL() (Linus)
+- gpio: drop 'virq' variable inside irq handler to avoid confusion
+  (Linus)
+- gpio: drop assignment of struct gpio_chip::owner (Linus)
+- Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org
+
+Changes in v2:
+- reorder bindings patches to avoid validation failures
+- add dependency information to cover letter (Krzysztof)
+- fix max77759_gpio_direction_from_control() in gpio driver
+- gpio: drop 'interrupts' property from binding and sort properties
+  alphabetically (Rob)
+- nvmem: drop example from nvmem binding as the MFD binding has a
+  complete one (Rob)
+- nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
+- mfd: add kernel doc
+- mfd: fix an msec / usec typo
+- mfd: error handling of devm_mutex_init (Christophe)
+- whitespace fixes & tidy-ups (Christophe)
+- Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org
+
+---
+André Draszik (3):
+      mfd: max77759: add Maxim MAX77759 core mfd driver
+      gpio: max77759: add Maxim MAX77759 gpio driver
+      nvmem: max77759: add Maxim MAX77759 NVMEM driver
+
+ MAINTAINERS                    |   4 +
+ drivers/gpio/Kconfig           |  13 +
+ drivers/gpio/Makefile          |   1 +
+ drivers/gpio/gpio-max77759.c   | 530 +++++++++++++++++++++++++++++++
+ drivers/mfd/Kconfig            |  20 ++
+ drivers/mfd/Makefile           |   1 +
+ drivers/mfd/max77759.c         | 690 +++++++++++++++++++++++++++++++++++++++++
+ drivers/nvmem/Kconfig          |  12 +
+ drivers/nvmem/Makefile         |   2 +
+ drivers/nvmem/max77759-nvmem.c | 145 +++++++++
+ include/linux/mfd/max77759.h   | 165 ++++++++++
+ 11 files changed, 1583 insertions(+)
+---
+base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
+change-id: 20250224-max77759-mfd-aaa7a3121b62
+
+Best regards,
 -- 
-2.49.0
+André Draszik <andre.draszik@linaro.org>
 
 
