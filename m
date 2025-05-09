@@ -1,239 +1,198 @@
-Return-Path: <linux-kernel+bounces-641913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FD3AB1813
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:11:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D37EAB1801
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8BEB507B96
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F88A00335
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EE7239E61;
-	Fri,  9 May 2025 15:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93882235048;
+	Fri,  9 May 2025 15:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3thS45oO"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2088.outbound.protection.outlook.com [40.107.100.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmkRTON0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078E0238171;
-	Fri,  9 May 2025 15:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746803303; cv=fail; b=bD7ZUjaxtCCzbY1LKqPW571VIg5cLzaoJ8Xxg+t9+w6PUJ5X780wFLdt+f88IW9EGOc74x6dxwkompQpMc8aS2R2XK88heIkXQn+KJ5LcY1AdNRKXLDw3CfoilxCoq6Bw3kySA/LhUVSL93OMtbKmzTLc+UJD5qgumsa3Kb4L+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746803303; c=relaxed/simple;
-	bh=8U6H7lnSEVPNbfFllcjL91wC7PobCR3JntkRpazSikI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YvMEVwVjYalKxOMJ2WvbzK23GzlIriuapVEP6l15GiGWin7AiC88IQsjW9JqVyk4qm87T3zStIm11VykY1R/+K0v3diu7ofKEadsOKtk52N1ULQbamLms+kRipV5Yyo1oFRW1D3FxuFmub0CSFasPMG2ui+HAqJ+WtR2g/7a2hY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3thS45oO; arc=fail smtp.client-ip=40.107.100.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CgfYPs3ZjOdkW/247SqNZfYd0XQGWP8OiOwF27hjCnmSpV5vHbupGvyzVeCwhUST/Qh8/m+Yr1hquWk1ofxTJPFtCpqOrP/xVJgP+sWglkRR42pZrlfutSipwokGGTc5CSiLsdNbmHSiGwsk2Q4uqqs7S+XxGkVkQfHzewUfGa5f2RYqJe1jY8i8oXj4QAE6dIVd8stTq0dMaHDesREXDa3gRQME0hOhLZSne7/RuWb527+iYteIUnA3WjO/dyhAbS+tdeaYyjWBfnvgWak4hdr0zp1gPGTEFCTo4WwmHrXHGgX4knTXiFsRej85wV5Pw0TcKeqTxyX1H8c0BwVr2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aSf2G4JwtivsU8WcnNT0Tj/VPRfv3310Dev63tbzTME=;
- b=JMVQB9KodxpUfaEDQr9TP8nmk2cBvqNS0rZBooJCryAUaKftnAuhSmHt3YfIRjqKbaW4xnIF/v1Mz7MUAh9vJBl4+hBN3M3PnNeiLfL4Y0/b6o1SKgZNeaBIBiHJEGF4uU3tkzD1sNQDqg52AK8pwUoEmPAQ5wZCZ2MiIbbDVlgqkMYRPf9xYoiPUITb/uxjaGPCc9Om8JSLnTWpEbmng+MRwix4VvyBnHCv3zLQnsGQr/lyMcnlGnKjq1yQPOp143cj14kssQ06RK1dDYIcZMn4CXMpyi3/g4xKcWI1ch3EZHh/+lmdIlemTEhx70oD+nlUFVXuqmpn4c+X0OV8kA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aSf2G4JwtivsU8WcnNT0Tj/VPRfv3310Dev63tbzTME=;
- b=3thS45oOPFcNFxNHDTtq1SON6qkeLjI7dZ9y1Ce21+7tOcJLwy6d6EUOpaMTgRV9rFQHe9Mm7DtIA8tYS+WWQkQnfh7Oe8g6N41Sbm/bFqbeYp+/vlJQBQ1+LBrg34/56u9ZmFbOWoSNINbwwrgMIdYd2i5NRoLkDZHv0InMxOE=
-Received: from BN0PR08CA0013.namprd08.prod.outlook.com (2603:10b6:408:142::21)
- by SJ2PR12MB8011.namprd12.prod.outlook.com (2603:10b6:a03:4c8::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.37; Fri, 9 May
- 2025 15:08:16 +0000
-Received: from BL6PEPF0001AB50.namprd04.prod.outlook.com
- (2603:10b6:408:142:cafe::2d) by BN0PR08CA0013.outlook.office365.com
- (2603:10b6:408:142::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.21 via Frontend Transport; Fri,
- 9 May 2025 15:08:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB50.mail.protection.outlook.com (10.167.242.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 15:08:15 +0000
-Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 May
- 2025 10:08:12 -0500
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>
-Subject: [PATCH v6 10/14] cxl/region: Factor out code to find a root decoder's region
-Date: Fri, 9 May 2025 17:06:55 +0200
-Message-ID: <20250509150700.2817697-11-rrichter@amd.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250509150700.2817697-1-rrichter@amd.com>
-References: <20250509150700.2817697-1-rrichter@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC1A21A453;
+	Fri,  9 May 2025 15:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746803220; cv=none; b=WnoQJR3md6MdJjZoly/eCcG4QhFlIX/3lIkRg/63IvD9R6Ri1J821Jhm95KIlofBiVv8QwldPXoFcTi5m7CHH7lKDhOoGYqL3n7m1Gr2B5Hoi5ner0py2DGxOUvohCBGw73B+yLAnBTPRh/JbOeZl+QjTcPF5/TvLwGxnNvoU7U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746803220; c=relaxed/simple;
+	bh=uuhnm0aRvVty+XrpMWSfjG9qUj5MeSFeFcHByOFvx8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZyYWWpp/1uCTZdsXN7yB5NE+O60d2XFiHIb5EMj1n/gNgzYx1fSRRrSOYMqzaaru5EvgJ8AaUYibkbmyAcKtQxPqL5PPupXH31F2N/hRWto6Y1duriQfWqmtIkx0l8efVygADe4iV4dBgU/Any0u8Ux1g0jOaE6xBPcjNfBZZj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmkRTON0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2283C4CEEE;
+	Fri,  9 May 2025 15:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746803220;
+	bh=uuhnm0aRvVty+XrpMWSfjG9qUj5MeSFeFcHByOFvx8M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YmkRTON0H7yevm0MRtgeMCYmm3T1PikFSLyzDGL09VCPhWr41kaq6npdKJ896Pufy
+	 la4Vp7EoUvSzBDIOkW8Q/oiV3OjP3Kkt82uTbg1xkH1YsoYO6sLArtREExIITvu/ao
+	 MAoWazhCHkSZGPUz6n0tAD4jxmKp2ESuZY8M5QWGlpqMOKenTNv6zvJh7vZnV8YYrw
+	 6BN+GT/49QoLfQHzz3+mtwVv1sz7ReyrZVZSf1JtbI1RgHa1L1QcC3jmTZeI1jlLkA
+	 ECX4TrZIk2deB3d3V2YlUcmH2hae8IUsld6blxABXIPpQChMl015HbwLr6I3iPbyJn
+	 m7THNEXnGhB1w==
+Message-ID: <02b0dbc2-e8fd-419a-b546-5910b3fd0e0c@kernel.org>
+Date: Fri, 9 May 2025 17:06:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB50:EE_|SJ2PR12MB8011:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86604793-0a4a-4564-9f84-08dd8f0b5300
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GCWZcFsIMiRHo5R8GuyOHF5DtIsQ9BmAiTPfTqJRt4zbXmNTq6QXTeqSfA0L?=
- =?us-ascii?Q?Y0jmNKRoVPd3HwoP4dYIhO/N5/IL3hCzWOLvsas3yfYzhxgIodzZNacg4vQP?=
- =?us-ascii?Q?FQwTtlJucwVALymP6goG7VGZmuUrFQYM8p764USJUC+9GgyM3lspSOluGjck?=
- =?us-ascii?Q?cAYx4SykshTRkteUxdV9kGbcQiAJqnZfKgeRR5W6DcWF8SxawvyUHrT4fsL9?=
- =?us-ascii?Q?N1NRPDgufvZhwSv8UVl+SPTuLcaQvlhmf6yBL8Y7R4Fv4/yfr6v9Ns9X96pf?=
- =?us-ascii?Q?C2rkWGyAYjHFjb7kN2YImc1kGaZVoA2DYGh24aVcXcsBM5ENMT/eaFiv4HZm?=
- =?us-ascii?Q?05NtCcPraDv1IQ7r7x87ZdfrPeND2/RnaluhC7AftHTgY9ePVFM6Af1JFc8Y?=
- =?us-ascii?Q?MyJWsziKB4vYlibxfF28Q36dPTrQYzd/jy/ppyukp5gdwPpVoBmzUQ0RVew7?=
- =?us-ascii?Q?E5MS2bZtDa6TRfstZr9bJEiVlK/V0QNJ8zgJmLaeMJrGtOXWtW91aoEkUL4a?=
- =?us-ascii?Q?aizWDpcoLAKI/zP05qVkJcufSOzTMvjcQ0gxinBO/hmymY/dmalym4p76yo0?=
- =?us-ascii?Q?47azrqrhjxU+uJ4Iye66ZqfgWc3ZVgvuSSY175tHu5zcc5umiBqqGmlSyRmG?=
- =?us-ascii?Q?VZvC288PSRdqVaVMmdSeh92/MyaQY2VpOFNlTcu2/da/TauFzBSQ8PuV870o?=
- =?us-ascii?Q?AuJjgZpxLTTkhl/v3s1T8NTe5QNjccH45Prxvaa8wlYQf0NW4onbed0rhSfk?=
- =?us-ascii?Q?51F1soUoRkWRBUkTEMcJcbrp4GZjEVu68zIIu6UCwkKj+ywFjZ61f0hlz5os?=
- =?us-ascii?Q?jEw1SMZVB64PsZUxA8di4hHnvPrjDOntohTKn1Wfkz1voao0x/H9ul6DPUG3?=
- =?us-ascii?Q?+03ubf6kGiNc4JzIx43dCjoHFIG7rRuhFpzXVdkoi5uUYseOOSlnVW5kmVaD?=
- =?us-ascii?Q?0iWSUvqeTh4GgLH7ZXZrgd4IUDubSuSxFB/jboDHewEQH8SbaCQ9HZ3EeBOF?=
- =?us-ascii?Q?H3i1ZvKLibfHkXIWpj+0RDx8sk0WKb5XGXAaMtYkL+QWuvVr8Pj3A82OJDwS?=
- =?us-ascii?Q?G28t1wGhnAN47DYY0yZjJYQ22YPjbOu/af+7Hw0KflIQ3pHlrizS1Q1VRmTz?=
- =?us-ascii?Q?CazZRJcK/J7X5kmw8FPJM+nAdz8TpoGYfSU+Aeiyjh+rnv6TJON+08I5aXZs?=
- =?us-ascii?Q?zly4U/xgIWt6j+hGgXxEAt/LBKgqvzVOvEVkIuguuCY4LqX6/PGfgvfSWMea?=
- =?us-ascii?Q?UfpPB4eodIRa0s80Y1xlsIqow4lc2FPJNpTjPRFoi4Kli89s58Ihy3Nr/R/1?=
- =?us-ascii?Q?W6f/W1SWlQbuirgOgtnqf5mP7ndECzV+ecb8YjjfwmmRqmwmcqxTmUug681K?=
- =?us-ascii?Q?7P8LXY13U/C2zk+PHP+Vvm6CglJ9kGreM1cX7SJcsc07+nvmMYRUmentJ50D?=
- =?us-ascii?Q?y4bmWfjavATSOPWquG7dBpX6UE+aPLxb0ig9DYYmod4Or5OG+kAcslffRfez?=
- =?us-ascii?Q?vv2ZtSFe2ZOyLhqNXHD8Vd8UVu48kz3XTgvf?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 15:08:15.6010
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86604793-0a4a-4564-9f84-08dd8f0b5300
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB50.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8011
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: iio: proximity: Add Nicera D3-323-AA PIR
+ sensor
+To: Waqar Hameed <waqar.hameed@axis.com>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@axis.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <c57675d505e93549bfca5f9909d67822ab304a44.1746802541.git.waqar.hameed@axis.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c57675d505e93549bfca5f9909d67822ab304a44.1746802541.git.waqar.hameed@axis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In function cxl_add_to_region() there is code to determine a root
-decoder's region. Factor that code out. This is in preparation to
-further rework and simplify function cxl_add_to_region().
+On 09/05/2025 17:03, Waqar Hameed wrote:
+> Nicera D3-323-AA is a PIR sensor for human detection. It has support for
+> raw data measurements and detection notification. The communication
+> protocol is custom made and therefore needs to be GPIO bit banged.
+> 
+> Add devicetree bindings requiring the compatible string and the various
+> GPIOs needed for operation. Some of the GPIOs have multiple use-cases
+> depending on device state. Describe these thoroughly.
 
-The reference count must be decremented after using the region.
-cxl_find_region_by_range() is paired with the put_cxl_region cleanup
-helper that can be used for this.
 
-Signed-off-by: Robert Richter <rrichter@amd.com>
-Reviewed-by: Gregory Price <gourry@gourry.net>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-Tested-by: Gregory Price <gourry@gourry.net>
----
- drivers/cxl/core/region.c | 26 ++++++++++++++++----------
- drivers/cxl/cxl.h         |  1 +
- 2 files changed, 17 insertions(+), 10 deletions(-)
+Drop redundant parts of description. Describe the hardware. Entire last
+paragraph is pretty pointless.
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 45f5d2c7dfdf..8fdf03058b2f 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -3405,13 +3405,25 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
- 	return cxlr;
- }
- 
-+static struct cxl_region *
-+cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
-+{
-+	struct device *region_dev;
-+
-+	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
-+				       match_region_by_range);
-+	if (!region_dev)
-+		return NULL;
-+
-+	return to_cxl_region(region_dev);
-+}
-+
- int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
- {
- 	struct cxl_root_decoder *cxlrd __free(put_cxl_root_decoder) = NULL;
-+	struct cxl_region *cxlr __free(put_cxl_region) = NULL;
- 	struct range *hpa = &cxled->cxld.hpa_range;
--	struct device *region_dev;
- 	struct cxl_region_params *p;
--	struct cxl_region *cxlr;
- 	bool attach = false;
- 	int rc;
- 
-@@ -3424,13 +3436,9 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
- 	 * one does the construction and the others add to that.
- 	 */
- 	mutex_lock(&cxlrd->range_lock);
--	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
--				       match_region_by_range);
--	if (!region_dev) {
-+	cxlr = cxl_find_region_by_range(cxlrd, hpa);
-+	if (!cxlr)
- 		cxlr = construct_region(cxlrd, cxled);
--		region_dev = &cxlr->dev;
--	} else
--		cxlr = to_cxl_region(region_dev);
- 	mutex_unlock(&cxlrd->range_lock);
- 
- 	rc = PTR_ERR_OR_ZERO(cxlr);
-@@ -3455,8 +3463,6 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
- 				p->res);
- 	}
- 
--	put_device(region_dev);
--
- 	return rc;
- }
- EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index 371f9dcfb61a..ba08b77b65da 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -741,6 +741,7 @@ struct cxl_root *find_cxl_root(struct cxl_port *port);
- DEFINE_FREE(put_cxl_root, struct cxl_root *, if (_T) put_device(&_T->port.dev))
- DEFINE_FREE(put_cxl_port, struct cxl_port *, if (!IS_ERR_OR_NULL(_T)) put_device(&_T->dev))
- DEFINE_FREE(put_cxl_root_decoder, struct cxl_root_decoder *, if (!IS_ERR_OR_NULL(_T)) put_device(&_T->cxlsd.cxld.dev))
-+DEFINE_FREE(put_cxl_region, struct cxl_region *, if (!IS_ERR_OR_NULL(_T)) put_device(&_T->dev))
- 
- int devm_cxl_enumerate_ports(struct cxl_memdev *cxlmd);
- void cxl_bus_rescan(void);
--- 
-2.39.5
+> +
+> +properties:
+> +  compatible:
+> +    const: nicera,d3323aa
+> +
+> +  vdd-gpio:
+> +    maxItems: 1
+> +    description:
+> +      GPIO for supply voltage (1.8 to 5.5 V).
 
+This is not how pins are represented in the kernel. Either you have here
+regulator (supply) or reset gpios. Plus 'gpio' suffix is not valid, btw.
+
+Datasheet says this is a supply.
+
+> +      This GPIO will be driven low by the driver in order to cut the supply and
+> +      reset the device (driving it then back to high to power it on).
+> +
+> +  clk-vout-gpio:
+
+No, for the similar reasons. Which pin is this?
+
+> +    maxItems: 1
+> +    description:
+> +      GPIO for clock and detection.
+> +      After reset, the device signals with two falling edges on this pin that it
+> +      is ready for configuration (within 1.2 s), which the driver listens for as
+> +      interrupts.
+> +      During configuration, it is used as clock for data reading and writing (on
+> +      data-gpio). The driver drives this pin with the frequency of 1 kHz (bit
+> +      banging).
+> +      After all this, the device is now in operational mode and signals on this
+> +      pin for any detections. The driver listens for this as interrupts.
+> +
+> +  data-gpio:
+
+There is no such pin.
+
+> +    maxItems: 1
+> +    description:
+> +      GPIO for data reading and writing.
+> +      During configuration, configuration data will be written and read back
+> +      with bit banging (together with clk-vout-gpio as clock).
+> +      After this, during operational mode, the device will output serial data on
+> +      this GPIO. However, the driver currently doesn't read this.
+> +
+> +required:
+> +  - compatible
+> +  - vdd-gpio
+> +  - clk-vout-gpio
+> +  - data-gpio
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+
+So you included that header
+
+> +
+> +    proximity {
+> +        compatible = "nicera,d3323aa";
+> +        vdd-gpio = <&gpio 73 0>;
+> +        clk-vout-gpio = <&gpio 78 0>;
+> +        data-gpio = <&gpio 76 0>;
+
+But where are you using it?
+
+> +    };
+> +...
+
+
+Best regards,
+Krzysztof
 
