@@ -1,146 +1,127 @@
-Return-Path: <linux-kernel+bounces-642129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF98AB1ADB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:48:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A830AB1B0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78FA5A20692
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013C61C45B7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE772367DF;
-	Fri,  9 May 2025 16:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3D298C17;
+	Fri,  9 May 2025 16:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StvVQEfL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="P/NX0RgH"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A4A1E3DFE;
-	Fri,  9 May 2025 16:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A382238C19;
+	Fri,  9 May 2025 16:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746809306; cv=none; b=uFLdiL6t2IdDOrVaYTaaIZUEcgdtXEgsGnAsUyYnWHKNveOOC3oAv1RkQwViZLgrRipPKKneQo9g2bqZsxJGO3yv9kKCWTbFfIFX2jBt/0LK9QssilwwY05aNUu/b+NGmI69K90UrQuFphmTAbGt1zWdFXcfrnVIm4iFMJ2q7vQ=
+	t=1746809514; cv=none; b=IQOO3d7n881EXR1WlHoy9ALSpq8BoGJNoZLdhBfHWYVfSa7L5HT/0o7/rxSQUB/dvNd+FCZH5Sl9yKXKd+d0U6MYhJhgHOiyOfLILifomuLB0Dbl10u7166BIsnieNH0uDpg6IvmStYMnOrlA2Fffm7z4RplVPy1QSayVL5skZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746809306; c=relaxed/simple;
-	bh=W4BlwOAOpXDcFWOiA5llJxsijavgFUfqMaykU1dFutw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZfeOChBqImv7w+L4MdkcqWxhUmwAQ5GRKSu4RUiLu/vkGYROfZffegrZFheE23yUn1ZtsFHE8RILqqB6svqheRTIzj6uHScrvBD3q7ti/zuWO4B4wP4vWze+2G0hvDeg+mEv/f5w3QwBDXTq6a7Ngj1o8LBldnCKtfsigW5EEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StvVQEfL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91405C4CEEF;
-	Fri,  9 May 2025 16:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746809305;
-	bh=W4BlwOAOpXDcFWOiA5llJxsijavgFUfqMaykU1dFutw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=StvVQEfLGL+CesSpOwv6IY03BX+s/d1aeDvmYmeIyD1gIujd4ph3ZXq4WAdT0l8Bp
-	 axdJhaHCG1Ko4MxrQB6mLBtUpvK5EnbduUfsaOL4rOGi7SGag6DJdN0zsToRPjep5G
-	 vO/17AZRWW/6EwBKpHW+RSs02AyaRhUblERKNfixMVJ7oDqSdquwHGDFx0suNPDLnM
-	 I6EHyLlFJTRhrb3bsA2Bupf4E1Nz4qON7CmgQ38xbcBYsrFpBcg7D0jpm+S0l4f+HN
-	 BQ94ajEuBmtcdzMxFE6KQLZwWF2fE4lXzVxYyh86O6EZQsL2i8LMsmtiIROhSxx6i1
-	 tEyX0IbCuVg4w==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-72c14235af3so1456496a34.3;
-        Fri, 09 May 2025 09:48:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWYZCS0FI0C6iOOC6fv7RMKpD130onhL1AKSJ4TeGq6wKiZE8Kfeu+oK3Ui2A8jKUrNaBc7xJJs6iQ=@vger.kernel.org, AJvYcCXzlHhp5b7hECBeMdKObLCviwF6hyg35LkSFAEpl0dGeTVDjWUIFcznuKtHi3I4/heVYT+pyKWmQQ+Jaqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0zgrUV1M0BDtEEvLPtKuVTSrlqZx/D0RPreC5P4whrxAlY8iN
-	lJEBl40r5Uq/noo9fKpNronbFG8PanFROHBM1l3SEtGhZbHy+UTPqPSS+Ms8pTrZ4HQU9xcAugI
-	O934L7ZMTLXRF4HN1mdCwhSaHN/Y=
-X-Google-Smtp-Source: AGHT+IG90A80wdNdQxgSBxQGx+GthEA8aaHFTNRSqgeCLm4FKsdL68Vw3eHLZzDe3gNqpFA7hH8Ja17yFeaPZfZNqFc=
-X-Received: by 2002:a05:6870:8895:b0:2d8:5015:1a90 with SMTP id
- 586e51a60fabf-2dba41f6c92mr2875266fac.2.1746809304850; Fri, 09 May 2025
- 09:48:24 -0700 (PDT)
+	s=arc-20240116; t=1746809514; c=relaxed/simple;
+	bh=9tmfUQl7n6sCe4B6VOxGhrGgZC2hfLqoLZRw4v0V5dg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=joAaeE0UGAFZu2qvuXgh6cUIWW4n4A71OHEzfjfacLJ5AIs1U4J2gbtkY2C0nZsQr8nGZESuHuurmHAj2BBowQaCO7Z9Mm4GTg4EwN8i6FfVcfm6m6OwrGV1i9H4VqTxWE2U2+i2AOs57RyY54oY9xR7dMRwwyqcAOuiBNa72IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=P/NX0RgH; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250506155659.95212-1-pmenzel@molgen.mpg.de>
-In-Reply-To: <20250506155659.95212-1-pmenzel@molgen.mpg.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 9 May 2025 18:48:14 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h0tc=5oJ5KsqyvXT6w64tztL8cy-iNF+=8xa2ncAwQ6w@mail.gmail.com>
-X-Gm-Features: ATxdqUEApZMpWO-oVpwTqpqItmiXtaXQEGlvyCAPfFbXec14qQ0utxbpQ0phg3s
-Message-ID: <CAJZ5v0h0tc=5oJ5KsqyvXT6w64tztL8cy-iNF+=8xa2ncAwQ6w@mail.gmail.com>
-Subject: Re: [PATCH] PM: thaw_processes: Rewrite restarting tasks log to
- remove stray *done.*
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1746809509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ckl3vux5StOjvP2+47jrXU3fLRpLeSvxiApo1TU/VDQ=;
+	b=P/NX0RgHit5EEJXk2v6IpDcc0CmX9jjuKGJ8J8O5RFsGJ+rX/Zfmu63/p9HRzmJ0SEju20
+	pN/gP6SdukESlLnnl2aOcQMGBMKpLbRL94g/juVXzwRKDpD05cfRZQ8VUzJA29MnSUgMZo
+	ZY4jHyKEEzcKFwwvHSoce0HjegXD/XQoC3oHYQxUqnMJtD5Job1emTRTCTV1VNsFpYqyB4
+	jx8bXA/Cqycgs8BL93wm4v4emqKSe08tJV905bRCSeEdKjQlyHIPr69944V7VG5RAvu1H0
+	GyRVpehpmWhks+9m0/OocqJs2C+FWFdssWbUkQJHyPXeEUX0eMh99gpsf78PVA==
+Content-Type: multipart/signed;
+ boundary=3e23f8a3f7dd23a047277bc59f050a2e77210dee6735ec02b945a8d601bd;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Fri, 09 May 2025 18:51:21 +0200
+Message-Id: <D9RSA5K547DD.1LYPIZZM4XALS@cknow.org>
+Cc: "Conor Dooley" <conor+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Dragan Simic" <dsimic@manjaro.org>, "Rob Herring"
+ <robh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 0/1] arm64: dts: rockchip: rk3568: Move PCIe3 MSI to use
+ GIC ITS
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Diederik de Haas" <didi.debian@cknow.org>, "Chukun Pan"
+ <amadeus@jmu.edu.cn>, "Heiko Stuebner" <heiko@sntech.de>
+References: <20250308093008.568437-1-amadeus@jmu.edu.cn>
+ <D9RQN76VZXO8.T3I0046FNVG3@cknow.org>
+In-Reply-To: <D9RQN76VZXO8.T3I0046FNVG3@cknow.org>
+X-Migadu-Flow: FLOW_OUT
+
+--3e23f8a3f7dd23a047277bc59f050a2e77210dee6735ec02b945a8d601bd
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Tue, May 6, 2025 at 5:57=E2=80=AFPM Paul Menzel <pmenzel@molgen.mpg.de> =
-wrote:
->
-> `pr_cont()` unfortunately does not work here, as other parts of the
-> Linux kernel log between the two log lines:
->
->     [18445.295056] r8152-cfgselector 4-1.1.3: USB disconnect, device numb=
-er 5
->     [18445.295112] OOM killer enabled.
->     [18445.295115] Restarting tasks ...
->     [18445.295185] usb 3-1: USB disconnect, device number 2
->     [18445.295193] usb 3-1.1: USB disconnect, device number 3
->     [18445.296262] usb 3-1.5: USB disconnect, device number 4
->     [18445.297017] done.
->     [18445.297029] random: crng reseeded on system resumption
->
-> `pr_cont()` also uses the default log level, normally warning, if the
-> corresponding log line is interrupted.
->
-> Therefore, replace the `pr_cont()`, and explicitly log it as a separate
-> line with log level info:
->
->     Restarting tasks ...
->     [=E2=80=A6]
->     Done restarting tasks.
->
-> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> ---
->  kernel/power/process.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/power/process.c b/kernel/power/process.c
-> index 66ac067d9ae6..92daf1dce8c3 100644
-> --- a/kernel/power/process.c
-> +++ b/kernel/power/process.c
-> @@ -189,7 +189,7 @@ void thaw_processes(void)
->
->         oom_killer_enable();
->
-> -       pr_info("Restarting tasks ... ");
-> +       pr_info("Restarting tasks ...\n");
+Hi again,
 
-I would prefer something like
-
-pr_info("Restarting tasks: Starting\n");
-
+On Fri May 9, 2025 at 5:34 PM CEST, Diederik de Haas wrote:
+> On Sat Mar 8, 2025 at 10:30 AM CET, Chukun Pan wrote:
+>> For a long time, rk3568's MSI-X had bugs and could only work on one node=
+.
+>> e.g. [    7.250882] r8125 0002:01:00.0: no MSI/MSI-X. Back to INTx.
+>>
+>> Following commit b956c9de9175 ("arm64: dts: rockchip: rk356x: Move
+>> PCIe MSI to use GIC ITS instead of MBI"), change the PCIe3 controller's
+>> MSI on rk3568 to use ITS, so that all MSI-X can work properly.
+>>
+> I tested this patch on my NanoPi R5S with a 6.15-rc3 kernel + a number
+> of [vcc|phy]-supply patches that have been accepted for 6.16 (and a
+> small WIP LED patch).
 >
->         __usermodehelper_set_disable_depth(UMH_FREEZING);
->         thaw_workqueues();
-> @@ -208,7 +208,7 @@ void thaw_processes(void)
->         usermodehelper_enable();
+> With this patch I get the following kernel warnings:
 >
->         schedule();
-> -       pr_cont("done.\n");
-> +       pr_info("Done restarting tasks.\n");
-
-And
-
-pr_info("Restarting tasks: Done\n");
-
-here so the messages are more visually similar.
-
-Otherwise this change is fine by me.
-
-Thanks!
-
->         trace_suspend_resume(TPS("thaw_processes"), 0, false);
->  }
+> pci 0001:10:00.0: Primary bus is hard wired to 0
+> pci 0002:20:00.0: Primary bus is hard wired to 0
 >
-> --
-> 2.49.0
->
+> If I 'unapply' this patch, I don't see those warnings.
+
+I was pretty sure I had seen those messages before, but couldn't find
+them before. But now I have: on my rk3588-rock-5b.
+
+> It's possible that this patch only brought a(nother) problem to light,
+
+So it looks indeed to be this.
+
+Cheers,
+  Diederik
+
+>> Chukun Pan (1):
+>>   arm64: dts: rockchip: rk3568: Move PCIe3 MSI to use GIC ITS
+>>
+>>  arch/arm64/boot/dts/rockchip/rk3568.dtsi | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+
+
+--3e23f8a3f7dd23a047277bc59f050a2e77210dee6735ec02b945a8d601bd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaB4yngAKCRDXblvOeH7b
+btTxAP9xcOOm/DKb1fMqBqNcR6qUMiNnWv1MKSyU06BFXAH6LQEAocEqmFyRa4iT
+xDj91oyTLTpAr8k0/xJZDB//WWhFPgs=
+=V4q7
+-----END PGP SIGNATURE-----
+
+--3e23f8a3f7dd23a047277bc59f050a2e77210dee6735ec02b945a8d601bd--
 
