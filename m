@@ -1,287 +1,110 @@
-Return-Path: <linux-kernel+bounces-642192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A72AB1B99
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:32:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A253BAB1B9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A37189CF75
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD63178836
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D029023A57F;
-	Fri,  9 May 2025 17:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35706239E9E;
+	Fri,  9 May 2025 17:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aIE7lTsx"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HuZzubWh"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C25E2356D9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 17:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9B145038;
+	Fri,  9 May 2025 17:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746811944; cv=none; b=DGTGl4+s62g4JDS8ZicFUsJ6qgC8jWElhRa8FVAw+gfccnchkiv2NL7a+vSZIglaRiUZCAscHqSISmUtxln+jjV0hQGKylphJAksOjLufVDzWPl/8vS6H5RuRR60f9GIo2IRei+O+0aIATqbREJVvrxRowT917Uwyf/jhYYhXwQ=
+	t=1746811972; cv=none; b=QLAJSlLL6CPZEmkiZCRDaj9xvgME/wXt3NAEw6cYMnPOiWVE/h1hKzB3eZUnR0jswYPVTcgpsVyGhwfJllUruV3gfwgzbXiu55GBpJGBYIPdxQY5yIh7+shtspZyMyn4GH93WdUNzH/tQ2S1vc1sXBHCiiIewzSf6WM3UMoogFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746811944; c=relaxed/simple;
-	bh=5eHoUKhkqLQGmaUembnNdbV4+tA3vXC6gIgS8fRZvko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DvpHUi5fRZj5g8vZE6KUEfUqMAVWR+AOv/7iN8n2yk3NTpUeM1Yg81bn0iFTPlC/ZecDZZF3eCt/HAUw1n6seLB5wvKZmJzVwN1cxSJvsWJqHXXTAkmGm/mfmCtw8G3vKFhMil++weIzLGhZm47R1h1Wwi+fFmOotj3JJZuMKqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aIE7lTsx; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22fa47f295dso12185ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 10:32:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746811941; x=1747416741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eksCJPPKUnzZZMnCwrQDL/i184EE28xZ4rbD/Sa6J8s=;
-        b=aIE7lTsx8savGL5Q5mamEtqcix3P+sESbWkcCfn3Hr9VeAFOYnILPcxJbByibmcR0w
-         DW21DtUkWT4gPwldwyAkE3xMaKrjQeCfj5s3XrrmSh4OVZq61qRRZbiIOPK6Owj6Qqj2
-         fnV2txXGrFgBacwJ6Wg+2rjda69nYEKVmMgoLVkJIgYwitSmresw1Fm0cRZVvuLQVRQ7
-         NbTNvUKnM4tNcGB2zuodYknU2fcNHvTcUvL7jLTbS7mzLnAw1tKC+ATc3N7/4jmxRgwS
-         lmwPU2V7VGeSnofh2ComatdS5tg53lfsxdlUWEBSxlVbE1EGxiRLL9QOhuYOv9YHDrub
-         bhfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746811941; x=1747416741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eksCJPPKUnzZZMnCwrQDL/i184EE28xZ4rbD/Sa6J8s=;
-        b=tvWcqQVRRxkUicximeVRImPYma89ECqaMFLAyRL5VbXqzVNRJgQ2x4zIehz0ZMaMRe
-         Vd2I0i4OjEutNluS82iUc/MT7vg/6B8l3KJQpki+ZY1BUXaqtY/OhcLddIaYvHyjl35Z
-         CDetIAb6xP8pD2tmrq/ae+ZnIE+oGStBP4JV6XehK9iRejv9AeYrTXvml0z0S0ie/F9c
-         EyU/n1z+qknbApUqyQniQKZYO+5Oa9Khlvq5VobrUYkzsu3ZNTqq5OAfyKdstFNhGcql
-         Tn9c3y18j2kExBF+zPVL4q35C2muz32mx8xhj5Xe3bZY4jBQdXRNrpu7X+g9ViN7+ILy
-         JXgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV9uEPEl1QI3gTLfGGay4AaSDwKYqQzoNA/27kWFI49/3J1opFVbyCqxtBGVRVzlred6KXywBQPtffpuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj2Y4oqn8CPwfP+peTAk/TnzMcE0uI7Xp2jTcumqmoyfqOB0Mg
-	raRgqG8LPXCHRCg31tq8GGzupHUkyT4HlbEe8lOSjpQSaHMqsLwqPvzXhLxkv2aMUyZBuqO6y06
-	UINk8W7dPL1ULbovpvKoGxjFf66oq3XXEClIy
-X-Gm-Gg: ASbGncvsh1DLD00E+faJyVLdfgFvPqQ4waJDWH4v2o5SuU2v7p0frlBy84bY8vHoeC8
-	p58KoqEj8kRwXFHGLcIr8yOC0OsCB32VPS6zXdb5ZRxH8H2D8SKy8lDsttSriOY+A+xO8y7iIq9
-	W4YQNZozT2HT16nhXKQx7gO6y2vo6hXenXieCRJwv39N520WwXXidL
-X-Google-Smtp-Source: AGHT+IFj0TndIRh/lZTWlpbLPDcfoUAdbzU63ncHeXdLshLF4cedqgULo3qSXEtwteAKMmWMtY8DXC8psezDG8cJFVo=
-X-Received: by 2002:a17:903:4403:b0:216:21cb:2e14 with SMTP id
- d9443c01a7336-22fcfa67bbdmr2405535ad.21.1746811941138; Fri, 09 May 2025
- 10:32:21 -0700 (PDT)
+	s=arc-20240116; t=1746811972; c=relaxed/simple;
+	bh=BYghYgLKz845p/XJUOgV5+fweGgy0oL4oXzWYAfXIGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SbGeLLPk4IBESx4hWo6dcnDG+p+sXjgPRZR5FAhkX1jvj/QtBxL77a85RcD+hM+LCeKBcg1Yhb44sugpQoqXk7/HZJ2IjD0Hwui2tTTKbz8r3KReg//NiicknJp89hb/p3BmLR7JllCXz5oqUhtNUO1DO8pCWnZsYU3SvZPuE0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HuZzubWh; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1914640E01CF;
+	Fri,  9 May 2025 17:32:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QP-XzlRqnOfZ; Fri,  9 May 2025 17:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1746811962; bh=92FBgt9X64NNgwgndLEy21ZDonQ9gW2RlXVeTWQ7YCs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HuZzubWhBj+bfLZE+YRtp8iBNxxFiR2Eg98G0JtYkLbtOzksG7IyiPCeOqSbwJXJT
+	 E1zyb7RSbovxsFzasq4gZluAvNeGCMO5XVm77neg5V525PpR7XULkoHwH1NpjOqgW4
+	 MMA57bP5OEYUovC8rtePBK9wFDWHIQWRLP3zED04BGf1Furmj30FfQHettBLsXNKZt
+	 I7mxnaW+vXqcslYDEgfw0bt0sOniuPjgXKU/WHMmvzf9pmVYJ9ez3VuFask7KJSRB6
+	 HrnNTCCpQAqzSjxiqxTNHjTBt2McSg+ANrdOAPUXPep69mCtnWzKSc4D986dueIemK
+	 bZIwTJC+l0UQR23Ig1WuX6U29+fEr/+QQ9icYFxKQR9QEJsgHposZRJ2DPAd6fMjkh
+	 anaA9ATNvLJndcc3euJ/jIqLIHigYe2QSvXq5bfMA5djQKZc64B8+HnlPOhHkJ4x9g
+	 NAyiVEMeOCx/JMAcMwpX7PUxGgn8MIZQ8IRzSsbGD93vBpDVOUFxTJ1LqBIG01hwfy
+	 UjF3JmvoPEowqyt8A/4YVILdIpngBLMHD+MYO7Mh0PcoVRurByZS/Kd11zRiFkJVR7
+	 dDq4BAZ1nRE30tKAbFWQY7c0t62lV+EdfRwBDw/eojza9yHgwUrg3LxC4VjaaxlxeZ
+	 fQmznck9KvdSAV6aEz/PVdHA=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3288C40E0222;
+	Fri,  9 May 2025 17:32:31 +0000 (UTC)
+Date: Fri, 9 May 2025 19:32:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Bernhard Kaindl <bk@suse.de>,
+	Andi Kleen <ak@linux.intel.com>, Li Fei <fei1.li@intel.com>,
+	stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/mtrr: Check if fixed-range MTRR exists in
+ mtrr_save_fixed_ranges()
+Message-ID: <20250509173225.GDaB48KZvZSA9QLUaR@fat_crate.local>
+References: <20250509170633.3411169-2-jiaqing.zhao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509115126.63190-1-byungchul@sk.com> <20250509115126.63190-20-byungchul@sk.com>
-In-Reply-To: <20250509115126.63190-20-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 9 May 2025 10:32:08 -0700
-X-Gm-Features: ATxdqUGI6dEeIG5BsTRWq0lynejMc_q6rYi0sEc0AnPpkdnHxpWvN7YcbLR7W5c
-Message-ID: <CAHS8izMoS4wwmc363TFJU_XCtOX9vOv5ZQwD_k2oHx40D8hAPA@mail.gmail.com>
-Subject: Re: [RFC 19/19] mm, netmem: remove the page pool members in struct page
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, ast@kernel.org, daniel@iogearbox.net, 
-	davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch, 
-	edumazet@google.com, pabeni@redhat.com, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250509170633.3411169-2-jiaqing.zhao@linux.intel.com>
 
-On Fri, May 9, 2025 at 4:51=E2=80=AFAM Byungchul Park <byungchul@sk.com> wr=
-ote:
->
-> Now that all the users of the page pool members in struct page have been
-> gone, the members can be removed from struct page.  However, the space
-> in struct page needs to be kept using a place holder with the same size,
-> until struct netmem_desc has its own instance, not overlayed onto struct
-> page, to avoid conficting with other members within struct page.
->
-> Remove the page pool members in struct page and replace with a place
-> holder.  The place holder should be removed once struct netmem_desc has
-> its own instance.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> ---
->  include/linux/mm_types.h  | 13 ++-----------
->  include/net/netmem.h      | 35 +----------------------------------
->  include/net/netmem_type.h | 22 ++++++++++++++++++++++
->  3 files changed, 25 insertions(+), 45 deletions(-)
->  create mode 100644 include/net/netmem_type.h
->
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index e76bade9ebb12..69904a0855358 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -20,6 +20,7 @@
->  #include <linux/seqlock.h>
->  #include <linux/percpu_counter.h>
->  #include <linux/types.h>
-> +#include <net/netmem_type.h> /* for page pool */
->
->  #include <asm/mmu.h>
->
-> @@ -118,17 +119,7 @@ struct page {
->                          */
->                         unsigned long private;
->                 };
-> -               struct {        /* page_pool used by netstack */
-> -                       /**
-> -                        * @pp_magic: magic value to avoid recycling non
-> -                        * page_pool allocated pages.
-> -                        */
-> -                       unsigned long pp_magic;
-> -                       struct page_pool *pp;
-> -                       unsigned long _pp_mapping_pad;
-> -                       unsigned long dma_addr;
-> -                       atomic_long_t pp_ref_count;
-> -               };
-> +               struct __netmem_desc place_holder_1; /* for page pool */
->                 struct {        /* Tail pages of compound page */
->                         unsigned long compound_head;    /* Bit zero is se=
-t */
->                 };
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index 00064e766b889..c414de6c6ab0d 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -10,6 +10,7 @@
->
->  #include <linux/mm.h>
->  #include <net/net_debug.h>
-> +#include <net/netmem_type.h>
->
->  /* net_iov */
->
-> @@ -20,15 +21,6 @@ DECLARE_STATIC_KEY_FALSE(page_pool_mem_providers);
->   */
->  #define NET_IOV 0x01UL
->
-> -struct netmem_desc {
-> -       unsigned long __unused_padding;
-> -       unsigned long pp_magic;
-> -       struct page_pool *pp;
-> -       struct net_iov_area *owner;
-> -       unsigned long dma_addr;
-> -       atomic_long_t pp_ref_count;
-> -};
-> -
->  struct net_iov_area {
->         /* Array of net_iovs for this area. */
->         struct netmem_desc *niovs;
-> @@ -38,31 +30,6 @@ struct net_iov_area {
->         unsigned long base_virtual;
->  };
->
-> -/* These fields in struct page are used by the page_pool and net stack:
-> - *
-> - *        struct {
-> - *                unsigned long pp_magic;
-> - *                struct page_pool *pp;
-> - *                unsigned long _pp_mapping_pad;
-> - *                unsigned long dma_addr;
-> - *                atomic_long_t pp_ref_count;
-> - *        };
-> - *
-> - * We mirror the page_pool fields here so the page_pool can access these=
- fields
-> - * without worrying whether the underlying fields belong to a page or ne=
-t_iov.
-> - *
-> - * The non-net stack fields of struct page are private to the mm stack a=
-nd must
-> - * never be mirrored to net_iov.
-> - */
-> -#define NET_IOV_ASSERT_OFFSET(pg, iov)             \
-> -       static_assert(offsetof(struct page, pg) =3D=3D \
-> -                     offsetof(struct netmem_desc, iov))
-> -NET_IOV_ASSERT_OFFSET(pp_magic, pp_magic);
-> -NET_IOV_ASSERT_OFFSET(pp, pp);
-> -NET_IOV_ASSERT_OFFSET(dma_addr, dma_addr);
-> -NET_IOV_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
-> -#undef NET_IOV_ASSERT_OFFSET
-> -
->  static inline struct net_iov_area *net_iov_owner(const struct netmem_des=
-c *niov)
->  {
->         return niov->owner;
-> diff --git a/include/net/netmem_type.h b/include/net/netmem_type.h
-> new file mode 100644
-> index 0000000000000..6a3ac8e908515
-> --- /dev/null
-> +++ b/include/net/netmem_type.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + *     Author: Byungchul Park <max.byungchul.park@gmail.com>
-> + */
-> +
-> +#ifndef _NET_NETMEM_TYPE_H
-> +#define _NET_NETMEM_TYPE_H
-> +
-> +#include <linux/stddef.h>
-> +
-> +struct netmem_desc {
-> +       unsigned long __unused_padding;
-> +       struct_group_tagged(__netmem_desc, actual_data,
-> +               unsigned long pp_magic;
-> +               struct page_pool *pp;
-> +               struct net_iov_area *owner;
-> +               unsigned long dma_addr;
-> +               atomic_long_t pp_ref_count;
-> +       );
-> +};
-> +
-> +#endif /* _NET_NETMEM_TYPE_H */
-> --
-> 2.17.1
->
+On Fri, May 09, 2025 at 05:06:33PM +0000, Jiaqing Zhao wrote:
+> When suspending, save_processor_state() calls mtrr_save_fixed_ranges()
+> to save fixed-range MTRRs. On platforms without fixed-range MTRRs,
+> accessing these MSRs will trigger unchecked MSR access error. Make
+> sure fixed-range MTRRs are supported before access to prevent such
+> error.
+> 
+> Since mtrr_state.have_fixed is only set when MTRRs are present and
+> enabled, checking the CPU feature flag in mtrr_save_fixed_ranges()
+> is unnecessary.
+> 
+> Fixes: 3ebad5905609 ("[PATCH] x86: Save and restore the fixed-range MTRRs of the BSP when suspending")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
 
-Currently the only restriction on net_iov is that some of its fields
-need to be cache aligned with some of the fields of struct page, but
-there is no restriction on new fields added to net_iov. We already
-have fields in net_iov that have nothing to do with struct page and
-shouldn't be part of struct page. Like net_iov_area *owner. I don't
-think net_iov_area should be part of struct page and I don't think we
-should add restrictions of net_iov.
+Next question: this is CC:stable, meaning it'll go to Linus now.
 
-What I would suggest here is, roughly:
+What exactly is it fixing?
 
-1. Add a new struct:
+Because the patch in Fixes: is from 2007. :-\
 
-               struct netmem_desc {
-                       unsigned long pp_magic;
-                       struct page_pool *pp;
-                       unsigned long _pp_mapping_pad;
-                       unsigned long dma_addr;
-                       atomic_long_t pp_ref_count;
-               };
+-- 
+Regards/Gruss,
+    Boris.
 
-2. Then update struct page to include this entry instead of the definitions=
-:
-
-struct page {
-...
-               struct netmem_desc place_holder_1; /* for page pool */
-...
-}
-
-3. And update struct net_iov to also include netmem_desc:
-
-struct net_iov {
-    struct netmem_desc desc;
-    struct net_iov_area *owner;
-    /* More net_iov specific fields in the future */
-};
-
-And drop patch 1 which does a rename.
-
-Essentially netmem_desc can be an encapsulation of the shared fields
-between struct page and struct net_iov.
-
---=20
-Thanks,
-Mina
+https://people.kernel.org/tglx/notes-about-netiquette
 
