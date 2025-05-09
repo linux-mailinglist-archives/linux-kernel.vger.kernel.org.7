@@ -1,60 +1,49 @@
-Return-Path: <linux-kernel+bounces-640761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13236AB08D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:21:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86154AB08CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6ABE3B02EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24C116FA48
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122D0221299;
-	Fri,  9 May 2025 03:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CD3239E63;
+	Fri,  9 May 2025 03:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AVIMuKl0"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5699864A8F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyi099k6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA28164A8F;
+	Fri,  9 May 2025 03:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746760888; cv=none; b=t0oTwlDxmad69cWKg4143fG+5ZO4XSP63DdcoVgGkmTmKGBPJepvJHxdOQX+3FkZeGqHt0uQt5oa3eKULQSHPD3KJpyyPJWc5WS9wYEILBDnqpxo23nhMtGWIEbrL6rBSSt5vKd5+lpwwmFJL7lMiw9RTg81KystJWTKv5E/9yk=
+	t=1746760805; cv=none; b=b+yIc02INh6krbqeVEp7OeQGrj7KJYWk1VMndSQUrVLk+hcOHIc9YaftyYKXzTkmG2FFFTCyqvBjZcXgUPsfUyK3c0wRRl2G/AW8kAJ448NhiuYFrYbyKh/L621Qg9+WRXEwDJZsPpFcM4qUtmepWqkgpDVZWgg1sf7c0Y+uzuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746760888; c=relaxed/simple;
-	bh=TAFGggvGD8kUsAWjA8GSgPLFofW+oxqL5S7UnszTOrs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iIw2w3zGfzD1QWZgzG3TsE8ZwcZjAcwOLg3nS5oPpvYUO/6HcyYVstADZFeIJMRCxhb1vVkTNh2W2+WeC2DYjE96X8iOEQZzDxVOeD6NEt7pYKfIbRBua91cV3y2bWCuW3miNkZ23+bMi2mBWFxu+/OX2oEW3Z3dyG81Y0mWsb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AVIMuKl0; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ph
-	KIn8xb8XbVXQGCQjiCBCqZi+z6O78hdDfrHAQJV6E=; b=AVIMuKl00lo1q/Lms4
-	6Y73Tu1IXKmKAiaeoBIWQYYQjDsD4fYLa3zisZL3qq7+UrslFaoJMIEMNyrJTZZw
-	M++WvXioo000IZ4JMpExwicWJXKQOwUydXFU1qgzBjXMu/YiKVkYLJ1Wab8N6Hn7
-	njNgcuCvGCFM6Wb+JVRfq9zmI=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAXdfCKdB1o2Hx1AA--.7654S4;
-	Fri, 09 May 2025 11:20:45 +0800 (CST)
-From: oushixiong1025@163.com
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sean Paul <sean@poorly.run>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v4 3/3] drm/udl: use DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS
-Date: Fri,  9 May 2025 11:20:40 +0800
-Message-Id: <20250509032040.185730-3-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250509032040.185730-1-oushixiong1025@163.com>
-References: <20250509032040.185730-1-oushixiong1025@163.com>
+	s=arc-20240116; t=1746760805; c=relaxed/simple;
+	bh=NY9f4q2kixUeTEknFQvFoV+AD+81IXXwblbM2CctxyA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=PJaLjAN4k3++h89E+Y41DS4uiX8PGQpjddwpEiKQSk2cKt6/G8WjHBwfrpRmCCIh0mdCncnJ5qtLTrcNdQmcI+o/yR+iPhZPilu9aZKGBWe0bvjI0g6wo7Kl3s/q6TCNAIHCzZnNfRcHPpExjMhNK3V0j/riIe7Jo8JED2XtSvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyi099k6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C55C4CEE7;
+	Fri,  9 May 2025 03:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746760804;
+	bh=NY9f4q2kixUeTEknFQvFoV+AD+81IXXwblbM2CctxyA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=lyi099k6fyh1ahKM/tIi2w1iD/oHFITWbewaXU85RAhs+2ImiRhUMBLcf1bBVf0Cg
+	 IUDKwZdC220PhgWaq7heBSTYpoTXLtChkVBQDVdT3N0UMiRsFfifWyASo5x1ET2GWH
+	 5TJUM319B4kyqdQ7xFGWDdlATCmBwMy2FnH7kZ02beNN9qepzcvadR1eI0h5jqExlj
+	 gvS8iSfn1Fo06yiztqXMR531F175M5zkI5XoaE7PyjFTJvdoElQZr4P4t6Me+0ZXQY
+	 OqVZk/Y2E8RLNk+gDJ99htcy2OYiD4iNe7FQ2Xg2fpwyiGAKmsEl6yQH/2GLY4K+Ov
+	 Z0BlxGOkIyVwg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BFF380AA7D;
+	Fri,  9 May 2025 03:20:44 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +51,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXdfCKdB1o2Hx1AA--.7654S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWDtrWrArykJF13Xw4fZrb_yoW3Zwb_CF
-	4ftrsrWFZ8uw1Duw1xAFW5Ary29a4ruF48WF47ta4Syw4xJw1j9ry0vrWvv3WUKF45CF9x
-	J397XrsxAr4kCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OAw3UUUUU==
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwNID2gdblKwZQAAs7
+Subject: Re: [PATCH v7 net-next 00/14] Add more features for ENETC v4 - round 2
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174676084300.3115683.12773669022927548558.git-patchwork-notify@kernel.org>
+Date: Fri, 09 May 2025 03:20:43 +0000
+References: <20250506080735.3444381-1-wei.fang@nxp.com>
+In-Reply-To: <20250506080735.3444381-1-wei.fang@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, christophe.leroy@csgroup.eu,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ timur@kernel.org
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+Hello:
 
-Import dmabuf without mapping its sg_table to avoid issues likes:
-   udl 2-1.4:1.0: swiotlb buffer is full (sz: 2097152 bytes), total 65536 (slots), used 1 (slots)
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/gpu/drm/udl/udl_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue,  6 May 2025 16:07:21 +0800 you wrote:
+> This patch set adds the following features.
+> 1. Compared with ENETC v1, the formats of tables and command BD of ENETC
+> v4 have changed significantly, and the two are not compatible. Therefore,
+> in order to support the NETC Table Management Protocol (NTMP) v2.0, we
+> introduced the netc-lib driver and added support for MAC address filter
+> table and RSS table.
+> 2. Add MAC filter and VLAN filter support for i.MX95 ENETC PF.
+> 3. Add RSS support for i.MX95 ENETC PF.
+> 4. Add loopback support for i.MX95 ENETC PF.
+> 
+> [...]
 
-diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-index 1922988625eb..9c385771b483 100644
---- a/drivers/gpu/drm/udl/udl_drv.c
-+++ b/drivers/gpu/drm/udl/udl_drv.c
-@@ -57,7 +57,7 @@ static const struct drm_driver driver = {
- 
- 	/* GEM hooks */
- 	.fops = &udl_driver_fops,
--	DRM_GEM_SHMEM_DRIVER_OPS,
-+	DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT,
- 	DRM_FBDEV_SHMEM_DRIVER_OPS,
- 
- 	.name = DRIVER_NAME,
+Here is the summary with links:
+  - [v7,net-next,01/14] net: enetc: add initial netc-lib driver to support NTMP
+    https://git.kernel.org/netdev/net-next/c/4701073c3deb
+  - [v7,net-next,02/14] net: enetc: add command BD ring support for i.MX95 ENETC
+    https://git.kernel.org/netdev/net-next/c/e3f4a0a8ddb4
+  - [v7,net-next,03/14] net: enetc: move generic MAC filtering interfaces to enetc-core
+    https://git.kernel.org/netdev/net-next/c/401dbdd1c23c
+  - [v7,net-next,04/14] net: enetc: add MAC filtering for i.MX95 ENETC PF
+    https://git.kernel.org/netdev/net-next/c/6c5bafba347b
+  - [v7,net-next,05/14] net: enetc: add debugfs interface to dump MAC filter
+    https://git.kernel.org/netdev/net-next/c/df6cb0958089
+  - [v7,net-next,06/14] net: enetc: add set/get_rss_table() hooks to enetc_si_ops
+    https://git.kernel.org/netdev/net-next/c/66b3fb001156
+  - [v7,net-next,07/14] net: enetc: make enetc_set_rss_key() reusable
+    https://git.kernel.org/netdev/net-next/c/7e1af4d6e4b4
+  - [v7,net-next,08/14] net: enetc: add RSS support for i.MX95 ENETC PF
+    https://git.kernel.org/netdev/net-next/c/2627e9873d69
+  - [v7,net-next,09/14] net: enetc: change enetc_set_rss() to void type
+    https://git.kernel.org/netdev/net-next/c/42fb12220ade
+  - [v7,net-next,10/14] net: enetc: enable RSS feature by default
+    https://git.kernel.org/netdev/net-next/c/2219281242fc
+  - [v7,net-next,11/14] net: enetc: extract enetc_refresh_vlan_ht_filter()
+    https://git.kernel.org/netdev/net-next/c/014e33e2d8e9
+  - [v7,net-next,12/14] net: enetc: move generic VLAN hash filter functions to enetc_pf_common.c
+    https://git.kernel.org/netdev/net-next/c/5d7f6f6836a1
+  - [v7,net-next,13/14] net: enetc: add VLAN filtering support for i.MX95 ENETC PF
+    https://git.kernel.org/netdev/net-next/c/f7d30ef6c1f7
+  - [v7,net-next,14/14] net: enetc: add loopback support for i.MX95 ENETC PF
+    https://git.kernel.org/netdev/net-next/c/932ce98041ff
+
+You are awesome, thank you!
 -- 
-2.17.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
