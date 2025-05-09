@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-641546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A98AB132D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FDCAB1331
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFF73A4E93
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:19:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC44506D8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DB12900A1;
-	Fri,  9 May 2025 12:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB521290BB8;
+	Fri,  9 May 2025 12:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b="EbQobLJG"
-Received: from eggs.gnu.org (eggs.gnu.org [209.51.188.92])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ruil6K+b"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C520722D9F8;
-	Fri,  9 May 2025 12:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.51.188.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFA92101BD;
+	Fri,  9 May 2025 12:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746793196; cv=none; b=phllemGobOfF5O3H/W0PYN1jQ7ky6zqaMd2YPsv2+GwmOC3ooiFhH7vk4xhyN+yXISO/CEPKNCz5aywudPaBQPWf9xjIan1TMvWySJx/c4Wt7o/vSP2E2VP3/33o2SfXYWb8m1HTPHlBpK2DKGz1+FFtwm67mzKNxZUCTd3qHS0=
+	t=1746793238; cv=none; b=cKBFKs10NPwqkDI7VLzZIVfnM7msenskOxvi/56oqY4m5QotjZwdCJWKi65yevBHdJ6JhwzxMZBeVvWBUp1UYbEi3Z/ZnAiD/OApk7/irXdLZIGQCptLD3ZBnYLeg+MdXg9i+DGWItQI/sqCs8cFrri4WBhj+uTKcQzf8XULd/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746793196; c=relaxed/simple;
-	bh=+91OYGRy69mtMICQt/vUfYhND/ZGYPeC1wbH0m+Gxvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rxl0MmPqYpLo79rWcwrn7ZdgOEa5W2uSXETvo8RDK7S0bnfg+x4Qb9XHPTN1qZ3jAutLoRQPj+tG6BKBEENZzpP92DBJa8kS2onj++TYqOpMWrHpYrRTL0WmIHkzAHmrKyNRhAwJy+bIIoLf+3dGkkS8YEEUB8YVokkIJkkeNK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org; spf=pass smtp.mailfrom=gnu.org; dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b=EbQobLJG; arc=none smtp.client-ip=209.51.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnu.org
-Received: from fencepost.gnu.org ([2001:470:142:3::e])
-	by eggs.gnu.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.90_1)
-	(envelope-from <othacehe@gnu.org>)
-	id 1uDMhe-0000f3-W6; Fri, 09 May 2025 08:19:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gnu.org;
-	s=fencepost-gnu-org; h=MIME-Version:Date:Subject:To:From:in-reply-to:
-	references; bh=H139cGEHa3IIp3U0gVnQ9YB0rP5tNLxOUIGuATG7bCo=; b=EbQobLJGIs+IHO
-	G2kjXUJ1gp6egYsaaYANdAMDHmYwk5rqwmsrz6W+sN8K1syABCEsCGE2XK/f0VTHBOTQJafkWf9FI
-	HaRjbkxrA59/SXqGU0CSVo9HWAU5H37MMiXMskCdzZzSWdqb+93uLDV1DjLQ2C9NTHywj4bT+8QTH
-	+VPOts0YlQxLroIdE4GXh3dVTuvAkurABQPx/5gAshgOT4pe5UL8RO/UsaqHtln1YfOa9huRRKSJM
-	w6iKNXEKcDBQJkeCK0CXJ6xPm6nMwjvDPKXmN5aQxu1DBlNjmn3TCkNpxJH9Ro/KUJVeQoxMJPtwB
-	PIOlso5CNcqCFbT08e8A==;
-From: Mathieu Othacehe <othacehe@gnu.org>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	anton.reding@landisgyr.com,
-	Mathieu Othacehe <othacehe@gnu.org>
-Subject: [PATCH net v2] net: cadence: macb: Fix a possible deadlock in macb_halt_tx.
-Date: Fri,  9 May 2025 14:19:35 +0200
-Message-ID: <20250509121935.16282-1-othacehe@gnu.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746793238; c=relaxed/simple;
+	bh=V5ZkZLQRuhW6tfA4j7ERqOdUxZSQCwk50GAfm/MYMXc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RpxhZ1o5AUzR0M1M8dlgQqEPrjLn6sfo2DM4PksKZHxtJ/Q25tBVWIwZf8Rky16soc0kmFGb6JZqoVZcAgaC7UEiU5RO6d8l1rrFIbbWBoMZCltn4w3SY7SJdyjbKezVLwAl7LDpuBsEp2ohy33tkNDRL7T9xg4R6Q1COqSA50s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ruil6K+b; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 549CKOow2172425
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 May 2025 07:20:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746793224;
+	bh=+mQhNQN15AWPoSxZ/UW96naO8N0jhNAwPL8W34KjnmI=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Ruil6K+bU9qcMNno0uaEo96wcmGTT/kQZTJQB3CauvilAMSPMBWBfd3CunIaQfcbk
+	 3N7VVWfaPnJR0VI+qr0SR7PG5xlljJQXMbgC0SLRC8wExIaduHVPFDjEvXB+AEZmWE
+	 X3zAmt2k0rJXPznyuO4VMmRf//mI4mzo058Aiums=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 549CKOZ9099455
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 9 May 2025 07:20:24 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
+ May 2025 07:20:23 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 9 May 2025 07:20:23 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 549CKNDF014862;
+	Fri, 9 May 2025 07:20:23 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Daniel Schultz <d.schultz@phytec.de>
+CC: Nishanth Menon <nm@ti.com>, <upstream@lists.phytec.de>
+Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-am62a: Enable CPU freq throttling on thermal alert
+Date: Fri, 9 May 2025 07:20:05 -0500
+Message-ID: <174679319970.1568651.6289988251494879815.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250506114134.3514899-1-d.schultz@phytec.de>
+References: <20250506114134.3514899-1-d.schultz@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-There is a situation where after THALT is set high, TGO stays high as
-well. Because jiffies are never updated, as we are in a context with
-interrupts disabled, we never exit that loop and have a deadlock.
+Hi Daniel Schultz,
 
-That deadlock was noticed on a sama5d4 device that stayed locked for days.
+On Tue, 06 May 2025 04:41:33 -0700, Daniel Schultz wrote:
+> Enable throttling down the CPU frequency when an alert temperature
+> threshold (lower than the critical threshold) is reached.
+> 
+> 
 
-Use retries instead of jiffies so that the timeout really works and we do
-not have a deadlock anymore.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Fixes: e86cd53afc590 ("net/macb: better manage tx errors")
+[1/2] arm64: dts: ti: k3-am62a: Enable CPU freq throttling on thermal alert
+      commit: 8785b579d431b2a76a64f105328434d3c543debf
+[2/2] arm64: dts: ti: k3-am62x-phyboard-lyra-gpio-fan: Update cooling maps
+      commit: 625e540cee2cfa0e514e0c8fb929fe2893e6d3bf
 
-Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
----
-v2: Use read_poll_timeout_atomic and add a Fixes tag.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
- drivers/net/ethernet/cadence/macb_main.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 1fe8ec37491b1..e1e8bd2ec155b 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -997,22 +997,15 @@ static void macb_update_stats(struct macb *bp)
- 
- static int macb_halt_tx(struct macb *bp)
- {
--	unsigned long	halt_time, timeout;
--	u32		status;
-+	u32 status;
- 
- 	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(THALT));
- 
--	timeout = jiffies + usecs_to_jiffies(MACB_HALT_TIMEOUT);
--	do {
--		halt_time = jiffies;
--		status = macb_readl(bp, TSR);
--		if (!(status & MACB_BIT(TGO)))
--			return 0;
--
--		udelay(250);
--	} while (time_before(halt_time, timeout));
--
--	return -ETIMEDOUT;
-+	/* Poll TSR until TGO is cleared or timeout. */
-+	return read_poll_timeout_atomic(macb_readl, status,
-+					!(status & MACB_BIT(TGO)),
-+					250, MACB_HALT_TIMEOUT, false,
-+					bp, TSR);
- }
- 
- static void macb_tx_unmap(struct macb *bp, struct macb_tx_skb *tx_skb, int budget)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-2.49.0
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
 
