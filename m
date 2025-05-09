@@ -1,215 +1,98 @@
-Return-Path: <linux-kernel+bounces-642325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A551DAB1D62
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:37:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0263AB1D6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1B607B42BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEC0C4A3B42
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D4B25DB17;
-	Fri,  9 May 2025 19:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E417025DCED;
+	Fri,  9 May 2025 19:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sj1SJoyC"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b="R9G0RMKX"
+Received: from h5.fbrelay.privateemail.com (h5.fbrelay.privateemail.com [162.0.218.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7663025D1E2
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 19:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE051E1DE8
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 19:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746819452; cv=none; b=eVbpKRcUiSySxNM/fC64nj1vqK9Uz2pTYDANqkKQeeF6dhnzzkwjaQgsu7SkW8Mkpn53QuyJGsDAyPpmvXDHXkTVW8xX6m7yCgzey49upFFkdHVyl7ltBgIe7NITIlqUUmlmgYLJS0n/SmS5RuirTsjXyO7p96GZRPnv1hW+RRI=
+	t=1746819850; cv=none; b=mfLrMD3ZdqZggwYQmtjG9WeFoEmXpeOpIePlDFpTkhaEa0W6/JO3AqP3yVirEev55IEd7lyLRcbTCkFdMjgkUdqFJcqXH/ZhBA5n7Q9tMx/H8QfvXoSxolrhOgbQC37B26KEJZhzrzknkxuaQjvuN6sJGlh1+jq4Y26XtSSeKj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746819452; c=relaxed/simple;
-	bh=83FRY+Vnw9dJkqYlgDfGaSE9Kj39v0Para6kPePwCfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+GMwqscPxGf1D8CZUMaZfwtzhx0ot3VNotNu/pfbtTkGRHvpoPH4EYlnH9MLHieFSlAN28v3P9y2pw8/81d6yBxQYE1XVVKBnGjxayAT3bqskVVT4r8ErDZzKOmJqj18lTIBa3dEStR6QGEPuoOf25yBISgFFhRB//t0Wb7oOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sj1SJoyC; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a1d8c09683so1136596f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 12:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746819449; x=1747424249; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3oAZerdoqNvoXq669EYro8m/ZBQ7UghYajG9A/pxU8g=;
-        b=sj1SJoyCn4CW3AOEPW9sZxaCUUwASKRm1y7R1m08uNBzkIhMCnTMdFgYZ58bB0JybV
-         QdDbZKzkb3V5QSVgvy7qaDs033977bnqzR/GGNBis8Y8VyGrpT93zwpW+sNSVJSop/hh
-         J9bY/XWd9Y7zY3V1VN6yOnBy2RASdanigNIkLM50YZV4aEa94cw5kZXG3jHxdDunjb9U
-         eU9/vo96UP0QLlHcaiqBF5e/ZmHxs4yrILK7U6oc/VYBcG5OpkmUfqPJdDGqBcW8qr3e
-         njX0//EBDYLVpcYAe6EfWZpkYCKM1CToLD2nGS1bhpaQ9nJj1RqhONB/HOGslLOD8NGH
-         E3Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746819449; x=1747424249;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3oAZerdoqNvoXq669EYro8m/ZBQ7UghYajG9A/pxU8g=;
-        b=vXl9FudH5+ArPwKX2pKFugV/ZdPpeD3eUTxSv53HiqeTQTeRJlxtS9qkXonyHC+1CM
-         jyI/UYIPti5UnLfqYamUgvza4wE11W5ccPK31aZR2Qx5AyDbW3zHjYr/ohHZ7v6L9Dr1
-         htj3iHMRBJ+JU6RMulz3BEiSSekVJWv/aOGqPMD3b/PjlT20cjTVR8Y64tPbZiIc41L9
-         WNI5pnH0lydnpuMPYqNWP/e8OhLLrE5qePi/oDIjX7uKGoU76loa2UWXEdigHNQk99U+
-         YGQ8JiVg+694+14SzUSMjZO+G8ML2PLF8c5wwkTaXnIQfKCPfL73k+4qE6s2Fv8qwh9K
-         T+SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOwCn6L+HDsV+f8nPTOE1KRVuvcBTwxH2XDf1ByrpUPTB46lHHxhjYLqojqkwwsMObm75+DQwEBiy5IAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxho2K7Qk1NG9l28BM/554tB+MUDbHpRUYX2qaTCBeFQAheeisl
-	zwp/vf0Ov6gdvMT8AOpDhNZh2Paef2S/iu2S6h2T3x2E9ETqiM8vNnWvhhG73Q==
-X-Gm-Gg: ASbGncv61w0UtVnjaoiiS3hGq7KM3PFG8yrIcruvCJPIihTQ+r2zEmIy2a38D1feLi5
-	wd6Qtv1LH0Z4WIrUz9vNZy290yyfOoCIOW0d5p8Tt1wW31v6W4Su/qkWAj8faa8VnoD5H2+GVPN
-	YYVhKxCj1M9A3j8q6UvxdVA1SlVI4ydsxgfxvx36vn0pIs4ZLXG5YkYi9FgYqvfH1+w4aENXU6J
-	ydLpVPCFhWZNTFMGrnbPy5oycndEtId3A0zdZ3D7OxM8JYcq3n+ViRddXoW7Cbee5yzWLNDAVuT
-	06ja1DMO1tHSqgOQ6g8W7H8GRW+LRbqSbm8qT0geTeysXBxvkeloeTChcvAdW3OSu525Eaj7/99
-	dC1Ecec4Zz4eUCgpJK2C4BY+rqRdqfvLS9rh4sZd8E1rM
-X-Google-Smtp-Source: AGHT+IHZrI/GvToEb7dCPGeWvlRmWso5d9JAzN2/1ym+EDk2TzhgDNhcO92+4YHwNzODFUBXeeEH/A==
-X-Received: by 2002:a05:6000:18a9:b0:39e:cbca:7156 with SMTP id ffacd0b85a97d-3a1f6422625mr4225502f8f.1.1746819448739;
-        Fri, 09 May 2025 12:37:28 -0700 (PDT)
-Received: from thinkpad (cust-east-par-46-193-69-61.cust.wifirst.net. [46.193.69.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f33b5sm4223527f8f.54.2025.05.09.12.37.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 12:37:28 -0700 (PDT)
-Date: Sat, 10 May 2025 01:07:27 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Aradhya Bhatia <a-bhatia1@ti.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Junhao Xie <bigfoot@classfun.cn>, Kever Yang <kever.yang@rock-chips.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: PCI: rcar-gen4-pci-host: Document
- optional aux clock
-Message-ID: <2ny7jhcp2g5ixo75donutncxnjdawzev3mw7cytvhbk6szl3ue@vixax5lwpycw>
-References: <20250406144822.21784-1-marek.vasut+renesas@mailbox.org>
- <20250406144822.21784-2-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1746819850; c=relaxed/simple;
+	bh=KLLVOUeBCibDY4KhYwgwtIdy91vQuI+qQGgCU3OAQLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmgbtJ0GNfxRrLX5Zked9uzgcOEY80ZdyuqpTnNm6Sj8xRCIUEHjkybVdMf78/3IGWFhvOBX3UMde2Doa8BQPxxTVfQEjNRJKrIOSkMGrQaWp53qfvDpdJRMF9bR0+tFwj5/QR+iutHDfk/qRbMiqkZDptcD7O1SQv0LsqfvyUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org; spf=pass smtp.mailfrom=kenogo.org; dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b=R9G0RMKX; arc=none smtp.client-ip=162.0.218.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kenogo.org
+Received: from MTA-05-3.privateemail.com (mta-05.privateemail.com [198.54.127.60])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by h5.fbrelay.privateemail.com (Postfix) with ESMTPSA id 4ZvK9f0K6Qz2xMx
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 19:40:54 +0000 (UTC)
+Received: from mta-05.privateemail.com (localhost [127.0.0.1])
+	by mta-05.privateemail.com (Postfix) with ESMTP id 4ZvK9T5BSDz3hhVp;
+	Fri,  9 May 2025 15:40:45 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=kenogo.org; s=default;
+	t=1746819645; bh=KLLVOUeBCibDY4KhYwgwtIdy91vQuI+qQGgCU3OAQLU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R9G0RMKX+2S8wQK1kSuKHOTc7fdqVFIWbWWmm8VxQp5PpS7R7kjk83Fzng50oFtVO
+	 Cr5olttVRJxKuIEVkS3Cdfw5azpYIBQvNrGWa3m/q/hBAUzMlcHIIVhldM74JKrVZT
+	 w16eI0Douk9siMHCkCEFALfxTqJmpSOPc4AxiTknHQ2pieuH0mk6D6BxErmXJKUpFm
+	 LCeyFInJ8PhOSbtchiRSNeyYqNSPWvoAneS/5oU5AL52FQyrfEqHjkAoBERWBpOIuo
+	 hv2yNV2Qm6beV5dPMO7HEY2MmvzO4G0ZCPsa8InCJ0DcNatNHhD2JHAO87tLuRr63z
+	 6JWVDfAym3ZKw==
+Received: from [IPV6:2a01:599:80c:8378:216:3eff:fe8a:ca6a] (tmo-117-72.customers.d1-online.com [80.187.117.72])
+	by mta-05.privateemail.com (Postfix) with ESMTPA;
+	Fri,  9 May 2025 15:40:34 -0400 (EDT)
+Message-ID: <e598eaa0-3b3b-4c16-9d7c-ff35dd150baa@kenogo.org>
+Date: Fri, 9 May 2025 21:40:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250406144822.21784-2-marek.vasut+renesas@mailbox.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: ntp: Adjustment of time_maxerror with 500ppm instead of 15ppm
+To: John Stultz <jstultz@google.com>
+Cc: tglx@linutronix.de, zippel@linux-m68k.org, mingo@elte.hu,
+ linux-kernel@vger.kernel.org, Miroslav Lichvar <mlichvar@redhat.com>
+References: <4a6f1494-c6fe-4f66-a376-b6389538ef9f@kenogo.org>
+ <CANDhNCpQLN0j5KBp9OB4LB-YJGCCexFG+v5Zax2wwBn-3Tv3Tw@mail.gmail.com>
+Content-Language: en-US
+From: Keno Goertz <contact@kenogo.org>
+In-Reply-To: <CANDhNCpQLN0j5KBp9OB4LB-YJGCCexFG+v5Zax2wwBn-3Tv3Tw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Sun, Apr 06, 2025 at 04:45:21PM +0200, Marek Vasut wrote:
-> Document 'aux' clock which are used to supply the PCIe bus. This
-> is useful in case of a hardware setup, where the PCIe controller
-> input clock and the PCIe bus clock are supplied from the same
-> clock synthesiser, but from different differential clock outputs:
+Hey!
 
-How different is this clock from the 'reference clock'? I'm not sure what you
-mean by 'PCIe bus clock' here. AFAIK, endpoint only takes the reference clock
-and the binding already has 'ref' clock for that purpose. So I don't understand
-how this new clock is connected to the endpoint device.
+On 5/8/25 21:45, John Stultz wrote:
+> Have you tried a patch introducing PHI (likely setting it to 15000 as
+> MAXFREQ is represented as nsec/sec) and using it instead of MAXFREQ in
+> the calculation? Do you see any behavioral change in fixing it, or is
+> this just a reporting  correctness issue?
 
-- Mani
+I haven't tried a patch, but I couldn't find any place in the kernel 
+itself that uses time_maxerror.  So I wouldn't expect behavioral changes 
+within the kernel.  Of course, user space applications may depend on the 
+values returned by the adjtimex system call.
 
-> 
->  ____________                    _____________
-> | R-Car PCIe |                  | PCIe device |
-> |            |                  |             |
-> |    PCIe RX<|==================|>PCIe TX     |
-> |    PCIe TX<|==================|>PCIe RX     |
-> |            |                  |             |
-> |   PCIe CLK<|======..  ..======|>PCIe CLK    |
-> '------------'      ||  ||      '-------------'
->                     ||  ||
->  ____________       ||  ||
-> |  9FGV0441  |      ||  ||
-> |            |      ||  ||
-> |   CLK DIF0<|======''  ||
-> |   CLK DIF1<|==========''
-> |   CLK DIF2<|
-> |   CLK DIF3<|
-> '------------'
-> 
-> The clock are named 'aux' because those are one of the clock listed in
-> Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml which
-> fit closest to the PCIe bus clock. According to that binding document,
-> the 'aux' clock describe clock which supply the PMC domain, which is
-> likely PCIe Mezzanine Card domain.
-> 
-> Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> NOTE: Shall we patch Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
->       instead and add 'bus' clock outright ?
-> ---
-> Cc: "Krzysztof Wilczyński" <kw@linux.com>
-> Cc: "Rafał Miłecki" <rafal@milecki.pl>
-> Cc: Aradhya Bhatia <a-bhatia1@ti.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Junhao Xie <bigfoot@classfun.cn>
-> Cc: Kever Yang <kever.yang@rock-chips.com>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Add TB from Niklas
->     - Document minItems in clock-names
-> ---
->  .../devicetree/bindings/pci/rcar-gen4-pci-host.yaml      | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
-> index bb3f843c59d91..528b916fdb99b 100644
-> --- a/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
-> +++ b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
-> @@ -46,12 +46,15 @@ properties:
->        - const: app
->  
->    clocks:
-> -    maxItems: 2
-> +    minItems: 2
-> +    maxItems: 3
->  
->    clock-names:
-> +    minItems: 2
->      items:
->        - const: core
->        - const: ref
-> +      - const: aux
->  
->    power-domains:
->      maxItems: 1
-> @@ -105,8 +108,8 @@ examples:
->                           <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
->                           <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
->              interrupt-names = "msi", "dma", "sft_ce", "app";
-> -            clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
-> -            clock-names = "core", "ref";
-> +            clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>, <&pcie0_clkgen>;
-> +            clock-names = "core", "ref", "aux";
->              power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
->              resets = <&cpg 624>;
->              reset-names = "pwr";
-> -- 
-> 2.47.2
-> 
+In fact, I only noticed this behavior in the first place because I am 
+writing a distributed time-stamping program and the maxerror reported by 
+libc's ntp_gettime (which calls adjtimex on Linux) just felt way too large.
 
--- 
-மணிவண்ணன் சதாசிவம்
+I'm curious to hear what Miroslav might know about other user space 
+applications that take an interest in this value.
+
+Best regards
+Keno
 
