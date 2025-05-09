@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-642271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3382EAB1C81
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:41:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9F8AB1C90
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9588B1C28599
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5E5B23EF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADCB23D29D;
-	Fri,  9 May 2025 18:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968CB2417F9;
+	Fri,  9 May 2025 18:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="C6Cf05nh"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kp3IqS3N"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705AD239E78
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 18:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C16923F417;
+	Fri,  9 May 2025 18:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746816071; cv=none; b=YBIF1DBWOxFDRDxAuyFUygialOTVC1NGifIxVvxdGRYDw3o0vIhcF0gQsgZ91uax7LPKJK+iC8Kgnov8/Vi40HkYfr9fNrgRYM1iJ8WicwwcmjV2FWzNyn8Ycnt0vJ/bjVyuRXaNrH72gtu/xRvKbD0ZfUFdtpqRaGolkXbYFYs=
+	t=1746816207; cv=none; b=slxVYCS7QiE/EGgoI6JWYfMpdxVLQPymHsD/Ce8gubxKZ9bSkAWQB/QXz8hzJ74IZza7gik+EkwKy/TFQWpCew+8HYK4I5Aytr1AcC6Qxk+TpibUsvvIsgncob91kNrbHlEPE9lrgWRIaCXG0lVOFbkYfYMOZqaRkwELJ0E2na4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746816071; c=relaxed/simple;
-	bh=LgF5BtBmfpeEAq5nMJcPYE0NWNHuMEL3cucPPBu6hWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p/kg4RAJal0GOlkZi54ijRfksoTrkTfzAiHFPht753jNqzvg6oCxRqRJRBO1eV1PEtiiFx7y9Zwp8L/1BGs24BHUKM/dJFNayhHijuB67um0gXVTmWFq1OZHntYnbl8M2n63IwjeIVfa/5Z54G9Cs7MtabksKDgoiO5WaP2Erqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=C6Cf05nh; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so12822035e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 11:41:09 -0700 (PDT)
+	s=arc-20240116; t=1746816207; c=relaxed/simple;
+	bh=41w0bk3kuGZ9kIBv+2LW2tbt6aV2CZQ1bo8zA7mqv+0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AbBFpfq1qhlYmvan7ZdqiGs+oG7PQapVrxYbGmnKVkfpdXvXbFK4XknFuymQLSd0NsZMOl/XBhCZOMMdYNncjLufOx6Rnw87aIIybw9u7hf3oc6o98x1SmJNu0lf6IDzygh8jgrZHMXmESLs1P//iu7sG4ICm8wQHrI+6jTQpis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kp3IqS3N; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54298ec925bso3625368e87.3;
+        Fri, 09 May 2025 11:43:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1746816068; x=1747420868; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J7xH+8c9IQ/eMw6xixEvFtV7xITokTNj2ogMwiKa5uM=;
-        b=C6Cf05nhNCJjbvEsVYuE5aFzTaeikmpl8ajkagMnTkI5oj7x4jZjQC1xMR1FkikHul
-         u92mm8Jx4qtLBbDUbYqxx4MK1kjM4kkcvUTiYHBQN/G+jYp7PYJ4gkJ0OgLjqE/TArDE
-         vpI9oPB+O5H0+BJsPRAa17z6O3r+Cm6yILTwDbhXpetZdAGInOSlPnO+oxJAlFj9PO4c
-         Bgoj4v7EPMNg8oDl29EWUncW3KmI0gJN3iKHmad7JKYo8aeHiXJWKpYmhnp2UbtiSsOU
-         MBnd9aNPtKxu03jgoG40f45VK8dZHkPwYccLh4SMco+Xay6A/EF1IIy4lflaMhR+UhEx
-         aNIA==
+        d=gmail.com; s=20230601; t=1746816203; x=1747421003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JhJzNOByoQ6GZyClitKhjcqQJuru+6gmvx6zsuwpmyw=;
+        b=Kp3IqS3NlSiTD+4jv5PbGiRqmCC9llEVajM/OftCS/Pxj9zkkv78xePPkC5UJL4hUy
+         qN8KZGWKmIzfVzLCKZIV/ekuSqoKnvD1+3AYMG6eKz14SQbrxMYrPyq++/IZFCwND5d2
+         OPbPNmwQQoTcUR7SCnRhhfgzSP/s0SeirW+ji05HbKHeSj5lhKCdkID15gznZ1KWAZEL
+         tndf012lClXBn39RC2J8TbbkhumF4m0L9InN4rF7YbQkYWp5+JVVidJ9SbUXCa2Jyq4w
+         HXMO92kSPJSr4ztj8PfltbjZFWGsRil4M5yrm0cSR4o8GrunccYJRNxiMsrQJa0bfCdN
+         Rjrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746816068; x=1747420868;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J7xH+8c9IQ/eMw6xixEvFtV7xITokTNj2ogMwiKa5uM=;
-        b=pZ+X+Xwd9z071VGt7lCoSQ4IFv/+2vH8OEJTWFG9RfA47IJIUdNXTbKesP0vGdmj1U
-         F4TQPvJIyMzOGpC9tdEGFzk28oN6OPMLdA/6J3YTa5q0VxOdum2k1T5oK4WmziYhCx9A
-         xm3SCWELV+ghdRt81p9+Dw7EvoRi8CXUIJoJVPUfLU0MGS6ymaabGs+LUDYBIKkhRNkh
-         nGM/w2LDp926se+XbEmb6eEGa/oX5qbBc+bXZTwIwd6eofX46cGrt3opxD4nfhyj3jHL
-         MZJdWecJpIt4NJh6z7zOmakE8uiLv/dgEcD2E+NpmhIKEjq5Vtq26CFDLZTl6gdF0CH7
-         xm0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVtPWNc5DcS1VNZ+umPHRajLeYknHo8ICXkXX2EjRZS9Tfe9KVsL7z3CBRY8KdMlodOEkqImJmkSW6xcZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygdDLg6B+IAJKk67jbDbMlye37OtoeQnh4l6Q5yNAScHeSdMGw
-	T8QGkkevUrQYtgN/5Mentm3VTv9s1XQVmh1VrHl2YjYVCZeHjsYVGvPKLv4uz/M=
-X-Gm-Gg: ASbGncsyLmml8KGnVWz6Yejm/ShXYMUbpF11Teu1KWZtv3t6rweWQ9YHwrt3/VOIvqm
-	RdH8fkU+GuWDt8sUB2ZoppzGa0uU1NmET30Bh74PFnnmwdaeDr3qplZyBypQ7IboHiKqYsitKuc
-	DisdzQtZPECT4fSpBs//LyAmpmQjXSlFyELA5FwqLvI6H8/RyqUJTJ94RcrBvAWFSJi+nH0RzN4
-	uHuA+917oGP3lfNXxQ+uS54t/l19SvnvT08K9qAZ/573T64GEi/xwP6k6R5rph/TNdP4k4xsV9t
-	x5r1nlrZpqxUZ/pg4Mk+K1gNFSpEygyxbpIgqmzAb3ySVXpyYCBwIMIVD7P20wVnBzSTb0cquEP
-	y9UXpFymcmGByhXs02xH4dgbnPDjhYMrSjtmCQdiruRvPTr2VtKjUjAaA7dcAdQ==
-X-Google-Smtp-Source: AGHT+IEzxzujGMd8NyxttjwFQjGc0xzB3QFdRjoydO8AuIWtcO29Kaq/G1I0ZFKFFTLzQq0b8NjSHA==
-X-Received: by 2002:a05:600c:3b85:b0:43b:c5a3:2e1a with SMTP id 5b1f17b1804b1-442d6d11fdemr38097465e9.2.1746816067774;
-        Fri, 09 May 2025 11:41:07 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f46c100023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f46:c100:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67df5ecsm37756915e9.9.2025.05.09.11.41.07
+        d=1e100.net; s=20230601; t=1746816203; x=1747421003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JhJzNOByoQ6GZyClitKhjcqQJuru+6gmvx6zsuwpmyw=;
+        b=YWpMAZghH5ieI+b9Nc/gmqIYio8Cq4cjan/lp7Ooo/J/4KhKgdi3LJWt6Yx9zH/2Ej
+         CzjQE2lbR6SGDvDfkvgJc7LKg4CgKCOn0Ne2u4/deep6oavOdEDoydTxglDV5IOq4FYu
+         lit4GqyzsYpYMTM7LuCdZTXstx4TiRXi9nyclGMRrmt6PsnmkWoGH4P5KQ61sZz1uFUQ
+         a8bCrjCaisEiYyRG4wfUWbJoXLZNtyNGqM+y3ghJlLsAb5zfDNBKusvjd47Gux6ZIIGn
+         bPCNW8+FgOfd1fz0Nr0zXwzGANb6DjxoqlK99JShrFTWFzTSz6oQj+ApwqWSOegriMfR
+         vsKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU17/d3URzf2du9GhAKKDUvkV5JuLfY4zXBDK11nsaFiEzbKaIEc0ABvUVw623D42MWTxd3VrcLxUEdVvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3xgpJJ6Ley2ZA1Tpcm98sfiV7tWSSayDhxIVpV32N9SGUmqxr
+	LFpTvxPTB5mTcQC84yNw4szrgSJGvqjVzXgIeKehxwJpVdZv0ILK638O7X8g
+X-Gm-Gg: ASbGncvNpGQzb2oLYS/JxHVhqztBDzt0XxRyzvDPV14tO8evkDljLpV+sFWD+ncgnXm
+	CdXz9N/pALchFxIUcu//iJzBGY9sTcYZEtv+sLSErMiEUeghXajAE10A86cYOwrp+qgYYzQMctV
+	/zxD3ev8z+R3SFIQAs6An4qCA2D5BRTeKWVD+vKPDWtQJgj30V2l+6nuLEtNYDeIkWLeCm9qVeK
+	/S7AYTzJ1RKrwf56c0kicxnmVLJlRUpeCA+DIa3Tm6RYIoWzNbbgdX3RISBCR1WbUs6zSfjPs5w
+	qtko6yyIGwbGRadPhCKvz1SurbAI/CkMWg1YxC8UJEGONEt9Z4u6CBfMysrV0Me420ZeuIWadOr
+	V2VUBW5jDaK1joNOFWotX1vbD
+X-Google-Smtp-Source: AGHT+IFA4V+MeNZUHv9v1knNzBcYL1+0e2L4o+RMw5+4fOqHYA4fdnFiUJqjYx2LDuDSEPo2Rh/dcg==
+X-Received: by 2002:a05:6512:3ca9:b0:54e:9c6e:8636 with SMTP id 2adb3069b0e04-54fc67ea0e2mr1495496e87.47.1746816202819;
+        Fri, 09 May 2025 11:43:22 -0700 (PDT)
+Received: from localhost.localdomain (91-159-131-140.elisa-laajakaista.fi. [91.159.131.140])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc644fbabsm355965e87.35.2025.05.09.11.43.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 11:41:07 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: ebiederm@xmission.com,
-	serge@hallyn.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	linux-security-module@vger.kernel.org,
+        Fri, 09 May 2025 11:43:22 -0700 (PDT)
+From: Valtteri Koskivuori <vkoskiv@gmail.com>
+To: jwoithe@just42.net,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] Documentation/no_new_privs.rst: document dropping effective ids
-Date: Fri,  9 May 2025 20:41:05 +0200
-Message-ID: <20250509184105.840928-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <87h61t7siv.fsf@email.froward.int.ebiederm.org>
-References: <87h61t7siv.fsf@email.froward.int.ebiederm.org>
+	Valtteri Koskivuori <vkoskiv@gmail.com>
+Subject: [PATCH] platform/x86: fujitsu-laptop: Support Lifebook S2110 hotkeys
+Date: Fri,  9 May 2025 21:42:49 +0300
+Message-ID: <20250509184251.713003-1-vkoskiv@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,48 +89,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Usually, execve() preserves the effective ids.  Many programs rely on
-this to detect setuid/setgid execution and will disable certain
-features (such as rejecting certain user input / environment
-variables).
+The S2110 has an additional set of media playback control keys enabled
+by a hardware toggle button that switches the keys between "Application"
+and "Player" modes. Toggling "Player" mode just shifts the scancode of
+each hotkey up by 4.
 
-However, if NO_NEW_PRIVS is set, effective ids are always reset by
-cap_bprm_creds_from_file(), but capabilities are not revoked.  That
-means the process looks like it's not setuid/setgid, but has full
-capabilities, and is effectively a superuser process.  This breaks
-userspace assumptions.
+Add defines for new scancodes, and a keymap and dmi id for the S2110.
 
-It was argued [1] that this surprising behavior must not change
-because programs might rely on it:
+Tested on a Fujitsu Lifebook S2110.
 
-Of course, this leaves many programs vulnerable, but if we decide the
-behavior must remain, we should at least document it with a warning.
-
-[1] https://lore.kernel.org/lkml/87h61t7siv.fsf@email.froward.int.ebiederm.org/
-
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Signed-off-by: Valtteri Koskivuori <vkoskiv@gmail.com>
 ---
- Documentation/userspace-api/no_new_privs.rst | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/platform/x86/fujitsu-laptop.c | 33 +++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/userspace-api/no_new_privs.rst b/Documentation/userspace-api/no_new_privs.rst
-index d060ea217ea1..89b0884991e9 100644
---- a/Documentation/userspace-api/no_new_privs.rst
-+++ b/Documentation/userspace-api/no_new_privs.rst
-@@ -29,6 +29,12 @@ bits will no longer change the uid or gid; file capabilities will not
- add to the permitted set, and LSMs will not relax constraints after
- execve.
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index a0eae24ca9e6..162809140f68 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -17,13 +17,13 @@
+ /*
+  * fujitsu-laptop.c - Fujitsu laptop support, providing access to additional
+  * features made available on a range of Fujitsu laptops including the
+- * P2xxx/P5xxx/S6xxx/S7xxx series.
++ * P2xxx/P5xxx/S2xxx/S6xxx/S7xxx series.
+  *
+  * This driver implements a vendor-specific backlight control interface for
+  * Fujitsu laptops and provides support for hotkeys present on certain Fujitsu
+  * laptops.
+  *
+- * This driver has been tested on a Fujitsu Lifebook S6410, S7020 and
++ * This driver has been tested on a Fujitsu Lifebook S2110, S6410, S7020 and
+  * P8010.  It should work on most P-series and S-series Lifebooks, but
+  * YMMV.
+  *
+@@ -107,7 +107,11 @@
+ #define KEY2_CODE			0x411
+ #define KEY3_CODE			0x412
+ #define KEY4_CODE			0x413
+-#define KEY5_CODE			0x420
++#define KEY5_CODE			0x414
++#define KEY6_CODE			0x415
++#define KEY7_CODE			0x416
++#define KEY8_CODE			0x417
++#define KEY9_CODE			0x420
  
-+A successful execve call with ``no_new_privs`` will reset the
-+effective uid/gid to the real uid/gid, but does not drop capabilities.
-+This means that comparing effective and real ids is not a valid method
-+to detect setuid/setgid execution; the proper way to do that is
-+getauxval(AT_SECURE).
+ /* Hotkey ringbuffer limits */
+ #define MAX_HOTKEY_RINGBUFFER_SIZE	100
+@@ -560,7 +564,7 @@ static const struct key_entry keymap_default[] = {
+ 	{ KE_KEY, KEY2_CODE,            { KEY_PROG2 } },
+ 	{ KE_KEY, KEY3_CODE,            { KEY_PROG3 } },
+ 	{ KE_KEY, KEY4_CODE,            { KEY_PROG4 } },
+-	{ KE_KEY, KEY5_CODE,            { KEY_RFKILL } },
++	{ KE_KEY, KEY9_CODE,            { KEY_RFKILL } },
+ 	/* Soft keys read from status flags */
+ 	{ KE_KEY, FLAG_RFKILL,          { KEY_RFKILL } },
+ 	{ KE_KEY, FLAG_TOUCHPAD_TOGGLE, { KEY_TOUCHPAD_TOGGLE } },
+@@ -584,6 +588,18 @@ static const struct key_entry keymap_p8010[] = {
+ 	{ KE_END, 0 }
+ };
+ 
++static const struct key_entry keymap_s2110[] = {
++	{ KE_KEY, KEY1_CODE, { KEY_PROG1 } }, /* "A" */
++	{ KE_KEY, KEY2_CODE, { KEY_PROG2 } }, /* "B" */
++	{ KE_KEY, KEY3_CODE, { KEY_WWW } },   /* "Internet" */
++	{ KE_KEY, KEY4_CODE, { KEY_EMAIL } }, /* "E-mail" */
++	{ KE_KEY, KEY5_CODE, { KEY_STOPCD } },
++	{ KE_KEY, KEY6_CODE, { KEY_PLAYPAUSE } },
++	{ KE_KEY, KEY7_CODE, { KEY_PREVIOUSSONG } },
++	{ KE_KEY, KEY8_CODE, { KEY_NEXTSONG } },
++	{ KE_END, 0 }
++};
 +
- To set ``no_new_privs``, use::
+ static const struct key_entry *keymap = keymap_default;
  
-     prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+ static int fujitsu_laptop_dmi_keymap_override(const struct dmi_system_id *id)
+@@ -621,6 +637,15 @@ static const struct dmi_system_id fujitsu_laptop_dmi_table[] = {
+ 		},
+ 		.driver_data = (void *)keymap_p8010
+ 	},
++	{
++		.callback = fujitsu_laptop_dmi_keymap_override,
++		.ident = "Fujitsu LifeBook S2110",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU SIEMENS"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "LIFEBOOK S2110"),
++		},
++		.driver_data = (void *)keymap_s2110
++	},
+ 	{}
+ };
+ 
 -- 
-2.47.2
+2.49.0
 
 
