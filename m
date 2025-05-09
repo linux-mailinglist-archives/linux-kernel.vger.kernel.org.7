@@ -1,120 +1,213 @@
-Return-Path: <linux-kernel+bounces-640927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6D4AB0B10
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F7EAB0B19
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE447506D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BDB9866AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172DF26FA4D;
-	Fri,  9 May 2025 06:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2279F26FD80;
+	Fri,  9 May 2025 07:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x5hlrJrH"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I5TW3pVS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE3B22FDE8
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610321C2324;
+	Fri,  9 May 2025 07:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746773919; cv=none; b=N9VCZt8FgX6IROwW2TdkeUiWlEqARioVVyq0tacuowAIFapjhHhVxxwcSCHCd2wnxc12wNKS1f0Bg69LcJRaJJMLvDGHe+Ou36MLJZ0yNjfY4weEhgM+ZwPNBSQGmZ5p820nfyU3e0Z2B7Rm0OL3i14khamRntYY78DeE4HeF8s=
+	t=1746774046; cv=none; b=PBsuXtbInWLnbpXRwxSgc/5RaW/6N1QcScrSPxSHdYYCPAELLQK8UMChuW6ZYDDYjd7DRNI5pXt0tizBGsofGjwY8SEAjsPYhHGU0Fyo1fdp3i74MVCQWGkYnED1DhKN9J+DyfLckpgc1VoZw3Z6njOiRE/QnI13dxaLWk6pLKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746773919; c=relaxed/simple;
-	bh=TFG0yZH9DngSMg6CI2IgJYe7USu76tZM73b0MECJA+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VBVy1ijvU4JlRZVDXLgUp5IoxpNMNBlvpAGWG4Ks+TnCjZVGwmtS5Mhq9ekG4ul5oW66AfN+QGggz+oel3C69ABSZm02f+W5/YhmOooSVusFsMgtP9uVm/cUP/gXJ9SV6oID7W37rNitBhAuTd7iOX0dgmHmMjpgN/NSmbzOaJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x5hlrJrH; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-326c8ae08e8so2114521fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 23:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746773916; x=1747378716; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2EQXB9e14/EbThODKAnSR7YxD3dmoo2cX6xJNhO1H20=;
-        b=x5hlrJrHOOo9JMq5dW1AHJxU53l77ulAjIbH40zIQmaZ+JzdhaKZJkEJutNhLnxSlN
-         NHIjdO2isKuJZGCuhYRQdvuu/L559YYaP1PLLHqkciBTRr6wfFW90Aptqklt+WEiNjl1
-         DCoLT+0298QQb+LwUb0JYv+6zd3avuYCVfTFnXGutwaQdM13zP4j8+VJyRUDg7C0OQPh
-         BcGlW2ih1SquH5JWwQB7GDMIDSSUcWnvOV7BBzCL6Mc16Fmm5IMXF5bt/eghhLVI4uhf
-         jEII1Ir8JF5tLGQpxqIfjx4R7OAdPnnGzFGpr6E/BENN/pAyrqFv9JBBoHZnP5szstAK
-         9JVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746773916; x=1747378716;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2EQXB9e14/EbThODKAnSR7YxD3dmoo2cX6xJNhO1H20=;
-        b=X9bwRfKVW/WLyGkj4Xy4naWLDQcFrYw28b81xAG77Dm1gnfZPTmoqbtoVb5U7H7iey
-         ehzLrQCnmGthob2IP4H5A5kQrh8YgcnR9eYDFy2S+EBgM1G94mimeycBGuLDMM7EaIK7
-         pvaXVaQ2mQzRY5f3/I1FeB2geXPO+rOfnvM3OjrdZBDOhKJPBtj0LOpNpIRugJDQXSfB
-         m0XgC+050KBIxfaXZc1KL75tPlNLuaY5kYeLE2cd4lWlKyIBCGfU2G2LJaafHe3fmH/4
-         Q5KiTLO1q3pllhAuipQRHO5DUKstyRdhns12HGspGagsnnyM97GDLhO1UWGGvW90oyMV
-         WJoA==
-X-Gm-Message-State: AOJu0YxliAmhwTl2clPQ617IT7MgPcaSCQmSx8pJGKKQrKYFOrpeTnGo
-	60G/wL01AgbI4sCAK0kDU2EWOqEEvs/IgiD14icau54EnPXYChCXHCbRVIqAskM=
-X-Gm-Gg: ASbGncul+s1V4qbOadl44B9GE26YwOCEVPW2c62itndVILc09PQY164B7TzrQQSYwPe
-	kQ8Kq7zu0MtpXmDHXHgWJNAVDQ2f7M9aHpjNPtUhbmagTEYjZTEmz8hl9ncs1Nuh1JQSofG5/ID
-	JthOhI9wvtqv3F4onNH0YzX1wxjLsxklcYyrPO4HBSW0ZfA9/YaP4Mu66Ffi3DxvQBY4QHtwOTf
-	LOjS/xOGajbxrKU5ScO8mtFrBXRq/maj6jMlWZwyqoppJYKNz+HvdWrgjoAu1BaD4K2Y2Zuze5E
-	Pyt/Mu+6Bl5pCETjGXOqrPk0gCp+n6bvsF7eOHUFcv3xMrnDsCaIZtDROsilDOis/A9qgFeOO4i
-	7rTOddf8=
-X-Google-Smtp-Source: AGHT+IH3EkxXTq0TXiCz+ScAzpBkCWHAoFqCnNrQw3x3DaNWfM/7rQYlSCeVQemX43yijXhghECcYg==
-X-Received: by 2002:a05:651c:150c:b0:30b:9813:b011 with SMTP id 38308e7fff4ca-326c4627e6bmr12199731fa.28.1746773915667;
-        Thu, 08 May 2025 23:58:35 -0700 (PDT)
-Received: from rayden (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-326c339a324sm1893081fa.4.2025.05.08.23.58.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 23:58:35 -0700 (PDT)
-Date: Fri, 9 May 2025 08:58:33 +0200
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: arm@kernel.org, soc@kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	op-tee@lists.trustedfirmware.org
-Subject: [GIT PULL] AMD-TEE updates for 6.16
-Message-ID: <20250509065833.GB4188600@rayden>
+	s=arc-20240116; t=1746774046; c=relaxed/simple;
+	bh=yfQkWx9DeJmRw8TBVfrP8PbDAnwkQi7w1kwefSN2X/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJh34a2SIhJlK9Rj/1ro7ANl9CbcaXvQWM7KNfo3/+Fx4WUD41MisZywWVv+uYsP9t7h2F0f4RjQ90gvc8DvthV1F9/6ku/ial8q850rKxHKyIqeOHUqsC+MfCeTIcIlxnbWCghE47FKmjyzDG/Pjb34Q2c9VBE3XJrvx//L3EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I5TW3pVS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54714C4CEE4;
+	Fri,  9 May 2025 07:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746774045;
+	bh=yfQkWx9DeJmRw8TBVfrP8PbDAnwkQi7w1kwefSN2X/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I5TW3pVST8qjxTKtl4nXW2aEgiYKXPJRDPncjobsXP9HiqxyKZG5VlS+/Ry+AO4I6
+	 Iw7+jREtjmvt1iQp6eyTSs0AYpIQYthYjQCeTAS86Tk7tqLknxL+HMMTtSs4KFhwgY
+	 owRB6sd/8of5Z5dorjNl41bkD8wT72b7fG66JRKFtLvByPjQkl08gHoaN0OvLQBE4e
+	 UgUKnuauyZL5rssVXVLFF4fsBbTVWLU1x5nnvDr1UP4J5w3iTpItuRoF9hYHRFtdeF
+	 8PeLubrhXgnK7PuFvTp6yLNVxIzf16P88Bs3BReSgKs/tixTrc+ceoG063pxdSeKfX
+	 cikpbm71pc9FQ==
+Message-ID: <606a3d9a-857a-4fd6-a9b9-76a9c8d60cea@kernel.org>
+Date: Fri, 9 May 2025 09:00:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] dt-bindings: hwmon: Add bindings for mpq8785
+ driver
+To: Pawel Dembicki <paweldembicki@gmail.com>, linux-hwmon@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Noah Wang <noahwang.wang@outlook.com>, Michal Simek <michal.simek@amd.com>,
+ Fabio Estevam <festevam@gmail.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ Shen Lichuan <shenlichuan@vivo.com>, Charles Hsu <ythsu0511@gmail.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250509065237.2392692-1-paweldembicki@gmail.com>
+ <20250509065237.2392692-6-paweldembicki@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250509065237.2392692-6-paweldembicki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello arm-soc maintainers,
+On 09/05/2025 08:51, Pawel Dembicki wrote:
+> Add device tree bindings for Monolithic Power Systems MPQ8785, MPM82504
+> and MPM3695 PMBus-compliant voltage regulators.
+> 
+> These bindings also documents the optional
+> "mps,vout-fb-divider-ratio-permille" property.
+> 
+> ---
+> v2:
+>   - remove mps,mpq8785 from trivial-devices.yaml
+>   - fix alphabetical order
+>   - rename voltage-scale-loop to mps,vout-fb-divider-ratio-permille
+>   - add mps,vout-fb-divider-ratio-permille min and max values
+>   - rewrite mps,vout-fb-divider-ratio-permille description
 
-Please pull these two small patches for the AMD-TEE driver.
+If you are going to send a new version, then reorder the patches so the
+bindings are before the user (see submitting patches in DT doc dir).
 
-Thanks,
-Jens
+> 
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> ---
+>  .../bindings/hwmon/pmbus/mps,mpq8785.yaml     | 88 +++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+>  2 files changed, 88 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
+> new file mode 100644
+> index 000000000000..3c61f5484326
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/pmbus/mps,mpq8785.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Monolithic Power Systems Multiphase Voltage Regulators with PMBus
+> +
+> +maintainers:
+> +  - Charles Hsu <ythsu0511@gmail.com>
+> +
+> +description:
+> +  Monolithic Power Systems digital multiphase voltage regulators with PMBus.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mps,mpm3695
+> +      - mps,mpm3695-25
+> +      - mps,mpm82504
+> +      - mps,mpq8785
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  mps,vout-fb-divider-ratio-permille:
+> +    description:
+> +      The feedback resistor divider ratio, expressed in permille
+> +      (Vfb / Vout * 1000). This value is written to the PMBUS_VOUT_SCALE_LOOP
+> +      register and is required for correct output voltage presentation.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
 
-The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
+maximum: 4095
+default: X
 
-  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
+required: block goes here, before allOf: block.
 
-are available in the Git repository at:
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: mps,mpq8785
+> +    then:
+> +      properties:
+> +        mps,vout-fb-divider-ratio-permille:
+> +          maximum: 2047
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: mps,mpm82504
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/amd-tee-for-v6.16
+That's enum with mpm3695
 
-for you to fetch changes up to 136deca59b1613c22aebfb0c8508dd02363c7142:
-
-  amdtee: Sort header includes (2025-04-29 10:57:57 +0200)
-
-----------------------------------------------------------------
-AMD-TEE driver updates for v6.16
-
-- Sort header includes
-- Use pr_fmt
-
-----------------------------------------------------------------
-Mario Limonciello (2):
-      amdtee: Use pr_fmt for messages
-      amdtee: Sort header includes
-
- drivers/tee/amdtee/core.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+> +    then:
+> +      properties:
+> +        mps,vout-fb-divider-ratio-permille:
+> +          maximum: 1023
+> +
+Best regards,
+Krzysztof
 
