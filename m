@@ -1,200 +1,130 @@
-Return-Path: <linux-kernel+bounces-640901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D2DAB0ABD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:40:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8EAAB0AC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96E51C02AC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22F53B422F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5E726B0B2;
-	Fri,  9 May 2025 06:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCFD26B2D8;
+	Fri,  9 May 2025 06:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7XwOpH5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqwqfZNd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CA5D53C;
-	Fri,  9 May 2025 06:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D41D53C;
+	Fri,  9 May 2025 06:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772831; cv=none; b=WDX/fEiVWlODX/cFbFV4ayHoXgbC1w1cjxjf3T7hzshXq2GNDL8Bk3czGFBzB//zKk4l59MwpclQCUIjBhacXefKVJB6dmPDYx7v4RJTVKiAytrqLeo7QoZkm/tp+HfGY21+/RkS1NZnNRUTcEovGLz1gWxgS4+R46nkaCc8II0=
+	t=1746772913; cv=none; b=S1XvE0zPnsSB4cs3hlzpZqup37lsyx7Hw8DfGc7ruXsLp9BWv3GQWVZYgaGyssZ468zhzva2Y4h3+6krGUGvfTPYPXxVjhcHcg5f+9Iuvy9eA/1k48s0kCEEeJnFLwaINfjpyc1cS2ynslH8bmy3jfwKYAuObx16gJPYIJpWLB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772831; c=relaxed/simple;
-	bh=efT4gy3DPSJVddrgV3Coynq8JjHJLhPlxsgqiMB2KA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtOkGYOlykcErgdrRztF307Oalprbk5FVMGAEdk3ChBA1x8T8C5DFOaDeQfKCAvgv9DJp/78I06lJjAaQNDoI8gxxpO9JOk99rpGEwyESUE+6nFuUMyfmbc4mgWMehrkfSc5xKgk665srgNLdQ0BqpS3aHZSbRG1Iw5tVhmc6Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7XwOpH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A1BC4CEE4;
-	Fri,  9 May 2025 06:40:30 +0000 (UTC)
+	s=arc-20240116; t=1746772913; c=relaxed/simple;
+	bh=Kh4wGH228iQlxlwW6s2BagqamPOuOLBEuhUiNjv0IJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s+7HETTZavZxAiyxonh2spew/HT3Moua6h7ESsVXEkhs9l3yZV4lZRn2wKKZ62Cc8fPzAciFvGOca2qM4P5800iAsUGsFnrHM9TGixtfgIY2nGqy+p36jSQ7PZJY1u61zntOCFqKk9fHBop5U9qZ3QFCMWQaOF9TEl3sbLNlYyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqwqfZNd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC77C4CEE4;
+	Fri,  9 May 2025 06:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746772830;
-	bh=efT4gy3DPSJVddrgV3Coynq8JjHJLhPlxsgqiMB2KA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j7XwOpH5E6EltH7WTXdpxVBPYMzno7SRjM/s9++39HRHcEijg1HXhFRtp/yg44q6l
-	 y7dszeimOpth5KQTRYPe2xHrpebYWpiW0cBjvmy3+1iZsqGvpBApip9ax9cgIivGAm
-	 3/K/iZPwmnlnnCvPVp9QmTbgSgWOb2vgiyNuGF2lFt2smO41K4jjEJIrxvcpql5Tvq
-	 i9owDKb8IIt7cuGCYG7shtzr5+Ib/VobAsQI1l+5JsmVevnL8al/+Oe+SbpQGaAZ7v
-	 8M/NYJlJUVNLstW+lw0lDCuJHKjEm4xm7DGNMKfQiSdzcIP4rD3dGoO1z7USZnnAIU
-	 KYUKhfXaCAPFA==
-Date: Fri, 9 May 2025 08:40:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Cyan Yang <cyan.yang@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH] dt-bindings: power: Add SiFive Domain Management
- controllers
-Message-ID: <20250509-small-graceful-limpet-d0ea41@kuoka>
-References: <20250509021605.26764-1-nick.hu@sifive.com>
+	s=k20201202; t=1746772913;
+	bh=Kh4wGH228iQlxlwW6s2BagqamPOuOLBEuhUiNjv0IJw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AqwqfZNdamR2GYB4GLNHfX7UU6YXIxxC3QF6aJ1rfeupgYKD6fCy/Z8xIJy38j24t
+	 eah1cWWOy5JYV4agJX8rM0SuMTHQYVUzDh2VglMsie1zyiiSRDBO9uKNxvBYLx2Q4e
+	 HE4WgSGCNvWuLkCs5Pb7xbR7HjqBcN3iHOlJ+oGKTKAx+uD1l/nRMPucMTPfOHFgti
+	 DoECptxew+UkUaivcndGFrgtmnqZl3rpoizDUVPsOABlDzVeiOWrS7plLWLS5zbs3R
+	 RRwrxpJGXnhsD7DJMiIJ0dKoWmaITZRmKV1ktCn3ZvFvCHKZyBCNkQ1LP7WYSVrxcA
+	 a0aDqWCEdLpjA==
+Message-ID: <b0eada5f-3901-46f5-bca9-87744091448b@kernel.org>
+Date: Fri, 9 May 2025 08:41:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250509021605.26764-1-nick.hu@sifive.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: qcom: Add missing bindings on
+ gcc-sc8180x
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250509-sc8180x-camcc-support-v3-0-409ca8bfd6b8@quicinc.com>
+ <20250509-sc8180x-camcc-support-v3-1-409ca8bfd6b8@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250509-sc8180x-camcc-support-v3-1-409ca8bfd6b8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 09, 2025 at 10:16:04AM GMT, Nick Hu wrote:
-> SiFive Domain Management controller includes the following components
-> - SiFive Tile Management Controller
-> - SiFive Cluster Management Controller
-> - SiFive Core Complex Management Controller
+On 09/05/2025 07:56, Satya Priya Kakitapalli wrote:
+> The multi-media AHB clocks are needed to create HW dependency in
+> the multimedia CC dt blocks and avoid any issues. They were not
+> defined in the initial bindings. Add all the missing clock bindings
+> for gcc-sc8180x.
 > 
-> These controllers control the clock and power domain of the
-> corresponding domain.
-> 
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->  .../devicetree/bindings/power/sifive,tmc.yaml | 89 +++++++++++++++++++
+> Cc: stable@vger.kernel.org
 
-Where is a patch with the driver (user of the binding)?
+Drop, we already asked for this: you are not fixing any bug.
 
->  1 file changed, 89 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/sifive,tmc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/power/sifive,tmc.yaml b/Documentation/devicetree/bindings/power/sifive,tmc.yaml
-> new file mode 100644
-> index 000000000000..7ed4f290b94b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/sifive,tmc.yaml
-> @@ -0,0 +1,89 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/sifive,tmc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SiFive Domain Management Controller
-> +
-> +maintainers:
-> +  - Cyan Yang <cyan.yang@sifive.com>
-> +  - Nick Hu <nick.hu@sifive.com>
-> +  - Samuel Holland <samuel.holland@sifive.com>
-> +
-> +description: |
-> +  This is the device tree binding for the following SiFive Domain Management Controllers.
-
-Explain the hardware, not that "binding is a binding for ...".
-
-Also, wrap according to Linux coding style.
-
-
-> +  - Tile Management Controller
-> +      - TMC0
-> +      - TMC1
-> +      - TMC2
-> +      - TMC3
-> +  - Subsystem Management Controller
-> +      - SMC0
-> +      - SMC1
-> +      - SMC2
-> +      - SMC3
-> +  - Cluster Management Controller
-> +      - CMC2
-> +      - CMC3
-> +  SiFive Domain Management Controllers support the SiFive Quiet Interface
-> +  Protocol (SQIP) starting from the Version 1. The control method is
-> +  different from the Version 0, making them incompatible.
-> +
-> +allOf:
-> +  - $ref: power-domain.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - {}
-> +          - pattern: "^sifive,[ts]mc0$"
-> +      - items:
-> +          - {}
-> +          - pattern: "^sifive,[ts]mc3$"
-> +          - pattern: "^sifive,[ts]mc2$"
-> +          - pattern: "^sifive,[ts]mc1$"
-> +      - items:
-> +          - {}
-> +          - pattern: "^sifive,[ts]mc2$"
-> +          - pattern: "^sifive,[ts]mc1$"
-> +      - items:
-> +          - {}
-> +          - pattern: "^sifive,[ts]mc1$"
-> +      - items:
-> +          - {}
-> +          - const: sifive,cmc3
-> +          - const: sifive,cmc2
-> +      - items:
-> +          - {}
-> +          - const: sifive,cmc2
-
-All of this is just unexpected. Why any compatible should come with
-these? You need to use SoC specific compatibles.
-
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  sifive,feature-level:
-> +    description: |
-> +      Supported power features. This property is absent if the full set of features
-> +      is supported
-
-Compatible defines this. Drop.
-
-
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum: ["nopg", "ceasepg", "runonlypg"]
-> +
-> +  "#power-domain-cells":
-> +    const: 0
-> +
-> +if:
-> +  not:
-> +    properties:
-> +      compatible:
-> +        contains:
-> +          pattern: "^sifive,[tsc]mc3$"
-> +then:
-> +  properties:
-> +    sifive,feature-level: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-
-Missing example.
+Read carefully stable kernel rules.
 
 Best regards,
 Krzysztof
-
 
