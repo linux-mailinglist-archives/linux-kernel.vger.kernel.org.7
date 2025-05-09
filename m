@@ -1,162 +1,169 @@
-Return-Path: <linux-kernel+bounces-642484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AA0AB1F54
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 23:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 006C6AB1F59
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 23:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0994217ECAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5877F4E4DF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663162609ED;
-	Fri,  9 May 2025 21:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18CA2609ED;
+	Fri,  9 May 2025 21:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aEBfc6CA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9gLSumS"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243FF2609D6
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 21:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C8825FA24;
+	Fri,  9 May 2025 21:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746827308; cv=none; b=aNIaWXu6kcdp8XSoR24+R571yVnsM7/dGzvZP+PS1k6B3k5ZuNSqVL2sSg8f29n2BmfLZEL9wVksoSPGnzLmoZIxJUGM1Sf5oLbJR5CQZ8MGDz3S97GPPiR76qfwmcZZPxEz/q0+QpCQoWX8J52d7c0XpuTNz21z7PY1OXZ9/Hk=
+	t=1746827392; cv=none; b=lFMFZx5lZbl7LtUgm5GFngyBM2TGq34iYrFy8QjCXis5sk5CIj6CRjUovG6Ve7z6iHw9MIy5QYXCKC6kcfQTy8pSjsz9vlWWddxC+e+1plF/N151UhAg3LGOWAeg67wr4M8R/lCtQD+0pGU9/hb00PnU0vGmBRb02Idb7hJW3U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746827308; c=relaxed/simple;
-	bh=jMiO8dfIWqztSqyBC/M/E5+POfZySH8C5EjWZ1zmoKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pslfYmmMAX+V3CWZrXn4k6BYW/Uutbxmj+G/qINTi5KOaxFKInVs5UUNrmDWdT1dCH8vREfgqZlL4jsLBB6ILtxLJtu2hGvIxdsakzFC0af547SWOcAaMrXs3J4Hu1vuCdSb2kdZKTD3bL/EJPbDyS4b5fut0TtKadrS//TI9fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aEBfc6CA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549BwbvD002550
-	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 21:48:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fkn3x/u1u+KSHGaXD2ujk6gLEDw1t6RvipnTJM9byJU=; b=aEBfc6CAEW/1P5VD
-	rf8YMFtCf/5+TPYoyKd1Od1YS51NRKX6BgS+KKDzeoO9dusIJLged2z5xf5xV5cK
-	AQ/ogyrCkhUEdF3/+5uaw6CKeAyo6mejDWfZ+k+dV1ZsZIh8sU7efEGnfOm3DKlA
-	DF2BQg5bi4Vj5nRIjuGH3c4CQU0uesd7esPtIQwEPY12H8rp06qv3jcNJOS4rJaN
-	gimSPQltAo04eIc3ECexxUkScmRLR5C/Kvn3ViPZXmGYWTyYtKt8v1iJ3yQCpqgj
-	a82tG9Qw0p6o5d46Hi16fnmFDuHSpkjDWnBMWu5HEN3otQQPsPuNom2nATaBoAcL
-	TYO1FA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp5dv8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 21:48:26 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f541067fa4so5751156d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 14:48:26 -0700 (PDT)
+	s=arc-20240116; t=1746827392; c=relaxed/simple;
+	bh=ZinlNdkiyCNzwk3CZlDqG9cAdnhvkAgo9icgRAJn/rU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S+urO5OB2IN4cYa4I4F1FId25DUnpn5mrmTDgOrmhjHZ1xLqNgnTdObotKyPngjXX3AOI+A72fRxK88QMuUL/6siwjvIM4QsfzWVO2kUz9LnrNubMhDAY5UpihPkrWFeY/JcraeBdamFsUT/5dVj5nWDaLNYYIJpippMTbDLXDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9gLSumS; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso3733933b3a.2;
+        Fri, 09 May 2025 14:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746827390; x=1747432190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/U9lcKW0lXABVXy+mgpMzNoe/NTD2evxfu2sRExNzas=;
+        b=L9gLSumSx0yIxUYbgEy1stex4IDy6WP+DJVbK/+vJ+R16cxCA/gC86FHIz+/ocy3wW
+         WRL6lfia1kWLvI4ZDVDZMCNGhlfpveRJezzEMOdSbLEeixbAFijAB8jSV0gxcA63ZLMc
+         rz3eK2howQtwj6o1+bYDdtXHNdj4bvnCvaeUR5sphp0reZErAHwm21jtu9q9hTE3izqY
+         2nZoMyeVk3Jslh1jICwDZWlpmUELz/nsIV66tr45ogFdTaKl68qmL8Sh3A0pQCRHkUCn
+         W9If5YXJJogYEdN2Q7UWHSOK5B9nrsBTiOtGTqngqPCKC3qwkV7mtF2Tc/K6gUrLn8E0
+         MdgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746827305; x=1747432105;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkn3x/u1u+KSHGaXD2ujk6gLEDw1t6RvipnTJM9byJU=;
-        b=BLgliuXXNG9tnaJziL0DKK5KppvH8YCyrqO/6NDmBEdz8aCjYUo/NBpsKHS3yhJyW1
-         BksZB7EE05Mh3o208qgTVKJr4LtnEMKeAK95sQuAZiYq9SRxC1T/Vap39TmzB3RZYgtQ
-         MdA5zT/jMnlz8V0id/dDJEOfT2jF5dBv/eUgInGFY5Um7WzWtf+vK8vcnEAQYc8xFTMT
-         93+m+lu5XSk3KtpKqMGcfcEoa1f82sbr5jGCro7vr6q/8KCnLBC/ctnTIVKbIQoJHmn2
-         ZHbJNzvolZGZzTwE+0Dm/RElQt1xRVYHgGObIsQd126tZfadPoLrC8VxofF6Rx+x20Cz
-         /xOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXABxX5t0kAtD4+ykHHVvwzK1GJ5Bm7FZ9DIUIsLxu5cw82TLSZyUmYtlIqMAqx2hD6uZjaGFcQkoV48FU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVMmYGDjzRLM2CrGZvQOzVBjaD4N1cH95dxym6VUDh8aDUnJc1
-	iyV55uOHbXCvYp+Awq15+IyApCqkOd5mE01/4JIWq8YYNdKgONSXZkiHSh7N3jd8lyqadaRcyjp
-	gxbRhrmQLTqBxTBK7z3Zla++xxYmX3NsUhHOQEeuU18KzGhuRzY+J3Xw+HPRDkXQ=
-X-Gm-Gg: ASbGncuPrvZ4l3+AHTLnk3c86AEYvh0D39HfhBn0hBLv7VFwEd9HF3Jizj9cXeMJ5lN
-	C2PmN7ejfipULAFd2fo0za30mtm52cJc50nixYvCKrPus+Yn6efuOpmaEqjY0hnUY7NNQVObKc7
-	52Evdkqg1X5poDHBvTkOaqmqIK9F8Wn+0wThD5S3KmyDjJ5sbA5TWcjOS5VL5FUw+u0m+E/TWe1
-	vL4htSs2SkCScT5urvKpiDwV35lN6JWL9BaWtmaJtchguM471kxEvlEVsAtXnoHJZHuXxmfh0Qm
-	Sa6qMjFaodDqKMka6uquQR0x8nxz6aCJpIgeARDuA3GczbiC0DyYKaSwk7gPS5/olKc=
-X-Received: by 2002:ad4:5e85:0:b0:6e8:fd2b:1801 with SMTP id 6a1803df08f44-6f6e47bea88mr29484046d6.2.1746827305428;
-        Fri, 09 May 2025 14:48:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSGc2XgNJYZeKKzikhTNArCWy0JPoDUUmmdsKTNg1QXI9xsFUIewBL4B3CBOAqNpYYGbz9XQ==
-X-Received: by 2002:ad4:5e85:0:b0:6e8:fd2b:1801 with SMTP id 6a1803df08f44-6f6e47bea88mr29483826d6.2.1746827305088;
-        Fri, 09 May 2025 14:48:25 -0700 (PDT)
-Received: from [192.168.65.158] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cbe496asm1899058a12.6.2025.05.09.14.48.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 14:48:23 -0700 (PDT)
-Message-ID: <43dbdfaf-fc02-49f4-b2e6-5c08b1998d17@oss.qualcomm.com>
-Date: Fri, 9 May 2025 23:48:20 +0200
+        d=1e100.net; s=20230601; t=1746827390; x=1747432190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/U9lcKW0lXABVXy+mgpMzNoe/NTD2evxfu2sRExNzas=;
+        b=BRJ2SWI6Qlr/eljl0TLC2Lo93rafNwqaY1bYhljGCMo2u/gh5/fU5ij26WBjj34PUv
+         OAP5J31Bu/8RI54doMk0juTgkJOWhGAXIX9pvd1JMjVolGeTjdVVslqA0KJ38OKR+gjw
+         qYF3Ix2plsIlGU2+JC3Iw0YqOCIF8SPPQr28tdGcAgJ5eJzfzebqlVXeP+dkCS3XcKlD
+         FLwE0G7HE0WmE2nEVx6kyvsEBmDbXMPmY83+us7tU5wSPk8odV0BgJUF+8ve392mZKqO
+         rVe44eXXw0n83Y27q9J4vR6oZiKacVdazI/Bt/1dkZbyZqT97xjEsWzlY+YghZP4MlSj
+         uP8A==
+X-Forwarded-Encrypted: i=1; AJvYcCV0DEgm8962/El4StREmG/7F28b/vg8wN+bPkBlUyrzB6nqJMcfIubj/ck/pivKLlSrYeQ=@vger.kernel.org, AJvYcCVtBn9NbUeyg/t/LfyNyRW9OebKddzRzqW+sAX7WDkLkWmzNjOutgNb67QJBf06Ds2QZ+ml9VeycihbeAmuf80BMTVS@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAN5urKOOHG8EXGXTk32b0MaWjpxZZfT1mFywDd0oiFXzBmJrs
+	ILPPA40svyNgwEXFiDHiKj53F4H6s4KjOx+iFTXTU+731AvPew8OErPr22wcW83tCU1pMapjITR
+	MLgKOzynqpP17ontc2xF0DsUSYK/NqhDx
+X-Gm-Gg: ASbGncsxzrLSK/s3+ckxG9TcigRsPouIgLmvGc6KxnYFtr6gvJ7/YDxrR9aToqPdMNm
+	5tXOwF0OB9mh0Y6dAb3M+IJy9ffoAz9WkHE7jC6nKwM6vQtnz6oaqY0SeXczUiirmgjmtwPj7Xp
+	EMFOpFoYW3Ch/oXHsRYjH28If1+x53SxMrCCKSrBfPNBenOeOBNvE5k6Rk2x0=
+X-Google-Smtp-Source: AGHT+IHPkwZR/8rn5sjyBGB0IOcQSZZ0Evw9rc/ZNuaIe7vZL0Xarx0Fw1QKpg7ximsYUdfxO7khqTgJocYUArU4xsI=
+X-Received: by 2002:a05:6a21:3182:b0:1f5:8a1d:3904 with SMTP id
+ adf61e73a8af0-215abace343mr8147447637.7.1746827389935; Fri, 09 May 2025
+ 14:49:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] dt-bindings: clock: qcom: ipq5018: remove bindings
- for XO clock
-To: george.moussalem@outlook.com, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
-        Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com>
- <20250506-ipq5018-cmn-pll-v2-2-c0a9fcced114@outlook.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250506-ipq5018-cmn-pll-v2-2-c0a9fcced114@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=XL0wSRhE c=1 sm=1 tr=0 ts=681e782a cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=UqCG9HQmAAAA:8 a=1mxAAckyurNBcPisKkgA:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: R278U8SXHelpHKjtdolHINII9zw2weWq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDIxOSBTYWx0ZWRfX5hqrQlhC5vLR
- 8tCjn0pYGDmSi3mjJ2bX0n2GaDpXHei/E9XBCJQsayEjMHDruLrg+q3AmAdbfVPiltZC6q7Letl
- K0Z9nKkNRWsYknc0Q3YufzbRx9/EYDVy/CaSHkcDtTypclbrNTaTCJFW8qWjo7skREUDFqoS2lo
- 3Pje4ODHWWPC8CewwlQYSv7e74lK3PUARENGx38piNd+1cPt8tVTaxAj6etFVDr8jWFkAI5s4ZM
- 4lcWS0vhkVczMGjS1+mHp6rmbm8P5euQfyp+SBbuZjF2NbCoAc9H3QI7FJIKesrtN5PVCVLSbGz
- YGnaKgbxsSDDSqPWgX8NEiHwJOMJcaz/L6Cj0lCLzNZ1KvJmmSc8kK/cLRhrbuCUjEUbOj+GF93
- MHgP913Y2lei15rMCfPc69ye7ZqWTfgTfCRP74YZw1ko3Rsp5S7EEK+Fs1mDUu6jD98Ak5LC
-X-Proofpoint-ORIG-GUID: R278U8SXHelpHKjtdolHINII9zw2weWq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_08,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- mlxlogscore=947 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
- spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505090219
+References: <20250509164524.448387100@goodmis.org> <20250509165155.628873521@goodmis.org>
+In-Reply-To: <20250509165155.628873521@goodmis.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 9 May 2025 14:49:37 -0700
+X-Gm-Features: ATxdqUEPWK1bzutKtWy6yxNmKdLWMZCU9skVB9Dn5IFiwho3pByZS297XPGSPQI
+Message-ID: <CAEf4Bzb7MCv87ZEPXvH7APk9yvmtCWvuUO5ShEaLvz_DLfNqpw@mail.gmail.com>
+Subject: Re: [PATCH v8 12/18] unwind deferred: Use SRCU unwind_deferred_task_work()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/6/25 7:43 AM, George Moussalem via B4 Relay wrote:
-> From: George Moussalem <george.moussalem@outlook.com>
-> 
-> The XO and its source clock must be always-on and is enabled in the GCC
-> during probe. As such, remove the bindings for them.
-> 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+On Fri, May 9, 2025 at 9:54=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+>
+> From: Steven Rostedt <rostedt@goodmis.org>
+>
+> Instead of using the callback_mutex to protect the link list of callbacks
+> in unwind_deferred_task_work(), use SRCU instead. This gets called every
+> time a task exits that has to record a stack trace that was requested.
+> This can happen for many tasks on several CPUs at the same time. A mutex
+> is a bottleneck and can cause a bit of contention and slow down performan=
+ce.
+>
+> As the callbacks themselves are allowed to sleep, regular RCU can not be
+> used to protect the list. Instead use SRCU, as that still allows the
+> callbacks to sleep and the list can be read without needing to hold the
+> callback_mutex.
+>
+> Link: https://lore.kernel.org/all/ca9bd83a-6c80-4ee0-a83c-224b9d60b755@ef=
+ficios.com/
+>
+> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  include/dt-bindings/clock/qcom,gcc-ipq5018.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/include/dt-bindings/clock/qcom,gcc-ipq5018.h b/include/dt-bindings/clock/qcom,gcc-ipq5018.h
-> index f3de2fdfeea11f4b8832b75a05e424ca347b3634..d4de5eaffee7b4cb81e0ff2dcbf9e6669c3da8f8 100644
-> --- a/include/dt-bindings/clock/qcom,gcc-ipq5018.h
-> +++ b/include/dt-bindings/clock/qcom,gcc-ipq5018.h
-> @@ -140,8 +140,6 @@
->  #define GCC_WCSS_DBG_IFC_NTS_BDG_CLK			131
->  #define GCC_WCSS_DBG_IFC_NTS_CLK			132
->  #define GCC_WCSS_ECAHB_CLK				133
-> -#define GCC_XO_CLK					134
-> -#define GCC_XO_CLK_SRC					135
->  #define GMAC0_RX_CLK_SRC				136
->  #define GMAC0_TX_CLK_SRC				137
->  #define GMAC1_RX_CLK_SRC				138
+>  kernel/unwind/deferred.c | 33 +++++++++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+>
+> diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+> index 7ae0bec5b36a..5d6976ee648f 100644
+> --- a/kernel/unwind/deferred.c
+> +++ b/kernel/unwind/deferred.c
+> @@ -13,10 +13,11 @@
+>
+>  #define UNWIND_MAX_ENTRIES 512
+>
+> -/* Guards adding to and reading the list of callbacks */
+> +/* Guards adding to or removing from the list of callbacks */
+>  static DEFINE_MUTEX(callback_mutex);
+>  static LIST_HEAD(callbacks);
+>  static unsigned long unwind_mask;
+> +DEFINE_STATIC_SRCU(unwind_srcu);
+>
+>  /*
+>   * Read the task context timestamp, if this is the first caller then
+> @@ -108,6 +109,7 @@ static void unwind_deferred_task_work(struct callback=
+_head *head)
+>         struct unwind_work *work;
+>         u64 timestamp;
+>         struct task_struct *task =3D current;
+> +       int idx;
+>
+>         if (WARN_ON_ONCE(!info->pending))
+>                 return;
+> @@ -133,13 +135,15 @@ static void unwind_deferred_task_work(struct callba=
+ck_head *head)
+>
+>         timestamp =3D info->timestamp;
+>
+> -       guard(mutex)(&callback_mutex);
+> -       list_for_each_entry(work, &callbacks, list) {
+> +       idx =3D srcu_read_lock(&unwind_srcu);
 
-Let's skip this patch - when we add dt-bindings, we promise these values
-will be an ABI, leaving them in there, even if unused, will help
-introducing spurious entries
+nit: you could have used guard(srcu)(&unwind_srcu) ?
+
+> +       list_for_each_entry_srcu(work, &callbacks, list,
+> +                                srcu_read_lock_held(&unwind_srcu)) {
+>                 if (task->unwind_mask & (1UL << work->bit)) {
+>                         work->func(work, &trace, timestamp);
+>                         clear_bit(work->bit, &current->unwind_mask);
+>                 }
+>         }
+> +       srcu_read_unlock(&unwind_srcu, idx);
+>  }
+>
+>  static int unwind_deferred_request_nmi(struct unwind_work *work, u64 *ti=
+mestamp)
+
+[...]
 
