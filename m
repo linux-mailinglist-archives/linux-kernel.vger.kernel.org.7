@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-640894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07275AB0AAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B097DAB0AB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744854A37E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146DE1C02272
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E203226A0DB;
-	Fri,  9 May 2025 06:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6177326AAB8;
+	Fri,  9 May 2025 06:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7jNSbhD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihBMTySM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D03028F4
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B913A28F4;
+	Fri,  9 May 2025 06:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772666; cv=none; b=iR0ISlfxnhzGs4ojaIPnpDaSMqvgjGfNA4gGfD6PRAZEaRct9vnq0RBlkWyoKwJ1T3wdokX/10pSVNs1+4h2ggJYx+SLcyDI0xY6kE0nC5obMEk+95WkJ2mSftoTKe6/K/wm0uhFdouRxs3wp5zuOS7kASm3RhdCwNZTAMYpqhU=
+	t=1746772703; cv=none; b=i57xaurZowQ7yISXcVF7upLvozhsb2aFpPCUkdDfqmoAqN/z4qvvWS2yt7ztfOK0YyES1OgDtwF7tXyOuZxlpgCmQ8vMkxZ2fq6DDLg6Cdr+ISpyFd+/C/ZqIU22XGU/rI4X4LSTCKysxBhjxA960iamcJQ7o6VdKCOKO7sVb8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772666; c=relaxed/simple;
-	bh=dQ/uJPqSHryC/jX10/p5XMijmEo7PL5OSa0J4w7KrII=;
+	s=arc-20240116; t=1746772703; c=relaxed/simple;
+	bh=DijmGR4CReVDiWNuWA3tbBM8VuHHMl+HFeLCqD0jOkY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cASYKkTq1ZecEuKGBpMgP3ncz5gWDnN5SfzzpUPoMlARWYHYwoCBxnO8sjZMnB3vp5bVCOUZYyaMUkRxWK8OLKWKMG+peQIEShg+BBiVq9pCJa+2HjkFBmrhbj22WBrm0VS8ElMoOomA3t1l5CeafsLcgo2ph/erRGIcgCZFeOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7jNSbhD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DC5C4CEE4;
-	Fri,  9 May 2025 06:37:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmaePxg5kWLJDFxonlwTIwxNkvPuuoYg35mogzIla72pY7VVASp8C3772QRxwxe9UJKbWGmm/e2ap/X5VI2jCOIr6pWbBJVw8meLjtL4Y2zYnwMHDZu8k8U65hOsMf80ZhSzgmiQwvKx/YdCizM3g7a+KAcao4zwXw87viEXIwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihBMTySM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C24C4CEE4;
+	Fri,  9 May 2025 06:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746772665;
-	bh=dQ/uJPqSHryC/jX10/p5XMijmEo7PL5OSa0J4w7KrII=;
+	s=k20201202; t=1746772703;
+	bh=DijmGR4CReVDiWNuWA3tbBM8VuHHMl+HFeLCqD0jOkY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O7jNSbhDOOIvuFlC+5KEUPDKQnpQkfNWo9JLbXUTgNX0/Trui6O9eQQH6qMCyXOcp
-	 KMuUWVTyDXi3dXsTDS7ZSgZkhXvPXLmwWZw4G0pZuNUUqfQkRVz3DNN67IrVyGejek
-	 h7uTn+UebLQMJQpa9ZhkrdtFkRbtDUl2Iw8OlPDexaUcPw9SuAWHI4+beJsgFlqUM8
-	 1CYSYFGE9E6jFjY10q54AC6SUIfMxih7C/oNMfpib2YRP0bMdERwTjq+94hgyUJ60l
-	 XFs7zCZbkTuPdpINs38KQyUk5xHn6rp33xsg67UkbY2/baOl5cf1w9dY/s+ZEm94N4
-	 ny6f2rz0LVcGw==
-Date: Fri, 9 May 2025 08:37:41 +0200
+	b=ihBMTySMNi0Q0hIgKK1LyO0M9lKYu3oaShiHal1xYZ9dkRF2ZaqKOtxsNaX1LNdDe
+	 GjjlJrK14Jwaeovr18Bo17oyM4K+8Dk61NTigpn9+kAEwUdjIOjZzagvlkobf6OHGx
+	 WPiYD/qSkqzYuGZ9nAMx0mXQumZiPJupB6sHdxmKyhVe+UOZXtad7/id4CG11ufHXb
+	 /NRNr01YZ2WaiHBYXtJoOaGMokubxhQXbcQEgMto0C+GLxVGXB3xG8fpigQ2O/rL2F
+	 KkAi3My9wBpLidClSN0PF++VT0kdYO70Px4xpdBPGbk06P0jKlt4rsNV6Y8BCw7dyf
+	 8T7RGPFCa0YOg==
+Date: Fri, 9 May 2025 08:38:18 +0200
 From: Ingo Molnar <mingo@kernel.org>
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dmukhin@ford.com, mingo@redhat.com, andriy.shevchenko@linux.intel.com,
-	x86@kernel.org, daniels <daniels@collabora.com>,
-	Daniel Stone <daniel@fooishbar.org>,
-	robdclark <robdclark@gmail.com>, lumag@kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: x86: Boot failure on select chromebooks with v6.15-rc5
-Message-ID: <aB2itc2-5h3LEJi6@gmail.com>
-References: <a8638f85-1cc2-4f51-97ba-7106a4662885@collabora.com>
- <aB2bStp8efMHPjet@gmail.com>
- <d966d626-458b-4a29-abe1-b645317e15d2@collabora.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: linux-next: manual merge of the drivers-x86 tree with the tip
+ tree
+Message-ID: <aB2i2oVeGwhaauIU@gmail.com>
+References: <20250509162901.79e269a5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,50 +63,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d966d626-458b-4a29-abe1-b645317e15d2@collabora.com>
+In-Reply-To: <20250509162901.79e269a5@canb.auug.org.au>
 
 
-* Vignesh Raman <vignesh.raman@collabora.com> wrote:
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> > What boot cmdline does your kernel have? The MMIO-UART patches should
-> > only have an effect if the feature is specifically enabled via a boot
-> > option:
-> > 
-> > +               if (!strncmp(buf, "mmio32", 6)) {
-> > +			buf += 6;
-> > +                       early_mmio_serial_init(buf);
-> > +                       early_console_register(&early_serial_console, keep);
-> > +                       buf += 4;
-> > +               }
-> > 
+> Hi all,
 > 
-> amdgpu:stoney:
-> earlyprintk=uart8250,mmio32,0xfedc6000,115200n8  console=ttyS0,115200n8
-> root=/dev/nfs rw nfsroot=192.168.201.1:/var/lib/lava/dispatcher/tmp/18598802/extract-nfsrootfs-wgn1xjer,tcp,hard,v3
-> init=/init rootwait usbcore.quirks=0bda:8153:k ip=dhcp
-> tftpserverip=192.168.201.1
+> Today's linux-next merge of the drivers-x86 tree got a conflict in:
 > 
-> i915:amly:
-> earlyprintk=uart8250,mmio32,0xde000000,115200n8  console=ttyS0,115200n8
-> root=/dev/nfs rw nfsroot=192.168.201.1:/var/lib/lava/dispatcher/tmp/18598804/extract-nfsrootfs-5rlm_b6z,tcp,hard,v3
-> init=/init rootwait usbcore.quirks=0bda:8153:k ip=dhcp
-> tftpserverip=192.168.201.1
+>   drivers/platform/x86/intel/speed_select_if/isst_if_common.c
 > 
-> i915:whl:
-> earlyprintk=uart8250,mmio32,0xde000000,115200n8  console=ttyS0,115200n8
-> root=/dev/nfs rw nfsroot=192.168.201.1:/var/lib/lava/dispatcher/tmp/18598833/extract-nfsrootfs-3w0w5_mi,tcp,hard,v3
-> init=/init rootwait usbcore.quirks=0bda:8153:k ip=dhcp
-> tftpserverip=192.168.201.1
+> between commit:
+> 
+>   6fa17efe4544 ("x86/msr: Rename 'wrmsrl_safe()' to 'wrmsrq_safe()'")
+> 
+> from the tip tree and commit:
+> 
+>   c935ddfe65da ("platform/x86: ISST: Do Not Restore SST MSRs on CPU Online Operation")
+> 
+> from the drivers-x86 tree.
+> 
+> I fixed it up (the latter removed the code that the former updated) and
+> can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-Well, if you remove the earlyprintk option then it will boot fine, 
-right?
-
-The earlyprintk=mmio32 in v6.15 is a new debugging feature that was 
-tested on a single board by Denis Mukhin AFAIK, and it may or may not 
-work on your particular UART - even assuming that all the parameters 
-are correct.
-
-Thanks,
+LGTM, thanks!
 
 	Ingo
 
