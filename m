@@ -1,150 +1,146 @@
-Return-Path: <linux-kernel+bounces-642362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC20AB1DC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:17:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139E8AB1E24
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F11D1C202CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:17:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61381B201EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E500C25EF88;
-	Fri,  9 May 2025 20:17:19 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FC2299936;
+	Fri,  9 May 2025 20:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNg86nmL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAA778F40;
-	Fri,  9 May 2025 20:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8A5298CDA;
+	Fri,  9 May 2025 20:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746821839; cv=none; b=nQ6B9urdkkV0Jl+HSvf3kU8ivGLTQ/liWC37NUKfNnYElrY6iIrqceEGF9brFk9hWhOM4wnuLe8sKU/yntZpNs38sERFpm5aU4tJ2KeZGVCAmhirAqPTx5beILo8UDM80nQ1o7lTEz3QtdDQ4hEd/ctyWK1PURmFztH2fUOqrBc=
+	t=1746821896; cv=none; b=OUiZDbVjb7sDAjgfP/ER1S+kHw1vHTtX1aCQA9i+tsDuTHjQvaYHHuRTmgB1mwYcmXEYD0Xs+iK+Vj1G55+B/eTiQ5TUDPj09r0tgGy1QqlMl3RP6r8i0LB0tehMm9MXKvEQqlCYvqHKewrCyeWO5RhdMPyqtMgPAmbxok1U278=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746821839; c=relaxed/simple;
-	bh=G8/CFf9ZO+i2PIjLZ8xby/5gBn5P22+n8NyIA/gSLSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+oCgi0UGlObAMThiwjpqhhVwsYzOwAui8Z/StIZNmQqpbTzl1+fnI3YHU5vvM53q8WReUPQIRnkDIHh3kk73rTqQ6VDO72kvS9aps14pbC5A+IdyRJlqFAHK1YQe2WEkyqMAIP2TFUlZAQ41DWyYLDrHBXOOMpEoc01p7g93+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 56608617; Fri,  9 May 2025 15:17:09 -0500 (CDT)
-Date: Fri, 9 May 2025 15:17:09 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, sergeh@kernel.org,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com,
-	jmorris@namei.org, kees@kernel.org, morgan@kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
- identical
-Message-ID: <20250509201709.GA708015@mail.hallyn.com>
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
- <20250309151907.GA178120@mail.hallyn.com>
- <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
- <20250506132158.GA682102@mail.hallyn.com>
- <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
- <aB0sVcjFZaCVEirH@lei>
- <CAKPOu+89=+SFk1hKGLheMtPq+K47E9FRCo1DBQo9zGMwW=Tr2w@mail.gmail.com>
- <87h61t7siv.fsf@email.froward.int.ebiederm.org>
- <CAKPOu+8uw6SCO_hhOy_Kc_XihTDvJGoPrC1ujAHPYuiBghUb1g@mail.gmail.com>
+	s=arc-20240116; t=1746821896; c=relaxed/simple;
+	bh=6Zot9E6ZFT2BtM6OWN9gJxNTDDNv77MxRe5bFHgepKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gAcn9OhyUd98euABADiSzwzWc91cO49HqHWIxo9oknaR++9rND1xNnw8rjur7ECkpe+/T0zVcb79nitj53Bl6VM41IRrrmWxra9z4wLETTzKFDr0x8NpyDe7CTeJjPW0ReMAU4KhuI1pAL8RH8w8FtLl5/kMlPXWXLYaQ3mpAOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNg86nmL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268FCC4CEEE;
+	Fri,  9 May 2025 20:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746821896;
+	bh=6Zot9E6ZFT2BtM6OWN9gJxNTDDNv77MxRe5bFHgepKA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UNg86nmLthG6r8CoN0b5Hoy+IMV+rcOoY2LVGBY0MLVhZvTXH72OSyuN98z/FqVBA
+	 gMwSKo1dVqlyPryIPmG6NjIs0RA20QEPuzTFUtIGqpUyoFehRtASOoDBNy61OMd4No
+	 RZy5oALjNtUSPleOD8S6IitH2exh/nqq3c4CKyD3LI64ID6h7+Q1nLIaDhWqE8uVik
+	 xqPoHm312cMoN4p/m3ohzxUv0wsH5qz9mgIcQaCP6fS99ejvF7PS7uh6pOpE/svjIQ
+	 YYRM78Gq1vTKvV70R+tI7n3noeax6MQ5wNI6dSA3eIw5WwUAjf0u76P9n1b7/dj0n4
+	 aiAUk5lFSor1g==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	laokz <laokz@foxmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Weinan Liu <wnliu@google.com>,
+	Fazla Mehrab <a.mehrab@bytedance.com>,
+	Chen Zhongjin <chenzhongjin@huawei.com>,
+	Puranjay Mohan <puranjay@kernel.org>
+Subject: [PATCH v2 45/62] x86/extable: Define ELF section entry size for exception tables
+Date: Fri,  9 May 2025 13:17:09 -0700
+Message-ID: <198cfbd12e54dfce1309828e146b90b1f7b200a5.1746821544.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1746821544.git.jpoimboe@kernel.org>
+References: <cover.1746821544.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+8uw6SCO_hhOy_Kc_XihTDvJGoPrC1ujAHPYuiBghUb1g@mail.gmail.com>
 
-On Fri, May 09, 2025 at 06:53:11PM +0200, Max Kellermann wrote:
-> On Fri, May 9, 2025 at 4:45 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > In particular __is_setuid or __is_setgid being true guarantees
-> > that has_identical_uids_gids will be false.
-> 
-> Sorry, no, that's completely wrong!
-> 
-> __is_setXid() compares effective with real.
-> has_identical_uids_gids() compares effective with effective, real with real etc.
-> 
-> See the difference?
-> 
-> > Which means has_identical_uids_gids adds nothing, and the patch is
-> > pointless.
-> 
-> Also wrong. If that were correct, then my patch would not have an
-> observable effect. But it does. Try it, try the small program I
-> posted!
-> 
-> It seems your whole email is based on this misunderstanding. Please reconsider.
-> 
-> > If your concern is LD_PRELOAD and the like please don't play with
-> > the uids/gids and instead just make certain bprm->secureexec gets
-> > set.
-> 
-> LD_PRELOAD is not my concern at all. I just observed that the current
+In preparation for the objtool klp diff subcommand, define the entry
+size for the __ex_table section in its ELF header.  This will allow
+tooling to extract individual entries.
 
-Right, it is an aside, though an important one.
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ arch/x86/include/asm/asm.h | 20 ++++++++++++--------
+ kernel/extable.c           |  2 ++
+ 2 files changed, 14 insertions(+), 8 deletions(-)
 
-> kernel behavior can annul the LD_PRELOAD/suid protection as
-> implemented in glibc.
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index f963848024a5..62dff336f206 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -138,15 +138,17 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
+ 
+ # include <asm/extable_fixup_types.h>
+ 
++#define EXTABLE_SIZE 12
++
+ /* Exception table entry */
+ #ifdef __ASSEMBLER__
+ 
+-# define _ASM_EXTABLE_TYPE(from, to, type)			\
+-	.pushsection "__ex_table","a" ;				\
+-	.balign 4 ;						\
+-	.long (from) - . ;					\
+-	.long (to) - . ;					\
+-	.long type ;						\
++# define _ASM_EXTABLE_TYPE(from, to, type)				\
++	.pushsection "__ex_table", "aM", @progbits, EXTABLE_SIZE;	\
++	.balign 4 ;							\
++	.long (from) - . ;						\
++	.long (to) - . ;						\
++	.long type ;							\
+ 	.popsection
+ 
+ # ifdef CONFIG_KPROBES
+@@ -189,7 +191,8 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
+ 	".purgem extable_type_reg\n"
+ 
+ # define _ASM_EXTABLE_TYPE(from, to, type)			\
+-	" .pushsection \"__ex_table\",\"a\"\n"			\
++	" .pushsection __ex_table, \"aM\", @progbits, "		\
++		       __stringify(EXTABLE_SIZE) "\n"		\
+ 	" .balign 4\n"						\
+ 	" .long (" #from ") - .\n"				\
+ 	" .long (" #to ") - .\n"				\
+@@ -197,7 +200,8 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
+ 	" .popsection\n"
+ 
+ # define _ASM_EXTABLE_TYPE_REG(from, to, type, reg)				\
+-	" .pushsection \"__ex_table\",\"a\"\n"					\
++	" .pushsection __ex_table, \"aM\", @progbits, "				\
++		       __stringify(EXTABLE_SIZE) "\n"				\
+ 	" .balign 4\n"								\
+ 	" .long (" #from ") - .\n"						\
+ 	" .long (" #to ") - .\n"						\
+diff --git a/kernel/extable.c b/kernel/extable.c
+index 71f482581cab..0ae3ee2ef266 100644
+--- a/kernel/extable.c
++++ b/kernel/extable.c
+@@ -55,6 +55,8 @@ const struct exception_table_entry *search_exception_tables(unsigned long addr)
+ {
+ 	const struct exception_table_entry *e;
+ 
++	BUILD_BUG_ON(EXTABLE_SIZE != sizeof(struct exception_table_entry));
++
+ 	e = search_kernel_exception_table(addr);
+ 	if (!e)
+ 		e = search_module_extables(addr);
+-- 
+2.49.0
 
-Hm, but no, it doesn't annul glibc's protection, right?
-
-The concern is that:
-a. musl doesn't implement LD_PRELOAD clearing
-b. with NNP, setuid-exec followed by setting NNP followed by exec,
-   will lead to different behavior from non-NNP.  In non-NNP,
-   you'll continue to have euid=0, ruid=1000, and caps.  With NNP,
-   you'll have euid=ruid=1000, and still full caps.
-
-So, if someone is using NNP believing that it is a safe way to
-execute untrusted code with privilege, because they see they
-are now uid 1000, they will be confused.  Worse, they are
-subject with musl to LD_PRELOAD from the user before setuid-root.
-
-So two things we can do are
-
-1. have NNP drop privilege.
-2. have NNP not force euid to be ruid.
-
-(1) sort of makes sense since you've bothered to use NNP, but
-as Max, who is a user of NNP, says, that is not the behavior
-that would be useful to him.  It also leaves the non-NNP and
-NNP exec behavior - which is already - obviously - far too
-complicated - with yet more cases.
-
-(2) is concerning because it is a change in behavior for NNP
-users, but on the other hand, it leaves us with fewer special
-cases.
-
-At this point I'm kind of leaning towards (2), though with the
-obvious modification Max has already found should be added (for
-secureexec).
-
-> > I see no evidence
-> > in this conversation that anyone has surveyed the users of NO_NEW_PRIVS
-> > and verified how anyone actually uses it.  Without such evidence we
-
-Max is such a user.  I don't know what we can do to get input from
-more users.  Perhaps scan the debian codebase results at
-
-  https://codesearch.debian.net/search?q=NO_NEW_PRIVS&literal=1
-
-I'll take a look through those in a bit.
-
-> > have to assume that userspace depends upon the current behavior.
-> 
-> That's fine for me. But this behavior should be documented, because it
-> is rather surprising.
-> 
-> (In any case, we will keep the patch in our kernel fork because we
-> need this part of the kernel to work properly. Our machines don't run
-> any code that depends on the buggy behavior.)
-> 
-> Max
 
