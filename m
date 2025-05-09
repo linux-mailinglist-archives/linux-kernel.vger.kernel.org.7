@@ -1,539 +1,387 @@
-Return-Path: <linux-kernel+bounces-641336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FE5AB103A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:15:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39729AB1072
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4721C252E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C38C4C051A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBAE28FAA8;
-	Fri,  9 May 2025 10:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SBTI+6qT"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678C28F51D;
-	Fri,  9 May 2025 10:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91FD21D581;
+	Fri,  9 May 2025 10:22:41 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88728E57A;
+	Fri,  9 May 2025 10:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746785642; cv=none; b=NYyj3dSbLhL7O4K/Mw021M8OcafcFyxX5k0IV4OXE4jAZEJIM7G+Jp/aNvq6YBe8732nCsbWyLj+5fD75corWxj+Tr6ntd/49XYxCCj2i8b1ZOeW8SjeRjiGrMYo9ZhuoYyZNZnEtA21zQbN7ukZ8OfNMP5zvL+YPbOaLPsBKeQ=
+	t=1746786161; cv=none; b=FQbuVGrRrrDmuEwhs2fO7Yn58V9yXZBNzMeSeVHWhZfOe2s2tMnK6RMIolQt3A+0WLBgSzJb4UkkVNhCPDZQ3ll/H4yIt9fo+vM93c/r1Bkcghl3eHa6gyxZHnZI9GTmOp8aD3eRcj/garI598X7u9Qf8FzvCGYSJvbgMdBOhmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746785642; c=relaxed/simple;
-	bh=dj2bntkdl7xEPsU3O8kNrVVqiaY9ql9KfTEsUCfgmbQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=D5zuVj1Zn6vgiL6/HloNpDrO3s8RNRDJELlUIkoja9Gltw4VByjlILPA3fsedwarG4ziR74nPRrfjj0PXiZpiMseK/FBbcPKHtmml2HhG9mq80CtoqundJvBPbcQL57+fNZO/6YkqiRDi3CugEeE7Wa6VtQ5BuDQE4dDwmWYvKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SBTI+6qT; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 091A92098462; Fri,  9 May 2025 03:13:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 091A92098462
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746785639;
-	bh=j0hv02lMNf3ygxb/Gu2IuZyCzEMjtz+gbRdiT+OLPPg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SBTI+6qThlS97fRCryGco2kspD3TzuiKHPkm152kXMIQstFup7tonhUeWdp8Wi8aj
-	 xUNjTJoXgr07lzcMF02GNOND9ijoXfFJq6Bup6omNO6Yw6pGDpEifn/mO82NORbeAm
-	 M92uanuJVaxYNsY8rO++MsuOlwiXB0gCOx27044w=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Dexuan Cui <decui@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Long Li <longli@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=EF=BF=BD=7EDski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Paul Rosswurm <paulros@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH v3 4/4] net: mana: Allocate MSI-X vectors dynamically
-Date: Fri,  9 May 2025 03:13:57 -0700
-Message-Id: <1746785637-4881-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1746785566-4337-1-git-send-email-shradhagupta@linux.microsoft.com>
-References: <1746785566-4337-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1746786161; c=relaxed/simple;
+	bh=/WP4DrNHI624YiUw9Qrw3Ri2OKUhK+p/AT6nU4QBfuw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HEz4aERXSjG60PdfwrYGKo+v1aYnfbl6dhBoWS0SQHlsGIq2+qArHXvWYM0VIliWE6CS/XRGL6RH2WyO+59YEufBmN96Xs4XJFaROZ8jLdbZopYeLXgVatCEtVklhHYVsS65zNVGPXcvd0JwNaG4AHdudHHflRgrtFSpcj9UiNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zv4n30Lwcz4f3jt8;
+	Fri,  9 May 2025 18:22:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 68C1F1A07C0;
+	Fri,  9 May 2025 18:22:34 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHKl9o1x1onzmRLw--.15694S4;
+	Fri, 09 May 2025 18:22:34 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: mtkaczyk@kernel.org,
+	linux-raid@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH RFC v3] mdadm: add support for new lockless bitmap
+Date: Fri,  9 May 2025 18:14:11 +0800
+Message-Id: <20250509101411.2093911-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHKl9o1x1onzmRLw--.15694S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jr18Aw45WryDZr1kGFykKrg_yoWfKry8pF
+	4jvr95Cr4rGr4fWw17t3y8ZF1rtw1vyFn2krZ7Zw1akF1YqrnIqF18GFyUA34fWr4kJFy2
+	9rs8Kw18u3yxXrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Currently, the MANA driver allocates MSI-X vectors statically based on
-MANA_MAX_NUM_QUEUES and num_online_cpus() values and in some cases ends
-up allocating more vectors than it needs. This is because, by this time
-we do not have a HW channel and do not know how many IRQs should be
-allocated.
+From: Yu Kuai <yukuai3@huawei.com>
 
-To avoid this, we allocate 1 MSI-X vector during the creation of HWC and
-after getting the value supported by hardware, dynamically add the
-remaining MSI-X vectors.
+A new major number 6 is used for the new bitmap.
 
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Noted that for the kernel that doesn't support lockless bitmap, create
+such array will fail:
+
+md0: invalid bitmap file superblock: unrecognized superblock version.
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- Changes in v3:
- * implemented irq_contexts as xarrays rather than list
- * split the patch to create a perparation patch around irq_setup()
- * add log when IRQ allocation/setup for remaining IRQs fails
----
- Changes in v2:
- * Use string 'MSI-X vectors' instead of 'pci vectors'
- * make skip-cpu a bool instead of int
- * rearrange the comment arout skip_cpu variable appropriately
- * update the capability bit for driver indicating dynamic IRQ allocation
- * enforced max line length to 80
- * enforced RCT convention
- * initialized gic to NULL, for when there is a possibility of gic
-   not being populated correctly
----
- .../net/ethernet/microsoft/mana/gdma_main.c   | 248 +++++++++++++++---
- include/net/mana/gdma.h                       |   8 +-
- 2 files changed, 211 insertions(+), 45 deletions(-)
+Changes in v3:
+ - add support for --assume-clean
+Changes in v2:
+ - add support for Incremental mode;
+ - use sysfs API bitmap_version to notify kernel to use llbitmap;
 
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 2de42ce43373..f07cebffc30d 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -6,6 +6,8 @@
- #include <linux/pci.h>
- #include <linux/utsname.h>
- #include <linux/version.h>
-+#include <linux/msi.h>
-+#include <linux/irqdomain.h>
+ Assemble.c    |  5 +++++
+ Create.c      | 10 ++++++++--
+ Grow.c        |  5 +++--
+ Incremental.c | 34 ++++++++++++++++++++++++++++++++++
+ bitmap.h      | 14 ++++++++++++--
+ mdadm.c       |  9 ++++++++-
+ mdadm.h       |  5 ++++-
+ super-intel.c |  2 +-
+ super0.c      |  2 +-
+ super1.c      | 18 +++++++++++++++++-
+ 10 files changed, 93 insertions(+), 11 deletions(-)
+
+diff --git a/Assemble.c b/Assemble.c
+index f8099cd3..3af36260 100644
+--- a/Assemble.c
++++ b/Assemble.c
+@@ -1029,6 +1029,11 @@ static int start_array(int mdfd,
+ 	int i;
+ 	unsigned int req_cnt;
  
- #include <net/mana/mana.h>
- 
-@@ -80,8 +82,15 @@ static int mana_gd_query_max_resources(struct pci_dev *pdev)
- 		return err ? err : -EPROTO;
- 	}
- 
--	if (gc->num_msix_usable > resp.max_msix)
--		gc->num_msix_usable = resp.max_msix;
-+	if (!pci_msix_can_alloc_dyn(pdev)) {
-+		if (gc->num_msix_usable > resp.max_msix)
-+			gc->num_msix_usable = resp.max_msix;
-+	} else {
-+		/* If dynamic allocation is enabled we have already allocated
-+		 * hwc msi
-+		 */
-+		gc->num_msix_usable = min(resp.max_msix, num_online_cpus() + 1);
-+	}
- 
- 	if (gc->num_msix_usable <= 1)
- 		return -ENOSPC;
-@@ -482,7 +491,9 @@ static int mana_gd_register_irq(struct gdma_queue *queue,
- 	}
- 
- 	queue->eq.msix_index = msi_index;
--	gic = &gc->irq_contexts[msi_index];
-+	gic = xa_load(&gc->irq_contexts, msi_index);
-+	if (!gic)
-+		return -EINVAL;
- 
- 	spin_lock_irqsave(&gic->lock, flags);
- 	list_add_rcu(&queue->entry, &gic->eq_list);
-@@ -507,7 +518,10 @@ static void mana_gd_deregiser_irq(struct gdma_queue *queue)
- 	if (WARN_ON(msix_index >= gc->num_msix_usable))
- 		return;
- 
--	gic = &gc->irq_contexts[msix_index];
-+	gic = xa_load(&gc->irq_contexts, msix_index);
-+	if (!gic)
-+		return;
++	if (st->ss->get_bitmap_version &&
++	    st->ss->get_bitmap_version(st) == BITMAP_MAJOR_LOCKLESS &&
++	    sysfs_set_str(content, NULL, "bitmap_version", "llbitmap"))
++		return 1;
 +
- 	spin_lock_irqsave(&gic->lock, flags);
- 	list_for_each_entry_rcu(eq, &gic->eq_list, entry) {
- 		if (queue == eq) {
-@@ -1329,29 +1343,96 @@ static int irq_setup(unsigned int *irqs, unsigned int len, int node,
- 	return 0;
- }
+ 	if (content->journal_device_required && (content->journal_clean == 0)) {
+ 		if (!c->force) {
+ 			pr_err("Not safe to assemble with missing or stale journal device, consider --force.\n");
+diff --git a/Create.c b/Create.c
+index fd6c9215..1537526a 100644
+--- a/Create.c
++++ b/Create.c
+@@ -541,6 +541,8 @@ int Create(struct supertype *st, struct mddev_ident *ident, int subdevs,
+ 			pr_err("At least 2 nodes are needed for cluster-md\n");
+ 			return 1;
+ 		}
++	} else if (s->btype == BitmapLockless) {
++		major_num = BITMAP_MAJOR_LOCKLESS;
+ 	}
  
--static int mana_gd_setup_irqs(struct pci_dev *pdev)
-+static int mana_gd_setup_dyn_irqs(struct pci_dev *pdev, int nvec)
+ 	memset(&info, 0, sizeof(info));
+@@ -1182,7 +1184,8 @@ int Create(struct supertype *st, struct mddev_ident *ident, int subdevs,
+ 	 * to stop another mdadm from finding and using those devices.
+ 	 */
+ 
+-	if (s->btype == BitmapInternal || s->btype == BitmapCluster) {
++	if (s->btype == BitmapInternal || s->btype == BitmapCluster ||
++	    s->btype == BitmapLockless) {
+ 		if (!st->ss->add_internal_bitmap) {
+ 			pr_err("internal bitmaps not supported with %s metadata\n",
+ 				st->ss->name);
+@@ -1190,10 +1193,13 @@ int Create(struct supertype *st, struct mddev_ident *ident, int subdevs,
+ 		}
+ 		if (st->ss->add_internal_bitmap(st, &s->bitmap_chunk,
+ 						c->delay, s->write_behind,
+-						bitmapsize, 1, major_num)) {
++						bitmapsize, 1, major_num, s->assume_clean)) {
+ 			pr_err("Given bitmap chunk size not supported.\n");
+ 			goto abort_locked;
+ 		}
++		if (s->btype == BitmapLockless &&
++		    sysfs_set_str(&info, NULL, "bitmap_version", "llbitmap") < 0)
++			goto abort_locked;
+ 	}
+ 
+ 	if (sysfs_init(&info, mdfd, NULL)) {
+diff --git a/Grow.c b/Grow.c
+index cc1be6cc..4422fa09 100644
+--- a/Grow.c
++++ b/Grow.c
+@@ -383,7 +383,8 @@ int Grow_addbitmap(char *devname, int fd, struct context *c, struct shape *s)
+ 		free(mdi);
+ 	}
+ 
+-	if (s->btype == BitmapInternal || s->btype == BitmapCluster) {
++	if (s->btype == BitmapInternal || s->btype == BitmapCluster ||
++	    s->btype == BitmapLockless) {
+ 		int rv;
+ 		int d;
+ 		int offset_setable = 0;
+@@ -425,7 +426,7 @@ int Grow_addbitmap(char *devname, int fd, struct context *c, struct shape *s)
+ 				rv = st->ss->add_internal_bitmap(
+ 					st, &s->bitmap_chunk, c->delay,
+ 					s->write_behind, bitmapsize,
+-					offset_setable, major);
++					offset_setable, major, 0);
+ 				if (!rv) {
+ 					st->ss->write_bitmap(st, fd2,
+ 							     NodeNumUpdate);
+diff --git a/Incremental.c b/Incremental.c
+index 228d2bdd..de2edecb 100644
+--- a/Incremental.c
++++ b/Incremental.c
+@@ -552,6 +552,40 @@ int Incremental(struct mddev_dev *devlist, struct context *c,
+ 			if (d->disk.state & (1<<MD_DISK_REMOVED))
+ 				remove_disk(mdfd, st, sra, d);
+ 
++		if (st->ss->get_bitmap_version) {
++			if (st->sb == NULL) {
++				dfd = dev_open(devname, O_RDONLY);
++				if (dfd < 0) {
++					rv = 1;
++					goto out;
++				}
++
++				rv = st->ss->load_super(st, dfd, NULL);
++				close(dfd);
++				dfd = -1;
++				if (rv) {
++					pr_err("load super failed %d\n", rv);
++					goto out;
++				}
++			}
++
++			if (st->ss->get_bitmap_version(st) == BITMAP_MAJOR_LOCKLESS) {
++				if (sra == NULL) {
++					sra = sysfs_read(mdfd, NULL, (GET_DEVS | GET_STATE |
++								    GET_OFFSET | GET_SIZE));
++					if (!sra) {
++						pr_err("can't read mdinfo\n");
++						rv = 1;
++						goto out;
++					}
++				}
++
++				rv = sysfs_set_str(sra, NULL, "bitmap_version", "llbitmap");
++				if (rv)
++					goto out;
++			}
++		}
++
+ 		if ((sra == NULL || active_disks >= info.array.working_disks) &&
+ 		    trustworthy != FOREIGN)
+ 			rv = ioctl(mdfd, RUN_ARRAY, NULL);
+diff --git a/bitmap.h b/bitmap.h
+index 7b1f80f2..cefad194 100644
+--- a/bitmap.h
++++ b/bitmap.h
+@@ -13,6 +13,7 @@
+ #define BITMAP_MAJOR_HI 4
+ #define	BITMAP_MAJOR_HOSTENDIAN 3
+ #define	BITMAP_MAJOR_CLUSTERED 5
++#define	BITMAP_MAJOR_LOCKLESS 6
+ 
+ #define BITMAP_MINOR 39
+ 
+@@ -139,8 +140,17 @@ typedef __u16 bitmap_counter_t;
+ 
+ /* use these for bitmap->flags and bitmap->sb->state bit-fields */
+ enum bitmap_state {
+-	BITMAP_ACTIVE = 0x001, /* the bitmap is in use */
+-	BITMAP_STALE  = 0x002  /* the bitmap file is out of date or had -EIO */
++	/* the bitmap file is out of date or had -EIO */
++	BITMAP_STALE		= 1,
++	/* A write error has occurred */
++	BITMAP_WRITE_ERROR	= 2,
++	/* llbitmap is just created */
++	BITMAP_FIRST_USE	= 3,
++	/* assume-clean is set while creating new llbitmap */
++	BITMAP_CLEAN		= 4,
++	/* used by kernel */
++	BITMAP_DAEMON_BUSY	= 5,
++	BITMAP_HOSTENDIAN	= 15,
+ };
+ 
+ /* the superblock at the front of the bitmap file -- little endian */
+diff --git a/mdadm.c b/mdadm.c
+index 1fd4dcba..7a64fba2 100644
+--- a/mdadm.c
++++ b/mdadm.c
+@@ -56,6 +56,12 @@ static mdadm_status_t set_bitmap_value(struct shape *s, struct context *c, char
+ 		return MDADM_STATUS_SUCCESS;
+ 	}
+ 
++	if (strcmp(val, "lockless") == 0) {
++		s->btype = BitmapLockless;
++		pr_info("Experimental lockless bitmap, use at your own disk!\n");
++		return MDADM_STATUS_SUCCESS;
++	}
++
+ 	if (strcmp(val, "clustered") == 0) {
+ 		s->btype = BitmapCluster;
+ 		/* Set the default number of cluster nodes
+@@ -1251,7 +1257,8 @@ int main(int argc, char *argv[])
+ 			pr_err("--bitmap is required for consistency policy: %s\n",
+ 			       map_num_s(consistency_policies, s.consistency_policy));
+ 			exit(2);
+-		} else if ((s.btype == BitmapInternal || s.btype == BitmapCluster) &&
++		} else if ((s.btype == BitmapInternal || s.btype == BitmapCluster ||
++			    s.btype == BitmapLockless) &&
+ 			   s.consistency_policy != CONSISTENCY_POLICY_BITMAP &&
+ 			   s.consistency_policy != CONSISTENCY_POLICY_JOURNAL) {
+ 			pr_err("--bitmap is not compatible with consistency policy: %s\n",
+diff --git a/mdadm.h b/mdadm.h
+index 77705b11..af97481b 100644
+--- a/mdadm.h
++++ b/mdadm.h
+@@ -607,6 +607,7 @@ enum bitmap_type {
+ 	BitmapNone,
+ 	BitmapInternal,
+ 	BitmapCluster,
++	BitmapLockless,
+ 	BitmapUnknown,
+ };
+ 
+@@ -1201,7 +1202,9 @@ extern struct superswitch {
+ 	 */
+ 	int (*add_internal_bitmap)(struct supertype *st, int *chunkp,
+ 				   int delay, int write_behind,
+-				   unsigned long long size, int may_change, int major);
++				   unsigned long long size, int may_change,
++				   int major, bool assume_clean);
++	int (*get_bitmap_version)(struct supertype *st);
+ 	/* Perform additional setup required to activate a bitmap.
+ 	 */
+ 	int (*set_bitmap)(struct supertype *st, struct mdinfo *info);
+diff --git a/super-intel.c b/super-intel.c
+index 7e3c5f2b..08215271 100644
+--- a/super-intel.c
++++ b/super-intel.c
+@@ -12977,7 +12977,7 @@ static int validate_internal_bitmap_imsm(struct supertype *st)
+ static int add_internal_bitmap_imsm(struct supertype *st, int *chunkp,
+ 				    int delay, int write_behind,
+ 				    unsigned long long size, int may_change,
+-				    int amajor)
++				    int amajor, bool assume_clean)
  {
- 	struct gdma_context *gc = pci_get_drvdata(pdev);
--	unsigned int max_queues_per_port;
- 	struct gdma_irq_context *gic;
--	unsigned int max_irqs, cpu;
--	int start_irq_index = 1;
--	int nvec, *irqs, irq;
-+	bool skip_first_cpu = false;
- 	int err, i = 0, j;
-+	int *irqs, irq;
- 
- 	cpus_read_lock();
--	max_queues_per_port = num_online_cpus();
--	if (max_queues_per_port > MANA_MAX_NUM_QUEUES)
--		max_queues_per_port = MANA_MAX_NUM_QUEUES;
- 
--	/* Need 1 interrupt for the Hardware communication Channel (HWC) */
--	max_irqs = max_queues_per_port + 1;
-+	irqs = kmalloc_array(nvec, sizeof(int), GFP_KERNEL);
-+	if (!irqs) {
-+		err = -ENOMEM;
-+		goto free_irq_vector;
-+	}
- 
--	nvec = pci_alloc_irq_vectors(pdev, 2, max_irqs, PCI_IRQ_MSIX);
--	if (nvec < 0) {
--		cpus_read_unlock();
--		return nvec;
-+	for (i = 0; i < nvec; i++) {
-+		gic = kcalloc(1, sizeof(struct gdma_irq_context), GFP_KERNEL);
-+		if (!gic) {
-+			err = -ENOMEM;
-+			goto free_irq;
-+		}
-+		gic->handler = mana_gd_process_eq_events;
-+		INIT_LIST_HEAD(&gic->eq_list);
-+		spin_lock_init(&gic->lock);
-+
-+		snprintf(gic->name, MANA_IRQ_NAME_SZ, "mana_q%d@pci:%s",
-+			 i, pci_name(pdev));
-+
-+		/* one pci vector is already allocated for HWC */
-+		irqs[i] = pci_irq_vector(pdev, i + 1);
-+		if (irqs[i] < 0) {
-+			err = irqs[i];
-+			goto free_current_gic;
-+		}
-+
-+		err = request_irq(irqs[i], mana_gd_intr, 0, gic->name, gic);
-+		if (err)
-+			goto free_current_gic;
-+
-+		xa_store(&gc->irq_contexts, i + 1, gic, GFP_KERNEL);
- 	}
-+
-+	/*
-+	 * When calling irq_setup() for dynamically added IRQs, if number of
-+	 * CPUs is more than or equal to allocated MSI-X, we need to skip the
-+	 * first CPU sibling group since they are already affinitized to HWC IRQ
-+	 */
-+	if (gc->num_msix_usable <= num_online_cpus())
-+		skip_first_cpu = true;
-+
-+	err = irq_setup(irqs, nvec, gc->numa_node, skip_first_cpu);
-+	if (err)
-+		goto free_irq;
-+
-+	cpus_read_unlock();
-+	kfree(irqs);
-+	return 0;
-+
-+free_current_gic:
-+	kfree(gic);
-+free_irq:
-+	for (j = i; j >= 0; j--) {
-+		irq = pci_irq_vector(pdev, j);
-+		gic = xa_load(&gc->irq_contexts, j);
-+		if (!gic)
-+			continue;
-+
-+		irq_update_affinity_hint(irq, NULL);
-+		free_irq(irq, gic);
-+		xa_erase(&gc->irq_contexts, j);
-+		kfree(gic);
-+	}
-+	kfree(irqs);
-+free_irq_vector:
-+	cpus_read_unlock();
-+	return err;
-+}
-+
-+static int mana_gd_setup_irqs(struct pci_dev *pdev, int nvec)
-+{
-+	struct gdma_context *gc = pci_get_drvdata(pdev);
-+	struct gdma_irq_context *gic;
-+	int start_irq_index = 1;
-+	unsigned int cpu;
-+	int *irqs, irq;
-+	int err, i = 0, j;
-+
-+	cpus_read_lock();
-+
- 	if (nvec <= num_online_cpus())
- 		start_irq_index = 0;
- 
-@@ -1361,15 +1442,13 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
- 		goto free_irq_vector;
- 	}
- 
--	gc->irq_contexts = kcalloc(nvec, sizeof(struct gdma_irq_context),
--				   GFP_KERNEL);
--	if (!gc->irq_contexts) {
--		err = -ENOMEM;
--		goto free_irq_array;
--	}
--
- 	for (i = 0; i < nvec; i++) {
--		gic = &gc->irq_contexts[i];
-+		gic = kcalloc(1, sizeof(struct gdma_irq_context), GFP_KERNEL);
-+		if (!gic) {
-+			err = -ENOMEM;
-+			goto free_irq;
-+		}
-+
- 		gic->handler = mana_gd_process_eq_events;
- 		INIT_LIST_HEAD(&gic->eq_list);
- 		spin_lock_init(&gic->lock);
-@@ -1384,13 +1463,13 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
- 		irq = pci_irq_vector(pdev, i);
- 		if (irq < 0) {
- 			err = irq;
--			goto free_irq;
-+			goto free_current_gic;
- 		}
- 
- 		if (!i) {
- 			err = request_irq(irq, mana_gd_intr, 0, gic->name, gic);
- 			if (err)
--				goto free_irq;
-+				goto free_current_gic;
- 
- 			/* If number of IRQ is one extra than number of online CPUs,
- 			 * then we need to assign IRQ0 (hwc irq) and IRQ1 to
-@@ -1408,39 +1487,110 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
- 			}
- 		} else {
- 			irqs[i - start_irq_index] = irq;
--			err = request_irq(irqs[i - start_irq_index], mana_gd_intr, 0,
--					  gic->name, gic);
-+			err = request_irq(irqs[i - start_irq_index],
-+					  mana_gd_intr, 0, gic->name, gic);
- 			if (err)
--				goto free_irq;
-+				goto free_current_gic;
- 		}
-+
-+		xa_store(&gc->irq_contexts, i, gic, GFP_KERNEL);
- 	}
- 
- 	err = irq_setup(irqs, (nvec - start_irq_index), gc->numa_node, false);
- 	if (err)
- 		goto free_irq;
- 
--	gc->max_num_msix = nvec;
--	gc->num_msix_usable = nvec;
- 	cpus_read_unlock();
- 	kfree(irqs);
+ 	struct intel_super *super = st->sb;
+ 	int vol_idx = super->current_vol;
+diff --git a/super0.c b/super0.c
+index ff4905b9..07723658 100644
+--- a/super0.c
++++ b/super0.c
+@@ -1153,7 +1153,7 @@ static __u64 avail_size0(struct supertype *st, __u64 devsize,
+ static int add_internal_bitmap0(struct supertype *st, int *chunkp,
+ 				int delay, int write_behind,
+ 				unsigned long long size, int may_change,
+-				int major)
++				int major, bool assume_clean)
+ {
+ 	/*
+ 	 * The bitmap comes immediately after the superblock and must be 60K in size
+diff --git a/super1.c b/super1.c
+index fe3c4c64..22659e50 100644
+--- a/super1.c
++++ b/super1.c
+@@ -2487,11 +2487,19 @@ static __u64 avail_size1(struct supertype *st, __u64 devsize,
  	return 0;
- 
-+free_current_gic:
-+	kfree(gic);
- free_irq:
- 	for (j = i - 1; j >= 0; j--) {
- 		irq = pci_irq_vector(pdev, j);
--		gic = &gc->irq_contexts[j];
-+		gic = xa_load(&gc->irq_contexts, j);
-+		if (!gic)
-+			continue;
- 
- 		irq_update_affinity_hint(irq, NULL);
- 		free_irq(irq, gic);
-+		xa_erase(&gc->irq_contexts, j);
-+		kfree(gic);
- 	}
- 
--	kfree(gc->irq_contexts);
--	gc->irq_contexts = NULL;
--free_irq_array:
- 	kfree(irqs);
- free_irq_vector:
-+	xa_destroy(&gc->irq_contexts);
- 	cpus_read_unlock();
--	pci_free_irq_vectors(pdev);
-+	return err;
-+}
-+
-+static int mana_gd_setup_hwc_irqs(struct pci_dev *pdev)
-+{
-+	struct gdma_context *gc = pci_get_drvdata(pdev);
-+	unsigned int max_irqs, min_irqs;
-+	int max_queues_per_port;
-+	int nvec, err;
-+
-+	if (pci_msix_can_alloc_dyn(pdev)) {
-+		max_irqs = 1;
-+		min_irqs = 1;
-+	} else {
-+		max_queues_per_port = num_online_cpus();
-+		if (max_queues_per_port > MANA_MAX_NUM_QUEUES)
-+			max_queues_per_port = MANA_MAX_NUM_QUEUES;
-+		/* Need 1 interrupt for HWC */
-+		max_irqs = max_queues_per_port + 1;
-+		min_irqs = 2;
-+	}
-+
-+	nvec = pci_alloc_irq_vectors(pdev, min_irqs, max_irqs, PCI_IRQ_MSIX);
-+	if (nvec < 0)
-+		return nvec;
-+
-+	err = mana_gd_setup_irqs(pdev, nvec);
-+	if (err) {
-+		pci_free_irq_vectors(pdev);
-+		return err;
-+	}
-+
-+	gc->num_msix_usable = nvec;
-+	gc->max_num_msix = nvec;
-+
-+	return err;
-+}
-+
-+static int mana_gd_setup_remaining_irqs(struct pci_dev *pdev)
-+{
-+	struct gdma_context *gc = pci_get_drvdata(pdev);
-+	int max_irqs, i, err = 0;
-+	struct msi_map irq_map;
-+
-+	if (!pci_msix_can_alloc_dyn(pdev))
-+		/* remain irqs are already allocated with HWC IRQ */
-+		return 0;
-+
-+	/* allocate only remaining IRQs*/
-+	max_irqs = gc->num_msix_usable - 1;
-+
-+	for (i = 1; i <= max_irqs; i++) {
-+		irq_map = pci_msix_alloc_irq_at(pdev, i, NULL);
-+		if (!irq_map.virq) {
-+			err = irq_map.index;
-+			/* caller will handle cleaning up all allocated
-+			 * irqs, after HWC is destroyed
-+			 */
-+			return err;
-+		}
-+	}
-+
-+	err = mana_gd_setup_dyn_irqs(pdev, max_irqs);
-+	if (err)
-+		return err;
-+
-+	gc->max_num_msix = gc->max_num_msix + max_irqs;
-+
- 	return err;
  }
  
-@@ -1458,19 +1608,22 @@ static void mana_gd_remove_irqs(struct pci_dev *pdev)
- 		if (irq < 0)
- 			continue;
- 
--		gic = &gc->irq_contexts[i];
-+		gic = xa_load(&gc->irq_contexts, i);
-+		if (!gic)
-+			continue;
- 
- 		/* Need to clear the hint before free_irq */
- 		irq_update_affinity_hint(irq, NULL);
- 		free_irq(irq, gic);
-+		xa_erase(&gc->irq_contexts, i);
-+		kfree(gic);
++static int get_bitmap_version1(struct supertype *st)
++{
++	struct mdp_superblock_1 *sb = st->sb;
++	bitmap_super_t *bms = (bitmap_super_t *)(((char *)sb) + MAX_SB_SIZE);
++
++	return __le32_to_cpu(bms->version);
++}
++
+ static int
+ add_internal_bitmap1(struct supertype *st,
+ 		     int *chunkp, int delay, int write_behind,
+ 		     unsigned long long size,
+-		     int may_change, int major)
++		     int may_change, int major, bool assume_clean)
+ {
+ 	/*
+ 	 * If not may_change, then this is a 'Grow' without sysfs support for
+@@ -2650,6 +2658,13 @@ add_internal_bitmap1(struct supertype *st,
+ 		bms->cluster_name[len - 1] = '\0';
  	}
  
- 	pci_free_irq_vectors(pdev);
- 
- 	gc->max_num_msix = 0;
- 	gc->num_msix_usable = 0;
--	kfree(gc->irq_contexts);
--	gc->irq_contexts = NULL;
-+	xa_destroy(&gc->irq_contexts);
- }
- 
- static int mana_gd_setup(struct pci_dev *pdev)
-@@ -1481,9 +1634,10 @@ static int mana_gd_setup(struct pci_dev *pdev)
- 	mana_gd_init_registers(pdev);
- 	mana_smc_init(&gc->shm_channel, gc->dev, gc->shm_base);
- 
--	err = mana_gd_setup_irqs(pdev);
-+	err = mana_gd_setup_hwc_irqs(pdev);
- 	if (err) {
--		dev_err(gc->dev, "Failed to setup IRQs: %d\n", err);
-+		dev_err(gc->dev, "Failed to setup IRQs for HWC creation: %d\n",
-+			err);
- 		return err;
- 	}
- 
-@@ -1499,6 +1653,12 @@ static int mana_gd_setup(struct pci_dev *pdev)
- 	if (err)
- 		goto destroy_hwc;
- 
-+	err = mana_gd_setup_remaining_irqs(pdev);
-+	if (err) {
-+		dev_err(gc->dev, "Failed to setup remaining IRQs: %d", err);
-+		goto destroy_hwc;
++	/* kernel will initialize bitmap */
++	if (major == BITMAP_MAJOR_LOCKLESS) {
++		bms->state = __cpu_to_le32(1 << BITMAP_FIRST_USE);
++		if (assume_clean)
++			bms->state |= __cpu_to_le32(1 << BITMAP_CLEAN);
++		bms->sectors_reserved = __le32_to_cpu(room);
 +	}
-+
- 	err = mana_gd_detect_devices(pdev);
- 	if (err)
- 		goto destroy_hwc;
-@@ -1575,6 +1735,7 @@ static int mana_gd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	gc->is_pf = mana_is_pf(pdev->device);
- 	gc->bar0_va = bar0_va;
- 	gc->dev = &pdev->dev;
-+	xa_init(&gc->irq_contexts);
- 
- 	if (gc->is_pf)
- 		gc->mana_pci_debugfs = debugfs_create_dir("0", mana_debugfs_root);
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 228603bf03f2..f20d1d1ea5e8 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -373,7 +373,7 @@ struct gdma_context {
- 	unsigned int		max_num_queues;
- 	unsigned int		max_num_msix;
- 	unsigned int		num_msix_usable;
--	struct gdma_irq_context	*irq_contexts;
-+	struct xarray		irq_contexts;
- 
- 	/* L2 MTU */
- 	u16 adapter_mtu;
-@@ -558,12 +558,16 @@ enum {
- /* Driver can handle holes (zeros) in the device list */
- #define GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP BIT(11)
- 
-+/* Driver supports dynamic MSI-X vector allocation */
-+#define GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT BIT(13)
-+
- #define GDMA_DRV_CAP_FLAGS1 \
- 	(GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
- 	 GDMA_DRV_CAP_FLAG_1_NAPI_WKDONE_FIX | \
- 	 GDMA_DRV_CAP_FLAG_1_HWC_TIMEOUT_RECONFIG | \
- 	 GDMA_DRV_CAP_FLAG_1_VARIABLE_INDIRECTION_TABLE_SUPPORT | \
--	 GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP)
-+	 GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP | \
-+	 GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT)
- 
- #define GDMA_DRV_CAP_FLAGS2 0
- 
+ 	*chunkp = chunk;
+ 	return 0;
+ }
+@@ -3025,6 +3040,7 @@ struct superswitch super1 = {
+ 	.avail_size = avail_size1,
+ 	.add_internal_bitmap = add_internal_bitmap1,
+ 	.locate_bitmap = locate_bitmap1,
++	.get_bitmap_version = get_bitmap_version1,
+ 	.write_bitmap = write_bitmap1,
+ 	.free_super = free_super1,
+ #if __BYTE_ORDER == BIG_ENDIAN
 -- 
-2.34.1
+2.39.2
 
 
