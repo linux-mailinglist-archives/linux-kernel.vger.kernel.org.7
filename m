@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-642130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78757AB1ADF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FFFAB1ABD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977C47A8077
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C6FA169A62
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE10238166;
-	Fri,  9 May 2025 16:49:12 +0000 (UTC)
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097A2236A79;
+	Fri,  9 May 2025 16:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wu6v7//0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976FC215175;
-	Fri,  9 May 2025 16:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0AC13C3CD;
+	Fri,  9 May 2025 16:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746809352; cv=none; b=YExvOaLiIUD6UOQcnG+cDkDeVRcIbB5pt4I8EiAoobG1wMyqbJICv3WwZ3gBX1FUDG8m707IeG/nhNAElLDOh2chesaw7t9rdFhs/1dbqvzS9pgo4fmKKLH0e07E5whro43SxxU6sH30pbDB0mO8O1lP1606S50yXZjUBlaF/v0=
+	t=1746808882; cv=none; b=Sq/CTMpe3JoXuVVi18qWqKRCY51perJcbhmQ2V4xnL23kPNXfYzbkL0lbAFeXryEAGkaFN235cJ8Xw9955O/qmMV1DOAlarP7GOq+VfPhotQu5de8n05FBRLgM6qc+kaeum7AoNwJK0xgHC3bPlHbuyyIgvu48z8Lvd6Fh16p4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746809352; c=relaxed/simple;
-	bh=Di562fRz1OvExNqlAtAa54+s7WlTDxKq+Rfaxv4PFbU=;
+	s=arc-20240116; t=1746808882; c=relaxed/simple;
+	bh=y0IAr64O+aYheRZ0wUGqwC1rzhN+VdRSDxf68VbESD8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mkhWEsUF1it65fhFtQ9XB0WwErYHkqOO2OX0gRAXMVOa/ExDJA1tE57BscxXs+HqtMKqYgEic+QQDIAMkqCmkFAdpTiGvQVZWBDGq9Ll/kPWSfK9oObOGjc5w854vePiYDl2E5b9sfiuxu5s2AC4De8MXHbKW/mQQgnV3mpBGjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d81cba18e1so17764895ab.3;
-        Fri, 09 May 2025 09:49:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746809349; x=1747414149;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+1jGam034RLLI89DszcNU83DPB5ZENGVlOfv4Pt5+Fo=;
-        b=m5kfhIwG4Gue00Y8Hk1Dw56NnX158gG8Y0GqNhPfsu+lLtvVYP457gxfs55/1uxYKp
-         Ae20K9VrDrH3cpYqKJ6tpBEFMir1WfB3iD1zQW/HpWkQ43v/ahrV4bGQaMH6spkNI/94
-         ge8uAp65m9kbQG9FOZuCPCiKpTq/243OoxcwAw4lxy6zUT12zARCJWi6Ldqj5UiDsuci
-         yUZWMsVTHXnRTVppzSiw/N+q+DvcBN07XY6HhU2kCuII3hjd/wX9KAAs0wW1YMbTz4wV
-         /TU7392MDNqsXjOjauv/+88Z+NKOjQ8IfscvC6Gl2Tj34tg5WzM9R2dZzUdjS9BubhS9
-         AkyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZTJLNNrUVie/iDDv4OQe9MJ+xCJrrJ6YyhYQusBIVnFIbeHKNv1lcja+s4Ypewjl+q2BAb4DZQpbRifLfSnIAqQiPG7dP@vger.kernel.org, AJvYcCVd1oMh/jGo0uv0kcxgClOzTKEWqIs/CqSNv2NezXps110EDnnTQZFeJ1MBv90SkVO+kfFjA9GrDhr4qC8=@vger.kernel.org, AJvYcCWul2eQ2Z+avxXy7xJDuxnFk2MzKKo2UO2gpfCIMFo7ErvbY6Ze1J1FAcgpFciDLh5LvCzoW2wn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoRrbspMw6AkNQ7Hs53qh72cC2xt13ljA29w30/iZxvmtxay1m
-	cFD4a1ddIDEmekbez9NS5Cv9Z5kcy7Qd0q8rHLShX7CZZCAmTUUxP7p8TbMaOa0=
-X-Gm-Gg: ASbGnct1oM5dKZcW6eTKaR7m2yrQkV7/E0GIyS6qYC6Vwnbv+HnTRWJmsiIsivU18Vw
-	DDCzti38QgIYtkGHkyq0MpQBoIjT4va5UJEpQHW13hvT7pYbZuj01vbe5ULuUN+2akrVVnI6ibh
-	ywh3W9NR+//iFxgQaPtv2DPGNXfcUweQ4oVuWiPVzTtPjSwVK3N54sHwuzNOjK2QUmTE1Q3Oog7
-	stBQRccSQzaTMLbZFZXzqGEyFQAzqtcS3lXxwcqYWoH7P20BS5u0WCE/6iD2VnBw9ieiWm9c8tH
-	20sp4Q2+mKheW1RhoLrWSuuHso/yO1wf28YNGVAe2VWp/sutVBetqC/nwUEkp1KiTNAVcvw1jgQ
-	+21XZ01Mr
-X-Google-Smtp-Source: AGHT+IHdg/R/QrVZLR+WXIOgB7KjmmeIfv68t+B7smmef4Z6fMnXeo5csmcYo+9r/+iYCD8wo3luKQ==
-X-Received: by 2002:a05:6e02:1a27:b0:3d8:1d7c:e192 with SMTP id e9e14a558f8ab-3da7e1e305bmr57365965ab.7.1746809349474;
-        Fri, 09 May 2025 09:49:09 -0700 (PDT)
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa2249ef8asm488408173.5.2025.05.09.09.49.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 09:49:09 -0700 (PDT)
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85e46f5c50fso198628139f.3;
-        Fri, 09 May 2025 09:49:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUM8zkbMrx0RsUxxTRXFru70RxLRYPKCeLyBETm0aRCK2JVyFxt1/Vz899GmbFUivWooyYLdfFEE8Pgf9DsWolhgEAb6tyS@vger.kernel.org, AJvYcCVMEqwlTflQrYHERZe+BfsyWfth4kz7OcsL8iLhPQRpyaD4VaKtdrz8CxcjTxc40IquaqumTgZ3@vger.kernel.org, AJvYcCXmEO3/21V9e67t+nbj0rL5ixgIc806uVs/1JJad5Fo7Nfz7XgC+yybCPtfqj77dnNPChQl5i6khEucDVI=@vger.kernel.org
-X-Received: by 2002:a05:6902:2204:b0:e78:7b0c:db8e with SMTP id
- 3f1490d57ef6-e78fdd2e11bmr5146920276.30.1746808864760; Fri, 09 May 2025
- 09:41:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=OzznVyj6USl4rITllkUiWaEx9I5FfU1LIVqQRK8y60MwWPPPCpU/kKV/6lakPLG3hSvIqqKBa6/MCX3zI081n8iZrWozVhZ2ahSuzajy+LoC23DbbA/yut/DvHXb/sv0Ml4AcuFuFB/lEOA7mCyqirLpnGvcy7OJTaohPI8X0UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wu6v7//0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65DBC4CEED;
+	Fri,  9 May 2025 16:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746808881;
+	bh=y0IAr64O+aYheRZ0wUGqwC1rzhN+VdRSDxf68VbESD8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Wu6v7//0wo+4nft/qVjSdeZDbGipVhncxiMduFAq58PvUV9CkE03zxTiDKEfjQuai
+	 7kVWr4W5yEqIx9es2m8d0sewPlFcGhf5KGfbQ+s1vabZF67Dki3y8Ik77aymXoI++a
+	 W5jTMwgW231enFsIbIXaTXntGUKaFjUbcz0f1YEs2fArDSeooWHMs/rMnglkngC1cZ
+	 TYur2oJWrKgHRuKJoWROHZ7KTW+veRBl6k4lxLetWStVPyF2vrLHlclOw9DZ/+CdFD
+	 ZporQPZTGea7i92ysYV37dCQcwd7iik4ds4Weik61CN20OB/Y98dQoOnB67nXNJaUX
+	 etGnW7Aiemf6Q==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c873231e7bso1877096fac.3;
+        Fri, 09 May 2025 09:41:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKGG41KnDBn2uTa5wcKXrvzpDCsDssLjqBYhN98OHM1OKbzY/YIjPUGrMTfYuDNba9vBZZEio8S/oM2yA=@vger.kernel.org, AJvYcCUlUWSp5CfDPNbC1X17fT5MxUxHJH+vOTp4DsCYQVGpRPQ8YdPTRnRk0zVRjXSI2Z42ntw9U1neg4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA8Qdvrli2EGXYvIzNvB3//AmTw9BOE+pzbdnQDj6HvJbpBBxR
+	Ij2jau5buOmbFvp+HIjgQPW606KZiN17eOSMLBwDLHou0q5KyyXoruAjqErIDm8Tx+Hk4SgTrmQ
+	qyeLp03c3KPxDeTDPX9nAJgxraEY=
+X-Google-Smtp-Source: AGHT+IFpEyejOAgEPyjkdGwaTitBM/mMEi03IHz5RFan2KnBgN9t31wT0HOuCTPZzGWKSJZuETYd9A4NMQMsmtjo+UM=
+X-Received: by 2002:a05:6871:782:b0:2d6:6639:52d9 with SMTP id
+ 586e51a60fabf-2dba45282c1mr2688171fac.32.1746808881126; Fri, 09 May 2025
+ 09:41:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
- <20250509-work-coredump-socket-v5-4-23c5b14df1bc@kernel.org> <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
-In-Reply-To: <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
-From: Luca Boccassi <bluca@debian.org>
-Date: Fri, 9 May 2025 17:40:53 +0100
-X-Gmail-Original-Message-ID: <CAMw=ZnQJ6wxz76+30jmPO=DD6_fufxO0qEU2jrP+jhMQWUYDKQ@mail.gmail.com>
-X-Gm-Features: ATxdqUHtnACv76Evvurm-jfNa0b2HAMH4VT6zOSLDIbIKwAAAJW5b477sDWlbeU
-Message-ID: <CAMw=ZnQJ6wxz76+30jmPO=DD6_fufxO0qEU2jrP+jhMQWUYDKQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/9] coredump: add coredump socket
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+References: <20250507014728.6094-1-changwoo@igalia.com> <a82423bc-8c38-4d57-93da-c4f20011cc92@arm.com>
+In-Reply-To: <a82423bc-8c38-4d57-93da-c4f20011cc92@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 9 May 2025 18:41:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ixh=ra-TDbC59rpZoGn0pRWmAMchHqoOb_XwB2XUzA7Q@mail.gmail.com>
+X-Gm-Features: ATxdqUEhekjKxOiCqJACIRj4Yucv3oDY0_mHhqtzyWszh96966OwdYTQVrriguk
+Message-ID: <CAJZ5v0ixh=ra-TDbC59rpZoGn0pRWmAMchHqoOb_XwB2XUzA7Q@mail.gmail.com>
+Subject: Re: [PATCH v2] PM: EM: Add inotify support when the energy model is updated.
+To: Changwoo Min <changwoo@igalia.com>, Lukasz Luba <lukasz.luba@arm.com>
+Cc: christian.loehle@arm.com, tj@kernel.org, rafael@kernel.org, 
+	pavel@kernel.org, kernel-dev@igalia.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, len.brown@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 9 May 2025 at 16:40, Christian Brauner <brauner@kernel.org> wrote:
+On Fri, May 9, 2025 at 12:55=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.com> w=
+rote:
 >
-> > Userspace can set /proc/sys/kernel/core_pattern to:
+> Hi Changwoo,
+>
+> On 5/7/25 02:47, Changwoo Min wrote:
+> > The sched_ext schedulers [1] currently access the energy model through =
+the
+> > debugfs to make energy-aware scheduling decisions [2]. The userspace pa=
+rt
+> > of a sched_ext scheduler feeds the necessary (post-processed) energy-mo=
+del
+> > information to the BPF part of the scheduler.
 > >
-> >         @linuxafsk/coredump_socket
+> > However, there is a limitation in the current debugfs support of the en=
+ergy
+> > model. When the energy model is updated (em_dev_update_perf_domain), th=
+ere
+> > is no way for the userspace part to know such changes (besides polling =
+the
+> > debugfs files).
+> >
+> > Therefore, add inotify support (IN_MODIFY) when the energy model is upd=
+ated.
+> > With this inotify support, the directory of an updated performance doma=
+in
+> > (e.g., /sys/kernel/debug/energy_model/cpu0) and its parent directory (e=
+.g.,
+> > /sys/kernel/debug/energy_model) are inotified. Therefore, a sched_ext
+> > scheduler (or any userspace application) monitors the energy model chan=
+ge
+> > in userspace using the regular inotify interface.
+> >
+> > Note that accessing the energy model information from userspace has man=
+y
+> > advantages over other alternatives, especially adding new BPF kfuncs. T=
+he
+> > userspace has much more freedom than the BPF code (e.g., using external
+> > libraries and floating point arithmetics), which may be infeasible (if =
+not
+> > impossible) in the BPF/kernel code.
+> >
+> > [1] https://lwn.net/Articles/922405/
+> > [2] https://github.com/sched-ext/scx/pull/1624
+> >
+> > Signed-off-by: Changwoo Min <changwoo@igalia.com>
+> > ---
+> >
+> > ChangeLog v1 -> v2:
+> >    - Change em_debug_update() to only inotify the directory of an updat=
+ed
+> >      performance domain (and its parent directory).
+> >    - Move the em_debug_update() call outside of the mutex lock.
+> >    - Update the commit message to clarify its motivation and what will =
+be
+> >      inotified when updated.
+> >
+> >   kernel/power/energy_model.c | 12 ++++++++++++
+> >   1 file changed, 12 insertions(+)
+> >
 >
-> I have one other proposal that:
+> I have discussed that with Rafael and we have similar view.
+> The EM debugfs is not the right interface for this purpose.
 >
-> - avoids reserving a specific address
-> - doesn't require bpf or lsm to be safe
-> - allows for safe restart and crashes of the coredump sever
->
-> To set up a coredump socket the coredump server must allocate a socket
-> cookie for the listening socket via SO_COOKIE. The socket cookie must be
-> used as the prefix in the abstract address for the coredump socket. It
-> can be followed by a \0 byte and then followed by whatever the coredump
-> server wants. For example:
->
-> 12345678\0coredump.socket
->
-> When a task crashes and generates a coredump it will find the provided
-> address but also compare the prefixed SO_COOKIE value with the socket
-> cookie of the socket listening at that address. If they don't match it
-> will refuse to connect.
->
-> So even if the coredump server restarts or crashes and unprivileged
-> userspace recycles the socket address for an attack the crashing process
-> will detect this as the new listening socket will have gotten either a
-> new or no SO_COOKIE and the crashing process will not connect.
->
-> The coredump server just sets /proc/sys/kernel/core_pattern to:
->
->         @SO_COOKIE/whatever
->
-> The "@" at the beginning indicates to the kernel that the abstract
-> AF_UNIX coredump socket will be used to process coredumps and the
-> indicating the end of the SO_COOKIE and the rest of the name.
->
-> Appended what that would look like.
+> A better design and mechanism for your purpose would be the netlink
+> notification. It is present in the kernel in thermal framework
+> and e.g. is used by Intel HFI
+> - drivers/thermal/intel/intel_hfi.c
+> - drivers/thermal/thermal_netlink.c
+> It's able to send to the user space the information from FW about
+> the CPUs' efficiency changes, which is similar to this EM modification.
 
-We set the core pattern via sysctl, so personally I'd prefer if it
-remained fixed rather than being dynamic and have to be set at
-runtime, so that it doesn't require anything to run and it continues
-to be activated on triggers only
+In addition, after this patch
+
+https://lore.kernel.org/linux-pm/3637203.iIbC2pHGDl@rjwysocki.net/
+
+which is about to get into linux-next, em_dev_update_perf_domain()
+will not be the only place where the Energy Model can be updated.
+
+Thanks!
 
