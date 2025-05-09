@@ -1,99 +1,129 @@
-Return-Path: <linux-kernel+bounces-641027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1CAAB0C3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D30AB0C47
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA7CA031BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149861B61C3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC67270569;
-	Fri,  9 May 2025 07:48:15 +0000 (UTC)
-Received: from mail.actia.se (mail.actia.se [212.181.117.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2777027584C;
+	Fri,  9 May 2025 07:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="1sWWA01l"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF14D27055D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69705272E45
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746776895; cv=none; b=lVQI4tfpSMxnBy9byi0OhgqGA7LEtYvXJsJykqGjG6WKEE3dW4y+Dv73p299eRPDU/F5P+LTokpzdNuXukaO/QJggfPZ5VxuuZUn2sLDfT4nWsBLnXcgT+KWjddlHc2Wxw/DGd4wMEe6yNFhDJqimvoHYLZFhwvigU+m++clrHI=
+	t=1746776990; cv=none; b=H2sC/NEPzil7eE3cKuZoUXKfoLv5q9m697LhWbNkngAlnGs7OUvBEirQBY7eP+lHqIzQC5p8GA6kAOyCtPRvDJr6osUkyMnSX5jU4o28K8OVOrujGWh0X3N9WH00jRjxmGtuzYRnSV9SdwM+M1iaciAdCFZF+ENqZLHsWFQduC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746776895; c=relaxed/simple;
-	bh=6Bb1bCIHUhcZpksKyLvuXWjp5mJsajaLw4Ijf+x0huU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=McOTW9vynJRsdXQZp+P1s9DIudtaRgHIw4cgIIjPNlXyuuA3uDyKJLi7214su2gqzDzw00KEFt/51skoXsMSUz0KAiCFw4lf6v5OBbsCKXERCml2h9zQFQfd/OlZzQBZTD61be3v6NvRRH5w/BktICD3UAcFYGMPi5bTmyp9JRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
-Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
- (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 May
- 2025 09:48:04 +0200
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
- 15.01.2507.039; Fri, 9 May 2025 09:48:04 +0200
-From: John Ernberg <john.ernberg@actia.se>
-To: Stefano Stabellini <sstabellini@kernel.org>, Christoph Hellwig
-	<hch@infradead.org>
-CC: Juergen Gross <jgross@suse.com>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>, "xen-devel@lists.xenproject.org"
-	<xen-devel@lists.xenproject.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
-Thread-Topic: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
-Thread-Index: AQHbu1cR+sKkXAZoXEOAUfrcrER157O/dMAAgAX2O4CAAkbqgIAAVVAAgAE+k4CAAI9lgA==
-Date: Fri, 9 May 2025 07:48:03 +0000
-Message-ID: <df9da8af-3a10-4f8b-8e4a-63e4ba473e17@actia.se>
-References: <20250502114043.1968976-1-john.ernberg@actia.se>
- <20250502114043.1968976-3-john.ernberg@actia.se>
- <alpine.DEB.2.22.394.2505021007460.3879245@ubuntu-linux-20-04-desktop>
- <75266eb7-66a4-4477-ae8a-cbd1ebbee8db@actia.se>
- <alpine.DEB.2.22.394.2505071602570.3879245@ubuntu-linux-20-04-desktop>
- <aBwvrLKD_VJapYkB@infradead.org>
- <alpine.DEB.2.22.394.2505081614450.3879245@ubuntu-linux-20-04-desktop>
-In-Reply-To: <alpine.DEB.2.22.394.2505081614450.3879245@ubuntu-linux-20-04-desktop>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-esetresult: clean, is OK
-x-esetid: 37303A2955B14453667D66
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EDE583C0E761E94898DF9F230B77BD62@actia.se>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1746776990; c=relaxed/simple;
+	bh=8DBiVFxTixrtiQG+3fkA6cwV+Bl/+i4GlK04eWSXcTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QewvjEV8/LFIypP0tKO9adqWzlidK9aKhLbxvuVFVCb363sE+hf/6YBrkeOq87OJd0+jXAMpzKiw2B5LsoACoFNXfgzeSa9thwryZpP7durlxxVSVXUyZhb119aVB/qiDHYkyAiNMyAB1libIoExLaYh5fS8FrkcL6zqGE8e3Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=1sWWA01l; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
+	by cmsmtp with ESMTPS
+	id DCw4utQemf1UXDISquxMEp; Fri, 09 May 2025 07:48:12 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id DISpuKvtTyiSgDISqukyBo; Fri, 09 May 2025 07:48:12 +0000
+X-Authority-Analysis: v=2.4 cv=RI61HZi+ c=1 sm=1 tr=0 ts=681db33c
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9i7u4wcDJ1b1hBDRDc+vpY5kyCY22Gzjhf2xPNXzx1I=; b=1sWWA01l87ArC8td5xeXU+FwnH
+	1+B/bdng9stw/3vQ6xTNOsknXOo1DGPM7z3A8qFxhk9hEF1QkaBx2EdPQXRYZn4begewrgQ9nvJ0I
+	CDbUS16aUvaNrIxwY2ZqNeMBBpdKiK41xLDvP85+xppqysocm9W87hNfF05yH1SDTdN7LaH7ZGx0X
+	pG6ifOvMYqlmTjMHo9p25fjmk1uMFDixDNjF7bPC3sYD+nHTvBc1WBZXvT5uhGzWyE66oP6WHR+a3
+	9uOE+cRxDDwt3b1MVYTe/gqcpX9T4aCAHkBLN0yaFiHZhIquNpoREdqHlq3sQZmb6Ru8aKFwLZ/ku
+	YMOZRsRA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36240 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uDISo-00000002cBN-2i9C;
+	Fri, 09 May 2025 01:48:10 -0600
+Message-ID: <c83c891b-b7bc-49b8-811e-1fa9a2453f65@w6rz.net>
+Date: Fri, 9 May 2025 00:48:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.14 000/183] 6.14.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250507183824.682671926@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250507183824.682671926@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uDISo-00000002cBN-2i9C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:36240
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHOdZg/uJL0LhbaWsRnOukwz3Xmx8BOOSmm6hKW4156ATeWnOe1CMngI6hVKTnmp7Ah5Cx+/2xJ4j2zpXMu93mg69pdJnv26Uel9If3U2P6IAs3dQYRY
+ G7Q2ympaWys4QeN2PPXJiuT5IJlu7UOw4clQ/ka4R8Nc/795nh0Jq3nZ8vyO6HcR5uM++fGZaW7/naJI8MyucCuNqtevXR+XWx4=
 
-SGkgU3RlZmFubywNCg0KT24gNS85LzI1IDE6MTQgQU0sIFN0ZWZhbm8gU3RhYmVsbGluaSB3cm90
-ZToNCj4gT24gV2VkLCA3IE1heSAyMDI1LCBDaHJpc3RvcGggSGVsbHdpZyB3cm90ZToNCj4+IE9u
-IFdlZCwgTWF5IDA3LCAyMDI1IGF0IDA0OjA5OjE1UE0gLTA3MDAsIFN0ZWZhbm8gU3RhYmVsbGlu
-aSB3cm90ZToNCj4+Pj4gVGhpcyBtYXBwaW5nIGlzIG5vdCBmb3IgYSBSQU0gYmFja2VkIGFkZHJl
-c3MuIEluIHRoZSBlRE1BIGNhc2UgZm9yIHRoZQ0KPj4+PiBpTVg4UVhQIHRoZSBgcGh5c2AgY29t
-aW5nIGluIGhlcmUgaXMgdGhlIGFkZHJlc3Mgb2YgYSByZWdpc3Rlci4NCj4+Pg0KPj4+IE9rLCB0
-aGlzIGluZm9ybWF0aW9uIGlzIGltcG9ydGFudCA6LSkNCj4+Pg0KPj4+IEkgYW0gbm90IGNlcnRh
-aW4gd2hldGhlciB0aGUgbWFwX3Jlc291cmNlIGludGVyZmFjZSBjYW4gb25seSBiZSBjYWxsZWQN
-Cj4+PiBmb3IgTU1JTyBhZGRyZXNzZXMgb3IgaWYgaXQgY2FuIGFsc28gYmUgY2FsbGVkIGZvciBS
-QU0tYmFja2VkIGFkZHJlc3Nlcw0KPj4+IHdpdGggYSBzaXplID4gUEFHRV9TSVpFLiBJbiB0aGUg
-bGF0dGVyIGNhc2UsIHdlIGNvdWxkIHJ1biBpbnRvIHRoZSBpc3N1ZQ0KPj4+IEkgd2FzIGRlc2Ny
-aWJpbmcuDQo+Pg0KPj4gbWFwX3Jlc291cmNlIGlzIGludGVuZGVkIGZvciBNTUlPIHJlZ2lvbnMs
-IGFsdGhvdWdoIHRob3NlIGNvdWxkIGJlID4NCj4+IFBBR0VfU0laRS4gIEl0IG11c3Qgbm90IGJl
-IGNhbGxlZCBvbiBSQU0uDQo+IA0KPiBJbiB0aGF0IGNhc2UsIEpvaG4sIHlvdSBjYW4ganVzdCB1
-c2UgZG1hX2RpcmVjdF9tYXBfcmVzb3VyY2UoKS4NCj4gDQo+IFRoYXQncyBiZWNhdXNlIE1NSU8g
-cmVnaW9uczoNCj4gLSBhcmUgMToxIG1hcHBlZCBvbiBBUk0NCj4gLSBhcmUgMToxIG1hcHBlZCBv
-biB4ODYgZm9yIFBWIERvbTANCj4gLSBtaWdodCBub3QgYmUgMToxIG1hcHBlZCBvbiB4ODYgZm9y
-IFBWSCBEb20wLCBidXQgaW4gdGhpcyBjYXNlIHdlIHJlbHkNCj4gICAgb24gdGhlIElPTU1VIHRv
-IGRvIGFkZHJlc3MgdHJhbnNsYXRpb24NCj4gDQo+IEluIG5vbmUgb2YgdGhlc2UgY2FzZXMgeGVu
-X3BoeXNfdG9fZG1hIHdvdWxkIGdpdmUgdXMgYW55IGludGVyZXN0aW5nDQo+IHJlc3VsdHMuICBJ
-dCB3b3VsZCBiZSB0aGUgc2FtZSBhcyBjYWxsaW5nIHBoeXNfdG9fZG1hLg0KDQpUaGFuayB5b3Ug
-Zm9yIGV4cGxhaW5pbmcuIEkgd2lsbCBzcGluIGEgVjIgaW5jb3Jwb3JhdGluZyB0aGlzLg0KVGhh
-bmtzISAvLyBKb2huIEVybmJlcmcNCg==
+On 5/7/25 11:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.14.6 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 09 May 2025 18:37:41 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.6-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
+
 
