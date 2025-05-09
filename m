@@ -1,241 +1,126 @@
-Return-Path: <linux-kernel+bounces-640925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B692CAB0B07
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:54:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C47AB0AEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB001B64C0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:54:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48EC54A40A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3B326FA7E;
-	Fri,  9 May 2025 06:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04D026E179;
+	Fri,  9 May 2025 06:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoiDDEoV"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hBbOvkW7"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C184C26E16A;
-	Fri,  9 May 2025 06:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DE826A1B8
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746773621; cv=none; b=jKFK7HWKtOX8zzSDIV10PAV0gXyDjqdov/oEcmhv481jltGbUg2mAr2Yg1IDrhiSKQZRjsHKKpP3PpFO0HekNyioAbF8wvqv4UuD80bXp7+76pvFQG4nG8H91/vsFQhFYmSGcEfibSAJyY4ax9FjMHuDuJLGu28O07YIS2uAXD8=
+	t=1746773480; cv=none; b=tK4mGgUSTG2tkd/5up+9sQXG1jFObQXKIsa3+xWnSRIFWfkQ37NnCBnYgWlMahbXUo4qQXBZvhl0SZvRBW0TCmb2L5oMPzsZx16xGrqginEBxO4DvBBRHabA4+lZSbVaHzKaNtz5MgqLPY3vgd9d0ChOsVm2S9GQFvv82+9fLw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746773621; c=relaxed/simple;
-	bh=cv3RfpeMQ4Ck7UgZdFcV3vI06Yt1aRSptGNgot++bps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RmXkGrG/j+ppMda7DvJJmnyho9d0OXW5372+tP2By8W39DBYQwhlH62SE6KDT+F7BFC+ffmJhPDRxt2J+ioRDJlW/j4u2uYY670ImAzGXCbANQkRaM00j8d1uZ62e5cm4QHhwGdBnLttWmFT7eZyUnPLo5srJHVL+Gn4aNdRFa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoiDDEoV; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so12949455e9.0;
-        Thu, 08 May 2025 23:53:39 -0700 (PDT)
+	s=arc-20240116; t=1746773480; c=relaxed/simple;
+	bh=AF5fpfzqJ+Ej96B9gVRXqWtxyZAB5RD/WG1QkctopUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Jn55wnPYptju20CipDTFnR4iRMJe7jHJeGznH5cnZj140gnjPlohMlsXDEcDmUFD4o9c6v/GarVkm50w6XwmtWZWYFVH73A0nZTXSHN33mdoZdL8frjkDODxXkytpSCbZQ0uYlBVCoGsy3xKqHoLvhfbyDAIkFvj9hldrgpo/G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hBbOvkW7; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fbda5a8561so2577639a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 23:51:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746773618; x=1747378418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5LurdoLz7UweJ6Wmwk4qfD4FsF/JhV+fB9edgA8f4OU=;
-        b=NoiDDEoVPfmfgozPVyBOTisCjYRqUX2puPamj63wl2vYX4cyo29oHIfi1ADxE7Wi1S
-         bU5CTlTvwMhBytMfoB/epEEoa+iirr9eI/w2dQBJP+bSZeKwQIlGiOlACRW+gueb0mwb
-         582JhIXy23Mn7f1IyWK0G6rMXrzC7qUI2+MuK4d12/wFUEVw8JZ3cZPFft4JYhINi9Ii
-         UuCYrBSvqrvH/0CfuTl1dNAvfhraD2+PXLDMrk+YvlJsSIRh+FcogtxT0Xf6jIcTslkq
-         gGoa/sjaf/wSU4uMU3LNcTSGIHJabkUtEy6w/kjKLJcsqWBtjEgAy+Yb2c4EOdJZ3YUl
-         5jjA==
+        d=linaro.org; s=google; t=1746773477; x=1747378277; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KYBTfNGTTnEFB0aMh2qxUzJsPyPpesZiTr/JW3zojpk=;
+        b=hBbOvkW7BmxxOxP8+ympB4RWPZGeOn6CHHfZqQVoajLn2esBcrg8teL3Sb9RxSdtEE
+         FIqwy/AfK32iPhEhxOvmOrrYgTrIclCym++2l9pNPRIfr5PwfC0d59S/466Czt7iIgHc
+         RDZmCdxRkNm/6Eob/Dw5IihzoyfPO9Rkeo27CA48Uiv8gaEvhWECLNBmCnPUD7jlXRQb
+         LltmR6EnOMtsxD+DV8CGuq7L6Yz2wccEG6Mmo8vP77iTSuwD5LmdeZOeOtcbuW4WKC5C
+         /azERjZjjCXk8K6Tp7VpeUQ7pWtf2jZL5/zWpwXzZ0VGdb8vfzTO+KVYLcgY5PzmSF0q
+         6rWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746773618; x=1747378418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5LurdoLz7UweJ6Wmwk4qfD4FsF/JhV+fB9edgA8f4OU=;
-        b=kIWGxYxEtfZ0pGXGOo1zvmcvQXHfRWnyEj9xAP9cTx0Zvpi6Lyi8MrHGk/+1H74ZMr
-         TtK87iDL6QI8VjmS8FxcrLrg0P1J5cBJ+QRtt7uTYJA/O2wSvxZykPtDiF6BsLq0aoJF
-         9H9ND13fOl5dkEbO6Vh/jbpjntg5iKjOqKU3LTNyLxCGNenn1bfEwj1U3Dz0rwsnsIih
-         k6zBzfWIMv0Qpj88sbAW5x29fYb2rJnylgDd4Y5DQYHBpnxlIzhw9kyfSRVhDs0sgie/
-         O2wI4EkFfmO3jEjQ3oWOWvK5BwDN7yvS17PHohMfdFKQZPIGPCyHs5Ez3Inbx0rVITFb
-         W+xw==
-X-Forwarded-Encrypted: i=1; AJvYcCULmmughZFLCRzDF9KRCI1USm7lKIC0lR4Cu8drsiZsgoPUvOm6R/VZdOo/3MWVrMSK1oKxSVqVE3Nxx/IQ@vger.kernel.org, AJvYcCWrlbE2XlZRw7VqUlehAVcTY56zgMRbL7BjcFx5RSpkJegi//j5YLa7z640HdfvOjSB89CEmzRFC+qY@vger.kernel.org, AJvYcCXsXeRzwY0YumZtgDJvHzDz5AxqIOWyifP6/2pbif7hmCsOODtiBFhoeeTGSaBz39efhNHpYRZZj28W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8PXVt3QQYg292Zth/pusxS1GAX5ldbATqWvkDjeX1xY9z/57P
-	tnFtvs5FlswElzyYaHZjShFLdmSAKpF09XXj9HQw9bKRwqB0AOhtM6pAshy1
-X-Gm-Gg: ASbGnctNJtmJLti10NhQG3atXk0GFpGLqdUUTjbpr01dWVYKHK7G/MEFWCTc05jtYg9
-	c3B4DLTv3F6bFHK1ZLGkYx1ujK2Sej+kEGtYPsTk/YVUhWo8s7I0eFbvxhUTv+hU5R5bSEzxY4D
-	5FBYe5cn5m/BWS+y/vjq+jRG24pMNmBrGUxGNnFeA6EKCljDKjJ8XxPmi1M3Rqbe0iNb62R4oJZ
-	9ls94p1bUQyzc7DRavJVhi2I0QYJj+eUH5dYIInsJ24Zco4lVyxdtfDTG2Z/ylHLh44o3SP5xiS
-	bENLrNg5NozQpt1KcryQ0G64zgBZy5fxj7+FlHEhceSXZ5iJ2RlJMq/8uOe7Hv2Z3A==
-X-Google-Smtp-Source: AGHT+IERkckyKlmXuZnRf0VVS6j7vxJGHp2mD1teeEiyOIji9PfSnSJn4PQPjqXigCXmZZsyuvuPGQ==
-X-Received: by 2002:a05:600c:34d5:b0:441:d438:4ea5 with SMTP id 5b1f17b1804b1-442d6dd24d3mr12441735e9.20.1746773617423;
-        Thu, 08 May 2025 23:53:37 -0700 (PDT)
-Received: from tempest2.110.lan (xt27dd.stansat.pl. [83.243.39.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c2asm19276315e9.1.2025.05.08.23.53.36
+        d=1e100.net; s=20230601; t=1746773477; x=1747378277;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYBTfNGTTnEFB0aMh2qxUzJsPyPpesZiTr/JW3zojpk=;
+        b=nrkjea/Ir+2UynWnyxMUuJOXNFe2RtBcADkcpbFQ6p/iB2QIsislRMgpKsRzwMvIc/
+         YVEuXFC51OnRKhSD0mDi25gg33d0OCy+HyPRR0BqG2KQn0a2TY06pB0NqFOXPEyQrex3
+         UICWvHgclCV2lJ2xMZggwiitq5asMAJ6TXZEypwfWGNJ49Q/UGUeNvhnBdnicx6KhV+L
+         gkqY7vlDwc9KVojWRMF917W9Hcq6YdGFEh4JzC413mT/yS7y5+A34S3Mu2L3jsCZDWal
+         mN6LiVHYWeh7sTR8g+E8UUTmaxraO6namtYg4rN9fMiz30zYd9AsMmYuIVtBdnDiTOto
+         CjBw==
+X-Gm-Message-State: AOJu0Yz0NTIOxsqS7VnLwbH65RaeiR7l/0hCBc4RIgnuiwAHTQz7LKpe
+	5V+ozdexy/Cexs+621Izg8bSasyQzEq/64tf8EwdyujRURKSThnNIfIektYTR/8+e3Nb1VTqy3B
+	i
+X-Gm-Gg: ASbGncsJYecTfNl7olUxy2Tkzlj2jSeagSG2Et7tfgrYA2fKx8QdwmUY3O8I1qcgWDg
+	T2eGILjkUxtEddWcRyt6oIEQw3Z2FwwzhyOmDWYfe7e3d2kdNeDH1F5A8S53M5/0RQ6r3Jp8evD
+	fUtcyqW5wVC8x6wAMkkXU910wR00geb5y5CSv2TBB4A4SFCJlS54JEO1NuDc0ZuFOxUI4tVzrYl
+	+Cmm4HaApNJ4lbWuy7/xeGF4ShTbB2SlX3c+4LVfVxmy8RxcWiX8sn/xX5zuO1dWEAbeGEZPHrh
+	h0koa2BbmmdWwUBLEZ/HGUsCy9eC06SPIRXKQfjpUwhMry4+zdj+qrIb53eCyejZKmTLyNwuAwH
+	SqCCjy7I=
+X-Google-Smtp-Source: AGHT+IGEq7s1cGa8nS1cxj9LzdihYh5cljT0mvPGw2cCH0VhEx2xs7QLyoyuTIKGYy59vJPEyiabaw==
+X-Received: by 2002:a05:6402:13cf:b0:5f6:c4ed:e24e with SMTP id 4fb4d7f45d1cf-5fca07eb917mr1808116a12.27.1746773476973;
+        Thu, 08 May 2025 23:51:16 -0700 (PDT)
+Received: from rayden (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d7100d2sm955653a12.80.2025.05.08.23.51.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 23:53:37 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: linux-hwmon@vger.kernel.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Noah Wang <noahwang.wang@outlook.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Grant Peltier <grantpeltier93@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Shen Lichuan <shenlichuan@vivo.com>,
-	Charles Hsu <ythsu0511@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v2 5/5] dt-bindings: hwmon: Add bindings for mpq8785 driver
-Date: Fri,  9 May 2025 08:51:09 +0200
-Message-ID: <20250509065237.2392692-6-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250509065237.2392692-1-paweldembicki@gmail.com>
-References: <20250509065237.2392692-1-paweldembicki@gmail.com>
+        Thu, 08 May 2025 23:51:16 -0700 (PDT)
+Date: Fri, 9 May 2025 08:51:14 +0200
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: arm@kernel.org, soc@kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	op-tee@lists.trustedfirmware.org
+Subject: [GIT PULL] TEE updates for 6.16
+Message-ID: <20250509065114.GA4188600@rayden>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Add device tree bindings for Monolithic Power Systems MPQ8785, MPM82504
-and MPM3695 PMBus-compliant voltage regulators.
+Hello arm-soc maintainers,
 
-These bindings also documents the optional
-"mps,vout-fb-divider-ratio-permille" property.
+Please pull two small small patches for the TEE subsystem and OP-TEE driver.
 
----
-v2:
-  - remove mps,mpq8785 from trivial-devices.yaml
-  - fix alphabetical order
-  - rename voltage-scale-loop to mps,vout-fb-divider-ratio-permille
-  - add mps,vout-fb-divider-ratio-permille min and max values
-  - rewrite mps,vout-fb-divider-ratio-permille description
+Thanks,
+Jens
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
- .../bindings/hwmon/pmbus/mps,mpq8785.yaml     | 88 +++++++++++++++++++
- .../devicetree/bindings/trivial-devices.yaml  |  2 -
- 2 files changed, 88 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
+The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
 
-diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
-new file mode 100644
-index 000000000000..3c61f5484326
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
-@@ -0,0 +1,88 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/pmbus/mps,mpq8785.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Monolithic Power Systems Multiphase Voltage Regulators with PMBus
-+
-+maintainers:
-+  - Charles Hsu <ythsu0511@gmail.com>
-+
-+description:
-+  Monolithic Power Systems digital multiphase voltage regulators with PMBus.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mps,mpm3695
-+      - mps,mpm3695-25
-+      - mps,mpm82504
-+      - mps,mpq8785
-+
-+  reg:
-+    maxItems: 1
-+
-+  mps,vout-fb-divider-ratio-permille:
-+    description:
-+      The feedback resistor divider ratio, expressed in permille
-+      (Vfb / Vout * 1000). This value is written to the PMBUS_VOUT_SCALE_LOOP
-+      register and is required for correct output voltage presentation.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: mps,mpq8785
-+    then:
-+      properties:
-+        mps,vout-fb-divider-ratio-permille:
-+          maximum: 2047
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: mps,mpm82504
-+    then:
-+      properties:
-+        mps,vout-fb-divider-ratio-permille:
-+          maximum: 1023
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: mps,mpm3695
-+    then:
-+      properties:
-+        mps,vout-fb-divider-ratio-permille:
-+          maximum: 1023
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: mps,mpm3695-25
-+    then:
-+      properties:
-+        mps,vout-fb-divider-ratio-permille:
-+          maximum: 4095
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      pmic@30 {
-+        compatible = "mps,mpm82504";
-+        reg = <0x30>;
-+        mps,vout-fb-divider-ratio-permille = <600>;
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 8da408107e55..7c1c0cc29655 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -293,8 +293,6 @@ properties:
-           - mps,mp5990
-             # Monolithic Power Systems Inc. digital step-down converter mp9941
-           - mps,mp9941
--            # Monolithic Power Systems Inc. synchronous step-down converter mpq8785
--          - mps,mpq8785
-             # Temperature sensor with integrated fan control
-           - national,lm63
-             # Serial Interface ACPI-Compatible Microprocessor System Hardware Monitor
--- 
-2.43.0
+  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/tee-for-v6.16
+
+for you to fetch changes up to 39bb67edcc582b3b386a9ec983da67fa8a10ec03:
+
+  tee: Prevent size calculation wraparound on 32-bit kernels (2025-04-30 14:57:03 +0200)
+
+----------------------------------------------------------------
+Small TEE updates for v6.16
+
+- Remove an unnecessary NULL check before release_firmware() in the
+  OP-TEE driver
+- Prevent a size wrap in the TEE subsystem. The wrap would have been caught
+  later in the code so no security consequences.
+
+----------------------------------------------------------------
+Chen Ni (1):
+      tee: optee: smc: remove unnecessary NULL check before release_firmware()
+
+Jann Horn (1):
+      tee: Prevent size calculation wraparound on 32-bit kernels
+
+ drivers/tee/optee/smc_abi.c |  3 +--
+ drivers/tee/tee_core.c      | 11 ++++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
