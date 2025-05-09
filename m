@@ -1,157 +1,288 @@
-Return-Path: <linux-kernel+bounces-641459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F50AB121A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:22:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C524AB1222
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E801B214A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BC71C41EBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D0128FFC4;
-	Fri,  9 May 2025 11:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05FC290BC0;
+	Fri,  9 May 2025 11:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="qr9zk9Tm"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="IjQNX/lC"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A70E28FAA7
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103692900A2
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746789659; cv=none; b=AKq0QFSR7fp2/4mpZ2edctrzjDzx9OjV2jOY7gDT0gzhHFMnhtbyBOjE0ClwYCOB0gF5KjP/pYeryJur6PNZGVVdF2FWwWDtUICH5YI5p/npb3asVFeSDPvHca7/npP8Q9Ne+tHlNaNjw976ru6uZ3DP54wmGYjIm42DoM9Sy/s=
+	t=1746789710; cv=none; b=dmElaCvU89QioBndkYU/M48c6TIwjmJsznG+P4FWd7Sha50fZHel8ti1KuaQqKiqxPDxyXEMPYi5HKIjSpSa2wxuUnzPz8jjhE37v31Trc070MT+Pry9bvLKf8MJuQog7U5ch7L9w29xnH0HmUsCpi/nhQpI2YfVpqYh159WYRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746789659; c=relaxed/simple;
-	bh=o+DTlUShzMqTWdpVptHXPZF7T6Hpe95l3FZm/2enEAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hSpxNW1VbguMd8c2URSxyKcZJR8rizZ4FT9XQksPdhvs3EUFQz6MNeCPXq9pnjZGvRkRWoMEVRhRGAtViZsHXVob22bnvNkSLEHBRrLZswyYZbU74jPFd3AnZxMCBGF9L8sZg1s++Te0zJpIcL3DtCfu3c3fZ1EoYp+ahYWQ1s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=qr9zk9Tm; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2d4e91512b4so1328514fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746789657; x=1747394457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f4O20IXLpg8jEm9xUHHnlctypzKfsB1ZRP9Xc0/of3c=;
-        b=qr9zk9TmzFk8u5MrPNvNPZzy3U+PAr26qcHdBeV9ev3ayi5VBpR24n1oO2oUYpWFii
-         iyRtw2IOGA1GE4h2XyKASz/PFMqDDKwGhkLrecOmPBRqePnwb2bH1sTj0oEfLyjkghOj
-         WjoPI51jH2V09069nGrpOiImLsMmKOwdBnSt9QKBpqkCeIB9UfE7iL5e76Qjw1hIBOqL
-         g8VWDORsilCuUnMo4PYhv0x0qUu76nUGr4+Z9Gfc38+YnEffAnK0pOjnrU9WjU0JTJrh
-         p0iUhiK5RZwwAe9LuHBaNGU3SaJGGBGZOd3S5PphSP5t/L4koTDx8z8gZpkzoiWR/LOR
-         z3lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746789657; x=1747394457;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f4O20IXLpg8jEm9xUHHnlctypzKfsB1ZRP9Xc0/of3c=;
-        b=L4qXvljQKk8K3/ZJeWev87L2rT4oORPVWaQ3S8CGDw4X9j3aP+QXIVLF/rHfJOA1Jl
-         w2jOAMidG04RAv1tYKJzfdDKcy46dvWMv4CNakuh0KUNjVKtm2KkKH3OPWpTDUfhCOGc
-         +FyQ4r8kdHfR9eHWsH9Kae1EChjMnyRfcz0T8zOfJ9hqVa09wTkwr8XvlfhM3y3E9bde
-         JHuOJ1YJRYstVxSM/W9uCFXo4B9DeHFEWFT4iqgcnUUewQEVZuPTxmTKXJxtS6jKhwFU
-         5cGpjV1D8VU3Y6D7xAvR7srPfCRQDanidvwi+RluQKJtY99LWGB3N4w0947XEg74BbT9
-         RCbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDVSCpctVj4gMwTJ4wfCP/iad+JFz6gIuPNIxPoSZEEqUZBsxqR4HO9C9o57z0KJ9CgHxHJpmXPaZ6nGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9aDFXXLfxBTy1YG7nqW+eXlj5Np3+vGmpPdYPxQW05RDVf+iF
-	Z4IRo9KEh41lghG1azIq5SmIsLR4oB2LANxMsIp2N8hIRGcbTn4vuCKbrIJS9sPgwjVTTuSaf/p
-	q
-X-Gm-Gg: ASbGncsHzWLyhzKojqUzmirytiF9rVodbVfkx4Rdu/32x8dpDKOalmNT+SNd8G0bjRf
-	6qQeNoip5UWp92neDzWdAtbpWDzQHOI1XcPFtpql1EVJ4vTfIVoeGP3fA75/eKs+/X2XOJJgLJs
-	H2xRI/bgLyitNhEC7cZQ0cUvUNdzlOhrggApTRujEVuJ2ZPJb9eae0BcVpAAWzYrHDBqyiolQeM
-	NOV9Oyske7jMpefHsgqpA+xVNYkMe417wN2sOXr4hlGIDXVUWPqSMXZAFzFj4aSZGr0jWsz15s9
-	NQAMN8wi5UJ0z81RZouRDDgNYrKWLJKOljIw0GTD/X8JHNGvhJoBnOs8TN9pd0YSMQFvUzGgYn/
-	wOHIXbrVLqiuWow==
-X-Google-Smtp-Source: AGHT+IHhcPDh8pSsBNqyKD2nWRDYn4h+n+ZvD9Pi5ASi8e+tMvfh3KEcYvhc33cDnA1c1ksabwra3A==
-X-Received: by 2002:a05:6e02:198e:b0:3d3:f4fc:a291 with SMTP id e9e14a558f8ab-3da7e21748bmr40779945ab.19.1746789647038;
-        Fri, 09 May 2025 04:20:47 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da7e10549fsm5136325ab.23.2025.05.09.04.20.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 04:20:46 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 6/6] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Fri,  9 May 2025 06:20:31 -0500
-Message-ID: <20250509112032.2980811-7-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250509112032.2980811-1-elder@riscstar.com>
-References: <20250509112032.2980811-1-elder@riscstar.com>
+	s=arc-20240116; t=1746789710; c=relaxed/simple;
+	bh=BlVflAgMKF1KY+21MKTFM8WI7wi3npy62PkBzFrs1LY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=ihBFfK9BTyKb7K+E3A0+glSUYyvmW8uzoDPtA4RV5/0QidbkyC0lK2xOCc9R1IvX/C40bwkIwscQUWWEqTWeIHjsntoRkqkggUNvVHcJ8FNPj+g/g63AqryEVjQy1N+A5u/UTqF1WebSgb+bTxS3wOeAJXdLlSskIa2TEC+fRhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=IjQNX/lC; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1746789694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jycqaezhCsooEMLFOB7YGlzrs+SpJfWD5uERxhFzT9w=;
+	b=IjQNX/lCGNU+MTonjMcjwKjBj2i18UbXyRd4mzgOuD/8Pqbj9xH9w3nv1Jyd3tn8PbXrNm
+	fWIVwOKQvpZL9hye+plpkgCiCxABFpmJTxA2+0d1dRqSPldbB3vfYOsOvXuh90Tv96cMh3
+	PD19WdITDHgwDKYJ+RTkRhJ6jjeefPePV/1rQ25feH+F/SutEirtNuULbUjvPoSFmzRGPE
+	ZwT4xnEWsKyBvn9XiNcxCSH1b6K+0qthvDHlraL9f4JkqDXsJ9YUmuEfGD3HyM2FxsU8qX
+	SC62p0PIMKt7DxkT0TJrUYrzdijQJKX/B3C7Morf6mUPHhDTdc25NlYasMqdIA==
+Content-Type: multipart/signed;
+ boundary=76ae7b15ebcac961fb29afb3c1039cc390728cd5d52cfd66bb9894187db4;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Fri, 09 May 2025 13:21:13 +0200
+Message-Id: <D9RL9DZN7PXS.PGSNWKK9J548@cknow.org>
+Subject: Re: [PATCH 4/6] arm64: dts: rockchip: add px30-cobra base dtsi and
+ board variants
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Heiko Stuebner" <heiko@sntech.de>
+Cc: <quentin.schulz@cherry.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ "Heiko Stuebner" <heiko.stuebner@cherry.de>
+References: <20250508150955.1897702-1-heiko@sntech.de>
+ <20250508150955.1897702-5-heiko@sntech.de>
+In-Reply-To: <20250508150955.1897702-5-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+--76ae7b15ebcac961fb29afb3c1039cc390728cd5d52cfd66bb9894187db4
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Hi,
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 6eec6328c26fe..f4afb35dc6bc9 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-control@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -553,6 +565,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+On Thu May 8, 2025 at 5:09 PM CEST, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+>
+> Cobra are Touchscreen devices built around the PX30 SoC using
+> a variety of display options.
+>
+> The devices feature an EMMC, network port, usb host + OTG ports and
+> a 720x1280 display with a touchscreen.
+>
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> ---
+>  arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+>  .../rockchip/px30-cobra-ltk050h3146w-a2.dts   |  39 ++
+>  .../dts/rockchip/px30-cobra-ltk050h3146w.dts  |  39 ++
+>  .../dts/rockchip/px30-cobra-ltk050h3148w.dts  |  39 ++
+>  .../dts/rockchip/px30-cobra-ltk500hd1829.dts  |  58 ++
+>  arch/arm64/boot/dts/rockchip/px30-cobra.dtsi  | 570 ++++++++++++++++++
+>  6 files changed, 749 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w-=
+a2.dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3148w.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk500hd1829.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra.dtsi
+>
+> <snip>
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/px30-cobra.dtsi b/arch/arm64/bo=
+ot/dts/rockchip/px30-cobra.dtsi
+> new file mode 100644
+> index 000000000000..92066cbc1a70
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/px30-cobra.dtsi
+> @@ -0,0 +1,570 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2025 Cherry Embedded Solutions GmbH
+> + */
+> +
+> +/dts-v1/;
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/pinctrl/rockchip.h>
+> +#include "px30.dtsi"
+> +
+> +/ {
+> +	aliases {
+> +		mmc0 =3D &emmc;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path =3D "serial5:115200n8";
+> +	};
+> +
+> +	backlight: backlight {
+> +		compatible =3D "pwm-backlight";
+> +		power-supply =3D <&vcc5v0_sys>;
+> +		pwms =3D <&pwm0 0 25000 0>;
+> +	};
+> +
+> +	beeper {
+> +		compatible =3D "pwm-beeper";
+> +		pwms =3D <&pwm1 0 1000 0>;
+> +	};
+> +
+> +	emmc_pwrseq: emmc-pwrseq {
+> +		compatible =3D "mmc-pwrseq-emmc";
+> +		pinctrl-0 =3D <&emmc_reset>;
+> +		pinctrl-names =3D "default";
+> +		reset-gpios =3D <&gpio1 RK_PB3 GPIO_ACTIVE_HIGH>;
+> +	};
+> +
+> +	gpio-leds {
+> +		compatible =3D "gpio-leds";
+> +
+> +		led-0 {
+> +			color =3D <LED_COLOR_ID_BLUE>;
+> +			gpios =3D <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+> +			label =3D "heartbeat";
+> +			linux,default-trigger =3D "heartbeat";
+> +		};
+> +	};
+> +
+> +	pwm-leds {
+> +		compatible =3D "pwm-leds";
+> +
+> +		ring_red: led-0 {
+> +			color =3D <LED_COLOR_ID_RED>;
+> +			default-state =3D "off";
+> +			label =3D "ring_red";
+> +			pwms =3D <&pwm5 0 1000000 0>;
+> +			max-brightness =3D <255>;
+> +		};
+> +
+> +		ring_green: led-1 {
+> +			color =3D <LED_COLOR_ID_GREEN>;
+> +			default-state =3D "off";
+> +			label =3D "ring_green";
+> +			pwms =3D <&pwm6 0 1000000 0>;
+> +			max-brightness =3D <255>;
+> +		};
+> +
+> +		ring_blue: led-2 {
+> +			color =3D <LED_COLOR_ID_BLUE>;
+> +			default-state =3D "off";
+> +			label =3D "ring_blue";
+> +			pwms =3D <&pwm7 0 1000000 0>;
+> +			max-brightness =3D <255>;
+> +		};
+> +	};
+> +
+> +	/* also named 5V_Q7 in schematics */
+> +	vcc5v0_sys: regulator-vccsys {
+> +		compatible =3D "regulator-fixed";
+> +		regulator-name =3D "vcc5v0_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt =3D <5000000>;
+> +		regulator-max-microvolt =3D <5000000>;
+> +	};
+> +};
+> +
+> +&cpu0 {
+> +	cpu-supply =3D <&vdd_arm>;
+> +};
+> +
+> +&cpu1 {
+> +	cpu-supply =3D <&vdd_arm>;
+> +};
+> +
+> +&cpu2 {
+> +	cpu-supply =3D <&vdd_arm>;
+> +};
+> +
+> +&cpu3 {
+> +	cpu-supply =3D <&vdd_arm>;
+> +};
+> +
+> +&display_subsystem {
+> +	status =3D "okay";
+> +};
+> +
+> +&dsi_dphy {
+> +	status =3D "okay";
+> +};
+> +
+> +&emmc {
+> +	bus-width =3D <8>;
+> +	cap-mmc-highspeed;
+> +	/*
+> +	 * For hs200 support, U-Boot would have to set the RK809 DCDC4
+> +	 * rail to 1.8V from the default of 3.0V. It doesn't do that on
+> +	 * devices out in the field, so disable hs200.
+> +	 * mmc-hs200-1_8v;
+> +	 */
+> +	mmc-pwrseq =3D <&emmc_pwrseq>;
+> +	non-removable;
+> +	vmmc-supply =3D <&vcc_3v3>;
+> +	vqmmc-supply =3D <&vcc_emmc>;
+> +	status =3D "okay";
+> +};
+> +
+> +&gmac {
+> +	clock_in_out =3D "output";
+> +	phy-handle =3D <&dp83825>;
+> +	phy-supply =3D <&vcc_3v3>;
+> +	status =3D "okay";
+> +};
+> +
+> +&gpu {
+> +	mali-supply =3D <&vdd_log>;
+> +	status =3D "okay";
+> +};
+> +
+> +/* I2C0 =3D PMIC, STUSB4500, RTC */
+> +&i2c0 {
+> +	status =3D "okay";
+> +
+> +	rk809: pmic@20 {
+> +		compatible =3D "rockchip,rk809";
+> +		reg =3D <0x20>;
+> +		#clock-cells =3D <0>;
+> +		clock-output-names =3D "xin32k";
+> +		interrupt-parent =3D <&gpio0>;
+> +		interrupts =3D <7 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names =3D "default";
+> +		pinctrl-0 =3D <&pmic_int>;
+> +		wakeup-source;
+> +		rockchip,system-power-controller;
 
+The "rockchip," prefix is not needed and deprecated, so you can drop it.
+Same issue is present in patch 6 of this series.
+
+Cheers,
+  Diederik
+
+--76ae7b15ebcac961fb29afb3c1039cc390728cd5d52cfd66bb9894187db4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaB3lNwAKCRDXblvOeH7b
+bo/FAQC5JFHh6hf/TaSCesVRR7H5eRQlxvlw731y6nMua5aEMAEAhPjTcmcQNuWH
+SVe21rvMza2bRe8N/MCmB9XPapWzzgU=
+=Hk2D
+-----END PGP SIGNATURE-----
+
+--76ae7b15ebcac961fb29afb3c1039cc390728cd5d52cfd66bb9894187db4--
 
