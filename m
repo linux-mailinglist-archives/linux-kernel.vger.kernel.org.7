@@ -1,395 +1,248 @@
-Return-Path: <linux-kernel+bounces-642080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28780AB1A6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:28:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48AFAB1A92
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00463A9697
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5E7168367
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C177F2367D8;
-	Fri,  9 May 2025 16:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D9A23A98D;
+	Fri,  9 May 2025 16:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkFvJNV7"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ITodAjqm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90AD231841;
-	Fri,  9 May 2025 16:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746808114; cv=none; b=cD8oatvlf9VJjmed4qiAbZmY15a7RWAY7T8yDVFgXepFz2+Dm3aTsZ3hgAoID8VzFTWxC9eixoWWVFAQVxrTNyrtF4Lqvslby40Q09wDz/RdmwXPl/o8IpK+nMFz3xdRuAljQSmXrjWd1Rjgf1CvhwuOki/DvHGSKrapA5WkI5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746808114; c=relaxed/simple;
-	bh=XhKWd7Cbton1PmuNKvkjSjQqgDhXUx4DilgBjLgbDPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R11c0UQh/YzNOqm5v7v8PnXvlgStMyyp3j69efQlVymDfgjPZ+QnBTeGwbRKzGWQKuVexgWHByB8NIK3WxyQMgVqfRFdH2iymbn2A/iUskDdEhIlTE1Xq55Poj6PX/LbLsiXpTnUg32KkQm1pTpQW58lgISRmeJZlHAtLiY8pPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkFvJNV7; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54998f865b8so2546446e87.3;
-        Fri, 09 May 2025 09:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746808108; x=1747412908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XNoGYCfFn1Ise+cYyN4rMghXeEvaDWlpHmEHwktQf4A=;
-        b=AkFvJNV7K3vKgyMJXu7X00SexEw/dw+8OL4WCXB7izGhCQYJGUivAeCb6VPPvMxfRV
-         9DJyEw723w6NfWM3tE+q8Z2ghKyTxleQf4SxOYx1K1Cz6WJbJfG0q3S1ikBGrZn79ttG
-         /Xqtw/fbm/yb/u01pGZsAemoar2omrLazDV+UZ5DAbI9DMDJ7an5IBfCGj335G2JOIb+
-         JkZwYE0lrsaLPDbm1xDQMUE+cTvHGNKZywwmzCBrV0jhlizk9UT+4sfji8hlKFuFbYbV
-         ZCfmGkuzorCh9RlxgzlrJGKnvxJ0Xt2qu7T3mQEQFTtte5bt1Y1Sp2S+24qJ5zyrIifG
-         /Alw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746808108; x=1747412908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNoGYCfFn1Ise+cYyN4rMghXeEvaDWlpHmEHwktQf4A=;
-        b=q4JhteL5H5F1GCgyZaBwkuaOh07INEx+y95xxL64xQqJO5l1aElyt51OpEvpwOV1w+
-         nBEimlp27+xPITiGpkub16gXfHD0rY6uQ66FP8F9lP+91/Jhl8M5LR8mVr80GxjmOZfc
-         T8GV7fkE9ws5To2as0bLujTXsaP8VForwOveZLGz5Pt5q5SUEWqAkYHj8V3U4bU0z7d0
-         ccLQnelr90FFSN1A8D4ZMKS16iunPvARqVEAu1GYc/RFek3yRHmQDAkL68FpNl4TT+UR
-         /lhKWtd5pLjsQVdxFFRhZeVFbE/7uNyNmzRcaQvjHqkyTabVWiGMx09alC6/urP4cqmx
-         MaMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGwhVMV+Z4SXxgsULm7tXEEwzbZAos6lMRR1zy2Jjvb0734JFKYdlqRnXVE5FZe3F0cgDUE4cNXjYW@vger.kernel.org, AJvYcCUsmtRx6cFssNKfJ5ViRdhLV9geYs9VPLgwAYnS18G/cQHB37N5lNL/p1JlPOL/OETbsNK8aUoMlei4@vger.kernel.org, AJvYcCXpjn2zVOuRkT3kiuqrso/Dze0nCWKU6TwYU77yhcVQdLwvxtGiHnptmfCrrAjSzXsF9i55bmv/p/QJVkg7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAC6dE1bIETJznuc+fnBMFBN5826KYlEEs3yqDqI5OzhjBNzdb
-	d1z1HuHhNcki/Sqr2Dd1d5apcJUKzr/tSTvaFx5QfDQt5lYWLK57SvMKhitDPlE=
-X-Gm-Gg: ASbGncuHSag8NLIgZ8bxPP75V2z4cuIgpJxTNpC3cO462ccfoAVomy+/zRC6heKN1eG
-	IzxTJgZ3PetDAhWvM+FNy0nYUHQMUstEDL5B0JmUxKXn4DUxIhXQU2XNqU8Gj1cJ7WhRiu6jYkO
-	V8yQMocfuUXPvatJ7fkKBXfxp0uY+UyNKJE4SiqMpdtL+fc2hHhCGB/Xswegr4fKKfElpVtcKt6
-	OFqggvua8UPJ2ReCIqh842oEsTZZPmaxy8j2YntRyAfAB9THMGmIdgtNRTfAQ1Zg8XHcuU9F4Vb
-	siN17DxrU9mN23Vk6ombcO89nwa8ZEQS2vqCvsBpfIO8Zj4iRDyhlT3vRoo+Xg+o1fIcf+1rDVt
-	OQWnujYQPIoXE
-X-Google-Smtp-Source: AGHT+IH/EXb373raBKjt6WQfYf9//Y986Nd2SlGxe0WcdFkLId+97MeCHvJVp1WwYjOQkLDE9lalsA==
-X-Received: by 2002:a05:6512:6501:b0:54f:c074:869a with SMTP id 2adb3069b0e04-54fc67e28c9mr1175869e87.45.1746808107398;
-        Fri, 09 May 2025 09:28:27 -0700 (PDT)
-Received: from [10.0.0.100] (host-185-69-73-15.kaisa-laajakaista.fi. [185.69.73.15])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc645cdaasm325994e87.60.2025.05.09.09.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 09:28:27 -0700 (PDT)
-Message-ID: <aa852707-9be9-4e88-a0b3-034ebd47a9ac@gmail.com>
-Date: Fri, 9 May 2025 19:29:40 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3DF235071;
+	Fri,  9 May 2025 16:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746808211; cv=fail; b=nwcVINX572emRtH3ikJboUxUv1Pk2Mp6uazVDNA13GyggOzLvPSNRxYX4YQG8s6z/aXY76hQck5lOKxMfy6uXhhmxriyaKPbSH+caUHYhK/XQNd+igKqRXC6NKnY/6cebeGHMVRNZfTaScgT9CZ723AnJHD+IX55C0a9JGHOC5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746808211; c=relaxed/simple;
+	bh=2GfoyxixWREB8j9uN1ZxyaIs5+GY58jkfE6F3BwDmE0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fwdHdAAVba7/aB+wpDEAcpwLcOGWESSdRaujLO56fX/Mfpjq1tO5RJpfK6vf6IRdKhkRskgaS3qAaJaF051L5qB1PzAVvyTYQfXZnEo3ab2ClIFN3ALgwnYkF7HXfm8TCCTgB8fK4MkAsFzjGIWcq3/nztNxnGwVyv4Urpq8cuU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ITodAjqm; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746808209; x=1778344209;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=2GfoyxixWREB8j9uN1ZxyaIs5+GY58jkfE6F3BwDmE0=;
+  b=ITodAjqm944qKNoAGLCntIu1qHGxyCQkjcqfviq9RHVnMZO9TiYSCJY3
+   K9kZuM8bMQbdIsLIbqhn4iJzdyCJldVfz+CSbBhr063e3s/9/aAs9HPZl
+   grxiUUtY3lAqP3F8CEUdB3Emsu6h8fJ5yLIrEpkaS8HVHi4AlC7UfB0TG
+   qcvMKR3LNz9VtJWuE7W3Cmw/UbsI7/A9G+tMl6rV2hYZLDpis9sRqcHE5
+   ItGD/poyFPmDpTGGWXDs0E8Ygghd8hrZITcQxSFRCtmOtR0dGrbNPezQ/
+   S/dt+HiFyMdITWeLx9AnW3o1I86WUOZxhJVMVI3X/jZuvVyf1Abd5TS7p
+   A==;
+X-CSE-ConnectionGUID: noiKnxGuQV6J9idnoSZkSQ==
+X-CSE-MsgGUID: h8/FWqmWRO6HbENmtiaKTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="59989513"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="59989513"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 09:30:08 -0700
+X-CSE-ConnectionGUID: 7X1WW7N1RNWzPx+/zu2dAQ==
+X-CSE-MsgGUID: IY5qS4X4Rq+im/YYRpEtGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="136357671"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 09:30:09 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 9 May 2025 09:30:08 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 9 May 2025 09:30:08 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 9 May 2025 09:30:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vOt63JSbYtR3WDiWFgJUCIy31q0rGas5aAOZTtp0Kxd01+ecH1Dj1Z3Zg38JharwsDze4wyVBNNqrSXSD1h9UUs5M8VMYAlik4q0e0309nqw23l00RZQaQ5L0YsiK8lUpLHy9eNG42aYkUJBMi91pNIWNL9xNYEbZ9exvEcJatPlXyRCw0IfyBPPpkGVvlW2gvSbT9chkHvvs3qHms9S9dQh2FTdgASms6BhmKvHVmPEnShFOPBeJ80AdVMY6hUWNy6dYgDsKl+SItD7aIVeLNXkz5qG5yRvIc3wZQkMuAjLSTbArsQAETBUbelqRgvny7IZTdXyaMdOc1LElJGg1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J2OAJQq/sF6PEWPhsvebMfVx7Fh+uYLSrqdAhcVCqs4=;
+ b=V/IxGZHPlhJGB2ZVaUnYfVp4l2PJJLi4iggrVT6V2sxVPYb0+dqHnSfwWy4G//9AEzXryjAxCqE8JjXxqEu+SxmiTSe99W06YUT5pbfuSsXRqlgYRIjKNaQ6C/+udST69C0Z7vHVX4pjcSZH1fW9tqqjMCKnFx3Bokc+JSjfNBwYmMRU0GNlAg07L6CKb5+qVqC5YGP/hnWyhY9IczhIhXrSznfI0MUtBGjXb1wNgo+caU7sb8CzjY5NJ0D/Zt0wuoKJLDlDFjEi8siWuejbi+ZTgNXAWZxPurOfcB/md8jpbJ8PA8mfS9A+o3y2I1JCg9TukWVxJCe2RTgZVyaAaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by DM4PR11MB5293.namprd11.prod.outlook.com (2603:10b6:5:390::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.26; Fri, 9 May
+ 2025 16:29:52 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8722.020; Fri, 9 May 2025
+ 16:29:52 +0000
+Date: Fri, 9 May 2025 09:29:49 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Robert Richter <rrichter@amd.com>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dave Jiang
+	<dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: Re: [PATCH v6 10/14] cxl/region: Factor out code to find a root
+ decoder's region
+Message-ID: <681e2d7d4e63e_27eca02942@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250509150700.2817697-1-rrichter@amd.com>
+ <20250509150700.2817697-11-rrichter@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250509150700.2817697-11-rrichter@amd.com>
+X-ClientProxiedBy: MW2PR16CA0058.namprd16.prod.outlook.com
+ (2603:10b6:907:1::35) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] drivers: soc: ti: k3-ringacc: handle absence of tisci
-To: Sai Sree Kartheek Adivi <s-adivi@ti.com>, vkoul@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com,
- ssantosh@kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- praneeth@ti.com, vigneshr@ti.com, u-kumar1@ti.com, a-chavda@ti.com
-References: <20250428072032.946008-1-s-adivi@ti.com>
- <20250428072032.946008-6-s-adivi@ti.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20250428072032.946008-6-s-adivi@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DM4PR11MB5293:EE_
+X-MS-Office365-Filtering-Correlation-Id: 061bd8e2-fa8d-4291-0a91-08dd8f16b959
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?OBmclhDa7XOVwAyMeYxcpeW8VIuhFKVes2Ki1WxTdpZIdjMIdp0S5AoiIInj?=
+ =?us-ascii?Q?0x521g39HQlZiOQQJ7y1vq+W6c2qrETn9MUhcgIjPbsHuh2+5o1rWaPOTCSt?=
+ =?us-ascii?Q?OiKTpvTcd6cs8c2RqS0lRH6OUzmXklAeeXZHUREWOA3Dq+1fMwZguxI7mU6o?=
+ =?us-ascii?Q?fgaK0jhu5cpDH0namDBNUa/74LlfHoTx4k9Bbf/EEJ0IJxIeCjFiBg3QYLlP?=
+ =?us-ascii?Q?rS4TMkeOUclHE5aOrwQnYVPs/YeSPaiv0GqxzHflehlU6uGYc+71Iyn2f30f?=
+ =?us-ascii?Q?JDFRL78ZrtBFjcwBmSIVryQjQfZnvLegAiXr1VR/+RqmFMIMpPcqd8EZXugQ?=
+ =?us-ascii?Q?/NpTErZfHK3Wc87AXb/5OWdTkADE7uKh8MXBJaiCs8mk3laFV8kj4L7QDGbY?=
+ =?us-ascii?Q?6eBXCjHnrulmOYRFhoH4oHMCHnnHaWPzsNCwMONx9Ml1Qss7z7xTSkVm4DTK?=
+ =?us-ascii?Q?2SwBnuEAKy6H4V1ACpVHpkBihz+6GRP8XHtnKmeSMZCLBj0H/NXEsi0lSX/m?=
+ =?us-ascii?Q?XzvjrJ4UqoUS2FqV42rRsRajsvcNS/SqgbaghQBuhWUGMOoYmFxht8IqeRAc?=
+ =?us-ascii?Q?iAOr52MuA3+7FUzb7S9nHnWqDrQwGw8es8O0/+MSgAmgxg8nRSpVa7WrC2Ev?=
+ =?us-ascii?Q?yXi1kf7f+j8lLZvizpyWj45C6yvr10amPuJ7EnHNSXtZWmd8jXwWnB7J9fIA?=
+ =?us-ascii?Q?4F03eLO0Qgqucu5+HqBo12qCobtpmhDYppZwBFm2qJx1PAKHqny/fSPRVL4c?=
+ =?us-ascii?Q?06hxCsyfDJgabE9kSsSiaUbqb8zlyDldKnDgL9AEVx7MWFU3HdBqxWqrRReU?=
+ =?us-ascii?Q?1beTIpcz130dt2YM79n4I+bnMc57OZ+q3b8YFG1F7TodBF3GyfVyQC/tm/We?=
+ =?us-ascii?Q?aARIPNRhrjfS5BMXMaYVX6PFzZKBqCtJGdRQ6Hj3+kskqQv9aAuuzodYR/OT?=
+ =?us-ascii?Q?ZAidMa/7qP8GyOKkC/3cCDz4SJNhyeDBekPngK1OCDeRzcU8XLqZ7sW+WpGd?=
+ =?us-ascii?Q?MOXni14HE8gT4R4S67seCYQYs4HmZfD9Zuzs1lUM0PMoI0SEwRl0hRm/SRvS?=
+ =?us-ascii?Q?PbWqAa/pLG3oSaD/4tYDyNWi8q/ZB/IhExNE1N8unxddP1++QAl9yDuna2MI?=
+ =?us-ascii?Q?fHTKFnR9kOrDLrgVnrOkwexYe3arUMIl3izTbXHRkkYF6Cb9uRQeydJ2+rwp?=
+ =?us-ascii?Q?aUI9sflEmxhEQioDShTh4SCp8HOqInYJHppCtvALNySNlAmqnFsGWa1Bz/YD?=
+ =?us-ascii?Q?Q6KAk7J2MUgUM+wBZdclNQsjUXqgcBZufJOt5XJ6lXP9dEkGd8uR9/xm2Qov?=
+ =?us-ascii?Q?gRjJq33hdFXcmirhK58dT/JnfdV9eN1dDPXbm0SNscqwJ2++HteerAynKK4a?=
+ =?us-ascii?Q?A8Lrn/4U+m6jv2vEsZyTZdhKiVmuY4KKvbVc3yYRC5uoR4vUDfgdmn+IbQv9?=
+ =?us-ascii?Q?SEckhjpbeKY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FQ4jnlagzhq7YyQqF+PGYMlH7AB2716lxLIyWmT0odOMtSm7rKywra1U/LOR?=
+ =?us-ascii?Q?DkgjAm9RQ/v9Ow4ISKIQuiT2uVGhSTqzOUbyIw0B4i/olY4p+sfxdPHhKbr+?=
+ =?us-ascii?Q?IcGimuCsHcjt9tDhZrgNPx07S5w0xM83pgFVVcxXhqby1VjP8eLtuWLKs0YM?=
+ =?us-ascii?Q?nJ6YLQguR9p1f9yfl/l3BdJO5F80cJhjS30dLfnuzDqKijBFWJNMrV94JI3c?=
+ =?us-ascii?Q?/xVzXsNQtFdQkMDA5vhptYHrU5ciI/bljTscPXoSyvJTkDox5uP4MY0T1/3y?=
+ =?us-ascii?Q?xch6nOSx3oPvdv/xuMWHr6IjpO4SL83aW0JwWSoNRgIjz7IfzQw1+QvKfrIM?=
+ =?us-ascii?Q?mr4ShQHgp9AA96TgvK5jA3jKap2ssNATu+ksi7Bc3CYVXgoq8FJMwR6kxpd8?=
+ =?us-ascii?Q?+0jYKwOAC1eiV9dMbVXOAVUqhagzd3r78LToiobUHyWVQLO2CaejH/57lQPP?=
+ =?us-ascii?Q?m5tsBeBAMvgDHdf4feMHA+V8TjqaLEt8ZqsYjU5AR3ylVdkC/Y9x+CLEhnFF?=
+ =?us-ascii?Q?0vALyyXowURtUTWYRNM3KfFw7V4giiuy7Ie1vJl4kRIyJoo5vWto7m0ZNFJc?=
+ =?us-ascii?Q?bEn3YjeyBHB7w8S/mylN9CJupTVxQvCPc4P1PosOQ9Ns0kHxt8a1Zvxr9aHe?=
+ =?us-ascii?Q?l8PjO/dAenXiOl2qJhWtJY9pW1IvV6bN0y4bTsdE9rBVIBHkpGiaqLfq2Xho?=
+ =?us-ascii?Q?ts7qsZ/A+BDVFsRFmWIvWTWtni+joNNwU0kwR08iTgY+8kE7Mc6Omk+ZN2DY?=
+ =?us-ascii?Q?/1neo/1+K/n1HhwJIz4S3OBPAO0HYXgzi8SuaIkGcsDOwQzQrroVSmSV/GSG?=
+ =?us-ascii?Q?iKw6eG+rVagZRAFeDMF/H5s+NYFDtZtjuNAvtJdQixLoC/JtDRRNRzPl3s7I?=
+ =?us-ascii?Q?BZFV0wk9iHwH92qXFrqUkvFtzy86oZsIwlemsNW8voCDnWPebxZqwxHxNzJ/?=
+ =?us-ascii?Q?cqUiOEfDGjJ6Sy/hFHlvClsEcNkYFkIYJ6Bta/MOxH2lGa+gYDFEhcRgadxV?=
+ =?us-ascii?Q?SiB6ohRuygmlKNIwIeSmeNbmT7b0SLTrFdCGtVz7IQxQfdBJjTFpuqeHp+wL?=
+ =?us-ascii?Q?PXHoII6prbjWLnPYuL4lrd5/imAN0w7qoAuqTMVVDOTvHmIVJ2RgrQBwkYmL?=
+ =?us-ascii?Q?eEDS9nC+AhQC6Xu32Ydk0Rt3nrIMr5FBJIp86cK1HM4d0XTGiJdo8+gkmVG4?=
+ =?us-ascii?Q?KKl8RQuGHJZG5B8okOadd9mCWqkgPgzqHQetRMkcwooTLh/x+kPAlq1oLJrA?=
+ =?us-ascii?Q?mZvuQUYe37xqRYWd0N5vqsIWCCpX4c0WaOMnIdqa9Eq/dpMIqrUI6K3PdXWL?=
+ =?us-ascii?Q?4r7vf7wmHsM0X2rYTs4VLQCKeMDlvAiynt12+8uf9OYHeNJ0DEmwNROc20vv?=
+ =?us-ascii?Q?kH8PQG6utHuHlZh7SzacYIvdzjJiDWQdnk98IFQ0HJKHFCo0Z9szzMBO2XHH?=
+ =?us-ascii?Q?NpP/luL60hAczCXsKaVDWiMnQvP/MgkSCymvXvnkRyskPasnf8vRiGFxdJK0?=
+ =?us-ascii?Q?lfxd/xNxsI0rLFcvJv6RJlbikJSjQL90X87+SthOHiH/VvIHY11XsItDU2C4?=
+ =?us-ascii?Q?ZpU90/JbAFh3qnqcOqSNrySl8rAKdnd8iNpsPbo/ldD1KaqGirCRpgyA/iYR?=
+ =?us-ascii?Q?og=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 061bd8e2-fa8d-4291-0a91-08dd8f16b959
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 16:29:51.9941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fP91+CIL/THjUbjum828kK+wH/2pt8hYIiqrXLgaOv4ESRpzipbwGHO922nMA+1HQz8mTmuk6mkTuktTP5ssfYcc1l+zLSlMJoznSBl0nDU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5293
+X-OriginatorOrg: intel.com
 
-
-
-On 28/04/2025 10:20, Sai Sree Kartheek Adivi wrote:
-> Handle absence of tisci with direct register writes. This will support
-> platforms that do not have tisci firmware like AM62L.
+Robert Richter wrote:
+> In function cxl_add_to_region() there is code to determine a root
+> decoder's region. Factor that code out. This is in preparation to
+> further rework and simplify function cxl_add_to_region().
 > 
-> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> The reference count must be decremented after using the region.
+> cxl_find_region_by_range() is paired with the put_cxl_region cleanup
+> helper that can be used for this.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> Tested-by: Gregory Price <gourry@gourry.net>
 > ---
->  drivers/soc/ti/k3-ringacc.c       | 162 +++++++++++++++++++++++++-----
->  include/linux/soc/ti/k3-ringacc.h |   4 +
->  2 files changed, 142 insertions(+), 24 deletions(-)
+>  drivers/cxl/core/region.c | 26 ++++++++++++++++----------
+>  drivers/cxl/cxl.h         |  1 +
+>  2 files changed, 17 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/soc/ti/k3-ringacc.c b/drivers/soc/ti/k3-ringacc.c
-> index 82a15cad1c6c4..49e0483676a14 100644
-> --- a/drivers/soc/ti/k3-ringacc.c
-> +++ b/drivers/soc/ti/k3-ringacc.c
-> @@ -45,6 +45,38 @@ struct k3_ring_rt_regs {
->  	u32	hwindx;
->  };
->  
-> +#define K3_RINGACC_RT_CFG_REGS_OFS	0x40
-> +#define K3_DMARING_CFG_ADDR_HI_MASK	GENMASK(3, 0)
-> +#define K3_DMARING_CFG_ASEL_SHIFT	16
-> +#define K3_DMARING_CFG_SIZE_MASK	GENMASK(15, 0)
-> +
-> +/**
-> + * struct k3_ring_cfg_regs - The RA Configuration Registers region
-> + *
-> + * @ba_lo: Ring Base Address Low Register
-> + * @ba_hi: Ring Base Address High Register
-> + * @size: Ring Size Register
-> + */
-> +struct k3_ring_cfg_regs {
-> +	u32	ba_lo;
-> +	u32	ba_hi;
-> +	u32	size;
-> +};
-> +
-> +#define K3_RINGACC_RT_INT_REGS_OFS		0x140
-> +#define K3_RINGACC_RT_INT_ENABLE_SET_COMPLETE	BIT(0)
-> +#define K3_RINGACC_RT_INT_ENABLE_SET_TR			BIT(2)
-> +
-> +struct k3_ring_intr_regs {
-> +	u32	enable_set;
-> +	u32	resv_4;
-> +	u32	clr;
-> +	u32	resv_16;
-> +	u32	status_set;
-> +	u32	resv_8;
-> +	u32	status;
-> +};
-> +
->  #define K3_RINGACC_RT_REGS_STEP			0x1000
->  #define K3_DMARING_RT_REGS_STEP			0x2000
->  #define K3_DMARING_RT_REGS_REVERSE_OFS		0x1000
-> @@ -157,6 +189,8 @@ struct k3_ring_state {
->   */
->  struct k3_ring {
->  	struct k3_ring_rt_regs __iomem *rt;
-> +	struct k3_ring_cfg_regs __iomem *cfg;
-> +	struct k3_ring_intr_regs __iomem *intr;
->  	struct k3_ring_fifo_regs __iomem *fifos;
->  	struct k3_ringacc_proxy_target_regs  __iomem *proxy;
->  	dma_addr_t	ring_mem_dma;
-> @@ -465,16 +499,30 @@ static void k3_ringacc_ring_reset_sci(struct k3_ring *ring)
->  	struct ti_sci_msg_rm_ring_cfg ring_cfg = { 0 };
->  	struct k3_ringacc *ringacc = ring->parent;
->  	int ret;
-> +	u32 reg;
->  
-> -	ring_cfg.nav_id = ringacc->tisci_dev_id;
-> -	ring_cfg.index = ring->ring_id;
-> -	ring_cfg.valid_params = TI_SCI_MSG_VALUE_RM_RING_COUNT_VALID;
-> -	ring_cfg.count = ring->size;
-> +	if (!ringacc->tisci) {
-
-these are not in hot path, right?
-The reg can be moved here and in other functions.
-
-> +		if (ring->cfg == NULL)
-> +			return;
-> +		reg = readl(&ring->cfg->size);
-> +		reg &= ~K3_DMARING_CFG_SIZE_MASK;
->  
-> -	ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
-> -	if (ret)
-> -		dev_err(ringacc->dev, "TISCI reset ring fail (%d) ring_idx %d\n",
-> -			ret, ring->ring_id);
-> +		writel(reg, &ring->cfg->size);
-> +		wmb();
-> +		reg |= ring->size;
-> +
-> +		writel(reg, &ring->cfg->size);
-> +	} else {
-> +		ring_cfg.nav_id = ringacc->tisci_dev_id;
-> +		ring_cfg.index = ring->ring_id;
-> +		ring_cfg.valid_params = TI_SCI_MSG_VALUE_RM_RING_COUNT_VALID;
-> +		ring_cfg.count = ring->size;
-> +
-> +		ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
-> +		if (ret)
-> +			dev_err(ringacc->dev, "TISCI reset ring fail (%d) ring_idx %d\n",
-> +				ret, ring->ring_id);
-> +	}
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 45f5d2c7dfdf..8fdf03058b2f 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3405,13 +3405,25 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  	return cxlr;
 >  }
 >  
->  void k3_ringacc_ring_reset(struct k3_ring *ring)
-> @@ -494,16 +542,30 @@ static void k3_ringacc_ring_reconfig_qmode_sci(struct k3_ring *ring,
->  	struct ti_sci_msg_rm_ring_cfg ring_cfg = { 0 };
->  	struct k3_ringacc *ringacc = ring->parent;
->  	int ret;
-> +	u32 reg;
->  
->  	ring_cfg.nav_id = ringacc->tisci_dev_id;
->  	ring_cfg.index = ring->ring_id;
->  	ring_cfg.valid_params = TI_SCI_MSG_VALUE_RM_RING_MODE_VALID;
->  	ring_cfg.mode = mode;
->  
-> -	ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
-> -	if (ret)
-> -		dev_err(ringacc->dev, "TISCI reconf qmode fail (%d) ring_idx %d\n",
-> -			ret, ring->ring_id);
-> +	if (!ringacc->tisci) {
-> +		writel(ring_cfg.addr_lo, &ring->cfg->ba_lo);
-> +		writel((ring_cfg.addr_hi & K3_DMARING_CFG_ADDR_HI_MASK) +
-> +				(ring_cfg.asel << K3_DMARING_CFG_ASEL_SHIFT),
-> +				&ring->cfg->ba_hi);
-> +
-> +		reg = readl(&ring->cfg->size);
-> +		reg &= ~K3_DMARING_CFG_SIZE_MASK;
-> +		reg |= ring_cfg.count & K3_DMARING_CFG_SIZE_MASK;
-> +
-> +		writel(reg, &ring->cfg->size);
-> +	} else {
-> +		ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
-> +		if (ret)
-> +			dev_err(ringacc->dev, "TISCI reconf qmode fail (%d) ring_idx %d\n",
-> +					ret, ring->ring_id);
-> +	}
->  }
->  
->  void k3_ringacc_ring_reset_dma(struct k3_ring *ring, u32 occ)
-> @@ -570,15 +632,29 @@ static void k3_ringacc_ring_free_sci(struct k3_ring *ring)
->  	struct ti_sci_msg_rm_ring_cfg ring_cfg = { 0 };
->  	struct k3_ringacc *ringacc = ring->parent;
->  	int ret;
-> +	u32 reg;
-
-this can be added to if (!ringacc->tisci) { } scope.>
->  	ring_cfg.nav_id = ringacc->tisci_dev_id;
->  	ring_cfg.index = ring->ring_id;
->  	ring_cfg.valid_params = TI_SCI_MSG_VALUE_RM_ALL_NO_ORDER;
->  
-> -	ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
-> -	if (ret)
-> -		dev_err(ringacc->dev, "TISCI ring free fail (%d) ring_idx %d\n",
-> -			ret, ring->ring_id);
-> +	if (!ringacc->tisci) {
-> +		writel(ring_cfg.addr_lo, &ring->cfg->ba_lo);
-> +		writel((ring_cfg.addr_hi & K3_DMARING_CFG_ADDR_HI_MASK) +
-> +				(ring_cfg.asel << K3_DMARING_CFG_ASEL_SHIFT),
-> +				&ring->cfg->ba_hi);
-> +
-> +		reg = readl(&ring->cfg->size);
-> +		reg &= ~K3_DMARING_CFG_SIZE_MASK;
-> +		reg |= ring_cfg.count & K3_DMARING_CFG_SIZE_MASK;
-> +
-> +		writel(reg, &ring->cfg->size);
-> +	} else {
-> +		ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
-> +		if (ret)
-> +			dev_err(ringacc->dev, "TISCI ring free fail (%d) ring_idx %d\n",
-> +					ret, ring->ring_id);
-> +	}
->  }
->  
->  int k3_ringacc_ring_free(struct k3_ring *ring)
-> @@ -669,15 +745,31 @@ int k3_ringacc_get_ring_irq_num(struct k3_ring *ring)
->  }
->  EXPORT_SYMBOL_GPL(k3_ringacc_get_ring_irq_num);
->  
-> +u32 k3_ringacc_ring_get_irq_status(struct k3_ring *ring)
+> +static struct cxl_region *
+> +cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
 > +{
-> +	struct k3_ringacc *ringacc = ring->parent;
-> +	struct k3_ring *ring2 = &ringacc->rings[ring->ring_id];
+> +	struct device *region_dev;
 > +
-> +	return readl(&ring2->intr->status);
+> +	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
+> +				       match_region_by_range);
+> +	if (!region_dev)
+> +		return NULL;
+> +
+> +	return to_cxl_region(region_dev);
 > +}
-> +EXPORT_SYMBOL_GPL(k3_ringacc_ring_get_irq_status);
 > +
-> +void k3_ringacc_ring_clear_irq(struct k3_ring *ring)
-> +{
-> +	struct k3_ringacc *ringacc = ring->parent;
-> +	struct k3_ring *ring2 = &ringacc->rings[ring->ring_id];
-> +
-> +	writel(0xFF, &ring2->intr->status);
-> +}
-> +EXPORT_SYMBOL_GPL(k3_ringacc_ring_clear_irq);
-> +
->  static int k3_ringacc_ring_cfg_sci(struct k3_ring *ring)
+>  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
 >  {
->  	struct ti_sci_msg_rm_ring_cfg ring_cfg = { 0 };
->  	struct k3_ringacc *ringacc = ring->parent;
-> +	u32 reg;
->  	int ret;
->  
-> -	if (!ringacc->tisci)
-> -		return -EINVAL;
-> -
->  	ring_cfg.nav_id = ringacc->tisci_dev_id;
->  	ring_cfg.index = ring->ring_id;
->  	ring_cfg.valid_params = TI_SCI_MSG_VALUE_RM_ALL_NO_ORDER;
-> @@ -688,11 +780,26 @@ static int k3_ringacc_ring_cfg_sci(struct k3_ring *ring)
->  	ring_cfg.size = ring->elm_size;
->  	ring_cfg.asel = ring->asel;
->  
-> +	if (!ringacc->tisci) {
-> +		writel(ring_cfg.addr_lo, &ring->cfg->ba_lo);
-> +		writel((ring_cfg.addr_hi & K3_DMARING_CFG_ADDR_HI_MASK) +
-> +				(ring_cfg.asel << K3_DMARING_CFG_ASEL_SHIFT),
-> +				&ring->cfg->ba_hi);
-> +
-> +		reg = readl(&ring->cfg->size);
-> +		reg &= ~K3_DMARING_CFG_SIZE_MASK;
-> +		reg |= ring_cfg.count & K3_DMARING_CFG_SIZE_MASK;
-> +
-> +		writel(reg, &ring->cfg->size);
-> +		writel(K3_RINGACC_RT_INT_ENABLE_SET_COMPLETE | K3_RINGACC_RT_INT_ENABLE_SET_TR,
-> +				&ring->intr->enable_set);
-> +		return 0;
-> +	}
-> +
->  	ret = ringacc->tisci_ring_ops->set_cfg(ringacc->tisci, &ring_cfg);
->  	if (ret)
->  		dev_err(ringacc->dev, "TISCI config ring fail (%d) ring_idx %d\n",
-> -			ret, ring->ring_id);
-> -
-> +				ret, ring->ring_id);
+>  	struct cxl_root_decoder *cxlrd __free(put_cxl_root_decoder) = NULL;
+> +	struct cxl_region *cxlr __free(put_cxl_region) = NULL;
 
-suprious change? The alignment was correct.
+Another instance of the "obj __free(...) = NULL" anti-pattern to clean
+up. The reason it is an anti-pattern is because it risks mixing up the
+assignment order with the declaration order leading to subtle bugs.
 
->  	return ret;
->  }
->  
-> @@ -1480,9 +1587,12 @@ struct k3_ringacc *k3_ringacc_dmarings_init(struct platform_device *pdev,
->  
->  	mutex_init(&ringacc->req_lock);
->  
-> -	base_rt = devm_platform_ioremap_resource_byname(pdev, "ringrt");
-> -	if (IS_ERR(base_rt))
-> -		return ERR_CAST(base_rt);
-> +	base_rt = data->base_rt;
-> +	if (!base_rt) {
-> +		base_rt = devm_platform_ioremap_resource_byname(pdev, "ringrt");
-> +		if (IS_ERR(base_rt))
-> +			return ERR_CAST(base_rt);
-> +	}
->  
->  	ringacc->rings = devm_kzalloc(dev,
->  				      sizeof(*ringacc->rings) *
-> @@ -1498,6 +1608,10 @@ struct k3_ringacc *k3_ringacc_dmarings_init(struct platform_device *pdev,
->  		struct k3_ring *ring = &ringacc->rings[i];
->  
->  		ring->rt = base_rt + K3_DMARING_RT_REGS_STEP * i;
-> +		ring->cfg = base_rt + K3_RINGACC_RT_CFG_REGS_OFS +
-> +			    K3_DMARING_RT_REGS_STEP * i;
-> +		ring->intr = base_rt + K3_RINGACC_RT_INT_REGS_OFS +
-> +			     K3_DMARING_RT_REGS_STEP * i;
->  		ring->parent = ringacc;
->  		ring->ring_id = i;
->  		ring->proxy_id = K3_RINGACC_PROXY_NOT_USED;
-> diff --git a/include/linux/soc/ti/k3-ringacc.h b/include/linux/soc/ti/k3-ringacc.h
-> index 39b022b925986..fcf6fbd4a8594 100644
-> --- a/include/linux/soc/ti/k3-ringacc.h
-> +++ b/include/linux/soc/ti/k3-ringacc.h
-> @@ -158,6 +158,9 @@ u32 k3_ringacc_get_ring_id(struct k3_ring *ring);
->   */
->  int k3_ringacc_get_ring_irq_num(struct k3_ring *ring);
->  
-> +u32 k3_ringacc_ring_get_irq_status(struct k3_ring *ring);
-> +void k3_ringacc_ring_clear_irq(struct k3_ring *ring);
-> +
->  /**
->   * k3_ringacc_ring_cfg - ring configure
->   * @ring: pointer on ring
-> @@ -262,6 +265,7 @@ struct k3_ringacc_init_data {
->  	const struct ti_sci_handle *tisci;
->  	u32 tisci_dev_id;
->  	u32 num_rings;
-> +	void __iomem *base_rt;
->  };
->  
->  struct k3_ringacc *k3_ringacc_dmarings_init(struct platform_device *pdev,
-
--- 
-Péter
-
+Scope-based cleanup should always be exempted from "x-mas" tree
+declaration cosmetics.
 
