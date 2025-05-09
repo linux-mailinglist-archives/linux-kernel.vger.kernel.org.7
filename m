@@ -1,136 +1,91 @@
-Return-Path: <linux-kernel+bounces-640768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7347AB08E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E500AB08E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265DA4C0217
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB5F4C0540
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73CE2397A4;
-	Fri,  9 May 2025 03:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481F722D9EA;
+	Fri,  9 May 2025 03:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hbp3Y5e0"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="dZ4U0jdt"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3734964E;
-	Fri,  9 May 2025 03:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C501D88A4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746761483; cv=none; b=PkiUM/GBjhCu2hw31zYgb6KFfCJQIgaFrUlUXTHXYg2slQKQCS22lfujNdSfmLL5hIAkcP7xoZWZyzC10hQfFqaKZiStktREkHdCJvLMwqq0zBpBi9GO4goMWecjuS8cLO5RE/LNcThLI9ECwyYOqN0Gqbze7IVCazB+k3Fo6oo=
+	t=1746761581; cv=none; b=TgNR4KU3TmXNXfTeFUoGdLfsCm6y1U1qKZR6T1FrfWcxForm7dUQUW4XeHTC6lnf3lSRJX5VtaNcPUrVCsbzY20ddsZToSLqGPUtDhzRG3VWOb12VH8ak1sEb9DlZ2S585J39tPuiZpzm25Mnv8MLnnn59UGdSg5SCVWjlS7pmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746761483; c=relaxed/simple;
-	bh=+Yt6T0u3fYfQL7cdc7BFMhOrNEKA8KJXzQY/Qxnx5gY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NBYg4PSaRXAURqE7dOdqaxS4SuefhqMSN4pT3LfBTsw2d65FB0aXt6qZCFbKXBU5+mY0tuf40CeofWJM5XEyW995Z4E9wjplPHI21RQjLI66vgljlvWqgP7WG6Z+Xq6BXWigZKsG8H+dQygQ/v+yIPl9aeSXusfsZJvz/+71y1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hbp3Y5e0; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4ddac386a29so605587137.3;
-        Thu, 08 May 2025 20:31:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746761480; x=1747366280; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4A2ix+KLqr1uAddQxC8meUMDCd4s6wELmtjquDmWLdA=;
-        b=Hbp3Y5e0nNVwKZRE2bWOf/nvF16Oqv6lsWvXkR20NeEYThlkm0kVKIDzPMOOkNYjOD
-         dXeKqUS/pN4PrxzDklt748QWkJuq7qCrU/FRmHfqff7MJ7YRcUjkC763BWnd6qZljIuQ
-         8LoQmjOY3iY/WdqSv4RZbc/xp1jijCvud0RFYa/jTmP6FZdN0CWxDnspQ9REb82zl/HH
-         zJMTDr/bVYgwUSDOVkbepbhek7e5U7la2qHfehDeoVt0vN300J4QDeEWbL8Fyrgye+zG
-         0pmm4ebBcLh0Uwwr7CF30Xof3Fvelst96kuzFvyJvm5DhCL4ps0wAM5A6PLdLRD0ETVP
-         OX9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746761480; x=1747366280;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4A2ix+KLqr1uAddQxC8meUMDCd4s6wELmtjquDmWLdA=;
-        b=ApLTyUdSZf+AnhF8cphmikc+XBe12TwPKgGwJeEwJPEtteBAn0uBsJznn6MhFsFZQr
-         JHVP8WcaYEGMMcMPj9NUgL7FmHFcaR3sXv9ItEb7dTKyREY/G4kp+zAR2/WeT8uNgm2F
-         KfFaADG32shB68bYlUCoYZcn8xsNDKDfgubszNFvp5oIM+QTwks8iiNun4tzUh7k5fzU
-         xz3KniG0lIsfem6+HywZlJ3jlCfisRQ3K82+4IG9/VFM9rHcLAzc44JrDWhquKlpapjF
-         dPy7uksDWvdCS/hds+oaQLnZvxE2N2G2nRanODNgkuREUiSii02cCnW2l54WdYQ8x3/J
-         ticw==
-X-Forwarded-Encrypted: i=1; AJvYcCWS8Fw3B+iz4LW/AUadfgl5oW3izjj/mObBB/1il+X0utKEjwCertAnW4MQMXT/jXTfsI0iGHvt@vger.kernel.org, AJvYcCX3qcac7BGGECl9sPHwSb+3AxTOokhFOg2mqVTA+F2/b03t1hlYLnm5yo5EQtGrlFwy0jhUcXGWXWpX5l4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzojKidh1dG7fIe3oWUCnHNQSStLbsGpGdCohuBpBmgOXR44tUd
-	4ugeoRN716ZzUdgElAZcycBqFozQFY9HjW9cY26+3gM6ePlap8dTMbKR1XEu+kwtgw23ffnG59R
-	gEllci7FQA+qdC2K3zRC+xvVTx2k=
-X-Gm-Gg: ASbGncssZP+m6iwKK5fDCoYWthK5NgMXEagPmc/RdNFUnhY3NzDGsMlggzAqSeGcr2c
-	Nxch+Jet8qCNoy09RcqGQs0lGEBuo0S7ZjmCcVPd0AMvVSZDCBsH1v9J/U+h9SsbM4ipGNJh37x
-	13gKH4SfdyEQki0dcAiGt0Zg==
-X-Google-Smtp-Source: AGHT+IGc5+Cslf0S1acbclvSNhn/uwwmcTG8ZUvvlGJo/X0wH/M3Gq+zbif2xm4TrTenOWf1MumTFqC9O986MUqRF8I=
-X-Received: by 2002:a05:6102:8097:b0:4c1:774b:3f7a with SMTP id
- ada2fe7eead31-4deed3d4b5bmr1410263137.16.1746761480413; Thu, 08 May 2025
- 20:31:20 -0700 (PDT)
+	s=arc-20240116; t=1746761581; c=relaxed/simple;
+	bh=rvryJxmKX4mc+nGRUBZnP1ySJowEcBkvwtk/IVIVfyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KD4YnhaFaJTzDFIy+4dFQjPdYLUC/5o3EWcMv/cKcNJskP64ftQtZc8HOmLPXDLGLdRKHGK04VB+IMfACRbo1ne7K+OkpkDk7DiUyfYAghMG8yIaKjs1zWiDtFMPuLwGlgs2kWi5EEvl9/AlRCuFRrj5Ik56c81WUFvYf+8rGOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=dZ4U0jdt; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=owtz943ONJf4Hi65xs0lmnylyelZKNP4CjPK5N5RqTY=;
+	b=dZ4U0jdt+0Vxg3QlRLiHCl/r65AP5gbQHncu5eLtprOCie4HHmw18GcfdTpx85
+	BR5lBY8f6tCq/I66R6Mt1xMzJZ9EnBA5O8iOoQGxXoyRGdmMcfOXKC5AMWpN0SnH
+	M+t5ANDjlNStFeK3Nsxpz5axivHBNc7CS3vP+/LMOL8iI=
+Received: from [192.168.31.105] (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3vxIGdx1omxWhAA--.59419S2;
+	Fri, 09 May 2025 11:31:20 +0800 (CST)
+Message-ID: <26c12da6-ce6c-449f-a7da-3e057f49085c@yeah.net>
+Date: Fri, 9 May 2025 11:31:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509020238.3378396-1-xiaqinxin@huawei.com> <20250509020238.3378396-2-xiaqinxin@huawei.com>
-In-Reply-To: <20250509020238.3378396-2-xiaqinxin@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 9 May 2025 15:31:09 +1200
-X-Gm-Features: AX0GCFuxI4KztwbrtFwtCfTebZzuXx55Bo7QyZab2Vhdl2Eshu9OBelft6iLsz8
-Message-ID: <CAGsJ_4zrCiugrAPw-aExgSMZXYBBUqLyyWbcpKH8RdhKnHxj9g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dma-mapping: benchmark: Add padding to ensure uABI
- remained consistent
-To: Qinxin Xia <xiaqinxin@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>
-Cc: yangyicong@huawei.com, hch@lst.de, iommu@lists.linux.dev, 
-	jonathan.cameron@huawei.com, prime.zeng@huawei.com, fanghao11@huawei.com, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Bug#1103397: linux-image-amd64: Kernel Panic:
+ copy_fpstate_to_sigframe crashes.
+To: Salvatore Bonaccorso <carnil@debian.org>, 1103397@bugs.debian.org
+Cc: Ben Hutchings <ben@decadent.org.uk>, TonyWWang-oc@zhaoxin.com,
+ "Chang S. Bae" <chang.seok.bae@intel.com>, Lyle Li <LyleLi@zhaoxin.com>,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, pbonzini@redhat.com, levymitchell0@gmail.com,
+ attofari@amazon.de, linux-kernel@vger.kernel.org, CobeChen@zhaoxin.com,
+ TimGuo@zhaoxin.com, LeoLiu-oc@zhaoxin.com
+References: <4ac9f677-699e-4ef1-b160-9f1c6fe8e820@yeah.net>
+ <c566339b-d8d3-4f74-a3b8-8f373fbe3f47@yeah.net>
+ <174486226753.86424.3234605951040281675.reportbug@zx2>
+ <8bcebb19-17f6-47e6-976a-0c9560795cd7@yeah.net>
+ <aB0Q8S47iNeD1GOM@eldamar.lan>
+Content-Language: en-US
+From: Larry Wei <larryw3i@yeah.net>
+In-Reply-To: <aB0Q8S47iNeD1GOM@eldamar.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:M88vCgD3vxIGdx1omxWhAA--.59419S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUTiifDUUUU
+X-CM-SenderInfo: xodu25vztlq5hhdkh0dhw/1tbiCRdIPGgdZIFfqwAAsO
 
-On Fri, May 9, 2025 at 2:02=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> wr=
-ote:
->
-> The padding field in the structure was previously reserved to
-> maintain a stable interface for potential new fields, ensuring
-> compatibility with user-space shared data structures.
-> However,it was accidentally removed by tiantao in a prior commit,
-> which may lead to incompatibility between user space and the kernel.
->
-> This patch reinstates the padding to restore the original structure
-> layout and preserve compatibility.
->
-> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header fil=
-e for map_benchmark definition")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+Salvatore Bonaccorso,
 
-+Marek, +Robin
+Yes, let's just consider it as good. But in fact, there are still many 
+problems, such as the one mentioned above 
+(https://linux-hardware.org/?probe=271fabb7a4&log=dmesg), and almost all 
+laptops using Zhaoxin CPUs cannot adjust the backlight brightness, which 
+is **VERY HARMFUL** to the eyes!
 
-Acked-by: Barry Song <baohua@kernel.org>
+Regards,
 
-> ---
->  include/linux/map_benchmark.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.=
-h
-> index 62674c83bde4..2ac2fe52f248 100644
-> --- a/include/linux/map_benchmark.h
-> +++ b/include/linux/map_benchmark.h
-> @@ -27,5 +27,6 @@ struct map_benchmark {
->         __u32 dma_dir; /* DMA data direction */
->         __u32 dma_trans_ns; /* time for DMA transmission in ns */
->         __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a ti=
-me */
-> +       __u8 expansion[76];     /* For future use */
->  };
->  #endif /* _KERNEL_DMA_BENCHMARK_H */
-> --
-> 2.33.0
->
+larryw3i
 
-Thanks
-Barry
+On 5/9/25 04:15, Salvatore Bonaccorso wrote:
+> Did this felt through the cracks?
+
 
