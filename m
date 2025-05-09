@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-641532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F19DAB1309
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063F5AB13CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F5317F3EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:10:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC57176865
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DF528FFE3;
-	Fri,  9 May 2025 12:10:53 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1C328936C;
+	Fri,  9 May 2025 12:51:29 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6D2269AFB
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 12:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D8A139B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 12:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746792653; cv=none; b=jT71CFZVSw/LkFoYM7kxdPF39Nl3Afc5CgoMWCEYUPAfV4dmow3vxZ37DucRwPPyBkzUNU2ws53cuX4LwtZnYHpZ/twD1H3o9419+gOBULKS+6WCWlIQckfQbQT21OzdnYExsnE0SEPxgAxcgcftAqKVJ+Tgp8NsNR3kFPv9fOU=
+	t=1746795089; cv=none; b=f+oHLpBfMz1zMVF8njIDBIFAcdG5r6DF1RZ2pbt+iQKicgQFpYExBXbVjwyLye+nhCXQuKFqhE6+IPCAi2IdA+E5Iqq0sUdJ+tLW6/YHZ9J92wseRiROsZUyrLqxW3AelzMxFXgU1szxX3Q93ihoZIImNOzqY9AXcmJyUU3kKJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746792653; c=relaxed/simple;
-	bh=XCc0z64VgbqtmzVk6jMi5CuOvNIgqhxOs01SPZSfkCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z467C3Wg+wxLWtN2JDWBSbplVtch1IuDRij7v9xfc8lWYCV3zpCw3WFtGa0NKfXRbQvt00pvR4RMf+KM08CAFAn5Rn09y/fIB7gJ2uKMYUbD1kVlLlDvSLSXG8Yghz5JqkM89Hz6yojA7Ll8gJpBsd0CfcScIr2V3akQbi6j5jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-148.bstnma.fios.verizon.net [173.48.82.148])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 549CAa1C018060
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 May 2025 08:10:37 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 9A5EA2E00E1; Fri, 09 May 2025 08:10:36 -0400 (EDT)
-Date: Fri, 9 May 2025 08:10:36 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, cve@kernel.org,
-        linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
- filesystems with manually crafted filesystem
-Message-ID: <20250509121036.GA92783@mit.edu>
-References: <2025040820-REJECTED-6695@gregkh>
- <20250509072033.1335321-1-dvyukov@google.com>
- <2025050940-marrow-roundish-8b98@gregkh>
- <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
- <2025050924-marmalade-overfill-fc5a@gregkh>
- <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
+	s=arc-20240116; t=1746795089; c=relaxed/simple;
+	bh=UZeAUV7fB5FaZiLEzNlfbpYcJuL9EFaEDtC+23S5TmU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QsoA1MdjlR0jwJF42+oHGlMttkvVnIUQOYyHeLxdDlPywf14IdvRwa9EoUCSDMWZfyR+bpcgPC/yoDirXyV8t5rbwZ5/fEA0s5mcE6cFBmC/iDR73CtLXScOcRbYjAuLTDIgC4XivquRzitabeAd0DBD1W4DviNdEy9z51V07Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id A8AFF5258A;
+	Fri,  9 May 2025 12:12:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf01.hostedemail.com (Postfix) with ESMTPA id 1BE536000F;
+	Fri,  9 May 2025 12:12:16 +0000 (UTC)
+Message-ID: <6fca28e476396963581acf511999086b71d2ec4f.camel@perches.com>
+Subject: Re: "scripts/get_maintainer.pl" - "Bad divisor in main::vcs_assign:
+ 0"
+From: Joe Perches <joe@perches.com>
+To: Nathan Royce <nroycea+kernel@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 09 May 2025 05:12:16 -0700
+In-Reply-To: <CALaQ_hp+TAgH6TFOy_DB0YpRYiDKNYH7LSL4nf03c1XWbrHFxw@mail.gmail.com>
+References: 
+	<CALaQ_hp+TAgH6TFOy_DB0YpRYiDKNYH7LSL4nf03c1XWbrHFxw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
+X-Stat-Signature: 7jtzkfsyyiy6ikrb8yp7cwpimyc1ygfz
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 1BE536000F
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX195aQYGzUqy5B28nyXVAKAHC1Zr7+5Vh+c=
+X-HE-Tag: 1746792736-151063
+X-HE-Meta: U2FsdGVkX1/0W7D9H+609ySKCsiWDorF1HfqfH4DVVz3LxMpvG+X7LiigQIPCfwTv6Apcd4aweQfWRJYPCUSmGyl6bDLLMphpO97SgXzRye/pYQCnrc+s8mpZXR2l7Ouox9sRS2zhpfBxcsIgAuplMh7H5wI/Z2BgsjfLLOhuWWzGpYUyu63EnBJKXl1lcmsaefGEe3zCsRN2eZxpsS/fKPagkChpTZ1NPUCBkuhsYS19WoV3IrO+yUhoLoGyK8xytYTyZqKLD2j00tzDQCEOAGhsLPhYbygByDjZVs0tqXij+LbzfF16Hs06VQHO/92rIBjQOXFubz+Rtni1RA66Noh+z+AM0x6EbFDlz+GfndwIY2rdrMOwrpTVe9eZ6VozB8CA0laoudvEpILB7thJETQaxyaBCteCjOu45D/SA4=
 
-On Fri, May 09, 2025 at 10:03:13AM +0200, Dmitry Vyukov wrote:
-> 
-> If we can't prove it does not have security impact in any context,
-> then the safe default would be to say it's unsafe.
+On Fri, 2025-05-09 at 03:18 -0500, Nathan Royce wrote:
+> Commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+>=20
+> The result from `./scripts/get_maintainer.pl -f scripts/config `.
 
-In that case *anything* could be unsafe.  You could have a context
-where (a) you aren't using secure boot, (b) /dev/mem is enabled, (c)
-/dev/mem is world writeable, etc.  In which case the mere existence of
-/bin/bash would be "unsafe".  Yes, this is uncreasonable and unsane.
-But that's because the "no security impact in any context" standard is
-insane.
+Dunno
 
-As far as many file system authors are concerned allowing automount by
-defaullt is insane, and is apparently the fault of some Red Hat
-product manager many years ago.
+:linus current
+-------------------------
+$ git log --oneline -1
+9c69f8884904 (HEAD -> master, origin/master, origin/HEAD) Merge tag 'bcache=
+fs-2025-05-08' of git://evilpiepirate.org/bcachefs
+$ ./scripts/get_maintainer.pl -f scripts/config
+Seyediman Seyedarab <imandevel@gmail.com> (commit_signer:1/1=3D100%,authore=
+d:1/1=3D100%,added_lines:16/16=3D100%,removed_lines:10/10=3D100%)
+Masahiro Yamada <masahiroy@kernel.org> (commit_signer:1/1=3D100%)
+linux-kernel@vger.kernel.org (open list)
+-------------------------
 
-E2fsprogs and xfsprogs now ship with a udev rule which disables
-automount by default.  If applied, mounting a maliciously fuzzed file
-system requires root privileges.
+:linus at commit 0af2f6be1b4281385b618cb86ad946eded089ac8
+-------------------------
+$ git checkout 0af2f6be1b4281385b618cb86ad946eded089ac8
+HEAD is now at 0af2f6be1b42 Linux 6.15-rc1
+$ git log --oneline -1
+0af2f6be1b42 (HEAD, tag: v6.15-rc1) Linux 6.15-rc1
+$ ./scripts/get_maintainer.pl -f scripts/config
+Seyediman Seyedarab <imandevel@gmail.com> (commit_signer:1/1=3D100%,authore=
+d:1/1=3D100%,added_lines:16/16=3D100%,removed_lines:10/10=3D100%)
+Masahiro Yamada <masahiroy@kernel.org> (commit_signer:1/1=3D100%)
+linux-kernel@vger.kernel.org (open list)
+-------------------------
 
-Of course, distributions are free to change the default, just as they
-are free to ship a system where root has a default password of
-"password" or /bin/bash is setuid root.  It would be insane, but
-product managers often do insane things in the name of user
-convenience.  In those cases, I would invite that security researchers
-file CVE's with the *product* as opposed to the upstream open source
-project.
+:next
+-------------------------
+$ git log --oneline -1
+ed61cb3d78d58 (HEAD, tag: next-20250509, origin/master, origin/HEAD) Add li=
+nux-next specific files for 20250509
+$ ./scripts/get_maintainer.pl -f scripts/config
+Seyediman Seyedarab <imandevel@gmail.com> (commit_signer:1/1=3D100%,authore=
+d:1/1=3D100%,added_lines:16/16=3D100%,removed_lines:10/10=3D100%)
+Masahiro Yamada <masahiroy@kernel.org> (commit_signer:1/1=3D100%)
+linux-kernel@vger.kernel.org (open list)
+-------------------------
 
-If companies want to assign me a chunk of headcount (say, 4 or 5 L4's
-and L5's for 3 years working on thing but ext4 hardening, plus a
-full-time L5 after that working exclusively to maintain the ext4
-hardening featuers and fix random syzbot complaints), I know what I
-could assign them to change the security assumptions that we have for
-ext4.  It might require a
-CONFIG_EXT4_SECURITY_IS_MORE_IMPORTANT_THAN_PERFORMANCE parameter to
-enable all of the hardening features, but it is doable.
-
-But they aren't, so I consider it to be *obivous* that the industry
-doesn't think is important --- just as Orange Book A1 certified OS's
-was a total, complete, and abject commercial failure.  And note, we
-don't assign CVE's based on the fact that se all OS's violate the
-security trust model of Orange Book's A1.  :-)
-
-						- Ted
 
