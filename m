@@ -1,222 +1,110 @@
-Return-Path: <linux-kernel+bounces-642174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81576AB1B5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E8FAB1B61
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E48A236B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:10:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D89A2828F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F05B239090;
-	Fri,  9 May 2025 17:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42635239E91;
+	Fri,  9 May 2025 17:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgcJs+2g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sf6blenk"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9E800;
-	Fri,  9 May 2025 17:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145AE2397BF;
+	Fri,  9 May 2025 17:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746810632; cv=none; b=AwCYsssTVc0CunX0rtBZI6Zi48QpqAgT76vD81pyOojgQenFSjTuwZZ8/U+y2fEAqq5Lfrw98i1kjgTgVyds1T+Tmq644wuZVnoVDQMsyW+urQgBretqS8r+6XmlffLrKOlHwQuNDXWBqw38RHMVVp+42CJPhdqnUnLbsVBtE1M=
+	t=1746810712; cv=none; b=TD/OyrCbXfXY5xsj3cbsk09D49moONIx0ftdawfha+X8Lhx/zZubhw0v7MIrkXMSpMrMlbToEkzq2Ub9zRW4nZ/BTZlyPc6s2eov84bhYmHG3z1nsWT2dn2LzLW7JZ1ZhuVOH3NC1vb+ybF9wUFzpdSy2VuluOUdKl2/okRvBLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746810632; c=relaxed/simple;
-	bh=Rg26xVepbKv+GhXzyO57+ntaAAUnjE9KukxV2nugKoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1OLEh7OTZMKZoOYg8LjmVikpt/7w0rTHKUqPaF54i7o6n5bQo3CiArGn6wkA46s7d67o1H/ayKSpv0rPhzm7eUTotCtPGixdPexH+l4fU+sobmXm0D3ZqU3Mmawl3HaRRhWrO0RA7TXNFLnOSre0cnfE7z+dv7jLxSatFQRtV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgcJs+2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01317C4CEE4;
-	Fri,  9 May 2025 17:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746810632;
-	bh=Rg26xVepbKv+GhXzyO57+ntaAAUnjE9KukxV2nugKoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EgcJs+2gmQcQQRtPJko2aZpyTLaujeLaSLfxYN4PC77ilDL+fivFo95iZkjr2coCg
-	 x3R30fiwAmxHH9wGoQbqyklQqyRuT8riDJwThw+sKP4ZJCefANJEyCG4aeCAvpMWtf
-	 aCqWWPayvy8jp1rXDkjzswwulALDGa5NPOGL7euPyopTMMr/9a4W6YEX8zGMD/Y7e7
-	 G9tXQcmIUIi/Rf6SjgTsAQNdCHMtrfmMRHO6GqKSKT4HrZIRz6LtaPFMZ8ZefKa48L
-	 mBq/mDOO2dQ2h1QiRWRllwyWGZeY/14OeTnRo0sOh6CwDm4Ur1Gfwauj6fpVIYY6rs
-	 vopmEhIyNh3Bg==
-Date: Fri, 9 May 2025 10:10:28 -0700
-From: Kees Cook <kees@kernel.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-mm@kvack.org,
-	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 07/12] Input: sysrq: mv sysrq into drivers/tty/sysrq.c
-Message-ID: <202505091010.F2F8C676@keescook>
-References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-7-d0ad83f5f4c3@kernel.org>
+	s=arc-20240116; t=1746810712; c=relaxed/simple;
+	bh=pfQViYo/nRzxZcTZocaRc3EpcPlVpggNSCl92rIMPtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TG/cykJ0xdKesjYnOTK9ntWWdhsBuLq+1sBXik5h2ZQs6atmWOoxtPl3iuBUTKK5f51vfSy4WcZDhTG4xnReRlZcgcnUoM6PNmgJtSpM/mqiHul8daTzdil/oEq0l2gpTLPH9Lonakc738VRXnCgCoIYUsmDQCjUX6FJE0WaDlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sf6blenk; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a1d8c0966fso1130276f8f.1;
+        Fri, 09 May 2025 10:11:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746810709; x=1747415509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0QUp7X96uaciaB3lV/3LzKd1Rk93vjwLaOeUmkb3zXk=;
+        b=Sf6blenkOk9JbeXixYYXDhtrMaf/rCGgzIktpAfUOnLqEDkcSCqhdWXUlsij+mSWXC
+         lW03nHq7bbuZvXS2sHzfEDjWQP/c86SghESAcgBiggs2PSxSAR2Ko3rOgughqKx8fIbp
+         2sATxH5+C0qQEs4/QGhlwh0yYC1GVSgw2Zf4/PVnZO5t9YPX9AFC4Uil/NOvcWbNFYpM
+         GsvUS6sYxFnLf6O8bRH9srkg9yryShRq7fGTeklVplq6FF4jIWaJrB7ijUwR+Q1B6MGv
+         AZKri8PubCbOQbbhiQyYNe/yqOQ4Vn/IUz04GM1vaNJg7XwJb26J36xqLqv1rN6OosfG
+         BK2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746810709; x=1747415509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0QUp7X96uaciaB3lV/3LzKd1Rk93vjwLaOeUmkb3zXk=;
+        b=vVpC/KmtCdLUA0QwYYA00kMpr7FbdBZpPNXnv/OVG25OKoB3yfW268ln0vIt+Bs4/n
+         JlTGYWBiuSohSxiYSHi+v9nYQ7jYV3hNqYpmIyinhXoo6rZUKt+hXDm0dOF6Gncixqi2
+         jcgKne3aUU8SDzwTxtho6764MddKarNYD095B5Ll1Lq+Pyr/yPi2MPpo/TmVdIzbKF/z
+         XIlT4XA6HKNpdAVU86B20wp+2lWKSaube2tGO45/2nj2K6zTNZvuH8Tt9LNR8B6a2VX9
+         2878M0GuRzhrNjuf0IC2Y2guo0XuxeECAFbekzgy+aNquPon0i67arwL4nxsPed6GOGU
+         1n5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVX8QAg1F8rDYh9m+KKcEPjMg8Bk+/MiqaTjrpAnCHXR6k8kEo7S40E9XoF/D86YwjfoRc=@vger.kernel.org, AJvYcCWZ0zrt5BenloNhnO5bk3vAFX5PvZ6iTl74z5wKAHYJd4WSh26bsPfQiKDVR/Tcho0Dksk62ABLjEWCpgXs/shb7AZc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkiPDWZfh6R5kPSjh2pCxLyhuyDQHI0T71wYHXjqPHcck56G16
+	pzfj0zxfOuJ7hLA2hxX6smQhb0a6CXjqdMX9sNZu5CROBmSnExppwvfDfySxZ9svBTKZSgKJV2K
+	i9sjVN1numCdzkE2wjEQWou2AKdE=
+X-Gm-Gg: ASbGncuDIEFg3Hb/l/N4QAwS6PK4oiIcBrporZqQa63Hf52HsdGyNAR5jU61Nk77ldI
+	dZL+OoUCv6e4b4Yb6xiJoF7lNoKGJhZqVOiK1mg/v5IL4MxYR1352+lMveVkSwOjX7/K6J2Ab2J
+	zkvYE+kPqXzDPC+lK5N8HznChGur6J07dEmWUiQg==
+X-Google-Smtp-Source: AGHT+IEhfS7XxQ4K3gEwHah0h4zkgO6NZGR2+v6Kauop7yoH1fZOIVCY9IrlqKAxYgftKkGwWXNIvhovpyZXun4lmKg=
+X-Received: by 2002:a05:6000:2203:b0:3a0:7c91:4aaf with SMTP id
+ ffacd0b85a97d-3a0b9941c6cmr7074630f8f.19.1746810709170; Fri, 09 May 2025
+ 10:11:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-7-d0ad83f5f4c3@kernel.org>
+References: <20250509164524.448387100@goodmis.org> <20250509165155.965084136@goodmis.org>
+In-Reply-To: <20250509165155.965084136@goodmis.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 9 May 2025 10:11:37 -0700
+X-Gm-Features: AX0GCFsa-Q-FOt9uvoZS9muWJ9x0mba317wJL-iHEFQnwaPE0aMl0u96PaOg35E
+Message-ID: <CAADnVQK=_SdbJ7WE+pP97aZQ5-EUN4uOc1GyMkLv3wUr5KiSPw@mail.gmail.com>
+Subject: Re: [PATCH v8 14/18] perf: Remove get_perf_callchain() init_nr argument
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	X86 ML <x86@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 09, 2025 at 02:54:11PM +0200, Joel Granados wrote:
-> Move both sysrq ctl_table and supported sysrq_sysctl_handler helper
-> function into drivers/tty/sysrq.c. Replaced the __do_proc_dointvec in
-> helper function with do_proc_dointvec as the former is local to
-> kernel/sysctl.c.
-
-nit: do_proc_dointvec_minmax
-
-> 
-> This is part of a greater effort to move ctl tables into their
-> respective subsystems which will reduce the merge conflicts in
-> kernel/sysctl.c.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-
-But yes, this looks correct.
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--Kees
-
+On Fri, May 9, 2025 at 10:07=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+>
+> The 'init_nr' argument has double duty: it's used to initialize both the
+> number of contexts and the number of stack entries.  That's confusing
+> and the callers always pass zero anyway.  Hard code the zero.
+>
+> Acked-by: Namhyung Kim <Namhyung@kernel.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  drivers/tty/sysrq.c | 38 ++++++++++++++++++++++++++++++++++++++
->  kernel/sysctl.c     | 30 ------------------------------
->  2 files changed, 38 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-> index 6853c4660e7c2586487fea83c12f0b7780db1ee1..8a304189749f3e33af48141a1aba5e456616c7de 100644
-> --- a/drivers/tty/sysrq.c
-> +++ b/drivers/tty/sysrq.c
-> @@ -1119,6 +1119,44 @@ int sysrq_toggle_support(int enable_mask)
->  }
->  EXPORT_SYMBOL_GPL(sysrq_toggle_support);
->  
-> +static int sysrq_sysctl_handler(const struct ctl_table *table, int write,
-> +				void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	int tmp, ret;
-> +	struct ctl_table t = *table;
-> +
-> +	tmp = sysrq_mask();
-> +	t.data = &tmp;
-> +
-> +	ret = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
-> +
-> +	if (ret || !write)
-> +		return ret;
-> +
-> +	if (write)
-> +		sysrq_toggle_support(tmp);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct ctl_table sysrq_sysctl_table[] = {
-> +	{
-> +		.procname	= "sysrq",
-> +		.data		= NULL,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= sysrq_sysctl_handler,
-> +	},
-> +};
-> +
-> +static int __init init_sysrq_sysctl(void)
-> +{
-> +	register_sysctl_init("kernel", sysrq_sysctl_table);
-> +	return 0;
-> +}
-> +
-> +subsys_initcall(init_sysrq_sysctl);
-> +
->  static int __sysrq_swap_key_ops(u8 key, const struct sysrq_key_op *insert_op_p,
->  				const struct sysrq_key_op *remove_op_p)
->  {
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index febf328054aa5a7b2462a256598f86f5ded87c90..ebcc7d75acd9fecbf3c10f31480c3cb6960cb53e 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -31,7 +31,6 @@
->  #include <linux/kernel.h>
->  #include <linux/kobject.h>
->  #include <linux/net.h>
-> -#include <linux/sysrq.h>
->  #include <linux/highuid.h>
->  #include <linux/writeback.h>
->  #include <linux/ratelimit.h>
-> @@ -964,26 +963,6 @@ int proc_dou8vec_minmax(const struct ctl_table *table, int write,
->  }
->  EXPORT_SYMBOL_GPL(proc_dou8vec_minmax);
->  
-> -#ifdef CONFIG_MAGIC_SYSRQ
-> -static int sysrq_sysctl_handler(const struct ctl_table *table, int write,
-> -				void *buffer, size_t *lenp, loff_t *ppos)
-> -{
-> -	int tmp, ret;
-> -
-> -	tmp = sysrq_mask();
-> -
-> -	ret = __do_proc_dointvec(&tmp, table, write, buffer,
-> -			       lenp, ppos, NULL, NULL);
-> -	if (ret || !write)
-> -		return ret;
-> -
-> -	if (write)
-> -		sysrq_toggle_support(tmp);
-> -
-> -	return 0;
-> -}
-> -#endif
-> -
->  static int __do_proc_doulongvec_minmax(void *data,
->  		const struct ctl_table *table, int write,
->  		void *buffer, size_t *lenp, loff_t *ppos,
-> @@ -1612,15 +1591,6 @@ static const struct ctl_table kern_table[] = {
->  		.proc_handler	= proc_dostring,
->  	},
->  #endif
-> -#ifdef CONFIG_MAGIC_SYSRQ
-> -	{
-> -		.procname	= "sysrq",
-> -		.data		= NULL,
-> -		.maxlen		= sizeof (int),
-> -		.mode		= 0644,
-> -		.proc_handler	= sysrq_sysctl_handler,
-> -	},
-> -#endif
->  #ifdef CONFIG_PROC_SYSCTL
->  	{
->  		.procname	= "cad_pid",
-> 
-> -- 
-> 2.47.2
-> 
-> 
+>  include/linux/perf_event.h |  2 +-
+>  kernel/bpf/stackmap.c      |  4 ++--
 
--- 
-Kees Cook
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
