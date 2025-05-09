@@ -1,289 +1,515 @@
-Return-Path: <linux-kernel+bounces-642224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71022AB1C00
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:08:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D519AB1C19
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35C11C4565D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:08:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF02A22C3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7162D23C50E;
-	Fri,  9 May 2025 18:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA2D23C50E;
+	Fri,  9 May 2025 18:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="efOz47Ne"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="15nWzUAi"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B522192F3;
-	Fri,  9 May 2025 18:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746814101; cv=none; b=U1dr0Td07YqbLeh7zsivRSHYo3CGG7pyhbHUvhMfattjXvsPVw+Pd3uG173JGyeMuQeEnIwNKPopckBDJVQIqFQn8N1wFDlUIDT6r3l+cdB/CoyROhGgKppzhOtGGRn5wRv9Lbfu8rESkK+2KKlJ2VWi3ZiELxKokWg00lU62xY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746814101; c=relaxed/simple;
-	bh=f17tyyZdnLA4sCUSpuUgHTeIbGOQ7gE1slCM/MWvW+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z4x7IfiYdFFpHr/b9zNxrl2ZteFpl6KBWOdxqy8QGHw2h3Axa7aKHimly7KCMeHt/PX8J8juMwLWBAzv4q2uA0uqmYiJH1+jd4Yn3HPlJmxkkTcAOyXWsccjYU4rExWeWQVyaiq9MOaK6x63mApi5n6Q/ikbl/TuTFn1YTgdzHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=efOz47Ne; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 481268288923;
-	Fri,  9 May 2025 13:08:18 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id ob-T11UPjxWJ; Fri,  9 May 2025 13:08:16 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 4249982889A9;
-	Fri,  9 May 2025 13:08:16 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 4249982889A9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1746814096; bh=tq2VzEjyj42ovjedBCjYqS3IU6FW+hRJF41bXqaJe6Q=;
-	h=From:To:Date:Message-Id:MIME-Version;
-	b=efOz47NeYsyBgRfSHKP8t7oe7iojTehXmex67qtmBkFjFboZ4k5u/ugauzdCSgswK
-	 F9Q390zcKEgBr++ir1yexmX6Elr/lq1SQ4IL29So8dTMk+NRfea1uZv4xuosFlLjdM
-	 8a9EpKrifA3fAHdntHrWaFKsbFg3k9c3lnyl6Mow=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TrcmAPt3Eo3y; Fri,  9 May 2025 13:08:15 -0500 (CDT)
-Received: from raptor-ewks-026.lan (5.edge.rptsys.com [23.155.224.38])
-	by mail.rptsys.com (Postfix) with ESMTPSA id 08ED78288923;
-	Fri,  9 May 2025 13:08:14 -0500 (CDT)
-From: Shawn Anastasio <sanastasio@raptorengineering.com>
-To: linux-pci@vger.kernel.org,
-	"Lukas Wunner" <lukas@wunner.de>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: "Bjorn Helgaas" <bhelgaas@google.com>,
-	"Lorenzo Pieralisi" <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	"Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-	"Rob Herring" <robh@kernel.o>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"chaitanya chundru" <quic_krichai@quicinc.com>,
-	"Bjorn Andersson" <andersson@kernel.org>,
-	"Konrad Dybcio" <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	"Jingoo Han" <jingoohan1@gmail.com>,
-	"Bartosz Golaszewski" <brgl@bgdev.pl>,
-	quic_vbadigan@quicnic.com,
-	amitk@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	jorge.ramirez@oss.qualcomm.com,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Timothy Pearson <tpearson@raptorengineering.com>,
-	Shawn Anastasio <sanastasio@raptorengineering.com>
-Subject: [RESEND PATCH v6] PCI: PCI: Add pcie_link_is_active() to determine if the PCIe link is active
-Date: Fri,  9 May 2025 13:08:12 -0500
-Message-Id: <20250509180813.2200312-1-sanastasio@raptorengineering.com>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7A52192F3;
+	Fri,  9 May 2025 18:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746814368; cv=fail; b=CDZzOVGhtgBJkJmCAKSgapclVp4TAljh4qdkG/X3FYQNJTV9xLngB8tG0nXoRSXUMa8Fgqm7+YCTjFGPbb5/m/XNgZijHOyUxF4eGCgElyr69PCd7QwXuvbjyt+ZPFdTSLgeJPJlxXVezV/rQgWD2Uro3SM2Y0ebW/18CeLzJqs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746814368; c=relaxed/simple;
+	bh=j8C89FFMd/5KlJ7TgFeHeX1QLjHHPX2qQ2/KnWyl5lQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gRcWng7FlDmXbqo8LIRxautmZDlnd/kpuvqeG1q2UxSnUZpkMwvxepBoCeeybfn5xFyANMvitUu+m3B366rgiKwH79X2OMXR+YRJaNKuotOPKAnYWAfn/urYh9fYHTTbCl++Wae2apWpEF2Ic4+Cid0zZqHQa1SP8Dx8BaHcV8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=15nWzUAi; arc=fail smtp.client-ip=40.107.243.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MSjNkNO6YKQIAQkNJxZ0mptAnLjcjwzEStNkp0AFVOeGhds7ff3cnqdY0dMDAoCyzfujYG1h+4giklXLvMBmO0fBCSYRZdyeb7yG9mWfOPh0LZrobJMxTwLVM7WX0pXkCts4stv+7z0yiX0BqR75K5EjRpap77xyG32GjOvhW8VLHrO77Lqyold7W1YhDz5JuWlJzuJfhrfckFSmds/Rzj9FSWgQ5RbMXTJV2aB/y/E6Cbwzp+QI3Fh9MXt6AHdfIrX5LLqyTmqbj8IxQUzGUh5CwwMTzgWg4RPC5s5k9MClKidLIp2S69PL3Ps63WeJ5bbBT8O0h8pb6ma+kzYXxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kRYn7GqRfL6tSo06ggttOM2LsNU1ZnkKoU+3IkPkMjQ=;
+ b=AR1RihcA1IM7qMH4qtDqjAftgd1YzMLZ6+9gjrr8msmlhG4mHwNZ2HvJbjw0APl8WQSds/NptGwnc1AFNze6QOHNBDNU8w5qoH2CkugA3ibxFdhLmVSlpvFVJ/T5YOgLRjby8QIL3/skbjlF/PO9RGJK/8Xqu9dajQDmmEoIFglmpJSDIfqOrtLX1MXu97oNjExwN6GMt0+4OIPilI8OXm+XOf3vlIYiF53ytHoAD2OAYKZP3rkDuf3/jDahaIPNHbtUB+XSNx+SpWhZUTcFdnXaUABBqWybNS+MTQsULoK7HvxjUjmOJoJQN7ofi4NzHHcxvb5m5HUw2xZZIDxYdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kRYn7GqRfL6tSo06ggttOM2LsNU1ZnkKoU+3IkPkMjQ=;
+ b=15nWzUAija8XjNhE5Ow1R80upXRA6Y6Wm4GM5nJDF8vDJD3832Wb5/OCP30NRz4uXJbcrtCxpmzRcP0q7kZKtjmc0yz43JRwMNMQwxgFBEpj42I0fPryugFNtZ7oddaZGjFrtQh/6UXLO/7hj/MQTKh/X1PWaf4XbrsyYNz+ThQ=
+Received: from SA1P222CA0057.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2c1::6)
+ by DM3PR12MB9352.namprd12.prod.outlook.com (2603:10b6:0:4a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.23; Fri, 9 May
+ 2025 18:12:42 +0000
+Received: from SA2PEPF0000150A.namprd04.prod.outlook.com
+ (2603:10b6:806:2c1:cafe::20) by SA1P222CA0057.outlook.office365.com
+ (2603:10b6:806:2c1::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.33 via Frontend Transport; Fri,
+ 9 May 2025 18:12:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF0000150A.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 18:12:41 +0000
+Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 May 2025 13:12:40 -0500
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <ilpo.jarvinen@linux.intel.com>, <hdegoede@redhat.com>, <W_Armin@gmx.de>,
+	<mario.limonciello@amd.com>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<benjamin.chan@amd.com>, <bin.du@amd.com>, <gjorgji.rosikopulos@amd.com>,
+	<king.li@amd.com>, <dantony@amd.com>, Pratap Nirujogi
+	<pratap.nirujogi@amd.com>
+Subject: [PATCH v13] platform/x86: Add AMD ISP platform config for OV05C10
+Date: Fri, 9 May 2025 14:08:16 -0400
+Message-ID: <20250509181220.1744783-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF0000150A:EE_|DM3PR12MB9352:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec165d82-264d-4952-6c21-08dd8f2516f1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|30052699003|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7oLB2bV5BcICpRZyVRX5Oxgktor0RqI0gen1I33m4YeNdIXVK0nhU7IvD4YB?=
+ =?us-ascii?Q?BrogWov0tugweME1Iz6DidHPQdStnAxycAToSvXzg0PV2SHVOACPr43KQy0F?=
+ =?us-ascii?Q?jC/xXQtqnfhlEyfJPmV6JtMCGl/TjqVeJefWTNfyIJeaTOSGqX1ROAE0aAvM?=
+ =?us-ascii?Q?5K3FMYr5AzkDn61mz6O3KPFeBeLXgyJcXt/yDn9SrEn+TEWxoB/ktR2W36c0?=
+ =?us-ascii?Q?4Bza+TdZHUTSKXquiYzhWmb/T8Zir/7gnc9opyenrtQ7972S/YiDET3yVojE?=
+ =?us-ascii?Q?eSMoVsofeo2p673sKXF1zCJXqRH/0rqnVtK4HARGJkD29uSRe+IV+zuhCM+R?=
+ =?us-ascii?Q?XcOSqgK/p2Jxtq27PL68WO3uSp3aYrZAQwsNevQhOg/NlAs51QBPpD0FRCNM?=
+ =?us-ascii?Q?ZkzB0I0UBvjLmDB9GrwSgSqMNmV0D/5muba5vABAm+ghJBmGmUUklDLCm/I1?=
+ =?us-ascii?Q?pBBwz8y1dOBeqkbs9GPA0PNM4J9XgjCDorkUL6V/cEbSD8VN3a6PFdF55Bu3?=
+ =?us-ascii?Q?SEXQgMPtQtwS8Mm8ZZvlov/Nh+6Vcelm7pwk0Gk53Eg8G/w3cBzf4Ldze6+O?=
+ =?us-ascii?Q?TI4Wbs5oj0cnCICg8TU/qfi6Z0cXMbj2szP7SDFueA/opNOcMkYquIFyzQ5F?=
+ =?us-ascii?Q?jHxWjHY4LWubcygxFDgznP1piQ05SwI0HoHWZYpU9eWJ+k21PWJSwfnOKNrA?=
+ =?us-ascii?Q?XJoqy10pPRRBT18O/BKxIHHSVTMetfw33X/8EQBYysmhG/ScYfYx+IonZoau?=
+ =?us-ascii?Q?fCo4TQo3F/utEJ8CTqhUBkvG6zbDCWMecVMVq1514+qoy7Nf8LckSeYhMkoF?=
+ =?us-ascii?Q?/+bmUMRvQIXgrHrRSiVtOslC0/oO7bnl69pT0TKP40r0/MKibrNtz85Jsc/M?=
+ =?us-ascii?Q?UB5nzHoHafP11vxY9xkE7jW9o3xoHCLkNyQXCJCBGA8pOE9fRuY1ZzgKAIIG?=
+ =?us-ascii?Q?vDPV7453k3dyY7UMnOqeZ0+vikLrp7rzdee1XtKuVR+FFRuY09n4YUMlZfIa?=
+ =?us-ascii?Q?vGQvltvnQY819yTEcbn2hHM1n8/ZKOmei2LnOt/mnKi9xMU5XzjX7S0hncrZ?=
+ =?us-ascii?Q?zkGlM5hvRLF0LwQwvVg4U7/Yq7yj1VLXAUW9uvk0PLwU3d086AuTR4G0YV1t?=
+ =?us-ascii?Q?tjZWBBdCvzNvO2w6RUi+frhWv1IHMu8jxUy/4TsnDdNX5nSp6H3XEMUCn00v?=
+ =?us-ascii?Q?b4orG6j/ExTPUn9yj7AVh0FxOTRxeNXAArPcKYwCz0DaOsBYD+XeCLijQexA?=
+ =?us-ascii?Q?hdbokTF/S90/Ip0hVw7829I0DIeNQK/3ughVvEPIFFpvIlhl4wTn140FZ/2F?=
+ =?us-ascii?Q?by88FRgRKpgcWr2hvJGbOGAUBmKX2klICVP6CmsA4JdQApaxxhL3bE8W50O7?=
+ =?us-ascii?Q?CH+46o3fPcdxcK7RlzxnNrEr7h3Nsvo3z3ycarl/YrKN5gWqJ6xrtIrpg8Z0?=
+ =?us-ascii?Q?yUV2zdFcOAF4FaKqUEswu3RNBa/RpRQ45GBlf9bi27LwynR8/fRYcfLLPgkS?=
+ =?us-ascii?Q?LQhZD9zYiH08ryL0Wh2fmOaPTzKOQXPHTfFo?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(30052699003)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 18:12:41.7218
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec165d82-264d-4952-6c21-08dd8f2516f1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF0000150A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9352
 
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+ISP device specific configuration is not available in ACPI. Add
+swnode graph to configure the missing device properties for the
+OV05C10 camera device supported on amdisp platform.
 
-Date: Sat, 12 Apr 2025 07:19:56 +0530
+Add support to create i2c-client dynamically when amdisp i2c
+adapter is available.
 
-Introduce a common API to check if the PCIe link is active, replacing
-duplicate code in multiple locations.
-
-Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+Co-developed-by: Benjamin Chan <benjamin.chan@amd.com>
+Signed-off-by: Benjamin Chan <benjamin.chan@amd.com>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
 ---
-(Resent since git-send-email failed to detect the Subject field from the patch
-file previously -- apologies!)
+Changes v12 -> v13:
 
-This is an updated patch pulled from Krishna's v5 series:
-https://patchwork.kernel.org/project/linux-pci/list/?series=952665
+* Add "struct amdisp_platform_info" to pass sensor specific
+configuration and make the driver generic to support OV05C10
+and other supported sensor modules in future.
 
-The following changes to Krishna's v5 were made by me:
-  - Revert pcie_link_is_active return type back to int per Lukas' review
-    comments
-  - Handle non-zero error returns at call site of the new function in
-    pci.c/pci_bridge_wait_for_secondary_bus
+* Address cosmetic and other review comments.
 
- drivers/pci/hotplug/pciehp.h      |  1 -
- drivers/pci/hotplug/pciehp_ctrl.c |  2 +-
- drivers/pci/hotplug/pciehp_hpc.c  | 33 +++----------------------------
- drivers/pci/pci.c                 | 26 +++++++++++++++++++++---
- include/linux/pci.h               |  4 ++++
- 5 files changed, 31 insertions(+), 35 deletions(-)
+ drivers/platform/x86/amd/Kconfig    |  11 +
+ drivers/platform/x86/amd/Makefile   |   1 +
+ drivers/platform/x86/amd/amd_isp4.c | 309 ++++++++++++++++++++++++++++
+ 3 files changed, 321 insertions(+)
+ create mode 100644 drivers/platform/x86/amd/amd_isp4.c
 
-diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
-index 273dd8c66f4e..acef728530e3 100644
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -186,7 +186,6 @@ int pciehp_query_power_fault(struct controller *ctrl);
- int pciehp_card_present(struct controller *ctrl);
- int pciehp_card_present_or_link_active(struct controller *ctrl);
- int pciehp_check_link_status(struct controller *ctrl);
--int pciehp_check_link_active(struct controller *ctrl);
- void pciehp_release_ctrl(struct controller *ctrl);
-
- int pciehp_sysfs_enable_slot(struct hotplug_slot *hotplug_slot);
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index d603a7aa7483..4bb58ba1c766 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -260,7 +260,7 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- 	/* Turn the slot on if it's occupied or link is up */
- 	mutex_lock(&ctrl->state_lock);
- 	present = pciehp_card_present(ctrl);
--	link_active = pciehp_check_link_active(ctrl);
-+	link_active = pcie_link_is_active(ctrl->pcie->port);
- 	if (present <= 0 && link_active <= 0) {
- 		if (ctrl->state == BLINKINGON_STATE) {
- 			ctrl->state = OFF_STATE;
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 8a09fb6083e2..278bc21d531d 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -221,33 +221,6 @@ static void pcie_write_cmd_nowait(struct controller *ctrl, u16 cmd, u16 mask)
- 	pcie_do_write_cmd(ctrl, cmd, mask, false);
- }
-
--/**
-- * pciehp_check_link_active() - Is the link active
-- * @ctrl: PCIe hotplug controller
-- *
-- * Check whether the downstream link is currently active. Note it is
-- * possible that the card is removed immediately after this so the
-- * caller may need to take it into account.
-- *
-- * If the hotplug controller itself is not available anymore returns
-- * %-ENODEV.
-- */
--int pciehp_check_link_active(struct controller *ctrl)
--{
--	struct pci_dev *pdev = ctrl_dev(ctrl);
--	u16 lnk_status;
--	int ret;
--
--	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
--		return -ENODEV;
--
--	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
--	ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
--
--	return ret;
--}
--
- static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
- {
- 	u32 l;
-@@ -467,7 +440,7 @@ int pciehp_card_present_or_link_active(struct controller *ctrl)
- 	if (ret)
- 		return ret;
-
--	return pciehp_check_link_active(ctrl);
-+	return pcie_link_is_active(ctrl_dev(ctrl));
- }
-
- int pciehp_query_power_fault(struct controller *ctrl)
-@@ -584,7 +557,7 @@ static void pciehp_ignore_dpc_link_change(struct controller *ctrl,
- 	 * Synthesize it to ensure that it is acted on.
- 	 */
- 	down_read_nested(&ctrl->reset_lock, ctrl->depth);
--	if (!pciehp_check_link_active(ctrl))
-+	if (!pcie_link_is_active(ctrl_dev(ctrl)))
- 		pciehp_request(ctrl, PCI_EXP_SLTSTA_DLLSC);
- 	up_read(&ctrl->reset_lock);
- }
-@@ -884,7 +857,7 @@ int pciehp_slot_reset(struct pcie_device *dev)
- 	pcie_capability_write_word(dev->port, PCI_EXP_SLTSTA,
- 				   PCI_EXP_SLTSTA_DLLSC);
-
--	if (!pciehp_check_link_active(ctrl))
-+	if (!pcie_link_is_active(ctrl_dev(ctrl)))
- 		pciehp_request(ctrl, PCI_EXP_SLTSTA_DLLSC);
-
- 	return 0;
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e77d5b53c0ce..3bb8354b14bf 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4926,7 +4926,6 @@ int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_type)
- 		return 0;
-
- 	if (pcie_get_speed_cap(dev) <= PCIE_SPEED_5_0GT) {
--		u16 status;
-
- 		pci_dbg(dev, "waiting %d ms for downstream link\n", delay);
- 		msleep(delay);
-@@ -4942,8 +4941,7 @@ int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_type)
- 		if (!dev->link_active_reporting)
- 			return -ENOTTY;
-
--		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &status);
--		if (!(status & PCI_EXP_LNKSTA_DLLLA))
-+		if (pcie_link_is_active(dev) <= 0)
- 			return -ENOTTY;
-
- 		return pci_dev_wait(child, reset_type,
-@@ -6247,6 +6245,28 @@ void pcie_print_link_status(struct pci_dev *dev)
- }
- EXPORT_SYMBOL(pcie_print_link_status);
-
-+/**
-+ * pcie_link_is_active() - Checks if the link is active or not
-+ * @pdev: PCI device to query
+diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+index c3e086ea64fc..152a68a470e8 100644
+--- a/drivers/platform/x86/amd/Kconfig
++++ b/drivers/platform/x86/amd/Kconfig
+@@ -32,3 +32,14 @@ config AMD_WBRF
+ 
+ 	  This mechanism will only be activated on platforms that advertise a
+ 	  need for it.
++
++config AMD_ISP_PLATFORM
++	tristate "AMD ISP4 platform driver"
++	depends on I2C && X86_64 && ACPI
++	help
++	  Platform driver for AMD platforms containing image signal processor
++	  gen 4. Provides camera sensor module board information to allow
++	  sensor and V4L drivers to work properly.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called amd_isp4.
+diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+index c6c40bdcbded..b0e284b5d497 100644
+--- a/drivers/platform/x86/amd/Makefile
++++ b/drivers/platform/x86/amd/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
+ obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+ obj-$(CONFIG_AMD_PMF)		+= pmf/
+ obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
++obj-$(CONFIG_AMD_ISP_PLATFORM)	+= amd_isp4.o
+diff --git a/drivers/platform/x86/amd/amd_isp4.c b/drivers/platform/x86/amd/amd_isp4.c
+new file mode 100644
+index 000000000000..27939020634c
+--- /dev/null
++++ b/drivers/platform/x86/amd/amd_isp4.c
+@@ -0,0 +1,309 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AMD ISP platform driver for sensor i2-client instantiation
 + *
-+ * Check whether the link is active or not.
-+ *
-+ * Return: link state, or -ENODEV if the config read failes.
++ * Copyright 2025 Advanced Micro Devices, Inc.
 + */
-+int pcie_link_is_active(struct pci_dev *pdev)
++
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/units.h>
++
++#define AMDISP_OV05C10_I2C_ADDR		0x10
++#define AMDISP_OV05C10_PLAT_NAME	"amdisp_ov05c10_platform"
++#define AMDISP_OV05C10_HID		"OMNI5C10"
++#define AMDISP_OV05C10_REMOTE_EP_NAME	"ov05c10_isp_4_1_1"
++#define AMD_ISP_PLAT_DRV_NAME		"amd-isp4"
++
++/*
++ * AMD ISP platform info definition to initialize sensor
++ * specific platform configuration to prepare the amdisp
++ * platform.
++ */
++struct amdisp_platform_info {
++	struct i2c_board_info board_info;
++	const struct software_node **swnodes;
++};
++
++/*
++ * AMD ISP platform definition to configure the device properties
++ * missing in the ACPI table.
++ */
++struct amdisp_platform {
++	const struct amdisp_platform_info *pinfo;
++	struct i2c_board_info board_info;
++	struct notifier_block i2c_nb;
++	struct i2c_client *i2c_dev;
++	struct mutex lock;	/* protects i2c client creation */
++};
++
++/* Top-level OV05C10 camera node property table */
++static const struct property_entry ov05c10_camera_props[] = {
++	PROPERTY_ENTRY_U32("clock-frequency", 24 * HZ_PER_MHZ),
++	{ }
++};
++
++/* Root AMD ISP OV05C10 camera node definition */
++static const struct software_node camera_node = {
++	.name = AMDISP_OV05C10_HID,
++	.properties = ov05c10_camera_props,
++};
++
++/*
++ * AMD ISP OV05C10 Ports node definition. No properties defined for
++ * ports node for OV05C10.
++ */
++static const struct software_node ports = {
++	.name = "ports",
++	.parent = &camera_node,
++};
++
++/*
++ * AMD ISP OV05C10 Port node definition. No properties defined for
++ * port node for OV05C10.
++ */
++static const struct software_node port_node = {
++	.name = "port@",
++	.parent = &ports,
++};
++
++/*
++ * Remote endpoint AMD ISP node definition. No properties defined for
++ * remote endpoint node for OV05C10.
++ */
++static const struct software_node remote_ep_isp_node = {
++	.name = AMDISP_OV05C10_REMOTE_EP_NAME,
++};
++
++/*
++ * Remote endpoint reference for isp node included in the
++ * OV05C10 endpoint.
++ */
++static const struct software_node_ref_args ov05c10_refs[] = {
++	SOFTWARE_NODE_REFERENCE(&remote_ep_isp_node),
++};
++
++/* OV05C supports one single link frequency */
++static const u64 ov05c10_link_freqs[] = {
++	925 * HZ_PER_MHZ,
++};
++
++/* OV05C supports only 2-lane configuration */
++static const u32 ov05c10_data_lanes[] = {
++	1,
++	2,
++};
++
++/* OV05C10 endpoint node properties table */
++static const struct property_entry ov05c10_endpoint_props[] = {
++	PROPERTY_ENTRY_U32("bus-type", 4),
++	PROPERTY_ENTRY_U32_ARRAY_LEN("data-lanes", ov05c10_data_lanes,
++				     ARRAY_SIZE(ov05c10_data_lanes)),
++	PROPERTY_ENTRY_U64_ARRAY_LEN("link-frequencies", ov05c10_link_freqs,
++				     ARRAY_SIZE(ov05c10_link_freqs)),
++	PROPERTY_ENTRY_REF_ARRAY("remote-endpoint", ov05c10_refs),
++	{ }
++};
++
++/* AMD ISP endpoint node definition */
++static const struct software_node endpoint_node = {
++	.name = "endpoint",
++	.parent = &port_node,
++	.properties = ov05c10_endpoint_props,
++};
++
++/*
++ * AMD ISP swnode graph uses 5 nodes and also its relationship is
++ * fixed to align with the structure that v4l2 expects for successful
++ * endpoint fwnode parsing.
++ *
++ * It is only the node property_entries that will vary for each platform
++ * supporting different sensor modules.
++ */
++static const struct software_node *ov05c10_nodes[] = {
++	&camera_node,
++	&ports,
++	&port_node,
++	&endpoint_node,
++	&remote_ep_isp_node,
++	NULL
++};
++
++/* OV05C10 specific AMD ISP platform configuration */
++static const struct amdisp_platform_info ov05c10_platform_config = {
++	.board_info = {
++		.dev_name = "ov05c10",
++		I2C_BOARD_INFO("ov05c10", AMDISP_OV05C10_I2C_ADDR),
++	},
++	.swnodes = ov05c10_nodes,
++};
++
++static const struct acpi_device_id amdisp_sensor_ids[] = {
++	{ AMDISP_OV05C10_HID, (kernel_ulong_t)&ov05c10_platform_config },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, amdisp_sensor_ids);
++
++static inline bool is_isp_i2c_adapter(struct i2c_adapter *adap)
 +{
-+	u16 lnk_status;
++	return !strcmp(adap->owner->name, "i2c_designware_amdisp");
++}
++
++static void instantiate_isp_i2c_client(struct amdisp_platform *isp4_platform,
++				       struct i2c_adapter *adap)
++{
++	struct i2c_board_info *info = &isp4_platform->board_info;
++	struct i2c_client *i2c_dev;
++
++	guard(mutex)(&isp4_platform->lock);
++
++	if (isp4_platform->i2c_dev)
++		return;
++
++	i2c_dev = i2c_new_client_device(adap, info);
++	if (IS_ERR(i2c_dev)) {
++		dev_err(&adap->dev, "error %pe registering isp i2c_client\n", i2c_dev);
++		return;
++	}
++	isp4_platform->i2c_dev = i2c_dev;
++}
++
++static int isp_i2c_bus_notify(struct notifier_block *nb,
++			      unsigned long action, void *data)
++{
++	struct amdisp_platform *isp4_platform =
++		container_of(nb, struct amdisp_platform, i2c_nb);
++	struct device *dev = data;
++	struct i2c_client *client;
++	struct i2c_adapter *adap;
++
++	switch (action) {
++	case BUS_NOTIFY_ADD_DEVICE:
++		adap = i2c_verify_adapter(dev);
++		if (!adap)
++			break;
++		if (is_isp_i2c_adapter(adap))
++			instantiate_isp_i2c_client(isp4_platform, adap);
++		break;
++	case BUS_NOTIFY_REMOVED_DEVICE:
++		client = i2c_verify_client(dev);
++		if (!client)
++			break;
++
++		scoped_guard(mutex, &isp4_platform->lock) {
++			if (isp4_platform->i2c_dev == client) {
++				dev_dbg(&client->adapter->dev, "amdisp i2c_client removed\n");
++				isp4_platform->i2c_dev = NULL;
++			}
++		}
++		break;
++	default:
++		break;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static struct amdisp_platform *prepare_amdisp_platform(struct device *dev,
++						       const struct amdisp_platform_info *src)
++{
++	struct amdisp_platform *isp4_platform;
 +	int ret;
 +
-+	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
-+		return -ENODEV;
++	isp4_platform = devm_kzalloc(dev, sizeof(*isp4_platform), GFP_KERNEL);
++	if (!isp4_platform)
++		return ERR_PTR(-ENOMEM);
 +
-+	pci_dbg(pdev, "lnk_status = %x\n", lnk_status);
-+	return !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++	ret = devm_mutex_init(dev, &isp4_platform->lock);
++	if (ret)
++		return ERR_PTR(ret);
++
++	isp4_platform->board_info.dev_name = src->board_info.dev_name;
++	strscpy(isp4_platform->board_info.type, src->board_info.type);
++	isp4_platform->board_info.addr = src->board_info.addr;
++	isp4_platform->pinfo = src;
++
++	ret = software_node_register_node_group(src->swnodes);
++	if (ret)
++		return ERR_PTR(ret);
++
++	isp4_platform->board_info.swnode = src->swnodes[0];
++
++	return isp4_platform;
 +}
-+EXPORT_SYMBOL(pcie_link_is_active);
 +
- /**
-  * pci_select_bars - Make BAR mask from the type of resource
-  * @dev: the PCI device for which BAR mask is made
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 51e2bd6405cd..a79a9919320c 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1945,6 +1945,7 @@ pci_release_mem_regions(struct pci_dev *pdev)
- 			    pci_select_bars(pdev, IORESOURCE_MEM));
- }
-
-+int pcie_link_is_active(struct pci_dev *dev);
- #else /* CONFIG_PCI is not enabled */
-
- static inline void pci_set_flags(int flags) { }
-@@ -2093,6 +2094,9 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
- {
- 	return -ENOSPC;
- }
++static int try_to_instantiate_i2c_client(struct device *dev, void *data)
++{
++	struct amdisp_platform *isp4_platform = (struct amdisp_platform *)data;
++	struct i2c_adapter *adap = i2c_verify_adapter(dev);
 +
-+static inline bool pcie_link_is_active(struct pci_dev *dev)
-+{ return false; }
- #endif /* CONFIG_PCI */
-
- /* Include architecture-dependent settings and functions */
---
-2.30.2
++	if (!isp4_platform || !adap)
++		return 0;
++	if (!adap->owner)
++		return 0;
++
++	if (is_isp_i2c_adapter(adap))
++		instantiate_isp_i2c_client(isp4_platform, adap);
++
++	return 0;
++}
++
++static int amd_isp_probe(struct platform_device *pdev)
++{
++	const struct amdisp_platform_info *pinfo;
++	struct amdisp_platform *isp4_platform;
++	int ret;
++
++	pinfo = device_get_match_data(&pdev->dev);
++	if (!pinfo) {
++		return dev_err_probe(&pdev->dev, -EINVAL,
++				     "failed to get valid ACPI data\n");
++	}
++
++	isp4_platform = prepare_amdisp_platform(&pdev->dev, pinfo);
++	if (IS_ERR(isp4_platform))
++		return dev_err_probe(&pdev->dev, PTR_ERR(isp4_platform),
++				     "failed to prepare AMD ISP platform fwnode\n");
++
++	isp4_platform->i2c_nb.notifier_call = isp_i2c_bus_notify;
++	ret = bus_register_notifier(&i2c_bus_type, &isp4_platform->i2c_nb);
++	if (ret)
++		goto error_unregister_sw_node;
++
++	/* check if adapter is already registered and create i2c client instance */
++	i2c_for_each_dev((void *)isp4_platform, try_to_instantiate_i2c_client);
++
++	platform_set_drvdata(pdev, isp4_platform);
++	return 0;
++
++error_unregister_sw_node:
++	software_node_unregister_node_group(isp4_platform->pinfo->swnodes);
++	return ret;
++}
++
++static void amd_isp_remove(struct platform_device *pdev)
++{
++	struct amdisp_platform *isp4_platform = platform_get_drvdata(pdev);
++
++	bus_unregister_notifier(&i2c_bus_type, &isp4_platform->i2c_nb);
++	i2c_unregister_device(isp4_platform->i2c_dev);
++	software_node_unregister_node_group(isp4_platform->pinfo->swnodes);
++}
++
++static struct platform_driver amd_isp_platform_driver = {
++	.driver	= {
++		.name			= AMD_ISP_PLAT_DRV_NAME,
++		.acpi_match_table	= amdisp_sensor_ids,
++	},
++	.probe	= amd_isp_probe,
++	.remove	= amd_isp_remove,
++};
++
++module_platform_driver(amd_isp_platform_driver);
++
++MODULE_AUTHOR("Benjamin Chan <benjamin.chan@amd.com>");
++MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
++MODULE_DESCRIPTION("AMD ISP4 Platform Driver");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
 
 
