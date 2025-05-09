@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-641032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AA0AB0C44
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:52:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7842AAB0C48
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F8A188DFE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C05A93AFFB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA86C2749D4;
-	Fri,  9 May 2025 07:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD5327467E;
+	Fri,  9 May 2025 07:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1F7EGgH"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScPJHkM7"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F347E27466A;
-	Fri,  9 May 2025 07:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A7A26AA86;
+	Fri,  9 May 2025 07:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746776963; cv=none; b=kvoA5oQ1jmRfzrA+OrXG1ATNa3/ha4BIxQZMX5g2uBYonfoUd/GA3CNakvJCkt/w2HTo22xsNbNl77zML1NwDs0xVW6mnbHQhR5/SRsG/WHaIUrNhDZprZfzUbRs+B0iI1oQ8ISOwhIvT6wFwNS/rKw9gW2uA0RWfgo5wXeC+sk=
+	t=1746776962; cv=none; b=UrsYOvrHif5V3Xfuus0C5dlfQRmbulfkwBc9NmHZJ+mQYgBlRPyS2h41EB+AspToBXyIc4AVRUZoAppJorVQPnFcly3hOTvKA1dG2fVdYkQI0a23IlXZf5SSHpf3X8jUSPpYRbmkvpfJQmbRvVB1jV8I4O2piy4t/Ub0p82PD/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746776963; c=relaxed/simple;
-	bh=zqJFSCx7AUWfbriM3zIDxSBZnylClDLryW6FMC+feiA=;
+	s=arc-20240116; t=1746776962; c=relaxed/simple;
+	bh=0mI/bIClotmAIMEue5Uh6KbwoJ+g9tFgZQBd+jg7Spg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hUwLsrTcgZtRuURUMb6iFgtMuH5cUM1Fci6TIWfozxyzrDrv9pakB6/LQ8OUzpAZ3JLA2N9zTve8d5uE+umhmZeAdDceSNeSHD9tb1N63MUTnay2rKuW7CoIiRcnD2M1bsN4H0/Ufu8XgWui1PbgRifvE/gHjgrePcGQLmWlNIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1F7EGgH; arc=none smtp.client-ip=209.85.217.50
+	 In-Reply-To:To:Cc; b=TsUZLbnO9LtLoiCQr5z5d4U03IVR7rZSX9Uv+N0Q1wOmErhIibmmtQDzc+fe+kRyt1sx36dZpQEFillMDxJV/FeI7dsV8HbqPqYXYaqFj+Ug8KPwekvtCUHQoKbr6T0pETIUpQPyOHdYU560F9HNiGugrrszF4kvSa4XWIAcrTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScPJHkM7; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4c4ecf86e8bso566861137.2;
-        Fri, 09 May 2025 00:49:15 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-523f670ca99so604730e0c.1;
+        Fri, 09 May 2025 00:49:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746776955; x=1747381755; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746776959; x=1747381759; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I0Qr/Dx2Mpz9q6UxyEXOpqASgzXyh5bvBW29AbGoUfc=;
-        b=I1F7EGgHvEgyLkvLUFXz+4oq7NFuIZ91/yxmw84bxy+gXMBZ2soupOuOyxryr3LtAz
-         u5RwYvRF7mvEl2CW95BVj+Mgz38jagok64Ij9odBxPNYGCVQpkZ5VQHXbA8a8X7HxpC4
-         7Hs4xZYoFGFd64lObKEVfQMPUCGe6REJVchad60Ah3BGBdPK8TtxA8B+xo+oJ9K0Ge/W
-         GqAa07dWo76IjM3EH3/hynL95As+Dx9R1OKFXHXIsW+qjzJIh9aE/0BBWoXTOAxkU3so
-         wtqmN/gb7HQ+vR+mi/XyIuPH3Mboc7nxAw3F2rpRyH3+6uFjBA6iHdoLtS/jeVzdyuXf
-         VbUg==
+        bh=E1RzP8Nae7C+98McQ5BCAJ1tDJLogzrgZIHRK1qrkfg=;
+        b=ScPJHkM7HqMcWWbJw4DRDwIuHq1d7WO91CMBt1o6hsUyl6Xr6szh90kXVW/cbr6hb2
+         nyhGORoQjpK29yzGvPFf0Ld4PfDcNAuay4GmAO73zkl6BBFykC9yXorcsCYhqj9+hpce
+         mpOhp5vTQVSEOD8JFX6lLJy7Hb+2p+92/jbGygcZ6TO/nXYhFLEjc6Om2G7ov4KcB0aq
+         lZHycUfYu4Nce6NFU15MFjyDYPPb1n0/xC9CYJAJoSP4lLi8VIHyjkmlXflxunTs/sI+
+         rANwI4FJum7EhkE2LWPdtpZCiPYbwMDRUo35NWkYTE2PCqRORajhw4LmQUtSP+jL4Kcf
+         U/7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746776955; x=1747381755;
+        d=1e100.net; s=20230601; t=1746776959; x=1747381759;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I0Qr/Dx2Mpz9q6UxyEXOpqASgzXyh5bvBW29AbGoUfc=;
-        b=em0MEer4d/gj/fWLjOicuo/0DGQyhMfAsrU7p28Lt4qawnFv1OBvyn5oWif6b7YLr/
-         wu10yEIpOtbTV7zSqp7dCM+n5TPwyn+yJfb58r5k57XDPmtGCj8GLalIslm1qW5+S9vn
-         6mRpAHXw52xeAggA9ddHaGdrmxqYDz2d5d3XHnCaIt0QqWuN68ThOKYFxb5ubwCBKNXs
-         ugKqVkZmiyKTmEK0SfUdaAXqPnDiBG8nZCZThZ4cZcbNK0thIpUR55kdJO+Dwtdm5P2t
-         g6DJ5dZyx/0C7eDWAFORDZ2H91DcWxdlEZqETkXDpFLB5oTOqs5LCvXyQ3Hl/DPSZS8J
-         Tyxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6SlmHOtH53U2rB168UcVW3JC+b27BPBJQr1/+jdfN83RaUEDjrXxDMaeZqRgkGY5qsN7nfvkljJ4b1nU=@vger.kernel.org, AJvYcCWDV670Y+P0iUAFGFzML+AiB38Xr2wp3cdxrbxEVgqcGE/K8eQQMgQQEGTrxFSkjKYqmdCylWoegs8ByFQL1e6Dy44eNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzZrr8fVxwPd0pMIz2ga7y+u/lX+pph6dHqfgEPqbiX743WOME
-	BYeZ1OFav7MHaB7UrN6YqLle7TTI1l4YS6ZpRh5kjh9T2s29M+nC
-X-Gm-Gg: ASbGncv6DI1iCYtHwTYZdNIapvY9k9lRUcBeXhg/lvhH+LNIW0oGKHqdAjC1olOsgbL
-	9RmckfDmKzDhg6Eo1wpESmYh8enh2Li5lOU73trA9f1BlQy/GBe2ehedLOX2igI6PDyGhwWYmrO
-	p4rDIKEyQm5KwAP8DHm24I+41FzikelFvvQsWi91uygq7q1Rbm/X7PBECsAz65eXBGN3ygfSHTO
-	V7ztr+RONvxMU/I1CpnROYFpjtw3dLj+JjhZN3bEsBZg+u5OFPhNm9CKhths5kaSQbzr13jqotj
-	Gx8pkCIzVaZl2mLLhmzn0joESCXl/swpmVOJacoHyBMMhZwiSq8=
-X-Google-Smtp-Source: AGHT+IEvyGOw+PpFZVA8mGRWI3dO+d4jJXn8bisKljR4euFo6qCqbKdB/hbtVsIvlqf3IB3qeQE9og==
-X-Received: by 2002:a05:6102:8006:b0:4cb:5d6e:e6c8 with SMTP id ada2fe7eead31-4deed33c1abmr1928239137.9.1746776954585;
-        Fri, 09 May 2025 00:49:14 -0700 (PDT)
+        bh=E1RzP8Nae7C+98McQ5BCAJ1tDJLogzrgZIHRK1qrkfg=;
+        b=RHTIeHCKnB16KhAB+cVP9g9HSr85uDoZB9U2GUoXTRrGALCRFBgTj/xCXZi1xawKOo
+         ByX7t0PJh1o9fh44mKYrehoJxtda1V6Vhm612Q7LCVjA7qrCZYBU5lEA2L+HCSeDPwcf
+         336MMeSGIfg2m7vaZw8BWImTEdORF29tLQGOCmXOknwNYviRqfNT6Brew+CkEttwq9tj
+         hvrgvR3OJZ6wnmjdNLm0fCiE37RwU8HoHBdLDQZiT+9oS8ejr7mRkGu7xt/gyRcLUSMX
+         PWQNhnzxkpqarV0fDO3chm/IBowom8QIXpaEWjVv8lrb61zZZgLlJaeBU2uFUV/+tnR9
+         KpBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1/1/IkDQj7PmfmcLjmp0NM+wo9OEosVmNA58QEX9eaXssa6znUXwXjTuh9ikUCTNyGlApBLmyJ4tXBvU=@vger.kernel.org, AJvYcCXSsZTayU+HjGV2lgNvM0zzL1NwHr3QrrmJ7wXv/1LuGhKJlDHJT0WZMs5rUKUa+W6FND8Xe42uIVjRvQOWLnr5XSzCgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNNcHNxEvBAdT0GX+cCnEGb8U2iGLK4ICI5lAtXtm8BUUjreFi
+	NJ65A7SH1PV1mZ/bXumaJN5dPJP49EqM2+ArrLbIL3OQudg/t/HU
+X-Gm-Gg: ASbGnctrPHei/g8bCgh9EV72XrUawLUja96JZiZzXVwZyziyYVdC7kPRjPokQigl1F1
+	djWcJvoBExyPLV4JIE5NeaLhOEnThSRjbfi6AWmasHQ9ETZLSk5trHZtVgJgOo49uU+4pXq8NSC
+	6mvUYrnbIgV3QDEK7eQMCE5g3EWfUNaoBVwXeGG6jkPwnO8HsffkQcXGo5xCjTqow1vXCBb2r1M
+	p8bi6x37SkMBwjQDRxtwOgCWvAkhKPJtNZoMr9mcba2LlSbSkHwufsex6Yes7gkSyF9LQMG5tSS
+	7UkFAy/oLTL/vMfrJNvwBPkncPOQr18RTxk/c0Rz
+X-Google-Smtp-Source: AGHT+IFdh3K8D/AsAmUV7aiJ3n2dUD0gZY0HWzhfepUoUEOQIyN3FiLcjdCcIyhy8JuMkPAR9vx0VQ==
+X-Received: by 2002:a05:6122:45a1:b0:520:af9c:c058 with SMTP id 71dfb90a1353d-52c53b7f396mr2104851e0c.5.1746776959286;
+        Fri, 09 May 2025 00:49:19 -0700 (PDT)
 Received: from [192.168.1.26] ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f62986f3sm678265241.33.2025.05.09.00.49.10
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f62986f3sm678265241.33.2025.05.09.00.49.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 00:49:14 -0700 (PDT)
+        Fri, 09 May 2025 00:49:18 -0700 (PDT)
 From: Kurt Borja <kuurtb@gmail.com>
-Date: Fri, 09 May 2025 04:48:34 -0300
-Subject: [PATCH RFC 2/5] platform/x86: firmware_attributes_class: Add a
- high level API
+Date: Fri, 09 May 2025 04:48:35 -0300
+Subject: [PATCH RFC 3/5] platform/x86: firmware_attributes_class: Add a
+ boolean type
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250509-fw-attrs-api-v1-2-258afed65bfa@gmail.com>
+Message-Id: <20250509-fw-attrs-api-v1-3-258afed65bfa@gmail.com>
 References: <20250509-fw-attrs-api-v1-0-258afed65bfa@gmail.com>
 In-Reply-To: <20250509-fw-attrs-api-v1-0-258afed65bfa@gmail.com>
 To: Hans de Goede <hdegoede@redhat.com>, 
@@ -98,630 +98,128 @@ Cc: Antheas Kapenekakis <lkml@antheas.dev>,
  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19553; i=kuurtb@gmail.com;
- h=from:subject:message-id; bh=zqJFSCx7AUWfbriM3zIDxSBZnylClDLryW6FMC+feiA=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDBmym3M0HZZXtt9y1i2f9eDeskjmpKigm+GLqr+9Y/mr+
- fzT7nOfOkpZGMS4GGTFFFnaExZ9exSV99bvQOh9mDmsTCBDGLg4BWAiJpGMDM9l2gNquH9O23xD
- ++rhbRf29RiVWG/RY+q91eh9Iuql1iqG/1lTt8tP9T965CNvs6yooS/XabNkrj8suk7W8/yfzTx
- sxgYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4584; i=kuurtb@gmail.com;
+ h=from:subject:message-id; bh=0mI/bIClotmAIMEue5Uh6KbwoJ+g9tFgZQBd+jg7Spg=;
+ b=owGbwMvMwCUmluBs8WX+lTTG02pJDBmym3M+q23cdt2n5GiH9IwDKSIVq254Gy39UFHftOPro
+ W/mn1pUO0pZGMS4GGTFFFnaExZ9exSV99bvQOh9mDmsTCBDGLg4BWAicyYx/C9acflwYQvLgtbl
+ gS4zRbVTNH5EpOsv1nU8ftxH8J0h6xyG/5k8XUYbC65dTz1RuHlW1vNFqWLPztTGimoot18X6xU
+ o4AUA
 X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
  fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
 
-Add an attribute configuration mechanism through the newly introduced
-`struct fwat_dev_config`, which makes use of other documented structs
-and callbacks.
-
-This API aims to be simple, yet flexible. In order to accomplish this,
-the following features were taken into account:
-
-* Ability to statically define attributes
-* Custom read/write callbacks for each attribute type
-* Ability to map attributes to numbers in order to differentiate them in
-  callbacks (`aux` number)
-* Ability to reuse read/write callbacks in different attributes
-* Ability to reuse property selection in different attributes
-* Optional visibility callback for dynamic attribute visibility
+Add a `boolean` attribute type to prevent the use of the `enumeration`
+type for this simple specification.
 
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/firmware_attributes_class.c | 249 ++++++++++++++++++++++-
- drivers/platform/x86/firmware_attributes_class.h | 228 +++++++++++++++++++++
- 2 files changed, 474 insertions(+), 3 deletions(-)
+ .../ABI/testing/sysfs-class-firmware-attributes          |  1 +
+ drivers/platform/x86/firmware_attributes_class.c         | 16 ++++++++++++++++
+ drivers/platform/x86/firmware_attributes_class.h         | 11 +++++++++++
+ 3 files changed, 28 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-class-firmware-attributes b/Documentation/ABI/testing/sysfs-class-firmware-attributes
+index 2713efa509b465a39bf014180794bf487e5b42d6..dc117e694416aed3f1f7ba0ebb1d0c23337b2298 100644
+--- a/Documentation/ABI/testing/sysfs-class-firmware-attributes
++++ b/Documentation/ABI/testing/sysfs-class-firmware-attributes
+@@ -21,6 +21,7 @@ Description:
+ 			- enumeration: a set of pre-defined valid values
+ 			- integer: a range of numerical values
+ 			- string
++			- bool
+ 
+ 		HP specific types
+ 		-----------------
 diff --git a/drivers/platform/x86/firmware_attributes_class.c b/drivers/platform/x86/firmware_attributes_class.c
-index 58ab1495ba3bd449cfe17de2827a57a0c5937788..7cfb0f49f235728c7450a82a7e9d00b8963d3dea 100644
+index 7cfb0f49f235728c7450a82a7e9d00b8963d3dea..13b10a1209be726b00fa1ebad6148778e165101e 100644
 --- a/drivers/platform/x86/firmware_attributes_class.c
 +++ b/drivers/platform/x86/firmware_attributes_class.c
-@@ -7,14 +7,233 @@
- #include <linux/kobject.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <linux/types.h>
- #include "firmware_attributes_class.h"
+@@ -26,6 +26,7 @@ EXPORT_SYMBOL_GPL(firmware_attributes_class);
  
-+#define to_fwat_attribute_ext(_a) container_of_const(_a, struct fwat_attribute_ext, attr)
-+
-+struct fwat_attribute_ext {
-+	struct fwat_attribute attr;
-+	enum fwat_property prop;
-+	const struct fwat_attr_config *config;
-+};
-+
- const struct class firmware_attributes_class = {
- 	.name = "firmware-attributes",
+ static const char * const fwat_type_labels[] = {
+ 	[fwat_type_integer]		= "integer",
++	[fwat_type_boolean]		= "boolean",
+ 	[fwat_type_string]		= "string",
+ 	[fwat_type_enumeration]		= "enumeration",
  };
- EXPORT_SYMBOL_GPL(firmware_attributes_class);
- 
-+static const char * const fwat_type_labels[] = {
-+	[fwat_type_integer]		= "integer",
-+	[fwat_type_string]		= "string",
-+	[fwat_type_enumeration]		= "enumeration",
-+};
-+
-+static const char * const fwat_prop_labels[] = {
-+	[FWAT_PROP_DISPLAY_NAME]		= "display_name",
-+	[FWAT_PROP_LANGUAGE_CODE]		= "display_name_language_code",
-+	[FWAT_PROP_DEFAULT]			= "default",
-+
-+	[FWAT_INT_PROP_MIN]			= "min_value",
-+	[FWAT_INT_PROP_MAX]			= "max_value",
-+	[FWAT_INT_PROP_INCREMENT]		= "scalar_increment",
-+
-+	[FWAT_STR_PROP_MIN]			= "min_length",
-+	[FWAT_STR_PROP_MAX]			= "max_length",
-+
-+	[FWAT_ENUM_PROP_POSSIBLE_VALUES]	= "possible_values",
-+};
-+
-+static ssize_t
-+fwat_type_show(struct device *dev, const struct fwat_attribute *attr, char *buf)
-+{
-+	const struct fwat_attribute_ext *ext = to_fwat_attribute_ext(attr);
-+	const struct fwat_attr_config *config = ext->config;
-+
-+	return sysfs_emit(buf, "%s\n", fwat_type_labels[config->type]);
-+}
-+
-+static ssize_t
-+fwat_property_show(struct device *dev, const struct fwat_attribute *attr, char *buf)
-+{
-+	const struct fwat_attribute_ext *ext = to_fwat_attribute_ext(attr);
-+	const struct fwat_attr_config *config = ext->config;
-+
-+	if (!config->ops->prop_read)
-+		return -EOPNOTSUPP;
-+
-+	return config->ops->prop_read(dev, config->aux, ext->prop, buf);
-+}
-+
-+static ssize_t
-+fwat_current_value_show(struct device *dev, const struct fwat_attribute *attr, char *buf)
-+{
-+	const struct fwat_attribute_ext *ext = to_fwat_attribute_ext(attr);
-+	const struct fwat_attr_config *config = ext->config;
-+	const char *str;
-+	long int_val;
-+	int ret;
-+
-+	switch (config->type) {
-+	case fwat_type_integer:
-+		ret = config->ops->integer_read(dev, config->aux, &int_val);
-+		if (ret)
-+			return ret;
-+
-+		return sysfs_emit(buf, "%ld\n", int_val);
-+	case fwat_type_string:
-+		ret = config->ops->string_read(dev, config->aux, &str);
-+		if (ret)
-+			return ret;
-+
-+		return sysfs_emit(buf, "%s\n", str);
-+	case fwat_type_enumeration:
-+		ret = config->ops->enumeration_read(dev, config->aux, &str);
-+		if (ret)
-+			return ret;
-+
-+		return sysfs_emit(buf, "%s\n", str);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static ssize_t
-+fwat_current_value_store(struct device *dev, const struct fwat_attribute *attr,
-+			 const char *buf, size_t count)
-+{
-+	const struct fwat_attribute_ext *ext = to_fwat_attribute_ext(attr);
-+	const struct fwat_attr_config *config = ext->config;
-+	long int_val;
-+	int ret;
-+
-+	switch (config->type) {
-+	case fwat_type_integer:
-+		ret = kstrtol(buf, 0, &int_val);
-+		if (ret)
-+			return ret;
-+
-+		ret = config->ops->integer_write(dev, config->aux, int_val);
-+		break;
-+	case fwat_type_string:
-+		ret = config->ops->string_write(dev, config->aux, buf);
-+		break;
-+	case fwat_type_enumeration:
-+		ret = config->ops->enumeration_write(dev, config->aux, buf);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return ret ? ret : count;
-+}
-+
-+static struct attribute *
-+fwat_alloc_attr(struct device *dev, const struct fwat_attr_config *config,
-+		const char *attr_name, umode_t mode, enum fwat_property prop,
-+		ssize_t (*show)(struct device *dev, const struct fwat_attribute *attr,
-+				char *buf),
-+		ssize_t (*store)(struct device *dev, const struct fwat_attribute *attr,
-+				 const char *buf, size_t count))
-+{
-+	struct fwat_attribute_ext *fattr;
-+
-+	fattr = devm_kzalloc(dev, sizeof(*fattr), GFP_KERNEL);
-+	if (!fattr)
-+		return NULL;
-+
-+	fattr->attr.attr.name = attr_name;
-+	fattr->attr.attr.mode = mode;
-+	fattr->attr.show = show;
-+	fattr->attr.store = store;
-+	fattr->prop = prop;
-+	fattr->config = config;
-+	sysfs_attr_init(&fattr->attr.attr);
-+
-+	return &fattr->attr.attr;
-+}
-+
-+static struct attribute **
-+fwat_create_attrs(struct device *dev, const struct fwat_attr_config *config)
-+{
-+	struct attribute **attrs;
-+	enum fwat_property prop;
-+	unsigned int index = 0;
-+
-+	attrs = devm_kcalloc(dev, config->num_props + 3, sizeof(*attrs), GFP_KERNEL);
-+	if (!attrs)
-+		return NULL;
-+
-+	/*
-+	 * Create optional attributes
-+	 */
-+	for (; index < config->num_props; index++) {
-+		prop = config->props[index];
-+		attrs[index] = fwat_alloc_attr(dev, config, fwat_prop_labels[prop],
-+					       0444, prop, fwat_property_show, NULL);
-+	}
-+
-+	/*
-+	 * Create mandatory attributes
-+	 */
-+	attrs[index++] = fwat_alloc_attr(dev, config, "type", 0444, 0, fwat_type_show, NULL);
-+	attrs[index++] = fwat_alloc_attr(dev, config, "current_value", 0644, 0,
-+					 fwat_current_value_show, fwat_current_value_store);
-+
-+	return attrs;
-+}
-+
-+static const struct attribute_group *
-+fwat_create_group(struct device *dev, const struct fwat_attr_config *config)
-+{
-+	struct attribute_group *group;
-+	struct attribute **attrs;
-+
-+	group = devm_kzalloc(dev, sizeof(*group), GFP_KERNEL);
-+	if (!group)
-+		return NULL;
-+
-+	attrs = fwat_create_attrs(dev, config);
-+	if (!attrs)
-+		return NULL;
-+
-+	group->name = config->name;
-+	group->attrs = attrs;
-+
-+	return group;
-+}
-+
-+static const struct attribute_group **
-+fwat_create_auto_groups(struct device *dev, const struct fwat_dev_config *config)
-+{
-+	const struct attribute_group **groups;
-+	const struct attribute_group *grp;
-+	unsigned int index = 0;
-+	size_t ngroups = 0;
-+
-+	while (config->attrs_config[ngroups])
-+		ngroups++;
-+
-+	groups = devm_kcalloc(dev, ngroups + 1, sizeof(*groups), GFP_KERNEL);
-+	if (!groups)
-+		return NULL;
-+
-+	for (unsigned int i = 0; i < ngroups; i++) {
-+		if (config->is_visible &&
-+		    !config->is_visible(dev, config->attrs_config[i]))
-+			continue;
-+
-+		grp = fwat_create_group(dev, config->attrs_config[i]);
-+		if (!grp)
-+			return NULL;
-+
-+		groups[index++] = grp;
-+	}
-+
-+	return groups;
-+}
-+
- static ssize_t fwat_attrs_kobj_show(struct kobject *kobj, struct attribute *attr,
- 				    char *buf)
- {
-@@ -61,6 +280,7 @@ static const struct kobj_type fwat_attrs_ktype = {
-  *			  device
-  * @parent: Parent device
-  * @name: Name of the class device
-+ * @config: Device configuration
-  * @data: Drvdata of the class device
-  * @groups: Sysfs groups for the custom `fwat_attrs_ktype` kobj_type
-  *
-@@ -72,8 +292,10 @@ static const struct kobj_type fwat_attrs_ktype = {
-  */
- struct fwat_device *
- fwat_device_register(struct device *parent, const char *name, void *data,
-+		     const struct fwat_dev_config *config,
- 		     const struct attribute_group **groups)
- {
-+	const struct attribute_group **auto_groups;
- 	struct fwat_device *fadev;
- 	struct device *dev;
+@@ -72,6 +73,7 @@ fwat_current_value_show(struct device *dev, const struct fwat_attribute *attr, c
+ 	const struct fwat_attribute_ext *ext = to_fwat_attribute_ext(attr);
+ 	const struct fwat_attr_config *config = ext->config;
+ 	const char *str;
++	bool bool_val;
+ 	long int_val;
  	int ret;
-@@ -97,19 +319,36 @@ fwat_device_register(struct device *parent, const char *name, void *data,
- 	if (ret)
- 		goto out_kobj_put;
  
--	if (groups) {
--		ret = sysfs_create_groups(&fadev->attrs_kobj, groups);
-+	if (config) {
-+		auto_groups = fwat_create_auto_groups(dev, config);
-+		if (!auto_groups) {
-+			ret = -ENOMEM;
-+			goto out_kobj_unregister;
-+		}
+@@ -82,6 +84,12 @@ fwat_current_value_show(struct device *dev, const struct fwat_attribute *attr, c
+ 			return ret;
+ 
+ 		return sysfs_emit(buf, "%ld\n", int_val);
++	case fwat_type_boolean:
++		ret = config->ops->boolean_read(dev, config->aux, &bool_val);
++		if (ret)
++			return ret;
 +
-+		ret = sysfs_create_groups(&fadev->attrs_kobj, auto_groups);
++		return sysfs_emit(buf, "%u\n", bool_val);
+ 	case fwat_type_string:
+ 		ret = config->ops->string_read(dev, config->aux, &str);
  		if (ret)
- 			goto out_kobj_unregister;
- 	}
- 
-+	if (groups) {
-+		ret = sysfs_create_groups(&fadev->attrs_kobj, groups);
-+		if (ret)
-+			goto out_remove_auto_groups;
-+	}
-+
- 	fadev->dev = dev;
- 	fadev->groups = groups;
-+	fadev->auto_groups = groups;
- 
- 	kobject_uevent(&fadev->attrs_kobj, KOBJ_ADD);
- 
- 	return fadev;
- 
-+out_remove_auto_groups:
-+	if (config)
-+		sysfs_remove_groups(&fadev->attrs_kobj, auto_groups);
-+
- out_kobj_unregister:
- 	kobject_del(&fadev->attrs_kobj);
- 
-@@ -125,6 +364,8 @@ void fwat_device_unregister(struct fwat_device *fwadev)
+@@ -105,6 +113,7 @@ fwat_current_value_store(struct device *dev, const struct fwat_attribute *attr,
  {
- 	if (fwadev->groups)
- 		sysfs_remove_groups(&fwadev->attrs_kobj, fwadev->groups);
-+	if (fwadev->auto_groups)
-+		sysfs_remove_groups(&fwadev->attrs_kobj, fwadev->auto_groups);
- 	kobject_del(&fwadev->attrs_kobj);
- 	kobject_put(&fwadev->attrs_kobj);
- 	device_unregister(fwadev->dev);
-@@ -143,6 +384,7 @@ static void devm_fwat_device_release(void *data)
-  *			       device
-  * @parent: Parent device
-  * @name: Name of the class device
-+ * @config: Device configuration
-  * @data: Drvdata of the class device
-  * @groups: Sysfs groups for the custom `fwat_attrs_ktype` kobj_type
-  *
-@@ -156,12 +398,13 @@ static void devm_fwat_device_release(void *data)
-  */
- struct fwat_device *
- devm_fwat_device_register(struct device *parent, const char *name, void *data,
-+			  const struct fwat_dev_config *config,
- 			  const struct attribute_group **groups)
- {
- 	struct fwat_device *fadev;
+ 	const struct fwat_attribute_ext *ext = to_fwat_attribute_ext(attr);
+ 	const struct fwat_attr_config *config = ext->config;
++	bool bool_val;
+ 	long int_val;
  	int ret;
  
--	fadev = fwat_device_register(parent, name, data, groups);
-+	fadev = fwat_device_register(parent, name, data, config, groups);
- 	if (IS_ERR(fadev))
- 		return fadev;
+@@ -116,6 +125,13 @@ fwat_current_value_store(struct device *dev, const struct fwat_attribute *attr,
  
+ 		ret = config->ops->integer_write(dev, config->aux, int_val);
+ 		break;
++	case fwat_type_boolean:
++		ret = kstrtobool(buf, &bool_val);
++		if (ret)
++			return ret;
++
++		ret = config->ops->boolean_write(dev, config->aux, bool_val);
++		break;
+ 	case fwat_type_string:
+ 		ret = config->ops->string_write(dev, config->aux, buf);
+ 		break;
 diff --git a/drivers/platform/x86/firmware_attributes_class.h b/drivers/platform/x86/firmware_attributes_class.h
-index ad94bf91e5af30a2b8feb9abf224ee6f0d17600a..f250875d785c3439682c43c693f98e1c20e9ff54 100644
+index f250875d785c3439682c43c693f98e1c20e9ff54..d95d2024b0d9630ee3750ec26e18874965ec5cff 100644
 --- a/drivers/platform/x86/firmware_attributes_class.h
 +++ b/drivers/platform/x86/firmware_attributes_class.h
-@@ -18,11 +18,14 @@ extern const struct class firmware_attributes_class;
-  * @dev: The class device.
-  * @attrs_kobj: The "attributes" root kobject.
-  * @groups: Sysfs groups attached to the @attrs_kobj.
-+ * @auto_groups: Sysgs groups generated from &struct fwat_attr_config attached.
-+ * to the @attrs_kobj
-  */
- struct fwat_device {
- 	struct device *dev;
- 	struct kobject attrs_kobj;
- 	const struct attribute_group **groups;
-+	const struct attribute_group **auto_groups;
+@@ -49,6 +49,7 @@ struct fwat_attribute {
+ 
+ enum fwat_attr_type {
+ 	fwat_type_integer,
++	fwat_type_boolean,
+ 	fwat_type_string,
+ 	fwat_type_enumeration,
  };
- 
- #define to_fwat_device(_k)	container_of_const(_k, struct fwat_device, attrs_kobj)
-@@ -30,6 +33,7 @@ struct fwat_device {
- /**
-  * struct fwat_attribute - The firmware-attributes's custom attribute
-  * @attr: Embedded struct attribute.
-+ * @aux: Auxiliary number defined by the user.
-  * @show: Show method called by the "attributes" kobject's ktype.
-  * @store: Store method called by the "attributes" kobject's ktype.
-  */
-@@ -43,14 +47,238 @@ struct fwat_attribute {
- 
- #define to_fwat_attribute(_a) container_of_const(_a, struct fwat_attribute, attr)
- 
-+enum fwat_attr_type {
-+	fwat_type_integer,
-+	fwat_type_string,
-+	fwat_type_enumeration,
-+};
-+
-+enum fwat_property {
-+	FWAT_PROP_DISPLAY_NAME,
-+	FWAT_PROP_LANGUAGE_CODE,
-+	FWAT_PROP_DEFAULT,
-+
-+	FWAT_INT_PROP_MIN,
-+	FWAT_INT_PROP_MAX,
-+	FWAT_INT_PROP_INCREMENT,
-+
-+	FWAT_STR_PROP_MIN,
-+	FWAT_STR_PROP_MAX,
-+
-+	FWAT_ENUM_PROP_POSSIBLE_VALUES,
-+};
-+
-+struct fwat_attr_config;
-+
-+/**
-+ * struct fwat_attr_ops - Operations for a firmware *attribute*
-+ * @prop_read: Callback for retrieving each configured property of an attribute.
-+ * @integer_read: Callback for reading the current_value of an attribute of
-+ *                type *integer*.
-+ * @integer_write: Callback for writing the current_value of an attribute of
-+ *                 type *integer*.
-+ * @string_read: Callback for reading the current_value of an attribute of type
-+ *               *string*.
-+ * @string_write: Callback for writing the current_value of an attribute of type
-+ *                *string*.
-+ * @enumeration_read: Callback for reading the current_value of an attribute of
-+ *                    type *enumeration*.
-+ * @enumeration_write: Callback for writing the current_value of an attribute
-+ *                     of type *enumeration*.
-+ */
-+struct fwat_attr_ops {
-+	ssize_t (*prop_read)(struct device *dev, long aux,
-+			     enum fwat_property prop, const char *buf);
-+	union {
+@@ -77,6 +78,10 @@ struct fwat_attr_config;
+  *                type *integer*.
+  * @integer_write: Callback for writing the current_value of an attribute of
+  *                 type *integer*.
++ * @boolean_read: Callback for reading the current_value of an attribute of type
++ *                *boolean*.
++ * @boolean_write: Callback for writing the current_value of an attribute of
++ *                 type *boolean*.
+  * @string_read: Callback for reading the current_value of an attribute of type
+  *               *string*.
+  * @string_write: Callback for writing the current_value of an attribute of type
+@@ -96,6 +101,12 @@ struct fwat_attr_ops {
+ 			int (*integer_write)(struct device *dev, long aux,
+ 					     long val);
+ 		};
 +		struct {
-+			int (*integer_read)(struct device *dev, long aux,
-+					    long *val);
-+			int (*integer_write)(struct device *dev, long aux,
-+					     long val);
++			int (*boolean_read)(struct device *dev, long aux,
++					    bool *val);
++			int (*boolean_write)(struct device *dev, long aux,
++					     bool val);
 +		};
-+		struct {
-+			int (*string_read)(struct device *dev, long aux,
-+					   const char **str);
-+			int (*string_write)(struct device *dev, long aux,
-+					    const char *str);
-+		};
-+		struct {
-+			int (*enumeration_read)(struct device *dev, long aux,
-+						const char **str);
-+			int (*enumeration_write)(struct device *dev, long aux,
-+						 const char *str);
-+		};
-+	};
-+};
-+
-+/**
-+ * struct fwat_attr_config - Configuration for a single firmware *attribute*
-+ * @name: Name of the sysfs group associated with this *attribute*.
-+ * @type: Type of this *attribute*.
-+ * @aux: Auxiliary number defined by the user, which will be passed to
-+ *       read/write callbacks.
-+ * @ops: Operations for this *attribute*.
-+ * @props: Array of properties of this *attribute*.
-+ * @num_props: Size of the props array.
-+ */
-+struct fwat_attr_config {
-+	const char *name;
-+	enum fwat_attr_type type;
-+	long aux;
-+	const struct fwat_attr_ops *ops;
-+	const enum fwat_property *props;
-+	size_t num_props;
-+};
-+
-+/**
-+ * DEFINE_SIMPLE_FWAT_OPS() - Define static &struct fwat_attr_ops for a simple
-+ *                            *attribute* with no properties, i.e. No
-+ *                            &fwat_attr_ops.read_prop callback
-+ * @_name: Prefix of the `read` and `write` callbacks.
-+ * @_type: Firmware *attribute* type.
-+ *
-+ * Example:
-+ *
-+ * static int example_read(...) {...}
-+ * static int example_write(...) {...}
-+ *
-+ * DEFINE_SIMPLE_FWAT_OPS(example, ...);
-+ */
-+#define DEFINE_SIMPLE_FWAT_OPS(_name, _type)		\
-+	static const struct fwat_attr_ops _name##_ops = { \
-+		._type##_read = _name##_read,		\
-+		._type##_write = _name##_write,		\
-+	}
-+
-+/**
-+ * DEFINE_FWAT_OPS() - Define static &struct fwat_attr_ops with all callbacks.
-+ * @_name: Prefix of the `read` and `write` callbacks.
-+ * @_type: Firmware *attribute* type.
-+ *
-+ * Example:
-+ *
-+ * static int example_read(...) {...}
-+ * static int example_write(...) {...}
-+ * static int example_prop_read(...) {...}
-+ *
-+ * DEFINE_FWAT_OPS(example, ...);
-+ */
-+#define DEFINE_FWAT_OPS(_name, _type)			\
-+	static const struct fwat_attr_ops _name##_ops = { \
-+		.prop_read = _name##_prop_read,		\
-+		._type##_read = _name##_read,		\
-+		._type##_write = _name##_write,		\
-+	}
-+
-+/**
-+ * FWAT_CONFIG() - Configuration pointer for a single firmware *attribute*.
-+ * @_name: String name of this *attribute*.
-+ * @_type: Firmware *attribute* type.
-+ * @_ops: Pointer to &struct fwat_attr_ops.
-+ * @_props: Pointer to a enum fwat_property array.
-+ * @_num_props: Size of the @_props array.
-+ *
-+ * This is a convenience macro to quickly construct a &struct fwat_attr_config
-+ * array, which will be passed to &struct fwat_dev_config.
-+ *
-+ * Example:
-+ *
-+ * static int example_read(...) {...}
-+ * static int example_write(...) {...}
-+ * static int example_prop_read(...) {...}
-+ *
-+ * DEFINE_FWAT_OPS(example, ...);
-+ *
-+ * static const enum fwat_property props[] = {...};
-+ *
-+ * static const struct fwat_attr_config * const attrs_config[] = {
-+ *	FWAT_CONFIG(example, ..., &example_fwat_ops, props,
-+ *		    ARRAY_SIZE(props)),
-+ *	...
-+ *	NULL
-+ * };
-+ *
-+ * static const struct fwat_dev_config fdev_config = {
-+ *	.attrs_config = attrs_config,
-+ *	...
-+ * }
-+ */
-+#define FWAT_CONFIG(_name, _type, _ops, _props, _num_props) \
-+	(&(const struct fwat_attr_config) {	\
-+		.name = _name,				\
-+		.type = fwat_type_##_type,		\
-+		.ops = _ops,				\
-+		.num_props = _num_props,		\
-+		.props = _props,			\
-+	})
-+
-+/**
-+ * FWAT_CONFIG_AUX() - Configuration pointer for a single firmware *attribute*
-+ *                     with an auxiliary number defined by the user
-+ * @_name: String name of this *attribute*.
-+ * @_type: Firmware *attribute* type.
-+ * @_aux: Auxiliary number defined by the user.
-+ * @_ops: Pointer to &struct fwat_attr_ops.
-+ * @_props: Pointer to a enum fwat_property array.
-+ * @_num_props: Size of the @_props array.
-+ *
-+ * This is a convenience macro to quickly construct a &struct fwat_attr_config
-+ * array, which will be passed to &struct fwat_dev_config.
-+ *
-+ * Example:
-+ *
-+ * static int example_read(...) {...}
-+ * static int example_write(...) {...}
-+ * static int example_prop_read(...) {...}
-+ *
-+ * DEFINE_FWAT_OPS(example, ...);
-+ *
-+ * static const enum fwat_property props[] = {...};
-+ *
-+ * static const struct fwat_attr_config * const config[] = {
-+ *	FWAT_CONFIG_AUX(example, ..., n, &example_fwat_ops, props,
-+ *			ARRAY_SIZE(props)),
-+ *	...
-+ *	NULL
-+ * };
-+ *
-+ * static const struct fwat_dev_config fdev_config = {
-+ *	.attrs_config = attrs_config,
-+ *	...
-+ * }
-+ */
-+#define FWAT_CONFIG_AUX(_name, _type, _aux, _ops, _props, _num_props) \
-+	(&(const struct fwat_attr_config) {		\
-+		.name = _name,				\
-+		.type = fwat_type_##_type,		\
-+		.aux = _aux,				\
-+		.ops = _ops,				\
-+		.num_props = _num_props,		\
-+		.props = _props,			\
-+	})
-+
-+/**
-+ * struct fwat_dev_config - Configuration for this devices's
-+ *                          &fwat_device.auto_groups
-+ * @attrs_config: NULL terminated &struct fwat_attr_config array.
-+ * @is_visible: Optional visibility callback to determine the visibility
-+ *              of each auto_group.
-+ */
-+struct fwat_dev_config {
-+	const struct fwat_attr_config *const *attrs_config;
-+	bool (*is_visible)(struct device *dev, const struct fwat_attr_config *config);
-+};
-+
- struct fwat_device * __must_check
- fwat_device_register(struct device *parent, const char *name, void *data,
-+		     const struct fwat_dev_config *config,
- 		     const struct attribute_group **groups);
- 
- void fwat_device_unregister(struct fwat_device *fwadev);
- 
- struct fwat_device * __must_check
- devm_fwat_device_register(struct device *parent, const char *name, void *data,
-+			  const struct fwat_dev_config *config,
- 			  const struct attribute_group **groups);
- 
- #endif /* FW_ATTR_CLASS_H */
+ 		struct {
+ 			int (*string_read)(struct device *dev, long aux,
+ 					   const char **str);
 
 -- 
 2.49.0
