@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-641673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2C3AB149A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCE8AB148D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AFBA2058B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65917A037EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64422951DE;
-	Fri,  9 May 2025 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE88293721;
+	Fri,  9 May 2025 13:13:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C377229291A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D61D2920B9
 	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796380; cv=none; b=sPpzCaGHMx+J2aV7PDwuGLsSA9TQM4OynOvzcgzJmui4mT0V/Kc/PXuaWQs1BUqvwlPoL/pA7hKsCzngufDCS2JQoC4V3tZFPwHNNO7qa1v2rXOy3c0O+dnMz+pEDTlzdV2lmCotU4WfvwrycRKnBNov8sPNmheZ3vO4B3tSmlQ=
+	t=1746796380; cv=none; b=oArqireb5g03teOfjkvUWMvmlK6WJSPl9SR8N2Bid1gszhibTkhyX++Bg1zjHsH6gK5nOUtGt6swg/yfpUnq/EGp/8Of5ekW7WsmWRThuFX+LVuoxtaKlIpiLUjS1Ns6d+DM1117rRcuIH9dMMSl8kcDlW6oCwMhunTfCD2SQdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746796380; c=relaxed/simple;
-	bh=6s9eu20TM2vzFU32ijFQgmiLWZKG/xNugMZygTtdbhw=;
+	bh=wEecE7svTPb11DcdMrTx0WAMQTb7eJNFeUdjgQ8JSws=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=aNuD7UkVDXy5S7F5mAXtRRCaOsdgcRFMfAsyxoDYBvQwB/6fj+HQDfPSKIl1GM/wyxP717rfXYS2MLa1tDUJcw73DjkK+XxybgnHKbjOpiONPC1aoqH/F9Ae8YaSzZnScbYZe3wBCa8GqdZZu8OqaXXzAEG35NKhFc6PFpPfgE4=
+	 Content-Type; b=cWxb3PNeVXOB2fBjs6L/KSWEe5ZgHmLTIsjOqShqCb6T4c10k60G6PKSIt4W+RrazUjGUQEwHvo+CPkNgYrO86tFeGttnwZsgLP2G5d7iLadEjL2tlnj3JM8ljSqsrGyHOo8MlLVypzGItSLwqZslnm8s+LifRzK3+IE0GngBAM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F694C4CEF5;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 671B5C4CEEE;
 	Fri,  9 May 2025 13:13:00 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uDNXP-00000002buG-3FPm;
+	id 1uDNXP-00000002bum-3y4B;
 	Fri, 09 May 2025 09:13:15 -0400
-Message-ID: <20250509131315.626033814@goodmis.org>
+Message-ID: <20250509131315.794682410@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 09 May 2025 09:13:02 -0400
+Date: Fri, 09 May 2025 09:13:03 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 13/31] tracing/mmiotrace: Remove reference to unused per CPU data pointer
+Subject: [for-next][PATCH 14/31] ftrace: Do not bother checking per CPU "disabled" flag
 References: <20250509131249.340302366@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,59 +53,88 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The mmiotracer referenced the per CPU array_buffer->data descriptor but
-never actually used it. Remove the references to it.
+The per CPU "disabled" value was the original way to disable tracing when
+the tracing subsystem was first created. Today, the ring buffer
+infrastructure has its own way to disable tracing. In fact, things have
+changed so much since 2008 that many things ignore the disable flag.
+
+There's no reason for the function tracer to check it, if tracing is
+disabled, the ring buffer will not record the event anyway.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20250505212234.696945463@goodmis.org
+Link: https://lore.kernel.org/20250505212234.868972758@goodmis.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_mmiotrace.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ kernel/trace/trace_functions.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/kernel/trace/trace_mmiotrace.c b/kernel/trace/trace_mmiotrace.c
-index ba5858866b2f..c706544be60c 100644
---- a/kernel/trace/trace_mmiotrace.c
-+++ b/kernel/trace/trace_mmiotrace.c
-@@ -291,7 +291,6 @@ __init static int init_mmio_trace(void)
- device_initcall(init_mmio_trace);
- 
- static void __trace_mmiotrace_rw(struct trace_array *tr,
--				struct trace_array_cpu *data,
- 				struct mmiotrace_rw *rw)
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 98ccf3f00c51..bd153219a712 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -209,7 +209,6 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
  {
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
-@@ -315,12 +314,10 @@ static void __trace_mmiotrace_rw(struct trace_array *tr,
- void mmio_trace_rw(struct mmiotrace_rw *rw)
- {
- 	struct trace_array *tr = mmio_trace_array;
--	struct trace_array_cpu *data = per_cpu_ptr(tr->array_buffer.data, smp_processor_id());
--	__trace_mmiotrace_rw(tr, data, rw);
-+	__trace_mmiotrace_rw(tr, rw);
- }
- 
- static void __trace_mmiotrace_map(struct trace_array *tr,
--				struct trace_array_cpu *data,
- 				struct mmiotrace_map *map)
- {
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
-@@ -344,12 +341,7 @@ static void __trace_mmiotrace_map(struct trace_array *tr,
- void mmio_trace_mapping(struct mmiotrace_map *map)
- {
- 	struct trace_array *tr = mmio_trace_array;
+ 	struct trace_array *tr = op->private;
 -	struct trace_array_cpu *data;
--
--	preempt_disable();
--	data = per_cpu_ptr(tr->array_buffer.data, smp_processor_id());
--	__trace_mmiotrace_map(tr, data, map);
--	preempt_enable();
-+	__trace_mmiotrace_map(tr, map);
- }
+ 	unsigned int trace_ctx;
+ 	int bit;
  
- int mmio_trace_printk(const char *fmt, va_list args)
+@@ -224,9 +223,7 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 
+ 	trace_ctx = tracing_gen_ctx_dec();
+ 
+-	data = this_cpu_ptr(tr->array_buffer.data);
+-	if (!atomic_read(&data->disabled))
+-		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
++	trace_function(tr, ip, parent_ip, trace_ctx, NULL);
+ 
+ 	ftrace_test_recursion_unlock(bit);
+ }
+@@ -236,10 +233,8 @@ function_args_trace_call(unsigned long ip, unsigned long parent_ip,
+ 			 struct ftrace_ops *op, struct ftrace_regs *fregs)
+ {
+ 	struct trace_array *tr = op->private;
+-	struct trace_array_cpu *data;
+ 	unsigned int trace_ctx;
+ 	int bit;
+-	int cpu;
+ 
+ 	if (unlikely(!tr->function_enabled))
+ 		return;
+@@ -250,10 +245,7 @@ function_args_trace_call(unsigned long ip, unsigned long parent_ip,
+ 
+ 	trace_ctx = tracing_gen_ctx();
+ 
+-	cpu = smp_processor_id();
+-	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+-	if (!atomic_read(&data->disabled))
+-		trace_function(tr, ip, parent_ip, trace_ctx, fregs);
++	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
+ 
+ 	ftrace_test_recursion_unlock(bit);
+ }
+@@ -352,7 +344,6 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ {
+ 	struct trace_func_repeats *last_info;
+ 	struct trace_array *tr = op->private;
+-	struct trace_array_cpu *data;
+ 	unsigned int trace_ctx;
+ 	int bit;
+ 
+@@ -364,8 +355,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		return;
+ 
+ 	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+-	data = this_cpu_ptr(tr->array_buffer.data);
+-	if (atomic_read(&data->disabled))
++	if (!tracer_tracing_is_on(tr))
+ 		goto out;
+ 
+ 	/*
 -- 
 2.47.2
 
