@@ -1,666 +1,598 @@
-Return-Path: <linux-kernel+bounces-641120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0385AAB0D1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB80AB0CE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34A21B6479B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4399505441
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398F42741A5;
-	Fri,  9 May 2025 08:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0457272E46;
+	Fri,  9 May 2025 08:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="RYHFMMWl"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W87Uiumc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9245F215F48;
-	Fri,  9 May 2025 08:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713A2741DD
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746779104; cv=none; b=ZY0jQphy7wpUz/j5neEtSt2CVG83XDM6Mc9kPna1QFXp3XEkzDMq3Cw15Y6xMBLI5gon2XwMW/W4VrBG67djzeYjABqefO6jRTreFQPqYrcjSNYfkWcUGyBPWjEiU9QbPT9M7vYMWVGjwHKctlbuih4g9kXPTxC18cWtZjkWeGY=
+	t=1746778481; cv=none; b=ED7jvM3wYkVKfGDNngt7RdljnAD7iMEnHIohudAoHa2GC1wx91M0uDi2E+Dmhihituj612Mdh0TztxzUNcLGgsV2A/VzamZjckrmJnbadmB00YHzgvJZDAPHc4LZsXP86Z9/WWu/b9G3riNsUy3HP9BdNzRlvqseDxBWKnjI2iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746779104; c=relaxed/simple;
-	bh=xXAeJtctwfu6dv36QbPvcjj9SnnbAKPdYh6zmPXR/Mo=;
+	s=arc-20240116; t=1746778481; c=relaxed/simple;
+	bh=YjChN+vh23L2FULjtmu5v2MLRZxR+OdIs3DXDmhBnOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I05WV5MsbPrADy5wy2thE0QGX1aZYnC64X1o24PnjWeFbgySHSqlPcrT7E3wdqB7Lgs4zoSAYf8nPZWTBv3TaeDHBCWeUpwEOF8+7R5O9wYE5MeQR7zB3d+jQf6OJ69Ui0M73Fmwb4M56HXguMqXEarFwvVjGmzNzWaLcHap86w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=RYHFMMWl; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=uv5kGiltlGhexO0Nd0f9NiBmIv+Am2IFgoH1gPOSC/Q=;
-	b=RYHFMMWlEplhA76/D9UTKrvgcARLW0vGkzWh+tG4i7q5ldIAKtqAYWAzRm/vMW
-	hrkpvYYv4SGdPD5tcKFPWibx8wtJUK6JPSnssYj1ea1tGN2i2kLao/mBAlfrLDB5
-	l3bc6arthwDpEb7HswDnAN83QvIsTikgv9VnWkO9q5cGQ=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBHd_A+uR1oIN2oAA--.60744S3;
-	Fri, 09 May 2025 16:13:51 +0800 (CST)
-Date: Fri, 9 May 2025 16:13:50 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: maudspierings@gocontroll.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 5/8] arm64: dts: freescale: add Ka-Ro Electronics
- tx8p-ml81 COM
-Message-ID: <aB25PrpFQNkjwPDK@dragon>
-References: <20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com>
- <20250417-initial_display-v6-5-3c6f6d24c7af@gocontroll.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bThC2ZKHxqadXmU4g2qc27Au35fY7U9iBJ4avlFQMywvTBkv40YnrGBN/Z2Hz8Nc5Phk3a0R7IHusS15HEH7PhO2x6uxqyfQPq5mII1TliJG1IONFkXrCu6XwUvMS6g7clJvI5UxoHLPLx8JgneaXn2MKZwh0l/nWmA7oSsY7zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W87Uiumc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746778477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kMY1q4CGEtr72fEml664zyG7vyi8pOMNChiBgsTWAsk=;
+	b=W87UiumcDbyS/v34LxoxCXYSiwfS77QBwvj/EuVCX0jRF/GS0qVyuyfZg+hmkoT5BbRuJS
+	OE4Rj3QVP3q8msOhoL+p68Rh8oXyRzzWSiOhjzy9XnlwXbP2yVwG/iy/39OVVADoqJ8GCX
+	3galFRogZtIumj/B5qTx5dzanVibXYw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-_cQ1zen2MdaPl04ZnkXx0w-1; Fri,
+ 09 May 2025 04:14:34 -0400
+X-MC-Unique: _cQ1zen2MdaPl04ZnkXx0w-1
+X-Mimecast-MFC-AGG-ID: _cQ1zen2MdaPl04ZnkXx0w_1746778472
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 496BD1955DD0;
+	Fri,  9 May 2025 08:14:32 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.140])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4591418003FD;
+	Fri,  9 May 2025 08:14:23 +0000 (UTC)
+Date: Fri, 9 May 2025 16:14:17 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 6/8] selftests: ublk: kublk: move per-thread data out
+ of ublk_queue
+Message-ID: <aB25WYnXBDwPCDFp@fedora>
+References: <20250507-ublk_task_per_io-v6-0-a2a298783c01@purestorage.com>
+ <20250507-ublk_task_per_io-v6-6-a2a298783c01@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250417-initial_display-v6-5-3c6f6d24c7af@gocontroll.com>
-X-CM-TRANSID:Ms8vCgBHd_A+uR1oIN2oAA--.60744S3
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Cw48KFyDAw4kWFW5Ww1ftFb_yoW8XFy7Wo
-	WYv345JFWDKr17ZwnIkFnFyF17XrZxGFZIya95trW3WF93JrnIyryjqw4jqrW7Jw40qF4k
-	Ga1fJ3Z5Ca4j9ws5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU88nYUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRBIZWgdnHeFMAAAsf
+In-Reply-To: <20250507-ublk_task_per_io-v6-6-a2a298783c01@purestorage.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Apr 17, 2025 at 12:14:06PM +0200, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
+On Wed, May 07, 2025 at 03:49:40PM -0600, Uday Shankar wrote:
+> Towards the goal of decoupling ublk_queues from ublk server threads,
+> move resources/data that should be per-thread rather than per-queue out
+> of ublk_queue and into a new struct ublk_thread.
 > 
-> The Ka-Ro Electronics tx8p-ml81 is a COM based on the imx8mp SOC. It has
-> 2 GB of ram and 8 GB of eMMC storage on board.
-> 
-> Add it to enable boards based on this Module
-> 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
 > ---
->  .../arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi | 548 +++++++++++++++++++++
->  1 file changed, 548 insertions(+)
+>  tools/testing/selftests/ublk/kublk.c | 225 ++++++++++++++++++-----------------
+>  tools/testing/selftests/ublk/kublk.h |  38 ++++--
+>  2 files changed, 145 insertions(+), 118 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4c9d010cfd40009a7cc0816a3043434b1ca2c982
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi
-> @@ -0,0 +1,548 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2020 Lothar Waﬂmann <LW@KARO-electronics.de>
-> + * 2025 Maud Spierings <maudspierings@gocontroll.com>
-> + */
+> diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
+> index 3ad9e162816c3a10e9928f9d530908cda7595530..313689f94cd6361a9a0f4b9257085b2a62bc8b8c 100644
+> --- a/tools/testing/selftests/ublk/kublk.c
+> +++ b/tools/testing/selftests/ublk/kublk.c
+> @@ -324,8 +324,8 @@ static void ublk_ctrl_dump(struct ublk_dev *dev)
+>  
+>  		for (i = 0; i < info->nr_hw_queues; i++) {
+>  			ublk_print_cpu_set(&affinity[i], buf, sizeof(buf));
+> -			printf("\tqueue %u: tid %d affinity(%s)\n",
+> -					i, dev->q[i].tid, buf);
+> +			printf("\tqueue %u: affinity(%s)\n",
+> +					i, buf);
+>  		}
+>  		free(affinity);
+>  	}
+> @@ -395,18 +395,16 @@ static void ublk_queue_deinit(struct ublk_queue *q)
+>  		free(q->ios[i].buf_addr);
+>  }
+>  
+> -static void ublk_thread_deinit(struct ublk_queue *q)
+> +static void ublk_thread_deinit(struct ublk_thread *t)
+>  {
+> -	q->tid = 0;
+> +	io_uring_unregister_buffers(&t->ring);
+>  
+> -	io_uring_unregister_buffers(&q->ring);
+> +	io_uring_unregister_ring_fd(&t->ring);
+>  
+> -	io_uring_unregister_ring_fd(&q->ring);
+> -
+> -	if (q->ring.ring_fd > 0) {
+> -		io_uring_unregister_files(&q->ring);
+> -		close(q->ring.ring_fd);
+> -		q->ring.ring_fd = -1;
+> +	if (t->ring.ring_fd > 0) {
+> +		io_uring_unregister_files(&t->ring);
+> +		close(t->ring.ring_fd);
+> +		t->ring.ring_fd = -1;
+>  	}
+>  }
+>  
+> @@ -421,7 +419,6 @@ static int ublk_queue_init(struct ublk_queue *q)
+>  	q->tgt_ops = dev->tgt.ops;
+>  	q->state = 0;
+>  	q->q_depth = depth;
+> -	q->cmd_inflight = 0;
+>  
+>  	if (dev->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY) {
+>  		q->state |= UBLKSRV_NO_BUF;
+> @@ -443,6 +440,7 @@ static int ublk_queue_init(struct ublk_queue *q)
+>  		q->ios[i].buf_addr = NULL;
+>  		q->ios[i].flags = UBLKSRV_NEED_FETCH_RQ | UBLKSRV_IO_FREE;
+>  		q->ios[i].q = q;
+> +		q->ios[i].tag = i;
+>  
+>  		if (q->state & UBLKSRV_NO_BUF)
+>  			continue;
+> @@ -463,47 +461,46 @@ static int ublk_queue_init(struct ublk_queue *q)
+>  	return -ENOMEM;
+>  }
+>  
+> -static int ublk_thread_init(struct ublk_queue *q)
+> +static int ublk_thread_init(struct ublk_thread *t)
+>  {
+> -	struct ublk_dev *dev = q->dev;
+> +	struct ublk_dev *dev = t->dev;
+>  	int ring_depth = dev->tgt.sq_depth, cq_depth = dev->tgt.cq_depth;
+>  	int ret;
+>  
+> -	q->tid = gettid();
+> -
+> -	ret = ublk_setup_ring(&q->ring, ring_depth, cq_depth,
+> +	ret = ublk_setup_ring(&t->ring, ring_depth, cq_depth,
+>  			IORING_SETUP_COOP_TASKRUN |
+>  			IORING_SETUP_SINGLE_ISSUER |
+>  			IORING_SETUP_DEFER_TASKRUN);
+>  	if (ret < 0) {
+> -		ublk_err("ublk dev %d queue %d setup io_uring failed %d\n",
+> -				q->dev->dev_info.dev_id, q->q_id, ret);
+> +		ublk_err("ublk dev %d thread %d setup io_uring failed %d\n",
+> +				dev->dev_info.dev_id, t->idx, ret);
+>  		goto fail;
+>  	}
+>  
+>  	if (dev->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY) {
+> -		ret = io_uring_register_buffers_sparse(&q->ring, q->q_depth);
+> +		ret = io_uring_register_buffers_sparse(
+> +			&t->ring, dev->dev_info.queue_depth);
+>  		if (ret) {
+> -			ublk_err("ublk dev %d queue %d register spare buffers failed %d",
+> -					dev->dev_info.dev_id, q->q_id, ret);
+> +			ublk_err("ublk dev %d thread %d register spare buffers failed %d",
+> +					dev->dev_info.dev_id, t->idx, ret);
+>  			goto fail;
+>  		}
+>  	}
+>  
+> -	io_uring_register_ring_fd(&q->ring);
+> +	io_uring_register_ring_fd(&t->ring);
+>  
+> -	ret = io_uring_register_files(&q->ring, dev->fds, dev->nr_fds);
+> +	ret = io_uring_register_files(&t->ring, dev->fds, dev->nr_fds);
+>  	if (ret) {
+> -		ublk_err("ublk dev %d queue %d register files failed %d\n",
+> -				q->dev->dev_info.dev_id, q->q_id, ret);
+> +		ublk_err("ublk dev %d thread %d register files failed %d\n",
+> +				t->dev->dev_info.dev_id, t->idx, ret);
+>  		goto fail;
+>  	}
+>  
+>  	return 0;
+>  fail:
+> -	ublk_thread_deinit(q);
+> -	ublk_err("ublk dev %d queue %d thread init failed\n",
+> -			dev->dev_info.dev_id, q->q_id);
+> +	ublk_thread_deinit(t);
+> +	ublk_err("ublk dev %d thread %d init failed\n",
+> +			dev->dev_info.dev_id, t->idx);
+>  	return -ENOMEM;
+>  }
+>  
+> @@ -545,8 +542,9 @@ static void ublk_dev_unprep(struct ublk_dev *dev)
+>  	close(dev->fds[0]);
+>  }
+>  
+> -int ublk_queue_io_cmd(struct ublk_queue *q, struct ublk_io *io, unsigned tag)
+> +int ublk_queue_io_cmd(struct ublk_io *io)
+>  {
+> +	struct ublk_thread *t = io->t;
+>  	struct ublksrv_io_cmd *cmd;
+>  	struct io_uring_sqe *sqe[1];
+>  	unsigned int cmd_op = 0;
+> @@ -571,13 +569,13 @@ int ublk_queue_io_cmd(struct ublk_queue *q, struct ublk_io *io, unsigned tag)
+>  	else if (io->flags & UBLKSRV_NEED_FETCH_RQ)
+>  		cmd_op = UBLK_U_IO_FETCH_REQ;
+>  
+> -	if (io_uring_sq_space_left(&q->ring) < 1)
+> -		io_uring_submit(&q->ring);
+> +	if (io_uring_sq_space_left(&t->ring) < 1)
+> +		io_uring_submit(&t->ring);
+>  
+> -	ublk_io_alloc_sqes(ublk_get_io(q, tag), sqe, 1);
+> +	ublk_io_alloc_sqes(io, sqe, 1);
+>  	if (!sqe[0]) {
+> -		ublk_err("%s: run out of sqe %d, tag %d\n",
+> -				__func__, q->q_id, tag);
+> +		ublk_err("%s: run out of sqe. thread %u, tag %d\n",
+> +				__func__, t->idx, io->tag);
+>  		return -1;
+>  	}
+>  
+> @@ -592,42 +590,51 @@ int ublk_queue_io_cmd(struct ublk_queue *q, struct ublk_io *io, unsigned tag)
+>  	sqe[0]->opcode	= IORING_OP_URING_CMD;
+>  	sqe[0]->flags	= IOSQE_FIXED_FILE;
+>  	sqe[0]->rw_flags	= 0;
+> -	cmd->tag	= tag;
+> -	cmd->q_id	= q->q_id;
+> -	if (!(q->state & UBLKSRV_NO_BUF))
+> +	cmd->tag	= io->tag;
+> +	cmd->q_id	= io->q->q_id;
+> +	if (!(io->q->state & UBLKSRV_NO_BUF))
+>  		cmd->addr	= (__u64) (uintptr_t) io->buf_addr;
+>  	else
+>  		cmd->addr	= 0;
+>  
+> -	user_data = build_user_data(tag, _IOC_NR(cmd_op), 0, q->q_id, 0);
+> +	user_data = build_user_data(io->tag, _IOC_NR(cmd_op), 0, io->q->q_id, 0);
+>  	io_uring_sqe_set_data64(sqe[0], user_data);
+>  
+>  	io->flags = 0;
+>  
+> -	q->cmd_inflight += 1;
+> +	t->cmd_inflight += 1;
+>  
+> -	ublk_dbg(UBLK_DBG_IO_CMD, "%s: (qid %d tag %u cmd_op %u) iof %x stopping %d\n",
+> -			__func__, q->q_id, tag, cmd_op,
+> -			io->flags, !!(q->state & UBLKSRV_QUEUE_STOPPING));
+> +	ublk_dbg(UBLK_DBG_IO_CMD, "%s: (thread %u qid %d tag %u cmd_op %u) iof %x stopping %d\n",
+> +			__func__, t->idx, io->q->q_id, io->tag, cmd_op,
+> +			io->flags, !!(t->state & UBLKSRV_THREAD_STOPPING));
+>  	return 1;
+>  }
+>  
+> -static void ublk_submit_fetch_commands(struct ublk_queue *q)
+> +static void ublk_submit_fetch_commands(struct ublk_thread *t)
+>  {
+> +	/*
+> +	 * Service exclusively the queue whose q_id matches our thread
+> +	 * index. This may change in the future.
+> +	 */
+> +	struct ublk_queue *q = &t->dev->q[t->idx];
+> +	struct ublk_io *io;
+>  	int i = 0;
+>  
+> -	for (i = 0; i < q->q_depth; i++)
+> -		ublk_queue_io_cmd(q, &q->ios[i], i);
+> +	for (i = 0; i < q->q_depth; i++) {
+> +		io = &q->ios[i];
+> +		io->t = t;
+> +		ublk_queue_io_cmd(io);
+> +	}
+>  }
+>  
+> -static int ublk_queue_is_idle(struct ublk_queue *q)
+> +static int ublk_thread_is_idle(struct ublk_thread *t)
+>  {
+> -	return !io_uring_sq_ready(&q->ring) && !q->io_inflight;
+> +	return !io_uring_sq_ready(&t->ring) && !t->io_inflight;
+>  }
+>  
+> -static int ublk_queue_is_done(struct ublk_queue *q)
+> +static int ublk_thread_is_done(struct ublk_thread *t)
+>  {
+> -	return (q->state & UBLKSRV_QUEUE_STOPPING) && ublk_queue_is_idle(q);
+> +	return (t->state & UBLKSRV_THREAD_STOPPING) && ublk_thread_is_idle(t);
+>  }
+>  
+>  static inline void ublksrv_handle_tgt_cqe(struct ublk_queue *q,
+> @@ -645,15 +652,16 @@ static inline void ublksrv_handle_tgt_cqe(struct ublk_queue *q,
+>  		q->tgt_ops->tgt_io_done(q, tag, cqe);
+>  }
+>  
+> -static void ublk_handle_cqe(struct ublk_dev *dev,
+> +static void ublk_handle_cqe(struct ublk_thread *t,
+>  		struct io_uring_cqe *cqe, void *data)
+>  {
+> +	struct ublk_dev *dev = t->dev;
+>  	unsigned q_id = user_data_to_q_id(cqe->user_data);
+>  	struct ublk_queue *q = &dev->q[q_id];
+>  	unsigned tag = user_data_to_tag(cqe->user_data);
+>  	unsigned cmd_op = user_data_to_op(cqe->user_data);
+>  	int fetch = (cqe->res != UBLK_IO_RES_ABORT) &&
+> -		!(q->state & UBLKSRV_QUEUE_STOPPING);
+> +		!(t->state & UBLKSRV_THREAD_STOPPING);
+>  	struct ublk_io *io;
+>  
+>  	if (cqe->res < 0 && cqe->res != -ENODEV)
+> @@ -664,7 +672,7 @@ static void ublk_handle_cqe(struct ublk_dev *dev,
+>  			__func__, cqe->res, q->q_id, tag, cmd_op,
+>  			is_target_io(cqe->user_data),
+>  			user_data_to_tgt_data(cqe->user_data),
+> -			(q->state & UBLKSRV_QUEUE_STOPPING));
+> +			(t->state & UBLKSRV_THREAD_STOPPING));
+>  
+>  	/* Don't retrieve io in case of target io */
+>  	if (is_target_io(cqe->user_data)) {
+> @@ -673,10 +681,10 @@ static void ublk_handle_cqe(struct ublk_dev *dev,
+>  	}
+>  
+>  	io = &q->ios[tag];
+> -	q->cmd_inflight--;
+> +	t->cmd_inflight--;
+>  
+>  	if (!fetch) {
+> -		q->state |= UBLKSRV_QUEUE_STOPPING;
+> +		t->state |= UBLKSRV_THREAD_STOPPING;
+>  		io->flags &= ~UBLKSRV_NEED_FETCH_RQ;
+>  	}
+>  
+> @@ -686,7 +694,7 @@ static void ublk_handle_cqe(struct ublk_dev *dev,
+>  			q->tgt_ops->queue_io(q, tag);
+>  	} else if (cqe->res == UBLK_IO_RES_NEED_GET_DATA) {
+>  		io->flags |= UBLKSRV_NEED_GET_DATA | UBLKSRV_IO_FREE;
+> -		ublk_queue_io_cmd(q, io, tag);
+> +		ublk_queue_io_cmd(io);
+>  	} else {
+>  		/*
+>  		 * COMMIT_REQ will be completed immediately since no fetching
+> @@ -700,87 +708,92 @@ static void ublk_handle_cqe(struct ublk_dev *dev,
+>  	}
+>  }
+>  
+> -static int ublk_reap_events_uring(struct ublk_queue *q)
+> +static int ublk_reap_events_uring(struct ublk_thread *t)
+>  {
+>  	struct io_uring_cqe *cqe;
+>  	unsigned head;
+>  	int count = 0;
+>  
+> -	io_uring_for_each_cqe(&q->ring, head, cqe) {
+> -		ublk_handle_cqe(q->dev, cqe, NULL);
+> +	io_uring_for_each_cqe(&t->ring, head, cqe) {
+> +		ublk_handle_cqe(t, cqe, NULL);
+>  		count += 1;
+>  	}
+> -	io_uring_cq_advance(&q->ring, count);
+> +	io_uring_cq_advance(&t->ring, count);
+>  
+>  	return count;
+>  }
+>  
+> -static int ublk_process_io(struct ublk_queue *q)
+> +static int ublk_process_io(struct ublk_thread *t)
+>  {
+>  	int ret, reapped;
+>  
+> -	ublk_dbg(UBLK_DBG_QUEUE, "dev%d-q%d: to_submit %d inflight cmd %u stopping %d\n",
+> -				q->dev->dev_info.dev_id,
+> -				q->q_id, io_uring_sq_ready(&q->ring),
+> -				q->cmd_inflight,
+> -				(q->state & UBLKSRV_QUEUE_STOPPING));
+> +	ublk_dbg(UBLK_DBG_THREAD, "dev%d-t%u: to_submit %d inflight cmd %u stopping %d\n",
+> +				t->dev->dev_info.dev_id,
+> +				t->idx, io_uring_sq_ready(&t->ring),
+> +				t->cmd_inflight,
+> +				(t->state & UBLKSRV_THREAD_STOPPING));
+>  
+> -	if (ublk_queue_is_done(q))
+> +	if (ublk_thread_is_done(t))
+>  		return -ENODEV;
+>  
+> -	ret = io_uring_submit_and_wait(&q->ring, 1);
+> -	reapped = ublk_reap_events_uring(q);
+> +	ret = io_uring_submit_and_wait(&t->ring, 1);
+> +	reapped = ublk_reap_events_uring(t);
+>  
+> -	ublk_dbg(UBLK_DBG_QUEUE, "submit result %d, reapped %d stop %d idle %d\n",
+> -			ret, reapped, (q->state & UBLKSRV_QUEUE_STOPPING),
+> -			(q->state & UBLKSRV_QUEUE_IDLE));
+> +	ublk_dbg(UBLK_DBG_THREAD, "submit result %d, reapped %d stop %d idle %d\n",
+> +			ret, reapped, (t->state & UBLKSRV_THREAD_STOPPING),
+> +			(t->state & UBLKSRV_THREAD_IDLE));
+>  
+>  	return reapped;
+>  }
+>  
+> -static void ublk_queue_set_sched_affinity(const struct ublk_queue *q,
+> +static void ublk_thread_set_sched_affinity(const struct ublk_thread *t,
+>  		cpu_set_t *cpuset)
+>  {
+>          if (sched_setaffinity(0, sizeof(*cpuset), cpuset) < 0)
+> -                ublk_err("ublk dev %u queue %u set affinity failed",
+> -                                q->dev->dev_info.dev_id, q->q_id);
+> +		ublk_err("ublk dev %u thread %u set affinity failed",
+> +				t->dev->dev_info.dev_id, t->idx);
+>  }
+>  
+> -struct ublk_queue_info {
+> -	struct ublk_queue 	*q;
+> -	sem_t 			*queue_sem;
+> +struct ublk_thread_info {
+> +	struct ublk_dev 	*dev;
+> +	unsigned		idx;
+> +	sem_t 			*ready;
+>  	cpu_set_t 		*affinity;
+>  };
+>  
+>  static void *ublk_io_handler_fn(void *data)
+>  {
+> -	struct ublk_queue_info *info = data;
+> -	struct ublk_queue *q = info->q;
+> -	int dev_id = q->dev->dev_info.dev_id;
+> +	struct ublk_thread_info *info = data;
+> +	struct ublk_thread *t = &info->dev->threads[info->idx];
+> +	int dev_id = info->dev->dev_info.dev_id;
+>  	int ret;
+>  
+> -	ret = ublk_thread_init(q);
+> +	t->dev = info->dev;
+> +	t->idx = info->idx;
 > +
-> +#include "imx8mp.dtsi"
-> +
-> +/ {
-> +	/* PHY regulator */
-> +	regulator-3v3-etn {
-> +		compatible = "regulator-fixed";
-> +		gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-0 = <&pinctrl_reg_3v3_etn>;
-> +		pinctrl-names = "default";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-name = "3v3-etn";
-> +		vin-supply = <&reg_vdd_3v3>;
-> +		enable-active-high;
+> +	ret = ublk_thread_init(t);
+>  	if (ret) {
+> -		ublk_err("ublk dev %d queue %d thread init failed\n",
+> -				dev_id, q->q_id);
+> +		ublk_err("ublk dev %d thread %u init failed\n",
+> +				dev_id, t->idx);
+>  		return NULL;
+>  	}
+>  	/* IO perf is sensitive with queue pthread affinity on NUMA machine*/
+> -	ublk_queue_set_sched_affinity(q, info->affinity);
+> -	sem_post(info->queue_sem);
+> +	ublk_thread_set_sched_affinity(t, info->affinity);
+> +	sem_post(info->ready);
+>  
+> -	ublk_dbg(UBLK_DBG_QUEUE, "tid %d: ublk dev %d queue %d started\n",
+> -			q->tid, dev_id, q->q_id);
+> +	ublk_dbg(UBLK_DBG_THREAD, "tid %d: ublk dev %d thread %u started\n",
+> +			gettid(), dev_id, t->idx);
+>  
+>  	/* submit all io commands to ublk driver */
+> -	ublk_submit_fetch_commands(q);
+> +	ublk_submit_fetch_commands(t);
+>  	do {
+> -		if (ublk_process_io(q) < 0)
+> +		if (ublk_process_io(t) < 0)
+>  			break;
+>  	} while (1);
+>  
+> -	ublk_dbg(UBLK_DBG_QUEUE, "ublk dev %d queue %d exited\n", dev_id, q->q_id);
+> -	ublk_thread_deinit(q);
+> +	ublk_dbg(UBLK_DBG_THREAD, "tid %d: ublk dev %d thread %d exiting\n",
+> +		 gettid(), dev_id, t->idx);
+> +	ublk_thread_deinit(t);
+>  	return NULL;
+>  }
+>  
+> @@ -823,20 +836,19 @@ static int ublk_send_dev_event(const struct dev_ctx *ctx, struct ublk_dev *dev,
+>  static int ublk_start_daemon(const struct dev_ctx *ctx, struct ublk_dev *dev)
+>  {
+>  	const struct ublksrv_ctrl_dev_info *dinfo = &dev->dev_info;
+> -	struct ublk_queue_info *qinfo;
+> +	struct ublk_thread_info *tinfo;
+>  	cpu_set_t *affinity_buf;
+>  	void *thread_ret;
+> -	sem_t queue_sem;
+> +	sem_t ready;
+>  	int ret, i;
+>  
+>  	ublk_dbg(UBLK_DBG_DEV, "%s enter\n", __func__);
+>  
+> -	qinfo = (struct ublk_queue_info *)calloc(sizeof(struct ublk_queue_info),
+> -			dinfo->nr_hw_queues);
+> -	if (!qinfo)
+> +	tinfo = calloc(sizeof(struct ublk_thread_info), dinfo->nr_hw_queues);
+> +	if (!tinfo)
+>  		return -ENOMEM;
+>  
+> -	sem_init(&queue_sem, 0, 0);
+> +	sem_init(&ready, 0, 0);
+>  	ret = ublk_dev_prep(ctx, dev);
+>  	if (ret)
+>  		return ret;
+> @@ -856,17 +868,18 @@ static int ublk_start_daemon(const struct dev_ctx *ctx, struct ublk_dev *dev)
+>  			goto fail;
+>  		}
+>  
+> -		qinfo[i].q = &dev->q[i];
+> -		qinfo[i].queue_sem = &queue_sem;
+> -		qinfo[i].affinity = &affinity_buf[i];
+> -		pthread_create(&dev->q[i].thread, NULL,
+> +		tinfo[i].dev = dev;
+> +		tinfo[i].idx = i;
+> +		tinfo[i].ready = &ready;
+> +		tinfo[i].affinity = &affinity_buf[i];
+> +		pthread_create(&dev->threads[i].thread, NULL,
+>  				ublk_io_handler_fn,
+> -				&qinfo[i]);
+> +				&tinfo[i]);
+>  	}
+>  
+>  	for (i = 0; i < dinfo->nr_hw_queues; i++)
+> -		sem_wait(&queue_sem);
+> -	free(qinfo);
+> +		sem_wait(&ready);
+> +	free(tinfo);
+>  	free(affinity_buf);
+>  
+>  	/* everything is fine now, start us */
+> @@ -889,7 +902,7 @@ static int ublk_start_daemon(const struct dev_ctx *ctx, struct ublk_dev *dev)
+>  
+>  	/* wait until we are terminated */
+>  	for (i = 0; i < dinfo->nr_hw_queues; i++)
+> -		pthread_join(dev->q[i].thread, &thread_ret);
+> +		pthread_join(dev->threads[i].thread, &thread_ret);
+>   fail:
+>  	for (i = 0; i < dinfo->nr_hw_queues; i++)
+>  		ublk_queue_deinit(&dev->q[i]);
+> diff --git a/tools/testing/selftests/ublk/kublk.h b/tools/testing/selftests/ublk/kublk.h
+> index 7c912116606429215af7dbc2a8ce6b40ef89bfbd..9eb2207fcebe96d34488d057c881db262b9767b3 100644
+> --- a/tools/testing/selftests/ublk/kublk.h
+> +++ b/tools/testing/selftests/ublk/kublk.h
+> @@ -51,10 +51,12 @@
+>  #define UBLK_IO_MAX_BYTES               (1 << 20)
+>  #define UBLK_MAX_QUEUES_SHIFT		5
+>  #define UBLK_MAX_QUEUES                 (1 << UBLK_MAX_QUEUES_SHIFT)
+> +#define UBLK_MAX_THREADS_SHIFT		5
+> +#define UBLK_MAX_THREADS		(1 << UBLK_MAX_THREADS_SHIFT)
+>  #define UBLK_QUEUE_DEPTH                1024
+>  
+>  #define UBLK_DBG_DEV            (1U << 0)
+> -#define UBLK_DBG_QUEUE          (1U << 1)
+> +#define UBLK_DBG_THREAD         (1U << 1)
+>  #define UBLK_DBG_IO_CMD         (1U << 2)
+>  #define UBLK_DBG_IO             (1U << 3)
+>  #define UBLK_DBG_CTRL_CMD       (1U << 4)
+> @@ -62,6 +64,7 @@
+>  
+>  struct ublk_dev;
+>  struct ublk_queue;
+> +struct ublk_thread;
+>  
+>  struct stripe_ctx {
+>  	/* stripe */
+> @@ -120,6 +123,8 @@ struct ublk_io {
+>  	unsigned short refs;		/* used by target code only */
+>  
+>  	struct ublk_queue *q;
+> +	struct ublk_thread *t;
 
-enable-active-high is a supplementary description of gpios.  Could you
-move it right after gpios?
+Given you have to take static mapping between queue/tag and thread,
+'struct ublk_thread' should have been figured out runtime easily,
+then we can save 8 bytes, also avoid memory indirect dereference.
 
-> +	};
-> +};
-> +
-> +&A53_0 {
-> +	cpu-supply = <&reg_vdd_arm>;
-> +};
-> +
-> +&A53_1 {
-> +	cpu-supply = <&reg_vdd_arm>;
-> +};
-> +
-> +&A53_2 {
-> +	cpu-supply = <&reg_vdd_arm>;
-> +};
-> +
-> +&A53_3 {
-> +	cpu-supply = <&reg_vdd_arm>;
-> +};
-> +
-> +&eqos {
-> +	assigned-clocks = <&clk IMX8MP_CLK_ENET_AXI>,
-> +			  <&clk IMX8MP_CLK_ENET_QOS_TIMER>,
-> +			  <&clk IMX8MP_CLK_ENET_QOS>;
-> +	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_266M>,
-> +				 <&clk IMX8MP_SYS_PLL2_100M>,
-> +				 <&clk IMX8MP_SYS_PLL2_50M>;
-> +	assigned-clock-rates = <266000000>, <100000000>, <50000000>;
-> +	phy-handle = <&ethphy0>;
-> +	phy-mode = "rmii";
-> +	pinctrl-0 = <&pinctrl_eqos>;
-> +	pinctrl-1 = <&pinctrl_eqos_sleep>;
-> +	pinctrl-names = "default", "sleep";
-> +	status = "okay";
-> +
-> +	mdio {
-> +		compatible = "snps,dwmac-mdio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		pinctrl-0 = <&pinctrl_ethphy_rst_b>;
-> +		pinctrl-names = "default";
-> +		reset-delay-us = <25000>;
-> +		reset-gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
-> +
-> +		ethphy0: ethernet-phy@0 {
-> +			reg = <0>;
-> +			interrupt-parent = <&gpio4>;
-> +			interrupts = <21 IRQ_TYPE_EDGE_FALLING>;
-> +			clocks = <&clk IMX8MP_CLK_ENET_QOS>;
-> +			pinctrl-0 = <&pinctrl_ethphy_int_b>;
-> +			pinctrl-names = "default";
-> +			smsc,disable-energy-detect;
-> +		};
-> +	};
-> +};
-> +
-> +&gpio1 {
-> +	gpio-line-names = "SODIMM_152",
-> +					  "SODIMM_42",
+sizeof(struct ublk_io) need to be held in single L1 cacheline.
 
-Could you indent like blow?
+But it can be one followup.
 
-	gpio-line-names = "SODIMM_152",
-			  "SODIMM_42",
-			  ...
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-> +					  "PMIC_WDOG_B SODIMM_153",
-> +					  "PMIC_IRQ_B",
-> +					  "SODIMM_154",
-> +					  "SODIMM_155",
-> +					  "SODIMM_156",
-> +					  "SODIMM_157",
-> +					  "SODIMM_158",
-> +					  "SODIMM_159",
-> +					  "SODIMM_161",
-> +					  "SODIMM_162",
-> +					  "SODIMM_34",
-> +					  "SODIMM_36",
-> +					  "SODIMM_27",
-> +					  "SODIMM_28",
-> +					  "ENET_MDC",
-> +					  "ENET_MDIO",
-> +					  "",
-> +					  "ENET_XTAL1/CLKIN",
-> +					  "ENET_TXD1",
-> +					  "ENET_TXD0",
-> +					  "ENET_TXEN",
-> +					  "ENET_POWER",
-> +					  "ENET_COL/CRS_DV",
-> +					  "ENET_RXER",
-> +					  "ENET_RXD0",
-> +					  "ENET_RXD1",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "";
-> +};
-> +
-> +&gpio2 {
-> +	gpio-line-names = "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "SODIMM_51",
-> +					  "SODIMM_57",
-> +					  "SODIMM_56",
-> +					  "SODIMM_52",
-> +					  "SODIMM_53",
-> +					  "SODIMM_54",
-> +					  "SODIMM_55",
-> +					  "SODIMM_15",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "";
-> +};
-> +
-> +&gpio3 {
-> +	gpio-line-names = "",
-> +					  "",
-> +					  "EMMC_DS",
-> +					  "EMMC_DAT5",
-> +					  "EMMC_DAT6",
-> +					  "EMMC_DAT7",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "",
-> +					  "EMMC_DAT0",
-> +					  "EMMC_DAT1",
-> +					  "EMMC_DAT2",
-> +					  "EMMC_DAT3",
-> +					  "",
-> +					  "EMMC_DAT4",
-> +					  "",
-> +					  "EMMC_CLK",
-> +					  "EMMC_CMD",
-> +					  "SODIMM_75",
-> +					  "SODIMM_145",
-> +					  "SODIMM_163",
-> +					  "SODIMM_164",
-> +					  "SODIMM_165",
-> +					  "SODIMM_143",
-> +					  "SODIMM_144",
-> +					  "SODIMM_72",
-> +					  "SODIMM_73",
-> +					  "SODIMM_74",
-> +					  "SODIMM_93",
-> +					  "",
-> +					  "";
-> +};
-> +
-> +&gpio4 {
-> +	gpio-line-names = "SODIMM_98",
-> +					  "SODIMM_99",
-> +					  "SODIMM_100",
-> +					  "SODIMM_101",
-> +					  "SODIMM_45",
-> +					  "SODIMM_43",
-> +					  "SODIMM_105",
-> +					  "SODIMM_106",
-> +					  "SODIMM_107",
-> +					  "SODIMM_108",
-> +					  "SODIMM_104",
-> +					  "SODIMM_103",
-> +					  "SODIMM_115",
-> +					  "SODIMM_114",
-> +					  "SODIMM_113",
-> +					  "SODIMM_112",
-> +					  "SODIMM_109",
-> +					  "SODIMM_110",
-> +					  "SODIMM_95",
-> +					  "SODIMM_96",
-> +					  "SODIMM_97",
-> +					  "ENET_nINT",
-> +					  "ENET_nRST",
-> +					  "SODIMM_84",
-> +					  "SODIMM_87",
-> +					  "SODIMM_86",
-> +					  "SODIMM_85",
-> +					  "SODIMM_83",
-> +					  "",
-> +					  "SODIMM_66",
-> +					  "SODIMM_65",
-> +					  "";
-> +};
-> +
-> +&gpio5 {
-> +	gpio-line-names = "",
-> +					  "",
-> +					  "",
-> +					  "SODIMM_76",
-> +					  "SODIMM_81",
-> +					  "SODIMM_146",
-> +					  "SODIMM_48",
-> +					  "SODIMM_46",
-> +					  "SODIMM_47",
-> +					  "SODIMM_44",
-> +					  "SODIMM_49",
-> +					  "",
-> +					  "SODIMM_70",
-> +					  "SODIMM_69",
-> +					  "PMIC_SCL",
-> +					  "PMIC_SDA",
-> +					  "SODIMM_41",
-> +					  "SODIMM_40",
-> +					  "SODIMM_148",
-> +					  "SODIMM_149",
-> +					  "SODIMM_150",
-> +					  "SODIMM_151",
-> +					  "SODIMM_60",
-> +					  "SODIMM_59",
-> +					  "SODIMM_64",
-> +					  "SODIMM_63",
-> +					  "SODIMM_62",
-> +					  "SODIMM_61",
-> +					  "SODIMM_68",
-> +					  "SODIMM_67",
-> +					  "",
-> +					  "";
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-0 = <&pinctrl_i2c1>;
-> +	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-> +	pinctrl-names = "default", "gpio";
-> +	scl-gpios = <&gpio5 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +	sda-gpios = <&gpio5 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +	status = "okay";
-> +
-> +	pmic@25 {
-> +		compatible = "nxp,pca9450c";
-> +		reg = <0x25>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-> +		pinctrl-0 = <&pinctrl_pmic>;
-> +		pinctrl-names = "default";
-> +
-> +		regulators {
-> +			reg_vdd_soc: BUCK1 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <900000>;
-> +				regulator-min-microvolt = <805000>;
-> +				regulator-name = "vdd-soc";
-> +				regulator-ramp-delay = <3125>;
-> +			};
-> +
-> +			reg_vdd_arm: BUCK2 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <950000>;
-> +				regulator-min-microvolt = <805000>;
-> +				regulator-name = "vdd-core";
-> +				regulator-ramp-delay = <3125>;
-> +				nxp,dvs-run-voltage = <950000>;
-> +				nxp,dvs-standby-voltage = <850000>;
-> +			};
-> +
-> +			reg_vdd_3v3: BUCK4 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-name = "3v3";
-> +			};
-> +
-> +			reg_nvcc_nand: BUCK5 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-name = "nvcc-nand";
-> +			};
-> +
-> +			reg_nvcc_dram: BUCK6 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-name = "nvcc-dram";
-> +			};
-> +
-> +			reg_snvs_1v8: LDO1 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-name = "snvs-1v8";
-> +			};
-> +
-> +			ldo2_reg: LDO2 {
-> +				regulator-always-on;
-> +				regulator-max-microvolt = <1150000>;
-> +				regulator-min-microvolt = <800000>;
-> +				regulator-name = "LDO2";
-> +			};
-> +
-> +			reg_vdda_1v8: LDO3 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-name = "vdda-1v8";
-> +			};
-> +
-> +			ldo4_reg: LDO4 {
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-min-microvolt = <800000>;
-> +				regulator-name = "LDO4";
-> +			};
-> +
-> +			ldo5_reg: LDO5 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-name = "LDO5";
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl_eqos: eqosgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ENET_TD2__CCM_ENET_QOS_CLOCK_GENERATE_REF_CLK
-> +			(MX8MP_DSE_X4 | MX8MP_PULL_UP | MX8MP_PULL_ENABLE | MX8MP_SION)
 
-Can we have an indent for config?
-
-			MX8MP_IOMUXC_ENET_TD2__CCM_ENET_QOS_CLOCK_GENERATE_REF_CLK
-				(MX8MP_DSE_X4 | MX8MP_PULL_UP | MX8MP_PULL_ENABLE | MX8MP_SION)
-
-Shawn
-
-> +			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC
-> +			(MX8MP_DSE_X4 | MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO
-> +			(MX8MP_DSE_X4 | MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0
-> +			(MX8MP_DSE_X6 | MX8MP_FSEL_FAST)
-> +			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1
-> +			(MX8MP_DSE_X6 | MX8MP_FSEL_FAST)
-> +			MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0
-> +			(MX8MP_FSEL_FAST | MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1
-> +			(MX8MP_FSEL_FAST | MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RXC__ENET_QOS_RX_ER
-> +			(MX8MP_FSEL_FAST | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL
-> +			(MX8MP_DSE_X6 | MX8MP_FSEL_FAST | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL
-> +			(MX8MP_DSE_X6 | MX8MP_FSEL_FAST)
-> +		>;
-> +	};
-> +
-> +	pinctrl_eqos_sleep: eqos-sleep-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ENET_TD2__GPIO1_IO19
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_MDC__GPIO1_IO16
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_MDIO__GPIO1_IO17
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_TD0__GPIO1_IO21
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_TD1__GPIO1_IO20
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RD0__GPIO1_IO26
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RD1__GPIO1_IO27
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RXC__GPIO1_IO25
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_RX_CTL__GPIO1_IO24
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_ENET_TX_CTL__GPIO1_IO22
-> +			(MX8MP_ODE_ENABLE | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +
-> +	pinctrl_ethphy_int_b: ethphy-int-bgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI2_RXFS__GPIO4_IO21
-> +			(MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT)
-> +		>;
-> +	};
-> +
-> +	pinctrl_ethphy_rst_b: ethphy-rst-bgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI2_RXC__GPIO4_IO22
-> +			(MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c1: i2c1grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL
-> +			MX8MP_I2C_DEFAULT
-> +			MX8MP_IOMUXC_I2C1_SDA__I2C1_SDA
-> +			MX8MP_I2C_DEFAULT
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c1_gpio: i2c1-gpiogrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C1_SCL__GPIO5_IO14
-> +			MX8MP_I2C_DEFAULT
-> +			MX8MP_IOMUXC_I2C1_SDA__GPIO5_IO15
-> +			MX8MP_I2C_DEFAULT
-> +		>;
-> +	};
-> +
-> +	pinctrl_pmic: pmicgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03
-> +			(MX8MP_PULL_UP | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +
-> +	pinctrl_reg_3v3_etn: reg-3v3-etngrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ENET_TXC__GPIO1_IO23
-> +			(MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3: usdhc3grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK
-> +			(MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7
-> +			MX8MP_USDHC_DATA_DEFAULT
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE
-> +			(MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK
-> +			(MX8MP_DSE_X2 | MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7
-> +			(MX8MP_DSE_X2 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE
-> +			(MX8MP_DSE_X2 | MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK
-> +			(MX8MP_DSE_X6 | MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7
-> +			(MX8MP_DSE_X6 | MX8MP_USDHC_DATA_DEFAULT)
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE
-> +			(MX8MP_DSE_X6 | MX8MP_FSEL_FAST | MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-> +		>;
-> +	};
-> +};
-> +
-> +&usdhc3 {
-> +	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
-> +	assigned-clock-rates = <200000000>;
-> +	bus-width = <8>;
-> +	max-frequency = <200000000>;
-> +	non-removable;
-> +	pinctrl-0 = <&pinctrl_usdhc3>;
-> +	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-> +	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	vmmc-supply = <&reg_vdd_3v3>;
-> +	voltage-ranges = <3300 3300>;
-> +	vqmmc-supply = <&reg_nvcc_nand>;
-> +	status = "okay";
-> +};
-> 
-> -- 
-> 2.49.0
-> 
-> 
+thanks,
+Ming
 
 
