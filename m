@@ -1,231 +1,232 @@
-Return-Path: <linux-kernel+bounces-641933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7A1AB1840
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:20:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6193AB1846
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57E1189AFF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C958189B117
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060D422D4FD;
-	Fri,  9 May 2025 15:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CDA22F76D;
+	Fri,  9 May 2025 15:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rNMBIrhb"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dNiRD6Ga"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E1212B3E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4760224882
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746803983; cv=none; b=huqVqy+pW2pLJRvDyxLWgM3ZZMD4vUNpCK9Fl+qA89giNFJYa6AurjjiC08gLwgb7sEyPhNBZu+6jR5XWnBvGnQqKwhJNNIFJrqU7penl2okI2jq5NJwTe2MFXLXa9d5Q6ZilQ/iIsn4T+6/sTPXX7m2METYP/HT0FKvmQdX1IM=
+	t=1746803986; cv=none; b=bweTFP9s2/fZH5h29iMAgoxgEscWgevFteOXV5VppqtW2z36Hm0Yel0yTlAbl4ag3NTg4lcpcj53XCA1PylbK86ZmsuXRKXNCn1qfTCnJMHaM9FitOpQ1ODmCJSqQSwtLuwkQZ14PzhwgNggQ2b+1WYTLn+NDB8rvx76evMMMqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746803983; c=relaxed/simple;
-	bh=2xHWD4KLfdNpzQ97wTKuNF6OyatfQp6W3sjEptEz6RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TIGm2Sl4SNeZc2FWrOxt/L3Y/3S2QSO5QdQjGc1Dru+5qcoHDpya/JG9mQ9PtqA+SnCZZEObG7LLLlMFaQa06DONfq6mVDeAMzxdMMmEYSnd+oOGtWyCBF6jcsZpUw339lEZ40KoqG1voaD0aoKafuldI0WV32HIfD2agkMiLcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rNMBIrhb; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cdea578b-5570-4a8d-98cc-61081a281a84@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746803967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y6xXAi6Y6zyC7gogZ2MCtrxpjOOwSTEh1MN+VnZXjk4=;
-	b=rNMBIrhbb4mYp7nTa6mvh8zkijnl5oliIvISBkrgxRbF2bsfSVv2Uy7ieFSUoGI0/vkw/M
-	r9VI5HKFDGot8j4WDiVRqg7dJvQ2Rg6dTf+oX3KpYGTx1i5uQiYyYmuYXPwVEzR3tGmhTK
-	XCKVR6UY29qau0047wDcxkPJbI1mc5o=
-Date: Fri, 9 May 2025 17:19:25 +0200
+	s=arc-20240116; t=1746803986; c=relaxed/simple;
+	bh=m8aROJFjpKUVyoRqALJjh1WRQTPMz0f/huyI4HbWrnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MN/07BlLMppWf1a+ZVjnavqYXVm2Fo0VShhx0TLY8RtlvYrUv4XjA+YouA9xBUPmql4WSfzfpCnYPIyzFCb4bLUlPjy2FlAqyFU+5opVOGPJHRYzKgAo+kVti2Jgl21mm612nQ+7c8NU2nlKRsdPhWjWFESLaa0T89DplLkaTpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dNiRD6Ga; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso366450366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 08:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746803982; x=1747408782; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=piveaIt51APJH/cy/5pKer1njMs8SNMZ9Efypy4VJ1I=;
+        b=dNiRD6GaI77D5dW6OOZQ4/6JdA7T9ukKMjthTX0yONwvPcRqTCnkz9DgmE8funeHNk
+         elFJBjzITJsuXnqUddYp3esGhRKDDiJfTlVLiswUR1oz4KYO0imArHdy69twLlYJSuae
+         P8x/dSVTNjFObmRURW0sknerC7BK2cb+USvos4DHX49RWex5wfwpjaRuCLnYH9tt1nxY
+         fpnYwYvMUpfs2QjKamYzbfDqDs7k4bZZR8JW4iWyuqmrMXUPh+0WWrAJNfw0FfICGDBY
+         ARrEUpLNbeZuyoFok1YOSq4jvwYnJeMK6nacKci/IAoI96EcSw/b4G38SJQMcMYBV81y
+         uA5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746803982; x=1747408782;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=piveaIt51APJH/cy/5pKer1njMs8SNMZ9Efypy4VJ1I=;
+        b=ne3TMpY1qWrj1NxxjP8H1EfT6VPZzGbzk5Ejtc8M4L6YgI2P3is5vy0mN7BgSkUPfn
+         9YsXK2hJsLj7XDyt9QviJoHITB1iGYxtEn1NXQUmhtmNzqP7RLx79+YX5GjTYSkGsJsw
+         tf2m18G4p23yan42/sKFk/7IqlF9vdK4r0ybAtfezScW+vENrbXKBWe+RwkmibQ2QWjI
+         ZmW6MBX/pgrwPC94MxJoI7eQ3UxMJoRX9H4KommNC9XzX46mIvCAQRnh3vxnCdRd+2WB
+         Mg3Ypbbxc8SNWiy+yeWpWP8/y+lyWgXiSFfyYLEeWwMQRxeqXXvH9sLfJ6wJT5gscilv
+         bYkw==
+X-Gm-Message-State: AOJu0YywAcyhDI1nOUjqCGjTnkn2tANoLC/axeAliG1zt+BRmQM7oh9w
+	z8f1Hu5dZtTUtxTPvIsmlv79GVhsoZnw/DuPvIOgr45Z3Gz6rG/7hgRkAAnMCxJYtY0084uuDkS
+	3
+X-Gm-Gg: ASbGncsvwPxzYb4U7qegh0f3RglP+wOwCYdGv+5Tb9P/LjYZ/esZKp5zXSb3w66E0Jl
+	jEt62BkX/u6vaEhlcKUP+SDDQfE0HfSDfVdJ+20BbLJwVQCFqH4FNCYafh+5BnJFknO8IfEuwTz
+	SEFuA8f4EiPmxPYWs+kMVM8oQkAHV7oS0UUY33l+3i7mcgkudikwGnTj420XmIxGPjJ3DY00lWQ
+	2W6c86yZxY43U3vw9MPLCdv0uEqoji0GLYrQpp1i2AyA+bhVQFJf+7SP/gAyTN5nX7/IE0LRga+
+	EvjJxhExS02bG+SUkTBTBe29pxfQWneGiOaoNmbjgDaqGs6S
+X-Google-Smtp-Source: AGHT+IHT7wYtfS2u3TlvINr8fJyTrH7JNqE175qLt+rBrEgAFEQwhYwKbs1ehus30wxqNmhfrYAvHA==
+X-Received: by 2002:a17:907:a2cd:b0:ace:caff:675a with SMTP id a640c23a62f3a-ad218e47c9bmr314645166b.10.1746803981845;
+        Fri, 09 May 2025 08:19:41 -0700 (PDT)
+Received: from [192.168.0.32] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd4d3sm164125066b.132.2025.05.09.08.19.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 08:19:41 -0700 (PDT)
+Message-ID: <26cc3478-8f65-44bb-8ebe-24a28a858dab@linaro.org>
+Date: Fri, 9 May 2025 18:19:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-next v2 1/2] RDMA/rxe: Implement synchronous prefetch
- for ODP MRs
-To: Daisuke Matsuda <dskmtsd@gmail.com>, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com
-References: <20250503134224.4867-1-dskmtsd@gmail.com>
- <20250503134224.4867-2-dskmtsd@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH 00/14] introduce kmemdump
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-doc@vger.kernel.org, corbet@lwn.net, tglx@linutronix.de,
+ mingo@redhat.com, rostedt@goodmis.org, john.ogness@linutronix.de,
+ senozhatsky@chromium.org, pmladek@suse.com, peterz@infradead.org,
+ mojha@qti.qualcomm.com, linux-arm-kernel@lists.infradead.org,
+ vincent.guittot@linaro.org, konradybcio@kernel.org,
+ dietmar.eggemann@arm.com, juri.lelli@redhat.com
+References: <20250422113156.575971-1-eugen.hristev@linaro.org>
+ <mtetvagzj2xltczutahqj7ijgpr3fy7ppbp5w6rmn2w2zmukux@tawhrkyoqjli>
+From: Eugen Hristev <eugen.hristev@linaro.org>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20250503134224.4867-2-dskmtsd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <mtetvagzj2xltczutahqj7ijgpr3fy7ppbp5w6rmn2w2zmukux@tawhrkyoqjli>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 03.05.25 15:42, Daisuke Matsuda wrote:
-> Minimal implementation of ibv_advise_mr(3) requires synchronous calls being
-> successful with the IBV_ADVISE_MR_FLAG_FLUSH flag. Asynchronous requests,
-> which are best-effort, will be added subsequently.
+Hello Bjorn,
+
+On 5/7/25 19:54, Bjorn Andersson wrote:
+> On Tue, Apr 22, 2025 at 02:31:42PM +0300, Eugen Hristev wrote:
+>> kmemdump is a mechanism which allows the kernel to mark specific memory
+>> areas for dumping or specific backend usage.
+>> Once regions are marked, kmemdump keeps an internal list with the regions
+>> and registers them in the backend.
+>> Further, depending on the backend driver, these regions can be dumped using
+>> firmware or different hardware block.
+>> Regions being marked beforehand, when the system is up and running, there
+>> is no need nor dependency on a panic handler, or a working kernel that can
+>> dump the debug information.
+>> The kmemdump approach works when pstore, kdump, or another mechanism do not.
+>> Pstore relies on persistent storage, a dedicated RAM area or flash, which
+>> has the disadvantage of having the memory reserved all the time, or another
+>> specific non volatile memory. Some devices cannot keep the RAM contents on
+>> reboot so ramoops does not work. Some devices do not allow kexec to run
+>> another kernel to debug the crashed one.
+>> For such devices, that have another mechanism to help debugging, like
+>> firmware, kmemdump is a viable solution.
+>>
+>> kmemdump can create a core image, similar with /proc/vmcore, with only
+>> the registered regions included. This can be loaded into crash tool/gdb and
+>> analyzed.
+>> To have this working, specific information from the kernel is registered,
+>> and this is done at kmemdump init time, no need for the kmemdump user to
+>> do anything.
+>>
+>> The implementation is based on the initial Pstore/directly mapped zones
+>> published as an RFC here:
+>> https://lore.kernel.org/all/20250217101706.2104498-1-eugen.hristev@linaro.org/
+>>
+>> The back-end implementation for qcom_smem is based on the minidump
+>> patch series and driver written by Mukesh Ojha, thanks:
+>> https://lore.kernel.org/lkml/20240131110837.14218-1-quic_mojha@quicinc.com/
+>>
+>> I appreciate the feedback on this series, I know it is a longshot, and there
+>> is a lot to improve, but I hope I am on the right track.
+>>
+>> Thanks,
+>> Eugen
+>>
+>> PS. Here is how crash tool reports the dump:
+>>
+>>      KERNEL: /home/eugen/linux-minidump/vmlinux  [TAINTED]
+>>     DUMPFILE: /home/eugen/eee
 > 
-> Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
-> ---
->   drivers/infiniband/sw/rxe/rxe.c     |  7 +++
->   drivers/infiniband/sw/rxe/rxe_loc.h | 10 ++++
->   drivers/infiniband/sw/rxe/rxe_odp.c | 86 +++++++++++++++++++++++++++++
->   3 files changed, 103 insertions(+)
+> Can you please describe the steps taken to get acquire/generate this
+> file and how to invoke crash?
 > 
-> diff --git a/drivers/infiniband/sw/rxe/rxe.c b/drivers/infiniband/sw/rxe/rxe.c
-> index 3a77d6db1720..e891199cbdef 100644
-> --- a/drivers/infiniband/sw/rxe/rxe.c
-> +++ b/drivers/infiniband/sw/rxe/rxe.c
-> @@ -34,6 +34,10 @@ void rxe_dealloc(struct ib_device *ib_dev)
->   	mutex_destroy(&rxe->usdev_lock);
->   }
->   
-> +static const struct ib_device_ops rxe_ib_dev_odp_ops = {
-> +	.advise_mr = rxe_ib_advise_mr,
-> +};
-> +
->   /* initialize rxe device parameters */
->   static void rxe_init_device_param(struct rxe_dev *rxe, struct net_device *ndev)
->   {
-> @@ -103,6 +107,9 @@ static void rxe_init_device_param(struct rxe_dev *rxe, struct net_device *ndev)
->   		rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= IB_ODP_SUPPORT_SRQ_RECV;
->   		rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= IB_ODP_SUPPORT_FLUSH;
->   		rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= IB_ODP_SUPPORT_ATOMIC_WRITE;
-> +
-> +		/* set handler for ODP prefetching API - ibv_advise_mr(3) */
-> +		ib_set_device_ops(&rxe->ib_dev, &rxe_ib_dev_odp_ops);
->   	}
->   }
->   
-> diff --git a/drivers/infiniband/sw/rxe/rxe_loc.h b/drivers/infiniband/sw/rxe/rxe_loc.h
-> index f7dbb9cddd12..21b070f3dbb8 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_loc.h
-> +++ b/drivers/infiniband/sw/rxe/rxe_loc.h
-> @@ -197,6 +197,9 @@ enum resp_states rxe_odp_atomic_op(struct rxe_mr *mr, u64 iova, int opcode,
->   int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
->   			    unsigned int length);
->   enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value);
-> +int rxe_ib_advise_mr(struct ib_pd *pd, enum ib_uverbs_advise_mr_advice advice,
-> +		     u32 flags, struct ib_sge *sg_list, u32 num_sge,
-> +		     struct uverbs_attr_bundle *attrs);
->   #else /* CONFIG_INFINIBAND_ON_DEMAND_PAGING */
->   static inline int
->   rxe_odp_mr_init_user(struct rxe_dev *rxe, u64 start, u64 length, u64 iova,
-> @@ -225,6 +228,13 @@ static inline enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr,
->   {
->   	return RESPST_ERR_UNSUPPORTED_OPCODE;
->   }
-> +static inline int rxe_ib_advise_mr(struct ib_pd *pd, enum ib_uverbs_advise_mr_advice advice,
-> +				   u32 flags, struct ib_sge *sg_list, u32 num_sge,
-> +				   struct uverbs_attr_bundle *attrs)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->   #endif /* CONFIG_INFINIBAND_ON_DEMAND_PAGING */
->   
->   #endif /* RXE_LOC_H */
-> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-> index 6149d9ffe7f7..e5c60b061d7e 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-> @@ -424,3 +424,89 @@ enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
->   
->   	return RESPST_NONE;
->   }
-> +
-> +static int rxe_ib_prefetch_sg_list(struct ib_pd *ibpd,
-> +				   enum ib_uverbs_advise_mr_advice advice,
-> +				   u32 pf_flags, struct ib_sge *sg_list,
-> +				   u32 num_sge)
-> +{
-> +	struct rxe_pd *pd = container_of(ibpd, struct rxe_pd, ibpd);
-> +	unsigned int i;
-> +	int ret = 0;
-> +
-> +	for (i = 0; i < num_sge; ++i) {
-> +		struct rxe_mr *mr;
-> +		struct ib_umem_odp *umem_odp;
-> +
-> +		mr = lookup_mr(pd, IB_ACCESS_LOCAL_WRITE,
-> +			       sg_list[i].lkey, RXE_LOOKUP_LOCAL);
-> +
-> +		if (IS_ERR(mr)) {
-> +			rxe_dbg_pd(pd, "mr with lkey %x not found\n", sg_list[i].lkey);
-> +			return PTR_ERR(mr);
-> +		}
-> +
-> +		if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH_WRITE &&
-> +		    !mr->umem->writable) {
-> +			rxe_dbg_mr(mr, "missing write permission\n");
-> +			rxe_put(mr);
-> +			return -EPERM;
-> +		}
-> +
-> +		ret = rxe_odp_do_pagefault_and_lock(mr, sg_list[i].addr,
-> +						    sg_list[i].length, pf_flags);
-> +		if (ret < 0) {
-> +			if (sg_list[i].length == 0)
-> +				continue;
-> +
-> +			rxe_dbg_mr(mr, "failed to prefetch the mr\n");
-> +			rxe_put(mr);
-> +			return ret;
-> +		}
-> +
-> +		umem_odp = to_ib_umem_odp(mr->umem);
-> +		mutex_unlock(&umem_odp->umem_mutex);
-> +
-> +		rxe_put(mr);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
-> +				     enum ib_uverbs_advise_mr_advice advice,
-> +				     u32 flags, struct ib_sge *sg_list, u32 num_sge)
-> +{
-> +	u32 pf_flags = RXE_PAGEFAULT_DEFAULT;
-> +
-> +	if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH)
-> +		pf_flags |= RXE_PAGEFAULT_RDONLY;
-> +
-> +	if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH_NO_FAULT)
-> +		pf_flags |= RXE_PAGEFAULT_SNAPSHOT;
-> +
-> +	/* Synchronous call */
-> +	if (flags & IB_UVERBS_ADVISE_MR_FLAG_FLUSH)
-> +		return rxe_ib_prefetch_sg_list(ibpd, advice, pf_flags, sg_list,
-> +					       num_sge);
-> +
-> +	/* Asynchronous call is "best-effort" */
 
-Asynchronous call is not implemented now, why does this comment appear?
+Thank you for looking into this.
 
-Zhu Yanjun
+Next week, on 16th of May, on Friday, there will be a talk related to
+this patch series at Linaro Connect in Lisbon. In that talk I will also
+show a demo in which all the process of acquiring the core dump and
+crash will be covered.
+I will be traveling the following days, if I get the time I will submit
+the steps as a reply to this email, if not, then for sure I will submit
+them after the talk in Lisbon.
 
-> +
-> +	return 0;
-> +}
-> +
-> +int rxe_ib_advise_mr(struct ib_pd *ibpd,
-> +		     enum ib_uverbs_advise_mr_advice advice,
-> +		     u32 flags,
-> +		     struct ib_sge *sg_list,
-> +		     u32 num_sge,
-> +		     struct uverbs_attr_bundle *attrs)
-> +{
-> +	if (advice != IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH &&
-> +	    advice != IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH_WRITE &&
-> +	    advice != IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH_NO_FAULT)
-> +		return -EOPNOTSUPP;
-> +
-> +	return rxe_ib_advise_mr_prefetch(ibpd, advice, flags,
-> +					 sg_list, num_sge);
-> +}
+Eugen
+
+> Regards,
+> Bjorn
+> 
+>>         CPUS: 8 [OFFLINE: 7]
+>>         DATE: Thu Jan  1 02:00:00 EET 1970
+>>       UPTIME: 00:00:28
+>>     NODENAME: qemuarm64
+>>      RELEASE: 6.14.0-rc5-next-20250303-00014-g011eb2aaf7b6-dirty
+>>      VERSION: #169 SMP PREEMPT Thu Apr 17 14:12:21 EEST 2025
+>>      MACHINE: aarch64  (unknown Mhz)
+>>       MEMORY: 0
+>>        PANIC: ""
+>>
+>> crash> log
+>> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd4b2]
+>> [    0.000000] Linux version 6.14.0-rc5-next-20250303-00014-g011eb2aaf7b6-dirty (eugen@eugen-station) (aarch64-none-linux-gnu-gcc (Arm GNU Toolchain 13.3.Rel1 (Build arm-13.24)) 13.3.1 20240614, GNU ld (Arm GNU Toolchain 13.3.Rel1 (Build arm-13.24)) 2.42.0.20240614) #169 SMP PREEMPT Thu Apr 17 14:12:21 EEST 2025
+>> [    0.000000] KASLR enabled
+>> [...]
+>>
+>> Eugen Hristev (14):
+>>   Documentation: add kmemdump
+>>   kmemdump: introduce kmemdump
+>>   kmemdump: introduce qcom-md backend driver
+>>   soc: qcom: smem: add minidump device
+>>   Documentation: kmemdump: add section for coreimage ELF
+>>   kmemdump: add coreimage ELF layer
+>>   printk: add kmsg_kmemdump_register
+>>   kmemdump: coreimage: add kmsg registration
+>>   genirq: add irq_kmemdump_register
+>>   kmemdump: coreimage: add irq registration
+>>   panic: add panic_kmemdump_register
+>>   kmemdump: coreimage: add panic registration
+>>   sched: add sched_kmemdump_register
+>>   kmemdump: coreimage: add sched registration
+>>
+>>  Documentation/debug/index.rst      |  17 ++
+>>  Documentation/debug/kmemdump.rst   |  83 +++++
+>>  drivers/Kconfig                    |   2 +
+>>  drivers/Makefile                   |   2 +
+>>  drivers/debug/Kconfig              |  39 +++
+>>  drivers/debug/Makefile             |   5 +
+>>  drivers/debug/kmemdump.c           | 197 ++++++++++++
+>>  drivers/debug/kmemdump_coreimage.c | 293 ++++++++++++++++++
+>>  drivers/debug/qcom_md.c            | 467 +++++++++++++++++++++++++++++
+>>  drivers/soc/qcom/smem.c            |  10 +
+>>  include/linux/irqnr.h              |   1 +
+>>  include/linux/kmemdump.h           |  77 +++++
+>>  include/linux/kmsg_dump.h          |   6 +
+>>  include/linux/panic.h              |   1 +
+>>  include/linux/sched.h              |   1 +
+>>  kernel/irq/irqdesc.c               |   7 +
+>>  kernel/panic.c                     |   8 +
+>>  kernel/printk/printk.c             |  13 +
+>>  kernel/sched/core.c                |   7 +
+>>  19 files changed, 1236 insertions(+)
+>>  create mode 100644 Documentation/debug/index.rst
+>>  create mode 100644 Documentation/debug/kmemdump.rst
+>>  create mode 100644 drivers/debug/Kconfig
+>>  create mode 100644 drivers/debug/Makefile
+>>  create mode 100644 drivers/debug/kmemdump.c
+>>  create mode 100644 drivers/debug/kmemdump_coreimage.c
+>>  create mode 100644 drivers/debug/qcom_md.c
+>>  create mode 100644 include/linux/kmemdump.h
+>>
+>> -- 
+>> 2.43.0
+>>
 
 
