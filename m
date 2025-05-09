@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-641216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45921AB0E5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABDBAB0EE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9404E1C61
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E9E3B2319
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50DF14F98;
-	Fri,  9 May 2025 09:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+cjk0yy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009B34964E;
-	Fri,  9 May 2025 09:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD0227584C;
+	Fri,  9 May 2025 09:20:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677D318E02A;
+	Fri,  9 May 2025 09:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746781946; cv=none; b=kyOEGhbDRO6LUeyx9BN6Th5/f5hDJrbyMe2ICBaVUyplpFonpMcaNsEZ8CXbnGuVq7npzV1eodpruIyVrRa5PbHU3K3JJvkKutW5MmT2DD9NEjdRUu2dKw8sw2j7+B9nWZ4ahPYjmdUfxiYXoTw7OHfSWyKk2+Xj6Tsnhba2xak=
+	t=1746782438; cv=none; b=lrIAN0WXGPOGURlnngY/OQzEZAuzXVm6baw7+mLcjfYNYmITBmBdG25dTZKQga6Z4sC350mzOyigbRfJtFf+G7m2RLUA10/DFfUwOjEdXdl3ziSss1frhV1OaskQvhA9eN5xDqQJPlipXu4qi0IIQ6gRiN/+Zpz1W9S5uijn8v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746781946; c=relaxed/simple;
-	bh=LRDCv2DLLNlrGCaFKvlPxw4rdYXFaY3NsGc82HtsQTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hlsWo1psyCRpJYWGyFkBlDtMglz+GlRd0k/sGxeb3mvC+lR1oq93/569Q5g7Y0mLeUWp7JHdJXRzoNi7Oske6T/V71x2QrfHMFTSUxHOhHlTaL0CsVL9DASKyntUiXEdnTqjWrJ4Sqsimel6ZtMG5Vko3wBkJKPVEN/VGlUg5TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+cjk0yy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76DA5C4CEEE;
-	Fri,  9 May 2025 09:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746781945;
-	bh=LRDCv2DLLNlrGCaFKvlPxw4rdYXFaY3NsGc82HtsQTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E+cjk0yyG0nPD29rJU+wSm3TBB71u8BKQsXWAwzKGNhcSIlA6WUKGY2I7FKikbZfS
-	 0anlG0tgVAyYoPZJmN9zkJbFDTUXeyPcIW+rEGYUIBFq+TALZbQxn7aKuIriNcA5QF
-	 7dwXTh9OKRn54uodCphSNn1yNv6/fgREU9VX/T5FXq1gASC5elkLVTFBIn36IJt7E1
-	 9m0EgZl+0ApiFlFD5oObfzhEvi4sdvmSivCySveJrrbTJoJS7iyVKgHbBsnwkoxJ4d
-	 nn1sNP6jKSb5ctyMid0XgdDr1ouAqTmN60B6Q5ENAh90B89Ct8QgsNQ8E4X0NbbWwG
-	 yQ+dRdQVsMxqg==
-Date: Fri, 9 May 2025 10:12:20 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v3 2/2] leds: tps6131x: add support for Texas Instruments
- TPS6131X flash LED driver
-Message-ID: <20250509091220.GB2492385@google.com>
-References: <20250423-leds-tps6131x-v3-0-ca67d346a4ea@emfend.at>
- <20250423-leds-tps6131x-v3-2-ca67d346a4ea@emfend.at>
- <20250501110306.GF1567507@google.com>
- <74577715-b644-4281-8e9b-b481d2a026f3@emfend.at>
- <20250508143146.GP3865826@google.com>
- <8220a150-b114-441a-a13a-62dc5dbf0ade@emfend.at>
+	s=arc-20240116; t=1746782438; c=relaxed/simple;
+	bh=HIJLJlaSHblXzW4J68BnNfxMHmJtQylwo1XmckKLjkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iB8CRdsNVwqf0SWsa5qrNAq5kh+X1MtdVkOV/3Sg204V85cHhBinRvfSN7J7XTqk/UWXHVUhKua0Anlj15odejpyIX9dtJDxxu9V+szIiZ7BSpfQuq7hGMOZzCAi88OT75pWf2IPA9Qj7GvOppdO51OFUnYQZUX68IeCnSJ/hQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4Zv3FQ06s9z9t7B;
+	Fri,  9 May 2025 11:13:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id s8onC-g13dbh; Fri,  9 May 2025 11:13:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zv3FP6VrMz9t2V;
+	Fri,  9 May 2025 11:13:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D63998B776;
+	Fri,  9 May 2025 11:13:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id fVWNjZv3ZZLW; Fri,  9 May 2025 11:13:13 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 21FC18B768;
+	Fri,  9 May 2025 11:13:13 +0200 (CEST)
+Message-ID: <bc561703-bf34-4c99-aaad-1b1aad5ced12@csgroup.eu>
+Date: Fri, 9 May 2025 11:13:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ASoC: fsl: fsl_qmc_audio: Only request completion on
+ last channel
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang <shengjiu.wang@gmail.com>,
+ Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+ Nicolin Chen <nicoleotsuka@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-sound@vger.kernel.org
+References: <19aa9d8a84c8475c62c42ac886dad0980428c6c0.1746776731.git.christophe.leroy@csgroup.eu>
+ <5cffeb220617584a5e4bc03067cc10e6cdcfc25e.1746776731.git.christophe.leroy@csgroup.eu>
+ <20250509104544.5c375f05@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250509104544.5c375f05@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8220a150-b114-441a-a13a-62dc5dbf0ade@emfend.at>
 
-On Fri, 09 May 2025, Matthias Fend wrote:
+Hi Hervé,
 
-> Hi Lee,
+Le 09/05/2025 à 10:45, Herve Codina a écrit :
+> On Fri,  9 May 2025 09:48:45 +0200
+> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 > 
-> thank you for your answers and additional explanations.
-> Except for one point, I think I understand the rest and will amend it
-> accordingly.
+>> In non-interleaved mode, several QMC channels are used in sync.
+>> More details can be found in commit 188d9cae5438 ("ASoC: fsl:
+>> fsl_qmc_audio: Add support for non-interleaved mode.")
+>> At the time being, an interrupt is requested on each channel to
+>> perform capture/playback completion, allthough the completion is
+>> really performed only once all channels have completed their work.
+>>
+>> This leads to a lot more interrupts than really needed. Looking at
+>> /proc/interrupts shows ~3800 interrupts per second when using
+>> 4 capture and 4 playback devices with 5ms periods while
+>> only 1600 (200 x 4 + 200 x 4) periods are processed during one second.
+>>
+>> The QMC channels work in sync, the one started first is the one
+>> finishing first and the one started last is the one finishing last,
 > 
-> Am 08.05.2025 um 16:31 schrieb Lee Jones:
-> > On Fri, 02 May 2025, Matthias Fend wrote:
-> > 
-> > > Hi Lee,
-> > > 
-> > > thank you for taking the time for this review.
-> > > 
-> > > Am 01.05.2025 um 13:03 schrieb Lee Jones:
-> > > > On Wed, 23 Apr 2025, Matthias Fend wrote:
-> > > > 
-> > > > > The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
-> > > > > stage is capable of supplying a maximum total current of roughly 1500mA.
-> > > > > The TPS6131x provides three constant-current sinks, capable of sinking up
-> > > > > to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
-> > > > > each sink (LED1, LED2, LED3) supports currents up to 175mA.
-> > > > > 
-> > > > > Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> > > > > ---
-> > > > >    MAINTAINERS                        |   7 +
-> > > > >    drivers/leds/flash/Kconfig         |  11 +
-> > > > >    drivers/leds/flash/Makefile        |   1 +
-> > > > >    drivers/leds/flash/leds-tps6131x.c | 798 +++++++++++++++++++++++++++++++++++++
-> > > > >    4 files changed, 817 insertions(+)
-
-[...]
-
-> > > > > +static int tps6131x_probe(struct i2c_client *client)
-> > > > > +{
-> > > > > +	struct tps6131x *tps6131x;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	tps6131x = devm_kzalloc(&client->dev, sizeof(*tps6131x), GFP_KERNEL);
-> > > > > +	if (!tps6131x)
-> > > > > +		return -ENOMEM;
-> > > > > +
-> > > > > +	tps6131x->dev = &client->dev;
-> > > > > +	i2c_set_clientdata(client, tps6131x);
-> > > > 
-> > > > If you already have client, to fetch this, you'll already have access to dev.
-> > > 
-> > > I understand that in principle. However, I'm still not entirely sure what
-> > > exactly I should change. Could you please provide me with some further
-> > > guidance?
-> > 
-> > Yes, don't store 'dev' in 'tps6131x'.
+> How can we be sure about that?
 > 
-> Ah, I see. Yes, the functions currently using 'dev' are all called from the
-> probe path, so I could just pass 'dev' as a separate argument and remove it
-> from 'tps6131x'.
-> But since I now also output a message with dev_err in
-> tps6131x_torch_refresh_handler() in case of an error, I need 'tps6131x->dev'
-> there. I haven't thought of any other way to get 'dev' here.
+> The mapping on the TDM bus has to be taken into account.
 > 
-> In this context, is it okay for you if 'dev' remains a member of 'tps6131x'?
+> chan 0 -> TDM bits 0..8
+> chan 1 -> TDM bits 16..23
+> chan 2 -> TDM bits 9..15
 
-Ah yes.  Looks like you do need it then.  No problem.
+In interleaved mode, the QMC will not allow that. You can have 
+TS0-TS1-TS2 or TS1-TS2-TS0 but you can't have TS0-TS2-TS1.
 
--- 
-Lee Jones [李琼斯]
+In non-interleaved mode we mimic the interleaved mode so I don't expect 
+it either.
+
+> 
+> In that case chan 1 can finish after chan 2.
+> 
+> qmc_chan_get_ts_info() could be used to get struct qmc_chan_ts_info
+> and [rx,tx]_ts_mask field in the struct give the mapping information.
+> 
+> The channel that ends last is the one with the highest bit set in the
+> mask (rx_tx_mask for capture and tx_ts_mask for playback).
+
+That would be right if the channels were starting all at exactely the 
+same time. But qmc_audio_pcm_write_submit() and 
+qmc_audio_pcm_read_submit() are calling resp. qmc_chan_write_submit() 
+and qmc_chan_read_submit() one by one.
+
+Even if that happens it shouldn't be a problem on its own as there are 
+only a few microseconds between each Timeslot (a full cycle is 125 µs). 
+And also because calling snd_pcm_period_elapsed() doesn't have any 
+destructive effect on ongoing processing.
+
+So I wouldn't make it too complicated. Here the benefit is real and 
+worth it.
+
+Thanks,
+Christophe
+
+> 
+> Best regards,
+> Hervé
+> 
+>> so when the last one finishes it is guaranteed that the other ones are
+>> finished as well. Therefore, only request completion processing on the
+>> last QMC channel.
+>>
+>> On my board with the above exemple, on a kernel started with
+>> 'threadirqs' option, the QMC irq thread uses 16% CPU time with this
+>> patch while it uses 26% CPU time without this patch.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> ---
+
 
