@@ -1,65 +1,49 @@
-Return-Path: <linux-kernel+bounces-642550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07193AB204A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:31:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E90AB2045
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D949E885C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 23:30:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926527BCA7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 23:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE487265628;
-	Fri,  9 May 2025 23:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82107267389;
+	Fri,  9 May 2025 23:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jO54i0gB"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jx2mDIIS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47DC26560A;
-	Fri,  9 May 2025 23:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54EB266B66;
+	Fri,  9 May 2025 23:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746833399; cv=none; b=IHeZn8q1a27kCRBvwfttnuMZ41qQ3Yzrw4pXc+G9t6ZeDiSljxdEMsIiPNLImb2SED59voLq97XGwjUGDUd2ZUyFh8zkFJWXm5rIdsVk3N5KK9vNMwVJ2PgtgXnQRZRXge6hXzB3izT8KEFRY+Q+OIsyDLK6EhCkKDIHy8rUJ44=
+	t=1746833395; cv=none; b=n7Bp+dtwSZkNZPZy9lXYfPepth+snAOChGEt6asIhNfM7OaOZFa20UNeL3Zl6qGjfX3Pw+Sk0XuS0rTmlhgqgUdOe+5Sq7VOShTwg2ytgOeSXhy21jKS+6ULBWJ0Y74BUMVW2VV1Zn725Xpjds4Gtcmsmt1qR/zt2aesXU6VVmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746833399; c=relaxed/simple;
-	bh=AKyXGOGVKSPuvLYS3bA9GrhLG5FKkEMoHJdXPl0VcwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FX9Va3OCSe81DiNFHQVNEPMMj0lIkywXFTMatS5plf3wBPfL3Piz9Kg3GjCj1repNTImqlZXbUnr+GspzGmf+MyvXdkjhHh+kGdEl5ifU/uLL+4myBV1WpWWad4PBvDAvYMDfoJo/tEmdnRTzMuilQ3LIm2hQ2lb8HyPdmnq/Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jO54i0gB; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746833394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kOY56VtkuEsaEOIjh23t6VcD+q32Hzr2b1NcpUgpvDE=;
-	b=jO54i0gBEBaFktQDWRNMuv4pLq+uKpVvOSG8rTGoHARaxg8BKTT6XbD+GIS15P62AwsIgo
-	GN6rjfqV9p4hIv4kuKltdlIFtazFX1Sdk5xLUX4DldmlmVbQcCnTMwi4oc6iq5souJ0Adb
-	19j4Qj8OvDs/mAh60jbhxHW5ENDLVBw=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	bpf@vger.kernel.org,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH 4/4] memcg: make objcg charging nmi safe
-Date: Fri,  9 May 2025 16:28:59 -0700
-Message-ID: <20250509232859.657525-5-shakeel.butt@linux.dev>
-In-Reply-To: <20250509232859.657525-1-shakeel.butt@linux.dev>
-References: <20250509232859.657525-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1746833395; c=relaxed/simple;
+	bh=s4SCu8hAtzR/dHa5zmpaOaTNRXp7YbgGtlIUiys975w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=n940GgFaM14r0b9eSpIt3asMXnKqcMaClgqKjKqLsAuVJXZNrArgmNRGqAQIdHS0KocV5bVceiqhaN5bNR4lYspvhTrUGfB5cyL2g6Z0FgOKrL5cO5JCAfusIfan5Aby/POUO9XqNNlK0P0LHTF19FIFex0wnGc3mryrYlarCCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jx2mDIIS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A17C4CEE4;
+	Fri,  9 May 2025 23:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746833395;
+	bh=s4SCu8hAtzR/dHa5zmpaOaTNRXp7YbgGtlIUiys975w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jx2mDIISOVk+qbkcJNUVXBZ79ndrIQP/v+1/040Y/c/rpNrzOmstkYZmFTILcINr+
+	 3oT9jDBPgT5ZPFUAQUi409PqOK4nZx+NNA7aRFRjlkxdL3k6vY4DSUmaLNogy6fy4H
+	 V02HaDXJrMEikdb765TLSVqJOU3DzuNmTgmwDQ5W8QWcPSOHRhj9Pz3fEg1Pxqkvd0
+	 RdC0wocbkuiiggVWuiHpbsg5FtiKc7XNfSC4CoFkvBdDHTuyvhwwVFZKK9ErpGNM17
+	 uW47Ika5mCoU2he89fQ6hiGQp8hwknRy+VR+XcaNV92Cm56QeK8lpjI6DdO3UW+N+o
+	 jitz1OzjefokA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC4A381091A;
+	Fri,  9 May 2025 23:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,59 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH net] net: mctp: Ensure keys maintain only one ref to
+ corresponding dev
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174683343349.3841790.11374991133112180926.git-patchwork-notify@kernel.org>
+Date: Fri, 09 May 2025 23:30:33 +0000
+References: <20250508-mctp-dev-refcount-v1-1-d4f965c67bb5@codeconstruct.com.au>
+In-Reply-To: <20250508-mctp-dev-refcount-v1-1-d4f965c67bb5@codeconstruct.com.au>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: jk@codeconstruct.com.au, matt@codeconstruct.com.au, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-To enable memcg charged kernel memory allocations from nmi context,
-consume_obj_stock() and refill_obj_stock() needs to be nmi safe. With
-the simple in_nmi() check, take the slow path of the objcg charging
-which handles the charging and memcg stats updates correctly for the nmi
-context.
+Hello:
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- mm/memcontrol.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index bba549c1f18c..6cfa3550f300 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2965,6 +2965,9 @@ static bool consume_obj_stock(struct obj_cgroup *objcg, unsigned int nr_bytes,
- 	unsigned long flags;
- 	bool ret = false;
- 
-+	if (unlikely(in_nmi()))
-+		return ret;
-+
- 	local_lock_irqsave(&obj_stock.lock, flags);
- 
- 	stock = this_cpu_ptr(&obj_stock);
-@@ -3068,6 +3071,15 @@ static void refill_obj_stock(struct obj_cgroup *objcg, unsigned int nr_bytes,
- 	unsigned long flags;
- 	unsigned int nr_pages = 0;
- 
-+	if (unlikely(in_nmi())) {
-+		if (pgdat)
-+			__mod_objcg_mlstate(objcg, pgdat, idx, nr_bytes);
-+		nr_pages = nr_bytes >> PAGE_SHIFT;
-+		nr_bytes = nr_bytes & (PAGE_SIZE - 1);
-+		atomic_add(nr_bytes, &objcg->nr_charged_bytes);
-+		goto out;
-+	}
-+
- 	local_lock_irqsave(&obj_stock.lock, flags);
- 
- 	stock = this_cpu_ptr(&obj_stock);
-@@ -3091,7 +3103,7 @@ static void refill_obj_stock(struct obj_cgroup *objcg, unsigned int nr_bytes,
- 	}
- 
- 	local_unlock_irqrestore(&obj_stock.lock, flags);
--
-+out:
- 	if (nr_pages)
- 		obj_cgroup_uncharge_pages(objcg, nr_pages);
- }
+On Thu, 08 May 2025 14:16:00 +0930 you wrote:
+> mctp_flow_prepare_output() is called in mctp_route_output(), which
+> places outbound packets onto a given interface. The packet may represent
+> a message fragment, in which case we provoke an unbalanced reference
+> count to the underlying device. This causes trouble if we ever attempt
+> to remove the interface:
+> 
+>     [   48.702195] usb 1-1: USB disconnect, device number 2
+>     [   58.883056] unregister_netdevice: waiting for mctpusb0 to become free. Usage count = 2
+>     [   69.022548] unregister_netdevice: waiting for mctpusb0 to become free. Usage count = 2
+>     [   79.172568] unregister_netdevice: waiting for mctpusb0 to become free. Usage count = 2
+>     ...
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net: mctp: Ensure keys maintain only one ref to corresponding dev
+    https://git.kernel.org/netdev/net/c/e4f349bd6e58
+
+You are awesome, thank you!
 -- 
-2.47.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
