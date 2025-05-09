@@ -1,157 +1,131 @@
-Return-Path: <linux-kernel+bounces-641517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98F1AB12B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:58:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72F8AB12B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0EEB1C43840
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA9C52659C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A064F28FFE5;
-	Fri,  9 May 2025 11:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4896290BD9;
+	Fri,  9 May 2025 11:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGJeum7J"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PYTcJouf"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F57628FA97
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD5028FABC
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746791768; cv=none; b=c3FZ8dEC43FfGrg6nYqoBLxBYSlbOgiQsywROjoScux92wXOfRUB2zR/4Mf5EmRiOcNZ3M2i9DwF+yF/3HLI0ZkZ4NmrFH8TXHT0K6jwSvfwbquJzJfsUDR/zmCZ8w4gyaqNu946HG56NjRLxIDj+Qw+WoyZerNHnmCHHOwx11c=
+	t=1746791842; cv=none; b=C+IMetnGKW3f0MpWUfibOgrYM54GaHV8Vw3OzEG+pSP7gxW3LoLFS2KDYvsfcyeC/hDu+KzP33kgcPgr08LNoHb1N0x/KdhC9yt73zdFDLdYO8f0MCjRhT/ehJx51wITbMvFjXbarEvu7kEnrd0dmU6e0r3PiII/btUk9H0iID4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746791768; c=relaxed/simple;
-	bh=LRbvViZoPclPGlN7A5PUm0tJDKLNRb0ymUi5CRfvQFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g3i4M6DFvWucrv7PPcC084s3m8yWUcZeZ3SJ9z19HXT6/BveJrEp4vqpT1J6jk2mI5reKb/ECBEbVnEafk8cmZ1Eu1/1yeM/tX1P2MyD4yIN+VHyxxgJh5Sajt35OY8iCMEUi/mZlM2p7Sb0hATDNQeC+ITjTTmEhYGFyWIbZQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGJeum7J; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5259327a93bso653488e0c.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:56:05 -0700 (PDT)
+	s=arc-20240116; t=1746791842; c=relaxed/simple;
+	bh=Q5IK9HN+g/ZwX1gC4emIwTwcU9muoYR6ijy3AT09hzg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UAAHL3ufaACUh3ybaNKlA0VIHkTJBZ1ARdErJgSYmZzKfaO1rm1vKNzwcYLxj9BZJW8o476X93iTksBqP4Y59DX8myYmAzEsqaCgFQ4SDOI29h4T7czgyAzJ6ZMqOA51aILiK8xMdALulfnVrZZvawSJWmqNdsstH8bjgvMUw/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PYTcJouf; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-441d1ed82dbso18858185e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746791764; x=1747396564; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqiFUbarWKLnCGJybuxJ4jR1QI/DeulSuNp7GD5UL+k=;
-        b=VGJeum7J0DHcBI1vzo+JsCnabOk6KaRKYgN47Fsp2aCwfNQngAIw+A61d0GtgzNUqU
-         ZTMczjPBWloY2IpACTHe7CQzowdWol4tkosmxK9I80446kO4/LrpaWWFbHEh3zbpqld6
-         elA4LjIurCyiBbKxmE3lCRMitQjEaTuD+1C20Rq3XAS8m77Px4vjW3T0VFz48TEoR7Qy
-         i0d8XVirJXeAosPa+tOhmiPwB0jarFAnobAVXw9i1J1SknAS+ryZNhOot5RBPZcxIeqE
-         FSRu+VLRIovWYSMlclDptNCKU1jCiqgHpqqrBzjXvQaNPD3RJmMWyPvFiSWkOExfMOi4
-         nGyQ==
+        d=linaro.org; s=google; t=1746791839; x=1747396639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=th1/bFaPGJFRCo8JO8Rwr3mcmgSJq8KTF5FpG5MwqQU=;
+        b=PYTcJoufQeQNTiDL5uL+1fe/GzGTGyxOM7Ez6cVsgYGGECsVLPctTKZ43NH2IgSFkO
+         sKn7x63931pdlwIjCjKQWdOSf+opdjXmtL7cvtvFIeplx9YIk3gdpWRnvBjsWjFTC/ql
+         wrsYYtG1hPN3MUXn4i7Bx++ZkGMG1j0UHW6lLaSYz47QYS4sJZPhFmWpBWFPbcOJ0GYa
+         V8P7u8ToiGrD+VgawNhP4qtJ8MnxUx9gUk34juMidQOkcvE16eicjqWh0AjGYDi+5Xni
+         yDDNv5PFvI7NfBlO4oCiKdD54Ubpd9gnV2t5qdztYcS2Cw16gAVO54oc41z4Q7HaBcRy
+         wSaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746791764; x=1747396564;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xqiFUbarWKLnCGJybuxJ4jR1QI/DeulSuNp7GD5UL+k=;
-        b=I0f02teHxsnBRp9eklMNc8PES8JTRgC+XyuqThAslQ7YOFMjQ0yCpYqb0yvL9gZCPd
-         s3Kzi7Fpnr67Rl+zwYTQqVEA3pKDPB5/gBjohiz+iZj/fke6rEYh6s/ma/8CekNqUn1m
-         JxvxKmCccQVctLtVIkuH2MI/rLgirRO51CnOJh/066WWDd2c5phKUdtWmlgbkUZv/gPX
-         7ZEuwTTIm43bCK1AH8KLQ9Jm8RUdQ0uupEGf9KvHI5gjIIaEJULKQ3qiLWXuMjM3x3eY
-         1qQGgkvpBnmGEh2jyTGIl8Eg/tmpFMnwpdnq/+MqxU2G88901b3XHjz52M0tydFWDY8x
-         BCCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrWIr1fWTnkonxk+F6IRraVYMTF5yRGCgQ43uQOmquEvPnz0FqcRZQdsjv/dvUtXWzSGNvlJ7KVSC5ghU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIExluWd58BbA/7pSsOSvLtz9JPDkBNLO3/I8a99Z2zJfwVrP9
-	irKTGS4QIDTgxPkXzm4PgKEFribXC3HCtGoqK08o7ebqGOmcHBzXGKNeL1Ks23U3udT2T6l7cwt
-	9V36jbYSEhSG58scHi310G/FdHfw=
-X-Gm-Gg: ASbGnctiAEOqun0EuXKEdV+uE8N0drNSh26KCtGzLU46BUdeOtxJdPPxaZ/YSRv8zke
-	DIvLDlCLQV/Zfid0RNEZwJ9+Rjaw6/Oon/mQTrW9LUWQ4VTU3Gdr+mz3/8vRTCKQLW6DV8uHCAv
-	aJMGXisYx/XPOxBMbKTMU6cA==
-X-Google-Smtp-Source: AGHT+IE4Ed6/a+4uS9HMJKRiOEF/n4Rq6ihgHyAvRSMHkhfbU7+qPOoUdqDjBcie4Ml38P1gLswJ/LANpg2k2cnKh8c=
-X-Received: by 2002:a05:6122:3bca:b0:518:6286:87a4 with SMTP id
- 71dfb90a1353d-52c53b59146mr2604105e0c.4.1746791764042; Fri, 09 May 2025
- 04:56:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746791839; x=1747396639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=th1/bFaPGJFRCo8JO8Rwr3mcmgSJq8KTF5FpG5MwqQU=;
+        b=bj8t2k2gifmjIuQtUgC0rkKwDGALZIO/c1LOsjREne8AprOSb6mQamKKzmepasAuZY
+         Vz5An8CE3hkCRE3vt/FQ1qBDlCZfAnUNPh9fBUq/yerG9S7pG9OnSgXoJFzk3uu0dSjA
+         dKL2KkF0yOMn/5gXKHffCRWqMwHIHparh4wnr2XCtr5WflPVG60r5clCgp+Aag7dwcnN
+         pFjqgyRzQ2wMQ3rHVG9NHNFe9rerbqnzLcsjfuWiiK2zX6zGbII+3JPcWq3g6t1sGyNZ
+         9X/kr/8JyVR6YGZ6OrMOQ1LyE8+SU3W0nKxYgWUc1qgsMdtmdn0Jr1vr+LmaPkOHTDmq
+         yDMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFcWcCmIaV+KRLja1OJCwy8d6diiRJn4ble2dqerizpBgea3x1pXo+I0JhakOyUbWPlbPK6x1/4B/sxas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaZvJjdjQWILi8Vqkqsy8cJWazmp7oTDRTHqJ8CsFX2TstEbMT
+	5q9Mt4jQVV9t46jXTqmyJga8EClAEa1s6x/RpTGylatAeDREPbg5nYxm6IEA7Zg=
+X-Gm-Gg: ASbGncthH8f8GS8Stp4KUaPgrIn1Cvd8lQixBeMoXs07nfASYgEznJp9HUhQ+XVu4hP
+	BysVVFFMhHq7JOgb99j+AtCLk4t+5KcUkU0mfvKQbHZVKTrXiz5mj7EaecUaemIv6S5EucEsO54
+	98NcpK+588iIETUJ3X1rUXT9BEtOFbbQGPncWKRPJGyHoBHtevddlI9uqLmEfVjPErV2oGq+7cI
+	sei4i6OEQttGBNEMzXmhyIw1BgtWxIsxVBwC+IxbJCN5fOhNbIiu63HRPyjYrPbsfk/f7mcqq/7
+	RiZguw/joTwEFiknBsEIavJgcON2EV30QIlTt6ET9O7/hJJTkRjcVcMhEHby5eKO+zWs3q7ip18
+	Tp9v8iYQ4009ySSI24cDzqK+1kUCZKmn87+ZEw0uOjpLvNcXIIQ==
+X-Google-Smtp-Source: AGHT+IGMhurb9PArmXo9wi/bzeveBgpvfyiPoLnFXyt7C3rq/dYKOcqicf2Ep0ffCf8DbUss6X3Ofg==
+X-Received: by 2002:a05:600c:a409:b0:43c:e7a7:aea0 with SMTP id 5b1f17b1804b1-442d780033fmr15039445e9.26.1746791838633;
+        Fri, 09 May 2025 04:57:18 -0700 (PDT)
+Received: from green.cable.virginm.net (nail-04-b2-v4wan-166353-cust693.vm26.cable.virginm.net. [82.35.130.182])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67ed1bcsm27032945e9.18.2025.05.09.04.57.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 04:57:18 -0700 (PDT)
+From: Terry Tritton <terry.tritton@linaro.org>
+To: Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Terry Tritton <terry.tritton@linaro.org>
+Subject: [PATCH] selftests/seccomp: fix negative_ENOSYS tracer tests on arm32
+Date: Fri,  9 May 2025 12:56:22 +0100
+Message-Id: <20250509115622.64775-1-terry.tritton@linaro.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_503130C3CD56569191396268CF4D12F09A06@qq.com>
-In-Reply-To: <tencent_503130C3CD56569191396268CF4D12F09A06@qq.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 9 May 2025 19:55:53 +0800
-X-Gm-Features: AX0GCFtZjjwuWrSColvr5pJ5ezCWRnG-VQdyNvJnQtZjTcILpkAWnHY2kWMVZLc
-Message-ID: <CAGsJ_4y2hHAsKWR9WLY79d5UDLcai=px+WbgDpoRJrysPqqQOw@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: remove obsolete pgd_offset_gate()
-To: Feng Lee <379943137@qq.com>
-Cc: david@redhat.com, akpm@linux-foundation.org, mingo@kernel.org, 
-	jgg@ziepe.ca, jhubbard@nvidia.com, peterx@redhat.com, maobibo@loongson.cn, 
-	trivial@kernel.org, linux-kernel@vger.kernel.org, lance.yang@linux.dev, 
-	anshuman.khandual@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 9, 2025 at 2:33=E2=80=AFPM Feng Lee <379943137@qq.com> wrote:
->
-> Remove pgd_offset_gate() completely and simply make the single
-> caller use pgd_offset().
->
-> It appears that the gate area resides in the kernel-mapped segment
-> exclusively on IA64. Therefore, removing pgd_offset_k is safe since
-> IA64 is now obsolete.
->
-> Signed-off-by: Feng Lee <379943137@qq.com>
+TRACE_syscall.ptrace.negative_ENOSYS and TRACE_syscall.seccomp.negative_ENOSYS
+on arm32 are being reported as failures instead of skipping.
 
-You missed including the tags from v2 when sending v3.
-These tags were already present in v2 and should have been carried over
-to v3:
+The teardown_trace_fixture function sets the test to KSFT_FAIL in case of a
+non 0 return value from the tracer process.
+Due to _metadata now being shared between the forked processes the tracer is
+returning the KSFT_SKIP value set by the tracee which is non 0.
 
-Reviewed-by: Barry Song <baohua@kernel.org>
-Acked-by: David Hildenbrand <david@redhat.com>
+Remove the setting of the _metadata.exit_code in teardown_trace_fixture.
 
->
-> ---
-> Changes in v3:
->   - adopt more precise subject descriptions
-> Changes in v2:
->   - remove pgd_offset_gate completely
->   - remove pgd_offset_k from the get_gate_page function completely
-> ---
->  include/linux/pgtable.h | 4 ----
->  mm/gup.c                | 5 +----
->  2 files changed, 1 insertion(+), 8 deletions(-)
->
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index b50447ef1c92..f1e890b60460 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1164,10 +1164,6 @@ static inline void arch_swap_restore(swp_entry_t e=
-ntry, struct folio *folio)
->  }
->  #endif
->
-> -#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
-> -#define pgd_offset_gate(mm, addr)      pgd_offset(mm, addr)
-> -#endif
-> -
->  #ifndef __HAVE_ARCH_MOVE_PTE
->  #define move_pte(pte, old_addr, new_addr)      (pte)
->  #endif
-> diff --git a/mm/gup.c b/mm/gup.c
-> index f32168339390..0685403fe510 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1101,10 +1101,7 @@ static int get_gate_page(struct mm_struct *mm, uns=
-igned long address,
->         /* user gate pages are read-only */
->         if (gup_flags & FOLL_WRITE)
->                 return -EFAULT;
-> -       if (address > TASK_SIZE)
-> -               pgd =3D pgd_offset_k(address);
-> -       else
-> -               pgd =3D pgd_offset_gate(mm, address);
-> +       pgd =3D pgd_offset(mm, address);
->         if (pgd_none(*pgd))
->                 return -EFAULT;
->         p4d =3D p4d_offset(pgd, address);
-> --
-> 2.49.0
->
+Fixes: 24cf65a62266 ("selftests/harness: Share _metadata between forked processes")
+Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index b2f76a52215a..c43a6f8f8cd5 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -1629,14 +1629,8 @@ void teardown_trace_fixture(struct __test_metadata *_metadata,
+ {
+ 	if (tracer) {
+ 		int status;
+-		/*
+-		 * Extract the exit code from the other process and
+-		 * adopt it for ourselves in case its asserts failed.
+-		 */
+ 		ASSERT_EQ(0, kill(tracer, SIGUSR1));
+ 		ASSERT_EQ(tracer, waitpid(tracer, &status, 0));
+-		if (WEXITSTATUS(status))
+-			_metadata->exit_code = KSFT_FAIL;
+ 	}
+ }
+ 
+-- 
+2.39.5
+
 
