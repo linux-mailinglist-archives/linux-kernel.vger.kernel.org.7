@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-642486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C59AB1F5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 23:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357F3AB1F5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 23:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256AB1C45FE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AF05004B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 21:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFFF2609EA;
-	Fri,  9 May 2025 21:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880832609E0;
+	Fri,  9 May 2025 21:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYAhK1H/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="qHMxKvjo"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE88226CF4;
-	Fri,  9 May 2025 21:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D138525FA10
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 21:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746827383; cv=none; b=RForPRk/UVY42WK3FP9PZZejo/pEJ+u66fP5VKO2GErsEh2w/p+PCRwGke2iWyHC4e1AMY+lyvIf7tchDhh32a9YBuJPA2R0ERQGLllA+QfFTy9MzKr6FxmZjg3JDTHosJHkslvnCvhMZolTtS9Pv3cZzhBINvTi6oIfwk+qBfQ=
+	t=1746827439; cv=none; b=f5bUOYGnFHss0rVz9q+o0Bm/+LfH7aQacbYmrmJGOunCwfru/BqhtT56oC16rxGaTkMML9FmuA9F0WuKtFRkwiaB/enaNaC69xkSHUQXr7wL9Ijw4O9olCcxdAfyay+rVeXCnt3bF0mX+WVagDhXqIyJHZ8zQ8jDQaCGZ1MWNxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746827383; c=relaxed/simple;
-	bh=SiJ264L76W+iNGxah+QR+bqOGeUBSZ7lji/MNG6Rk4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ze/NDB7OKPt5z6kGPUeBiwbQdyhpg20xi0k4z7N88p2o9lSMWxeojCjn72vGJKzOOxZphONEM7Mp6Qg30x/G2zlDtlF89sRlGOlzUvVFcDmFMY+i3bin8qhoPYp5erAh1k/6AXU7SIKdkekTFSG68dd0ZI57r/F3LaPP/JsFJvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYAhK1H/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02004C4CEE4;
-	Fri,  9 May 2025 21:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746827381;
-	bh=SiJ264L76W+iNGxah+QR+bqOGeUBSZ7lji/MNG6Rk4w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uYAhK1H/3ajc/630iBxlSZwFpfs7YQjH28MoAy/PNXdDe5ceNI2Ycnxt1dn+GTZ7d
-	 Q3lsLH2TxYfYHz+IrJ3qB14PQJo3sJspgtFfVNbI8W2CuG4oyBhBZo1LP2UragiUPj
-	 05tToUJo/K4GRvFE3hrbtcl3cCcwJhJZC4jMwKYPF//w+q7XKUk9iIZy2B6/5BbqAG
-	 M+Q4oMqDgbf7hrL7a1JZuLFLOXpo9VdqQytFBt5g+A+xD4/yEJFMVJhJlxUAT4iNI7
-	 afH+/8ACTMWKfAKZI6z5+xaLPzbvrXLxWPccl6Lm0FzuU4aNnm+LbWIiQpfIhxEwsf
-	 i5CWn2npgfs4Q==
-Date: Fri, 9 May 2025 21:49:39 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-hyperv@vger.kernel.org, kvm@vger.kernel.org, xin@zytor.com,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 3/6] x86/msr: minimize usage of native_*() msr access
- functions
-Message-ID: <aB54c5ajYkGZ1sPi@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-References: <20250506092015.1849-1-jgross@suse.com>
- <20250506092015.1849-4-jgross@suse.com>
+	s=arc-20240116; t=1746827439; c=relaxed/simple;
+	bh=vOxqEgCrICifNtaKDhsZWxwqtUcwlYfTkQ0x/bD3oII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qh8Adm6Su6CvPx0n3Q0AmsRnesKCuwRAuBh+9oE9/fRp24ri1FdWJkOKyFqrxk5JjtKrYRpCyZvs18MbPSwyPnk5NgPbGjgd1Z4q2OrGGJlZot3ccwy9WJOL19UHw9x7W8A3GVyncmaFNdxTU8o6fAYB5801be27Uxz7peS7pbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=qHMxKvjo; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1746827431;
+ bh=Q/4hTUTysjyHMdWQYAFUoh8JWnAIFyUM8sIjXoykTqA=;
+ b=qHMxKvjocFqI975NhElRqCbaZen3vOTVRat0dmrWZd/W73DGS7x3Q7XSZug2jtb+GdgM43cZ5
+ biCcjP+fK/nUzq9fbPo8yZWLtGeXM8sVpPUUdoxhn0GVIQCPGmchATnxMDqwm1ktiy1LrVqCFUE
+ CgIkxKi6QC/NW199/ZjymQMWka8oNGgVay4pg6kUtrjH43rs7uRpWslcmTUvVIPYxGGv+eekdqN
+ V1/TG7c9ZVyHxuXeapXBF3Xp1wH3uEcaoaAymWR2p1hYjYOhpppKYLnuUp8QhYQGhy26RcNjM/Q
+ C8Ytz+/ysUIDaUBbiGcktLjTP6gm4GfmF6REOY3EBtwg==
+X-Forward-Email-ID: 681e789856028bab66256880
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.0.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <36fb3b11-9a1d-4849-9333-5ef26a217106@kwiboo.se>
+Date: Fri, 9 May 2025 23:50:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506092015.1849-4-jgross@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] rockchip: Enable Ethernet controller on Radxa E20C
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
+ Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250509202402.260038-1-jonas@kwiboo.se>
+ <2728051.BddDVKsqQX@diego>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <2728051.BddDVKsqQX@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 06, 2025 at 11:20:12AM +0200, Juergen Gross wrote:
-> In order to prepare for some MSR access function reorg work, switch
-> most users of native_{read|write}_msr[_safe]() to the more generic
-> rdmsr*()/wrmsr*() variants.
-> 
-> For now this will have some intermediate performance impact with
-> paravirtualization configured when running on bare metal, but this
-> is a prereq change for the planned direct inlining of the rdmsr/wrmsr
-> instructions with this configuration.
-> 
-> The main reason for this switch is the planned move of the MSR trace
-> function invocation from the native_*() functions to the generic
-> rdmsr*()/wrmsr*() variants. Without this switch the users of the
-> native_*() functions would lose the related tracing entries.
-> 
-> Note that the Xen related MSR access functions will not be switched,
-> as these will be handled after the move of the trace hooks.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/hyperv/ivm.c      |  2 +-
+Hi Heiko,
 
-Acked-by: Wei Liu <wei.liu@kernel.org>
+On 2025-05-09 23:40, Heiko Stübner wrote:
+> Am Freitag, 9. Mai 2025, 22:23:56 Mitteleuropäische Sommerzeit schrieb Jonas Karlman:
+>> The Rockchip RK3528 has two Ethernet controllers, one 100/10 MAC to be
+>> used with the integrated PHY and a second 1000/100/10 MAC to be used
+>> with an external Ethernet PHY.
+>>
+>> This series add device tree nodes for the Ethernet controllers found in
+>> RK3528 and enable the LAN interface on Radxa E20C.
+>>
+>> This include a gmac0 node for the 100/10 MAC and its related integrated
+>> PHY node that only have recived limited testing. I have no board that
+>> expose an Ethernet port for the gmac0 and the integrated PHY. However,
+>> the PHY can be identified on addr 0x2 as 0044.1400 and in vendor kernel
+>> this relate to the Rockchip RK630 PHY. A proper PHY driver will be
+>> needed to support any real use of gmac0.
+>>
+>> Changes in v3:
+>> - Rebase on top of latest mmind/for-next
+>>
+>> Changes in v2:
+>> - Split from the "Add GMAC support for RK3528" driver series [1]
+> 
+> split from ... was that series merged already?
+
+Yes, sorry for not being more clear, the dt-bindings and driver has been
+merged and is already included in v6.15-rc1.
+
+https://lore.kernel.org/r/174291544076.609648.8594782943472190694.git-patchwork-notify@kernel.org
+
+Regards,
+Jonas
 
 > 
-> diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-> index 09a165a3c41e..fe177a6be581 100644
-> --- a/arch/x86/hyperv/ivm.c
-> +++ b/arch/x86/hyperv/ivm.c
-> @@ -319,7 +319,7 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
->  	asm volatile("movl %%ds, %%eax;" : "=a" (vmsa->ds.selector));
->  	hv_populate_vmcb_seg(vmsa->ds, vmsa->gdtr.base);
->  
-> -	vmsa->efer = native_read_msr(MSR_EFER);
-> +	rdmsrq(MSR_EFER, vmsa->efer);
->  
+> The linked lore-thread only talks about the series needing to be reposted.
+> 
+> 
+> Heiko
+> 
+>> - Add ethernet-phy@2 for the integrated PHY
+>> - Rebase on top of the "Support I2C controllers in RK3528" series [2]
+>>
+>> [1] https://lore.kernel.org/r/20250309232622.1498084-1-jonas@kwiboo.se
+>> [2] https://lore.kernel.org/r/20250309070603.35254-1-ziyao@disroot.org
+>>
+>> Jonas Karlman (2):
+>>   arm64: dts: rockchip: Add GMAC nodes for RK3528
+>>   arm64: dts: rockchip: Enable Ethernet controller on Radxa E20C
+>>
+>>  .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  30 +++++
+>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 105 ++++++++++++++++++
+>>  2 files changed, 135 insertions(+)
+
+
 
