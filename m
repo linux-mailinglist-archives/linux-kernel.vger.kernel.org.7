@@ -1,198 +1,227 @@
-Return-Path: <linux-kernel+bounces-641901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D37EAB1801
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8044AAB1815
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F88A00335
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6773B2E1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93882235048;
-	Fri,  9 May 2025 15:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62246239E76;
+	Fri,  9 May 2025 15:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmkRTON0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GnHCz8gS"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC1A21A453;
-	Fri,  9 May 2025 15:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746803220; cv=none; b=WnoQJR3md6MdJjZoly/eCcG4QhFlIX/3lIkRg/63IvD9R6Ri1J821Jhm95KIlofBiVv8QwldPXoFcTi5m7CHH7lKDhOoGYqL3n7m1Gr2B5Hoi5ner0py2DGxOUvohCBGw73B+yLAnBTPRh/JbOeZl+QjTcPF5/TvLwGxnNvoU7U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746803220; c=relaxed/simple;
-	bh=uuhnm0aRvVty+XrpMWSfjG9qUj5MeSFeFcHByOFvx8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZyYWWpp/1uCTZdsXN7yB5NE+O60d2XFiHIb5EMj1n/gNgzYx1fSRRrSOYMqzaaru5EvgJ8AaUYibkbmyAcKtQxPqL5PPupXH31F2N/hRWto6Y1duriQfWqmtIkx0l8efVygADe4iV4dBgU/Any0u8Ux1g0jOaE6xBPcjNfBZZj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmkRTON0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2283C4CEEE;
-	Fri,  9 May 2025 15:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746803220;
-	bh=uuhnm0aRvVty+XrpMWSfjG9qUj5MeSFeFcHByOFvx8M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YmkRTON0H7yevm0MRtgeMCYmm3T1PikFSLyzDGL09VCPhWr41kaq6npdKJ896Pufy
-	 la4Vp7EoUvSzBDIOkW8Q/oiV3OjP3Kkt82uTbg1xkH1YsoYO6sLArtREExIITvu/ao
-	 MAoWazhCHkSZGPUz6n0tAD4jxmKp2ESuZY8M5QWGlpqMOKenTNv6zvJh7vZnV8YYrw
-	 6BN+GT/49QoLfQHzz3+mtwVv1sz7ReyrZVZSf1JtbI1RgHa1L1QcC3jmTZeI1jlLkA
-	 ECX4TrZIk2deB3d3V2YlUcmH2hae8IUsld6blxABXIPpQChMl015HbwLr6I3iPbyJn
-	 m7THNEXnGhB1w==
-Message-ID: <02b0dbc2-e8fd-419a-b546-5910b3fd0e0c@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9652356A8;
+	Fri,  9 May 2025 15:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746803305; cv=fail; b=CfvKVGKBLh3nX34kdvBzwjLleoM7x9JKbpTKXHf3WYxruyX/+kzJUdUlNNF6R/dpwLL48N7xzpnl+l6qFpPLOlz/yOkRaA1vXJ/pth/qz05pvaLMHoFXJqfTJpU3//DjABfIuEdv32QEooryCHiuJJQGCbL15X1XZlhhLxIhgh8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746803305; c=relaxed/simple;
+	bh=EVY608MSRGAyJg6soKxpzCSkhW3eTBd4swI/fO4HQr8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TL2LNCb2XvNk1NwSsOQcrjzdQjTVIJfCrtjaPlwrAXsMRMYurdQaF4FnqjgxYIPF+nf6/8Ul2ozUbb2SMB6D8PFxDN5Rkd35rwtLcDwakpQb9PZwCdhEfcaU49jgUir8F13g8goickZnpplJsiMYezPK8wvLgXMUA3OC5ewdqmY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GnHCz8gS; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=egc+F+5w1WGAYr1CQNMkP2VYdVocIqG0P9Rv7wn/ebX8aEJ+jO/bQlCcLVCIYwFHLAbuMZ6jBJkuEuWK0HQ9HWjzN4uejUmJ9msrkDLxfO41ZuHW6rpkajIB7zGwJSoiUf7rAymkS1Pb+DtAsQPms/bZQe6GJPkNRzMn9svCxYMMLwvzWIHLn3ivZxfACSZ/xGK9cQzzwFSCnrikB2nLnwynx6LHOyhXhWaUKDeu4OH0dwzyNhAhXlgeTFkOY8JAnc59ootYMJsYy1s8RQgZer0+LENwboJOnpl0m+qsK9VeT0MiMvfxsZ6ZRAXL25DUDsO51zH+8U9B21ClcqfyDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pt/5lYbuBYr7QnCT42EKg7CM1j0/9ElH/ZocySjS8tM=;
+ b=mgEJyLuk6eOlkgyINniJZ9vldDCs582kMQzo5Y4c22PYoHSqZHjJHnXqTWz5zGm2l6ejH8eatmIjLdTRflgaHErlAKMIUhpWKP6hO6upRE+YF9NM9j87n/13D0Sb/62K/6UathChJbJd0nEpYWOEfSnNQX2dqO5Jj+9WsK49xZqgaTJ60dsiRqooBHUyHBlI2oci70h/UmjrGHxMiG1c5UhV9aJx1OyTeFiXviFpDG9mFpvQz4B0TjB8HkkR/pquks25GI09dF9cZrWNVSbULuV59MhPdPJxPgVo6fGVN4myRxujYKKVm+864/2Dq/rHZGznoeMGAK8lvfsZP/lteA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pt/5lYbuBYr7QnCT42EKg7CM1j0/9ElH/ZocySjS8tM=;
+ b=GnHCz8gSm/YiqZEz1gnnyFh9bJX18KGrd3vRSzAF9aFSDf9zeaGTciXvJZTbFj9xyLTfO2SQ32c+aEhVDixwhIxlIEeZtE6Nr5QsgQ9SOpQcxN2XQzz3EdaQK2AJDhSnCBb37U+VIjwNCndDuYjFcYBzb0KkAmlqOfUpe5Ucveo=
+Received: from BL0PR0102CA0021.prod.exchangelabs.com (2603:10b6:207:18::34) by
+ CH2PR12MB4230.namprd12.prod.outlook.com (2603:10b6:610:aa::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.21; Fri, 9 May 2025 15:08:19 +0000
+Received: from BL6PEPF0001AB4B.namprd04.prod.outlook.com
+ (2603:10b6:207:18:cafe::ed) by BL0PR0102CA0021.outlook.office365.com
+ (2603:10b6:207:18::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.26 via Frontend Transport; Fri,
+ 9 May 2025 15:08:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB4B.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 15:08:19 +0000
+Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 May
+ 2025 10:08:16 -0500
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: [PATCH v6 11/14] cxl/region: Add function to find a port's switch decoder by range
 Date: Fri, 9 May 2025 17:06:56 +0200
+Message-ID: <20250509150700.2817697-12-rrichter@amd.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250509150700.2817697-1-rrichter@amd.com>
+References: <20250509150700.2817697-1-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: iio: proximity: Add Nicera D3-323-AA PIR
- sensor
-To: Waqar Hameed <waqar.hameed@axis.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@axis.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <c57675d505e93549bfca5f9909d67822ab304a44.1746802541.git.waqar.hameed@axis.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <c57675d505e93549bfca5f9909d67822ab304a44.1746802541.git.waqar.hameed@axis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4B:EE_|CH2PR12MB4230:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b846e73-1052-4d7e-8e57-08dd8f0b554e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EwjFjvVLAb1sXYGxOd5RPs8cyc9NGX2/pdfCbQLGDwlBa5M/m1dvOrRJonoG?=
+ =?us-ascii?Q?u9uYIyGRkT9THAg/4/ml6ftVGTbP3JpiPcBFy75HJQAYWW80xaVZ8SdPCGCp?=
+ =?us-ascii?Q?Zhbm7eHLU6FJXAuSltVdV62W99yK4CIRCdIMmUP39Uh+In/fO19YlPNqyGI5?=
+ =?us-ascii?Q?JQo51BulQku5jpVpZH4vL9qnhl92DKi6lRZ/gM35EqKmicBHG+YTNExbVxst?=
+ =?us-ascii?Q?VT4AUVHLJQVoXEr6EpndyJpa88uN/0VHsfh3Uqm1ROyO7k2MhaCR4GVcwNZf?=
+ =?us-ascii?Q?LkvZIB04lHtCeqQTjFWUeq5kjQP9EIWp/tiNSO0VgY8Y+EF28sLRxsqqKv5k?=
+ =?us-ascii?Q?f4BJ9c+LIMHIpzsXMGPg9jweS3Ji/YupDIxgKnpMZ6E+RBOIsW3upRaPhAKu?=
+ =?us-ascii?Q?jFtX+8SqrmDerH4awfxg817imyzxjtwYkYOaSB/7GvKpL3EP0Do3m2KujING?=
+ =?us-ascii?Q?yxD+IFwtusdyPXZ/e4l/bGVQPJ2fSVncIxXc5iBtRxwdnwFN9yhUYnKoJd90?=
+ =?us-ascii?Q?E1xMrPQG7aD0/oVrd0VAzA6RZLpqMnGzpHO6OPfhvrXEaMdfeESfVkEB8n+b?=
+ =?us-ascii?Q?a0/9j6koHBmHFEdmdDF6Nj7VROvG02trAfPlF2Q5wERz75RxTnvimM/cERLD?=
+ =?us-ascii?Q?6qfs4Gr9rL/5wPn7giJgT/gnCRtNajpueLpU05jwdEJfhFLAEz8iWzaA55aT?=
+ =?us-ascii?Q?c+m3+Zioe0Rz2KnXXNfH7/T66yUoMMnn35yzErp9su5m9lssg1Ztxy5e33Ds?=
+ =?us-ascii?Q?vqvIFjhBbsvRzyoyBj+XIgJheuEz/k2fKpMcIcnS2LvRYkQs4c1Slg/tSNEY?=
+ =?us-ascii?Q?IRkm6GJYZEy1KRLidEHox+azalCl1rDQW/1McLnaMoO7sExnqCEtQOFUvIeh?=
+ =?us-ascii?Q?IBBiUYst5Io9QVQytWAyFvWrqxyvUlPbVdNotKTCWfCsicYOoAVkYMWcOMnt?=
+ =?us-ascii?Q?cQswuWSwQaFGo4sAjyjbrBLNo89LFHdMJmFwmtgZW+D4S2tLEocn2IbVecTl?=
+ =?us-ascii?Q?uW+UbCFLkmmHdXANrAnUpole/2LnTqoxzJ/t1zUVg63fBREGM+Qwet+CfBkU?=
+ =?us-ascii?Q?KuJExwxP8BiRMPOfJ4Oqk/FEnbzynaBp+GGaH/ZwzsbKcWFeRjSItbL7rxX3?=
+ =?us-ascii?Q?ve5mWwQB5P2U2ruseLUg6U9nqsabxAB/LFY06HA/eCh5Qo3QAB3FaSu4BU/W?=
+ =?us-ascii?Q?lAgIKG4Bjha/5aflOZkpf82G6wsgce88AjphzgYeykbjlQXi7XAbp2RcKYZu?=
+ =?us-ascii?Q?2JGdDYH7ZlFY9ajG8dR9Ad7YvBYHEr+Y3ffWyDERH9IwyBvKGM76h+kiixdm?=
+ =?us-ascii?Q?FNIwMNtdrJmyqCznSkqGD9EJ6eLp2FycyS1jHgxOuysei7bZp9w0t1bXU2ga?=
+ =?us-ascii?Q?DKM2giJhVjlc5jqeQzi0uP//jMwTzbDLFj5BAmJGjmAVhhVl+duPq8BqZOEK?=
+ =?us-ascii?Q?wlQ06MzUG5O5SkDpy0ISYgay/kNkbBxEY8MU/jDPvD7y3Te0Rkuz7iuJEVaB?=
+ =?us-ascii?Q?I2WL5YU4/rSz7X7c8VXpPAb8jbz+T00t/0ep?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 15:08:19.4669
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b846e73-1052-4d7e-8e57-08dd8f0b554e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB4B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4230
 
-On 09/05/2025 17:03, Waqar Hameed wrote:
-> Nicera D3-323-AA is a PIR sensor for human detection. It has support for
-> raw data measurements and detection notification. The communication
-> protocol is custom made and therefore needs to be GPIO bit banged.
-> 
-> Add devicetree bindings requiring the compatible string and the various
-> GPIOs needed for operation. Some of the GPIOs have multiple use-cases
-> depending on device state. Describe these thoroughly.
+Factor out code to find the switch decoder of a port for a specific
+address range. Reuse the code to search a root decoder, create the
+function cxl_port_find_switch_decoder() and rework
+match_root_decoder_by_range() to be usable for switch decoders too.
 
+Signed-off-by: Robert Richter <rrichter@amd.com>
+Reviewed-by: Gregory Price <gourry@gourry.net>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Tested-by: Gregory Price <gourry@gourry.net>
+---
+ drivers/cxl/core/region.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-Drop redundant parts of description. Describe the hardware. Entire last
-paragraph is pretty pointless.
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 8fdf03058b2f..9d3f97ed664b 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -3202,33 +3202,39 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
+ 	return rc;
+ }
+ 
+-static int match_root_decoder_by_range(struct device *dev,
+-				       const void *data)
++static int match_decoder_by_range(struct device *dev, const void *data)
+ {
+ 	const struct range *r1, *r2 = data;
+-	struct cxl_root_decoder *cxlrd;
++	struct cxl_decoder *cxld;
+ 
+-	if (!is_root_decoder(dev))
++	if (!is_switch_decoder(dev))
+ 		return 0;
+ 
+-	cxlrd = to_cxl_root_decoder(dev);
+-	r1 = &cxlrd->cxlsd.cxld.hpa_range;
++	cxld = to_cxl_decoder(dev);
++	r1 = &cxld->hpa_range;
+ 	return range_contains(r1, r2);
+ }
+ 
++static struct cxl_decoder *
++cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
++{
++	struct device *cxld_dev = device_find_child(&port->dev, hpa,
++						    match_decoder_by_range);
++
++	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
++}
++
+ static struct cxl_root_decoder *
+ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+ {
+ 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+ 	struct cxl_port *port = cxled_to_port(cxled);
+ 	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+-	struct cxl_decoder *cxld = &cxled->cxld;
++	struct cxl_decoder *root, *cxld = &cxled->cxld;
+ 	struct range *hpa = &cxld->hpa_range;
+-	struct device *cxlrd_dev;
+ 
+-	cxlrd_dev = device_find_child(&cxl_root->port.dev, hpa,
+-				      match_root_decoder_by_range);
+-	if (!cxlrd_dev) {
++	root = cxl_port_find_switch_decoder(&cxl_root->port, hpa);
++	if (!root) {
+ 		dev_err(cxlmd->dev.parent,
+ 			"%s:%s no CXL window for range %#llx:%#llx\n",
+ 			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
+@@ -3236,7 +3242,7 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+ 		return NULL;
+ 	}
+ 
+-	return to_cxl_root_decoder(cxlrd_dev);
++	return to_cxl_root_decoder(&root->dev);
+ }
+ 
+ static int match_region_by_range(struct device *dev, const void *data)
+-- 
+2.39.5
 
-> +
-> +properties:
-> +  compatible:
-> +    const: nicera,d3323aa
-> +
-> +  vdd-gpio:
-> +    maxItems: 1
-> +    description:
-> +      GPIO for supply voltage (1.8 to 5.5 V).
-
-This is not how pins are represented in the kernel. Either you have here
-regulator (supply) or reset gpios. Plus 'gpio' suffix is not valid, btw.
-
-Datasheet says this is a supply.
-
-> +      This GPIO will be driven low by the driver in order to cut the supply and
-> +      reset the device (driving it then back to high to power it on).
-> +
-> +  clk-vout-gpio:
-
-No, for the similar reasons. Which pin is this?
-
-> +    maxItems: 1
-> +    description:
-> +      GPIO for clock and detection.
-> +      After reset, the device signals with two falling edges on this pin that it
-> +      is ready for configuration (within 1.2 s), which the driver listens for as
-> +      interrupts.
-> +      During configuration, it is used as clock for data reading and writing (on
-> +      data-gpio). The driver drives this pin with the frequency of 1 kHz (bit
-> +      banging).
-> +      After all this, the device is now in operational mode and signals on this
-> +      pin for any detections. The driver listens for this as interrupts.
-> +
-> +  data-gpio:
-
-There is no such pin.
-
-> +    maxItems: 1
-> +    description:
-> +      GPIO for data reading and writing.
-> +      During configuration, configuration data will be written and read back
-> +      with bit banging (together with clk-vout-gpio as clock).
-> +      After this, during operational mode, the device will output serial data on
-> +      this GPIO. However, the driver currently doesn't read this.
-> +
-> +required:
-> +  - compatible
-> +  - vdd-gpio
-> +  - clk-vout-gpio
-> +  - data-gpio
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-
-So you included that header
-
-> +
-> +    proximity {
-> +        compatible = "nicera,d3323aa";
-> +        vdd-gpio = <&gpio 73 0>;
-> +        clk-vout-gpio = <&gpio 78 0>;
-> +        data-gpio = <&gpio 76 0>;
-
-But where are you using it?
-
-> +    };
-> +...
-
-
-Best regards,
-Krzysztof
 
