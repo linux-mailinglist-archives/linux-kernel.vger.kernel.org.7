@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-640752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAEFAB08BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:18:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9FFAB08C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7EC1C20F46
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2961520561
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867FA24418E;
-	Fri,  9 May 2025 03:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C65239E63;
+	Fri,  9 May 2025 03:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fdgTY9ZS"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5B21D7985
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 03:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="JqtZjoxF"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6916021E094;
+	Fri,  9 May 2025 03:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746760610; cv=none; b=csZH/QG5gdeNj42C/yZ4upi50+Fbfv6GJm3CiA6puzq9HXRr243JuyILB3PfzA8n2ysJRlHaGN4SSzIr97jrj3UQq5n574bwnIndkU8wjor+JzKCia5gqLdLGXeaAiER8bojJExJ/glWRqAeRKB8wqs7CQSeT6MNrzydpmxM9Zg=
+	t=1746760773; cv=none; b=QVuTTfmBFjqmvirtHsyyBxPu2qVHCUxlgCbpXt1IAYkZ/qx2PPg023hdphaOsDLdytqLOGx0pVbQJR4FQJKxJrYw2GW4U7DspVn+DrS1RysiDtQbtcLjjj4ZpbJv0XoVyWbFRkgcZkuxn7ATWrq+ICJLGg1/J5/7DahZJXK0EtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746760610; c=relaxed/simple;
-	bh=d/IsvdO2UHi4Lve88nd3NjTiZKxwcVU54M/ExtK0rp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KYtZK7WaGLkYC7vJ8x+lpv4nPt4w6U3Z3tHSWhW7KEvTFLiIv/GaRVuzYXYAhMJowzVq6I3th4jqEyU12wQ0mLWdDoQrvPjCCfJF45WoBY1az0mUW4nDR1Vptr4ANuiPQT0pHQvrqzm5NfnLxJQkQsU0gOOff0KQ9xYdVxGCbxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fdgTY9ZS; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=sM
-	l4uDULJ4d2VplsLBXiseBBzW7TX6oyV9iz007EHaY=; b=fdgTY9ZS0keqXsXBT8
-	XV8j88E6S93/AzsYGphFUeOMZZRmpPiRIUe5LOvcxDy7YBiB1zuJ8Tufm3RCdLDj
-	Qif0RBptSLAxFJ+obO4D5QpPO+5+1yE82rmGGxfS6S8bZ6JTMBs/jebUPpGHoO/T
-	L6JamKk6eBoJhfaBp0KQ3l/4c=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3v26Bcx1ombx0AA--.1362S2;
-	Fri, 09 May 2025 11:16:21 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: andrzej.p@collabora.com,
-	hjc@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	tzimmermann@suse.de,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1746760773; c=relaxed/simple;
+	bh=orWV0KwImVaIe1Pg1GNgaP87AmVSYay0c+IU0+2Y2iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dN+BvhFvOFoqvn3E+u08Aqx8put4ereWCBO5oY/DcoykymxL89kaFNvpByrCZ2CRjkIPsj3ykwm0mwFPj3t9aWJuXvAM2wSTp59+i4pBdt87ZKwZn5ixlJjoymHvf4FHj7MSkoznc2gkf0mgl48TnAseyTbNPpJWCnxf9EZIkkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=JqtZjoxF; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=dE7KsY3C69gRveUcK9458KB7m3NHQralEt4kxp669RU=; b=JqtZjoxFaHNb7nB2mMWLV1uOZC
+	3BrNBdJRfR76KqHBqGWU8ir/hwBsVUKSLPy5W8eiUplGCjtGXdlVaBFd+gxDGGI69iEIDnEbBZGS4
+	m1mEJW/I7OB5QIi2ieSaLgYcqYQa5ft1SJo88FNjCdtNqA/3phTkiu4QaQqa6j6baUUo3WUFZv5Fu
+	6oP9hBvOQ3WynYwUF2SH+P2qtXISd8N5K7sAfRQskPBT0ncza+SPNFmEtKS7vi78E3fQy2foN+kwS
+	ti3LTEUB2gY2OAUzuux85m/OeF6bojizQ0/l/8y1vYkwSdzFp0J0A1UZr9VNOKaVE1Vxy7n6cM/lK
+	dgI/8Y4A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uDEGk-004kX5-1M;
+	Fri, 09 May 2025 11:19:27 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 09 May 2025 11:19:26 +0800
+Date: Fri, 9 May 2025 11:19:26 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, regressions@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH] drm/rockchip: cleanup fb when drm_gem_fb_afbc_init failed
-Date: Fri,  9 May 2025 11:15:59 +0800
-Message-ID: <20250509031607.2542187-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
+	Romain Perier <romain.perier@gmail.com>
+Subject: Re: [v3 PATCH] crypto: marvell/cesa - Do not chain submitted requests
+Message-ID: <aB10PqZNk0L-ly70@gondor.apana.org.au>
+References: <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
+ <Zw9AsgqKHJfySScx@gondor.apana.org.au>
+ <aBoMSHEMYj6FbH8o@gondor.apana.org.au>
+ <aBsdTJUAcQgW4ink@gondor.apana.org.au>
+ <aBt5Mxq1MeefwXGJ@Red>
+ <aBw-C_krkNsIoPlT@gondor.apana.org.au>
+ <aBw_iC_4okpiKglQ@gondor.apana.org.au>
+ <aBypVwhHHzmqqN5K@Red>
+ <aBytNdRyd5Ywh1Pq@gondor.apana.org.au>
+ <aBy06xyzh5kKC48a@Red>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v26Bcx1ombx0AA--.1362S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr4DZr47WrWkJrWkZw1xGrg_yoW8Gw1rpa
-	9xtFWjvrWxGw40grnFkFs5ZFyrK3ZFgayxKr4xGa1fZr12kFyqgw1fCF95ZrW3Jr17ZryY
-	vrZ3J348AFZruFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5AwxUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0h1IXmgdbavmLAAAsg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBy06xyzh5kKC48a@Red>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Thu, May 08, 2025 at 03:43:07PM +0200, Corentin Labbe wrote:
+>
+> 6.14.4 boot log at http://kernel.montjoie.ovh/477911.log
 
-In the function drm_gem_fb_init_with_funcs, the framebuffer (fb)
-and its corresponding object ID have already been registered.
+What's interesting is that the skcipher tests are failing during
+the random tests which means that they'd already passed all the
+static test vectors.
 
-So we need to cleanup the drm framebuffer if the subsequent
-execution of drm_gem_fb_afbc_init fails.
+Looking at the driver modprobe code, the skciphers get registered
+before the ahash algorithms.  so their tests would have started
+sooner.
 
-Directly call drm_framebuffer_put to ensure that all fb related
-resources are cleanup.
+I wonder if the skcipher code is corrupting the ahash state when
+run concurrently (and chained together).
 
-Fixes: 7707f7227f09 ("drm/rockchip: Add support for afbc")
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index dcc1f07632c3a..5829ee061c61b 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -52,16 +52,9 @@ rockchip_fb_create(struct drm_device *dev, struct drm_file *file,
- 	}
- 
- 	if (drm_is_afbc(mode_cmd->modifier[0])) {
--		int ret, i;
--
- 		ret = drm_gem_fb_afbc_init(dev, mode_cmd, afbc_fb);
- 		if (ret) {
--			struct drm_gem_object **obj = afbc_fb->base.obj;
--
--			for (i = 0; i < info->num_planes; ++i)
--				drm_gem_object_put(obj[i]);
--
--			kfree(afbc_fb);
-+			drm_framebuffer_put(&afbc_fb->base);
- 			return ERR_PTR(ret);
- 		}
- 	}
+Cheers,
 -- 
-2.43.0
-
-base-commit: 98f498ca33ac03f4d9514e66cdfec9ee58808f82
-branch: rk3036_hdmi_bridge_v5
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
