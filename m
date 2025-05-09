@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-640896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B097DAB0AB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE48FAB0AB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146DE1C02272
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD549C7D3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6177326AAB8;
-	Fri,  9 May 2025 06:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656D626B096;
+	Fri,  9 May 2025 06:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihBMTySM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Y2WLLVxx"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B913A28F4;
-	Fri,  9 May 2025 06:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A358026AAA5
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772703; cv=none; b=i57xaurZowQ7yISXcVF7upLvozhsb2aFpPCUkdDfqmoAqN/z4qvvWS2yt7ztfOK0YyES1OgDtwF7tXyOuZxlpgCmQ8vMkxZ2fq6DDLg6Cdr+ISpyFd+/C/ZqIU22XGU/rI4X4LSTCKysxBhjxA960iamcJQ7o6VdKCOKO7sVb8g=
+	t=1746772756; cv=none; b=YQyPTD5ydRn7RpFL2ZDAhPEmKkudK1nuSOLNKTLDE6ZD56rVarO4ysagX8szseAnh4ZZ6b7+O6JBkN5DmbWEI23d0EH8X1uEMvDvm8MRt+MTZw8669rF583P/YPVI3l6tfn4tpeI53mMyc3XPJRKDyJJVgEMm02sX7uum9+kXj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772703; c=relaxed/simple;
-	bh=DijmGR4CReVDiWNuWA3tbBM8VuHHMl+HFeLCqD0jOkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmaePxg5kWLJDFxonlwTIwxNkvPuuoYg35mogzIla72pY7VVASp8C3772QRxwxe9UJKbWGmm/e2ap/X5VI2jCOIr6pWbBJVw8meLjtL4Y2zYnwMHDZu8k8U65hOsMf80ZhSzgmiQwvKx/YdCizM3g7a+KAcao4zwXw87viEXIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihBMTySM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C24C4CEE4;
-	Fri,  9 May 2025 06:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746772703;
-	bh=DijmGR4CReVDiWNuWA3tbBM8VuHHMl+HFeLCqD0jOkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ihBMTySMNi0Q0hIgKK1LyO0M9lKYu3oaShiHal1xYZ9dkRF2ZaqKOtxsNaX1LNdDe
-	 GjjlJrK14Jwaeovr18Bo17oyM4K+8Dk61NTigpn9+kAEwUdjIOjZzagvlkobf6OHGx
-	 WPiYD/qSkqzYuGZ9nAMx0mXQumZiPJupB6sHdxmKyhVe+UOZXtad7/id4CG11ufHXb
-	 /NRNr01YZ2WaiHBYXtJoOaGMokubxhQXbcQEgMto0C+GLxVGXB3xG8fpigQ2O/rL2F
-	 KkAi3My9wBpLidClSN0PF++VT0kdYO70Px4xpdBPGbk06P0jKlt4rsNV6Y8BCw7dyf
-	 8T7RGPFCa0YOg==
-Date: Fri, 9 May 2025 08:38:18 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: linux-next: manual merge of the drivers-x86 tree with the tip
- tree
-Message-ID: <aB2i2oVeGwhaauIU@gmail.com>
-References: <20250509162901.79e269a5@canb.auug.org.au>
+	s=arc-20240116; t=1746772756; c=relaxed/simple;
+	bh=toPsAjTHhDkqLjmaul6Wfecw6WhjzpH35h5akmjTlog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u0jrfo3TGynxM7+x0YfZeFXGl20s9HtBH1Wx6wB461pO0Kyshfpwxjcr5/UqEoib51lb9CAosq7iNg7mLQwltK7TpgKaSpIHR6hBBL4JlFPFfG2TnBEV4DY/B5Mkj//nUsgEI2Qi1pGi5tal5TpV0+V3fL96oFLCFYzKBVwYcE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Y2WLLVxx; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1746772748;
+ bh=y6AR61P+JIqfzvn1/iMFMvHRsQy3bZwJcBc+BL7GPOw=;
+ b=Y2WLLVxxCKGVtP6k/d1eiNj2nFBjUf7kcadW59YkSwTXFx7znXAMk44GQXsdIyo51fakUuClb
+ VnLwRUUb9AFmA2qHH/qeDLSV+cLWp6FZnv7FhNX30BXu6MdZ1itqcuwycK2Q+vTM79jFNjpJw9U
+ jfUQgBa8UvRUSDTalLRkQcAzbfF9H0KMOU4HSlppAUhIJP9zuKs3RrgM3EtkgAwcM8qDU4CyGNS
+ lbRnNiqeReLhd1Zak8LVGGyVyEvdIaj2TvTx8QHKuUw6Q6MAHagX/TCoseo2oOq0z2PJtXMt3Hl
+ 3F6bYGZxCB7yXORLJ7xkIbatrKGf+WimQtwo4icGlYIw==
+X-Forward-Email-ID: 681da3084a62bf69f80b0c1b
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.0.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <1ddc77da-2355-4c41-b215-533fb23fd0be@kwiboo.se>
+Date: Fri, 9 May 2025 08:38:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509162901.79e269a5@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] arm64: dts: rockchip: Add SDMMC/SDIO controllers
+ for RK3528
+To: Yao Zi <ziyao@disroot.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250508234829.27111-2-ziyao@disroot.org>
+ <20250508234829.27111-3-ziyao@disroot.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250508234829.27111-3-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2025-05-09 01:48, Yao Zi wrote:
+> RK3528 features two SDIO controllers and one SD/MMC controller, describe
+> them in devicetree. Since their sample and drive clocks are located in
+> the VO and VPU GRFs, corresponding syscons are added to make these
+> clocks available.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+This has not changed since v4, so this is still [1]:
 
-> Hi all,
-> 
-> Today's linux-next merge of the drivers-x86 tree got a conflict in:
-> 
->   drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-> 
-> between commit:
-> 
->   6fa17efe4544 ("x86/msr: Rename 'wrmsrl_safe()' to 'wrmsrq_safe()'")
-> 
-> from the tip tree and commit:
-> 
->   c935ddfe65da ("platform/x86: ISST: Do Not Restore SST MSRs on CPU Online Operation")
-> 
-> from the drivers-x86 tree.
-> 
-> I fixed it up (the latter removed the code that the former updated) and
-> can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+Reviewed-by: Jonas Karlman <jonas@kwiboo.se>
 
-LGTM, thanks!
+[1] https://lore.kernel.org/r/f0ef6679-7ddf-4deb-98a3-755ac2b61a57@kwiboo.se/
 
-	Ingo
+Regards,
+Jonas
+
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 69 ++++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+
+[snip]
+
 
