@@ -1,218 +1,151 @@
-Return-Path: <linux-kernel+bounces-641732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08827AB152F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:31:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8CFAB147C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80EB16C545
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446711C4291E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89A62918C6;
-	Fri,  9 May 2025 13:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718E629187D;
+	Fri,  9 May 2025 13:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cXe4/vvP"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="uQ5AqAXF"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274BE153BD9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CDE15E96
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797236; cv=none; b=ilCtEUyevAW5N7KYN/EZled9bpfNJ0Meb6o2x4SzYSnoyliQcyE5Y7RSMoP2yt92D9jwZbSLSvnBbsUiIKqWuss5w4aHChB9401MLGZSfIxXmKXLU5rGNqZdKdEt4EhiYhVSTnTFJQ5Tt3ROj4/oR6yFGWNrpE2FYzGh6UzLN3o=
+	t=1746796340; cv=none; b=rYkCgSU6bgHVI94ey1WnYpsWP7duDZdGwRgV/nsewWfbJ7hEd0KkrafmbgTDt8I3w5xuuQAOFclDQP66eSvjYmVjP+nujt9RP468TiQItmvV2TIEA6NZF8l5OKdGHQOUhTLwJFbq9CstvnhkD0+tBCrWset4WqOWNdTQoVaPClw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797236; c=relaxed/simple;
-	bh=doZKpPxAQpxaBkO/YlN9rUxl+kd59lEXLwgpO7DZBAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=QfhL3qJ/E0BKqy4CN5m1s6IoM7aeXThtYi4gIdSbCMdYrq2MLQ4MMfpwl5T68gsjj4IN7cd6g1gBGRB0nTpMYs4IzkKqopL3cioO7/pjjxqLQ9Q7A4oRAhlisukFySN/OdPeaAKX8ahwrTHytPLHKskoX4UZTxaZf8dhU+nF5/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cXe4/vvP; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250509132712epoutp045bb495b2d92940092d149217744b87ac~93tPx5lkm2812728127epoutp04d
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:27:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250509132712epoutp045bb495b2d92940092d149217744b87ac~93tPx5lkm2812728127epoutp04d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746797232;
-	bh=e0Eu3ZZtuZQ0K6JhQyN7GxUowK7inRr+RYFTzz6V1gY=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=cXe4/vvPDnsUyQ/zYa+6dRFdUBtEjIZxq97KBqyqwbHFw99YXPAKwTYEgu2gWDFLA
-	 aWEvcyV1dI1wFxRLWchs6w+n9FrogP/FCFyYellSveTB6+hMdaybGJ1iti4G3+stZE
-	 l5Cy+HYPYwKzo60c51a1z22udEajNYjqU/S3kmqg=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250509132711epcas5p2decb26bfdfcd376a21cd9ef17d7ea02f~93tPDhFaE1216212162epcas5p20;
-	Fri,  9 May 2025 13:27:11 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4Zv8tP5tbbz6B9m7; Fri,  9 May
-	2025 13:27:09 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62~93XoXd59A0846108461epcas5p3K;
-	Fri,  9 May 2025 13:02:26 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250509130226epsmtrp1f24d8b7de12cdf7a6cbea7e38cc19009~93XoWtUdw2431924319epsmtrp1Y;
-	Fri,  9 May 2025 13:02:26 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-64-681dfce2c039
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F6.FC.19478.2ECFD186; Fri,  9 May 2025 22:02:26 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250509130224epsmtip1e3878beea0dbc1db6802ec0f36e702e9~93XmiwAWx2265322653epsmtip1L;
-	Fri,  9 May 2025 13:02:24 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	mturquette@baylibre.com, sboyd@kernel.org, richardcochran@gmail.com,
-	alim.akhtar@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Raghav Sharma <raghav.s@samsung.com>
-Subject: [PATCH v1] clk: samsung: exynosautov920: add block hsi2 clock
- support
-Date: Fri,  9 May 2025 18:42:10 +0530
-Message-Id: <20250509131210.3192208-1-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746796340; c=relaxed/simple;
+	bh=ycTXrwCf5dD7v25Dchh11ii5tZH9UbpA8WEp96qqcN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1qQ77PL+UTlfALavpTaayDbTKwTgXlMcY+KiPRUqppEUwYxqQsef3HioJRY49Ce0TA1xGt+IphrCx1FLsKnhAVGzmF0AEWgpb5HgYE2ZjuUTICtjRm4Lx2ZCAitq6nhNehUpXtp4Q4/FSUGZN2NX9rPH6CkZ+8/fuLpY8uW59s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=uQ5AqAXF; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Fri, 9 May 2025 09:12:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1746796336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hlt61GqgvUxq8BPErozdvm0ae/X6SagRe6G13VwOLvM=;
+	b=uQ5AqAXFVcmHUb0x+rThTA1wu5GMLar705S4fEHg1OWaqDIn856HhShJkRTS/7xYF/H4uj
+	FhOOVgXecAgyMVzJGuz54etH4wDaqgWm7dk8ufkJCbswdg8rMSE0QHhRoChDars1v1X6hK
+	r7944Dg7mqTEUUV5vA6whCm1ZerKoR7WI4Wlggw5VoJmBMAOIPAzW0LeiNcziVgEnAVeQX
+	+JnYZMrwxbPmeNKCgl0KEOszta9ePIn6Grb6uUXi+irvy2ag+72+YLPcGa9lP+iUk1kps4
+	sU/JfEVcgiqlzlAmOEPYXZ4pQ1P5qFeuS6fBHfCbb554nNnOn4ldn2bTrx3e9A==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: sven@svenpeter.dev
+Cc: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+	Hector Martin <marcan@marcan.st>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] dt-bindings: gpio: Add Apple Mac SMC GPIO block
+Message-ID: <aB3_Kw6WDaDAY6Ub@blossom>
+References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev>
+ <20250503-smc-6-15-v4-1-500b9b6546fc@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSnO6jP7IZBjMvGFg8mLeNzeL6l+es
-	FufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhbHFohZfF95h9HiyJkXzBaH37SzWvy7
-	tpHFgdfj/Y1Wdo+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwRXHZpKTmZJalFunbJXBlzPj/
-	n7FgvnLFwpcdLA2MR2S7GDk5JARMJG6dP8vUxcjFISSwnVFi0b8jjBAJCYl9/39D2cISK/89
-	Z4coesso8Wn7U7AEm4CWxJXt79hAEiICaxglPvbNB0swC5xhlJg5UQjEFhbwk2ic/J2li5GD
-	g0VAVWLVN3aQMK+AtcSZ3XNYIBbIS+w/eJYZIi4ocXLmExaIMfISzVtnM09g5JuFJDULSWoB
-	I9MqRtHUguLc9NzkAkO94sTc4tK8dL3k/NxNjODw1grawbhs/V+9Q4xMHIyHGCU4mJVEeJ93
-	ymQI8aYkVlalFuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MFm1FlRO
-	q7CN9rm8QjB/4uejCbul/tz7qf9TRTPyVPbDEHbXBdxi1QtYjN0ez2Lt8ntXU3BYa/l8a4ls
-	dh3frr63Hb+Z938y0X+U96Rzb+mlhnc2B1a8WJl14P8nkT9uMdbzNM48k9ye4LaIb397sFpM
-	zypWz9kF6jIxl7IFljw57WB6MCnh49LJ6w+baXx5HFk3lfOv8/yiCi1hi2eLNx1OLhGRWnfN
-	J8f9NFO4T6OM320ea4l0pbQ/Zc+1m5ni10yavKrrK9+Xx/ZCGncMNYW2PMozjzn3rnb1/muB
-	y77Vnr25LFEp/4lHx7OPFUye3YUSHj/ee3x89GmvZGOT3FYZa4dDCXW8yk2Wyfe5lFiKMxIN
-	tZiLihMBaYD+fN4CAAA=
-X-CMS-MailID: 20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62
-References: <CGME20250509130226epcas5p3cf112ae8a2911c76f02756a386c09e62@epcas5p3.samsung.com>
+In-Reply-To: <20250503-smc-6-15-v4-1-500b9b6546fc@svenpeter.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Register compatible and cmu_info data to support clocks.
-CMU_HSI2, this provides clocks for HSI2 block
+Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- drivers/clk/samsung/clk-exynosautov920.c | 72 ++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-index f8168eed4a66..89d6ea10515d 100644
---- a/drivers/clk/samsung/clk-exynosautov920.c
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -26,6 +26,7 @@
- #define CLKS_NR_MISC			(CLK_DOUT_MISC_OSC_DIV2 + 1)
- #define CLKS_NR_HSI0			(CLK_DOUT_HSI0_PCIE_APB + 1)
- #define CLKS_NR_HSI1			(CLK_MOUT_HSI1_USBDRD + 1)
-+#define CLKS_NR_HSI2			(CLK_DOUT_HSI2_ETHERNET_PTP + 1)
- 
- /* ---- CMU_TOP ------------------------------------------------------------ */
- 
-@@ -1752,6 +1753,74 @@ static const struct samsung_cmu_info hsi1_cmu_info __initconst = {
- 	.clk_name		= "noc",
- };
- 
-+/* ---- CMU_HSI2 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_HSI2 (0x16b00000) */
-+#define PLL_LOCKTIME_PLL_ETH                    0x0
-+#define PLL_CON3_PLL_ETH			0x10c
-+#define PLL_CON0_MUX_CLKCMU_HSI2_ETHERNET_USER  0x600
-+#define PLL_CON0_MUX_CLKCMU_HSI2_NOC_UFS_USER   0x610
-+#define PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_USER  0x630
-+#define CLK_CON_MUX_MUX_CLK_HSI2_ETHERNET       0x1000
-+#define CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET       0x1800
-+#define CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET_PTP   0x1804
-+
-+static const unsigned long hsi2_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_ETH,
-+	PLL_CON3_PLL_ETH,
-+	PLL_CON0_MUX_CLKCMU_HSI2_ETHERNET_USER,
-+	PLL_CON0_MUX_CLKCMU_HSI2_NOC_UFS_USER,
-+	PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_USER,
-+	CLK_CON_MUX_MUX_CLK_HSI2_ETHERNET,
-+	CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET,
-+	CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET_PTP,
-+};
-+
-+static const struct samsung_pll_clock hsi2_pll_clks[] __initconst = {
-+	/* CMU_HSI2_PLL */
-+	PLL(pll_531x, FOUT_PLL_ETH, "fout_pll_eth", "oscclk",
-+	    PLL_LOCKTIME_PLL_ETH, PLL_CON3_PLL_ETH, NULL),
-+};
-+
-+/* List of parent clocks for Muxes in CMU_HSI2 */
-+PNAME(mout_clkcmu_hsi2_noc_ufs_user_p) = { "oscclk", "dout_clkcmu_hsi2_noc_ufs" };
-+PNAME(mout_clkcmu_hsi2_ufs_embd_user_p) = { "oscclk", "dout_clkcmu_hsi2_ufs_embd" };
-+PNAME(mout_hsi2_ethernet_p) = { "fout_pll_eth", "mout_clkcmu_hsi2_ethernet_user" };
-+PNAME(mout_clkcmu_hsi2_ethernet_user_p) = { "oscclk", "dout_clkcmu_hsi2_ethernet" };
-+
-+static const struct samsung_mux_clock hsi2_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_HSI2_NOC_UFS_USER, "mout_clkcmu_hsi2_noc_ufs_user",
-+	    mout_clkcmu_hsi2_noc_ufs_user_p, PLL_CON0_MUX_CLKCMU_HSI2_NOC_UFS_USER, 4, 1),
-+	MUX(CLK_MOUT_HSI2_UFS_EMBD_USER, "mout_clkcmu_hsi2_ufs_embd_user",
-+	    mout_clkcmu_hsi2_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_USER, 4, 1),
-+	MUX(CLK_MOUT_HSI2_ETHERNET, "mout_hsi2_ethernet",
-+	    mout_hsi2_ethernet_p, CLK_CON_MUX_MUX_CLK_HSI2_ETHERNET, 0, 1),
-+	MUX(CLK_MOUT_HSI2_ETHERNET_USER, "mout_clkcmu_hsi2_ethernet_user",
-+	    mout_clkcmu_hsi2_ethernet_user_p, PLL_CON0_MUX_CLKCMU_HSI2_ETHERNET_USER, 4, 1),
-+};
-+
-+static const struct samsung_div_clock hsi2_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_HSI2_ETHERNET, "dout_hsi2_ethernet",
-+	    "mout_hsi2_ethernet", CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET,
-+	    0, 4),
-+	DIV(CLK_DOUT_HSI2_ETHERNET_PTP, "dout_hsi2_ethernet_ptp",
-+	    "mout_hsi2_ethernet", CLK_CON_DIV_DIV_CLK_HSI2_ETHERNET_PTP,
-+	    0, 4),
-+};
-+
-+static const struct samsung_cmu_info hsi2_cmu_info __initconst = {
-+	.pll_clks               = hsi2_pll_clks,
-+	.nr_pll_clks            = ARRAY_SIZE(hsi2_pll_clks),
-+	.mux_clks               = hsi2_mux_clks,
-+	.nr_mux_clks            = ARRAY_SIZE(hsi2_mux_clks),
-+	.div_clks               = hsi2_div_clks,
-+	.nr_div_clks            = ARRAY_SIZE(hsi2_div_clks),
-+	.nr_clk_ids             = CLKS_NR_HSI2,
-+	.clk_regs               = hsi2_clk_regs,
-+	.nr_clk_regs            = ARRAY_SIZE(hsi2_clk_regs),
-+	.clk_name               = "noc",
-+};
-+
- static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
- {
- 	const struct samsung_cmu_info *info;
-@@ -1779,6 +1848,9 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynosautov920-cmu-hsi1",
- 		.data = &hsi1_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynosautov920-cmu-hsi2",
-+		.data = &hsi2_cmu_info,
- 	},
- 	{ }
- };
--- 
-2.34.1
-
+Le Sat , May 03, 2025 at 10:06:48AM +0000, Sven Peter via B4 Relay a écrit :
+> From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+> 
+> Add the DT binding for the Apple Mac System Management Controller GPIOs.
+> 
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Sven Peter <sven@svenpeter.dev>
+> ---
+>  .../devicetree/bindings/gpio/apple,smc-gpio.yaml   | 37 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/apple,smc-gpio.yaml b/Documentation/devicetree/bindings/gpio/apple,smc-gpio.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..07305eeb2595f59d5c28f6e507295b828dafd4a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/apple,smc-gpio.yaml
+> @@ -0,0 +1,37 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/apple,smc-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Apple Mac System Management Controller GPIO
+> +
+> +maintainers:
+> +  - Sven Peter <sven@svenpeter.dev>
+> +
+> +description:
+> +  Apple Mac System Management Controller GPIO block.
+> +
+> +properties:
+> +  compatible:
+> +    const: apple,smc-gpio
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    gpio {
+> +        compatible = "apple,smc-gpio";
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a70d79a5f6ae98fc0055f1da20dbecc095ea5c65..7f91f0225133490607ba0d79ad4225892ef31a66 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2267,6 +2267,7 @@ F:	Documentation/devicetree/bindings/arm/apple/*
+>  F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
+>  F:	Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
+>  F:	Documentation/devicetree/bindings/dma/apple,admac.yaml
+> +F:	Documentation/devicetree/bindings/gpio/apple,smc-gpio.yaml
+>  F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
+>  F:	Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml
+>  F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
