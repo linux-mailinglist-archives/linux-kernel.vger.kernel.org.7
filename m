@@ -1,39 +1,51 @@
-Return-Path: <linux-kernel+bounces-641123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386DAAB0D21
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:28:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92302AB0DE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8660D1BA6887
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCED3B180F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40FC2741A5;
-	Fri,  9 May 2025 08:28:02 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F3178F44;
-	Fri,  9 May 2025 08:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503782741A5;
+	Fri,  9 May 2025 08:56:42 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C5121FF23
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746779282; cv=none; b=NgRMUMG2ohIvlaCxwZS20BWG24zV6oCIjvNb+ihHJSJ/7JtRNxlkBLCowZ1Z43c8hA3bAGGOLz6lKsJ7OuHW1S9JHbzyBNHaDKq+n7RVUQQLOsdgfm7wdksEAJwraHcUTe9ZMPQJikoX008Dsi4zz8VRIbOv23StyGCzJtl3Jws=
+	t=1746781002; cv=none; b=GD8MIK10omHFIJ8adh8H9aLJbNAJ96jxyKklEvaREL4FrbGbdjJvADDbU8S7Xa/iHLOI60tIBxb2WCI+Hl74dXClkKYDyvD08EOBzI/XpHt5ZnsM4SStSFQFAuzTqvZScEJiWeRkbmhPIhEoBmjumD8xafpEurNoZKYZqoBYO8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746779282; c=relaxed/simple;
-	bh=zt4Yp2rwhdxWjESu9/z/iyNWq4hu5etLj8FEIXCqoD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eB37QMmoRS8gcGG9/XHV3tVgBOu0SMKS4Lg7YzDKhAfmV2uiDwWuQQ1B8MhaNaf+0xnuvnI5EpYu7YL6F9qxXBZywd4q8Ma5F/6PER5DZZ9Y5k/yxK5LIYItZTUcxmagw15eU/cCwbwuF9eAmZ/Xtf6n8vJfw/+dSpnFJUMkrzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.186])
-	by gateway (Coremail) with SMTP id _____8AxquCGvB1oCkPbAA--.55768S3;
-	Fri, 09 May 2025 16:27:50 +0800 (CST)
-Received: from [127.0.0.1] (unknown [223.64.68.186])
-	by front1 (Coremail) with SMTP id qMiowMBx2xp+vB1oJem_AA--.14742S2;
-	Fri, 09 May 2025 16:27:44 +0800 (CST)
-Message-ID: <9b32fba8-a096-416a-abba-338ef414def7@loongson.cn>
-Date: Fri, 9 May 2025 16:27:41 +0800
+	s=arc-20240116; t=1746781002; c=relaxed/simple;
+	bh=dZZ3VPiPFOzf4cQPlWnKeSAeKt/VPUjAUXwbEpsGKjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=El/+kglHdxw2G+/pZBunL6g26HBUM5QomVOtAAJnDncCJexL/Rw4HmtrEywLhXJuHk6281M7KCooB8r2mYicfjQti0Tyd1HKTV1+8vPqq7eTBKWWM21iHqs8KHQS0tsaRr50hRNd44ql1jQ6PbFnnOgvGsb8cqq5iwNoScoNxP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1746779891-1eb14e386d11dc50001-xx1T2L
+Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id lNjwCd9NGm5gCPPo (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 09 May 2025 16:38:11 +0800 (CST)
+X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX3.zhaoxin.com
+ (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Fri, 9 May
+ 2025 16:38:10 +0800
+Received: from ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2]) by
+ ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2%6]) with mapi id
+ 15.01.2507.044; Fri, 9 May 2025 16:38:10 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from [10.32.65.152] (10.32.65.152) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Fri, 9 May
+ 2025 16:31:08 +0800
+Message-ID: <acfbdc87-5146-4c39-831f-70b132f9f4b0@zhaoxin.com>
+Date: Fri, 9 May 2025 16:31:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,109 +53,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] rtc: loongson: Add missing alarm notifications for
- ACPI RTC events
-To: Liu Dalin <liudalin@kylinsec.com.cn>, alexandre.belloni@bootlin.com,
- wangming01@loongson.cn
-Cc: chenhuacai@kernel.org, gaojuxin@loongson.cn, git@xen0n.name,
- jiaxun.yang@flygoat.com, keguang.zhang@gmail.com, lixuefeng@loongson.cn,
- linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250429062736.982039-1-liudalin@kylinsec.com.cn>
- <20250509014046.7399-1-liudalin@kylinsec.com.cn>
- <3c8eddda-ecce-4fdf-8773-3cfe8a09f237@loongson.cn>
- <48586F8AA034EA7A+02ca49ef-db27-47a5-8de3-3407dcfb48a5@kylinsec.com.cn>
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-In-Reply-To: <48586F8AA034EA7A+02ca49ef-db27-47a5-8de3-3407dcfb48a5@kylinsec.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBx2xp+vB1oJem_AA--.14742S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ArWktFWDWFWxuw13Aw47Awc_yoW8KFyfpF
-	Z5Aa4qkrZ5tr18uF9Fqa4UWryjk34rJ398XFs7ta409anFyw12gr4YqFyq9F4DAr48GF4a
-	qw1j9ay3uFn093gCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
-	twAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	AIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1q6r43
-	MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67
-	AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0
-	cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z2
-	80aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI
-	43ZEXa7IU8uuWJUUUUU==
+Subject: Re: Bug#1103397: linux-image-amd64: Kernel Panic:
+ copy_fpstate_to_sigframe crashes.
+To: Larry Wei <larryw3i@yeah.net>, Salvatore Bonaccorso <carnil@debian.org>,
+	<1103397@bugs.debian.org>
+X-ASG-Orig-Subj: Re: Bug#1103397: linux-image-amd64: Kernel Panic:
+ copy_fpstate_to_sigframe crashes.
+CC: Ben Hutchings <ben@decadent.org.uk>, "Chang S. Bae"
+	<chang.seok.bae@intel.com>, Lyle Li <LyleLi@zhaoxin.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<aruna.ramakrishna@oracle.com>, <pbonzini@redhat.com>,
+	<levymitchell0@gmail.com>, <attofari@amazon.de>,
+	<linux-kernel@vger.kernel.org>, <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>,
+	<LeoLiu-oc@zhaoxin.com>, <GeorgeXue@zhaoxin.com>, <yunshen@zhaoxin.com>,
+	<AlanSong@zhaoxin.com>
+References: <4ac9f677-699e-4ef1-b160-9f1c6fe8e820@yeah.net>
+ <c566339b-d8d3-4f74-a3b8-8f373fbe3f47@yeah.net>
+ <174486226753.86424.3234605951040281675.reportbug@zx2>
+ <8bcebb19-17f6-47e6-976a-0c9560795cd7@yeah.net>
+ <aB0Q8S47iNeD1GOM@eldamar.lan>
+ <6cebe32d-0290-41d8-9629-d80ef3c159c3@yeah.net>
+Content-Language: en-US
+From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+In-Reply-To: <6cebe32d-0290-41d8-9629-d80ef3c159c3@yeah.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Moderation-Data: 5/9/2025 4:38:09 PM
+X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
+X-Barracuda-Start-Time: 1746779891
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 1324
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.141129
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
 
-On 2025/5/9 16:06, Liu Dalin wrote:
->
->
-> 在 2025/5/9 15:12, Binbin Zhou 写道:
->> Hi:
->>
->> On 2025/5/9 09:40, Liu Dalin wrote:
->>> When an application sets and enables an alarm on Loongson RTC devices,
->>> the alarm notification fails to propagate to userspace because the
->>> ACPI event handler omits calling rtc_update_irq().
->>>
->>> As a result, processes waiting via select() or poll() on RTC device
->>> files fail to receive alarm notifications.
->>>
->>> Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family 
->>> chips")
->>> Signed-off-by: Liu Dalin <liudalin@kylinsec.com.cn>
->> Technically I don't think this is a compliant patch, firstly this 
->> patch should be V2 and also you should add "Changlog" for describing 
->> the differences from the previous patch.
->> Anyway, it's good to me.
->
-> Ok! There is another problem, if regmap_write(priv->regmap,
-> TOY_MATCH0_REG, 0) move to the end of loongson_rtc_handler as 
-> 09471d8f5b39("rtc: loongson: clear TOY_MATCH0_REG in 
-> loongson_rtc_isr()"), the interrupt also can be triggered multiple times.
->
-> So the regmap_write(priv->regmap,TOY_MATCH0_REG, 0) is move behind of 
-> rtc_update_irq by me, then the interrupt was triggered OK.
->
-> Is there any problem ?
 
-It is ok. That's where I added it when I suggested it before.
+On 2025/5/9 11:49, Larry Wei wrote:
+>=20
+>=20
+> [=E8=BF=99=E5=B0=81=E9=82=AE=E4=BB=B6=E6=9D=A5=E8=87=AA=E5=A4=96=E9=83=A8=
+=E5=8F=91=E4=BB=B6=E4=BA=BA =E8=B0=A8=E9=98=B2=E9=A3=8E=E9=99=A9]
+>=20
+> Salvatore Bonaccorso,
+>=20
+> Yes, let's just consider it as good. But in fact, there are still many
+> problems, such as the one mentioned above (
+> linux-hardware.org/?probe=3D271fabb7a4&log=3Ddmesg ), and almost all lapt=
+ops
+> using Zhaoxin CPUs cannot adjust the backlight brightness, which is
+> **VERY HARMFUL** to the eyes!
 
-Thanks.
-Binbin
+Dear Larry,
 
->
->>
->> Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
->>
->>> ---
->>>   drivers/rtc/rtc-loongson.c | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
->>> index 97e5625c064c..2ca7ffd5d7a9 100644
->>> --- a/drivers/rtc/rtc-loongson.c
->>> +++ b/drivers/rtc/rtc-loongson.c
->>> @@ -129,6 +129,14 @@ static u32 loongson_rtc_handler(void *id)
->>>   {
->>>       struct loongson_rtc_priv *priv = (struct loongson_rtc_priv *)id;
->>> +    rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
->>> +
->>> +    /*
->>> +     * The TOY_MATCH0_REG should be cleared 0 here,
->>> +     * otherwise the interrupt cannot be cleared.
->>> +     */
->>> +    regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
->>> +
->>>       spin_lock(&priv->lock);
->>>       /* Disable RTC alarm wakeup and interrupt */
->>>       writel(readl(priv->pm_base + PM1_EN_REG) & ~RTC_EN,
->> Thanks.
->> Binbin
->>
->>
->>
+We are currently investigating the causes of the WARNING messages you=20
+mentioned in this log:
+[    4.141284] ------------[ cut here ]------------
+[    4.141285] alg: self-tests for sha1 using sha1-padlock-nano failed=20
+(rc=3D-22)
+[    4.141302] WARNING: CPU: 2 PID: 657 at crypto/testmgr.c:5865=20
+alg_test.cold+0xb7/0xe0
 
+Regarding the inability to adjust the laptop backlight brightness, we=20
+believe this issue is unlikely related to the CPU itself. It is=20
+recommended to contact the laptop manufacturer to confirm whether the=20
+device supports backlight brightness adjustment and inquire about=20
+specific configuration methods, such as installing specific EC=20
+controller drivers or updating graphics card drivers.
+
+BRs!
+TonyWWang-oc
+>=20
+> Regards,
+>=20
+> larryw3i
+>=20
+> On 5/9/25 04:15, Salvatore Bonaccorso wrote:
+>> Did this felt through the cracks?
+>=20
 
