@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-642347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E9AB1D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498E1AB1D91
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC391B67224
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:01:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E454E4865
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0292725EFAA;
-	Fri,  9 May 2025 20:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Pyv7+A++"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE89925E815;
+	Fri,  9 May 2025 20:00:29 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B163F25DCED;
-	Fri,  9 May 2025 20:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD10D78F39
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 20:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746820845; cv=none; b=JpZlChTxDRJG4A37OkTLGEqOspD75wsCHY6g3h/a/JVvILHeobgBZlkWCRoQlpZEk/cPAePvZsumCgM4AUFWnjl4LWvJ4Hpw59a0e45PwyqsDQg8LxRfmmouhnex9SkzOoTBQsmHP7IkwOSf91zS7iG6TANNru/uPvqPh6gTI3A=
+	t=1746820829; cv=none; b=EPbun8Vi8279YLZ2ytku9y6nk3JGnWlc4MCWGULG0m/LVluIllVwZZbqGiuEjpsx3txdCn+2A13PGBNnNnbqVPyR7KsR+k1cBXJToAiNtbiR+wbfh6uHM/LTouKSz3EhMD2Xz+elnajDx13HB37UFaXOI08DbDF6SqA2RM9o704=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746820845; c=relaxed/simple;
-	bh=chO1k4fDyu2eYOHha8AZNZF4lCTV5sZsr/oNYjXdza4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kpiiXT/L5U8HVCKe67LUboy6kTfjneoAaNFO9WBWZsW31UJ/EdIQDsMkiJewMRrhZUxeVmyGaRlKe5WEjgXM6KhyXUeYzD+bELTsoJONd6fXKRwvweWvbG47wSBy/h/8vCgOfNovOVj+ThbKUU/4DkN5mh0M6ls49EI3LgeGIZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Pyv7+A++; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=KL6I1YmxNyuddUkwhXXWOAEg5l5FH054h54i4n0mk9A=; b=Pyv7+A++X2qXrdKmdackh5Cjmi
-	B9Nyd3jGnhX3hYmeumXkeMOGKr4FpDEPOlbbS0ytzvkCOhlhTNJ6h1ceBAYGPeIlg7X/gwSgw7XcB
-	1qIS7bVdgpYEBy3MBHIs19mt0OjsmvBNlsUJTNCCxrFYHUMr//HgecLQDDLujTqJc+kDOXmv7tqYh
-	CV0EylPgXa3UGkVeLsYIPfjRtglRPjRJmv27hrcvlYT0eOGULIt76/jy6Mbx45sivLRU8p+UWUmJB
-	22FYIhTxgK17ghYSGxoTR6NYRIHIguKAoY4PVdHFTiz93EonqnwUtBDxs9FhC2uM98XL5BfOgEVkL
-	gOo4/EGA==;
-Received: from i53875a1d.versanet.de ([83.135.90.29] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uDTtb-0004Jo-LF; Fri, 09 May 2025 22:00:35 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] Support SD/SDIO controllers on RK3528
-Date: Fri,  9 May 2025 22:00:23 +0200
-Message-ID: <174682074858.2029046.4538748769888209188.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250508234829.27111-2-ziyao@disroot.org>
-References: <20250508234829.27111-2-ziyao@disroot.org>
+	s=arc-20240116; t=1746820829; c=relaxed/simple;
+	bh=2aZJi90JXyrvmkIK5CBaOEyHjcCKQqsSifXJYutTtDA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bmrlba1xvN1lpm81aUCv0sw9hp1lhlMRBH4o34O2Svrljzr5IS0Yjyi/eNuD6XlYEv4K8Q7DxeV/8giyF/UDQwK9P1KaOtOjbsMmq3wS6IwtR0UcfGpvfMCxSJdXSihCMtFOaytPCisZEwf6fMaQW63mkK/JqXWnWoiVOic6bMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-85db3356bafso434667339f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 13:00:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746820827; x=1747425627;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bCQtphB0FemzCy19IwV6cQERYXbXPlbaTZmPEyFJTGI=;
+        b=jfpFC7q65CfN35Poe1dy0ApI5flXa7/y9fM9hMWNXzY7Tp1odWRT9U3tIrxt2ftxTj
+         7hwe14S0bbZkEpUgqm5O4yuSiXDOvLQih079C7xnzOH2CGVK9VPNxCDh8jVaNLigXxub
+         l4ynGr5o9uft3lzQuZ8i0Hf5yjA4m5PBan8IT+pOwSjt9u0h9WuDlMD01oktZAE4pvzE
+         5O5cXTLqkPIlQDU0D3l3o4In0ynoOTm6Re0+z81cBlbsFbPIdLszR79nS358aCmDiSAH
+         Ty4e3fGMFs4i1uaaVZoQ+xNXxybpOT+QNmj78hRoA4ZdaqaYAUO+XtqsdgTPSGznSN25
+         WbEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv0qxlqcdDNM0VSeio9bXeEFfhIWV8MAr7nLsi4nk8b4GGvqL4jpSnBSOMN8sTRpXBN6NX3HikjugCk7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiCGzRfeYQFXJ/Fp4NiaisLwCLa0gGx9C66XhxUCkJy+VW0xfd
+	dRRP1sEIlUfSmn0zG2ubjt0T0ZasQJNAo+COztjGr/KY70rjQ7gc45c8rEOkILn31QOaNeBSFkw
+	qJqD3cZgeLwynaoTn2ZqUOlaWoh/jNhdHtp25KYGIZYyq0LHNKImZDow=
+X-Google-Smtp-Source: AGHT+IFS1QqSUbqR7M7CBn7/jSPir9EcUhhf7mriUS+G5//b7VHIh2HGn9UpRPzgIvf03d2pRHHD+iUCvyv3SGjcENr4tG5dY9JM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3425:b0:867:d48:342b with SMTP id
+ ca18e2360f4ac-867636223a2mr517642539f.11.1746820827029; Fri, 09 May 2025
+ 13:00:27 -0700 (PDT)
+Date: Fri, 09 May 2025 13:00:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <681e5edb.050a0220.a19a9.013e.GAE@google.com>
+Subject: [syzbot] [net?] KMSAN: uninit-value in __ipv6_dev_mc_inc (2)
+From: syzbot <syzbot+3735d5f00e991698985a@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    02ddfb981de8 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=149d2cf4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9dc42c34a3f5c357
+dashboard link: https://syzkaller.appspot.com/bug?extid=3735d5f00e991698985a
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ca57f5a3f77/disk-02ddfb98.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3f23cbc11e68/vmlinux-02ddfb98.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/73e63afac354/bzImage-02ddfb98.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3735d5f00e991698985a@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in __ipv6_dev_mc_inc+0x4f0/0x1640 net/ipv6/mcast.c:966
+ __ipv6_dev_mc_inc+0x4f0/0x1640 net/ipv6/mcast.c:966
+ ipv6_dev_mc_inc+0x38/0x50 net/ipv6/mcast.c:997
+ addrconf_join_solict net/ipv6/addrconf.c:2242 [inline]
+ addrconf_dad_begin net/ipv6/addrconf.c:4100 [inline]
+ addrconf_dad_work+0x401/0x1d10 net/ipv6/addrconf.c:4228
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xb97/0x1d90 kernel/workqueue.c:3319
+ worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
+ kthread+0xd59/0xf00 kernel/kthread.c:464
+ ret_from_fork+0x6e/0x90 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Local variable maddr.i.i created at:
+ addrconf_join_solict net/ipv6/addrconf.c:2236 [inline]
+ addrconf_dad_begin net/ipv6/addrconf.c:4100 [inline]
+ addrconf_dad_work+0x244/0x1d10 net/ipv6/addrconf.c:4228
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xb97/0x1d90 kernel/workqueue.c:3319
+
+CPU: 1 UID: 0 PID: 3845 Comm: kworker/u8:19 Not tainted 6.15.0-rc3-syzkaller-00094-g02ddfb981de8 #0 PREEMPT(undef) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/29/2025
+Workqueue: ipv6_addrconf addrconf_dad_work
+=====================================================
 
 
-On Thu, 08 May 2025 23:48:28 +0000, Yao Zi wrote:
-> RK3528 features two SDIO controllers and one SD/MMC controller. This
-> series brings the SD/MMC one up on Radxa E20C board. Both HS and SDR104
-> modes are verified.
-> 
-> - Changed from v5
->   - Drop applied clock patches
->   - Rebase on top of linux-rockchip/for-next
->   - Link to v5: https://lore.kernel.org/all/20250506092206.46143-1-ziyao@disroot.org/
-> - Changed from v4
->   - rk3528 clock driver
->     - Switch to auxiliary GRF
->     - drop rockchip_clk_register_grf_branches
->     - Rename branch_mmc_grf to branch_grf_mmc to make style consistent
->       (with branch_grf_gate)
->   - Link to v4: https://lore.kernel.org/all/20250417143647.43860-1-ziyao@disroot.org/
-> - Changed from v3
->   - Drop applied binding patch of MMC controller
->   - Rebase on top of linux-rockchip/for-next
->   - Link to v3: https://lore.kernel.org/all/20250309055348.9299-1-ziyao@disroot.org/
-> - Changed from v2
->   - Apply review tags
->   - Rebase on top of linux-rockchip/for-next and drop applied patches
->   - RK3528 devicetree
->     - Fix accidentally dropped status property of saradc node
->     - drop det and pwren pinctrls for SDIO{0,1} according to the
->       reference design
->     - Correct max-frequency for SDIO{0,1}
->   - rk3528-radxa-e20c devicetree
->     - Don't disable sdio for sdmmc as claimed in the hw design guide
->   - Link to v2: https://lore.kernel.org/all/20250305194217.47052-1-ziyao@disroot.org/
-> - Changed from v1
->   - Apply review tags
->   - Rebase on top of linux-rockchip/for-next and saradc v2 series
->   - rk3528 clock driver:
->     - explicitly include minmax.h, replace MAX() with more robust max()
->     - readability improvements
->     - fix error checks: ERR_PTR(-ENODEV), instead of ERR_PTR(ENODEV), is
->       returned when syscon_regmap_lookup_by_compatible() fails for missing
->       such syscon
->   - RK3528 devicetree
->     - Add default pinctrl
->     - Move the per-SoC property, rockchip,default-sample-phase, into the
->       SoC devicetree
->   - rk3528-radxa-e20c devicetree
->     - Assign sdcard to mmc1
->     - Add missing regulators
->     - Apply no-sdio for the sdmmc controller
->     - Sort nodes
->   - Link to v1: https://lore.kernel.org/all/20250301104250.36295-1-ziyao@disroot.org/
-> 
-> [...]
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Applied, thanks!
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-[1/2] arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
-      commit: 894a2640422208b1d3e4c238f126220d406e5fb1
-[2/2] arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
-      commit: a2130d9123b23d74a717f52240fa3cb92bf8113c
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
