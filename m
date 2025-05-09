@@ -1,124 +1,162 @@
-Return-Path: <linux-kernel+bounces-641164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C76AB0DAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D9BAB0DB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F071635BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:47:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C97AB178DAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89E727604B;
-	Fri,  9 May 2025 08:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMJXFD7i"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA71F27B4FB;
+	Fri,  9 May 2025 08:44:10 +0000 (UTC)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C8227586B;
-	Fri,  9 May 2025 08:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A1A27700C;
+	Fri,  9 May 2025 08:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746780226; cv=none; b=gLsDhS8EuKJInHUC8qs8fIwCHq7e5dxTCMGbB2LLYYtq0DFy+dieuT6Qsg15v1jRUge8/nLi+wBZeAW/2X6ijrNH6/+MIAPxcaLaSyDhB29WKE+zb1emDz2Z3dVNaM0PI271VcOQRl7rIKoy1lbX7/rmDcJc87bPBnF0lU9BlyY=
+	t=1746780250; cv=none; b=Rl13iIda5vB5DGzEsQ8Joo+tBvvBwVToBASGOwD9MCzpZVohb14NTyvyEsqaqjJZhoQpeKPXhSFqW3Lg5ZuKpYXZ6tRUo41djYm9zi1okJf0NBQ0bvppnKcNPWbuluLg4PTQeGLhkthbbzNVzFqLiYnbzNHitjevrFe8D3vTVq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746780226; c=relaxed/simple;
-	bh=D+Z3MPOOomLStRJL1NiuAWmq/XdQJ45mhJewSQu6uSs=;
+	s=arc-20240116; t=1746780250; c=relaxed/simple;
+	bh=+Yp2wbVgA+EjZj3j/nQp643OXO4dNE0GkTBgD7mi0dQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rwea1stYNHMpfu+MaPP6C4RkEkVaunQzn8rYmTSnVP0RSS2dINNvIubQrWsZB/Ebka5lQdPzRKGy1aAZZHwJQk6yw40g2sEzQ/lCQTr9ZW04fZnwwsXCVFGpW0u99ksa8juJYc8B/fOehKIp0j9Ul3NsH+mx+up5yqMNoETnOsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMJXFD7i; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=QbNPylIw0NipNzanrlbU1kCfk3qdG+MbNPOWJ20Szoayx4BplftVhk05CzmPS+7aLtfhv8bwI1eATNf14/ExM+G+V6Bx6XG+aoiUp0I7YmQ37QLyeCBuxurlk/+0cJ6jBGngtjzCNwRB3ftGhlCGKduwICIK4ZmzbG83Y0AghgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e1597a5abso2870175ad.0;
-        Fri, 09 May 2025 01:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746780223; x=1747385023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D+Z3MPOOomLStRJL1NiuAWmq/XdQJ45mhJewSQu6uSs=;
-        b=RMJXFD7ijQWGBpHWufRoc7MieAPslSTryiZ/REJWFYnricDnpv9lTG071wK1DVYoSn
-         pe9VgQ/BtEjMDB+zkLlOcOg7IrLeXK0sAktMDCiTVH+MUwP8PIhEqq4UqFUIgcJ7TnaC
-         jvptc8GN1beSgf2K+J34t9mSREORt0IA2/H8dXRWvNb5vcOsf1wKFwDt3uEN3C577w/K
-         ZO8RsBO4KKj58iLD/hH3IcZBa4PzuGMUmHNY+zRyDR1E/sZ06m9hDakUyJVa0Ue2p7iB
-         YUIibXf2HLZbD6UGqHiAwLoYL0HS21KlZbHXFcXpU1zZFOxabtA0rL/DBGvSh2mWL+Py
-         8TuA==
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4c6cf5e4cd5so1705411137.2;
+        Fri, 09 May 2025 01:44:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746780223; x=1747385023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D+Z3MPOOomLStRJL1NiuAWmq/XdQJ45mhJewSQu6uSs=;
-        b=EeB5DaV5RCyOt3id9zm1mSnmowcquYJTlTbQqKPi5R66GINopTVGNJZ0qUQ2gt6YSz
-         YC2lLh1nxJ0+UtsBKZ71a5H6Qa2fdC98/ESOJH9mAFp3sG5f91CXa2kqH7ECxAARvgBD
-         HNUQkrmzlKxFv2YjL/FO4u9ZVkbF0PMsAQgf4/vQcqPcsNQiRyoxYHsuKxCUworEMNAQ
-         i5t+PAaQRfvPDGnQXXRvyHFKpsAQL5JIPaUqPl98avU2M0LCXQPZO2y7WCFpINesuclb
-         dTOoU4odNfFuZdUBqy7A2EWi698mu0SOrTDZOaQ7t7uAKQtNbuhMovAva5LeIeENRELr
-         Mrqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgrC5yKvkXZ7LdexIzg4TbDLNOcSbHuOx36QAHCsmHXHafy0XVAnvRSQg1o9aaWsaEHSKaQ6D4F8ihqgCa@vger.kernel.org, AJvYcCUrrDaVvi96hzlMbMn27F6PUhqE5QWPCHZ4ZDYTlk8dlNReV61ygPY+RgpLTEKEf8N6ojYXlFk/ZfY=@vger.kernel.org, AJvYcCVg+8QMZYTwaSmqDDhrgSRX2ibqWd/1GWkU7EkRiVNbR2xCI/5hZDfpxctZS9J/7U+pNfQTi1UoZV4=@vger.kernel.org, AJvYcCWN2XEDhdo7W8FF2Pl6d6PSeoiuSSVrMNikZdWpIq5OBeDHLJKLzFbE7btYMtxBPlMT5bwFvq1NMrWFeb8knw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMKveKz5CriEX/rOcBmBO9ECDj/Bdm9Qe5R+wCDfSyITh/xv0N
-	T1i28pPPUmalyIIhui/BmEznTjdwLdUeAlu7v1rWI1vPZE/H3/qh4NcUH/NXITcx4bpqj2hqhC2
-	F124fXvFNVs0QngCQlP4Oz5HVD5U=
-X-Gm-Gg: ASbGncseyCAdX6YeP7CgMUCmM10x6mNxvgogUUemomtdF+eZvP1bE6EHodE2JQsmDcx
-	283lOiMYD9CMCYze9/0zPEyIM9zI4g7oImP7YoVMuBJoAAzat7Def3acWkdxZLYFre5ZTAX24tB
-	N02WTS8UvlSDkSst5nXIF8Tw==
-X-Google-Smtp-Source: AGHT+IEJ5b65Q0v/CP2S0OTkUGvauUws7VombfalBDLX8YTyGJdmjd6kE+QjHM7Qv0bMlOEC/TCXzyk6KW7sbDKSNtw=
-X-Received: by 2002:a17:902:e54f:b0:22f:b00d:fe59 with SMTP id
- d9443c01a7336-22fc8d98a69mr14263115ad.9.1746780223105; Fri, 09 May 2025
- 01:43:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746780246; x=1747385046;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fhmBpQomX9NG5iuAvqHopd32DqiB0flMOUXVobwYc6M=;
+        b=kLzD8qFvBu/NmusCAsFQm59ebE6PczeSSl3OCtdSUr8CKFjHNdlO0nEf/YuLm54Yhh
+         SgdDebNJuuwBd6NFoIW92HsMX2uHamjHoY7vHyP1lEw0RQQcyc2di6S9NiPO0+CJYUqo
+         2k8MRrzPGbpAc2f4BeEoak+jaa6aNgbYsY1ZsC3c81DVeDIjZYM7JFijQLMTeUWUbAqr
+         DZJGRVCZ3YU/FRnkGxKcy1HRB71LOqvpKjJfkMS1oszfojcRPB9fQwaHUNoXSXGwi8lj
+         W8q7PVI7Y0teATVvbz7jRPkDBe3U9LCYYyu3dISl16CrToxsdKXKHDtvVmO4B0g7Hwy8
+         cfrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO1ztiMEQ1eiRdbOlbkwFT/NgijrMYwyTHPq9kYbqnnM974nQjv78VtJMgsjqUeVnJMAeQIm4HG6Zw@vger.kernel.org, AJvYcCUdVd4xPqI3u5kBWjek65Grg8DXLXRfObgtRA7+6QMu0sQMyt/eYy8vk9ouSm4mRXBdBLDm3ghAufOqHn2tMIyG@vger.kernel.org, AJvYcCV9D7e9D++sxllck3nizn5rmCpmSIPcEeFASbfULO/ObC0Bh36BvPykdnqQjCkYFTQFzlUejRZZ5MBSbcNC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGGHrTxCEq9uvrfZGu32+eA1zuA6QfWKvLE48czMQWd3x8F2ay
+	wYxjFN3PjdpphdgWwTJ+EVoC4b5VoFlUt9DQ8sZrsfa5IDLoxKKj5s4rWxD7
+X-Gm-Gg: ASbGncvVQp+WLhw+FN4BZ7PV8ow4xs38zDHnbisCitNLhavnosaaUhLvkmcC3MahloQ
+	dhfya/X2/QjajZgy5VhVcAf5CO6jBtXXhGLm4sH3esqkgNpks1wSjIo/CIOS8fCXibVAgwo6sUZ
+	v1DUgQVHgJpZIyZ/n8UMEPlpfsCxxZ3mcif9kfqhdZxwwVlHbTUqh4a5pcSkzIG3Zw5u0NxTRSU
+	+P5aSeANrKT0HTwLAQYtdptrxhjHL5wRcd3u979TCCu2TZ5KuVeuBJwxkHOGf0rEJAG+0vXRBgp
+	PlUDvhiuUDGIsVRXzH2h3gndI9nQIbESi9oKJfjLJB2Fobz6rjvO4RGeSEOENMGVEIW2FvLKutL
+	S+cA=
+X-Google-Smtp-Source: AGHT+IH5qyn2vFyYQY6HagjOy0j3hcknHPUwPI37zEIeQlk0dAv7yXe68QvtigwEm3CoVSlnlCcRQQ==
+X-Received: by 2002:a67:e7cc:0:b0:4dd:b037:d23d with SMTP id ada2fe7eead31-4deed36f9ddmr2287869137.12.1746780245817;
+        Fri, 09 May 2025 01:44:05 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4deb2016d22sm753070137.19.2025.05.09.01.44.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 01:44:04 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4ddba761dc4so831972137.3;
+        Fri, 09 May 2025 01:44:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4ts1Pi258BHb0MTgdU1i0dw0nkaCeqzwPrxku4KakQOsyM1GfxsWTQc6BVpTburM4yq07PqzbOnu6RcAXlzeN@vger.kernel.org, AJvYcCWM01eLMKPDHegQc4giCqvyxyL2BHaNwo/PSeueHND9jpFcCpJAXEC4zGFxtFfMV+0jpPBIQ7tUA+LgkrLo@vger.kernel.org, AJvYcCX8emvkLi4T8SGRAmKaOODt1WE8Xucbahak1JW60e9M/20/wQVEY4mTuM7pqUY0LcT5eYkV8iJWLRFA@vger.kernel.org
+X-Received: by 2002:a05:6102:4bc5:b0:4dd:b259:ef34 with SMTP id
+ ada2fe7eead31-4deed33faf6mr2382623137.10.1746780244214; Fri, 09 May 2025
+ 01:44:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502070109.inpes2ou3rxx2fxp@vireshk-i7> <20250506101311.142475-1-andrewjballance@gmail.com>
- <CANiq72k3ozKkLMinTLQwvkyg9K=BeRxs1oYZSKhJHY-veEyZdg@mail.gmail.com> <CAKohponbEEP4_weUuKkOGLRj5-1oOsoL_Zu_7W_SxB61hjsSCw@mail.gmail.com>
-In-Reply-To: <CAKohponbEEP4_weUuKkOGLRj5-1oOsoL_Zu_7W_SxB61hjsSCw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 9 May 2025 10:43:30 +0200
-X-Gm-Features: AX0GCFtvP7qV0uyKskrVkXxx4K1dOjHrcNE79kiWKdjUal4cdNNd8gXeg84r6B4
-Message-ID: <CANiq72mSDEwDQx6ePq20SRi40aCs95mwo6fShZ0WCK9rmiWVVQ@mail.gmail.com>
-Subject: Re: [PATCH V11 00/15] Rust abstractions for clk, cpumask, cpufreq, OPP
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Philip Li <philip.li@intel.com>, kbuild test robot <lkp@intel.com>, 
-	Andrew Ballance <andrewjballance@gmail.com>, a.hindborg@kernel.org, alex.bennee@linaro.org, 
-	alex.gaynor@gmail.com, aliceryhl@google.com, anisse@astier.eu, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	bqe@google.com, dakr@kernel.org, dakr@redhat.com, 
-	daniel.almeida@collabora.com, gary@garyguo.net, joakim.bech@linaro.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux@armlinux.org.uk, linux@rasmusvillemoes.dk, 
-	manos.pitsidianakis@linaro.org, mturquette@baylibre.com, nm@ti.com, 
-	ojeda@kernel.org, peterz@infradead.org, rafael@kernel.org, robh@kernel.org, 
-	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
-	tmgross@umich.edu, vincent.guittot@linaro.org, vireshk@kernel.org, 
-	yury.norov@gmail.com
+References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
+ <20250506-aaeon-up-board-pinctrl-support-v5-5-3906529757d2@bootlin.com> <CAMuHMdVLo2w609eFOKRkYAfEMb8XOTNB-XzzZn_89VM-YV_-kA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVLo2w609eFOKRkYAfEMb8XOTNB-XzzZn_89VM-YV_-kA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 May 2025 10:43:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXjc8hV4mvq0oOZDERajei+-sGxevq9m1wfQ=VCvod-6Q@mail.gmail.com>
+X-Gm-Features: AX0GCFvMZLAP1ahBL5IRSEZHR-bVv8I7BRcCLPtgUqqOnPsoGYlpkXVRENB7NK8
+Message-ID: <CAMuHMdXjc8hV4mvq0oOZDERajei+-sGxevq9m1wfQ=VCvod-6Q@mail.gmail.com>
+Subject: Re: [PATCH v5 05/12] gpio: aggregator: refactor the code to add GPIO
+ desc in the forwarder
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 8, 2025 at 4:10=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
-g> wrote:
+On Fri, 9 May 2025 at 10:38, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, 6 May 2025 at 17:21, Thomas Richard <thomas.richard@bootlin.com> wrote:
+> > Create a dedicated function to add a GPIO desc in the forwarder. Instead of
+> > passing an array of GPIO descs, now the GPIO descs are passed on by one to
 >
-> That's strange. I have tested this earlier and made sure such issues
-> weren't there. I tried "next-20250507" now for arm64 (with qemu)
-> with and without CONFIG_CPUMASK_OFFSTACK and still don't
-> see these issues.
+> one by one
 >
-> Anything apart from this ?
+> > the forwarder.
 >
-> CONFIG_RUST_KERNEL_DOCTESTS=3Dy
+> Also, the passed array is no longer stored as-is, but copied.
 >
-> Sorry for the trouble, I thought this is all covered already
-> (apart from x86 failure).
+> >
+> > Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 
-No worries, it happens!
+> >  /**
+> >   * gpiochip_fwd_create() - Create a new GPIO forwarder
+> >   * @dev: Parent device pointer
 
-I can still reproduce it on next-20250508 with defconfig RUST=3Dy
-KUNIT=3Dy RUST_KERNEL_DOCTESTS=3Dy and then running in QEMU with e.g.
-`-machine virt -cpu cortex-a53`.
+      * @ngpios: Number of GPIOs in the forwarder.
+      * @descs: Array containing the GPIO descriptors to forward to.
+      *         This array must contain @ngpios entries, and must not
+be deallocated
+      *         before the forwarder has been destroyed again.
 
-Cheers,
-Miguel
+This needs an update, as the array is copied.
+
+> > @@ -559,26 +593,12 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
+> >
+> >         chip = &fwd->chip;
+> >
+> > -       /*
+> > -        * If any of the GPIO lines are sleeping, then the entire forwarder
+> > -        * will be sleeping.
+> > -        * If any of the chips support .set_config(), then the forwarder will
+> > -        * support setting configs.
+> > -        */
+> >         for (i = 0; i < ngpios; i++) {
+> > -               struct gpio_chip *parent = gpiod_to_chip(descs[i]);
+> > -
+> > -               dev_dbg(dev, "%u => gpio %d irq %d\n", i,
+> > -                       desc_to_gpio(descs[i]), gpiod_to_irq(descs[i]));
+> > -
+> > -               if (gpiod_cansleep(descs[i]))
+> > -                       chip->can_sleep = true;
+> > -               if (parent && parent->set_config)
+> > -                       chip->set_config = gpio_fwd_set_config;
+> > +               error = gpiochip_fwd_gpio_add(fwd, descs[i], i);
+> > +               if (error)
+> > +                       return ERR_PTR(error);
+> >         }
+> >
+> > -       fwd->descs = descs;
+>
+> So the passed array is no longer stored, and thus the caller
+> (gpio_aggregator_probe()) can free it after the call.
+>
+> > -
+> >         if (chip->can_sleep)
+> >                 mutex_init(&fwd->mlock);
+> >         else
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
