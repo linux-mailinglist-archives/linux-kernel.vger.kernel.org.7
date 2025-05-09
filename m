@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-640759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86154AB08CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291D7AB08D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24C116FA48
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61544987FEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CD3239E63;
-	Fri,  9 May 2025 03:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B2B237713;
+	Fri,  9 May 2025 03:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyi099k6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1CywGkS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA28164A8F;
-	Fri,  9 May 2025 03:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0192B1F8750;
+	Fri,  9 May 2025 03:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746760805; cv=none; b=b+yIc02INh6krbqeVEp7OeQGrj7KJYWk1VMndSQUrVLk+hcOHIc9YaftyYKXzTkmG2FFFTCyqvBjZcXgUPsfUyK3c0wRRl2G/AW8kAJ448NhiuYFrYbyKh/L621Qg9+WRXEwDJZsPpFcM4qUtmepWqkgpDVZWgg1sf7c0Y+uzuM=
+	t=1746760936; cv=none; b=eixPq34Q8ALsFRk2FyX1HS6H9afNsUXK/hyqb11aT65lOKYpXW39HHbuB7CrBqVpPMfVT0IzEdntyKQ1364A76ZfG50S+DksancojcTPf9a31HogVRF0JQPLaJwYjmnKeKj6eDHAHUyiuueZsQjfhqYXYrxB6z0vznAn7VTBGco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746760805; c=relaxed/simple;
-	bh=NY9f4q2kixUeTEknFQvFoV+AD+81IXXwblbM2CctxyA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PJaLjAN4k3++h89E+Y41DS4uiX8PGQpjddwpEiKQSk2cKt6/G8WjHBwfrpRmCCIh0mdCncnJ5qtLTrcNdQmcI+o/yR+iPhZPilu9aZKGBWe0bvjI0g6wo7Kl3s/q6TCNAIHCzZnNfRcHPpExjMhNK3V0j/riIe7Jo8JED2XtSvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyi099k6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C55C4CEE7;
-	Fri,  9 May 2025 03:20:04 +0000 (UTC)
+	s=arc-20240116; t=1746760936; c=relaxed/simple;
+	bh=SsNCueF8A7VqlQhoL36fgJMU6tN9VQrjDiQfdzjssck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdrSZ+8Z2HSDSRZ8nEr2tG2mRPt8qI52EkPSka6H5siZbC6tKFP05o0+oC8ACvZNkSOKyfsTn5kB2fI5vT+MmOURvzovwQENydedHbGUecaF1Mj16pPpdavLmv5OO2AAoHgcpNMgbd/9QpOWr5GzOUHKj511wswlatDujxgZUqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1CywGkS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50513C4CEE7;
+	Fri,  9 May 2025 03:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746760804;
-	bh=NY9f4q2kixUeTEknFQvFoV+AD+81IXXwblbM2CctxyA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lyi099k6fyh1ahKM/tIi2w1iD/oHFITWbewaXU85RAhs+2ImiRhUMBLcf1bBVf0Cg
-	 IUDKwZdC220PhgWaq7heBSTYpoTXLtChkVBQDVdT3N0UMiRsFfifWyASo5x1ET2GWH
-	 5TJUM319B4kyqdQ7xFGWDdlATCmBwMy2FnH7kZ02beNN9qepzcvadR1eI0h5jqExlj
-	 gvS8iSfn1Fo06yiztqXMR531F175M5zkI5XoaE7PyjFTJvdoElQZr4P4t6Me+0ZXQY
-	 OqVZk/Y2E8RLNk+gDJ99htcy2OYiD4iNe7FQ2Xg2fpwyiGAKmsEl6yQH/2GLY4K+Ov
-	 Z0BlxGOkIyVwg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BFF380AA7D;
-	Fri,  9 May 2025 03:20:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1746760935;
+	bh=SsNCueF8A7VqlQhoL36fgJMU6tN9VQrjDiQfdzjssck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m1CywGkSz/rfUQACrb11wBz1Qm4Ni5w42U2CLojgXRQc4fMTZHjojMlXnxJ1qr0A2
+	 872U/r5CPd7jVB1++XStw0mDEjfKjLzXaBIdQMmhh35MTKHdNVDLlsCI2PP+VNsNgm
+	 GzzzqPf7ICxV4iWVoWGeufzaZCrcDH+omkla1KQGw+4LMkxCZflDggW2qGziYugRwf
+	 4hgY71XCAswS3bk0Wnzw5q1z24UpWmWVUFvqTsCmaOuvdmrqmwgWfAE8QPgIcZqbFM
+	 ieyMI0NnOn8sUoOsWvjmXKV6Gmm0difqBPDA6XzK8IW3A2jrPQTpNWypYwK6ZkjIH6
+	 26YxhtTWuONXw==
+Date: Thu, 8 May 2025 20:22:12 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Rong Xu <xur@google.com>
+Cc: tip-bot2 for Rong Xu <tip-bot2@linutronix.de>, 
+	linux-tip-commits@vger.kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [tip: objtool/core] objtool: Fix up st_info in COMDAT group
+ section
+Message-ID: <cilgdvjaihkdstabhvblpuz3xonuuxtaep462bdipaosbmp4sh@a3tsfzitaibb>
+References: <20250425200541.113015-1-xur@google.com>
+ <174601619410.22196.10353886760773998736.tip-bot2@tip-bot2>
+ <jj4fu243l7ap4bza5imrgjk5f5dhsoloxezgphdjwo7sb5iqsq@wkt46abbt45r>
+ <CAF1bQ=SBgs6RiOEXakcZ=TaYjwXngMKNrp8gHL9FhfjOodOxiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v7 net-next 00/14] Add more features for ENETC v4 - round 2
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174676084300.3115683.12773669022927548558.git-patchwork-notify@kernel.org>
-Date: Fri, 09 May 2025 03:20:43 +0000
-References: <20250506080735.3444381-1-wei.fang@nxp.com>
-In-Reply-To: <20250506080735.3444381-1-wei.fang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, christophe.leroy@csgroup.eu,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- timur@kernel.org
+In-Reply-To: <CAF1bQ=SBgs6RiOEXakcZ=TaYjwXngMKNrp8gHL9FhfjOodOxiA@mail.gmail.com>
 
-Hello:
+On Thu, May 08, 2025 at 05:45:18PM -0700, Rong Xu wrote:
+> On Wed, May 7, 2025 at 4:22 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > On Wed, Apr 30, 2025 at 12:29:54PM +0000, tip-bot2 for Rong Xu wrote:
+> > > The following commit has been merged into the objtool/core branch of tip:
+> > >
+> > > Commit-ID:     2cb291596e2c1837238bc322ae3545dacb99d584
+> > > Gitweb:        https://git.kernel.org/tip/2cb291596e2c1837238bc322ae3545dacb99d584
+> > > Author:        Rong Xu <xur@google.com>
+> > > AuthorDate:    Fri, 25 Apr 2025 13:05:41 -07:00
+> > > Committer:     Peter Zijlstra <peterz@infradead.org>
+> > > CommitterDate: Wed, 30 Apr 2025 13:58:34 +02:00
+> > >
+> > > objtool: Fix up st_info in COMDAT group section
+> > >
+> > > When __elf_create_symbol creates a local symbol, it relocates the first
+> > > global symbol upwards to make space. Subsequently, elf_update_symbol()
+> > > is called to refresh the symbol table section. However, this isn't
+> > > sufficient, as other sections might have the reference to the old
+> > > symbol index, for instance, the sh_info field of an SHT_GROUP section.
+> > >
+> > > This patch updates the `sh_info` field when necessary. This field
+> > > serves as the key for the COMDAT group. An incorrect key would prevent
+> > > the linker's from deduplicating COMDAT symbols, leading to duplicate
+> > > definitions in the final link.
+> > >
+> > > Signed-off-by: Rong Xu <xur@google.com>
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > Link: https://lkml.kernel.org/r/20250425200541.113015-1-xur@google.com
+> >
+> > Unfortunately this patch completely destroys performance when adding a
+> > bunch of symbols.  Which I'm doing in v2 of my klp-build patch set.
+> The patch won't add symbols. Do you mean the updates take too much time
+> when adding symbols?
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Right.  I was testing a new feature for generating livepatch modules.  I
+was using objtool to add thousands of local symbols to a binary with
+-ffunction-sections and -fdata-sections, so it was calling that function
+in a tight loop.
 
-On Tue,  6 May 2025 16:07:21 +0800 you wrote:
-> This patch set adds the following features.
-> 1. Compared with ENETC v1, the formats of tables and command BD of ENETC
-> v4 have changed significantly, and the two are not compatible. Therefore,
-> in order to support the NETC Table Management Protocol (NTMP) v2.0, we
-> introduced the netc-lib driver and added support for MAC address filter
-> table and RSS table.
-> 2. Add MAC filter and VLAN filter support for i.MX95 ENETC PF.
-> 3. Add RSS support for i.MX95 ENETC PF.
-> 4. Add loopback support for i.MX95 ENETC PF.
+> It's probably true as we lookup the sections for every
+> added symbols. I did not notice the compile time issues in my builds.
+
+Yeah, I had an extreme test case :-)
+
+> If this is a problem, it needs to be fixed.
+> Thanks for working with v2!
+> >
+> > What was the use case for this?  I don't remember seeing any COMDAT
+> > groups in the kernel.
 > 
-> [...]
+> In the PGO or AutoFDO builds, we used many COMDAT variables for counters
+> and control variables. I think the compiler also puts the functions
+> defined in header
+> as COMDAT.
+> The issue I encountered was objtool moved the variables for
+> profile_filename and
+> profile_version, but the comdat keys were not updated.
 
-Here is the summary with links:
-  - [v7,net-next,01/14] net: enetc: add initial netc-lib driver to support NTMP
-    https://git.kernel.org/netdev/net-next/c/4701073c3deb
-  - [v7,net-next,02/14] net: enetc: add command BD ring support for i.MX95 ENETC
-    https://git.kernel.org/netdev/net-next/c/e3f4a0a8ddb4
-  - [v7,net-next,03/14] net: enetc: move generic MAC filtering interfaces to enetc-core
-    https://git.kernel.org/netdev/net-next/c/401dbdd1c23c
-  - [v7,net-next,04/14] net: enetc: add MAC filtering for i.MX95 ENETC PF
-    https://git.kernel.org/netdev/net-next/c/6c5bafba347b
-  - [v7,net-next,05/14] net: enetc: add debugfs interface to dump MAC filter
-    https://git.kernel.org/netdev/net-next/c/df6cb0958089
-  - [v7,net-next,06/14] net: enetc: add set/get_rss_table() hooks to enetc_si_ops
-    https://git.kernel.org/netdev/net-next/c/66b3fb001156
-  - [v7,net-next,07/14] net: enetc: make enetc_set_rss_key() reusable
-    https://git.kernel.org/netdev/net-next/c/7e1af4d6e4b4
-  - [v7,net-next,08/14] net: enetc: add RSS support for i.MX95 ENETC PF
-    https://git.kernel.org/netdev/net-next/c/2627e9873d69
-  - [v7,net-next,09/14] net: enetc: change enetc_set_rss() to void type
-    https://git.kernel.org/netdev/net-next/c/42fb12220ade
-  - [v7,net-next,10/14] net: enetc: enable RSS feature by default
-    https://git.kernel.org/netdev/net-next/c/2219281242fc
-  - [v7,net-next,11/14] net: enetc: extract enetc_refresh_vlan_ht_filter()
-    https://git.kernel.org/netdev/net-next/c/014e33e2d8e9
-  - [v7,net-next,12/14] net: enetc: move generic VLAN hash filter functions to enetc_pf_common.c
-    https://git.kernel.org/netdev/net-next/c/5d7f6f6836a1
-  - [v7,net-next,13/14] net: enetc: add VLAN filtering support for i.MX95 ENETC PF
-    https://git.kernel.org/netdev/net-next/c/f7d30ef6c1f7
-  - [v7,net-next,14/14] net: enetc: add loopback support for i.MX95 ENETC PF
-    https://git.kernel.org/netdev/net-next/c/932ce98041ff
+I see.  Thanks for the explanation.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Josh
 
