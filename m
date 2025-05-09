@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-641870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFADBAB1797
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:41:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3239AAB179E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4387F5229D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817291B63FD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CD722A1D5;
-	Fri,  9 May 2025 14:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B19622A1E5;
+	Fri,  9 May 2025 14:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="cfr8GOgm"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="V0d6960n"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0DE225A50;
-	Fri,  9 May 2025 14:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC0D225A50;
+	Fri,  9 May 2025 14:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746801674; cv=none; b=grKbKeeK52J7ll7AboNUbeI9octgYLclee7DRERopF3QcpTIWrSRa0Oi+YcpmSWowwG7HjHdAeJf750msnZy5nBMjYpY5JRhjy0OyK2NFdfTrtmHAaASBvJ5PF2S84gzFWGt46B1u76nnbl0fCP0LK9LOeJfPYwrBVNT5bpku9E=
+	t=1746801834; cv=none; b=pGm2+KWtQfwThAGh1NmO/pIfwtTP70zRM+j81V3dQDSmbkdxcmpXkvW9IYq8aWcu3/bxQaCjhRkPOHDSzZsqqhImvTEhJ062kknrNO6jWgedqziDoonALLnzWsndmK5mPoRD+R5CcBxnxW/e5GBCG0rjgsTHq6r/tb92NatKamI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746801674; c=relaxed/simple;
-	bh=1Bb8xF5ZUtAqzAYX+MCnhk8JufnOu8YhLs1oNq47D4Y=;
+	s=arc-20240116; t=1746801834; c=relaxed/simple;
+	bh=mNPApPuwIaDUrhXbWA5v+Y3Fcvc95RJv/Ek/jZVjQTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HAaSZEzwvIix1G7iy+VoH3kfDRNdf1HetFy/GUBfgX9s9cgUgsUyIpDTx5o5RSnwgKtYgJETfn/e3XrNWo7GSBCXp/oaFLtkC/kCUX0lDEv4ydO+DpjQ5lm3KZ8ZBqA6UtUMeVdeXE0lNQC64UYlfv8hOxukWuJBK4EcBA3WXdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=cfr8GOgm; arc=none smtp.client-ip=220.197.32.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8i3wCyvYmYMsPeyxI0rJbzUmITGrneRx/ODIyUsFqWiHMA1d3mTPub7eRjcBqErF+j07JRiZKS/PJVike4kbNVYxkUoAxZSd1vOs69NWfn3IlHd9BPZVv31ldt2DWYVanoEoJlLZZA4i5oDZUpC4PQ8VQjR/cyuPfGtL5cxEdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=V0d6960n; arc=none smtp.client-ip=220.197.32.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=yUwQFda+RlFIMXKiIF4g+n1LDysyAUbuSGkjmJu59Ic=;
-	b=cfr8GOgmFsA2xfLB7tC4cs6pXs2TEJkPJLkAcTW6VwZd4EUlbSUtIe7stkK96p
-	WSOCOj7j5rsObTdgRkl2E0mHplt13wrUI+YDKamzENgs/WjV/0lloc4rrf+mVtP2
-	ZiaorTCC6rhl39ewTp7s9FnCZGHgAR/iJ3jYhol/d4NHI=
+	Content-Type; bh=6EkHZ6uoB2xHmNiBXZ1kh3u+YSfhV8TuHSXfN/u3xAQ=;
+	b=V0d6960n3JUBSgaFAneLnUf6NWJU+XxTBr84bDIiZfFivT+rAU4oWpEwuW6ABd
+	MGNCgLJS+TDcLEbCtiC3D8lpUKfRtDvKD3e6aCfn3keTrBrosq57oyHKyCbYrcBb
+	8UOTwWx4hh9yfzmfHQSiaDbUsgiVEm9JU4LX3Ul16Q5ME=
 Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDn7xPQEx5oH32oAA--.41579S3;
-	Fri, 09 May 2025 22:40:18 +0800 (CST)
-Date: Fri, 9 May 2025 22:40:16 +0800
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDXnytmFB5oWHWqAA--.62630S3;
+	Fri, 09 May 2025 22:42:48 +0800 (CST)
+Date: Fri, 9 May 2025 22:42:45 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Francesco Dolcini <francesco@dolcini.it>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: dts: imx93-tqma9352-mba91xxca: disable Open
- Drain for MDIO
-Message-ID: <aB4T0Jaz2VJk07hF@dragon>
-References: <20250430081849.1827688-1-alexander.stein@ew.tq-group.com>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] arm64: dts: freescale: imx8mp-toradex-smarc: add
+ fan, ec, gpio
+Message-ID: <aB4UZZgSSsLIg3qv@dragon>
+References: <20250430094151.98079-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,24 +64,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430081849.1827688-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:M88vCgDn7xPQEx5oH32oAA--.41579S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU8mhFUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCR5IZWgd36zXkwABs5
+In-Reply-To: <20250430094151.98079-1-francesco@dolcini.it>
+X-CM-TRANSID:Mc8vCgDXnytmFB5oWHWqAA--.62630S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOzuWUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAQVIZWgd+-h1qQAAsD
 
-On Wed, Apr 30, 2025 at 10:18:48AM +0200, Alexander Stein wrote:
-> From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+On Wed, Apr 30, 2025 at 11:41:46AM +0200, Francesco Dolcini wrote:
+> Emanuele Ghidoli (2):
+>   arm64: dts: freescale: imx8mp-toradex-smarc: add embedded controller
+>   arm64: dts: freescale: imx8mp-toradex-smarc: add gpio expander
 > 
-> Using the MDIO pins with Open Drain causes spec violations of the
-> signals. Revert the changes.
-> This is similar to commit 14e66e4b13221 ("Revert "arm64: dts:
-> imx93-tqma9352-mba93xxca: enable Open Drain for MDIO"")
-> 
-> Fixes: e5bc07026f94 ("arm64: add initial device tree for TQMa93xx/MBa91xxCA")
-> Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Francesco Dolcini (3):
+>   arm64: dts: freescale: imx8mp-toradex-smarc: add fan PWM configuration
+>   arm64: dts: freescale: imx8mp-toradex-smarc: use generic gpio node
+>     name
+>   arm64: defconfig: Add Toradex Embedded Controller config
 
-Applied, thanks!
+Applied all, thanks!
 
 
