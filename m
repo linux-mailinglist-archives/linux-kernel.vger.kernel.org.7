@@ -1,97 +1,186 @@
-Return-Path: <linux-kernel+bounces-642057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FEAAB1A29
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62697AB1A41
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D802E4C61D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE751884637
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938FB235BF0;
-	Fri,  9 May 2025 16:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D6423536A;
+	Fri,  9 May 2025 16:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfwFHQ75"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="DaE/t9us";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="csaqIxHM"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A518DF8D;
-	Fri,  9 May 2025 16:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C40521517C;
+	Fri,  9 May 2025 16:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807180; cv=none; b=WqVmGmtd75eM29hDCO40mLx2BY7KguyD8EzqP0ScZIXrao/UzQCIF2MyHly/wm61CY+g6joYOFV4tqjPqrvYt4rYhDUN3hamqbwudgvq1gGRZVcwYUHyYo4r4AYSMFYusQH2Qw1Wj2whM7yKRUN1xQ1dU65KBFNfbdFaoGA8ZZ0=
+	t=1746807271; cv=none; b=uz7hWUORx/h7BwjyjPmn56KA+HVLbG8TsvfvJnqti6DLXsjIKJSENgfuYJmmYQoGAWA8KQOs0aYaHTFcwaNS+hnqbYgYxsuhuVsx4bbgJJMA5y3RY34GQFLs0sqb5+aAB8JwuwcoSRHpKRAxadzziHAP7HK7tVzpqWKHRptnUbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807180; c=relaxed/simple;
-	bh=KvFVbBZKMEEzgkn+ju6i49wV/DSgXVrOXZUutqy3pcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYtqeInvJeqabOTJCgmYLHdBD/tC9qYWZYtmUzEJ+6Bb+jGv30xZWk2xXty/ED6SXjy94Vr0pDfMXPrIEedUqk3oRyNhXKkTzzicVq360vI6NpGNIjF8ZjBjVxpSuIkwJrWlyVacENHb8LSE9InLi7JD//NldvHXmPHq7kny4go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfwFHQ75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A19DC4CEE4;
-	Fri,  9 May 2025 16:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807179;
-	bh=KvFVbBZKMEEzgkn+ju6i49wV/DSgXVrOXZUutqy3pcM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EfwFHQ7579tnAf+BucCg+rcQjbXUlAALdMDmVOLpkyb3eNinjFQpm9MQOsFZ3cBzn
-	 dR9ZQuCeFkSv2mMDK8OaSY0e5O2sG1SbRiAKdNcZh0x0MKbD/KBWZKsSMtLoWhw2Wd
-	 w2liSNawXm2C6YIEW5MVcDQR4ErSBw4TKZeqA2Y/S+dR85yHXvvWwpLPr/5qlb6cG5
-	 P/WzUrmIttHGCSHGU/LhJE/szVJNrvqCF6b8614XIUMHYiXW5+T5KP5cwo9XQQqujO
-	 nKZmIiCsiqjtdrqQLnWZ4ESxzVbSv595Ez5OByvAJRY8+rm9Vrm9bTuT4GyEuDN5hW
-	 N5QHBOsyBxatw==
-Date: Fri, 9 May 2025 09:12:57 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-mm@kvack.org,
-	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 08/12] sysctl: Move tainted ctl_table into kernel/panic.c
-Message-ID: <aB4piT844_bxd9eq@bombadil.infradead.org>
-References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-8-d0ad83f5f4c3@kernel.org>
+	s=arc-20240116; t=1746807271; c=relaxed/simple;
+	bh=ReBd0VghedSq6F65PBL5sD14utQA43skxapmkjoJDiA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ppxwz3w9JQzEBpJ/cc43NGRc5qjZ5k3q5AnBpkYcx7rmAm/QjnmWN1YWUeyHbZjvh5Z1/H+EAs41sS1bG5+leBzuWa76GEEFhyTXk9t0PcWr0DJNnAGXRYy/mvUMIAb2YfPrSYmQYmLrrth1Zzkhm2pQaPntvM/HFFniFe0wjts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=DaE/t9us; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=csaqIxHM; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4FC21114011B;
+	Fri,  9 May 2025 12:14:28 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-04.internal (MEProxy); Fri, 09 May 2025 12:14:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1746807268; x=1746893668; bh=OXbezUHKcYvu1Ptzr6+1Xx+ex3X8GOpu
+	nRzS3Jp2Cx0=; b=DaE/t9uss9mpBJoxg8WG84xuq9HK3gkZs7C10WZatQSUBvcW
+	N7LQWH2kCi+VAVRsNjj3kWjcdUU6b2p4Hc0huz+0LN46xMdIpEGJYNAQ38ORqhOb
+	ExrTby5c0RLt0NIe5AZ3+kw4zwrD+nLzTYYWx/4UHz+AJ4mBd2cOk+Ach49rRA39
+	MCt2IdNJKFLWyqxJvsngKoNvtTXT0ma+SkVrv1u2liE+7Wcy3IzM6X1bwwgNj7GX
+	S2aGVQ1Ue2vPsfdxJ2U9jt1i71C1O70Rulee4QpqLnEhAfLsp1QnDZxLpj0hrfMd
+	sfIZJfJG+bdyVahYVVMiL8UMnqcDo5hP7d5FwA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746807268; x=
+	1746893668; bh=OXbezUHKcYvu1Ptzr6+1Xx+ex3X8GOpunRzS3Jp2Cx0=; b=c
+	saqIxHMcu+VEiQmjFN4OZFefjyF47XLBIMrCPMbfHpIqkHCvwSSJGaFLiybkaV5d
+	Jz9hSQR/49ozNx020jkMYxI+81Ohvp2Ibyohj31qnq4jEKsMvoLKyf+YEmuFgRc3
+	C/7/PA5u6CPQQp4Jele7AkZCvtORwTBnDHLhL475VMUAzsn34f2DwyO9dY9+ktW5
+	DIyKbS+Thw1jg0i2siLWI+Z5BZqskjUeOKJC1G1X6Poq3eYq8D5MEgdyAwjYgMJ7
+	pNOsDCawDTd4Gn7KXwtG56/lFMPydrktp0v+PS9zN6x3iJ+Y2oN8kWNuzVowlY+M
+	8vEQl64Pa4Nsg/ZcEPWwg==
+X-ME-Sender: <xms:4ykeaCJOg2jKgtx7pKFznBIP6u7nmFfH3ZzoxhtlUVhUiLltKKog8w>
+    <xme:4ykeaKLsaENKTxDUu4N1BGOZVGZ7VtDQpIbt-15tSGdrteaRt25QLiWZNNYbA3Onl
+    xbbD9GJeARVwsGuY-I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvleeftdejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
+    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepleefteeugeduudeuudeuhfefheegveek
+    ueefffdvffektdffffelveffvddvueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhnsggp
+    rhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhmkhdokh
+    gvrhhnvghlsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsghrghhlsegs
+    ghguvghvrdhplhdprhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtth
+    hopehjsehjrghnnhgruhdrnhgvthdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgriieskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:4ykeaCul_pCvPXQDFfMwRyhKptftWme9TqBcC63VhwBW4LYz6JsDKQ>
+    <xmx:4ykeaHZhWFevFxHrPdMCFEF5MBsiGKQejjaTiJys0MTt1kczdZoNRw>
+    <xmx:4ykeaJZHPQEdBgNbzM7NINTFQD42j66G5LNH_BbwrLL13tFtJZWnaQ>
+    <xmx:4ykeaDDblii-Ktq1U2trbst6o-SBPUSkjI9lL_W-3cntbNWMWCU-Qw>
+    <xmx:5CkeaH7A37GhqngamR_x-oDBc0s_YAmK8Aaxd2kNXJqprE5kDLwul7qM>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7072E1C20069; Fri,  9 May 2025 12:14:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-8-d0ad83f5f4c3@kernel.org>
+X-ThreadId: T4bf42f97a4fae5f2
+Date: Fri, 09 May 2025 18:13:09 +0200
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Alyssa Rosenzweig" <alyssa@rosenzweig.io>
+Cc: "Janne Grunau" <j@jannau.net>, "Neal Gompa" <neal@gompa.dev>,
+ "Hector Martin" <marcan@marcan.st>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Sebastian Reichel" <sre@kernel.org>,
+ "Lee Jones" <lee@kernel.org>, "Marc Zyngier" <maz@kernel.org>,
+ "Russell King" <rmk+kernel@armlinux.org.uk>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Message-Id: <196f84ea-6567-4fe3-9bee-743bb289223e@app.fastmail.com>
+In-Reply-To: <aB39iJm9759RYAKW@blossom>
+References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev>
+ <20250503-smc-6-15-v4-6-500b9b6546fc@svenpeter.dev>
+ <aB39iJm9759RYAKW@blossom>
+Subject: Re: [PATCH v4 6/9] power: reset: macsmc-reboot: Add driver for rebooting via
+ Apple SMC
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 09, 2025 at 02:54:12PM +0200, Joel Granados wrote:
-> Move the ctl_table with the "tainted" proc_name into kernel/panic.c.
-> With it moves the proc_tainted helper function.
-> 
-> This is part of a greater effort to move ctl tables into their
-> respective subsystems which will reduce the merge conflicts in
-> kernel/sysctl.c.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+thanks for the review!
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+On Fri, May 9, 2025, at 15:05, Alyssa Rosenzweig wrote:
+>> +	for (i = 0; i < ARRAY_SIZE(ac_power_mode_map); i++)
+>> +		if (mode == ac_power_mode_map[i])
+>> +			len += scnprintf(buf+len, PAGE_SIZE-len,
+>> +					 "[%s] ", ac_power_modes[i]);
+>> +		else
+>> +			len += scnprintf(buf+len, PAGE_SIZE-len,
+>> +					 "%s ", ac_power_modes[i]);
+>
+> Nit: { braces } at least on the for loop...
 
-  Luis
+Will fix that.
+
+>
+> (And might be more concise as
+>
+>     for (i = 0; i < ARRAY_SIZE(ac_power_mode_map); i++) {
+>         bool match = (mode == ac_power_mode_map[i]);
+>         len += scnprintf(buf+len, PAGE_SIZE-len,
+>                  match ? "[%s] " : "%s ", ac_power_modes[i]);
+>     }
+>
+> though IDK how people feel about it.)
+
+imho it's less readable that way but I don't have a strong opinion
+either way.
+
+>
+>> +		mdelay(100);
+>> +		WARN_ON(1);
+>
+> ...What?
+
+This is done in a few drivers in drivers/power/reboot. If we haven't
+rebooted after 100ms something's wrong with SMC. I'll add a comment.
+
+drivers/power/reset/tps65086-restart.c:	WARN_ON(1);
+drivers/power/reset/atc260x-poweroff.c:	WARN_ONCE(1, "Unable to power off system\n");
+drivers/power/reset/mt6323-poweroff.c:	WARN_ONCE(1, "Unable to power off system\n");
+drivers/power/reset/gpio-restart.c:	WARN_ON(1);
+drivers/power/reset/regulator-poweroff.c:	WARN_ON(1);
+
+
+
+>
+>> +	if (ret)
+>> +		return dev_err_probe(&pdev->dev, ret,
+>> +				     "Failed to register power-off handler\n");
+>> +
+>> +
+>> +	ret = devm_register_sys_off_handler(&pdev->dev, SYS_OFF_MODE_RESTART_PREPARE,
+>> +					    SYS_OFF_PRIO_HIGH, macsmc_prepare_atomic, reboot);
+>
+> Nit: squash double blank-line
+
+will do.
+
+
+thanks,
+
+
+Sven
 
