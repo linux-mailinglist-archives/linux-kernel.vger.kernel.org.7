@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-641247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604F4AB0EEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:26:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBDEAB0EF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE8B9E6DF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:22:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0608EA02A95
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D303A27A459;
-	Fri,  9 May 2025 09:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D11276050;
+	Fri,  9 May 2025 09:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXgxC1bV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDcVTB7u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA6927A130;
-	Fri,  9 May 2025 09:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10782701C1;
+	Fri,  9 May 2025 09:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746782499; cv=none; b=u/M4xpTWUX+Yovy0EW/P9sdQeHEp9SdNbKc/a4JwnD/8XBADnh2jRv03hsza6jaBCPHhpHJ0L4zDwK3RpFeEhkmYqfJ0DUzo5MGvWVNWi0D+z4kzACAe/xxgLeoAxclmb6d2pahicDlQ1S28uDmHcZx4R29y7DueXSmoyUap9Mc=
+	t=1746782552; cv=none; b=hHpko2Wk9+RdzGsIVm5Gh3rI5cEcpgSWZ8w6RqY+4uQOy1kweWK15cRBkMZtXFNmAZ+8/1eWVVMPKkyQWbIdrvO0r+r2kpQmVy72omY5Sucf6AbuN0MM2PivZYOrlNnNA4AI32XYvcie1/VpjP4vf1FFKoOadERYg1uqodgeBZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746782499; c=relaxed/simple;
-	bh=YAiCFXDrUR9QpZfn6PRjLwyLkYo2hhAiphrjnSdS4GU=;
+	s=arc-20240116; t=1746782552; c=relaxed/simple;
+	bh=9RwaVCJoB2QX52Fzfwg1Ie9/qtAgL82D53jNjXgnjjQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ikOP0/J5gfJsAACViZY33eCo5yX9xPM4eRE9Rx/p736r6P0HcJCl4xJtP3OIN0CLABAI/wuM0ORzmPBIjXpNqeIP/foRrmZ5d0Do+/7rGYM8hE7RHp5S7DUddHNGmtDYTd8pIz5riLw82COLMKcX0kngLEMdzwmlq67gPta/qS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXgxC1bV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3A1C4CEE4;
-	Fri,  9 May 2025 09:21:34 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=UkkfYkPo0t72AzmWFe8gfrd4HreBmLUi7ytj+nTCfffY4RYRw0nJdl3uo9Ir8cG7ffuIu51KBoq2dGLT3otdEAiQC5xIfr/MOOhNOcSjghtgXe42JnqIVe6VOKj+Kp2keYZjtJ1AP84O5z/aanfk3hfdrwWyMd213Ps/F0MSEDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDcVTB7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E87EC4CEE9;
+	Fri,  9 May 2025 09:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746782498;
-	bh=YAiCFXDrUR9QpZfn6PRjLwyLkYo2hhAiphrjnSdS4GU=;
+	s=k20201202; t=1746782552;
+	bh=9RwaVCJoB2QX52Fzfwg1Ie9/qtAgL82D53jNjXgnjjQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tXgxC1bVlKrgf8eGnuIC+stZBZLpvZEKl18Xr3q6+owfm4xWrKvnBz1wGG2+aoySQ
-	 DYm3QfirHRPe9BS66Il5sjgFiewUl4+jPSUm83wEgtp8b2Iabo+FRRaBCOaLiredZt
-	 9boEel/8mlE9oGBu/Zq/zTZDBU2f23p90bs+wzez4mjnFgTyCP17pihMIdztxWUJC/
-	 DuHv7Jcx7h0WJ1IZ8tCjGn1zlM18niw3ryiWbybf8sRzMD59pQPXtl6PV0+86tKayE
-	 1BGWT2KFPkxIXmh+c6hh8fgjn/Ok+E3bUhRsVKNbPD6OE4vxOtZIhXMY8JsnKtrNF1
-	 GcndGsDqZuSpg==
-Message-ID: <5c0a3b62-cf4f-46ec-b0e2-7d78ac499cb5@kernel.org>
-Date: Fri, 9 May 2025 11:21:32 +0200
+	b=qDcVTB7uRdZVUEn57NM9lVN1IeezZySRSG6biuzKx5NsoWnb3bmGeNilt5WQn14zF
+	 MZHkWmmIWgTG/BHC2DibkuAvfEr5oWjw1FiNHXarZ7gfD8xakVDj5Pg8UoQyQ+l3Wx
+	 MScDqxI7g5xO90TjO48SLrAFLdChEgOzNKQ8VVdbn8DUGs+B9mzum9ClzwoDWX6gPP
+	 0JdRQUFc9ovZ0BC1NTLJ/urJLLrPEU1U4RHIXwoWKaJjuo/lviQ+s5PpLhS86wgQu8
+	 8uSnFLiM3GECugygpYSKqlqr9XfQizblc11s/ZqjV+6zt2fL4XwUdvAtGZ1acbsJML
+	 Kmhee+Lrul25A==
+Message-ID: <e002674f-f180-425a-9f60-ce8f9126b058@kernel.org>
+Date: Fri, 9 May 2025 11:22:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: display: rockchip: Convert
- cdn-dp-rockchip.txt to yaml
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>, Chaoyi Chen
- <kernel@airkyi.com>, Sandy Huang <hjc@rock-chips.com>,
- Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Dragan Simic <dsimic@manjaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250509070247.868-1-kernel@airkyi.com>
- <20250509070247.868-3-kernel@airkyi.com>
- <ccf4b15a-8399-4a7f-ae40-d01d0975921c@kernel.org>
- <5a4f6229-1450-4c96-bfac-5257f66b2ddf@rock-chips.com>
+Subject: Re: [PATCH v2 1/5] hwmon: pmbus: mpq8785: Prepare driver for multiple
+ device support
+To: =?UTF-8?Q?Pawe=C5=82_Dembicki?= <paweldembicki@gmail.com>
+Cc: linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Noah Wang <noahwang.wang@outlook.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Fabio Estevam <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Shen Lichuan <shenlichuan@vivo.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Charles Hsu <ythsu0511@gmail.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250509065237.2392692-1-paweldembicki@gmail.com>
+ <20250509065237.2392692-2-paweldembicki@gmail.com>
+ <272301e5-6561-499a-91eb-615fed4727fa@kernel.org>
+ <CAJN1KkxPOuZqRwysx3zu_5ChODn2wnizKXzfEZHD2AiHAbd0ig@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,56 +114,75 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <5a4f6229-1450-4c96-bfac-5257f66b2ddf@rock-chips.com>
+In-Reply-To: <CAJN1KkxPOuZqRwysx3zu_5ChODn2wnizKXzfEZHD2AiHAbd0ig@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/05/2025 09:34, Chaoyi Chen wrote:
-> Hi Krzysztof,
-> 
-> On 2025/5/9 15:11, Krzysztof Kozlowski wrote:
->> On 09/05/2025 09:02, Chaoyi Chen wrote:
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: core-clk
->>> +      - const: pclk
->>> +      - const: spdif
->>> +      - const: grf
->>> +
->>> +  extcon:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    description:
->>> +      Phandle to the extcon device providing the cable state for the DP PHY.
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  phys:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> Just phandle. If this is an array (but why?), you need maxItems for
->> outer and inner dimensions.
-
-Uh, sorry, that was supposed to be under extcon.
-
-> 
-> I think it could be phandle or phandle-array. Since the RK3399 DP has 
-
-Here it is obviously not needed, that's a dtschema type.
-
-> two PHYs, if we put in two PHYs here, the driver will pick one PHY port 
-> that is already plugged into the DP for output. If we fill in only one 
-> PHY here, then output is only allowed on the corresponding PHY.
-> 
-> Will add restrictions and add more descriptions in v3.
-> 
-> 
+On 09/05/2025 09:41, Paweł Dembicki wrote:
+> pt., 9 maj 2025 o 09:03 Krzysztof Kozlowski <krzk@kernel.org> napisał(a):
 >>
->>> +    description:
->>> +      Phandle to the PHY device for DP output.
+>> On 09/05/2025 08:51, Pawel Dembicki wrote:
+>>> Refactor the driver to support multiple Monolithic Power Systems devices.
+>>> Introduce chip ID handling based on device tree matching.
+>>>
+>>> No functional changes intended.
+>>>
+>>> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+>>>
+>>> ---
+>>> v2:
+>>>  - no changes done
+>>> ---
+>>>  drivers/hwmon/pmbus/mpq8785.c | 38 +++++++++++++++++++++++++++--------
+>>>  1 file changed, 30 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/hwmon/pmbus/mpq8785.c b/drivers/hwmon/pmbus/mpq8785.c
+>>> index 331c274ca892..00ec21b081cb 100644
+>>> --- a/drivers/hwmon/pmbus/mpq8785.c
+>>> +++ b/drivers/hwmon/pmbus/mpq8785.c
+>>> @@ -8,6 +8,8 @@
+>>>  #include <linux/of_device.h>
+>>>  #include "pmbus.h"
+>>>
+>>> +enum chips { mpq8785 };
+>>
+>> Use Linux coding style, so:
+>> 1. missing wrapping after/before each {}
+>> 2. missing descriptive name for the type (mpq8785_chips)
+>> 3. CAPITALICS see Linux coding style - there is a chapter exactly about
+>> this.
+>>
+>>
+> 
+> Sorry, I was thinking that it is a local pmbus tradition.
+> Many drivers have the same enum without capitalics :
+> 
+> grep -r "enum chips {" .
+> ./isl68137.c:enum chips {
+> ./bel-pfe.c:enum chips {pfe1100, pfe3000};
+> ./mp2975.c:enum chips {
+> ./ucd9200.c:enum chips { ucd9200, ucd9220, ucd9222, ucd9224, ucd9240,
+> ucd9244, ucd9246,
+> ./zl6100.c:enum chips { zl2004, zl2005, zl2006, zl2008, zl2105,
+> zl2106, zl6100, zl6105,
+> ./ucd9000.c:enum chips { ucd9000, ucd90120, ucd90124, ucd90160,
+> ucd90320, ucd9090,
+> ./max16601.c:enum chips { max16508, max16600, max16601, max16602 };
+> ./q54sj108a2.c:enum chips {
+> ./bpa-rs600.c:enum chips { bpa_rs600, bpd_rs600 };
+> ./adm1275.c:enum chips { adm1075, adm1272, adm1273, adm1275, adm1276,
+> adm1278, adm1281, adm1293, adm1294 };
+> ./max20730.c:enum chips {
+> ./mp2856.c:enum chips { mp2856, mp2857 };
+> ./tps53679.c:enum chips {
+> ./ltc2978.c:enum chips {
+> ./max34440.c:enum chips {
+> ./pim4328.c:enum chips { pim4006, pim4328, pim4820 };
+> ./fsp-3y.c:enum chips {
+> ./lm25066.c:enum chips { lm25056, lm25066, lm5064, lm5066, lm5066i };
 
-You need to list the items with description iinstead.
-
+If that's standard for this subsystem, then it's fine, although to me it
+feels odd to see all over the code lower case constant.
 
 
 Best regards,
