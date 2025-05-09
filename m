@@ -1,244 +1,138 @@
-Return-Path: <linux-kernel+bounces-641721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A9BAB1513
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDE2AB1505
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC94A2625B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85B11C47480
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026A3293735;
-	Fri,  9 May 2025 13:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940F0292933;
+	Fri,  9 May 2025 13:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YTssG2cX"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMBmbHYY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C21829293A
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10EB290BBE;
+	Fri,  9 May 2025 13:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796966; cv=none; b=Rvyao2HBIkebRJj4ZMif65ipSNwRMtOHpUIzs7lSGPUJ1+vYfcXco527PgIFRc41l9M4vtgdrjZTTwiuqAANV/YOf1EEpxj6GAi7fluhvzxoJgLYuhlzT3LS7Eaqkk5TsNMT5buWENp2rWj8nRDLhzIvlIQalzPHiHYD0BuFmek=
+	t=1746796963; cv=none; b=A88kWIn0ASmeLRERh9OWjrbAqfDc16w1gp1PiMMgZEL/p8VUsjypZ1ZasIyswtQ7cUZusjsHi4w3gqchff9J1F5vpyRbN83wMY4Jt4C1eo7XXH/EcTk5IwL6Cm+i3G778IpNKeXFU6+7e6vc6rdpbUxDCE4DqXw+1eiYmmYq0Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746796966; c=relaxed/simple;
-	bh=ulCybTioPfppe4R4TtApa6DBt+CNMCqsqrBOJRG2OXo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=exTlhwSe76Lx4ICSm3DctMHGfzuRrw3T4PsmvYSaxA1OOzyEepyRVYmjvYu01Hm7yDrgqa2Sc8ytW/oNPAdwpxwV2Saf3Skk42kZekrlVNyxePJMQvM0l9d48nblxkHh0Y29a0fZnofc63SHIUQ0lKzKUn3gzC17aB9ndaBmk14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YTssG2cX; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad1e8e2ad6bso419618366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746796962; x=1747401762; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4vZm6ZTX/GNv3NmqUNFFgVoy98eQ+Gy2jzvvvvSHnPE=;
-        b=YTssG2cX4LH5Zk0jXnXMNFXpXq7CjLjr1vvNClbWOWcDGvIEhPlAQiK6BiOMYerfLB
-         xxaxb6TTDMFoEObyhVudzZk6+n04QhSvsaIWhk/+U5pbxc1ct1MnwlCXmAouYOj20Oo3
-         y3BtoWhw6VLV/eNjHqQfYxvYWRV23VE0KASZ5QxiFy20MSVhNsBkwhSqmEGf4ZRhN6pq
-         Ix2KEFwFDkqm7O2/oCzH9JToNoGVMajMVGG6DJ1PgllY216eWHIvthInBQcYwhxhLwOH
-         KdqhhSugYGcTL7Kk9dz3VYV5aYeZAszHhKyzZ9YODdif/fw3p4TaAhihmePyyvXg9sad
-         VBbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746796962; x=1747401762;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4vZm6ZTX/GNv3NmqUNFFgVoy98eQ+Gy2jzvvvvSHnPE=;
-        b=TqEvGwWimKY5TJj9AGUzKLPZWNwJgRG3fKI6YpulDKN4y+UQDRIQpLvRLUbIFJszcD
-         PuDm/LLamTOSmNjgLdxzzTdrUKlZilGqu3TVPq6TgGWf9Qii7zo3+1rNq2O4vS+wIyAC
-         fcIkNLxn5bRdrwVebAeNlCaQi+yFFQ7o66/tBBB94ogVCPn8Xg9Hc+LnIBTgLc3eNBEa
-         MVgTWZEL7EV9bLzw4H1r/Mkrh/0Rl9bmZ7PeOjMc87jPSjzbheM/9jj6HN2ah9Rus/Af
-         pjbnexaV/jyywk1/W5hboseDaI78aBrA7orKqDm4gnJHzFR4U6neTfuZcLP0VwoGpihW
-         PlyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWueMmOB9Ni0dyfy+EkL5wClpvnXoDHgfscvXwLFAKmBpBqrJUR4vThXeUZbxnIaDR1pUCLA86pafZwDwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgXIVJ1Oc9iVvYf7zZnz9h5hZtYEJf40dKnG06VTN+bx7kBU5+
-	W+aFC8uytuhebwu/vkbEJ6T8Yn+0gZbdv1eBBmfcg5ugsNS5knNszJTC3+1WbCY=
-X-Gm-Gg: ASbGncvZ9AWMxw26lWcVcbn+GLkLWaqToxitS3HS+POhH38G0DyaNVfLjlkDuLat5tX
-	LCMvyxX8gJ98cEo48PhyfvYDV32UmcLkhXO5cFdE89MlgusTq0HgKq+AHdkeCF3vqH/eKCBypYh
-	ZKIMN0fHAAhV+k7NW9fiM2W7o/ErWDAkvTq3Kfr77A3qGWImCSmBMdR/GhS4Z553PWDlWaJxlH9
-	p9l+s9gj/9J1LWjwjfPmIF2U3+tHAiocxOG0fi91pZo1GyCLEAThjuaCmqrdEQNa5BDo+nbvM95
-	GXcxzWrgTAdj/asilu6z4EpA+lpl58J/S12KY3dq0/soOlkKjtvh4mcVIH5cqubRG2qNH40l3Ei
-	yjfzWihiRFfOmznFW/uIu7p4i
-X-Google-Smtp-Source: AGHT+IElF34czXrgd/ETSd6RK4arhdgSAG0WjsAxoXZ19B3iyixaSPqa8Uzjt2JeA7O1/51p0++srg==
-X-Received: by 2002:a17:907:d9e:b0:ad1:dbec:44d3 with SMTP id a640c23a62f3a-ad218f79625mr408598766b.27.1746796962170;
-        Fri, 09 May 2025 06:22:42 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21947abcasm149041966b.84.2025.05.09.06.22.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 06:22:41 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v10 0/3] Maxim Integrated MAX77759 PMIC MFD-based drivers
-Date: Fri, 09 May 2025 14:22:38 +0100
-Message-Id: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
+	s=arc-20240116; t=1746796963; c=relaxed/simple;
+	bh=fMwC4VkQFpw0XhF3h7LQAlc851BqN8TPwRsoDYvP9E8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gEaRM4ZaaJ4dT7sDWOD2c57P1f3c0w+reIVujr+RyYNQCDKsdV6+5gtD3TALd4DhUGKxy2maUMxQc2T+/GAKQ8XhpcPatbNV5FvIIO9soX758D0RruPdfn1FsmVMQnKWpJu6ZaW+r5QMIbiuad6jLh2QBNXdn3CXciR6fbCTiQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMBmbHYY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A88C4CEE4;
+	Fri,  9 May 2025 13:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746796962;
+	bh=fMwC4VkQFpw0XhF3h7LQAlc851BqN8TPwRsoDYvP9E8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tMBmbHYYS9D4tpxUTPEJ+Jo/pZOer0sc2Pwk1aa5Ekda5H7u3kuaed3K8m7lrVQEN
+	 05OqqmgxLfUxIghMBlu8kWWyKU47n4x9mR0Rq75c3HpfIKrwB0ZGHS0drVurVVBCQJ
+	 JGyKtXPKeqF9TWWQ9NPcDDAwvkuVZcCfbf+xYbj450zM2Gd+Y+sHFblrPpV1Wzwtnd
+	 XpNXZX0BhaOKseZ0vLxPUDygYUi8DPbao6Ay/Qghy5yWTJBLmx/Y2tz4NhOX+gky2z
+	 UfNaOJndqwLf/AWsRA2+fCA/OHIInu9eSHmr0sy2BCnGuZQCJLAYNkVlg0h34DeSNO
+	 q0VzouY4mJNfQ==
+Message-ID: <da65077f-09bc-4369-91c0-ac7178eff62c@kernel.org>
+Date: Fri, 9 May 2025 15:22:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAJ4BHmgC/33Pz2rDMAwG8FcpPi9DlmPJ3mnvMXbw39awNiMZo
- aPk3ef00ixmA10k+H3iu4kpjSVN4uVwE2Oay1SGS10kPB1EOLnLMXUl1oNAQA2IfXd2V2bWtjv
- n2Dnn2CmJ0hOKSj7HlMv1nvf2XvdTmb6G8fseP8v1+kfQLDvo0OesKNsIWr9+lIsbh+dhPIo1a
- catpp3Gqh3p5BP6AM42Wm212WlVNQRFyLFHjdTo/qFr2Z3uq/YWTCSgYIJvtN5o1DutqybrI2V
- gx9xq+k9T1QEMQ3BE6F2j+aH7pjdXnWJOPQRJOZlGm622O22qZox1Alsnc6PtRivYabv2VpZJJ
- VTa/v69LMsPPAzJ2ZoCAAA=
-X-Change-ID: 20250224-max77759-mfd-aaa7a3121b62
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: imx8mp: Add TechNexion EDM-G-IMX8M-PLUS
+ SoM on WB-EDM-G carrier board
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Hu <richard.hu@technexion.com>, sascha.hauer@pengutronix.de,
+ Shawn Guo <shawnguo@kernel.org>
+Cc: imx@lists.linux.dev, ray.chang@technexion.com,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250509071242.12098-1-richard.hu@technexion.com>
+ <8173a798-b5d7-485c-8ce3-b46f4a097d83@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <8173a798-b5d7-485c-8ce3-b46f4a097d83@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 09/05/2025 15:21, Krzysztof Kozlowski wrote:
+> On 09/05/2025 09:12, Richard Hu wrote:
+>> index b6d3fe26d621..6acd2408f936 100644
+> 
+> 
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument, so you will
+> not CC people just because they made one commit years ago). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> 
+> 
+> All of the addresses here are totally bogus. I am dropping them, except
+> Shawn's which I corrected.
 
-This series improves support for the Maxim Integrated MAX77759
-companion PMIC for USB Type-C applications using the MFD framework.
 
-This series must be applied in-order, due to interdependencies of some
-of the patches:
-* to avoid use of undocumented compatibles by the newly added drivers,
-  the bindings are added first in this series
-* patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
-  new MAINTAINERS entry, including a wildcard match for the other
-  bindings in this series
-* patch 3 ("dt-bindings: mfd: add max77759 binding") references the
-  bindings added in patch 1 and 2 and can not work if those aren't
-  available
-* patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
-  the core MFD driver, which also exposes an API to its leaf drivers
-  and is used by patches 5 and 6
-* patches 5 and 6 won't compile without patch 4
-
-The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
-sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-
-This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
-
-This series adds support for the top-level MFD device, the gpio, and
-nvmem cells. Other components are excluded for the following reasons:
-
-    While in the same package, Fuel Gauge and TCPC have separate and
-    independent I2C addresses, register maps, interrupt lines, and
-    aren't part of the top-level package interrupt hierarchy.
-    Furthermore, a driver for the TCPC part exists already (in
-    drivers/usb/typec/tcpm/tcpci_maxim_core.c).
-
-    I'm leaving out temperature sensors and charger in this submission,
-    because the former are not in use on Pixel 6 and I therefore can
-    not test them, and the latter can be added later, once we look at
-    the whole charging topic in more detail.
-
-To make maintainers' work easier, I am planning to send the relevant
-DTS and defconfig changes via a different series, unless everything
-is expected to go via Lee's MFD tree in one series?
-
-Cheers,
-Andre'
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-Changes in v10:
-- collect tag for nvmem
-- rebase against next-20250509
-- drop already-merged bindings patches
-- update a comment in core driver (Lee)
-- Link to v9: https://lore.kernel.org/r/20250430-max77759-mfd-v9-0-639763e23598@linaro.org
-
-Changes in v9:
-- nvmem: drop superfluous max77759_nvmem_is_valid() (Srini)
-- collect tags
-- Link to v8: https://lore.kernel.org/r/20250429-max77759-mfd-v8-0-72d72dc79a1f@linaro.org
-
-Changes in v8:
-- gpio: switch to gpio_chip::set_rv() (Bartosz)
-- gpio, nvmem: replace MODULE_ALIAS() with .id_table (Krzysztof)
-- gpio, nvmem: drop previous tags due to above
-- Link to v7: https://lore.kernel.org/r/20250428-max77759-mfd-v7-0-edfe40c16fe8@linaro.org
-
-Changes in v7:
-- rebased against next-20250424
-- Link to v6: https://lore.kernel.org/r/20250325-max77759-mfd-v6-0-c0870ca662ba@linaro.org
-
-Changes in v6:
-- add one missing change in core driver
-- Link to v5: https://lore.kernel.org/r/20250325-max77759-mfd-v5-0-69bd6f07a77b@linaro.org
-
-Changes in v5:
-- core: incorporate Lee's comments (hoping I didn't miss any :-)
-- Link to v4: https://lore.kernel.org/r/20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org
-
-Changes in v4:
-- collect tags
-- mfd: add missing build_bug.h include
-- mfd: update an irq chip comment
-- mfd: fix a whitespace in register definitions
-- Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
-
-Changes in v3:
-- collect tags
-- mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
-  child (Rob)
-- gpio: drop duplicate init of 'handled' variable in irq handler
-- gpio: use boolean with IRQ_RETVAL() (Linus)
-- gpio: drop 'virq' variable inside irq handler to avoid confusion
-  (Linus)
-- gpio: drop assignment of struct gpio_chip::owner (Linus)
-- Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org
-
-Changes in v2:
-- reorder bindings patches to avoid validation failures
-- add dependency information to cover letter (Krzysztof)
-- fix max77759_gpio_direction_from_control() in gpio driver
-- gpio: drop 'interrupts' property from binding and sort properties
-  alphabetically (Rob)
-- nvmem: drop example from nvmem binding as the MFD binding has a
-  complete one (Rob)
-- nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
-- mfd: add kernel doc
-- mfd: fix an msec / usec typo
-- mfd: error handling of devm_mutex_init (Christophe)
-- whitespace fixes & tidy-ups (Christophe)
-- Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org
-
----
-André Draszik (3):
-      mfd: max77759: add Maxim MAX77759 core mfd driver
-      gpio: max77759: add Maxim MAX77759 gpio driver
-      nvmem: max77759: add Maxim MAX77759 NVMEM driver
-
- MAINTAINERS                    |   4 +
- drivers/gpio/Kconfig           |  13 +
- drivers/gpio/Makefile          |   1 +
- drivers/gpio/gpio-max77759.c   | 530 +++++++++++++++++++++++++++++++
- drivers/mfd/Kconfig            |  20 ++
- drivers/mfd/Makefile           |   1 +
- drivers/mfd/max77759.c         | 690 +++++++++++++++++++++++++++++++++++++++++
- drivers/nvmem/Kconfig          |  12 +
- drivers/nvmem/Makefile         |   2 +
- drivers/nvmem/max77759-nvmem.c | 145 +++++++++
- include/linux/mfd/max77759.h   | 165 ++++++++++
- 11 files changed, 1583 insertions(+)
----
-base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
-change-id: 20250224-max77759-mfd-aaa7a3121b62
+You also have broken SoB chain, read submitting patches.
 
 Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Krzysztof
 
