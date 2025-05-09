@@ -1,151 +1,256 @@
-Return-Path: <linux-kernel+bounces-640892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE13AB0AA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7842AB0AAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42E837B0B70
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:33:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E799E7878
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C3126B95C;
-	Fri,  9 May 2025 06:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF1C2746C;
+	Fri,  9 May 2025 06:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvdHuVRR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OR5/PAA1"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E91267B9D;
-	Fri,  9 May 2025 06:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CAB26A0DB
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772456; cv=none; b=netm27vRkw+grsh6yjQy8ew3X2b/bWqJK7gmcioSm7Tmj91HwbArsMSswnL65VvTCKYCL7kTxmQ3rcb03Ix5Qwv5RDGNjcwTfoRpKYLEw48Gp6C5h8OiLVTJCIMMqAP7gqCUqfoicJ/6oYMiMyN3RxNGia15NCAXv1+lGwsv7Ps=
+	t=1746772544; cv=none; b=LW0RYgN83+t9Yt+pUi22RAJU0gzVvSp2LONjIps3tMvz6j0HJWCSO+EmZ2qaSb2Fl935Yzmbd4pGs/4EPTxrtr4uNImwXHtfmNspK87KMcLwy8UQT352u26v2qGpgSYsoVxt6af5mjzUBIJvCQp4EFEh01iHDdwPgJXb15/dq1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772456; c=relaxed/simple;
-	bh=f/1mOnTVgTLPMHCDttVgoZS1/fOdBKrXOZWrb3T2gE0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oojm0b4LLlpwdhcllhlNMLAvbsTPA1nbHat1j4JKtRBy94Opx2ADngagpkRq16/XzpQJpB1adZ/oVGS2/D2azr6PgB8Be3vtVJGLIluFQjbTX+YXB7SjbmcNwnEobqbw+MU4zZqhpyO/uqnV5ceazKO8ZCPIzcNh0gU5W/K6RvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvdHuVRR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B8EAC4CEED;
-	Fri,  9 May 2025 06:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746772455;
-	bh=f/1mOnTVgTLPMHCDttVgoZS1/fOdBKrXOZWrb3T2gE0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bvdHuVRRCE/L/ZsXFkUf1p4VUD9yrp6xlzYBiK01kl70J0q5t6ODYrUd9mpMYC7qS
-	 4qDhSsSrXsgcE8uJfn5TANzVh17FtJRKGN4HmJ5FoTZGJncr09ff0vrGkmkRVR5HWm
-	 xDnf6oYDZtL9LGxgHwjH15nlYX0nRPv04TU5Gkt8NjTHXt3djYghsg6luCKIe/DiNs
-	 89izwq2dwF9+y85+FKDXM5nQ/CRaUoJvU1cPS5REaPXAeQqUkg0YoH7wrf+hI4Y6yu
-	 JGC2gcoMkuoxphLv2tNYQ6bMwnM6G5/jlbCBiDSEoIiuMakSBI+r1enBeCgCmHhl3l
-	 hlVmZZOawEisw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83811C3ABC3;
-	Fri,  9 May 2025 06:34:15 +0000 (UTC)
-From: Chen Linxuan via B4 Relay <devnull+chenlinxuan.uniontech.com@kernel.org>
-Date: Fri, 09 May 2025 14:33:55 +0800
-Subject: [PATCH v3 3/3] fs: fuse: add more information to fdinfo
+	s=arc-20240116; t=1746772544; c=relaxed/simple;
+	bh=gkEafuegoJQXN//t3DWSiAZe46ykr2HSI4qLffwkIl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdxgalRRbZYLuwAlnf3mpf6JxMVRCBweFHj9aRA94Uw5ZITJct1luP+Owp915aAgidDhQHqEEz1qNM1K4fe+gmgmErUUWMPffzhlMeds90qdwyxKdpXrEyqHc/pfH6SFa2ZuHRfKdHzhDT+evnuKXymBV3ZmGUgVkdXzlnjnt14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OR5/PAA1; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1746772532; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=SkhD2IxpaDCRBkEhJPn7Xyzv7yN9xhPQIe/Iee2HJxM=;
+	b=OR5/PAA1bCSCteU4nMHlIJqCKM2ka9ITTipAjx5BfDyzlqBTRsG/yglmSouBggJHLYOG47ZBnDzTQQRWCezxf2z1L3g5TSJznXg/sPZCGSbX7LZkH7tgu7H5W8sRituRyEJv4aLBwtVdC2ongvZz2YbUJjzxAtZI3XBZGlZAML0=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wa2I1pb_1746772531 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 09 May 2025 14:35:31 +0800
+Date: Fri, 9 May 2025 14:35:30 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	llong@redhat.com, mhiramat@kernel.org, amaindex@outlook.com
+Subject: Re: [PATCH RFC 2/3] kernel/hung_task: add option to dump system info
+ when hung task detected
+Message-ID: <aB2iMoAR7AiZZnPK@U-2FWC9VHC-2323.local>
+References: <20250507104322.30700-1-feng.tang@linux.alibaba.com>
+ <20250507104322.30700-3-feng.tang@linux.alibaba.com>
+ <6eb27fe4-9dad-4ea5-afd0-a5d1e3f60acb@linux.dev>
+ <aBxE6jXwjIDRdr1z@U-2FWC9VHC-2323.local>
+ <d98c6c9f-b50d-4818-848f-326f6ab01439@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250509-fusectl-backing-files-v3-3-393761f9b683@uniontech.com>
-References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
-In-Reply-To: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Chen Linxuan <chenlinxuan@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1981;
- i=chenlinxuan@uniontech.com; h=from:subject:message-id;
- bh=dLLqMK4ZOcnisnxvwBa6DIUP279E8lmWmNnP/Jp8VBc=;
- b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoHaHkSaO7ABqs4yzAz39RKANByQf+JUI3TKu7C
- Sr9++vXnGOJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaB2h5AAKCRB2HuYUOZmu
- iziaD/9E0shRqgXj6Cql0vx0z76dvfJg9D8CviOBAIAbIP77+gnQNU80+QhM5vnDs5si+GCg8xF
- YFi1lTMhWqrw9yoLI0t9ZgIRlMoEbajlekgbCu8Ha3YMZ2LlmBd2CPgzss9YyZE+0/Jf/e70oLT
- Uo4kHGgMrp0S3vkO6Perze84j+PIRJW1il7OS8RTH9rlpCNOccbx2my0sqeX1/7zbKp65D/C7EO
- UIUt7tkOHUUp+aunG4dVa1LwvqzSjrK0YHPm0Ya7Ge9jqqf6YEVWnuzjqG64PMnDwvGMDRMwa6g
- GTkSmW5XfKAdzIuf2OTmbo7dg9qYVrS3TMmNBKcD/X5pIgk/KKfDZXbEj8VVEpT8qw0eDac8Pjz
- o8xYyNDl288/ewh/wBtwG3UkfnNUn/AUAZV6voraVM7BiNOn35h+XDtM57lY814ZPYt+BdfV8o3
- UQZC2loVcEiS5cSfyMJqfxousd+9ISENfKlV/UUlZLe06b+PZyk8QTfNIzSAtqg5eb4RKodKe5v
- odc4SHWLxpODtLOpZBUB/lEktMukIiHNmEb562gtEKFrFwPCLEcJrf3d6WGBVoh8ePZEXAsgu3M
- OH4zFfPmP5iiOXA+h45xkrWInOA2mpdqGK+aVbJFwn0GzRG46rozfHYvxq8z7/YX0iA1xNxLl8+
- rZ+1NF5Xx+Us3gA==
-X-Developer-Key: i=chenlinxuan@uniontech.com; a=openpgp;
- fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
-X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
- auth_id=380
-X-Original-From: Chen Linxuan <chenlinxuan@uniontech.com>
-Reply-To: chenlinxuan@uniontech.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d98c6c9f-b50d-4818-848f-326f6ab01439@linux.dev>
 
-From: Chen Linxuan <chenlinxuan@uniontech.com>
+On Fri, May 09, 2025 at 12:44:14PM +0800, Lance Yang wrote:
+> 
+> 
+> On 2025/5/8 13:45, Feng Tang wrote:
+> > Hi Lance,
+> > 
+> > Many thanks for the review!
+> > 
+> > On Thu, May 08, 2025 at 11:02:22AM +0800, Lance Yang wrote:
+> > > Hi Feng,
+> > > 
+> > > Thanks for the patch series!
+> > > 
+> > > On 2025/5/7 18:43, Feng Tang wrote:
+> > > > Kernel panic code utilizes sys_show_info() to dump needed system
+> > > > information to help debugging. Similarly, add this debug option for
+> > > > task hung case, and 'hungtask_print' is the knob to control what
+> > > > information should be printed out.
+> > > > 
+> > > > Also clean up the code about dumping locks and triggering backtrace
+> > > > for all CPUs. One todo may be to merge this 'hungtask_print' with
+> > > > some sysctl knobs in hung_task.c.
+> > > > 
+> > > > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> > > > ---
+> > > >    kernel/hung_task.c | 29 ++++++++++++++++-------------
+> > > >    1 file changed, 16 insertions(+), 13 deletions(-)
+> > > > 
+> > > > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> > > > index dc898ec93463..8229637be2c7 100644
+> > > > --- a/kernel/hung_task.c
+> > > > +++ b/kernel/hung_task.c
+> > > > @@ -58,12 +58,20 @@ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
+> > > >    static int __read_mostly sysctl_hung_task_warnings = 10;
+> > > >    static int __read_mostly did_panic;
+> > > > -static bool hung_task_show_lock;
+> > > >    static bool hung_task_call_panic;
+> > > > -static bool hung_task_show_all_bt;
+> > > >    static struct task_struct *watchdog_task;
+> > > > +/*
+> > > > + * A bitmask to control what kinds of system info to be printed when a
+> > > > + * hung task is detected, it could be task, memory, lock etc. Refer panic.h
+> > > > + * for details of bit definition.
+> > > > + */
+> > > > +unsigned long hungtask_print;
+> > > > +core_param(hungtask_print, hungtask_print, ulong, 0644);
+> > > 
+> > > how about lockup_debug_print_mask?
+> 
+> Oops, typo: hungtask_* (not lockup_*)
+> 
+> > 
+> > The 3/3 patch has a 'lockup_print' as it is for soft/hard lockup :).
+> > The name follows the existing 'panic_print', and indeed it's actually
+> > a bitmask, how about 'hung_print_mask'?
+> 
+> Yep, we should be following ’panic_print‘ pattern like 'hungtask_print',
+> but I‘d rather go with 'hungtask_print_mask' ;)
 
-This commit add fuse connection device id, open_flags and backing
-files, to fdinfo of opened fuse files.
+OK, will change to it.
 
-Related discussions can be found at links below.
+> 
+> > 
+> > > 
+> > > It could be useful for debugging, but there are a few concerns:
+> > > 
+> > > 1) SYS_PRINT_* vs. hung_task_* priority conflict
+> > > - If SYS_PRINT_ALL_CPU_BT is set on the command line but
+> > > hung_task_all_cpu_backtrace is disabled, which one wins?
+> > > - Or should SYS_PRINT_ALL_CPU_BT force-enable hung_task_all_cpu_backtrace?
+> > 
+> > With this patch, the 'hungtask_print' and hung_task_all_cpu_backtrace
+> > will be ORed, so yes, if user sets SYS_PRINT_ALL_CPU_BT explicitly, the
+> > all-cpu-backtrace will be printed.
+> > 
+> > While the default value for hungtask_print is 0, and no system info will
+> > be dumped by default.
+> > 
+> > Long term wise, I'm not sure if sysctl_hung_task_all_cpu_backtracemay
+> > could be removed as its function can be covered by this print_mask knob.
+> 
+> Afraid we cannot remove that knob — it would break user-space. Note that
+> hungtask_print_mask should act as an extension (to provide more details
+> when investigating hangs), and it must still follow hung-task detector's
+> rules, IIUC.
 
-Link: https://lore.kernel.org/all/CAOQ4uxgS3OUy9tpphAJKCQFRAn2zTERXXa0QN_KvP6ZOe2KVBw@mail.gmail.com/
-Link: https://lore.kernel.org/all/CAOQ4uxgkg0uOuAWO2wOPNkMmD9wqd5wMX+gTfCT-zVHBC8CkZg@mail.gmail.com/
-Cc: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
----
- fs/fuse/file.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Right.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 754378dd9f7159f20fde6376962d45c4c706b868..1e54965780e9d625918c22a3dea48ba5a9a5ed1b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -8,6 +8,8 @@
+
+> Hmm... SYS_PRINT_ALL_CPU_BT is a bit tricky here. Maybe we can directly
+> enable hung_task_all_cpu_backtrace when SYS_PRINT_ALL_CPU_BT is set in
+> hungtask_print_mask, while still allowing manual disabling to dump
+> backtraces for all CPUs via hung_task_all_cpu_backtrace. This way, we
+> keep its original semantics ;)
  
- #include "fuse_i.h"
- 
-+#include "linux/idr.h"
-+#include "linux/rcupdate.h"
- #include <linux/pagemap.h>
- #include <linux/slab.h>
- #include <linux/kernel.h>
-@@ -3392,6 +3394,21 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
- 	return ret;
- }
- 
-+static void fuse_file_show_fdinfo(struct seq_file *seq, struct file *f)
-+{
-+	struct fuse_file *ff = f->private_data;
-+	struct fuse_conn *fc = ff->fm->fc;
-+	struct file *backing_file = fuse_file_passthrough(ff);
-+
-+	seq_printf(seq, "fuse conn:%u open_flags:%u\n", fc->dev, ff->open_flags);
-+
-+	if (backing_file) {
-+		seq_puts(seq, "fuse backing_file: ");
-+		seq_file_path(seq, backing_file, " \t\n\\");
-+		seq_puts(seq, "\n");
-+	}
-+}
-+
- static const struct file_operations fuse_file_operations = {
- 	.llseek		= fuse_file_llseek,
- 	.read_iter	= fuse_file_read_iter,
-@@ -3411,6 +3428,9 @@ static const struct file_operations fuse_file_operations = {
- 	.poll		= fuse_file_poll,
- 	.fallocate	= fuse_file_fallocate,
- 	.copy_file_range = fuse_copy_file_range,
-+#ifdef CONFIG_PROC_FS
-+	.show_fdinfo	= fuse_file_show_fdinfo,
-+#endif
- };
- 
- static const struct address_space_operations fuse_file_aops  = {
+Sounds goot to me, thanks for the suggestion!
 
--- 
-2.43.0
+> > 
+> > > 2) Duplicate prints
+> > > With SYS_PRINT_BLOCKED_TASKS enabled, processes in D state will be printed
+> > > twice, right?
+> > 
+> > Good point. As sys_show_info() is a general API helper, the user may chose
+> > not to set SYS_PRINT_BLOCKED_TASKS when debugging task hung.
+> > 
+> > In one recent bug we debugged with this patch, when the first "task hung" was
+> > shown, there were already dozens of tasks were in D state, which just hadn't
+> > hit the 120 seconds limit yet, and dumping them all helped in that case.
+> 
+> Makes sense to me. Right, SYS_PRINT_BLOCKED_TASKS doesn’t duplicate prints,
+> and
+> catches all D-state tasks - even the ones not yet timed out.
+> 
+> > 
+> > > Also, we really should document how those command-line parameters work ;)
+> > 
+> > Exactly! It currently just said 'refer panic.h' in code comment, maybe I
+> > should copy those definitions here as comments. How do you think?
+> 
+> Yes. Both comments and kernel-doc are needed ;)
 
+Sure. Seems kernel-parameters.txt is the good place for core parameters.
 
+Thanks,
+Feng
+
+> 
+> Thanks,
+> Lance
+> 
+> > 
+> > Thanks,
+> > Feng
+> > 
+> > > Thansk,
+> > > Lance
+> > > 
+> > > > +
+> > > > +static unsigned long cur_hungtask_print;
+> > > > +
+> > > >    #ifdef CONFIG_SMP
+> > > >    /*
+> > > >     * Should we dump all CPUs backtraces in a hung task event?
+> > > > @@ -163,11 +171,12 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> > > >    	 */
+> > > >    	sysctl_hung_task_detect_count++;
+> > > > +	cur_hungtask_print = hungtask_print;
+> > > >    	trace_sched_process_hang(t);
+> > > >    	if (sysctl_hung_task_panic) {
+> > > >    		console_verbose();
+> > > > -		hung_task_show_lock = true;
+> > > > +		cur_hungtask_print |= SYS_PRINT_LOCK_INFO;
+> > > >    		hung_task_call_panic = true;
+> > > >    	}
+> > > > @@ -190,10 +199,10 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> > > >    			" disables this message.\n");
+> > > >    		sched_show_task(t);
+> > > >    		debug_show_blocker(t);
+> > > > -		hung_task_show_lock = true;
+> > > > +		cur_hungtask_print |= SYS_PRINT_LOCK_INFO;
+> > > >    		if (sysctl_hung_task_all_cpu_backtrace)
+> > > > -			hung_task_show_all_bt = true;
+> > > > +			cur_hungtask_print |= SYS_PRINT_ALL_CPU_BT;
+> > > >    		if (!sysctl_hung_task_warnings)
+> > > >    			pr_info("Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings\n");
+> > > >    	}
+> > > > @@ -242,7 +251,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+> > > >    	if (test_taint(TAINT_DIE) || did_panic)
+> > > >    		return;
+> > > > -	hung_task_show_lock = false;
+> > > > +	cur_hungtask_print = 0;
+> > > >    	rcu_read_lock();
+> > > >    	for_each_process_thread(g, t) {
+> > > >    		unsigned int state;
+> > > > @@ -266,14 +275,8 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+> > > >    	}
+> > > >     unlock:
+> > > >    	rcu_read_unlock();
+> > > > -	if (hung_task_show_lock)
+> > > > -		debug_show_all_locks();
+> > > > -
+> > > > -	if (hung_task_show_all_bt) {
+> > > > -		hung_task_show_all_bt = false;
+> > > > -		trigger_all_cpu_backtrace();
+> > > > -	}
+> > > > +	sys_show_info(cur_hungtask_print);
+> > > >    	if (hung_task_call_panic)
+> > > >    		panic("hung_task: blocked tasks");
+> > > >    }
 
