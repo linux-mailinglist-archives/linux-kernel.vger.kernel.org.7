@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-640952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1900AB0B49
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AC6AB0B5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAA01630C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53AC1165AE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB90426FD95;
-	Fri,  9 May 2025 07:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB5F272E54;
+	Fri,  9 May 2025 07:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEzYIo1C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VkSn/HC/"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D0026D4C4;
-	Fri,  9 May 2025 07:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3C5270ECE;
+	Fri,  9 May 2025 07:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746774674; cv=none; b=GmLQuPX+GgRNm8+I2MidxEWEkEiEpdRc5nVt+MBXWbfCMxea13eO4ALuQkSByrQSnIQAqDmkD3bqTFaW6wrMbh406K9m2pbWQyaZIUwLyVqltKfjeWV8yUvwiaipMWKUU+GL0v/v5t+KeTdgvuUCM3CDtg61ZJ291whSFAYDGSM=
+	t=1746774790; cv=none; b=j5mQL8a177QVmiz13GlahOgdoEbfB9nbSh0o3pKRQ0UAh5sUyDSjxdsjJin9FpVMk5k0oGrIDcTCf3Qv08oZL7ZGsnpexec9meIjtnVoZ0DDRL5MOL1y1M3YhhOfFJXlZiME26+2u40fY0PfSJ5VUaXuDhexRz1Prq8Aby931WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746774674; c=relaxed/simple;
-	bh=u3ZfQBj5s6NVJZ5Nx5H/avFJ+A++2sTas5i3qAMXsII=;
+	s=arc-20240116; t=1746774790; c=relaxed/simple;
+	bh=8JI2CZf49Vns0Fcaw0E03b15sEgTn3bh0KK5uHLOevw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K0uDAFSMVkgKSV20fhpbuAVAyYagRecXuZGeXzxh1MbpAvdZ7sP9h8wQXK/fwjrA2EoJH8VR1Gc93ePJEdma0RW7AzKZHi4fKStuN2HdWYXBJfi2kNyTUn52ZfNgr1A7R76dowp2ADH6/Z76JhUjxl9tSqUjcasrK5fWWq6bVTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEzYIo1C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA3A6C4CEE4;
-	Fri,  9 May 2025 07:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746774673;
-	bh=u3ZfQBj5s6NVJZ5Nx5H/avFJ+A++2sTas5i3qAMXsII=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TEzYIo1CRo6Vo2NET14ploXJ/8rRxm0rtJ/pwTjUKlOVBtqthh0gYvjj4r1kAmjAn
-	 rQcyEJi+zcM3h7J8lnJc/TrdaBLoxerGgxP88J7AcR/PeWSri5uq2lP66uWu3sDryK
-	 wMDZb/lGAML7O3dabV21YEFpHwvTrg/Zpy/h0XjLB0+EHvTaDBTaj7ZowHTFWquosF
-	 sS1S19ampaRvT3niN74xCM2fo3WlwHIvGnYODNELDZGY/NSVXIU42XlkZVyxdYml3I
-	 SGYIt2jhM6Hpq0rw0j2ghB5BbawKaC55Q1Mg5+wEFeGFyF3pso37998IfHWYZS/z9Z
-	 yvvjw5jklOgIw==
-Message-ID: <ccf4b15a-8399-4a7f-ae40-d01d0975921c@kernel.org>
-Date: Fri, 9 May 2025 09:11:07 +0200
+	 In-Reply-To:Content-Type; b=FbqP+669IojlbegvGewiiNLSrOhcQuMiLWp8hvMEc49qwTRw/veYyt8wzky5mYkxTEGZcEbIVPeAg4fVjEFTUDWPTA31IfoxYCGXKhgZgkXo5PpcMHDoxypS8UrGg/R2/4Ozqd65R4DMRizA53Jcf34F7dm/2NU8Kr5Nzw2FaOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VkSn/HC/; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id DHtkumGVhQJEDDHtkusQSr; Fri, 09 May 2025 09:11:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746774717;
+	bh=QbqpHgfWZdWoL+dxr51NWJP/ji7RrPcoN02Bo/D+aZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=VkSn/HC/XS4DR2ial8Rge8vMEtVc8//o8TPeHpC7/LQRBIyoBhkq3UYGQc7kQHU0s
+	 PwQix5eAtMFFW/U+luipETykyYq51MoKZNMmlNbD0EwIzzIONkC3noZg7G5oggD9Nl
+	 HqdVKe8D3iIWcf5F7bK+vJtDy3fFm06ZwNKPPMz7iW5OVxCT1nUz4d9eOxas2cvRQ1
+	 vWkRIh/Ob8/OMGdm6/AAgF0SaNjHwOidCcJtDgUURGTA8nDdHDFNS5CwuMzaV/1w9Y
+	 HGmZw7JjT9Cgofleb+XWL6iScmXCJJeMZFlMn9+ywk2InIWqf82/LLHEnszG1PdmvG
+	 oEoRkDfJjXtmA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 09 May 2025 09:11:57 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <fc126869-15f4-48f1-a44c-30c45f8dd2ec@wanadoo.fr>
+Date: Fri, 9 May 2025 09:11:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,157 +56,318 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: display: rockchip: Convert
- cdn-dp-rockchip.txt to yaml
-To: Chaoyi Chen <kernel@airkyi.com>, Sandy Huang <hjc@rock-chips.com>,
- Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Chaoyi Chen <chaoyi.chen@rock-chips.com>,
- Dragan Simic <dsimic@manjaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250509070247.868-1-kernel@airkyi.com>
- <20250509070247.868-3-kernel@airkyi.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250509070247.868-3-kernel@airkyi.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] i2c: amd-isp: Add ISP i2c-designware driver
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org,
+ mlimonci@amd.com, krzk@kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
+ king.li@amd.com, dantony@amd.com,
+ Venkata Narendra Kumar Gutta <vengutta@amd.com>
+References: <20250424184952.1290019-1-pratap.nirujogi@amd.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250424184952.1290019-1-pratap.nirujogi@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 09/05/2025 09:02, Chaoyi Chen wrote:
-> +
-> +  clock-names:
-> +    items:
-> +      - const: core-clk
-> +      - const: pclk
-> +      - const: spdif
-> +      - const: grf
-> +
-> +  extcon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle to the extcon device providing the cable state for the DP PHY.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Just phandle. If this is an array (but why?), you need maxItems for
-outer and inner dimensions.
-
-> +    description:
-> +      Phandle to the PHY device for DP output.
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Input of the CDN DP
-> +        properties:
-> +          endpoint@0:
-> +            description: Connection to the VOPB
-> +          endpoint@1:
-> +            description: Connection to the VOPL
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Output of the CDN DP
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 4
-> +
-> +  reset-names:
-> +    items:
-> +      - const: spdif
-> +      - const: dptx
-> +      - const: apb
-> +      - const: core
-> +
-> +  rockchip,grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to GRF register to control HPD.
-> +
-> +  "#sound-dai-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - phys
-> +  - ports
-> +  - resets
-> +  - reset-names
-> +  - rockchip,grf
-> +
-> +additionalProperties: false
-
-Well, if you added dai-common $ref then this could have stayed as
-unevaluatedProperties, so you will allow names for the DAI as well.
-
+Le 24/04/2025 à 20:49, Pratap Nirujogi a écrit :
+> The camera sensor is connected via ISP I2C bus in AMD SOC
+> architectures. Add new I2C designware driver to support
+> new camera sensors on AMD HW.
 > 
+> Co-developed-by: Venkata Narendra Kumar Gutta <vengutta@amd.com>
+> Signed-off-by: Venkata Narendra Kumar Gutta <vengutta@amd.com>
+> Co-developed-by: Bin Du <bin.du@amd.com>
+> Signed-off-by: Bin Du <bin.du@amd.com>
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+> Changes v1 -> v2:
+> 
+> * Remove dependency on exported symbol "isp_power_set()". Use pm_runtime ops to power on/off ISP controller.
+> * Remove hardcoding adapter id to 99. Instead switched to use dynamically allocated adapter id.
+> * Cleanup header files.
+> * Replace subsys_initcall() with default module_init()
+> * Update copyright header and license info.
+> * Update MAINTAINERS details for i2c-designware-amdisp.c
+> * Fix coding errors based on review feedback.
+> 
+>   MAINTAINERS                                |   7 +
+>   drivers/i2c/busses/Kconfig                 |  10 +
+>   drivers/i2c/busses/Makefile                |   1 +
+>   drivers/i2c/busses/i2c-designware-amdisp.c | 205 +++++++++++++++++++++
+>   4 files changed, 223 insertions(+)
+>   create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f31aeb6b452e..65b6d985e1ed 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23519,6 +23519,13 @@ L:	linux-i2c@vger.kernel.org
+>   S:	Supported
+>   F:	drivers/i2c/busses/i2c-designware-*
+>   
+> +SYNOPSYS DESIGNWARE I2C DRIVER - AMDISP
+> +M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
+> +M:	Bin Du <bin.du@amd.com>
+> +L:	linux-i2c@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/i2c/busses/i2c-designware-amdisp.c
+> +
+>   SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER
+>   M:	Jaehoon Chung <jh80.chung@samsung.com>
+>   L:	linux-mmc@vger.kernel.org
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 83c88c79afe2..adb2910525b1 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -592,6 +592,16 @@ config I2C_DESIGNWARE_PLATFORM
+>   	  This driver can also be built as a module.  If so, the module
+>   	  will be called i2c-designware-platform.
+>   
+> +config I2C_DESIGNWARE_AMDISP
+> +	tristate "Synopsys DesignWare Platform for AMDISP"
+> +	depends on I2C_DESIGNWARE_CORE
+> +	help
+> +	  If you say yes to this option, support will be included for the
+> +	  AMDISP Synopsys DesignWare I2C adapter.
+> +
+> +	  This driver can also be built as a module.  If so, the module
+> +	  will be called amd_isp_i2c_designware.
+> +
+>   config I2C_DESIGNWARE_AMDPSP
+>   	bool "AMD PSP I2C semaphore support"
+>   	depends on ACPI
+> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> index c1252e2b779e..04db855fdfd6 100644
+> --- a/drivers/i2c/busses/Makefile
+> +++ b/drivers/i2c/busses/Makefile
+> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)			+= i2c-designware-platform.o
+>   i2c-designware-platform-y 				:= i2c-designware-platdrv.o
+>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)	+= i2c-designware-amdpsp.o
+>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
+> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
+>   obj-$(CONFIG_I2C_DESIGNWARE_PCI)			+= i2c-designware-pci.o
+>   i2c-designware-pci-y					:= i2c-designware-pcidrv.o
+>   obj-$(CONFIG_I2C_DIGICOLOR)	+= i2c-digicolor.o
+> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
+> new file mode 100644
+> index 000000000000..ad6f08338124
+> --- /dev/null
+> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
+> @@ -0,0 +1,205 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Based on Synopsys DesignWare I2C adapter driver.
+> + *
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include "i2c-designware-core.h"
+> +
+> +#define DRV_NAME		"amd_isp_i2c_designware"
+> +#define AMD_ISP_I2C_INPUT_CLK	100 /* Mhz */
+> +
+> +static void amd_isp_dw_i2c_plat_pm_cleanup(struct dw_i2c_dev *i2c_dev)
+> +{
+> +	pm_runtime_disable(i2c_dev->dev);
+> +
+> +	if (i2c_dev->shared_with_punit)
+> +		pm_runtime_put_noidle(i2c_dev->dev);
+> +}
+> +
+> +static inline u32 amd_isp_dw_i2c_get_clk_rate(struct dw_i2c_dev *i2c_dev)
+> +{
+> +	return AMD_ISP_I2C_INPUT_CLK * 1000;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
+> +{
+> +	struct dw_i2c_dev *isp_i2c_dev;
+> +	struct i2c_adapter *adap;
+> +	int ret;
+> +
+> +	isp_i2c_dev = devm_kzalloc(&pdev->dev, sizeof(*isp_i2c_dev), GFP_KERNEL);
+> +	if (!isp_i2c_dev)
+> +		return -ENOMEM;
+> +	isp_i2c_dev->dev = &pdev->dev;
+> +
+> +	pdev->dev.init_name = DRV_NAME;
+> +
+> +	/*
+> +	 * Use the polling mode to send/receive the data, because
+> +	 * no IRQ connection from ISP I2C
+> +	 */
+> +	isp_i2c_dev->flags |= ACCESS_POLLING;
+> +	platform_set_drvdata(pdev, isp_i2c_dev);
+> +
+> +	isp_i2c_dev->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(isp_i2c_dev->base))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(isp_i2c_dev->base),
+> +				     "failed to get IOMEM resource\n");
+> +
+> +	isp_i2c_dev->get_clk_rate_khz = amd_isp_dw_i2c_get_clk_rate;
+> +	ret = i2c_dw_fw_parse_and_configure(isp_i2c_dev);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "failed to parse i2c dw fwnode and configure\n");
+> +
+> +	i2c_dw_configure(isp_i2c_dev);
+> +
+> +	adap = &isp_i2c_dev->adapter;
+> +	adap->owner = THIS_MODULE;
+> +	ACPI_COMPANION_SET(&adap->dev, ACPI_COMPANION(&pdev->dev));
+> +	adap->dev.of_node = pdev->dev.of_node;
+> +	/* use dynamically allocated adapter id */
+> +	adap->nr = -1;
+> +
+> +	if (isp_i2c_dev->flags & ACCESS_NO_IRQ_SUSPEND)
+> +		dev_pm_set_driver_flags(&pdev->dev,
+> +					DPM_FLAG_SMART_PREPARE);
+> +	else
+> +		dev_pm_set_driver_flags(&pdev->dev,
+> +					DPM_FLAG_SMART_PREPARE |
+> +					DPM_FLAG_SMART_SUSPEND);
+> +
+> +	device_enable_async_suspend(&pdev->dev);
+> +
+> +	if (isp_i2c_dev->shared_with_punit)
+> +		pm_runtime_get_noresume(&pdev->dev);
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	ret = i2c_dw_probe(isp_i2c_dev);
+> +	if (ret) {
+> +		dev_err_probe(&pdev->dev, ret, "i2c_dw_probe failed\n");
+> +		goto error_release_rpm;
+> +	}
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +
+> +	return 0;
+> +
+> +error_release_rpm:
+> +	amd_isp_dw_i2c_plat_pm_cleanup(isp_i2c_dev);
+> +	pm_runtime_put_sync(&pdev->dev);
+> +	return ret;
+> +}
+> +
+> +static void amd_isp_dw_i2c_plat_remove(struct platform_device *pdev)
+> +{
+> +	struct dw_i2c_dev *isp_i2c_dev = platform_get_drvdata(pdev);
+> +
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	i2c_del_adapter(&isp_i2c_dev->adapter);
+
+Usually, this match a corresponding i2c_add_adapter().
+
+For my own understaning, in which function/calls path is it hidden?
+Is it needed here?
+
+CJ
 
 
-Best regards,
-Krzysztof
+> +
+> +	i2c_dw_disable(isp_i2c_dev);
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +	amd_isp_dw_i2c_plat_pm_cleanup(isp_i2c_dev);
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_prepare(struct device *dev)
+> +{
+> +	/*
+> +	 * If the ACPI companion device object is present for this device, it
+> +	 * may be accessed during suspend and resume of other devices via I2C
+> +	 * operation regions, so tell the PM core and middle layers to avoid
+> +	 * skipping system suspend/resume callbacks for it in that case.
+> +	 */
+> +	return !has_acpi_companion(dev);
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_runtime_suspend(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +
+> +	if (i_dev->shared_with_punit)
+> +		return 0;
+> +
+> +	i2c_dw_disable(i_dev);
+> +	i2c_dw_prepare_clk(i_dev, false);
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_suspend(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (!i_dev)
+> +		return -ENODEV;
+> +
+> +	ret = amd_isp_dw_i2c_plat_runtime_suspend(dev);
+> +	if (!ret)
+> +		i2c_mark_adapter_suspended(&i_dev->adapter);
+> +
+> +	return ret;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_runtime_resume(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +
+> +	if (!i_dev)
+> +		return -ENODEV;
+> +
+> +	if (!i_dev->shared_with_punit)
+> +		i2c_dw_prepare_clk(i_dev, true);
+> +	if (i_dev->init)
+> +		i_dev->init(i_dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_resume(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +
+> +	amd_isp_dw_i2c_plat_runtime_resume(dev);
+> +	i2c_mark_adapter_resumed(&i_dev->adapter);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops amd_isp_dw_i2c_dev_pm_ops = {
+> +	.prepare = pm_sleep_ptr(amd_isp_dw_i2c_plat_prepare),
+> +	LATE_SYSTEM_SLEEP_PM_OPS(amd_isp_dw_i2c_plat_suspend, amd_isp_dw_i2c_plat_resume)
+> +	RUNTIME_PM_OPS(amd_isp_dw_i2c_plat_runtime_suspend, amd_isp_dw_i2c_plat_runtime_resume, NULL)
+> +};
+> +
+> +/* Work with hotplug and coldplug */
+> +MODULE_ALIAS("platform:amd_isp_i2c_designware");
+> +
+> +static struct platform_driver amd_isp_dw_i2c_driver = {
+> +	.probe = amd_isp_dw_i2c_plat_probe,
+> +	.remove = amd_isp_dw_i2c_plat_remove,
+> +	.driver		= {
+> +		.name	= DRV_NAME,
+> +		.pm	= pm_ptr(&amd_isp_dw_i2c_dev_pm_ops),
+> +	},
+> +};
+> +module_platform_driver(amd_isp_dw_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("Synopsys DesignWare I2C bus adapter in AMD ISP");
+> +MODULE_IMPORT_NS("I2C_DW");
+> +MODULE_IMPORT_NS("I2C_DW_COMMON");
+> +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
+> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
+> +MODULE_AUTHOR("Bin Du <bin.du@amd.com>");
+> +MODULE_LICENSE("GPL");
+
 
