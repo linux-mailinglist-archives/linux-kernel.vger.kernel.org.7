@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-640939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A438AAB0B31
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:07:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635B7AB0B36
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2694517F735
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CB31C200DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A1326FDA3;
-	Fri,  9 May 2025 07:06:59 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E952741AC;
+	Fri,  9 May 2025 07:07:02 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779EC26FDA7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C5226FDA2
 	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746774419; cv=none; b=STalB10nXpEK+Pp8/9s/QeN6tuXK+DltAgFvbUFivYZp5wNdBAGmqZVke5xqqjo8HHLISSn1jecWlHth8i2b6Wc4lSaHBDQetitBrMi/c1JAasysx0cf8kZkWZGSfNUNPHcXIDav/3ZN18Y4DmlHRXF1AaMHxNWmgUjZnsMEnPU=
+	t=1746774419; cv=none; b=IlTauybJw57PoaJmMZQG2yh+8x9ji2gS9kWluIOGdQGGIfZiTqNhIofYxlk0K1QK5n6ZHSwepKXNj5WndJKv66GV8aqeNT7hvSmJUPZTGUaSJSg5GWE+X5nqkijTlvQ4aMibC30rck7xVpwbhdui7xr3NaWjLakRl4+kUMEwYys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746774419; c=relaxed/simple;
-	bh=xuh3+d3PyJHPLx/vRAjNd3dPRlG+l4xvonJuqToDVxA=;
+	bh=us+ZJ6WIK8Ixr9HGqe8c7I6zbm6KW5ujWB5Obyd2WO8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dnQn4OK+HPaloRkrt32NZA4izGwncqa/qprBk5RD8bhNUaxklcBk3fKcRPxRlq5+V60fq2ECCFrgYVBNhUtqFRYp1cJiyNdI3l9WjvOXtodCQfQaJpiZ6DOp1IMe+5YO3uX/DMlMj+LhSSI8zfnw0kB0GObHZTUw/zFk862JDDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=NL2cmsXmT8jpSluJLHssWlCsucGHT3R9q2FlUdQbowjjsxOYOFyKbc9RDwwK1pn9xI56hmQGfT2Lwuy9JTPAjgrQfAcG5u8j63EnXMEu2W5TIdoNZqp5cY13AInd6YKekzRzLkd92H0gkkgcKnXRFhPZ7t3qjL1sH9G1mAggtZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zv0R959F8z4f3jch
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:06:29 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zv0RH1B8Dz4f3jtT
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:06:35 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 4ED5B1A0847
+	by mail.maildlp.com (Postfix) with ESMTP id 831A31A07C0
 	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:06:54 +0800 (CST)
 Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgAnesR4qR1ofcXLLg--.60961S11;
+	by APP3 (Coremail) with SMTP id _Ch0CgAnesR4qR1ofcXLLg--.60961S12;
 	Fri, 09 May 2025 15:06:54 +0800 (CST)
 From: Chen Ridong <chenridong@huaweicloud.com>
 To: akpm@linux-foundation.org,
@@ -60,9 +60,9 @@ To: akpm@linux-foundation.org,
 Cc: linux-kernel@vger.kernel.org,
 	lujialin4@huawei.com,
 	chenridong@huaweicloud.com
-Subject: [RFC next 3/5] user_namespace: add user_ns iteration helper
-Date: Fri,  9 May 2025 06:54:15 +0000
-Message-Id: <20250509065417.147515-10-chenridong@huaweicloud.com>
+Subject: [RFC next 4/5] uounts: factor out __inc_rlimit_get_ucounts/__dec_rlimit_put_ucounts
+Date: Fri,  9 May 2025 06:54:16 +0000
+Message-Id: <20250509065417.147515-11-chenridong@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250509065417.147515-1-chenridong@huaweicloud.com>
 References: <20250509065417.147515-1-chenridong@huaweicloud.com>
@@ -73,10 +73,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAnesR4qR1ofcXLLg--.60961S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF43KFWfZF1Utry7Gw4fGrg_yoW5XFWDpF
-	4Skr9xAw47JrnrKwn8ZFs5u34fWr10vFy8JFyxu3s3tF1agFy5Arn7A3WrZr9xGr4UGrW5
-	XFWUKws8Kr4Uu37anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgAnesR4qR1ofcXLLg--.60961S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1Dtr15Jr47WrWruw1UAwb_yoW5trW7pr
+	4xJ34UAw4kJF43trn5Ja95AryrArWSvry5AFy7Wrn3t3W3tr1Fgw12vryYga47t3yrJ34a
+	qasrWFWqk3WUZrUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -87,98 +87,124 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxGF43KFWfZF1Utry7Gw4fGrg_yoW5XFWDpF
 	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
 	kIc2xKxwCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
 	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
+	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
 	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
+	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
 	daVFxhVjvjDU0xZFpf9x0pRUDGrUUUUU=
 X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 From: Chen Ridong <chenridong@huawei.com>
 
-Add a helper function named 'ns_next_child_pre' that performs
-a pre-order traversal of a namespace's descendants.
+The __inc_rlimit_get_ucounts function has been factored out. This function
+can increment the rlimit by a variable number and acquires an additional
+ucount reference when the rlimit count was previously zero.
+
+Correspondingly, the __dec_rlimit_put_ucounts function has also been
+factored out. This function releases the ucount reference when the rlimit
+reaches zero.
+
+These functions not only make the code more concise but also serve as a
+foundation for subsequent patches.
 
 Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- include/linux/user_namespace.h |  9 +++++++
- kernel/user_namespace.c        | 44 ++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
+ kernel/ucount.c | 56 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index d84b2703caab..823df9267a4a 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -169,6 +169,15 @@ static inline void set_userns_rlimit_max(struct user_namespace *ns,
- 	ns->rlimit_max[type] = max <= LONG_MAX ? max : LONG_MAX;
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index 8686e329b8f2..33605e416724 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -276,22 +276,46 @@ bool dec_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v)
+ 	return (new == 0);
  }
  
-+struct user_namespace *ns_next_child(struct user_namespace *pos,
-+					   struct user_namespace *parent);
-+struct user_namespace *ns_next_child_pre(struct user_namespace *pos,
-+						    struct user_namespace *root);
-+
-+#define ns_for_each_child_pre(pos, ns)				\
-+	for ((pos) = ns_next_child_pre(NULL, (ns)); (pos);	\
-+	     (pos) = ns_next_child_pre((pos), (ns)))
-+
- #ifdef CONFIG_USER_NS
- 
- static inline struct user_namespace *get_user_ns(struct user_namespace *ns)
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index cbe8f96c3e60..9a2e77505b97 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -30,6 +30,50 @@ static bool new_idmap_permitted(const struct file *file,
- 				struct uid_gid_map *map);
- static void free_user_ns(struct work_struct *work);
- 
-+struct user_namespace *ns_next_child(struct user_namespace *pos,
-+					   struct user_namespace *parent)
++static void __dec_rlimit_put_ucounts(struct ucounts *ucounts,
++				enum rlimit_type type, long v)
 +{
-+	struct user_namespace *next;
++	long dec = atomic_long_sub_return(v, &ucounts->rlimit[type]);
 +
-+	if (!pos)
-+		/* Get the first child of the parent. */
-+		next = list_entry_rcu(parent->children.next, struct user_namespace, ns_node);
-+	else
-+		next = list_entry_rcu(pos->ns_node.next, struct user_namespace, ns_node);
-+
-+	if (&next->ns_node != &parent->children)
-+		return next;
-+
-+	return NULL;
++	WARN_ON_ONCE(dec < 0);
++	if (dec == 0)
++		put_ucounts(ucounts);
 +}
 +
-+/* Should be called under rcu_read_lock() */
-+struct user_namespace *ns_next_child_pre(struct user_namespace *pos,
-+						    struct user_namespace *root)
++static long __inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v)
 +{
-+	struct user_namespace *next;
++	long new = atomic_long_add_return(v, &ucounts->rlimit[type]);
 +
++	/*
++	 * Grab an extra ucount reference for the caller when
++	 * the rlimit count was previously 0.
++	 */
++	if (new == v && !get_ucounts(ucounts)) {
++		long dec = atomic_long_sub_return(v, &ucounts->rlimit[type]);
 +
-+	/* if first iteration, visit @root */
-+	if (!pos)
-+		return root;
-+
-+	/* visit the first child if exists */
-+	next = ns_next_child(NULL, pos);
-+	if (next)
-+		return next;
-+
-+	/* no child, visit my or the closest ancestor's next ns_node */
-+	while (pos != root) {
-+		next = ns_next_child(pos, pos->parent);
-+		if (next)
-+			return next;
-+		pos = pos->parent;
++		WARN_ON_ONCE(dec < 0);
++		return 0;
 +	}
-+
-+	return NULL;
++	return new;
 +}
 +
- static struct ucounts *inc_user_namespaces(struct user_namespace *ns, kuid_t uid)
+ static void do_dec_rlimit_put_ucounts(struct ucounts *ucounts,
+-				struct ucounts *last, enum rlimit_type type)
++				struct ucounts *last, enum rlimit_type type, long v)
  {
- 	return inc_ucount(ns, uid, UCOUNT_USER_NAMESPACES);
+ 	struct ucounts *iter, *next;
+ 	for (iter = ucounts; iter != last; iter = next) {
+-		long dec = atomic_long_sub_return(1, &iter->rlimit[type]);
+-		WARN_ON_ONCE(dec < 0);
+ 		next = iter->ns->ucounts;
+-		if (dec == 0)
+-			put_ucounts(iter);
++		__dec_rlimit_put_ucounts(ucounts, type, v);
+ 	}
+ }
+ 
+ void dec_rlimit_put_ucounts(struct ucounts *ucounts, enum rlimit_type type)
+ {
+-	do_dec_rlimit_put_ucounts(ucounts, NULL, type);
++	do_dec_rlimit_put_ucounts(ucounts, NULL, type, 1);
+ }
+ 
+ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
+@@ -300,30 +324,22 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
+ 	/* Caller must hold a reference to ucounts */
+ 	struct ucounts *iter;
+ 	long max = LONG_MAX;
+-	long dec, ret = 0;
++	long ret = 0;
+ 
+ 	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
+-		long new = atomic_long_add_return(1, &iter->rlimit[type]);
+-		if (new < 0 || new > max)
++		long new = __inc_rlimit_get_ucounts(iter, type, 1);
++
++		if (new <= 0 || new > max)
+ 			goto dec_unwind;
+ 		if (iter == ucounts)
+ 			ret = new;
+ 		if (!override_rlimit)
+ 			max = get_userns_rlimit_max(iter->ns, type);
+-		/*
+-		 * Grab an extra ucount reference for the caller when
+-		 * the rlimit count was previously 0.
+-		 */
+-		if (new != 1)
+-			continue;
+-		if (!get_ucounts(iter))
+-			goto dec_unwind;
+ 	}
+ 	return ret;
++
+ dec_unwind:
+-	dec = atomic_long_sub_return(1, &iter->rlimit[type]);
+-	WARN_ON_ONCE(dec < 0);
+-	do_dec_rlimit_put_ucounts(ucounts, iter, type);
++	do_dec_rlimit_put_ucounts(ucounts, iter, type, 1);
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
 
