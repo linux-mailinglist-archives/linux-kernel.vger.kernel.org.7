@@ -1,125 +1,73 @@
-Return-Path: <linux-kernel+bounces-640685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC93DAB07CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460AAAB07D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013A31BA48F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:16:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1171BC0E54
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B90242D8C;
-	Fri,  9 May 2025 02:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96315243378;
+	Fri,  9 May 2025 02:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="njGFB6Kf"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMEfJhQP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DDF3FE4;
-	Fri,  9 May 2025 02:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22577E0E8;
+	Fri,  9 May 2025 02:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746756979; cv=none; b=m5RwdBUIUMhohEiYIs8+qZ7lIUEBbBanLUqg20n4eDjFY243FhhJNhVWtsSogMszyo5lLKBjOWIFMRIT27Sw3eLzJisP55xnwxi3Vbnv9Z7NNUGF+WBUaMxQinxR1TY1DzgP8UJWefzW3S4b77S4mfKvKdPO4wM3lYSRgWbOI5o=
+	t=1746757077; cv=none; b=T9f3PmfrZXK7zr/f/Et9hXfH2FK9Gn8Y0P0kF1asleYMHd4rExuYHK9md2rL/ZoSc4E6RboeLcOyjuqH/4RJiszURxsL3ejPYA5yLe+b6Im1V4P2z8pQVOnP3qnRpCw+MuIo7BPQvpLJmL2lN5DSUDHEjAHBKmnbzTjb3YlZAvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746756979; c=relaxed/simple;
-	bh=jcDz03GykXpgZhcHsKLE3bBIS6sLvPXKPUZIzKPJA/Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VC77Vdmq3GiPFiRNcItBXE+5uBAcLU/330LuVvYnSaUyCZQ9Q5VEn8hSXvZyiRE5aO1TyNTW3x66rpHnBSNMjX3B2ZBI2i290LZ/wRySQIiC/O0EALyNyuUx3zDukTTF8NxCA1T6dC4xzgQOy1EZBaVCmLhydtMvk+cnRwxKKnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=njGFB6Kf; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5492G6Vs1272622
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 8 May 2025 21:16:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746756966;
-	bh=CS/tUAIA1b6CCBXh10C6SNMxVsUo85DYXePoK+bxjKw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=njGFB6KfQhtmDsI/ZzB2KRWKAAsHm43knJdCkczOtmxLG+e8+obmpwefk95YQ+4jc
-	 fv64ExsKnp3guxCe6yymutSzGr/ePPCk2Z8NCVuDXtctmmjFblNBGilyKZvi69k8mV
-	 qh/bJz5zo7Fc6Uh5sKg0QWn6P6WK6+7tk1hjLSkQ=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5492G6jY113458
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 May 2025 21:16:06 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- May 2025 21:16:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 May 2025 21:16:06 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5492G5ds106642;
-	Thu, 8 May 2025 21:16:05 -0500
-Date: Thu, 8 May 2025 21:16:05 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Bryan Brattlof <bb@ti.com>
-CC: Paresh Bhagat <p-bhagat@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: ti: Add support for AM62D2-EVM
-Message-ID: <20250509021605.zgfwx5ubbccbxwbb@equator>
-References: <20250508091422.288876-1-p-bhagat@ti.com>
- <20250508091422.288876-4-p-bhagat@ti.com>
- <20250509002201.g2db6cf5w4mtow6k@bryanbrattlof.com>
+	s=arc-20240116; t=1746757077; c=relaxed/simple;
+	bh=wGEzWR6WTZcRw7fY06oJ8MlbhCBOdgHesLcRLWkuAG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s8TORnvA5LkCwC80htv8Cq73bZO8mGUVvZqGZmEY3fpQmCow/I69YKS3zOjwtL81qapL7Nu2r6H5xR3Hr23Zrfwlkr2n0dNwqkg3MvjlQZNN+ne7oIf7dbTIMGYZeyewVEChJavRnNL/SuUKfD5D7cllJgY9SYzCwNTJ4FLQg9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMEfJhQP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A114C4CEE7;
+	Fri,  9 May 2025 02:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746757076;
+	bh=wGEzWR6WTZcRw7fY06oJ8MlbhCBOdgHesLcRLWkuAG4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mMEfJhQPbLgGN0mbI+rYp1xnbX+2+3AGNeLtrxufB0TJEaD1f9xDZmNaArwa9W7bs
+	 N9hT354TQ9vIh6ncMAdqwt+Ccf4AKW22zOaQjcUOSuv8yuXiyp4AvLswofG7f1ta/S
+	 IvZV86XZUT64wMqloQIpcYNxqxCPNToH4dkG3zUfYXcs/zMCfmoUuoq5TogckM81O8
+	 UWMWj9hYX1pIhus/BLK1ocmqBwHwOXc5yWPi2LWNswIJQ6iodtTdrgX3Dyyt0BShHm
+	 iaZTvpvhdOsAxbgx75boB9lj1yvfnFLjrkxrFNQr4jFOic+2a9Gq8UP3Ae7arO7/7/
+	 i7qJke4RZ71Qw==
+Date: Thu, 8 May 2025 19:17:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Konstantin Taranov <kotaranov@linux.microsoft.com>
+Cc: kotaranov@microsoft.com, pabeni@redhat.com, haiyangz@microsoft.com,
+ kys@microsoft.com, edumazet@google.com, davem@davemloft.net,
+ decui@microsoft.com, wei.liu@kernel.org, longli@microsoft.com,
+ jgg@ziepe.ca, leon@kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH rdma-next v3 1/4] net: mana: Probe rdma device in mana
+ driver
+Message-ID: <20250508191754.21e9ad31@kernel.org>
+In-Reply-To: <1746557541-3617-2-git-send-email-kotaranov@linux.microsoft.com>
+References: <1746557541-3617-1-git-send-email-kotaranov@linux.microsoft.com>
+	<1746557541-3617-2-git-send-email-kotaranov@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250509002201.g2db6cf5w4mtow6k@bryanbrattlof.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Paresh,
+On Tue,  6 May 2025 11:52:18 -0700 Konstantin Taranov wrote:
+> From: Konstantin Taranov <kotaranov@microsoft.com>
+> 
+> Initialize gdma device for rdma inside mana module.
+> For each gdma device, initialize an auxiliary ib device.
 
-
-On 19:22-20250508, Bryan Brattlof wrote:
-> On May  8, 2025 thus sayeth Paresh Bhagat:
-> > AM62D-EVM evaluation module (EVM) is a low-cost expandable platform board
-> > designed for TI’s AM62D2 SoC. It supports the following interfaces:
-> > 
-> > * 4 GB LPDDR4 RAM
-> > * x2 Gigabit Ethernet expansion connectors
-> > * x4 3.5mm TRS Audio Jack Line In
-> > * x4 3.5mm TRS Audio Jack Line Out
-> > * x2 Audio expansion connectors
-> > * x1 Type-A USB 2.0, x1 Type-C dual-role device (DRD) USB 2.0
-> > * x1 UHS-1 capable µSD card slot
-> > * 32 GB eMMC Flash
-> > * 512 Mb OSPI NOR flash
-> > * x4 UARTs via USB 2.0-B
-> > * XDS110 for onboard JTAG debug using USB
-> > * Temperature sensors, user push buttons and LEDs
-> > 
-> > AM62A7 and AM62D2 SoCs share several peripherals in wakeup, mcu, thermal,
-> > and portions of the main domain. To improve reuse and reduce duplication,
-> > common *-wakeup.dtsi, *-mcu.dtsi, *-thermal.dtsi, and *-main.dtsi files
-> > have been introduced. Each board will have a dedicated DTS file that
-> > includes both the shared and SoC-specific .dtsi files.
-> > 
-
-I suggest doing a cleanup and internal review before public next
-level patch. We have enough number of patches in upstream to use as
-reference as to how to do this correctly.
-
-
-Let us look at this in the next window, I do encourage using the time to
-review internally to use the best practises and have less discussion on
-minor organizational topics.
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Acked-by: Jakub Kicinski <kuba@kernel.org>
 
