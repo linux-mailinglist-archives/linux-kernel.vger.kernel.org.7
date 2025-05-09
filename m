@@ -1,156 +1,84 @@
-Return-Path: <linux-kernel+bounces-641741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9620AAB1550
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:34:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB81AB1548
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC2116411E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:34:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9A1F7B99F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D875F292094;
-	Fri,  9 May 2025 13:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18DB28ECCB;
+	Fri,  9 May 2025 13:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EnWyqmwT"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHEsOSV2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D3C153BD9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0680033FD;
+	Fri,  9 May 2025 13:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797616; cv=none; b=sXt7hrIiSpvz8oaaWuD6erJdf+VnB0ybgdA1lm54AMWqFBaMEUJQp52y4YILy/JxE9nhpsPWP6G5KVNOWgUmab6iWSY9pOAojS92fl4ZJ+xU6wZWRuYW4MyTOk0RS4Hm+AIN1y4if9NYWLoi5Gb+bvteZ4ajQVi4Z1Fr81op3ZY=
+	t=1746797613; cv=none; b=MozN+r1lGZyYFw6LH7Ypehs3aUypcTez3BenyeH4RCgts+bFWUOuE0icBcNegD4H0x9m9DXohsO61byKsk7IYvIYb9uZ/UB6mtBsXkByQM4EpeBlS4UY7z+3zR+T1tdJZ10reTCvvfcxr6Q/b9XQZdTSdlQeET/4+m5bM9FAVlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797616; c=relaxed/simple;
-	bh=TlkSYuqs+traWUaA3K1HwpXrmTQmXOWxUyVb6ntrqxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BSDizgHuhSxbOcgYSSjcPrjOPZ3oDdE/3ClGJJQJno8nCpvelSlUKBODA9d0gYClYFNkhDlEDwyzsc6BrbareWDOOm6b65+RFtwuteC3VlHW2OI2HqnickokaFscgp+mfodDUJW9jIYb35q95qG6FKqqNZM4AhdBFLgNS8uNvVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EnWyqmwT; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54d3ee30af1so1517582e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746797612; x=1747402412; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyTEj+ygo5+Kkz2DMrVi7Q4tbRBWdTGHuOvCJaygYnA=;
-        b=EnWyqmwTTH7t/lJXqovsbpnUSYBu1TblFw2aQjlPtSGPusPIJaAQ6aMbf5Qq8nGKRu
-         PC+YRHDTqN4i8gdl3szK2ghVP51R7nXzPzu+L0MjnXLdCXovoIHe9otRhdH1P31mw/5z
-         g5JYyllS/bUYNTlmRjX6WBBEk1yYh/QzMZi/tvOX4dj8uBtqCAdkSheA0Gn9hd5JHO1j
-         GcZO/njv1AG51XHRLg6gWHdjHmE6Ki2YvXbWtDlbwIl0XQH+juBAd7G5E30wz5nVEFlK
-         YU3Us9E32Mkn8d1vhUKjsjThXixJOKMqMfCBWf9nEWdVToSZfGUeqBDABCEZL19Yr1FX
-         joVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746797612; x=1747402412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KyTEj+ygo5+Kkz2DMrVi7Q4tbRBWdTGHuOvCJaygYnA=;
-        b=h8yUbLu5JWtUhuI/dHlKjuaeEbI231td+3aMZB9KxWiZCEoRqXnP53/0u0jYMxe/Gb
-         rICkjxlYpC0sIKK3A/W5zpYaxUYebpWvRS0HLmQ4IHVsxoFa2lvefL9/BPABsILIq1qa
-         FBuybOZm5lw62nhbMMu4rlru31aBmr8uOJAHoUd/16JHHznxHl6dSDJweT2h6Rt9diKT
-         gSbTl6zs91u+DVj8NOg5dSWWRXmMUwotebRz4v1LcvZn/iMpG+c3sjdGkZoCetFtHil/
-         TQuA9CfCjWNuUNGf92WV3JhgldtsWnIDSUriFK+ST12VV7nsodQcJkA66zgIpfT4wERk
-         6ZFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWBIwNtdwyJniuuvM+gYeC7d+pYUZpEItuC9r8ujN8WzUIs7tNLIB4o7uWlCWPRB7V/AknXJJWIOONmbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTiS5G6Pvlzuc5xaYKrxvsjzT0g1P25u6lY1xu4e6ICqyAYYKd
-	ZmqpFnANBpX+Wf0Ob9KM+lYmGCzTq5Tu+Cgd7q0pam9T64jW0FfJNGToom29eQ+NUUn5Mbx/1Sc
-	8iiihEN0ilxR0hakhfLeTQTd63EcDOd5WRAorYQ==
-X-Gm-Gg: ASbGncu2OHK/U6peXEPwDqxcsrloGfbYybLAKmIdlfyVoP3peSlE6UjN1pWjRaB5BvY
-	rYZxSygUbXYJmo4nYzQb3zbu3hipNB4KQljC/di5G8vRnca2foa+7TsCHId4HRV913Ohk/Xb0c6
-	FvcGWXRaNjcSVZN8AAaLIIhRgTtQSIVhWIt84Vc2RRB5HCc+1CNx/j3A==
-X-Google-Smtp-Source: AGHT+IH+RK7/XEa6JiT7pqhmb3oGoQVrhP9K1d8JyHBGzCVXdWspuBYjMtak9HjjuGq6re9lqeqvC3BDvp4KpIO5YTk=
-X-Received: by 2002:a05:651c:a11:b0:30c:160b:c75f with SMTP id
- 38308e7fff4ca-326c46b1a39mr15861731fa.36.1746797612514; Fri, 09 May 2025
- 06:33:32 -0700 (PDT)
+	s=arc-20240116; t=1746797613; c=relaxed/simple;
+	bh=vUkjVmgHbl5bkGxqT1facucSdubrZByHBHyHxJ0RHyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuZPug+a3NQC6FO25R7EEtYc3wAM2n6lsMm9mSjOSuDBEMWht6DQK7j5QlY9SBFlKUFrV6nYIuOWGsgHhsjbSlf40z+cl4yzX4mQ1hAEJk3UF3Vdoc+eq7GLqs8zRsZdYyVJG6n8YJdiH76+5IT3Hdg/At29yYQasbSjXbA2iy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHEsOSV2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC0D6C4CEE4;
+	Fri,  9 May 2025 13:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746797612;
+	bh=vUkjVmgHbl5bkGxqT1facucSdubrZByHBHyHxJ0RHyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lHEsOSV2142oH3KJyOD6L6m7K1/ingI/kY7z75SaCl/Y2bI5tmRpzKbmaDTW01JNa
+	 7gLVLpeLO4aB3Xzj8+PmhxMEFtgM366xxi5wHyhmrET6F2jVbon3b32leiDpJW77EP
+	 Q+CtfqiglJ2XAw+RdgU9IGQhCH4lHq7kE17RBkqYhT1y/UTEff8PPDuwg4tW9DRYaY
+	 mNicjLac0wbE4t5xtSfljeK14T0eDxJwkGOi94M5v8NjZbQdic/mjU6SnfVXYQLxaD
+	 2h/AO3O+uZHoKQS+ZFbAM5eSubCmubhRETkViEvycD9pbglMDpS6kEQf1AngaraaDi
+	 yEOm3n8Oybp4g==
+Date: Fri, 9 May 2025 15:33:29 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Z qiang <qiang.zhang1211@gmail.com>
+Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rcu/nocb: Add Safe checks for access offloaded rdp
+Message-ID: <aB4EKfvicJ558J7A@localhost.localdomain>
+References: <20250507112605.20910-1-qiang.zhang1211@gmail.com>
+ <20250507112605.20910-2-qiang.zhang1211@gmail.com>
+ <aBuJi3jhcp4dCbSY@localhost.localdomain>
+ <CALm+0cWyWrEcsYx+6nDT9XjMdLBDwx27SmAXTPUFLB59TbEc3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
- <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com>
- <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com> <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
- <2f02284d-2922-4bc3-ab2a-8848023019b7@bootlin.com> <CAHp75VdZuqP_ga_i1=kERQbscu55GFShPK_AhYF1jigoBz8wpg@mail.gmail.com>
-In-Reply-To: <CAHp75VdZuqP_ga_i1=kERQbscu55GFShPK_AhYF1jigoBz8wpg@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 9 May 2025 15:33:21 +0200
-X-Gm-Features: ATxdqUF1PrMyfdLebwhfVKGAVlYVaBvsllsiAwoSwuvvCaSGYfX2F5YWtmxv7uk
-Message-ID: <CAMRc=MdBwRMfpXG-bAWTAaiD9E7sRzr5RTfMWJ-2wAryJ-EcKQ@mail.gmail.com>
-Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
- gpio_desc in gpiochip_fwd
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Thomas Richard <thomas.richard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALm+0cWyWrEcsYx+6nDT9XjMdLBDwx27SmAXTPUFLB59TbEc3Q@mail.gmail.com>
 
-On Wed, May 7, 2025 at 5:24=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Wed, May 7, 2025 at 4:54=E2=80=AFPM Thomas Richard
-> <thomas.richard@bootlin.com> wrote:
-> > On 5/7/25 15:24, Andy Shevchenko wrote:
-> > > On Wed, May 7, 2025 at 1:10=E2=80=AFPM Thomas Richard
-> > > <thomas.richard@bootlin.com> wrote:
-> > >> On 5/7/25 08:34, Andy Shevchenko wrote:
-> > >>> On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
-> > >>> <thomas.richard@bootlin.com> wrote:
->
-> ...
->
-> > >>>> +       /*
-> > >>>> +        * get_direction() is called during gpiochip registration,=
- return input
-> > >>>> +        * direction if there is no descriptor for the line.
-> > >>>> +        */
-> > >>>> +       if (!test_bit(offset, fwd->valid_mask))
-> > >>>> +               return GPIO_LINE_DIRECTION_IN;
-> > >>>
-> > >>> Can you remind me why we choose a valid return for invalid line? Fr=
-om
-> > >>> a pure code perspective this should return an error.
-> > >>
-> > >> I reproduced gpiolib behavior. During gpiochip registration, we get =
-the
-> > >> direction of all lines. In the case the line is not valid, it is mar=
-ked
-> > >> as input if direction_input operation exists, otherwise it is marked=
- as
-> > >> output. [1]
-> > >>
-> > >> But in fact we could return an error and the core will mark the line=
- as
-> > >> input. Maybe ENODEV ?
-> > >
-> > > I am fine with this error code, but do we have similar cases already
-> > > in the kernel? Do they use the same or different error code(s)?
-> >
-> > I dumped all get_direction() operations in drivers/gpio and
-> > drivers/pinctrl and returned values are:
-> > - GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN (make sense).
-> > - -EINVAL (for example [1]).
-> > - -EBADE in gpiochip_get_direction() [2].
-> > - regmap_read() return code.
-> >
-> > But from my point of view -EINVAL and -EBADE do not match our case.
->
-> Hmm... I believe we need a GPIO maintainer to have a look at this.
->
+Le Thu, May 08, 2025 at 02:43:11PM +0800, Z qiang a écrit :
+> On Thu, May 8, 2025 at 12:25 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+> > On a second thought, isn't "rdp == this_cpu_ptr(&rcu_data)" enough?
+> 
+> If the CONFIG_DEBUG_PREEMPT=y, the following code will cause
+> a warning in rcuop kthreads:
+> 
+> WARN_ON_ONCE(!rcu_rdp_is_offloaded(rdp))
 
-I went with -EBADE in GPIO core to indicate that the underlying driver
-borked and returned an invalid value. I'm not sure if this is the
-right one here. I'm not against using -ENODEV.
+I keep forgetting that, indeed!
 
-Bart
+Looks good then, thanks.
+
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
