@@ -1,146 +1,167 @@
-Return-Path: <linux-kernel+bounces-641730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE91AB1529
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD68BAB1434
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B991B6055A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:27:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7F01BC4D8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18769289E01;
-	Fri,  9 May 2025 13:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563F829116A;
+	Fri,  9 May 2025 12:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gSecdX1o"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tu5HUi95"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365C5291882
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCD01E50B;
+	Fri,  9 May 2025 12:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797219; cv=none; b=PKPypizicGwSkBZBASYcppFCD5I1YYoY4FCijKgSG79WL9PUhKyyW+E9kIJQ4IyMaMNKbeGKc0biqEARnlFdJzUoBn0LUZ1Lv+jaGed2XeXKohszM1KebmAzp0wUbuYvyK0ZRxG03vboq9cVelHqbjvAKeg88kJ6FbdueOAzfd0=
+	t=1746795480; cv=none; b=dMRa0+dLv4SDFn+uBB06PRVbjRn2tFOce5BCBpI1ya2ruFLQy+FDkKnXl1L+21elNoyEHy6OyzVST408z2in5nDtWcpnHVAcGFyy3V1tuQ6CuUbVUaA/UUNLc5gwmt7D4uZdkoiUPizx02pGI82E7L3Ra5kJEBIJKUR/0ELkdd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797219; c=relaxed/simple;
-	bh=tPM06Iu4Z8+P5EtG8tgjuDyDEEfZr/lbw7DZWRVQNhU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=dcJhOlP0+hKZbuGRccyJ1eFkchV9KfAenwY/mWpd54y7sbPA2Na9UUku80L63sweYgpGOsW6ch2tF8RZcTjlhNEjLpPILIGbE5GNEKp1ToYpkQZ2L3sJNInE6pIllyrJpRoKE7LzcMY6lEGu74ieF/0Cd0M99rK81A7oyv2Z5MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gSecdX1o; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250509132648epoutp037978dc23fb408be032153940fcdf1cc0~93s5QOTzt0201402014epoutp03h
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:26:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250509132648epoutp037978dc23fb408be032153940fcdf1cc0~93s5QOTzt0201402014epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746797208;
-	bh=9orThWdcg4TfeCb68m3fWgyEG197G9T1RDce0h0a5uA=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=gSecdX1oOe9APpkGq6S7+HbTi1lhUu6jVTwVac0Zz1BCe1QZvZgxuLuOWCgbVqNID
-	 QJjFYn4AbLXmitK0CNCEnCAVhB07YnY1CbUDqeaPQbVOb5hdPqhNNUMdJium85RgW2
-	 IlYzt4k6DvCedxx2nPK7e1li7kWFBAuzjfizQY/I=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250509132647epcas5p2b7230107602ed17c24fcda9d48d850eb~93s4VQ3x60975309753epcas5p25;
-	Fri,  9 May 2025 13:26:47 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4Zv8sx2KR0z6B9m6; Fri,  9 May
-	2025 13:26:45 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840~93KKoVN2C0832308323epcas5p3L;
-	Fri,  9 May 2025 12:47:01 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250509124701epsmtrp2ab77079f3558be76c75d7002ac34b6e8~93KKnhEnM2652026520epsmtrp2D;
-	Fri,  9 May 2025 12:47:01 +0000 (GMT)
-X-AuditID: b6c32a52-41dfa70000004c16-2a-681df9451973
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	22.3C.19478.549FD186; Fri,  9 May 2025 21:47:01 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250509124700epsmtip2a2aea9a0075dd374a05f53a9d1ffaae9~93KJT_XeV2899828998epsmtip2x;
-	Fri,  9 May 2025 12:47:00 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Raghav
-	Sharma <raghav.s@samsung.com>
-Subject: [PATCH v1] arm64: dts: exynosautov920: add cmu_hsi2 clock DT nodes
-Date: Fri,  9 May 2025 18:26:46 +0530
-Message-Id: <20250509125646.2727393-1-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746795480; c=relaxed/simple;
+	bh=ndAnXW6bg2EJMnwzBHjA708HhulGxBdlHjwhnFr1MuA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Meiy9RrcCt0b4CNUm109B0yLmRIHcUIOP1P7L52HHhkRitpjRpMMmX6ovaPQhjJ30Dvo1qVk90bAHFf2d5nsoS+RsNUqQc7ZuyHjGSMw4N6Sy3utXWRnvf51ewOhvQWtHAsU0tO/Zb7lWw7fuXnp4Js9oLMSoLTb4gtXQARn3GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tu5HUi95; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E94CC4CEE4;
+	Fri,  9 May 2025 12:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746795480;
+	bh=ndAnXW6bg2EJMnwzBHjA708HhulGxBdlHjwhnFr1MuA=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=Tu5HUi95QreCXvpPlAYU8neJYudjSRRYZTrscpC2yvQsWNyI6fscahqk+tUi2huL8
+	 y1uJIGBmLwSR2P98LgzVVOlcA5FfyZqB8nzqB7gWKmTzdp2ujFKrQx+SBwjdAJzQW8
+	 UGkbR3TFAB/Ck2Zv0UXpOGdmWoFA3gEvRWreHWFQFHwBUQ8rYCsPrbeNgeallzNwKH
+	 p3TqMv7yL8Vbcug2Fujyh34I8h87Hx1wt7fTXUepBdjgK/Cb+sKrmrS4pZhmVEKNs2
+	 VGmDzbxZalxMtFd6EyBxA0tDft8tJlfM7X+kMyJKfYjmGBjhgWUHxKDOw5ZMB6Rwn8
+	 tpWIZGwiipMIg==
+Date: Fri, 9 May 2025 14:57:56 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Vincent Lefevre <vincent@vinc17.net>, 
+	"Andries E. Brouwer" <aeb@cwi.nl>, linux-man@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	libc-alpha@sourceware.org, "G. Branden Robinson" <branden@debian.org>, 
+	Carlos O'Donell <carlos@redhat.com>, Eugene Syromyatnikov <evgsyr@gmail.com>
+Subject: Re: man-pages-6.14 released
+Message-ID: <ib7p6mx6sltp2bu6vxw7n2urxuaq2lk4a6efsgnjym43svpvy3@wbgmnm6sy23o>
+References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+ <20250509112627.GA924923@if>
+ <bn2rs76dkhejmthy2wvul4ho26zzlwtkfg474ztiwggkxz7f3d@g25omktsd3ug>
+ <20250509121454.GA952723@if>
+ <qghsrpxzxccbcuuctx56oq5xe7mtpkgljis7ovopr6ojmiz3js@vw5p5w7om4f4>
+ <20250509124829.GD3017@cventin.lip.ens-lyon.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvK7rT9kMg4WHFS0ezNvGZrFm7zkm
-	i/lHzrFavJx1j81i0+NrrBaXd81hs5hxfh+TxfeVdxgt/u/Zwe7A6bFpVSebx+Yl9R59W1Yx
-	enzeJBfAEsVlk5Kak1mWWqRvl8CVsf3FTaaCB5wVW398Z29gfMvexcjJISFgIvF5513WLkYu
-	DiGB7YwSFxZcY4VISEjs+/+bEcIWllj57zk7RNFbRokrV+6BdbMJaElc2f6ODcQWEYiWWHb3
-	DBtIEbPAZkaJdTMPgU0SFvCW6Lj8BqyIRUBVYs2xy2BTeQWsJe5ensoCsUFeYv/Bs8wQcUGJ
-	kzOfgMWZgeLNW2czT2Dkm4UkNQtJagEj0ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4EDV
-	CtrBuGz9X71DjEwcjIcYJTiYlUR4n3fKZAjxpiRWVqUW5ccXleakFh9ilOZgURLnVc7pTBES
-	SE8sSc1OTS1ILYLJMnFwSjUwCe20nn3CcIdytrfCjqAjjb+Ur2+PO9/eVfZ34+eeTULiVZd6
-	rjDxH7Is5vNcKFozpVB5u7OOmP+WlU3FZU0FG/d/KG3ZO+P61b9rW2vWvdh6Vkemee62qL9O
-	Lu3StzRXOn9/7/vzx9T2v5mPuqXvz7xj8ffx9rwgxdLiml+XZGur9da7yjdtW16S0uRryFl7
-	JpTXPZRlv8zPF61zdKwYzlrd2sBvLRTy4ikfyyZDkXcLb0Wzd7P8c5zK/or1IbfHzWCBnhMu
-	cyT+3u58xX9ga9qRY+9dvqh9uaaabvfsvvN3sWrvH6fTn+91L3Q8dvSuQ7WHUdOVyPY/R6P5
-	Ga/Lhwb29etMf9MeU23V969RiaU4I9FQi7moOBEAu3XYC8MCAAA=
-X-CMS-MailID: 20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840
-References: <CGME20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840@epcas5p3.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h76monlxzyenakhr"
+Content-Disposition: inline
+In-Reply-To: <20250509124829.GD3017@cventin.lip.ens-lyon.fr>
 
-Add required dt node for cmu_hsi2 block, which
-provides clocks to ufs and ethernet IPs
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+--h76monlxzyenakhr
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Vincent Lefevre <vincent@vinc17.net>, 
+	"Andries E. Brouwer" <aeb@cwi.nl>, linux-man@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	libc-alpha@sourceware.org, "G. Branden Robinson" <branden@debian.org>, 
+	Carlos O'Donell <carlos@redhat.com>, Eugene Syromyatnikov <evgsyr@gmail.com>
+Subject: Re: man-pages-6.14 released
+References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+ <20250509112627.GA924923@if>
+ <bn2rs76dkhejmthy2wvul4ho26zzlwtkfg474ztiwggkxz7f3d@g25omktsd3ug>
+ <20250509121454.GA952723@if>
+ <qghsrpxzxccbcuuctx56oq5xe7mtpkgljis7ovopr6ojmiz3js@vw5p5w7om4f4>
+ <20250509124829.GD3017@cventin.lip.ens-lyon.fr>
+MIME-Version: 1.0
+In-Reply-To: <20250509124829.GD3017@cventin.lip.ens-lyon.fr>
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 2cb8041c8a9f..7890373f5da0 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
- 			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		cmu_hsi2: clock-controller@16b00000 {
-+			compatible = "samsung,exynosautov920-cmu-hsi2";
-+			reg = <0x16b00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC_UFS>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_UFS_EMBD>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_ETHERNET>;
-+			clock-names = "oscclk",
-+				      "noc",
-+				      "ufs",
-+				      "embd",
-+				      "ethernet";
-+		};
-+
- 		pinctrl_hsi2: pinctrl@16c10000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x16c10000 0x10000>;
--- 
-2.34.1
+Hi Vincent,
 
+On Fri, May 09, 2025 at 02:48:29PM +0200, Vincent Lefevre wrote:
+> Hi,
+>=20
+> On 2025-05-09 14:28:23 +0200, Alejandro Colomar wrote:
+> > On Fri, May 09, 2025 at 02:14:54PM +0200, Andries E. Brouwer wrote:
+> > > Hi Alejandro,
+> > >=20
+> > > > > I wonder about the legal status of such a change.
+> > > > > There is ownership of the pages, and a license that allows
+> > > > > others to do certain things.
+> > > >=20
+> > > > I also wonder about it.  We discussed it for several (~3) months, a=
+nd I
+> > > > documented links to the discussion in the commit message:
+> > > >=20
+> > > > commit 9f2986c34166085225bb5606ebfd4952054e1657
+> > > > Author: Alejandro Colomar <alx@kernel.org>
+> > > > Date:   Fri Apr 11 02:19:48 2025 +0200
+> > > >=20
+> > > >     *, CREDITS: Unify copyright notices
+> > > >    =20
+> > > >     Link: <https://lore.kernel.org/linux-man/jpin2dbnp5vpitnh7l4qmv=
+kamzq3h3xljzsznrudgioox3nn72@57uybxbe3h4p/T/#u>
+> > > >     Link: <https://www.linuxfoundation.org/blog/blog/copyright-noti=
+ces-in-open-source-software-projects>
+> > >=20
+> > > So I read this last link, and see
+> > >=20
+> > > "Don=E2=80=99t change someone else=E2=80=99s copyright notice without=
+ their permission
+> > > You should not change or remove someone else=E2=80=99s copyright noti=
+ce unless
+> > > they have expressly (in writing) permitted you to do so. This includes
+> > > third parties=E2=80=99 notices in pre-existing code."
+> >=20
+> > I understood that paragraph as not changing copyright notices from
+> > people unrelated to the project.
+>=20
+> I don't think so. But IMHO, it would be OK to provide the old copyright
+> notices in an indirect way: put them in a different file and just give
+> a reference to this file, as long as this file is distributed together
+> with the man pages and can be found easily.
+
+Hmmm, I considered that the copyright attributed to the contributors
+and then a CREDITS file that lists the contributors is an indirect way
+of keeping the notices.  The CREDITS file is distributed together with
+the manual pages, and can be found easily (root of the repo).  It
+doesn't keep the original notice text verbatim, though.
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--h76monlxzyenakhr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmgd+9QACgkQ64mZXMKQ
+wqlyxg//ft55E7NDQrIFXNtXYJMwA+2PqRn71LYd/vE/95VNz0wqV2DMPJzoQzsZ
+HUSkXdfoXjMLMg2usvltLaV/l3uwAlTlKTe3CHy1YAe4A0nj1NmfaXFynUj8M9zJ
+PfWBKl6uio4WBrMAfwTmhepR8E8HcwuUjIJNpaAJxi1BQgKrQedKTtsf5kVu4Xta
+Og15VqEZlUmPM4FMNmQq2/jUlSWDNXkZvKXp4n/MCYG1MdR9SxbS5vZUzvUH9JMo
+ffR6s6xwIzC2wrLe0a8QEg8FW+hZHGF9IxLvt8TCR6WHzBzbSZYYnetjDEvyZmb5
+qn9YcSL/zo3kwkJ0lnW8sfH/EOSBHHmbfwcwJKC47CNDU6ppBl4vwVXLuUBg5/Gh
+rvsXEkmS9O6F7mL0b1UHxhzivD167TBujNAhn/Baj9ECU2Pvs29U1T+sUg4yAvaF
+nWLzLN9vZ7mupfbdmAGvf4RpkUdcmjq0q29EPvmEuASzvW+JPhh9+jDwNitQ+q7e
+/A5IfL7CrFPJpGeESZDkaS7sM079F1VsP0wmUWzZw2ive3j1iSeeT7RvfVJx1qnS
+4upNypru8aRdxCpwS9o0Fw8XmdrhgyjberJp6ppSNstbjgdMPzUQlPnTNsytewU9
+h7yLi0upRxsodxSBurHqaSIqGgMIGgRp75cgAcy7+mhSoIrwB1M=
+=pHO/
+-----END PGP SIGNATURE-----
+
+--h76monlxzyenakhr--
 
