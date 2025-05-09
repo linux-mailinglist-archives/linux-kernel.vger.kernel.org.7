@@ -1,258 +1,301 @@
-Return-Path: <linux-kernel+bounces-641783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F155AB1623
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:56:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFBDAB160A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2470C3B5381
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:52:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F78A7B2B6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE95F29208B;
-	Fri,  9 May 2025 13:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C9B2920A0;
+	Fri,  9 May 2025 13:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c51lr94F"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lw+EQEO2"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBBD290D87
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5991F26FDB9;
+	Fri,  9 May 2025 13:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746798768; cv=none; b=KiAkNbTNC04z/VtPWKxL/pxeK7WLlXT8Lnj3uJfmKWoZeTQnjx8jmMrNFaWktPmIbBNb1wwnlSi/0sLynEB/7MD2faTTGhFvDnALRk/GdJvhDDEm8aDSRtHWtJNTJrB7Ypp1sBBoQIU129aq9GAg5aT7RwuSY4t2Pgb5DMSaWiQ=
+	t=1746798979; cv=none; b=YatZnCxOhxsuEi1+WXm9Qezg2/FIhcWO/NdR0tdhG4PiG2MW2Y51fkzEycuVw3Igx6RYhLhw7+X3XoyXgz5F39z7GtwuQBDCbR75HpYQaVzuVTAKA0q3jv35vWbsCWP1XRzZSZ5oVl1nyYG/b+dVC/EZBVvdtWQaGBwui5Lvptg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746798768; c=relaxed/simple;
-	bh=MGubqGeYpC0ja1MkjjJEf4XgAx5U8n0/6/HTY5IM2hw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MYHltwle7EYQxUuTwvlAxyi3GUC7twf8SAaegYfax+caRQNkBhcSVOOTEK0p62QUHNcCdDhNfvzo1rJ+C6Y4/AnEKTSBMOSiWbs/4ZfdIy9pUNiJ0DRfGUAS+VdfRZsYBzQOCFBMJy4ZBUoA95Kk6MyMI9NnItB6L5Ky4fgmFm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c51lr94F; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3fbc00143d6so1882306b6e.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746798765; x=1747403565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vG/sdowqIMmjoKGncX6ih2QtRKdIX5Cx2o9iXTqzu6w=;
-        b=c51lr94FojXtkv6EESidmhw8j6pGGXwZ9OPs2q1Oi0BjUEiXr2N1aTmMkqgGYkjDyt
-         yMWyTu6AAlTXzqW7ESqIQ+GrHF/8E/8t3Pph6vDd+EF1mSbv4G8yWZ+PNaUvI6WwswxK
-         GMa5IEtSeyHSxwSZDskM/0fAMVYMsweWTtwmYYnNrnqQEcjOSmRwNxd5mSnfjQMVT1Wc
-         yhX3eSnvtQyzl7MCmcm9ecAHuLfmmnccU61aqoayXUzHznU0DLN0BkmJjdiGeqNh4Ekk
-         fk1aQqPOjir34L01IxtWtK1QFpnQDSDmIp8xmBPeMlgfWYLMOIfMrwIhaiRKTFgLgbfw
-         J8GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746798765; x=1747403565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vG/sdowqIMmjoKGncX6ih2QtRKdIX5Cx2o9iXTqzu6w=;
-        b=Zo50YP1FhpxP1vxxEK5weop+6xV4HZJgVdakIJ+QATAYQxW9rWsQGaPAxFwVcmmRf3
-         1T/08kTjFeuQlP3ZXv2mCrGgBwgTRjbGKLFKP07P5gQkv7kNeIm9hw8PggIBhyklbIZT
-         8ldgA2oZmZrvCLaw+IVSI0rlhFozAqaE9jJLQd7IL1tRjzQmy992TmqNe7nxH/poZ6Oc
-         +eUsQ9lkOiB1ig4zncsIYvWabtOsAPvyxc9fCBLRXkXGLfwB7fUC+nd9Lco9geEbcHl/
-         0qFlQDNhCU4G1qeQOBEKCRiSSMsCULgTyszP65031rtgk2TJt5I6hD359neuYE+bG5v7
-         jYSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWA1Pe8O+N+mFU+T+pHxbSXhNTx2VK8DwwKRNiZq+6kMgrbcAl2Tqg0fkOPN17WMUxqEfRcJlWf6DcyqDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQRvAU1+LdE+1uGIJC0ENoUvFrmdZpoom7a0GwC2WlJ01CD9uL
-	XVJjfBX0zn35HUqvGhEl54tY8zKJ6lzwvCjBBPxj8r/sF97Let80ta4+graD5zLy/VUhPcg3vET
-	Fgfdx29AiZLbGMUw0+jD7AWK3BbH/ZRwh9fFyjQ==
-X-Gm-Gg: ASbGncvoPAJQNRPhavIG5/yZqupja9CSuZpP6t/6QNwZiVQzcAjsYzNnCanWkwLtfVG
-	maWQmebCEUiWV+XkLZtxNDPpOr+Dn9PcaUR+l2ctUynP24H6AvX8/PE5110QAQHlj4zzecv3O8d
-	M9DtR93NqtnExq7TCLdwfLLg==
-X-Google-Smtp-Source: AGHT+IGfTYNQXb38Qd3XEblVwFr61ZWUCt+JRdOJ06/p2uEstoNfALhHpSjlt/PkHSMkxNxM78UZKpOwOfIpsf1xSn8=
-X-Received: by 2002:a05:6808:23d4:b0:3f8:c486:9b27 with SMTP id
- 5614622812f47-4037fe522a5mr2143056b6e.22.1746798764909; Fri, 09 May 2025
- 06:52:44 -0700 (PDT)
+	s=arc-20240116; t=1746798979; c=relaxed/simple;
+	bh=Jnqsjr3slJMpqG1xFTg3lBzYjoJxbPXe/oORDRv1WTU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ae5sfz/YUbO3Ci/6AE8i/Ibxdd8HKExiywuAzm8tySenv9TWal0HgvXE1kdr9HullzCi409hcRV/prSwdlQhHmir+Wmko8PUFkR8fOWjCul3HFnIuKgs3+W2D1QID5SECMISgd+MveVt3h88M0nURmesln4BN1j1q2Mm5bt5kWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lw+EQEO2; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 06B7443B6D;
+	Fri,  9 May 2025 13:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746798971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3gLOa47Xk0ok2K33C8I47xYA9XRAOM9sF3Fq2wGIFQc=;
+	b=lw+EQEO287PssCQbUR5pbpq8hWm7h9CR05KLQtMfotqjCDKWEphI2S4R2sxAXowdZTfKdC
+	OmHerQw6VCqG7SnTf10aZAkCjuyQsOYw/0RSu2PejQEA8yGzg9SSlEIJKW/s+3Ij5kBk22
+	phDq54pI0DXGqnQrGhQkDkRMf4gSkETNGTZDTB1vhe0zaoyIZWcwRAOBomuFVhKR4YkZt0
+	YfhwQ5/k1oOGjFpg9+X4l6h2xj6L0vvc7/dNrbEF2U+7SPCCCdjVku3BCyXKN3m9jMg9kV
+	pJrsJt+IjI7h7HGimPq/bRngS2ihBVdyl4Yi8fbn8ccERhKObBh9G0PjFbOcKQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v3 00/22] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Date: Fri, 09 May 2025 15:53:26 +0200
+Message-Id: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
-In-Reply-To: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 9 May 2025 14:52:34 +0100
-X-Gm-Features: ATxdqUFUdIagbNNE69FQ_bG89w8nhF65-rjxSwOObUqDQgd3C6_gz2Uofy98FnM
-Message-ID: <CADrjBPpZseD+9ZQ8BK+++VH=Zsgnn1fbjpiMKvC7XvD0wA7Cag@mail.gmail.com>
-Subject: Re: [PATCH v10 0/3] Maxim Integrated MAX77759 PMIC MFD-based drivers
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANYIHmgC/4WNyw6CMBBFf4V07Zi2VBRW/odhAX3IJNAhbdNoC
+ P9uJXHt8tybnLOxaAPayLpqY8FmjEi+QH2qmJ4G/7SApjCTXF644gpMWGAMaMqjyWcbEiSCYZ5
+ Jw7AiNEKNVrtGylaxYlmDdfg6Co++8IQxUXgfwSy+6899/evOAjgoKUTt3M20mt9HojSjP2taW
+ L/v+wdg6Tv10AAAAA==
+X-Change-ID: 20250404-drm-bridge-convert-to-alloc-api-614becf62294
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Adam Ford <aford173@gmail.com>, Adrien Grassein <adrien.grassein@gmail.com>, 
+ Aleksandr Mishin <amishin@t-argos.ru>, Andy Yan <andy.yan@rock-chips.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Christoph Fritz <chf.fritz@googlemail.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Guenter Roeck <groeck@chromium.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Liu Ying <victor.liu@nxp.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Phong LE <ple@baylibre.com>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Sugar Zhang <sugar.zhang@rock-chips.com>, 
+ Sui Jingfeng <sui.jingfeng@linux.dev>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Vitalii Mordan <mordan@ispras.ru>, "Rob Herring (Arm)" <robh@kernel.org>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+ Pin-yen Lin <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
+ Aradhya Bhatia <a-bhatia1@ti.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Ian Ray <ian.ray@gehealthcare.com>, 
+ Martyn Welch <martyn.welch@collabora.co.uk>, 
+ Peter Senna Tschudin <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>, 
+ linux-doc@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledvjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejjefhgfffleevhefhfeduhedtfedttedtkefgkeeuieehtdeifeduveejffevgeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepleejpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghphhgrvghlrdhgrghllhgrihhsqdhpohhusehfohhsshdrshhtrdgto
+ hhmpdhrtghpthhtohepthhrvggrphhkihhnghestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepihgrnhdrrhgrhiesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrshhrihhvrghtshesrhgvughhrghtrdgtohhmpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Andr=C3=A9,
+devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+bridge, and the only one supported from now on. It is the first milestone
+towards removal of bridges from a still existing DRM pipeline without
+use-after-free.
 
-On Fri, 9 May 2025 at 14:22, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> Hi,
->
-> This series improves support for the Maxim Integrated MAX77759
-> companion PMIC for USB Type-C applications using the MFD framework.
->
-> This series must be applied in-order, due to interdependencies of some
-> of the patches:
-> * to avoid use of undocumented compatibles by the newly added drivers,
->   the bindings are added first in this series
-> * patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
->   new MAINTAINERS entry, including a wildcard match for the other
->   bindings in this series
-> * patch 3 ("dt-bindings: mfd: add max77759 binding") references the
->   bindings added in patch 1 and 2 and can not work if those aren't
->   available
-> * patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
->   the core MFD driver, which also exposes an API to its leaf drivers
->   and is used by patches 5 and 6
-> * patches 5 and 6 won't compile without patch 4
->
-> The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
-> sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
->
-> This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
->
-> This series adds support for the top-level MFD device, the gpio, and
-> nvmem cells. Other components are excluded for the following reasons:
->
->     While in the same package, Fuel Gauge and TCPC have separate and
->     independent I2C addresses, register maps, interrupt lines, and
->     aren't part of the top-level package interrupt hierarchy.
->     Furthermore, a driver for the TCPC part exists already (in
->     drivers/usb/typec/tcpm/tcpci_maxim_core.c).
->
->     I'm leaving out temperature sensors and charger in this submission,
->     because the former are not in use on Pixel 6 and I therefore can
->     not test them, and the latter can be added later, once we look at
->     the whole charging topic in more detail.
->
-> To make maintainers' work easier, I am planning to send the relevant
-> DTS and defconfig changes via a different series, unless everything
-> is expected to go via Lee's MFD tree in one series?
->
-> Cheers,
-> Andre'
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
+The steps in the grand plan [1] are:
 
-For the series: -
+ 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+ 2. handle gracefully atomic updates during bridge removal
+ 3. avoid DSI host drivers to have dangling pointers to DSI devices
+ 4. finish the hotplug bridge work, removing the "always-disconnected"
+    connector, moving code to the core and potentially removing the
+    hotplug-bridge itself (this needs to be clarified as points 1-3 are
+    developed)
 
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
+This series is part of step 1 of the grand plan.
 
-Thanks,
+Current tasks in step 1 of the grand plan:
 
-Peter
+ A. ✔ add new alloc API and refcounting -> (now in drm-misc-next)
+ B. ➜ convert all bridge drivers to new API (this series)
+ C. … documentation, kunit tests (v1 under discussion)
+ D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+ E. after (B), convert accessors; this is a large work and can be done
+    in chunks
+ F. debugfs improvements
 
+More info about this series in the v2 cover [2].
 
-> Changes in v10:
-> - collect tag for nvmem
-> - rebase against next-20250509
-> - drop already-merged bindings patches
-> - update a comment in core driver (Lee)
-> - Link to v9: https://lore.kernel.org/r/20250430-max77759-mfd-v9-0-639763=
-e23598@linaro.org
->
-> Changes in v9:
-> - nvmem: drop superfluous max77759_nvmem_is_valid() (Srini)
-> - collect tags
-> - Link to v8: https://lore.kernel.org/r/20250429-max77759-mfd-v8-0-72d72d=
-c79a1f@linaro.org
->
-> Changes in v8:
-> - gpio: switch to gpio_chip::set_rv() (Bartosz)
-> - gpio, nvmem: replace MODULE_ALIAS() with .id_table (Krzysztof)
-> - gpio, nvmem: drop previous tags due to above
-> - Link to v7: https://lore.kernel.org/r/20250428-max77759-mfd-v7-0-edfe40=
-c16fe8@linaro.org
->
-> Changes in v7:
-> - rebased against next-20250424
-> - Link to v6: https://lore.kernel.org/r/20250325-max77759-mfd-v6-0-c0870c=
-a662ba@linaro.org
->
-> Changes in v6:
-> - add one missing change in core driver
-> - Link to v5: https://lore.kernel.org/r/20250325-max77759-mfd-v5-0-69bd6f=
-07a77b@linaro.org
->
-> Changes in v5:
-> - core: incorporate Lee's comments (hoping I didn't miss any :-)
-> - Link to v4: https://lore.kernel.org/r/20250312-max77759-mfd-v4-0-b908d6=
-06c8cb@linaro.org
->
-> Changes in v4:
-> - collect tags
-> - mfd: add missing build_bug.h include
-> - mfd: update an irq chip comment
-> - mfd: fix a whitespace in register definitions
-> - Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627=
-d42526@linaro.org
->
-> Changes in v3:
-> - collect tags
-> - mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
->   child (Rob)
-> - gpio: drop duplicate init of 'handled' variable in irq handler
-> - gpio: use boolean with IRQ_RETVAL() (Linus)
-> - gpio: drop 'virq' variable inside irq handler to avoid confusion
->   (Linus)
-> - gpio: drop assignment of struct gpio_chip::owner (Linus)
-> - Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe=
-2bc0a9@linaro.org
->
-> Changes in v2:
-> - reorder bindings patches to avoid validation failures
-> - add dependency information to cover letter (Krzysztof)
-> - fix max77759_gpio_direction_from_control() in gpio driver
-> - gpio: drop 'interrupts' property from binding and sort properties
->   alphabetically (Rob)
-> - nvmem: drop example from nvmem binding as the MFD binding has a
->   complete one (Rob)
-> - nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
-> - mfd: add kernel doc
-> - mfd: fix an msec / usec typo
-> - mfd: error handling of devm_mutex_init (Christophe)
-> - whitespace fixes & tidy-ups (Christophe)
-> - Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36=
-f9d055@linaro.org
->
-> ---
-> Andr=C3=A9 Draszik (3):
->       mfd: max77759: add Maxim MAX77759 core mfd driver
->       gpio: max77759: add Maxim MAX77759 gpio driver
->       nvmem: max77759: add Maxim MAX77759 NVMEM driver
->
->  MAINTAINERS                    |   4 +
->  drivers/gpio/Kconfig           |  13 +
->  drivers/gpio/Makefile          |   1 +
->  drivers/gpio/gpio-max77759.c   | 530 +++++++++++++++++++++++++++++++
->  drivers/mfd/Kconfig            |  20 ++
->  drivers/mfd/Makefile           |   1 +
->  drivers/mfd/max77759.c         | 690 +++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/nvmem/Kconfig          |  12 +
->  drivers/nvmem/Makefile         |   2 +
->  drivers/nvmem/max77759-nvmem.c | 145 +++++++++
->  include/linux/mfd/max77759.h   | 165 ++++++++++
->  11 files changed, 1583 insertions(+)
-> ---
-> base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
-> change-id: 20250224-max77759-mfd-aaa7a3121b62
->
-> Best regards,
-> --
-> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
+Luca
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
+[2] https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v3:
+- Fixed issues reported for some patches
+- Added review tags
+- Removed patches that have been applied
+- Added revert for the exynos patch, applied by mistake
+- Update cover with grand plan info and trim some of it
+- Updated bouncing e-mail address in Cc list
+- Link to v2: https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com/
+
+Changes in v2:
+- Improved cover letter with link to commit adding devm_drm_bridge_alloc()
+- add review tags
+- fix bugs in zynqmp, vc4 patches
+- fix patch 1 error code checking
+- Link to v1: https://lore.kernel.org/r/20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com
+
+---
+Luca Ceresoli (22):
+      Revert "drm/exynos: mic: convert to devm_drm_bridge_alloc() API"
+      drm: convert many bridge drivers from devm_kzalloc() to devm_drm_bridge_alloc() API
+      drm/bridge: anx7625: convert to devm_drm_bridge_alloc() API
+      drm/bridge: cdns-dsi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: convert to devm_drm_bridge_alloc() API
+      drm/bridge: nxp-ptn3460: convert to devm_drm_bridge_alloc() API
+      drm/bridge: sii902x: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: dpi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: dsi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: hdmi4: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: hdmi5: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: sdi: convert to devm_drm_bridge_alloc() API
+      drm/omap: dss: venc: convert to devm_drm_bridge_alloc() API
+      drm/rcar-du: dsi: convert to devm_drm_bridge_alloc() API
+      drm/bridge: stm_lvds: convert to devm_drm_bridge_alloc() API
+      drm/sti: dvo: convert to devm_drm_bridge_alloc() API
+      drm: zynqmp_dp: convert to devm_drm_bridge_alloc() API
+      drm/bridge: imx8qxp-pixel-combiner: convert to devm_drm_bridge_alloc() API
+      drm/bridge: tc358767: convert to devm_drm_bridge_alloc() API
+      drm/bridge: add devm_drm_put_bridge()
+      drm/bridge: panel: convert to devm_drm_bridge_alloc() API
+      drm/todo: add entry to remove devm_drm_put_bridge()
+
+ Documentation/gpu/todo.rst                         | 15 ++++++
+ drivers/gpu/drm/adp/adp-mipi.c                     |  8 ++--
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |  8 ++--
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  9 ++--
+ drivers/gpu/drm/bridge/analogix/anx7625.c          |  7 ++-
+ drivers/gpu/drm/bridge/aux-bridge.c                |  8 ++--
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c            |  9 ++--
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c     |  8 ++--
+ .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |  8 ++--
+ drivers/gpu/drm/bridge/chipone-icn6211.c           |  8 ++--
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |  8 ++--
+ drivers/gpu/drm/bridge/cros-ec-anx7688.c           |  8 ++--
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  7 ++-
+ drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c     |  8 ++--
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pvi.c       |  8 ++--
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    | 27 ++++++-----
+ drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c    |  8 ++--
+ drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c       |  8 ++--
+ drivers/gpu/drm/bridge/ite-it6263.c                |  8 ++--
+ drivers/gpu/drm/bridge/ite-it6505.c                |  8 ++--
+ drivers/gpu/drm/bridge/ite-it66121.c               |  8 ++--
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |  8 ++--
+ drivers/gpu/drm/bridge/lontium-lt9211.c            |  7 ++-
+ drivers/gpu/drm/bridge/lontium-lt9611.c            |  8 ++--
+ drivers/gpu/drm/bridge/lvds-codec.c                |  9 ++--
+ .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   | 11 ++---
+ drivers/gpu/drm/bridge/microchip-lvds.c            |  8 ++--
+ drivers/gpu/drm/bridge/nwl-dsi.c                   |  8 ++--
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  9 ++--
+ drivers/gpu/drm/bridge/panel.c                     | 12 ++---
+ drivers/gpu/drm/bridge/parade-ps8622.c             |  8 ++--
+ drivers/gpu/drm/bridge/parade-ps8640.c             |  8 ++--
+ drivers/gpu/drm/bridge/sii902x.c                   |  7 ++-
+ drivers/gpu/drm/bridge/sii9234.c                   |  8 ++--
+ drivers/gpu/drm/bridge/sil-sii8620.c               |  8 ++--
+ drivers/gpu/drm/bridge/simple-bridge.c             |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c      |  8 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c     |  8 ++--
+ drivers/gpu/drm/bridge/tc358762.c                  |  8 ++--
+ drivers/gpu/drm/bridge/tc358764.c                  |  8 ++--
+ drivers/gpu/drm/bridge/tc358767.c                  | 56 +++++++++++++++-------
+ drivers/gpu/drm/bridge/tc358768.c                  |  8 ++--
+ drivers/gpu/drm/bridge/tc358775.c                  |  8 ++--
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  8 ++--
+ drivers/gpu/drm/bridge/ti-dlpc3433.c               |  8 ++--
+ drivers/gpu/drm/bridge/ti-tdp158.c                 |  8 ++--
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  8 ++--
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |  8 ++--
+ drivers/gpu/drm/drm_bridge.c                       | 17 +++++++
+ drivers/gpu/drm/exynos/exynos_drm_mic.c            |  7 +--
+ drivers/gpu/drm/mediatek/mtk_dp.c                  |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  8 ++--
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c         | 10 ++--
+ drivers/gpu/drm/meson/meson_encoder_dsi.c          | 10 ++--
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         | 10 ++--
+ drivers/gpu/drm/omapdrm/dss/dpi.c                  |  7 ++-
+ drivers/gpu/drm/omapdrm/dss/dsi.c                  |  7 ++-
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c                | 26 ++++------
+ drivers/gpu/drm/omapdrm/dss/hdmi5.c                | 26 ++++------
+ drivers/gpu/drm/omapdrm/dss/sdi.c                  | 25 ++++------
+ drivers/gpu/drm/omapdrm/dss/venc.c                 | 23 ++++-----
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  8 ++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |  8 ++--
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c     |  8 ++--
+ drivers/gpu/drm/sti/sti_dvo.c                      | 29 +++++------
+ drivers/gpu/drm/stm/lvds.c                         |  7 ++-
+ drivers/gpu/drm/xlnx/zynqmp_dp.c                   | 31 +++++-------
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c                |  1 -
+ include/drm/drm_bridge.h                           |  4 ++
+ 72 files changed, 390 insertions(+), 379 deletions(-)
+---
+base-commit: 94c60d3c1079fc044e356a78ffc68ca7b0603039
+change-id: 20250404-drm-bridge-convert-to-alloc-api-614becf62294
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
