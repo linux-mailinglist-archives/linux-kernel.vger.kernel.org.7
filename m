@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-640883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD01AB0A8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECE6AB0A92
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9205E3AF0F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:25:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51FD74E1806
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DA026A1DE;
-	Fri,  9 May 2025 06:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A6C26AA9E;
+	Fri,  9 May 2025 06:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wX2BB27V"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oNWobCd1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1563326A0BD
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BDD269CF1;
+	Fri,  9 May 2025 06:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746771946; cv=none; b=bI59fcbs+w9Uf6/g0/A6dt15wOwurZZgHAw6OAOmDvnQUs6zDX3BVA9CZtb8oLavCxrn/Yh4vYGbEPG8E0zKkgVmTuOxv7faxgzNlRayV+5FX76zR611M719S8xs4CD5GuxXWDwsVvA2/DzVUhT6vF5B8tN53IW+ZNMrKJss6CI=
+	t=1746772147; cv=none; b=cKKrIeYFJbiszP/o7EomoB9Ub20DEs6xwQeThtqAzLCePCfaFTQX7EchXoXHn9xxgqr0KoU56ApoakgVVPuK5RuQ+HcDSF8tdOLYaxcxqe6NmD5AP1oVKdzJoz+t30MxGdq8mSPdtaB3kQtkJXcR49rVEX5qDrfe9sn1rW4ZmAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746771946; c=relaxed/simple;
-	bh=sT78nN+pkguiIepeHcI/OhL3YYwqizIKDFZ8qkd6c8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ePdV6ZeGMHEKLIlTCgZEVuTpFsn1HGV6iXkq9tF5CIx11uX3wl2rpB2GmZ5FuzsN7DBU8EuthVIgTRElIKlcyy9kF8YOn+cUQ4cRL+TrcKjQvp/Tdwo3xxOa6JCsY1snuEQLWTYaz13uI4kgJ3HMGmod7EU3ekogTOF9nC/q4R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wX2BB27V; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5fbee929e56so3295009a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 23:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746771942; x=1747376742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J2sBRlj94okcxqPX5H1gKCJTax9lnG2hxBuhlKbj+a4=;
-        b=wX2BB27Vx43IPn2aYK0lKLCtuCYeGDal9fuuR+ZZd9vX3WnekUtbFpkDYMBDwkdrFF
-         1RSdMeNVicaNWzy8Sdh92oUk8iYdEixVdxbWDxTTHHpvY/V12+fz369NgojlyppkayjX
-         MKkmLMeSY35587rMLQOsHIccvcoWRiVXSsW2OdCct3FIYcg2RWepxGcS+myeZTJBxMmE
-         jIB+iFiJJCcft+YiaAf4dghTa7DOMHEjESEeLPN4S5uRkJSZd2HNvIc97zFApPwNohSe
-         UvWJfxuTnt3LZajz8iL3UQ+XKLaiQVvJBmnWLQ15XkGy4THz/2MazC9Jm+9w9QJbbEJY
-         VUWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746771942; x=1747376742;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2sBRlj94okcxqPX5H1gKCJTax9lnG2hxBuhlKbj+a4=;
-        b=LW713i1sog/Vidw6BxYh8Iv3HwJEr9AEgngMIB5ZS0MJwFbqf4kBF6SGrJZXI0sQwI
-         7kQ0NFXD67jNwq7vhwj0CzxSzgb028jULITm9wK/3YLx+Z5hgPC5HpPjaV+EOVrouQ9t
-         Q2f7S2w1ahHiM9CYF3Pxkgzi/KwyCcERxq2miDcbFV8iRyBD1EqAx6G7jfa4ZP8dG4vf
-         Vdu2o3A6qF2TXGFkmze+NrbUo0KEuZiTx4PR/StgnR7f56x0v23skRSVi5b0e1rEP7Mx
-         uGieyae0bzxEy0gS8Xll4mcg1ergh2T9yWXi3y6WfAYqR6j6ULqMWkOP01lKfQJTdu5Y
-         S8mA==
-X-Gm-Message-State: AOJu0YzR7QPnqkwm51cBMZwpePl40pTXL0NOrMd4Up9Jcp069c2Qm4x1
-	W3ML4vR/ePks7hbOu2XkqOsBOo2c5u264uvFZd9CQPQM1wMcTeEWaMoKfo22hkbMfu5nYm7Ghxa
-	k
-X-Gm-Gg: ASbGncsjEFGQpwvdgz5sh3V5Pu67dOBfeJLz4eWGy6suS2gse0AYmDR4d2i5RS7I4Z3
-	4FJwOtcJFMwdihkWJ/n9YLi3d0ypbHjRkOzjQczUKJz6ceZyIRm3kcSwMQCJVuB+iLG3Tv25Wdf
-	WgSV9ytju3/brOWI6xYle9D6fIeLdq3/kNH2HoelpwVENI8RJM0ICM/Owr8ARA1TrMMkK28z1oK
-	jwml9JaJEHItTRqApneXblzZomPZj2mFVooxdexeWdWeF1d/XeH7pFk+ag0u1H13wuHDb7PBxow
-	pl6uTxmJ+an18pM2MhSFWF1TH3XM7zNLP1csWHH27UZYL4yZ
-X-Google-Smtp-Source: AGHT+IFMIuFKiOjLQ3eIogAmMtah9CU+aZgki/iojua/5RZ6ucOc6hJ3VkVi8yBlgIxrbQ2NIDXCJA==
-X-Received: by 2002:a17:907:d9e:b0:ad1:dbec:44d3 with SMTP id a640c23a62f3a-ad218f79625mr256897766b.27.1746771942340;
-        Thu, 08 May 2025 23:25:42 -0700 (PDT)
-Received: from [192.168.0.32] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd2a8sm101212866b.145.2025.05.08.23.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 23:25:41 -0700 (PDT)
-Message-ID: <e03d3e18-9868-4896-a8fc-1443372c0c5b@linaro.org>
-Date: Fri, 9 May 2025 09:25:41 +0300
+	s=arc-20240116; t=1746772147; c=relaxed/simple;
+	bh=kywdu2FXas4L3YPLsGAb8UCDtG5332pxZOYw7Oll8z0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E2HIc6IMtLvc15uUVGmMhPiPQzYHoW9EGXzDKmEQi5GIZIE4T90mK+76SSez/zsmx/BlGQsWjUtNCJLctZq3uv1MiA2cUuwRtOdF0NFdjP/ZOZN/gms3jrVvNDF1GUF1JIjCysQAXcrphYzQW+mifWkVLMpIPH0n7sozkK5BHFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oNWobCd1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746772143;
+	bh=K2UlQfpU195Tsm7cO9w1Iim7hnaVu9KQM1cXlkewGeI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oNWobCd1Uvv774IqCFxCExJjwSzyIY4vlQP3o8Bquv8wkszezzChiFugl8pF4QPCA
+	 bsgyEozws8opPbhHvfbvba3c7pEi7E1iJSPyAvr0um5G83+1z860/n8+fbkX4bvSaJ
+	 YsE8NXuIxsJLYSsOehYVQoqjX8d/DxI/ElIFk1vOFNfv/sYWJrZ9E85Iebc3Qb+FCm
+	 k5lTNpal5ymrSEvZYlfgEIIeXEfT/nJ5i52OKkB8B1GA0SlQny91yxSk9gi1tXcmJb
+	 10Ggn7JtzZNknOqvr0dHK7RJkodfG8SHQYBbf5E6fPUlfpE7lDnzrdcWanHwCv+Alq
+	 w/8cz2pM38eIQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ztzby0ypSz4wj2;
+	Fri,  9 May 2025 16:29:02 +1000 (AEST)
+Date: Fri, 9 May 2025 16:29:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H.
+ Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Srinivas Pandruvada
+ <srinivas.pandruvada@linux.intel.com>
+Subject: linux-next: manual merge of the drivers-x86 tree with the tip tree
+Message-ID: <20250509162901.79e269a5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pstore/zone: fix trivial comment typo
-To: kees@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20241224154405.295840-1-eugen.hristev@linaro.org>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <20241224154405.295840-1-eugen.hristev@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/=JRMuB4F/LvhXRL.6+_GiZb";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/=JRMuB4F/LvhXRL.6+_GiZb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 12/24/24 17:44, Eugen Hristev wrote:
-> s/conpressed/compressed
-> 
-> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-> ---
->  fs/pstore/zone.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
-> index 694db616663f..a4ee4e04d1cd 100644
-> --- a/fs/pstore/zone.c
-> +++ b/fs/pstore/zone.c
-> @@ -43,7 +43,7 @@ struct psz_buffer {
->   *
->   * @magic: magic num for kmsg dump header
->   * @time: kmsg dump trigger time
-> - * @compressed: whether conpressed
-> + * @compressed: whether compressed
->   * @counter: kmsg dump counter
->   * @reason: the kmsg dump reason (e.g. oops, panic, etc)
->   * @data: pointer to log data
+Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-Hi Kees,
+  drivers/platform/x86/intel/speed_select_if/isst_if_common.c
 
-While you are at it, there is also this trivial typo
+between commit:
 
-Eugen
+  6fa17efe4544 ("x86/msr: Rename 'wrmsrl_safe()' to 'wrmsrq_safe()'")
+
+from the tip tree and commit:
+
+  c935ddfe65da ("platform/x86: ISST: Do Not Restore SST MSRs on CPU Online =
+Operation")
+
+from the drivers-x86 tree.
+
+I fixed it up (the latter removed the code that the former updated) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=JRMuB4F/LvhXRL.6+_GiZb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgdoK0ACgkQAVBC80lX
+0GzbtQf7BHMiEjcdOtdKOf2C/QXQOPujVIQZu7fUVrrlWBCH9776zASAXBdke8jB
+XyCj6C4OgLIgedHvptKDjh9xuEmw2JEkcb8L234G+7oE7MOjK7mN51r8nVZR2x09
+Y5s7s/uV2gmQAf5RFbMtNPbAonAjbeU60r+44fjwQzB/eVk0wlqOC0uUXwhrVLSr
+nIrPEn1/TDsN8V6BoFRMny3zOOIKeut91bp2YwRiwqgJErKdURmKI3clgFfnxYMo
+4chtNXPk7a3CfDjZl5siKx+/XliBkMqv76DE5v/9RNXEiyGZvJEcMmd4BwgZOfQD
+Qfp+1AX65TWGFZZOjNdyJynwnyB2KA==
+=aA/N
+-----END PGP SIGNATURE-----
+
+--Sig_/=JRMuB4F/LvhXRL.6+_GiZb--
 
