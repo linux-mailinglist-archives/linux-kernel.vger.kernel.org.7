@@ -1,177 +1,141 @@
-Return-Path: <linux-kernel+bounces-640916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264FBAB0AE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:50:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBA4AB0AF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5033B397D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2561B638FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175B626FA4D;
-	Fri,  9 May 2025 06:50:01 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDFE26F453;
+	Fri,  9 May 2025 06:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEEc/DTt"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC9A26F477
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E36221293;
+	Fri,  9 May 2025 06:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746773400; cv=none; b=n3Dmt/+qHVL3lrsa7dzF8XlgZSn9HO/6cu87xoVnl7xzvgFeUaekAhCYx9g6YTGKq9fIrI8mWPgIW9c0FAei92jmjilS+uz4xQqzaufbiCNe76xeky6uvc5cNcIjMAx5MFMtpmK4I2WilSGmNTscQAPz/oBgrg+/9iY2BIZsWHY=
+	t=1746773582; cv=none; b=IeATxfIzE0YF2tpoj1qrhXBFp5LfaXbXkbhASQha+H0OSM1be5iV4SPSfP4YzsmBh1DIwtPcMDU4F6pXpY6HlsraVGmSopSqgydEnj/nEIC6LxR3OsoSzX8AMWjxS3k+bfwOLmRCL7yajCAA+74bH8gyyRys9CsFSjihUUEil+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746773400; c=relaxed/simple;
-	bh=s1Tfgan3ZnbxcAc6GqPk3+UE6ol9W4UjsJu4UkoB3sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EvwKgMbo75BmRadmPjDseDhr5c/2Ugjv8YyxJArLPIJ4X76df52ufsQD0wuDk2AnysglYG+LV5oT6F2/2BEwCcIdzSSguZcJZqEGfhYAXfIuMNN2/H35uBKtE7VQhWlduMKOpumzPPrwrTJU4tTh91KQwoSrcnYD3qtDx1zD5yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Ztzz60tNfzyV6y;
-	Fri,  9 May 2025 14:45:38 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5E33F140202;
-	Fri,  9 May 2025 14:49:54 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 May 2025 14:49:53 +0800
-Message-ID: <cfe66043-6fe3-4c65-9c7e-e961e8a73971@huawei.com>
-Date: Fri, 9 May 2025 14:49:53 +0800
+	s=arc-20240116; t=1746773582; c=relaxed/simple;
+	bh=N2JPicMZJ48nTjhPXP2aBy4vJsxIvWM1IuvmEwdncto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f99apnRZdABsWV+ZFotoW4/EitfjJSWg4EuYijhdIZF67DfzXe0WE1GNPtEsdHect1BCpk1e8V9W2hwqS78i8yISf/PISKXsJvRCXAkdxwPw5dS/zTCIxJ+qRBHAtxoglFWocm9mKR9nvChPxgyDPcHRFfuoOQ8GKMxhMaWbaLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEEc/DTt; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso10806445e9.0;
+        Thu, 08 May 2025 23:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746773578; x=1747378378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vtStDkpT6pNDiic3cMI+Uakg3PJcpZiL4B68M7mfzz4=;
+        b=cEEc/DTt0NZWKpFbqh1M0f/JgD8X2qHpWt7dbYIaBHOOJsaCcS/zlW74O0rOXwtRpt
+         UiDPsRMvNUVd/JVQwqABx8n9C01yWdZAygo2DQ8aSLKu9ZvGhfFabhKjUAycMFPxrMoO
+         Cv/I8JyFNET95f5irYDJh44MVEkpIOJ9Ng+AkCxH9VUFqeQ1tgWQUeOxdYX28oYe82Fz
+         oYrVfqXwI6YZO38D3F1gRWoGg4YomDV/rJCXgFRyyC3DpJ6dlGh2/XqZCYp3ffcAV/wD
+         xN7CWyzIybLFM52FMG263Q4GfmBeIF7+fQksrhoQBMySwQ2CFaOkoJqkEDvVVOr+8V0i
+         rCjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746773578; x=1747378378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vtStDkpT6pNDiic3cMI+Uakg3PJcpZiL4B68M7mfzz4=;
+        b=X150O4YqPLH1ehOad6q88/cSh2IsvkMaNw+VCNIFXSvjA2gDmDtgNyrgetaLGYSYZO
+         oQZ07VuS4qL2/SGaqNMTHSSbs0AM/heRn4CH7kEnKwGnNwN//E87aTUDfCeXo3m5TuKr
+         blyYUk65kcpaNmyckCiVcQGcvfDrDBl9iVQ0DNzvAElnqyEVLSXiUhHFCjL5WOEE1MyM
+         TRSPFIyrWMIAIzd9l+lHVTmwBrCJ1n/2+o4/bZFMZvkMPMZ/yDpWc7rnHBMP8Urefvi0
+         735C/poV4QvB8VW4D3trHpMz+bckkHjKT155MrzL7u69AhWyDfVIfIXZ0TIEefpNrti6
+         CeAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJbIR/LXeSSob4A6HZ1BejGoV47eMA6mJu7tt+gv27zCX/JyqzSeLfSOS03uN4ynqEDYeyLY/6/Frr@vger.kernel.org, AJvYcCVRoOS9eTX+fTCUmpeNjmsbhDzKENNFALHSJ/rOB+Of3TiEMdaneG8iAqEPA05mCnhLcW6DRvc16x82@vger.kernel.org, AJvYcCXW4T6DPMtrtSbW34aDoHt0cf1t65ZNVW/pRIok3SQTO9NAFAHL79/lgBBhQ38uDXhF26HH7+bTIg8DG585@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaCDeybqyR2UM98PXt901hAjNK9omrzu0En1/fWNRfEEA627uN
+	zYS5wt+89Is8pLX1rzwD8Z7OxRzH4R65Hxn5yH4Xm7rhDES11W0LsQPi9vGl
+X-Gm-Gg: ASbGnctBEXvdfDCzD2c/IZXKXc+hg5RW3D9ytCYjkfsl3gRlnj31kRGVfw1Qd5dnzgD
+	ZHC9fZPaXFeD1s4xenAkuP4q1ymZHn/wGNuJIY62nIT5+5k0L5bcjAPZS1pHzshwGQu0Jr4BfN1
+	3rPBatzylpX5mPUvDuD0R5jcwWFzIN8LD2bCfj6t+2/tGQxp8P007axw7e80W8WAjziKh6SW4WZ
+	tjK00LcfxGwLI/YnMjktbHv4Ah1P5xlpd+QE34OhanjNysRhFm1bOf8LJfLb5pS+bm10LMjcB92
+	H7Y6V5eX4OqVifuFhQMARk5+cl6WETKVQ8nP5F3B8V9tuFm8JXuS944NRReIYh5PLjWbUQFCtH7
+	2
+X-Google-Smtp-Source: AGHT+IH+lDwJzQJ52g2YzQjDD6Ljm0EDeMicZ/Qy53fT3bDPT7CtF2hR3CTDpU4k/VUa376kgkfukw==
+X-Received: by 2002:a05:600c:4443:b0:43c:fd72:f028 with SMTP id 5b1f17b1804b1-442d6ddd612mr16731135e9.29.1746773578410;
+        Thu, 08 May 2025 23:52:58 -0700 (PDT)
+Received: from tempest2.110.lan (xt27dd.stansat.pl. [83.243.39.221])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c2asm19276315e9.1.2025.05.08.23.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 23:52:58 -0700 (PDT)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: linux-hwmon@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Noah Wang <noahwang.wang@outlook.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Shen Lichuan <shenlichuan@vivo.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Charles Hsu <ythsu0511@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v2 0/5] hwmon: pmbus: Add support for MPM82504 and MPM3695 family
+Date: Fri,  9 May 2025 08:51:04 +0200
+Message-ID: <20250509065237.2392692-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] selftests/dma: Add dma_map_sg support
-To: Barry Song <21cnbao@gmail.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
-References: <20250509020238.3378396-1-xiaqinxin@huawei.com>
- <20250509020238.3378396-5-xiaqinxin@huawei.com>
- <CAGsJ_4zaE6F5Goh9O6ytPA+RekeYiMhsU7dHYAM_sKzXREiQjA@mail.gmail.com>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <CAGsJ_4zaE6F5Goh9O6ytPA+RekeYiMhsU7dHYAM_sKzXREiQjA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemj200003.china.huawei.com (7.202.194.15)
 
+This series extends the hwmon PMBus driver for the MPS MPQ8785 to support
+two additional Monolithic Power Systems devices: the MPM82504 and
+MPM3695 family.
 
-On 2025/5/9 11:59:53, Barry Song <21cnbao@gmail.com> wrote:
-> On Fri, May 9, 2025 at 2:02 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->> Support for dma_map_sg, add option '-m' to distinguish mode.
->>
->> i) Users can set option '-m' to select mode:
->>     DMA_MAP_SINGLE_MODE=0, DMA_MAP_SG_MODE:=1
->>     (The mode is also show in the test result).
->> ii) Users can set option '-g' to set sg_nents
->>      (total count of entries in scatterlist)
->>      the maximum number is 1024. Each of sg buf size is PAGE_SIZE.
->>      e.g
->>      [root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
->>      dma mapping mode: DMA_MAP_SG_MODE
->>      dma mapping benchmark: threads:8 seconds:30 node:-1
->>      dir:FROM_DEVICE granule/sg_nents: 8
->>      average map latency(us):1.4 standard deviation:0.3
->>      average unmap latency(us):1.3 standard deviation:0.3
->>      [root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
->>      dma mapping mode: DMA_MAP_SINGLE_MODE
->>      dma mapping benchmark: threads:8 seconds:30 node:-1
->>      dir:FROM_DEVICE granule/sg_nents: 8
->>      average map latency(us):1.0 standard deviation:0.3
->>      average unmap latency(us):1.3 standard deviation:0.5
->>
->> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->
-> - stable@vger.kernel.org
-> + Marek
-> + Robin,
->
-> Please also include something like 'DMA map benchmark' in the subject line
-> to make it more specific. Additionally, make sure constants like
-> DMA_MAP_SINGLE_MODE use a more specific namespace, as mentioned in
-> earlier replies. With those changes, feel free to add:
->
-> Reviewed-by: Barry Song <baohua@kernel.org>
-Okay, I'll fix it in the next version.
->> ---
->>   tools/testing/selftests/dma/dma_map_benchmark.c | 16 ++++++++++++++--
->>   1 file changed, 14 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
->> index b12f1f9babf8..036ddb5ac862 100644
->> --- a/tools/testing/selftests/dma/dma_map_benchmark.c
->> +++ b/tools/testing/selftests/dma/dma_map_benchmark.c
->> @@ -27,6 +27,7 @@ int main(int argc, char **argv)
->>          int fd, opt;
->>          /* default single thread, run 20 seconds on NUMA_NO_NODE */
->>          int threads = 1, seconds = 20, node = -1;
->> +       int map_mode = DMA_MAP_SINGLE_MODE;
->>          /* default dma mask 32bit, bidirectional DMA */
->>          int bits = 32, xdelay = 0, dir = DMA_MAP_BIDIRECTIONAL;
->>          /* default granule 1 PAGESIZE */
->> @@ -34,7 +35,7 @@ int main(int argc, char **argv)
->>
->>          int cmd = DMA_MAP_BENCHMARK;
->>
->> -       while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:")) != -1) {
->> +       while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:m:")) != -1) {
->>                  switch (opt) {
->>                  case 't':
->>                          threads = atoi(optarg);
->> @@ -57,11 +58,20 @@ int main(int argc, char **argv)
->>                  case 'g':
->>                          granule = atoi(optarg);
->>                          break;
->> +               case 'm':
->> +                       map_mode = atoi(optarg);
->> +                       break;
->>                  default:
->>                          return -1;
->>                  }
->>          }
->>
->> +       if (map_mode >= DMA_MAP_MODE_MAX) {
->> +               fprintf(stderr, "invalid map mode, DMA_MAP_SINGLE_MODE:%d, DMA_MAP_SG_MODE:%d\n",
->> +                       DMA_MAP_SINGLE_MODE, DMA_MAP_SG_MODE);
->> +               exit(1);
->> +       }
->> +
->>          if (threads <= 0 || threads > DMA_MAP_MAX_THREADS) {
->>                  fprintf(stderr, "invalid number of threads, must be in 1-%d\n",
->>                          DMA_MAP_MAX_THREADS);
->> @@ -111,13 +121,15 @@ int main(int argc, char **argv)
->>          map.dma_dir = dir;
->>          map.dma_trans_ns = xdelay;
->>          map.granule = granule;
->> +       map.map_mode = map_mode;
->>
->>          if (ioctl(fd, cmd, &map)) {
->>                  perror("ioctl");
->>                  exit(1);
->>          }
->>
->> -       printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule: %d\n",
->> +       printf("dma mapping mode: %d\n", map_mode);
->> +       printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule/sg_nents: %d\n",
->>                          threads, seconds, node, dir[directions], granule);
->>          printf("average map latency(us):%.1f standard deviation:%.1f\n",
->>                          map.avg_map_100ns/10.0, map.map_stddev/10.0);
->> --
->> 2.33.0
->>
-> Thanks
-> Barry
+The driver is restructured to support multiple devices using device tree
+matching. It also introduces an optional "mps,vout-fb-divider-ratio-permille"
+property to configure the VOUT_SCALE_LOOP PMBus register, which adjusts
+reported output voltages depending on the external feedback divider.
 
-Thanks
+Device tree bindings are updated accordingly.
 
-Qinxin
+Changes have been tested on hardware with device-tree based matching
+using the MPM82504 and MPM3695-10.
+
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+
+Pawel Dembicki (5):
+  hwmon: pmbus: mpq8785: Prepare driver for multiple device support
+  hwmon: pmbus: mpq8785: Add support for MPM82504
+  hwmon: pmbus: mpq8785: Add support for MPM3695 family
+  hwmon: pmbus: mpq8785: Implement VOUT feedback resistor divider ratio
+    configuration
+  dt-bindings: hwmon: Add bindings for mpq8785 driver
+
+ .../bindings/hwmon/pmbus/mps,mpq8785.yaml     | 88 ++++++++++++++++++
+ .../devicetree/bindings/trivial-devices.yaml  |  2 -
+ Documentation/hwmon/mpq8785.rst               | 27 ++++--
+ drivers/hwmon/pmbus/mpq8785.c                 | 93 +++++++++++++++++--
+ 4 files changed, 194 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
+
+-- 
+2.43.0
 
 
