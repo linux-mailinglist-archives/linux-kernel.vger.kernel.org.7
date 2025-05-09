@@ -1,143 +1,207 @@
-Return-Path: <linux-kernel+bounces-641524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF356AB12E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:03:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E11AB12DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89531899F9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7EB3B3B75
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B128FFEC;
-	Fri,  9 May 2025 12:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6442428FFE1;
+	Fri,  9 May 2025 12:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mlGh+L/e"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUl8nEj1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF3A274643;
-	Fri,  9 May 2025 12:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B887A233733;
+	Fri,  9 May 2025 12:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746792228; cv=none; b=sybXniYEXp3SGQFRvQbLBBkX6/YnqYCZpXtoZUkjPNWsUMx3VxvqECRkxQN5/oLHsBKJZhNhOg1pKQe0PoO/36ovYjP6qdFkrdB/tGLL/6pI6YvyBwpVkNnbl2wxlOk6zQPTSl21JMdzIaswp+z5FpKEy94K3/Dw5gFtHpXu9ck=
+	t=1746792142; cv=none; b=iB/sOSS+BuAuuYlhwlMLX4+DC5uAhNHeJqhJBgOaVXRj8PKM7BFHcY13ox1eijIycnkT4baYEESlgyfXksNiNaawR+dgL2l8JQpDiEd4LmKhqA2yAcltkpu303BQeKghbuoaQ/PVYQkXYXYBY4xHKoy0hi3GOqR28N3p4TYumr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746792228; c=relaxed/simple;
-	bh=zMk3Ur7keZic+WklbtXFWS6gObTJIJhCYMILZ9CiGdg=;
+	s=arc-20240116; t=1746792142; c=relaxed/simple;
+	bh=ZIMsPG8/Ehl0ue2QuizU14PoW7lpL6qpzlkxA5aNloI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpGHQ1/Di7rEduh1/OwMiIlV3lIO9ziKLFlVhY+tJkx58h0pRTZS2FrI53AcRF5v3e++k4CtV7oL5u75o2Mnnrcbx8Gv54NyOi4IRB695zmANMoGQF6hxeVenltg1bfkiP5HT06jxLUeESI+73ZjunjZyUvFfWJiA10HHsCspek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mlGh+L/e; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=uZznWLba/NrZlGr5Qa9wgXdmAIeUPmYseOlEvibVjwc=;
-	b=mlGh+L/e3yD5Rzxyt5H4YE5WgU95NUq48DtszJYSAK09t/qKPMO2tb5qPO1ANa
-	CO673MDq3NgqiHbSRopshU79k8zJukP3ey48IEnX4Qkfdka1wZIaOXr7jETDafFC
-	6D0y8KiZxyUvBGEnGDjZ8UUDzIl3iL/FuD1aBPN4ml7Gw=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgC3N_Ke7h1oXnOrAA--.65461S3;
-	Fri, 09 May 2025 20:01:36 +0800 (CST)
-Date: Fri, 9 May 2025 20:01:34 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-amarula@amarulasolutions.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: (subset) [PATCH v12 00/19] Support spread spectrum clocking for
- i.MX8M PLLs
-Message-ID: <aB3unsCzCFUkdp9i@dragon>
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
- <CABGWkvrkVLRocFsZs9JLni4KDZCDyYDZxMzwA9AzAwipmUyTzQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3cmpEsC1KpNniBCu/vwbXX/+xgipIyJ5iAYMtTRFxEKrVt2ISbymrqEYiFo+lQgqIIXCUVC/nXsH3QoJoNlELkOGy6FLzgb+3E82mwpY3zCTezr81pUniV8/ExQwnsUPVO2gCNTCxv8WwSe0wf1KEskA7xc4YM3amyCztF6YqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUl8nEj1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C9CC4CEE4;
+	Fri,  9 May 2025 12:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746792142;
+	bh=ZIMsPG8/Ehl0ue2QuizU14PoW7lpL6qpzlkxA5aNloI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qUl8nEj18L2HjreZSHsAghG+uD7IBKhX2ktcSQyE/hMrlawZ4C8eFiOdtlagmeI0v
+	 PBtUk+/sIzHCXHzQwsWjsxHvsvXT3mOyxrr097gO5FczG2pbxj0R2n3lp7ggvOsapZ
+	 Kb0h4ClTwS+pNW1+6q/QXnypmVumPiwfel8xEJ/GA5cs2G1s8MXO+CoQupOdB8Nxts
+	 nQXciD9h2ZixNMdHNRSYnJZM+qnNO3piHVGi5JzX7Hg6h7l+ru5K5A21W5+CHPtc5e
+	 iKkc7dpkWhfbAsQE/PuEGjV1TQ7Q2+rCLw3m9PlNj2FYq8Vnq+bUNvJky+WLGDnEfn
+	 juiRqADarWx+g==
+Date: Fri, 9 May 2025 14:02:18 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: "Andries E. Brouwer" <aeb@cwi.nl>
+Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	libc-alpha@sourceware.org
+Subject: Re: man-pages-6.14 released
+Message-ID: <bn2rs76dkhejmthy2wvul4ho26zzlwtkfg474ztiwggkxz7f3d@g25omktsd3ug>
+References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+ <20250509112627.GA924923@if>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="omvnaiydm5jceej7"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABGWkvrkVLRocFsZs9JLni4KDZCDyYDZxMzwA9AzAwipmUyTzQ@mail.gmail.com>
-X-CM-TRANSID:Ms8vCgC3N_Ke7h1oXnOrAA--.65461S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXw1kGFWrCr1furWUWr13CFg_yoW5WrWUpa
-	4SkayqyrWDJFy8GF9Fyr45ta40qw4DZay8Jw1Ygr90v34YqF15JFW7Kry5KFyUG3yfC39r
-	tay5Xw1ku3WYvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j4c_fUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxNIZWgd37UzoAAAs5
+In-Reply-To: <20250509112627.GA924923@if>
 
-On Thu, May 08, 2025 at 10:32:10AM +0200, Dario Binacchi wrote:
-> Hello Shawn,
-> 
-> On Mon, May 5, 2025 at 9:52 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> >
-> >
-> > On Thu, 24 Apr 2025 08:21:30 +0200, Dario Binacchi wrote:
-> > > This version keeps the version v9 patches that can be merged and
-> > > removes the patches that will need to be modified in case Peng's
-> > > PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
-> > > The idea is to speed up the merging of the patches in the series
-> > > that have already been reviewed and are not dependent on the
-> > > introduction of the assigned-clocks-sscs property, and postpone
-> > > the patches for spread spectrum to a future series once it becomes
-> > > clear what needs to be done.
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [01/19] dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
-> >         commit: 20e5d201b5d8f830e702d7d183f6b1b246b78d8a
-> > [02/19] clk: imx8mm: rename video_pll1 to video_pll
-> >         commit: 26a33196b5b68cf199b6c4283a254aa92d2aaf4b
-> > [03/19] dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
-> >         commit: 2d50415e2457c6f6621c2faa3b01b11150fb9c67
-> > [04/19] clk: imx8mp: rename video_pll1 to video_pll
-> >         commit: 21bb969f608cefd8d847cf6eb50a193d9f1fbb87
-> > [05/19] dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-> >         commit: 2ba124053687c933031a6dc5b2e16ceaca250934
-> > [10/19] clk: imx: add hw API imx_anatop_get_clk_hw
-> >         commit: 17e3c1a272d97e49b4f3fbfe1f1b889e120d2be8
-> > [11/19] clk: imx: add support for i.MX8MM anatop clock driver
-> >         commit: 3cbc38cf42ca42d2dc9a93c949e0381ff919df71
-> > [12/19] clk: imx: add support for i.MX8MN anatop clock driver
-> >         commit: 80badb1d7264e83b512475898e7459f464a009c9
-> > [13/19] clk: imx: add support for i.MX8MP anatop clock driver
-> >         commit: 4c82bbe8b5437c7f16b2891ce33210c0f1410597
-> > [14/19] clk: imx8mp: rename ccm_base to base
-> >         commit: 1a77907dbbecfbe5e6a1aec28afd49a1dc184b7a
-> > [16/19] dt-bindings: clock: imx8m-clock: add PLLs
-> >         commit: 6a55647af3334f1d935ece67de4a838a864b53fc
-> >
-> 
-> Please check the remaining patches, as they are required for correctly
-> building the
-> ones merged by Abel. The kernel test robot has already reported build errors.
 
-I assume the remaining patches are DTS ones?  If so, I do not see how
-clock drivers would require DTS change to build correctly.  Do you have
-a pointer to the reported build errors?
+--omvnaiydm5jceej7
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: "Andries E. Brouwer" <aeb@cwi.nl>
+Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	libc-alpha@sourceware.org
+Subject: Re: man-pages-6.14 released
+References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+ <20250509112627.GA924923@if>
+MIME-Version: 1.0
+In-Reply-To: <20250509112627.GA924923@if>
 
-My understanding about the build dependency is the opposite, i.e. the
-DTS changes require clock defines merged by Abel to build?  In that
-case, I suggest Abel pick up the whole series with my ack on DTS changes.
+Hi Andries,
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+On Fri, May 09, 2025 at 01:26:27PM +0200, Andries E. Brouwer wrote:
+> On Fri, May 09, 2025 at 01:15:06AM +0200, Alejandro Colomar wrote:
+> > Gidday!
+> >=20
+> > I'm proud to announce:
+> >=20
+> > 	man-pages-6.14 - manual pages for GNU/Linux
+> >=20
+> >=20
+> > Global changes
+> > --------------
+> >=20
+> > -  CREDITS, *
+> >    -  Move in-source contribution records to a new CREDITS file, and
+> >       update copyright notices to be uniform across the project.
+>=20
+> Good morning!
+>=20
+> I wonder about the legal status of such a change.
+> There is ownership of the pages, and a license that allows
+> others to do certain things.
 
-Alternatively, I can pick up the remaining patches after clock changes
-land on mainline (the next -rc1).
+I also wonder about it.  We discussed it for several (~3) months, and I
+documented links to the discussion in the commit message:
 
-Shawn
+commit 9f2986c34166085225bb5606ebfd4952054e1657
+Author: Alejandro Colomar <alx@kernel.org>
+Date:   Fri Apr 11 02:19:48 2025 +0200
 
+    *, CREDITS: Unify copyright notices
+   =20
+    Link: <https://lore.kernel.org/linux-man/jpin2dbnp5vpitnh7l4qmvkamzq3h3=
+xljzsznrudgioox3nn72@57uybxbe3h4p/T/#u>
+    Link: <https://www.linuxfoundation.org/blog/blog/copyright-notices-in-o=
+pen-source-software-projects>
+    Cc: "G. Branden Robinson" <branden@debian.org>
+    Cc: Carlos O'Donell <carlos@redhat.com>
+    Cc: Eugene Syromyatnikov <evgsyr@gmail.com>
+    Signed-off-by: Alejandro Colomar <alx@kernel.org>
+
+
+In the first link, you'll see the discussion.
+
+> If I pick a random page, man2/unlink.2, then it used to start
+>=20
+> .\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+> .\"             and Copyright (C) 1993 Ian Jackson
+> .\"             and Copyright (C) 2006, 2014 Michael Kerrisk.
+> .\"
+> .\" Permission is granted to make and distribute verbatim copies of this
+> .\" manual provided the copyright notice and this permission notice are
+> .\" preserved on all copies.
+> .\"
+> .\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
+> .\" Modified 1996-09-08 by Arnt Gulbrandsen <agulbra@troll.no>
+> .\" Modified 1997-01-31 by Eric S. Raymond <esr@thyrsus.com>
+> .\" Modified 2001-05-17 by aeb
+> .\" Modified 2004-06-23 by Michael Kerrisk <mtk.manpages@gmail.com>
+>=20
+> Today I read
+>=20
+> .\" Copyright, The contributors to the Linux man-pages project
+> .\"
+> .\" SPDX-License-Identifier: Linux-man-pages-copyleft
+>=20
+> I no longer find the information about who owns this page.
+
+It is less specific than it was before, but it still includes the
+authors, as part of the group "The contributors ot the ...", which are
+then listed in CREDITS.
+
+	$ grep -e Faith -e Gulbrandsen -e Raymond -e Andries -e Kerrisk CREDITS
+	Andries E. Brouwer <aeb@cwi.nl>
+	Arnt Gulbrandsen <agulbra@troll.no>
+	Eric S. Raymond <esr@thyrsus.com>
+	Michael Kerrisk <mtk.manpages@gmail.com>
+	Rickard E. Faith <faith@cs.unc.edu>
+
+The current wording is IMO more appropriate, as we also credit
+contributors that don't take the time to update the copyright (I haven't
+updated copyright notices for myself in many pages).  On the other hand,
+it literally removes copyright notices that were there before (by
+transforming them into the unified one), so I would understand if
+someone would consider this not valid legally.
+
+I am not a lawyer.
+
+> The old permission notice does not seem to allow distribution
+> without this information.
+>=20
+> Andries
+
+I was wondering if I should CC the ~600 people listed in CREDITS, and
+wait for a month or so until we can assume all agree to it (by their
+silence).
+
+Any opinions?  FWIW, are you okay with your own notices being
+transformed?
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--omvnaiydm5jceej7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmgd7sQACgkQ64mZXMKQ
+wqnXnw//aK4srkVAJzAwBWBmaX4m5YJhfC6ZwlvIODPKT5Yc+b8mnUnxe8wnFwtk
+avsOSb/wh/KNlY3qCk7Z51KLacWMim9+M1/TSIl9y3Dj+ixiXntZE3GsMI70LIus
+FozGqf3WftNFUBfJJhFMJQWsT6RO2AAn18bjozmcoc2BEKCcHjARKaRq5Che3COI
+BZSQ6Le5Jk/1WD/WY33eFgWKRRUp7r6g5lLFNiR28ex+HMkl3h2tLHUleWUkq0ad
+JzEd5nMcTl8ddOT61d7sgTrQf3B5luJCqm+ch2+dzZv3qH/5mcqrbfG+qKKR42KE
+zRXmH+BM9J0WD5X2Q+LkNgkMHo8+dbFagkLNuVFRbn7SByusm+MVh4Vv7Ag6ren/
+sdNr8Q/JZNOuRELHIJ+vch3ZkLChirnesOfWsd62MpbgIOooq5DIYyuzlVnL2x/j
+02hEtzTqNR3DvfzbOTSAYFktvru4qVgkhwTXrtCuN+FdAtXutOPf8tUoeVAiCjOH
+sEBwk2MD5bTBVrPBt0zkozZ6Aqf8Glfe9oysUURCNKxo2ysHAS/2fhIgYukxiDtS
+LPt+GVOr9XaamGehiPI267Ud0iBXBmjzLea7y1m9wVg4hwfQwgYi0M63ai2YJHN7
+erOa6bnn68+NzIBoTW1LCi/qHuneyT3nHqFdhY/Zc1HN0o9Vcx0=
+=SzJC
+-----END PGP SIGNATURE-----
+
+--omvnaiydm5jceej7--
 
