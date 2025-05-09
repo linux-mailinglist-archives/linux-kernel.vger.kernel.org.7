@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-641185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB503AB0DEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:57:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3076AAB0E10
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63DAB521FF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A473173BBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B2227467F;
-	Fri,  9 May 2025 08:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983B0274FD6;
+	Fri,  9 May 2025 08:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="33eSrwXy"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="BHUfba6b"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9762750FC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDEB27466D;
+	Fri,  9 May 2025 08:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746781043; cv=none; b=atioxLwq0B5XgdApnKoYzofvUHnhSQvqVh41/4SKV7qm4nZS/4bGonQtDO+CqWdbsbOHioqy6ns9kErx4JGMa6/f3DZdbKSY7oZFGGnJEmuvgvKHoe2sg7zu7sYhxUpbwjblC/ou/mexkZbsreLtgo8ndNEGG1O3T9thMnhqqZ0=
+	t=1746781176; cv=none; b=MAqYOnSVKzWAxbq8HRUhCJyPxEijCFlC7lN4DVf3YQotFPJQhTVZD6HvAgJafyCYJhwvahEAZ9570b32I6t4ek/4bngUZf/4NBfJo9BosE31853mUefhs0O++vvabapGs0gZGC9aeJaissFeaNsDjtXP6K+Pc6OIqoSWmuKDpKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746781043; c=relaxed/simple;
-	bh=R+9CnLehBKqfBSvZuqQpAsrEp7E3sWeVIVk/b6VyBJ8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iiHXgzslIwwJzbljFNCrZNkfs2fLbKj9wflnOe8lExN+aM+LoNP1T0TsB1vd87QYTLTMKmOYX44OIbP7vok8kkkOWDQNJDjW2QYqONxEzt6UlEfoiTTSmpCcgZ7CAiLaAA+N0xFIyT48DclI1H1+/JcP32XavyP4X/qzb7nrXxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=33eSrwXy; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a0b7c8b3e2so1250503f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 01:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746781039; x=1747385839; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iP0GIrhMfkUhRnBdT5rEtUWXHmjU+cDPxxlDMopY3Wk=;
-        b=33eSrwXycG3P1pImvvO9HeZzjC5yQSZXPv4AWuiRbdjseVNHGCju9x3xZjQLSivUJc
-         7kJioTcRJET1OvTCkPvsrkRKw/7rxSdVPXzW7eoP100TWmrTrPcyjStjWuUjmrq2hO37
-         uHvo5DCCK1tLpkVLmBoHWQSEAQdL06ZWUS7sigmprhvKrqvpc2sF9/cJ+4+yQqLMsb0T
-         5+qj9yLqE8hbF44TrxWHusIfJ+aiT7auA/2hLNjw3maagk2Peh0Kf8Rf4/aNjP6k04wi
-         mgQdKvFRM4VB3dH6uETaxOvwo2r/B01NWbUUdXFTLwedd+iP81nLEo7C1JmKgOX7TVZ8
-         IQ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746781039; x=1747385839;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iP0GIrhMfkUhRnBdT5rEtUWXHmjU+cDPxxlDMopY3Wk=;
-        b=ZV5NgycYTSD4rYQGNIzYnI8mX2/SmrlODT+1huTQgrI3veQGfgduTx/h1qAats1ARE
-         Nxpd4Q/gcwLjcYk5ssNTdJFxPEEHLlZnJKh4tfv02R3e82cjc2RzyPZ0rVsKUJbJlntp
-         dMgfoA//kHws6F3ALeeA2kMWYQp5LZRfqStrsw8U3xQMUdj1yoOqv4gxglXWdIixcIjo
-         SQcbCwsS9NO+ReHxYa6j4Z4i7+WvBcImA2jQeiGOoYL24bxVJLQ3WINr4osV/83xKZ77
-         5QPymMUUVhEYMJg5dH6wIxi4oPOavCGclyiz2qz9XBESi2d3/x6XvMAdYoySMq50xEUj
-         4ffw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF50GE2+tnx7lLS+3NUi+xRbqoEyHehzcmeMm8yVgKaCVy4Nixb81Vv6HT6J4QL/STLIxbN8vWYhcKHow=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh+gs9gedd8ARBYcYrhyEhLx/+XCId6u3gqR9S2Q2FQnZ5Y+ZO
-	AzSeBFCtbTg6fAS69H4xluDdY2o0qBxBS+2uQCrkeniGEbmwv9JvLGOFXDV5MyNrzxH5EwiVVnQ
-	QnaqwhwTwEw/Jmw==
-X-Google-Smtp-Source: AGHT+IGQ5Dez0I0n5aW+bmnJJQk6izAHF7Klp7GU4gxJF/MMP/32u29u2Wp72hGxzSMQGZvSQUri6B6q1UgUXMw=
-X-Received: from wmbhj20.prod.google.com ([2002:a05:600c:5294:b0:440:68cb:bd4])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:64e3:0:b0:3a0:847d:8326 with SMTP id ffacd0b85a97d-3a1f6445313mr1892954f8f.25.1746781039581;
- Fri, 09 May 2025 01:57:19 -0700 (PDT)
-Date: Fri, 9 May 2025 08:57:17 +0000
-In-Reply-To: <dbx8a57nrkod.fsf@ynaffit-andsys.c.googlers.com>
+	s=arc-20240116; t=1746781176; c=relaxed/simple;
+	bh=G8kQrHH3OYQ47ahmGn1kqAZ1Tk03y/9R+YubZV04GLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJj15wTR150P1C+r5RfXvruZBipUVkJ6FeJPmQ7EvjJEaCDt4g0mwKBWZPj5edFYoa4ofX7mxDCXnbNsyp3PYpacCCqmXdzxeybEev9qcTz24gTOWsO0IWrmkryxOJ54qbgJEXGv1JouIFx4GvDV7iflcMN8w3C1QNDFGysxgn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=BHUfba6b; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=DLliCO1t/SFOSRBkUHeejJJ+CCq3T7Q5aAPydMePW8A=;
+	b=BHUfba6bHY10VKBkg4+2RAhj1CXxl1F83mzJaW1LHlL0XRVVYjDD7TAipEINSk
+	F1Scu973CVyhBa124FB01AsQkFPOGAct7JYS26uYZmmJVeg2qzOHfiLO0hyS4J2k
+	nAEXiWZJ9lXbO22xIL2gvfp0V3j6+dom9oGaDORePilEc=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAXR_C5wx1oNGmpAA--.63149S3;
+	Fri, 09 May 2025 16:58:35 +0800 (CST)
+Date: Fri, 9 May 2025 16:58:33 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 3/8] MAINTAINERS: add maintainer for the Ka-Ro
+ tx8p-ml81 COM module
+Message-ID: <aB3DuZMBIwsFXrVz@dragon>
+References: <20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com>
+ <20250417-initial_display-v6-3-3c6f6d24c7af@gocontroll.com>
+ <aB26FRq/Ets5fiRK@dragon>
+ <PA4PR04MB7630F5874577DA12FCBE1537C58AA@PA4PR04MB7630.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250507211005.449435-3-ynaffit@google.com> <aByjK9-FR6KsYx_7@google.com>
- <dbx8a57nrkod.fsf@ynaffit-andsys.c.googlers.com>
-Message-ID: <aB3DbelD08I1hL3U@google.com>
-Subject: Re: [PATCH v3 1/2] binder: Refactor binder_node print synchronization
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tiffany Yang <ynaffit@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB7630F5874577DA12FCBE1537C58AA@PA4PR04MB7630.eurprd04.prod.outlook.com>
+X-CM-TRANSID:Ms8vCgAXR_C5wx1oNGmpAA--.63149S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ur18ZFWfGr15Xr1ktFWrKrg_yoW8XFyDpr
+	18KFs3CFn8JFsrC3W2g3WYvwnIqFyvkFW8Xa9xu34qyasxtFsxtr4qqr15uFWDJr4fWr4F
+	yrnIv347Aw4rZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UkOz3UUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBAlIZWgduuwjLgAAsO
 
-On Thu, May 08, 2025 at 07:01:38PM +0000, Tiffany Yang wrote:
-> Alice Ryhl <aliceryhl@google.com> writes:
-> > I don't buy this logic. Imagine the following scenario:
-> >
-> > 1. print_binder_proc is called, and we loop over proc->nodes.
-> > 2. We call binder_inner_proc_unlock(node->proc).
-> > 3. On another thread, binder_deferred_release() is called.
-> > 4. The node is removed from proc->nodes and node->proc is set to NULL.
-> > 5. Back in print_next_binder_node_ilocked(), we now call
-> >    spin_lock(&binder_dead_nodes_lock) and return.
-> > 6. In print_binder_proc(), we think that we hold the proc lock, but
-> >    actually we hold the dead nodes lock instead. BOOM.
-> >
-> > What happens with the current code is that print_binder_proc() takes the
-> > proc lock again after the node was removed from proc->nodes, and then it
-> > exits the loop because rb_next(n) returns NULL when called on a node not
-> > in any rb-tree.
-> >
-> > Alice
+On Fri, May 09, 2025 at 08:42:38AM +0000, Maud Spierings | GOcontroll wrote:
+> On 5/9/25 10:17, Shawn Guo wrote:
+> > On Thu, Apr 17, 2025 at 12:14:04PM +0200, Maud Spierings via B4 Relay wrote:
+> >> From: Maud Spierings <maudspierings@gocontroll.com>
+> >>
+> >> Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
+> >> module bindings.
+> >>
+> >> This support is not officially done by Ka-Ro electronics, if they at
+> >> some point will supporting mainline, this should be changed to them.
+> >>
+> >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> >> ---
+> >>   MAINTAINERS | 6 ++++++
+> >>   1 file changed, 6 insertions(+)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index b5acf50fc6af4322dec0dad2169b46c6a1903e3c..1ca022081bcf564c8ec91fb6431570045495ec23 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -12779,6 +12779,12 @@ S:	Maintained
+> >>   F:	Documentation/hwmon/k8temp.rst
+> >>   F:	drivers/hwmon/k8temp.c
+> >>   
+> >> +KA-RO TX8P COM MODULE
+> >> +M:	Maud Spierings <maudspierings@gocontroll.com>
+> >> +L:	imx@lists.linux.dev
+> >> +S:	Maintained
+> >> +F:	arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi
+> >> +
+> > 
+> > I'm not fond of such changes, as MAINTAINERS file could be bloated
+> > quickly by individual DTS.
 > 
-> 
-> Thanks for catching this!! I think this race could be solved by passing
-> "proc" in as a parameter (NULL if iterating over the dead_nodes_list),
-> and locking/unlocking based on that instead of node->proc. WDYT?
+> Is there some way you would prefer to see it? I don't really know of a better
+> way. 
 
-I believe that would work.
+There was some discussion about getting ./scripts/get_maintainer.pl pick
+up the Author: field (in DTS header area).  But I'm not sure where it
+ended.
 
-Alice
+Shawn
+
 
