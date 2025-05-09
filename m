@@ -1,160 +1,111 @@
-Return-Path: <linux-kernel+bounces-641602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC68AB13C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:47:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B686AB1437
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2612F9814B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15151C4278E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCBD2900B5;
-	Fri,  9 May 2025 12:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DywruXM1"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7728B2920B1;
+	Fri,  9 May 2025 12:58:21 +0000 (UTC)
+Received: from cventin.lip.ens-lyon.fr (cventin.lip.ens-lyon.fr [140.77.13.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E03139B;
-	Fri,  9 May 2025 12:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5EF22A4D6;
+	Fri,  9 May 2025 12:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.13.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746794865; cv=none; b=pm1sIFzYNpzmuDK0w+P2blz7mFUESX9zUSHAQeKL43czNSeoRLnwL6S9PFFZ0J8DyHhSU+mNYWZ8IZYw8DLocLFsYijRXjECf0wwm7PNKKzv105UOlVGz4G5SNfjw0UIIsC2nc0+J+HPBuWFxnA8crMn2TWmNcpUBNKUMFsx2Oc=
+	t=1746795501; cv=none; b=OWtT74Q8mv7kYgZTaU82Bpf4eI9I0tYivQVv++WBgdKEuLxnJBkJa+3aMW9nlsACx27+1E3Zjgk8Z7bbWN9L7ZWaBMGNWN85R64mhyu3oypiNaN6BI/fT/371ysF4ATmwah6soA3xFUmN1HQ+OOWVJCpVJNOXQdwIzFDUqCzDE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746794865; c=relaxed/simple;
-	bh=lE1yrC7THVc4nzkqlGbFuHn6zVttoh/FamryFZZzE0U=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XM2HDFI0l9VWHewCjhCQHcljFBbCbNq+PzU+hMYwx/d+0E38lE+po6AGaClVj7E5T4NIdN+HyK3/rYkJB8tjl+YNaQOPjaMgYe5WfL7bA7Lrma8PwyZTEhxC2Wa8lqSWixAddkEtxtFiouPKgaROx1VTax+XV4e2rn9Tg2UFwLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DywruXM1; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f4d0da2d2cso3648728a12.3;
-        Fri, 09 May 2025 05:47:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746794862; x=1747399662; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8ZIx9Wf+0ssahSZtddtwRmi5eBnM6hzKyzjSP+8iMc=;
-        b=DywruXM19zzntBw4f3P6zpkGB9mxsNn8YmdLmXfjJPDydvfUkGsQvth6VjQ8jqEuGp
-         wlI638ZLUIfqx7ikttLEiD6RhOO/nOHccAV4/Zw6LFXQ5qOKf7mMfbfzHG7HOuW4QN9B
-         kHZdWB2gTmQajS3v2AEGuXUlm4WXAx1kZlAJMF33ksRc2bpf0CL49sFfQHHmxdvlT2AZ
-         x54wyd2GbW9mB7UFQysATTFBmr8sYt+jiuE+4d8+2xZaJ0NZ3NFz8P0ewulhOqeRoVxK
-         veAY/X8LDTKGM2QoEiUKHG9fVv6SWoU4GdWB7l/M/waROiPkvkN2eQ47kb2RDCb9OpGe
-         b8TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746794862; x=1747399662;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=k8ZIx9Wf+0ssahSZtddtwRmi5eBnM6hzKyzjSP+8iMc=;
-        b=AQFITubvis44RDXlwpEMyqRaifAhPyctvKKSN0reRp8XLJh8S3RY+l2BXaVrU85l3D
-         KdVXVgRFN3iz+Xzp2/7f9vCzsTcqBQTIYPRuNFbqL3VBfKxP6etuVZol9CPe1zg6K/lz
-         BDi5yio28diqu72VC7uN7PHN9FcZqILd9mu9VYuDh4+Qg2tLqo7a7aQxbfn2Z3CrpeeU
-         +zN1GU7epyXyRKGlpBj9C+e2Dddv/gnOCfZ9JdwBT4EqtYfAvbMRXUVgLRE/cmBLFBOl
-         BfYnZ9qbPktTMZYgQqijTvDTAPuUNBOqyuTuxpL5VYst6pwyXlXqNoHxFShaELpvqz0d
-         LmGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4TbBwT0FnvzK+RkPYD5qxJObgIo8q2fRiMWDNQdmUfBKcrTKDRCza54pQQKRwa+Uqy93nHIiH/gQ=@vger.kernel.org, AJvYcCVhhIux+MrfZ38w9B2sww2sToIIHIv3gYxjpY5QoOXxrKo3rcj3ljy8QSjCEe3C95DkE05AQUvG06T2w13b@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjCilHEpTaj123MorB+oJ09NMotm6vOtePKzCyCi4zijqwsMN7
-	4MsWf1Hh0DUgtB7axWwibe4xN6P70ikBRJm6IQZ32N5kEFg0UwU/Pbrv8ny7
-X-Gm-Gg: ASbGnctW3emXwqtmhM+GPxYMiiIIngN5ukszlfmoMhA5UNVfxY2hJ+3ssQmI1RCbgNo
-	6tqfhR1NdUGy3VW5v9S0+ea0jwrYIHWDwijfJt8GZO4Gs+G2odk8nbLstTH84K4ylrM0vpTULbY
-	31Cn/YtIxeiCV/y/FaYiQ96Mv9zOYHMZ49ENbhcBW6sTjkO0BIvLBg+Jw59/TfX908/yaWvvsAd
-	zmMSazNUb8krHFDM0WpNlR4qrp6DLfZSP2fbORr6c5MfHSEi4dZ5Ufk4JJ1XGmsiaJwY+gDPlRH
-	3s+SUiiauAr84fEkXhyyJ9yTqDJ+RKLQUb5GSSh7
-X-Google-Smtp-Source: AGHT+IGSI8Tnw7s989vnn2nfEYRSiAHvuBsmKY5a3i+2m1Q45ERIvfCDzWPGQm8KGBi9egfzmyVk7g==
-X-Received: by 2002:a05:6402:2115:b0:5fb:2105:c62c with SMTP id 4fb4d7f45d1cf-5fca0731354mr2818289a12.3.1746794861819;
-        Fri, 09 May 2025 05:47:41 -0700 (PDT)
-Received: from [10.5.0.2] ([45.94.208.210])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cc4f790sm1335508a12.38.2025.05.09.05.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 05:47:41 -0700 (PDT)
-Message-ID: <310975db928bbd57411da9ff18746df8836fe642.camel@gmail.com>
-Subject: Re: [PATCH] iio: adc: ad4851: fix ad4858 chan pointer handling
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 09 May 2025 13:47:41 +0100
-In-Reply-To: <20250509101657.6742-1-antoniu.miclaus@analog.com>
-References: <20250509101657.6742-1-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1746795501; c=relaxed/simple;
+	bh=W5IN8KekiXhtsFvY8lSklWXRlcn4sRA+tLE3ZGCXS44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oo1qVZlsyL2naTs5uvryblQ0FJVoY7A0fvN+53cxTbn5jdXwSz4lPPjxV7NaUX9gSx62f1d0qYehEslxHXINjyvkTJc2tjxOlCXDSNuDVwM/dDlNpdQgGsFoRZb6iLrvxSFGK8FfPAzCjDBoUtvVCG4PBalnlotsfyJUSsl2uo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinc17.net; spf=pass smtp.mailfrom=vinc17.net; arc=none smtp.client-ip=140.77.13.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinc17.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinc17.net
+Received: from vlefevre by cventin.lip.ens-lyon.fr with local (Exim 4.98.2)
+	(envelope-from <vincent@vinc17.net>)
+	id 1uDN9R-0000000036V-1NWQ;
+	Fri, 09 May 2025 14:48:29 +0200
+Date: Fri, 9 May 2025 14:48:29 +0200
+From: Vincent Lefevre <vincent@vinc17.net>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Andries E. Brouwer" <aeb@cwi.nl>, linux-man@vger.kernel.org,
+	linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
+	"G. Branden Robinson" <branden@debian.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Eugene Syromyatnikov <evgsyr@gmail.com>
+Subject: Re: man-pages-6.14 released
+Message-ID: <20250509124829.GD3017@cventin.lip.ens-lyon.fr>
+Mail-Followup-To: Vincent Lefevre <vincent@vinc17.net>,
+	Alejandro Colomar <alx@kernel.org>,
+	"Andries E. Brouwer" <aeb@cwi.nl>, linux-man@vger.kernel.org,
+	linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
+	"G. Branden Robinson" <branden@debian.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Eugene Syromyatnikov <evgsyr@gmail.com>
+References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+ <20250509112627.GA924923@if>
+ <bn2rs76dkhejmthy2wvul4ho26zzlwtkfg474ztiwggkxz7f3d@g25omktsd3ug>
+ <20250509121454.GA952723@if>
+ <qghsrpxzxccbcuuctx56oq5xe7mtpkgljis7ovopr6ojmiz3js@vw5p5w7om4f4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <qghsrpxzxccbcuuctx56oq5xe7mtpkgljis7ovopr6ojmiz3js@vw5p5w7om4f4>
+X-Mailer-Info: https://www.vinc17.net/mutt/
+User-Agent: Mutt/2.2.13+86 (bb2064ae) vl-169878 (2025-02-08)
 
-On Fri, 2025-05-09 at 13:16 +0300, Antoniu Miclaus wrote:
-> The pointer returned from ad4851_parse_channels_common() is incremented
-> internally as each channel is populated. In ad4858_parse_channels(),
-> the same pointer was further incremented while setting ext_scan_type
-> fields for each channel. This resulted in indio_dev->channels being set
-> to a pointer past the end of the allocated array, potentially causing
-> memory corruption or undefined behavior.
->=20
-> Fix this by iterating over the channels using an explicit index instead
-> of incrementing the pointer. This preserves the original base pointer
-> and ensures all channel metadata is set correctly.
->=20
-> Fixes: 6250803fe2ec ("iio: adc: ad4851: add ad485x driver")
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
+Hi,
 
-LGTM
+On 2025-05-09 14:28:23 +0200, Alejandro Colomar wrote:
+> On Fri, May 09, 2025 at 02:14:54PM +0200, Andries E. Brouwer wrote:
+> > Hi Alejandro,
+> > 
+> > > > I wonder about the legal status of such a change.
+> > > > There is ownership of the pages, and a license that allows
+> > > > others to do certain things.
+> > > 
+> > > I also wonder about it.  We discussed it for several (~3) months, and I
+> > > documented links to the discussion in the commit message:
+> > > 
+> > > commit 9f2986c34166085225bb5606ebfd4952054e1657
+> > > Author: Alejandro Colomar <alx@kernel.org>
+> > > Date:   Fri Apr 11 02:19:48 2025 +0200
+> > > 
+> > >     *, CREDITS: Unify copyright notices
+> > >     
+> > >     Link: <https://lore.kernel.org/linux-man/jpin2dbnp5vpitnh7l4qmvkamzq3h3xljzsznrudgioox3nn72@57uybxbe3h4p/T/#u>
+> > >     Link: <https://www.linuxfoundation.org/blog/blog/copyright-notices-in-open-source-software-projects>
+> > 
+> > So I read this last link, and see
+> > 
+> > "Don’t change someone else’s copyright notice without their permission
+> > You should not change or remove someone else’s copyright notice unless
+> > they have expressly (in writing) permitted you to do so. This includes
+> > third parties’ notices in pre-existing code."
+> 
+> I understood that paragraph as not changing copyright notices from
+> people unrelated to the project.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+I don't think so. But IMHO, it would be OK to provide the old copyright
+notices in an indirect way: put them in a different file and just give
+a reference to this file, as long as this file is distributed together
+with the man pages and can be found easily.
 
-> =C2=A0drivers/iio/adc/ad4851.c | 14 +++++++-------
-> =C2=A01 file changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
-> index 98ebc853db79..f1d2e2896f2a 100644
-> --- a/drivers/iio/adc/ad4851.c
-> +++ b/drivers/iio/adc/ad4851.c
-> @@ -1034,7 +1034,7 @@ static int ad4858_parse_channels(struct iio_dev
-> *indio_dev)
-> =C2=A0	struct device *dev =3D &st->spi->dev;
-> =C2=A0	struct iio_chan_spec *ad4851_channels;
-> =C2=A0	const struct iio_chan_spec ad4851_chan =3D AD4858_IIO_CHANNEL;
-> -	int ret;
-> +	int ret, i =3D 0;
-> =C2=A0
-> =C2=A0	ret =3D ad4851_parse_channels_common(indio_dev, &ad4851_channels,
-> =C2=A0					=C2=A0=C2=A0 ad4851_chan);
-> @@ -1042,15 +1042,15 @@ static int ad4858_parse_channels(struct iio_dev
-> *indio_dev)
-> =C2=A0		return ret;
-> =C2=A0
-> =C2=A0	device_for_each_child_node_scoped(dev, child) {
-> -		ad4851_channels->has_ext_scan_type =3D 1;
-> +		ad4851_channels[i].has_ext_scan_type =3D 1;
-> =C2=A0		if (fwnode_property_read_bool(child, "bipolar")) {
-> -			ad4851_channels->ext_scan_type =3D
-> ad4851_scan_type_20_b;
-> -			ad4851_channels->num_ext_scan_type =3D
-> ARRAY_SIZE(ad4851_scan_type_20_b);
-> +			ad4851_channels[i].ext_scan_type =3D
-> ad4851_scan_type_20_b;
-> +			ad4851_channels[i].num_ext_scan_type =3D
-> ARRAY_SIZE(ad4851_scan_type_20_b);
-> =C2=A0		} else {
-> -			ad4851_channels->ext_scan_type =3D
-> ad4851_scan_type_20_u;
-> -			ad4851_channels->num_ext_scan_type =3D
-> ARRAY_SIZE(ad4851_scan_type_20_u);
-> +			ad4851_channels[i].ext_scan_type =3D
-> ad4851_scan_type_20_u;
-> +			ad4851_channels[i].num_ext_scan_type =3D
-> ARRAY_SIZE(ad4851_scan_type_20_u);
-> =C2=A0		}
-> -		ad4851_channels++;
-> +		i++;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	indio_dev->channels =3D ad4851_channels;
+-- 
+Vincent Lefèvre <vincent@vinc17.net> - Web: <https://www.vinc17.net/>
+100% accessible validated (X)HTML - Blog: <https://www.vinc17.net/blog/>
+Work: CR INRIA - computer arithmetic / Pascaline project (LIP, ENS-Lyon)
 
