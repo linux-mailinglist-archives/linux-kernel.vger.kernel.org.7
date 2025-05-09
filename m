@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-642101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6EFAB1A8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A020FAB1A93
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5A80521BC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF03189A2E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA336297B84;
-	Fri,  9 May 2025 16:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE05297B77;
+	Fri,  9 May 2025 16:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bHJ99MF4"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Aq4FcIiL"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAF6238151
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 16:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E6E290DA4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 16:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.73
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746808154; cv=fail; b=HkUYHZly3/SmaPGxFsBz1TKvIGWidlanDyU6DXMQ0ErOEVqEHPBGqhr/pxqbB9cxJr44C5FLHpQngt3TJGUUOMZxvQJdWE8f/IL618WaR7x9WoxKdslW7ozh8rtIUy+o4H/yfi0Q1cdzij52RypUkmS7uoxIuncmu4zcpkuGZus=
+	t=1746808153; cv=fail; b=SHWE8MYtD2ZUC2vD6cHWJkiFhRhzsDfH9odx8KoFZutQRlnZgyEH3J85iaGnAU45u/VubJfzvnvglLrVkCQLiuA7Yaq5pIFDGf3LOPWrQsP/8m5mjYEwiLSujruooXYLoo6jTqqO2AOa15i54aAbwtdXbZVkZGvdgPi/PnVvTRE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746808154; c=relaxed/simple;
-	bh=nnVEZK8E2WSfyPPq4z6x1v0qkqfcXD713rKpQABisd0=;
+	s=arc-20240116; t=1746808153; c=relaxed/simple;
+	bh=9ePOZNxU4dO8vNKhy9+NYqZIYqNkrpKC+OBiaDA6lqM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dMGgVs7OWBncmo3V+NeppJTtNVi3/w35i2rnkCKhSfz5WW8a+FBXNyrUh6G9LS3UsP+r6Z6qyI7S+WJP8V5TsCgMuttw+VoBgWGTM1hAvIpK+Ty1uw81QLdV8m0+pUzIc2drA9NKXxHEqVRTJawRQWHv8eS01DBsCkmN9zg8Vfs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bHJ99MF4; arc=fail smtp.client-ip=40.107.93.47
+	 MIME-Version:Content-Type; b=CgjQZep4QAn7waYUO3aXgsvSxnSaogFRR49Og8UUkYfN8gn/k6O3LjrCkwXxAsFzh2vWfeW/FtBfsqs6crLdQ3b2N5192cVM6KG7nt+NUBLPxhvDM9XItRkBlG63n4yP930TOzH0DjhmG2iTZbdUXC3RRVl5Tv39z8C8xbopGik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Aq4FcIiL; arc=fail smtp.client-ip=40.107.244.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xuz+ZZxSdiYI3tw1G+1B+I2FT4ef5GYIUimpV8NoToEosHphDfLn001nuyk1/iCmdHj9LaJPsw7VRtX4/MUpqttsIhXr/Uj8b0LwnPHydx7/189/0rguhg94EhOXWSMgAB1ZCVNDiIbv6I+24kZF1r35mc+nV7TKS9+/qSdMtN41IkYDzJ/uGe7GH3T8pVl4BLquycKX1ldKZJ5BHsuZz9qV6qVP3cj7DZZpIDqzo2814oudmvf+Anz6HF+Lue+wmq3uWZUCaMo/j6I8kRCtHrqzFvWRa8YIzJ6StXNtkvTsbbwvsa+sPTYdlOHA2Nt/MeyL8yNzZ+3n9zRwbeu/hg==
+ b=f+FtmuscFEqKKoNFv84FHrwB26jretN6a4yuScI02/escRbTrySRKwiobMEkt17B8yStlnzMQnR9wfAhK8aXSz7jZ/tPXpTXYRUG6M+rU6VSZbE8vpX7pyy3WRCkPslNcntlDePoBGvDzWyu7nIhJ92lP0V3PPK51Qzkv6sz+o1rpJ3/03rt4VXQYo9vOvU1JN2VRhAGXNek9lb+lVTnRJrK8HRFlMqbLnwZsrkjKpaRV1D5OkDcjSLcudtTIgeIpCYLKYmNknGtlWZUKHu5J9rJVDkkvF1azw8yguxBVjxKhSeka//NFyAkqSQlwyoUkDjTXSGpE8jtrHVN4Ng0pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ESSAFQwIg28BwrwypKLZDxYDSij6Tz1LiZ0Nj3O0cko=;
- b=wqnSEuDQzoh3MsGm0rZ9T1b4xw8r5JgFqGCxzD6enl7t/7Mr/stDM6A4xFZT90P+TOS6nxK+VJiSmkQCl2+LnkUGPt+jUVjvBKCToj/PhScBV5gGck1ZXKs5f6EswzPWPoA45KnZ9mfgZxZvn5hgBUjtQFQdDb3+uvFVJeJ00I5+FLuLxhuROQTssuX3OAml3LSvPY9TiWdIphu6KXRoby0XNy6HjhuSNk/InkdH6uZ+qRP1tilX2JzE4jj44b2tbh+ml5Is0l8KDfj/4P6BSMZ/fXvBwv/cXwTPfSsYvJuF3mHrLdg4D264itvpoZ4CnnVSQvZG6zZQTvav3SF/AQ==
+ bh=+E7M8bB4d/Bm8ZiZ7eSfTLzA8pOvObfiTAHYavQH1nI=;
+ b=m6EJhsOJW9+9IGV9pGUhY6EnYy3S7ifZEF9zl6/CTKUki/oUFpIaNSCDQIwANaOmv564T5hAkbhRHglMqAYxA/A2QN9M3XdvAS0hKVuLtLnBTfhgPQ7qtAyaXDGN7cPYiJ5afyZRlhLCPMXy5rMahSsuVsLeEyTddq9U/GDrUKgKa78argxZS+2x8hh2k5O1h0/73Xwbli3lRLucwXP53uxalC87sFGK4xV4Loo3ackj6dcR9TTv9z5Ok28Hg+yyCUtvJxGWohUsVtw9bOwgUwFvCPuK38UysNYCeHJY8WzBGTooBr/PmwVZqiEBs8bryNjPQfRsti6WR4zaqvTPwQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ESSAFQwIg28BwrwypKLZDxYDSij6Tz1LiZ0Nj3O0cko=;
- b=bHJ99MF4zG3hEPPNVkeRzlAV75m84txwDKTctf7ooF8vM8BlIofLnxj961v6WNRDcHRxbPkMnaienyFlIVWBtiY6nQ9nvV7F1gcnli4Hy6y22i0lSt1q6iwaBalo9TXJvix78L2DsYcXTIONdtRYuuESG9Kv+DWEdt902Niy9bE=
-Received: from BL1PR13CA0093.namprd13.prod.outlook.com (2603:10b6:208:2b9::8)
- by PH8PR12MB7421.namprd12.prod.outlook.com (2603:10b6:510:22b::17) with
+ bh=+E7M8bB4d/Bm8ZiZ7eSfTLzA8pOvObfiTAHYavQH1nI=;
+ b=Aq4FcIiLvc2VuPROYN4hcBbvrAw/zvD/6lpNQp0WgcZyD//AdpAnTMsrVSXjRfKkFAlkhupSdwyyx27ZD3UAL0IF4pEWoD4gDlyuvVUD6qKbVPYZcx+kGYQtkrGi63orwp6ACcYc0i1H8WdUz32O6r5k/B/5Gd49XuM8Kx+fRcs=
+Received: from BL1PR13CA0113.namprd13.prod.outlook.com (2603:10b6:208:2b9::28)
+ by CY5PR12MB6324.namprd12.prod.outlook.com (2603:10b6:930:f::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
- 2025 16:29:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Fri, 9 May
+ 2025 16:29:09 +0000
 Received: from BN3PEPF0000B074.namprd04.prod.outlook.com
- (2603:10b6:208:2b9:cafe::38) by BL1PR13CA0093.outlook.office365.com
- (2603:10b6:208:2b9::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.11 via Frontend Transport; Fri,
- 9 May 2025 16:29:05 +0000
+ (2603:10b6:208:2b9:cafe::7a) by BL1PR13CA0113.outlook.office365.com
+ (2603:10b6:208:2b9::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.19 via Frontend Transport; Fri,
+ 9 May 2025 16:29:09 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,11 +64,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  BN3PEPF0000B074.mail.protection.outlook.com (10.167.243.119) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 16:29:05 +0000
+ 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 16:29:09 +0000
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 May
- 2025 11:29:02 -0500
+ 2025 11:29:03 -0500
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 19/20] x86/bugs: Print enabled attack vectors
-Date: Fri, 9 May 2025 11:28:38 -0500
-Message-ID: <20250509162839.3057217-20-david.kaplan@amd.com>
+Subject: [PATCH v5 20/20] cpu: Show attack vectors in sysfs
+Date: Fri, 9 May 2025 11:28:39 -0500
+Message-ID: <20250509162839.3057217-21-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250509162839.3057217-1-david.kaplan@amd.com>
 References: <20250509162839.3057217-1-david.kaplan@amd.com>
@@ -94,115 +94,156 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B074:EE_|PH8PR12MB7421:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6846cb9e-f80a-4327-e4a0-08dd8f169d91
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B074:EE_|CY5PR12MB6324:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee88a001-5a93-436e-8686-08dd8f169feb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dtVKJjwedUZjMfBtI+wh/JnljFNhNxQozmY742Rcx0zAK/K8RcSTLKBBqWxA?=
- =?us-ascii?Q?S3iFvPjIUWYm46v2++ymyXNt1mBFbWPFOgJ3fvD1cZzInfAc1/T2nbzjN+D/?=
- =?us-ascii?Q?E+DMxp0ikZ8So72WoIfxjbocRGdwj9IYKRxpdqXRzkmQMTscrO9MvMX02n+7?=
- =?us-ascii?Q?kt/8TNBNP/OnOAVej1uosAM+LuXqYCC2u2xQIJkFQha0/MBxTW6iKZGt+Y4A?=
- =?us-ascii?Q?7nbciYSFkWxw4novSLXwPTi/EDs8h1/ReB5t4OTEQA1Wos4gwuEPQTgiJCpp?=
- =?us-ascii?Q?M/5XWoo6jFtBsOpmNFJ+Au/XwPYK5H+uxnYagRqkvbewS/V6L99bYY63uUkN?=
- =?us-ascii?Q?RGwyJMfYjPFNGNL0GYY6XdKuoGbnpzie092s+r8OI6kGNMw1aA0E97I2/q/O?=
- =?us-ascii?Q?yZFo6T9mPqD5ym2rDpB2uwX+i9et5YCRr9Rfzd55pwrLeJXibcbr4g2AFL25?=
- =?us-ascii?Q?EQfG1sAAs426eNbb0z9deo8z0M3OuDQljaa3OSh15HqqBAME1WwpsdbUVbXk?=
- =?us-ascii?Q?AccvMCWYUnbbcevXTlDfzUMDBdl5+AHa+i+zChFbJ0NbSruSZuFhBaJANJDb?=
- =?us-ascii?Q?K79Gh0s9hOo1xkaB+KUGp5IY7Pe909ii/lNC++SW5C9xq68BbhRZnXrfjWRN?=
- =?us-ascii?Q?ifZJ/WoxMsuJV4gMf9p+jzIOZpIib9mefSX4FpDv27w/Fb9aQfl3uEILj6Xv?=
- =?us-ascii?Q?L/JewXTpFCgha3+xNyT/SJTiRbxW3N2TU3TaDYSosutctPPK5krMoS5uySv9?=
- =?us-ascii?Q?q6TMuV5C64CWQ6jq8FB5sExc23kd6Hnd+cL9Fq02KcZBPcAMOlqC+nGXMaKz?=
- =?us-ascii?Q?H3ZdsgR+WvM6aDFLSetHkZFhT7h59s1PmW0HgaKQHdIL5WnLUCqpniQkW3Uc?=
- =?us-ascii?Q?BbkxJY6FpWEB6RXveSJcDd+JGpIxFTrBoDeYk0zPUK4F7DD7d9dtMPF/U3pu?=
- =?us-ascii?Q?kPOY6mQxbr9uMSjL8lExA4OV/oBcxQfkfbdCYN6e7kb5MWJ8XJaR2OhKBchu?=
- =?us-ascii?Q?o1RWp0g1xo5LZK02p6TsdGxQpMtv8pGZQwWbunOnrXHeCBxiB24B0rCdX18t?=
- =?us-ascii?Q?QCdfvSatc4MNaHrjjyZFfAln9aVqBKp+javqwKSWmDOp2LIVnKHgY2v/IfFH?=
- =?us-ascii?Q?uIbsWDlTPngMe/rfBOGajOoEqBWUeOV/4WRwY+TFuY41kukcnX4NeNX8Cssx?=
- =?us-ascii?Q?Cie0CU4qJ1HdyeoIwxz7ZpqQ5ImVlycYhh8qjP5FXtBekAqYB8f0LEgPxMDZ?=
- =?us-ascii?Q?+bgueFGDVGnXLRuPaWMd7izw8xH39zStb8WFTIpeE9aC1i2+RFt0p9DoMMZk?=
- =?us-ascii?Q?1KMjbt/0+01Lc7YUk+RBVO+v6E4QrS2LRXuc0BrTiYEhJn9nFvF+Tpb1a7sP?=
- =?us-ascii?Q?JjtqT6EKLcLpth8hEozZ/v96NEOJ4naXbRHuC4YMeqVhFzUKmorbkG7kxtHm?=
- =?us-ascii?Q?YW0Jqco420i1Dp6WiCkY9B3PM8CpXx4/iZz/u17Mqmnq0ST/VUl1nQSokm5F?=
- =?us-ascii?Q?WCJLEyTjpLb9wYPetksoQJFpC9Di9Ufocq8S?=
+	=?us-ascii?Q?EguhrFJcOHN/TnjK/i/zXO0r/qyVAZysxOCShR7ZLCX8vdH9JUsLX+L+Oo+Y?=
+ =?us-ascii?Q?CFWrSwxmHo3klknMCzoUlGYXd1PxKxe4uEKZea7EWukFwHqtMp8Xttbwzs+P?=
+ =?us-ascii?Q?xexAMXThdAjHO8RH4Wes8w1Hhvko+wVDbyBLNJtNBmpHqwdBjpszgpM5Ih6X?=
+ =?us-ascii?Q?fvvAEkbWK+CV09qmiJGKe41YzmMH+DoSK909xI5G095R7L13px3iFhTpb9rV?=
+ =?us-ascii?Q?9ycHJARKfWcBnURp1mBKlQLZVT+MEtwe8JmnqcJ7pW7t092C4+gxxtXM8VJk?=
+ =?us-ascii?Q?Wfi6jnH2icMpiy7zkYLE/J2jILgJs8qWpDKuiZUowm1z6bQQGI6wCJ0FE+KM?=
+ =?us-ascii?Q?a5wocjTY4kkqf7f90YioKLdKqPdlILFLkk8Ve4Gn0ZAEDdY8INGTCl1IWxnB?=
+ =?us-ascii?Q?dpNKRtFQu4Ihb0xpxtQwVkYlIwYRE093KAD2r2L8+qAtDrChRFDEFlStal1X?=
+ =?us-ascii?Q?iT0rENjBeqZxXtCOKeDgB6G4oBDmbm/TnnF1E56LC2yKq2T8yOgpGpVXHkhv?=
+ =?us-ascii?Q?NI6gBg20/0pTAkQn+MgFhLn2eezXz1lR8ORCWFZRCHSJXJmrtE3+C/9O1lDw?=
+ =?us-ascii?Q?64JLtUuQq2bMYlx/SLVwT7gcMK0RYK+re5ykb577o6dhzavgfwxbo/KKhCww?=
+ =?us-ascii?Q?LNQYvUCYn21NQ9o0iPvipNVFjskpz0cDGhjzWqUgz5T4qHZ5cVv3SCT1K2jt?=
+ =?us-ascii?Q?Z37LxDD1niTe96+OisR0/VaObn0e6fqeQDbLyIUX0WT7oYk11ZkCb+eb4CZD?=
+ =?us-ascii?Q?608EfLCDQOZ19ZxvxWQCk9dsQvjohayqXCtGxqD0r9CRq8gR9HSprh5Nq65B?=
+ =?us-ascii?Q?aLfqNBnnUBjJtWvhTK2ufryVVEO17foYwT3v0d2u/kcUO3RH/vLl8GeHYbNy?=
+ =?us-ascii?Q?Bk7A9AehimXGLbJsXlH0ix4NFFqq816z/mDTnhNAO764U5IUt6OvYONXPN3d?=
+ =?us-ascii?Q?hRfs4FU7JcFO/PeVhgbOVHG3/WLXqgkQr9an98p14KW7hFmWHbIE3hbi9KZ2?=
+ =?us-ascii?Q?uBV7rzp0QID33o+qLPP3SmVuI+CkE5kajqGqi3hle4CtrPWMdZyXXYCll6Ds?=
+ =?us-ascii?Q?O3PutYsWGh9Zk9ITXn2FSU/BpJPa1/ytPLdCap8lPN440T1H/Vv8QoIqRXNu?=
+ =?us-ascii?Q?T4mMgPRLPZnqkiLkyL4KSf2qiESP94H+CWY5g5fCqWfeQ4MhTcXQN51KU9ZI?=
+ =?us-ascii?Q?WiiRrLWgTtJq/4aNAB1TRSrBbcApdwgSFUCz3fB1GsExDG/hGn7Xftwz8xds?=
+ =?us-ascii?Q?BjWQZq/CqA8uXunM9xtFnr6V9tX9G9U5dQUtA04ane84YvYe/j5lX9EX23d8?=
+ =?us-ascii?Q?E4d9v1Oz9rbfR6IPQS9WIYB0wqIc0e2nIxResSN1uXAV1FArHBdnQnype1GW?=
+ =?us-ascii?Q?hPSWEBB4t2Bt+dNGTI4HFPOMDVNs6IW7N/dx1RSQrW8W3nKXGSDrX1Aaid6D?=
+ =?us-ascii?Q?x3ZMyU5J5An4L+qOa4060kj7EnZsvlSqAtkLsKKpPLl9xbOajtUtrRSNE8I3?=
+ =?us-ascii?Q?l/95hk2ii5vg0+IoyqQ+HwQsqyCuTCIX6DuE?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 16:29:05.1696
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 16:29:09.1112
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6846cb9e-f80a-4327-e4a0-08dd8f169d91
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee88a001-5a93-436e-8686-08dd8f169feb
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	BN3PEPF0000B074.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7421
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6324
 
-Print the status of enabled attack vectors and SMT mitigation status in the
-boot log for easier reporting and debugging.  This information will also be
-available through sysfs.
+Show the status of currently mitigated attack vectors in
+/sys/devices/system/cpu/vector_mitigations/
+
+Note that these files are not under the vulnerabilities directory so they
+will not be printed by 'lscpu'.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/base/cpu.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 55b0658562c0..4e01903ca6fd 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -177,6 +177,39 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
- DEFINE_STATIC_KEY_FALSE(cpu_buf_vm_clear);
- EXPORT_SYMBOL_GPL(cpu_buf_vm_clear);
+diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+index 1c4359366cd7..991f989f18ff 100644
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -20,6 +20,7 @@
+ #include <linux/tick.h>
+ #include <linux/pm_qos.h>
+ #include <linux/delay.h>
++#include <linux/string_choices.h>
+ #include <linux/sched/isolation.h>
  
-+#undef pr_fmt
-+#define pr_fmt(fmt)	"mitigations: " fmt
-+
-+static void __init cpu_print_attack_vectors(void)
+ #include "base.h"
+@@ -644,6 +645,70 @@ static const struct attribute_group cpu_root_vulnerabilities_group = {
+ 	.attrs = cpu_root_vulnerabilities_attrs,
+ };
+ 
++static const char *attack_vector_state(enum cpu_attack_vectors v)
 +{
-+	pr_info("Enabled attack vectors: ");
-+
-+	if (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL))
-+		pr_cont("user_kernel, ");
-+
-+	if (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER))
-+		pr_cont("user_user, ");
-+
-+	if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_HOST))
-+		pr_cont("guest_host, ");
-+
-+	if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST))
-+		pr_cont("guest_guest, ");
-+
-+	pr_cont("SMT mitigations: ");
-+
-+	switch (smt_mitigations) {
-+	case SMT_MITIGATIONS_OFF:
-+		pr_cont("off\n");
-+		break;
-+	case SMT_MITIGATIONS_AUTO:
-+		pr_cont("auto\n");
-+		break;
-+	case SMT_MITIGATIONS_ON:
-+		pr_cont("on\n");
-+	}
++	return str_on_off(cpu_attack_vector_mitigated(v));
 +}
 +
- void __init cpu_select_mitigations(void)
- {
- 	/*
-@@ -197,6 +230,8 @@ void __init cpu_select_mitigations(void)
- 
- 	x86_arch_cap_msr = x86_read_arch_cap_msr();
- 
-+	cpu_print_attack_vectors();
++static ssize_t cpu_show_user_kernel_vector(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%s\n",  attack_vector_state(CPU_MITIGATE_USER_KERNEL));
++}
 +
- 	/* Select the proper CPU mitigations before patching alternatives: */
- 	spectre_v1_select_mitigation();
- 	spectre_v2_select_mitigation();
++static ssize_t cpu_show_user_user_vector(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%s\n", attack_vector_state(CPU_MITIGATE_USER_USER));
++}
++
++static ssize_t cpu_show_guest_host_vector(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%s\n", attack_vector_state(CPU_MITIGATE_GUEST_HOST));
++}
++
++static ssize_t cpu_show_guest_guest_vector(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%s\n", attack_vector_state(CPU_MITIGATE_GUEST_GUEST));
++}
++
++static ssize_t cpu_show_smt_vector(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	switch (smt_mitigations) {
++	case SMT_MITIGATIONS_OFF:
++		return sysfs_emit(buf, "off\n");
++	case SMT_MITIGATIONS_ON:
++		return sysfs_emit(buf, "on\n");
++	case SMT_MITIGATIONS_AUTO:
++		return sysfs_emit(buf, "auto\n");
++	}
++
++	return 0;
++}
++
++static DEVICE_ATTR(user_kernel, 0444, cpu_show_user_kernel_vector, NULL);
++static DEVICE_ATTR(user_user, 0444, cpu_show_user_user_vector, NULL);
++static DEVICE_ATTR(guest_host, 0444, cpu_show_guest_host_vector, NULL);
++static DEVICE_ATTR(guest_guest, 0444, cpu_show_guest_guest_vector, NULL);
++static DEVICE_ATTR(smt, 0444, cpu_show_smt_vector, NULL);
++
++static struct attribute *cpu_vector_mitigations_attrs[] = {
++	&dev_attr_user_kernel.attr,
++	&dev_attr_user_user.attr,
++	&dev_attr_guest_host.attr,
++	&dev_attr_guest_guest.attr,
++	&dev_attr_smt.attr,
++	NULL
++};
++
++static const struct attribute_group cpu_vector_mitigations_group = {
++	.name  = "vector_mitigations",
++	.attrs = cpu_vector_mitigations_attrs,
++};
++
+ static void __init cpu_register_vulnerabilities(void)
+ {
+ 	struct device *dev = bus_get_dev_root(&cpu_subsys);
+@@ -651,6 +716,8 @@ static void __init cpu_register_vulnerabilities(void)
+ 	if (dev) {
+ 		if (sysfs_create_group(&dev->kobj, &cpu_root_vulnerabilities_group))
+ 			pr_err("Unable to register CPU vulnerabilities\n");
++		if (sysfs_create_group(&dev->kobj, &cpu_vector_mitigations_group))
++			pr_err("Unable to register CPU attack vectors\n");
+ 		put_device(dev);
+ 	}
+ }
 -- 
 2.34.1
 
