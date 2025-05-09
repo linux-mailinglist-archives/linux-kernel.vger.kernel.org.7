@@ -1,127 +1,212 @@
-Return-Path: <linux-kernel+bounces-640917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075B2AB0AEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:51:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C82AB0B01
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 818073AB1D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3ED998008C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AD926E16A;
-	Fri,  9 May 2025 06:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D572550DD;
+	Fri,  9 May 2025 06:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZLhl8vlt"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIunfV3W"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D01D26A1B8
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EDD26FA52;
+	Fri,  9 May 2025 06:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746773471; cv=none; b=kudSpzREcecpPYr2EGixX/lNM37xN29jyP1BIWCw/dpFkH/Vq+q6b/TrgonxWFVpIpO1SN0LqikEvQ5kMhTCy5MJ6e0LgvJmGjyxnISM64VcmcOulu0lRlq+xAS/zQHvg/sQO/kgUfOOnrT3IktGjO4971HCyn3vvvd1yiH+klw=
+	t=1746773606; cv=none; b=rmsEX6TUOUeMWppvnJHeziHM4wdPRQDX95i5saVErs2j5AGDha4THMbjFyrJJ9MgRgQt1SWn6PLT2tdzNtpSc8MffAwAjmRbMLIQpiBCekLcaGO0LlVyvweVKV6n86Xpy7S5fOIxEJkWbdEpD1Pa32nzMwDC8NggYAbIdC7YXSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746773471; c=relaxed/simple;
-	bh=wiDZ4xkPtV9BOe7ADj1LbvuGPB4FiUezAyGN2IFKEzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fk+OwyFv7Qcd5lV34Vw4V4vyHvA61jVGPdenB17nVcvcQs2QBNCKxBmA4ehx+cCYIlrJ1BGMJ/uaL6mqIk9+KGPmaobBQjHDMdXgBJG+23T2TUUvrz77D6lGmO4Vduc90O91Fm5yDgiiyVZXbbTIVcRa46c6UgZaM76BY3BvRzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZLhl8vlt; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so18513095e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 23:51:09 -0700 (PDT)
+	s=arc-20240116; t=1746773606; c=relaxed/simple;
+	bh=XbyvX3UwLUkwC0pc5CuR0HrjYdx11LqUUQpNigy53lQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aA6eUfzFRJ4Rsdp+vQhJPglE4erRsdGbc3aaklWcvclGhVkimupuKLxWi181gviSSNpX455o8GSHOPW+MjBtFN3ynG021KlBSouNmK1N7fi7AYBmtQ9FM6ApywCefAtwTRzJ4rxO/+n+jNuxW7GvVanAHx+78G14mOFNNiNlbm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIunfV3W; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so12965055e9.1;
+        Thu, 08 May 2025 23:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746773468; x=1747378268; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ypnr2THvthLLCavYo7AZWLvgkehzz9yqDu3s2kWxJOs=;
-        b=ZLhl8vltiQyAai1i+3Sn+H0oJQzhx2abSENViGQGEi/dQOBeBEIWkVmHyDe56CHdLt
-         xDKK0g6GDHValO90OKLmhKsHxBC+IQkjHp1xhb8B67gRrfG//1E2UEPij8Lfzkl+ZSmd
-         Ctx4cYNfzv3iaukeZn0YbhpJtLdreKmT2xXwozoLqNnEtS8QL108OPMuH7c+UGaXBK85
-         qeEOFyq2mdQMZEZ4Mv6ZefuHOZtS9d0XdK9YsL9cpJjjxqloitR4iVeGiSavGywOx2TP
-         DqwfefGijEOyPKlA/cjFEaNRW6SAkoeMHd5uup1+sfQ5BP6Av/+V7me1cfS0RnJ+i3nr
-         2tnA==
+        d=gmail.com; s=20230601; t=1746773602; x=1747378402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hxIjdaLc48Q8gLT2aI5w+HCOv+woxWrYc8AKvi1Mj+s=;
+        b=SIunfV3WnXacHZtOau+OBFDeRey6mP9kYIrIodEl6tCq99opEg124CcGsiBYc4jUqt
+         fIqRs3Fnyh1GBN9UjKWAs+UidWvKGmtM2x2/8UofrBWqAr3FWaQ8koNJThx5Uc7+1Q76
+         aR6bButIT5TZ78aBJ6DypUsuqBZ6eLdeP+YsRErIOMOj6ULjchj3eH2DztzH89GuybCu
+         87vSt6qtE9U4KSoLHBOFOmqx0Ah0lqZdr6TLJXcSjDVVjRqo8RL10wlY+7QcoGY5Ndl4
+         /NzBgCAr8UxrudWe6XaykVke1k4BlbsqDf045sZhlhques6d5dJ0ze/KVc1z/QHjSaQJ
+         Qr0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746773468; x=1747378268;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypnr2THvthLLCavYo7AZWLvgkehzz9yqDu3s2kWxJOs=;
-        b=iEtGVHCWg7vOTYXOqtJ7FNeRZ+fh/Q0F5PkPVmQ5zDd72QqE9Mu1hw1jdYq+QLKpy3
-         LR+ERESIWnzccRbc/6WdifnHgMuA4Xe7eZkFTN9kEPqiOXyPs5FPczFh8KkwclJpLrpu
-         TNzslHKfAEkQvltPK9+iaRB8yLKpdsXVx6gwM4wDHC9lOamnGiuml2TYH5l8hlR0CiHH
-         64ttmGEVvtf8/HRw5dwoxMEcLJRG8Nqh4b9Ttsj/5WbZwQy4gYe6vsZKTPTdJ92XnX0R
-         7yvv8Dt7zFIyd01leUf61F1wzGC6DWZ18k+dE9rznKRlxgv4IJiKqGpaqd4j/ahVNNOY
-         GzZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4oja4sYrCXWUAuKyy3YTY0iB5pLOxkKpPzHcp1S1fk0ngRaPpKh84zi4/KyoyHPgH8EjsKde5hDsaNBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyihijXxDv4XjUmoF7kkOydWZzIQTA0itf2FCPcU629a5g7ieUH
-	4dtX/ajopEbUzyI7UW6pz4qSdX7fv4L9yqRFTtv9VN8gFBOgF3ZM6vTvwyKb8g==
-X-Gm-Gg: ASbGnctj72ZQWzP1SHpSBVmWNrmVAnUtbPrUqQy23tYnN/5KuCXARNY1NwDHzoPpp+Z
-	dtf12xKKfpIK2XpD3xlPhQwBf3jIOy3UVMvablgi+c2WDXlwLaZ3lXWCERxDwvY3D7waGQ/qusO
-	r6B9ik398wAoWS9ZDCzao/RkLku9mzKA8toiA4lq10YBk1MCZ8l/CjeHoDs3IAPnbdeETmkiL+/
-	a5jXxqibf5CtMlxIF+unK6fl3LAezR14GZ5gyR9Kjvc5H9ncnvms2Tizkq+vaICZ16D3+f1AAbP
-	OzuhfqT4YWqL8Vd4bk2JMjtUdTkco65leUPE4r+m+YutHR29XRlbpy3VHXTPPlrjlj6K8AC8n0R
-	HGnqj7fKBwqz45usxV2PKKI8=
-X-Google-Smtp-Source: AGHT+IEBZ+xyU+mtZq/TJ5fu+6WMLt3/ZEPH5kI6vP9q6SNWA2Tnohwr4qj0xsEIdaPCJ/e8n6vxRA==
-X-Received: by 2002:a05:6000:178e:b0:391:4889:5045 with SMTP id ffacd0b85a97d-3a1f649be24mr1423812f8f.36.1746773468403;
-        Thu, 08 May 2025 23:51:08 -0700 (PDT)
-Received: from thinkpad (cust-east-par-46-193-69-61.cust.wifirst.net. [46.193.69.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4c5e1sm2214791f8f.89.2025.05.08.23.51.07
+        d=1e100.net; s=20230601; t=1746773602; x=1747378402;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hxIjdaLc48Q8gLT2aI5w+HCOv+woxWrYc8AKvi1Mj+s=;
+        b=Sr8RtM2zzUBedEMt8G8hMVhi88LP/9DRad6e9NSe2d+uhdX/O3RMCYK7jWDx3Lcoid
+         OzKX+jgqczefikVGz0PqbVQixCgUqDK04NZHUgRSNwoc8TTYRj7+n/vgvv+6LgMan1f0
+         sZkj2cQrFZm5Hp8WsoYQuUdj03dVoRmNPBofAdv51JmJUcL6QRYwzr5/i9ynIqLfkVhz
+         T1P8I2mvDUlJSkwYtkO8fjOttG078v6TluLD86AcXJHcdaYF5/03Vle2PUQHzHSQbeWE
+         CtoLHJRIj+gqRQxoEFy3TfsxpRCsZdo7aoyRR4Ysy29Ft7NU9sVSFc7IaPaD8fF02pMU
+         jBZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ImohDihrmEB/mfONXcWTW9KeubpHuu7I7YXHHxRPxqCYNmN4lnP1djfwgoXy1A4y4AFf+fyPXhLhzIhD@vger.kernel.org, AJvYcCX4NX61La+xXL7ciVvClxbIPbdmWMBCkVvVtOvaGZHeChf1cigJy77CDj5Jr/o0nu+ZE3MKPMd/6zCI@vger.kernel.org, AJvYcCXCGSFiFPQOGGv6KYonSzFFcnAKimS3slF2YWTQCo4yzID6bg8NJyjlYZg6LhJCIzISBWOoV6jCGmNj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ifmVSE1DATnGw02dRpSXv1c8k9LU3nKWckR8WfTCBsQDraiA
+	DStvcSv7Vp0Elny+TI9Y+aNvWMH86+bTgTnsHMOMPW8HqzVLTq/51h9UTpL4
+X-Gm-Gg: ASbGncvqZdlyXp6zxcW+eSRBwGcQjAmshdXju8KldFoefaIY6YjR+rj6SnpmAr0U7X+
+	38Hk7SkLoeJR8ojvYdy4exMOImFJU6HDOnCxYuFL3yW6pVr2jWOF50vWdMix2X+HwWkoZkQ43Ef
+	vYBOLPjOtmlvOXh90gpwv3YdHncaaPiTwBAOK/eHwkOcDN0BWvBT0BygPMfd2a0lHLtdhkcMhX/
+	L7ZnTuqARcviOUHWd/qEaynHomDkumEfMqzo0jWLEJVC5It5PGpZBuxSPZ+Up56zzNq211URBzp
+	QVPiM5KyNtfvUPONMS3AlHU0R+pBhGwoV4UjZOAb07VyBOIfVmmxZw2qVpS83YpzbA==
+X-Google-Smtp-Source: AGHT+IGh3zWR5dloNttdtVecxcltJ6Yzv9SN6JB89Afc2kJClOZagKrYdwWELSdcLPAC4dAN0R3e+Q==
+X-Received: by 2002:a05:600c:c04a:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-442d89cb6e1mr5314605e9.6.1746773602019;
+        Thu, 08 May 2025 23:53:22 -0700 (PDT)
+Received: from tempest2.110.lan (xt27dd.stansat.pl. [83.243.39.221])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c2asm19276315e9.1.2025.05.08.23.53.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 23:51:07 -0700 (PDT)
-Date: Fri, 9 May 2025 12:21:07 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Ethan Zhao <etzhao1900@gmail.com>
-Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>, 
-	Will Deacon <will@kernel.org>, Robert Richter <rric@kernel.org>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc Zyngier <maz@kernel.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	dingwei@marvell.com, cassel@kernel.org, Lukas Wunner <lukas@wunner.de>, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/5] PCI/ERR: Remove misleading TODO regarding kernel
- panic
-Message-ID: <34nnkgbfkccvxiksjb5qaojppcvnkq4l7rchllsppy7cl4fics@4mwtb3rhko5n>
-References: <20250508-pcie-reset-slot-v4-0-7050093e2b50@linaro.org>
- <20250508-pcie-reset-slot-v4-1-7050093e2b50@linaro.org>
- <ec5bd8d1-c865-40ac-b03d-9e07875d931c@gmail.com>
+        Thu, 08 May 2025 23:53:21 -0700 (PDT)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: linux-hwmon@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Noah Wang <noahwang.wang@outlook.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Shen Lichuan <shenlichuan@vivo.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Charles Hsu <ythsu0511@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v2 3/5] hwmon: pmbus: mpq8785: Add support for MPM3695 family
+Date: Fri,  9 May 2025 08:51:07 +0200
+Message-ID: <20250509065237.2392692-4-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250509065237.2392692-1-paweldembicki@gmail.com>
+References: <20250509065237.2392692-1-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec5bd8d1-c865-40ac-b03d-9e07875d931c@gmail.com>
 
-On Fri, May 09, 2025 at 02:11:00PM +0800, Ethan Zhao wrote:
-> 
-> 
-> On 5/8/2025 3:10 PM, Manivannan Sadhasivam wrote:
-> > A PCI device is just another peripheral in a system. So failure to
-> > recover it, must not result in a kernel panic. So remove the TODO which
-> > is quite misleading.
-> > 
-> Could you explain what the result would be if A PCI device failed to
-> recovery from FATAL/NON_FATAL aer error or DPC event ? what else
-> better choice we have as next step ? or just saying "failed" then
-> go ahead ?
-> 
+Add support for the Monolithic Power Systems MPM3695 family.
+It contains four devices with suffixes: -10, -20, -25 and -100.
+The device is PMBus compliant and shares characteristics with the
+MPM82504.
 
-If the recovery is not possible (with device,bus,host reset), then there is
-nothing could be done.
+MPM3695-25 has different VOLTAGE_SCALE_LOOP register size [11:0]
+and it needs to be separated because it will be configured in the next
+commit.
 
-- Mani
+Tested with device tree based matching (MPM3695-10).
 
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+
+---
+v2:
+  - Added whole MPM3695 family
+---
+ Documentation/hwmon/mpq8785.rst | 13 +++++++++----
+ drivers/hwmon/pmbus/mpq8785.c   |  8 +++++++-
+ 2 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/hwmon/mpq8785.rst b/Documentation/hwmon/mpq8785.rst
+index be228ee58ce2..7093e4db4f55 100644
+--- a/Documentation/hwmon/mpq8785.rst
++++ b/Documentation/hwmon/mpq8785.rst
+@@ -7,6 +7,7 @@ Supported chips:
+ 
+   * MPS MPQ8785
+   * MPS MPM82504
++  * MPS MPM3695 family
+ 
+     Prefix: 'mpq8785'
+ 
+@@ -29,6 +30,14 @@ The device can also operate in parallel with the MPM3695-100 and additional
+ MPM82504 devices to provide a higher output current. The MPM82504 operates
+ at high efficiency across a wide load range.
+ 
++The MPM3695 family is a scalable, ultra-thin, fully integrated power module with
++a PMBus interface. It offers a complete power solution that achieves up to
++10A (-10 variant), 20A (-25 variant), 25A (-20 variant), 100A (-100 variant)
++of output current with excellent load and line regulation across a wide input
++voltage range. It operates at high efficiency over a wide load range, and can
++be parallled to deliver higher current. Variants -10,-20 and -100 have different
++voltage scale configuration register range (10 bits) than -25 version (11 bits).
++
+ The PMBus interface provides converter configurations and key parameters
+ monitoring.
+ 
+@@ -42,10 +51,6 @@ Fully integrated protection features include over-current protection (OCP),
+ over-voltage protection (OVP), under-voltage protection (UVP), and
+ over-temperature protection (OTP).
+ 
+-All supported modules require a minimal number of readily available, standard
+-external components. The MPQ8785 is available in a TLGA (5mmx6mm) package
+-and the MPM82504 is available in a BGA (15mmx30mmx5.18mm) package.
+-
+ Device compliant with:
+ 
+ - PMBus rev 1.3 interface.
+diff --git a/drivers/hwmon/pmbus/mpq8785.c b/drivers/hwmon/pmbus/mpq8785.c
+index 9a4a211b2aeb..34245d0d2125 100644
+--- a/drivers/hwmon/pmbus/mpq8785.c
++++ b/drivers/hwmon/pmbus/mpq8785.c
+@@ -10,7 +10,7 @@
+ 
+ #define PMBUS_READ_TEMPERATURE_1_SIGN	BIT(9)
+ 
+-enum chips { mpq8785, mpm82504 };
++enum chips { mpq8785, mpm82504, mpm3695, mpm3695_25 };
+ 
+ static int mpq8785_identify(struct i2c_client *client,
+ 			    struct pmbus_driver_info *info)
+@@ -79,6 +79,8 @@ static struct pmbus_driver_info mpq8785_info = {
+ static const struct i2c_device_id mpq8785_id[] = {
+ 	{ "mpq8785", mpq8785 },
+ 	{ "mpm82504", mpm82504 },
++	{ "mpm3695", mpm3695 },
++	{ "mpm3695-25", mpm3695_25 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(i2c, mpq8785_id);
+@@ -86,6 +88,8 @@ MODULE_DEVICE_TABLE(i2c, mpq8785_id);
+ static const struct of_device_id __maybe_unused mpq8785_of_match[] = {
+ 	{ .compatible = "mps,mpq8785", .data = (void *)mpq8785 },
+ 	{ .compatible = "mps,mpm82504", .data = (void *)mpm82504 },
++	{ .compatible = "mps,mpm3695", .data = (void *)mpm3695 },
++	{ .compatible = "mps,mpm3695-25", .data = (void *)mpm3695_25 },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, mpq8785_of_match);
+@@ -110,6 +114,8 @@ static int mpq8785_probe(struct i2c_client *client)
+ 		info->identify = mpq8785_identify;
+ 		break;
+ 	case mpm82504:
++	case mpm3695:
++	case mpm3695_25:
+ 		info->format[PSC_VOLTAGE_OUT] = direct;
+ 		info->m[PSC_VOLTAGE_OUT] = 8;
+ 		info->b[PSC_VOLTAGE_OUT] = 0;
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
