@@ -1,206 +1,171 @@
-Return-Path: <linux-kernel+bounces-642176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F156DAB1B5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:11:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB300AB1B66
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 19:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675BC5233C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B31B1BA698B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42391238C03;
-	Fri,  9 May 2025 17:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618302397B0;
+	Fri,  9 May 2025 17:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SarHmX20"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JtL3G45W"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357A2800;
-	Fri,  9 May 2025 17:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2AB238C03
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 17:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746810708; cv=none; b=TUDrJUwkkZsDA4eLh0VVQTqCk51+VIhhQxjCteBRUreLCoprjkEmBbd+x2Sby9I5oIS0gL5SuU+oqz4nFWAszlpERi9PzKnfTA8nUrEKnJgEdTmwKiYE0Roe//znWmaJq+eNCnydOGlFsRZH/5uo6ybRTI+hBd22B4CN5HzPMS4=
+	t=1746810806; cv=none; b=g6cYrWXg39zR8mjHp0py8EqtOnZzsbw03+iOihJNRd3QK70y2hCmEPXze1JEMACcjzv6Fu11Cu+V9h32M2Jovwfykz3bnBVGFc8RzKIFpVgg9CnWRQqirFAMBgTIoKFOjO4BTLqNxThquTrhZgmh6SJu/fZJgc4yw3G5LrTd+YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746810708; c=relaxed/simple;
-	bh=2Nmb/Stcl0b5TfR6PceRsQPtHrK8u0gyIjyDnM5nQgE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hkiildntuyBI1qvwFKwlhucv6GrCmMfSMPENZl9W1hrxMA72i/hw+eVtCIq2Qq6x8RRwUupym+cHA/WJzcO8+GVveti4taADJHRW2r2fmOAt0MELHuFmKLrU4Fkjbj0I0wv2qn9/upR/tG1EXDA+O24dUdJgII4Eba+SNJjMDVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SarHmX20; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746810706; x=1778346706;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=2Nmb/Stcl0b5TfR6PceRsQPtHrK8u0gyIjyDnM5nQgE=;
-  b=SarHmX20vFub3zkuJEzT8UaB/cz36zJmmMqPtiX9Cz1NlTd7yA59oYSU
-   Ms5wAvjFsd60OsggywVAL6XkAGuDLo2x5p9w+LnAHLaFIg9o3hKj2lXpG
-   /qLu/1nJ9Dy7M9krU3dDCAdl/x39iliPmUE2iDu+LrssaK2rgk45FIUVs
-   h0KQCflyTIBFJc1ctZreIQkYbfGe1Mi7KbBNrKkEPPem3XrSRxyoTjK+u
-   rxvcRzrv/d0YnGZjl1EVZ6vXkIhIQ8Zis1T4r38NOtG+2ey3MWJ2pQUoJ
-   tqENB9TUquLICyonRd2BymfJHk/pGG24FoRaCJCyOZvdp2B1PlaIxcwRT
-   Q==;
-X-CSE-ConnectionGUID: Rmb++ck1QS2u+e7ZLL+iYw==
-X-CSE-MsgGUID: cZ8bkhr+TaGvzOWYqYFwpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="47762929"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="47762929"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 10:11:46 -0700
-X-CSE-ConnectionGUID: l476N46oSWev5dphsI9VeA==
-X-CSE-MsgGUID: XcfeQg0RQSiOJJqvwFpoeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="136694640"
-Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.108.220]) ([10.125.108.220])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 10:11:44 -0700
-Message-ID: <3df32c03-8e83-462d-ae3c-ac0a76912786@intel.com>
-Date: Fri, 9 May 2025 10:11:43 -0700
+	s=arc-20240116; t=1746810806; c=relaxed/simple;
+	bh=D7WBZhpJi3uskwbj8ltGIQL3FHUXzrn4rGOoY6krjGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pr+uHz9AG7IMp3N2ldoJg6Jwj/PM2YQBhhCHP+Y9eAGioJTFmW4dn+DvSbYZ4IK+WQeWsjZg4s6Ck1xCdbdgILSXGA7BWe6/qgZLq+1EgnpDUyanFRLmTxBV4QXVU3VgQpQjM0INzSSOUCiVP/8qJkFbS77qoaqirmZl3sy/yMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JtL3G45W; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso1755e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 10:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746810803; x=1747415603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fgW/S+IuQhDMqkGx/1B5fC/F8bX0uong/zoW2X+2nEA=;
+        b=JtL3G45WWO0zQ242j1gcibAbgCuVclPj+ZAbs1BAj0TXz5Ds0BWVL3zT8ht8li5XBK
+         oP40eca6mbRZ8UGnLV3EhlYA9AyTe956zIy2oGrb1+lL8iHsVTnzuuknVVEvC0+dNIdO
+         uVb2Ch9iwR4HlNDnIyc9wrrVTbvfYPoQeT4JWcrPlDUMuusIa/g+tb939OJAA4G01RC7
+         j1zvJrRLQOmb/Zk2P4nLJE3+l+ZsXEXM6Hh8eGIzS/WGuXPdnfvKiSjs5PUh0h8CqYr0
+         Yf3wII+GCfTuYyXJD2SDe4iYFhSKSzSChLOcwG3pFfPV1kL/1hShZPHjzQ0l8Vz0oX+4
+         Fzlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746810803; x=1747415603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fgW/S+IuQhDMqkGx/1B5fC/F8bX0uong/zoW2X+2nEA=;
+        b=wcnTvoIY0VrVLsXO27LP73Qq3SZMORzp1rPBzrRmGf2zbDsTnnrlHckPjnVDXNF8eq
+         bj7SrlaqdDVIy3ChHmMgb4p7Yiuvs0FJwEO+UIhW1diMfUZGLjj+V2NP1pMP1GZFzKcG
+         1xOsRWj23GqghXC+RPD/IRLkNvmAycSPqUv2NezZaRlxuDeVfLGJy+Obtui6aD0TRozi
+         wTjAxTWFQLAdbHi9rx6OYun30k4NYzvMR+5Vxbe3wZZs1aomKnj4Wlbuj/oy0DNTwQk2
+         R0W1jDfEKCzjSe5anKJT9ni5awJ/vC4APjJ1YAiuUeUXeKrZkXAYd+A8o+Y0IWkqKXgZ
+         2LJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsnFo1XNAeoOYtBtdpK/7rNfLGBmWJx/OIARuY+mje0ww5nNRvZfUJx31vHRrKZLiAYJVhaff+X+jzGts=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6CoJWI/IpYHpcYmW0EgsawitZxOlJACSdjjl+j9GJMoss8wOJ
+	+21xAX9hVX0UwvkkCCwlKSG2GBVKkwDrl0dHXoPYmaAQbWb9fpkbAwGgEcdM/VQLZVj646dyA9q
+	pR2e1yIjMKvAI1YtpffOwGBI3nKJ9cvZU5SgI
+X-Gm-Gg: ASbGncveXqU9gLUbr/qnF0X/ApBf8qkpM9jsQt4iITK1FDvwoN0OMl4IYr/JQ2pmDut
+	Ucaa4bv0KHkZlux+U/i2Ks3wi9mkVA8cPfjB5ZW4RGsUiS13en3B8KO8dlVWN8J61lLSw9w7dpN
+	giX2zJ6J8MMe+gK+brYA1W7Lp5b/ReBrQ=
+X-Google-Smtp-Source: AGHT+IHGfe/tXiaZqmJana79QrqFFike9FzFdHOfCIOTaVJ+13CLjx45F20TFT7eQCOyZ/XfQXSyYaW53E9ARHmgIFs=
+X-Received: by 2002:a05:600c:3c95:b0:43b:c2cc:5075 with SMTP id
+ 5b1f17b1804b1-442d7c3bfd6mr1645325e9.5.1746810802780; Fri, 09 May 2025
+ 10:13:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/14] cxl: Address translation support, part 1:
- Cleanups and refactoring
-From: Dave Jiang <dave.jiang@intel.com>
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250509150700.2817697-1-rrichter@amd.com>
- <14b64c8d-a5fc-42eb-8160-590c17bbbd99@intel.com>
-Content-Language: en-US
-In-Reply-To: <14b64c8d-a5fc-42eb-8160-590c17bbbd99@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250508182025.2961555-1-tjmercier@google.com>
+ <20250508182025.2961555-3-tjmercier@google.com> <CAPhsuW6cTCEwnbfRNX0KDGGs7M+N3xf+EP9FfS5Y_OHyXqs_Qw@mail.gmail.com>
+In-Reply-To: <CAPhsuW6cTCEwnbfRNX0KDGGs7M+N3xf+EP9FfS5Y_OHyXqs_Qw@mail.gmail.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Fri, 9 May 2025 10:13:10 -0700
+X-Gm-Features: AX0GCFseXwp9JI9wID6QRkim2g6TRuMaRHnwPleWxRyNB1BiSXAGkZCVkEOBhEc
+Message-ID: <CABdmKX1gxShJu3L11D0-hNMwRArJrzy1UMpuKJY-CSZvAfDh-Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 2/5] bpf: Add dmabuf iterator
+To: Song Liu <song@kernel.org>
+Cc: sumit.semwal@linaro.org, christian.koenig@amd.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	skhan@linuxfoundation.org, alexei.starovoitov@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, android-mm@google.com, 
+	simona@ffwll.ch, eddyz87@gmail.com, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 8, 2025 at 5:27=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> On Thu, May 8, 2025 at 11:20=E2=80=AFAM T.J. Mercier <tjmercier@google.co=
+m> wrote:
+> >
+> > The dmabuf iterator traverses the list of all DMA buffers.
+> >
+> > DMA buffers are refcounted through their associated struct file. A
+> > reference is taken on each buffer as the list is iterated to ensure eac=
+h
+> > buffer persists for the duration of the bpf program execution without
+> > holding the list mutex.
+> >
+> > Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> Acked-by: Song Liu <song@kernel.org>
+>
+> With one nitpick below.
 
+Thanks!
 
-On 5/9/25 9:03 AM, Dave Jiang wrote:
-> 
-> 
-> On 5/9/25 8:06 AM, Robert Richter wrote:
->> This series is the first part of adding support for CXL address
->> translation. It contains cleanup and code refactoring in preparation
->> of the actual implementation that will be sent in part 2. Cleanup and
->> code refactoring have been split in a separate series to reduce the
->> number of patches of the series. Even without address translation on
->> top this rework improves esp. the region code, cleans it up,
->> simplifies it and adds debugging messages to better analyze region
->> creation failures:
->>
->> Content of patches:
->>
->>  * Patches 1: Remove else after return.
->>
->>  * Patches 2-3: Cleanups and comments around cxl_hdm_decode_init().
->>
->>  * Patches 4-6: Adding and modifying helper functions.
->>
->>  * Patches 7-11: Refactoring of endpoint decoder setup and cxl_find*()
->>    including cleanup helpers.
->>
->>  * Patches 12-14: Adding and modifying debug messages.
->>
->> v6:
->>  * added tags to SOB chain,
->>  * added more occurences to remove-else-after-return (Alison),
->>  * updated description of cxl_port_pick_region_decoder() (Fabio),
->>
->> v5:
->>  * added tags to SOB chain,
->>  * made comment a oneliner in cxl_hdm_decode_init() (Jonathan),
->>  * updated patch description introducing parent_port_of() (Fabio),
->>  * removed EXPORT_SYMBOL_NS_GPL() of function parent_port_of() (Dan),
->>  * renamed functions to cxl_port_pick_region_decoder() and
->>    cxl_rr_assign_decoder(), updated descriptions (Dan),
->>  * added patch to replace put_cxl_root() by a cleanup helper,
->>  * using __free() for reference counting of cxl_find_*() functions,
->>    added cleanup helpers (Dan),
->>  * dropped patch adding CFMWS memory log messages (Dan),
->>
->> v4:
->>  * rebased onto cxl/next, commit 0a14566be090 ("cxl/Documentation:
->>    Remove 'mixed' from sysfs mode doc"),
->>  * added tags to SOB chain,
->>  * reworked comments in cxl_hdm_decode_init() (dropped moving comment
->>    and updated patch that modifies comments) (Jonathan),
->>  * reworded patch description that removes duplicate call of
->>    cxl_find_decoder_early() (Jonathan),
->>  * moved some patches out of this rework and cleanup series (Dave,
->>    Jonathan),
->>
->> v3:
->>  * added tags to SOB chain,
->>  * fixed NULL pointer dereference in cxl_find_root_decoder() (Alison),
->>  * updated subject line of patches that add kernel messages and
->>    included example log messages (Alison),
->>
->> v2:
->>  * rebased onto cxl/next,
->>  * added tags to SOB chain,
->>  * move patches with cleanups and refactoring into this separate
->>    series (Dave),
->>  * added patch "cxl/acpi: Unify CFMWS memory log messages with SRAT
->>    messages" to improve CFMWS log messages,
->>  * renamed endpoint decoder functions to cxl_endpoint_decoder_*() (Li),
->>  * reworded patch description that moves find_cxl_root() and reworks
->>    cxl_find_root_decoder() (Terry),
->>  * small changes to cxl_find_root_decoder()/
->>    cxl_endpoint_decoder_initialize() (Jonanthan),
->>  * updated comment in cxl_port_find_switch_decoder() (Ben),
->>  * cxl_endpoint_decoder_initialize(): Simplify variable declaration
->>    (Jonathan, Ben),
->>  * cxl_find_decoder_early(): Added comment on function usage (Gregory),
->>  * reordered patches and reworded some of the subject for a better
->>    structure.
->>
->> Robert Richter (14):
->>   cxl: Remove else after return
->>   cxl/pci: Moving code in cxl_hdm_decode_init()
->>   cxl/pci: Add comments to cxl_hdm_decode_init()
->>   cxl: Introduce parent_port_of() helper
->>   cxl/region: Rename function to cxl_port_pick_region_decoder()
->>   cxl/region: Avoid duplicate call of cxl_port_pick_region_decoder()
->>   cxl/region: Move find_cxl_root() to cxl_add_to_region()
->>   cxl/port: Replace put_cxl_root() by a cleanup helper
->>   cxl/region: Factor out code to find the root decoder
->>   cxl/region: Factor out code to find a root decoder's region
->>   cxl/region: Add function to find a port's switch decoder by range
->>   cxl/region: Add a dev_warn() on registration failure
->>   cxl/region: Add a dev_err() on missing target list entries
->>   cxl: Add a dev_dbg() when a decoder was added to a port
->>
->>  drivers/cxl/acpi.c        |  10 ++-
->>  drivers/cxl/core/cdat.c   |   2 +-
->>  drivers/cxl/core/hdm.c    |   3 +-
->>  drivers/cxl/core/memdev.c |   4 +-
->>  drivers/cxl/core/pci.c    |  48 +++++++----
->>  drivers/cxl/core/port.c   |  23 ++---
->>  drivers/cxl/core/region.c | 177 +++++++++++++++++++++++---------------
->>  drivers/cxl/cxl.h         |  13 +--
->>  drivers/cxl/port.c        |  15 +---
->>  9 files changed, 173 insertions(+), 122 deletions(-)
->>
->>
->> base-commit: 8e62ba590160f91abba6490d9c17aa13bada4752
-> 
-> Applied to cxl/next. Thanks Robert!
-> 
-> 
-Robert,
-I applied Dan's requested changes and also picked up his ACK's. Please check cxl/next to make sure everything looks good to you. Thanks!
+> > ---
+> [...]
+> > diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+> > index 8ff4add71f88..7af2ea839f58 100644
+> > --- a/include/linux/dma-buf.h
+> > +++ b/include/linux/dma-buf.h
+> > @@ -634,4 +634,6 @@ int dma_buf_vmap(struct dma_buf *dmabuf, struct ios=
+ys_map *map);
+> >  void dma_buf_vunmap(struct dma_buf *dmabuf, struct iosys_map *map);
+> >  int dma_buf_vmap_unlocked(struct dma_buf *dmabuf, struct iosys_map *ma=
+p);
+> >  void dma_buf_vunmap_unlocked(struct dma_buf *dmabuf, struct iosys_map =
+*map);
+> > +struct dma_buf *dma_buf_iter_begin(void);
+> > +struct dma_buf *dma_buf_iter_next(struct dma_buf *dmbuf);
+> >  #endif /* __DMA_BUF_H__ */
+> > diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> > index 70502f038b92..3a335c50e6e3 100644
+> > --- a/kernel/bpf/Makefile
+> > +++ b/kernel/bpf/Makefile
+> > @@ -53,6 +53,9 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D relo_core.o
+> >  obj-$(CONFIG_BPF_SYSCALL) +=3D btf_iter.o
+> >  obj-$(CONFIG_BPF_SYSCALL) +=3D btf_relocate.o
+> >  obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
+> > +ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
+> > +obj-$(CONFIG_BPF_SYSCALL) +=3D dmabuf_iter.o
+> > +endif
+> >
+> >  CFLAGS_REMOVE_percpu_freelist.o =3D $(CC_FLAGS_FTRACE)
+> >  CFLAGS_REMOVE_bpf_lru_list.o =3D $(CC_FLAGS_FTRACE)
+> > diff --git a/kernel/bpf/dmabuf_iter.c b/kernel/bpf/dmabuf_iter.c
+> > new file mode 100644
+> > index 000000000000..96b4ba7f0b2c
+> > --- /dev/null
+> > +++ b/kernel/bpf/dmabuf_iter.c
+> > @@ -0,0 +1,102 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/* Copyright (c) 2025 Google LLC */
+> > +#include <linux/bpf.h>
+> > +#include <linux/btf_ids.h>
+> > +#include <linux/dma-buf.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/seq_file.h>
+> > +
+> > +BTF_ID_LIST_SINGLE(bpf_dmabuf_btf_id, struct, dma_buf)
+> > +DEFINE_BPF_ITER_FUNC(dmabuf, struct bpf_iter_meta *meta, struct dma_bu=
+f *dmabuf)
+>
+> nit: It is better to move these two lines later, to where they
+> are about to be used.
 
+I've moved them both to just before dmabuf_iter_init() farther down.
 
