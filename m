@@ -1,182 +1,198 @@
-Return-Path: <linux-kernel+bounces-641955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59853AB1886
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0A3AB16B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15EBD1899F54
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520D03ABCC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4356422F766;
-	Fri,  9 May 2025 15:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F413929672A;
+	Fri,  9 May 2025 13:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hJ7Nikvu"
-Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H9d2GFtY"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D805EC2;
-	Fri,  9 May 2025 15:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B00296707;
+	Fri,  9 May 2025 13:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746804694; cv=none; b=bBtNTkbB1rNDByAGktpwLxno6vvPafpmbfpxR9cQ+0HOGPC6Pk9G3I0DNhfxp9jv8v/wfv08j2+P6yamt6hharq5LtXqCZpR1n+XukTXbzarFveqg0B4j7TgXp9Q0VUIQpRB3eKo/tdvERkiaQot8QuOI+j6kwsHxrczkrnqgeA=
+	t=1746799034; cv=none; b=mZ4KYOr+VTgrXBzhkiDfi3trndFMywPX049VSjjmmumBJj9OI7KLK6i+cw88so3hNuePs8QbP0Pgk5IL6OC++MJPahnkphycwnibBmwvpfSx96owwRrLrVFugpxsrdYkzQlnEzemkPZZ5KJocMeJ8iHQSvlivQmLvtTrEhqoUn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746804694; c=relaxed/simple;
-	bh=aUXLQFR9i3uB03CTH4HcldYKi09Z7d+Q5TiSesZj3Sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnJqQDmKtR6dk4m9gwYzdp1BKb4sr2p0eNvZSh956zdLV29P10VXL4V0lskd6+15kM+hyhZibEm5IiPbZR+l1rrK6m05nil8GWzBRd0o+FvkqIgUuvbR/y6AHRe2ShdQimiyEWwFGLe5Gu63MADxreKg+VRjWzG9oHUQzNKwSl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hJ7Nikvu; arc=none smtp.client-ip=101.71.155.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-1-entmail-virt204.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 147cae3e8;
-	Fri, 9 May 2025 15:34:58 +0800 (GMT+08:00)
-Message-ID: <5a4f6229-1450-4c96-bfac-5257f66b2ddf@rock-chips.com>
-Date: Fri, 9 May 2025 15:34:47 +0800
+	s=arc-20240116; t=1746799034; c=relaxed/simple;
+	bh=1MWjZruB57BDOqBScjh5541VHk9FJOxNddFujLJtRQ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=T/ecm1c92iS5sO8X9K2tKr15URf8EZ9zkU6NIpBogYNUA+sKt8FGNiFLCwxVaB6TfCDS9leBju2+JKm/RGwD2uXNSjmWzH5dYR1Bc+xY1/KqYZ0zm19RvXE0ams+05F+gIOLkaNfNMXJjs0G4mG4Ix5k7DS99AZnYHvizRvAIIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H9d2GFtY; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B5F4043B67;
+	Fri,  9 May 2025 13:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746799030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PS8lSBx0SgWehq3/+W/jHTYiLDqAvodlyxPqYctHkFA=;
+	b=H9d2GFtYWgoDrwhx0NxqqRoMN7UDjEHOEPB2whIs9XvQYeziYN5s3nv07dUBSVKU0EFnWX
+	mBXz0E5qWPkEMs9pae/VMgkJP/xMgO1zyvKfQpPqyC7VE0q3Gydx18DKv4ikdgq/pTvbXp
+	i8EH98vCniHQyXPDhMKoTWtrEyLVs13n9OaFKo3sJN291iEfooOciLkIJJ5o4Hhr2ymWLV
+	ONc784wWHHgKxJ3vWGB/kSbfJrDjSdvZqqAaS855dU6bUA7WCex1Ra8gi6eoaa/tgb19G4
+	MJodIRbAD1G2Pi6+6lB17UXv4X1w8KJDtexFfAqrq5RQoOPz4d+4o12Rg/ujww==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Fri, 09 May 2025 15:53:44 +0200
+Subject: [PATCH v3 18/22] drm/bridge: imx8qxp-pixel-combiner: convert to
+ devm_drm_bridge_alloc() API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: display: rockchip: Convert
- cdn-dp-rockchip.txt to yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, Chaoyi Chen <kernel@airkyi.com>,
- Sandy Huang <hjc@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Dragan Simic <dsimic@manjaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250509070247.868-1-kernel@airkyi.com>
- <20250509070247.868-3-kernel@airkyi.com>
- <ccf4b15a-8399-4a7f-ae40-d01d0975921c@kernel.org>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <ccf4b15a-8399-4a7f-ae40-d01d0975921c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUkfGVYYSUxJHhgdSBhLShpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a96b3f8063203abkunm147cae3e8
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M1E6Kgw*HDJWFQI4FToPDCIW
-	Fx0aCUhVSlVKTE9NTExNSktPQkhMVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBSEJOTzcG
-DKIM-Signature:a=rsa-sha256;
-	b=hJ7NikvuDJyHiU7TZoYgd87OzKAxhsDgv4cKFeiFgwAnYpwpLeSMndEsG6yjBhRVE4W7w8ioYZpdvRBjJX0LT/gbPHUp9B3ZkZA+9kh6jciL3KWKe7lrhHOr8J8qyQdAE0rM7L+7JAmxljZqr+wVdMoLy7f0nS6OQxx/RUC+BZE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=BQYBVB8p8nqMgWuckxW3aKVVBX+ixBeiwRuXnWXYxag=;
-	h=date:mime-version:subject:message-id:from;
+Message-Id: <20250509-drm-bridge-convert-to-alloc-api-v3-18-b8bc1f16d7aa@bootlin.com>
+References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
+In-Reply-To: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Liu Ying <victor.liu@nxp.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledvjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpeduieenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedtpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnu
+ higqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrshhrihhvrghtshesrhgvughhrghtrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Krzysztof,
+This is the new API for allocating DRM bridges.
 
-On 2025/5/9 15:11, Krzysztof Kozlowski wrote:
-> On 09/05/2025 09:02, Chaoyi Chen wrote:
->> +
->> +  clock-names:
->> +    items:
->> +      - const: core-clk
->> +      - const: pclk
->> +      - const: spdif
->> +      - const: grf
->> +
->> +  extcon:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description:
->> +      Phandle to the extcon device providing the cable state for the DP PHY.
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  phys:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> Just phandle. If this is an array (but why?), you need maxItems for
-> outer and inner dimensions.
+This driver embeds an array of channels in the main struct, and each
+channel embeds a drm_bridge. This prevents dynamic, refcount-based
+deallocation of the bridges.
 
-I think it could be phandle or phandle-array. Since the RK3399 DP has 
-two PHYs, if we put in two PHYs here, the driver will pick one PHY port 
-that is already plugged into the DP for output. If we fill in only one 
-PHY here, then output is only allowed on the corresponding PHY.
+To make the new, dynamic bridge allocation possible:
 
-Will add restrictions and add more descriptions in v3.
+ * change the array of channels into an array of channel pointers
+ * allocate each channel using devm_drm_bridge_alloc()
+ * adapt the code wherever using the channels
+ * remove the is_available flag, now "ch != NULL" is equivalent
 
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
->
->> +    description:
->> +      Phandle to the PHY device for DP output.
->> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +
->> +    properties:
->> +      port@0:
->> +        $ref: /schemas/graph.yaml#/properties/port
->> +        description: Input of the CDN DP
->> +        properties:
->> +          endpoint@0:
->> +            description: Connection to the VOPB
->> +          endpoint@1:
->> +            description: Connection to the VOPL
->> +      port@1:
->> +        $ref: /schemas/graph.yaml#/properties/port
->> +        description: Output of the CDN DP
->> +
->> +    required:
->> +      - port@0
->> +      - port@1
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    maxItems: 4
->> +
->> +  reset-names:
->> +    items:
->> +      - const: spdif
->> +      - const: dptx
->> +      - const: apb
->> +      - const: core
->> +
->> +  rockchip,grf:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle to GRF register to control HPD.
->> +
->> +  "#sound-dai-cells":
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - interrupts
->> +  - phys
->> +  - ports
->> +  - resets
->> +  - reset-names
->> +  - rockchip,grf
->> +
->> +additionalProperties: false
-> Well, if you added dai-common $ref then this could have stayed as
-> unevaluatedProperties, so you will allow names for the DAI as well.
+---
 
-Thanks for your clarification. Will fix in v3.
+Cc: Liu Ying <victor.liu@nxp.com>
 
+Changes in v3:
+- fix NULL pointer deref in .remove and remove is_available bool
 
->
->
-> Best regards,
-> Krzysztof
->
->
+Changes in v2: none
+---
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    | 27 +++++++++++-----------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c
+index 1f6fd488e7039e943351006d3373009f0c15cb08..8517b1c953d4e0fb9f5b6dbe25fbaaa63eef2b33 100644
+--- a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c
++++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c
+@@ -63,12 +63,11 @@ struct imx8qxp_pc_channel {
+ 	struct drm_bridge *next_bridge;
+ 	struct imx8qxp_pc *pc;
+ 	unsigned int stream_id;
+-	bool is_available;
+ };
+ 
+ struct imx8qxp_pc {
+ 	struct device *dev;
+-	struct imx8qxp_pc_channel ch[2];
++	struct imx8qxp_pc_channel *ch[2];
+ 	struct clk *clk_apb;
+ 	void __iomem *base;
+ };
+@@ -307,7 +306,14 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
+ 			goto free_child;
+ 		}
+ 
+-		ch = &pc->ch[i];
++		ch = devm_drm_bridge_alloc(dev, struct imx8qxp_pc_channel, bridge,
++					   &imx8qxp_pc_bridge_funcs);
++		if (IS_ERR(ch)) {
++			ret = PTR_ERR(ch);
++			goto free_child;
++		}
++
++		pc->ch[i] = ch;
+ 		ch->pc = pc;
+ 		ch->stream_id = i;
+ 
+@@ -333,9 +339,7 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
+ 		of_node_put(remote);
+ 
+ 		ch->bridge.driver_private = ch;
+-		ch->bridge.funcs = &imx8qxp_pc_bridge_funcs;
+ 		ch->bridge.of_node = child;
+-		ch->is_available = true;
+ 
+ 		drm_bridge_add(&ch->bridge);
+ 	}
+@@ -345,8 +349,8 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
+ free_child:
+ 	of_node_put(child);
+ 
+-	if (i == 1 && pc->ch[0].next_bridge)
+-		drm_bridge_remove(&pc->ch[0].bridge);
++	if (i == 1 && pc->ch[0]->next_bridge)
++		drm_bridge_remove(&pc->ch[0]->bridge);
+ 
+ 	pm_runtime_disable(dev);
+ 	return ret;
+@@ -359,13 +363,10 @@ static void imx8qxp_pc_bridge_remove(struct platform_device *pdev)
+ 	int i;
+ 
+ 	for (i = 0; i < 2; i++) {
+-		ch = &pc->ch[i];
+-
+-		if (!ch->is_available)
+-			continue;
++		ch = pc->ch[i];
+ 
+-		drm_bridge_remove(&ch->bridge);
+-		ch->is_available = false;
++		if (ch)
++			drm_bridge_remove(&ch->bridge);
+ 	}
+ 
+ 	pm_runtime_disable(&pdev->dev);
+
+-- 
+2.49.0
+
 
