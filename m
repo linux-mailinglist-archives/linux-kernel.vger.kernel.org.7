@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-642280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5BDAB1CA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:49:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4237AB1CAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37C7504C05
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11FD3BBA18
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E2D23F40C;
-	Fri,  9 May 2025 18:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AB923F403;
+	Fri,  9 May 2025 18:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xL4N83Jg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SMAcjrxt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFPghcQ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D528723ED5E;
-	Fri,  9 May 2025 18:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176CA23F409;
+	Fri,  9 May 2025 18:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746816564; cv=none; b=IUlpj9KrFpWwOpY2Y7U12VHvA1mD9mUiT7xKwEIuokoLoKcPvbx7C9bse2/ZcA1rt7o4/tbonDpbTzDBrDUBgpqC4ADI1ldT3HGUcKLNk/Ccp+thPuTRGfxJ8qFG1TIgSAT4S54i3e++BF1iDE29FBT9w7BYzYsge3YFTr93SvA=
+	t=1746816613; cv=none; b=N8iHJPx5WqHatfXjqPMoj19biT9I4x6JzhWmZ0JNoYzDrQjZJB8TGrhOAb6qCrnEBOc736p46AryykLU7oVL6yKkfsGaNLwwWDo44UhfwVLR/x2JzSymKpfj90wFDf6O/gUxJkr/sFYYnzFb+oZqvmVU7iYvPFwohODfFQPo5pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746816564; c=relaxed/simple;
-	bh=vTm1UPAYBKXj/NtunEqp0VH16i8irWFyVFkAUSPo0QY=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=sW44LE+q6wNbBZ1sQmVULIK//4Xp5hxfGwrcgga2GkOWlKqsQNZcdUZFfPYWLo6lz5Ksw4Bvgh01UE8rFQD17cLDUZziVQoDIoj/lGQCYrjOc/s8ifmdGGcVq/QnJeGvlLehRzApmkAU7aYXqau1e7p5pPYXOQA9L8/lE0POgj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xL4N83Jg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SMAcjrxt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 09 May 2025 18:49:19 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746816560;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Av5RZLI0gkZU85yW1UwoZiS9zvo6O+KA2YoViJunh6Y=;
-	b=xL4N83JgQFAV/o2hdRewppCiQzI3ER23nnMNDN8z8sYvvznIS+23D2R04DMlbtfokQYVnR
-	oa2wASfY3x8WmBdQJnYb4J5eJqg2eJQchrzbwFlkVFuDMmAjsTiBWZ5BSqVZCfeGeQLpSf
-	6EB1z1IriJbUkkvJ2n6ivkEmYPDdq7eiGjocQdh4/TOGYQr5vi9P8tPjdhbAI//jAV5N6Y
-	/hdnU9LMsCwx66+zNaDg0LU93KHsAtbJK/5ddEEZGvTmjBfNKSlTSBKkt/I2BiYmnTIXQ5
-	pHfbXQhbFg04/3e775IRE4UGVhfH3gVifKcj4BkY6cBMIjKQ65JTxzmsxClnHA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746816560;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Av5RZLI0gkZU85yW1UwoZiS9zvo6O+KA2YoViJunh6Y=;
-	b=SMAcjrxt2IvQC1+JgG11oZf6K6VqCxU3ya9q7TiHZmTUO5N4wzSNR2zDhAKGasumjsUrSb
-	ZVF9AbV3Yrfj0zAA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Fix inverted condition in handle_nested_irq()
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
+	s=arc-20240116; t=1746816613; c=relaxed/simple;
+	bh=Nw2icyS2gV5tHa1D9rYpJZ+wGXpk3ib7WkwKezocKec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uqxkZ2313RyhT7AQXnGbopU1MX4Rvq3aIW6S2C5ylHyyHfrVYwQ1kLl2IHVpO6RzjDvKbyddIxxmaAkKeoIKqW660WBENefatDeoX2YsgtdaYsfqgMCBL0l/XaKjfvewBD5B4dtAeDaiDTDHyCLHasV4PWKopSgSv3Yqtoc4nj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFPghcQ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80696C4CEF1;
+	Fri,  9 May 2025 18:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746816612;
+	bh=Nw2icyS2gV5tHa1D9rYpJZ+wGXpk3ib7WkwKezocKec=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gFPghcQ+g6Ow9fN25q0c90JbQo/nGkzH0y81T4XLX5PFSG16F/6zq6b+vvU92VHAD
+	 IulxDi9xgjPdU/ADecB1w0UTu4nKkIl9rc4KuCVMf3O9J4wKzGkKfV2f1LgmP32Fjd
+	 NVrUcsxXd0PArNhlEZ8CaJf01HIcfiYutctkQ/rjVeKxeyJXrgDbppkfX8iIyTwQ5P
+	 mgUzWoohx3oNk9tHWdTETFqoI0YQnGcN8GxGZ1PlIMRV/4RGcHyELPXGqtxYf5iQKK
+	 QX27STt8I7pQlx8PDeNJzWhOI6f+ARYeLTQ/c1MGZXcqbegmwBqO+jOOx7W2XUQSK7
+	 HC4bpoTekdA4A==
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f2c45ecaffso25172806d6.2;
+        Fri, 09 May 2025 11:50:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUhBEDAheXM/dKrd34T9/a1p/N3/6CrhKj5dZGK5CFS/4oGerTOCxiZVgViiIvNW2c4sJw=@vger.kernel.org, AJvYcCWGQdiqIfQ0BN44LkFKJY2X6HyriwnjQ6h4SxPWQpDXblG1v0u8n2k8SSarl5bhOpfjwEWcuBHAkOKoJ8rU@vger.kernel.org, AJvYcCXddGjPF1sHUcPIP5R/kHORBPmE5fFsjcbOx97jrFeDN+5nGDH5MMarkuKzQlBXGxVsHMtA4NybIxgHmhwvG0Y8@vger.kernel.org, AJvYcCXu8pab8ZZaMbCoTMPXN2mhSRPA4dWJy5PbFwhtHmus5VrM658JKo3zpPcYIfejCB8/a46fdXmiHmgW7lY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc9kDX+Z9NxuQxMsd+hJu7GBJZ5xV9PqP8cSp/Nf3QcASUdsHR
+	/zGxiiZKLBJIK0yG98g7q0K7cqeo56uUJjYPJsxvi4zLccJxwcFeibvFU28cZQfbD5WdMyhXnnW
+	Z3yn/UfGs5Qo3N3WvsGrbm1VfGfA=
+X-Google-Smtp-Source: AGHT+IGViwOqDoSNMIOEXeB3GdIvGbjcaeo4byd7FglN0JuWKHxLNlzbt1DVCaT9CHq9HWOw/2go8UY9Rkg8LznMS0k=
+X-Received: by 2002:a05:6214:c48:b0:6f4:b8eb:4815 with SMTP id
+ 6a1803df08f44-6f6e470e2b8mr69583436d6.0.1746816611621; Fri, 09 May 2025
+ 11:50:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174681655962.406.11707812475471138588.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250508182025.2961555-1-tjmercier@google.com> <20250508182025.2961555-5-tjmercier@google.com>
+In-Reply-To: <20250508182025.2961555-5-tjmercier@google.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 9 May 2025 11:50:00 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7vkmr_SMgzOwhgVCW4GOzJR3thuCQhZFOT5_17jy74_Q@mail.gmail.com>
+X-Gm-Features: ATxdqUHqE3dBs_GqqtsEkebsXlPIJjQ8mIfly-oCmcZbVTRJUoQ4p6wXYOBC9U4
+Message-ID: <CAPhsuW7vkmr_SMgzOwhgVCW4GOzJR3thuCQhZFOT5_17jy74_Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 4/5] selftests/bpf: Add test for dmabuf_iter
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: sumit.semwal@linaro.org, christian.koenig@amd.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	skhan@linuxfoundation.org, alexei.starovoitov@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, android-mm@google.com, 
+	simona@ffwll.ch, eddyz87@gmail.com, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the irq/core branch of tip:
+On Thu, May 8, 2025 at 11:20=E2=80=AFAM T.J. Mercier <tjmercier@google.com>=
+ wrote:
+[...]
 
-Commit-ID:     c1ab449df871d6ce9189cb0a9efcd37d2ead10f0
-Gitweb:        https://git.kernel.org/tip/c1ab449df871d6ce9189cb0a9efcd37d2ead10f0
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Fri, 09 May 2025 20:37:54 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 09 May 2025 20:42:26 +02:00
+> +
+> +void test_dmabuf_iter(void)
+> +{
+> +       struct dmabuf_iter *skel =3D NULL;
+> +       char buf[256];
+> +       int iter_fd;
+> +
+> +       skel =3D dmabuf_iter__open_and_load();
+> +       if (!ASSERT_OK_PTR(skel, "dmabuf_iter__open_and_load"))
+> +               return;
+> +
+> +       if (!ASSERT_OK(create_test_buffers(), "create_buffers"))
+> +               goto destroy;
+> +
+> +       if (!ASSERT_OK(dmabuf_iter__attach(skel), "skel_attach"))
+> +               goto destroy;
 
-genirq: Fix inverted condition in handle_nested_irq()
+From here...
 
-Marek reported that the rework of handle_nested_irq() introduced a inverted
-condition, which prevents handling of interrupts. Fix it up.
+> +       iter_fd =3D bpf_iter_create(bpf_link__fd(skel->links.dmabuf_colle=
+ctor));
+> +       if (!ASSERT_OK_FD(iter_fd, "iter_create"))
+> +               goto destroy;
+> +
+> +       while (read(iter_fd, buf, sizeof(buf)) > 0)
+> +               ; /* Read out all contents */
+> +
+> +       /* Next reads should return 0 */
+> +       ASSERT_EQ(read(iter_fd, buf, sizeof(buf)), 0, "read");
 
-Fixes: 2ef2e13094c7 ("genirq/chip: Rework handle_nested_irq()")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Closes: https://lore.kernel/org/all/46ed4040-ca11-4157-8bd7-13c04c113734@samsung.com
----
- kernel/irq/chip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+to here, can be a separate subtest. Then iter_fd can be moved to
+that subtest.
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 865cf74..1d45c84 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -497,7 +497,7 @@ void handle_nested_irq(unsigned int irq)
- 	might_sleep();
- 
- 	scoped_guard(raw_spinlock_irq, &desc->lock) {
--		if (irq_can_handle_actions(desc))
-+		if (!irq_can_handle_actions(desc))
- 			return;
- 
- 		action = desc->action;
+> +
+> +       if (test__start_subtest("default_iter"))
+> +               subtest_dmabuf_iter_check_default_iter(skel);
+> +
+> +       close(iter_fd);
+> +
+> +destroy:
+> +       destroy_test_buffers();
+> +       dmabuf_iter__destroy(skel);
+[...]
 
