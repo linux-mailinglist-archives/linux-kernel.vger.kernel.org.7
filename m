@@ -1,169 +1,163 @@
-Return-Path: <linux-kernel+bounces-641733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D23AB150E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:28:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B641AB153B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268D67AE390
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B894C3B4693
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C54291158;
-	Fri,  9 May 2025 13:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F76290D90;
+	Fri,  9 May 2025 13:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/qKTkYv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOE4/cEU"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCCE1F5EA;
-	Fri,  9 May 2025 13:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F441F5EA;
+	Fri,  9 May 2025 13:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797291; cv=none; b=W8fGlfBie7WWsOh1jkE46qqXIjMYPGTrm/4VC0dLxZb6Te43zbDqeEcwtuPSwvWKveWPFQtQRnG6HHkM2H/dvOpFehBtsvPM5R5HJkkX+8p7Beokhlnv/URzUtBfTkfD7/4DTOnr0o+9R5EJVwvftjKhsoy1j79MgJecsWOtfIc=
+	t=1746797373; cv=none; b=OHDyN6vxQJTIehd0BfJE5aMxOwLIDqd3fmglYmJ9v6YV+P5iBQr5tY2JYYCLR0IRmbi6TghNkYYvf0WSu7tsJTVcqZYihBPjpFV8jLzicECFQ+rftR4eACtIdR3uaLPyb12Tnc3ykpFz++9SInYXY8P0cOX7b4RV98VJMxNGAjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797291; c=relaxed/simple;
-	bh=uGoem5oxm43T5fBHILnLczoz1AtySDH/1Rn1MgOYPac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5mW3f5XXPf61GKpUgi5LuB0SaimB4IT+3/mLtzDtEJcdBxGC0pm9WzzKQdL7O6Cmer3/V4iFWhctBMWp/TGjiTctZR+0QQS5y/5P/NltDQlQSEOjY87PHgbzohZYS58vPpMh+PgGx7sd7DjOwb94mVe48hpNh0IDzCNtYTIv7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/qKTkYv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821F1C4CEE4;
-	Fri,  9 May 2025 13:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746797291;
-	bh=uGoem5oxm43T5fBHILnLczoz1AtySDH/1Rn1MgOYPac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K/qKTkYvKVVTL/AsYT4XN3dR5mNNF5V9oZU0cgbdrjt5Uye0DU6ayJJQmIz1SYb3j
-	 5CNDMVXNCVxAeK+YYRqkm5q+4v4VHH3tSa5GFhcGmNMiEBH0L/jcrbWRPWT4OkaX3b
-	 bCyofsZLMixdAyw6F1VeLVSoY3OZ08xuDuA9pTg2CmP7GRDbkCjTLvu3zWhNQ/E83w
-	 UpIU80N5XF4HS8cq+FB70/eNtNZsXnQ7VrQa1ZA6dryXimDHM6rYYc9SQGi86hnkRm
-	 JwtVXjQK/mJ53alMZcRcbjqgYC7LuWMaUmfYiQHc6Gsz/iTjS/vv8k5ktyIK1T3ynt
-	 wn1c4ga+aXmcQ==
-Date: Fri, 9 May 2025 14:28:05 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, patches@lists.linux.dev,
-	stable@vger.kernel.org,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Marcus Seyfarth <m.seyfarth@gmail.com>
-Subject: Re: [PATCH v2] kbuild: Disable -Wdefault-const-init-unsafe
-Message-ID: <20250509132805.GA4132662@ax162>
-References: <20250506-default-const-init-clang-v2-1-fcfb69703264@kernel.org>
- <CAK7LNATmW6SfUkF4uZBLVCDUK9NRpWUrmenat1HsSkLHDNmVTQ@mail.gmail.com>
+	s=arc-20240116; t=1746797373; c=relaxed/simple;
+	bh=VTUhwyCFVJHXbPOiVHuMR6HLMB9i1XE3aN5p4N741Aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P+vauySYlzDShVHrKHi6zC0mJLi+cEgQJmhroM9z/u0+kCLy6eUq6mZ+X5Eq9oiyPTYlgQOlBfQoqGe5C5/nufJbeK5UCl7PYr3SoQ/blkb5C2JWd81Y9PMY9tFAfWm1fgcfPoukgrw5Q7yO3zQFd5YuLnqLSNAfUmD6mQCRanc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOE4/cEU; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d0618746bso16402585e9.2;
+        Fri, 09 May 2025 06:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746797369; x=1747402169; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sAjcyLLUHHoKLlLAz4gIt49fi1TRIPxU/0xocMT17i4=;
+        b=dOE4/cEUTnaSxhr6KLTspJeyKq+NHX9IviL1yww+eUC9ZnTxgyGWq3R02PSHj4pWbZ
+         YuF2EybAZPqLMwxzgycYPng6sKp9/qEsx1HdFCh0lQea6VsvNw8xb8ZjraGMD1B5Tybr
+         bFdklDtfrQUcd9pdSOVpsVeogRIT2Yb63b6zJuRKs0mxwI3OjAaOUuWAcHkPMnjtntxg
+         DHgwl6fQZ1jifdqazT7oweUIzR4BMKHSCAxyggkpbk2CN2o6GT4OBRWhOTS2thoe7QEH
+         GVb1c5N8/kXOSFmdSwIiPk4HWP9u9Vc0keswAsutzpNbLzeO5X1Ipr1UAt82VzGctda2
+         EuEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746797369; x=1747402169;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sAjcyLLUHHoKLlLAz4gIt49fi1TRIPxU/0xocMT17i4=;
+        b=JyreMMix8Vm0yECTzLmXvk6GQ9BLp4mbA/sXJhKww83bfthHEpZWyesJbQilS0AuBd
+         qG+eigEbcL+lmgsj1TMkRqhZUMmYlVKnRCyWDAcQcXxZ3kwWV+N83XrwOVGeFPwdhq6h
+         IqXJ/J3Hf5xofaigIIkUlghj+/62g5yzIidZZqI6RLkNg2i7vKWoqaVA8va34vs6COv3
+         4WxWNaYe5ngbY1tueYia45t9K/g9PAEMgGLGgkPxaTt6RZYNFkzyDTXIYuESQ13SCb9g
+         Nh1IE3rzJpDaR7I9JJX0glNJ0lEE3xV149szelNT3B7Cv5xFvJIeE+IFmVkKZSLvqdBE
+         f2bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlRqcV5rMjpbOuROxGyrWSjvD4BraIeMV29NbnvK2UxnfIZpcpeFibuDGg2ifz3Uz0bwTTXvo8kNV/VlB/5bIBMOE=@vger.kernel.org, AJvYcCVKftQrAey1QOWpLiw3s+dWqw7zqzdTfbkZAgmOwQ2EUhXpujjt2VFAhVJFNoaO8fHUmOpnj2QHvqo=@vger.kernel.org, AJvYcCWE55HrhK5bHh0shh7t+VYVsuuxrYR9Ko0k8PQ8Av+PSGHPmZmDJeqtMUlnL4psAAjmwt4m3TbaOyGz2XXg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxdeQQe2DCrrO6WhYHZcZ1MnQwt/3RC4ZHs4FahWb1+NEXXUvh
+	fvoq5Ol9GcYNLcavitcv6Ob+DWLh0sVwL7kawnAzZganFLyAmnywuLj+yPfKH3aO8j7qYjyQZYC
+	IFl4hxVSZcgMuVSqZyokM66aUGgk=
+X-Gm-Gg: ASbGncut5Xa2aSN0aR5yx5O5vr8ZC2VB/KNECGlMCByXqT8BsbEEM19kE5LoQI9tHeB
+	ZyoxrU2leMTSNypQMBJY3JgzSKPmyxsBY1lsym1GEFgqpNSJKSZJEoAa+jsyGH86JyE279VKqIr
+	zNC3358ZNVekBVSmrAXcBT/A==
+X-Google-Smtp-Source: AGHT+IHtVI2pyoRAO5lIPxueecpsNEKA+L1sFo0+6wNlyN8kBVMW7vgJLsD0ozHvFJYSp0dgBbvzHAKcfZrL/y/+yd4=
+X-Received: by 2002:a05:600c:548d:b0:43d:ea:51d2 with SMTP id
+ 5b1f17b1804b1-442d6d44918mr28228735e9.14.1746797369209; Fri, 09 May 2025
+ 06:29:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATmW6SfUkF4uZBLVCDUK9NRpWUrmenat1HsSkLHDNmVTQ@mail.gmail.com>
+References: <20250428184152.428908-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250428184152.428908-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWUpJHB_NsBqdvyD6=dDnZXQMr-=0aOpW0OutN9hSA5=A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWUpJHB_NsBqdvyD6=dDnZXQMr-=0aOpW0OutN9hSA5=A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 9 May 2025 14:29:02 +0100
+X-Gm-Features: AX0GCFvQg2K352ydidoNWkyE3_L_e7L1lUvhobbGKCoG86SY7RJWT89lXaip14g
+Message-ID: <CA+V-a8ukvn_K69h_COXS6JCqZbqXPQG1L9UAnm-gYQk7PTzb_g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: renesas: r9a09g057: Add clock and reset
+ entries for GBETH0/1
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 09, 2025 at 10:04:23PM +0900, Masahiro Yamada wrote:
-> On Wed, May 7, 2025 at 6:06 AM Nathan Chancellor <nathan@kernel.org> wrote:
+Hi Geert,
+
+Thank you for the review.
+
+On Thu, May 8, 2025 at 5:13=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 28 Apr 2025 at 20:42, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > A new on by default warning in clang [1] aims to flags instances where
-> > const variables without static or thread local storage or const members
-> > in aggregate types are not initialized because it can lead to an
-> > indeterminate value. This is quite noisy for the kernel due to
-> > instances originating from header files such as:
+> > Add clock and reset entries for GBETH instances. Include core clocks fo=
+r
+> > PTP, sourced from PLLETH, and add PLLs, dividers, and static mux clocks
+> > used as clock sources for the GBETH IP.
 > >
-> >   drivers/gpu/drm/i915/gt/intel_ring.h:62:2: error: default initialization of an object of type 'typeof (ring->size)' (aka 'const unsigned int') leaves the object uninitialized [-Werror,-Wdefault-const-init-var-unsafe]
-> >      62 |         typecheck(typeof(ring->size), next);
-> >         |         ^
-> >   include/linux/typecheck.h:10:9: note: expanded from macro 'typecheck'
-> >      10 | ({      type __dummy; \
-> >         |              ^
-> >
-> >   include/net/ip.h:478:14: error: default initialization of an object of type 'typeof (rt->dst.expires)' (aka 'const unsigned long') leaves the object uninitialized [-Werror,-Wdefault-const-init-var-unsafe]
-> >     478 |                 if (mtu && time_before(jiffies, rt->dst.expires))
-> >         |                            ^
-> >   include/linux/jiffies.h:138:26: note: expanded from macro 'time_before'
-> >     138 | #define time_before(a,b)        time_after(b,a)
-> >         |                                 ^
-> >   include/linux/jiffies.h:128:3: note: expanded from macro 'time_after'
-> >     128 |         (typecheck(unsigned long, a) && \
-> >         |          ^
-> >   include/linux/typecheck.h:11:12: note: expanded from macro 'typecheck'
-> >      11 |         typeof(x) __dummy2; \
-> >         |                   ^
-> >
-> >   include/linux/list.h:409:27: warning: default initialization of an object of type 'union (unnamed union at include/linux/list.h:409:27)' with const member leaves the object uninitialized [-Wdefault-const-init-field-unsafe]
-> >     409 |         struct list_head *next = smp_load_acquire(&head->next);
-> >         |                                  ^
-> >   include/asm-generic/barrier.h:176:29: note: expanded from macro 'smp_load_acquire'
-> >     176 | #define smp_load_acquire(p) __smp_load_acquire(p)
-> >         |                             ^
-> >   arch/arm64/include/asm/barrier.h:164:59: note: expanded from macro '__smp_load_acquire'
-> >     164 |         union { __unqual_scalar_typeof(*p) __val; char __c[1]; } __u;   \
-> >         |                                                                  ^
-> >   include/linux/list.h:409:27: note: member '__val' declared 'const' here
-> >
-> >   crypto/scatterwalk.c:66:22: error: default initialization of an object of type 'struct scatter_walk' with const member leaves the object uninitialized [-Werror,-Wdefault-const-init-field-unsafe]
-> >      66 |         struct scatter_walk walk;
-> >         |                             ^
-> >   include/crypto/algapi.h:112:15: note: member 'addr' declared 'const' here
-> >     112 |                 void *const addr;
-> >         |                             ^
-> >
-> >   fs/hugetlbfs/inode.c:733:24: error: default initialization of an object of type 'struct vm_area_struct' with const member leaves the object uninitialized [-Werror,-Wdefault-const-init-field-unsafe]
-> >     733 |         struct vm_area_struct pseudo_vma;
-> >         |                               ^
-> >   include/linux/mm_types.h:803:20: note: member 'vm_flags' declared 'const' here
-> >     803 |                 const vm_flags_t vm_flags;
-> >         |                                  ^
-> >
-> > Silencing the instances from typecheck.h is difficult because '= {}' is
-> > not available in older but supported compilers and '= {0}' would cause
-> > warnings about a literal 0 being treated as NULL. While it might be
-> > possible to come up with a local hack to silence the warning for
-> > clang-21+, it may not be worth it since -Wuninitialized will still
-> > trigger if an uninitialized const variable is actually used.
-> >
-> > In all audited cases of the "field" variant of the warning, the members
-> > are either not used in the particular call path, modified through other
-> > means such as memset() / memcpy() because the containing object is not
-> > const, or are within a union with other non-const members.
-> >
-> > Since this warning does not appear to have a high signal to noise ratio,
-> > just disable it.
-> >
-> > Cc: stable@vger.kernel.org
-> > Link: https://github.com/llvm/llvm-project/commit/576161cb6069e2c7656a8ef530727a0f4aefff30 [1]
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > Closes: https://lore.kernel.org/CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com/
-> > Reported-by: Marcus Seyfarth <m.seyfarth@gmail.com>
-> > Closes: https://github.com/ClangBuiltLinux/linux/issues/2088
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > > ---
-> > Changes in v2:
-> > - Disable -Wdefault-const-init-var-unsafe as well, as '= {}' does not
-> >   work in typecheck() for all supported compilers and it may not be
-> >   worth a local hack.
-> > - Link to v1: https://lore.kernel.org/r/20250501-default-const-init-clang-v1-0-3d2c6c185dbb@kernel.org
-> 
-> 
-> 
-> Applied to linux-kbuild.
-> Thanks.
-> 
-> I fixed up the conflict with the -Wdefault-const-init-field-unsafe patch.
-> 
-> Please check if it is correct.
-
-This patch should replace the -Wdefault-const-init-field-unsafe patch,
-not be applied on top. -Wdefault-const-init-unsafe contains both
--Wdefault-const-init-field-unsafe and -Wdefault-const-init-var-unsafe.
+> > v2->v3:
+> > - Used DEF_MOD_MUX_EXTERNAL() macro for external MUX clocks.
+> > - Renamed gbe0/1 external mux clock names
+>
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+> > @@ -78,6 +87,19 @@ static const struct clk_div_table dtable_2_64[] =3D =
+{
+> >         {0, 0},
+> >  };
+> >
+> > +static const struct clk_div_table dtable_2_100[] =3D {
+> > +       {0, 2},
+> > +       {1, 10},
+> > +       {2, 100},
+> > +       {0, 0},
+> > +};
+> > +
+> > +/* Mux clock tables */
+> > +static const char * const smux2_gbe0_rxclk[] =3D { ".plleth_gbe0", "et=
+0_rxclk" };
+> > +static const char * const smux2_gbe0_txclk[] =3D { ".plleth_gbe0", "et=
+0_txclk" };
+> > +static const char * const smux2_gbe1_rxclk[] =3D { ".plleth_gbe1", "et=
+1_rxclk" };
+> > +static const char * const smux2_gbe1_txclk[] =3D { ".plleth_gbe1", "et=
+1_txclk" };
+> > +
+> >  static const struct cpg_core_clk r9a09g057_core_clks[] __initconst =3D=
+ {
+> >         /* External Clock Inputs */
+> >         DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+>
+> This patch starts to LGTM.  The only outstanding issue is how the
+> et*_[rt]xclk will be provided.  I have read your comments on v2,
+> and am eagerly awaiting the full patch set (CPG binding update, PHY
+> updates, ...) to get this all to work.
+>
+My intention here is to get these initial patches in so that we have
+Ethernet working on RZ/V2H (G3E/V2N) so that we have these boards on
+LAVA and tackle et*_[rt]xclk clocks for the next cycle as this will
+have to be discussed the -net maintainers. Are you OK with this
+approach.
 
 Cheers,
-Nathan
+Prabhakar
 
