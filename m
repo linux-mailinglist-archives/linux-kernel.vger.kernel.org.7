@@ -1,234 +1,169 @@
-Return-Path: <linux-kernel+bounces-641729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749B3AB1528
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:30:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D23AB150E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6D1B4C1754
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268D67AE390
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881EC28F52F;
-	Fri,  9 May 2025 13:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C54291158;
+	Fri,  9 May 2025 13:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+ojOsY+"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/qKTkYv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8CCEAC7;
-	Fri,  9 May 2025 13:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCCE1F5EA;
+	Fri,  9 May 2025 13:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797205; cv=none; b=qPUj3w5mfk8Eq9dd66is+PsV9uPNgn23MqnJ7oYjJG6WXFbx/Cw8klw+XGwpxLFEPw+qdsB6aH0gTsiPnV35HF6ceMvzsdcMns5mDCXhdUbP/NiTZGqkqSVjkFQmZMBG7aTGHSbxkLU87YuzGdDw4q3kf2junCHm5Z5+/0g6jlo=
+	t=1746797291; cv=none; b=W8fGlfBie7WWsOh1jkE46qqXIjMYPGTrm/4VC0dLxZb6Te43zbDqeEcwtuPSwvWKveWPFQtQRnG6HHkM2H/dvOpFehBtsvPM5R5HJkkX+8p7Beokhlnv/URzUtBfTkfD7/4DTOnr0o+9R5EJVwvftjKhsoy1j79MgJecsWOtfIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797205; c=relaxed/simple;
-	bh=4ljaswZvpLa11JnKtqLJZzlpXgbUNueMnGcwfKTV9KY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hnd61pGdTLGdfqCNBn+sTQE7qkah1h4xaaqite59A+PTv2CJE59A7gK/eKFLfnIzZC6LkFhNQk3uwcl1oFML0XT4sHVT29Bgulbk18LJePUJSdgGJeZacjiJRNApPT+U0nyCAnce1Ft0/madR5PuMnZ0ge7aylQ+Z3R+BmLYI/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+ojOsY+; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e6a088e16so15850375ad.1;
-        Fri, 09 May 2025 06:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746797201; x=1747402001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=M99M9pqDd4HY7ZTat7gh8dmPe+mFUSH3NvZfT0ucCMI=;
-        b=Y+ojOsY+a/sMZxNxgDofV5WF4P/9rq203HpyuwUMcZup2BS/do/JxdPYXwcpSCvAs6
-         cH5sL2OZejeAPtUOGsGxYuYDuc5oJMeWnwdmSPCu2Ux8vnlW8sJpKCRuaUQJ+bel//J0
-         ltwOTke/+Xk1PZWUOp9Mdm14apZcICG3EtMt6e1KzW+iQNSgVbwhILSYCvS61lRuJGwO
-         6SqD2q/glWuCBeDhw8hE1EU0ixgPYfzBEiOVmYJVkzdujFbevQ7RqWEN3VK/vpazcd8Z
-         41SusGstvv6grZyLLZnsMWhOl1Bgu7jfY/gkE4G6rZY7d2gHHidhA8DBA+jKQXB4HPnP
-         BXbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746797201; x=1747402001;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M99M9pqDd4HY7ZTat7gh8dmPe+mFUSH3NvZfT0ucCMI=;
-        b=vd54j602V5GWSyshctNwDgBMwMhXvdrOq/TtYIt3CKpyNMv6wT+6S9yKnJRiIRKhf7
-         BVVQ1tghOaKHSxwIV/8ln4KuqW/SfwcewBt5Nbfm6JS1geQUe+5rJU6Ab1y9dgHNDlwH
-         SRBDZKLtVlv9wah3BFPBznVB8qlBmHJOHxo/uqxbYm6vFhNyreQYczvfegoNa6c4VtV0
-         mTfiQbOcU9IQ14zEFFjsaVR0Z3k1WszrxZr4Hu6vOP6v+wdiiQKv5107TXrDmv1BF5fi
-         /9CYBhHy3F4uGoWI9vZHChxBHvN3mBmc4k3r/bygeoUx/ACCZUPPd/hbAqUHhcODJ4Yp
-         uKFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUY2t9+1XHvCZ6zaYxX4QCWl8Roya+K2EiuV2ENQYwwJU39UdkDzu3MVUeJvg5SrPTjypFTQr1uzH7w@vger.kernel.org, AJvYcCVNf2WRy786nijvNfaxRkXvaVmpocklyoYhtVivB17WeJa65K8IOFmump0XHjjWNIn27o8FM9Jk+jcW@vger.kernel.org, AJvYcCVxHKerErTmIo+me8uq+64h2rVONJX5uLl1K+QhCTIFuAIWWRls8ToWXDayxhXumfW1yyezqhbaCTncd/c=@vger.kernel.org, AJvYcCX1zM5qXio66AfYa0xKifQM0ZrC7NHKjKYUNEmJpUNWZSlzbnkWxvfhDw2HqYX1QWtB283jCISQ7a0G58Qo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8IIEfDgng40nSwPRNUHdBkAsII2UGk7XbsreUTk0uod0vIdTT
-	8YPZWougJXySLsz89kbp/PqVmpEZkgQ6EUqAIXJVAzJldft/in8I
-X-Gm-Gg: ASbGnctOQ0LLYCEejTtT0WGbApl9iTvIClheXYacCO+1zShqSt3ChY+x8QpE6SOyd1a
-	uzinS3IDIGGa44Gwp98bkYZ7lb1RmBhiMhrutN1J3emst6S85G/ZD2IJJY0vUYkKbe7rFlGGITG
-	u3MBHDEjAvlid0cXx4wA0mwWPKyUvLQerRqfcJoTlkqmZkcvl4eyd6K/0zuC6gVz8ZlPc/fD8XV
-	i7yck3BkmZtCKiyp+xL4+WwkdMKXkBVjCxUJnoRUDxSqO7iUfYMYiZa0NWNNiS/StXQzXRfZU6o
-	LVtGDahgl3rl7zdesBl63XVn1KVO7hCrv2I2VrdzFn+gf8WfErWZIBWNz2XRyVOeBQ8rKh3/C/5
-	cAC+vXu5S5RBlUQ==
-X-Google-Smtp-Source: AGHT+IF1kr7NFCr8YU3Cp/1fNg8yu3Ky0zpKNpL2nfPUiW9hl80G8AZThU5x1ZRytfbBPlKxXYUu7Q==
-X-Received: by 2002:a17:903:1c7:b0:215:6c5f:d142 with SMTP id d9443c01a7336-22fc93dbc45mr46429305ad.20.1746797201019;
-        Fri, 09 May 2025 06:26:41 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7b2a004sm16950085ad.106.2025.05.09.06.26.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 06:26:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <d578893e-167a-404f-bdd0-8e5b187af816@roeck-us.net>
-Date: Fri, 9 May 2025 06:26:37 -0700
+	s=arc-20240116; t=1746797291; c=relaxed/simple;
+	bh=uGoem5oxm43T5fBHILnLczoz1AtySDH/1Rn1MgOYPac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5mW3f5XXPf61GKpUgi5LuB0SaimB4IT+3/mLtzDtEJcdBxGC0pm9WzzKQdL7O6Cmer3/V4iFWhctBMWp/TGjiTctZR+0QQS5y/5P/NltDQlQSEOjY87PHgbzohZYS58vPpMh+PgGx7sd7DjOwb94mVe48hpNh0IDzCNtYTIv7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/qKTkYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821F1C4CEE4;
+	Fri,  9 May 2025 13:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746797291;
+	bh=uGoem5oxm43T5fBHILnLczoz1AtySDH/1Rn1MgOYPac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K/qKTkYvKVVTL/AsYT4XN3dR5mNNF5V9oZU0cgbdrjt5Uye0DU6ayJJQmIz1SYb3j
+	 5CNDMVXNCVxAeK+YYRqkm5q+4v4VHH3tSa5GFhcGmNMiEBH0L/jcrbWRPWT4OkaX3b
+	 bCyofsZLMixdAyw6F1VeLVSoY3OZ08xuDuA9pTg2CmP7GRDbkCjTLvu3zWhNQ/E83w
+	 UpIU80N5XF4HS8cq+FB70/eNtNZsXnQ7VrQa1ZA6dryXimDHM6rYYc9SQGi86hnkRm
+	 JwtVXjQK/mJ53alMZcRcbjqgYC7LuWMaUmfYiQHc6Gsz/iTjS/vv8k5ktyIK1T3ynt
+	 wn1c4ga+aXmcQ==
+Date: Fri, 9 May 2025 14:28:05 +0100
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	stable@vger.kernel.org,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Marcus Seyfarth <m.seyfarth@gmail.com>
+Subject: Re: [PATCH v2] kbuild: Disable -Wdefault-const-init-unsafe
+Message-ID: <20250509132805.GA4132662@ax162>
+References: <20250506-default-const-init-clang-v2-1-fcfb69703264@kernel.org>
+ <CAK7LNATmW6SfUkF4uZBLVCDUK9NRpWUrmenat1HsSkLHDNmVTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] hwmon: pmbus: mpq8785: Implement VOUT feedback
- resistor divider ratio configuration
-To: Pawel Dembicki <paweldembicki@gmail.com>, linux-hwmon@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Noah Wang <noahwang.wang@outlook.com>, Michal Simek <michal.simek@amd.com>,
- Naresh Solanki <naresh.solanki@9elements.com>,
- Fabio Estevam <festevam@gmail.com>, Grant Peltier
- <grantpeltier93@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Shen Lichuan <shenlichuan@vivo.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>, Charles Hsu <ythsu0511@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250509065237.2392692-1-paweldembicki@gmail.com>
- <20250509065237.2392692-5-paweldembicki@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250509065237.2392692-5-paweldembicki@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATmW6SfUkF4uZBLVCDUK9NRpWUrmenat1HsSkLHDNmVTQ@mail.gmail.com>
 
-On 5/8/25 23:51, Pawel Dembicki wrote:
-> Implement support for setting the VOUT_SCALE_LOOP PMBus register
-> based on an optional device tree property
-> "mps,vout-fb-divider-ratio-permille".
+On Fri, May 09, 2025 at 10:04:23PM +0900, Masahiro Yamada wrote:
+> On Wed, May 7, 2025 at 6:06 AM Nathan Chancellor <nathan@kernel.org> wrote:
+> >
+> > A new on by default warning in clang [1] aims to flags instances where
+> > const variables without static or thread local storage or const members
+> > in aggregate types are not initialized because it can lead to an
+> > indeterminate value. This is quite noisy for the kernel due to
+> > instances originating from header files such as:
+> >
+> >   drivers/gpu/drm/i915/gt/intel_ring.h:62:2: error: default initialization of an object of type 'typeof (ring->size)' (aka 'const unsigned int') leaves the object uninitialized [-Werror,-Wdefault-const-init-var-unsafe]
+> >      62 |         typecheck(typeof(ring->size), next);
+> >         |         ^
+> >   include/linux/typecheck.h:10:9: note: expanded from macro 'typecheck'
+> >      10 | ({      type __dummy; \
+> >         |              ^
+> >
+> >   include/net/ip.h:478:14: error: default initialization of an object of type 'typeof (rt->dst.expires)' (aka 'const unsigned long') leaves the object uninitialized [-Werror,-Wdefault-const-init-var-unsafe]
+> >     478 |                 if (mtu && time_before(jiffies, rt->dst.expires))
+> >         |                            ^
+> >   include/linux/jiffies.h:138:26: note: expanded from macro 'time_before'
+> >     138 | #define time_before(a,b)        time_after(b,a)
+> >         |                                 ^
+> >   include/linux/jiffies.h:128:3: note: expanded from macro 'time_after'
+> >     128 |         (typecheck(unsigned long, a) && \
+> >         |          ^
+> >   include/linux/typecheck.h:11:12: note: expanded from macro 'typecheck'
+> >      11 |         typeof(x) __dummy2; \
+> >         |                   ^
+> >
+> >   include/linux/list.h:409:27: warning: default initialization of an object of type 'union (unnamed union at include/linux/list.h:409:27)' with const member leaves the object uninitialized [-Wdefault-const-init-field-unsafe]
+> >     409 |         struct list_head *next = smp_load_acquire(&head->next);
+> >         |                                  ^
+> >   include/asm-generic/barrier.h:176:29: note: expanded from macro 'smp_load_acquire'
+> >     176 | #define smp_load_acquire(p) __smp_load_acquire(p)
+> >         |                             ^
+> >   arch/arm64/include/asm/barrier.h:164:59: note: expanded from macro '__smp_load_acquire'
+> >     164 |         union { __unqual_scalar_typeof(*p) __val; char __c[1]; } __u;   \
+> >         |                                                                  ^
+> >   include/linux/list.h:409:27: note: member '__val' declared 'const' here
+> >
+> >   crypto/scatterwalk.c:66:22: error: default initialization of an object of type 'struct scatter_walk' with const member leaves the object uninitialized [-Werror,-Wdefault-const-init-field-unsafe]
+> >      66 |         struct scatter_walk walk;
+> >         |                             ^
+> >   include/crypto/algapi.h:112:15: note: member 'addr' declared 'const' here
+> >     112 |                 void *const addr;
+> >         |                             ^
+> >
+> >   fs/hugetlbfs/inode.c:733:24: error: default initialization of an object of type 'struct vm_area_struct' with const member leaves the object uninitialized [-Werror,-Wdefault-const-init-field-unsafe]
+> >     733 |         struct vm_area_struct pseudo_vma;
+> >         |                               ^
+> >   include/linux/mm_types.h:803:20: note: member 'vm_flags' declared 'const' here
+> >     803 |                 const vm_flags_t vm_flags;
+> >         |                                  ^
+> >
+> > Silencing the instances from typecheck.h is difficult because '= {}' is
+> > not available in older but supported compilers and '= {0}' would cause
+> > warnings about a literal 0 being treated as NULL. While it might be
+> > possible to come up with a local hack to silence the warning for
+> > clang-21+, it may not be worth it since -Wuninitialized will still
+> > trigger if an uninitialized const variable is actually used.
+> >
+> > In all audited cases of the "field" variant of the warning, the members
+> > are either not used in the particular call path, modified through other
+> > means such as memset() / memcpy() because the containing object is not
+> > const, or are within a union with other non-const members.
+> >
+> > Since this warning does not appear to have a high signal to noise ratio,
+> > just disable it.
+> >
+> > Cc: stable@vger.kernel.org
+> > Link: https://github.com/llvm/llvm-project/commit/576161cb6069e2c7656a8ef530727a0f4aefff30 [1]
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > Closes: https://lore.kernel.org/CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com/
+> > Reported-by: Marcus Seyfarth <m.seyfarth@gmail.com>
+> > Closes: https://github.com/ClangBuiltLinux/linux/issues/2088
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> > Changes in v2:
+> > - Disable -Wdefault-const-init-var-unsafe as well, as '= {}' does not
+> >   work in typecheck() for all supported compilers and it may not be
+> >   worth a local hack.
+> > - Link to v1: https://lore.kernel.org/r/20250501-default-const-init-clang-v1-0-3d2c6c185dbb@kernel.org
 > 
-> This allows the driver to provide the correct VOUT value depending
-> on the feedback voltage divider configuration for chips where the
-> bootloader does not configure the VOUT_SCALE_LOOP register.
 > 
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 > 
-> ---
-> v2:
->    - rename property to mps,vout-fb-divider-ratio-permille
->    - add register value range checking
-> ---
->   drivers/hwmon/pmbus/mpq8785.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
+> Applied to linux-kbuild.
+> Thanks.
 > 
-> diff --git a/drivers/hwmon/pmbus/mpq8785.c b/drivers/hwmon/pmbus/mpq8785.c
-> index 34245d0d2125..1d0e7ac9daf4 100644
-> --- a/drivers/hwmon/pmbus/mpq8785.c
-> +++ b/drivers/hwmon/pmbus/mpq8785.c
-> @@ -12,6 +12,13 @@
->   
->   enum chips { mpq8785, mpm82504, mpm3695, mpm3695_25 };
->   
-> +static u16 voltage_scale_loop_max_val[] = {
-> +	GENMASK(10, 0), /* mpq8785 */
-> +	GENMASK(9, 0), /* mpm82504 */
-> +	GENMASK(9, 0), /* mpm3695 */
-> +	GENMASK(11, 0), /* mpm3695_25 */
+> I fixed up the conflict with the -Wdefault-const-init-field-unsafe patch.
+> 
+> Please check if it is correct.
 
-Use
-	[... ] = GENMASK()
-as suggested.
+This patch should replace the -Wdefault-const-init-field-unsafe patch,
+not be applied on top. -Wdefault-const-init-unsafe contains both
+-Wdefault-const-init-field-unsafe and -Wdefault-const-init-var-unsafe.
 
-> +};
-> +
->   static int mpq8785_identify(struct i2c_client *client,
->   			    struct pmbus_driver_info *info)
->   {
-> @@ -99,6 +106,8 @@ static int mpq8785_probe(struct i2c_client *client)
->   	struct device *dev = &client->dev;
->   	struct pmbus_driver_info *info;
->   	enum chips chip_id;
-> +	u32 voltage_scale;
-> +	int ret;
->   
->   	info = devm_kmemdup(dev, &mpq8785_info, sizeof(*info), GFP_KERNEL);
->   	if (!info)
-> @@ -126,6 +135,18 @@ static int mpq8785_probe(struct i2c_client *client)
->   		return -ENODEV;
->   	}
->   
-> +	if (!of_property_read_u32(dev->of_node,
-
-s/of_property/device_property/ (and include linux/property.h) to make this
-usable from non-devicetree systems.
-
-Also, please swap this patch with the previous patch to address the concern
-about patch order (i.e., introduce the property first and then add support
-for the new chips).
-
-Thanks,
-Guenter
-
-> +				  "mps,vout-fb-divider-ratio-permille",
-> +				  &voltage_scale)) {
-> +		if (voltage_scale > voltage_scale_loop_max_val[chip_id])
-> +			return -EINVAL;
-> +
-> +		ret = i2c_smbus_write_word_data(client, PMBUS_VOUT_SCALE_LOOP,
-> +						voltage_scale);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->   	return pmbus_do_probe(client, info);
->   };
->   
-
+Cheers,
+Nathan
 
