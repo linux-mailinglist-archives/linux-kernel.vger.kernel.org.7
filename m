@@ -1,149 +1,189 @@
-Return-Path: <linux-kernel+bounces-641289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07C4AB0F7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:45:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9896AAB0F8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54AA9503B9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 647859E1C8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED3128DEE1;
-	Fri,  9 May 2025 09:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185F628DB6F;
+	Fri,  9 May 2025 09:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="bsMOAxeU"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n8ShsXQ5"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B36428D840;
-	Fri,  9 May 2025 09:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1F7266B44;
+	Fri,  9 May 2025 09:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746783934; cv=none; b=OWPxe+j0dhja0FdmruGIA5o6543Z2gFJf3m1k0g6o2ur3dvCuDKjNf8nN4qFfBTe/LailLOijwt8hOKSnjAkP9CqZTsU/4oQQKcoMho2om0RUstNDhNkc9O5xrarsVHbBOAI6yBSviO35vMOQXwtZWEP9fMqyux7LIkR3iL4Efw=
+	t=1746784099; cv=none; b=Sz6H+p6DGEBPaM203oCSLVbOyLL0YLwz9ZUb0UGUaQcWgnUT0FeEBW+0qe80nafNa8zHmGc9gQHa9QC8KuXWtRT5aNr40rc6jwReZHEedgQ/3RBdhMkqpfvXgVLU3DgKJb6LZQcKfU6oAi8vXzvF5f0lbSW2zhtE35r6P+ap9is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746783934; c=relaxed/simple;
-	bh=rCAKiZwC07a6hYm1JXeN/eU4Io7sxQr9R2Z0uILb7+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=auPX5lzaTDejiGDwy33UJdQ1GkRY1JzCEefgM1l5K0MVUP6D5jaExW8NXBa+xYJefZUKc7ayY/4Kd7hoFzPgSlJmVH6D9IZhIiwbx9C/NVAlblZ3wOw/Pjw8O9zOE6QExuIwIqjNW2YF1ruC+9N9zQw52Erc6Rk+ang08Qf15UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=bsMOAxeU; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=OgKUwxjDLVEnkNCJ6apJ/HjXQWHF4sHczo99k4VuzQ0=; b=bsMOAxeUeKSmOj0fW9khPDifvx
-	VkxBt0BZF6rOZ95DJ9mT28mVjw5BmwkTkW0uRU1aESBW3EVgBHDKiGehu6BFrK6Cgx2lLlloSjlls
-	GZu7ZwU3QsrtYF3/WiV1ilNeKBy4rviTv8t0ujG8adRNI1fSHGXUnyRi/ElCOv/37eGymenZnq78N
-	vZcrtuIDjWwRzBn97Emxc8hE51NZakOvVRVh+kQatQ+ciT0ZSmmNj96+AN7lPdigoEcSXn1dBxRLQ
-	/dquK9ssHjsBeQf8b++9QOolNj61Y8i8/3z1T3LIZBz003LpQdp1+hjQEqGANPtdHpvrQAHJLCAOR
-	lRTKp6nA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uDKIC-004olb-2U;
-	Fri, 09 May 2025 17:45:21 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 09 May 2025 17:45:20 +0800
-Date: Fri, 9 May 2025 17:45:20 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, keyrings@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [v3 PATCH] KEYS: Invert FINAL_PUT bit
-Message-ID: <aB3OsMWScE2I9DhG@gondor.apana.org.au>
-References: <aBccz2nJs5Asg6cN@gondor.apana.org.au>
- <202505091721.245cbe78-lkp@intel.com>
+	s=arc-20240116; t=1746784099; c=relaxed/simple;
+	bh=clXk6+TyzwGn7jst9KCUuBWidIZ/3lsFT8MeDrELOVI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P1ZeR3NW7cO+aA1K+fF+SCytVtdiaJTcDPb7007JPQn2g3RAIGPIZLPAupuOVqg54L7DWU0KwdVThOyejLsWUpy0SmcQq1xQqXJs3j2PVo9YAwmqlScVLWsybRn9fNGHMvyKPmKEEhWLcbf67vuTJ7t1QR9F5dzWSwuOIuGDjlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n8ShsXQ5; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5550341DF4;
+	Fri,  9 May 2025 09:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746784089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8klRadoLwDsuugPRdfkTBI5fHbN2cc7BUxlcxRublVA=;
+	b=n8ShsXQ5N9AfaM9I+nuF0nB7V0W6tS6DAeRJIakU8triwC/tjTW1B6rxifJZr5uVorXtQ0
+	5pWOOa2VbZWc2F1/VVh+rMKN5w3I0PHP1iU7wNbuLqnpGfrrfaFa5v+/+PzJ0SvQIl/WE5
+	RGwdUMSdZA0hClfo4RxxDfZGwFmewPPcUJeGuaxXeA0BFkRKwpYgjm+YihAP3OejX74+Yy
+	bou2p+smtRxzT0gYQ98LBWj6WBW1FZyUh95Wfz0hwG5Yprs69Ol5yGee5JK/NX5Mt+jkzZ
+	W65BTrPV87lHCx64xq76+bt3k9YzrApvCaH735sSjhq1a/PLPU07jZpdBqCHRA==
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Subject: [PATCH v8 0/2] riscv: pwm: sophgo: add pwm support for CV1800
+Date: Fri, 09 May 2025 11:45:42 +0200
+Message-Id: <20250509-pwm_sophgo-v8-0-cfaebeb8ee17@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202505091721.245cbe78-lkp@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMbOHWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyLHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNz3YLy3Pji/IKM9HxdUwNjoyRjC1OLZCNzJaCGgqLUtMwKsGHRsbW
+ 1AKgEj4lcAAAA
+X-Change-ID: 20250407-pwm_sophgo-5032b3858c27
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+ sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Jingbao Qiu <qiujingbao.dlmu@gmail.com>, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledvfedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsuceuohhnnhgvfhhilhhlvgcuoehthhhomhgrshdrsghonhhnvghfihhllhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekvdeggfefheektdevtdeuleffiefhveduhefhheekgeeujeevkeelfedutedvffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucfkphepvdgrtddumegtsgdugeemkeeflegtmeejtgdttdemrgegugejmeefvgelvgemvgekfedtmegsfegvtgenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeekfeeltgemjegttddtmegrgegujeemfegvlegvmegvkeeftdemsgefvggtpdhhvghloheplgduledvrdduieekrddurddufegnpdhmrghilhhfrhhomhepthhhohhmrghsrdgsohhnnhgvfhhilhhlvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhor
+ hhgpdhrtghpthhtohepihhnohgthhhirghmrgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrsghonhhnvghfihhllhgvsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehqihhujhhinhhgsggrohdrughlmhhusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Fri, May 09, 2025 at 05:34:09PM +0800, kernel test robot wrote:
-> 
-> our bot applied this patch directly upon v6.15-rc5. could you let us know if
-> this is a correct appliment?
+The Sophgo CV1800 chip provides a set of four independent
+PWM channel outputs.
+This series adds PWM controller support for Sophgo cv1800.
 
-Yes it is correct.
+Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+[Thomas since v8]
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+---
+Changes in v8:
+- Rewrote supported frequency
+- Hardcoded HLPERIOD_BASE and PERIDO_BASE
+- Change usage of update_bits to set/clear bits when needed
+- Rewrote construct of enablement of PWM
+- Fixed OE activation
+- Fixed hw state modification in case where pwm value cannot be reached
+- Renamed variables
+- Errors out for new cases
+- Reworded some comments
 
-The patch was buggy, the test_bit_acquire should've been inverted too:
+v7: https://lore.kernel.org/linux-pwm/20240501083242.773305-1-qiujingbao.dlmu@gmail.com/
 
----8<---
-Invert the FINAL_PUT bit so that test_bit_acquire and clear_bit_unlock
-can be used instead of smp_mb.
+Changes in v7:
+- add detailed Limitations
+- using BIT(n) instead BIT(0) << n
+- use 0 instead of disable macro
+- modify OE judgment criteria
+- add devm_regmap_init_mmio error message
+- delete unused variable
 
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+v6: https://lore.kernel.org/all/20240406063413.3334639-1-qiujingbao.dlmu@gmail.com/
 
-diff --git a/include/linux/key.h b/include/linux/key.h
-index ba05de8579ec..81b8f05c6898 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -236,7 +236,7 @@ struct key {
- #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
- #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
- #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
--#define KEY_FLAG_FINAL_PUT	10	/* set if final put has happened on key */
-+#define KEY_FLAG_USER_ALIVE	10	/* set if final put has not happened on key yet */
- 
- 	/* the key type and key description string
- 	 * - the desc is used to match a key against search criteria
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index f27223ea4578..748e83818a76 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -218,8 +218,8 @@ static void key_garbage_collector(struct work_struct *work)
- 		key = rb_entry(cursor, struct key, serial_node);
- 		cursor = rb_next(cursor);
- 
--		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
--			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
-+		if (!test_bit_acquire(KEY_FLAG_USER_ALIVE, &key->flags)) {
-+			/* Clobber key->user after final put seen. */
- 			goto found_unreferenced_key;
- 		}
- 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 7198cd2ac3a3..3bbdde778631 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -298,6 +298,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 	key->restrict_link = restrict_link;
- 	key->last_used_at = ktime_get_real_seconds();
- 
-+	key->flags |= 1 << KEY_FLAG_USER_ALIVE;
- 	if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
- 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
- 	if (flags & KEY_ALLOC_BUILT_IN)
-@@ -658,8 +659,8 @@ void key_put(struct key *key)
- 				key->user->qnbytes -= key->quotalen;
- 				spin_unlock_irqrestore(&key->user->lock, flags);
- 			}
--			smp_mb(); /* key->user before FINAL_PUT set. */
--			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
-+			/* Mark key as safe for GC after key->user done. */
-+			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
- 			schedule_work(&key_gc_work);
- 		}
- 	}
+Changes in v6:
+- delete the OE function because we plan to use the counter subsystem
+  instead of capture, so there is no need to reuse this code.
+- fix set polarity reverse error.
+
+v5: https://lore.kernel.org/all/20240314100131.323540-1-qiujingbao.dlmu@gmail.com/
+
+Changes in v5:
+- drop filename
+- fix macro
+- optimize cv1800_pwm_set_polarity()
+- optimize cv1800_pwm_set_oe()
+- add comment for cv1800_pwm_set_oe()
+- use ticks replace tem
+- fix duty_cycle larger than period_val
+- use devm_clk_rate_exclusive_get() replace
+  clk_rate_exclusive_get()
+- map linux polarity to register polarity 
+
+v4: https://lore.kernel.org/all/20240304085933.1246964-1-qiujingbao.dlmu@gmail.com/
+
+datasheet Link: https://github.com/milkv-duo/duo-files/blob/main/duo/datasheet/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
+page 614
+
+Changes in v4:
+- use macro instead of npwm number
+- add support for polarity feature
+- add support for Output-Enable/OE feature
+
+v3: https://lore.kernel.org/all/20240223082014.109385-1-qiujingbao.dlmu@gmail.com/
+
+Changes in v3:
+- use 0x08 instead of macro
+- split if statements based on conditions
+- in order to round up, first calculate the
+  number of high-level cycles, then subtract
+  it from the PERIOD to obtain the number of HLPERIOD
+- use new pwmchip_alloc() API instead of old style
+
+v2: https://lore.kernel.org/all/20240212121729.1086718-1-qiujingbao.dlmu@gmail.com/
+
+Changes in v2:
+- drop full stop from subject
+- re-order maintainers and description
+- pass checkpatch.pl --strict
+- fix naming errors
+- add "Limitations" section
+- use a driver specific prefix for all defines
+- using bool instead u32 in cv1800_pwm_enable
+- check and set state->polarity
+- use mul_u64_u64_div_u64
+- use clk_rate_exclusive_get(), balance with clk_rate_exclusive_put()
+- using macro definitions instead of shift operations
+- remove shift operation on 0
+- use priv replace cv_pwm
+- hardcode npwm
+- set atomic to true
+- remove MODULE_ALIAS
+
+v1: https://lore.kernel.org/all/20240207055856.672184-1-qiujingbao.dlmu@gmail.com/
+
+---
+Jingbao Qiu (2):
+      dt-bindings: pwm: sophgo: add pwm for Sophgo CV1800 series SoC
+      pwm: sophgo: add pwm support for Sophgo CV1800 SoC
+
+ .../devicetree/bindings/pwm/sophgo,cv1800-pwm.yaml |  45 ++++
+ drivers/pwm/Kconfig                                |  10 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-cv1800.c                           | 294 +++++++++++++++++++++
+ 4 files changed, 350 insertions(+)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250407-pwm_sophgo-5032b3858c27
+
+Best regards,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+
 
