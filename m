@@ -1,151 +1,139 @@
-Return-Path: <linux-kernel+bounces-641331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D87AAB101C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D52AB1031
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DFB07BEAB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551AF1C252E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D31928ECFE;
-	Fri,  9 May 2025 10:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CAD28F51F;
+	Fri,  9 May 2025 10:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BefuLuEY"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABCA28EA44;
-	Fri,  9 May 2025 10:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="Yk8uJ4NM"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF543274674;
+	Fri,  9 May 2025 10:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746785606; cv=none; b=D/jLvQfKDn++qupEdBweWgY6IB+Tg7eS9N+SnALJdMz5Y3+M0WBxq3Xv0mZE0qoWDppJ1etqSdcQeddwSLSKr4uq+qOWVLFHTb3zr27F9KEay7dkLVOMrRMspJXvEqz3njx+GdinIAYFrfuzkA9ncOF87hG+ZOFVlSGR30xuo/c=
+	t=1746785639; cv=none; b=vGpZDpAIS+1mTMT20NycMOHFB1HSDxs17+AJvsgHJt0X/aF+r2Mjlr+UR/nIVam+o+DIaTfhNarb2tOoVwqQdStN37r8wOF/U/MxGLqNUtZoDyFf4j67QPDhiG/CYQZPazbUQFr/8T4VXnJq8oBCCMMBDGCN89EOZz162FVWRh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746785606; c=relaxed/simple;
-	bh=eheSknn2THWCqMhu/QSVH4frT7M4Uuq3n5+Qbd+NYcE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=TPSwD/x1Wue15Ft1l6NGd7NT1DOhUkCkuDc2kbJEBUDMYG4Tozynsxyx1uOL6Z/WxnBN5KAPjxqwbz0vFVbWhQs8IDnAHkstxAdSVRXmvYRN6hfxgFbJM8t7WVBSa2HVl1Iyz7vkAMP1yDvX/P100kA4pVX2rMwxef4fLjX4Hd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BefuLuEY; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id B079E2111571; Fri,  9 May 2025 03:13:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B079E2111571
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746785604;
-	bh=km0lQIF3NA+f3D6n5s967/qB/wGbEZ8pGu9m1a7cwt0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BefuLuEY7t1KJ8cb7O5BZ3ssurzZrp2ed+2ZhNgirvLSygKKshwV9fHIzgd2Y3G5q
-	 D2vScBhsEM0ykCLMtJVyDTcqrCD04Dxgk/8DWvEc3fg2WJ6yXG7Sk1FcKSn+VmzNP/
-	 NH1M0tvhB3MmqZ+FE6JkkEYa5Movp5B15Qu7NTm4=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=EF=BF=BD=7EDski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Long Li <longli@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Paul Rosswurm <paulros@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH v3 2/4] PCI: hv: Allow dynamic MSI-X vector allocation
-Date: Fri,  9 May 2025 03:13:22 -0700
-Message-Id: <1746785602-4600-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1746785566-4337-1-git-send-email-shradhagupta@linux.microsoft.com>
-References: <1746785566-4337-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1746785639; c=relaxed/simple;
+	bh=AU/evyLY36h6heLli8/0jOoKd69aELP0vtO9uBIR2Lg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=swBxGvvuOU/VhLkCgFvNOxB3Rx2tm6y5ODXG5Ly5ElYWwwIzzrNzNruhLcjoQ7kp2p8F5C/TBDriPfMeqk22uBH76FOBvMle/5VrP4jX5rwnxyseZ/hOxaR0kIPq3Bz+3zcXkxq6gGgcQBLirpP9KU2y71YtcUEyi5iZih8V9BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=Yk8uJ4NM; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=nAfoWVNuZUaaIrzJ/KTAH5X5jAijWISwnD0nCOplMzE=; b=Yk8uJ4NMd3wjcpnvWtoeavtXMC
+	NQZkPY7+0+V8Vip0kgom6HDMFU1+vKqHoVMghH4oHNDSmSeP4WSyj5/92H0+XysIUrB2KQaWhI97L
+	ArnKc3Kzn7FqiB40YMPniLv7l83EarqNf+47u9hB0i4qi/tIEet0QKweu6BO0fKvp0nY=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:56672 helo=[127.0.1.1])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1uDKjp-001ghk-L1; Fri, 09 May 2025 12:13:54 +0200
+From: Matthias Fend <matthias.fend@emfend.at>
+Subject: [PATCH v4 0/2] Support for Texas Instruments TPS6131X flash LED
+ driver
+Date: Fri, 09 May 2025 12:13:41 +0200
+Message-Id: <20250509-leds-tps6131x-v4-0-2c9563f5b67c@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFfVHWgC/2XNTQqDMBCG4atI1k2Z/Gi0q96jdBGTsQZalUSCR
+ bx7o1CkdvkNPO/MJKB3GMglm4nH6ILruzTkKSOm1d0DqbNpEw48B84VfaINdBxCwQSbqFZSqLI
+ UKAFIMoPHxk1b73ZPu3Vh7P17y0e2Xr+l8lCKjAK1DBSzFTQV6iu+GuzsWY9kLUW+a8H+NE+6N
+ lAZpXOoOR612LXk4qhF0kYXygpZaPn7e1mWDxp7Sp0mAQAA
+X-Change-ID: 20250227-leds-tps6131x-a7437883e400
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Matthias Fend <matthias.fend@emfend.at>, 
+ bsp-development.geo@leica-geosystems.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-Allow dynamic MSI-X vector allocation for pci_hyperv PCI controller
-by adding support for the flag MSI_FLAG_PCI_MSIX_ALLOC_DYN and using
-pci_msix_prepare_desc() to prepare the MSI-X descriptors.
+The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
+stage is capable of supplying a maximum total current of roughly 1500mA.
+The TPS6131x provides three constant-current sinks, capable of sinking up
+to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
+each sink (LED1, LED2, LED3) supports currents up to 175m
 
-Feature support added for both x86 and ARM64
-
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
 ---
- Changes in v3:
- * Add arm64 support
----
- Changes in v2:
- * split the patch to keep changes in PCI and pci_hyperv controller
-   seperate
- * replace strings "pci vectors" by "MSI-X vectors"
----
- drivers/pci/controller/pci-hyperv.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Changes in v4:
+- Added/removed/adjusted comments
+- Use defines for register defaults
+- Updated source format
+- Check for error in torch refresh timer
+- Return error from tps6131x_parse_node()
+- Link to v3: https://lore.kernel.org/r/20250423-leds-tps6131x-v3-0-ca67d346a4ea@emfend.at
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index ac27bda5ba26..8c8882cb0ad2 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -598,7 +598,8 @@ static unsigned int hv_msi_get_int_vector(struct irq_data *data)
- 	return cfg->vector;
- }
- 
--#define hv_msi_prepare		pci_msi_prepare
-+#define hv_msi_prepare			pci_msi_prepare
-+#define hv_msix_prepare_desc		pci_msix_prepare_desc
- 
- /**
-  * hv_arch_irq_unmask() - "Unmask" the IRQ by setting its current
-@@ -727,6 +728,7 @@ static void hv_arch_irq_unmask(struct irq_data *data)
- #define FLOW_HANDLER		NULL
- #define FLOW_NAME		NULL
- #define hv_msi_prepare		NULL
-+#define hv_msix_prepare_desc	pci_msix_prepare_desc
- 
- struct hv_pci_chip_data {
- 	DECLARE_BITMAP(spi_map, HV_PCI_MSI_SPI_NR);
-@@ -2063,6 +2065,7 @@ static struct irq_chip hv_msi_irq_chip = {
- static struct msi_domain_ops hv_msi_ops = {
- 	.msi_prepare	= hv_msi_prepare,
- 	.msi_free	= hv_msi_free,
-+	.prepare_desc	= hv_msix_prepare_desc,
- };
- 
- /**
-@@ -2084,7 +2087,7 @@ static int hv_pcie_init_irq_domain(struct hv_pcibus_device *hbus)
- 	hbus->msi_info.ops = &hv_msi_ops;
- 	hbus->msi_info.flags = (MSI_FLAG_USE_DEF_DOM_OPS |
- 		MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_MULTI_PCI_MSI |
--		MSI_FLAG_PCI_MSIX);
-+		MSI_FLAG_PCI_MSIX | MSI_FLAG_PCI_MSIX_ALLOC_DYN);
- 	hbus->msi_info.handler = FLOW_HANDLER;
- 	hbus->msi_info.handler_name = FLOW_NAME;
- 	hbus->msi_info.data = hbus;
+Changes in v3:
+- Add comment for locking
+- Drop handling based on CONFIG_V4L2_FLASH_LED_CLASS
+- Stop if getting reset GPIO fails
+- Optimize locks
+- Fix type of num_channels (u32 -> int)
+- Convert a remaining return sequence to dev_err_probe
+- Link to v2: https://lore.kernel.org/r/20250318-leds-tps6131x-v2-0-bc09c7a50b2e@emfend.at
+
+Changes in v2:
+- Bindings: Extend device description
+- Bindings: Drop unused address/size cells
+- Bindings: Use fallback compatible 
+- Bindings: Corrected minimum current for 50mA steps
+- Bindings: Drop node label
+- Fix name of REGISTER4 INDC shift define
+- Save device instead i2c_client in private data
+- Add comment for mutex
+- Use macro to convert from uA to mA
+- Use defines to describe initial register values
+- Add safety delay during reset sequence
+- Use fixed value enum to set the mode
+- Renamed some local variables
+- Re-sorted local variables
+- Replaced ifdefs for V4L2_FLASH_LED_CLASS
+- Improved some error messages
+- Link to v1: https://lore.kernel.org/r/20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at
+
+---
+Matthias Fend (2):
+      dt-bindings: leds: add Texas Instruments TPS6131x flash LED driver
+      leds: tps6131x: add support for Texas Instruments TPS6131X flash LED driver
+
+ .../devicetree/bindings/leds/ti,tps61310.yaml      | 120 +++
+ MAINTAINERS                                        |   7 +
+ drivers/leds/flash/Kconfig                         |  11 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-tps6131x.c                 | 815 +++++++++++++++++++++
+ 5 files changed, 954 insertions(+)
+---
+base-commit: 9c69f88849045499e8ad114e5e13dbb3c85f4443
+change-id: 20250227-leds-tps6131x-a7437883e400
+
+Best regards,
 -- 
-2.34.1
+Matthias Fend <matthias.fend@emfend.at>
 
 
