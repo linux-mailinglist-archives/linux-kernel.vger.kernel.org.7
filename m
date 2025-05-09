@@ -1,111 +1,294 @@
-Return-Path: <linux-kernel+bounces-642023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBECFAB19B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:05:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B91AB19C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EA61C47847
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C45B3BE795
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD08D2356C5;
-	Fri,  9 May 2025 15:59:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDEA182BC;
+	Fri,  9 May 2025 16:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UEgZSx/s"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699CD23314B;
-	Fri,  9 May 2025 15:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0076922F757
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 16:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746806366; cv=none; b=QxLkHhQbDDIoyi56dttgIaaArpYZaVtUovJaBcZZs3SzU7S4KkQqiQ3+vbCU+oPT4n1DM+g+gIsFMvTCN9ZehrnxfHlv4MyI4PRm50QW2B9NXeCD7Gxuoq5RRjA4ZWoi4rLQUzOejaNsxzTcO2wVLBOZvKwlBcZ8s3tqGDzIqMA=
+	t=1746806423; cv=none; b=gMQ13qWvpQ37Dkbhv2zwPB+LINX3m/1Y5LM2Ep3tmpsCk5ck9rmaEWvcP5dKId5k54mmjPiIbKvB1iaTtL2UvNk4YOJFCPMvPN5FZ0Kd6Oiz46Q3CXdmCsrK7A2BSRVY9Rrlx0OndYu6eQGl4fIhbcGnQGOgk2sX4H6x9ui8C2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746806366; c=relaxed/simple;
-	bh=LVbe8NaiNwFmsU6alsTBr36nsp6BgvkDwyvbLPLKG8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+Vunv6AAs4qQJD0YbnYc5ORxzH+Rpq+8ncl3QC1BlcIhJZqZDxFXR7ScZYl+y/HOdrHm12j3Lr+fbBsuRYy/nQ0/hxeDF9W83/2/7KauPhE0yEsda80oazg4rkwgfWuqxLXYby9jAHmk1ZOWby4xPjDmLDHJ0bSZm50km7ELec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211D3C4CEE4;
-	Fri,  9 May 2025 15:59:20 +0000 (UTC)
-Date: Fri, 9 May 2025 16:59:18 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	=?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>,
-	suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
-	jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
-	akpm@linux-foundation.org, paulmck@kernel.org, mark.rutland@arm.com,
-	joey.gouly@arm.com, maz@kernel.org, james.morse@arm.com,
-	broonie@kernel.org, oliver.upton@linux.dev, baohua@kernel.org,
-	david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca,
-	nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
-	smostafa@google.com, kevin.tian@intel.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
-Subject: Re: [RESEND PATCH v6 1/3] arm64: Add BBM Level 2 cpu feature
-Message-ID: <aB4mVtzLaS-YCzW2@arm.com>
-References: <20250428153514.55772-2-miko.lenczewski@arm.com>
- <20250428153514.55772-4-miko.lenczewski@arm.com>
- <20250506142508.GB1197@willie-the-truck>
- <78fec33d-fe66-4352-be11-900f456c9af3@arm.com>
- <20250509134904.GA5707@willie-the-truck>
- <9bb94fe8-d605-49b4-91f0-0ad6d527b320@arm.com>
- <20250509142852.GA5845@willie-the-truck>
+	s=arc-20240116; t=1746806423; c=relaxed/simple;
+	bh=aFTgs5swAI0cahFmMQV07LyAkgLg+EMy9e7W9lBLOJ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NN6sDY6l8AGlkA65PnrRJbxC7B7gleltMpoIPOMwain4H9GNwKZAasybCbhKKfrL+MfDdoCztrGP2fQZg3NNtoEqRaWItfC8Pw4JN41sdpeDX5LyZRdEecJEZqSbpOR1XxzDlTm3uYp8FBQomfWjpTuHC1gf45Zjq1QZhiSQvyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UEgZSx/s; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746806409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Xo8KAOck/nq9vlwlvBnbq73MIxiM/M9AFXx0o6yplGM=;
+	b=UEgZSx/s5HnkFDrWqR1KPYmqjSH0uQvYWGdOBxONH7KARhjsrbdcH60ILn4uvzYc+6rCwF
+	+CwUaC9XTppJYFdhbm0WsQ+VHYYuRIWwWz0UFBAbludiOeAGK+4R7P/HyHZWFqTUzz+OEn
+	X9hMR1893PCS5qw9tyxKql9EM1kXg98=
+From: Dawei Li <dawei.li@linux.dev>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dawei.li@linux.dev,
+	set_pte_at@outlook.com
+Subject: [PATCH v2 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Date: Fri,  9 May 2025 23:59:24 +0800
+Message-Id: <20250509155927.109258-1-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509142852.GA5845@willie-the-truck>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, May 09, 2025 at 03:28:53PM +0100, Will Deacon wrote:
-> On Fri, May 09, 2025 at 03:16:01PM +0100, Ryan Roberts wrote:
-> > On 09/05/2025 14:49, Will Deacon wrote:
-> > > I wonder if we could treat it like an erratum in some way instead? That
-> > > is, invert things so that CPUs which _don't_ have BBML2_NOABORT are
-> > > considered to have a "BBM_CONFLICT_ABORT" erratum (which we obviously
-> > > wouldn't shout about). Then we should be able to say:
-> > > 
-> > >   - If any of the early CPUs don't have BBML2_NOABORT, then the erratum
-> > >     would be enabled and we wouln't elide BBM.
-> > > 
-> > >   - If a late CPU doesn't have BBML2_NOABORT then it can't come online
-> > >     if the erratum isn't already enabled.
-> > 
-> > That's exactly the policy that this cludge provides. But it's using the midr to
-> > check if the CPU has BBML2_NOABORT. I'm not sure I follow your point about a
-> > "BBM_CONFLICT_ABORT" erratum?
-> 
-> I was hoping that it would mean that each CPU can independently determine
-> whether or not they have the erratum and then enable it as soon as they
-> detect it. That way, there's no need to iterate over all the early cores.
+Hi,
 
-But then we'll still have to disable the feature if one of the early
-CPUs doesn't have it. As a local CPU feature as per the errata handling,
-the feature (bug) is advertised if at least one CPU supports it. Here we
-kind of need a combination of system (available an all early CPUs) and
-local MIDR check.
+This is V2 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+for rpmsg subsystem.
 
-We might be able to work with two features - one SCOPE_SYSTEM for the
-sanitised ID reg and a _negative_ (deny-list) SCOPE_LOCAL_CPU for the
-MIDR. Or probably a single CPU-local feature, but negative, that checks
-both the ID reg and MIDR, let's call it ARM64_HAS_NO_BBML2_NOABORT. If a
-single CPU does not have the ID reg or is on the MIDR deny-list, this
-"feature" will be enabled. For late CPUs, if NO_BBML2_NOABORT has been
-enabled, they are allowed to miss it (OPTIONAL_FOR_LATE_CPU). However,
-if NO_BBML2_NOABORT is cleared, a late CPU is not allowed to have it.
+Current uAPI implementation for rpmsg ctrl & char device manipulation is
+abstracted in procedures below:
+- fd = open("/dev/rpmsg_ctrlX")
+- ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+  generated.
+- fd_ep = open("/dev/rpmsgY", O_RDWR) 
+- operations on fd_ep(write, read, poll ioctl)
+- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+- close(fd_ep)
+- close(fd)
 
-Hmm, if I got the logic right, that's what
-ARM64_CPUCAP_LOCAL_CPU_ERRATUM means but we need to negate the feature
-to disable the optimisation if at least one CPU is on the deny-list or
-missing BBML2.
+This /dev/rpmsgY abstraction is less favorable for:
+- Performance issue: It's time consuming for some operations are
+invovled:
+  - Device node creation.
+    Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+    overhead is based on coordination between DEVTMPFS and userspace
+    tools such as udev and mdev.
 
-(or maybe I haven't had enough coffee today)
+  - Extra kernel-space switch cost.
+
+  - Other major costs brought by heavy-weight logic like device_add().
+
+- /dev/rpmsgY node can be opened only once. It doesn't make much sense
+    that a dynamically created device node can be opened only once.
+
+- For some container application such as docker, a client can't access
+  host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+  is generated dynamically and whose existence is unknown for clients in
+  advance, this uAPI based on device node doesn't fit well.
+
+An anon inode based approach is introduced to address the issues above.
+Rather than generating device node and opening it, rpmsg code just make
+a anon inode representing eptdev and return the fd to userspace.
+
+# Performance demo
+
+An simple C application is tested to verify performance of new uAPI.
+
+$ cat test.c
+
+#include <linux/rpmsg.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/time.h>
+
+#define N (1 << 20)
+
+int main(int argc, char *argv[])
+{
+	int ret, fd, ep_fd, loop;
+	struct rpmsg_endpoint_info info; 
+	struct rpmsg_endpoint_fd_info fd_info; 
+	struct timeval start, end;
+	int i = 0;
+	double t1, t2;
+
+	fd = -1;
+	ep_fd = -1;
+	loop = N;
+
+	if (argc == 1) {
+		loop = N;
+	} else if (argc > 1) {
+		loop = atoi(argv[1]);
+	}
+
+	printf("loop[%d]\n", loop);
+
+	strcpy(info.name, "epx");
+	info.src = -1;
+	info.dst = -1;
+
+	strcpy(fd_info.name, "epx");
+	fd_info.src = -1;
+	fd_info.dst = -1;
+	fd_info.fd = -1;
+
+	while (fd < 0) {
+		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+		if (fd < 0) {
+			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+		}
+	}
+
+	gettimeofday(&start, NULL);
+
+	while (loop--) {
+		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		ep_fd = -1;
+		i = 0;
+
+		while (ep_fd < 0) {
+			ep_fd = open("/dev/rpmsg0", O_RDWR);
+			if (ep_fd < 0) {
+				i++;
+				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+			}
+		}
+
+		//printf("Number of open failed[%d]\n", i);
+
+		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("old ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d], errno[%d]\n",
+				ret, errno);
+		}
+
+		close(ep_fd);
+	}
+	
+	gettimeofday(&end, NULL);
+
+	printf("time for old way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+
+	if (argc == 1) {
+		loop = N;
+	} else if (argc > 1) {
+		loop = atoi(argv[1]);
+	}
+
+	printf("loop[%d]\n", loop);
+
+	gettimeofday(&start, NULL);
+
+	while (loop--) {
+		fd_info.fd = -1;
+		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+		if (ret < 0 || fd_info.fd < 0) {
+			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		close(fd_info.fd);
+	}
+	
+	gettimeofday(&end, NULL);
+
+	printf("time for new way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+
+	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+
+	close(fd);
+}
+
+# Performance benchmark 
+
+- Legacy means benchmark based on old uAPI
+- New means benchmark based on new uAPI(the one this series introduce)
+- Time are in units of us(10^-6 s)
+
+Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+1	1000	203227			2533		80.2	
+2	1000	196501			2384		82.4
+3	1000	213619			2518		84.8
+4	1000	215898			2515		85.8
+5	1000	211340			2417		87.4
+6	1000	217008			2545		85.2
+7	1000	213591			2478		86.1
+8	1000	214618			2351		91.2
+9	1000	208021			2505		83.0
+10	1000	217092			2716		79.9	
+11	10000	2040802			26765		76.2
+12	10000	2027708			26867		75.4
+13	10000	1986117			27151		73.1
+14	10000	1992956			26301		75.7
+15	10000	1980262			25808		76.7
+16	10000	1925883			27926		68.9	
+17	10000	1957518			27100		72.2
+18	10000	1980626			28020		70.6
+19	10000	1990349			27351		72.7
+20	10000	1979087			27563		71.8
+21	100000	20266414		256170		79.1
+22	100000	19732259		259883		75.9
+23	100000	19878399		253710		78.3	
+24	100000	19788886		257199		76.9
+25	100000	19937663		258865		77.0
+26	100000	19602512		256771		76.3
+27	100000	19599214		257088		76.2
+28	100000	19795920		261488		75.7
+29	100000	19719341		263299		74.8
+30	100000	19871390		258465		76.8
+
+# Changelog:
+
+Changes in v2:
+- Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+- Link to v1: https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+
+Dawei Li (3):
+  rpmsg: char: Reuse eptdev logic for anon device
+  rpmsg: char: Implement eptdev based on anon inode
+  rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+
+ drivers/rpmsg/rpmsg_char.c | 124 ++++++++++++++++++++++++++++++-------
+ drivers/rpmsg/rpmsg_char.h |  19 ++++++
+ drivers/rpmsg/rpmsg_ctrl.c |  37 ++++++++---
+ include/uapi/linux/rpmsg.h |  19 ++++++
+ 4 files changed, 167 insertions(+), 32 deletions(-)
+
+---
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+
+Thanks,
+
+	Dawei
 
 -- 
-Catalin
+2.25.1
+
 
