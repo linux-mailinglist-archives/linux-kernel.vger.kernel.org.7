@@ -1,166 +1,159 @@
-Return-Path: <linux-kernel+bounces-640704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A84AB0804
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:41:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB143AB0808
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1723B5578
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4BB7AF5DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A48B22D793;
-	Fri,  9 May 2025 02:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25C822D9EB;
+	Fri,  9 May 2025 02:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTkXVan5"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfZj6Fbk"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D8910F2;
-	Fri,  9 May 2025 02:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BC321CFFA
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746758483; cv=none; b=H96aF/c7NXbw+Mghd7JMLcGRwDlrs0uTQAPyI80aJfI4vrHvtKNNOYQw1r4/iYnxGUQ20/xG7iaV7DuGueobQoJuBt/Ol267bKI7d9CgKLDAQpv5AbAm96ABoJXAv0NqSmm0/Y0jIHFXrbnfJP7efW+y3mfjaohRBi503k5TPVc=
+	t=1746758679; cv=none; b=H7RtNvDRqi86jyUb89HSTW/45/Sa/k5Z4Gy9NauDroQr8T22O1KlaOsvXTHK3mObhTlxeFm9HB0Kib7UHrkhwM7wv5TmWPwQvNHJHL9ElqfyY4o1vvfSnLzocdOemWF0/N50H0eOldET7I4P+oIv1Zh8L+KLUZzjMq/zkpXgAtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746758483; c=relaxed/simple;
-	bh=QCt7W9cQubdkOh1wzz0DSW4wGR4LXBXeyzwonSK7vwE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ezYaXuXAklgdmRcZ2EsS9oJu4jMP5MWrhqhMszDdakVBgXjbg1SkW2gh2HoH/44yOe0rBF2ebtpJfs5sy3+iyz+3WQR3NJ3S7f0aEjVbZtZTdmOE6ZIbh8I/ebINIca/r6QVA1j8+3VSG9GSeq2pHaahhVcCUOVLxxCvBxFXuew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTkXVan5; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1746758679; c=relaxed/simple;
+	bh=9RPpMIHS6Yf3v1StZtqE3gpsPteFqRSN4YhOjypjRxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HYZmL+EpZ9mFqDTaKszbEs4v5ab607DVuatNArxJ7B2cUA3HEJV//jTvr1rPks3cqszpKcnMsJcONtuNT96M80HIGs746YcSTMYrwFRMYTnUz1US9J8bMayBBC9zg5I2fME/jZNyNmCCVplbZC4lJVm/tWec8/NY23U9qjhBfGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfZj6Fbk; arc=none smtp.client-ip=209.85.217.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22e70a9c6bdso26585925ad.3;
-        Thu, 08 May 2025 19:41:21 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4c4e1f16833so511848137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 19:44:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746758481; x=1747363281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1746758676; x=1747363476; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mFS6mbwVeD+XxwjTe2L6G5xAyvfPHlOmCcGIREdnkRY=;
-        b=LTkXVan5wASFMkgedm1oq4CSqd2veMO7GHLjvMumV3fjiJDrEnSccdhssbSHwJ0Psf
-         PPr63wh4BkWOeMRettjLGiWQB5WzXJDbVBYEnVSZqiBN7xmbVbBENY3i5tVUGik+IvhG
-         U89PD5E+vwna9Cn/DD5UOaUVvxzerUQSK8YBRA6B5ws6KSPFpb2NXrxg+58uvlSArVWh
-         s1f3xvTsgGLAW2Vaf3Kp0HY8DzUmJj4z2+lFMxuqDBqbFg23KY9XoyD93/a2tuQOIm3O
-         YHxACf7gXDux6yAYmypNYCV5ywPb03xkBRfLqybj7KMK11w8zBakM88/1UC7G58neQyI
-         zaoA==
+        bh=mhwQ021WoX11b7d+iITjWgoVSr3Nzxd9UUacYTrQMbc=;
+        b=PfZj6FbkSvH5LVOoZABO9rLAfJSRI5Q/4X+BADQ1a4eW8yngCX5gM0XRCvRN+jB6V1
+         R22pGALCjWyJugBAPgM1IO0yy/MOTzt3MSe2kTBlUVHlUQ0hlTUda5druUCcJ4Ok5iwO
+         JlsJos8tvXAliD/mD/8H1p876ZEV4iWdINiiyjvsCGK/K+J4TdwcGzrjzM7S57+vXhqV
+         oKV/PJZwAEs5G/t/tfCVCDLZA3q9dMDM3grsf9Hq84wEq+RLi/L7+1i2TiQnGG/WtRfe
+         VD3dmfzZAvL6eqe+oiMDRk5zcZarb9xvLv1DhbedJ0+Mz+rVj/pflF3EdtdP9IJf+s9X
+         +WOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746758481; x=1747363281;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1746758676; x=1747363476;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mFS6mbwVeD+XxwjTe2L6G5xAyvfPHlOmCcGIREdnkRY=;
-        b=VBVkxGDZ1kgYPH7hGEgZQKYqE2GRz8Zflcutn6p8r3efX53IhjNnwjQia3N9AFPZVn
-         HH5cFxbZMlYScm27XOcDxXrGB0pqQ06BE5FfGMSOjm01z69b1ZXGUxNv5MAjm9Mrc0L2
-         NInbIAAlIz/MS/RNviAE+IcyXWyB30/QdMO7D7hadNNKkGX6GUadK0Mf4FN2Sg3jNnNQ
-         WoJ2ehTlSKqxqUnQ4nf+GIBE57a9MnYCLJ8fGdgNOzz2dZ0pwKPI/3TVo5u4BvatJzRH
-         uEO2cIaCNi1IhkUg5JPbzvsHpUjkxHMgj9dpioqzPqCJm2YpIULOuJGH8hUfNK0CiFRi
-         VI4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUb9I7hDAqokECR26aOQvB2sub+rTIxU6AAmHh13kd7aLsR1HJtvP3/kcF0HZ2gUxDOW84Yvxa8TipcOqJivIujR1ofdYJR@vger.kernel.org, AJvYcCWHTt3BX6lYtQjKTWTxvGwA3qgirZX126vhoBpkrCX0lJtTj+6+3vqMezVPSVgON1VjiU09WlEh+oZrke90@vger.kernel.org, AJvYcCWkR4/dy5z/u/TdKcoW7XVJYQnFRWeAh2EJPVTSK/2zmRoZAwBjmfO2ZlrBFyw0L+YicVewqkNVZyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzxIHtT1AShRlGIPFn68xLK2yI4BJhixiGEn4n3fgpaGstaMO2
-	D7rAoQrLcBmxdxV7L6EgkpR0tEmQrdJ0yNMEdK3ECjoZgmlCoe99
-X-Gm-Gg: ASbGncurgEMXlwTmHge01bHmMbgjf72HhWEoMQ2TPGqIiePAYKYl4KIWMB3ErwXFvn+
-	rps0ig7TtQOTlw6hK/sbbmWryieFsgt7bskyJM6UH0hVq1BluX0kmWWvcFUSG1SK9N4QFsLeYOV
-	94QBJoqA0SQ/Dv7B12VqLkV5LPTJFolvT3x9DoGj/iwpfnYkShvnwfU46YkfXCWpwUODGRLmUZP
-	cgeQZSaJLn7hNPWOwRVoN+jl0bN3sQIlw6+9mEdcvDHY3PwKhMt2Kni2Vqzlbx2D/wjXxyc+l5z
-	gBoEtGH3zUHAN9sEnE4esSDvg9SN1Trke/Jn693INXbTg3bf3Fa/84Lr0czqekGmJVAzIZXSb2t
-	vdl9E7Ix6/64TCxo=
-X-Google-Smtp-Source: AGHT+IGyYqp1wunfFzEOreidx8NjAbn3wqVn2CCrv5Sg8a4MZvMn88hnCC6hGU4WQ+NrUM+4SB//iQ==
-X-Received: by 2002:a17:902:f682:b0:224:a79:5fe9 with SMTP id d9443c01a7336-22fc8b59bd0mr22926965ad.30.1746758481075;
-        Thu, 08 May 2025 19:41:21 -0700 (PDT)
-Received: from localhost.localdomain ([14.116.239.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7544fc1sm7111905ad.46.2025.05.08.19.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 19:41:20 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: paul@paul-moore.com
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	chrisw@osdl.org,
-	greg@kroah.com,
-	jmorris@namei.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	serge@hallyn.com,
-	viro@zeniv.linux.org.uk,
-	wufan@linux.microsoft.com,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v3] securityfs: fix missing of d_delete() in securityfs_remove()
-Date: Fri,  9 May 2025 10:41:12 +0800
-Message-Id: <20250509024112.362527-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <CAHC9VhScmdZLz7W=FN+mfWjf5LB7jbTJm5g-iy35hvvMgbKRfQ@mail.gmail.com>
-References: <CAHC9VhScmdZLz7W=FN+mfWjf5LB7jbTJm5g-iy35hvvMgbKRfQ@mail.gmail.com>
+        bh=mhwQ021WoX11b7d+iITjWgoVSr3Nzxd9UUacYTrQMbc=;
+        b=Z+sZ0cd22NVbNxJcZqc8BvpcWE+fFcoNy2SPYUNbY6RFPTMSoetH4/bbaFVmSVckPV
+         cEGHuuwboEQCWzgVaVslJpkWr3wH87HTckWknmO+lGzZkzdaGL/NR6BP7Yb+O390IyXR
+         3ODneKN5u924mBgAbDNV0e7ZUDWCC7JoSLkXocGSLIPz988xjjEZH+edh8QOP1JTQj0e
+         tfPW9wq1po19t5xx3w94qZbvrQUC/zQN0aGXZ2J7gBc6UaSGs1kXA6xtTbeYqP/P37YL
+         vrFhHlpfZ90GjZPenusaUW4oO33e9rdZy5vvI5XS0F2PfJ5tpZMhSvW/i7S9MuFXkaey
+         EulQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwSnr8usJa/t7tYGZ9rrgd9gNR3EcdAW84P9/AEhz6vsu+cReEOqxl9bgDkdKqXlmQBJCdkJrzMztDuq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAH2jOV/TocBkOSaeX3B41yoU2iwKvKyxl0bXHEuV3PlIF4EfA
+	QfBMKDGpxN9pjtIdE6w8+dnSShRXatjXmCh0Uxg+tEeccIDPRm3n4l3VOj6vlyW6rCtqIZFSOei
+	PRuCsodqj0VdEXypuq9Qw+qGmtKA=
+X-Gm-Gg: ASbGnctik+lzRuxeUsrgCsU1sxRm5l5gKxQ/d+qJWoBVutrDhg+Jvjkjg/aWw2JTbgB
+	N4lINjUILanzJpXDaEvsQWZmc0KUlsID3nrwrMByxbVQS0Sn1nlYXhfWkxgt2+EGwhy+iExULGI
+	HYzTSDInam8RIlaULN+dKoNdFRbYR4VUsL
+X-Google-Smtp-Source: AGHT+IE47FPUz5/BnIb2DO47zCfE4KOhLMfUoBcCgBQwpo9OziunDh4bO23QRCXei7xi8gJSxjP1hJZm1XvF3qWz55A=
+X-Received: by 2002:a05:6102:4a8c:b0:4db:154f:aa02 with SMTP id
+ ada2fe7eead31-4deed30ce38mr2019530137.1.1746758676366; Thu, 08 May 2025
+ 19:44:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <tencent_0B227ECF6D12D91A3070FE8D41568AD10206@qq.com>
+In-Reply-To: <tencent_0B227ECF6D12D91A3070FE8D41568AD10206@qq.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 9 May 2025 14:44:25 +1200
+X-Gm-Features: AX0GCFv4rNg7UEufyZvK318eL1k82uFmT4TjkV1NLH5iMvntfUagn5i2y4t1PaM
+Message-ID: <CAGsJ_4yLyXefpjycf05MYEnUis1UkEmH+kKVeKDnCsZzgGNUMw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: clean up redundant code
+To: Feng Lee <379943137@qq.com>
+Cc: david@redhat.com, akpm@linux-foundation.org, mingo@kernel.org, 
+	jgg@ziepe.ca, jhubbard@nvidia.com, peterx@redhat.com, maobibo@loongson.cn, 
+	trivial@kernel.org, linux-kernel@vger.kernel.org, lance.yang@linux.dev, 
+	anshuman.khandual@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 8 May 2025 18:55:30 -0700, Fan Wu <wufan@kernel.org> wrote:
-> On Thu, May 8, 2025 at 7:11 AM <alexjlzheng@gmail.com> wrote:
-> >
-> > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> >
-> > Consider the following execution flow:
-> >
-> >   Thread 0: securityfs_create_dir("A")
-> >   Thread 1: cd /sys/kernel/security/A           <- we hold 'A'
-> >   Thread 0: securityfs_remove(dentry)           <- 'A' don't go away
-> >   Thread 0: securityfs_create_dir("A")          <- Failed: File exists!
-> >
-> > Although the LSM module will not be dynamically added or deleted after
-> > the kernel is started, it may dynamically add or delete pseudo files
-> > for status export or function configuration in userspace according to
-> > different status, which we are not prohibited from doing so.
-> >
-> > In addition, securityfs_recursive_remove() avoids this problem by calling
-> > __d_drop() directly. As a non-recursive version, it is somewhat strange
-> > that securityfs_remove() does not clean up the deleted dentry.
-> >
-> > Fix this by adding d_delete() in securityfs_remove().
-> >
-> > Fixes: b67dbf9d4c198 ("[PATCH] add securityfs for all LSMs to use")
-> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > ---
-> > changelog:
-> > v3: Modify the commit message to avoid readers mistakenly thinking that the LSM is being dynamically loaded
-> > v2: https://lore.kernel.org/all/20250507111204.2585739-1-alexjlzheng@tencent.com/
-> > v1: https://lore.kernel.org/all/20250425092548.6828-1-alexjlzheng@tencent.com/
-> > ---
-> >  security/inode.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/security/inode.c b/security/inode.c
-> > index da3ab44c8e57..d99baf26350a 100644
-> > --- a/security/inode.c
-> > +++ b/security/inode.c
-> > @@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
-> >                         simple_rmdir(dir, dentry);
-> >                 else
-> >                         simple_unlink(dir, dentry);
-> > +               d_delete(dentry);
-> >                 dput(dentry);
-> >         }
-> >         inode_unlock(dir);
-> > --
-> > 2.49.0
-> >
-> >
-> 
-> Since this could impact efi_secret_unlink(), I would suggest adding linux-efi.
+On Fri, May 9, 2025 at 1:54=E2=80=AFPM Feng Lee <379943137@qq.com> wrote:
+>
+> Remove pgd_offset_gate() completely and simply make the single
+> caller use pgd_offset()
 
-Thank you for your reply. :)
+ "."
 
-Did you mean cc to linux-efi?
+>
+> It appears that the gate area resides in the kernel-mapped segment
+> exclusively on IA64. Therefore, removing pgd_offset_k is safe since
+> IA64 is now obsolete.
+>
+> Signed-off-by: Feng Lee <379943137@qq.com>
+>
 
-thanks,
-Jinliang Zheng.
+Better to rename the subject to be more specific, e.g.  "mm: remove
+obsolete  pgd_offset_gate()" or similar. Otherwise,
 
-> 
-> -Fan
+Reviewed-by: Barry Song <baohua@kernel.org>
+
+> ---
+> Changes in v2:
+>   - remove pgd_offset_gate completely
+>   - remove pgd_offset_k from the get_gate_page function completely
+> ---
+>  include/linux/pgtable.h | 4 ----
+>  mm/gup.c                | 5 +----
+>  2 files changed, 1 insertion(+), 8 deletions(-)
+>
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index b50447ef1c92..f1e890b60460 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -1164,10 +1164,6 @@ static inline void arch_swap_restore(swp_entry_t e=
+ntry, struct folio *folio)
+>  }
+>  #endif
+>
+> -#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+> -#define pgd_offset_gate(mm, addr)      pgd_offset(mm, addr)
+> -#endif
+> -
+>  #ifndef __HAVE_ARCH_MOVE_PTE
+>  #define move_pte(pte, old_addr, new_addr)      (pte)
+>  #endif
+> diff --git a/mm/gup.c b/mm/gup.c
+> index f32168339390..0685403fe510 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1101,10 +1101,7 @@ static int get_gate_page(struct mm_struct *mm, uns=
+igned long address,
+>         /* user gate pages are read-only */
+>         if (gup_flags & FOLL_WRITE)
+>                 return -EFAULT;
+> -       if (address > TASK_SIZE)
+> -               pgd =3D pgd_offset_k(address);
+> -       else
+> -               pgd =3D pgd_offset_gate(mm, address);
+> +       pgd =3D pgd_offset(mm, address);
+>         if (pgd_none(*pgd))
+>                 return -EFAULT;
+>         p4d =3D p4d_offset(pgd, address);
+> --
+> 2.49.0
+>
+
+Thanks
+barry
 
