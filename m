@@ -1,130 +1,169 @@
-Return-Path: <linux-kernel+bounces-640763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291D7AB08D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC91AB08DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61544987FEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F923B2536
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B2B237713;
-	Fri,  9 May 2025 03:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CB8237713;
+	Fri,  9 May 2025 03:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1CywGkS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BT0nKIYt"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0192B1F8750;
-	Fri,  9 May 2025 03:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782CF64A8F;
+	Fri,  9 May 2025 03:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746760936; cv=none; b=eixPq34Q8ALsFRk2FyX1HS6H9afNsUXK/hyqb11aT65lOKYpXW39HHbuB7CrBqVpPMfVT0IzEdntyKQ1364A76ZfG50S+DksancojcTPf9a31HogVRF0JQPLaJwYjmnKeKj6eDHAHUyiuueZsQjfhqYXYrxB6z0vznAn7VTBGco=
+	t=1746761020; cv=none; b=Fax/VjoYI1FX3BiByxQTlGoiMIEFESendrNVNzKhXNGorazvHJ6CnQIK3dFoPz9te6+3uSAzQzD+V/ddg/xTI6jBReo09/5wcVcyVgwbanm+CrDjj3zt3GCeV24kCLw3912P3xL1vy5RplZum/3cgbGI0Ydh57BF+Rti+tV0sg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746760936; c=relaxed/simple;
-	bh=SsNCueF8A7VqlQhoL36fgJMU6tN9VQrjDiQfdzjssck=;
+	s=arc-20240116; t=1746761020; c=relaxed/simple;
+	bh=aq59dRcFi8HDohmDuQ/0lA/OfRUS3wr+VrtOYgXpwac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdrSZ+8Z2HSDSRZ8nEr2tG2mRPt8qI52EkPSka6H5siZbC6tKFP05o0+oC8ACvZNkSOKyfsTn5kB2fI5vT+MmOURvzovwQENydedHbGUecaF1Mj16pPpdavLmv5OO2AAoHgcpNMgbd/9QpOWr5GzOUHKj511wswlatDujxgZUqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1CywGkS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50513C4CEE7;
-	Fri,  9 May 2025 03:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746760935;
-	bh=SsNCueF8A7VqlQhoL36fgJMU6tN9VQrjDiQfdzjssck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m1CywGkSz/rfUQACrb11wBz1Qm4Ni5w42U2CLojgXRQc4fMTZHjojMlXnxJ1qr0A2
-	 872U/r5CPd7jVB1++XStw0mDEjfKjLzXaBIdQMmhh35MTKHdNVDLlsCI2PP+VNsNgm
-	 GzzzqPf7ICxV4iWVoWGeufzaZCrcDH+omkla1KQGw+4LMkxCZflDggW2qGziYugRwf
-	 4hgY71XCAswS3bk0Wnzw5q1z24UpWmWVUFvqTsCmaOuvdmrqmwgWfAE8QPgIcZqbFM
-	 ieyMI0NnOn8sUoOsWvjmXKV6Gmm0difqBPDA6XzK8IW3A2jrPQTpNWypYwK6ZkjIH6
-	 26YxhtTWuONXw==
-Date: Thu, 8 May 2025 20:22:12 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: tip-bot2 for Rong Xu <tip-bot2@linutronix.de>, 
-	linux-tip-commits@vger.kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [tip: objtool/core] objtool: Fix up st_info in COMDAT group
- section
-Message-ID: <cilgdvjaihkdstabhvblpuz3xonuuxtaep462bdipaosbmp4sh@a3tsfzitaibb>
-References: <20250425200541.113015-1-xur@google.com>
- <174601619410.22196.10353886760773998736.tip-bot2@tip-bot2>
- <jj4fu243l7ap4bza5imrgjk5f5dhsoloxezgphdjwo7sb5iqsq@wkt46abbt45r>
- <CAF1bQ=SBgs6RiOEXakcZ=TaYjwXngMKNrp8gHL9FhfjOodOxiA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PRrnoFZ84+IDzDqFbtgcfDjAOl1iSQHBspVfvRUUjrygmjsCPl3AtGi1XH4JeCT9/v8jt4YIbYPLGV+tk0LfqISqCtijFx1kc4Gi69gt0rwUzv1b0GkHdJWq/QFcsSZn1GFBQne/fRC0ZpzAMcxrX5EaNCG9dfcTe0sks/kUt/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BT0nKIYt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6twfXBtE2DEQcWdr1sjZzN400y+anVUxZjhsMnkK8m8=; b=BT0nKIYthAnpX9O9nftx/502uV
+	L4OY6zkOc1BlTiJX9W1xWQkbCAb0dE3iKZn9ECLbfaFRo6JsqTxx3YCgXIpo/+3quGGEdTQ3SBuO1
+	eAnNZzxAuZMiGgyppSo9Eq8vh85aVpqQH2jPMZoilH//U+kdDarZL7Kq3eCft9NTlGWqWA+CgDq5s
+	41ji9MhQDhT02dpVsal69HtRzt+1DRx/RODKXo/1KWZamG5++qzjylfakIri33iypeW8x7pVeTEHZ
+	G/YIizZjD+1crKCgAX9WJiEU/W5k4Tzbu80MYq/gaXEWtKgIdn8dn1oEjDqW/oP1hCDK8vyu33IXx
+	sLhEuexA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uDEKc-00000009on1-2qa1;
+	Fri, 09 May 2025 03:23:26 +0000
+Date: Fri, 9 May 2025 04:23:26 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: alexjlzheng@gmail.com
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	greg@kroah.com, chrisw@osdl.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [PATCH v3] securityfs: fix missing of d_delete() in
+ securityfs_remove()
+Message-ID: <20250509032326.GJ2023217@ZenIV>
+References: <20250508140438.648533-2-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF1bQ=SBgs6RiOEXakcZ=TaYjwXngMKNrp8gHL9FhfjOodOxiA@mail.gmail.com>
+In-Reply-To: <20250508140438.648533-2-alexjlzheng@tencent.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, May 08, 2025 at 05:45:18PM -0700, Rong Xu wrote:
-> On Wed, May 7, 2025 at 4:22 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > On Wed, Apr 30, 2025 at 12:29:54PM +0000, tip-bot2 for Rong Xu wrote:
-> > > The following commit has been merged into the objtool/core branch of tip:
-> > >
-> > > Commit-ID:     2cb291596e2c1837238bc322ae3545dacb99d584
-> > > Gitweb:        https://git.kernel.org/tip/2cb291596e2c1837238bc322ae3545dacb99d584
-> > > Author:        Rong Xu <xur@google.com>
-> > > AuthorDate:    Fri, 25 Apr 2025 13:05:41 -07:00
-> > > Committer:     Peter Zijlstra <peterz@infradead.org>
-> > > CommitterDate: Wed, 30 Apr 2025 13:58:34 +02:00
-> > >
-> > > objtool: Fix up st_info in COMDAT group section
-> > >
-> > > When __elf_create_symbol creates a local symbol, it relocates the first
-> > > global symbol upwards to make space. Subsequently, elf_update_symbol()
-> > > is called to refresh the symbol table section. However, this isn't
-> > > sufficient, as other sections might have the reference to the old
-> > > symbol index, for instance, the sh_info field of an SHT_GROUP section.
-> > >
-> > > This patch updates the `sh_info` field when necessary. This field
-> > > serves as the key for the COMDAT group. An incorrect key would prevent
-> > > the linker's from deduplicating COMDAT symbols, leading to duplicate
-> > > definitions in the final link.
-> > >
-> > > Signed-off-by: Rong Xu <xur@google.com>
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > Link: https://lkml.kernel.org/r/20250425200541.113015-1-xur@google.com
-> >
-> > Unfortunately this patch completely destroys performance when adding a
-> > bunch of symbols.  Which I'm doing in v2 of my klp-build patch set.
-> The patch won't add symbols. Do you mean the updates take too much time
-> when adding symbols?
+On Thu, May 08, 2025 at 10:04:39PM +0800, alexjlzheng@gmail.com wrote:
 
-Right.  I was testing a new feature for generating livepatch modules.  I
-was using objtool to add thousands of local symbols to a binary with
--ffunction-sections and -fdata-sections, so it was calling that function
-in a tight loop.
-
-> It's probably true as we lookup the sections for every
-> added symbols. I did not notice the compile time issues in my builds.
-
-Yeah, I had an extreme test case :-)
-
-> If this is a problem, it needs to be fixed.
-> Thanks for working with v2!
-> >
-> > What was the use case for this?  I don't remember seeing any COMDAT
-> > groups in the kernel.
+> In addition, securityfs_recursive_remove() avoids this problem by calling
+> __d_drop() directly. As a non-recursive version, it is somewhat strange
+> that securityfs_remove() does not clean up the deleted dentry.
 > 
-> In the PGO or AutoFDO builds, we used many COMDAT variables for counters
-> and control variables. I think the compiler also puts the functions
-> defined in header
-> as COMDAT.
-> The issue I encountered was objtool moved the variables for
-> profile_filename and
-> profile_version, but the comdat keys were not updated.
+> Fix this by adding d_delete() in securityfs_remove().
 
-I see.  Thanks for the explanation.
+This is not a fix.  First and foremost, securityfs_recursive_remove()
+does *not* just call __d_drop() - it calls simple_recursive_removal(),
+which takes care to evict anything possibly mounted on those suckers.
 
--- 
-Josh
+Your variant trivially turns into a mount leak - just bind anything
+on that thing and trigger removal.
+
+<a bit of a rant follows; if it offends somebody, feel free to report
+to CoC committee>
+
+What's more, securityfs object creation is... special.  It does, for
+some odd reason, leave you dentry with refcount *two*.  For no reason
+whatsoever, as far as I can tell.
+
+securityfs_remove() matches that; securityfs_recursive_remove(),
+as far as I can tell, should simply leak them.  That's from RTFS
+alone, but I don't see how it could possibly *not* happen -
+securityfs_create_file() is a call of securityfs_create_dentry(),
+which
+	* calls lookup_one_len(), getting a negative dentry with
+refcount 1.
+	* verifies it's negative
+	* gets a new inode
+	* does d_instantiate(), attaching it to dentry.
+	* does dget(), for some unspeakable reason.  Refcount is 2 now.
+	* returns that dentry to caller.
+
+policyfs stuff calls securityfs_create_dir() (which is a wrapper for
+securityfs_create_file(), with nothing extra done to refcounts),
+then populates it with a bunch of files, all with the same refcount
+weirdness.
+
+Result: directory dentry with refcount 2 + number of children and
+a bunch of children, each with refcount 2.
+
+Now, securityfs_recursive_remove() calls simple_recursive_removal(),
+which will strip _one_ off the refcount of each dentry in that tree.
+Yes, they are all unhashed and any stuff mounted on them is kicked
+out, but you have a massive dentry leak now - all of those dentries
+have refcount at least 1.
+
+I'm not blaming securityfs_recursive_remove() authors - it *should*
+have worked; their only fault is that they hadn't guessed that
+object creation on securityfs happens to be that strange.
+
+Another special snowflake is efi_secret_unlink() - it calls
+securityfs_remove(), which is needed instead of simple_unlink()
+since
+	* that double refcount needs to be dropped
+	* having internal mount pinned is something that needs
+to be undone, innit?
+
+Of course, it runs afoul of the parent being locked, but nevermind that -
+it just unlocks and relocks it, 'cuz what can go wrong?  That - instead
+of discussing that with VFS and filesystem folks.
+
+As for "what can go wrong"...  Consider what happens if another process
+calls unlink() on the same file, just before the first one drops the
+lock on parent.  Parent found, process 2 blocked on the lock.  Process 1
+unlocks that lock and loses CPU.  Process 2 runs and tries to lock the
+victim; blocks since process 1 is still holding it locked.  Process 1,
+in securityfs_remove(): blocks trying to lock the parent.  AB-BA deadlock.
+
+Oh, well...
+
+Anyway, the reasons for securityfs_remove() use there are real deficiencies
+of securityfs.  Weird shit with refcounts is one thing; internal mount
+pinning is a bit more subtle, but it's also solvable.
+
+The thing is, objects on securityfs never change parents.  So you only
+need to pin for subdirectories of root - everything deeper will be
+automatically fine.  And that kills the second reason for those games.
+With that dealt with, efi_secret_unlink() can simply call simple_unlink()
+instead of those games.
+
+After that securityfs_remove() can become an alias for
+securityfs_recursive_remove() (or the other way round, preferably).
+
+BTW,
+        d_inode(dent)->i_op = &efi_secret_dir_inode_operations;
+in the same drivers/virt/coco is also nasty - you don't change the method
+table on an object that is already exposed in shared data structures.
+Basic multithreaded programming safety rules...  Yes, _that_ probably runs
+too early in the boot for anything to hit it, so it's not a security hole,
+but the same "what if somebody copies that code and gets screwed" applies
+there...  If anything, that points to the need of securityfs_create_dir()
+variant that would override ->i_op, which should've been discussed back
+when the thing had been merged.
+
+</rant>
+
+I have fixes for some of that crap done on top of tree-in-dcache series;
+give me an hour or two and I'll separate those and rebase to mainline...
 
