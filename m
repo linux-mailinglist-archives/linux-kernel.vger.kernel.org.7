@@ -1,177 +1,100 @@
-Return-Path: <linux-kernel+bounces-640682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C060BAB07C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:11:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E44AAB07D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2F14A4DB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:11:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0C23980195
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D39A242D61;
-	Fri,  9 May 2025 02:11:01 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E060244666;
+	Fri,  9 May 2025 02:18:17 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18DA8F77;
-	Fri,  9 May 2025 02:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C114C242D8C;
+	Fri,  9 May 2025 02:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746756661; cv=none; b=S1b1n/ZOZORPogXtIPSFPBheWu9UDdxtKC1u6niOZqC1LzLl21j+9Gyg//CTPqDFssHXDwTYpFVHmQrlu5D4N9OPg0ikUZHr+/r8KhVY3H2lxZN57Mvcmy47+w4pLfzwg/HzCeqdMBP98t4Z3dmCwmtBKpk8FUvKfzWMogngPq4=
+	t=1746757097; cv=none; b=VX3l0+Q0yK1dO2VP0synjczyIp8FRcaxbOrfss8+fYCBVa1oGjQ+owoKWQw+LQ5z0s7/qTYYWuyB09DElPTTMJgwRDvl2pwDiRQXIA8dcJynYKrU0I34Ij3j99RRmaByZzNcIkeriiuUXsDaQfQOkyWhG2KaLpD+ML3DHRw4oGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746756661; c=relaxed/simple;
-	bh=eouLDxNWFtWINNeneQevRkOh1Ike8Q0fYwwO6srNaVc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nm17EKxeRqKlswvacxvZutHb/kl1FKwenxAWzvATPEkM9qPff7iVW6NqvPHyZsPZ3vX1nH+oYk0t9VSTF3+/3eU+PB5j2IIv293Ir9CTLTjh7tC7TnHYPOJyw/txmDZOgHWQCVFjgFNM/IyngDUQKnc9ThuhTpl4/SqFDYs4wb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	s=arc-20240116; t=1746757097; c=relaxed/simple;
+	bh=tytqPqeiD3YDw8o6ZV6Piy/NIVtbcyv2D9V7UPXWtAE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=riMhz/8AJw/TYp+w2oGBtrCJlcDjV8xVecfwt2MqR6uVX5oXC5e60k1959cVP04vknCI48IDGw9MlwmWH0eDIh0CTxi0+5KW8q2aIXDssGnSb+kzmYiVvtinoRoZL64PoxknAuc7ZI71ZlwCAnHtttGf84pRASnJhnXnjMkPWaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZtsQr68Dbz1Z1Yl;
-	Fri,  9 May 2025 09:50:44 +0800 (CST)
-Received: from kwepemk200017.china.huawei.com (unknown [7.202.194.83])
-	by mail.maildlp.com (Postfix) with ESMTPS id 745B0180B52;
-	Fri,  9 May 2025 09:54:21 +0800 (CST)
-Received: from [10.174.178.219] (10.174.178.219) by
- kwepemk200017.china.huawei.com (7.202.194.83) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZtscR6wMFz2CdfQ;
+	Fri,  9 May 2025 09:59:03 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 53A121A0188;
+	Fri,  9 May 2025 10:02:40 +0800 (CST)
+Received: from localhost.huawei.com (10.90.30.45) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 May 2025 09:54:19 +0800
-Subject: Re: [PATCH] perf kvm: Fix arm64 VM-EXIT event detection
-To: Haixin Yu <yuhaixin.yhx@linux.alibaba.com>
-CC: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, James
- Clark <james.clark@arm.com>, Mike Leach <mike.leach@linaro.org>, Leo Yan
-	<leo.yan@linaro.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
-	<mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Namhyung
- Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
-	<adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Shannon Zhao
-	<shannon.zhao@linux.alibaba.com>, Sergey Senozhatsky
-	<sergey.senozhatsky@gmail.com>
-References: <ZNG9PNB-fEBNyK9E@B-Q60VQ05P-2326.local>
-From: Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <33dd0a17-cf35-4b6b-9ee5-9983669cc98b@huawei.com>
-Date: Fri, 9 May 2025 09:54:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+ 15.2.1544.11; Fri, 9 May 2025 10:02:39 +0800
+From: Qinxin Xia <xiaqinxin@huawei.com>
+To: <21cnbao@gmail.com>, <xiaqinxin@huawei.com>
+CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3 0/4]{topost} dma-mapping: benchmark: Add support for dma_map_sg
+Date: Fri, 9 May 2025 10:02:34 +0800
+Message-ID: <20250509020238.3378396-1-xiaqinxin@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZNG9PNB-fEBNyK9E@B-Q60VQ05P-2326.local>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk200017.china.huawei.com (7.202.194.83)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-[ +Cc the original author of perf kvm stat ]
+Modify the framework to adapt to more map modes, add benchmark
+support for dma_map_sg, and add support sg map mode in ioctl.
 
-On 2023/8/8 11:57, Haixin Yu wrote:
-> A VM-EXIT event shall start at kvm:kvm_exit, and end with the next
-> kvm:kvm_entry. But it's reversed on arm64, which means the time running
-> guest code in fact.
+The result:
+[root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
+dma mapping mode: DMA_MAP_SG_MODE
+dma mapping benchmark: threads:8 seconds:30 node:-1 dir:FROM_DEVICE granule/sg_nents: 8
+average map latency(us):1.4 standard deviation:0.3
+average unmap latency(us):1.3 standard deviation:0.3
+[root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
+dma mapping mode: DMA_MAP_SINGLE_MODE
+dma mapping benchmark: threads:8 seconds:30 node:-1 dir:FROM_DEVICE granule/sg_nents: 8
+average map latency(us):1.0 standard deviation:0.3
+average unmap latency(us):1.3 standard deviation:0.5
 
-Good catch! It'd be great if Sergey could take a look.
+---
+Changes since V2:
+- Address the comments from Barry and ALOK, some commit information and function
+  input parameter names are modified to make them more accurate.
+- Link: https://lore.kernel.org/all/20250506030100.394376-1-xiaqinxin@huawei.com/
 
-> 
-> Example:
-> 
->  # perf kvm stat record -p 2772 -- sleep 1
-> 
-> Before this change:
-> 
->  # perf kvm stat report
-> 
-> Analyze events for all VMs, all VCPUs:
-> 
->     VM-EXIT Samples Samples%   Time%   Min Time   Max Time    Avg time
-> 
->     IRQ      756     100.00%  100.00%   2.28us    3674.38us   1375.66us ( +-   4.34% )
-> 
-> Total Samples:756, Total events handled time:1039996.94us.
-> 
-> After:
-> 
->  # perf kvm stat report
-> 
-> Analyze events for all VMs, all VCPUs:
-> 
->     VM-EXIT Samples Samples%   Time%   Min Time   Max Time    Avg time
-> 
->     IRQ     772      100.00%  100.00%   0.24us     62.86us    6.34us ( +-   3.55% )
-> 
-> Total Samples:772, Total events handled time:4890.80us.
-> 
-> IRQ average handled time decreases to 6us, which is a more rational result
-> as KVM handles IRQ by returning to guest directly.
-> 
-> Signed-off-by: Haixin Yu <yuhaixin.yhx@linux.alibaba.com>
-> ---
->  tools/perf/arch/arm64/util/kvm-stat.c | 24 +++---------------------
->  tools/perf/builtin-kvm.c              |  2 +-
->  2 files changed, 4 insertions(+), 22 deletions(-)
-> 
-> diff --git a/tools/perf/arch/arm64/util/kvm-stat.c b/tools/perf/arch/arm64/util/kvm-stat.c
-> index 6611aa21cba9..eeb659ceedc2 100644
-> --- a/tools/perf/arch/arm64/util/kvm-stat.c
-> +++ b/tools/perf/arch/arm64/util/kvm-stat.c
-> @@ -21,7 +21,7 @@ const char *kvm_events_tp[] = {
->  	NULL,
->  };
->  
-> -static void event_get_key(struct evsel *evsel,
-> +void exit_event_get_key(struct evsel *evsel,
->  			  struct perf_sample *sample,
->  			  struct event_key *key)
->  {
-> @@ -40,27 +40,9 @@ static void event_get_key(struct evsel *evsel,
->  	}
->  }
->  
-> -static bool event_begin(struct evsel *evsel,
-> -			struct perf_sample *sample __maybe_unused,
-> -			struct event_key *key __maybe_unused)
-> -{
-> -	return evsel__name_is(evsel, kvm_entry_trace);
-> -}
-> -
-> -static bool event_end(struct evsel *evsel,
-> -		      struct perf_sample *sample,
-> -		      struct event_key *key)
-> -{
-> -	if (evsel__name_is(evsel, kvm_exit_trace)) {
-> -		event_get_key(evsel, sample, key);
-> -		return true;
-> -	}
-> -	return false;
-> -}
-> -
->  static struct kvm_events_ops exit_events = {
-> -	.is_begin_event = event_begin,
-> -	.is_end_event	= event_end,
-> +	.is_begin_event = exit_event_begin,
-> +	.is_end_event	= exit_event_end,
->  	.decode_key	= exit_event_decode_key,
->  	.name		= "VM-EXIT"
->  };
-> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-> index 71165036e4ca..498cd8e21134 100644
-> --- a/tools/perf/builtin-kvm.c
-> +++ b/tools/perf/builtin-kvm.c
-> @@ -615,7 +615,7 @@ static const char *get_filename_for_perf_kvm(void)
->  
->  #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
->  
-> -void exit_event_get_key(struct evsel *evsel,
-> +void __weak exit_event_get_key(struct evsel *evsel,
->  			struct perf_sample *sample,
->  			struct event_key *key)
->  {
+Changes since V1:
+- Address the comments from Barry, added some comments and changed the unmap type to void.
+- Link: https://lore.kernel.org/lkml/20250212022718.1995504-1-xiaqinxin@huawei.com/
+
+Qinxin Xia (4):
+  dma-mapping: benchmark: Add padding to ensure uABI remained consistent
+  dma-mapping: benchmark: modify the framework to adapt to more map modes
+  dma-mapping: benchmark: add support for dma_map_sg
+  selftests/dma: Add dma_map_sg support
+
+ include/linux/map_benchmark.h                 |  46 +++-
+ kernel/dma/map_benchmark.c                    | 225 ++++++++++++++++--
+ .../testing/selftests/dma/dma_map_benchmark.c |  16 +-
+ 3 files changed, 252 insertions(+), 35 deletions(-)
+
+--
+2.33.0
+
 
