@@ -1,149 +1,247 @@
-Return-Path: <linux-kernel+bounces-642077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9992AB1A68
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:26:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68718AB1A6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D36B41D99
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:24:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 269FDB4242D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC212367D0;
-	Fri,  9 May 2025 16:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AA32367D0;
+	Fri,  9 May 2025 16:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjckqt4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OuWC6mFn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E69C4B1E5C;
-	Fri,  9 May 2025 16:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807948; cv=none; b=rfocGJWBOf4VI2sM6QbxRRuYihVnOR/ZmFTDomo+HrExZeM5+nPF6PjSKT4IqixAI4J7CYGvFGH8Vf/LvNjkB92xmGFZPwX8jTj5Dslnc/zdCDxAAJvGk5Jo21RlD131lAPrK6aK5oUQRbaZDV8t2vW4o3GLH7Lw6KI31g8RPSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807948; c=relaxed/simple;
-	bh=pWBgsTEX8GV7+i3t+seP0AVeCM2U+ftwb9bTfHMqsr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iiFwMaFG1hxb4ILsbUMcJYwQYtsR68lP80ddFdNB3bh9IDT3XnuhDd7mKFlpopy4wBhNMNr0PNdNfMvWsGA/wbSqbKRSkk+KuNFlSngCucqyqgOKd0OSEALYgarriBOIryLg6yOxenz/zgEz6DojumNBUqMwf3p7Q+XpRkNSkHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjckqt4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B95B4C4CEE4;
-	Fri,  9 May 2025 16:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807948;
-	bh=pWBgsTEX8GV7+i3t+seP0AVeCM2U+ftwb9bTfHMqsr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fjckqt4ff3yPZ9Z10wyhN9E27yWp8UPgNgf6MpU6+T/JD774nJHwwYaNW4sDl/SIv
-	 tfg1KoT010YGjS4DsOoZ9apCkuuoMfDPErP3HTTF2W39sCgP4tBvFreluPtO5wau4d
-	 2uhFEKXxRJl3DYzqRfZYf6lOtv1XFS4TpcbM+wktnwpetlf4PeuLGT6Bkqc9DgfxTi
-	 QgdakWKRAagwX8iDrcCZy7OUbgA0CasETjjnktKwlZ1fLZ3yogIzz/V+0gl87d4Nrh
-	 B1JmU4CKusHRWfFkwq077jjNOpgz//HQO7ovyXp1sTub4/91Pzypmi9kQQJEqm1NwS
-	 oaDsGvN7jKTFA==
-Date: Fri, 9 May 2025 11:25:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v12 16/19] dt-bindings: clock: imx8m-clock: add PLLs
-Message-ID: <20250509162546.GA3704130-robh@kernel.org>
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <20250424062154.2999219-17-dario.binacchi@amarulasolutions.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEB1235059;
+	Fri,  9 May 2025 16:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746808007; cv=fail; b=EVB6HR6bgwuo2Np+DC2WrbomRPgBJ17yqZ6BZq/zhLnfWfySA7z29ZoHFoNRcJar63pDL4fPk4B2rayLHtCbsOO9VsafbPvEatRC5qL//uXnm+k5tMdIzUAQAIJS0C1zmw5a+H6Aie9SIKjTVIa1EQqUT9oYglkGQbigv28QlX0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746808007; c=relaxed/simple;
+	bh=MBFT21aIRz5LIrok2KF9Pxjt9YwW0bUMP0r56/xYQ+4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H0ruaTGuSvH6f7XSzE42wJcjkO67bndkqB+2KzmQ23uGhitPcBwdrozvkHOp5XT7J2OjNE8GzQZphznONUx5/6kqO7nF/gLJzVpsTBW1UEIo6asVEKQi0lt8I5/yaWpLE77yGooHy1nMLyquciOSiLVWalryvoF2TOoIHE4+IaY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OuWC6mFn; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746808005; x=1778344005;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=MBFT21aIRz5LIrok2KF9Pxjt9YwW0bUMP0r56/xYQ+4=;
+  b=OuWC6mFnIyeQTXm0NAIz/RRCnnGkWuQSN/GNfyZyTwtBO1E61PJtdm73
+   19nzI2KM2rs8eV37bGwe6+AxDl6D4JTbDXxBHDnB9n0018UVnxCp0OGnm
+   RCMVAAjPz7o4EP3qphTwXzRAAd15YyePiOFTcABb4n8karB9TouCbLsbr
+   6BUO0AME7Owa8gd4no9KW+9jGnZVLpxAd6P/HFAzAkoQSYYptkK7uM48i
+   rPcYBbxQcnFdbFE+VFtsO4jC0qbJwC1HcJXhJZPn3SS7z+TSl+yOv3ooI
+   lt/XpFYgj1ScsVdfPK093l/096F9otVYoiF8w8JjGauzHo3lVhhi/H+Qt
+   w==;
+X-CSE-ConnectionGUID: S6wL7h2VQBC879+Z8VhpSQ==
+X-CSE-MsgGUID: G1Vds/h6SbqqOgaygBrjhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="52296512"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="52296512"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 09:26:41 -0700
+X-CSE-ConnectionGUID: 01bIQ/fOSSCG7Hz97QJa7w==
+X-CSE-MsgGUID: QwWClfIxQ6STS/+J7g8x+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="136611924"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 09:26:41 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 9 May 2025 09:26:41 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 9 May 2025 09:26:41 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 9 May 2025 09:26:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Whq7f0Ued5FvDdE4wtw7MCPMizj0mFw+thIaBFxPQhzp7+GHvbgBD7ZwOcK2sknzpEDWZS1yqpOf+47sMuPUrZSL6rPiiwmkcMRIzR5hRDkblcBmBGOmXbM2zZZjN/7jszfiQ3TvlxuMO8YjB4vb50mWYtW3mdKUUjnxeFabLsWAvvVW08b6ld186jXBtJ4EaBmpR7H2TrJp4WRKTgiQ+9Jjsgc2+U5x2ry2TxkkbnptEp90D+zun9zRsmNWvGXzPkcnszoahEoIkYZO/rYtN1SR+cQ27hoCrCAWn5lph4iKJI67fPwkBx8QuXbDeiUoaEaMCO8dPT8PFhhgINWZXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l5OEZwJOW9l24hcjFtkmtCuuteLXzl0A6mlJhA/OXCg=;
+ b=UzUV+yXGUQFwARDotchSiv8DrzUIhuVLXVWljtb75Wu0gPqHbmaFtbhv65cPpwwrPjd/lV0+ebJFNyaLxm1gbgplFjSdbV7UsVKD/bTnKEX/cpupdOPagC1RxwKPB1DVUdbZ10IN1So6PkW4sb+EbOywzlNLe7j7+qXRhN/Abt8+ULvHXd5O7g4dFYN8CL0OmN8BlT48EpBbBb5rRjb3213+iCdqszZxDYgYkMKUFz6cq0x1Mja/rPaEe4jvgwCGfS85f44cXT+F8BXbndgb9myM3bQ6+G4D22OBy2IHLmn2UPCWCK9tg8w7AggYrDJLn6MRlhsj7tDZUHkjvHSQsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by IA0PR11MB7953.namprd11.prod.outlook.com (2603:10b6:208:40d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
+ 2025 16:26:33 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8722.020; Fri, 9 May 2025
+ 16:26:33 +0000
+Date: Fri, 9 May 2025 09:26:29 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Robert Richter <rrichter@amd.com>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dave Jiang
+	<dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: Re: [PATCH v6 09/14] cxl/region: Factor out code to find the root
+ decoder
+Message-ID: <681e2cb5ca5a9_27eca0294d7@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250509150700.2817697-1-rrichter@amd.com>
+ <20250509150700.2817697-10-rrichter@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250509150700.2817697-10-rrichter@amd.com>
+X-ClientProxiedBy: MW4PR03CA0239.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::34) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424062154.2999219-17-dario.binacchi@amarulasolutions.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA0PR11MB7953:EE_
+X-MS-Office365-Filtering-Correlation-Id: cbb7ce42-678e-4636-765c-08dd8f16430d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ev9mB5jQYLl9fxQTT7K4H6P9vMW3TIFqaY+1bQgUkNsCuJh9oniWHqV9ul8K?=
+ =?us-ascii?Q?BI/1DuJtT4XJwaLx+grefFiu3AmVH145zEt/yvB5Tkj0JhUCDMN1fvsBZ310?=
+ =?us-ascii?Q?18vqNPq7GHlMc8NCE8C7PN26B0eojWHmTk+4769AfQy9mDvNEW5SMhf8MOxR?=
+ =?us-ascii?Q?dJPJ/z0tsIlqJMyApX4ITmbhoknPMnvLMS9rti10JMQlkWZX019NhyxJjHF7?=
+ =?us-ascii?Q?je7TcbnyPX2ZeoFHRXO6qX3P4BPkBl9oaagVVokRy0oB1lGb2UvfvGtQP9J+?=
+ =?us-ascii?Q?U2pavC7Ruk4AAKv7nfjVmfsKd36nHowN8/cdTZK5rLGtod5/FIk5b+eNhc/r?=
+ =?us-ascii?Q?f+Ye4EM8WC82HP++olkaRij40xzHVEy/cF+Gx6MGkXOZrAnOV70piNAfcMxK?=
+ =?us-ascii?Q?g5mvTjKioMsqHpoa65CQAjGsQ+hNOINs8qvSQfaY7Pp4Bl+VCD9EYNR4GCvO?=
+ =?us-ascii?Q?9K2q5pELJRp7Le6Uz+ZCzBgy3w844n3loPkLvY9/6ChJ21IsqZAnJ8D5Ka6m?=
+ =?us-ascii?Q?7G3YtgdzFRxbmdpBvoh77Dy6Me2LaaLSlC2ah/QDMMmDsHoRre7uHGvpngVI?=
+ =?us-ascii?Q?8bggQPZdOkoOudG0nBCnHyJ+TDErNo+vQCVX7XP8ulAaGvs/p1HAgdbeyfzl?=
+ =?us-ascii?Q?bkQHIZyLYSRhxirVlQmUdjyBRcogFZcui0q3PuHJByXg5KYD7rzqv9e3kGaL?=
+ =?us-ascii?Q?Ij+0XClAuWULuDS0ySHrMlAlwB7wNSdkwqJiU7UBZTktnd9UXd70bHdAVUao?=
+ =?us-ascii?Q?YNYG+3xqGZ1mknEZPWvDoobTEsz2YgDiPifCbMWAqc6FJWJGMhNfKbDI+8Kw?=
+ =?us-ascii?Q?Z1MeE6Q+bW/d5x9X85soRUXflFjp8S77+WoGdDXgLh8uUI9rN6bWzRvrT7d9?=
+ =?us-ascii?Q?Gk1P0+Yv4sNvp4sOHk2afhIZ0Tp8w+5fAKncE9SPVNV9JwykCgYmRHAVymtJ?=
+ =?us-ascii?Q?7DRnpPyHTFh6b4aY86FQFp56PBUJ1gtUUB+eKS0/6/M1gV965izF5SdiILu1?=
+ =?us-ascii?Q?r7Mw1q4GbmbOoEM4g5zwuXbMNoH5aBjGmG64ufSew+xjzVzrB71wSoS04QBq?=
+ =?us-ascii?Q?+Dtiro+YwvFeMZYQhXL4miPsOBJUaTnUuaE6kmHSxD86aQEbER6aE3V2UjGO?=
+ =?us-ascii?Q?lqvAiQNIV6CAEzGwWLlUqOb3f00NG0wR1TM5VEaO/J5cAFOeF1b3z5EEloZ/?=
+ =?us-ascii?Q?qdQrYN5xbfNAimQnGWK5GMM2LWSSJ+ToVDeCvqjBYQMFUu7L+dKxAAde3QT4?=
+ =?us-ascii?Q?lqfLDjBZAY+HyE257I884jQai/QY5GVSpmY2tzjgRJi9JViwF6ksXpULy79e?=
+ =?us-ascii?Q?iQeLDoIZAqlf0DTIQlCEoJ4D0wjvkoLS5VeEDgt+w64p9ez/qOm9cx7RigJW?=
+ =?us-ascii?Q?zQKhvmsRrO9Rw8ZERl6gM/qnrVob64nr0rMfjW0x3gQXeEXQ/bRFfJW4o9+T?=
+ =?us-ascii?Q?FuEi0Q4i+Fk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jP2LeYIT32mzbQXC1tC+npMT6oPF9z/d+NLA5y2TEXorcW9Bb/jzWKcLlR34?=
+ =?us-ascii?Q?yfYQlF6o/YXeNjfsw3dGB0F13UdTqbStBbjxhWUTUpLa2XkAodmJCjL/ok9d?=
+ =?us-ascii?Q?g3Ribm7uUbe/v9MpRC/qkd+FxehCxrTPchBy0dl3F2LGfHCXbSH8OkhK4T2O?=
+ =?us-ascii?Q?K+78vTd7W6vhEZf9klPKPyMdWncLxGCpw2ElHCcGIpXVBgbfa2pDxRFP+Izr?=
+ =?us-ascii?Q?M3OiOoQX4Ip628xWcfilwOQAXxsTE66x8A/GXKs+cJLGDWQApvDuswKmcPuN?=
+ =?us-ascii?Q?6Ip3l2YJoZoYntQ/iPjM4ZwBTGzi1gsr/jLYRSzPRmCYRiqEgQXqTCCXFPac?=
+ =?us-ascii?Q?B6X47xXN0h4OdSkrsEZ11b6gRTwwcyiDKIinhj36MWIozfCiuWZ6dwMOkmhU?=
+ =?us-ascii?Q?a+nhJTfYF8yqvw7WU9lKUQreYLLcRbb9T68pRq7BbjM/YeEwJAxWX7hmR2zv?=
+ =?us-ascii?Q?yIDe2atxvHTk02/oaOkkjPEwBfMSoCdOjMnXBfXQKYyPplkVJgi6mL1DlWXI?=
+ =?us-ascii?Q?30iy+er8Pr/B2eAcZK11qlAlLrJHxp5mRs8yhvG8UJTsOuP+i99TvM3zv70O?=
+ =?us-ascii?Q?+eLxGpdhSonlH9x9BFFF3vV2jGmWSOvIejeladCKik8LW5OWnQLjn8GKOTME?=
+ =?us-ascii?Q?ej111E0Oyjoww5FxTfXVpoz1fUp96fUVY/2kRGU5wqZ8fKN0S3TV3BwKa/Jc?=
+ =?us-ascii?Q?zj44jEvCXILA0JVNcmlVtGupMN16+bDpjUosS/d2z1HPyNOSXX0KYaMW6uWJ?=
+ =?us-ascii?Q?SbMArDA3V19ZeAVJ32Q0L0itnnNtJ9cN5qrtjm2qTvEw4v1QqT4ZZCfjvXJR?=
+ =?us-ascii?Q?ipD/TOSqy/s4eEdbIYrTyuuD475/Jn2oEmZ2rom+XCOWZBHHfFFqyE11Zv8+?=
+ =?us-ascii?Q?2fhBZJFIarKN3/o475vMEB7K/buY9wZ0dwiO9n9mit+wA34n1geRbIrz9b+C?=
+ =?us-ascii?Q?r3DV6Nx3RMdRoyKIo+wGPiyqPwPWFiIKRDEqIiRH6ctl2HRZ91eQQnA294Kw?=
+ =?us-ascii?Q?JxxG+7DktfvjvF+OJyYujMZJYfqvU2iF8F2uNZmZHjCt2thrFSbVqo7Cn0IB?=
+ =?us-ascii?Q?X7u3pxfNlDA1g9lEf9rrpCRpFtDIUB4o2ycz64kRtADvdOV0KU3yD+Whoovy?=
+ =?us-ascii?Q?faqX76QbMZevVPt/PYejFstsf7h2c8Y75BBgAl1cL9BKVrN0sa4gjmIqU1iE?=
+ =?us-ascii?Q?+EiLsUkxjmGKLaOG5MZ90fM7rhcII1orVw8Mw+F2zR8p3LRICvvTc5Og1mTi?=
+ =?us-ascii?Q?/YkmwEz/LJ9cekcURraS0H/zSiaBxw73UUW5wkZL4FwlMwz26SVV7f0Av1gS?=
+ =?us-ascii?Q?jpvNlqAIYNNjm150JwzrawKCzJWbkzf5PI1DXxcVqJT8l9vFY7qQ5XLO5kob?=
+ =?us-ascii?Q?Fi7h2ou2JD3Hi09YXR7mZQYlypgw2SxVC9FPTe0spaqjfHOgyxjRq5Qpp/jp?=
+ =?us-ascii?Q?met96c/ipxV1aak2L2GVhAvHxb9IadtterMsgC6Iy1Qju4Tn6ooZEWxwIP4/?=
+ =?us-ascii?Q?qqX5bTJcMXj56zg/C98QamGXJkNydKczxD468Hzim0SW0RPK73tCJ//qhhKu?=
+ =?us-ascii?Q?/gp5L11Y/fua7LfSH9fudvDUs1mVgHFo3AE2Cy7vk//bNuOyiXoHnSL2xC5C?=
+ =?us-ascii?Q?lQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbb7ce42-678e-4636-765c-08dd8f16430d
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 16:26:33.4961
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZL3432h+BMjlJB1BxlezKEP8IsZtLzDvit988pY4gQOfbQLKXw/dC/XqhEvwn1SFcibhSkO/NI6HYClStoK5bD9fZaqis4cGi2uN51UX7Ds=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7953
+X-OriginatorOrg: intel.com
 
-On Thu, Apr 24, 2025 at 08:21:46AM +0200, Dario Binacchi wrote:
-> Though adding the PLLs to clocks and clock-names properties will break
-> the ABI, it is required to accurately describe the hardware. Indeed,
-> the Clock Control Module (CCM) receives clocks from the PLLs and
-> oscillators and generates clocks for on-chip peripherals.
+Robert Richter wrote:
+> In function cxl_add_to_region() there is code to determine the root
+> decoder associated to an endpoint decoder. Factor out that code for
+> later reuse. This has the benefit of reducing cxl_add_to_region()'s
+> function complexity.
 > 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The reference count must be decremented after using the root decoder.
+> cxl_find_root_decoder() is paired with the put_cxl_root_decoder
+> cleanup helper that can be used for this.
+[..]
 > 
-> ---
-> 
-> (no changes since v11)
-> 
-> Changes in v11:
-> - Fix conflict while rebasing on master
-> 
-> Changes in v7:
-> - Add 'Reviewed-by' tag of Krzysztof Kozlowski
-> 
-> Changes in v6:
-> - New
-> 
->  .../bindings/clock/imx8m-clock.yaml           | 27 ++++++++++++++-----
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> index 4fec55832702..e83f08abd44c 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> @@ -29,12 +29,12 @@ properties:
->      maxItems: 2
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 59d0d6becbd1..45f5d2c7dfdf 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+[..]
+> @@ -3384,29 +3407,17 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
 >  
->    clocks:
-> -    minItems: 6
-> -    maxItems: 7
-> +    minItems: 7
+>  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  {
+> -	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> -	struct cxl_port *port = cxled_to_port(cxled);
+> -	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+> +	struct cxl_root_decoder *cxlrd __free(put_cxl_root_decoder) = NULL;
 
-Increasing the minimum entries looks like an ABI break to me. The .dts 
-files not being in linux-next confirms that (from 0 warnings in 
-mainline):
+Please avoid the "obj __free(...) = NULL" pattern. Per the documentation
+in include/linux/cleanup.h.
 
-arch/arm64/boot/dts/freescale:859:50
-    122  clock-controller@30380000 (fsl,imx8mm-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-    120  clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-     61  clock-controller@30360000 (fsl,imx8mm-anatop): 'clocks' is a required property
-     61  clock-controller@30360000 (fsl,imx8mm-anatop): 'clock-names' is a required property
-     60  clock-controller@30360000 (fsl,imx8mp-anatop): 'clocks' is a required property
-     60  clock-controller@30360000 (fsl,imx8mp-anatop): 'clock-names' is a required property
-     36  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[35], [36], [37], [38], [39], [40]] is too short
-     36  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[24], [25], [26], [27], [28], [29]] is too short
-     32  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[34], [35], [36], [37], [38], [39]] is too short
-     28  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[22], [23], [24], [25], [26], [27]] is too short
-     26  clock-controller@30380000 (fsl,imx8mn-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-     17  clock-controller@30360000 (fsl,imx8mq-anatop): 'clocks' is a required property
-     17  clock-controller@30360000 (fsl,imx8mq-anatop): 'clock-names' is a required property
-     14  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[44], [45], [46], [47], [48], [49]] is too short
-     14  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[23], [24], [25], [26], [27], [28]] is too short
-     13  clock-controller@30360000 (fsl,imx8mn-anatop): 'clocks' is a required property
-     13  clock-controller@30360000 (fsl,imx8mn-anatop): 'clock-names' is a required property
-     12  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[26], [27], [28], [29], [30], [31]] is too short
-     10  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[38], [39], [40], [41], [42], [43]] is too short
-      8  clock-controller@30380000 (fsl,imx8mn-ccm): clocks: [[22], [23], [24], [25], [26], [27]] is too short
-      8  clock-controller@30380000 (fsl,imx8mn-ccm): clocks: [[20], [21], [22], [23], [24], [25]] is too short
-      8  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[34], [35], [36], [37], [38], [39]] is too short
-      8  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[28], [29], [30], [31], [32], [33]] is too short
-      8  bcrmf@1 (brcm,bcm4329-fmac): $nodename:0: 'bcrmf@1' does not match '^wifi(@.*)?$'
-      6  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[41], [42], [43], [44], [45], [46]] is too short
-      6  clock-controller@30380000 (fsl,imx8mn-ccm): clocks: [[24], [25], [26], [27], [28], [29]] is too short
-      4  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[43], [44], [45], [46], [47], [48]] is too short
-      4  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[40], [41], [42], [43], [44], [45]] is too short
-      4  clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[36], [37], [38], [39], [40], [41]] is too short
-      4  clock-controller@30380000 (fsl,imx8mm-ccm): clocks: [[35], [36], [37], [38], [39], [40]] is too short
+>  	struct range *hpa = &cxled->cxld.hpa_range;
+> -	struct cxl_decoder *cxld = &cxled->cxld;
+> -	struct device *cxlrd_dev, *region_dev;
+> -	struct cxl_root_decoder *cxlrd;
+> +	struct device *region_dev;
+>  	struct cxl_region_params *p;
+>  	struct cxl_region *cxlr;
+>  	bool attach = false;
+>  	int rc;
+>  
+> -	cxlrd_dev = device_find_child(&cxl_root->port.dev, &cxld->hpa_range,
+> -				      match_root_decoder_by_range);
+> -	if (!cxlrd_dev) {
+> -		dev_err(cxlmd->dev.parent,
+> -			"%s:%s no CXL window for range %#llx:%#llx\n",
+> -			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
+> -			cxld->hpa_range.start, cxld->hpa_range.end);
+> +	cxlrd = cxl_find_root_decoder(cxled);
 
-Please fix the binding or drop what's been applied so far.
+...i.e. always instantiate and asssign a scope-based cleanup variable in
+one statement.
 
-Rob
+	cxlrd __free(put_cxl_root_decoder) = cxl_find_root_decoder(cxled);
 
+Otherwise, this looks good.
 
