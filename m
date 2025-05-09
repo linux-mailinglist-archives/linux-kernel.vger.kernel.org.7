@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-640930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30060AB0B23
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:04:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C121CAB0B2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADE9A7AFED1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:02:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB49D3AC6FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803E026FD90;
-	Fri,  9 May 2025 07:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F2826FD91;
+	Fri,  9 May 2025 07:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBm8e5CG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWrqIGtA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC99B26C3A7;
-	Fri,  9 May 2025 07:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEF026FA5C;
+	Fri,  9 May 2025 07:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746774232; cv=none; b=W3fpF/ZpagA9aZ7L0s5pvcv0kVPTmOgkf3ZBdxFaj+nEvYt/ayEvt1CsCHeTK1wkLYJMZNVDj1JzlBI6iOem2P/GpXVjN16E3Gzh62tOEc9ipJCdFLZAKJVvikhSMdxoVCNDwooIpWenYNKJ4wx8kX92dnCNoDsVgyC/IL/OBW0=
+	t=1746774376; cv=none; b=mCS3+CdGx5rWHEl639wVVK3XhlvpyK5bSe63w9fiLJ2y+Q8fYI5kAVAQWO7atkvSt/rNoUEL2WPoph+sUZ83r2UdXu3KbV/DJx+Kf2/P0TtpybmfHTl5k15S4mcf6tfaVb4S9rV8TmtBAZ6qi6mJkThA4XTb/xX8Jb0O0pcw+OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746774232; c=relaxed/simple;
-	bh=0WwhJopkhycwO+EDKmA/3h2Xtcd2/NqM/2fimRhGpy4=;
+	s=arc-20240116; t=1746774376; c=relaxed/simple;
+	bh=ttmv5irzEpM/ynDKw1BjJl4iEmL2XL36+Ltiqs40NgE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZRK/AOk4RzCx87R95tx+GlQ8vZwua1wREdX4nNLjlrN8RAqGYNp16Egb6DpkJnA5LR1sAXkSsHRayoh6gqxi7vV4vkJ5fkvfINJB4Ps6tir4zV458ga69FBchEhpW6oU5B0kNzBus33wOGpMHH3ZYZbEF0qsywiyEpbLeZKnFvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBm8e5CG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A83C4CEE9;
-	Fri,  9 May 2025 07:03:47 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pnRg6wCFQYthkiqiRZNuU2bsKLQLEowurS8PmwKmqiqgQb4woBODKFU6nqjBPP/UtcIYvIX7oQvGgvHu/TbSmyM4o0S4rZrU/uAV/SzNvi24pI7mpbnTr8cl/5wA+K9+U2JNEusmYR9vlVl08Lj9C8130Pnck+wgQjMnuRLpD30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWrqIGtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D2CC4CEE4;
+	Fri,  9 May 2025 07:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746774232;
-	bh=0WwhJopkhycwO+EDKmA/3h2Xtcd2/NqM/2fimRhGpy4=;
+	s=k20201202; t=1746774376;
+	bh=ttmv5irzEpM/ynDKw1BjJl4iEmL2XL36+Ltiqs40NgE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XBm8e5CGv9avQSxiXTeWn6d5TRwTP96MXxW/1RfS0GP5IT6bGvX9BayRE5+EFTOiy
-	 62wgEGqnbXZ+iVw1sxyTZzqKV/rQkndQAbZ3xYR2wQjJUpxY6PEWopL2KnYuzAi5NB
-	 OgAPpAnVFU7cLtH82ML1vYaT2byHomFBALHoVB8pIrXS5ZmgLpjpA0LZvCuGmd7z7W
-	 U1cUkfR3DXNAtDI+fNNTMjIxMeIHYwqyTnjkQgU3KG4gqJJqbiXQvmmqSb9uMteuUn
-	 pcwuYhyEL1oTFxz0NfAU+VUYggf8XdRCdEYbimE3xmdk7o1KATwZFvfvGM28HhTjlx
-	 VtwFoJaxsyQAg==
-Message-ID: <272301e5-6561-499a-91eb-615fed4727fa@kernel.org>
-Date: Fri, 9 May 2025 09:03:45 +0200
+	b=KWrqIGtAvO+ToVnYjbCjHXwsEKPVzjIXUOGPZjSX+isoT9rJwk8zzb9xkGaoSx9Bk
+	 NlT1dMtCOwLZGMId09yd2cc9F6DFmyVy5lWNIEsJk0MQu85R70+PnpziYH7r2VIoCd
+	 ehsNorlDth4la1Ne0hekH0TKn9ee2sB2pGILxj0kGReqRg2izzVuXr+CrRKWEzH51s
+	 zwYCDVojZ7z0uZqqEN690mn/kDjgesi8E3yCpkrBMMJOVEVHCtqLWbnEsYTzw1pCWp
+	 U4oVMy+YQ9XUZfyWCPDTIaXqexdCbD4SgYCxhAQV8J78JcLf90v5FhMmiLssUbYg4S
+	 HEK5R68WKdLjA==
+Message-ID: <84c85750-18b2-46c4-b0cc-7bb663d03783@kernel.org>
+Date: Fri, 9 May 2025 09:06:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] hwmon: pmbus: mpq8785: Prepare driver for multiple
- device support
+Subject: Re: [PATCH v2 3/5] hwmon: pmbus: mpq8785: Add support for MPM3695
+ family
 To: Pawel Dembicki <paweldembicki@gmail.com>, linux-hwmon@vger.kernel.org
 Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Noah Wang <noahwang.wang@outlook.com>,
+ Noah Wang <noahwang.wang@outlook.com>, Fabio Estevam <festevam@gmail.com>,
+ Michal Simek <michal.simek@amd.com>,
  Naresh Solanki <naresh.solanki@9elements.com>,
- Fabio Estevam <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
  Grant Peltier <grantpeltier93@gmail.com>,
  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Shen Lichuan <shenlichuan@vivo.com>, Peter Zijlstra <peterz@infradead.org>,
+ Peter Zijlstra <peterz@infradead.org>, Shen Lichuan <shenlichuan@vivo.com>,
  Greg KH <gregkh@linuxfoundation.org>, Charles Hsu <ythsu0511@gmail.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-doc@vger.kernel.org
 References: <20250509065237.2392692-1-paweldembicki@gmail.com>
- <20250509065237.2392692-2-paweldembicki@gmail.com>
+ <20250509065237.2392692-4-paweldembicki@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,91 +111,118 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250509065237.2392692-2-paweldembicki@gmail.com>
+In-Reply-To: <20250509065237.2392692-4-paweldembicki@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/05/2025 08:51, Pawel Dembicki wrote:
-> Refactor the driver to support multiple Monolithic Power Systems devices.
-> Introduce chip ID handling based on device tree matching.
+> Add support for the Monolithic Power Systems MPM3695 family.
+> It contains four devices with suffixes: -10, -20, -25 and -100.
+> The device is PMBus compliant and shares characteristics with the
+> MPM82504.
 > 
-> No functional changes intended.
+> MPM3695-25 has different VOLTAGE_SCALE_LOOP register size [11:0]
+> and it needs to be separated because it will be configured in the next
+> commit.
+
+This should be *this* commit. Add proper support for a device in one
+commit. Not half-broken commit, being fixed later.
+
+> 
+> Tested with device tree based matching (MPM3695-10).
 > 
 > Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 > 
 > ---
 > v2:
->  - no changes done
+>   - Added whole MPM3695 family
 > ---
->  drivers/hwmon/pmbus/mpq8785.c | 38 +++++++++++++++++++++++++++--------
->  1 file changed, 30 insertions(+), 8 deletions(-)
+>  Documentation/hwmon/mpq8785.rst | 13 +++++++++----
+>  drivers/hwmon/pmbus/mpq8785.c   |  8 +++++++-
+>  2 files changed, 16 insertions(+), 5 deletions(-)
 > 
+> diff --git a/Documentation/hwmon/mpq8785.rst b/Documentation/hwmon/mpq8785.rst
+> index be228ee58ce2..7093e4db4f55 100644
+> --- a/Documentation/hwmon/mpq8785.rst
+> +++ b/Documentation/hwmon/mpq8785.rst
+> @@ -7,6 +7,7 @@ Supported chips:
+>  
+>    * MPS MPQ8785
+>    * MPS MPM82504
+> +  * MPS MPM3695 family
+>  
+>      Prefix: 'mpq8785'
+>  
+> @@ -29,6 +30,14 @@ The device can also operate in parallel with the MPM3695-100 and additional
+>  MPM82504 devices to provide a higher output current. The MPM82504 operates
+>  at high efficiency across a wide load range.
+>  
+> +The MPM3695 family is a scalable, ultra-thin, fully integrated power module with
+> +a PMBus interface. It offers a complete power solution that achieves up to
+> +10A (-10 variant), 20A (-25 variant), 25A (-20 variant), 100A (-100 variant)
+> +of output current with excellent load and line regulation across a wide input
+> +voltage range. It operates at high efficiency over a wide load range, and can
+> +be parallled to deliver higher current. Variants -10,-20 and -100 have different
+> +voltage scale configuration register range (10 bits) than -25 version (11 bits).
+> +
+>  The PMBus interface provides converter configurations and key parameters
+>  monitoring.
+>  
+> @@ -42,10 +51,6 @@ Fully integrated protection features include over-current protection (OCP),
+>  over-voltage protection (OVP), under-voltage protection (UVP), and
+>  over-temperature protection (OTP).
+>  
+> -All supported modules require a minimal number of readily available, standard
+> -external components. The MPQ8785 is available in a TLGA (5mmx6mm) package
+> -and the MPM82504 is available in a BGA (15mmx30mmx5.18mm) package.
+> -
+>  Device compliant with:
+>  
+>  - PMBus rev 1.3 interface.
 > diff --git a/drivers/hwmon/pmbus/mpq8785.c b/drivers/hwmon/pmbus/mpq8785.c
-> index 331c274ca892..00ec21b081cb 100644
+> index 9a4a211b2aeb..34245d0d2125 100644
 > --- a/drivers/hwmon/pmbus/mpq8785.c
 > +++ b/drivers/hwmon/pmbus/mpq8785.c
-> @@ -8,6 +8,8 @@
->  #include <linux/of_device.h>
->  #include "pmbus.h"
+> @@ -10,7 +10,7 @@
 >  
-> +enum chips { mpq8785 };
-
-Use Linux coding style, so:
-1. missing wrapping after/before each {}
-2. missing descriptive name for the type (mpq8785_chips)
-3. CAPITALICS see Linux coding style - there is a chapter exactly about
-this.
-
-
-> +
+>  #define PMBUS_READ_TEMPERATURE_1_SIGN	BIT(9)
+>  
+> -enum chips { mpq8785, mpm82504 };
+> +enum chips { mpq8785, mpm82504, mpm3695, mpm3695_25 };
+>  
 >  static int mpq8785_identify(struct i2c_client *client,
 >  			    struct pmbus_driver_info *info)
->  {
-> @@ -53,26 +55,46 @@ static struct pmbus_driver_info mpq8785_info = {
->  		PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
->  		PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
->  		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP,
-> -	.identify = mpq8785_identify,
-> -};
-> -
-> -static int mpq8785_probe(struct i2c_client *client)
-> -{
-> -	return pmbus_do_probe(client, &mpq8785_info);
->  };
->  
+> @@ -79,6 +79,8 @@ static struct pmbus_driver_info mpq8785_info = {
 >  static const struct i2c_device_id mpq8785_id[] = {
-> -	{ "mpq8785" },
-> +	{ "mpq8785", mpq8785 },
+>  	{ "mpq8785", mpq8785 },
+>  	{ "mpm82504", mpm82504 },
+> +	{ "mpm3695", mpm3695 },
+> +	{ "mpm3695-25", mpm3695_25 },
 >  	{ },
 >  };
 >  MODULE_DEVICE_TABLE(i2c, mpq8785_id);
->  
+> @@ -86,6 +88,8 @@ MODULE_DEVICE_TABLE(i2c, mpq8785_id);
 >  static const struct of_device_id __maybe_unused mpq8785_of_match[] = {
-> -	{ .compatible = "mps,mpq8785" },
-> +	{ .compatible = "mps,mpq8785", .data = (void *)mpq8785 },
+>  	{ .compatible = "mps,mpq8785", .data = (void *)mpq8785 },
+>  	{ .compatible = "mps,mpm82504", .data = (void *)mpm82504 },
+> +	{ .compatible = "mps,mpm3695", .data = (void *)mpm3695 },
+> +	{ .compatible = "mps,mpm3695-25", .data = (void *)mpm3695_25 },
 >  	{}
 >  };
 >  MODULE_DEVICE_TABLE(of, mpq8785_of_match);
->  
-> +static int mpq8785_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct pmbus_driver_info *info;
-> +	enum chips chip_id;
-> +
-> +	info = devm_kmemdup(dev, &mpq8785_info, sizeof(*info), GFP_KERNEL);
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	if (dev->of_node)
-> +		chip_id = (uintptr_t)of_device_get_match_data(dev);
+> @@ -110,6 +114,8 @@ static int mpq8785_probe(struct i2c_client *client)
+>  		info->identify = mpq8785_identify;
+>  		break;
+>  	case mpm82504:
+> +	case mpm3695:
+> +	case mpm3695_25:
 
-(kernel_ulong_t) instead
+So are these fully compatible? Looks like, so why aren't you expressing
+it in the binding and here? No need for these redundant ID table entries.
 
-> +	else
-> +		chip_id = i2c_match_id(mpq8785_id, client)->driver_data;
-
-Do not open-code i2c_get_match_data().
+>  		info->format[PSC_VOLTAGE_OUT] = direct;
+>  		info->m[PSC_VOLTAGE_OUT] = 8;
+>  		info->b[PSC_VOLTAGE_OUT] = 0;
 
 
 Best regards,
