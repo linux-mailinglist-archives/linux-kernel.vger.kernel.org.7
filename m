@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-641626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C992CAB1430
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:59:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F31AB13EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73C7A04892
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:57:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47A127B7983
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBAE2949F3;
-	Fri,  9 May 2025 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20020291171;
+	Fri,  9 May 2025 12:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2gnI2ZJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1B+YBYN"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABB92918F0;
-	Fri,  9 May 2025 12:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE65290DA4;
+	Fri,  9 May 2025 12:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795307; cv=none; b=ZQ59KqPOrkSt/NErBdW0z/5pAq47pSy0k/MxLZ/ESrQHvIAyraCfxrM03dAVALSIqIyLUmu6qp+Tw1ufQeWQSkWaxxQT0PoIAgxgbGc8XFwY8e8kcSMgvdV2KY3OJ69gw1W7HXOzHEsnHDX1BZF3jtEEsSVreV5U6MDbf40AJOg=
+	t=1746795293; cv=none; b=HrcsQFhHjLI1aJf8f0wPK5H13M5BQG9RZd9nLnuxusKgU3z22ZJA+NNarpd0/0lNX50jXFOwEKDB1LcAxXHlPgVr956LVYsX5iflRcM0nT+OkaT8STg52FQKKkrcV7UAH4ywe4FjR67jW9aKOtn31KwWM7yJjDHW0TRwTBZkFBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746795307; c=relaxed/simple;
-	bh=9rUI733v52tyD4qD/w5fv4MFvpEqPz2boNwanOapOa0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ED19uSIKHLhn3uZ4kdxo+EB6J49yqrfQRJfdTmx7ZBpqJJJH1uNi3TaZK9f9An2cKwokWIkJeWJHr183ViyI7mk4WBbyFTVfyeWwdO6BxjrLxvppSZyLeiZLxaNyOK3+bAJ7vcmTLcoJpvvvRfMxhL8+yz6dHZ6p3cP5bw6HHjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2gnI2ZJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 69714C4CEF3;
-	Fri,  9 May 2025 12:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746795306;
-	bh=9rUI733v52tyD4qD/w5fv4MFvpEqPz2boNwanOapOa0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=a2gnI2ZJQZbb9jNAm2UICyM4UeiBulsb1SLjv9+QiXAsZAhPIIOaClx3sCZEs6vyK
-	 7GmfUMqUbqfp9FEbJ1P8skw1q3Kz5V25wbQM4wdMOFkNWXexqzrDjH0ryjP/wjcvfz
-	 T1aROfRgK1I/NkbhdhxN9PKUdrEpjCb9t8NAr+DH/C3lKFz5twJsYZso5K2wO6j+w4
-	 DE651QxGkwT8ilBPqmfELA9nJOBGNZbJ7G8HAa5PBIISXDrFExmVT+p5z9EFNhBexA
-	 aGnjoRfsTo1fxoRkJAXN01w2ERMQ83cZRDdy3DriWWb580GRTVxYiZW5tPfND/dXRn
-	 hBPaHXPG11wGA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C66CC3ABCE;
-	Fri,  9 May 2025 12:55:06 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Fri, 09 May 2025 14:54:16 +0200
-Subject: [PATCH 12/12] sysctl: Remove superfluous includes from
- kernel/sysctl.c
+	s=arc-20240116; t=1746795293; c=relaxed/simple;
+	bh=mdjay/bt0YQTImzRRyNTf7+nM7Iqt5fpIRc4hBQRXqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gDWRsP3qi9GezEztZimq+yNWnc+O12xAo4Ox30nQvUpTbd7gw2VmdXF71+zPe72ivQEG5a8cksrNqT0uqfIOYF+GcUVg5et3I//RvF+XKm1I7J6n2tpWMEPyD+6xSpuquAWGnp8g/ibBN61w9b//ZOvEZ1Oay2VJYQlnQo3it8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1B+YBYN; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549963b5551so2368672e87.2;
+        Fri, 09 May 2025 05:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746795290; x=1747400090; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VUkV8BywuFWcK3XlHlfeRzzwdT0Xtem3jQh4BxB4+2M=;
+        b=Z1B+YBYNXVt1LA+Hh6w9jB7h0xJ2UsTL8rSCZVMHD53bt2VZcOGiDOQ9vloHS/Wep0
+         Hl5Z2BvnGAZstrnlTUMYFS+cehwDJVN9I5G4vE59Vg0nLTA9+j5Fm9Rzt+ecRfwZvxQS
+         CGKWR78YyF71XE9md9/QjV3ui4aE5FOw7cudDNI+NJVlnXLL4hstB75VRfjVw313NNji
+         IXO9D81+1BMPLY/nIQPv1gAKRiyxNj4d7PzZ30AQY7D9jQ3Hvq+TZ561JpyssJMpwj0g
+         BxjP4hBgQmuoeqlwNW0kqmhVbl9VMPe2afu8SCdMfnBYj0cNMI0NRk7dIQL61n5hNw5n
+         HCFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746795290; x=1747400090;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VUkV8BywuFWcK3XlHlfeRzzwdT0Xtem3jQh4BxB4+2M=;
+        b=K9+ezftC0MtxQNJ48OAhX1aJX4E0V9xLZsitABtybuz+tBF01rb1UzKoOKJ2yBUAMU
+         SSZqKG1BAegXy6pHrluqk3zqUFC2hRodtkYJfEXZJT1w+h10xRtFtQCoXVuI5Gk4b9i2
+         VXXlsK6QdhJkJxqp/dm4J09fZQl1TtmqBmaJWLSWRIzix28MkjU7HuNHo7C+wy1ormgS
+         mRhIsYdYpMHuUVZjydHcgUsxS9UxbGYx+iK7j9jeypRCRJOLkh54/PN25NKCaMpUe6UT
+         yJe7RTZ3VNgAwiPLKqHqW4mgPzkbiyRXtxwpXzOpENV0WfWo4UzLkDwMyfztxi8dhJpJ
+         pgjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVupWFRF0ncXbWOyM5eWpa+I+MyiwzfgGdBjwV1bpD5wKN2P8wEKRczitRLnmYRLdnWkb9fhXS99/8P4Dad@vger.kernel.org, AJvYcCXA3XcDG+gSu7ah5NrIrkwVb/6FL0ZBoI2D3a89TdaqGd42xtoLc47VZWdOzpOz9oI47uob8ADglLyf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs/0TBDrEYAWrwXG+S2ul9NMJTV/VfYWNoWUCNB/ZkFt48ypj8
+	Zb0VbTvzvCUPm+S+i2ePXAdQtbylzaPxA354sxSFnAqFxklhZWK2
+X-Gm-Gg: ASbGncszHBOo6TL3OdmrDRLdlRPjkD5Aq3uXvsuKHfiRDcUEamuRzga7ejMtIoTvTUr
+	dnsAz2cK/cl2HNLp6hoHAmDiPQvfzg0uBdBLIatYoTPzgP9TzVS7MRXjOA/CQ0MnfQxJ2BQ0vV2
+	+/VF5D3IoIpz3GiY68zXoQrkN1Q5FC9tDJaRAhuJmW4qr/aF+rUo8mrORZGcm10Wuc9d7zY5xfP
+	y5WmVDF3i++FpZ3aa9anHxdNLNRmR3DlYeH3vHovL3BfGKdgpCG9VEfYzb0IVAKGyCxe4uaJu9Y
+	09GRDTBvDByaUhoLtm87agFxSBCHLL6H3lns3TaNqi2rq2CdSoqo4NsNSccVGbgn/ig5Ao72HGm
+	tOb0hiO9QikpUQ80YPoTVPOLUpOQbLud2
+X-Google-Smtp-Source: AGHT+IGB0rBm4Sd2c2ZAuOBq1Wdz7EzM8zgvpzQWNHnTdOFbsdIwxpR9iWs0VxeI4bDlh0fT/50rUQ==
+X-Received: by 2002:a05:6512:6506:b0:54f:c074:f91b with SMTP id 2adb3069b0e04-54fc67c95damr1229451e87.24.1746795289472;
+        Fri, 09 May 2025 05:54:49 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc645cdcbsm270564e87.69.2025.05.09.05.54.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 05:54:48 -0700 (PDT)
+Message-ID: <16e91572-b132-4246-9fa9-8e8bc4c24f40@gmail.com>
+Date: Fri, 9 May 2025 15:54:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/14] arm64: dts: Add DSPI entries for S32G platforms
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ James Clark <james.clark@linaro.org>, Vladimir Oltean <olteanv@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+ Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, larisa.grigore@nxp.com, arnd@linaro.org,
+ andrei.stefanescu@nxp.com, dan.carpenter@linaro.org
+Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "Radu Pirea (NXP OSS)" <radu-nicolae.pirea@oss.nxp.com>
+References: <20250509-james-nxp-spi-v1-0-32bfcd2fea11@linaro.org>
+ <20250509-james-nxp-spi-v1-14-32bfcd2fea11@linaro.org>
+ <3ddde799-76b5-43f9-971e-a52ec322e9b1@kernel.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <3ddde799-76b5-43f9-971e-a52ec322e9b1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250509-jag-mv_ctltables_iter2-v1-12-d0ad83f5f4c3@kernel.org>
-References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
- Waiman Long <longman@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
- Joel Fernandes <joel@joelfernandes.org>, 
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org, 
- linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org, 
- Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2583;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=9rUI733v52tyD4qD/w5fv4MFvpEqPz2boNwanOapOa0=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGgd+ydY223rqSHwB4C1mckkQQi7bRKrIQfLI
- rtDBZEL1cuGSIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoHfsnAAoJELqXzVK3
- lkFPmBsL/2553g/JX/UeMa5y5SOfFJmDPzhUtapo/71UW/5OdLFx2JZskrl0SbCOFUfjTwu4mJp
- c5jTGK5aw/Hb2/PyQveQBCyfhdq5TjMC2c/rpw3Ryp3BEvjdyPp+PvWY0YuLlMjnTkir8oNYX3C
- Pym1ifCJS+k178tPjpVMvnew9QomUmd8TgWhBcYOsiSyCUY/x93rKSyWwFlrnOCaiXRn6YsDkCk
- 97/85cO2uaUxkz3Ayi+CHOmlQYwuPT0jl3MgjN98SBFJ4mdks2b3s7bAMGuIU3I75iKBwVLdScp
- UbjEiSSeFUvKyiro5Bx8RJadVmBgGivzJApqMmJc41WKE9paV61DlIYT/41oniS6v/z+R82BSQH
- 4AGsd1bvzVsIHiBLKIMfcs+rMhnhCCqzpn8ATz82I+SRZaUGTho21sMU4jBU/wSwW41PjOP4tMB
- UzYzCRVa4WwLsWhHJiReLrqNzM+hUw93Y1QlQ3MwcIFI78jxVYsb2Va5Hghv4fzkbhaabqEClB7
- Us=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
 
-Remove the following headers from the include list in sysctl.c.
+On 09/05/2025 14:26, Krzysztof Kozlowski wrote:
+> On 09/05/2025 13:06, James Clark wrote:
+>> +&spi1 {
+>> +	pinctrl-0 = <&dspi1_pins>;
+>> +	pinctrl-names = "default";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	status = "okay";
+>> +
+>> +	spidev0: spidev@0 {
+> 
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> 
+>> +		compatible = "rohm,dh2228fv";
+> 
+> 
+> Nah, I really doubt. That's not the device you have there. It's
+> possible, though, so can you share schematics?
 
-* These are removed as the related variables are no longer there.
-  ===================   ====================
-  Include               Related Var
-  ===================   ====================
-  linux/kmod.h          usermodehelper
-  asm/nmi.h             nmi_watchdoc_enabled
-  asm/io.h              io_delay_type
-  linux/pid.h           pid_max_{,min,max}
-  linux/sched/sysctl.h  sysctl_{sched_*,numa_*,timer_*}
-  linux/mount.h         sysctl_mount_max
-  linux/reboot.h        poweroff_cmd
-  linux/ratelimit.h     {,printk_}ratelimit_state
-  linux/printk.h        kptr_restrict
-  linux/security.h      CONFIG_SECURITY_CAPABILITIES
-  linux/net.h           net_table
-  linux/key.h           key_sysctls
-  linux/nvs_fs.h        acpi_video_flags
-  linux/acpi.h          acpi_video_flags
-  linux/fs.h            proc_nr_files
+Actually, not even possible. There is no DH2228FV from ROHM. There is 
+BH2228FV though:
+https://www.rohm.com/products/data-converter/d-a-converters/8bit-d-a/bh2228fv-product
 
-* These are no longer needed as intermediate includes
-  ==============
-  Include
-  ==============
-  linux/filter.h
-  linux/binfmts.h
+but as you know, it is unlikely this is the part populated on the board.
 
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
----
- kernel/sysctl.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+For the author:
+https://lore.kernel.org/linux-rockchip/20250213-calamity-smuggler-5d606993be32@spud/T/
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index dee9a818a9bbc8b1ecd17b8ac1ae533ce15c2029..0716c7df7243dc38f0a49c7cae78651c3f75f5a3 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -5,44 +5,24 @@
- 
- #include <linux/sysctl.h>
- #include <linux/bitmap.h>
--#include <linux/printk.h>
- #include <linux/proc_fs.h>
--#include <linux/security.h>
- #include <linux/ctype.h>
--#include <linux/filter.h>
--#include <linux/fs.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/kobject.h>
--#include <linux/net.h>
- #include <linux/highuid.h>
- #include <linux/writeback.h>
--#include <linux/ratelimit.h>
- #include <linux/initrd.h>
--#include <linux/key.h>
- #include <linux/times.h>
- #include <linux/limits.h>
- #include <linux/syscalls.h>
--#include <linux/nfs_fs.h>
--#include <linux/acpi.h>
--#include <linux/reboot.h>
--#include <linux/kmod.h>
- #include <linux/capability.h>
--#include <linux/binfmts.h>
--#include <linux/sched/sysctl.h>
--#include <linux/mount.h>
--#include <linux/pid.h>
- 
- #include "../lib/kstrtox.h"
- 
- #include <linux/uaccess.h>
- #include <asm/processor.h>
- 
--#ifdef CONFIG_X86
--#include <asm/nmi.h>
--#include <asm/io.h>
--#endif
--
- /* shared constants to be used in various sysctls */
- const int sysctl_vals[] = { 0, 1, 2, 3, 4, 100, 200, 1000, 3000, INT_MAX, 65535, -1 };
- EXPORT_SYMBOL(sysctl_vals);
-
--- 
-2.47.2
-
-
+Yours,
+	-- Matti
 
