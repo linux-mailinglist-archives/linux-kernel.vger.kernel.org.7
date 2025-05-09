@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-640631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EA6AB0725
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE34AAB0729
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B3C34E627A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:42:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524464E703E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567CE1172A;
-	Fri,  9 May 2025 00:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A411CBA;
+	Fri,  9 May 2025 00:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="GW2tYU+s"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HFn+2qo+"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3BB1FDA;
-	Fri,  9 May 2025 00:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7AC38DE1;
+	Fri,  9 May 2025 00:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746751349; cv=none; b=C8rDT4pEjPC6JxhTQ3hNL1tfS2hLkKhUcEyF4QeuPQCcEnXZk6EZrlWqRhcapgC7eJu4dN1/8/7EVp/N3j1tQZyoO4KD1/JUjFbhnQNgIHA0pE2ocOKAWGFl02HM2jhEostJ3uO00cNasdWLDKJQaC4mkmtjL7hIDZL6tBKeQOw=
+	t=1746751354; cv=none; b=UZQj7J4A5qZi1Z39tl/AE2mulCE8/laBp5PGJi1U8FQh+eyx6jAxF79cy2HkX+X+k/R2UR3uBrp6fvW2uU5c+SpSx1Aj+zV27/SlJp/M0w8UstCqGi0TtXu7wn/ll7jx3nzQoNdCvmN5wha6avydl9mkPZ0ic5yOWznaul19+9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746751349; c=relaxed/simple;
-	bh=+rXAV48iJAiEuwfYBZeLEYqSDFPFw+FyIOe7/hH7PYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O3O/+GY+7qm2BsZpk/l0I4r72DymHW9Vy1A7/1um7MpgLy+NOkTqxhyRTRza4wSaqnDr0CcEP67Jvr8U4n80XO2L6V7EKKplm15YothP43OokbeVAM/BNYF9J2/Z1DzkyPRk6tgiYPR8O/2BSudFZvTEiHjkyAp/Tr50dQQ4v/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=GW2tYU+s; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1746751354; c=relaxed/simple;
+	bh=R+IC1SCvxx356jqj5bqy53vEVEdZC6a8kUA28zCXPGQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JPkOosdNbEGNfEGdAxTEOm9tKpJrcftcOzyzEuG8sTUq1k1xx+9IEkGyUzgkqEy1X3ggYkVuBh8y0d03zGIv5oKR20BKlZ6QK6YsMK2dl9TgB4zuYsWEvI4rF6zVrAG5MOzSSkkz1PJ7BEHUwgw5fe12MsA4rllkHuNQ2rZMF0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HFn+2qo+; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9F2A5260FC;
-	Fri,  9 May 2025 02:42:24 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 6FA0A234ED;
+	Fri,  9 May 2025 02:42:30 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 7jXVltKdRkjg; Fri,  9 May 2025 02:42:23 +0200 (CEST)
+ id GK8D_ypDRo6u; Fri,  9 May 2025 02:42:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746751343; bh=+rXAV48iJAiEuwfYBZeLEYqSDFPFw+FyIOe7/hH7PYM=;
-	h=From:To:Cc:Subject:Date;
-	b=GW2tYU+sFtyUp3DjWxDP/PJAZV8fhN1xL6nabCzCsJCxiMUOC7PyR3BL/jSI+jPHb
-	 9z0qz7PMmHW07Rf9dOWzwPZViFxxjIBWKsfNMCEUC56fMZFYk/SeCUNqbV9E0JkQZc
-	 RXFRf8WNGE28KUK/6I82OiwZ8JeIerH5tMUd5Tmj24RHnh07KvtEjYLbqpCn8Yyqj/
-	 HbAqs50o0ye8qAokR8DbCIIC4qjFm6CM5pZ/pzKNgOvY/27c4FAiornmyWUktBjf62
-	 eZTbIzax4TqnC14RccVDeuR5FLTq2bf2H1NXcTrCOaBh3jvQBzT4dmzcHBVemJ4LrJ
-	 z3F/uC/On+3vQ==
+	t=1746751349; bh=R+IC1SCvxx356jqj5bqy53vEVEdZC6a8kUA28zCXPGQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=HFn+2qo+yH+H+mZfogdOhoocRulrzyRxQw0Ut55j9oNYtGxtT5NpHjSGPwkqUytlB
+	 /fCh3x8M/nEoyxxVp5P16mSEF6fmvoEmJ/RPk5UMmWP9oLqWbQByiw8WRdseRIe8lQ
+	 mkkLZz+Gd4u+tgT/o2xuHGtVLOvv32V46JgdlkhPxUfvknEEAiMQTerZ58xqjjjG3n
+	 GvnEuiQEq05j0Vk2IhxrV7GCV1fYkKgSEbAhJVeCmHMDkcYDQ1gWTBInUl3zQTyumF
+	 PbIoMvmCPdchByM07wpl+uUq9S3LUaHVZbFPYCQJKYB0uPr+VwPE/zKVnfbBNJjc4k
+	 SNf04Oz/rcnLA==
 From: Yao Zi <ziyao@disroot.org>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -64,10 +65,13 @@ Cc: linux-phy@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] Support RK3528 variant of Rockchip naneng-combphy
-Date: Fri,  9 May 2025 00:41:17 +0000
-Message-ID: <20250509004121.36058-2-ziyao@disroot.org>
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 1/5] dt-bindings: soc: rockchip: Add RK3528 pipe-phy GRF syscon
+Date: Fri,  9 May 2025 00:41:18 +0000
+Message-ID: <20250509004121.36058-3-ziyao@disroot.org>
+In-Reply-To: <20250509004121.36058-2-ziyao@disroot.org>
+References: <20250509004121.36058-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,42 +80,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rockchip RK3528 ships a naneng-combphy that operates in either PCIe or
-USB 3.0 mode. It has a similar control logic to previous generations of
-naneng-combphy but an apparently different register layout.
+Add compatible string for pipe-phy GRF found on RK3528 SoC, which
+controls misc settings for the integrated naneng-combphy.
 
-This series prepares phy-rockchip-naneng-combphy.c for variants with a
-different register layout and add RK3528 support.
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Testing is done on both Radxa E20C and Radxa Rock 2A with downstream
-devicetree changes, both USB 3 and PCIe modes are verified with mainline
-driver and achives a reasonable link speed.
-
-The devicetree change (PATCH 5) depend on v6 of the SD/SDIO series
-("Support SD/SDIO controllers on RK3528")[1] for a clean apply. Thanks
-for your time and review.
-
-[1]: https://lore.kernel.org/all/20250508234829.27111-2-ziyao@disroot.org/
-
-- Changed from v1
-  - Collect review tags
-  - Restyle RK3528 register definitions in the combphy driver
-  - Drop unused include of phy.h in SoC devicetree
-  - Link to v1: https://lore.kernel.org/all/20250508134332.14668-2-ziyao@disroot.org/
-
-Yao Zi (5):
-  dt-bindings: soc: rockchip: Add RK3528 pipe-phy GRF syscon
-  dt-bindings: phy: rockchip: naneng-combphy: Add RK3528 variant
-  phy: rockchip: naneng-combphy: Add SoC prefix to register definitions
-  phy: rockchip: naneng-combphy: Add RK3528 support
-  arm64: dts: rockchip: Add naneng-combphy for RK3528
-
- .../phy/phy-rockchip-naneng-combphy.yaml      |   5 +-
- .../devicetree/bindings/soc/rockchip/grf.yaml |   1 +
- arch/arm64/boot/dts/rockchip/rk3528.dtsi      |  22 +
- .../rockchip/phy-rockchip-naneng-combphy.c    | 746 +++++++++++-------
- 4 files changed, 500 insertions(+), 274 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+index 2f61c1b95fea..7e9321999435 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+@@ -16,6 +16,7 @@ properties:
+           - enum:
+               - rockchip,rk3288-sgrf
+               - rockchip,rk3528-ioc-grf
++              - rockchip,rk3528-pipe-phy-grf
+               - rockchip,rk3528-vo-grf
+               - rockchip,rk3528-vpu-grf
+               - rockchip,rk3566-pipe-grf
 -- 
 2.49.0
 
