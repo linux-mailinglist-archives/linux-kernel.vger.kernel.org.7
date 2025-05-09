@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-641657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213B5AB1484
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380C0AB1485
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B10A04D24
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1BD4C0529
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C762918CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B8B2918D2;
 	Fri,  9 May 2025 13:12:59 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7324291881
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3F4291885
 	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796378; cv=none; b=o+SLphBlSLcphmujNBHYvY5usUJtP+YkLZjcitdAaL8dMdncYkydVCi0s07ErrdnFVfDHZGbpOM3uEJ8QQZvOSSfJ9eUEtdkUf0c+wBlJJC3fFwelWp3AXzorI+M2MDIXjoDHPoCYaPogMOSpolrNdNgzyHCFdp0oY8pZCY6oRg=
+	t=1746796378; cv=none; b=qz+Y2k065HvatpvojYKwt5NyH/fOJFJbc44HBllqrWy8eitvEz3DiMVg/HtLYcZMjspQDNvAXvoI7itvLy0k+lHvjURvR7BlXMV3IQ1s5Q1cFeDFjxcxaOff7hT/6yIYAflMBxwPAO3cK9Su8lHLIYtH5KX10C+rpOpYj7/m/m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746796378; c=relaxed/simple;
-	bh=8rec8zMYyPtWG77kE1jVUaH5/n35o46IbwU7XIWi2r8=;
+	bh=80eGUuMKueuJ/ihAj2jSJbQh90YSw31csO4ocx/C2xQ=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rSMSxfwtIfmrvZS2s5dYwKQO+q83EeFoIv/U6pyo2wJQbqr4XObWpW7jo2ljE5eIxcZ1YvUvfEM1ohQYfHK3jKOUNOpo/9/Wpxorywx1YN7OV3zzHF38VBHgHQze8vMcatpLBtA1LweRVEilLkdxVCAMVJgnaM3++JIIMxO+X38=
+	 Content-Type; b=lojJuDq+FiX7sZyE6XpUruhFJeZAJ2ZXrcDxNpfA4T9FjjdLVpBbZTqzyB+EOem+rYbj5KvD+lqqJvWmp6ZnWol5NkfI9eL9kxjHqRfbZXrfRIDRACYTF4/n4m+ajUKpT7whm9+P+yvWpRf4pbNsXxX119KGcyCCmaIVQLE3Oj0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB27C4CEEE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E106C4CEF0;
 	Fri,  9 May 2025 13:12:58 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uDNXN-00000002boI-36Ru;
+	id 1uDNXN-00000002bom-3pDT;
 	Fri, 09 May 2025 09:13:13 -0400
-Message-ID: <20250509131313.599215203@goodmis.org>
+Message-ID: <20250509131313.761474477@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 09 May 2025 09:12:50 -0400
+Date: Fri, 09 May 2025 09:12:51 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 01/31] tracing: Update function trace addresses with module addresses
+Subject: [for-next][PATCH 02/31] tracing: Show function names when possible when listing fields
 References: <20250509131249.340302366@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,72 +53,67 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Now that module addresses are saved in the persistent ring buffer, their
-addresses can be used to adjust the address in the persistent ring buffer
-to the address of the module that is currently loaded.
+When the "fields" option is enabled, the "print fmt" of the trace event is
+ignored and only the fields are printed. But some fields contain function
+pointers. Instead of just showing the hex value in this case, show the
+function name when possible:
 
-Instead of blindly using the text_delta that only works for core kernel
-code, call the trace_adjust_address() that will see if the address matches
-an address saved in the persistent ring buffer, and then uses that against
-the matching module if it is loaded.
+Instead of having:
+
+ # echo 1 > options/fields
+ # cat trace
+ [..]
+  kmem_cache_free: call_site=0xffffffffa9afcf31 (-1448095951) ptr=0xffff888124452910 (-131386736039664) name=kmemleak_object
+
+Have it output:
+
+  kmem_cache_free: call_site=rcu_do_batch+0x3d1/0x14a0 (-1768960207) ptr=0xffff888132ea5ed0 (854220496) name=kmemleak_object
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20250506111648.5df7f3ec@gandalf.local.home
+Link: https://lore.kernel.org/20250325213919.624181915@goodmis.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_output.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ kernel/trace/trace_output.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index b9ab06c99543..aab6816f0249 100644
+index aab6816f0249..73037efdb45f 100644
 --- a/kernel/trace/trace_output.c
 +++ b/kernel/trace/trace_output.c
-@@ -1086,11 +1086,11 @@ enum print_line_t trace_nop_print(struct trace_iterator *iter, int flags,
- }
+@@ -1015,14 +1015,24 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 					break;
+ 				}
  
- static void print_fn_trace(struct trace_seq *s, unsigned long ip,
--			   unsigned long parent_ip, long delta,
--			   unsigned long *args, int flags)
-+			   unsigned long parent_ip, unsigned long *args,
-+			   struct trace_array *tr, int flags)
- {
--	ip += delta;
--	parent_ip += delta;
-+	ip = trace_adjust_address(tr, ip);
-+	parent_ip = trace_adjust_address(tr, parent_ip);
- 
- 	seq_print_ip_sym(s, ip, flags);
- 	if (args)
-@@ -1119,8 +1119,7 @@ static enum print_line_t trace_fn_trace(struct trace_iterator *iter, int flags,
- 	else
- 		args = NULL;
- 
--	print_fn_trace(s, field->ip, field->parent_ip, iter->tr->text_delta,
--		       args, flags);
-+	print_fn_trace(s, field->ip, field->parent_ip, args, iter->tr, flags);
- 	trace_seq_putc(s, '\n');
- 
- 	return trace_handle_return(s);
-@@ -1706,7 +1705,7 @@ static enum print_line_t trace_print_print(struct trace_iterator *iter,
- 
- 	trace_assign_type(field, iter->ent);
- 
--	ip = field->ip + iter->tr->text_delta;
-+	ip = trace_adjust_address(iter->tr, field->ip);
- 
- 	seq_print_ip_sym(s, ip, flags);
- 	trace_seq_printf(s, ": %s", field->buf);
-@@ -1792,7 +1791,7 @@ trace_func_repeats_print(struct trace_iterator *iter, int flags,
- 
- 	trace_assign_type(field, iter->ent);
- 
--	print_fn_trace(s, field->ip, field->parent_ip, iter->tr->text_delta, NULL, flags);
-+	print_fn_trace(s, field->ip, field->parent_ip, NULL, iter->tr, flags);
- 	trace_seq_printf(s, " (repeats: %u, last_ts:", field->count);
- 	trace_print_time(s, iter,
- 			 iter->ts - FUNC_REPEATS_GET_DELTA_TS(field));
+-				trace_seq_printf(&iter->seq, "0x%x (%d)",
+-						 *(unsigned int *)pos,
+-						 *(unsigned int *)pos);
++				if (sizeof(long) == 4)
++					trace_seq_printf(&iter->seq, "%pS (%d)",
++							 *(void **)pos,
++							 *(unsigned int *)pos);
++				else
++					trace_seq_printf(&iter->seq, "0x%x (%d)",
++							 *(unsigned int *)pos,
++							 *(unsigned int *)pos);
+ 				break;
+ 			case 8:
+-				trace_seq_printf(&iter->seq, "0x%llx (%lld)",
+-						 *(unsigned long long *)pos,
+-						 *(unsigned long long *)pos);
++				if (sizeof(long) == 8)
++					trace_seq_printf(&iter->seq, "%pS (%lld)",
++							 *(void **)pos,
++							 *(unsigned long long *)pos);
++				else
++					trace_seq_printf(&iter->seq, "0x%llx (%lld)",
++							 *(unsigned long long *)pos,
++							 *(unsigned long long *)pos);
+ 				break;
+ 			default:
+ 				trace_seq_puts(&iter->seq, "<INVALID-SIZE>");
 -- 
 2.47.2
 
