@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-640662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21C9AB0780
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCE8AB0784
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 03:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE291C03044
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF92A3BDCB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 01:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EEF12B17C;
-	Fri,  9 May 2025 01:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eHnPL9TG"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146D112D758;
+	Fri,  9 May 2025 01:41:49 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2361FC3
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 01:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458A9946C;
+	Fri,  9 May 2025 01:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746754701; cv=none; b=Tj9gh6WXXku6yJobec/9CTYKEvybdbQ3V1DH5ltDYShDHEB/Olq9WbVkvKy4x504VDBzdGH5/3eUO70xGA7LSchnvpWZmQqHqYRnSti/Zmu4b+kjbguGchki67UX79yNiwoZeaZC20e0WhDpUs1JnNWBcwYq1A3IwguPs0nGToE=
+	t=1746754908; cv=none; b=T7K8RyeOF3XToDSNOjdBeIlCjIBTEw+XlNmYBaB7qzYAChOM0/0tbEYka+/FUgG/tyc+CCmAIFlaHUgFhHZ2QB7RSAlQRkAT0E8MrJhCxbyhSJ4eAuuizNTbs3U4muMS0BxZxrBA3agg3xTzDxKg/U+mbKt+6hY/M1Q2drU2bL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746754701; c=relaxed/simple;
-	bh=9usjLUr32ZxLro9cjrGBZHFD0yVa51/PNmixGpgHEkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfFJlw2ftjVchJtLvP+ciWQJ3WVuEMCoEV4GT7FbJpVdzhhlS7sBLO4+YniuCqlZhbgt9E4ELf15yeCU95DtSn30m2IMsJ/rpeTby+gw/c8cFXZZTvzOKZb363eO+9CDu7Y0jbmC2eCIUtc7/+zHI1ybrI6LPQaNnh1dZ1V0CUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eHnPL9TG; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22e5df32197so18055275ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 18:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1746754699; x=1747359499; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q1ZcdHivvNbREwW8KHlFJoP7qz78WcmPAGgzmVjdBy8=;
-        b=eHnPL9TGAMg15ELV4jb5dXzRzcXss9/mruTqWrjhRidqeglrWLqDqksFkHCSlns/Z/
-         czWhqM5Ll0UMrKmQj5TO6Hnby7lcukAnvOS9ppl2kLnICsinNJPc+Azvqvmn7y8DKUVu
-         i4URvOYBSH6ILqyMiZbMEvWMmRnkMHbsxyyZc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746754699; x=1747359499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q1ZcdHivvNbREwW8KHlFJoP7qz78WcmPAGgzmVjdBy8=;
-        b=sgzqM5hm67CTQnymnB0/OuAg0WjcrLoC4SrDlMnyhaWX/SDu9XxwlmgVGncc6qVIk2
-         6uoMYMiXB1QAJhaYnq2yLJMfo/X267TffSwltZTFvS5B9PD5F5aJi161AY3hbijmyMQO
-         tm5iQsuOQ1sL25LqWkf0MB6WwlI+IMDl8EF8gSbT1ux/xERyDv55k9GArQoPjGOS8twD
-         deNgxncuKD/egADBK24uuMyMoHq8q191whYhxZ8o7iKrfrhIw2pZREBGibcjyRTn2zdS
-         7J507aixZJSLvf501n8Z3ZXxHC+nheZezjRC6NpOPtvA4E/1XUqlFbyDxjmEOotCiA0y
-         z1cg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/9YbbwvNoFmWwOn5K8hTUoplqVQTn4l8jlqkggKFUAWGUOEbbRHmRWC7jTa+MpmaU803w3GRw8rrAfWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp/edEzYBpydG9+Xq6XNCmJGVozKiD6rKFNvJmrr+Kdt6wmDtM
-	7L/j2kxM0KpIH8rJ+WYmidYtHd5lghUQFa5FSlFSYDBSbBYO4pbIm99BcOw/pw==
-X-Gm-Gg: ASbGncvOHcObM3xznw0QYCyN3eUAiPL+JSAGGHCKFRKv1fqe2SbSDQRWB3brCh2phSq
-	rsF+Xwn51xHktUZtmo7m5/HNZyDpPZK105/gpR9krDPHnHwred5Pt1RvoAN4IKyxf981Yuq0mS6
-	Szy7jljasR/U9tTEpRJFbb1D1tSmf0w3E+cOdeqS+c6uVuF62OUBWMVqcp43qDQlEqgJivN8hcj
-	vRQShzQXOHKvt2vWwA6b5zBYSRFeWnLYGdDqKDg8GVOjoQft9ZR7UJm+E6aznxDCKBMr1/OEt+8
-	CJtt2CxuOhqBWu+wzYMMgHkyttOYW4FCy/2ChgKcAzUW
-X-Google-Smtp-Source: AGHT+IFi530B2sRlz6o2F/z+hAqK2/FbwxnukCcHQ1nZH/APjuWe/i1i5zKAQV7eV8o/m5e/WA5XFQ==
-X-Received: by 2002:a17:903:2349:b0:224:10a2:cae7 with SMTP id d9443c01a7336-22fc8e95bf0mr23837955ad.40.1746754699453;
-        Thu, 08 May 2025 18:38:19 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:c794:38be:3be8:4c26])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7743b8esm6432555ad.101.2025.05.08.18.38.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 18:38:18 -0700 (PDT)
-Date: Fri, 9 May 2025 10:38:14 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Zaslonko Mikhail <zaslonko@linux.ibm.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCHv7 10/24] zram: add zlib compression backend support
-Message-ID: <gekqwhcpombpm2u3b4xl7zladuyzbxybeq5wcwt47k7tsgo4bh@rfrxaeqwzypi>
-References: <20240902105656.1383858-1-senozhatsky@chromium.org>
- <20240902105656.1383858-11-senozhatsky@chromium.org>
- <6046d139-2a46-4824-bdfc-687750c1ee5b@linux.ibm.com>
+	s=arc-20240116; t=1746754908; c=relaxed/simple;
+	bh=QPSI/nDUyiW2FjAADn1tIo0LfEblwaUPPvLyUjoQ+YI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uDXpDq2LDhWXMS6f+PN1qsRIG6WdmZsU0t7QKp2gbG3GNV+BlW43kDshuhHgbEYoRViL6ev/MU460PZIsV1qYdq7lvl2nfSMFUNFiz0KUWlM0nGX92aK26mUuDrtY2ADqMiyjmDPlTjxhW8xNntVm1Nezs+s9TRHKu7ZCu0ul5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn; spf=none smtp.mailfrom=kylinsec.com.cn; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kylinsec.com.cn
+X-QQ-mid: zesmtpsz7t1746754851t03ce554a
+X-QQ-Originating-IP: HsWACdo/6p+2+Xlv0CaWzUOgRr9FlLvbn1+uFwpn1/U=
+Received: from localhost.localdomain ( [118.249.225.48])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 09 May 2025 09:40:49 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3901934880426052766
+From: Liu Dalin <liudalin@kylinsec.com.cn>
+To: alexandre.belloni@bootlin.com,
+	zhoubinbin@loongson.cn,
+	wangming01@loongson.cn
+Cc: chenhuacai@kernel.org,
+	gaojuxin@loongson.cn,
+	git@xen0n.name,
+	jiaxun.yang@flygoat.com,
+	keguang.zhang@gmail.com,
+	lixuefeng@loongson.cn,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V1] rtc: loongson: Add missing alarm notifications for ACPI RTC events
+Date: Fri,  9 May 2025 09:40:46 +0800
+Message-Id: <20250509014046.7399-1-liudalin@kylinsec.com.cn>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250429062736.982039-1-liudalin@kylinsec.com.cn>
+References: <20250429062736.982039-1-liudalin@kylinsec.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6046d139-2a46-4824-bdfc-687750c1ee5b@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:kylinsec.com.cn:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: M4K5nIxZYv59t91TMkjmmNWmR+c21lQggGOkJLlnptcVQ/mtq1sTHrlX
+	kJb9NqeQK9c0kAs2RGNWGeafEQLRTDVPE1MstE4KhZYQo/uB1j34Mz758Xg3jF6PLUTe/jK
+	D1iH3D0thCIsap37ZYmGxCI0RP2isYgqNhsN11wM4oX3DwX8qHYf3lHuAWmH7B9qId8m+EO
+	tZhiav44UxafTEXKs3pexKiKppTVkr6ffV0d9S+P7CqDJimgz4HKwF6Dy6vXKnEnAgnnTOP
+	lnQ6oWlVGGHfL3MudqVzWMy2pF+PDcv39m1INUA/rrS9xUxISsiiHIJJwm9Nn3l7Y31yl6I
+	dLuaUcksQoMSME1bd0F3/OJUnkGW7LHKmTjJS7O3zMx9fTVqtLlKza6+Av+hEmq14+Sl/WT
+	Dj65ecBTYi8WTu76VuPq2QXAVEkMMTkqRVMcBkUdGWxtG+PO0FFCNEcESSd0y3MbT8oS6dE
+	/eg0kt2Qn7z2ME1pPMEwXx+PentRUy4kWVCv1tsCg4+2SxMxnnVnAUvbnKYIZgdaboZREy2
+	FygPPNTj9ZKqOKsZQXXNR43Y9/EwWSgaO2cIUWLyGX7sH6YVB1l5bQZhTRdQrGLucLXYmdd
+	WlGej3vu0F/6qfgR51SFapH7rQ5Vkd6umkwYps1NXFeQGPM9fX+/kJQ81PlMAGQMKRE9FTP
+	YhZaBF8RS8NLFLk8lkFBUHpK3Yoc2R3HDP7+eXx76KGGA9GlIdt3PiQvaHJurOMEn0d46PK
+	ILM+oAPnp/IQPi7/MoNga4Pkwzu288OsZGBqR3NmqL+fhrVTiPDa4ehXwvyH4Uj18vfkY7X
+	/7EiLFMO7yj4Fy70sNljMLwU4gTP2Sa8pyQF5vCfmQA0K9YwGx0TWYHHio9vAaP8iYjRiyE
+	rRTzS8FBLZlY8hp27CFb/oGamlVJ6iakxMReWf9TY9pin8PKXrBrHJj2NlD6/pQOj0fcnlr
+	FWg0yKQVOqr5QcEXF3uc1DBq03wRr1zng43afs0AZENiaz2FiKH8JdVAa1qn0f40TeAk=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-Hello,
+When an application sets and enables an alarm on Loongson RTC devices,
+the alarm notification fails to propagate to userspace because the
+ACPI event handler omits calling rtc_update_irq().
 
-On (25/05/08 16:19), Zaslonko Mikhail wrote:
-[..]
-> > +#include "backend_deflate.h"
-> > +
-> > +/* Use the same value as crypto API */
-> > +#define DEFLATE_DEF_WINBITS		11
-> > +#define DEFLATE_DEF_MEMLEVEL		MAX_MEM_LEVEL
-> > +
-[..]
-> The comment line says 'Use the same value as crypto API'...
-> could you please clarify here? Are there some memory constraints?
+As a result, processes waiting via select() or poll() on RTC device
+files fail to receive alarm notifications.
 
-When zram transitioned from Crypto API (scomp) to custom compression
-API I picked the CryptoAPI deflate DEFLATE_DEF_WINBITS value:
+Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
+Signed-off-by: Liu Dalin <liudalin@kylinsec.com.cn>
+---
+ drivers/rtc/rtc-loongson.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-crypto/deflate.c: DEFLATE_DEF_WINBITS	11
+diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
+index 97e5625c064c..2ca7ffd5d7a9 100644
+--- a/drivers/rtc/rtc-loongson.c
++++ b/drivers/rtc/rtc-loongson.c
+@@ -129,6 +129,14 @@ static u32 loongson_rtc_handler(void *id)
+ {
+ 	struct loongson_rtc_priv *priv = (struct loongson_rtc_priv *)id;
+ 
++	rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
++
++	/*
++	 * The TOY_MATCH0_REG should be cleared 0 here,
++	 * otherwise the interrupt cannot be cleared.
++	 */
++	regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
++
+ 	spin_lock(&priv->lock);
+ 	/* Disable RTC alarm wakeup and interrupt */
+ 	writel(readl(priv->pm_base + PM1_EN_REG) & ~RTC_EN,
+-- 
+2.33.0
 
-which is then passed to zlib_deflateInit2() and zlib_inflateInit2().
-
-> I tried to build the kernel with DEFLATE_DEF_WINBITS set to 15 and
-> verified that s390 hardware deflate acceleration works for zram devices
-> with a deflate compression.
-
-If we define it as 15 on non-s390 machines, will there be any
-consequences?  Increased memory usage?  By how much?
 
