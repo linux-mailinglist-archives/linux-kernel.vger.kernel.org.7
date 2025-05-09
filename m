@@ -1,141 +1,138 @@
-Return-Path: <linux-kernel+bounces-641461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70170AB121F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9046DAB1224
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 165B51C23D2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EAE1C40DFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C7D290097;
-	Fri,  9 May 2025 11:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pIDfMFGg"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C472D290D8C;
+	Fri,  9 May 2025 11:21:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFA522A4D6
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602162900A2
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 11:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746789703; cv=none; b=o6E223kcS22b63+oNGnH1HMjUHfHYZ9V37BQCK9DzIERHxYItzzJH9i4+tpPlEJVZyRiU0hZcVYkNlFmBN1cW5XG20Ertnc7SgyaBMQm3dzW3FFyQBtqEV035/O7vfmUHu4rtrLMm9LOiP3PXgYPt6ybp2j6HuI8bdHK9SSNERI=
+	t=1746789714; cv=none; b=howk1EG307wlnUWncN5TFgQzujThFrHhpgBqLNAu49sFIuJeQl1CfmgjbKI/txPr1EU31iGwAutWxnzM2vU2BeuK8J3jqVDmEkUIhCWu7ebvHGEafhCndICujnzKfxY++Hm+P/a6gK9bdNSVl/0r1ou/IfffV+YDBRCZI+rEV/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746789703; c=relaxed/simple;
-	bh=0BuO/miu0FNdGeIwKI4Igcv8UGoaQFfIol3GnMmPqqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ekPPzkf76Jz0VM1hYakjyeKWm1MjJG8BJ4THg8D0sm9VfDmobte4cvOoIf7p1XekMj2nC9fxSULSAHSEmcJYq0mkM97wkGCpNp4Q8tlxq+j69vqc75yY0XSDl5sETsyfXfFZhCm2Wj+eo+EPU7b9BqHjn3aGj3x0Z74C9c9r9rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pIDfMFGg; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d4ff56136so1880575e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 04:21:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746789700; x=1747394500; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0zvaxLdQ0qhtC7Jg6xocbXcJy/vEo+u7LRWPS1JM5/o=;
-        b=pIDfMFGgO0Hrlt8MMl0kZ9RISa2qcjnwC3tO8RCk6eDiBXdZUcw+0Ar+QyClfzjjZy
-         q7rcmL7awLcC34ICwfPrZeq/wiwJaHqDPX6H/ajLjV466tOFN9TNhpAiOdW3yCwMdSr2
-         rOh36bgF1jWPEXBP+kcLn+mrYhM/1fGrb9R+UQBfyssoShzTwB9LV2LMet077oelBZnP
-         M7ievaT+a/NedGigYAbg8JbMIz2iNJvbcTjP7MJTQ6dWQ4zHRxOecc6PvWo1/s30197N
-         rIQY7W3sO/zbL6+WbkWpVsr3TBrPlskz6WJWPSNjiMYQ/bum8QWKus1rFmZlGJcagngz
-         Av8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746789700; x=1747394500;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0zvaxLdQ0qhtC7Jg6xocbXcJy/vEo+u7LRWPS1JM5/o=;
-        b=JLRhJ6IO084NhLCjjho7MpzSGGt385yxu6PF3uJjqv79kXEuhIMMK6hShe3xaZpYD5
-         hrfNmHTn9lXbDDHzKpftk5HYqpmlaQ+3CfWNArNWzPceBDLfA/aqkdPs3myo0YQMQ0aB
-         t3LSj66eA2ey1bR8EREMMuINnCR8Rb3RBGvp1l97QlrXeD+TKYwKrqMA6MHbi3lrSBcN
-         X4fLET3f5WctmrTwICXapVum3D71IUDLw86IZDsEOzbuYxfi5824zhgswlfnkqA0rLWA
-         T2XTR+JYo8utvgZyx2GUB8U0b0SBsLTmYoqfsVy8rJU7GuLp/n70SrY5/D+/9oGteZel
-         jCQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIspUFd5uqS/KQ8LRvRiAkDLzBsFvAMNvJ3SnQ9bxcp8gWUtujNXDf7EARGD5kaIqQN3I222xg3zKbOQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmOKyfPY/YJb3pfeBjGbc8o780+VPqNPRWp2LWr3Txb75vyEKq
-	z7mV1IovnGPrJwfkutaFtMPWvA9UO+7RjQlvCTPoqpJ5nVKS74jfb9RRpjWcCig=
-X-Gm-Gg: ASbGnctGqkXS9KwRH2Bfz6pn91g0Hk/3rY3Bz+RfTx7GjHwY6pb0ifWlGSvCiSKaIJ0
-	9nNT2VcxAWnrHMf0koljTu/o6eGQWZhc8RYb6A3ybyI9lkkoA7vK8HEe5oLhJ6W6CSnKCCIqjQh
-	CUyiWay7urc7I76vvi5mMkcY3eg0WoBfhuWTeOTdnsfGv8YHkZ7vDg+I6zAsOwd/mqQEaphKJAD
-	lZSZKilnkHTvCawuWm/7hTT9c3GqGC/RUYelTNQpeCw8jNGtfeDHKzyF3UKJdp/4HFt5DobXO6b
-	YHkiqtpvcVC247lwlwIwbqpaLTcvjqPlDcdwjhovsqTqoNAOZg==
-X-Google-Smtp-Source: AGHT+IEuDuBg93OxIQQoW+nylcXuRFPBeBathaUSkxBNEQ4jD3mR42Jzx1DI1Z0ON8bFZOIloNRtJQ==
-X-Received: by 2002:a05:600c:1382:b0:439:a30f:2e49 with SMTP id 5b1f17b1804b1-442d6dd5413mr8885805e9.5.1746789699803;
-        Fri, 09 May 2025 04:21:39 -0700 (PDT)
-Received: from kuoka.. ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd328455sm69946945e9.2.2025.05.09.04.21.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 04:21:39 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vladimir Oltean <olteanv@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Frank Li <Frank.Li@nxp.com>,
-	linux-spi@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] spi: dt-bindings: nuvoton,wpcm450-fiu: Drop unrelated nodes from DTS example
-Date: Fri,  9 May 2025 13:21:32 +0200
-Message-ID: <20250509112130.123462-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250509112130.123462-3-krzysztof.kozlowski@linaro.org>
-References: <20250509112130.123462-3-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1746789714; c=relaxed/simple;
+	bh=EbQ5yeRzZgQ7jY24RZbakhEEEwoGGgvfogKc4nReYuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxnu6GrAv1MzLAanq7w6T45fBR0e+iIeCuwfA36za05gIfSCkQRcQJCUztwsQL1D+7xF0JTlXY9IRGCrMNK6F5ySszHv0iZkG14IRnwGPtz5ZQJnVnR8Ymt21DZGbLJkm2NioYV/5pOC0pIRL+VNAK5OxEl5MI7utyjejfdvRWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D89C4CEEB;
+	Fri,  9 May 2025 11:21:49 +0000 (UTC)
+Date: Fri, 9 May 2025 12:21:47 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: James Morse <james.morse@arm.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Subject: Re: [PATCH v10 07/30] x86/resctrl: Check all domains are offline in
+ resctrl_exit()
+Message-ID: <aB3lS8K7I0wEkGw_@arm.com>
+References: <20250508171858.9197-1-james.morse@arm.com>
+ <20250508171858.9197-8-james.morse@arm.com>
+ <dafc0ab3-aaf7-4055-bf56-ffd5414f8895@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=869; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=0BuO/miu0FNdGeIwKI4Igcv8UGoaQFfIol3GnMmPqqQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoHeU9Raekbf2tG03zWC6ko3skitxMRci9RwRJu
- 8slhDM2iNaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaB3lPQAKCRDBN2bmhouD
- 14v3D/9iuwKe4zn277rUfVsmgt/II8fADdf1u/LFF8b+e1VT3f1aiSpH7QsV6sp6QMDJZT/Sjan
- EA5EpUVZRySb6x1OoQPqh9geb8YTnuzu+1mWMxtmBwBzSqNa/ip2dEhYZIkq+zUlobn5dkMP6/N
- z0P5+VQc/vFc6uFcTHXE4h3Ngj/l7NEMSlEJzaV5zdlAJh6LqF1L7x04TAc9S7KqAEwToyaJENd
- LX0+FVaiwpPNKbElXgizKP16egYtBw+RTrZjsUxgOfIccAbaCPDSWQbw5Dd2tsfLhlD56fuQ//U
- bkTV252AgvsA0CBs5BFD1CN7zHWsKzQF6SYkq+LlHWC8dTO8IViLSn09zJnknFgQCsUiYh8y5jE
- xav332eHokzZ/JmqqM1BjdCrVPnlsxrvgaHLhJLu8h3bW4bucGZCs3LNUC+U2deDOeYbrAXE6D6
- 5jqPWdMYxx5FLKVIJkMSJyDtTPV0YiXrqDmFsPJKYUNJAnIZFKGpN0Wpk6VYWZ9rDtepU0781rB
- oO3zGPlWD4Snadvawz9PIqeEAueNplqWUjDezYjF3SvujhiPpmZpXkQ+Q1jV4stqNtnVPNXh3HW
- nSGGYwfk/aaVVWfKANaOQqz0C69xQIXbDORTrC1Ts5aDxeQa4LgzFEkrxuJ4aZyTW7vw1Crk4AP WWtlsOiCaLqiCxg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dafc0ab3-aaf7-4055-bf56-ffd5414f8895@intel.com>
 
-Binding example should not contain other nodes, including other
-providers like syscon, because this is redundant and only adds
-unnecessary bloat.
+Hi Reinette,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/spi/nuvoton,wpcm450-fiu.yaml         | 5 -----
- 1 file changed, 5 deletions(-)
+Thanks for the reviews.
 
-diff --git a/Documentation/devicetree/bindings/spi/nuvoton,wpcm450-fiu.yaml b/Documentation/devicetree/bindings/spi/nuvoton,wpcm450-fiu.yaml
-index 4e0d391e1d69..c97bf48b56b4 100644
---- a/Documentation/devicetree/bindings/spi/nuvoton,wpcm450-fiu.yaml
-+++ b/Documentation/devicetree/bindings/spi/nuvoton,wpcm450-fiu.yaml
-@@ -59,8 +59,3 @@ examples:
-         reg = <0>;
-       };
-     };
--
--    shm: syscon@c8001000 {
--      compatible = "nuvoton,wpcm450-shm", "syscon";
--      reg = <0xc8001000 0x1000>;
--    };
+On Thu, May 08, 2025 at 10:51:23AM -0700, Reinette Chatre wrote:
+> On 5/8/25 10:18 AM, James Morse wrote:
+> > diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > index 88197afbbb8a..f617ac97758b 100644
+> > --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > @@ -4420,8 +4420,32 @@ int __init resctrl_init(void)
+> >  	return ret;
+> >  }
+> >  
+> > +static bool __exit resctrl_online_domains_exist(void)
+> > +{
+> > +	struct rdt_resource *r;
+> > +
+> > +	for_each_rdt_resource(r) {
+> > +		if (!list_empty(&r->ctrl_domains) || !list_empty(&r->mon_domains))
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> 
+> This looks the same as before. Did you notice my comment in [1] about this list_empty() usage?
+
+James may have missed that comment (and he's off today). Copying your
+comment here:
+
+> A list needs to be initialized for list_empty() to behave as intended. A list within
+> an uninitialized or "kzalloc()'ed" struct will not be considered empty.
+> resctrl_arch_get_resource() as used by for_each_rdt_resource() already establishes
+> that if an architecture does not support a particular resource then it can (should?)
+> return a "dummy/not-capable" resource. I do not think resctrl should require
+> anything additionally like initializing the lists of a dummy/not-capable resource
+> to support things like this loop.
+
+I agree the description of the resctrl_arch_get_resource() semantics
+doesn't specifically mention that the list_heads should be initialised
+in dummy resources. IIUC, x86 should be safe for now since the
+rdt_resources_all[] array elements have the ctrl_domains and mon_domains
+list_heads initialised.
+
+> Considering this, could this be made more specific? For example,
+> 
+> 	for_each_alloc_capable_rdt_resource(r) {
+> 		if (!list_empty(&r->ctrl_domains))
+> 			return true;
+> 	}
+> 
+> 	for_each_mon_capable_rdt_resource(r) {
+> 		if (!list_empty(&r->mon_domains))
+> 			return true;
+> 	}
+
+If not-capable resources can be only partially initialised, your
+proposal makes (alternatively, keep a single loop but only check
+list_empty() if {mon,alloc}_capable; maybe the compiler is smart enough
+to squash the two loops).
+
+That said, if Boris plans to take this series, I don't think it's worth
+a respin (assuming my understanding is correct and there are no other
+issues with the series). The fix can be added subsequently on top before
+other architectures gain support for resctrl (well, most likely Mon/Tue
+when James is back).
+
+Thanks.
+
 -- 
-2.45.2
-
+Catalin
 
