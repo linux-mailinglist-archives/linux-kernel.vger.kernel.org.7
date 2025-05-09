@@ -1,99 +1,332 @@
-Return-Path: <linux-kernel+bounces-642058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A841AB1A46
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:20:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3FBAB1A34
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 553E0B40493
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2364316D2A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBB42367D3;
-	Fri,  9 May 2025 16:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAEE2367D1;
+	Fri,  9 May 2025 16:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hg6v/O29"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQRgdvbE"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2522D4FD;
-	Fri,  9 May 2025 16:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41032367B1;
+	Fri,  9 May 2025 16:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807204; cv=none; b=nOR0xE8xuOSgEuyojFAVADzmATbN2cqDlZc3HlTlWSDogprZaur6v47WHYvS6/SdXdvtp6eyLre9iQfNUyhBzR+XyKwJxgA0AniNqRuo4DbbZ+1YN6kI20SN27ey3TLbm5I+BMilUITonbptUD4CygCmPjDyquGdaEs5rc5iCxc=
+	t=1746807236; cv=none; b=tPfxrbzF/Qj44/lcw7K8SSNxwkRkYv+CKTNn1+Rq/Ae+gH8iHUoRLZuvr9JOuVaWsSnGbTWYtjXk+rZLWeTlxjwDX8eS8c/7o/c03P2ba9+/JjoAFZbjr4DRUuCNJY7TAtmyoK+Dtt1rnjrqVqdu+FGxdLxUD47PXih/dO0qB50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807204; c=relaxed/simple;
-	bh=90WLMcjZaIacrXRziNVygPsGLxcvNTB/TqZUVJKgH44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjeX9QgXDZInVEhrZ4XH8fwi+8dK33MazgfMZh+sIDtlXA7ZUwSocQ4iFV+kIoV2RHo1stj+x2CRw0iy7x7cRXvepf9FNAvZar08Q+5vmCF0PoJyZJjODol+k5opaSlwMHaLN1g9vIwY3sY94aVWZbYLQQvmYh59f6okEXIu4X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hg6v/O29; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 839FEC4CEE4;
-	Fri,  9 May 2025 16:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807204;
-	bh=90WLMcjZaIacrXRziNVygPsGLxcvNTB/TqZUVJKgH44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hg6v/O29HMpNA5LynknPfbR7Jzd0aPeq7YIiIAiy9O+1kWoEUj/BwVOpNWfPshrTg
-	 T3nj7Ca/OgY4Syrhu1SYrf9nyc1pgSVvImGTQ+zWRRbJqH1Ac0m88PeJUuhDl1MaPs
-	 GO+td8v60SirbtsGf2FhP0aPU1TM8tnPm0FfzTGxYoud6oSYH6hGy0dq80OwUxIwLi
-	 sybpdFa8W36A12ebvr2uBmItdXLoxwswAF3X2GBG4LItxeBA8AYDoHTgWVK3H/VQKJ
-	 yAx8cL70zc3WY5MTmZfEQZTvkgrkSkaudQ7ksKsneuYfVydjegvFFlaqIa/zjUO4RM
-	 RCghvCno/b1tw==
-Date: Fri, 9 May 2025 09:13:22 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-mm@kvack.org,
-	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 09/12] sysctl: move cad_pid into kernel/pid.c
-Message-ID: <aB4polMnZXRCqcDD@bombadil.infradead.org>
-References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-9-d0ad83f5f4c3@kernel.org>
+	s=arc-20240116; t=1746807236; c=relaxed/simple;
+	bh=DvqUdBGK3qqM5NpI6UbmFyhga1fK3OK92MfA9hlg8+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fZb3nHaoeLL2jhMGyMsRD6WWKd+frGieCoXtsbsIKf+d3D9s9eojjA+nu9PnpR2Ju11c/GgPqK/LilMiJD6PbxKFtFTo4ZgvAeEpT8lKcFvMTvim5/kqdTgtM1EbFFvEAH1PR0cZesYqgVA757sqESe7sXHHnnFKp6wjBxrn7Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQRgdvbE; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3105ef2a071so26012471fa.1;
+        Fri, 09 May 2025 09:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746807233; x=1747412033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MdjRZ8kWgdlygetbiJM8snNNIhyxMwsGsBXVDaSIIV0=;
+        b=iQRgdvbEm1HjSIqr5qyLnF8wMeF3CKBbaZIuM89N0YNi5tfuuDDzqK+wvK15a27j58
+         UKClJu9noby2XH3mRuz4Ozl1bILuMMjdpu6nkZ/ECAkYHKdKXKqbW5zPD9b74yRz9CCj
+         iDQemNDKN0D81xK8m5kUNnUK7fbbTtDWRdw2PAFFMo3xi5t9czI8W/C1XrAMX1glRn+w
+         PDYDmEpv6aYht9Gzq2iZKxmklajZTnLiwxKd44XzJFvqxa1IlVIS1xdNhblVnFmtDJHe
+         Wlc0OAujXmASWfS0OA6mxn1D6nasZyRo81cZqVSawoHLEoQcdf2s5UJE4d0Bi4MooY3o
+         cOiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746807233; x=1747412033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MdjRZ8kWgdlygetbiJM8snNNIhyxMwsGsBXVDaSIIV0=;
+        b=L8c60wDyRS1hQDQxZCG69lvRlfQ/EYLtdWU3zYBvGSmt6I0JLt4TsgmlkSy6BYAeEr
+         z2nIq+thKpkK0iw/cIy6Xtz2vcx0JYwxepiWcCGpTggWOjLdzkinQJCb9CYjCB2ddHtq
+         f2D0DQBaZn7QeintWkuGrhfuCpo5qRqAnE5rgydSk4yTEuIUPUcqbCcwicpbkauQ/4wH
+         Ysxt0g7eEGk2z4PjKgO3TEIYjFHPWN6XmJ4kOHes29pu8BH5obE1dIwT6xY9FCKRgJZw
+         t/Fguc2StmQPGRG4QjAB/vZD3+skFQQrJjviLSHSyuNgG4Zw9MaQ4UPR8k4+VvpZkMyd
+         LG1w==
+X-Forwarded-Encrypted: i=1; AJvYcCURxmJPaixdIX2YJ5CV3FFPx1Umyels6+/rICTTdtK0N1ojWRVhCyRf6byepwHel/YOy6AcJV6Yjd7yyf/e@vger.kernel.org, AJvYcCUrQ1VLqh50wEZ80LEVxkk3Cc2tRyyYRH5sW5pwpDZhroAqwxHHHtOA3mNJDWc/iKzvZjbWOeiY3/gvDZQfx0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0wr2EaOrULc5QeiZTGho82YTOjp4uhyOl203AZyNUO7EM3aeU
+	LK9NAgD+HKOWb8mAMm8hbpk1PfR0usHKbWyKjcjznL4Ppzf0rhMYbphUVR5lHa+k3zRAFX+RnJm
+	emgLro7zXE80YWeOdofLhfNHD4GM=
+X-Gm-Gg: ASbGncv6mCs0QnxPInPKJhOxiCPTSvIa6K5oriusKdgDlxXEFB7yLIRaCnWD9d0zCBw
+	pt5I3YUiAXK3HnVQsoELgTPDU51HPOmSr2AgPX2gp3MQQopjwVe7r4myvj16XXOxtC6kab1TM/h
+	BlggieiXZHN9dW14O8HlPs
+X-Google-Smtp-Source: AGHT+IF5h2wKi/PV1ym86BhwV6SUssh82eTXTBtJP150byFQVhdhBW+dhLFoUNrv4VOPR9XfWl0M41Hg2+O2Fznf+zs=
+X-Received: by 2002:a2e:a542:0:b0:30c:5c6:91e0 with SMTP id
+ 38308e7fff4ca-326c459a4abmr20414131fa.2.1746807232323; Fri, 09 May 2025
+ 09:13:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-9-d0ad83f5f4c3@kernel.org>
+References: <20250509-iso-v2-1-da53bd18c193@amlogic.com> <772853441dbc7bef7dc49741d2a76aedaf92525d.camel@iki.fi>
+In-Reply-To: <772853441dbc7bef7dc49741d2a76aedaf92525d.camel@iki.fi>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 9 May 2025 12:13:39 -0400
+X-Gm-Features: AX0GCFuaOvOT5CZ4bNWnll19k0oXV44m2rJ5l6zh1ZEB6GoH-8LqQY07w7qXvTw
+Message-ID: <CABBYNZLjLw0AasZj4Wyo2cag1CqaketCxGUB5ceNx9s9m+ydZg@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: fix socket matching ambiguity between BIS
+ and CIS
+To: Pauli Virtanen <pav@iki.fi>
+Cc: yang.li@amlogic.com, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 09, 2025 at 02:54:13PM +0200, Joel Granados wrote:
-> Move cad_pid as well as supporting function proc_do_cad_pid into
-> kernel/pic.c. Replaced call to __do_proc_dointvec with proc_dointvec
-> inside proc_do_cad_pid which requires the copy of the ctl_table to
-> handle the temp value.
-> 
-> This is part of a greater effort to move ctl tables into their
-> respective subsystems which will reduce the merge conflicts in
-> kernel/sysctl.c.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+Hi Pauli,
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+On Fri, May 9, 2025 at 11:46=E2=80=AFAM Pauli Virtanen <pav@iki.fi> wrote:
+>
+> Hi,
+>
+> pe, 2025-05-09 kello 18:17 +0800, Yang Li via B4 Relay kirjoitti:
+> > From: Yang Li <yang.li@amlogic.com>
+> >
+> > When the DUT acts as a sink device, and a BIS already exists,
+> > creating a CIS connection can cause the kernel to incorrectly
+> > reference the BIS socket. This occurs because the socket
+> > lookup only checks for state =3D=3D BT_LISTEN, without
+> > distinguishing between BIS and CIS socket types.
+> >
+> > To fix this, match the destination address (dst addr) during
+> > ISO socket lookup to differentiate between BIS and CIS sockets
+> > properly.
+>
+> Does it work if you have both CIS and BIS established between the same
+> two machines?
+>
+> Now that CIS_LINK and BIS_LINK are separate hci_conn types, it could
+> make sense to introduce `__u8 hcon_type;` in iso_pinfo, maybe set in
+> iso_connect/listen so that also the socket types won't be confused.
 
-  Luis
+We do store the hci_conn as part of iso_conn which is already a member
+of iso_pinfo, so the information of the conn type is already
+accessible from the iso.c.
+
+> >
+> > Link: https://github.com/bluez/bluez/issues/1224
+> >
+> > Signed-off-by: Yang Li <yang.li@amlogic.com>
+> > ---
+> > Changes in v2:
+> > - Fix compilation errors
+> > - Improved the problem description for clarity.
+> > - Link to v1: https://lore.kernel.org/r/20250507-iso-v1-1-6f60d243e037@=
+amlogic.com
+> > ---
+> >  net/bluetooth/hci_event.c | 34 +++++++++++++++++++---------------
+> >  net/bluetooth/iso.c       | 12 +++++++++---
+> >  2 files changed, 28 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> > index 66052d6aaa1d..6b26344ad69f 100644
+> > --- a/net/bluetooth/hci_event.c
+> > +++ b/net/bluetooth/hci_event.c
+> > @@ -6413,6 +6413,8 @@ static void hci_le_pa_sync_estabilished_evt(struc=
+t hci_dev *hdev, void *data,
+> >
+> >       conn->sync_handle =3D le16_to_cpu(ev->handle);
+> >       conn->sid =3D HCI_SID_INVALID;
+> > +     conn->dst =3D ev->bdaddr;
+> > +     conn->dst_type =3D ev->bdaddr_type;
+> >
+> >       mask |=3D hci_proto_connect_ind(hdev, &ev->bdaddr, BIS_LINK,
+> >                                     &flags);
+> > @@ -6425,7 +6427,7 @@ static void hci_le_pa_sync_estabilished_evt(struc=
+t hci_dev *hdev, void *data,
+> >               goto unlock;
+> >
+> >       /* Add connection to indicate PA sync event */
+> > -     pa_sync =3D hci_conn_add_unset(hdev, BIS_LINK, BDADDR_ANY,
+> > +     pa_sync =3D hci_conn_add_unset(hdev, BIS_LINK, &ev->bdaddr,
+> >                                    HCI_ROLE_SLAVE);
+>
+> Do these make the update of conn->dst in iso_conn_ready() unnecessary?
+>
+> It should be documented somewhere what are the different types of
+> BIS_LINK hci_conn that exist, and what are their invariants...
+>
+> >       if (IS_ERR(pa_sync))
+> > @@ -6456,13 +6458,6 @@ static void hci_le_per_adv_report_evt(struct hci=
+_dev *hdev, void *data,
+> >
+> >       hci_dev_lock(hdev);
+> >
+> > -     mask |=3D hci_proto_connect_ind(hdev, BDADDR_ANY, BIS_LINK, &flag=
+s);
+> > -     if (!(mask & HCI_LM_ACCEPT))
+> > -             goto unlock;
+> > -
+> > -     if (!(flags & HCI_PROTO_DEFER))
+> > -             goto unlock;
+> > -
+> >       pa_sync =3D hci_conn_hash_lookup_pa_sync_handle
+> >                       (hdev,
+> >                       le16_to_cpu(ev->sync_handle));
+> > @@ -6470,6 +6465,13 @@ static void hci_le_per_adv_report_evt(struct hci=
+_dev *hdev, void *data,
+> >       if (!pa_sync)
+> >               goto unlock;
+> >
+> > +     mask |=3D hci_proto_connect_ind(hdev, &pa_sync->dst, BIS_LINK, &f=
+lags);
+> > +     if (!(mask & HCI_LM_ACCEPT))
+> > +             goto unlock;
+> > +
+> > +     if (!(flags & HCI_PROTO_DEFER))
+> > +             goto unlock;
+> > +
+>
+> Commit message should explain what this reordering of *_ind after
+> pa_sync lookup/update are for.
+>
+> >       if (ev->data_status =3D=3D LE_PA_DATA_COMPLETE &&
+> >           !test_and_set_bit(HCI_CONN_PA_SYNC, &pa_sync->flags)) {
+> >               /* Notify iso layer */
+> > @@ -6993,6 +6995,8 @@ static void hci_le_big_sync_established_evt(struc=
+t hci_dev *hdev, void *data,
+> >                       set_bit(HCI_CONN_PA_SYNC, &bis->flags);
+> >
+> >               bis->sync_handle =3D conn->sync_handle;
+> > +             bis->dst =3D conn->dst;
+> > +             bis->dst_type =3D conn->dst_type;
+> >               bis->iso_qos.bcast.big =3D ev->handle;
+> >               memset(&interval, 0, sizeof(interval));
+> >               memcpy(&interval, ev->latency, sizeof(ev->latency));
+> > @@ -7038,13 +7042,6 @@ static void hci_le_big_info_adv_report_evt(struc=
+t hci_dev *hdev, void *data,
+> >
+> >       hci_dev_lock(hdev);
+> >
+> > -     mask |=3D hci_proto_connect_ind(hdev, BDADDR_ANY, BIS_LINK, &flag=
+s);
+> > -     if (!(mask & HCI_LM_ACCEPT))
+> > -             goto unlock;
+> > -
+> > -     if (!(flags & HCI_PROTO_DEFER))
+> > -             goto unlock;
+> > -
+> >       pa_sync =3D hci_conn_hash_lookup_pa_sync_handle
+> >                       (hdev,
+> >                       le16_to_cpu(ev->sync_handle));
+> > @@ -7054,6 +7051,13 @@ static void hci_le_big_info_adv_report_evt(struc=
+t hci_dev *hdev, void *data,
+> >
+> >       pa_sync->iso_qos.bcast.encryption =3D ev->encryption;
+> >
+> > +     mask |=3D hci_proto_connect_ind(hdev, &pa_sync->dst, BIS_LINK, &f=
+lags);
+> > +     if (!(mask & HCI_LM_ACCEPT))
+> > +             goto unlock;
+> > +
+> > +     if (!(flags & HCI_PROTO_DEFER))
+> > +             goto unlock;
+> > +
+> >
+> >       /* Notify iso layer */
+> >       hci_connect_cfm(pa_sync, 0);
+> >
+> > diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> > index 6e2c752aaa8f..1dc233f04dbe 100644
+> > --- a/net/bluetooth/iso.c
+> > +++ b/net/bluetooth/iso.c
+> > @@ -641,11 +641,12 @@ static struct sock *iso_get_sock(bdaddr_t *src, b=
+daddr_t *dst,
+> >                       continue;
+> >
+> >               /* Exact match. */
+> > -             if (!bacmp(&iso_pi(sk)->src, src)) {
+> > +             if (!bacmp(&iso_pi(sk)->src, src)
+> > +                  && !bacmp(&iso_pi(sk)->dst, dst)
+> > +                     ){
+>
+> Code style issues here.
+>
+> >                       sock_hold(sk);
+> >                       break;
+> >               }
+> > -
+> >               /* Closest match */
+> >               if (!bacmp(&iso_pi(sk)->src, BDADDR_ANY)) {
+> >                       if (sk1)
+> > @@ -1962,7 +1963,7 @@ static void iso_conn_ready(struct iso_conn *conn)
+> >               }
+> >
+> >               if (!parent)
+> > -                     parent =3D iso_get_sock(&hcon->src, BDADDR_ANY,
+> > +                     parent =3D iso_get_sock(&hcon->src, &hcon->dst,
+> >                                             BT_LISTEN, NULL, NULL);
+>
+> I think the code here would be more clear if it's refactored to handle
+> hcon->type =3D=3D CIS_LINK and hcon->type =3D=3D BIS_LINK with explicitly
+> separate code path.
+>
+> What happens here if we have a BIS listener socket for `dst`, and `dst`
+> initiates a CIS connection? Won't the CIS connection get resolved to
+> the BIS listener socket?
+>
+> IIUC CIS listeners always have dst =3D=3D BDADDR_ANY. BIS listeners have
+> dst !=3D BDADDR_ANY.
+>
+> Perhaps there could also be `__u8 hcon_type` in iso_pinfo that gets set
+> to CIS_LINK or BIS_LINK in iso_connect/listen.
+>
+> >
+> >               if (!parent)
+> > @@ -2203,6 +2204,11 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr=
+_t *bdaddr, __u8 *flags)
+> >       } else {
+> >               sk =3D iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
+> >                                 BT_LISTEN, NULL, NULL);
+> > +             if (!sk)
+> > +                     sk =3D iso_get_sock(&hdev->bdaddr, bdaddr,
+> > +                                       BT_LISTEN, NULL, NULL);
+> > +             else
+> > +                     iso_pi(sk)->dst =3D *bdaddr;
+>
+> This updates the listener socket dst address with that of the
+> connecting device? I think what is set in bind() shouldn't be modified
+> later on.
+>
+> Isn't this wrong for CIS, won't it block connecting another device?
+
+On top of these comments this lacks proper testing with iso-tester
+which seems to be failing with these changes, beside that we would
+probably benefit from having a test that emulates this topology, which
+appears to mix CIS and BIS together, which doesn't seem to be covered
+in any audio configuration (AC-#) from the spec, although it seems
+valid to support it if controllers are capable of doing it.
+
+> >       }
+> >
+> >  done:
+> >
+> > ---
+> > base-commit: f3daca9b490154fbb0459848cc2ed61e8367bddc
+> > change-id: 20250506-iso-6515893b5bb3
+> >
+> > Best regards,
+>
+> --
+> Pauli Virtanen
+
+
+
+--=20
+Luiz Augusto von Dentz
 
