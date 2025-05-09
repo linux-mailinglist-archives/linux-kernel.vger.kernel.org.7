@@ -1,157 +1,209 @@
-Return-Path: <linux-kernel+bounces-641232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF4DAB0EB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:19:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75983AB0EAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0B3A03779
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ECC47A7803
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054DC277031;
-	Fri,  9 May 2025 09:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921DB2798F8;
+	Fri,  9 May 2025 09:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A49+jEYE"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PqkwGTdh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638D21F4C9D;
-	Fri,  9 May 2025 09:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA7A278E60
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 09:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746782160; cv=none; b=E4D7v4nbVAq5ZWAG/UkCWY6XHK+tK1Pf82Vnn4YJ4NBDHAJDACBgahtzQ67VHkC3SS0YWeiRAjPsmBXMWwnn+ESW7QXFPO427SnkMvfMAs33oy7q2CYUS3XVWgKr9p6igNgqJwQqgckky9QkvEIvm8gbGqE4kDGhjGnXlngvCd0=
+	t=1746782174; cv=none; b=nir+j7BtFSJL7/gl8UraRsABE58haWXxNUuEUIFBDJNqvqbGSoil0AHzy60skej7IpwKFmXpV2QoSCAHipj/jmsApP/gbi1mO4JV7pZEX+/PrgRMmbSgxAOaiel+Ci/QaLVYSIZAgqI3NJM60X0kt4yPZ6yUZ5MEa0mFXtbV8OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746782160; c=relaxed/simple;
-	bh=aPdJ0egps+Pd3GyaV5txJ6SoXup6IGGorXKAqGmMelQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F0q3Yd5vKcNZvwiYNvV5m8AhzWZMXjB6fGTWHR8wMBwc8jr5lFERrlZP97SGC3DTxhjwB68/SSWxrO7f7MicbBp1hrcBAuyS5L+Py1Fpci50FtFF0Q1QSc3Rk0FGViS1V0oVsm38pcHFYuWeq84y85/Dtf1PziCdATUUTHrlc9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A49+jEYE; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 07CAE1FD43;
-	Fri,  9 May 2025 09:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746782155;
+	s=arc-20240116; t=1746782174; c=relaxed/simple;
+	bh=DzdR3yho6JGbbQZjnApVUh5/NNgpyD1bEhSi135GoyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j5q4HQCSKFtzB9bNgUb20EzHPEvDUGBlsuciXuygz4TtTRljD2vqwiOAMQogm0LCztBkUC+B3Pph9SQrU2rytzJmIQWuVKZH5njY7tLm/Q9dRqS+c08+xnmvRQYl9T2O0pM2akZ24tDQAZn1nOl5DYpjk7kjZQdbuNbnJxwHLmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PqkwGTdh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746782171;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOMW9BGxskbhad6mlU+Himy6oHmyXjwahxXAzW3WdCk=;
-	b=A49+jEYE7WBREA5b6YXFMHfgJgHIHEfZyMK/RNX+suNhPAOLzF5+ZiOY9VjEJNSMYeaD2Y
-	MrnyIbfXfo5AU1P/osyUWAzpu3oBNbTlJjbZ/T4DNgoboLXfJnwYLb94aKzyQcE92u7PwO
-	MxY7uBU7wLo9mKHJ7ykciVIv9HjzTHlMpHoPSOS+J61W/2Bng8ecZy4/tEJavqMtWveEFm
-	pVhdjm1YJzBBVR7R2MpYwhF4mh+Vp7E7Yn9maafTTpzVxqA7CFWvg6+45chPVUEGbF0rfK
-	ATf0366ofRqxq3v87RGphfqb8PJX9dkrxtXdpD7U2pbjx/3P5Kp0+w4cAJqQUA==
-Date: Fri, 9 May 2025 11:15:54 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang
- <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam
- <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 1/2] soc: fsl: qmc: Only set completion interrupt when
- needed
-Message-ID: <20250509111554.770263b7@bootlin.com>
-In-Reply-To: <19aa9d8a84c8475c62c42ac886dad0980428c6c0.1746776731.git.christophe.leroy@csgroup.eu>
-References: <19aa9d8a84c8475c62c42ac886dad0980428c6c0.1746776731.git.christophe.leroy@csgroup.eu>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O50KC8poIn0AkdXO4SOPXeacSJBmsTouUfEw4SHP0HE=;
+	b=PqkwGTdh9iCsKYI05UoFzT4eft3OGFy+J/jhMTGqtURNquJX5Pk10w3haJfOuLEHnejKS+
+	G9GVnAvoBZvSwmFDR+6vaCXFWK7Ngrj21eBExolFiPr1XEMQuP3aU32aBYm4SVZs18ssNh
+	zeXhzSpJmBMZmlIl7KUjbiKXyzz2qhg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-106-Ge37d9JdOM-DoA9oKkBhZA-1; Fri, 09 May 2025 05:16:10 -0400
+X-MC-Unique: Ge37d9JdOM-DoA9oKkBhZA-1
+X-Mimecast-MFC-AGG-ID: Ge37d9JdOM-DoA9oKkBhZA_1746782169
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a1f6c5f54cso237089f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 02:16:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746782169; x=1747386969;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=O50KC8poIn0AkdXO4SOPXeacSJBmsTouUfEw4SHP0HE=;
+        b=guN+ntSH92gHE6ygYRDoO5N4Z452LyTo9tSBTRjF9k/y65NqJq0g+xVPbSHZeVaw/Z
+         eCSOSwoINsPsm0l8PQWgaWEyhQ6VGKqY6BjdLY2bokuEGlb2o7xLQiHvq24KV3d2ATG1
+         D3KffpCBkyzlsOWlgampcRl+74qbIzvUNdc0Pyq8gw9J9vCA7jjQ4FD8d8CzR6Gx1HuZ
+         2p899k0qwx425jEOQCdOgUuSoYDLlzO2wRqitw2Taq2eWHF+ZhPt9YqKgMyueKewAIHe
+         t/H4c3DODu5xQkNluOmyJ7Xzb1yQ6D7rQcS33xtCWojBWYnVK2ZfJwP4qSj2894wgrBS
+         moww==
+X-Forwarded-Encrypted: i=1; AJvYcCUEtrr2EVHidmrTDtzLejsn/ebitJuvh0ln2jtLM7qgrecNHpMfnIdnHQEF4XE+9aLFG5os21Im9DJWTv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydCMYUGtOaNkJJlbaheDWYg0KgA3dSqUGMDGbP7+RmkT5iS+5o
+	Leli+W0aZTGrZIYoWzh+PsUH7W0ZB5wm9kAj3oWyuHoFrqqId0WF37CL9sJ7a3HEHktCLpWLISm
+	lNIjSJzTkAdxxMtMyYA4YDXjrm9mn+T0zXj/dZ80cI4oeCht8EuKEGAaqhj3qKg==
+X-Gm-Gg: ASbGncsnspiMmPzJfresanC60HhkVzMjPmDW0Z5EfJCvxl9zWxSSsIkIbPBv1UNN4Uw
+	omZ+PG9s3JFmJh/DY0j/wPM/ASqtiBzJ+h9jiHyxDhI81XEfMWgPzNognxlPNSjJV1Isdg3ihw9
+	T/egP/YJ6sBElTgXw0Ou/aCXilRhtMXpK1GGlAkJcFUaM3lD+ggzdSzSnlymUVCbhdzN589xcm0
+	m1Z2gosBf3PSPQKUDEK6AIBigJ4O64aZqDEf6A/ToWCTXVPs6zP+Wben3Yb97RU0xJTHquKaE44
+	AgiZ2At7nmpl07TunVyEUoSA95g56cgPK7/gj6Oh5S4snNyefnKMfURGjXND63AgZiTrnOT/WdA
+	6Fcp9UdDB/orvGwk8cqExkj/BEJprO2qAZ0hTnuY=
+X-Received: by 2002:a5d:59ac:0:b0:397:5de8:6937 with SMTP id ffacd0b85a97d-3a1f64a4b57mr2149455f8f.41.1746782169283;
+        Fri, 09 May 2025 02:16:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpI1ETBmNUmD+2lZouKEgBiUCjLKGmWUAe31bT4cFadKl7DqoBsUiIB1JaibPip6PYQmoKmQ==
+X-Received: by 2002:a5d:59ac:0:b0:397:5de8:6937 with SMTP id ffacd0b85a97d-3a1f64a4b57mr2149430f8f.41.1746782168899;
+        Fri, 09 May 2025 02:16:08 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f45:5500:8267:647f:4209:dedd? (p200300d82f4555008267647f4209dedd.dip0.t-ipconnect.de. [2003:d8:2f45:5500:8267:647f:4209:dedd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4c5b9sm2644007f8f.91.2025.05.09.02.16.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 02:16:08 -0700 (PDT)
+Message-ID: <900a8898-0666-4639-9a0a-7e602eed275f@redhat.com>
+Date: Fri, 9 May 2025 11:16:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledvvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjefflefhieduteegffeifeeggfffvdeuvdeutddvfeduudeukeffleehheffkeetnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtohepqhhirghnghdriihhrghosehngihprdgtohhmpdhrtghpthhtohepshhhvghnghhjihhurdifrghnghesghhmrghilhdrtghomhdprhgtphhtthhopegiihhusghordfnvggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhgvshhtv
- ghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhhitgholhgvohhtshhukhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mm: Add generic helper to hint a large folio
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, peterx@redhat.com, ryan.roberts@arm.com,
+ mingo@kernel.org, libang.li@antgroup.com, maobibo@loongson.cn,
+ zhengqi.arch@bytedance.com, baohua@kernel.org, anshuman.khandual@arm.com,
+ willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com
+References: <20250506050056.59250-1-dev.jain@arm.com>
+ <20250506050056.59250-3-dev.jain@arm.com>
+ <887fb371-409e-4dad-b4ff-38b85bfddf95@redhat.com>
+ <b104b843-f12a-4382-a05f-53e2e35bdcb0@arm.com>
+ <0979ce4e-d316-477c-872e-d3f9e47690e5@redhat.com>
+ <b4e092c4-8388-471f-948d-f0b5828efed3@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <b4e092c4-8388-471f-948d-f0b5828efed3@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Christophe,
-
-On Fri,  9 May 2025 09:48:44 +0200
-Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
-
-> When no post-completion processing is expected, don't waste time
-> handling useless interrupts.
+On 09.05.25 07:25, Dev Jain wrote:
 > 
-> Only set QMC_BD_[R/T]X_I and QMC_BD_[R/T]X_UB when a completion
-> function is passed in.
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
->  drivers/soc/fsl/qe/qmc.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
+> On 08/05/25 4:25 pm, David Hildenbrand wrote:
+>>
+>>>> (2) Do we really need "must be part of the same folio", or could be just
+>>>> batch over present
+>>>> ptes that map consecutive PFNs? In that case, a helper that avoids
+>>>> folio_pte_batch() completely
+>>>> might be better.
+>>>>
+>>> I am not sure I get you here. folio_pte_batch() seems to be the simplest
+>>> thing we can do as being done around in the code elsewhere, I am not
+>>> aware of any alternate.
+>>
+>> If we don't need the folio, then we can have a batching function that
+>> doesn't require the folio.
+>>
+>> Likely, we could even factor that (non-folio batching) out from
+>> folio_pte_batch().
+>> The recent fix [1] might make that easier. See below.
+>>
+>>
+>> So my question is: is something relying on all of these PTEs to point at
+>> the same folio?
 > 
-> diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-> index 36c0ccc06151..0a704fd0b1a0 100644
-> --- a/drivers/soc/fsl/qe/qmc.c
-> +++ b/drivers/soc/fsl/qe/qmc.c
-> @@ -474,7 +474,9 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
->  	xfer_desc->context = context;
->  
->  	/* Activate the descriptor */
-> -	ctrl |= (QMC_BD_TX_R | QMC_BD_TX_UB);
-> +	ctrl |= QMC_BD_TX_R;
-> +	if (complete)
-> +		ctrl |= QMC_BD_TX_I | QMC_BD_TX_UB;
+> Hmm...get_and_clear_full_ptes, as you say in another mail, will require
+> that...
+> 
+>>
+>> [1] https://lkml.kernel.org/r/20250502215019.822-2-arkamar@atlas.cz
+>>
+>>
+>> Something like this: (would need kerneldoc, probably remove "addr"
+>> parameter from folio_pte_batch(),
+>> and look into other related cleanups as discussed with Andrew)
+> 
+> I like this refactoring! Can you tell the commit hash on which you make
+> the patch, I cannot apply it.
 
-Be careful, you don't set the UB bit for all descriptor anymore.
-Your goal, is to have interrupts only on some descriptors (those where I
-bit is set).
+Oh, it was just on top of my private version of [1]. It should now be in 
+mm-new (or mm-unstable, did not check).
 
-This can lead to issue in the function handling the interrupt.
-This function, qmc_chan_write_done(), do the processing according to the
-following:
-        /*
-	 * R bit  UB bit
-	 *   0       0  : The BD is free
-	 *   1       1  : The BD is in used, waiting for transfer
-	 *   0       1  : The BD is in used, waiting for completion
-	 *   1       0  : Should not append
-	 */
-https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/soc/fsl/qe/qmc.c#L507
-
-It considers R=0 / UB=0 as a free BD and R=1 / UB=0 as a case that should
-not happen.
-
-Both cases are no more correct with your modification.
-
-Have the feeling that UB bit still has to be set even if I bit is not set
-in order to have qmc_chan_write_done() looking at all descriptors.
-
-Suppose:
- desc 0, no interrupt
- desc 1, no interrupt
- desc 2, interrupt
-
-When the interrupt for desc 2 is handled, desc 0 and desc 1 are seen with
-R=0 and UB=0. As desc 0 is considered as free by qmc_chan_write_done(), it
-will never look at desc 2.
-
->  	wmb(); /* Be sure to flush the descriptor before control update */
->  	qmc_write16(&bd->cbd_sc, ctrl);
->  
-> @@ -586,7 +588,9 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
->  		  QMC_BD_RX_AB | QMC_BD_RX_CR);
->  
->  	/* Activate the descriptor */
-> -	ctrl |= (QMC_BD_RX_E | QMC_BD_RX_UB);
-> +	ctrl |= QMC_BD_RX_E;
-> +	if (complete)
-> +		ctrl |= QMC_BD_RX_I | QMC_BD_RX_UB;
-
-Exact same comment.
+But as raised in my other mail, get_and_clear_full_ptes() might be 
+problematic across folios.
 
 
-Best regards,
-Hervé
+-- 
+Cheers,
+
+David / dhildenb
+
 
