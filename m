@@ -1,136 +1,148 @@
-Return-Path: <linux-kernel+bounces-641172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE5AB0DBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:50:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB03BAB0DCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3FB4E3C56
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C0A3B30AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B23727F737;
-	Fri,  9 May 2025 08:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A3C2798EF;
+	Fri,  9 May 2025 08:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DS8DsYq7"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2DjfQz6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C9627E7FE
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A132749F9;
+	Fri,  9 May 2025 08:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746780375; cv=none; b=eojNrLUyx8nx8ehm3P41SYZ/5rdccd9thtpagEW642qGmE4yN+ZzsDWUG7y3AXk++xBRWSXtCOLB9/BNhWQIVHoaD6CX3GmMmCaF8UADT1h913zmo4ElyZBhyJPXF7uwkgZKObbv+nQJQ80aJ6jAWXTAvlASM+oShcxSnYPqVLE=
+	t=1746780418; cv=none; b=iK3r0yEUAPttnHUl3HuS8vwAa8GVPquqhYUT1HMteObtyBia4mkXLfKMdw9muAlJHxQtpILop1jGiJrofErD1+5PnZoWHuX2UZYI9C3Qxw3gyVxewuaYiuV1wYfXCsOBbkxO/aNzxhKOwpgRwN7p4D0VlJZAvvEbW9CwuD9GvnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746780375; c=relaxed/simple;
-	bh=qsl/joelKwczJ7bi9V1St9WtcC0k/O+XG8627gyNOKE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FHWRfZEjR323xonwBvXNkL2l/hhMF56e4eMiI8pFCY/8Scoy+5LQwqm5lz1PSobZG6HpyZolYEf3sj/DJEf+mmE5yxDEL+Rl6cY+VZywWtso2xJnwd0Qk0xeEly+YmPZVeShIdsFgWNeKU9EfNyjZ2LkJasuVXFJ3RXo6lQqb4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DS8DsYq7; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43f251dc364so11641165e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 01:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746780371; x=1747385171; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MGJzbeAPShVS80kaiI20MlTe07Nkf3fvhyjfEiBHmj0=;
-        b=DS8DsYq7AgvGJ74cfgR0vVfM06tnemuI4DcKSKNKxvTu8+FfM6s+nVFBS9kRoQnXyS
-         v8nBuMYX4QP1WY4pEZo+pH22tOdGXe3y8vM81cs6TT2ENESJEdgyrShPQ/f9k2xY9FWZ
-         dimRh1zDWa+le/ldmuUM5MCXknF5TdJGQkfpXp9O5DsQ3R1PGVjSjaQx50Y4kW24wpAe
-         RFw73U4/RLfiE0pExrP1qZ6fQz5+VYfhc1t/Xqbbt5PV1op0uFvkffEtEytsqmxwuSra
-         qipV1Zhwa2hlLiiBc16tqmxdhl3OWIGBIhMR9Axq4XkxPIJ6gD2XXV0PYjd6MXKKRtc/
-         V2Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746780371; x=1747385171;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MGJzbeAPShVS80kaiI20MlTe07Nkf3fvhyjfEiBHmj0=;
-        b=GkRE+5kcnLPfUyYszHB0AjmtSDLmMwZcvsAzxY1X2eg3yDRwuYeqvpI+d805bvjc8D
-         XtJvAx5aj0o+i3kswQLY2kUMv7DFWc17yRPp4gYDZ6g1aQ4YzsORQrob+4vf75L3lAJr
-         bCSa1o7325tF/8jF6hSe6gkHJiNP/GYnMg4RW7NmFtfwIYuhn8CWV8Bq2/kYl4CtRb06
-         LxNH09IExXeAgw8FP87YrQFoPg0KW0J+qQPXV+uow+mHG3/doMQ93Y2doKuW80kpW5Rv
-         w9goT1Adqgbu5SRuz9mT1kQnAniMyFg1es5JGuLj86X6O5Din56uNl7ox0MnQkME8HBH
-         lWTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWT+zqB13k/m/KoNNHVfRdKxqSbJvkKvHgDyLpTn9VY7Z11X3k//XE043fJReY7CO1RRRCc4dUsL3Sb+/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgKNQSfKaN/TNvsOl2AQEn5OCC7Fhy3QWXj4V2ejm+Eq2mcqpy
-	ZnUcY/EChqJf+ghitK0TsF4rXRVZ/+Evumh80ijshVW9gg2FV1FJVtqsMbnYAZRt6LrhUXYyOum
-	v8vSMk4Y4t53mfw==
-X-Google-Smtp-Source: AGHT+IE1g5YyKhENi+6gXRQtJXAWEa/UniZ8LOkUkrGgQNc45EoYtxjXpwi6qJONxZWCOgGv1QUMncVWtyjEBmM=
-X-Received: from wmrm7.prod.google.com ([2002:a05:600c:37c7:b0:440:5f8a:667c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:608c:b0:43c:e70d:450c with SMTP id 5b1f17b1804b1-442d6dbbd6cmr19045605e9.22.1746780371623;
- Fri, 09 May 2025 01:46:11 -0700 (PDT)
-Date: Fri, 9 May 2025 08:46:09 +0000
-In-Reply-To: <CANiq72muSS+NNs5fxp4GPKWWhyXT95spvbGsZz6AJnK8RerUqQ@mail.gmail.com>
+	s=arc-20240116; t=1746780418; c=relaxed/simple;
+	bh=pMHYGnRHELxFia/MAGVgWzMYD/pngfkgxW/XHM9ufMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBqa5WxMDD5+Tl/00+K4sFFl6H044UH0qXaJAMYJ7h14Rt2vkDjFXHX81aW3zj24gUCWylSNR8iRQsd7PEUBMQ4jqpH4+b0R6o5/pwJPGTnrmpRzMW5VXStOcCLabzWIx94RmAG6jUPX6vun50zXF51FI9iqr7bIcSX5+9nxQ6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2DjfQz6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1086C4CEE4;
+	Fri,  9 May 2025 08:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746780417;
+	bh=pMHYGnRHELxFia/MAGVgWzMYD/pngfkgxW/XHM9ufMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y2DjfQz6oSyktGTnZMp3v8EEf/WxvZLSateR0ZNivF22NaHzTLcO/eZc9FkeVIXRS
+	 p9gn4ylValhULj4SiGja/fKdzvajwUshC+b798+rkYKGLNVkfkiZOi8PhYy/O5NAPR
+	 gVmELm2YEnSs/gItyMKrO5X8fG3rCf2zinZAZUKu+WbBW6b1MYRHEUv/7u39cgxT/d
+	 i6bLXYZnpJ1YYpGyHiAoTwkq3D3HDBAlKXbjw527kVEKXQd9Ur7t21qXoX8M6D4Tw6
+	 KOrtY08FLYcoAsuu9W85vQHd5X5w3bMaCrewi/9rW2Zgi4fwooM6xd673afkTvJWHa
+	 bywY0JAlTmY1w==
+Date: Fri, 9 May 2025 09:46:52 +0100
+From: Lee Jones <lee@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: Ivan Stepchenko <sid@itb.spb.ru>, Pavel Machek <pavel@kernel.org>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] leds: uleds: fix unchecked copy_to_user() in uleds_read()
+Message-ID: <20250509084652.GA2492385@google.com>
+References: <20250505081342.3855-1-sid@itb.spb.ru>
+ <20250508143451.GQ3865826@google.com>
+ <037fc605-3401-4e68-b452-b5e4882d56bc@lechnology.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250410132649.GE9833@noisy.programming.kicks-ass.net>
- <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
- <20250410133446.GF9833@noisy.programming.kicks-ass.net> <CAH5fLghrcqSYwkqbC4SSp6oYCny0riMRGA6W+oqQ69aA=NwYWw@mail.gmail.com>
- <CANiq72k0AM3v9JZe=8mDN6T1ToiAt1-1e1zJ3z0Oh6ZWfchzag@mail.gmail.com>
- <20250416202040.GD38216@noisy.programming.kicks-ass.net> <202504161442.66CE2596@keescook>
- <20250417081818.GJ38216@noisy.programming.kicks-ass.net> <CANiq72kjDM0cKALVy4POEzhfdT4nO7tqz0Pm7xM+3=_0+L1t=A@mail.gmail.com>
- <CANiq72muSS+NNs5fxp4GPKWWhyXT95spvbGsZz6AJnK8RerUqQ@mail.gmail.com>
-Message-ID: <aB3A0Qe5WqmxXQJt@google.com>
-Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Kees Cook <kees@kernel.org>, "=?utf-8?B?UGF3ZcWC?= Anikiel" <panikiel@google.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Matthew Maurer <mmaurer@google.com>, Ramon de C Valle <rcvalle@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <037fc605-3401-4e68-b452-b5e4882d56bc@lechnology.com>
 
-On Wed, May 07, 2025 at 12:19:11AM +0200, Miguel Ojeda wrote:
-> On Thu, Apr 17, 2025 at 8:40=E2=80=AFPM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > Thanks Peter (and Kees for clarifying) -- not sure how you/others
-> > prefer to route this patch or if you expect a v2, but I got the
-> > following (attached). I converted your Ack.
->=20
-> Applied to `rust-fixes` -- thanks everyone!
->=20
-> (If someone else prefers to carry it, please shout)
->=20
->     [ Rust 1.88.0 (scheduled for 2025-06-26) should have this fixed [1],
->       and thus we relaxed the condition with Rust >=3D 1.88.
->=20
->       When `objtool` lands checking for this with e.g. [2], the plan is
->       to ideally run that in upstream Rust's CI to prevent regressions
->       early [3], since we do not control `core`'s source code.
->=20
->       Alice tested the Rust PR backported to an older compiler.
->=20
->       Peter would like that Rust provides a stable `core` which can be
->       pulled into the kernel: "Relying on that much out of tree code is
->       'unfortunate'".
->=20
->         - Miguel ]
->=20
->     [ Reduced splat. - Miguel ]
+On Thu, 08 May 2025, David Lechner wrote:
 
-Actually ... I don't think putting it on CFI_AUTO_DEFAULT the right
-approach.
+> On 5/8/25 9:34 AM, Lee Jones wrote:
+> > On Mon, 05 May 2025, Ivan Stepchenko wrote:
+> > 
+> >> The copy_to_user() is annotated with __must_check, indicating that
+> >> its return value must be checked by the caller. Currently, uleds_read()
+> >> ignores it. If the userspace buffer is invalid and copy_to_user() fails,
+> >> the userspace application may assume it has received fresh data, while
+> >> in fact copying has failed. This can leave applications out of sync
+> >> with the actual device state.
+> >>
+> >> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> >>
+> >> Fixes: e381322b0190 ("leds: Introduce userspace LED class driver")
+> >> Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
+> >> ---
+> >>  drivers/leds/uleds.c | 11 +++++++----
+> >>  1 file changed, 7 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
+> >> index 374a841f18c3..41bfce43136c 100644
+> >> --- a/drivers/leds/uleds.c
+> >> +++ b/drivers/leds/uleds.c
+> >> @@ -147,10 +147,13 @@ static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
+> >>  		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
+> >>  			retval = -EAGAIN;
+> >>  		} else if (udev->new_data) {
+> >> -			retval = copy_to_user(buffer, &udev->brightness,
+> >> -					      sizeof(udev->brightness));
+> >> -			udev->new_data = false;
+> >> -			retval = sizeof(udev->brightness);
+> >> +			if (copy_to_user(buffer, &udev->brightness,
+> >> +					 sizeof(udev->brightness))) {
+> > 
+> > This is not good.
+> > 
+> > Please store the result into a variable and return that instead.
+> 
+> Every other caller of copy_to_user() in the kernel I've seen ignores the actual
+> return value and returns -EFAULT, so I thought this looked correct and it was
+> just a quirk of copy_to_user().
 
-Shouldn't the depends on clause go on `config FINEIBT` instead? After
-all, the current patch just means that you can't make FineIBT the
-default option. But you can still pass kcfi=3Dfineibt on boot to enble
-FineIBT which would result in the same crash.
+Yes, I think you're right.  Interesting.
 
-Alice
+So my counterproposal is as follows:
+
+--- a/drivers/leds/uleds.c
++++ b/drivers/leds/uleds.c
+@@ -147,10 +147,11 @@ static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
+                } else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
+                        retval = -EAGAIN;
+                } else if (udev->new_data) {
+-                       retval = copy_to_user(buffer, &udev->brightness,
+-                                             sizeof(udev->brightness));
+-                       udev->new_data = false;
+-                       retval = sizeof(udev->brightness);
++                       ssize_t size = retval = sizeof(udev->brightness);
++                       if (copy_to_user(buffer, &udev->brightness, size))
++                               retval = -EFAULT;
++                       else
++                               udev->new_data = false;
+                }
+
+                mutex_unlock(&udev->mutex);
+
+> >> +				retval = -EFAULT;
+> >> +			} else {
+> >> +				udev->new_data = false;
+> >> +				retval = sizeof(udev->brightness);
+> >> +			}
+> >>  		}
+> >>  
+> >>  		mutex_unlock(&udev->mutex);
+> >> -- 
+> >> 2.39.5
+> >>
+> > 
+> 
+
+-- 
+Lee Jones [李琼斯]
 
