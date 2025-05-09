@@ -1,152 +1,202 @@
-Return-Path: <linux-kernel+bounces-641244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABDBAB0EE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB97AB0E64
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E9E3B2319
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323B74A396B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD0227584C;
-	Fri,  9 May 2025 09:20:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677D318E02A;
-	Fri,  9 May 2025 09:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B07274FFB;
+	Fri,  9 May 2025 09:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aiEFRVrW"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECA373477;
+	Fri,  9 May 2025 09:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746782438; cv=none; b=lrIAN0WXGPOGURlnngY/OQzEZAuzXVm6baw7+mLcjfYNYmITBmBdG25dTZKQga6Z4sC350mzOyigbRfJtFf+G7m2RLUA10/DFfUwOjEdXdl3ziSss1frhV1OaskQvhA9eN5xDqQJPlipXu4qi0IIQ6gRiN/+Zpz1W9S5uijn8v0=
+	t=1746782055; cv=none; b=nm2iFZBzPapEpejsshRlt6EHr/u3Hr+xVnaAemc+5fBYl/JNSrT/vO1IRmsA5WEdB6LysKbmzgMzugO3rCYcp5qnDvFjBElPeDLIo3EV8skGYR5HrqGNZpgGRzL+HTw/HzX8GHBIxF4GMAqMk9/ZPnd20vDk2iGCIx46w2JBPcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746782438; c=relaxed/simple;
-	bh=HIJLJlaSHblXzW4J68BnNfxMHmJtQylwo1XmckKLjkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iB8CRdsNVwqf0SWsa5qrNAq5kh+X1MtdVkOV/3Sg204V85cHhBinRvfSN7J7XTqk/UWXHVUhKua0Anlj15odejpyIX9dtJDxxu9V+szIiZ7BSpfQuq7hGMOZzCAi88OT75pWf2IPA9Qj7GvOppdO51OFUnYQZUX68IeCnSJ/hQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Zv3FQ06s9z9t7B;
-	Fri,  9 May 2025 11:13:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id s8onC-g13dbh; Fri,  9 May 2025 11:13:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zv3FP6VrMz9t2V;
-	Fri,  9 May 2025 11:13:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D63998B776;
-	Fri,  9 May 2025 11:13:13 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id fVWNjZv3ZZLW; Fri,  9 May 2025 11:13:13 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 21FC18B768;
-	Fri,  9 May 2025 11:13:13 +0200 (CEST)
-Message-ID: <bc561703-bf34-4c99-aaad-1b1aad5ced12@csgroup.eu>
-Date: Fri, 9 May 2025 11:13:12 +0200
+	s=arc-20240116; t=1746782055; c=relaxed/simple;
+	bh=vItGlJMuzbxOXtTTMJsjkJgBtkKmyb4sB1UNIvljBeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZOZWLrlYcUvxlzRAADsidzDYRjvaAgvueop4kUm+ba6EonFwDxJMjporUFQVpIAQFlEYgcv5XzuHS+XbQhxB/YeTAPy/3K9I4s5Mh/+g5abRwblsPy8LCdgm6iKCCtFd5DYGNhyPtTFLuanm9cNW60NXN0oHsthUB94k9KSuh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aiEFRVrW; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so3417986a12.0;
+        Fri, 09 May 2025 02:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746782052; x=1747386852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fhO0hsCpCTctc/RhbxA8mBatB8tQsLopxXqBz5ibW5U=;
+        b=aiEFRVrWezfAnJphKVwc4oNrmx2dmK9wd/NWSX6VE2SR6SX256niI8cgCC3V0Sa3EM
+         h8cmVOD/8STLarZ4wDnKGH19Ftba0Yl7ZcwpOBbDdjUFvrwtNW8RSyPttwSCYgPKUU56
+         y9dC4r+VH0sPsAsD7pfcIFdzrHTA9jWr9RSfwzY86tAKcWbyLJ1/NwE/h+mIPxLnerwP
+         dYUkI6wBgDUUKCN3eH6V5ZlvVeXOXtZq77UOpWbUVZeE2UQdfZXLddt5KISO/O1GD1Mt
+         PiIyFhOsOr+06Co5TWhnExzAswE/fxrg0wrsmlXHsoRccFcDYpxlzP8T6RSdD0XEGTOD
+         VtHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746782052; x=1747386852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fhO0hsCpCTctc/RhbxA8mBatB8tQsLopxXqBz5ibW5U=;
+        b=cU244V7LaqXPFOgUJtBvtdYF5A/mJwO1u+V+LRnnnvHB6Ns6M165osefvkSI8AxOu2
+         MNrtBcOm1yfrVYjrAY2k74YBOaZemSXferYK57Yrv5OLhMqVyS9Tv+RdoTIa7lTTAQFy
+         NdEcJSb58UDMtXaAFRSajpbN1g1NESLzGdV7Bt9H6o6XOyeAPImW+XFLsbjI3qoDRrc+
+         UHIwtVLO/pQr1qrkDNglsa2kENjyBu06gWiVM2dB2Ao3U7aIB7R15cmovYo+kDTAUPVY
+         sCFUakEHRJnRycJNce1Pf5oREmjOGRStGb9sfb/QtnN9Z7O6Gcd5h0+Ks8H4Fgsrf8BT
+         Z3eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/r1ys8RP8dUmFVzlfNNsOlBFEwKC1inxvVkl+gL31D1TJv8RbcKIXa3Juwa1q4ktVr/7pRKOnXPbK979p@vger.kernel.org, AJvYcCXPepLjniQ8uTobVgA1X3whHZtNhmH9e/t/5hBJEArJq+USzpVvV+//7np8uMJsb4LTPUu2ak+x+A+hxeJe@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFT0JPeoqwy5y9B2tUtv0G6krostQ6KbQsgqJtghdHIkGxklcI
+	NxeTXL5hLZfqwBUoZOb512y3yYgr4w4AyAv4rUqB43bny4sDUJap+5xtyuCgwSssOgZZgUAyDR+
+	wXVacJQAY/BvylXs8e7YWufxkrPA=
+X-Gm-Gg: ASbGncsX/Vl0NmwyvsfEXwa4JcS7HHje9RNyasxPwJeWrfWL6HuRSeTNLaldLhgUw6H
+	WRnpMKCzGcK24UMjhBr6EMsOysNP64LFszEYIBSY/Q+a0CB9+/9isdZcDTYfIblJITXAAQ3jAHR
+	c2ik4MbFAF+iaopriQAG1JQg==
+X-Google-Smtp-Source: AGHT+IEVbDuDWTg+KNmf0HXjPEqDqTURkxFsPGThz0tbkN8+U9Hl7RtJUiTPZCOnSqF7ZOlEXdgCzgBUS6IW29pI/JE=
+X-Received: by 2002:a17:907:940f:b0:acb:107c:7aed with SMTP id
+ a640c23a62f3a-ad219291ef8mr278897066b.55.1746782051711; Fri, 09 May 2025
+ 02:14:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ASoC: fsl: fsl_qmc_audio: Only request completion on
- last channel
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang <shengjiu.wang@gmail.com>,
- Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
- Nicolin Chen <nicoleotsuka@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-sound@vger.kernel.org
-References: <19aa9d8a84c8475c62c42ac886dad0980428c6c0.1746776731.git.christophe.leroy@csgroup.eu>
- <5cffeb220617584a5e4bc03067cc10e6cdcfc25e.1746776731.git.christophe.leroy@csgroup.eu>
- <20250509104544.5c375f05@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250509104544.5c375f05@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
+ <20250509-fusectl-backing-files-v3-2-393761f9b683@uniontech.com> <CAC1kPDM5cN9p-Ri1WUEWt6JNiTZukekJyihYRT=qTwawVT3bFA@mail.gmail.com>
+In-Reply-To: <CAC1kPDM5cN9p-Ri1WUEWt6JNiTZukekJyihYRT=qTwawVT3bFA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 9 May 2025 11:14:00 +0200
+X-Gm-Features: AX0GCFsZkfwnPNQXlghJCMRfEEC4aqhJqH0caqzt3Q4NG2pzyaumtwa_HZiA0XI
+Message-ID: <CAOQ4uxhQu+Gr8Sn5HbZRyOhDd3MBqN5xKFxZru39LGgk5K-ACw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] fs: fuse: add backing_files control file
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hervé,
+On Fri, May 9, 2025 at 9:39=E2=80=AFAM Chen Linxuan <chenlinxuan@uniontech.=
+com> wrote:
+>
+> On Fri, May 9, 2025 at 2:34=E2=80=AFPM Chen Linxuan via B4 Relay
+> <devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
+> >
+> > From: Chen Linxuan <chenlinxuan@uniontech.com>
+> >
+> > Add a new FUSE control file "/sys/fs/fuse/connections/*/backing_files"
+> > that exposes the paths of all backing files currently being used in
+> > FUSE mount points. This is particularly valuable for tracking and
+> > debugging files used in FUSE passthrough mode.
+> >
+> > This approach is similar to how fixed files in io_uring expose their
+> > status through fdinfo, providing administrators with visibility into
+> > backing file usage. By making backing files visible through the FUSE
+> > control filesystem, administrators can monitor which files are being
+> > used for passthrough operations and can force-close them if needed by
+> > aborting the connection.
+> >
+> > This exposure of backing files information is an important step towards
+> > potentially relaxing CAP_SYS_ADMIN requirements for certain passthrough
+> > operations in the future, allowing for better security analysis of
+> > passthrough usage patterns.
+> >
+> > The control file is implemented using the seq_file interface for
+> > efficient handling of potentially large numbers of backing files.
+> > Access permissions are set to read-only (0400) as this is an
+> > informational interface.
+> >
+> > FUSE_CTL_NUM_DENTRIES has been increased from 5 to 6 to accommodate the
+> > additional control file.
+> >
+> > Some related discussions can be found at links below.
+> >
+> > Link: https://lore.kernel.org/all/4b64a41c-6167-4c02-8bae-3021270ca519@=
+fastmail.fm/T/#mc73e04df56b8830b1d7b06b5d9f22e594fba423e
+> > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxhAY1m7ubJ3p-A3rSufw_=
+53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com/
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+> > ---
+> >  fs/fuse/control.c | 155 ++++++++++++++++++++++++++++++++++++++++++++++=
++++-----
+> >  fs/fuse/fuse_i.h  |   2 +-
+> >  2 files changed, 144 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+> > index f0874403b1f7c91571f38e4ae9f8cebe259f7dd1..6333fffec85bd562dc9e86b=
+a7cbf88b8bc2d68ce 100644
+> > --- a/fs/fuse/control.c
+> > +++ b/fs/fuse/control.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/init.h>
+> >  #include <linux/module.h>
+> >  #include <linux/fs_context.h>
+> > +#include <linux/seq_file.h>
+> >
+> >  #define FUSE_CTL_SUPER_MAGIC 0x65735543
+> >
+> > @@ -180,6 +181,135 @@ static ssize_t fuse_conn_congestion_threshold_wri=
+te(struct file *file,
+> >         return ret;
+> >  }
+> >
+> > +struct fuse_backing_files_seq_state {
+> > +       struct fuse_conn *fc;
+> > +       int backing_id;
+> > +};
+>
+> As mentioned in the previous v2 related discussion
+> backing_id is maintained in state because
+> show() of seq_file doesn't accept the pos parameter.
+> But actually we can get the pos in the show() function
+> via the index field of struct seq_file.
+> The softnet_seq_show() function in net-procfs.c are doing this.
+> I'm not really sure if it would be better to implement it this way.
+>
 
-Le 09/05/2025 à 10:45, Herve Codina a écrit :
-> On Fri,  9 May 2025 09:48:45 +0200
-> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
-> 
->> In non-interleaved mode, several QMC channels are used in sync.
->> More details can be found in commit 188d9cae5438 ("ASoC: fsl:
->> fsl_qmc_audio: Add support for non-interleaved mode.")
->> At the time being, an interrupt is requested on each channel to
->> perform capture/playback completion, allthough the completion is
->> really performed only once all channels have completed their work.
->>
->> This leads to a lot more interrupts than really needed. Looking at
->> /proc/interrupts shows ~3800 interrupts per second when using
->> 4 capture and 4 playback devices with 5ms periods while
->> only 1600 (200 x 4 + 200 x 4) periods are processed during one second.
->>
->> The QMC channels work in sync, the one started first is the one
->> finishing first and the one started last is the one finishing last,
-> 
-> How can we be sure about that?
-> 
-> The mapping on the TDM bus has to be taken into account.
-> 
-> chan 0 -> TDM bits 0..8
-> chan 1 -> TDM bits 16..23
-> chan 2 -> TDM bits 9..15
+For better clarity of the code and maintainability,
+I think that storing backing_id in the state as you did is better.
 
-In interleaved mode, the QMC will not allow that. You can have 
-TS0-TS1-TS2 or TS1-TS2-TS0 but you can't have TS0-TS2-TS1.
+> > +
+> > +static void fuse_backing_files_seq_state_free(struct fuse_backing_file=
+s_seq_state *state)
+> > +{
+> > +       fuse_conn_put(state->fc);
+> > +       kvfree(state);
+> > +}
+> > +
+> > +static void *fuse_backing_files_seq_start(struct seq_file *seq, loff_t=
+ *pos)
+> > +{
+> > +       struct fuse_backing *fb;
+> > +       struct fuse_backing_files_seq_state *state;
+> > +       struct fuse_conn *fc;
+> > +       int backing_id;
+> > +       void *ret;
+> > +
+> > +       fc =3D fuse_ctl_file_conn_get(seq->file);
+>
+> I'm not sure if I should get fc in fuse_backing_files_seq_start here
+> and handle fc as (part of) the seq_file iterator.
+> Or should I get the fc in fuse_backing_files_seq_open
+> and store the fc in the private field of the seq_file more appropriately.
+> I guess the difference isn't that big?
 
-In non-interleaved mode we mimic the interleaved mode so I don't expect 
-it either.
-
-> 
-> In that case chan 1 can finish after chan 2.
-> 
-> qmc_chan_get_ts_info() could be used to get struct qmc_chan_ts_info
-> and [rx,tx]_ts_mask field in the struct give the mapping information.
-> 
-> The channel that ends last is the one with the highest bit set in the
-> mask (rx_tx_mask for capture and tx_ts_mask for playback).
-
-That would be right if the channels were starting all at exactely the 
-same time. But qmc_audio_pcm_write_submit() and 
-qmc_audio_pcm_read_submit() are calling resp. qmc_chan_write_submit() 
-and qmc_chan_read_submit() one by one.
-
-Even if that happens it shouldn't be a problem on its own as there are 
-only a few microseconds between each Timeslot (a full cycle is 125 µs). 
-And also because calling snd_pcm_period_elapsed() doesn't have any 
-destructive effect on ongoing processing.
-
-So I wouldn't make it too complicated. Here the benefit is real and 
-worth it.
+The simpler the better.
+I think what you did is fine. I see no reason to change it.
 
 Thanks,
-Christophe
-
-> 
-> Best regards,
-> Hervé
-> 
->> so when the last one finishes it is guaranteed that the other ones are
->> finished as well. Therefore, only request completion processing on the
->> last QMC channel.
->>
->> On my board with the above exemple, on a kernel started with
->> 'threadirqs' option, the QMC irq thread uses 16% CPU time with this
->> patch while it uses 26% CPU time without this patch.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->> ---
-
+Amir.
 
