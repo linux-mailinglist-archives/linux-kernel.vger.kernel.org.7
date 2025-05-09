@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-641778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE81AB15D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:52:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D404DAB15DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B188502C18
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E640A23060
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E81293727;
-	Fri,  9 May 2025 13:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B8440855;
+	Fri,  9 May 2025 13:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hc8nLPs+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcLfg91L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CBA2918DC;
-	Fri,  9 May 2025 13:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4D08632C;
+	Fri,  9 May 2025 13:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746798605; cv=none; b=q3RrYqPq2MQbWruy7gmOhFy9ejnWTlRVdwOadrd0C6K+HHOPZu04MKEErCwvZKPryjCyvKAHx7ktfdx0SLvje/uuBKEh08fi8Rw5VpuwCIMjLdqTNvQz3VN/F7SP8RNx8GRvf0CQRdb6VEIDHmUFK4quzJeFhrd1ZrzLawEG08U=
+	t=1746798590; cv=none; b=m2QoQU05mOxYcb8mxqnrkh9KKvRxum+MQduWUlUWj7XSi1Ea4VPiFnbFxhXGbd7vgHd+9X64wedCMhvkMXBJoHLw4+0dA7+0qrCd9v8WpJoryoPE9rn902nW4EnJgVAIK8wLq1p534sJJ2DEEKV0UTxF7QkeLkb51bYMWdDjGqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746798605; c=relaxed/simple;
-	bh=qL35tfjqtvRbZWZeDNm4gyYoQKOGEeBiDKDQQJ0f6xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UaPH//KGtmw/pJE3nBKw8R0S0XZRtj+cIbsUQj3/73FX0aslEGMokCJ7BVPHCufMfwBXcbBNEXGpWCBo57dWwnwO5/lPGakjnZ6J6WVKcUa8Olj6mtP8f6dSV/4d+ZCMfioGk7V/4zbCtw4FJBI8egrCqh72UfV5it2zHRMJ6ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Hc8nLPs+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549DYmZw031546;
-	Fri, 9 May 2025 13:49:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=qL35tfjqtvRbZWZeDNm4gyYoQKOGEe
-	BiDKDQQJ0f6xM=; b=Hc8nLPs+GogWCY8kTHyiFY0gIrg0TzimptS2a6fDT6zcwR
-	Ohdi4qF3WkLRiVni2zrKvQAsZvGtjESE421Gl3ef74BUhq8ufOHx5ENWgcdztvBK
-	6dsRagf/J4hItu87AgWYZlXna5zVHNXTe6q/jEzOtB5p44DcCrt5E4VGeZ1yZknv
-	+zDt/pFeUArs+TtfIDFQh2m7cctqd7k5UYUmgHXvmWJNy/Lfiw2c1SuXszLJyU3L
-	PgwCfvPxjdKozvlHPcI/7+JMTGMxpch7gD6GzDqmnLcInh3c3wJxfIgl2A8bpPsa
-	ytKUM0VB8cPum0ce6Q9krW7tjRTkySv5wZrxc5DQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46h4rwc0gp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 13:49:47 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 549DhFHQ030863;
-	Fri, 9 May 2025 13:49:46 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46h4rwc0gk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 13:49:46 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 549DIKC8014097;
-	Fri, 9 May 2025 13:49:45 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46dypm3b49-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 13:49:45 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 549DnfBA55378284
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 9 May 2025 13:49:41 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BBEAC200F6;
-	Fri,  9 May 2025 13:49:41 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DE822200F8;
-	Fri,  9 May 2025 13:49:38 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.39.24.79])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  9 May 2025 13:49:38 +0000 (GMT)
-Date: Fri, 9 May 2025 19:19:36 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: Amit Machhiwal <amachhiw@linux.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: PPC: Book3S HV: Fix IRQ map warnings with XICS on
- pSeries KVM Guest
-Message-ID: <m2a54sgts6stdrdiduzhkiqsp3wlfmlueelxivjsy5qpd3f3oz@3lgtuy5bl4x2>
-References: <20250425185641.1611857-1-amachhiw@linux.ibm.com>
+	s=arc-20240116; t=1746798590; c=relaxed/simple;
+	bh=6bZ+vf6SEbbcD54k3LpukEwQykUSzOHjLk3LAB6BAVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P2gk2i+ECXNWm1aoFDUndAqyB9gxdYR2XuJcjyXAr1NmtU7P2RlwA3InxTxIPfLL+T6PvaB2+dKWu2dNE1JUW6DjnnjG3YJmVfW87nAq8kY1keJjZTvfTa5e7H54Y4SXU3UVuq9IbdweNre/9njeWmmuAt2w0GkTIGRv1KrDDRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcLfg91L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37D5C4CEEB;
+	Fri,  9 May 2025 13:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746798589;
+	bh=6bZ+vf6SEbbcD54k3LpukEwQykUSzOHjLk3LAB6BAVY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fcLfg91LGpTLIQZEPPwf8pV0V6BUAplVsYR6gpfWHr6th9yXjZ3TbBJYYT3IrPDD2
+	 CUCmYJzWVxMShkaHi4S4GHv9F9LHeWFwN1sXaxT8uXRexeju3VMY074TjncNf2dKG6
+	 4dFq+FVkGD0iT22BM8rdhK0rCYLQtd1Fl2TA2Z8wzwBoWV9e/t73FjQDk2lvxtCuYB
+	 U60StW+iMWdA7vApxv8rZp9yljvKvEMlhyO4mHyJNPeJLkeSkNxAwNFZCjvwsEwLs5
+	 x6m8teVO538pjSqMls0ILlHWZ+BQcKe/iZ4S1MFjFCM5a1M2ocvPaQWvqRbBbsXj6i
+	 ecjjZmzdQhW8Q==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c2c754af3cso2002386fac.3;
+        Fri, 09 May 2025 06:49:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+BGUFy347FsUEbSln07CNi9F+IaC2k0c6Zc9svBXTtKU+qN8XBe4qAVs8smEXklX0ol28f7wlWNs9VwY=@vger.kernel.org, AJvYcCWtH5BJ9JoNCJ7//dSJnXK2soO5IregKaFHx0QqfxerNS2j+MHsV13wQS7RFRvoKvNmTzmp6704v5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVbl0SN/MultHTuUtDjMTh74wVZBI9amchxYqBBhATsBBQLtFs
+	6zVmcI/LRLYwo1kw3irqJsKIvDIikmrG4lXBkVVaSdKWgnkDRTYF2IPYDYygu3dWdHw2FUsneQa
+	RZgyvQ4tGqNgFTvD9bdoKZv1O1/g=
+X-Google-Smtp-Source: AGHT+IEQu7O66imBb1XCgR/7r44Byx2SHH/bX8IUTBLO+SQS6K3b/qN3CU2FJ7QEKF17DuQilWKuLOF2r3T4qgpDg9w=
+X-Received: by 2002:a05:6871:ea8c:b0:2c1:7289:d62a with SMTP id
+ 586e51a60fabf-2dba455cef4mr2223647fac.36.1746798589193; Fri, 09 May 2025
+ 06:49:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425185641.1611857-1-amachhiw@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=QIxoRhLL c=1 sm=1 tr=0 ts=681e07fb cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=v01Bmm9WW5sV4C35fbgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: HaN2FDaQ0WR_SGqBR-G2bMzjMEx0FPeF
-X-Proofpoint-ORIG-GUID: 0neBe9qo4vhcaef3bA8JcpV8S5vxVVwP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDEyOCBTYWx0ZWRfX+ZwY+iQm1GHY paAeBzeUc7BYyHlO61eGEeVHBhPzZnvdEYKQCFlIO2ee0Ir+SJ2Y6p1BSFxukZhlC117CrAasR/ 088CaR/oeWz0vzgPkjM2rDlxkiHtFRvekaaDNeDg8AJsTQhIBxhj+AE3EIvcuQZOrtZZGZ1ahsu
- enZ4Ad0sFzTQJDRoGH5xAPdw3LjZrMjF6U8f4cl5YjZToZADVvHbm3oc4LgIPJrIt2Q8cWWozdN ZEPdEaUJDyfqqhgpuhOf2on3ai+EzMfeEtaOPkpWOThz4dnJsczs0N96pfz365ziBe5Z9a6gPkP KaxZKY3bi9qyzGtAjRYQXjTr1rOJq4iWZ8nLcvIUYvwQY9bVoSYO3bDA/gLRxn92Px5SuhhZk4X
- a+ILzqMnlb/5ibD9RkZvGujtcIG/h9YDcDyfdh1oJ2oSrElr3ay+Xpoauc+UJ9kDvSKFdbBV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_05,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=568 spamscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505090128
+References: <20250505-fix_power-v1-1-0f7f2c2f338c@quicinc.com>
+In-Reply-To: <20250505-fix_power-v1-1-0f7f2c2f338c@quicinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 9 May 2025 15:49:37 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ihdg3S0--73OjdMjCxkE1NaEmBEEOc-gDS-u64gC0+rA@mail.gmail.com>
+X-Gm-Features: ATxdqUG40BLfKieLCPtixT71HD9NmxJnsUih7D-2BBRvIjqTb--i7CDoi6Z2k-8
+Message-ID: <CAJZ5v0ihdg3S0--73OjdMjCxkE1NaEmBEEOc-gDS-u64gC0+rA@mail.gmail.com>
+Subject: Re: [PATCH] PM: wakeup: Delete space in the end of string shown by pm_show_wakelocks()
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I tested this on both KOP and PowerNV, LGTM
+On Mon, May 5, 2025 at 11:27=E2=80=AFAM Zijun Hu <zijun_hu@icloud.com> wrot=
+e:
+>
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>
+> pm_show_wakelocks() is called to generate a string when showing attribute=
+s
+> /sys/power/wake_(lock|unlock), but the string ends with an unwanted space
+> the space was added back by mistake by commit c9d967b2ce40
+> ("PM: wakeup: simplify the output logic of pm_show_wakelocks()").
+>
+> Remove the unwanted space.
+>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  kernel/power/wakelock.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/kernel/power/wakelock.c b/kernel/power/wakelock.c
+> index 52571dcad768b988eaadbd3ce98a4ac42dd2f7dd..4e941999a53ba69410f4526d5=
+d55c32312c36140 100644
+> --- a/kernel/power/wakelock.c
+> +++ b/kernel/power/wakelock.c
+> @@ -49,6 +49,9 @@ ssize_t pm_show_wakelocks(char *buf, bool show_active)
+>                         len +=3D sysfs_emit_at(buf, len, "%s ", wl->name)=
+;
+>         }
+>
+> +       if (len > 0)
+> +               --len;
+> +
+>         len +=3D sysfs_emit_at(buf, len, "\n");
+>
+>         mutex_unlock(&wakelocks_lock);
+>
+> ---
 
-Tested-by: Gautam Menghani <gautam@linux.ibm.com>
+Applied as 6.16 material, thanks!
 
