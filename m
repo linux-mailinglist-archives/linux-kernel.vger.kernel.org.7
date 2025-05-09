@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-641217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E785AB0E61
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:13:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D78AB0FB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B238AA001BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1C51C23505
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC27E2750FC;
-	Fri,  9 May 2025 09:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BF828DF20;
+	Fri,  9 May 2025 09:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coolkit.cn header.i=@coolkit.cn header.b="TzJfddtL"
-Received: from out28-97.mail.aliyun.com (out28-97.mail.aliyun.com [115.124.28.97])
+	dkim=pass (1024-bit key) header.d=coolkit.cn header.i=@coolkit.cn header.b="c/OdzP7L"
+Received: from out198-21.us.a.mail.aliyun.com (out198-21.us.a.mail.aliyun.com [47.90.198.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605B3270579;
-	Fri,  9 May 2025 09:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D8127465C;
+	Fri,  9 May 2025 09:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746781969; cv=none; b=AmFWV1zkG6qeyA5YW4WLgsnabQ8n7CY+sRMTzQDLetDt/iV482jQ0tu9GeavXUfVFzN5x3KbE4HzGWsPcC2glaJVpC0+/ePu61wiQlK13zly64DasAe3oHC7xUjILf3zRI4/o1wJLV7f02R1GqbuIMRPMYwcFWt+EsOt34v47Dg=
+	t=1746784728; cv=none; b=BjZPl6ng0BIWGJbMX6rS/qXnj7NVTNsQTt5DtQYap6x1m+RS0fRg++nJ0Yg5u1tKFbRueVAnFlykWmKdzgWRBL3h41O5B6vvRFip1g3p2+TrL41kIYSyi4xfLXgnyIDdjCncuossESSfoxY5RF0rHvKWg+OX96OmCcOKT8XRL0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746781969; c=relaxed/simple;
-	bh=7COBxy7a+Hsq1ru8BBCuFdsudwT7UH8NdBwk9+qR+2E=;
+	s=arc-20240116; t=1746784728; c=relaxed/simple;
+	bh=VWX7G/DVxq26xmeDCflJUO8sJLSsHFqKs/EofwXfRKM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NypWw/wotB9u657c0Fh9WVEkHgaVIlecpdK6xL2CDr9gyClKFe77rSc+Vld8NWHbd8kGoPxeDb4sSN9coeNwTYCM0+wafpQEmjjv/jO1QpZp7Nx9Kq1RaZmItu1ac9FeBmOY7PBlnkvA+lzciEBXspefy0BBwk9R4HFbja7AHyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coolkit.cn; spf=pass smtp.mailfrom=coolkit.cn; dkim=pass (1024-bit key) header.d=coolkit.cn header.i=@coolkit.cn header.b=TzJfddtL; arc=none smtp.client-ip=115.124.28.97
+	 MIME-Version; b=TXf8EVeWPg2Z1M/iY7m/DjBRGm90JpfeXx6jDsHPMm4efKQsOLC7/+zqWvvlXV1KWtTkrvgsccAUi0xbyoBkrLU7eaxGlpKM4Xu7G7eTuHu2uzNiIr96EpU9/Uu6vXafLv3TAodwWQOXVnNuNhSNm09KxDsrSMZI2thg2qsCBDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coolkit.cn; spf=pass smtp.mailfrom=coolkit.cn; dkim=pass (1024-bit key) header.d=coolkit.cn header.i=@coolkit.cn header.b=c/OdzP7L; arc=none smtp.client-ip=47.90.198.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coolkit.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coolkit.cn
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=coolkit.cn; s=default;
-	t=1746781962; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ciWbwyTmOlnq2cLpie/tgwrHFKelOt2C5BCRX15iCf4=;
-	b=TzJfddtLOniFwc1o1mGz88vhmiPXWB2x8Bti52JMzGVsVEE7PFk8OiaLAY0tuaLZAnatXcyXsvO93m0WviqCqauR0JlDY4vpahQitwK6g2y5kIfHLgkKVTM0GJ4O4TgJcbLnqjGYNN4lW4vpd7SrFm79zrNDqSfXE3JeFTuiKY4=
-Received: from ubuntu-z.lan(mailfrom:hao.zhang@coolkit.cn fp:SMTPD_---.cjnlki._1746781023 cluster:ay29)
+	t=1746784703; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=3ZXjjEkHeGITH9J2fWd0u7vufG50QXwj93RzEehOzDM=;
+	b=c/OdzP7LPWrz+RwL8YwjFdg/VDy6rw5eHCeSPhCXd9rNngdHp6NciMArZBUIiv0AHoXo2RYi8Av9nFlUeEmZudgCiRMgsL8zjVlVoDgGhH4cXN6Ry9Yiq8+dR92YT3o7pEBKB9SCMyRKlz0PNSO99/OwuStFVLvm+bW9GwLQp44=
+Received: from ubuntu-z.lan(mailfrom:hao.zhang@coolkit.cn fp:SMTPD_---.cjnlknc_1746781026 cluster:ay29)
           by smtp.aliyun-inc.com;
-          Fri, 09 May 2025 16:57:05 +0800
+          Fri, 09 May 2025 16:57:09 +0800
 From: Hao Zhang <hao.zhang@coolkit.cn>
 To: heiko@sntech.de
 Cc: robh@kernel.org,
@@ -49,9 +49,9 @@ Cc: robh@kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"hao.zhang" <hao.zhang@coolkit.cn>
-Subject: [PATCH 1/2] ARM: dts: rockchip: Sonoff-iHost: adjust SDIO for stability
-Date: Fri,  9 May 2025 16:56:56 +0800
-Message-Id: <20250509085657.309934-2-hao.zhang@coolkit.cn>
+Subject: [PATCH 2/2] ARM: dts: rockchip: Sonoff-iHost: correct IO domain voltages
+Date: Fri,  9 May 2025 16:56:57 +0800
+Message-Id: <20250509085657.309934-3-hao.zhang@coolkit.cn>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250509085657.309934-1-hao.zhang@coolkit.cn>
 References: <20250509085657.309934-1-hao.zhang@coolkit.cn>
@@ -65,37 +65,40 @@ Content-Transfer-Encoding: 8bit
 
 From: "hao.zhang" <hao.zhang@coolkit.cn>
 
-Reduce max-frequency from 50MHz to 25MHz to improve WiFi module stability
-on some Sonoff iHost units. Remove unsupported or redundant properties,
-and keep only minimal, validated configuration.
+Modify the corresponding vccio according to the schematic of
+Sonoff iHost. This change aligns the device tree with the actual
+hardware design and improves peripheral stability.
 
 Signed-off-by: hao.zhang <hao.zhang@coolkit.cn>
 ---
- arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi b/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi
-index 9a87dc0d5f66..088a069bb1a8 100644
+index 088a069bb1a8..1aedcd3a2167 100644
 --- a/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi
-@@ -342,16 +342,14 @@ &saradc {
+@@ -323,15 +323,15 @@ wifi_enable_h: wifi-enable-h {
+ };
  
- &sdio {
- 	bus-width = <4>;
--	cap-sd-highspeed;
- 	cap-sdio-irq;
- 	keep-power-in-suspend;
--	max-frequency = <50000000>;
-+	max-frequency = <25000000>;
- 	mmc-pwrseq = <&sdio_pwrseq>;
- 	non-removable;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc1_clk &sdmmc1_cmd &sdmmc1_bus4>;
- 	rockchip,default-sample-phase = <90>;
--	sd-uhs-sdr50;
- 	vmmc-supply = <&vcc3v3_sd>;
- 	vqmmc-supply = <&vcc_1v8>;
+ &pmu_io_domains {
+-	pmuio0-supply = <&vcc1v8_pmu>;
++	pmuio0-supply = <&vcc3v3_sys>;
+ 	pmuio1-supply = <&vcc3v3_sys>;
+ 	vccio1-supply = <&vcc_1v8>;
+ 	vccio2-supply = <&vccio_sd>;
+ 	vccio3-supply = <&vcc3v3_sd>;
+-	vccio4-supply = <&vcc_dovdd>;
+-	vccio5-supply = <&vcc_1v8>;
+-	vccio6-supply = <&vcc_1v8>;
+-	vccio7-supply = <&vcc_dovdd>;
++	vccio4-supply = <&vcc_3v3>;
++	vccio5-supply = <&vcc_3v3>;
++	vccio6-supply = <&vcc_3v3>;
++	vccio7-supply = <&vcc_1v8>;
  	status = "okay";
+ };
+ 
 -- 
 2.34.1
 
