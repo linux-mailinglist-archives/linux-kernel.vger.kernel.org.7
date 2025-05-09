@@ -1,133 +1,83 @@
-Return-Path: <linux-kernel+bounces-640638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7804EAB0733
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340B0AB0727
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8971C01D32
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:44:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346FB4E6DF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 00:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F06313A3F7;
-	Fri,  9 May 2025 00:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2639D2C1A2;
+	Fri,  9 May 2025 00:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="W4gUqrBm"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GeHURCqy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281368615A;
-	Fri,  9 May 2025 00:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB4E1802B;
+	Fri,  9 May 2025 00:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746751414; cv=none; b=ck8yfgu5OF6TBBZd3tvbV99K0hTQaf+lCsuv/aXAAeKFeZ2SnkK3ivIkJHqQcTslIp/vzN/Z6kHFU00vrOV87nF6dzM7D9Ibhdu8V+WG2iY7SGeC66F87rLFgkmKhNbwL2zVDQAipLxHguACQNX/aKD9PpWJ67XeVmkpE68mWw4=
+	t=1746751351; cv=none; b=p+l9MzZySmWH6Vun/nkR6H2sB32CE2b1tBB3hEXSkjCVmJpAX9LQb1PunSGXXlCg9ZvFsuaFccKwboe1rUULfWFFfw/UEmz5isnUPf/3Pf46ywOukBZ0mID2JAVrp5LNFQiuRSm8IbENF6L09K/dVpuPWqdyEosmZqI8kQH19F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746751414; c=relaxed/simple;
-	bh=ZdvTKQqzNuK1cYYcOlkZ38hXG7R64U6pk2NbaOyRi1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HFQ9xYx2O+FyTSbDMdRGG4P3eQwhaSsAyEusUJuhDdNQvfC9S1OBTHF2nfuS/Vl7Fo6OEF/lk/IvmHaBtQMfvZgc8ezXbvCnKwUS5M3bOWEggL04CH4Hsa0jioGTscTvcb8K80x2ZmZJZlp7s1YcGHhIG6JJDvW7mXYTL6FC+3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=W4gUqrBm; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9609B261B5;
-	Fri,  9 May 2025 02:43:31 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 9ISWAi9Dedp8; Fri,  9 May 2025 02:43:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746751410; bh=ZdvTKQqzNuK1cYYcOlkZ38hXG7R64U6pk2NbaOyRi1Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=W4gUqrBmfI0lli6DheZm/slrz2Zbd4Fsso6G4p7zP1evhN1TLPivdRowCRNW/C3bi
-	 26aES85vqUpqho/s/bTUtdgXcWLptBulyG2dGqLS3rJmMcYc4LVmM+W8Fw/irzxE+a
-	 8QN48Cv5HfdgYRFXWAWHzw5yWRdI3J1Bcx2fo2PbK045FL83RHDQ7b3MF0HfCJV1zW
-	 VvQDjXDdV40s3habn13S78I/F4ss35NaL1VWfR6E/M0yUc+oIEz8Z3fwWunQPFlB5o
-	 6lH9yec4A0xQhVMUVmBaYBVsZ8Tk9WXPMTqWQtFCrMfDCP9hom85SNjL6BJYc7zzge
-	 SsQh3u1KncYdA==
-From: Yao Zi <ziyao@disroot.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Yao Zi <ziyao@disroot.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] arm64: dts: rockchip: Add naneng-combphy for RK3528
-Date: Fri,  9 May 2025 00:41:22 +0000
-Message-ID: <20250509004121.36058-7-ziyao@disroot.org>
-In-Reply-To: <20250509004121.36058-2-ziyao@disroot.org>
-References: <20250509004121.36058-2-ziyao@disroot.org>
+	s=arc-20240116; t=1746751351; c=relaxed/simple;
+	bh=PRRpLihiyKbV/Sfm7nAyauKWja5MC4KYGOEp5dMFOPU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BGx/fRVMknVc7i2WIPZzMK7XjWm20VwL9k38SSbDi14qIOXHbohDJIVHXRO5raiK0PRUj+n2P/BNMM8Y2mlxiHsb/w3e0UQ22gOqeNLMLfWGHfqHI+NY7a1+d3/HmkUCGmyradMCF1gAlfNsNIMEPqwYZMkoCLQEsEVd6UVC8CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GeHURCqy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 715CEC4CEED;
+	Fri,  9 May 2025 00:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1746751351;
+	bh=PRRpLihiyKbV/Sfm7nAyauKWja5MC4KYGOEp5dMFOPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GeHURCqy78rgaPH336N7O9DR2zC7Dw3upYbA5PXTkE3c9yrNHxYhi+rlndDY1nj01
+	 Cs/isfb6y6BJask44SKtR4DoFzv1HGXitOByXCwXPBESsszgnZ2pSxTUoqw5WdJIJx
+	 yDmSt6Fy7MdG77SX11Re/PiIMGvbjh/GlTUS2YtY=
+Date: Thu, 8 May 2025 17:42:29 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: Jonathan.Cameron@huawei.com, dan.j.williams@intel.com, rppt@kernel.org,
+ rafael@kernel.org, lenb@kernel.org, alison.schofield@intel.com,
+ rrichter@amd.com, bfaccini@nvidia.com, haibo1.xu@intel.com,
+ david@redhat.com, chenhuacai@kernel.org, linux-cxl@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, chenbaozi@phytium.com.cn, loongarch@lists.linux.dev
+Subject: Re: [PATCH v3 1/1] mm: numa_memblks: introduce
+ numa_add_reserved_memblk
+Message-Id: <20250508174229.c310803222405c1b7d60e104@linux-foundation.org>
+In-Reply-To: <20250508022719.3941335-1-wangyuquan1236@phytium.com.cn>
+References: <20250508022719.3941335-1-wangyuquan1236@phytium.com.cn>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Rockchip RK3528 ships a naneng-combphy that is shared by PCIe and USB
-3.0 controllers. Describe it and the pipe-phy grf which it depends on.
+On Thu,  8 May 2025 10:27:19 +0800 Yuquan Wang <wangyuquan1236@phytium.com.cn> wrote:
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/arm64/boot/dts/rockchip/rk3528.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> acpi_parse_cfmws() currently adds empty CFMWS ranges to numa_meminfo
+> with the expectation that numa_cleanup_meminfo moves them to
+> numa_reserved_meminfo. There is no need for that indirection when it is
+> known in advance that these unpopulated ranges are meant for
+> numa_reserved_meminfo in support of future hotplug / CXL provisioning.
+> 
+> Introduce and use numa_add_reserved_memblk() to add the empty CFMWS
+> ranges directly.
+> 
+> ...
+>
+>  drivers/acpi/numa/srat.c     |  2 +-
+>  include/linux/numa_memblks.h |  1 +
+>  mm/numa_memblks.c            | 22 ++++++++++++++++++++++
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-index 193b84b5e912..672350400774 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-@@ -334,6 +334,11 @@ vpu_grf: syscon@ff340000 {
- 			reg = <0x0 0xff340000 0x0 0x8000>;
- 		};
- 
-+		pipe_phy_grf: syscon@ff348000 {
-+			compatible = "rockchip,rk3528-pipe-phy-grf", "syscon";
-+			reg = <0x0 0xff348000 0x0 0x8000>;
-+		};
-+
- 		vo_grf: syscon@ff360000 {
- 			compatible = "rockchip,rk3528-vo-grf", "syscon";
- 			reg = <0x0 0xff360000 0x0 0x10000>;
-@@ -778,6 +783,23 @@ dmac: dma-controller@ffd60000 {
- 			arm,pl330-periph-burst;
- 		};
- 
-+		combphy: phy@ffdc0000 {
-+			compatible = "rockchip,rk3528-naneng-combphy";
-+			reg = <0x0 0xffdc0000 0x0 0x10000>;
-+			#phy-cells = <1>;
-+			clocks = <&cru CLK_REF_PCIE_INNER_PHY>, <&cru PCLK_PCIE_PHY>,
-+				 <&cru PCLK_PIPE_GRF>;
-+			clock-names = "ref", "apb",
-+				      "pipe";
-+			assigned-clocks = <&cru CLK_REF_PCIE_INNER_PHY>;
-+			assigned-clock-rates = <100000000>;
-+			resets = <&cru SRST_PCIE_PIPE_PHY>, <&cru SRST_P_PCIE_PHY>;
-+			reset-names = "phy", "apb";
-+			rockchip,pipe-grf = <&vpu_grf>;
-+			rockchip,pipe-phy-grf = <&pipe_phy_grf>;
-+			status = "disabled";
-+		};
-+
- 		pinctrl: pinctrl {
- 			compatible = "rockchip,rk3528-pinctrl";
- 			rockchip,grf = <&ioc_grf>;
--- 
-2.49.0
-
+I'm not sure which tree this best belongs to so I'll add it to mm-git. 
+If it later pops up in another tree, I'll drop it again.
 
