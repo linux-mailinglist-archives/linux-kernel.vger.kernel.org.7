@@ -1,144 +1,543 @@
-Return-Path: <linux-kernel+bounces-642021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B0BAB19B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:05:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A20FAB19BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05968A280C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59A13B3169
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9E9235364;
-	Fri,  9 May 2025 15:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08001235BF1;
+	Fri,  9 May 2025 15:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="li4S6GU1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2ss3g8H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3BF235362
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41A123506F;
+	Fri,  9 May 2025 15:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746806293; cv=none; b=DGvCH3qUr27QLUaCGdmelORm8pycllh1kMVad7ojNzoPJjvZXbxp1VahCfhPzEv66/Cdzs8jvks5SoL+1DetEwE/oQ9P0zWo2Koj5cu2RjUrovES+z3kLgmiVqZERc9GWjSTxIKMh8fZox6LqfnEHhH5qhddXof3za3RBhU9L+I=
+	t=1746806377; cv=none; b=NJF6dAWUJEuN+FESiWsSzZ0LTrCdHgINCJYRFcvthbvtjRFmnOvava+1/XQBK37IQ3V/qL0vHFokotFJP4gyhYbeE9B9MpriGbxRCUIKsyPxwGLu7aGHYv9+aXxqXzvzvn2+FnI78hZBZ0ZUekXtBmx36oPSCCSAjZ0K71la3Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746806293; c=relaxed/simple;
-	bh=irLWXJPagDXrveAmW0ysal4JRHs3lchHeVAcCzAJ2r8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WHJZOqBjEMNt6mByETe3d87D8LIrS0JU7B2LorQNcdnwXRSXpco3TkgqWO+3HOeW9HCS8S0t/OKTy1VxE9HkLh+TqVrjPBxA8j8szpW1H36UBcPXk7A1RKaBUjhe7MVbY8Nk0LLg83MPxAivm/mCd8Dlk60f/D9JiXSqml+80aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=li4S6GU1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5499DMib013551
-	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 15:58:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	262ZEu3WvDh8g01OaP8GQaXghLw60EkUopSCqASt1kA=; b=li4S6GU1QS8jfOs8
-	7tbEPRR+sag5akPfFJ5exwolDAAG/DlVYG6QCOzjA0ZhvlQ/FLXWqEo+R/mML+E2
-	uPUS6CxHdKmf+8feDXaTt7ROIKyDb4/JZss+5zgBlO6g/9T3W4otzUD/krzI+qQw
-	NW80H/eUvWtrRv1Ywm62MLWqMGnKIubjqGWkCqZll8hGwVDLCJbcG9nUSd6epsL8
-	/fZBVqpJVl+AJJ0+gPW2HZGsCRjYC19ECHxe59aXYGGlCp+eeKQM6+VVXURTxQ/V
-	KUAfNPfkfQZBcOs6YMH91cViEoG42PhOuewPHrOSkbKouj1umeG8Br/8UUIaK7Uq
-	yv7oYw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gt52vcd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 15:58:11 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f5495bf0aeso4122256d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 08:58:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746806290; x=1747411090;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=262ZEu3WvDh8g01OaP8GQaXghLw60EkUopSCqASt1kA=;
-        b=tATWLHm4BYZoGlRMnxzMYnRGhFTDWZnyGmSDpau55Z4N1ob9/zVIwNNxXRsqmPSHXN
-         JEwDuxgcHndieh2Y9pKCeiajFV6xCXUEfdMEGx0V9Cp984OyZ0CkBxLNuRAecUq7E2s9
-         MHp+pxCk2Nt0O1aAnwHYkl6oooiVI6wbg+SEsA787fXLvJtizt8HQaBiJFgGShPVRPou
-         5vHHuKU8ntR5U9lW39gcUqKG0XErGuOc+r16vmm/+/TvzO9/nikPoQbYyupbTxwKjqFW
-         Qp+d7Pd5coPVEHRF6CjDD2rUNaYLUlTKLJjM7GonnnZYLsvkZTtIlm/o5X52WYTd2Gwq
-         oadw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaLa+txASyDmrJhItiZg90eemQ2TnbX8fdpTd3Lw1exfYyU8pOyPgY/OU7zwSNs4G6HcyF2hH45ZXzhxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk4JC1Tu9pIwSXxK93gJvI3sd+XlXYlOiuWkjE+xnwesB4chLg
-	cT4DHIclC0eBUDHn5M7/Pnsiwy2Gqd6TUXw+EDDWaHeIeCycciYCLGJdq6SkrsHLFoelpNtYVnN
-	yPmBZPdBysHuhEDOzKZpnu7rmaq7HCDyoex8Gjbhz1pSKuwvGvjO1FpnSKqt5OjY=
-X-Gm-Gg: ASbGncs3yJkdkUiJCAMTmBTW2ATwmQASWUnzYRwRM0/TL4RT8OpBDf7hCYZ1fng54xz
-	LwmUZp8ThnY/Tnq5UTF8pBQt21XgRkLdLmHUS+xzDhmSKNxwWqk4RtkHBG8JQUXnJvsfUb9ziOy
-	qqAq0Z/uJiN4BI2iJ/WUOtD2nb7ftLOT74RQZMQlFDSeuB09xiQdE/5Ws8fZe3+1okVjJLUGtrN
-	vSn7Pj2BFyBl+2i24bz4KFNk/EV143IBpr5EpjHCaLKTeigyPrci5jE5pPSSHINunhPSZIuv3Mw
-	iQFEAjpy9dJP4FIzX7ouOgwFaGec0u9huZqiafvxCizfv9CQ6qad4D5KWnq7cmCw1E0=
-X-Received: by 2002:a05:6214:1bc8:b0:6f6:d4a8:1a6c with SMTP id 6a1803df08f44-6f6e479559emr25148526d6.1.1746806289933;
-        Fri, 09 May 2025 08:58:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvG0eBziMbOZ8EBGHmv1fc6XD7+4vLbKGzjZd8J2ynq1/rKSXEFQ5tVK2pqkSnfFcXnm0YbA==
-X-Received: by 2002:a05:6214:1bc8:b0:6f6:d4a8:1a6c with SMTP id 6a1803df08f44-6f6e479559emr25148116d6.1.1746806289370;
-        Fri, 09 May 2025 08:58:09 -0700 (PDT)
-Received: from [192.168.65.105] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cc52937sm1637448a12.48.2025.05.09.08.58.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 08:58:08 -0700 (PDT)
-Message-ID: <7347ced4-980b-4630-9b5b-4810df249b89@oss.qualcomm.com>
-Date: Fri, 9 May 2025 17:58:06 +0200
+	s=arc-20240116; t=1746806377; c=relaxed/simple;
+	bh=h2kWVI9tPku6cxcG/rzSWHBGCF3nXiUEMtt00r6go0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hrdfeJ+ONUQYSafRgvoo1SbAHoj4GQ2N6onA5JQ7fT6p9muBr/RVuFg1LMsN/Sl4i7QIU85tdMbVa89IxQgA2LWQvUr4RaL4tKi7PF4fKUe3YFS7iRivk8zy1MLOp/IfC2ZZEz8zOXgAGDJpQuVbDxVC6R0y9IN1Q5W5DjrUH2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2ss3g8H; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746806374; x=1778342374;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h2kWVI9tPku6cxcG/rzSWHBGCF3nXiUEMtt00r6go0w=;
+  b=V2ss3g8HM1hwJh+HQNsVHhiffCSVNTooXiiJOKE4D4k/q2KaGWJoSlUj
+   GfSXoPm8SVp2qEhOjuk88thiKCMOTR8uDjCApTrswdH/UYJweFEP30AcM
+   48xivPGla3uEGtTtZ/gP2xJ5x+1VuP3o4Ihv+VBiLKfecfm/qbd/e9m9W
+   HDOOsDeL3mH2tLgCTLiQcnTKqmzZFBLISBRf5G2lZ6HMgUGVfcQKC7uoY
+   sfmLD9xhh8XQCG5xyyFCFPUdZidh9Ir/t3+7ifddMaWbUeXCz2QnDR8wm
+   1uoMTspIt83sCvBvWWmZoLLslW6Q4WnJvGi4Nu+BSM/5zJPpSaEtoInpj
+   Q==;
+X-CSE-ConnectionGUID: 0sO9tHZOQdeRAGf1vHtRJw==
+X-CSE-MsgGUID: hdEHv5HkQ1iyAnB9EpTkoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48798427"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="48798427"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 08:59:34 -0700
+X-CSE-ConnectionGUID: i7oooTQ4SNm/ZdqJZ8mnvw==
+X-CSE-MsgGUID: Ryji/geURwqLHOsw+Ct2PA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="137043451"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 09 May 2025 08:59:29 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDQ8E-000CDb-35;
+	Fri, 09 May 2025 15:59:26 +0000
+Date: Fri, 9 May 2025 23:58:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
+	Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 3/3] iio: imu: smi330: Add driver
+Message-ID: <202505092349.jx1FRafM-lkp@intel.com>
+References: <20250505151641.52878-4-Jianping.Shen@de.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: qcom: sm8650: add iris DT node
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250509-topic-sm8x50-upstream-iris-8650-dt-v3-1-f6842e0a8208@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250509-topic-sm8x50-upstream-iris-8650-dt-v3-1-f6842e0a8208@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDE1NyBTYWx0ZWRfXwAwLlB43vJhv
- 8f3dHZS3/DLKDcOgFiOf3QZ1HCjV0x3hLRIynUveqRvlpSHp3eci5xyuNnbU8sovjcaWfw/zgEb
- frQ/JlzNu3o/YUn08+KSx/6+tFLIzaB1vaQ5v99UG2feyIQ4/m4BwWg/R9WIhbjCg+IEG+w9svV
- 7/hYhZ7qg35HCMym22/tuHSuoJ7vfO87CaRwyOmvO+E6CU5Sf5uCP/T7aHHjknDUdaGkHuD0Cq1
- NJBHNOWnKS1jNzP7BKqWs7TeVGYkt3594tOedxw6MoKSw64GauuHPu7u3XDGTCGERxKiA6y43l2
- JyhlN6r3Da0C97a5ow4KAbrBB9uibIAvQCsVgUuZs7Rr088vGinEo4r/gox2ojNth/m67+h6Hw9
- Z4Ru1vsz0CCPZoVjuMYG3Gr/4Vq8cp4cWO6j96oMXJAxDvvSXbmrnv1wNwYzyKUiMzX0aSZx
-X-Authority-Analysis: v=2.4 cv=LKFmQIW9 c=1 sm=1 tr=0 ts=681e2613 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=rgwGDv9o_da3FyMresgA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: gwjX1dfyRPklWXB4NCBgcwESwvS8QZpM
-X-Proofpoint-GUID: gwjX1dfyRPklWXB4NCBgcwESwvS8QZpM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_06,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=985 clxscore=1015 lowpriorityscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0 phishscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505090157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505151641.52878-4-Jianping.Shen@de.bosch.com>
 
-On 5/9/25 5:28 PM, Neil Armstrong wrote:
-> Add DT entries for the sm8650 iris decoder.
-> 
-> Since the firmware is required to be signed, only enable
-> on Qualcomm development boards where the firmware is
-> available.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+Hi,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+kernel test robot noticed the following build warnings:
 
-Konrad
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.15-rc5 next-20250509]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jianping-Shen-de-bosch-com/docs-iio-imu-smi330-Add-ABI-documentation/20250505-232315
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250505151641.52878-4-Jianping.Shen%40de.bosch.com
+patch subject: [PATCH v1 3/3] iio: imu: smi330: Add driver
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250509/202505092349.jx1FRafM-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505092349.jx1FRafM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505092349.jx1FRafM-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/imu/smi330/smi330_core.c:557:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     557 |                 reg_value = FIELD_PREP(mask, reg_value);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:561:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     561 |                 reg_value = FIELD_PREP(mask, reg_value);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:565:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     565 |                 reg_value = FIELD_PREP(mask, reg_value);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:569:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     569 |                 reg_value = FIELD_PREP(mask, reg_value);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:573:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     573 |                 reg_value = FIELD_PREP(mask, reg_value);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+>> drivers/iio/imu/smi330/smi330_core.c:1010:20: warning: result of comparison of constant 61292 with expression of type 's16' (aka 'short') is always true [-Wtautological-constant-out-of-range-compare]
+    1010 |                           data_array[8] != SMI330_SC_ST_VALUE_8))) {
+         |                           ~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:1009:20: warning: result of comparison of constant 65485 with expression of type 's16' (aka 'short') is always true [-Wtautological-constant-out-of-range-compare]
+    1009 |                           data_array[7] != SMI330_SC_ST_VALUE_7 ||
+         |                           ~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:1006:20: warning: result of comparison of constant 65519 with expression of type 's16' (aka 'short') is always true [-Wtautological-constant-out-of-range-compare]
+    1006 |                           data_array[4] != SMI330_SC_ST_VALUE_4 ||
+         |                           ~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:1004:20: warning: result of comparison of constant 37401 with expression of type 's16' (aka 'short') is always true [-Wtautological-constant-out-of-range-compare]
+    1004 |                           data_array[1] != SMI330_SC_ST_VALUE_1 ||
+         |                           ~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:1002:33: warning: result of comparison of constant 65512 with expression of type 's16' (aka 'short') is always true [-Wtautological-constant-out-of-range-compare]
+    1002 |         if (ret == 0 && (data_array[3] != SMI330_SC_ST_VALUE_3 &&
+         |                          ~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:1374:9: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    1374 |                 val = FIELD_PREP(mask, val);
+         |                       ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:1378:9: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    1378 |                 val = FIELD_PREP(mask, val);
+         |                       ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+>> drivers/iio/imu/smi330/smi330_core.c:2156:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((en_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (en_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2156 |                                 en_val = FIELD_PREP(en_mask, state);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:2160:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((en_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (en_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2160 |                                 en_val = FIELD_PREP(en_mask, state);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:2164:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((en_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (en_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2164 |                                 en_val = FIELD_PREP(en_mask, state);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+>> drivers/iio/imu/smi330/smi330_core.c:2170:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((int_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (int_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2170 |                         int_val = FIELD_PREP(int_mask, data->cfg.feat_irq);
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:2176:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((en_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (en_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2176 |                                 en_val = FIELD_PREP(en_mask, state);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:2180:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((en_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (en_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2180 |                                 en_val = FIELD_PREP(en_mask, state);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:2184:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((en_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (en_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+    2184 |                                 en_val = FIELD_PREP(en_mask, state);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:557:22: note: expanded from macro 'compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:545:23: note: expanded from macro '_compiletime_assert'
+     545 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:537:9: note: expanded from macro '__compiletime_assert'
+     537 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   drivers/iio/imu/smi330/smi330_core.c:2190:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((int_mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (int_mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+
+
+vim +557 drivers/iio/imu/smi330/smi330_core.c
+
+   524	
+   525	static int smi330_set_sensor_config(struct smi330_data *data,
+   526					    enum smi330_sensor sensor,
+   527					    enum smi330_sensor_conf_select config,
+   528					    int value, bool is_reg_value)
+   529	{
+   530		int ret, i, reg_value, mask;
+   531		const struct smi330_sysfs_attr *attr;
+   532	
+   533		if (is_reg_value) {
+   534			reg_value = value;
+   535		} else {
+   536			ret = smi330_get_sysfs_attr(config, sensor, &attr);
+   537			if (ret)
+   538				return ret;
+   539	
+   540			ret = -EINVAL;
+   541			for (i = 0; i < attr->len; i++) {
+   542				if (attr->vals[i] == value) {
+   543					if (attr->type == IIO_VAL_INT)
+   544						reg_value = attr->reg_vals[i];
+   545					else
+   546						reg_value = attr->reg_vals[i / 2];
+   547					ret = 0;
+   548				}
+   549			}
+   550			if (ret)
+   551				return ret;
+   552		}
+   553	
+   554		switch (config) {
+   555		case SMI330_ODR:
+   556			mask = SMI330_CFG_ODR_MASK;
+ > 557			reg_value = FIELD_PREP(mask, reg_value);
+   558			break;
+   559		case SMI330_RANGE:
+   560			mask = SMI330_CFG_RANGE_MASK;
+   561			reg_value = FIELD_PREP(mask, reg_value);
+   562			break;
+   563		case SMI330_BW:
+   564			mask = SMI330_CFG_BW_MASK;
+   565			reg_value = FIELD_PREP(mask, reg_value);
+   566			break;
+   567		case SMI330_AVG_NUM:
+   568			mask = SMI330_CFG_AVG_NUM_MASK;
+   569			reg_value = FIELD_PREP(mask, reg_value);
+   570			break;
+   571		case SMI330_MODE:
+   572			mask = SMI330_CFG_MODE_MASK;
+   573			reg_value = FIELD_PREP(mask, reg_value);
+   574			break;
+   575		default:
+   576			return -EINVAL;
+   577		}
+   578	
+   579		return smi330_set_sensor_config_reg(data, sensor, mask, reg_value);
+   580	}
+   581	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
