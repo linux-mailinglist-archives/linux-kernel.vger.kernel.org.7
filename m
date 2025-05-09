@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-641850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266A6AB173A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:21:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00009AB173F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29EC2166F83
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95382A24B04
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D59A2135DD;
-	Fri,  9 May 2025 14:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8072147F1;
+	Fri,  9 May 2025 14:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meV1szuP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n32x43Yz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F1D219A7D;
-	Fri,  9 May 2025 14:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F71219A7D;
+	Fri,  9 May 2025 14:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800488; cv=none; b=oQmd5rxc/rwM7Do2DcQUm/iqfSOiPfn5KVlor1KPkeTTVgEBmHGzd8SWnqYDOe73eJGzSjX1ZEyLZN449UsZqFDyFzDmJVxIzTI2dSsfTW4gmnxt2XxEfTAiCFwK25vleg0Cvxh+Mz7E3qwpG5kq6YC60fHPXj9sWg8F5BO0FpU=
+	t=1746800492; cv=none; b=aaB+QJYB8tBrG3YjPKnyMWZ1/PoA5J9HRTR46VI6qz9ClQKyxVrD6zwbCgOPjHVBykOKhFCvHLYd5y20I71kdEY7B0D25Nn5Sywe+7IySwmIIWKeofpkh7PobL4e+pocgPHHbiuOwD4xk1bHsp18d4xKDBDdJ7XEkeSQnl1s8QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800488; c=relaxed/simple;
-	bh=sLqdIcgHD/DJtkIGdJq4bDKP2Ofo2cMVDy5Rm7hJjEA=;
+	s=arc-20240116; t=1746800492; c=relaxed/simple;
+	bh=f7zTVEe5aD0hTkmXyPBcDqsJb6NWA2toaHf5VkcvYYw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SJVisRMuDMMQ/FyjhFcJfAJFpbfUuYML+VbfrO+TEDcT74yVOK8PmaD4X8DzzowNi7uypb4Dw1+ayJMTvAmw68/CCy1cJL6bzJB4kYD72PeZQmdd1gux1p/5xsK3HUjIhJhsQcw1uRV9I8WRP4lVmCL/UjKpgDHaNClUtoO0fDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meV1szuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF06DC4CEEE;
-	Fri,  9 May 2025 14:21:24 +0000 (UTC)
+	 MIME-Version:Content-Type; b=XcQzRyXFBPkoomCWJT9j5GCvzLzAIfvrzBRgi+6irS5BS80c3vQnXTKf3lyZGCIxMJH5VF59OsJXkSorWDGgEXia/yJWsSeoAtSd6RilJ7Y82SjdvCWwCy1Atm+fYI1ahJB3Tin9D2x7kXdtm3pzyxuBnrOV5RaQkArvX9ctMpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n32x43Yz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9A4C4CEEF;
+	Fri,  9 May 2025 14:21:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746800488;
-	bh=sLqdIcgHD/DJtkIGdJq4bDKP2Ofo2cMVDy5Rm7hJjEA=;
+	s=k20201202; t=1746800491;
+	bh=f7zTVEe5aD0hTkmXyPBcDqsJb6NWA2toaHf5VkcvYYw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=meV1szuPT6M7ayjOH5wAhtNtTD6ccORzJ1MnJIf+wzCVpWrGrCxUbzTqiYxa+3Ksi
-	 CjNAnE2YJfj5j7369R1lY3SZ++y7Tm8/nb5w9Wkj/n4VSoc0JSFBiISKWLrrsui8H7
-	 VzTYvmdphr5fKTbW4zAdABNVH/zdfrD+RV764kNZFZuow0TsYfcKtRNwpLc5l8S1tJ
-	 nyjnfCcJPows2k7FQtyaSWoGABZmw1VZ9SV/kF070vBJ+bee1+8HEZh8yQKe22MJAM
-	 8t2Lx/w1/OcPmwTBaEVzeMsjkN105oC1Ja7UeuJwd5ggO8wBSi2eozfc9mChxx3/19
-	 Rbfxmegzi3TAA==
+	b=n32x43YzWKZqX53ozdjsX4Dl15HgLUFUUskqyGTlZ4gETTsCqPu5cR7CUiPyzpGYU
+	 qHkgGgs9Ox0bGZ+NVHCBpXKlPuqXSshr2vzzttpqmGOiergEZQmYoizTb06XkrmfPB
+	 mgu/z/cBQEXcYtXc+oryxjd4gzA3UsBLUlMANX3A6lkByvO5EkIne946PtMHWATZIp
+	 NeOubU3tgDd6VxX+p1fo34GlRosgpAH7JdgZ1dOaPnwds1A3EN+vNKZFiINm+WUnv0
+	 bBwoFGN8tWdPLPcxg11VlY9x8c5mSQDIaS9P55HSmPjmQK/4QshpOodPF2DJU1RzWM
+	 UrM60aQ3ozfdA==
 From: Lee Jones <lee@kernel.org>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, 
  Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Peter Griffin <peter.griffin@linaro.org>, 
@@ -55,12 +54,12 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-In-Reply-To: <20250325-max77759-mfd-v6-0-c0870ca662ba@linaro.org>
-References: <20250325-max77759-mfd-v6-0-c0870ca662ba@linaro.org>
-Subject: Re: [PATCH v6 0/6] Maxim Integrated MAX77759 PMIC MFD-based
+In-Reply-To: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
+References: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org>
+Subject: Re: [PATCH v10 0/3] Maxim Integrated MAX77759 PMIC MFD-based
  drivers
-Message-Id: <174680048459.2927467.16331911843849143362.b4-ty@kernel.org>
-Date: Fri, 09 May 2025 15:21:24 +0100
+Message-Id: <174680048833.2927467.5021194102243558370.b4-ty@kernel.org>
+Date: Fri, 09 May 2025 15:21:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,7 +70,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-b75d9
 
-On Tue, 25 Mar 2025 08:27:01 +0000, André Draszik wrote:
+On Fri, 09 May 2025 14:22:38 +0100, André Draszik wrote:
 > This series improves support for the Maxim Integrated MAX77759
 > companion PMIC for USB Type-C applications using the MFD framework.
 > 
@@ -94,17 +93,11 @@ On Tue, 25 Mar 2025 08:27:01 +0000, André Draszik wrote:
 
 Applied, thanks!
 
-[1/6] dt-bindings: gpio: add max77759 binding
-      (no commit info)
-[2/6] dt-bindings: nvmem: add max77759 binding
-      (no commit info)
-[3/6] dt-bindings: mfd: add max77759 binding
-      (no commit info)
-[4/6] mfd: max77759: add Maxim MAX77759 core mfd driver
+[1/3] mfd: max77759: add Maxim MAX77759 core mfd driver
       commit: 7934db593dbc8b92cbd028af3f3740e9ef5c6e64
-[5/6] gpio: max77759: add Maxim MAX77759 gpio driver
+[2/3] gpio: max77759: add Maxim MAX77759 gpio driver
       commit: c4ff17482041f28a1e9454ce06f0c1ba1ad6cee1
-[6/6] nvmem: max77759: add Maxim MAX77759 NVMEM driver
+[3/3] nvmem: max77759: add Maxim MAX77759 NVMEM driver
       commit: 8b24b312bf493a5e71d2418a2a7ee3eb33f33054
 
 --
