@@ -1,144 +1,382 @@
-Return-Path: <linux-kernel+bounces-641181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92302AB0DE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9DCAB0D26
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCED3B180F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:56:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F3717A940D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503782741A5;
-	Fri,  9 May 2025 08:56:42 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7D72741D0;
+	Fri,  9 May 2025 08:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y54H9TvO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C5121FF23
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434CB22D9EF
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746781002; cv=none; b=GD8MIK10omHFIJ8adh8H9aLJbNAJ96jxyKklEvaREL4FrbGbdjJvADDbU8S7Xa/iHLOI60tIBxb2WCI+Hl74dXClkKYDyvD08EOBzI/XpHt5ZnsM4SStSFQFAuzTqvZScEJiWeRkbmhPIhEoBmjumD8xafpEurNoZKYZqoBYO8c=
+	t=1746779517; cv=none; b=aVvI2HBNyXnl1pDlm7579S3UwC26wzafAqPNm7D2oqeuQHEODLq8Zfbc1CnUpeJVoxYwftV0kQgtH+pqMkc1smz2+waXvUm+qZ6o9dAYDZ//3GqUVWuXx3kIdRClthuHHMbeObqDFn41kVPIFdn3OOSI7Jy4bdcCW6bS8zDqfa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746781002; c=relaxed/simple;
-	bh=dZZ3VPiPFOzf4cQPlWnKeSAeKt/VPUjAUXwbEpsGKjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=El/+kglHdxw2G+/pZBunL6g26HBUM5QomVOtAAJnDncCJexL/Rw4HmtrEywLhXJuHk6281M7KCooB8r2mYicfjQti0Tyd1HKTV1+8vPqq7eTBKWWM21iHqs8KHQS0tsaRr50hRNd44ql1jQ6PbFnnOgvGsb8cqq5iwNoScoNxP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1746779891-1eb14e386d11dc50001-xx1T2L
-Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id lNjwCd9NGm5gCPPo (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 09 May 2025 16:38:11 +0800 (CST)
-X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX3.zhaoxin.com
- (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Fri, 9 May
- 2025 16:38:10 +0800
-Received: from ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2]) by
- ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2%6]) with mapi id
- 15.01.2507.044; Fri, 9 May 2025 16:38:10 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from [10.32.65.152] (10.32.65.152) by ZXBJMBX03.zhaoxin.com
- (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Fri, 9 May
- 2025 16:31:08 +0800
-Message-ID: <acfbdc87-5146-4c39-831f-70b132f9f4b0@zhaoxin.com>
-Date: Fri, 9 May 2025 16:31:05 +0800
+	s=arc-20240116; t=1746779517; c=relaxed/simple;
+	bh=9lQZozOT//ZQ/czf66UkcCEnEqMNT17DHsbR/6BKiCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=STxgcxW0HRSU9/6Ssj0H1MwmXrcdIUZ54BsjoD/13PISv3KR7gjxLSbTydDuc4JYzhifpcqtzG6FMJXrEvwJNTFj9WC/77XN+kWqIeczS4gMKhQ8/zCBCAKmTPnlh83LdNcajQH5Vms8d4iFkcbZ6+W3fmyXhioiH/z6WBqq8Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y54H9TvO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746779513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxQK0cexvFnlqB7R/upvH/pd3k+8Oz9YpLbSOHmnD6g=;
+	b=Y54H9TvOmadXmvOTg+dYHe91+ozZUfAvwUsPsy4yduglyeQShZu7WcACZP27VTwbdBF0p6
+	IYsTVarjjvVDoKOEDtxIx6xBR+CKkRP6pxKvcc0XemgdDGfnQ4qNvijLSw1ilm4dLjHj5N
+	aqo+/kn9KiPl2cocH/xhZFV2SEZO3z8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-OxVlxgQBMmyiGSCjS0-IVw-1; Fri,
+ 09 May 2025 04:31:49 -0400
+X-MC-Unique: OxVlxgQBMmyiGSCjS0-IVw-1
+X-Mimecast-MFC-AGG-ID: OxVlxgQBMmyiGSCjS0-IVw_1746779508
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D115C1800446;
+	Fri,  9 May 2025 08:31:47 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.140])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B33EC1953B85;
+	Fri,  9 May 2025 08:31:41 +0000 (UTC)
+Date: Fri, 9 May 2025 16:31:31 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 7/8] selftests: ublk: kublk: decouple ublk_queues from
+ ublk server threads
+Message-ID: <aB29Y6OTjESOPVlc@fedora>
+References: <20250507-ublk_task_per_io-v6-0-a2a298783c01@purestorage.com>
+ <20250507-ublk_task_per_io-v6-7-a2a298783c01@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Bug#1103397: linux-image-amd64: Kernel Panic:
- copy_fpstate_to_sigframe crashes.
-To: Larry Wei <larryw3i@yeah.net>, Salvatore Bonaccorso <carnil@debian.org>,
-	<1103397@bugs.debian.org>
-X-ASG-Orig-Subj: Re: Bug#1103397: linux-image-amd64: Kernel Panic:
- copy_fpstate_to_sigframe crashes.
-CC: Ben Hutchings <ben@decadent.org.uk>, "Chang S. Bae"
-	<chang.seok.bae@intel.com>, Lyle Li <LyleLi@zhaoxin.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<aruna.ramakrishna@oracle.com>, <pbonzini@redhat.com>,
-	<levymitchell0@gmail.com>, <attofari@amazon.de>,
-	<linux-kernel@vger.kernel.org>, <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>,
-	<LeoLiu-oc@zhaoxin.com>, <GeorgeXue@zhaoxin.com>, <yunshen@zhaoxin.com>,
-	<AlanSong@zhaoxin.com>
-References: <4ac9f677-699e-4ef1-b160-9f1c6fe8e820@yeah.net>
- <c566339b-d8d3-4f74-a3b8-8f373fbe3f47@yeah.net>
- <174486226753.86424.3234605951040281675.reportbug@zx2>
- <8bcebb19-17f6-47e6-976a-0c9560795cd7@yeah.net>
- <aB0Q8S47iNeD1GOM@eldamar.lan>
- <6cebe32d-0290-41d8-9629-d80ef3c159c3@yeah.net>
-Content-Language: en-US
-From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-In-Reply-To: <6cebe32d-0290-41d8-9629-d80ef3c159c3@yeah.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Moderation-Data: 5/9/2025 4:38:09 PM
-X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
-X-Barracuda-Start-Time: 1746779891
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 1324
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.141129
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507-ublk_task_per_io-v6-7-a2a298783c01@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+
+On Wed, May 07, 2025 at 03:49:41PM -0600, Uday Shankar wrote:
+> Add support in kublk for decoupled ublk_queues and ublk server threads.
+> kublk now has two modes of operation:
+> 
+> - (preexisting mode) threads and queues are paired 1:1, and each thread
+>   services all the I/Os of one queue
+> - (new mode) thread and queue counts are independently configurable.
+>   threads service I/Os in a way that balances load across threads even
+>   if load is not balanced over queues. requires passing --round_robin
+> 
+> The new mode of operation is exercised by the new test_generic_08, which
+> issues I/O against a single queue and verifies that each of the 8 ublk
+> server threads handles exactly 1/8 of the total I/O count. Under the old
+> mode of operation (i.e. without --round_robin), all I/O goes to one ublk
+> server thread, and the test fails.
+> 
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> ---
+>  tools/testing/selftests/ublk/Makefile              |  1 +
+>  tools/testing/selftests/ublk/file_backed.c         |  4 +-
+>  tools/testing/selftests/ublk/kublk.c               | 96 ++++++++++++++++++----
+>  tools/testing/selftests/ublk/kublk.h               |  3 +
+>  tools/testing/selftests/ublk/null.c                |  4 +-
+>  tools/testing/selftests/ublk/stripe.c              |  4 +-
+>  tools/testing/selftests/ublk/test_generic_08.sh    | 61 ++++++++++++++
+>  .../selftests/ublk/trace/count_ios_per_tid.bt      |  9 ++
+>  8 files changed, 160 insertions(+), 22 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ublk/Makefile b/tools/testing/selftests/ublk/Makefile
+> index e2e7b1e52a06252f626df5606221d17e3106d0d3..f8579019f0d1f9185df098440611c3b75087073b 100644
+> --- a/tools/testing/selftests/ublk/Makefile
+> +++ b/tools/testing/selftests/ublk/Makefile
+> @@ -14,6 +14,7 @@ TEST_PROGS += test_generic_04.sh
+>  TEST_PROGS += test_generic_05.sh
+>  TEST_PROGS += test_generic_06.sh
+>  TEST_PROGS += test_generic_07.sh
+> +TEST_PROGS += test_generic_08.sh
+>  
+>  TEST_PROGS += test_null_01.sh
+>  TEST_PROGS += test_null_02.sh
+> diff --git a/tools/testing/selftests/ublk/file_backed.c b/tools/testing/selftests/ublk/file_backed.c
+> index 563f11a21604bbf5b9531f69f806d09cdd785960..72e22f54f7fe60d26096ace4eb4001987fbe7b15 100644
+> --- a/tools/testing/selftests/ublk/file_backed.c
+> +++ b/tools/testing/selftests/ublk/file_backed.c
+> @@ -50,7 +50,7 @@ static int loop_queue_tgt_rw_io(struct ublk_queue *q, const struct ublksrv_io_de
+>  
+>  	ublk_io_alloc_sqes(ublk_get_io(q, tag), sqe, 3);
+>  
+> -	io_uring_prep_buf_register(sqe[0], 0, tag, q->q_id, tag);
+> +	io_uring_prep_buf_register(sqe[0], 0, tag, q->q_id, ublk_get_io(q, tag)->buf_index);
+
+->buf_index can be calculated runtime by adding helper of ublk_io_buf_idx(io), so
+the extra field can be avoided, CPU is fast than memory.
+
+>  	sqe[0]->flags |= IOSQE_CQE_SKIP_SUCCESS | IOSQE_IO_HARDLINK;
+>  	sqe[0]->user_data = build_user_data(tag,
+>  			ublk_cmd_op_nr(sqe[0]->cmd_op), 0, q->q_id, 1);
+> @@ -62,7 +62,7 @@ static int loop_queue_tgt_rw_io(struct ublk_queue *q, const struct ublksrv_io_de
+>  	sqe[1]->flags |= IOSQE_FIXED_FILE | IOSQE_IO_HARDLINK;
+>  	sqe[1]->user_data = build_user_data(tag, ublk_op, 0, q->q_id, 1);
+>  
+> -	io_uring_prep_buf_unregister(sqe[2], 0, tag, q->q_id, tag);
+> +	io_uring_prep_buf_unregister(sqe[2], 0, tag, q->q_id, ublk_get_io(q, tag)->buf_index);
+>  	sqe[2]->user_data = build_user_data(tag, ublk_cmd_op_nr(sqe[2]->cmd_op), 0, q->q_id, 1);
+>  
+>  	return 2;
+> diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
+> index 313689f94cd6361a9a0f4b9257085b2a62bc8b8c..27046bb6a13b99879ad164ff8eaabeba57e17387 100644
+> --- a/tools/testing/selftests/ublk/kublk.c
+> +++ b/tools/testing/selftests/ublk/kublk.c
+> @@ -478,8 +478,11 @@ static int ublk_thread_init(struct ublk_thread *t)
+>  	}
+>  
+>  	if (dev->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY) {
+> +		unsigned nr_ios = dev->dev_info.queue_depth * dev->dev_info.nr_hw_queues;
+> +		unsigned max_nr_ios_per_thread = nr_ios / dev->nthreads;
+> +		max_nr_ios_per_thread += !!(nr_ios % dev->nthreads);
+>  		ret = io_uring_register_buffers_sparse(
+> -			&t->ring, dev->dev_info.queue_depth);
+> +			&t->ring, max_nr_ios_per_thread);
+>  		if (ret) {
+>  			ublk_err("ublk dev %d thread %d register spare buffers failed %d",
+>  					dev->dev_info.dev_id, t->idx, ret);
+> @@ -612,18 +615,42 @@ int ublk_queue_io_cmd(struct ublk_io *io)
+>  
+>  static void ublk_submit_fetch_commands(struct ublk_thread *t)
+>  {
+> -	/*
+> -	 * Service exclusively the queue whose q_id matches our thread
+> -	 * index. This may change in the future.
+> -	 */
+> -	struct ublk_queue *q = &t->dev->q[t->idx];
+> +	struct ublk_queue *q;
+>  	struct ublk_io *io;
+> -	int i = 0;
+> +	int i = 0, j = 0;
+>  
+> -	for (i = 0; i < q->q_depth; i++) {
+> -		io = &q->ios[i];
+> -		io->t = t;
+> -		ublk_queue_io_cmd(io);
+> +	if (t->dev->dev_info.flags & UBLK_F_RR_TAGS) {
+
+You shouldn't depend on the generic feature of UBLK_F_RR_TAGS, which can be
+used for non-io-task too.
+
+Here you need one helper of ublk_use_io_task(), or sort of flags.
+
+> +		/*
+> +		 * Lexicographically order all the (qid,tag) pairs, with
+> +		 * qid taking priority, and give this thread every Nth
+> +		 * entry, where N is the total number of threads. The
+> +		 * offset is controlled by the thread index. This takes
+> +		 * load which may be imbalanced across the queues and
+> +		 * balances it across the threads.
+> +		 */
+> +		const struct ublksrv_ctrl_dev_info *dinfo = &t->dev->dev_info;
+> +		int nr_ios = dinfo->nr_hw_queues * dinfo->queue_depth;
+> +		for (i = t->idx; i < nr_ios; i += t->dev->nthreads, j++) {
+> +			int q_id = i / dinfo->queue_depth;
+> +			int tag = i % dinfo->queue_depth;
+
+I understand UBLK_F_RR_TAGS means that IO with adjacent tag should be
+handled locally, but the above actually does the opposite, only IOs with
+non-adjacent tags are handled in same pthread, can you explain a bit
+why UBLK_F_RR_TAGS helps for this way?
+
+> +			q = &t->dev->q[q_id];
+> +			io = &q->ios[tag];
+> +			io->t = t;
+> +			io->buf_index = j;
+> +			ublk_queue_io_cmd(io);
+> +		}
+> +	} else {
+> +		/*
+> +		 * Service exclusively the queue whose q_id matches our
+> +		 * thread index.
+> +		 */
+> +		struct ublk_queue *q = &t->dev->q[t->idx];
+> +		for (i = 0; i < q->q_depth; i++) {
+> +			io = &q->ios[i];
+> +			io->t = t;
+> +			io->buf_index = i;
+> +			ublk_queue_io_cmd(io);
+> +		}
+>  	}
+>  }
+>  
+> @@ -778,7 +805,8 @@ static void *ublk_io_handler_fn(void *data)
+>  		return NULL;
+>  	}
+>  	/* IO perf is sensitive with queue pthread affinity on NUMA machine*/
+> -	ublk_thread_set_sched_affinity(t, info->affinity);
+> +	if (info->affinity)
+> +		ublk_thread_set_sched_affinity(t, info->affinity);
+>  	sem_post(info->ready);
+>  
+>  	ublk_dbg(UBLK_DBG_THREAD, "tid %d: ublk dev %d thread %u started\n",
+> @@ -844,7 +872,7 @@ static int ublk_start_daemon(const struct dev_ctx *ctx, struct ublk_dev *dev)
+>  
+>  	ublk_dbg(UBLK_DBG_DEV, "%s enter\n", __func__);
+>  
+> -	tinfo = calloc(sizeof(struct ublk_thread_info), dinfo->nr_hw_queues);
+> +	tinfo = calloc(sizeof(struct ublk_thread_info), dev->nthreads);
+>  	if (!tinfo)
+>  		return -ENOMEM;
+>  
+> @@ -867,17 +895,24 @@ static int ublk_start_daemon(const struct dev_ctx *ctx, struct ublk_dev *dev)
+>  				 dinfo->dev_id, i);
+>  			goto fail;
+>  		}
+> +	}
+>  
+> +	for (i = 0; i < dev->nthreads; i++) {
+>  		tinfo[i].dev = dev;
+>  		tinfo[i].idx = i;
+>  		tinfo[i].ready = &ready;
+> -		tinfo[i].affinity = &affinity_buf[i];
+> +		/*
+> +		 * If threads are not tied to queues, setting thread
+> +		 * affinity based on queue affinity makes no sense.
+> +		 */
+> +		if (!(dinfo->flags & UBLK_F_RR_TAGS))
+> +			tinfo[i].affinity = &affinity_buf[i];
+>  		pthread_create(&dev->threads[i].thread, NULL,
+>  				ublk_io_handler_fn,
+>  				&tinfo[i]);
+>  	}
+>  
+> -	for (i = 0; i < dinfo->nr_hw_queues; i++)
+> +	for (i = 0; i < dev->nthreads; i++)
+>  		sem_wait(&ready);
+>  	free(tinfo);
+>  	free(affinity_buf);
+> @@ -901,7 +936,7 @@ static int ublk_start_daemon(const struct dev_ctx *ctx, struct ublk_dev *dev)
+>  		ublk_send_dev_event(ctx, dev, dev->dev_info.dev_id);
+>  
+>  	/* wait until we are terminated */
+> -	for (i = 0; i < dinfo->nr_hw_queues; i++)
+> +	for (i = 0; i < dev->nthreads; i++)
+>  		pthread_join(dev->threads[i].thread, &thread_ret);
+>   fail:
+>  	for (i = 0; i < dinfo->nr_hw_queues; i++)
+> @@ -1011,6 +1046,7 @@ static int ublk_stop_io_daemon(const struct ublk_dev *dev)
+>  
+>  static int __cmd_dev_add(const struct dev_ctx *ctx)
+>  {
+> +	unsigned nthreads = ctx->nthreads;
+>  	unsigned nr_queues = ctx->nr_hw_queues;
+>  	const char *tgt_type = ctx->tgt_type;
+>  	unsigned depth = ctx->queue_depth;
+> @@ -1034,6 +1070,23 @@ static int __cmd_dev_add(const struct dev_ctx *ctx)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* default to 1:1 threads:queues if nthreads is unspecified */
+> +	if (nthreads == -1)
+> +		nthreads = nr_queues;
+
+Maybe we can start 1:1 for nrthreads == 0, which looks more readable,
+and you needn't to set -1 default.
+
+> +
+> +	if (nthreads > UBLK_MAX_THREADS) {
+> +		ublk_err("%s: %u is too many threads (max %u)\n",
+> +				__func__, nthreads, UBLK_MAX_THREADS);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (nthreads != nr_queues && !(ctx->flags & UBLK_F_RR_TAGS)) {
+> +		ublk_err("%s: threads %u must be same as queues %u if "
+> +			"not using round robin\n",
+> +			__func__, nthreads, nr_queues);
+> +		return -EINVAL;
+> +	}
+> +
+>  	dev = ublk_ctrl_init();
+>  	if (!dev) {
+>  		ublk_err("%s: can't alloc dev id %d, type %s\n",
+> @@ -1054,6 +1107,7 @@ static int __cmd_dev_add(const struct dev_ctx *ctx)
+>  	info->nr_hw_queues = nr_queues;
+>  	info->queue_depth = depth;
+>  	info->flags = ctx->flags;
+> +	dev->nthreads = nthreads;
+>  	dev->tgt.ops = ops;
+>  	dev->tgt.sq_depth = depth;
+>  	dev->tgt.cq_depth = depth;
+> @@ -1249,6 +1303,7 @@ static int cmd_dev_get_features(void)
+>  		[const_ilog2(UBLK_F_USER_COPY)] = "USER_COPY",
+>  		[const_ilog2(UBLK_F_ZONED)] = "ZONED",
+>  		[const_ilog2(UBLK_F_USER_RECOVERY_FAIL_IO)] = "RECOVERY_FAIL_IO",
+> +		[const_ilog2(UBLK_F_RR_TAGS)] = "RR_TAGS",
+>  	};
+>  	struct ublk_dev *dev;
+>  	__u64 features = 0;
+> @@ -1290,8 +1345,10 @@ static void __cmd_create_help(char *exe, bool recovery)
+>  			exe, recovery ? "recover" : "add");
+>  	printf("\t[--foreground] [--quiet] [-z] [--debug_mask mask] [-r 0|1 ] [-g]\n");
+>  	printf("\t[-e 0|1 ] [-i 0|1]\n");
+> +	printf("\t[--nthreads threads] [--round_robin]\n");
+>  	printf("\t[target options] [backfile1] [backfile2] ...\n");
+>  	printf("\tdefault: nr_queues=2(max 32), depth=128(max 1024), dev_id=-1(auto allocation)\n");
+> +	printf("\tdefault: nthreads=nr_queues");
+>  
+>  	for (i = 0; i < sizeof(tgt_ops_list) / sizeof(tgt_ops_list[0]); i++) {
+>  		const struct ublk_tgt_ops *ops = tgt_ops_list[i];
+> @@ -1343,6 +1400,8 @@ int main(int argc, char *argv[])
+>  		{ "recovery_fail_io",	1,	NULL, 'e'},
+>  		{ "recovery_reissue",	1,	NULL, 'i'},
+>  		{ "get_data",		1,	NULL, 'g'},
+> +		{ "nthreads",		1,	NULL,  0 },
+> +		{ "round_robin",	0,	NULL,  0 },
+>  		{ 0, 0, 0, 0 }
+>  	};
+>  	const struct ublk_tgt_ops *ops = NULL;
+> @@ -1351,6 +1410,7 @@ int main(int argc, char *argv[])
+>  	struct dev_ctx ctx = {
+>  		.queue_depth	=	128,
+>  		.nr_hw_queues	=	2,
+> +		.nthreads	=	-1,
+>  		.dev_id		=	-1,
+>  		.tgt_type	=	"unknown",
+>  	};
+> @@ -1411,6 +1471,10 @@ int main(int argc, char *argv[])
+>  				ublk_dbg_mask = 0;
+>  			if (!strcmp(longopts[option_idx].name, "foreground"))
+>  				ctx.fg = 1;
+> +			if (!strcmp(longopts[option_idx].name, "nthreads"))
+> +				ctx.nthreads = strtol(optarg, NULL, 10);
+> +			if (!strcmp(longopts[option_idx].name, "round_robin"))
+> +				ctx.flags |= UBLK_F_RR_TAGS;
+
+maybe `--io_task` is more readable, and you can always enable UBLK_F_RR_TAGS
+for this '--io_task' ublk server feature.
 
 
+Thanks, 
+Ming
 
-On 2025/5/9 11:49, Larry Wei wrote:
->=20
->=20
-> [=E8=BF=99=E5=B0=81=E9=82=AE=E4=BB=B6=E6=9D=A5=E8=87=AA=E5=A4=96=E9=83=A8=
-=E5=8F=91=E4=BB=B6=E4=BA=BA =E8=B0=A8=E9=98=B2=E9=A3=8E=E9=99=A9]
->=20
-> Salvatore Bonaccorso,
->=20
-> Yes, let's just consider it as good. But in fact, there are still many
-> problems, such as the one mentioned above (
-> linux-hardware.org/?probe=3D271fabb7a4&log=3Ddmesg ), and almost all lapt=
-ops
-> using Zhaoxin CPUs cannot adjust the backlight brightness, which is
-> **VERY HARMFUL** to the eyes!
-
-Dear Larry,
-
-We are currently investigating the causes of the WARNING messages you=20
-mentioned in this log:
-[    4.141284] ------------[ cut here ]------------
-[    4.141285] alg: self-tests for sha1 using sha1-padlock-nano failed=20
-(rc=3D-22)
-[    4.141302] WARNING: CPU: 2 PID: 657 at crypto/testmgr.c:5865=20
-alg_test.cold+0xb7/0xe0
-
-Regarding the inability to adjust the laptop backlight brightness, we=20
-believe this issue is unlikely related to the CPU itself. It is=20
-recommended to contact the laptop manufacturer to confirm whether the=20
-device supports backlight brightness adjustment and inquire about=20
-specific configuration methods, such as installing specific EC=20
-controller drivers or updating graphics card drivers.
-
-BRs!
-TonyWWang-oc
->=20
-> Regards,
->=20
-> larryw3i
->=20
-> On 5/9/25 04:15, Salvatore Bonaccorso wrote:
->> Did this felt through the cracks?
->=20
 
