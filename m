@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-641213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D9BAB0E47
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C908CAB0E57
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164094C2BE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A421BC0FBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BE127602F;
-	Fri,  9 May 2025 09:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBBC274FF2;
+	Fri,  9 May 2025 09:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="I9zSl3WC"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y0m10W+/"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCD3275106;
-	Fri,  9 May 2025 09:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BAE73477
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 09:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746781811; cv=none; b=MVvSO+7jEvDBHaMQNiZ2S4rRtK6niiMqySP61nTbsuQBpLxUjnN0b6Z62OnPK6aZFHJc4zzVCVz2/nrydLUhZ8z+aopbdBtPT3pNIK14hCrRS/CPxXU1xuc4Z5BTFXze+b7kUimHFXas7JAtMFLZ3u3kAxfC3ZNdONte3kcY/rU=
+	t=1746781922; cv=none; b=TQnnDz5MXmS5EDTI6MHFKNjN6QVWHrWC2wpqgpAYKAMqpdGTvb4fSxuXpPhC7fd1HK9prwieHs8sQNIPvwkXMagtYBuJNAaV9thnNEsbL22Xs6Jq5ZforPXR9am6IGgmcFxsJGrD6+ec8skMUa++R/Byvfi4v42rOVwWHlyKydg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746781811; c=relaxed/simple;
-	bh=hc89LVy2YgB2RbkxSw2z2iAGrxOpaXCRHJoRlySZKBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B26ScbNqFCDg1mHBTk1ncVzaAXhcJBoRpZqxxsfrtgl3We/RdYOLQHGBRvrN8SlRwzwG4xT8PZgZDjE5PCmz25IJigbFDssyoI4ivTjytyxbuke+Y4f/7U4q40gPb1pqsre7apme7viAPHOdxo4UiDrnIYHtWIYOrtiXAFQq6n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=I9zSl3WC; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id DJk5un7myQJEDDJk5uxqHD; Fri, 09 May 2025 11:10:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1746781807;
-	bh=pDLt5pxHxdGAut4aWtyDiVnW//QILcNDde9fKTiC3fg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=I9zSl3WCzuABu3i/hGxZY/D2z9pLRS0semJTJM25tfWlls394EMChFOS5WE/lYGT8
-	 aiKvyYhxAcyNa621qncSSGJK340oZUVlrU9tbrtu0qtWWZOfi7LYZPpXkt+omOS2eK
-	 r5/FOto+Uwg5CW/MnLUM3emlxM5aCboYd5pWf3wn7QaEXkkMayHURiGJK0BrYNMvn+
-	 q4IXpMDiZ/vT3riAH+jdBgPhvFZzgsJubm+5CXb/c1NVNcLZpiR87ETnGGTrBYuioG
-	 t3JYewPyX0yfM9raFim3uDyPb789zkRcADjq17PmzvHomYMyFQ4/KmcUDNMfxKnhTl
-	 qR5vFNC0nhWyQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 09 May 2025 11:10:07 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH] ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
-Date: Fri,  9 May 2025 11:09:55 +0200
-Message-ID: <7338875b20cb41693f803c6b9673cf7f3e5f089a.1746781775.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746781922; c=relaxed/simple;
+	bh=Ci/t6dlu80O2JuGu3DUlOlvoakx7dZpPT5xzy04MF3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VGA/Z5gzOtPPffAVQDOuEPCiNVTFpzIQZV43ts2RPI29tjEOe06W7dU04i0oLe5d3fmfpjaYAxh+otoy3z8QUsfsl2IT+uFRX7PzI0u8A9qIm4Yw/WUMnD72qTDzvDScC4b2v5CgDKTU2LIqTTffKMj9nGI38AbkSmJ/2czfWb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y0m10W+/; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4774d68c670so32072691cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 02:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746781920; x=1747386720; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yqOryqskqRvQ8bx+Wjf9vUcQYnHMdUoN2Z5HJ3jNYUA=;
+        b=Y0m10W+/4eEh/QjuG9CybJ4s4uD2kXLOVnX4haGHeMQgnLD4wjIq8es4J0PLgC8xVE
+         VdiPDPsYPoA63pS8xYaxhqs9/Lkt2HPgnExyNjDPbJ3p19TczHD2IT5PtADXQfrhn3u9
+         zoHdoKh4/nUhGZxFzX0P6iEbDpA3opvX4FNLZNETwKFrs0FS+FUC/gMQdLmXuJi60fSP
+         UMD9paG/nube03dMaQGs3PJtbgrfNxPekIg2nMMOWShYRSIE2dhieKUMlmgTV67mLeMI
+         Ai+Hf/Rxkbbh8X8TsgQViLTivtfOSrG/0MFyWyS9SjgUrR5fVlnPEC47HXdHghQo/pjK
+         httA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746781920; x=1747386720;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yqOryqskqRvQ8bx+Wjf9vUcQYnHMdUoN2Z5HJ3jNYUA=;
+        b=eEsy8v/kvJKkFcApsONi/PmxTtJPyO1P1K4giDH6P5Fq4Fdz16+rq1e7mRmWprg9+9
+         wyph0ccPnk9QHR8W3cZdvzr/5t5BCMpBOsrKuTCK+7q5TcZIzQMxaSjlRvsKF1LOzeWw
+         9zBAOCrFv6h7ooMHNvSGuMTGsVtUERrO2j3mJHoXPG97QWFyGAzxNsnmZvrsAfTraa5X
+         ckmIJg/uj0mGTe49GVHJeIJGKYzRa+S1PSsLvZ6YFDjvcYetyJ4aQjm3h6L0NGljIPkA
+         LRyI4cC0kugeKAwYWRIoszepBnRGjIX8Kgz47856dWRRfIuJVuO91RwyQSsnVJRPcfHE
+         gVWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFRIaNIFfbD4Sis3cGLa2UMFYhvFhYbvHEahXzR5IAUEsy+sGmHwrPfVPTP5hs0EnSD1bq1uXWkqchfRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzML1eVHRThMglAHeIIbL9g3nUbSIQClMMbODIrDiJw4W3MuwJ6
+	cPotsDUP0vGbW/bd0rUPBBS7/Zcj9yYX1p0YGpMKQfo8PDKdmSSjJ7I1bNovP/QDY7TRDs9WukM
+	q2ayQ9SPkb7Zo3e+HGUw5I5dYhgXz806evdoc
+X-Gm-Gg: ASbGncs1OPIEGlPCuy11+gozoXHGfuYoYnN8mqawL6X2bieboLy4kRA904huaB1PwUA
+	k5yzyqppfyMkn7L7L8e4O9ndXHZw5WOaypBAoc4Zj5jg4IyWqJyApDsi72Hg+T/FQM0WgSQnjuH
+	LUY8uCWx+mKq2Oj8hsSjTrTkc0+iC/pCmtZ2itxUEYCcliYE486C0=
+X-Google-Smtp-Source: AGHT+IFlirV44fJeIqumI+ufd/Qr9Q/v5a/Fg/xwhsZmRAokCZsEllXBa5Ze2evO1cIXYt++e/Jy6nrAg0xfT6uDtEM=
+X-Received: by 2002:a05:620a:f13:b0:7c5:9a09:cb73 with SMTP id
+ af79cd13be357-7cd0110453amr416174285a.23.1746781919858; Fri, 09 May 2025
+ 02:11:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250410132649.GE9833@noisy.programming.kicks-ass.net>
+ <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
+ <20250410133446.GF9833@noisy.programming.kicks-ass.net> <CAH5fLghrcqSYwkqbC4SSp6oYCny0riMRGA6W+oqQ69aA=NwYWw@mail.gmail.com>
+ <CANiq72k0AM3v9JZe=8mDN6T1ToiAt1-1e1zJ3z0Oh6ZWfchzag@mail.gmail.com>
+ <20250416202040.GD38216@noisy.programming.kicks-ass.net> <202504161442.66CE2596@keescook>
+ <20250417081818.GJ38216@noisy.programming.kicks-ass.net> <CANiq72kjDM0cKALVy4POEzhfdT4nO7tqz0Pm7xM+3=_0+L1t=A@mail.gmail.com>
+ <CANiq72muSS+NNs5fxp4GPKWWhyXT95spvbGsZz6AJnK8RerUqQ@mail.gmail.com>
+ <aB3A0Qe5WqmxXQJt@google.com> <CANiq72=NymSwziZw1a0PUNyJ=TCN5tkr3PojJRQ0sjqFWDjz-g@mail.gmail.com>
+In-Reply-To: <CANiq72=NymSwziZw1a0PUNyJ=TCN5tkr3PojJRQ0sjqFWDjz-g@mail.gmail.com>
+From: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>
+Date: Fri, 9 May 2025 11:11:48 +0200
+X-Gm-Features: ATxdqUFNtz40aZaXy527JX_9a4RrdQI_LkIIgT_Hz3D0wk_Vdl1WGRXF-uEInLU
+Message-ID: <CAM5zL5psM0ED0A5ZkEdNi34q2itfyMCi+QRBtG-5URUsChUU6A@mail.gmail.com>
+Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Kees Cook <kees@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Matthew Maurer <mmaurer@google.com>, 
+	Ramon de C Valle <rcvalle@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If an error occurs after a successful q6usb_dai_add_aux_device() call,
-some resources should be released as already done in the remove function.
+On Fri, May 9, 2025 at 11:04=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Fri, May 9, 2025 at 10:46=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > Actually ... I don't think putting it on CFI_AUTO_DEFAULT the right
+> > approach.
+> >
+> > Shouldn't the depends on clause go on `config FINEIBT` instead? After
+> > all, the current patch just means that you can't make FineIBT the
+> > default option. But you can still pass kcfi=3Dfineibt on boot to enble
+> > FineIBT which would result in the same crash.
+>
+> I thought the intention was to avoid disabling FineIBT at config time:
+> https://lore.kernel.org/all/202504161442.66CE2596@keescook/
 
-Add an error handling path in the probe and the missing clean-up.
+I think you mean enabling FineIBT - yes, this patch does exactly that,
+it's still possible to enable it by hand with cfi=3D
 
-Fixes: 72b0b8b29980 ("ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/qcom/qdsp6/q6usb.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+> If another approach is needed, then we can change it on top if that is
+> OK (I am about to submit the PR).
 
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index adba0446f301..8044cb7e4dd8 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -327,8 +327,10 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 		return ret;
- 
- 	usb = snd_soc_usb_allocate_port(component, &data->priv);
--	if (IS_ERR(usb))
--		return -ENOMEM;
-+	if (IS_ERR(usb)) {
-+		ret = -ENOMEM;
-+		goto free_aux_devices;
-+	}
- 
- 	usb->connection_status_cb = q6usb_alsa_connection_cb;
- 	usb->update_offload_route_info = q6usb_update_offload_route;
-@@ -337,6 +339,12 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 	data->usb = usb;
- 
- 	return 0;
-+
-+free_aux_devices:
-+	auxiliary_device_delete(&data->uauxdev);
-+	auxiliary_device_uninit(&data->uauxdev);
-+
-+	return ret;
- }
- 
- static void q6usb_component_remove(struct snd_soc_component *component)
--- 
-2.49.0
+Putting it on CONFIG_FINEIBT was my initial idea, but it turns out
+that this creates a dependency cycle in Kconfig:
 
+error: recursive dependency detected!
+        symbol RUST depends on CALL_PADDING
+        symbol CALL_PADDING is selected by FINEIBT
+        symbol FINEIBT depends on RUST
+
+Not sure if it's possible to make it work.
 
