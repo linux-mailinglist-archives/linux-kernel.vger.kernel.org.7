@@ -1,95 +1,181 @@
-Return-Path: <linux-kernel+bounces-640900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563BEAB0ABA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200DBAB0ABF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A0916FC0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:39:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46CFC1C02FBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D3C26B966;
-	Fri,  9 May 2025 06:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D971426B2B1;
+	Fri,  9 May 2025 06:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="HRPH0sdR"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WDrcJGZo"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F7326C380
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516DB26AAB8;
+	Fri,  9 May 2025 06:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772761; cv=none; b=vAGuo9cg+7ATTBw1q8+pDEwgYUrn+qj7sbUjhCqA1bvN7wwp+Jd5pLTKDK5MODylWycrBltrpwhF/+r5nJ3gj/reZZiNxV+/EJ6gRsbKNpatetXpt5GrHAXDLcb2+HbPL0ChFQg3FfpbnMx7wVzDt3vJGKnP4YcV8RpsE3nkneQ=
+	t=1746772846; cv=none; b=ZVs0Exj1aEcPEoYCuukdV85jxxo55PjuPM+8GHENvZhXtR9yD5VbXIRsIYqevOt5qAItqvV4OBT69cwtbJxo/3UnJqP1QTyp24OQxvVVGLbtyphkvVq+LJ9+dLGQh9yZnQ37t9Uzunv39QyEzzKvRT7JH8/e5Flob+On6WXMSrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746772761; c=relaxed/simple;
-	bh=+3Cx4Rb8aolns0GsK5RoTi+ZhoenOsry2wQ5+MveQS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZiOCCifz7+LpGWWMnwez0LCfKPI8/zJHlapQSTB52xJYUvsm9rLQVbaDm9h6ok0QUMFa4Pd6pccSTM7k0mjz3kLvJfLXv2a7a4+UaWljgDQ9o+BzCg0AhkUDTtz7/dybM79l4i7c5mPtLX1lhHA3+oojTW402wj1/6EyndHW0h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=HRPH0sdR; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1746772757;
- bh=RGGUWsD6mE/MPYlXlrelAUBFwk7Si62HhFTya0QjVbo=;
- b=HRPH0sdRWcqEoqOzbCIdHeWVcCrGprThINHV1cWThucwfABNZOhteQKZCrMMmOOr8g903NHhM
- D/pFpcfdVG69AhyRpXRcusHYuILPQTEGNUjxeAyz5XFCVCCoHB4kXrspp5gHVzhA7yBs0udeNxW
- kwPDyICSqF3nude6txsIobps5GXnY0+F4y1HtrL1Lc3vJGNSCfS//TDqrLIM83Neo0WkqC8G9fI
- iq9EnKzCRlRg/MxBTsnAKOag/5nZVHq0UTjWJZ0ibBLJTpUNi+Kyjmh2xV25gd5MtkeEiGdq0D2
- r+tD8dihqaLOPrbpHkFwBBdkPnve422PuYbQjF04weuw==
-X-Forward-Email-ID: 681da3124a62bf69f80b0c57
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.0.2
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <77c35f99-eb71-4d64-a2e1-e9cf9f6ffa4f@kwiboo.se>
-Date: Fri, 9 May 2025 08:39:10 +0200
+	s=arc-20240116; t=1746772846; c=relaxed/simple;
+	bh=fxFHM0v/ka3OQUBI82UzTNhBtodXGXXGvy6pJYC+zm4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eZWtOWMMNYa78s7qaT3ITfvZEgdxnlCDkkQyulWbJIoDVcnxTIhk2sXBmRnr4VE2pyI40IfIQxHIQVMOrn9HwOYzCSuWiZjcKz+7VAVcEQkKGHXwE1/LbnvpDa9WUVrZUAh3NegvO4/ERWJJHB+UtomgXa+xcXBYsmFdCO07ZwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WDrcJGZo; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1746772830;
+	bh=ihh5ov5KNpxuRkZgVS2WL0voYFPXwHmFK1A25R6l4s8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=WDrcJGZoqfFu4BM0j0HqkiUNcfToAXs91ynhU/Rez7iz1gkgvtNjiSrUQPC5hIV/n
+	 3Rlxl6FjQw2RciCFXmwyHPo+g7CdmxV2THVmd/jjtDQSinNh8nEZWTMh9Ubw5jLuRr
+	 IGa51LFdhWOwLqTfbGZpvxsQeRU6IMSOVojnAjlo=
+X-QQ-mid: esmtpsz16t1746772827te5f6ae54
+X-QQ-Originating-IP: xj3l6DJxrjkt4qTlt77TClYLZub6HSSXCznRsEI96bA=
+Received: from mail-yw1-f178.google.com ( [209.85.128.178])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 09 May 2025 14:40:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8370490462894577466
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7091d7244e8so17856677b3.3;
+        Thu, 08 May 2025 23:40:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUFHpWh6X22vLYxJwFgU/drslJu6behU+H/h3BhjtiOPBczK/gUqzgPydcnJ2Nw+KH8NBHp+XpeD1UD7k4@vger.kernel.org, AJvYcCVBpor63sNamTkUeKz6BsxJ931/+Fx7vjPKKQeZSVu/jUfe1n6/sFppiGV3NxggGLeU9bqinBbp+6g6s863@vger.kernel.org
+X-Gm-Message-State: AOJu0YyciT3g6/zNh3BmLTWi7QyzXwoSK4iadhlxCZzeC39ooaRTbWnt
+	F9VLKfNWXVH+idWDg38/CwxlOdEDkiIccfNanVya72hf138uEpbQ425DPlcV1pOUabvr+ZqAUWl
+	b90LtE/Kfo8VSmLUGIkP4I6lQR74=
+X-Google-Smtp-Source: AGHT+IFDWb8362FrDmkSJcfKLIT9BCU/J1FTe+b0rRaNN0UQUsLyveoFtB5VWAftvXNt2sd2zZ+lmxNaUm68KNiQXLI=
+X-Received: by 2002:a05:690c:74c5:b0:708:ca91:d583 with SMTP id
+ 00721157ae682-70a3fb1461emr30415607b3.25.1746772825216; Thu, 08 May 2025
+ 23:40:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] arm64: dts: rockchip: Enable SD-card interface on
- Radxa E20C
-To: Yao Zi <ziyao@disroot.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250508234829.27111-2-ziyao@disroot.org>
- <20250508234829.27111-4-ziyao@disroot.org>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250508234829.27111-4-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com> <20250509-fusectl-backing-files-v3-3-393761f9b683@uniontech.com>
+In-Reply-To: <20250509-fusectl-backing-files-v3-3-393761f9b683@uniontech.com>
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+Date: Fri, 9 May 2025 14:40:14 +0800
+X-Gmail-Original-Message-ID: <07F6D6C67DF1D1A0+CAC1kPDOdDdPQVKs0C-LmgT1_MGBWbFqy4F+5TeunYBkA=xq7+Q@mail.gmail.com>
+X-Gm-Features: ATxdqUE25ZeQ5xIHSbFb-ApRFoPgWAHDZSxksRoyReXXX_uje8AZxeHlMjW1Ym8
+Message-ID: <CAC1kPDOdDdPQVKs0C-LmgT1_MGBWbFqy4F+5TeunYBkA=xq7+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] fs: fuse: add more information to fdinfo
+To: chenlinxuan@uniontech.com
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: Np4vjJaFyq9jHr2M3gGr6lOltbJQO+TaSWN8jIZnpdslFFeoOYjHIOcA
+	V8oOtFPrc2XWEmYxmY92t6Xpp7RY9y/lmnN6q4AD/bsYMK32ykR5NBQ+9TSbc09FN6Uu3pt
+	Jx6BfS9mHyqW0rzLf/Rc7ekVvhuLAdpkYkCbMkdC1Kbt1X3LfcWSCfsPeVqa+MWI50BObru
+	N2Z3xyc3O+XbxVjwp7f5GjtoSutBvUBaTApbCJDv6jdWWFiRFmLDTbQeboHNjYIRVufIuIT
+	dFMpL2PUEQEnPM+XtKluR/q8EN55a+x8QrtLJayoRyp0lBSZNn4LXaAiK42mOZ4QrLst9Z4
+	frk50+F9IwFgicFdukgcyECeo+yPJkNRjA2G+rfEMjmD7aQpv/rad6UOaRfnlwCM+ZnRGD5
+	Prii5jl5Qne1jtVCh5lpQDaY9076mYNQKf2ThaRRW4x/thF54vfhgshhWDMQzLmd8t1QKoI
+	+uKAGsl3PoyUB6evvl6kVmxx91c0JddV0O8PdJFmi8su4CmjVgyzUoiY+RZ64PjiQBIMOs2
+	SJA/msakcMtuEk5wcf3YlPLq/xUQKOw/qMzi7Uy/xAQf5Tb7iYq92R36/JpRfj96FJ+pdQ+
+	HCX4mBtV/nwrOzck4xEeDZsotLzCaxjykrt0vBtwhUeDLzl0iOOBVnxGVkiDLeqF2N9GXwX
+	RGUwoZkQh44ugM7UpMMe2Kj2uwmuJREzp9t3hrfYX/DGheDuf9TDq3p2gydEqSvtdUxH7oO
+	U1wqdaRgje2V50TwuOerRV6FH2FG8Xq3QMgzRg07o6+0hfQBS5vxaPFIKw7fQZPilaF2yZL
+	orMxNUrl3W/CGr8T+uMdjaxTV8u0WS+ShZ829heTU1m4mP5D8s5gblm89GWyJZJXlrQI1cv
+	cD0P6A0qo4+qI5xWg7CoMfEQdogYUClAWuS9Jjvy5m1SExOyCqzK5K0Ll6Xxsb/jNFSr5cd
+	Osgft/IH80h+5ZyS7c4tmnRIk8Hxp0QK6VEo5lRUqd9hHtKfnGE6LMQYIo2XongA3wplNcz
+	aVBbQyRyfss0SjWIGTVsCBc3kj4C5ZmRc/8Yn5WxEC1LgGjHDo
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On 2025-05-09 01:48, Yao Zi wrote:
-> SD-card is available on Radxa E20C board.
-> 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-
-This has not changed since v4, so this is still [1]:
-
-Reviewed-by: Jonas Karlman <jonas@kwiboo.se>
-
-[1] https://lore.kernel.org/r/f19f11f7-c020-44a3-84fa-eb9ca48ed11f@kwiboo.se/
-
-Regards,
-Jonas
-
+On Fri, May 9, 2025 at 2:34=E2=80=AFPM Chen Linxuan via B4 Relay
+<devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
+>
+> From: Chen Linxuan <chenlinxuan@uniontech.com>
+>
+> This commit add fuse connection device id, open_flags and backing
+> files, to fdinfo of opened fuse files.
+>
+> Related discussions can be found at links below.
+>
+> Link: https://lore.kernel.org/all/CAOQ4uxgS3OUy9tpphAJKCQFRAn2zTERXXa0QN_=
+KvP6ZOe2KVBw@mail.gmail.com/
+> Link: https://lore.kernel.org/all/CAOQ4uxgkg0uOuAWO2wOPNkMmD9wqd5wMX+gTfC=
+T-zVHBC8CkZg@mail.gmail.com/
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
 > ---
->  .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
+>  fs/fuse/file.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 754378dd9f7159f20fde6376962d45c4c706b868..1e54965780e9d625918c22a3d=
+ea48ba5a9a5ed1b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -8,6 +8,8 @@
+>
+>  #include "fuse_i.h"
+>
+> +#include "linux/idr.h"
+> +#include "linux/rcupdate.h"
+>  #include <linux/pagemap.h>
+>  #include <linux/slab.h>
+>  #include <linux/kernel.h>
+> @@ -3392,6 +3394,21 @@ static ssize_t fuse_copy_file_range(struct file *s=
+rc_file, loff_t src_off,
+>         return ret;
+>  }
+>
+> +static void fuse_file_show_fdinfo(struct seq_file *seq, struct file *f)
+> +{
+> +       struct fuse_file *ff =3D f->private_data;
+> +       struct fuse_conn *fc =3D ff->fm->fc;
+> +       struct file *backing_file =3D fuse_file_passthrough(ff);
+> +
+> +       seq_printf(seq, "fuse conn:%u open_flags:%u\n", fc->dev, ff->open=
+_flags);
 
-[snip]
+Note: The fc->dev is already accessible to userspace.
+The mnt_id field in /proc/PID/fdinfo/FD references a mount,
+which can be found in /proc/PID/mountinfo.
 
+And this file includes the device ID.
+
+> +
+> +       if (backing_file) {
+> +               seq_puts(seq, "fuse backing_file: ");
+> +               seq_file_path(seq, backing_file, " \t\n\\");
+> +               seq_puts(seq, "\n");
+> +       }
+> +}
+> +
+>  static const struct file_operations fuse_file_operations =3D {
+>         .llseek         =3D fuse_file_llseek,
+>         .read_iter      =3D fuse_file_read_iter,
+> @@ -3411,6 +3428,9 @@ static const struct file_operations fuse_file_opera=
+tions =3D {
+>         .poll           =3D fuse_file_poll,
+>         .fallocate      =3D fuse_file_fallocate,
+>         .copy_file_range =3D fuse_copy_file_range,
+> +#ifdef CONFIG_PROC_FS
+> +       .show_fdinfo    =3D fuse_file_show_fdinfo,
+> +#endif
+>  };
+>
+>  static const struct address_space_operations fuse_file_aops  =3D {
+>
+> --
+> 2.43.0
+>
+>
+>
+>
 
