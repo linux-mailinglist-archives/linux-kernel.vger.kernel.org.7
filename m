@@ -1,221 +1,160 @@
-Return-Path: <linux-kernel+bounces-641050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7434AB0C7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C087AB0C80
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C604A1227
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:00:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0593C7AAEA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9EC270ED8;
-	Fri,  9 May 2025 08:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C5526A0E7;
+	Fri,  9 May 2025 08:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JdEkDQoa"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IGlJh5UR"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777E63595D;
-	Fri,  9 May 2025 08:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E25221731
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746777647; cv=none; b=kTe8wKsY9r2stpROt2e3tnxO8/Bv5jBmzk9+a8So399mJTZolqc3XGUWAVwToJiLwQ/rtvLWdGsCHGySRdEfJyH5intDK96kYgjzOwSoO1tTlwKCaRZKystG52mzHl0EqnansJwiAEqH0wl3lXf7fpQMI8Xebq7zFcB/WAznR0c=
+	t=1746777809; cv=none; b=CBHZi2W87x7Ax8omdpIPYSj8r4s2V3/E1oudU37UekHJcbU3fpOBGgzZjWWsFjVaqNyXu8HsQt7m6PZuToRl5Djl4K9AocsdLaOBKyTtoRZCvXq3sRHhlPP2VdoIMHccrU+l3Opotcqaz1iI9xYTWNeW9im8BwAQbBKpHEKS74I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746777647; c=relaxed/simple;
-	bh=OBBJ2/jWCWhzGYzrw+W9mrxtRTci9rtUACn9259sMQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aiDieSfSdwCGtN3AkQSf9hsmAItj/jX70YgwT294FQwz/G8lpNCOpJ7Ql+sDI5DcFjbMNDpPbPmBTQ1q8j6uLmV/TP+7yt2Ceoo6jz6RK1lpOWV3SJgwGL3ER1rlBRSHG67bp1SNvprHLTtyWJ1kZL5GYIZ3rR8pmdj4arq7CmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JdEkDQoa; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2001:861:3a80:3300:7c3b:c7bf:b733:fa1b])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BC04A721;
-	Fri,  9 May 2025 10:00:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1746777628;
-	bh=OBBJ2/jWCWhzGYzrw+W9mrxtRTci9rtUACn9259sMQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JdEkDQoa8JgH4rtF4RICtS9cPtFqOlfUm99aDdoVTCBSgcF2HeVvJWaZuojTgIms+
-	 sbJERe8B191Mw+EGu/OrTpyXYFX8wDydOsl1k6NCd3WbrcyiZFaNBRNAEKB4VK55NZ
-	 dE+Ser8K9J9thDxm70a/Sk1nzxeDhxS5a9g7Wqnc=
-Date: Fri, 9 May 2025 10:00:38 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, keke.li@amlogic.com, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
-	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com
-Subject: Re: [PATCH v9 08/10] media: platform: Add C3 ISP driver
-Message-ID: <ihqj5zq34qyilswcyiiiefur4bm2k4v4sd7tujh6oawtw5gwra@h63zl25azvgm>
-References: <20250427-c3isp-v9-0-e0fe09433d94@amlogic.com>
- <20250427-c3isp-v9-8-e0fe09433d94@amlogic.com>
- <aBzRb8ZKuGI3E_cu@valkosipuli.retiisi.eu>
- <3ee2qcz3ckhcvd6v5mt6cjbqdysipucqokpud76meilhplhcso@im62bwviw7x4>
- <aB0bhkihpY81TrII@valkosipuli.retiisi.eu>
+	s=arc-20240116; t=1746777809; c=relaxed/simple;
+	bh=Bxr4f8XqlhiHDO8vXlb3wsLZaRiLl9d4KMCuvjqxlV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZvrD01j97Tg6H9xQhKBXmoGDe8A/ZT2wzMCUaCoHgjmRwBLCm2rFg9cIFZg1VpYvtED8BW1Z8Vh5gB3IRdmsI/ZH9IgiuBpkKBcWO/YFpP7O9qAbw0zr9pHefXHq1LhQkPOIZf/cAebgbnwb/vi2mG/p5q8SJOyYBQ+x/slIhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IGlJh5UR; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-326c38c7346so5959801fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 01:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746777806; x=1747382606; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1HMko1aCmpwMylOv6VaTNj1Xzn+TxcEsWmBvyHWGyA=;
+        b=IGlJh5URUX+El1Bs/paXpsPkXnJroAIhZ+I5tL1Uj0lMO6oZej+lSoJ7VLGKO26qNG
+         EGVeERz8toE8GaSZU2wZMrGLcQ6DDV+skmwJ3S8OoYuI39hH9ahgWj1v9HZ7ujvPezh2
+         3FLA9zd1F8s3crnAttZZGMiBxbsWRQUw0EysA/kmxLnqe6NYltmSmzF4ZFFrDDxjl8LN
+         V9lmxE3j3be6PmdVaecGQLl0Y6EQtXx1Za+qbZwkLM9Ns3aUbrXny/6z60r0uflkpidG
+         +2wEU8HLLZ0M+wIxn9TvCy0z6GJn4NhrSHmmyw0OptIxw+m5Kdz5kQzDsv7nZ1169e9r
+         6yXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746777806; x=1747382606;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O1HMko1aCmpwMylOv6VaTNj1Xzn+TxcEsWmBvyHWGyA=;
+        b=B9A9gur2xT+UpgF2pnopJKItp/jdRS8s9P7+BSs0VrW6qt14gkKZX0eH6DcMK8t7SX
+         sL5tFPrpIEHrnTSooKYRwiTNP5HXjvpashvctbM7xDh141/7frfRH3j7dgMecIP93M6p
+         aeBxC5ylEG0JEY4czIFOjLMGeJGWo41fclBq60DG51h7LTr4/c9aXEBwhFykxKaeelzM
+         iN1ccdXjPvDtfddz5T8ZFpjeXf6P41bd6J5WzfMOkYu7Ls1QehBDNDwuyxPCilpnFa1O
+         zsVeok+TkK+ePOlJvT2hwt3NvpdTWCTSIbcBiONlfTigwV004MrRYpeRHFtmw+Xk5gan
+         3zQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RUL9NERmE8boSxxq/QO7+KdOCAC2vu2AYKEuF7aFmhdrlNfXg2FDG4Nyp+QlHSLGXR0HZkiTvLwdqK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/CsBXeF0Em88Gosw3NsfCkGJCQyhdBWLL4kkfndnBlzYsZS1P
+	sEinIJh7ic089vTh4aMK+qnVxdVjwFs6x/+PQrlV9GzT3MNJIfvLtNgqqIROnrQnLOXqrbNd1Gh
+	Yr7jDTyO4ErH9xacgOFvnikQJk8wuGWUyeU46
+X-Gm-Gg: ASbGnctE5MhcwvFIjbLxmCjyv8Awk7/7o/pnTpEbuXqCZ2sRgxKxowDn7+SG0tc8913
+	Ufngo6RkRVKDAciZyW7NJCVEjzQmnwfBpGlvw9yeT/we9atf/05dSZJ8PXEGnLAcoN0Zqv9pZKd
+	h30l/WtsITXE0U5bzb5KHuXITiu7Caiwi32PRZaCuNoDzw1Mrk9ATmfRE=
+X-Google-Smtp-Source: AGHT+IHjHfKn8EdR7TqxaySaf0TL1ILl1v5sSHiSF/35MJTWepIJYBvHONcE+pkpvNhaFCOMO1yE/w2kxPjmQ4IfNn0=
+X-Received: by 2002:a05:651c:2210:b0:31a:ba1:2387 with SMTP id
+ 38308e7fff4ca-326c45de068mr9037631fa.31.1746777805477; Fri, 09 May 2025
+ 01:03:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aB0bhkihpY81TrII@valkosipuli.retiisi.eu>
+References: <2025040820-REJECTED-6695@gregkh> <20250509072033.1335321-1-dvyukov@google.com>
+ <2025050940-marrow-roundish-8b98@gregkh> <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
+ <2025050924-marmalade-overfill-fc5a@gregkh>
+In-Reply-To: <2025050924-marmalade-overfill-fc5a@gregkh>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 9 May 2025 10:03:13 +0200
+X-Gm-Features: AX0GCFsvjMgX4UMUNF5TUHFJKZmIUAnm-11W6C3KEI9I4NFG84lE2mCEAKkPLxE
+Message-ID: <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
+Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
+ filesystems with manually crafted filesystem
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-cve-announce@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sakari
-
-On Thu, May 08, 2025 at 09:00:54PM +0000, Sakari Ailus wrote:
-> Hi Jacopo,
+On Fri, 9 May 2025 at 09:55, Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> On Thu, May 08, 2025 at 06:28:41PM +0200, Jacopo Mondi wrote:
-> > Hi Sakari
-> >
-> > On Thu, May 08, 2025 at 03:44:47PM +0000, Sakari Ailus wrote:
-> > > Hi Keke, Jacopo,
+> On Fri, May 09, 2025 at 09:47:20AM +0200, Dmitry Vyukov wrote:
+> > On Fri, 9 May 2025 at 09:34, Greg KH <gregkh@linuxfoundation.org> wrote:
 > > >
-> > > On Sun, Apr 27, 2025 at 02:27:16PM +0800, Keke Li via B4 Relay wrote:
-> > > > diff --git a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-> > > > new file mode 100644
-> > > > index 000000000000..0e0b5d61654a
-> > > > --- /dev/null
-> > > > +++ b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
+> > > On Fri, May 09, 2025 at 09:20:33AM +0200, Dmitry Vyukov wrote:
+> > > > > CVE-2025-0927 has now been rejected and is no longer a valid CVE.
+> > > >
+> > > > > Filesystem bugs due to corrupt images are not considered a CVE for any
+> > > > > filesystem that is only mountable by CAP_SYS_ADMIN in the initial user
+> > > > > namespace. That includes delegated mounting.
+> > > >
+> > > > I wonder if this should be the case only if the image is flagged by fsck
+> > > > as corrupted? Otherwise I am not sure what's "trusted". It's not about
+> > > > somebody's "honest eyes", right. E.g. in the context of insider risks
+> > > > the person providing an image may be considered "trusted", or in the
+> > > > context of Zero Trust Architecture nothing at all is considered trusted,
+> > > > or a trusted image may be tampered with while stored somewhere.
+> > > >
+> > > > Without any formal means to classify an image as corrupted or not,
+> > > > this approach does not look very practical to me. While flagging by fsck
+> > > > gives concrete workflow for any context that requires more security.
 > > >
-> > > ...
-> > >
-> > > > +static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
-> > > > +{
-> > > > +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-> > > > +	struct c3_isp_params_buffer *buf = to_c3_isp_params_buffer(vbuf);
-> > > > +	struct c3_isp_params *params = vb2_get_drv_priv(vb->vb2_queue);
-> > > > +	struct c3_isp_params_cfg *cfg = buf->cfg;
-> > > > +	struct c3_isp_params_cfg *usr_cfg = vb2_plane_vaddr(vb, 0);
-> > > > +	size_t payload_size = vb2_get_plane_payload(vb, 0);
-> > > > +	size_t header_size = offsetof(struct c3_isp_params_cfg, data);
-> > > > +	size_t block_offset = 0;
-> > > > +	size_t cfg_size;
-> > > > +
-> > > > +	/* Payload size can't be greater than the destination buffer size */
-> > > > +	if (payload_size > params->vfmt.fmt.meta.buffersize) {
-> > > > +		dev_dbg(params->isp->dev,
-> > > > +			"Payload size is too large: %zu\n", payload_size);
-> > > > +		return -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	/* Payload size can't be smaller than the header size */
-> > > > +	if (payload_size < header_size) {
-> > > > +		dev_dbg(params->isp->dev,
-> > > > +			"Payload size is too small: %zu\n", payload_size);
-> > > > +		return -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	/*
-> > > > +	 * Use the internal scratch buffer to avoid userspace modifying
-> > > > +	 * the buffer content while the driver is processing it.
-> > > > +	 */
-> > > > +	memcpy(cfg, usr_cfg, payload_size);
-> > > > +
-> > > > +	/* Only v0 is supported at the moment */
-> > > > +	if (cfg->version != C3_ISP_PARAMS_BUFFER_V0) {
-> > > > +		dev_dbg(params->isp->dev,
-> > > > +			"Invalid params buffer version: %u\n", cfg->version);
-> > > > +		return -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	/* Validate the size reported in the parameter buffer header */
-> > > > +	cfg_size = header_size + cfg->data_size;
-> > > > +	if (cfg_size != payload_size) {
-> > > > +		dev_dbg(params->isp->dev,
-> > > > +			"Data size %zu and payload size %zu are different\n",
-> > > > +			cfg_size, payload_size);
-> > > > +		return -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	/* Walk the list of parameter blocks and validate them */
-> > > > +	cfg_size = cfg->data_size;
-> > > > +	while (cfg_size >= sizeof(struct c3_isp_params_block_header)) {
-> > > > +		const struct c3_isp_params_block_header *block;
-> > > > +		const struct c3_isp_params_handler *handler;
-> > > > +
-> > > > +		block = (struct c3_isp_params_block_header *)
-> > > > +			&cfg->data[block_offset];
-> > > > +
-> > > > +		if (block->type >= ARRAY_SIZE(c3_isp_params_handlers)) {
-> > > > +			dev_dbg(params->isp->dev,
-> > > > +				"Invalid params block type\n");
-> > > > +			return -EINVAL;
-> > > > +		}
-> > > > +
-> > > > +		if (block->size > cfg_size) {
-> > > > +			dev_dbg(params->isp->dev,
-> > > > +				"Block size is greater than cfg size\n");
-> > > > +			return -EINVAL;
-> > > > +		}
-> > > > +
-> > > > +		if ((block->flags & (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
-> > > > +				     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) ==
-> > > > +		    (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
-> > > > +		     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) {
-> > > > +			dev_dbg(params->isp->dev,
-> > > > +				"Invalid parameters block flags\n");
-> > > > +			return -EINVAL;
-> > > > +		}
-> > > > +
-> > > > +		handler = &c3_isp_params_handlers[block->type];
-> > > > +		if (block->size != handler->size) {
-> > > > +			dev_dbg(params->isp->dev,
-> > > > +				"Invalid params block size\n");
-> > > > +			return -EINVAL;
-> > > > +		}
-> > > > +
-> > > > +		block_offset += block->size;
-> > > > +		cfg_size -= block->size;
-> > > > +	}
-> > > > +
-> > > > +	if (cfg_size) {
-> > > > +		dev_dbg(params->isp->dev,
-> > > > +			"Unexpected data after the params buffer end\n");
-> > > > +		return -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > >
-> > > The above looks very much like rkisp1_params_prepare_ext_params() in the
+> > > And how do we know of fsck can flag anything,
 > >
-> > slightly similar, yes :)
-> >
-> > > Rockchip ISP driver. Instead of copying all this non-trivial code in
-> > > verbatim here, could you instead refactor this so both the drivers could
-> > > use the same implementation?
-> > >
-> >
-> > Yeah, that's the plan.
-> >
-> > We have more drivers in the pipeline using extensible parameters and this
-> > code (and possibily other parts) will certainly be factored out.
-> >
-> > My plan is to add at one more user in and the do move common parts to
-> > the framework. Would this work for you ?
+> > By running fsck on the image. Or what do you mean?
 >
-> How about refactoring the two users to use a common framework first and
-> then using it in the third? :-) The more copies there are, the greater the
-> task to unify them.
+> That requires us to attempt to reproduce stuff when assigning CVEs?
 >
-
-Sorry, I probably wasn't clear.
-
-When upstreaming the third user of extensible parameters I will move
-the common parts to the framework and port these two existing users to
-use the new helpers.
-
-It's not my intention to upstream a third user and then port all of
-them to use a common helper later on ;)
-
-> --
-> Regards,
+> And what architecture/target?  How do we do this for all of them?
 >
-> Sakari Ailus
+> Remember, we are averaging 13 CVE assignments a day, this has to be
+> automated in order for us to be able to manage this with the volunteer
+> staff we have.
+
+If we can't prove it does not have security impact in any context,
+then the safe default would be to say it's unsafe.
+That's the current Kernel CNA approach, right. It creates a super set
+of any issues that may be relevant in some context.
+
+
+> > > AND which version of fsck?
+> >
+> > This needs to be answered as part of establishing the vulnerability
+> > triage process. I would go for a relatively fresh version. That will
+> > remove bugs fixed a long time ago, and if users rely on it for
+> > security purposes they have to update it.
+>
+> Remember older kernels are updated but userspace isn't on many
+> platforms, so the combinations of userspace tools and the kernel
+> versions is not anything we are going to even be aware of.
+>
+> > > We'll defer to the fs developers as to what they want here, but note, we
+> > > do not determine "trusted" or not, that is a use case that is outside of
+> > > our scope entirely.
+> >
+> > I think classification should be tied to users and use cases in the
+> > first place. I, as a developer, wouldn't want any CVEs assigned to my
+> > code, if I could just wish so :)
+>
+> This is open source, we can not, and do not, dictate use.  It is up to
+> the users of our software to determine if their use case matches up with
+> the reported vulnerability or not.  We can not do it the other way
+> around, that is impossible from our side.
+
+Indeed. And for that we need to flag it as a potential vulnerability
+in the first place.
+
+But the current rule says it's not a vulnerability for any possible
+user and use case out there.
 
