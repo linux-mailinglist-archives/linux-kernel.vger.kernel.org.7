@@ -1,420 +1,209 @@
-Return-Path: <linux-kernel+bounces-640919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727D8AB0AF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44359AB0B34
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA5B04A502D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8CE1C2116B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3164426E164;
-	Fri,  9 May 2025 06:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LzAG3pBU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FihgJ+jU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K6rnL3/z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u2Fyg6hA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD43B272E76;
+	Fri,  9 May 2025 07:07:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC76221293
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 06:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B47926FD8D
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746773523; cv=none; b=GqA/yI/HUel/bzNpA8N16N13YwAz7WRhpZ4n7Z9axfb/KumwjB0f5HIQxippGvz6hzaXkfnvFeUcoTCHNSfM/AyCZtaVr0UoJXcFkAFfv/pMKHAxMwoelosp5jsMNtedc/+0w4Tv6xqy2ODw5Hv2PkMSyWH6+Auja9rrqrSFFak=
+	t=1746774419; cv=none; b=lrlXxfteRZ2YIPURsfXAFSCcSX1BV0A/3+HO+dIwqo8cDTA+RdREw1DiYlv6yjxlNEvGdFGJXqoqsvEp3dHWZ4y26oT22ybSebLlWUhQrVhZqXEnZHQeb1xM9I74L7jyjLra4JNhhWY2hfitZDTlF6+xB91BFY+LEYMd7o+l/F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746773523; c=relaxed/simple;
-	bh=/L6xCituKhvUB6kxhRUR8uJ+zQ1Wn+fWuLawv+oaCy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Opq4NOTfLHLhL+QsuhZCKKsW0B8Vs8ud3oIJTm6NFrAOgmsjCgJOH1b9MDJJ5M78inLKxYfBKdd0MDA4WriaPXHoebrMT05/sTs89Ed54zzDZ5JiJ4kLSFL+Rbz4NnuFsV9AnQYknvpag277ax84JfERSqVgvjtw94rZakU+jxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LzAG3pBU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FihgJ+jU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K6rnL3/z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u2Fyg6hA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BC89D1F38A;
-	Fri,  9 May 2025 06:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746773518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xR1hlJqYhBYtXiW2Bn8SVrjardsNny6md2cm0NdiW0g=;
-	b=LzAG3pBUwbLfV9GUKg1htYv5xv8+KBNOhCroxpwc9/B68VBVgFEkR1avTESdkknANXA7DC
-	YqHa/2/w0GssY5qug1NwZL8xxu4e5lty17CYNjK09FqZHzxI0aAezHlhIp2amUejEC4Xqc
-	lRbjgtIeBQOWzS68VI4lQLoELRtQ6Mg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746773518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xR1hlJqYhBYtXiW2Bn8SVrjardsNny6md2cm0NdiW0g=;
-	b=FihgJ+jUZZ+B7aLZVe4fJdDOSHAUPZgF2/3jTapJF+ciTzqxYp7PCF6+tqDDBaAxKEK/3V
-	1sURFHNkv4aiC1BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746773517; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xR1hlJqYhBYtXiW2Bn8SVrjardsNny6md2cm0NdiW0g=;
-	b=K6rnL3/zQyvkUYpH1M+NWDbehPCpmmiBESM4ZuT3/aP4itTFwr1NY3We5LDyS6s4X5fxuN
-	KKVS54ktAZpXd18FacoHnsJYQYmPJ5xqXyon4wzkptiDXOMRjR/sA4JUhfjeuI9b9ba1Ar
-	Zc8AbstynmDKc6nf0IDWma6pkSG53NI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746773517;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xR1hlJqYhBYtXiW2Bn8SVrjardsNny6md2cm0NdiW0g=;
-	b=u2Fyg6hAcSCOBO+WUGMGdlwXmqaL/nHwFHQJo8CvPJRktR4GtYEWBdIntDNH87M9BkuN/B
-	Lhef99ma5fTia5Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 651BD13931;
-	Fri,  9 May 2025 06:51:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2h8NFw2mHWhTPAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 09 May 2025 06:51:57 +0000
-Message-ID: <a93a62b0-3252-4fed-b634-18a2e097ab7d@suse.de>
-Date: Fri, 9 May 2025 08:51:57 +0200
+	s=arc-20240116; t=1746774419; c=relaxed/simple;
+	bh=zgA44xH88px7Gc0D+by36IzKENo9XiHp4Sbt3M4HI6I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NaGS5hMIe9p1r1FRS0StKa+1/4IyaiyByeaRDiDyj3OCdDOex1Yg4nozb3mXPS1mXFgCJ+5bcIhS1TT3gC8JOqZhmOOZaoCuOOZH4rI2yx1vXgFUCffX8I62vqfvZv+GtVTDPJiK9TKOI0Bcao0riHIb5WZ+aviFT2OxtiaPAMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zv0R72V6Fz4f3lVb
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:06:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 681201A19E8
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:06:53 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP3 (Coremail) with SMTP id _Ch0CgAnesR4qR1ofcXLLg--.60961S2;
+	Fri, 09 May 2025 15:06:53 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	bigeasy@linutronix.de,
+	legion@kernel.org,
+	roman.gushchin@linux.dev,
+	brauner@kernel.org,
+	tglx@linutronix.de,
+	frederic@kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com,
+	joel.granados@kernel.org,
+	viro@zeniv.linux.org.uk,
+	lorenzo.stoakes@oracle.com,
+	avagin@google.com,
+	mengensun@tencent.com,
+	linux@weissschuh.net,
+	jlayton@kernel.org,
+	ruanjinjie@huawei.com,
+	kees@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huaweicloud.com
+Subject: [RFC next 0/5] ucount: add rlimit cache for ucount
+Date: Fri,  9 May 2025 06:54:06 +0000
+Message-Id: <20250509065417.147515-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] drm/shmem-helper: Import dmabuf without mapping
- its sg_table
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- oushixiong1025@163.com
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>,
- Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250509032040.185730-1-oushixiong1025@163.com>
- <301f1962-88a5-4ea1-bfc1-826426d01ab5@amd.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <301f1962-88a5-4ea1-bfc1-826426d01ab5@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[amd.com,163.com];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,poorly.run,redhat.com,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-CM-TRANSID:_Ch0CgAnesR4qR1ofcXLLg--.60961S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF4fZr15GF48JF4xGr17Jrb_yoWrCF1rpr
+	WSv3sxJr4kJFnrAr1S934kX34Sg3yrAF4UGFs5C34fA3Z8GFyFyryxta4FvryDKrZ3Ja4j
+	qrWjg3yqka1DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hi
+From: Chen Ridong <chenridong@huawei.com>
 
-Am 09.05.25 um 08:22 schrieb Christian König:
-> On 5/9/25 05:20, oushixiong1025@163.com wrote:
->> From: Shixiong Ou <oushixiong@kylinos.cn>
->>
->> [WHY]
->> 1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
->>     DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
->>     sg_table import.
->>     They only need dma_buf_vmap() to access the shared buffer's
->>     kernel virtual address.
->>
->> 2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
->>     trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
->>     restricts the maximum DMA streaming mapping memory, resulting in
->>     errors like:
->>
->>     ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
->>
->> [HOW]
->> Provide a gem_prime_import implementation without sg_table mapping
->> to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do not
->> require sg_table can adopt this.
->>
->> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
->> ---
->> v1->v2:
->> 	Patch rebase.
->> v2->v3:
->> 	Rename the import callback function.
->> 	Remove drm_gem_shmem_prime_export() and separate some codes
->> 	to drm_gem_prime_import_self().
->> v3->v4:
->> 	Separate the test from the policy.
->> 	Rename the macro.
->>
->>   drivers/gpu/drm/drm_gem_shmem_helper.c | 57 ++++++++++++++++++++++++++
->>   drivers/gpu/drm/drm_prime.c            | 36 ++++++++++++----
->>   include/drm/drm_gem_shmem_helper.h     | 15 +++++++
->>   include/drm/drm_prime.h                |  3 ++
->>   4 files changed, 102 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
->> index aa43265f4f4f..8fa160c3635e 100644
->> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
->> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
->> @@ -800,6 +800,63 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
->>   }
->>   EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
->>   
->> +/**
->> + * drm_gem_shmem_prime_import_no_sgt - Import dmabuf without mapping its sg_table
->> + * @dev: Device to import into
->> + * @dma_buf: dma-buf object to import
->> + *
->> + * Drivers that use the shmem helpers but also wants to import dmabuf without
->> + * mapping its sg_table can use this as their &drm_driver.gem_prime_import
->> + * implementation.
->> + */
->> +struct drm_gem_object *drm_gem_shmem_prime_import_no_sgt(struct drm_device *dev,
->> +							 struct dma_buf *dma_buf)
->
-> Please don't mention "no sgt" in the name, that we use sgtable is an implementation detail.
->
-> Maybe use something like "no map" or similar.
+The will-it-scale test case signal1 [1] has been observed. and the test
+results reveal that the signal sending system call lacks linearity.
+To further investigate this issue, we initiated a series of tests by
+launching varying numbers of dockers and closely monitored the throughput
+of each individual docker. The detailed test outcomes are presented as
+follows:
 
-To be fair, I asked to not named it something like _vmap(), but rather 
-_no_sgt().  These vmap-only names purely describe a use case. I'd be OK 
-with any name that refers to the difference between the various 
-functions; not just their effect.
+	| Dockers     |1      |4      |8      |16     |32     |64     |
+	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
 
->
->
->> +{
->> +	struct dma_buf_attachment *attach;
->> +	struct drm_gem_shmem_object *shmem;
->> +	struct drm_gem_object *obj;
->> +	size_t size;
->> +	int ret;
->> +
->> +	if (drm_gem_prime_exported_dma_buf(dev, dma_buf)) {
->> +		/*
->> +		 * Importing dmabuf exported from our own gem increases
->> +		 * refcount on gem itself instead of f_count of dmabuf.
->> +		 */
->> +		obj = dma_buf->priv;
->> +		drm_gem_object_get(obj);
->> +		return obj;
->> +	}
->> +
->> +	attach = dma_buf_attach(dma_buf, dev->dev);
->> +	if (IS_ERR(attach))
->> +		return ERR_CAST(attach);
->> +
->> +	get_dma_buf(dma_buf);
+The data clearly demonstrates a discernible trend: as the quantity of
+dockers increases, the throughput per container progressively declines.
+In-depth analysis has identified the root cause of this performance
+degradation. The ucouts module conducts statistics on rlimit, which
+involves a significant number of atomic operations. These atomic
+operations, when acting on the same variable, trigger a substantial number
+of cache misses or remote accesses, ultimately resulting in a drop in
+performance.
+
+Notably, even though a new user_namespace is created upon docker startup,
+the problem persists. This is because all these dockers share the same
+parent node, meaning that rlimit statistics continuously modify the same
+atomic variable.
+
+Currently, when incrementing a specific rlimit within a child user
+namespace by 1, the corresponding rlimit in the parent node must also be
+incremented by 1. Specifically, if the ucounts corresponding to a task in
+Docker B is ucount_b_1, after incrementing the rlimit of ucount_b_1 by 1,
+the rlimit of the parent node, init_ucounts, must also be incremented by 1.
+This operation should be ensured to stay within the limits set for the
+user namespaces.
+
+	init_user_ns                             init_ucounts
+	^                                              ^
+	|                        |                     |
+	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+	|                        |                     |
+	|<---- usr_ns_b(docker B)|usr_ns_a->ucount---->|
+					^
+					|
+					|
+					|
+					ucount_b_1
+
+What is expected is that dockers operating within separate namespaces
+should remain isolated and not interfere with one another. Regrettably,
+the current signal system call fails to achieve this desired level of
+isolation.
+
+Proposal:
+
+To address the aforementioned issues, the concept of implementing a cache
+for each namespace's rlimit has been proposed. If a cache is added for
+each user namespace's rlimit, a certain amount of rlimits can be allocated
+to a particular namespace in one go. When resources are abundant, these
+resources do not need to be immediately returned to the parent node. Within
+a user namespace, if there are available values in the cache, there is no
+need to request additional resources from the parent node.
+
+	init_user_ns                             init_ucounts
+	^                                              ^
+	|                        |                     |
+	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+	|                        |                     |
+	|<---- usr_ns_b(docker B)|usr_ns_b->ucount---->|
+			^		^
+			|		|
+			cache_rlimit--->|
+					|
+					ucount_b_1
 
 
->> +
->> +	size = PAGE_ALIGN(attach->dmabuf->size);
->> +
->> +	shmem = __drm_gem_shmem_create(dev, size, true, NULL);
->> +	if (IS_ERR(shmem)) {
->> +		ret = PTR_ERR(shmem);
->> +		goto fail_detach;
->> +	}
+The ultimate objective of this solution is to achieve complete isolation
+among namespaces. After applying this patch set, the final test results
+indicate that in the signal1 test case, the performance does not
+deteriorate as the number of containers increases. This effectively meets
+the goal of linear scalability.
 
-Unrelated to this series, we might reconsider 
-drm_driver.gem_prime_import_sg_table. If we move the call to 
-dma_buf_map_attachment_unlocked() into the callback and rename it to 
-gem_prime_import_attachment, using sg tables would become optional for 
-all drivers. SHMEM would be able to create the object without SG table 
-without having to reimplement the prime boiler-plate code. Thoughts?
+	| Dockers     |1      |4      |8      |16     |32     |64     |
+	| Throughput  |381809 |382284 |380640 |383515 |381318 |380120 |
 
+Challenges:
 
->> +
->> +	drm_dbg_prime(dev, "size = %zu\n", size);
->> +
->> +	shmem->base.import_attach = attach;
->> +	shmem->base.resv = dma_buf->resv;
->> +
->> +	return &shmem->base;
->> +
->> +fail_detach:
->> +	dma_buf_detach(dma_buf, attach);
->> +	dma_buf_put(dma_buf);
->> +
->> +	return ERR_PTR(ret);
->> +}
->> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_no_sgt);
->> +
->>   MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
->>   MODULE_IMPORT_NS("DMA_BUF");
->>   MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
->> index d828502268b8..5bcf483520b8 100644
->> --- a/drivers/gpu/drm/drm_prime.c
->> +++ b/drivers/gpu/drm/drm_prime.c
->> @@ -910,6 +910,26 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
->>   }
->>   EXPORT_SYMBOL(drm_gem_prime_export);
->>   
->> +
->> +/**
->> + * drm_gem_prime_exported_dma_buf -
->> + * checks if the DMA-BUF was exported from a GEM object belonging to @dev.
->> + * @dev: drm_device to check against
->> + * @dma_buf: dma-buf object to import
->> + *
->> + * Return: true if the DMA-BUF was exported from a GEM object belonging
->> + * to @dev, false otherwise.
->> + */
->> +
->> +bool drm_gem_prime_exported_dma_buf(struct drm_device *dev,
->> +				    struct dma_buf *dma_buf)
-> If I remember the naming conventions correctly this should be something like drm_gem_is_prime_exported_dma_buf().
+When checking the pending signals in the parent node using the command
+ cat /proc/self/status | grep SigQ, the retrieved value includes the
+cached signal counts from its child nodes. As a result, the SigQ value
+in the parent node fails to accurately and instantaneously reflect the
+actual number of pending signals.
 
-Again my fault. But the name you suggested sounds correct.
+	# cat /proc/self/status | grep SigQ
+	SigQ:	16/6187667
 
-Best regards
-Thomas
+TODO:
 
->
-> Regards,
-> Christian.
->
->> +{
->> +	struct drm_gem_object *obj = dma_buf->priv;
->> +
->> +	return (dma_buf->ops == &drm_gem_prime_dmabuf_ops) && (obj->dev == dev);
->> +}
->> +EXPORT_SYMBOL(drm_gem_prime_exported_dma_buf);
->> +
->>   /**
->>    * drm_gem_prime_import_dev - core implementation of the import callback
->>    * @dev: drm_device to import into
->> @@ -933,16 +953,14 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
->>   	struct drm_gem_object *obj;
->>   	int ret;
->>   
->> -	if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
->> +	if (drm_gem_prime_exported_dma_buf(dev, dma_buf)) {
->> +		/*
->> +		 * Importing dmabuf exported from our own gem increases
->> +		 * refcount on gem itself instead of f_count of dmabuf.
->> +		 */
->>   		obj = dma_buf->priv;
->> -		if (obj->dev == dev) {
->> -			/*
->> -			 * Importing dmabuf exported from our own gem increases
->> -			 * refcount on gem itself instead of f_count of dmabuf.
->> -			 */
->> -			drm_gem_object_get(obj);
->> -			return obj;
->> -		}
->> +		drm_gem_object_get(obj);
->> +		return obj;
->>   	}
->>   
->>   	if (!dev->driver->gem_prime_import_sg_table)
->> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
->> index b4f993da3cae..9ee697ff52ea 100644
->> --- a/include/drm/drm_gem_shmem_helper.h
->> +++ b/include/drm/drm_gem_shmem_helper.h
->> @@ -287,6 +287,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
->>   				    struct sg_table *sgt);
->>   int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
->>   			      struct drm_mode_create_dumb *args);
->> +struct drm_gem_object *drm_gem_shmem_prime_import_no_sgt(struct drm_device *dev,
->> +							 struct dma_buf *buf);
->>   
->>   /**
->>    * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
->> @@ -298,4 +300,17 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
->>   	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
->>   	.dumb_create		   = drm_gem_shmem_dumb_create
->>   
->> +/**
->> + * DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT - shmem GEM operations
->> + *                                   without mapping sg_table on
->> + *                                   imported buffer.
->> + *
->> + * This macro provides a shortcut for setting the shmem GEM operations in
->> + * the &drm_driver structure for drivers that do not require a sg_table on
->> + * imported buffers.
->> + */
->> +#define DRM_GEM_SHMEM_DRIVER_OPS_NO_SGT \
->> +	.gem_prime_import       = drm_gem_shmem_prime_import_no_sgt, \
->> +	.dumb_create            = drm_gem_shmem_dumb_create
->> +
->>   #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
->> diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
->> index fa085c44d4ca..ec83f1c077a4 100644
->> --- a/include/drm/drm_prime.h
->> +++ b/include/drm/drm_prime.h
->> @@ -100,6 +100,9 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
->>   unsigned long drm_prime_get_contiguous_size(struct sg_table *sgt);
->>   
->>   /* helper functions for importing */
->> +bool drm_gem_prime_exported_dma_buf(struct drm_device *dev,
->> +				    struct dma_buf *dma_buf);
->> +
->>   struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
->>   						struct dma_buf *dma_buf,
->>   						struct device *attach_dev);
+Add cache for the other rlimits.
+
+[1] https://github.com/antonblanchard/will-it-scale/blob/master/tests/
+
+Chen Ridong (5):
+  user_namespace: add children list node
+  usernamespace: make usernamespace rcu safe
+  user_namespace: add user_ns iteration helper
+  uounts: factor out __inc_rlimit_get_ucounts/__dec_rlimit_put_ucounts
+  ucount: add rlimit cache for ucount
+
+ include/linux/user_namespace.h |  23 ++++-
+ kernel/signal.c                |   2 +-
+ kernel/ucount.c                | 181 +++++++++++++++++++++++++++++----
+ kernel/user.c                  |   2 +
+ kernel/user_namespace.c        |  60 ++++++++++-
+ 5 files changed, 243 insertions(+), 25 deletions(-)
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.34.1
 
 
