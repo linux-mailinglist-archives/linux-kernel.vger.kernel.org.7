@@ -1,159 +1,110 @@
-Return-Path: <linux-kernel+bounces-640856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23368AB0A31
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2030AAB0A34
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ABA27B61DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8334C26DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 06:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC4B269898;
-	Fri,  9 May 2025 06:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BFF269CEC;
+	Fri,  9 May 2025 06:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwRtefw7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDvfscBn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C2711CBA;
-	Fri,  9 May 2025 06:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A61911CBA;
+	Fri,  9 May 2025 06:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746770443; cv=none; b=JAchwb+ztLo6HvYazQr7sRtTomRuzJzWl6H6NlDwH2niAWOn6X+G0UT4bMIrGVWvXQhw1KN5KaJRrYP4BkHOVf55CWwOz/mhdQ6GAH9b3k4yjI4xRiRdXAZz2Fn97MtYVXBDqoK/h3bLXq1MXQUKMy6+FEloGnMU9K1jOIKURPE=
+	t=1746770594; cv=none; b=nquoYlPYhGD7pbTiI1FL6xAzZSYVDBTasDaHpIg9MH6FpULr1mqUfOzczrc0wWT8yfSEwW80NbKPl/B/AG/HjK92gMZZr7zcKdH8nxtWqMu19WYy9vVBt3PgRG2FIGxyzEHeznS/sDvGKmvO0WFNYjIkraBLWmZlafgDPI+M8zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746770443; c=relaxed/simple;
-	bh=2F9C7tIL0E1UVn2MTuipbuWXEc0JNCxH2nHehw68R0M=;
+	s=arc-20240116; t=1746770594; c=relaxed/simple;
+	bh=miqYtWyTKqalmWH/MGZunXZc53zAHSRNBQvWm45NGQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjvphs9mPurMLxxHCLYi0soAVblhP/DvgwE2FnGDWzjlMPEhQdiSCWwhGxtIMzZFTIjUkf1w2IE+vL1sOBrrarLBAAPEUWrJi74cf3JcTxnUMxSoLsIFNx0ilzYcTE7Rlf85Il2NM7vLGI6DNm+fNdh5+EFZh+L9dt6Nl2wRG9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwRtefw7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E85C4CEED;
-	Fri,  9 May 2025 06:00:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKX0BS1tkQG0wbVMEyMcdcclYj2W9Gx5Cd35OG3kbjHHt0zpczaK1js4eTBR73ice2EdKZcp4pZGx1eE0ySQouW2nW9KWaa5B477g5ORC5g2y0Oh/Q253l2AOAiBXaZYQfTqSnE9Ck90f3cxG6PVUTGO67L2yun7K0suWNP82v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDvfscBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51685C4CEE4;
+	Fri,  9 May 2025 06:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746770443;
-	bh=2F9C7tIL0E1UVn2MTuipbuWXEc0JNCxH2nHehw68R0M=;
+	s=k20201202; t=1746770593;
+	bh=miqYtWyTKqalmWH/MGZunXZc53zAHSRNBQvWm45NGQ0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwRtefw71D3zLS7KhS59GNlxf0NDjxLfSFg3UDnGLi82Bdt9bcuUsHDxgLpjVHYTt
-	 2sTBwATargPCOdzsUo7jUtkIYVhKBZUF1lKX93oLY2OzZFwPH4WIT1QpvdDhAwJF3f
-	 lQaGRFapkRKzfLU6I646LD/XcWUOidIy0GSso1yk4JgR0+TATk+8xe2LeHmehitf3k
-	 nkyhQbPaf1MuYANTzoUkYBrLSit4RWFuM6hEiNekBAz7oK9+qHr7siu6DGt+s/A2K/
-	 DZAHG5zw3u1tAnHCHcm98AOtz3ifAY43sQt6ZU0s1+9pm+7fjZkFj4H/D2+skPNFT+
-	 I0NuuhQ9nZ9/A==
-Date: Fri, 9 May 2025 08:00:32 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Kunwu Chan <kunwu.chan@hotmail.com>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Borys Tyran <borys.tyran@protonmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Panagiotis Foliadis <pfoliadis@posteo.net>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	llvm@lists.linux.dev, Daniel Almeida <daniel.almeida@collabora.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4/5] sched/core: Add __might_sleep_precision()
-Message-ID: <aB2aAEELa3253nBh@gmail.com>
-References: <20250506045843.51258-1-boqun.feng@gmail.com>
- <20250506045843.51258-5-boqun.feng@gmail.com>
+	b=cDvfscBnFjzX5lYFVRWG6HqIvO2BmUHXP4zFLn5QBcuK2I4fgvV0Gqf+PjThAc0cx
+	 dtRc+LWiQv87umLgJ78pVfk0qpIROY64IG+qnWyNx4HlqTEQnUO+EyibIMB4bo/jOW
+	 RuM27JQIdkhpEXtKDmJot+11r9jRUXeM2f1Odv1r6JQTWkW/Xh/sdFnzlo68WpO92H
+	 Ro4xSyi7MCUWh2ikYungCMBqbZJaM0v6HxtY7MGie6Fz4Uv3r3VkcFOECk19h4lGKG
+	 eUeq4ceJoisr4sYDZ/6e3W8WD8FG20XVrGBoIUFSSG1rWws+U2kT4gc0cN7Xn01ztv
+	 ZrhXtKYGV+a5A==
+Date: Fri, 9 May 2025 08:03:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Frank Wang <frank.wang@rock-chips.com>, 
+	Andy Yan <andy.yan@rock-chips.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, Shresth Prasad <shresthprasad7@gmail.com>, 
+	Chukun Pan <amadeus@jmu.edu.cn>, Jonas Karlman <jonas@kwiboo.se>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: phy: rockchip: naneng-combphy: Add
+ RK3528 variant
+Message-ID: <20250509-secret-smart-kangaroo-fd3b58@kuoka>
+References: <20250509004121.36058-2-ziyao@disroot.org>
+ <20250509004121.36058-4-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250506045843.51258-5-boqun.feng@gmail.com>
+In-Reply-To: <20250509004121.36058-4-ziyao@disroot.org>
 
-
-* Boqun Feng <boqun.feng@gmail.com> wrote:
-
-> From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+On Fri, May 09, 2025 at 12:41:19AM GMT, Yao Zi wrote:
+> Rockchip RK3528 ships one naneng-combphy which operates in either PCIe
+> or USB 3 mode. Document its compatible string.
 > 
-> Add __might_sleep_precision(), Rust friendly version of
-> __might_sleep(), which takes a pointer to a string with the length
-> instead of a null-terminated string.
-> 
-> Rust's core::panic::Location::file(), which gives the file name of a
-> caller, doesn't provide a null-terminated
-> string. __might_sleep_precision() uses a precision specifier in the
-> printk format, which specifies the length of a string; a string
-> doesn't need to be a null-terminated.
-> 
-> Modify __might_sleep() to call __might_sleep_precision() but the
-> impact should be negligible. When printing the error (sleeping
-> function called from invalid context), the precision string format is
-> used instead of the simple string format; the precision specifies the
-> the maximum length of the displayed string.
-> 
-> Note that Location::file() providing a null-terminated string for
-> better C interoperability is under discussion [1].
-> 
-> [1]: https://github.com/rust-lang/libs-team/issues/466
-> 
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Link: https://lore.kernel.org/r/20250410225623.152616-2-fujita.tomonori@gmail.com
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  include/linux/kernel.h |  2 ++
->  kernel/sched/core.c    | 62 ++++++++++++++++++++++++++++--------------
->  2 files changed, 43 insertions(+), 21 deletions(-)
+
+Eh, no...
+
+>  .../devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index be2e8c0a187e..086ee1dc447e 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -87,6 +87,7 @@ extern int dynamic_might_resched(void);
->  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
->  extern void __might_resched(const char *file, int line, unsigned int offsets);
->  extern void __might_sleep(const char *file, int line);
-> +extern void __might_sleep_precision(const char *file, int len, int line);
+> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml b/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml
+> index 888e6b2aac5a..bd064754e537 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml
+> @@ -12,6 +12,7 @@ maintainers:
+>  properties:
+>    compatible:
+>      enum:
+> +      - rockchip,rk3528-naneng-combphy
+>        - rockchip,rk3562-naneng-combphy
+>        - rockchip,rk3568-naneng-combphy
+>        - rockchip,rk3576-naneng-combphy
+> @@ -102,7 +103,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: rockchip,rk3588-naneng-combphy
+> +            enum:
+> +             - rockchip,rk3528-naneng-combphy
 
-Ugh.
+Still not tested. Neither v1 nor v2 was ever tested.
 
-Firstly, '_precision' is really ambiguous in this context and suggests 
-'precise sleep' or something like that, which this is not about at all. 
-So the naming here is all sorts of bad already.
+Best regards,
+Krzysztof
 
-But more importantly, this is really a Rust problem. Does Rust really 
-have no NUL-terminated strings? It should hide them in shame and 
-construct proper, robust strings, instead of spreading this disease to 
-the rest of the kernel, IMHO ...
-
-Rust is supposed to be about increased security, right? How does extra, 
-nonsensical complexity for simple concepts such as strings achieve 
-that? If the Rust runtime wants to hook into debug facilities of the 
-Linux kernel then I have bad news: almost all strings used by kernel 
-debugging facilities are NUL-terminated.
-
-So I really don't like this patch. Is there no other way to do this?
-
-Thanks,
-
-	Ingo
 
