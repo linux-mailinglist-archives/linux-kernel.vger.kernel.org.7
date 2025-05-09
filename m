@@ -1,74 +1,61 @@
-Return-Path: <linux-kernel+bounces-641834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFDBAB170B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:16:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12519AB1728
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F81E3AB0A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE54527086
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC751E5B64;
-	Fri,  9 May 2025 14:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F58B221F3D;
+	Fri,  9 May 2025 14:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MzrwKsN1"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="SSkA9rzG"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4633D189F3F;
-	Fri,  9 May 2025 14:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8469621324D;
+	Fri,  9 May 2025 14:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800191; cv=none; b=NMZyGl1mYQd9VVEVY263CxgJeGJai5OBqA6g+JRDbApXjdtlEhAmJFKVyAckwCOc0Uk1cL+zW+r7+PvojTVVlRfxqqAumVnF/RHjrntqZLY7pqF4bu6vrvAUjUUZ55bYed/dcauxqDletcIKmjfMuaPr5x2s1T/uN6+pq9AqZnc=
+	t=1746800252; cv=none; b=PNJlzrdafNeL65+Vj7TE69+6w89tRaOB+0KpBgkQNBxuXqyGoXYjcQeN/t/SKWLmI8HMZAcxQIDz0ElVCz1AaxUVT/NiqfFMwpNnfu9Gh5LEGwprvAR1Rpa38Fu5I/JxdkLtqqd3gBhUGdgBzuK54keKb1BqxOfu3ISKHH/qnK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800191; c=relaxed/simple;
-	bh=l5uOK2NHOVpNyhdKueRawcuEd4RFXsqeuFyPt8+9zW4=;
+	s=arc-20240116; t=1746800252; c=relaxed/simple;
+	bh=8YpPIiJRES6y9U9nDUVsp0fNxxDECRqz8HdY8Iy5l9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mk4VufasCDwxNAAP4JYT62T6INy0C2oCdY0TLyk4lPW/HwivacYpDOj8b7j4dVGIQ227yu4bpgC0/RInJeCPYjd0MNeISxAKT7Zq8CEAsznIFM50m+a7RhqUij1CinuvJibFGXhLi8HU017sevOfDRU4xXsuQgoy7oFPUJnRzhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MzrwKsN1; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=JsL4/uSh//KW4XU+/7cb+Wp/CQFLXpjftCYcnzWSJDY=; b=MzrwKsN1AMh+jchfsXKG2SCRhe
-	Mena3Z3jWuQiR2yNFOKM+wfYzkKp7dkTGsqnWWC7FA4PxqVmGV4b3bpx+YImpN31KcNOIXEQxLaS+
-	x3SMDhy2I1WAwgq1DzotULCHN9lC/m6VtJ2oj8zw3vEDythcH3leH3LNzeHYvWdyDDfvsCh4oQ4yy
-	mblNMuZxp/gDKfBR8TLQ1A9n1gTV02avxWGA49QIUlU3S+/5JFjPScXJVZZdmY6GuGVA/Eyeli2Ex
-	PJcnt6zje8Cy9+M4XDdGCXR3BxqxsIw5RJmnQxU23Us6c7JwpogWKTBEJ+Z2AgpLbfSkDYt3EC/g9
-	9DTICNcQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uDOWT-004sgo-0b;
-	Fri, 09 May 2025 22:16:22 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 09 May 2025 22:16:21 +0800
-Date: Fri, 9 May 2025 22:16:21 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Danny Tsen <dtsen@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] crypto: powerpc/poly1305 - Restore crypto_simd_usable
- test
-Message-ID: <aB4ONRiTNjHpCw6U@gondor.apana.org.au>
-References: <cover.1745815528.git.herbert@gondor.apana.org.au>
- <915c874caf5451d560bf26ff59f58177aa8b7c17.1745815528.git.herbert@gondor.apana.org.au>
- <242ebbf1-4ef0-41c3-83cb-a055c262ba4a@leemhuis.info>
- <aBtF2jVZQwxGiHVk@gondor.apana.org.au>
- <37cf099e-d5c2-40d8-bc31-77e1f9623b1c@linux.ibm.com>
- <aByX_Y64C6lVRR8M@gondor.apana.org.au>
- <f66620e2-77e3-4713-a946-ddb2c8a0bccb@linux.ibm.com>
- <aByiNZNxqyTerdYG@gondor.apana.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lH7mhSh1eNUZ3F8EGG+6bp0PX/QQdUj9bYLlQrRx7qaxcilFhw2uxyO7vPLlQ2P1uYTUnXBO8SZlHjKSexfpoKSLydbFKrMMnXgCp0I0DnAvhaeBEuwy1uMsiPLtfJ6/egcjAfL4UXgMnuSiFa2Dv2bTVJtPtP90oP3+GIGvufk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=SSkA9rzG; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Kg1lOsicIGwMurHHg1lsBFSLBs1lOtH7DCGaQFmSoc4=;
+	b=SSkA9rzGzQPYLCmZq3aIZxQoDYOHXIIkCeFrJsIqAmFW1LByq3EGP4MrFBeYD/
+	xNj44kpFFaqkqBEvtsiUciWqUrgnVuTLwb+qqUUAkNWpUY9S6/X3SbQCVdyf49eJ
+	FOXSMjluCBPH6r+Ma45DCZmyLC4QNvMX16DqwHTgH/4iU=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCnB_pEDh5oyTOqAA--.49231S3;
+	Fri, 09 May 2025 22:16:38 +0800 (CST)
+Date: Fri, 9 May 2025 22:16:35 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Markus Niebel <Markus.Niebel@tq-group.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: add TQMa8XxS boards
+Message-ID: <aB4OQ+sVXz1Qima0@dragon>
+References: <20250424075533.1266435-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,31 +64,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aByiNZNxqyTerdYG@gondor.apana.org.au>
+In-Reply-To: <20250424075533.1266435-1-alexander.stein@ew.tq-group.com>
+X-CM-TRANSID:Mc8vCgCnB_pEDh5oyTOqAA--.49231S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYD73DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBFIZWgd-c1QIAAAsN
 
-On Thu, May 08, 2025 at 08:23:17PM +0800, Herbert Xu wrote:
->
-> @@ -51,7 +52,7 @@ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
->  	if (!static_key_enabled(&have_p10))
->  		return poly1305_blocks_generic(state, src, len, padbit);
->  	vsx_begin();
-> -	if (len >= POLY1305_BLOCK_SIZE * 4) {
-> +	if (crypto_simd_usable() && len >= POLY1305_BLOCK_SIZE * 4) {
+On Thu, Apr 24, 2025 at 09:55:29AM +0200, Alexander Stein wrote:
+> From: Markus Niebel <Markus.Niebel@tq-group.com>
+> 
+> TQMa8XxS is a SOM series featuring NXP i.MX8X SoC.
+> They are called TQMa8XQPS and TQMa8XDPS respectively.
+> MB-SMARC-2 is a carrier reference design.
+> 
+> Signed-off-by: Markus Niebel <Markus.Niebel@tq-group.com>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-This patch is obviously broken.  However, I think this code was
-always broken in the SIMD-fallback case.  AFAICS the fallback
-uses vector instructions so it can't be used in softirqs either.
+Applied both, thanks!
 
-A proper fallback would have to convert the state to the format
-used by the generic poly1305 implementation, call that, and then
-convert it back.
-
-Of course it would be a lot easier if ppc could make VSX usable
-in softirq context.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
