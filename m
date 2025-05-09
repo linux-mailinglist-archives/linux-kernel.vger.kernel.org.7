@@ -1,89 +1,58 @@
-Return-Path: <linux-kernel+bounces-642526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1551DAB1FF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:37:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC11AB1FFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4236A0051A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:37:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD18B23E18
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1942262FFC;
-	Fri,  9 May 2025 22:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B234262FEB;
+	Fri,  9 May 2025 22:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBQRMJ9d"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9HLyYt7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D849225F79A;
-	Fri,  9 May 2025 22:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497BC25F79A;
+	Fri,  9 May 2025 22:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746830250; cv=none; b=sbSYcQb3NxzwZWkD32bxJuRwLshhlX4JfSIdT1jEeYohWGdLlBy1MIMbOem1w/KxRcCiC5GC1aeaQN8ZIS0DsrFkguBQL365uYYHLhZJSmYAOSHdyLU4XZwqm/MOBI9Lixn+x7qUG7EOEVTuX04m+RJDyt0kXnmzCDeqDfAG1c4=
+	t=1746830308; cv=none; b=Jpn8FM3G4NPX0pgc6HQ9LdxsQbxKTefPtOtFBtkJpbYyASkSZ/hbtAjZ8EAPIlFvCcIYYZ2ZTsHOxQTE/rEjs7hPosQxQ1UMeXX0QwJ2UyAuwg+L0oAgCt+sJRG8fUIbQZW6LP1JNgyAsmUIaNGZGQkxaGIMvlmgldebqryq0VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746830250; c=relaxed/simple;
-	bh=A3w4RuWEmr5Bdnc77LbTtq0I+pATPQNYK9q8S93+9hw=;
+	s=arc-20240116; t=1746830308; c=relaxed/simple;
+	bh=UFLG+qJLt7G6jEoUzpzLZXtZ0sylu//S/7ihWu5mva8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ouiTyXZlKzO0SFh29YuNkRBjh2AnFX2I92jRL2CrLQ3n8EeZ+aI/Lras1He8pvgWFnQos4yOSEkvAt5UNghE/XrrtprjJMAxW8XYi6WzJ8U9OX5w1ARTk8b9jUaBsVVbFfnpKP7XT4/tSbm0zl6tNum5JHw8j1LdO0h9MIvK4QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBQRMJ9d; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6f5365bdbaeso24749576d6.3;
-        Fri, 09 May 2025 15:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746830248; x=1747435048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wls++UmOuF/4mPyEoE5Qu8r2syygUVJY2hk7mKDxU0s=;
-        b=kBQRMJ9dwJZgF1BGObmbsFrp1c8zoe9gH5bhZHEoBDtBdFn2aIu04JxsEBYJX6inH1
-         xpzQJZCsiFJ24O32XqJD5r7uSwkBdWm5SRfLnFIfCfqMVbtOQdNJbb++eWiD+ZiVVudg
-         Xsn62KG/AE+t/sIFFNG3Vxr5rEQEa8hAKqUsi3AhH7EK7fJYO7dzXBQyiNH+ONw3zib1
-         yul7EVpISXUXnBy33zRs35n1W6SKhSK0wbKmJYPm7JoaFcoMhGkBn4RZCeOl4uptiUIf
-         6+X9XKig51yWaWA7h5bl6X5cPorrFV7uLjnP/FuK9ZA7a6JbiUew4RzjA8BnErkqaLIM
-         AeVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746830248; x=1747435048;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wls++UmOuF/4mPyEoE5Qu8r2syygUVJY2hk7mKDxU0s=;
-        b=qMSeeMD2sGZOupiu+ZqzPBkOWZxf6GchDzb2MSPKUU63EdHvCVgFqR7KIBRoRFbIXN
-         C/OfsA8FAywbJW7alHiZ8T+8T5IJ4GvX7T2enBI6vQpuCLfFx8U7qKLC6IJUfLCfyPp4
-         VYBBXpA9O3xPwDHsUlfYmm1jX9cnOSwqX7e3hklj6+uQzIDaiqHDoYY218Vk6mb8uNLm
-         LsfQs4JBo/5J5iywOwmTWJBfoQT6c5wTLcc0GzhHSjmJqaP/A9YXZ181gyuh+3dUW0xo
-         /4EKEEgmo+xQ9YQS0PjjWjuV82q1Q0aU5a7GWGESDFmbyuJwJb4DMmCC+ypSwAC0nLnF
-         pzUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFt9CMPHe8BR4fkG9HYIxky19NGITgzbHMtAJl3Cfcc2kiPoLNhae1sWk112pdZ0c2oNaouJjbsq6AsGW1@vger.kernel.org, AJvYcCUbKeZB5JYHpdk9QUPYukYYGWs0Fr6eKo86E5HHnlIXHV9tpSyqAl5QXAlOmQXSsJ24keDEeqy4Rs5f@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyin6tQJlQGk2nbKtInNNAUJhRHuBryDKZz4Wj+4unfBBFygx01
-	mlB8qjExpo0W4wF9YZSggSwb1o/K3hRwerkmxW+7w1jbE08TNHye
-X-Gm-Gg: ASbGncvZdm+jcWaaZNbQeCQfNmpIFXR2CshFqFXfQaz+HylL8ifcXCchPbkcYzR3Hpt
-	s0cgrDQt9MuePsAx7qCLb0B56+ftktInoJINcWWsUjmovTUjHpcReTT6mUNhkxCagXr4OhKeG0l
-	3tQwNwa2/UpTbbHCoYkZTyPChftNR1QWIJG/4sAoUOwmITqXwY0K9scBZKAd1mBkBpjlbQVlUeV
-	jNQjISwgOvhQ9h6y14yI4K+koQsdKjKEKfeVL45cIr1pnHXJFGcYwIbh/i5GcdJUT4Jne3qQu7W
-	4wy9S+BX1qlomXk6F79GNwr6YGE=
-X-Google-Smtp-Source: AGHT+IGT4gynGMwVrr5xrHK5k1kPhXxajuXtDsQp/TWj+voeyjLTQ+BuPWtRD2a2o0XUy3TbdPOunQ==
-X-Received: by 2002:a05:6214:528f:b0:6f4:f458:7ef2 with SMTP id 6a1803df08f44-6f6e480f83amr63955966d6.43.1746830247675;
-        Fri, 09 May 2025 15:37:27 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f6e39e0685sm19440936d6.13.2025.05.09.15.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 15:37:27 -0700 (PDT)
-Date: Sat, 10 May 2025 06:37:00 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Han Gao <rabenda.cn@gmail.com>, devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Guo Ren <guoren@kernel.org>, Chao Wei <chao.wei@sophgo.com>, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: riscv: add Sophgo x4 EVB bindings
-Message-ID: <5hn5ywklwlc2cfjeesarg7hcf2knsujloxijzp46o26ox33yzo@6kuf3bkqqigf>
-References: <cover.1746811744.git.rabenda.cn@gmail.com>
- <4a9236b67a368423c1bb1a86720dfcd7593f0d1b.1746811744.git.rabenda.cn@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J57z7reqrws2ajE3MFsEKKmj2bpUdntsCrJ+mIL9fh6wP/kNRr5NGx9jQ3tz060H54N2g93Ecrr3+VB3yIEpbzSr/g0kToE37WJw3S/jV2udXLJYBWFchX2ympPjLiDxJ6GRXFTQxVHcYrzJAJLv6ogX2pboJlZAMB7QZpCBLns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9HLyYt7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ABBCC4CEE4;
+	Fri,  9 May 2025 22:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746830307;
+	bh=UFLG+qJLt7G6jEoUzpzLZXtZ0sylu//S/7ihWu5mva8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I9HLyYt786mNoMXtqssk56VK36x5mq/M717pcugDBZFZ1b+JUk0jUuo3xx0DOTtW2
+	 TQBwky9/5D2p5nrdqVSRjvBZoedDCVLFZsJXcU9n59krYRRYv+eHVKUI+KJ+wZ0tTK
+	 HdFPw48aANr941HIw+5SPrJ4DoTzDfLhYc6+PcK8dE1Iy6rPs8e1FFO+Ss4iilCJFE
+	 3NhtmKMkCvzvm+EuLVZOFeeaR0uJCB186uQD+YLezv1wFFjI903+GOa358IkTH6o5q
+	 LBRafNN+2xEpJPw4PAOODOsMhTSXOsVxNOxVZg5vsOxQij9t/mE56u6WTuTrq8+oo8
+	 Kswje5XCCMqLQ==
+Date: Fri, 9 May 2025 15:38:24 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Eugen Hristev <eugen.hristev@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	rostedt@goodmis.org, john.ogness@linutronix.de, senozhatsky@chromium.org, 
+	pmladek@suse.com, peterz@infradead.org, mojha@qti.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, vincent.guittot@linaro.org, konradybcio@kernel.org, 
+	dietmar.eggemann@arm.com, juri.lelli@redhat.com
+Subject: Re: [RFC][PATCH 02/14] kmemdump: introduce kmemdump
+Message-ID: <qcpzoi6t2xvmncq4pbxnlnrdw5bj4dvedftsf5cp3zj7nbeklm@rmsrqqb5vta5>
+References: <20250422113156.575971-1-eugen.hristev@linaro.org>
+ <20250422113156.575971-3-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,36 +61,405 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4a9236b67a368423c1bb1a86720dfcd7593f0d1b.1746811744.git.rabenda.cn@gmail.com>
+In-Reply-To: <20250422113156.575971-3-eugen.hristev@linaro.org>
 
-On Sat, May 10, 2025 at 02:13:29AM +0800, Han Gao wrote:
-> Add DT binding documentation for the Sophgo x4 EVB board [1].
+On Tue, Apr 22, 2025 at 02:31:44PM +0300, Eugen Hristev wrote:
+> Kmemdump mechanism allows any driver to mark a specific memory area
+
+I know naming is a hard problem, but "kmemdump" sounds to me like a
+mechanism where the kernel does the memory dumping - and in contrast to
+existing mechanisms, that's not what this does.
+
+> for later dumping purpose, depending on the functionality
+> of the attached backend. The backend would interface any hardware
+> mechanism that will allow dumping to complete regardless of the
+> state of the kernel (running, frozen, crashed, or any particular
+> state).
 > 
-> Link: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG2042-x4-EVB [1]
-> 
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 > ---
->  Documentation/devicetree/bindings/riscv/sophgo.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/Kconfig          |   2 +
+>  drivers/Makefile         |   2 +
+>  drivers/debug/Kconfig    |  16 ++++
+>  drivers/debug/Makefile   |   3 +
+>  drivers/debug/kmemdump.c | 185 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/kmemdump.h |  52 +++++++++++
+>  6 files changed, 260 insertions(+)
+>  create mode 100644 drivers/debug/Kconfig
+>  create mode 100644 drivers/debug/Makefile
+>  create mode 100644 drivers/debug/kmemdump.c
+>  create mode 100644 include/linux/kmemdump.h
 > 
-> diff --git a/Documentation/devicetree/bindings/riscv/sophgo.yaml b/Documentation/devicetree/bindings/riscv/sophgo.yaml
-> index ee244c9f75cc..0f93f4cbfc6c 100644
-> --- a/Documentation/devicetree/bindings/riscv/sophgo.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/sophgo.yaml
-> @@ -35,6 +35,7 @@ properties:
->            - enum:
->                - milkv,pioneer
->                - sophgo,sg2042-x8evb
-> +              - sophgo,sg2042-x4evb
->            - const: sophgo,sg2042
+> diff --git a/drivers/Kconfig b/drivers/Kconfig
+> index 7bdad836fc62..ef56588f559e 100644
+> --- a/drivers/Kconfig
+> +++ b/drivers/Kconfig
+> @@ -245,4 +245,6 @@ source "drivers/cdx/Kconfig"
 >  
->  additionalProperties: true
-> -- 
-> 2.47.2
-> 
+>  source "drivers/dpll/Kconfig"
+>  
+> +source "drivers/debug/Kconfig"
+> +
+>  endmenu
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 45d1c3e630f7..cf544a405007 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -195,3 +195,5 @@ obj-$(CONFIG_CDX_BUS)		+= cdx/
+>  obj-$(CONFIG_DPLL)		+= dpll/
+>  
+>  obj-$(CONFIG_S390)		+= s390/
+> +
+> +obj-y				+= debug/
+> diff --git a/drivers/debug/Kconfig b/drivers/debug/Kconfig
+> new file mode 100644
+> index 000000000000..22348608d187
+> --- /dev/null
+> +++ b/drivers/debug/Kconfig
+> @@ -0,0 +1,16 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +menu "Generic Driver Debug Options"
+> +
+> +config DRIVER_KMEMDUMP
+> +	bool "Allow drivers to register memory for dumping"
 
-Please keep alphabetical order.
+You use kmemdump in non-driver code as well.
+
+> +	help
+> +	  Kmemdump mechanism allows any driver to mark a specific memory area
+
+I think it would be better to express this as "register specific memory
+areas with kmemdump for dumping" - you're not really marking any
+memory...
+
+> +	  for later dumping purpose, depending on the functionality
+> +	  of the attached backend. The backend would interface any hardware
+> +	  mechanism that will allow dumping to complete regardless of the
+> +	  state of the kernel (running, frozen, crashed, or any particular
+> +	  state).
+> +
+> +	  Note that modules using this feature must be rebuilt if option
+> +	  changes.
+
+While true, hopefully no human should be needed to act upon this fact?
+
+> +endmenu
+> diff --git a/drivers/debug/Makefile b/drivers/debug/Makefile
+> new file mode 100644
+> index 000000000000..cc14dea250e3
+> --- /dev/null
+> +++ b/drivers/debug/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_DRIVER_KMEMDUMP) += kmemdump.o
+> diff --git a/drivers/debug/kmemdump.c b/drivers/debug/kmemdump.c
+> new file mode 100644
+> index 000000000000..a685c0863e25
+> --- /dev/null
+> +++ b/drivers/debug/kmemdump.c
+> @@ -0,0 +1,185 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/device.h>
+> +#include <linux/errno.h>
+> +#include <linux/module.h>
+> +#include <linux/kmemdump.h>
+> +#include <linux/idr.h>
+> +
+> +#define MAX_ZONES 512
+
+Why is this 512?
+
+Seems this depend on the backend, in which case 512 is unlikely to be
+the choosen limit.
+
+> +
+> +static struct kmemdump_backend *backend;
+> +static DEFINE_IDR(kmemdump_idr);
+> +static DEFINE_MUTEX(kmemdump_lock);
+> +static LIST_HEAD(kmemdump_list);
+> +
+> +/**
+> + * kmemdump_register() - Register region into kmemdump.
+> + * @handle: string of maximum 8 chars that identifies this region
+> + * @zone: pointer to the zone of memory
+> + * @size: region size
+> + *
+> + * Return: On success, it returns an allocated unique id that can be used
+> + *	at a later point to identify the region. On failure, it returns
+> + *	negative error value.
+
+You can say this more succinctly, something like:
+
+Return: "unique id for the zone, or negative errno on failure"
+
+> + */
+> +int kmemdump_register(char *handle, void *zone, size_t size)
+> +{
+> +	struct kmemdump_zone *z = kzalloc(sizeof(*z), GFP_KERNEL);
+> +	int id;
+> +
+> +	if (!z)
+> +		return -ENOMEM;
+> +
+> +	mutex_lock(&kmemdump_lock);
+> +
+> +	id = idr_alloc_cyclic(&kmemdump_idr, z, 0, MAX_ZONES, GFP_KERNEL);
+> +	if (id < 0) {
+> +		mutex_unlock(&kmemdump_lock);
+> +		return id;
+
+A goto out_unlock; seems reasonable here and below.
+
+And you're leaking 'z'
+
+> +	}
+> +
+> +	if (!backend)
+> +		pr_debug("kmemdump backend not available yet, waiting...\n");
+
+"waiting" tells me that we're waiting here, but you're "deferring".
+
+> +
+> +	z->zone = zone;
+> +	z->size = size;
+> +	z->id = id;
+> +
+> +	if (handle)
+> +		strscpy(z->handle, handle, 8);
+
+Isn't the 8 optional, given that z->handle is a statically sized array?
+
+> +
+> +	if (backend) {
+> +		int ret;
+> +
+> +		ret = backend->register_region(id, handle, zone, size);
+> +		if (ret) {
+> +			mutex_unlock(&kmemdump_lock);
+> +			return ret;
+> +		}
+> +		z->registered = true;
+> +	}
+> +
+> +	mutex_unlock(&kmemdump_lock);
+> +	return id;
+> +}
+> +EXPORT_SYMBOL_GPL(kmemdump_register);
+> +
+> +/**
+> + * kmemdump_unregister() - Unregister region from kmemdump.
+> + * @id: unique id that was returned when this region was successfully
+> + *	registered initially.
+> + *
+> + * Return: None
+> + */
+> +void kmemdump_unregister(int id)
+> +{
+> +	struct kmemdump_zone *z;
+> +
+> +	mutex_lock(&kmemdump_lock);
+> +
+> +	z = idr_find(&kmemdump_idr, id);
+> +	if (!z)
+> +		return;
+
+You forgot to unlock &kmemdump_lock.
+
+> +	if (z->registered && backend)
+> +		backend->unregister_region(z->id);
+> +
+> +	idr_remove(&kmemdump_idr, id);
+> +	kfree(z);
+> +
+> +	mutex_unlock(&kmemdump_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(kmemdump_unregister);
+> +
+> +static int kmemdump_register_fn(int id, void *p, void *data)
+> +{
+> +	struct kmemdump_zone *z = p;
+> +	int ret;
+> +
+> +	if (z->registered)
+> +		return 0;
+> +
+> +	ret = backend->register_region(z->id, z->handle, z->zone, z->size);
+> +	if (ret)
+> +		return ret;
+> +	z->registered = true;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * kmemdump_register_backend() - Register a backend into kmemdump.
+> + * Only one backend is supported at a time.
+> + * @be: Pointer to a driver allocated backend. This backend must have
+> + *	two callbacks for registering and deregistering a zone from the
+> + *	backend.
+> + *
+> + * Return: On success, it returns 0, negative error value otherwise.
+> + */
+> +int kmemdump_register_backend(struct kmemdump_backend *be)
+> +{
+> +	mutex_lock(&kmemdump_lock);
+> +
+> +	if (backend)
+> +		return -EALREADY;
+
+unlock
+
+> +
+> +	if (!be || !be->register_region || !be->unregister_region)
+> +		return -EINVAL;
+
+unlock
+
+
+Although neither one of these cases actually need to be handled under
+the lock.
+
+> +
+> +	backend = be;
+> +	pr_info("kmemdump backend %s registered successfully.\n",
+
+pr_debug() is probably enough.
+
+> +		backend->name);
+> +
+> +	/* Try to call the backend for all previously requested zones */
+> +	idr_for_each(&kmemdump_idr, kmemdump_register_fn, NULL);
+> +
+> +	mutex_unlock(&kmemdump_lock);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(kmemdump_register_backend);
+> +
+> +static int kmemdump_unregister_fn(int id, void *p, void *data)
+> +{
+> +	int ret;
+> +	struct kmemdump_zone *z = p;
+> +
+> +	if (!z->registered)
+> +		return 0;
+> +
+> +	ret = backend->unregister_region(z->id);
+> +	if (ret)
+> +		return ret;
+> +	z->registered = false;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * kmemdump_register_backend() - Unregister the backend from kmemdump.
+> + * Only one backend is supported at a time.
+> + * Before deregistering, this will call the backend to unregister all the
+> + * previously registered zones.
+
+These three lines seems more suitable below the argument definitions.
+
+> + * @be: Pointer to a driver allocated backend. This backend must match
+> + *	the initially registered backend.
+> + *
+> + * Return: None
+> + */
+> +void kmemdump_unregister_backend(struct kmemdump_backend *be)
+> +{
+> +	mutex_lock(&kmemdump_lock);
+> +
+> +	if (backend != be) {
+> +		mutex_unlock(&kmemdump_lock);
+> +		return;
+> +	}
+> +
+> +	/* Try to call the backend for all previously requested zones */
+> +	idr_for_each(&kmemdump_idr, kmemdump_unregister_fn, NULL);
+> +
+> +	backend = NULL;
+> +	pr_info("kmemdump backend %s removed successfully.\n", be->name);
+
+pr_debug()
+
+> +
+> +	mutex_unlock(&kmemdump_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(kmemdump_unregister_backend);
+> diff --git a/include/linux/kmemdump.h b/include/linux/kmemdump.h
+> new file mode 100644
+> index 000000000000..b55b15c295ac
+> --- /dev/null
+> +++ b/include/linux/kmemdump.h
+> @@ -0,0 +1,52 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef _KMEMDUMP_H
+> +#define _KMEMDUMP_H
+> +
+> +#define KMEMDUMP_ZONE_MAX_HANDLE 8
+> +/**
+> + * struct kmemdump_zone - region mark zone information
+> + * @id: unique id for this zone
+> + * @zone: pointer to the memory area for this zone
+> + * @size: size of the memory area of this zone
+> + * @registered: bool indicating whether this zone is registered into the
+> + *	backend or not.
+> + * @handle: a string representing this region
+> + */
+> +struct kmemdump_zone {
+
+It seems this is the internal-only representation of the zones and isn't
+part of the API (in either direction). Better move it into the
+implementation.
+
+> +	int id;
+> +	void *zone;
+> +	size_t size;
+> +	bool registered;
+> +	char handle[KMEMDUMP_ZONE_MAX_HANDLE];
+> +};
+> +
+> +#define KMEMDUMP_BACKEND_MAX_NAME 128
+> +/**
+> + * struct kmemdump_backend - region mark backend information
+> + * @name: the name of the backend
+> + * @register_region: callback to register region in the backend
+> + * @unregister_region: callback to unregister region in the backend
+> + */
+> +struct kmemdump_backend {
+> +	char name[KMEMDUMP_BACKEND_MAX_NAME];
+> +	int (*register_region)(unsigned int id, char *, void *, size_t);
+> +	int (*unregister_region)(unsigned int id);
+> +};
+> +
+> +#ifdef CONFIG_DRIVER_KMEMDUMP
+> +int kmemdump_register(char *handle, void *zone, size_t size);
+> +void kmemdump_unregister(int id);
+> +#else
+> +static inline int kmemdump_register(char *handle, void *area, size_t size)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void kmemdump_unregister(int id)
+> +{
+> +}
+> +#endif
+> +
+> +int kmemdump_register_backend(struct kmemdump_backend *backend);
+> +void kmemdump_unregister_backend(struct kmemdump_backend *backend);
+
+These two functions are defined in kmemdump.c which is only built if
+CONFIG_DRIVER_KMEMDUMP=y, so shouldn't they be defined under the guard
+as well?
 
 Regards,
-Inochi
+Bjorn
+
+> +#endif
+> -- 
+> 2.43.0
+> 
 
