@@ -1,82 +1,139 @@
-Return-Path: <linux-kernel+bounces-641485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EEBAB126B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B40FAB1277
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BBE9E1DE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07094A6310
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483B428ECE9;
-	Fri,  9 May 2025 11:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9C229008F;
+	Fri,  9 May 2025 11:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+TU53PS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0pp0+mq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DC97E1;
-	Fri,  9 May 2025 11:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5428FFD9;
+	Fri,  9 May 2025 11:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746791005; cv=none; b=rekryA8rKfGg2Am9jvhoe+KJwdAnvSGjdJnzi8+mYbyB8rumegylBq66/htZNQgoDRBn1jJMHLr3ePxofmoSkSqrfK1uPQL0eAvP1mZPynTvLHzA2j49KHa7JJvS3rFNe+BM+Xtnn1SNOIU1HS+bGGjMTxiUeERtcR4BVt40aJE=
+	t=1746791173; cv=none; b=JV/pusjSo2aodJMDCY0ygiJoVX+Rt1ivU4Q/kirmQ79RIPuN8GNE8RxdtXE0rlIc07DBHqhwZEaU7kP2W9jrIHQr8kLYJdx49cOg1GxgChND6ETm0CyyxP+xNg212b8eCYF6vB+rkdP3ONrJsJQf3mdWkUIzN0P4EWekurCyjlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746791005; c=relaxed/simple;
-	bh=pXq8xRM3r9Lvv1wVFngQCSXL1x5RF4IQd+aJrNn6jdM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AG7Of9zl+mmX0jhN2K6mwsVO0BZuffc42R4Lt6sAjoptxGRKo6DiQ+sx5rQQGQbnnHmZ0NvnzVQUNV1xTCFVezsnlOaNroEp+88vpnkrfNi+YpIF+OGtHT1W53lshurWLuPVt7nfiasqPIst3anOMSwBm0U1RHYD1Q2BvGZ1X7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+TU53PS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 828CDC4CEE4;
-	Fri,  9 May 2025 11:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746791005;
-	bh=pXq8xRM3r9Lvv1wVFngQCSXL1x5RF4IQd+aJrNn6jdM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=j+TU53PSfUr9Y0hMZ6P00HijLGw6ENEFXNrBaZ9/0HKKceFbITvBcUPvppuXJom7P
-	 Swlrgu1NGa3oir44B0NVpTlYxmOgzqdbPKSTrMnXozfDsqBO4BiGTRg5lKc7LjSbBg
-	 LFn7nSXyA3V+SZMxMtxrSfv+QYAL2h3LGpsTuPMBBKTLMKpt/vSmK3V0CzeG3cNSNN
-	 8T3pgh7eh5t9x8KfcOpaKb1XnKfOhKLi+nzX/dQGdEnPAFb8qgfGhUHs/GAlycTzmr
-	 m3HRTwjNANKAfng79fxTH5hOJ9iIoPg3xpnTqD1+lLPQT2GTHYbjg933P7iY+eGEMg
-	 lHnIZBZtbP1fA==
-From: Carlos Maiolino <cem@kernel.org>
-To: chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, 
- osandov@fb.com, john.g.garry@oracle.com, Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- wozizhi@huawei.com, yangerkun@huawei.com, leo.lilong@huawei.com
-In-Reply-To: <20250506011540.285147-1-wozizhi@huaweicloud.com>
-References: <20250506011540.285147-1-wozizhi@huaweicloud.com>
-Subject: Re: [PATCH] xfs: Remove deprecated xfs_bufd sysctl parameters
-Message-Id: <174679100223.556944.12054181296984574578.b4-ty@kernel.org>
-Date: Fri, 09 May 2025 13:43:22 +0200
+	s=arc-20240116; t=1746791173; c=relaxed/simple;
+	bh=SQkxBRiOnv36QIXTxodgUMy2H7LsOL+7k7SNq2aq4AA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3QxvE3phjxX/dDrxolhaPQf9yM/KCR7vLh5/6EtHK6b7tdmgC+HLYOtPFftvZIzlbp1MVhC2xmssvyVATsM1/N1Z4pCoHPt2N6ZdEggQwZOFPu+6OC9y100XevQDqbKTBeufo+ZQ+GdfThiVpG3Bg0nleOm4z23xfaq9gNWxEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0pp0+mq; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746791172; x=1778327172;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SQkxBRiOnv36QIXTxodgUMy2H7LsOL+7k7SNq2aq4AA=;
+  b=B0pp0+mqumq49Z72cQmahfiBvCMkxhK/hNo6FF/3O8VEPfcMnrrrTmHL
+   bl+V4dVE6mJGHSDY4sFFs3WA2kBMxuyJ87pdkYbvXQ4iLUxckehCah/e8
+   2kHXhiRkgGvSiwmdeG57buTCZkDUumhCWMhxcNsvI1PSOElVST6i3JuVo
+   kiIup89OxRF9SnvJXlJUlnpz+S3Uwrs4EGXHuxJ4lKJSA4iupI9Mfh8F5
+   z0yLBKdPnibk73IjwS4YZ2FY8v2f6q7Ef/SI3ShTb+tgv61hlxzHdMfZr
+   LxZe4cgSprkexNehBqz+B5DIqyG3kG7Ve59mtrdC86DYDEKRANQBWAT/t
+   g==;
+X-CSE-ConnectionGUID: zf+DzwbSSt+KRmzjh64gbw==
+X-CSE-MsgGUID: ibWD3MAXQJqwiJpWxsqvsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48774461"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="48774461"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 04:46:12 -0700
+X-CSE-ConnectionGUID: tSopib0KRZm1vWrW42CKjw==
+X-CSE-MsgGUID: hEhG9rRhT3+uXvkH80Z+bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="141816422"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 09 May 2025 04:46:07 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDMB2-000C1r-1U;
+	Fri, 09 May 2025 11:46:04 +0000
+Date: Fri, 9 May 2025 19:45:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7405: add ad7405 driver
+Message-ID: <202505091958.k0P7xNyC-lkp@intel.com>
+References: <20250508123107.3797042-5-pop.ioan-daniel@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508123107.3797042-5-pop.ioan-daniel@analog.com>
 
-On Tue, 06 May 2025 09:15:40 +0800, Zizhi Wo wrote:
-> Commit 64af7a6ea5a4 ("xfs: remove deprecated sysctls") removed the
-> deprecated xfsbufd-related sysctl interface, but forgot to delete the
-> corresponding parameters: "xfs_buf_timer" and "xfs_buf_age".
-> 
-> This patch removes those parameters and makes no other changes.
-> 
-> 
-> [...]
+Hi Pop,
 
-Applied to for-next, thanks!
+kernel test robot noticed the following build warnings:
 
-[1/1] xfs: Remove deprecated xfs_bufd sysctl parameters
-      commit: 92926c447c606dcf2fb6d0c3e32491775f4eb123
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.15-rc5 next-20250508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
+url:    https://github.com/intel-lab-lkp/linux/commits/Pop-Ioan-Daniel/iio-backend-update-iio_backend_oversampling_ratio_set/20250508-203339
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250508123107.3797042-5-pop.ioan-daniel%40analog.com
+patch subject: [PATCH v2 4/4] iio: adc: ad7405: add ad7405 driver
+config: m68k-randconfig-r123-20250509 (https://download.01.org/0day-ci/archive/20250509/202505091958.k0P7xNyC-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20250509/202505091958.k0P7xNyC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505091958.k0P7xNyC-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/adc/ad7405.c:19:20: sparse: sparse: symbol 'ad7405_dec_rates' was not declared. Should it be static?
+
+vim +/ad7405_dec_rates +19 drivers/iio/adc/ad7405.c
+
+    18	
+  > 19	const unsigned int ad7405_dec_rates[] = {
+    20		4096, 2048, 1024, 512, 256, 128, 64, 32,
+    21	};
+    22	
+
 -- 
-Carlos Maiolino <cem@kernel.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
