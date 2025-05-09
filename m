@@ -1,208 +1,156 @@
-Return-Path: <linux-kernel+bounces-641738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25954AB153E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9620AAB1550
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A602C1893F29
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:32:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC2116411E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5518C291893;
-	Fri,  9 May 2025 13:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D875F292094;
+	Fri,  9 May 2025 13:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aUWlu45A"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EnWyqmwT"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CD521E0BA
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D3C153BD9
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797508; cv=none; b=h4b+7HPCBJqZA7I8QLDO0KSlkFJInEQpy1rxWhbkUipPNCKT0KuV3KeJKTQfeAOioUOyEAYVX+6HoWOBHKeGDafzL9qYTimwrsdsIeY4vsVAUpPJocB0BKJ83ypGQ3apLCmD/bG3NKNTIP82QpCPLVQ6V7D8X43GwRq+oWEnlfg=
+	t=1746797616; cv=none; b=sXt7hrIiSpvz8oaaWuD6erJdf+VnB0ybgdA1lm54AMWqFBaMEUJQp52y4YILy/JxE9nhpsPWP6G5KVNOWgUmab6iWSY9pOAojS92fl4ZJ+xU6wZWRuYW4MyTOk0RS4Hm+AIN1y4if9NYWLoi5Gb+bvteZ4ajQVi4Z1Fr81op3ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797508; c=relaxed/simple;
-	bh=QpUpPbG5svYT68qq1x+MaBeqBT1A0NlqpUGMuN3j95I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NbFYZqhOcCFeVs4uqgjNFMI8R48UnWe7COoLCDt1zcUNDKxVx+rOqzCL0tCMoUU4/x5kaE1mnkUSDVsaOSXB6iFCYikK+Pqt6ROqD6tVH4bVyaC7VSh15LDbMspAJXFHtApZ7hvPsLxV3ORQa1yYRHTd6SM5N0Ax7D3iEztUAVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aUWlu45A; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549BDqmG010675
-	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 13:31:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H/mFBQYhKgbj0hFzRcljV/UBoTZzDtA2j70YoMKBcnw=; b=aUWlu45AWReBAs8C
-	NkJlMLyVy0N3RHeudCpffh6A38sQTXir03AJYx50K4JnnfRLz2vjhg0MchQzZtLo
-	HBY1bP44z5PVsMkUwgLNjrc886lTsxS/1O949AVP+gTkMcgGuWM8N1/qU6lwseBA
-	zjYW8Old6otzLv9udA7d9Nn+hUZwYSS4T+I9uRr3tVzd2LUOU85LtWlsnJxkY7ua
-	/SrYID9eofFuMZBWI+mXf9I6AB1Tawd7OgjYOjCVRED/LEQdvTGSiMLeKxTwNb+h
-	i0aWvND4KUBRsV5UjeGsfFtSBZ45RewMlW8X5C0YSKlfjWtJd4TDMbZob2NfpApo
-	uzHJaQ==
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnpmmt1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 13:31:46 +0000 (GMT)
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3da720e0c93so46621105ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:31:46 -0700 (PDT)
+	s=arc-20240116; t=1746797616; c=relaxed/simple;
+	bh=TlkSYuqs+traWUaA3K1HwpXrmTQmXOWxUyVb6ntrqxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSDizgHuhSxbOcgYSSjcPrjOPZ3oDdE/3ClGJJQJno8nCpvelSlUKBODA9d0gYClYFNkhDlEDwyzsc6BrbareWDOOm6b65+RFtwuteC3VlHW2OI2HqnickokaFscgp+mfodDUJW9jIYb35q95qG6FKqqNZM4AhdBFLgNS8uNvVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EnWyqmwT; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54d3ee30af1so1517582e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 06:33:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746797612; x=1747402412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KyTEj+ygo5+Kkz2DMrVi7Q4tbRBWdTGHuOvCJaygYnA=;
+        b=EnWyqmwTTH7t/lJXqovsbpnUSYBu1TblFw2aQjlPtSGPusPIJaAQ6aMbf5Qq8nGKRu
+         PC+YRHDTqN4i8gdl3szK2ghVP51R7nXzPzu+L0MjnXLdCXovoIHe9otRhdH1P31mw/5z
+         g5JYyllS/bUYNTlmRjX6WBBEk1yYh/QzMZi/tvOX4dj8uBtqCAdkSheA0Gn9hd5JHO1j
+         GcZO/njv1AG51XHRLg6gWHdjHmE6Ki2YvXbWtDlbwIl0XQH+juBAd7G5E30wz5nVEFlK
+         YU3Us9E32Mkn8d1vhUKjsjThXixJOKMqMfCBWf9nEWdVToSZfGUeqBDABCEZL19Yr1FX
+         joVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746797488; x=1747402288;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/mFBQYhKgbj0hFzRcljV/UBoTZzDtA2j70YoMKBcnw=;
-        b=X9LT7qT6egDKMTKkfbMctr98GTu568T+Z5uuZAqCYf7uZomKDtN06FmBQWQPUz6Eur
-         OSuyTM5PYKETExZZP9BawudmVLW/M0sKzPEyILrHJKUB1zM9oA2+E0897Y3dgT5cRvoV
-         StaKETcSHryWBbHTV9/P3j0qmBdZRRXmg6YmghVJM9oDA6K9awGbuwS8BOIgMrTwsWz0
-         1OpHurkX8rtNJfTAWoPtLODb5XAMzzeakrKpIAigJlpAN5nUQ1T5sNYkNh7uBfO5owVh
-         WOUjC1q63iAGXv5Z17dVR94TUvYv46CowPrLC3m+H0+ut0yViooOsbxORebLhk8ketYE
-         VLKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtUf59ZBif92M/w7JX9SbGoKT6KJYQNqp/scReF413XwsjFVrNq4+mWpnaVSfYyhaq74BBQdqxTHH+ZRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx47e3BKfmnerGkhC5wvzwS0RwA3fygLrCDkSBkNoItn72ubpG7
-	SygcItXdKK5AkidIwbSFD3EIJ1Q6x4LDUICajZVAzM3WOaFo5uqjQ2veoaTIKPwPshrqeTJ71et
-	0ayKakhBY01BalTeFKyI1BTwEXE+3IeDCK8qXnz3yxtQ5VRWcYMF3P4fQlHC22Sw=
-X-Gm-Gg: ASbGncshz/6w8uFPPcxCYsPLYs8KHAJpY+Jb7mcO6hdX5CPgOosSxoH6qM0i1xq8AtU
-	4IaC4JnU/xGBEMm+w9BljykD0RXDsOv7DD3fl2Lgdoc2hvteY6JugywTqzXAUHgRfueJ+iod7bM
-	6DE+8j+EQ1AH4TaH9YwS4qI35h4jEi9k60ate78TjvTdqN/xYrv8IOmtuzktIgWi4Ztj4Is8PkS
-	q8aQRfMWGtDbvp8DEaRsRZihEaKl8fTHuRSHiq2W/oxKMRiVvL0tl4A56HpbL/3nkIkQvjmtwsT
-	PP7Lb7dLS8EA34PL5ZdCAjCySyhHgSWf6uF2Dg==
-X-Received: by 2002:a05:6e02:214b:b0:3d9:2aa3:fe2e with SMTP id e9e14a558f8ab-3da7e1eefa7mr40722085ab.10.1746797488427;
-        Fri, 09 May 2025 06:31:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKXDET+rSLEQgjqZr+KTAcq1z75SyEGSZHd2zD6MhrKtJtI7oJokPFT73x1xhjijYU4XXf9g==
-X-Received: by 2002:a05:6e02:214b:b0:3d9:2aa3:fe2e with SMTP id e9e14a558f8ab-3da7e1eefa7mr40721625ab.10.1746797488019;
-        Fri, 09 May 2025 06:31:28 -0700 (PDT)
-Received: from [192.168.68.106] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a1f58f2fe6sm3347590f8f.58.2025.05.09.06.31.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 06:31:27 -0700 (PDT)
-Message-ID: <90a1ce3e-140b-4076-b34d-9545d1b0c568@oss.qualcomm.com>
-Date: Fri, 9 May 2025 14:31:26 +0100
+        d=1e100.net; s=20230601; t=1746797612; x=1747402412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KyTEj+ygo5+Kkz2DMrVi7Q4tbRBWdTGHuOvCJaygYnA=;
+        b=h8yUbLu5JWtUhuI/dHlKjuaeEbI231td+3aMZB9KxWiZCEoRqXnP53/0u0jYMxe/Gb
+         rICkjxlYpC0sIKK3A/W5zpYaxUYebpWvRS0HLmQ4IHVsxoFa2lvefL9/BPABsILIq1qa
+         FBuybOZm5lw62nhbMMu4rlru31aBmr8uOJAHoUd/16JHHznxHl6dSDJweT2h6Rt9diKT
+         gSbTl6zs91u+DVj8NOg5dSWWRXmMUwotebRz4v1LcvZn/iMpG+c3sjdGkZoCetFtHil/
+         TQuA9CfCjWNuUNGf92WV3JhgldtsWnIDSUriFK+ST12VV7nsodQcJkA66zgIpfT4wERk
+         6ZFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWBIwNtdwyJniuuvM+gYeC7d+pYUZpEItuC9r8ujN8WzUIs7tNLIB4o7uWlCWPRB7V/AknXJJWIOONmbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTiS5G6Pvlzuc5xaYKrxvsjzT0g1P25u6lY1xu4e6ICqyAYYKd
+	ZmqpFnANBpX+Wf0Ob9KM+lYmGCzTq5Tu+Cgd7q0pam9T64jW0FfJNGToom29eQ+NUUn5Mbx/1Sc
+	8iiihEN0ilxR0hakhfLeTQTd63EcDOd5WRAorYQ==
+X-Gm-Gg: ASbGncu2OHK/U6peXEPwDqxcsrloGfbYybLAKmIdlfyVoP3peSlE6UjN1pWjRaB5BvY
+	rYZxSygUbXYJmo4nYzQb3zbu3hipNB4KQljC/di5G8vRnca2foa+7TsCHId4HRV913Ohk/Xb0c6
+	FvcGWXRaNjcSVZN8AAaLIIhRgTtQSIVhWIt84Vc2RRB5HCc+1CNx/j3A==
+X-Google-Smtp-Source: AGHT+IH+RK7/XEa6JiT7pqhmb3oGoQVrhP9K1d8JyHBGzCVXdWspuBYjMtak9HjjuGq6re9lqeqvC3BDvp4KpIO5YTk=
+X-Received: by 2002:a05:651c:a11:b0:30c:160b:c75f with SMTP id
+ 38308e7fff4ca-326c46b1a39mr15861731fa.36.1746797612514; Fri, 09 May 2025
+ 06:33:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8750: Add adsp fastrpc support
-To: Alexey Klimov <alexey.klimov@linaro.org>, ekansh.gupta@oss.qualcomm.com,
-        linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, srini@kernel.org,
-        quic_ekangupt@quicinc.com, krzysztof.kozlowski@linaro.org
-References: <20250502011539.739937-1-alexey.klimov@linaro.org>
- <bf9291e1-bdad-4b4d-b527-b21963970902@oss.qualcomm.com>
- <D9RNPEB01S78.24ONMK7M7HHSK@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <D9RNPEB01S78.24ONMK7M7HHSK@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=TpjmhCXh c=1 sm=1 tr=0 ts=681e03c2 cx=c_pps
- a=vy3nvQW9C2dqy/lMnN3IYg==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=kV5Bgjj1i6tpFY9TKI8A:9 a=QEXdDO2ut3YA:10
- a=mHQ74H5e8mo-RpSg_uaF:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: lfA-n7lff-w24WbwmoeQhGPDkLzsm9oN
-X-Proofpoint-GUID: lfA-n7lff-w24WbwmoeQhGPDkLzsm9oN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDEzMiBTYWx0ZWRfX4WR6b5xpw1V+
- 6N4XghlyWPnwFlcrepxlBC5V4NJh0/mxYB4b9y/jcd+yykXs6395RwSF1Mc1TsGHTLQOOBzbbkg
- 363uILBFte40FltzTPODgKeLpGgz3ZizbDsxxniQRUNf1kOMlAYoRvXO5v08VkoYwhFaMA2JuFr
- 7LiECj1iQ2i8R6An/UUsnQBkMjuFQPOWfSXCBDzDiF21woaXUV7QhiVQHxImUnlnTi9iW2OplWR
- H81RQilxyqYLbYMQt3FkKBxpnmt2krYBBy9k8tQUMj4k2fH0MM/EMrSnZay5V31FCKUCpVyHqxm
- UZ1QqiXfoWKkrbI/q9XO6si5M78sKQQDH0I07G2vtw2ZVigSgMVd9vSeGWNdqghiQjr9YzFMrKJ
- e9RaO8O6dVLIXs0bY3PIxPnES8ZB+qIxFJAPJJoId6liPJQ1sEhbGFB3TatfL9CkDzoIA3s/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_05,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 suspectscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 mlxscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505090132
+References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
+ <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
+ <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com>
+ <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com> <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
+ <2f02284d-2922-4bc3-ab2a-8848023019b7@bootlin.com> <CAHp75VdZuqP_ga_i1=kERQbscu55GFShPK_AhYF1jigoBz8wpg@mail.gmail.com>
+In-Reply-To: <CAHp75VdZuqP_ga_i1=kERQbscu55GFShPK_AhYF1jigoBz8wpg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 9 May 2025 15:33:21 +0200
+X-Gm-Features: ATxdqUF1PrMyfdLebwhfVKGAVlYVaBvsllsiAwoSwuvvCaSGYfX2F5YWtmxv7uk
+Message-ID: <CAMRc=MdBwRMfpXG-bAWTAaiD9E7sRzr5RTfMWJ-2wAryJ-EcKQ@mail.gmail.com>
+Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
+ gpio_desc in gpiochip_fwd
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Thomas Richard <thomas.richard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/9/25 14:16, Alexey Klimov wrote:
-> On Fri May 2, 2025 at 11:51 AM BST, Srinivas Kandagatla wrote:
->> On 5/2/25 02:15, Alexey Klimov wrote:
->>> While at this, also add required memory region for fastrpc.
->>>
->>> Tested on sm8750-mtp device with adsprpdcd.
->>>
->>> Cc: Ekansh Gupta <quic_ekangupt@quicinc.com>
->>> Cc: Srinivas Kandagatla <srini@kernel.org>
->>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 70 ++++++++++++++++++++++++++++
->>>  1 file changed, 70 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> index 149d2ed17641..48ee66125a89 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> @@ -7,6 +7,7 @@
->>>  #include <dt-bindings/clock/qcom,sm8750-gcc.h>
->>>  #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
->>>  #include <dt-bindings/dma/qcom-gpi.h>
->>> +#include <dt-bindings/firmware/qcom,scm.h>
->>>  #include <dt-bindings/interconnect/qcom,icc.h>
->>>  #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
->>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> @@ -523,6 +524,14 @@ llcc_lpi_mem: llcc-lpi@ff800000 {
->>>  			reg = <0x0 0xff800000 0x0 0x800000>;
->>>  			no-map;
->>>  		};
->>> +
->>> +		adsp_rpc_remote_heap_mem: adsp-rpc-remote-heap {
->>> +			compatible = "shared-dma-pool";
->>> +			alloc-ranges = <0x0 0x00000000 0x0 0xffffffff>;
->>> +			alignment = <0x0 0x400000>;
->>> +			size = <0x0 0xc00000>;
->>> +			reusable;
->>> +		};
->>>  	};
->>>  
->>>  	smp2p-adsp {
->>> @@ -2237,6 +2246,67 @@ q6prmcc: clock-controller {
->>>  						};
->>>  					};
->>>  				};
->>> +
->>> +				fastrpc {
->>> +					compatible = "qcom,fastrpc";
->>> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
->>> +					label = "adsp";
->>> +					memory-region = <&adsp_rpc_remote_heap_mem>;
->>> +					qcom,vmids = <QCOM_SCM_VMID_LPASS
->>> +						      QCOM_SCM_VMID_ADSP_HEAP>;
->>> +					qcom,non-secure-domain;
->>
->> Any reason why we what to mark adsp as non-secure domain by default?
-> 
-> No particular reason. That's what we went with on other platforms, so this just follows
-> the same. If we need to update this flag to secure then most likely that should be done
-> for some other platforms as well.
-> The only thing I know that adsprpcd + audio pd works with non-secure flag.
-> I can try to re-test with secure flag.
-> 
-I know that this is loosely enforced in the current state.
-We want adsp to be always in secure mode as it will have access to some
-of the IP blocks inside the DSP other than just hexagon compute.
+On Wed, May 7, 2025 at 5:24=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Wed, May 7, 2025 at 4:54=E2=80=AFPM Thomas Richard
+> <thomas.richard@bootlin.com> wrote:
+> > On 5/7/25 15:24, Andy Shevchenko wrote:
+> > > On Wed, May 7, 2025 at 1:10=E2=80=AFPM Thomas Richard
+> > > <thomas.richard@bootlin.com> wrote:
+> > >> On 5/7/25 08:34, Andy Shevchenko wrote:
+> > >>> On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
+> > >>> <thomas.richard@bootlin.com> wrote:
+>
+> ...
+>
+> > >>>> +       /*
+> > >>>> +        * get_direction() is called during gpiochip registration,=
+ return input
+> > >>>> +        * direction if there is no descriptor for the line.
+> > >>>> +        */
+> > >>>> +       if (!test_bit(offset, fwd->valid_mask))
+> > >>>> +               return GPIO_LINE_DIRECTION_IN;
+> > >>>
+> > >>> Can you remind me why we choose a valid return for invalid line? Fr=
+om
+> > >>> a pure code perspective this should return an error.
+> > >>
+> > >> I reproduced gpiolib behavior. During gpiochip registration, we get =
+the
+> > >> direction of all lines. In the case the line is not valid, it is mar=
+ked
+> > >> as input if direction_input operation exists, otherwise it is marked=
+ as
+> > >> output. [1]
+> > >>
+> > >> But in fact we could return an error and the core will mark the line=
+ as
+> > >> input. Maybe ENODEV ?
+> > >
+> > > I am fine with this error code, but do we have similar cases already
+> > > in the kernel? Do they use the same or different error code(s)?
+> >
+> > I dumped all get_direction() operations in drivers/gpio and
+> > drivers/pinctrl and returned values are:
+> > - GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN (make sense).
+> > - -EINVAL (for example [1]).
+> > - -EBADE in gpiochip_get_direction() [2].
+> > - regmap_read() return code.
+> >
+> > But from my point of view -EINVAL and -EBADE do not match our case.
+>
+> Hmm... I believe we need a GPIO maintainer to have a look at this.
+>
 
+I went with -EBADE in GPIO core to indicate that the underlying driver
+borked and returned an invalid value. I'm not sure if this is the
+right one here. I'm not against using -ENODEV.
 
-> Ekansh, do we have any preference here regarding this?
-
-@Ekansh, we should provide that clarity in dt bindings.
-
---srini
-> 
-> Best regards,
-> Alexey
-
+Bart
 
