@@ -1,64 +1,76 @@
-Return-Path: <linux-kernel+bounces-642059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFF2AB1A30
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 625F9AB1A39
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4657216C18F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:14:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DCC170DE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 16:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9662356DA;
-	Fri,  9 May 2025 16:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8721114901B;
+	Fri,  9 May 2025 16:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wi2eOpED"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdYlK9AE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0E91EEF9;
-	Fri,  9 May 2025 16:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC50021ABDB;
+	Fri,  9 May 2025 16:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807229; cv=none; b=dSDjTCzxpmCGnStXlm3XUhZnUKm1wrvmdA1vRXQN1l+ahoIpJQqesYujj3IHQ0SDvarnFLbz7okZC3BKTALoAfx0D9x2NowlP8SB+wFFjLFkc4ds7ddwul5BltoDrKDYbtR70rV+69VaHbE9khlIw031nHmNNwyE+C4gDaNr7r0=
+	t=1746807299; cv=none; b=uW6WuDrrsh+MD2QpdxjqS4tolC2uCzwN+XAeaeorTHm7M1DerXA+/ltKHjGYWEEDlSWqvkCydspuRSVWTRhL8II2Sg8UEEZjNDWNpjKjqr5zXKGu17nS02NriNgvNqVuozGYhsLry9sf1k46iCaSXmf4dXsLSyskSbSIRTMD4qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807229; c=relaxed/simple;
-	bh=uFFdv/hSTyJmM0f7WK/XFsk1+vMgNlfUpcrghzEP2XE=;
+	s=arc-20240116; t=1746807299; c=relaxed/simple;
+	bh=qfGfA/lDYVUq9cNM/Ap9jQkrniTOHGXmbD9TLuuU7Xo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCplkAyDtmfy2JhHCz3q6TeCtIkOgSSjv8zEGMZevjavMNPjmCM+RTqCl2J1tRCTodtgB+k187mpkjjY1IkeGNN+kI0QPMxYFxBw0K2KAId0gbj9J/hn7BfNSGKcuPRBbGNsW5hB8Abtl9r8WVzOaiXRQG8AE+lLZoEdB/fO6Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wi2eOpED; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23388C4CEE4;
-	Fri,  9 May 2025 16:13:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftkd7CSJcmqgrx1h/F68oO2U3RyJZ/+5vDHzvMhnOQA9Ac9fVlB9oC5jaF2QWBT7gVRQ627JaFOF/xgQYTrI+xXNS/gpWRagrFRmVIdnK5bN1p3lbPldpbJaOe6FueDfaqSZ97hUDwAh8D3sZPdHagI4z6/yaSU4BqZgQjxUpK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdYlK9AE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE3DC4CEE4;
+	Fri,  9 May 2025 16:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807229;
-	bh=uFFdv/hSTyJmM0f7WK/XFsk1+vMgNlfUpcrghzEP2XE=;
+	s=k20201202; t=1746807299;
+	bh=qfGfA/lDYVUq9cNM/Ap9jQkrniTOHGXmbD9TLuuU7Xo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wi2eOpEDOyXzvkIhsnn6NHqrfcEmbeGXEIQxGP06AbyFg/9w52FzuVFmEtkHfPv6H
-	 5VtwnQEdkojBMjZsp0GqNcfFVJd01ZHPOyzNHL4Af363bJ5W+9x8FNRHtEOzb9Mzf3
-	 PzglM4ThFEKfd3wNua8iWe1ofWa9gay+WcN4iCcLHAskN/s6VLjwvJ84SGw7GRNMEI
-	 eyLBeBpNYr9S1GEuN7Lv40NzLZM6MiL3ExOw/EXTxXnH9aR3JsfkjhIpx1YdAmonjc
-	 K+v2fHcIwz9v7stgsf2iSmpxG0x84tBxx7WopbrxrnHH2Vnvht7W8NxYeV0Ptt7Vyp
-	 yFBh/VKdsV3xg==
-Date: Fri, 9 May 2025 11:13:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v8 1/2] dt-bindings: pwm: sophgo: add pwm for Sophgo
- CV1800 series SoC
-Message-ID: <20250509161347.GA3649553-robh@kernel.org>
-References: <20250509-pwm_sophgo-v8-0-cfaebeb8ee17@bootlin.com>
- <20250509-pwm_sophgo-v8-1-cfaebeb8ee17@bootlin.com>
+	b=QdYlK9AE99gS56xVvhOU7ONt2nkIOGIMqdB9kTlHA3NIs6oeGubEYqedbnZyI6y2y
+	 5kbil/ar47mJgy1Langth3DgdDGoxZT5ppDbFgl1lOc7a9jGXY0wbv91g6ruWgvOVB
+	 ZtnuPE9++KsxuckqLQLFogzCJEd6TB4rEc1WqGHHn20kls4UHTyot+8Qd/tyj4Kp++
+	 7/aA2vUqLqSSGMHRzjbaFgWkLoGdHY0sbzQ+MAaHK4EVuhpetkg79tcXCF/YfVHzPj
+	 mhpNtKZuLL6kLf0jZfE+jAw3NCwMg9R6QL4bZVGgW2eqy/LLcbLNkl5l/Q7nS0SgrF
+	 CIIaHPj4MP6Pw==
+Date: Fri, 9 May 2025 09:14:56 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-mm@kvack.org,
+	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 06/12] fork: mv threads-max into kernel/fork.c
+Message-ID: <aB4qAMaSedFvUXlp@bombadil.infradead.org>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-6-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,17 +79,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509-pwm_sophgo-v8-1-cfaebeb8ee17@bootlin.com>
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-6-d0ad83f5f4c3@kernel.org>
 
-On Fri, May 09, 2025 at 11:45:43AM +0200, Thomas Bonnefille wrote:
-> From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+On Fri, May 09, 2025 at 02:54:10PM +0200, Joel Granados wrote:
+> make sysctl_max_threads static as it no longer needs to be exported into
+> sysctl.c.
 > 
-> Add devicetree binding to describe the PWM for Sophgo CV1800 SoC.
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kernel/sysctl.c.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-As the sender, you have to add your S-o-b as well.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Rob
+ Luis
 
