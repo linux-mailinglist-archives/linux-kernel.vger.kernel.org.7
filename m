@@ -1,583 +1,262 @@
-Return-Path: <linux-kernel+bounces-641970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355D8AB18FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:40:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73F2AB1902
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 17:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06310A262B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:40:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1461BA4EAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC6E22F77E;
-	Fri,  9 May 2025 15:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8632F22F778;
+	Fri,  9 May 2025 15:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITCyaFlF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hB5hJo6F"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D96722FAD4;
-	Fri,  9 May 2025 15:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142715223
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746805222; cv=none; b=FdYASzx6xOAy8nDp/Fl8qmllCkAa81eazaFjOJh+xotCCrWOB8pzF+WGGJyLqbmZgJyHbGAJXapjRH+IjtwwJpuLeWxOZpdNP9v6xBJjn6AbT8UAKOsKsDgvryNaphQgFLjCe6M7n8WAcZWQ6ytnsKKEoWDlJkboQBRbqsLRsQk=
+	t=1746805268; cv=none; b=b9URIoC5KJH0yMGayOEotLVEaScTccpuTzyXEJia4j8LeCv6XNEUlI7EOirwAOiNyPyG6RI9C+V/+K+rTIBsifKTmWFR1p4lYBCuVA+ecZ1NdIosQSa7qAGfgw/coGmAGnUTXns0pcS6mOJKz3UhPHgXNIg5B5CvR9/dn3Z8AeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746805222; c=relaxed/simple;
-	bh=X7Y3Bk5TpW29HCt4LTRXWPnb2e2RwdeFAZ2KkehZVxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoGMBj5sgPXDuwsb8xuK+ulzRYaLea6dI1KEXpHE4Owpe/4SibGSWxZoDP9l0S6swwJEhL47FtfDFM3R5oQFZ1AONomim8tOlg5VYY8unkCgw3RhbAd+T7wu7eFnnuruREPR1R1zbA6qUw/iDeKUvRHbxueUj+8/Eb9ZdYNH9Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITCyaFlF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E22C4CEF5;
-	Fri,  9 May 2025 15:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746805221;
-	bh=X7Y3Bk5TpW29HCt4LTRXWPnb2e2RwdeFAZ2KkehZVxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ITCyaFlFKdntc/Z+eE3XUJ/zVMcMnk7fgcIiYV6jfd6D3d09AWugapb4lhXAbzRwi
-	 151Yyerk+Dc4XwGiAuXDgxiAJMyhfjSyZeaCxpzuadD5vgLnh2qcFnU6UZbxF2LwTb
-	 lBZBTuWCttjmFz/WMLV2hCku+SKtHiDnhJlSJwBzvSpBngn3B0ElJZHb450YF8Fhie
-	 e/iQiP0nelz6SYftu5ygz4O5OHuSUgthoPR9Yxe6SVW9wsW79z0SeqTWSPH9VzIRm6
-	 NWLCGprSk6lQqjp+f/LRrzm9l/mTQNd0exlxpIwL5fm2RWD+4MqGCFm1omxSJ0ARbl
-	 d5jupjdbUwGQQ==
-Date: Fri, 9 May 2025 17:40:14 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH v5 4/9] coredump: add coredump socket
-Message-ID: <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
-References: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
- <20250509-work-coredump-socket-v5-4-23c5b14df1bc@kernel.org>
+	s=arc-20240116; t=1746805268; c=relaxed/simple;
+	bh=8LVQA1kGsDH4xPMp3EaHebk+RPKOZ0f711LW4mB3xSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V7VF4zI6jtlVpKf/5Be/AI95Hn5LrQFZ8z2ETsE7Iqr8CQpB+yWmhX4GrnlJSF5NCoo+TRiMUH++GoX1Uf8gXUwyJH4DJi3CEigDRKuXmb3n3GNKDEYBhOxLK3j+0A7u1W37jwiy87FnaW/Bf5v1/2p53OxWxZP1ky/IYzKCJ/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hB5hJo6F; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 549DUACr029559;
+	Fri, 9 May 2025 15:40:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=pmSKL4
+	D4kH+Gt6bFEcGGXb0xIWjN2YDtb8WLtaVT54o=; b=hB5hJo6F5cVfibmDNrlQI6
+	TQ7WDbnoenMOKEEyxn/Q+QR4whVr7zkfPKYN7Wk5UYKfyk8SNROE9hrUiJDINcXW
+	a0kow/XgfLkl0GFUpNt2s8Yj0fRdJ6gg2A8q8mycT8afMSdj/mL9hJ4uOGsD0TKX
+	LvqySclbIPYmRi3iinBOcgwB6a16Id+5trrMExNF1umjjNxOd586OFr2wE7Y45Gg
+	LZAcL0eseuQ7V0SpWgZr7lA9qBhxyhK3u2MFw7LXTmBTogobQ9QcS9pm4PtSKDN/
+	qtS93tkUU2vpjWgrlS30iVrbnT4QLHI0f4Aj/vZ351o5kGpRVZUdVkaq1scpBxUw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46h6k0mak9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 May 2025 15:40:43 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 549FYoIJ009045;
+	Fri, 9 May 2025 15:40:43 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46h6k0mak4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 May 2025 15:40:43 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 549E1SUt014583;
+	Fri, 9 May 2025 15:40:42 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46dypm3wkb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 May 2025 15:40:42 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 549FefQS15598152
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 May 2025 15:40:41 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 99EBB58043;
+	Fri,  9 May 2025 15:40:41 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DAB9258053;
+	Fri,  9 May 2025 15:40:36 +0000 (GMT)
+Received: from [9.124.209.250] (unknown [9.124.209.250])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  9 May 2025 15:40:36 +0000 (GMT)
+Message-ID: <d19ad41c-069d-436d-8fea-a05188adcb0e@linux.ibm.com>
+Date: Fri, 9 May 2025 21:10:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="cvtza4xbbllnzmw3"
-Content-Disposition: inline
-In-Reply-To: <20250509-work-coredump-socket-v5-4-23c5b14df1bc@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] driver/base: Optimize memory block registration to
+ reduce boot time
+To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        Danilo Krummrich <dakr@kernel.org>,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com>
+ <aBdK2EIMYYRmmEwA@kernel.org>
+ <a1e0cddc-ed38-4f48-b028-f3ab5025c157@linux.ibm.com>
+ <188fbfba-afb4-4db7-bbba-7689a96be931@redhat.com>
+ <aBhoqpC4Jy-c-74p@localhost.localdomain>
+ <74c500dd-8d1c-4177-96c7-ddd51ca77306@redhat.com>
+ <aBhuZWpZ7ltMuOe0@kernel.org>
+ <8180a50d-eebe-4f9b-9ce8-d886654a992d@redhat.com>
+ <aBi8Iqp27jXLUWfs@kernel.org>
+ <78bc6a1b-164e-4925-a624-a271a4499364@redhat.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <78bc6a1b-164e-4925-a624-a271a4499364@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uZaB9WtL4eQ4mY4iz0NpmkauIXeMA1hl
+X-Proofpoint-ORIG-GUID: JBUuPV6qFmy1fGheTknIVlXLho2ryNpA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDE1NCBTYWx0ZWRfX9xQDvNYZD6SJ v7hiPtAHyzz301hFpLNdoQ1AXXZAvniOtN8bpFbXhWZsbMuu7EVhTBuHKnbBoGEnh5vIydBD/Z/ kJttl7zjbil7T1IT47kktq3J48jyu+U5iBWf8V06wMoORphcen00URkz1B2cGWJTn6Ng1BEvYsS
+ NFUloD8jbQzDV+F1i6q0q80mfCYO/LyAwBvux6M18wyTZ6IqwxXiVeoB8wgtwcf034N4mGgW16R 33zL13yTDg6dN2BTcXnAviXNQm+YZokSucIJy4/FRVaJoqDnvOywCVeaNBkXRcYdHSzDV6m4ryh zzU74xeszmaYCwqPCEbghiQQdfsGEfbqBqYZh9FDjSYmL2e7dd4XP+q2GnZNFxKqCSO+GE9wF06
+ yTBCxvA0DMaC7PwsO74O6/D2tD3+HvRGulfL+IrK0p5iRwU7oQ13ssOqmEQSIWHldZWLz9GF
+X-Authority-Analysis: v=2.4 cv=OcCYDgTY c=1 sm=1 tr=0 ts=681e21fb cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=erVvInnpyg78pcfNAL4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-09_06,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 spamscore=0 bulkscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 mlxscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=792 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505090154
 
 
---cvtza4xbbllnzmw3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On 5/8/25 2:48 PM, David Hildenbrand wrote:
+> On 05.05.25 15:24, Mike Rapoport wrote:
+>> On Mon, May 05, 2025 at 10:18:43AM +0200, David Hildenbrand wrote:
+>>> On 05.05.25 09:53, Mike Rapoport wrote:
+>>>> On Mon, May 05, 2025 at 09:38:43AM +0200, David Hildenbrand wrote:
+>>>>> On 05.05.25 09:28, Oscar Salvador wrote:
+>>>>>> On Mon, May 05, 2025 at 09:16:48AM +0200, David Hildenbrand wrote:
+>>>>>>> memory hotplug code never calls register_one_node(), unless I am 
+>>>>>>> missing
+>>>>>>> something.
+>>>>>>>
+>>>>>>> During add_memory_resource(), we call __try_online_node(nid, 
+>>>>>>> false), meaning
+>>>>>>> we skip register_one_node().
+>>>>>>>
+>>>>>>> The only caller of __try_online_node(nid, true) is 
+>>>>>>> try_online_node(), called
+>>>>>>> from CPU hotplug code, and I *guess* that is not required.
+>>>>>>
+>>>>>> Well, I guess this is because we need to link the cpus to the node.
+>>>>>> register_one_node() has two jobs: 1) register cpus belonging to 
+>>>>>> the node
+>>>>>> and 2) register memory-blocks belonging to the node (if any).
+>>>>>
+>>>>> Ah, via __register_one_node() ...
+>>>>>
+>>>>> I would assume that an offline node
+>>>>>
+>>>>> (1) has no memory
+>>>>> (2) has no CPUs
+>>>>>
+>>>>> When we *hotplug* either memory or CPUs, and we first online the 
+>>>>> node, there
+>>>>> is nothing to register. Because if there would be something, the 
+>>>>> node would
+>>>>> already be online.
+>>>>>
+>>>>> In particular, try_offline_node() will only offline a node if
+>>>>>
+>>>>> (A) No present pages: No pages are spanned anymore. This includes
+>>>>>       offline memory blocks.
+>>>>> (B) No present CPUs.
+>>>>>
+>>>>> But maybe there is some case that I am missing ...
+>>>>
+>>>> I actually hoped you and Oscar know how that stuff works :)
+>>>
+>>> Well, I know how the memory side works, but the CPU side is giving 
+>>> me a hard
+>>> time :)
+>>>
+>>>>
+>>>> I tried to figure what is going on there and it all looks really 
+>>>> convoluted.
+>>>
+>>> Jap ...
+>>>
+>>>>
+>>>> So, on boot we have
+>>>>     cpu_up() ->
+>>>>         try_online_node() ->
+>>>>                bails out because all nodes are online (at least on
+>>>>             x86 AFAIU, see 1ca75fa7f19d ("arch/x86/mm/numa: Do
+>>>>                           not initialize nodes twice"))
+>>>>     node_dev_init()i ->
+>>>>         register_one_node() ->
+>>>>             this one can use __register_one_node() and loop
+>>>>             over memblock regions.
+>>>>
+>>>> And for the hotplug/unplug path, it seems that
+>>>> register_memory_blocks_under_node(MEMINIT_EARLY) is superfluous, 
+>>>> because if
+>>>> a node had memory it wouldn't get offlined, and if we are 
+>>>> hotplugging an
+>>>> node with memory and cpus, memory hotplug anyway calls
+>>>> register_memory_blocks_under_node_hotplug().
+>>>>
+>>>> So, IMHO, register_one_node() should not call
+>>>> register_memory_blocks_under_node() at all, but again, I might have 
+>>>> missed
+>>>> something :)
+>>>
+>>> Hm, but someone has to create these links for the memory blocks.
+>>
+>> My understanding that the links for the memory blocks during hotplug 
+>> are created in
+>>
+>> add_memory_resource()
+>>    register_memory_blocks_under_node()
+>
+> Yes, during hotplug it's exactly that, after registering the node + 
+> setting it online.
+>
+>>
+>> So register_one_node() only calls register_memory_blocks_under_node() 
+>> when
+>> there are no actual memory resources under that node, isn't it?
+>
+> Except in early boot. That's why register_one_node() has:
+>
+>     register_memory_blocks_under_node(nid, start_pfn, end_pfn,
+>                       MEMINIT_EARLY);
+>
+>                         ^ early :)
+> And that is triggered by
+>
+>     node_dev_init()->register_one_node()
+>
+>
+>>
+>> Then we can drop the call to register_memory_blocks_under_node() from
+>> register_one_node() and add creation of memory blocks to 
+>> node_dev_init(),
+>> i.e.
+>>
+>> node_dev_init()
+>>    for_each_node(nid)
+>>      __register_one_node(nid)
+>>        for_each_mem_region()
+>>          /* create memory block if node matches */
+>
+> Yes exactly, that makes sense.
 
-> Userspace can set /proc/sys/kernel/core_pattern to:
-> 
->         @linuxafsk/coredump_socket
+Hi Andrew and Mike
 
-I have one other proposal that:
+Based on the discussion so far, it is clear that the patch will work in all cases,
+including when CONFIG_ARCH_KEEP_MEMBLOCK  is disabled. Just checking —
+would you prefer to take this version, or should I send a v4?
 
-- avoids reserving a specific address
-- doesn't require bpf or lsm to be safe
-- allows for safe restart and crashes of the coredump sever
+Thanks
+Donet
 
-To set up a coredump socket the coredump server must allocate a socket
-cookie for the listening socket via SO_COOKIE. The socket cookie must be
-used as the prefix in the abstract address for the coredump socket. It
-can be followed by a \0 byte and then followed by whatever the coredump
-server wants. For example:
-
-12345678\0coredump.socket
-
-When a task crashes and generates a coredump it will find the provided
-address but also compare the prefixed SO_COOKIE value with the socket
-cookie of the socket listening at that address. If they don't match it
-will refuse to connect.
-
-So even if the coredump server restarts or crashes and unprivileged
-userspace recycles the socket address for an attack the crashing process
-will detect this as the new listening socket will have gotten either a
-new or no SO_COOKIE and the crashing process will not connect.
-
-The coredump server just sets /proc/sys/kernel/core_pattern to:
-
-        @SO_COOKIE/whatever
-
-The "@" at the beginning indicates to the kernel that the abstract
-AF_UNIX coredump socket will be used to process coredumps and the
-indicating the end of the SO_COOKIE and the rest of the name.
-
-Appended what that would look like.
-
---cvtza4xbbllnzmw3
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-coredump-add-coredump-socket.patch"
-
-From a99749a48d2aafddeca5fd1fab64b907137c1a68 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 5 May 2025 11:33:44 +0200
-Subject: [PATCH] coredump: add coredump socket
-
-Coredumping currently supports two modes:
-
-(1) Dumping directly into a file somewhere on the filesystem.
-(2) Dumping into a pipe connected to a usermode helper process
-    spawned as a child of the system_unbound_wq or kthreadd.
-
-For simplicity I'm mostly ignoring (1). There's probably still some
-users of (1) out there but processing coredumps in this way can be
-considered adventurous especially in the face of set*id binaries.
-
-The most common option should be (2) by now. It works by allowing
-userspace to put a string into /proc/sys/kernel/core_pattern like:
-
-        |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
-
-The "|" at the beginning indicates to the kernel that a pipe must be
-used. The path following the pipe indicator is a path to a binary that
-will be spawned as a usermode helper process. Any additional parameters
-pass information about the task that is generating the coredump to the
-binary that processes the coredump.
-
-In the example core_pattern shown above systemd-coredump is spawned as a
-usermode helper. There's various conceptual consequences of this
-(non-exhaustive list):
-
-- systemd-coredump is spawned with file descriptor number 0 (stdin)
-  connected to the read-end of the pipe. All other file descriptors are
-  closed. That specifically includes 1 (stdout) and 2 (stderr). This has
-  already caused bugs because userspace assumed that this cannot happen
-  (Whether or not this is a sane assumption is irrelevant.).
-
-- systemd-coredump will be spawned as a child of system_unbound_wq. So
-  it is not a child of any userspace process and specifically not a
-  child of PID 1. It cannot be waited upon and is in a weird hybrid
-  upcall which are difficult for userspace to control correctly.
-
-- systemd-coredump is spawned with full kernel privileges. This
-  necessitates all kinds of weird privilege dropping excercises in
-  userspace to make this safe.
-
-- A new usermode helper has to be spawned for each crashing process.
-
-This series adds a new mode:
-
-(3) Dumping into an abstract AF_UNIX socket.
-
-Userspace can set /proc/sys/kernel/core_pattern to:
-
-        @SO_COOKIE/whatever
-
-The "@" at the beginning indicates to the kernel that the abstract
-AF_UNIX coredump socket will be used to process coredumps.
-
-When the coredump server sets up a coredump socket it must allocate a
-socket cookie for it and use it as the prefix in the abstract address.
-It may be followed by a zero byte and whatever other name the server may
-want.
-
-The crashing process uses the socket cookie to verify the socket
-connection. Even if the coredump server restarts or crashes and
-unprivileged userspace recycles the socket address the kernel will
-detect that the address has been recycled as a new socket cookie will
-have been allocated for it.
-
-The coredump socket is located in the initial network namespace. To bind
-the coredump socket userspace must hold CAP_SYS_ADMIN in the initial
-user namespace. Listening and reading can happen from whatever
-unprivileged context is necessary to safely process coredumps.
-
-When a task coredumps it opens a client socket in the initial network
-namespace and connects to the coredump socket.
-
-- The coredump server uses SO_PEERPIDFD to get a stable handle on the
-  connected crashing task. The retrieved pidfd will provide a stable
-  reference even if the crashing task gets SIGKILLed while generating
-  the coredump.
-
-- By setting core_pipe_limit non-zero userspace can guarantee that the
-  crashing task cannot be reaped behind it's back and thus process all
-  necessary information in /proc/<pid>. The SO_PEERPIDFD can be used to
-  detect whether /proc/<pid> still refers to the same process.
-
-  The core_pipe_limit isn't used to rate-limit connections to the
-  socket. This can simply be done via AF_UNIX sockets directly.
-
-- The pidfd for the crashing task will grow new information how the task
-  coredumps.
-
-- The coredump server should mark itself as non-dumpable.
-  To capture coredumps for the coredump server itself a bpf program
-  should be run at connect to redirect it to another socket in
-  userspace. This can be useful for debugging crashing coredump servers.
-
-- A container coredump server in a separate network namespace can simply
-  bind to another well-know address and systemd-coredump fowards
-  coredumps to the container.
-
-- Coredumps could in the future also be handled via per-user/session
-  coredump servers that run only with that users privileges.
-
-  The coredump server listens on the coredump socket and accepts a
-  new coredump connection. It then retrieves SO_PEERPIDFD for the
-  client, inspects uid/gid and hands the accepted client to the users
-  own coredump handler which runs with the users privileges only
-  (It must of coure pay close attention to not forward crashing suid
-  binaries.).
-
-The new coredump socket will allow userspace to not have to rely on
-usermode helpers for processing coredumps and provides a safer way to
-handle them instead of relying on super privileged coredumping helpers
-that have and continue to cause significant CVEs.
-
-This will also be significantly more lightweight since no fork()+exec()
-for the usermodehelper is required for each crashing process. The
-coredump server in userspace can e.g., just keep a worker pool.
-
-This is easy to test:
-
-(a) coredump processing (we're using socat):
-
-    > cat coredump_socket.sh
-    #!/bin/bash
-
-    set -x
-
-    sudo bash -c "echo '@@socket_cookie/whatever-you-want' > /proc/sys/kernel/core_pattern"
-    sudo socat --statistics abstract-listen:socket_cookie\0whatever-you-want,fork FILE:core_file,create,append,trunc
-
-(b) trigger a coredump:
-
-    user1@localhost:~/data/scripts$ cat crash.c
-    #include <stdio.h>
-    #include <unistd.h>
-
-    int main(int argc, char *argv[])
-    {
-            fprintf(stderr, "%u\n", (1 / 0));
-            _exit(0);
-    }
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/coredump.c            | 133 ++++++++++++++++++++++++++++++++++++---
- include/linux/coredump.h |   2 +
- include/linux/net.h      |   2 +
- net/unix/af_unix.c       |  22 +++++--
- 4 files changed, 145 insertions(+), 14 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index b2eda7b176e4..6692790bd459 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -44,7 +44,11 @@
- #include <linux/sysctl.h>
- #include <linux/elf.h>
- #include <linux/pidfs.h>
-+#include <linux/net.h>
-+#include <linux/socket.h>
-+#include <net/net_namespace.h>
- #include <uapi/linux/pidfd.h>
-+#include <uapi/linux/un.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -79,6 +83,7 @@ unsigned int core_file_note_size_limit = CORE_FILE_NOTE_SIZE_DEFAULT;
- enum coredump_type_t {
- 	COREDUMP_FILE = 1,
- 	COREDUMP_PIPE = 2,
-+	COREDUMP_SOCK = 3,
- };
- 
- struct core_name {
-@@ -232,13 +237,16 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 	cn->corename = NULL;
- 	if (*pat_ptr == '|')
- 		cn->core_type = COREDUMP_PIPE;
-+	else if (*pat_ptr == '@')
-+		cn->core_type = COREDUMP_SOCK;
- 	else
- 		cn->core_type = COREDUMP_FILE;
- 	if (expand_corename(cn, core_name_size))
- 		return -ENOMEM;
- 	cn->corename[0] = '\0';
- 
--	if (cn->core_type == COREDUMP_PIPE) {
-+	switch (cn->core_type) {
-+	case COREDUMP_PIPE: {
- 		int argvs = sizeof(core_pattern) / 2;
- 		(*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
- 		if (!(*argv))
-@@ -247,6 +255,29 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 		++pat_ptr;
- 		if (!(*pat_ptr))
- 			return -ENOMEM;
-+		break;
-+	}
-+	case COREDUMP_SOCK: {
-+		/* skip the @ */
-+		pat_ptr++;
-+		err = cn_printf(cn, "%s", pat_ptr);
-+		if (err)
-+			return err;
-+
-+		/*
-+		 * Currently no need to parse any other options.
-+		 * Relevant information can be retrieved from the peer
-+		 * pidfd retrievable via SO_PEERPIDFD by the receiver or
-+		 * via /proc/<pid>, using the SO_PEERPIDFD to guard
-+		 * against pid recycling when opening /proc/<pid>.
-+		 */
-+		return 0;
-+	}
-+	case COREDUMP_FILE:
-+		break;
-+	default:
-+		WARN_ON_ONCE(true);
-+		return -EINVAL;
- 	}
- 
- 	/* Repeat as long as we have more pattern to process and more output
-@@ -393,11 +424,20 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 	 * If core_pattern does not include a %p (as is the default)
- 	 * and core_uses_pid is set, then .%pid will be appended to
- 	 * the filename. Do not do this for piped commands. */
--	if (!(cn->core_type == COREDUMP_PIPE) && !pid_in_pattern && core_uses_pid) {
--		err = cn_printf(cn, ".%d", task_tgid_vnr(current));
--		if (err)
--			return err;
-+	if (!pid_in_pattern && core_uses_pid) {
-+		switch (cn->core_type) {
-+		case COREDUMP_FILE:
-+			return cn_printf(cn, ".%d", task_tgid_vnr(current));
-+		case COREDUMP_PIPE:
-+			break;
-+		case COREDUMP_SOCK:
-+			break;
-+		default:
-+			WARN_ON_ONCE(true);
-+			return -EINVAL;
-+		}
- 	}
-+
- 	return 0;
- }
- 
-@@ -801,6 +841,59 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		}
- 		break;
- 	}
-+	case COREDUMP_SOCK: {
-+#ifdef CONFIG_UNIX
-+		struct file *file __free(fput) = NULL;
-+		struct sockaddr_un addr = {
-+			.sun_family = AF_UNIX,
-+		};
-+		unsigned int addr_len;
-+		struct socket *socket;
-+		char *p;
-+
-+		/*
-+		 * It is possible that the userspace process which is
-+		 * supposed to handle the coredump and is listening on
-+		 * the AF_UNIX socket coredumps. Userspace should just
-+		 * mark itself non dumpable.
-+		 */
-+
-+		retval = sock_create_kern(&init_net, AF_UNIX, SOCK_STREAM, 0, &socket);
-+		if (retval < 0)
-+			goto close_fail;
-+
-+		file = sock_alloc_file(socket, 0, NULL);
-+		if (IS_ERR(file)) {
-+			sock_release(socket);
-+			goto close_fail;
-+		}
-+
-+		retval = strscpy(addr.sun_path + 1, cn.corename, strlen(cn.corename));
-+		if (retval)
-+			goto close_fail;
-+
-+		/* Format is @socket_cookie\0whatever. */
-+		p = strchr(addr.sun_path + 1, '/');
-+		if (p)
-+			*p = '\0';
-+		addr_len = offsetof(struct sockaddr_un, sun_path) + retval + 1;
-+
-+		retval = kernel_connect(socket, (struct sockaddr *)(&addr),
-+					addr_len, O_NONBLOCK | SOCK_COREDUMP);
-+		if (retval) {
-+			if (retval == -EAGAIN)
-+				coredump_report_failure("Skipping as coredump socket connection %s couldn't complete immediately", cn.corename);
-+			goto close_fail;
-+		}
-+
-+		cprm.limit = RLIM_INFINITY;
-+		cprm.file = no_free_ptr(file);
-+#else
-+		coredump_report_failure("Core dump socket support %s disabled", cn.corename);
-+		goto close_fail;
-+#endif
-+		break;
-+	}
- 	default:
- 		WARN_ON_ONCE(true);
- 		goto close_fail;
-@@ -838,8 +931,32 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		file_end_write(cprm.file);
- 		free_vma_snapshot(&cprm);
- 	}
--	if ((cn.core_type == COREDUMP_PIPE) && core_pipe_limit)
--		wait_for_dump_helpers(cprm.file);
-+
-+	/*
-+	 * When core_pipe_limit is set we wait for the coredump server
-+	 * or usermodehelper to finish before exiting so it can e.g.,
-+	 * inspect /proc/<pid>.
-+	 */
-+	if (core_pipe_limit) {
-+		switch (cn.core_type) {
-+		case COREDUMP_PIPE:
-+			wait_for_dump_helpers(cprm.file);
-+			break;
-+		case COREDUMP_SOCK: {
-+			/*
-+			 * We use a simple read to wait for the coredump
-+			 * processing to finish. Either the socket is
-+			 * closed or we get sent unexpected data. In
-+			 * both cases, we're done.
-+			 */
-+			__kernel_read(cprm.file, &(char){}, 1, NULL);
-+			break;
-+		}
-+		default:
-+			break;
-+		}
-+	}
-+
- close_fail:
- 	if (cprm.file)
- 		filp_close(cprm.file, NULL);
-@@ -1069,7 +1186,7 @@ EXPORT_SYMBOL(dump_align);
- void validate_coredump_safety(void)
- {
- 	if (suid_dumpable == SUID_DUMP_ROOT &&
--	    core_pattern[0] != '/' && core_pattern[0] != '|') {
-+	    core_pattern[0] != '/' && core_pattern[0] != '|' && core_pattern[0] != '@') {
- 
- 		coredump_report_failure("Unsafe core_pattern used with fs.suid_dumpable=2: "
- 			"pipe handler or fully qualified core dump path required. "
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index 76e41805b92d..3e4b52c769e3 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -7,6 +7,8 @@
- #include <linux/fs.h>
- #include <asm/siginfo.h>
- 
-+struct sockaddr_un;
-+
- #ifdef CONFIG_COREDUMP
- struct core_vma_metadata {
- 	unsigned long start, end;
-diff --git a/include/linux/net.h b/include/linux/net.h
-index 0ff950eecc6b..3f467786bdc9 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -82,6 +82,8 @@ enum sock_type {
- #define SOCK_NONBLOCK	O_NONBLOCK
- #endif
- 
-+#define SOCK_COREDUMP O_NOCTTY
-+
- #endif /* ARCH_HAS_SOCKET_TYPES */
- 
- /**
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 472f8aa9ea15..944248d7c5be 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -101,6 +101,7 @@
- #include <linux/string.h>
- #include <linux/uaccess.h>
- #include <linux/pidfs.h>
-+#include <linux/kstrtox.h>
- #include <net/af_unix.h>
- #include <net/net_namespace.h>
- #include <net/scm.h>
-@@ -1191,7 +1192,7 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
- 
- static struct sock *unix_find_abstract(struct net *net,
- 				       struct sockaddr_un *sunaddr,
--				       int addr_len, int type)
-+				       int addr_len, int type, int flags)
- {
- 	unsigned int hash = unix_abstract_hash(sunaddr, addr_len, type);
- 	struct dentry *dentry;
-@@ -1201,6 +1202,15 @@ static struct sock *unix_find_abstract(struct net *net,
- 	if (!sk)
- 		return ERR_PTR(-ECONNREFUSED);
- 
-+	if (flags & SOCK_COREDUMP) {
-+		u64 cookie;
-+
-+		if (kstrtou64(sunaddr->sun_path, 0, &cookie))
-+			return ERR_PTR(-ECONNREFUSED);
-+		if (cookie != atomic64_read(&sk->sk_cookie))
-+			return ERR_PTR(-ECONNREFUSED);
-+	}
-+
- 	dentry = unix_sk(sk)->path.dentry;
- 	if (dentry)
- 		touch_atime(&unix_sk(sk)->path);
-@@ -1210,14 +1220,14 @@ static struct sock *unix_find_abstract(struct net *net,
- 
- static struct sock *unix_find_other(struct net *net,
- 				    struct sockaddr_un *sunaddr,
--				    int addr_len, int type)
-+				    int addr_len, int type, int flags)
- {
- 	struct sock *sk;
- 
- 	if (sunaddr->sun_path[0])
- 		sk = unix_find_bsd(sunaddr, addr_len, type);
- 	else
--		sk = unix_find_abstract(net, sunaddr, addr_len, type);
-+		sk = unix_find_abstract(net, sunaddr, addr_len, type, flags);
- 
- 	return sk;
- }
-@@ -1473,7 +1483,7 @@ static int unix_dgram_connect(struct socket *sock, struct sockaddr *addr,
- 		}
- 
- restart:
--		other = unix_find_other(sock_net(sk), sunaddr, alen, sock->type);
-+		other = unix_find_other(sock_net(sk), sunaddr, alen, sock->type, flags);
- 		if (IS_ERR(other)) {
- 			err = PTR_ERR(other);
- 			goto out;
-@@ -1620,7 +1630,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
- 
- restart:
- 	/*  Find listening sock. */
--	other = unix_find_other(net, sunaddr, addr_len, sk->sk_type);
-+	other = unix_find_other(net, sunaddr, addr_len, sk->sk_type, flags);
- 	if (IS_ERR(other)) {
- 		err = PTR_ERR(other);
- 		goto out_free_skb;
-@@ -2089,7 +2099,7 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
- 	if (msg->msg_namelen) {
- lookup:
- 		other = unix_find_other(sock_net(sk), msg->msg_name,
--					msg->msg_namelen, sk->sk_type);
-+					msg->msg_namelen, sk->sk_type, 0);
- 		if (IS_ERR(other)) {
- 			err = PTR_ERR(other);
- 			goto out_free;
--- 
-2.47.2
-
-
---cvtza4xbbllnzmw3--
 
