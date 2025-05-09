@@ -1,129 +1,206 @@
-Return-Path: <linux-kernel+bounces-641712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47135AB14F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00413AB14FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C6E18916A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0ACA23A76
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F60A296729;
-	Fri,  9 May 2025 13:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75DF296D18;
+	Fri,  9 May 2025 13:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDfo1z0S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhstrrLf"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97AF29375A;
-	Fri,  9 May 2025 13:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298E8296D03;
+	Fri,  9 May 2025 13:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796700; cv=none; b=FBjWXIOm9Paovq7ucxz+4t3HdiZ24ifOxVLncZ41zYtP5d+5UsM//KKMWM6DBuyncj/GEysj7deQ8MaSOXjrju5YfhygzORTTMSNTZ/sxXFyJ1zfZlxtEES8q8SeG1DDBQxewOu+XOF3cs8tc0t9JHQ2HsPrX5ebqYDcGiEGsso=
+	t=1746796705; cv=none; b=oxJHTVI/iAu0q2LaHhRlAXVhbKXPWMzNhIlJNC0849lCNbZWtv3linWSHqd41nUtj/nkM5Ztw25tye8g+g2SadLBhxcubScQaG+XBh4LO6Eoy0Vab8OYctrvPNHmbEE/WYSbZHQPW2md8Dbf7/ioN3zmv/hb2c6ix+IvmLMopLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746796700; c=relaxed/simple;
-	bh=u0KhINI0YhCaw7x4o4t2KmY7tH8jFbQqrmNdRuvwe6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYQ2OCvLE09EPIRr39IllzvpUOu9VWuM6QReN4B6r+ZztfmldJPmxtDbKryh3hFxjT8nEbeXkegyDmYoO1mRAYpA/IhJTUDCWldEh8O6xsX1rKskQyjUHVyaCvrUKumlB34XpP7qUAXNQ2dzTCEzo26nyncHPDAXFKIFP6KcESk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDfo1z0S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3160C4CEEB;
-	Fri,  9 May 2025 13:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746796700;
-	bh=u0KhINI0YhCaw7x4o4t2KmY7tH8jFbQqrmNdRuvwe6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mDfo1z0SKP/X0hJkPuVqoKVaBYGHIGz9on0dtLQJw8qMLI3wwOfjFg0HdWTmWN3h8
-	 eC4DDzcBOg+F0vuwtKxTFGBz0GMkWIcwjOrru+hJ3Mke5ai7MmzPJPYtWqyqOh3xOS
-	 dz5xFT9slLw8TFknGWAodbF/YdTfFXPh1oQVPEMH/rlqzQMfU66eJxM9uoK80t67Tc
-	 F36EXAmAXlagOIUMem4rdkh3qfFx4/fjp9+euabvFgdRGv6OK5NdgEFRKSdTbEfXgQ
-	 zr5Jogjiw8BOb5FMvwZ2GoUPkYZOyoBx7Wvxx0VhY9lonBUBuQd6H46JioilHeqPcB
-	 MTJ1skiSMGaeA==
-Date: Fri, 9 May 2025 15:18:17 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Xi Wang <xii@google.com>
-Subject: Re: [PATCH v2] cgroup/cpuset: Extend kthread_is_per_cpu() check to
- all PF_NO_SETAFFINITY tasks
-Message-ID: <aB4AmUtEM-qQ1Xoa@localhost.localdomain>
-References: <20250508192413.615512-1-longman@redhat.com>
+	s=arc-20240116; t=1746796705; c=relaxed/simple;
+	bh=sgUuawys4CVWd18cGnNmHCR+VHk9LnqU+20rIof8jPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVQ1ACZM33Xb+gLZ5NV3KrLePC8ewcY7evmpZl3llG2ddVOm4HK9b8envmswI5+rzZ6QybmtSf+Se3DZn5NUiCl1l4PGyVK9gtYQrGps1qfpvZCr1WMNHPIwQVsK0g+8BmSq4i7+uvXtp2dQEDTaluh6kqQ4bBc/WoTj3Nlpubw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhstrrLf; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a0ebf39427so1333509f8f.3;
+        Fri, 09 May 2025 06:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746796701; x=1747401501; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d6kFmlgqoPiMHx9iRiwRxPf9qHkMFcTzTxiQjceKAuI=;
+        b=MhstrrLfVCeBMHAdsyK0a1k7uthaaQOLFpTGTOBmpJGYCyXoB5kK4KBjIeWrxNA0VI
+         VCMQu1Z4pzuPHbmht894f3gkZtvlY+G8Kk0Bze8ueEywVtLRFAGnxdKKnSdh/gogPzmh
+         N3lY9vQu/EwERB5TpEKIyKeDJ2htt0WxwnoVjujx+2rD7/rwPU7oHkg1yVtILhl2nyWO
+         sOy0k0q12e1+Mygwa9mu13LG97oVRUqlAmDJADcSUk68OU6soh7sa1pCsHzJ5gh+7GOD
+         qvmh340RPS49FrxRYPBsaBxdwVbGfJywA1SJ4okFpMSVFT0Iq+26kIvb0rKlozVeix0k
+         Bmgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746796701; x=1747401501;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6kFmlgqoPiMHx9iRiwRxPf9qHkMFcTzTxiQjceKAuI=;
+        b=k5rEtNR2cnAOd4DB42DRDt3B7mWiuxNNDMHFMsdfonBjjwjwDf3BcJBkFwcZEH+hLg
+         ioSV8KmjFyFmdgn6q6EHUOP1Kdnd5xKzHBamgpustrVPAf5AAqN2mJ6Sa0UVxFwH91Xt
+         M57vO3BPAnU2tLc+3GEcY0rycgtPXcAU4xJpbXJQvxmaadfssDOZQRDS/A2v9V24tRTx
+         cMSjBUQYQUqmObXPjHPVgCaDcY+j8/Dix/+5Qy633qEvU6QEda7I6lprBQVF2pRAaYUH
+         XJcLXBiAbRvYWmWMb87uHPNIGsDprmj893cxP6w+AA4R+iUjgG8iij+mK/Hx07/o9zJu
+         oNxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR/vkw6StAAOTIVFg8a1rs9V9O6ogjv0IKxWphGW0R7UPrXmhAfzwNu+zi7uhaDB1t/mOCIowAuD9aYLw1oqkPQrE=@vger.kernel.org, AJvYcCXdFmBGWTSOJhR49V4WRn658jZRMfg05QDIRuUBKsTBJaAZ58aMhFFXHze14ryMxU7/QM8Xjm7U1j83/Jef@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI0Mt/zkC72wyMWpGQtTZaG1ElhYMmeGtnXQpWGY6z0GL3Rprf
+	eETgiN6iexg4F+4DIyeTFhCdnK7r62PFAIH2f5DcLQrzY1Dyk/ia
+X-Gm-Gg: ASbGncuubyJtbD7p9aA2xK37SG7kXKI37aCTUq2jK82NDYPr1Q0gJoECJeCjp4agiJG
+	vuXX/niohOxDOiuegBL2n2yF+klaNB+QuM0TFJNPfN70ruWzVIYXLydignD83XhW7gqEYv1oz9R
+	KsIie1d0J9Pj6eQDY9u9D1mAWLc3ijtlw5sXZIb6nxqf0SXJfrvlH19PUOF+hAtkB6Lj7SDuTsF
+	26bIoJ2Tm9yW7C9ESIrYcIRUwPyOwBED0bJNPre06U1j1HcStfGLsFy2Flz6lnFL8Lj+YxP1vjT
+	8rgqVF3ivFbzuqsnCEjzbd/0oDV0n10tzIQEwuT/NAXF61Y8
+X-Google-Smtp-Source: AGHT+IGKuCHUteYYaaWgXJ0x6ii7m7FmxtGjV1AI/Suc2tv2PoC0iHGOic2BZRIQbQSqWmqYDWEbjA==
+X-Received: by 2002:adf:e105:0:b0:39c:30d9:3b5c with SMTP id ffacd0b85a97d-3a1f649a919mr2476134f8f.39.1746796701118;
+        Fri, 09 May 2025 06:18:21 -0700 (PDT)
+Received: from [10.14.0.2] ([178.239.163.112])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f2a12sm3194434f8f.44.2025.05.09.06.18.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 06:18:20 -0700 (PDT)
+Message-ID: <6191c255-84cc-4721-91d1-1884472989f7@gmail.com>
+Date: Fri, 9 May 2025 15:18:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250508192413.615512-1-longman@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
+ filesystems with manually crafted filesystem
+To: Theodore Ts'o <tytso@mit.edu>, Dmitry Vyukov <dvyukov@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, cve@kernel.org,
+ linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <2025040820-REJECTED-6695@gregkh>
+ <20250509072033.1335321-1-dvyukov@google.com>
+ <2025050940-marrow-roundish-8b98@gregkh>
+ <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
+ <2025050924-marmalade-overfill-fc5a@gregkh>
+ <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
+ <20250509121036.GA92783@mit.edu>
+Content-Language: en-US
+From: Attila Szasz <szasza.contact@gmail.com>
+In-Reply-To: <20250509121036.GA92783@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Thu, May 08, 2025 at 03:24:13PM -0400, Waiman Long a écrit :
-> Commit ec5fbdfb99d1 ("cgroup/cpuset: Enable update_tasks_cpumask()
-> on top_cpuset") enabled us to pull CPUs dedicated to child partitions
-> from tasks in top_cpuset by ignoring per cpu kthreads. However, there
-> can be other kthreads that are not per cpu but have PF_NO_SETAFFINITY
-> flag set to indicate that we shouldn't mess with their CPU affinity.
-> For other kthreads, their affinity will be changed to skip CPUs dedicated
-> to child partitions whether it is an isolating or a scheduling one.
-> 
-> As all the per cpu kthreads have PF_NO_SETAFFINITY set, the
-> PF_NO_SETAFFINITY tasks are essentially a superset of per cpu kthreads.
-> Fix this issue by dropping the kthread_is_per_cpu() check and checking
-> the PF_NO_SETAFFINITY flag instead.
-> 
-> Fixes: ec5fbdfb99d1 ("cgroup/cpuset: Enable update_tasks_cpumask() on top_cpuset")
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/cgroup/cpuset.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index d0143b3dce47..967603300ee3 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1130,9 +1130,11 @@ void cpuset_update_tasks_cpumask(struct cpuset *cs, struct cpumask *new_cpus)
->  
->  		if (top_cs) {
->  			/*
-> -			 * Percpu kthreads in top_cpuset are ignored
-> +			 * PF_NO_SETAFFINITY tasks are ignored.
-> +			 * All per cpu kthreads should have PF_NO_SETAFFINITY
-> +			 * flag set, see kthread_set_per_cpu().
->  			 */
-> -			if (kthread_is_per_cpu(task))
-> +			if (task->flags & PF_NO_SETAFFINITY)
->  				continue;
->  			cpumask_andnot(new_cpus, possible_mask, subpartitions_cpus);
+ > I would invite that security researchers
+> file CVE's with the *product* as opposed to the upstream open source
+> project.
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+The CVE was originally filed for Ubuntu Linux ;)
+Namely, cpe:2.3:o:canonical:ubuntu_linux.
 
-But this makes me realize I overlooked that when I introduced the unbound kthreads
-centralized affinity.
+It was moved to kernel.org CNA territory due to some politics,
+then it was rejected on the same day the bug was fixed upstream.
 
-cpuset_update_tasks_cpumask() seem to blindly affine to subpartitions_cpus
-while unbound kthreads might have their preferences (per-nodes or random cpumasks).
+Since then, I saw Canonical folks mention that they wanted to
+allocate a new one but needed to obfuscate the description so it no
+longer sounds like a kernel bug.
 
-So I need to make that pass through kthread API.
+Which, incidentally, is not quite true either, it *is* a kernel bug.
 
-It seems that subpartition_cpus doesn't contain nohz_full= CPUs.
-But it excludes isolcpus=. And it's usually sane to assume that
-nohz_full= CPUs are isolated.
+Since then I checked, and 5.4 LTS (any<=5.6) had been vulnerable without
+the need to ever mount an untrusted/malformed FS just by systematically
+corrupting a vanilla fs's B-trees with normal operations.
+       
 
-I think I can just rename update_unbound_workqueue_cpumask()
-to update_unbound_kthreads_cpumask() and then handle unbound
-kthreads from there along with workqueues. And then completely
-ignore kthreads from cpuset_update_tasks_cpumask().
+There was also a logic issue I wrote about that hasn't been
+patched, since hfs_brec_find() can return with -ENOENT, and
+hfsplus_create_attr did not treat ENOENT as a problem when
+inserting records, resulting in a flow completely missing the
+only boundary checks that were present earlier. With the issue
+that commit 25efb2f patched upstream and another issue I found,
+the condition for the rejection is no longer true.
+The image to begin with is not even corrupt.
 
-Let me think about it (but feel free to apply the current patch meanwhile).
+According to this, https://lwn.net/Articles/652468/, user namespace
+mounting for block filesystems *was seriously considered*
+at some point, but it was deemed too hard or costly.
+But ok, so it is "doable" in theory.
 
-Thanks.
+Then, it is just not consistent with the rest of your CNA practices to
+blame users for relaxing requirements on mounting, and as this shows,
+this was not even the case here for one of the LTS stables.
 
--- 
-Frederic Weisbecker
-SUSE Labs
+I think the delegated threat model is a difficult one, but you kind of
+chose this yourselves with the CNA policy of treating most bugs as
+potentially exploitable.
+
+
+> If companies want to assign me a chunk of headcount (say, 4 or 5 L4's
+> and L5's for 3 years working on thing but ext4 hardening, plus a
+> full-time L5 after that working exclusively to maintain the ext4
+> hardening featuers and fix random syzbot complaints), I know what I
+> could assign them to change the security assumptions that we have for
+> ext4.  It might require a
+> CONFIG_EXT4_SECURITY_IS_MORE_IMPORTANT_THAN_PERFORMANCE parameter to
+> enable all of the hardening features, but it is doable.
+
+> But they aren't, so I consider it to be *obivous* that the industry
+> doesn't think is important --- just as Orange Book A1 certified OS's
+> was a total, complete, and abject commercial failure.  And note, we
+> don't assign CVE's based on the fact that se all OS's violate the
+> security trust model of Orange Book's A1.  :-)
+
+No, you (or more like cve@) assign CVEs on panic_on_warn noise instead:)
+
+On 5/9/25 14:10, Theodore Ts'o wrote:
+> On Fri, May 09, 2025 at 10:03:13AM +0200, Dmitry Vyukov wrote:
+>> If we can't prove it does not have security impact in any context,
+>> then the safe default would be to say it's unsafe.
+> In that case *anything* could be unsafe.  You could have a context
+> where (a) you aren't using secure boot, (b) /dev/mem is enabled, (c)
+> /dev/mem is world writeable, etc.  In which case the mere existence of
+> /bin/bash would be "unsafe".  Yes, this is uncreasonable and unsane.
+> But that's because the "no security impact in any context" standard is
+> insane.
+>
+> As far as many file system authors are concerned allowing automount by
+> defaullt is insane, and is apparently the fault of some Red Hat
+> product manager many years ago.
+>
+> E2fsprogs and xfsprogs now ship with a udev rule which disables
+> automount by default.  If applied, mounting a maliciously fuzzed file
+> system requires root privileges.
+>
+> Of course, distributions are free to change the default, just as they
+> are free to ship a system where root has a default password of
+> "password" or /bin/bash is setuid root.  It would be insane, but
+> product managers often do insane things in the name of user
+> convenience.  In those cases, I would invite that security researchers
+> file CVE's with the *product* as opposed to the upstream open source
+> project.
+>
+> If companies want to assign me a chunk of headcount (say, 4 or 5 L4's
+> and L5's for 3 years working on thing but ext4 hardening, plus a
+> full-time L5 after that working exclusively to maintain the ext4
+> hardening featuers and fix random syzbot complaints), I know what I
+> could assign them to change the security assumptions that we have for
+> ext4.  It might require a
+> CONFIG_EXT4_SECURITY_IS_MORE_IMPORTANT_THAN_PERFORMANCE parameter to
+> enable all of the hardening features, but it is doable.
+>
+> But they aren't, so I consider it to be *obivous* that the industry
+> doesn't think is important --- just as Orange Book A1 certified OS's
+> was a total, complete, and abject commercial failure.  And note, we
+> don't assign CVE's based on the fact that se all OS's violate the
+> security trust model of Orange Book's A1.  :-)
+>
+> 						- Ted
+>
 
