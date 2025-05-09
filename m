@@ -1,216 +1,159 @@
-Return-Path: <linux-kernel+bounces-640835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403F0AB09E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:48:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F864AB0A00
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66504E54EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:48:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C218DB201F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 05:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D5A269899;
-	Fri,  9 May 2025 05:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FB526A096;
+	Fri,  9 May 2025 05:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="BDMjuBQ0"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021097.outbound.protection.outlook.com [52.101.129.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="P8HoKr3T"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F89139D1B;
-	Fri,  9 May 2025 05:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.97
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746769727; cv=fail; b=sckDAN1fcEPDZfs/FU/DQpi4QZ2aLbFZzXQin5PLAlfO93dsPF3DzTOoiQlE8MeTpMu2qvGjjbHIxQ1jmhs7vN6490LV/eapSLNTATi+hqivrGRig0rtM5gCDojTyti8drjR4UWpb7hcpgDsOaoTCyKhVeMO03iphSZKzzihUos=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746769727; c=relaxed/simple;
-	bh=E+xdKIkX59FVW+tSSGI8qOOQlkPbOFR6G+MdKwfVz9s=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MGbjIjaVoTccJTZXRPbbB5PY+jxgYUhb2j80KGibXaUfr0L/O1oCiNrky37i/AJ0tESO+kHBq2vl4COfG5Zg6js71pgxIkvXnZB1HG7AwdiEkZAXNNcdSiTzVK/T/35udkvj4pPP2N0I5aCRKpMBGqmb2ooHLBeW9tg0FULaia0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=BDMjuBQ0; arc=fail smtp.client-ip=52.101.129.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tEVuIR/lzK+Ziuw76x9lQJ3iJvHA6rpy2lLAz3JRfZI+JSolpNo8y300nGo1WUW8/WOgAazNvitMOGr68g5BcLZw56ytWJnlMMmF8TeSG/nu4JH0OFq5u/KZUmidT2F4fDOle61Vvhv/+rLZPnkw7Jjwc5MvBfke48OKOTgmM3VBA2DrgQ3iqtoBTYXIEI/Y24x3XZtORgIHPVLvW9wM1dwDRQ18D8CgQOywo18yM2rbqFe2xLte5sCmf3+hHY40GOrCNJDKZsXTux6BhZAYO7D6eLdaMKRv/o7sN9QxW/6YAIkCahHD7BGJ4m6Zisrka10KOyjRamkocod+0PzTwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gDidjGTlhUSkVsgqZDgriOEJzWiiY2JPJtzB3gtKfNc=;
- b=MYyRjdf0aawOv4ePy+QAuWYiV9M8E+QOJiJdHpvQtaBt6gC1I3WBbNXo+V9wk0oMZgD7y+gNPXILoXdX6DvunKlTAt3hkiYpqD5lKtFKTJnKhIzqmKx9HqJGuIQWdvfBRi9mq6TiYX4CXufskmPB/FrYt8UFySVEOe9LHU0FAmHMf8+bzXqfOa0c+Tu9aQT/ICIo2y72KKmgMqsRdbYvWdN0oehpZDNVSXYbz9hd7m4MS2F5VOlu4G6Yh3r//63MLhsa9b9uPHyVxT8XAI/l2i/B2v/6k7ROF3KXzQ9UOZjdtkTV2OiUS0LvLfjs4qj+L67IFHX9UVf2KnFqJUo7OA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gDidjGTlhUSkVsgqZDgriOEJzWiiY2JPJtzB3gtKfNc=;
- b=BDMjuBQ0/4YsJgCJUJPGpMu5RRolfVF+TBPqDHPfFA7QlanJhPXQOE6vI1zJRNaXkBGg5IEH0Sf0A7kdlpYbFiB+fJ4npWHH98MRW8Vs4QkjkslPcDD/sovZOMiM5/YOmVkWUMNY1Vs7fFiTQxaG6YCyhRPzELS6Hbn+MXtzjMtAbvsIhcLTvjNpXLg/DhVxsPi835O1qPXbobZja0nrjnF5M/egp5nNf/fcFok21k+KV4RHx6X0CGacCWg8q2bh0/StbMffq6i7Q2kq3BzM83d7kEMXUOiPKlq8JpA+qY3ewUAZYfdVoRdRrVeXMH3ZfHfGgkNJbZwwckAa9uhxwg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
- by JH0PR03MB8637.apcprd03.prod.outlook.com (2603:1096:990:8f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 9 May
- 2025 05:48:39 +0000
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f]) by TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f%4]) with mapi id 15.20.8699.022; Fri, 9 May 2025
- 05:48:38 +0000
-Message-ID: <e778eaa9-6a41-48fe-a1a4-35aac427f337@amlogic.com>
-Date: Fri, 9 May 2025 13:48:33 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 00/10] Amlogic C3 ISP support
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kieran.bingham@ideasonboard.com, laurent.pinchart@ideasonboard.com,
- dan.scally@ideasonboard.com, jacopo.mondi@ideasonboard.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250427-c3isp-v9-0-e0fe09433d94@amlogic.com>
- <aBzXVdM5GWnpHNvJ@valkosipuli.retiisi.eu>
-Content-Language: en-US
-From: Keke Li <keke.li@amlogic.com>
-In-Reply-To: <aBzXVdM5GWnpHNvJ@valkosipuli.retiisi.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2P153CA0051.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::20)
- To TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC74269D09
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 05:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746769805; cv=none; b=BuBmDHATqMq0Mwd7y+ql8A3AA2a1721BpHb0ZoBLEYk4VJ63imcaDCWCne+rCAdSDK3JHf51iYFpYfyokIRju4lcdCEtNNKiD4j+1w4qTMq3W5ECm4j8nRnCCoSNa8XOIKNDUhsxztX404XP1fE+5GzoOcVEUscgApM7VMQd8OY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746769805; c=relaxed/simple;
+	bh=ZA0MrnVqPmGqRqvds91nIAY/X0tkAPwaQfeJInh43CA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXx4U7mvogCPM9ePRhXYNC1mbL8dhQZKcQrEZBeVKeLqrko6FLFAOeHC6mLcI3OWUY8kXxP251YvzDnkpk+QJRAAxKlYiDemzdfRuarfQHrhvKB/JwFdTQFqcsmB8RLqymxLu9Cyeti9dd+dxTKgRBfzCDzLwL0H8rQgJlqKHh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=P8HoKr3T; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c54b651310so261466385a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 22:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1746769802; x=1747374602; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cz9N1KWOckoEyD/I2Q+cFcf/PqZ2i2IlArKDvKjy79k=;
+        b=P8HoKr3TDkxDKvKFyXTUpyUgQPCyhENcwzxSGt25Oco4ltNmU1cmIJhJDaDhHYkNZI
+         VkM8ggnvadlB9dO0lls49cF/t8tAe8mduFziFSx3jrriXSRMJeJYQfC8xdkCebMKq3AE
+         cLH9v2GkVRIibhoU5Yc/VsYNOICWQajnbGYCeWm+R1XL2oV2Ud8BSYpL25ILGsZTOvqn
+         l2bjMFLLbdMhq23HmpE5sCnjmvn67drs9IsazKa7qry9nNAHjcIJ+5ZD6oE1C/plGgmG
+         2lEi75NXeLcVV6NAHphVxgGDjLYrvLFils1N5AsOP4+pY1uo9q0KMygo8YqHt4vTIuhy
+         6Bpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746769802; x=1747374602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cz9N1KWOckoEyD/I2Q+cFcf/PqZ2i2IlArKDvKjy79k=;
+        b=amrwFN7q/8QMLcRl6xpKDzADwa5y4tq1lr1R7IsxPdY329EZpp/Ly53vZ8DuVcZwEi
+         TH9RgBqPOGOeyoWPMS9JewQd86AdpWTkH0oGbwoasZXgbpKG0t+M7UtCu3q6EATqHSo4
+         r51E9OFpljdkfnywrWslXkp6tVxJHrfX286Zrsl2JRSvGh+W6n+c8KFan91GNwejMObh
+         Brr1T7UfyI/GdP9SYSovMVCcb1CE4TpThZTiPZhJe0xuZaah2CbIQX3jm0BiilahKzsQ
+         PAsKE5+YSbC0CvgbiUsMyRYOT+v5/wpBAEMXCdFsCSTQp9LGA1rvCP7kKYuLdTP5pA6y
+         tRXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpvT+Px6N/bLLpJtmL6KxWGmFO+H1vTnynlNP5o4Rg8PK4szphwFnetPpzOYgxhFKWpUZ+Rz3FTFhIbmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrnklP/Ub7VXuzN+WqsZWQMWq1fThn5Km2iGlZoQ2qRqfVmJGc
+	3hTNkEZSMmVqlODCOnNUoiyGEyu1VuPCnBnI/isMkf7xE6SqeyswKHeCQH82FyJFhQBjkowSaqv
+	w
+X-Gm-Gg: ASbGncu84SiLHTRzyRHrSbEXUIWZi1kKpDSupxAJyKCl0F3rsp8ETIb4qfqz2UzxDoC
+	FjChFs2BWBwud3WyFuFZA9vRdapMaPS3dQhGzNNG15Mu+FlLE0KQrjsNZN0jUkv28NMDTWg7VfR
+	E/qgTp6D59DhrwTyK1+L3vm+dytOJ60cIyFuxNr4A2Aheo1O2VOFcwBBKB8tQV5SvyK4rBwIfU9
+	Fb10EMrnUjfrqgUUFRreKPDpKzv5mQFQazXjfS1bMzTW4V9/oE98182FBwcbGx0rRJ51J1xyTHv
+	/6/IL8jDqKVZvMfJKmsb8sFBne9Kya7NiletXwPkJoTXi3oJmwRcDIE4rVLbXwd71nR1kvqQDm1
+	D+ZNXvDTrJV75iqbR8Swi
+X-Google-Smtp-Source: AGHT+IElqWip8aE/2idz6dfBS7ZlxOEMPHoBzrDhBd78If8/KiDXUWfsyQmB3CNHzKfet4ro2QMMdA==
+X-Received: by 2002:a05:620a:319e:b0:7ca:e971:8335 with SMTP id af79cd13be357-7cd010d51ecmr362007285a.8.1746769802047;
+        Thu, 08 May 2025 22:50:02 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00f4e1a5sm94081385a.13.2025.05.08.22.50.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 22:50:01 -0700 (PDT)
+Date: Fri, 9 May 2025 01:49:59 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: joshua.hahnjy@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	dan.j.williams@intel.com, ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com, honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in
+ weighted interleave
+Message-ID: <aB2Xh4jEqpSTuvsi@gourry-fedora-PF4VCD3F>
+References: <aBzJ42b8zIThYo1X@gourry-fedora-PF4VCD3F>
+ <20250509023032.235-1-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR03MB8627:EE_|JH0PR03MB8637:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0938c073-913d-494b-38ee-08dd8ebd2568
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T1pOZCtxaUttZk5XTFRZSGJkRTR4RkR5ZkVqTTdZamp0NEF2bEttMkM3aUNP?=
- =?utf-8?B?emxXL29aYk1qNGVQL2c5UG5yREpLVXpjK1FnOFpoQXhLc1llc1VQenAwb016?=
- =?utf-8?B?TTkvOGE3YkRtVDVHKy9WZzVVcmh5VEhKcnYzaWZpczNVNzUrNGprS2hveUJv?=
- =?utf-8?B?ZGxkeVlFYTJaaTFRT1ZHcVZWM0lndUR0WDFPOTNwTjdWUUNGc0VLaUVrd2hT?=
- =?utf-8?B?azhBNVI0U2pCWmdnQ2pzZUVJNjM0d2x6a3RHQXhianVuMCsvb3ZSMjAzbUlH?=
- =?utf-8?B?SXIwa3dTeVhTbEpiZ0p2QUZYNGtjWmpraUJmMEtMSVpSQ0lSYzVlTDdpTEh0?=
- =?utf-8?B?NXJTVnB4cXJDSXdpSkZpVnQ0S1A5c3hxOU43aUFuQWdlbUJ0RGdrMnZuKy9o?=
- =?utf-8?B?VzFaQU1mZlBHL25WeFNZSktITzNKOU5YQTJaT0lTVjFzdkRHdittd2EwcnY5?=
- =?utf-8?B?SzA0elIyV0VBWVdWcm8yaTJqclljc3hLRUUvc1haNlJzOFZYeS9FTGdRNzJL?=
- =?utf-8?B?dThIOGFtcGZOdTltTHdsalRmT25ZQWExcGdWczNGbGZHWW5mRWZyNXF0aEU2?=
- =?utf-8?B?aVJVbE9RUjNUd1dkSldnR3ZrSUc2SVJNak1RVDBZWnNaYnltdnlZVncxcEZT?=
- =?utf-8?B?UjN4eUlPL05UaXVuVWJhMXp1R0FkbWE3cFJjc1Z0bUIwOWRGZkFZZGZBbHd6?=
- =?utf-8?B?ZlBVaURyam8wWTgwQm9kQXEvRTFjMDV5VnVlbFNzR1EzTlh1UzFkOEs0ejk5?=
- =?utf-8?B?YTZEWFNUclBDQlBMYk9iSkN3S1NpeFV2YUZrUHdwQzNpSjh4WmpuV0cyZU9p?=
- =?utf-8?B?emx2YjN1VjQ4TUNHVWx3bGF2Y3hDaWdKWWlhNC80aVFRV1hiaTREeVhsdUQ0?=
- =?utf-8?B?Uk1QOVZ5d0phN3NaVlpCMllick90d2FlNUNmUUtwMDd3TzlneFJVeFZ0Vkw0?=
- =?utf-8?B?Q0NybVpzN3BwMG5BZVExMWUyOXozYituR2FKQy9UK0FwblhBVExaYjE4aktH?=
- =?utf-8?B?QUdURXpMcnA1TnFKclpGZXZ4RW1BSURNV1cxUXQxaXRweFpHamY5QWxnZnlI?=
- =?utf-8?B?ekh6WVdqZjgrYk96eWM2MnlKMGdOVlgyc1dNNTQrTDRYTEJEMkJ3TG5yRzNT?=
- =?utf-8?B?RTFJbXRSQmUwVXRkWHl0UzZWaXFqOThQajVrOEJ2emtTWVpqUmdRdEVwTjJQ?=
- =?utf-8?B?SXZPNWdOYU5mSG5MK0p2ZE5XeWFjeUEzeTlQc1I5cTZraDdic2p0eWVYamEy?=
- =?utf-8?B?M1RwV2Yxa0trczVRK1hRUlJaclhvekEvaWxxTjE4Q1hHT2VZdmx1TTNyVGZY?=
- =?utf-8?B?S2w1WUR4TkRzdnBjaDQrUytDRTN1YjJRSG1uM0hOZnFXc3BqdHpLNkh5U244?=
- =?utf-8?B?SW5Pby9vMEVzWW10OHBJYyszWTY2ZzNNc0JpQTM3d09obXZ4cFRJdVAyTHJ5?=
- =?utf-8?B?MEtsZkszOG1JL1I0aWVaZUVxdjNTak5qZCsyWEhYRzZGUmtYbGUrR1ZzRmYx?=
- =?utf-8?B?WVhwaE5vODVXaHducHNOa2RVWVY1SVorTnl5aGFNWVJ0T1pxNE43QkMxdmdC?=
- =?utf-8?B?VUJ0TnE3S0kyZ3FMQ1hoa3pkQnBzQ2JWZDZUVGNsOHJEa05qWnp5MHVya05C?=
- =?utf-8?B?bXkrUTcrR3JQZW8yaGNsajl1UVMzLzZhZFVSNTZaTXFzUDkvc2dBRXdZZm1u?=
- =?utf-8?B?NUhKSzNyRGlmVG9UYW5INzY1OWo5ZkV1Y21CUFAyZkdPOEhmbENHalo5bHlz?=
- =?utf-8?B?eWR2YjNmdWsrRXlZU0s3cVNxdkFBMDY3VVc3NVpoUkV1TEV1bTdSTGdRYm9B?=
- =?utf-8?B?V0xUSmtLNEJkWEY3T21jVElUUXFBVXBEaENlTEpBYnM0NVN4QlU4dXRwTFFK?=
- =?utf-8?B?czhBR0xIdVJNcXFkbXZJTTM3eGhYN1dyYm9MWmhkeGFwamc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR03MB8627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N1ZQck04K2x3emN3MzNHVHZuT28xQVdSMHo0TDE2RG9YOHN3Z0RlSlpqQ2cx?=
- =?utf-8?B?Q0NZSDkwcHVzYWtZK2owek5ERXFQcVFuS3RNQjBVN2VGWUYydkI5b2phU2xO?=
- =?utf-8?B?ajFFT0N0Mmt2YlVvY1llMzljT01zeGpsdUhUMXZ3OWFTbWcwY1BSZVBxaXRP?=
- =?utf-8?B?ZFlDeEVtcVB2TkVIdzVQQ0JQK2NkMEdDUnRTWWZoTEtLZlptUWNsN2FqUnkw?=
- =?utf-8?B?dEZMTnYyVmFiNTRiUkdUZE4wcXk0NTFkUEpKU1FBSDYwNVpXM0l6ZEV1Z3pn?=
- =?utf-8?B?L08vVzlweDJHcW9WQ0tHdzBLTGtqU3F5eUZPdnBpN2c0dVRoTDgxbU5UTita?=
- =?utf-8?B?R002TlNCQ054Y2VTVUltNU9tL0QzN1BlVyszSWszM3FDVW1LbnNjM3FJSFYz?=
- =?utf-8?B?TnlNSHA5SndMMm9ETlZsM3BmalRYSjBTSy8rQ3VTSWdFZVBkYnAzZTNKekFV?=
- =?utf-8?B?ZTkvVmpPMFFMNmMrZ2RWRzh4dEVCMTBHUFRVRUpVV3VwL1FlSmlZeGYzMVhz?=
- =?utf-8?B?eXJCdllCVlM2aHM1WCtYSmhvSFFvMzQ1MXRwaW8vT1g0ejFhTmdPZTVwbjJE?=
- =?utf-8?B?YUI4Sm1PK3BlRnRoc1hhYlAyQ01IaGMwbFkyMUtaVHBuTnJuSGJlaUY5dnRZ?=
- =?utf-8?B?bm4zVnN0Q3dNY3JnS0lyb3BoaVIyOFlZdU4zR1Z5Zjl3OGE0cDBML0Q5UGpT?=
- =?utf-8?B?UmwzWDVJSS94M21PTnlUeTMyWWRxYUZlRS9NNlFLL3NHVmdYVVQxZGxaNHBI?=
- =?utf-8?B?WnNjZUR0bUF6cVZnVTRDTUJSTTlDb0I4T04rcm9oSHJIOGY0WlNLZXd3ejFU?=
- =?utf-8?B?YldzYUNxT2JhZEJxTWdVSTR5eHhLUDlLWlpwRmFzNFQ5aTJLZkFvUXdpTnEz?=
- =?utf-8?B?MVh5WUZwU0s0aWVBcEh2L1QyNkVETVRqaEQ5YWpGUmZuT0hSYndmVFJSSTVE?=
- =?utf-8?B?SXlqSExjMSszU3VxajBWQ3JXU0VUdkJPUStselJpTkxHRmhORUx5aGFkMHdO?=
- =?utf-8?B?YlNzL0wrbVBzb1ZNTWVKM1lXaHdpcVpRTjkwLys1NVg0YWI2Ym1wZHJaYkRR?=
- =?utf-8?B?dkJCRWhSZlZLR01vbW9ZT3VkWjdDWVNxMkN3Rlh4cmpEb2xZV0xWeUNscTRO?=
- =?utf-8?B?TG4yRTVaMU5JYWtyQU9RNjd2WTJiRWpSR0dWNkdIV0h3K3hERzA4Y202bEZI?=
- =?utf-8?B?M2U1UWVMa3NSbkM0QlJVbU9rVXBCNVhXeGx4bmhPUDdzTnJFcnZKalg0ZUox?=
- =?utf-8?B?NC9qdWFPNHFFOVRoZ1Vxbk41WENJNnd2b0lmZVlhSk5mMU5nMFZZZ2s0RjNP?=
- =?utf-8?B?NGh2SXVxV09qMGtXbm94RWJVNDlpUmJUcVA1UEZZenlsTTJhYXNZdWZPQTV0?=
- =?utf-8?B?elJqakdjaGh0dk9ncXdxVElTSkExRDNwazBOQnViUEIvSjE5OVd6azNsZTV1?=
- =?utf-8?B?SkZsTHRObWpsaWpyQ1ltOVlCeHdOWE5wbjdieVg4eFVXS1FWUVNBeUdGU2ZR?=
- =?utf-8?B?WE5HbHNidUs3ZmFua20vN09SRjg5RXBZdjgvc0xycHJWb212TmVYUE42cXJR?=
- =?utf-8?B?RS9mQVV1aXF4S0ZubmpnTDNoQU9EenJnM1I2cDVVb0NjazVQek03dHlqV3Qv?=
- =?utf-8?B?VkxGbytmNFFIb0dVajc4TjMvYVdnMUxSVzhjMHltS1crWmRFajFJSW5SeVBN?=
- =?utf-8?B?TjRSZXlTb0Y5NmRiM1FSSWZCVXpmL095blpsbjNGdkRNa3JsK3RPNHZPWTUx?=
- =?utf-8?B?NHdBQ2pjUmNvdDRPVUdSbzVvL2F2U3pneldFTExaUEM5ekpvVTQ5UnIxTnN4?=
- =?utf-8?B?ZnpTWEtjbEF6a2FKWUFFeE5RSTMzZndJSGlWNzUzcjY4SnRwcGR4UFZwcTI0?=
- =?utf-8?B?R0ZOMTBZNitWRXYzS1lKT0lFcWJyeEpvekxBM2F6dndzYmN3dXY1VkdmVlV1?=
- =?utf-8?B?a1RGaDZXRkFnV2hSRzNBeVJmTm1NWHFuWXdWd1BpVGxnaUtGYTU3bXBWaUVB?=
- =?utf-8?B?akJkNENZVzJmSnJYOWdVbmV6WUFpeXZjeVBQa0psSGpDMDBNc0hSb25Kd0VD?=
- =?utf-8?B?YlllaW9SQWUwTUdJZXMwVkNMa01MeEFjZS91QURoZ2hKS3VpbmNzT0JRODYx?=
- =?utf-8?Q?cyuR+Tq51WXL9HerbK17HENhR?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0938c073-913d-494b-38ee-08dd8ebd2568
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR03MB8627.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 05:48:38.6272
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WXPucztbs07HzoiQ13Yq47EPfc9xz852tIjTQ+b+RI6MQAvZGTjlhJAfzaAi9k+8eL275nQpecBnhT1x/NWuFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB8637
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509023032.235-1-rakie.kim@sk.com>
 
-Hi Sakari
+On Fri, May 09, 2025 at 11:30:26AM +0900, Rakie Kim wrote:
+> 
+> Scenario 1: Adapt weighting based on the task's execution node
+> A task prefers only the DRAM and locally attached CXL memory of the
+> socket on which it is running, in order to avoid cross-socket access and
+> optimize bandwidth.
+> - A task running on CPU0 (node0) would prefer DRAM0 (w=3) and CXL0 (w=1)
+> - A task running on CPU1 (node1) would prefer DRAM1 (w=3) and CXL1 (w=1)
+... snip ...
+> 
+> However, Scenario 1 does not depend on such information. Rather, it is
+> a locality-preserving optimization where we isolate memory access to
+> each socket's DRAM and CXL nodes. I believe this use case is implementable
+> today and worth considering independently from interconnect performance
+> awareness.
+> 
 
-Thanks for your reply.
+There's nothing to implement - all the controls exist:
 
-On 2025/5/9 00:09, Sakari Ailus wrote:
-> [You don't often get email from sakari.ailus@iki.fi. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> [ EXTERNAL EMAIL ]
->
-> Hi Keke,
->
-> On Sun, Apr 27, 2025 at 02:27:08PM +0800, Keke Li via B4 Relay wrote:
->> The Amlogic C3 platform integrates an ISP capable of supporting
->> multi-camera, multi-exposure high dynamic range (HDR) imaging with up to
->> 14-bit raw RGB Bayer data.
->>
->> Capturing images on the C3 involves operating the CSI2 receiver and PHY,
->> an adapter layer that integrates the inline processing from the PHY to
->> the ISP, and the ISP driver itself.
->>
->> This implementation consists of several distinct module drivers and
->> is expected to support different platforms in the future.
-> Jacopo has already sent a PR on this and none of my comments address grave
-> issues. Please post further patches on top instead of changing this set.
+1) --cpunodebind=0
+2) --weighted-interleave=0,2
+3) cpuset.mems
+4) cpuset.cpus
 
-[02/10] and [04/10]:
+You might consider maybe something like "--local-tier" (akin to
+--localalloc) that sets an explicitly fallback set based on the local
+node.  You'd end up doing something like
 
-We will address these issues in further patches based on your review 
-feedback.
+current_nid = memtier_next_local_node(socket_nid, current_nid)
 
-[08/10]:
+Where this interface returns the preferred fallback ordering but doesn't
+allow cross-socket fallback.
 
-We will migrate to the common framework once it becomes available.
+That might be useful, i suppose, in letting a user do:
 
-> --
-> Regards,
->
-> Sakari Ailus
+--cpunodebind=0 --weighted-interleave --local-tier
+
+without having to know anything about the local memory tier structure.
+
+> > At the same time we were discussing this, we were also discussing how to
+> > do external task-mempolicy modifications - which seemed significantly
+> > more useful, but ultimately more complex and without sufficient
+> > interested parties / users.
+> 
+> I'd like to learn more about that thread. If you happen to have a pointer
+> to that discussion, it would be really helpful.
+> 
+
+https://lore.kernel.org/all/20231122211200.31620-1-gregory.price@memverge.com/
+https://lore.kernel.org/all/ZV5zGROLefrsEcHJ@r13-u19.micron.com/
+https://lore.kernel.org/linux-mm/ZWYsth2CtC4Ilvoz@memverge.com/
+https://lore.kernel.org/linux-mm/20221010094842.4123037-1-hezhongkun.hzk@bytedance.com/
+There are locking issues with these that aren't easy to fix.
+
+I think the bytedance method uses a task_work queueing to defer a
+mempolicy update to the task itself the next time it makes a kernel/user
+transition.  That's probably the best overall approach i've seen.
+
+https://lore.kernel.org/linux-mm/ZWezcQk+BYEq%2FWiI@memverge.com/
+More notes gathered prior to implementing weighted interleave.
+
+~Gregory
 
