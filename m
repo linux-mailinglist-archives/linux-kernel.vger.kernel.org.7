@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-641308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D78AB0FB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 11:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32BF9AB0DE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 10:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1C51C23505
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 568A8189108F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 08:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BF828DF20;
-	Fri,  9 May 2025 09:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2FB267391;
+	Fri,  9 May 2025 08:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coolkit.cn header.i=@coolkit.cn header.b="c/OdzP7L"
-Received: from out198-21.us.a.mail.aliyun.com (out198-21.us.a.mail.aliyun.com [47.90.198.21])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lkTTIOEv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D8127465C;
-	Fri,  9 May 2025 09:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88A62701AF
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 08:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746784728; cv=none; b=BjZPl6ng0BIWGJbMX6rS/qXnj7NVTNsQTt5DtQYap6x1m+RS0fRg++nJ0Yg5u1tKFbRueVAnFlykWmKdzgWRBL3h41O5B6vvRFip1g3p2+TrL41kIYSyi4xfLXgnyIDdjCncuossESSfoxY5RF0rHvKWg+OX96OmCcOKT8XRL0I=
+	t=1746781030; cv=none; b=Rmo/RuuGec7G5heslsCRC2kr51rIR9IdRC2UmakM8yZjPoh9xFMzVC8wIgJTW7DGr6B5Ht7Dxiol/mjKCLkCdvzx8PSTFmxSLZj8Emh0mxQBjC4Z2w5xyqPUcWfSBy8Yv0iyG3wH8QJ0XhiyI704zwOueSdLjkUdo/Dz/uooMcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746784728; c=relaxed/simple;
-	bh=VWX7G/DVxq26xmeDCflJUO8sJLSsHFqKs/EofwXfRKM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TXf8EVeWPg2Z1M/iY7m/DjBRGm90JpfeXx6jDsHPMm4efKQsOLC7/+zqWvvlXV1KWtTkrvgsccAUi0xbyoBkrLU7eaxGlpKM4Xu7G7eTuHu2uzNiIr96EpU9/Uu6vXafLv3TAodwWQOXVnNuNhSNm09KxDsrSMZI2thg2qsCBDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coolkit.cn; spf=pass smtp.mailfrom=coolkit.cn; dkim=pass (1024-bit key) header.d=coolkit.cn header.i=@coolkit.cn header.b=c/OdzP7L; arc=none smtp.client-ip=47.90.198.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coolkit.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coolkit.cn
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=coolkit.cn; s=default;
-	t=1746784703; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=3ZXjjEkHeGITH9J2fWd0u7vufG50QXwj93RzEehOzDM=;
-	b=c/OdzP7LPWrz+RwL8YwjFdg/VDy6rw5eHCeSPhCXd9rNngdHp6NciMArZBUIiv0AHoXo2RYi8Av9nFlUeEmZudgCiRMgsL8zjVlVoDgGhH4cXN6Ry9Yiq8+dR92YT3o7pEBKB9SCMyRKlz0PNSO99/OwuStFVLvm+bW9GwLQp44=
-Received: from ubuntu-z.lan(mailfrom:hao.zhang@coolkit.cn fp:SMTPD_---.cjnlknc_1746781026 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 09 May 2025 16:57:09 +0800
-From: Hao Zhang <hao.zhang@coolkit.cn>
-To: heiko@sntech.de
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tim@feathertop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"hao.zhang" <hao.zhang@coolkit.cn>
-Subject: [PATCH 2/2] ARM: dts: rockchip: Sonoff-iHost: correct IO domain voltages
-Date: Fri,  9 May 2025 16:56:57 +0800
-Message-Id: <20250509085657.309934-3-hao.zhang@coolkit.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250509085657.309934-1-hao.zhang@coolkit.cn>
-References: <20250509085657.309934-1-hao.zhang@coolkit.cn>
+	s=arc-20240116; t=1746781030; c=relaxed/simple;
+	bh=n6uTSNWQEaZRx0cW/tlfqUOE+LWnOA8WNzEMZ2lYqpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ofNYLQQTu37m19ow8ifjMqeS50jhye8rdHl9ih2QAy0nBcQoTev7MRks5zgTOGsNGmFib+ClFOZ/WTU2athHB10VSVekt5AIOavLCy5hGA9WvvT037zMRayNcykT16Bn5UNs/q47IAW6CrYI4koOkjU0rVs3YcPdxy14QVfiLug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lkTTIOEv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5493L0wv031382
+	for <linux-kernel@vger.kernel.org>; Fri, 9 May 2025 08:57:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2F2tft5UjMrfRl3YRgRsxIlyPACuq0DMYHaQoSibLhs=; b=lkTTIOEvjbPa59R4
+	Tpe5RhIffXWRGHJCpujGHyUyNJxwTsXk2n3FaqED1sHOdNPhgATzJo0hg9GyG9ws
+	unFt0UtJmdZ1BU/YtwcR0i60hyNqtS32pe/WZuVXeglTSyQhKGqDcDuwHHwDYoZ3
+	rSiZasPBGzn7bfBLcJqHpsYAJh4po8/B0m30UrfAHEy6EFKViBSpus12dkANSr6T
+	zOELjP/CJftk+qVYdZDuD1KiZrTKyi61RnyyQd4rmuL7rKqa4LEk2XfBQKEeZQ8Y
+	BM211eI4cqUedvyeTSRibTk4XVe8lmkyDPVwXSjNqctfRVDYFSRXHz04mdIjSvJZ
+	1CUpQQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnpgm06j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 08:57:07 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-476786e50d9so4664211cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 01:57:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746781026; x=1747385826;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2F2tft5UjMrfRl3YRgRsxIlyPACuq0DMYHaQoSibLhs=;
+        b=EteXxv/wbWiySZqzIpfWeTd+Qhh5a/tVAoOp6BB52uZgRw9m+0PHIqD+H79XRp1Hww
+         WfQkmILEzNe9p1SkQbKOUJXSCANgk1+Dv8dC7wVHgAXOMWe/PxB5pIYxG5Z1p2MQakPt
+         hVDFhnhVZs5oubA/YxF7wX9D6XboSCQkWAF9/II27JNfzjRlMn8/olAyESZKIw0iHj70
+         tz/5PiA1A7ne2lUvRzij638PwbeWEF8zIQRngoYbsyaYNnCz7oGSvfrd/Gm/1cXM4qE0
+         KjB2PbmqvN6HJaKcrV7pO4Ltn4L6x7VrE30shu2T6y+L2adByUmKd283nDdkwKxo0Riq
+         vpoQ==
+X-Gm-Message-State: AOJu0YzyIY5RkL5ZlGdLHSxvKK4BR1KlOqdZwvABB7doTn4n36g2dDHS
+	cA4vVTezeeLW7yjZLBw4DRVAKnR7OTxUrHln21UeTRYii1gP+6Le44mVjjVVqR6oCWkhojpeKoR
+	x8QLgdSP/vhiT8Lck38iv0LFMQoW8vNQPhcgEDi9zY46OarwdLC1Ht0PsdiJ9Fsk=
+X-Gm-Gg: ASbGncvoDQK/raeP2gItJA0fmUyNciShKp8UcIIyTqHhaGLugru83qRBo31I5aF501n
+	Sdgqq/zn3p8+GWdE8mb9FL4XMCIRfSn3fDvPHHbn+PTkfX+j1lflNz7rdSPygfMu/JcDsaZb9Rg
+	Sookh1gRvc+VFEffURFBSKVDgNHb6ztf5O6G89+J1Od5V0kDXVDt+VMPP4+urnjkggFWK18LYom
+	02Fn/Pw0U8jgN2IZnXBGpD8AAWE/RaWrlfuKRxpGTKLbY2+4wqEoF2H0mXML/5ApPU7Qs7Q+rLM
+	Hr/awlZmImEe8UYXuoCx5MI6Z7czdATCOWEXaxHraNJ3jq1anTkq4WjeXjZSCrDBcU0=
+X-Received: by 2002:a05:622a:4cf:b0:475:1c59:1748 with SMTP id d75a77b69052e-494527d04femr14440291cf.11.1746781026570;
+        Fri, 09 May 2025 01:57:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxeMUsTznzv79+qD/JwrjZfuwI2c0VRgixgGeW6tBc4r4HMOcMF9Pc59SvA9wJVZojTbpvtw==
+X-Received: by 2002:a05:622a:4cf:b0:475:1c59:1748 with SMTP id d75a77b69052e-494527d04femr14440181cf.11.1746781026180;
+        Fri, 09 May 2025 01:57:06 -0700 (PDT)
+Received: from [192.168.65.105] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2192c8535sm119615366b.8.2025.05.09.01.57.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 01:57:05 -0700 (PDT)
+Message-ID: <691487b5-bcc8-4013-8848-77019e7476e8@oss.qualcomm.com>
+Date: Fri, 9 May 2025 10:57:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: arm_sdei: Add EVENT_SIGNAL for ARM SDEI
+To: Huang Yiwei <quic_hyiwei@quicinc.com>, james.morse@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, quic_aiquny@quicinc.com, kernel@quicinc.com,
+        kernel@oss.qualcomm.com
+References: <20250509064552.3330202-1-quic_hyiwei@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250509064552.3330202-1-quic_hyiwei@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=681dc363 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=_FxPWtGLIxKa-BK1s2sA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDA4NiBTYWx0ZWRfX/rlNgA+XiROO
+ zn3MiRwq+10q3t7StqDoBme/faTMSg5R70pMWKM8PEshn5dRIxVYPlKdh0YAk1toXMFZtZ0JJYE
+ ST3jq82QtjQL7TaGBlzG+k8kWHaTm3doBpxocVCz5p2o8pfy+KbprnVUf0+RNlW4Ag4aEN3KDLS
+ SKoVXFVhXu2dhIZvjl+IupQVTyyFL3UqH+lgWMSPIdFqeXtzAgyiaV7NQt6LnNcbF6VNamMzj/1
+ i0Kda+i8OGLCSUJeJXq2aS2grDK/Dy/wuiV6oUpxSDsH5keZDLGZXdjDqVAwJep4to4ZOc50z9d
+ wqvdnnkiL8ljOwAXio5PtHTbpJZ5XhdAuubmAxUZhXYWKkWzQxZPvjM1xtP3uXX/pgULKzB6cMT
+ n/jXopgRznax9XnQSWb6b9uDBZh9aDVlMp4AYZjNoWobEDB0K9k9CExtHC+MjiaTy69wZmk2
+X-Proofpoint-GUID: ufuhSfHOJLwy5dvWxTTCCwdSCXINcv95
+X-Proofpoint-ORIG-GUID: ufuhSfHOJLwy5dvWxTTCCwdSCXINcv95
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-09_03,2025-05-08_04,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ spamscore=0 impostorscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505090086
 
-From: "hao.zhang" <hao.zhang@coolkit.cn>
+On 5/9/25 8:45 AM, Huang Yiwei wrote:
+> SDEI_EVENT_SIGNAL is a standard interface for SDEI feature and useful
+> for customized firmware calls. Therefore, adding this missing interface
+> to SDEI driver.
+> 
+> Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
+> ---
 
-Modify the corresponding vccio according to the schematic of
-Sonoff iHost. This change aligns the device tree with the actual
-hardware design and improves peripheral stability.
+Patches like this are usually expected to come together with a user
+of the newly-introduced functions
 
-Signed-off-by: hao.zhang <hao.zhang@coolkit.cn>
----
- arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi b/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi
-index 088a069bb1a8..1aedcd3a2167 100644
---- a/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rv1126-sonoff-ihost.dtsi
-@@ -323,15 +323,15 @@ wifi_enable_h: wifi-enable-h {
- };
- 
- &pmu_io_domains {
--	pmuio0-supply = <&vcc1v8_pmu>;
-+	pmuio0-supply = <&vcc3v3_sys>;
- 	pmuio1-supply = <&vcc3v3_sys>;
- 	vccio1-supply = <&vcc_1v8>;
- 	vccio2-supply = <&vccio_sd>;
- 	vccio3-supply = <&vcc3v3_sd>;
--	vccio4-supply = <&vcc_dovdd>;
--	vccio5-supply = <&vcc_1v8>;
--	vccio6-supply = <&vcc_1v8>;
--	vccio7-supply = <&vcc_dovdd>;
-+	vccio4-supply = <&vcc_3v3>;
-+	vccio5-supply = <&vcc_3v3>;
-+	vccio6-supply = <&vcc_3v3>;
-+	vccio7-supply = <&vcc_1v8>;
- 	status = "okay";
- };
- 
--- 
-2.34.1
-
+Konrad
 
