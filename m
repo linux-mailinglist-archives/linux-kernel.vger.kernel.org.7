@@ -1,154 +1,239 @@
-Return-Path: <linux-kernel+bounces-642433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9D1AB1E54
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80673AB1E5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 22:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823E750489D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A88A3B0716
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C999F263C91;
-	Fri,  9 May 2025 20:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC4E25F7B0;
+	Fri,  9 May 2025 20:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="EcZgoLEn"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="L9+2ta5h"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B53262815
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 20:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746822263; cv=none; b=XB1NQH/vY2e+lGPDKC5ilX5kGdQnezesmmuaDcLEB23CG/bVAo4wIUBVKcfRRSeZ2OnS71ddzjkOO8C5CcDYIUPPDIg1B/HP33aUJBKW2BZGyR/F330QpvcaIlCpbe48YF4TyEvij/m7Uuh4vyHZMBF6Gv9tjzC5vMVGTB0+rFc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746822263; c=relaxed/simple;
-	bh=sLj//1AcXpvIwBqzWW3CI6S+W+1lUK/SIwxIUMmLcqM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ba+zrciI6urCW/ik6ncspk8fCO2lpTS6TNYSlFY+OHFKVgh15F2mIxkSX7icBLuHN0c3fwGg7gPKC5Qobmf04D4jBDYuzr+1YJ+m1/eM/d9hr1duCRZUqWtfVgTkgfVzA230fxftxGmT21MQf/u4vvCp4kLBN5WtPLKAaMpSea0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=EcZgoLEn; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1746822260; bh=ehstcimJR9z+3Rt/ETv7WL7WqYg2RyHiNK4ycKLwqgc=;
- b=EcZgoLEnz7ewv6ZRBdjX+KGGQuc/XP86n3R48eMgXo3sk8HIJTPUUBeBDW1VVMXzcfpFAZpNd
- GwuSLWAbt2QnpEjkgDlUdjNJ5DFQsXlR0I9PUVN+pAbJoDN7jVCmbgSU8rOOLINCnSqwb0uhs9E
- gdsuhMCICRiQ/UohvqrkdGuImbhsPWqXt0W2wu00KtWEjugIpCAuelod7sbQlMENUwi7y3R9pmB
- XfKZMT2nu4s+0lFmJ32lhehrEKJvMmb6fBjNlaCcGhKZuGdSetDUaX9ahgFozmWDMSJ7SV+Ji+s
- qUAR3Pk8fGquT6CHNX4vx9/Rd5Vw7G1PFFqIvfYIvoRQ==
-X-Forward-Email-ID: 681e6470b323f1ffafd05da1
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.0.2
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Yao Zi <ziyao@disroot.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v3 2/2] arm64: dts: rockchip: Enable Ethernet controller on Radxa E20C
-Date: Fri,  9 May 2025 20:23:58 +0000
-Message-ID: <20250509202402.260038-3-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250509202402.260038-1-jonas@kwiboo.se>
-References: <20250509202402.260038-1-jonas@kwiboo.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A34525F7BA;
+	Fri,  9 May 2025 20:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746822650; cv=pass; b=dZh9XKWS5g7o06kQs15ue53u8uCQXtz1IJNlJuBxaYkjV8P1zCHImncDvJTT14H6D5jqtfDifQMPLByIo5NcojH/a77KWGY6nZOEr/g2W5V6dJ1aqPoJ6dT7ZUsGXZKAbYQB4IjrTf6tcaNY1N91gIyXYuiMJWZdC9fN8efztxc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746822650; c=relaxed/simple;
+	bh=sCHbHsdO1t8SMG3PnvDC6/DZuQ6a+5e+wpLVFFICQJ8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QfudGOb92Cr1K5mdCE/uiFb7ny9aGF8lbbgyiKhT2FOv83jW2of6ersG8usMFE9iNFOLxBq0i3iaT+X0yctdTtYlDkCBfzKPLq89fUaNI3JCEFenOnwuGo/lpfYjUSaLTO2n2t9UCj5fQzQgYALzzV5AunpV6VXaeWNHn+oE3vY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=L9+2ta5h; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1746822618; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=d1VPv0k8N6IoxTXgwaledrfNsvKRXoPgBoYB6gth6+B+P/FsTOta1iPCRQb3EHup1bb/Nyis84/h9DpSBcCgvKVRWTaOk+fwgjGBaakh6hwqlLumYP/4vbpK6gRc6BySRj4B6FNWXAHz7XCYfghUHBW599UfnNwc/tU6T/vKpAY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1746822618; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=H7/PBvPybkP5KxwxVUAJwfDn3rRM3myRQvRRWWmC9kk=; 
+	b=Z2T+IvHH5KysyJrWRlY4Vu84xsEJQluaQgAM1jZAEsEfIDS94ykUTwHMVCPMd9xEQq0KvmHlNHYJCZpEy8ExH6rxYIy/5DemIYsH1P38hRzNGp/Eurq4WSH3JZIT9t5v233fPYxMxb3iwvz8dSmbkqOF99Ms2TQ6bqN1czc1MgY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746822618;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=H7/PBvPybkP5KxwxVUAJwfDn3rRM3myRQvRRWWmC9kk=;
+	b=L9+2ta5h1Pnixo9lN64o1qzT5j4cZeRqqrW/rfhJ3v3njNZWOErQUisVfiFC7qhn
+	oqI9dwB4NjEe3vAnkJzWoATLPx+/rAjaQiu26lXfPVRW6KJ3s+hSieOEIoCwmc06mF3
+	K80XCnCgHNwgj87sq/a6stipkMk9BUaDgjmVEm98=
+Received: by mx.zohomail.com with SMTPS id 1746822615763380.89814111166925;
+	Fri, 9 May 2025 13:30:15 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v8 0/3] rust: platform: add Io support
+Date: Fri, 09 May 2025 17:29:45 -0300
+Message-Id: <20250509-topics-tyr-platform_iomem-v8-0-e9f1725a40da@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALllHmgC/43OQWrDMBCF4asErTtGkmvLzqr3KCGo1qgekDxmJ
+ ExC8N3rZFPoqst/8T7eQxUUwqLOp4cS3KgQL0cMbyc1zX75RqBwtLLadro1A1ReaSpQ7wJr8jW
+ y5CtxxgzGGe2Nc2hCVMd+FYx0e9mfl6OjcIY6C/pf0bTaWt3Zsen7bhh7MBD8QpganzJS8B8Tp
+ +S/WHwzcX6yM5XKcn893twT/8+5zYEG994O/WjCiNH9gS/7vv8A8fS2uA0BAAA=
+X-Change-ID: 20250318-topics-tyr-platform_iomem-1710a177e1df
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Ying Huang <huang.ying.caritas@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Fiona Behrens <me@kloenk.dev>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
+X-ZohoMailClient: External
 
-The Radxa E20C has two GbE ports, LAN and WAN. The LAN port is provided
-using a GMAC controller and a YT8531C PHY and the WAN port is provided
-by an RTL8111H PCIe Ethernet controller.
+Changes in v8:
+- Rebased on driver-core-next
+- Opted to wait for 'rust/revocable: add try_with() convenience method' to
+  land instead of using the suggested closure (let me know if we should
+  just switch to the closure anyways)
+- Cc'd more people
+- Link to v7: https://lore.kernel.org/r/20250318-topics-tyr-platform_iomem-v7-0-7438691d9ef7@collabora.com
 
-Enable support for the LAN port on Radxa E20C.
+Changes in v7:
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
+- Rebased on top of rust-next
+- Fixed a few Clippy lints
+- Fixed typos (Thanks Daniel!)
+- "struct Flags" now contains a usize (thanks Daniel)
+- Fixed "Doc list without indentation" warning (thanks, Guangbo)
+
+Thanks, Fiona {
+- Removed RequestFn, as all functions simply used request_region and RequestFn
+  had issues. Only request_region() is exposed now.
+- Gated iomem_resource on CONFIG_HAS_IOMEM
+- Require that the name argument be 'static
+}
+
+- Correctly check for IORESOURCE_MEM_NONPOSTED. We now call ioremap_np if that
+  is set (thanks, Lina!)
+- Remove #[dead_code] attribute from ExclusiveIoMem::region.
+
+Changes in v6:
+
+- Added Fiona as co-developer in the first patch, as I merged part of her code
+from the LED driver series (thanks, Fiona)
+
+- (Fiona) added the ResourceSize type, thereby fixing the u32 vs u64 issues
+  pointed out by Christian
+
+- Moved the request_region, release_region and friends to resource.rs
+
+- Added the Region type. This type represents a resource returned by
+  `request_region` and friends. It is also owned, representing the fact
+  that the region remains marked as busy until release_region is called on
+  drop. (Thanks Alice, for pointing out this pattern)
+
+- Rewrote the IoMem abstraction to implement a separate type for exclusive
+  access to an underlying region. I really disliked the `EXCLUSIVE` const
+  generic, as it was definitely not ergonomic, i.e.:
+
+  `IoMem<0, false>`
+
+  ...doesn't really say much. In fact, I believe that boolean parameters
+  hurt readability in general.
+
+  This new approach lets users build either regular IoMem's, which basically
+  call ioremap under the covers, and ExclusiveIoMem's , which also call request_region
+  via the Region type.
+
+- Added access to the ioresource_port and ioresource_mem globals.
+
+Link to v5: https://lore.kernel.org/rust-for-linux/20250116125632.65017-1-daniel.almeida@collabora.com/
+
+Changes in v5:
+
+- resend v5, as the r4l list was not cc'd
+- use srctree where applicable in the docs (Alice)
+- Remove 'mut' in Resource::from_ptr() (Alice)
+- Add 'invariants' section for Resource (Alice)
+- Fix typos in mem.rs (Alice)
+- Turn 'exclusive' into a const generic (Alice)
+- Fix example in platform.rs (Alice)
+- Rework the resource.is_null() check (Alice)
+- Refactor IoMem::new() to return DevRes<IoMem> directly (Danilo)
+
+link to v4: https://lore.kernel.org/rust-for-linux/20250109133057.243751-1-daniel.almeida@collabora.com/
+
+Changes in v4:
+
+- Rebased on top of driver-core-next
+- Split series in multiple patches (Danilo)
+- Move IoMem and Resource into its own files (Danilo)
+- Fix a missing "if exclusive {...}" check (Danilo)
+- Fixed the example, since it was using the old API (Danilo)
+- Use Opaque in `Resource`, instead of NonNull and PhantomData (Boqun)
+- Highlight that non-exclusive access to the iomem might be required in some cases
+- Fixed the safety comment in IoMem::deref()
+
+Link to v3: https://lore.kernel.org/rust-for-linux/20241211-topic-panthor-rs-platform_io_support-v3-1-08ba707e5e3b@collabora.com/
+
 Changes in v3:
-- Rebase on top of latest mmind/for-next
+- Rebased on top of v5 for the PCI/Platform abstractions
+- platform_get_resource is now called only once when calling ioremap
+- Introduced a platform::Resource type, which is bound to the lifetime of the
+ platform Device
+- Allow retrieving resources from the platform device either by index or
+ name
+- Make request_mem_region() optional
+- Use resource.name() in request_mem_region
+- Reword the example to remove an unaligned, out-of-bounds offset
+- Update the safety requirements of platform::IoMem
 
 Changes in v2:
-- Rebase on top of the "Support I2C controllers in RK3528" series [1]
+- reworked the commit message
+- added missing request_mem_region call (Thanks Alice, Danilo)
+- IoMem::new() now takes the platform::Device, the resource number and
+ the name, instead of an address and a size (thanks, Danilo)
+- Added a new example for both sized and unsized versions of IoMem.
+- Compiled the examples using kunit.py (thanks for the tip, Alice!)
+- Removed instances of `foo as _`. All `as` casts now spell out the actual
+ type.
+- Now compiling with CLIPPY=1 (I realized I had forgotten, sorry)
+- Rebased on top of rust-next to check for any warnings given the new
+ unsafe lints.
 
-[1] https://lore.kernel.org/r/20250309070603.35254-1-ziyao@disroot.org
+Daniel Almeida (3):
+  rust: io: add resource abstraction
+  rust: io: mem: add a generic iomem abstraction
+  rust: platform: allow ioremap of platform resources
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/io.c               |  36 +++++
+ rust/kernel/io.rs               |   3 +
+ rust/kernel/io/mem.rs           | 125 ++++++++++++++++
+ rust/kernel/io/resource.rs      | 252 ++++++++++++++++++++++++++++++++
+ rust/kernel/platform.rs         | 123 +++++++++++++++-
+ 6 files changed, 539 insertions(+), 1 deletion(-)
+ create mode 100644 rust/kernel/io/mem.rs
+ create mode 100644 rust/kernel/io/resource.rs
+
+--
+2.48.0
+
 ---
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Daniel Almeida (3):
+      rust: io: add resource abstraction
+      rust: io: mem: add a generic iomem abstraction
+      rust: platform: allow ioremap of platform resources
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index d45b6594b2de..506d54337ece 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -17,6 +17,7 @@ / {
- 	compatible = "radxa,e20c", "rockchip,rk3528";
- 
- 	aliases {
-+		ethernet0 = &gmac1;
- 		mmc0 = &sdhci;
- 		mmc1 = &sdmmc;
- 	};
-@@ -184,6 +185,17 @@ &cpu3 {
- 	cpu-supply = <&vdd_arm>;
- };
- 
-+&gmac1 {
-+	clock_in_out = "output";
-+	phy-handle = <&rgmii_phy>;
-+	phy-mode = "rgmii-id";
-+	phy-supply = <&vcc_3v3>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
-+		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>;
-+	status = "okay";
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1m0_xfer>;
-@@ -198,7 +210,25 @@ eeprom@50 {
- 	};
- };
- 
-+&mdio1 {
-+	rgmii_phy: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0x1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gmac1_rstn_l>;
-+		reset-assert-us = <20000>;
-+		reset-deassert-us = <100000>;
-+		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
- &pinctrl {
-+	ethernet {
-+		gmac1_rstn_l: gmac1-rstn-l {
-+			rockchip,pins = <4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
- 	gpio-keys {
- 		user_key: user-key {
- 			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/io.c               |  41 ++++++++
+ rust/kernel/io.rs               |   3 +
+ rust/kernel/io/mem.rs           | 141 +++++++++++++++++++++++++
+ rust/kernel/io/resource.rs      | 222 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/platform.rs         | 128 ++++++++++++++++++++++-
+ 6 files changed, 535 insertions(+), 1 deletion(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250318-topics-tyr-platform_iomem-1710a177e1df
+
+Best regards,
 -- 
-2.49.0
+Daniel Almeida <daniel.almeida@collabora.com>
 
 
