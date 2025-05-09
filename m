@@ -1,127 +1,115 @@
-Return-Path: <linux-kernel+bounces-640703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89669AB0800
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 095F0AB0806
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 04:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35BF1B6791B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:40:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433131BC7594
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 02:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F61229B2C;
-	Fri,  9 May 2025 02:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE722D9F7;
+	Fri,  9 May 2025 02:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eINcCWxD"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F104110F2
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 02:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="G/5jHHYJ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFAD21CFFA;
+	Fri,  9 May 2025 02:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746758427; cv=none; b=qCUlXer+vX1g3T7KiQu628BubV+lKBVCdGAoQcvQK+MzLY+/XcjXBNMjEU3RzhosheQk1Sk8IvJfG/3eJw8kSeQmwh8otiSYHLjm4RB/wBju7UKr12CKVycPQccszkbnIrcYSGqOE9/mMokysfu+Nmd3L9O0bMdsCvYggTnyhCo=
+	t=1746758566; cv=none; b=AjsojFFhmOYxJl+u5lkWl35j6/fa1zWE7Yr2i5V3uhlL7Tr2RPaIIn6JZkDgrqrEw/FRQEKCaEPAbj2m7C/uxW0J4ctYzrUR07eg2q6uZEAeAZNBtthpHYNSZd4nblmX+v+sfKG9mR6aoCYJ882k+ToA0D9p7SUlUjNyUVYLvqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746758427; c=relaxed/simple;
-	bh=fbU3HjWyMXkb9dGsZnGLbxInBFDNVNu9m2J3gvv0qnM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DSatk+tucK3d4m1SnZANK86jIckJBNcS7EVdCHlDeWU6sH9VQlSBKRPPRNQtazSbRAQ7xJK8moVPi/EdX/U+3HcS/3Y8uSZQGw4YETgdxSQuzxBhLtFioC7lzBCdD6DoBqizLLibmhwP9xi5dAgEecUCt0OpyJ+uuD+NT1t8pH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eINcCWxD; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5fbf1365b1fso5121a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 May 2025 19:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746758424; x=1747363224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fbU3HjWyMXkb9dGsZnGLbxInBFDNVNu9m2J3gvv0qnM=;
-        b=eINcCWxDjU1u5WMzC4bWyzKpLTcSq8kp09EeAwZ0xQl1jnSPwVMY0Jg6czzR32uyN2
-         xHAcVRWGKfF/VfNUf9jwpyv/7aQPRjdV+VTns7wy3oV2r2464Ptj2Sp+tshepmCtBziM
-         UYzJYmk3VIxMyw2pjHKnWprRvEhKDVdv4SIsawitKDYfdhSrchpkBeqlva3OaJNFjZQ0
-         Fg/i/wcKwSxWfoO0mS0kJYbWS+w/i2K1dYubAezrlrwhQ1pqA5PaKfEAArDgal2LlZuS
-         BXDVjQR/2b6VpTXz4UeHtYdGw9ieb4muVvc/jL/EFNab9YPKY+OvOQ9Nox7O3b3DZ5jM
-         tbQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746758424; x=1747363224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fbU3HjWyMXkb9dGsZnGLbxInBFDNVNu9m2J3gvv0qnM=;
-        b=qa3gD46t+rCLb/uvkVqPz7R0uqB07EbfdJyEl+oEQRrwqO0fPmm8IwuBw07ZDWKRxv
-         5ITgkDCAG+8eLgWjacrgzlUw77kK4MIkG/Rt80hRyqoTyzIXlEkc1bk/uYJMN8zFqOrm
-         3KBfkNKVEaWkI2D8LVhC6THn0jbeeFKD4rDU0mn5xlhPq9HZS1wBaAlQGbxibUpSln/x
-         Cne8j/G9Ak3KbIO2gWKJyR0kjXJKAN86oFDudjfJaJJlMYC3F5MJeDRzspgxg30mZt4C
-         mxtQXOOABNw7DQMZZYg4i6+leypTB9isnLfZs/FzJDrGW4ewmLxzplQLGN9pxSK8df6F
-         kXwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsMGMRq68MFzZ89XlY70j4M3vNQe7euwR6cIUhn3ZE89dDOYstuvR8t3NoQwYyQFFY2QG3FIGak74siJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjj5rorWf+m9XquKHS+T13059pSmVo/g91Gap/ydl1Kt4Jwbqv
-	U+9iF3FftmjPCwxZkcdHWcz9+WKiGwUUFPD0UXR4+m/d3PmY4qWZDSQVmqC5XxDN6PuTpHbrHFD
-	eFKMTnhn8xFVCVCqfmrd4HDWuvqPhdzUNrTTmxFEKwI+EWFNRmw==
-X-Gm-Gg: ASbGnctSAd9Hg5W1N2F5bUh+0puhzpLm67y9yhtZWzpUKkxbfff0QZtWN00iRL7ugr1
-	mlKUSW1t93fh8lveNe43HomLkC4z1E4BB+56KzV6jZJGZgNNVyqpeE/bOz6Cic7DaJYzipxVjzv
-	20RTBbiBEiv0YHKGQ05xEX
-X-Google-Smtp-Source: AGHT+IHs8N8GIJHV6hQ7v6BVcAhLlzquJwKORlwm8OHV24AyjhJvWrD2zfqx4hpKyBMB0ZsJzP8evSJIQn9Apks+tPQ=
-X-Received: by 2002:aa7:cd07:0:b0:5fa:ac6f:ff97 with SMTP id
- 4fb4d7f45d1cf-5fca1efb492mr46780a12.2.1746758424053; Thu, 08 May 2025
- 19:40:24 -0700 (PDT)
+	s=arc-20240116; t=1746758566; c=relaxed/simple;
+	bh=Mv1GQESWsvvxNW/Pj5hv1tq7U2AdP9+SctY77+FiEbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ddx2HkaSKzXKFWVTWLWUjTpOC++mhIuh1jq7UiNxFetc12xcHgHLfmJS1HW3/efoGAPFAWRcotGKfeb18ZKRVFZHUMB8Q+grKWobJ+pPEpmsbz+WJuuByrF5/RE+vA0Fxts2ENr2k4lrEW0sBDt2xOwMDkLCKlXLQOvsJSmDW7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=G/5jHHYJ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=gEI52y3dVNCkwTQfiMWGNC67/6f3hVlLllGEpTUyFT4=;
+	b=G/5jHHYJzJLgVR/58tBVOx1A8kutMaWau6KRzO3vNv/Mg8JF/jYiF5FxQ7BJSe
+	Hf0+7mqlK6lC30a7WjPnT7rwH3HzECtabWyozypQ6N9Rz6Sc7BtgXZvtKxRUILiP
+	M+KYY+yXyDkIXOtYklgypOg5lYis5HoLd7Ab+nxXhdFAI=
+Received: from [10.42.12.155] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCXxO1Hax1o6gpuAA--.1864S2;
+	Fri, 09 May 2025 10:41:13 +0800 (CST)
+Message-ID: <0ef733c0-a945-4eae-8af2-2fe7bb60ed92@163.com>
+Date: Fri, 9 May 2025 10:41:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425200541.113015-1-xur@google.com> <174601619410.22196.10353886760773998736.tip-bot2@tip-bot2>
- <jj4fu243l7ap4bza5imrgjk5f5dhsoloxezgphdjwo7sb5iqsq@wkt46abbt45r>
- <yrdh2fmzgqlrfe35wvxb3a2z7wdqod3liupdbriqzc5ihqjw5y@fsqeyi34cbgg>
- <xb2rjui75xylasuihl7gdnovv2z6qxgsefmzhxvhntlcuw5ktb@zbstyytmzjag> <20250508152713.GI4439@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250508152713.GI4439@noisy.programming.kicks-ass.net>
-From: Rong Xu <xur@google.com>
-Date: Thu, 8 May 2025 19:40:13 -0700
-X-Gm-Features: AX0GCFuXdBKM7y2tZJ4PRPCqtCRq-rf2WAsTlEUdkGvaXI8BntKBO0j8ScCcDyc
-Message-ID: <CAF1bQ=S52yEfJhhW8WrqmXu7ux1W4zVyk7Osv80tkiXpvegNqQ@mail.gmail.com>
-Subject: Re: [PATCH] objtool: Speed up SHT_GROUP reindexing
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, tip-bot2 for Rong Xu <tip-bot2@linutronix.de>, 
-	linux-tip-commits@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] driver core:add device's platform_data set for faux
+ device
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, dakr@kernel.org, markgross@kernel.org, arnd@arndb.de,
+ eric.piel@tremplin-utc.net, valentina.manea.m@gmail.com, shuah@kernel.org,
+ i@zenithal.me, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Zongmin Zhou <zhouzongmin@kylinos.cn>
+References: <cover.1746662386.git.zhouzongmin@kylinos.cn>
+ <b03b374bc3adad275893e2ad60d4bf5a0ad358e3.1746662386.git.zhouzongmin@kylinos.cn>
+ <2025050854-breeching-had-c9b3@gregkh>
+Content-Language: en-US
+From: Zongmin Zhou <min_halo@163.com>
+In-Reply-To: <2025050854-breeching-had-c9b3@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCXxO1Hax1o6gpuAA--.1864S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr1xZry8WFy3Kryktw1kXwb_yoW8AFyrpa
+	yIgFy2kr4DKay2gr17Xw48Zw1Svw4Sy3y5Arn8Jryjkw4fJrnavFy3t3yvyay5JrWFk3ZF
+	qayDXFWkAFZ8A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UeuWLUUUUU=
+X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbiUABIq2gdaHtftwAAs9
 
-On Thu, May 8, 2025 at 8:27=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
+
+On 2025/5/8 17:45, Greg KH wrote:
+> On Thu, May 08, 2025 at 05:11:47PM +0800, Zongmin Zhou wrote:
+>> From: Zongmin Zhou <zhouzongmin@kylinos.cn>
+>>
+>> Most drivers based on platform bus may have specific data
+>> for the device.And will get this specific data to use
+>> after device added.
+>> So keep the setting for device's platform_data is necessary
+>> for converting platform device to faux device.
+> I do not understand, why not just use the platform_data field directly
+> in the faux device structure?  Why change all callers to now have to
+> keep track of an additional pointer in these create functions?  That
+> just adds complexity for everyone when almost no one will need it.
+In fact, I have tried other approaches.
+However, I found that it must be set after creating faux_dev and before 
+calling the device_add() function.
+
+Because the execution of the driver init and the device probe function 
+is asynchronous,
+and the actual test shows that the probe function is executed
+before faux_device_create_with_groups () returns faux_device for the caller.
+But the probe and related functions may need to get plat_data.If 
+plat_data is set after
+faux_device_create_with_groups() is completed and fdev is returned, the 
+probe function will get NULL.
+
+Take vhci-hcd as an example:
+vhci_hcd_init() calls faux_device_create_with_groups(),
+Once device_add() is called, vhci_hcd_probe() will be executed immediately.
+Therefore, the probe function will attempt to obtain plat_data
+before vhci_hcd_init() receives the return value of faux_device.
+It's too late to set plat_data after get the return value of faux_device.
+
+If there is anything not clearly or other good ways to handle this, 
+please let me know.
+
+Thanks very much.
+
 >
-> On Wed, May 07, 2025 at 05:11:53PM -0700, Josh Poimboeuf wrote:
-> > On Wed, May 07, 2025 at 05:11:03PM -0700, Josh Poimboeuf wrote:
-> > > From 2a33e583c87e3283706f346f9d59aac20653b7fd Mon Sep 17 00:00:00 200=
-1
-> > > Message-ID: <2a33e583c87e3283706f346f9d59aac20653b7fd.1746662991.git.=
-jpoimboe@kernel.org>
-> > > From: Josh Poimboeuf <jpoimboe@kernel.org>
-> > > Date: Wed, 7 May 2025 16:56:55 -0700
-> > > Subject: [PATCH] objtool: Speed up SHT_GROUP reindexing
-> >
-> > Urgh, sorry about the patch formatting, the above can obviously be
-> > dropped.
+> thanks,
 >
-> No worries, my script did it almost right :-)
->
-> Patch seems sane to me; I'll go stick it into objtool/core. Rong if you
-> could verify your case still work correctly that would be appreciated.
+> greg k-h
 
-I tested the patch, and it works for me.
-
-I also looked at the patch. It assumes there is only one .symtab section.
- In general, there can be multiple symtab sections in an ELF file. But this
-(i.e. one symtab) most likely holds for the kernel.
-
-Tested-by: Rong Xu <xur@google.com>
-
-Thanks,
-
--Rong
-
->
 
