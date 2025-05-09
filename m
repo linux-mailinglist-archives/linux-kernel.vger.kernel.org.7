@@ -1,102 +1,207 @@
-Return-Path: <linux-kernel+bounces-640970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-640989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272C0AB0B7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:20:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831B9AB0BCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 09:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED4C1BC1EDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:21:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC17B4097
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 07:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7687D255F59;
-	Fri,  9 May 2025 07:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jM9fwDPO"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36101272E7B;
+	Fri,  9 May 2025 07:33:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4246D2AD0D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C76A23D2AF
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 07:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746775241; cv=none; b=Luy1H7YR3eCHYjke6dJTKaW4nhBYjziZp+TMtVFnza1UE+iPPCyYiobmNSXXUqdauOZTtpLMFB0QIo+pOu9yYJbvwrUS+CR+0aWN2bsbFoMY2gdgqL5MJ2bDQtPkPpP+/tiGqQ8qsMdTQvOh/uhEp4eHbIMHMuGsnOnnGYGQij8=
+	t=1746776006; cv=none; b=nTPRKyhk3XAVCJJRlRfxpBJfZMLlkhmreWu7cluj3aCEoBWeXsKriLX1E6/S+i9hLTrpi6P3ocMYD8Xdhw0M7+BoYwz9dRnvUZVcGO+NeV2Gqz21yaw27IhSOCNPMsbpvpy0v2UeCy6ZVsAj+gVelgk4pkv7Rcj5u2qoVRAyR3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746775241; c=relaxed/simple;
-	bh=E52sUhwrPT88c00/iONr1WsHW3o/X2f1q2URFxRkf6Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CGwFIgQMktdw75KjiR49APOBJcvFGOTVNj/I8buIARnKv6fKkMomm6CmCswpF9KeAX0EDmNvmW6+q0L6oF9zFamScqAF+uN8kMrm5tlao9BpdmUZHJMOMSHOoFlhUSMniG2btj/BNVaKsizUlk875Neb4j+i/+oH0hcRudR5b+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jM9fwDPO; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5f92fc82c39so1728064a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 00:20:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746775238; x=1747380038; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E52sUhwrPT88c00/iONr1WsHW3o/X2f1q2URFxRkf6Q=;
-        b=jM9fwDPOul0Bj3bU7KZJTwktSAeEEZVoC0LPaXUGVqfqpTU0Bn+AKKExoCf34IHBKE
-         Y7LtK5bdjmAPREiJiv2hYYuN3D6ueQKWgfDcyZieP16eh8R7sy2rHqkmvDM9QfiO/Zup
-         CexSn7GcSpP4IdoZBoPkFtnJFNpIl9p0agT1vpA1IhM7q68Pl12OOZkKAfdwiadXi7VO
-         vFNl5Au7X6/zURpqNXe/qj17sqStx3YeSNG0hULIYNlvAjRaVpf/39ukcbv0g1Vd/HKj
-         0JGibf/B0fU2x5D2oWu8/nMXwO7pEWzEpMHm8oqpZey0CQEsufHpjhJh+h5//V7QKT/H
-         J8vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746775238; x=1747380038;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E52sUhwrPT88c00/iONr1WsHW3o/X2f1q2URFxRkf6Q=;
-        b=BxA7gzNI1V3K0Y8P0yoTOX/BKNBdWevNsAMy2OGne9kTUGpw1iHJkdj9MV9y5bwfgr
-         Xbi/4s2xOlfAt1kfDrZUsKCQQL3INGjnkZLzcMr4qxRi+easw5Cgm8nf4CNadOsAl/TE
-         zdAO3/T4WY2PAeWuRm5Gg7LgXRuXoc+Z0KWhNVBNQ9haD/WWP9uvedBGcZugfmJ10J7d
-         TiBWnSRYz/3XvsA0dtuW+i1oM+UDkrlNHbzkSB++G6OwgRienSy37PhgN8uNfP3wMcXP
-         KqcygP3/dhDThBkupQvj7PDjiqwEwhhjA4JC2rODrKqOj7BSbM6VfJQgMOuESiKsQO1s
-         /ynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+8k2YOJJ2zpvq7/VYgCJqIeb8gX7o9ux0PLJw2tSujnNYvzGzrTm6VyNQU7DoMYXxlnXRyAX4S/B6Cd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIS1q/qXstSbqrYWQDwspKUmzP4dhASL4ExFO7IJ8tQQunMszf
-	8hOYqc/J7TPpNmZ164EUAPOm7kcTw1Rge7YYMxQqZbCk5AZllXPIC2VGlWk6uT3WKNR1LR14EqE
-	VDhTSgA==
-X-Google-Smtp-Source: AGHT+IHudBw1Bfd8zPFPws5wwuo3sjzx9KmyClmMQ+BvrIpmJmJlojWkYFBO6H8lDZOgjAqcWyzvY9Csh0Vo
-X-Received: from edbig5.prod.google.com ([2002:a05:6402:4585:b0:5fb:f13a:53c9])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:3483:b0:5fc:9bc3:9eab
- with SMTP id 4fb4d7f45d1cf-5fca0770899mr1674022a12.17.1746775238596; Fri, 09
- May 2025 00:20:38 -0700 (PDT)
-Date: Fri,  9 May 2025 09:20:33 +0200
-In-Reply-To: <2025040820-REJECTED-6695@gregkh>
+	s=arc-20240116; t=1746776006; c=relaxed/simple;
+	bh=yRcMZWWIn9IwWXeqtxsIt7Ke1M1EkjF7RXIEeGnVKIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CwcZLxFxrP6gC0f62o30IUAMbZKro6A7XvWgWp3v5hz6kmFCBCQCC/ZMwvCstpdYInzMdgxN1KHc/Vwvy+aGY3RBIY5hG0Tro/DbO8lthTmXuDO9pKbCLaChG2jVjkmpVSFIT0fz0sOX1Q4A7kDmzu7JB9QAv51Ki6/GxmOHD9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zv11f21THz4f3lVL
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:32:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 58E971A07C0
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 15:33:20 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP3 (Coremail) with SMTP id _Ch0CgCHJsG1rx1oiZnNLg--.58746S2;
+	Fri, 09 May 2025 15:33:20 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	bigeasy@linutronix.de,
+	legion@kernel.org,
+	roman.gushchin@linux.dev,
+	brauner@kernel.org,
+	tglx@linutronix.de,
+	frederic@kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com,
+	joel.granados@kernel.org,
+	viro@zeniv.linux.org.uk,
+	lorenzo.stoakes@oracle.com,
+	avagin@google.com,
+	mengensun@tencent.com,
+	linux@weissschuh.net,
+	jlayton@kernel.org,
+	ruanjinjie@huawei.com,
+	kees@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huaweicloud.com
+Subject: [RFC next v2 0/5] ucount: add rlimit cache for ucount
+Date: Fri,  9 May 2025 07:20:49 +0000
+Message-Id: <20250509072054.148257-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <2025040820-REJECTED-6695@gregkh>
-X-Mailer: git-send-email 2.49.0.1015.ga840276032-goog
-Message-ID: <20250509072033.1335321-1-dvyukov@google.com>
-Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
- filesystems with manually crafted filesystem
-From: Dmitry Vyukov <dvyukov@google.com>
-To: gregkh@linuxfoundation.org
-Cc: cve@kernel.org, linux-cve-announce@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCHJsG1rx1oiZnNLg--.58746S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr45Ww17GFWfGrWxWFWfKrg_yoWrCr1xpr
+	WSy3sxJr4kJF17Jr1S934kX34Sg3yrAF4UGFs5C34fA3Z8GFyFyr1fta4FvryDKrZ3Ja4j
+	qrWjg3yDCa1qvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
+	sGvfC2KfnxnUUI43ZEXa7sREhiSPUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-> CVE-2025-0927 has now been rejected and is no longer a valid CVE.
+The will-it-scale test case signal1 [1] has been observed. and the test
+results reveal that the signal sending system call lacks linearity.
+To further investigate this issue, we initiated a series of tests by
+launching varying numbers of dockers and closely monitored the throughput
+of each individual docker. The detailed test outcomes are presented as
+follows:
 
-> Filesystem bugs due to corrupt images are not considered a CVE for any
-> filesystem that is only mountable by CAP_SYS_ADMIN in the initial user
-> namespace. That includes delegated mounting.
+	| Dockers     |1      |4      |8      |16     |32     |64     |
+	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
 
-I wonder if this should be the case only if the image is flagged by fsck
-as corrupted? Otherwise I am not sure what's "trusted". It's not about
-somebody's "honest eyes", right. E.g. in the context of insider risks
-the person providing an image may be considered "trusted", or in the
-context of Zero Trust Architecture nothing at all is considered trusted,
-or a trusted image may be tampered with while stored somewhere.
+The data clearly demonstrates a discernible trend: as the quantity of
+dockers increases, the throughput per container progressively declines.
+In-depth analysis has identified the root cause of this performance
+degradation. The ucouts module conducts statistics on rlimit, which
+involves a significant number of atomic operations. These atomic
+operations, when acting on the same variable, trigger a substantial number
+of cache misses or remote accesses, ultimately resulting in a drop in
+performance.
 
-Without any formal means to classify an image as corrupted or not,
-this approach does not look very practical to me. While flagging by fsck
-gives concrete workflow for any context that requires more security.
+Notably, even though a new user_namespace is created upon docker startup,
+the problem persists. This is because all these dockers share the same
+parent node, meaning that rlimit statistics continuously modify the same
+atomic variable.
+
+Currently, when incrementing a specific rlimit within a child user
+namespace by 1, the corresponding rlimit in the parent node must also be
+incremented by 1. Specifically, if the ucounts corresponding to a task in
+Docker B is ucount_b_1, after incrementing the rlimit of ucount_b_1 by 1,
+the rlimit of the parent node, init_ucounts, must also be incremented by 1.
+This operation should be ensured to stay within the limits set for the
+user namespaces.
+
+	init_user_ns                             init_ucounts
+	^                                              ^
+	|                        |                     |
+	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+	|                        |                     |
+	|<---- usr_ns_b(docker B)|usr_ns_a->ucount---->|
+					^
+					|
+					|
+					|
+					ucount_b_1
+
+What is expected is that dockers operating within separate namespaces
+should remain isolated and not interfere with one another. Regrettably,
+the current signal system call fails to achieve this desired level of
+isolation.
+
+Proposal:
+
+To address the aforementioned issues, the concept of implementing a cache
+for each namespace's rlimit has been proposed. If a cache is added for
+each user namespace's rlimit, a certain amount of rlimits can be allocated
+to a particular namespace in one go. When resources are abundant, these
+resources do not need to be immediately returned to the parent node. Within
+a user namespace, if there are available values in the cache, there is no
+need to request additional resources from the parent node.
+
+	init_user_ns                             init_ucounts
+	^                                              ^
+	|                        |                     |
+	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+	|                        |                     |
+	|<---- usr_ns_b(docker B)|usr_ns_b->ucount---->|
+			^		^
+			|		|
+			cache_rlimit--->|
+					|
+					ucount_b_1
+
+
+The ultimate objective of this solution is to achieve complete isolation
+among namespaces. After applying this patch set, the final test results
+indicate that in the signal1 test case, the performance does not
+deteriorate as the number of containers increases. This effectively meets
+the goal of linear scalability.
+
+	| Dockers     |1      |4      |8      |16     |32     |64     |
+	| Throughput  |381809 |382284 |380640 |383515 |381318 |380120 |
+
+Challenges:
+
+When checking the pending signals in the parent node using the command
+ cat /proc/self/status | grep SigQ, the retrieved value includes the
+cached signal counts from its child nodes. As a result, the SigQ value
+in the parent node fails to accurately and instantaneously reflect the
+actual number of pending signals.
+
+	# cat /proc/self/status | grep SigQ
+	SigQ:	16/6187667
+
+TODO:
+
+Add cache for the other rlimits.
+
+[1] https://github.com/antonblanchard/will-it-scale/blob/master/tests/
+
+Chen Ridong (5):
+  user_namespace: add children list node
+  usernamespace: make usernamespace rcu safe
+  user_namespace: add user_ns iteration helper
+  uounts: factor out __inc_rlimit_get_ucounts/__dec_rlimit_put_ucounts
+  ucount: add rlimit cache for ucount
+
+ include/linux/user_namespace.h |  23 ++++-
+ kernel/signal.c                |   2 +-
+ kernel/ucount.c                | 181 +++++++++++++++++++++++++++++----
+ kernel/user.c                  |   2 +
+ kernel/user_namespace.c        |  60 ++++++++++-
+ 5 files changed, 243 insertions(+), 25 deletions(-)
+
+-- 
+2.34.1
 
 
