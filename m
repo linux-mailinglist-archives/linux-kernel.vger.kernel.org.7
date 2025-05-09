@@ -1,251 +1,222 @@
-Return-Path: <linux-kernel+bounces-642217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920CFAB1BE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:03:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008CDAB1BF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 20:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F3C4A85EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:03:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1EEA22397
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 18:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FE623C8DB;
-	Fri,  9 May 2025 18:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E1623C384;
+	Fri,  9 May 2025 18:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ZyJ76Etm"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021141.outbound.protection.outlook.com [52.101.129.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CRwRilSD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F37323C8A1;
-	Fri,  9 May 2025 18:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.141
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746813784; cv=fail; b=UB5+yErOUptZ2Rd2N2J9RiDa3IxTWygGfq5DSsclEV+YidknF3UCUw1EEukOSzPgCv0xGSaHoDEqds5BM4dmsMcrFHoBsTkOPQDzdLHbs+MPuClJKjDuoHv6TcgnwTmOQlmHTeDLhtJFDFkEHJG25g2sQNa8BeSVQnkaUyF2nZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746813784; c=relaxed/simple;
-	bh=vtAU26z9ezxDSDv4YjF5dSKkQys9ySL+sbxqRVfUV88=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LMCX9Nn5LaJZ4E7ls3P3n6KFN098FH9kmy27PB4X5BhTcs6N65iIevzMIJEk1M1Qf53L0SCr39MwE6W74hP/KaiNBma5Hd/Zs5TlWvtJubaTMNfe+yeX08BEZEZokRyiSFwTA7Fuew1pJFK6Etso/WUlm+q4LlNIobVzjONTQbw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=ZyJ76Etm; arc=fail smtp.client-ip=52.101.129.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uEEyLDwpgzxIpAjy0lax6H6YtiaMMxoMZ8zNiJuR5dlq6rgC7foUqUzWBUnv/uDCHL5YBfh5oQE/6OLfqLZ5mBKFKtaIdt9HxQUi4c5B25dXU/PrfSsQoYECkeGlbDDqUlLP1FCYbjGcg5M5bxwUSUKS0JtVpJ4eBNHyHzPMSCeayUoDKqDY8hjawAGHLSXICDxS7mSJ0I2PjvCjoWOiGs0QlbaTKOaVyRw0FREnfzrDbZrZ/HYAwUqRrjQoQZv/PmwVdh7lFaP9ewuhL7CSnqdxaqUUKbN02S4NN/myiNCYdJKfLOwjgxwVXYA6Mk6v7m7mCZg3GXlk9mErMrEgng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XfB890TzvoyQO6xWHFmz+H2/QcMh1f1+NnwEU+FGsRs=;
- b=T4b5qRuttWH0wVFBsKYzpSyNSqSmfTJfVy+9xjBLXMu/bg2q5ghk22sMDESTM7g+9i7/BdC/cSkIv55No6pO2/j39ChLdAgybe7fr5foTmxBTZ6IXoygeQB7t8ixDBo4fx7mgUisIMIxXMK0Dyn570xnIDxd4BMhsPvDAgrG68ARjRIBo+qMPvP8iM2CZ0dimIHUcimkKMB6o0CTn6OmfiGCz/rj+/e4SNKymlltLdvUTRYo5shPdcCW+Dm6IIRxpXpFOZhLFKzsfSzOpwfyvkdjGLJIK0hE4X74+BLEH/HE2fI0IAB1nu+kKCMI9hzK199TblWsXICv0FLg7xRlRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XfB890TzvoyQO6xWHFmz+H2/QcMh1f1+NnwEU+FGsRs=;
- b=ZyJ76EtmA8M9WkCGD8MX5ga3wLYNyxAPPPM8guQhkBq07gSRKBpr9kWUzCGBDuTN+8z/pC6M8wDHnQZg4cElnrKF9OKzO0fi4o+gI4m2RkNBQjlRh/i/DJNP4nKmT8OW3SMF0ozkQCaCZj2c32W1m54nM2yIOmxElsZbVfh7J4o=
-Received: from KUZP153MB1444.APCP153.PROD.OUTLOOK.COM (2603:1096:d10:36::22)
- by SIAP153MB1340.APCP153.PROD.OUTLOOK.COM (2603:1096:4:28c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.5; Fri, 9 May
- 2025 18:02:58 +0000
-Received: from KUZP153MB1444.APCP153.PROD.OUTLOOK.COM
- ([fe80::1d66:c349:800b:f365]) by KUZP153MB1444.APCP153.PROD.OUTLOOK.COM
- ([fe80::1d66:c349:800b:f365%5]) with mapi id 15.20.8746.002; Fri, 9 May 2025
- 18:02:58 +0000
-From: Saurabh Singh Sengar <ssengar@microsoft.com>
-To: Wei Liu <wei.liu@kernel.org>, Roman Kisel <romank@linux.microsoft.com>
-CC: Naman Jain <namjain@linux.microsoft.com>, KY Srinivasan
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui
-	<decui@microsoft.com>, Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>, Stanislav Kinsburskii
-	<skinsburskii@linux.microsoft.com>, Nuno Das Neves
-	<nunodasneves@linux.microsoft.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>
-Subject: RE: [EXTERNAL] Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
-Thread-Topic: [EXTERNAL] Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
-Thread-Index: AQHbvmPWwq1NkNsYtEq9b/XTYQeJpbPHBnSQgACG/ACAAXzIAIABkZyA
-Date: Fri, 9 May 2025 18:02:57 +0000
-Message-ID:
- <KUZP153MB14447CC188576D3A7376CEAABE8AA@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
-References: <20250506084937.624680-1-namjain@linux.microsoft.com>
- <KUZP153MB1444858108BDF4B42B81C2A0BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
- <8f83fbdb-0aee-4602-ad8a-58bbd22dbdc9@linux.microsoft.com>
- <aBzx8HDwKakGG1tR@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-In-Reply-To: <aBzx8HDwKakGG1tR@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=c6ff1c44-4d74-4a20-b38f-c066d6ccf37d;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-05-09T18:00:53Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: KUZP153MB1444:EE_|SIAP153MB1340:EE_
-x-ms-office365-filtering-correlation-id: 01ff478e-ff96-4489-91bb-08dd8f23baad
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?cBI7MbrkHvK/At8tXeW/0xz6jTcrfoHh5n/qizQsQhADgIh4pmghh0SjR57j?=
- =?us-ascii?Q?V8CjVkOoAlywv7EZDpw4ElKn6F9bcIQr74UyfpcMsiTn94xfisLj4pBqiT4l?=
- =?us-ascii?Q?usep5KDt97KSZeAKftyeHvvfPbdtHyLLx0pcJHi2l1iWJOk/Jkjm6iUMooyE?=
- =?us-ascii?Q?TUelhDMHyKbl1L5aQrdFuvW3miJVJppO7qP24pBuloAaKL7cI/7xVy9cInY0?=
- =?us-ascii?Q?wZNpMU4RJejCoNCb1taH1AL/V+eU/jMsMOBpMAQe7wz9hoDl1OI+Y+FiPX7A?=
- =?us-ascii?Q?OyVeUInkFobP5P2vIy2pDkh5tTZCwboFIoeercGhxuobkP51yYouP3zIwH2t?=
- =?us-ascii?Q?78U/GebCFohnFY5dB2LnXRWNVzp7Bu0LUXhU4qTeu0tqUd6u/L+J37JPdxfl?=
- =?us-ascii?Q?gWmI+cKUlmSf5F7ls1FtffpsjK8Kzm8L6Z9Cs6oOUzd1aSrqL9nDE6NvNSTt?=
- =?us-ascii?Q?ezMADwaZ0eZNXF8FE8bxAbAjDKnQwOWimPS6Mi2FPNepUwhI0whiOKg9OFcw?=
- =?us-ascii?Q?nXUP+xXFnxQAJX1Kys7OOmDPHlybQsyTeo2FEx73T82fWCQ8LyxDhHKZtUOy?=
- =?us-ascii?Q?cbyl0sOE1zbhZUo37xhMT4S9S+L/nB8XKQI3KPi7khdzOQDoCZIHpRHM0JTZ?=
- =?us-ascii?Q?ZZ12jiLs7ohHCv5TTHkEgTQ6G/iIkU1fmK0bZ/5sqr4bUcSVHEvRdED4AKS4?=
- =?us-ascii?Q?5O4GQYHyoQu8zXGYnJawi1NdVqlnK3H8MGywo7U26g/hAkvKgRWAWoSkUqhJ?=
- =?us-ascii?Q?MmGhg5Z/BO3weEjdTJsKnt7rHhrDdjXj0nzomUsbe3ue1g0YYcW/bXUEDR/S?=
- =?us-ascii?Q?8w+Aq2HurN8fOvuNg3t2+cr2KrFkkx+nf7RESnw3vE3q8johru5xoTki34py?=
- =?us-ascii?Q?lGjlceAHMEAwv97sf5TG7Wz5UJDZRlbi756RGRREIbjuq7XauNgx5jkkopQp?=
- =?us-ascii?Q?+8j1tyFEi7gZPLJAq6Yq5N5WU8cK1+krXiQ+GD/zlKq5dUD7ODkTaQx1bd3i?=
- =?us-ascii?Q?4+BDh4TvwtLtYRXg6kZL7Y876CX6qgIu2MsR1JuiniM4X0g0K5OmgIXHaumu?=
- =?us-ascii?Q?8c5Mu2gajt0OIztJe0ZFNXL8099N8ZNR5tc0rdasoVAfiaWMZ/2uQ1t79ueO?=
- =?us-ascii?Q?9cJkS3MbeHoPJu3aFG75jXI978sZQDgxdzdYT8lx1TRLwyc9Cpvc1eD+8146?=
- =?us-ascii?Q?NLfJ0Ps7dSz6qYup48yGwZNfwyWWCXbW4hW5r80Lq4uQvsf3pEbTOMR84lNU?=
- =?us-ascii?Q?n/c0m6SqAktJC0wWrVy+iMGjU/EP1BSt/fCe2yVxar1NYbqkBPAlWd2Es4mw?=
- =?us-ascii?Q?+m2xNTfFHLPKXVH2DWUKjbBswIexGSN+VRohCb7/sBUScU+prClb8JTLL5nK?=
- =?us-ascii?Q?zISO4Y0yUhHGHZ0K56xiumMeBgwjBzDo2UvomHMMFt9dpww0QDAg/RDyXaXt?=
- =?us-ascii?Q?VO8ThCebda1xT4rFyldc41Yn4WZ6az6HLE4U8ySY1SVkjhyCryGLPQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KUZP153MB1444.APCP153.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Z16ZGzOnIMJyiS0tYZywto/5+XaIugeu0pq20ZGjkz7R9CyoT/XrIu1mcQqa?=
- =?us-ascii?Q?Yjrc5obZBq4CY3jx6sCjt2ZsGwVagg4ZpIL3XN6GKllJJTz/mQPWpgTzSqiW?=
- =?us-ascii?Q?5mkV3B3dwi+YS8AE2ADUYTqwcsBYTY3Cm1w8a/9ouMpmFd3o6I8R67qMkXO4?=
- =?us-ascii?Q?6Pv9DFkKytcYyIPLN/GtPY7N90vcyOHqgdq/gAfE0WJDCcmvE20+BhGZp7ne?=
- =?us-ascii?Q?7Nwl3u9ivlPlItNGda7c8MvcI1qGbBzkSWqOUMXMgvJQhkCGDrbejJ+uCyng?=
- =?us-ascii?Q?k0p2jXRYM1Y6oy8R7errQeGNW6oyjcPRr4Vw7WYj3wNByp7785GIn51YgEB4?=
- =?us-ascii?Q?5qhV+WCdKbPVQAwVrWcADM9aZZOgvlbN0zqPrzDKoccUsSYXYBBDehSHCUwa?=
- =?us-ascii?Q?7OATsyarw9NQ92nI8AP+1AAnyDD2svo7mhBOwtyInQujqKTikR1C8hsWNPlo?=
- =?us-ascii?Q?ZfmFpbsbm9ZtgmbcBvCq426ZWnTauJe8KPKlgdWn8IQALVMEe1CPykwylPlO?=
- =?us-ascii?Q?gZecnGoMlMGCN4Oce0IeQzzdTa4Nu7lv5au6F3SgGF0SDhKZT+tjGVs9o4Is?=
- =?us-ascii?Q?3UGvrTCKz0hkuOXdA0PjPy3u8t92lzir/T0A83F6CaLVe3UEzolwWS7BWIaf?=
- =?us-ascii?Q?EgLHbgFatRftK2GIa3C9khi2sNxLb69GKozDrXm+V+mi1DcDivdOCKnjxYzh?=
- =?us-ascii?Q?t3awUiWjEGUiDw5b+2MsX/GrZvyhtYyzuzMv8zNQdKn+/pf5eFtD8cjCRPVs?=
- =?us-ascii?Q?w6LE50rlFbhqTFaGxlhcma0gtYQlf4IsVh9BuZCWCzU9LzjMrPzNCpADRn3N?=
- =?us-ascii?Q?T9LRurAy8ABuNOoctuOYvwi8ZkWHkISH2nUH73k55HQPfH80rIed+oeD0JdX?=
- =?us-ascii?Q?jx3L/umX0rx5x1/7f1Dsvd04znR9uB4xcrFRM0S1wF5SoRGh5/HTNCjxX0rb?=
- =?us-ascii?Q?nfHjsxC0Te9ahAMWGfjX2RGFF/T6J423tK2KtKYhsMsxk46MAQrjdE9/RaRm?=
- =?us-ascii?Q?//Hz+OuF6G6A/w/UUaJsugynNk0Nn3f+7kT9p0ZKCqFGth53p+cbnTR3neTF?=
- =?us-ascii?Q?8t1B7SfxXPmd8HP2syPgxIkWVtZtENbW42O9ue0tXY4dcpnEMk/qYWnPmvHp?=
- =?us-ascii?Q?vR850DDWyYWVeBhzRfrLhshXG7iUn8AXBa9uvfuwv2DoUacGVswT0lPy4i0z?=
- =?us-ascii?Q?RmZ/BgoFteJ+KxHVytfMgSPZg01ZGpVXFLl3kDxz+1ECCg2lCRebNuk/fGhe?=
- =?us-ascii?Q?O8osezc75MD8jqu2KEYVbAQUQKNtJdWB9ZmJeODUVZ6URiv5IX3l+xKDrqgu?=
- =?us-ascii?Q?WrFKRaG6O5wHQqbAtkHVL305mvJvPpYn5cQLbueeuRPF65Sym5sNikBmRVAX?=
- =?us-ascii?Q?IXsqVG2jUJMBJOy8kiTkKcIoXb/NIyr+Brb3rznsKJUbjUhHejbDTZL7Ch6q?=
- =?us-ascii?Q?r0jxVexzUVceHww+ViuwmIovaHuTAQBMRY5QmOL/574DPOjBr7Cg75+3dObv?=
- =?us-ascii?Q?YNa7tjAPGYnonfcWaLTylB7JvDnN+c7Bmi/HHEqdEkVD+h9LN20UEnpCutMi?=
- =?us-ascii?Q?kRT1KY5Z1pCXvUFvyGtFMzRRzdijd4L9/Wjwq9jY?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3DC23A994;
+	Fri,  9 May 2025 18:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746813831; cv=none; b=HThs9BeVNRxafeAUXomGCTFU4CD7XROVXp+6nUaKsunApBpT0h22hJN1zxsv8/+il+7CAFVD/lULRsjx4ij+IKp2rNjda+QIUWju4s28EPy7lL6v0JMKs+iZ9U0LFGJ1S2T9PJeX57m0hWap0Pkn9g7WgMXBK3DhSnUIVw2CWkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746813831; c=relaxed/simple;
+	bh=TMIiQS5YfSgbaasKX3QzBCK1/RYA4e4rftcFiPeXxS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ffT8uoRMZgUaG4W0KB43saNiVnIaydhysrH5EWbBrb9XIQhj5bj53iyXaVcf6RbDPvyqPx+i1synpd2Uksnxs/g08Cu4MRChvlFiuw/8kx/4Gk8f9DR4WxkTrtG/7SOqPTtbKMWLo3lQeaNOk3NkkzQhaRt206KNypKmMyVXdyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CRwRilSD; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746813830; x=1778349830;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TMIiQS5YfSgbaasKX3QzBCK1/RYA4e4rftcFiPeXxS8=;
+  b=CRwRilSDwM6EvLv3d66YeXGcQaJbsuD4dGaLDYwkPDIKE22pPqA+SVGF
+   mIdhEMc6DINlZABECe4tD8jamLlc8S2RfdOJ4YRioduIXqW918LSCbUZX
+   /wchVlxjKNA/yOdxWN3ooSV6tOpSmHdOlWDQXXPuRYaQG3NVyseKuA9NC
+   dFx6wEi0PKqcz16t5nULoMSYF7FVNNaAkIkCnkKdfRiO71EaHvFsaGOUq
+   sRCGEnaxTX5LIJzgFK8B7r7RecVkVS9ZHrLQLsFmRyGbusQ3XTOx9MIo3
+   IHLNGGZRCHKvtU0L5TOoIXmp7DwkKxBvwz1Jlhyr1NpReSlTVxze0n9cS
+   g==;
+X-CSE-ConnectionGUID: uieYRu5RTXS8vnXEqeTe/Q==
+X-CSE-MsgGUID: Qwn9x3ZXRp+LXtjjSuSGpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48349969"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="48349969"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 11:03:49 -0700
+X-CSE-ConnectionGUID: Wdk17spXQvK54qmPmDD3Cw==
+X-CSE-MsgGUID: 97+KdvmWSkqS2ddY1D4QhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="141802458"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 09 May 2025 11:03:40 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDS4Q-000CL5-0U;
+	Fri, 09 May 2025 18:03:38 +0000
+Date: Sat, 10 May 2025 02:03:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 1/4] iio: backend: update
+ iio_backend_oversampling_ratio_set
+Message-ID: <202505100131.FZe7C8ot-lkp@intel.com>
+References: <20250508123107.3797042-2-pop.ioan-daniel@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: KUZP153MB1444.APCP153.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01ff478e-ff96-4489-91bb-08dd8f23baad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2025 18:02:57.4554
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yHAIvM9nJFf6BA77C6Rqc1h9i0FuIOmShfxDmVSmNHROukv5xjxTKaYAaWusumjy/CYsBHvi/HRc4ERc3C4AGw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SIAP153MB1340
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508123107.3797042-2-pop.ioan-daniel@analog.com>
 
+Hi Pop,
 
+kernel test robot noticed the following build warnings:
 
-> -----Original Message-----
-> From: Wei Liu <wei.liu@kernel.org>
-> Sent: 08 May 2025 23:33
-> To: Roman Kisel <romank@linux.microsoft.com>
-> Cc: Saurabh Singh Sengar <ssengar@microsoft.com>; Naman Jain
-> <namjain@linux.microsoft.com>; KY Srinivasan <kys@microsoft.com>;
-> Haiyang Zhang <haiyangz@microsoft.com>; Wei Liu <wei.liu@kernel.org>;
-> Dexuan Cui <decui@microsoft.com>; Anirudh Rayabharam
-> <anrayabh@linux.microsoft.com>; Saurabh Sengar
-> <ssengar@linux.microsoft.com>; Stanislav Kinsburskii
-> <skinsburskii@linux.microsoft.com>; Nuno Das Neves
-> <nunodasneves@linux.microsoft.com>; linux-kernel@vger.kernel.org; linux-
-> hyperv@vger.kernel.org
-> Subject: [EXTERNAL] Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
->=20
-> On Wed, May 07, 2025 at 12:20:36PM -0700, Roman Kisel wrote:
-> >
-> >
-> > On 5/7/2025 6:02 AM, Saurabh Singh Sengar wrote:
-> > >
-> > [..]
-> >
-> > > > +	}
-> > > > +
-> > > > +	local_irq_save(flags);
-> > > > +	in =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
-> > > > +	out =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
-> > > > +
-> > > > +	if (copy_from_user(in, (void __user *)hvcall.input_ptr,
-> > > > hvcall.input_size)) {
-> > >
-> > > Here is an issue related to usage of user copy functions when interru=
-pt are
-> disabled.
-> > > It was reported by Michael K here:
-> > > https://nam06.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fg=
-i
-> > > thub.com%2Fmicrosoft%2FOHCL-Linux-
-> Kernel%2Fissues%2F33&data=3D05%7C02%
-> > >
-> 7Cssengar%40microsoft.com%7C3a21fc17545e4bafb86e08dd8e5aa427%7C72
-> f98
-> > >
-> 8bf86f141af91ab2d7cd011db47%7C1%7C0%7C638823242185564641%7CUnk
-> nown%7
-> > >
-> CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJ
-> XaW4
-> > >
-> zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DpdQ90a
-> aKZsy
-> > > 67qkPZkV4BfpwM6cM6scUbTeH9lT7s6s%3D&reserved=3D0
-> >
-> > From the practical point of view, that memory will be touched by the
-> > user mode by virtue of Rust requiring initialization so the a possible
-> > page fault would be resolved before the IOCTL. OpenHCL runs without
-> > swap so the the memory will not be paged out to require page faults to
-> > be brought in back.
-> >
-> > I do agree that might be turned into a footgun by the user land if
-> > they malloc a page w/o prefaulting (so it's just a VA range, not
-> > backed with the physical page), and then send its address straight
-> > over here right after w/o writing any data to it. Perhaps likelier
-> > with the output data. Anyway, yes, relying on the user land doing sane
-> > things isn't the best approach to the kernel programming.
->=20
-> Yep. We don't rely on user land software doing sane things to maintain
-> correctness in kernel, so this needs to be fixed.
->=20
-> Thanks,
-> Wei.
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.15-rc5 next-20250509]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Pop-Ioan-Daniel/iio-backend-update-iio_backend_oversampling_ratio_set/20250508-203339
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250508123107.3797042-2-pop.ioan-daniel%40analog.com
+patch subject: [PATCH v2 1/4] iio: backend: update iio_backend_oversampling_ratio_set
+config: i386-randconfig-061-20250509 (https://download.01.org/0day-ci/archive/20250510/202505100131.FZe7C8ot-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250510/202505100131.FZe7C8ot-lkp@intel.com/reproduce)
 
-How about fixing this for normal x86 for now and put a TODO for CVM to be f=
-ixed later, when we bring in CVM support ?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505100131.FZe7C8ot-lkp@intel.com/
 
-Regards,
-Saurabh
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/adc/ad4851.c:324:60: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned int chan @@     got struct iio_chan_spec const *chan @@
+   drivers/iio/adc/ad4851.c:324:60: sparse:     expected unsigned int chan
+   drivers/iio/adc/ad4851.c:324:60: sparse:     got struct iio_chan_spec const *chan
+
+vim +324 drivers/iio/adc/ad4851.c
+
+   295	
+   296	static int ad4851_set_oversampling_ratio(struct iio_dev *indio_dev,
+   297						 const struct iio_chan_spec *chan,
+   298						 unsigned int osr)
+   299	{
+   300		struct ad4851_state *st = iio_priv(indio_dev);
+   301		int val, ret;
+   302	
+   303		guard(mutex)(&st->lock);
+   304	
+   305		if (osr == 1) {
+   306			ret = regmap_clear_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+   307						AD4851_OS_EN_MSK);
+   308			if (ret)
+   309				return ret;
+   310		} else {
+   311			val = ad4851_osr_to_regval(osr);
+   312			if (val < 0)
+   313				return -EINVAL;
+   314	
+   315			ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+   316						 AD4851_OS_EN_MSK |
+   317						 AD4851_OS_RATIO_MSK,
+   318						 FIELD_PREP(AD4851_OS_EN_MSK, 1) |
+   319						 FIELD_PREP(AD4851_OS_RATIO_MSK, val));
+   320			if (ret)
+   321				return ret;
+   322		}
+   323	
+ > 324		ret = iio_backend_oversampling_ratio_set(st->back, chan, osr);
+   325		if (ret)
+   326			return ret;
+   327	
+   328		switch (st->info->resolution) {
+   329		case 20:
+   330			switch (osr) {
+   331			case 0:
+   332				return -EINVAL;
+   333			case 1:
+   334				val = 20;
+   335				break;
+   336			default:
+   337				val = 24;
+   338				break;
+   339			}
+   340			break;
+   341		case 16:
+   342			val = 16;
+   343			break;
+   344		default:
+   345			return -EINVAL;
+   346		}
+   347	
+   348		ret = iio_backend_data_size_set(st->back, val);
+   349		if (ret)
+   350			return ret;
+   351	
+   352		if (osr == 1 || st->info->resolution == 16) {
+   353			ret = regmap_clear_bits(st->regmap, AD4851_REG_PACKET,
+   354						AD4851_PACKET_FORMAT_MASK);
+   355			if (ret)
+   356				return ret;
+   357	
+   358			st->resolution_boost_enabled = false;
+   359		} else {
+   360			ret = regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+   361						 AD4851_PACKET_FORMAT_MASK,
+   362						 FIELD_PREP(AD4851_PACKET_FORMAT_MASK, 1));
+   363			if (ret)
+   364				return ret;
+   365	
+   366			st->resolution_boost_enabled = true;
+   367		}
+   368	
+   369		if (st->osr != osr) {
+   370			ret = ad4851_scale_fill(indio_dev);
+   371			if (ret)
+   372				return ret;
+   373	
+   374			st->osr = osr;
+   375		}
+   376	
+   377		return 0;
+   378	}
+   379	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
