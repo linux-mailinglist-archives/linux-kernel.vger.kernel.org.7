@@ -1,189 +1,121 @@
-Return-Path: <linux-kernel+bounces-641656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B1AAB1480
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:12:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE326AB1483
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF1B1C426BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:13:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE39CA04C56
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40DF29186B;
-	Fri,  9 May 2025 13:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="NwgyCVj3"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9ED15E96;
+	Fri,  9 May 2025 13:12:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB7428FFD9;
-	Fri,  9 May 2025 13:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72BA29116A
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746796365; cv=none; b=ZEf7B44YPbS5Gb/EkrNg39KD5uCwK1N/Fpmuj9EyQ/PbeI+Wshft3kO4+SLpvD2qglRDssJMYg86fPUwYOwKKIL9Uc5Wzykyd1Vam9kbAsGeAzGPh8DmX4nFLuJfuy71bJuurPfjrzHfg+uiyjv2Dje2P/7zczTetz7aBjqG7Yk=
+	t=1746796378; cv=none; b=rr4iW/HZYYQlRPalKriYjSVJ51EGkjqOJ92WSilVUkHnNuLDgYtFUM+CAfpLpkfTuRz1b1crgWiDhAHLOuKLVgB9aORudYX4hpXmDD0Bjn/6xwMBowD26FJJJY0Y7d4qsPtwjkAsfcqtWX+iFcMNhYyF4cd9FRoGjMJ2aVEkanQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746796365; c=relaxed/simple;
-	bh=qSlct4DDCCgoCYbECl4GdlHE+UOZT1M/mcJSKEXEBoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K19tFcH74Wm8r5F3TNBHAOSq8o75c817ErKcuSKbTbn2QWbWI30zX3dKOqYh7RGkyX/D5+pTJIoN+EBu1CJ7krYXKa2IJZPtNWAgnONX+BCvyTqPQTaoi4OUSeDeJlK0yz6MLnjzLiDlMSRoY37P1SAvoUPf8Eyv/RRk53BZj7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=NwgyCVj3; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Fri, 9 May 2025 09:12:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1746796358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHE+CTrnMR2Ej/pQosbeYTQFW+gx7bU1DLRuJAwU1k8=;
-	b=NwgyCVj3WnE0BcZ1RmT3kyajgJh7ZmeJ8DszNOsVFNtgnADHiFlbusgtsdfmql0lKr7le7
-	F/U6iqHBzgcZwiLRnODBb7xpmz0PH+M54K3dqVDiZwJVniw6x9t6xCVoojHGC9hWKOUagx
-	jgY+QYOWVk3mK87d4EjlwVDzEo9eFA00rFn3cdlQAEuE8o95bLmKoqINv+MCS8ySOok9vr
-	t40+IBEs56GK+TK0iTSphbzK/Xn29pXmxGGWbTAuMncWGfQviGsRj91UpfRjwFleSw9g9e
-	r67TR9B0I/7HiwHou1MT1j4oUcWbIsM8tcONEqxv9Q0D6cS1SgcOI+d0o7vchg==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: sven@svenpeter.dev
-Cc: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
-	Hector Martin <marcan@marcan.st>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 3/9] dt-bindings: mfd: Add Apple Mac System Management
- Controller
-Message-ID: <aB3_QUTH5BzjzSvJ@blossom>
-References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev>
- <20250503-smc-6-15-v4-3-500b9b6546fc@svenpeter.dev>
+	s=arc-20240116; t=1746796378; c=relaxed/simple;
+	bh=z1xCrAabZiQUvTwdwOsMJsc68Yxi5MBS/RYz9fmxYik=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=NVi3AcUQ8ZckYNQzoLHm8C0J8gKN6u+kuIkFmNl+9XDQTcVX/MGHcd5Mwl6HggsWke3QA2o/HzGAGdGukSjHHtwZM2aXXqiK7EwTKc+8dUtfQfAcN9i31Ir20b+oXo+1eVKmMWUYKYYrFs5PgWONzhcO7oezLVSaIbeJIIFiFyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A99EC4CEE4;
+	Fri,  9 May 2025 13:12:58 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uDNXN-00000002bnm-2OCU;
+	Fri, 09 May 2025 09:13:13 -0400
+Message-ID: <20250509131249.340302366@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 09 May 2025 09:12:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/31] tracing: Updates for v6.16
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250503-smc-6-15-v4-3-500b9b6546fc@svenpeter.dev>
-X-Migadu-Flow: FLOW_OUT
 
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/for-next
 
-Le Sat , May 03, 2025 at 10:06:50AM +0000, Sven Peter via B4 Relay a écrit :
-> From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-> 
-> Add a DT binding for the Apple Mac System Management Controller.
-> 
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> ---
->  .../devicetree/bindings/mfd/apple,smc.yaml         | 71 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 72 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/apple,smc.yaml b/Documentation/devicetree/bindings/mfd/apple,smc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9f1058c15bbf62d84f8a72fdaa354909b02e2801
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/apple,smc.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/apple,smc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple Mac System Management Controller
-> +
-> +maintainers:
-> +  - Sven Peter <sven@svenpeter.dev>
-> +
-> +description:
-> +  Apple Mac System Management Controller implements various functions
-> +  such as GPIO, RTC, power, reboot.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - apple,t6000-smc
-> +          - apple,t8103-smc
-> +          - apple,t8112-smc
-> +      - const: apple,smc
-> +
-> +  reg:
-> +    items:
-> +      - description: SMC area
-> +      - description: SRAM area
-> +
-> +  reg-names:
-> +    items:
-> +      - const: smc
-> +      - const: sram
-> +
-> +  mboxes:
-> +    maxItems: 1
-> +
-> +  gpio:
-> +    $ref: /schemas/gpio/apple,smc-gpio.yaml
-> +
-> +  reboot:
-> +    $ref: /schemas/power/reset/apple,smc-reboot.yaml
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - mboxes
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      smc@23e400000 {
-> +        compatible = "apple,t8103-smc", "apple,smc";
-> +        reg = <0x2 0x3e400000 0x0 0x4000>,
-> +               <0x2 0x3fe00000 0x0 0x100000>;
-> +        reg-names = "smc", "sram";
-> +        mboxes = <&smc_mbox>;
-> +
-> +        smc_gpio: gpio {
-> +          compatible = "apple,smc-gpio";
-> +          gpio-controller;
-> +          #gpio-cells = <2>;
-> +        };
-> +      };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d85d9d9065db4dc5869788f8a81d9d9a425d7ce3..2c16b2fc3fec76104967530f487123485af1e777 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2275,6 +2275,7 @@ F:	Documentation/devicetree/bindings/iommu/apple,dart.yaml
->  F:	Documentation/devicetree/bindings/iommu/apple,sart.yaml
->  F:	Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
->  F:	Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
-> +F:	Documentation/devicetree/bindings/mfd/apple,smc.yaml
->  F:	Documentation/devicetree/bindings/net/bluetooth/brcm,bcm4377-bluetooth.yaml
->  F:	Documentation/devicetree/bindings/nvme/apple,nvme-ans.yaml
->  F:	Documentation/devicetree/bindings/nvmem/apple,efuses.yaml
-> 
-> -- 
-> 2.34.1
-> 
-> 
+Head SHA1: 98e1783bf20da8f969c30e79adb9a6bc5bbf54e2
+
+
+Devaansh Kumar (1):
+      tracing: Replace deprecated strncpy() with strscpy() for stack_trace_filter_buf
+
+Ilya Leoshkevich (1):
+      ftrace: Expose call graph depth as unsigned int
+
+Miaoqian Lin (1):
+      tracing: Fix error handling in event_trigger_parse()
+
+Steven Rostedt (27):
+      tracing: Update function trace addresses with module addresses
+      tracing: Show function names when possible when listing fields
+      tracing: Only return an adjusted address if it matches the kernel address
+      tracing: Adjust addresses for printing out fields
+      tracing: Show preempt and irq events callsites from the offsets in field print
+      tracing: Always use memcpy() in histogram add_to_key()
+      tracing: Move histogram trigger variables from stack to per CPU structure
+      tracing: Add common_comm to histograms
+      ftrace: Show subops in enabled_functions
+      ftrace: Comment that ftrace_func_mapper is freed with free_ftrace_hash()
+      tracing/mmiotrace: Remove reference to unused per CPU data pointer
+      ftrace: Do not bother checking per CPU "disabled" flag
+      tracing: Just use this_cpu_read() to access ignore_pid
+      tracing: Add tracer_tracing_disable/enable() functions
+      tracing: Use tracer_tracing_disable() instead of "disabled" field for ftrace_dump_one()
+      tracing: kdb: Use tracer_tracing_on/off() instead of setting per CPU disabled
+      ftrace: Do not disabled function graph based on "disabled" field
+      tracing: Do not use per CPU array_buffer.data->disabled for cpumask
+      ring-buffer: Add ring_buffer_record_is_on_cpu()
+      tracing: branch: Use trace_tracing_is_on_cpu() instead of "disabled" field
+      tracing: Convert the per CPU "disabled" counter to local from atomic
+      tracing: Use atomic_inc_return() for updating "disabled" counter in irqsoff tracer
+      tracing: Remove unused buffer_page field from trace_array_cpu structure
+      tracing: Rename event_trigger_alloc() to trigger_data_alloc()
+      tracing: Remove unnecessary "goto out" that simply returns ret is trigger code
+      tracing: Add a helper function to handle the dereference arg in verifier
+      tracing: Allow the top level trace_marker to write into another instances
+
+Tomas Glozar (1):
+      tracing/osnoise: Allow arbitrarily long CPU string
+
+----
+ Documentation/trace/ftrace.rst       |  13 +++
+ include/linux/ftrace.h               |   2 +
+ include/linux/ring_buffer.h          |   1 +
+ kernel/trace/fgraph.c                |   2 +
+ kernel/trace/ftrace.c                |  45 +++++++-
+ kernel/trace/ring_buffer.c           |  18 ++++
+ kernel/trace/trace.c                 | 195 +++++++++++++++++++++++++++--------
+ kernel/trace/trace.h                 |  30 ++++--
+ kernel/trace/trace_branch.c          |   4 +-
+ kernel/trace/trace_entries.h         |  12 +--
+ kernel/trace/trace_events.c          |  39 ++++---
+ kernel/trace/trace_events_hist.c     | 179 ++++++++++++++++++++++++++------
+ kernel/trace/trace_events_trigger.c  |  64 +++++-------
+ kernel/trace/trace_functions.c       |  24 ++---
+ kernel/trace/trace_functions_graph.c |  38 ++-----
+ kernel/trace/trace_irqsoff.c         |  47 +++++----
+ kernel/trace/trace_kdb.c             |   9 +-
+ kernel/trace/trace_mmiotrace.c       |  12 +--
+ kernel/trace/trace_osnoise.c         |   9 +-
+ kernel/trace/trace_output.c          |  60 +++++++----
+ kernel/trace/trace_sched_wakeup.c    |  18 ++--
+ kernel/trace/trace_stack.c           |   2 +-
+ 22 files changed, 570 insertions(+), 253 deletions(-)
 
