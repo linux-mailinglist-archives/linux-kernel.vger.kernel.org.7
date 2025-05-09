@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-641631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-641730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E55CAB1433
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 14:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE91AB1529
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 15:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8C8522E24
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 12:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B991B6055A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 May 2025 13:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A0D2918F4;
-	Fri,  9 May 2025 12:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18769289E01;
+	Fri,  9 May 2025 13:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BS3sxEDZ"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gSecdX1o"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C4F291176;
-	Fri,  9 May 2025 12:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365C5291882
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795399; cv=none; b=IaRMPFFfn99P3l2Yo/AmN8AhznHgVKBzBFTUa4b59etd+v6Y8tf596rIE7c8IpU+QajNBxSR5tF7W7vqswXkm6eCypAG1zKb3H1NEPp5iBdSvnwWNZdXDf2GAzBs7PW1IFsb0bOA3zdDAel7FC5TmXBWe8W47AixuSc3P2eOScE=
+	t=1746797219; cv=none; b=PKPypizicGwSkBZBASYcppFCD5I1YYoY4FCijKgSG79WL9PUhKyyW+E9kIJQ4IyMaMNKbeGKc0biqEARnlFdJzUoBn0LUZ1Lv+jaGed2XeXKohszM1KebmAzp0wUbuYvyK0ZRxG03vboq9cVelHqbjvAKeg88kJ6FbdueOAzfd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746795399; c=relaxed/simple;
-	bh=eEulgBiddSPX2RK7TdqXaa1VbtpWWvwEmnOnDQcmVnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUByqwgNRPblfSurUWfvdUgWpNF+l5MJdCUSYw4nUMG1jOnwc2D1buV38lwe+l9UXVqdc41+SCnMrG7P30z2aNUabh0UcjKaye8K6ZMa/gD2XlartktEx8ePWizz+DMHrujzCzmhHCaLS4HDWP1W2haMmF3q2DWa7YkVHrOvJLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BS3sxEDZ; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5fa828b4836so334775a12.2;
-        Fri, 09 May 2025 05:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746795396; x=1747400196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=evkkZXoj/VhOqVAgoh4F9uXWFeC77YbHlW2Gg+VCwuE=;
-        b=BS3sxEDZSAkyGPoQ7TcBXbUG86HvLcuQz6PkXU6rcQzXU+zIVAqmeHbWU7ZUHGgQ5R
-         C0qtHi0VtT+BpA7MU/1Oa5LJwxyieLh+rWyq3xXJ5Xxtde5kiNrmSwYqBrVqAoaHtERN
-         wMNN1lCKs3h6Kc/lJGjn+9/herVyvx5ZuIq+agtnzwITQ1/5dazcOYObIOYq5gK8ScgW
-         iKt0yaKTDqkcavpRyjlv6RddOTS6gMH501GJqZmB+1J+7sfdJstt2PgAS37DOJQUpbg/
-         qpdobg1cgWM33DqPVAjE7ZUVVr78XjtsVD/tsyFU4ZHSy5M0lG+P1IFP+dvcZ6w/AqJ/
-         ebBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746795396; x=1747400196;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=evkkZXoj/VhOqVAgoh4F9uXWFeC77YbHlW2Gg+VCwuE=;
-        b=I2oeU1jcTzpfGmqBTaqrOxLi8v4ar6GN27KYZpcKH/KHfGl2NZp5nvdm/hKMoU5Oed
-         8r9NiJHmpXmPY6rwRRhFBsfKqNIQUafPEHMhouYMvsjSHKlorxKVR0N1oEzyH7S5w+NB
-         JFC7zjraQbCPIcN/zLHW6dRl5oalJt62mIMjfKipO+XmAIqJeIAAmYQWq9uno3vJs/cz
-         bnNVnTPh4lBHw1MxzJTzjFYK35LZuBLe5Hi16j1Ag2FPiLOpDCNdP+/dMsdMYH5FhAq7
-         gXqq/mKLTR99UnAbZFK+ALBs7LFyf91F1rhVyVFqI9tRwxKdwuKrYLZLiwfXOM/RRg9A
-         4u7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU3+M1MwzGRWFvTUFZpd6GaCJ9ljc9XC5PReV7nSPhBDfiGOZM9x1KV3Zplq5htjf2T+0WdRpvzpZ328jA=@vger.kernel.org, AJvYcCXaDEqomnXNcLd/cpYHy86YeOKUb1yzEjn0dmLGKErCQOuwCaCUnuLLa5+m0D82yXGArvWTcMH0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOvoivfszicpdG2ORvZV6b/wP7SfQtqvAkDaS8y0nPHzDd6ewt
-	2qWjP4CfvJLupEv/nPHEqCvWyFEwaKbmJPgUnquJUYynGdORBOY9
-X-Gm-Gg: ASbGncv8L6AUh8ZuxgyeEj4vbf9/sXCcg0WLDfnYIFIP1/GxtFpzt7VqsH9QKs6yoqD
-	oo1mjyvK7UFbCsoLUQUbqil7njxtLxhGUhkxrZC7QGmOwvDsid6aMuLguywrbXg4k1AkoOwL5Tq
-	qSZjwnaP3WPdfouY/oUIa97gQ7cuvNAaOyPBYfxcAewjdiCU9+fqG6csYhhblC2vKoT0d2aFXTj
-	ZOsyMtOiqs7KvnetnR1j+8YSIgYuyZnabMGqH4n0wu34MfklpDGeV7wwnRVSMM7O7siVmK/sCfr
-	3k7CW+53KMNev3/AuWtPFYL5kTYB
-X-Google-Smtp-Source: AGHT+IETJc9VTIe+oklQHEE8vi1Z7BiidfOYztR4qgSvUyJTtTuPqagkaumWxFZ9cXcdOOfvW+M4Ag==
-X-Received: by 2002:a05:6402:4309:b0:5e5:c5f5:f6a with SMTP id 4fb4d7f45d1cf-5fca0735f19mr1031091a12.2.1746795395582;
-        Fri, 09 May 2025 05:56:35 -0700 (PDT)
-Received: from skbuf ([188.25.50.178])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d70f51esm1326234a12.79.2025.05.09.05.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 05:56:34 -0700 (PDT)
-Date: Fri, 9 May 2025 15:56:31 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>, Jakob Unterwurzacher <jakobunt@gmail.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, quentin.schulz@cherry.de,
-	Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	George McCollister <george.mccollister@gmail.com>
-Subject: Re: [PATCH] net: dsa: microchip: linearize skb for tail-tagging
- switches
-Message-ID: <20250509125631.cckfc2ychkyobqqo@skbuf>
-References: <20250509071820.4100022-1-jakob.unterwurzacher@cherry.de>
- <e76f230c-a513-4185-ae3f-72c033aeeb1e@lunn.ch>
+	s=arc-20240116; t=1746797219; c=relaxed/simple;
+	bh=tPM06Iu4Z8+P5EtG8tgjuDyDEEfZr/lbw7DZWRVQNhU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=dcJhOlP0+hKZbuGRccyJ1eFkchV9KfAenwY/mWpd54y7sbPA2Na9UUku80L63sweYgpGOsW6ch2tF8RZcTjlhNEjLpPILIGbE5GNEKp1ToYpkQZ2L3sJNInE6pIllyrJpRoKE7LzcMY6lEGu74ieF/0Cd0M99rK81A7oyv2Z5MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gSecdX1o; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250509132648epoutp037978dc23fb408be032153940fcdf1cc0~93s5QOTzt0201402014epoutp03h
+	for <linux-kernel@vger.kernel.org>; Fri,  9 May 2025 13:26:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250509132648epoutp037978dc23fb408be032153940fcdf1cc0~93s5QOTzt0201402014epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746797208;
+	bh=9orThWdcg4TfeCb68m3fWgyEG197G9T1RDce0h0a5uA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=gSecdX1oOe9APpkGq6S7+HbTi1lhUu6jVTwVac0Zz1BCe1QZvZgxuLuOWCgbVqNID
+	 QJjFYn4AbLXmitK0CNCEnCAVhB07YnY1CbUDqeaPQbVOb5hdPqhNNUMdJium85RgW2
+	 IlYzt4k6DvCedxx2nPK7e1li7kWFBAuzjfizQY/I=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250509132647epcas5p2b7230107602ed17c24fcda9d48d850eb~93s4VQ3x60975309753epcas5p25;
+	Fri,  9 May 2025 13:26:47 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4Zv8sx2KR0z6B9m6; Fri,  9 May
+	2025 13:26:45 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840~93KKoVN2C0832308323epcas5p3L;
+	Fri,  9 May 2025 12:47:01 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250509124701epsmtrp2ab77079f3558be76c75d7002ac34b6e8~93KKnhEnM2652026520epsmtrp2D;
+	Fri,  9 May 2025 12:47:01 +0000 (GMT)
+X-AuditID: b6c32a52-41dfa70000004c16-2a-681df9451973
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	22.3C.19478.549FD186; Fri,  9 May 2025 21:47:01 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250509124700epsmtip2a2aea9a0075dd374a05f53a9d1ffaae9~93KJT_XeV2899828998epsmtip2x;
+	Fri,  9 May 2025 12:47:00 +0000 (GMT)
+From: Raghav Sharma <raghav.s@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Raghav
+	Sharma <raghav.s@samsung.com>
+Subject: [PATCH v1] arm64: dts: exynosautov920: add cmu_hsi2 clock DT nodes
+Date: Fri,  9 May 2025 18:26:46 +0530
+Message-Id: <20250509125646.2727393-1-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e76f230c-a513-4185-ae3f-72c033aeeb1e@lunn.ch>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvK7rT9kMg4WHFS0ezNvGZrFm7zkm
+	i/lHzrFavJx1j81i0+NrrBaXd81hs5hxfh+TxfeVdxgt/u/Zwe7A6bFpVSebx+Yl9R59W1Yx
+	enzeJBfAEsVlk5Kak1mWWqRvl8CVsf3FTaaCB5wVW398Z29gfMvexcjJISFgIvF5513WLkYu
+	DiGB7YwSFxZcY4VISEjs+/+bEcIWllj57zk7RNFbRokrV+6BdbMJaElc2f6ODcQWEYiWWHb3
+	DBtIEbPAZkaJdTMPgU0SFvCW6Lj8BqyIRUBVYs2xy2BTeQWsJe5ensoCsUFeYv/Bs8wQcUGJ
+	kzOfgMWZgeLNW2czT2Dkm4UkNQtJagEj0ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4EDV
+	CtrBuGz9X71DjEwcjIcYJTiYlUR4n3fKZAjxpiRWVqUW5ccXleakFh9ilOZgURLnVc7pTBES
+	SE8sSc1OTS1ILYLJMnFwSjUwCe20nn3CcIdytrfCjqAjjb+Ur2+PO9/eVfZ34+eeTULiVZd6
+	rjDxH7Is5vNcKFozpVB5u7OOmP+WlU3FZU0FG/d/KG3ZO+P61b9rW2vWvdh6Vkemee62qL9O
+	Lu3StzRXOn9/7/vzx9T2v5mPuqXvz7xj8ffx9rwgxdLiml+XZGur9da7yjdtW16S0uRryFl7
+	JpTXPZRlv8zPF61zdKwYzlrd2sBvLRTy4ikfyyZDkXcLb0Wzd7P8c5zK/or1IbfHzWCBnhMu
+	cyT+3u58xX9ga9qRY+9dvqh9uaaabvfsvvN3sWrvH6fTn+91L3Q8dvSuQ7WHUdOVyPY/R6P5
+	Ga/Lhwb29etMf9MeU23V969RiaU4I9FQi7moOBEAu3XYC8MCAAA=
+X-CMS-MailID: 20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840
+References: <CGME20250509124701epcas5p3eee2e2e0d19914366a6759e13d561840@epcas5p3.samsung.com>
 
-On Fri, May 09, 2025 at 02:31:00PM +0200, Andrew Lunn wrote:
-> On Fri, May 09, 2025 at 09:18:19AM +0200, Jakob Unterwurzacher wrote:
-> > The pointer arithmentic for accessing the tail tag does not
-> > seem to handle nonlinear skbs.
-> > 
-> > For nonlinear skbs, it reads uninitialized memory inside the
-> > skb headroom, essentially randomizing the tag, breaking user
-> > traffic.
-> 
-> Both tag_rtl8_4.c & tag_trailer.c also linearize, so i would say this
-> is correct.
-> 
-> What is interesting is that both xrs700x_rcv() and
-> sja1110_rcv_inband_control_extension() also don't call
-> skb_linearize().
-> 
-> Vladimir? George?
+Add required dt node for cmu_hsi2 block, which
+provides clocks to ufs and ethernet IPs
 
-Yes, it should be a more widespread problem.
+Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Have non-zero needed_tailroom:
-trailer
-ksz8795
-ksz9477
-ksz9893
-lan937x
-hellcreek
-sja1110
-xrs700x
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index 2cb8041c8a9f..7890373f5da0 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
+ 			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		cmu_hsi2: clock-controller@16b00000 {
++			compatible = "samsung,exynosautov920-cmu-hsi2";
++			reg = <0x16b00000 0x8000>;
++			#clock-cells = <1>;
++
++			clocks = <&xtcxo>,
++				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
++				 <&cmu_top DOUT_CLKCMU_HSI2_NOC_UFS>,
++				 <&cmu_top DOUT_CLKCMU_HSI2_UFS_EMBD>,
++				 <&cmu_top DOUT_CLKCMU_HSI2_ETHERNET>;
++			clock-names = "oscclk",
++				      "noc",
++				      "ufs",
++				      "embd",
++				      "ethernet";
++		};
++
+ 		pinctrl_hsi2: pinctrl@16c10000 {
+ 			compatible = "samsung,exynosautov920-pinctrl";
+ 			reg = <0x16c10000 0x10000>;
+-- 
+2.34.1
 
-Call skb_linearize():
-trailer
-rtl8_4t
-
-It should be only a matter of chance that the other taggers haven't come
-across non-linear skbs.
-
-My opinion is that we should let taggers linearize when and if it is
-necessary, rather than doing so in the core. For example, sja1110 only
-needs to do so if (rx_header & SJA1110_RX_HEADER_HAS_TRAILER), which the
-core obviously does not know. Thus, I agree with the proposed fix.
-
-Jakob, when you resend v2 retargeted to "net" and with the Fixes: tag
-added, could you also address xrs700x and sja1110, or should I?
 
