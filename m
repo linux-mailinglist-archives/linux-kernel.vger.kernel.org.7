@@ -1,199 +1,136 @@
-Return-Path: <linux-kernel+bounces-642690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AACAB2208
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0020AB2210
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B52B9E5929
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 08:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC308A02746
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 08:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCFE1EA7EB;
-	Sat, 10 May 2025 07:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92D11E9B2A;
+	Sat, 10 May 2025 08:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m3X3XSsr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Cp+2ur12"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E56D1E9B31;
-	Sat, 10 May 2025 07:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4734C2E401;
+	Sat, 10 May 2025 08:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746863920; cv=none; b=LpUJV/XvxiDgDoV020dHEHsVGCQMuuNAuvTt7YyYQMcWrKHxDUHXlAYEAUHANQO5A6z2OOmD5rVmLTXCDapdywwpbHotMe3kJYWeX0tcIHV7K20L0e5pNdOo7luyTHldabnxC/3I+lUvRZ+PjygJ+3Z4h/HiQmmqgXZkRGezQcs=
+	t=1746864177; cv=none; b=J1C7ZVVsBtiP2z1aheQhKUqTs/PevzLF0KgjlqtyCZ6X54cdTwQxJiX0CG8T6kLZVOKSmhSpWThQyFL+MAEVQdCsFp1Yy3r0ktfrmuvzRorrlPFrZTqjhn+yU79S7HjTm4C6rM49n3d82AvOJXAZwWOJz8bAjHymqse0isdsZrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746863920; c=relaxed/simple;
-	bh=IOMjYybCNa4VIYxpu0/TU90XZnL6Kch3/vV5iu45em0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uH+WZAVKJQPr0nQ2naNRWXPK0hrusETusWywMuK8e3ahvLIqrcIk7nIofImWOcS52iReaaH881RktxuntLahg8UuCwcq5wwGRoimP0Wzg00LWpveDHYFpjWxVDG/n1EcsQRh4w62HFhweaET45uiy+LqWpNxJ2GmCt79Hs/1wPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m3X3XSsr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54A60Me5031215;
-	Sat, 10 May 2025 07:58:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/uFby0lNzqHbnplT4Q8bV6dsWxUrWFLJbcAudtU0fbw=; b=m3X3XSsrRjWwjUT4
-	Dr0VY/Oq4QqSjtPmrJCfPltWPRcsBgF1HrXFSjgo9hDtPM+ujSw/aG6AMoyNpL5A
-	o/VQ2ZUMk25wH21y4NHwMVOmXFrKMraDgc18eCnT1bmDfazOsH62/93eap4pOpGj
-	8ZUIj7OMQX9A+Z0e8eLYjF5OLalcbrGn5+5TnJ7cvQ4FfO1rBvvKW5lc/vFfZI7v
-	gTfiJjkRqgX5B1VYe1756BziLwMHJwvCZ91IhBeHN/fP0AUeFGujy8/geirfhx1p
-	pbpYScbqbBWprHwIH/E38Mb0/x6CqZXP5yeL8Hf2a4uUX8xIFREQzo//plzG9Bli
-	TERIIg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hwt90ccv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 10 May 2025 07:58:28 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54A7wRDX027113
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 10 May 2025 07:58:27 GMT
-Received: from [10.204.73.14] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 10 May
- 2025 00:58:22 -0700
-Message-ID: <fd4a66f6-1d64-4047-b6ea-cbcf6720ef70@quicinc.com>
-Date: Sat, 10 May 2025 13:28:19 +0530
+	s=arc-20240116; t=1746864177; c=relaxed/simple;
+	bh=TgGotephKsM3CZvFEOAbmICkRQqBI40OGkRN9uP0W/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BoLiqGSUZooISlj1bKniLeiM6Ng13ExvGc7X83bsET2tUvcGjGOTjZ8FbOlFjdQSW/p/Xd+dguwY65XGP5QKkHP6r2Xy9EB/LV6MyN6KXdomT4lOq5bECNltAlz12zFGLBwTp3bCxHAipvfJh/JhK3ARAhorZ2lAygfb0zlrw6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Cp+2ur12; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9416225F87;
+	Sat, 10 May 2025 10:02:52 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id EgI7a7q_e3sx; Sat, 10 May 2025 10:02:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1746864163; bh=TgGotephKsM3CZvFEOAbmICkRQqBI40OGkRN9uP0W/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Cp+2ur12X9YGgScUvhME4HTmlhADbBWK3Mc1HfKlC0WDvtn8pMHmpH0iY3wshCc3b
+	 J+OfKmC0aZ82LgU9l4Sbi8PtgAh5icWcVRLWeVJ65H4xG9m26/59YWP0/ExK4gVhZ0
+	 SPXYlEniuB953XVt92CAXcvVdLa8esWewf+AudhTRQSHu8liVU53tb6+BEoSypY3dF
+	 k5waeYzDnbt7oSOtZ3PVgY/xjOxksCHx6KlVaH90hSsib3EDh7mG5V0cBz/lwzn891
+	 3dfbggHa9kwQynBCS+3B9Y2MT3VoxNzVFc2KtR7CHBFMFYWSaLHnNd4DAt7m/tdk3b
+	 LdqART5uD+xcw==
+Date: Sat, 10 May 2025 08:02:29 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] rockchip: Enable Ethernet controller on Radxa E20C
+Message-ID: <aB8IFYq2uPPXm0HX@pie.lan>
+References: <20250509202402.260038-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/WIP v2 7/9] media: qcom: camss: Add support for CSID
- for sa8775p
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250427070135.884623-1-quic_vikramsa@quicinc.com>
- <20250427070135.884623-8-quic_vikramsa@quicinc.com>
-Content-Language: en-US
-From: Suresh Vankadara <quic_svankada@quicinc.com>
-In-Reply-To: <20250427070135.884623-8-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEwMDA3OSBTYWx0ZWRfX3MereqBUYSsq
- HtVdMe4OsifMb47syvhIUN2dlsMwS+ZAzeqrjxNo/fwN4lx0gPooJOq45Q2buL87FMg2H6qo67l
- E3HrjhBRCNgW6549nDA4lKHy8XJZfzgbspiYrwum2dON45Vrch7kcxJBFTT1m7w6bIsKqk4/n3W
- Rjmeya/BjDuLyoopIJ4CyRsty8vcSu1wWwcfVUL+Db4RfRj6S5XLqW7I1sUFdphAeLbABhBMjCn
- RyIwAu9zGZXeHniOO07PqHRU87yjvEPOu3ChC/OGTFy3EDS0pjtcfoY/lt719oto9fsY6EHXXk6
- RQs2HjvYr9k8dUe/FvhluK9XH1fCmFX06YZ6UfmN8i2golSuWaytOQ44A+xF+U1WsWKgAKlsz7K
- parm63RNUQdC8p2s26cAZ+ovLacrGTNq7j2kdsguED6zOYas3oUiLu8zJH4cNnpRgSpJY4Ey
-X-Proofpoint-ORIG-GUID: cEbBw-yNHMCGuQk_8daleBt3w1yBXQvx
-X-Proofpoint-GUID: cEbBw-yNHMCGuQk_8daleBt3w1yBXQvx
-X-Authority-Analysis: v=2.4 cv=a58w9VSF c=1 sm=1 tr=0 ts=681f0724 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=E8EaJ-78P5yFifbjexQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-10_03,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
- clxscore=1015 impostorscore=0 mlxscore=0 spamscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505100079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509202402.260038-1-jonas@kwiboo.se>
 
-
-
-On 4/27/2025 12:31 PM, Vikram Sharma wrote:
-> The CSID in sa8775p is version 690, This csid is different from
-> csid 780 w.r.t few bit-fields.
+On Fri, May 09, 2025 at 08:23:56PM +0000, Jonas Karlman wrote:
+> The Rockchip RK3528 has two Ethernet controllers, one 100/10 MAC to be
+> used with the integrated PHY and a second 1000/100/10 MAC to be used
+> with an external Ethernet PHY.
 > 
-> Co-developed-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   .../platform/qcom/camss/camss-csid-gen3.c     |  31 +++-
->   drivers/media/platform/qcom/camss/camss.c     | 151 ++++++++++++++++++
->   2 files changed, 175 insertions(+), 7 deletions(-)
+> This series add device tree nodes for the Ethernet controllers found in
+> RK3528 and enable the LAN interface on Radxa E20C.
 > 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> index b66105f7b901..4f9471523a08 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> @@ -48,8 +48,12 @@
->   #define CSID_CSI2_RX_IRQ_CLEAR		0xA4
->   #define CSID_CSI2_RX_IRQ_SET		0xA8
->   
-> +#define IS_CSID_690(csid)	(csid->camss->res->version ==\
-> +					CAMSS_8775P ? true : false)
->   #define CSID_BUF_DONE_IRQ_STATUS	0x8C
-> -#define		BUF_DONE_IRQ_STATUS_RDI_OFFSET	(csid_is_lite(csid) ? 1 : 14)
-> +#define BUF_DONE_IRQ_STATUS_RDI_OFFSET  (csid_is_lite(csid) ?\
-> +						1 : (IS_CSID_690(csid) ?\
-> +						13 : 14))
-This becomes more complex if more number of chipsets under csid gen3 are 
-added.inline function helps for readability. It should return with 1, 13 
-or 14. This comment is applicable at all places in csid.
+> This include a gmac0 node for the 100/10 MAC and its related integrated
+> PHY node that only have recived limited testing. I have no board that
+> expose an Ethernet port for the gmac0 and the integrated PHY. However,
+> the PHY can be identified on addr 0x2 as 0044.1400 and in vendor kernel
+> this relate to the Rockchip RK630 PHY. A proper PHY driver will be
+> needed to support any real use of gmac0.
+> 
+> Changes in v3:
+> - Rebase on top of latest mmind/for-next
+> 
+> Changes in v2:
+> - Split from the "Add GMAC support for RK3528" driver series [1]
+> - Add ethernet-phy@2 for the integrated PHY
+> - Rebase on top of the "Support I2C controllers in RK3528" series [2]
+> 
+> [1] https://lore.kernel.org/r/20250309232622.1498084-1-jonas@kwiboo.se
+> [2] https://lore.kernel.org/r/20250309070603.35254-1-ziyao@disroot.org
+> 
+> Jonas Karlman (2):
+>   arm64: dts: rockchip: Add GMAC nodes for RK3528
+>   arm64: dts: rockchip: Enable Ethernet controller on Radxa E20C
+> 
+>  .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  30 +++++
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 105 ++++++++++++++++++
+>  2 files changed, 135 insertions(+)
 
->   
-> -#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(0x548 + 0x100 * (rdi))
-> -#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(0x54C + 0x100 * (rdi))
-> -
-> +#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +							(0x348 + 0x100 * (rdi)) :\
-> +							(0x548 + 0x100 * (rdi)))
-> +#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +							(0x34C + 0x100 * (rdi)) :\
-> +							(0x54C + 0x100 * (rdi)))
-Subsample pattern is not used in driver. Remove?
+On my Radxa E20C board, iperf3 shows the interface could run at roughly
+1Gbps with this series,
 
->   #define CSI2_RX_CFG0_PHY_SEL_BASE_IDX	1
->   
->   static void __csid_configure_rx(struct csid_device *csid,
-> @@ -103,6 +117,9 @@ static void __csid_configure_rx(struct csid_device *csid,
->   	val |= phy->lane_assign << CSI2_RX_CFG0_DL0_INPUT_SEL;
->   	val |= (phy->csiphy_id + CSI2_RX_CFG0_PHY_SEL_BASE_IDX) << CSI2_RX_CFG0_PHY_NUM_SEL;
->   
-> +	if (IS_CSID_690(csid) && (vc > 3))
-> +		val |= 1 << CSI2_RX_CFG0_VC_MODE;
-Is VC greater than 3? in which case?
+# iperf3 -c 192.168.114.51
+Connecting to host 192.168.114.51, port 5201
+[  5] local 192.168.114.50 port 41894 connected to 192.168.114.51 port 5201
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-1.00   sec   113 MBytes   948 Mbits/sec    0    380 KByes
+[  5]   1.00-2.00   sec   112 MBytes   944 Mbits/sec    0    399 KBytes
+[  5]   2.00-3.00   sec   112 MBytes   940 Mbits/sec    0    399 KBytes
+[  5]   3.00-4.00   sec   112 MBytes   942 Mbits/sec    0    399 KBytes
+[  5]   4.00-5.00   sec   112 MBytes   944 Mbits/sec    0    399 KBytes
+[  5]   5.00-6.00   sec   112 MBytes   940 Mbits/sec    0    399 KBytes
+[  5]   6.00-7.00   sec   112 MBytes   940 Mbits/sec    0    399 KBytes
+[  5]   7.00-8.00   sec   112 MBytes   944 Mbits/sec    0    399 KBytes
+[  5]   8.00-9.00   sec   112 MBytes   941 Mbits/sec    0    399 KBytes
+[  5]   9.00-10.00  sec   112 MBytes   941 Mbits/sec    0    399 KBytes
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-10.00  sec  1.10 GBytes   942 Mbits/sec    0            sender
+[  5]   0.00-10.00  sec  1.10 GBytes   941 Mbits/sec                  receiver
 
-> +static const struct camss_subdev_resources csid_res_8775p[] = {
-> +	/* CSID0 */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "csid", "csiphy_rx"},
-> +		.clock_rate = {
-> +			{ 400000000, 400000000},
-> +			{ 400000000, 400000000}
-> +		},
-> +
-> +		.reg = { "csid0", "csid_top" },
-Align name with DTS for csid_top. Comment is applicable for all 
-instances for this target.
+iperf Done.
 
-> +	/* CSID2 (lite) */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "cpas_ife_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-Align with DTS comment in clock name. Applicable for all CSID lites for 
-this target.
+Tested-by: Yao Zi <ziyao@disroot.org>
 
+Thanks for your work!
 
-Regards,
-Suresh Vankadara.
-
-
+> -- 
+> 2.49.0
+> 
 
