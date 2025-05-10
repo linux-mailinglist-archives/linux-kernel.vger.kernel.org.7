@@ -1,143 +1,1178 @@
-Return-Path: <linux-kernel+bounces-642754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76DCAB234F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 12:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B67A6AB2373
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 12:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4954C5111
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B834C586D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2CF221DA0;
-	Sat, 10 May 2025 10:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCX2IeS/"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADB41E3790;
+	Sat, 10 May 2025 10:27:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0D259C
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 10:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FAB233736
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 10:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746872664; cv=none; b=LHuPzFGaE8TlhOUBdUSYlHHRCIicgVlWKF7Dmyx0E9CmggVNSVA50yjOhHD7qRuOBhqaQVnOnF3w2vcmA3b+3+wYxKrI6KJFBCrZzYNbWmy3QM1SeVKxsOZwj30T7J+RnAXHqWStKlOHoCEQ2nM+9t0Ns+pCDFOr5UsqlyLsIvM=
+	t=1746872846; cv=none; b=OBePGG+H0ru0KhuxnVfSoskOudOO6lvasQ/ah+gEa1YRn2vBWosV82XUon0vs9UfFcRgZGOmTdFgJJgz/be7YIM9Av+2kqqNyV78mwZAGsUgwU/gdmydpkYMMyly6WoQRpLF5iV0iqCN+2WyrVOVnR86ezjgUrEJ6RJt9J1O5GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746872664; c=relaxed/simple;
-	bh=XR2eoL21B7qgjqjwcqA53eAq02iWZTPQJFIvkizweE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qkx74eiAI4gjcinWPFPbrXzlNaDoOGOaofU/noGOB9vmosxvLHm8fYbScwEe1YfSVra9exQeR7xFE1rMxn5Rv1vw3ZbXQWuJ/YDnH5rJnuxBPCPiqsU24hCVMKVQRHYb7Uxxwg2zUeVNrKx3oHRbbmAhk7qVPy125k8+0Ai3160=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCX2IeS/; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so30633525e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746872660; x=1747477460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X54rWRNLW17tSBvsmAsUPfuEHJyuny1CVhaZpG1ZBXU=;
-        b=YCX2IeS/NEOvTvdOvKB5DcuMlasDELhv5wcLUVa+6tzhIzVvdKcpdO6FWy0ywKFE2F
-         jlPwrz6k3AaebT4a9BADNBgV8SZUqM6mjBCSDnj9pnK0oUmds/F5EKzPUT8L8/d0cz7I
-         2s9Qmhm8iyPhhL+yFCgZ4i9rMlFQFj15W9pD71deZ28soksykJoFW92ys8HhtkDwpZ5H
-         z2fGNfvDgvuMlMWCGd2n4aEU84/gt1ts6k7x2YggSXIZ+O+zp28VSvenD6NlNg036nmU
-         tKIGTvaVU2CqWnmsr1yod//FnVTA/1J+lK8lg4xz5vzQDKBbNs2L1aK4tiU7ldOiHp5q
-         T5gg==
+	s=arc-20240116; t=1746872846; c=relaxed/simple;
+	bh=46mkpWM98a3Q9C5RkGpRzp/uYaNv+SfQ1pUaNU3gN8M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aXejFa/4woPU6RifyyKT8f4m8pCoWXYj5Zce6KaDLNBezzlnpBEUvQ9c43kS/Ue27ucygoKDGOCsyWe67S2m8r9aafL8AGirrxTCPcFiwUtuMnM9Q2ujQDbxxhUYbVW/oTf3tuTpgLj+yez3cgLxOUJrSCVOB7wCK9ebOy9iUUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3da76423ba1so53986315ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:27:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746872660; x=1747477460;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X54rWRNLW17tSBvsmAsUPfuEHJyuny1CVhaZpG1ZBXU=;
-        b=dk2/Mxi583NVx/nKSvWRW8iuopQZNzUY37QXkqyKWc+NUmQ+8ZgHa4cFe8YemPfePy
-         HVw1DJr+Tn3JrGLh3IU5rzfgHRPcbk5ZOZ+a2VDkKA9DGOgQoIWzcjB/bD+WxRNqfnnK
-         Bj1SuQ7a+ZSQgtPYaFhII0bFHpDE8l51GfWXINTECbhk5q79h2Ywwi7dR6v/IigzQuVb
-         aWnvgT/dUxkajzJuClAXa98L01UODGVqIeRGf0vj6o5JatyzEmj514LJkp9w8wdacST3
-         KnSdpBw4bbPnhDOXAhxsOuwK20rfnGZ1j2SupCyiCJBz4qzjt3k8o4S5D8diteSa7tfp
-         cbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIoHwgJidZfJ5ToF2+CCirEzJPuxx3q46CmbNgOLpE5Ox99RwyqJ4J9ktra0F8T7beCw31EbO7cRFFlpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSlpn6qNik7bothLygq7IQDCvLIZTTOU27tLDW9oYEqQo3NMw+
-	UiJgzCszBZpGOznvyrjTWeHKFl3gydnfWvqXXTEuG4H068UeZvzn
-X-Gm-Gg: ASbGncsADJZcpTaM8LWg+LbklC2VAhW8eBwdyrs03GqpZSN2lMV+oBqoeWVriq800Oy
-	ffs/jNmwmfHjqDEb/OKaLbJhaluRQ14a9wzQlxUMXqfVIC2LTRpbm+x2WEphdGJt7RsV7OIhUll
-	UdlPhjvEgtvKZ0N+oHMRBCClS276NX91jXU4Of+5KrqV8uMyfeFbAjNiB5USq6F6hUChFQg4RMR
-	s8T0bDB2e5BAzIObBwoM8n7/eIsjXKPzvaiE+TBGpDP5HmPaiy/H9pZoOCHhkR6ww9LGh2XZv9p
-	EZ8v+dagwSmCyWPL3Xeuuo2gWXrWnHMqib5kqTmBA0fRkTkA41J9f3x5Z5YM6qR8gftsJu2zV31
-	9QpgmLxVvAvHDNw==
-X-Google-Smtp-Source: AGHT+IHmKjjVR4g+SsPL5UrBT/AEPsB+lNkQ5qQbaRA/6ZQru5xn1OVVVzTDLMZwyDlYYW3az+Mxrg==
-X-Received: by 2002:a05:600c:37c6:b0:43c:f629:66f3 with SMTP id 5b1f17b1804b1-442d6d517e2mr52696175e9.18.1746872660399;
-        Sat, 10 May 2025 03:24:20 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67e138asm57265725e9.10.2025.05.10.03.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 03:24:20 -0700 (PDT)
-Date: Sat, 10 May 2025 11:24:19 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, yuzhao@google.com, stevensd@chromium.org,
- kaleshsingh@google.com, zhanjun@uniontech.com, niecheng1@uniontech.com,
- guanwentao@uniontech.com, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
-Message-ID: <20250510112419.749652a7@pumpkin>
-In-Reply-To: <74D5BC8AD7E5511A+13242b55-13e5-463a-9422-f863d58b6af6@uniontech.com>
-References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
-	<20250506162438.91fffc7ef924d9653ed0f503@linux-foundation.org>
-	<74D5BC8AD7E5511A+13242b55-13e5-463a-9422-f863d58b6af6@uniontech.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1746872842; x=1747477642;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FkRTEOXGwDMjolyGo7WKB5wUnU32+VRgttUcpzB/JXs=;
+        b=p7jzzacUMjXizHXCZqsXi0rQHbIcc+1AQnN2BoXGzm4jJ0xDpxbGlje7kts0xsjuF2
+         3KuvidPOJ+iKvr6Da1ovfcIYWwDvQEXZLhz6UaeSndpKntoQVXoJao7XJOfyP/Apn7Tw
+         yBOdoK2ezT/9M0dMeowwYTorp+Tgnss+c0cGdsPa34/tkt31v3d14PEtCS1cCwUP5/lt
+         3YG8su7nJSBCt5DWpZ6/EWl6b+COh/bGxz0x2qhe/aNNtTDK46h1X0d0YnR6p4Wge/wK
+         9urkduSZzQ52NatqxMJwjT1W7QZ/CLgFXeOtthAkyW3weqI2oGnAs+UIC2GUC4Muycss
+         q7Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUiYvid7S3W97CuxO9qfCwceQKQ9uSDtYEkU9kNSb3DTjfnxtEXU81l7OEwhvnLp4E0M+lGVLTOtPlnbag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3VgSnBswvsO0rFPO8vDsI/HwLSdmcWBYY0n9Chbti6l013Otc
+	3jAXkDY4OAHQ2IQ1tI1M6SLd5HHJ6AXdtpesoWuPgK7DB8rfmWOwDoEU3sNExOghlckwFsPHN2I
+	Tp81zt543CF1zMbdIxdjlTPClCtl9Z+K1zs8vlAObDouJClzyo/s/B7o=
+X-Google-Smtp-Source: AGHT+IHizS6phOLqKZ01dV6/GfKHs4ayrROvKRDjxGdQAIijU3UA9BAq+zzjRd8upr4QJVxG1KvrdXKGIjZFMmTpljMxNqs7T4Mu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:17cc:b0:3d6:d145:2ffb with SMTP id
+ e9e14a558f8ab-3da7e2173cemr97226385ab.21.1746872841839; Sat, 10 May 2025
+ 03:27:21 -0700 (PDT)
+Date: Sat, 10 May 2025 03:27:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <681f2a09.050a0220.f2294.0006.GAE@google.com>
+Subject: [syzbot] [arm?] upstream-arm64 test error: WARNING in __apply_to_page_range
+From: syzbot <syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 7 May 2025 12:06:11 +0800
-WangYuli <wangyuli@uniontech.com> wrote:
+Hello,
 
-> Hi Andrew Morton,
-> 
-> On 2025/5/7 07:24, Andrew Morton wrote:
-> > On Wed,  7 May 2025 00:02:38 +0800 WangYuli <wangyuli@uniontech.com> wrote:
-> >
-> > Make `tier' unsigned?  After all, negative tier numbers are nonsensical.  
-> 
-> That point is well taken.
-> 
-> However, I've noticed that variables named "tier" seem to be commonly 
-> defined as int rather than unsigned int throughout the mm subsystem, and 
-> perhaps even the wider kernel code.
-> 
-> I was wondering if changing just this one instance might feel a little 
-> inconsistent?
-> 
-> Perhaps a possible approach for now could be to change this line to for 
-> (i = tier % MAX_NR_TIERS; i <= min_t(int, tier, MAX_NR_TIERS - 1); i++) 
-> {, which would allow us to keep the signed int type for the tier 
-> variable itself.
+syzbot found the following issue on:
 
-Remember that min_t(int, a, b) is just min((int)a, (int)b) and you really
-wouldn't put casts like that in code.
-Even if a cast can't be avoided only one side would normally need it.
+HEAD commit:    ac57c6b0f09c Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1556e670580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea4635ffd6ad5b4a
+dashboard link: https://syzkaller.appspot.com/bug?extid=5c0d9392e042f41d45c5
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+userspace arch: arm64
 
-There really ought to be a 'duck shoot' against min_t().
-I'm trying very hard to stop any more being added.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4818e8577303/disk-ac57c6b0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/53920b0d80b6/vmlinux-ac57c6b0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/66529cd2f94a/Image-ac57c6b0.gz.xz
 
-	David
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
 
-> 
-> Regarding the potential for a more comprehensive change in the future to 
-> redefine all these "tier" variables and related ones as unsigned int, I 
-> would be very grateful for your guidance on whether that's a direction 
-> we should consider.
-> 
-> But actually, whether it's signed or not likely won't affect its normal 
-> operation...
-> 
-> Thanks,
-> 
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6368 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6368 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6368 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6368 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6368 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6368 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6368 Comm: dhcpcd-run-hook Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017900
+x29: ffff800080017a20 x28: ffff0001ffbbefff x27: ffff0001fec50fe8
+x26: ffff0001ffbbf000 x25: dfff800000000000 x24: ffff0001ffbbe000
+x23: ffff0001fea8edf0 x22: 0000000000000100 x21: ffff0000c2d35b80
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 0000000000000000
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb95d x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb95e x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c2d35b80 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017b00 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kfree+0x268/0x474 mm/slub.c:4841
+ slab_free_after_rcu_debug+0x78/0x2f4 mm/slub.c:4679
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __sanitizer_cov_trace_cmp8+0x8/0x98 kernel/kcov.c:293 (P)
+ mas_wr_walk lib/maple_tree.c:3526 [inline]
+ mas_wr_store_type+0x104/0x1350 lib/maple_tree.c:4203
+ mas_store+0x370/0xa8c lib/maple_tree.c:5393
+ vma_iter_bulk_store include/linux/mm.h:1125 [inline]
+ dup_mmap kernel/fork.c:702 [inline]
+ dup_mm kernel/fork.c:1734 [inline]
+ copy_mm+0xc30/0x1bd8 kernel/fork.c:1786
+ copy_process+0x1518/0x318c kernel/fork.c:2429
+ kernel_clone+0x1d8/0x7a0 kernel/fork.c:2844
+ __do_sys_clone kernel/fork.c:2987 [inline]
+ __se_sys_clone kernel/fork.c:2955 [inline]
+ __arm64_sys_clone+0x144/0x1a0 kernel/fork.c:2955
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 9751
+hardirqs last  enabled at (9750): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (9750): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (9751): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (9570): [<ffff8000801fbf10>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (9713): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6392 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6392 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6392 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6392 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6392 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6392 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6392 Comm: cmp Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017900
+x29: ffff800080017a20 x28: ffff0001ffbc2fff x27: ffff0001fec50fe8
+x26: ffff0001ffbc3000 x25: dfff800000000000 x24: ffff0001ffbc2000
+x23: ffff0001fea8ee10 x22: 0000000000000100 x21: ffff0000c7f98000
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 0000000000000000
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9d7 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9d8 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c7f98000 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017b00 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kfree+0x268/0x474 mm/slub.c:4841
+ slab_free_after_rcu_debug+0x78/0x2f4 mm/slub.c:4679
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline] (P)
+ _raw_spin_unlock_irqrestore+0x44/0x98 kernel/locking/spinlock.c:194 (P)
+ debug_object_activate+0x240/0x460 lib/debugobjects.c:836
+ debug_rcu_head_queue kernel/rcu/rcu.h:224 [inline]
+ __call_rcu_common kernel/rcu/tree.c:3067 [inline]
+ call_rcu+0x50/0x96c kernel/rcu/tree.c:3202
+ ma_free_rcu lib/maple_tree.c:211 [inline]
+ mas_free lib/maple_tree.c:1313 [inline]
+ mas_replace_node+0x34c/0x5d0 lib/maple_tree.c:1750
+ mas_wr_node_store lib/maple_tree.c:3863 [inline]
+ mas_wr_store_entry+0x1194/0x1f80 lib/maple_tree.c:4083
+ mas_store_prealloc+0x8bc/0xce4 lib/maple_tree.c:5475
+ vma_iter_store_overwrite+0x314/0x870 mm/vma.h:448
+ vma_iter_store_new mm/vma.h:455 [inline]
+ vma_complete+0x3cc/0xa08 mm/vma.c:323
+ __split_vma+0x778/0x8d4 mm/vma.c:523
+ vms_gather_munmap_vmas+0x2a0/0xf54 mm/vma.c:1315
+ __mmap_prepare mm/vma.c:2303 [inline]
+ __mmap_region mm/vma.c:2506 [inline]
+ mmap_region+0x4e8/0x1a24 mm/vma.c:2597
+ do_mmap+0x968/0xf78 mm/mmap.c:561
+ vm_mmap_pgoff+0x2b8/0x43c mm/util.c:579
+ ksys_mmap_pgoff+0x394/0x5b8 mm/mmap.c:607
+ __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+ __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+ __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 3737
+hardirqs last  enabled at (3736): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (3736): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (3737): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (1634): [<ffff8000801fbf10>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (3711): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 23 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 23 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 23 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 23 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 23 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 23 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 23 Comm: ksoftirqd/1 Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800097717700
+x29: ffff800097717820 x28: ffff0001ffbc6fff x27: ffff0001fec50fe8
+x26: ffff0001ffbc7000 x25: dfff800000000000 x24: ffff0001ffbc6000
+x23: ffff0001fea8ee30 x22: 0000000000000100 x21: ffff0000c1b95b80
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 1fffe0003386f276
+x17: ffff80008f31e000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb99b x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb99c x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c1b95b80 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800097717900 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ rcu_guarded_free+0x4c/0x5c mm/kfence/core.c:587
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ run_ksoftirqd+0x70/0xc0 kernel/softirq.c:968
+ smpboot_thread_fn+0x4d8/0x9cc kernel/smpboot.c:164
+ kthread+0x5fc/0x75c kernel/kthread.c:464
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
+irq event stamp: 551089
+hardirqs last  enabled at (551088): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (551088): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (551089): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (550580): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (550580): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (550583): [<ffff8000803d1418>] run_ksoftirqd+0x70/0xc0 kernel/softirq.c:968
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6424 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6424 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6424 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6424 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6424 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6424 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6424 Comm: dhcpcd-run-hook Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017900
+x29: ffff800080017a20 x28: ffff0001ffbd2fff x27: ffff0001fec50fe8
+x26: ffff0001ffbd3000 x25: dfff800000000000 x24: ffff0001ffbd2000
+x23: ffff0001fea8ee90 x22: 0000000000000100 x21: ffff0000c825bd00
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 0000000000000000
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9d7 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9d8 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c825bd00 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017b00 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kfree+0x268/0x474 mm/slub.c:4841
+ slab_free_after_rcu_debug+0x78/0x2f4 mm/slub.c:4679
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
+ lock_release+0x270/0x39c kernel/locking/lockdep.c:5890 (P)
+ fs_reclaim_acquire+0xd0/0x118 mm/page_alloc.c:4082
+ might_alloc include/linux/sched/mm.h:318 [inline]
+ slab_pre_alloc_hook mm/slub.c:4098 [inline]
+ slab_alloc_node mm/slub.c:4176 [inline]
+ kmem_cache_alloc_noprof+0x58/0x3e8 mm/slub.c:4203
+ vm_area_dup+0x34/0x50c kernel/fork.c:488
+ dup_mmap kernel/fork.c:672 [inline]
+ dup_mm kernel/fork.c:1734 [inline]
+ copy_mm+0x9e0/0x1bd8 kernel/fork.c:1786
+ copy_process+0x1518/0x318c kernel/fork.c:2429
+ kernel_clone+0x1d8/0x7a0 kernel/fork.c:2844
+ __do_sys_clone kernel/fork.c:2987 [inline]
+ __se_sys_clone kernel/fork.c:2955 [inline]
+ __arm64_sys_clone+0x144/0x1a0 kernel/fork.c:2955
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 9375
+hardirqs last  enabled at (9374): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (9374): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (9375): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (8082): [<ffff8000801fbf10>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (8227): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017900
+x29: ffff800080017a20 x28: ffff0001ffbd6fff x27: ffff0001fec50fe8
+x26: ffff0001ffbd7000 x25: dfff800000000000 x24: ffff0001ffbd6000
+x23: ffff0001fea8eeb0 x22: 0000000000000100 x21: ffff0000c1a0db80
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 1fffe0003386f276
+x17: 0000000000000000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb958 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb959 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c1a0db80 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017b00 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kmem_cache_free+0x250/0x550 mm/slub.c:4744
+ put_cred_rcu+0x258/0x320 kernel/cred.c:89
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48 (P)
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1d8/0x454 kernel/sched/idle.c:325
+ cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:423
+ secondary_start_kernel+0x1b8/0x1e0 arch/arm64/kernel/smp.c:279
+ __secondary_switched+0xc0/0xc4 arch/arm64/kernel/head.S:401
+irq event stamp: 160227
+hardirqs last  enabled at (160226): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (160226): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (160227): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (160106): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (160106): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (160151): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017900
+x29: ffff800080017a20 x28: ffff0001ffbdefff x27: ffff0001fec50fe8
+x26: ffff0001ffbdf000 x25: dfff800000000000 x24: ffff0001ffbde000
+x23: ffff0001fea8eef0 x22: 0000000000000100 x21: ffff0000c1a0db80
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 1fffe0003386f276
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb93d x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb93e x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c1a0db80 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017b00 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kfree+0x268/0x474 mm/slub.c:4841
+ slab_free_after_rcu_debug+0x78/0x2f4 mm/slub.c:4679
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48 (P)
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1d8/0x454 kernel/sched/idle.c:325
+ cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:423
+ secondary_start_kernel+0x1b8/0x1e0 arch/arm64/kernel/smp.c:279
+ __secondary_switched+0xc0/0xc4 arch/arm64/kernel/head.S:401
+irq event stamp: 167057
+hardirqs last  enabled at (167056): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (167056): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (167057): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (166994): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (166994): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (167011): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017120
+x29: ffff800080017240 x28: ffff0001ffbecfff x27: ffff0001fec50fe8
+x26: ffff0001ffbed000 x25: dfff800000000000 x24: ffff0001ffbec000
+x23: ffff0001fea8ef60 x22: 0000000000000500 x21: ffff0000c1a0db80
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 1fffe0003386f276
+x17: 0000000000a000ae x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9b7 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9b8 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c1a0db80 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017320 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000500 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kmem_cache_free+0x250/0x550 mm/slub.c:4744
+ kfree_skbmem+0x14c/0x1dc net/core/skbuff.c:-1
+ __kfree_skb net/core/skbuff.c:1177 [inline]
+ consume_skb+0xb8/0x130 net/core/skbuff.c:1408
+ ifb_xmit+0x174/0x53c drivers/net/ifb.c:346
+ __netdev_start_xmit include/linux/netdevice.h:5203 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5212 [inline]
+ xmit_one net/core/dev.c:3776 [inline]
+ dev_hard_start_xmit+0x2b0/0x8ac net/core/dev.c:3792
+ sch_direct_xmit+0x1fc/0x468 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:4018 [inline]
+ __dev_queue_xmit+0x13b4/0x31f0 net/core/dev.c:4595
+ dev_queue_xmit include/linux/netdevice.h:3350 [inline]
+ lapbeth_data_transmit+0x1fc/0x2a8 drivers/net/wan/lapbether.c:260
+ lapb_data_transmit+0x8c/0xb0 net/lapb/lapb_iface.c:447
+ lapb_transmit_buffer+0x160/0x208 net/lapb/lapb_out.c:149
+ lapb_send_control+0x21c/0x320 net/lapb/lapb_subr.c:251
+ lapb_t1timer_expiry+0x490/0x864 net/lapb/lapb_timer.c:-1
+ call_timer_fn+0x1b4/0x818 kernel/time/timer.c:1789
+ expire_timers kernel/time/timer.c:1840 [inline]
+ __run_timers kernel/time/timer.c:2414 [inline]
+ __run_timer_base+0x51c/0x76c kernel/time/timer.c:2426
+ run_timer_base kernel/time/timer.c:2435 [inline]
+ run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2445
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48 (P)
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1d8/0x454 kernel/sched/idle.c:325
+ cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:423
+ secondary_start_kernel+0x1b8/0x1e0 arch/arm64/kernel/smp.c:279
+ __secondary_switched+0xc0/0xc4 arch/arm64/kernel/head.S:401
+irq event stamp: 171221
+hardirqs last  enabled at (171220): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (171220): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (171221): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (171182): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (171182): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (171197): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 0 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff800080017120
+x29: ffff800080017240 x28: ffff0001ffbeefff x27: ffff0001fec50fe8
+x26: ffff0001ffbef000 x25: dfff800000000000 x24: ffff0001ffbee000
+x23: ffff0001fea8ef70 x22: 0000000000000500 x21: ffff0000c1a0db80
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 00000000ffffffff
+x17: 0000000000a000ae x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9b7 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9b8 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c1a0db80 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017320 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000500 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kmem_cache_free+0x250/0x550 mm/slub.c:4744
+ kfree_skbmem+0x14c/0x1dc net/core/skbuff.c:-1
+ __kfree_skb net/core/skbuff.c:1177 [inline]
+ consume_skb+0xb8/0x130 net/core/skbuff.c:1408
+ ifb_xmit+0x174/0x53c drivers/net/ifb.c:346
+ __netdev_start_xmit include/linux/netdevice.h:5203 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5212 [inline]
+ xmit_one net/core/dev.c:3776 [inline]
+ dev_hard_start_xmit+0x2b0/0x8ac net/core/dev.c:3792
+ sch_direct_xmit+0x1fc/0x468 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:4018 [inline]
+ __dev_queue_xmit+0x13b4/0x31f0 net/core/dev.c:4595
+ dev_queue_xmit include/linux/netdevice.h:3350 [inline]
+ lapbeth_data_transmit+0x1fc/0x2a8 drivers/net/wan/lapbether.c:260
+ lapb_data_transmit+0x8c/0xb0 net/lapb/lapb_iface.c:447
+ lapb_transmit_buffer+0x160/0x208 net/lapb/lapb_out.c:149
+ lapb_send_control+0x21c/0x320 net/lapb/lapb_subr.c:251
+ lapb_t1timer_expiry+0x490/0x864 net/lapb/lapb_timer.c:-1
+ call_timer_fn+0x1b4/0x818 kernel/time/timer.c:1789
+ expire_timers kernel/time/timer.c:1840 [inline]
+ __run_timers kernel/time/timer.c:2414 [inline]
+ __run_timer_base+0x51c/0x76c kernel/time/timer.c:2426
+ run_timer_base kernel/time/timer.c:2435 [inline]
+ run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2445
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48 (P)
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1d8/0x454 kernel/sched/idle.c:325
+ cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:423
+ secondary_start_kernel+0x1b8/0x1e0 arch/arm64/kernel/smp.c:279
+ __secondary_switched+0xc0/0xc4 arch/arm64/kernel/head.S:401
+irq event stamp: 171733
+hardirqs last  enabled at (171732): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (171732): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (171733): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (171696): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (171696): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (171703): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6475 Comm: syz-executor Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff8000800179c0
+x29: ffff800080017ae0 x28: ffff0001ffbf8fff x27: ffff0001fec50fe8
+x26: ffff0001ffbf9000 x25: dfff800000000000 x24: ffff0001ffbf8000
+x23: ffff0001fea8efc0 x22: 0000000000000100 x21: ffff0000c9033d00
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 0000000000000000
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9a5 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9a6 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c9033d00 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017bc0 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ rcu_guarded_free+0x4c/0x5c mm/kfence/core.c:587
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline] (P)
+ _raw_spin_unlock_irqrestore+0x44/0x98 kernel/locking/spinlock.c:194 (P)
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ unlock_page_lruvec_irqrestore include/linux/memcontrol.h:1526 [inline]
+ folio_batch_move_lru+0x2c4/0x378 mm/swap.c:174
+ __folio_batch_add_and_move+0x3c4/0x630 mm/swap.c:196
+ folio_add_lru+0xc4/0x154 mm/swap.c:505
+ folio_add_lru_vma+0xc4/0x118 mm/swap.c:524
+ do_anonymous_page mm/memory.c:5047 [inline]
+ do_pte_missing mm/memory.c:4158 [inline]
+ handle_pte_fault mm/memory.c:5997 [inline]
+ __handle_mm_fault mm/memory.c:6140 [inline]
+ handle_mm_fault+0x3e64/0x4cf0 mm/memory.c:6309
+ do_page_fault+0x428/0x1554 arch/arm64/mm/fault.c:647
+ do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+ do_mem_abort+0x70/0x194 arch/arm64/mm/fault.c:919
+ el0_da+0x64/0x160 arch/arm64/kernel/entry-common.c:627
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:789
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 19357
+hardirqs last  enabled at (19356): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (19356): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (19357): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (17602): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (17602): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (19255): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6475 Comm: syz-executor Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff8000800178a0
+x29: ffff8000800179c0 x28: ffff0001ffa0cfff x27: ffff0001fec50fe8
+x26: ffff0001ffa0d000 x25: dfff800000000000 x24: ffff0001ffa0c000
+x23: ffff0001fea8e060 x22: 0000000000000100 x21: ffff0000c9033d00
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 0000000000000000
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9ab x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9ac x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c9033d00 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017aa0 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kmem_cache_free+0x250/0x550 mm/slub.c:4744
+ ptlock_free+0x54/0x6c mm/memory.c:7364
+ pagetable_dtor include/linux/mm.h:3109 [inline]
+ pagetable_dtor_free include/linux/mm.h:3116 [inline]
+ __tlb_remove_table+0x30/0x274 include/asm-generic/tlb.h:215
+ __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
+ tlb_remove_table_rcu+0x8c/0x19c mm/mmu_gather.c:290
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ preempt_count arch/arm64/include/asm/preempt.h:13 [inline] (P)
+ check_kcov_mode kernel/kcov.c:183 [inline] (P)
+ __sanitizer_cov_trace_pc+0x14/0x84 kernel/kcov.c:217 (P)
+ vsnprintf+0x814/0xd60 lib/vsprintf.c:2852
+ seq_vprintf fs/seq_file.c:391 [inline]
+ seq_printf+0x148/0x22c fs/seq_file.c:406
+ s_show+0x194/0x294 kernel/kallsyms.c:743
+ seq_read_iter+0x85c/0xc2c fs/seq_file.c:272
+ seq_read+0x238/0x33c fs/seq_file.c:162
+ pde_read fs/proc/inode.c:308 [inline]
+ proc_reg_read+0x17c/0x2d4 fs/proc/inode.c:320
+ vfs_read+0x22c/0x898 fs/read_write.c:568
+ ksys_read+0x120/0x210 fs/read_write.c:713
+ __do_sys_read fs/read_write.c:722 [inline]
+ __se_sys_read fs/read_write.c:720 [inline]
+ __arm64_sys_read+0x7c/0x90 fs/read_write.c:720
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 177625
+hardirqs last  enabled at (177624): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (177624): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (177625): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (177108): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (177108): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (177563): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6475 Comm: syz-executor Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range mm/memory.c:2936 [inline]
+lr : apply_to_pmd_range mm/memory.c:2985 [inline]
+lr : apply_to_pud_range mm/memory.c:3021 [inline]
+lr : apply_to_p4d_range mm/memory.c:3057 [inline]
+lr : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+sp : ffff8000800178a0
+x29: ffff8000800179c0 x28: ffff0001ffa0efff x27: ffff0001fec50fe8
+x26: ffff0001ffa0f000 x25: dfff800000000000 x24: ffff0001ffa0e000
+x23: ffff0001fea8e070 x22: 0000000000000100 x21: ffff0000c9033d00
+x20: 100000023ea8e403 x19: 0000000000000001 x18: 0000000000000000
+x17: ffff80010d10c000 x16: ffff80008051bab8 x15: 0000000000000001
+x14: 1ffff00012dfb9ab x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700012dfb9ac x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c9033d00 x7 : ffff800080c2b0a4 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : ffff800080017aa0 x3 : ffff8000802595f4
+x2 : 0000000000001000 x1 : 0000000000000100 x0 : 0000000000000000
+Call trace:
+ arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline] (P)
+ apply_to_pte_range mm/memory.c:2936 [inline] (P)
+ apply_to_pmd_range mm/memory.c:2985 [inline] (P)
+ apply_to_pud_range mm/memory.c:3021 [inline] (P)
+ apply_to_p4d_range mm/memory.c:3057 [inline] (P)
+ __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093 (P)
+ apply_to_page_range+0x4c/0x64 mm/memory.c:3112
+ __change_memory_common+0xac/0x3f8 arch/arm64/mm/pageattr.c:64
+ set_memory_valid+0x68/0x7c arch/arm64/mm/pageattr.c:-1
+ kfence_protect_page arch/arm64/include/asm/kfence.h:17 [inline]
+ kfence_protect mm/kfence/core.c:247 [inline]
+ kfence_guarded_free+0x278/0x5a8 mm/kfence/core.c:565
+ __kfence_free+0x104/0x198 mm/kfence/core.c:1187
+ kfence_free include/linux/kfence.h:187 [inline]
+ slab_free_hook mm/slub.c:2318 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kmem_cache_free+0x250/0x550 mm/slub.c:4744
+ ptlock_free+0x54/0x6c mm/memory.c:7364
+ pagetable_dtor include/linux/mm.h:3109 [inline]
+ pagetable_dtor_free include/linux/mm.h:3116 [inline]
+ __tlb_remove_table+0x30/0x274 include/asm-generic/tlb.h:215
+ __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
+ tlb_remove_table_rcu+0x8c/0x19c mm/mmu_gather.c:290
+ rcu_do_batch kernel/rcu/tree.c:2568 [inline]
+ rcu_core+0x848/0x17a4 kernel/rcu/tree.c:2824
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2841
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:86
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:584 [inline]
+ el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:598
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:603
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
+ preempt_count arch/arm64/include/asm/preempt.h:13 [inline] (P)
+ check_kcov_mode kernel/kcov.c:183 [inline] (P)
+ __sanitizer_cov_trace_pc+0x14/0x84 kernel/kcov.c:217 (P)
+ vsnprintf+0x814/0xd60 lib/vsprintf.c:2852
+ seq_vprintf fs/seq_file.c:391 [inline]
+ seq_printf+0x148/0x22c fs/seq_file.c:406
+ s_show+0x194/0x294 kernel/kallsyms.c:743
+ seq_read_iter+0x85c/0xc2c fs/seq_file.c:272
+ seq_read+0x238/0x33c fs/seq_file.c:162
+ pde_read fs/proc/inode.c:308 [inline]
+ proc_reg_read+0x17c/0x2d4 fs/proc/inode.c:320
+ vfs_read+0x22c/0x898 fs/read_write.c:568
+ ksys_read+0x120/0x210 fs/read_write.c:713
+ __do_sys_read fs/read_write.c:722 [inline]
+ __se_sys_read fs/read_write.c:720 [inline]
+ __arm64_sys_read+0x7c/0x90 fs/read_write.c:720
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 177641
+hardirqs last  enabled at (177640): [<ffff80008add91e8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (177640): [<ffff80008add91e8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (177641): [<ffff80008adb3680>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (177108): [<ffff8000803ce71c>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (177108): [<ffff8000803ce71c>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (177563): [<ffff800080020efc>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pte_range mm/memory.c:2936 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pmd_range mm/memory.c:2985 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_pud_range mm/memory.c:3021 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 apply_to_p4d_range mm/memory.c:3057 [inline]
+WARNING: CPU: 1 PID: 6475 at ./arch/arm64/include/asm/pgtable.h:82 __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+Modules linked in:
+CPU: 1 UID: 0 PID: 6475 Comm: syz-executor Tainted: G        W           6.15.0-rc5-syzkaller-gac57c6b0f09c #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+pc : apply_to_pte_range mm/memory.c:2936 [inline]
+pc : apply_to_pmd_range mm/memory.c:2985 [inline]
+pc : apply_to_pud_range mm/memory.c:3021 [inline]
+pc : apply_to_p4d_range mm/memory.c:3057 [inline]
+pc : __apply_to_page_range+0xdb4/0x13e4 mm/memory.c:3093
+lr : arch_enter_lazy_mmu_mode arch/arm64/include/asm/pgtable.h:82 [inline]
+lr : apply_to_pte_range
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
