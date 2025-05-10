@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-642867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE2CAB2496
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:13:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3B0AB2499
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F9A71B67765
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:14:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58ADF4A72A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090B1238C34;
-	Sat, 10 May 2025 16:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A61F130E;
+	Sat, 10 May 2025 16:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PIDa3Whz"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rE77FBZb"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C4937160
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 16:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA9D2459F2;
+	Sat, 10 May 2025 16:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746893630; cv=none; b=bccTKoeoSRqB48/yvQJZTW9jAt5PDw0vWOEQzN5NyMgBRb7ZoIKLamImDasoqpyFYXNVUMQzrVmGPMgQxfOFEx5it4mJVjsvgEMx6/6WhlWoqfohgDVtX93v0kuivclBWPy9Pacl2D7ErgZVnSohY0lDbjlhIG0qlSmDx+qlJgs=
+	t=1746893635; cv=none; b=F/IFqHw033Jk2P0dD9CLkvf+mWEj5No7qPOJSt/eKGXwnocQevKMmOcaAONAHglTZNKKMiqixs4v43a2GinHXAbDT7NCzCGClDY3kmUpA4GNdwmw68CpNPRXheIC+U03lxgagnd2fu2ukjAa7kSnaOhJg0rG5LyMrBm8vJ/98JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746893630; c=relaxed/simple;
-	bh=HOmWtp8v4wsorQqYx5/caIaCxJ3mgOKZ0x/dDvS1+iQ=;
+	s=arc-20240116; t=1746893635; c=relaxed/simple;
+	bh=qFdVhVxxzmO7W01SUAwnZoTpnvkGyy2+whLaqYK3KEk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AYcrrhGzwGmwi2nKUXIXxnNYz9/pwI+ITw0VIBdEF69lRG3NnXBbDcGuJk1yCwYpAzoRf6fIKcFSuYkb/4Lt3p8PDi+w6+ljziyhkHNBDo3veKh478S/NQ7Z2vz8Ir4MsGl+SBAH4gFc7+3srvFDHvLlv/LcPCNhVekgwIRk3L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PIDa3Whz; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=j00DAfy8YgZJwFXOuyy/v38FeRu7DOAkGtAO77d+oUsRPNi+EK0zFIbqks52vDl7netSpwYIb0DmNJ4RXGZSn8mirW/RGa7MfuybGTk6OF1GCdZ4EPQmK8wFSNrVv9k1Qr1vcA28IyaHovUDIBlx7uTSMcw2w8HHO+/iPgFRc90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rE77FBZb; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,28 +35,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4LiBJgpx1JPuJVPFYxmFK8cSpH55Fx19FbdJD4Cvi6U=; b=PIDa3Whz9bpYOxtN2U+zVEa9Dn
-	KI7xDNCGrd7kxy3ZlYu1wsD+nWHG43N1h1Gvhcvo8mmZTD77Up4mFpEypxhBtqpNMhiGiRBTuVmAI
-	y4TW/2UzL62Ya/m7rf9AD33dyELNnP7LyQ6mg9QMMWJ03KbQNTDtVhpzVl9HpuYoZEx2WiyQMT6mL
-	P28Mb1f5Z6ShQhcPozcXndAptvzLAWTrE2piKZ9O/MVr2j8NlmEgf85V12WnzSbuuPImMr8R+LsY8
-	nmLazI+xVhFVpnFRey4K6JoqAVwEBRgWl/xAmcVswNRID/OM1QyA1VWABHfcFnK0o9pE1j5o0dLhw
-	N34NOISQ==;
+	bh=Ijvnew3h0xw65xtPp4Zyn3Y7poqn0R7NBg2KYZO4w8A=; b=rE77FBZbRCIsb/SQN+cYSJYiOi
+	HaWqtErRGaZR5988s0daXG+FPekrma/zJE/m+1wNR4cZl2TXEU45BuPgAT17zR/IyMeYIsYGHvYIK
+	wWooRTyMCUghK8+h/LOxdcGYXqwVdyw1VAYiL5QwG4e6J/zYg0mwAZ1HBI3/+2Gbqucp9vLCQ3F8T
+	urYh8qcdnsBRP5H2+i43HxDrkkoeJZXizaI9dBTurGBQYTPGVQgUXJeMo9gfj70DOWy8CRJ+0O9MR
+	Vw+fiq5yfD0tRBv28VmFb5HU0fFfuHXhcQh10LZUhc7FQe9MAtpxrAj9xDexR/mRFbBITwjnDUXCr
+	SeehJG0A==;
 Received: from i53875a1d.versanet.de ([83.135.90.29] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uDmpY-0000dK-33; Sat, 10 May 2025 18:13:40 +0200
+	id 1uDmpY-0000dK-Im; Sat, 10 May 2025 18:13:40 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org,
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
 	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: drop wrong spdif clock from edp1 on rk3588
-Date: Sat, 10 May 2025 18:13:27 +0200
-Message-ID: <174689356074.2086280.14230309672508886390.b4-ty@sntech.de>
+Subject: Re: [PATCH v3 0/2] rockchip: Enable Ethernet controller on Radxa E20C
+Date: Sat, 10 May 2025 18:13:28 +0200
+Message-ID: <174689356069.2086280.16152743367950070469.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250509152329.2004073-1-heiko@sntech.de>
-References: <20250509152329.2004073-1-heiko@sntech.de>
+In-Reply-To: <20250509202402.260038-1-jonas@kwiboo.se>
+References: <20250509202402.260038-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,22 +74,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 09 May 2025 17:23:29 +0200, Heiko Stuebner wrote:
-> As described, the analogix-dp controller on rk3588 only supports 2 clocks
-> and the edp0 node handles that correctly.
+On Fri, 09 May 2025 20:23:56 +0000, Jonas Karlman wrote:
+> The Rockchip RK3528 has two Ethernet controllers, one 100/10 MAC to be
+> used with the integrated PHY and a second 1000/100/10 MAC to be used
+> with an external Ethernet PHY.
 > 
-> The edp1 node on the other hand seems to have a dangling 3rd clock called
-> spdif, that probably only exists in the vendor-tree.
-> 
-> As that is not handled at all, remove it for now so that we adhere to the
-> binding.
+> This series add device tree nodes for the Ethernet controllers found in
+> RK3528 and enable the LAN interface on Radxa E20C.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: rockchip: drop wrong spdif clock from edp1 on rk3588
-      commit: 30f98e934a094b4a2de79ffdb877360c4289b8d6
+[1/2] arm64: dts: rockchip: Add GMAC nodes for RK3528
+      commit: 5eb28f461a1b368a57994cc3b3f2ba3154c00bb8
+[2/2] arm64: dts: rockchip: Enable Ethernet controller on Radxa E20C
+      commit: 10b9ef4a514b25dea6eac24f25e3027866526800
 
 Best regards,
 -- 
