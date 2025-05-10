@@ -1,129 +1,86 @@
-Return-Path: <linux-kernel+bounces-642746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D46AB2335
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:59:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796E1AB2341
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 12:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9220C4A570B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FDE1B65D2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA822222CB;
-	Sat, 10 May 2025 09:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999F32222C0;
+	Sat, 10 May 2025 10:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXWpAKMN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lYr2mgJ6"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41838221726;
-	Sat, 10 May 2025 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B2C18DF8D;
+	Sat, 10 May 2025 10:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746871162; cv=none; b=fqdncG2XhAeasnrxllZ0yR6AQS88TrCt2f/epBsK5AX4jg3Ekz7OP0hJVmDAegKdsAq4GAq5snMO7YhuakgpvCZetIyoPutBB9M0S0z9AY7l55J0acuRKQHSWWOZfuChDuKmtRTy3guDwMzdmBZfQ6p13WdFvXMKwHMA294FEtg=
+	t=1746871542; cv=none; b=IuEvCpqrwoO5mPx6fbnaf/yS8umtRBc4MP5XkD7dz7+57HUm+uKdJJal035kobn+TfFXBiwBEu5AnmqkYGnPqIcKy3E5VxSJ+BqJIlr71UteTnvzWBjJB6vhWDB3+EweUBOT5j5KMWyo2jkBYZMSj2ko0/oGvaXxlzhHmWxbf5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746871162; c=relaxed/simple;
-	bh=3DEDo/oT2mSMSaFNL9SAV8nObn2xvcl2tILbp4CvHJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksgUvn9wt9c7VFMbv+rdmxjfsSwdIVjJ6S7WboDQ0zu2/ZVNhQyZWUwepXJe5+UlWzBjBteTN69wWyCzP5tXmX7eGlSYR1QS03DulsUNKcwDy4OkmyYbuoCqCG5j0tben2h/vc7mr8Euu9lOdPTYgDHqjKCOz4j7dCg21px0fZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXWpAKMN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37174C4CEE2;
-	Sat, 10 May 2025 09:59:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746871161;
-	bh=3DEDo/oT2mSMSaFNL9SAV8nObn2xvcl2tILbp4CvHJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rXWpAKMNzeCNUPQsBH4RKKdK7l89yw0b+2lxhE6Az1XtHzs5gDI8lrCdav9ZbFlY7
-	 fCgQm4MZFA39hJ/owlgQZAUCLqKQ0BXi4fIWheg/x5Vlj5TrHLvq3j2MosBEewj60c
-	 itmdtszyhedIyELm76r/dC+GDOfDGoC5LjPAfgGVE234GPxcZxYHlvguA6gdI2UYFL
-	 iLfyHAp4jNjaBuGnZzmAeNJffZx7xp8ApgpGKHhxfRsaEmEHDTEe7YaqJLdG7IAWjf
-	 D2EmK44ParOoe43q1mi1zkpJ/Bi52RWyNrfkveGzRcljdprHCjuLLvGUKG7OXW5jTY
-	 T70o6qew3fsJg==
-Date: Sat, 10 May 2025 11:59:17 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Eric Auger <eric.auger@redhat.com>, David Airlie <airlied@redhat.com>, 
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Simona Vetter <simona@ffwll.ch>, "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux.dev>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/virtio: implement virtio_gpu_shutdown
-Message-ID: <urpxto3fgvwoe4hob2aukggeop4bcsyb7m5wflgru4c3otd6rq@aktopqufgxom>
-References: <20250507082821.2710706-1-kraxel@redhat.com>
+	s=arc-20240116; t=1746871542; c=relaxed/simple;
+	bh=nCg5dTq3OdqIAS+Cl59freLTg2I/khLS4trUZ7wl8+g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h5octX1AvQIZaGlJ3SxioFE4IZBJpH5Lbpr1EISdbSoJCtvUZMeruiGWJ/+0psxKutA4v39TeK4n59ZlQ3kPIaNYxp5nkbBwhcurL3qe57nlsME4gh7jbdAJM7BjkS/sU8TCHQD6IG73grvlVEZ6Jri/SKihnyOi16qr72ZHDSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lYr2mgJ6; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4068341080
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1746871534; bh=nCg5dTq3OdqIAS+Cl59freLTg2I/khLS4trUZ7wl8+g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lYr2mgJ6qGVYEx6+p/cIs1CIN8mPg7NT6QgMaqIRRJ4IBLrnd0/l7gE9ksWO20JGM
+	 AAgWMWa0jTYU6AH+6JSLOjbz++zbuTZ8szStTrQQK/xNIKD6V6tnKaR3HM1myRlVwZ
+	 WO5ANi8PSKOJ0X+7SkoLDiSDZByu6fbfrhEbW4q9B+8huGEp6C9WWWPHfo2gqnHgeC
+	 We9HQahhV8JHWuxFB39dRVxVCiFdJhhCDEC5hfdxZHTFwlkHcV7GknzBMvxeLikvb9
+	 qspUgUcLV+lN3/+PPVRMGrPO9b235Xs2h9Pt8BszoY/ms72Byvsrm0T99l0RNR1kx9
+	 7JnXAoQo+vrSQ==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 4068341080;
+	Sat, 10 May 2025 10:05:33 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: workflows@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan
+ <adobriyan@gmail.com>
+Subject: Re: [PATCH 1/9] CodingStyle: make Documentation/CodingStyle into
+ symlink
+In-Reply-To: <20250509203430.3448-1-adobriyan@gmail.com>
+References: <20250509203430.3448-1-adobriyan@gmail.com>
+Date: Sat, 10 May 2025 04:05:29 -0600
+Message-ID: <87frhcsrva.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="heio2mtmzyxze2l7"
-Content-Disposition: inline
-In-Reply-To: <20250507082821.2710706-1-kraxel@redhat.com>
+Content-Type: text/plain
 
+Alexey Dobriyan <adobriyan@gmail.com> writes:
 
---heio2mtmzyxze2l7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/virtio: implement virtio_gpu_shutdown
-MIME-Version: 1.0
-
-Hi,
-
-On Wed, May 07, 2025 at 10:28:21AM +0200, Gerd Hoffmann wrote:
-> Calling drm_dev_unplug() is the drm way to say the device
-> is gone and can not be accessed any more.
->=20
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> Tested-by: Eric Auger <eric.auger@redhat.com>
+> Every time I open Documentation/CodingStyle it says the party moved
+> somewhere else. :-(
+>
+> Of course, I forget where it moved to by the next time.
+>
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > ---
->  drivers/gpu/drm/virtio/virtgpu_drv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virti=
-o/virtgpu_drv.c
-> index e32e680c7197..71c6ccad4b99 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -130,10 +130,10 @@ static void virtio_gpu_remove(struct virtio_device =
-*vdev)
-> =20
->  static void virtio_gpu_shutdown(struct virtio_device *vdev)
->  {
-> -	/*
-> -	 * drm does its own synchronization on shutdown.
-> -	 * Do nothing here, opt out of device reset.
-> -	 */
-> +	struct drm_device *dev =3D vdev->priv;
-> +
-> +	/* stop talking to the device */
-> +	drm_dev_unplug(dev);
 
-I'm not necessarily opposed to using drm_dev_unplug() here, but it's
-still pretty surprising to me. It's typically used in remove, not
-shutdown. The typical helper to use at shutdown is
-drm_atomic_helper_shutdown.
+No 0/9 cover letter?
 
-So if the latter isn't enough or wrong, we should at least document why.
+Just FYI, I won't apply coding-style patches without a strong sense that
+there is a consensus behind them...I suspect that could prove to be a
+high bar here.
 
-Maxime
+Thanks,
 
---heio2mtmzyxze2l7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaB8jcAAKCRAnX84Zoj2+
-duddAYDhtj3E5iLvtJE0ExfR3YSefUln3girrNWJDNmuwHDv700fcFh2eNBGOWJy
-94rqjtoBfRpekvvA/QLKNQlgDgV2cxs7yw1z4vpWWmJ/RQAgNfXyMUxiepy/DCAJ
-GQrxfPQIlw==
-=QWHu
------END PGP SIGNATURE-----
-
---heio2mtmzyxze2l7--
+jon
 
