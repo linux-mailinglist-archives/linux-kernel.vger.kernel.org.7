@@ -1,104 +1,100 @@
-Return-Path: <linux-kernel+bounces-642594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F15AB20CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCD1AB20D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0491B6814F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE16B4A82DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034CC26658E;
-	Sat, 10 May 2025 01:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233AC26658E;
+	Sat, 10 May 2025 01:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L+npKzXq"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="HmXOFb4U"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCAF1EB5E3;
-	Sat, 10 May 2025 01:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792741E2852;
+	Sat, 10 May 2025 01:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746840960; cv=none; b=LYvodlLnt0fMXBGrOBVwDEQ9492SwnIYUmkVy2iWSg8RvaCN8k1/MjW65Cp1G95pr5JKGSsGOYQ8Q6CZjM/NQ8GPMpix20AJObRjejNq2s1u/a4S7YdoVBpVcCLPmYL6ergjypxNgrQDZLpgUZn/3fsj4dT2+IQ5MIu1+EWQ4Jk=
+	t=1746841085; cv=none; b=ElRsA8o1jMrP2xgh6yCXOsfFhKdrZe6SCD7Igi1uhXOrifyDJ7gyEFhHvqxns5KlJxmFTFwdAcg75pXEnWay8IGwBLwhpPFEMEPe1RKere9gP/JyDNI8K/DGus2qQW5/+kkrPVv5IdQxMQ3ahTi4im4bPbRZXF4HzmrA/uET71g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746840960; c=relaxed/simple;
-	bh=XqMD8wNZrmoCiV2gzLvREdKhFywTyDuGBIYB3XlhsBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=erJgXj5tuuL3F2QDJqgjyQr5VJSwqYeguoUJeKADFA5zZ6/2ArRcbuWy4ZsFJENyRqphkOhYVjibUihL1JkKHeHj334i+OOwhzgXtlFNumGuOqYDF+DtCk5QADGXNy1rQUGatFcwiB9wdzUvHPoiBhTkcwwj476AGzrmcCZAaoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L+npKzXq; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=8/WILxu11hrOlxr88vOwZbwA0FfG3mAKSy1H5uSBCnM=; b=L+npKzXqIRQEg1MUKnO3kslVK7
-	Q0CfjlpQO1Dmestmcm5OPbglFlMlaFHkgxAwANl4qE/OqRDAh7NJu6BU2nm4/4FVZ0jaHEk2ec8rT
-	qpS4CVyRWTEAorXmC3sCTPE+7Y59LbUrJ0wPn0BiyKsSX+pF2qe7ROtCvmO/sleNpkvPacdZGRKJt
-	nnDp0yB2mLxVVAs85MYuqLGBZlORrVseR8dDyprhVhTJpvNaNYlbaB/VDBJgPkFi0kMrLcbrew5Qa
-	8LgOyRxZj2DUNyxLJ2p686xTUXHl7o0H5QcfyC5QsYFPxdcvYlHTinKsT44o3a01FtpMT9Yr62125
-	UxaPOfkw==;
-Received: from [50.39.124.201] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uDZ7w-0000000GOZf-2NXu;
-	Sat, 10 May 2025 01:35:46 +0000
-Message-ID: <a1d9134f-0567-4a53-a1e7-a55cd6b189a9@infradead.org>
-Date: Fri, 9 May 2025 18:35:29 -0700
+	s=arc-20240116; t=1746841085; c=relaxed/simple;
+	bh=dj8o2QTnCDr8ohkesAp8BSgfS4SRxpbtqt4mGydYjLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h8DYRp42O8PkRLurp/ghZGsQnMqgzvjQ+3zMPLv/6F/YR28xZQVubnS2KV8il5WebwnyY9eyAulwpO5IVdQ83my+Lf57Qsvw/fu2NCVt14IUY/XwvTK2QUgZN5NX/FKHZBjItpZexTDuiILTji/eA0q8s+1i8bo3TNvb69ToHKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=HmXOFb4U; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=iyV8HkAn6nqQyuiUYQoJaHYTsOkBmzu+xr40l8RNaEU=; b=HmXOFb4UYofjAQ8c2BlImQRCXl
+	TYEmcTlD2O9evPk7Hqh2ayp0ZZQ5hORT7K3L/TL8q+m/ZayQUm8VEAgCsKBE0xBe6ZJ23ZG6FWM2e
+	+igoaXEC+l691s7Wps1c9y/Tr+sBtSHnRvdG2HwrKQB4I8uxQ7hyje0H/BOIK5mymFHcBDuYrtH7D
+	S2J6Bs8d4/vX9GTJdtQgokbDi6zGn1fBSGulrN+t/1GKzyH/Or9RP6OOY2qPkfvrFaBTUgPZB8qlW
+	8A9hMlfB8+pBTFrLpws8elVgsUZIJKNqsZMLicBGq9XDTYcNDGLOL4gZOPWVHjnOsw3ecsRS8s1Aw
+	qo6PEOeA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uDZA6-004zn5-1g;
+	Sat, 10 May 2025 09:37:59 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 10 May 2025 09:37:58 +0800
+Date: Sat, 10 May 2025 09:37:58 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
+	Romain Perier <romain.perier@gmail.com>
+Subject: Re: [v3 PATCH] crypto: marvell/cesa - Do not chain submitted requests
+Message-ID: <aB6t9lfMCSuYVxwv@gondor.apana.org.au>
+References: <aBt5Mxq1MeefwXGJ@Red>
+ <aBw-C_krkNsIoPlT@gondor.apana.org.au>
+ <aBw_iC_4okpiKglQ@gondor.apana.org.au>
+ <aBypVwhHHzmqqN5K@Red>
+ <aBytNdRyd5Ywh1Pq@gondor.apana.org.au>
+ <aBy06xyzh5kKC48a@Red>
+ <aB10PqZNk0L-ly70@gondor.apana.org.au>
+ <aB24nSeEJKtP1bO_@gondor.apana.org.au>
+ <aB3ggeQDdaPblUxi@Red>
+ <aB6oxlR6DINIvdLM@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for May 9
- (drivers/platform/x86/tuxedo/nb04/wmi_ab.o)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Werner Sembach <wse@tuxedocomputers.com>,
- platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250509195816.7f0a67a3@canb.auug.org.au>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250509195816.7f0a67a3@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aB6oxlR6DINIvdLM@gondor.apana.org.au>
 
-
-
-On 5/9/25 2:58 AM, Stephen Rothwell wrote:
-> Hi all,
+On Sat, May 10, 2025 at 09:15:50AM +0800, Herbert Xu wrote:
 > 
-> Changes since 20250508:
-> 
+> I see some bugs in the driver with regards to zero-length updates,
+> but I'm at a loss as to why that would only make a difference when
+> run concurrently.
 
-When CONFIG_HID is not set:
+In particular, when testmgr does an update+final, it will give a
+non-NULL SG list to the final call.
 
-ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tux_remove':
-wmi_ab.c:(.text+0x29): undefined reference to `hid_destroy_device'
-ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tux_probe':
-wmi_ab.c:(.text+0x6a): undefined reference to `hid_allocate_device'
-ld: wmi_ab.c:(.text+0xbc): undefined reference to `hid_add_device'
-ld: wmi_ab.c:(.text+0xf3): undefined reference to `hid_destroy_device'
-ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tux_ll_parse':
-wmi_ab.c:(.text+0x46e): undefined reference to `hid_parse_report'
+The buggy code in marvell/cesa will then read that non-NULL SG list
+during the final call and overwrite the cached bytes with it.
+However, I still can't see why that would make a difference because
+it should contain the same data.
 
-When CONFIG_ACPI or CONFIG_ACPI_WMI is not set:
-
-ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tuxedo_nb04_wmi_tux_init':
-wmi_ab.c:(.init.text+0x20): undefined reference to `__wmi_driver_register'
-ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tuxedo_nb04_wmi_tux_exit':
-wmi_ab.c:(.exit.text+0x9): undefined reference to `wmi_driver_unregister'
-ld: drivers/platform/x86/tuxedo/nb04/wmi_util.o: in function `__wmi_method_buffer_out.constprop.0':
-wmi_util.c:(.text+0x3a): undefined reference to `wmidev_evaluate_method'
-
-
-
+Cheers,
 -- 
-~Randy
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
