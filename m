@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-642855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F11AB2474
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93315AB246D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C238A00E7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:40:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2196F17DC2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF423504F;
-	Sat, 10 May 2025 15:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74455233153;
+	Sat, 10 May 2025 15:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lxm.se header.i=@lxm.se header.b="PptzLYqb"
-Received: from smtp.outgoing.loopia.se (smtp.outgoing.loopia.se [93.188.3.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZW8Zp1FQ"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B72223327
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 15:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.3.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499E5189F3F;
+	Sat, 10 May 2025 15:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746891639; cv=none; b=DA84JvnevKdMzWSwW+otKWJmd94u40dfVS5I5VDPzPWRJFnd8T/zC1bBc6cLPI3oIxHWegRKWqCtAt0ZrdD1Qfiu3TAAfhFkSX7aveXggQ8eJT6WOJRlla68ZAOr9Feh3LCEAW2ywRyqhFO4a38VPnD+bTF2pJftbTdvyfwvmS0=
+	t=1746891146; cv=none; b=Xp4rK65w9vN/9b6EuNIedcJ5ls78swUFLTGfCNQYo2uymzr2h6mF4HCwSSrQR1LugTacX9P2qiW9+6vsNA3AWEUssbZyKu/kXCs5LjAHwehmNJFV5/C+cA8nwrs0wbLdqtjk20qTB9XV4o4WeU+qeCiTgQP2SmWZeUfK0PZf6LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746891639; c=relaxed/simple;
-	bh=KQnU/8biptC1lyMJGcNts0DIV/7C76t6ScF3y+7ePT0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V93T8sXfWZv0Xb6pcNJHJPVDnTBJFeRgbqMcR5HebEuxhdF+ST920ASTkK72L8myYIDJIf3RtnDOJJMBJjjAF9MyoqkEApk1ix9B3Z41nSKZ+6yENjMr1w3JiV2U7YwSs9q1dklHs5p7x/LBbri3yOQPoT7MbB6KW264iJErkKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lxm.se; spf=pass smtp.mailfrom=lxm.se; dkim=pass (2048-bit key) header.d=lxm.se header.i=@lxm.se header.b=PptzLYqb; arc=none smtp.client-ip=93.188.3.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lxm.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lxm.se
-Received: from s807.loopia.se (localhost [127.0.0.1])
-	by s807.loopia.se (Postfix) with ESMTP id 5B326327E44
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 17:33:51 +0200 (CEST)
-Received: from s934.loopia.se (unknown [172.22.191.6])
-	by s807.loopia.se (Postfix) with ESMTP id 40F62326E58;
-	Sat, 10 May 2025 17:33:51 +0200 (CEST)
-Received: from s474.loopia.se (unknown [172.22.191.5])
-	by s934.loopia.se (Postfix) with ESMTP id 37AE27CE9FA;
-	Sat, 10 May 2025 17:33:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at amavis.loopia.se
-X-Spam-Flag: NO
-X-Spam-Score: -1.2
-X-Spam-Level:
-Authentication-Results: s474.loopia.se (amavisd-new); dkim=pass (2048-bit key)
- header.d=lxm.se
-Received: from s979.loopia.se ([172.22.191.6])
- by s474.loopia.se (s474.loopia.se [172.22.190.14]) (amavisd-new, port 10024)
- with LMTP id vG2lrLdINikH; Sat, 10 May 2025 17:33:50 +0200 (CEST)
-X-Loopia-Auth: user
-X-Loopia-User: henrik@lxm.se
-X-Loopia-Originating-IP: 92.35.16.29
-Received: from pc.arpa.home (c-92-35-16-29.bbcust.telenor.se [92.35.16.29])
-	(Authenticated sender: henrik@lxm.se)
-	by s979.loopia.se (Postfix) with ESMTPSA id 9AE1410BC394;
-	Sat, 10 May 2025 17:33:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lxm.se;
-	s=loopiadkim1708025221; t=1746891230;
-	bh=dGzqMlkGrM/RG1QWaZUTpamCo8a7h4gI2wxn4xA3pJw=;
-	h=From:To:Cc:Subject:Date;
-	b=PptzLYqbrSG951A+OIcWhz7KaS6qGgb4EiULRKlRyYTYZDU7MjrJJCuzgBEDnYxiP
-	 b0/iZivq3HMEFzYOb8KOQDFybbY6/9/w1A9rxWs0bmvIV35+d8s4vlBBN/wnbbjs8o
-	 Ve7yzFLJ+PCYwmOck3+gFcNd94Da+7yWbeRpzPpCxJMCL2RlVP2WOTtbyjjMnCOZOh
-	 uc/JbGSq+dWUwXoUiNDjxpY/ROYAJAAwdXULOOgthaUgvI1LdCuQYZw2QXrWkvFJJL
-	 hb+hyu8QMVmkAva54vfMJMjoCOsWWp1XNZTzxC35X83/1AdqDiuA5rQrf05wUhCrJW
-	 IOuboXLs15GaA==
-From: =?UTF-8?q?Henrik=20Lindstr=C3=B6m?= <henrik@lxm.se>
-To: masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas.schier@linux.dev
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Henrik=20Lindstr=C3=B6m?= <henrik@lxm.se>
-Subject: [PATCH] Makefile: remove dependency on archscripts for header installation
-Date: Sat, 10 May 2025 17:32:04 +0200
-Message-Id: <20250510153204.11052-1-henrik@lxm.se>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1746891146; c=relaxed/simple;
+	bh=Qc05YvQd0vI3HlBbTp06BdjeXOC450faijq9mN/Ykck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qZngOxqnasLeEfeQYEmN99reeGeunlxXggxkOR+C39tCCwsLnu17ikFSYAkJmk3wa19bRoYBCZPQ57f00PYB/vCliQ93JLpq/xsB7VlBSQKXsz0txONGNVvYtEWwPRMWuUjOpgBEiia+Cn0e/L0WNVHVH37dkAqpGMxzIR+J784=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZW8Zp1FQ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad221e3e5a2so243446166b.1;
+        Sat, 10 May 2025 08:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746891143; x=1747495943; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JO3YataffYPrXuj75gcg3TSw3IJYHLUJXACaoC6+gBk=;
+        b=ZW8Zp1FQsqywg3DSAPY9cwpZDObW/i+a7FfpYenJpJVR/mJ5Hk6HZwuSdvqkmg0tgJ
+         +OAd6LlnwZgb4ZyA6eIasz6MT1gkC+thMGxeKcop7V7capQLruN/lpHgpb/XZhUMNZRU
+         b7ynMrI+7Hgx3yVjAztOqjeSCFAqP5HFgm0DqvEy6Mi74FEEpW2rXzZkd5vtTP+qZrxW
+         ozjZEma+hIaEnpzxuNTg0ARylZO7ngj0pMJrAnEGLeiJc+Y98u1pTC1RVktKetpEqzQ6
+         L7CIT8oQtZwYnaMvYsz5kqeCTQB0nDVyxmWILQwf83JvXMAwGjFLhd5iKFmsm1v9lpaw
+         rJUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746891143; x=1747495943;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JO3YataffYPrXuj75gcg3TSw3IJYHLUJXACaoC6+gBk=;
+        b=Q8TM3qCnIbaPZGdl3bym2o6VV7hdyYyvvSU03htxT0VOqk2UKDyjJaG8GgXRju13Rn
+         qIwZmMiC8w/6DiWE2o8zU4rSLHmic9z3Fn6G61PZmo2E630MsjJ6uHJUHVQss2Kn6rfn
+         xcpqQFXtUKEuQUjYJVLj+noiPyy8KVGn1SsMCqYJz7OoDKbz0RDx2Z2EC6xHNbP3Q5MX
+         2l0vIJZmzQGtvtA+PvwFiQhekUcPqk8+1LkZu79Y8uDRkfpH0/997RV9elF2gwyqrbs6
+         +fUCtjZbaLr3U0dKZ7mMv+YAf10OOCbdDCJWGHU2FtDIKNiRjXGX30f40GrbQEER50uL
+         v1Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJbYwUjWWRkqiGJ+E+LZm7XUktIdXsGkQroihzdlPRWlUQtByz16Ul5ie8Hrr2p5orN3CVBD/Ntj8KWt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznIQ7jzEiA4Alfa8P7LLwsZh5mxww7Wg4JKc1xChpnksk/VY5d
+	HbL3kZS3+bSGB7a8TVopOqJSudgNc2opg15WwJ+dIo70XEEihZfK
+X-Gm-Gg: ASbGncu6NFusK1Sp97DWSYbPfiAOiMqyiFrMuteg5wCndoKDOophNCuS9hilYZ4PapL
+	bLYknkgVNKFmn8FcTsPn+QmZdslVCNB3Loo9pLttG5b0Gl0CZ/MRKDTrQSEQMWa9wp50+TeXl+G
+	jFf/ssHDWvElJR+Lx4scgYqGYbDAg/jbY4cHkiP//6hJMkiVYMX8+5c52sxGX+e6/1Q8MHQHmaY
+	/noozNmQbUbbz2k7QhIPobqQm8F42/YA3PDuwrxJohmvKdmpuQhBHrkZOiFYbDKg5V/VFa1eg0H
+	8lUrvIM+G//tK8M7CdZhlqijYzHMp36vr2s3kb9oqYFEhbJuFNRju3pwn1Gnb7VD2hSmVD6Nj2k
+	=
+X-Google-Smtp-Source: AGHT+IEOxR/l/vntZrk62iCLv8eENeEgSRGDMZXjwZemo8Lbpx+AM7PncOIJtTyup5q0sHR8zWQlqg==
+X-Received: by 2002:a17:907:940f:b0:ac2:49b1:166f with SMTP id a640c23a62f3a-ad2192b7bb7mr718329066b.52.1746891143219;
+        Sat, 10 May 2025 08:32:23 -0700 (PDT)
+Received: from [192.168.0.131] ([194.183.54.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad219746cf4sm332752466b.102.2025.05.10.08.32.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 May 2025 08:32:22 -0700 (PDT)
+Message-ID: <62a74e0e-f5a1-40b5-a855-6e9bd620cbd5@gmail.com>
+Date: Sat, 10 May 2025 17:32:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct
+ multi_index
+To: Johan Adolfsson <johan.adolfsson@axis.com>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com
+References: <20250506-led-fix-v1-1-56a39b55a7fc@axis.com>
+Content-Language: en-US
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+In-Reply-To: <20250506-led-fix-v1-1-56a39b55a7fc@axis.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There doesn't seem to be any purpose behind this dependency, and it prevents
-installing x86 and mips headers on non Linux systems. Doing so is useful when
-building a cross compiler targetting Linux, which requires the header files.
+Hi Johan,
 
-Signed-off-by: Henrik Lindström <henrik@lxm.se>
----
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 5/6/25 12:39, Johan Adolfsson wrote:
+> mc_subled used for multi_index needs well defined array indexes,
+> to guarantee the desired result, optionally use reg for that.
+> 
+> If devicetree child nodes is processed in random or reverse order
+> you may end up with multi_index "blue green red" instead of the expected
+> "red green blue".
+> If user space apps uses multi_index to deduce how to control the leds
+> they would most likely be broken without this patch if devicetree
+> processing is reversed (which it appears to be).
 
-diff --git a/Makefile b/Makefile
-index b29cc321ffd9..0234faafe8f0 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1366,7 +1366,7 @@ PHONY += archheaders archscripts
- hdr-inst := -f $(srctree)/scripts/Makefile.headersinst obj
- 
- PHONY += headers
--headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders archscripts
-+headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders
- ifdef HEADER_ARCH
- 	$(Q)$(MAKE) -f $(srctree)/Makefile HEADER_ARCH= SRCARCH=$(HEADER_ARCH) headers
- else
+Are you trying to solve some real problem that occurred to you?
+
+The order of DT nodes parsing is not a problem here - we save
+color index in subled_info to be able to figure out which color
+is on which position. This information can be retrieved in sysfs
+by reading multi_index file.
+
 -- 
-2.39.5
-
+Best regards,
+Jacek Anaszewski
 
