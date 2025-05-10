@@ -1,169 +1,112 @@
-Return-Path: <linux-kernel+bounces-642851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695ACAB246A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F11AB2474
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DD31BA6C38
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C238A00E7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D3025D901;
-	Sat, 10 May 2025 15:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF423504F;
+	Sat, 10 May 2025 15:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb0e8h2I"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lxm.se header.i=@lxm.se header.b="PptzLYqb"
+Received: from smtp.outgoing.loopia.se (smtp.outgoing.loopia.se [93.188.3.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D122924E019;
-	Sat, 10 May 2025 15:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B72223327
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 15:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.3.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746889961; cv=none; b=V/YySCLCNR9Rzd17a3b9MTRSvss1yqG9Zy97dlmcxR1ZnLayxdW2sRbBW7JICKoyhQMwDj9onw2ccO3rNy+Og44pQXg+drbvavzLo7fJun+nWoCYe0S3N71wUjdq+d6ZgYAve7Pis9eB3vIhlelTQDfjTmm0kXTauF633gp/b3Y=
+	t=1746891639; cv=none; b=DA84JvnevKdMzWSwW+otKWJmd94u40dfVS5I5VDPzPWRJFnd8T/zC1bBc6cLPI3oIxHWegRKWqCtAt0ZrdD1Qfiu3TAAfhFkSX7aveXggQ8eJT6WOJRlla68ZAOr9Feh3LCEAW2ywRyqhFO4a38VPnD+bTF2pJftbTdvyfwvmS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746889961; c=relaxed/simple;
-	bh=ZHoXysjC3tKjwBhupXya9t0tvevKJFeLclU2Q2P4acg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t/eyY0LrB4nldVqGQJMltPe3lakoGTB0k8NxWlnH5XpQ8KjqnOmPtxnhdev+78MiEsPs3AhyluVgOaqHsfqa/R6UiZlgLgnoGAoBfT5KlTRlPEzsNbf2d3ZOQYrymXkFBk1hlZUPNQyIOcHaA1qvz65PwZXHMeDS33Vbq597SlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb0e8h2I; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-af51596da56so2540605a12.0;
-        Sat, 10 May 2025 08:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746889959; x=1747494759; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YgYxG+vTxBAlApfr9OfPBfVTpSGem7njEO/S/STMqlg=;
-        b=fb0e8h2Irc+MV79f5aM0zUBpBdXxtnwugzIbNoiIhk0UViecQcuHAzWTeJFOlHBB1n
-         iVzrLHEO7cWdzatgC0ftR3cAdbTKLVI8YwR245HIkOex7SJiSu0hQEkesyD7u6wxozty
-         AzV6h+grnhWyYVo2wtBvtoLdTyCGqVsK+oSZ6YVrGmCnfwOPZl7Eke7zKobYs6wWC8mC
-         OeVFbsVvTaK3wIMC0TT0IMgvKEHjGHsCqdvd90/Nbij1iu0rQ71/tJ6v8iEyCSYCXvY9
-         ZjYOw+MBWNIrY6IC5StIKxtr3iwsopKR0vUh/td6oKTwoLbD3G4617Redgr0mUPUaTwm
-         DS2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746889959; x=1747494759;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YgYxG+vTxBAlApfr9OfPBfVTpSGem7njEO/S/STMqlg=;
-        b=ag6vlDJJqCMxiYdZlItFPwpw5xkaQl3kA3p9xEH+sPh+VCVw+pMlzRnBTG86SLEWjH
-         JOP7bF6fbeHMnFmdx6yb252cNlBKfeaZ7By/0jSUCgKPgrxdLZ60xAfuD8QiQhhBmvxB
-         hzlXr1aE8JvinbIKD9oRdx8NfJS+q8wLvOR8tusdsXkl9ZOKYIlNn8Wo9wa9WWI/XBDV
-         V5bVgW6isvp/Ucy8udOcpgVriEg5xuhRXfqG2Kw5Sf0pqerQOHprjy8y1XVlr1yS5m7o
-         j4XktMb641Eh4l6PFa1z305oWoxl69uKPgx/MqzJIKAGgYqGA8oT/yyiz/iQbwpvdrgU
-         9yUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHvJQ1H47ZDNOry/3Iv9SEbB+Hq4dGVug7G0ASOi5jP5CZx+NHLMlpr5jL/dDZkeIiZGDF5muwVGWyx1dzUnbd6Q==@vger.kernel.org, AJvYcCXF4kPH9XkEXVwOYHmJem0wt8y9aCPzQir+GM6ig3dzM8NKz37Qq5rNQXA/TQdHmwC8HyS6wBHAizLenWE5@vger.kernel.org, AJvYcCXl+tL1EY8dUi3ibElF/lFMjiNkYd/MqodcP5odi3Ual1rZUy9ZD1KS66GHpMHeo1TZo1MyreL5JaXM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuA9Fnj9aYiEKIbRiCPE5d63aZRKxDLfZLlQHbuYFxXBSZaiQX
-	MLRU9gOFGbLbGmcqAb9b5azwCFZK3nfhj32e7kDPzqXvu42JaEXj
-X-Gm-Gg: ASbGncv+96r73o9twBQnf0fTjqQ2cIqBi9eCWGwY2o5WKMh6FEOqQYtMtN0JHMO933S
-	sdk7tau21seG/YMdVW5EMlNOfRJyDt7M8Qy76u9jyf4duM+PiEhViWLz93mW40g8BpaxYjxRYqP
-	ieUMiw+AFjXyDQwlN8n9piVRZqUVAfr6XvPKNYehrfco5UdyF21ASaAoPKb8//qB8e51EdaXgTs
-	6QYlIDJkBNLaKsMiukmLrBvliKm+XcEAzfdjxQ6hSlPkV+jjRaAdPbZzVmGLGVbJC7x4twDxKu+
-	MH576AkOwVCaVLS9bXUczNeAdaPABL25Nm7L9FrovRy1fEC+Zm77Xw==
-X-Google-Smtp-Source: AGHT+IGsbdop8plBHpcmpnMxKCFGsNL9XJ5fPzAac6FXRl20VRiIJR/5u5O/hLTD0QEvnuaKLrsa8A==
-X-Received: by 2002:a17:902:e84d:b0:22e:8183:1fae with SMTP id d9443c01a7336-22fc8e94b54mr114728855ad.41.1746889958989;
-        Sat, 10 May 2025 08:12:38 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b2350ddca3asm2990493a12.58.2025.05.10.08.12.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 08:12:38 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Sat, 10 May 2025 23:11:02 +0800
-Subject: [PATCH v7 21/21] arm64: dts: apple: t8015: Add CPU PMU nodes
+	s=arc-20240116; t=1746891639; c=relaxed/simple;
+	bh=KQnU/8biptC1lyMJGcNts0DIV/7C76t6ScF3y+7ePT0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V93T8sXfWZv0Xb6pcNJHJPVDnTBJFeRgbqMcR5HebEuxhdF+ST920ASTkK72L8myYIDJIf3RtnDOJJMBJjjAF9MyoqkEApk1ix9B3Z41nSKZ+6yENjMr1w3JiV2U7YwSs9q1dklHs5p7x/LBbri3yOQPoT7MbB6KW264iJErkKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lxm.se; spf=pass smtp.mailfrom=lxm.se; dkim=pass (2048-bit key) header.d=lxm.se header.i=@lxm.se header.b=PptzLYqb; arc=none smtp.client-ip=93.188.3.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lxm.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lxm.se
+Received: from s807.loopia.se (localhost [127.0.0.1])
+	by s807.loopia.se (Postfix) with ESMTP id 5B326327E44
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 17:33:51 +0200 (CEST)
+Received: from s934.loopia.se (unknown [172.22.191.6])
+	by s807.loopia.se (Postfix) with ESMTP id 40F62326E58;
+	Sat, 10 May 2025 17:33:51 +0200 (CEST)
+Received: from s474.loopia.se (unknown [172.22.191.5])
+	by s934.loopia.se (Postfix) with ESMTP id 37AE27CE9FA;
+	Sat, 10 May 2025 17:33:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at amavis.loopia.se
+X-Spam-Flag: NO
+X-Spam-Score: -1.2
+X-Spam-Level:
+Authentication-Results: s474.loopia.se (amavisd-new); dkim=pass (2048-bit key)
+ header.d=lxm.se
+Received: from s979.loopia.se ([172.22.191.6])
+ by s474.loopia.se (s474.loopia.se [172.22.190.14]) (amavisd-new, port 10024)
+ with LMTP id vG2lrLdINikH; Sat, 10 May 2025 17:33:50 +0200 (CEST)
+X-Loopia-Auth: user
+X-Loopia-User: henrik@lxm.se
+X-Loopia-Originating-IP: 92.35.16.29
+Received: from pc.arpa.home (c-92-35-16-29.bbcust.telenor.se [92.35.16.29])
+	(Authenticated sender: henrik@lxm.se)
+	by s979.loopia.se (Postfix) with ESMTPSA id 9AE1410BC394;
+	Sat, 10 May 2025 17:33:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lxm.se;
+	s=loopiadkim1708025221; t=1746891230;
+	bh=dGzqMlkGrM/RG1QWaZUTpamCo8a7h4gI2wxn4xA3pJw=;
+	h=From:To:Cc:Subject:Date;
+	b=PptzLYqbrSG951A+OIcWhz7KaS6qGgb4EiULRKlRyYTYZDU7MjrJJCuzgBEDnYxiP
+	 b0/iZivq3HMEFzYOb8KOQDFybbY6/9/w1A9rxWs0bmvIV35+d8s4vlBBN/wnbbjs8o
+	 Ve7yzFLJ+PCYwmOck3+gFcNd94Da+7yWbeRpzPpCxJMCL2RlVP2WOTtbyjjMnCOZOh
+	 uc/JbGSq+dWUwXoUiNDjxpY/ROYAJAAwdXULOOgthaUgvI1LdCuQYZw2QXrWkvFJJL
+	 hb+hyu8QMVmkAva54vfMJMjoCOsWWp1XNZTzxC35X83/1AdqDiuA5rQrf05wUhCrJW
+	 IOuboXLs15GaA==
+From: =?UTF-8?q?Henrik=20Lindstr=C3=B6m?= <henrik@lxm.se>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas.schier@linux.dev
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Henrik=20Lindstr=C3=B6m?= <henrik@lxm.se>
+Subject: [PATCH] Makefile: remove dependency on archscripts for header installation
+Date: Sat, 10 May 2025 17:32:04 +0200
+Message-Id: <20250510153204.11052-1-henrik@lxm.se>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250510-apple-cpmu-v7-21-bd505cb6c520@gmail.com>
-References: <20250510-apple-cpmu-v7-0-bd505cb6c520@gmail.com>
-In-Reply-To: <20250510-apple-cpmu-v7-0-bd505cb6c520@gmail.com>
-To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Sven Peter <sven@svenpeter.dev>, 
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1462; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=ZHoXysjC3tKjwBhupXya9t0tvevKJFeLclU2Q2P4acg=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBoH2yduqtId3KunRw3JTc76ysraowG5U1aETUds
- MsXaefV0bOJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaB9snQAKCRABygi3psUI
- JJ7ZD/9u11yUrcdGe9PhCwIpTccxOS51IX1XGrdagHrb1ZM3v+9lN4qeWlTrMOxBuROK4/nXWIH
- RIsz9GiQ+g/CCHfwPIS3FcjN72VgWIpwIAPfqgecQJDdWPcRYdm1bIkTv97/dmNwE/MFpyJP+tc
- yxR8s+nThG7coTj3wBo9tgft7eZRKJbkkB80TcacuCnzhHWZ2V6XqmFCAA5/PKI7Acl+tknBlSJ
- XXnBQ6y47hDMuxvGCWzy5izaStC5gqTSMjiaDA9d6QOzDHyc8pyXi3eOChsoUzoWSQ37ckcXzoa
- 75qmgBw0CS5HwT5WhOaw8dl3Z1uTs/DUBCY973H+Vrm0BhUmv5knuoluH9fmoQUQUSM6cQ6DmpM
- O8BRUbOWVhMrdwRhOWIsrWq3IPoVbot1g9szKn9x/qHwpxbhjy4ToxS1SV8ajaS2OPDtpo0V8V3
- zeMsXe+9UaInXhwydyy1yCkB7WHmq7S85EYmA/yx6PmvtoY7Wz/57ZtBxvFp9kNv1/bIP3VaOeC
- y8gZj8hoCqGXM5uwv/cq+p0KgdNOpgACTlcRmJj2Wu0/51H6Kf+fxdDUln7UPeDggFz/YRbIHpy
- ZOYFxLYFvsPA7vqClpoRIXE3Ai/qiNuimeDeTod5UqNeHn1ZinnfgapBR/fspmBf93n4k1L9T52
- 0d3mNZ7vF8d9zGw==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add CPU PMU nodes for Apple A11 SoC.
+There doesn't seem to be any purpose behind this dependency, and it prevents
+installing x86 and mips headers on non Linux systems. Doing so is useful when
+building a cross compiler targetting Linux, which requires the header files.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Signed-off-by: Henrik Lindström <henrik@lxm.se>
 ---
- arch/arm64/boot/dts/apple/t8015.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/apple/t8015.dtsi b/arch/arm64/boot/dts/apple/t8015.dtsi
-index 4d54afcecd50b50ed1fd386ccfc46c373e190e6b..e838b65ea63eef9c198032ee87e63dae282141dc 100644
---- a/arch/arm64/boot/dts/apple/t8015.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015.dtsi
-@@ -252,6 +252,18 @@ aic: interrupt-controller@232100000 {
- 			#interrupt-cells = <3>;
- 			interrupt-controller;
- 			power-domains = <&ps_aic>;
-+
-+			affinities {
-+				e-core-pmu-affinity {
-+					apple,fiq-index = <AIC_CPU_PMU_E>;
-+					cpus = <&cpu_e0 &cpu_e1 &cpu_e2 &cpu_e3>;
-+				};
-+
-+				p-core-pmu-affinity {
-+					apple,fiq-index = <AIC_CPU_PMU_P>;
-+					cpus = <&cpu_p0 &cpu_p1>;
-+				};
-+			};
- 		};
+diff --git a/Makefile b/Makefile
+index b29cc321ffd9..0234faafe8f0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1366,7 +1366,7 @@ PHONY += archheaders archscripts
+ hdr-inst := -f $(srctree)/scripts/Makefile.headersinst obj
  
- 		pmgr: power-management@232000000 {
-@@ -380,6 +392,18 @@ timer {
- 		interrupts = <AIC_FIQ AIC_TMR_GUEST_PHYS IRQ_TYPE_LEVEL_HIGH>,
- 			     <AIC_FIQ AIC_TMR_GUEST_VIRT IRQ_TYPE_LEVEL_HIGH>;
- 	};
-+
-+	pmu-e {
-+		compatible = "apple,mistral-pmu";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_FIQ AIC_CPU_PMU_E IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	pmu-p {
-+		compatible = "apple,monsoon-pmu";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_FIQ AIC_CPU_PMU_P IRQ_TYPE_LEVEL_HIGH>;
-+	};
- };
- 
- #include "t8015-pmgr.dtsi"
-
+ PHONY += headers
+-headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders archscripts
++headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders
+ ifdef HEADER_ARCH
+ 	$(Q)$(MAKE) -f $(srctree)/Makefile HEADER_ARCH= SRCARCH=$(HEADER_ARCH) headers
+ else
 -- 
-2.49.0
+2.39.5
 
 
