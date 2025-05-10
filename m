@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-642736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797BDAB22ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:33:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C415DAB22EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DBC1BC345F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305804E2DD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8377B22172F;
-	Sat, 10 May 2025 09:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A3F2222DE;
+	Sat, 10 May 2025 09:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyFyf1Ni"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfGkughh"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B388BA27;
-	Sat, 10 May 2025 09:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5064D22171A;
+	Sat, 10 May 2025 09:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746869588; cv=none; b=A88YUII1w4Ev3ytEWJyvgesIN171k5cf+TFBvOU0ZxouKqStXTa0xoweh1cIH24ghbHWYx61i9wYDVQ7YjGeJT5NyY/Bk1GP+6hY6JuKQ4d4cRphZpSGRI+fOAJfMezQTvNjJiINIrZhNpiyaW5xJxZm3Dpw88bA3hropnPWLxs=
+	t=1746869591; cv=none; b=RMibqremqdHlLQpqtVH38LLEo1jW98qis/H5w2nLqZsd1eZjRwYv5BznMSPDat+npYwaeW+z8I8KUwmtUs6XlPHlP6O93o7IZcxr7S/LK5bMt1sZaZwlHaeQY+hKFRv1+iEOTXdTjJJbBzQaGOIlFo1MhYImj7yo5my9yskphVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746869588; c=relaxed/simple;
-	bh=d/Q2dqkM3hGIa7pRJKatBlt0uQwkDzQUldsLHN8FByw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FsLcDsu1IKejTw2xEVPQ5uLDPJ+FU9bAT5Nh5UvUaArMvClZcemj53rep3NbOLm6GyjcMe5lLdkDUThefuq/hYJ7vAqafB/dLgp/G/9rsweo3gQDUcrkLHPwtHztMvLd223Z72f4zziVU261zLfhVB+eQsKpkjYKSvQfKTIM8LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyFyf1Ni; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1746869591; c=relaxed/simple;
+	bh=dWjiyob69G2GucTul/lsXlGpP89mKJGQ4P8+IWoJ7pA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IpqKIPQCb2Q0KeeFqdFQk+nP8qolfe3nj5scFeHNhj/+6hbxEx0UBxvSCoAhood7WUNbk358D+BcHqt1xYG++JCSbJ4vcp6weFEBkJauilvEtytrJ61HJbLPyImV2/3oKJwHXeYozwjrjYdBF6GhcFfCqzgBERRwRhrNvpuADj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfGkughh; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a20257c815so117044f8f.3;
-        Sat, 10 May 2025 02:33:06 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a1b8e8b2b2so1284743f8f.2;
+        Sat, 10 May 2025 02:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746869585; x=1747474385; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0zBTUK9ila/Am76tfftf45UmHXE5OHX/2meSQDmacZw=;
-        b=JyFyf1NitE4S82p3FtnA72vTxN2yKwDiJX3j1w9n+ZRGdAUhtlHsC/5OLIUFglYnl9
-         wNbGjcsPXyYjiMvIjjviEvmAHxneZlusQR/aTjRP8ADxA1YvAJ8YlCdcZEY+WgmF7gSI
-         ChPMzabGaFb2FPc2LhRn4f1XZgtYaiHcUQ6O4b82vBKSm1L5MWz8d2fZWatCBO+pIGe1
-         1qg6/Ozvtpw9jzr24sQh9r/65S73iRHSLbllYTpdDk4Bqv+1AI50nYz760aPbmn/Zi2B
-         a6oA2bLzTLf10zX65xzdB8S9H4egclfN4ydpU19wdHLxB3UrW0aLHYCji1RvzKhT+T2B
-         XXFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746869585; x=1747474385;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1746869587; x=1747474387; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0zBTUK9ila/Am76tfftf45UmHXE5OHX/2meSQDmacZw=;
-        b=In5TfmIHXyzNrRz6SJ3BnTAIvrnhpz6W/zjfPulzK/eoB8GbS1ALVrs++KG8M5q0Fu
-         wOF5CdEVS83/c8uXhtXYe+ascIRBHmosIEy+0psY36Qopf58uK8jJQoBfygZYVQ8MyCE
-         4dtK1EDIP/NXI5D7ITH2ipRGnt5YfXRUIrj/HsvhS65/WpQ2T3I2Q9nHz6kTf5NjZnCd
-         Gq/BeLy+/v/v/rf4rhMe401AZ0cv+5X1URzdA/Zfk3DdCsJqJCsU1r6qzjc2YdVo38je
-         S4jHOT3nn6uBxuQ17F+LWmfWjSq9+u3DJ8vSjAdt7T0cwDPty08dMJP6FP3e+gpmyJri
-         noNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWk7CoSkx/dAvBDLnV5D61aF/lgZsYhi9x8FTTMljEw46Bv7czXUDtzYuk2HPiQbzQBsiwX4VrIlU9KTrE1OA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoQBaOuouZzxmMZiF7RtGqFWB0cNNpaV7iySGxc+xL3S3tYWEj
-	Y19NEQ2X7xj8BMLP5LD5/cs3H4vz3jAMwzR+nYIMCmS4ZaDhuLhy
-X-Gm-Gg: ASbGncumv2mb5ipWHS7mlSAFwyitvjYSBrsO9svwEsq/xNhOG1KufWILNnDMrMrV0Ck
-	uunZaAnCSSt97MMp2H7CEKAY5VvUMQ2JFBIlMfgDN5faEnx609dOu5EuMYTZvGdkRyIv22Wz+1X
-	1Y0bhjvxpd8YHbQ+dlwiHbjsEBO0CIeDIbscIcps38VNwQ2I0ds/DfqZxf3MDvcfePnWdHPQJXT
-	95vQ+ymvs0DlLwHJNBkxW6Bq9K0lAJUQ9VmCi/SInSQz+Gj+rvtandwkYfDwE7KEPsDuZwDIVLx
-	X2XvDHf2J8hiJ5MIuXwfQhh2qWg3fJdYCkRS6Ug=
-X-Google-Smtp-Source: AGHT+IHnyP/lG7e9Gb+RWekvJAvxRIKIlVbkfvcf+0TPVjM7e8MKuRrz5aPODf9+w4RcEhWogWlIhA==
-X-Received: by 2002:a05:6000:2502:b0:3a0:aed9:e39 with SMTP id ffacd0b85a97d-3a1f646c6e3mr5519558f8f.28.1746869585084;
-        Sat, 10 May 2025 02:33:05 -0700 (PDT)
+        bh=SOE7sdT8D61vDqGwsVaxjwgujETa56pyZ4FYk1rPCD4=;
+        b=gfGkughhRDp9XEwHhvE+jqkq90PrO7ZGIzuYUNKI4lYgaRpcjTE6mgnivB/CrG1+mF
+         bLCdXrha99z03ztNIEe4ovu+HBgBeKPiNyw3qBTAYo7ueEgYTO6+THq7Q1ZTbsF1PjnV
+         mJCtU+bCR6qZLiJ5eVzdwi0xf/W4lRTb7ROOSHaEHMML1NA20JM4RSgMdSa6zP+MfWZc
+         /zP4GLSyGcbqhExQqA30YjFy7bD+3zQMXPzjjMZy/AkOPzAz3acMEZOHfMKOpq8bf04+
+         wGane6K5zgN+6be+wOE+32iA+f6hNSJ4f1qsXrXZmpwyjggNA10Z9BlYa+y+BzvP4uey
+         GyQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746869587; x=1747474387;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SOE7sdT8D61vDqGwsVaxjwgujETa56pyZ4FYk1rPCD4=;
+        b=KlTPax8uR2vdLTiGvMneNZFNru2sLAUq/iPZvPG6KJ6JFnOl8rbpxAQPK07yxnisFt
+         PuxU6FyiCs1lTkpWlgEy5y0nuYVpARZvuJixZ8UpBdfnmBdvu0HOUqNetRmPp1CofvSq
+         XIBnmtWu/Gn9At2oWIz7JubH6kySqtFkkY7iXgB6iCejVoe4BKBdgJMhJgdFNjHeJkMQ
+         DwJuThC9cN2Xu0NCuDwLdvOdOtLLjazXWhmUcJZ2UF12EYg34/StJWEvjXgoFJwtdpQx
+         fxSWcaBug/Da9359ZrAuFIPhvU5Krxb8bixCKKVWBHcS0lgOAagxfvqueLrfIZkAWSWo
+         9jQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNn46HKBaZQFqrVJRUKB1A4Yy8IFFdDFxkRNFiMcz3Kg4roTbi1BRWJt+uoimdKCritK4h/QY6FigtAjk7ug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLTJAzU35q6BScfyPk68BCQAX/A0582OWh6gbDlbdB/5vBJ1mx
+	K3vLOZjOwwCYd52QgmpKdCd7J3/hyIcxFnjXbVcn01vP3QltDIzPWMhWY3fH
+X-Gm-Gg: ASbGncsOklf8Ezk+9c1wD5QHMrdixs+Pb2F2du+RS29HYWmfIyQplYJEASmVpzpdLHP
+	g6a5d9BC3cuhe5YQy8ck8hY9RecPGUdVCUougp95m9Ze2OCtbXzGUCG1uknQxI5lg4yMc/vusQX
+	oR8w3+LYh3TXMqPJHLRlZe1VXgPL1QET0ItD4/Rw75/otvy9wFOX1nWEzaC7zY9blPXtRryaHw4
+	sfsWjSzXjG/Fx4lVs4fXA+WQ57kTEB1rmUaAoSZznO4uYSgY92/8cZGz0ljj6+R5xEpekNkDHBN
+	lAJkiu8u+LZ/HS23tbpAmQ1FTQvvxPP2yLLFmG8=
+X-Google-Smtp-Source: AGHT+IFVbblIDN2ouLSx9sgtkfmF6TDVCexrpp5Doe3paIz95KUyn+eXRyz6dYaHj9TZC+ejqCcpgg==
+X-Received: by 2002:a05:6000:401e:b0:3a0:aee0:c647 with SMTP id ffacd0b85a97d-3a1f64374e1mr5493421f8f.17.1746869586609;
+        Sat, 10 May 2025 02:33:06 -0700 (PDT)
 Received: from [10.0.1.56] ([2001:871:22a:99c5::1ad1])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a1f57ddde0sm5981485f8f.14.2025.05.10.02.33.03
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a1f57ddde0sm5981485f8f.14.2025.05.10.02.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 02:33:04 -0700 (PDT)
+        Sat, 10 May 2025 02:33:06 -0700 (PDT)
 From: Christian Schrefl <chrisi.schrefl@gmail.com>
-Subject: [PATCH v3 0/3] rust: add `UnsafePinned` type
-Date: Sat, 10 May 2025 11:32:25 +0200
-Message-Id: <20250510-rust_unsafe_pinned-v3-0-57ce151123f9@gmail.com>
+Date: Sat, 10 May 2025 11:32:26 +0200
+Subject: [PATCH v3 1/3] rust: add UnsafePinned type
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,12 +81,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACkdH2gC/32PQQ6DIBBFr2JYlwYQK3bVezSNITAoSUULStoY7
- 160Xbhounwz+W/+zCiAtxDQOZuRh2iD7V2C/JAh1UrXALY6MWKEFYRTgf0UxnpyQRqoB+scaCw
- qqhWwMq01SsHBg7HPTXq9JW5tGHv/2m5Euk7/6iLFFCuuyqIQeVUZcWk6ae9H1Xdo1UW2U+Tkp
- 4Jhgo0SJ1rKkhPG94rlU9HDY0rvjt+ey/IGjbyv7gwBAAA=
-X-Change-ID: 20250418-rust_unsafe_pinned-891dce27418d
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250510-rust_unsafe_pinned-v3-1-57ce151123f9@gmail.com>
+References: <20250510-rust_unsafe_pinned-v3-0-57ce151123f9@gmail.com>
+In-Reply-To: <20250510-rust_unsafe_pinned-v3-0-57ce151123f9@gmail.com>
 To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>, 
  Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
  Gary Guo <gary@garyguo.net>, 
@@ -98,62 +97,196 @@ To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>,
  Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
  Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- llvm@lists.linux.dev, Christian Schrefl <chrisi.schrefl@gmail.com>, 
- Benno Lossin <lossin@kernel.org>
+ llvm@lists.linux.dev, Christian Schrefl <chrisi.schrefl@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746869583; l=1940;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746869583; l=8523;
  i=chrisi.schrefl@gmail.com; s=20250119; h=from:subject:message-id;
- bh=d/Q2dqkM3hGIa7pRJKatBlt0uQwkDzQUldsLHN8FByw=;
- b=fNIBzCK2rGyd0yhyM0HMpRMGdhkLEIhOldzeweIjdz3SN+t28c+wI5mzpIAbYaJpghqDYUfAh
- R7+Mt6jIIYDCc7DYjz6ZSlOkGo3rZKoTob44KU4i16mJdT30+95EDrq
+ bh=dWjiyob69G2GucTul/lsXlGpP89mKJGQ4P8+IWoJ7pA=;
+ b=qz6jwCq5QCTjxafiO7g3wJAMoBTTNDpYvHhtgDrKF8imb7cwNHmpLvQ6G4jXPxK2xqz+C6zf/
+ cgmCZYY7ltoAhopI0I0sjxOMih2ndKndO8ovfWHIXrlA7XwFUdnc4qu
 X-Developer-Key: i=chrisi.schrefl@gmail.com; a=ed25519;
  pk=EIyitYCrzxWlybrqoGqiL2jyvO7Vp9X40n0dQ6HE4oU=
 
-This version now only has the kernel implementation without the
-config flag for using the upstream version. Additionally now
-commits for using `UnsafePinned` in `Opaque` were added.
+`UnsafePinned<T>` is useful for cases where a value might be shared with
+C code but not directly used by it. In particular this is added for
+storing additional data in the `MiscDeviceRegistration` which will be
+shared between `fops->open` and the containing struct.
 
-Checkpatch warns about `rust/kernel/types/unsafe_pinned.rs`
-missing a MAINTAINERS entry. This should be fine because it
-will be included in the RUST entry.
+Similar to `Opaque` but guarantees that the value is always initialized
+and that the inner value is dropped when `UnsafePinned` is dropped.
 
-This patchset is based on the pin-init-next branch.
+This was originally proposed for the IRQ abstractions [0] and is also
+useful for other where the inner data may be aliased, but is always
+valid and automatic `Drop` is desired.
 
+Since then the `UnsafePinned` type was added to upstream Rust [1] by Sky
+as a unstable feature, therefore this patch implements the subset of the
+upstream API for the `UnsafePinned` type required for additional data in
+`MiscDeviceRegistration` and in the implementation of the `Opaque` type.
+
+Some differences to the upstream type definition are required in the
+kernel implementation, because upstream type uses some compiler changes
+to opt out of certain optimizations, this is documented in the
+documentation and a comment on the `UnsafePinned` type.
+
+The documentation on is based on the upstream rust documentation with
+minor modifications for the kernel implementation.
+
+Link: https://lore.kernel.org/rust-for-linux/CAH5fLgiOASgjoYKFz6kWwzLaH07DqP2ph+3YyCDh2+gYqGpABA@mail.gmail.com [0]
+Link: https://github.com/rust-lang/rust/pull/137043 [1]
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Gerald Wisböck <gerald.wisboeck@feather.ink>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Co-developed-by: Sky <sky@sky9.dev>
+Signed-off-by: Sky <sky@sky9.dev>
 Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 ---
-Changes in v3:
-- Dropped CONFIG_RUSTC_HAS_UNSAFE_PINNED and feature(unsafe_pinned) (Alice)
-- Add comment to `Opaque` reasoning about included `UnsafeCell` (Benno)
-- Small changes in commit message of Patch 3 (Benno)
-- Removed docs mentioning not included functions (Benno)
-- Removed docs mentioning implementation details and added that as
-    comment instead (Benno)
-- Link to v2: https://lore.kernel.org/r/20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com
-
-Changes in v2:
-- Expanded `UnsafePinned` documentation to describe differences
-    with upstream rust implementation.
-- Removed config flag for using upstream `UnsafePinned` type.
-- Add patch implementing `Wrapper` for `Opaque`
-- Add patch for using `UnsafePinned` internally in `Opaque`
-- Link to v1: https://lore.kernel.org/r/20250418-rust_unsafe_pinned-v1-1-c4c7558399f8@gmail.com
-
----
-Christian Schrefl (3):
-      rust: add UnsafePinned type
-      rust: implement `Wrapper<T>` for `Opaque<T>`
-      rust: use `UnsafePinned` in the implementation of `Opaque`
-
- rust/kernel/revocable.rs           |   2 +
- rust/kernel/types.rs               |  45 ++++++++-------
+ rust/kernel/types.rs               |   6 ++
  rust/kernel/types/unsafe_pinned.rs | 113 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 140 insertions(+), 20 deletions(-)
----
-base-commit: 9de1a293c8ece00d226b21a35751ec178be2a9fa
-change-id: 20250418-rust_unsafe_pinned-891dce27418d
+ 2 files changed, 119 insertions(+)
 
-Best regards,
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 9d0471afc9648f2973235488b441eb109069adb1..705f420fdfbc4a576de1c4546578f2f04cdf615e 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -253,6 +253,9 @@ fn drop(&mut self) {
+ ///
+ /// [`Opaque<T>`] is meant to be used with FFI objects that are never interpreted by Rust code.
+ ///
++/// In cases where the contained data is only used by Rust, is not allowed to be
++/// uninitialized and automatic [`Drop`] is desired [`UnsafePinned`] should be used instead.
++///
+ /// It is used to wrap structs from the C side, like for example `Opaque<bindings::mutex>`.
+ /// It gets rid of all the usual assumptions that Rust has for a value:
+ ///
+@@ -578,3 +581,6 @@ pub enum Either<L, R> {
+ /// [`NotThreadSafe`]: type@NotThreadSafe
+ #[allow(non_upper_case_globals)]
+ pub const NotThreadSafe: NotThreadSafe = PhantomData;
++
++mod unsafe_pinned;
++pub use unsafe_pinned::UnsafePinned;
+diff --git a/rust/kernel/types/unsafe_pinned.rs b/rust/kernel/types/unsafe_pinned.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..612b67b400ff361335803c29799b6aeb375ed52c
+--- /dev/null
++++ b/rust/kernel/types/unsafe_pinned.rs
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: Apache-2.0 OR MIT
++
++//! The contents of this file partially come from the Rust standard library, hosted in
++//! the <https://github.com/rust-lang/rust> repository, licensed under
++//! "Apache-2.0 OR MIT" and adapted for kernel use. For copyright details,
++//! see <https://github.com/rust-lang/rust/blob/master/COPYRIGHT>.
++//!
++//! This file provides a implementation / polyfill of a subset of the upstream
++//! rust `UnsafePinned` type. For details on the difference to the upstream
++//! implementation see the comment on the [`UnsafePinned`] struct definition.
++
++use core::{cell::UnsafeCell, marker::PhantomPinned};
++use pin_init::{cast_pin_init, PinInit, Wrapper};
++
++/// This type provides a way to opt-out of typical aliasing rules;
++/// specifically, `&mut UnsafePinned<T>` is not guaranteed to be a unique pointer.
++///
++/// However, even if you define your type like `pub struct Wrapper(UnsafePinned<...>)`, it is still
++/// very risky to have an `&mut Wrapper` that aliases anything else. Many functions that work
++/// generically on `&mut T` assume that the memory that stores `T` is uniquely owned (such as
++/// `mem::swap`). In other words, while having aliasing with `&mut Wrapper` is not immediate
++/// Undefined Behavior, it is still unsound to expose such a mutable reference to code you do not
++/// control! Techniques such as pinning via [`Pin`](core::pin::Pin) are needed to ensure soundness.
++///
++/// Similar to [`UnsafeCell`], [`UnsafePinned`] will not usually show up in
++/// the public API of a library. It is an internal implementation detail of libraries that need to
++/// support aliasing mutable references.
++///
++/// Further note that this does *not* lift the requirement that shared references must be read-only!
++/// Use [`UnsafeCell`] for that.
++///
++/// This type blocks niches the same way [`UnsafeCell`] does.
++///
++/// # Kernel implementation notes
++///
++/// This implementation works because of the "`!Unpin` hack" in rustc, which allows (some kinds of)
++/// mutual aliasing of `!Unpin` types. This hack might be removed at some point, after which only
++/// the `core::pin::UnsafePinned` type will allow this behavior. In order to simplify the migration
++/// to future rust versions only this polyfill of this type should be used when this behavior is
++/// required.
++//
++// As opposed to the upstream Rust type this contains a `PhantomPinned` and `UnsafeCell<T>`
++// - `PhantomPinned` to ensure the struct always is `!Unpin` and thus enables the `!Unpin` hack.
++//   This causes the LLVM `noalias` and `dereferenceable` attributes to be removed from
++//   `&mut !Unpin` types.
++// - In order to disable niche optimizations this implementation uses `UnsafeCell` internally,
++//   the upstream version however currently does not. This will most likely change in the future
++//   but for now we don't expose this in the documentation, since adding the guarantee is simpler
++//   than removing it. Meaning that for now the fact that `UnsafePinned` contains an `UnsafeCell`
++//   must not be relied on (Other than the niche blocking).
++//   See this Rust tracking issue: https://github.com/rust-lang/rust/issues/137750
++#[repr(transparent)]
++pub struct UnsafePinned<T: ?Sized> {
++    _ph: PhantomPinned,
++    value: UnsafeCell<T>,
++}
++
++impl<T> UnsafePinned<T> {
++    /// Constructs a new instance of [`UnsafePinned`] which will wrap the specified value.
++    ///
++    /// All access to the inner value through `&UnsafePinned<T>` or `&mut UnsafePinned<T>` or
++    /// `Pin<&mut UnsafePinned<T>>` requires `unsafe` code.
++    #[inline(always)]
++    #[must_use]
++    pub const fn new(value: T) -> Self {
++        UnsafePinned {
++            value: UnsafeCell::new(value),
++            _ph: PhantomPinned,
++        }
++    }
++}
++impl<T: ?Sized> UnsafePinned<T> {
++    /// Get read-only access to the contents of a shared `UnsafePinned`.
++    ///
++    /// Note that `&UnsafePinned<T>` is read-only if `&T` is read-only. This means that if there is
++    /// mutation of the `T`, future reads from the `*const T` returned here are UB! Use
++    /// [`UnsafeCell`] if you also need interior mutability.
++    ///
++    /// [`UnsafeCell`]: core::cell::UnsafeCell
++    ///
++    /// ```rust,no_build
++    /// use kernel::types::UnsafePinned;
++    ///
++    /// unsafe {
++    ///     let mut x = UnsafePinned::new(0);
++    ///     let ptr = x.get(); // read-only pointer, assumes immutability
++    ///     x.get_mut_unchecked().write(1);
++    ///     ptr.read(); // UB!
++    /// }
++    /// ```
++    ///
++    /// Note that the `get_mut_unchecked` function used by this example is
++    /// currently not implemented in the kernel implementation.
++    #[inline(always)]
++    #[must_use]
++    pub const fn get(&self) -> *const T {
++        self.value.get()
++    }
++
++    /// Gets a mutable pointer to the wrapped value.
++    #[inline(always)]
++    #[must_use]
++    pub const fn raw_get_mut(this: *mut Self) -> *mut T {
++        this as *mut T
++    }
++}
++
++impl<T> Wrapper<T> for UnsafePinned<T> {
++    fn pin_init<E>(init: impl PinInit<T, E>) -> impl PinInit<Self, E> {
++        // SAFETY: `UnsafePinned<T>` has a compatible layout to `T`.
++        unsafe { cast_pin_init(init) }
++    }
++}
+
 -- 
-Christian Schrefl <chrisi.schrefl@gmail.com>
+2.49.0
 
 
