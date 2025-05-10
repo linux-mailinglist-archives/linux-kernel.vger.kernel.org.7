@@ -1,91 +1,65 @@
-Return-Path: <linux-kernel+bounces-642854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C052AB2471
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:38:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B54EAB247D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6DDA00E54
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035D81B656CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2876323A58E;
-	Sat, 10 May 2025 15:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674B1238C34;
+	Sat, 10 May 2025 15:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWA4K11T"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE1422D4D4
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 15:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="X2PmB14l"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3311B245003;
+	Sat, 10 May 2025 15:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746891490; cv=none; b=UWPfWYFtmD72J1+VYjW1cmjRVRulT2AQ257B4ihpOT/MMOZ2FGt6w20TvTs6XdTW8binuIPj5lu6U+ltKL7ogOv+Hvu0PGfe4tQJs5tLlImWd6v9GNJ7nLYg8eVkF0iLIkjwVfa6I31p3uwmUo7HPatZ+vuWzbPiwsL9EAK+NOU=
+	t=1746892645; cv=none; b=b5fXsAGFmuLZXNQHbx5XKfzO0DluewtRcOW0eewKXiA/HqpNzrwYwUKHJhdjMr4yY9tW4hBnbnTOL1ZGc8WIm8aVaSgXv/lPD+iEz2M2o7DvV6xGfCUItFbDLlqRIS1fvyojyfoUXsje6KTYAAfT8QyzmG3m7fb9T83yvNLrg3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746891490; c=relaxed/simple;
-	bh=cyKzN5n74ZRPzOjivCuJ+2rpIjBBQdYG1gV1au2lrSg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pvRQj1uyiBJbHRL9ITDbqfmmwWNUk76UrGL9p5UyEDwqi5rwRCWoWkkDMLaniZBRGoSyErvW/vccXYJ7nejSNIiOOCxjUMkG3QPIJ+1fOBYEk91zhr3Y5ifQHLz/950XDu7pgzcEnZr+y9rrYfvNFYRMtWuNvDieTQRyFnEvAwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWA4K11T; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso4903785a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 08:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746891487; x=1747496287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WisVRIR4CgyfzhdNxpezMbCgvO4XZsl1Wpaq0T63y3k=;
-        b=QWA4K11T8I8zm2NYEwlpSfrAjtQFtt0h5jJOdJyvArXonsJ5yiMRd54UoT4VOurJdf
-         tQkwwmYlDYQ4I86t5RIDL5HoUtlAtDIpgPL744ptHsK/WPZAr/xu9loyRIBxdakGVup+
-         ry/0BLIgh4z4ktUy8EPeW5m+s+QpyhuIxkq2xZBhQ8N8DAuxCw+U0J4qVaHpGfD6SY83
-         aEQipUmrz7h3TuK2tiA/TS0QvBCM6/nUTn9ZFOB7gcm+4qoCuhaxb08Zd+1JDqMX1mFf
-         VI3S/JiEu1Qwez+F6vdrRBW0IT8iPl8dt90kDafmzq+/jbMuDFrp+Ntq1PzCZCmtkRx4
-         2p6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746891487; x=1747496287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WisVRIR4CgyfzhdNxpezMbCgvO4XZsl1Wpaq0T63y3k=;
-        b=W44tjPvVNCO/gZk34alAPipQ90JwjPb02ZocqjVp/8W46w3g4Str2fAuOWNzm8IzpJ
-         5Kp8jroJJHXF7rJd3uvOSgWs+MvtWQgwXybz+6V1xiJ08Vcdnb1spErybzzeoNGcBdwW
-         5ZuTdt9E9ca54RlpT5rsxYLhdXif3loOHQrGL0552A9rJYsZa7Se79kAelJ3gYcQz8xi
-         +qkWrA870tCXjbN+UQUWcsmAbFOIzsmHwMjGHcEdxh3/EW5Us12+DB/Q3CePMc/K/rQq
-         oTBcE+rsDhhKx9HlZTPZe9WBMtAu2wl4OFOafNPNhCf/tJIJBrQd8BUT1WsLbHor7/YZ
-         CrUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgL80JjXoG3g18pwXnTbyVDRbLEqZx2dTskH4OcIbzVhKheASpwIWdIk/hwW1YIUuuy4AMo8b46Nq8I3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+pUSZFHttwN9KfiEu92CSfhVILZCibsPbSj8OaUgZ/KwlcM+e
-	XoxWFf1qUH2g3siFlQFabFtLtP6O5LCo6tXDgeWUtxi7HPK7moi9LrNYDvP+72iJ/w==
-X-Gm-Gg: ASbGncuphLUMOabG/d4nK5m2+prZpSXNFputJ0go9OGwOkNoxSPYlBh0r8qBQXC5o5h
-	ioTZ8nJL2UFjxt875zstcZGbLzV0FXi0KIDSPWphcZ5sIelxauWBxaZj1zud/pv6YCxaiWcTosg
-	tmrdwlOUku7zgl59yE1dXtjI+X1V1HjxbtV/pQSfXmto41b5SufnIhr8o5XMhUBB+u6xTj807Xe
-	wwExSGZJVpp9ftHxnLPZnOWnp4Mw+OIBBterb0ax7a9ESH8SA/hVuhaJgNSQG6SrrJuMOeNayHw
-	xRs9bTuu081AJ9inWQHQ1g+zDMCimbOdTglM6FZ9AuukwMR3PSSVZEDkKRtMDy0eOjuGff3dcVE
-	Mv0cVw+E3b2sYZUXLzAWlJLwhoIsEu+njTMiyiJz+BDXPq3hR4Wk1mIW8yhVo1d5n4MLoCak+lZ
-	GH4A6WkDaB/F0=
-X-Google-Smtp-Source: AGHT+IGJ7K1oC+40LDkqzQMhD25A5UkOKfSfr8SDBJL1orB3LhZckJHKiEfLWOxv6y/kE9lR9h4LtA==
-X-Received: by 2002:a05:6402:26c1:b0:5f3:f8d5:4a5e with SMTP id 4fb4d7f45d1cf-5fca0730971mr5419551a12.2.1746891487036;
-        Sat, 10 May 2025 08:38:07 -0700 (PDT)
-Received: from chimera.arnhem.chello.nl (2001-1c08-0706-8b00-79cf-0e0d-6e5d-219d.cable.dynamic.v6.ziggo.nl. [2001:1c08:706:8b00:79cf:e0d:6e5d:219d])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d70e296sm2986376a12.75.2025.05.10.08.38.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 08:38:06 -0700 (PDT)
-From: Thomas Andreatta <thomasandreatta2000@gmail.com>
-X-Google-Original-From: Thomas Andreatta <thomas.andreatta2000@gmail.com>
-To: dpenkler@gmail.com
-Cc: gregkh@linuxfoundation.org,
+	s=arc-20240116; t=1746892645; c=relaxed/simple;
+	bh=KAhNGfk0o76b7mrzBRdNyO3ZXCX7PG7qTMs6jnDE/9w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n55z8L1xEI6iNcvD1s7K1bvE97Bk2jO0ZW/6hnpWfGV2EQ6jHNYc7d5VrXWAzsNfJi4rezEy2LCzyPkEVw/eEEJV3EBw5JcXMd0dWqgTQKEwjnLfUIhDu2TvuLEMYSGI3+gOXTylRVBFqlN+5zGVDc24K7jBYOMcUqyd/GC+WH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=X2PmB14l; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=DE
+	u0ugbaD/EBsgXHrzA+saK2ZnHcC31tU43n92kMs3Q=; b=X2PmB14lcNS9bPpiGB
+	3NxGhEVTtE7UpB/dr22ViWJ840f8diVGc0uL0PU0EzKcJdSy3O1+x+ej4XuCeQDh
+	uFVzrWgi4RRBb+pDwTD9UAEPLkrKPeoPl3pN3ce3qimhaCI4m1bKX4IFkneu9N+X
+	liB8/omO2GJu96M9LrKtKTQUs=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXjxsYdx9ormDlAQ--.43845S2;
+	Sat, 10 May 2025 23:56:09 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	heiko@sntech.de,
+	manivannan.sadhasivam@linaro.org,
+	yue.wang@Amlogic.com
+Cc: pali@kernel.org,
+	neil.armstrong@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Thomas Andreatta <thomas.andreatta2000@gmail.com>
-Subject: [PATCH 2/2] Staging: common: gpib_os: `request_system_control_ioctl` return value
-Date: Sat, 10 May 2025 17:38:00 +0200
-Message-Id: <20250510153800.130974-2-thomas.andreatta2000@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250510153800.130974-1-thomas.andreatta2000@gmail.com>
-References: <20250510153800.130974-1-thomas.andreatta2000@gmail.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v4 0/2] Configure root port MPS during host probing
+Date: Sat, 10 May 2025 23:56:05 +0800
+Message-Id: <20250510155607.390687-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,32 +67,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXjxsYdx9ormDlAQ--.43845S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JF4Dtw1fAFW7ur4rGry8Xwb_yoWDKwc_uF
+	WrCayDWw47AFyvyF1rKF4Syryjva97uryUW3WvqayakasxZr13Xana9FW2g3WrWFWSkFsx
+	Cr9xZrWfAr12vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRdb1nUUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhhJo2gfbZ-YWwAAsO
 
-`request_system_control_ioctl` now returns the value returned from the
-function `ibrsc`, now int.
+1. PCI: Configure root port MPS during host probing
+2. PCI: dwc: Remove redundant MPS configuration
 
-Signed-off-by: Thomas Andreatta <thomas.andreatta2000@gmail.com>
 ---
- drivers/staging/gpib/common/gpib_os.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes for v4:
+- The patch [v4 1/2] add a comment to explain why it was done this way.
+- The patch [v4 2/2] have not been modified.
+- Drop patch [v3 3/3]. The Maintainer of the pci-aardvark.c file suggests
+  that this patch cannot be submitted. In addition, Mani also suggests
+  dropping this patch until this series of issues is resolved.
 
-diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index 8456b97290b8..dddf7a70084d 100644
---- a/drivers/staging/gpib/common/gpib_os.c
-+++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -1970,9 +1970,9 @@ static int request_system_control_ioctl(struct gpib_board *board, unsigned long
- 	if (retval)
- 		return -EFAULT;
- 
--	ibrsc(board, request_control);
-+	retval = ibrsc(board, request_control);
- 
--	return 0;
-+	return retval;
- }
- 
- static int t1_delay_ioctl(struct gpib_board *board, unsigned long arg)
+Changes for v3:
+- The new split is patch 2/3 and 3/3.
+- Modify the patch 1/3 according to Niklas' suggestion.
+
+Changes for v2:
+- According to the Maintainer's suggestion, limit the setting of MPS
+  changes to platforms with controller drivers.
+- Delete the MPS code set by the SOC manufacturer.
+---
+
+Hans Zhang (2):
+  PCI: Configure root port MPS during host probing
+  PCI: dwc: Remove redundant MPS configuration
+
+ drivers/pci/controller/dwc/pci-meson.c | 17 ------
+ drivers/pci/probe.c                    | 72 +++++++++++++++-----------
+ 2 files changed, 41 insertions(+), 48 deletions(-)
+
+
+base-commit: 01f95500a162fca88cefab9ed64ceded5afabc12
 -- 
-2.34.1
+2.25.1
 
 
