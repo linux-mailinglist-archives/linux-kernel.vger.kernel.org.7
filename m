@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-642592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CA0AB20C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:35:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F15AB20CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5800C4A7F76
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0491B6814F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65251F130A;
-	Sat, 10 May 2025 01:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034CC26658E;
+	Sat, 10 May 2025 01:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jn7m1SE4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L+npKzXq"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47113212A
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 01:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCAF1EB5E3;
+	Sat, 10 May 2025 01:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746840920; cv=none; b=UAOoK6lQDJHwbPOud5v21kb2bo/fGhLZT2dc4cdQVArAmSAVnDw6fu67d/6GPUokLb9DaUn1AIfkJl8MBB5OgW1x4AwChAgMnMZRpMJQIGskL3KHpzFJv69udoAEBogwniHR71eRevrNiTb+gjguE8qgkyv+s01BiIvYh59E3MU=
+	t=1746840960; cv=none; b=LYvodlLnt0fMXBGrOBVwDEQ9492SwnIYUmkVy2iWSg8RvaCN8k1/MjW65Cp1G95pr5JKGSsGOYQ8Q6CZjM/NQ8GPMpix20AJObRjejNq2s1u/a4S7YdoVBpVcCLPmYL6ergjypxNgrQDZLpgUZn/3fsj4dT2+IQ5MIu1+EWQ4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746840920; c=relaxed/simple;
-	bh=RKZARjtItSMo67EEN9USgQO9kVkqBIBwfgHN4qsQIF4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=jR6gH3Ukm7q2Wpve2H9CyKUJkFddHWK0Qi2pdVGSq4xMlw1KPM5vVAsgLZlS+xJhieiBd+n70k9NvfC0nEI24eouROVZDYt/iPuQM/BX4VftP2AB3fAuxfrs/xPmQat2mV9bupfmmpS8MnNtYm06WRJk5cXjmMj6X9dw6AHYdpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jn7m1SE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF16C4CEE4;
-	Sat, 10 May 2025 01:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1746840919;
-	bh=RKZARjtItSMo67EEN9USgQO9kVkqBIBwfgHN4qsQIF4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Jn7m1SE4CkXhy8+3E6kC1fI4Jx9ahn2xXUX6E5oZu2JSsg8nbWlZObHnAYokfHd/4
-	 Uhaid6Xl/iEVNjIJrMr1FIvOWbjdbqF6l5z1AfW50W7pYPunkgAiAdWaPZjwzqZvVg
-	 DowEuEXhgAVxjZQsgst+x2RWJiZD3XqeRioz5PxE=
-Date: Fri, 9 May 2025 18:35:18 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Coiby Xu <coxu@redhat.com>, fuqiang wang <fuqiang.wang@easystack.cn>,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v4] x86/kexec: fix potential cmem->ranges out of bounds
-Message-Id: <20250509183518.bf7cd732ac667a9c20f1fee1@linux-foundation.org>
-In-Reply-To: <aB3RqS85p6DiHKHm@MiWiFi-R3L-srv>
-References: <20240108130720.228478-1-fuqiang.wang@easystack.cn>
-	<ZZzBhy5bLj0JuZZw@MiWiFi-R3L-srv>
-	<4de3c2onosr7negqnfhekm4cpbklzmsimgdfv33c52dktqpza5@z5pb34ghz4at>
-	<20250507225959.174dd1eed6b0b1354c95a0fd@linux-foundation.org>
-	<2754f4evjfumjqome63bc3inqb7ozepemejn2lcl57ryio2t6k@35l3tnn73gei>
-	<aB3RqS85p6DiHKHm@MiWiFi-R3L-srv>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746840960; c=relaxed/simple;
+	bh=XqMD8wNZrmoCiV2gzLvREdKhFywTyDuGBIYB3XlhsBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=erJgXj5tuuL3F2QDJqgjyQr5VJSwqYeguoUJeKADFA5zZ6/2ArRcbuWy4ZsFJENyRqphkOhYVjibUihL1JkKHeHj334i+OOwhzgXtlFNumGuOqYDF+DtCk5QADGXNy1rQUGatFcwiB9wdzUvHPoiBhTkcwwj476AGzrmcCZAaoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L+npKzXq; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=8/WILxu11hrOlxr88vOwZbwA0FfG3mAKSy1H5uSBCnM=; b=L+npKzXqIRQEg1MUKnO3kslVK7
+	Q0CfjlpQO1Dmestmcm5OPbglFlMlaFHkgxAwANl4qE/OqRDAh7NJu6BU2nm4/4FVZ0jaHEk2ec8rT
+	qpS4CVyRWTEAorXmC3sCTPE+7Y59LbUrJ0wPn0BiyKsSX+pF2qe7ROtCvmO/sleNpkvPacdZGRKJt
+	nnDp0yB2mLxVVAs85MYuqLGBZlORrVseR8dDyprhVhTJpvNaNYlbaB/VDBJgPkFi0kMrLcbrew5Qa
+	8LgOyRxZj2DUNyxLJ2p686xTUXHl7o0H5QcfyC5QsYFPxdcvYlHTinKsT44o3a01FtpMT9Yr62125
+	UxaPOfkw==;
+Received: from [50.39.124.201] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uDZ7w-0000000GOZf-2NXu;
+	Sat, 10 May 2025 01:35:46 +0000
+Message-ID: <a1d9134f-0567-4a53-a1e7-a55cd6b189a9@infradead.org>
+Date: Fri, 9 May 2025 18:35:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for May 9
+ (drivers/platform/x86/tuxedo/nb04/wmi_ab.o)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Werner Sembach <wse@tuxedocomputers.com>,
+ platform-driver-x86@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250509195816.7f0a67a3@canb.auug.org.au>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250509195816.7f0a67a3@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 9 May 2025 17:58:01 +0800 Baoquan He <bhe@redhat.com> wrote:
 
-> > The bad commit was introduced in 2021 but only recent gcc-15 supports
-> > __counted_by. That's why we don't see this UBSAN warning until this
-> > year. And although this UBSAN warning is scary enough, fortunately it
-> > doesn't cause a real problem.
-> > 
-> > > 
-> > > Baoquan, please re-review this?
-> > > 
-> > > A -stable backport is clearly required.  A Fixes: would be nice, but I
-> > > assume this goes back a long time so it isn't worth spending a lot of
-> > > time working out when this was introduced.
-> > 
-> > So I believe the correct fix should be as follows,
-> 
-> Thanks for testing and investigation into these. Could you arrange this
-> into formal patches based on your testing and analysis? 
-> 
-> It would be great if you can include Fuqiang's patch since it has
-> conflict with your LUKS patch. This can facilitate patch merging for
-> Andrew. Thanks in advance.
 
-Yes please, I'm a bit lost here. 
-x86-kexec-fix-potential-cmem-ranges-out-of-bounds.patch is not
-presently in mm.git and I'd appreciate clarity on how to resolve the
-conflicts which a new version of
-x86-kexec-fix-potential-cmem-ranges-out-of-bounds.patch will produce.
+On 5/9/25 2:58 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20250508:
+> 
+
+When CONFIG_HID is not set:
+
+ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tux_remove':
+wmi_ab.c:(.text+0x29): undefined reference to `hid_destroy_device'
+ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tux_probe':
+wmi_ab.c:(.text+0x6a): undefined reference to `hid_allocate_device'
+ld: wmi_ab.c:(.text+0xbc): undefined reference to `hid_add_device'
+ld: wmi_ab.c:(.text+0xf3): undefined reference to `hid_destroy_device'
+ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tux_ll_parse':
+wmi_ab.c:(.text+0x46e): undefined reference to `hid_parse_report'
+
+When CONFIG_ACPI or CONFIG_ACPI_WMI is not set:
+
+ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tuxedo_nb04_wmi_tux_init':
+wmi_ab.c:(.init.text+0x20): undefined reference to `__wmi_driver_register'
+ld: drivers/platform/x86/tuxedo/nb04/wmi_ab.o: in function `tuxedo_nb04_wmi_tux_exit':
+wmi_ab.c:(.exit.text+0x9): undefined reference to `wmi_driver_unregister'
+ld: drivers/platform/x86/tuxedo/nb04/wmi_util.o: in function `__wmi_method_buffer_out.constprop.0':
+wmi_util.c:(.text+0x3a): undefined reference to `wmidev_evaluate_method'
+
+
+
+-- 
+~Randy
+
 
