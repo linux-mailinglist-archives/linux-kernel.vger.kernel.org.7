@@ -1,52 +1,48 @@
-Return-Path: <linux-kernel+bounces-642735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24BEAB22EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:31:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6F5AB2339
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 12:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E07C9E72A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:30:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 595DA7AF498
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F5B1FBEA9;
-	Sat, 10 May 2025 09:30:57 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131882222C0;
+	Sat, 10 May 2025 10:00:37 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9575978F39
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 09:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F72618DF8D;
+	Sat, 10 May 2025 10:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746869457; cv=none; b=qzhLuCe8jxzCrUNa1Q95mkMkaeKvrXuGC1bCdj04/RjFUqTzOhmDQdiEfgsKT2cIldIrVxnmHYcgUSfU+73nqn1OY1yxH7OIdUW+98mSAB00xXzVHdSK0Lx7Psiyyp9/K2idBaNp//YnXWrvM2fZrNSh6Cr4eKzcrNgzsZp+1UA=
+	t=1746871236; cv=none; b=uHkEGiFoTfXCcL04nuctDPYbUYeGhatK214YqbXqXSO5VgtyzIyp0hpbbpsVGKFLLdeIljDWjOi+Kh+jhH0cgubsi8f/1/sYcHw8gJXn2pEBROY27w78OsVir7dyL3cqGC995ak6CiPinknoR5Rt2WZQ7vng9oWV4V2yH2dvnrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746869457; c=relaxed/simple;
-	bh=B/rp+opmpsKwWO3OR+xcnlHBWgqfAq6PqFespyLJhN0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kOzPV+wlq7sx3iR9nTFpUHXtLuNuRqaseIt/Edt8CuQehre9O8/N44j/YUqM5frzNMDLkJIZwxOvLgm4x1SDhbQeEHW+rCZp7HdScunPdhrMCYoSdclTTQVlmllahwD9kXFgT5/LsYC7JewUfFJFcAjbtB3YCEdq8WPdB5qR6MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Zvgc671xyz27hNk;
-	Sat, 10 May 2025 17:31:34 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7305D140146;
-	Sat, 10 May 2025 17:30:48 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 10 May
- 2025 17:30:47 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<maarten.lankhorst@linux.intel.com>, <mario.kleiner@tuebingen.mpg.de>,
-	<airlied@redhat.com>, <mripard@kernel.org>, <simona@ffwll.ch>
-CC: <bobo.shaobowang@huawei.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/vblank: Fix hard lockup in drm_handle_vblank()
-Date: Sat, 10 May 2025 17:47:57 +0800
-Message-ID: <20250510094757.4174662-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1746871236; c=relaxed/simple;
+	bh=Pi3y4dmEW1UEme+HX6yYi09ZtTkO/xqgAF/M7VX6HHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qyCuMaL1+vEYEeZaFhERp3J/ZTD84P71wISLcZrJgiEXB8fF471rHxPHunxA7hunc7SqUFu3HiKsvV5qS3PCql/DEH63A30hY2jVnEMwW09AfrLqqWq/AZtAtgZoBDq/w9tBiWwovjs6UXU/IOfnnP36ksTHb2FMiarrm6m3pSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.199.70.239])
+	by APP-05 (Coremail) with SMTP id zQCowADnJg8iIh9oBnoDEw--.48103S2;
+	Sat, 10 May 2025 17:53:42 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: njavali@marvell.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: mrangankar@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [RESEND PATCH] scsi: qla4xxx: Add missing is_qla4022 check in device initialization
+Date: Sat, 10 May 2025 17:52:57 +0800
+Message-ID: <20250510095257.921-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,108 +50,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+X-CM-TRANSID:zQCowADnJg8iIh9oBnoDEw--.48103S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFWxGryUGF1rGw15XFWfGrg_yoWkuwb_ua
+	10v34Iv3ZIyr4kZ3W7XF18JFnavrsYqr1jq34Sqr4fA34UZ3s3Xryqv343Zw15G3yjyasx
+	Gws5Xry5Ar1fKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
+	Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUU
+	UUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYSA2gesI3jzAAAs-
 
-When we performed fuzz testing on DRM using syzkaller, we encountered
-the following hard lockup issue:
+The current code only checks for is_qla4032 in the adapter initialization
+logic, but is_qla4022 is also required for proper handling of qla4022
+devices. This can lead to incorrect behavior on qla4022 adapters.
 
-Kernel panic - not syncing: Hard LOCKUP
-CPU: 3 PID: 0 Comm: swapper/3 Not tainted 6.6.0+ #21
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-Call Trace:
- <IRQ>
- hrtimer_cancel+0x52/0x70 kernel/time/hrtimer.c:1449
- __disable_vblank drivers/gpu/drm/drm_vblank.c:434 [inline]
- drm_vblank_disable_and_save+0x27f/0x3c0 drivers/gpu/drm/drm_vblank.c:478
- vblank_disable_fn+0x15d/0x1b0 drivers/gpu/drm/drm_vblank.c:495
- call_timer_fn+0x39/0x280 kernel/time/timer.c:1700
- expire_timers+0x22d/0x3c0 kernel/time/timer.c:1751
- __run_timers kernel/time/timer.c:2022 [inline]
- run_timer_softirq+0x315/0x8a0 kernel/time/timer.c:2035
- handle_softirqs+0x195/0x580 kernel/softirq.c:553
- __do_softirq kernel/softirq.c:587 [inline]
- </IRQ>
+This patch adds the missing is_qla4022 check to ensure proper handling
+of both qla4022 and qla4032 devices during adapter initialization.
 
-This is a deadlock issue as follows:
-
-    CPU3				CPU 7
-
-vblank_disable_fn()
-  drm_vblank_disable_and_save()
-  spin_lock(vblank_time_lock)
-				hrtimer_interrupt()
-				  vkms_vblank_simulate()
-				    drm_handle_vblank()
-				      // wait for CPU3 to release vblank_time_lock
-				      spin_lock(vblank_time_lock)
-    vkms_disable_vblank()
-      // wait for vblank_hrtimer on CPU7 to finish
-      hrtimer_cancel(vblank_hrtimer)
-
-The call of hrtimer_cancel() has hold vblank_time_lock which would prevent
-completion of the hrtimer's callback function.
-
-Therefore, in drm_handle_vblank(), we move the check for the
-vblank->enabled variable to the time when vblank_time_lock() is acquired.
-If the CRTC event has already been canceled, the drm_handle_vblank() will
-be terminated and will no longer attempt to acquire vblank_time_lock.
-
-In the same time, in drm_vblank_disable_and_save(), we set vblank->enabled
-to disable before calling hrtimer_cancel() to avoid endless waiting in
-hrtimer_cancel_wait_running().
-
-Fixes: 27641c3f003e ("drm/vblank: Add support for precise vblank timestamping.")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+Fixes: d915058f4874 ("[SCSI] qla4xxx: add support for qla4032")
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- drivers/gpu/drm/drm_vblank.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/scsi/qla4xxx/ql4_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 78958ddf8485..56b80e5ede2a 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -471,6 +471,8 @@ void drm_vblank_disable_and_save(struct drm_device *dev, unsigned int pipe)
- 	if (!vblank->enabled)
- 		goto out;
- 
-+	vblank->enabled = false;
-+
- 	/*
- 	 * Update the count and timestamp to maintain the
- 	 * appearance that the counter has been ticking all along until
-@@ -479,7 +481,6 @@ void drm_vblank_disable_and_save(struct drm_device *dev, unsigned int pipe)
- 	 */
- 	drm_update_vblank_count(dev, pipe, false);
- 	__disable_vblank(dev, pipe);
--	vblank->enabled = false;
- 
- out:
- 	spin_unlock_irqrestore(&dev->vblank_time_lock, irqflags);
-@@ -1932,14 +1933,13 @@ bool drm_handle_vblank(struct drm_device *dev, unsigned int pipe)
- 	 * vblank enable/disable, as this would cause inconsistent
- 	 * or corrupted timestamps and vblank counts.
- 	 */
--	spin_lock(&dev->vblank_time_lock);
--
--	/* Vblank irq handling disabled. Nothing to do. */
--	if (!vblank->enabled) {
--		spin_unlock(&dev->vblank_time_lock);
--		spin_unlock_irqrestore(&dev->event_lock, irqflags);
--		return false;
--	}
-+	do {
-+		/* Vblank irq handling disabled. Nothing to do. */
-+		if (!vblank->enabled) {
-+			spin_unlock_irqrestore(&dev->event_lock, irqflags);
-+			return false;
-+		}
-+	} while (!spin_trylock(&dev->vblank_time_lock));
- 
- 	drm_update_vblank_count(dev, pipe, true);
- 
+diff --git a/drivers/scsi/qla4xxx/ql4_init.c b/drivers/scsi/qla4xxx/ql4_init.c
+index 301bc09c8365..dfe3d0b26224 100644
+--- a/drivers/scsi/qla4xxx/ql4_init.c
++++ b/drivers/scsi/qla4xxx/ql4_init.c
+@@ -513,7 +513,7 @@ static int qla4xxx_fw_ready(struct scsi_qla_host *ha)
+ 			      "seconds expired= %d\n", ha->host_no, __func__,
+ 			      ha->firmware_state, ha->addl_fw_state,
+ 			      timeout_count));
+-		if (is_qla4032(ha) &&
++		if ((is_qla4022(ha) || is_qla4032(ha)) &&
+ 			!(ha->addl_fw_state & FW_ADDSTATE_LINK_UP) &&
+ 			(timeout_count < ADAPTER_INIT_TOV - 5)) {
+ 			break;
 -- 
-2.25.1
+2.42.0.windows.2
 
 
