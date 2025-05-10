@@ -1,101 +1,150 @@
-Return-Path: <linux-kernel+bounces-642610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F95EAB210A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 05:26:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736C5AB210E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 05:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E001BC7E8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCDF93A2924
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD45C190676;
-	Sat, 10 May 2025 03:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Tdh3J8SS"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F3024B29
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BA919D8AC;
+	Sat, 10 May 2025 03:32:07 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741C242AB4
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746847584; cv=none; b=Vez1hY778oVxXQyFmNQdDtEmF0a7+02gNc6BBhBZS3NuGzBc1uVdg2kTukRrr8QFfQ/VWLuUCZ0UgLdb8t3kQ3FoHc+RTt3QVIQL9yPLImwcL6rU1toaA4HvlXgC2tpLLnDL9KGu06Zh0HbZf/vFnVy8TjvM7naVBxwySWbnYc4=
+	t=1746847927; cv=none; b=FsAZKG6EdfwlDHe+TrbnZZgP6F8W8s6nMLnhtmUTmZ2uUNoFrCqKS25HG1RG5+YKFk52nkrtXdzX/Wx835sHW68GyG+pXHCP1BHjFpkS0ynC8JPgJfuDdPKQEysz0SM5eh2yrLamB3tv/ycinZYp6jR7xPA3OE31Qk34W+6/KvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746847584; c=relaxed/simple;
-	bh=QIpt02LYO1R8RWPVE5NAgG9Nn7Ig63WWTiMMMzfCXxA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=resIrwWQ0CHZXyHzaLmZBnBzPwIg6yyjxubhGAg+ONLaYtWlM6whI84QrDeSRuB63aGRJb+56/BuUdQUWE+v57GYKYQ9ecIYLfZMSB3F6MGfrokdruIpzv8i+A3vcWDN6JyQ69ktb/wqKVSptTuVQBTav2SnNqae5I2VZDk7THo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Tdh3J8SS reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=oU+cMc6ZOlFQWAq6dQ2bMXk2bihfuhYNwBhN6Y+KoxU=; b=T
-	dh3J8SSPjrJiIHYNmZr1fGdobVGwZTBri3HKjvK7e75/a980n1FWS8LciFRWknhF
-	WCcv7B98i+Z9VXjvo5rJ1vNWS/wA1zgWvMq+Y5XhSd2bJPXwfFveI++9gAV+n08r
-	xQ1AnzdziCuU3c61xTvycZ7D+nhgGPSPs/wYxzGDME=
-Received: from 00107082$163.com ( [111.35.191.17] ) by
- ajax-webmail-wmsvr-40-128 (Coremail) ; Sat, 10 May 2025 11:25:18 +0800
- (CST)
-Date: Sat, 10 May 2025 11:25:18 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Tim Chen" <tim.c.chen@linux.intel.com>
-Cc: surenb@google.com, kent.overstreet@linux.dev, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/2] alloc_tag: keep codetag iterator active between
- read() calls
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <7f237574d9f08a9fa8dcaa60d2edf8d8e91441d4.camel@linux.intel.com>
-References: <20250507175500.204569-1-00107082@163.com>
- <20250509173929.42508-1-00107082@163.com>
- <7f237574d9f08a9fa8dcaa60d2edf8d8e91441d4.camel@linux.intel.com>
-X-NTES-SC: AL_Qu2fBPSfuE0q7imdYukZnEYQheY4XMKyuPkg1YJXOp80liTj+QsqeHJmM2fy0MWCMhmgvRWIThZo2P9Ff7J6UbIjiec6pflHcWV1TvGZ1P7k
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1746847927; c=relaxed/simple;
+	bh=WDgm1rnjA6iM8ibp1cxEAvd6TWSmBc8LRAKzag92bIo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e+h5gr6NSsV/bg40hsbP469Wrfv2PEQ9pY7R/IAJhpF2laVNm/QjQkMgne3GtqFzOyFNsec48pnt9Yysh9FMkFgp0CIcCvTKZnu2Qv5kaVaJYNb+2xlK9RE2Nw7O7KaS6iUqqD53OJ9+PfJPHT+DrYdkmkj5ubbaSSDQGqd1vcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZvWZn0pZzz1R7Xb;
+	Sat, 10 May 2025 11:29:53 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4A5F1140293;
+	Sat, 10 May 2025 11:32:00 +0800 (CST)
+Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
+ (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 10 May
+ 2025 11:31:59 +0800
+From: Wupeng Ma <mawupeng1@huawei.com>
+To: <bryan-bt.tan@broadcom.com>, <vishnu.dasa@broadcom.com>,
+	<ryan.roberts@arm.com>, <jhansen@vmware.com>, <darius@vmware.com>,
+	<acking@vmware.com>
+CC: <bcm-kernel-feedback-list@broadcom.com>, <gregkh@linuxfoundation.org>,
+	<linux-kernel@vger.kernel.org>, <mawupeng1@huawei.com>,
+	<sunnanyong@huawei.com>
+Subject: [PATCH] VMCI: fix race between vmci_host_setup_notify and vmci_ctx_unset_notify
+Date: Sat, 10 May 2025 11:30:40 +0800
+Message-ID: <20250510033040.901582-1-mawupeng1@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4538ec3b.1052.196b839d0f1.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:gCgvCgD3n+Ufxx5oeSwBAA--.7119W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBxJqmgevNQrKQAHs0
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-CgpBdCAyMDI1LTA1LTEwIDAyOjMzOjQ4LCAiVGltIENoZW4iIDx0aW0uYy5jaGVuQGxpbnV4Lmlu
-dGVsLmNvbT4gd3JvdGU6Cj5PbiBTYXQsIDIwMjUtMDUtMTAgYXQgMDE6MzkgKzA4MDAsIERhdmlk
-IFdhbmcgd3JvdGU6Cj4+IAo+PiAKPj4gU2lnbmVkLW9mZi1ieTogRGF2aWQgV2FuZyA8MDAxMDcw
-ODJAMTYzLmNvbT4KPj4gLS0tCj4+ICBsaWIvYWxsb2NfdGFnLmMgfCAyOSArKysrKysrKysrLS0t
-LS0tLS0tLS0tLS0tLS0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDE5
-IGRlbGV0aW9ucygtKQo+PiAKPj4gZGlmZiAtLWdpdCBhL2xpYi9hbGxvY190YWcuYyBiL2xpYi9h
-bGxvY190YWcuYwo+PiBpbmRleCAyNWVjYzEzMzRiNjcuLmZkZDU4ODc3NjlhNiAxMDA2NDQKPj4g
-LS0tIGEvbGliL2FsbG9jX3RhZy5jCj4+ICsrKyBiL2xpYi9hbGxvY190YWcuYwo+PiBAQCAtNDUs
-MjEgKzQ1LDE2IEBAIHN0cnVjdCBhbGxvY2luZm9fcHJpdmF0ZSB7Cj4+ICBzdGF0aWMgdm9pZCAq
-YWxsb2NpbmZvX3N0YXJ0KHN0cnVjdCBzZXFfZmlsZSAqbSwgbG9mZl90ICpwb3MpCj4+ICB7Cj4+
-ICAJc3RydWN0IGFsbG9jaW5mb19wcml2YXRlICpwcml2Owo+PiAtCXN0cnVjdCBjb2RldGFnICpj
-dDsKPj4gIAlsb2ZmX3Qgbm9kZSA9ICpwb3M7Cj4+ICAKPj4gLQlwcml2ID0ga3phbGxvYyhzaXpl
-b2YoKnByaXYpLCBHRlBfS0VSTkVMKTsKPj4gLQltLT5wcml2YXRlID0gcHJpdjsKPj4gLQlpZiAo
-IXByaXYpCj4+IC0JCXJldHVybiBOVUxMOwo+PiAtCj4+IC0JcHJpdi0+cHJpbnRfaGVhZGVyID0g
-KG5vZGUgPT0gMCk7Cj4+ICsJcHJpdiA9IChzdHJ1Y3QgYWxsb2NpbmZvX3ByaXZhdGUgKiltLT5w
-cml2YXRlOwo+PiAgCWNvZGV0YWdfbG9ja19tb2R1bGVfbGlzdChhbGxvY190YWdfY3R0eXBlLCB0
-cnVlKTsKPj4gLQlwcml2LT5pdGVyID0gY29kZXRhZ19nZXRfY3RfaXRlcihhbGxvY190YWdfY3R0
-eXBlKTsKPj4gLQl3aGlsZSAoKGN0ID0gY29kZXRhZ19uZXh0X2N0KCZwcml2LT5pdGVyKSkgIT0g
-TlVMTCAmJiBub2RlKQo+PiAtCQlub2RlLS07Cj4+IC0KPj4gLQlyZXR1cm4gY3QgPyBwcml2IDog
-TlVMTDsKPj4gKwlpZiAobm9kZSA9PSAwKSB7Cj4+ICsJCXByaXYtPnByaW50X2hlYWRlciA9IHRy
-dWU7Cj4+ICsJCXByaXYtPml0ZXIgPSBjb2RldGFnX2dldF9jdF9pdGVyKGFsbG9jX3RhZ19jdHR5
-cGUpOwo+PiArCQljb2RldGFnX25leHRfY3QoJnByaXYtPml0ZXIpOwo+PiArCX0KPgo+RG8geW91
-IG5lZWQgdG8gc2tpcCBwcmludCBoZWFkZXIgd2hlbiAqcG9zICE9IDA/IGkuZSBhZGQKPgo+CX0g
-ZWxzZSB7Cj4JCXByaXYtPnByaW50X2hlYWRlciA9IGZhbHNlOwo+CX0KPgo+VGltCgpwcmludF9o
-ZWFkZXIgZmxhZyB3aWxsIGJlIHNldCB0byBmYWxzZSBvbmNlIGhlYWRlciBpcyBwcmludGVkLCBp
-biBhbGxvY2luZm9fc2hvdygpOgoxMTQgICAgICAgICBpZiAocHJpdi0+cHJpbnRfaGVhZGVyKSB7
-CjExNSAgICAgICAgICAgICAgICAgcHJpbnRfYWxsb2NpbmZvX2hlYWRlcigmYnVmKTsKMTE2ICAg
-ICAgICAgICAgICAgICBwcml2LT5wcmludF9oZWFkZXIgPSBmYWxzZTsKMTE3ICAgICAgICAgfQoK
-b25jZSBwcml2LT5wcmludF9oZWFkZXIpIGlzIHNldCB0byB0cnVlLCAgdGhlIGhlYWRlciB3aWxs
-IGJlIHByaW50ZWQgb25jZSBhbmQgb25seSBvbmNlIHVudGlsIGl0IGlzIApzZXQgdG8gdHJ1ZSBu
-ZXh0IHRpbWUuCgpUaGFua3MKRGF2aWQKCj4KPj4gKwlyZXR1cm4gcHJpdi0+aXRlci5jdCA/IHBy
-aXYgOiBOVUxMOwo+PiAgfQo+PiAgCg==
+During our test, it is found that a warning can be trigger in try_grab_folio
+as follow:
+
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 1678 at mm/gup.c:147 try_grab_folio+0x106/0x130
+  Modules linked in:
+  CPU: 0 UID: 0 PID: 1678 Comm: syz.3.31 Not tainted 6.15.0-rc5 #163 PREEMPT(undef)
+  RIP: 0010:try_grab_folio+0x106/0x130
+  Call Trace:
+   <TASK>
+   follow_huge_pmd+0x240/0x8e0
+   follow_pmd_mask.constprop.0.isra.0+0x40b/0x5c0
+   follow_pud_mask.constprop.0.isra.0+0x14a/0x170
+   follow_page_mask+0x1c2/0x1f0
+   __get_user_pages+0x176/0x950
+   __gup_longterm_locked+0x15b/0x1060
+   ? gup_fast+0x120/0x1f0
+   gup_fast_fallback+0x17e/0x230
+   get_user_pages_fast+0x5f/0x80
+   vmci_host_unlocked_ioctl+0x21c/0xf80
+  RIP: 0033:0x54d2cd
+  ---[ end trace 0000000000000000 ]---
+
+Digging into the source, context->notify_page may init by get_user_pages_fast
+and can be seen in vmci_ctx_unset_notify which will try to put_page. However
+get_user_pages_fast is not finished here and lead to following
+try_grab_folio warning. The race condition is shown as follow:
+
+cpu0			cpu1
+vmci_host_do_set_notify
+vmci_host_setup_notify
+get_user_pages_fast(uva, 1, FOLL_WRITE, &context->notify_page);
+lockless_pages_from_mm
+gup_pgd_range
+gup_huge_pmd  // update &context->notify_page
+			vmci_host_do_set_notify
+			vmci_ctx_unset_notify
+			notify_page = context->notify_page;
+			if (notify_page)
+			put_page(notify_page);	// page is freed
+__gup_longterm_locked
+__get_user_pages
+follow_trans_huge_pmd
+try_grab_folio // warn here
+
+To slove this, use local variable page to make notify_page can be seen
+after finish get_user_pages_fast.
+
+Fixes: a1d88436d53a ("VMCI: Fix two UVA mapping bugs")
+Closes: https://lore.kernel.org/all/e91da589-ad57-3969-d979-879bbd10dddd@huawei.com/
+Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
+---
+ drivers/misc/vmw_vmci/vmci_host.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index abe79f6fd2a7..b64944367ac5 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -227,6 +227,7 @@ static int drv_cp_harray_to_user(void __user *user_buf_uva,
+ static int vmci_host_setup_notify(struct vmci_ctx *context,
+ 				  unsigned long uva)
+ {
++	struct page *page;
+ 	int retval;
+ 
+ 	if (context->notify_page) {
+@@ -243,13 +244,11 @@ static int vmci_host_setup_notify(struct vmci_ctx *context,
+ 	/*
+ 	 * Lock physical page backing a given user VA.
+ 	 */
+-	retval = get_user_pages_fast(uva, 1, FOLL_WRITE, &context->notify_page);
+-	if (retval != 1) {
+-		context->notify_page = NULL;
++	retval = get_user_pages_fast(uva, 1, FOLL_WRITE, &page);
++	if (retval != 1)
+ 		return VMCI_ERROR_GENERIC;
+-	}
+-	if (context->notify_page == NULL)
+-		return VMCI_ERROR_UNAVAILABLE;
++
++	context->notify_page = page;
+ 
+ 	/*
+ 	 * Map the locked page and set up notify pointer.
+-- 
+2.43.0
+
 
