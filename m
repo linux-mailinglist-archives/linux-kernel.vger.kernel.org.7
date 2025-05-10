@@ -1,221 +1,159 @@
-Return-Path: <linux-kernel+bounces-642734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAC5AB22E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797BDAB22ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2DD77BAD6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DBC1BC345F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5EE21C197;
-	Sat, 10 May 2025 09:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8377B22172F;
+	Sat, 10 May 2025 09:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlUz5FBU"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyFyf1Ni"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4EC1E9901;
-	Sat, 10 May 2025 09:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B388BA27;
+	Sat, 10 May 2025 09:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746868961; cv=none; b=S1NB+Uwcd4GAOvIV4sve7Xpa2p7hZYFYm3MpkcGVME+2k6GVRfKEO1XuAve+HhQ5sgQ6mjrUsvYLyIpQtQR3PzF/XsDwwwrxQyWwUoHT7RZmYv8lDkMVfovWiHtRMfzu2u/4P4IrqF1NRx1RIQnr28ZOg4VuQ8v7BdxErhnPuYU=
+	t=1746869588; cv=none; b=A88YUII1w4Ev3ytEWJyvgesIN171k5cf+TFBvOU0ZxouKqStXTa0xoweh1cIH24ghbHWYx61i9wYDVQ7YjGeJT5NyY/Bk1GP+6hY6JuKQ4d4cRphZpSGRI+fOAJfMezQTvNjJiINIrZhNpiyaW5xJxZm3Dpw88bA3hropnPWLxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746868961; c=relaxed/simple;
-	bh=inV0RfRccOu6V+1k6bacnU/OZqds2ZuOK2S735pm+GI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mzvTuFmEnR2oLDeuIlZqW0Rbf58Cd9ZxlekXkJWW8wfRVoSs0pBlBh0OySXL3ePQ84S4oRjbubojlreevNFUrdR0Qp3B7ZlAeUcp5WOFD11mubSRfnAQAxpMXPacNYd0X5oVFLCeUhvMMASEA4/ncuAY9iAlOCjyVHtfMwMr21I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QlUz5FBU; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1746869588; c=relaxed/simple;
+	bh=d/Q2dqkM3hGIa7pRJKatBlt0uQwkDzQUldsLHN8FByw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FsLcDsu1IKejTw2xEVPQ5uLDPJ+FU9bAT5Nh5UvUaArMvClZcemj53rep3NbOLm6GyjcMe5lLdkDUThefuq/hYJ7vAqafB/dLgp/G/9rsweo3gQDUcrkLHPwtHztMvLd223Z72f4zziVU261zLfhVB+eQsKpkjYKSvQfKTIM8LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyFyf1Ni; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5fc8c68dc9fso5148645a12.1;
-        Sat, 10 May 2025 02:22:38 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a20257c815so117044f8f.3;
+        Sat, 10 May 2025 02:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746868957; x=1747473757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6LwVXbI/uaImz8Mia1ZxOyXkkvE03E1h6lfweWlCf3c=;
-        b=QlUz5FBUW0ObBel7or+bu/OEOEWFBRmq/dj609FtrK6ZsVp+DrxYnJrir6Rr9bHtv1
-         RBHQXWsha1j5uuQy3lfkjb1WXwGrw/VWzwMmCipWwauXvV3xuKocnFh9V6XmUeUeNFwS
-         efnA17SZ43S0hPhB5ngwTi7cTA2vrskQrkBKL94M45vJ4jo2ZauxYZP25phKDl/3yfIn
-         Rvdmxf5xZZlUNCddh3owwED5/ZNISrPIUyPfXTcMVZLG5vvm6EFC1uAnTOTo3SbEexEQ
-         2+3JwRpY8Jn9NSt1mf9uRlD11BheVwhNlk1TyQkzFX2HIEemhmawRZ/Dx8upRmjzgMZh
-         sYZw==
+        d=gmail.com; s=20230601; t=1746869585; x=1747474385; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0zBTUK9ila/Am76tfftf45UmHXE5OHX/2meSQDmacZw=;
+        b=JyFyf1NitE4S82p3FtnA72vTxN2yKwDiJX3j1w9n+ZRGdAUhtlHsC/5OLIUFglYnl9
+         wNbGjcsPXyYjiMvIjjviEvmAHxneZlusQR/aTjRP8ADxA1YvAJ8YlCdcZEY+WgmF7gSI
+         ChPMzabGaFb2FPc2LhRn4f1XZgtYaiHcUQ6O4b82vBKSm1L5MWz8d2fZWatCBO+pIGe1
+         1qg6/Ozvtpw9jzr24sQh9r/65S73iRHSLbllYTpdDk4Bqv+1AI50nYz760aPbmn/Zi2B
+         a6oA2bLzTLf10zX65xzdB8S9H4egclfN4ydpU19wdHLxB3UrW0aLHYCji1RvzKhT+T2B
+         XXFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746868957; x=1747473757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1746869585; x=1747474385;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6LwVXbI/uaImz8Mia1ZxOyXkkvE03E1h6lfweWlCf3c=;
-        b=J8gy3dyV0UVwRIomwJsq0uFcmOh+ho0HIJ/tYEFqG7OZUowXcuj9c5YznklqJOI0sv
-         7HmVV9EoLT4QTJ8e9jEQlIvLGDc1UUfjGsAxMXGJYjA9XcUiJkpz/iZ19KBDDrESt3x0
-         Nm8I3pO0asUVE/2L5/W63C/V4lwp5611kLrOaUmecPJduNCH6+kUo2Uc4Kh8Z+3UNZ4D
-         lJNu5FqOboUYa7tY9jkEKkS4J0Wc1u50WTwuaMxP78c7PNnGaemAbeKF5zTDctQUeu5t
-         CS0Q4mYOyIWrDqAr3h1hGKF0w0+fHv1NysGgeGDb2uPHyfEkWSf07qhYUxYHpUy3bNAz
-         RWYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNiBJJKK+3+Q3G7MPFHvVgsLD6iugBr4OSuBFgKj1WYVIdeHgvnI59CLZjCArNdGF8XSBORbKUT5xWpvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvYUd/jL++39SZLUKtK5OKQvA6lm0Fdfj4GA/K2Pg+RNVX+xya
-	dAl5ZjO0DH2MNrD0afGk4h+uz24+R1QleChtg1fyacN0eYY+rlX1
-X-Gm-Gg: ASbGncssP1hfLx8B2fh5VvsoRLxGDEjTv+nd+UcUvqJ/oinxV30WcYMFphjck2601pm
-	XKtahFw72t1Q9OQ7YBglBgmg+Bq00Pom00axDkbbVJRzqiW0TBTX8aY2KPrADomrAYCAb9dIziw
-	c9QvkxhON3wOcarIXxkM69CzpCaoF/mGnvwFvKvi/6W/jd4dp99eXkrE7nKo6WZ3/J77BwCrXMs
-	ptDD6TiygfaxqsmqE5DJGSEFdjewbnCp/DiBRrrQDQ4ldO98u3kANXGTGYcCu9RsuB45UBmEszk
-	I8EHw4tES8Qwy9K04DPuLkRaUBI++VfrbIQbTyBP1cuUxKSar9rkPKA7cSI6SVUchFycVSHcXHV
-	dLSeEwfakf0ZuIozHkhP/rPlvtJEJTq6kbHBSO/b7cA==
-X-Google-Smtp-Source: AGHT+IEAh+Cd49qeeWCkpvlkc1ALXf2DHLU4upT+4OE22rHLh1z9xQl0vI1i+IoUeb/AHRE96Bl/FA==
-X-Received: by 2002:a05:6402:348f:b0:5fa:9222:e875 with SMTP id 4fb4d7f45d1cf-5fca0792de0mr5385001a12.18.1746868957161;
-        Sat, 10 May 2025 02:22:37 -0700 (PDT)
-Received: from localhost (dslb-002-205-017-193.002.205.pools.vodafone-ip.de. [2.205.17.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cbe523bsm2643188a12.12.2025.05.10.02.22.36
+        bh=0zBTUK9ila/Am76tfftf45UmHXE5OHX/2meSQDmacZw=;
+        b=In5TfmIHXyzNrRz6SJ3BnTAIvrnhpz6W/zjfPulzK/eoB8GbS1ALVrs++KG8M5q0Fu
+         wOF5CdEVS83/c8uXhtXYe+ascIRBHmosIEy+0psY36Qopf58uK8jJQoBfygZYVQ8MyCE
+         4dtK1EDIP/NXI5D7ITH2ipRGnt5YfXRUIrj/HsvhS65/WpQ2T3I2Q9nHz6kTf5NjZnCd
+         Gq/BeLy+/v/v/rf4rhMe401AZ0cv+5X1URzdA/Zfk3DdCsJqJCsU1r6qzjc2YdVo38je
+         S4jHOT3nn6uBxuQ17F+LWmfWjSq9+u3DJ8vSjAdt7T0cwDPty08dMJP6FP3e+gpmyJri
+         noNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWk7CoSkx/dAvBDLnV5D61aF/lgZsYhi9x8FTTMljEw46Bv7czXUDtzYuk2HPiQbzQBsiwX4VrIlU9KTrE1OA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoQBaOuouZzxmMZiF7RtGqFWB0cNNpaV7iySGxc+xL3S3tYWEj
+	Y19NEQ2X7xj8BMLP5LD5/cs3H4vz3jAMwzR+nYIMCmS4ZaDhuLhy
+X-Gm-Gg: ASbGncumv2mb5ipWHS7mlSAFwyitvjYSBrsO9svwEsq/xNhOG1KufWILNnDMrMrV0Ck
+	uunZaAnCSSt97MMp2H7CEKAY5VvUMQ2JFBIlMfgDN5faEnx609dOu5EuMYTZvGdkRyIv22Wz+1X
+	1Y0bhjvxpd8YHbQ+dlwiHbjsEBO0CIeDIbscIcps38VNwQ2I0ds/DfqZxf3MDvcfePnWdHPQJXT
+	95vQ+ymvs0DlLwHJNBkxW6Bq9K0lAJUQ9VmCi/SInSQz+Gj+rvtandwkYfDwE7KEPsDuZwDIVLx
+	X2XvDHf2J8hiJ5MIuXwfQhh2qWg3fJdYCkRS6Ug=
+X-Google-Smtp-Source: AGHT+IHnyP/lG7e9Gb+RWekvJAvxRIKIlVbkfvcf+0TPVjM7e8MKuRrz5aPODf9+w4RcEhWogWlIhA==
+X-Received: by 2002:a05:6000:2502:b0:3a0:aed9:e39 with SMTP id ffacd0b85a97d-3a1f646c6e3mr5519558f8f.28.1746869585084;
+        Sat, 10 May 2025 02:33:05 -0700 (PDT)
+Received: from [10.0.1.56] ([2001:871:22a:99c5::1ad1])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a1f57ddde0sm5981485f8f.14.2025.05.10.02.33.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 02:22:36 -0700 (PDT)
-From: Jonas Gorski <jonas.gorski@gmail.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: dsa: b53: implement setting ageing time
-Date: Sat, 10 May 2025 11:22:11 +0200
-Message-ID: <20250510092211.276541-1-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Sat, 10 May 2025 02:33:04 -0700 (PDT)
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+Subject: [PATCH v3 0/3] rust: add `UnsafePinned` type
+Date: Sat, 10 May 2025 11:32:25 +0200
+Message-Id: <20250510-rust_unsafe_pinned-v3-0-57ce151123f9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACkdH2gC/32PQQ6DIBBFr2JYlwYQK3bVezSNITAoSUULStoY7
+ 160Xbhounwz+W/+zCiAtxDQOZuRh2iD7V2C/JAh1UrXALY6MWKEFYRTgf0UxnpyQRqoB+scaCw
+ qqhWwMq01SsHBg7HPTXq9JW5tGHv/2m5Euk7/6iLFFCuuyqIQeVUZcWk6ae9H1Xdo1UW2U+Tkp
+ 4Jhgo0SJ1rKkhPG94rlU9HDY0rvjt+ey/IGjbyv7gwBAAA=
+X-Change-ID: 20250418-rust_unsafe_pinned-891dce27418d
+To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ =?utf-8?q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ llvm@lists.linux.dev, Christian Schrefl <chrisi.schrefl@gmail.com>, 
+ Benno Lossin <lossin@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746869583; l=1940;
+ i=chrisi.schrefl@gmail.com; s=20250119; h=from:subject:message-id;
+ bh=d/Q2dqkM3hGIa7pRJKatBlt0uQwkDzQUldsLHN8FByw=;
+ b=fNIBzCK2rGyd0yhyM0HMpRMGdhkLEIhOldzeweIjdz3SN+t28c+wI5mzpIAbYaJpghqDYUfAh
+ R7+Mt6jIIYDCc7DYjz6ZSlOkGo3rZKoTob44KU4i16mJdT30+95EDrq
+X-Developer-Key: i=chrisi.schrefl@gmail.com; a=ed25519;
+ pk=EIyitYCrzxWlybrqoGqiL2jyvO7Vp9X40n0dQ6HE4oU=
 
-b53 supported switches support configuring ageing time between 1 and
-1,048,575 seconds, so add an appropriate setter.
+This version now only has the kernel implementation without the
+config flag for using the upstream version. Additionally now
+commits for using `UnsafePinned` in `Opaque` were added.
 
-This allows b53 to pass the FDB learning test for both vlan aware and
-vlan unaware bridges.
+Checkpatch warns about `rust/kernel/types/unsafe_pinned.rs`
+missing a MAINTAINERS entry. This should be fine because it
+will be included in the RUST entry.
 
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+This patchset is based on the pin-init-next branch.
+
+Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 ---
-With this and the standalone port isolation patch applied b53 passes all
-test from bridge_vlan_aware and bridge_vlan_unaware.
+Changes in v3:
+- Dropped CONFIG_RUSTC_HAS_UNSAFE_PINNED and feature(unsafe_pinned) (Alice)
+- Add comment to `Opaque` reasoning about included `UnsafeCell` (Benno)
+- Small changes in commit message of Patch 3 (Benno)
+- Removed docs mentioning not included functions (Benno)
+- Removed docs mentioning implementation details and added that as
+    comment instead (Benno)
+- Link to v2: https://lore.kernel.org/r/20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com
 
-Fun fact: According to the BCM53115 datasheet its default ageing time is
-300 ns. Luckily that's just a typo.
+Changes in v2:
+- Expanded `UnsafePinned` documentation to describe differences
+    with upstream rust implementation.
+- Removed config flag for using upstream `UnsafePinned` type.
+- Add patch implementing `Wrapper` for `Opaque`
+- Add patch for using `UnsafePinned` internally in `Opaque`
+- Link to v1: https://lore.kernel.org/r/20250418-rust_unsafe_pinned-v1-1-c4c7558399f8@gmail.com
 
- drivers/net/dsa/b53/b53_common.c | 28 ++++++++++++++++++++++++++++
- drivers/net/dsa/b53/b53_priv.h   |  1 +
- drivers/net/dsa/b53/b53_regs.h   |  7 +++++++
- drivers/net/dsa/bcm_sf2.c        |  1 +
- 4 files changed, 37 insertions(+)
+---
+Christian Schrefl (3):
+      rust: add UnsafePinned type
+      rust: implement `Wrapper<T>` for `Opaque<T>`
+      rust: use `UnsafePinned` in the implementation of `Opaque`
 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index 9eb39cfa5fb2..2cff88bc7a1f 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -21,6 +21,7 @@
- #include <linux/export.h>
- #include <linux/gpio.h>
- #include <linux/kernel.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/platform_data/b53.h>
- #include <linux/phy.h>
-@@ -1175,6 +1176,10 @@ static int b53_setup(struct dsa_switch *ds)
- 	 */
- 	ds->untag_vlan_aware_bridge_pvid = true;
- 
-+	/* Ageing time is set in seconds */
-+	ds->ageing_time_min = 1 * 1000;
-+	ds->ageing_time_max = AGE_TIME_MAX * 1000;
-+
- 	ret = b53_reset_switch(dev);
- 	if (ret) {
- 		dev_err(ds->dev, "failed to reset switch\n");
-@@ -2373,6 +2378,28 @@ static int b53_get_max_mtu(struct dsa_switch *ds, int port)
- 	return B53_MAX_MTU;
- }
- 
-+int b53_set_ageing_time(struct dsa_switch *ds, unsigned int msecs)
-+{
-+	struct b53_device *dev = ds->priv;
-+	u32 atc;
-+	int reg;
-+
-+	if (is63xx(dev))
-+		reg = B53_AGING_TIME_CONTROL_63XX;
-+	else
-+		reg = B53_AGING_TIME_CONTROL;
-+
-+	atc = DIV_ROUND_CLOSEST(msecs, 1000);
-+
-+	if (!is5325(dev) && !is5365(dev))
-+		atc |= AGE_CHANGE;
-+
-+	b53_write32(dev, B53_MGMT_PAGE, reg, atc);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(b53_set_ageing_time);
-+
- static const struct phylink_mac_ops b53_phylink_mac_ops = {
- 	.mac_select_pcs	= b53_phylink_mac_select_pcs,
- 	.mac_config	= b53_phylink_mac_config,
-@@ -2396,6 +2423,7 @@ static const struct dsa_switch_ops b53_switch_ops = {
- 	.port_disable		= b53_disable_port,
- 	.support_eee		= b53_support_eee,
- 	.set_mac_eee		= b53_set_mac_eee,
-+	.set_ageing_time	= b53_set_ageing_time,
- 	.port_bridge_join	= b53_br_join,
- 	.port_bridge_leave	= b53_br_leave,
- 	.port_pre_bridge_flags	= b53_br_flags_pre,
-diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
-index 2cf3e6a81e37..a5ef7071ba07 100644
---- a/drivers/net/dsa/b53/b53_priv.h
-+++ b/drivers/net/dsa/b53/b53_priv.h
-@@ -343,6 +343,7 @@ void b53_get_strings(struct dsa_switch *ds, int port, u32 stringset,
- void b53_get_ethtool_stats(struct dsa_switch *ds, int port, uint64_t *data);
- int b53_get_sset_count(struct dsa_switch *ds, int port, int sset);
- void b53_get_ethtool_phy_stats(struct dsa_switch *ds, int port, uint64_t *data);
-+int b53_set_ageing_time(struct dsa_switch *ds, unsigned int msecs);
- int b53_br_join(struct dsa_switch *ds, int port, struct dsa_bridge bridge,
- 		bool *tx_fwd_offload, struct netlink_ext_ack *extack);
- void b53_br_leave(struct dsa_switch *ds, int port, struct dsa_bridge bridge);
-diff --git a/drivers/net/dsa/b53/b53_regs.h b/drivers/net/dsa/b53/b53_regs.h
-index bfbcb66bef66..2f7ee0156952 100644
---- a/drivers/net/dsa/b53/b53_regs.h
-+++ b/drivers/net/dsa/b53/b53_regs.h
-@@ -217,6 +217,13 @@
- #define   BRCM_HDR_P5_EN		BIT(1) /* Enable tagging on port 5 */
- #define   BRCM_HDR_P7_EN		BIT(2) /* Enable tagging on port 7 */
- 
-+/* Aging Time control register (32 bit) */
-+#define B53_AGING_TIME_CONTROL		0x06
-+#define B53_AGING_TIME_CONTROL_63XX	0x08
-+#define  AGE_CHANGE			BIT(20)
-+#define  AGE_TIME_MASK			0x7ffff
-+#define  AGE_TIME_MAX			1048575
-+
- /* Mirror capture control register (16 bit) */
- #define B53_MIR_CAP_CTL			0x10
- #define  CAP_PORT_MASK			0xf
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 454a8c7fd7ee..960685596093 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -1235,6 +1235,7 @@ static const struct dsa_switch_ops bcm_sf2_ops = {
- 	.port_disable		= bcm_sf2_port_disable,
- 	.support_eee		= b53_support_eee,
- 	.set_mac_eee		= b53_set_mac_eee,
-+	.set_ageing_time	= b53_set_ageing_time,
- 	.port_bridge_join	= b53_br_join,
- 	.port_bridge_leave	= b53_br_leave,
- 	.port_pre_bridge_flags	= b53_br_flags_pre,
+ rust/kernel/revocable.rs           |   2 +
+ rust/kernel/types.rs               |  45 ++++++++-------
+ rust/kernel/types/unsafe_pinned.rs | 113 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 140 insertions(+), 20 deletions(-)
+---
+base-commit: 9de1a293c8ece00d226b21a35751ec178be2a9fa
+change-id: 20250418-rust_unsafe_pinned-891dce27418d
+
+Best regards,
 -- 
-2.43.0
+Christian Schrefl <chrisi.schrefl@gmail.com>
 
 
