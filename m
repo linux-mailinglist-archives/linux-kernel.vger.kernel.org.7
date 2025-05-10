@@ -1,65 +1,53 @@
-Return-Path: <linux-kernel+bounces-642574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8A4AB2093
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 02:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0645AAB207A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 02:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661C2524BA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFAEA0414C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80411D6DBF;
-	Sat, 10 May 2025 00:40:34 +0000 (UTC)
-Received: from trager.us (trager.us [52.5.81.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB475103F;
+	Sat, 10 May 2025 00:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zc8yK7lP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C5D28F5;
-	Sat, 10 May 2025 00:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03192594;
+	Sat, 10 May 2025 00:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746837634; cv=none; b=ldZ9sXf77ten5OBDdSsfPIOXE6nwZr+osjjkxYrbGaIptLGgkxcpLZgvqPCGtO03I0VKq0hAZXX/ynaLs6BtyfEupMTPGZRTubRGhyEh1r1Vyr5TqA3bLShq5mO1/0sGO7o3GgpAeGhs6K2CJ0L2ZoZ+PIseGnTmrg4U4wcZNsM=
+	t=1746836871; cv=none; b=ZPvK389GmQM5Av46YaRD9GNNhLTa/AltNgqapQaKucGxXikWHdSjkmRFGGXo4L2u3/Z4ZAFi9Z4/MUHRx7q5+AYCyqCZwMNWkswmvnaUOy+PBfufv/TqVhHXbWDArd/9E/b8WdDRXamD1HXkCUvpuaQHns6MwdjUkEkkD1E1rdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746837634; c=relaxed/simple;
-	bh=ZSBeNZhVlDluP2mEXpc5bd+15XC6fnGcgcWH3iHGyS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uii5byxHRvAn00BoBROTE9kxxVylPcEMUaSo74Vt0mZD8v5Zvaa4XNAq4RRmOwArfbityFW2Psbg1F2pNArNPVa/OM7RV+lyqrIEm2LThLomJirC7pUpoWOKunHmU2Mx6D+PXKl95AotIX8eZi50kYYlPvP5sphhKGsJg9F0nhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
-Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=localhost)
-	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92.3)
-	(envelope-from <lee@trager.us>)
-	id 1uDYGM-0002FN-I1; Sat, 10 May 2025 00:40:22 +0000
-From: Lee Trager <lee@trager.us>
-To: Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	kernel-team@meta.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Mohsin Bashir <mohsin.bashr@gmail.com>,
-	Sanman Pradhan <sanman.p211993@gmail.com>,
-	Su Hui <suhui@nfschina.com>,
-	Lee Trager <lee@trager.us>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1746836871; c=relaxed/simple;
+	bh=HqMC/PvO3hI0omYHl1kiX7py/howh1t3h7nulYsHeA4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n+KdCVVQlJbuugJxrvuHUn7aAQ5awCwvoK0DzNvr/CNYFU+PV+XATqvgeKU1+C3Acs2gT1ucJlgk6HLOxSd4OZoXXWQYW/05CLh9e2BNx1KiYOE7Ez7mc3w68zcAAxobTY9D7NYZ3y3IgtFTfAxtKOWgI1NOoVM7/dwnOq7ZM9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zc8yK7lP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 118AAC4CEE4;
+	Sat, 10 May 2025 00:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746836870;
+	bh=HqMC/PvO3hI0omYHl1kiX7py/howh1t3h7nulYsHeA4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Zc8yK7lPMH4Wvj+nKpwVYUsupUfWveByPXcHbw7wwSK4aCzBQMv3aX2n9p65JHPLQ
+	 gHAlAGPFjgUZT1pXT6+1MDq/sTraeEh/RrzFRYdYnezk2i+oOoDGX6DIpDKmQ6VRDS
+	 9RM07OsaYtJXh6uCQ5c9oZLvHSMyqilkzbay0aLq81P1atJZc6RtJ5OLtehvMteiv9
+	 6PpHf5EXKAx5RuW17Iw6Bf6Cvi5oSOSxFyNPoKoZUAYfK7aPREyaQyDDD/8NxBOAxs
+	 hPIo9JqPAScHY/FzWBwVyxV5Tx0qNkGvO0N/UQW8BpVnEhUflnM5EdVs4yKT1kuX9k
+	 DGRdelXk5YaWA==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 5/5] eth: fbnic: Add devlink dev flash support
-Date: Fri,  9 May 2025 17:21:17 -0700
-Message-ID: <20250510002851.3247880-6-lee@trager.us>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250510002851.3247880-1-lee@trager.us>
-References: <20250510002851.3247880-1-lee@trager.us>
+Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2025-05-12
+Date: Fri,  9 May 2025 17:27:46 -0700
+Message-Id: <20250510002746.58427-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,400 +56,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support to update the CMRT and control firmware as well as the UEFI
-driver on fbnic using devlink dev flash.
+Hello,
 
-Make sure the shutdown / quiescence paths like suspend take the devlink
-lock to prevent them from interrupting the FW flashing process.
 
-Signed-off-by: Lee Trager <lee@trager.us>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
----
- .../device_drivers/ethernet/meta/fbnic.rst    |  11 +
- drivers/net/ethernet/meta/Kconfig             |   1 +
- .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 260 +++++++++++++++++-
- drivers/net/ethernet/meta/fbnic/fbnic_fw.h    |   9 +
- drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |   9 +
- 5 files changed, 289 insertions(+), 1 deletion(-)
+This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
+(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
+for the week of 2025-05-12.
 
-diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-index 3483e498c08e..f8592dec8851 100644
---- a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-+++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-@@ -28,6 +28,17 @@ devlink dev info provides version information for all three components. In
- addition to the version the hg commit hash of the build is included as a
- separate entry.
+We will have the two meetings in the week as usual.
 
-+Upgrading Firmware
-+------------------
-+
-+fbnic supports updating firmware using signed PLDM images with devlink dev
-+flash. PLDM images are written into the flash. Flashing does not interrupt
-+the operation of the device.
-+
-+On host boot the latest UEFI driver is always used, no explicit activation
-+is required. Firmware activation is required to run new control firmware. cmrt
-+firmware can only be activated by power cycling the NIC.
-+
- Statistics
- ----------
+I'm also considering merging any-topic and dedicated-topic discussions since
+apparently people prefer dedicated topic discussions.  For any-topic, I'm
+thinking about creating a Slack-like casual messaging systems.  Nothing has
+decided so far.  I'm just thinking about options.  Please let me know if you
+have any concerns or suggestions for that.
 
-diff --git a/drivers/net/ethernet/meta/Kconfig b/drivers/net/ethernet/meta/Kconfig
-index 831921b9d4d5..3ba527514f1e 100644
---- a/drivers/net/ethernet/meta/Kconfig
-+++ b/drivers/net/ethernet/meta/Kconfig
-@@ -27,6 +27,7 @@ config FBNIC
- 	select NET_DEVLINK
- 	select PAGE_POOL
- 	select PHYLINK
-+	select PLDMFW
- 	help
- 	  This driver supports Meta Platforms Host Network Interface.
+Any-topic discussions
+---------------------
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-index 0072d612215e..4cb615385671 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-@@ -3,10 +3,12 @@
+Next three time slots for any topic (no reservation is required) are scheduled
+as below:
 
- #include <linux/unaligned.h>
- #include <linux/pci.h>
-+#include <linux/pldmfw.h>
- #include <linux/types.h>
- #include <net/devlink.h>
+- 2025-05-12 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2025-05-28 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2025-06-09 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
 
- #include "fbnic.h"
-+#include "fbnic_tlv.h"
+Dedicated-topic discussions
+---------------------------
 
- #define FBNIC_SN_STR_LEN	24
+Next three time slots that I reserved in advance for possible future dedicated
+topic discussions are as below.
 
-@@ -109,8 +111,264 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
- 	return 0;
- }
+- 2025-05-14 (Wed) 09:30 PT (not yet reserved)
+- 2025-05-26 (Mon) 18:00 PT (not yet reserved)
+- 2025-06-11 (Wed) 09:30 PT (not yet reserved)
 
-+static bool
-+fbnic_pldm_match_record(struct pldmfw *context, struct pldmfw_record *record)
-+{
-+	struct pldmfw_desc_tlv *desc;
-+	u32 anti_rollback_ver = 0;
-+	struct devlink *devlink;
-+	struct fbnic_dev *fbd;
-+	struct pci_dev *pdev;
-+
-+	/* First, use the standard PCI matching function */
-+	if (!pldmfw_op_pci_match_record(context, record))
-+		return -ENODEV;
-+
-+	pdev = to_pci_dev(context->dev);
-+	fbd = pci_get_drvdata(pdev);
-+	devlink = priv_to_devlink(fbd);
-+
-+	/* If PCI match is successful, check for vendor-specific descriptors */
-+	list_for_each_entry(desc, &record->descs, entry) {
-+		if (desc->type != PLDM_DESC_ID_VENDOR_DEFINED)
-+			continue;
-+
-+		if (desc->size < 21 || desc->data[0] != 1 ||
-+		    desc->data[1] != 15)
-+			continue;
-+
-+		if (memcmp(desc->data + 2, "AntiRollbackVer", 15) != 0)
-+			continue;
-+
-+		anti_rollback_ver = get_unaligned_le32(desc->data + 17);
-+		break;
-+	}
-+
-+	/* Compare versions and return error if they do not match */
-+	if (anti_rollback_ver < fbd->fw_cap.anti_rollback_version) {
-+		char buf[128];
-+
-+		snprintf(buf, sizeof(buf),
-+			 "New firmware anti-rollback version (0x%x) is older than device version (0x%x)!",
-+			 anti_rollback_ver, fbd->fw_cap.anti_rollback_version);
-+		devlink_flash_update_status_notify(devlink, buf,
-+						   "Anti-Rollback", 0, 0);
-+
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static int
-+fbnic_flash_start(struct fbnic_dev *fbd, struct pldmfw_component *component)
-+{
-+	struct fbnic_fw_completion *cmpl;
-+	int err;
-+
-+	cmpl = kzalloc(sizeof(*cmpl), GFP_KERNEL);
-+	if (!cmpl)
-+		return -ENOMEM;
-+
-+	fbnic_fw_init_cmpl(cmpl, FBNIC_TLV_MSG_ID_FW_START_UPGRADE_REQ);
-+	err = fbnic_fw_xmit_fw_start_upgrade(fbd, cmpl,
-+					     component->identifier,
-+					     component->component_size);
-+	if (err)
-+		goto cmpl_free;
-+
-+	/* Wait for firmware to ack firmware upgrade start */
-+	if (wait_for_completion_timeout(&cmpl->done, 10 * HZ))
-+		err = cmpl->result;
-+	else
-+		err = -ETIMEDOUT;
-+
-+	fbnic_fw_clear_cmpl(fbd, cmpl);
-+cmpl_free:
-+	fbnic_fw_put_cmpl(cmpl);
-+
-+	return err;
-+}
-+
-+static int
-+fbnic_flash_component(struct pldmfw *context,
-+		      struct pldmfw_component *component)
-+{
-+	const u8 *data = component->component_data;
-+	const u32 size = component->component_size;
-+	struct fbnic_fw_completion *cmpl;
-+	const char *component_name;
-+	struct devlink *devlink;
-+	struct fbnic_dev *fbd;
-+	struct pci_dev *pdev;
-+	u32 offset = 0;
-+	u32 length = 0;
-+	char buf[32];
-+	int err;
-+
-+	pdev = to_pci_dev(context->dev);
-+	fbd = pci_get_drvdata(pdev);
-+	devlink = priv_to_devlink(fbd);
-+
-+	switch (component->identifier) {
-+	case QSPI_SECTION_CMRT:
-+		component_name = "boot1";
-+		break;
-+	case QSPI_SECTION_CONTROL_FW:
-+		component_name = "boot2";
-+		break;
-+	case QSPI_SECTION_OPTION_ROM:
-+		component_name = "option-rom";
-+		break;
-+	default:
-+		snprintf(buf, sizeof(buf), "Unknown component ID %u!",
-+			 component->identifier);
-+		devlink_flash_update_status_notify(devlink, buf, NULL, 0,
-+						   size);
-+		return -EINVAL;
-+	}
-+
-+	/* Once firmware receives the request to start upgrading it responds
-+	 * with two messages:
-+	 * 1. An ACK that it received the message and possible error code
-+	 *    indicating that an upgrade is not currently possible.
-+	 * 2. A request for the first chunk of data
-+	 *
-+	 * Setup completions for write before issuing the start message so
-+	 * the driver can catch both messages.
-+	 */
-+	cmpl = kzalloc(sizeof(*cmpl), GFP_KERNEL);
-+	if (!cmpl)
-+		return -ENOMEM;
-+
-+	fbnic_fw_init_cmpl(cmpl, FBNIC_TLV_MSG_ID_FW_WRITE_CHUNK_REQ);
-+	err = fbnic_mbx_set_cmpl(fbd, cmpl);
-+	if (err)
-+		goto cmpl_free;
-+
-+	devlink_flash_update_timeout_notify(devlink, "Initializing",
-+					    component_name, 15);
-+	err = fbnic_flash_start(fbd, component);
-+	if (err)
-+		goto err_no_msg;
-+
-+	while (offset < size) {
-+		if (!wait_for_completion_timeout(&cmpl->done, 15 * HZ)) {
-+			err = -ETIMEDOUT;
-+			break;
-+		}
-+
-+		err = cmpl->result;
-+		if (err)
-+			break;
-+
-+		/* Verify firmware is requesting the next chunk in the seq. */
-+		if (cmpl->u.fw_update.offset != offset + length) {
-+			err = -EFAULT;
-+			break;
-+		}
-+
-+		offset = cmpl->u.fw_update.offset;
-+		length = cmpl->u.fw_update.length;
-+
-+		if (length > TLV_MAX_DATA || offset + length > size) {
-+			err = -EFAULT;
-+			break;
-+		}
-+
-+		devlink_flash_update_status_notify(devlink, "Flashing",
-+						   component_name,
-+						   offset, size);
-+
-+		/* Mailbox will set length to 0 once it receives the finish
-+		 * message.
-+		 */
-+		if (!length)
-+			continue;
-+
-+		reinit_completion(&cmpl->done);
-+		err = fbnic_fw_xmit_fw_write_chunk(fbd, data, offset, length,
-+						   0);
-+		if (err)
-+			break;
-+	}
-+
-+	if (err) {
-+		fbnic_fw_xmit_fw_write_chunk(fbd, NULL, 0, 0, err);
-+err_no_msg:
-+		snprintf(buf, sizeof(buf), "Mailbox encountered error %d!",
-+			 err);
-+		devlink_flash_update_status_notify(devlink, buf,
-+						   component_name, 0, 0);
-+	}
-+
-+	fbnic_fw_clear_cmpl(fbd, cmpl);
-+cmpl_free:
-+	fbnic_fw_put_cmpl(cmpl);
-+
-+	return err;
-+}
-+
-+static const struct pldmfw_ops fbnic_pldmfw_ops = {
-+	.match_record = fbnic_pldm_match_record,
-+	.flash_component = fbnic_flash_component,
-+};
-+
-+static int
-+fbnic_devlink_flash_update(struct devlink *devlink,
-+			   struct devlink_flash_update_params *params,
-+			   struct netlink_ext_ack *extack)
-+{
-+	struct fbnic_dev *fbd = devlink_priv(devlink);
-+	const struct firmware *fw = params->fw;
-+	struct device *dev = fbd->dev;
-+	struct pldmfw context;
-+	char *err_msg;
-+	int err;
-+
-+	context.ops = &fbnic_pldmfw_ops;
-+	context.dev = dev;
-+
-+	err = pldmfw_flash_image(&context, fw);
-+	if (err) {
-+		switch (err) {
-+		case -EINVAL:
-+			err_msg = "Invalid image";
-+			break;
-+		case -EOPNOTSUPP:
-+			err_msg = "Unsupported image";
-+			break;
-+		case -ENOMEM:
-+			err_msg = "Out of memory";
-+			break;
-+		case -EFAULT:
-+			err_msg = "Invalid header";
-+			break;
-+		case -ENOENT:
-+			err_msg = "No matching record";
-+			break;
-+		case -ENODEV:
-+			err_msg = "No matching device";
-+			break;
-+		case -ETIMEDOUT:
-+			err_msg = "Timed out waiting for reply";
-+			break;
-+		default:
-+			err_msg = "Unknown error";
-+			break;
-+		}
-+
-+		NL_SET_ERR_MSG_FMT_MOD(extack,
-+				       "Failed to flash PLDM Image: %s (error: %d)",
-+				       err_msg, err);
-+	}
-+
-+	return err;
-+}
-+
- static const struct devlink_ops fbnic_devlink_ops = {
--	.info_get = fbnic_devlink_info_get,
-+	.info_get	= fbnic_devlink_info_get,
-+	.flash_update	= fbnic_devlink_flash_update,
- };
+Please reach out to me (sj@kernel.org or whatever) to reserve the
+not-yet-reserved time slots for your topics.  The reservation is made in a
+First-Come First-Served way, and I will send a Google Meet link to
+reservation-confirmed attendees.
 
- void fbnic_devlink_free(struct fbnic_dev *fbd)
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_fw.h b/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
-index 0ab6ae3859e4..6baac10fd688 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
-@@ -100,6 +100,15 @@ do {									\
- #define fbnic_mk_fw_ver_str(_rev_id, _str) \
- 	fbnic_mk_full_fw_ver_str(_rev_id, "", "", _str, sizeof(_str))
+Please note that other time slots are also available on demands.
 
-+enum {
-+	QSPI_SECTION_CMRT			= 0,
-+	QSPI_SECTION_CONTROL_FW			= 1,
-+	QSPI_SECTION_UCODE			= 2,
-+	QSPI_SECTION_OPTION_ROM			= 3,
-+	QSPI_SECTION_USER			= 4,
-+	QSPI_SECTION_INVALID,
-+};
-+
- #define FW_HEARTBEAT_PERIOD		(10 * HZ)
+Shared Calendar
+---------------
 
- enum {
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-index 70a852b3e99d..249d3ef862d5 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-@@ -6,6 +6,7 @@
- #include <linux/pci.h>
- #include <linux/rtnetlink.h>
- #include <linux/types.h>
-+#include <net/devlink.h>
+You can get the schedule via this shared Google Calendar:
+https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
 
- #include "fbnic.h"
- #include "fbnic_drvinfo.h"
-@@ -388,8 +389,12 @@ static int fbnic_pm_suspend(struct device *dev)
- 	rtnl_unlock();
+You can also get the past and upcoming schedules via
+https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
 
- null_uc_addr:
-+	devl_lock(priv_to_devlink(fbd));
-+
- 	fbnic_fw_free_mbx(fbd);
 
-+	devl_unlock(priv_to_devlink(fbd));
-+
- 	/* Free the IRQs so they aren't trying to occupy sleeping CPUs */
- 	fbnic_free_irqs(fbd);
-
-@@ -420,11 +425,15 @@ static int __fbnic_pm_resume(struct device *dev)
-
- 	fbd->mac->init_regs(fbd);
-
-+	devl_lock(priv_to_devlink(fbd));
-+
- 	/* Re-enable mailbox */
- 	err = fbnic_fw_request_mbx(fbd);
- 	if (err)
- 		goto err_free_irqs;
-
-+	devl_unlock(priv_to_devlink(fbd));
-+
- 	/* No netdev means there isn't a network interface to bring up */
- 	if (fbnic_init_failure(fbd))
- 		return 0;
---
-2.47.1
+Thanks,
+SJ
 
