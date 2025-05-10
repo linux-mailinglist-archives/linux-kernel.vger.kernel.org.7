@@ -1,199 +1,251 @@
-Return-Path: <linux-kernel+bounces-642811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9C6AB2401
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:49:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB28FAB2405
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984584C0E1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 13:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458CC3BF1F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 13:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E501223339;
-	Sat, 10 May 2025 13:49:24 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26322488E;
+	Sat, 10 May 2025 13:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T14Tbftt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6701F0E2E
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 13:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762B9222599;
+	Sat, 10 May 2025 13:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746884963; cv=none; b=m3XGU/T20/j6bz/rGcKNmFDdC40TOv6SBlGFv8mVDmW2rPORZgRj9w3nAlJZc+lVIno2EortFSl2xrK8vaQixIOkntsfh7Vf/2uKgqH5NdfNFhdLkWhoLl7tsR6B/gLQ8E6OranjDDpsUohoGq7h4qOe1RNC+xcsvVWUkpnvsKk=
+	t=1746885006; cv=none; b=llxn1N3+Tna3bBwr55JiDFn+MK6XAqVaGAigY+kHX/xBec1GOlLC3KakWVqHOboOCDkgXmKyd/vONjpY4CdP6WREyEJZrT8SGh0fJZTNFSsKZxvziPmb9uLIOn7Eg01hAQUzCiS0Yp1YcCosVaTWbRCbq2dQCTY5ahhd98/G5lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746884963; c=relaxed/simple;
-	bh=OrsFK+ZS7TM0uUGbmoMltUnue9SFjzb0xvf2VP/9Bxs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mWm4Zdm2aknTpXQI1/YYhWtrWlki/etCWu2XFcvUGmicquQlo77dXvVr2MdjDNoN1pi4yp6T+KixlWT16yW7NBFKyPhE4Wl3dXb2b3fGrQAh0XVokGiMFerUIndvbbzOdVgoLafqYGYKWBeZd/TXUULXj8fGDpiMoxUsK4okZxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3da6f284ca5so61356675ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 06:49:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746884961; x=1747489761;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zjKAt51Ib6tJ6ZlFjMQvjnLQ7buOFeQS+pgmgxdFTsg=;
-        b=oSp7z0A836QVSaZdHr20YGWpKmmqWN4oc4I1aeyMzsPIobPNbB2j1csD0PaxmCw64L
-         KPih1gu9O6muGCGRDSOONkQLUWU+oYMsJWA7K7YlF0ILA4zP0ApC6hydMwvyloqysnCX
-         FZOCgElufYR2ybMNiLzcVoSaavzUHh/s5uJWiVaUyQMeHjeazl5aHl/lS3MGeffPwrA2
-         88zuUFMt79loQngPQYGmC8DFenBPlVnQ4XiqM+wAP+elW3dDUjDm+BJII61ZqY9StzrI
-         UeH6bf71NLQeUq9ExGw8tYL+N9i1F6KzNqFQxuKQcVEMDE/QC2uxSVwu45dLeEY6iHl4
-         mb7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRy9SAiesix1X+2XMdxDuFT1MmFW6Jn0GLOLXT1pofwTPk8HPsogL8ZCOOQ9df47Gc9YrMczwViay+37k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqH9fDN8Ua0NH4LHhJQWkGsF5LZfZ7rBzE1UatJeuCQjM7LW3R
-	jGyjWBn2eBJWVEmsIVEXZ7dzKu77uFJC6ZKlWMTTRa/KhF5wqoJBvZv8snhrJHkIfZPnkMwN0SL
-	xiIB8HCDiOHbAka5AOlfVtnK7V25qIBb68Wy3B3DUeNFa+XGeadyGT7Q=
-X-Google-Smtp-Source: AGHT+IEfkOrNLDdmY3UsxnMBWH9eSicn8iesn0Lhbax5hADxAUqAasNQcEe/WHCuIeo6ixihilk9O5J/o0Oe8KBaBfDJy3pfsJeM
+	s=arc-20240116; t=1746885006; c=relaxed/simple;
+	bh=f+G/cjnyKT5yoFP2OM6bQOMPKODgZNapnWrSZt0VPq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YXncVI/K3Bw7/aMDZdZrT7EXYI72fMEaFLgtE3sKbu6rsFDWzH89hTRcJg7DIA5CnIF5CotmfKZyeoKWGUVvFk9IhOjzXSQ8ZAGIWeXGL8iBcgumV+TCsdjEwJA6u+/HaSfzZ8fffusA7Z4aB2UKm4yft32IiPnYKMNBcIbvza8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T14Tbftt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54ABmdU5023152;
+	Sat, 10 May 2025 13:49:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6QI5MdJNvPxptwrSHZ/+tFrMWva0CsITk7LKryGpub4=; b=T14Tbftt9mYS0Nj1
+	c+jShrN8JlRqrYhLG5stHSVwwgsmJQ5bkd9ucAJZw0j5FwCewursgQMdrlziviBs
+	Avz08gyP0bttXYH7vCEOrH8g06eKoQx8tDOnUtzzMvFMHhWu7izcMyOV08SwKZc+
+	MzSUDx1I+q9v1Gd6Z+vtYgVRDs70tbAZHskHJCDygikHUrI5n1OvJoMheCbajPa/
+	VqKIr13v11VrUL2mo4GvXUvQSpbYGESxjIM+VcMBFwgaPY3dkWeRaEChfaksM2CE
+	Xa27B93ZwIQ5wk8Fe5H5x4N4VfXHK26iByCcoRJACKwL8fUPHqkGqRlPZipib7ix
+	vzETOw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hy68gnm9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 10 May 2025 13:49:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54ADne58028513
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 10 May 2025 13:49:40 GMT
+Received: from [10.216.13.129] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 10 May
+ 2025 06:49:35 -0700
+Message-ID: <812a9905-a8f6-40b2-a603-6c0be18239da@quicinc.com>
+Date: Sat, 10 May 2025 19:19:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:220b:b0:3d4:2409:ce6 with SMTP id
- e9e14a558f8ab-3da7e1e59e3mr83739225ab.5.1746884961239; Sat, 10 May 2025
- 06:49:21 -0700 (PDT)
-Date: Sat, 10 May 2025 06:49:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <681f5961.050a0220.f2294.000f.GAE@google.com>
-Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request in rcu_segcblist_advance
-From: syzbot <syzbot+180ee4715c8ed6d72258@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    c32f8dc5aaf9 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c96cf4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea4635ffd6ad5b4a
-dashboard link: https://syzkaller.appspot.com/bug?extid=180ee4715c8ed6d72258
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11004cf4580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b921498959d4/disk-c32f8dc5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/04e6ad946c4b/vmlinux-c32f8dc5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d4f0d8db50ee/Image-c32f8dc5.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cd47245ef994/mount_17.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+180ee4715c8ed6d72258@syzkaller.appspotmail.com
-
-  allowing incompatible features above 0.0: (unknown version)
-bcachefs (loop2): initializing new filesystem
-bcachefs (loop2): going read-write
-bcachefs (loop2): marking superblocks
-Unable to handle kernel paging request at virtual address fffffdfffffffdff
-KASAN: maybe wild-memory-access in range [0x0003efffffffeff8-0x0003efffffffefff]
-Mem abort info:
-  ESR = 0x0000000096000006
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x06: level 2 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000207bf8000
-[fffffdfffffffdff] pgd=0000000000000000, p4d=100000023ea67403, pud=100000023ea66403, pmd=0000000000000000
-Internal error: Oops: 0000000096000006 [#1]  SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 6884 Comm: syz.2.18 Not tainted 6.15.0-rc5-syzkaller-gc32f8dc5aaf9 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-pstate: 804000c5 (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : rcu_segcblist_restempty kernel/rcu/rcu_segcblist.h:105 [inline]
-pc : rcu_segcblist_advance+0x84/0x368 kernel/rcu/rcu_segcblist.c:474
-lr : srcu_gp_start_if_needed+0x568/0x10d0 kernel/rcu/srcutree.c:1316
-sp : ffff80009b8661f0
-x29: ffff80009b8661f0 x28: fffffdffbf72d2c0 x27: 00000000000000c0
-x26: dfff800000000000 x25: 1fffffbff7ee5a61 x24: dfff800000000000
-x23: ffff0000cda92980 x22: fffffdfffffffdff x21: fffffffffffffe70
-x20: fffffdffbf72d308 x19: fffffdffbf72d300 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff80008adb421c x15: ffff70001370cc34
-x14: 1ffff0001370cc34 x13: 0000000000000004 x12: ffffffffffffffff
-x11: 000000001372e057 x10: 0000000000000003 x9 : 0000000000000000
-x8 : 0000000000000000 x7 : ffff80008059d5f8 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80008ae837c0
-x2 : 0000000000000008 x1 : fffffffffffffe70 x0 : fffffdffbf72d300
-Call trace:
- rcu_segcblist_restempty kernel/rcu/rcu_segcblist.h:105 [inline] (P)
- rcu_segcblist_advance+0x84/0x368 kernel/rcu/rcu_segcblist.c:474 (P)
- srcu_gp_start_if_needed+0x568/0x10d0 kernel/rcu/srcutree.c:1316
- __call_srcu kernel/rcu/srcutree.c:1389 [inline]
- call_srcu+0xc8/0xe0 kernel/rcu/srcutree.c:1416
- __call_rcu+0x38/0x60 fs/bcachefs/rcu_pending.c:76
- __rcu_pending_enqueue fs/bcachefs/rcu_pending.c:497 [inline]
- rcu_pending_enqueue+0x70c/0x840 fs/bcachefs/rcu_pending.c:531
- bkey_cached_free+0xb8/0x1c4 fs/bcachefs/btree_key_cache.c:115
- bch2_btree_key_cache_drop+0x10c/0x5c8 fs/bcachefs/btree_key_cache.c:619
- bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:772 [inline]
- do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:844 [inline]
- __bch2_trans_commit+0x4ac8/0x62d0 fs/bcachefs/btree_trans_commit.c:1050
- bch2_trans_commit fs/bcachefs/btree_update.h:195 [inline]
- bch2_trans_mark_metadata_bucket+0x328/0xe14 fs/bcachefs/buckets.c:1052
- bch2_trans_mark_metadata_sectors fs/bcachefs/buckets.c:1069 [inline]
- __bch2_trans_mark_dev_sb fs/bcachefs/buckets.c:1109 [inline]
- bch2_trans_mark_dev_sb+0x318/0x67c fs/bcachefs/buckets.c:1137
- bch2_trans_mark_dev_sbs_flags+0x6f4/0x754 fs/bcachefs/buckets.c:1147
- bch2_trans_mark_dev_sbs+0x24/0x34 fs/bcachefs/buckets.c:1159
- bch2_fs_initialize+0x8cc/0x10ac fs/bcachefs/recovery.c:1153
- bch2_fs_start+0x5a0/0x908 fs/bcachefs/super.c:1092
- bch2_fs_get_tree+0xa0c/0xf30 fs/bcachefs/fs.c:2570
- vfs_get_tree+0x90/0x28c fs/super.c:1759
- do_new_mount+0x228/0x814 fs/namespace.c:3884
- path_mount+0x5b4/0xde0 fs/namespace.c:4211
- do_mount fs/namespace.c:4224 [inline]
- __do_sys_mount fs/namespace.c:4435 [inline]
- __se_sys_mount fs/namespace.c:4412 [inline]
- __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4412
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
- el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-Code: 38786908 34000068 aa1603e0 94197940 (f94002c8) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	38786908 	ldrb	w8, [x8, x24]
-   4:	34000068 	cbz	w8, 0x10
-   8:	aa1603e0 	mov	x0, x22
-   c:	94197940 	bl	0x65e50c
-* 10:	f94002c8 	ldr	x8, [x22] <-- trapping instruction
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 09/11] scsi: ufs: qcom : Refactor phy_power_on/off
+ calls
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <manivannan.sadhasivam@linaro.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+        <bvanassche@acm.org>, <andersson@kernel.org>,
+        <neil.armstrong@linaro.org>
+CC: <quic_rdwivedi@quicinc.com>, <quic_cang@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+References: <20250503162440.2954-1-quic_nitirawa@quicinc.com>
+ <20250503162440.2954-10-quic_nitirawa@quicinc.com>
+ <780d84ca-4004-41ef-a9ae-17532053f8a5@oss.qualcomm.com>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <780d84ca-4004-41ef-a9ae-17532053f8a5@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEwMDE0MCBTYWx0ZWRfX1h+K6Uf6o6PN
+ K/c4kgXFHJGJ1vLM9MnFnoPNsGfxw0QjAxTejOP3cLttcog6P6pJnZPmTixd9J233KYITEm/1Hg
+ NDrhW284Ke5rcF4uE2gYALWUDPaElTqWEqiVwMYQqpjDs2WBZWpK4oAKEay4fDEXTsSv7DVyI2Y
+ JINvCqGZmXxL9ROKo7Uw8vgZ7aHTzzjOcLekgIfZtbxHVAxmmvPOk6N6cjmNHflTgNyKYW68G8Y
+ wvvzUgpJczTlbcB1EIuJO5MOwVZ+eqLVZzu9etjipICSq9w0pqXFa8I68+7dC2l4F3n291Bmcez
+ Rzyo6FAxNpHkeQmHKrgAZvx9NVkJ4usxij3mOnKIMJvf7PVFeMDRK58rIx7tRKWIVnVgwz5lGiC
+ c2vMZRIj83/j7qRAbClLQi2V4YSYLNbqvhVNtu98TPy5QBYjxS++vi+7jDphzPQ8TD61CQfh
+X-Proofpoint-GUID: WbuIQtUqq6SOkPhJTB31z1TbFyt35Vh5
+X-Proofpoint-ORIG-GUID: WbuIQtUqq6SOkPhJTB31z1TbFyt35Vh5
+X-Authority-Analysis: v=2.4 cv=c5irQQ9l c=1 sm=1 tr=0 ts=681f5975 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=iv0NEw3qHnIl1jiBOd0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-10_03,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505100140
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 5/9/2025 5:05 PM, Konrad Dybcio wrote:
+> On 5/3/25 6:24 PM, Nitin Rawat wrote:
+>> Commit 3f6d1767b1a0 ("phy: ufs-qcom: Refactor all init steps into
+>> phy_poweron") removes the phy_power_on/off from ufs_qcom_setup_clocks
+>> to suspend/resume func.
+>>
+>> To have a better power saving, remove the phy_power_on/off calls from
+>> resume/suspend path and put them back to ufs_qcom_setup_clocks, so that
+>> PHY regulators & clks can be turned on/off along with UFS's clocks.
+>>
+>> Since phy phy_power_on is separated out from phy calibrate, make
+>> separate calls to phy_power_on and phy_calibrate calls from ufs qcom
+>> driver.
+>>
+>> Co-developed-by: Can Guo <quic_cang@quicinc.com>
+>> Signed-off-by: Can Guo <quic_cang@quicinc.com>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> ---
+>>   drivers/ufs/host/ufs-qcom.c | 55 ++++++++++++++++---------------------
+>>   1 file changed, 23 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+>> index 2cd44ee522b8..ff35cd15c72f 100644
+>> --- a/drivers/ufs/host/ufs-qcom.c
+>> +++ b/drivers/ufs/host/ufs-qcom.c
+>> @@ -639,26 +639,17 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+>>   	enum ufs_notify_change_status status)
+>>   {
+>>   	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>> -	struct phy *phy = host->generic_phy;
+>>   
+>>   	if (status == PRE_CHANGE)
+>>   		return 0;
+>>   
+>> -	if (ufs_qcom_is_link_off(hba)) {
+>> -		/*
+>> -		 * Disable the tx/rx lane symbol clocks before PHY is
+>> -		 * powered down as the PLL source should be disabled
+>> -		 * after downstream clocks are disabled.
+>> -		 */
+>> +	if (!ufs_qcom_is_link_active(hba))
+> 
+> so is_link_off and !is_link_active are not the same thing - this also allows
+> for disabling the resources when in hibern8/broken states - is that intended?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Yes is_link_off and !is_link_Active is not same thing. !is_link_active 
+also include link in hibern8 state where lane clock is intended to be
+disabled because PHY is powered down in hibern8.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> 
+>>   		ufs_qcom_disable_lane_clks(host);
+>> -		phy_power_off(phy);
+>>   
+>> -		/* reset the connected UFS device during power down */
+>> -		ufs_qcom_device_reset_ctrl(hba, true);
+>>   
+>> -	} else if (!ufs_qcom_is_link_active(hba)) {
+>> -		ufs_qcom_disable_lane_clks(host);
+>> -	}
+>> +	/* reset the connected UFS device during power down */
+>> +	if (ufs_qcom_is_link_off(hba) && host->device_reset)
+>> +		ufs_qcom_device_reset_ctrl(hba, true);
+> 
+> similarly this will not be allowed in hibern8/broken states now
+> 
+>>   
+>>   	return ufs_qcom_ice_suspend(host);
+>>   }
+>> @@ -666,26 +657,11 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+>>   static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>>   {
+>>   	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>> -	struct phy *phy = host->generic_phy;
+>>   	int err;
+>>   
+>> -	if (ufs_qcom_is_link_off(hba)) {
+>> -		err = phy_power_on(phy);
+>> -		if (err) {
+>> -			dev_err(hba->dev, "%s: failed PHY power on: %d\n",
+>> -				__func__, err);
+>> -			return err;
+>> -		}
+>> -
+>> -		err = ufs_qcom_enable_lane_clks(host);
+>> -		if (err)
+>> -			return err;
+>> -
+>> -	} else if (!ufs_qcom_is_link_active(hba)) {
+>> -		err = ufs_qcom_enable_lane_clks(host);
+>> -		if (err)
+>> -			return err;
+>> -	}
+>> +	err = ufs_qcom_enable_lane_clks(host);
+>> +	if (err)
+>> +		return err;
+>>   
+>>   	return ufs_qcom_ice_resume(host);
+>>   }
+>> @@ -1042,6 +1018,8 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>>   				 enum ufs_notify_change_status status)
+>>   {
+>>   	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>> +	struct phy *phy = host->generic_phy;
+>> +	int err;
+>>   
+>>   	/*
+>>   	 * In case ufs_qcom_init() is not yet done, simply ignore.
+>> @@ -1060,10 +1038,22 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>>   				/* disable device ref_clk */
+>>   				ufs_qcom_dev_ref_clk_ctrl(host, false);
+>>   			}
+>> +			err = phy_power_off(phy);
+> 
+> a newline to separate the blocks would improve readability> +			if (err) {
+>> +				dev_err(hba->dev, "%s: phy power off failed, ret=%d\n",
+>> +					__func__, err);
+>> +					return err;
 
-If you want to undo deduplication, reply with:
-#syz undup
+Sure will add in next patchset.
+
+> 
+> please indent the return statement a tab earlier so it doesn't look
+> like it's an argument to dev_err()
+
+Sure will add in next patchset.
+
+> 
+> putting PHY calls in the function that promises to toggle clocks could
+> also use a comment, maybe extending the kerneldoc to say that certain
+> clocks come from the PHY so it needs to be managed together
+> 
+Sure will add a comment or update in kernel doc in next patchset.
+
+> Konrad
+
 
