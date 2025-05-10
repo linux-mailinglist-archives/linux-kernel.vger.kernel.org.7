@@ -1,89 +1,181 @@
-Return-Path: <linux-kernel+bounces-642868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2B5AB2497
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:14:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF3DAB249C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B74151B67781
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E9AA02BC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6360523C505;
-	Sat, 10 May 2025 16:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D981AB52D;
+	Sat, 10 May 2025 16:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iK9LgXZv"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="HwGIKoxR"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A71DEFE8;
-	Sat, 10 May 2025 16:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA0288D6
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 16:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746893630; cv=none; b=SDFxFftV6JxpaOhOokjOGusvcmSGYfv47HYBPRZLhbKIx0Lxi+is+bx7mNFD9Bouf7uqnTV/X71IPJ/WsL1KYZWOLQbyreY9Qv2lRDOOuYbMzbQzZ40U5+eIOC/5spvBqEO0NW0XJdjNlON0Bj2HUm68v5Ildle1scm3E7sdGNI=
+	t=1746893746; cv=none; b=j9wnTIo8+NGt53NKsFzA3qGc99n2jtJZ2WX53E3OXXelKUh/vE0DQCb/Vi1FLTA0YZput7Jfep79jj/DvUhStbiU1cfKKKlwf6aj/DVUA+Dw2vpGjEghMdLNFrl4lZo4Xw5DOrdfnE+HHqNoqVsJgxzZlZkMAzBFDg89XWH/ajA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746893630; c=relaxed/simple;
-	bh=4BFLwHRS5sx9UfyYdVI7gDyB8adpJUUQ97O6lRHBa2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=byeOKhg5AYJpPqUy5HXOltXRvdKKBrLrQli2JokVZW3dg0RxJdTUI5T1qGh1z22ub8aoMBxXONZrtB4qrdbv4qml7Ti7KhkTvwiKflblNCgmcJURiE6yD+kHvbCFvsksPNZAj04Me84qS8jK5nnlWF35/0e4Cl4QJEHR2QcYeHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iK9LgXZv; arc=none smtp.client-ip=185.11.138.130
+	s=arc-20240116; t=1746893746; c=relaxed/simple;
+	bh=I7qsisNmJSUmqYJBmMiwDIyEFTkKuC/j8SsQjRaqRkM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OXZmp2ccYg9/7m65dCnYul7KkZzjrjJjW8cW/HbJgH3IxCSZqpI9IPhIIHD3KH9p76p366VDn+WwVCSuDQvaiA+N34VjfQyvzMNZ7QvS1tblh/6GKCyLOeRpNYDtFoeDeDgc9YV0/YNzOJZ3XzGKZ1lmuRgMqwz4TTmizQBCZVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=HwGIKoxR; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=gzvMMd1RbP+1PMa1EVSreCjzq6bOjb6pj1xLI8TnSdM=; b=iK9LgXZvQtCdnK5F2KPqCb/3bz
-	1n3Vmo8ayXMmflM+cKP28NIWloG4eV6x1muqq6jWFZwYQVjO73QoEkJd1F2c2c4zJJHDdlH5YW04K
-	DrkJRMsD/3YMG7sYMvs9wC8LUCvGWFUdqhIYlY3eWHV2UZy70AVKQy4AipTVHMf+b3jNL+ThZCunD
-	0+lIUNuzPz/XFdm0+GkGOwDnDHpYEv0cqMB+cxW0Mz1AWLIB1XBOt8mA9KNVZGsIXviw8hmuxmbl/
-	NOf1ln1pVoeXCkUfmvyDKviPL2penh7JhFhv3uoIO/lr3eHRc+90KbZ2Byxx0j/eY45i9ddpGuA8f
-	FB2Dvexw==;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=0GKSka8sGAEVtIjgnkv+3cC9f+hK5UlvpIaCwa+sWU4=; b=HwGIKoxRapWnJikLnDBLSqW7KD
+	EFFcCdddUtvPqFJWG6JHMfL1tzYz4SPBlCFuAqFrIfAjAvG+NXZ5hf0mKhkstK1SBSlKdo0hA9Pwh
+	KzsB5A3Ey9PrW2mcWwQBBSGTvuwWHrYoXwTEl75811/u0gLTvdR9C1mp58aJoOu1PCe4FWNm5VLMo
+	xWxrt9qE7JSGLm60tWt3+y5eD136ZPLQkyYNclMnjAKlGNbVzkuy3N9i1PhAUWaL1wY6SW4oGrTlC
+	zHrJMsN8XmTMtLXe1i1HyByugK2qtwh/2uHueMzmjS1XIE+4gKVFsr2HG6xVXpULuESkb0oZGN4NE
+	ZgDKZMFA==;
 Received: from i53875a1d.versanet.de ([83.135.90.29] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uDmpa-0000dK-0G; Sat, 10 May 2025 18:13:42 +0200
+	id 1uDmrU-0000ha-Hn; Sat, 10 May 2025 18:15:40 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: heiko@sntech.de
+Cc: kever.yang@rock-chips.com,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] clk: rockchip: Pass NULL as reg pointer when registering GRF MMC clocks
-Date: Sat, 10 May 2025 18:13:30 +0200
-Message-ID: <174689356067.2086280.9979554984882379307.b4-ty@sntech.de>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: convert rk3562 to their dt-binding constants
+Date: Sat, 10 May 2025 18:15:31 +0200
+Message-ID: <20250510161531.2086706-1-heiko@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250510075248.34006-2-ziyao@disroot.org>
-References: <20250510075248.34006-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Now that the binding head has been merged, convert the power-domain ids
+back to these constants for easier handling.
 
-On Sat, 10 May 2025 07:52:49 +0000, Yao Zi wrote:
-> This corrects the type and suppresses sparse warnings about passing
-> plain integers as NULL pointer.
-> 
-> 
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3562.dtsi | 37 ++++++++++++------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-Applied, thanks!
-
-[1/1] clk: rockchip: Pass NULL as reg pointer when registering GRF MMC clocks
-      commit: 61bf658a4d95e8f982b6e66dea763bff57996349
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/rockchip/rk3562.dtsi b/arch/arm64/boot/dts/rockchip/rk3562.dtsi
+index 0156f969c4bc..412ecad79b0d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3562.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3562.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/phy/phy.h>
++#include <dt-bindings/power/rockchip,rk3562-power.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
+ #include <dt-bindings/reset/rockchip,rk3562-cru.h>
+ #include <dt-bindings/soc/rockchip,boot-mode.h>
+@@ -546,48 +547,48 @@ power: power-controller {
+ 				#size-cells = <0>;
+ 				status = "okay";
+ 
+-				power-domain@8 {
+-					reg = <8>;
++				power-domain@RK3562_PD_GPU {
++					reg = <RK3562_PD_GPU>;
+ 					pm_qos = <&qos_gpu>;
+ 					#power-domain-cells = <0>;
+ 				};
+ 
+-				power-domain@7 {
+-					reg = <7>;
++				power-domain@RK3562_PD_NPU {
++					reg = <RK3562_PD_NPU>;
+ 					pm_qos = <&qos_npu>;
+ 					#power-domain-cells = <0>;
+ 				};
+ 
+-				power-domain@11 {
+-					reg = <11>;
++				power-domain@RK3562_PD_VDPU {
++					reg = <RK3562_PD_VDPU>;
+ 					pm_qos = <&qos_rkvdec>;
+ 					#power-domain-cells = <0>;
+ 				};
+ 
+-				power-domain@12 {
+-					reg = <12>;
++				power-domain@RK3562_PD_VI {
++					reg = <RK3562_PD_VI>;
+ 					#power-domain-cells = <1>;
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					pm_qos = <&qos_isp>,
+ 						 <&qos_vicap>;
+ 
+-					power-domain@10 {
+-						reg = <10>;
++					power-domain@RK3562_PD_VEPU {
++						reg = <RK3562_PD_VEPU>;
+ 						pm_qos = <&qos_vepu>;
+ 					#power-domain-cells = <0>;
+ 					};
+ 				};
+ 
+-				power-domain@13 {
+-					reg = <13>;
++				power-domain@RK3562_PD_VO {
++					reg = <RK3562_PD_VO>;
+ 					#power-domain-cells = <1>;
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					pm_qos = <&qos_vop>;
+ 
+-					power-domain@14 {
+-						reg = <14>;
++					power-domain@RK3562_PD_RGA {
++						reg = <RK3562_PD_RGA>;
+ 						pm_qos = <&qos_rga_rd>,
+ 							 <&qos_rga_wr>,
+ 							 <&qos_jpeg>;
+@@ -595,8 +596,8 @@ power-domain@14 {
+ 					};
+ 				};
+ 
+-				power-domain@15 {
+-					reg = <15>;
++				power-domain@RK3562_PD_PHP {
++					reg = <RK3562_PD_PHP>;
+ 					pm_qos = <&qos_pcie>,
+ 						 <&qos_usb3>;
+ 					#power-domain-cells = <0>;
+@@ -616,7 +617,7 @@ gpu: gpu@ff320000 {
+ 				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "job", "mmu", "gpu";
+ 			operating-points-v2 = <&gpu_opp_table>;
+-			power-domains = <&power 8>;
++			power-domains = <&power RK3562_PD_GPU>;
+ 			#cooling-cells = <2>;
+ 			status = "disabled";
+ 		};
+@@ -653,7 +654,7 @@ pcie2x1: pcie@ff500000 {
+ 			num-lanes = <1>;
+ 			phys = <&combphy_pu PHY_TYPE_PCIE>;
+ 			phy-names = "pcie-phy";
+-			power-domains = <&power 15>;
++			power-domains = <&power RK3562_PD_PHP>;
+ 			ranges = <0x01000000 0x0 0xfc100000 0x0 0xfc100000 0x0 0x100000
+ 				  0x02000000 0x0 0xfc200000 0x0 0xfc200000 0x0 0x1e00000
+ 				  0x03000000 0x3 0x00000000 0x3 0x00000000 0x0 0x40000000>;
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.47.2
+
 
