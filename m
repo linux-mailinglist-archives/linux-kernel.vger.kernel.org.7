@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-642659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E372AB21B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:44:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D355AAB21C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F101BC128D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494C63BA37C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BF61E503D;
-	Sat, 10 May 2025 07:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC961EB196;
+	Sat, 10 May 2025 07:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRm0JemU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYy0kgX5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DE96125;
-	Sat, 10 May 2025 07:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807B11E5B9C;
+	Sat, 10 May 2025 07:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746863084; cv=none; b=dvxemJYYdHql5tIsuHpTd0TrADLnQ/+snF2RrkdMH+9M3aMeEdlSBf9O6zchKhdlpQDNS9JtipW5TKCH9HutN0ZLw+Hq9Jso8hyLeqrnQJfHJ3hrOyCUEK/2F3c7V5NYFvIv54Hlw1lciMF+YuY6KhWBY1rQf0vdZE8b5D9oTjg=
+	t=1746863109; cv=none; b=d3LZilRjGB6v/fJ1Rcu25F0Fbc7j1EYp3nLr8jiMhKRCaFGSiW4tpJMIfh6gAt08sopeFiko5wup91q46XSdJLJvciAt13FGfLNiTFA/ghycGppdqk/jFrhOmJfhsHss1w/tP3DAmqTKOku5U+BkeahJYL7wUE81l0Y3J5HVIxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746863084; c=relaxed/simple;
-	bh=bE/SOpoChEP71E9o00tKei1ZQQ2RQ/5dOoWOaqj9An8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PP/OBrYFdDG1ixLd2ut2PewqpAiTsRsRFnkpFGq1Pv904SFd3uG4T5Vv0QXn/E5lhLCaOg854qb/ZDB9gehWxylG5zAQ+BePa6hYAA0ha2/OwzLsK2H/6GwDH3fq5E5Jp9fHW91jA+DufrcfGVw94uJQcyC59f+BEPbelRxotJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRm0JemU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CA1C4CEE2;
-	Sat, 10 May 2025 07:44:42 +0000 (UTC)
+	s=arc-20240116; t=1746863109; c=relaxed/simple;
+	bh=CUo/MimrCW1xHj5d7fHDtNMddbwaaGdTDWDyY+tLI84=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FE3O6fAqJNuMl/ZUusmHgOH/rMh2XX94LanYhCTljAu3AF6nCx5nrE7jYj+aht2ho0zr0v9S2v3S35Hcn34auuv841OiNYbXScWQCoTyRY28rkNyofqX9nKd/CcNTYcTBfDdNXewdKpwcWlo3ACA6T7MRJrfu64u+D7ZK+qw8uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYy0kgX5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E4BB3C4CEE2;
+	Sat, 10 May 2025 07:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746863083;
-	bh=bE/SOpoChEP71E9o00tKei1ZQQ2RQ/5dOoWOaqj9An8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZRm0JemUldpe+AgpDLQ5gUzWpGiNST07Xb7zIxeqwnu7jsSZr1yS4/lz4mfza2rln
-	 G7AyXvCic3ERDJlHJMfN3/S7aWRxrb7rmLDTtta01a79D3ACZLBzNl2+Zd4CVFHMqs
-	 quMc08ZsU6wqlDsG6c5lHSD5KEpOOdNF1h70gGSb4W8qvFDaK7kw0dKtNwzqtYeQgU
-	 zmm/Yxvof1Ps+yJAHT7+PbjkbgIV7njlN6hU0BumHXRHQ8/Aw16DO7Lf8ciKRklKi3
-	 JDoafNUlWi1+P/wswBxr6C1sL3xDClwUVa6Rsq0Wk/bcrQXS2SN5ixpLivo249eC2O
-	 Ja0cRETdRmAjw==
-Date: Sat, 10 May 2025 10:44:38 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, Peter Huewe <peterhuewe@gmx.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	linux-integrity@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH v4 1/4] tpm: add buf_size parameter in the .send callback
-Message-ID: <aB8D5syofPSqjzns@kernel.org>
-References: <20250509085713.76851-1-sgarzare@redhat.com>
- <20250509085713.76851-2-sgarzare@redhat.com>
+	s=k20201202; t=1746863109;
+	bh=CUo/MimrCW1xHj5d7fHDtNMddbwaaGdTDWDyY+tLI84=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=YYy0kgX5lVaXFTKrYRGliD8DTCl5jxlh4Nayz0Wb+66AFxLc20MuO/3+CziqiiX/x
+	 qk24j8sGwyjrh8CeEdEkoEefu9qPheo8X7iuxHUITn2Vw7hwyZ+FFBH4eIeiI+d+pP
+	 9tqajp4y7JgSFrn3BB89zd9YjsYRu4G2Uhm50EOTDRbBSlq8Egg0krIFauzT9XwQyn
+	 7Z5FKogs/CrHxr8MQX9+rKkvBq8v7xlbNMEQA+5CxoAfvuzhz8ttoZLNwjf0PYyaWG
+	 ij7O7LjRz0CU1n0K1u1LIqBqhPtE7yrqndTXcscYbZYEoFOjP4NyT5nNPFNRJQBFQr
+	 HfCNhkezxwIGw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2891C3ABC3;
+	Sat, 10 May 2025 07:45:08 +0000 (UTC)
+From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
+Subject: [PATCH 0/7] Support exposing bits of any byte as NVMEM cells
+Date: Sat, 10 May 2025 07:44:40 +0000
+Message-Id: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509085713.76851-2-sgarzare@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOgDH2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUwML3byy3NRc3ZQS3ZRUw0RDCxOjVAsLYyWg8oKi1LTMCrBR0bG1tQD
+ ysA7VWgAAAA==
+X-Change-ID: 20250508-nvmem-dt-de1a1842e883
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Sven Peter <sven@svenpeter.dev>, R <rqou@berkeley.edu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1867; i=sven@svenpeter.dev;
+ h=from:subject:message-id;
+ bh=CUo/MimrCW1xHj5d7fHDtNMddbwaaGdTDWDyY+tLI84=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Y886+JhUwn/3XVWSgdXLxSLkhOtF73koo070H5hzV9l
+ sqLejk7SlkYxDgYZMUUWbbvtzd98vCN4NJNl97DzGFlAhnCwMUpABMpF2b4K/xC+RXPE+Plrf6O
+ 8U5L98/5yRi1snSb6Ukhv1e+M3wP+DMyzC4UmveQ9UfFm/Qf//fd1WmRubpx9tnEs/vKKqM4DW5
+ v4QMA
+X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
+ auth_id=167
+X-Original-From: Sven Peter <sven@svenpeter.dev>
+Reply-To: sven@svenpeter.dev
 
-On Fri, May 09, 2025 at 10:57:10AM +0200, Stefano Garzarella wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> Add a new `buf_size` parameter to the `.send` callback in `tpm_class_ops`.
-> This parameter will allow drivers to differentiate between the actual
-> command length to send and the total buffer size. Currently `buf_now` is
-> not used, but it will be used to implement devices with synchronous send()
-> to send the command and receive the response on the same buffer.
-> 
-> Also rename the previous parameter `len` to `cmd_len` in the declaration
-> to make it clear that it contains the length in bytes of the command
-> stored in the buffer. The semantics don't change and it can be used as
-> before by drivers. This is an optimization since the drivers could get it
-> from the header, but let's avoid duplicating code.
-> 
-> While we are here, resolve a checkpatch warning:
->   WARNING: Unnecessary space before function pointer arguments
->   #66: FILE: include/linux/tpm.h:90:
->   +	int (*send) (struct tpm_chip *chip, u8 *buf, size_t cmd_len,
-> 
-> Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
-> v4:
-> - rework the commit description [Jarkko]
-> ---
->  include/linux/tpm.h                  | 3 ++-
->  drivers/char/tpm/st33zp24/st33zp24.c | 2 +-
->  drivers/char/tpm/tpm-interface.c     | 2 +-
->  drivers/char/tpm/tpm_atmel.c         | 3 ++-
->  drivers/char/tpm/tpm_crb.c           | 2 +-
->  drivers/char/tpm/tpm_ftpm_tee.c      | 4 +++-
->  drivers/char/tpm/tpm_i2c_atmel.c     | 3 ++-
->  drivers/char/tpm/tpm_i2c_infineon.c  | 3 ++-
->  drivers/char/tpm/tpm_i2c_nuvoton.c   | 3 ++-
->  drivers/char/tpm/tpm_ibmvtpm.c       | 6 ++++--
->  drivers/char/tpm/tpm_infineon.c      | 3 ++-
->  drivers/char/tpm/tpm_nsc.c           | 3 ++-
->  drivers/char/tpm/tpm_svsm.c          | 3 ++-
->  drivers/char/tpm/tpm_tis_core.c      | 3 ++-
->  drivers/char/tpm/tpm_tis_i2c_cr50.c  | 6 ++++--
->  drivers/char/tpm/tpm_vtpm_proxy.c    | 4 +++-
->  drivers/char/tpm/xen-tpmfront.c      | 3 ++-
->  17 files changed, 37 insertions(+), 19 deletions(-)
-> 
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 9ac9768cc8f7..7ac390ec89ce 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -87,7 +87,8 @@ struct tpm_class_ops {
->  	const u8 req_complete_val;
->  	bool (*req_canceled)(struct tpm_chip *chip, u8 status);
->  	int (*recv) (struct tpm_chip *chip, u8 *buf, size_t len);
-> -	int (*send) (struct tpm_chip *chip, u8 *buf, size_t len);
-> +	int (*send)(struct tpm_chip *chip, u8 *buf, size_t cmd_len,
-> +		    size_t buf_size);
+Hi,
 
-I'm sorry but now that I look at this, just for the sake of consistency:
+I'm preparing USB3 support for Apple Silicon Macs for upstreaming right
+now and this series is the first dependency. The Type-C PHY requires
+configuration values encoded in fuses for which we already have a
+driver.
+Unfortunately, the fuses on these machines are only accessibly as 32bit
+words but the Type-C PHY configuration values are individual bits which
+are sometimes spread across multiple fuses.
+Right now this is not supported by the nvmem core which only allows a
+subset of bits within the first byte to be exposed as a nvmem cell. This
+small series adds support for exposing arbitrary bits as nvmem cells.
 
-	int (*send)(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-		    size_t cmd_len);
+The second part of the series then adds the nvmem cells required for the
+Type-C PHY to our device trees. While it's technically independent I've
+included those changes in this series for context.
 
-I.e. match the order and parameter names from tpm_try_transmit().
+Best,
 
-BR, Jarkko
+Sven
+
+Signed-off-by: Sven Peter <sven@svenpeter.dev>
+---
+Janne Grunau (2):
+      Revert "nvmem: core: Print error on wrong bits DT property"
+      arm64: dts: apple: t8112: Add eFuses node
+
+R (1):
+      arm64: dts: apple: t600x: Add eFuses node
+
+Sven Peter (4):
+      nvmem: core: allow bit offset > 8
+      nvmem: core: round up to word_size
+      dt-bindings: nvmem: apple: Add T8112 compatible
+      arm64: dts: apple: t8103: Add eFuses node
+
+ .../devicetree/bindings/nvmem/apple,efuses.yaml    |   1 +
+ arch/arm64/boot/dts/apple/t600x-dieX.dtsi          | 187 +++++++++++++++++++++
+ arch/arm64/boot/dts/apple/t8103.dtsi               | 102 +++++++++++
+ arch/arm64/boot/dts/apple/t8112.dtsi               |  97 +++++++++++
+ drivers/nvmem/core.c                               |  24 +--
+ 5 files changed, 401 insertions(+), 10 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250508-nvmem-dt-de1a1842e883
+
+Best regards,
+-- 
+Sven Peter <sven@svenpeter.dev>
+
+
 
