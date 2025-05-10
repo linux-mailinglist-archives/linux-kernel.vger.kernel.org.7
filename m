@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-642587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F74AAB20BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:19:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87F5AB20B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B12E1C27786
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 409441C2752F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7AC265CD0;
-	Sat, 10 May 2025 01:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CE72641D8;
+	Sat, 10 May 2025 01:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MheHkrQy"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAHwqVpa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641CE26461D
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 01:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BE21F1507;
+	Sat, 10 May 2025 01:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746839937; cv=none; b=XbKgyEhh60aAA8mqi9DHqk7B/7xANQch2siJBfEDn1cND7mV/fChErAZVw6412AYz8JFDBfHAFjao/FfMy/yPdEkKuGp09utDv4KspodYzAPmEKGgt0G/Tb/ekV/TvK61pRojXcMhxdlLd2dtaZ0pj+2rOYXWLlWzjLdwOwBVhM=
+	t=1746839918; cv=none; b=qEJhq0okmLdZg1jUJpBfaNM7oKQBLiMOtbHlBwO7L7FYCMvy+v7E1bjQKnacdbhLX9KgkCEU1fwWqb/zTqrCscum/nJohxbCApj9C8QFn6VwqerijwtnCrP6SHQOJVJ8ehxjlUfY4lbaKqAGIaYYBEjTlx2WxztKdid+DmZp5Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746839937; c=relaxed/simple;
-	bh=MVFP26o3JRYFN82Czfr3I5Vz03DmDe+QuR/wItUQxJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qz9uPAUyogvNO4eFExxCUwaNhT5MVvgVg/Re3MwJ7V4Bl92yZlMC9V10XbXi4WA8o7x3ht1yqPHE5dIYncq2V2xTJhFP0Nj/4yCYj7ALwQuoRINeFmBuoAZTPT2nsINOCILcoRYAKAFBu0Wg0Cjth0xEU84VmG/tVH4VhPibGiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MheHkrQy; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so14167075e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 18:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746839933; x=1747444733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KcbRw7WL1aA35JdPyMCk8b9GQjgHfODnY0TIqzziuqQ=;
-        b=MheHkrQyzPmlA4cw86cfaAW1j+PbduiMU1qa+jj5wqDgJ+igMraQJ+5HTv6fBkf3JA
-         fHF5pgFMTGTB8JXQxvlO43drbRTbH2WLCdyDlZcpKnyhBxFBW7SQ+Xko+so7jZRueHHm
-         nUJdG7oFSG4xOzOwQyGhi/GDDx8XBb3esn/xove2co0OlcZAtXEvIxHIeAw+J4E6D9Rp
-         HzC2HOHBeyufvAaKChfvTvoJHPXXjR+W6GMwK9MSRYM1XfF++vMiyeqNHH9QtDhkBkSu
-         WCtxj8RInTlX9PmTbt7h/+7psnnm+gA40vomrvTR0JFFSJ5oGvJ9JRic+8Zr31r/jUb0
-         5EkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746839933; x=1747444733;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KcbRw7WL1aA35JdPyMCk8b9GQjgHfODnY0TIqzziuqQ=;
-        b=eu4PAkrDogEQXhRTL4dC5cHS6+9dp8pTGxC7jp5YjiLCM7+SeKvV5myYHo+4x/SAj9
-         Mx0lgufPYEPCYTO7m7stZYD86rNhCDlbG/CKSqZ/Qi5AT1RK5XgUoxs4Kpq97f3KeVZ0
-         iT4qB2O1y30WUQjXQMx5QW+R3A8R7GqNT6KkMoQa7tYAGM7/2k4pPQirlzNcSGfvpkZp
-         hjxDp8eahP2vWAtWUetSx0fG1CsQPDoL2gzeWjOduHvot2izfxrNeRUIGXBHPicTeA/k
-         TMw5J9ePvW5/xgMLNv9kfMgWgy9tE1DUCfYytSTJmRlBFrcsrTVDhSLwlV7iVP6vdEWl
-         si+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVozuaKTLhvHizMWlki7WG532596XemCpmVlqSak3/YznlrdT5Y/j7DNLcqhKkljwKfLwzJtB8Zm/vA+sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRTNgWmEcADsdjQlRVU/TvbqhapTOO1bgwSQ74woKRBLZF1UbY
-	2ADXNFZhXSh/4x8Tu/hdPyzBfxXAEGp6892MwRFJxu8n1ekwedh0
-X-Gm-Gg: ASbGncvtDDANJXDxTe5ZNwPFd7UsNLwm6cNMxMSmuyUgRCOFlb/GECfu/+fzeeva4pk
-	6OCLEnwE0adMX1lPt2Wm3IyZvJlFb6X1rV9T6pQ1ZGJJXrHO0cXbr0f1XOWboPMHPMP951uEgOX
-	IJomBIkJ/qWZTAS4/0TuOQn5qgj5Jy/nWBOIeywetgIC4L+sESeZFU8Er91ioTgqR7ZHwXf7PHE
-	/Xrcto78KE6W9ToTR1IFCMtxRMWdd5WuA+GKnJmtBzkQFQp0++fL3naVOlaudjf2Q7w5bRdJiAC
-	w3JsTpMa5JbQVZspGpk//oGLbD6xW9M4FyvqpiqQJO+zNDysfDZsyQ4AVbQJvoe+dRjtD4w=
-X-Google-Smtp-Source: AGHT+IHslDelJiKBr0u5zFkfUSe0cpcfUyw7dLCX3sH7zQ7C2K0jEXgxo60/V/aqM7KalwC2bIriTg==
-X-Received: by 2002:a05:600c:8207:b0:43c:ee62:33f5 with SMTP id 5b1f17b1804b1-442d6ddcf2dmr42021515e9.27.1746839933274;
-        Fri, 09 May 2025 18:18:53 -0700 (PDT)
-Received: from localhost.localdomain ([176.206.99.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f0easm86967305e9.12.2025.05.09.18.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 18:18:53 -0700 (PDT)
-From: Denis Benato <benato.denis96@gmail.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Shawn Guo <shawnguo@kernel.org>,
+	s=arc-20240116; t=1746839918; c=relaxed/simple;
+	bh=yWNHjmwW9VsY6glrAg1UgBAK/oAU6eV1FZfNUgwyLLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t62a2ap2CazhQEPuFZTp0Et/WwmJuDwnayAxYQQhM9vWDiAv6JnY8PlOa7zE8rSPVVIBHrxml2ZUhditAi7C3o+u9MvZaR570iHxHJQyRmPYDLPCcHcQ60j5j3rmmLLCY5UCCEQ2NkT21E4rKB88cVdVfWCpYr8BDUt9/GG6CrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAHwqVpa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89254C4CEE4;
+	Sat, 10 May 2025 01:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746839918;
+	bh=yWNHjmwW9VsY6glrAg1UgBAK/oAU6eV1FZfNUgwyLLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CAHwqVpa+OPmYTeTOF3uAZyF2H4hAXRZ1spCaoMTnfu37b4Ot7eoz179At92w6cNg
+	 jyHcLdEd8j3OBko28P1K7y4ea0boGTCzuhXLY/4N7cqoK5C6+YLjZ9Jmf+RKAen6di
+	 e620rxLGMKANV5f/Uw9oYzjmygvGzy4ESypigdBGspB2jeJdtrTuNllH3yIN4xNLCp
+	 o0Ij64Qynas8CmeOW3wCqcu3zf6n8yChNQCrqHxdAzM5HaEU8/Klrf4c5kTjouyjb9
+	 ZnfJN+7lIQyTj0kN58918DGD6ZYGPKG7x+dPNariC5nDbWkJqHDIu3OH3fAmnzLUnv
+	 U3kRJ+ceZQY6A==
+Date: Sat, 10 May 2025 10:18:35 +0900
+From: Mark Brown <broonie@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Denis Benato <benato.denis96@gmail.com>
-Subject: [PATCH 3/3] ARM: imxrt_defconfig: define CONFIG_ARCH_NXP
-Date: Sat, 10 May 2025 03:18:06 +0200
-Message-ID: <20250510011806.13470-4-benato.denis96@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250510011806.13470-1-benato.denis96@gmail.com>
-References: <20250510011806.13470-1-benato.denis96@gmail.com>
+	Fabio Estevam <festevam@gmail.com>, larisa.grigore@nxp.com,
+	arnd@linaro.org, andrei.stefanescu@nxp.com,
+	dan.carpenter@linaro.org, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Andra-Teodora Ilie <andra.ilie@nxp.com>,
+	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+Subject: Re: [PATCH 10/14] spi: spi-fsl-dspi: Enable modified transfer
+ protocol
+Message-ID: <aB6pa9m0emX2vMH8@finisterre.sirena.org.uk>
+References: <20250509-james-nxp-spi-v1-0-32bfcd2fea11@linaro.org>
+ <20250509-james-nxp-spi-v1-10-32bfcd2fea11@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eHDy/O/wzZPE7H4n"
+Content-Disposition: inline
+In-Reply-To: <20250509-james-nxp-spi-v1-10-32bfcd2fea11@linaro.org>
+X-Cookie: Well begun is half done.
 
-Define CONFIG_ARCH_NXP so that CONFIG_ARCH_MXC won't be disabled
-as it depends on CONFIG_ARCH_NXP.
 
-Signed-off-by: Denis Benato <benato.denis96@gmail.com>
----
- arch/arm/configs/imxrt_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+--eHDy/O/wzZPE7H4n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/configs/imxrt_defconfig b/arch/arm/configs/imxrt_defconfig
-index 52dba3762996..7cc1555c0231 100644
---- a/arch/arm/configs/imxrt_defconfig
-+++ b/arch/arm/configs/imxrt_defconfig
-@@ -2,6 +2,7 @@
- CONFIG_BPF_SYSCALL=y
- CONFIG_SCHED_AUTOGROUP=y
- # CONFIG_MMU is not set
-+CONFIG_ARCH_NXP=y
- CONFIG_ARCH_MXC=y
- CONFIG_SOC_IMXRT=y
- CONFIG_SET_MEM_PARAM=y
--- 
-2.49.0
+On Fri, May 09, 2025 at 12:05:57PM +0100, James Clark wrote:
+> From: Andra-Teodora Ilie <andra.ilie@nxp.com>
+>=20
+> Set MTFE bit in MCR register for frequencies higher than 25MHz.
 
+Is this a bug fix?
+
+--eHDy/O/wzZPE7H4n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgeqWoACgkQJNaLcl1U
+h9ATVQf/ViujQ6wWUrilRw8LqA2oeHPk8LhY8ucw+I5me7zj0rDL8yKoaeNZtjCH
++wT0CIW70XthMVfnFJOXemdqWwGXOyy46igADLMlMDSo7YB04rzabrpjH2CPrg6b
+SY99Rj5KOB9t8l+LRSpmDTwGwAnL8HXXNzPrT8pG/MC28XA+ISE7XBvSSW/5cSZL
+Zih0iT1J6H4LuAWqbWXPU4s0OeutaTDwBvGhaP4JZhgrFc8r3jUoaZoDedIoM6rP
+m7WV4Bb8KDWOPMBMa41Hl/xMr7YwTlCBGe4L/E1qxFNHnstcicFvF6vclJ6JIl8C
+zkFVj+hpbFd5F2fRz5RHJm2blPrUpg==
+=9NmH
+-----END PGP SIGNATURE-----
+
+--eHDy/O/wzZPE7H4n--
 
