@@ -1,216 +1,122 @@
-Return-Path: <linux-kernel+bounces-642611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F41CAB210D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 05:31:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C674CAB210F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 05:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1113A1B95
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172503AE10E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCB818DF89;
-	Sat, 10 May 2025 03:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F7719EEBF;
+	Sat, 10 May 2025 03:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IroJaUro"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3187BA27
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IMZspYA7"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD8519C556
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746847864; cv=none; b=azDfbsjkSgeTdsFXXI81pq2Uq+ahlrONenF9v+ayZ7kgcUlmKBBEGiJ1fkRoHHQMLhuHAJiU6rKjKxkNzkmae0FnqHzqRvmTM3+HL9DlDjBQAs4/oFO5567UJgWLY6h4/BnQ9oBXrglE6k8xZ1brRnLzh908m9q6FXvLMxdeyaM=
+	t=1746848177; cv=none; b=HjdWWMub6VTerUn2xhRHfGdI6Xksbw0D0rMtWk+tT9fCYJGPUhjbR1pP7Au0iHhmNhg3WmDG95WpFq4u7RZzyR4dGblEkk5bOsHnpX9rC9YhLUVmewKcQ1aqA3SVVFGfST4JT3fdEmCpJMbZykW+tWO0627sCZXkOZcQCoaeZvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746847864; c=relaxed/simple;
-	bh=yHfPpaz4WoW4QV4ea/eBvd8nOOUC0mPFz2ZVber3AiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qIvWuxgzNNY5sDVs9KPg+WG62KztH5tZtvc2fJcsDjWUmaIjleCreu2QeI+yR13lyQSSAza4j75NBEanbBgSdu4DtOXhm1+pEAbEkf0iH6YPbxSqE5nLd3HXuvOwko7YxQQk5rfp/dMlz8zcdARPKbYT0ZNGIz6zQ9JyX/PrXkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IroJaUro; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47666573242so154701cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 20:31:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746847861; x=1747452661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cxC/mzAUv+WLp2bqkAOe0LlzGx41xiGaA3xtnTEbHto=;
-        b=IroJaUroZMys92oeSLp/kqvR+s43FVJsOaRUw03ZebWnvEkjHlcKw2TPnXTG6R+9H7
-         2mEA4EhkcGzLH52PCiQM6PS021HIPucdxnHahDj2SclXFNEhXI3J30/RcquCi/mWhXpc
-         1pHAjrdt5MjUuHzfO9k6qLc8yQgMP3cGc4vkzAlCx2igv96J/CYy52cTe8D7k1PVlN7U
-         aJtEI9h3A5otQowg4PSEY7zmHw1YsauUmXFPel6ClQa1B7AlmAjOOSnm4nAvFN2SRwVV
-         Iv0hJBISHV0GFKBB8lGr8KRm60vOxdlLU0tS95Qrpyiti/c6LnadVEiVNXYHejR51fiz
-         s+Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746847861; x=1747452661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cxC/mzAUv+WLp2bqkAOe0LlzGx41xiGaA3xtnTEbHto=;
-        b=FQ58AWc8m/bwtXK0I//yWPAl/+hsFzOqXoFD9vDP43x1VvVwOki4H57gNZ/Z/MK6Hh
-         lHIEqxrjjJnRIzr70LmcsSwRGHdHnIUl/SSSWLf+GESs11iz1yoW3viCz+c4/Xyn/4c/
-         0upHt28llOk+6vzjPeX/BIscvv9FRHPkNji66QI2BvJtWk7+nWY4PdNW16CUbvvi4r/v
-         COaRinbm4CFV8Akt5ZUwN9p8FwJAvz3em9ZbHwoG2TAGXq1X5eNbS0YT8kgQzw1/9sfw
-         hdrV30f1Nvs9yWYWKnSfaD/q4jt9JKjuYkDoLdjOMcW70qzvbTOD1mEWn1gxN30hnl/8
-         HWog==
-X-Forwarded-Encrypted: i=1; AJvYcCXZQLFUFtu3pVgFOX+bIoyUU1/3ICUvqbM/oQEno0tYp8wDLeJbps5r4+w/TRJ3OD1hjL42AUimfiiC54A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMz2S5ZycgHUvt2pDVmJEAkiWdI0GAwJ9KLlWQEXocWtQIF+PF
-	c0bYf/czf/7eem3DO/qyiWvvQseVKf18gKN8d7em0WQ/8hv8mS+VP9SYAWVKahMRP/FtiSuELgu
-	42aqdnruvGFcZOEHSK3JXT+r4HPiPWgiXiuaG
-X-Gm-Gg: ASbGncugtnc5TlkwEz3/NIOmBkJesRR2asatDkrj2xUu5B3g1UH9wv2FJVTzBV/JF49
-	YZMq/+9r2kqGF9Zc02F693vi9jb48+pmMiAspTM6pvIdep7slfN/M3Xf8liQCTe1cuSIwWt6qf2
-	EqDgdoKH7YNv0AFAj3kmEcKs1POHb/Y/8=
-X-Google-Smtp-Source: AGHT+IFGMaC9OqkxFNOPZKLQA5bM+AqNuwWWMAveWL+IGAFF7qDQwggjNqRbcq9N+nQeXDrOPW2xGU801kG98ywgtGo=
-X-Received: by 2002:a05:622a:54e:b0:467:8416:d99e with SMTP id
- d75a77b69052e-49462f90a7bmr1032861cf.21.1746847861271; Fri, 09 May 2025
- 20:31:01 -0700 (PDT)
+	s=arc-20240116; t=1746848177; c=relaxed/simple;
+	bh=90SklKXFWqF5yabT/MHUzKHcwbxe9jbWkHzVLaV2rQ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=R4kbdpOrtVs1gj6xqdeH245RuskaBlw81FgRtixYaKaYTruMx8v9/11oJZIHwLF4sO34riJamFZBxtImnQve3gJs+HFfa1DZa0zd4bCmKzrMIH28JQ4NSUhH5Cud8JGI9s0cQHYQnXZThuTsrC8uyOo/cGhzf8kYCWvslp7scWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IMZspYA7; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=90SklKXFWqF5yabT/MHUzKHcwbxe9jbWkHzVLaV2rQ4=; b=I
+	MZspYA7CKGyBpyUpunt1oHmohNU8QGVZkHBzgmfD0Iwq43ahcLhf2o2eRV1kXr+1
+	fC5I0CEMXo20qjEL4j7Pe2BMG0yAXxSqKU0dy2eO7/4UhJ5oKVIFQhwbUtH+LRoE
+	bsS7TU3ILPdtxtWtdQpA0ISSAqzpmgXm8Re+uQK3Uw=
+Received: from 00107082$163.com ( [111.35.191.17] ) by
+ ajax-webmail-wmsvr-40-128 (Coremail) ; Sat, 10 May 2025 11:35:47 +0800
+ (CST)
+Date: Sat, 10 May 2025 11:35:47 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Tim Chen" <tim.c.chen@linux.intel.com>
+Cc: "Suren Baghdasaryan" <surenb@google.com>, kent.overstreet@linux.dev,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/2] alloc_tag: keep codetag iterator active between
+ read() calls
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <294d0743c0b2e5c409857ef81a6fe8baaf87727f.camel@linux.intel.com>
+References: <20250507175500.204569-1-00107082@163.com>
+ <20250509173929.42508-1-00107082@163.com>
+ <7f237574d9f08a9fa8dcaa60d2edf8d8e91441d4.camel@linux.intel.com>
+ <CAJuCfpHB8T8daanvE_wowRD9-sAo30rtCcFfMPZL_751+KSs5w@mail.gmail.com>
+ <294d0743c0b2e5c409857ef81a6fe8baaf87727f.camel@linux.intel.com>
+X-NTES-SC: AL_Qu2fBPSft0kv4SSYYOkZnEYQheY4XMKyuPkg1YJXOp80liTj+QsqeHJmM2fy0MWCMhmgvRWIThZo2P9Ff7J6UbI9cYWZ5Z7tgSJZMW1ehqq3
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507175500.204569-1-00107082@163.com> <20250509173929.42508-1-00107082@163.com>
- <7f237574d9f08a9fa8dcaa60d2edf8d8e91441d4.camel@linux.intel.com>
- <CAJuCfpHB8T8daanvE_wowRD9-sAo30rtCcFfMPZL_751+KSs5w@mail.gmail.com>
- <294d0743c0b2e5c409857ef81a6fe8baaf87727f.camel@linux.intel.com>
- <CAJuCfpF=u-LpR6S+XmwPe8a6h4knzP2Nu5WFp=Rdvqa14vOzDA@mail.gmail.com>
- <CAJuCfpFLqTR=KfkstR-iRQvE7ZQMsr9=jXj6C4VdFq-Ebq6mvQ@mail.gmail.com> <3cbaf905.ef7.196b82bdcc9.Coremail.00107082@163.com>
-In-Reply-To: <3cbaf905.ef7.196b82bdcc9.Coremail.00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 9 May 2025 20:30:50 -0700
-X-Gm-Features: AX0GCFsQsRL9ga96UAA-qchFPMnhNROUHcHBnwyvG4zLqJF0vdTeFZc6RBnaKRU
-Message-ID: <CAJuCfpHuYHJh6yM+na0WLi3Lb910m73Xth8N3ZBnJKpAW5Qxww@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] alloc_tag: keep codetag iterator active between
- read() calls
-To: David Wang <00107082@163.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, kent.overstreet@linux.dev, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <c48b719.112d.196b84367d1.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:gCgvCgD3f+STyR5oqC0BAA--.7114W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gxJqmgexcNK8QACs0
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, May 9, 2025 at 8:10=E2=80=AFPM David Wang <00107082@163.com> wrote:
->
->
-> At 2025-05-10 05:15:43, "Suren Baghdasaryan" <surenb@google.com> wrote:
-> >On Fri, May 9, 2025 at 1:46=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >>
-> >> On Fri, May 9, 2025 at 12:46=E2=80=AFPM Tim Chen <tim.c.chen@linux.int=
-el.com> wrote:
-> >> >
-> >> > On Fri, 2025-05-09 at 12:36 -0700, Suren Baghdasaryan wrote:
-> >> > > On Fri, May 9, 2025 at 11:33=E2=80=AFAM Tim Chen <tim.c.chen@linux=
-.intel.com> wrote:
-> >> > > >
-> >> > > > On Sat, 2025-05-10 at 01:39 +0800, David Wang wrote:
-> >> > > > >
-> >> > > > >
-> >> > > > > Signed-off-by: David Wang <00107082@163.com>
-> >> > >
-> >> > > Acked-by: Suren Baghdasaryan <surenb@google.com>
-> >> > >
-> >> > > > > ---
-> >> > > > >  lib/alloc_tag.c | 29 ++++++++++-------------------
-> >> > > > >  1 file changed, 10 insertions(+), 19 deletions(-)
-> >> > > > >
-> >> > > > > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> >> > > > > index 25ecc1334b67..fdd5887769a6 100644
-> >> > > > > --- a/lib/alloc_tag.c
-> >> > > > > +++ b/lib/alloc_tag.c
-> >> > > > > @@ -45,21 +45,16 @@ struct allocinfo_private {
-> >> > > > >  static void *allocinfo_start(struct seq_file *m, loff_t *pos)
-> >> > > > >  {
-> >> > > > >       struct allocinfo_private *priv;
-> >> > > > > -     struct codetag *ct;
-> >> > > > >       loff_t node =3D *pos;
-> >> > > > >
-> >> > > > > -     priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
-> >> > > > > -     m->private =3D priv;
-> >> > > > > -     if (!priv)
-> >> > > > > -             return NULL;
-> >> > > > > -
-> >> > > > > -     priv->print_header =3D (node =3D=3D 0);
-> >> > > > > +     priv =3D (struct allocinfo_private *)m->private;
-> >> > > > >       codetag_lock_module_list(alloc_tag_cttype, true);
-> >> > > > > -     priv->iter =3D codetag_get_ct_iter(alloc_tag_cttype);
-> >> > > > > -     while ((ct =3D codetag_next_ct(&priv->iter)) !=3D NULL &=
-& node)
-> >> > > > > -             node--;
-> >> > > > > -
-> >> > > > > -     return ct ? priv : NULL;
-> >> > > > > +     if (node =3D=3D 0) {
-> >> > > > > +             priv->print_header =3D true;
-> >> > > > > +             priv->iter =3D codetag_get_ct_iter(alloc_tag_ctt=
-ype);
-> >> > > > > +             codetag_next_ct(&priv->iter);
-> >> > > > > +     }
-> >> > > >
-> >> > > > Do you need to skip print header when *pos !=3D 0? i.e add
-> >> > >
-> >> > > Technically not needed since proc_create_seq_private() allocates
-> >> > > seq->private using kzalloc(), so the initial value of
-> >> > > priv->print_header is always false.
-> >> >
-> >> > But we'll start with first call to allocinfo_start() with *pos =3D=
-=3D 0,
-> >>
-> >> Usually but not always if we do lseek() to a non-zero position beforeh=
-and.
-> >
-> >Actually, this change will break the lseek() case. We can't always
-> >assume that we start reading from *pos =3D=3D 0. Current patch will fail
-> >to initialize priv if we start reading with *pos !=3D 0.
-> >priv->iter should be tracking current position and allocinfo_start()
-> >should detect a mismatch between *pos and iter->pos and re-walk the
-> >tags if there was a position change.
->
-> seq_file works line by line,  I think even if it support lseek, seq_file =
-would still start with line #0,
-> since seq_file have on clue the byte size for each line.
->
-> I will check the code,  make some tests and update later.
+CkF0IDIwMjUtMDUtMTAgMDM6NDY6MDYsICJUaW0gQ2hlbiIgPHRpbS5jLmNoZW5AbGludXguaW50
+ZWwuY29tPiB3cm90ZToKPk9uIEZyaSwgMjAyNS0wNS0wOSBhdCAxMjozNiAtMDcwMCwgU3VyZW4g
+QmFnaGRhc2FyeWFuIHdyb3RlOgo+PiBPbiBGcmksIE1heSA5LCAyMDI1IGF0IDExOjMz4oCvQU0g
+VGltIENoZW4gPHRpbS5jLmNoZW5AbGludXguaW50ZWwuY29tPiB3cm90ZToKPj4gPiAKPj4gPiBP
+biBTYXQsIDIwMjUtMDUtMTAgYXQgMDE6MzkgKzA4MDAsIERhdmlkIFdhbmcgd3JvdGU6Cj4+ID4g
+PiAKPj4gPiA+IAo+PiA+ID4gU2lnbmVkLW9mZi1ieTogRGF2aWQgV2FuZyA8MDAxMDcwODJAMTYz
+LmNvbT4KPj4gCj4+IEFja2VkLWJ5OiBTdXJlbiBCYWdoZGFzYXJ5YW4gPHN1cmVuYkBnb29nbGUu
+Y29tPgo+PiAKPj4gPiA+IC0tLQo+PiA+ID4gIGxpYi9hbGxvY190YWcuYyB8IDI5ICsrKysrKysr
+KystLS0tLS0tLS0tLS0tLS0tLS0tCj4+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlv
+bnMoKyksIDE5IGRlbGV0aW9ucygtKQo+PiA+ID4gCj4+ID4gPiBkaWZmIC0tZ2l0IGEvbGliL2Fs
+bG9jX3RhZy5jIGIvbGliL2FsbG9jX3RhZy5jCj4+ID4gPiBpbmRleCAyNWVjYzEzMzRiNjcuLmZk
+ZDU4ODc3NjlhNiAxMDA2NDQKPj4gPiA+IC0tLSBhL2xpYi9hbGxvY190YWcuYwo+PiA+ID4gKysr
+IGIvbGliL2FsbG9jX3RhZy5jCj4+ID4gPiBAQCAtNDUsMjEgKzQ1LDE2IEBAIHN0cnVjdCBhbGxv
+Y2luZm9fcHJpdmF0ZSB7Cj4+ID4gPiAgc3RhdGljIHZvaWQgKmFsbG9jaW5mb19zdGFydChzdHJ1
+Y3Qgc2VxX2ZpbGUgKm0sIGxvZmZfdCAqcG9zKQo+PiA+ID4gIHsKPj4gPiA+ICAgICAgIHN0cnVj
+dCBhbGxvY2luZm9fcHJpdmF0ZSAqcHJpdjsKPj4gPiA+IC0gICAgIHN0cnVjdCBjb2RldGFnICpj
+dDsKPj4gPiA+ICAgICAgIGxvZmZfdCBub2RlID0gKnBvczsKPj4gPiA+IAo+PiA+ID4gLSAgICAg
+cHJpdiA9IGt6YWxsb2Moc2l6ZW9mKCpwcml2KSwgR0ZQX0tFUk5FTCk7Cj4+ID4gPiAtICAgICBt
+LT5wcml2YXRlID0gcHJpdjsKPj4gPiA+IC0gICAgIGlmICghcHJpdikKPj4gPiA+IC0gICAgICAg
+ICAgICAgcmV0dXJuIE5VTEw7Cj4+ID4gPiAtCj4+ID4gPiAtICAgICBwcml2LT5wcmludF9oZWFk
+ZXIgPSAobm9kZSA9PSAwKTsKPj4gPiA+ICsgICAgIHByaXYgPSAoc3RydWN0IGFsbG9jaW5mb19w
+cml2YXRlICopbS0+cHJpdmF0ZTsKPj4gPiA+ICAgICAgIGNvZGV0YWdfbG9ja19tb2R1bGVfbGlz
+dChhbGxvY190YWdfY3R0eXBlLCB0cnVlKTsKPj4gPiA+IC0gICAgIHByaXYtPml0ZXIgPSBjb2Rl
+dGFnX2dldF9jdF9pdGVyKGFsbG9jX3RhZ19jdHR5cGUpOwo+PiA+ID4gLSAgICAgd2hpbGUgKChj
+dCA9IGNvZGV0YWdfbmV4dF9jdCgmcHJpdi0+aXRlcikpICE9IE5VTEwgJiYgbm9kZSkKPj4gPiA+
+IC0gICAgICAgICAgICAgbm9kZS0tOwo+PiA+ID4gLQo+PiA+ID4gLSAgICAgcmV0dXJuIGN0ID8g
+cHJpdiA6IE5VTEw7Cj4+ID4gPiArICAgICBpZiAobm9kZSA9PSAwKSB7Cj4+ID4gPiArICAgICAg
+ICAgICAgIHByaXYtPnByaW50X2hlYWRlciA9IHRydWU7Cj4+ID4gPiArICAgICAgICAgICAgIHBy
+aXYtPml0ZXIgPSBjb2RldGFnX2dldF9jdF9pdGVyKGFsbG9jX3RhZ19jdHR5cGUpOwo+PiA+ID4g
+KyAgICAgICAgICAgICBjb2RldGFnX25leHRfY3QoJnByaXYtPml0ZXIpOwo+PiA+ID4gKyAgICAg
+fQo+PiA+IAo+PiA+IERvIHlvdSBuZWVkIHRvIHNraXAgcHJpbnQgaGVhZGVyIHdoZW4gKnBvcyAh
+PSAwPyBpLmUgYWRkCj4+IAo+PiBUZWNobmljYWxseSBub3QgbmVlZGVkIHNpbmNlIHByb2NfY3Jl
+YXRlX3NlcV9wcml2YXRlKCkgYWxsb2NhdGVzCj4+IHNlcS0+cHJpdmF0ZSB1c2luZyBremFsbG9j
+KCksIHNvIHRoZSBpbml0aWFsIHZhbHVlIG9mCj4+IHByaXYtPnByaW50X2hlYWRlciBpcyBhbHdh
+eXMgZmFsc2UuCj4KPkJ1dCB3ZSdsbCBzdGFydCB3aXRoIGZpcnN0IGNhbGwgdG8gYWxsb2NpbmZv
+X3N0YXJ0KCkgd2l0aCAqcG9zID09IDAswqAKPnRoZW4gcHJpbnRfaGVhZGVyIHdpbGwgYmUgaW5p
+dGlhbGl6ZWQgdG8gdHJ1ZS4KPldpbGwgdGhlcmUgYmUgc3Vic2VxdWVudCBjYWxscyBvZiBhbGxv
+Y2luZm9fc3RhcnQoKSB3aXRoICpwb3MgIT0wLAo+YnV0IHByaXYtPnByaW50X2hlYWRlciBzdGF5
+cyBhdCAwPyAKCkhlYWRlciBvbmx5IG5lZWRzIHRvIGJlIHByaW50ZWQgYXQgbGluZSAjMDoKTm9y
+bWFsIHNlcV9maWxlIG9wZXJhdGVzOwogICAgc3RhcnQoMCkKICAgIHNob3coMCkgICA8LS0tcHJp
+bnQgaGVhZGVyIGhlcmUKICAgIHNob3coMSkKICAgIHN0b3AoKQogICAgc3RhcnQoMikgICA8LS0t
+LW5vIG5lZWQgdG8gcHJpbnQgaGVhZGVyCiAgICBzaG93KDIpCiAgICBzaG93KDMpCiAgIC4uLgoK
+SWYgc3RhcnQoMCkvc2hvdygwKSBoYXBwZW5lZCB0d2ljZSwgdHdvIGhlYWRlciB3b3VsZCBiZSBw
+cmludGVkOyBvciBpZiB0aGVyZSBpcyBubyBzdGFydCgwKSBub3RoaW5nIHdvdWxkIGJlIHByaW50
+ZWQuCklmIHRob3NlIHR3byBzY2VuYXJpbyBoYXBwZW5zLCAgSSB0aGluayBpdCBpcyBhIGJ1ZyBp
+biBzZXFfZmlsZS4KClRoYW5rcwpEYXZpZAogCgo+Cj5UaW0KPj4gCj4+ID4gCj4+ID4gICAgICAg
+ICB9IGVsc2Ugewo+PiA+ICAgICAgICAgICAgICAgICBwcml2LT5wcmludF9oZWFkZXIgPSBmYWxz
+ZTsKPj4gPiAgICAgICAgIH0KPj4gPiAKPj4gPiBUaW0KPj4gPiAKPj4gPiA+ICsgICAgIHJldHVy
+biBwcml2LT5pdGVyLmN0ID8gcHJpdiA6IE5VTEw7Cj4+ID4gPiAgfQo+PiA+ID4gCj4+ID4gCg==
 
-Ah, yes. You are correct.
-seq_lseek() will traverse restarting from 0:
-https://elixir.bootlin.com/linux/v6.14.6/source/fs/seq_file.c#L323.
-Position jumps are similarly handled with traversal from 0:
-https://elixir.bootlin.com/linux/v6.14.6/source/fs/seq_file.c#L194.
-
->
->
-> >
-> >>
-> >> > then print_header will be initialized to true.
-> >>
-> >> After the first call to allocinfo_show() print_header will be reset
-> >> back to false.
-> >>
-> >> > Will there be subsequent calls of allocinfo_start() with *pos !=3D0,
-> >> > but priv->print_header stays at 0?
-> >>
-> >> Yes, there will be subsequent calls to allocinfo_start() with *pos !=
-=3D0
-> >> and priv->print_header=3Dfalse, which is what we want, right? We want =
-to
-> >> print the header only at the beginning of the file (node =3D=3D 0).
-> >>
-> >> >
-> >> > Tim
-> >> > >
-> >> > > >
-> >> > > >         } else {
-> >> > > >                 priv->print_header =3D false;
-> >> > > >         }
-> >> > > >
-> >> > > > Tim
-> >> > > >
-> >> > > > > +     return priv->iter.ct ? priv : NULL;
-> >> > > > >  }
-> >> > > > >
-> >> > > >
-> >> >
 
