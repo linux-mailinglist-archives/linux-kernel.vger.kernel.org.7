@@ -1,63 +1,79 @@
-Return-Path: <linux-kernel+bounces-642672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51097AB21D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:53:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A926AB21E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13D91BA204D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:53:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9DA44C6A5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D40B1E7C02;
-	Sat, 10 May 2025 07:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774A91EB190;
+	Sat, 10 May 2025 07:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Zh74CPPy"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="A4y1uzHW"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66932E401;
-	Sat, 10 May 2025 07:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E581E7C16;
+	Sat, 10 May 2025 07:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746863616; cv=none; b=LQDaipmeXuiXlbV0BWEyebGK7cLQg0zweXHjVjLCZoXNu7L9ixa6wIKxHye+Ttp9zUirkh0/xmYAIPQWEOSDnwgXTTePNQtYPW9aQlRXZvfOXq6MVi3AkMFzK232Ca9YPq3CEL9HLQIH6vex7MIXHkPkWhD63wipuAIOOu9H0hw=
+	t=1746863906; cv=none; b=YPpLHC/IwHT+M8mlmrFJSDtkGZiqzrDnwGMeSOIWHQcnNakplM7ktUC62wLDHxiaQIZK5sPaQ7FKWlBlUi33FUC5E44+aXOB4BZueaap45HWMiSiwjgF0M3MjzGSSh6lR5a/hgHZYUVTxzY8t7crjHMkn2qHxtakw9NorFqD0Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746863616; c=relaxed/simple;
-	bh=oJREma6J7hcfGwjgy7lv6qM1wLUpD8zhJ0GVqc+khVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bM7ggkOMxc9iExoQgPWlC+a2L7213ZaLi1pJLF/m/NHS8XfEcfyWO1rZSYRFYFlFpBItVPIC3Aay8mKBMWGCxNM/WputfwD/WdTk3sw5JuYx0M5DKuwBM8uPPr9y4Qem57Hhj9t0cp5otRPT0WoURiLAcjHrDYqrCUuzgd51yNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Zh74CPPy; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 194F525F3D;
-	Sat, 10 May 2025 09:53:25 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id KZGqBqejas4K; Sat, 10 May 2025 09:53:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746863604; bh=oJREma6J7hcfGwjgy7lv6qM1wLUpD8zhJ0GVqc+khVo=;
-	h=From:To:Cc:Subject:Date;
-	b=Zh74CPPyoh9D7+lMgkqcxGni/Ama8qPHgkp8CW+MExpCgEMsNOSSq3jguj6UXSYWS
-	 +GoYIvBxE4/jSnPisVLioL85+YADSekcrJkBZnhZxhR+XdMSCbWLHcTD0nYhMvvs/K
-	 8XkNsERLGrZiWogGnos3dEi4+tedx6iFBsCPEEFBq2F4/7uE88ijMSJAdWy4o6Bb0n
-	 dFql4uNyHQnAIGgyQDNeZ1jKb+ayS7oItIULNv25AwJ4qa5VH7Q7XWXooXN04aBiyA
-	 DVW9ZjDp2EYcJznABxckPHr4meR5pN9gRASxxXIw7syioHbpcC4759kLhCyT4iADKO
-	 PRSSA3DIuankw==
-From: Yao Zi <ziyao@disroot.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Yao Zi <ziyao@disroot.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: rockchip: Pass NULL as reg pointer when registering GRF MMC clocks
-Date: Sat, 10 May 2025 07:52:49 +0000
-Message-ID: <20250510075248.34006-2-ziyao@disroot.org>
+	s=arc-20240116; t=1746863906; c=relaxed/simple;
+	bh=yxv/GjyWDEcJCRPXJk9IZ8r+FuVV8riWGZpFdwWIz8o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LXj+z7meYB5zOwFSsoO/Ta7Fu6KLwqDaAH6YXQgJqCGhn66lsZrGCxpNBYj/wLNXkomJIu1FhosGxTSxUry4FJJVxe6q8h5vvUQpam4U1523ecLt7MpaafDhPboSsqePw3mbw5klTl5faaT5bDEKc2TWCQwZuSHHZh/KaO6GWKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=A4y1uzHW; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8852802a2d7411f0813e4fe1310efc19-20250510
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=6agtWIXbJmUtcrx4iD0m4JDURbIUkZ7GY6LMdZCpjis=;
+	b=A4y1uzHWf0jek4MJPav62tw+95kFtKngbt/N7z4MxBM3TcTPYe1dW1ItiV39S43ZEkFajFP8KBfalkAM27+W0Xemc6Ql8rzz3WEzHOD2DvSZAN08PFK8Gbt4puexsKKY7GZHsUBQ0UmatHPA49ppdurRhS1CM4bm4OwKcWOPTg0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:90c1b08a-982d-43bd-b094-acf476a1c58e,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:ffcc5e51-76c0-4e62-bb75-246dfb0889c6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
+	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-UUID: 8852802a2d7411f0813e4fe1310efc19-20250510
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1686562588; Sat, 10 May 2025 15:58:17 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Sat, 10 May 2025 15:58:14 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Sat, 10 May 2025 15:58:13 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, Yunfei
+ Dong <yunfei.dong@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH 00/14] media: mediatek: vcodec: support video decoder in mt8196
+Date: Sat, 10 May 2025 15:53:30 +0800
+Message-ID: <20250510075357.11761-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,32 +81,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-This corrects the type and suppresses sparse warnings about passing
-plain integers as NULL pointer.
+Using vcp micro processor to support video decoder in mt8196 platform,
+need to add new firmware interface to communicate with vcp in kernel
+side. Then add mt8196 compatible, codec levels/profiles and private data.
+Re-write av1 driver to support extend vsi struct, then change irq table
+and cdf table size.
 
-Fixes: 621ba4d9f6db ("clk: rockchip: Support MMC clocks in GRF region")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505100302.YVtB1zhF-lkp@intel.com/
-Signed-off-by: Yao Zi <ziyao@disroot.org>
+This patch set depends on "Add VCP support for mt8196"[1]
+
+[1] https://patchwork.kernel.org/project/linux-remoteproc/patch/20250402092134.12293-2-xiangzhi.tang@mediatek.com/
 ---
- drivers/clk/rockchip/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yunfei Dong (14):
+  dt-bindings: media: mediatek: vcodec: add decoder dt-bindings for
+    mt8196
+  media: mediatek: vcodec: add decoder compatible to support mt8196
+  media: mediatek: vcodec: add driver to support vcp
+  media: mediatek: vcodec: add driver to support vcp encoder
+  media: mediatek: vcodec: get different firmware ipi id
+  media: mediatek: vcodec: get share memory address
+  media: mediatek: vcodec: define MT8196 vcodec levels.
+  media: mediatek: vcodec: support vcp architecture
+  media: mediatek: vcodec: support 36bit iova address
+  media: mediatek: vcodec: clean xpc status
+  media: mediatek: vcodec: add debug information
+  media: mediatek: vcodec: send share memory address to vcp
+  media: mediatek: decoder: fill av1 buffer size with picinfo
+  media: mediatek: decoder: support av1 extend vsi
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 43d7ed5c3418..805ab4a6f7e0 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -622,7 +622,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
- 			clk = rockchip_clk_register_mmc(
- 				list->name,
- 				list->parent_names, list->num_parents,
--				0,
-+				NULL,
- 				grf, list->muxdiv_offset,
- 				list->div_shift
- 			);
+ .../media/mediatek,vcodec-subdev-decoder.yaml |   1 +
+ .../media/platform/mediatek/vcodec/Kconfig    |   4 +
+ .../platform/mediatek/vcodec/common/Makefile  |   4 +
+ .../mediatek/vcodec/common/mtk_vcodec_dbgfs.c |  21 +-
+ .../mediatek/vcodec/common/mtk_vcodec_fw.c    |  16 +
+ .../mediatek/vcodec/common/mtk_vcodec_fw.h    |   2 +
+ .../vcodec/common/mtk_vcodec_fw_priv.h        |  12 +
+ .../vcodec/common/mtk_vcodec_fw_vcp.c         | 493 ++++++++++++++++++
+ .../vcodec/common/mtk_vcodec_fw_vcp.h         | 151 ++++++
+ .../vcodec/decoder/mtk_vcodec_dec_drv.c       |  16 +
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |   1 +
+ .../vcodec/decoder/mtk_vcodec_dec_hw.c        |  28 +
+ .../vcodec/decoder/mtk_vcodec_dec_hw.h        |  13 +-
+ .../vcodec/decoder/mtk_vcodec_dec_stateless.c |   6 +
+ .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c |  85 ++-
+ .../decoder/vdec/vdec_h264_req_multi_if.c     |  10 +-
+ .../decoder/vdec/vdec_hevc_req_multi_if.c     |  11 +-
+ .../vcodec/decoder/vdec/vdec_vp8_req_if.c     |   4 +-
+ .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c |  20 +-
+ .../mediatek/vcodec/decoder/vdec_ipi_msg.h    |   2 +
+ .../mediatek/vcodec/decoder/vdec_vpu_if.c     |   9 +-
+ .../mediatek/vcodec/encoder/mtk_vcodec_enc.c  |   1 -
+ .../mediatek/vcodec/encoder/mtk_vcodec_enc.h  |   2 +
+ include/linux/remoteproc/mtk_vcp_public.h     |   2 +-
+ 24 files changed, 871 insertions(+), 43 deletions(-)
+ create mode 100644 drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vcp.c
+ create mode 100644 drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vcp.h
+
 -- 
-2.49.0
+2.46.0
 
 
