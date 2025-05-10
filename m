@@ -1,152 +1,223 @@
-Return-Path: <linux-kernel+bounces-642889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5910AB24C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 19:16:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61262AB24CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 19:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7904A5518
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:16:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D827B0126
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86CF1C8603;
-	Sat, 10 May 2025 17:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5081723A58E;
+	Sat, 10 May 2025 17:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FsjV+H/e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0b0loSu"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A5F1C5D62
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 17:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D2751022;
+	Sat, 10 May 2025 17:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746897406; cv=none; b=hdWoydxBQmJ9GFc5CHqF56EWXhdM0E6wN+Ewr5gXsfWs6OATXJY7vkcDZ+7PwvMA3uook2bjgPLW4+VxvlwSSnh1+csUNQY8Zw7iW6H1xK3otwP+kKVKA687SbZuEPeYW+xsOIw5glcGPmS0vObQV2gZ/ihqFNzIfTnTJZGyWSw=
+	t=1746897649; cv=none; b=I94PHBNG1BthXGuUupSRscUc/1s46Mb/nQof4o5wL9Vw33yHSOaQU5jZ58U1LPk6fXfrdEup2ly9DzSDv8SkbIDVe/26SGICENVbBonZ7s8kqO8cTjMjWDc8CQlK4fwIwzZQgNKKnccH2dvGzahTCkSniNzrmNgD96m9S5ufiic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746897406; c=relaxed/simple;
-	bh=5a+K9yVUzUjem+JVCAmRVxB7jkIPgeOlfhF23nvZU7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7bsQp9Cbo0hdLwyxJ8PilRgkrwiIYV/MczOqgCGHmDDXI1cm0asgqqQpWoJn54H5L1oEQxfGVrSTaZ6873GqJWNwrnsegiVfGKLlxTYQJ7PqnYwA21fMCKTGQ/DBfV5rPNiSYAcHYqREA5+JSJDM/xa1TH0+PTF5Rtqxp2aGYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FsjV+H/e; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746897403; x=1778433403;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5a+K9yVUzUjem+JVCAmRVxB7jkIPgeOlfhF23nvZU7k=;
-  b=FsjV+H/elK10kG99npvfSggZOKel9EoxtRlUX9xoGi7E0S81Q+0s66NK
-   Nb/bDnclSrTplJZEXLk4R5AWzeV6+jCKsi+sT0kbKiv0V8aumwr1XRWHF
-   ZXSOb8HBuInFmrESCxuux3LqThXcplz2wo6mad45kThi/5LOdirVSdz2H
-   bghPD+fwSWTJ2I0vLSWn6HYzmcXRbv7dbkQjxpT8ea1KecBoEYKTDkgS0
-   E1cO+r/kwLCkGhz+eiLRVF6rNhGU7WJuxKCiJJU5E+JcMj/QS+0ZltBlP
-   1MxIUg/F6GBSG0G7Q4J0Sak+Uj8Upeo9mcSk9cK47T/SOkKvduv23khgj
-   Q==;
-X-CSE-ConnectionGUID: Hb4HA357TN2WEjqU2sghrQ==
-X-CSE-MsgGUID: Csiu0bNTQ8+as0ytpIa1fA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11429"; a="48726507"
-X-IronPort-AV: E=Sophos;i="6.15,278,1739865600"; 
-   d="scan'208";a="48726507"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2025 10:16:43 -0700
-X-CSE-ConnectionGUID: 6wAO3b7bQrmZUETqge/O6A==
-X-CSE-MsgGUID: imy8juLDQ+irrYLG+ZqeYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,278,1739865600"; 
-   d="scan'208";a="167991669"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 10 May 2025 10:16:39 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDnoT-000DEp-0M;
-	Sat, 10 May 2025 17:16:37 +0000
-Date: Sun, 11 May 2025 01:16:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Juan Yescas <jyescas@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	tjmercier@google.com, isaacmanjarres@google.com, surenb@google.com,
-	kaleshsingh@google.com, Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>, Minchan Kim <minchan@kernel.org>
-Subject: Re: [PATCH v4] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block
- order
-Message-ID: <202505110035.wtOWnL8o-lkp@intel.com>
-References: <20250510010338.3978696-1-jyescas@google.com>
+	s=arc-20240116; t=1746897649; c=relaxed/simple;
+	bh=q3eiTex1Caxf9IO4ImTo8aQWY5JusUh0pQVD3KAlQnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwrjIDHqCue6M2xhQKCErXA7S2CivOWg2AmwQ9QVe3EiEKFLhmSD7dqKLdTEbNblzE4cqGEv8od6sLwTzTyrHDp5ayW+A16FZ7srwDmY6lReD2hszqWZHILKivqFMgXh58qA7BXmqdOPlE15drGZYgFZhcDvwI70L234nDUHWtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0b0loSu; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22e3b069f23so31168655ad.2;
+        Sat, 10 May 2025 10:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746897647; x=1747502447; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wrbQG8EFeF/6pwQUZJBfCk+p6E1aOkgOBFugu5p2OKk=;
+        b=O0b0loSuwfXJ8fcML1ThN4jon12pMD/AX7OqnQAS0vfE8cGh0r/v7/vKUTwie4BcPq
+         m8ZmA2F+VTgc1DHMcr0Isb8ysORcNErFjChK0z4To7J6fQ2KZOJtn2FU+9/s6gSrdf3r
+         UYCmI3+Hwo+ZLZR/Ia4gNlm6ZNFaIqart1mh3Uq//yCWI3EokaawI9zk0ttTXeGhJVY8
+         Ma5cmiSA3LJfc0+TJxkKzPB8D2C3MaAjAX6APMwLIaTO1T2+KnVenYyjmRQyB09GRIvv
+         JrmXcvqjKyV1OxKUbPLrNQ9IV3X7LFRw5xor16HQm16MyTBXoZV+PO1cSgn2UHcJEiXj
+         Kg1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746897647; x=1747502447;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wrbQG8EFeF/6pwQUZJBfCk+p6E1aOkgOBFugu5p2OKk=;
+        b=gReQwLmMta+uKtZAGyohX5fXNBbNdyh9/tk6rMBgf7G4sf1rJcLayGwuUxMcm23CXH
+         2jEzyAanNzzJZiMibagL7jMatVRC7ha8DZAXT4k5eLuAGn6Q3DxugMu49wkcbevGjXP6
+         ZwmPHn1uFr1pwjTN0GpxscLlPzGSxV8Tz18ypANWJAZy7fALgKcUImVJ/UU6Gv5SUypc
+         iBf/LuayziVDZI1nxjJxwqD+IjKG1Bnraq8m5Hpih3GErSk1SMSFKs6EJ7AJpgVOwzA1
+         hQMeyOH91CfzI3J6mmd46AAr+f6GL5iJ/1fq8IkFsQZg1byxlAEI9D2aIf5bzoLilsb3
+         NtBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDFu8vzq7iEyqwOusiNRkocFEtwrNsz2KSA9GObTRsTOBUM/KupOCWRD8XUUPT6L3DogrZiIyAZ4VZUpzq@vger.kernel.org, AJvYcCXB801iTKFoWv6vOfIG7u7ZAIHlfG7Fytl2OqmGkAx3IrYVAj30bL7zd44ZYk3pZp82tlhN1s2M46uO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyonin54/9JQv9keAseKbmWV9tfydVoiRfQiGqbEnndRwUibobh
+	4eHGLuxCHdzFTpbk8gT4qU/IR4tmWUOXCcZYpb45VGpoW7VNzI6KlAG6HA==
+X-Gm-Gg: ASbGnctQJVzwonF9hCgx4X0EVGSRd5lHD6hTuVgAUTRfDj4LiES6A1g6G+6Rqd1wj3F
+	aeViqJEeBy8kdWhOALvJFztHyuLautbDzHSh7zkyfc/0IW8xAl2+oOBKssOxy1jEVNOvCXYCyX/
+	Gh2w6kzbDhyEiJCY9nGdufYRnxhUGPzegLwnt2hMCQQARiGGmWtvzOVnNuaYLgpb368qbedkNA8
+	9SYSFwLBJwnEzBP0KR8p/E4VV25oaW35WZeh+D3UVexuPgazLNhlU0bYg3giltFMVM6OTShZFSh
+	8oZtoxwMYm7804QWdkM51dujCeqZ5AO8MNZHdkD32VWWyYMQWrksSJVpXiIuGdltviY1iM8kWos
+	qTQ==
+X-Google-Smtp-Source: AGHT+IHdd1itBgn8zaWroCmwk4p10HaAMsDE+3H5E0ouXn7FoUohnCOeOsuOyI2G0WcCLX23BbHgrA==
+X-Received: by 2002:a17:902:e54f:b0:224:191d:8a79 with SMTP id d9443c01a7336-22fc8c7b6bbmr108714995ad.27.1746897647294;
+        Sat, 10 May 2025 10:20:47 -0700 (PDT)
+Received: from [192.168.1.5] ([136.185.237.194])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7544e33sm35065975ad.16.2025.05.10.10.20.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 May 2025 10:20:46 -0700 (PDT)
+Message-ID: <b18bc629-6bf6-4490-be98-033b771ecda7@gmail.com>
+Date: Sat, 10 May 2025 22:50:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250510010338.3978696-1-jyescas@google.com>
-
-Hi Juan,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.15-rc5]
-[cannot apply to akpm-mm/mm-everything next-20250509]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Juan-Yescas/mm-Add-CONFIG_PAGE_BLOCK_ORDER-to-select-page-block-order/20250510-090501
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250510010338.3978696-1-jyescas%40google.com
-patch subject: [PATCH v4] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block order
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20250511/202505110035.wtOWnL8o-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250511/202505110035.wtOWnL8o-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505110035.wtOWnL8o-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/gfp.h:7,
-                    from include/linux/xarray.h:16,
-                    from include/linux/list_lru.h:14,
-                    from include/linux/fs.h:14,
-                    from include/linux/compat.h:17,
-                    from arch/powerpc/kernel/asm-offsets.c:12:
->> include/linux/mmzone.h:53:2: error: #error MAX_PAGE_ORDER must be >= PAGE_BLOCK_ORDER
-      53 | #error MAX_PAGE_ORDER must be >= PAGE_BLOCK_ORDER
-         |  ^~~~~
-   make[3]: *** [scripts/Makefile.build:98: arch/powerpc/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1275: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mmc: ti-omap: convert text based binding to
+ json schema
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250510-ti-omap-v1-1-588b0ccb1823@gmail.com>
+Content-Language: en-US
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+In-Reply-To: <20250510-ti-omap-v1-1-588b0ccb1823@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +53 include/linux/mmzone.h
 
-    46	
-    47	/*
-    48	 * The MAX_PAGE_ORDER, which defines the max order of pages to be allocated
-    49	 * by the buddy allocator, has to be larger or equal to the PAGE_BLOCK_ORDER,
-    50	 * which defines the order for the number of pages that can have a migrate type
-    51	 */
-    52	#if (PAGE_BLOCK_ORDER > MAX_PAGE_ORDER)
-  > 53	#error MAX_PAGE_ORDER must be >= PAGE_BLOCK_ORDER
-    54	#endif
-    55	
+On 10-05-2025 22:07, Charan Pedumuru wrote:
+> Convert TI MMC host controller binding to YAML format. It's a
+> straight-forward conversion of the typical mmc host controller.
+> 
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/ti-omap.txt  | 26 ---------
+>  Documentation/devicetree/bindings/mmc/ti-omap.yaml | 61 ++++++++++++++++++++++
+>  2 files changed, 61 insertions(+), 26 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/ti-omap.txt b/Documentation/devicetree/bindings/mmc/ti-omap.txt
+> deleted file mode 100644
+> index 02fd31cf361d6ed893ec2f9eb8368b358ab2bae1..0000000000000000000000000000000000000000
+> --- a/Documentation/devicetree/bindings/mmc/ti-omap.txt
+> +++ /dev/null
+> @@ -1,26 +0,0 @@
+> -* TI MMC host controller for OMAP1 and 2420
+> -
+> -The MMC Host Controller on TI OMAP1 and 2420 family provides
+> -an interface for MMC, SD, and SDIO types of memory cards.
+> -
+> -This file documents differences between the core properties described
+> -by mmc.txt and the properties used by the omap mmc driver.
+> -
+> -Note that this driver will not work with omap2430 or later omaps,
+> -please see the omap hsmmc driver for the current omaps.
+> -
+> -Required properties:
+> -- compatible: Must be "ti,omap2420-mmc", for OMAP2420 controllers
+> -- ti,hwmods: For 2420, must be "msdi<n>", where n is controller
+> -  instance starting 1
+> -
+> -Examples:
+> -
+> -	msdi1: mmc@4809c000 {
+> -		compatible = "ti,omap2420-mmc";
+> -		ti,hwmods = "msdi1";
+> -		reg = <0x4809c000 0x80>;
+> -		interrupts = <83>;
+> -		dmas = <&sdma 61 &sdma 62>;
+> -		dma-names = "tx", "rx";
+> -	};
+> diff --git a/Documentation/devicetree/bindings/mmc/ti-omap.yaml b/Documentation/devicetree/bindings/mmc/ti-omap.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3660f54550e0ee46d3a7cfa3f531d95802f1e2fb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/ti-omap.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/ti-omap.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI MMC host controller for OMAP1 and 2420
+> +
+> +description:
+> +  The MMC Host controller for TI OMAP1 and 2420 family provides
+> +  an interface for MMC, SD and SDIO types of memory cards.
+> +
+> +allOf:
+> +  - $ref: mmc-controller.yaml
+> +
+> +maintainers:
+> +  - Ulf Hansson <ulf.hansson@linaro.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,omap2420-mmc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 2
+> +
+> +  dma-names:
+> +    items:
+> +      - const: tx
+> +      - const: rx
+> +
+> +  ti,hwmods:
+> +    items:
+> +      pattern: "^msdi[0-9]+$"
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - dmas
+> +  - dma-names
+> +  - ti,hwmods
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    mmc@4809c000 {
+> +        compatible = "ti,omap2420-mmc";
+> +        ti,hwmods = "msdi1";
+> +        reg = <0x4809c000 0x80>;
+> +        interrupts = <83>;
+
+Forgot to include irq interrupt-controller header and use it for the interrupts, will change in next revision.
+
+
+> +        dmas = <&sdma 61 &sdma 62>;
+> +        dma-names = "tx", "rx";
+> +    };
+> +...
+> 
+> ---
+> base-commit: 3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7
+> change-id: 20250502-ti-omap-12655fa9db3e
+> 
+> Best regards,
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best Regards,
+Charan.
+
 
