@@ -1,207 +1,197 @@
-Return-Path: <linux-kernel+bounces-642667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B86AB21C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E650FAB21CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC54B4C34BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2468818837D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B131D1F192B;
-	Sat, 10 May 2025 07:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwhO4hHz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264941E5B65;
+	Sat, 10 May 2025 07:46:26 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1230C1EA7E6;
-	Sat, 10 May 2025 07:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C541E0B86;
+	Sat, 10 May 2025 07:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746863111; cv=none; b=ne0UJO8VW2SeHPAhpywx3g2IsVMwFHupI57jjJq7zOXoHR+MQfZTSpufWsbk1HxFU3hGxt3dICLNChwg+XN0zP52tNqFMis1CYxBzHOhv2mm0ACVFVFoxJPlUbOHAfYkdg+38h7jEBnA+bV41tICR4FS1ZcVd7qx5UWaFkcdOOU=
+	t=1746863185; cv=none; b=SoYtCFddCR4gxUrBKBMTmQNSZK66FosBlQ6HGh7fWaexBBDBTPUzT2cWcdJV+IWxJjT2x5Q2TKAZ6pV0Vc6zGdl6bRAoLeCOGVGND9tCwNp82Vgnm0Bgpr8YzIxnsd7yDaDK+e68FRJ+u//bg/y7JQ9JXhkFiQ7bF5Ak5WEd0wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746863111; c=relaxed/simple;
-	bh=UDYWDg2Yz1nJiRbj7Z8QC9FBgMmCSf4p9oWrfm2p7xg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fjF+3ugIcpPGGeSeUmnRyY9kl/ZodySqUYz4u1cYcXX5csJo0oUdAq66evdaZtQL4+QLwC2gc6S6mQQ3VgW7VX6d4s9tClsmkhUIzGSpV/+qyyZ9S2tG4iXE0NIuL1EaBtfP/aIOHfXiHGlmRRe5iZCRhTrqaoJ9j66TaMzUDyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwhO4hHz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4FDEBC4CEEE;
-	Sat, 10 May 2025 07:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746863109;
-	bh=UDYWDg2Yz1nJiRbj7Z8QC9FBgMmCSf4p9oWrfm2p7xg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UwhO4hHzvTUyEUINoVyRSWnnIgJzC5hOQVCO9nDINmlMcBN3nuVHK3PkpmD5WQx3s
-	 qPcF5oa4erEFUPF5LGF6+AEKGjbrr74VxRSx/nJiNQ5MeFrolF5Xc4B0WRaYDxXVWy
-	 4nu1eqS1UAhHhmFoZsd40s8KiZp35qpYYQVAw10EFEpQpbXBrh5uBSvHsev0kAcr31
-	 5br9k4qZW3S1FCQxtCs1bxRLAH9/MDrX6CAPKnjh6kJbhFyCisQyxFw7ONNdyyLlFr
-	 w91QEUWn8KsN/1p2Ocyeg1f32koQM5Eq5mGj64VpDbxa6SHZb5Yz0Cm47/c1irjgVT
-	 9CbefdFbMZZuQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47295C3ABCE;
-	Sat, 10 May 2025 07:45:09 +0000 (UTC)
-From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Sat, 10 May 2025 07:44:47 +0000
-Subject: [PATCH 7/7] arm64: dts: apple: t8112: Add eFuses node
+	s=arc-20240116; t=1746863185; c=relaxed/simple;
+	bh=np0DaZ3kQtyZ8X0ulRKMltdlhXrvfRJ+lXFN+7rI0b0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Bf8R1jll0xeRs8DiCkkRxTSqfJgutqrj+1RNKLvgaWTIiCCvjPhIAMZz/svgrlrPMNYGqo8yQylBuUgF98fqPgh5HnmLJPfz6DaA6zkhRUlrdiDFCzaAFlwWchP14z/kv2RUlgkpWmWmkEklzBjU2FzRxpPIyT+Y5L46nSlaE3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZvdDz6lNgznfXM;
+	Sat, 10 May 2025 15:44:51 +0800 (CST)
+Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
+	by mail.maildlp.com (Postfix) with ESMTPS id AC7911400CA;
+	Sat, 10 May 2025 15:46:09 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 10 May 2025 15:46:09 +0800
+Subject: Re: [PATCH v7 6/6] hisi_acc_vfio_pci: update function return values.
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+References: <20250411035907.57488-1-liulongfang@huawei.com>
+ <20250411035907.57488-7-liulongfang@huawei.com>
+ <ed4f09039ffb45f3a3d5b418c92ae6ad@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <c60625eb-eb48-d504-7334-70e375b4a202@huawei.com>
+Date: Sat, 10 May 2025 15:46:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <ed4f09039ffb45f3a3d5b418c92ae6ad@huawei.com>
+Content-Type: text/plain; charset="gbk"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250510-nvmem-dt-v1-7-eccfa6e33f6a@svenpeter.dev>
-References: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
-In-Reply-To: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Sven Peter <sven@svenpeter.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2946; i=sven@svenpeter.dev;
- h=from:subject:message-id;
- bh=j8UAIvDfj4+sxfGUjSBnpN2Tc+COrCSgMqHTgCD6qaE=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Y8C5Pvvb3nd1S1va7TWWZrYM+v6bqTeS8fM9ssXjbtb
- PmbkmodpSwMYhwMsmKKLNv325s+efhGcOmmS+9h5rAygQxh4OIUgImEBjH8FXX64lD5sPT+0iwf
- owVXjNfdcTAz+rX278Qvz60knwV4ODEyrGq35UgWbrn35/0rpRd8fzw/vs7JcPXXSZl47aTtUvH
- fPAA=
-X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
- auth_id=167
-X-Original-From: Sven Peter <sven@svenpeter.dev>
-Reply-To: sven@svenpeter.dev
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500006.china.huawei.com (7.202.181.43)
 
-From: Janne Grunau <j@jannau.net>
+on 2025/4/15 17:25, Shameerali Kolothum Thodi wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: liulongfang <liulongfang@huawei.com>
+>> Sent: Friday, April 11, 2025 4:59 AM
+>> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+>> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+>> <jonathan.cameron@huawei.com>
+>> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+>> Subject: [PATCH v7 6/6] hisi_acc_vfio_pci: update function return values.
+>>
+>> In this driver file, many functions call sub-functions and use ret
+>> to store the error code of the sub-functions.
+>> However, instead of directly returning ret to the caller, they use a
+>> converted error code, which prevents the end-user from clearly
+>> understanding the root cause of the error.
+>> Therefore, the code needs to be modified to directly return the error
+>> code from the sub-functions.
+>>
+>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+>> ---
+>>  drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 16 ++++++++--------
+>>  1 file changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> index d12a350440d3..c63e302ac092 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> @@ -392,7 +392,7 @@ static int vf_qm_check_match(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  	ret = vf_qm_version_check(vf_data, dev);
+>>  	if (ret) {
+>>  		dev_err(dev, "failed to match ACC_DEV_MAGIC\n");
+>> -		return -EINVAL;
+>> +		return ret;
+>>  	}
+>>
+>>  	if (vf_data->dev_id != hisi_acc_vdev->vf_dev->device) {
+>> @@ -404,7 +404,7 @@ static int vf_qm_check_match(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  	ret = qm_get_vft(vf_qm, &vf_qm->qp_base);
+>>  	if (ret <= 0) {
+>>  		dev_err(dev, "failed to get vft qp nums\n");
+>> -		return -EINVAL;
+>> +		return ret;
+>>  	}
+>>
+>>  	if (ret != vf_data->qp_num) {
+>> @@ -501,7 +501,7 @@ static int vf_qm_load_data(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  	ret = qm_write_regs(qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
+>>  	if (ret) {
+>>  		dev_err(dev, "failed to write QM_VF_STATE\n");
+>> -		return -EINVAL;
+>> +		return ret;
+>>  	}
+>>  	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
+>>
+>> @@ -542,7 +542,7 @@ static int vf_qm_read_data(struct hisi_qm *vf_qm,
+>> struct acc_vf_data *vf_data)
+>>
+>>  	ret = qm_get_regs(vf_qm, vf_data);
+>>  	if (ret)
+>> -		return -EINVAL;
+>> +		return ret;
+>>
+>>  	/* Every reg is 32 bit, the dma address is 64 bit. */
+>>  	vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
+>> @@ -556,13 +556,13 @@ static int vf_qm_read_data(struct hisi_qm
+>> *vf_qm, struct acc_vf_data *vf_data)
+>>  	ret = qm_get_sqc(vf_qm, &vf_data->sqc_dma);
+>>  	if (ret) {
+>>  		dev_err(dev, "failed to read SQC addr!\n");
+>> -		return -EINVAL;
+>> +		return ret;
+>>  	}
+>>
+>>  	ret = qm_get_cqc(vf_qm, &vf_data->cqc_dma);
+>>  	if (ret) {
+>>  		dev_err(dev, "failed to read CQC addr!\n");
+>> -		return -EINVAL;
+>> +		return ret;
+>>  	}
+>>
+>>  	return 0;
+>> @@ -588,7 +588,7 @@ static int vf_qm_state_save(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>
+>>  	ret = vf_qm_read_data(vf_qm, vf_data);
+>>  	if (ret)
+>> -		return -EINVAL;
+>> +		return ret;
+>>
+>>  	migf->total_length = sizeof(struct acc_vf_data);
+>>  	/* Save eqc and aeqc interrupt information */
+>> @@ -1379,7 +1379,7 @@ static int hisi_acc_vf_debug_check(struct seq_file
+>> *seq, struct vfio_device *vde
+>>  	ret = qm_wait_dev_not_ready(vf_qm);
+>>  	if (ret) {
+>>  		seq_puts(seq, "VF device not ready!\n");
+>> -		return -EBUSY;
+>> +		return ret;
+>>  	}
+>>
+>>  	return 0;
+> 
+> Any reason you avoided few other instances here?
+>
 
-Add the eFuse controller and the nvmem cells required for both Type-C
-PHYs
+In the next version, I will add the modification.
 
-Signed-off-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
----
- arch/arm64/boot/dts/apple/t8112.dtsi | 97 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+Thank you.
+Longfang.
 
-diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
-index d9b966d68e4fae2dfb21d6fb7a97ebba81643ae8..4dec6415ef73e922dd574997569ad0e6acbc9658 100644
---- a/arch/arm64/boot/dts/apple/t8112.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112.dtsi
-@@ -782,6 +782,103 @@ wdt: watchdog@23d2b0000 {
- 			interrupts = <AIC_IRQ 379 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		efuse@23d2c8000 {
-+			compatible = "apple,t8112-efuses", "apple,efuses";
-+			reg = <0x2 0x3d2c8000 0x0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			atcphy0_auspll_rodco_bias_adjust: efuse@480,20 {
-+				reg = <0x480 4>;
-+				bits = <20 3>;
-+			};
-+
-+			atcphy0_auspll_rodco_encap: efuse@480,23 {
-+				reg = <0x480 4>;
-+				bits = <23 2>;
-+			};
-+
-+			atcphy0_auspll_dtc_vreg_adjust: efuse@480,25 {
-+				reg = <0x480 4>;
-+				bits = <25 3>;
-+			};
-+
-+			atcphy0_auspll_fracn_dll_start_capcode: efuse@480,28 {
-+				reg = <0x480 4>;
-+				bits = <28 2>;
-+			};
-+
-+			atcphy0_aus_cmn_shm_vreg_trim: efuse@480,30 {
-+				reg = <0x480 8>;
-+				bits = <30 5>;
-+			};
-+
-+			atcphy0_cio3pll_dco_coarsebin0: efuse@484,3 {
-+				reg = <0x484 4>;
-+				bits = <3 6>;
-+			};
-+
-+			atcphy0_cio3pll_dco_coarsebin1: efuse@484,9 {
-+				reg = <0x484 4>;
-+				bits = <9 6>;
-+			};
-+
-+			atcphy0_cio3pll_dll_start_capcode: efuse@484,15 {
-+				reg = <0x484 4>;
-+				bits = <15 2>;
-+			};
-+
-+			atcphy0_cio3pll_dtc_vreg_adjust: efuse@484,17 {
-+				reg = <0x484 0x4>;
-+				bits = <17 3>;
-+			};
-+
-+			atcphy1_auspll_rodco_bias_adjust: efuse@484,30 {
-+				reg = <0x484 8>;
-+				bits = <30 3>;
-+			};
-+
-+			atcphy1_auspll_rodco_encap: efuse@488,1 {
-+				reg = <0x488 8>;
-+				bits = <1 2>;
-+			};
-+
-+			atcphy1_auspll_dtc_vreg_adjust: efuse@488,3 {
-+				reg = <0x488 4>;
-+				bits = <3 3>;
-+			};
-+
-+			atcphy1_auspll_fracn_dll_start_capcode: efuse@488,6 {
-+				reg = <0x488 4>;
-+				bits = <6 2>;
-+			};
-+
-+			atcphy1_aus_cmn_shm_vreg_trim: efuse@488,8 {
-+				reg = <0x488 4>;
-+				bits = <8 5>;
-+			};
-+
-+			atcphy1_cio3pll_dco_coarsebin0: efuse@488,13 {
-+				reg = <0x488 4>;
-+				bits = <13 6>;
-+			};
-+
-+			atcphy1_cio3pll_dco_coarsebin1: efuse@488,19 {
-+				reg = <0x488 4>;
-+				bits = <19 6>;
-+			};
-+
-+			atcphy1_cio3pll_dll_start_capcode: efuse@488,25 {
-+				reg = <0x488 4>;
-+				bits = <25 2>;
-+			};
-+
-+			atcphy1_cio3pll_dtc_vreg_adjust: efuse@488,27 {
-+				reg = <0x488 0x4>;
-+				bits = <27 3>;
-+			};
-+		};
-+
- 		pinctrl_smc: pinctrl@23e820000 {
- 			compatible = "apple,t8112-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x3e820000 0x0 0x4000>;
-
--- 
-2.34.1
-
-
+> 1. qemu_set_regs() --> hisi_qm_wait_mb_ready() -->ret -EBUSY;
+> 2. vf_qm_cache_wb() ret -EINVAL on -ETIMEOUT.
+> 
+> With the above addressed,
+> 
+> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> 
+> Thanks,
+> Shameer
+> 
+> .
+> 
 
