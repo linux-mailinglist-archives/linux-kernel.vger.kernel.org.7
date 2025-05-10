@@ -1,102 +1,78 @@
-Return-Path: <linux-kernel+bounces-642633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F9AAB2161
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:51:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6935BAB211C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 06:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4C6501478
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 05:51:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7711B7BD093
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 04:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8C51DB92A;
-	Sat, 10 May 2025 05:51:28 +0000 (UTC)
-Received: from mail-m8327.xmail.ntesmail.com (mail-m8327.xmail.ntesmail.com [156.224.83.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4101B4145;
+	Sat, 10 May 2025 04:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcQvzjn6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFFF1C6FE8;
-	Sat, 10 May 2025 05:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8740133F6;
+	Sat, 10 May 2025 04:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746856288; cv=none; b=lT4OATUmxXYnoQqfzDSsr49Sv+ceUn5FcWSnhCupVx9urXm56d/AIkuacJ86bsFO9dENAG8SZaWrJznKEj6w4qBX1pVtc8L+0cD+ubbopqu/cRSyhs9zUdMhCqYgQssVSO2KrymQB/Lj1pUUAB98IjKAhurd7Y2W5jiy8EQG7bg=
+	t=1746850274; cv=none; b=Y1djTxmKf/t/iWxrQu+bkxEH7qZI2buJJw3N/Zt6vUHpOpUq+mIHqsec4LT4CT8V8r1FU0Wl3zFhcJYs4VlmqlG9C1rjlz5pCKAphmFc1zJp7HX34fiteJNuDwq3WW2LrFPi+2mH7SOMPAi4A++5nz10N3Kfo73VdZwXe/uPTnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746856288; c=relaxed/simple;
-	bh=KC0f4NcgvAuBmb2oh4vE1jM3mEtPu06HOF02kc+Ru0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VsAiFTP/XE9Jau8aFrorVISwxkmL8bDY91qzkKiFfRh6py96jKsT8geokr669RZXsw5KBB86NIF/QnoBrquOpPGQfYGhYXkCEGH4vyffCdP70XOFU5hXFmlDAFBD0JEw3c7AHlPmdpmYfCrkDLBQD+Sjux/fsPcIQB5IQIxHpr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sangfor.com.cn; spf=pass smtp.mailfrom=sangfor.com.cn; arc=none smtp.client-ip=156.224.83.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sangfor.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sangfor.com.cn
-Received: from [172.16.212.10] (unknown [121.32.254.146])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 148f13876;
-	Sat, 10 May 2025 09:15:13 +0800 (GMT+08:00)
-Message-ID: <a497880a-e6a3-409d-8c4e-d5086459ce3a@sangfor.com.cn>
-Date: Sat, 10 May 2025 09:15:13 +0800
+	s=arc-20240116; t=1746850274; c=relaxed/simple;
+	bh=yigxBPyjABeEtPPpHkuA5KDTUTnASdcAJ1gPSs5+dE8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=u/bx2pFc3jR6ahJq3/5Mdb7PGgbXlCT41cSCrwarimjUoBbqoD7k70ocF+ZwNuHXTP/CZtPOJ+9dy/N6BZt8+5d5lDmOUKdfzFkp3mTSfDjRq7v+QS9YY4xzL1UFM0GhhYcUldZrRC6sZQJ/wqz5mqDEHrsCe/UW84XSCTEY4Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcQvzjn6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D806C4CEE2;
+	Sat, 10 May 2025 04:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746850274;
+	bh=yigxBPyjABeEtPPpHkuA5KDTUTnASdcAJ1gPSs5+dE8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=PcQvzjn6RJoOs1AigCqb+gpiGnRLbNiXUedMmeIdZYIoiNZmU5H5I4PYE7dJWGJBy
+	 uPLXyluimNyF5tJrIfOxQqUP7ViQKMY3cSaRrpZahejcR3UHzdBDzvOdZsOOX5rUR/
+	 SDMCWFucy6YhFLTeG4mjIoCcKnAWva1B+/6OKoweDeZeEdrMWa/hM2z1imQJDR2r+H
+	 iabEfYkDB5cHbRi9GC8cT0Aao4xuV20z1WDFiw8ZWzadVW+9d22aY5/d5DraCu6BdI
+	 iaHS6M6h92CtfPsYJPQorR+lqk85dyapNrF7TE/5mNkka51ndDsBzsbUy4drVJ0QPa
+	 Z5bqLbiaQQY9g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEE63822D42;
+	Sat, 10 May 2025 04:11:53 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 cilent fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5mtRj=+xk4bt74j=pzbOF8=BxJNp2L3nr_VzvtZY5tLW0g@mail.gmail.com>
+References: <CAH2r5mtRj=+xk4bt74j=pzbOF8=BxJNp2L3nr_VzvtZY5tLW0g@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mtRj=+xk4bt74j=pzbOF8=BxJNp2L3nr_VzvtZY5tLW0g@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.15-rc5-smb3-client-fixes
+X-PR-Tracked-Commit-Id: 3ca02e63edccb78ef3659bebc68579c7224a6ca2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1a33418a69cc801d48c59d7d803af5c9cd291be2
+Message-Id: <174685031250.3889839.16286078530861390741.pr-tracker-bot@kernel.org>
+Date: Sat, 10 May 2025 04:11:52 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: smartpqi: Fix the race condition between
- pqi_tmf_worker and pqi_sdev_destroy
-To: Don.Brace@microchip.com
-Cc: dinghui@sangfor.com.cn, zengzhicong@sangfor.com.cn,
- James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
- storagedev@microchip.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250508125011.3455696-1-zhuwei@sangfor.com.cn>
- <CAF=wSYo0=US5Rj8Qbo7tbPLTtEVR-E=q4w07jCvU3nMroZBKmA@mail.gmail.com>
- <SJ2PR11MB8369E480AEB019041B756254E18AA@SJ2PR11MB8369.namprd11.prod.outlook.com>
-From: zhuwei <zhuwei@sangfor.com.cn>
-In-Reply-To: <SJ2PR11MB8369E480AEB019041B756254E18AA@SJ2PR11MB8369.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTEtPVk5MShkdSU4dGhofGlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUpVSElVSU5PVUpPTVlXWRYaDxIVHRRZQVlPS0hVSktJT09PSFVKS0
-	tVSkJLS1kG
-X-HM-Tid: 0a96b7c2b77509cekunm148f13876
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NCo6SAw*DDJDAVETDT0MShwi
-	PCxPCw5VSlVKTE9NQ0hCTEpPSENMVTMWGhIXVQETDgweEjsIGhUcHRQJVRgUFlUYFUVZV1kSC1lB
-	WUpJSlVISVVJTk9VSk9NWVdZCAFZQUlPTUo3Bg++
 
+The pull request you sent on Fri, 9 May 2025 16:38:38 -0500:
 
+> git://git.samba.org/sfrench/cifs-2.6.git tags/6.15-rc5-smb3-client-fixes
 
-On 2025/5/9 23:19, Don.Brace@microchip.com wrote:
-> 
-> ---------- Forwarded message ---------
-> From: Zhu Wei <zhuwei@sangfor.com.cn>
-> Date: Thu, May 8, 2025 at 7:57 AM
-> Subject: [PATCH] scsi: smartpqi: Fix the race condition between pqi_tmf_worker and pqi_sdev_destroy
-> To: <don.brace@microchip.com>, <kevin.barnett@microchip.com>
-> Cc: <dinghui@sangfor.com.cn>, <zengzhicong@sangfor.com.cn>, <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>, <storagedev@microchip.com>, <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>, Zhu Wei <zhuwei@sangfor.com.cn>
-> 
-> 
-> There is a race condition between pqi_sdev_destroy and pqi_tmf_worker.
-> After pqi_free_device is released, pqi_tmf_worker will still use device.
-> 
-> Don: Thank-you for your patch, however we recently applied a similar patch to our internal repo.
-> Don: But more checking is done for removed devices.
-> Don: When this patch has been tested internally, we will post it up for review.
-> Don: I will add a Reported-By tag with your name.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1a33418a69cc801d48c59d7d803af5c9cd291be2
 
-Ok, hope smartpqi gets better.
+Thank you!
 
-> Don: So Nak.
-> 
-> 
-> 
-> kasan report:
-> [ 1933.765810] ==================================================================
-> [ 1933.771862] scsi 15:0:20:0: Direct-Access     ATA      WDC  WUH722222AL WTS2 PQ: 0 ANSI: 6
-> [ 1933.779190] BUG: KASAN: use-after-free in pqi_device_wait_for_pending_io+0x9e/0x600 [smartpqi]
-> ......
-> --
-> 2.43.0
-> 
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
