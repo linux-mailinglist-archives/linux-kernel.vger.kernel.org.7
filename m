@@ -1,213 +1,148 @@
-Return-Path: <linux-kernel+bounces-642881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E69AB24BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:42:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75F4AB24B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45D917D4C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6EE3B9C18
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6759D243958;
-	Sat, 10 May 2025 16:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12532242D63;
+	Sat, 10 May 2025 16:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H54ZxD00"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oor14e/2"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC02563;
-	Sat, 10 May 2025 16:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB97878C91;
+	Sat, 10 May 2025 16:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746895366; cv=none; b=hf1UrJt0Opu0SAlZ7qxHgyZNs9hwlpCqaUVrCx6fq0SWTwuhUGT3bWbwgyimkFBKpMdI1sj8WEuhc7sqN9QgDKDScqJH1liHWtEgfobwybWFehvYz5xhp6XaHU4vVCNWwXzvM5iwQZcgBAy2yJnIswofYayPtgDV1ghQsNMi08M=
+	t=1746895118; cv=none; b=cPqMuAAFcWl+mvVhwdjQB2w1UtqezNt1QRu24m7jNuE5c8x9G+Y/cLOIk3AtxL91raRArk8u+AfW8+7AA+sYHmd1+GiZnyZ8tZxCZzN5Ur8EpzcY+DVBKDxVRkZuntYAqmqsZEZTYRW7jDU0O17DM9fH3IICJ2E7ph4YXjXu8qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746895366; c=relaxed/simple;
-	bh=Y9UIkQJFf+OhvWRDpSN4BhfGFO+hTVtvuC3X0Xy4VAM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kx0PlQj6Np8Qfk4EU9mu8XVMyTp46wXNLvCm0BwxMLLU4agxSK6gTTlYg9zyawgCar6YNY6mPBN+fQeIkajtdlITSoA09k23rEZ6zIM9ac5WaHckk9uPHdWsDuqTa5y+pE0M+GOlUap4gAj8nEiP+aVivK74TOidNiz8CSMpyh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H54ZxD00; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1746895118; c=relaxed/simple;
+	bh=+oD11Hhq1SifV8wWUxQGl8z4mlOsK5Dajs0XHf6rsDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sYNt06mOM+dsMLEJlQh+WdJdIZq9+y2ZzGXwqL4w8+kOyFkZlCXWfP8F834ojhcBf+nnt61YJehoHQyA8H2IsSyIm8wBbnIvbXL4G5aGlkTx6B1AMWYsYFppqdfV7rMVyI36ofdHfqvAHGOuYvthDEst/9s7rDxRjIG55gm9iZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oor14e/2; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22e6344326dso32693655ad.1;
-        Sat, 10 May 2025 09:42:45 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-73c17c770a7so3826656b3a.2;
+        Sat, 10 May 2025 09:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746895364; x=1747500164; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ERGJy7c3JjPSUvwDem/hK+Mphmj7ax8U1nvwn5S9i7A=;
-        b=H54ZxD00jSwn1LbQLiHdrvipYtK5jhXeZF4exPeB50qJctpdD42/IRruBQP9l/gY9W
-         KU3jmN+itqyZvBvHZ7XnTq6WyPgp/WfiMOS1nCQ0nVfE62v/gqf+L7JpjBOCu5ezfdkn
-         D1Vug1s7drNx3TbLuZ42RzwXtCnFaaNhpbkxZutisNBvrdXYYc16A0oYGnbRkgzmdpfl
-         L/+jGC03Sn6TdnvQZy030nhnt3pgvH0Ex7XwZWTddKFuN+5fMtXbuk6z0LeO8p+MJnU8
-         O/qvYEkOsRnkSCT6DwWX+eWEMopEYMHTcAAG9MBZfrFvePdalItvhhW7kX8FVmd7KeKl
-         0fhw==
+        d=gmail.com; s=20230601; t=1746895116; x=1747499916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NYY3xvs/hoQR/RMoyxL6CTuYbkJnioycFjEXIOY4vtU=;
+        b=Oor14e/2uianlPaE+/TzgH4tRk15biQ8wuEQEXyrHI5kyiC2esCMa609MPDUI4CEgo
+         6wUNrMUoqh45EykTx8Bgf97LLkA4x8IP0SUdp5R3xH0RJYHiNiwNOQByl0qNzl3npCMf
+         z9LiKBATdSNLrBcO09rFhMJVN4iPfftD2IIz27ytAgxMrhWlGzwWY6FlPcSASgJLAxn1
+         T0LczP+0kd3wOwAJ2Ay0s0Yufj7NnLexdKzeFBKbWsMPqhE54PkLQ2qUNmm0T9yHa+a1
+         Di9fRvRbwMbv2N+E6R3KYrNaUBPgdH1KHJhoDWW5UVha/a1hK607FXu9UWViAT/cAcNW
+         /Ztg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746895364; x=1747500164;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1746895116; x=1747499916;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ERGJy7c3JjPSUvwDem/hK+Mphmj7ax8U1nvwn5S9i7A=;
-        b=qtZpVcvRLMRvELaZenC6lKlYzRUkN+Nhb7UPu0DZ9ElTejzxf5AKUgnXFzC0nn42aN
-         6TxF0TPeuXudZx2mlY3Y0G6QjaMRBNgTVnKWHibGn/YQKcG/uvKiN0FRecWehz4TzyG7
-         09EIFvVJjW8sAiZwdXa4mPBqNle5CWFHziYOCNx1UFbOcOs0H8ae9rQDGVHEqgdq010A
-         NFixONkqECkNPSAdQWg46F+IUYCKOIPiQahrj2ArPzyLMwWGROTw6L8G43oykngjvDj7
-         da1wGKzIwyDr31VBbqvsKoiX7ZhlU6hqr9YssiI2RVBKD2Z/foXdWvKLUxJ86KfS2ieC
-         qsEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7dxinKIJJlasqW0JxJwavr4Xl5wtBHNAbGWEl6AmyuP0ZtyQdWxlfXmuqq+YzJErrKaQufw2CBgAVgAwJ@vger.kernel.org, AJvYcCWiPP1nW+X6TkT89EbLoelfMb1flmv3wzmtuMv2U2oGhOHcCzzjYiIwGFz/yaLqQw5zbs3EEboNpZqR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5zAlxTyZLXvk/fMkuJr1hPACwqDq8DaeaoWOXSVFIOFnxEpzx
-	h9Kaz0SB6kDZLYjrrqurtML5BLf19fWgUtjQYLSrLcNtVdpvu3W9f79Lxg==
-X-Gm-Gg: ASbGncvGJyBVowSWb73d0y3/HlXvcvq8uTVfUky7mHGF1M7TxpcXi4doz7QTRVcwLJm
-	stL+SQZEVHKP2B6wUfzJQlFXfBd1OxhpxDKHFNh0tHMQ/KMjbgQ1pyngJ6si0IvGfpZyRKYC+Us
-	oRnkW/aDTcAZIpp3BagU5dlMHll/WhdmOg6uT9MA/pE0K017paloGr2aaQ814HYWf/K206f0lOs
-	pQdmf3ErPW+ny0YhdQPQAQos9Mhmcp2Viz0sE1Mlw/g0mwJpjULJdIa4o4ED4vPT2M/5R8dLeP0
-	LUVQKsNHVQLexYNqg6yf4MaNuyiZjlFk1cffgUoO8Gw1kZMzgVcCpAw+KS6d/g==
-X-Google-Smtp-Source: AGHT+IHh/rGDNcaDNb9KY94nQAqJXFTqLjA1Awf0Be7tz6pWSLfP5n/NRr0YqbOspVj4cY+q70izaA==
-X-Received: by 2002:a17:903:1905:b0:22e:40d7:3718 with SMTP id d9443c01a7336-22fc917fd5amr93661405ad.47.1746895364235;
-        Sat, 10 May 2025 09:42:44 -0700 (PDT)
-Received: from Black-Pearl. ([136.185.237.194])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22fc8271f77sm34853695ad.126.2025.05.10.09.42.41
+        bh=NYY3xvs/hoQR/RMoyxL6CTuYbkJnioycFjEXIOY4vtU=;
+        b=lPbzIk/rvbskvZBMdRrOK5S8dYIlzwVxJ8LmIHySSSUqfSBC3699qW6nhVhCBTWPS6
+         arjmUlE16BE4ddHwk9j2IDrIBqx+hYD0uwLshnEvrqaud3ucvTmF8nkfbBd36vYQMsYR
+         Q0SUykAtkvCU+hQ+b1DdFb/9htODVispYGdDYI7omo9R2CmCJaWXV8HDolBsCX0mw2x/
+         xbQNlPdj+4x4Pr7aU+EHyKSiJI6tq2CYmIy0ifYZAecLpCwLQ4Q0pVBHvySAI0uu7VvZ
+         nFCqtIFj0phL0hTh8GGLmgHgz22ZQD02XQ0/N0GjH6eTQSGTtkqkj2T/Wbj2nls96nyF
+         GVyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVgnwvv041m9rPF/ZEDuvQc5kemwYXEqBP6Q51lOdWyv7SJp4I2cURci07zJ3MTuvfjHYlexgZ2ADfgMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxnWfC5/+C4WaDR24wT45+df1iwa6dGhsmSA4Z/YgqDwXhgk3t
+	tIpF4EWoHxyoyHsuBgEkjFIALQ41u0n1j4WXJ5hYsIvOhUBcsUMrvGLQ8UDmRg0=
+X-Gm-Gg: ASbGncso4CwIEMxg4i26JLN4MENqSP0DHQnfPV+Py10KxJ9tgIU6J+vuJQ4UJOM4/Lc
+	uqqOkPqPvgCE2GsXfrKgUSOmNCy8QBaJiIk565RJx0iXgImpPufPrpA8D+Rd29gEASUXO/QDRKf
+	XfoXN4fsgfdELzdgBnqES3AC8WEsEu94wSyR1GhB0uzN0p/ffLg+ANNqUKHQbxA7BCBoZ1KdUHk
+	G+li76+uu6BmANTF0cdmdOx+l1vrSWdZ2DX1FwpR5tW+Hl4mlvYvrCGWDj7pX1y/HfyeU+x3Ros
+	uhB7bUO2X2Peku7RjD+x6n1ftjBRZBjgdonccZ/NX+Gr71zaFFugI3Fo+0Cu7Pz/cOqor2oHCbY
+	zJGl7lexPqxWUlNY=
+X-Google-Smtp-Source: AGHT+IEalHcH+lEKumbEO69hX83MgcEzoVZj4otUwM2OLLsC3N5xsIFsWYOrkodSPcpFydmL3IHRDQ==
+X-Received: by 2002:a05:6a00:855:b0:740:8153:68f with SMTP id d2e1a72fcca58-7423c00bf24mr10184167b3a.20.1746895115945;
+        Sat, 10 May 2025 09:38:35 -0700 (PDT)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237727a02sm3520937b3a.56.2025.05.10.09.38.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 09:42:43 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Sat, 10 May 2025 16:37:27 +0000
-Subject: [PATCH] dt-bindings: mmc: ti-omap: convert text based binding to
- json schema
+        Sat, 10 May 2025 09:38:35 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] n_tty: fix data race in n_tty_poll()
+Date: Sun, 11 May 2025 01:38:27 +0900
+Message-ID: <20250510163828.21963-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250510-ti-omap-v1-1-588b0ccb1823@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAMaAH2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDUwMj3ZJM3fzcxAJdQyMzU9O0RMuUJONUJaDqgqLUtMwKsEnRsbW1ABJ
- 27whZAAAA
-X-Change-ID: 20250502-ti-omap-12655fa9db3e
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Convert TI MMC host controller binding to YAML format. It's a
-straight-forward conversion of the typical mmc host controller.
+I found data-race in my fuzzer:
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+==================================================================
+BUG: KCSAN: data-race in n_tty_poll / tty_set_termios
+
+read to 0xffff8880116b4d14 of 4 bytes by task 5443 on cpu 0:
+ n_tty_poll+0xa4/0x4c0 drivers/tty/n_tty.c:2452
+ tty_poll+0x8f/0x100 drivers/tty/tty_io.c:2208
+ vfs_poll include/linux/poll.h:82 [inline]
+ select_poll_one fs/select.c:480 [inline]
+ do_select+0x95f/0x1030 fs/select.c:536
+ core_sys_select+0x284/0x6d0 fs/select.c:677
+....
+
+write to 0xffff8880116b4d08 of 44 bytes by task 14547 on cpu 1:
+ tty_set_termios+0xf9/0x500 drivers/tty/tty_ioctl.c:339
+ set_termios.part.0+0x3bc/0x4d0 drivers/tty/tty_ioctl.c:520
+ set_termios drivers/tty/tty_ioctl.c:454 [inline]
+ tty_mode_ioctl+0x2db/0xa00 drivers/tty/tty_ioctl.c:807
+ n_tty_ioctl_helper+0x4e/0x230 drivers/tty/tty_ioctl.c:986
+ n_tty_ioctl+0x67/0x230 drivers/tty/n_tty.c:2509
+....
+==================================================================
+
+In n_tty_poll() we are doing a read on tty->termios but we are missing
+rwsem lock, which causes a concurrency problem. To fix this, we need to
+add rwsem lock at the appropriate location.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
- Documentation/devicetree/bindings/mmc/ti-omap.txt  | 26 ---------
- Documentation/devicetree/bindings/mmc/ti-omap.yaml | 61 ++++++++++++++++++++++
- 2 files changed, 61 insertions(+), 26 deletions(-)
+ drivers/tty/n_tty.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/ti-omap.txt b/Documentation/devicetree/bindings/mmc/ti-omap.txt
-deleted file mode 100644
-index 02fd31cf361d6ed893ec2f9eb8368b358ab2bae1..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/mmc/ti-omap.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--* TI MMC host controller for OMAP1 and 2420
--
--The MMC Host Controller on TI OMAP1 and 2420 family provides
--an interface for MMC, SD, and SDIO types of memory cards.
--
--This file documents differences between the core properties described
--by mmc.txt and the properties used by the omap mmc driver.
--
--Note that this driver will not work with omap2430 or later omaps,
--please see the omap hsmmc driver for the current omaps.
--
--Required properties:
--- compatible: Must be "ti,omap2420-mmc", for OMAP2420 controllers
--- ti,hwmods: For 2420, must be "msdi<n>", where n is controller
--  instance starting 1
--
--Examples:
--
--	msdi1: mmc@4809c000 {
--		compatible = "ti,omap2420-mmc";
--		ti,hwmods = "msdi1";
--		reg = <0x4809c000 0x80>;
--		interrupts = <83>;
--		dmas = <&sdma 61 &sdma 62>;
--		dma-names = "tx", "rx";
--	};
-diff --git a/Documentation/devicetree/bindings/mmc/ti-omap.yaml b/Documentation/devicetree/bindings/mmc/ti-omap.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..3660f54550e0ee46d3a7cfa3f531d95802f1e2fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/ti-omap.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/ti-omap.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
+index 6af3f3a0b531..36b41374e1bd 100644
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -2449,6 +2449,8 @@ static __poll_t n_tty_poll(struct tty_struct *tty, struct file *file,
+ 
+ 	poll_wait(file, &tty->read_wait, wait);
+ 	poll_wait(file, &tty->write_wait, wait);
 +
-+title: TI MMC host controller for OMAP1 and 2420
++	down_read(&tty->termios_rwsem);
+ 	if (input_available_p(tty, 1))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+ 	else {
+@@ -2456,6 +2458,8 @@ static __poll_t n_tty_poll(struct tty_struct *tty, struct file *file,
+ 		if (input_available_p(tty, 1))
+ 			mask |= EPOLLIN | EPOLLRDNORM;
+ 	}
++	up_read(&tty->termios_rwsem);
 +
-+description:
-+  The MMC Host controller for TI OMAP1 and 2420 family provides
-+  an interface for MMC, SD and SDIO types of memory cards.
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+maintainers:
-+  - Ulf Hansson <ulf.hansson@linaro.org>
-+
-+properties:
-+  compatible:
-+    const: ti,omap2420-mmc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+  ti,hwmods:
-+    items:
-+      pattern: "^msdi[0-9]+$"
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - dmas
-+  - dma-names
-+  - ti,hwmods
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    mmc@4809c000 {
-+        compatible = "ti,omap2420-mmc";
-+        ti,hwmods = "msdi1";
-+        reg = <0x4809c000 0x80>;
-+        interrupts = <83>;
-+        dmas = <&sdma 61 &sdma 62>;
-+        dma-names = "tx", "rx";
-+    };
-+...
-
----
-base-commit: 3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7
-change-id: 20250502-ti-omap-12655fa9db3e
-
-Best regards,
--- 
-Charan Pedumuru <charan.pedumuru@gmail.com>
-
+ 	if (tty->ctrl.packet && tty->link->ctrl.pktstatus)
+ 		mask |= EPOLLPRI | EPOLLIN | EPOLLRDNORM;
+ 	if (test_bit(TTY_OTHER_CLOSED, &tty->flags))
+--
 
