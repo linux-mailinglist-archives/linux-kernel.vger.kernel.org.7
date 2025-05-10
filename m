@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-642593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFCBAB20C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04256AB20CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4305E4A8032
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EE7E4A8175
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D1A23A9BE;
-	Sat, 10 May 2025 01:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7D325A345;
+	Sat, 10 May 2025 01:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="khDfseoT"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RkvWTFy/"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D701E2852
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 01:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4CC1F130A
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 01:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746840934; cv=none; b=lKzyYI3IQzRYIS73QcsouUejPCDdMOMGfh7Sae5SuL80koEHEgVODLhM6ldu0J7oTJOyDm7OQh78h+bkzNq3tM5U7Jxql8ugfGz9G9s6LZXYmy/MsNjVWNf8YnbMWnViLo0aBW70aAK0PBrtowGxLOAHVBGx7e/ViEcR7yXBpok=
+	t=1746840980; cv=none; b=oOxZ74b8wsm3nuoTnUF91ZJQ39scHWFRGlxOX0FNXhA7CMs2JUuxhbEUvfnKJbuGwDxlNimhNWn6gJLmICknueXv5ixmC4y6sz87FOeRJTdnuv975IDfPPLqGuZsYwMyC9/V5L261bi7TQzdXcEJ/W4bF+fKFC0RBlIspM11cOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746840934; c=relaxed/simple;
-	bh=qYL6xyOqlNHmEcHUDFX8KOgZK5j+gI/KYlgKxttQ6oE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SFZKfHEtqGahghSYtigIf7VE7/oRQtt3pN1FoAD40ZbQp3oyzJTyJBoHjVUiTy5ZIvRcP1khwu5ROw6sDMj1k66CcrXbiGGontDGdqjpxBjixCrGuu5RZCRQ/oMZOfEw5UOvOASnLsSr2pEtqhAvJFxCQZtAKTbfkZlv9Ff2tH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=khDfseoT; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1746840980; c=relaxed/simple;
+	bh=MvHhOYzuPXE+ZAiylgjvQQRw1fFDajZqjqZFHpCyDJg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=caKb4l9/HhclsvgoFUJ4SnC2jl//hHBMozgB184GJtOHQCsZkqQOJvS7JRuodAjZi29E4NRTR0IRvO2kESyxrEMIMTxGsYfVZonV2vxAuQqBtPJznLv+p0SUIh5Ke3goJSMPag9B11hX+lykhzDdZZRl/U6OnkzqYPHa3jDOnYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RkvWTFy/; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af8e645a1d1so1836725a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 18:35:32 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22e45821fd7so25070325ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 May 2025 18:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746840932; x=1747445732; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5yAdwYPk/dHZyDlGWX3uSFrKaKPhopB8djZyrRSb7PU=;
-        b=khDfseoTvTT3kXrdsC20c1cpSGamtnz9jSLhfzejkzX7o4S8pM9FhblX1C744RVIt2
-         lCjTrhUxm8dVclMLCt82sHfEupfEpUTMFAppojmt2HlEgk7vkq4uN6ZzRoLebAF0pGxQ
-         kQAkSR2/HdA43DZ7BR/6Po9Vtv5KP+T+DvkqfQ/57UQsFtdNVp6EKG6tVmk7hauuZSVC
-         CqDVVkL9ZQm4vIc3dykv88bZ66NgZ2VKoyQYnxBYE8IC992MYugC9w/Zzq/VAW6HaawE
-         GEluWSTbm+Jy7o6bRafSk61yrauEEhdF26V+5rJr4CXumaHWehb9F1Dvsc5r1t4Podjw
-         qrug==
+        d=google.com; s=20230601; t=1746840978; x=1747445778; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0owO96VxXnEIdL3Ktl+9Izc5OSRQuzJp2JR2ysvq8MA=;
+        b=RkvWTFy/ylPJW+3teZZAw5/8RHAd3bH2zNGZ1BaU9dlFlJQtubcizdKgOlrcjcaKDL
+         N2ZdjjmTjdp4Q6YMV8hMOQ5MwGm5GgQZ19z5CFy9I0jzj/ewYfEumva6KMD8lxm4yiUW
+         hYX/25DV1EKoIkcZN0EbYh8zqE0Vw5rKFwU4GwxEXQFeVQL9M6aecKmcvI4vqvoHghHJ
+         kGTKkQBmkNgyHiGPYvzfARDA2KmMhtR6rcHPkn0QtoRxzyhtb3j1c2rQ4jLBl0VUTFIh
+         aN71Hd5S1NDySIlF14fZY3hN8oGvxCEg+rKiNXapJaBkY3y8BbvGe8os7/iwhNXqXVxb
+         tpCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746840932; x=1747445732;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5yAdwYPk/dHZyDlGWX3uSFrKaKPhopB8djZyrRSb7PU=;
-        b=ICeJ7ZhPRom4H31n1KwZei50yotsdVkl/b6wUGXxCHCUu9SWeXx4kB6yjuYi9ux2Gu
-         qqgJpsOn2H7ai0mk9qku3MWkRvRNoAEXQBM0hBRySP/DhEj/jWQv8wDRvibNfC4MYGMx
-         VDxu3Grn254OaJIQHTpCagALGBIvI8VjA+UPxPonLTd1gFWsaTz8j8ACpbfr3myjxhoZ
-         h32v3PFa0Og33G4IzTYTpcrel9ofIcvurcM0//bs/d9O17xSaR1ugQ/shs0wmmVP1HCn
-         7VyMezEs7FNh/a19QV4TszNEwbMmcSuCwMEPz7MK3+yMT6gvY1PwYbBb5WJPlh86zyvE
-         qFRw==
-X-Gm-Message-State: AOJu0Yx6XBiJsdupr3QiyAtqSgzWMvkJ5YDEW2D/iHz8y2Zt8hJaLw2/
-	ihb3wNqATPt2Ey0WybJzSoCPJa08fsAlatqXIvXI+cUoWOmPZ6C+33DIkgKy9MVwumZxJlP+g3k
-	v5Qz/Ag==
-X-Google-Smtp-Source: AGHT+IHj8I99VpkIkOinLBR3j9BXDkBx5q4u9/CEOgXjmOYZOuwXRSG+CGfNT77V8oZURU/zx+VvFmqqKEAf
-X-Received: from pjbsm8.prod.google.com ([2002:a17:90b:2e48:b0:2fc:c98:ea47])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1844:b0:30a:4ce4:5287
- with SMTP id 98e67ed59e1d1-30c3b8fea1bmr11625120a91.0.1746840932310; Fri, 09
- May 2025 18:35:32 -0700 (PDT)
-Date: Sat, 10 May 2025 01:34:38 +0000
+        d=1e100.net; s=20230601; t=1746840978; x=1747445778;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0owO96VxXnEIdL3Ktl+9Izc5OSRQuzJp2JR2ysvq8MA=;
+        b=UO5AXKt342SiWWnqYgU8aMZYo8f/AYJzacu9aJmpL5qQbfGGuMKfBYfrRKYYLAqRQd
+         qZcwJUUfxwtvY2KDHfHe7cyQtoR/Hhz/PNpne5iAnReoUPrpnesv+dbMQXJORr+yZeuu
+         FZ+7iwB972O8UTt67cyX4esWZrJ6UApLMZaDpkYG5shQAMC5UWzBGpyEHYROTLTtLQxK
+         hHp135g6O0WTok16ShTZuCmdNtpaHMkpdS+WnM+CYMcj5OavHNrwXdTIcPzZ6x5TQ5qX
+         7zQ7+aUj8P8s47LvYizw0rVeJ7ZquihJLndsIUGek4XSdb19BXuxmhO/VkDofHmG6Vnz
+         wTxw==
+X-Gm-Message-State: AOJu0YxlkxRVGZmErFS+8ka0gMLO/aUzrbXf/m3iaLHptUOkFdf9mHeq
+	30tn5w3HjG7h9zpGNIM+RECSm0vM0Cp9oRncIorw2DfzGaJZdDuGGYke+HkfJJzwbFFkS65nxMH
+	msiWmfg==
+X-Google-Smtp-Source: AGHT+IFmqClNvE3KxKNn8qSTh1J4f/zKXn6Hrece7vxaye/d2GcDpOzKmPLlxA2ffl8xLhqvA0I8kcWWo0mu
+X-Received: from pllb9.prod.google.com ([2002:a17:902:e949:b0:22d:a5a9:8117])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:990:b0:22e:485a:b45
+ with SMTP id d9443c01a7336-22fc918d07emr81853875ad.46.1746840977979; Fri, 09
+ May 2025 18:36:17 -0700 (PDT)
+Date: Sat, 10 May 2025 01:34:40 +0000
+In-Reply-To: <20250510013435.1520671-5-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250510013435.1520671-5-ynaffit@google.com>
 X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <20250510013435.1520671-5-ynaffit@google.com>
-Subject: [PATCH v4 1/2] binder: Refactor binder_node print synchronization
+Message-ID: <20250510013435.1520671-7-ynaffit@google.com>
+Subject: [PATCH v4 2/2] binder: Create safe versions of binder log files
 From: "Tiffany Y. Yang" <ynaffit@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
@@ -79,246 +82,310 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-The binder driver outputs information about each dead binder node by
-iterating over the dead nodes list, and it prints the state of each live
-node in the system by traversing each binder_proc's proc->nodes tree.
-Both cases require similar logic to maintain the global lock ordering
-while accessing each node.
+Binder defines several seq_files that can be accessed via debugfs or
+binderfs. Some of these files (e.g., 'state' and 'transactions')
+contain more granular information about binder's internal state that
+is helpful for debugging, but they also leak userspace address data
+through user-defined 'cookie' or 'ptr' values. Consequently, access
+to these files must be heavily restricted.
 
-Create a helper function to synchronize around printing binder nodes in
-a list. Opportunistically make minor cosmetic changes to binder print
-functions.
+Add two new files, 'state_hashed' and 'transactions_hashed', that
+reproduce the information in the original files but use the kernel's
+raw pointer obfuscation to hash any potential user addresses. This
+approach allows systems to grant broader access to the new files
+without having to change the security policy around the existing ones.
+
+In practice, userspace populates these fields with user addresses, but
+within the driver, these values only serve as unique identifiers for
+their associated binder objects. Consequently, binder logs can
+obfuscate these values and still retain meaning. While this strategy
+prevents leaking information about the userspace memory layout in the
+existing log files, it also decouples log messages about binder
+objects from their user-defined identifiers.
 
 Acked-by: Carlos Llamas <cmllamas@google.com>
+Tested-by: Carlos Llamas <cmllamas@google.com>
 Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
 ---
 v2:
-* Updated print_next_binder_node_ilocked function comment to reflect
-  dropped locks
-* Added acked-by tag
+* Update commit message
+* Add acked-by tag
+v3:
+* Cast binder_uintptr_t to long before casting to ptr
 v4:
-* Specify binder_proc to re-lock on instead of using node->proc to avoid
-  error from race with binder_node_release that Alice pointed out
+* Add tested-by tag
 
 ---
- drivers/android/binder.c | 119 ++++++++++++++++++++++-----------------
- 1 file changed, 68 insertions(+), 51 deletions(-)
+ drivers/android/binder.c | 106 +++++++++++++++++++++++++++++----------
+ 1 file changed, 79 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 5fc2c8ee61b1..8e4912643749 100644
+index 8e4912643749..c9c4193fad99 100644
 --- a/drivers/android/binder.c
 +++ b/drivers/android/binder.c
-@@ -6377,10 +6377,10 @@ static void print_binder_transaction_ilocked(struct seq_file *m,
- }
- 
- static void print_binder_work_ilocked(struct seq_file *m,
--				     struct binder_proc *proc,
--				     const char *prefix,
--				     const char *transaction_prefix,
--				     struct binder_work *w)
-+				      struct binder_proc *proc,
-+				      const char *prefix,
-+				      const char *transaction_prefix,
-+				      struct binder_work *w)
+@@ -6380,7 +6380,7 @@ static void print_binder_work_ilocked(struct seq_file *m,
+ 				      struct binder_proc *proc,
+ 				      const char *prefix,
+ 				      const char *transaction_prefix,
+-				      struct binder_work *w)
++				      struct binder_work *w, bool hash_ptrs)
  {
  	struct binder_node *node;
  	struct binder_transaction *t;
-@@ -6430,7 +6430,7 @@ static void print_binder_work_ilocked(struct seq_file *m,
+@@ -6403,9 +6403,15 @@ static void print_binder_work_ilocked(struct seq_file *m,
+ 		break;
+ 	case BINDER_WORK_NODE:
+ 		node = container_of(w, struct binder_node, work);
+-		seq_printf(m, "%snode work %d: u%016llx c%016llx\n",
+-			   prefix, node->debug_id,
+-			   (u64)node->ptr, (u64)node->cookie);
++		if (hash_ptrs)
++			seq_printf(m, "%snode work %d: u%p c%p\n",
++				   prefix, node->debug_id,
++				   (void *)(long)node->ptr,
++				   (void *)(long)node->cookie);
++		else
++			seq_printf(m, "%snode work %d: u%016llx c%016llx\n",
++				   prefix, node->debug_id,
++				   (u64)node->ptr, (u64)node->cookie);
+ 		break;
+ 	case BINDER_WORK_DEAD_BINDER:
+ 		seq_printf(m, "%shas dead binder\n", prefix);
+@@ -6430,7 +6436,7 @@ static void print_binder_work_ilocked(struct seq_file *m,
  
  static void print_binder_thread_ilocked(struct seq_file *m,
  					struct binder_thread *thread,
--					int print_always)
-+					bool print_always)
+-					bool print_always)
++					bool print_always, bool hash_ptrs)
  {
  	struct binder_transaction *t;
  	struct binder_work *w;
-@@ -6505,8 +6505,53 @@ static void print_binder_ref_olocked(struct seq_file *m,
- 	binder_node_unlock(ref->node);
+@@ -6460,14 +6466,16 @@ static void print_binder_thread_ilocked(struct seq_file *m,
+ 	}
+ 	list_for_each_entry(w, &thread->todo, entry) {
+ 		print_binder_work_ilocked(m, thread->proc, "    ",
+-					  "    pending transaction", w);
++					  "    pending transaction",
++					  w, hash_ptrs);
+ 	}
+ 	if (!print_always && m->count == header_pos)
+ 		m->count = start_pos;
  }
  
--static void print_binder_proc(struct seq_file *m,
--			      struct binder_proc *proc, int print_all)
-+/**
-+ * print_next_binder_node_ilocked() - Print binder_node from a locked list
-+ * @m:          struct seq_file for output via seq_printf()
-+ * @proc:       struct binder_proc we hold the inner_proc_lock to (if any)
-+ * @node:       struct binder_node to print fields of
-+ * @prev_node:	struct binder_node we hold a temporary reference to (if any)
-+ *
-+ * Helper function to handle synchronization around printing a struct
-+ * binder_node while iterating through @proc->nodes or the dead nodes list.
-+ * Caller must hold either @proc->inner_lock (for live nodes) or
-+ * binder_dead_nodes_lock. This lock will be released during the body of this
-+ * function, but it will be reacquired before returning to the caller.
-+ *
-+ * Return:	pointer to the struct binder_node we hold a tmpref on
-+ */
-+static struct binder_node *
-+print_next_binder_node_ilocked(struct seq_file *m, struct binder_proc *proc,
-+			       struct binder_node *node,
-+			       struct binder_node *prev_node)
-+{
-+	/*
-+	 * Take a temporary reference on the node so that isn't freed while
-+	 * we print it.
-+	 */
-+	binder_inc_node_tmpref_ilocked(node);
-+	/*
-+	 * Live nodes need to drop the inner proc lock and dead nodes need to
-+	 * drop the binder_dead_nodes_lock before trying to take the node lock.
-+	 */
-+	if (proc)
-+		binder_inner_proc_unlock(proc);
+ static void print_binder_node_nilocked(struct seq_file *m,
+-				       struct binder_node *node)
++				       struct binder_node *node,
++				       bool hash_ptrs)
+ {
+ 	struct binder_ref *ref;
+ 	struct binder_work *w;
+@@ -6475,8 +6483,13 @@ static void print_binder_node_nilocked(struct seq_file *m,
+ 
+ 	count = hlist_count_nodes(&node->refs);
+ 
+-	seq_printf(m, "  node %d: u%016llx c%016llx hs %d hw %d ls %d lw %d is %d iw %d tr %d",
+-		   node->debug_id, (u64)node->ptr, (u64)node->cookie,
++	if (hash_ptrs)
++		seq_printf(m, "  node %d: u%p c%p", node->debug_id,
++			   (void *)(long)node->ptr, (void *)(long)node->cookie);
 +	else
-+		spin_unlock(&binder_dead_nodes_lock);
-+	if (prev_node)
-+		binder_put_node(prev_node);
-+	binder_node_inner_lock(node);
-+	print_binder_node_nilocked(m, node);
-+	binder_node_inner_unlock(node);
-+	if (proc)
-+		binder_inner_proc_lock(proc);
-+	else
-+		spin_lock(&binder_dead_nodes_lock);
-+	return node;
-+}
-+
-+static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
-+			      bool print_all)
++		seq_printf(m, "  node %d: u%016llx c%016llx", node->debug_id,
++			   (u64)node->ptr, (u64)node->cookie);
++	seq_printf(m, " hs %d hw %d ls %d lw %d is %d iw %d tr %d",
+ 		   node->has_strong_ref, node->has_weak_ref,
+ 		   node->local_strong_refs, node->local_weak_refs,
+ 		   node->internal_strong_refs, count, node->tmp_refs);
+@@ -6489,7 +6502,8 @@ static void print_binder_node_nilocked(struct seq_file *m,
+ 	if (node->proc) {
+ 		list_for_each_entry(w, &node->async_todo, entry)
+ 			print_binder_work_ilocked(m, node->proc, "    ",
+-					  "    pending async transaction", w);
++					  "    pending async transaction",
++					  w, hash_ptrs);
+ 	}
+ }
+ 
+@@ -6511,6 +6525,7 @@ static void print_binder_ref_olocked(struct seq_file *m,
+  * @proc:       struct binder_proc we hold the inner_proc_lock to (if any)
+  * @node:       struct binder_node to print fields of
+  * @prev_node:	struct binder_node we hold a temporary reference to (if any)
++ * @hash_ptrs:  whether to hash @node's binder_uintptr_t fields
+  *
+  * Helper function to handle synchronization around printing a struct
+  * binder_node while iterating through @proc->nodes or the dead nodes list.
+@@ -6523,7 +6538,7 @@ static void print_binder_ref_olocked(struct seq_file *m,
+ static struct binder_node *
+ print_next_binder_node_ilocked(struct seq_file *m, struct binder_proc *proc,
+ 			       struct binder_node *node,
+-			       struct binder_node *prev_node)
++			       struct binder_node *prev_node, bool hash_ptrs)
+ {
+ 	/*
+ 	 * Take a temporary reference on the node so that isn't freed while
+@@ -6541,7 +6556,7 @@ print_next_binder_node_ilocked(struct seq_file *m, struct binder_proc *proc,
+ 	if (prev_node)
+ 		binder_put_node(prev_node);
+ 	binder_node_inner_lock(node);
+-	print_binder_node_nilocked(m, node);
++	print_binder_node_nilocked(m, node, hash_ptrs);
+ 	binder_node_inner_unlock(node);
+ 	if (proc)
+ 		binder_inner_proc_lock(proc);
+@@ -6551,7 +6566,7 @@ print_next_binder_node_ilocked(struct seq_file *m, struct binder_proc *proc,
+ }
+ 
+ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
+-			      bool print_all)
++			      bool print_all, bool hash_ptrs)
  {
  	struct binder_work *w;
  	struct rb_node *n;
-@@ -6519,31 +6564,18 @@ static void print_binder_proc(struct seq_file *m,
- 	header_pos = m->count;
- 
+@@ -6566,7 +6581,7 @@ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
  	binder_inner_proc_lock(proc);
--	for (n = rb_first(&proc->threads); n != NULL; n = rb_next(n))
-+	for (n = rb_first(&proc->threads); n; n = rb_next(n))
+ 	for (n = rb_first(&proc->threads); n; n = rb_next(n))
  		print_binder_thread_ilocked(m, rb_entry(n, struct binder_thread,
- 						rb_node), print_all);
+-						rb_node), print_all);
++						rb_node), print_all, hash_ptrs);
  
--	for (n = rb_first(&proc->nodes); n != NULL; n = rb_next(n)) {
-+	for (n = rb_first(&proc->nodes); n; n = rb_next(n)) {
+ 	for (n = rb_first(&proc->nodes); n; n = rb_next(n)) {
  		struct binder_node *node = rb_entry(n, struct binder_node,
- 						    rb_node);
- 		if (!print_all && !node->has_async_transaction)
+@@ -6575,7 +6590,8 @@ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
  			continue;
  
--		/*
--		 * take a temporary reference on the node so it
--		 * survives and isn't removed from the tree
--		 * while we print it.
--		 */
--		binder_inc_node_tmpref_ilocked(node);
--		/* Need to drop inner lock to take node lock */
--		binder_inner_proc_unlock(proc);
--		if (last_node)
--			binder_put_node(last_node);
--		binder_node_inner_lock(node);
--		print_binder_node_nilocked(m, node);
--		binder_node_inner_unlock(node);
--		last_node = node;
--		binder_inner_proc_lock(proc);
-+		last_node = print_next_binder_node_ilocked(m, proc, node,
-+							   last_node);
+ 		last_node = print_next_binder_node_ilocked(m, proc, node,
+-							   last_node);
++							   last_node,
++							   hash_ptrs);
  	}
  	binder_inner_proc_unlock(proc);
  	if (last_node)
-@@ -6551,12 +6583,10 @@ static void print_binder_proc(struct seq_file *m,
- 
- 	if (print_all) {
- 		binder_proc_lock(proc);
--		for (n = rb_first(&proc->refs_by_desc);
--		     n != NULL;
--		     n = rb_next(n))
-+		for (n = rb_first(&proc->refs_by_desc); n; n = rb_next(n))
- 			print_binder_ref_olocked(m, rb_entry(n,
--							    struct binder_ref,
--							    rb_node_desc));
-+							     struct binder_ref,
-+							     rb_node_desc));
- 		binder_proc_unlock(proc);
- 	}
- 	binder_alloc_print_allocated(m, &proc->alloc);
-@@ -6696,7 +6726,7 @@ static void print_binder_proc_stats(struct seq_file *m,
- 	count = 0;
- 	ready_threads = 0;
+@@ -6593,7 +6609,8 @@ static void print_binder_proc(struct seq_file *m, struct binder_proc *proc,
  	binder_inner_proc_lock(proc);
--	for (n = rb_first(&proc->threads); n != NULL; n = rb_next(n))
-+	for (n = rb_first(&proc->threads); n; n = rb_next(n))
- 		count++;
+ 	list_for_each_entry(w, &proc->todo, entry)
+ 		print_binder_work_ilocked(m, proc, "  ",
+-					  "  pending transaction", w);
++					  "  pending transaction", w,
++					  hash_ptrs);
+ 	list_for_each_entry(w, &proc->delivered_death, entry) {
+ 		seq_puts(m, "  has delivered dead binder\n");
+ 		break;
+@@ -6775,7 +6792,7 @@ static void print_binder_proc_stats(struct seq_file *m,
+ 	print_binder_stats(m, "  ", &proc->stats);
+ }
  
- 	list_for_each_entry(thread, &proc->waiting_threads, waiting_thread_node)
-@@ -6710,7 +6740,7 @@ static void print_binder_proc_stats(struct seq_file *m,
- 			ready_threads,
- 			free_async_space);
- 	count = 0;
--	for (n = rb_first(&proc->nodes); n != NULL; n = rb_next(n))
-+	for (n = rb_first(&proc->nodes); n; n = rb_next(n))
- 		count++;
- 	binder_inner_proc_unlock(proc);
- 	seq_printf(m, "  nodes: %d\n", count);
-@@ -6718,7 +6748,7 @@ static void print_binder_proc_stats(struct seq_file *m,
- 	strong = 0;
- 	weak = 0;
- 	binder_proc_lock(proc);
--	for (n = rb_first(&proc->refs_by_desc); n != NULL; n = rb_next(n)) {
-+	for (n = rb_first(&proc->refs_by_desc); n; n = rb_next(n)) {
- 		struct binder_ref *ref = rb_entry(n, struct binder_ref,
- 						  rb_node_desc);
- 		count++;
-@@ -6756,29 +6786,16 @@ static int state_show(struct seq_file *m, void *unused)
- 	spin_lock(&binder_dead_nodes_lock);
- 	if (!hlist_empty(&binder_dead_nodes))
+-static int state_show(struct seq_file *m, void *unused)
++static void print_binder_state(struct seq_file *m, bool hash_ptrs)
+ {
+ 	struct binder_proc *proc;
+ 	struct binder_node *node;
+@@ -6788,16 +6805,38 @@ static int state_show(struct seq_file *m, void *unused)
  		seq_puts(m, "dead nodes:\n");
--	hlist_for_each_entry(node, &binder_dead_nodes, dead_node) {
--		/*
--		 * take a temporary reference on the node so it
--		 * survives and isn't removed from the list
--		 * while we print it.
--		 */
--		node->tmp_refs++;
--		spin_unlock(&binder_dead_nodes_lock);
--		if (last_node)
--			binder_put_node(last_node);
--		binder_node_lock(node);
--		print_binder_node_nilocked(m, node);
--		binder_node_unlock(node);
--		last_node = node;
--		spin_lock(&binder_dead_nodes_lock);
--	}
-+	hlist_for_each_entry(node, &binder_dead_nodes, dead_node)
-+		last_node = print_next_binder_node_ilocked(m, NULL, node,
-+							   last_node);
+ 	hlist_for_each_entry(node, &binder_dead_nodes, dead_node)
+ 		last_node = print_next_binder_node_ilocked(m, NULL, node,
+-							   last_node);
++							   last_node,
++							   hash_ptrs);
  	spin_unlock(&binder_dead_nodes_lock);
  	if (last_node)
  		binder_put_node(last_node);
  
  	mutex_lock(&binder_procs_lock);
  	hlist_for_each_entry(proc, &binder_procs, proc_node)
--		print_binder_proc(m, proc, 1);
-+		print_binder_proc(m, proc, true);
+-		print_binder_proc(m, proc, true);
++		print_binder_proc(m, proc, true, hash_ptrs);
  	mutex_unlock(&binder_procs_lock);
++}
++
++static void print_binder_transactions(struct seq_file *m, bool hash_ptrs)
++{
++	struct binder_proc *proc;
++
++	seq_puts(m, "binder transactions:\n");
++	mutex_lock(&binder_procs_lock);
++	hlist_for_each_entry(proc, &binder_procs, proc_node)
++		print_binder_proc(m, proc, false, hash_ptrs);
++	mutex_unlock(&binder_procs_lock);
++}
++
++static int state_show(struct seq_file *m, void *unused)
++{
++	print_binder_state(m, false);
++	return 0;
++}
  
++static int state_hashed_show(struct seq_file *m, void *unused)
++{
++	print_binder_state(m, true);
  	return 0;
-@@ -6807,7 +6824,7 @@ static int transactions_show(struct seq_file *m, void *unused)
- 	seq_puts(m, "binder transactions:\n");
- 	mutex_lock(&binder_procs_lock);
- 	hlist_for_each_entry(proc, &binder_procs, proc_node)
--		print_binder_proc(m, proc, 0);
-+		print_binder_proc(m, proc, false);
- 	mutex_unlock(&binder_procs_lock);
+ }
  
+@@ -6819,14 +6858,13 @@ static int stats_show(struct seq_file *m, void *unused)
+ 
+ static int transactions_show(struct seq_file *m, void *unused)
+ {
+-	struct binder_proc *proc;
+-
+-	seq_puts(m, "binder transactions:\n");
+-	mutex_lock(&binder_procs_lock);
+-	hlist_for_each_entry(proc, &binder_procs, proc_node)
+-		print_binder_proc(m, proc, false);
+-	mutex_unlock(&binder_procs_lock);
++	print_binder_transactions(m, false);
++	return 0;
++}
+ 
++static int transactions_hashed_show(struct seq_file *m, void *unused)
++{
++	print_binder_transactions(m, true);
  	return 0;
-@@ -6822,7 +6839,7 @@ static int proc_show(struct seq_file *m, void *unused)
+ }
+ 
+@@ -6839,7 +6877,7 @@ static int proc_show(struct seq_file *m, void *unused)
  	hlist_for_each_entry(itr, &binder_procs, proc_node) {
  		if (itr->pid == pid) {
  			seq_puts(m, "binder proc state:\n");
--			print_binder_proc(m, itr, 1);
-+			print_binder_proc(m, itr, true);
+-			print_binder_proc(m, itr, true);
++			print_binder_proc(m, itr, true, false);
  		}
  	}
  	mutex_unlock(&binder_procs_lock);
+@@ -6906,8 +6944,10 @@ const struct file_operations binder_fops = {
+ };
+ 
+ DEFINE_SHOW_ATTRIBUTE(state);
++DEFINE_SHOW_ATTRIBUTE(state_hashed);
+ DEFINE_SHOW_ATTRIBUTE(stats);
+ DEFINE_SHOW_ATTRIBUTE(transactions);
++DEFINE_SHOW_ATTRIBUTE(transactions_hashed);
+ DEFINE_SHOW_ATTRIBUTE(transaction_log);
+ 
+ const struct binder_debugfs_entry binder_debugfs_entries[] = {
+@@ -6917,6 +6957,12 @@ const struct binder_debugfs_entry binder_debugfs_entries[] = {
+ 		.fops = &state_fops,
+ 		.data = NULL,
+ 	},
++	{
++		.name = "state_hashed",
++		.mode = 0444,
++		.fops = &state_hashed_fops,
++		.data = NULL,
++	},
+ 	{
+ 		.name = "stats",
+ 		.mode = 0444,
+@@ -6929,6 +6975,12 @@ const struct binder_debugfs_entry binder_debugfs_entries[] = {
+ 		.fops = &transactions_fops,
+ 		.data = NULL,
+ 	},
++	{
++		.name = "transactions_hashed",
++		.mode = 0444,
++		.fops = &transactions_hashed_fops,
++		.data = NULL,
++	},
+ 	{
+ 		.name = "transaction_log",
+ 		.mode = 0444,
 -- 
 2.49.0.1045.g170613ef41-goog
 
