@@ -1,86 +1,98 @@
-Return-Path: <linux-kernel+bounces-642752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12A4AB234C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 12:21:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D97CAB2353
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 12:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3858A4C4E69
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:21:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0EAA7B1169
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 10:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E78F2343AE;
-	Sat, 10 May 2025 10:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3112356BC;
+	Sat, 10 May 2025 10:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NeGORnBt"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lV6MF5yv"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA7621B9E2
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 10:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6BD259C;
+	Sat, 10 May 2025 10:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746872498; cv=none; b=bFlLIryL0QwmPzpGUQQvRagpDp5+VMUilg6AUig1xTxOCn4TpHz+/cX1/6LTOiTmyYp05epP1SmYY/x2oj4a+m0ebeA0/b6THVjz1tWtFq8t8ElWMyB3jju2s6MGA8Cc3Abr3S/tK6Ko8nmsrC3cyBhEu7rYMWQd0wxT9C936ss=
+	t=1746872669; cv=none; b=CZ/ej/sCxj9RerUxNPpwVg4UtSN5I/8hPNiou2CKIajNz0HGvLUf/F0AS1DgubyGJelvoe1yhe/EWth48xqZEKR+OHKaph3jvFaMVYySfo/40JKUTGaeoK5tL0HI0QGPm5IW7GmjDTz2poUYM/IylOBDFY6OrwNaRTC7oBf1Yn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746872498; c=relaxed/simple;
-	bh=wvyfyP5GNb7dYAUO9N524DiOE/hrns350VPRomjD9R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m0kDVbqTRL6zdQ0gokeQDHOAi6xJGjCdW5HVlg648qdKK7AUfyOexL76/P769cHodVd70luaQQVIkSdt3EE6EhmlS0yZnSV2RtHCwPGOdNHMsGdL65OChU8pEp8ur1lICcjpAPTCcD/j5/y3+ZabQOKSburvgBxGRygg3E8728g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NeGORnBt; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1746872669; c=relaxed/simple;
+	bh=wnHNMgoot9KpGEi5CBooTZqBluK/Q3+vxIHecX2g2eQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Z9lnNVHT6Lr5JMIP4McY6TS5H8veS9daCkQ2/fVENKBYccbaTg0OExYrboBHD+FVa9hxBu+8rAQvdQw27HduFP5wEwIm34poidYDQ3wSGDOTU1g4YDvRB8WtVni5FlqxC+jEM5YkppSDgc91OLPPuWCNnJ8MUkJv4+UZAJWcqMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lV6MF5yv; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7423fb98cb1so1264000b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 03:21:36 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so21397865e9.1;
+        Sat, 10 May 2025 03:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746872496; x=1747477296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5uq+Zst8YwtPGpsQlMHD4aGLCy+mUn3+jss35jpDE/s=;
-        b=NeGORnBtIR0rahPird2feB5CPO9/+LrPo6HDEvGG3wHpaa88y4b1aOYH1iwppHgOHJ
-         Ed2hlHkcvgB9HJ2exgzBsS4m8+AKHgHeMhm9VPakUsQMz786Cn8U/BKNI3ttfbdtnxSz
-         dBW+v7x5Cbfnjr50l9r9TT/+pTNKnuhEWQAqhUAxPHQiWso58USZ3AI0tTqDdsUwCHJ0
-         4Hkxfkpaz86Q4lThn/ZfO9e8u1s4uBSgmJp3Z6tg/ClaqJSYyEvaJvkEMkrihPlXxovs
-         6WXUb/fQOvjYKnmr2v3eizD/ozX9oUR+zQzs9skGjwYMKnG1ZtJ9UTd0HT41etTgfoqT
-         QtaQ==
+        d=gmail.com; s=20230601; t=1746872666; x=1747477466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zKxSsCzPd9u4xpd7kmKpWDs7KnLnF8iUPkHfPwwlEy8=;
+        b=lV6MF5yvl0+k5Da0aD9A7uMWx8tkd++FuXG82WBNorR7BfOUOpa0hGdL6Zl0djdhN2
+         9TzAltnjEJFYzXaro6XnhnBVhTh/8pP4jMPgqzWja2YGecjPtQ0tsLIHE6yzsfibXfa4
+         fL4IAdfEfCP2+VVkvpUQyvRJpORIml7VobYqB0VLr+h587qyRazInP4armn4IXdYfT5a
+         EuSe3Kv/aTf4do0wOBijFvZNKQonslHW2LIOkbxBPa9Itg4x2fM+p5u0uUASslt9vpCc
+         +ZFX5bltq8EYXFpyM/ucRcZPid/mG9abt0Wb2OsLBTaj1DVY3/HVJnQjQgMPjddEpplR
+         6lUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746872496; x=1747477296;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5uq+Zst8YwtPGpsQlMHD4aGLCy+mUn3+jss35jpDE/s=;
-        b=BAcijFX7Qy4K1bzw6nypzyxg12HymNadhGmo1vT+YiqMknvVkq4LnHOS2SgUAHkFE7
-         S2moipTfsjYTikXOvuhBZnm8sfdXMpWJ6BW7KjCWNKCHjvlFLCv8SDzoxLzSUVkLoxaG
-         qenA3ZvqAatIKui+ksrkO6SQ56yoe7Or7K0uzaVLktoJ3Sc/DmrHmHQKogbTUg9ZOj3a
-         L6k+7eI5r3mfhGDyOLi4r9cUjfKqmHFRTsci2obpebNg8o1mPkjKLYnQ8xUHrUmT/Wrw
-         kxxuCmXM/wv8IFIM36RaHSOFClPkQU0x0Y/ImizM+9Q7bQXPWaiaerS6UBp70YnPJYcv
-         UmoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyuvBMF+r3v/92shYLDRFpI3cCxPXsSte8cI349aEiY3lMEmyVKqr1vBrGRZ47O0CT4BbLjt8H2uPQExI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1nDG/mp8hzVsmIvqXGTj4xWngJtvdgVXa970MNSc9TKHYbs99
-	SrL/agRw4TtBFZENlBGxFjIRbOcb3/r1826h9/xd9Vh676rxK2a/
-X-Gm-Gg: ASbGncu9zJYQmtPeme406sVxfljnPS52COUilK+mAO1CBlXUSuVQ73Nx7TK3CHU0uIs
-	GRmN+L3GM7gggFgeeh3BqblTWv2RPKOhPBYM/X3lVbUtL1C3zTFvui4i8HVRVxq2ajI4IyD7xah
-	bDwnnRmodO9cBl2kAWtalMiK+DR9lo4vipkSrOZ3oZf4/PipfNoeoVjGofe1Ja/oAi3CkEOd7cz
-	HuoGSx6dnjKdU1wDvj+qxDt5K7CyLw6b8Jk8DyW5X3gd++NuLdk0MLGKaUlDO//tnMV3Fe9uQnV
-	0jixjQL/fMmJiLkJ5Hnu8tNZKL54M0009yzMIpccRyZXQiNUGL0sFnvj
-X-Google-Smtp-Source: AGHT+IGTyFC3y3txfPtKS8vmVFwlrXN1ldd56g5XK0RMzSCg6bJ2N10vkSvR4w29AgSFP+E0lUB6TQ==
-X-Received: by 2002:a05:6a00:2d08:b0:736:5544:7ad7 with SMTP id d2e1a72fcca58-7423bfb9282mr8688337b3a.14.1746872496113;
-        Sat, 10 May 2025 03:21:36 -0700 (PDT)
-Received: from ilya.linux.jp ([240b:10:c301:9100:7db1:c9cc:c837:2394])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a8efa2sm2978554b3a.165.2025.05.10.03.21.33
+        d=1e100.net; s=20230601; t=1746872666; x=1747477466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zKxSsCzPd9u4xpd7kmKpWDs7KnLnF8iUPkHfPwwlEy8=;
+        b=vhuiX09+mRF6RB+437bSDZ8hFsBY1S9DF6SIR63WSkFUiqaYUQnizmt6aoAV3ghO0S
+         8umqeBMbMhYFWp26LA3NUVleNyJL1weILGIkLRh5iW1eumX58EnrA/XwCb6K5Bs7eMiA
+         cGwsGbEvahZwyyIoyQ7pxcrQD6UTf1HmCXO2HIPHRV2PykPR3m2a52is5ylIVLePzLOx
+         fTnIaPQY3yKUZXEj8pD9ffoJIf2UNxGZ3xyiKCFVQR0SiYV+LP62auf3PM8S9efVMSHb
+         mghWtDJQzAMEJ1I1isubnYHZEi1sJ/rqmypK9o9bt+wIlsFwacsLS8dDaVXXVkZpRCWh
+         gzXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ncDifv52RzxlZvZUL7PlZe3OWitaD+Wx9yNyX2suaqk0+Dm2T6GiofiLhhcnChnGYykNhsRK6nV9@vger.kernel.org, AJvYcCWHiqZHKrxeu1eeb+1G7Uqex+82miLehMeKN9L/50JYqsd+8v5Xf+zSaljcOK1sGB0fFR9Np0T9qzSp4w7l@vger.kernel.org, AJvYcCXzVfzR4+Zh/yA47Krfw4lHL8GWut80d8SmFIvnn+5zL8U946dkF5MXiwJoLLv+vS9dny2wxWjQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3zC0Sy2Fs+NtWemrey5UtBQZLVak1X0JzpOkIOS2EgZu7fNVw
+	JqQPsI27N3ef9d3HY/OEo4d9+z56pT0imE6oEbrLIBP1zU0Y6s7prYlxig==
+X-Gm-Gg: ASbGncte+2QPMdSxl8m1UlAZjYlDE5lA92LXLXCl8vvuSkGeJJWGUUem0kCY0d430gW
+	eU6xMeN7Ltfo3Q5ZA2jKbFLYoQbtZE0zT03qnKn0+1SzpM/pCrWswotqHReXA5+A/ucY9+P/kBy
+	Ty/nDG3upD4yqyl14hbfHS6bDpGzmQDuyfIh1dwww03+/5KFa1GPlB/msMP+pTPolqTFrdyM0I8
+	tGeJi+XdFxq9mylnWAm8Oa70GDxo74y8LH8MZhW9WEzGQa6ETyhFnZKmW7uaj1PxwgNYbHCURDR
+	grTEFJ7EYj9ydE6PEZGOLNYO5otv/4jRfTEYzxASxEYHTvrGSClmPTghnxBgGcMnmdWPLa1FzSL
+	Gfu6giMXELL+2o0dmzgYo
+X-Google-Smtp-Source: AGHT+IER7aYGVjZvmxZddHRM9lepgv9quMoiGYDbNTLn8P/0KGg+V5JhDH8HVNHzudh0XVsJecAxFA==
+X-Received: by 2002:a05:600c:528e:b0:43d:77c5:9c1a with SMTP id 5b1f17b1804b1-442d6d19253mr56581905e9.4.1746872665475;
+        Sat, 10 May 2025 03:24:25 -0700 (PDT)
+Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442d67df639sm57981265e9.13.2025.05.10.03.24.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 03:21:35 -0700 (PDT)
-From: ilya guterman <amfernusus@gmail.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
+        Sat, 10 May 2025 03:24:25 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ilya Guterman <amfernusus@gmail.com>
-Subject: [PATCH] drivers/nvme: Add quirks for device 025e:f1ac
-Date: Sat, 10 May 2025 19:21:30 +0900
-Message-ID: <20250510102130.14710-1-amfernusus@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [net-next PATCH v3 00/11] net: pcs: Introduce support for fwnode PCS
+Date: Sat, 10 May 2025 12:23:20 +0200
+Message-ID: <20250510102348.14134-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,35 +101,169 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ilya Guterman <amfernusus@gmail.com>
+This series introduce a most awaited feature that is correctly
+provide PCS with fwnode without having to use specific export symbol
+and additional handling of PCS in phylink.
 
-This commit adds NVME_QUIRK_NO_DEEPEST_PS for
-device [126f:2262], which belongs to device SOLIDIGM P44 Pro SSDPFKKW020X7
+There is currently an equivalent series for this feature where
+a wrapper implementation is proposed. I honestly don't really like
+introducing layer of layer of wrapping to workaround stuff, so
+this is my attempt at giving a more direct approach to this.
 
-The device frequently have trouble exiting the deepest power state (5),
-resulting in the entire disk unresponsive.
-
-Verified by setting nvme_core.default_ps_max_latency_us=10000 and observing them behaving normally.
-Also by running with the patch couldn't reproduce the issue after multiple wake up from sleeps.
-Running without the patch again reprodcued the issue on the first wake from sleep.
 ---
- drivers/nvme/host/pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+First the PCS fwnode:
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index d49b69565d04..d62fef76cc07 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -3734,6 +3734,8 @@ static const struct pci_device_id nvme_id_table[] = {
- 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
- 	{ PCI_DEVICE(0x1e49, 0x0041),   /* ZHITAI TiPro7000 NVMe SSD */
- 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
-+	{ PCI_DEVICE(0x025e, 0xf1ac),   /* SOLIDIGM  P44 pro SSDPFKKW020X7  */
-+		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
- 	{ PCI_DEVICE(0xc0a9, 0x540a),   /* Crucial P2 */
- 		.driver_data = NVME_QUIRK_BOGUS_NID, },
- 	{ PCI_DEVICE(0x1d97, 0x2263), /* Lexar NM610 */
+The concept is to implement a producer-consumer API similar to other
+subsystem like clock or PHY.
+
+That seems to be the best solution to the problem as PCS driver needs
+to be detached from phylink and implement a simple way to provide a
+PCS while maintaining support for probe defer or driver removal.
+
+To keep the implementation simple, the PCS driver devs needs some
+collaboration to correctly implement this. This is O.K. as helper
+to correctly implement this are provided hence it's really a matter
+of following a pattern to correct follow removal of a PCS driver.
+
+A PCS provider have to implement and call fwnode_pcs_add_provider() in
+probe function and define an xlate function to define how the PCS
+should be provided based on the requested interface and phandle spec
+defined in fwnode (based on the #pcs-cells)
+
+fwnode_pcs_get() is provided to provide a specific PCS declared in
+fwnode at index.
+
+A simple xlate function is provided for simple single PCS
+implementation, fwnode_pcs_simple_get.
+
+A PCS provider on driver removal should first call
+fwnode_pcs_del_provider() to delete itself as a provider and then
+release the PCS from phylink with phylink_release_pcs() under rtnl
+lock.
+
+---
+Second PCS handling in phylink:
+
+We have the PCS problem for the only reason that in initial
+implementation, we permitted way too much flexibility to MAC driver
+and things started to deviate. At times we couldn't think SoC
+would start to put PCS outside the MAC hence it was OK to assume
+they would live in the same driver. With the introduction of
+10g in more consumer devices, we are observing a rapid growth
+of this pattern with multiple PCS external to MAC.
+
+To put a stop on this, the only solution is to give back to phylink
+control on PCS handling and enforce more robust supported interface
+definition from both MAC and PCS side.
+
+It's suggested to read patch 0003 of this series for more info, here
+a brief explaination of the idea:
+
+This series introduce handling of PCS in phylink and try to deprecate
+.mac_select_pcs.
+
+Phylink now might contain a linked list of available PCS and
+those will be used for PCS selection on phylink_major_config.
+
+MAC driver needs to define pcs_interfaces mask in phylink_config
+for every interface that needs a dedicated PCS.
+
+These PCS needs to be provided to phylink at phylink_create time
+by setting the available_pcs and num_available_pcs in phylink_config.
+A helper to parse PCS from fwnode is provided
+fwnode_phylink_pcs_parse() that will fill a preallocated array of
+PCS. (the same function can be used to get the number of PCS
+defined in DT, more info in patch 0005)
+
+phylink_create() will fill the internal PCS list with the passed
+array of PCS. phylink_major_config and other user of .mac_select_pcs
+are adapted to make use of this new PCS list.
+
+The supported interface value is also moved internally to phylink
+struct. This is to handle late removal and addition of PCS.
+(the bonus effect to this is giving phylink a clear idea of what
+is actually supported by the MAC and his constraint with PCS)
+
+The supported interface mask in phylink is done by OR the
+supported_interfaces in phylink_config with every PCS in PCS list.
+
+PCS removal is supported by forcing a mac_config, refresh the
+supported interfaces and run a phy_resolve().
+
+PCS late addition is supported by introducing a global notifier
+for PCS provider. If a phylink have the pcs_interfaces mask not
+zero, it's registered to this notifier.
+
+PCS provider will emit a global PCS add event to signal any
+interface that a new PCS might be avialable.
+
+The function will then check if the PCS is related to the MAC
+fwnode and add it accordingly.
+
+A user for this new implementation is provided as an Airoha PCS
+driver. This was also tested downstream with the IPQ95xx QCOM SoC
+and with the help of Daniel also on the various Mediatek MT7988
+SoC with both SFP cage implementation and DSA attached.
+
+Lots of tests were done with driver unbind/bind and with interface
+up/down also by adding print to make sure major_config_fail gets
+correctly triggered and reset once the PCS comes back.
+
+The dedicated commits have longer description on the implementation
+so it's suggested to also check there for additional info.
+
+---
+
+Changes v3:
+- Out of RFC
+- Fix various spelling mistake
+- Drop circular dependency patch
+- Complete Airoha Ethernet phylink integration
+- Introduce .pcs_link_down PCS OP
+Changes v2:
+- Switch to fwnode
+- Implement PCS provider notifier
+- Better split changes
+- Move supported_interfaces to phylink
+- Add circular dependency patch
+- Rework handling with indirect addition/removal and
+  trigger of phylink_resolve()
+
+Christian Marangi (11):
+  net: phylink: keep and use MAC supported_interfaces in phylink struct
+  net: phy: introduce phy_interface_copy helper
+  net: phylink: introduce internal phylink PCS handling
+  net: phylink: add phylink_release_pcs() to externally release a PCS
+  net: pcs: implement Firmware node support for PCS driver
+  net: phylink: support late PCS provider attach
+  dt-bindings: net: ethernet-controller: permit to define multiple PCS
+  net: phylink: add .pcs_link_down PCS OP
+  net: pcs: airoha: add PCS driver for Airoha SoC
+  dt-bindings: net: pcs: Document support for Airoha Ethernet PCS
+  net: airoha: add phylink support for GDM2/3/4
+
+ .../bindings/net/ethernet-controller.yaml     |    2 -
+ .../bindings/net/pcs/airoha,pcs.yaml          |  112 +
+ drivers/net/ethernet/airoha/airoha_eth.c      |  138 +
+ drivers/net/ethernet/airoha/airoha_eth.h      |    3 +
+ drivers/net/ethernet/airoha/airoha_regs.h     |   12 +
+ drivers/net/pcs/Kconfig                       |   14 +
+ drivers/net/pcs/Makefile                      |    2 +
+ drivers/net/pcs/core.c                        |  241 ++
+ drivers/net/pcs/pcs-airoha.c                  | 2920 +++++++++++++++++
+ drivers/net/phy/phylink.c                     |  287 +-
+ include/linux/pcs/pcs-provider.h              |   41 +
+ include/linux/pcs/pcs.h                       |  104 +
+ include/linux/phy.h                           |    5 +
+ include/linux/phylink.h                       |   14 +
+ 14 files changed, 3867 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/airoha,pcs.yaml
+ create mode 100644 drivers/net/pcs/core.c
+ create mode 100644 drivers/net/pcs/pcs-airoha.c
+ create mode 100644 include/linux/pcs/pcs-provider.h
+ create mode 100644 include/linux/pcs/pcs.h
+
 -- 
-2.49.0
+2.48.1
 
 
