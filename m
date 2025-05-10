@@ -1,160 +1,103 @@
-Return-Path: <linux-kernel+bounces-642568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CD3AB207F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 02:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36841AB2090
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 02:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4C34E2803
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEBB3AC15F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F54537E9;
-	Sat, 10 May 2025 00:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE0D1D5CE8;
+	Sat, 10 May 2025 00:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g9Tx6eg4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7+jNr0H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38628F3
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 00:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFC51A2C11;
+	Sat, 10 May 2025 00:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746837198; cv=none; b=J+kN/gY1J45bYMEEVaLLxebFHCWcJyi1QPj9cOKdUAddE3Eron+qrCnXytuHF3E8zyaJ7iMYRJudRpfsZtFQW1SpVV2ocbP86CPbHhgN7h62IRM4DNtIn607CIN7ST27X583masCJTMb7YUm69RRW7U91V6GuRnELP25//0XERQ=
+	t=1746837593; cv=none; b=WUzKP5MKxTM6OihldzT5pT6qPgv+SkuiWc++844Qz/yF+Jhf/DBOZ5rSzADuxkK+vU74pIT4GvVEWDXEEYtBPuWidqg2UQTVcuSl9XlveDPNeBCxgVEhfnq2baPOBXWAXnXsRXUOcYxN4BsUn5O+OzNTvF9af61SXksdSeAbzHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746837198; c=relaxed/simple;
-	bh=68Yyo9DKhyUzGrzZE+Y1y7T4U7CvNc4zRHAS8WYlyTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=unFBILg0OqJBEGfgTzToZuFmI5JSdTUDow6AGtv9MrYa5vvAH4TY9EUapLnn5eIMYqxwaCqIdVa1gyqP3zEYX8trDD1aoEW45n27tjCWTVr/3KSO2WtoUJDiN6fGC/SAWUrt4+Y+N3wv9X7JPvAXTfKvz9mNrWilqV7RooGk3fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g9Tx6eg4; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746837197; x=1778373197;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=68Yyo9DKhyUzGrzZE+Y1y7T4U7CvNc4zRHAS8WYlyTA=;
-  b=g9Tx6eg4U8GYNUrh7XhqH0nbkzJE7BzSnSaMVHlDt8ldDwfhWM7p/0iK
-   AytANapX801mkG3NbLYN5WyRjYthQk+O8DH3XYro1h4wyc8rfUKDJ3LkQ
-   fYGGNxUm/cuBz+Iu+l4kkpApVYTp4xBu54/nO2iXL5VGUvcmwFIa4kvBA
-   Yh6WewVyCd/yufOhcv4MnoURxwFHwZuH79ybAspoz3WLxfYHj3ZqnY6Y4
-   Elu5M5cMF2Jf38AR4JIXZJDosknXb6DfEtjVTLZ573HV/jtaCJdns57q1
-   l3Y1VeHUzces5uxS3N2QmIaMdaXlmdhO2PSBnj+iSpkINeDKRs3Fq0H7A
-   g==;
-X-CSE-ConnectionGUID: gd93paXsSt6yNO5sdkkIKg==
-X-CSE-MsgGUID: JAzU1v1fTGGZmD/kvOeFZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48601782"
-X-IronPort-AV: E=Sophos;i="6.15,276,1739865600"; 
-   d="scan'208";a="48601782"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 17:33:15 -0700
-X-CSE-ConnectionGUID: udVbD7UCRo2VFOAulWVHew==
-X-CSE-MsgGUID: 9IROyiIJSG69s7zCGcawMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,276,1739865600"; 
-   d="scan'208";a="137160215"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 09 May 2025 17:33:13 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDY9P-000Caz-29;
-	Sat, 10 May 2025 00:33:11 +0000
-Date: Sat, 10 May 2025 08:32:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: drivers/thermal/thermal_debugfs.c:252:59: warning: '%d' directive
- output may be truncated writing between 1 and 5 bytes into a region of size
- between 3 and 8
-Message-ID: <202505100843.B3Gh1AwW-lkp@intel.com>
+	s=arc-20240116; t=1746837593; c=relaxed/simple;
+	bh=hU5x5nV621PCXb98dd7QNAbrE73+PaQ5xx0FQ9+8knM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Ux586yeg6S6YbWY2ZJnTytPj3UPHiDbjLhM3yjwjNdwOH2edihST2yigNbOp4Ajo/O/1mvxMR3UhikDNSrExPKeA8mCFIOMp9jk4OpKz8tQ5tOAbnUU4fuOOSA4hhNQjX4XQQ0FT8VY7SDEyLNYX4R9xCu0NlwIH10FQNNBoJYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7+jNr0H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEDBC4CEE4;
+	Sat, 10 May 2025 00:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746837593;
+	bh=hU5x5nV621PCXb98dd7QNAbrE73+PaQ5xx0FQ9+8knM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=A7+jNr0HNwuo15U+Nm15rn6xSLrb4t7GyjtyBFUwopRjXp4IlcaNbkKMFtZvPG6nZ
+	 NulpbIMpXB5V1uGCx1zvlZoHGIP/e9UQN+kKWQBLNNlZrypakkjxhLoR6hT8PTmudr
+	 1rE/xK6DCE/gFicMObwo6gZp0L9fu+L3eI8JBgJbrXdYdk/IytKRFZOVgcm7oVN+ns
+	 0jNCP0VrtQwAH1JngkV+jh4TJIWinoppC9jA0a6q7MilxMZHAYiGzIoJAZeCXTKTuc
+	 rgAUzEk+kAOOsuvpvVo8RRfZVEfdkJKWQBGTzxbapLMe67LpwUUXhnJ9/KWaVwvnU2
+	 5ipkrFFWiCnlQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCB4381091A;
+	Sat, 10 May 2025 00:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v5 0/3] Refactoring designware VLAN code. 
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174683763150.3852829.17036982288908409763.git-patchwork-notify@kernel.org>
+Date: Sat, 10 May 2025 00:40:31 +0000
+References: <20250507063812.34000-1-boon.khai.ng@altera.com>
+In-Reply-To: <20250507063812.34000-1-boon.khai.ng@altera.com>
+To: Boon Khai Ng <boon.khai.ng@altera.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ linux@armlinux.org.uk, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, 0x1207@gmail.com, matthew.gerlach@altera.com,
+ tien.sung.ang@altera.com, mun.yew.tham@altera.com, rohan.g.thomas@altera.com
 
-Hi Daniel,
+Hello:
 
-FYI, the error/warning still remains.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0e1329d4045ca3606f9c06a8c47f62e758a09105
-commit: 755113d7678681a137c330f7997ceb680adb644e thermal/debugfs: Add thermal cooling device debugfs information
-date:   1 year, 4 months ago
-config: csky-randconfig-002-20250106 (https://download.01.org/0day-ci/archive/20250510/202505100843.B3Gh1AwW-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250510/202505100843.B3Gh1AwW-lkp@intel.com/reproduce)
+On Wed,  7 May 2025 14:38:09 +0800 you wrote:
+> Refactoring designware VLAN code and introducing support for
+> hardware-accelerated VLAN stripping for dwxgmac2 IP,
+> the current patch set consists of two key changes:
+> 
+> 1) Refactoring VLAN Functions:
+> The first change involves moving common VLAN-related functions
+> of the DesignWare Ethernet MAC into a dedicated file, stmmac_vlan.c.
+> This refactoring aims to improve code organization and maintainability
+> by centralizing VLAN handling logic.
+> 
+> [...]
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505100843.B3Gh1AwW-lkp@intel.com/
+Here is the summary with links:
+  - [net-next,v5,1/3] net: stmmac: Refactor VLAN implementation
+    https://git.kernel.org/netdev/net-next/c/1d2c7a5fee31
+  - [net-next,v5,2/3] net: stmmac: stmmac_vlan: rename VLAN functions and symbol to generic symbol.
+    https://git.kernel.org/netdev/net-next/c/f3acaf7364a6
+  - [net-next,v5,3/3] net: stmmac: dwxgmac2: Add support for HW-accelerated VLAN stripping
+    https://git.kernel.org/netdev/net-next/c/534df0c1724b
 
-All warnings (new ones prefixed by >>):
-
-   drivers/thermal/thermal_debugfs.c:103:6: warning: no previous prototype for 'thermal_debug_init' [-Wmissing-prototypes]
-     103 | void thermal_debug_init(void)
-         |      ^~~~~~~~~~~~~~~~~~
-   drivers/thermal/thermal_debugfs.c:329:6: warning: no previous prototype for 'thermal_debug_cdev_state_update' [-Wmissing-prototypes]
-     329 | void thermal_debug_cdev_state_update(const struct thermal_cooling_device *cdev,
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/thermal_debugfs.c:389:6: warning: no previous prototype for 'thermal_debug_cdev_add' [-Wmissing-prototypes]
-     389 | void thermal_debug_cdev_add(struct thermal_cooling_device *cdev)
-         |      ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/thermal_debugfs.c:431:6: warning: no previous prototype for 'thermal_debug_cdev_remove' [-Wmissing-prototypes]
-     431 | void thermal_debug_cdev_remove(struct thermal_cooling_device *cdev)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/thermal_debugfs.c: In function 'cdev_tt_seq_show':
->> drivers/thermal/thermal_debugfs.c:252:59: warning: '%d' directive output may be truncated writing between 1 and 5 bytes into a region of size between 3 and 8 [-Wformat-truncation=]
-     252 |                 snprintf(buffer, ARRAY_SIZE(buffer), "%d->%d",
-         |                                                           ^~
-   drivers/thermal/thermal_debugfs.c:252:54: note: directive argument in the range [0, 65535]
-     252 |                 snprintf(buffer, ARRAY_SIZE(buffer), "%d->%d",
-         |                                                      ^~~~~~~~
-   drivers/thermal/thermal_debugfs.c:252:17: note: 'snprintf' output between 5 and 14 bytes into a destination of size 11
-     252 |                 snprintf(buffer, ARRAY_SIZE(buffer), "%d->%d",
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     253 |                          entry->id >> 16, entry->id & 0xFFFF);
-         |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +252 drivers/thermal/thermal_debugfs.c
-
-   233	
-   234	static int cdev_tt_seq_show(struct seq_file *s, void *v)
-   235	{
-   236		struct thermal_debugfs *thermal_dbg = s->private;
-   237		struct cdev_debugfs *cdev_dbg = &thermal_dbg->cdev_dbg;
-   238		struct list_head *transitions = cdev_dbg->transitions;
-   239		struct cdev_record *entry;
-   240		int i = *(loff_t *)v;
-   241	
-   242		if (!i)
-   243			seq_puts(s, "Transition\tOccurences\n");
-   244	
-   245		list_for_each_entry(entry, &transitions[i], node) {
-   246			/*
-   247			 * Assuming maximum cdev states is 1024, the longer
-   248			 * string for a transition would be "1024->1024\0"
-   249			 */
-   250			char buffer[11];
-   251	
- > 252			snprintf(buffer, ARRAY_SIZE(buffer), "%d->%d",
-   253				 entry->id >> 16, entry->id & 0xFFFF);
-   254	
-   255			seq_printf(s, "%-10s\t%-10llu\n", buffer, entry->count);
-   256		}
-   257	
-   258		return 0;
-   259	}
-   260	
-
+You are awesome, thank you!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
