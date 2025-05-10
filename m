@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-642901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A857AB24E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 19:58:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECBDAB24E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 19:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DE8D1BA2181
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:58:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A624F7B6C81
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13A124BC00;
-	Sat, 10 May 2025 17:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81722242D7E;
+	Sat, 10 May 2025 17:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="N6baxT28"
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a42M2fwj"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209B822B8D9;
-	Sat, 10 May 2025 17:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493761B043C
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 17:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746899886; cv=none; b=fLqgzw+gUCKDyyMh1VAVVHAB2o8X2kvrNll6L1nhKKkHE7x1EvRqWLcUB1mwIa4wRB9UxpHPfDgVEj8SC/bCkoihh0y7FaPOpqGR5r5FaD61djCs3SzjWtgs+DnfigKkpd2pXR8EkaCo2wH/0ifLiwIjHvQVVXixoeAcl5dgFuQ=
+	t=1746899843; cv=none; b=oUAr2mwHxkYGFjj23QavBStK47SU8ccVU13msyi6DA2kRC5X3ebIyz9flgYUUPsteA64hvUc8Mt3C174B2EAXCzy7XmHEUbEe9t5DmUKov+9WqMvlLAlZ5njwwXNb63RGtFxWXaMuPThlhjz6BAJcSSjRPxTDGlcaDda+SjfMjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746899886; c=relaxed/simple;
-	bh=QQf//rEMyNITbaywNt9GDXiXMR5B3IjJlWxUEQrvqOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XJYvxiP8gcyrNE+yKxip02wLRKf0scPn30+OevHkgRjMlHhuZf2qnD5i5UT5yEl5sKr3B/porApczrpmJMhQcrVYRMNCKuB37/oWgoreoydX6WZnpKJXOmA5Vyfje6lIcZT7IQ/0VE0Kf/274GZzkGTnH5MOYHKpqUQZhlYjNdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=N6baxT28; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout4.routing.net (Postfix) with ESMTP id 0FB381003BB;
-	Sat, 10 May 2025 17:50:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1746899400;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZJk9iIuV2ZtYqSNu6/IHDZogtwF6sWyClO8J6khSNsA=;
-	b=N6baxT28joV5PobXemFEQf3aHy//NBRJu5h1FppZg7CUlO5K2vaKkykWWLWuFN3Z5Qi+m/
-	4aUx9ZMqr3ub0pMZqD8QDhU6T6lONQ+lChXAVa/DTw7j+e/isAzXlf5pL4el4CuZJcjGcw
-	fu+v8GDpfkTETMeyTdQWmeuRmmtKR5k=
-Received: from frank-u24.. (fttx-pool-157.180.226.129.bambit.de [157.180.226.129])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id C0A5980236;
-	Sat, 10 May 2025 17:49:58 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	SkyLake Huang <SkyLake.Huang@mediatek.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [net-next, PATCH v2] net: phy: mediatek: do not require syscon compatible for pio property
-Date: Sat, 10 May 2025 19:49:32 +0200
-Message-ID: <20250510174933.154589-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746899843; c=relaxed/simple;
+	bh=WjgGUfr6X08qxQK3zfVrb3aTo/x2kOH4Dzdn/sVCI8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uoOTuRplzAL2Xa5N1ektQJ9rsuUWTD3EcaDsMPjyNqHxbiHWRZM6cxvI11qb7D05YJq4Y31k2CR7vKGK8zGResntxHsowuLg2C6QmCKEZP6UCCkyYkultjbabjPkFYMDQg394cwKG2s4QQ9NGfHyqvn1hYFWj5B/HERs40+38Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a42M2fwj; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54d98aa5981so4982464e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 10:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746899839; x=1747504639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjgGUfr6X08qxQK3zfVrb3aTo/x2kOH4Dzdn/sVCI8Y=;
+        b=a42M2fwjO7jggns9B/kIVIC39zfwxk023gX7SsN02ebietWCjA8+ip6ffcvqJKqq7E
+         0/aX0jztyEQyFmtaMfVYCAK08uGowJXfQBXzTulQNQXqr15BmfDRVcZxl12bNcgFeREA
+         iKNFqMeWUpZ0qPcPBKkyfcyyxN/dEOWkTjw597zLyGYsaNxJ5988MAVrzOD06qy+pt/P
+         6PETy89olOmrHsUGv14Sk7PKowS20n6JKxBYGEFPIaPRld/oguencRcBG0xLvqh9mFXw
+         9z5nnIZiD7HEfX/zHoFreLSTNCDvz1KKmYU/bZPFvFIAU+eHteGfFtuiDX+dB5AABpEn
+         fX0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746899839; x=1747504639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WjgGUfr6X08qxQK3zfVrb3aTo/x2kOH4Dzdn/sVCI8Y=;
+        b=DFDHTTcuK0C0DwYG6G6ujTpoQdCZ+TPs7E0FPNptBHocidZ/vOA1ylK2M/4IG5YEj4
+         Ao82/7jx0U2b1zcP0nJef/kBiGP4YkyHcgwWX2um3P0WK5N2oAIHQkgqJFtCzC21YXM2
+         XyAaJaGox4TuqQqOfw+uv+G2KtCDIURxkFPeSrg21vaXCgUwn0boEVdgmoF/PekiBkcg
+         +BGWnn3//2JH/UluMpgxOOlbiGtgFf1Ku4gcaak2gjINUsUCtc+K9H+Wm4NjYj7WzWyk
+         cW7Nkqk8xs/4uhJsM3VC4GrzFNo5MVb5Ib9yJi41v6Pld/sBl1t5wlP0gTkxg2guzI30
+         mmQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbLukDM/k/iWAVbhahi6lUfZuR5MKPZWiElzCNY5UhQL3Rq+H+wkHyl90pB12l5ASH/4bfV5QuQIq3NNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3rfCoCvZulw1FjsYB1Ymp1Pfiqcke5LG/sjwpEm7ZKjc8EXDn
+	zTTjxjxhEJAfgqrSfxwkHW2hHFO7h1w1E4nf3288JR6pvP7Ut7pIxlHynEiy6KM8zH8mWYvGtWO
+	RZAGwxn1K04eI8Y78V8TkOFVYUhM=
+X-Gm-Gg: ASbGnctv0ZzOAdSygHhfnknvJKN59S/D69sb41QflUFngQj7dlOCH6r2DbHbRK32a5U
+	hBnkbBhR6zhpScjCwlKRk6DA0GkuJnt3HkBbF1xzuHLmGgWg8km7IXlJTS8oLyOHKlXkrfNLjbB
+	gn2RS+pINs2TqtjohUpg0MkjWeEhAuOaxs3Iq54R4wsfZELsEP5TgfZheXFIvbU1oS
+X-Google-Smtp-Source: AGHT+IF3Z7tQbN2UvUVUBVdgIrJ9vuxONRjESM/OBLUWaAOZrCvSkzujqqR6dmG4HVeFUAwt4imd8+AAeDimdibevQg=
+X-Received: by 2002:a05:651c:30c6:b0:30c:7a7:e874 with SMTP id
+ 38308e7fff4ca-326c4569ba6mr34455471fa.11.1746899838943; Sat, 10 May 2025
+ 10:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: c1fe3543-f69b-41e4-8960-f64da6740af7
+References: <20250510011806.13470-1-benato.denis96@gmail.com> <20250510011806.13470-2-benato.denis96@gmail.com>
+In-Reply-To: <20250510011806.13470-2-benato.denis96@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 10 May 2025 14:57:07 -0300
+X-Gm-Features: AX0GCFu_Mc34XZBVrE6yFFGghE4cYWVtNs10oUnBiwd7enOu-iz8bicOZ1AybT8
+Message-ID: <CAOMZO5A1oRcUuNVcr_kcKz0SZqGc-AHzLR+__gRQEaV__xKbsw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: imx_v4_v5_defconfig: define CONFIG_ARCH_NXP
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Fri, May 9, 2025 at 10:18=E2=80=AFPM Denis Benato <benato.denis96@gmail.=
+com> wrote:
+>
+> Define CONFIG_ARCH_NXP so that CONFIG_ARCH_MXC won't be disabled
+> as it depends on CONFIG_ARCH_NXP.
 
-Current implementation requires syscon compatible for pio property
-which is used for driving the switch leds on mt7988.
+This is not correct.
 
-Replace syscon_regmap_lookup_by_phandle with of_parse_phandle and
-device_node_to_regmap to get the regmap already assigned by pinctrl
-driver.
+$ make imx_v4_v5_defconfig
+#
+# configuration written to .config
+#
+$ cat .config | grep CONFIG_ARCH_MXC
+CONFIG_ARCH_MXC=3Dy
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-
-v2:
-- out of RFC
-
----
- drivers/net/phy/mediatek/mtk-ge-soc.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/mediatek/mtk-ge-soc.c b/drivers/net/phy/mediatek/mtk-ge-soc.c
-index 175cf5239bba..21975ef946d5 100644
---- a/drivers/net/phy/mediatek/mtk-ge-soc.c
-+++ b/drivers/net/phy/mediatek/mtk-ge-soc.c
-@@ -7,6 +7,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/phy.h>
- #include <linux/regmap.h>
-+#include <linux/of.h>
- 
- #include "../phylib.h"
- #include "mtk.h"
-@@ -1319,6 +1320,7 @@ static int mt7988_phy_probe_shared(struct phy_device *phydev)
- {
- 	struct device_node *np = dev_of_node(&phydev->mdio.bus->dev);
- 	struct mtk_socphy_shared *shared = phy_package_get_priv(phydev);
-+	struct device_node *pio_np;
- 	struct regmap *regmap;
- 	u32 reg;
- 	int ret;
-@@ -1336,7 +1338,13 @@ static int mt7988_phy_probe_shared(struct phy_device *phydev)
- 	 * The 4 bits in TPBANK0 are kept as package shared data and are used to
- 	 * set LED polarity for each of the LED0.
- 	 */
--	regmap = syscon_regmap_lookup_by_phandle(np, "mediatek,pio");
-+	pio_np = of_parse_phandle(np, "mediatek,pio", 0);
-+	if (!pio_np)
-+		return -ENODEV;
-+
-+	regmap = device_node_to_regmap(pio_np);
-+	of_node_put(pio_np);
-+
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--- 
-2.43.0
-
+CONFIG_ARCH_NXP is an arm64 option.
 
