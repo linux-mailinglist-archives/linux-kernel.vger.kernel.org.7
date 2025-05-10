@@ -1,177 +1,104 @@
-Return-Path: <linux-kernel+bounces-642945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15317AB2597
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 00:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D7AAB25B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 01:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2725D189C4C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 22:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D873217FF98
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 23:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DAB20E6E2;
-	Sat, 10 May 2025 22:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZFR7Ovf+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036B720C00C;
-	Sat, 10 May 2025 22:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4025620F07C;
+	Sat, 10 May 2025 23:08:01 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478E01C84D0;
+	Sat, 10 May 2025 23:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746915752; cv=none; b=hTbka3Oaat7kPAHTgAfeSIzg1/ry4vGd7Wsjnl1Oeirl6BwLXdtorpYaQZk6qitoTLqR6SCsaKyC5hH+ys7IPyyhw/R2FyWJwtWKOeijgmEQ/PLT29LWS0YdurBGCyZsxEA3x1qKMtvY7wMTaBfoCmSZecRan44AJkVynZ53eoo=
+	t=1746918480; cv=none; b=Ho9nFS6JuFveVutZR6xMehuN6WwzQ9uUV/2sGcPIA+Sfj1pYPWF4FKKEOtN0t97lp/dqm5gkchjn1x9X2QaO+ba3bo0YXxx8//p3+apNfdY2jMERutqWvFcsbesa0wqByJLFkqG3s6eX2FmHIbKlLHWBDlqJ40jBE05Ol4sIV+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746915752; c=relaxed/simple;
-	bh=ukgB+evCgCwwEnYan1JRIC6vSU5Hcfx4UggVn9a88D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSFENEpM1o67EuxrcQULifcdRzePDwj1eJiaDhNwGcijnaD0LgZIzJd1FsBq7Re9zS1UsA2gi4Ne7CWVe4rl2LowtU9mzi4NESf3z3CiVJp0AO8F5jOurrOWtZ/TaOvNsZ1hL6afJkHnf76bDmygQERix3y+ZRjR6S9UY8FPJHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZFR7Ovf+; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746915751; x=1778451751;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ukgB+evCgCwwEnYan1JRIC6vSU5Hcfx4UggVn9a88D0=;
-  b=ZFR7Ovf+sms3/8fK6wEMykK5n7B6hixmsyY7bfR5lefmdYOl+pIYuuYD
-   SphuWTqP18qQpH0TVewMY85eozA2p6Lc1LgGf6dnblWHMReTl+jr8QtFu
-   jHGmrsEdCtGTuaXxr0ooFETmYy5hr3nYCvBZ95l1P5wg0NvjI/vvNQXc1
-   FYzBDiW8gf1yn5cYz7XxwwzvZUMOWh82/ddI7UicWy4SKWTyS/pqlLuPa
-   zOVMxs4a2AO1ruH1TDZ9fAD2H9kEs3cd3SoOqDHtrgxPXwan0n8dFFMvx
-   /ooF4aNaYRVY1HkueNAysMy9+2xfTgvs+0eCCUXl+l8lXk+Y7XuDoo6pl
-   A==;
-X-CSE-ConnectionGUID: gWKiolBZQq+BX8QFPdvUEQ==
-X-CSE-MsgGUID: sp5S/5SsRoaIz9jD3V1sUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11429"; a="60070995"
-X-IronPort-AV: E=Sophos;i="6.15,278,1739865600"; 
-   d="scan'208";a="60070995"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2025 15:22:31 -0700
-X-CSE-ConnectionGUID: yDZ2mg0YT5CNxlYkKlF02Q==
-X-CSE-MsgGUID: 24ULPRgJRqy7z5ibucgwkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,278,1739865600"; 
-   d="scan'208";a="142192608"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 10 May 2025 15:22:28 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDsaQ-000DR1-1n;
-	Sat, 10 May 2025 22:22:26 +0000
-Date: Sun, 11 May 2025 06:21:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Raju Rangoju <Raju.Rangoju@amd.com>, broonie@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Raju Rangoju <Raju.Rangoju@amd.com>,
-	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
-	Akshata MukundShetty <akshata.mukundshetty@amd.com>
-Subject: Re: [PATCH] spi: spi_amd: Add HIDDMA basic write support
-Message-ID: <202505110641.zLT16Dv7-lkp@intel.com>
-References: <20250509181737.997167-1-Raju.Rangoju@amd.com>
+	s=arc-20240116; t=1746918480; c=relaxed/simple;
+	bh=0eGkGEjSo6rsUIZh+3fn1kbepWZlnE3rKLuCNJYFR04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caeRpS9Lf9DBApd1gjUiQ4Y5YbZZrbhc0No7JNhiutFkSZ1JzwP0IuGL1WSvNA30MUF2KDMnaXwFTSs69iXiU38hhN8yGbh7RRjn0CSUTkZA1uhHp9XuQ+2jG5oz6ZnUIqYoFUrGuc5SYV89K+9MbuX+tmoTdqnyrpkYw5Ym53g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 54AMY5A8009132;
+	Sat, 10 May 2025 17:34:05 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 54AMY1Rq009126;
+	Sat, 10 May 2025 17:34:01 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Sat, 10 May 2025 17:34:01 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        Thorsten Leemhuis <linux@leemhuis.info>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Danny Tsen <dtsen@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [v2 PATCH] crypto: powerpc/poly1305 - Add poly1305_emit_arch wrapper
+Message-ID: <20250510223401.GK30295@gate.crashing.org>
+References: <aBtF2jVZQwxGiHVk@gondor.apana.org.au> <37cf099e-d5c2-40d8-bc31-77e1f9623b1c@linux.ibm.com> <aByX_Y64C6lVRR8M@gondor.apana.org.au> <f66620e2-77e3-4713-a946-ddb2c8a0bccb@linux.ibm.com> <aByiNZNxqyTerdYG@gondor.apana.org.au> <1d2c2fdc-5c36-4d4e-8b25-8289b865726d@linux.ibm.com> <aB31DI4QBBZuQObQ@gondor.apana.org.au> <20250510044450.GA505731@sol> <aB7fvi_FBdnmLUON@gondor.apana.org.au> <20250510053308.GB505731@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509181737.997167-1-Raju.Rangoju@amd.com>
+In-Reply-To: <20250510053308.GB505731@sol>
+User-Agent: Mutt/1.4.2.3i
 
-Hi Raju,
+Hi!
 
-kernel test robot noticed the following build warnings:
+On Fri, May 09, 2025 at 10:33:08PM -0700, Eric Biggers wrote:
+> On Sat, May 10, 2025 at 01:10:22PM +0800, Herbert Xu wrote:
+> > On Fri, May 09, 2025 at 09:44:50PM -0700, Eric Biggers wrote:
+> > >
+> > > This fixes "-cpu Power10", but older CPUs (e.g. "-cpu POWER9") are still
+> > > failing.
+> > 
+> > You're right.  I'll revert this and apply the following patch
+> > instead.
+> > 
+> > BTW this thing is still hopelessly broken if it's called from
+> > softirq context because there is no SIMD fallback.  Yes I removed
+> > the SIMD check but it was already broken before that as it simply
+> > switched from the 4-block version to the 1-block version if SIMD
+> > is not available rather than actually doing something that is
+> > safe in softirq context.
+> > 
+> > Perhaps we should just remove this altogether until it's fixed.
+> 
+> Yes, the PowerPC Poly1305 code incorrectly uses VSX without first checking
+> crypto_simd_usable().  And PowerPC also doesn't support VSX in softirqs, or at
+> least it doesn't claim to (it doesn't override may_use_simd(), so it gets the
+> default from include/asm-generic/simd.h which returns false in softirq context).
+> Maybe add 'depends on BROKEN' to CRYPTO_POLY1305_P10 for now, and give the
+> PowerPC folks (Cc'ed) a chance to fix this before removing the code.
 
-[auto build test WARNING on v6.15-rc5]
-[also build test WARNING on linus/master]
-[cannot apply to broonie-spi/for-next next-20250509]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+What doe "may_use_simd" even *mean*?  At its declaration site it says
+"whether it is allowable at this time to issue SIMD instructions or
+access the SIMD register file", but that is 100% meaningless, you can do
+SIMD in GPRs.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Rangoju/spi-spi_amd-Add-HIDDMA-basic-write-support/20250510-021954
-base:   v6.15-rc5
-patch link:    https://lore.kernel.org/r/20250509181737.997167-1-Raju.Rangoju%40amd.com
-patch subject: [PATCH] spi: spi_amd: Add HIDDMA basic write support
-config: m68k-randconfig-r111-20250511 (https://download.01.org/0day-ci/archive/20250511/202505110641.zLT16Dv7-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250511/202505110641.zLT16Dv7-lkp@intel.com/reproduce)
+On PowerPC we have two separate register files dedicated to SIMD-like
+stuff, the VMX and the VSX register files.  Which of those is this
+function supposed to care about?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505110641.zLT16Dv7-lkp@intel.com/
+It looks like the whole "may_use_simd" thing is a misguided abstraction
+unfortunately :-(
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/spi/spi-amd.c:594:57: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
-   drivers/spi/spi-amd.c:594:57: sparse:     expected void volatile [noderef] __iomem *addr
-   drivers/spi/spi-amd.c:594:57: sparse:     got void *
 
-vim +594 drivers/spi/spi-amd.c
-
-   566	
-   567	static void amd_spi_mem_data_out(struct amd_spi *amd_spi,
-   568					 const struct spi_mem_op *op)
-   569	{
-   570		int base_addr = AMD_SPI_FIFO_BASE + op->addr.nbytes;
-   571		u64 *buf_64 = (u64 *)op->data.buf.out;
-   572		u64 addr_val = op->addr.val;
-   573		u32 nbytes = op->data.nbytes;
-   574		u32 left_data = nbytes;
-   575		u8 *buf;
-   576		int i;
-   577	
-   578		/*
-   579		 * Condition for using HID write mode. Only for writing complete page data, use HID write.
-   580		 * Use index mode otherwise.
-   581		 */
-   582		if (amd_spi->version == AMD_HID2_SPI && amd_is_spi_write_cmd(op->cmd.opcode)) {
-   583			void *hid_base_addr = amd_spi->dma_virt_addr + op->addr.nbytes + op->cmd.nbytes;
-   584	
-   585			/* Write opcode and address in system memory */
-   586			writeb(op->cmd.opcode, amd_spi->dma_virt_addr);
-   587	
-   588			for (i = 0; i < op->addr.nbytes; i++) {
-   589				writeb(addr_val & GENMASK(7, 0), hid_base_addr - i - op->cmd.nbytes);
-   590				addr_val >>= 8;
-   591			}
-   592	
-   593			for (i = 0; left_data >= 8; i++, left_data -= 8)
- > 594				writeq(*buf_64++, hid_base_addr + (i * 8));
-   595	
-   596			buf = (u8 *)buf_64;
-   597	
-   598			for (i = 0; i < left_data; i++)
-   599				writeb(buf[i], hid_base_addr + (nbytes - left_data + i));
-   600	
-   601			amd_spi_hiddma_write(amd_spi, op);
-   602		} else {
-   603			amd_spi_set_opcode(amd_spi, op->cmd.opcode);
-   604			amd_spi_set_addr(amd_spi, op);
-   605	
-   606			for (i = 0; left_data >= 8; i++, left_data -= 8)
-   607				amd_spi_writereg64(amd_spi, base_addr + op->dummy.nbytes + (i * 8),
-   608						   *buf_64++);
-   609	
-   610			buf = (u8 *)buf_64;
-   611			for (i = 0; i < left_data; i++) {
-   612				amd_spi_writereg8(amd_spi,
-   613						  base_addr + op->dummy.nbytes + nbytes + i - left_data,
-   614						  buf[i]);
-   615			}
-   616	
-   617			amd_spi_set_tx_count(amd_spi, op->addr.nbytes + op->data.nbytes);
-   618			amd_spi_set_rx_count(amd_spi, 0);
-   619			amd_spi_clear_fifo_ptr(amd_spi);
-   620			amd_spi_execute_opcode(amd_spi);
-   621		}
-   622	}
-   623	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Segher
 
