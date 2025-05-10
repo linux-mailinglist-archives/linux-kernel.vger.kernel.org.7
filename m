@@ -1,129 +1,108 @@
-Return-Path: <linux-kernel+bounces-642856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90000AB2479
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 17:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A78CAB2482
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9723A4A2DE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 15:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6DB4A3B95
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40EA235056;
-	Sat, 10 May 2025 15:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437321AAA1D;
+	Sat, 10 May 2025 16:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GEqct7cD"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7C71F0982;
-	Sat, 10 May 2025 15:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XZfjEyUa"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0596125
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 16:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746892635; cv=none; b=E3SpXh+bUMbotVUCfIt/9hRVnYDlLs7IJXXcW1802Qa1lDy59INkt/80idvXWSF2E7CoWn3qSTTKkZAzbyq+yTpPZ8uDHBkJrwIFhDlNErjqNmZqs+QJsaWlKzXY+ZMVUgGflyJRyW+EPvDC33a7U46YN6mSwX3PoarFGn6+D7o=
+	t=1746892848; cv=none; b=SVqZt9rNkN8DvTQK9MBm/mnAA63nuh/rfNSe5Ur5hsuh/7Et4MAR+1kJ2ec37YmwtNZM81VTqRQxkuwLmgNGM1Wblw+PUpDznmt5G6MMh73Qfw7zfaLd3tiZOxO6wh+DdN3H1hjb2lMQk0jZTo4u2QJ2ecfq+mca3Krvcpd8eo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746892635; c=relaxed/simple;
-	bh=YbY4BzhwwS0Bs97W2qpZD/tuPkcUHS6xrK4/be/t7fU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KIR3aiVSXGfEI2IUr5KbeJpr6G0rPGIU7bBDyrUK41YvTU+qB5Poy5T/Gv3r7oR9d81sngdOcuQzd+YS5r8bHDVdSqp+5iXj/LyAndPyO64yXxW1krjNwNDvRIINs+ooSXOOr9rs4cyhP3+gWRAQPGewF3DtSCR5q31SO23PPoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GEqct7cD; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=E2
-	ofUgHGCmm1xPAFMa2TsfZAr9ZO/RTFbitpv1wF7q0=; b=GEqct7cD2x6TeWs/1+
-	CvwrTM6aZ8kOl3lZkymWL5+X6StJ8S0xqQh9WK87mgeWKH8YpkaXSmti1EuPmo+z
-	+uNcZW3XP4YXMi40xmCQP4EfRwI9DOfMzN92NFxcwa+PpzF2N3uUXaaYqRQcmhjm
-	LWAmx7cihinHZg9/S++j1u+wk=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXjxsYdx9ormDlAQ--.43845S4;
-	Sat, 10 May 2025 23:56:11 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	heiko@sntech.de,
-	manivannan.sadhasivam@linaro.org,
-	yue.wang@Amlogic.com
-Cc: pali@kernel.org,
-	neil.armstrong@linaro.org,
-	robh@kernel.org,
-	jingoohan1@gmail.com,
-	khilman@baylibre.com,
-	jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v4 2/2] PCI: dwc: Remove redundant MPS configuration
-Date: Sat, 10 May 2025 23:56:07 +0800
-Message-Id: <20250510155607.390687-3-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250510155607.390687-1-18255117159@163.com>
-References: <20250510155607.390687-1-18255117159@163.com>
+	s=arc-20240116; t=1746892848; c=relaxed/simple;
+	bh=+5l24ce3Yi3dLqgaEQsSaOjQurXeuBkBLrGtXwdSccM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rSDsGeHR7eTIk4FD2X4s64Kox6eXpAiyUsdFK3Bd8cjPkqP0IZZK9tMqHhjwPPC/xtiyqeDq2NwlljqbzX0JdxhBEIHkMaWkk1XH08jiAfZQIeiCnJV8lNR1gqP74rAMfeU7zUyTF3EOWfPunMaAdEjcztPDO9fiPxsRk1OWXNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XZfjEyUa; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acb5ec407b1so556480366b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 09:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1746892844; x=1747497644; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=agAxFQa4ZuiU7cjsZP4jyMITjDw2hahHdYNvqVN9K0s=;
+        b=XZfjEyUaTuJcHPfZxm4OIGLBLPrMTJRKfrOcKmG+K1gPd4MPYe+VfGI4WWdK0NVpwf
+         sytrw1EBq/3c6trh39o9h07uQeAuj5nmUeyPc/SpDpgOOqlKdN4THzSVU2H6ZqAmUm0p
+         u8JwsUat7zn+jQy5dUzbCRsX2rtUBo0+wIzk8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746892844; x=1747497644;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=agAxFQa4ZuiU7cjsZP4jyMITjDw2hahHdYNvqVN9K0s=;
+        b=ACFrBYmvaSnsoDrkw1J2d2J3aGMp9G7PGA8gvwNT8IASgi5UYQU8j9Sfn1IZONBdZ5
+         +jC5wmSHn2O6Y5+YEnW5F8O/UQFVDYyt2GjWxjRPBtVoWP+IzFya+QnfzTvhf2tOMgCA
+         IcUNHD+PxEM8EA1kurLPhstc5m5XHf7Zlsf/qsziBxXqfIfaoueH/XmCvzgbaCzWluH5
+         l1v5p+08rDfLplruBag0gIJ0C1wg+5RoTGxzFd57LKap30AvyCkgmOqUpyazrHIGfn9I
+         UaANllKKCAKmZj4/ODMubuyK81o9qT9tSEHyS9Jjd/vo9kUE1HI/M7hS+a+ji2eMo+WA
+         08Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ZG9E8t0LTDj+/RPwZp0U9s/CfNc6eFAXf9YA0/72UHZ/Jw4GpJBjxa4AxRKF2foBBiI7UlaVYgjvQlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx601qe92DYNgw3M+x/NfoIgbkFVZWmQJSmkmkF4z4UdaBw/DVj
+	QHx4FKiE5waymMxuIFFQTJs/5V/i8eGQizPLvWE0F7GulNRbzr6nXAcdaprdnMKOqiH1KlRDniz
+	BBlE=
+X-Gm-Gg: ASbGncsT2f1SgMYyuyxphYe8/3+/1TwqjeERyeP5tIwnwORzi3LhKM9xEjNInw5q5nE
+	Z8J+UhgwsO6NP04UAhCEoK6BdDKurXb2nu5w9X+MXFFVx4lQlS+GQkrd4WG/zEHxZp8yYnh4wrP
+	ZwVrVrq8/BKyBwJh966nO9xMJGgQgerpScIhTHiaHhpRzxFpMzv5KiNmFgWcMmf/q2w6jBhUZDr
+	a7BnHjO3GMf4wq5ZodbSYxVWBWzVpWdAqZf3QFZ7a9N5WTtAFQS1D5JgEW0bzI4K6JQ02OjNVDa
+	w/4n5c57xJjzQInjkPePpqFJ5ReD3Qh8NjHW4fcOcwBRN4NUXRXXrN96skGJ2ylSvyzzoKRx3bA
+	TZIJWBwRwi6DiTn4Ae4DRhGdgkw==
+X-Google-Smtp-Source: AGHT+IGtv0skMUY5fBgiWrmY/G4cQf0ZFB2W+rSHPE714CBw26OJ6ZJbPCLQO6uRemAkSDsGW7W9PQ==
+X-Received: by 2002:a17:907:9484:b0:acb:5f9a:7303 with SMTP id a640c23a62f3a-ad21902bd67mr615416766b.35.1746892843658;
+        Sat, 10 May 2025 09:00:43 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd432sm329469066b.129.2025.05.10.09.00.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 May 2025 09:00:41 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5fc9c49c8adso2550368a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 09:00:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKlCuoYZ876cP6sJZQ/YgmICoWrK6IrdcugngA4IY8qtPAGK8vqbJLcSIYRKRkatwf1/9fHAF9HJLajt8=@vger.kernel.org
+X-Received: by 2002:a17:907:da9:b0:acb:35df:33f5 with SMTP id
+ a640c23a62f3a-ad2192be047mr714777766b.56.1746892841498; Sat, 10 May 2025
+ 09:00:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXjxsYdx9ormDlAQ--.43845S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF4xuw4xXFWDJw43WF4xtFb_yoW8Cr1fpF
-	y3Xrsa9F18Jr45WF4qkan5Cay3tasxCry7JF9Ig3yfuFyayFsrXa4ayFWSkFyxXrW293WS
-	kr98K3y8C3W5trUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_rWrfUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhNJo2gfbZ-YXQADsA
+References: <aB9aTNHuSV-5U15D@kroah.com>
+In-Reply-To: <aB9aTNHuSV-5U15D@kroah.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 10 May 2025 09:00:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgiZ2kk73wU58o8B8_5fuNLReGQkGo_8HXsnsCE_YUsBw@mail.gmail.com>
+X-Gm-Features: AX0GCFvyZc4aQ8D-XQTidiJpyLk4kbFSAngpvEX3ub4p-Ag_j-Y-P7VeUIs6hio
+Message-ID: <CAHk-=wgiZ2kk73wU58o8B8_5fuNLReGQkGo_8HXsnsCE_YUsBw@mail.gmail.com>
+Subject: Re: [GIT PULL] Driver core fix for 6.15-rc6
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 
-The Meson PCIe controller driver manually configures maximum payload
-size (MPS) through meson_set_max_payload, duplicating functionality now
-centralized in the PCI core.  Deprecating redundant code simplifies the
-driver and aligns it with the consolidated MPS management strategy,
-improving long-term maintainability.
+On Sat, 10 May 2025 at 06:53, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-6.15-rc6
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/dwc/pci-meson.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+I suspect you forgot to push out, or it's in some other tree.
 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index db9482a113e9..126f38ed453d 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -261,22 +261,6 @@ static int meson_size_to_payload(struct meson_pcie *mp, int size)
- 	return fls(size) - 8;
- }
- 
--static void meson_set_max_payload(struct meson_pcie *mp, int size)
--{
--	struct dw_pcie *pci = &mp->pci;
--	u32 val;
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
--	int max_payload_size = meson_size_to_payload(mp, size);
--
--	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
--	val &= ~PCI_EXP_DEVCTL_PAYLOAD;
--	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
--
--	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
--	val |= PCIE_CAP_MAX_PAYLOAD_SIZE(max_payload_size);
--	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
--}
--
- static void meson_set_max_rd_req_size(struct meson_pcie *mp, int size)
- {
- 	struct dw_pcie *pci = &mp->pci;
-@@ -381,7 +365,6 @@ static int meson_pcie_host_init(struct dw_pcie_rp *pp)
- 
- 	pp->bridge->ops = &meson_pci_ops;
- 
--	meson_set_max_payload(mp, MAX_PAYLOAD_SIZE);
- 	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
- 
- 	return 0;
--- 
-2.25.1
+Because there's no such tag in that git repo.
 
+             Linus
 
