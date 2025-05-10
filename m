@@ -1,147 +1,93 @@
-Return-Path: <linux-kernel+bounces-642596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E730AB20D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CA0AB20C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B6A3BC729
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5800C4A7F76
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9DB266599;
-	Sat, 10 May 2025 01:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65251F130A;
+	Sat, 10 May 2025 01:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FELXjd7n"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jn7m1SE4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4D01E2852;
-	Sat, 10 May 2025 01:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47113212A
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 01:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746840991; cv=none; b=jXnaFpLNvXrwTIbe04sNRwwfYO9k/6SDKK7LAkf3IJce9QBg6/du8510Y8qIkf87xOorSJbfLI6kpm6Wgimdi5e6IqghPAhXO1Zql2VBQCt8rY+wKBcymGcb0xLxZ2Zynyfktl1AuFBqttkwnP2njuzjLN4D8IYWdQ6hSsLecD8=
+	t=1746840920; cv=none; b=UAOoK6lQDJHwbPOud5v21kb2bo/fGhLZT2dc4cdQVArAmSAVnDw6fu67d/6GPUokLb9DaUn1AIfkJl8MBB5OgW1x4AwChAgMnMZRpMJQIGskL3KHpzFJv69udoAEBogwniHR71eRevrNiTb+gjguE8qgkyv+s01BiIvYh59E3MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746840991; c=relaxed/simple;
-	bh=JqYUP0gYITpwIO56NDGK79wZtTPw/VgY4gE78t6lC9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eX5Ju4spoQm5+A3zNO++DIK+PnJ1JJRgfx8aXXZkXplBbouQSHafWm6lCqbN8IieeHpYX4+bTJD6eSTFf7U6cES2DkkcaGkrO1myfZOuAjrCQJ5QMCk7XSxPeXdmf5SvaiMjHp1EsEpZFLIfTlp9IBtuaWXKWn3slUequ6+umIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FELXjd7n; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22c336fcdaaso28122155ad.3;
-        Fri, 09 May 2025 18:36:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746840989; x=1747445789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wD9SkKboBNMZ2NtG53GX3UU3m+Xh67ccGkM3pd0hqvQ=;
-        b=FELXjd7nuqd4aVfe0keq+aClN7yUecO2YYtWdYDAOKSpe28UnEa2stwMkbB7+TIIpL
-         N7aM28w9JwErPXsf6+QN5JTl6rQdBKGQwEGg8tGZBIDVK4qu79PHvn1c+bqC6nASLTnC
-         nEJ5hZYh2JVaF7/3ZBQVWxWzQ7BBExjY2l37tUYSOfAJWByFFGS9rr4ASMLPiK2mZIWZ
-         cBI2TkPfHp5d/qGSNnCjHssnpcjF3OUSXzPvGeFmyS1lCphOzUNt+OWzdbleMkZSo+gY
-         o3DGp7QTZNf9cHUAXiQTE+wNvWrW+iys48nK2Zdcs6uPTu1Yl7WFbxj0A14PDwl88S8r
-         wPnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746840989; x=1747445789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wD9SkKboBNMZ2NtG53GX3UU3m+Xh67ccGkM3pd0hqvQ=;
-        b=C5W5oD1zBkan5FSajYHX8To05TEbM9RR2sAUwiq5XZK6Ent/wt6Z5c6FB5LiobrLlr
-         LZ5nl4mlY9oDxB4FtjPYvZfuPOYRFXAYUClPhLRyCiRcJNZBzn3OWsN+Pe7RI9MphYtS
-         zOEFu5UjFnqoRYeyNXHKFTWEEGLWVgzehrXbSCHMHlXHB66xutcaGylEfZRXZiYcTaB4
-         nng4Ly42mLITefTkaedXqW57hYSEMII/PtXcxXxA3In6UXVthuCrjF6lJalH0/y5nCiY
-         B9n9F9cYaD4LEGNQgzLxDPvOjcXSlfAr5rOL1s6XheTezNHq+0roDI2WmOetJ4LM51XP
-         7Trw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7JDIQwYxI52ujTKlKZzVO/QCFv4mxFDmjE1RrEOmlvP6URVifKm8N5wr2Zie5YITdouwbkqLgs1F+iSlk@vger.kernel.org, AJvYcCXxJgZpjy2Lq+I/E5y4nQzVvvEwcHmcvdrpvmh97I/YhO6NaxPPH2lXMVia/X0Ab413+/IASYfoOfu/Brs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj+pmG1QFh1SAFg7wkwX3odDtF7lkPBDM83bn3Dz6Q6Ot2PkFB
-	X0iylSK90p5/vu7tTKwHHD28xGhH59hppTwxpPLh2K9rGn1kIkYA
-X-Gm-Gg: ASbGncuyQ7oVO+i8J10n/2wP88T2pvse6HAKO+hqsybZrdwKLxwqi88P4zS4nyTUbis
-	6b68cCoQbQ3cOkojzfOb9JeQBf6hic2iaCg6trZtGhA7H2D6DYTjTekvgOdfpAfTt6By5MYMfMH
-	tc0M7y+S+sTCvCQ+b7IVsicanaUF5R14jeg9UffTZnGvu6YEj07mSyW+jgXrvIn3MHFjdprlbti
-	BccqZWd6rQJEtockDrNUyHYtqlpXKgJXPZXQE0Np6fEaXWhCVsywMmqwL61svlKx/RnD8lgt8Pt
-	PsYNYD3jwmf4BqJwjg+V38aMWXj+HhiB/OT4LIgDWPWZO3GOBErR6ULF2U2odzaNDG68deQJZmJ
-	zR0sNRoBCZztsyGbAuDThRZK0NdyCJGHdwmChkQ==
-X-Google-Smtp-Source: AGHT+IENg0QA4pDDrAf5YXcYOBv5jJnYgaomoJkaWvWaHINOGGkwFUMAt+vGF529iQB2hgnXBoY+FQ==
-X-Received: by 2002:a17:903:1904:b0:22e:4d64:821f with SMTP id d9443c01a7336-22fc8b56982mr61314845ad.20.1746840988708;
-        Fri, 09 May 2025 18:36:28 -0700 (PDT)
-Received: from localhost.localdomain (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc8271bcfsm23902965ad.125.2025.05.09.18.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 18:36:28 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: john.ogness@linutronix.de,
-	pmladek@suse.com
-Cc: Jason@zx2c4.com,
-	gregkh@linuxfoundation.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lkp@intel.com,
-	oe-lkp@lists.linux.dev,
-	oliver.sang@intel.com,
-	ryotkkr98@gmail.com
-Subject: [PATCH] rslib: Add scheduling points during the test
-Date: Sat, 10 May 2025 10:35:15 +0900
-Message-Id: <20250510013515.69636-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746840920; c=relaxed/simple;
+	bh=RKZARjtItSMo67EEN9USgQO9kVkqBIBwfgHN4qsQIF4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jR6gH3Ukm7q2Wpve2H9CyKUJkFddHWK0Qi2pdVGSq4xMlw1KPM5vVAsgLZlS+xJhieiBd+n70k9NvfC0nEI24eouROVZDYt/iPuQM/BX4VftP2AB3fAuxfrs/xPmQat2mV9bupfmmpS8MnNtYm06WRJk5cXjmMj6X9dw6AHYdpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jn7m1SE4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF16C4CEE4;
+	Sat, 10 May 2025 01:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1746840919;
+	bh=RKZARjtItSMo67EEN9USgQO9kVkqBIBwfgHN4qsQIF4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Jn7m1SE4CkXhy8+3E6kC1fI4Jx9ahn2xXUX6E5oZu2JSsg8nbWlZObHnAYokfHd/4
+	 Uhaid6Xl/iEVNjIJrMr1FIvOWbjdbqF6l5z1AfW50W7pYPunkgAiAdWaPZjwzqZvVg
+	 DowEuEXhgAVxjZQsgst+x2RWJiZD3XqeRioz5PxE=
+Date: Fri, 9 May 2025 18:35:18 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: Coiby Xu <coxu@redhat.com>, fuqiang wang <fuqiang.wang@easystack.cn>,
+ Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+ kexec@lists.infradead.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v4] x86/kexec: fix potential cmem->ranges out of bounds
+Message-Id: <20250509183518.bf7cd732ac667a9c20f1fee1@linux-foundation.org>
+In-Reply-To: <aB3RqS85p6DiHKHm@MiWiFi-R3L-srv>
+References: <20240108130720.228478-1-fuqiang.wang@easystack.cn>
+	<ZZzBhy5bLj0JuZZw@MiWiFi-R3L-srv>
+	<4de3c2onosr7negqnfhekm4cpbklzmsimgdfv33c52dktqpza5@z5pb34ghz4at>
+	<20250507225959.174dd1eed6b0b1354c95a0fd@linux-foundation.org>
+	<2754f4evjfumjqome63bc3inqb7ozepemejn2lcl57ryio2t6k@35l3tnn73gei>
+	<aB3RqS85p6DiHKHm@MiWiFi-R3L-srv>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The test has been prone to softlockup but stayed unnoticed because
-of the printk calls during the test resets the soflockup watchdog by
-calling touch_nmi_watchdog(). With the commit b63e6f60eab4 ("serial:
-8250: Switch to nbcon console"), the printk calls no longer suppress
-the softlockup and warnings can be observed more evidently that shows
-the test needs more scheduling points.
+On Fri, 9 May 2025 17:58:01 +0800 Baoquan He <bhe@redhat.com> wrote:
 
-Provide scheduling points by adding cond_resched() for each test
-iteration on their up to/beyond error correction capacity.
+> > The bad commit was introduced in 2021 but only recent gcc-15 supports
+> > __counted_by. That's why we don't see this UBSAN warning until this
+> > year. And although this UBSAN warning is scary enough, fortunately it
+> > doesn't cause a real problem.
+> > 
+> > > 
+> > > Baoquan, please re-review this?
+> > > 
+> > > A -stable backport is clearly required.  A Fixes: would be nice, but I
+> > > assume this goes back a long time so it isn't worth spending a lot of
+> > > time working out when this was introduced.
+> > 
+> > So I believe the correct fix should be as follows,
+> 
+> Thanks for testing and investigation into these. Could you arrange this
+> into formal patches based on your testing and analysis? 
+> 
+> It would be great if you can include Fuqiang's patch since it has
+> conflict with your LUKS patch. This can facilitate patch merging for
+> Andrew. Thanks in advance.
 
-Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
----
-
-Hi!
-
-The discussion on how the printk was preventing
-the softlockup can be found here [0].
-
-Sincerely,
-Ryo Takakura
-
-[0] https://lore.kernel.org/all/202501221029.fb0d574d-lkp@intel.com/
----
- lib/reed_solomon/test_rslib.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/lib/reed_solomon/test_rslib.c b/lib/reed_solomon/test_rslib.c
-index 75cb1adac..322d7b0a8 100644
---- a/lib/reed_solomon/test_rslib.c
-+++ b/lib/reed_solomon/test_rslib.c
-@@ -306,6 +306,8 @@ static void test_uc(struct rs_control *rs, int len, int errs,
- 
- 		if (memcmp(r, c, len * sizeof(*r)))
- 			stat->dwrong++;
-+
-+		cond_resched();
- 	}
- 	stat->nwords += trials;
- }
-@@ -400,6 +402,8 @@ static void test_bc(struct rs_control *rs, int len, int errs,
- 		} else {
- 			stat->rfail++;
- 		}
-+
-+		cond_resched();
- 	}
- 	stat->nwords += trials;
- }
--- 
-2.34.1
-
+Yes please, I'm a bit lost here. 
+x86-kexec-fix-potential-cmem-ranges-out-of-bounds.patch is not
+presently in mm.git and I'd appreciate clarity on how to resolve the
+conflicts which a new version of
+x86-kexec-fix-potential-cmem-ranges-out-of-bounds.patch will produce.
 
