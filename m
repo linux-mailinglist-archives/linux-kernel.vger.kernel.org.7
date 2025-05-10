@@ -1,115 +1,161 @@
-Return-Path: <linux-kernel+bounces-642744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFD7AB2307
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24BEAB22EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 11:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FCCE1BC44BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E07C9E72A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0512222A3;
-	Sat, 10 May 2025 09:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="B7WvgvF8"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F5B1FBEA9;
+	Sat, 10 May 2025 09:30:57 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A3F7FBA2
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 09:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9575978F39
+	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 09:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746870303; cv=none; b=rTeby6uYNEM+WS6Unlh/ta42n1lj4CSpx7g7XsaYVB+azmhn6U7lS2BkfgbUvATWZe34yo5tuyx2dvPdL8dBr9hBfxXkN4wlHJXT5Tv9KrfoKH38bkavtxm6woi3OtBHMrVz84jaWF9Y48ZrDl59brQHLMAuoKWg2t6h5H6bEqA=
+	t=1746869457; cv=none; b=qzhLuCe8jxzCrUNa1Q95mkMkaeKvrXuGC1bCdj04/RjFUqTzOhmDQdiEfgsKT2cIldIrVxnmHYcgUSfU+73nqn1OY1yxH7OIdUW+98mSAB00xXzVHdSK0Lx7Psiyyp9/K2idBaNp//YnXWrvM2fZrNSh6Cr4eKzcrNgzsZp+1UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746870303; c=relaxed/simple;
-	bh=zqlh9T6lprqhOCs89lpTlZP7/3GWg+hgKWkX6nmed60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lv4MwLgqaHhUDesN+6HTxNk3n2JTki8T+RNVXQsynqAAkPdm5gp/N3c9ot8884P88b3SnYbu0yF74DLHGkDCPtmICoqW+IbLUnElYZFLcQLnbny0+4X7UL/H8k6kzcSwFZYFi4RgcUwklU55Z4wV9I4ytbfloulVFeO6Rf9h8X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=B7WvgvF8; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=zqlh
-	9T6lprqhOCs89lpTlZP7/3GWg+hgKWkX6nmed60=; b=B7WvgvF8dMkzBKswDZJx
-	FA06frZF6aUJ9Cx86BMAHbRcooYVmQ2zZtSmmEASUcXvVfYa7joQ983d1ixz+YMp
-	ZcK2Jkx38Ccq0veZvOxX+0EN3HfrjmRcbkztrn/ZuFGvcpqq58ssN+uePGzVrGT5
-	pUpZpIDxlD5WWlj+WWIqf+vnz/ceeZDoocGU0ipfkmIXiF9WP4COXduTKewr35Wp
-	CkpyaNBEaTO7cbItu2GgdXdOtxowtYnR7iZrkqTij9sCWnoYbzxN6u8/MqApfqjt
-	0u/EyTrwuY6unSlcIpyMGR01dzdtDh7G/rerMhObSHGGikB25nqfdAZ5P7jwr0rW
-	MA==
-Received: (qmail 263804 invoked from network); 10 May 2025 11:44:49 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 May 2025 11:44:49 +0200
-X-UD-Smtp-Session: l3s3148p1@H4AG78Q0lk4vQDLS
-Date: Sat, 10 May 2025 11:44:48 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.15-rc6
-Message-ID: <aB8gEAEBtIW3ATB4@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-References: <xpvrz2zt7jm7k56vu6txgyorg73yrfag2omwyqbkpqdkxyoikl@rh5wcugtqwhf>
+	s=arc-20240116; t=1746869457; c=relaxed/simple;
+	bh=B/rp+opmpsKwWO3OR+xcnlHBWgqfAq6PqFespyLJhN0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kOzPV+wlq7sx3iR9nTFpUHXtLuNuRqaseIt/Edt8CuQehre9O8/N44j/YUqM5frzNMDLkJIZwxOvLgm4x1SDhbQeEHW+rCZp7HdScunPdhrMCYoSdclTTQVlmllahwD9kXFgT5/LsYC7JewUfFJFcAjbtB3YCEdq8WPdB5qR6MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Zvgc671xyz27hNk;
+	Sat, 10 May 2025 17:31:34 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7305D140146;
+	Sat, 10 May 2025 17:30:48 +0800 (CST)
+Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
+ (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 10 May
+ 2025 17:30:47 +0800
+From: Zeng Heng <zengheng4@huawei.com>
+To: <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<maarten.lankhorst@linux.intel.com>, <mario.kleiner@tuebingen.mpg.de>,
+	<airlied@redhat.com>, <mripard@kernel.org>, <simona@ffwll.ch>
+CC: <bobo.shaobowang@huawei.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/vblank: Fix hard lockup in drm_handle_vblank()
+Date: Sat, 10 May 2025 17:47:57 +0800
+Message-ID: <20250510094757.4174662-1-zengheng4@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IvN/djnseQK5rpJl"
-Content-Disposition: inline
-In-Reply-To: <xpvrz2zt7jm7k56vu6txgyorg73yrfag2omwyqbkpqdkxyoikl@rh5wcugtqwhf>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
+When we performed fuzz testing on DRM using syzkaller, we encountered
+the following hard lockup issue:
 
---IvN/djnseQK5rpJl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Kernel panic - not syncing: Hard LOCKUP
+CPU: 3 PID: 0 Comm: swapper/3 Not tainted 6.6.0+ #21
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+Call Trace:
+ <IRQ>
+ hrtimer_cancel+0x52/0x70 kernel/time/hrtimer.c:1449
+ __disable_vblank drivers/gpu/drm/drm_vblank.c:434 [inline]
+ drm_vblank_disable_and_save+0x27f/0x3c0 drivers/gpu/drm/drm_vblank.c:478
+ vblank_disable_fn+0x15d/0x1b0 drivers/gpu/drm/drm_vblank.c:495
+ call_timer_fn+0x39/0x280 kernel/time/timer.c:1700
+ expire_timers+0x22d/0x3c0 kernel/time/timer.c:1751
+ __run_timers kernel/time/timer.c:2022 [inline]
+ run_timer_softirq+0x315/0x8a0 kernel/time/timer.c:2035
+ handle_softirqs+0x195/0x580 kernel/softirq.c:553
+ __do_softirq kernel/softirq.c:587 [inline]
+ </IRQ>
 
-On Fri, May 09, 2025 at 02:09:01PM +0200, Andi Shyti wrote:
-> Hi Wolfram,
->=20
-> Two patches in this pull request. The first one updates the
-> MAINTAINERS file to remove Seth from the ISMT entry. His email
-> bounces, and he no longer works at Intel. I had a chat with him
-> before he left, and he did not intend to continue in the role.
->=20
-> The second patch is a minor fix, barely worth a Fixes tag, but
-> we decided to include it since it addresses a warning introduced
-> in the latest merge window. We preferred to keep the patch and
-> its fix in the same release cycle.
->=20
-> That said, I hope to see you soon, and in the meantime I wish
-> you a great weekend.
+This is a deadlock issue as follows:
 
-Thanks, pulled. Yes, see you soon :)
+    CPU3				CPU 7
 
+vblank_disable_fn()
+  drm_vblank_disable_and_save()
+  spin_lock(vblank_time_lock)
+				hrtimer_interrupt()
+				  vkms_vblank_simulate()
+				    drm_handle_vblank()
+				      // wait for CPU3 to release vblank_time_lock
+				      spin_lock(vblank_time_lock)
+    vkms_disable_vblank()
+      // wait for vblank_hrtimer on CPU7 to finish
+      hrtimer_cancel(vblank_hrtimer)
 
---IvN/djnseQK5rpJl
-Content-Type: application/pgp-signature; name="signature.asc"
+The call of hrtimer_cancel() has hold vblank_time_lock which would prevent
+completion of the hrtimer's callback function.
 
------BEGIN PGP SIGNATURE-----
+Therefore, in drm_handle_vblank(), we move the check for the
+vblank->enabled variable to the time when vblank_time_lock() is acquired.
+If the CRTC event has already been canceled, the drm_handle_vblank() will
+be terminated and will no longer attempt to acquire vblank_time_lock.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgfIAwACgkQFA3kzBSg
-Kbb0VA/8DwLyAx0UwZ2an+52TdkTsf0FQyoUoqLb7HvGKQ01kpC4pYTVlXdYDpPY
-OBknU8LFdEdAEvLCdzImc9IBDuRzGTyO0jonI00T6+48s8WVkU2Tl9umPfz+T9+L
-zdRRE7kXR8GW25YY5SILsXBGcJTEe6nY8YRS6TRXiL7IvSOL2eotU0/p6WehBrGD
-uQZh8awbmHpO+oYiOiHWKLKFYVajsd8GplbKAwup3FNIUWkWgabreyDhc1NPxFdZ
-hBz3N1bmnWVw/NTQKZzSzCHZVhr9JLAcsIDPe34D/VnOK60v7SNoq7SEd+UFsEAw
-9oOJZte8kPIiWq52VZkzUdHl/MqyX0dlf+HMXYTppAfFDs5OWT9RX8EGXwlsA+5W
-GxFXZ6HkUUvIyzYh62/x2QyCQVas9CgQq4RqFnH0/JtkTeTJLMd0/NyGhcYbBbcB
-fkNu+G16vEFDODsqX9+TKN6cCuegyxQ0HBikTs5v4HnoHZSW5/AH8dlJA2KrnQnO
-7rMftNpupMRfqwKu9XLCAaWdg1JI0WeBHDhYM4/PxQecAmnyFAz1s4w6vgi0d4aZ
-hlbl40RuVKIg1sO1fR55T3kEmQhKOBUTur5wUmAJaWiSfEjIIceetRvqJtdlzdC/
-yZJi+04hrhhAM4i71E7yCBwPiGS7L9uYAa37dyxAgNI4/6fXV/g=
-=QTrs
------END PGP SIGNATURE-----
+In the same time, in drm_vblank_disable_and_save(), we set vblank->enabled
+to disable before calling hrtimer_cancel() to avoid endless waiting in
+hrtimer_cancel_wait_running().
 
---IvN/djnseQK5rpJl--
+Fixes: 27641c3f003e ("drm/vblank: Add support for precise vblank timestamping.")
+Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+---
+ drivers/gpu/drm/drm_vblank.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+index 78958ddf8485..56b80e5ede2a 100644
+--- a/drivers/gpu/drm/drm_vblank.c
++++ b/drivers/gpu/drm/drm_vblank.c
+@@ -471,6 +471,8 @@ void drm_vblank_disable_and_save(struct drm_device *dev, unsigned int pipe)
+ 	if (!vblank->enabled)
+ 		goto out;
+ 
++	vblank->enabled = false;
++
+ 	/*
+ 	 * Update the count and timestamp to maintain the
+ 	 * appearance that the counter has been ticking all along until
+@@ -479,7 +481,6 @@ void drm_vblank_disable_and_save(struct drm_device *dev, unsigned int pipe)
+ 	 */
+ 	drm_update_vblank_count(dev, pipe, false);
+ 	__disable_vblank(dev, pipe);
+-	vblank->enabled = false;
+ 
+ out:
+ 	spin_unlock_irqrestore(&dev->vblank_time_lock, irqflags);
+@@ -1932,14 +1933,13 @@ bool drm_handle_vblank(struct drm_device *dev, unsigned int pipe)
+ 	 * vblank enable/disable, as this would cause inconsistent
+ 	 * or corrupted timestamps and vblank counts.
+ 	 */
+-	spin_lock(&dev->vblank_time_lock);
+-
+-	/* Vblank irq handling disabled. Nothing to do. */
+-	if (!vblank->enabled) {
+-		spin_unlock(&dev->vblank_time_lock);
+-		spin_unlock_irqrestore(&dev->event_lock, irqflags);
+-		return false;
+-	}
++	do {
++		/* Vblank irq handling disabled. Nothing to do. */
++		if (!vblank->enabled) {
++			spin_unlock_irqrestore(&dev->event_lock, irqflags);
++			return false;
++		}
++	} while (!spin_trylock(&dev->vblank_time_lock));
+ 
+ 	drm_update_vblank_count(dev, pipe, true);
+ 
+-- 
+2.25.1
+
 
