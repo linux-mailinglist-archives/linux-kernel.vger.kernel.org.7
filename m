@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-642566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C4AAB2076
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 02:19:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FCFAB20C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 03:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA821B6193E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 00:19:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD147BA16A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 01:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4D744C94;
-	Sat, 10 May 2025 00:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrnMwztr"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C97264F83;
+	Sat, 10 May 2025 01:32:37 +0000 (UTC)
+Received: from trager.us (trager.us [52.5.81.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37251D6AA;
-	Sat, 10 May 2025 00:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7CBB67F;
+	Sat, 10 May 2025 01:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746836337; cv=none; b=i6Ll6UWYWsr3JE1Ebo6Cz4veubXJ1KUEb9CfUY4VPcgTi9gSPKEtcbIoDO/XWNsTUUfp2+NsR1fFtOf+/Nosz16gy7A22/mUW/iufFRahcIh2LAFFjDuQUNtHTKGwzwlwqA5MGc0E1HnfeE3245Ov1A48ID3K0p93MkJjngX+UQ=
+	t=1746840757; cv=none; b=ji+zfpvNeKR2yck/eUFBsRgKeYxD9YsWf6bZYeuW0hidDBC2MB1cf852Ru8/N4Jn7NHSMBtFI72qvxPy015Px7p78IzEQPlLUDqn4w9iFbDg2g4M1JOYsCrVZMUvKY/1G5xhKEYqJgNVB3NtnPzS1HbJ+7gHgKP+mp6T77NO2qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746836337; c=relaxed/simple;
-	bh=lsLtnFSVphBZGRaEOpHYnW/43K3L3GszCrMpsXdOAAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cb3/FtmR3dpfSKCxfba0XQ8KSCGSS5YfeI4mrTpze4G06IfuZbaaS53RqYGF4dlCwppvKDi12VnCBnfEDn1yR7FtjOFt/5FHgaTcc2Dj5XGfq8HjI8EbQMIyaN7itTL/+reyJURhgJUyPa/izRZrq//9cgeyVsHDW4qFOMvLFoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NrnMwztr; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=JxEjBAQahXn7jOCRVGcyOqQ96R/5yhjHGXWRQR573Kg=; b=NrnMwztrylTNvdmJfJ9q0Qh+I6
-	K8qZyCmISUX3nEEtgcOFP1QVwEkkU7Vn3JE5kkZvfjsSlYFUtC3rZrbwhmD7AkH+FFenzHL8sfF+y
-	hdHgK/hqqNxe+pLxAaSXg0g5i5XI5DhKGudPqXbfQ2pLuG1Ed7rYl8AKWdc6vgiSzeZT5H6fMtXLg
-	74mAF3AbRGaZsXoVPKK1tP4v9ADylxl3mcO1b7DJqP6VKQoIDpfAZy4vUt7NA1f2CIDomqVT2ssK9
-	MuuhwTXyWAtics6zMrlC27a9SF/y1896pKxCbh3OMohIp+f7e7llOWbcs+Lwc3eK1D+Ku30oATR5A
-	nZptyVvw==;
-Received: from [50.39.124.201] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uDXvU-0000000GO9z-0NBe;
-	Sat, 10 May 2025 00:18:48 +0000
-Message-ID: <a4e821f9-9daa-4a65-b41a-200a6da85191@infradead.org>
-Date: Fri, 9 May 2025 17:18:40 -0700
+	s=arc-20240116; t=1746840757; c=relaxed/simple;
+	bh=xgEoxdF8WtQ4LXl7GXwgSisMk5T5Altc6CL481mKxEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GkWp0rfPi1LVgfwW+i9eB2QPVFRQdIpcuGX/zqxLeeGU4Jzq9zvf/od7Z1hGOyhJ7/Ia7olQVpDmOgCj6axIHsDq93ppSq2iogU+cCjHjMvkjpEEws1VnqIxQjvIgISFY4d1cw1SyyZv1zUM7Ts4dllCNd3n+ALP34Oy4a/uZSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
+Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=localhost)
+	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92.3)
+	(envelope-from <lee@trager.us>)
+	id 1uDY9X-0002Do-TG; Sat, 10 May 2025 00:33:20 +0000
+From: Lee Trager <lee@trager.us>
+To: Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	kernel-team@meta.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>,
+	Sanman Pradhan <sanman.p211993@gmail.com>,
+	Su Hui <suhui@nfschina.com>,
+	Lee Trager <lee@trager.us>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 0/5] eth: fbnic: Add devlink dev flash support
+Date: Fri,  9 May 2025 17:21:12 -0700
+Message-ID: <20250510002851.3247880-1-lee@trager.us>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for May 9 (i2c/busses/i2c-mlxbf.c)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Khalil Blaiech <kblaiech@nvidia.com>, Asmaa Mnebhi <asmaa@nvidia.com>,
- linux-i2c@vger.kernel.org
-References: <20250509195816.7f0a67a3@canb.auug.org.au>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250509195816.7f0a67a3@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+fbnic supports updating firmware using signed PLDM images. PLDM images are
+written into the flash. Flashing does not interrupt the operation of the
+device.
 
+Changes:
 
-On 5/9/25 2:58 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20250508:
-> 
+V4:
+* Tested flashing in a 50x loop
+* Add devl_lock() in shutdown / quiescene paths like suspend to prevent
+  interrupting the FW flashing process.
+* Add support for multiple completion messages.
+* Removed BSD function notation from fbnic_fw_xmit_fw_start_upgrade()
+* Mailbox functions no longer return cmpl_data->result
+* Add missing error check in fbnic_fw_xmit_fw_write
+* Drop setting cmpl->u.fw_update.* to 0
+* Set offset and length before validation
+* Drop !fw check
+* Firmware upgrades are now process driven
+* Fix potential memory leak when an error is received in the mailbox when
+  updating.
+* Include anti-rollback support
+* Drop retries when updating but increase timeout to 10s
+* Use NL_SET_ERR_MSG_FMT_MOD in fbnic_devlink_flash_update()
+* Updated cover letter, commit messages, and docs as suggested
+* Dropped kdocs
+* Patched libpldmfw to not require send_package_data or send_component_table
+  which allowed stub functions to be dropped.
+* Dropped all dev_*() printks
+* Fixed Xmas tree variable declarations
 
-on i386:
+V3 - https://lore.kernel.org/lkml/20241111043058.1251632-1-lee@trager.us/T/
+* Fix comments
 
-ld: drivers/i2c/busses/i2c-mlxbf.o: in function `mlxbf_i2c_set_timings':
-i2c-mlxbf.c:(.text+0x67): undefined reference to `__udivdi3'
-ld: i2c-mlxbf.c:(.text+0x8a): undefined reference to `__udivdi3'
-ld: i2c-mlxbf.c:(.text+0xc7): undefined reference to `__udivdi3'
-ld: i2c-mlxbf.c:(.text+0xeb): undefined reference to `__udivdi3'
-ld: i2c-mlxbf.c:(.text+0x112): undefined reference to `__udivdi3'
+V2 - https://lore.kernel.org/all/20241022013941.3764567-1-lee@trager.us/
+* Fixed reversed Xmas tree variable declarations
+* Replaced memcpy with strscpy
 
-ld: drivers/i2c/busses/i2c-mlxbf.o: in function `mlxbf_i2c_calculate_freq_from_tyu':
-i2c-mlxbf.c:(.text+0x194): undefined reference to `__udivdi3'
-ld: drivers/i2c/busses/i2c-mlxbf.o: in function `mlxbf_i2c_calculate_freq_from_yu':
-i2c-mlxbf.c:(.text+0x1e0): undefined reference to `__udivdi3'
+Lee Trager (5):
+  pldmfw: Don't require send_package_data or send_component_table to be
+    defined
+  eth: fbnic: Accept minimum anti-rollback version from firmware
+  eth: fbnic: Add support for multiple concurrent completion messages
+  eth: fbnic: Add mailbox support for PLDM updates
+  eth: fbnic: Add devlink dev flash support
 
-These come fromm using '/' instead of one of the kernel's DIV macros when using
-u64 or ULL  data types.
+ .../device_drivers/ethernet/meta/fbnic.rst    |  11 +
+ drivers/net/ethernet/meta/Kconfig             |   1 +
+ drivers/net/ethernet/meta/fbnic/fbnic.h       |   3 +-
+ .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 260 +++++++++++++++-
+ drivers/net/ethernet/meta/fbnic/fbnic_fw.c    | 294 ++++++++++++++++--
+ drivers/net/ethernet/meta/fbnic/fbnic_fw.h    |  53 +++-
+ drivers/net/ethernet/meta/fbnic/fbnic_mac.c   |   2 +-
+ drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |   9 +
+ lib/pldmfw/pldmfw.c                           |   6 +
+ 9 files changed, 616 insertions(+), 23 deletions(-)
 
-in mlxbf_i2c_get_ticks():
-
-	ticks = (nanoseconds * frequency) / MLXBF_I2C_FREQUENCY_1GHZ;
-
-in mlxbf_i2c_calculate_freq_from_yu():
-
-	corepll_frequency = (MLXBF_I2C_PLL_IN_FREQ * core_f) / MLNXBF_I2C_COREPLL_CONST;
-	corepll_frequency /= (++core_r) * (++core_od);
-
-in mlxbf_i2c_calculate_freq_from_tyu():
-
-	core_frequency /= (++core_r) * (++core_od);
-
-
-commit 37f071ec327b0 ("i2c: mlxbf: Fix frequency calculation")
-
-
--- 
-~Randy
-
+--
+2.47.1
 
