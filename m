@@ -1,104 +1,175 @@
-Return-Path: <linux-kernel+bounces-642956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D7AAB25B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 01:08:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2523AB259B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 00:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D873217FF98
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 23:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366F0189F376
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 22:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4025620F07C;
-	Sat, 10 May 2025 23:08:01 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478E01C84D0;
-	Sat, 10 May 2025 23:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69130210F45;
+	Sat, 10 May 2025 22:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSbaeVdp"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2965420B7FA;
+	Sat, 10 May 2025 22:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746918480; cv=none; b=Ho9nFS6JuFveVutZR6xMehuN6WwzQ9uUV/2sGcPIA+Sfj1pYPWF4FKKEOtN0t97lp/dqm5gkchjn1x9X2QaO+ba3bo0YXxx8//p3+apNfdY2jMERutqWvFcsbesa0wqByJLFkqG3s6eX2FmHIbKlLHWBDlqJ40jBE05Ol4sIV+Q=
+	t=1746916480; cv=none; b=g2SaBdUWByMcVIrD9P52K6+fUrXVFSOluuaz2+kaui2CDofxUvtmwejXIYPjCBVxq4+dfvpOObi0fhUFFYH1ghmSp/XK4eWcDXk4u9u9auYBgK4Wkur7zeLfcLupeTIRUzrjMyZSjiWlf4LucrZsRSmcJGshNaiae3ZKbamsB1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746918480; c=relaxed/simple;
-	bh=0eGkGEjSo6rsUIZh+3fn1kbepWZlnE3rKLuCNJYFR04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=caeRpS9Lf9DBApd1gjUiQ4Y5YbZZrbhc0No7JNhiutFkSZ1JzwP0IuGL1WSvNA30MUF2KDMnaXwFTSs69iXiU38hhN8yGbh7RRjn0CSUTkZA1uhHp9XuQ+2jG5oz6ZnUIqYoFUrGuc5SYV89K+9MbuX+tmoTdqnyrpkYw5Ym53g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 54AMY5A8009132;
-	Sat, 10 May 2025 17:34:05 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 54AMY1Rq009126;
-	Sat, 10 May 2025 17:34:01 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Sat, 10 May 2025 17:34:01 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        Thorsten Leemhuis <linux@leemhuis.info>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Danny Tsen <dtsen@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [v2 PATCH] crypto: powerpc/poly1305 - Add poly1305_emit_arch wrapper
-Message-ID: <20250510223401.GK30295@gate.crashing.org>
-References: <aBtF2jVZQwxGiHVk@gondor.apana.org.au> <37cf099e-d5c2-40d8-bc31-77e1f9623b1c@linux.ibm.com> <aByX_Y64C6lVRR8M@gondor.apana.org.au> <f66620e2-77e3-4713-a946-ddb2c8a0bccb@linux.ibm.com> <aByiNZNxqyTerdYG@gondor.apana.org.au> <1d2c2fdc-5c36-4d4e-8b25-8289b865726d@linux.ibm.com> <aB31DI4QBBZuQObQ@gondor.apana.org.au> <20250510044450.GA505731@sol> <aB7fvi_FBdnmLUON@gondor.apana.org.au> <20250510053308.GB505731@sol>
+	s=arc-20240116; t=1746916480; c=relaxed/simple;
+	bh=VA+r8TlMvQ+zsu8dUJc/GlSJtmFEKUVcH9YdAOj/AH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iyBbgeQvr82o6U57RArw//SGkd8VPZ0m0GIgksoOy1EbEMPnQo1Q7ftGKJjwlhUZb4QKFxyXWelSBc9gJJlQ6lf4fvKQAAoQRJf8Cqqk0L5HQMWgOf+VQ+PBil/dHNSM9mkGm7xiVykci5hIgGbpXXVWHtgkYD2EXGR18LE7zbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSbaeVdp; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c5b2472969so358519285a.1;
+        Sat, 10 May 2025 15:34:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746916478; x=1747521278; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=X9RqchaeKuSR9tb3CHmzTo6Ss78YKwXAQrXHYWmrF9A=;
+        b=eSbaeVdpD/bP+aSc4/b/jEbSu+U7U+zjjKhdEQm3XAOGQWAC7cTk/7jKtx7aaGdYhp
+         40GIsjJ2XWdcyQlnBA4T9n8/nTzucfMHJF6kEUOr4eMfw1KAtBgeO4pRd+sZAs0I4gcN
+         NkJAm8VaAvcg3KkIQMgGDiBHsRbqPjzxOI05ZHvvGd5h3NSygpA1GSpVRaFb3gnmASxg
+         Y9RFNTJiPSTP3VqVauui6eBp1i8uM26vs4KuYNyzrJ0Vts+LnOsYHxyqkGN/rJg6Id2K
+         b9f6YAvGramDdPCaHRP+7FIj3378+MK1HclEiSMN6WdQ6eFn64Si4tQ8K8AE79DUUoH5
+         TRrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746916478; x=1747521278;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9RqchaeKuSR9tb3CHmzTo6Ss78YKwXAQrXHYWmrF9A=;
+        b=Om894F2t4avSrHSEMBiRw2qOKDeATzFOLRYuS1SLdTzMoAFsNl7VrkD4jSkAMVLupQ
+         BGlIMWTtBqsG/DiCgbaZqist1naZMPpdTpifMGZWl5banLfYJfwWEs7e6dDy15jEExkB
+         dUSyDfbemRISNdgIOWby26WhjHW6yAdGAXbLHVWJtD9M11erxNWVXEk79n4yPU5bakLD
+         jbqFUZjSw7BAwN4Hht5x/6JO0F6LO8Qm58QTsudqageuJF0TlqO5Gb1tQcCcSJRXuzq+
+         jxuNmhyLG53+RZVg6UITPQyI8tIAEJD9kerhyk4+nNlDUx6/3FEqR++6MxgLkU5sDxrn
+         WiHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWWuMXvzL980CBPFpdoqelHuTooOx2y/8Lfk6gD2H0p5n3Z0OTDQ7CQvLRnVp/CAvIzbnIk602cms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXQzBrMKafKsOe6o98zrvPFQ/6cqz+Bckbg2EqDY73beA7m/0a
+	6Tr4WrRQXb3T8CAv3YlMFmPb+vK1aOlxtzrnrHDWo0566lSg1bjQ
+X-Gm-Gg: ASbGncszY+Y7s7QgLzTXdYpcJuh+vHrqfdj8ONxDlNhfT1/N9YIOOaK7KyBbmdhobk9
+	UvehcV/EsST+T7dl+6zJbJoYo5klu/tVHgQr+S6ZvWwVEmkN0hCxiaOTBmy9ST8EaV/U+mGk3cn
+	wpO8RY92UnBycZ3ktXyZ4qMC+H7dvh1SutiSu1ap/3XT3TJndTd9pCleZxQ/Xt12boPs6iYRHf/
+	5HbtdvarKQSSQ9ZYothx2ZRfdkHeQP/8pmyNNxvpFNzfoODZ7bAmJ0pz6bmPkGoMRv6P7PUJFRY
+	M5CalysVcEia3Jf4qzFU8f0g41w=
+X-Google-Smtp-Source: AGHT+IFNxZ+WwsD8gTpXkGg65SNCLgE5qlBO7RTMUPiiYfAL7UnFJgwMfjv6YT79wlFJycMs0w8xeg==
+X-Received: by 2002:a05:620a:d8d:b0:7c3:cd78:df43 with SMTP id af79cd13be357-7cd01168e05mr1231923285a.58.1746916477861;
+        Sat, 10 May 2025 15:34:37 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd00ff11d6sm318727185a.115.2025.05.10.15.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 May 2025 15:34:37 -0700 (PDT)
+Date: Sun, 11 May 2025 06:34:09 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, sophgo@lists.linux.dev, linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15] rtc: sophgo: add rtc support for Sophgo CV1800 SoC
+Message-ID: <u6ofni4aabs4jy4unh5nudgm6qieg5hsk3xt4725yiuumlspen@ypery534oe4q>
+References: <20250507195626.502240-1-alexander.sverdlin@gmail.com>
+ <dm4l3wfcuygmuylz6uqn2g7wztg4tyrjbm24hqcpffjnpkwany@ib2nvjibq2wl>
+ <4d15d7b363869080da825ddc700e553a68928c85.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250510053308.GB505731@sol>
-User-Agent: Mutt/1.4.2.3i
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4d15d7b363869080da825ddc700e553a68928c85.camel@gmail.com>
 
-Hi!
-
-On Fri, May 09, 2025 at 10:33:08PM -0700, Eric Biggers wrote:
-> On Sat, May 10, 2025 at 01:10:22PM +0800, Herbert Xu wrote:
-> > On Fri, May 09, 2025 at 09:44:50PM -0700, Eric Biggers wrote:
-> > >
-> > > This fixes "-cpu Power10", but older CPUs (e.g. "-cpu POWER9") are still
-> > > failing.
-> > 
-> > You're right.  I'll revert this and apply the following patch
-> > instead.
-> > 
-> > BTW this thing is still hopelessly broken if it's called from
-> > softirq context because there is no SIMD fallback.  Yes I removed
-> > the SIMD check but it was already broken before that as it simply
-> > switched from the 4-block version to the 1-block version if SIMD
-> > is not available rather than actually doing something that is
-> > safe in softirq context.
-> > 
-> > Perhaps we should just remove this altogether until it's fixed.
+On Sat, May 10, 2025 at 04:30:07PM +0200, Alexander Sverdlin wrote:
+> Hi Inochi!
 > 
-> Yes, the PowerPC Poly1305 code incorrectly uses VSX without first checking
-> crypto_simd_usable().  And PowerPC also doesn't support VSX in softirqs, or at
-> least it doesn't claim to (it doesn't override may_use_simd(), so it gets the
-> default from include/asm-generic/simd.h which returns false in softirq context).
-> Maybe add 'depends on BROKEN' to CRYPTO_POLY1305_P10 for now, and give the
-> PowerPC folks (Cc'ed) a chance to fix this before removing the code.
+> On Fri, 2025-05-09 at 06:21 +0800, Inochi Amaoto wrote:
+> > On Wed, May 07, 2025 at 09:56:20PM +0200, Alexander Sverdlin wrote:
+> > > From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> > > 
+> > > Implement the RTC driver for CV1800, which able to provide time alarm.
+> > > 
+> > > Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> > > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> 
+> ...
+> 
+> > > +static int cv1800_rtc_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct cv1800_rtc_priv *rtc;
+> > > +	int ret;
+> > > +
+> > > +	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+> > > +	if (!rtc)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	rtc->rtc_map = device_node_to_regmap(pdev->dev.parent->of_node);
+> > > +	if (IS_ERR(rtc->rtc_map))
+> > > +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->rtc_map),
+> > > +				     "cannot get parent regmap\n");
+> > > +
+> > > +	rtc->irq = platform_get_irq(pdev, 0);
+> > > +	if (rtc->irq < 0)
+> > > +		return rtc->irq;
+> > > +
+> > > +	rtc->clk = devm_clk_get_enabled(pdev->dev.parent, "rtc");
+> > > +	if (IS_ERR(rtc->clk))
+> > > +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk),
+> > > +				     "rtc clk not found\n");
+> > > +
+> > > +	platform_set_drvdata(pdev, rtc);
+> > > +
+> > > +	device_init_wakeup(&pdev->dev, 1);
+> > > +
+> > > +	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
+> > > +	if (IS_ERR(rtc->rtc_dev))
+> > > +		return PTR_ERR(rtc->rtc_dev);
+> > > +
+> > > +	rtc->rtc_dev->ops = &cv1800_rtc_ops;
+> > > +	rtc->rtc_dev->range_max = U32_MAX;
+> > > +
+> > > +	ret = devm_request_irq(&pdev->dev, rtc->irq, cv1800_rtc_irq_handler,
+> > > +			       IRQF_TRIGGER_HIGH, "rtc alarm", rtc);
+> > > +	if (ret)
+> > > +		return dev_err_probe(&pdev->dev, ret,
+> > > +				     "cannot register interrupt handler\n");
+> > > +
+> > > +	return devm_rtc_register_device(rtc->rtc_dev);
+> > > +}
+> > > +
+> > 
+> > I wonder whether the rtc driver may need reset (maybe optional) for this?
+> > If so, please add it.
+> 
+> I'm not sure which reset you are referring to... RTC module can carry out
+> system-wide resets, but cannot be reset itself (as I understand).
+> 
 
-What doe "may_use_simd" even *mean*?  At its declaration site it says
-"whether it is allowable at this time to issue SIMD instructions or
-access the SIMD register file", but that is 100% meaningless, you can do
-SIMD in GPRs.
+This is fine for me.
 
-On PowerPC we have two separate register files dedicated to SIMD-like
-stuff, the VMX and the VSX register files.  Which of those is this
-function supposed to care about?
+> Initially I was thinking about providing a reboot driver for Linux utilizing
+> the RTC module but it turns out PSCI interface is not optional on ARM64, which
+> means PSCI reset interface has to be provided by the firmware (I'm thinking
+> about U-Boot) and Linux will rely on PSCI reboot.
+> 
 
-It looks like the whole "may_use_simd" thing is a misguided abstraction
-unfortunately :-(
+I am not familiar with PSCI, but there is a fact that preserve uboot may
+be costly as the ram is limited. I think it may be fine to have a reboot
+driver to provide power function at the same time. But if you find there
+is a way to implement PSCI reboot, just do the thing you prefer.
 
-
-Segher
+Regards,
+Inochi
 
