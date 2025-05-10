@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-642662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D355AAB21C2
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053D3AB21C1
 	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494C63BA37C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F2C4C2D96
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC961EB196;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4164C1EB18F;
 	Sat, 10 May 2025 07:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYy0kgX5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAhp8Lqb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807B11E5B9C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4A41E5B65;
 	Sat, 10 May 2025 07:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746863109; cv=none; b=d3LZilRjGB6v/fJ1Rcu25F0Fbc7j1EYp3nLr8jiMhKRCaFGSiW4tpJMIfh6gAt08sopeFiko5wup91q46XSdJLJvciAt13FGfLNiTFA/ghycGppdqk/jFrhOmJfhsHss1w/tP3DAmqTKOku5U+BkeahJYL7wUE81l0Y3J5HVIxg=
+	t=1746863109; cv=none; b=dJQBfsdTnSg9stvenLoDE4dTbCosuNYWNtjbyxH+3K869I29gWrB87a3/UvuMcTq9PuXeoI/5m8I/TpE7cF6YDxRt2H81qciggBnmMabwEu4QtaAgFPoE+WTsFvUpLtiWWZW92eZDDd6kcGHyV8uvgE/z1S9sFGjue5QcaPhwPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746863109; c=relaxed/simple;
-	bh=CUo/MimrCW1xHj5d7fHDtNMddbwaaGdTDWDyY+tLI84=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FE3O6fAqJNuMl/ZUusmHgOH/rMh2XX94LanYhCTljAu3AF6nCx5nrE7jYj+aht2ho0zr0v9S2v3S35Hcn34auuv841OiNYbXScWQCoTyRY28rkNyofqX9nKd/CcNTYcTBfDdNXewdKpwcWlo3ACA6T7MRJrfu64u+D7ZK+qw8uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYy0kgX5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E4BB3C4CEE2;
+	bh=8+87LojQGyhr9E2+FPjQbHUWYlFaQtWgj0ictMi28nk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HLVS/V48SGU+P5eAFKUgATPP1Q0YiNgCInwIoZr01BCudYWNRr9/Ef95hW27cb4g1G384oqfWaxCljOkYr2tVTSyjl1vci2e5eVwBQwT0C4FYN9JZvWiYpeqPC8XfRX6nrNHVUbOZ9CmKHuy6J0TQNH/84InOb3gCXZfDxf2lFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAhp8Lqb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03391C4CEEB;
 	Sat, 10 May 2025 07:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746863109;
-	bh=CUo/MimrCW1xHj5d7fHDtNMddbwaaGdTDWDyY+tLI84=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=YYy0kgX5lVaXFTKrYRGliD8DTCl5jxlh4Nayz0Wb+66AFxLc20MuO/3+CziqiiX/x
-	 qk24j8sGwyjrh8CeEdEkoEefu9qPheo8X7iuxHUITn2Vw7hwyZ+FFBH4eIeiI+d+pP
-	 9tqajp4y7JgSFrn3BB89zd9YjsYRu4G2Uhm50EOTDRbBSlq8Egg0krIFauzT9XwQyn
-	 7Z5FKogs/CrHxr8MQX9+rKkvBq8v7xlbNMEQA+5CxoAfvuzhz8ttoZLNwjf0PYyaWG
-	 ij7O7LjRz0CU1n0K1u1LIqBqhPtE7yrqndTXcscYbZYEoFOjP4NyT5nNPFNRJQBFQr
-	 HfCNhkezxwIGw==
+	bh=8+87LojQGyhr9E2+FPjQbHUWYlFaQtWgj0ictMi28nk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=HAhp8LqbTFplQycwz1yVu0Ceeghb0EqTJs1v/5XtBYBLpZon1iElFP1oBgHHJnGHr
+	 2tfV4rHZEEHRe7g+Dw1sqxkmFaUJKAnwyFxeFCuG8twWk1eAVWxCyZmwZ3m+Cn46Js
+	 YCfWL50FWLogP/fmqI59oo9Gy4hWLRylobKvLPBLH23O5xQmmRskTXT1YmWvzSx3xq
+	 ivUapzgFt0eBQ4qeBVzPc6xM/A5qwK4GwXkdnWpJuDqIr8TA9Q2tELHVByACGkLYQc
+	 FHkNF4s5q9DXubLJLXgz3El73qtVkO8UXcszvMXpMWTy1pCeDNROlABPw6yJgxWJuV
+	 kTN28is82/ZSQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2891C3ABC3;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F93C3ABCB;
 	Sat, 10 May 2025 07:45:08 +0000 (UTC)
 From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Subject: [PATCH 0/7] Support exposing bits of any byte as NVMEM cells
-Date: Sat, 10 May 2025 07:44:40 +0000
-Message-Id: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
+Date: Sat, 10 May 2025 07:44:41 +0000
+Subject: [PATCH 1/7] nvmem: core: allow bit offset > 8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,10 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOgDH2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDUwML3byy3NRc3ZQS3ZRUw0RDCxOjVAsLYyWg8oKi1LTMCrBR0bG1tQD
- ysA7VWgAAAA==
-X-Change-ID: 20250508-nvmem-dt-de1a1842e883
+Message-Id: <20250510-nvmem-dt-v1-1-eccfa6e33f6a@svenpeter.dev>
+References: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
+In-Reply-To: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
  Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
  Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
@@ -65,15 +64,15 @@ To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Sven Peter <sven@svenpeter.dev>, R <rqou@berkeley.edu>
+ Sven Peter <sven@svenpeter.dev>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1867; i=sven@svenpeter.dev;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1784; i=sven@svenpeter.dev;
  h=from:subject:message-id;
- bh=CUo/MimrCW1xHj5d7fHDtNMddbwaaGdTDWDyY+tLI84=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Y886+JhUwn/3XVWSgdXLxSLkhOtF73koo070H5hzV9l
- sqLejk7SlkYxDgYZMUUWbbvtzd98vCN4NJNl97DzGFlAhnCwMUpABMpF2b4K/xC+RXPE+Plrf6O
- 8U5L98/5yRi1snSb6Ukhv1e+M3wP+DMyzC4UmveQ9UfFm/Qf//fd1WmRubpx9tnEs/vKKqM4DW5
- v4QMA
+ bh=Y1TJPt662hBSSQOfCJzcnzeri1OU9vTgDvhNcwok9XQ=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Y8898N9vGOPA/Zt0rMKM49cd4yx3GNKve5jXN8TMvmB
+ hRYX8nsKGVhEONgkBVTZNm+3970ycM3gks3XXoPM4eVCWQIAxenAEykz5eRoe33tMU7pt845v/O
+ Y+n/LL8Vu7m0ljOdm/M7Lf5KVdnmVYsYGVp3fj/uZRiudHU/96KAYwFLe5U2KuxavZ9j74HS599
+ 31bIAAA==
 X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
  fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
 X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
@@ -81,55 +80,60 @@ X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
 X-Original-From: Sven Peter <sven@svenpeter.dev>
 Reply-To: sven@svenpeter.dev
 
-Hi,
+From: Sven Peter <sven@svenpeter.dev>
 
-I'm preparing USB3 support for Apple Silicon Macs for upstreaming right
-now and this series is the first dependency. The Type-C PHY requires
-configuration values encoded in fuses for which we already have a
-driver.
-Unfortunately, the fuses on these machines are only accessibly as 32bit
-words but the Type-C PHY configuration values are individual bits which
-are sometimes spread across multiple fuses.
-Right now this is not supported by the nvmem core which only allows a
-subset of bits within the first byte to be exposed as a nvmem cell. This
-small series adds support for exposing arbitrary bits as nvmem cells.
-
-The second part of the series then adds the nvmem cells required for the
-Type-C PHY to our device trees. While it's technically independent I've
-included those changes in this series for context.
-
-Best,
-
-Sven
+Some nvmem controllers like Apple's eFuses or Nintendo's OTP have a cell
+size that's larger than one byte. Consumers may however still need
+access to a subset of bits that start after the first byte.
 
 Signed-off-by: Sven Peter <sven@svenpeter.dev>
 ---
-Janne Grunau (2):
-      Revert "nvmem: core: Print error on wrong bits DT property"
-      arm64: dts: apple: t8112: Add eFuses node
+ drivers/nvmem/core.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-R (1):
-      arm64: dts: apple: t600x: Add eFuses node
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index fff85bbf0ecd0f638e21f127370105d9f79c00d2..1bd39b12c21a86b9b135be95251a52a10543c2ea 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -1630,15 +1630,24 @@ EXPORT_SYMBOL_GPL(nvmem_cell_put);
+ static void nvmem_shift_read_buffer_in_place(struct nvmem_cell_entry *cell, void *buf)
+ {
+ 	u8 *p, *b;
+-	int i, extra, bit_offset = cell->bit_offset;
++	int i, padding, extra, bit_offset = cell->bit_offset;
++	int bytes = cell->bytes;
+ 
+ 	p = b = buf;
+ 	if (bit_offset) {
++		/* Remove any full bytes at the beginning that contain no bits of interest */
++		padding = bit_offset / BITS_PER_BYTE;
++		if (padding) {
++			memmove(buf, buf + padding, bytes - padding);
++			bit_offset -= BITS_PER_BYTE * padding;
++			bytes -= padding;
++		}
++
+ 		/* First shift */
+ 		*b++ >>= bit_offset;
+ 
+ 		/* setup rest of the bytes if any */
+-		for (i = 1; i < cell->bytes; i++) {
++		for (i = 1; i < bytes; i++) {
+ 			/* Get bits from next byte and shift them towards msb */
+ 			*p |= *b << (BITS_PER_BYTE - bit_offset);
+ 
+@@ -1651,7 +1660,7 @@ static void nvmem_shift_read_buffer_in_place(struct nvmem_cell_entry *cell, void
+ 	}
+ 
+ 	/* result fits in less bytes */
+-	extra = cell->bytes - DIV_ROUND_UP(cell->nbits, BITS_PER_BYTE);
++	extra = bytes - DIV_ROUND_UP(cell->nbits, BITS_PER_BYTE);
+ 	while (--extra >= 0)
+ 		*p-- = 0;
+ 
 
-Sven Peter (4):
-      nvmem: core: allow bit offset > 8
-      nvmem: core: round up to word_size
-      dt-bindings: nvmem: apple: Add T8112 compatible
-      arm64: dts: apple: t8103: Add eFuses node
-
- .../devicetree/bindings/nvmem/apple,efuses.yaml    |   1 +
- arch/arm64/boot/dts/apple/t600x-dieX.dtsi          | 187 +++++++++++++++++++++
- arch/arm64/boot/dts/apple/t8103.dtsi               | 102 +++++++++++
- arch/arm64/boot/dts/apple/t8112.dtsi               |  97 +++++++++++
- drivers/nvmem/core.c                               |  24 +--
- 5 files changed, 401 insertions(+), 10 deletions(-)
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250508-nvmem-dt-de1a1842e883
-
-Best regards,
 -- 
-Sven Peter <sven@svenpeter.dev>
+2.34.1
 
 
 
