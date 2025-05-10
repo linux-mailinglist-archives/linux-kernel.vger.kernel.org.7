@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-642880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587C6AB24BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:41:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95594AB24BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 18:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE2D03B01F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DA817FC76
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 16:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8992023498E;
-	Sat, 10 May 2025 16:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C15243958;
+	Sat, 10 May 2025 16:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oNWz2AgE"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M7tn7YkL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69BC221FBE
-	for <linux-kernel@vger.kernel.org>; Sat, 10 May 2025 16:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D7378C91;
+	Sat, 10 May 2025 16:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746895292; cv=none; b=PoVlPuQTSfNqar2+4iR8c8ubyDEk5cKut57KLWs4+48a6UWJjkHhMpNQCD8rPUIvyuGIQRWTwsJERmgatBcPjksrfST74rWXN6C55uCY1kjuXfgy1FGKPI3LPbf7aD9lIKRYQg39/2wpyWJEpTJqr2BDQeDUU9pN38FwdKmbINE=
+	t=1746895482; cv=none; b=YPMq1ozQQOUWpuwqt07rOm+SaGgcJpOw4xuCF2y5idMnkd36cahVqAGuWn8+fzntrtftZjk4zQdYP/dqvUwVIGATMvKWiZY8TqsktbonQjB2Lo/Bs0b7+enuYGifqXD+zYN0IKoQliqYiF2VCSFN9h2sgNcIzl/ZnZ8hyLIcHUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746895292; c=relaxed/simple;
-	bh=rbJZxrSbS04OMy+KMamFhwO3lee5Vo4dN7i0CY932xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QAaUd8UvdfGyQUR3QDD4RqlqurFBxS28e5dDSp1tjeO7A2afcnQcjEfOut4F/qsidcPwoi2f88OrV5KJ3VCCuOn+a7hSCQuNOl4RgiE6bILYbWCbpcTt9OTyqySVn+hbVvK86pOFBGjNFpRzi0MOZl/3RWcAhY4SyU1O8+YWxuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oNWz2AgE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8549C4CEE2;
-	Sat, 10 May 2025 16:41:30 +0000 (UTC)
+	s=arc-20240116; t=1746895482; c=relaxed/simple;
+	bh=5zf+Gmp4BkStSzRYoo8kl/40BTtK0Nx0b3ScZiIdh+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZqKUcJgTXaGdrgGc2oaBSPTyRy9vwPWhGkDP78Ke+iH1cymaohjOcIz4Ef0iPa2e3S5dEl3hNfGAzQdpD3MbzkSyp72uDDY28+sNoc/XR38gx5U0O98iMucD2V81X2DaFzVMjB/RDuS0mpy0BxNs35L9aNzklskGmumnUnuONjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M7tn7YkL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DF3C4CEE2;
+	Sat, 10 May 2025 16:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1746895291;
-	bh=rbJZxrSbS04OMy+KMamFhwO3lee5Vo4dN7i0CY932xo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oNWz2AgEPQ+PuhUHi93BcY3ij6e1KbiNBLIBOCbHqqSgP0YHwZMdWV0DHrgLDxcRq
-	 NuTETXMVYQuit5kQhICtnbk3xbLHYHZzo9P6WONcaiFfMXkG6UjIOaQb0yEufmKCpC
-	 1bVzft52376nyNO6CFwpbzduqYbWnnk+2+wOviGs=
-Date: Sat, 10 May 2025 18:41:28 +0200
+	s=korg; t=1746895481;
+	bh=5zf+Gmp4BkStSzRYoo8kl/40BTtK0Nx0b3ScZiIdh+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M7tn7YkLlNoiTHIVV3YX84ZenqG+fsuIdJKn49y38GRODx0Vb1u4pG7CykJc9X1Rl
+	 NOgPdfdFWPcRQn8JOPUulic6gCz3cwQTJsJJXZs2UV7WLlYkaA0dvm0/WikBMN/qjn
+	 IJufrUbWk0TNU2CU0F4DlehHX0YQsWrWP7il6EnM=
+Date: Sat, 10 May 2025 18:44:38 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL] Driver core fix for 6.15-rc6 - try 2
-Message-ID: <aB-BuCkpqmN3ybIP@kroah.com>
+To: Thomas Andreatta <thomasandreatta2000@gmail.com>
+Cc: dpenkler@gmail.com, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Thomas Andreatta <thomas.andreatta2000@gmail.com>
+Subject: Re: [PATCH 1/2] Staging: common: iblib: Changed ibrsc function type
+Message-ID: <2025051025-slate-grape-37ce@gregkh>
+References: <20250510153800.130974-1-thomas.andreatta2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,33 +54,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250510153800.130974-1-thomas.andreatta2000@gmail.com>
 
-The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e:
+On Sat, May 10, 2025 at 05:37:59PM +0200, Thomas Andreatta wrote:
+> Function ibrsc type changed from void to int.
 
-  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
+You need to explain more here.
 
-are available in the Git repository at:
+> Returning 0 for success.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git driver-core-6.15-rc6
+Yes, but it can not fail:
 
-for you to fetch changes up to 95deee37a12364f410d22c6a8383f59738a2fef3:
+> 
+> Signed-off-by: Thomas Andreatta <thomas.andreatta2000@gmail.com>
+> ---
+>  drivers/staging/gpib/common/iblib.c       | 4 ++--
+>  drivers/staging/gpib/include/gpib_proto.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/gpib/common/iblib.c b/drivers/staging/gpib/common/iblib.c
+> index b297261818f2..8b4280309ae7 100644
+> --- a/drivers/staging/gpib/common/iblib.c
+> +++ b/drivers/staging/gpib/common/iblib.c
+> @@ -418,12 +418,12 @@ int ibsic(struct gpib_board *board, unsigned int usec_duration)
+>  	return 0;
+>  }
+>  
+> -	/* FIXME make int */
+> -void ibrsc(struct gpib_board *board, int request_control)
+> +int ibrsc(struct gpib_board *board, int request_control)
+>  {
+>  	board->master = request_control != 0;
+>  	if (board->interface->request_system_control)
+>  		board->interface->request_system_control(board, request_control);
+> +	return 0;
 
-  platform: Fix race condition during DMA configure at IOMMU probe time (2025-05-01 18:00:58 +0200)
+If this can not fail, and request_system_control() can not fail, why
+does this function need to return anything?
 
-----------------------------------------------------------------
-Driver core fix for 6.15-rc6
+And you aren't checking the return value of it either, so why change it?
 
-Here is a single driver core fix for a regression for platform devices
-that is a regression from a change that went into 6.15-rc1 that affected
-Pixel devices.  It has been in linux-next for over a week with no
-reported problems.
+On another note, it's not a good name for a global function :)
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+thanks,
 
-----------------------------------------------------------------
-Will McVicker (1):
-      platform: Fix race condition during DMA configure at IOMMU probe time
-
- drivers/base/platform.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+greg k-h
 
