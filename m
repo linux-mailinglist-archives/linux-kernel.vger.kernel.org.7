@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-642663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-642664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F101FAB21C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:45:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EADAB21C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 09:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 377B04C2B51
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3544C3075
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 May 2025 07:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FDA1EB5CB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D411EDA02;
 	Sat, 10 May 2025 07:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgWXpeTG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TiMKl3FI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B251E7C03;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC151E8326;
 	Sat, 10 May 2025 07:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746863109; cv=none; b=iO1YoSZ1xNo56sr/bOFvVHcpDs5foqxrJFzGHd9zDj2/kgwEF7aSIF+PUCokqVd15mh4X99kDwx5avwxm00JzL20bROisrfu7+Rq0h0PaV9zaMfouFDEdXkFVIxMSedNiP7Adx1CXKBMH7cDCIp6Q4HCLTJGe0ApZLHfkWZLhko=
+	t=1746863109; cv=none; b=h/ZddrZYgh2f6+zxyMNcSKiCtdo/OXfyKbfFNqqi3QMFAoG9Arp7yF9Zbwk9oga5QZjASf5v8FaxewSmmQYC8Ml2xMAXO0xQIHap6bSXZx1EX8Ai0Q12ibngqkHdcQb0aAVdUEOZSSEOxaNGFfWDEnEBRxwaD3A1c4vdCTr6qNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746863109; c=relaxed/simple;
-	bh=ftCcW7WIxYGQk7HA8lp62RbBZM06Z5asH0bujmE6CcU=;
+	bh=+zKk01WvQFEh+9PS5+vkAROny5qxzLPQphXlcj06AMQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BFJZ0QY7PEbFJIC2Vr7UAHvFf2CmmmL5sY/tt9XoONg9AveAQo73nDqtX630k006aZk+Qy/BAZP8mdVlOTOd/ocB1U+j84kKCc1+6iuHkJx9EsT3+Sv/9IWJnQVqbLkhs6eTgM+UWb89dQAztyNc/noBDjm6/tBOZBoH8+decXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgWXpeTG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 19001C4CEF1;
+	 In-Reply-To:To:Cc; b=pFs0djFR11pIF1kH3opYdOGaeXQ1gFOyoUcFJAIO0IY4FULmtwjJWALn8PER/WApUlV0oWPp3aUmr3AHosa0OdBIzb7YwM3YMOgHCrCAgY1PwFp8lUQnNeHNO/JKUmfp7rnHhRGdjKquB9Mg/dhKsoyaAHOTGc3zZ+S0/pHTo7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TiMKl3FI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2AFB5C4CEF2;
 	Sat, 10 May 2025 07:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746863109;
-	bh=ftCcW7WIxYGQk7HA8lp62RbBZM06Z5asH0bujmE6CcU=;
+	bh=+zKk01WvQFEh+9PS5+vkAROny5qxzLPQphXlcj06AMQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=sgWXpeTGyvrpyEns61D6Dw84JcJcSkdgmOleT3NYM578DuoduMD3suLSzEdrNe9xi
-	 72B7rEgoFfJz5ZfiIlCrTs+B2g3HL+/Dwv+KUuEMOOTPDh0M2DYOTEgZT0IJpo1ahs
-	 zwlNLz6rV7CGHHrownc/QC1cIsjiGDGNxZ7D/mODDxXPY+cnQXlzM/YlDzWCTeEJGa
-	 t5WkSb6wAsM/eCXOJM2/7iyx7HP8Mk9UeJSS0vE0quES/7SvReVsrutUhT2RC9vGxY
-	 LlIjq9dypB+Sd0k79sGpPhvawKL/pf+GEBma5XFUB3S2g7VOPu+v413VbQ3o7j3ce/
-	 vs5AK5uWDMT+w==
+	b=TiMKl3FIidgw00YlMPoMBmwK9lE3bbpwUptOCGHvbVzkOVCXUbldm5Jlop+mXfxhj
+	 naXoADkLN7+lZu0v9TiJQFuL2NmqX2ybEjKb7IY6lhQLE4BhqKL9G9X924Ur69VP4c
+	 d+WZo1PsE9A7Ruy0+bXPe9I6IXMSY0zNXFzw9K1JeMM+tu+xCmYi8hpJiD0qruR8nJ
+	 b0t6tL0M5z0FIOzgz0pw8pHA5h1s7UeIvuCXKxAX7KScewNB2bV8xue7AH1czMJt1W
+	 GE+AWAWJK1gDRBHn1TfwEi3CDNXoeCBqBctlsH2UVrUE3ocAKMXFePIpgy2CMTnwuO
+	 PQW61e94QB3lA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E07AC3ABCC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D03AC3ABC3;
 	Sat, 10 May 2025 07:45:09 +0000 (UTC)
 From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Sat, 10 May 2025 07:44:43 +0000
-Subject: [PATCH 3/7] Revert "nvmem: core: Print error on wrong bits DT
- property"
+Date: Sat, 10 May 2025 07:44:44 +0000
+Subject: [PATCH 4/7] dt-bindings: nvmem: apple: Add T8112 compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250510-nvmem-dt-v1-3-eccfa6e33f6a@svenpeter.dev>
+Message-Id: <20250510-nvmem-dt-v1-4-eccfa6e33f6a@svenpeter.dev>
 References: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
 In-Reply-To: <20250510-nvmem-dt-v1-0-eccfa6e33f6a@svenpeter.dev>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
@@ -67,13 +66,13 @@ Cc: linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
  Sven Peter <sven@svenpeter.dev>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1031; i=sven@svenpeter.dev;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=803; i=sven@svenpeter.dev;
  h=from:subject:message-id;
- bh=hpPWBCehpQX+TRroEYSLZmoZuXPmZL8t0ylnYC5nM1Q=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Y883++/u3l1adVWlJs9YLZTxQcu8fofWhL8YmaEy5cU
- +Rf17d0lLIwiHEwyIopsmzfb2/65OEbwaWbLr2HmcPKBDKEgYtTACZiUMnw3+vR7e2GDusU50ks
- z3jCtm3S2wPbI/5ufdvw/NekJt4HDHmMDL/uGzoqHLjJfEXi5U1z2z+BCZ7ui/VnX7ox4Ye1mqx
- FARMA
+ bh=1rEv9jNzjWLwB2+MWFArfWPPCr4WKfPng+/WgNvEPzQ=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Y8C4PvicJlb00+JvVvFvq+NWXph6TEiiNVD74bLXz0/
+ OFL3a+TO0pZGMQ4GGTFFFm277c3ffLwjeDSTZfew8xhZQIZwsDFKQATUfNh+B9XbvTq4S8N3oxP
+ u1Y/2fD8ygy+/xsl79iarTDmSW55frqakeHa1qveyjbVLVnN7nLvlA8f/5FWMWGL8V+7rQ2sn9R
+ j+DkA
 X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
  fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
 X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
@@ -81,35 +80,28 @@ X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
 X-Original-From: Sven Peter <sven@svenpeter.dev>
 Reply-To: sven@svenpeter.dev
 
-From: Janne Grunau <j@jannau.net>
+From: Sven Peter <sven@svenpeter.dev>
 
-This reverts commit def3173d4f17b37cecbd74d7c269a080b0b01598.
+The eFuse controller found in Apple's M2 is compatible to the one found
+in M1 SoCs
 
-Now that the core supports accessing bits even beyond the first byte
-this additional error check is no longer required.
-
-Signed-off-by: Janne Grunau <j@jannau.net>
 Signed-off-by: Sven Peter <sven@svenpeter.dev>
 ---
- drivers/nvmem/core.c | 5 -----
- 1 file changed, 5 deletions(-)
+ Documentation/devicetree/bindings/nvmem/apple,efuses.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 02081c93fa467e5448bd78a4920072d437365fb9..ef1f59b34d262a533fb601d87fec123061cfff81 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -837,11 +837,6 @@ static int nvmem_add_cells_from_dt(struct nvmem_device *nvmem, struct device_nod
- 		if (addr && len == (2 * sizeof(u32))) {
- 			info.bit_offset = be32_to_cpup(addr++);
- 			info.nbits = be32_to_cpup(addr);
--			if (info.bit_offset >= BITS_PER_BYTE || info.nbits < 1) {
--				dev_err(dev, "nvmem: invalid bits on %pOF\n", child);
--				of_node_put(child);
--				return -EINVAL;
--			}
- 		}
+diff --git a/Documentation/devicetree/bindings/nvmem/apple,efuses.yaml b/Documentation/devicetree/bindings/nvmem/apple,efuses.yaml
+index d3abdafdbca06245cdba000ce2ca757b5ce77d3f..2e8b014e9854a1a25d662bab75fee773c62369cd 100644
+--- a/Documentation/devicetree/bindings/nvmem/apple,efuses.yaml
++++ b/Documentation/devicetree/bindings/nvmem/apple,efuses.yaml
+@@ -24,6 +24,7 @@ properties:
+       - enum:
+           - apple,t8103-efuses
+           - apple,t6000-efuses
++          - apple,t8112-efuses
+       - const: apple,efuses
  
- 		info.np = of_node_get(child);
+   reg:
 
 -- 
 2.34.1
