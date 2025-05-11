@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-643245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70608AB2A00
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 19:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E364FAB2A02
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 19:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60AE41899256
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 17:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0451899E76
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 17:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BE325D8E5;
-	Sun, 11 May 2025 17:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3CD1FC3;
+	Sun, 11 May 2025 17:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="SbcI5efI"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="slywNdRx"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE42725D8E4;
-	Sun, 11 May 2025 17:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ED425D535;
+	Sun, 11 May 2025 17:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746984697; cv=none; b=M/Yuz0kWlB0hkHlebJVNEdNx93VEU9p1Zm0tOnBObcN5VUBsDF5NKnWnzhvCo0tB85R/AdVsZFv4LGLTl5NORfz24Ko+PlpZLxmgVpED6hQLVPZDlpUuCTTsCxQeXSoKANipBghLdVgdw6yyWPJ3Vs7xLfRt1AsSZjlAY87lD/Q=
+	t=1746984721; cv=none; b=NnQMfncGP+h943258KapMvLyPwC5HddxrEt5LS0yZ8H0xTb7r+RmmH/EopyOhLWiRAwnvlyimFZLVLSQESGCbtWoOcFKPx9HLFwdTzMI20688B8LxU48ynPJGU0VokXQRftuGHBmIR/Cl2PUoojrjagnOx9izY30lAQZUZQDF4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746984697; c=relaxed/simple;
-	bh=Pf+VzyysXD68l+KJQCLG2aEwhEMl4XVbBRNkAwxMSTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j8r2aJJQSerLeG+DeKxDG7f6EqelYQo34cnYldRXY6DK5UXx75trBigE3WIEcwMO4NteRk/tgfqbRN0szNAlSSPMslAyOnOj+yMT8vLksio8WN1TjQvUL9D7YlSVqkqWZXhIMvEnmFIpvufDk3KJQPrbcQY/VSacPfGu6bXkxNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=SbcI5efI; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1746984694;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=at5EPWGlV4UKqMblvAMTE9/lujase2/QeqyVZV1+yY0=;
-	b=SbcI5efIaZie5Masa2rB+JAZ9MUDkPHfDEr9HETc1RRQVTB4jZaDA+M2d3prNf5gPhIbW8
-	TVS81hiRT9pJu+V/LCJJgT3VHzZHZ+wS/ADbw+x8cd4sPncKxXDMRmZ9Xm2VjEN2/dXiCb
-	CfVmRlQD47f7kQoGQ8SAPI0xyWJR9FiTSFk/UT2LLODN/7I2znuCaLv5zaU9dCfGgFj8oN
-	epk3ezLvB+xVkybIBPFuxmke6guVl8IpmDOSUIYD25UA9plZseyPWmIeHiBd95wvbfL5Ov
-	ZcxfTar9HwRm7O8dbIOXZuNx7BJS4prwrqjN+kmvuNUJsOHtMr4F0QKxnpdhzg==
-To: selinux@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/14] selinux: harden against malformed policies
-Date: Sun, 11 May 2025 19:30:15 +0200
-Message-ID: <20250511173055.406906-15-cgoettsche@seltendoof.de>
-In-Reply-To: <20250511173055.406906-1-cgoettsche@seltendoof.de>
-References: <20250511173055.406906-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1746984721; c=relaxed/simple;
+	bh=fsE7/JDV49MxrYYFGw4WZAW/BC6kd2MsaPMufKKDvjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SjRV+99AQqp9l5YIfjHntRtKGEp5BiiKVLqNO2CSUm3kf9IWyNb7trYpQPxFJu25lJGit+8e6t8iFkB4S1sxosU+JS5WXEPu8egx78pf/FGVsr6rS0wAblpBAHsrLdgqmB70tqTe7aPlPy1Rg19yydFt47rg9Z/YShvyQ2GGabQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=slywNdRx; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=TSW2pIy3xvnPWZgwqQfqFssUyi/DLc9kFN6L1e7D1rg=; b=slywNdRxQwkSdZPS
+	1olgPKfbx9nbumgffvh0e6tk9r6DMu1aupMHthUCcApsxSSBe4KSNCpXJwj/lZeUXBNdBEFz40Wl3
+	OheUcu0c4/u5O5ohEjTAWgTj9tPySZBcFAh7C4fbbwuhR5rjc7zMrDaCyM89PHwZK+f1fikvajOVA
+	O8JRxrxfPJrYhbHnp6ZexZ+9AZ/ffwQgy3Vd9UiaAfW9TMGWtqOjqQ9k+Q7bXc13ZGXd/rceCsz0Z
+	uDC1EwMgGAsRnVHsHPEgmPCFc2vrVyMIpX8f1kE6yXaC5nkUDGxSOhI6FTuetNwE6fSvb1Zd/miWk
+	ODQu3XY3wvcLh3itxg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1uEAWo-002uCE-19;
+	Sun, 11 May 2025 17:31:54 +0000
+Date: Sun, 11 May 2025 17:31:54 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: perex@perex.cz, tiwai@suse.com, krzysztof.h1@wp.pl,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: question on sound/isa/msnd/msnd_midi.c
+Message-ID: <aCDfCpeaD2eDLwFI@gallifrey>
+References: <aByXJKi2j7B4b0bH@gallifrey>
+ <87r00vxmjs.wl-tiwai@suse.de>
+ <aCDUi3sBXHOICgs3@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <aCDUi3sBXHOICgs3@gallifrey>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 17:31:37 up 14 days,  1:45,  1 user,  load average: 0.07, 0.03, 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-From: Christian Göttsche <cgzones@googlemail.com>
+* Dr. David Alan Gilbert (linux@treblig.org) wrote:
+> * Takashi Iwai (tiwai@suse.de) wrote:
+> > On Thu, 08 May 2025 13:36:04 +0200,
+> > Dr. David Alan Gilbert wrote:
+> > > 
+> > > Hi,
+> > >    I noticed that nothing calls snd_msndmidi_new in
+> > > sound/isa/msnd/msnd_midi.c and was about to delete it, but I'm not
+> > > too sure - I think it's actually a bug where it should be called.
+> > > 
+> > >   This code was added in 2009 by
+> > > commit f6c638350275 ("ALSA: Turtle Beach Multisound Classic/Pinnacle driver")
+> > > (Pretty new for an ISA card!)
+> > > 
+> > > Looking at msnd_midi.c the only function in there that anything
+> > > calls is snd_msndmidi_input_read() called by msnd_pinnacle.c but that
+> > > is guarded by a check:
+> > > 
+> > >   146    if (chip->msndmidi_mpu)
+> > >   147          snd_msndmidi_input_read(chip->msndmidi_mpu);   
+> > > 
+> > > but I don't think anything sets that msndmidi_mpu, since the only
+> > > thing that could is snd_msndmidi_new() which isn't called.
+> > > 
+> > > I see that the original poster didn't test the external midi:
+> > >    https://mailman.alsa-project.org/hyperkitty/list/alsa-devel@alsa-project.org/message/CWPYLPLJQEK64UU3YFCAMVXGDY42QKF2/
+> > > so I guess this has always been missing.
+> > > 
+> > > I don't have the hardware to test.
+> > > 
+> > > Thoughts?
+> > 
+> > Well, it's a very old code on an old interface, and if it's not used
+> > (even because of a typo or an overlook), then it's basically no chance
+> > to be used in future.  Let's rip off.
+> 
+> Ok, I'll cut a patch to remove snd_msndmidi_new() and then probably the whole
+> of msnd_midi.c and the call in msnd_pinnacle.c
 
-With the SELinux namespace feature on the horizon it becomes important
-to identify and reject malformed policies at load time.  Otherwise
-memory corruptions can compromise the kernel or NULL-pointer dereferences
-and BUG() encounters can bring systems down.  Currently this is not a
-security relevant issue since loading a policy requires root privileges
-and permission of the current loaded SELinux policy, making it one of the
-most privileged operation.
+Patch sent, see message: 20250511172957.1001583-1-linux@treblig.org
 
-Patch 13 limits the valid set of characters and the length for strings
-defined by policies.  Currently there are no restrictions, so control
-characters are accepted, e.g. Esc as part of a type name, and their
-length can be arbitrary.  Human formatted security contexts however must
-not be arbitrarily long, one example is they must fit in a page size for
-selinuxfs interaction and network associations.
-Thus the patch introduces the following restrictions:
-  * Disallow control characters
-  * Limit characters of identifiers to alphanumeric, underscore, dash,
-    and dot
-  * Limit identifiers in length to 128, expect types to 1024 and
-    categories to 32, characters (excluding NUL-terminator)
-    
-v1: https://lore.kernel.org/selinux/20241115133619.114393-23-cgoettsche@seltendoof.de/
+Thanks,
 
-v2: https://lore.kernel.org/selinux/20241216164055.96267-23-cgoettsche@seltendoof.de/
-  - also convert ebitmap_cmp() as suggested by Daniel
-  - accept instead of rejecting unknown xperm specifiers to support
-    backwards compatibility for future ones, suggested by Thiébaud
-  - add wrappers for str_read() to minimize the usage of magic numbers
-  - limit sensitivities to a length of 32, to match categories,
-    suggested by Daniel
-    
-v3:
-  - rename comparison macro to cmp_int()
-  - move some portions from patch 2 to patch 3
-  - minimize magic value usage
-  - fix error branch reported by kernel test robot
-  - merge ebitmap_highest_set_bit() patch into patch making use of it
-  - introduce a central limits.h header
-  - add limits for all kinds of string: filesystem names, filetrans
-    keys, genfs paths, infiniband device names
-  - add patch 14 for MLS stringification hardening
+Dave
 
-Christian Göttsche (14):
-  selinux: avoid nontransitive comparison
-  selinux: use u16 for security classes
-  selinux: more strict policy parsing
-  selinux: check length fields in policies
-  selinux: validate constraints
-  selinux: pre-validate conditional expressions
-  selinux: check type attr map overflows
-  selinux: reorder policydb_index()
-  selinux: beef up isvalid checks
-  selinux: validate symbols
-  selinux: more strict bounds check
-  selinux: check for simple types
-  selinux: restrict policy strings
-  selinux: harden MLS context string generation against overflows
-
- security/selinux/include/limits.h   |  90 +++++
- security/selinux/include/security.h |   1 +
- security/selinux/ss/avtab.c         |  49 ++-
- security/selinux/ss/avtab.h         |  13 +
- security/selinux/ss/conditional.c   | 152 ++++---
- security/selinux/ss/conditional.h   |   2 -
- security/selinux/ss/constraint.h    |   3 +-
- security/selinux/ss/ebitmap.c       |  27 ++
- security/selinux/ss/ebitmap.h       |   1 +
- security/selinux/ss/hashtab.h       |   4 +-
- security/selinux/ss/mls.c           |  84 ++--
- security/selinux/ss/mls.h           |   6 +-
- security/selinux/ss/policydb.c      | 597 +++++++++++++++++++++++-----
- security/selinux/ss/policydb.h      | 106 ++++-
- security/selinux/ss/services.c      | 111 ++++--
- security/selinux/ss/symtab.c        |   2 +-
- security/selinux/ss/symtab.h        |   2 +-
- 17 files changed, 1008 insertions(+), 242 deletions(-)
- create mode 100644 security/selinux/include/limits.h
-
+> Dave
+> 
+> > 
+> > thanks,
+> > 
+> > Takashi
+> > 
+> -- 
+>  -----Open up your eyes, open up your mind, open up your code -------   
+> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+> \        dave @ treblig.org |                               | In Hex /
+>  \ _________________________|_____ http://www.treblig.org   |_______/
+> 
 -- 
-2.49.0
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
