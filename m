@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-643341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A05AB2B3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:53:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319A0AB2B37
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7467D176F08
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 20:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1302A1898F0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 20:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA9726157E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8408A26137F;
 	Sun, 11 May 2025 20:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="h+zh1jxP"
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="bZe4STWq"
 Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C4625E45A;
-	Sun, 11 May 2025 20:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB7C25DD10;
+	Sun, 11 May 2025 20:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746996807; cv=none; b=CT8k3JuWd6a9zinLmt21goWJPVH68FT79wmBh+Z1nvbnyKOw0LH4SawW6BDQu5/Tmb13bxEPVljOf+FCyT+lv9eVyT1utSvZPvb4uP8nL6f+Y9Aee51XxFemjlOWXVMvZEfG0ni22sWrRgNR81ysVKbz1CARNFr4jS13O6uc2T0=
+	t=1746996806; cv=none; b=drsR8jsZtrOUAB9VAlBPR78NCg/eowUyX1ijkF9BQyEtMNUQblVopZnMoDAUu4++gJfH62SnmUf3ygFWVyqy+XSHO8Z6TCc2Z60i93nbhQTklYStSrP5Gf79eVvOe+zPj0qhqM6DYH4rhndDcEPhGg0q2qTQNPm20SMF8kX62WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746996807; c=relaxed/simple;
-	bh=lxVqT6fVrxp3st8VNJBf2MocKXWigeCZ+B0AprVLg14=;
+	s=arc-20240116; t=1746996806; c=relaxed/simple;
+	bh=LIFeAHb+nqLq+xefQoSh++C1ZLkF/KDUEKZLmwKOmlI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RNGTw7S9ibQAbnj5R7Sfk3Hal78VTaY9V5g9tw3mhwY5SgtnisdLp18DV98yQq/hhtJQO0p4Z6EjITzdw4sJEQnXNTZ3ZCm9LFu401PYWrGV6cuQ3QatrekdOrloIyvcJTesMBvlTYu1DKu7Iw6tCiUuf7wX0oqMDRrOtjn7A6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=h+zh1jxP; arc=none smtp.client-ip=185.138.42.100
+	 MIME-Version; b=eG93KGTrILpLsFkI9Bvy3Du0OqfH92di+RxCW3R2NtLVC71uBisUaxfGCdbs0nj8mfd4ArOO2B+R2XcigaSLH8t8Tt4ITRKJ5jZWlojuz7YAWH7WQzn54MFCCydaTXXJ/6FsTEMqww+cIZh+obYD7gMXe+4e1gsW7lxg3XPtioA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=bZe4STWq; arc=none smtp.client-ip=185.138.42.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
 Received: from localhost.localdomain (x5996a826.customers.hiper-net.dk [89.150.168.38])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 08D492E0A47A;
-	Sun, 11 May 2025 23:44:37 +0300 (EEST)
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 7A1C32E0A474;
+	Sun, 11 May 2025 23:44:40 +0300 (EEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1746996280;
-	bh=Prktr/wUoxhrqc+n5hi2mCrepwPtH3enZVLiFIXWbZY=; h=From:To:Subject;
-	b=h+zh1jxPppLqx413m1/fZcTRfHtLRa15nOZl7yktDPqzijyb4u8YUSAe/ItlPf345
-	 1PvR/ndmkAx9irwWtvC/6lC3hbTe426u6d0PitFKgQNzTcQdzM5OdhoFMQ6/S5ChI4
-	 ODcroasdL5mv8uj3V/ih7hZjo4f0d6ftZPQqqMcg=
+	s=default; t=1746996282;
+	bh=rgXIXL0LET4rRdcbB8YpYDd7SOLKugo5R8SBkYijYKU=; h=From:To:Subject;
+	b=bZe4STWqq/hnhSxdOI4peaHCfrNVRcvW4ysI3SUPmMUSHMr71enegUQZs9vVq+QR1
+	 wNY38919fARSgmJlnefQhKp0VBKb1J/nWD+KqeZoyJ8xvMT2x+PTneOkhssKE5Ldbs
+	 kWAk+EBQjIY4lMst4Y+FCUX+rthHUiV2XCN1pZwo=
 Authentication-Results: linux1587.grserver.gr;
 	spf=pass (sender IP is 89.150.168.38) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
 Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
@@ -55,10 +55,10 @@ Cc: Armin Wolf <W_Armin@gmx.de>,
 	linux-kernel@vger.kernel.org,
 	linux-hwmon@vger.kernel.org,
 	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v1 01/10] platform/x86: msi-wmi-platform: Use input buffer for
- returning result
-Date: Sun, 11 May 2025 22:44:18 +0200
-Message-ID: <20250511204427.327558-2-lkml@antheas.dev>
+Subject: [PATCH v1 02/10] platform/x86: msi-wmi-platform: Add unlocked
+ msi_wmi_platform_query
+Date: Sun, 11 May 2025 22:44:19 +0200
+Message-ID: <20250511204427.327558-3-lkml@antheas.dev>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250511204427.327558-1-lkml@antheas.dev>
 References: <20250511204427.327558-1-lkml@antheas.dev>
@@ -70,174 +70,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-PPP-Message-ID: 
- <174699627977.27565.11929832264375726108@linux1587.grserver.gr>
+ <174699628198.27634.6236568785205799371@linux1587.grserver.gr>
 X-PPP-Vhost: antheas.dev
 X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
 X-Virus-Status: Clean
 
-From: Armin Wolf <W_Armin@gmx.de>
+This driver requires to be able to handle transactions that perform
+multiple WMI actions at a time. Therefore, it needs to be able to
+lock the wmi_lock mutex for multiple operations.
 
-Modify msi_wmi_platform_query() to reuse the input buffer for
-returning the result of a WMI method call. Using a separate output
-buffer to return the result is unnecessary because the WMI interface
-requires both buffers to have the same length anyway.
+Add msi_wmi_platform_query_unlocked() to allow the caller to
+perform the WMI query without locking the wmi_lock mutex, by
+renaming the existing function and adding a new one that only
+locks the mutex.
 
-Co-developed-by: Antheas Kapenekakis <lkml@antheas.dev>
 Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 ---
- drivers/platform/x86/msi-wmi-platform.c | 53 ++++++++++++-------------
- 1 file changed, 26 insertions(+), 27 deletions(-)
+ drivers/platform/x86/msi-wmi-platform.c | 27 ++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/platform/x86/msi-wmi-platform.c b/drivers/platform/x86/msi-wmi-platform.c
-index dc5e9878cb682..41218a9d6e35d 100644
+index 41218a9d6e35d..f0d1b8e1a2fec 100644
 --- a/drivers/platform/x86/msi-wmi-platform.c
 +++ b/drivers/platform/x86/msi-wmi-platform.c
-@@ -21,6 +21,7 @@
- #include <linux/mutex.h>
- #include <linux/printk.h>
- #include <linux/rwsem.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <linux/wmi.h>
- 
-@@ -140,19 +141,19 @@ static int msi_wmi_platform_parse_buffer(union acpi_object *obj, u8 *output, siz
+@@ -140,7 +140,7 @@ static int msi_wmi_platform_parse_buffer(union acpi_object *obj, u8 *output, siz
+ 	return 0;
  }
  
- static int msi_wmi_platform_query(struct msi_wmi_platform_data *data,
--				  enum msi_wmi_platform_method method, u8 *input,
--				  size_t input_length, u8 *output, size_t output_length)
-+				  enum msi_wmi_platform_method method, u8 *buffer,
-+				  size_t length)
+-static int msi_wmi_platform_query(struct msi_wmi_platform_data *data,
++static int msi_wmi_platform_query_unlocked(struct msi_wmi_platform_data *data,
+ 				  enum msi_wmi_platform_method method, u8 *buffer,
+ 				  size_t length)
  {
- 	struct acpi_buffer out = { ACPI_ALLOCATE_BUFFER, NULL };
- 	struct acpi_buffer in = {
--		.length = input_length,
--		.pointer = input
-+		.length = length,
-+		.pointer = buffer
- 	};
- 	union acpi_object *obj;
- 	acpi_status status;
- 	int ret;
- 
--	if (!input_length || !output_length)
-+	if (!length)
+@@ -156,15 +156,9 @@ static int msi_wmi_platform_query(struct msi_wmi_platform_data *data,
+ 	if (!length)
  		return -EINVAL;
  
- 	/*
-@@ -169,7 +170,7 @@ static int msi_wmi_platform_query(struct msi_wmi_platform_data *data,
+-	/*
+-	 * The ACPI control method responsible for handling the WMI method calls
+-	 * is not thread-safe. Because of this we have to do the locking ourself.
+-	 */
+-	scoped_guard(mutex, &data->wmi_lock) {
+-		status = wmidev_evaluate_method(data->wdev, 0x0, method, &in, &out);
+-		if (ACPI_FAILURE(status))
+-			return -EIO;
+-	}
++	status = wmidev_evaluate_method(data->wdev, 0x0, method, &in, &out);
++	if (ACPI_FAILURE(status))
++		return -EIO;
+ 
+ 	obj = out.pointer;
  	if (!obj)
- 		return -ENODATA;
- 
--	ret = msi_wmi_platform_parse_buffer(obj, output, output_length);
-+	ret = msi_wmi_platform_parse_buffer(obj, buffer, length);
- 	kfree(obj);
- 
+@@ -176,6 +170,19 @@ static int msi_wmi_platform_query(struct msi_wmi_platform_data *data,
  	return ret;
-@@ -185,17 +186,15 @@ static int msi_wmi_platform_read(struct device *dev, enum hwmon_sensor_types typ
- 				 int channel, long *val)
- {
- 	struct msi_wmi_platform_data *data = dev_get_drvdata(dev);
--	u8 input[32] = { 0 };
--	u8 output[32];
-+	u8 buffer[32] = { 0 };
- 	u16 value;
- 	int ret;
- 
--	ret = msi_wmi_platform_query(data, MSI_PLATFORM_GET_FAN, input, sizeof(input), output,
--				     sizeof(output));
-+	ret = msi_wmi_platform_query(data, MSI_PLATFORM_GET_FAN, buf, sizeof(buf));
- 	if (ret < 0)
- 		return ret;
- 
--	value = get_unaligned_be16(&output[channel * 2 + 1]);
-+	value = get_unaligned_be16(&buffer[channel * 2 + 1]);
- 	if (!value)
- 		*val = 0;
- 	else
-@@ -245,13 +244,17 @@ static ssize_t msi_wmi_platform_write(struct file *fp, const char __user *input,
- 		return ret;
- 
- 	down_write(&data->buffer_lock);
--	ret = msi_wmi_platform_query(data->data, data->method, payload, data->length, data->buffer,
-+	ret = msi_wmi_platform_query(data->data, data->method, data->buffer,
- 				     data->length);
- 	up_write(&data->buffer_lock);
- 
- 	if (ret < 0)
- 		return ret;
- 
-+	down_write(&data->buffer_lock);
-+	memcpy(data->buffer, payload, data->length);
-+	up_write(&data->buffer_lock);
-+
- 	return length;
  }
  
-@@ -348,23 +351,21 @@ static int msi_wmi_platform_hwmon_init(struct msi_wmi_platform_data *data)
- 
- static int msi_wmi_platform_ec_init(struct msi_wmi_platform_data *data)
++static int msi_wmi_platform_query(struct msi_wmi_platform_data *data,
++				  enum msi_wmi_platform_method method, u8 *buffer,
++				  size_t length)
++{
++	/*
++	 * The ACPI control method responsible for handling the WMI method calls
++	 * is not thread-safe. Because of this we have to do the locking ourself.
++	 */
++	scoped_guard(mutex, &data->wmi_lock) {
++		return msi_wmi_platform_query_unlocked(data, method, buffer, length);
++	}
++}
++
+ static umode_t msi_wmi_platform_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 					   u32 attr, int channel)
  {
--	u8 input[32] = { 0 };
--	u8 output[32];
-+	u8 buffer[32] = { 0 };
- 	u8 flags;
- 	int ret;
- 
--	ret = msi_wmi_platform_query(data, MSI_PLATFORM_GET_EC, input, sizeof(input), output,
--				     sizeof(output));
-+	ret = msi_wmi_platform_query(data, MSI_PLATFORM_GET_EC, buffer, sizeof(buffer));
- 	if (ret < 0)
- 		return ret;
- 
--	flags = output[MSI_PLATFORM_EC_FLAGS_OFFSET];
-+	flags = buffer[MSI_PLATFORM_EC_FLAGS_OFFSET];
- 
- 	dev_dbg(&data->wdev->dev, "EC RAM version %lu.%lu\n",
- 		FIELD_GET(MSI_PLATFORM_EC_MAJOR_MASK, flags),
- 		FIELD_GET(MSI_PLATFORM_EC_MINOR_MASK, flags));
- 	dev_dbg(&data->wdev->dev, "EC firmware version %.28s\n",
--		&output[MSI_PLATFORM_EC_VERSION_OFFSET]);
-+		&buffer[MSI_PLATFORM_EC_VERSION_OFFSET]);
- 
- 	if (!(flags & MSI_PLATFORM_EC_IS_TIGERLAKE)) {
- 		if (!force)
-@@ -378,27 +379,25 @@ static int msi_wmi_platform_ec_init(struct msi_wmi_platform_data *data)
- 
- static int msi_wmi_platform_init(struct msi_wmi_platform_data *data)
- {
--	u8 input[32] = { 0 };
--	u8 output[32];
-+	u8 buffer[32] = { 0 };
- 	int ret;
- 
--	ret = msi_wmi_platform_query(data, MSI_PLATFORM_GET_WMI, input, sizeof(input), output,
--				     sizeof(output));
-+	ret = msi_wmi_platform_query(data, MSI_PLATFORM_GET_WMI, buffer, sizeof(buffer));
- 	if (ret < 0)
- 		return ret;
- 
- 	dev_dbg(&data->wdev->dev, "WMI interface version %u.%u\n",
--		output[MSI_PLATFORM_WMI_MAJOR_OFFSET],
--		output[MSI_PLATFORM_WMI_MINOR_OFFSET]);
-+		buffer[MSI_PLATFORM_WMI_MAJOR_OFFSET],
-+		buffer[MSI_PLATFORM_WMI_MINOR_OFFSET]);
- 
--	if (output[MSI_PLATFORM_WMI_MAJOR_OFFSET] != MSI_WMI_PLATFORM_INTERFACE_VERSION) {
-+	if (buffer[MSI_PLATFORM_WMI_MAJOR_OFFSET] != MSI_WMI_PLATFORM_INTERFACE_VERSION) {
- 		if (!force)
- 			return -ENODEV;
- 
- 		dev_warn(&data->wdev->dev,
- 			 "Loading despite unsupported WMI interface version (%u.%u)\n",
--			 output[MSI_PLATFORM_WMI_MAJOR_OFFSET],
--			 output[MSI_PLATFORM_WMI_MINOR_OFFSET]);
-+			 buffer[MSI_PLATFORM_WMI_MAJOR_OFFSET],
-+			 buffer[MSI_PLATFORM_WMI_MINOR_OFFSET]);
- 	}
- 
- 	return 0;
 -- 
 2.49.0
 
