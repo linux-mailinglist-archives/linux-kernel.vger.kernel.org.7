@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-643051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710B2AB274C
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 10:21:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336D4AB2754
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 10:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1053BF219
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 08:20:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA97A63E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 08:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D001B1E5200;
-	Sun, 11 May 2025 08:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FC01B4247;
+	Sun, 11 May 2025 08:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDIXU9Z0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRAnEud2"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE701C5D62;
-	Sun, 11 May 2025 08:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA711A5BBE
+	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 08:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746951550; cv=none; b=Jcy2kPG5esPUO4T2bAdKOfkalW1FGjk2hrZmnhOE9s+jtkGpqFaGOd8sCaPuJVaJ2H4y2H0O7iun+6MMcutwrMGK1/0Jj68K1lzqrVTNrVlN365NO/1t4nEALjjK0ZUrvN8bB6TBZtYwv27l5YCEj/gitKCg6XEypA3tOMvu/pc=
+	t=1746951908; cv=none; b=Bcx4olYrV0n8N5NTmPck5r42KQogjZtKMbLG11TXpuqunq8xxzmeEuHs/x8cuHBv4+Y5t1SwYtDCZI3uj66RRmWeisdOW/RKtU8+kwWTUzaMvhGp9OM7DLFu+Efayo0cTpucJQ86tARb8h+NAs9mXKY8V4VM0WqkIhsDxTW4kfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746951550; c=relaxed/simple;
-	bh=gFsJ3sO48WGZPCtwcEY+er9dS43pV/euPP5vmSeW+Fw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t6FXnNB7UPWg3fRGs70SSeix0WvVw4JL5op9sRCQPlJz84hD5lpVJEpPxhdEIO0aTxr+px9/RO89hZOSojdU9wKJDiEPt98OAoZv4GPJzoglJk24T9/f8D0tDCfoybGvLqouhDsVo9SsaeyCkWW6DPWnZdVLouIaj43XRBbAhO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDIXU9Z0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AEDF1C116D0;
-	Sun, 11 May 2025 08:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746951549;
-	bh=gFsJ3sO48WGZPCtwcEY+er9dS43pV/euPP5vmSeW+Fw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dDIXU9Z0CgYjmYOoiowUnW2MNxMk7dEI8bgqLVoohgftkMzrNgprNDiGHca0KzM0O
-	 C9LJkGSjA2WAt2m9FpQTgEZra/NPe5h8OtTrLwpZkfOqRzXTywDAPsZFhjmQ/XdhB/
-	 GnZQECORrG9AYdk7erhZBcrNlu8qiEZ3Qqj+STfs2m9a8LgbvxIr1yZ6xoKXE6B59S
-	 +g5C5vJi4VRznzP/H78v2dGeePc5WunWbw7wCEg9Ltaob2L+T9ZWLzOBr3wVbqlVFc
-	 4mNTftbazOWSSaoNZv/ZV08Q3RbF+VNUN71TsihPygi7F0cxCBdjpVyP9LpCifLbzQ
-	 Lc6Od2hCrU+QQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B0AC3ABC3;
-	Sun, 11 May 2025 08:19:09 +0000 (UTC)
-From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Sun, 11 May 2025 08:18:45 +0000
-Subject: [PATCH v5 10/10] arm64: dts: apple: t600x: Add SMC node
+	s=arc-20240116; t=1746951908; c=relaxed/simple;
+	bh=axlzh8wdBSnRAj1XihJUWHBLhaR7tOyyavylk1fO3Uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BzAK2pDRlGgUJ9L7Up+B/ZHE0Mrq2HpAMKyJrjS4nZgW24zpjqizykBKIRqjvWMM23rA6UzocwUq47/b5B5i45l/HtsswZ4vo4mQqcHA/RZFyaG/hm5VEVbEkMC6BZ7WMZWK0lsOGPoPQgO0buTU8f1sSBNs7ZPNeN89mDYvG+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRAnEud2; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so37723515e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 01:25:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746951903; x=1747556703; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JGDVeACw/jp0C4k4Wd6moCgif1Pfm842wvA1qG0yCD4=;
+        b=FRAnEud2utrkUbirh9TSp5wX3z0gZ/03sP+PQwaYgJHnjzK6tJfkNH43xZwUN7xNuH
+         6bukQ1Lw+crhXlZQcqRDzhR+1WoPv2gD9SF61oZMCkmELmwLQWGCR2qYz+C+GUzaT86i
+         MBCRVTINCjFZwY5ZSNUAmZpUScykS0NsAKbpMQuYojUubW6n0vTZJkWi0Fc8PiYVd2Yw
+         LDoa+eEWW8ujaXGfChYfLipTCDEeKG7MlNakw9doySGJVljmSJW+wHo3IFv0LacWnoXK
+         PE22Tcc/wywX+znBEpiTuZjrvvaK0V9JADc83R2HgswqLr8OAaITRFeln5g9WRFJWbX/
+         aVmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746951903; x=1747556703;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGDVeACw/jp0C4k4Wd6moCgif1Pfm842wvA1qG0yCD4=;
+        b=wyZhB39/7AznyJYpi22To+h+fDRSepezJ/w/L3s26AJdwnIzOhdAVRR55SnmUY1BlL
+         nIFaVa34h6BRcJmQ5lAvW0wACBVJ+ARfMmIYrg9hhGYaStonBUugayccJphNADISaUuc
+         3IAgiZw9j4vwnMd13GwnUBXCxRrrtfYa2IE2kiB1miTzlgt7ypeLHUI6JUiMkAEkfABA
+         iPMQErDJuIKkrujXLL88hEmEzV2Vjg85H89daGZp3vfqCWBH9XpIr4sD/3NLVaXkOgWF
+         5/tJM98M3CSdBg8ydfmthcnFO8Ri9fe7ZVgw0mxqZk8OyhLNIn/gh7F0Je0TeEY46JoU
+         1hgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPtChPq7S9a/u4yAw8bxOiKfkZqL8X8G0RhYDGOOQSuAKHjDQ1OElv0hBYTV46jTGzOupNqQ9Djfg9NM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzze9fpb0pQjIARwgRRSz8bt+kyqOHs7FuTyST8zw5iPHFdvUCS
+	eE7awtPyDgQkBehaB+bhuANW6+Wab5w6xJb2QMmEJloZ4zdA9V7/m8/BB2IOlw==
+X-Gm-Gg: ASbGncvrRZdj/gjYQWtSFzEqFTh9h5/9nb20QOMZp6pFfW/dMbgT4/yQDu5jnq0kK0z
+	tkuC1u1nTpOOJ7fK4k1Yp0QJbhjLDXriFeJzVA5KRYErxddQgXPJCvU9sEUOGKz2UAPZohrN7Tq
+	2ymtgOTi+3+gTCIZuUlXbPc26hv7u1kyg7QAuZEq5mlK7U98wZ3z23D2gtcur1lMjk1audKLfgK
+	HUxbefOIxU6A6JzBj58la0/SNXZkR6DLUZ7OJjlmkZ5/xO/ly5XEkbONyv7fQX4wAbkQulDJfMy
+	HzpXlxv3htP/pPdybcoAx2xQvlDWUcKDCotOSK5SsKVmZKGVVfMDhcMI6soR0zI=
+X-Google-Smtp-Source: AGHT+IGIgwTqFwghplknMmhn0PhrkMbkYatLkYI+iiXeqPEmbShj2REeefkdrAzhOMUJoVnfgrJgUQ==
+X-Received: by 2002:a05:6000:2902:b0:390:ee01:68fa with SMTP id ffacd0b85a97d-3a1f6444a44mr7489435f8f.24.1746951903183;
+        Sun, 11 May 2025 01:25:03 -0700 (PDT)
+Received: from thinkpad ([130.93.163.156])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58ec912sm8487327f8f.23.2025.05.11.01.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 May 2025 01:25:01 -0700 (PDT)
+Date: Sun, 11 May 2025 13:54:59 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frank Li <Frank.Li@nxp.com>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>, 
+	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, 
+	jdmason@kudzu.us, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	imx@lists.linux.dev, devicetree@vger.kernel.org
+Subject: Re: [PATCH v18 00/15] PCI: EP: Add RC-to-EP doorbell with platform
+ MSI controller
+Message-ID: <4oyhjtoedh66sdyhebltwskskksy5ask4avvuekoxbckibdxmb@bqwe72b5q4en>
+References: <20250414-ep-msi-v18-0-f69b49917464@nxp.com>
+ <87y0v7ko8o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250511-smc-6-15-v5-10-f5980bdb18bd@svenpeter.dev>
-References: <20250511-smc-6-15-v5-0-f5980bdb18bd@svenpeter.dev>
-In-Reply-To: <20250511-smc-6-15-v5-0-f5980bdb18bd@svenpeter.dev>
-To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1906; i=sven@svenpeter.dev;
- h=from:subject:message-id;
- bh=92m9tjkE/9fmIrwCKyHzSWjjFycxwyBc2n6Mji86KpA=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ4ZCbNX/meHWDVVVucqnriznUl5kzrDinn9/j4zdasbNl
- 5StDaQ6SlkYxDgYZMUUWbbvtzd98vCN4NJNl97DzGFlAhnCwMUpABN5f4aR4VbwjPpv98IVwjZx
- xW91NTbNb2deJLmmYrZR537FUyf5jRj+WT94s3fJVpc0j91Wy6+fnKv7uvbFFsOPahw3ls4Lkuv
- XZQEA
-X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
- auth_id=167
-X-Original-From: Sven Peter <sven@svenpeter.dev>
-Reply-To: sven@svenpeter.dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87y0v7ko8o.ffs@tglx>
 
-From: Hector Martin <marcan@marcan.st>
+On Thu, May 08, 2025 at 07:26:31PM +0200, Thomas Gleixner wrote:
+> On Mon, Apr 14 2025 at 14:30, Frank Li wrote:
+> > This patches add new API to pci-epf-core, so any EP driver can use it.
+> >       platform-msi: Add msi_remove_device_irq_domain() in platform_device_msi_free_irqs_all()
+> >       irqdomain: Add IRQ_DOMAIN_FLAG_MSI_IMMUTABLE and irq_domain_is_msi_immutable()
+> >       irqchip/gic-v3-its: Set IRQ_DOMAIN_FLAG_MSI_IMMUTABLE for ITS
+> >       dt-bindings: PCI: pci-ep: Add support for iommu-map and msi-map
+> >       irqchip/gic-v3-its: Add support for device tree msi-map and msi-mask
+> 
+> I applied the interrupt related changes in the tip tree. They are on a
+> seperate rc1 based branch and contain no other changes so that they can
+> be pulled into the PCI tree as prerequisite for the actual endpoint
+> changes. This can be pulled from the following tag:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-platform-msi-05-08-25
+> 
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
----
- arch/arm64/boot/dts/apple/t600x-die0.dtsi | 35 +++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Thanks! I'd like to have a closer look at the endpoint patches and want to try
+them out on some hardware before merging. Unfortunately, this cannot happen for
+the next two weeks as I'll be on vacation.
 
-diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-index 110bc6719512e334e04b496fb157cb4368679957..4993a8ace87b2fc7e645b08c19fcd9b0c21896aa 100644
---- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-@@ -24,6 +24,41 @@ aic: interrupt-controller@28e100000 {
- 		power-domains = <&ps_aic>;
- 	};
- 
-+	smc: smc@290400000 {
-+		compatible = "apple,t6000-smc", "apple,smc";
-+		reg = <0x2 0x90400000 0x0 0x4000>,
-+			<0x2 0x91e00000 0x0 0x100000>;
-+		reg-names = "smc", "sram";
-+		mboxes = <&smc_mbox>;
-+
-+		smc_gpio: gpio {
-+			compatible = "apple,smc-gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		smc_reboot: reboot {
-+			compatible = "apple,smc-reboot";
-+			nvmem-cells = <&shutdown_flag>, <&boot_stage>,
-+				<&boot_error_count>, <&panic_count>, <&pm_setting>;
-+			nvmem-cell-names = "shutdown_flag", "boot_stage",
-+				"boot_error_count", "panic_count", "pm_setting";
-+		};
-+	};
-+
-+	smc_mbox: mbox@290408000 {
-+		compatible = "apple,t6000-asc-mailbox", "apple,asc-mailbox-v4";
-+		reg = <0x2 0x90408000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ 0 754 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 755 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 756 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 757 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "send-empty", "send-not-empty",
-+			"recv-empty", "recv-not-empty";
-+		#mbox-cells = <0>;
-+	};
-+
- 	pinctrl_smc: pinctrl@290820000 {
- 		compatible = "apple,t6000-pinctrl", "apple,pinctrl";
- 		reg = <0x2 0x90820000 0x0 0x4000>;
+So please take the interrupt changes for the upcoming cycle and we will deal
+with endpoint patches after 6.16-rc1. The major blocker for this series has been
+the interrupt related changes. I'm so glad that it got resolved finally.
+
+Frank, thanks for your persistence!
+
+- Mani
 
 -- 
-2.34.1
-
-
+மணிவண்ணன் சதாசிவம்
 
