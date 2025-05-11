@@ -1,112 +1,84 @@
-Return-Path: <linux-kernel+bounces-643370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1100FAB2BD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 00:04:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B055AB2BE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 00:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D10D16EF31
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E8C1897992
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930D525C6E9;
-	Sun, 11 May 2025 22:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iK0Nh9aB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4DE263F25;
+	Sun, 11 May 2025 22:22:23 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F7F20328
-	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 22:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837BE13BAF1;
+	Sun, 11 May 2025 22:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747001078; cv=none; b=Mujvtm3pMrzB7mMjbAgS3tXGcPNJnL7ZWjFAnPGj701MDtj8AHUivdoJfbMV/c4MHGQ1pstxU6ozs9vQ47fb+9uq8PZa9dQQQX6YUXchhW85w0c1KdonW0yn0BmjQ0SSp3u95BjwnYdT7C08TNurppyGb4HIhzqQ/3rZfQ/zmEs=
+	t=1747002143; cv=none; b=JAKlbrkXmfPycgia53QvtEw3NA/z6MEQ31tss9jQLiRyXzHU3jvpcf3jHnVObc3zAJLMqUUlIX4JpQHTl9nfBdItlFZn+t5F/9D6n41I6YFWTNo0YQsLBxaCv+2PtOqcQblfPw78BAMZJb2oebEgzI7Yd0iIP134WSpz/c7h47E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747001078; c=relaxed/simple;
-	bh=8Sd78TFosm+8lOixefW7+MQo1cD6xcF43l9bOo/vH2c=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ORyTGtRF3dN/5G5E3P/lBxhjtJl7BFNQDv85p5dzRwHEZ9wUbN0ur1r7sh31gJ2r08LD1WIu+Ipx9fcgGlhashY8KSOblLBZ6EcO9Q0Lcbzat7tDT9qvWn+AonbhBu1upfApJCmrGukzDuWCCXboqfgYoMKDgGoevo99rXLc0Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iK0Nh9aB; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747001075; x=1778537075;
-  h=date:from:to:cc:subject:message-id;
-  bh=8Sd78TFosm+8lOixefW7+MQo1cD6xcF43l9bOo/vH2c=;
-  b=iK0Nh9aBtX+NnH9IuzdlATBcXi3KV7oGLO02brzGKnzIcqBuEVoPInZ7
-   +Y1h8ffaGXRGBWZOneNdFWy3QlSnuxKRyMg7Dc5b+zBA2+Ht4igZdp7C2
-   qmuZEIo2GZ0aWp1iUZcbKdPjVfpTU1ORDt8GPnEDHE1qxaTQVT97ukgLC
-   boTGJuLBVmUfTJ2AIHJ49fYw1El3l6yj0SQSNXib9UriodQtWBposNmV8
-   pUaZGkLEdX5g/+QWMSYEdDlFnId7n36bDrNCvKgeJaB9L1FAAx2RRqVT9
-   eiBt8iWjMPSvOR8QogTxSgx2Iu4JSp8EAoGDQYMtLhjbF+f+szRwDc1KA
-   w==;
-X-CSE-ConnectionGUID: 8P/KxlI4R8Sg4sZzjHYCzg==
-X-CSE-MsgGUID: v6Wca8rAQY60YTpfHt+D7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48687542"
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="48687542"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2025 15:04:35 -0700
-X-CSE-ConnectionGUID: VeT9OXPAT52Mz9nQqb3wiA==
-X-CSE-MsgGUID: TL+LHV/lTr6gCoSAPAcYHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="168123046"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 11 May 2025 15:04:34 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uEEme-000E1Y-0U;
-	Sun, 11 May 2025 22:04:32 +0000
-Date: Mon, 12 May 2025 06:04:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- f7387eff4bad33d12719c66c43541c095556ae4e
-Message-ID: <202505120656.3Ai2rLEv-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1747002143; c=relaxed/simple;
+	bh=xcGjkpBj/EnoapfIH+HcMnAV6qKAFn5NRJcOXJ7R3dY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTQl+6O15d/Q4ZVgRxrtig/9EkFg/8+MBqIibTy6tmLxrzjJBtVt7mydxagUVgG0VMHJL8Y31tOW69ooeYcvLsOwuU5dZvNOSgsTOOAhEeL8KaULGhPFmT51Wqnk7e11V7i2fCCHEvv68IfsczQIA4x2dHgeyzgwjjK8PWWidrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uEEYY-000000006sM-1X1I;
+	Sun, 11 May 2025 21:55:54 +0000
+Date: Sun, 11 May 2025 22:55:50 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Frank Wunderlich <frank-w@public-files.de>, linux@fw-web.de,
+	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, arinc.unal@arinc9.com,
+	Landen.Chao@mediatek.com, dqfext@gmail.com, sean.wang@mediatek.com,
+	lorenzo@kernel.org, nbd@nbd.name, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: Re: [PATCH v1 09/14] arm64: dts: mediatek: mt7988: add switch
+ node
+Message-ID: <aCEc5tYPivxvRVDK@makrotopia.org>
+References: <20250511141942.10284-1-linux@fw-web.de>
+ <20250511141942.10284-10-linux@fw-web.de>
+ <bfa0c158-4205-4070-9b72-f6bde9cd9997@lunn.ch>
+ <trinity-0edcdb4e-bcc9-47bb-b958-a018f5980128-1746984591926@trinity-msg-rest-gmx-gmx-live-74d694d854-ls6fz>
+ <74afe286-2adb-42d3-9491-881379053e36@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74afe286-2adb-42d3-9491-881379053e36@lunn.ch>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: f7387eff4bad33d12719c66c43541c095556ae4e  x86/sev: Fix operator precedence in GHCB_MSR_VMPL_REQ_LEVEL macro
+On Sun, May 11, 2025 at 11:25:27PM +0200, Andrew Lunn wrote:
+> > i will move that into the board dtsi file in v2 because "normal" bpi-r4 and 2g5 variant are same here.
+> 
+> Maybe you just need to expand the commit message? What does this .dtsi
+> actually represent? The SoC, or what is common across a number of
+> boards?
 
-elapsed time: 721m
+mt7988a.dtsi represents the SoC, and thus there shouldn't be any
+labels assigned to the DSA ports.
 
-configs tested: 20
-configs skipped: 126
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250511    clang-20
-i386    buildonly-randconfig-002-20250511    gcc-12
-i386    buildonly-randconfig-003-20250511    clang-20
-i386    buildonly-randconfig-004-20250511    clang-20
-i386    buildonly-randconfig-005-20250511    clang-20
-i386    buildonly-randconfig-006-20250511    gcc-12
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250511    clang-20
-x86_64  buildonly-randconfig-002-20250511    clang-20
-x86_64  buildonly-randconfig-003-20250511    clang-20
-x86_64  buildonly-randconfig-004-20250511    clang-20
-x86_64  buildonly-randconfig-005-20250511    gcc-12
-x86_64  buildonly-randconfig-006-20250511    clang-20
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-18
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In case of the BananaPi R4 there are two different boards, one with 2x
+SFP+ and one with 1x SFP+ + 1x 2500Base-T (with PoE-in), hence there is
+a dtsi files for all the parts shared among the two boards. I suppose
+Frank meant to move the labels to that board dtsi file, and that's
+correct imho as the labels of the 1G switch ports are the same on BPi-R4
+and BPi-R4-PoE.
 
