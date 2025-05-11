@@ -1,151 +1,158 @@
-Return-Path: <linux-kernel+bounces-643162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E2CAB28EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 16:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F30AB290F
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 16:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1423B74FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 14:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B86E1898349
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 14:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B362571BD;
-	Sun, 11 May 2025 14:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5933325A656;
+	Sun, 11 May 2025 14:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A7lJ4dIM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+6H0+xaN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A7lJ4dIM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+6H0+xaN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="oFSq6J7D"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF16286A1
-	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 14:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ACF256C79;
+	Sun, 11 May 2025 14:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746972890; cv=none; b=tlNtp21R5N5f7lCiJmIq0ZrXSUeinTMdh8e/dlIkUzS4LHCKa7vScUMHebqjJHA8SY6CpMMMDs5WzqKw1lAP8y7/DtdgSIVGw3ORPbx7HoxMHhFEh2MTfmWIhSyJW062vVqS9ED9sPsyp/KfTrYfc0WuD7Hm6Kv06is+/LQ7m70=
+	t=1746973635; cv=none; b=XKVHYIG7CSYpjqTqJJ1XFaLbNt0H1EqClvSrS0zDwwOFhvP2w7maU99spnl44j2wuq1NaLTfpZIyoqvgZ0claj+5F+UBiuzv7cWQzt8w75BNj6UT+zAUVpLn3oB/dtwSrrDKgvkWDsncwo1S3z89DtgVsUeXJIIfFnbA2q8GDIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746972890; c=relaxed/simple;
-	bh=40jNP656X7e02APWX3NbLHlFmIwLJ/BFBmXyNt2FOfs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NUFtiSvEZ7gqfsVV6EBsL3DxFDY1ZxJa3IHzUNF1kvTZPHYrLwgtRKqN0xweXt3fsCFC85SVK24iXD3G9Vp8zFOo6HlG+j+uElaL+bjNk1a/f/+c32hIYH0/8luZ4XscSa8d9uC7t4rMvxxjNDvIA+YsTK7+VYGVKDA+aE/YKiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A7lJ4dIM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+6H0+xaN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A7lJ4dIM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+6H0+xaN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A9B0621170;
-	Sun, 11 May 2025 14:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746972886; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qL8PtxHW0oelGLaG3XXPzhbioxOK+s7Sx44/0BX0D/c=;
-	b=A7lJ4dIM2/qybLoU3iCZJctyyKwUZdYcsAWxe5fPtJgqJQA0vdrlMtZjHjRxJ0JGS5sdFJ
-	zUoTeZ1PSrbUZ/OtZKvKIXn8O+AySoza0MRywjFBFR4HBKrYjlIjopE5Eopo4fc/qid0R0
-	V8QrjfChdrpbt7+BExCcb7xco/4CoeE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746972886;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qL8PtxHW0oelGLaG3XXPzhbioxOK+s7Sx44/0BX0D/c=;
-	b=+6H0+xaNJE4Ojzr6YgkfRF5goNUjuIaKNFZE5o63fRrBCiFpSDsHfDbbF3UZ5ZF9paIc9E
-	nX2473XRTirePXBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746972886; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qL8PtxHW0oelGLaG3XXPzhbioxOK+s7Sx44/0BX0D/c=;
-	b=A7lJ4dIM2/qybLoU3iCZJctyyKwUZdYcsAWxe5fPtJgqJQA0vdrlMtZjHjRxJ0JGS5sdFJ
-	zUoTeZ1PSrbUZ/OtZKvKIXn8O+AySoza0MRywjFBFR4HBKrYjlIjopE5Eopo4fc/qid0R0
-	V8QrjfChdrpbt7+BExCcb7xco/4CoeE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746972886;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qL8PtxHW0oelGLaG3XXPzhbioxOK+s7Sx44/0BX0D/c=;
-	b=+6H0+xaNJE4Ojzr6YgkfRF5goNUjuIaKNFZE5o63fRrBCiFpSDsHfDbbF3UZ5ZF9paIc9E
-	nX2473XRTirePXBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59CB413690;
-	Sun, 11 May 2025 14:14:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vFKNFNawIGjqbgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 11 May 2025 14:14:46 +0000
-Date: Sun, 11 May 2025 16:14:45 +0200
-Message-ID: <87plgfxmi2.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Cc: vkoul@kernel.org,
-	yung-chuan.liao@linux.intel.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	pierre-louis.bossart@linux.dev,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1746973635; c=relaxed/simple;
+	bh=BeheGT/VrTl4jw2S0KWtbuWBgAAFP9huqff6Yx45PhI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YgHTUjNHc+BBIuUJCszqDoYe7TPOeIAbjkZmqM1kWwMafeTdMbZ1N7pMoi8QoKO7U/cAQxBzmf+AaLuMpAqvRU8Wx2gJQO/g9gd6Cc4QPjUBUXjrXLJcFb57Y2MlbOWEo9e1exEKe9yXSy9Ayo1dBJeTKVCZ87O0A2MY/lCrRjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=oFSq6J7D; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
+	by mxout2.routing.net (Postfix) with ESMTP id AE8D35FD70;
+	Sun, 11 May 2025 14:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1746973192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9zt4V23HteLxlHiTCgCG0cybfkvtPIOYBYrWS/uBlKI=;
+	b=oFSq6J7DcXVCeeVliNJIvyi08c5w0pyMSD69hTGcfFGH1b3fvTrlpYs2tPTDgyYe4HLXWI
+	Gb7OUWdexRDWPG6JxTSP40UfQ630JGsXVUaxgbqCwIr2UOBgLF+iQpA2Sn1eLKXpeHQwYb
+	anP/Tk/o1J4eCzl73wqGOwYxGTlBmEw=
+Received: from frank-u24.. (fttx-pool-194.15.84.99.bambit.de [194.15.84.99])
+	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 36F70100500;
+	Sun, 11 May 2025 14:19:51 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Felix Fietkau <nbd@nbd.name>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	liam.r.girdwood@intel.com,
-	ranjani.sridharan@linux.intel.com
-Subject: Re: [PATCH] ALSA/hda: intel-sdw-acpi: Correct sdw_intel_acpi_scan() function parameter
-In-Reply-To: <20250508181207.22113-1-peter.ujfalusi@linux.intel.com>
-References: <20250508181207.22113-1-peter.ujfalusi@linux.intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v1 00/14] further mt7988 devicetree work
+Date: Sun, 11 May 2025 16:19:16 +0200
+Message-ID: <20250511141942.10284-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: beeb2363-c36a-4a1c-b90d-c115fec7d014
 
-On Thu, 08 May 2025 20:12:07 +0200,
-Peter Ujfalusi wrote:
-> 
-> The acpi_handle should be just a handle and not a pointer in
-> sdw_intel_acpi_scan() parameter list.
-> It is called with 'acpi_handle handle' as parameter and it is passing it to
-> acpi_walk_namespace, which also expects acpi_handle and not  acpi_handle*
-> 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-> Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
-> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Thanks, applied now.
+This series continues mt7988 devicetree work
 
+- Add SPI with BPI-R4 nand to reach eMMC
+- Add thermal protection (fan+cooling-points)
+- Extend cpu frequency scaling with CCI
+- Basic network-support (ethernet controller + builtin switch + SFP Cages)
 
-Takashi
+depencies (i hope this list is complete and latest patches/series linked):
+
+"Add Bananapi R4 variants and add xsphy" (reviewed, but not yet applied):
+https://patchwork.kernel.org/project/linux-mediatek/list/?series=955733
+
+"net: phy: mediatek: do not require syscon compatible for pio property":
+https://patchwork.kernel.org/project/netdevbpf/patch/20250510174933.154589-1-linux@fw-web.de/
+for phy led function (RFC not yet reviewed, resent without RFC)
+
+for 2.5g phy function (currently disabled):
+- net: ethernet: mtk_eth_soc: add support for MT7988 internal 2.5G PHY (already merged to 6.15-net-next)
+- net: phy: mediatek: add driver for built-in 2.5G ethernet PHY on MT7988
+  https://patchwork.kernel.org/project/netdevbpf/patch/20250219083910.2255981-4-SkyLake.Huang@mediatek.com/
+  requested updated patch due to comments
+
+for SFP-Function (macs currently disabled):
+
+PCS clearance which is a 1.5 year discussion currently ongoing
+
+e.g. something like this (one of):
+* https://patchwork.kernel.org/project/netdevbpf/patch/20250510102348.14134-4-ansuelsmth@gmail.com/ 
+  (changes requested, but no comment on the pcs part)
+* https://patchwork.kernel.org/project/netdevbpf/patch/20250415193323.2794214-3-sean.anderson@linux.dev/
+  (changes requested)
+* https://patchwork.kernel.org/project/netdevbpf/patch/ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org/
+
+full usxgmii driver:
+https://patchwork.kernel.org/project/netdevbpf/patch/07845ec900ba41ff992875dce12c622277592c32.1702352117.git.daniel@makrotopia.org/
+
+first PCS-discussion is here:
+https://patchwork.kernel.org/project/netdevbpf/patch/8aa905080bdb6760875d62cb3b2b41258837f80e.1702352117.git.daniel@makrotopia.org/
+
+and then dts nodes for sgmiisys+usxgmii
+
+when above depencies are solved the mac1+2 can be enabled and 2.5G phy and SFP slots will work.
+
+Frank Wunderlich (14):
+  dt-bindings: net: mediatek,net: update for mt7988
+  dt-bindings: net: dsa: mediatek,mt7530: add dsa-port definition for
+    mt7988
+  dt-bindings: net: dsa: mediatek,mt7530: add internal mdio bus
+  arm64: dts: mediatek: mt7988: add spi controllers
+  arm64: dts: mediatek: mt7988: move uart0 and spi1 pins to soc dtsi
+  arm64: dts: mediatek: mt7988: add cci node
+  arm64: dts: mediatek: mt7988: add phy calibration efuse subnodes
+  arm64: dts: mediatek: mt7988: add basic ethernet-nodes
+  arm64: dts: mediatek: mt7988: add switch node
+  arm64: dts: mediatek: mt7988a-bpi-r4: Add fan and coolingmaps
+  arm64: dts: mediatek: mt7988a-bpi-r4: configure spi-nodes
+  arm64: dts: mediatek: mt7988a-bpi-r4: add proc-supply for cci
+  arm64: dts: mediatek: mt7988a-bpi-r4: add sfp cages and link to gmac
+  arm64: dts: mediatek: mt7988a-bpi-r4: configure switch phys and leds
+
+ .../bindings/net/dsa/mediatek,mt7530.yaml     |  17 +-
+ .../devicetree/bindings/net/mediatek,net.yaml |   9 +-
+ .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |  11 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  |  18 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 137 +++++-
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     | 402 +++++++++++++++++-
+ 6 files changed, 574 insertions(+), 20 deletions(-)
+
+-- 
+2.43.0
+
 
