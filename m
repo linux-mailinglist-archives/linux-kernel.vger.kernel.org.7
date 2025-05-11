@@ -1,95 +1,127 @@
-Return-Path: <linux-kernel+bounces-643368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E0BAB2BB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 23:50:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0279AAB2AAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6243B6565
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 21:50:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6319B7A966A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 20:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D1B2609F8;
-	Sun, 11 May 2025 21:50:49 +0000 (UTC)
-Received: from mail-m2491.xmail.ntesmail.com (mail-m2491.xmail.ntesmail.com [45.195.24.91])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F245B25A344;
+	Sun, 11 May 2025 20:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBGDlyF0"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A053C78F52;
-	Sun, 11 May 2025 21:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5A2AE9A;
+	Sun, 11 May 2025 20:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747000248; cv=none; b=eXyn9hObqLEBP1hE1UxgdbAf3TmIYlubhgN2gYN/K/LJh6pQkzhpGvHtHPhnTWfb8dBxHouGAv/JC0uOIGbA57QQj3uJcM92gJ/Q+cqjtcdRNLWf86KNmZQylgs2agg3uECvGBFtz6baTcB5FhP/sErnCjqokw9Oag0ELdq1ze8=
+	t=1746993892; cv=none; b=u2v3tbR/Ly+bbUc5s29h2hQ3VyacKs8/n1QtnQwO40eN71zs8+SlN5y9EKa3rMRTEla22wD8VMzus4oT6b3zjf23WKzrZj0gQungMEpPh+i7E2JDBxxoQ70h6t7t/i69nUyg9f8p3FBdl1xzXQ5z0dYCecgQP/aBo2jhQ+NBZ8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747000248; c=relaxed/simple;
-	bh=OOUdApa0JThYxCoz78OPV6tqoLIrTEdW0j0Sn5iyVqY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vD6ZiFjXdYqk/c72lnbAdSWidLxIc8bBssffFO5GWa6AG30wOvOz9mClhMbRdPZZTPpvV/4Z2zzCNy3ldVf4Mkm3SHBdGsuqua3NS83CfTISzeC9xVwXg0xSnVRlv30OllJh5rGZvxwP7ZQytKLLRuXOozk89mILr/oK91FQEXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.195.24.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c03:9b0:dce1:ee4:cfd7:5cd7])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 14a30f72c;
-	Sun, 11 May 2025 23:01:04 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: heiko@sntech.de
-Cc: amadeus@jmu.edu.cn,
-	ziyao@disroot.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v7 4/5] arm64: dts: rockchip: add core dtsi for RK3562 SoC
-Date: Sun, 11 May 2025 23:01:01 +0800
-Message-Id: <20250511150101.51273-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <3317829.AJdgDx1Vlc@diego>
-References: <3317829.AJdgDx1Vlc@diego>
+	s=arc-20240116; t=1746993892; c=relaxed/simple;
+	bh=a2vLC5e8w621vYFZFZ6T2uLOfqBXeMNXA1BIWr7Badc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KS6wWr6WQKoNKKhaD1OLsYpJt+rAB+UxpprK9hf1QTWvWWt8d0Tp8k5+GJm1bIQliA0Xciayda/oYwraS+JsfsdD8Gtv2sS17zKXPiSvrEBgDw5merRI4GoYdAB4px8ZUfn9OXwhf84ryqPhMkdI73t4YdSIrp6JmK6fYoDA+XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBGDlyF0; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso23034765e9.1;
+        Sun, 11 May 2025 13:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746993889; x=1747598689; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sYnfyvuko3DstVBj9VsnghcCFLtVoXIoYcgRptdifpw=;
+        b=kBGDlyF0xsjuiu3UMx0D6GJS6qIzBvhnDFwJ8TE7HKqyLYwsOtHXIsRppr5lakpq5L
+         MWNiPRY9FHwM7XejFttv+FISBJ1kV//iXYt93i3kBum/HakCkaLOyty3TmBk1dqAOmHT
+         0EHjFus6XACvdsUgkHDpJPKAGhSEwOlpWoh60IFOojpp7msuWJgs1UTzWXfEg7K12K1D
+         qzkrPP5+xuFeUgJG/Ubf3lvVbwlNcnRZy2fi2VRssAxtG7ZZ+OxDS05ZVd/ZM/UloA5s
+         mOkmLEUZoy76oeJRN9y1y9y5I50KsykouBTn8tLZ0l4CuQcS1Y7qxBuaZQpV86wBt6Z5
+         5K6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746993889; x=1747598689;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sYnfyvuko3DstVBj9VsnghcCFLtVoXIoYcgRptdifpw=;
+        b=cwL1gjeE+iCMSgpgHtPwG09ZwDRK5aoTOKD8UlZWpMqrfqoAo84/5uIg96j4RSulSP
+         3vQw/U4brMdOpmMBYMSTeoZ37iLwqZuory6tw5dfvQkBapk8nE7WrmRLs0joqbhK6D63
+         fI9FbO4GveUh/zGK+5/+IXUx9VgbRVgI+4hSKlrI8ktQlMKx5yDRA68J76/RrNRIJJUz
+         sCLLn0CNYc9epd/srHbCWwvblJLsWClqzj+3TGmEt9uvF3OXGxiX6lCGctDbJcxxZ41O
+         hbwwDDpzT6t4AzaC0U6ffNYzauy3C1nvv1+9HOj7RQgjcx9uy5Jk66effXgqofEtXRtx
+         CDIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz1NM2JPs4IyvcS5/pWKhME0VbyTbjZtL/auhSk8Y/8SHKXI6wnAcHgnv8055WOqFXF5EbkqkWdE2GsyA=@vger.kernel.org, AJvYcCWoXEQ7CH3DK2AJKTEokImSNoGGZqYM3SnTPRtZ9Q5wqfTkzH8B3cH6co7tTTAIvgnhFXoyimGx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTyP/snEgbRsKItvVRpCuR4wgooHhuCOD6K+92ql7K5/yeHHZQ
+	qCtXrNsMOH+DAPjtUayMpNwKjjpENuYzu+edf9+eeq9XbPGYhw0y
+X-Gm-Gg: ASbGncsc9cynpY6dgB2Nkbib8u2J2T/YFpUyy5DLl/qPwv1Cc1tM+JljlT9sH59ttw4
+	tmj/887YqmKVKqKQU/uXYvNEf/ThZgQWbJgnPmmiIMuuKEkfATlQOFHZ6LTUCfogAw0GJUPLciK
+	HgejqvIEF29q02/5g377qxImJklUcQSQaTUa6xwGisddkN6o72NJlM5PbIVdbTJRIzjj1uSQeee
+	ijrGNDrHQ4hRp/J4ZMLegcQ0wapTpwSO0k9U5mw6ioX8cCDOBazoTp4Mj5nKQ+JgvAyGS4/S2nT
+	J0liJO1GwFhW9x8MRbBgvybiPhAGY4uDRKJrHnMcFKJvkDPf2WM9Wu002xBPSsIMks17Z7JQInb
+	DWpdQSKfKWxzZzkFIOgRmOwnQNrd4RcS3yEPpoPROQA206nVgm/IGtrk=
+X-Google-Smtp-Source: AGHT+IFjIJ/PiWP0rc5Lu8A35rP2o8sedXKOTMh73Xgvm5S60olcSUYwZBrdtBhLKmBU/xrQcLLW+w==
+X-Received: by 2002:a05:600c:45d1:b0:43d:8ea:8d80 with SMTP id 5b1f17b1804b1-442d6d18ab4mr87990995e9.5.1746993888671;
+        Sun, 11 May 2025 13:04:48 -0700 (PDT)
+Received: from shift.daheim (p200300d5ff34db0050f496fffe46beef.dip0.t-ipconnect.de. [2003:d5:ff34:db00:50f4:96ff:fe46:beef])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c35sm101844785e9.5.2025.05.11.13.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 May 2025 13:04:47 -0700 (PDT)
+Received: from localhost ([127.0.0.1])
+	by shift.daheim with esmtp (Exim 4.98.2)
+	(envelope-from <chunkeey@gmail.com>)
+	id 1uECsL-00000000RYg-3Q9R;
+	Sun, 11 May 2025 22:04:46 +0200
+Message-ID: <9086a511-bd3e-4a88-ad86-8c51d5a385ac@gmail.com>
+Date: Sun, 11 May 2025 22:04:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHxgaVhgaHU1JSUNPTEsdHVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtIQUIZS0EfGB5KQR4eT0EYHR9MQU4YH0xZV1kWGg8SFR
-	0UWUFZT0tIVUpLSEpMTU1VSktLVUpCS0tZBg++
-X-HM-Tid: 0a96bfdd298703a2kunm14a30f72c
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NjY6Nio6GDJPGUoLFB8zHBMo
-	OgoaChNVSlVKTE9NQkxOTU1OSklMVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0hBQhlLQR8YHkpBHh5PQRgdH0xBThgfTFlXWQgBWUFKSExONwY+
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12] Revert "um: work around sched_yield not yielding in
+ time-travel mode"
+To: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org,
+ linux-um@lists.infradead.org
+Cc: benjamin.berg@intel.com, sashal@kernel.org, richard@nod.at,
+ stable@vger.kernel.org
+References: <20250509095040.33355-1-chunkeey@gmail.com>
+ <b09d6b4ef6291a2109dd7e1bada4ecff931a553f.camel@sipsolutions.net>
+Content-Language: de-DE, en-US
+From: Christian Lamparter <chunkeey@gmail.com>
+In-Reply-To: <b09d6b4ef6291a2109dd7e1bada4ecff931a553f.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 5/11/25 9:23 PM, Johannes Berg wrote:
+> On Fri, 2025-05-09 at 11:50 +0200, Christian Lamparter wrote:
+>>
+>> What's interesting/very strange strange about this time-travel stuff:
+>>> commit 0b8b2668f998 ("um: insert scheduler ticks when userspace does not yield")
+>>
+>>   $ git describe 0b8b2668f998
+>> => v6.12-rc2-43-g0b8b2668f998
+>>
+> 
+> Come to think of it, often you just want "git describe --contains":
+> 
+> $ git describe --contains --match=v* 0b8b2668f998
+> v6.13-rc1~18^2~25
 
-> I might be blind, but I don't see a tab missing here? #adress-cells and
-> #size-cells are in the same level of indentation as the other properties
-> of spi0? I did move the -cells down though now.
+yeah, I'm wondering if this 'git describe vs git describe --contains' could be the
+reason why the patch was AUTOSEL'd? I have no idea how Sasha's helper works though.
 
-Sorry I didn't make it clear. This refers to -cells.
+As for UML: Your work is greatly appreciated. I've ran into this because OpenWrt is
+currently in the process of adapting to the 6.12 LTS:
+https://github.com/openwrt/openwrt/pull/18666
 
-> hopefully caught all pwms now
-
-The pinctrl-names of pwm4 to pwm15 are still "active".
-
-> +		saradc0: adc@ff730000 {
-> +			compatible = "rockchip,rk3562-saradc";
-> +			reg = <0x0 0xff730000 0x0 0x100>;
-> +			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-> +			#io-channel-cells = <1>;
-
-> > `#io-channel-cells` should be put above `status = "disabled";`
->
-> moved now :-)
-
-It looks like saradc0 forgot to change.
-
-Thanks,
-Chukun
-
---
-2.25.1
-
+Cheers,
+Christian
 
