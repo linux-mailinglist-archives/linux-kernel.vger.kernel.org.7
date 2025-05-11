@@ -1,156 +1,358 @@
-Return-Path: <linux-kernel+bounces-643387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4804BAB2C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 00:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BEDAB2C01
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 00:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B35174845
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E1317493E
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 22:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313EE264FB7;
-	Sun, 11 May 2025 22:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A315263F5F;
+	Sun, 11 May 2025 22:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kIEiIZK0"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+bOzdDE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B742609EE
-	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 22:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA4DBE4A;
+	Sun, 11 May 2025 22:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747003707; cv=none; b=OnkExm1iHNkYbaYdoXDmabnI4SVQoX/I4h8xprnDApWek7WTQjUpWHbIXrKLsRx9IzJJDOhn/uiIY/KWomMqr2NkOIdmlzYba57QzgEii/f7fsfiLw7i+Ow3HzGl4Yer0030taBjbL4jR2Nz2bKSc9lfMF96fM9KISmzJCJIt+0=
+	t=1747003697; cv=none; b=lmKP8a5AhRB4TgUH8c1ILB6GhWf/eGQciQT7tSa4hBiYavMB1O2CWhTb6K9KuxKk6KzwhzcDq7mN5ihVnIP+fwCZmmsHYqnIz1bCkZKy+lZYLO2oJv5o62SAI3hU5Yv4llaI9sIUeGWFpywaweZjxkBjwWugIZaAlgF6wjBOMn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747003707; c=relaxed/simple;
-	bh=vmLwhuTwTvt7eMs50a6cBYCilwolKWR9eHExvgLaBtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kEMq4aZ54TlTofa1nbeKr9G51CNP+TZD2nFXBWPjHyGatveEzKSNsw+GA8u+iEAFLFf9lQqLugPMrvaXg08b+SQkHM6Ff/qXf5LDuMAgB+giwnvZr6XrasBdQ+cdzKXF9cKM55/FPoa5tcwrFx8bva1zvfe/50C0lfE0PT4+4lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kIEiIZK0; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=OL4xibm39jmfI8uxvEjCXO513VYShvHZZAZJDGQ0FxA=; b=kIEiIZK0goyXe/TGejy65jY/Ev
-	8KVOOgZoj2VVP0S08JpeRdIA75Qh8F8VmjyZZ9Olbs6vwnqyjuMDzn60yYRY4xU3aPGguWW1G0j0e
-	ot0xD9kRItjtUFaPdDOPn4bGXEx2pAKgPds9IaLP4SpoeKgKuDS4J+LE7Cy+ZZAt7osf55InbwQLx
-	wC4evhCBlUFVJkZNRGhXlpfeE0RjVBQoTguQruRYy1OLvaxqqqLSG+0PuECF9a1LoUAS8rzbfKU7K
-	K31KPZBcLtycQnVIhSEwkmSuJDrqvXzfWnozg8BIEusBTB7UTGFEUZOM9f5EuEpsG/Ma6JEPkQGqN
-	eYVlF1zA==;
-Received: from [191.204.192.64] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uEFNn-006nqn-Qf; Mon, 12 May 2025 00:48:08 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: "Alex Deucher" <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	siqueira@igalia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	"Raag Jadav" <raag.jadav@intel.com>,
-	rodrigo.vivi@intel.com,
-	jani.nikula@linux.intel.com,
-	Xaver Hugl <xaver.hugl@gmail.com>,
-	"Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	amd-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v2 3/3] drm/amdgpu: Make use of drm_wedge_app_info
-Date: Sun, 11 May 2025 19:47:45 -0300
-Message-ID: <20250511224745.834446-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250511224745.834446-1-andrealmeid@igalia.com>
-References: <20250511224745.834446-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1747003697; c=relaxed/simple;
+	bh=cDd9/C/c/hoFNChqLxPmDmUtIiKdG7G1InZEgNWwhVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s29DIpzunpWGcGX3F+Ay949Ioh5BNf8Bx7ZkA1MX8CoNItl4vIhN1dplB9Y3RnZ83QZGhk5CGXcapb5A7rhqsPd9DSVxskXXjXesORV6C/dzdaSE1URLHw0n6mQc6eahi9JLL7f8F2jCKwjpgSm4jSW1jA75bMRlZd4YJGAefRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+bOzdDE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F115C4CEE4;
+	Sun, 11 May 2025 22:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747003696;
+	bh=cDd9/C/c/hoFNChqLxPmDmUtIiKdG7G1InZEgNWwhVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B+bOzdDE9hjFDFpmFPuaK27OUfUz1k3vHBW5WiT85TyahbcDQbj6oJF5Vat90gDBR
+	 YIDLxOBM7WjMLUmb3U+eBp9WTU3wtcwBxQbj8foGI5NOaoJUr8O9iDAznjyTDMKfJt
+	 5A05kdhf7lxEPtfqSRCnkqPsBSpKXiZfUZfdx6RTSDsbpnf/bX+abRk/w2UiL34l6H
+	 JgoWm2mfCh1drjmxvsAWymgMwzvNOfgqxMQAzK5feWri42QyU0LDjjGOtrzrEMBY6v
+	 E/sSD5CsEX95Xg4OkTyfsY/jGDF2y1D1VsBp+Q3qDO5iiI4hW1eNOuYGVa7bRErvZG
+	 l90ZKoZBLt9ag==
+Date: Sun, 11 May 2025 17:48:11 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Georgi Djakov <djakov@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
+ for clock-controller
+Message-ID: <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
+References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
+ <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
 
-To notify userspace about which app (if any) made the device get in a
-wedge state, make use of drm_wedge_app_info parameter, filling it with
-the app PID and name.
+On Tue, May 06, 2025 at 03:10:08PM +0200, Stephan Gerhold wrote:
+> APCS "global" is sort of a "miscellaneous" hardware block that combines
+> multiple registers inside the application processor subsystem. Two distinct
+> use cases are currently stuffed together in a single device tree node:
+> 
+>  - Mailbox: to communicate with other remoteprocs in the system.
+>  - Clock: for controlling the CPU frequency.
+> 
+> These two use cases have unavoidable circular dependencies: the mailbox is
+> needed as early as possible during boot to start controlling shared
+> resources like clocks and power domains, while the clock controller needs
+> one of these shared clocks as its parent. Currently, there is no way to
+> distinguish these two use cases for generic mechanisms like fw_devlink.
+> 
+> This is currently blocking conversion of the deprecated custom "qcom,ipc"
+> properties to the standard "mboxes", see e.g. commit d92e9ea2f0f9
+> ("arm64: dts: qcom: msm8939: revert use of APCS mbox for RPM"):
+>   1. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
+>   2. The clock controller inside &apcs1_mbox needs
+>      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
+>   3. &rpmcc is a child of remoteproc &rpm
+> 
+> The mailbox itself does not need any clocks and should probe early to
+> unblock the rest of the boot process. The "clocks" are only needed for the
+> separate clock controller. In Linux, these are already two separate drivers
+> that can probe independently.
+> 
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
- 2 files changed, 22 insertions(+), 3 deletions(-)
+Why does this circular dependency need to be broken in the DeviceTree
+representation?
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index c8a51418d0e7..e6d8f6d0ec47 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -6215,8 +6215,23 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
- 
- 	atomic_set(&adev->reset_domain->reset_res, r);
- 
--	if (!r)
--		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
-+	if (!r) {
-+		struct drm_wedge_app_info aux, *info = NULL;
-+
-+		if (job) {
-+			struct amdgpu_task_info *ti;
-+
-+			ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
-+			if (ti) {
-+				aux.pid = ti->pid;
-+				aux.comm = ti->process_name;
-+				info = &aux;
-+				amdgpu_vm_put_task_info(ti);
-+			}
-+		}
-+
-+		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
-+	}
- 
- 	return r;
- }
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index a47b2eb301e5..98efa3318ddb 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -89,6 +89,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- {
- 	struct amdgpu_ring *ring = to_amdgpu_ring(s_job->sched);
- 	struct amdgpu_job *job = to_amdgpu_job(s_job);
-+	struct drm_wedge_app_info aux, *info = NULL;
- 	struct amdgpu_task_info *ti;
- 	struct amdgpu_device *adev = ring->adev;
- 	int idx;
-@@ -127,6 +128,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 		dev_err(adev->dev,
- 			"Process information: process %s pid %d thread %s pid %d\n",
- 			ti->process_name, ti->tgid, ti->task_name, ti->pid);
-+		aux.pid = ti->pid;
-+		aux.comm = ti->process_name;
-+		info = &aux;
- 		amdgpu_vm_put_task_info(ti);
- 	}
- 
-@@ -166,7 +170,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 			if (amdgpu_ring_sched_ready(ring))
- 				drm_sched_start(&ring->sched, 0);
- 			dev_err(adev->dev, "Ring %s reset succeeded\n", ring->sched.name);
--			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
-+			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
- 			goto exit;
- 		}
- 		dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
--- 
-2.49.0
+As you describe, the mailbox probes and register the mailbox controller
+and it registers the clock controller. The mailbox device isn't affected
+by the clock controller failing to find rpmcc...
 
+Regards,
+Bjorn
+
+> Break up the circular dependency chain in the device tree by separating the
+> clock controller into a separate child node. Deprecate the old approach of
+> specifying the clock properties as part of the root node, but keep them for
+> backwards compatibility.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  .../bindings/mailbox/qcom,apcs-kpss-global.yaml    | 169 ++++++++++++++-------
+>  1 file changed, 118 insertions(+), 51 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> index a58a018f3f7b9f8edd70d7c1bd137844ff2549df..3a0a304bb65a68b2d4a1df79b3243ddac6bf88b2 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> @@ -72,6 +72,7 @@ properties:
+>      description: phandles to the parent clocks of the clock driver
+>      minItems: 2
+>      maxItems: 3
+> +    deprecated: true
+>  
+>    '#mbox-cells':
+>      const: 1
+> @@ -82,6 +83,23 @@ properties:
+>    clock-names:
+>      minItems: 2
+>      maxItems: 3
+> +    deprecated: true
+> +
+> +  clock-controller:
+> +    type: object
+> +    additionalProperties: false
+> +    properties:
+> +      clocks:
+> +        description: phandles to the parent clocks of the clock driver
+> +        minItems: 2
+> +        maxItems: 3
+> +
+> +      '#clock-cells':
+> +        enum: [0, 1]
+> +
+> +      clock-names:
+> +        minItems: 2
+> +        maxItems: 3
+>  
+>  required:
+>    - compatible
+> @@ -90,6 +108,76 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +# Clocks should be specified either on the parent node or on the child node
+> +oneOf:
+> +  - required:
+> +      - clock-controller
+> +    properties:
+> +      clocks: false
+> +      clock-names: false
+> +      '#clock-cells': false
+> +  - properties:
+> +      clock-controller: false
+> +
+> +$defs:
+> +  msm8916-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: primary pll parent of the clock driver
+> +          - description: auxiliary parent
+> +      clock-names:
+> +        items:
+> +          - const: pll
+> +          - const: aux
+> +      '#clock-cells':
+> +        const: 0
+> +
+> +  msm8939-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: primary pll parent of the clock driver
+> +          - description: auxiliary parent
+> +          - description: reference clock
+> +      clock-names:
+> +        items:
+> +          - const: pll
+> +          - const: aux
+> +          - const: ref
+> +      '#clock-cells':
+> +        const: 0
+> +
+> +  sdx55-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: reference clock
+> +          - description: primary pll parent of the clock driver
+> +          - description: auxiliary parent
+> +      clock-names:
+> +        items:
+> +          - const: ref
+> +          - const: pll
+> +          - const: aux
+> +      '#clock-cells':
+> +        const: 0
+> +
+> +  ipq6018-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: primary pll parent of the clock driver
+> +          - description: XO clock
+> +          - description: GCC GPLL0 clock source
+> +      clock-names:
+> +        items:
+> +          - const: pll
+> +          - const: xo
+> +          - const: gpll0
+> +      '#clock-cells':
+> +        const: 1
+> +
+>  allOf:
+>    - if:
+>        properties:
+> @@ -98,15 +186,10 @@ allOf:
+>              enum:
+>                - qcom,msm8916-apcs-kpss-global
+>      then:
+> +      $ref: "#/$defs/msm8916-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: primary pll parent of the clock driver
+> -            - description: auxiliary parent
+> -        clock-names:
+> -          items:
+> -            - const: pll
+> -            - const: aux
+> +        clock-controller:
+> +          $ref: "#/$defs/msm8916-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -115,17 +198,10 @@ allOf:
+>              enum:
+>                - qcom,msm8939-apcs-kpss-global
+>      then:
+> +      $ref: "#/$defs/msm8939-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: primary pll parent of the clock driver
+> -            - description: auxiliary parent
+> -            - description: reference clock
+> -        clock-names:
+> -          items:
+> -            - const: pll
+> -            - const: aux
+> -            - const: ref
+> +        clock-controller:
+> +          $ref: "#/$defs/msm8939-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -134,17 +210,10 @@ allOf:
+>              enum:
+>                - qcom,sdx55-apcs-gcc
+>      then:
+> +      $ref: "#/$defs/sdx55-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: reference clock
+> -            - description: primary pll parent of the clock driver
+> -            - description: auxiliary parent
+> -        clock-names:
+> -          items:
+> -            - const: ref
+> -            - const: pll
+> -            - const: aux
+> +        clock-controller:
+> +          $ref: "#/$defs/sdx55-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -153,17 +222,10 @@ allOf:
+>              enum:
+>                - qcom,ipq6018-apcs-apps-global
+>      then:
+> +      $ref: "#/$defs/ipq6018-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: primary pll parent of the clock driver
+> -            - description: XO clock
+> -            - description: GCC GPLL0 clock source
+> -        clock-names:
+> -          items:
+> -            - const: pll
+> -            - const: xo
+> -            - const: gpll0
+> +        clock-controller:
+> +          $ref: "#/$defs/ipq6018-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -179,19 +241,7 @@ allOf:
+>        properties:
+>          clocks: false
+>          clock-names: false
+> -
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            enum:
+> -              - qcom,ipq6018-apcs-apps-global
+> -    then:
+> -      properties:
+> -        '#clock-cells':
+> -          const: 1
+> -    else:
+> -      properties:
+> +        clock-controller: false
+>          '#clock-cells':
+>            const: 0
+>  
+> @@ -216,6 +266,23 @@ examples:
+>      };
+>  
+>    # Example apcs with qcs404
+> +  - |
+> +    #define GCC_APSS_AHB_CLK_SRC  1
+> +    #define GCC_GPLL0_AO_OUT_MAIN 123
+> +    mailbox@b011000 {
+> +        compatible = "qcom,qcs404-apcs-apps-global",
+> +                     "qcom,msm8916-apcs-kpss-global", "syscon";
+> +        reg = <0x0b011000 0x1000>;
+> +        #mbox-cells = <1>;
+> +
+> +        apcs_clk: clock-controller {
+> +          clocks = <&apcs_hfpll>, <&gcc GCC_GPLL0_AO_OUT_MAIN>;
+> +          clock-names = "pll", "aux";
+> +          #clock-cells = <0>;
+> +        };
+> +    };
+> +
+> +  # Example apcs with qcs404 (deprecated: use clock-controller subnode)
+>    - |
+>      #define GCC_APSS_AHB_CLK_SRC  1
+>      #define GCC_GPLL0_AO_OUT_MAIN 123
+> 
+> -- 
+> 2.47.2
+> 
 
