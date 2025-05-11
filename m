@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-643358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C22AB2B96
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 23:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9979FAB2B95
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 23:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C52189A1E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 21:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375E01899FDC
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 21:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040CD266B4F;
-	Sun, 11 May 2025 21:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C15419C578;
+	Sun, 11 May 2025 21:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tPRJhreh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eyG41UCA"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q9/Tx3hJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pHSxmLgt"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFAF2641FC
-	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 21:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D742641F8
+	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 21:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746998297; cv=none; b=TOQKFW2Ivy/uwgFa/rjZBrvwptdeMU2G+B/jNsTimPGHrkknHojdgz8jsaSwopXXmVmI7IARZ3LNxlXcFIXrB5WfzmFASIa3/UD9ELHqU7ZxMacBk2luKDA+AKlMVT+fKcgnFxVl7yg/jQZ65UB3QNPBoNAy3iYxQ4wd0Dywt3k=
+	t=1746998297; cv=none; b=qfc3Lcd9iZmio+s5fnb0nhz7TTb2v/m2lEzZWc00axFmxv51/x9sYAlWDq36fsUOYKH0ddYV39W9+ACmPYKxGW+C6IVuxNQh/IbnO9Q671Sx3qHReP5fzhcwJDrKV7QzSyCopRrV/XS427NtSsi2J2OV0CwHaVj372mEpQ1TDmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746998297; c=relaxed/simple;
-	bh=no4qakD4nxljmSj0dNsH7cHTRGfko3yxxNeYW0VDHXA=;
+	bh=Ws2nDVvQopR6wx2xDaiXWVZ9L9hlwAgMsqyPuGIrmp8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WyhYQFGNCJofPf3TvE3tgdlmhrEp0BA/NOCOpbXB6N5PlFSPjI5jay+FW+dNF+x76f492pegG+lG6kljyB3JICVBp1Gx4XFg1OECn9Q4N60n0ls2tkazGWKTHhj5QCWXqEC0PMh8WFb9VNpPq+GmGZ7GqBhdvLnCN0be9+x99TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tPRJhreh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eyG41UCA; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=YR3lxyDpECRk1mpdn+lyJ5hcXbBMCZFTJ4wAj/P2U57o7cdJv+mAOnVxSN7sibivy3MXq3A3SeE06BCzsxZw//Db2Wov56HAiSFXdJ//KLnzjSZAlOFd4oLEcaKjhWgOISp86Y++G6sKapwTKIDPq3XH5HP49QwY/iBqoIevmvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q9/Tx3hJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pHSxmLgt; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E7nRg54MLFX0wtJKb5RifAgoyTmks+tvfzWz8EaXC+I=;
-	b=tPRJhrehBPcmassI4U6hQ+6Hdpv9rxGcGNrQJirTHwzDfsrdCwUgu1sjMtAwWAWj967XL3
-	NPJkg9F2+CbJLbRnlWVKQf3SFVdTZSNsOl71R4G5wGIJXdIZAbtbDto+lvdGpmDcoHIp3F
-	j/nDpgmezlvFIWck+//t/Sg03WFdmMdpsdfW5nHJOim7NGw7lYCsozyN6cUc+0wOxtyao+
-	MVHoFIPLkXd8XadAu5jVxP1Ikf/NDgJUV4p639ybA5iup8oGq/tGt0EVMEpFSEnM7Yc2bN
-	n++vMbSHO8/XbKN/vq+fmiS9rp45cVkLp5kjXs2pzE2ZYjmaT1LdKCaBpFrE8A==
+	bh=ofRlSkfoMczDkVEQIfQIC8RlTmO5xBys4uCekN9vBRo=;
+	b=Q9/Tx3hJUILpIEp06fQma9qN1+iMs9Sa/7Z5shRXrMIKOQzz0bV39ArEZo+onXxGUfvtvN
+	EuNmPLT04T/FhYA1EHyX/IvK4Fl3l9cZ5Za9ZSc1ii8WrLfW2Mi9cJ4w46x9gVF5TtJ0yL
+	5wVL/NO4dSK8iQo8JT0N43ykYoE5lpBls/CymSXANfFz/l9jh/wLOAQN7xsjOZ8a9x8je1
+	IwEnKjgoN8V+iTdjBa32loLmQUOgITR2yMS2EEKoaqbO0+Q/KACE1l6YiHxsEX79vaJyL9
+	1S0bPNscwlqxKW2Xy9HRQbtPC8yNDfvoNYaHdBqmQz6Tszj3wZyy7cRJXrv2tQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1746998292;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E7nRg54MLFX0wtJKb5RifAgoyTmks+tvfzWz8EaXC+I=;
-	b=eyG41UCA5GOgr6jB0HFIk7/4ZIzC8VjG+m2YtoWBEGjkRvhqXmWnPrPkGsG39JCdE9XsZX
-	cTwKh1rcOE1ZuFBA==
+	bh=ofRlSkfoMczDkVEQIfQIC8RlTmO5xBys4uCekN9vBRo=;
+	b=pHSxmLgtOBB4FsYEQvh1sDzt8EOQL/+YXiOKHnUtIun3i12yJ03x1iQQOpECZF8Iih4Blp
+	LIj42Ii3e28q8vDQ==
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -60,9 +60,9 @@ To: Paul Walmsley <paul.walmsley@sifive.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 08/11] riscv: kprobes: Remove duplication of RVC_EXTRACT_BTYPE_IMM
-Date: Sun, 11 May 2025 23:18:00 +0200
-Message-Id: <fc9a3dc0a7365800edf8c300b73d6f82ef761ff0.1746997351.git.namcao@linutronix.de>
+Subject: [PATCH 09/11] riscv: kprobes: Remove duplication of RV_EXTRACT_RD_REG
+Date: Sun, 11 May 2025 23:18:01 +0200
+Message-Id: <710026e5113b9929fd9fca2cdd5d5cd86aa6b447.1746997351.git.namcao@linutronix.de>
 In-Reply-To: <cover.1746997351.git.namcao@linutronix.de>
 References: <cover.1746997351.git.namcao@linutronix.de>
 Precedence: bulk
@@ -73,40 +73,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Use RVC_EXTRACT_BTYPE_IMM, instead of reimplementing it in
-simulate_c_bnez_beqz().
+Use RV_EXTRACT_RD_REG, instead of reimplementing its code.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- arch/riscv/kernel/probes/simulate-insn.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ arch/riscv/kernel/probes/simulate-insn.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/p=
 robes/simulate-insn.c
-index f5d64613dab5..e670e55954d2 100644
+index e670e55954d2..1717df780409 100644
 --- a/arch/riscv/kernel/probes/simulate-insn.c
 +++ b/arch/riscv/kernel/probes/simulate-insn.c
-@@ -232,16 +232,10 @@ static bool __kprobes simulate_c_bnez_beqz(u32 opcode=
-, unsigned long addr, struc
- 	if (!rv_insn_reg_get_val(regs, rs1, &rs1_val))
- 		return false;
+@@ -42,7 +42,7 @@ bool __kprobes simulate_jal(u32 opcode, unsigned long add=
+r, struct pt_regs *regs
+ 	 */
+ 	bool ret;
+ 	s32 imm;
+-	u32 index =3D (opcode >> 7) & 0x1f;
++	u32 index =3D RV_EXTRACT_RD_REG(opcode);
 =20
--	if ((rs1_val !=3D 0 && is_bnez) || (rs1_val =3D=3D 0 && !is_bnez)) {
--		offset =3D  ((opcode >> 3)  & 0x3) << 1;
--		offset |=3D ((opcode >> 10) & 0x3) << 3;
--		offset |=3D ((opcode >> 2)  & 0x1) << 5;
--		offset |=3D ((opcode >> 5)  & 0x3) << 6;
--		offset |=3D ((opcode >> 12) & 0x1) << 8;
--		offset =3D sign_extend32(offset, 8);
--	} else {
-+	if ((rs1_val !=3D 0 && is_bnez) || (rs1_val =3D=3D 0 && !is_bnez))
-+		offset =3D RVC_EXTRACT_BTYPE_IMM(opcode);
-+	else
- 		offset =3D 2;
--	}
+ 	ret =3D rv_insn_reg_set_val(regs, index, addr + 4);
+ 	if (!ret)
+@@ -65,7 +65,7 @@ bool __kprobes simulate_jalr(u32 opcode, unsigned long ad=
+dr, struct pt_regs *reg
+ 	bool ret;
+ 	unsigned long base_addr;
+ 	u32 imm =3D (opcode >> 20) & 0xfff;
+-	u32 rd_index =3D (opcode >> 7) & 0x1f;
++	u32 rd_index =3D RV_EXTRACT_RD_REG(opcode);
+ 	u32 rs1_index =3D RV_EXTRACT_RS1_REG(opcode);
 =20
- 	instruction_pointer_set(regs, addr + offset);
+ 	ret =3D rv_insn_reg_get_val(regs, rs1_index, &base_addr);
+@@ -81,9 +81,6 @@ bool __kprobes simulate_jalr(u32 opcode, unsigned long ad=
+dr, struct pt_regs *reg
+ 	return ret;
+ }
 =20
+-#define auipc_rd_idx(opcode) \
+-	((opcode >> 7) & 0x1f)
+-
+ #define auipc_imm(opcode) \
+ 	((((opcode) >> 12) & 0xfffff) << 12)
+=20
+@@ -104,7 +101,7 @@ bool __kprobes simulate_auipc(u32 opcode, unsigned long=
+ addr, struct pt_regs *re
+ 	 *        20       5     7
+ 	 */
+=20
+-	u32 rd_idx =3D auipc_rd_idx(opcode);
++	u32 rd_idx =3D RV_EXTRACT_RD_REG(opcode);
+ 	unsigned long rd_val =3D addr + auipc_offset(opcode);
+=20
+ 	if (!rv_insn_reg_set_val(regs, rd_idx, rd_val))
 --=20
 2.39.5
 
