@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-643359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86529AB2B97
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 23:19:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFE0AB2B9B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 23:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5283BB271
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 21:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0243B5902
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 21:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BE9266B57;
-	Sun, 11 May 2025 21:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0C3261362;
+	Sun, 11 May 2025 21:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HjhXIJUW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8dMpZIAP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MRsbE802"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD204264A6E
-	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 21:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8D743169;
+	Sun, 11 May 2025 21:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746998297; cv=none; b=ZG5VmkrPckUlzZhtSsqdZuDlylh/RcjU4JmzpozyFF15XVtaA0ON2AaLVZOh8B0wJ4n2M21i5gUulHrXG2nYefauXbDbVpfVjevPFUyc8Ns9tZgyO6uaGT/FgPkpZ7zAeWl4085WJDW9j9fYuuXzAIJAByXWDmA7+zmaBImutLA=
+	t=1746998544; cv=none; b=oYqrqReffPzitxF4w/mVqUs9lTp43qXO3PfnKsotb4mZk4+pLluX+9sRtu9rAXFNE4yuXtz2CrqKRIHB+jaRHtvDmycA6pzzBw8aPzmkE3y4O2s4PydzNWs82C5RMFrLrIoLkmzd3tfAs207BF2nrC0I8uqUsKdH3yUjpoMxT00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746998297; c=relaxed/simple;
-	bh=j1DioIwVOiyApHB2qerSx2O5NWoG+WaJcUbS8nbLoe8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d/fiZe3wGA3eCmRKU1LH9J6e9DWcGgkprogOQIcSUeFgzoB9B487ufi5kpnsoW3J9XafOolWvQu77hdxbD4ujobhNicZbme6MKpvwvX7FzrnsH5BUPCRvX/gUH3shXCeSdT0HLh/BjugD8l6JfG0Zw1WzX1TTIdDD2D3BlGqvNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HjhXIJUW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8dMpZIAP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746998293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YuprVJ8dctdiMrh0XyEl1XTvNDpL+VEXZc49r4qPy8=;
-	b=HjhXIJUWdi8O9Rjb+lJg29OUgeDPdJWXzI99fJq+fOrfdfQZaoT8hiYI7HgVH1BUjrGhVY
-	lkbKGy7kzWhUgHyru7UkTQu3Rrb8qiYZB8hojXg2zpn8QYX7lJec0W1/mzLJn/6fKMFmxP
-	zAVtCRhVBjFS/5MfUhTwaiOb5JBhyvb0nboHu3fzUmK02yS9RqgolSjiJgngFwElWaJm7C
-	koHdoTUQx5pWd1wblFNiEPYj2MoHIwTFUzeMKKXPRefoGui8iWMapD/iZm5XJ5Tt0pcmB9
-	MYybPxNM5F8F38d1qCQBQslYe+mtijglSRdfN21Cz3fkRVDRSG5YxG4zruq5Tw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746998293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YuprVJ8dctdiMrh0XyEl1XTvNDpL+VEXZc49r4qPy8=;
-	b=8dMpZIAPEiO5C/lMba+ZSdSkzzwVmpOhUMWmswW2C1y6tXcJkn3B5wZmKEQ6W8VA2tm2bk
-	CsxYeXtYrUpJJGBA==
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 11/11] riscv: kprobes: Remove duplication of RV_EXTRACT_ITYPE_IMM
-Date: Sun, 11 May 2025 23:18:03 +0200
-Message-Id: <2a2d138d1a5c011a00ba2a9eb84d5226304d7b48.1746997351.git.namcao@linutronix.de>
-In-Reply-To: <cover.1746997351.git.namcao@linutronix.de>
-References: <cover.1746997351.git.namcao@linutronix.de>
+	s=arc-20240116; t=1746998544; c=relaxed/simple;
+	bh=mTem+6igHDgqrWUC8LXJOZmBzQNvwsDPdH4Z11cVT3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbQps5EfLRYzlb7gBKIUGzhE0iFl3ujHOxO7ks3LA4mT3whDdZ4ufBtUL6JiLxc5wPtSjJoXrWr0n7KgPhUgIMsv9QutysmsN2uuhY45nhmy3oQ+Uln9gw0Xj6fx96T3ejtoq9gJSqIF/z36ECp1EzWoYwuQ1uIY9UpgR+JhpXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MRsbE802; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=RrNyqzWsoxW7PT7XBcAVPoXOI9p5Db8vQWoqbzcV3Bs=; b=MRsbE802EdcrNIsmJ9rJJrB3Gb
+	J27nqulZChtl/IUzRLo3poP1dnDuJTs8ZhlIKJ8x9qAZ+/ZyE5k8nQ1WpXhwwKP/1iofIltl6bscw
+	riU7Q4/Z1OGJ6K8fvVqPh8lhdHDfv9QaEDscHK/OeYuVs2oAX3HAEx5fYslxxk2ah4D0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uEE7l-00CHNm-T0; Sun, 11 May 2025 23:22:17 +0200
+Date: Sun, 11 May 2025 23:22:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: netdev@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-sctp@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Sagi Grimberg <sagi@grimberg.me>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH net-next 00/10] net: faster and simpler CRC32C computation
+Message-ID: <fe9fdf65-8eb1-4e33-88ce-4856a10364b2@lunn.ch>
+References: <20250511004110.145171-1-ebiggers@kernel.org>
+ <b9b0f188-d873-43ff-b1e1-259e2afdda6c@lunn.ch>
+ <20250511172929.GA1239@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250511172929.GA1239@sol>
 
-Use RV_EXTRACT_ITYPE_IMM, instead of re-implementing it in simulate_jalr().
+On Sun, May 11, 2025 at 10:29:29AM -0700, Eric Biggers wrote:
+> On Sun, May 11, 2025 at 06:30:25PM +0200, Andrew Lunn wrote:
+> > On Sat, May 10, 2025 at 05:41:00PM -0700, Eric Biggers wrote:
+> > > Update networking code that computes the CRC32C of packets to just call
+> > > crc32c() without unnecessary abstraction layers.  The result is faster
+> > > and simpler code.
+> > 
+> > Hi Eric
+> > 
+> > Do you have some benchmarks for these changes?
+> > 
+> > 	Andrew
+> 
+> Do you want benchmarks that show that removing the indirect calls makes things
+> faster?  I think that should be fairly self-evident by now after dealing with
+> retpoline for years, but I can provide more details if you need them.
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- arch/riscv/kernel/probes/simulate-insn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was think more like iperf before/after? Show the CPU load has gone
+down without the bandwidth also going down.
 
-diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/p=
-robes/simulate-insn.c
-index 2b3cd69d6f8e..fa581590c1f8 100644
---- a/arch/riscv/kernel/probes/simulate-insn.c
-+++ b/arch/riscv/kernel/probes/simulate-insn.c
-@@ -64,7 +64,7 @@ bool __kprobes simulate_jalr(u32 opcode, unsigned long ad=
-dr, struct pt_regs *reg
- 	 */
- 	bool ret;
- 	unsigned long base_addr;
--	u32 imm =3D (opcode >> 20) & 0xfff;
-+	u32 imm =3D RV_EXTRACT_ITYPE_IMM(opcode);
- 	u32 rd_index =3D RV_EXTRACT_RD_REG(opcode);
- 	u32 rs1_index =3D RV_EXTRACT_RS1_REG(opcode);
-=20
---=20
-2.39.5
+Eric Dumazet has a T-Shirt with a commit message on the back which
+increased network performance by X%. At the moment, there is nothing
+T-Shirt quotable here.
 
+	Andrew
 
