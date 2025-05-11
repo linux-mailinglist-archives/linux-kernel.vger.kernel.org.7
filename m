@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-643178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496D1AB291B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 16:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B4DAB292A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 16:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1544164A93
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 14:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6549A188EC17
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 14:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F1125D212;
-	Sun, 11 May 2025 14:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F9725B666;
+	Sun, 11 May 2025 14:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUTFGZsf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0E9AawhQ"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919BB25D1ED;
-	Sun, 11 May 2025 14:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41481F92E
+	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 14:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746973640; cv=none; b=Gx1mhi7zQhQopM41Shs9o6PZabvcwybcOsgfCYu5oIPvGimx5b1f1jOBUChOZVMnGYmp/hG0oqwYtow/vT1jrt8laOVy7TOK9tFm3cRAIE0LgBMXwiEFMy0kxFE669cXi/Ggn7dd7hFrOfCDh1cXsNpB5xqWHpyZyp6n5EWUwpQ=
+	t=1746974285; cv=none; b=iAYMWkOVWA003p8Rb80IhhNbmqNLxbA8bSWDraSVNc7eBVSk6tcI7HYje3MOB74RIw6/5QowE2e8NobImpEadZON4Ysoo0UFzBCjG84KqW4+hfr4o9zdewb+b/d0OLyK6oks9xDzArkN/cvfoDsLhzVM+o6RpdQlISEgDF6H8JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746973640; c=relaxed/simple;
-	bh=qYsPB5KTJZb+XUGm4MW6ZwKZMh54o71O1hC+tg3tZWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NjQjqKsv4EBSByA7CcRRhU+5nR06pW0ErUtSlyrT45YVD1po8RStMjbT3tRoJDDBw+hgjumhRbkzWDHfHEmWggq26Ui2M/baVlgCX8kykE4mKL4ZAwlKJjQYr5U/oV2ZE5G3DUNGQ7b/zZ7n8hE5QD9njVoarhrkQAckV1lBQd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUTFGZsf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0707C4CEE4;
-	Sun, 11 May 2025 14:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746973639;
-	bh=qYsPB5KTJZb+XUGm4MW6ZwKZMh54o71O1hC+tg3tZWI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VUTFGZsfLBrHnjVnBTeej4wSPZzyPI6+32RY1g9O8Wgdp865wvZgZqUP6ZUvCJDST
-	 OW9a5RdYmOw53EABLcl+/LFqcmiT5iL1+avGUChdgS2gHQHfczML3CrO2wTkJ8rz6F
-	 CMazwxn5m+RtnpAo+K7dg0TAGowB8SZaK9LQU5Q11spR3ShzejqeaPM7SnJ1szITOY
-	 sCNQW1pmzbbK6k2NgqwrqJMvUQ4TPg3TVB67TVoslAlYYSSfXXssVHNG27CZLSPrLb
-	 3MWWCAShtdXDHPI9siix40h2m2Xw1ef67f7pd8l4hEffQk+2J/CmA2n9AKwsqWUYnu
-	 zICK5ZaW1dXtg==
-Date: Sun, 11 May 2025 15:27:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Markus Burri <markus.burri@mt.com>
-Cc: linux-kernel@vger.kernel.org, Mahesh J Salgaonkar
- <mahesh@linux.ibm.com>, "Oliver O'Halloran" <oohall@gmail.com>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Jacek
- Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, Maciej Falkowski
- <maciej.falkowski@linux.intel.com>, Oded Gabbay <ogabbay@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Nuno Sa <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linuxppc-dev@lists.ozlabs.org,
- dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
- linux-iio@vger.kernel.org, Markus Burri <markus.burri@bbv.ch>
-Subject: Re: [PATCH v4 1/6] iio: backend: fix out-of-bound write
-Message-ID: <20250511152707.294bc7b9@jic23-huawei>
-In-Reply-To: <20250508130612.82270-2-markus.burri@mt.com>
-References: <20250508130612.82270-1-markus.burri@mt.com>
-	<20250508130612.82270-2-markus.burri@mt.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746974285; c=relaxed/simple;
+	bh=8bl3KG/FnieTFJPm8izZLh/ssk/QFseWAgjoneCWP74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UHA2WMOqELFXFuLMn5hnoYAYC/I/VOsMmXFT7dsEmtMX2n+QpSJ+/p+8VaJ6Csfqqd07Ne7x4mdeTVHH1Dj4r/pbfJvxCmr/r2pP25YFseBWNkk+KbZctQwxn5x7e/yzRCUub27QuiiV4jOYPztuNRIecvZSMZerUbi+Bqea5Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0E9AawhQ; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d90208e922so17239505ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 07:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746974282; x=1747579082; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gLvNwccVZ0cYmbj7WRvgYRBYA8Okxhxyw1Lm5uIekF0=;
+        b=0E9AawhQi2Z8MqK6MxEDR07yBjccjxZq/J+5HeHYVGByZfjM+EvQ2zZuscBS8XmdJN
+         +gXXjlwuyPSEuh8puSPj8tVAI5R6VwqiBxvDjKyCFyjuc8SdgZYBpFnM9mV5oCyBqaKH
+         7wJaskaUjVkCUcty5B3Hl4TBnIY8P99Jy0cxapeLsf5XAg3QPB8130iH1z0tnvefHoHo
+         sK8Ek5HneMxfgHupGBqmsWXa6KNEECtqsQilVNftYbCYNCF2GcLOYLostY7jFMgbr4sN
+         H/Ef4h936ZpIHiZemSi5gSs8xJixHU1TD2wzSpEaq/e0IXJrGItGkzDXk7nJCqIn1i9z
+         eR/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746974282; x=1747579082;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gLvNwccVZ0cYmbj7WRvgYRBYA8Okxhxyw1Lm5uIekF0=;
+        b=sGYKRZwy8LWGx7sSFjH0vDXOW7FGPJvYjEYMvpHBd+n3oZU4BhfHCfxtZb6LC22t4M
+         VF5AOvRfqIeRaXA9172Hc/voQmq/s5mlgT1A9GScKFH7gi6+3Qnuajbwr00AxDZRVRit
+         eDz2sXe3xzd2R0i9VadGLbbzG5rkSPLKca20mqxqbmN7i1QPG6muRuC7FIpbbAGhkC3l
+         9CksfGrlr2iqrKgaPe8RLfdApbKGGtBCTWRE+C0gMM7Ub40UnPcVvpluyT1rSkuLMzsK
+         PwZl6QL2gRZYIxTWbvdocuwHwMRRZS4X0Y5HDnTuDZTifyVplr+bNLFKz7S6wuAkaN5W
+         HR6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmcSLclUbFd/NFqq4y468CtfgwHoLBhbFwCRIEWRfYTCp2bcjgbF7qZ95+ODwtHq93iMdJ90zm4KIRUXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycUtOBXhXFFkEJKn0Kb6KioI60UZcZ4MptRjMcMplXLe1y0G3S
+	uayBdMdQD3IjZUtaNSE4AKttK9epWzHPTQnCj6Ad0WN5vHjxs7KcdVD38waBBSU=
+X-Gm-Gg: ASbGncu84XRjZXIg9PF28Hm8LpfygJ7gOuQKgpi1XAUiX43Q29YHpMaZMLuqW7zalsI
+	2OMAf8kfztue2dg3XKrr4nyY0fklgAulteGyRcBctXmQQcvW0HVDMgzjOU2cEgncf5OMnEu91i0
+	7TpVdzvrtn7gzXFxnNInSGaMRaWcT5Bne9FhbsOuG4RNHZDoBHNrROGJx236bwyEooc1OCyFotC
+	+b2DtnnZ2jOsK32fBPjjlqifjfSa2Dhvjrakbnzk1kuTpDKd+5NaHLBdHkDBK8Af/Xd5IMspMaJ
+	WcfevTaNjimVAxAeuJOfM7StSGEeWXPD1n9VBr0W3p7iq2fN
+X-Google-Smtp-Source: AGHT+IFmI8KNYL+OA7GhNF+oltU2v5+lz8V4cUzVkwfC6r+xMTSFtJT62p8l95UKs8xmv8rLtYxHjw==
+X-Received: by 2002:a92:cda7:0:b0:3d9:66c7:d1e8 with SMTP id e9e14a558f8ab-3da7e165314mr112425165ab.0.1746974281771;
+        Sun, 11 May 2025 07:38:01 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da7e159bdbsm17947385ab.44.2025.05.11.07.38.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 May 2025 07:38:00 -0700 (PDT)
+Message-ID: <30676ba5-a901-4789-be07-224108ab66e6@kernel.dk>
+Date: Sun, 11 May 2025 08:37:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] [usb?] BUG: unable to handle kernel NULL
+ pointer dereference in module_kobj_release
+To: syzbot <syzbot+3ea73421f5aa3f339e9e@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <682074be.050a0220.f2294.002c.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <682074be.050a0220.f2294.002c.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu,  8 May 2025 15:06:07 +0200
-Markus Burri <markus.burri@mt.com> wrote:
+#syz set subsystems: usb
 
-> The buffer is set to 80 character. If a caller write more characters,
-> count is truncated to the max available space in "simple_write_to_buffer".
-> But afterwards a string terminator is written to the buffer at offset count
-> without boundary check. The zero termination is written OUT-OF-BOUND.
-> 
-> Add a check that the given buffer is smaller then the buffer to prevent.
-> 
-> Fixes: 035b4989211d ("iio: backend: make sure to NULL terminate stack buffer")
-> Signed-off-by: Markus Burri <markus.burri@mt.com>
-I'm looking for a tag from Nuno on this one before applying.
-
-J
-> ---
->  drivers/iio/industrialio-backend.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-> index a43c8d1bb3d0..31fe793e345e 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -155,11 +155,14 @@ static ssize_t iio_backend_debugfs_write_reg(struct file *file,
->  	ssize_t rc;
->  	int ret;
->  
-> +	if (count >= sizeof(buf))
-> +		return -ENOSPC;
-> +
->  	rc = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
->  	if (rc < 0)
->  		return rc;
->  
-> -	buf[count] = '\0';
-> +	buf[rc] = '\0';
->  
->  	ret = sscanf(buf, "%i %i", &back->cached_reg_addr, &val);
->  
+-- 
+Jens Axboe
 
 
