@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-643215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEFFAB2998
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 18:35:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06FEAB299C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 18:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42BD51897554
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 16:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF1DD3A4D60
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 16:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E4125D20C;
-	Sun, 11 May 2025 16:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6888D25CC6E;
+	Sun, 11 May 2025 16:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jK4tUp/N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKj+Z7QH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CF525CC5F
-	for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 16:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08A41426C;
+	Sun, 11 May 2025 16:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746981327; cv=none; b=DYowFWSBd+/vSH1Lc14p2ovEFmdzSKzzjoS6EFb/uZKwcFrqs0cro2T8wnm10RBobqWDha7oTzPX/AXGMw6UDelwApNAfxxwDLFrJw2ntvMe/6Z8z5+/QK+0rvSRMlCMnQk5zQET78dENHKLiOVMlNd8al+gjn5of2uXyhqGlOE=
+	t=1746981502; cv=none; b=MJzrt6CyVU8OvVzCGazeLP9KApZvXd8RzJb1fyFAftxANBYqv/ulm9WDCjL+jrh5kYJB1F3c+HXOc/4mvMbK2QgWKkJTQF0U6RX0/8Q6t9hBu/YbdhPOXyoIRuGbiQOpzRuZaRcp4LFuHrOXQZPQ6pewm5wd4TDA2wj+XKC0kz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746981327; c=relaxed/simple;
-	bh=yXnSYyP1mrYQ+gK1si8iEF8hympcNOwuZnqV8CQOOhY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gclO79ntSfP1VTbP6i1ONRMJLSP8Jk3Eaq5Qdpr3JD6GmdO18SGxcZPJlAZ17pJypvus3LASuulqLL1tkF6bmedwreE07r3r2PzwgMi/mCBwej9WDkFDGsZysQRj6MwwR6ZXE64jNRLIIOb7J895aLy3OE8w6Osl3iAFZ1BZRyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jK4tUp/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 473BCC4CEF2;
-	Sun, 11 May 2025 16:35:27 +0000 (UTC)
+	s=arc-20240116; t=1746981502; c=relaxed/simple;
+	bh=hs5vd8LRGfzxohCkfiT0NgBKcp5M5vzIsAKBSBoXpLQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=D8LT9261r6bw0kS8VTLNZN9BBLD9vqO5eW3nEcpMt+F6qloHCRqQTdTAw4tG3ZYvSF3sVx9FmxGFpq73iFIdk18uJ8LblP0THKWiXDvfRINbPzZubGc2pAyDMSRROfDsJWURep4/z8mBpNZGF5xz+esJVU14V8OJ3OkrRN/C6Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKj+Z7QH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171BFC4CEE4;
+	Sun, 11 May 2025 16:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746981327;
-	bh=yXnSYyP1mrYQ+gK1si8iEF8hympcNOwuZnqV8CQOOhY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jK4tUp/NSPxJvfCScx7PH5tKDO238/6DSRZQRi8XZu9ooqolUp9JcE8LJHSxtjwE+
-	 cH1wzPQhXz0Ri6NTnlZ4s/XgE38wdrYbW6PYjfDcN9urOIdLKMQcMLx74eJw/D/Dla
-	 wbFvvec2kmuu6qOcnJLTRkMDmm+SKg2LawB3W9p9wZ4ufRIBye+shDoMA9czT7wuSt
-	 lHKjSsC8ek3ORgoy9pcfVqoM4DSgtG+OFFviSRWLXJZD8nkL04raTRU87ARMhzQoCw
-	 h5ZOPITzuUt1wmw9FLCeGEG0tv1m1aEb/Ad91FZWfsHjtqNgJt6sDGXkUtcydsLIbK
-	 UOa/92k7HHVqg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uE9e9-00Dt22-AG;
-	Sun, 11 May 2025 17:35:25 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>
-Subject: [PATCH 4/4] irqchip/gic-v3-its: Use allocation size from the prepare call
-Date: Sun, 11 May 2025 17:35:20 +0100
-Message-Id: <20250511163520.1307654-5-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250511163520.1307654-1-maz@kernel.org>
-References: <20250511163520.1307654-1-maz@kernel.org>
+	s=k20201202; t=1746981502;
+	bh=hs5vd8LRGfzxohCkfiT0NgBKcp5M5vzIsAKBSBoXpLQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=iKj+Z7QHlhKB3tC5Zy0pppDZKsomMglPO8eSOMhdfZmNdk1ifDb4+svINF/4J2UC0
+	 gwPfIOcRd65sFHTnRfoz6rvfmXlzfeaTe9tdeSV5Hbpb9uuilbn5u53QOzSba5Vv6r
+	 kNzZy+KJm861N8LvwR4O4SI2CCopHm1FLlCjzlrXL/fkXriW7FKBlqMCWjkEXgbjDY
+	 SJ6YWKvEHLOW3oVj2UnXZ06MKymeQ+Sv0zMtOMaa1BuwUqqB02FSKCykpJjXfUU5yd
+	 YIf+Xx0A6X92HPqBVnQADUH0ddUl9wobZ6wysQ2+TvI6Wz4nlyWIYOVsr1kSnUM/6U
+	 xKRbtaYcBAalw==
+Date: Sun, 11 May 2025 11:38:20 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, lpieralisi@kernel.org, sascha.bischoff@arm.com, timothy.hayes@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Junhao Xie <bigfoot@classfun.cn>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>, 
+ linux-kernel@vger.kernel.org, Michael Tretter <m.tretter@pengutronix.de>, 
+ Gaosheng Cui <cuigaosheng1@huawei.com>, 
+ Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Kever Yang <kever.yang@rock-chips.com>, Michal Simek <michal.simek@amd.com>
+To: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+In-Reply-To: <20250511144752.504162-4-yassine.ouaissa@allegrodvt.com>
+References: <20250511144752.504162-1-yassine.ouaissa@allegrodvt.com>
+ <20250511144752.504162-4-yassine.ouaissa@allegrodvt.com>
+Message-Id: <174698150049.490551.15288138396615870362.robh@kernel.org>
+Subject: Re: [PATCH 3/3] media: allegro-dvt: Add DT-bindings for the Gen 3
+ IP
 
-Now that .msi_prepare() gets called at the right time and not
-with semi-random parameters, remove the ugly hack that tried
-to fix up the number of allocated vectors.
 
-It is now correct by construction.
+On Sun, 11 May 2025 16:47:34 +0200, Yassine Ouaissa wrote:
+> Add the device-tree bindings for the allegro-dvt Gen 3 IP decoders, and
+> update the MAINTAINERS file.
+> 
+> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+> ---
+>  .../bindings/media/allegrodvt,al300-vdec.yaml | 86 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 87 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
+> 
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its-msi-parent.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-index 76b94f55b00e2..2df75a758c104 100644
---- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-+++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-@@ -67,17 +67,6 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
- 	/* ITS specific DeviceID, as the core ITS ignores dev. */
- 	info->scratchpad[0].ul = pci_msi_domain_get_msi_rid(domain->parent, pdev);
- 
--	/*
--	 * @domain->msi_domain_info->hwsize contains the size of the
--	 * MSI[-X] domain, but vector allocation happens one by one. This
--	 * needs some thought when MSI comes into play as the size of MSI
--	 * might be unknown at domain creation time and therefore set to
--	 * MSI_MAX_INDEX.
--	 */
--	msi_info = msi_get_domain_info(domain);
--	if (msi_info->hwsize > nvec)
--		nvec = msi_info->hwsize;
--
- 	/*
- 	 * Always allocate a power of 2, and special case device 0 for
- 	 * broken systems where the DevID is not wired (and all devices
-@@ -143,14 +132,6 @@ static int its_pmsi_prepare(struct irq_domain *domain, struct device *dev,
- 	/* ITS specific DeviceID, as the core ITS ignores dev. */
- 	info->scratchpad[0].ul = dev_id;
- 
--	/*
--	 * @domain->msi_domain_info->hwsize contains the size of the device
--	 * domain, but vector allocation happens one by one.
--	 */
--	msi_info = msi_get_domain_info(domain);
--	if (msi_info->hwsize > nvec)
--		nvec = msi_info->hwsize;
--
- 	/* Allocate at least 32 MSIs, and always as a power of 2 */
- 	nvec = max_t(int, 32, roundup_pow_of_two(nvec));
- 
--- 
-2.39.2
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml:52:3: [error] syntax error: could not find expected ':' (syntax)
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml: ignoring, error parsing file
+./Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml:52:3: could not find expected ':'
+make[2]: *** Deleting file 'Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.example.dts'
+Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml:52:3: could not find expected ':'
+make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.example.dts] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1527: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250511144752.504162-4-yassine.ouaissa@allegrodvt.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
