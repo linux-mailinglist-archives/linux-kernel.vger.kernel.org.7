@@ -1,170 +1,220 @@
-Return-Path: <linux-kernel+bounces-643040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E3BAB2724
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 10:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9059AB2747
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 10:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9D81899FB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 08:17:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B34189A40A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 May 2025 08:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E5F1AAA29;
-	Sun, 11 May 2025 08:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8983C1D9663;
+	Sun, 11 May 2025 08:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIxXtLiF"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7Ma8ohw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76113774D;
-	Sun, 11 May 2025 08:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7A32F872;
+	Sun, 11 May 2025 08:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746951427; cv=none; b=NFUqppVFmlZrlnaYLqqZKlcd4qVkZ4qPztABc4HNDBWG3cPaT8OPRIJag6HOvZbyb/grTtng35Z8EGAkfBvUk/aGlNSqv0EzZpeCScBoY+REqEpkUvOIJM8Pccb+T3hGvaqoUv1Mr6tl8zd+sXQZ/w9589VxpyeJ8/zmNTvwLH8=
+	t=1746951549; cv=none; b=Or/abx+nVqc9Wm5/mcUWsasWTpsuQD6cVkPhbUvyRuM6xDVJ+OJ8nSrTVcPIfA5Wd+NvaiBgOlqyxa0zrVGqbQqkQAzWRcs9Qc5TDuVqT2XzDv0Tms3XDoXRotj+/HDfqZJtL6yclQBV8j5f8SW7l8NWBfftiOlV6XVF+c6DNuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746951427; c=relaxed/simple;
-	bh=o4DjkmcqH0CQCvpj+nku8qIxAhWg3czmlViskMBg67s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rfa5fsYtERPPQZhfr/wUX1FyZNqlJFbnlV+ZivxmNtQNURoU0W3KCcCZUw62hVL/5k8JN72juidJfO1FiHP8onk3GU6912fgXf5ZY+t5xHiyhsFdmPjfHOMF3TTfkI53gABYv34JBer2/tCGj4buaAKEfiV79HVjY3E+RUUDPyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIxXtLiF; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad238c68b35so214174966b.1;
-        Sun, 11 May 2025 01:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746951424; x=1747556224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E0yIeowaIbrdAkUcV+diXTwOIqrz0Jk3yzCANqW1Lvs=;
-        b=SIxXtLiFBoHp6T77uaR1mPzRvzWBp3j9dv81vAV5GWI3vLZomZYfh+TF+HdXLK5nQJ
-         SJ7EUHH26GwGa1I7Gyfd63g4gD1JeN4r3JEpnL1faIxqnghPchXL2vD9JZMtx7wUu08C
-         CcTgBMym6L0ipx8//GbFjEIoenJHxqcCZOI0a+Bm8kivazwnydP715/tF9d50CzPbNm8
-         Pw7T6rJaHwwaX+ES+lA+Oy/8PgR7Ilu3969wgbYFVDR5oHdtkdFqz9JY9pwcjFvWKoy3
-         rRIMjem/R3jOhK27kjkX7GBdallsgmzAsYOQLMOYZJDdqktausZEREGiGRRSn06IpHn8
-         ZLCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746951424; x=1747556224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E0yIeowaIbrdAkUcV+diXTwOIqrz0Jk3yzCANqW1Lvs=;
-        b=ts/2fiq6PzuMLC50V31VfuKTZuOzDubetm9QJHtRW4HbNEMQT7S9xZ7F2CxgGg2VS/
-         muS8mN1DSYRKfOguREQhVsZr4iVnHr0kqxxvBUEA/rPu25PYDCqiR4V/mRM/3A9y7b43
-         XGwVXrZQDHSiU15OKmzJTDGcV0bNZIgbDxr9ar6N7QEH8wzPLz8ctmpkIdWNz47svWuD
-         md2/O9v+amuuf4ma8u3khjNKw51LAvbdDG0X8uB0yLkzleO6lSMUkpXEnY3n9p6QBtwC
-         SzS12RRiKmq8Jngw9jgA2SO0FjzvYSAyLD47QhyKdJLgakfwo55nXLPK9V/nTYQw7heu
-         XLOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwks18UqM75NhsneSA4YyXl1P1NIVvN7t9EviYbV4q8lFnVFnK5RDF8xJ87fGjtylCry+zbAT7@vger.kernel.org, AJvYcCWW9fB95OD56yPjOxH6CU/CAzxJBixlsmA4T2ucGtqQUkuzEHUSSFrrHgvlGruYUTlf0JT2mowC4uIOdMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/arCMOyFW2ow88oEhLSXjzf/et8G+QnwgPWR2EqI4ozlw6Tr0
-	9Wq6LwrGCaRFMRnM+QXIzQLNJKZbK3mWOZRsH4gTV1PvdJx80su0Pw+PtRAzKgC/oMyDJxclL5W
-	/YQ8sY6IfmqvZsFs48wywh2A7+5o=
-X-Gm-Gg: ASbGnctMncdtfu8rG1NKUzUOajmV3x6MCVuFUkUz/3uKkhWe/7GPpP4SDcGke2IZFxe
-	7Gsdi6Zo6+1yimqFfKQR+7tgAfNY4iKqaQwfnf7vC7QTwZNDHg9Qi6AcXMu4hhn0w/9bHK2KDtv
-	2KkO4b7rxewgVwysFUeuYx4ylvTWqkI1I=
-X-Google-Smtp-Source: AGHT+IGNxDzG67FJ0vVSkUAOEuJpzRmkUU7lbBEvEVleyQPtoMGTx4Pt/EtSNSsSdGdykLfTj8CVX7O59v3KvViXtWA=
-X-Received: by 2002:a17:907:6a13:b0:ac7:81b0:62c8 with SMTP id
- a640c23a62f3a-ad218f8b0b6mr996987666b.31.1746951424016; Sun, 11 May 2025
- 01:17:04 -0700 (PDT)
+	s=arc-20240116; t=1746951549; c=relaxed/simple;
+	bh=AN3OnTybScRz8x1B3JwySPq8GXU7Hvcbq2tPBjfW/n0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GyaE1LRO3ovKrM7P74GYIYYisXDHSWLGZY5it2NUMz9K4sb+t0aHd+MaFi3CgTIKa08jiv8qIvOOhc3HKHHNC0h0RD/OOWNaZOoI0SR7WXS7ilvVAC2+WjpBq4ZophpqzryDppAp5JhR/xxEiwgIK7DxA4qncnumqVDInmKcl9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7Ma8ohw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EB36EC4CEE4;
+	Sun, 11 May 2025 08:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746951549;
+	bh=AN3OnTybScRz8x1B3JwySPq8GXU7Hvcbq2tPBjfW/n0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=q7Ma8ohwFoDUrmJDzDIFxmQ6Fsd8YeUZ0BhnqbttPT0q+UrhXeiXTcaGcxl8Ea61r
+	 IS+nMNFgDIGykTm1weLFgy5BYrMYaIrTBBRe4tuCBtph0tEAus6Vt5J4YKZIE8+z0V
+	 LOVJDISNfQWsM/REfEz4VnwyG6gwjsZPm1FSR2boit9N4K/Qj+rn3NEL5MaadGvOrm
+	 yzxLsmpUIwDWHCJ8HfKc82z9nAcWtYlOUcWg6z5ezZZO/WF3x/5v92VcaIrNcXEznw
+	 EBp122VDudfBrXC+D3eESN8aoW8uu5P3Skn08EJ1KiwRjtgC/ii3sLRJ5f004mc6Lx
+	 YkXWcT/tdunRw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4320C3ABC3;
+	Sun, 11 May 2025 08:19:08 +0000 (UTC)
+From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
+Subject: [PATCH v5 00/10] Apple Mac System Management Controller
+Date: Sun, 11 May 2025 08:18:35 +0000
+Message-Id: <20250511-smc-6-15-v5-0-f5980bdb18bd@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250508071901.135057-1-maimon.sagi@gmail.com> <20250509150157.6cdf620c@kernel.org>
-In-Reply-To: <20250509150157.6cdf620c@kernel.org>
-From: Sagi Maimon <maimon.sagi@gmail.com>
-Date: Sun, 11 May 2025 11:16:37 +0300
-X-Gm-Features: AX0GCFu6rzTuh-ZOaCjTGrjQYgAUVP_Er2JeVxhmIZ9Ym3TQFDC0pXHsfCnIxBo
-Message-ID: <CAMuE1bH-OB_gPY+fR+gVJSZG_+iPKSBQ5Bm02wevThH1VgSo3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ptp: ocp: Limit SMA/signal/freq counts in show/store functions
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: jonathan.lemon@gmail.com, vadim.fedorenko@linux.dev, 
-	richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFtdIGgC/0XMQQ6CMBCF4auQWTtmgLYJrryHYSHtVGZhIS1pN
+ KR3t+LC5f/y8u2QOAonuDQ7RM6SZAk19KkBO9/Dg1Fcbeio09STwvS0aLDV6ImdaQfuW6eg3tf
+ IXl4HdRtrz5K2Jb4POavv+kMq80eyQkJNNA2T0cp4e02Zw8obx7PjDGMp5QNSkX/ipAAAAA==
+X-Change-ID: 20250304-smc-6-15-f0ed619e31d4
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6421; i=sven@svenpeter.dev;
+ h=from:subject:message-id;
+ bh=AN3OnTybScRz8x1B3JwySPq8GXU7Hvcbq2tPBjfW/n0=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4ZCbP76RVVTdtyuPLtryc3W9mPHL8iuPXfiS9z/ttADf
+ 6MV1mgwdZSyMIhxMMiKKbJs329v+uThG8Glmy69h5nDygQyhIGLUwAmolrIyPCBZf+EH2G/FDyP
+ cx97lqOvuPXdAubPb2rLN8Wl/DKc22vD8FfwXeDTj26HLNSO1Fs/u7rk+4uKjR5uve8ndehxm9j
+ UlfACAA==
+X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
+ auth_id=167
+X-Original-From: Sven Peter <sven@svenpeter.dev>
+Reply-To: sven@svenpeter.dev
 
-On Sat, May 10, 2025 at 1:01=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Thu,  8 May 2025 10:19:01 +0300 Sagi Maimon wrote:
-> > The sysfs show/store operations could access uninitialized elements in
-> > the freq_in[], signal_out[], and sma[] arrays, leading to NULL pointer
-> > dereferences. This patch introduces u8 fields (nr_freq_in, nr_signal_ou=
-t,
-> > nr_sma) to track the actual number of initialized elements, capping the
-> > maximum at 4 for each array. The affected show/store functions are upda=
-ted to
->
-> This line is too long. I think the recommended limit for commit message
-> is / was 72 or 74 chars.
->
-will be fixed on next patch
-> > respect these limits, preventing out-of-bounds access and ensuring safe
-> > array handling.
->
-> What do you mean by out-of-bounds access here. Is there any access with
-> index > 4 possible? Or just with index > 1 for Adva?
->
-index > 4 is possible via the sysfs commands, so this fix is general
-for all boards
-> We need more precise information about the problem to decide if this is
-> a fix or an improvement
->
-> > +     bp->sma_nr  =3D 4;
->
-> nit: double space in all the sma_nr assignments
->
-will be fixed on next patch
-> >
-> >       ptp_ocp_fb_set_version(bp);
-> >
-> > @@ -2862,6 +2870,9 @@ ptp_ocp_art_board_init(struct ptp_ocp *bp, struct=
- ocp_resource *r)
-> >       bp->fw_version =3D ioread32(&bp->reg->version);
-> >       bp->fw_tag =3D 2;
-> >       bp->sma_op =3D &ocp_art_sma_op;
-> > +     bp->signals_nr =3D 4;
-> > +     bp->freq_in_nr =3D 4;
-> > +     bp->sma_nr  =3D 4;
-> >
-> >       /* Enable MAC serial port during initialisation */
-> >       iowrite32(1, &bp->board_config->mro50_serial_activate);
-> > @@ -2888,6 +2899,9 @@ ptp_ocp_adva_board_init(struct ptp_ocp *bp, struc=
-t ocp_resource *r)
-> >       bp->flash_start =3D 0xA00000;
-> >       bp->eeprom_map =3D fb_eeprom_map;
-> >       bp->sma_op =3D &ocp_adva_sma_op;
-> > +     bp->signals_nr =3D 2;
-> > +     bp->freq_in_nr =3D 2;
-> > +     bp->sma_nr  =3D 2;
-> >
-> >       version =3D ioread32(&bp->image->version);
-> >       /* if lower 16 bits are empty, this is the fw loader. */
-> > @@ -3002,6 +3016,9 @@ ptp_ocp_sma_show(struct ptp_ocp *bp, int sma_nr, =
-char *buf,
-> >       const struct ocp_selector * const *tbl;
-> >       u32 val;
-> >
-> > +     if (sma_nr > bp->sma_nr)
-> > +             return 0;
->
-> Why are you returning 0 and not an error?
->
-will be fixed next patch
-> As a matter of fact why register the sysfs files for things which don't
-> exists?
-> --
-The number of SMAs initialized via sysfs is shared across all boards,
-necessitating a modification to this mechanism. Additionally, only the
-freq_in[] and signal_out[] arrays are causing NULL pointer
-dereferences. To address these issues, I will submit two separate
-patches: one to handle the NULL pointer dereferences in signals and
-freq_in, and another to refactor the SMA initialization process.
+Hi,
 
-> pw-bot: cr
+This series adds support for the System Management Controller found in
+Apple Silicon devices which we model as a mfd. It also includes support
+for the GPIO block and the power/reset block as sub-devices.
+
+Changes between v4 and v5:
+  - Alyssa's comments:
+    - Made the WARN_ON in the reboot driver more obvious
+    - Added missing brackets around a for loop in the reboot driver
+    - Used min instead of open-coded variant inside the gpio driver
+    - Reoder struct memebers to prevent padding inside the mfd driver
+  - Lee's comments:
+    - All comments now start with an uppercase letter
+    - Removed apple_smc_read_ioft_scaled and apple_smc_read_f32_scaled
+      since these are not yet used and likely don't belong into
+      drivers/mfd
+    - Relaced if (ret != 0) with if (ret) when possible
+    - Used devm_platform_get_and_ioremap_resource to get and map the
+      SRAM resource
+    - Used reverse Christmas-tree formating when declaring variables
+    - Dropped _platform left-overs from probe and remove functions
+    - Removed dev_dbg prints which are no long required after
+      development
+    - Reworked is_alive/is_initialized so that it's obvious how errors
+      during boot are propagated from the callback to the probe function
+    - Used dev_warn instead of dev_err in a few places
+    - Removed no-op apple_smc_rtkit_shmem_destroy; this required an
+      additional change in rtkit.c because we had a check there that's a
+      bit too strict
+    - Removed struct resource in apple_smc_rtkit_shmem_setup and
+      open-coded resource_contains instead
+    - Unwrapped lines with less than 100 chars
+    - Made sure to compile with W=1 and ran scripts/kernel-doc -v
+      on macsmc.h once and fixed any fallout
+  - Removed first_key/last_key from struct smc and moved
+    apple_smc_find_first_key_index to the gpio driver since it's only
+    used there anyway to find the index of the first GPIO key (gP00)
+  - Return -EIO when a command fails instead of whatever SMC returns
+    which does not map to Linux errnos on errors
+
+Changes between v3 and v4:
+  - Added documentation for all functions and structs
+  - Fixed dt-bindings and re-ordered commits so that the mfd one comes
+    last and can include the gpio subdevice
+  - Added the reset driver and corresponding bindings
+  - Reworked the atomic mode inside SMC since the previous implementation
+    called mutex_lock from atomic context
+  - Removed the backend split for now which lead to a quite intense discussion
+    for the previous versions which hadn't been solved as far as I could tell
+    from the old threads.
+    It's also been 2+ years and I haven't heard of any backend implementation
+    for T2 or even older macs. It's also unclear to me which sub-devices
+    are actually useful there because at least GPIO and shutdown/reboot
+    from this series will not work as-is there.
+    I'd rather have this initial version which only supports M1+ macs upstream
+    and then iterate there if any other backend is developed.
+    I'll gladly help to re-introduce backend support if it's ever required.
+
+Dependencies:
+The code and dt-bindings themselves apply cleanly to 6.15-rc1 but
+the device tree changes require the already merged SPMI controller
+and SPMI NVMEM series which will be part of 6.16.
+The series is also using the printf format specifiers which will
+land in 6.16 via the drm-misc tree.
+A tree with all dependencies for testing is available at
+https://github.com/AsahiLinux/linux/commits/sven/smc-v5/.
+
+Merging:
+The dt-binding patches all depend on each other such that they all
+should probably go together with the mfd device itself.
+The following commits also depend on mfd due to the new header file and
+will either have to go through the mfd tree as well or we'll need an
+immutable branch there or we just wait one kernel release and I'll
+re-submit the rest then.
+I'll take the device tree updates through our tree which also has the
+previous device tree updates these depend on.
+
+v4: https://lore.kernel.org/asahi/20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev/
+v3: https://lore.kernel.org/asahi/Y2qEpgIdpRTzTQbN@shell.armlinux.org.uk/
+v2: https://lore.kernel.org/asahi/YxdInl2qzQWM+3bs@shell.armlinux.org.uk/
+v1: https://lore.kernel.org/asahi/YxC5eZjGgd8xguDr@shell.armlinux.org.uk/
+
+Best,
+
+Sven
+
+---
+Hector Martin (5):
+      gpio: Add new gpio-macsmc driver for Apple Macs
+      power: reset: macsmc-reboot: Add driver for rebooting via Apple SMC
+      arm64: dts: apple: t8103: Add SMC node
+      arm64: dts: apple: t8112: Add SMC node
+      arm64: dts: apple: t600x: Add SMC node
+
+Russell King (Oracle) (2):
+      dt-bindings: gpio: Add Apple Mac SMC GPIO block
+      dt-bindings: mfd: Add Apple Mac System Management Controller
+
+Sven Peter (3):
+      dt-bindings: power: reboot: Add Apple Mac SMC Reboot Controller
+      soc: apple: rtkit: Make shmem_destroy optional
+      mfd: Add Apple Silicon System Management Controller
+
+ .../devicetree/bindings/gpio/apple,smc-gpio.yaml   |  37 ++
+ .../devicetree/bindings/mfd/apple,smc.yaml         |  71 +++
+ .../bindings/power/reset/apple,smc-reboot.yaml     |  52 +++
+ MAINTAINERS                                        |   7 +
+ arch/arm64/boot/dts/apple/t600x-die0.dtsi          |  35 ++
+ arch/arm64/boot/dts/apple/t8103.dtsi               |  35 ++
+ arch/arm64/boot/dts/apple/t8112.dtsi               |  35 ++
+ drivers/gpio/Kconfig                               |  10 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-macsmc.c                         | 293 ++++++++++++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/macsmc.c                               | 506 +++++++++++++++++++++
+ drivers/power/reset/Kconfig                        |  11 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/macsmc-reboot.c                | 363 +++++++++++++++
+ drivers/soc/apple/rtkit.c                          |   3 +-
+ include/linux/mfd/macsmc.h                         | 277 +++++++++++
+ 18 files changed, 1751 insertions(+), 2 deletions(-)
+---
+base-commit: 5abab6ab4ebacfff5857b63bd349902a6568d2e8
+change-id: 20250304-smc-6-15-f0ed619e31d4
+
+Best regards,
+-- 
+Sven Peter <sven@svenpeter.dev>
+
+
 
