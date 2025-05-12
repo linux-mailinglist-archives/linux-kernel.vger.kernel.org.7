@@ -1,171 +1,231 @@
-Return-Path: <linux-kernel+bounces-644431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B28AB3C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23280AB3C2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B97B189DBBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D486319E07B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7B32309BD;
-	Mon, 12 May 2025 15:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528B523C4E4;
+	Mon, 12 May 2025 15:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jWDU0Cf2"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AkAWsxUe"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D7F230BF5;
-	Mon, 12 May 2025 15:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747064039; cv=none; b=BA7WGfZCcGSjRwynb9GB7oWfyqRoTP8W892JP0JYZl/BrPAlFTHaUDb8cAWPBlm/g9MtTNSTN3pPUL4CuZHXiL6t2IKMA4+VQalL00RLWmqfGEy1QpGU77AVFjJ1gX/ovGqAsLKICjN6SOpI/z3fIpysJqCuO5y9ggzlFByQPUs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747064039; c=relaxed/simple;
-	bh=8kFDe70qaBxmc6z/Z1gNuXvdsiYl3WM8puv+RKmDiaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UkjC9Yck9YaH/YV8swH0pvnYsnuXvaKMGvHbpGDgWl2Y0RbQhh/gGENIxO+gv2ZSD1yig+D3blkgNfYPY/VOWl92D2J5ohjS4R5eNQRfYQ/30MuTyKnCzuUjN8SeNuKFn+WTnckIDSJJYU1J4sJQLa7ltIwAw06VT+lGOdKLDD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jWDU0Cf2; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A3ABC43B3A;
-	Mon, 12 May 2025 15:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747064035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqr4mwpC62OuBMSttBJ++MLfd/oZaeC/h6MdIt4o6Dg=;
-	b=jWDU0Cf2tHPFa1T6VvkLpuRitJNsHihmOOifZKfM3nHDGeYcC8zu5J6wdAL9JpNhXfkwLd
-	9lG1Ee+LZwBf77xLTsNxW+4SCAp8xs7IGbhx4w+CjRxKvHnpAOmOECqN4vC9XXhMs28M6K
-	gv2iuARfeRGeHHRylgy+7mR6Pupk/P9T6U39LsPp1EldOZf5Nf6yeoyvISZZ34xJovJK4N
-	zdAimCXdjmjR+zVzZkDo54YbqQPXbHDjC97KRTs1QN+8GmN/ShCMMehV2cEZ9uuOsPIN9m
-	5ZdrdVLoiVVVF5n4y3QOIj+VwrBGyjjwWSBQ1wmRLPPGI0oXGd7Nn838n17vSw==
-Message-ID: <5030b353-85ba-40d7-9b87-619787d99061@bootlin.com>
-Date: Mon, 12 May 2025 17:33:53 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C419C1AA1E0;
+	Mon, 12 May 2025 15:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747064051; cv=fail; b=NZuP2PMJc9iuA77R1LuDhr5O7oxoGvl6HrNvAHBi7dVORasMgn3mzDuC5dCZGLx8ooYdiKR+qZCUJw4EGhu2+l8u0Vne3poWZAhNqkB7qIPTSTnMSj/9pytAazixkCotoL92vWCAQbSslpqsrX3VWTu0npEkYbl0rg362qetpdU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747064051; c=relaxed/simple;
+	bh=fUGxPd6XQqB59YxnT/1Y4gFWqS3d9y2nztI3AN9YsfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=D5omw4Ei5ndbJy/EwE632vdo1t/6wXdvNQxrI/HF8L46ohall0UcFTedWIhu92NVjdPu4TUMWlHiidAZ4xzaTt3gc8rjyGWoJoNXGygjugShK960KbjNcu8/iAq9s3fApwm0IHRhXnhGsxjCcFrozTwwP8iku+yxYi1MZ7rJPhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AkAWsxUe; arc=fail smtp.client-ip=40.107.223.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HVclRgaqtBPJgcI9K9OjUpqrWwlHrpZvsK3gP9g1NPvwl304wtgTRFOzhdlpcv4b6oumpK5wsos3SmouP7NjpUb/xGemebEVYwKjM3JE/z8s0Log8WPeU9CsFDNKqySngQ4hp955zX3joIe7gFxtEDFWnZo/uP7UA+WBeo+wVBmjjWnbzh+qFQkfnHGPBvnXbckMEUi8f9aleR3n9lD5Xv1B3piFV11cNFHVMleNklKR7+S1HTEHbetSbGxDMJqm9AQnmAzvzlrqVbif3rHkSWuawuCN3z5KgcmbsPkCDU7o9sAc/rGKloO1EE5+xULC5KZ5W6cVMefVmh2stcOfGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SKc0dsOByVG60TG641VJvv4KQWi9t1SbnAnLmCVGq/E=;
+ b=UQlTsMy+pot2eFumUpWALgvyE5MaJI3a5GiLcYjbOYGcAbIkTkgUzKcKN5mZl+7UIy8Skd4rLSzUex5+rLlbuvGSLLrdeg05+1wniZZGjKauC7Z0tBnHkX9WaNAYg5wuZSiML+rav+8RtRPF6tR2Y8SFtlF2MxOp0se+LF0elsu3nZ0DIRpcPOvJDh2CqjF7JErrk+5/q8dRLSPAJyBcCfYUMro/6dNvd6bwJGg6JyngWMBfMb2UJqV6j85NV4dvhg2CUyN8L0mQ7I7jK4QsgFcq4i3pEcPPuNQLpeoRTbhhMssyNjEn1jURbZMHGforMB9VMgjDa/hOYVIQ5wGDdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SKc0dsOByVG60TG641VJvv4KQWi9t1SbnAnLmCVGq/E=;
+ b=AkAWsxUenUSR4/hnk64T93CNU+QDwUcD2tuvsnu9QFC+TQqC/fJoTMCC6vkX7+MKJSArpYUigEgrha7aiY6jfjGaItORJln7otFPGeVh2G+mju2AsEsKx+KKpGFcIAMr2cVkI/48DPa0B7o18rMh8gj0nQNUHZF0YMr2Ljot6eU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ MN0PR12MB5833.namprd12.prod.outlook.com (2603:10b6:208:378::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.27; Mon, 12 May
+ 2025 15:34:05 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%7]) with mapi id 15.20.8722.027; Mon, 12 May 2025
+ 15:34:05 +0000
+Date: Mon, 12 May 2025 11:34:01 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Subject: Re: [PATCH v3 14/17] x86/mce/amd: Enable interrupt vectors once
+ per-CPU on SMCA systems
+Message-ID: <20250512153401.GA2355@yaz-khff2.amd.com>
+References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
+ <20250415-wip-mca-updates-v3-14-8ffd9eb4aa56@amd.com>
+ <20250507193539.GPaBu2C_Gt7ksvRHoc@fat_crate.local>
+ <20250508155300.GB1939543@yaz-khff2.amd.com>
+ <20250509140821.GQaB4MVUiLk-a5FWM-@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509140821.GQaB4MVUiLk-a5FWM-@fat_crate.local>
+X-ClientProxiedBy: MN0PR04CA0028.namprd04.prod.outlook.com
+ (2603:10b6:208:52d::27) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/12] gpio: aggregator: export symbols of the GPIO
- forwarder library
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, linux-hardening@vger.kernel.org
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
- <CAMuHMdXzU1k_JZ0UhUh33XCq_zpq6MBJgAjo9F9Cw4gckA12EQ@mail.gmail.com>
- <c10b7752-cec5-483c-90a9-ada16aa0904a@bootlin.com>
- <CAMuHMdUtEtZH0MuS7TA6RTa1-LB=K47sEGzo9BJM_RvfCRmRAw@mail.gmail.com>
- <93425f2f-9496-4d18-ad7d-7e631a80e6cf@bootlin.com>
- <CAMuHMdUMVFk+-3akj6nj+XCya9zj_FqkbnpOT1Wc4wSsgttiww@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <CAMuHMdUMVFk+-3akj6nj+XCya9zj_FqkbnpOT1Wc4wSsgttiww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdduieefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegteekfeevudduvdduveehgeejuefgieeitdeuvdekgfdvgefhjedtffdufeegheenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrngdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgp
- dhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: thomas.richard@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MN0PR12MB5833:EE_
+X-MS-Office365-Filtering-Correlation-Id: d99dce0b-e503-48f9-fb66-08dd916a6def
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WZdBK4NJ3g6yNtOd041T7uu/3C35VU1ZX1xt9RZhGgSL0DjZLsWJHgoCpmQE?=
+ =?us-ascii?Q?V6pcDVcXzyJ/ZUBv9bjRWLXbUQHx797Z0rbxcTMEsnvcpFM/rMI/2fsF1tbu?=
+ =?us-ascii?Q?Ek0A5BldBgzPdt7gcEXfwZfIrwnzBmkZyPGBTrteuGDYS+o1Rkehlg2kkUzq?=
+ =?us-ascii?Q?egcVq7j06zT1Hp64LZ7jYwBlQteBuIY1wrvF7/UCGtBnTzVvGnd5aDVvsMmg?=
+ =?us-ascii?Q?nbBGA3mUcwayEHMbQXwjpd+butxszzqjdTetZBAU4mhObvZyIVC+/LJfXq8e?=
+ =?us-ascii?Q?JK4csNWDMYn21+AepohaPR8QaXS/eBy+YijGUyh1aaaPYQtiSHl3ddsK0gks?=
+ =?us-ascii?Q?yv4ipeu13Njd43FOP+lsGgcF0te3P9a0L1WiUziRyFChQRsvuKPDkAIpxsfI?=
+ =?us-ascii?Q?P8EunrgA8iV1MuFTacuZfh9XcVM0fN/Dws/Awwzg6xFhNmrPOCM7OLb9qXdQ?=
+ =?us-ascii?Q?zH4Yt+xonLu0x3oZJ9NNQhir8wTTb6d9b857QvYXYLi5vFvTBVRZw9IVIWbi?=
+ =?us-ascii?Q?MhJQFCN3jvQ4tLbC5Wl5APS5NPzWIIzlYHJ+R/FFgNSOZBgx+/PDtc9md/Ym?=
+ =?us-ascii?Q?pbwsHhuqsP47Syv4N/dscaplZu+Y1KPeTwETL7qRvk10SdYt3YqKd6Q1u+gC?=
+ =?us-ascii?Q?x7aT801AHR0Rl0KrMW3xpgypFtxMjDgMbDoDBoxJJySVFcA8+WgjZfnlo+2J?=
+ =?us-ascii?Q?q+LCLTjE6NzknJeytGOrPfdHpED6r7zlwvW21s+SdyRQSnYApthIhozihUZA?=
+ =?us-ascii?Q?4zacQnRdsX4NOKBkfoTMhNK0QN/Zw7kOKssFaVMO/W5XeuZoLMV98ehLdyuV?=
+ =?us-ascii?Q?vdZDZcE+4uQ5rbAYJkixd6BIstr9ZoOrR88TiPiBSExymGBbt45/FIngmzE5?=
+ =?us-ascii?Q?QEZUzwL/2nCDco49h42QLoQ4Mxsi0xkObbsjQSU74HBTAS3O4vhG6rlcgEdH?=
+ =?us-ascii?Q?SgjOp/flVQwUaQWJmhyB4qC+vP8+0iVqnZGCBa2liBRPpFYnQt1uGq9HZpIg?=
+ =?us-ascii?Q?zLgGN4qibg3cgkEAc9E7eRo8NjucPpb615/ZLWmNjQZokQx5+YiAUV/4kbHj?=
+ =?us-ascii?Q?whm2WFLZB27mhp4vchZxPsd272bHOaVPX1mRCzyI+OgwSjJsywejdtBAhD5K?=
+ =?us-ascii?Q?yLk8s9gyxzaE8xu43/UgwVNBlQseXFKpqQIFgZgFpt18PXBXS0Kcn8+62E0L?=
+ =?us-ascii?Q?h8K0GRkORkcoS6EXmQWbpsBW6LsdeW6GAhIOwkC+LlTBheGMrbXXcpwyH/Er?=
+ =?us-ascii?Q?S83b+ghAxmTsFnKiCjVuQh5/WB9E6cwO2UEJts/351jvkLzr1nnJVLBi7jcv?=
+ =?us-ascii?Q?EDcz8u9r+2Hc2Q1n2eN6b/a5kOPWTjSD/LZOt6I5jVCHp09Jr+4w/NZOfRdb?=
+ =?us-ascii?Q?q16u6rdqdrph9UyThfxcTDp2pS4k?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vwb1bJWF48wG6Fz9oh3OKkd8S/PsRH00bXQzOkoqmhWn1hQY02XEYPDbZV/F?=
+ =?us-ascii?Q?AQei9pe7sxheCzj9pZHwVv79jJeLqYzxokeuDHUqKmGRbm/vJqNZTOuAdqWZ?=
+ =?us-ascii?Q?qWBchDX1v6K/AjitdxbpG9awMmv21w4vC9FDuQNrOoIqd7OvFtvT/LAlqx5i?=
+ =?us-ascii?Q?Y7Hb2mXby+ljg1732x8LGlSOHs8zEYhF9CUTh11U2GkswaYyJM2v0vt0SKxI?=
+ =?us-ascii?Q?mUXGe/wJyrHhi2tY71rxC6PJMoeI2YsfsMWPml06mHTCZki2ouh8qKc6nWd5?=
+ =?us-ascii?Q?g0UyZBExxCVemzmEl5qH9OnfrdHMYrTBYDSFii1dourAjZ4g2OzdWLxFqTWH?=
+ =?us-ascii?Q?wE6xEDacZ/shnMROjOoz0zAG/hivvQfLDsMZWF+Rfnjjf5aHuPuf4mO0/bOv?=
+ =?us-ascii?Q?7oKDARiTdk1TT+iuwbroa3ZnRNhY4T8iPCxagFBpq3b2DU1G68C+gfjTI4jb?=
+ =?us-ascii?Q?JL8tX53Ea63S/ZRg+8Sy4AqDEYxaYz+2/olPPFSid/f5K0/Dcyv8GICVfh4e?=
+ =?us-ascii?Q?K6R/no8NsuGJS7EwFFi/jj2S3wqkFQMU+4bMkpu34+uO4APukXpXJMx/Bk0H?=
+ =?us-ascii?Q?DzoFeJePTnPr8MRJyFbW87sSMQ28QARJpLSwtmUU0QGzGOpXgs7YsQZvQJWa?=
+ =?us-ascii?Q?cZ50DI2T0PPpzBgLTn6gADSr17J99CeRn8XTG/E+UDSvYpDzRpnTkMAd/fs5?=
+ =?us-ascii?Q?ZnGViiqFtVCqN1Tr78bdHPZy3Z96LHQs92/SAcyrcPZk2NeBSQfe0y6rCfWh?=
+ =?us-ascii?Q?/pTdmiF8WNZWTXk0m8UcLsbOPvaUd6gu2hzoMH4JKgupTECIFDDz4EomJchC?=
+ =?us-ascii?Q?zDDBKUC9753x2rRs8j3Rf7PO6y0N6TIepm+HSnblkSE0JYCwri6hXEsnsa25?=
+ =?us-ascii?Q?mi3bmJ/cKbYKbd1crWs9Sa4+11Ck6YNBPpsA5xmfYKfC6pA+yS+vZCOuPnDy?=
+ =?us-ascii?Q?b7W/HCjjVUHcXTK6bQPUM/oorYSSa6dE/XKl1aVNZnxRqdvqEKrPyiErKBW+?=
+ =?us-ascii?Q?QdhtTvAoeUmF9m/IpMGgZErUOfE/UnIrT9VNN6iNOWCTnaby2006XiL5u/iD?=
+ =?us-ascii?Q?NuOt86A2WkliTNQxzZvtESib+vtpZOdFHcVV4139ZddSeIHfVM83lHq13sNj?=
+ =?us-ascii?Q?GeM0RQVuuDU43InTNLqrQIKjhoXIUEu5OwrQWp2QiVqSt+LZ1wuiz7ABxsGR?=
+ =?us-ascii?Q?zBE3F1kqAGKaO1mbUa9cVE2sP+SJ/uh5bM4XXndOeBP0y7LgfARHIRwmi76F?=
+ =?us-ascii?Q?JRHeCnLawKQSdDxLHne8vql1RfkfG22F1zZX+zdglQu6SyyediwbCNakNFmJ?=
+ =?us-ascii?Q?WNXqMLa0VJJbVfLowv6jEpwi6ljPt+wEia5jKgwx+QubFQif0T9ZNIyr/uSe?=
+ =?us-ascii?Q?o/Orw1LMI6cGckld7JEXcvzOhHzYlH9H5RJM4XqDtgkBfGSfr4PTJACn/3rq?=
+ =?us-ascii?Q?8NKgnx3OB0cLy3RwJ8ymr9pfzKCZtwC48vw8pX6J5EZGQBMXo0w4dW0+2S2l?=
+ =?us-ascii?Q?kbZgmC3PIxYQuUnPenmsOI2hyJ1xQZUYy3fvGd4wb89p49fqjcDSV0hrxcbM?=
+ =?us-ascii?Q?2gsMKHrvhI2LwJjpXKJVaArcTyzaRSVnekrWjDJ5?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d99dce0b-e503-48f9-fb66-08dd916a6def
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 15:34:05.7004
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bGowpYf3uigRhmM+LdAGoqBgP843uPG6DNPzLKckgrjOhNoN7J4rc2t9H1ewKypFTW7zHGethX+2aNhlMRS3eQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5833
 
-On 5/12/25 17:14, Geert Uytterhoeven wrote:
-> Hi Thomas,
+On Fri, May 09, 2025 at 04:08:21PM +0200, Borislav Petkov wrote:
+> On Thu, May 08, 2025 at 11:53:00AM -0400, Yazen Ghannam wrote:
+> > Let me flip it around. Why is this check needed at all?
 > 
-> On Mon, 12 May 2025 at 17:01, Thomas Richard <thomas.richard@bootlin.com> wrote:
->> On 5/12/25 16:39, Geert Uytterhoeven wrote:
->>> On Mon, 12 May 2025 at 16:08, Thomas Richard <thomas.richard@bootlin.com> wrote:
->>>> On 5/9/25 11:07, Geert Uytterhoeven wrote:
->>>>> On Tue, 6 May 2025 at 17:21, Thomas Richard <thomas.richard@bootlin.com> wrote:
->>>>>> Export all symbols and create header file for the GPIO forwarder library.
->>>>>> It will be used in the next changes.
->>>>>>
->>>>>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
->>>>
->>>> ...
->>>>
->>>>>> +
->>>>>> +int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
->>>>>> +                       unsigned long config);
->>>>>> +
->>>>>> +int gpio_fwd_to_irq(struct gpio_chip *chip, unsigned int offset);
->>>>>
->>>>> I would expect all of these to take gpiochip_fwd pointers instead of
->>>>> gpio_chip pointers.  What prevents you from passing a gpio_chip pointer
->>>>> that does not correspond to a gpiochip_fwd object, causing a crash?
->>>>
->>>> Indeed nothing prevents from passing gpio_chip pointer which does not
->>>> correspond to a gpiochip_fwd object.
->>>> And it is also a bit weird to pass a gpiochip_fwd pointer in some cases
->>>> (for example gpio_fwd_gpio_add()) and a gpio_chip in other cases.
->>>>
->>>> I can keep GPIO operations as is, and create exported wrappers which
->>>> take a gpiochip_fwd pointer as parameter, for example:
->>>>
->>>> int gpiochip_fwd_get_multiple(struct gpiochip_fwd *fwd,
->>>>                               unsigned long *mask,
->>>>                               unsigned long *bits)
->>>> {
->>>>         struct gpio_chip *gc = gpiochip_fwd_get_gpiochip(fwd);
->>>>
->>>>         return gpio_fwd_get_multiple_locked(chip, mask, bits);
->>>> }
->>>> EXPORT_SYMBOL_NS_GPL(gpiochip_fwd_get_multiple, "GPIO_FORWARDER");
->>>>
->>>> So exported functions are gpiochip_fwd_*().
->>>
->>> That sounds fine to me.
->>>
->>> BTW, do you need to use these functions as gpio_chip callbacks?
->>> If that is the case, they do no need to take struct gpio_chip pointers.
->>>
->> I'm not sure to understand the question, or the idea behind the question.
+> As I said above, some BIOS f*ckup.
 > 
-> Do users of the forwarder library want to use these functions directly
-> as callbacks in their own gpiochip?
-> E.g. do they want to use:
+> > Was there ever a real issue to resolve?
 > 
->     chip->get_multiple_rv = gpiochip_fwd_get_multiple;
+> Not that I remember...
 > 
-> I hope my question is more clear now.
+> > It seems to me the deferred error updates are just following what other code
+> > did.
+> 
+> Let's search the web for it:
+> 
+> * https://bbs.archlinux.org/viewtopic.php?id=299379
+> 
+> - silly guests, who cares
+> 
+> * https://gitlab.com/qemu-project/qemu/-/issues/2571
+> 
+> - another misguided qemu...
+> 
+> Aha:
+> 
+> https://lore.kernel.org/lkml/20241219124426.325747-1-pbonzini@redhat.com
+> 
+> the usual virt silly stuff.
+> 
+> > I figure the reason to have the platform give the offset to the OS is so
+> > the OS doesn't hard code it (in case it needs to change). These offsets
+> > were hard coded in the past (conflict between IBS/THR), and it caused
+> > problems when the offsets switched in the hardware. The registers that
+> > give the offsets were introduced soon after, I think.
+> 
+> Right.
+> 
+> > So the checks we do are defeating the purpose. The OS is still hard
+> > coding the offsets. The goal of this change is to follow the intent of
+> > the design. Sometimes we need to let go and trust [the BIOS]. ;)
+> 
+> Look at you being silly :-P
+> 
+> > Now we could update the checks to verify that an offset is not used for
+> > multiple interrupt sources.
+> 
+> ... or, we won't do anything until someone in BIOS f*cks up again.
+>  
+> > Let's follow up with the design folks to be sure.
+> 
+> Yah, sounds like we will have to verify them after all. You can see how
+> universally widespread the trust in BIOS is...
+> 
+> :-P
+> 
+> In any case, whatever you do, when you axe off stuff, write in the commit
+> message why you do so. Silently removing it is making me want to know why it
+> is ok now.
+> 
 
-Oh ok I understand now.
-The answer is no (gpiochip_fwd_get_multiple() is already by default the
-get_multiple_rv operation of the forwarder).
+Right, it sounds like we should take the values from the platform and
+just make sure they aren't used for multiple sources. In other words, we
+don't hard code the offsets, and we verify that each source has a unique
+offset.
 
-My use case (patch 12/12) is:
-I have a pinctrl driver (for a FPGA) which registers a gpiochip_fwd. The
-driver has to drive in tandem its configuration and SoC GPIOs (which are
-added in the gpiochip_fwd).
-During the probe, the driver will change gpiochip operation to use its
-own operation.
+I agree we can leave this for now. So I'll drop this part from the patch.
 
-gc = gpiochip_fwd_get_gpiochip(fwd)
-gc->direction_input = my_direction_input;
+I think this topic can be a separate set, and it should cover all APIC
+LVT sources including IBS. I'll add it to the to-do list. :)
 
-This function does some custom things and them call
-gpiochip_fwd_gpio_direction_input().
-
-my_direction_input()
-{
-	do_something()
-	gpiochip_fwd_gpio_direction_input()
-}
-
-It allows you to add custom action before/after default operation.
-
-Regards,
-
-Thomas
+Thanks,
+Yazen
 
