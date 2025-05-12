@@ -1,155 +1,173 @@
-Return-Path: <linux-kernel+bounces-644974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7A7AB4710
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 00:02:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18118AB4712
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 00:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C65486451A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 22:01:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947134687CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 22:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F33925C71F;
-	Mon, 12 May 2025 22:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B241525C71C;
+	Mon, 12 May 2025 22:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZtEZgBw0"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q4u0YqE6"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC61924DFF1
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 22:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D13C2AE68
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 22:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747087312; cv=none; b=C3TE4wjHZ8nMKnBfTT2V70S045lgDSP8M9msuzD5seTHEXjOK6O9KQke8zStTBnBj8BIpnMIvu+3VxSttwyoTGFgg0szxM+j/uiS+pReFNjy3Nlbb6QNO399JIKzl3XJXmJFmxqKN4rCWoTNKZ7vPsA0U3/fCOYHpeO7YL9NQLE=
+	t=1747087359; cv=none; b=QRRz/0fbMNlZZq7RJJp5er+nCWJfOahBhDJhD/WT8aJIhcq3eOH1ygUzPjyZRGMsB0/NoBO55tyPhQBfWVbQbqdDdHflLJchpqMlgB5iJa/uKc0zyZw9LSxU3C6J17NM/yKB1C1iDn+Ml2VyAqpAtLgR9jaXNSSCuVZoBWeHmOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747087312; c=relaxed/simple;
-	bh=rHfSaTbnyI9XoypCkJo/iUq/Y4OjgIW4d0dEWEOb4WQ=;
+	s=arc-20240116; t=1747087359; c=relaxed/simple;
+	bh=Oi1DAOtb6owPdmhsxmbmlFroX+fOcLI+wg1xCtwIW1U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qKOa0pCEgu+aAUm0TPbgdFJJv/5OYkxd/3zoWusrrq4rXgCF6S4Q/paFtiJXPXPca/gOWdeNyH/Upx0+G52OL2OfamUXH34pcLEwmjR7H+xjkJaMWFCa1ULiyB52gCJBtv00pMTvfVWZ57496Dp9c5D4PLiK3Lwc8fZaQOaCVA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZtEZgBw0; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70a338b1ce5so45981487b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:01:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=VWYLfwaDDGcYFF8bf+hhlDbueuknoW2XycuRqsQcfKddNLGNLxTIr0Sd3ZiCoJHwSpvuR3zY4rdsFJp3zZxESpdYMv+jT3QUzEqo+GRqAPWItGEecHosX12TwUKXWOMeLGdxk69CxRwgM85h0idmIhU2qcF3sOhpHhtAfpuO92s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q4u0YqE6; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-708a853c362so45209447b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747087309; x=1747692109; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747087356; x=1747692156; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XKie0IlRkp83iNNzrci+462IuBHk3Z5i8ViXJGbM2zI=;
-        b=ZtEZgBw0GmHrKBzqkZyUxP7mkbD8/w0vn//14mhD4T1atH4bDu2pDSP46+cDLmfAPY
-         ZI4MJ//OPOZlf9nwd4wVP5Xe8Y9DrKnmsgUmO1y68MZIRWaHL1OsGOFzAfK40sz+4giL
-         mgJU2jOZvRFhkXm2qSi4InNudvUCgsLge5YbBhD5zVY37468STGiJOe5PMmBfPgs3FxW
-         qmFU9FgvEhJSaasZbRMKjy7OW7qhraSdnYTu7f9vZWpqHvYGfQNyovl5kZLGZCp4+Y/l
-         Whx9hGFvjrUamAFiJYOBG/YNAlg4LRwGaGoUS9nVHsQ2aBtWZu8rv3q3DhcsN+Cpb7uK
-         IpZA==
+        bh=vW7A5aHjiKH+X9Ydb070/D1q8O2n+GGEFy0ERxt+OF4=;
+        b=Q4u0YqE6wSFKuiGLaxX+Ucm94VA3VV1anbL+PCSLoWiRVtgI4AQtAyCRs33RsG6vhV
+         kK1MtytZ7MEMF6Il0wcXkXtDxq9epybhYg3FWfm5tOwHRXVorHQxQujV5JBsxOzWrMmY
+         yooX2jsvEv1ykKDXjA5CMqodyDm/Z/TOdWauiQBwM/T6uK7Hd3tk3XMmU2lYi+YMRrgF
+         pxIMAWiWsdiKwCTqp1YOKYSlGr0IEOqqU/Ap6x5uqdWtgmyObrZrz7YnYs8CJNCEiLaJ
+         Y1iqp/Chq5WRyrcnZ4hJemcNJ6g7zsKoje75t6Y8JBgK2b7dgMYQbB+fP8pOshRFVNLE
+         HY4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747087309; x=1747692109;
+        d=1e100.net; s=20230601; t=1747087356; x=1747692156;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XKie0IlRkp83iNNzrci+462IuBHk3Z5i8ViXJGbM2zI=;
-        b=bsZYKeUXVWF9ZrXquSymir1HZB7nRF/PvHvHbs4mxC4mvFpQcrg/idkttfCzhONIOt
-         O+1/tynYfgx9nG/jRYFw1352HtUNIFG4r43EV13gfsTmWuAYs8b4RWqlkO1GB2/ReQ/K
-         00AQl5sdQrzD/xcgqWnGkdJyv6Bq0eDTpkVd8hHRdcAPzoPzr75XEONVuhkcmT9jnnwT
-         05skKogMFqFd34MvI+9naKOMWnwPThWCpE5LPF5sJz0xjVGb26IaYDFTH/Qm8MtP3muQ
-         FQ1VWRGG3dZUrG50WPWxAzTF8O+C6aYeiOlVHSlf9QJK/8Tk+6DKHLCPxmHatWQC8Vbm
-         yYsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhXwMhnP1j82mx09BVAg139sMfrY3mUoTUdDzYQT6NLaBArmTNopcs945gBawW6xMTPWLsAOacfIEmP9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjnJCwL1Ox6Mtno0+iQfeESRZBjUVrJrcULMLnAJbX6zy6zxd6
-	B/Z1Lp4tNWwSB9AIJBe5wGUFJBpWt/bfXHo670+GTv5fFx1/CgC9NJAAibBKmz4BhjVOmfWT4GG
-	2l4hizBl3PmxkoAtA+42gbJg120cIyGOPt2yHx3F/dinwT7U=
-X-Gm-Gg: ASbGncuylygz5IvKsrGYuLS1p+zQcd7R4XA/AnmvAP6jLOKIBgO0ltZwKSG6TPfwaRg
-	FPJ+U/c8dSpWMlC/GMxKrV3+ZNtE86ir4505Ao/dNgXmaNzZiOKEoKhDsOTbdmmynsyiltEsEzA
-	MGzzRqpQygOHx9Ida+xSllifrBp6x+V9H4
-X-Google-Smtp-Source: AGHT+IFOMIsPRB6N77R/jqBwaSjy0jmjto+6IHP1IR9XhbZIQXfDLlpLMX4TWO85MDI4QzsKiGldRFQrkRYAnblk9Us=
-X-Received: by 2002:a05:690c:4b0f:b0:706:ac56:825f with SMTP id
- 00721157ae682-70a3f9ec8e0mr191260187b3.5.1747087309387; Mon, 12 May 2025
- 15:01:49 -0700 (PDT)
+        bh=vW7A5aHjiKH+X9Ydb070/D1q8O2n+GGEFy0ERxt+OF4=;
+        b=pQPopge+xBp8Q41Nwb3oISdXq3HJEw32umiCm0d0ekdvRFAjm2eZylPvGQ849VqpKa
+         9ulxzNSbn7o+6rMEWm7FNcIgbP2n/SioTdubnSvGRDmpdZv7NcAkaRpx87QNfZP0tmq/
+         zVbKrqM0B90v5AqhT4Z3Y0KkvoVARKLSidRU59DlF5Ii9XdVqGpKGyNT9370fitzlEWA
+         UpzaBBqe4J4SsuT5xjdDJQ/QzXKRILM/b/huG6dUEafZlPj7QbhmqKSZXAkFUhZm9hmp
+         J1LasjX4eBV4hFURS9rShVz9HV8BXLpeU5EGGssRFLVF+4qsP5oJWpORvyqWmym3TV8s
+         wUfg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3iqaLfjSofBbRV+oUMu8a5E9lZtTUW7olL8f5Ps9eeaAA8bbI+k+xaQvZaAnPv8OKmMBPIkT9D5+Zkn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkKXIsFWcOp7NbyuQmz5XYt6mAhoROuCCfnzsA/eLVbbnZJL57
+	RpVaxQGJD2an++Q19uIUGE9WbHxkuFjZULKU86p6Si97VLvleEzXrM8FD1a6UCIBRoDMBTKQJua
+	7jyhj0I7Wc5HP9n1JMt0pJNtciyiJUYqPvH5x
+X-Gm-Gg: ASbGncuhvWLlUvPo2j0i/IK1DP8lBRQ1do7PjGsbn98kdkUz7OByE5Jdju8WkA6pMml
+	/o2GNs4IuLTNHG4v0t8zxkZv2H22gOO/B0m0qLRH7+qSP0i1NYk0Kr68TyT9r1EkH6Ol1zdEcI6
+	/UGxNb0LCNs23R/JR1foj9jf+3Hson5Jmc0QW88xTsTFjEeQKYu8BWy7LClgIbSr8=
+X-Google-Smtp-Source: AGHT+IEY2Wm0wRuKLCb1QmSEkjT4BonO7vkJwDLak0FvVLGxCP+HmOGNgi+tbfiHD1pu4N/5AkT34JQGp18mtpkll4U=
+X-Received: by 2002:a05:690c:7209:b0:6fd:318b:9acf with SMTP id
+ 00721157ae682-70a3fb6c30cmr199093197b3.38.1747087356145; Mon, 12 May 2025
+ 15:02:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321102422.640271-1-nik.borisov@suse.com> <CAHC9VhSpgzde_xRiu9FApg59w6sR1FUWW-Pf7Ya6XG9eFHwTqQ@mail.gmail.com>
- <67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch> <68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch>
-In-Reply-To: <68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 May 2025 18:01:38 -0400
-X-Gm-Features: AX0GCFtgJv-4_VcLPYA2b-6hwyHqoFeVQTahFrJ-tcQAIU0sDVq-uYd-lD9xr08
-Message-ID: <CAHC9VhSyz2MqMjnHFbTiMqYvhAFZf162ZabnSsyyCQEZj-V9=g@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Allow individual features to be locked down
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, kees@kernel.org, linux-kernel@vger.kernel.org, 
-	kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev
+References: <20250508141012.1411952-1-seanjc@google.com> <20250508141012.1411952-4-seanjc@google.com>
+In-Reply-To: <20250508141012.1411952-4-seanjc@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 12 May 2025 15:02:00 -0700
+X-Gm-Features: AX0GCFtYvDiSjKXwNYi5yPNZUrZVRNCxuiYwCVVYJdbwfCZQdLE8KCQ5ZWcpNFo
+Message-ID: <CADrL8HURpnXgN0ux4sUk0nVze=A6d488i_ztiZTwGZUdDMoTvg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] KVM: Conditionally reschedule when resetting the
+ dirty ring
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Xu <peterx@redhat.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 5:41=E2=80=AFPM Dan Williams <dan.j.williams@intel.=
-com> wrote:
-> Dan Williams wrote:
-> > Paul Moore wrote:
-> > > On Fri, Mar 21, 2025 at 6:24=E2=80=AFAM Nikolay Borisov <nik.borisov@=
-suse.com> wrote:
-> > > >
-> > > > This simple change allows usecases where someone might want to  loc=
-k only specific
-> > > > feature at a finer granularity than integrity/confidentiality level=
-s allows.
-> > > > The first likely user of this is the CoCo subsystem where certain f=
-eatures will be
-> > > > disabled.
-> > > >
-> > > > Nikolay Borisov (2):
-> > > >   lockdown: Switch implementation to using bitmap
-> > > >   lockdown/kunit: Introduce kunit tests
-> > >
-> > > Hi Nikolay,
-> > >
-> > > Thanks for the patches!  With the merge window opening in a few days,
-> > > it is too late to consider this for the upcoming merge window so
-> > > realistically this patchset is two weeks out and I'm hopeful we'll
-> > > have a dedicated Lockdown maintainer by then so I'm going to defer th=
-e
-> > > ultimate decision on acceptance to them.
-> >
-> > The patches in this thread proposed to selectively disable /dev/mem
-> > independent of all the other lockdown mitigations. That goal can be
-> > achieved with more precision with this proposed patch:
-> >
-> > http://lore.kernel.org/67f5b75c37143_71fe2949b@dwillia2-xfh.jf.intel.co=
-m.notmuch
+On Thu, May 8, 2025 at 7:11=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
 >
-> Just wanted to circle back here and repair the damage I caused to the
-> momentum of this "lockdown feature bitmap" proposal. It turns out that
-> devmem maintainers are not looking to add yet more arch-specific hacks
-> [1].
+> When resetting a dirty ring, conditionally reschedule on each iteration
+> after the first.  The recently introduced hard limit mitigates the issue
+> of an endless reset, but isn't sufficient to completely prevent RCU
+> stalls, soft lockups, etc., nor is the hard limit intended to guard
+> against such badness.
 >
->     "Restricting /dev/mem further is a good idea, but it would be nice
->      if that could be done without adding yet another special case."
+> Note!  Take care to check for reschedule even in the "continue" paths,
+> as a pathological scenario (or malicious userspace) could dirty the same
+> gfn over and over, i.e. always hit the continue path.
 >
-> security_locked_down() is already plumbed into all the places that
-> confidential VMs may need to manage userspace access to confidential /
-> private memory.
+>   rcu: INFO: rcu_sched self-detected stall on CPU
+>   rcu:  4-....: (5249 ticks this GP) idle=3D51e4/1/0x4000000000000000 sof=
+tirq=3D309/309 fqs=3D2563
+>   rcu:  (t=3D5250 jiffies g=3D-319 q=3D608 ncpus=3D24)
+>   CPU: 4 UID: 1000 PID: 1067 Comm: dirty_log_test Tainted: G             =
+L     6.13.0-rc3-17fa7a24ea1e-HEAD-vm #814
+>   Tainted: [L]=3DSOFTLOCKUP
+>   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/20=
+15
+>   RIP: 0010:kvm_arch_mmu_enable_log_dirty_pt_masked+0x26/0x200 [kvm]
+>   Call Trace:
+>    <TASK>
+>    kvm_reset_dirty_gfn.part.0+0xb4/0xe0 [kvm]
+>    kvm_dirty_ring_reset+0x58/0x220 [kvm]
+>    kvm_vm_ioctl+0x10eb/0x15d0 [kvm]
+>    __x64_sys_ioctl+0x8b/0xb0
+>    do_syscall_64+0x5b/0x160
+>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>    </TASK>
+>   Tainted: [L]=3DSOFTLOCKUP
+>   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/20=
+15
+>   RIP: 0010:kvm_arch_mmu_enable_log_dirty_pt_masked+0x17/0x200 [kvm]
+>   Call Trace:
+>    <TASK>
+>    kvm_reset_dirty_gfn.part.0+0xb4/0xe0 [kvm]
+>    kvm_dirty_ring_reset+0x58/0x220 [kvm]
+>    kvm_vm_ioctl+0x10eb/0x15d0 [kvm]
+>    __x64_sys_ioctl+0x8b/0xb0
+>    do_syscall_64+0x5b/0x160
+>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>    </TASK>
 >
-> I considered registering a new "coco-LSM" to hook
-> security_locked_down(), but that immediately raises the next question of
-> how does userspace discover what is currently locked_down. So just teach
-> the native lockdown LSM how to be more fine-grained rather than
-> complicate the situation with a new LSM.
+> Fixes: fb04a1eddb1a ("KVM: X86: Implement ring-based dirty memory trackin=
+g")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  virt/kvm/dirty_ring.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/virt/kvm/dirty_ring.c b/virt/kvm/dirty_ring.c
+> index e844e869e8c7..97cca0c02fd1 100644
+> --- a/virt/kvm/dirty_ring.c
+> +++ b/virt/kvm/dirty_ring.c
+> @@ -134,6 +134,16 @@ int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm=
+_dirty_ring *ring,
+>
+>                 ring->reset_index++;
+>                 (*nr_entries_reset)++;
+> +
+> +               /*
+> +                * While the size of each ring is fixed, it's possible fo=
+r the
+> +                * ring to be constantly re-dirtied/harvested while the r=
+eset
+> +                * is in-progress (the hard limit exists only to guard ag=
+ainst
+> +                * wrapping the count into negative space).
+> +                */
+> +               if (!first_round)
+> +                       cond_resched();
 
-Historically Linus has bristled at LSMs with alternative
-security_locked_down() implementations/security-models, therefore I'd
-probably give a nod to refining the existing Lockdown approach over a
-new LSM.
+Should we be dropping slots_lock here?
 
-Related update, there are new Lockdown maintainers coming, there is
-just an issue of sorting out some email addresses first.  Hopefully
-we'll see something on-list soon.
-
---=20
-paul-moore.com
+It seems like we need to be holding slots_lock to call
+kvm_reset_dirty_gfn(), but that's it. Userspace can already change the
+memslots after enabling the dirty ring, so `entry->slot` can already
+be stale, so dropping slots_lock for the cond_resched() seems harmless
+(and better than not dropping it).
 
