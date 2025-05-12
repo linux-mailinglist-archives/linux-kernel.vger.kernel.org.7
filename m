@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-644199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E751AB384B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:18:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C494AB3818
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9280817F224
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:18:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446C87AB7C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED32957AA;
-	Mon, 12 May 2025 13:17:08 +0000 (UTC)
-Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4172629552E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2773293B7A;
+	Mon, 12 May 2025 13:07:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C8325C710;
+	Mon, 12 May 2025 13:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747055827; cv=none; b=PIzVqr5o0eU2J5xwMRp3EcRDErlITUqzPVnYJfyTL/HpNtRXSQaGICH8jFjT5jFsxNni5vRfXwQLQQgpMrHgXSlwaLCmXfQJBWIksYHgDRQqsHjgL3Dvc1y4s5n5yGv5coxM836Q4SL620Jv1N0eOixpaBUiAcHlgba2YOB+aIg=
+	t=1747055269; cv=none; b=pK4F/1NtfxBcsR5oAZefbCIaFce0Kqxqxn4laLOyTrR2mRa/WJN1DmEi39YAg6LE9WjxYXJBaI+luxffB3CLGyZyP1hwhXP0lVazyajmegQ3IDVPGbYAiH9iQ/BMLd0i1sSsISrfLk7ViivaL5eR9jJZacPP6rDEvaJJwIYaCS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747055827; c=relaxed/simple;
-	bh=qyGlqeoaX018wK20EkYJAUZufA8oVkUeenZJQTWOTzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U2S3HBh+47k2bO9+G4yCieOehU6eGiw5vULeu5sIgPfbVgGJ7Nr6M1SgL5PPClVJcwNpyb+ZTz9cVAtYnc4SgpLZ+/Vzg1lCRbGHAR7mfVd1XJKFOwy6s9ivFdmSNOk9O9n0xYMsp8qrJtQYikfmnF2y6BbPkWocz3mx5TaOFJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
-Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.emlix.com (Postfix) with ESMTPS id 10ECB5FE9E;
-	Mon, 12 May 2025 15:16:17 +0200 (CEST)
-From: Rolf Eike Beer <eb@emlix.com>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Bert Karwatzki <spasswolf@web.de>, Lu Baolu <baolu.lu@linux.intel.com>,
- Jerry Snitselaar <jsnitsel@redhat.com>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Nick Kossifidis <mick@ics.forth.gr>,
- Sebastien Boeuf <seb@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Robin Murphy <robin.murphy@arm.com>,
- linux-arm-kernel@lists.infradead.org, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>
-Subject: [PATCHv3 0/6] make vendor specific subdirectory inclusion conditional
-Date: Mon, 12 May 2025 15:07:27 +0200
-Message-ID: <1926170.CQOukoFCf9@devpool92.emlix.com>
-Organization: emlix GmbH
+	s=arc-20240116; t=1747055269; c=relaxed/simple;
+	bh=1dC9tqxjkLDhSyRziAIuOV7EgJfqIP8QHeVCN6LKOMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kbFVfAKWpCHVzvuGAsM34Z+c6a6pNRfKc4AlymYsasWZVIb8roU4q0cIyxsff4qdoQX/bSlLObDK2+p8wiF9VzC1GD7ZICRzAS5RjVM3oefQ609FlZPh8SldKzesMLYRoSYhwB6Rkb/81Zmfd/iZbm3BuAhDFf7UScSbgF35vTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2706C150C;
+	Mon, 12 May 2025 06:07:35 -0700 (PDT)
+Received: from [10.57.90.222] (unknown [10.57.90.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7962D3F5A1;
+	Mon, 12 May 2025 06:07:41 -0700 (PDT)
+Message-ID: <015746d7-ca46-4978-a441-09fba781fdd4@arm.com>
+Date: Mon, 12 May 2025 14:07:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart23936481.6Emhk5qWAg";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v6 1/3] arm64: Add BBM Level 2 cpu feature
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+ jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
+ akpm@linux-foundation.org, paulmck@kernel.org, mark.rutland@arm.com,
+ joey.gouly@arm.com, maz@kernel.org, james.morse@arm.com, broonie@kernel.org,
+ oliver.upton@linux.dev, baohua@kernel.org, david@redhat.com,
+ ioworker0@gmail.com, jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
+ jsnitsel@redhat.com, smostafa@google.com, kevin.tian@intel.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+References: <20250428153514.55772-2-miko.lenczewski@arm.com>
+ <20250428153514.55772-4-miko.lenczewski@arm.com>
+ <20250506142508.GB1197@willie-the-truck>
+ <78fec33d-fe66-4352-be11-900f456c9af3@arm.com>
+ <20250509134904.GA5707@willie-the-truck> <aB4nqtMJuvvp7Vwm@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <aB4nqtMJuvvp7Vwm@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---nextPart23936481.6Emhk5qWAg
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Rolf Eike Beer <eb@emlix.com>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Date: Mon, 12 May 2025 15:07:27 +0200
-Message-ID: <1926170.CQOukoFCf9@devpool92.emlix.com>
-Organization: emlix GmbH
-MIME-Version: 1.0
+On 09/05/2025 17:04, Catalin Marinas wrote:
+> On Fri, May 09, 2025 at 02:49:05PM +0100, Will Deacon wrote:
+>> On Tue, May 06, 2025 at 03:52:59PM +0100, Ryan Roberts wrote:
+>>> On 06/05/2025 15:25, Will Deacon wrote:
+>>>> This penalises large homogeneous systems and it feels unnecessary given
+>>>> that we have the ability to check this per-CPU. Can you use
+>>>> ARM64_CPUCAP_BOOT_CPU_FEATURE instead of ARM64_CPUCAP_SYSTEM_FEATURE
+>>>> to solve this?
+>>>
+>>> We are trying to solve for the case where the boot CPU has BBML2 but a secondary
+>>> CPU doesn't. (e.g. hetrogeneous system where boot CPU is big and secondary is
+>>> little and does not advertise the feature. I can't remember if we proved there
+>>> are real systems with this config - I have vague recollection that we did but my
+>>> memory is poor...).
+>>>
+>>> My understanding is that for ARM64_CPUCAP_BOOT_CPU_FEATURE, "If the boot CPU
+>>> has enabled this feature already, then every late CPU must have it". So that
+>>> would exclude any secondary CPUs without BBML2 from coming online?
+>>
+>> Damn, yes, you're right. However, it still feels horribly hacky to iterate
+>> over the online CPUs in has_bbml2_noabort() -- the cpufeature framework
+>> has the ability to query features locally and we should be able to use
+>> that. We're going to want that should the architecture eventually decide
+>> on something like BBML3 for this.
+>>
+>> What we have with BBML2_NOABORT seems similar to an hwcap in that we only
+>> support the capability if all CPUs have it (rejecting late CPUs without it
+>> in that case) but we can live without it if not all of the early CPUs
+>> have it. Unlikely hwcaps, though, we shouldn't be advertising this to
+>> userspace and we can't derive the capability solely from the sanitised
+>> system registers.
+>>
+>> I wonder if we could treat it like an erratum in some way instead? That
+>> is, invert things so that CPUs which _don't_ have BBML2_NOABORT are
+>> considered to have a "BBM_CONFLICT_ABORT" erratum (which we obviously
+>> wouldn't shout about). Then we should be able to say:
+>>
+>>   - If any of the early CPUs don't have BBML2_NOABORT, then the erratum
+>>     would be enabled and we wouln't elide BBM.
+>>
+>>   - If a late CPU doesn't have BBML2_NOABORT then it can't come online
+>>     if the erratum isn't already enabled.
+>>
+>> Does that work? If not, then perhaps the cpufeature/cpuerrata code needs
+>> some surgery for this.
+> 
+> Ah, I should have read this thread in order. I think we can treat this
+> as BBML2_NOABORT available as default based on ID regs and use the
+> allow/deny-list as an erratum.
+> 
 
-I found it strange that the vendor specific subdirectories were uncondition=
-ally=20
-added. Everything in these directories obviously depends on the specific Kc=
-onfig=20
-option. This series cleans this up by making the directory itself depend on=
-=20
-the respective option which looks more natural to me.
+Just to make sure I've understood all this, I think what you are both saying is
+we can create a single capability called ARM64_HAS_NO_BBML2_NOABORT of type
+ARM64_CPUCAP_LOCAL_CPU_ERRATUM. Each CPU will then check it has BBML2 and is in
+the MIDR allow list; If any of those conditions are not met, the CPU is
+considered to have ARM64_HAS_NO_BBML2_NOABORT.
 
-I must confess that I am too lazy to find a good solution for the "arm/"=20
-directory, so I left it as is.
+Then we have this helper:
 
-Regards,
+static inline bool system_supports_bbml2_noabort(void)
+{
+	return system_capabilities_finalized() &&
+	       !alternative_has_cap_unlikely(ARM64_HAS_NO_BBML2_NOABORT);
+}
 
-Eike
+system_capabilities_finalized() is there to ensure an early call to this helper
+returns false (i.e. the safe value before we have evaluated on all CPUs).
+Because ARM64_HAS_NO_BBML2_NOABORT is inverted it would otherwise return true
+prior to finalization.
 
-=2D--
-Changes in v3:
-=2D added Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-=2D rebased on top of 2e9b2ee2ba403cbe270a8256b8794ef5ad19b38d
+I don't believe we need any second (SYSTEM or BOOT) feature. This is sufficient
+on its own?
 
-Changes in v2:
-=2D clean up subdirectory Makefiles to use obj-y now
-=2D add arm/arm-smmu-v3 and iommufd patches
-=2D-=20
-Rolf Eike Beer
-
-emlix GmbH
-Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
-Phone +49 (0)551 30664-0, e-mail info@emlix.com
-District Court of G=C3=B6ttingen, Registry Number HR B 3160
-Managing Directors: Heike Jordan, Dr. Uwe Kracke
-VAT ID No. DE 205 198 055
-Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
-Office Bonn: Bachstr. 6, 53115 Bonn, Germany
-http://www.emlix.com
-
-emlix - your embedded Linux partner
---nextPart23936481.6Emhk5qWAg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCaCHyjwAKCRCr5FH7Xu2t
-/NGvBACQ++ncU9h70pXINUzTwksmp8QYS7bw5uht6BV/o0aqHCaFisMsBu5xsT/N
-Q6AEn+ablK7oufZX2TqX8jKVZlPoEZYW6SEebCOytttzFqk/EFtoCNvLO66wISBe
-vPSrcpiktcbYyuPMd9/rsvKiEkvYwwrY/Hs4eYWkS+DU6ppKRA==
-=7yC0
------END PGP SIGNATURE-----
-
---nextPart23936481.6Emhk5qWAg--
-
-
+Thanks,
+Ryan
 
 
