@@ -1,70 +1,72 @@
-Return-Path: <linux-kernel+bounces-643985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF4AAB3545
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:54:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E55AB3540
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA2917E6E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B8D17E3DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE84C270EAB;
-	Mon, 12 May 2025 10:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3B426E17D;
+	Mon, 12 May 2025 10:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NJPjJ6l3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dji95j+H"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lWYw5dVh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2VNd9cv1"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D97226989D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E665269CF5;
 	Mon, 12 May 2025 10:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747047086; cv=none; b=KAoyRUl3sZcoPKiIuBoG5PjXlfQtD5+eCiA8LDOP9fCN/AxITNrRR//MRn+6g8sHA2WuHANaQcOtFJr4pWD49upda49uYsU85T61lflcgP7JerOcPXi2lDMealmON1Ey8ONAWhp13UVr9+Rl9WmtY4xk5Kxg/qKummAUc71LWAs=
+	t=1747047085; cv=none; b=DfBdct60VvCu7g5x+IyEXn1XNuEtcIH1CRxo6lbVVdpq0A9PQfv8J+PK3kD6rg33MlcoWBZGYylKofL+JVsWAwR36r3E0CpRJYB6DqtsVXrnzmvhseIsjHrMw/RBJWNFK5aignhKcObxfwRY/Q9PEtVJkTMTv4WkuBzcppU2Ydo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747047086; c=relaxed/simple;
-	bh=kqcbhOu8kIZHISvJo8KAGZrL33iqXUCCx7EkZNU2zjU=;
+	s=arc-20240116; t=1747047085; c=relaxed/simple;
+	bh=eX5oXC+HBcw1mu0TCAHq5i0a+I/QmsXUI8/vYm8odp4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TnkYmd4uVjGWVoBNhi7KQiYq/oMEY+q7QCVTiDBGwoXWBq25kQaZBh1X0pkyoY3Y3giT6CCniSgvTdk+uMaQ6MRJ41ZqhJkyy2gU8RHmlR13b1wVOoOWS5/07gvO3/J63GT/Hw1A5UE0AB2wqzbjENaIt74rzVrVtZiblqQd98g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NJPjJ6l3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dji95j+H; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=SlbeiQmAAlc9zeOQKzrez9/5FK0GuYIL4volRmKeGTbugV3mBu20X7hH+zsdA+nPbIjHSnaBeYe5DJ0+4bVJbQ6a+0OLr6czX8ll0duzrJm2QvZv8bT2aYcvqWUVJfZ7rCnYCNvq/7SLJWCsd4GyHZdCzEuOSQdN6kJ+L1mDoBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lWYw5dVh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2VNd9cv1; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747047079;
+	s=2020; t=1747047080;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yZnTmXXPPJ43/SdX9l5xjKLxTpAA3+OeMalQ6WpsFjI=;
-	b=NJPjJ6l3HcVlf9x7yzLY6lOv0vLQF3BD1NT3n0vVucsulJ3ZbQoD2EdEcJ4Vgtq3Bjn7rO
-	HpmT7KQ/sdjY9LoxGlXs+pvfNhVaQT4wYHSA+lra2MKx3faQiKCuQAgbZOgDQ+5QZF/GeG
-	fNYQb0pKrYtrv5T0Gwpy36l05exJBqDDL3VPWTjOGAQ+6oMT7S53Eu8YmqNImCkHjyAsDY
-	nfENxMHw2o/juaqGgbAvmnx8NL75nhUE73C/LbSidz91NbnBVh1bTWyBrpSt2Z1SRv7PEc
-	wRSrB7TgZTL3MOIkOOkVezlAHDUmkrs7eaePFBZFKw6mwMbxOv7CXmU4pTLivQ==
+	bh=GRN84yAGCbJ9jXd7YMFr0fN4dU5tvyZpKeky5D5bT9k=;
+	b=lWYw5dVhwTY/Rd5JEMbr5TV80WlTf7uiCI1hmWfWb6VHt0BMQxPm0xDxKyYMQO/tcWML2E
+	ZlFadGGKu4qhpr9n7gjPtSWWTvW10fNtRlAprVHeU8RMof3X529SqleywKGmQa+y10fJJq
+	OFfgFIbC2iV1ec0jeChFGto1iypbsCEYDn8mjrohsIJWgdx4xKOjwIn2U/VTlxgDAa/W7R
+	1/kyTVUjRaL7Lqv8vW+yyKDR4pL1/QE5ME3+RlY6QM8C/Af6gVjr6pNeqXw5tbWPbmxtei
+	kFQNhFUzLPvou6yx8UH019/PVeQREaUaEwA+pClx/LQddd5Us7vSdH805VugtQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747047079;
+	s=2020e; t=1747047080;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yZnTmXXPPJ43/SdX9l5xjKLxTpAA3+OeMalQ6WpsFjI=;
-	b=Dji95j+HM2jVtEbCTKaQFGw1LFbGxnHkrzG+jOZG1qWr9mD7mZL8ru7KvwyBj2Yx/bk6Xe
-	tOCnZ2zyHZ3+eDBQ==
+	bh=GRN84yAGCbJ9jXd7YMFr0fN4dU5tvyZpKeky5D5bT9k=;
+	b=2VNd9cv18ED4C4ucSqx8UH02IAblhdWPUHKm29lA7oUAoYSuWBvMLpJy51I2qm3Qnn7zPF
+	JL3pNk13bugyInBw==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: john.ogness@linutronix.de,
 	Nam Cao <namcao@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8 17/22] arm64: mm: Add page fault trace points
-Date: Mon, 12 May 2025 12:51:00 +0200
-Message-Id: <f5fccde2326a896e5c568ef06a4dbd9aa7465f6a.1747046848.git.namcao@linutronix.de>
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v8 18/22] riscv: mm: Add page fault trace points
+Date: Mon, 12 May 2025 12:51:01 +0200
+Message-Id: <178fb6ea9110bb9f2476f20f2b5ccfade4eb4974.1747046848.git.namcao@linutronix.de>
 In-Reply-To: <cover.1747046848.git.namcao@linutronix.de>
 References: <cover.1747046848.git.namcao@linutronix.de>
 Precedence: bulk
@@ -75,45 +77,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Add page fault trace points, which are useful to implement RV monitor which
+Add page fault trace points, which are useful to implement RV monitor that
 watches page faults.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
+Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org
 ---
- arch/arm64/mm/fault.c | 8 ++++++++
+ arch/riscv/mm/fault.c | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index ec0a337891dd..55094030e377 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -44,6 +44,9 @@
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 0194324a0c50..04ed6f8acae4 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -20,6 +20,9 @@
+ #include <asm/ptrace.h>
  #include <asm/tlbflush.h>
- #include <asm/traps.h>
 =20
 +#define CREATE_TRACE_POINTS
 +#include <trace/events/exceptions.h>
 +
- struct fault_info {
- 	int	(*fn)(unsigned long far, unsigned long esr,
- 		      struct pt_regs *regs);
-@@ -559,6 +562,11 @@ static int __kprobes do_page_fault(unsigned long far, =
-unsigned long esr,
- 	if (kprobe_page_fault(regs, esr))
- 		return 0;
+ #include "../kernel/head.h"
+=20
+ static void show_pte(unsigned long addr)
+@@ -291,6 +294,11 @@ void handle_page_fault(struct pt_regs *regs)
+ 	if (kprobe_page_fault(regs, cause))
+ 		return;
 =20
 +	if (user_mode(regs))
-+		trace_page_fault_user(addr, regs, esr);
++		trace_page_fault_user(addr, regs, cause);
 +	else
-+		trace_page_fault_kernel(addr, regs, esr);
++		trace_page_fault_kernel(addr, regs, cause);
 +
  	/*
- 	 * If we're in an interrupt or have no user context, we must not take
- 	 * the fault.
+ 	 * Fault-in kernel-space virtual memory on-demand.
+ 	 * The 'reference' page table is init_mm.pgd.
 --=20
 2.39.5
 
