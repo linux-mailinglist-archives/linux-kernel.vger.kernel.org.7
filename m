@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-644781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B8FAB4471
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78431AB4475
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785EC3AD773
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D61243BC0D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F362980B0;
-	Mon, 12 May 2025 19:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDEB2980A5;
+	Mon, 12 May 2025 19:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQDp5vjj"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UL2uAYR6"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1F929712B;
-	Mon, 12 May 2025 19:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201CD29713B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076971; cv=none; b=igJgwBTvj49xY6gxAsqkXAW+KfwsCnEGdaC6lz1x2CVmgjOL2aCHZeI1bbmovImi8bxyqCjwkZZyBXP1xGr9NlKbZHSDtodBUr8W4tu8QLDEZwYIqJOBbrECbxZMgfsfPZwP5kInpuhDFCz7fkh7JIQbTntVAtZabUEeK28+c00=
+	t=1747077023; cv=none; b=Clzbc2bkVg3beOrhGtkf5Msy8vBABv2MaMOo3dpqOSdRxkHIRQUd0Ipj8fcoVlUJhdgv2+mRf+lPeJa4Ks1OdGIcpy08pLqfSkYcneBHKgYgvO/l6EBbCITzRGf7dFCNPbZOElmU4vwe9Yoa/mmGvCpG20B+nMiik331nqjoHi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076971; c=relaxed/simple;
-	bh=kS4EiEYQtpB4pncLyzyagF50S4NaO1jIJavYy0QuVgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ama2h0KFEi20o+4sShoSll0MSqVALuB+PAIviOGf8BttpUZx+fRUCVfqWb+d0jzLabZyS9syKZAgjXvD7GKNtqa7PTEvlzfT04cPhIawOYsKqLaKaMBT0WHcmkrJhSC0KoIXRWiTQOKhreefj/QXPzezcI4mIp591krkGot6J6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQDp5vjj; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-441ab63a415so49188765e9.3;
-        Mon, 12 May 2025 12:09:29 -0700 (PDT)
+	s=arc-20240116; t=1747077023; c=relaxed/simple;
+	bh=wSSePSSFWXHCvtu8SYuUqUMJvmE4cuWdk3lZOY2BEX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tMR8LKZE83HuwqFeD8nT+FoBptKOWf0jTfTDFnHm4u6G0ovwV4bL+llL1Cp/WB/FK7wDvVDFwWMB3sLqTyaXqZfc/IfPZAv6GW34vo/WMH//VqtBn9E5t1HAzWiOYHWSFQ5zxnJC4ql7EXUk00sX2+GtxJ7uNgVrOV4AZYJtrkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UL2uAYR6; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2259a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747076968; x=1747681768; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1747077020; x=1747681820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8Y+ZyUxqyekzIAsZAz8uROf/miqSCLrRGK87eoHnHJE=;
-        b=YQDp5vjjss7eOF0Q9HkCagW4NvOJRpbKzbywWCGX5R0PGExShvD4p7yqMX7HX+3OqX
-         x4xsGNt6Rqmt9wTfFxRTR2mtYs3B5XSL58SudN1ZGfARggKnQ1KHWbP6Qd/UuzjebmoC
-         2cF5qw8qHCdjngeYkryS+X4O9wkuuaNIjRD+M66KfNxYEE0QSDIgudCiShM7ta+K8JA4
-         fk1La3vStxTcPeL6R0XEsFJF27gfKWpI+cEkkPdHidQweMFtKAIFQ0JjlJam7GnOZDMf
-         yuEBGLHARoO5t0z4vCtq4WtJY232rvLJdUuXaJRNfZaUcsMIidWXrD7Dlyz9Yh6l0exj
-         D6QQ==
+        bh=N5AiAQRzff+Fnpyk4hqCxjXcsP8Fivam44x9/hbBNxI=;
+        b=UL2uAYR6kWxnby54S21H9f1T14bilUeyORYK6ItNKSfCejnj+2WYdXjYq9spkP2kGS
+         XHxbXrrC8NdjhkoV/4PmBaAOaeZpx15GACX1DJ5IO14SOtpp9CbSUs2BoGZXrIujFPCo
+         14qj6nWSebG5CcavfO5nSyGLGaZ3MfTNXDDI/s4MxOEthZovpGZswug3mMmIbuWnkQ1S
+         eiNE56ui3n5xvxmJFBBKp6tlLLxlF/nXwsJsvMiD27koPlRsela5KdBLYuLZu/zMzvS1
+         5jRVP0JtiSX039C12LhLonV/LfPmNmxhIWoAyE2569peNiV7aNEtVvPRhj7j0Hr4cWOI
+         jS8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747076968; x=1747681768;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1747077020; x=1747681820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8Y+ZyUxqyekzIAsZAz8uROf/miqSCLrRGK87eoHnHJE=;
-        b=AiDBJ1icbE+ZyC11YE2L37M4lp27LVJjTamxga9aWaZDNezNecVXYVqwIlInltrHG7
-         icr/8biTfnLyB86uSnRyhj7Hkrcck8gdm0XAcvGmbdW21o+d8LkgF//l2y+HRJZ1qK7v
-         NqTNrUd4G44mlmiYjqOAeQCJ8SyT7B9YL2RtKcc+YHOmJ8TKkwSoMN5VCf8HDD2vcNXU
-         Ax6drfplrvHcfIsYMddh07XiuVx+8VOaeaRjronWHKaas5Ftcuwn2ZwC9HKvn3yhNbol
-         NMUb29scUDXV7mlqR2xkamg/vSKh9zo7zJpb6ggwkGg1QHWdTfZqmTlFddtVHZhp0jrR
-         HrJg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2flo5tAAhamYk2LzinDZJftJhRuPCmUAohD7e64ZqtK0dC+63UiZCKAYq7IXYsB7iuwJiOIxs0QSk@vger.kernel.org, AJvYcCXpdg0pIsJ6iTYYiKyFygdS9Evkoxsry+dYbM5fGIcj3UB/eQfybPKEDdpR5H4DrCi5vlwvVaNCNXZdlos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3EsKfr9jEyDeF6keVQKRnYb7xVKhQd6YkMUv3dXMxaaQGK7uv
-	e0GPMjvPzWJ0AA87aJ1Cg4NyFjb4KnFQKBsTyMWGg2CTEphQcDSzaBZx6A==
-X-Gm-Gg: ASbGncsC27NT46gD4mddA3rm2TCVoHuW2NZ25TBCyBl492chdz8vQiLit7FGwJqJKX2
-	Ij6esCvC1QfhV73Od2cvr62wGdqV85PlFNRA2MBVy8lqnz7xAvqnyrtdesdNBZETPPAVf1i78c7
-	33LsgBVJUlAucSKl2mP5vf/fDk93809zJabIPQXFUu7GGV8BOKfg1jbPzD0FF491DDZ9yYIccvl
-	3Nao2dgceoz/Y+n6kTpifAxCZDKWGyJ4Cm2AVL6SO6sOWMbDmndxHsqSgW+mvl9Wun1qndgO45V
-	oRHdPmyU0amWhuQhAQjm2g4fn2NPf27GgZLCQL5048wm1/Vj7wlloUWc8cngwuoSzGU08VmrnTx
-	weUwYR3AiW5W5wA==
-X-Google-Smtp-Source: AGHT+IHEIm18FtPPp9iYppR3J86vrDdfNF2seQD1cayS7gUciFizs9uEv0jY3qdjem7sXz23Z6IbWQ==
-X-Received: by 2002:a05:600c:37c7:b0:43c:efed:733e with SMTP id 5b1f17b1804b1-442d6d379b2mr136024165e9.14.1747076967380;
-        Mon, 12 May 2025 12:09:27 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7f18sm185136545e9.40.2025.05.12.12.09.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 12:09:27 -0700 (PDT)
-Date: Mon, 12 May 2025 20:09:20 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: corbet@lwn.net, workflows@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] CodingStyle: tell people how to split long "for"
- loops
-Message-ID: <20250512200920.0849462d@pumpkin>
-In-Reply-To: <cefe24b6-c1a1-4fe4-826d-e08a856aa8e0@p183>
-References: <20250509203430.3448-1-adobriyan@gmail.com>
-	<20250509203430.3448-8-adobriyan@gmail.com>
-	<20250510195603.37279af3@pumpkin>
-	<cefe24b6-c1a1-4fe4-826d-e08a856aa8e0@p183>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=N5AiAQRzff+Fnpyk4hqCxjXcsP8Fivam44x9/hbBNxI=;
+        b=jxzx6XVffoT99E4Zu+RWawgycpSttjMQb7cuH67dLoDsPm+aHh+Y3gIPN9ZeQ5jiR0
+         dwbiYXMFIEZUk/HQ+ZhKjFkpYifr5Q5aw0cZy8G45uEoq5iI5WvQwj4hYUikP64WMPa0
+         OnY1cZ2/RnJG3QpNSdXz6dNHisSU/0zDduXtxeuhaGQTZy53JwC6bnOP2kj1VG3s3N2p
+         ruC0Q3bCv12dbcynrn+9dGSl7Si06Ez8GqNaCLC0YspiNkc1QTeihD3jta+cKbRS+FG9
+         3MZg9jumjjoLdYPsM+jnbed1Eq4nI+RwinUX9GApeGTRaLraVX4q24bbzRljXwgNa7mT
+         xdUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyR0gwLdubO1vbfwME6NPvQoYvae/0PZwg9VxjaKSvJ9ynBrqRlF9x/vIR26yVNu9C8xow7unvAxyU2S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx83eUv2fuAK2+jIsFsRcRzFKDYJBFIHK3qqyriQKxvVt9Gn7rz
+	ibIg2vGNlhQ/T4ZXrx76EtP1JcCl8uQpNGdFEMw4nM6fpgcCAdbV4eQyLAzCcqMnhof4dfETf7L
+	r0ZAY9DbQeFuN11rBgsYUcAc6q2elP/bl/cUGz/Kd
+X-Gm-Gg: ASbGncskhIeq3NeUkSBu/oTlsJpQCgbJiro9PQaKtxIeIiVDU36Gm79euLqvLGZCpV6
+	YupDlv1UYCSNjPFdLGho8bM5PluiTqA1/kMipLmaCXBLa4kzK+lpOt7XERRauh5wGA7jcTDkn2I
+	LlLyg/NlJbWl2k8gMGxPH3KwdhvnNe/biHHmuZooscy54oeKNkEEB/raPTe7ZkoI4=
+X-Google-Smtp-Source: AGHT+IH0X7OXY2c2wm3vHcfj6eREiCHt0sfaqRAvXgUgcOFWWbKYOjtzsyI4MgBbRRSFkgBiNpZNXPI800gGZwDDcdg=
+X-Received: by 2002:aa7:d94d:0:b0:5fc:e6a6:6a34 with SMTP id
+ 4fb4d7f45d1cf-5ff356e3dcbmr11772a12.6.1747077020206; Mon, 12 May 2025
+ 12:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250509115126.63190-1-byungchul@sk.com> <20250509115126.63190-20-byungchul@sk.com>
+ <CAHS8izMoS4wwmc363TFJU_XCtOX9vOv5ZQwD_k2oHx40D8hAPA@mail.gmail.com>
+ <aB5FUKRV86Tg92b6@casper.infradead.org> <CAHS8izMJx=+229iLt7GphUwioeAK5=CL0Fxi7TVywS2D+c-PKw@mail.gmail.com>
+ <aB5b_FmBlcqQk09l@casper.infradead.org>
+In-Reply-To: <aB5b_FmBlcqQk09l@casper.infradead.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 12 May 2025 12:10:05 -0700
+X-Gm-Features: AX0GCFvoPJJcQzET5ZShS86HbjuJ2f-9-4APyukZLguKBpnLzWbvE5OAdk4p78Q
+Message-ID: <CAHS8izOL_L3fjB1YutDm8xvp1hboyO9_ng0pOVESUqDew9N96w@mail.gmail.com>
+Subject: Re: [RFC 19/19] mm, netmem: remove the page pool members in struct page
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Byungchul Park <byungchul@sk.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
+	akpm@linux-foundation.org, ast@kernel.org, daniel@iogearbox.net, 
+	davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch, 
+	edumazet@google.com, pabeni@redhat.com, vishal.moola@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 12 May 2025 19:20:23 +0300
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On Fri, May 9, 2025 at 12:48=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, May 09, 2025 at 12:04:37PM -0700, Mina Almasry wrote:
+> > Right, all I'm saying is that if it's at all possible to keep net_iov
+> > something that can be extended with fields unrelated to struct page,
+> > lets do that. net_iov already has fields that should not belong in
+> > struct page like net_iov_owner and I think more will be added.
+>
+> Sure, that's fine.
+>
 
-> On Sat, May 10, 2025 at 07:56:03PM +0100, David Laight wrote:
-> > On Fri,  9 May 2025 23:34:29 +0300
-> > Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >   
-> > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > > ---
-> > >  Documentation/process/coding-style.rst | 16 +++++++++++++++-
-> > >  1 file changed, 15 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
-> > > index e17de69845ff..494ab3201112 100644
-> > > --- a/Documentation/process/coding-style.rst
-> > > +++ b/Documentation/process/coding-style.rst
-> > > @@ -183,7 +183,21 @@ Descendants are always substantially shorter than the parent and
-> > >  are placed substantially to the right.  A very commonly used style
-> > >  is to align descendants to a function open parenthesis.
-> > >  
-> > > -These same rules are applied to function headers with a long argument list.
-> > > +These same rules are applied to function prototypes with a long argument list.
-> > > +
-> > > +Very long ``for`` loops are split at the ``;`` characters making it easier
-> > > +to see which code goes to which clause:
-> > > +
-> > > +.. code-block:: c
-> > > +
-> > > +	for (int i = 0;
-> > > +	     i < N;
-> > > +	     i += 1)
-> > > +	{
-> > > +	}
-> > > +
-> > > +Opening curly is placed on a separate line then to make it easier to tell
-> > > +loop body from iteration clause.  
-> > 
-> > Is that actually the style - I don't remember seeing it.  
-> 
-> Check include/linux/list.h.
-> 
-> The point here is that it is either 1 line or 3 (not 2).
-> If you start splitting for loop there are 2 obvious points to do so.
+Excellent!
 
-Yes, and there is absolutely no reason to always use both of them.
-You do want to split at 'low priority' operators rather than just at
-80 columns - but that is always true.
+> > I'm thinking netmem_desc can be the fields that are shared between
+> > struct net_iov and struct page (but both can have more specific to the
+> > different memory types). As you say, for now netmem_desc can currently
+> > overlap fields in struct page and struct net_iov, and a follow up
+> > change can replace it with something that gets kmalloced and (I
+> > guess?) there is a pointer in struct page or struct net_iov that
+> > refers to the netmem_desc that contains the shared fields.
+>
+> I'm sure I've pointed you at
+> https://kernelnewbies.org/MatthewWilcox/Memdescs before.
+>
 
-	David
- 
+I've gone through that again. Some of it is a bit over my head
+(sorry), but this page does say that page->compound_head will have a
+link to memdesc:
 
-	David
+https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
 
+That's an approach that sounds fine to me. We can have net_iov follow
+that pattern if necessary (have in it a field that points to the
+memdesc).
+
+> But I wouldn't expect to have net_iov contain a pointer to netmem_desc,
+> rather it would embed a netmem_desc.  Unless there's a good reason to
+> separate them.
+>
+
+net_iov embedding netmem_desc sounds fine as well to me.
+
+> Actually, I'd hope to do away with net_iov entirely.  Networking should
+> handle memory-on-PCI-devices the same way everybody else does (as
+> hotplugged memory) rather than with its own special structures.
+>
+
+Doing away with net_iov entirely is a different conversation. From the
+devmem TCP side, you're much more of an expert than me but my
+experience is that the GPU devices we initially net_iovs for, dmabuf
+is the standard way of sharing memory, and the dma-buf importer just
+gets a scatterlist, and has to either work with the scatterlist
+directly or create descriptors (like net_iov) to handle chunks of the
+scatterlist.
+
+I think we discussed this before and you said to me you have long term
+plans to get rid of scatterlists. Once that is done we may be able to
+do away with the dma-buf use case for net_iovs, but the conversation
+about migrating scatterlists to something new is well over my head and
+probably needs discussion with the dma-buf maintainers.
+
+Note also that the users of net_iov have expanded and io_uring has a
+dependency on it as well.
+
+The good news (I think) is that Byungchul's effort does not require
+the removal of net_iov. From looking at this patchset I think what
+he's trying to do is very compatible with net_iovs with minor
+modifications.
+
+--=20
+Thanks,
+Mina
 
