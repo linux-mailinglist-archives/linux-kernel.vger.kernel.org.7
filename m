@@ -1,181 +1,102 @@
-Return-Path: <linux-kernel+bounces-643747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4E8AB312C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E04FAB3115
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED69B189718A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:11:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F3E3188FC3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A4E257AD8;
-	Mon, 12 May 2025 08:11:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCB82571BB;
+	Mon, 12 May 2025 08:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XfcpP+8u"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A692561B8;
-	Mon, 12 May 2025 08:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1F02561B8;
+	Mon, 12 May 2025 08:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747037465; cv=none; b=evZZnJUz92LLVfgP8+6EnUcW6HJOUxXF+0ZF0QuHqeyVdbNxU/ZiKaz7VPILuNIapbDUCkSi6jdM2KmsS4YJ542U5ytnELhgT3hw6ap4/mMp8+6LsCqSeGkiIInCiKiVkgNNl2B3dc5MOmCto9IGZ0c814Og8DEPfxXmqkxz/LQ=
+	t=1747037283; cv=none; b=L++g5scJZs1qni1ZYKj9v1f4FIlQoW1sMmtDP5ugycT35HB0ELrpaPUbixHV0juABJISqkRdekGMPGLJSvsOUtHg2YvnZ9j+PqaX1RRMkT1yhuKRHDWFvsWvRuY2YXkoWRwRSdrcqTU5uCI1EFqZsfgiRJUvpqRCy9yi6iuw5mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747037465; c=relaxed/simple;
-	bh=9Wo1EwJxutD9p3npSM18IZGR8PNKr7fkce/EAjiUTQo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W8PAleS703vSs2IGt26wm1k/U18OOPq6HUxGckRmkvuYcfgFzVK38362+1G0X91esXzSxNE0bfVpUM1+R+2qFZsMBCNu69Xd4DBRP4r/TWXyJaaesQTk7CLLwatzZYVnwGPfbLGnTuS7xOBhHwh8YfnWZCUPsKNu0F2Svaw/10E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Zwscv1Lntz6M4gh;
-	Mon, 12 May 2025 16:06:23 +0800 (CST)
-Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id BE8E41402F4;
-	Mon, 12 May 2025 16:11:01 +0800 (CST)
-Received: from a2303103017.china.huawei.com (10.47.30.10) by
- frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 12 May 2025 10:11:00 +0200
-From: Alireza Sanaee <alireza.sanaee@huawei.com>
-To: <devicetree@vger.kernel.org>
-CC: <robh@kernel.org>, <alireza.sanaee@huawei.com>,
-	<jonathan.cameron@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<mark.rutland@arm.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<krzk@kernel.org>, <dianders@chromium.org>, <catalin.marinas@arm.com>,
-	<suzuki.poulose@arm.com>, <mike.leach@linaro.org>, <james.clark@linaro.org>,
-	<linux-perf-users@vger.kernel.org>, <coresight@lists.linaro.org>,
-	<gshan@redhat.com>, <ruanjinjie@huawei.com>, <saravanak@google.com>
-Subject: [PATCH v3 7/7] of: of_cpu_phandle_to_id to support SMT threads
-Date: Mon, 12 May 2025 09:07:15 +0100
-Message-ID: <20250512080715.82-8-alireza.sanaee@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250512080715.82-1-alireza.sanaee@huawei.com>
-References: <20250512080715.82-1-alireza.sanaee@huawei.com>
+	s=arc-20240116; t=1747037283; c=relaxed/simple;
+	bh=A2stEFFTyjCo1kwOBEy50M2t1+vj64LTf8/SATGT/5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eMBupjwqaOPYEcV05jSZslpKkO+/e5XSonhDWtyRPhtDLd41eukcHzTWAJdirU2xpXcl4PyCQHAHfMHsl8GynCi5IIdxhxcBYFc13QyBIxLGttGn5gOgQAVMroIaC2iWy6PzkknQ3EJcp7oHpyPzAovGsnGGYrvNy8BTbruQDlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XfcpP+8u; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747037276;
+	bh=eDk/RBPxp7qiD91+5iU7Pf/RaVAHsmLMufawATiRJ9M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XfcpP+8uvTFT9MKgwaHhvtTiEOiLlsmUNyIZ4AsgAL8+/slpQxUSUgb3jkmnMZXnG
+	 CnbpjbVTS/WGcWKRO0uywjrezEs7GUC5Jz9i8/YLOc+ky82qXnHkZg/pFYhkrRc7UG
+	 TTMVEyPdVfWe/wFHtHS0G4SF6/U2BfcubS/EUNjWLcFChXLqRGkq43IFSDtC6AC79m
+	 UalwWjhQH92efmw6ytzejKr7tLOAWo+YQf1VEWa2l3HkIxCKq++8en50MeyCH2fnA0
+	 A2WY7P3k41trmTLc/xd/OBkWfIXa7CjI1ULkMOhjFgqwtGgY/ESp7C9Vl3v2soflvc
+	 0BnPWNdNgRnwg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zwsfh1CnNz4wbr;
+	Mon, 12 May 2025 18:07:55 +1000 (AEST)
+Date: Mon, 12 May 2025 18:07:53 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the cgroup tree
+Message-ID: <20250512180753.2e6a5249@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500003.china.huawei.com (7.182.85.28)
+Content-Type: multipart/signed; boundary="Sig_/=GX3OkrjU5kcXB7.2hO8KI/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Enhance the API to support SMT threads, this will allow sharing
-resources among multiple SMT threads.
+--Sig_/=GX3OkrjU5kcXB7.2hO8KI/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Enabled the sharing of resources, such as L1 Cache and clocks, between
-SMT threads. It introduces a fix that uses thread IDs to match each CPU
-thread in the register array within the cpu-node. This ensures that the
-cpu-map or any driver relying on this API is fine even when SMT threads
-share resources.
+Hi all,
 
-Additionally, I have tested this for CPU based on the discussions in
-[1], I adopted the new cpu-map layout, where the first parameter is a
-phandle and the second is the local thread index, as shown below:
+The following commit is also in the vfs-bauner tree as a different commit
+(but the same patch):
 
-    core0 {
-      thread0 {
-        cpu = <&cpu0 0>;
-      };
-      thread1 {
-        cpu = <&cpu0 1>;
-      };
-    };
+  c8e7e056366a ("include/cgroup: separate {get,put}_cgroup_ns no-op case")
 
-Also, there are devices such as below that are a bit different.
+This is comit
 
-    arm_dsu@0 {
-      compatible = "arm,dsu";
-      cpus = <&cpu0 &cpu1 &cpu2 &cpu3>;
-    }
+  79fb8d8d93e4 ("include/cgroup: separate {get,put}_cgroup_ns no-op case")
 
-In these cases, we can also point to a CPU thread as well like the
-following:
+in the vfs-brauner tree.
 
-    arm_dsu@0 {
-      compatible = "arm,dsu";
-        cpus = <&cpu0 5 &cpu1 9 &cpu2 1 &cpu3 0>;
-    }
+--=20
+Cheers,
+Stephen Rothwell
 
-It should be possible to know how many arguments a phandle might
-require, and this information is encoded in another variable in the dt
-called #cpu-cells in cpu node.
+--Sig_/=GX3OkrjU5kcXB7.2hO8KI/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+-----BEGIN PGP SIGNATURE-----
 
-[1] https://lore.kernel.org/devicetree-spec/CAL_JsqK1yqRLD9B+G7UUp=D8K++mXHq0Rmv=1i6DL_jXyZwXAw@mail.gmail.com/
----
- drivers/of/cpu.c | 41 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 33 insertions(+), 8 deletions(-)
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmghrFkACgkQAVBC80lX
+0Gy6bQf4/kA/eyiH/NaEpHpOfGljoUEGVqAmftNbnF1kauB6U4MVJWctwR8UkDwN
+GMjj8UucTMMinfZIYqe1yTsAM/xHMSzKSesHO2dyEI23xF+sJVXSicWY6FG3QLOB
+sV+bKuCfBjAqulwuom/Rgzo9YssmZryCdI8E6onrtVyIYVwLbxYqmLpDICMvLllK
+mxjkEfGpXp46HJbfMgfJV6VCmP/k8Lj+6staT69LjO1rufTbwDW4QWBlvVlVCj9u
+TXyjhhFNzHXDurc+1AxoZ0TeDDg1pn+GdC9EiHMfg+bbTC8YTkd0X2ePEfmF8/Oh
++InS1+TBF5DhW6gwW4a7uv8RLJoN
+=db6c
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/of/cpu.c b/drivers/of/cpu.c
-index fba17994fc20..cf54ef47f029 100644
---- a/drivers/of/cpu.c
-+++ b/drivers/of/cpu.c
-@@ -189,16 +189,41 @@ int of_cpu_phandle_to_id(const struct device_node *node,
- 			 struct device_node **cpu_np,
- 			 uint8_t cpu_idx)
- {
-+	bool found = false;
-+	int cpu, ret = -1, i, j;
-+	uint32_t local_thread, thread_index;
-+	struct device_node *np;
-+	struct of_phandle_args args;
-+	static const char * const phandle_names[] = { "cpus", "cpu" };
-+	static const char * const cpu_cells[] = { "#cpu-cells", NULL };
-+
- 	if (!node)
--		return -1;
-+		return ret;
- 
--	*cpu_np = of_parse_phandle(node, "cpu", 0);
--	if (!*cpu_np)
--		*cpu_np = of_parse_phandle(node, "cpus", cpu_idx);
--			if (!*cpu_np)
--				return -ENODEV;
-+	for (i = 0; i < ARRAY_SIZE(phandle_names); i++) {
-+		for (j = 0; j < ARRAY_SIZE(cpu_cells); j++) {
-+			ret = of_parse_phandle_with_args(node, phandle_names[i],
-+							 cpu_cells[j], cpu_idx,
-+							 &args);
-+				if (ret >= 0)
-+					goto success;
-+		}
-+	}
- 
--	return of_cpu_node_to_id(*cpu_np);
-+	if (ret < 0)
-+		return ret;
-+success:
-+	*cpu_np = args.np;
-+	thread_index = args.args_count == 1 ? args.args[0] : 0;
-+	for_each_possible_cpu(cpu) {
-+		np = of_get_cpu_node(cpu, &local_thread);
-+		found = (*cpu_np == np) && (local_thread == thread_index);
-+		of_node_put(np);
-+		if (found)
-+			return cpu;
-+	}
-+
-+	return -ENODEV;
- }
- EXPORT_SYMBOL(of_cpu_phandle_to_id);
- 
-@@ -206,7 +231,7 @@ EXPORT_SYMBOL(of_cpu_phandle_to_id);
-  * of_get_cpu_state_node - Get CPU's idle state node at the given index
-  *
-  * @cpu_node: The device node for the CPU
-- * @index: The index in the list of the idle states
-+g* @index: The index in the list of the idle states
-  *
-  * Two generic methods can be used to describe a CPU's idle states, either via
-  * a flattened description through the "cpu-idle-states" binding or via the
--- 
-2.34.1
-
+--Sig_/=GX3OkrjU5kcXB7.2hO8KI/--
 
