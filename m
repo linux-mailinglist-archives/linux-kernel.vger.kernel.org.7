@@ -1,249 +1,299 @@
-Return-Path: <linux-kernel+bounces-644634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88D7AB4089
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776C7AB40A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6E819E7BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20C5461E2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A38255E52;
-	Mon, 12 May 2025 17:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1DF296FA5;
+	Mon, 12 May 2025 17:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iqgBv6dt"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2076.outbound.protection.outlook.com [40.107.212.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FatTnEMw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C01293B6B;
-	Mon, 12 May 2025 17:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747072516; cv=fail; b=bGbf27EdVYDkg9BOxdgstU7uZuOzPOSjkyU1H1kiCR5Hbo3SEaKrk2yaZV9G9vJrWn++TfWUhxv2U67NWB8bwDbkjwvvudaQQDUTO3ikq0/1QqJeJXdSUnXFyyXFjpyJ82s04ObkZmhQu7xlzpew+ijWBmRxKSjKNSr4MOBkzPQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747072516; c=relaxed/simple;
-	bh=4uVeOToRLCZEkPdISine1Sf16N82QVRYxEcpjNJxHmA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KUIBQ1yjKJ3A0GCaZSjYlA3dPtMA7NYz0C5HeoJ/ZmaZTimaeb34QCVUFx0Y6TDfEoBCrIkExmFBIyJmLOjXqYACkPINvtr5KhHWzJE8rygFXEukOiMOV4vcN4b70mZxYeNNK24pl03I7yemi2qEoSpb4UyQI2T4bf14zxv4LoM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iqgBv6dt; arc=fail smtp.client-ip=40.107.212.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gFHOUKauBkLxUNX4N8Pu+iQffA+ifojTTM62mE6ObCkVu9pV6SmoRNA5a4WtcaHG7iBqZjkpGcxFKSh26BfKtWqa+sZXqDoxNfVJFe/JFby6zsxtxiBXNJwrU96jaEFme2taisJkNB83ZOS9LXvueoPgDZ22pT5z3b+gz34G719T+3nnNkJg+2f/y4xJrRPwiVxSxreBiyNhBMoMfqExC6zBA4jtiquQJZuK88I7RHbjoCD2zaXsIikhf5YvZ18EQ9gs9rG6/l1fqdbq4+Si4aWpPjUqkQQtRj3UseWuRvreXN6q9eyD0ypTRRgYJ4YXGC+yNO8jVVC5S9qadT74DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=elPcZdZfS9OrQbw+vpB0Es+p5EncP7w+9Ihnqv+snQg=;
- b=mhh+NDJvMD+LwG5pm3t/RSu97137XvR2kPKZAHo9hnyL2d3aQkmTM0VQxjrYL23IcNWSEEmLpzijb8JO2A+KKT2Crwt+sWMSe0ymEhvHywZudbBvnvnfuNZH5oAKMlEZ5bTAJNSrSlIeBHbtY5UHn+Qj5GrmXtH3jZ6JBDXB5EQmaWJZO408+uas4m6sC+9o+yiAu3niOtV3qjyLnhZNWFoD2KXO3YjNijyV4wME4B6VXSZzyZZnX+e/rkmLE9PbND93rgZ7GxEvQA8gXsFdty2kw982k741MaHqgheuQh1oTuo1QkJ2UOA4A/Tjuh51zKNWHNEPYu6z717iSBE7Lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=elPcZdZfS9OrQbw+vpB0Es+p5EncP7w+9Ihnqv+snQg=;
- b=iqgBv6dt0HjlahY8HJWDDG0es9Pp9wXVt0CNi3jfIR3httjpwp35N01DtOZmc1YzbRz+a8W0GnkRVEBjEVXazWH5UoIq+RAKmo4T1vOz8Kq9PyLcJm6jVyz7h4qFk09Bkc6Yh1AktMc9UnR7GW3yhMR+/ro4sqmVaekp1x9PuUI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6395.namprd12.prod.outlook.com (2603:10b6:510:1fd::14)
- by DM6PR12MB4481.namprd12.prod.outlook.com (2603:10b6:5:2af::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Mon, 12 May
- 2025 17:55:11 +0000
-Received: from PH7PR12MB6395.namprd12.prod.outlook.com
- ([fe80::5a9e:cee7:496:6421]) by PH7PR12MB6395.namprd12.prod.outlook.com
- ([fe80::5a9e:cee7:496:6421%4]) with mapi id 15.20.8722.024; Mon, 12 May 2025
- 17:55:11 +0000
-Message-ID: <8c89410b-80f2-47ad-97fd-6ac10752c040@amd.com>
-Date: Mon, 12 May 2025 23:25:02 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: spi_amd: Add HIDDMA basic write support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: kernel test robot <lkp@intel.com>, broonie@kernel.org,
- oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Krishnamoorthi M <krishnamoorthi.m@amd.com>,
- Akshata MukundShetty <akshata.mukundshetty@amd.com>
-References: <20250509181737.997167-1-Raju.Rangoju@amd.com>
- <202505110641.zLT16Dv7-lkp@intel.com>
- <e84f5483-a203-4095-82cd-23fa94c87700@amd.com>
- <CAMuHMdUAE2umYggDdBjYZJY2-mYwim=P_=4Q00k9b8gB1tNY+Q@mail.gmail.com>
-Content-Language: en-US
-From: "Rangoju, Raju" <raju.rangoju@amd.com>
-In-Reply-To: <CAMuHMdUAE2umYggDdBjYZJY2-mYwim=P_=4Q00k9b8gB1tNY+Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2P287CA0002.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:21b::10) To PH7PR12MB6395.namprd12.prod.outlook.com
- (2603:10b6:510:1fd::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C429E25742B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747072567; cv=none; b=rsYc7KT1d+YzCfqVX5HZ9G5CEEJHwXk42m+VuTfL2dmkAqwW+mEqsAfjPwMsFPVsi0NPn5Cwn5zPFAp+NhoZdRxZxaKOQdC80QDnxIggRYhgesV/N51eeIT7+3msrKhR5R9PyDCXuf3yeWeoYM9XOBWkiN8JXOkMcOsDWRnWap4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747072567; c=relaxed/simple;
+	bh=+PM1XQX5taXMEXVfyMIOxtzRaXVApXcjBUSbRi9fomA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jdxqqFgLBM3ecAIHhCezg7vDl/3AKsBYukSlB+gVy6tKt5GqMDHKXPt/Oc7nZbu1zii0qdO82U3mjYyt0LEOMSPn5kXCn6/SAnj0HzREsdhH6uL5Q6DlnapwMJcQ6BJTCbY7nWVj+iizyxIRkGvoeOxWNyDbzHdm4cl0v9zVIjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FatTnEMw; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747072565; x=1778608565;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+PM1XQX5taXMEXVfyMIOxtzRaXVApXcjBUSbRi9fomA=;
+  b=FatTnEMwOb4VINczR7biZ1kwNJQVDa+qLCnF8HeXf5KP9KD6acxU6/YK
+   k6JCAbaSZqbodCOfjHlZD6Z+LtzgYSzBzWC75f5tEz5mZkGPqe/bq51tn
+   ACUVCaoOQsSoYrDW50iDIXMV/0JPmSLzdYh12PkymiopgqpFyh85CykGk
+   3xqdleEpUulB6HeOEcIXFyyAAcXY3uwIfwCJUcjrr65i5zQJeTvl/P69Y
+   Zby19jbnqVfojmouCdTybeSccNho1VRofJggd1EJ4u/DTMT+7UEZbc8Jj
+   9qdxSVfyvQymWn9wbmjlnvdd/6TCf5azX7DP9cXnsqyG8bDGvTQhmGTPS
+   A==;
+X-CSE-ConnectionGUID: 9gRZyJrWT8SCkLE32pYtLA==
+X-CSE-MsgGUID: tJLrVPFATyiddBLLzI64zg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="59520624"
+X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
+   d="scan'208";a="59520624"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 10:56:04 -0700
+X-CSE-ConnectionGUID: mckp73vBSTeP8KmWKuZMJQ==
+X-CSE-MsgGUID: rIKCmK7zThq2uC4zZTUqlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
+   d="scan'208";a="137909193"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa010.fm.intel.com with ESMTP; 12 May 2025 10:56:03 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Subject: [RFC PATCH] perf/x86/intel: Add a check for dynamic constraints
+Date: Mon, 12 May 2025 10:55:42 -0700
+Message-Id: <20250512175542.2000708-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6395:EE_|DM6PR12MB4481:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f130003-28d4-442d-326e-08dd917e23f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aTc4dDdBTndOei9JQmRaK0FFQm5oZ1YyeFVGQVJpTE5UTkR3azJFRUNUYXZE?=
- =?utf-8?B?NVVpWmlnN3dENVNwdTdhNUtsUmdGWlpVYWlYNWpIeXpXUysvbnltYkpuZHk4?=
- =?utf-8?B?MjhPUWQyMVZuVlZHOXYvVzRjTVU4TzZYM1N1TjVsQmJNOWxsSUVRMmhqeU0v?=
- =?utf-8?B?KzZ4V0VXUzVDWTZOVStVaDBRV245L2dtL25BTnA0YlpwNWlnVDkxdFo2eGYz?=
- =?utf-8?B?VXpoR2N6aTRoNTZnZVpYWDMvMGhEdHZOekZYRVlld253SjFuVWdsWU9rcDVN?=
- =?utf-8?B?amhaOGxDR1hJSXRBaVlGMGNkdVZLbk1RKzBEcC9qTEVtUU5KY01tcWRwT3o2?=
- =?utf-8?B?bmFLNm5nWnVDdFAvSFJHd1hBbldldXhrVjQ1TnBRc0VBRmZkTGpyVEFnVHVm?=
- =?utf-8?B?QXRybzJCTHJrdXgwQWVWcFlHNGRYMTN6OVhuRkFTWmZBQkQ3RGNaa0Z4SXlw?=
- =?utf-8?B?dS9OUW0xL25Hb3hScnJlakw0WXZ1aHRqU2VjemlUNUJ2N0tKV3F0ZjE2eUFK?=
- =?utf-8?B?N1o0UlZ4ZHZzMXdlVm1maXpUNUxIMmlaKzBObDVTY3Q3NTgzU1IxN1I0bnhW?=
- =?utf-8?B?SW9TTHJpMWJaVWltbHo2QUNyNWdsSFM4YlhOZWhQTWFzNWZrUklhaG5nczFN?=
- =?utf-8?B?L2xUcXUyVTVNMWI2Wlc2b3lmMzIrL3FLcXB3WDRuMmc0TUdkQ0ZiZ1Q2MFR6?=
- =?utf-8?B?ZmMwRjEwUFgyTFJ1a1NpSStiZmlQM0xaenkxZ2dJWTIyV0x0M0pwakNNYVk1?=
- =?utf-8?B?ZE4wTjRIMC84V2lVWHA0MzJyWldCSUZxaE82V3ZMY1NVWlRqMmszeStDVFRV?=
- =?utf-8?B?SzNTNVg4WkE2cXBGdGkrb2VQZW93WDhmWFhXN2hHYURzb3B0ejFpbXE4dldP?=
- =?utf-8?B?MkpyTytpcXNqWWhUYUdNQzVhSUg3VURwdWdEL1ZISUs5aW0xVGppYTRDMUl1?=
- =?utf-8?B?QnhYUEl5SHU5bWhRRCtPZmhKc1k3eTBVVnAzaHNqd2l1ZGdJb1FDampNVlp4?=
- =?utf-8?B?a1M2enBDRUNLc0ZLYXVKMXZ1UmFFNCtpME90L05LcWgyZDl6T0kxQ3JwZFpR?=
- =?utf-8?B?THp6U1VkZlFTRmNnOUs4eXZoOXFLQUZyQjkzRGNiSjZNblBoeXpoYzhRc3Rn?=
- =?utf-8?B?cldpdE1NNVJwY3V5ZlhzQld2UjdxaEpVM3o0LzZucDhUcjI3RDJsWDdENHpF?=
- =?utf-8?B?RHlLQ0lzaG1CWlRNQmx4a05ITnBvSk84WUd6eXlaNXgzS3Y0YUFIZ05VT0VW?=
- =?utf-8?B?bDVqWmFJNUV1SndJVE9RSkVuRSswUmRPNXluelVPcWFtMEVvTW8yekcvaElX?=
- =?utf-8?B?Umhhd2N3S1BORzFUOGRNdjliWlgyRFFQUmtrLzQ0d3ByZU02cEJadFpSUHF2?=
- =?utf-8?B?WTVzQXpxbGF4UTlaTGpjZ3pUU1NxRDFPZ2VuN04xdk1kaC80MDNFdnp2ZThE?=
- =?utf-8?B?YzdZamdrTzh1dWZXWWl1T0l0SG9LZ1Z5d3ZzTERWYVUyWkUwQkRwNmFqaTkz?=
- =?utf-8?B?WXRheFdaUzFUMW9pNTh2MUZqeE91eWxBd0Z4YmlQN0hneHFEbEdnbldNcHVW?=
- =?utf-8?B?Qnh2QUhXK1RLYUM1TWhaYWxIZlgwMDVOVnJZenlDcFc4Z1ZxaDZJS1pyc05s?=
- =?utf-8?B?SHZVOFlOQ1ZuV1pka2NEdDJubzJ1R0xHbkF1d0wyS2lIY2xQamp6NTZidFgw?=
- =?utf-8?B?cGVnWXdraVVmdDNGdWdnNUV6T0JOZmVsUXVIRzhncVpicDY4eXlROGs2UzJM?=
- =?utf-8?B?VTVVL0w3MHN6V0NCTTdEK21iYlcybkg3RS9BSnZmZGtTV3dQY0RkekhnVFZt?=
- =?utf-8?B?ME8yYS9pMDA2TlFsK0NEY0RnQVBuUjRPM0w2ZE9Wa0VMRzlHblo4TDBOSlpE?=
- =?utf-8?Q?q1dhrDYTuViFe?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6395.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aEpWSW12WE1jaXV3UWdEQklqeTVHR2JPNjgxdWQ1R1pDNmdQT2x0RjZKRHYv?=
- =?utf-8?B?cW0zUFlOcktvb1NXWHRNMVdTb0xvUFVYUXI0NFdqY2tlTEcrNnV0WTdPR3F6?=
- =?utf-8?B?TmVXWDg0Rk1HQlJTMFdNU1hBYWcrNGFrNm0xN0RIWDhhcndGSkZaZzJOdmEr?=
- =?utf-8?B?QWVlNTFnK0xaaTZWWmx4R0RsdFk1d1kyNlJYdDIrUlJwRTZ3czBLazhINVA4?=
- =?utf-8?B?RGdKaWtaRVNRbVl2SjhwN2NidGRxWXFUdTZvN0xGbGJvbFhVQXJ6dTE3SHNm?=
- =?utf-8?B?anpWeUNTRnlJR2RvVDJGNXFwQlpxTFZpemduWDhkR0dsWm1aRlBOb0M3SmtQ?=
- =?utf-8?B?ODNXVU9VRlRTOGN3TlVPVCtOMXpoQ3dlNjc4YkVIRHVHMUpsMHp0K0szWGdK?=
- =?utf-8?B?Z0pGUHMwV1JGOW1hMTBOTE10ajhpL3pGQS83d05aL1JQWUV4dzQvVG5vTWVw?=
- =?utf-8?B?a0FHbWFkak9DbnppUEpzTDZnMllzeTdDUDAzbCtWb1RMc0pBZmhVVE93R3dR?=
- =?utf-8?B?Tmg4Q2JYWktYYnNyRUNvbTFvOGFjUkVDbFhPaWhRa3NPTlRqWEIxU0ptV1BW?=
- =?utf-8?B?REV4OWI3cHlOU2ltU0RvR1NVYXl3YWtqN1pWcmxjd1MwejBOT1dBSG4xNnNu?=
- =?utf-8?B?WDVkZzJKQTJocHRsSUI3OStUeTBKVWNZYWo0b1diU05tOHplbXRVRldiS0tR?=
- =?utf-8?B?SUw3WDRYYWorSXIzUTljUE5KeFozaTVOR1JmMVBCVHh6RlQ1SmVzOTlvWFVT?=
- =?utf-8?B?OE1YTlZWbGRkdWpsZVdxNUc4MXF3Q3ZvQm9nQjhzVkxWbDR0bXArcGxTeWFw?=
- =?utf-8?B?UGRnZEVidm8ya2NLSUNjL2lYWitqd0FSOGVBNS9vUjdwQ0d2WjQ2Vmt5a1Zy?=
- =?utf-8?B?RU9yYS9FRDBMZzE4QnpkUWxoYnhPUlFkM0JXcXF6VExLQjUrcU1UazI1V3Mv?=
- =?utf-8?B?YWR4a3hnZy8vMERiWDBSQmRuYXF4U3lPYWx5alFxbElhanlndCtlT2JpQWRz?=
- =?utf-8?B?OWM3dW5pQ2lvTllwNlhqc2ZDRXZXWEU4S2dWWkdhRzVYejRGR0lVK1cxcFV6?=
- =?utf-8?B?NFZTTWxIUW5SdjdxN1VrK1AwU1RuOXBYVjhnMDZRVXlkb0k0UTl3ek5EU3JK?=
- =?utf-8?B?TGFJUXBGRFZTNFRpS2R4czRVQm1lRGlheXplQUprRWl5b2ttV2tiQzcxenlY?=
- =?utf-8?B?REVRRzhnMVhpaFg2RHgwQ2pDYkxIdTBBL2QvTGt1V3lobTdhajJpMERwT2dB?=
- =?utf-8?B?c0VLT04wTEkyOHA3SmtRVjd5TmxvbW5rMktPSUtuaTE5b1ZNT0JKT2VaZVN5?=
- =?utf-8?B?RkJzQzNsaE96WE1VY0ZMcjM0RFF3WUdzRFRJODJEMGVIa1hxWncyT0FYNity?=
- =?utf-8?B?VjFDTDhSalpzU2kzN2tOSldhSmVSTjk4Q1I0SFdZWk4rU2NHWlh2L2FVNkc4?=
- =?utf-8?B?V2IwV1owYzBENlZMaFVmL2tmN3Q0dWFMUGlhNWNkaVhmYkQ5SXo5ZkhOL2hX?=
- =?utf-8?B?RVNNM3JIeXpMMkxXZTdtTm15a3dxQzZEM0E1V3RoekVDS1JEejFQTytYL1pa?=
- =?utf-8?B?cmNNNEc0cUNSZmxSL2tlVlR0NFpVVnpBZ3JEZ2czVG9aUVdMMTloSUkySzY1?=
- =?utf-8?B?RExzODJHaDI3Z0lhU1pnTnIwNU9ZN05KWEh5eHZoREJLZC9SREF1Z0pjNkVH?=
- =?utf-8?B?SC9BOTVkNktKWDNrTXhxdTdlYS8weWdESkd5NGZqa3ZWNUlpalVrSjJuUU85?=
- =?utf-8?B?dy9ERk9KOG9mWElJQk55VG1Ib2o3Y25GSURxQ2t4L3hqKzBPZWQrZVFsMkJG?=
- =?utf-8?B?VmtmbW1URmNNREprUXRZNmlEc0ZzcnNpV1dSUUJycXJHTmRHcklNRUxVSkhr?=
- =?utf-8?B?YUlYSU16VitaQzZOTWFUSnU3SWhMYk5JZXk3ajBsSEVTbVJianpOSGZGc3hi?=
- =?utf-8?B?K0JUTkowOXk4ZTVsU0NBdDlSN2RYSnBFbjZRZ2xQV25wT1NsaEo3bEI1WnRO?=
- =?utf-8?B?OFdablFkeXJZUjFxSTlSaXcwR0Fza3NBSGpVSjNud1ZZN25yZzU4ZHBVQ2Vh?=
- =?utf-8?B?ckhuaDdZTmtpVC9LOXRIeW85ZW5SSjgvZWRYRk9HdG5yQ0JHSHhxNnROY0JB?=
- =?utf-8?Q?WTIBW4oL6o7SBWYAdWkjiWNfY?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f130003-28d4-442d-326e-08dd917e23f2
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6395.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 17:55:11.5175
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GPbM70/JrEzaH2Ei/oltcErDO7IuuNzcPyzLkWaL5NT6QgLCj7E0QIkkqykQysFL8rqTnRRZKsWIxtZ4VHtZyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4481
+Content-Transfer-Encoding: 8bit
 
+From: Kan Liang <kan.liang@linux.intel.com>
 
+The current event scheduler has a limit. If the counter constraint of an
+event is not a subset of any other counter constraint with an equal or
+higher weight. The counters may not be fully utilized.
 
-On 5/12/2025 7:47 PM, Geert Uytterhoeven wrote:
-> Hi Rangoju,
-> 
-> On Mon, 12 May 2025 at 09:29, Rangoju, Raju <raju.rangoju@amd.com> wrote:
->> On 5/11/2025 3:51 AM, kernel test robot wrote:
->>> kernel test robot noticed the following build warnings:
->>>
->>> [auto build test WARNING on v6.15-rc5]
->>> [also build test WARNING on linus/master]
->>> [cannot apply to broonie-spi/for-next next-20250509]
->>> [If your patch is applied to the wrong git tree, kindly drop us a note.
->>> And when submitting patch, we suggest to use '--base' as documented in
->>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>>
->>> url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Rangoju/spi-spi_amd-Add-HIDDMA-basic-write-support/20250510-021954
->>> base:   v6.15-rc5
->>> patch link:    https://lore.kernel.org/r/20250509181737.997167-1-Raju.Rangoju%40amd.com
->>> patch subject: [PATCH] spi: spi_amd: Add HIDDMA basic write support
->>> config: m68k-randconfig-r111-20250511 (https://download.01.org/0day-ci/archive/20250511/202505110641.zLT16Dv7-lkp@intel.com/config)
->>> compiler: m68k-linux-gcc (GCC) 14.2.0
->>
->> Thanks for reporting this. We do not support m68k.
-> 
-> All write[bwlq]() functions take a volatile void __iomem pointer
-> (https://elixir.bootlin.com/linux/v6.14.6/source/include/asm-generic/io.h#L174)
-> while you are passing a void *, so sparse should complain about this
-> on all architectures.  
+To workaround it, the commit bc1738f6ee83 ("perf, x86: Fix event
+scheduler for constraints with overlapping counters") introduced an
+overlap flag, which is hardcoded to the event constraint that may
+trigger the limit. It only works for static constraints.
 
-My bad, with the following flags included, sparse now complains this on 
-all architectures.
+Many features on and after Intel PMON v6 require dynamic constraints. An
+event constraint is decided by both static and dynamic constraints at
+runtime. See commit 4dfe3232cc04 ("perf/x86: Add dynamic constraint").
+The dynamic constraints are from CPUID enumeration. It's impossible to
+hardcode it in advance. It's not practical to set the overlap flag to all
+events. It's harmful to the scheduler.
 
--fmax-errors=unlimited -fmax-warnings=unlimited
+For the existing Intel platforms, the dynamic constraints don't trigger
+the limit. A real fix is not required.
 
-And sparse is right, this driver is using MMIO
-> accessors on allocated DMA memory, which is just plain wrong:
-> 
->      amd_spi->dma_virt_addr = dma_alloc_coherent(dev, AMD_SPI_HID2_DMA_SIZE,
->              &amd_spi->phy_dma_buf, GFP_KERNEL);
-> 
->       for (i = 0; left_data >= 8; i++, left_data -= 8)
->              *buf_64++ = readq((u8 __iomem *)amd_spi->dma_virt_addr + (i * 8));
-> 
->> Will re-spin v2 with necessary changes in Kconfig.
-> 
-> Please fix the real issue instead ;-)
+However, for virtualization, VMM may give a weird CPUID enumeration to a
+guest. It's impossible to indicate what the weird enumeration is. A
+check is introduced, which can list the possible breaks if a weird
+enumeration is used.
 
-We are using read*/write* calls instead of memcpy to copy data to/from 
-DMA memory due to performance concerns, as we observed better throughput 
-during continuous read/write compared to the memcpy functions.
+Check the dynamic constraints enumerated for normal, branch counters
+logging, and auto-counter reload.
+Check both PEBS and non-PEBS constratins.
 
-Additionally, the DMA operations are entirely handled by the hardware, 
-and the software's role is limited to copying data to the DMA buffer.
+Closes: https://lore.kernel.org/lkml/20250416195610.GC38216@noisy.programming.kicks-ass.net/
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c | 156 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 148 insertions(+), 8 deletions(-)
 
-> 
->>> reproduce: (https://download.01.org/0day-ci/archive/20250511/202505110641.zLT16Dv7-lkp@intel.com/reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202505110641.zLT16Dv7-lkp@intel.com/
->>>
->>> sparse warnings: (new ones prefixed by >>)
->>>>> drivers/spi/spi-amd.c:594:57: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
->>>      drivers/spi/spi-amd.c:594:57: sparse:     expected void volatile [noderef] __iomem *addr
->>>      drivers/spi/spi-amd.c:594:57: sparse:     got void *
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 3a319cf6d364..5928523dc96f 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -5257,6 +5257,151 @@ static void intel_pmu_check_event_constraints(struct event_constraint *event_con
+ 					      u64 fixed_cntr_mask,
+ 					      u64 intel_ctrl);
+ 
++enum dyn_constr_type {
++	DYN_CONSTR_NONE,
++	DYN_CONSTR_BR_CNTR,
++	DYN_CONSTR_ACR_CNTR,
++	DYN_CONSTR_ACR_CAUSE,
++
++	DYN_CONSTR_MAX,
++};
++
++static const char * const dyn_constr_type_name[] = {
++	[DYN_CONSTR_NONE] = "a normal event",
++	[DYN_CONSTR_BR_CNTR] = "a branch counter logging event",
++	[DYN_CONSTR_ACR_CNTR] = "an auto-counter reload event",
++	[DYN_CONSTR_ACR_CAUSE] = "an auto-counter reload cause event",
++};
++
++static void __intel_pmu_check_dyn_constr(struct event_constraint *constr,
++					 enum dyn_constr_type type, u64 mask)
++{
++	struct event_constraint *c1, *c2;
++	int new_weight, check_weight;
++	u64 new_mask, check_mask;
++
++	for_each_event_constraint(c1, constr) {
++		new_mask = c1->idxmsk64 & mask;
++		new_weight = hweight64(new_mask);
++
++		/* ignore topdown perf metrics event */
++		if (c1->idxmsk64 & INTEL_PMC_MSK_TOPDOWN)
++			continue;
++
++		if (!new_weight && fls64(c1->idxmsk64) < INTEL_PMC_IDX_FIXED) {
++			pr_info("The event 0x%llx is not supported as %s.\n",
++				c1->code, dyn_constr_type_name[type]);
++		}
++
++		if (new_weight <= 1)
++			continue;
++
++		for_each_event_constraint(c2, c1 + 1) {
++			bool check_fail = false;
++
++			check_mask = c2->idxmsk64 & mask;
++			check_weight = hweight64(check_mask);
++
++			if (c2->idxmsk64 & INTEL_PMC_MSK_TOPDOWN ||
++			    !check_weight)
++				continue;
++
++			/* The same constraints or no overlap */
++			if (new_mask == check_mask ||
++			    (new_mask ^ check_mask) == (new_mask | check_mask))
++				continue;
++
++			/*
++			 * A scheduler issue may be triggered in the following cases.
++			 * - Two overlap constraints have the same weight.
++			 *   E.g., A constraints: 0x3, B constraints: 0x6
++			 *   event	counter		failure case
++			 *   B		PMC[2:1]	1
++			 *   A		PMC[1:0]	0
++			 *   A		PMC[1:0]	FAIL
++			 * - Two overlap constraints have different weight.
++			 *   The constraint has a low weight, but has high last bit.
++			 *   E.g., A constraints: 0x7, B constraints: 0xC
++			 *   event	counter		failure case
++			 *   B		PMC[3:2]	2
++			 *   A		PMC[2:0]	0
++			 *   A		PMC[2:0]	1
++			 *   A		PMC[2:0]	FAIL
++			 */
++			if (new_weight == check_weight) {
++				check_fail = true;
++			} else if (new_weight < check_weight) {
++				if ((new_mask | check_mask) != check_mask &&
++				    fls64(new_mask) > fls64(check_mask))
++					check_fail = true;
++			} else {
++				if ((new_mask | check_mask) != new_mask &&
++				    fls64(new_mask) < fls64(check_mask))
++					check_fail = true;
++			}
++
++			if (check_fail) {
++				pr_info("The two events 0x%llx and 0x%llx may not be "
++					"fully scheduled under some circumstances as "
++					"%s.\n",
++					c1->code, c2->code, dyn_constr_type_name[type]);
++			}
++		}
++	}
++}
++
++static void intel_pmu_check_dyn_constr(struct pmu *pmu,
++				       struct event_constraint *constr,
++				       u64 cntr_mask)
++{
++	enum dyn_constr_type i;
++	u64 mask;
++
++	for (i = DYN_CONSTR_NONE; i < DYN_CONSTR_MAX; i++) {
++		mask = 0;
++		switch (i) {
++		case DYN_CONSTR_NONE:
++			mask = cntr_mask;
++			break;
++		case DYN_CONSTR_BR_CNTR:
++			if (x86_pmu.flags & PMU_FL_BR_CNTR)
++				mask = x86_pmu.lbr_counters;
++			break;
++		case DYN_CONSTR_ACR_CNTR:
++			mask = hybrid(pmu, acr_cntr_mask64) & GENMASK_ULL(INTEL_PMC_MAX_GENERIC - 1, 0);
++			break;
++		case DYN_CONSTR_ACR_CAUSE:
++			if (hybrid(pmu, acr_cntr_mask64) == hybrid(pmu, acr_cause_mask64))
++				continue;
++			mask = hybrid(pmu, acr_cause_mask64) & GENMASK_ULL(INTEL_PMC_MAX_GENERIC - 1, 0);
++			break;
++		default:
++			pr_warn("Unsupported dynamic constraint type %d\n", i);
++		}
++
++		if (mask)
++			__intel_pmu_check_dyn_constr(constr, i, mask);
++	}
++}
++
++static void intel_pmu_check_event_constraints_all(struct pmu *pmu)
++{
++	struct event_constraint *event_constraints = hybrid(pmu, event_constraints);
++	struct event_constraint *pebs_constraints = hybrid(pmu, pebs_constraints);
++	u64 cntr_mask = hybrid(pmu, cntr_mask64);
++	u64 fixed_cntr_mask = hybrid(pmu, fixed_cntr_mask64);
++	u64 intel_ctrl = hybrid(pmu, intel_ctrl);
++
++	intel_pmu_check_event_constraints(event_constraints, cntr_mask,
++					  fixed_cntr_mask, intel_ctrl);
++
++	if (event_constraints)
++		intel_pmu_check_dyn_constr(pmu, event_constraints, cntr_mask);
++
++	if (pebs_constraints)
++		intel_pmu_check_dyn_constr(pmu, pebs_constraints, cntr_mask);
++}
++
+ static void intel_pmu_check_extra_regs(struct extra_reg *extra_regs);
+ 
+ static inline bool intel_pmu_broken_perf_cap(void)
+@@ -5319,10 +5464,7 @@ static void intel_pmu_check_hybrid_pmus(struct x86_hybrid_pmu *pmu)
+ 	else
+ 		pmu->intel_ctrl &= ~(1ULL << GLOBAL_CTRL_EN_PERF_METRICS);
+ 
+-	intel_pmu_check_event_constraints(pmu->event_constraints,
+-					  pmu->cntr_mask64,
+-					  pmu->fixed_cntr_mask64,
+-					  pmu->intel_ctrl);
++	intel_pmu_check_event_constraints_all(&pmu->pmu);
+ 
+ 	intel_pmu_check_extra_regs(pmu->extra_regs);
+ }
+@@ -7734,10 +7876,8 @@ __init int intel_pmu_init(void)
+ 	if (x86_pmu.intel_cap.anythread_deprecated)
+ 		x86_pmu.format_attrs = intel_arch_formats_attr;
+ 
+-	intel_pmu_check_event_constraints(x86_pmu.event_constraints,
+-					  x86_pmu.cntr_mask64,
+-					  x86_pmu.fixed_cntr_mask64,
+-					  x86_pmu.intel_ctrl);
++	intel_pmu_check_event_constraints_all(NULL);
++
+ 	/*
+ 	 * Access LBR MSR may cause #GP under certain circumstances.
+ 	 * Check all LBR MSR here.
+-- 
+2.38.1
 
 
