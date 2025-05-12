@@ -1,220 +1,135 @@
-Return-Path: <linux-kernel+bounces-643759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B15CAB3180
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:23:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2884AB3185
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18E1D17230F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:23:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189AD3BCA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3293D258CC4;
-	Mon, 12 May 2025 08:23:32 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3467258CCA;
-	Mon, 12 May 2025 08:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B552586F6;
+	Mon, 12 May 2025 08:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mwE317VB"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC911258CC0
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 08:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747038211; cv=none; b=HATEQyXLfaRKFAXx49kUQZ+hf89pAogn1iqy7Uy8KGHRewwy91wwg/3JycGjEtIEkqgAGaGQwE8CbLGdC9+aELmUvd2qoj+4fHxV/baKIUmYOX0H89nojtMartWpUudrZxjah7yQgBDq6hPqPOHPajxnVLpd30I4lp2HEYGk2KM=
+	t=1747038246; cv=none; b=G/WL0Gm46WWwMct/3yfZzLBCa8WAfuSxO9aXr6NxvqEYR+v5PmVPnQzQ7Qmi8jmCCb1mIuO2TL/vMKtspVXTi2Z7aIrPeX8yMrocQjFRvDBi2QPhbPNdoJSuuOuum3LAQD5k7y7dX3RCO0GfcuCiMltgmQ8C7kK8BzmjigNMD6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747038211; c=relaxed/simple;
-	bh=1Z8x8vzMJPRdGcVco8GbYGcxczYtEYM3hxvfcdV4gTA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S3Q/1MBHUYzNyzJ/FcbLzivGgDSo+i2KlUCeciAtccu309YT5Lt5h5xPMyeUs4KQw7NvUMLsmuDzY4oV+dBStBs4nrZ5cJIWq87Wo27truwdPpZWHmso/mI/L/fqpuwJsMvYMOWwIEXGHGOYc93Vc5+5nEOjoRiaD1JTWIy4pYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-9f-6821affd1420
-From: Rakie Kim <rakie.kim@sk.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Rakie Kim <rakie.kim@sk.com>,
-	joshua.hahnjy@gmail.com,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	"Keith Busch" <kbusch@kernel.org>,
-	Jerome Glisse <jglisse@google.com>,
-	Gregory Price <gourry@gourry.net>
-Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in weighted interleave
-Date: Mon, 12 May 2025 17:23:14 +0900
-Message-ID: <20250512082320.274-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <20250509123131.0000051b@huawei.com>
-References: 
+	s=arc-20240116; t=1747038246; c=relaxed/simple;
+	bh=RVERkuO+Icf4ZI8o+6mMJrekC+d+ItdWOEKd+uRXquY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MJjJOEMvGC4ynRhWeQnSMejrA0A6z6EolioNRS61TAgWr4Hivh4RSch64o3oAW/+YaxZrA/gqu0G1TU0euJ8HKuEqQ0XaV/LHxrQYCdZpvXAYjUjNi/JZhe8vvF1zLjvhjkRiGah7QYtt6WiB48IE3xYbQO0LJO/yMY0QmcIEbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mwE317VB; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1a5bc420-c716-4d0b-b767-32adf32f4958@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747038236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TElvHhd7DydXVZlOSat7FJ7I+zBIH483XZd4jOzKuP0=;
+	b=mwE317VBw59kffo3mY/wpiIuV3gaWone3np+Bmn8zz9jaFdOrRrVrjsFE5zdUXBzaBJ+5e
+	XHyovyO4VXM2KJvMq61v5ircvRKvdL0zeE5mm7Zy/v9aDBJ5lGiif3w+FIdzvkTFiuIbTw
+	B5+PRG+PCXj4UVcKFd+HfyC9MrNpoOk=
+Date: Mon, 12 May 2025 16:23:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsXC9ZZnoe7f9YoZBqs2SljMWb+GzWL61AuM
-	Fj/vHme3+Hl4B4vFqoXX2CyOb53HbjHp0DVGi/OzTrFYXN41h83i3pr/rBar12Q4cHvsnHWX
-	3WPBplKP7rbL7B4tR96yeize85LJY9OqTjaPTZ8msXucmPGbxWPnQ0uPz5vkAriiuGxSUnMy
-	y1KL9O0SuDLuN7AX3NSr+NbylrWBsUepi5GTQ0LARGLO6VVsMPaDmx3sXYwcHGwCShLH9saA
-	hEUEjCTe3ZjE2MXIxcEsMJ9Z4tqMZawgCWGBBIlT8y4xg9gsAqoS63tXsID08goYSyyb7gMx
-	UlOi4dI9JhCbU8BQ4lbjUkYQW0iAR+LVhv1gNq+AoMTJmU9YQGxmAXmJ5q2zmUF2SQh8Z5N4
-	vH47O8QgSYmDK26wTGDkn4WkZxaSngWMTKsYhTLzynITM3NM9DIq8zIr9JLzczcxAsN/We2f
-	6B2Mny4EH2IU4GBU4uFNWKuQIcSaWFZcmXuIUYKDWUmEdyqDfIYQb0piZVVqUX58UWlOavEh
-	RmkOFiVxXqNv5SlCAumJJanZqakFqUUwWSYOTqkGxiV6YXsuKLd+ZPSeb/acofBpgtUd2ZV+
-	0ZFN5tMcNsR+DTkQeyD1bHCmeWmNKHOJSnS+QrvHvgPch2ddiJXZrCK2p3zP3kf6m62Wrgma
-	3hl4eJ51Q4tKeLf10T3TI3e+WtvlI81od6iiMTP0W1OW4QI78eQl//in9ti7P2EwLf93f9q0
-	d7/DlViKMxINtZiLihMBWRm1/HsCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsXCNUNNS/fvesUMg86TPBZz1q9hs5g+9QKj
-	xc+7x9ktPj97zWzx8/AOFotVC6+xWRzfOo/dYtKha4wWh+eeZLU4P+sUi8XlXXPYLO6t+c9q
-	cejac1aL1WsyLH5vW8HmwO+xc9Zddo8Fm0o9utsus3u0HHnL6rF4z0smj02rOtk8Nn2axO5x
-	YsZvFo+dDy09vt328Fj84gOTx+dNcgE8UVw2Kak5mWWpRfp2CVwZ9xvYC27qVXxrecvawNij
-	1MXIySEhYCLx4GYHexcjBwebgJLEsb0xIGERASOJdzcmMXYxcnEwC8xnlrg2YxkrSEJYIEHi
-	1LxLzCA2i4CqxPreFSwgvbwCxhLLpvtAjNSUaLh0jwnE5hQwlLjVuJQRxBYS4JF4tWE/mM0r
-	IChxcuYTFhCbWUBeonnrbOYJjDyzkKRmIUktYGRaxSiSmVeWm5iZY6pXnJ1RmZdZoZecn7uJ
-	ERjyy2r/TNzB+OWy+yFGAQ5GJR5eCX/FDCHWxLLiytxDjBIczEoivFMZ5DOEeFMSK6tSi/Lj
-	i0pzUosPMUpzsCiJ83qFpyYICaQnlqRmp6YWpBbBZJk4OKUaGM1e8S8xT/iq8tU3IOfkd4v8
-	zHQ7jxa9Nkflv0+tpl1ONapJLPZe1bElYUtwoWRNIb/Eww3ZZefWJYqVn8pk2tn39/SuY6HO
-	cpMjWfZdZo/YbrV7zbSWHYGXwgXvsesePZrzn/HEnYum3CeC2UwzP0qW199sTSrM/HQ5/1y5
-	15bq9PllPK8DlViKMxINtZiLihMB6DnNq3UCAAA=
-X-CFilter-Loop: Reflected
+Subject: Re: [PATCH v1 0/3] generalize panic_print's dump function to be used
+ by other kernel parts
+Content-Language: en-US
+To: Feng Tang <feng.tang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-kernel@vger.kernel.org, mhiramat@kernel.org, llong@redhat.com
+References: <20250511085254.61446-1-feng.tang@linux.alibaba.com>
+ <20250511184617.85d5fe22fde831c1edb8321c@linux-foundation.org>
+ <aCFnjmRWwBjgV2Hv@U-2FWC9VHC-2323.local>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <aCFnjmRWwBjgV2Hv@U-2FWC9VHC-2323.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 9 May 2025 12:31:31 +0100 Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> On Thu, 8 May 2025 11:12:35 -0400
-> Gregory Price <gourry@gourry.net> wrote:
-> 
-> > On Thu, May 08, 2025 at 03:30:36PM +0900, Rakie Kim wrote:
-> > > On Wed, 7 May 2025 12:38:18 -0400 Gregory Price <gourry@gourry.net> wrote:
-> > > 
-> > > The proposed design is completely optional and isolated: it retains the
-> > > existing flat weight model as-is and activates the source-aware behavior only
-> > > when 'multi' mode is enabled. The complexity is scoped entirely to users who
-> > > opt into this mode.
-> > >   
-> > 
-> > I get what you're going for, just expressing my experience around this
-> > issue specifically.
-> > 
-> > The lack of enthusiasm for solving the cross-socket case, and thus
-> > reduction from a 2D array to a 1D array, was because reasoning about
-> > interleave w/ cross-socket interconnects is not really feasible with
-> > the NUMA abstraction.  Cross-socket interconnects are "Invisible" but
-> > have real performance implications.  Unless we have a way to:
-> 
-> Sort of invisible...  What their topology is, but we have some info...
-> 
-> > 
-> > 1) Represent the topology, AND
-> > 2) A way to get performance about that topology
-> 
-> There was some discussion on this at LSF-MM.
-> 
-> +CC Keith and Jerome who were once interested in this topic
-> 
-> It's not perfect but ACPI HMAT does have what is probably sufficient info
-> for a simple case like this (2 socket server + Generic Ports and CXL
-> description of the rest of the path), it's just that today we aren't exposing that
-> to userspace (instead only the BW / Latency from a single selected nearest initiator
-> /CPU node to any memory containing node).
-> 
-> That decision was much discussed back when Keith was adding HMAT support.
-> At that time the question was what workload needed the dense info (2D matrix)
-> and we didn't have one.  With weighted interleave I think we do.
-> 
-> As to the problems...
-> 
-> We come unstuck badly in much more complex situations as that information
-> is load free so if we have heavy contention due to one shared link between
-> islands of nodes it can give a very misleading idea.
-> 
->   [CXL Node 0]                         [CXL Node 2]
->        |                                    |
->    [NODE A]---\                    /----[NODE C]
->                \___Shared link____/ 
->                /                  \
->    [NODE B]---/                    \----[NODE D]
->        |                                   |
->   [CXL Node 1]                         [CXL Node 3]
-> 
-> In this from ACPI this looks much like this (fully connected
-> 4 socket system).
-> 
->   [CXL Node 0]                         [CXL Node 2]
->        |                                    |
->    [NODE A]-----------------------------[NODE C]
->        |   \___________________________   / | 
->        |    ____________________________\/  |  
->        |   /                             \  | 
->    [NODE B]-----------------------------[NODE D]
->        |                                   |
->   [CXL Node 1]                         [CXL Node 3]
-> 
-> In the first case we should probably halve the BW of shared link or something
-> like that. In the second case use the full version. In general we have no way
-> to know which one we have and it gets way more fun with 8 + sockets :)
-> 
-> SLIT is indeed useless for anything other than what's nearest decisions
-> 
-> Anyhow, short term I'd like us to revisit what info we present from HMAT
-> (and what we get from CXL topology descriptions which have pretty much everything we
-> might want).
-> 
-> That should put the info in userspace to tune weighted interleave better anyway
-> and perhaps provide the info you need here. 
-> 
-> So just all the other problems to solve ;)
-> 
-> J
 
-Jonathan, thank you very much for your thoughtful response.
 
-As you pointed out, ACPI HMAT and CXL topology descriptions do contain
-meaningful information for simple systems such as two-socket platforms.
-If that information were made more accessible to userspace, I believe
-existing memory policies could be tuned with much greater precision.
+On 2025/5/12 11:14, Feng Tang wrote:
+> Hi Andrew,
+> 
+> Thanks for the review!
+> 
+> On Sun, May 11, 2025 at 06:46:17PM -0700, Andrew Morton wrote:
+>> On Sun, 11 May 2025 16:52:51 +0800 Feng Tang <feng.tang@linux.alibaba.com> wrote:
+>>
+>>> When working on kernel stability issues, panic, task-hung and
+>>> software/hardware lockup are frequently met. And to debug them, user
+>>> may need lots of system information at that time, like task call stacks,
+>>> lock info, memory info etc.
+>>>
+>>> panic case already has panic_print_sys_info() for this purpose, and has
+>>> a 'panic_print' bitmask to control what kinds of information is needed,
+>>> which is also helpful to debug other task-hung and lockup cases.
+>>>
+>>> So this patchset extract the function out, and make it usable for other
+>>> cases which also need system info for debugging.
+>>>
+>>> Locally these have been used in our bug chasing for stablility issues
+>>> and was helpful.
+>>
+>> Truth.  Our responses to panics, oopses, WARNs, BUGs, OOMs etc seem
+>> quite poorly organized.  Some effort to clean up (and document!) all of
+>> this sounds good.
+>>
+>> My vote is to permit the display of every scrap of information we can
+>> think of in all situations.  And then to permit users to select which of
+>> that information is to be displayed under each situation.
 
-I fully understand that such detailed topology data was not widely
-exposed in the past, largely because there was little demand for it.
-However, with the growing complexity of memory hierarchies in modern
-systems, I believe its relevance and utility are increasing rapidly.
-
-I also appreciate your point about the risks of misrepresentation in
-more complex systems, especially where shared interconnect links can
-cause bandwidth bottlenecks. That nuance is critical to consider when
-designing or interpreting any policy relying on topology data.
-
-In the short term, I fully agree that revisiting what information is
-presented from HMAT and CXL topology and how we surface it to
-userspace is a realistic and meaningful direction.
-
-Thank you again for your insights, and I look forward to continuing the
-discussion.
-
-Rakie
+Completely agreed. The tricky part is making a global knob that works for
+all situations without breaking userspace, but it's a better system-wide
+approach ;)
 
 > 
-> > 
-> > It's not useful. So NUMA is an incomplete (if not wrong) tool for this.
-> > 
-> > Additionally - reacting to task migration is not a real issue.  If
-> > you're deploying an allocation strategy, you probably don't want your
-> > task migrating away from the place where you just spent a bunch of time
-> > allocating based on some existing strategy.  So the solution is: don't
-> > migrate, and if you do - don't use cross-socket interleave.
-> > 
-> > Maybe if we solve the first half of this we can take a look at the task
-> > migration piece again, but I wouldn't try to solve for migration.
-> > 
-> > At the same time we were discussing this, we were also discussing how to
-> > do external task-mempolicy modifications - which seemed significantly
-> > more useful, but ultimately more complex and without sufficient
-> > interested parties / users.
-> > 
-> > ~Gregory
-> > 
+> Good point! Maybe one future todo is to add a gloabl system info dump
+> function with ONE global knob for selecting different kinds of information,
+> which could be embedded into some cases you mentioned above.
+
+IMHO, for features with their own knobs, we need:
+a) The global knob (if enabled) turns on all related feature-level knobs,
+b) while still allowing users to manually override individual knobs.
+
+Something like:
+
+If SYS_PRINT_ALL_CPU_BT (global knob) is on, it enables 
+hung_task_all_cpu_backtrace
+for hung-task situation automatically. But users can still disable it via
+hung_task_all_cpu_backtrace.
+
+Anyway, the global knob (when set) controls all feature-level knobs, but
+they can override it if explicitly set ;)
+
+Thanks,
+Lance
+
 > 
+>> As for this patchset - sounds good to me.  For now I'll await input
+>> from reviewers.
 > 
+> Thank you!
+> 
+> - Feng
+
 
