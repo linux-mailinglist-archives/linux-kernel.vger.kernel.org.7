@@ -1,169 +1,152 @@
-Return-Path: <linux-kernel+bounces-644717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48175AB4370
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3510EAB4342
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2C516801F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDB01650F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C92029E04A;
-	Mon, 12 May 2025 18:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C7B296FAC;
+	Mon, 12 May 2025 18:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cI2gGvZz"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eaEugD1c"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4229826B;
-	Mon, 12 May 2025 18:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770FF25335E
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747074245; cv=none; b=swOo+pR2AOa2N4ul32v0qlP6Yj/hw2QiqwoGTD11Ma2WV1Wvzb+KDUICnbwSEKtIIH6Dz1dUvrr3dgLdW5SCcaNiJUXWReXomYIK1mRgfNIcHhCDu4ChaIz98uWLEGIRedXcAEun0efcy90xXkEqSclLw7zKO+IVbfe+IHSJmMU=
+	t=1747074215; cv=none; b=HVSmX49f8aUN8sMm3FSrlI3qN8yh4m2IPIXZPiSH4E/toEfsLCOX8lmRTqs17KW30TtLJO1dMwDcWB/FRBwhv5W83HsJBZ8zMt+JZmvcwP80ppXQld9LE1IqTRfL2n1afo4OirYEvBqZGIRr80lUDVRFj80RRWBZSHebRwjrP8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747074245; c=relaxed/simple;
-	bh=eusjnOGb/ZY2HpGbND1nJZHAe/yvuvFGJ5uuZR3tQYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fC6gjQeHUjhBrcXehQ8mL5K5nYG2AOFW8tiky7MyqpWdaEUfpDmz4HGhw2CNDavY1TUEdjC0a5NvOMLKKBSoWaoZaT8h8PsN2Qars3jVELsVyt1dVIusjoCzobZBqRVHHT+yxuyFUhV+d1gWMgLUP8Tq9tOmpNAYUDOfN4M6L/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cI2gGvZz; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so35480975e9.1;
-        Mon, 12 May 2025 11:24:03 -0700 (PDT)
+	s=arc-20240116; t=1747074215; c=relaxed/simple;
+	bh=xBGFDbIy9RqjSxPXztoA+FCBn3Xtom0hkV9I1lIirmI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YufvmHH/FfUFrnNrg/b73OYxY9RzrcdpXRvLUQY7SYBrdfZtfNYW+w91X8HJfOswGEGYpNrmYHlUQ9hMGAtoO9/Ec3LVS/igpZWbXvmTSko26z87HrhVrUN0YFRKnqd6MWO9k7oVIqBXROKWbksSbL15XP8X/nQytmO5yQVCzos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eaEugD1c; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b25dda2f585so2711399a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:23:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747074242; x=1747679042; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IBldqOJbxPyk01FO14zb5LuQItiiBv1hPLg4G6aZDqY=;
-        b=cI2gGvZzJDVkRGCLzthW+AfZaLcbQ9SPyHfKRUUqYuHzD2I2IMcQNKZcWjqzJ7qFco
-         evVkb5CKAuMxoK8xm+83rtP4YZq/niTaE8XiIyBgQaRtruLeXRSMzJIPEejpNdL5WBxB
-         xLEo9K3UePEW5EOVkk9Uk2VBMzIgSFw2VsRQKc0i+JS7s0T94ddQgnVNQ78gSMCxlg8U
-         XoK+RVkWL9Y66FtG8zYImNjTnTcDlUeMU/6826VC4Ndd3HWPb3U05WutefUObm7ReTlb
-         Ed0ReW/eetsMq/7A2FyZyeDz+3FsBO33kFNRFpz2/31smpMh7MELx7ZSuQlCRC6+Y1oB
-         f1ng==
+        d=google.com; s=20230601; t=1747074214; x=1747679014; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DhXF/CHBNXDZ8TD5O0grJafmQnUhM9pMjEfCT/Aj0J8=;
+        b=eaEugD1cGC3XwMnAgt3W0XRWMod540mPcMzwc6c4Cv9honKtDPHxA0taUFXZJr4SEv
+         WCr2gjc0toFjTqpzQMGUj7Vkk6R4UCyHT9gFxmYhKOLqbQj2mLBJsnRkYK+J0io6okxY
+         6UTS5pghVjnsahuRO4nfncBV/PdG+03cYXZ0AhS+Xo749w3mncBjXONAffOP5UH3PbAI
+         oRNhYYqoJgUGAxWsGFw5mTCoODcltsGVICLn4XBgY5Zb/MPK+SHMHOCrZHNLqza4bf86
+         /dq0AduKOLYnOPnJhhwHEvdPdazG+1Kuqqn3N3hqZtMbCwiLkCaNbDdaa2qTDo3NFiWN
+         0/EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747074242; x=1747679042;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IBldqOJbxPyk01FO14zb5LuQItiiBv1hPLg4G6aZDqY=;
-        b=BPvUwUZV+RLHCBl8nBwVXt6wL38RzcIPOY2e/xHdYGUJjJycpyYtS4IOWGv5PkteEo
-         TmkGoVl8hSQ67jQQTrTiED4xxisnc73wkb5/G7hqmrcnlWdq3vrerA0TN7/vmxQAYEc+
-         i7mhYbjgx6OJkvyFs/aydpbJyp4BEBP/PzWSXwSbM0zlwtfcY+EvoZ/kt0CQZXYNRFW5
-         HHsyf+v/hgNyJO9lYkUz7cTRxLE6Vexz6ouyAkD23UZw1vXCgsFHiXU7g4O1ll4cXfxN
-         eTBeQwTCGQvbQab32CSdSopBmzQF0hPkG4h7h4+JYX9JjyYjV30HuOav0tBN1p8eXP8o
-         CvXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcE5xouJuePVVXkPqHDRC0ycu4V/0NSEMouqMvDbvWDMB2hq2pBxiysbC177yWVkRagAWiGpPVQRuT@vger.kernel.org, AJvYcCX2bmVUje5PpU9GHnleUTm4fRHBHvneFZ+dSlQFHP83HkcSkhHS8tcigzUWviqqtyqKfP/Jb9VbUNUKHewz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUtM3Dg3AibgWySmuueOeKa9O0khb+zur2hFyaEkdX7XpyjqMO
-	EUnJrk7oZVyVGCCDDf0JQIOQyFvPOyFhJ2pnjSpTlha3yIo0l7fi
-X-Gm-Gg: ASbGncs37GolmDYj1vtqJE1aea3/P+j/z/Xnzf9DaI7PIT+xXW0EZ8WvTHfgPZIubBC
-	n5sk91KagK5+3ce7zwKjCfiInkcm/3NxTrUjSzU0uo9JTWtGSrf6RuDMgW8LnCOb0BMF1B+SX1W
-	03I7kU2iLKo6SzM8gXeRg2TKA/xJukv7LwslE2Fa/0XUlj6XX9Zh55YFTJmX38zOZf54SjxBWSD
-	cLc1jN530YMx0nNqu1p14kNMuSdtEm7Hp86C4DED7uNN/Bwsx6TkcFNhrg9aB+NA6VrcTHUUThx
-	xIP1UWU/oFYPVO5eDs9emLX/PKK9VX52sYEEZ6DlAHp5T/3CmAWQk1spJyQUi/E02j+nsl+QzG+
-	f
-X-Google-Smtp-Source: AGHT+IGqeZRKNxhHRaoSDKnh7ZHow4KAV/QyIpjtHrUPVuyzvNsX0/u3WONT1r4ZQ2DR3fjmEAYQUA==
-X-Received: by 2002:a5d:4c4a:0:b0:3a1:fa6c:4736 with SMTP id ffacd0b85a97d-3a1fa6c494emr9331963f8f.57.1747074241993;
-        Mon, 12 May 2025 11:24:01 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:581b:951a:bc46:a124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4c5f6sm13175497f8f.86.2025.05.12.11.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 11:24:01 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 12/12] drm: renesas: rz-du: mipi_dsi: Add support for LPCLK clock handling
-Date: Mon, 12 May 2025 19:23:30 +0100
-Message-ID: <20250512182330.238259-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250512182330.238259-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250512182330.238259-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1747074214; x=1747679014;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DhXF/CHBNXDZ8TD5O0grJafmQnUhM9pMjEfCT/Aj0J8=;
+        b=UL+OL0lFB8FLh1PiJpVDz1I7Uv7uZUDLC749V55pfxSkr+0tZYFBwALmeu3Xn+netS
+         w4MdDvVTJjlEzrcdbPX81DfVTy74vVzPTIx2PI5M6P+rkqgkXrHkw4fUFizfBKjUYA+O
+         XcEn1pXOp0KkhAoMH6JsbGoPrqGVWWjCIRTdR6qqg8vynX8LaUcL0Akg2OtJIuNDNhPX
+         1u6yifOZmCk5hqhv4tgtg2Wr9aMeEzXj3Ztf9PgQ+Ts/vR3EKv9AC6igDzc5LTteQtdp
+         0VH7J2Y7b/AEA4rdchsYQMnqBFn1aJ4YJUdXRey+E5rsjo7hKluWFVx2jZZ33uKMTuBh
+         r+8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVOWGWjeH1/HsTQDTehbYAxHNIAitsFeqMH1rYSUExFptowHoVsWS0RL9ky9QKhDcWZWXcTimIx88KRRWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoMapAF4rEAuftp61SDbeZirDhrJNmJH7MmdzpLsO8atQYcOUU
+	n9fGUwoywfv/ypJE10KlDWzMFtUcuJxxKug+K9i/3dzJBXn4UhIu+wLt1UDCvYPz9JfkHLtnJ7e
+	nJg==
+X-Google-Smtp-Source: AGHT+IFxuWdlhqICz+7tB+ZoaL8tfHry8cvS0vmOzMxg7tsh6qE+qvmYcSnCxleO5Xjbzty+biW82xsevWs=
+X-Received: from pjbse15.prod.google.com ([2002:a17:90b:518f:b0:308:64af:7bb9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d2c5:b0:30c:523e:89e7
+ with SMTP id 98e67ed59e1d1-30c523e8d29mr15208716a91.16.1747074213775; Mon, 12
+ May 2025 11:23:33 -0700 (PDT)
+Date: Mon, 12 May 2025 11:23:32 -0700
+In-Reply-To: <20250313203702.575156-7-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-7-jon@nutanix.com>
+Message-ID: <aCI8pGJbn3l99kq8@google.com>
+Subject: Re: [RFC PATCH 06/18] KVM: VMX: Wire up Intel MBEC enable/disable logic
+From: Sean Christopherson <seanjc@google.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Mar 13, 2025, Jon Kohler wrote:
+> Add logic to enable / disable Intel Mode Based Execution Control (MBEC)
+> based on specific conditions.
+> 
+> MBEC depends on:
+> - User space exposing secondary execution control bit 22
+> - Extended Page Tables (EPT)
+> - The KVM module parameter `enable_pt_guest_exec_control`
+> 
+> If any of these conditions are not met, MBEC will be disabled
+> accordingly.
 
-Add LPCLK clock support in the RZ/G2L MIPI DSI driver via the optional
-clock API. This clock is required by some SoCs like RZ/V2H(P) for proper
-DPHY configuration, whereas it is absent on others like RZ/G2L.
+Why?  I know why, but I know why despite the changeloge, not because of the
+changelog.
 
-Introduce a new `lpclk` field in the `rzg2l_mipi_dsi` structure and
-conditionally acquire the "lpclk" clock using `devm_clk_get_optional()`
-during probe. This allows LPCLK-aware SoCs to pass the clock via device
-tree without impacting existing platforms.
+> Store runtime enablement within `kvm_vcpu_arch.pt_guest_exec_control`.
 
-Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v4->v5:
-- Made use of devm_clk_get_optional() for lpclk
-- Added Reviewed tag from Biju
+Again, why?  If you actually tried to explain this, I think/hope you would realize
+why it's wrong.
 
-v3->v4
-- No changes
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> 
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 11 +++++++++++
+>  arch/x86/kvm/vmx/vmx.h |  7 +++++++
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 7a98f03ef146..116910159a3f 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2694,6 +2694,7 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
+>  			return -EIO;
+>  
+>  		vmx_cap->ept = 0;
+> +		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
+>  		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
+>  	}
+>  	if (!(_cpu_based_2nd_exec_control & SECONDARY_EXEC_ENABLE_VPID) &&
+> @@ -4641,11 +4642,15 @@ static u32 vmx_secondary_exec_control(struct vcpu_vmx *vmx)
+>  		exec_control &= ~SECONDARY_EXEC_ENABLE_VPID;
+>  	if (!enable_ept) {
+>  		exec_control &= ~SECONDARY_EXEC_ENABLE_EPT;
+> +		exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
+>  		exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
+>  		enable_unrestricted_guest = 0;
+>  	}
+>  	if (!enable_unrestricted_guest)
+>  		exec_control &= ~SECONDARY_EXEC_UNRESTRICTED_GUEST;
+> +	if (!enable_pt_guest_exec_control)
+> +		exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
 
-v2->v3:
-- No changes
+This is wrong and unnecessary.  As mentioned early, the input that matters is
+vmcs12.  This flag should *never* be set for vmcs01.
 
-v1->v2:
-- Added LPCLK as feature flag
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 5 +++++
- 1 file changed, 5 insertions(+)
+>  	if (kvm_pause_in_guest(vmx->vcpu.kvm))
+>  		exec_control &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
+>  	if (!kvm_vcpu_apicv_active(vcpu))
+> @@ -4770,6 +4775,9 @@ static void init_vmcs(struct vcpu_vmx *vmx)
+>  		if (vmx->ve_info)
+>  			vmcs_write64(VE_INFORMATION_ADDRESS,
+>  				     __pa(vmx->ve_info));
+> +
+> +		vmx->vcpu.arch.pt_guest_exec_control =
+> +			enable_pt_guest_exec_control && vmx_has_mbec(vmx);
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 35f0bceac055..98d2f30ae79d 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -62,6 +62,7 @@ struct rzg2l_mipi_dsi {
- 	struct drm_bridge *next_bridge;
- 
- 	struct clk *vclk;
-+	struct clk *lpclk;
- 
- 	enum mipi_dsi_pixel_format format;
- 	unsigned int num_data_lanes;
-@@ -790,6 +791,10 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
- 	if (IS_ERR(dsi->vclk))
- 		return PTR_ERR(dsi->vclk);
- 
-+	dsi->lpclk = devm_clk_get_optional(dsi->dev, "lpclk");
-+	if (IS_ERR(dsi->lpclk))
-+		return PTR_ERR(dsi->lpclk);
-+
- 	dsi->rstc = devm_reset_control_get_optional_exclusive(dsi->dev, "rst");
- 	if (IS_ERR(dsi->rstc))
- 		return dev_err_probe(dsi->dev, PTR_ERR(dsi->rstc),
--- 
-2.49.0
-
+This should effectively be dead code, because vmx_has_mbec() should never be
+true at vCPU creation.
 
