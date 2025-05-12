@@ -1,92 +1,104 @@
-Return-Path: <linux-kernel+bounces-644142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D8FAB379D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:47:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07805AB37B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E8CE7A129E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E99862D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2BA25C832;
-	Mon, 12 May 2025 12:47:12 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049B22949EE;
+	Mon, 12 May 2025 12:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwMJlLjY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A20C25522B
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DC528D837;
+	Mon, 12 May 2025 12:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747054032; cv=none; b=UHPxNP1ZPu4JsI4yz4KWSLbNYyJKMwzM6X6fdo2ZSPbv/HxI0biOnda8jyTYkTGhr1K0Eq1RT5R4lCxZgPGbam+2wy2GPEeBE0QerFy0gqlQe7B7BE14amhCNIRNlKDxqvVGHkBJxt31CZB8u4/IdJrY6pdvtZjOor0DTPQ2E5g=
+	t=1747054154; cv=none; b=H7hsLvPLmIBl6XQ+ctUI53RIp1tUU72LWOB1kpzNeOdwBd2xbx7pG9zt9tJZSFTPiq0b9/jnlCKOzPCXYm6Go2sxBhF8Jp4bwAVveF3TBVxjjvFr4FE0/4FlmRhKczy3setIXZXjF1yHJB1AsVN7A54R9/xLq7WlU4fT6W1CM84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747054032; c=relaxed/simple;
-	bh=C7JmtKNbL4VlUTmVWKpTRF/arfLWMbhWSzhlo+JxnHg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=QOTkS/xlF2BzIu9P49A2MZixpuM/sCEoAVEZoREuTxDfcqU+3ujNak8NvCH6PGJefv17q24oR9S/SVIJBEv7XETkxTh3iwUno2Qzny7Tn5rRXdEhue0EC5SDPkcwR2fJLXWvREn2rgz4Kt9408qFTMYEO63YTUMKCN02qeqZzOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id A607C294730;
-	Mon, 12 May 2025 14:47:06 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id f6iLu6qRFOPt; Mon, 12 May 2025 14:47:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 0542F298563;
-	Mon, 12 May 2025 14:47:06 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RLjzZz2HeF-r; Mon, 12 May 2025 14:47:05 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id DA437294730;
-	Mon, 12 May 2025 14:47:05 +0200 (CEST)
-Date: Mon, 12 May 2025 14:47:05 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <1200504110.30346467.1747054025727.JavaMail.zimbra@nod.at>
-In-Reply-To: <d70952c1-e4ca-4f09-ac23-2ad13e0facc0@prolan.hu>
-References: <20250512084033.69718-1-csokas.bence@prolan.hu> <87frhambri.fsf@bootlin.com> <d70952c1-e4ca-4f09-ac23-2ad13e0facc0@prolan.hu>
-Subject: Re: [PATCH v3] mtd: Verify written data in paranoid mode
+	s=arc-20240116; t=1747054154; c=relaxed/simple;
+	bh=uXEcchTcO63su+JbMHctt2KTy/tOE1VE6ZfMeTnDk1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OuJeQnmwhju2qk+lLiHg0aEurfn/XYCjI6VJisNv7r2QKK6kPPiosJVMydHlOrl7r9gePqSiUwDkViGOuMaz0ip17xDKvUAkrZOvvkSHOfPYZ6oSG0TQrKrt1fAOfaUw2A5SIop8Pl6PFYiuDculIbffmQuxEn4cX2oKZ6UuJvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwMJlLjY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3731FC4CEE7;
+	Mon, 12 May 2025 12:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747054153;
+	bh=uXEcchTcO63su+JbMHctt2KTy/tOE1VE6ZfMeTnDk1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uwMJlLjYQGzc0DdFsmf6RtXqsHabVagYiHF9JKeEXSPeEOIThqkuQyMFu2Po1nvxt
+	 ByirJmikQ3bCxGfTpM5fd7773amvGS2RTOAwDpqD9QhtNxPSnGEl3bSICbeYz14Dxr
+	 JQXqFaby7WFAycfSFR1zEzq4S7Hy6sg8DsKVEv6vFBiIha4jxqLHoSnqQOr4rdlYX6
+	 qrCJmTKFxxZ0K6qqHBtfCuvAMwWzNA0xCbF9YvwWc3bEsPxdwQ0XPYaN7bGhzAYgXO
+	 eB9lDrzS22MiqLcg7daBEihH221ofrW3WpyGZYJY1C4bJVDZ8i/YYohu2CZBKJEpQW
+	 W+6divt6VYZDg==
+Date: Mon, 12 May 2025 13:49:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Lee Trager <lee@trager.us>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Karlsson, Magnus" <magnus.karlsson@intel.com>,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Madhu Chittim <madhu.chittim@intel.com>,
+	Josh Hay <joshua.a.hay@intel.com>,
+	Milena Olech <milena.olech@intel.com>, pavan.kumar.linga@intel.com,
+	"Singhai, Anjali" <anjali.singhai@intel.com>
+Subject: Re: [PATCH iwl-next v3 00/15] Introduce iXD driver
+Message-ID: <20250512124906.GA1417107@horms.kernel.org>
+References: <20250509134319.66631-1-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF138 (Linux)/8.8.12_GA_3809)
-Thread-Topic: Verify written data in paranoid mode
-Thread-Index: vdlBgtKgU0/G1AOofAbE/k3HO+5Ouw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509134319.66631-1-larysa.zaremba@intel.com>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Cs=C3=B3k=C3=A1s Bence" <csokas.bence@prolan.hu>
-> Well, yes, in our case. But the point is, we have a strict requirement
-> for data integrity, which is not unique to us I believe. I would think
-> there are other industrial control applications like ours, which dictate
-> a high data integrity.
+On Fri, May 09, 2025 at 03:42:57PM +0200, Larysa Zaremba wrote:
+> This patch series adds the iXD driver, which supports the Intel(R)
+> Control Plane PCI Function on Intel E2100 and later IPUs and FNICs.
+> It facilitates a centralized control over multiple IDPF PFs/VFs/SFs
+> exposed by the same card. The reason for the separation is to be able
+> to offload the control plane to the host different from where the data
+> plane is running.
+> 
+> This is the first phase in the release of this driver where we implement the
+> initialization of the core PCI driver. Subsequent phases will implement
+> advanced features like usage of idpf ethernet aux device, link management,
+> NVM update via devlink, switchdev port representors, data and exception path,
+> flow rule programming, etc.
 
-In your last patch set you said your hardware has an issue that every
-now and that data is not properly written.
-Now you talk about data integrity requirements. I'm confused.
+Hi Larysa,
 
-My point is that at some level we need to trust hardware,
-if your flash memory is so broken that you can't rely on the write
-path you're in deep trouble.
-What is the next step, reading it back every five seconds to make
-sure it is still there? (just kidding).
-
-We do have plenty of tests to verify this for *testing*
-to find broken drivers or hardware.
-e.g. mtd/ubi tests, UBI verify at runtime.
-
-Thanks,
-//richard
+I am having a bit of trouble figuring out where to cleanly apply this
+series to. Could you help me out?
 
