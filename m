@@ -1,208 +1,156 @@
-Return-Path: <linux-kernel+bounces-643672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BD2AB3016
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:54:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EE0AB301F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041763A3697
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:53:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 373CE7A4150
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64463255F4D;
-	Mon, 12 May 2025 06:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE962566E4;
+	Mon, 12 May 2025 06:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEVlwO9f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDGXfV6B"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEBF20326;
-	Mon, 12 May 2025 06:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666ED255F4F;
+	Mon, 12 May 2025 06:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747032839; cv=none; b=DWJDaVXYYwz3Qq1/RJuGVLwhJZYh2drZjgVHSKMa3AVrKrow7VllF2QRHC4GRqMlIc48tbZ3+poc5RMxXXAs3n6YjGO5xuoJPoLbHz41Hm3FDZXcIGCIMapyG6hg+KRvp/l46asggfdyt6HUzCQobcL/h/NzgDxzOBgqc5P5GXc=
+	t=1747032875; cv=none; b=TaDkbL1fXPjPa/EqpqTfHRp0WrmHkVSdKY1QsvjP9em1KXoGEEzIUN+4pjBr0vYomue4fUDe/u7NCq/yA2SfsvYLZ/zSo6zFSEfygEvuHkgTGz88+t/ioz36hXr9KYPE1cy8iANo+ZLGCnw/x7SEKaCxpCM5YpoSwhvIvfl6+1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747032839; c=relaxed/simple;
-	bh=mh+sdmR3x5Rbvl556oXQ+b9KXmClWHYBqf3INe3CBIM=;
+	s=arc-20240116; t=1747032875; c=relaxed/simple;
+	bh=CjCK+P/4K0u22ZSfctP+qqRA7d/Qr40HRVR4jEdKpLA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sw6yYS6bNnKRNrrBCn0h8Kx6Prgyq/vVIgj/cdR8hOOLqbvZs3PZ/EixZLjih+wcahH7DypXKyOM6uOTs6gS3ga6gXpkoawRT7BoWiJrnp0Vwov2wvatamfSUAYnlwksuCMyg4991nB3ImOSVjjkW3LmRuOYdDZIjM9Y/i9INR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEVlwO9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054A0C4CEE7;
-	Mon, 12 May 2025 06:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747032839;
-	bh=mh+sdmR3x5Rbvl556oXQ+b9KXmClWHYBqf3INe3CBIM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TEVlwO9fPqb4KYxcSKok/3WWhh6Roy+HMyg2gazSODgwSIPiMZt89NLxTz9jeLXSw
-	 7iy2n9cSfsXdDvGTqj1lacaUwnNaUGV2Q+aAbn1QpyvW0mWL/uuyoKaa04ypQYIEac
-	 t1OlcqyETToELo9ndHjwmq1NBU/Tl9yVgMXaNqtJSNTRL4OrpV3RZWoMAtUMNtqMbg
-	 /NXw89QfB3vH+axLTuqRCdJonifYLpwj0mkJ1OBUkGeAide2Q5V4hJ9gLYpOlS1Mkh
-	 EEVBVT4LzTUfVMhfmpMIPy2101HzN1uJDj4o8xDLIi66NPmvA/DbF1a14isvkK2DlB
-	 xxh1eLdPqs1vw==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5feb22e7d84so501423a12.3;
-        Sun, 11 May 2025 23:53:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV9B23gPbWkwAetI1fD0PKhKLUr1WnfVxOuxtasV2l2KlmY/c7lk8IdyLk7llKegGPJrEc=@vger.kernel.org, AJvYcCVWQPM3uKvWXbFtAPFpbXC8Z44Tk704VZkIcimMbeJk2kZVwAV1k8ImcESjrJqYmyO0pBUyFhPQYnWEtPeBkKCV@vger.kernel.org, AJvYcCWYd8gQPPs4ZSJcguMxvQ0RBpNF7QycdVY0hoke3kCByjEuKTnDA58jSuhmytgTfcohK/SdJqKek8fmOI1o@vger.kernel.org
-X-Gm-Message-State: AOJu0YytDFIiSKxoTBc0y7kJakJGnXgrOLgJl8YnBzA3zgBF4lMPH2cW
-	InxegtOT8fUNvptq8HUFpgyRNkdgDElQPjVx71pI55YNBTM7avPVn29NutA2xdD+bHrboaK7veZ
-	t55XvKvNrcVflduoVOqVD45YWL+I=
-X-Google-Smtp-Source: AGHT+IGYRY0B10vegQmafQSE8DUSAPwKI0y7cXH+07quA4LOc9ROMYRJ/NbsjsQKA9jnOXY8pQ4n1aGH9LYo+ms3Ukc=
-X-Received: by 2002:a05:6402:239c:b0:5fc:a51c:149 with SMTP id
- 4fb4d7f45d1cf-5fca51c13acmr7690374a12.15.1747032837537; Sun, 11 May 2025
- 23:53:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=a218ltfC1/ZJIZHylZ8+31Y84Vy9Ozyh9D46I3hTC2z/wNE2gHxg9fsjb4BAZQXUTcxFCCgs9Dz08E7f99dq/69zQk+8ArDak3eVK4c0hWPCEnBgsnDTGKS12J97/0EAtX8NswZJo/XqdUXZh+notfVjlngmWUJr6a9IJAce2dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDGXfV6B; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3da73e9cf17so41960035ab.2;
+        Sun, 11 May 2025 23:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747032872; x=1747637672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CjCK+P/4K0u22ZSfctP+qqRA7d/Qr40HRVR4jEdKpLA=;
+        b=GDGXfV6Bz6ZQ1ScOpUqpJWQyjnq57nb4qPntjgala4n5K42CN/7MMeRttHPEbNNwK1
+         RiKeUBFEQZUcc4r1Uzx2CQbZdVf6Iz4LKM3IFDxJu5wUGEwPxoEZediR2EVV7ZcF0pZu
+         rzw1ERxxqbSAIJ7M1vZB9j2otpSgL1Y4bXWkGJKwBKWECtEX2UAp4CJ6z+xsS3iNzQhH
+         mqNnkPp6MAfrZe2oIBAFeuw0BYmYpKy/OxX8ydogggmcqSxZuBWxwWwVsh8nY2yavBYM
+         yOd1GWqCkDOG6YnQiwwgENYNdHpcRjPARfPQTOZ9+SczzM5dJImVysCyeh1y58HlUBdK
+         KVRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747032872; x=1747637672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CjCK+P/4K0u22ZSfctP+qqRA7d/Qr40HRVR4jEdKpLA=;
+        b=f0uBSZw4wPPkIDvt/PB6grq7fd63VbzZ4Gg+JJa5qr5Z52BG/6SVIveml5IpA+/4gX
+         voS6Maj3ovSvHMniATJkzFVdaizNqa7fouIgwi2fdAQQAMrr/KCdVhuEJUDe8So8Ww5h
+         A29o5Vr3pkmf6hEzvQcOXumkkqcL5aq1p36+QrpCQ9FlTRgtqm+D+IGjuoDcjU3l72+w
+         Mz/3NIUUJ7KxhOuu1soyiw8KnCNq0OoslaUmiRse+VKKmipD0ij6NWEX23lYZ9aTCeTY
+         x97DimYKKavQR9zPiCSjCDeA3J9mXCglKJN6ZxxZVHz3G985lRSK3NXe+/CpS4TxScsr
+         qG1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV2XrDy1ZpKc/EH9ur35eihPDA5TMRuikIa6s+RQF9wH2+s0xBewcb9y3ZxeFegTda/zszEVuRlfeA=@vger.kernel.org, AJvYcCWN11497cx7Tbm/mZCcE8+ZO+8aCLzm0duZshddWw7hFFBT77Bm+FeSfAEe4VmVnxnO8MaJDsFUqlhwKVp5@vger.kernel.org
+X-Gm-Message-State: AOJu0YynN4V+J+U25JeKUGLpmgQls+78K+YCYZwfAAW9bJzeyiEQEksk
+	bgRWmXpeNaWHf2YnDwYN20BqPiAYxSP1H4pnWRvB7zqjWzWApYfK7+WOKr3Wta37+m3SnHI7/CM
+	EXb4Z04BzdXts+puFk5Ec6CGXjz9k0gB/
+X-Gm-Gg: ASbGncu94f8Ibd9RJSqx7/ncB8NDisizhOGCF6vpyMkWr88rcGCcKdKX5aieYiGlKPA
+	2TcqcEOLZu1vnWc0LV+JfOOGlb+Kmq+FZ5FjsMnteYMQFtcDvBaqkk2bNpW+gx6OhmjJH51sIhi
+	yu9F2jOHhpyQuRrcojaXmrhpVRei0Xdw2xNfI8hFvmiw==
+X-Google-Smtp-Source: AGHT+IHA5UkN6ttXUOz5l0Mxxg1kTXifa0uj7ajNGFFKegiX63CpoQzdqo6+H3KiFOCkN6tZffa10uyGN9o9dcZ6ORs=
+X-Received: by 2002:a05:6e02:2611:b0:3d5:8923:faa5 with SMTP id
+ e9e14a558f8ab-3da7e1e7c60mr128897425ab.10.1747032872323; Sun, 11 May 2025
+ 23:54:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250427064535.242404-1-maobibo@loongson.cn>
-In-Reply-To: <20250427064535.242404-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 12 May 2025 14:53:48 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7XmHcvea-8NvgnSzfg6dVt5wATyDKmDYp31ThYZa+Fgw@mail.gmail.com>
-X-Gm-Features: AX0GCFuW_0esH8fIIs24kGTOZ9DFkLfLl9d7hy6t1OtIT5_MwJ3ZMPQwKcpHYSM
-Message-ID: <CAAhV-H7XmHcvea-8NvgnSzfg6dVt5wATyDKmDYp31ThYZa+Fgw@mail.gmail.com>
-Subject: Re: [PATCH v11 0/5] KVM: selftests: Add LoongArch support
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+References: <CAL+tcoCVjihJc=exL4hJDaLFr=CrMx=2JgYO_F_m12-LP9Lc-A@mail.gmail.com>
+ <aCGR4EOcWRK6Rgfv@smile.fi.intel.com>
+In-Reply-To: <aCGR4EOcWRK6Rgfv@smile.fi.intel.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Mon, 12 May 2025 14:53:56 +0800
+X-Gm-Features: AX0GCFvI8uwdt7CAYwwfB-jWNgBEnYFB4l9G08fu0KtnLZlJaJzrnXZt_8pJ0hU
+Message-ID: <CAL+tcoDYOwmt+MqUouc=7DCpMyR3HfOhycgruX_n3+eKJxqv9Q@mail.gmail.com>
+Subject: Re: [PATCH] relay: Remove unused relay_late_setup_files
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, linux-doc@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux@treblig.org, viro@zeniv.linux.org.uk, 
+	Jens Axboe <axboe@kernel.dk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Bibo,
+On Mon, May 12, 2025 at 2:15=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, May 12, 2025 at 09:12:56AM +0800, Jason Xing wrote:
+> > Hi All,
+> >
+> > I noticed this patch "relay: Remove unused relay_late_setup_files"
+> > appears in the mm branch already[1], which I totally missed. Sorry for
+> > joining the party late.
+> >
+> > I have a different opinion on this. For me, I'm very cautious about
+> > what those so-called legacy interfaces are and how they can work in
+> > different cases and what the use case might be... There are still a
+> > small number of out-of-tree users like me heavily relying on relayfs
+> > mechanism. So my humble opinion is that if you want to remove
+> > so-called dead code, probably clearly state why it cannot be used
+> > anymore in the future.
+> >
+> > Dr. David, I appreciate your patch, but please do not simply do the
+> > random cleanup work __here__. If you take a deep look at the relayfs,
+> > you may find there are other interfaces/functions no one uses in the
+> > kernel tree.
+> >
+> > I'm now checking this kind of patch in relayfs one by one to avoid
+> > such a thing happening. I'm trying to maintain it as much as possible
+> > since we internally use it in the networking area to output useful
+> > information in the hot paths, a little bit like blktrace. BTW, relayfs
+> > is really a wonderful one that helps kernel modules communicate with
+> > userspace very efficiently. I'm trying to revive it if I can.
+>
+> Jason, with all of the respect, if you are interested in keeping things g=
+oing
+> on, please add yourself to the MAINTAINERS. It will makes the users of th=
+e
+> legacy code, Andrew and others, who are doing maintainer's/reviewer's job=
+,
+> and you happy.
 
-On Sun, Apr 27, 2025 at 2:45=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> This patchset adds KVM selftests for LoongArch system, currently only
-> some common test cases are supported and pass to run. These test cases
-> are listed as following:
->     coalesced_io_test
->     demand_paging_test
->     dirty_log_perf_test
->     dirty_log_test
->     guest_print_test
->     hardware_disable_test
->     kvm_binary_stats_test
->     kvm_create_max_vcpus
->     kvm_page_table_test
->     memslot_modification_stress_test
->     memslot_perf_test
->     set_memory_region_test
-I have applied this series [1] but with some modifications (see
-comments in other patches). You can test it to see if everything is
-OK.
+I didn't subscribe to LKML because they're too many emails everyday.
+Because of this, I missed most of changes in relayfs.
 
-And if it's OK, it is better to fetch the patches from [1] and then send V1=
-2.
+Sure, I'm happy to do so, but I'm not sure how/what the detailed
+process is here. I would like to ask the core maintainers/developers
+in advance.
 
-[1] https://github.com/chenhuacai/linux/commits/loongarch-next
-
-
-
-Huacai
+Any thoughts on this? Andrew, Jens.
 
 >
-> ---
-> Changes in v11:
-> 1. Fix a typo issue in notes of patch 2, it is kvm_util_arch.h rather tha=
-n
->    kvm_util_base.h
+> Also note, we usually do not care about the out-of-tree users. The main Q=
+ here
+> why are they out-of-tree for so long time?
+
+It's due to the history problem. Back then, developers were trying to
+develop various file systems to add more debuginfo. As you may notice,
+blktrace is the one which manifests the answer.
+
 >
-> Changes in v10:
-> 1. Add PS_64K and remove PS_8K in file include/loongarch/processor.h
-> 2. Fix a typo issue in file lib/loongarch/processor.c
-> 3. Update file MAINTAINERS about LoongArch KVM selftests
+> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit=
+/?h=3Dmm-everything&id=3D46aa76118ee365c25911806e34d28fc2aa5ef997
 >
-> Changes in v9:
-> 1. Add vm mode VM_MODE_P47V47_16K, LoongArch VM uses this mode by
->    default, rather than VM_MODE_P36V47_16K.
-> 2. Refresh some spelling issues in changelog.
->
-> Changes in v8:
-> 1. Porting patch based on the latest version.
-> 2. For macro PC_OFFSET_EXREGS, offsetof() method is used for C header fil=
-e,
->    still hardcoded definition for assemble language.
->
-> Changes in v7:
-> 1. Refine code to add LoongArch support in test case
-> set_memory_region_test.
->
-> Changes in v6:
-> 1. Refresh the patch based on latest kernel 6.8-rc1, add LoongArch
-> support about testcase set_memory_region_test.
-> 2. Add hardware_disable_test test case.
-> 3. Drop modification about macro DEFAULT_GUEST_TEST_MEM, it is problem
-> of LoongArch binutils, this issue is raised to LoongArch binutils owners.
->
-> Changes in v5:
-> 1. In LoongArch kvm self tests, the DEFAULT_GUEST_TEST_MEM could be
-> 0x130000000, it is different from the default value in memstress.h.
-> So we Move the definition of DEFAULT_GUEST_TEST_MEM into LoongArch
-> ucall.h, and add 'ifndef' condition for DEFAULT_GUEST_TEST_MEM
-> in memstress.h.
->
-> Changes in v4:
-> 1. Remove the based-on flag, as the LoongArch KVM patch series
-> have been accepted by Linux kernel, so this can be applied directly
-> in kernel.
->
-> Changes in v3:
-> 1. Improve implementation of LoongArch VM page walk.
-> 2. Add exception handler for LoongArch.
-> 3. Add dirty_log_test, dirty_log_perf_test, guest_print_test
-> test cases for LoongArch.
-> 4. Add __ASSEMBLER__ macro to distinguish asm file and c file.
-> 5. Move ucall_arch_do_ucall to the header file and make it as
-> static inline to avoid function calls.
-> 6. Change the DEFAULT_GUEST_TEST_MEM base addr for LoongArch.
->
-> Changes in v2:
-> 1. We should use ".balign 4096" to align the assemble code with 4K in
-> exception.S instead of "align 12".
-> 2. LoongArch only supports 3 or 4 levels page tables, so we remove the
-> hanlders for 2-levels page table.
-> 3. Remove the DEFAULT_LOONGARCH_GUEST_STACK_VADDR_MIN and use the common
-> DEFAULT_GUEST_STACK_VADDR_MIN to allocate stack memory in guest.
-> 4. Reorganize the test cases supported by LoongArch.
-> 5. Fix some code comments.
-> 6. Add kvm_binary_stats_test test case into LoongArch KVM selftests.
-> ---
-> Bibo Mao (5):
->   KVM: selftests: Add VM_MODE_P47V47_16K VM mode
->   KVM: selftests: Add KVM selftests header files for LoongArch
->   KVM: selftests: Add core KVM selftests support for LoongArch
->   KVM: selftests: Add ucall test support for LoongArch
->   KVM: selftests: Add test cases for LoongArch
->
->  MAINTAINERS                                   |   2 +
->  tools/testing/selftests/kvm/Makefile          |   2 +-
->  tools/testing/selftests/kvm/Makefile.kvm      |  18 +
->  .../testing/selftests/kvm/include/kvm_util.h  |   6 +
->  .../kvm/include/loongarch/kvm_util_arch.h     |   7 +
->  .../kvm/include/loongarch/processor.h         | 141 ++++++++
->  .../selftests/kvm/include/loongarch/ucall.h   |  20 +
->  tools/testing/selftests/kvm/lib/kvm_util.c    |   3 +
->  .../selftests/kvm/lib/loongarch/exception.S   |  59 +++
->  .../selftests/kvm/lib/loongarch/processor.c   | 342 ++++++++++++++++++
->  .../selftests/kvm/lib/loongarch/ucall.c       |  38 ++
->  .../selftests/kvm/set_memory_region_test.c    |   2 +-
->  12 files changed, 638 insertions(+), 2 deletions(-)
->  create mode 100644 tools/testing/selftests/kvm/include/loongarch/kvm_uti=
-l_arch.h
->  create mode 100644 tools/testing/selftests/kvm/include/loongarch/process=
-or.h
->  create mode 100644 tools/testing/selftests/kvm/include/loongarch/ucall.h
->  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/exception.S
->  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/processor.c
->  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/ucall.c
->
->
-> base-commit: 5bc1018675ec28a8a60d83b378d8c3991faa5a27
 > --
-> 2.39.3
+> With Best Regards,
+> Andy Shevchenko
+>
 >
 
