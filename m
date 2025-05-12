@@ -1,144 +1,114 @@
-Return-Path: <linux-kernel+bounces-643953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC0EAB34F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:33:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84230AB3509
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C99189BBD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F103F3BFCC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F32265CA5;
-	Mon, 12 May 2025 10:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D4F2673AF;
+	Mon, 12 May 2025 10:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVekFqWR"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="frYmQFVC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43B22500CF;
-	Mon, 12 May 2025 10:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2A412F399
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747046011; cv=none; b=IyfsMVe0xOXn1ZbCET7I8Zbi1WLEmVCn5deHY6ATll+yeNLr59IDS+x4k7+BYJHjSL35Nb/EZvAzAVrVGea2H4oLgf/8KPLHqcTblefLIMGR1WQbi8hj7iRVT3QPM1v0rgPV+1pwHwtGchay24TPijH8nKDZX1IDQBJOlS2YqLM=
+	t=1747046331; cv=none; b=S4NnDkKOGx7icT7CYJLVkKLOp73NUxhvQRHbBUmtLwlH9ZFKG8LBKRngkq5h239AGXpaUGIOFk2hfHCPKvuEkaPI4hiw//sKnSQcQjR3P5xQyOzUWRZyce+iZAOvrMUZNo4rUuBQJNI4LAEGFU8ELJD/ZT/lPbWnC+nbSr2BpHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747046011; c=relaxed/simple;
-	bh=G3Cxx0BHSe9RqF+Hv8aFljAC132Oze/gTGVIrLfY5HY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mcr3mv0fb090UaRz9Hkb5W9BEBJWA89m9VkwnQy08ZJpu52SXchD0Dlor/kkFsmh8NOW8t5gcYP79zS3+9t55HofgZLchUFgAsLa66xLsOy94pQ8Xma1txKoNTnGv4B9zhBp2yoAVXhad8PO/mC64GoVg+XVfKE4XLO951u9UMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVekFqWR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B783C4CEE7;
-	Mon, 12 May 2025 10:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747046010;
-	bh=G3Cxx0BHSe9RqF+Hv8aFljAC132Oze/gTGVIrLfY5HY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iVekFqWRnOyc0Ak18pcmTgF0y0FaYGHT1DdYy9A/aFHOArBrsIcDfN9Ga2SMTSDyf
-	 7Pt6uD6d+TpW5IKMVHGH3gh9Rh1alm752H3rM77hLepVMCHfLjw2Ca0vg+Ca3gNDPq
-	 MUBvyV2WOLgLGTNqcYchqkKp9qsQnud6oRUvIMQwb8Gv+35i+4+DTLAnfLysIPrYpO
-	 gmkTK1P1zLEex64g3edXY5enERGP7k9+MNS6F4VN71+7XA1MfZSlKYgHHY3/Jkvvg5
-	 hQsutc0W1QXXWVYVSowvSeBTS6/VtczU3QctoD5Fd8CsOP0JUC9U63/t+b8EYwuxuj
-	 NvaJ1/M+wcpCg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Ingo Molnar" <mingo@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>,  "Thomas Gleixner" <tglx@linutronix.de>,
-  "Frederic Weisbecker" <frederic@kernel.org>,  "H . Peter Anvin"
- <hpa@zytor.com>,  "Linus Torvalds" <torvalds@linux-foundation.org>,
-  "Peter Zijlstra" <peterz@infradead.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Anna-Maria
- Behnsen" <anna-maria@linutronix.de>,  "Boqun Feng" <boqun.feng@gmail.com>,
-  "Lyude Paul" <lyude@redhat.com>,  "Rust ML"
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 01/10] rust: Rename timer_container_of() to
- hrtimer_container_of()
-In-Reply-To: <87jz6mnpnm.fsf@kernel.org> (Andreas Hindborg's message of "Mon,
-	12 May 2025 11:29:01 +0200")
-References: <20250507175338.672442-1-mingo@kernel.org>
-	<qqz686a7_ob8uzbREL3X3P-MTdPUVJo9hi33Dsv-3kgJoB1_bE0ynnuXFVLIwbZ5dNkntegTdZhkBp04syneXA==@protonmail.internalid>
-	<20250507175338.672442-2-mingo@kernel.org> <877c2spaag.fsf@kernel.org>
-	<exZlQK8ioPft3NijtFzp4A_qkGlCunbqRbqwq8STs5kyK8khboJDM8LqVH7EZTImMbpeMOnxadeRvyEnyU69kA==@protonmail.internalid>
-	<aBu2ocPIFOvq_EiA@gmail.com> <87jz6mnpnm.fsf@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 12 May 2025 12:33:17 +0200
-Message-ID: <87ecwunmoi.fsf@kernel.org>
+	s=arc-20240116; t=1747046331; c=relaxed/simple;
+	bh=uPYoh2qd9twXv2t/5rtKA9T/rK7iFC3czNcd8n+Ldl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BspURFCJLUgaY2caFckae6roJAtgPqvkpji3eLUFeQwF0fBQ64QpbXLtQtlTXse/9hJSgm4lIRbT3jrtOPWCcDEdiSyVc6tevMR4XyM8vq3U7TRZmaxTBQQKqbSddpO0adPq4nvxxaCFA5VcBX8XOf8bGwMuIs2Ip7kUE4Kcu1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=frYmQFVC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14A2C4CEE7;
+	Mon, 12 May 2025 10:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747046331;
+	bh=uPYoh2qd9twXv2t/5rtKA9T/rK7iFC3czNcd8n+Ldl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=frYmQFVC+tRLHpAdv/XV0hLF+311U1qxNzvjyC0Cyp4TWIBhtnqc4Qu/inaXwS574
+	 FRM7CWGtE1IcXy75061fW4yhBF+JKVp4VtikrFHSx5d2Bj7R8Wp8BSb3hI6kPy8Gog
+	 CAPQpDAeU0ArAXV+zhRlD8ofsgYhen/0ou82C3ow=
+Date: Mon, 12 May 2025 12:36:24 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Lee Jones <lee@kernel.org>, david.m.ertman@intel.com,
+	ira.weiny@intel.com, andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] mfd: core: Support auxiliary device
+Message-ID: <2025051221-gulf-schematic-26e1@gregkh>
+References: <20250428060207.3170325-1-raag.jadav@intel.com>
+ <20250501125028.GM1567507@google.com>
+ <aBVArb-zJ_aqicHW@black.fi.intel.com>
+ <aCHL8WWV-Wt7OrII@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCHL8WWV-Wt7OrII@black.fi.intel.com>
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
+On Mon, May 12, 2025 at 01:22:41PM +0300, Raag Jadav wrote:
+> On Sat, May 03, 2025 at 01:01:23AM +0300, Raag Jadav wrote:
+> > On Thu, May 01, 2025 at 01:50:28PM +0100, Lee Jones wrote:
+> > > On Mon, 28 Apr 2025, Raag Jadav wrote:
+> > > 
+> > > > Extend MFD subsystem to support auxiliary child device. This is useful
+> > > > for MFD usecases where parent device is on a discoverable bus and doesn't
+> > > > fit into the platform device criteria. Purpose of this implementation is
+> > > > to provide discoverable MFDs just enough infrastructure to register
+> > > > independent child devices without abusing the platform device.
+> > > > 
+> > > > Current support is limited to just PCI type MFDs, but this can be further
+> > > > extended to support other types like USB in the future.
+> > > > 
+> > > > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> > > > ---
+> > > > 
+> > > > v2: Introduce a shared struct mfd_aux_device
+> > > >     Introduce auxiliary device opt-in flag
+> > > > 
+> > > > v3: Fix device_type ABI breakage (Andy)
+> > > >     Aesthetic adjustments (Andy)
+> > > > 
+> > > > v4: s/mfd_aux/maux
+> > > >     Allow num_resources for child device (Andy)
+> > > >     Fix build warning (Andy)
+> > > > 
+> > > >  drivers/mfd/Kconfig      |   2 +-
+> > > >  drivers/mfd/Makefile     |   2 +-
+> > > >  drivers/mfd/mfd-aux.c    | 156 +++++++++++++++++++++++++++++++
+> > > 
+> > > This looks like mostly duplicated platform device code.
+> > > 
+> > > If you are _certain_ that it needs to exist, you need to push it out to
+> > > the auxiliary subsystem and remove any traces of it being MFD related.
+> > > 
+> > > If it's needed by MFD, it'll be needed by other auxiliary users.  Even
+> > > if not now, sometime in the future.
+> > 
+> > Greg, if you are okay with this, please let me know. Or perhaps suggest
+> > a better alternative.
+> 
+> Greg, any guidance on this?
 
-> "Ingo Molnar" <mingo@kernel.org> writes:
->
->> * Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->>> "Ingo Molnar" <mingo@kernel.org> writes:
->>>
->>> > This primitive is dealing with 'struct hrtimer' objects, not
->>> > 'struct timer_list' objects - so clarify the name.
->>> >
->>> > We want to introduce the timer_container_of() symbol in the kernel
->>> > for timer_list, make sure there's no clash of namespaces, at least
->>> > on the conceptual plane.
->>>
->>> Is this a resend?
->>
->> I noted the changes in the boilerplate:
->>
->>   Changes in -v3:
->>
->>     - Picked up review tags
->>     - Rebased to v6.15-rc5
->>
->> This particular patch didn't change.
->
-> Thanks. I didn't get the cover letter, but I should have looked for it.
->
->>
->>> Again, I think this change is unnecessary. Please see my earlier reply [1].
->>>
->>> Best regards,
->>> Andreas Hindborg
->>>
->>>
->>> [1] https://lore.kernel.org/all/877c3cbdq2.fsf@kernel.org
->>
->> Yeah, saw that, but you said you are fine with it if I insist, and I'd
->> like to have this to free up the timer_* namespace.
->
-> Yes. I did not hear any proper insisting till now though.
->
->> Since I think we'd
->> like to introduce the timer_container_of() in the future it would be
->> nice to do this rename, as:
->>
->> 	$ git grep -w timer_container_of
->>
->> will have hrtimer related false positive hits in rust/ code, even
->> though the namespaces are obviously independent.
->
-> Ok, I see. I'm not used to grepping like that, but I see how that can be
-> annoying.
->
->>
->> The Rust method is arguably a minor misnomer as well: you have
->> work_container_of around struct work, but timer_container_of is around
->> struct hrtimer?
->
-> Yes, you are right.
->
-> Feel free to take this through tip. Otherwise maybe Miguel can pick it
-> up in the rust PR for 6.15.
+I don't know what to say, I don't see the code here that is being
+quoted, sorry.  If this should be in the aux code, add it and submit a
+patch that uses it so we can see what you are referring to.
 
-Sorry, I meant 6.16 of course.
+confused,
 
-
-Best regards,
-Andreas Hindborg
-
-
+greg k-h
 
