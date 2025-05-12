@@ -1,217 +1,143 @@
-Return-Path: <linux-kernel+bounces-644809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D8BAB44B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:16:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374D7AB44B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB35118884C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:16:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA82D17BCFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2654298CB6;
-	Mon, 12 May 2025 19:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEA7299936;
+	Mon, 12 May 2025 19:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xnR/l2GV"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xc2IwTMZ"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F91298C03
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDF7298C18
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747077226; cv=none; b=DUy8z+4QRG9N69AfEI4ObQSinef9oxQZ5MvhtkHEduw/anknJP+pZtLXxannkSefjcmOXVCQwppcRKok0dHNLbU6BAroi6h+qumoZfuBh2A3ZRS9EYrKoHk5DgGp1z3EVlVch4ISNRvxCrAlz9GK2NxFIA7Ciu6pKbcn17Va++U=
+	t=1747077278; cv=none; b=NrGieZKmt+CnV0rVI/7F0w/txX0f3ziXy5yc1oE7kdzjWbWM0ZKAxkYgEf6uZxVtvV5sc9lscZN04OiPDKaraYF5wNPcNPIhA73gCUQN5SC++58zJ87crSFLKyib5IXiiFxJQp04BoPFdbRC17MP8ODf6WsEPnRylAU3XQOsKso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747077226; c=relaxed/simple;
-	bh=hOzShn0d1VpvoCf2Jm+K+rqtd4i4H7Bs81YA329/3dI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Rx3SD3R9LnrFc7PQ8e0rPBJldhUn6pw6Tuoy55OqDBXgEsUY7OSPV2npGrmO/jbt7xu05FRrSUHHxWlhimXLkiy1VimNN1fO4ihCnO6zk3hvC6LfGgY54aiADq+Ct6pDNZ3eV98fK1aKabq6t4XyLE5SA876o2asIOMec+x+lTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xnR/l2GV; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1747077278; c=relaxed/simple;
+	bh=nSw3M6rRmpkbciW/XQfxFWq2eszCHwOBQzhvjLxmTOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EP2FD1OgnCB91bELdjuBeaWdrmYNEu9PliqpLl56HAEVPTKV7EvEK3Tns3IDugymJH/0nrhS4WjX+lsDvV8H3CEz4zBtCQWIZ1NVLsW9sq1zL03+7Fm+s24fcgbp+zi6B6SRhG9N0nUhCrszdunfd1aGbpwe7bCu9mv6t31IBmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xc2IwTMZ; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b1442e039eeso2962021a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:13:44 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2299a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747077224; x=1747682024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lJx9UOI4PMOst2OpE9us15li238FLNTl40Rp91/Ppb4=;
-        b=xnR/l2GVbfn4Q4Bw3GkXCKLRsEMupj/lIDncUadw54fADY8++5K46SQ+vs3gGtD5/2
-         fkRhCGMJucNuK6ixM/sg/IH150MKkwAw2H+nujd5XRvD61SWVfM3Gg0tI+aSlRvuZHym
-         yiXVRZF3Yp78buxdXCn1EwiJw/pSJpBX1ry3HFPjLZOvHzMlvAnC3Gxbd4D8pGHuHLgM
-         Xqn8Bu7S16RbtSuubmE3JusiR3USPhgYuIanDr6NJgt6vhwiJIanC6en2hGwHEfWqM3w
-         H5f6QDWAr6IJTMj18ZgLt0EKW/UlUpmYzTOWLN1jPSxLLJPlVkbQu8OwTWGTpKfjs4E2
-         21SQ==
+        d=google.com; s=20230601; t=1747077275; x=1747682075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6grkvz4IGQ6h1k6YUz5SWGU/3xxG7rgL4ytaAoxrVus=;
+        b=xc2IwTMZdItsXeHUzrjLMZltubWngOxbTl8g2Ayj9NoC+nZw73msQi0xVta1qFBgxQ
+         j9RYAuWIWQqlSczjFIRegIBObGYpF/YqfPrHFiFzKrX5z0WvhGMAUQmMGAPKkymW38YP
+         f9/LvUS0JbhJ6sMHaa1hd+K/1w1FyqnTwxwLgsMutPnn+y5U4KaZNzS44wUxi/UeXnJT
+         lAG9UrTGJj7ahrz+gmKrnw7i0GPogNNwXc0vWdIuMZZrK85ovq47jACvQDymvNzkKCzd
+         bxmY4QpY7WZkxsbmWnbquBlNF68kDZx1bIZgn+H9w0E9rujqqf1izKoMlvCYq9Z5Ltx5
+         hxXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747077224; x=1747682024;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lJx9UOI4PMOst2OpE9us15li238FLNTl40Rp91/Ppb4=;
-        b=EH3VBuxhoKzOAHZYbxrV/0mQN2hdhhMT51SC+slsFQKPKqrdTJGULYFodqIktf2KBK
-         7cJ3l0/r9tWXBQFGncN1aNEJTkgagO23L7pW1+0odjBi8Spmd5XKcdE0rqFd7EkFHoFH
-         LArwWI/3JmYFgy3EEjWtqyf4z2q2AIzZMThNKQ9UjlfpczbmlkQvpW8kU0IBhHzjsDJi
-         y5tUOKulPG8jr0Lj7Y9ulCqgPebhsSmcXymALWn224JhJwbOUDk8bwu4XOx+yu1C/ckF
-         6wxwN+gumHFZKfaQ+0VW/6gg6AbibQ0KYzJaHyyB0IM+0wyOQbBcnkT71W6sC8vpuB8O
-         Lv8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVU5GP8qoH6UOmJE/hFV8E29y6u0JBJMdd18wWP5mhEPk+X6zzWc5AHv672GRQuTGU2Nvkt9YRVVMG5Czo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4ug+XCjlaavo2UV5Te5TSnD0BRc7aDK2L4Ra3YQXu7qLXoDyw
-	YeP+0Ag03mj9usSEnipfMNyDLFqa4XLvC9cd53zIAaWlCV0B5A7nY4hbRSgG8u7II0w/2EddVUj
-	WEA==
-X-Google-Smtp-Source: AGHT+IG/DheF6+DB5H/MuBZC30AE1eW2qEhr5QdZeTJGOjHWqmwrfunvk18P9rn5Ac2Y/Af/I9choRB0WCI=
-X-Received: from pjbqx15.prod.google.com ([2002:a17:90b:3e4f:b0:309:da3b:15d1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b4b:b0:308:6d7a:5d30
- with SMTP id 98e67ed59e1d1-30c3d3e0a86mr24720902a91.18.1747077223739; Mon, 12
- May 2025 12:13:43 -0700 (PDT)
-Date: Mon, 12 May 2025 12:13:42 -0700
-In-Reply-To: <20250313203702.575156-13-jon@nutanix.com>
+        d=1e100.net; s=20230601; t=1747077275; x=1747682075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6grkvz4IGQ6h1k6YUz5SWGU/3xxG7rgL4ytaAoxrVus=;
+        b=VtQWWMKborYtPXWQWXj+QvBREnP+ZlfVIMpG3aVsFScD75oRZSMA/THsQQFY06QBtu
+         Mi4jNGTA1UqrZaY/0KmVEraZOpn+tCZmxUBoOVFnwdt92HUfoBHLGZdIFQcpvXB1uuja
+         ejwFUtTDwZMloCSHZAigiyuXQJ6eHURoetRug7KBEznfNwwCBDoyI+xOg0PNItRRo1Z/
+         rIQME7aBedzjGarU58indK+Pzt23VYC90s2zuheqYMZKzOweMckRmDXsyDExTEAcdWFw
+         EiNQUXbIYVeH/bn78X0sPwGZBrXiJnIfmWacD6QXDhjXby0zWuPqkJgnKU0Sh4cdjlcV
+         DVfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo6Rm491qGpH2bdeYeSfpy/uNOgHzM5fD9RQ0FsfWegN03vaqhPKkflHYJ8gBnDej4MR/nULcndUBUcWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQWzb4P+IkTaaiuUeuXfQ1nFES1Rxets8zGLWwlskgQB2ZzO8+
+	NUEf1foIrUAPyLHCoKk8mSVNUKy9Tg2xeQVM+usVV5TN1/KsRH1N3HfU5wnHYvDNfYWN3Qok4+D
+	FPchDX7qXFBDIaghuUJyZzLYx8GdR5RuRLZZe6/xG
+X-Gm-Gg: ASbGncvZu/heLwP3GiedJKuMjxsFG55D95/7AmIYnQQ7NOgTtaNBad6i0j6CJOhaOYV
+	6TtZyYXSfE4u0m/Z1MkAZq5GPKQMkuNMLc+gPRjCHnLZIIrZnNyajPtFpo9wcXApyTwPDQc6DHf
+	WcYyHe2bgIOWTTyUPmhLVSbo6ykg7orE2ZAKUz45kFJR0Q0I+MV8UNTeG65A8Laqs=
+X-Google-Smtp-Source: AGHT+IFtZat3CxYkRrxuf4LayeSFUTjMOU/UUK6s3flry2QVc1ThfDr5aYHBrgSXAdeNzDz8w9DKO2TrEjr/VQ451Qs=
+X-Received: by 2002:a05:6402:b2e:b0:5fd:2041:88f7 with SMTP id
+ 4fb4d7f45d1cf-5ff2a33cf76mr16530a12.2.1747077274857; Mon, 12 May 2025
+ 12:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-13-jon@nutanix.com>
-Message-ID: <aCJIZgHi67_lze_v@google.com>
-Subject: Re: [RFC PATCH 12/18] KVM: x86/mmu: Introduce shadow_ux_mask
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sergey Dyasli <sergey.dyasli@nutanix.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250509115126.63190-1-byungchul@sk.com> <20250509115126.63190-2-byungchul@sk.com>
+ <ea4f2f83-e9e4-4512-b4be-af91b3d6b050@gmail.com> <20250512132939.GF45370@system.software.com>
+In-Reply-To: <20250512132939.GF45370@system.software.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 12 May 2025 12:14:13 -0700
+X-Gm-Features: AX0GCFuWCsCZDfmhnWSbDcL7YWTV_J17ret_1dOAsScEvpk7dr4EAmn0tHdJSi4
+Message-ID: <CAHS8izPoNw9qbtAZgsNxAAPYqu7czdRYSZAXVZbJo9pP-htfDg@mail.gmail.com>
+Subject: Re: [RFC 01/19] netmem: rename struct net_iov to struct netmem_desc
+To: Byungchul Park <byungchul@sk.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, willy@infradead.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com, 
+	kuba@kernel.org, ilias.apalodimas@linaro.org, harry.yoo@oracle.com, 
+	hawk@kernel.org, akpm@linux-foundation.org, ast@kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, john.fastabend@gmail.com, 
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com, 
+	vishal.moola@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025, Jon Kohler wrote:
-> @@ -28,6 +28,7 @@ u64 __read_mostly shadow_host_writable_mask;
->  u64 __read_mostly shadow_mmu_writable_mask;
->  u64 __read_mostly shadow_nx_mask;
->  u64 __read_mostly shadow_x_mask; /* mutual exclusive with nx_mask */
-> +u64 __read_mostly shadow_ux_mask;
->  u64 __read_mostly shadow_user_mask;
->  u64 __read_mostly shadow_accessed_mask;
->  u64 __read_mostly shadow_dirty_mask;
-> @@ -313,8 +314,14 @@ u64 make_huge_page_split_spte(struct kvm *kvm, u64 h=
-uge_spte,
->  		 * the page executable as the NX hugepage mitigation no longer
->  		 * applies.
->  		 */
-> -		if ((role.access & ACC_EXEC_MASK) && is_nx_huge_page_enabled(kvm))
-> +		if ((role.access & ACC_EXEC_MASK) && is_nx_huge_page_enabled(kvm)) {
+On Mon, May 12, 2025 at 6:29=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
+rote:
+>
+> On Mon, May 12, 2025 at 02:11:13PM +0100, Pavel Begunkov wrote:
+> > On 5/9/25 12:51, Byungchul Park wrote:
+> > > To simplify struct page, the page pool members of struct page should =
+be
+> > > moved to other, allowing these members to be removed from struct page=
+.
+> > >
+> > > Reuse struct net_iov for also system memory, that already mirrored th=
+e
+> > > page pool members.
+> > >
+> > > Signed-off-by: Byungchul Park <byungchul@sk.com>
+> > > ---
+> > >   include/linux/skbuff.h                  |  4 +--
+> > >   include/net/netmem.h                    | 20 ++++++------
+> > >   include/net/page_pool/memory_provider.h |  6 ++--
+> > >   io_uring/zcrx.c                         | 42 ++++++++++++----------=
+---
+> >
+> > You're unnecessarily complicating it for yourself. It'll certainly
+> > conflict with changes in the io_uring tree, and hence it can't
+> > be taken normally through the net tree.
+> >
+> > Why are you renaming it in the first place? If there are good
+>
+> It's because the struct should be used for not only io vetor things but
+> also system memory.  Current network code uses struct page as system
+> memory descriptor but struct page fields for page pool will be gone.
+>
+> So I had to reuse struct net_iov and I thought renaming it made more
+> sense.  It'd be welcome if you have better idea.
+>
 
-This is wrong, and probably so is every other chunk of KVM that looks at
-ACC_EXEC_MASK.  E.g. if a guest hugepage is executable for user but not sup=
-ervisor,
-KVM will fail to make the small child user-executable.
+As I said in another thread, struct page should not embed struct
+net_iov as-is. struct net_iov already has fields that are unrelated to
+page (like net_iov_owner) and more will be added in the future.
 
-The bug in make_spte() is even worse, because KVM would let an MBEC-aware g=
-uest
-trigger the iTLB multi-hit #MC.
+I think what Matthew seems to agree with AFAIU in the other thread is
+creating a new struct, struct netmem_desc, and having struct net_iov
+embed netmem_desc.
 
->  			child_spte =3D make_spte_executable(child_spte);
-> +			// TODO: For LKML: switch to vcpu->arch.pt_guest_exec_control? up
-> +			// for suggestions on how best to toggle this.
 
-No, it belongs in the role.
-
-> +			if (enable_pt_guest_exec_control &&
-> +			    role.access & ACC_USER_EXEC_MASK)
-> +				child_spte |=3D shadow_ux_mask;
-> +		}
->  	}
-> =20
->  	return child_spte;
-> @@ -326,7 +333,7 @@ u64 make_nonleaf_spte(u64 *child_pt, bool ad_disabled=
-)
->  	u64 spte =3D SPTE_MMU_PRESENT_MASK;
-> =20
->  	spte |=3D __pa(child_pt) | shadow_present_mask | PT_WRITABLE_MASK |
-> -		shadow_user_mask | shadow_x_mask | shadow_me_value;
-> +		shadow_user_mask | shadow_x_mask | shadow_ux_mask | shadow_me_value;
-> =20
->  	if (ad_disabled)
->  		spte |=3D SPTE_TDP_AD_DISABLED;
-> @@ -420,7 +427,8 @@ void kvm_mmu_set_me_spte_mask(u64 me_value, u64 me_ma=
-sk)
->  }
->  EXPORT_SYMBOL_GPL(kvm_mmu_set_me_spte_mask);
-> =20
-> -void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only)
-> +void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only,
-> +			   bool has_guest_exec_ctrl)
->  {
->  	shadow_user_mask	=3D VMX_EPT_READABLE_MASK;
->  	shadow_accessed_mask	=3D has_ad_bits ? VMX_EPT_ACCESS_BIT : 0ull;
-> @@ -428,8 +436,14 @@ void kvm_mmu_set_ept_masks(bool has_ad_bits, bool ha=
-s_exec_only)
->  	shadow_nx_mask		=3D 0ull;
->  	shadow_x_mask		=3D VMX_EPT_EXECUTABLE_MASK;
->  	/* VMX_EPT_SUPPRESS_VE_BIT is needed for W or X violation. */
-> +	// For LKML Review:
-> +	// Do we need to modify shadow_present_mask in the MBEC case?
-
-No, because MBEC bifurcates X, it doesn't change whether or not an EPTE can=
- be
-X without being R.  From the SDM:
-
-  1. If the =E2=80=9Cmode-based execute control for EPT=E2=80=9D VM-executi=
-on control is 1,
-     setting bit 0 indicates also that software may also configure EPT
-     paging-structure entries in which bits 1:0 are both clear and in which=
- bit 10
-     is set (indicating a translation that can be used to fetch instruction=
-s from a
-     supervisor-mode linear address or a user-mode linear address).
-
->  	shadow_present_mask	=3D
->  		(has_exec_only ? 0ull : VMX_EPT_READABLE_MASK) | VMX_EPT_SUPPRESS_VE_B=
-IT;
-> +
-> +	shadow_ux_mask		=3D
-> +		has_guest_exec_ctrl ? VMX_EPT_USER_EXECUTABLE_MASK : 0ull;
-
-This is EPT specific code, just call this what it is:
-
-	shadow_ux_mask		=3D has_mbec ? VMX_EPT_USER_EXECUTABLE_MASK : 0ull;
-> +
->  	/*
->  	 * EPT overrides the host MTRRs, and so KVM must program the desired
->  	 * memtype directly into the SPTEs.  Note, this mask is just the mask
-> @@ -484,6 +498,7 @@ void kvm_mmu_reset_all_pte_masks(void)
->  	shadow_dirty_mask	=3D PT_DIRTY_MASK;
->  	shadow_nx_mask		=3D PT64_NX_MASK;
->  	shadow_x_mask		=3D 0;
-> +	shadow_ux_mask		=3D 0;
->  	shadow_present_mask	=3D PT_PRESENT_MASK;
-> =20
->  	/*
-> diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-> index d9e22133b6d0..dc2f0dc9c46e 100644
-> --- a/arch/x86/kvm/mmu/spte.h
-> +++ b/arch/x86/kvm/mmu/spte.h
-> @@ -171,6 +171,7 @@ extern u64 __read_mostly shadow_mmu_writable_mask;
->  extern u64 __read_mostly shadow_nx_mask;
->  extern u64 __read_mostly shadow_x_mask; /* mutual exclusive with nx_mask=
- */
->  extern u64 __read_mostly shadow_user_mask;
-> +extern u64 __read_mostly shadow_ux_mask;
->  extern u64 __read_mostly shadow_accessed_mask;
->  extern u64 __read_mostly shadow_dirty_mask;
->  extern u64 __read_mostly shadow_mmio_value;
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 0aadfa924045..d16e3f170258 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -8544,7 +8544,8 @@ __init int vmx_hardware_setup(void)
-> =20
->  	if (enable_ept)
->  		kvm_mmu_set_ept_masks(enable_ept_ad_bits,
-> -				      cpu_has_vmx_ept_execute_only());
-> +				      cpu_has_vmx_ept_execute_only(),
-> +				      enable_pt_guest_exec_control);
-
-Without the module param, just cpu_has_vmx_mbec().
+--=20
+Thanks,
+Mina
 
