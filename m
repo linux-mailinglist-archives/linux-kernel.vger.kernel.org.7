@@ -1,152 +1,99 @@
-Return-Path: <linux-kernel+bounces-644704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3510EAB4342
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:32:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD145AB43A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDB01650F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD273B02D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C7B296FAC;
-	Mon, 12 May 2025 18:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BF429898B;
+	Mon, 12 May 2025 18:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eaEugD1c"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ia5WLQRL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770FF25335E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB7E245022;
+	Mon, 12 May 2025 18:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747074215; cv=none; b=HVSmX49f8aUN8sMm3FSrlI3qN8yh4m2IPIXZPiSH4E/toEfsLCOX8lmRTqs17KW30TtLJO1dMwDcWB/FRBwhv5W83HsJBZ8zMt+JZmvcwP80ppXQld9LE1IqTRfL2n1afo4OirYEvBqZGIRr80lUDVRFj80RRWBZSHebRwjrP8A=
+	t=1747074372; cv=none; b=nqbqYBbLdNXqy2oMt/AGuKjn1SKDxIRbJpwxHHB88GPbjfuYQvPXNS8vgH6j+Q05pCTkTGlU9ukcdNTPuyPhvwRu79jJJHNOV5a2E9q3Oi3W8A7J2Nt9/hkIwXnI0VZLq9WZGiI6s3yS0+qoGs6nj7bEIHYpm3dZQex2+ofIpi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747074215; c=relaxed/simple;
-	bh=xBGFDbIy9RqjSxPXztoA+FCBn3Xtom0hkV9I1lIirmI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YufvmHH/FfUFrnNrg/b73OYxY9RzrcdpXRvLUQY7SYBrdfZtfNYW+w91X8HJfOswGEGYpNrmYHlUQ9hMGAtoO9/Ec3LVS/igpZWbXvmTSko26z87HrhVrUN0YFRKnqd6MWO9k7oVIqBXROKWbksSbL15XP8X/nQytmO5yQVCzos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eaEugD1c; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b25dda2f585so2711399a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747074214; x=1747679014; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DhXF/CHBNXDZ8TD5O0grJafmQnUhM9pMjEfCT/Aj0J8=;
-        b=eaEugD1cGC3XwMnAgt3W0XRWMod540mPcMzwc6c4Cv9honKtDPHxA0taUFXZJr4SEv
-         WCr2gjc0toFjTqpzQMGUj7Vkk6R4UCyHT9gFxmYhKOLqbQj2mLBJsnRkYK+J0io6okxY
-         6UTS5pghVjnsahuRO4nfncBV/PdG+03cYXZ0AhS+Xo749w3mncBjXONAffOP5UH3PbAI
-         oRNhYYqoJgUGAxWsGFw5mTCoODcltsGVICLn4XBgY5Zb/MPK+SHMHOCrZHNLqza4bf86
-         /dq0AduKOLYnOPnJhhwHEvdPdazG+1Kuqqn3N3hqZtMbCwiLkCaNbDdaa2qTDo3NFiWN
-         0/EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747074214; x=1747679014;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DhXF/CHBNXDZ8TD5O0grJafmQnUhM9pMjEfCT/Aj0J8=;
-        b=UL+OL0lFB8FLh1PiJpVDz1I7Uv7uZUDLC749V55pfxSkr+0tZYFBwALmeu3Xn+netS
-         w4MdDvVTJjlEzrcdbPX81DfVTy74vVzPTIx2PI5M6P+rkqgkXrHkw4fUFizfBKjUYA+O
-         XcEn1pXOp0KkhAoMH6JsbGoPrqGVWWjCIRTdR6qqg8vynX8LaUcL0Akg2OtJIuNDNhPX
-         1u6yifOZmCk5hqhv4tgtg2Wr9aMeEzXj3Ztf9PgQ+Ts/vR3EKv9AC6igDzc5LTteQtdp
-         0VH7J2Y7b/AEA4rdchsYQMnqBFn1aJ4YJUdXRey+E5rsjo7hKluWFVx2jZZ33uKMTuBh
-         r+8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVOWGWjeH1/HsTQDTehbYAxHNIAitsFeqMH1rYSUExFptowHoVsWS0RL9ky9QKhDcWZWXcTimIx88KRRWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoMapAF4rEAuftp61SDbeZirDhrJNmJH7MmdzpLsO8atQYcOUU
-	n9fGUwoywfv/ypJE10KlDWzMFtUcuJxxKug+K9i/3dzJBXn4UhIu+wLt1UDCvYPz9JfkHLtnJ7e
-	nJg==
-X-Google-Smtp-Source: AGHT+IFxuWdlhqICz+7tB+ZoaL8tfHry8cvS0vmOzMxg7tsh6qE+qvmYcSnCxleO5Xjbzty+biW82xsevWs=
-X-Received: from pjbse15.prod.google.com ([2002:a17:90b:518f:b0:308:64af:7bb9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d2c5:b0:30c:523e:89e7
- with SMTP id 98e67ed59e1d1-30c523e8d29mr15208716a91.16.1747074213775; Mon, 12
- May 2025 11:23:33 -0700 (PDT)
-Date: Mon, 12 May 2025 11:23:32 -0700
-In-Reply-To: <20250313203702.575156-7-jon@nutanix.com>
+	s=arc-20240116; t=1747074372; c=relaxed/simple;
+	bh=6Q2jz1G+bUKQsb4zfDpMbTExI9ep4BLneYtxWvwjmGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWIgoj+LtgXlys+78bwovQQmLhiZ7k9uq1mEv5Z7kD3UwGrsOxnNkKGeVf0fkeIwIYGBpUFrmypi+MaL5bpGlcYjUZZ462ywgkXnJZfO9uPaiRVFMzNy5U1ZQhtcJD4FWUYmfDTywVqU99zi9jEqfF6AdD/ux1dJ61f/rHrN5Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ia5WLQRL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EXLzzby17OeuImZpl0bn8vKeJixwwGVwH6DpLX/u2w8=; b=ia5WLQRLlkGcUXx76Ce9kHz5C7
+	QBr15oHXn5J/+Z8KXVnNCHhaLafwmPZWLxE/n0KJ2c0LRePodPA7S/Sb/uYU+sAlOlqcmC3JyYJqJ
+	tKft6FbTuqZjJLtfu+k/f3h9li1b8JfvlUdne8dg94G7sZlQ3Ad1kf/QnJ5Dot5fitPAv34lln4Ah
+	Rkx8T/z9JyCzFewvg3zHC3LbKcMnRbRorRvgAMeRsuT1PbO3jYWJibaM5+e9a03VwLcIi8iVc16xP
+	XrUqduRgYDDRVcsNJMkdu3wXk0x5a5HgyVfHB2pJMcJ5eIfN1OshIFvrDeOP6WUGN6ITSNWJiBrGW
+	gOdrQMtQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uEXqh-0000000A8Kq-3urV;
+	Mon, 12 May 2025 18:26:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 82F05300717; Mon, 12 May 2025 20:25:59 +0200 (CEST)
+Date: Mon, 12 May 2025 20:25:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for
+ conditional locking
+Message-ID: <20250512182559.GB25891@noisy.programming.kicks-ass.net>
+References: <20250507072145.3614298-1-dan.j.williams@intel.com>
+ <20250507072145.3614298-2-dan.j.williams@intel.com>
+ <20250507093224.GD4439@noisy.programming.kicks-ass.net>
+ <681bce2193f38_1229d6294c7@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250508110043.GG4439@noisy.programming.kicks-ass.net>
+ <681d8ce06c869_1229d6294e@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250509104028.GL4439@noisy.programming.kicks-ass.net>
+ <681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch>
+ <20250512105026.GP4439@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-7-jon@nutanix.com>
-Message-ID: <aCI8pGJbn3l99kq8@google.com>
-Subject: Re: [RFC PATCH 06/18] KVM: VMX: Wire up Intel MBEC enable/disable logic
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512105026.GP4439@noisy.programming.kicks-ass.net>
 
-On Thu, Mar 13, 2025, Jon Kohler wrote:
-> Add logic to enable / disable Intel Mode Based Execution Control (MBEC)
-> based on specific conditions.
-> 
-> MBEC depends on:
-> - User space exposing secondary execution control bit 22
-> - Extended Page Tables (EPT)
-> - The KVM module parameter `enable_pt_guest_exec_control`
-> 
-> If any of these conditions are not met, MBEC will be disabled
-> accordingly.
+On Mon, May 12, 2025 at 12:50:26PM +0200, Peter Zijlstra wrote:
 
-Why?  I know why, but I know why despite the changeloge, not because of the
-changelog.
-
-> Store runtime enablement within `kvm_vcpu_arch.pt_guest_exec_control`.
-
-Again, why?  If you actually tried to explain this, I think/hope you would realize
-why it's wrong.
-
-> Signed-off-by: Jon Kohler <jon@nutanix.com>
-> 
-> ---
->  arch/x86/kvm/vmx/vmx.c | 11 +++++++++++
->  arch/x86/kvm/vmx/vmx.h |  7 +++++++
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 7a98f03ef146..116910159a3f 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2694,6 +2694,7 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
->  			return -EIO;
->  
->  		vmx_cap->ept = 0;
-> +		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
->  		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
->  	}
->  	if (!(_cpu_based_2nd_exec_control & SECONDARY_EXEC_ENABLE_VPID) &&
-> @@ -4641,11 +4642,15 @@ static u32 vmx_secondary_exec_control(struct vcpu_vmx *vmx)
->  		exec_control &= ~SECONDARY_EXEC_ENABLE_VPID;
->  	if (!enable_ept) {
->  		exec_control &= ~SECONDARY_EXEC_ENABLE_EPT;
-> +		exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
->  		exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
->  		enable_unrestricted_guest = 0;
->  	}
->  	if (!enable_unrestricted_guest)
->  		exec_control &= ~SECONDARY_EXEC_UNRESTRICTED_GUEST;
-> +	if (!enable_pt_guest_exec_control)
-> +		exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
-
-This is wrong and unnecessary.  As mentioned early, the input that matters is
-vmcs12.  This flag should *never* be set for vmcs01.
-
->  	if (kvm_pause_in_guest(vmx->vcpu.kvm))
->  		exec_control &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
->  	if (!kvm_vcpu_apicv_active(vcpu))
-> @@ -4770,6 +4775,9 @@ static void init_vmcs(struct vcpu_vmx *vmx)
->  		if (vmx->ve_info)
->  			vmcs_write64(VE_INFORMATION_ADDRESS,
->  				     __pa(vmx->ve_info));
+> +#define __GUARD_ERR(_ptr) \
+> +	({ long _rc = (__force unsigned long)(_ptr); \
+> +	   if (!_rc) { _rc = -EBUSY; } if (!IS_ERR_VALUE(_rc)) { _rc = 0; } \
+> +	   _rc; })
 > +
-> +		vmx->vcpu.arch.pt_guest_exec_control =
-> +			enable_pt_guest_exec_control && vmx_has_mbec(vmx);
 
-This should effectively be dead code, because vmx_has_mbec() should never be
-true at vCPU creation.
+>  #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
+> -	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
+> +	DEFINE_CLASS(_name, _type, if (!__GUARD_ERR(_T)) { _unlock; }, ({ _lock; _T; }), _type _T); \
+>  	DEFINE_CLASS_IS_GUARD(_name)
+
+GCC is 'stupid' and this generates atrocious code. I'll play with it.
 
