@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-644703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47ADAB433B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:31:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A269FAB4372
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0A94A3FD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EDE73A500C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70535297B60;
-	Mon, 12 May 2025 18:20:36 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CE91C8639
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95899295D97;
+	Mon, 12 May 2025 18:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ug+h8PqF"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A8C29B8C3
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747074036; cv=none; b=gS789W7J1dC652wJXwjewpC7fVVHFSHgGTYVKoZeJkbnfQPlLaFVz/RR6bXd4s+/KwFUGlr2+KLEo9gLF7euevCVqPtct2akXNoMl157Cyo7poJmtOtLMt4TJzGDzMahagACbvyhnCe98qAad2m8LDUbB8cNOaFVXX3wsZgsd3w=
+	t=1747073708; cv=none; b=l0FzmPSjw0lijmgmqWLpOaLEB+y+p4UWgJdo6T64vR8Lc2AVklyF44v9vGkaQap8wtecdW3P0jDMM9IZKbAGz7dxw8XFYlsgFsyleMR972i7pTI4Aej14pRdIsrdj+5Kf5pMfB4Y/vn8RbvLeVXAfR936TFXfhEEfy4AsaQOb9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747074036; c=relaxed/simple;
-	bh=2bRnPOgixSh1KN5TilifSXLoxOTTFgZvz6H1AGyqCe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oo/IQIrRgkq6nvTIadAwoX3kdnocqZ9siTZU0jm9t9DOgOQ/HW/1RtOgJEBUoPVdKrEoRrzXhgU3G5bRxjXg7zz7a9tJUZE6oTMqWW/7KWnky8z/RsD2DNVW66wfKFdtzhThJoLOqQC8wLE/1X5w9K7OGZWFyjbevo6UsY3gOQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Zx7790M1cz9sB2;
-	Mon, 12 May 2025 20:15:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 4RD4ewTYA1SE; Mon, 12 May 2025 20:15:00 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zx7786JDDz9s9J;
-	Mon, 12 May 2025 20:15:00 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C80628B764;
-	Mon, 12 May 2025 20:15:00 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id pjYqhLFiADqp; Mon, 12 May 2025 20:15:00 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.202.221])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 880118B763;
-	Mon, 12 May 2025 20:14:59 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/vdso: Fix build of VDSO32 with pcrel
-Date: Mon, 12 May 2025 20:14:55 +0200
-Message-ID: <1fa3453f07d42a50a70114da9905bf7b73304fca.1747073669.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1747073708; c=relaxed/simple;
+	bh=XRgxPrQuWwX712fF2KflNnXoQ502wCaR5BHoTUuXB04=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bzEXF7tR45NDtcT06RbsZp/udNhZrG+6RI/jMXGU6/WCuyvawH7wveK5XxY8H51FHIRkvTaInuSOtmnkw5iHYbVsPaEhMKTd4U4nuo8kh1RYikr0dC9TlAT1tnA1M9ZJt+aoP+zgFwOxk1g3dFaMuaIXgb89mbNMnGdTW4+krLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ug+h8PqF; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30a59538b17so4582729a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747073706; x=1747678506; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OawiPZy4beozboh+ADi996BCPJ4CwdxLLRfTTirpfYY=;
+        b=ug+h8PqFIOYv+/rpwt+0myhrSFKCuhi5YOUYAIGZOSzdmaKzrg8MmIe8cDEXBxcTea
+         eOwjhDae5vTE4LFccjbA4e6foVEUaHXr72EhBIqLTanKanPn+AXl8B7osRwjQhuoXBZb
+         TK1ELQe8jMw228FsGuZORMmIQaylSTRcCzHzVuw2yXY3Xg2jjgNtBKDF5uxOGkKmAADk
+         vnzJB23Prm0q5jLj/j/S+ekp4m1FKLH8U5LOGJ4Sy8uZ+oGvstxLOy2WLiY+ydnpoHIx
+         iMJEUzS/OCvR20fdzks7g5zP98BLxJCDWGeCcih11YTKxo+L7MivgH6MFt44QxLD98DI
+         3RMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747073706; x=1747678506;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OawiPZy4beozboh+ADi996BCPJ4CwdxLLRfTTirpfYY=;
+        b=aVUevjaP141pCRiHIGnsKYEhw4y39kxSctOPV0d4FY56IjfYXX5lb1B4vZX6Xzv0BD
+         aYEtURzhBvddXWPHQVmPqsmkXnmjSTP5LoEs9dpuNDnTfnNKC+aPcsNHrfFmE3dynWIN
+         vw18MYSzk3xz6wifEhqmgTTH1ccZhrnVwyt0FVNo2k9F4fDVRyyObVPGitjKEsWiX3nR
+         6LMRYX+FoMNzxVfyrfi57Sgh1woeizFi7IN85nmLDlQhDfB8BaeKgYiKqdg62Uux7yBG
+         ZvLazYDHbw4dzZbVjefXpGy51RzHfLo2WaBhY7kbFV9djbdzvUG2LwKi+Wj2e7MhJMrL
+         rFlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDJP5pZEFUV4XwE5ncpddXrHeBL3T1Wnwxr/V3uGPtWpShaB/2fNJbSQQaqdngd44c7j+0/82JwfsuhOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxve53wRmLrtklqtDGDQ2jwif++e6JrtzYNXAe/EAxpHcj6ghxg
+	mj56gYPPsjwOo4hjv53wQb8hBW5y8s7KZKSv2oa/uKlswzL4OUjd8k3BgaHpkSd5bfemTZ13eZg
+	XTA==
+X-Google-Smtp-Source: AGHT+IGyau0PoBP95Yo7LfzxSiqa/oArBrnyxawTOxipXchYIU5+/lMqeUCH5/FZBJvvi0+YCIuI2+JTqkk=
+X-Received: from pjh4.prod.google.com ([2002:a17:90b:3f84:b0:2ea:aa56:49c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1843:b0:301:9f62:a944
+ with SMTP id 98e67ed59e1d1-30c3d64f332mr26562923a91.33.1747073705884; Mon, 12
+ May 2025 11:15:05 -0700 (PDT)
+Date: Mon, 12 May 2025 11:15:04 -0700
+In-Reply-To: <20250313203702.575156-6-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747073696; l=2735; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=2bRnPOgixSh1KN5TilifSXLoxOTTFgZvz6H1AGyqCe4=; b=gJKXhk5l8wg7PTWXYLYWRfjMZnNjPB8gWqHCIsAtnbSFXNMPDLiWnB7uowT38KyfINX9TmzEO 8GXCIPXwtSbBp79ffWNmIrzbr2p8zraECBzL2A5mZjKofq7Ogp1mQ38
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-6-jon@nutanix.com>
+Message-ID: <aCI6qMg6OjT-cWzR@google.com>
+Subject: Re: [RFC PATCH 05/18] KVM: x86: Add pt_guest_exec_control to kvm_vcpu_arch
+From: Sean Christopherson <seanjc@google.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Building vdso32 on power10 with pcrel leads to following errors:
+On Thu, Mar 13, 2025, Jon Kohler wrote:
+> Add bool for pt_guest_exec_control to kvm_vcpu_arch, to be used for
+> runtime checks for Intel Mode Based Execution Control (MBEC) and
+> AMD Guest Mode Execute Control (GMET).
+> 
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> 
+> ---
+>  arch/x86/include/asm/kvm_host.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index fd37dad38670..192233eb557a 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -856,6 +856,8 @@ struct kvm_vcpu_arch {
+>  	struct kvm_hypervisor_cpuid kvm_cpuid;
+>  	bool is_amd_compatible;
+>  
+> +	bool pt_guest_exec_control;
 
-	  VDSO32A arch/powerpc/kernel/vdso/gettimeofday-32.o
-	arch/powerpc/kernel/vdso/gettimeofday.S: Assembler messages:
-	arch/powerpc/kernel/vdso/gettimeofday.S:40: Error: syntax error; found `@', expected `,'
-	arch/powerpc/kernel/vdso/gettimeofday.S:71:  Info: macro invoked from here
-	arch/powerpc/kernel/vdso/gettimeofday.S:40: Error: junk at end of line: `@notoc'
-	arch/powerpc/kernel/vdso/gettimeofday.S:71:  Info: macro invoked from here
-	 ...
-	make[2]: *** [arch/powerpc/kernel/vdso/Makefile:85: arch/powerpc/kernel/vdso/gettimeofday-32.o] Error 1
-	make[1]: *** [arch/powerpc/Makefile:388: vdso_prepare] Error 2
-
-Once the above is fixed, the following happens:
-
-	  VDSO32C arch/powerpc/kernel/vdso/vgettimeofday-32.o
-	cc1: error: '-mpcrel' requires '-mcmodel=medium'
-	make[2]: *** [arch/powerpc/kernel/vdso/Makefile:89: arch/powerpc/kernel/vdso/vgettimeofday-32.o] Error 1
-	make[1]: *** [arch/powerpc/Makefile:388: vdso_prepare] Error 2
-	make: *** [Makefile:251: __sub-make] Error 2
-
-Make sure pcrel version of CFUNC() macro is used only for powerpc64
-builds and remove -mpcrel for powerpc32 builds.
-
-Fixes: 7e3a68be42e1 ("powerpc/64: vmlinux support building with PCREL addresing")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/include/asm/ppc_asm.h | 2 +-
- arch/powerpc/kernel/vdso/Makefile  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-index 02897f4b0dbf..b891910fce8a 100644
---- a/arch/powerpc/include/asm/ppc_asm.h
-+++ b/arch/powerpc/include/asm/ppc_asm.h
-@@ -183,7 +183,7 @@
- /*
-  * Used to name C functions called from asm
-  */
--#ifdef CONFIG_PPC_KERNEL_PCREL
-+#if defined(__powerpc64__) && defined(CONFIG_PPC_KERNEL_PCREL)
- #define CFUNC(name) name@notoc
- #else
- #define CFUNC(name) name
-diff --git a/arch/powerpc/kernel/vdso/Makefile b/arch/powerpc/kernel/vdso/Makefile
-index e8824f933326..8834dfe9d727 100644
---- a/arch/powerpc/kernel/vdso/Makefile
-+++ b/arch/powerpc/kernel/vdso/Makefile
-@@ -53,7 +53,7 @@ ldflags-$(CONFIG_LD_ORPHAN_WARN) += -Wl,--orphan-handling=$(CONFIG_LD_ORPHAN_WAR
- ldflags-y += $(filter-out $(CC_AUTO_VAR_INIT_ZERO_ENABLER) $(CC_FLAGS_FTRACE) -Wa$(comma)%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
- 
- CC32FLAGS := -m32
--CC32FLAGSREMOVE := -mcmodel=medium -mabi=elfv1 -mabi=elfv2 -mcall-aixdesc
-+CC32FLAGSREMOVE := -mcmodel=medium -mabi=elfv1 -mabi=elfv2 -mcall-aixdesc -mpcrel
- ifdef CONFIG_CC_IS_CLANG
- # This flag is supported by clang for 64-bit but not 32-bit so it will cause
- # an unused command line flag warning for this file.
--- 
-2.47.0
-
+Again, aside from the fast that putting this in kvm_vcpu_arch is wrong, this not
+worth of a separate patch.
 
