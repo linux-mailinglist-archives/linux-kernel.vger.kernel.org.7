@@ -1,171 +1,162 @@
-Return-Path: <linux-kernel+bounces-643729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D534AAB30EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A58DAB30E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65DF1189B886
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D0C3189BCB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D486D256C87;
-	Mon, 12 May 2025 07:58:17 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C161325745C;
+	Mon, 12 May 2025 07:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EzAaN+CS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r0CZ7qZy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bM4Deu++";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PK8ChYPY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70C03D984
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 07:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACDB257421
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 07:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747036697; cv=none; b=PPgVSz2yEH8c4dh4HJixAygq62S1KahRws+Ffm1J9AFCzm1gP+7Iav+vGvNnIu2kze+tQyf5COX4clYu5wIctt8K2GBh2l3Gmw0hkADJ+yORkSJe/8mFQflB5Rj4Md/iGr7VGijJ3HDo6UBbLoD3Y3mP8TJ5UdHG31czrEilQBY=
+	t=1747036579; cv=none; b=Zu/KGH6QiLgsJZk7D9y+M3Im+0qeH3xxRJYFoR94MVDTeBzkSrapxPUZ1utQATaDXYMfBpF5jSN8fO0QKEFJc7MajY60DfGP+5opzOxK3Q/VqxivCZtSlLnIyFQlppBPNOWnVgFxrLUpY1SUhAL8XnYY3FngFzOr7t4W4sSAAio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747036697; c=relaxed/simple;
-	bh=4RyxF+zHBde/Sh9TkHzjLmXRWl6x6RsvLNgDaryOqdM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gtU712RaJl10mB57bURMMVlMe/BUDb3XzXn8a98z1nwHlHOn5tYdN6z9ATP9tyl1MzrtMa0vdbQ8l0Tl8Rd2uAZ0M6q62Gw3Lyf5wjkwIQFA3ATZkdKKSPuqktxM3d9mBVgwWuZO24yZqn5Ib3rhun3JtXqMebpwtKAil1NwUUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-	by SHSQR01.spreadtrum.com with ESMTP id 54C7wAeA024092
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:58:10 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 54C7u7LI010914;
-	Mon, 12 May 2025 15:56:07 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4ZwsLc3vFVz2Nm5S0;
-	Mon, 12 May 2025 15:54:00 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Mon, 12 May 2025 15:56:05 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Yu Zhao <yuzhao@google.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang
-	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [RFC PATCH] mm: throttling the reclaim when LRUVEC is congested under MGLRU
-Date: Mon, 12 May 2025 15:55:57 +0800
-Message-ID: <20250512075557.2308397-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747036579; c=relaxed/simple;
+	bh=0EU4+2jK89EhyErsG3ivuot8oJE4GOEHcxesP+hdRFs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jsb+xxQFoNcR5HU/EdFa1HZ6Sw8fHYJ9GNmCejoTkmcbJwN09hF6pROQaJs5oPlk+JINKsPRXSKuwAx9nf+bzw9C9AjUcG7cUAenDnYSdPgWFCrzPGvMqNwGriCMlNlBFj+JfhGeVyOiYBCjbkVboSm/1bt0lQjYqvxLDkPj5CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EzAaN+CS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r0CZ7qZy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bM4Deu++; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PK8ChYPY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D1569211E3;
+	Mon, 12 May 2025 07:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747036575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgUNNz4w/3G78HwqRCGV7qEpEt71tYq4lU0/QdqjGLg=;
+	b=EzAaN+CSSDDPi36iVbHlRW96fQMqtguAAj5+QNNZxjgAVNJiyve34EJ4b+Dve4HKmnJi+E
+	mNEk4Q+2dz0x0bCJn86gRshLndGFrHutgI1uwtqFFWDOql2a9MDhNl+fZRLdOrLByKmTri
+	5FQwkoVJiEAfJAuyDkih1R7urOVLQEc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747036575;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgUNNz4w/3G78HwqRCGV7qEpEt71tYq4lU0/QdqjGLg=;
+	b=r0CZ7qZywAiGHNzHXXiSxlJaWK08wWJUS6iCr50QPybn+vioQcLXyktiSnCKUdR7cGHaPT
+	tgnJRsEseNZKbmAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bM4Deu++;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=PK8ChYPY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747036574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgUNNz4w/3G78HwqRCGV7qEpEt71tYq4lU0/QdqjGLg=;
+	b=bM4Deu++OfudXpyjLYGTCSV5SKLBcPD+eBqtLhvmUoG8kTgg25uRSRZJzrQvLTILgjokrc
+	vxoOlZuAZWvxcUtZhi9h7YLNmESPReriiAvJs9CJH5WgSAbnpTuSxervmk6qJTeYJAbfDG
+	XAWJ3aNlLclrcxhgxz7R6YHH5k2EcGk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747036574;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgUNNz4w/3G78HwqRCGV7qEpEt71tYq4lU0/QdqjGLg=;
+	b=PK8ChYPYhGvK++SycROBoiyf13K37uQ/P503zcVisJ6ArWCCV3baHQ6p/RDodEu96YLt5e
+	DSE2FcHSypnbwPDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B6FF1397F;
+	Mon, 12 May 2025 07:56:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Q0AoJJ6pIWh/FAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 12 May 2025 07:56:14 +0000
+Date: Mon, 12 May 2025 09:56:14 +0200
+Message-ID: <87ldr2uush.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: linux@treblig.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	krzysztof.h1@wp.pl,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: msnd: Remove midi code
+In-Reply-To: <20250511172957.1001583-1-linux@treblig.org>
+References: <20250511172957.1001583-1-linux@treblig.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 54C7u7LI010914
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: D1569211E3
+X-Spam-Flag: NO
+X-Spam-Score: -3.51
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[wp.pl];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,wp.pl,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_DN_NONE(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim,treblig.org:email]
+X-Rspamd-Action: no action
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Sun, 11 May 2025 19:29:57 +0200,
+linux@treblig.org wrote:
+> 
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> Nothing calls snd_msndmidi_new()
+>   thus nothing sets chip->msndmidi_mpu
+>     The call to snd_msndmidi_input_read is gated on that being set,
+>     so snd_msndmidi_input_read() won't be called either.
+> 
+> This is probably a missing call to snd_msndmidi_new(), but since
+> this is ancient code, it's probably best to remove it (especially
+> since I don't have the hardware to test it).
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Our v6.6 based ANDROID system with 4GB RAM and per pid based MEMCGv2
-enabled constantly experienc starving of local watchdog process [1]
-during an extreme fill data test over file system, which will generate
-enormous dirty pages on page cache along with page fault from userspace.
-Furthermore, we can see 423 out of 507 UN tasks are blocked by the same
-callstack which indicating heavy IO pressure. However, the same test
-case could get pass under legacy LRU.
-By further debug, we find that 90% reclaimed folios are dirty [2] which
-have reclaim be hard to reclaim folios and introduce extra IO by page
-thrashing(clean cold mapped page get dropped and refault quickly).
-We temporarily solving this by simulating the throttle thing as legacy
-LRU does. I think this patch works because of reclaim_throttle happens
-when all dirty pages of one round of scanning pages are all
-congested(writeback & reclaim), which is easily to reach when memcgs
-are configured in small granularity as we do(memcg for each single
-process).
+Applied now.  Thanks.
 
-[1]
-PID: 1384     TASK: ffffff80eae5e2c0  CPU: 4    COMMAND: "watchdog"
- #0 [ffffffc088e4b9f0] __switch_to at ffffffd0817a8d34
- #1 [ffffffc088e4ba50] __schedule at ffffffd0817a955c
- #2 [ffffffc088e4bab0] schedule at ffffffd0817a9a24
- #3 [ffffffc088e4bae0] io_schedule at ffffffd0817aa1b0
- #4 [ffffffc088e4bb90] folio_wait_bit_common at ffffffd08099fe98
- #5 [ffffffc088e4bc40] filemap_fault at ffffffd0809a36b0
- #6 [ffffffc088e4bd60] handle_mm_fault at ffffffd080a01a74
- #7 [ffffffc088e4bdc0] do_page_fault at ffffffd0817b5d38
- #8 [ffffffc088e4be20] do_translation_fault at ffffffd0817b5b1c
- #9 [ffffffc088e4be30] do_mem_abort at ffffffd0806e09f4
- #10 [ffffffc088e4be70] el0_ia at ffffffd0817a0d94
- #11 [ffffffc088e4bea0] el0t_64_sync_handler at ffffffd0817a0bfc
- #12 [ffffffc088e4bfe0] el0t_64_sync at ffffffd0806b1584
 
-[2]
-crash_arm64_v8.0.4++> kmem -p|grep reclaim|wc -l
-22184
-crash_arm64_v8.0.4++> kmem -p|grep dirty|wc -l
-20484
-crash_arm64_v8.0.4++> kmem -p|grep "dirty.*reclaim"|wc -l
-20151
-crash_arm64_v8.0.4++> kmem -p|grep "writeback.*reclaim"|wc -l
-123
-
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
- mm/vmscan.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 3783e45bfc92..a863d5cb5281 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4698,6 +4698,11 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
- 	reclaimed = shrink_folio_list(&list, pgdat, sc, &stat, false);
- 	sc->nr.unqueued_dirty += stat.nr_unqueued_dirty;
- 	sc->nr_reclaimed += reclaimed;
-+	sc->nr.dirty += stat.nr_dirty;
-+	sc->nr.congested += stat.nr_congested;
-+	sc->nr.unqueued_dirty += stat.nr_unqueued_dirty;
-+	sc->nr.writeback += stat.nr_writeback;
-+	sc->nr.immediate += stat.nr_immediate;
- 	trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
- 			scanned, reclaimed, &stat, sc->priority,
- 			type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
-@@ -6010,10 +6015,36 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 	unsigned long nr_reclaimed, nr_scanned, nr_node_reclaimed;
- 	struct lruvec *target_lruvec;
- 	bool reclaimable = false;
-+	unsigned long flags;
- 
- 	if (lru_gen_enabled() && root_reclaim(sc)) {
- 		memset(&sc->nr, 0, sizeof(sc->nr));
- 		lru_gen_shrink_node(pgdat, sc);
-+		/*
-+		 * Tag a node/memcg as congested if all the dirty pages were marked
-+		 * for writeback and immediate reclaim (counted in nr.congested).
-+		 *
-+		 * Legacy memcg will stall in page writeback so avoid forcibly
-+		 * stalling in reclaim_throttle().
-+		 */
-+		if (sc->nr.dirty && sc->nr.dirty == sc->nr.congested) {
-+			set_bit(LRUVEC_CGROUP_CONGESTED, &flags);
-+
-+			if (current_is_kswapd())
-+				set_bit(LRUVEC_NODE_CONGESTED, &flags);
-+		}
-+
-+		/*
-+		 * Stall direct reclaim for IO completions if the lruvec is
-+		 * node is congested. Allow kswapd to continue until it
-+		 * starts encountering unqueued dirty pages or cycling through
-+		 * the LRU too quickly.
-+		 */
-+		if (!current_is_kswapd() && current_may_throttle() &&
-+				!sc->hibernation_mode &&
-+				(test_bit(LRUVEC_CGROUP_CONGESTED, &flags) ||
-+				 test_bit(LRUVEC_NODE_CONGESTED, &flags)))
-+			reclaim_throttle(pgdat, VMSCAN_THROTTLE_CONGESTED);
- 		return;
- 	}
- 
--- 
-2.25.1
-
+Takashi
 
