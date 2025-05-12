@@ -1,103 +1,121 @@
-Return-Path: <linux-kernel+bounces-644007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22743AB356F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D954AB358D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2C6D7A5F6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 358B317BF8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA1B275116;
-	Mon, 12 May 2025 11:00:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA53D2777FB;
+	Mon, 12 May 2025 11:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1fyMQpZ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315FB274FCF
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEE827587F;
+	Mon, 12 May 2025 11:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747047624; cv=none; b=biSL8E6MUUwUnLmTfmGe17tu6m0RVYJKCZbrdRHz/X8z+qVfSE142JYwc94Ch7GJ/shkCSciuJbgRb34mHMxEFGeCAjgJrOquKf08oQ2axitLo5hTSfpa/QdhLZniVjsylF752VoRLWmykK/7Vbcv9rn4Bi1fGGETitgV/CiNV4=
+	t=1747047639; cv=none; b=ZFS3HuiCmRvW76utWmOEkqhRQbIw7btnao5BR3XQOxxa1jQ5smVAR74U8GdpcPgnEnZRKccstyH8uQ3oESCFdriYwu7mpI4nvFIl+nWQgQUMfusCkiQiIS7A7MfF7aH0cEFKXPcTn5RY4nFkvYh7Rk7YPBJfSrAX/YQ0HOx1dB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747047624; c=relaxed/simple;
-	bh=XVqqwyPF9bgz/4cVPTQUSgv6snCVuZUFIAbCZmX8LtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NjqeH7Bk2gPTZzqYa3dOyQzW73cwcBA09iUcEpAcV+9nNTUt0ZNjy+3Wuvs7QHWjA/ldtwK1tR2vwXv18fgNLCP08LLx2wjlYP9FAXZcWtuKlvEw94m55l+GRco1ugp0odETU3nb7U4pJJi92JM00/qbmin0CMPiUbHvqWxM62U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7EFC4CEEF;
-	Mon, 12 May 2025 11:00:20 +0000 (UTC)
-Date: Mon, 12 May 2025 12:00:17 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Will Deacon <will@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	s=arc-20240116; t=1747047639; c=relaxed/simple;
+	bh=pwYBeR97BIxNsN8CElT/32bfkmC4wOwuawHLhLij1fo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JnATCcRaJd6BV43rOi/wgoG1Nq3X9QUq/udRrBtAhDAHH8Q9mW0mWUsvZJu05JKBOzwA7fw7yWpV4rSAc5c5unt+3A8XH3+ILl5AtF8RkyBA2w2qfeOPE/zzmv8lJS+kaJHZdcfzlRCfFX1hEbJdj3p1SZUWvs/jK4KF0XiimVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1fyMQpZ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30db3f3c907so41238071fa.1;
+        Mon, 12 May 2025 04:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747047635; x=1747652435; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AiibmBb2TgKHLZaSpGFjEjGxFWFoz4TNIUXPov39aMI=;
+        b=P1fyMQpZDzIVOUPIZCcZnpud5AIB9bwcgoSO6HXYdvZCxfBgDYDKosmXtIMwTfcvjL
+         +zB21Pihu+fKL7sUG1Swymft54AZyT+F+Rm61iacnS7X6vT9Y1Tv/NvJl9eYnewAxX+X
+         oYNjZwtFfjWKqrwPMqDmScrdeZUh6ke7BDqhJylSDIwBEKU5h/RnyBMImNFOItjGNsBG
+         xkVRk8tEO+OrEPXH1P27DAJPs3d2E0v6JoOvxeu8nzpKBHKul78MUqZ8rPlU5wSSYYWJ
+         ZuoXrhjIjz/7+c7+K1kPAHehnsxqM+ryZdkwGRpDXxPth/egF5PRPNXgh9kKti/qga11
+         Bosg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747047635; x=1747652435;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AiibmBb2TgKHLZaSpGFjEjGxFWFoz4TNIUXPov39aMI=;
+        b=EznaiiUJ2M1QZaaX7E+yq3NSHSsb7GrLI00PT2Nwd2nKIILWWN5pRaNnJ3EZ62kvVv
+         vvMzVgokzySPpcr5FBjdXrecX/IOAEQ2hSwkAB5RkegUur86nASUfAUo4ss4ChuHzUv+
+         B12Vrdtm8cQKdZHBH9KuSyM/NDcZPD0isD3VDkygg+BVu/cJy0jV9oJ+ZR3kTHSAVA23
+         rfDEEWwC7+QxHSuzlyQPahP/kX8dNdssubtTLbCtYj7Z6lvSF1a+qypYHZPMqJFkNVtj
+         zGrqrjdkZ1scxmyrnKPjIYypNv9GqaCC4ugDTr2HCNqky4ZwHIu2dL8EaD1jrrIfeqm3
+         FYCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNop1F5EL/eZzw1sdU/yCKrji2/JzI81KnPneJpAhUm1MsydIF+zV583kjy8X+fpf6whTUBB3KSMc=@vger.kernel.org, AJvYcCVynIYEy242wTbhQy2DdTkc6qeBFVnSRCnmMFFnGeRK1lpnZa0qR1DKg3nxjoXQ/gMuSKbbxitNlBA0Rpbk@vger.kernel.org, AJvYcCXUjs+mltXaW4IbsmiZg1a4sxlrSD3KmeEOLWU3MKIeYPxb8kxLeWqgoHy+I4fG94HBm7LG1q9x@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC+RTWIKF0au9XAmcKo/bH1zlvjzVynrolO5Hw++ZAPy9wmIx2
+	IfGq79A33xqKK9Dmwhgtm+YI8k1cY8bHRKXLwM2fDCbOoQ2DNplt
+X-Gm-Gg: ASbGncsgMYoeiranH+tT2v3vnGnsJeAcKRH05AqoqNOMfcPfpnUxqUKeFVyz60821rq
+	2hRFetXnwDnihRlo+KZKD+bHDf/EHp2ZZAmu0Njy90nkCZaTzbDlMKE1Ix5FGHuEXFWPcdBiW7N
+	3kPfkipEaBi1y8SLUtt0zlu9thxee5U1nHkztSYVQ0UnZ8dXpzM6pKGDd9bvnFKduRkfxgQEQBQ
+	yR1JEwHjAvg4D0/dxf1/xqKXUSq4ACpOuVK7+uu8RTgyfZNV6qGdcBZFsOHp82X4agcDWy4ZVrW
+	/a+ReUXvjCw35yis7raHXx0b06kok/mt0gsnc6novacmXPVYQMPDFZ+jyVfYI5Pr/yl5
+X-Google-Smtp-Source: AGHT+IFHwwb0Wf277goCmSM/dTazqu+h3MJl9DvtXNpnIfB4xxp80sRGBAvvHMgiFAubjDGUQyi90g==
+X-Received: by 2002:a2e:bc17:0:b0:30b:be23:3ad with SMTP id 38308e7fff4ca-326c4589014mr46473731fa.10.1747047635186;
+        Mon, 12 May 2025 04:00:35 -0700 (PDT)
+Received: from localhost.localdomain ([176.33.65.121])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-326c3585c7fsm12756831fa.88.2025.05.12.04.00.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 04:00:34 -0700 (PDT)
+From: Alper Ak <alperyasinak1@gmail.com>
+To: kuba@kernel.org
+Cc: jiri@resnulli.us,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
-Subject: Re: [PATCH] arm64/mm: Disable barrier batching in interrupt contexts
-Message-ID: <aCHUwZzeI6sEbg2T@arm.com>
-References: <20250512102242.4156463-1-ryan.roberts@arm.com>
+	alperyasinak1@gmail.com
+Subject: [PATCH v2] documentation: networking: devlink: Fix a typo in devlink-trap.rst
+Date: Mon, 12 May 2025 14:00:28 +0300
+Message-ID: <20250512110028.9670-1-alperyasinak1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512102242.4156463-1-ryan.roberts@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 12, 2025 at 11:22:40AM +0100, Ryan Roberts wrote:
-> Commit 5fdd05efa1cd ("arm64/mm: Batch barriers when updating kernel
-> mappings") enabled arm64 kernels to track "lazy mmu mode" using TIF
-> flags in order to defer barriers until exiting the mode. At the same
-> time, it added warnings to check that pte manipulations were never
-> performed in interrupt context, because the tracking implementation
-> could not deal with nesting.
-> 
-> But it turns out that some debug features (e.g. KFENCE, DEBUG_PAGEALLOC)
-> do manipulate ptes in softirq context, which triggered the warnings.
-> 
-> So let's take the simplest and safest route and disable the batching
-> optimization in interrupt contexts. This makes these users no worse off
-> than prior to the optimization. Additionally the known offenders are
-> debug features that only manipulate a single PTE, so there is no
-> performance gain anyway.
-> 
-> There may be some obscure case of encrypted/decrypted DMA with the
-> dma_free_coherent called from an interrupt context, but again, this is
-> no worse off than prior to the commit.
-> 
-> Some options for supporting nesting were considered, but there is a
-> difficult to solve problem if any code manipulates ptes within interrupt
-> context but *outside of* a lazy mmu region. If this case exists, the
-> code would expect the updates to be immediate, but because the task
-> context may have already been in lazy mmu mode, the updates would be
-> deferred, which could cause incorrect behaviour. This problem is avoided
-> by always ensuring updates within interrupt context are immediate.
-> 
-> Fixes: 5fdd05efa1cd ("arm64/mm: Batch barriers when updating kernel mappings")
-> Reported-by: syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/linux-arm-kernel/681f2a09.050a0220.f2294.0006.GAE@google.com/
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+From: alperak <alperyasinak1@gmail.com>
 
-As per the request in the original report, please also add:
+Fix a typo in the documentation: "errorrs" -> "errors".
 
-Reported-by: syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
+Signed-off-by: Alper Ak <alperyasinak1@gmail.com>
+---
+ Documentation/networking/devlink/devlink-trap.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll give it a try as well with my configurations and let you know if
-there are any problems. In the meantime:
+diff --git a/Documentation/networking/devlink/devlink-trap.rst b/Documentation/networking/devlink/devlink-trap.rst
+index 2c14dfe69b3a..5885e21e2212 100644
+--- a/Documentation/networking/devlink/devlink-trap.rst
++++ b/Documentation/networking/devlink/devlink-trap.rst
+@@ -451,7 +451,7 @@ be added to the following table:
+    * - ``udp_parsing``
+      - ``drop``
+      - Traps packets dropped due to an error in the UDP header parsing.
+-       This packet trap could include checksum errorrs, an improper UDP
++       This packet trap could include checksum errors, an improper UDP
+        length detected (smaller than 8 bytes) or detection of header
+        truncation.
+    * - ``tcp_parsing``
+--
+2.43.0
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
