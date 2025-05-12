@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-643918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA7CAB3409
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:53:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C033AB3436
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954833A90BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8B83A2D9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430D325F7B0;
-	Mon, 12 May 2025 09:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD380264609;
+	Mon, 12 May 2025 09:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urDd84rh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTcIeneb"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E586256C85;
-	Mon, 12 May 2025 09:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACF6259C9B;
+	Mon, 12 May 2025 09:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747043540; cv=none; b=gN4vKCXVEgQUeBP1ydBqWkhVy5kqhZOl4NG79fTz0OzdN+bcbJ4B0P6NpAtwsH6uRJQ5kQ6KFSG8/xgLFK11lcOyql5cy5mdRSHzA9+nIXU7jiQVWm/TANTQ1+044AZW7oQuY+QqZkwsV+AWo2HQROZp1y1U+M5YwwPzwmjCBAE=
+	t=1747043782; cv=none; b=Cx2u+jSrbc13pEnlBLFGfwIVawGA3wzol1x9st1RUf9V96WCrp0pzbRCO0kSJb0d3CYQqFYafV0LS1CP4a2aH3pM5tIqcbRU220uN/DuWE4l0hrrqxW+I0Whs3JonBUgIhBs91XfwKniHCy9tdCic+4FGGG2eLqimE7yhkJPNdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747043540; c=relaxed/simple;
-	bh=UsAP5U6i/JZ+e0RZb/59AdOFAkskPO65BJbs+hpWXlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDDJrc2iqVV/uXHQTQp917/b0NMjOTSARi2ZVw9Mluj8Y3ZQNgqF1KQhQjgVgIZNJFMl8aeYYQOjWMMhQtd4m/x/w9MHZiYgsMzCsSMo0p6+VFBunwoBqm6nNGMFJLuUtvsTpghCab82tvm2xnuTZMLkJY+nSk96v6hK+9BOzOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urDd84rh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55E7C4CEE7;
-	Mon, 12 May 2025 09:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747043538;
-	bh=UsAP5U6i/JZ+e0RZb/59AdOFAkskPO65BJbs+hpWXlo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=urDd84rhNLx2aspoq4TzDyklNIY4+L0k+2CUr8B1yBEh5IMAHpHTjV8b5f2qBzPV6
-	 U1v7kwXqW7zfeKSbNIKtOUjlpcarrFKJTShN4aTl9wcDgd4PQ+iUTyBWtHFUpYfqaz
-	 zoYGMAOzGL4GPGjllx4SegQYR05O400D7EopqIdV1tezQVnyzcWTtahJRZ28LMtkWI
-	 dUuTqQ5sDecBPPmvz8YbjaAxnSMBnFqAX9dJ9n58yHbw1TSXxgYoRYob85Ep48AWrI
-	 VRltdUvZtvDiVY+LVQxtnH7hhyVA6DBLjcsAelDv9+glS71lcoDCSBNJK1frl/sz1O
-	 8pLRz3h0swjGA==
-Date: Mon, 12 May 2025 11:52:14 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>, jack@suse.cz
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: make several inode lock operations killable
-Message-ID: <20250512-unrat-kapital-2122d3777c5d@brauner>
-References: <20250429094644.3501450-1-max.kellermann@ionos.com>
- <20250429094644.3501450-2-max.kellermann@ionos.com>
- <20250429-anpassen-exkremente-98686d53a021@brauner>
- <CAKPOu+8H11mcMEn5gQYcJs5BhTt8J8Cypz73Vdp_tTHZRXgOKg@mail.gmail.com>
+	s=arc-20240116; t=1747043782; c=relaxed/simple;
+	bh=OlbebHoLu4LXG8M5DHLeD47dN2+hbpUNsw4GjMsaE6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pSO/9Xb4gJG7DGyFkBGp6pWzYZVHXLJDasXm7/263SX/zEUV+lFJlxWLdh3bs+nNF6+aoIE7WrXjjDa9IgdSZ6ju4mw/oZhhVZSkyxv2QSfDE4W59sjHRYbHlKSLj5hXNj0TG5A9eV2Bw03yneJL9DCBUCjnpW4Zza69lFcQQLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTcIeneb; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54b0d638e86so4772688e87.1;
+        Mon, 12 May 2025 02:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747043778; x=1747648578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n6xGlGBkE1m8gu0/rjDmatj+Hz4dtijC/JB0CSfGWno=;
+        b=TTcIenebahkJuRXSJryxpnnfBRwKKNCrTfi0Gr5gretwOgLHI0TQY/M15jpe3d0tNu
+         WCpixKQLwbmBlfuJImgxGu8iErNxQw/4Kt5UVEH8Th0eT4rkyhJI0YmVXsMUgnndIrRE
+         GUut89zCGWVvkUtMKHMYwTCKdH28DkdGCxd1h5A/DWKQ4x55sZIu7QZK/Mg16jT9D2LU
+         E7cyo305vb1gOJvitiMgCJIN5XIJHNB804ytz6DGnAfHt4OFZS+hJKiTUThp2VTYAaNp
+         x7KFrG1Ryx7wzCDhkXroWsHu/0wsTDMl+146ECFMTt/NNW4XzS7VEKqDSQKGRsV/HFDT
+         Qc1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747043778; x=1747648578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n6xGlGBkE1m8gu0/rjDmatj+Hz4dtijC/JB0CSfGWno=;
+        b=VuSrbMLixtb3Dllzcy7tWvQ18vQLuJNWmT9rP1g4x+8Qd3nZbDZ466oslBAPnFtqq4
+         7u8G6lRYLoNOwrm8heOb9ScZMmbY7enXhiu6XzECSaRKBQ2SN2JGX09vT4DlE6y5zFJb
+         xvlLHdgYYdS2atQ1POMKi4D0weFJ5xHCkyouqBQwIxtHt33dHdkGMlKCcDjYp2POje0V
+         A96+IWWpdMXocfW6f9edyDrNfPYuS4JDGjV1yBr4UYfcdv8MAnZ+e7LFJ9WIbdWx2zXc
+         lKBBbF41qjS9muGeZuD5k22YhvXGDMUOSRwjXOzVba3b4EIMXOFNoitijMzsmLOfw9e4
+         Pdeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeBtZLGmY8xbajFdVLsYzKNnURciCK+CX54Nes1Fu5VE+2aRoydqXxnT/k+y0uWaVOhWmziDOjt0LzISDPaSA=@vger.kernel.org, AJvYcCVuHTimskuKtx2GyGyzQFC7KQM5e3lI437fTCCt10m9F0fn9JUGD78ye9d9t97jHsnsesLhC8YpU0cMZ4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBhDI5TmVj4K00/0sqy2QuA5BSkUr6ihdAFGWZ3idWCO3cRyZh
+	4CTOPPiKbOG+DciGCQzegXzi1zDt5zDyxV7vAxiiieO+FIjgSWlA
+X-Gm-Gg: ASbGnctSEotcwu4YhncrC6qG7KnZ0fCwvXA3OFeA5ZyiLQpTQymR5I0/ATXC8RKVDOa
+	8/lpMZaU3qIAHAyUge3iPBBLo/wqYvpi7EMxGFDtx78yN+dzrzjGFvf0935cB45FD2Nf3YzTEzU
+	fYmebDtOJOeWoVBcL5EZC+Ffd9JbaPTMmnTKK2kNPjS+P6daWdFEaWbZqBM40VvS3vgVj/I6gvV
+	B2DP5ZOG/4kP+PipMl5wbq/maLBj5URDCqlLlCMQbXX9K6nIpbqTEZfBgnI5dMw86W/Nfatjr7x
+	obJcYYIom17oc5zlLXEIk1rdqYE6CP00icfW1+fePAq+ZbKY7Oab3aK8fs8Qy7O2bTUppzgia/n
+	Okx+4VPEztUXcLJx2CEV2t/WHlfF1jC/uuXsjTsQ=
+X-Google-Smtp-Source: AGHT+IHVWWri4vLZs2whHIUJWvjl7yMbyBdtbTF5UREoIyZ4wrhRYZ7fIdThZCbA87BC5h9ImJP7aQ==
+X-Received: by 2002:a05:6512:4408:b0:545:944:aae1 with SMTP id 2adb3069b0e04-54fc67ad8bemr4406415e87.12.1747043777823;
+        Mon, 12 May 2025 02:56:17 -0700 (PDT)
+Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc644fa48sm1460449e87.1.2025.05.12.02.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 02:56:17 -0700 (PDT)
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+To: dakr@kernel.org,
+	lyude@redhat.com
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kernel@vger.kernel.org (open list),
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	airlied@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
+	Petr Tesarik <petr@tesarici.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Sui Jingfeng <sui.jingfeng@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Subject: [RFC PATCH 0/2] scatterlist rust bindings
+Date: Mon, 12 May 2025 12:53:26 +0300
+Message-ID: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+8H11mcMEn5gQYcJs5BhTt8J8Cypz73Vdp_tTHZRXgOKg@mail.gmail.com>
 
-Sorry, coming back to this now. I lost sight of this patch.
+Hi,
 
-On Tue, Apr 29, 2025 at 01:28:49PM +0200, Max Kellermann wrote:
-> On Tue, Apr 29, 2025 at 1:12 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > --- a/fs/read_write.c
-> > > +++ b/fs/read_write.c
-> > > @@ -332,7 +332,9 @@ loff_t default_llseek(struct file *file, loff_t offset, int whence)
-> > >       struct inode *inode = file_inode(file);
-> > >       loff_t retval;
-> > >
-> > > -     inode_lock(inode);
-> > > +     retval = inode_lock_killable(inode);
-> >
-> > That change doesn't seem so obviously fine to me.
-> 
-> Why do you think so? And how is this different than the other two.
+Here are the scatterlist bindings that has been brewing for a while in my
+local tree while working with Nova code. The bindings are used mostly to
+build the radix3 table from the GSP firmware which is loaded via dma.
+This interface can be used on top of existing kernel scatterlist objects
+or to allocate a new one from scratch.
 
-chown_common() and chmod_common() are very close to the syscall boundary
-so it's very unlikely that we run into weird issues apart from userspace
-regression when they suddenly fail a change for new unexpected reasons.
+Some questions still need to be resolved, which mostly come from
+the DeviceSGTable::dma_map() function. Primarily, what if you call
+bindings::dma_map_sgtable() on an already mapped sg_table? From my
+experiments it doesn't seem to do anything and no indication is returned if
+the call succeeded or not. Should we save the "mapping info" to a list
+everytime we call DeviceSGTable::dma_map more than once?
 
-But just look at default_llseek():
+Hoping this initial submission will generate some discussion. I'd like to
+acknowledge valuable feedback from Danilo Krummrich and Lyude
+Paul in shaping this up.
 
-    > git grep default_llseek | wc -l
-    461
+Abdiel Janulgue (2):
+  rust: add initial scatterlist bindings
+  samples: rust: add sample code for scatterlist bindings
 
-That is a lot of stuff and it's not immediately clear how deeply or
-nested they are called. For example from overlayfs in stacked
-callchains. Who knows what strange assumptions some of the callers have
-including the possible return values from that helper.
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/scatterlist.c      |  25 +++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/scatterlist.rs      | 275 ++++++++++++++++++++++++++++++++
+ samples/rust/rust_dma.rs        |  14 +-
+ 6 files changed, 316 insertions(+), 1 deletion(-)
+ create mode 100644 rust/helpers/scatterlist.c
+ create mode 100644 rust/kernel/scatterlist.rs
 
-> 
-> > Either way I'd like to see this split in three patches and some
-> > reasoning why it's safe and some justification why it's wanted...
-> 
-> Sure I can split this patch, but before I spend the time, I'd like us
-> first to agree that the patch is useful.
 
-This is difficult to answer. Yes, on the face of it it seems useful to
-be able to kill various operations that sleep on inode lock but who
-knows what implicit guarantees/expectations we're going to break if we
-do it. Maybe @Jan has some thoughts here as well.
+base-commit: dd21715de3dfa6f6457432ce909e5f7eb142a7d2
+-- 
+2.43.0
 
-> I wrote this while debugging lots of netfs/nfs/ceph bugs; even without
-> these bugs, I/O operations on netfs can take a looong time (if the
-> server is slow) and the inode is locked during the whole operation.
-> That can cause lots of other processes to go stuck, and my patch
-> allows these operations to be canceled. Without this, the processes
-> not only remain stuck until the inode is unlocked, but all stuck
-> processes have to finish all their I/O before anything can continue.
-> I'd like to be able to "kill -9" stuck processes.
-> 
-> A similar NFS-specific patch I wrote was merged last year:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=38a125b31504f91bf6fdd3cfc3a3e9a721e6c97a
-> The same patch for Ceph was never merged (but not explicitly
-> rejected): https://lore.kernel.org/lkml/20241206165014.165614-1-max.kellermann@ionos.com/
-> Prior to my work, several NFS operations were already killable.
 
