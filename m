@@ -1,155 +1,289 @@
-Return-Path: <linux-kernel+bounces-644475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D4BAB3CF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:05:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24418AB3D04
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AAE93AEF68
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0DC1674F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E220246790;
-	Mon, 12 May 2025 16:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABAC248F4C;
+	Mon, 12 May 2025 16:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lxm.se header.i=@lxm.se header.b="en+5tvkJ"
-Received: from smtp.outgoing.loopia.se (smtp.outgoing.loopia.se [93.188.3.38])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VvXRuTHy"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12666246333
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.3.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED2E24886E;
+	Mon, 12 May 2025 16:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747065938; cv=none; b=eSzZnT9o1UdAnpU1NKCR+cFpIiJ6JENZRVeP/Mk01cog15dOcXrHM369t9Vg5mTziJ4/F5vBBmo9QiXz8Z3pH38mSyaIdTgbH6qwge9Derx0JR6toNgWWUgG4RgKOnXknPia8hEh0fWuU7xSqECpNX8R4LhD8cjPzNfKhR2C9KQ=
+	t=1747066193; cv=none; b=fJUU5WOv/cBSKj9RaeKulfaQD71SVTWFV/rUXAN8uQIu3VeNYCGjf19ec02kDmJgoX9l37BPQYK5lGE9b//UlKbVD4poq+MoUh9T3YsgZM1TVXLQ06nhgyNhIMsuxfqEHn0gPfEc90Bga1gwLkrmdnMVwKXgSX04CRizbCf8mdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747065938; c=relaxed/simple;
-	bh=Qww/+DGY1oh/zF5dnfoZAg4ka+2ohc4hHKxkb8WSqmI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=cJA5yl6KxoQ4CD0lEPYwVm8I+8x4Ux8r23ZrYZRVhhRTH7ZjluspCLq0MYg3jnOludtuyP6kl+c2WLI/z4A772EqJTrXKTA6xW0TN/J/LSGg9K/umJDfAQ13t3pTJZmjQSF0lku8EWyfP0/9Aa/hkZCajCOFlj61xjosf50mVa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lxm.se; spf=pass smtp.mailfrom=lxm.se; dkim=pass (2048-bit key) header.d=lxm.se header.i=@lxm.se header.b=en+5tvkJ; arc=none smtp.client-ip=93.188.3.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lxm.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lxm.se
-Received: from s807.loopia.se (localhost [127.0.0.1])
-	by s807.loopia.se (Postfix) with ESMTP id 528A638A2E7
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:55:54 +0200 (CEST)
-Received: from s934.loopia.se (unknown [172.22.191.6])
-	by s807.loopia.se (Postfix) with ESMTP id 3F1CB38AFCF;
-	Mon, 12 May 2025 17:55:54 +0200 (CEST)
-Received: from s470.loopia.se (unknown [172.22.191.5])
-	by s934.loopia.se (Postfix) with ESMTP id 3C22E7CEA49;
-	Mon, 12 May 2025 17:55:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at amavis.loopia.se
-X-Spam-Flag: NO
-X-Spam-Score: -1.2
-X-Spam-Level:
-Authentication-Results: s470.loopia.se (amavisd-new); dkim=pass (2048-bit key)
- header.d=lxm.se
-Received: from s981.loopia.se ([172.22.191.6])
- by s470.loopia.se (s470.loopia.se [172.22.190.34]) (amavisd-new, port 10024)
- with UTF8LMTP id xMWofZxMXs0z; Mon, 12 May 2025 17:55:53 +0200 (CEST)
-X-Loopia-Auth: webmail
-X-Loopia-User: henrik@lxm.se
-Received: from webmail.loopia.se (unknown [172.22.212.7])
-	(Authenticated sender: henrik@lxm.se)
-	by s981.loopia.se (Postfix) with ESMTPA id ADF0D22B179C;
-	Mon, 12 May 2025 17:55:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lxm.se;
-	s=loopiadkim1708025221; t=1747065353;
-	bh=o6tlUAAKaemR+GJxvM/NEaZspAsiJGP2uOmTEG9aDPw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=en+5tvkJv4WuqB9u7zDCv0XbJiZO+QethysUB/ciuDdW7mulkN0n3+ZBxct6kjid5
-	 Z/bXSVmIKkFSQC1dwRrFcl/667Q7zmyt5lyDuFzWJlOFOTsfFy0WX4M5uvK8me3Cfk
-	 uN4r3G7tFQwgtZb20HyJefD95LriO7AnxBnykWpMERqunAMuwaZfFBrcNvBlW0h3aW
-	 bGqvKvZ7owM4rmpp9/Cke7W1mFUIWfiW1lh0lpKC0vpVzcPm7TBZRzz35xtl0GHKC/
-	 eNJenXBl9l0+D6maeRY62+gKYPbL1nkgtXVaHFggTsHjdXbd4DMexkvvNxZacKckhz
-	 2iyDpaoAuA5WA==
+	s=arc-20240116; t=1747066193; c=relaxed/simple;
+	bh=HPkbizzJPBBZVxpQgpvMoa7T4QCDgny19Bvar4SBW/E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=bbtc/VYEssWnjcRkKVfuAI/BZFOYsfk5vXiGaxxyfcsU0CASQYzlSF9yGgCa/ICIjUxUFyKIWgHXgbsijXLTVT+G1EqmoYlwQEe2NYmIaCwWEA1Klg8Zf28xHYw3hKYsoUJHtfG6xJ+bTPf7BQzmhcI7PT5e0UmEoDuYo1N3ZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VvXRuTHy; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54CBSAd1030870;
+	Mon, 12 May 2025 18:09:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	TQF/4z87M6Zev4BTJ0Pi8MpOAsMnb3E7xkduvvN1r+k=; b=VvXRuTHypFhS946I
+	hXJUhnrSozdE5ib6zQ8hb9tSBWEmrq6CEE1RSDYmypvtI47ghJrWsxpUCQEZw336
+	qM92Yo7fiNBGPfySZOq9C8I9QvLb4rqhnYfK35anvCYOBdpULYLJZprmaHmyT4+o
+	QWbrMMTh7pfAf4g5SZk9mn7SFknuQ0NaO/yVJBP0oaGfqudQ2XJB5JX4YcJP/Lch
+	0GhYtyjIR93b+NgXcX+vCFa12VWm3Xs9OmrIi30FJM5tY4+kl+dfTTzL/ha2OMod
+	uOlDhYA1FHGtyNDGd2/RzMbvr0KVWbQAV4CeUvc9Ur8othH34MF2IFuiOkSw8jA4
+	I9Cl7g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46jhrmwc1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 18:09:19 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1BFB540048;
+	Mon, 12 May 2025 18:07:37 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CCDF6B2C9B7;
+	Mon, 12 May 2025 18:06:18 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 12 May
+ 2025 18:06:18 +0200
+Message-ID: <619756c5-1a61-4aa9-b7fb-6be65175ded2@foss.st.com>
+Date: Mon, 12 May 2025 18:06:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 12 May 2025 17:55:53 +0200
-From: =?UTF-8?Q?Henrik_Lindstr=C3=B6m?= <henrik@lxm.se>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: nathan@kernel.org, nicolas.schier@linux.dev,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Makefile: remove dependency on archscripts for header
- installation
-In-Reply-To: <CAK7LNASYL6VCf_JgT_ks6ZObiR1xdB8HvV0XyYrWLrfYghtzbA@mail.gmail.com>
-References: <20250510153204.11052-1-henrik@lxm.se>
- <CAK7LNASYL6VCf_JgT_ks6ZObiR1xdB8HvV0XyYrWLrfYghtzbA@mail.gmail.com>
-User-Agent: Loopia Webmail/1.6.10
-Message-ID: <8bd773107cf5a78359bcf03a0dcd2785@lxm.se>
-X-Sender: henrik@lxm.se
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Christian Bruel <christian.bruel@foss.st.com>
+Subject: Re: [PATCH v8 4/9] PCI: stm32: Add PCIe Endpoint support for
+ STM32MP25
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
+        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
+        <cassel@kernel.org>, <johan+linaro@kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250423090119.4003700-1-christian.bruel@foss.st.com>
+ <20250423090119.4003700-5-christian.bruel@foss.st.com>
+ <tdgyva6qyn6qwzvft4f7r3tgp5qswuv4q5swoaeomnnbxtmz5j@zo3gvevx2skp>
+Content-Language: en-US
+In-Reply-To: <tdgyva6qyn6qwzvft4f7r3tgp5qswuv4q5swoaeomnnbxtmz5j@zo3gvevx2skp>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_05,2025-05-09_01,2025-02-21_01
 
-That was my attempt to explain why i wanted to make this change, but 
-you're right that it's really just a small cleanup.
+Hello Manivannan,
 
-Will go again with a simpler message, thanks.
-
-On 2025-05-12 14:23, Masahiro Yamada wrote:
-> On Sun, May 11, 2025 at 12:34 AM Henrik Lindström <henrik@lxm.se> 
-> wrote:
->> 
->> There doesn't seem to be any purpose behind this dependency, and it 
->> prevents
->> installing x86 and mips headers on non Linux systems. Doing so is 
->> useful when
->> building a cross compiler targetting Linux, which requires the header 
->> files.
->> 
->> Signed-off-by: Henrik Lindström <henrik@lxm.se>
+On 4/30/25 09:50, Manivannan Sadhasivam wrote:
+> On Wed, Apr 23, 2025 at 11:01:14AM +0200, Christian Bruel wrote:
+>> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
+>> controller based on the DesignWare PCIe core in endpoint mode.
+>>
+>> Uses the common reference clock provided by the host.
+>>
+>> The PCIe core_clk receives the pipe0_clk from the ComboPHY as input,
+>> and the ComboPHY PLL must be locked for pipe0_clk to be ready.
+>> Consequently, PCIe core registers cannot be accessed until the ComboPHY is
+>> fully initialised and refclk is enabled and ready.
+>>
+>> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
 >> ---
+>>   drivers/pci/controller/dwc/Kconfig         |  12 +
+>>   drivers/pci/controller/dwc/Makefile        |   1 +
+>>   drivers/pci/controller/dwc/pcie-stm32-ep.c | 414 +++++++++++++++++++++
+>>   drivers/pci/controller/dwc/pcie-stm32.h    |   1 +
+>>   4 files changed, 428 insertions(+)
+>>   create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+>>
+>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>> index 2aec5d2f9a46..aceff7d1ef33 100644
+>> --- a/drivers/pci/controller/dwc/Kconfig
+>> +++ b/drivers/pci/controller/dwc/Kconfig
+>> @@ -422,6 +422,18 @@ config PCIE_STM32_HOST
+>>   	  This driver can also be built as a module. If so, the module
+>>   	  will be called pcie-stm32.
+>>   
+>> +config PCIE_STM32_EP
+>> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
+>> +	depends on ARCH_STM32 || COMPILE_TEST
+>> +	depends on PCI_ENDPOINT
+>> +	select PCIE_DW_EP
+>> +	help
+>> +	  Enables endpoint support for DesignWare core based PCIe controller
+>> +	  found in STM32MP25 SoC.
 > 
-> This clean-up makes sense.
+> Can you please use similar description for the RC driver also?
 > 
-> However, I could not understand the commit description
-> about the non-Linux systems.
+> "Enables Root Complex (RC) support for the DesignWare core based PCIe host
+> controller found in STM32MP25 SoC."
+
+Yes, will align the messages
+
+>> +
+>> +	  This driver can also be built as a module. If so, the module
+>> +	  will be called pcie-stm32-ep.
+>> +
+>>   config PCI_DRA7XX
+>>   	tristate
+>>   
 > 
-> In my understanding, archscripts is not required here
-> regardless of whether it is a Linux or non-Linux system.
+> [...]
 > 
-> So, the following description sound good to me:
+>> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
+>> +			     struct platform_device *pdev)
+>> +{
+>> +	struct dw_pcie_ep *ep = &stm32_pcie->pci.ep;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
 > 
->   archscripts has nothing to do with headers_install.
+> This needs to be called before devm_pm_runtime_enable().
+
+OK. Also and we must use pm_runtime_get_noresume() here.
+
 > 
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +				 STM32MP25_PCIECR_TYPE_MASK,
+>> +				 STM32MP25_PCIECR_EP);
+>> +	if (ret) {
+>> +		goto err_pm_put_sync;
+>> +		return ret;
+>> +	}
+>> +
+>> +	reset_control_assert(stm32_pcie->rst);
+>> +	reset_control_deassert(stm32_pcie->rst);
+>> +
+>> +	ep->ops = &stm32_pcie_ep_ops;
+>> +
+>> +	ret = dw_pcie_ep_init(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
+>> +		goto err_pm_put_sync;
+>> +	}
+>> +
+>> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to enable resources: %d\n", ret);
+>> +		goto err_ep_deinit;
+>> +	}
+>> +
+>> +	ret = dw_pcie_ep_init_registers(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
+>> +		goto err_disable_resources;
+>> +	}
+>> +
+>> +	pci_epc_init_notify(ep->epc);
+>> +
 > 
-> Could you send v2 with the simplified commit log?
+> Hmm, looks like you need to duplicate dw_pcie_ep_init_registers() and
+> pci_epc_init_notify() in stm32_pcie_perst_deassert() for hw specific reasons.
+> So can you drop these from there?
+
+We cannot remove dw_pcie_ep_init_registers() and 
+dw_pcie_ep_init_registers() here because the PCIe registers need to be 
+ready at the end of pcie_stm32_probe, as the host might already be 
+running. In that case the host enumerates with /sys/bus/pci/rescan 
+rather than asserting/deasserting PERST#.
+Therefore, we do not need to reboot the host after initializing the EP."
+
+
 > 
+>> +	return 0;
+>> +
+>> +err_disable_resources:
+>> +	stm32_pcie_disable_resources(stm32_pcie);
+>> +
+>> +err_ep_deinit:
+>> +	dw_pcie_ep_deinit(ep);
+>> +
+>> +err_pm_put_sync:
+>> +	pm_runtime_put_sync(dev);
+>> +	return ret;
+>> +}
+>> +
+>> +static int stm32_pcie_probe(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+>> +	if (!stm32_pcie)
+>> +		return -ENOMEM;
+>> +
+>> +	stm32_pcie->pci.dev = dev;
+>> +	stm32_pcie->pci.ops = &dw_pcie_ops;
+>> +
+>> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
+>> +	if (IS_ERR(stm32_pcie->regmap))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
+>> +				     "No syscfg specified\n");
+>> +
+>> +	stm32_pcie->phy = devm_phy_get(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->phy))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
+>> +				     "failed to get pcie-phy\n");
+>> +
+>> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->clk))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
+>> +				     "Failed to get PCIe clock source\n");
+>> +
+>> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->rst))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
+>> +				     "Failed to get PCIe reset\n");
+>> +
+>> +	stm32_pcie->perst_gpio = devm_gpiod_get(dev, "reset", GPIOD_IN);
+>> +	if (IS_ERR(stm32_pcie->perst_gpio))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
+>> +				     "Failed to get reset GPIO\n");
+>> +
+>> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	platform_set_drvdata(pdev, stm32_pcie);
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "Failed to enable pm runtime %d\n", ret);
 > 
+> Use dev_err_probe() please for consistency.
+
+OK
+
+thank you
+
+Christian
 > 
+> - Mani
 > 
-> 
-> 
->>  Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/Makefile b/Makefile
->> index b29cc321ffd9..0234faafe8f0 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -1366,7 +1366,7 @@ PHONY += archheaders archscripts
->>  hdr-inst := -f $(srctree)/scripts/Makefile.headersinst obj
->> 
->>  PHONY += headers
->> -headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders 
->> archscripts
->> +headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders
->>  ifdef HEADER_ARCH
->>         $(Q)$(MAKE) -f $(srctree)/Makefile HEADER_ARCH= 
->> SRCARCH=$(HEADER_ARCH) headers
->>  else
->> --
->> 2.39.5
->> 
-> 
-> 
-> --
-> Best Regards
-> Masahiro Yamada
 
