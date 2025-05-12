@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-643904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41625AB33DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:41:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB582AB33E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1073A7387
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A5F3AF7E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDD7151991;
-	Mon, 12 May 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sWXf4GsG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D0F25CC4A;
+	Mon, 12 May 2025 09:42:24 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF59D25B669;
-	Mon, 12 May 2025 09:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550A32E645;
+	Mon, 12 May 2025 09:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747042815; cv=none; b=PpQyguij67XAUa7/wzVjj3vIZUvpd+myglD0PyA+ttOBFRI8Zn0+PujsiBLlsYmuVcVEEukqDqJ0eEt1LoLKo9IuCp7ucAxHRGbqOHNCpwp/rpQxOcKgLvdDMOHAjuF0CJ44K/k+aNztF5qCL1yHKq3u9dUGPvqJGh7QmQ1RlCQ=
+	t=1747042943; cv=none; b=tYI7B6GFyH0MKd3bmaBZBG3KfVcGu8Xke1cPu+GeBXsYx+w26bFu36QiOJysqA65bC835quNlkStd0+bnJ3zfLsC+htheHsGh5OSfMLnCyafiiE9sk2lhMgcjnwaHQEpbParao2SMPqiyjWJnP5wNlBLCU8fmk1gu/M+NrxmbA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747042815; c=relaxed/simple;
-	bh=iIHf/Ip4F9B0ByfdX3mApcBxIp6w7x727g6UmnSPAik=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SmKdshuYAWOfslHTWglmOp5DORHnLlNyZHBkRacAvBP0Pif7XUMl7ptsPAqVmtdkNKQd3WD1ziOIrLNwHgBIlqZLxjIsXqicQ+xGHHLHAa+DA9jlAyhNbBC3UZelGvvu/KGFppFs4xCeTayzV+QMlr8g0Chuj9jDUsQmklH5oic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sWXf4GsG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747042809;
-	bh=pfHe8Q+o64Ex/RBn0WtBU883NQ4o8Ldu9qKCx3KCc5E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sWXf4GsGodSRf4b3cHSbiyjCv+Hl5Kd9kfiFkwZo63UQgIfz/zlqeuVYhI3DXYgNm
-	 TG+HTTTg6HlTy419u7P1fqhJF3QIovMBmjA5agp/okApfZJuJDzaFT2XG/ql9OaeFB
-	 Ah3NrO5sNVjATU9yTlOTvH18WfdJ/BzGHyCJqMDg2Qax0GFR0CUM13plkDzbfg7pB1
-	 V6k66416PPuTefsFWlxhnyw9jiYiGvlRdrOS2Pa5ZzB5c9UOhlxS+zaqFsVy8bQOJN
-	 NEYzDLlwu51XPPNJScMkgGvwJa6K9amYsCODg2dZXCrjhjRBfUvgdVb2Lx538uyKV6
-	 ltOJKzjifwDog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zwvj55m8tz4wnp;
-	Mon, 12 May 2025 19:40:09 +1000 (AEST)
-Date: Mon, 12 May 2025 19:40:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the rust tree
-Message-ID: <20250512194008.3bf1bd47@canb.auug.org.au>
+	s=arc-20240116; t=1747042943; c=relaxed/simple;
+	bh=hLrvNZ8i+JktglQb7ZFqPXFRMH1hMkoqvVZhP0Ghm7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hsreLTyB0w9AxAQsyWIbKlrQQ6296padS86a60lcc+Bfsf0bMDHr2y3eMoc3aga1Ln1Ky5Y5Qi9/pto8e0if/x7Bt1bvAGyRRBmUEzSDB3SnfLr+GGfTTCA1O6QXKOIIUIYshMYhtr/fyU/DxiBuyhzE3OGGd5B2KLncvCtI1Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51eb1a714bfso3652083e0c.3;
+        Mon, 12 May 2025 02:42:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747042940; x=1747647740;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oxaXUnTJQ9X/sSRmLTkqCU/OLmyikEnIJW6UNmEyAnw=;
+        b=uefM0nyasF+jE/+ARnvu40JYaRzXf4XG9iwsNoRdIAUh9ZyQDZyU38AhLOoIboYf8K
+         0FgAi4l6LTEcre44+x2tlFA7vU1Mb/erXS9VopiTwoqZg4mu4XlU3injepuhcb+8KMEP
+         Wh8TvbBBqaH/AD0ih7NMFiBS7iNQJK6vQJTKvHPfE20SfooHF8giczsCXrnJdlOK6iWh
+         fpCJ0pP0FqQ+RijrLV6sO7Ysh2dtjcXBfQDXrbBbFb43m2Y1LsA7mX2Idc0rDRC5b9oi
+         RzMPGx0FTU+aR9Fm73GJ8ATuePtxIKSnM5KenoqMWQV0uR4IUqGa1qVK9HDB8/HTgadr
+         Gnow==
+X-Forwarded-Encrypted: i=1; AJvYcCXP1c9X6xGboTOUVUUS7In7UEwJip+WmY1vDyFgjuKibohSUMRIFClJnvLltmSYzoE5XJZMv/iEXokGHRNB@vger.kernel.org, AJvYcCXizEBHKf5Hkui9s1kSco2g9hoTAAtkhiAiROHsEwpGOZTAWaYDaplpwhC/hBGK4b9YJpxdtmEd@vger.kernel.org, AJvYcCXv+LidbnVYex8Cq+4mQbodPj6NncvERbYpMKKjHvszxW0mWRuchOsg4CKvn9kDjizpF70+1xObMQG/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwLAn2m+F12rlIEt5KPRjJSlOMZqB9kDC1ot380mdKTk56qARq
+	J0SQJ1Ocx+PyURPcY7T9ZI1LKvgXu4K9NPs4Jl9RYtxTOeOBq9aOnQnP+bKO
+X-Gm-Gg: ASbGncuuQRlFO1x/XnItnw9OY2dnCtcByXCeP2s0JlEq/+Wg2sIChYwY9ALaKz4A99t
+	WANLn4k8uc6VWxafvjyG7d5YgXJRLqEjvUtk53sYhf81t9VZC5JZmL9VnhW9Tr4VNTpftM5gbhl
+	KVAbApKMqkUZ4aaarcvrbkjn/7LQsadHF4rL5rMEmQ2ycNkGsQTYi6Ul88/Y5CJgm3WL0QURRSj
+	w8KJfcxj3RniQyq85ikSMVU9vPY0TPAxWFSr0LI/yQxZ3ETXtYMp9/QibeXMDAoAji3JpLxWohG
+	8Ouob08kru+NdrsGre3RSgJkkqdLJLbEdxeeyQTdqL75VP/TkdtdjOXZa82lW1pNpD/wq0X4bBW
+	6h/YtTdJ5Wkv8A3OwI5WDWp50
+X-Google-Smtp-Source: AGHT+IEadcD6TXY2NzIdfqdmxG92rAujjPc1OiAwO2m5KMF/ewl/ia24KEYQDcrmivkMAL5dVWaXvA==
+X-Received: by 2002:a05:6122:17aa:b0:523:e2bd:b937 with SMTP id 71dfb90a1353d-52c53ba78a5mr8343001e0c.3.1747042939721;
+        Mon, 12 May 2025 02:42:19 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f603551dsm4864872241.0.2025.05.12.02.42.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 02:42:19 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86fea8329cdso3048338241.1;
+        Mon, 12 May 2025 02:42:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIjC570aWR63LwozpR/DFQu8KSWJoTF9TX2B4VMkiyQyiHp7IuS81UIp8p3/9mpuwRlZZxhsO/@vger.kernel.org, AJvYcCW6NeTwAVBnDFnpjdNOgANyFpkr3AhZ0G+YfYN2rnr/bUD2rG8OW5ZnK8rOva3Ya0OYPaXB0yFqOrP/9gh6@vger.kernel.org, AJvYcCXLz8i6WwGEgIuIf6LIIEPK3a6/YgSdp9ikmDN9A11wO+j5K1VusSsdY+dOVKsYh5GMR5iMEwGVWQtp@vger.kernel.org
+X-Received: by 2002:a05:6102:8082:b0:4da:e6e1:c343 with SMTP id
+ ada2fe7eead31-4deed3ec6f2mr10435052137.23.1747042938966; Mon, 12 May 2025
+ 02:42:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/of3sVe_FlIeceRug=bezX6A";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20250509141828.57851-1-francesco@dolcini.it> <CAMuHMdXqRpuy8gsz+0a0xTp6VWfMD0=WWdS84jWvF31O9i4MZw@mail.gmail.com>
+ <aCG-DZI4fexZGy2H@smile.fi.intel.com> <10caddc8-7dc1-4579-9edb-4514efa540cd@gmail.com>
+In-Reply-To: <10caddc8-7dc1-4579-9edb-4514efa540cd@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 May 2025 11:42:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUL0vd16C6=pr8UQV3+t2E0fJLqgtUWgm908VEsCYkyiw@mail.gmail.com>
+X-Gm-Features: AX0GCFsYAjhVktfUQcp6VZbHccrljkdyDEuNs8jjvL7H95OWlSLpFlXPvZyNCqk
+Message-ID: <CAMuHMdUL0vd16C6=pr8UQV3+t2E0fJLqgtUWgm908VEsCYkyiw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: pca953x: fix IRQ storm on system wake up
+To: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Francesco Dolcini <francesco@dolcini.it>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, 
+	stable@vger.kernel.org, Francesco Dolcini <francesco.dolcini@toradex.com>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/of3sVe_FlIeceRug=bezX6A
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Emanuele,
 
-Hi all,
+On Mon, 12 May 2025 at 11:38, Emanuele Ghidoli
+<ghidoliemanuele@gmail.com> wrote:
+> On 12/05/2025 11:23, Andy Shevchenko wrote:
+> > On Mon, May 12, 2025 at 11:17:48AM +0200, Geert Uytterhoeven wrote:
+> >> On Fri, 9 May 2025 at 16:18, Francesco Dolcini <francesco@dolcini.it> wrote:
+> >>> An irq can be disabled with disable_irq() and still wake the system as
+> >>> long as the irq has wake enabled, so the wake-up functionality is
+> >>> preserved.
+> >
+> > ...
+> >
+> >> While this does not cause the regression seen on Salvator-XS with
+> >> the earlier approach[1], I expect this will break using a GPIO as a
+> >> wake-up source?
+> >
+> > Good point! Have this code been checked for that kind of scenarios?
+> >
+> >> [1] https://lore.kernel.org/linux-gpio/CAMuHMdVnKX23yi7ir1LVxfXAMeeWMFzM+cdgSSTNjpn1OnC2xw@mail.gmail.com
+> >
+> Yes, I tested this specific scenario with its GPIOs as wake-up sources, and it
+> worked as expected. I already included the note in the commit message.
 
-After merging the rust tree and the other rust trees, today's linux-next
-build (x86_64 allmodconfig) failed like this:
+Sorry, I missed that.
 
-error[E0599]: no method named `cast_mut` found for raw pointer `*mut auxili=
-ary_device` in the current scope
-   --> rust/kernel/auxiliary.rs:239:83
-    |
-239 |         let adev =3D unsafe { container_of!(dev, bindings::auxiliary_=
-device, dev) }.cast_mut();
-    |                                                                      =
-             ^^^^^^^^
-    |
-help: there is a method `as_mut` with a similar name
-    |
-239 |         let adev =3D unsafe { container_of!(dev, bindings::auxiliary_=
-device, dev) }.as_mut();
-    |                                                                      =
-             ~~~~~~
+Then I have no objections from my side.
 
-error: aborting due to 1 previous error
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-For more information about this error, try `rustc --explain E0599`.
+Gr{oetje,eeting}s,
 
-Not sure what caused this and that file has not changed from
-next-20250509, so I have used the rust tree from next-20250509 for today.
-Clearly I need help with the merge resolution here.
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/of3sVe_FlIeceRug=bezX6A
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmghwfkACgkQAVBC80lX
-0GwwBggAmcVkKyyZ2/0tsu3YzOd5Dy/hueYP4Hxia8+fbHLKiVz4L4qIUji97RvU
-g48Om4ifo7MScfxWVHRlpIoFHxRJ357FN6X4Ku97DgFA12QvDppyojTvCcnrZ/rE
-Zqux9QFLnn9c7r98q0eWu+J9YOqxAkNWxQp0FICgU7ROSxTgyd2ID9TGL57LwZIb
-NdJV+LD7UDhfFpvar1JGDMRly5ogHbePdnhxJITFzHpvJDT/eKgxNhsYdqf/lZ6M
-AaEjnB1fhQ5AVWPg7VF96wUzsovjxd8k9a6t6Ab96L5bV2qmi6U1Imm3Q++5akwE
-al4MEbx2tv3JdkZEyWeYS8llmKTztg==
-=59T4
------END PGP SIGNATURE-----
-
---Sig_/of3sVe_FlIeceRug=bezX6A--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
