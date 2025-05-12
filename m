@@ -1,64 +1,77 @@
-Return-Path: <linux-kernel+bounces-644585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EFBAB3EAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:09:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CB8AB3EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 642B17A3DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C473A5936
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2448D2957CC;
-	Mon, 12 May 2025 17:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfBRFxip"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3A296153;
+	Mon, 12 May 2025 17:11:46 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762B9253352;
-	Mon, 12 May 2025 17:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0165B24468F;
+	Mon, 12 May 2025 17:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747069744; cv=none; b=pQKq0F97tp+ItQziDoojjcYruSrk6+X0i00JLk4Wun0Cap17YP8FABxRAu80ZUfz097Vca8vPrNMSTjEuzjUnYRe3CUDciTfG1sHwG34BvWT5GNQtbo0+1SkKZaE5NsFg8+z4ok3QQLKfV1YFfWxyS/eXzD4A/L/KtfuInDBUP4=
+	t=1747069906; cv=none; b=nr0aSsmMr5cLPPtpeEjmZNXxB+ttiJTcX8AVPMhhZn/oQ3yGABgDouccoAQPDpp8hoGpDZT4NIOzlTlhIV3WWjIyuYi+zkWDZpPMoQAEGNprjilCD1k2o6mDYWq3UeL9mpungVWKF9CJspYnMAR3gXkCUKNiK80CLLtRqR4OZE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747069744; c=relaxed/simple;
-	bh=NXrn6pd6C/pHrLJRV8tm1na465rKRwRiRJAsOnDNemg=;
+	s=arc-20240116; t=1747069906; c=relaxed/simple;
+	bh=IVnOc9MOV2+02cQgtBlCO9R1yHhMZSXIztpUlnxj9J0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGR43XD991om5EHOSiRQ+Vxh1BLuHrBqq0XQkbajzw3A2lRa5cvb7eh+CivijyMZcg7i+XZDNsNyQ8WBNOgLYab+bnSLmvwTcIyMkrqe+p42bHipYlw09RAYSjfSvJpkv3uF6hHRlviNkOAeSREWqUQf3k5CwFl9e9mrhk3qIzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfBRFxip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0542EC4CEE7;
-	Mon, 12 May 2025 17:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747069744;
-	bh=NXrn6pd6C/pHrLJRV8tm1na465rKRwRiRJAsOnDNemg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfBRFxipEX9Zi6bx8K12OZUZKZJ5Ej0zY3Oh2qmYxXTsfNNcItD5ExaQFlGC3QO8r
-	 SH3jhdntHJWMCgRhD60gsmhfQejxr6qSnd64toFAS7i+a+ARgdiJxmwmuXUzIJCPIW
-	 Osu790tp65CuFDxhdvqWVKrLR5fmS/In6lFnK8unfaX1d0hpFhTkulhfOa1REU7Jin
-	 0QhRoUsJ1GZ1eSJn4v50ShHCH5WVg584lvOELBejruVBNtKA48FFtorOIROWImn8lp
-	 uIui+pkwcyoywGYxGqzQ+n5KA2+ZLwUQ1RqkQJlAUnnDxzizwumsYmaYzXT4l+qTyN
-	 EAppQaZJcq1TQ==
-Date: Mon, 12 May 2025 12:09:02 -0500
-From: Rob Herring <robh@kernel.org>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Saravana Kannan <saravanak@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4 5/9] rust: device: Introduce PropertyGuard
-Message-ID: <20250512170902.GA3463681-robh@kernel.org>
-References: <20250504173154.488519-1-remo@buenzli.dev>
- <20250504173154.488519-6-remo@buenzli.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fGHORQb+NjFnpez3sw9+LXICmMCTQTJSQAS3v+6znvUki7N5Kt3KOMovZ3Jd7dYM1k3BmmfifJELLR1NCsErliDt3miPNumIAvzdTGOGABTsPQumsFeGrshXYgvl3iBJYaGD6Pd1mtx8PXFBSfvE3oa1cmG5a4HHKuFdY73szuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uEWau-000000006LH-25Hs;
+	Mon, 12 May 2025 17:11:32 +0000
+Date: Mon, 12 May 2025 18:11:25 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, upstream@airoha.com,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Claudiu Beznea <claudiu.beznea@microchip.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Jonathan Corbet <corbet@lwn.net>, Joyce Ooi <joyce.ooi@intel.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Robert Hancock <robert.hancock@calian.com>,
+	Saravana Kannan <saravanak@google.com>,
+	UNGLinuxDriver@microchip.com,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [net-next PATCH v4 00/11] Add PCS core support
+Message-ID: <aCIrvTAGP5ukmwnb@makrotopia.org>
+References: <20250512161013.731955-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,64 +80,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250504173154.488519-6-remo@buenzli.dev>
+In-Reply-To: <20250512161013.731955-1-sean.anderson@linux.dev>
 
-On Sun, May 04, 2025 at 07:31:50PM +0200, Remo Senekowitsch wrote:
-> This abstraction is a way to force users to specify whether a property
-> is supposed to be required or not. This allows us to move error
-> logging of missing required properties into core, preventing a lot of
-> boilerplate in drivers.
+On Mon, May 12, 2025 at 12:10:02PM -0400, Sean Anderson wrote:
+> This series adds support for creating PCSs as devices on a bus with a
+> driver (patch 3). As initial users,
 > 
-> It will be used by upcoming methods for reading device properties.
-> 
-> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
-> ---
->  rust/kernel/device/property.rs | 59 ++++++++++++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
-> 
-> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-> index 6ccc7947f9c31..59c61e2493831 100644
-> --- a/rust/kernel/device/property.rs
-> +++ b/rust/kernel/device/property.rs
-> @@ -123,3 +123,62 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->          unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
->      }
->  }
-> +
-> +/// A helper for reading device properties.
-> +///
-> +/// Use [`Self::required_by`] if a missing property is considered a bug and
-> +/// [`Self::optional`] otherwise.
-> +///
-> +/// For convenience, [`Self::or`] and [`Self::or_default`] are provided.
-> +pub struct PropertyGuard<'fwnode, 'name, T> {
-> +    /// The result of reading the property.
-> +    inner: Result<T>,
-> +    /// The fwnode of the property, used for logging in the "required" case.
-> +    fwnode: &'fwnode FwNode,
-> +    /// The name of the property, used for logging in the "required" case.
-> +    name: &'name CStr,
-> +}
-> +
-> +impl<T> PropertyGuard<'_, '_, T> {
-> +    /// Access the property, indicating it is required.
-> +    ///
-> +    /// If the property is not present, the error is automatically logged. If a
-> +    /// missing property is not an error, use [`Self::optional`] instead. The
-> +    /// device is required to associate the log with it.
-> +    pub fn required_by(self, dev: &super::Device) -> Result<T> {
-> +        if self.inner.is_err() {
-> +            dev_err!(
-> +                dev,
-> +                "{}: property '{}' is missing\n",
-> +                self.fwnode.display_path(),
+> - The Lynx PCS (and all of its users) is converted to this system (patch 5)
+> - The Xilinx PCS is broken out from the AXI Ethernet driver (patches 6-8)
+> - The Cadence MACB driver is converted to support external PCSs (namely
+>   the Xilinx PCS) (patches 9-10).
 
-Is it possible to do "{self.fwnode}: property ..."?
-
-Then if we want to modify the default, we could do something like 
-"{self.fwnode:pn}"? It doesn't look like that's something which would 
-work OOTB and is not something we need to solve now. So just the default 
-formatter is good for now.
-
-Rob
+Are those changes tested on real hardware?
 
