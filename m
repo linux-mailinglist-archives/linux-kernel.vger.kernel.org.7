@@ -1,150 +1,184 @@
-Return-Path: <linux-kernel+bounces-643677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2231AB3025
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD1AB3032
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BC23A8390
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB5DD3A9296
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6618B255E4E;
-	Mon, 12 May 2025 06:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AC0256C75;
+	Mon, 12 May 2025 07:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNYLdDfK"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vLSNlWEN"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CDB185E4A;
-	Mon, 12 May 2025 06:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3922561D7;
+	Mon, 12 May 2025 07:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747032983; cv=none; b=gPnCt4TYftXfcSS4mP6MHdaQTWP/cNYwtxTEWQcQMlzShljg+GF8hT07ya5HlwPe7vBhn0xc/JCsn42ic8RsJyLg7EEwYJAtUqZL4Zrqc9kKo1GoyFGr9oksYlMcsUO+R6sbI35MN5cK76C9gwVBpD3j4ia6YnwlglWYwoyXCkA=
+	t=1747033212; cv=none; b=rqrWVkqxeg8FclpbkbnImWoxmvs2h88M6ExiipjlMAr7IY/2XWeMyUD+ZnnSnHkekXXjrLyaBGtERjJyQYeQseVa+5sQB1HoN9CmBC6TrkLKhixFToEig1vmyqMr+0rienbXC0VDSKV89R4RQD5G1nK0pxhllcV6uywL0CKaOMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747032983; c=relaxed/simple;
-	bh=JScEE0sqpFGbRHc2CWcKwMrOfDcxQMU0VBJzQxhA6GY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PH8+HYuotha6r3Blkn6dN1a5nTaAMSLO6yzBsKptOazO4486osA0t8gjviJ0K1NxvlRrBybRsKq5XuR65+8GF8byJp0iD9HUoyfjF57kCbtM4Tpc+Bi21xI0Lrn2koDP/rgvav3OkC6MRPcMTaJiMxukwfGLvo9ioS8F+F2bpkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNYLdDfK; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d817bc6eb0so21038705ab.1;
-        Sun, 11 May 2025 23:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747032981; x=1747637781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JScEE0sqpFGbRHc2CWcKwMrOfDcxQMU0VBJzQxhA6GY=;
-        b=MNYLdDfK5SRGFwq2bPbmbbGdLoKh8P78YDtfsKhE/w4FLqsw9AiN/jfuPaod983QKL
-         IGmALDDbR9jnLf+9KOQ4Bz+urgWUApgxeG1p5iSQEIeqFYzs7KXZLREpvA/6cbT3vcEx
-         IXHYU9lYyi9kbJstB0LbXEV15AL9V7/F2lKPJOeJfqhtFpgBlXEpHeWDIXuEr4W8N93t
-         tCWiAkeNZnNINK+jPThIwqqk0VfMG5ADH5KfFuSNWpNbeftM4pFXaVriAA1CnKw6wc/b
-         Hk5pFHoXtZeLYicM/mb5VnarP/6snrA3ZYU8+5Rfv82RWCVnY+PDpEAChVrCuJQ74C3p
-         nctQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747032981; x=1747637781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JScEE0sqpFGbRHc2CWcKwMrOfDcxQMU0VBJzQxhA6GY=;
-        b=IUW2Li35i3qXhCL6MTc/qEOn1yOp0RXp7CBp0C9aJFLZq5Kv3kDArR0D4lHquTd9to
-         LSoSL1+F2JLalzTfagWWa+EEGGWLYaNaSDgXig6Zq1CAYEOTsxlnUPeGLvgxJV3cjjYM
-         UEw/ixLTcwUcEHcjUU2KRH4YpQQl2UPEAA0fcl9fND+N7UwGJE4P5zBAK5DrAxyTCD1M
-         NwJSvUuipohrdz4xt+n9ie7XntRKe298ZuXbffh/u3PkYDwSHXOMzr1uwXrh0ZXXDbdU
-         cFsWUAmpjgIDPX9+sifw0ufwbuVjFHJLHgyGDGv5CQZKbOr7Y+FB0WwyR3naoGHgn51p
-         rghg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/4Hf7Q1ebqKhsyAe1igDkLpekaCCyn1lfI1/vG+7vFYtKeskUzl8TDRhGpYo9dEMEZob0vhXcPm7g/Xcs@vger.kernel.org, AJvYcCXBKxBBkHdzakGkfE+349ZZB1ppSzsADOSfBcZ61ih8uVGaTi4ItCowKVbnPC4WN0TAKKwyJDvsqGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNNdBfQTTAS47/cq1/uCrz5BgxSCymkOtZWgkOPcANDWM8TRXi
-	Ig9EcNxbadcB9ymE2S7UiaJEPwRBSFkt55SbjdXn4U2ESeNhIERAsvEtIidPLsmjrcIaA7eYG08
-	O2sKsNPjN+UYLFYr2FetW/If/69s=
-X-Gm-Gg: ASbGncvCnKgFUo0YqvPLiFDajmWVHajtrfvdYsrD2Nm5NSP3Amn/x7gY8K3PfHyxVZN
-	m4rlokOW33EtdpdcTTUmfBCU4K2h0Q0CJ+VfoSekb5RmnXASnoIot+yhzPFROwIoKrGK/B6sChz
-	004asYcvsPonjuDtCfLhhapN0MvH7F8uU=
-X-Google-Smtp-Source: AGHT+IFCVmt2yhLHz1OOXNXp2NZPofmH5H8CUnhJUNACcNhm+UnZiugUjwFuMX4sSfnJDaj2aINqqLH67Ds7+SY+UaY=
-X-Received: by 2002:a05:6e02:1a8d:b0:3d8:20fb:f060 with SMTP id
- e9e14a558f8ab-3da7e1e2b95mr133494045ab.4.1747032981279; Sun, 11 May 2025
- 23:56:21 -0700 (PDT)
+	s=arc-20240116; t=1747033212; c=relaxed/simple;
+	bh=UfFApR33S255gX1NEwSNsGVPkagO2UXauiNgiBYMjf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rHidIXLAKsVLwECULrA1oJTNabtieeTa8kMHGeHH2EKDmjzp/WV+GDIUSnicQ5wzU+kgzgd1IFE+Rc2fXq/0PAcdgZye/tE62wOQPlrHjPB4mWpDl0JMiSlGrUL+NrjC1aoccWnYXnzU/WsELGwvAC8EmtyKE159VypO+bW6PZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vLSNlWEN; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54BKH5uc007926;
+	Mon, 12 May 2025 08:59:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	6rgaWbRTM+DFYeZhCEAh/L1Os9dQNFKUxR9CFmxIXbs=; b=vLSNlWENDiCRu1IW
+	mCs6uZ/MkOw7XXzo/sb5AMWYG4NB1tpUWC+ZEj+iMvOfFr2E08Z20YlKW96gCCXm
+	gma/4apQEDcrfQmdAeyI9k0H5Y7tY0XuVp2X4TJX81sCTxLhjlB7YfSjzEqsVCCS
+	9mfrpbCFbyAgXzgKQpX6cgPH5pQZoCvnPBrJrZFtD2KTrGd3bsYjHNWdo2O80Usq
+	Yv1Wmj+24VKL45LhO2if/df+5W+TxZ+Fg4rb10T79qjZUSkWYJR++jzrrmIe8Y/x
+	Hd/Dm7qoVfvX9xzl3O6L3HhSuyAQzXNqjPci+A7MLBSm07OUuHW9loKHr4YzPuDi
+	EqJQpw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46huxa5gay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 08:59:57 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BD04140045;
+	Mon, 12 May 2025 08:58:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0D629A79D85;
+	Mon, 12 May 2025 08:58:29 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 12 May
+ 2025 08:58:28 +0200
+Message-ID: <3c655dad-270d-44e1-b20f-3b15f6cc06f1@foss.st.com>
+Date: Mon, 12 May 2025 08:58:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAL+tcoCVjihJc=exL4hJDaLFr=CrMx=2JgYO_F_m12-LP9Lc-A@mail.gmail.com>
- <aCGR4EOcWRK6Rgfv@smile.fi.intel.com> <aCGSYSDwDZiJmOtD@smile.fi.intel.com>
-In-Reply-To: <aCGSYSDwDZiJmOtD@smile.fi.intel.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Mon, 12 May 2025 14:55:45 +0800
-X-Gm-Features: AX0GCFtmwz4Q1yV8vCtioEK7fWYLfBkoJ4OHC48jCzLzwO_T-QWXkpHMvzLfEvk
-Message-ID: <CAL+tcoAkrtH3NYX+X+6WcvBgGWDW8POnENjbtxStMLRyPORf-A@mail.gmail.com>
-Subject: Re: [PATCH] relay: Remove unused relay_late_setup_files
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux@treblig.org, viro@zeniv.linux.org.uk, 
-	Jens Axboe <axboe@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] spi: stm32-ospi: Make usage of
+ reset_control_acquire/release() API
+To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250507-b4-upstream_ospi_reset_update-v3-1-7e46a8797572@foss.st.com>
+ <ee4e3e521434a0dadce058e7e5f3bbd77f598f90.camel@pengutronix.de>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <ee4e3e521434a0dadce058e7e5f3bbd77f598f90.camel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_02,2025-05-09_01,2025-02-21_01
 
-On Mon, May 12, 2025 at 2:17=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, May 12, 2025 at 09:14:56AM +0300, Andy Shevchenko wrote:
-> > On Mon, May 12, 2025 at 09:12:56AM +0800, Jason Xing wrote:
-> > > Hi All,
-> > >
-> > > I noticed this patch "relay: Remove unused relay_late_setup_files"
-> > > appears in the mm branch already[1], which I totally missed. Sorry fo=
-r
-> > > joining the party late.
-> > >
-> > > I have a different opinion on this. For me, I'm very cautious about
-> > > what those so-called legacy interfaces are and how they can work in
-> > > different cases and what the use case might be... There are still a
-> > > small number of out-of-tree users like me heavily relying on relayfs
-> > > mechanism. So my humble opinion is that if you want to remove
-> > > so-called dead code, probably clearly state why it cannot be used
-> > > anymore in the future.
-> > >
-> > > Dr. David, I appreciate your patch, but please do not simply do the
-> > > random cleanup work __here__. If you take a deep look at the relayfs,
-> > > you may find there are other interfaces/functions no one uses in the
-> > > kernel tree.
-> > >
-> > > I'm now checking this kind of patch in relayfs one by one to avoid
-> > > such a thing happening. I'm trying to maintain it as much as possible
-> > > since we internally use it in the networking area to output useful
-> > > information in the hot paths, a little bit like blktrace. BTW, relayf=
-s
-> > > is really a wonderful one that helps kernel modules communicate with
-> > > userspace very efficiently. I'm trying to revive it if I can.
-> >
-> > Jason, with all of the respect, if you are interested in keeping things=
- going
-> > on, please add yourself to the MAINTAINERS. It will makes the users of =
-the
-> > legacy code, Andrew and others, who are doing maintainer's/reviewer's j=
-ob,
-> > and you happy.
-> >
-> > Also note, we usually do not care about the out-of-tree users. The main=
- Q here
-> > why are they out-of-tree for so long time?
-> >
-> > > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/comm=
-it/?h=3Dmm-everything&id=3D46aa76118ee365c25911806e34d28fc2aa5ef997
->
-> With the above being said, I am +1 for the patch to stay. Feel free to se=
-nd
-> a revert with a good justification of why it should stay. Note, out-of-tr=
-ee
-> is not enough argument.
 
-Thanks for the vote. Let me seriously think of the possible use case
-here. If I find one, I think I would revert it as soon as possible.
 
-Thanks,
-Jason
+On 5/8/25 11:16, Philipp Zabel wrote:
+> Hi Patrice,
+> 
+> On Mi, 2025-05-07 at 18:04 +0200, Patrice Chotard wrote:
+>> As ospi reset is consumed by both OMM and OSPI drivers, use the reset
+>> acquire/release mechanism which ensure exclusive reset usage.
+>>
+>> This avoid to call reset_control_get/put() in OMM driver each time
+>> we need to reset OSPI children and guarantee the reset line stays
+>> deasserted.
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>> Changes in v3:
+>>   - Remove previous patch 1/2 as already merged.
+>>   - Keep the reset control acquired from probe() to remove().
+>>   - Link to v2: https://lore.kernel.org/r/20250411-b4-upstream_ospi_reset_update-v2-0-4de7f5dd2a91@foss.st.com
+>>
+>> Changes in v2:
+>>   - Rebased on spi/for-next (7a978d8fcf57).
+>>   - Remove useless check on reset.
+>>   - Add error handling on reset_control_acquire().
+>>   - Link to v1: https://lore.kernel.org/all/20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com/
+>> ---
+>>  drivers/spi/spi-stm32-ospi.c | 24 ++++++++++++++++++------
+>>  1 file changed, 18 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+>> index 668022098b1eac3628f0677e6d786e5a267346be..b2597b52beb1133155e0d6f601b0632ad4b8e8f5 100644
+>> --- a/drivers/spi/spi-stm32-ospi.c
+>> +++ b/drivers/spi/spi-stm32-ospi.c
+>> @@ -804,7 +804,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+>>  		return ret;
+>>  	}
+>>  
+>> -	ospi->rstc = devm_reset_control_array_get_optional_exclusive(dev);
+>> +	ospi->rstc = devm_reset_control_array_get_exclusive_released(dev);
+>>  	if (IS_ERR(ospi->rstc))
+>>  		return dev_err_probe(dev, PTR_ERR(ospi->rstc),
+>>  				     "Can't get reset\n");
+>> @@ -936,11 +936,13 @@ static int stm32_ospi_probe(struct platform_device *pdev)
+>>  	if (ret < 0)
+>>  		goto err_pm_enable;
+>>  
+>> -	if (ospi->rstc) {
+>> -		reset_control_assert(ospi->rstc);
+>> -		udelay(2);
+>> -		reset_control_deassert(ospi->rstc);
+>> -	}
+>> +	ret = reset_control_acquire(ospi->rstc);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Can not acquire reset %d\n", ret);
+>> +
+>> +	reset_control_assert(ospi->rstc);
+>> +	udelay(2);
+>> +	reset_control_deassert(ospi->rstc);
+>>  
+>>  	ret = spi_register_controller(ctrl);
+>>  	if (ret) {
+>> @@ -983,6 +985,8 @@ static void stm32_ospi_remove(struct platform_device *pdev)
+>>  	if (ospi->dma_chrx)
+>>  		dma_release_channel(ospi->dma_chrx);
+>>  
+>> +	reset_control_release(ospi->rstc);
+>> +
+>>  	pm_runtime_put_sync_suspend(ospi->dev);
+>>  	pm_runtime_force_suspend(ospi->dev);
+>>  }
+>> @@ -993,6 +997,8 @@ static int __maybe_unused stm32_ospi_suspend(struct device *dev)
+>>  
+>>  	pinctrl_pm_select_sleep_state(dev);
+>>  
+>> +	reset_control_release(ospi->rstc);
+> 
+> It would be nice to point out in a comment that OMM will temporarily
+> take over control during resume. But either way,
+> 
+Hi Philipp
+
+Right, i will send a new version by adding this information.
+
+Thanks
+Patrice
+
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+
+
+> 
+> regards
+> Philipp
 
