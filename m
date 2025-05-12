@@ -1,128 +1,112 @@
-Return-Path: <linux-kernel+bounces-644231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8642AB3942
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:30:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C17AB395C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67391165BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164AE18832AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0700293751;
-	Mon, 12 May 2025 13:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="hI33z0tR"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B963A2951DB;
+	Mon, 12 May 2025 13:34:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F8295500
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47E5294A13
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747056618; cv=none; b=laswf8SYKWeJkk1d9HY93HyEPd2xw2yye8ypvY0emTfSLYMJBifFbBaERLb2/SJ50Dgh02fKLQPIBRarrV2bnKXSalhry5QgdNf91QjjYzI3bQTNHQjp3s9w7EgrTc/FNy7ZRJSCuX/O+3Q/VUDJYiGfaHscnbx1M/Y+Hp9jIhc=
+	t=1747056870; cv=none; b=KipURHn7x+xueJMX5Bd0tkZyLTru6EFIbTBhqinWvuEfh9nTQZ7FrVzbYZ82uUwf/2j8wemawSY8JIL1H6BQ2WrmcZBzGduvlbOh2RgLDO2pq3jXdcJNj1lb6WNHzuiy+F04BBjHCMIX65R8HPRLa/sI4T9OUrHSzva02mF0fq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747056618; c=relaxed/simple;
-	bh=O8oz5UvKiTFaAgUQe1w3ZHg8nAMDBTrMSIwdDYm3EAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SFc7K4GC7nvMXuzpJsPUpIY5gwWSui8TnBaRtdafJkvCe9xhEb0+tlsjhVPkoJSwHwb2CWviM+dyp/3xEVFzJwYT96R/Q0syrLNnKScUpEyludkRSuAkkLqRysn6/f9Zk9p2xZ29tXkkBfZTvo5g7/sKKdjboAqLrnktqrk+tk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=hI33z0tR; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so52130345e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=csie.ntu.edu.tw; s=google; t=1747056613; x=1747661413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6O0jvL9bp0RhLH3gFStx+IoQOSIzReGN6we6Sj8t7oo=;
-        b=hI33z0tRKXBUNmuOsZuKg5r8twTlx4P15iGap4f4ngJNysiIDcl155Heg65mjy5ecG
-         dCBevx51aKjuNLvOcdfJOoA85dBOfw9g6UcF7aEztsJGgoHrcoJhTF1nH7H7MuMaLSLq
-         r6rV6g2FOQwNWIYUQMDfnoAGpYHyeyDre7IC1oASimQVlLtPtlO3PMidjCbGpRLYUEpO
-         +jO7nDKZae2XDTH9DycBZe+7NHKLJR2s+ZpI7W2w/XFDnxp5XJ3gIhX2q211139Kzk2F
-         yb7i3Ydpri3ipYyWNPme3e/5ELZFggnWhHF4WkFvc0BnYV3j3kGpUj9zfYwWaN9xwVz/
-         nHEw==
+	s=arc-20240116; t=1747056870; c=relaxed/simple;
+	bh=9LaT8jpMDsO0x/0Nqzjg5EOM711aSAdddO9qszVV5k8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kF8MnKHgPSwV97cjmPvnvbBWAwh+fTEwJXdsUbfvtzmqpAuahC04fBZOUAITe49N90gjlX7TSE2hAPVDuqAZyF7wDq4DID8qz0jKgSbw++V/CA9HS19rQ6p+tNf8/S87GwMvgMJ6Ef3ofwlSjRqnq84R6oyh4LBElDDUGX3JP94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3da76423b9cso51204575ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:34:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747056613; x=1747661413;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6O0jvL9bp0RhLH3gFStx+IoQOSIzReGN6we6Sj8t7oo=;
-        b=SX23JiVrAl2eNSWmziAgC2xGDDMHerDUSGnBFZMyscT5LMemczF19nGZBZSr1JsvU7
-         kOB1jguYsblBcfsIl9kMSpAVx6LwRQ5OrHvv1QbCxIzKn/kJdNl10awyFVVmdCbhZrR4
-         5acXEo75cwPYOZUP0WdLKAuVVk6Lr3JT37hjpvuJ7cQUsKyYgLt+cLVauHrAWkJ42Gox
-         tyCcP+Cj9AwBLBI6T4d+JRbBaCe7ODyBKq0+lD3MR/RCMVc/+J7Lv36oPPJ3xVFZveDw
-         BAjX5LSCvjoSjZxy11CPsdRQ9NOh+dGZqiizkVeTf4k/limmZEWd9yybgXNfgWm/OpLp
-         Dnqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBE+2fscrFvS0PYADb5ogrAxYdMW9wH3wB4HXsot3ESXniJHR85/7fIC7a6D3dhRgnfebxVrYE2216kn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXw2+fwbPy8NpvwOL7A0P9LIu0FZnnKcLCVKpWmQVwz72TZ1Ti
-	W9J/CEld3UcCo6ZI9hDsoBcw8BW9+qgPMPpaavqf5xqQIcbbz/AO0GRsZu6bZPtF7ZoIr56YYP+
-	fmvX+yhZjh/p/hZcccZr9BlZAoroQcvaWNJ7ca2H5rUwQPsETmF2hVm0=
-X-Gm-Gg: ASbGncseIK1DCMsWENahUvxPhTtmv422mmrcQOoa556AtK3Fd1RJ8aS5rkcrhfTqX58
-	w/By29INm1aJw3tZQ6tgBPK+4PKbtZA3bm5dUTrE1Wz2++5sNLT0iekXgiEwGZvB+KeUfYpAs82
-	/AUfKE0lsLBMVLa/jKw0Hp1zRok4vdFHjRI4bPb445z2EdorpDiMJZ612MusWKVya1p6sWKXbcd
-	gP66O2AJcLgIMyIsT/+yhuVlC1Xp3GMXHRxTa0dR8gjjsygctAA7zGpCJeEU/AQw5JFGuj50LTT
-	bdVX+C2+VapOhZkgukXAug7OgD3ewUe4nwJ/Xh3ur4UeBaXP6OAX33D2/iDqtjL7dwng9Mv3
-X-Google-Smtp-Source: AGHT+IGvjNxhAX66VVq4W0wV6STryscjMOGjWiI63Myou666P8Evc1sc/t303qv3kgeVp110Hjntxg==
-X-Received: by 2002:a05:600c:5250:b0:43c:ea1a:720c with SMTP id 5b1f17b1804b1-442d6d6ad52mr105665795e9.18.1747056612621;
-        Mon, 12 May 2025 06:30:12 -0700 (PDT)
-Received: from localhost.localdomain ([213.157.19.150])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67ee33bsm125593325e9.20.2025.05.12.06.30.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 06:30:12 -0700 (PDT)
-From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jintack Lim <jintack@cs.columbia.edu>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-Subject: [PATCH] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1
-Date: Mon, 12 May 2025 21:32:23 +0800
-Message-ID: <20250512133223.866999-1-r09922117@csie.ntu.edu.tw>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1747056868; x=1747661668;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N5Jsy2OEKlJIXsAudq58rYcIWaWdiHscV+wnkzGpNzo=;
+        b=mDBSb6WRlkEHmwkupfndhwvm3hDYfk7dcIr64AR2wtsgcO7tRcaXrVWBKVNqo8MYK8
+         qBxFvudnuY3tOsW2Qa/6f3K82+mP/Ro3CODKXkfm1LiMuT4NXSM1cqwev0/G2Dlec39A
+         xwGbQgurA4ArwnGpXku2qGC38JpaSecaFOERNfbIMO9M9eoAXzWMvxueSwq+TXcQzNQT
+         I214NlSVfVhXX7SpziWpRtO2BMSMVpieT7C43hQMCeWF9NnGh1zCCrwGfzDXOEIJgquc
+         UgfOPy/XMKks+rEVXEI/7TKk0eaA01GDcWXXlq0EnSpU7z/YQw6G1+TilE0PqLj5QeBl
+         aFtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWC2WrpByqz91h+e+TXkkNlf1TClYMnVJ1TwLYlcgFIcKkSmzKsQpRl1MxRsHDp9MQ7IObw9Nm2OUMq4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaaDqz9f/WaJFz5CwSPJJIhBGzladOQ4gfIRElFk7CBXrPVfNu
+	ViX5BoAA8Pw50CDIQK/H7ox10H82XF2w8RYIphh89Kfoi29SkjJ5CSefniT4NUnlzfRESLucUBo
+	XslGovZQ9y0tipyBnIwEcfa7mzEiKcfkl7FjcSJ7kyaFIMRHcg7sMeeM=
+X-Google-Smtp-Source: AGHT+IECV7osDVIrJ+ZByHa1VnrQa26YYhTwEGq12zIt0CegPoH35EnLWtvqfi5x5AfsOhWU4F7+jPdHKuocSKMakLBIPc327aLY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+X-Received: by 2002:a05:6e02:1a06:b0:3d9:39ae:b23c with SMTP id
+ e9e14a558f8ab-3da7e21751dmr157403935ab.20.1747056867911; Mon, 12 May 2025
+ 06:34:27 -0700 (PDT)
+Date: Mon, 12 May 2025 06:34:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6821f8e3.050a0220.f2294.0061.GAE@google.com>
+Subject: [syzbot] Monthly input report (May 2025)
+From: syzbot <syzbot+listce35d07e50216cd75a3a@syzkaller.appspotmail.com>
+To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In the case of ICH_LR<n>.HW == 1, bit 41 of LR is just a part of pINTID
-without EOI meaning, and bit 41 will be zeroed by the subsequent clearing
-of ICH_LR_PHYS_ID_MASK anyway.
-No functional changes intended.
+Hello input maintainers/developers,
 
-Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+This is a 31-day syzbot report for the input subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/input
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 27 issues are still open and 58 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  24829   Yes   UBSAN: shift-out-of-bounds in __kfifo_alloc
+                   https://syzkaller.appspot.com/bug?extid=d5204cbbdd921f1f7cad
+<2>  1915    Yes   WARNING in cm109_urb_irq_callback/usb_submit_urb
+                   https://syzkaller.appspot.com/bug?extid=2d6d691af5ab4b7e66df
+<3>  1120    No    possible deadlock in evdev_pass_values (2)
+                   https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
+<4>  731     Yes   WARNING in enable_work
+                   https://syzkaller.appspot.com/bug?extid=7053fbd8757fecbbe492
+<5>  396     Yes   KASAN: slab-out-of-bounds Read in mcp2221_raw_event
+                   https://syzkaller.appspot.com/bug?extid=52c1a7d3e5b361ccd346
+<6>  54      Yes   WARNING in cm109_input_open/usb_submit_urb (3)
+                   https://syzkaller.appspot.com/bug?extid=ac0f9c4cc1e034160492
+<7>  38      Yes   possible deadlock in uinput_request_submit
+                   https://syzkaller.appspot.com/bug?extid=159077b1355b8cd72757
+<8>  21      Yes   WARNING in bcm5974_start_traffic/usb_submit_urb (2)
+                   https://syzkaller.appspot.com/bug?extid=b064b5599f18f7ebb1e1
+<9>  18      Yes   INFO: rcu detected stall in console_callback
+                   https://syzkaller.appspot.com/bug?extid=32af18ae7b894a681f2d
+<10> 4       Yes   INFO: rcu detected stall in call_timer_fn (5)
+                   https://syzkaller.appspot.com/bug?extid=03dd0f0cbfcf5c5c24f1
+
 ---
- arch/arm64/kvm/vgic/vgic-v3-nested.c | 3 ---
- 1 file changed, 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-index bfa5bde1f106..4f6954c30674 100644
---- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-@@ -240,9 +240,6 @@ static void vgic_v3_create_shadow_lr(struct kvm_vcpu *vcpu,
- 			goto next;
- 		}
- 
--		/* It is illegal to have the EOI bit set with HW */
--		lr &= ~ICH_LR_EOI;
--
- 		/* Translate the virtual mapping to the real one */
- 		lr &= ~ICH_LR_PHYS_ID_MASK;
- 		lr |= FIELD_PREP(ICH_LR_PHYS_ID_MASK, (u64)irq->hwintid);
--- 
-2.49.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
