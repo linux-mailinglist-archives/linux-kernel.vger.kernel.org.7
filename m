@@ -1,218 +1,144 @@
-Return-Path: <linux-kernel+bounces-644074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8690CAB364B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:54:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF607AB3648
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5F8B189FF3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953B73A1EC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4EA2920AC;
-	Mon, 12 May 2025 11:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED7C2920A1;
+	Mon, 12 May 2025 11:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jTkbqjy2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhykW5tW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB41F1D7E5B
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74818259CBE;
+	Mon, 12 May 2025 11:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050827; cv=none; b=Jz6u/+21rOGVsT9dWagh1gbU/552t/g192sPtEd5GGMr13i2Mc1mYsR+cMpAb3q5nrOShkB9j7b4kvE+DDuiauVMAeNbXHfIMqntUGPeL9OFROS7c4k7XruQD+mRuSfingpdX7iEoqxjKk7PJRoGYvVzynfg3HkbXRnutnY+IIU=
+	t=1747050808; cv=none; b=D34THRyVroN0LWkZ4WjVg5R2ue1l7hfq1az9l+6WOuaNV+vEz4mosFQQhvDCDq2q2Utl1hEEryXgQ9Znabhcs+cptNRS2KYsu9+yWgwrHUbfgRQWrVk2zOhciGOsOLDfd+xERLD2Wx3LaojS+GEGqKNqAHgVWccqRq7HcUR3RYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050827; c=relaxed/simple;
-	bh=2NJ16dCcp73RdpieYOtjDGiCHYIF7vEN/pHpM1Awfhg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g0A420Jzecv7Ok7hFLS7xZBpkvlXk8+fgX1MMLFhsbP12s+CG4k6vBhtPYX2Lw8AU208no56HgEOjSJdfoAEDrsjWVokcD+KxRfM+/TZrBAAaDb9F4WZW7j9xwW0hEuksPe7mGvMJv8fo3ZHc9yJf7YMSYvK3lVlBiwkhKgV7bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jTkbqjy2; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C9FAvG015889;
-	Mon, 12 May 2025 11:53:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=5wFIR5gyRg2ECtomM
-	xwyuNgGFE7Y/SXkDgRUfBo3XVU=; b=jTkbqjy2Dnh0mn8LJaqr6Umplob0gXR1r
-	NwO9Exd6f2HnmstkIa6ZU4hY60s009DuL43zRF4uM7Lw77DOvCnivl0FZrkUKrUc
-	ENqKa9c8EOcNxGbk0RQ3Mt7inHehcnsnhOPL04kY/Lv28aQJD8vBR6nUN+uJtBZp
-	Xq9+f8jUVnIAMYR/e75G2kuIHOXGBqvEsKtNYa7e6O9u2rFkTpGwpBFipZBk4ZK0
-	mqSQS8RdhCrociXLwXSYp2g8zKh6MVZXSo5ClVcRBIa4vqwVF18OOCef+oEOCcfd
-	1Mzb/+86arOAspeMOf0zIi+cz4b8AQBUN2aisIAFs+8Xo2gHVMbxw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ke6j0mg3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:33 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CBrXo2027962;
-	Mon, 12 May 2025 11:53:33 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ke6j0mfy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:32 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CB4vmr011544;
-	Mon, 12 May 2025 11:53:32 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46jku25etn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CBrS5p58130738
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 May 2025 11:53:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A4DB200E4;
-	Mon, 12 May 2025 11:53:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B38F9200E8;
-	Mon, 12 May 2025 11:53:27 +0000 (GMT)
-Received: from IBM-PW0CRK36.ibm.com (unknown [9.111.90.223])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 12 May 2025 11:53:27 +0000 (GMT)
-From: Tobias Huschle <huschle@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, sshegde@linux.ibm.com
-Subject: [RFC PATCH v3 2/4] sched/rt: add support for parked CPUs
-Date: Mon, 12 May 2025 13:53:23 +0200
-Message-Id: <20250512115325.30022-3-huschle@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250512115325.30022-1-huschle@linux.ibm.com>
-References: <20250512115325.30022-1-huschle@linux.ibm.com>
+	s=arc-20240116; t=1747050808; c=relaxed/simple;
+	bh=XRTRdFsjTIvQFPCYdsS7RtuGeazpj8HDdc2C/0Tr0+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBfoSUlVfpDNFVzvOBKdAjkq+hgJkgTB6/s+3+Gb8PDhKqHC9bFRjU2dsm7dUWdHzGGld75n1LiM6DNGAridbK80ovJfMx5Vgx+3eVXYfbP5lYAjouzAwLLtu46PbJ/uMBDZhmnaorcavtY83eM+8FidVBLhSntNaNbncY8Jt9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhykW5tW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FBD1C4CEE7;
+	Mon, 12 May 2025 11:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747050808;
+	bh=XRTRdFsjTIvQFPCYdsS7RtuGeazpj8HDdc2C/0Tr0+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uhykW5tWkylsMRnTtM4JyB85xGedLRJaWdAGBR7SS6gscZl1OaRFbhfhwIQYpna1U
+	 1YhecEAWlQutPONxvc/+ZDIyHIoZzBci0wwJsLTb9YqoCswKOD41ANXLtE5cKWpJJb
+	 fRgFHktHPiJnsPQ8rmXju3B+58MLO8fz/I1Vcos1Q3g0wGjaVD7NoeF+EB24qQgobw
+	 /6U1kLuFYWgNG/3VS/HxZc7dP2CiznjHRZ0QDHE5YSthWRjjpikOMFqd2i1K4KwH/n
+	 yVHAeJRX1JbdWYZ9ONTt61IhB8x4BCvk/52FoeTNiDMzM+MPlQaVEb6rNOR6Ds221/
+	 R3EsBllOXQFKw==
+Date: Mon, 12 May 2025 12:53:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Ben Zong-You Xie <ben717@andestech.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: cache: add specific RZ/Five
+ compatible to ax45mp
+Message-ID: <20250512-unbundle-outgoing-92aeed9c60f4@spud>
+References: <20250509-sapling-exhale-72815a023ac1@spud>
+ <20250509-dwindle-remold-98b3d03d0631@spud>
+ <CAMuHMdVWznEm4Kg-MvgCT5+cBtdwGi9YrzFK6mBaoPJ+VK8S+Q@mail.gmail.com>
+ <20250512-disaster-plaster-9dc63205cd6e@spud>
+ <CA+V-a8sJUsNsF+AT1v3ySLiH9RGwDukMHHOC44JuV4JE3YKEpg@mail.gmail.com>
+ <CAMuHMdWcfH7RfYnX+1vx6zFo83oGAW25kSAH0fW8Nb_LQ4PV_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DA6iYAGlwSyCh9Dsvq3DsDGiKc91zCxT
-X-Proofpoint-ORIG-GUID: ANI7Qxp7wfaZDDPyYkQ422LC0etqW_J_
-X-Authority-Analysis: v=2.4 cv=auyyCTZV c=1 sm=1 tr=0 ts=6821e13d cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=l-v1mVCvDpcWLIwNwUUA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDEyMiBTYWx0ZWRfX51x2jZbBapCM 1p9RbYH2UHOHmqctBRDbI1JVsrOb1odCGRaOuf9Y32TdqC+Q+ERWR+55AL0YDCuV9HnEuhN5PXB DS8VggH+iPom1Xz9cACxsLHz7mkIp7f9Mvk+AvAeTJXA4ZkgrJZQkOoYCe++QkWOPL3ks64BfXY
- Owb96OGIvgJLJEHwPiCaKUu2xUcfyrfowAyfYX+IP5Y5rGK7V+iD5wtPCdrRxIHhKbqnSCXq1Ak tPZndDZjNomPo0iyU3y6HIFplees5lAV16ThRcieY3JGCSKLIUKRHmiwIfKYLsHq1Ond95GE8Gx nPnv/fnR/7d7Rg7faE/KCB/Y8Gbn0NtY7JaQcXVOf5hNg9rebJ2RUKCfsx9WGdQFyRK/EeWefoF
- 1xj3EC7FnOyjN8OydUhhPgQRI4eenx59U12CBqegwjvqcv7qlhxvm6z1jsJ6nG0T8BU6hIs/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 adultscore=0 mlxlogscore=907
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505120122
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RsJS8sFLG1dSwYiq"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWcfH7RfYnX+1vx6zFo83oGAW25kSAH0fW8Nb_LQ4PV_w@mail.gmail.com>
 
-Realtime tasks must also react to the parked states of CPUs. Tasks will
-be treated as if the parked CPUs have no free capacity to work on them.
 
-A dynamic change in the parked state of CPUs is handled correctly if
-realtime tasks do not consume 100% CPU time, without any interruption.
-If a realtime tasks runs without interruption, it will never enter the
-load balancing code and will therefore remain on a CPU, even if the CPU
-becomes classified as parked. Any value below 100% causes the task to
-be migrated off a CPU which has just been classified as parked.
+--RsJS8sFLG1dSwYiq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
----
- kernel/sched/rt.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+On Mon, May 12, 2025 at 01:05:13PM +0200, Geert Uytterhoeven wrote:
+> On Mon, 12 May 2025 at 12:05, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > On Mon, May 12, 2025 at 10:59=E2=80=AFAM Conor Dooley <conor@kernel.org=
+> wrote:
+> > > On Mon, May 12, 2025 at 11:01:26AM +0200, Geert Uytterhoeven wrote:
+> > > > On Fri, 9 May 2025 at 17:39, Conor Dooley <conor@kernel.org> wrote:
+> > > > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > > >
+> > > > > When the binding was originally written, it was assumed that all
+> > > > > ax45mp-caches had the same properties etc. This has turned out to=
+ be
+> > > > > incorrect, as the QiLai SoC has a different number of cache-sets.
+> > > > >
+> > > > > Add a specific compatible for the RZ/Five for property enforcemen=
+t and
+> > > > > in case there turns out to be additional differences between these
+> > > > > implementations of the cache controller.
+> > > > >
+> > > > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > > --- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-ca=
+che.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-ca=
+che.yaml
+> > > > > @@ -28,6 +28,7 @@ select:
+> > > > >  properties:
+> > > > >    compatible:
+> > > > >      items:
+> > > > > +      - const: renesas,r9a07g043f-cache
+> > > >
+> > > > This name looks a bit too generic to me, as this is not a generic
+> > > > cache on the R9A07G043F SoC, but specific to the CPU cores.
+> > >
+> > > So "reneasas,r9...-cpu-cache"?
+> >
+> > Maybe "renesas,r9a07g043f-riscv-cache" ?
+>=20
+> "renesas,r9a07g043f-ax45mp-cache"?
+>=20
+> There don't seem to be many vendor-specific derivatives of standardized
+> caches, except for "brcm,bcm11351-a2-pl310-cache".
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index fa03ec3ed56a..595d760304fb 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -460,6 +460,9 @@ static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
- 	unsigned int max_cap;
- 	unsigned int cpu_cap;
- 
-+	if (arch_cpu_parked(cpu))
-+		return false;
-+
- 	/* Only heterogeneous systems can benefit from this check */
- 	if (!sched_asym_cpucap_active())
- 		return true;
-@@ -474,6 +477,9 @@ static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
- #else
- static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
- {
-+	if (arch_cpu_parked(cpu))
-+		return false;
-+
- 	return true;
- }
- #endif
-@@ -1799,6 +1805,8 @@ static int find_lowest_rq(struct task_struct *task)
- 	int this_cpu = smp_processor_id();
- 	int cpu      = task_cpu(task);
- 	int ret;
-+	int parked_cpu = 0;
-+	int tmp_cpu;
- 
- 	/* Make sure the mask is initialized first */
- 	if (unlikely(!lowest_mask))
-@@ -1807,11 +1815,18 @@ static int find_lowest_rq(struct task_struct *task)
- 	if (task->nr_cpus_allowed == 1)
- 		return -1; /* No other targets possible */
- 
-+	for_each_cpu(tmp_cpu, cpu_online_mask) {
-+		if (arch_cpu_parked(tmp_cpu)) {
-+			parked_cpu = tmp_cpu;
-+			break;
-+		}
-+	}
-+
- 	/*
- 	 * If we're on asym system ensure we consider the different capacities
- 	 * of the CPUs when searching for the lowest_mask.
- 	 */
--	if (sched_asym_cpucap_active()) {
-+	if (sched_asym_cpucap_active() || parked_cpu > -1) {
- 
- 		ret = cpupri_find_fitness(&task_rq(task)->rd->cpupri,
- 					  task, lowest_mask,
-@@ -1833,14 +1848,14 @@ static int find_lowest_rq(struct task_struct *task)
- 	 * We prioritize the last CPU that the task executed on since
- 	 * it is most likely cache-hot in that location.
- 	 */
--	if (cpumask_test_cpu(cpu, lowest_mask))
-+	if (cpumask_test_cpu(cpu, lowest_mask) && !arch_cpu_parked(cpu))
- 		return cpu;
- 
- 	/*
- 	 * Otherwise, we consult the sched_domains span maps to figure
- 	 * out which CPU is logically closest to our hot cache data.
- 	 */
--	if (!cpumask_test_cpu(this_cpu, lowest_mask))
-+	if (!cpumask_test_cpu(this_cpu, lowest_mask) || arch_cpu_parked(this_cpu))
- 		this_cpu = -1; /* Skip this_cpu opt if not among lowest */
- 
- 	rcu_read_lock();
-@@ -1860,7 +1875,7 @@ static int find_lowest_rq(struct task_struct *task)
- 
- 			best_cpu = cpumask_any_and_distribute(lowest_mask,
- 							      sched_domain_span(sd));
--			if (best_cpu < nr_cpu_ids) {
-+			if (best_cpu < nr_cpu_ids && !arch_cpu_parked(best_cpu)) {
- 				rcu_read_unlock();
- 				return best_cpu;
- 			}
-@@ -1877,7 +1892,7 @@ static int find_lowest_rq(struct task_struct *task)
- 		return this_cpu;
- 
- 	cpu = cpumask_any_distribute(lowest_mask);
--	if (cpu < nr_cpu_ids)
-+	if (cpu < nr_cpu_ids && !arch_cpu_parked(cpu))
- 		return cpu;
- 
- 	return -1;
--- 
-2.34.1
+The sifive stuff is all "vendor,soc-cache" into "sifive,ccache" but
+there's little ambiguity about there being an arm version of the same
+soc there. I don't mind the "renesas,r9...-ax45mp-cache" one you
+suggested, feels better than "riscv" to me.
 
+--RsJS8sFLG1dSwYiq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCHhMwAKCRB4tDGHoIJi
+0lJdAQDZmT6/q6Y+3Bxx5FSNDxRX2GP522P/d6ovCDdXuDAXKQEAtZHf0hmuuKUK
+Qg/Xu5NA7V10fSgeZavhNiZEaWlFdgI=
+=4rqL
+-----END PGP SIGNATURE-----
+
+--RsJS8sFLG1dSwYiq--
 
