@@ -1,128 +1,138 @@
-Return-Path: <linux-kernel+bounces-644046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB30AB35F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:40:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A81AB3601
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FA957A31DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1C817B09F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A442918E1;
-	Mon, 12 May 2025 11:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44592292931;
+	Mon, 12 May 2025 11:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZgBpguFX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3Ay/FpS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFAC19F101
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D732918F3;
+	Mon, 12 May 2025 11:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747049994; cv=none; b=qZkXTFjL5j587f8ezjTk5b+C89IwQM9z1sL8ZDUce8EU1YtRxTuX7brs/ZShdvmJLXqtlqli8mpOPyQtiwcTLTyEcBKko7IQUREBK9BWCQuuowJWodB5Fsq+EPc7pL6NP8O1H+lbHRAI2LywwhF0cx0Dlc6no8CMBa8ywItxYHQ=
+	t=1747050019; cv=none; b=gecH5+3wHD5SWwBqUi4XfGxLS6G98Luv8t3llcdzpJqsjZ5JLuGlJgP/S8jSRLuL+lSyBAqTBKQPJA1zPdk3S00o6tgUeFwEe4QCXQB/f+GVPAJx9Oi5oHQDtUnunR1YmTvmCyOArqRCYcQJdWZ71j8XGUEu20JH9Mk9uFFGvLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747049994; c=relaxed/simple;
-	bh=vvdv1oojC1mflejovSMP5mtKKQVsZOEk9gARXzsu9u0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkJmrNszPxp4jS6XsRbxoNRRIVNpf5V+4BUEmhVR+KoNy284mxMeFBpcFYiu6q/PfoPt7od6WtLKiadJnrsy45KqwP0y0DYUplm8GfIZ+kmLNh0EMeaa+U4a+VR7ScmkGgOOmU+/NsYHXC55CL2f/TzJwjou19V+t0x1qHiLjRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZgBpguFX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BED5F40E01ED;
-	Mon, 12 May 2025 11:39:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aifAoQMaROQo; Mon, 12 May 2025 11:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1747049985; bh=hpEHQ8YcTZ/63UB5aLcAw++eZZe1RzGiHTAUXUCymOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZgBpguFXQ5blSkzXAmbBd4Rdwon1TpZVOiTT9LSzkBxtKYpL6nN6KyW4m8mNk3kQb
-	 N6vDQwRqwANaYf/70IkJGLdKJiPKnF+RhMR//+EVCO9ZuEIAF+AHrqWxl4jmS3PZjo
-	 PH7r3aRl9V8SBg0TgWDe2UlbLJFbrJVz0VQtYGC1dSzKuPjKyKc9vIaBOYGOi6oj4Q
-	 epAsMAlTQbfOW+Jpx2hnSPURfVFCbx6la9EoAGL29Ck0s7cj+mYeXcWYwsQweLlJiP
-	 9NviCoGW4axHEsxeHPLcwdDM1HTqv0n8MIloo1kQu7iFcvHlmIqiJQJxCP7YwtdSgJ
-	 lcknp2E6Bqi3IUPSrAYB6K8SX/J4T/4I1aPsUWo82wBUKiN0EMBvAACVHkYNaeOsg3
-	 YNdI7dddatxwqo/cJ3SUPNkkgx7goSzIjsMA0cio0jwLbOhyrY7j2CS7W7GlPs0Mks
-	 74OB1aJmIrYSdNlvJykRwaK+dgjTEwC1MQqdL+KHw52S14vRn3uiGaJVAq1pQINRLU
-	 Pn8vq2HFrinnDZxZrTMoWIMP2lxzAD90gx3fdxfc5lI7dccTtxbar0ICWoPd9v4Bjv
-	 bgCdZ/w0PJhHFvoATTPTveaZ12hjupgeC5zue19GOhkJCp8FO/P7Ib60qSIPzodTOL
-	 wRoXJKRoyR9kS/PAzDYMgdnc=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ECE4B40E0241;
-	Mon, 12 May 2025 11:39:42 +0000 (UTC)
-Date: Mon, 12 May 2025 13:39:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: remove Alexey Makhalov
-Message-ID: <20250512113936.GAaCHd-IWbVzIjKKi8@fat_crate.local>
-References: <20250512113004.23050-1-jgross@suse.com>
+	s=arc-20240116; t=1747050019; c=relaxed/simple;
+	bh=xrLqGr/A7KBzm6992uLWeERh4hVm6A4U+dV5uqSfpIQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UmkjDgDmHzkBKjwVQE8L+3sNx/8vRilCyuo1s18aPkSeiLDluNInnOrfhyHJ9H1jyisDy/5PhJVmULqgbE8mkFQVu56TOm3KagRjUiu0TPaH+6x44K9NNZh8bjh+0B7z1i+lTOdLHM/YS/wmB7PlWWP3Y3SC/QOX38rzoEe34fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3Ay/FpS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E00A5C4CEED;
+	Mon, 12 May 2025 11:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747050018;
+	bh=xrLqGr/A7KBzm6992uLWeERh4hVm6A4U+dV5uqSfpIQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=D3Ay/FpSmJxBhmUzRkeFDrk219bgrsI5vlhJGZ0DZqVo8MHWquLY0epeG37h0Ds3y
+	 lWBVoNHjIdRNr0l+QV0iLzwEnZDawP7wXwpdIEU4dQbFnWJLJG/SWdJXwQz4b1Yx2/
+	 vagFxZoqafPEOPKYfEiqzxNHtQ7VDZB20S0dhHRXxSjXUA+dQg87hrw4/kEi/N6wCG
+	 jhxwYrbvyazUi48MWcFD52ASkrnjQpwLZcf142CV/Kd5PG5jy6hRnlnzOlcFvWW28I
+	 5AgmlSF8BE3DKfMy2NDyBsm4gDs9rSALlElHn+bnFJvYHjFMxw0VySH26xZWQQnJ85
+	 RZewM+3fhRBfw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D50BDC3ABBC;
+	Mon, 12 May 2025 11:40:18 +0000 (UTC)
+From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
+Subject: [PATCH v2 0/7] stratix10: Add framework for asynchronous
+ communication with SDM
+Date: Mon, 12 May 2025 19:39:50 +0800
+Message-Id: <20250512-sip_svc_upstream-v2-0-fae5c45c059d@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250512113004.23050-1-jgross@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAbeIWgC/2WP3YrCMBCFX6XkeiP5aWzrle+xSIlxogOm7WZiU
+ KTvvmlkr/ZuzsD5Ps6bEUQEYofmzSJkJJynEtRXw9zNTlfgeCmZKaGMkFpywmWk7MbHQimCDRy
+ 6/tK74dxqbVipLRE8Pivy+/TJEX4ehZw+TxaAyFZyEW1cJVpOs/PL1Y5//IDkeNZc8P3Q+c5Lo
+ 523R5wS3HduDpvqbAl4uQOmQ5P3O2l4dC3brDekNMdX3ZVl1VZVq9T/CVkWjeh7YQY5CK/l0d4
+ TRFs9p3VdfwEs7PruJwEAAA==
+X-Change-ID: 20250131-sip_svc_upstream-e78d8c9b4335
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747050016; l=2502;
+ i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
+ bh=xrLqGr/A7KBzm6992uLWeERh4hVm6A4U+dV5uqSfpIQ=;
+ b=ku0EdbMV76Oe+dVxInq5QTEgMFlwm/BkweImQTxhU9f8QuQqXAS3feO94whUR0VMLdUoPGpd5
+ /2U5IhU7RMHAPtyftESsvyQ32G7bINQQCmpHC6EVhZJ1qj3MHqzCHyf
+X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
+ pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
+X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
+ auth_id=337
+X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
+Reply-To: mahesh.rao@altera.com
 
-On Mon, May 12, 2025 at 01:30:04PM +0200, Juergen Gross wrote:
-> Mails to Alexey keep bouncing, so remove him from MAINTAINERS.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  MAINTAINERS | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f21f1dabb5fe..da3d37fdbb50 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18432,7 +18432,6 @@ F:	include/uapi/linux/ppdev.h
->  PARAVIRT_OPS INTERFACE
->  M:	Juergen Gross <jgross@suse.com>
->  R:	Ajay Kaher <ajay.kaher@broadcom.com>
-> -R:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
->  R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
->  L:	virtualization@lists.linux.dev
->  L:	x86@kernel.org
-> @@ -25918,7 +25917,6 @@ F:	drivers/misc/vmw_balloon.c
->  
->  VMWARE HYPERVISOR INTERFACE
->  M:	Ajay Kaher <ajay.kaher@broadcom.com>
-> -M:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
->  R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
->  L:	virtualization@lists.linux.dev
->  L:	x86@kernel.org
-> @@ -25946,7 +25944,6 @@ F:	drivers/scsi/vmw_pvscsi.h
->  VMWARE VIRTUAL PTP CLOCK DRIVER
->  M:	Nick Shi <nick.shi@broadcom.com>
->  R:	Ajay Kaher <ajay.kaher@broadcom.com>
-> -R:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
->  R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
->  L:	netdev@vger.kernel.org
->  S:	Supported
-> -- 
+The patch set includes the following changes:
 
-https://lore.kernel.org/r/20250318004031.2703923-1-alexey.makhalov@broadcom.com
+- Add protection for querying memory objects in
+  multi-threaded flow.
+- Add support to generate and maintain message id
+  and client id for asynchronous communication with SDM.
+- Add framework to communicate with Secure Device
+  Manager(SDM) asynchronously by sending a request
+  and polling for response.
+- Add interrupt definition in Agilex devicetree
+  for asynchronous communication.
+- Add SDM interrupt support for Agilex platform
+  supporting asynchronous communication.
+- Add support to optionally notify the clients if
+  response is available using interrupts from SDM.
+- Add commands for querying temperature and voltage
+  from SDM.
 
-Looks like this fell through the cracks. :-(
+---
+Changes in v2:
+- Added Reviewed by tag from Rob Herring for dt-binding
+  patch.
+- Resending the patch-set as there is no response from
+  the maintainers for the previous patch submission.
 
-Lemme fix.
+- Link to v1: https://lore.kernel.org/r/20250422-sip_svc_upstream-v1-0-088059190f31@altera.com
 
+---
+Mahesh Rao (7):
+      firmware: stratix10-svc: Add mutex lock and unlock in stratix10 memory allocation/free
+      firmware: stratix10-svc: Implement ID pool management for asynchronous operations
+      firmware: stratix10-svc: Add initial support for asynchronous communication with Stratix 10 service channel
+      dt-bindings: firmware: Add interrupt specification for Intel Stratix 10 Service Layer.
+      dts: agilex: Add support for SDM mailbox interrupt for Intel Agilex SoC FPGA.
+      firmware: stratix10-svc: Add for SDM mailbox doorbell interrupt
+      firmware: stratix10-svc: Add support for HWMON temperature and voltage read command.
+
+ .../bindings/firmware/intel,stratix10-svc.yaml     |  10 +
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi      |   2 +
+ drivers/firmware/stratix10-svc.c                   | 981 ++++++++++++++++++++-
+ include/linux/firmware/intel/stratix10-smc.h       |  84 ++
+ .../linux/firmware/intel/stratix10-svc-client.h    |  99 +++
+ 5 files changed, 1165 insertions(+), 11 deletions(-)
+---
+base-commit: 39d6783f6488786301f36b0e7c619f220c3e8d2c
+change-id: 20250131-sip_svc_upstream-e78d8c9b4335
+prerequisite-message-id: 20250204-socfpga_sip_svc_misc-v3-0-697f7f153cfa@intel.com
+prerequisite-patch-id: 6a4223bd2c01a0fd20925e597c906dc64e11ec2f
+prerequisite-patch-id: 33ca4dbe8b8e18d3e51145c6bcaae55170878b22
+prerequisite-patch-id: a02bca91874f4405191e60704574a0c99f37d184
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Mahesh Rao <mahesh.rao@altera.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
