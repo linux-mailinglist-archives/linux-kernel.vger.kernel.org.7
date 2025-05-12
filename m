@@ -1,144 +1,98 @@
-Return-Path: <linux-kernel+bounces-643837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB28AB32C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:09:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3915AB32ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F029189277E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8577D16A407
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FD025A2CB;
-	Mon, 12 May 2025 09:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C2125B1FA;
+	Mon, 12 May 2025 09:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m5JC5GBL"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=aparecida.go.gov.br header.i=@aparecida.go.gov.br header.b="OTBeX+dI"
+Received: from mail.aparecida.go.gov.br (mail.aparecida.go.gov.br [191.222.184.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB2255F5E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 09:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2511B134AC
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 09:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=191.222.184.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747040967; cv=none; b=HW0o8ImYOGNZZGfmyv/JVf1DY6sTh+zQBB61IA43jfg33rwKrN0G7OlyOSNasblWlxJTOrA3D8N5GltdrhItO+aA+ZXnPf3bsa29B0GRVw+gq9KczBPGPeKbYD5ot8y3b/z61HZYWvOR7llksDsZZr+dMimDBLz2tH4O3UmExjk=
+	t=1747041554; cv=none; b=M0Oz6RDe1G880CCIlN/wXP2ndyIIW5OJIF2Of7jetCjfQEgy1HwEK1G8LMWN/3qm9k180hsUNiOOMRw1NHVdkp+6PXo+KXFoISdvcFV/pvA+oyecctqp78POdcynI3gRFZPXZ8xB7OIZHuDumzEetx5ll81IWN1N2Mj4tFsr4Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747040967; c=relaxed/simple;
-	bh=QvUlU1mDRHLL75zkuyqfgBcWMeWc3nzP/iD1ya0fFbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VlQ5o7LCQILy9yBjREgUx+ybaGMefGAx/tD9i82F8Q6S0y1NGkBJ551SUGlowkhMESCNLEYsxDZt5vIY3t4q1ZzaUQ3N6k9I4rW+53lM7OvZQo6cSVFWDxqii4bheSeodSfwJPBDrHx9TT2PguGn9/7ggJNQVsb/UM9qeYvapFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m5JC5GBL; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 73145433E9;
-	Mon, 12 May 2025 09:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747040962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zKsMMVg+ksWGcwsexvgT2/5MZLLsZR0fW85cr2s0QhU=;
-	b=m5JC5GBLNZAiQowwpGPPWyQX6dO93nDUwSEcLvuejGUEuVFsJ5v/pF/0iJs43P8chhxMfe
-	eWfaKop3uXCySpd6IEMeZBZV6ghvinCapzAikE8T0kmwUOMTCNlGqErybed6JvZl3Rwkom
-	psWJf/VWH2KgL4pbOYG16juvGbzNy5KG5XpK+dJl4KT9bmUrQfwZO2CmNYZgtLnDN3MhlN
-	gzxoWEESJcmXUCSjz0+Cxw8isf0Xz9PuIF0H0D6KMoR97koSPKDJsdFklOBPBp4JwUGuKS
-	bK8+aQMh39EkCSomReeYyTJjjIGNCsOgYssItzd9FZfYbYRpFHlZrW0ZTRafSA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: wsa+renesas@sang-engineering.com,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] misc: ti_fpc202: Switch to of_fwnode_handle()
-Date: Mon, 12 May 2025 11:09:17 +0200
-Message-ID: <47222064.fMDQidcC6G@fw-rgant>
-In-Reply-To: <20250512085852.2432422-1-jirislaby@kernel.org>
-References: <20250512085852.2432422-1-jirislaby@kernel.org>
+	s=arc-20240116; t=1747041554; c=relaxed/simple;
+	bh=ifqe93bWW7NB+h2TBef/9+FHgSnJ2rp3RC2sDlIhwOY=;
+	h=Content-Type:MIME-Version:To:From:Subject:Message-Id:Date; b=gh21BA43qU9omswL9UBrtuPWNLcmGfHkw1Nbdr86nkGyaHw8j7kuGm7Y7auJItTjMPP0T92dRcMKMtLtvl9HDrFRgvXWHfg74vpAvWjkl96krgZHrtoAY2CeqUFSzJTKZn+S0/TAkmBZgP2a5DwZ50N62G3RbdYgh84uypSrVoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aparecida.go.gov.br; spf=pass smtp.mailfrom=aparecida.go.gov.br; dkim=pass (2048-bit key) header.d=aparecida.go.gov.br header.i=@aparecida.go.gov.br header.b=OTBeX+dI; arc=none smtp.client-ip=191.222.184.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aparecida.go.gov.br
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aparecida.go.gov.br
+Received: from localhost (localhost [127.0.0.1])
+	by mail.aparecida.go.gov.br (Postfix) with ESMTP id 989DF23D21933
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:09:45 -0300 (-03)
+Received: from mail.aparecida.go.gov.br ([127.0.0.1])
+ by localhost (mail.aparecida.go.gov.br [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id CAJYXRRs1ObF for <linux-kernel@vger.kernel.org>;
+ Mon, 12 May 2025 06:09:45 -0300 (-03)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.aparecida.go.gov.br (Postfix) with ESMTP id 1953420724B25
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:09:45 -0300 (-03)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.aparecida.go.gov.br 1953420724B25
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aparecida.go.gov.br;
+	s=83049786-2A36-11EE-A10D-0A99322757AD; t=1747040985;
+	bh=ifqe93bWW7NB+h2TBef/9+FHgSnJ2rp3RC2sDlIhwOY=;
+	h=MIME-Version:To:From:Message-Id:Date;
+	b=OTBeX+dIZqJY6E60hGHH8P15seMwFtAn7NBvhikqKwHCRPbO5jd0YgaO4h8yTVn5c
+	 i8egq3kQFADBOznpbFtPTtYbv69YaMpy0Z7/+5Sj9vc3Aba4y1Cr+pKTk7vMP1930b
+	 kcaPE4ktLm+czX+ThxevXz8aq52s6POf/lD2qC3HRpuOhPfqR70TxJ9s+TwSX0InNU
+	 YacIMBVVeOoPyNOo7i74VHTeiIgW4Up6g5lL1oi6rYh/ZmyFVM4/fGgN5OXOCaO+9w
+	 Ma/0USE5lML8HijQzEzLtVvMmNsHsmVwggTuRShGVraB1/wZQP6q/qwkW6e1BBW+yR
+	 JRWl27MBFihBQ==
+X-Virus-Scanned: amavis at aparecida.go.gov.br
+Received: from mail.aparecida.go.gov.br ([127.0.0.1])
+ by localhost (mail.aparecida.go.gov.br [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id yIojzo1BDtDu for <linux-kernel@vger.kernel.org>;
+ Mon, 12 May 2025 06:09:45 -0300 (-03)
+Received: from [127.0.0.1] (unknown [62.60.239.155])
+	by mail.aparecida.go.gov.br (Postfix) with ESMTPSA id 7DC6D23D21933
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:09:44 -0300 (-03)
+Reply-To: b_ellis@meilookv.com
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev75
+X-Originating-Client: open-xchange-appsuite
+X-OX-Marker: f83629b2-24bc-446f-acd4-3aa376d19cae
+Content-Type: multipart/mixed; boundary="===============4545382915492903781=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2235955.Icojqenx9y";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftddtkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepghhrvghgkhhhsehli
- hhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: "antonio.netto@aparecida.go.gov.br" <antonio.netto@aparecida.go.gov.br>
+Subject: Request for Clarification on Unknown Charge
+Message-Id: <20250512090944.7DC6D23D21933@mail.aparecida.go.gov.br>
+Date: Mon, 12 May 2025 06:09:44 -0300 (-03)
 
---nextPart2235955.Icojqenx9y
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH] misc: ti_fpc202: Switch to of_fwnode_handle()
-Date: Mon, 12 May 2025 11:09:17 +0200
-Message-ID: <47222064.fMDQidcC6G@fw-rgant>
-In-Reply-To: <20250512085852.2432422-1-jirislaby@kernel.org>
-References: <20250512085852.2432422-1-jirislaby@kernel.org>
+--===============4545382915492903781==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Hello Jiri,
+Hola,
 
-On Monday, 12 May 2025 10:58:52 CEST Jiri Slaby (SUSE) wrote:
-> of_node_to_fwnode() is an irqdomain's reimplementation of the
-> "officially" defined of_fwnode_handle(). The former is in the process of
-> being removed, so use the latter instead.
-> 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
-> Cc: Romain Gantois <romain.gantois@bootlin.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/misc/ti_fpc202.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ti_fpc202.c b/drivers/misc/ti_fpc202.c
-> index b9c9ee4bfc4e..cc597682b89c 100644
-> --- a/drivers/misc/ti_fpc202.c
-> +++ b/drivers/misc/ti_fpc202.c
-> @@ -284,7 +284,7 @@ static int fpc202_probe_port(struct fpc202_priv *priv,
-> struct device_node *i2c_h
-> 
->  	desc.chan_id = port_id;
->  	desc.parent = dev;
-> -	desc.bus_handle = of_node_to_fwnode(i2c_handle);
-> +	desc.bus_handle = of_fwnode_handle(i2c_handle);
->  	desc.num_aliases = FPC202_ALIASES_PER_PORT;
-> 
->  	fpc202_fill_alias_table(priv->client, aliases, port_id);
+I just saw that I was charged two times for my recent transaction on your online store.
 
-Looks good to me.
+Transaction is listed repeated on my payment history, and I want to request a reversal for the duplicate transaction.
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+Please investigate this and correct the problem soonest possible time? I would be grateful for an update as fast as possible.
 
---nextPart2235955.Icojqenx9y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Thank you for your assistance in advance. Hoping for your response.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmghur0ACgkQ3R9U/FLj
-285vuRAAjNDAQ/01mOOa99MhOI6ywCt9FVAHEOdrJWyyu8Qc5Y4Np359+L/aWARe
-f7FEwcEysYVaBJJ0VS64NEDAgm7hqvb3efdu3afj8rNIsAbalc1Byibkg4zewCo2
-7qoVaCWcsBiPM/JtBd9EFRauPg4RntGqAXgsN+2W96M7Mr8Ze6ScoFAksSlMwqn4
-pNGG8AKIHQLy4N/yb7FSDiAqbNYg3a6jECenAU2ZgYdIGJZgupSxaW0BhZm74NsF
-UA9r45a+1PxyrekPtKg3KVRUPg+veIBmSEOsSxa6tynkAWmkzGBZOMXu2h/57Oxc
-n2ijhSAlRnksMc731rwAFQnBWGMW4yKrD33G5C+tZCvVeB1dNYB0tYrXcGogYFeF
-mNBvhG21EBZJ9r5fJA95kFB22CVbi9V7U9nek0yujulTJVL03H0XAurX2YgeUTEU
-c76y2JrXgKYRW6SKruCVB635/1eFeoLct3O1dJKpUdddqQxsa61kfPfXb1Dwuupx
-DwjFyDx8XLBPJn2rFzhUfOovafoL6Sf525vyEC5J64ZfQwzQYw2tYlixBy4Unrh5
-M9egOd+FP1FfJEjWKbEF4fI6hSGqeu79X6S1rRN3NaRzLir7ThtgfomfFSWxZptn
-sZoZI+q4GEPbvPmhk+lbZuHofqX3+KGC5KZfNrvcRRGT1/z76bs=
-=zbl8
------END PGP SIGNATURE-----
-
---nextPart2235955.Icojqenx9y--
-
-
-
+With appreciation,
+Bennett Ellis
+--===============4545382915492903781==--
 
