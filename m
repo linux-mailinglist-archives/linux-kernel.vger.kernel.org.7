@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-644514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF90AAB3D75
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDD6AB3D63
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9DD1667F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1AED166753
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105025A2C7;
-	Mon, 12 May 2025 16:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E0C24EF6B;
+	Mon, 12 May 2025 16:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="mFsOy4j0"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="RW0d/bQD"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17E524C098
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E172524C09C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747066922; cv=none; b=LCH+zEvN9u8endvWIQxHT70EyWny2zmf6Dc3K0LJDaeBXFHWwmpRhbIGO2Os0JJXjhz+xQb92lu8S1NptHsqpb7A+cLKVIUG5V3BP1kJGGzb8dkQrR+FnToSCBA5rUkX+ODTNeOJfVdKuVo40BwN+W59A0P13uSgzPmbUhLwhsU=
+	t=1747066911; cv=none; b=pJnMoiEVETo9aMbTD6BC925qguIrg/GQMRVLA+oLHuNH+qWw3hJAgeL1SlH+XDdZNsz3Zej+zW68ZEFehIG4A+//3BAgqGgcVYj9UiEUV7r9HXs5Krk/rDaRlFTPh2bCUcOS7EFpWGkLzlc6W9MVB4ymeFvUKy7JQEIY1SoIQAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747066922; c=relaxed/simple;
-	bh=5OMS59Fls7yssVe/eBHwNamMLgl3UdidmTKUG9C1bZ8=;
+	s=arc-20240116; t=1747066911; c=relaxed/simple;
+	bh=wF1Wn6uogxrZLs0egXNeQW8IAGTYKa8Ie8NiQvbbfCA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lPxdSWCPebzHRcqt9cQeQn4q/coRxu7ckZ02kbjj/L0r4ASYTpUInjArgXqFYGzkctHo6O4V4yjyhUmLEctWfD5OcOZ/k+qXC/OJVdbvAYMTKgFEyqqAA5TyHTUcFdwomq5f3QeTxP+venYaliA3dDpkQGI5Ki+cZVZVT4wCyyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=mFsOy4j0; arc=none smtp.client-ip=209.85.222.173
+	 MIME-Version; b=FJDeftk8WSsocfbFCbsxh7OTNLujCCfIaUuQijR8W+E2HKvGv5pwj0s1kjNYGfnfnEAnOovsj20yTAhUnKaJH0bMFoN4Ka8VjR5YOZOq1pfPBFy9HMoLSNqS5PLzGcZikzhR29RQOHV+x3pgIYMwaaA624wknkG7sxPvK7rctR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=RW0d/bQD; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c53b9d66fdso706846685a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 09:21:59 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47690a4ec97so59023801cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 09:21:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1747066918; x=1747671718; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1747066909; x=1747671709; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jt/521w64tsazt1m4c92762k12ji8Xm+LaBsIndvwlE=;
-        b=mFsOy4j0KvZ0bocaq58Obuup0nHhCHj3IgvdtUDb5fxmpVd6r7hHigAw9e11FPk6YD
-         Cb4i6nr0MsRUF+4K5SXE9VFbUlefd9f3BB02RwcxX0BW3fbChWVf5xhE0ypCLfiQVZAh
-         gBJQ9DGea3goKPqyg8/xSB/i5VOOYsGyMvZie+swdflErQffxdbgjCH5UNEXIyIi0beR
-         /ePzKNLtwyeCQrfBkDPS0E3PHOdM6yW1EIx+U2H7NUh3s+mmaFuLHqGFkYTtVtZ64Hi+
-         4inFfMPOmpncr8e7bzDNg1jv1h6H8PzgxVqaCQGJAQLF+0fFQ0rb2M8EIPsuTrY7jcXn
-         VxWg==
+        bh=RP9DathHldScOCsDJTBc7upQEKyGa+tOLTpLEorT/Ys=;
+        b=RW0d/bQDHQyyBN4VgmEWG4GgIuzZQs8n5J0N3tbazVjgQXrND6c374KB4hzL56DnEi
+         9AGWR2lNJ4E/9f0Mo6YmIGjv/WYk76jT/T6o+rBYpojdiRVi6853nzMFAXEQOf8vtOES
+         OImCO8SsTmhj8zj4RSYJb7mmswpgxtpm3Dwxmu0Q5wkNERatgTdbnQxFiId5EdlpWgv4
+         5upw0sCCjXNUGazVo8qtjPUtrPaq/LaT+qxx35e09AKnPRBUG0e+lGIarKsZzj+oLMkN
+         ARSWWChXizR2LIdHpvxefwWNoqvN871WlpY0AwHNpzoZr3JWq1cpnNjCMB0yKBcKl2db
+         aBPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747066918; x=1747671718;
+        d=1e100.net; s=20230601; t=1747066909; x=1747671709;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jt/521w64tsazt1m4c92762k12ji8Xm+LaBsIndvwlE=;
-        b=NCuUFugDlyVv48Ho8RsQW+WUtEkBIQ6LDH8+zxmScUqXl7DKmqvB3Jvkg+Y+0ZHD4q
-         XFeoBaRrj7BHu69ytO3pBsORwUENDiGPrtR07AAeZqkgMhwhwaQ22Vs6rQ53tjoZeZLP
-         RMegxSDRdB7ZfgkE3DdPiHWmEK4/5CLe2VwyKVKuozByNKjTHD7lZnLxQ7pSk76RvG9Y
-         gJmR7t5W+MFUlveAIIW7BhFfiIET1eDwQy8uGxzMw47A/A14uAcAR/zy98+A72c39pzG
-         X5b3yaBwiuuftui8p0b3rtkwPZhw7lcF92TmFI6tn1EmyAlAf/a8yYYsqqFLHl7MCXu3
-         m4FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj6O8cG2YHeNF13kkD9T41wkpGUXTLShxYqrnGEf72ukZ1nMrAGngyc0D6Bn4T0N7ytM97Tcb91YCfcVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8SG+nEUFY2k8qBallXiEMrwgMQQ72wWynq9Mi5I4faHY1Qzd+
-	XgR/omMDTEo7BNd8Q2w5IEXoRqUI0BDEYmA2DxGUvldQt1VvK8cSgvomOJLaLas0+fnxbfQjNNp
-	Z
-X-Gm-Gg: ASbGncvj+zMHQ0+HlRmS5d1VIsm6kHxUotilkbu6DeQlDxaxJzODzxM2Oso4PBvjmxw
-	0Y0EGudkDqO9qSa3d2WTNX7NUYHLPOwZBy4yGyXgGWfaJ6CpBPrI9sFVkZVtvIhtLVaTCB1hRe3
-	WZA8ORDQJpgaClpZfY47w/2FtlMDXlTRt8PzIX92BfCYAqLvfi5GQxqIf1EaD0umlJ5RbkN0HST
-	O1uS6bv/jUNLUXJi5r4e02A2Tz7M9YyzLFtyTaTGFkNMMBRaRa6vJKduR0vEnurtxtW9YUpBJPl
-	FE87WkeimQIHuhmLv1EYHczuhTaveeRYC2wdru6aI6i1bFfhd1iYFI/9DHM45ite6m3xxpcvbQW
-	o+RrfjzpSJPgTGo2TQo/I6w61sXdSvIKF5FzkkgIIbt3hmwk=
-X-Google-Smtp-Source: AGHT+IGgq4dX8u+VS136dy5RsF6lNNfBNEBuuVYsuUsKinYkKNcF5+J+dn7L3DuanbNeTbM5peQhrw==
-X-Received: by 2002:a05:6214:400b:b0:6e4:2dcb:33c8 with SMTP id 6a1803df08f44-6f6e4802e14mr217368156d6.29.1747066906925;
-        Mon, 12 May 2025 09:21:46 -0700 (PDT)
+        bh=RP9DathHldScOCsDJTBc7upQEKyGa+tOLTpLEorT/Ys=;
+        b=sxaFTVZiB8VOIBBag+kS1Li/YFKKyv4HpDoxJON9hWMyIvMWFgE6TYDzxmNW9ZyJnI
+         ZsA/OG4QW/ZSvY8E8mxjYV/A8+Ewqmcj7fOxVTDgenxIDShHN99FmAVomUU2OsI2mT39
+         wOWVpFMh5R7r/Ly4qG63jn37d1SW2DLIaMh0Qp+HiA9dfwUk/pcrDs2LcaoBIlIMfSek
+         HeUO1ekD8V6j50TcKOjJUwNQwm2qk3F387GMShw1n0dYiY5vJcf64pSTIk6mxlu1mmD3
+         7gM+6b4ykaveyCllQbuGQQF8/JXaOocKBhrHwTtYVSGqO+RiZLq2ASVET6JAqt5kRIBG
+         erYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaA7yEsjRZsHlzUkXPU+WJVVQT7a1Na7xxi1MikPPF2gN0+XweS/ndGs7Wdiuvcvp9Lr7lMk7HLt98UHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrdWl9zu4a6AIM4x6DhXh75nVUlJxFZdk9y71kbM/rLpqgXFSZ
+	/UrqoQk5NZrEPssnuhW79en6pAo8LrQc2ldlxsgk2pcgQKjbUQ5Y+CTuEvE7ELM=
+X-Gm-Gg: ASbGncsUYrHSjvpzFX9igBg23NHd0QOnUQ3HHYGeKQsC4memd8m8b9Z1vvS/qw+Jwqm
+	x0EO7wNHGXsFKaU7URDFTzzhDEvx5ulVG4v05ytlNnG/XdPnr6b9KydN9NOH1yrej9t56/6qeUs
+	CCXg9AuzSagoK4C3BipakpCZg32EtyNQO24qY0SsfuAY6eTg1YUNXSAUYVCDqe9HfIN11wNQF+m
+	j3g40oJj1mxQpHspFlFwtqF9ckovl+NzVUbx8s7WPKJ14P5bqJUhJjpMhKgKKs7BuPhsyPJ1Ma0
+	rjRcDB2/srHzH2PXYpp3l9nzyWmylux7jFAvaGgC1Apk34FEl4xvgkDWiy/YS7clVeY1sWYvZSw
+	UufqtN6Czd0bsrx9CLE4H9sC14OWUlAnV0RoS
+X-Google-Smtp-Source: AGHT+IEUp9iPKick/+CTSjfkLaVSn4+KhiJqqKe4wlaHm4OX2t63Mp7RNtbQYu02g8JBVeTg55d1zQ==
+X-Received: by 2002:ac8:5885:0:b0:476:a3c8:c78d with SMTP id d75a77b69052e-494527637f9mr182733071cf.29.1747066908469;
+        Mon, 12 May 2025 09:21:48 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-49452583961sm52461791cf.58.2025.05.12.09.21.46
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-49452583961sm52461791cf.58.2025.05.12.09.21.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 09:21:46 -0700 (PDT)
+        Mon, 12 May 2025 09:21:48 -0700 (PDT)
 From: Gregory Price <gourry@gourry.net>
 To: linux-cxl@vger.kernel.org
 Cc: linux-doc@vger.kernel.org,
@@ -86,9 +85,9 @@ Cc: linux-doc@vger.kernel.org,
 	ira.weiny@intel.com,
 	dan.j.williams@intel.com,
 	corbet@lwn.net
-Subject: [PATCH v3 03/17] cxl: docs/devices - add cxl device and protocol reference
-Date: Mon, 12 May 2025 12:21:20 -0400
-Message-ID: <20250512162134.3596150-4-gourry@gourry.net>
+Subject: [PATCH v3 04/17] cxl: docs/platform/bios-and-efi documentation
+Date: Mon, 12 May 2025 12:21:21 -0400
+Message-ID: <20250512162134.3596150-5-gourry@gourry.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250512162134.3596150-1-gourry@gourry.net>
 References: <20250512162134.3596150-1-gourry@gourry.net>
@@ -100,204 +99,301 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a simple device primer sufficient to understand the theory
-of operation documentation.
+Add some docs on CXL configurations done in bios/efi that affect
+linux configuration - information vendors may care to consider.
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- .../driver-api/cxl/devices/device-types.rst   | 165 ++++++++++++++++++
  Documentation/driver-api/cxl/index.rst        |   6 +
- 2 files changed, 171 insertions(+)
- create mode 100644 Documentation/driver-api/cxl/devices/device-types.rst
+ .../driver-api/cxl/platform/bios-and-efi.rst  | 262 ++++++++++++++++++
+ 2 files changed, 268 insertions(+)
+ create mode 100644 Documentation/driver-api/cxl/platform/bios-and-efi.rst
 
-diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
-new file mode 100644
-index 000000000000..c70564cf0be3
---- /dev/null
-+++ b/Documentation/driver-api/cxl/devices/device-types.rst
-@@ -0,0 +1,165 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=====================
-+Devices and Protocols
-+=====================
-+
-+The type of CXL device (Memory, Accelerator, etc) dictates many configuration steps. This section
-+covers some basic background on device types and on-device resources used by the platform and OS
-+which impact configuration.
-+
-+Protocols
-+=========
-+
-+There are three core protocols to CXL.  For the purpose of this documentation,
-+we will only discuss very high level definitions as the specific hardware
-+details are largely abstracted away from Linux.  See the CXL specification
-+for more details.
-+
-+CXL.io
-+------
-+The basic interaction protocol, similar to PCIe configuration mechanisms.
-+Typically used for initialization, configuration, and I/O access for anything
-+other than memory (CXL.mem) or cache (CXL.cache) operations.
-+
-+The Linux CXL driver exposes access to .io functionalty via the various sysfs
-+interfaces and /dev/cxl/ devices (which exposes direct access to device
-+mailboxes).
-+
-+CXL.cache
-+---------
-+The mechanism by which a device may coherently access and cache host memory.
-+
-+Largely transparent to Linux once configured.
-+
-+CXL.mem
-+---------
-+The mechanism by which the CPU may coherently access and cache device memory.
-+
-+Largely transparent to Linux once configured.
-+
-+
-+Device Types
-+============
-+
-+Type-1
-+------
-+
-+A Type-1 CXL device:
-+
-+* Supports cxl.io and cxl.cache protocols
-+* Implements a fully coherent cache
-+* Allows Device-to-Host coherence and Host-to-Device snoops.
-+* Does NOT have host-managed device memory (HDM)
-+
-+Typical examples of type-1 devices is a Smart NIC - which may want to
-+directly operate on host-memory (DMA) to store incoming packets. These
-+devices largely rely on CPU-attached memory.
-+
-+Type-2
-+------
-+
-+A Type-2 CXL Device:
-+
-+* Supports cxl.io, cxl.cache, and cxl.mem protocols
-+* Optionally implements coherent cache and Host-Managed Device Memory
-+* Is typically an accelerator device w/ high bandwidth memory.
-+
-+The primary difference between a type-1 and type-2 device is the presence
-+of host-managed device memory, which allows the device to operate on a
-+local memory bank - while the CPU sill has coherent DMA to the same memory.
-+
-+The allows things like GPUs to expose their memory via DAX devices or file
-+descriptors, allows drivers and programs direct access to device memory
-+rather than use block-transfer semantics.
-+
-+Type-3
-+------
-+
-+A Type-3 CXL Device
-+
-+* Supports cxl.io and cxl.mem
-+* Implements Host-Managed Device Memory
-+* May provide either Volatile or Persistent memory capacity (or both).
-+
-+A basic example of a type-3 device is a simple memory expander, whose
-+local memory capacity is exposed to the CPU for access directly via
-+basic coherent DMA.
-+
-+Switch
-+------
-+
-+A CXL switch is a device capacity of routing any CXL (and by extension, PCIe)
-+protocol between an upstream, downstream, or peer devices.  Many devices, such
-+as Multi-Logical Devices, imply the presence of switching in some manner.
-+
-+Logical Devices and Heads
-+-------------------------
-+
-+A CXL device may present one or more "Logical Devices" to one or more hosts
-+(via physical "Heads").
-+
-+A Single-Logical Device (SLD) is a device which presents a single device to
-+one or more heads.
-+
-+A Multi-Logical Device (MLD) is a device which may present multiple devices
-+to one or more devices.
-+
-+A Single-Headed Device exposes only a single physical connection.
-+
-+A Multi-Headed Device exposes multiple physical connections.
-+
-+MHSLD
-+~~~~~
-+A Multi-Headed Single-Logical Device (MHSLD) exposes a single logical
-+device to multiple heads which may be connected to one or more discrete
-+hosts.  An example of this would be a simple memory-pool which may be
-+statically configured (prior to boot) to expose portions of its memory
-+to Linux via the CEDT ACPI table.
-+
-+MHMLD
-+~~~~~
-+A Multi-Headed Multi-Logical Device (MHMLD) exposes multiple logical
-+devices to multiple heads which may be connected to one or more discrete
-+hosts.  An example of this would be a Dynamic Capacity Device or which
-+may be configured at runtime to expose portions of its memory to Linux.
-+
-+Example Devices
-+===============
-+
-+Memory Expander
-+---------------
-+The simplest form of Type-3 device is a memory expander.  A memory expander
-+exposes Host-Managed Device Memory (HDM) to Linux.  This memory may be
-+Volatile or Non-Volatile (Persistent).
-+
-+Memory Expanders will typically be considered a form of Single-Headed,
-+Single-Logical Device - as its form factor will typically be an add-in-card
-+(AIC) or some other similar form-factor.
-+
-+The Linux CXL driver provides support for static or dynamic configuration of
-+basic memory expanders.  The platform may program decoders prior to OS init
-+(e.g. auto-decoders), or the user may program the fabric if the platform
-+defers these operations to the OS.
-+
-+Multiple Memory Expanders may be added to an external chassis and exposed to
-+a host via a head attached to a CXL switch.  This is a "memory pool", and
-+would be considered an MHSLD or MHMLD depending on the management capabilities
-+provided by the switch platform.
-+
-+As of v6.14, Linux does not provide a formalized interface to manage non-DCD
-+MHSLD or MHMLD devices.
-+
-+Dynamic Capacity Device (DCD)
-+-----------------------------
-+
-+A Dynamic Capacity Device is a Type-3 device which provides dynamic management
-+of memory capacity. The basic premise of a DCD to provide an allocator-like
-+interface for physical memory capacity to a "Fabric Manager" (an external,
-+privileged host with privileges to change configurations for other hosts).
-+
-+A DCD manages "Memory Extents", which may be volatile or persistent. Extents
-+may also be exclusive to a single host or shared across multiple hosts.
-+
-+As of v6.14, Linux does not provide a formalized interface to manage DCD
-+devices, however there is active work on LKML targeting future release.
 diff --git a/Documentation/driver-api/cxl/index.rst b/Documentation/driver-api/cxl/index.rst
-index fe1594dc6778..a2d1c5b18a8a 100644
+index a2d1c5b18a8a..ffa0462ad950 100644
 --- a/Documentation/driver-api/cxl/index.rst
 +++ b/Documentation/driver-api/cxl/index.rst
-@@ -15,6 +15,12 @@ that have impacts on each other.  The docs here break up configurations steps.
-    theory-of-operation
-    maturity-map
+@@ -21,6 +21,12 @@ that have impacts on each other.  The docs here break up configurations steps.
+ 
+    devices/device-types
  
 +.. toctree::
 +   :maxdepth: 2
-+   :caption: Device Reference
++   :caption: Platform Configuration
 +
-+   devices/device-types
++   platform/bios-and-efi
 +
  .. toctree::
     :maxdepth: 1
     :caption: Linux Kernel Configuration
+diff --git a/Documentation/driver-api/cxl/platform/bios-and-efi.rst b/Documentation/driver-api/cxl/platform/bios-and-efi.rst
+new file mode 100644
+index 000000000000..552a83992bcc
+--- /dev/null
++++ b/Documentation/driver-api/cxl/platform/bios-and-efi.rst
+@@ -0,0 +1,262 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++======================
++BIOS/EFI Configuration
++======================
++
++BIOS and EFI are largely responsible for configuring static information about
++devices (or potential future devices) such that Linux can build the appropriate
++logical representations of these devices.
++
++At a high level, this is what occurs during this phase of configuration.
++
++* The bootloader starts the BIOS/EFI.
++
++* BIOS/EFI do early device probe to determine static configuration
++
++* BIOS/EFI creates ACPI Tables that describe static config for the OS
++
++* BIOS/EFI create the system memory map (EFI Memory Map, E820, etc)
++
++* BIOS/EFI calls :code:`start_kernel` and begins the Linux Early Boot process.
++
++Much of what this section is concerned with is ACPI Table production and
++static memory map configuration. More detail on these tables can be found
++under Platform Configuration -> ACPI Table Reference.
++
++.. note::
++   Platform Vendors should read carefully, as this sections has recommendations
++   on physical memory region size and alignment, memory holes, HDM interleave,
++   and what linux expects of HDM decoders trying to work with these features.
++
++UEFI Settings
++=============
++If your platform supports it, the :code:`uefisettings` command can be used to
++read/write EFI settings. Changes will be reflected on the next reboot. Kexec
++is not a sufficient reboot.
++
++One notable configuration here is the EFI_MEMORY_SP (Specific Purpose) bit.
++When this is enabled, this bit tells linux to defer management of a memory
++region to a driver (in this case, the CXL driver). Otherwise, the memory is
++treated as "normal memory", and is exposed to the page allocator during
++:code:`__init`.
++
++uefisettings examples
++---------------------
++
++:code:`uefisettings identify` ::
++
++        uefisettings identify
++
++        bios_vendor: xxx
++        bios_version: xxx
++        bios_release: xxx
++        bios_date: xxx
++        product_name: xxx
++        product_family: xxx
++        product_version: xxx
++
++On some AMD platforms, the :code:`EFI_MEMORY_SP` bit is set via the :code:`CXL
++Memory Attribute` field.  This may be called something else on your platform.
++
++:code:`uefisettings get "CXL Memory Attribute"` ::
++
++        selector: xxx
++        ...
++        question: Question {
++            name: "CXL Memory Attribute",
++            answer: "Enabled",
++            ...
++        }
++
++Physical Memory Map
++===================
++
++Physical Address Region Alignment
++---------------------------------
++
++As of Linux v6.14, the hotplug memory system requires memory regions to be
++uniform in size and alignment.  While the CXL specification allows for memory
++regions as small as 256MB, the supported memory block size and alignment for
++hotplugged memory is architecture-defined.
++
++A Linux memory blocks may be as small as 128MB and increase in powers of two.
++
++* On ARM, the default block size and alignment is either 128MB or 256MB.
++
++* On x86, the default block size is 256MB, and increases to 2GB as the
++  capacity of the system increases up to 64GB.
++
++For best support across versions, platform vendors should place CXL memory at
++a 2GB aligned base address, and regions should be 2GB aligned.  This also helps
++prevent the creating thousands of memory devices (one per block).
++
++Memory Holes
++------------
++
++Holes in the memory map are tricky.  Consider a 4GB device located at base
++address 0x100000000, but with the following memory map ::
++
++  ---------------------
++  |    0x100000000    |
++  |        CXL        |
++  |    0x1BFFFFFFF    |
++  ---------------------
++  |    0x1C0000000    |
++  |    MEMORY HOLE    |
++  |    0x1FFFFFFFF    |
++  ---------------------
++  |    0x200000000    |
++  |     CXL CONT.     |
++  |    0x23FFFFFFF    |
++  ---------------------
++
++There are two issues to consider:
++
++* decoder programming, and
++* memory block alignment.
++
++If your architecture requires 2GB uniform size and aligned memory blocks, the
++only capacity Linux is capable of mapping (as of v6.14) would be the capacity
++from `0x100000000-0x180000000`.  The remaining capacity will be stranded, as
++they are not of 2GB aligned length.
++
++Assuming your architecture and memory configuration allows 1GB memory blocks,
++this memory map is supported and this should be presented as multiple CFMWS
++in the CEDT that describe each side of the memory hole separately - along with
++matching decoders.
++
++Multiple decoders can (and should) be used to manage such a memory hole (see
++below), but each chunk of a memory hole should be aligned to a reasonable block
++size (larger alignment is always better).  If you intend to have memory holes
++in the memory map, expect to use one decoder per contiguous chunk of host
++physical memory.
++
++As of v6.14, Linux does provide support for memory hotplug of multiple
++physical memory regions separated by a memory hole described by a single
++HDM decoder.
++
++
++Decoder Programming
++===================
++If BIOS/EFI intends to program the decoders to be statically configured,
++there are a few things to consider to avoid major pitfalls that will
++prevent Linux compatibility.  Some of these recommendations are not
++required "per the specification", but Linux makes no guarantees of support
++otherwise.
++
++
++Translation Point
++-----------------
++Per the specification, the only decoders which **TRANSLATE** Host Physical
++Address (HPA) to Device Physical Address (DPA) are the **Endpoint Decoders**.
++All other decoders in the fabric are intended to route accesses without
++translating the addresses.
++
++This is heavily implied by the specification, see: ::
++
++  CXL Specification 3.1
++  8.2.4.20: CXL HDM Decoder Capability Structure
++  - Implementation Note: CXL Host Bridge and Upstream Switch Port Decoder Flow
++  - Implementation Note: Device Decoder Logic
++
++Given this, Linux makes a strong assumption that decoders between CPU and
++endpoint will all be programmed with addresses ranges that are subsets of
++their parent decoder.
++
++Due to some ambiguity in how Architecture, ACPI, PCI, and CXL specifications
++"hand off" responsibility between domains, some early adopting platforms
++attempted to do translation at the originating memory controller or host
++bridge.  This configuration requires a platform specific extension to the
++driver and is not officially endorsed - despite being supported.
++
++It is *highly recommended* **NOT** to do this; otherwise, you are on your own
++to implement driver support for your platform.
++
++Interleave and Configuration Flexibility
++----------------------------------------
++If providing cross-host-bridge interleave, a CFMWS entry in the CEDT must be
++presented with target host-bridges for the interleaved device sets (there may
++be multiple behind each host bridge).
++
++If providing intra-host-bridge interleaving, only 1 CFMWS entry in the CEDT is
++required for that host bridge - if it covers the entire capacity of the devices
++behind the host bridge.
++
++If intending to provide users flexibility in programming decoders beyond the
++root, you may want to provide multiple CFMWS entries in the CEDT intended for
++different purposes.  For example, you may want to consider adding:
++
++1) A CFMWS entry to cover all interleavable host bridges.
++2) A CFMWS entry to cover all devices on a single host bridge.
++3) A CFMWS entry to cover each device.
++
++A platform may choose to add all of these, or change the mode based on a BIOS
++setting.  For each CFMWS entry, Linux expects descriptions of the described
++memory regions in the SRAT to determine the number of NUMA nodes it should
++reserve during early boot / init.
++
++As of v6.14, Linux will create a NUMA node for each CEDT CFMWS entry, even if
++a matching SRAT entry does not exist; however, this is not guaranteed in the
++future and such a configuration should be avoided.
++
++Memory Holes
++------------
++If your platform includes memory holes intersparsed between your CXL memory, it
++is recommended to utilize multiple decoders to cover these regions of memory,
++rather than try to program the decoders to accept the entire range and expect
++Linux to manage the overlap.
++
++For example, consider the Memory Hole described above ::
++
++  ---------------------
++  |    0x100000000    |
++  |        CXL        |
++  |    0x1BFFFFFFF    |
++  ---------------------
++  |    0x1C0000000    |
++  |    MEMORY HOLE    |
++  |    0x1FFFFFFFF    |
++  ---------------------
++  |    0x200000000    |
++  |     CXL CONT.     |
++  |    0x23FFFFFFF    |
++  ---------------------
++
++Assuming this is provided by a single device attached directly to a host bridge,
++Linux would expect the following decoder programming ::
++
++     -----------------------   -----------------------
++     | root-decoder-0      |   | root-decoder-1      |
++     |   base: 0x100000000 |   |   base: 0x200000000 |
++     |   size:  0xC0000000 |   |   size:  0x40000000 |
++     -----------------------   -----------------------
++                |                         |
++     -----------------------   -----------------------
++     | HB-decoder-0        |   | HB-decoder-1        |
++     |   base: 0x100000000 |   |   base: 0x200000000 |
++     |   size:  0xC0000000 |   |   size:  0x40000000 |
++     -----------------------   -----------------------
++                |                         |
++     -----------------------   -----------------------
++     | ep-decoder-0        |   | ep-decoder-1        |
++     |   base: 0x100000000 |   |   base: 0x200000000 |
++     |   size:  0xC0000000 |   |   size:  0x40000000 |
++     -----------------------   -----------------------
++
++With a CEDT configuration with two CFMWS describing the above root decoders.
++
++Linux makes no guarantee of support for strange memory hole situations.
++
++Multi-Media Devices
++-------------------
++The CFMWS field of the CEDT has special restriction bits which describe whether
++the described memory region allows volatile or persistent memory (or both). If
++the platform intends to support either:
++
++1) A device with multiple medias, or
++2) Using a persistent memory device as normal memory
++
++A platform may wish to create multiple CEDT CFMWS entries to describe the same
++memory, with the intent of allowing the end user flexibility in how that memory
++is configured. Linux does not presently have strong requirements in this area.
 -- 
 2.49.0
 
