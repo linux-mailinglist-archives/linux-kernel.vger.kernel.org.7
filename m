@@ -1,228 +1,135 @@
-Return-Path: <linux-kernel+bounces-644409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABB3AB3BCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:18:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9856AB3C60
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D3A189F054
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7DB19E117E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB1123C4FC;
-	Mon, 12 May 2025 15:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C705A23AE96;
+	Mon, 12 May 2025 15:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DdR7Awuj"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2077.outbound.protection.outlook.com [40.107.236.77])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f64XCK3w"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E050623C4EA
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747063094; cv=fail; b=HjsWVpUBmf5Pj29zPK3o8wdi9rRLpYBr4dLBLmCTD1y1qJpNyzpjpj5JFZMpN5tXghXeYyLOoyEpepS5FV3OvJEi8EcdS+gF8ryc1MdNA7skNzHNM3rQ/n/ByAQEQ9I5zUZPusT/IryeY1ibEEb5o7Ql0/ZjaFOqRzwHviD/Eo8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747063094; c=relaxed/simple;
-	bh=mY4Z7VZQsjms2Ih4Qcf+vczPNZHLT7lNGu+JEpavmbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hWSHqBkL1CqtGFrw9KrGsuT/GOfgMI7QMQsHH6K/kN5c47VAfXFvFTqaFipYsBHrWE5wqOq1bDGvwV4NV/VY2h6I3Mxm/3MYchUF0xeKiURIAIfPhuyR6Bm3g8el7dkBfHvfhubynNbPJcqTmGs728lZnV7udtIZ1vILz/njRF4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DdR7Awuj; arc=fail smtp.client-ip=40.107.236.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n3C2/JXa9nUk0o/BQDQ+jTkBNrDx21xwv3BUAr3uIowArTmPytf5x5cWo+cPmSSaYHWttsgkS/wjRPob4g/mhfBBB77uzsDxSVnXuEXCOLg7lrDSgHrdf1O+hPgiAIYzjMwmgTQ/rOvUelTwp1xXb4m83yfgiidhN1wu3vIk6TPrgmLtSklXRMhO5MFc3A3W4cXgH2xzyG2iieIwInw2wqQ/7MwV3aFWmXc9sNo8bhHmJk69I1JEjXAM+lOUqmeE+LSYatXx07rNAomd/OF6J7E5SxgBM/2qfJygaw1jenzW5DtS5pLlVo7qPRnhIjEgQC/kB4pjWrLzLudraJbMXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TcIhcBHqWWD4+q8qfS7R0vePSpqJhqZLLP8uQYucC6c=;
- b=HWvT2g4qZAaVkIATxC0g52gn+xaOLZlyccs6AmwnKaIRzBopG7QnzYpBtTenTf9SbbO3qpdyxT4K6ykzwLOCwUBJz7IpYlvc5HQQOx/m/9Ha7n15dwfVrqFYX6Sn65Nb32xykN24851sk5LzRfk2EyZ7+5BReq6bO4Pc6B552dPgbYHDfr7BQJ1E4WLb3aIiTts5eyM5cBOEsEpU9T2q0iPatNzuQmKSE4Tn1m4ig3cBYcc4pmGLrpQVGlCA+GZzuc6FA30f7vbp9jkMy2xE9a3mDXpWJv72XHDjHdqVPWT9e6MtZ16hKxd2XPFcu9qP8aALu8b0hj49Wyz9LlWZxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TcIhcBHqWWD4+q8qfS7R0vePSpqJhqZLLP8uQYucC6c=;
- b=DdR7Awuj/bhV/b9AvvyuTi2+abdcU93oiZAlbqsdwhpfR/rAxB485Cijmi2jdDw9e8oTvrv3I9w17byt1yWfGfm4EFYve0ktDRnXkuX20OgaT9W1bUoaGAjNX1XIHLn5pszTLaaC4S8Cilutw4NMeHFfJBo13dF7+S8IkyA1pLEdn6JutTdDjTinXx7VlM7+sZf9bzfkH6z2AvsFYJR7ZPmTUWazCHTEEsutsqqvDltcO5mvt8UePHnZtrbJM4tWksqhbkqzVx2ebxXmKmfjSGaOqop1JEcTmXWhP4hNwcM0UiD99DlHfG8Qw1MfZV+G48FL28lSxj5mIGviTVVhQA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by LV8PR12MB9619.namprd12.prod.outlook.com (2603:10b6:408:2a1::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Mon, 12 May
- 2025 15:18:08 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%7]) with mapi id 15.20.8722.027; Mon, 12 May 2025
- 15:18:08 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] sched_ext/idle: Make scx_bpf_select_cpu_and() usable from any context
-Date: Mon, 12 May 2025 17:14:56 +0200
-Message-ID: <20250512151743.42988-3-arighi@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250512151743.42988-1-arighi@nvidia.com>
-References: <20250512151743.42988-1-arighi@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0008.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::13) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E58227E8A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747064461; cv=none; b=asZ/LqUqZs11ydByGDiq+hEB47DogXnEoIt0jSzMSpWy8lXXADUektDCFKzPc4scECEsTCVKKZXs7EPKYGSXhcO+tOFysXvxbZgCEB6QFWxvjEyl7tPo6Hjn7p7E1B39TAIzNBk6EkVcZK7Dqm/C/flwK5a2IYNjM8fTXEEUYkM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747064461; c=relaxed/simple;
+	bh=eB51KYgQdyr7IwazZ3F+ybay1cyim9/w4WbmWWtX9F8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=U+ueKUYip3AWAVEbjc0E2vFSJxG0y+oh3sJndEXxh/JAoYMMhmU5RRac0MSAhsZslHLk7KHF+3qbzs1ZHPc9EqE4gKpFvBaurWYE0IIABDD3o8tG4V2dbrETOSNswp+KZrMl8xJygcl/sEovXBNngdDsq9aabOQ9VrylPS6E15U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f64XCK3w; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54CDnGbn001327;
+	Mon, 12 May 2025 15:40:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=J+A6k4
+	tHqMzx9b4qYee8w4KYIFOoacw1O8+M9svb7xI=; b=f64XCK3wJTu/45P8N18nSV
+	sb40aFlBa36I5GVRuhtXw5u4xoT6diTxmq69NlQbGad1FQdhtr9JLrBWSpwDdn8I
+	iCu+zm3UA1HwqjtDTqzsuz1XEtJTAaXxafz0XsHclF5Sm3+A0psPj1y2s6xDajPh
+	KBxnkFbOHIB5kfaurQ41nShtHcDq/LBjwtCGgT5xVp3rRF/cMjzJmHOFx6mSMWAC
+	d0d5SuGzL1jK8GzZFmvJHIy3oFJLv8u9rZRWcv+HuTTxJn6D1hr16Qnd1YMzv3F+
+	HgUqbX5Upw76l2E5SAl4eJOJFcOVHfXjXe/OSRkVpmVxdngoEehT0E8US7+Fn4pw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46kj758jth-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 15:40:47 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CFZIdi018983;
+	Mon, 12 May 2025 15:40:47 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46kj758jte-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 15:40:47 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CCfoWw016955;
+	Mon, 12 May 2025 15:40:46 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46jhgyxrbm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 15:40:46 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CFeidu44630318
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 May 2025 15:40:44 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CBF1200C8;
+	Mon, 12 May 2025 15:16:25 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 62936200C4;
+	Mon, 12 May 2025 15:16:22 +0000 (GMT)
+Received: from [9.111.90.223] (unknown [9.111.90.223])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 12 May 2025 15:16:22 +0000 (GMT)
+Message-ID: <a56f71e2-fad3-4777-b774-a43bc6fabcac@linux.ibm.com>
+Date: Mon, 12 May 2025 17:16:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|LV8PR12MB9619:EE_
-X-MS-Office365-Filtering-Correlation-Id: c34d9989-c9ec-4990-8402-08dd91683370
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SZUOWXDOaAhca7r7Bfh0ZIxZks1oBu8c/5sZlIPlQD1pWZZkVaq5lH7Tcv4y?=
- =?us-ascii?Q?j+XwwDV6WHQinOq95Ylkuo2EiRSTqGWyrfziNTMgb7wjkEn+FKq4BDx4V06C?=
- =?us-ascii?Q?YtTD1XmjPk9SC+t3KMNbRRjwPGBxbOcqKlJwuylCN9Als8S8roL+PBl/Gh3V?=
- =?us-ascii?Q?F4SdukLQ1Ia7UKslgKOY70/BnKgvUXK4Py6+RgZDbNhMeSoP5oXhalphQdai?=
- =?us-ascii?Q?4ZiWyZ2r32ZMtD6IzmzzHmtKBzurcKCT0eKBm74B25GlFma/FYaW/U0Mco3t?=
- =?us-ascii?Q?M3Vv3eDVPhJg1GLpF7yWXvZm5yknoQH4ESEL5gLnRVbq/tAFSJJz6b+0l1B8?=
- =?us-ascii?Q?C+NWgMHBF5LTM4sONjcqNNgUvlAOCDKTtDY/zoDA75EFttUz/rZW2XYhfrTR?=
- =?us-ascii?Q?JSRdw2D460C/d8YONSuClnu9eZU6Bc7ihSXfzQQ7nxk6Y/AC4EcXLs4tbRsn?=
- =?us-ascii?Q?YNEXdwNlcf1Y2842mQPOthB041xFoO/Xp+yen+/0y6VIW2N1Cw6D9R7L9jS9?=
- =?us-ascii?Q?SZZwThPG8e5LiuA0kufwDtNi2Ga72RHw0pJnuCVibXb3HpmtMKgQUt/mGMAe?=
- =?us-ascii?Q?RkvnIo50FQqX9soANW9kK0T6KdwLT1Vul0oseboYy3XebMWcQJtjvLm5GhVH?=
- =?us-ascii?Q?v+4Edw8dWdRJCKYD2ZHUQi8TpyWN30H9kseyyjD60JrrY1y+2m0lF2uCrPj+?=
- =?us-ascii?Q?HPyW8kcp5eGOXi5tDrxCGuzbcqNr+lsPjtvqCsf72HZk/jxQ+7MmVERt7c9W?=
- =?us-ascii?Q?PY2DvD+ItgxITX0JP+mz4gjL1SuHIhRTzUuORCaJA2e+3sJSc7ChJrTX5ow4?=
- =?us-ascii?Q?0WynILmNn2kyQGEWdUnIvDgJiqqJa9bUMYBF3pmCD0HJ+Dp99FNRmyTk9eeP?=
- =?us-ascii?Q?WibRLwCFEXkcKBB4usGpEsnmULzaqkvv2jQQZoBKXm4EBeS5GXnOgPW60D7N?=
- =?us-ascii?Q?LmxGlpmVcqEe+nugIhSNujVtS0K9UpaO/nnRjyR7OYrWoPTo+riUaVlTjRcQ?=
- =?us-ascii?Q?n5Zx59nV6VqZjxJw7RdBxWytkoTISv6RUOyLxc1R9LcExaS60MlKp9x7j7t7?=
- =?us-ascii?Q?QBnVRT9AxXvEIgr4Alxo6waPtiJNEwMkJlusxTx/mcxAEkfX/+t8wNChF+iq?=
- =?us-ascii?Q?Lh3AfAGE4IbmcY7eoyi/OrvYgDYHpGOoihwgZbSubqyrXVpuFJiyXPdKgmHf?=
- =?us-ascii?Q?4WWxiUtnUB6jt84ZWALnS11NF8Py3SMWsXB3WLKMmJK8Ysdlv+wBdsrgHoDa?=
- =?us-ascii?Q?PSvMDO0JCZsXDqwj2mXsnyc6fse0W21H17rN3FgijYbGP6NIdBICYzFOlNX4?=
- =?us-ascii?Q?wPmQ22AkCT0cyF816dvNdLkBsJbIkQo7Q4pqNbDomlswzXpxNsU4YPM69wVl?=
- =?us-ascii?Q?4RxYWZe++1BD8ENEvZwfwF00X1H0/0Rcj/djvaSHJyHpSAVWYuwYdqQSkElP?=
- =?us-ascii?Q?w3CSgXFCntI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sUBN1hdPVf5vz7D6Wppz+FgasGdiKRAOWst8vnCGaxhmP7b56bcx3wiE07w0?=
- =?us-ascii?Q?H472uZA9zlrU22LMb5OOV4zrAYjNGZNLa1bgZRTHbUXTwaxi2VZt5xtZ7Q5q?=
- =?us-ascii?Q?ymnXAQRPD/MYSYdO9Lbu19WzmKZsuRtIHL1CBNlGUzl1B597k1adtAouwNGH?=
- =?us-ascii?Q?fwgGCbgRE6u1IgHgqjBdyr0nFThEd36owFE73a7QY/Am4kcsfWKwDqW5lHCt?=
- =?us-ascii?Q?nZC93Qp+JMztgNyLHzuGGc9kkuIILfWHeiFGJlrdWEPA9M72bAmtd5sjGAaK?=
- =?us-ascii?Q?jzGAflbVfcdF9ObvllLWRPOMQLal1DAM/b4vKa6uIIABLDDXolACG/zkoocp?=
- =?us-ascii?Q?Wja/F85I9dbwncuoCkz6oOLGFB5F/aHVd6tiYNSsVY9Iii8rv1hNUZJb+rnQ?=
- =?us-ascii?Q?/i4YLtws0s7ZwV19SnoeTvfipjRW82il0BamU79CAFhRkBH5qXUl7wWQwzmD?=
- =?us-ascii?Q?oJ9wp9RQVsJl5ibWq4LSoPOquQVd3evvIKe4xkFVKBc9tQkM6mgyuIcgzSje?=
- =?us-ascii?Q?Ge9FI5ujH97/ZHAj+ahdRgEQQ7XNRfCky6G8DsUbfZraTDFhDNixBziWnTTl?=
- =?us-ascii?Q?jLCs2Chh9cSQlh3E2EToOfCmHsQfLXxzlq/Q1wf8uW9puv/ZhzNOIp575U2R?=
- =?us-ascii?Q?U/VPyFvuXeixcTe8PiTuiqSfOmAdbnVxSuMNnmwWv/q3KLexWQ2lalWiq4PJ?=
- =?us-ascii?Q?GEoSfwyeL6byhoeMGbAhuzsNeYvzR/7ad00yYGtoJj7hjZba+edRRfbNKypi?=
- =?us-ascii?Q?TAyLiEAVWl61eSmJdmqqxjorheB62lgKjGw8kt+A/xmaWgbjIyXxlKaV99Ed?=
- =?us-ascii?Q?9r/yYO+uY9v6gpRObcFhOzyKFXjMFID0a/n/+LFvQupD3i7gxKxXTt8ekOtE?=
- =?us-ascii?Q?BPUXHiCW0G/IQDgCkUH7SwR4sbyolX5bwG62kdMclKXT0lA8JuP7/cSV72za?=
- =?us-ascii?Q?EupogV7J/7dBWBVRchkMwMWzmjIw18PxcVk0VSLu0fFrHtNHfDlKywtODtng?=
- =?us-ascii?Q?Fj/LC3WAq8Do4ZYUjyKbte4npg28m+ZiqNUFSkSYg1o/detgPY+eT0p3GduR?=
- =?us-ascii?Q?1iQHJ/Br9MiTb0/gl9hnBvSAw5jbhpZ91/arTGuEgEgG/mOjnA5Wa1+Ea11t?=
- =?us-ascii?Q?dDvtaTqxIrm2LXJXrMwv+bmXGvDKcRV1fwExJV2kFg+l1g2DBg79Pdtta3z0?=
- =?us-ascii?Q?esUewf8uSx3m8eZEmBxObeRnODRKaTfQUhmo8QkRS88JF7kQURzxM22tAbtf?=
- =?us-ascii?Q?wnTbD/MkkRvtMunDFdfc0Y8awbNowNKgFYuIJKGpn86+32GHZVeQc887QwgD?=
- =?us-ascii?Q?mu6sO/adVmNXzSwT4IZV9tfk7ciQmUeEJrWuG4nbSdXnLV9fQCre9MM8YN2X?=
- =?us-ascii?Q?P1x5KYv8F6GOwJQ5S2cITJ/Byh/SuY9I2JMKoCWkAcJmwHjkY+AJQ4JMxhJa?=
- =?us-ascii?Q?+gHIYW1XYe0k4ybENCMP3KUftpiJzJfyML0pHIwWlvgdfINfndW3kvE15In7?=
- =?us-ascii?Q?3xbT+U6SFqzdDGL1xqmWaIPdl1QvVEIwd7eLJGJOxsu7Ibdv1RbaDrxb6AJr?=
- =?us-ascii?Q?qlfyJl3GwUXn3c+eQL4Wq3LoF4qvtHwTmw8kBKhl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c34d9989-c9ec-4990-8402-08dd91683370
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 15:18:08.3010
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yIVs3/lJvATIeNdSjgG16rC/tDOvkECaIe+3urfv0BfxCBSiPyUoD0ZwY2I29ouwFcUBr9fmrE/4CYnxQi704Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9619
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 2/4] sched/rt: add support for parked CPUs
+From: Tobias Huschle <huschle@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, sshegde@linux.ibm.com
+References: <20250512115325.30022-1-huschle@linux.ibm.com>
+ <20250512115325.30022-3-huschle@linux.ibm.com>
+In-Reply-To: <20250512115325.30022-3-huschle@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDE2MiBTYWx0ZWRfX/b8YtZeWEypV JQoEjfPreK6B4J24z5tl51YdPgq3L2psj6deCQ2kGCfHqvaJeDdWLWa8C1pmz5qdqOZGaAQQkwW a+B5BT2nNr9gIOmJ5iS6Y0z+/BXguYtRPZdXxdortxvryXoaHg+jnjK7MCJr5JwXzADJNna/XEH
+ +COTW70zuJG6iem3/DDrckFvljIEeGgNJtMCnZH53WU1dKAlNMK7URuwFYJA/lF1rfugakuKjZn Uha/Y5JnR5xY/oDRtY2WpRccEu1Lj8Spfy/YZwyDVzvAbP/+WLtGHfe+1oWYb9ALywSU0+tHmWd sWB9IZm8IRPoDZLb3WqRpNr74P6xOxNYVPQV6/7qQ0JtULjR35OU69gb+NAHTbY+M9DEF5LNZcT
+ DK9OGo3zSmUm1dDef1y0LKcopcL4c5IgMzAYu5DIptSvZ8B3eWudPRrMBX8oAu/jx3McMdyY
+X-Authority-Analysis: v=2.4 cv=J4mq7BnS c=1 sm=1 tr=0 ts=6822167f cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=IJLY_-R8i5aRopSSRXUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 3BvVJ9uvrww0HGBlnGtOMrnr4XwVbzCY
+X-Proofpoint-GUID: jsvKRcbJHe4LH6uj5GsCy1mBG_Lpubem
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_05,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=585 priorityscore=1501
+ mlxscore=0 impostorscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505120162
 
-Allow scx_bpf_select_cpu_and() to be used from any context, not just
-from ops.enqueue() or ops.select_cpu().
 
-This enables schedulers, including user-space ones, to implement a
-consistent idle CPU selection policy and helps reduce code duplication.
 
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext_idle.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+On 12/05/2025 13:53, Tobias Huschle wrote:
+> Realtime tasks must also react to the parked states of CPUs. Tasks will
+> be treated as if the parked CPUs have no free capacity to work on them.
+> 
+> A dynamic change in the parked state of CPUs is handled correctly if
+> realtime tasks do not consume 100% CPU time, without any interruption.
+> If a realtime tasks runs without interruption, it will never enter the
+> load balancing code and will therefore remain on a CPU, even if the CPU
+> becomes classified as parked. Any value below 100% causes the task to
+> be migrated off a CPU which has just been classified as parked.
+> 
+> Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
 
-diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
-index 6915685cd3d6b..5373132db02b6 100644
---- a/kernel/sched/ext_idle.c
-+++ b/kernel/sched/ext_idle.c
-@@ -943,10 +943,15 @@ __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64
- 	if (!check_builtin_idle_enabled())
- 		return -EBUSY;
- 
--	if (!scx_kf_allowed(SCX_KF_SELECT_CPU | SCX_KF_ENQUEUE))
--		return -EPERM;
--
- #ifdef CONFIG_SMP
-+	/*
-+	 * If called from an unlocked context, try to acquire
-+	 * cpus_read_lock() to avoid races with CPU hotplug.
-+	 */
-+	if (scx_kf_allowed_if_unlocked())
-+		if (!cpus_read_trylock())
-+			return -EBUSY;
-+
- 	/*
- 	 * This may also be called from ops.enqueue(), so we need to handle
- 	 * per-CPU tasks as well. For these tasks, we can skip all idle CPU
-@@ -956,10 +961,16 @@ __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64
- 	if (p->nr_cpus_allowed == 1) {
- 		if (cpumask_test_cpu(prev_cpu, cpus_allowed) &&
- 		    scx_idle_test_and_clear_cpu(prev_cpu))
--			return prev_cpu;
--		return -EBUSY;
-+			cpu = prev_cpu;
-+		else
-+			cpu = -EBUSY;
-+		goto out_unlock;
- 	}
- 	cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, cpus_allowed, flags);
-+
-+out_unlock:
-+	if (scx_kf_allowed_if_unlocked())
-+		cpus_read_unlock();
- #else
- 	cpu = -EBUSY;
- #endif
-@@ -1266,6 +1277,7 @@ BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_node, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_idle)
- 
- static const struct btf_kfunc_id_set scx_kfunc_set_idle = {
-@@ -1275,7 +1287,6 @@ static const struct btf_kfunc_id_set scx_kfunc_set_idle = {
- 
- BTF_KFUNCS_START(scx_kfunc_ids_select_cpu)
- BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_RCU)
--BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_select_cpu)
- 
- static const struct btf_kfunc_id_set scx_kfunc_set_select_cpu = {
--- 
-2.49.0
+The content of this patch was proposed by Shrikanth, so special thanks 
+to him!
+
+<...>
 
 
