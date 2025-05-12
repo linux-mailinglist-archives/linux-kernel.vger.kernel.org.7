@@ -1,144 +1,143 @@
-Return-Path: <linux-kernel+bounces-643821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E6EAB3281
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEECBAB3285
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41C73AF43A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:59:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 641317AA5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D34425B668;
-	Mon, 12 May 2025 08:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC94A25D524;
+	Mon, 12 May 2025 08:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D1Uaidzq"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4g56BTp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F3325A32F
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 08:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6CB25B69A;
+	Mon, 12 May 2025 08:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747040242; cv=none; b=drGpjSMqXo+ofZLJR4ysRwHme6Yx5vCYG07sj2usMPvT48Tn+PdGQr3RaoA7fA1CSoMy4l5jTwAFTAosKuZAxQC8EVSS2AZtLSR6OMKh7pB71QWWe0WPKgKOtVkAU6mbNDSvkSj3+GlVes5o/7XBpqKgWxvC92dFMOEUqCNQRq0=
+	t=1747040267; cv=none; b=G9Jxq9nOUbhcGanqE85W976IzdE5paDG06PZzr7mVSlaDZ9lnLSE8mocoSxMONaOzd4iAr1grHlKbltHj2EacYOi1uQrnNeMfBx4yk4Wzwa35EQ1YdCtvIes4CY2WJatGAjPrA7vd+Is/csopvlPQnZZBfflsdEHHdhsFYV6GZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747040242; c=relaxed/simple;
-	bh=JhLyS8OlAvaLP9r7KbQp2hC6ezEHKIzbqXNmUbZHJpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nc5mbRL6Al6c3oNWIWB2qp/POD9EPzh0kHRDDZgDIlLRdeXeqelJObYZUTwEsCGXVFjPfKxzX9UPvoepzjB6+oGsckKQIhGMfHzbdlv4seg40+bexdL7lCVaUDPPerjf7LCssBu8Qj7nDg+Do/eoMLzWC3g1LAkSfigpRcCkSTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D1Uaidzq; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74068f95d9fso3779214b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 01:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1747040240; x=1747645040; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sc3CqNV/8Mi2zP04knLd5VAdkGEl8lYzJxAs+HQXCEQ=;
-        b=D1UaidzqpoK8gIulW9n1/Bsx8Ekb5WoxuQhpfF1z5uBRux3hsCDFNo7zNHYqBGDgZl
-         CeuQ1ux0KNKMYNODDa+mV5+KkseMK8cJpdf7QNhrawYkjidcIVpNH1BdKcuohzpkUbhW
-         H6OPN+E6uxWcZ8TiyAaooZbZvVbgrPO/+dx6xiqDCUywjer71y4j6E02z++N7wVyozLc
-         Tu2vclbwMDZawKoou3vuUNFLo2pZL/r2FZn+y7dZuGppA3bis57GWmW3mZGVoFrEc6sn
-         UPAYt6fOdNkIMqa8bLneDh4oVgiKEsxVpti/1u+LdyY14pvc+1BrWXQ0IAfzDtVRFeGy
-         7kpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747040240; x=1747645040;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sc3CqNV/8Mi2zP04knLd5VAdkGEl8lYzJxAs+HQXCEQ=;
-        b=n89w4wjjw28O4JC21l+yEfYF8b0K6hTRhzpJl7K/oMIJ2KurmQInYiVAJTZZjoaj2s
-         qRHUkEV/SLAbvQyrZzbbtk5f35WG6E+vzJJY7DVaAGxUrzAPQeVJgwsbPdZcx1NCcWoB
-         WJjV0CWDbiIimdtDaxj+zxbXa61aL4nSINw2Kh/iiNfuH2fOhI9KuyewzM10cMIHqrZj
-         InBK6fDyLxlMU5O3NlTv6HGnsQBqR0gfuRE9CPFEGtsVqo248TfliVVGfYHO97A4YpMz
-         oV5auaNysORGqG6YhVYrzen4wK9gJf+pXjWvisZUhoVyOPqDS2Fo7DTE4fE/85xNrY4E
-         ATTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+zpDoRHj2Bg6f9MhDlmHp87dYNvf4LtBlLt8gtACyccRRKRPEX3/uyDg2ac/46b6LKT9PukZVzTxEFnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/e/QAYMeMXLVm4Km9hv8if0x13lgMH9yWLvJ8ewN7SDZD4Df6
-	DXuHdeS4CO6eYWEi3CumqUS4J/DA9NJ7iDDoHUED9iggbtqix00KGHXzUXZNik0=
-X-Gm-Gg: ASbGncu5tgqo6yhLSCymSd0IlPM08azUAtXkSR7GDQbR7JD/t/d8cVgyhX+73T1Jwe5
-	NOgrfpTuOcrlsz8EfxYk64U8ohAcqwfTeqYDlI+qrV/61UEKGTUcTTZ8JWQDT/8JaiGsPbX2HJA
-	juEj+V1kCItH3doQn3lbZ5RN0Q4xZepXYnOY5Z08pIh7GrgKXLvme3bQba+pX2SzPF8CaURp2Lg
-	+jYpwMBcf4bUHuwnhh9TJpg6ECD2tAb7UvBB/vOEuuC/QRLBmv906ZUsCQzKa9dijekDfb0BHrc
-	YXGqUzhiHUmQ/g/471qb+RfjR/reeabEhe3HXCiz2UtorqlgcXdVRcp4FK8=
-X-Google-Smtp-Source: AGHT+IFWgBjdZaW68l9bQibLY9baPAwDqAl5/2YWyRVkP0+/oKFF3fyXGC7vyJbnIM52riOnSv7fSQ==
-X-Received: by 2002:a05:6a20:8792:b0:215:d4be:b0ad with SMTP id adf61e73a8af0-215d4beb697mr3485599637.28.1747040239872;
-        Mon, 12 May 2025 01:57:19 -0700 (PDT)
-Received: from sunil-laptop ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b234a0b29casm4459423a12.28.2025.05.12.01.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 01:57:19 -0700 (PDT)
-Date: Mon, 12 May 2025 14:27:05 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 20/23] mailbox/riscv-sbi-mpxy: Add ACPI support
-Message-ID: <aCG34XoERpmESesO@sunil-laptop>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-21-apatel@ventanamicro.com>
- <aCGjEdNVH3ughITd@smile.fi.intel.com>
- <aCGzFVXFBVRbMUKz@sunil-laptop>
- <aCG1kqi2w2EUKWyO@smile.fi.intel.com>
+	s=arc-20240116; t=1747040267; c=relaxed/simple;
+	bh=krG29boC1nw0mvew+VXZrkh+APefvKGWDsm547BBetk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qZDmsg/RrYXfAdKLJd3XtgRab8q+ZuWyALZWQ18iW/2d0I1qjE6d3eQPz12l6XJ4Jo9g86wppCfN8PZF7m8o8z/fzowZJhTkQ+6QE+5wtNhQDl+Y8gtLJ/BFPbWw+wuYVcPmQooZhf5hkDHsph+BDoGnF9MxfXk2eFabjZ1wXPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4g56BTp; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747040265; x=1778576265;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=krG29boC1nw0mvew+VXZrkh+APefvKGWDsm547BBetk=;
+  b=J4g56BTpgEffkRpwMKD8z/fnpx+j8B7k0FuoWpAc8cOfhlS9vKcEpbsy
+   BMlvIDbIhB1sdBHq1Ilt50OIjiNFYc6NtkB5NTayAebH3N6A3aavwejYe
+   +DfOrHQbM8rbg6A5KTpLxvUQIE7maS46k14UpjT1eSu99naK0lyTtUiNq
+   WGHmY58o++OL69m/emttCjXbjXfgedIXG84c3LH2nfZDlNJVDArPTkh5f
+   jdFqSb8iqjSCE+WT/mt6M0Bj2Tc4G5YhBSeT0oFyr0iVh5nZQiMmEjEUF
+   98/l3QcKZvmJNf8+SLAbEWBSU3gK6GwspbhxJAc/0pJAz1kbIiicFTOev
+   g==;
+X-CSE-ConnectionGUID: ZRaWj8gaQGG5bf2a/aPpzA==
+X-CSE-MsgGUID: ZGTTWy4/RvuxAKZ0vhcznw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="59488706"
+X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
+   d="scan'208";a="59488706"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:57:45 -0700
+X-CSE-ConnectionGUID: sI1dBwrtRHK+BLzNza+vsw==
+X-CSE-MsgGUID: Vv8762iBQ8iwVu9vWeVZOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
+   d="scan'208";a="138235779"
+Received: from 984fee019967.jf.intel.com ([10.165.54.94])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:57:45 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	tglx@linutronix.de,
+	dave.hansen@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: peterz@infradead.org,
+	rick.p.edgecombe@intel.com,
+	weijiang.yang@intel.com,
+	john.allen@amd.com,
+	bp@alien8.de,
+	chang.seok.bae@intel.com,
+	xin3.li@intel.com,
+	Chao Gao <chao.gao@intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Stanislav Spassov <stanspas@amazon.de>,
+	Kees Cook <kees@kernel.org>,
+	Eric Biggers <ebiggers@google.com>
+Subject: [PATCH v7 2/6] x86/fpu: Initialize guest FPU permissions from guest defaults
+Date: Mon, 12 May 2025 01:57:05 -0700
+Message-ID: <20250512085735.564475-3-chao.gao@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250512085735.564475-1-chao.gao@intel.com>
+References: <20250512085735.564475-1-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCG1kqi2w2EUKWyO@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 12, 2025 at 11:47:14AM +0300, Andy Shevchenko wrote:
-> On Mon, May 12, 2025 at 02:06:37PM +0530, Sunil V L wrote:
-> > On Mon, May 12, 2025 at 10:28:17AM +0300, Andy Shevchenko wrote:
-> > > On Sun, May 11, 2025 at 07:09:36PM +0530, Anup Patel wrote:
-> 
-> ...
-> 
-> > > > +#ifdef CONFIG_ACPI
-> > > > +	if (!acpi_disabled)
-> > > 
-> > > Hmm... Why do you need this check? What for?
-> > > 
-> > When we boot with DT, ACPI_COMPANION(dev) will return NULL which will
-> > cause a crash in acpi_dev_clear_dependencies(). Let me know if I am
-> > missing something.
-> 
-> Yes, just check that the companion is NULL, rather than the above.
-> 
-> 	struct acpi_device *adev;
-> 
-> 	adev = ACPI_COMPANION(dev);
-> 	if (adev)
-> 		acpi_dev_clear_dependencies(adev);
-> 
-Ah Ok. Sure. Will update.
+Currently, fpu->guest_perm is copied from fpu->perm, which is derived from
+fpu_kernel_cfg.default_features.
 
-Thanks!
-Sunil
+Guest defaults were introduced to differentiate the features and sizes of
+host and guest FPUs. Copying guest FPU permissions from the host will lead
+to inconsistencies between the guest default features and permissions.
+
+Initialize guest FPU permissions from guest defaults instead of host
+defaults. This ensures that any changes to guest default features are
+automatically reflected in guest permissions, which in turn guarantees
+that fpstate_realloc() allocates a correctly sized XSAVE buffer for guest
+FPUs.
+
+Suggested-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+v6: Drop vcpu_fpu_config.user_* and collect reviews (Rick)
+---
+ arch/x86/kernel/fpu/core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 2cd5e1910ff8..444e517a8648 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -553,8 +553,14 @@ void fpstate_reset(struct fpu *fpu)
+ 	fpu->perm.__state_perm		= fpu_kernel_cfg.default_features;
+ 	fpu->perm.__state_size		= fpu_kernel_cfg.default_size;
+ 	fpu->perm.__user_state_size	= fpu_user_cfg.default_size;
+-	/* Same defaults for guests */
+-	fpu->guest_perm = fpu->perm;
++
++	fpu->guest_perm.__state_perm	= guest_default_cfg.features;
++	fpu->guest_perm.__state_size	= guest_default_cfg.size;
++	/*
++	 * User features and sizes remain the same between guest FPUs
++	 * and host FPUs.
++	 */
++	fpu->guest_perm.__user_state_size = fpu_user_cfg.default_size;
+ }
+ 
+ static inline void fpu_inherit_perms(struct fpu *dst_fpu)
+-- 
+2.47.1
+
 
