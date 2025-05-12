@@ -1,74 +1,113 @@
-Return-Path: <linux-kernel+bounces-644291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4754AB39F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFE9AB39F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D47189F1E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0784E3AA6A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EA91DF72C;
-	Mon, 12 May 2025 14:02:53 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8641E0DE3;
+	Mon, 12 May 2025 14:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+FIkSUc"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B0B172BD5;
-	Mon, 12 May 2025 14:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC462AD18;
+	Mon, 12 May 2025 14:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747058572; cv=none; b=dGZxejHKNz2da3jAa6q/qRTa8wYtsSHAHvkBz9lBTHEqfI8Q4eHmggHASKAsAoWG5JfrbiZCmHpaXQcB/IRQF76hDAt8YyssfyWs6/5V4YAbqTW8WTJyRgHdj8AgfTk71ojm2+Xq+H9piXpRA748UEq2x6xwS7YL+EO0bmcUm6c=
+	t=1747058636; cv=none; b=RZI7xHfrbia7Ra5iUaBKGpsudKNi4PBoMn1knPdhCZXTnXjnP/3HGzcMNYONFN4umtGQqAXWorcaGvVacfjTAuiOOmEhM1u30n16mpc4iEyb3pNgYwqITk/eM5/utMieBoJkcT5Rb7A6C3t8hzl063qlrSwtcAf+KmTnrhX3C1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747058572; c=relaxed/simple;
-	bh=3f2mVS4Mc59O2nnOm0Xi9wqIANmD+N3zePum+PiJL8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NGiiUHV6IJ98/XVIJkDhrEyTIvWU7OAZXeuX7XbG8VY0oKJLovPtya0uBhH2+XIzciP2YEIanGiQHRO+e3z5ZwNHswLv5frDsVyypTQ6sDucyDHmKTMofx9rF/182v5SMenauM7stHSEubPOq6fsNef3IuHcx7t4zOrQtQyfWSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E652C4CEE7;
-	Mon, 12 May 2025 14:02:51 +0000 (UTC)
-Date: Mon, 12 May 2025 10:03:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Paul Cacheux <paulcacheux@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Namhyung Kim <namhyung@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: probes: Fix a possible race in trace_probe_log
- APIs
-Message-ID: <20250512100313.4040c35b@gandalf.local.home>
-In-Reply-To: <20250512092442.32527a9e0dca2aeabcd07bf3@kernel.org>
-References: <174684868120.551552.3068655787654268804.stgit@devnote2>
-	<20250512092442.32527a9e0dca2aeabcd07bf3@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747058636; c=relaxed/simple;
+	bh=Wo2gtYcy8F8/HRgD/mguaoCC7Ih+VqVdVr7p9Tj2BO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqWi9oB/gy0yocuI4gXagggQ/2ZcGBCPXMXF+TpwSPGFB9KXyPdppeCJl804hLjeuvXI6zhuhFwdEtc983Cwm14lxFeGJvUrFIk2MV9xZNnyaw7UCgVzSeJfMQzPVxs6cPkO0LJpzuGqoT4BTTUjanrDhkSUEcyBRjpowKnxd6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+FIkSUc; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2d060c62b61so4516610fac.0;
+        Mon, 12 May 2025 07:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747058633; x=1747663433; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLb+JRGLVFS0BSqKTkNSyQIkAQdMTPXYGYGh/OuIIrg=;
+        b=P+FIkSUc36fwfhemX9NbXd6s9GPZHrxjVog9KmBKEzyVj0fyRP/fK130e5TgDZExP6
+         PuhbFm/zf3m1Cwv2yLzGuGHIxqCd/UFNideSXJYrzHibdTlK9tX19hnSvBPsDGycHCR+
+         FRHS0Sl3h8Drnvd2PHSnxQYI10OIkpDqt3MWsvL6Ye08npyVgVzEJ0AsfB5d5ZF3ig+z
+         kN9AYDIl3IE5xfSl12TJOhMdGlFYjnNoWOaWrAHooMpYJ/7xUqHVUQk+WcaCotcouj7a
+         xlIySSGNZ5hMe4f3yTCGA0Amk4t3jr9DSFT49j+xflfIYZsPuGS/oEWlMqW8GBkvrKBL
+         s7LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747058633; x=1747663433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dLb+JRGLVFS0BSqKTkNSyQIkAQdMTPXYGYGh/OuIIrg=;
+        b=rM/EZ1jLBgbKqqievYpC5VTljZsi8taKxNf7PUh8iENxLIAEYrCX0ziBS0kz4yOk/P
+         I1wdPWfiWdtXC2667gNX9xTTCTd9cIjS3dq6hMCTpLJIehwFILDdViysYuoktnqh+RDb
+         ziM1zp36MEeRzuVdEkpy+CRdh5gJ+9sE719yu+ySGnzy95uNEqss2unblxjqDDhXyRD2
+         wAl5FkKIItyvfzNM7lL4AxEwYq+bh568CclMptahyl8rcZUpUbK8VJed4Y7bj7Ep1D3d
+         SnNoBJycW95Z5Jr3QlisOY9g93DH9g5oyQv7Qr7CLBoNUXB+f9U5YgY8g6bXIU768jFk
+         /vgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhYr7vRhnLJEELGoWueUBy0rnJM7Z4mnJtbpVEBiZXHh3Rbu7DFvFTFmncxxRHFLqzW1PHGvDD1B0ld1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJDDA7WRmkxguxGJwaLOGo7gduYjbTrJTjh2oBhT+vXeC7Wq6S
+	pNlevX60imor7FhTiAUPBd3+t90MnThFY1yqvMgqpbtpYaTDXNSt
+X-Gm-Gg: ASbGncvTtFbnENRJOI3ADbdmfCEk1oSlt2BckSgu8Hzy29DZYb5y1jj6E3fV45UQU3A
+	3IXEo46vLJvVm5mxLWw3q003SD4Q3SWH7LaAMNOx/glGlDF/p+DuXE/dHBgAl1/jlcqIPfhBjYZ
+	WygsOi2yV/NR/U52pzePd+eTiUzkcRe7+sHx1gkQk0IERgRXIlT/0PRB3KkTms702l5sxNuyfs7
+	IP1qK8cRhKBiOgqPUxzjbxPUGQa+IikaNtS3rVfwthtJgHIH/3tUN5bp3cfylvVmiklXYd5h9A9
+	6U3uvNWB32zxAfK382qZLcdgdi1RXoM++JgYfy3dg6DNcFi/TUVzqNTmkKiMJWw466c0CrU=
+X-Google-Smtp-Source: AGHT+IF1tkZYqYyXXtjmaPTB+Gkqq74Inf49XWAK+PjfZ2RlQ2OoYywpaAUFYYJ6wzuQTsDoXjEWhA==
+X-Received: by 2002:a05:6870:5246:b0:2c8:34df:8c4f with SMTP id 586e51a60fabf-2dba453cc52mr7464382fac.37.1747058628114;
+        Mon, 12 May 2025 07:03:48 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732264d59e1sm1553171a34.34.2025.05.12.07.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 07:03:46 -0700 (PDT)
+Date: Mon, 12 May 2025 07:03:43 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Jason Xing <kernelxing@tencent.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] docs: networking: timestamping: improve stacked PHC
+ sentence
+Message-ID: <aCH_v3fSZXROUHpD@hoboy.vegasvil.org>
+References: <20250512131751.320283-1-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512131751.320283-1-vladimir.oltean@nxp.com>
 
-On Mon, 12 May 2025 09:24:42 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> BTW, this fixes the problem introduced by commit ab105a4fb894
-> ("tracing: Use tracing error_log with probe events"). However,
-> this patch can be applied after commit d262271d0483 
-> ("tracing/dynevent: Delegate parsing to create function").
+On Mon, May 12, 2025 at 04:17:51PM +0300, Vladimir Oltean wrote:
+> The first paragraph makes no grammatical sense. I suppose a portion of
+> the intended sentece is missing: "[The challenge with ] stacked PHCs
+> (...) is that they uncover bugs".
 > 
-> Thus, before that commit, we may need another way to fix
-> this issue. (e.g. introduce a different mutex.)
-> Anyway, to record the correct fixes;
-
-The method is if this depends on other commits, then those other commits
-need to be backported too.
-
--- Steve
-
-
+> Rephrase, and at the same time simplify the structure of the sentence a
+> little bit, it is not easy to follow.
 > 
-> Fixes: ab105a4fb894 ("tracing: Use tracing error_log with probe events")
+> Fixes: 94d9f78f4d64 ("docs: networking: timestamping: add section for stacked PHC devices")
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 
