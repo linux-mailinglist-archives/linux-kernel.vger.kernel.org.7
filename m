@@ -1,89 +1,146 @@
-Return-Path: <linux-kernel+bounces-644770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A69AB443A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A6EAB4443
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98DB189EB2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86C7189E3D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C97297127;
-	Mon, 12 May 2025 19:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m8nKzx19"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12153296FDF;
+	Mon, 12 May 2025 19:05:28 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E541123A9BD
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009E246788;
+	Mon, 12 May 2025 19:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076598; cv=none; b=LdGkJCU+r1n54Ya24bTBl7lWXI+eaGZHSftalfdG7kOVOpqOrCzJT9DAW5hFgKbCMTquNOqzRlczmAFskp6541Q0sLt28rXO4/aaZnHEYCfxxqGv3B1Mmo37pKKxFAjLLat/a+L2igWgp4wcxCkw1wcmuvvC/PPmr0IOeblztm8=
+	t=1747076727; cv=none; b=ikWx8i6+vkUf0LChp5ntuGLNcHGTDotpZ0frjdjo0qFlCEk1o3LSsY/AMYE/jyyzzzQlPVsJUI3wNOP0RwPgxZau5OPTRz57uI9kEK1sGcnfWp1mn7bXx26U4Y8DJ6H1VmK0gHljvaL6PgBI/BsQB2HnQTFFln98z3smQ6+mR6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076598; c=relaxed/simple;
-	bh=O4H8iAzwOwN+yTMHteguWKtTAD4YhTkV/H8oa2wjqkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5LEzmBHHEmGOhfH1RAmmezdbjPnmRtHBs9CaEdME/aNP9to8q6OnGej/+lDbRb1kS+9PwhNwSw73dd4bhbmiAZEup4BPXqS+zBGDuduhv/kO/DR7KEp7JMp+wvZI23b7BIo+Tfr/T18IzTkj2QK614djRw05s8Wcfk+v9hv2dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m8nKzx19; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6TU8lovtR+mIfquQ2rCbk6fwLvKUBUsDQ9Gbh5JlI78=; b=m8nKzx198g557xXfy33UFRw+Kr
-	qoyVHoc5J/ZHQWHjy+CmISnWIg9QilqxqRc8j5FTIC44xRVH68NBsZBcQtK0pJzqoGQ8aNBSUKezj
-	4AoX90aHZB39mu2IfgjZn4nJg61ODpbKGnlMQGDPjujcsDYFgY2ao9ddJgjrhc3+qC7gpe6Ow9ytz
-	9EpqnIuyHFh+fWWZZLlL6mGmjat0WVnJ7Fth3pWkzPpGj9onP41kYaYjM5iKCJngX659kfFbAtkxU
-	oi6USOiKVK6s1Y9R8W5CYVaxs50SuOTOrGBQA/Cd64UgKVuoz5Ju26v890On9g7o86334/Ia0xUI3
-	LwARxIjg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uEYQh-0000000AAGr-304E;
-	Mon, 12 May 2025 19:03:11 +0000
-Date: Mon, 12 May 2025 20:03:11 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosryahmed@google.com,
-	yosry.ahmed@linux.dev, chengming.zhou@linux.dev, linux-mm@kvack.org,
-	kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] page_io: zswap: do not crash the kernel on
- decompression failure
-Message-ID: <aCJF74ILruXJOAkQ@casper.infradead.org>
-References: <20250306205011.784787-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1747076727; c=relaxed/simple;
+	bh=1ZSZ7d40EjM6PfGtNNzgCiWaN1/tS5p7HVYONGN2Dj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C3vKokaxpLjyFsbWrNzKgONHkYYeWcAnba7VXzaKfOljk7ZyqE+4vTJ4rgMNUz861RD5Q99FUlpeYs6uhhObBdOO9B/u4a/84LPzt+Nm+xtAS7F0E5nRZuvD+OGRPW4vuZ14MZCvhN//RrgaKMas88OLSVZa/l2tj+SQYjw1kWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47663aeff1bso51908501cf.0;
+        Mon, 12 May 2025 12:05:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747076724; x=1747681524;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d3MF6Gdr8jf4kveAGsiH58pOxAm/4f3V90GsWQvlGwk=;
+        b=sAVOzYyIz1hmU4mTQOI9iLh0G+cEhbe6hIVDv2ubsvbzaDiSbPxU8khtAlYPV3njUy
+         EI6O5LcTInVQh1A/9izEbCM/cp8FqfxgBAocXHok3VXdSpGgM56h4Bs3+OIwXseAciLn
+         LGeHKExOJ8FTXYx5s14ulB+A9jgl16GN2RoClG20zs8MwC/0t9nUhKCr9H6bsm6xMXgx
+         0iB03bV5FS3ysaQevIXKQu5FBKnmQwnHzE0bIW6UidrbU6Ah5m9/X+yctM67+xdhRSOD
+         VztQrsdml1bZ7P/wtMzdPZAY3RRIOWtY1WkBI/7mzNuyR6aREg4plY8QJhbk7V3SWO0M
+         LTTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9bXYkeuDTsoHNAIPvSu1YH75wZjUySAGp99q1S1eYk1O+I9SXSXF7oJJVspZSKME7k/5x5YrrTR+IVFOmvfxKHXo=@vger.kernel.org, AJvYcCXL2bCz8vEpw4jTqjYe1lUkNCKhEIVx3pe+AZAMDETvyZWiDXUolgTmtPdEEm2tRCPwumQyHO07aRLQ@vger.kernel.org, AJvYcCXtpsBhFfidBaLpYOlJz6rlA7SJI9W+Vu0lyyG7nG3dQIZP4j2Pq0wO3lDedG1pou5ZattU+43NTC7k06z2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9l1NDqQZ/SiNyH1h3uAq16Z+5oIXNUWfh8F+fXf9ijxt1LE9U
+	CJhYngKkPZWha+6cTd2LfE5d9etCwjt12IhYBuMQh8Vc8O/I/7eBygN97t+r
+X-Gm-Gg: ASbGnctn+LyhOz7uNOIKDQEIOCZ/bgWZ0VlS2PpiHCOyAHnR2lw1Od28yaxmJB/fQ07
+	Cfu1CgfMb/Se/JU0voG1UmGYaQq8TEEQGnE+k/VQf9kXshKXfcOwMYheId8C3Bf0z3YZM6Pvo1T
+	tc5FIMFl8ZfveyVCytqIBEFqJUgpKEV4wp6B5Ehgy+H25I8K6vSlrdH+nqP3hZxnRU0Zo0snSxQ
+	XDxg8v5GZ81aboln0J42gXVf/hVvmj6fFUNp8mw3+QZvnKiANupsyBZ6zJKSD2xYt3T6gum0A7W
+	4nypMMJuNnWd9WmVL+nM8lgZKgWpEpCRZNhz628g+JICZE2WWLDE9CHTS+zqfbwyN0HTqUFz6yh
+	W3cJXeHglGwx6/4OfMQ==
+X-Google-Smtp-Source: AGHT+IGstQiLdDGDu9maHppC/iabqbA5QXQmg8mpHV7U9Tqs/EcOZcOoeOb0kjqYGdqfIm0J1wUE/Q==
+X-Received: by 2002:ac8:5a4b:0:b0:48e:1c13:ecaf with SMTP id d75a77b69052e-4945273c570mr229066781cf.16.1747076724062;
+        Mon, 12 May 2025 12:05:24 -0700 (PDT)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4945259e590sm54065441cf.73.2025.05.12.12.05.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 12:05:23 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c542ffec37so574814985a.2;
+        Mon, 12 May 2025 12:05:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3QqpLqFTVf0zYXFFOIQ0/svFgUNnjmr90jlPj5aIZOAVMdjaR++asn8CdXzLQhJ61jB+Tyy306U872WseQg6XqGY=@vger.kernel.org, AJvYcCWE59ePz78McCXCZ6kRh5OVLV0MysWxvQkRqLYOK4FdOH4XOJFBqYrcOLhuTKXKZEqGfxV1qqa8064Kb/yG@vger.kernel.org, AJvYcCWzSjSV9ZMznRvrHcFHbD7lSbNms+tenWvwA4Yz2m4n7PddM64hAKFtp0MmmVLGTtZOja+Q5BCZUgmV@vger.kernel.org
+X-Received: by 2002:a05:620a:8e16:b0:7cc:fd28:8c6d with SMTP id
+ af79cd13be357-7cd01115c75mr1718978285a.30.1747076723435; Mon, 12 May 2025
+ 12:05:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306205011.784787-1-nphamcs@gmail.com>
+References: <20250509153559.326603-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250509153559.326603-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250509153559.326603-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 May 2025 21:05:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWnaujCjK+gu8RFfrZ4a2axf=xffEOAdwsjFMvUHcfw1w@mail.gmail.com>
+X-Gm-Features: AX0GCFs1qqVunPFP6HjVL2vSxCh34k-gq5vGbef1mspomelrG6kKVz1s8JOeHg0
+Message-ID: <CAMuHMdWnaujCjK+gu8RFfrZ4a2axf=xffEOAdwsjFMvUHcfw1w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: renesas: r9a09g057h44-rzv2h-evk:
+ Enable GBETH
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06, 2025 at 12:50:10PM -0800, Nhat Pham wrote:
-> -static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-> +static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
+Hi Prabhakar,
 
-Hm, why do it this way?  I had it as:
+On Fri, 9 May 2025 at 17:36, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable the GBETH nodes on the RZ/V2H Evaluation Kit.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
--static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-+static int zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-...
-+       err = crypto_acomp_decompress(acomp_ctx->req);
-+       err = crypto_wait_req(err, &acomp_ctx->wait);
-+       if (!err && acomp_ctx->req->dlen != PAGE_SIZE)
-+               err = -EIO;
+Thanks for your patch!
 
-which allows us to return something more meaningful than -EIO.  Or is
-doing that a bad idea and we should squash all decompression failures
-to EIO?
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-(also i really dislike the chained approach:
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> @@ -78,6 +80,68 @@ &audio_extal_clk {
+>         clock-frequency = <22579200>;
+>  };
+>
+> +&eth0 {
+> +       pinctrl-0 = <&eth0_pins>;
+> +       pinctrl-names = "default";
+> +       phy-handle = <&phy0>;
+> +       phy-mode = "rgmii-id";
+> +       status = "okay";
+> +
+> +       mdio {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               compatible = "snps,dwmac-mdio";
 
-        decomp_ret = crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait);
+I am just wondering if the above parts of the mdio subnodes should be
+moved to the SoC-specific .dtsi instead, as it is part of the SoC and
+fairly static?
 
-that's much harder to understand than the two lines i have above)
+Both approaches seem to be popular: e.g. rk3568.dtsi[1] has the mdio
+subnode in the SoC part, and rk3568-nanopi-r5s.dts[2] extends the
+subnode, while rk3399-orangepi.dts[3] has the full subnode in the
+board part.
+
+[1] arch/arm64/boot/dts/rockchip/rk3568.dtsi
+[2] arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts
+[3] arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
