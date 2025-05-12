@@ -1,184 +1,129 @@
-Return-Path: <linux-kernel+bounces-644785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D53AB4480
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:11:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF90AB44B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856D719E7448
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:11:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E297B1070
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744F2298C17;
-	Mon, 12 May 2025 19:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE07B298C3C;
+	Mon, 12 May 2025 19:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YiNhDA7y"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GEWi9xep"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010DE2989B8
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B202980BE
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747077047; cv=none; b=HxSIUIvkmSxaPVaP4tV631CVc3XNF5lcT7eD43+ftxeMpvTCJwuTbkhDdsw5N14oCJc/+HFH2ZO2Ng5VCS4JlnR/e5XZTb/fZfQM5mR09XUNIIvcpsuVSJrG1HR3nNp4JLoi4HoFexk6uR9hXdMA2CkPu1ge8icCaZ8XK2HcImI=
+	t=1747077188; cv=none; b=AINxEiMttsVlE+VFXMfOvJDoAtWHMomeUFL7RKR9xcxWinrZiFpeCAVMifLAN1B9f2N4iaqQ8WZ1JF+IKqUkgv5/yt8e9sm55tOc5kK8EnCdq4WCJONyEeO86t8G5r98Oy+SV0Uiq0/Oiww0sATNYG0/OOsR4itQ/F3kIoLii30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747077047; c=relaxed/simple;
-	bh=7sJCGvd2/PSBwmSbhnI0Hh5oMJHdrnmIUcsLbfEaRDo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lpx9WHuLebMck9LzILDPVynPNHIBHqC1BCIZmbcYRy00DTR5gwnOTGcyGDm4LVhnwC2ihsJEDyJgNKiqb/eICXkTmGpG/6euxAfB7g6sXLO+R2yYXw/t7JevNdQ84jsUmTaQqJQ3mj+GW/RpX1UX5McDYZ1hq/NaqJHSgA7YtJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YiNhDA7y; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d5f10e1aaso11755e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747077044; x=1747681844; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hm/PPoZA1XOQh100d62s3HDVZNFFqoCK54oYIZBXFgE=;
-        b=YiNhDA7yL4rhGJEHutNHhtQ2xnHVxjxwIz8kIDpoNB3R1QFs5PvaW9xkyLcJNF+cOY
-         4/rqXWayzkl/6UWK4jRdw4PfmcRKzeuyxg3zOTEl53jEVIiZdVTUxaUA/Vq2Gvyw/JB4
-         LRgvvovHl/Yb/EHuj5OVMLggoUrEddF7Q/zxsn8mhkUAjcmKDgf+WTvTZl+r1N0MiEUy
-         WthZm9BPpOgmXDCIkKGEOobWcP74TdpOcxU4twvI1vUh8nPX6pE/Xjl7CtxvM9/IM4Au
-         yyUe5KVoK2cAOtJ9MIB3CvoJVH0D7KVEOHpWeLHia3JuVJICI9wvbhzJC6Rkipnh56Yf
-         j+ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747077044; x=1747681844;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hm/PPoZA1XOQh100d62s3HDVZNFFqoCK54oYIZBXFgE=;
-        b=ssYiWqJ5FF0dL/wQiwua+n2Je07VMWxVTKy67Lu9Eewykv6F9Gb5CbYj2I2Y/MPVCn
-         sJAvs3+IakcCiPDTthWTIV5Ut+Q/HWze7RTVSZ+zM8PBUzP8G3ndXXqI49TvmsaYY1m+
-         tUj56Jp4+us3Ly+PG6+7IhLk16Ax8XgtyN+uQJrIrv3XV3m+0+Z1TdOYYgFddQlVxI9D
-         r5GvLFETGeIgClJJ0pb/Gfsi+qldxhR0iLyLKdilM0CyemjwIEVWXZPIlAPiXkJRIpY0
-         drSOXoUAOOvtD5ard/2s+LQHSxKelctt5U1g2Nj3JH3plT/4B7OpeSFAq/I/57uqdqxU
-         xPOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQOCBPvSn1XyjL3Q4vuw8cSHWFNNb5I82UrMtOZkl2n+AS8z/wKnNJmHJ7BFBweRkAnIOVNOCVjx8lt5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNuz2Cy+lrSm8L71i7509b50taahrk9nALpunOEQwqB7ytnpXI
-	SPfCjvTxtv3XTMXtHzrWNNTSFxTV1rI7kh7YouisHW9dKUxuJEIZUSdQt1IeJICuhM8NW6OL+b6
-	5r5IVzoGBWitTqmODsL/Mi74L4rM/YYzc3MY7lP8vsHq1+cDQNC/g
-X-Gm-Gg: ASbGnctet9iXsswg8Noi/r5yYmy6zXEWNI9tehtC7P53gevM/I9yAT1QJxFTzgzKFX/
-	W1JpueZqVyNL8kfASegfmX34gVqwsKG6efA4TnT83qoiSrGLtyazObaj09u7Pr/58S0kDn11Qpf
-	Ibvl+9Hjr28fBxpVBtJVe5jOmztYbpUmlrHw15Pvk+iA==
-X-Google-Smtp-Source: AGHT+IEhJna6SF6AWqidUoCT2Jm/s8v5ZVMXBVF44DHVGLlvS0U5wRATEd00vS/y2Vx87UPbRiSHB0qxO5c6fEFlwVs=
-X-Received: by 2002:a05:600c:308a:b0:43b:c2cc:5075 with SMTP id
- 5b1f17b1804b1-442eb5c4ef0mr95615e9.5.1747077044127; Mon, 12 May 2025 12:10:44
- -0700 (PDT)
+	s=arc-20240116; t=1747077188; c=relaxed/simple;
+	bh=x23mxA82De3cXdZgj34aQv76fZozL81umdIXokRJ4MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMg2/m1LsGekRhLRRXIVQGA85Gpjr+Hzkdpjdl5c0qGHnmyNe1W6xaEq2DcvOalITyMNPFb9sC/BlNNM7kZAf2oIHpLMhofjffabXVM5r9m5wAU3KSYftNJzxZeP5Vje+wdSytGCu809dg8pAu14DgoDJrKzZDETh+iJrQPrwRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GEWi9xep; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 12 May 2025 12:12:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747077174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sqVwqlZm0Qlg6KxhYJj/U/iuxKDNt6d7QLnu+Tbwxmg=;
+	b=GEWi9xepBuUD84Xj6HySZwI1fUdZ1NMcdnQxSfPl28Sz4E2JabYfQWGfYtVKaSfs3gWfd7
+	vZzse9fB54pbGKa9+vqFt0R8nEldYEJgJ5Js2BD3+rLgFEvvnPZYyDi4aM+W4h8F978mTp
+	R2WWBjsuU51IuooEqJXc7vpYirmx8dM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	bpf@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH 0/4] memcg: nmi-safe kmem charging
+Message-ID: <mzrsx4x5xluljyxy5h5ha6kijcno3ormac3sobc3k7bkj5wepr@cuz2fluc5m5d>
+References: <20250509232859.657525-1-shakeel.butt@linux.dev>
+ <2e2f0568-3687-4574-836d-c23d09614bce@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512174036.266796-1-tjmercier@google.com> <20250512174036.266796-5-tjmercier@google.com>
- <CAPhsuW6TUogokra2mJQG6jeuZ1_RZPwr4xGbBOUJZBUg9AqW3g@mail.gmail.com>
-In-Reply-To: <CAPhsuW6TUogokra2mJQG6jeuZ1_RZPwr4xGbBOUJZBUg9AqW3g@mail.gmail.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Mon, 12 May 2025 12:10:31 -0700
-X-Gm-Features: AX0GCFuAa1TiNYsj-36X4VBRhiCNdv4k59_jqcRfoVVDhkJg1nA6Timls4X60Xs
-Message-ID: <CABdmKX200iB3+_6mVQpCH7agdcwsjbfR5cJKRyySuu-2BsL2gA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 4/5] selftests/bpf: Add test for dmabuf_iter
-To: Song Liu <song@kernel.org>
-Cc: sumit.semwal@linaro.org, christian.koenig@amd.com, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
-	skhan@linuxfoundation.org, alexei.starovoitov@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, android-mm@google.com, 
-	simona@ffwll.ch, eddyz87@gmail.com, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e2f0568-3687-4574-836d-c23d09614bce@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, May 12, 2025 at 11:58=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> On Mon, May 12, 2025 at 10:41=E2=80=AFAM T.J. Mercier <tjmercier@google.c=
-om> wrote:
-> [...]
-> > +
-> > +static int udmabuf;
->
-> static int udmabuf =3D -1;
->
-> > +static const char udmabuf_test_buffer_name[DMA_BUF_NAME_LEN] =3D "udma=
-buf_test_buffer_for_iter";
-> > +static size_t udmabuf_test_buffer_size;
-> > +static int sysheap_dmabuf;
->
-> static int sysheap_dmabuf =3D -1;
+I forgot to CC Tejun, so doing it now.
 
-We don't really need the -1 since the rework in this version
-initializes them to -1 on failure, but I'll add it anyway.
+On Mon, May 12, 2025 at 05:56:09PM +0200, Vlastimil Babka wrote:
+> On 5/10/25 01:28, Shakeel Butt wrote:
+> > BPF programs can trigger memcg charged kernel allocations in nmi
+> > context. However memcg charging infra for kernel memory is not equipped
+> > to handle nmi context. This series adds support for kernel memory
+> > charging for nmi context.
+> > 
+> > The initial prototype tried to make memcg charging infra for kernel
+> > memory re-entrant against irq and nmi. However upon realizing that
+> > this_cpu_* operations are not safe on all architectures (Tejun), this
+> 
+> I assume it was an off-list discussion?
+> Could we avoid this for the architectures where these are safe, which should
+> be the major ones I hope?
 
-> > +static const char sysheap_test_buffer_name[DMA_BUF_NAME_LEN] =3D "sysh=
-eap_test_buffer_for_iter";
-> > +static size_t sysheap_test_buffer_size;
-> > +
-> > +static int create_udmabuf(void)
-> > +{
-> > +       struct udmabuf_create create;
->
-> nit: zero initialize create to be future proof.
+Yes it was an off-list discussion. The discussion was more about the
+this_cpu_* ops vs atomic_* ops as on x86 this_cpu_* does not have lock
+prefix and how I should prefer this_cpu_* over atomic_* for my series on
+objcg charging without disabling irqs. Tejun pointed out this_cpu_* are
+not nmi safe for some archs and it would be better to handle nmi context
+separately. So, I am not that worried about optimizing for NMI context
+but your next comment on generic_atomic64_* ops is giving me headache.
 
-Ok, done.
+> 
+> > series took a different approach targeting only nmi context. Since the
+> > number of stats that are updated in kernel memory charging path are 3,
+> > this series added special handling of those stats in nmi context rather
+> > than making all >100 memcg stats nmi safe.
+> 
+> Hmm so from patches 2 and 3 I see this relies on atomic64_add().
+> But AFAIU lib/atomic64.c has the generic fallback implementation for
+> architectures that don't know better, and that would be using the "void
+> generic_atomic64_##op" macro, which AFAICS is doing:
+> 
+>         local_irq_save(flags);                                          \
+>         arch_spin_lock(lock);                                           \
+>         v->counter c_op a;                                              \
+>         arch_spin_unlock(lock);                                         \
+>         local_irq_restore(flags);                                       \
+> 
+> so in case of a nmi hitting after the spin_lock this can still deadlock?
+> 
+> Hm or is there some assumption that we only use these paths when already
+> in_nmi() and then another nmi can't come in that context?
+> 
+> But even then, flush_nmi_stats() in patch 1 isn't done in_nmi() and uses
+> atomic64_xchg() which in generic_atomic64_xchg() implementation also has the
+> irq_save+spin_lock. So can't we deadlock there?
 
->
-> > +       int dev_udmabuf, memfd, local_udmabuf;
-> > +
-> > +       udmabuf_test_buffer_size =3D 10 * getpagesize();
->
-> [...]
->
-> > +static void subtest_dmabuf_iter_check_default_iter(struct dmabuf_iter =
-*skel)
-> > +{
-> > +       bool found_test_sysheap_dmabuf =3D false;
-> > +       bool found_test_udmabuf =3D false;
-> > +       struct DmabufInfo bufinfo;
-> > +       size_t linesize =3D 0;
-> > +       char *line =3D NULL;
-> > +       FILE *iter_file;
-> > +       int iter_fd, f =3D INODE;
-> > +
-> > +       iter_fd =3D bpf_iter_create(bpf_link__fd(skel->links.dmabuf_col=
-lector));
-> > +       ASSERT_OK_FD(iter_fd, "iter_create");
->
-> Should we check ASSERT_OK_FD() and exit early on
-> failures?
+I was actually assuming that atomic_* ops are safe against nmis for all
+archs. I looked at atomic_* ops in include/asm-generic/atomic.h and it
+is using arch_cmpxchg() for CONFIG_SMP and it seems like for archs with
+cmpxchg should be fine against nmi. I am not sure why atomic64_* are not
+using arch_cmpxchg() instead. I will dig more.
 
-We should fallthrough on error, but let's add the early out.
+I also have the followup series on objcg charging without irq almost
+ready. I will send it out as rfc soon.
 
->
-> > +
-> > +       iter_file =3D fdopen(iter_fd, "r");
-> > +       ASSERT_OK_PTR(iter_file, "fdopen");
->
-> Same here.
-> [...]
-> > +/*
-> > + * Fields output by this iterator are delimited by newlines. Convert a=
-ny
-> > + * newlines in user-provided printed strings to spaces.
-> > + */
-> > +static void sanitize_string(char *src, size_t size)
-> > +{
-> > +       for (char *c =3D src; c && (size_t)(c - src) < size; ++c)
->
-> Should this be:
->
->   for (char *c =3D src; *c && (size_t)(c - src) < size; ++c)
->
-> ?
-
-Yes! Thanks.
-
-> Thanks,
-> Song
->
-> [...]
+Thanks a lot for awesome and insightful comments.
+Shakeel
 
