@@ -1,371 +1,459 @@
-Return-Path: <linux-kernel+bounces-644093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA2DAB367D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:02:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE31AB36BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 811387ACBCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9053B3A76C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE54329292C;
-	Mon, 12 May 2025 12:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B706D293444;
+	Mon, 12 May 2025 12:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIbhuogt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lylGVZ2J"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA3219E97C;
-	Mon, 12 May 2025 12:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AAE267B92
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747051370; cv=none; b=YLvKrgPoBEV4ZwfS20YF2PlAtBKXqECshyPvuBW6BatP2ppq0ARNyg+qBK5e4QMN4/WBC8AbSfEgTjHt9K1YwNTiI0RfgLAz9tVlpt8cazs1iOOqCcLKZUapcQOkPpMLUJ4OM58p5coNCmhNQiDSzfH1kPCGFtYT7SUasSwkgJA=
+	t=1747051845; cv=none; b=qETWOUYb0ur/WnGJ+h3/9Lee6J/OMxhr58MjwLqss/9f1s4FXHwcXMEo9n8nArP/4EgEKq+LaoKa4Z6sxArqui3Wte5JJFHXBNSSeY4BhlSpB6fzx6NpLrL/rLMdHqYdwoht1kS8EaCw+Ctyj2rhXH64mwWib5dpZKZ+4RYHr/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747051370; c=relaxed/simple;
-	bh=HPI21mZ9LiKt9b3HxWT9R23PWPJ2DrusEN/wAhQi5WI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fUNOf2VUl36HItb7WrqEyuiEP7bFY3f3B/8S6IsLU1WNPQR34EHyk8wF1Pc7KcaYlQ0QW3Un4PsuLrPAQ606rBGEYW/a1r5DbiMSChv7+DgzOQH75qjOIBcmXQF0Cj1T8Ki7xpBMPujI7GrNc0MMfHk4UQRO0PrrvMwXfo6hO0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIbhuogt; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747051369; x=1778587369;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=HPI21mZ9LiKt9b3HxWT9R23PWPJ2DrusEN/wAhQi5WI=;
-  b=YIbhuogt0d1pKSUI6Cg/rCswBsss5uhcnoDbjQKC4yvM39nPpRCJoFUj
-   iVzykhg6YliuEW91mYul3D714QM+xMcuROKRnz5g2OzSOhlQeIr2ol3tg
-   7w4IaJLCjge+txHDfqsXBV+hnKfVhUgzn6xgyBnokTbw4jApq0nMe6rlB
-   ildFwawv1EUwU1YB+FybaeMqgHWALuTS+Asqo93w1FS3uqZ0EnLqbonVb
-   yDx4cN30eHEm8QhuaqLdUm1hsjRSRfVvvCQefuIjVMHur01D5/F7MWCnB
-   go2Kp7O6SXoWojB3b9do3AW2S+8+p8iqjyaI4BfgkY4dx49eNwEcSb1xi
-   g==;
-X-CSE-ConnectionGUID: +0X9iqipQ1u99rtwkAgnnA==
-X-CSE-MsgGUID: jDKU4uENQc2iTgYJh/6RyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="52492827"
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
-   d="scan'208";a="52492827"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 05:02:48 -0700
-X-CSE-ConnectionGUID: 4JW8kLaTTdaqQxB4/1iJ7A==
-X-CSE-MsgGUID: nHQrLTOqQpGyHpF4Z3pYwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
-   d="scan'208";a="137757349"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.245])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 05:02:42 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 12 May 2025 15:02:40 +0300 (EEST)
-To: yunhui cui <cuiyunhui@bytedance.com>
-cc: arnd@arndb.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    benjamin.larsson@genexis.eu, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    heikki.krogerus@linux.intel.com, Jiri Slaby <jirislaby@kernel.org>, 
-    jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, markus.mayer@linaro.org, 
-    matt.porter@linaro.org, namcao@linutronix.de, paulmck@kernel.org, 
-    pmladek@suse.com, schnelle@linux.ibm.com, sunilvl@ventanamicro.com, 
-    tim.kryger@linaro.org
-Subject: Re: [External] Re: [PATCH v5 2/4] serial: 8250: avoid potential
- PSLVERR issue
-In-Reply-To: <CAEEQ3w=xPmbyaCHLPtCBgFOzz7TzDYMkOnKt=EvpdknQqot=cA@mail.gmail.com>
-Message-ID: <34f3c38c-b224-8a4d-3235-c1df04ac1d04@linux.intel.com>
-References: <20250506112321.61710-1-cuiyunhui@bytedance.com> <20250506112321.61710-2-cuiyunhui@bytedance.com> <6801686d-a0b3-7093-1293-cdac6ad055e4@linux.intel.com> <CAEEQ3wnouWbVvkvhV1oB8MrOADNhN6BQB4-epUXa6cLYkKFRiw@mail.gmail.com>
- <41066f2f-a690-83ef-5fbb-0bc1d956a19d@linux.intel.com> <CAEEQ3w=xPmbyaCHLPtCBgFOzz7TzDYMkOnKt=EvpdknQqot=cA@mail.gmail.com>
+	s=arc-20240116; t=1747051845; c=relaxed/simple;
+	bh=2QCB2SuN1wpsr9YqrrwuAk0wTgAtxbANKSzHAg2/huQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Dgjz5DNdNlnJ320wVxnMftreNWNSsfa6S7ea9oUWpyi/oRu71keMIUrvK6QvjlR9n9jlUGfzRofCsyXx1LJsmj+PgLaniVZx3EP6dMTL8UQHceVN6zpf3gaWR6rloiA/ZhQPOLgh8/N4uifJeTnurGRga7fP673ROzhYFouzhY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lylGVZ2J; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C9Ep5T015457;
+	Mon, 12 May 2025 12:10:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=DN8IsBRjOzjHHBzDJ
+	gIL816UD74O6S2zdS//76HcAMM=; b=lylGVZ2J/+prx3ZB3yY86AW2qefNbbRO7
+	NnjFnZEUjsSk52PDTEosgb9Lbaej1uwJRJ+nUud8cVoFWUCZCSQ7bxQQgng6WBs/
+	Lt150ci+/LwdMazHXRQZHYUjMVrlkw2FULLj3igiWTrXA3pB2rl7thzCkZkoWHZO
+	S8EG4r7ZstvGJPJcw+Af4gB2uwFBhI+DQ98yhqDqn6sbciOSPSFJf2mrCKvIZihG
+	MGoHdh0qBrqu1YvAJEEDimaS47vylk84opGVaE78GrbJtbzgn+AG/jZXY14zOstj
+	2Na7E/kF6TIxB04FhIHIWkvut4AqtX4Ts4Fx0dia8crqZIHVG2qsw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ke6j0qsb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 12:10:32 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CCANJl003141;
+	Mon, 12 May 2025 12:10:31 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ke6j0qs8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 12:10:31 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CA687P024537;
+	Mon, 12 May 2025 12:10:31 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46jjmkwr52-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 12:10:30 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CCAR8C20644370
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 May 2025 12:10:27 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C011200E7;
+	Mon, 12 May 2025 11:53:27 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D83B7200E1;
+	Mon, 12 May 2025 11:53:26 +0000 (GMT)
+Received: from IBM-PW0CRK36.ibm.com (unknown [9.111.90.223])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 May 2025 11:53:26 +0000 (GMT)
+From: Tobias Huschle <huschle@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, sshegde@linux.ibm.com
+Subject: [RFC PATCH v3 1/4] sched/fair: introduce new scheduler group type group_parked
+Date: Mon, 12 May 2025 13:53:22 +0200
+Message-Id: <20250512115325.30022-2-huschle@linux.ibm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250512115325.30022-1-huschle@linux.ibm.com>
+References: <20250512115325.30022-1-huschle@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-239501703-1747051360=:929"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MJxaM8WbEVUomQ4psKk8nSAegtv5IIUz
+X-Proofpoint-ORIG-GUID: cT4DVgmvBXYCybM6h1-ft2F8mRiDQxS5
+X-Authority-Analysis: v=2.4 cv=auyyCTZV c=1 sm=1 tr=0 ts=6821e538 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=Ig1JQATniH1yXVHltnwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDEyNyBTYWx0ZWRfX9aOaB6N+tnm+ ENHN05ccqdcogzjsJ6uPwwP1q3E5cz8PXkBZsHk1HsO5lP6BUfTorZgzQKEV06Q/m2GLqnjRXjs DBHZC0Q0xcY0LYeHP97OM70fUt0xt+AEWzUPjfgxezrAfWNc+IKIzDpPMfBiEGDJhKDs7aQnHOX
+ waXrZyVfT4RHvC/x0/Kl1y/rnVgy7xuHhhIxn8KOLX6GZC4B+Vjm6xkqQ6xkJVMhZGkVS5MKv9r O6F5ExFFiRSGTn13S89sp55Vf/rJW+43tVmOt5oiv96ca74FO5jF0vwOsGjqrRheu2QogcFALkq tZk9HMsRb1Gob41IQf+1AmvOYfv7Vc7Qa0MtQPXOS9HOwhEmrhTe55ZtX75h3lVuyYJxbpJoMlc
+ vhoGdhWgm6iHct69/ZWVq7SqFSScSe+LVikI9eDJynU1eGU1PV7U70eoQGMvuT8N5ILuHWHv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 adultscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505120127
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+A parked CPU is considered to be flagged as unsuitable to process
+workload at the moment, but might be become usable anytime. Depending on
+the necessity for additional computation power and/or available capacity
+of the underlying hardware.
 
---8323328-239501703-1747051360=:929
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+A scheduler group is considered to be parked, if there are tasks queued
+on parked CPUs and there are no idle CPUs, i.e. all non parked CPUs are
+busy or there are only parked CPUs. A scheduler group with parked tasks
+can be considered to not be parked, if it has idle CPUs which can pick
+up the parked tasks. A parked scheduler group is considered to be busier
+than another if it runs more tasks on parked CPUs than another parked
+scheduler group.
 
-On Mon, 12 May 2025, yunhui cui wrote:
+A parked CPU must keep its scheduler tick (or have it re-enabled if
+necessary) in order to make sure that parked CPUs which only run a
+single task which does not give up its runtime voluntarily is still
+evacuated as it would otherwise go into NO_HZ.
 
-> Hi Ilpo,
->=20
-> On Mon, May 12, 2025 at 6:27=E2=80=AFPM Ilpo J=C3=A4rvinen
-> <ilpo.jarvinen@linux.intel.com> wrote:
-> >
-> > On Mon, 12 May 2025, yunhui cui wrote:
-> >
-> > > Hi Ilpo,
-> > >
-> > > On Tue, May 6, 2025 at 8:00=E2=80=AFPM Ilpo J=C3=A4rvinen
-> > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > >
-> > > > On Tue, 6 May 2025, Yunhui Cui wrote:
-> > > >
-> > > > > Failure to check the UART_LSR_DR before reading UART_RX, or the
-> > > > > non-atomic nature of clearing the FIFO and reading UART_RX, poses
-> > > > > potential risks that could lead to PSLVERR.
-> > > >
-> > > > Don't expect reader to know the condition how PSLVERR is triggered.=
- I know
-> > > > it's worded out in the other patch but also explain it here.
-> > > >
-> > > > You're only explaining problem and missing what this patch does to =
-solve
-> > > > the problem.
-> > > >
-> > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > > > ---
-> > > > >  drivers/tty/serial/8250/8250.h      | 13 +++++++++
-> > > > >  drivers/tty/serial/8250/8250_port.c | 43 +++++++++++++++--------=
-------
-> > > > >  2 files changed, 35 insertions(+), 21 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/=
-8250/8250.h
-> > > > > index b861585ca02a..6f97ff3a197d 100644
-> > > > > --- a/drivers/tty/serial/8250/8250.h
-> > > > > +++ b/drivers/tty/serial/8250/8250.h
-> > > > > @@ -162,6 +162,19 @@ static inline u16 serial_lsr_in(struct uart_=
-8250_port *up)
-> > > > >       return lsr;
-> > > > >  }
-> > > > >
-> > > > > +/*
-> > > > > + * To avoid PSLVERR, check UART_LSR_DR in UART_LSR before
-> > > > > + * reading UART_RX.
-> > > > > + */
-> > > > > +static inline void serial8250_discard_data(struct uart_8250_port=
- *up)
-> > > > > +{
-> > > > > +     u16 lsr;
-> > > > > +
-> > > > > +     lsr =3D serial_in(up, UART_LSR);
-> > > > > +     if (lsr & UART_LSR_DR)
-> > > > > +             serial_in(up, UART_RX);
-> > > > > +}
-> > > > > +
-> > > > >  /*
-> > > > >   * For the 16C950
-> > > > >   */
-> > > > > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/se=
-rial/8250/8250_port.c
-> > > > > index a913135d5217..1666b965f6a0 100644
-> > > > > --- a/drivers/tty/serial/8250/8250_port.c
-> > > > > +++ b/drivers/tty/serial/8250/8250_port.c
-> > > > > @@ -1357,9 +1357,8 @@ static void autoconfig_irq(struct uart_8250=
-_port *up)
-> > > > >       /* Synchronize UART_IER access against the console. */
-> > > > >       uart_port_lock_irq(port);
-> > > > >       serial_out(up, UART_IER, UART_IER_ALL_INTR);
-> > > > > +     serial8250_discard_data(up);
-> > > > >       uart_port_unlock_irq(port);
-> > > > > -     serial_in(up, UART_LSR);
-> > > > > -     serial_in(up, UART_RX);
-> > > > >       serial_in(up, UART_IIR);
-> > > > >       serial_in(up, UART_MSR);
-> > > > >       serial_out(up, UART_TX, 0xFF);
-> > > > > @@ -2137,25 +2136,22 @@ static void wait_for_xmitr(struct uart_82=
-50_port *up, int bits)
-> > > > >  static int serial8250_get_poll_char(struct uart_port *port)
-> > > > >  {
-> > > > >       struct uart_8250_port *up =3D up_to_u8250p(port);
-> > > > > -     int status;
-> > > > > +     int status =3D NO_POLL_CHAR;
-> > > > >       u16 lsr;
-> > > > > +     unsigned long flags;
-> > > > >
-> > > > >       serial8250_rpm_get(up);
-> > > > >
-> > > > > +     uart_port_lock_irqsave(port, &flags);
-> > > > >       lsr =3D serial_port_in(port, UART_LSR);
-> > > > > +     if (lsr & UART_LSR_DR)
-> > > > > +             status =3D serial_port_in(port, UART_RX);
-> > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > >
-> > > > > -     if (!(lsr & UART_LSR_DR)) {
-> > > > > -             status =3D NO_POLL_CHAR;
-> > > > > -             goto out;
-> > > > > -     }
-> > > > > -
-> > > > > -     status =3D serial_port_in(port, UART_RX);
-> > > > > -out:
-> > > > >       serial8250_rpm_put(up);
-> > > > >       return status;
-> > > >
-> > > > Not a problem that originates from you, but IMO calling this variab=
-le
-> > > > "status" is quite misleading when it is the character (or NO_POLL_C=
-HAR
-> > > > is no character is present).
-> > > >
-> > > > >  }
-> > > > >
-> > > > > -
-> > > > >  static void serial8250_put_poll_char(struct uart_port *port,
-> > > > >                        unsigned char c)
-> > > > >  {
-> > > > > @@ -2264,13 +2260,17 @@ int serial8250_do_startup(struct uart_por=
-t *port)
-> > > > >        * Clear the FIFO buffers and disable them.
-> > > > >        * (they will be reenabled in set_termios())
-> > > > >        */
-> > > > > +     uart_port_lock_irqsave(port, &flags);
-> > > > >       serial8250_clear_fifos(up);
-> > > > >
-> > > > >       /*
-> > > > > -      * Clear the interrupt registers.
-> > > > > +      * Read UART_RX to clear interrupts (e.g., Character Timeou=
-t).
-> > > > > +      * No data on UART_IIR_RX_TIMEOUT, UART_LSR_DR won't set.
-> > > > > +      * FIFO disabled, read UART_RX without LSR check, no PSLVER=
-R.
-> > > >
-> > > > I don't understand what the last two lines mean and I don't see the
-> > > > connection to the code that is below the comment either, could you =
-try to
-> > > > rephrase the comment.
-> > >
-> > > The original intention was to check UART_LSR_DR first when reading
-> > > UART_RX. However, the purpose of serial_port_in(port, UART_RX) here i=
-s
-> > > to clear the interrupt, such as the interrupt caused by RX_TIMEOUT.
-> >
-> > I understood the first sentence in the comment but the rest of it is ve=
-ry
-> > cryptic and has many grammar issues too. Also, the extent of passive vo=
-ice
-> > there makes it hard to know who does what (UART / kernel).
-> >
-> > > The logic for clearing the interrupt in the interrupt handling
-> > > function of RX_TIMEOUT is !UART_LSR_DR. And to avoid PSLVERR, we need
-> > > to check UART_LSR_DR first. To meet the requirements of both, the FIF=
-O
-> > > needs to be disabled.
-> >
-> > The grammar is so broken, it failed to convey that message.
->=20
-> The purpose of serial_port_in(port, UART_RX) is to clear interrupts
-> such as rx_timeout. In dw8250_handle_irq(), serial_port_in(p, UART_RX)
-> is called when the LSR does not have the UART_LSR_DR bit set.
->=20
-> To avoid PSLVERR when the FIFO is enabled, serial_in(up, UART_RX)
-> should be called only when the LSR has the UART_LSR_DR bit set.
->=20
-> These two logics are clearly contradictory. Therefore, both
-> serial8250_clear_fifos() and serial_port_in(port, UART_RX) are placed
-> under the protection of port->lock.
->=20
-> If you believe this is not a potential issue, that's fine. I can
-> remove this patch in the next patchset version.
+The status of the underlying hardware must be considered to be
+architecture dependent. Therefore the check whether a CPU is parked is
+architecture specific. For architectures not relying on this feature,
+the check is mostly a NOP.
 
-No, my goal is not to get this removed from the patch series.
+This is more efficient and non-disruptive compared to CPU hotplug in
+environments where such changes can be necessary on a frequent basis.
 
-I meant that the comment wording needs to be fixed for the next version=20
-such that it is understandable for those that are not deeply familiar with=
-=20
-what is related to PSLVERR. Currently even I struggle to follow what's=20
-written into that comment (unless I read heavily between lines and base=20
-guesses on the extra knowledge I've about how this entire patchset relates=
-=20
-to PSLVERR).
+Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
+---
+ include/linux/sched/topology.h | 19 +++++++++
+ kernel/sched/core.c            | 13 +++++-
+ kernel/sched/fair.c            | 77 +++++++++++++++++++++++++++++-----
+ kernel/sched/syscalls.c        |  3 ++
+ 4 files changed, 101 insertions(+), 11 deletions(-)
 
-> > > Therefore, we should put serial8250_clear_fifos() and the execution o=
-f
-> > > serial_port_in(port, UART_RX) without checking UART_LSR_DR under the
-> > > port->lock.
-> > >
-> > > >
-> > > > >        */
-> > > > >       serial_port_in(port, UART_LSR);
-> > > > >       serial_port_in(port, UART_RX);
-> > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > >       serial_port_in(port, UART_IIR);
-> > > > >       serial_port_in(port, UART_MSR);
-> > > > >
-> > > > > @@ -2429,15 +2429,14 @@ int serial8250_do_startup(struct uart_por=
-t *port)
-> > > > >       }
-> > > > >
-> > > > >  dont_test_tx_en:
-> > > > > -     uart_port_unlock_irqrestore(port, flags);
-> > > > >
-> > > > >       /*
-> > > > >        * Clear the interrupt registers again for luck, and clear =
-the
-> > > > >        * saved flags to avoid getting false values from polling
-> > > > >        * routines or the previous session.
-> > > > >        */
-> > > > > -     serial_port_in(port, UART_LSR);
-> > > > > -     serial_port_in(port, UART_RX);
-> > > > > +     serial8250_discard_data(up);
-> > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > >       serial_port_in(port, UART_IIR);
-> > > > >       serial_port_in(port, UART_MSR);
-> > > > >       up->lsr_saved_flags =3D 0;
-> > > > > @@ -2519,7 +2518,6 @@ void serial8250_do_shutdown(struct uart_por=
-t *port)
-> > > > >               port->mctrl &=3D ~TIOCM_OUT2;
-> > > > >
-> > > > >       serial8250_set_mctrl(port, port->mctrl);
-> > > > > -     uart_port_unlock_irqrestore(port, flags);
-> > > > >
-> > > > >       /*
-> > > > >        * Disable break condition and FIFOs
-> > > > > @@ -2527,6 +2525,14 @@ void serial8250_do_shutdown(struct uart_po=
-rt *port)
-> > > > >       serial_port_out(port, UART_LCR,
-> > > > >                       serial_port_in(port, UART_LCR) & ~UART_LCR_=
-SBC);
-> > > > >       serial8250_clear_fifos(up);
-> > > > > +     /*
-> > > > > +      * Read data port to reset things, and then unlink from
-> > > > > +      * the IRQ chain.
-> > > > > +      * Since reading UART_RX clears interrupts, doing so with
-> > > > > +      * FIFO disabled won't trigger PSLVERR.
-> > > > > +      */
-> > > > > +     serial_port_in(port, UART_RX);
-> > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > >
-> > > > >  #ifdef CONFIG_SERIAL_8250_RSA
-> > > > >       /*
-> > > > > @@ -2535,11 +2541,6 @@ void serial8250_do_shutdown(struct uart_po=
-rt *port)
-> > > > >       disable_rsa(up);
-> > > > >  #endif
-> > > > >
-> > > > > -     /*
-> > > > > -      * Read data port to reset things, and then unlink from
-> > > > > -      * the IRQ chain.
-> > > > > -      */
-> > > > > -     serial_port_in(port, UART_RX);
-> > > > >       serial8250_rpm_put(up);
-> > > > >
-> > > > >       up->ops->release_irq(up);
-> > > > >
-> > > >
-> > > > --
-> > > >  i.
-> > > >
-> > >
-> > > Thanks,
-> > > Yunhui
-> > >
-> >
-> > --
-> >  i.
->=20
-> Thanks,
-> Yunhui
->=20
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 7b4301b7235f..6baf51d45e85 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -251,6 +251,25 @@ unsigned long arch_scale_cpu_capacity(int cpu)
+ }
+ #endif
+ 
++#ifndef arch_cpu_parked
++/**
++ * arch_cpu_parked - Check if a given CPU is currently parked.
++ *
++ * A parked CPU cannot run any kind of workload since underlying
++ * physical CPU should not be used at the moment .
++ *
++ * @cpu: the CPU in question.
++ *
++ * By default assume CPU is not parked
++ *
++ * Return: Parked state of CPU
++ */
++static __always_inline bool arch_cpu_parked(int cpu)
++{
++	return false;
++}
++#endif
++
+ #ifndef arch_scale_hw_pressure
+ static __always_inline
+ unsigned long arch_scale_hw_pressure(int cpu)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c81cf642dba0..90efc322a81e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1358,6 +1358,9 @@ bool sched_can_stop_tick(struct rq *rq)
+ 	if (rq->cfs.h_nr_queued > 1)
+ 		return false;
+ 
++	if (rq->cfs.h_nr_queued > 0 && arch_cpu_parked(cpu_of(rq)))
++		return false;
++
+ 	/*
+ 	 * If there is one task and it has CFS runtime bandwidth constraints
+ 	 * and it's on the cpu now we don't want to stop the tick.
+@@ -2449,7 +2452,7 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
+ 
+ 	/* Non kernel threads are not allowed during either online or offline. */
+ 	if (!(p->flags & PF_KTHREAD))
+-		return cpu_active(cpu);
++		return !arch_cpu_parked(cpu) && cpu_active(cpu);
+ 
+ 	/* KTHREAD_IS_PER_CPU is always allowed. */
+ 	if (kthread_is_per_cpu(p))
+@@ -2459,6 +2462,10 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
+ 	if (cpu_dying(cpu))
+ 		return false;
+ 
++	/* CPU should be avoided at the moment */
++	if (arch_cpu_parked(cpu))
++		return false;
++
+ 	/* But are allowed during online. */
+ 	return cpu_online(cpu);
+ }
+@@ -3929,6 +3936,10 @@ static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
+ 	if (!scx_allow_ttwu_queue(p))
+ 		return false;
+ 
++	/* The task should not be queued onto a parked CPU. */
++	if (arch_cpu_parked(cpu))
++		return false;
++
+ 	/*
+ 	 * Do not complicate things with the async wake_list while the CPU is
+ 	 * in hotplug state.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0fb9bf995a47..ee8ccee69774 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6884,6 +6884,8 @@ static int sched_idle_rq(struct rq *rq)
+ #ifdef CONFIG_SMP
+ static int sched_idle_cpu(int cpu)
+ {
++	if (arch_cpu_parked(cpu))
++		return 0;
+ 	return sched_idle_rq(cpu_rq(cpu));
+ }
+ #endif
+@@ -7414,6 +7416,9 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ {
+ 	int target = nr_cpumask_bits;
+ 
++	if (arch_cpu_parked(target))
++		return prev_cpu;
++
+ 	if (sched_feat(WA_IDLE))
+ 		target = wake_affine_idle(this_cpu, prev_cpu, sync);
+ 
+@@ -9204,7 +9209,12 @@ enum group_type {
+ 	 * The CPU is overloaded and can't provide expected CPU cycles to all
+ 	 * tasks.
+ 	 */
+-	group_overloaded
++	group_overloaded,
++	/*
++	 * The CPU should be avoided as it can't provide expected CPU cycles
++	 * even for small amounts of workload.
++	 */
++	group_parked
+ };
+ 
+ enum migration_type {
+@@ -9923,6 +9933,7 @@ struct sg_lb_stats {
+ 	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
+ 	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
+ 	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
++	unsigned int sum_nr_parked;
+ 	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
+ 	unsigned int group_weight;
+ 	enum group_type group_type;
+@@ -10180,6 +10191,9 @@ group_type group_classify(unsigned int imbalance_pct,
+ 			  struct sched_group *group,
+ 			  struct sg_lb_stats *sgs)
+ {
++	if (sgs->sum_nr_parked && !sgs->idle_cpus)
++		return group_parked;
++
+ 	if (group_is_overloaded(imbalance_pct, sgs))
+ 		return group_overloaded;
+ 
+@@ -10375,6 +10389,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		if (cpu_overutilized(i))
+ 			*sg_overutilized = 1;
+ 
++		sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_queued;
++
+ 		/*
+ 		 * No need to call idle_cpu() if nr_running is not 0
+ 		 */
+@@ -10480,6 +10496,8 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+ 	 */
+ 
+ 	switch (sgs->group_type) {
++	case group_parked:
++		return sgs->sum_nr_parked > busiest->sum_nr_parked;
+ 	case group_overloaded:
+ 		/* Select the overloaded group with highest avg_load. */
+ 		return sgs->avg_load > busiest->avg_load;
+@@ -10643,6 +10661,9 @@ static int idle_cpu_without(int cpu, struct task_struct *p)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+ 
++	if (arch_cpu_parked(cpu))
++		return 0;
++
+ 	if (rq->curr != rq->idle && rq->curr != p)
+ 		return 0;
+ 
+@@ -10691,6 +10712,8 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
+ 		nr_running = rq->nr_running - local;
+ 		sgs->sum_nr_running += nr_running;
+ 
++		sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_queued;
++
+ 		/*
+ 		 * No need to call idle_cpu_without() if nr_running is not 0
+ 		 */
+@@ -10738,6 +10761,8 @@ static bool update_pick_idlest(struct sched_group *idlest,
+ 	 */
+ 
+ 	switch (sgs->group_type) {
++	case group_parked:
++		return false;
+ 	case group_overloaded:
+ 	case group_fully_busy:
+ 		/* Select the group with lowest avg_load. */
+@@ -10788,7 +10813,7 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
+ 	unsigned long imbalance;
+ 	struct sg_lb_stats idlest_sgs = {
+ 			.avg_load = UINT_MAX,
+-			.group_type = group_overloaded,
++			.group_type = group_parked,
+ 	};
+ 
+ 	do {
+@@ -10846,6 +10871,8 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
+ 		return idlest;
+ 
+ 	switch (local_sgs.group_type) {
++	case group_parked:
++		return idlest;
+ 	case group_overloaded:
+ 	case group_fully_busy:
+ 
+@@ -11097,6 +11124,12 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 	local = &sds->local_stat;
+ 	busiest = &sds->busiest_stat;
+ 
++	if (busiest->group_type == group_parked) {
++		env->migration_type = migrate_task;
++		env->imbalance = busiest->sum_nr_parked;
++		return;
++	}
++
+ 	if (busiest->group_type == group_misfit_task) {
+ 		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
+ 			/* Set imbalance to allow misfit tasks to be balanced. */
+@@ -11265,13 +11298,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ /*
+  * Decision matrix according to the local and busiest group type:
+  *
+- * busiest \ local has_spare fully_busy misfit asym imbalanced overloaded
+- * has_spare        nr_idle   balanced   N/A    N/A  balanced   balanced
+- * fully_busy       nr_idle   nr_idle    N/A    N/A  balanced   balanced
+- * misfit_task      force     N/A        N/A    N/A  N/A        N/A
+- * asym_packing     force     force      N/A    N/A  force      force
+- * imbalanced       force     force      N/A    N/A  force      force
+- * overloaded       force     force      N/A    N/A  force      avg_load
++ * busiest \ local has_spare fully_busy misfit asym imbalanced overloaded parked
++ * has_spare        nr_idle   balanced   N/A    N/A  balanced   balanced  balanced
++ * fully_busy       nr_idle   nr_idle    N/A    N/A  balanced   balanced  balanced
++ * misfit_task      force     N/A        N/A    N/A  N/A        N/A       N/A
++ * asym_packing     force     force      N/A    N/A  force      force     balanced
++ * imbalanced       force     force      N/A    N/A  force      force     balanced
++ * overloaded       force     force      N/A    N/A  force      avg_load  balanced
++ * parked           force     force      N/A    N/A  force      force     balanced
+  *
+  * N/A :      Not Applicable because already filtered while updating
+  *            statistics.
+@@ -11310,6 +11344,13 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
+ 		goto out_balanced;
+ 
+ 	busiest = &sds.busiest_stat;
++	local = &sds.local_stat;
++
++	if (local->group_type == group_parked)
++		goto out_balanced;
++
++	if (busiest->group_type == group_parked)
++		goto force_balance;
+ 
+ 	/* Misfit tasks should be dealt with regardless of the avg load */
+ 	if (busiest->group_type == group_misfit_task)
+@@ -11331,7 +11372,6 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
+ 	if (busiest->group_type == group_imbalanced)
+ 		goto force_balance;
+ 
+-	local = &sds.local_stat;
+ 	/*
+ 	 * If the local group is busier than the selected busiest group
+ 	 * don't try and pull any tasks.
+@@ -11444,6 +11484,9 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
+ 		enum fbq_type rt;
+ 
+ 		rq = cpu_rq(i);
++		if (arch_cpu_parked(i) && rq->cfs.h_nr_queued)
++			return rq;
++
+ 		rt = fbq_classify_rq(rq);
+ 
+ 		/*
+@@ -11614,6 +11657,9 @@ static int need_active_balance(struct lb_env *env)
+ {
+ 	struct sched_domain *sd = env->sd;
+ 
++	if (arch_cpu_parked(env->src_cpu) && cpu_rq(env->src_cpu)->cfs.h_nr_queued)
++		return 1;
++
+ 	if (asym_active_balance(env))
+ 		return 1;
+ 
+@@ -11647,6 +11693,14 @@ static int should_we_balance(struct lb_env *env)
+ 	struct sched_group *sg = env->sd->groups;
+ 	int cpu, idle_smt = -1;
+ 
++	if (arch_cpu_parked(env->dst_cpu))
++		return 0;
++
++	for_each_cpu(cpu, sched_domain_span(env->sd)) {
++		if (arch_cpu_parked(cpu) && cpu_rq(cpu)->cfs.h_nr_queued)
++			return 1;
++	}
++
+ 	/*
+ 	 * Ensure the balancing environment is consistent; can happen
+ 	 * when the softirq triggers 'during' hotplug.
+@@ -12788,6 +12842,9 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+ 
+ 	update_misfit_status(NULL, this_rq);
+ 
++	if (arch_cpu_parked(this_cpu))
++		return 0;
++
+ 	/*
+ 	 * There is a task waiting to run. No need to search for one.
+ 	 * Return 0; the task will be enqueued when switching to idle.
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index c326de1344fb..4e559d8775da 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -214,6 +214,9 @@ int idle_cpu(int cpu)
+ 		return 0;
+ #endif
+ 
++	if (arch_cpu_parked(cpu))
++		return 0;
++
+ 	return 1;
+ }
+ 
+-- 
+2.34.1
 
---=20
- i.
-
---8323328-239501703-1747051360=:929--
 
