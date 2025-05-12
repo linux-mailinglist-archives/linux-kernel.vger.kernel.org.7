@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-644817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CF8AB44D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40678AB44DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C91A27B4327
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D236F19E8373
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A182989B9;
-	Mon, 12 May 2025 19:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423B4298C08;
+	Mon, 12 May 2025 19:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejND3fog"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KGltEkjz"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C52AEFD;
-	Mon, 12 May 2025 19:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F99F23F417;
+	Mon, 12 May 2025 19:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747077695; cv=none; b=hO9WkeWOky/3FPFUG3y60kaHiImTsxWU6Evgsewu1aLnie7gBmuSAOpdVDXIndWJWN8qxqxTkj3usln2Dw9ETgiCqswtMHHd96CCFNretLtW8icJqb5xBkmLhmS4hVB7EdIZQdIRj2n7yJc+4lwSvPCihwq18wmQ8U8hePYsMjs=
+	t=1747078185; cv=none; b=ArN/bifVGNKTRoWpM6w+/7jOsf5d9sGNn8sURTcSZlBpNrDkTsUK2uRCmwvTTcttNauZm4NsWMBqRwySxLdxgtyPhBNzBT293v2sWWDobiUN6IrnEmhLEH8U5D9JRMruaGAN9w1xxhtGP+XsYSaWz/MW5v+8lzExvBeY3hhMnwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747077695; c=relaxed/simple;
-	bh=6tO6V1fnQ4BphmyZCfnhxNAdBz118GU4icXTLHyRy3c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rjfHc63bAmRZoqNCAZKRrsRHbME+YV89bf2WO2ZimbzwHBfYSqiOU6mrEE9oMJDB763TGImLNZqwlke01dKqEDAiqrPM/J+yZs/baoczRKTPvL4sVuF93PCTYH90Kb2k0pIe9xNfOPs705UHA66bZzkhIi2NXtKU7gH8L6K9y8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejND3fog; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-875b8e006f8so1426500241.0;
-        Mon, 12 May 2025 12:21:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747077692; x=1747682492; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6tO6V1fnQ4BphmyZCfnhxNAdBz118GU4icXTLHyRy3c=;
-        b=ejND3fogETt5nj6GXU2lty9jm5t6+yZnL2WFJdXlTuGwvoR5klDL5iOkmlkSqAFCyC
-         XVZJRF7rVwlzANyDwosSi8qvAIbOLCaeLL/uwIYZN3WfqsJXqhHdD1vg2p28Co0n/lqh
-         o054XmFzqENnCTafrhEzS5igg/E7Kg6yVbWXCRItSWj7BV99uV/XGuCcLI3UKmRKZu5+
-         kTH+PgZo4gqKFMsiAqbdN1GLaAqzkGniREv3VkxwTLVGKV/m8ReYzMbxL7QKlH8uWfa2
-         AbdtHmO5WyrxpxULSd60QLT6ABzA3lqun6JaYjtiYjyIOxTuuZ7oR71kU8YpYOYhvaj6
-         FlFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747077692; x=1747682492;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6tO6V1fnQ4BphmyZCfnhxNAdBz118GU4icXTLHyRy3c=;
-        b=EAMJJDvlcbcasuvl8T4HrGGZ49tm6F5aL4Dq2IoTHQxaedbXzisDcuF02qc9TyS9RY
-         Mp7BQqlO3gB5V0bD5tP004TDaOwTbrxj8YSlveR8kAeBDlK78YRFZbsIP53Oe7HVoJ/p
-         V/mTas9tPK0yOo5BBugWPmQ21NoFwTLEPnoFeySwVPE2L7lb0V7kzxHNK8KZoFNBpuSL
-         53zgdS6AvvmutO2x6UmMLPOgvC3CYuqKIUxXTGLIYi86+ib1i8CJugUR3WDzL8vYNe+l
-         AvltRVPV6oEMZlnkS8PnSV2wwebG3oP1H2sUHihDsz+Q5oFezDI5RvcNBjjfQCoTDW3F
-         W9VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0fybuwqRDCrKlKaaMk0NPFaCw0mEjWepz1+XxVNDTEi2P4hRsibdUP3dlirXRj5aE/TATg9CbZS1mCLD9NrkKG7OVPw==@vger.kernel.org, AJvYcCVdvWXmOfYXR4s4YGNQEUUx++4q4t3JQJSF+DDXt10AovLCRyW80DqeZcWQVj4WnLi2zKRRrvlge9LHkyh5@vger.kernel.org, AJvYcCW6c6UxFBNb8wORh/1nBeFTlEunXG0CB613+kWS9Qr06P6xnGZCcXjYqs1D7QmDwlVHycH39u/8c60=@vger.kernel.org, AJvYcCWu9dVt/XJsIJ0TawGIAIdZyWMhtlEAyNznP56TTekSGpWX67uTn+0zeuYIOYl0l0XE2prC13i3ERPzpU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1H2J+OzEiuEKjAbWV22YtTa2YDCQY/bI9OzrQn/xiJ01ExyHb
-	kos/tqSa4gHv7x++H9JJEFPA4951ks3EMVwv1UBj/KFmS8SXx/MQ
-X-Gm-Gg: ASbGncvdAJDj6kiKXEkjUXEwkTsWVVhIZGqjU/h+oLx3V0QlUdajtNAncX5cBTSHQNg
-	hzqQC1Bg3bmjcBarLt7jz3FoC1rZEK7xsOzsV4Q67zp7JnYnsNTePCwe1sv5YDycNyZlwygDS5F
-	DR3rLgJ4DRey4PKmDGNCbLDJj/KHQcXuOm4+Mk+EXDZ4SfTbXsmUsuqvu5L48HWJIam1ACpEtl6
-	VBBHSYt3CKYocQ+Hwz9G441Ij/nso/5hEBpOs27ewsLrN0GSM6YdfQ3P72ugQa0MjWVKrC1M+xP
-	uuCZvRIB0eT2BUPzzfS2v1sxJPqPBfKk/pgDWADExMdt
-X-Google-Smtp-Source: AGHT+IEgxCmOA6GDxTk9OZxAAhXhnkR8evFxdcLcnGbDppxlLt6iLU7XobVowtj+sgqFjBbxORG8lw==
-X-Received: by 2002:a05:6102:2b99:b0:4dd:bb2c:491b with SMTP id ada2fe7eead31-4deed351cc0mr12281133137.7.1747077692261;
-        Mon, 12 May 2025 12:21:32 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dea85b2575sm5698900137.7.2025.05.12.12.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 12:21:31 -0700 (PDT)
+	s=arc-20240116; t=1747078185; c=relaxed/simple;
+	bh=Sdl1gDmVvVhvI5vO5ld0fmlqgs4/bpMSz4SEZl51ot0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OZZ12Ult+6Tb5c9m0UIxgcmhMm4Rrx03mVGykt+YfDj0Uky0OTA14biKHF28ipHbxxCf4VQA61R9DlNzXg1abHtdyTQ4/HnDo8ja7E87vnUtRMvQEJJa1GSVTQZtuEv0EVKg0NjOJoT1bWYPcV4pT/oo3oc4sLJWq+LUOZmSQ1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KGltEkjz; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1747078184; x=1778614184;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Sdl1gDmVvVhvI5vO5ld0fmlqgs4/bpMSz4SEZl51ot0=;
+  b=KGltEkjzvM7iWn+lHQbk2YEm5wla86lXfIhLaxClwSUDXeyq9+U8xTrm
+   0slsRfFEbPPN+zX6n9miNG3tc52ZTVx8sJQOux9Sr7Ymz9pGbCn2cE4si
+   Ty3yyRczDMIRnA5U4pBQeDH7bIaLz3P/sfIk5tN7DO65EgevzRRyKSErV
+   t4/fhbj9vQqESF/Yhj0loB1vPL6sPl2NU/jsQN578HvQjZV7n4FkK/WMr
+   Q44VNbBEEvleK31TbqHh85lP5S+7r08s/rcwEh/Rq0iq2oPIDIG+xQ+vp
+   FoVG4OJ49FlHVcZ2LQ6E5bWHMmjCTWMPzdeYt6k6Zy8Ut3gAjZxhyJP5l
+   g==;
+X-CSE-ConnectionGUID: hYKpzzHaRPOvLPNNOvU8gw==
+X-CSE-MsgGUID: dl60q0MJRZCfEkOp56V1ig==
+X-IronPort-AV: E=Sophos;i="6.15,283,1739862000"; 
+   d="scan'208";a="209006606"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 May 2025 12:29:36 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 12 May 2025 12:28:56 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Mon, 12 May 2025 12:28:56 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<olivia@selenic.com>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Ryan
+ Wanner" <Ryan.Wanner@microchip.com>
+Subject: [PATCH 0/9] SAMA7D65 Add support for Crypto, CAN and PWM
+Date: Mon, 12 May 2025 12:27:26 -0700
+Message-ID: <cover.1747077616.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=43d26cbfefa2873a56beb9d435520e2b45c3cc114187a34e63c1d683ca4b;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 12 May 2025 16:21:27 -0300
-Message-Id: <D9UFCPLQHE5V.UH1BAK279S5M@gmail.com>
-Cc: "Armin Wolf" <W_Armin@gmx.de>, "Jonathan Corbet" <corbet@lwn.net>, "Hans
- de Goede" <hdegoede@redhat.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Jean Delvare" <jdelvare@suse.com>,
- "Guenter Roeck" <linux@roeck-us.net>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>
-Subject: Re: [PATCH v1 02/10] platform/x86: msi-wmi-platform: Add unlocked
- msi_wmi_platform_query
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Antheas Kapenekakis" <lkml@antheas.dev>,
- <platform-driver-x86@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250511204427.327558-1-lkml@antheas.dev>
- <20250511204427.327558-3-lkml@antheas.dev>
-In-Reply-To: <20250511204427.327558-3-lkml@antheas.dev>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
---43d26cbfefa2873a56beb9d435520e2b45c3cc114187a34e63c1d683ca4b
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-On Sun May 11, 2025 at 5:44 PM -03, Antheas Kapenekakis wrote:
-> This driver requires to be able to handle transactions that perform
-> multiple WMI actions at a time. Therefore, it needs to be able to
-> lock the wmi_lock mutex for multiple operations.
->
-> Add msi_wmi_platform_query_unlocked() to allow the caller to
-> perform the WMI query without locking the wmi_lock mutex, by
-> renaming the existing function and adding a new one that only
-> locks the mutex.
->
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+This set adds support for the SAMA7D65 SoC crypto subsystem and enabling
+them in the device tree. This set also adds PWM to the device tree, and
+adds and enables the CAN bus system for the SAMA7D65 SoC.
 
-You only use msi_wmi_platform_query_unlocked() to protect the
-fan_curve/AP state right?
+Ryan Wanner (9):
+  dt-bindings: crypto: add sama7d65 in Atmel AES
+  dt-bindings: crypto: add sama7d65 in Atmel SHA
+  dt-bindings: crypto: add sama7d65 in Atmel TDES
+  dt-bindings: rng: atmel,at91-trng: add sama7d65 TRNG
+  crypto: atmel - add support for AES and SHA IPs available on sama7d65
+    SoC
+  ARM: dts: microchip: sama7d65: Add crypto support
+  ARM: dts: microchip: sama7d65: Add PWM support
+  ARM: dts: microchip: sama7d65: Add CAN bus support
+  ARM: dts: microchip: sama7d65: Enable CAN bus
 
-If that's the case I think we don't need it. AFAIK sysfs reads/writes
-are already synchronized/locked, and as I mentioned in Patch 10, I don't
-think you need this variant in probe/remove either.
+ .../crypto/atmel,at91sam9g46-aes.yaml         |   4 +-
+ .../crypto/atmel,at91sam9g46-sha.yaml         |   4 +-
+ .../crypto/atmel,at91sam9g46-tdes.yaml        |   4 +-
+ .../bindings/rng/atmel,at91-trng.yaml         |   1 +
+ .../dts/microchip/at91-sama7d65_curiosity.dts |  35 +++++
+ arch/arm/boot/dts/microchip/sama7d65.dtsi     | 128 ++++++++++++++++++
+ drivers/crypto/atmel-aes.c                    |   1 +
+ drivers/crypto/atmel-sha.c                    |   1 +
+ 8 files changed, 175 insertions(+), 3 deletions(-)
 
-I'd like to hear more opinions on this though.
+-- 
+2.43.0
 
---=20
- ~ Kurt
-
---43d26cbfefa2873a56beb9d435520e2b45c3cc114187a34e63c1d683ca4b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSHYKL24lpu7U7AVd8WYEM49J/UZgUCaCJKOwAKCRAWYEM49J/U
-ZoveAQCdLZOGRy65KeoiJwTn2v+w2cO8JR3Mw99Y3RWodxaHbwEAqxaEYLxBKOy8
-ZJGHUpGwkBT1SJEcAHuINbaVnKLcGw8=
-=8UlE
------END PGP SIGNATURE-----
-
---43d26cbfefa2873a56beb9d435520e2b45c3cc114187a34e63c1d683ca4b--
 
