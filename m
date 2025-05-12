@@ -1,112 +1,253 @@
-Return-Path: <linux-kernel+bounces-644070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36816AB3643
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912FDAB364C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C9A17BE06
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321A0189FC8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB842918E1;
-	Mon, 12 May 2025 11:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5442F292923;
+	Mon, 12 May 2025 11:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JI0ago30"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wr7hXvkV"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8989E2673A9;
-	Mon, 12 May 2025 11:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADA728E5EC
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050777; cv=none; b=ank5L/T8I5A7eHh9aBylCaZVHdLs8OR8bRRAHV4cTxh9Bd0nH7mjZZDmsBgH97YyDhZWpd1jhlq0yrk8bG7UexnT9IbOavwcivjiHwdnuNIcA+BDaNw5LHtVnZHRw1+UXk1vlryATfgK7p84yvF/+mjYc5JLwgb7qZM7LyzDnrE=
+	t=1747050827; cv=none; b=mj0ISp3zmLAs8D7g7b3lcN670awm0Xlh7q8bkeJqbDpVg1LDGcd4MTGKj/jmy6BC+1ataArXXi8kBFQSYcNy7iDe2XY8PndLHq3Zg0P39Ore6uLKtcvhbaX6bqHBbkrKoXQ6G2J90cbibFrZkfN4btNzcS7WFwXACigzT6QhVxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050777; c=relaxed/simple;
-	bh=oo4/TzVexqKyE/EuAeDYMXfgf6SLlVETjNuimYWEluc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pBLMT6ExHurn0IwPBDUFhcWyAB72N5M9otPjPy2Vb10L8DEOqYkc2jxjqC0nSJwdKDqmFfWsimoxfcknJd5udMXK1tXf5bLZuYJL2OB7B7pkQf3dfGljcyQZ2kzuXK8a04FoV+iwEQZk+8i/8oykuw7TzwvFHD1w6qVt88r+RBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JI0ago30; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e163543ceso3540705ad.2;
-        Mon, 12 May 2025 04:52:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747050774; x=1747655574; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oo4/TzVexqKyE/EuAeDYMXfgf6SLlVETjNuimYWEluc=;
-        b=JI0ago30KPYrnSELZ5mgHydmcmOkOo1H0Y36GVkr7MTK79CCEbIUQ+ghD9lKbPdYYA
-         Lr5amIeBcS8CbHil4mqSJkknBNptPy8QQdx4K+ZcE9rxDe6zFXiEmjn7yMmoQ68Qgo5g
-         jXYG2rTjVdamOxcQsijczonjJr+IWf+4KjYqypSpylMCgV62DbE9Pq82uz+pmZnYK/gI
-         x7WuIQckBoVws4CO8Kt4x3bUw7Jlks5oBVuf/WBgGF134XyoVsLV4l0A6knPxQVQl8Jz
-         m0e6Kynk1fCbO4qMNwu9Sr1wPE5kjN1JHbRxWZ3zdkDVOwpj/20VnMVgNEl/ujwqH/8m
-         J4VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747050774; x=1747655574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oo4/TzVexqKyE/EuAeDYMXfgf6SLlVETjNuimYWEluc=;
-        b=k3ngf/H62wyr/NG+2PMyStDesQ92e6hP6X0NbWRwKVE+dZ3fgV3kZLJAG5fr+DevgY
-         D+yVtxsMNB+uTS5357jRs+Jd8W1h/Gn15DugsXOM8aqUkDZOmibWDnJGx9y4Zy+mfC6g
-         Y1Z7/HL24GYeipwZao27QbYsTk9asY+KyZrHZXFmAGjpt5kxObBv5FBh/6xKiFfkfPCS
-         J/ljDQ6fPlPr0icGSDy8USaEz5ghT0rECsCCKcsTGuIputMUeRTAoemSS0r0G5HhDtXN
-         k7/MTfIpnlY/fvq2I4nOJnAEkV5V3eT2BJeJsx1DJ7hYcOu8HxJJ6G0BkhIloT0U5F8P
-         TfsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgZbJZ3UKYID3Hl2dDi+yq9YraazZR8pk+KbHGVMIncrk/V5dRedimi/PxCrlI/fE52c6FoEYVGc7WpQ==@vger.kernel.org, AJvYcCXrO3TeqwUQwUmKSqn9JejhEx6Jz9YX6GGGBD/jSpjOPA3Pq73atfQDPbQgzUh6yNYAGBUvDIcCMoWYT7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSb+CwWSDZmJU8zUDYKVvBV20xdbpL5JVJ8I3X483KKj2IRzB2
-	gq5OH3cToCxaDVm7+jqeUzhQYA3dPuifNB3Olso1DviONSz9/H0G0GSM3do5YW4dPNJwwolJxre
-	JGikjuFgP1Vrw0m7+yZq7Y7aZyeY=
-X-Gm-Gg: ASbGncsyo4MarJa5/CwpbqFNuTXiaMuVOs/u9z+lOlXWvqA5yODw+XeJTZu7KyAFdVB
-	owCZOow1TfROG+9+DSau1EWw+0HG6PfQC10uV1CvUlZKWkyy8yfyX2XZEtWfmDGHFwE62+AmwnO
-	y233uijEwa1ppI8URWmrFR6OlOecvMGELSYrPRxZsUCGM=
-X-Google-Smtp-Source: AGHT+IEteCtbPqS1i1Wldot6vJgVrGTIPz23UCNRKKXAdQvxj8l2nBr2DPuG7EsHLeAn16XDEYRpdcMuLtsFH/nSAwk=
-X-Received: by 2002:a17:902:e84f:b0:224:e0e:e08b with SMTP id
- d9443c01a7336-22fc8946fbfmr77057865ad.0.1747050773672; Mon, 12 May 2025
- 04:52:53 -0700 (PDT)
+	s=arc-20240116; t=1747050827; c=relaxed/simple;
+	bh=fERv0qxRGHTLMsyf66AHOVfHnTHJnU+2cOjgdsoHdBE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TXWVynhkIzo6LigZulEz73AzYzhfPC0VFXrd6PkWTIzkv/h3kLuXJkSpT1UL9PORZ4LyZYuBjp5x3kHuiL1bzL+XncgtgXh8/6QgAEwHf1KsbleQyTZCbDgCcfd6+++bfeZ6e8PVOWu57Z+Ml9j0Ie6nGAyjr2xPl0t5iQ2p210=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Wr7hXvkV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C9ZGfb017744;
+	Mon, 12 May 2025 11:53:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=xoiAncQNw9nuyx5N/O5nXjUA5OuhVg/KOSVXkOWMO
+	ZM=; b=Wr7hXvkVW9vbKOJ3cmNcKOWf2ZNW7KdAjUiZgsZZ9aWKfvuWNmyrnGm/b
+	wfv7S94MJy68RQV7RR+ulecJA3AdZ9lqEis71MXrWUNAD0wD3ly5XdISuzmo15nN
+	i4KXrMRnNLyjA2UMV3cwA4qbEzvYZLFx6+ohBoU1hmmwgnDA5oQDFjtTZ7ZYBkAS
+	8qIb9SWuIne1bCv4LolcS/hDz+9uaE8PxVHlQ6+33mm4CW8JDlrIUFfF8fFyg9b5
+	nOvO4DALk1tAF16uFH9iovc3mcgRFV2onUru6+WocEkXmL80p3zQzQleAzK323db
+	e7+ZFXg8ZC6DdAkS0rnZ60UzoLTtA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46k1k6k1j9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 11:53:32 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CBgV24018297;
+	Mon, 12 May 2025 11:53:31 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46k1k6k1j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 11:53:31 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CAGcYL024470;
+	Mon, 12 May 2025 11:53:30 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46jjmkwnpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 11:53:30 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CBrQqX21627414
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 May 2025 11:53:26 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C02CD200E6;
+	Mon, 12 May 2025 11:53:26 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0532E200E1;
+	Mon, 12 May 2025 11:53:26 +0000 (GMT)
+Received: from IBM-PW0CRK36.ibm.com (unknown [9.111.90.223])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 May 2025 11:53:25 +0000 (GMT)
+From: Tobias Huschle <huschle@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, sshegde@linux.ibm.com
+Subject: [RFC PATCH v3 0/4] sched/fair: introduce new scheduler group type group_parked
+Date: Mon, 12 May 2025 13:53:21 +0200
+Message-Id: <20250512115325.30022-1-huschle@linux.ibm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512194008.3bf1bd47@canb.auug.org.au>
-In-Reply-To: <20250512194008.3bf1bd47@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 12 May 2025 13:52:40 +0200
-X-Gm-Features: AX0GCFv1jrzlEPbM_9KGtSL-lNPg5smR3y-QHCF2tW9Yd-4oZIvyXy293v5eX2Y
-Message-ID: <CANiq72kv96aFrOYLtMpakfo02hLYyzWv_vfAPdbx1NEp2zfCOw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the rust tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=dNSmmPZb c=1 sm=1 tr=0 ts=6821e13c cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=j3NHNQmsH8o8r10dKhYA:9
+X-Proofpoint-GUID: h0catcOXRi6NpclZ4GEwyCSv0rG-aZNF
+X-Proofpoint-ORIG-GUID: StPOIwViPTKGQpqg7DZBuGIfb91PpHBB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDExNiBTYWx0ZWRfX133LJ3w3X74C +I5uDiGMohUv0ZIuzMOpkzrQXwXQih8Ly6OLZA2jb9jAPk8KdFghdfy1szFj6xom2frP3go5uo7 VSiJk117qDzZS3PnL0OQFge3+UaJKqEXzan9vhJY+GkEFzYgm7otHNopKS6mp0pfO4Wi3cA8GiZ
+ GUUEdZJTzcp+e/YegJ40m8stWfY0OSumd3sJH0o9Nb9D5F1VpuwfDl/M8BVigJaGH1IwKouNm82 vNzUkE6FD8DmnZR1lgYjTdYnOB+slAO8uKeXMwXtlH62FV35ysQDiWJGgvNnB2QTDWyl0y4zzxN vRFd9rXzGcLHr78b7zFlwbmd/IGfQcdIFonDrs//fkIn0WFqDa4kQH+Mbze5OIAd5HN9J3LxIzJ
+ gs/xa4RtgH9f2Tv2c4H/F17nplHyadpV27DxjdL6KPF+D+s6rmd8Rxro2C/klEikrCDSpF/p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ adultscore=0 phishscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505120116
 
-On Mon, May 12, 2025 at 11:40=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Not sure what caused this and that file has not changed from
-> next-20250509, so I have used the rust tree from next-20250509 for today.
-> Clearly I need help with the merge resolution here.
+Introduces parked_cpu concept. When a CPU is marked as parked, 
+it is expected that nothing meaningful runs on it. To achieve 
+this use a new group type called group_parked in the load 
+balance path.
 
-Sorry, it is due to commit b0ba6be4458e ("rust: retain pointer
-mut-ness in `container_of!`") -- the change requires cleanups in other
-code arriving elsewhere and `auxiliary.rs` does not have those.
+See cover letter of v2 for extensive description.
 
-I was about to suggest the cleanup (just removing 3 cases of
-`.cast_mut()`), but then I noticed a Clippy lint triggering in turn
-due to that -- reported.
+Adding an usecase and performance metrics:
 
-Anyway, I have some upcoming travel, so I have dropped the commit (and
-the dependent) for the moment.
+The core goal is to allow Linux systems running as guests under a
+hypervisor to run more efficiently. Virtualization usually implies
+that the total amount of virtual CPUs creates an overcommitment on
+the actually existing physical CPUs on the host.
 
-Thanks!
+==== Scenario and workload ==========================================
 
-Cheers,
-Miguel
+Therefore, the following scenario is used:
+- KVM host with 10 cores, SMT 2, yielding 20 CPUs
+- 8 KVM guests with 6 vCPUs each, no SMT, yielding 48 vCPUs in total
+
+The following workload is used:
+The guests communicate pair-wise with one another via distinct Linux
+bridges, so we get 4 bridges, with 2 guests connected respectively.
+Each pair runs an uperf benchmark with one guest sending 200 bytes to
+the other guest and receiving 30000 bytes on return. This is done
+by 50 parallel workers per pair. All running simulatinously for 400s.
+
+==== Comparison 1 ===================================================
+
+1. no guest vCPUs are parked
+   This implies that 48 vCPUs are used, overcommiting the 20 actually
+   available host CPUs.
+2. guest vCPUs 2-5 are parked, means only 0-1 are used
+   In this case, only 16 vCPUs are explicitly used, leaving 4 host
+   CPUs available for virtualization overhead
+
+Results:
+Setup 2 provides a throughput improvement of ~24%.
+
+==== Comparison 2 ===================================================
+
+In addition to the uperf workload, each guest now runs 2 stress-ng
+workers: stress-ng --cpu 2 --cpu-load 99 --cpu-method matrixprod
+These 2 stress-ng workers are meant to consume the full CPU
+entitlement of each guest.
+
+Results:
+Setup 2 provides a throughput improvement of ~50%. 
+
+As an additional metric, the bogo/ops reported by stress-ng can be
+noted where setup 1 outperforms setup 2 by 23%, which is expected, 
+as stress-ng will pick up all available computation power left 
+untouched by uperf. So, a better performing uperf consumes more
+CPU runtime, taking it away from stress-ng.
+
+This yields a trade-off between improving interrupt/lock-using
+workload like uperf and penalizing purely CPU focussed workload
+like stress-ng. With a 50% improvement on the uperf side, but only
+23% regression on the stress-ng side, it is probably possible to
+find a sweet spot.
+
+==== Notes ==========================================================
+
+This is of course only an initial sniff test. Additional
+configurations will need to be tested, but the initial runs look
+promising, in the sense that it is possible to find performance 
+improvements by passing information about the availability of CPU 
+resources in the host. 
+In the presented runs, all values where set statically and not
+dynamically modified.
+
+The number of usable CPU resources should be seen as a part of the
+topology that the system is perceiving from the underlying layer.
+The host running on that underlying layer has to determine, that 
+certain CPUs are currently not usable for the guest. 
+The guest would receive this information through architecture
+specific means, as it should perceive, that it is interacting with
+actual hardware rathen than being virtualized.
+
+In the case where the host observes that all of its resources are
+consumed by the guests, it can pass the necessary information such
+that the guests can start parking CPUs. If the host observes, that
+the overall pressure on the resources is relieved, it can instruct
+the guests that it is safe to unpark CPUs again.
+
+==== Open questions =================================================
+
+There are a couple of issues and corner cases which need further
+considerations:
+- dl:         Deadline scheduling is not covered yet. There is
+              probably only little overlap in systems that would make
+              use of parked CPUs and systems running deadline 
+              scheduling.
+- ext:        Probably affected as well. Needs some conceptional
+              thoughts first.
+- raciness:   Right now, there are no synchronization efforts. It needs
+              to be considered whether those might be necessary or if
+              it is alright that the parked-state of a CPU might change
+              during load-balancing.
+- taskset:    If a task is pinned to CPUs that are all parked, the 
+              pinning is discarded (similar to CPU hotplug). Thoughts
+              need to be spent on how to properly notify the user.
+- reporting:  Tools like lsdasd and debugfs should represent the parked 
+              state of CPUs.
+- interrupts: Interrupts should be disabled on parked CPUs as well,
+              most likely responsibility of an implementing arch.
+
+=====================================================================
+
+Changes to v2
+- provide usecase and performance measurements
+- add support for realtime scheduler
+  The adjustments work fine for all kinds of real time threads.
+  Only those which are running at 100% CPU utilization are never
+  interrupted and therefore never rescheduled. This is an
+  limitation for now although scenarios that would profit from
+  having parked CPUs would probably not run such uninterrupted
+  real time processes anyway.
+- use h_nr_queued instead of nr_running
+- remove unnecessary arch_cpu_parked check
+- do not touch idle load balancer, it seems to be unnecessary to 
+  explicitly run it, the idea could be reconsidered later
+
+Patches apply to tip:sched/core
+
+The s390 patch serves as a simplified implementation example.
+Tobias Huschle (4):
+  sched/fair: introduce new scheduler group type group_parked
+  sched/rt: add support for parked CPUs
+  sched/fair: adapt scheduler group weight and capacity for parked CPUs
+  s390/topology: Add initial implementation for selection of parked CPUs
+
+ arch/s390/include/asm/smp.h    |  2 +
+ arch/s390/kernel/smp.c         |  5 ++
+ include/linux/sched/topology.h | 19 +++++++
+ kernel/sched/core.c            | 13 ++++-
+ kernel/sched/fair.c            | 95 +++++++++++++++++++++++++++++-----
+ kernel/sched/rt.c              | 25 +++++++--
+ kernel/sched/syscalls.c        |  3 ++
+ 7 files changed, 142 insertions(+), 20 deletions(-)
+
+-- 
+2.34.1
+
 
