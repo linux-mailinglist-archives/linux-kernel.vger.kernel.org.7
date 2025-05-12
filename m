@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-644477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED0DAB3CFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:09:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDF7AB3D05
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1ECA165A0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B4019E36C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA51216E1B;
-	Mon, 12 May 2025 16:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EE124886E;
+	Mon, 12 May 2025 16:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SteE+40c"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0uxskyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC46E21770B;
-	Mon, 12 May 2025 16:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AA724888D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747066139; cv=none; b=gI6vGmu19IoxFqAyNmJnosq5NG9N8SNsDZJxj/bBpilnlpAldLuJDghiHhCqbxbikAYbwzo2cbfm+SmseDS/5Ht4SG2j8xZZFrsHYWSkR5cIlkVNzk7kJoIXWygXD5CqUv5PGeg652x/iYmQeg8NG925xnM3HUUd2/BAO59Dv5s=
+	t=1747066203; cv=none; b=jD80ib87qTxILrYd8fa2xpVhmnQkpDXxWIpBPtI07HkKJ8SrgoOVWp+v/Uq+DIOtJHZllMo0hmhZNtWSSs+t+ernv075h/ULd1asXrjK7FLkrPGSG3sL7RJapIUT3a445a6O6OOk4/UUHmXK373pz9tBFDgEggnE9O7qDsaYLLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747066139; c=relaxed/simple;
-	bh=GtFHCpKmWgumg5kfjLlUPZMRhZodvVQlEjZCqCQOXug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifWqQQ9KYxgSC0khVETBM877S2HoLnpIJLj8CHz/fG2KbgK1bs55oPYH5qlBtNC1jOEFftY/KK/suAwpzgjg0Dyxu4mf0cKfSKL/caT01ySpIkwRUeKC+teEeXoWqVAqwYptXKcuw5JB+cniQCGAhoKAvI9G7ogzDe1qWJ63wJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SteE+40c; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f5bef591d6so9730630a12.1;
-        Mon, 12 May 2025 09:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747066136; x=1747670936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qEsAI2COF0r2HL5oebsAQkXwVMnRApoak0sIere6jr0=;
-        b=SteE+40cv8Jzn7g+JsFpanycsU/3p90GzAL+GyGclA1YLZUkxa0Hn80l5Azvh5VfIH
-         BhlxeHiUUwl4uJk6zBtVext8litfJM3R5JZpAKWXdGf3e9QznpSipg1kyOJcrjtiYTm5
-         Pyxwo/P+8XMN5Q+ljQFz43JVTTr9blN9cRByYKrHS1mfS1gxC4aJZ+KknE0RbTSemSHj
-         RLEUyeHld257MvtproyOOQsSLHR3ljrFQuCSaC093sZZCZ/1qXL78DtNQvTZGB5Hpgpr
-         S5PJI1Nc2y3Hr9emKAIaZe75I+khxCC4ozHNirVVytRO1CCBl1x7eIJcwogboOr7tmmI
-         c0+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747066136; x=1747670936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qEsAI2COF0r2HL5oebsAQkXwVMnRApoak0sIere6jr0=;
-        b=DaJ6jOwiu7/zO8b7ETiJ0t1UXiacg4PyTmrCKqZgLe3PlnBdtQtKK5t+o3znt+Oxub
-         KcQVNLpVWZYSDruGjBlOpR48rKOZMcqIJxE6+UbCEUBHl83Eqpyl5mpgrdbYpHcwZyfJ
-         XOP+Y4KV0/2A5y6UcYIpWbPIjlJJd5Fv+Q4isGxym+YH/3EJ6qumTRtWTZFvdocbA0Vd
-         f79m4ljkM7gB/xzyjUARxfI7MkTbDFr2ApajcTvIAWmSt5cL6mjhx8Vu0GvF55Je2mLg
-         pW88VfoWPFfFcoPQGV4lSN4Y77lTNLcZ0uHFAf051ls/rsy8YLlAIEoSnLfE+nZ2BOvB
-         RRtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWDspmVQx6Nf12sZD1/ESTuYRl2LFroDBmBZ+ttIZ8/Fg1cNki+SEYrS6t186RwTYkhRYV9hmKEDP5DU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr8AGXl+WpYmudT+s9GqY0j/5xtU0J5xnChDBbK4cToHlc9DoX
-	gTL7jsVqL1DVAbpKJqkL+MMdTRIYvsFwrPhbWbeG2o9NloS10a4=
-X-Gm-Gg: ASbGnctePHYs86tfjbg+ONbIpb/smZtjDlLVBXxMAdrGqkfT0I90ux0GmSSCuaj1hmJ
-	nVN3oB4Cl/AWG00m7NwqRSjmtANfWUGwIVDipBnPa85Z0Q0dq+cVY/1QslUp5v0uavkjvYMwO3c
-	B/HqOV6wHI0PmqZAda/LByvXlXyCdOxme5MsdPQymUFHqR67Esz6rUcVsXeTlKhnCiJG1jpdi1w
-	BnO0JsSs2/aY9njImmST85ZWjTn0EQTV234mB/ycZHJJjqlOYLt16XujmS1cRhVmKou0GMxg0H1
-	ezpdO4/PwzYiW1iL5t3ujh0HBCySRlfUdUS6
-X-Google-Smtp-Source: AGHT+IFgYQSOmtOhWap/5tgAF1XXuzAr+ZzRiPgyJCaorz27QzuB/tXqUB1fLyiM3jt+oZ3oCU0PRw==
-X-Received: by 2002:a05:6402:27d3:b0:5fb:cdd2:8040 with SMTP id 4fb4d7f45d1cf-5fca075dd1fmr11288270a12.12.1747066135724;
-        Mon, 12 May 2025 09:08:55 -0700 (PDT)
-Received: from p183 ([46.53.249.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fd29adb7absm2528711a12.32.2025.05.12.09.08.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 09:08:55 -0700 (PDT)
-Date: Mon, 12 May 2025 19:08:53 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] CodingStyle: make Documentation/CodingStyle into
- symlink
-Message-ID: <77f03295-df5d-4bc0-9a61-5be829969662@p183>
-References: <20250509203430.3448-1-adobriyan@gmail.com>
- <87frhcsrva.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1747066203; c=relaxed/simple;
+	bh=iL2V/bvrYGW9bbo4sD+uM9MvWXY78cNQRMuPYip5Pf4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HooB+N+YF1anRY++R39FZrJo41Kdr3Td3ZFFO9h4X4lDXCixJ8IMmZwDMtSx5I2mgupNWk/9BURKEGV5L5T+zY0gWQwlmIAmFiCVb6RWj84bvfKSkOrYvL29hWiZThaQRhvIT+FqrivauLq+RB2apxSOS7ZlAvSG9ndnKJsRWoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0uxskyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CDA2C4CEE7;
+	Mon, 12 May 2025 16:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747066203;
+	bh=iL2V/bvrYGW9bbo4sD+uM9MvWXY78cNQRMuPYip5Pf4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o0uxskyoOjACJ12rcKa0ajOh1RM/FYNmekNIeB1lXBSkFcMTmF7izyYVHP8mgKsxE
+	 BenwT/plXzUpPoq4okelpfKHVfMunDBorTUMD0Ki4UcGhcyf4oPvRkuqrzkAQWdis8
+	 4c1VxVVRAtY6KGuwigB0YMH/1EN74jR9mkTMCfn54HbHxBjDh6dgUaEMk5dD+M02+H
+	 ayuM7ICDbqxuViEjLFabEhoSy5bpqiwgrfMlfAcdBj5NurZr+/1R2cdgKtL3r6EN5R
+	 MltFcTky9GZOrPZ6/Zgj/dWhISEDp68P/uqFtns4+yIhEY1ZW4gRXTYKHduyz96to5
+	 gR/zfCFzwG/OQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uEVj6-00EBmE-W1;
+	Mon, 12 May 2025 17:10:01 +0100
+Date: Mon, 12 May 2025 17:09:59 +0100
+Message-ID: <86sel9g694.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Sascha Bischoff
+ <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>
+Subject: Re: [PATCH 2/4] irqchip/gic-v3-its: Implement .msi_teardown() callback
+In-Reply-To: <87ecwtlwx8.ffs@tglx>
+References: <20250511163520.1307654-1-maz@kernel.org>
+	<20250511163520.1307654-3-maz@kernel.org>
+	<87ecwtlwx8.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87frhcsrva.fsf@trenco.lwn.net>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, sascha.bischoff@arm.com, timothy.hayes@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat, May 10, 2025 at 04:05:29AM -0600, Jonathan Corbet wrote:
-> Alexey Dobriyan <adobriyan@gmail.com> writes:
+On Mon, 12 May 2025 15:34:59 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
 > 
-> > Every time I open Documentation/CodingStyle it says the party moved
-> > somewhere else. :-(
-> >
-> > Of course, I forget where it moved to by the next time.
-> >
-> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > ---
+> On Sun, May 11 2025 at 17:35, Marc Zyngier wrote:
+> > We currently nuke the structure representing an endpoint device
 > 
-> No 0/9 cover letter?
+> How is we? We means nothing as you know :)
 
-Not really. Cover letter would be very short:
+We means a lot to *me*.
 
-	Tweak coding style to add things I've learned over the years of
-	Linux/C programming.
+> 
+> > translating via an ITS on freeing the last LPI allocated for it.
+> >
+> > That's an unfortunate state of affair, as it is pretty common for
+> > a driver to allocate a single MSI, do something clever, teardown
+> > this MSI, and reallocate a whole bunch of them. The nvme driver
+> > does exactly that, amongst others.
+> >
+> > What happens in that case is that the core code is buggy enough
+> > to issue another .msi_prepare() call, even if it shouldn't.
+> > This luckily cancels the above behaviour and hides the problem.
+> >
+> > In order to fix the core code, let's start by implementing the new
+> 
+> s/let's//
+> 
+> I really have to understand why everyone is so fond of "let's". It only
+> makes limited sense when the patch is proposed, but in a change log it
+> does not make sense at all.
+> 
+> > .msi_teardown() callback. Nothing calls it yet, so a side effect
+> > is that the its_dev structure will not be freed and that the DID
+> > will stay mapped. Not a big deal, and this will be solved in the
+> > following patch.
+> 
+> Now I see why you added this incomprehensible condition into the core
+> code. Bah.
+> 
+> Why don't you add this callback once you changed the prepare muck, which
+> introduces info::alloc_data?
 
-	And stop making kernel devs look like aliens from another Universe
-	(see static_assert() rule and especially(!) "declare ALAP" rule)
+Changing prepare first breaks nvme and igbxe, amongst other things,
+for the reasons explained just above, so you need to implement
+teardown first, plug the MSI controller into it, and only then you can
+switch prepare.
 
-> Just FYI, I won't apply coding-style patches without a strong sense that
-> there is a consensus behind them...I suspect that could prove to be a
-> high bar here.
+What I can do is:
 
-I split them like referendum ballots to see where the consensus at and
-not have big single discussion thread.
+(1) introduce teardown without the call site in msi_remove_device_irq_domain()
+
+(2) add its implementation in the ITS driver
+
+(3) move the prepare crap
+
+(4) add the teardown call to msi_remove_device_irq_domain(), without
+    the check on info->alloc_data
+
+With that order, everything will keep working, with a temporary leak
+of ITTs in the ITS driver between patches (2) and (4).
+
+Is that something you can live with?
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
