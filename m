@@ -1,87 +1,90 @@
-Return-Path: <linux-kernel+bounces-644075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912FDAB364C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8690CAB364B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321A0189FC8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:54:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5F8B189FF3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5442F292923;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4EA2920AC;
 	Mon, 12 May 2025 11:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wr7hXvkV"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jTkbqjy2"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADA728E5EC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB41F1D7E5B
 	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050827; cv=none; b=mj0ISp3zmLAs8D7g7b3lcN670awm0Xlh7q8bkeJqbDpVg1LDGcd4MTGKj/jmy6BC+1ataArXXi8kBFQSYcNy7iDe2XY8PndLHq3Zg0P39Ore6uLKtcvhbaX6bqHBbkrKoXQ6G2J90cbibFrZkfN4btNzcS7WFwXACigzT6QhVxU=
+	t=1747050827; cv=none; b=Jz6u/+21rOGVsT9dWagh1gbU/552t/g192sPtEd5GGMr13i2Mc1mYsR+cMpAb3q5nrOShkB9j7b4kvE+DDuiauVMAeNbXHfIMqntUGPeL9OFROS7c4k7XruQD+mRuSfingpdX7iEoqxjKk7PJRoGYvVzynfg3HkbXRnutnY+IIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747050827; c=relaxed/simple;
-	bh=fERv0qxRGHTLMsyf66AHOVfHnTHJnU+2cOjgdsoHdBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TXWVynhkIzo6LigZulEz73AzYzhfPC0VFXrd6PkWTIzkv/h3kLuXJkSpT1UL9PORZ4LyZYuBjp5x3kHuiL1bzL+XncgtgXh8/6QgAEwHf1KsbleQyTZCbDgCcfd6+++bfeZ6e8PVOWu57Z+Ml9j0Ie6nGAyjr2xPl0t5iQ2p210=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Wr7hXvkV; arc=none smtp.client-ip=148.163.158.5
+	bh=2NJ16dCcp73RdpieYOtjDGiCHYIF7vEN/pHpM1Awfhg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=g0A420Jzecv7Ok7hFLS7xZBpkvlXk8+fgX1MMLFhsbP12s+CG4k6vBhtPYX2Lw8AU208no56HgEOjSJdfoAEDrsjWVokcD+KxRfM+/TZrBAAaDb9F4WZW7j9xwW0hEuksPe7mGvMJv8fo3ZHc9yJf7YMSYvK3lVlBiwkhKgV7bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jTkbqjy2; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C9ZGfb017744;
-	Mon, 12 May 2025 11:53:32 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C9FAvG015889;
+	Mon, 12 May 2025 11:53:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=xoiAncQNw9nuyx5N/O5nXjUA5OuhVg/KOSVXkOWMO
-	ZM=; b=Wr7hXvkVW9vbKOJ3cmNcKOWf2ZNW7KdAjUiZgsZZ9aWKfvuWNmyrnGm/b
-	wfv7S94MJy68RQV7RR+ulecJA3AdZ9lqEis71MXrWUNAD0wD3ly5XdISuzmo15nN
-	i4KXrMRnNLyjA2UMV3cwA4qbEzvYZLFx6+ohBoU1hmmwgnDA5oQDFjtTZ7ZYBkAS
-	8qIb9SWuIne1bCv4LolcS/hDz+9uaE8PxVHlQ6+33mm4CW8JDlrIUFfF8fFyg9b5
-	nOvO4DALk1tAF16uFH9iovc3mcgRFV2onUru6+WocEkXmL80p3zQzQleAzK323db
-	e7+ZFXg8ZC6DdAkS0rnZ60UzoLTtA==
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=5wFIR5gyRg2ECtomM
+	xwyuNgGFE7Y/SXkDgRUfBo3XVU=; b=jTkbqjy2Dnh0mn8LJaqr6Umplob0gXR1r
+	NwO9Exd6f2HnmstkIa6ZU4hY60s009DuL43zRF4uM7Lw77DOvCnivl0FZrkUKrUc
+	ENqKa9c8EOcNxGbk0RQ3Mt7inHehcnsnhOPL04kY/Lv28aQJD8vBR6nUN+uJtBZp
+	Xq9+f8jUVnIAMYR/e75G2kuIHOXGBqvEsKtNYa7e6O9u2rFkTpGwpBFipZBk4ZK0
+	mqSQS8RdhCrociXLwXSYp2g8zKh6MVZXSo5ClVcRBIa4vqwVF18OOCef+oEOCcfd
+	1Mzb/+86arOAspeMOf0zIi+cz4b8AQBUN2aisIAFs+8Xo2gHVMbxw==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46k1k6k1j9-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ke6j0mg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 11:53:33 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CBrXo2027962;
+	Mon, 12 May 2025 11:53:33 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ke6j0mfy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 12 May 2025 11:53:32 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CBgV24018297;
-	Mon, 12 May 2025 11:53:31 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46k1k6k1j7-1
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CB4vmr011544;
+	Mon, 12 May 2025 11:53:32 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46jku25etn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:31 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CAGcYL024470;
-	Mon, 12 May 2025 11:53:30 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46jjmkwnpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:30 +0000
+	Mon, 12 May 2025 11:53:32 +0000
 Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CBrQqX21627414
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CBrS5p58130738
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 May 2025 11:53:26 GMT
+	Mon, 12 May 2025 11:53:28 GMT
 Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C02CD200E6;
-	Mon, 12 May 2025 11:53:26 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 7A4DB200E4;
+	Mon, 12 May 2025 11:53:28 +0000 (GMT)
 Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0532E200E1;
-	Mon, 12 May 2025 11:53:26 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id B38F9200E8;
+	Mon, 12 May 2025 11:53:27 +0000 (GMT)
 Received: from IBM-PW0CRK36.ibm.com (unknown [9.111.90.223])
 	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 12 May 2025 11:53:25 +0000 (GMT)
+	Mon, 12 May 2025 11:53:27 +0000 (GMT)
 From: Tobias Huschle <huschle@linux.ibm.com>
 To: linux-kernel@vger.kernel.org
 Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
         rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
         vschneid@redhat.com, sshegde@linux.ibm.com
-Subject: [RFC PATCH v3 0/4] sched/fair: introduce new scheduler group type group_parked
-Date: Mon, 12 May 2025 13:53:21 +0200
-Message-Id: <20250512115325.30022-1-huschle@linux.ibm.com>
+Subject: [RFC PATCH v3 2/4] sched/rt: add support for parked CPUs
+Date: Mon, 12 May 2025 13:53:23 +0200
+Message-Id: <20250512115325.30022-3-huschle@linux.ibm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250512115325.30022-1-huschle@linux.ibm.com>
+References: <20250512115325.30022-1-huschle@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,163 +93,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=dNSmmPZb c=1 sm=1 tr=0 ts=6821e13c cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=j3NHNQmsH8o8r10dKhYA:9
-X-Proofpoint-GUID: h0catcOXRi6NpclZ4GEwyCSv0rG-aZNF
-X-Proofpoint-ORIG-GUID: StPOIwViPTKGQpqg7DZBuGIfb91PpHBB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDExNiBTYWx0ZWRfX133LJ3w3X74C +I5uDiGMohUv0ZIuzMOpkzrQXwXQih8Ly6OLZA2jb9jAPk8KdFghdfy1szFj6xom2frP3go5uo7 VSiJk117qDzZS3PnL0OQFge3+UaJKqEXzan9vhJY+GkEFzYgm7otHNopKS6mp0pfO4Wi3cA8GiZ
- GUUEdZJTzcp+e/YegJ40m8stWfY0OSumd3sJH0o9Nb9D5F1VpuwfDl/M8BVigJaGH1IwKouNm82 vNzUkE6FD8DmnZR1lgYjTdYnOB+slAO8uKeXMwXtlH62FV35ysQDiWJGgvNnB2QTDWyl0y4zzxN vRFd9rXzGcLHr78b7zFlwbmd/IGfQcdIFonDrs//fkIn0WFqDa4kQH+Mbze5OIAd5HN9J3LxIzJ
- gs/xa4RtgH9f2Tv2c4H/F17nplHyadpV27DxjdL6KPF+D+s6rmd8Rxro2C/klEikrCDSpF/p
+X-Proofpoint-GUID: DA6iYAGlwSyCh9Dsvq3DsDGiKc91zCxT
+X-Proofpoint-ORIG-GUID: ANI7Qxp7wfaZDDPyYkQ422LC0etqW_J_
+X-Authority-Analysis: v=2.4 cv=auyyCTZV c=1 sm=1 tr=0 ts=6821e13d cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=l-v1mVCvDpcWLIwNwUUA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDEyMiBTYWx0ZWRfX51x2jZbBapCM 1p9RbYH2UHOHmqctBRDbI1JVsrOb1odCGRaOuf9Y32TdqC+Q+ERWR+55AL0YDCuV9HnEuhN5PXB DS8VggH+iPom1Xz9cACxsLHz7mkIp7f9Mvk+AvAeTJXA4ZkgrJZQkOoYCe++QkWOPL3ks64BfXY
+ Owb96OGIvgJLJEHwPiCaKUu2xUcfyrfowAyfYX+IP5Y5rGK7V+iD5wtPCdrRxIHhKbqnSCXq1Ak tPZndDZjNomPo0iyU3y6HIFplees5lAV16ThRcieY3JGCSKLIUKRHmiwIfKYLsHq1Ond95GE8Gx nPnv/fnR/7d7Rg7faE/KCB/Y8Gbn0NtY7JaQcXVOf5hNg9rebJ2RUKCfsx9WGdQFyRK/EeWefoF
+ 1xj3EC7FnOyjN8OydUhhPgQRI4eenx59U12CBqegwjvqcv7qlhxvm6z1jsJ6nG0T8BU6hIs/
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 clxscore=1011 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505120116
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 adultscore=0 mlxlogscore=907
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505120122
 
-Introduces parked_cpu concept. When a CPU is marked as parked, 
-it is expected that nothing meaningful runs on it. To achieve 
-this use a new group type called group_parked in the load 
-balance path.
+Realtime tasks must also react to the parked states of CPUs. Tasks will
+be treated as if the parked CPUs have no free capacity to work on them.
 
-See cover letter of v2 for extensive description.
+A dynamic change in the parked state of CPUs is handled correctly if
+realtime tasks do not consume 100% CPU time, without any interruption.
+If a realtime tasks runs without interruption, it will never enter the
+load balancing code and will therefore remain on a CPU, even if the CPU
+becomes classified as parked. Any value below 100% causes the task to
+be migrated off a CPU which has just been classified as parked.
 
-Adding an usecase and performance metrics:
+Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
+---
+ kernel/sched/rt.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-The core goal is to allow Linux systems running as guests under a
-hypervisor to run more efficiently. Virtualization usually implies
-that the total amount of virtual CPUs creates an overcommitment on
-the actually existing physical CPUs on the host.
-
-==== Scenario and workload ==========================================
-
-Therefore, the following scenario is used:
-- KVM host with 10 cores, SMT 2, yielding 20 CPUs
-- 8 KVM guests with 6 vCPUs each, no SMT, yielding 48 vCPUs in total
-
-The following workload is used:
-The guests communicate pair-wise with one another via distinct Linux
-bridges, so we get 4 bridges, with 2 guests connected respectively.
-Each pair runs an uperf benchmark with one guest sending 200 bytes to
-the other guest and receiving 30000 bytes on return. This is done
-by 50 parallel workers per pair. All running simulatinously for 400s.
-
-==== Comparison 1 ===================================================
-
-1. no guest vCPUs are parked
-   This implies that 48 vCPUs are used, overcommiting the 20 actually
-   available host CPUs.
-2. guest vCPUs 2-5 are parked, means only 0-1 are used
-   In this case, only 16 vCPUs are explicitly used, leaving 4 host
-   CPUs available for virtualization overhead
-
-Results:
-Setup 2 provides a throughput improvement of ~24%.
-
-==== Comparison 2 ===================================================
-
-In addition to the uperf workload, each guest now runs 2 stress-ng
-workers: stress-ng --cpu 2 --cpu-load 99 --cpu-method matrixprod
-These 2 stress-ng workers are meant to consume the full CPU
-entitlement of each guest.
-
-Results:
-Setup 2 provides a throughput improvement of ~50%. 
-
-As an additional metric, the bogo/ops reported by stress-ng can be
-noted where setup 1 outperforms setup 2 by 23%, which is expected, 
-as stress-ng will pick up all available computation power left 
-untouched by uperf. So, a better performing uperf consumes more
-CPU runtime, taking it away from stress-ng.
-
-This yields a trade-off between improving interrupt/lock-using
-workload like uperf and penalizing purely CPU focussed workload
-like stress-ng. With a 50% improvement on the uperf side, but only
-23% regression on the stress-ng side, it is probably possible to
-find a sweet spot.
-
-==== Notes ==========================================================
-
-This is of course only an initial sniff test. Additional
-configurations will need to be tested, but the initial runs look
-promising, in the sense that it is possible to find performance 
-improvements by passing information about the availability of CPU 
-resources in the host. 
-In the presented runs, all values where set statically and not
-dynamically modified.
-
-The number of usable CPU resources should be seen as a part of the
-topology that the system is perceiving from the underlying layer.
-The host running on that underlying layer has to determine, that 
-certain CPUs are currently not usable for the guest. 
-The guest would receive this information through architecture
-specific means, as it should perceive, that it is interacting with
-actual hardware rathen than being virtualized.
-
-In the case where the host observes that all of its resources are
-consumed by the guests, it can pass the necessary information such
-that the guests can start parking CPUs. If the host observes, that
-the overall pressure on the resources is relieved, it can instruct
-the guests that it is safe to unpark CPUs again.
-
-==== Open questions =================================================
-
-There are a couple of issues and corner cases which need further
-considerations:
-- dl:         Deadline scheduling is not covered yet. There is
-              probably only little overlap in systems that would make
-              use of parked CPUs and systems running deadline 
-              scheduling.
-- ext:        Probably affected as well. Needs some conceptional
-              thoughts first.
-- raciness:   Right now, there are no synchronization efforts. It needs
-              to be considered whether those might be necessary or if
-              it is alright that the parked-state of a CPU might change
-              during load-balancing.
-- taskset:    If a task is pinned to CPUs that are all parked, the 
-              pinning is discarded (similar to CPU hotplug). Thoughts
-              need to be spent on how to properly notify the user.
-- reporting:  Tools like lsdasd and debugfs should represent the parked 
-              state of CPUs.
-- interrupts: Interrupts should be disabled on parked CPUs as well,
-              most likely responsibility of an implementing arch.
-
-=====================================================================
-
-Changes to v2
-- provide usecase and performance measurements
-- add support for realtime scheduler
-  The adjustments work fine for all kinds of real time threads.
-  Only those which are running at 100% CPU utilization are never
-  interrupted and therefore never rescheduled. This is an
-  limitation for now although scenarios that would profit from
-  having parked CPUs would probably not run such uninterrupted
-  real time processes anyway.
-- use h_nr_queued instead of nr_running
-- remove unnecessary arch_cpu_parked check
-- do not touch idle load balancer, it seems to be unnecessary to 
-  explicitly run it, the idea could be reconsidered later
-
-Patches apply to tip:sched/core
-
-The s390 patch serves as a simplified implementation example.
-Tobias Huschle (4):
-  sched/fair: introduce new scheduler group type group_parked
-  sched/rt: add support for parked CPUs
-  sched/fair: adapt scheduler group weight and capacity for parked CPUs
-  s390/topology: Add initial implementation for selection of parked CPUs
-
- arch/s390/include/asm/smp.h    |  2 +
- arch/s390/kernel/smp.c         |  5 ++
- include/linux/sched/topology.h | 19 +++++++
- kernel/sched/core.c            | 13 ++++-
- kernel/sched/fair.c            | 95 +++++++++++++++++++++++++++++-----
- kernel/sched/rt.c              | 25 +++++++--
- kernel/sched/syscalls.c        |  3 ++
- 7 files changed, 142 insertions(+), 20 deletions(-)
-
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index fa03ec3ed56a..595d760304fb 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -460,6 +460,9 @@ static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
+ 	unsigned int max_cap;
+ 	unsigned int cpu_cap;
+ 
++	if (arch_cpu_parked(cpu))
++		return false;
++
+ 	/* Only heterogeneous systems can benefit from this check */
+ 	if (!sched_asym_cpucap_active())
+ 		return true;
+@@ -474,6 +477,9 @@ static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
+ #else
+ static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
+ {
++	if (arch_cpu_parked(cpu))
++		return false;
++
+ 	return true;
+ }
+ #endif
+@@ -1799,6 +1805,8 @@ static int find_lowest_rq(struct task_struct *task)
+ 	int this_cpu = smp_processor_id();
+ 	int cpu      = task_cpu(task);
+ 	int ret;
++	int parked_cpu = 0;
++	int tmp_cpu;
+ 
+ 	/* Make sure the mask is initialized first */
+ 	if (unlikely(!lowest_mask))
+@@ -1807,11 +1815,18 @@ static int find_lowest_rq(struct task_struct *task)
+ 	if (task->nr_cpus_allowed == 1)
+ 		return -1; /* No other targets possible */
+ 
++	for_each_cpu(tmp_cpu, cpu_online_mask) {
++		if (arch_cpu_parked(tmp_cpu)) {
++			parked_cpu = tmp_cpu;
++			break;
++		}
++	}
++
+ 	/*
+ 	 * If we're on asym system ensure we consider the different capacities
+ 	 * of the CPUs when searching for the lowest_mask.
+ 	 */
+-	if (sched_asym_cpucap_active()) {
++	if (sched_asym_cpucap_active() || parked_cpu > -1) {
+ 
+ 		ret = cpupri_find_fitness(&task_rq(task)->rd->cpupri,
+ 					  task, lowest_mask,
+@@ -1833,14 +1848,14 @@ static int find_lowest_rq(struct task_struct *task)
+ 	 * We prioritize the last CPU that the task executed on since
+ 	 * it is most likely cache-hot in that location.
+ 	 */
+-	if (cpumask_test_cpu(cpu, lowest_mask))
++	if (cpumask_test_cpu(cpu, lowest_mask) && !arch_cpu_parked(cpu))
+ 		return cpu;
+ 
+ 	/*
+ 	 * Otherwise, we consult the sched_domains span maps to figure
+ 	 * out which CPU is logically closest to our hot cache data.
+ 	 */
+-	if (!cpumask_test_cpu(this_cpu, lowest_mask))
++	if (!cpumask_test_cpu(this_cpu, lowest_mask) || arch_cpu_parked(this_cpu))
+ 		this_cpu = -1; /* Skip this_cpu opt if not among lowest */
+ 
+ 	rcu_read_lock();
+@@ -1860,7 +1875,7 @@ static int find_lowest_rq(struct task_struct *task)
+ 
+ 			best_cpu = cpumask_any_and_distribute(lowest_mask,
+ 							      sched_domain_span(sd));
+-			if (best_cpu < nr_cpu_ids) {
++			if (best_cpu < nr_cpu_ids && !arch_cpu_parked(best_cpu)) {
+ 				rcu_read_unlock();
+ 				return best_cpu;
+ 			}
+@@ -1877,7 +1892,7 @@ static int find_lowest_rq(struct task_struct *task)
+ 		return this_cpu;
+ 
+ 	cpu = cpumask_any_distribute(lowest_mask);
+-	if (cpu < nr_cpu_ids)
++	if (cpu < nr_cpu_ids && !arch_cpu_parked(cpu))
+ 		return cpu;
+ 
+ 	return -1;
 -- 
 2.34.1
 
