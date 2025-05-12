@@ -1,103 +1,204 @@
-Return-Path: <linux-kernel+bounces-643820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D3FAB327F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:59:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0098EAB3286
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2252189CA0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74770189C810
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BEE25B1E9;
-	Mon, 12 May 2025 08:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1C925C804;
+	Mon, 12 May 2025 08:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dnREQvu/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HAxHghDU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED79258CEF;
-	Mon, 12 May 2025 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEA025A2A6;
+	Mon, 12 May 2025 08:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747040206; cv=none; b=SHREMo+YzEKrI9QRuKExMyjaQLSFkzvvxwJeAYGDC1N7+Vb4OpsAY4aeKI/XFG/fgC2K9NmZuMDM/ARM7w2Ozp2por2Smz30ARsV1nL4ox3ys0CuqFdLFmWZEXtqDeMPNRQYq8X3ZQ5F9TpBK/fgPhpwwPbyKz1D6rXmLPotrmo=
+	t=1747040264; cv=none; b=cSTtPvAxCpDNw0Q5Y1aoiEPYC6Dqk6UxNoERUHzv6YBiqDN5SN0NsZaott0HOExMB593Sdrf6s6e8siwIIaxYd45o3wPvCxl5CPXt5TC9tV+B0tU7DSExyz6ZCipfV5OOAJhEbRRXfBw3cd8+RGVlImwPcbGS+n/d224BEYQqzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747040206; c=relaxed/simple;
-	bh=CJBjSPGvbIb27uy7XsT6idTI18HZkGio14LfEtwFx3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ujxDKqB9Yd6iIpFMC332158U0XR4q530ukKYMu8hetmmllMD8qyjs/YysgyvM4/R9c8f704OllOI54qiHvEGtSLTxNmfptWRnqqN9EoFwArgrEQmfxQ/qpJphnzcE4ZzyY50DK+WgEod+SKcG/+Wjni2buePBb3rOSgs5JxEYm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dnREQvu/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747040202;
-	bh=oiuLWHpwfiImEcyGOQl7gHZNWAsNEzAGOtjG7wCJm0Q=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dnREQvu/Lq4HES3n/rtlRBhX/ruQoGLcDIg0Bu32jCUUCj4mw9Qgmyo2GbN8Sd6Di
-	 AWBSBkTdf3ssZwdReiOdxcOA9cElb9HZpHaJ7/GDFSFjzjt+a2ikNfLoG+1bSyboEt
-	 zDBN1Yfv4cObjYaoiftfl7jHkPmfSoao0kie0WnlU5tWUslZTnxSxZWuPE/vhzyDgt
-	 8hLMGGFpCw0RI2LLj37jz5fQFDo5JFTvLrS5XDRdGEc2TMueTaIQv3BQwyJfSWnZkF
-	 FtSqpAXNOb15KVNbHkl7de1A1f13dpBsLFkUSanuoMYI+d1ApS4bYuMdAz3oImypgx
-	 ghX7tqwG9CByw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zwtky3vzbz4x07;
-	Mon, 12 May 2025 18:56:42 +1000 (AEST)
-Date: Mon, 12 May 2025 18:56:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the tip tree
-Message-ID: <20250512185641.0450a99b@canb.auug.org.au>
+	s=arc-20240116; t=1747040264; c=relaxed/simple;
+	bh=2hwfJlxtKCrmA/U7kWwtPfgBIj+XASaD+BQF4ujJlQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h42AfwNpSPWyGm5+Vp/zWzgoKaq58B253Z83vXQuYZWrB76bfQyMIUMrQMWqQkSeAhuu0fj3ewsZvjIbTfhL9DIDObB4TZDLZ8gkeQwmj6Hz3m+iYo284Z5l9UAxHRjGRGNa1wx+aEGA0d/w9vUpv6oKNfSRIBpRnl4bILlwLxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HAxHghDU; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747040263; x=1778576263;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2hwfJlxtKCrmA/U7kWwtPfgBIj+XASaD+BQF4ujJlQA=;
+  b=HAxHghDUOaW68hwHyh1oFRGkoAr3TGUroI9Mp8PXB3Wfn1GI4kJFRzN0
+   lMV7QnGct5Vds2gvjPY0/cvueQXafhPMtp81JGboUiVF8bzMYslnf0RBT
+   mZzmFZs8X1TK2sRIz9NK8dYnudEsJu/SOtHOYUHGXqz4S4v8uylTZZnuo
+   WWExptrXFlsmDpqWyNzkJMJlgMINWD/QGZ1r3KUD22zCpiFDVYcXP2gIT
+   t3caZoMO9hTskzKA0v75Qs5GxGqVxLoyXNK5FE9YCw9sDO1KQLsqzj113
+   +j7mF5SfXMQyC/S28RmpeMTeptJSC4pDikYX79E1+8AtpYYE5++HmQ5Gh
+   w==;
+X-CSE-ConnectionGUID: +FkhSPRTS9ueuzqfBd6ysA==
+X-CSE-MsgGUID: i0xJIGAJSSuOHrc0/huFQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="59488677"
+X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
+   d="scan'208";a="59488677"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:57:42 -0700
+X-CSE-ConnectionGUID: rC1bDCljTv+3nTsch+G/Xg==
+X-CSE-MsgGUID: ZDoCbOdQS/uiChmcW5EFKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
+   d="scan'208";a="138235770"
+Received: from 984fee019967.jf.intel.com ([10.165.54.94])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:57:42 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	tglx@linutronix.de,
+	dave.hansen@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: peterz@infradead.org,
+	rick.p.edgecombe@intel.com,
+	weijiang.yang@intel.com,
+	john.allen@amd.com,
+	bp@alien8.de,
+	chang.seok.bae@intel.com,
+	xin3.li@intel.com,
+	Chao Gao <chao.gao@intel.com>,
+	Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Eric Biggers <ebiggers@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Stanislav Spassov <stanspas@amazon.de>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Vignesh Balasubramanian <vigbalas@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>
+Subject: [PATCH v7 0/6] Introduce CET supervisor state support
+Date: Mon, 12 May 2025 01:57:03 -0700
+Message-ID: <20250512085735.564475-1-chao.gao@intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ax_l1zH4ZoJT.fBDWuOuJKK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/ax_l1zH4ZoJT.fBDWuOuJKK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Dear maintainers and reviewers,
 
-Hi all,
+I kindly request your consideration for merging this series. Most of
+patches have received Reviewed-by/Acked-by tags.
 
-After merging the tip tree, today's linux-next build (htmldocs) produced
-this warning:
+Thanks Chang, Rick, Xin, Sean and Dave for their help with this series.
 
-WARNING: kernel/futex/waitwake.c:593 function parameter 'task' not describe=
-d in 'futex_wait_setup'
+== Changelog ==
+v6->v7:
+ - Collect reviews from Rick
+ - Tweak __fpstate_reset() to handle guest fpstate rather than adding a
+   guest-specific reset function (Sean & Dave)
+ - Fold xfd initialization into __fpstate_reset() (Sean)
+ - v6: https://lore.kernel.org/all/20250506093740.2864458-1-chao.gao@intel.com/
 
-Introduced by commit
+== Background ==
 
-  93f1b6d79a73 ("futex: Move futex_queue() into futex_wait_setup()")
+CET defines two register states: CET user, which includes user-mode control
+registers, and CET supervisor, which consists of shadow-stack pointers for
+privilege levels 0-2.
 
---=20
-Cheers,
-Stephen Rothwell
+Current kernel disables shadow stacks in kernel mode, making the CET
+supervisor state unused and eliminating the need for context switching.
 
---Sig_/ax_l1zH4ZoJT.fBDWuOuJKK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+== Problem ==
 
------BEGIN PGP SIGNATURE-----
+To virtualize CET for guests, KVM must accurately emulate hardware
+behavior. A key challenge arises because there is no CPUID flag to indicate
+that shadow stack is supported only in user mode. Therefore, KVM cannot
+assume guests will not enable shadow stacks in kernel mode and must
+preserve the CET supervisor state of vCPUs.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmght8oACgkQAVBC80lX
-0GyGsAf/TjZ66fBTbEaewtOHzari41QcznqXK+QxKEm5aP+XXuF3cNcHdOUfiNRR
-e6upsmxiZO/TjMRkrUQahqDAyxh0BkgikjcRnSqsEugyIVbhfILdzxhK8RBX25oK
-lUO+gDxw7GjlL7FxU8fMLOltG8d7K7LEHUGfgOaRZ7m1D2QWlbUyhy9+SA+Q/HZR
-rIZt6VxZ4FzY/Ph6mGdoiw3glqOMz2bgb54GTWOaclhItKuzRIHn+0cIaTsTksBR
-pwZ+2enyp2h7fwdq4l9tq+hM8qsNDg/Atcx3MWYWRvGkpARXp1+ZHNxTECb6PzSJ
-Ilh0AIUGe0e+MDps33t5GdlkL8UnuQ==
-=01Zw
------END PGP SIGNATURE-----
+== Solution ==
 
---Sig_/ax_l1zH4ZoJT.fBDWuOuJKK--
+An initial proposal to manually save and restore CET supervisor states
+using raw RDMSR/WRMSR in KVM was rejected due to performance concerns and
+its impact on KVM's ABI. Instead, leveraging the kernel's FPU
+infrastructure for context switching was favored [1].
+
+The main question then became whether to enable the CET supervisor state
+globally for all processes or restrict it to vCPU processes. This decision
+involves a trade-off between a 24-byte XSTATE buffer waste for all non-vCPU
+processes and approximately 100 lines of code complexity in the kernel [2].
+The agreed approach is to first try this optimal solution [3], i.e.,
+restricting the CET supervisor state to guest FPUs only and eliminating
+unnecessary space waste.
+
+Key changes in this series are:
+
+1) Fix existing issue regarding enabling guest supervisor states support.
+2) Add default features and size for guest FPUs.
+3) Add infrastructure to support guest-only features.
+4) Add CET supervisor state as the first guest-only feature.
+
+With the series in place, guest FPUs have xstate_bv[12] == xcomp_bv[12] == 1
+and CET supervisor state is saved/reloaded when xsaves/xrstors executes on
+guest FPUs. non-guest FPUs have xstate_bv[12] == xcomp_bv[12] == 0, then
+CET supervisor state is not saved/restored.
+
+== Performance ==
+
+We measured context-switching performance with the benchmark [4] in following
+three cases.
+
+case 1: the baseline. i.e., this series isn't applied
+case 2: baseline + this series. CET-S space is allocated for guest fpu only.
+case 3: baseline + allocate CET-S space for all tasks. Hardware init
+        optimization avoids writing out CET-S space on each XSAVES.
+
+The performance differences in the three cases are very small and fall within the
+run-to-run variation.
+
+[1]: https://lore.kernel.org/kvm/ZM1jV3UPL0AMpVDI@google.com/
+[2]: https://lore.kernel.org/kvm/1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com/
+[3]: https://lore.kernel.org/kvm/2597a87b-1248-b8ce-ce60-94074bc67ea4@intel.com/
+[4]: https://github.com/antonblanchard/will-it-scale/blob/master/tests/context_switch1.c
+
+Chao Gao (4):
+  x86/fpu/xstate: Differentiate default features for host and guest FPUs
+  x86/fpu: Initialize guest FPU permissions from guest defaults
+  x86/fpu: Initialize guest fpstate and FPU pseudo container from guest
+    defaults
+  x86/fpu: Remove xfd argument from __fpstate_reset()
+
+Yang Weijiang (2):
+  x86/fpu/xstate: Introduce "guest-only" supervisor xfeature set
+  x86/fpu/xstate: Add CET supervisor xfeature support as a guest-only
+    feature
+
+ arch/x86/include/asm/fpu/types.h  | 49 +++++++++++++++++++++++++++----
+ arch/x86/include/asm/fpu/xstate.h |  9 ++++--
+ arch/x86/kernel/fpu/core.c        | 49 ++++++++++++++++++++++---------
+ arch/x86/kernel/fpu/init.c        |  1 +
+ arch/x86/kernel/fpu/xstate.c      | 40 ++++++++++++++++++++-----
+ arch/x86/kernel/fpu/xstate.h      |  5 ++++
+ 6 files changed, 123 insertions(+), 30 deletions(-)
+
+-- 
+2.47.1
+
 
