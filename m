@@ -1,237 +1,153 @@
-Return-Path: <linux-kernel+bounces-644211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD73AB38C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3C6AB38AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E2A7AFB66
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260ED3ACF0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2B7294A1F;
-	Mon, 12 May 2025 13:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8A8294A0C;
+	Mon, 12 May 2025 13:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YuPwUdVF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K09Bq98w"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF5128E61F;
-	Mon, 12 May 2025 13:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747056176; cv=fail; b=bpAIBuWmD/Y6FNj4YTzCqPVv8VuGYhNi2qAwf9urcbSe1nljBFupmSOZid6QuUly7iL21roQxPe6gyMYrgaS4Z3nzj15LA/GaGVWyQUiaixmo5ytIYFtynxMENFWz5Pj8q6uObpbQhpcw6Q4O5Qutk+h99ZkQ7yHtCnzQZ0jVJY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747056176; c=relaxed/simple;
-	bh=c5tMMG/67+49haFFi2g3okC7Sud1/nKnVqir2aPoWQ0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WDIOlY8S2DbFS3rifljs7yHU4i2EDYCn26kWaPseCZQLCJc1KMcA/gVIZYrJEl7MHZnjdkjC0cu/PgxWkX7SVCmERrOKd011FGs4Y696CLffZK7zH57j0afoaGZCsXwjN/yBfwqb3JQu8BcpI2PDSEoOPEhciVNgL6+qVU2tIGI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YuPwUdVF; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747056174; x=1778592174;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=c5tMMG/67+49haFFi2g3okC7Sud1/nKnVqir2aPoWQ0=;
-  b=YuPwUdVFib4ScxK8m9rB1jZRCNGHP2UGtvxzal9joBo8CS8GkvohtAhb
-   sIBNExkAxT0iZs1tbowPWNMgdAvnxS61J4dd0ZOc3uwZl9MmdE7K5HZzA
-   DixlQkifqVdZftjTcJG96nRKUqSSCPRAhBVXHMnu4vzNGc+1w+wwDXHEh
-   +RWYhcqnOG+uwmiRhnmX7RO7FDh5Ye6uvyUrDDovCLsAGXni1Jl08D5Dw
-   ndkNl+Js4n1QzYTk6/dKq1XV4W7IawYmUI/WsbHkbzhUQbc+DbD0cfk0N
-   MD4tNPoPHsExzOppdjUsuqlIWtgtc2LSYtmZ/5uHu9lbxwTVi/Vso0qeb
-   Q==;
-X-CSE-ConnectionGUID: zEVkYciQTcCcu9Rm9OL8cQ==
-X-CSE-MsgGUID: +eVCUN92R6CbxL42W93HcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="71363796"
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
-   d="scan'208";a="71363796"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 06:22:52 -0700
-X-CSE-ConnectionGUID: 7d2PxyiJSQaVGmhBITJ27A==
-X-CSE-MsgGUID: cVeKd9M3TQ6XvyUGjbyy1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
-   d="scan'208";a="137834945"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 06:22:52 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 12 May 2025 06:22:51 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 12 May 2025 06:22:51 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 12 May 2025 06:22:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HuwzlvNOGgOMU3Qmo2JNsMUkcB6lyY7yacuR078WXeP8fAM3D6EHGRclP0bD3TUnSsKVf78qqPum0neW+OkDg9XdTIGA/WIw2D7t+oitG0l2E8G6h7vjMmZSWH9cgXW8pQdNl9Pavj4gYWmA90YqBeV6kFbDfGZAIZkReeq02f5Iv5F7DuWQBmpF596R3znZaj5aY1EaJEUx9xIsUEd+MaHcAn3BO7TBLhSPOvYXrckA9leRpFmaEz8oSWX8A+aJBhmCST+W+MBrt21HuoKKlZ4Zxl8P5a+1It3gjXhvomDg5U55HsCQek5Ax7BuZC5K4V0BGBUnx7N8KbbWKLJ+Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ulAs7s2Hq8GIKCICRUSDIeeUQDLzBQHlzJKh8FR2yr8=;
- b=K3S+Fxwd3JB9Log6acuePWHECNfvjhDo0DtmR4m/HNXbQwxxufgw+PLbDpg39VcWfmUoQQSoUhtyy1sFMFtKAYtwHTqL7qEhMJsv54IOmGaWZ/Adg+tjKy1puCrfqvpo7LUFW3ue12NUAFWnBxW/f7lxVjr4xs1Ne7Wn7Q34an31N0fPb+xybhP51Gv5w3ibLupSO2c3YlWriWPmwGbhbmxU2yQkcGZe+PlxnJScGWunf+zZ56wrGA1QasyhU2XBLiHmcyKrUCcZHSsT3BlZsRMzEd4ra810nGhGKiWu+pfSKuZExz/XIfPAxWnk/TYRhY7oNhtk6Q261InQu1YI3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB7540.namprd11.prod.outlook.com (2603:10b6:806:340::7)
- by LV8PR11MB8582.namprd11.prod.outlook.com (2603:10b6:408:1f7::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Mon, 12 May
- 2025 13:22:12 +0000
-Received: from SN7PR11MB7540.namprd11.prod.outlook.com
- ([fe80::399f:ff7c:adb2:8d29]) by SN7PR11MB7540.namprd11.prod.outlook.com
- ([fe80::399f:ff7c:adb2:8d29%4]) with mapi id 15.20.8722.027; Mon, 12 May 2025
- 13:22:11 +0000
-Date: Mon, 12 May 2025 15:21:58 +0200
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: Simon Horman <horms@kernel.org>
-CC: <intel-wired-lan@lists.osuosl.org>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, Jiri Pirko <jiri@resnulli.us>, "Tatyana
- Nikolova" <tatyana.e.nikolova@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, Maciej Fijalkowski
-	<maciej.fijalkowski@intel.com>, "Lee Trager" <lee@trager.us>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, "Sridhar Samudrala"
-	<sridhar.samudrala@intel.com>, Jacob Keller <jacob.e.keller@intel.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>, Mateusz Polchlopek
-	<mateusz.polchlopek@intel.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
-	<netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "Karlsson, Magnus"
-	<magnus.karlsson@intel.com>, Emil Tantilov <emil.s.tantilov@intel.com>,
-	"Madhu Chittim" <madhu.chittim@intel.com>, Josh Hay <joshua.a.hay@intel.com>,
-	"Milena Olech" <milena.olech@intel.com>, <pavan.kumar.linga@intel.com>,
-	"Singhai, Anjali" <anjali.singhai@intel.com>
-Subject: Re: [PATCH iwl-next v3 00/15] Introduce iXD driver
-Message-ID: <aCH19kCiDI0GUs8s@soc-5CG4396X81.clients.intel.com>
-References: <20250509134319.66631-1-larysa.zaremba@intel.com>
- <20250512124906.GA1417107@horms.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250512124906.GA1417107@horms.kernel.org>
-X-ClientProxiedBy: PR0P264CA0062.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:100:1d::26) To SN7PR11MB7540.namprd11.prod.outlook.com
- (2603:10b6:806:340::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E402628D857
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747056147; cv=none; b=tu5a8R5Z27xlcCkBEKSNlbjkK+KHUV2oUos7+YFuSDA6cLYvcb/RoO6/KCKz84IZJGiTaWahQX2w5baP6bcmhT28fL+h8gNHse6F3T02IZeDYdamATzknlFzKOM+zOxoNpEKP9Er4/RXiMFdKQTi/qac/bYTsa+X0PrDDI+C1XM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747056147; c=relaxed/simple;
+	bh=devXGGTl4DFBk0hfDQYT+VXZS73W2OS2D90j3Cs28xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CvCOvpNMKjLQoEu2WmWh41nGMJnt67ej09DM8tEE4wdF+pIO3Nw4jmZq4Aw73N+gqMvxU0jv/5t4Hs9w1kqLLVAXQuvqklQnjzcmjbSnag9G/Fh6GBs8DI+j0IwusCe/Xbj6hUVJvbG0oR0mCVSjEh2Ip9kZLPOs7NZp5bNUz1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K09Bq98w; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso43265961fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747056144; x=1747660944; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NxfQxcq5BBu2nIwTspctDTWvHfOZ5xVRTcaBJjw0co0=;
+        b=K09Bq98w1EpFzFYcMrDpJMhtAbVkvZC4waLkje3yhkSzWqBf152/TBblOAy3HM+Tqp
+         F0Mf4nXYSpCEFmly6h5khPzF95pP4fqeYN0x42OvEV0gRsvHzMM42Bc9RjD1AvSrdgTJ
+         2t8E1PfJgkQfSwWBJDsluyYY6NwOxjOAMru/owWoTvY0GAHGr67Ym9zqzjM751L43CPa
+         sJvL4blFiFQdaNkt8+6P2yGxpBes+fpMv0grAw0MlYZqOtt3mz9iC8mGDg2qxlaZb//n
+         i5Ch/jUy60I9o9YdzGdKXR5gTRJNd5Z1b9K9nYDbvGwCadeSVuyx7GMLPRRx+N3/1e0M
+         VM/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747056144; x=1747660944;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NxfQxcq5BBu2nIwTspctDTWvHfOZ5xVRTcaBJjw0co0=;
+        b=Tt/OMJ3mbkdw3Nt/YQ8TGW1MsoY8sXudtQI5TpJ5MqCpbcKFSWVsXD4ZE3TzhvXbOQ
+         RMNmRE72VP16w2biSPIOaNqFjuLZOhT81/bITbpENAv5y/oQdOVUxId/8N4TbK05GDjb
+         +6hiBUJenwhhf+LC14kTWS8kwteu+kwiwxPpK3ftOLljmLisQwoxYCChJpjPBECZTSk1
+         t1sFqeYTQZGy2NLq8Z/P9BMHsgnvtc/4HyDlcel/lCBrJxI9PoG6v3PzZjtqEDphn808
+         Y2H3s5ZntZ55IiEY+ZaiZrIkr4aI68r6/Lvb6xt11IUFxD409N+CMb9IJ0wGwQckW+G/
+         QjaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo35zxnvnF9JZhXZGDNJ8j8tfeHPETRRRA0fF9Qmo5TabGjT4p33QMxcOefzWzIQTgHj27TZxmL702hq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6oSs7I2wVjJp2tECUdtVQfk8sgoAN+lLzkdYz/vmEGuMx/naU
+	DCnMGbjdPQ6+/WbxOGm0jzurU5Ayk0FwVjJLUpEhf6AHkFcHh0jH/tYR4az9zW+RkZXXJZ6NUSN
+	vmJIMEaKoIUqN94Hb4steyMibEeO7wSLPVZB6
+X-Gm-Gg: ASbGncvTU0OsqaU7sZ5H87eQmvGVmUteCLaDDsTOEui7Kbfa2Wb0644DTgVAkwdXXsu
+	Jrbu56hvmXdpl+8EY6kEul8GrluCl+mcEHeZVkbHlOU7aIDBjKfHgcTpaKRYUMmwjrUiuoXaNRw
+	3qEQ24ftXugGt1KBWW87aFVovmy1W0gm8XROGhzMGjw7qAxVO9QR2Ym4+te/yhdoU=
+X-Google-Smtp-Source: AGHT+IHJ0J3uWkk7U0OJTsKkGCVoc1wLn6lNVuY2eD8aI4/X4UvTUJC7R+SKP6Y7Pq0muiFKVQNrWuLAUMwE86JkihM=
+X-Received: by 2002:a05:651c:a11:b0:30b:efa5:69c3 with SMTP id
+ 38308e7fff4ca-326c45f2969mr53857651fa.22.1747056143763; Mon, 12 May 2025
+ 06:22:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB7540:EE_|LV8PR11MB8582:EE_
-X-MS-Office365-Filtering-Correlation-Id: b87d16db-ca35-4f99-8361-08dd915800e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VH/3jUkuAVGY6d+pl72lp1mbtZsTO/syprBrsRB+j/xXixSKPgwUYGOjk9z6?=
- =?us-ascii?Q?AFleSxcmfKTqTBJmnJRkvGnvIvDNK8wl104HoeFeQxLidayTzKHc4rjfH98O?=
- =?us-ascii?Q?J9EDFO1hbxH54m9DFUlW/w4wCghRfKvnBQIwuCk7aeHI0257NEWIZajQTe3d?=
- =?us-ascii?Q?qm8i2VBbJW85Mxj1v8KgJxIlThpF5Pw2Lo+rmDElYRvksfbc2VCtv8ANStb7?=
- =?us-ascii?Q?P6/W9KwR6TnasxU0NSsb6MKLXHE3UIACrs6uMtF+4dPxbVYLh7M3xteML17m?=
- =?us-ascii?Q?r72ocFjzkBJrVZHxpnNTcCAQ69AeZYWnT11A+ijgXUFLkrRk3OZIE8U+zjB8?=
- =?us-ascii?Q?JNqlhIurH4MOz/wDw3aL7TkzEviu8N0ARZpS+M47vPGwuByFrrhkxwYmOZRu?=
- =?us-ascii?Q?HbYNmH/tSS8d8GFDaER90Q38Pa52aZVdbvIYow+Y33Gh0OTcsbyNjBA3JWBc?=
- =?us-ascii?Q?ce4WO/Y9S86qsp2eEZ0jd69bE5yGZdx4B53xeGpGy2xoGFwNPE9xcZhGRKPH?=
- =?us-ascii?Q?409Dp6FAbFmyojL4xgpcwn6DVM2VpQHVuL5pS3SwOsM+aiWNJPjNReNNjHjF?=
- =?us-ascii?Q?NBEcGjBOH8eOexqAkHa3/yejxq9Hnfq4q58ZaiEzt3mY5IWssUSoSDx4wqAu?=
- =?us-ascii?Q?A2ZRBGzl7pGsHJd1MhueZvkB8S4AuX1loI73qfjO2hCCYe/Qq+ywXN8+/PVc?=
- =?us-ascii?Q?XS74IUzw+X6A+4tv9mIkkMo9BzguAijZ8yvuMABoB+KiDi/sZN9R4mInpOLO?=
- =?us-ascii?Q?a2g4qtA6Cm4DO1a4ZxUJCiAU4sFc/ovqrsAR+ZQXneoTXRXmjDH0Rn5gturc?=
- =?us-ascii?Q?h511HgV47harLLpr7PMEc5QoVaqvcS1Ybt7rd2WPLPhoFsW75Yvnc7Qya/cp?=
- =?us-ascii?Q?dl65L0FHzuiDgVVkUXJQ/AEkzb1BEtXGME+Ka5tdmJlvABLU9KLFnoVBBL14?=
- =?us-ascii?Q?QJQpgay7h0o8nzD8uvmqe5OAseDrF2dY3xbOUeHIh1FtSFu3/PrOwMvLDunU?=
- =?us-ascii?Q?5w5wGRB4qg1im9DgJTRbk4a+XzEbbjyLAv7OUESmGDrtOEjm1qe0IZCH7HZY?=
- =?us-ascii?Q?UDAckKp0xvtoyChV/fe0yweNe9gMnj81fPIlQ6XoHP3WzaowRNQKzwn76bHb?=
- =?us-ascii?Q?qJzSxvTNw2E+/On1Nl7vQ0n9XPrL7IT51hUHYiqoVdo3eTOUSeIQSWYAUKeO?=
- =?us-ascii?Q?zo0tdxJcxYrKYxvpUNa9f+19+08iBihPMZ9JLbdQIiN4ejhp58bjtb0NPyy8?=
- =?us-ascii?Q?QaI5GuSJFNkTc94iZjJ8WKTs5VDw0/ANEBCNZ6wTePJbeEsTSgwHi3VdN3bl?=
- =?us-ascii?Q?CqVjBPz0aXu+hgbjQqecVCxILqp1dUDCsYv0QXX1mfIODyCjyu9GIifm+LR9?=
- =?us-ascii?Q?75ky8JE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB7540.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?phsgsa2prtPv73yqV4nzFrb8mbYekzTBOUIbA5DGjdoc7AgVe5wUpUBsqzwR?=
- =?us-ascii?Q?0+SEzfSyweY/on6th9k2ft23e0aBo/flkfgd2Q/eu+QL+CxrUcqj9qud+JRA?=
- =?us-ascii?Q?KNnXlAEcYHVBPwiWg9IdtvkdOq1w/jm3azoVjREYbXoWWGqlVIXauN5rcbN0?=
- =?us-ascii?Q?KNW2oSQHI7RgXtxOGYsV30L4pxj4PFea2Mx8q1U3HnoOksZDnSdZ/ESq6kAM?=
- =?us-ascii?Q?GzZ1AwUrmaKzLLrQXmwaV2dHCa2bLnEJNELgRY41M3DwUGxkzot5DF9OUtF5?=
- =?us-ascii?Q?/bOqiOisNafXNDIngsGJL7BXWEFH207Hrv9JaiNHXiGXcA5xyPqTdbf8bUcj?=
- =?us-ascii?Q?qMfGvTXZQalSyUqf9bHxKkBiXfNt6asmqI9SkR/hx1Vi6y1CnIIrV7rGDeP8?=
- =?us-ascii?Q?cxsStJ/G9pr2xG5sE0ST6k0rOPD7a+/Vz8JqPcOMY0Wz+sHj6IcanS4QeFFD?=
- =?us-ascii?Q?NPENI78Fx6fiXdH5WakHrC1JXfvzih9B7C6ME3BOZsrcGKbQ0psy7kxP/w0p?=
- =?us-ascii?Q?EooWqE9ImGUuEaKFv0KEmZqWok1aaWfYkkiWay4THRcnkneKTVkeGFNKg1hG?=
- =?us-ascii?Q?h95Pl/xmeb7v49gWPKjqLYDI8pB1lepsXzSXEjolYOHp6BSLIdE9G2shmH1v?=
- =?us-ascii?Q?znvQu6vnRwuaxuwVWX4EZBq1LKzVz1rL5BiuZOAN6JSr+Qx35cnetNXu9ahO?=
- =?us-ascii?Q?6c5A3Py2JkpEEqtmz2KlZNPiJQ1RD7zf/O/F3FPjJ7NHdehPrfY5/lwUiDEO?=
- =?us-ascii?Q?dhMMy21l0dXuhja4tAjEFNMu4XsuENv7wKlAQLpsujM+h1zGlDK1jTMh6rcN?=
- =?us-ascii?Q?OMQi9uaDYbFJsLscBbqU9x53Nfv368cUYU2042r0kMbMBVNRetUn2uFPPL7G?=
- =?us-ascii?Q?FvXUToXV+HiOmyb1uXavcRzD0JOklQEO3uTWT58OKOZFQQ3n/gymHORFWnMU?=
- =?us-ascii?Q?fCis6UMKFvcvRt2whtKRLYTgDEVDlsRTgpe3NZVCWiZF0yZTfW0eaxPEOvV3?=
- =?us-ascii?Q?z2HaZWBegI7TSCMkctHMPDVBfhYzdpgVyJoAdb8jSatvBOKkynqtTeZNIYB3?=
- =?us-ascii?Q?lAJKLCUZLqK2nvYL24F1Ke8E7IOhV5yr97R2auc8cEvr5Q5ZD7tW0gjZnitu?=
- =?us-ascii?Q?BW47G8sU50IUfAfDR3vptwvsmgGGh8vuPZrfx+/NDLFgQuZL0RjYdfAqe1/7?=
- =?us-ascii?Q?06yb+X4BMqh2yz2MpMBN/dpP32Q3QdLfBSo24fht9xocU2QHRzye/qofnDLg?=
- =?us-ascii?Q?OBNoBVIij/Mk224shgbzMncTkwZMjIcnNJbhb/dlLfd+wMGb/VUHE5OTC5Qa?=
- =?us-ascii?Q?yB6rm87Kt6yPscLJ+NZ3NahxdWfxgAzrovsWMP0jWb5OPdQENw7IBk4NT0V1?=
- =?us-ascii?Q?qaRKnhepqxyIMhN/VMQhmvAkVDAACmDQrgozwNx/wZphvpBI1LilzKzOQL4E?=
- =?us-ascii?Q?QUEQ+6Vr+YZ8GlB/kxk6CtSzr4a7V5J2D72G/KTKz0ZoLEr5scypoNA7KD+j?=
- =?us-ascii?Q?Qn6tzep23FLkegxKW2Rt8Eqbm0dkyf4bBzSh/p/tA+jn85Lp1NpdMz6GkTuW?=
- =?us-ascii?Q?gnwpdCKfhDapmpNLhoDcWKUeTWUxS7QqiPRqzrnuUdK52IUlBie82VIF57K/?=
- =?us-ascii?Q?aoQ6TMV1mhC3HSaNMFM7WmaOBKFMlX1skX5H6iLZGCOjJKxXBGKFJ0Hwe9wH?=
- =?us-ascii?Q?u592jQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b87d16db-ca35-4f99-8361-08dd915800e0
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7540.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 13:22:11.6591
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x1c5Xr3eaMmbyqZT8vP1pG6EM/5iZJbPOC8xvwjkNjLm3T71cCycjiLC+lV7I41vuO77CQ8SUPlth6x3YWhJO8fSCIiB433NehyP2MnqOY0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8582
-X-OriginatorOrg: intel.com
+References: <2025040820-REJECTED-6695@gregkh> <20250509072033.1335321-1-dvyukov@google.com>
+ <2025050940-marrow-roundish-8b98@gregkh> <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
+ <2025050924-marmalade-overfill-fc5a@gregkh> <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
+ <20250509121036.GA92783@mit.edu>
+In-Reply-To: <20250509121036.GA92783@mit.edu>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 12 May 2025 15:22:12 +0200
+X-Gm-Features: AX0GCFtzw9I9FmLNWVQ1hmmtOBCaQ8ajwJAZHoD_IV1RujUj26dE1DoyFijBsMM
+Message-ID: <CACT4Y+Z8ANddFCpNHvNqq6u6=s_aWoYPwu_1HmH19OWeLBi47A@mail.gmail.com>
+Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
+ filesystems with manually crafted filesystem
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Greg KH <gregkh@linuxfoundation.org>, cve@kernel.org, 
+	linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 12, 2025 at 01:49:06PM +0100, Simon Horman wrote:
-> On Fri, May 09, 2025 at 03:42:57PM +0200, Larysa Zaremba wrote:
-> > This patch series adds the iXD driver, which supports the Intel(R)
-> > Control Plane PCI Function on Intel E2100 and later IPUs and FNICs.
-> > It facilitates a centralized control over multiple IDPF PFs/VFs/SFs
-> > exposed by the same card. The reason for the separation is to be able
-> > to offload the control plane to the host different from where the data
-> > plane is running.
-> > 
-> > This is the first phase in the release of this driver where we implement the
-> > initialization of the core PCI driver. Subsequent phases will implement
-> > advanced features like usage of idpf ethernet aux device, link management,
-> > NVM update via devlink, switchdev port representors, data and exception path,
-> > flow rule programming, etc.
-> 
-> Hi Larysa,
-> 
-> I am having a bit of trouble figuring out where to cleanly apply this
-> series to. Could you help me out?
+On Fri, 9 May 2025 at 14:10, Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> On Fri, May 09, 2025 at 10:03:13AM +0200, Dmitry Vyukov wrote:
+> >
+> > If we can't prove it does not have security impact in any context,
+> > then the safe default would be to say it's unsafe.
+>
+> In that case *anything* could be unsafe.  You could have a context
+> where (a) you aren't using secure boot, (b) /dev/mem is enabled, (c)
+> /dev/mem is world writeable, etc.  In which case the mere existence of
+> /bin/bash would be "unsafe".  Yes, this is uncreasonable and unsane.
+> But that's because the "no security impact in any context" standard is
+> insane.
 
-Tree did change quite a bit in a short span of time between me fetching and 
-sending, sorry for the trouble.
+The official documented behavior is not unsafe. If a user made
+/dev/mem world-writable, then allowing any writes to it is not a bug
+nor a security issue. Let's not mix working-as-intended with bugs.
 
-The base commit is 10f540c09cf9 "ice: default to TIME_REF instead of TXCO on 
-E825-C". In case you cannot access it, I have pushed the tree to my github.
+> As far as many file system authors are concerned allowing automount by
+> defaullt is insane, and is apparently the fault of some Red Hat
+> product manager many years ago.
 
-https://github.com/walking-machine/linux/commits/ixd_phase1_iwl_v3
+This is not even about auto-mount. Let's say I am mounting a flash
+drive that you gave me, how do I ensure it's a safe image to mount?
+Removable media, portable drives, and some use cases related to
+mounting images stored in local files either deal with images with
+unknown origin, or can't provide 100% guarantee that the image wasn't
+tempered with.
 
-This version is probably much closer to what would be in dev-queue eventually, 
-compared to a properly rebased one. Some patches were pulled out of dev-queue 
-because of validation problems, but should be back pretty soon, as far as I 
-know. Those patches are the reason why I have an additional fix in the github 
-tree.
+
+> E2fsprogs and xfsprogs now ship with a udev rule which disables
+> automount by default.  If applied, mounting a maliciously fuzzed file
+> system requires root privileges.
+>
+> Of course, distributions are free to change the default, just as they
+> are free to ship a system where root has a default password of
+> "password" or /bin/bash is setuid root.  It would be insane, but
+> product managers often do insane things in the name of user
+> convenience.  In those cases, I would invite that security researchers
+> file CVE's with the *product* as opposed to the upstream open source
+> project.
+>
+> If companies want to assign me a chunk of headcount (say, 4 or 5 L4's
+> and L5's for 3 years working on thing but ext4 hardening, plus a
+> full-time L5 after that working exclusively to maintain the ext4
+> hardening featuers and fix random syzbot complaints), I know what I
+> could assign them to change the security assumptions that we have for
+> ext4.  It might require a
+> CONFIG_EXT4_SECURITY_IS_MORE_IMPORTANT_THAN_PERFORMANCE parameter to
+> enable all of the hardening features, but it is doable.
+
+Question of resources for fixing is orthogonal to classification of an
+issue (if it's a bug or not, if it's a security issue or not).
+
+
+> But they aren't, so I consider it to be *obivous* that the industry
+> doesn't think is important --- just as Orange Book A1 certified OS's
+> was a total, complete, and abject commercial failure.  And note, we
+> don't assign CVE's based on the fact that se all OS's violate the
+> security trust model of Orange Book's A1.  :-)
+>
+>                                                 - Ted
 
