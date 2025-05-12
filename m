@@ -1,99 +1,156 @@
-Return-Path: <linux-kernel+bounces-644032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC8FDAB35CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:18:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14278AB35D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610071898021
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1ED168BD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89876290BCD;
-	Mon, 12 May 2025 11:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E512918D2;
+	Mon, 12 May 2025 11:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="XykPirUq"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="R3LxhEyL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EE71A317E;
-	Mon, 12 May 2025 11:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747048733; cv=none; b=nxn0k/tWfVf76upyC9FiFLoUhz++rQNs/lbJJTvicCqg3JITfCbGvLfWF1IYvSWPRg7pAQ8dimCqa1Kr5j9Qrl7txdb8PD7vunwgbTZMLmE1wGtNwTgPCAhkB5KqnNpmJF6DZNuRboBjZUH9NasqfiMZuQUfhlT/s6MbP3uo9ao=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747048733; c=relaxed/simple;
-	bh=ChtQ/9s+duTX3tq4uH4bQvjGWJQpVh6ASx1lije9Olc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trd6WN5EYwLqbwmbjA27g6FZ2BX1h6FNLqNcO5lvGj9RoFzKMTOTww2gfrVGfr3L7/wfe436vLr8AK/LR34U06oiikX3Esm3mxS0fXRtLjWK0BT08/hq4L42M9egPHVBeGHPsc/xn8Euv2QMygxOwhIX1f0/P289/Ll/qozh76w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=XykPirUq; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=1QHb+jW4QgFhaEaixB4uVZPrgggCZCnmHUsuraUoIWE=; b=XykPirUq2Yiys8M/
-	ZBtsIQ0UJbRq0dwsIgWS0EsfqsmqJQdeOWunCFUzPH0FPxXo+ZC8qPlfPwmUZKhQ3r0D0xIaXhzXv
-	vtY0B5auPhyBczRjVPF8yGlxT8TnoYdpq6lpN+ovVRfc2lVexRi6q4K1ymxVzlmJ14ftjnw0H3XT9
-	nrP07oU2rc2sCUhpLqyd9fgmXnoShEUx3mDT9cpTsinXqibOxLETNj9J8ayTYDh6YsC96HKXqD9J4
-	DYKmhzOz1aZyLRrqexk8wUHISQzIP6VJBIwbHWNx+SG9zqnA8JwtpSyQrN6dfOEzQxq6KclJ+8F8S
-	iC8CgX7v0NZHHcoRdg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uERBD-0030yS-2r;
-	Mon, 12 May 2025 11:18:43 +0000
-Date: Mon, 12 May 2025 11:18:43 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: perex@perex.cz, tiwai@suse.com, krzysztof.h1@wp.pl,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: msnd: Remove midi code
-Message-ID: <aCHZE7G2kTeGrDlN@gallifrey>
-References: <20250511172957.1001583-1-linux@treblig.org>
- <87ldr2uush.wl-tiwai@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A02A291886;
+	Mon, 12 May 2025 11:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747048865; cv=pass; b=BGPBYVbLZRbHvriB8vdm9nAGHUFr4IGb5yTOpOhm/wgqqN2n8NJ4dr0zxF3JQfP7rG8av28FngZhV07QTkLMZqNoLUrJDL9pEET/rivbpg7W/vSbJZ+ia9vKBJYGNgurOd5k750UFZUEMTi6pcIyWQDzSMz8Qs4G6SzZkKBHMw8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747048865; c=relaxed/simple;
+	bh=fmR6fYqFrhWsjxGe1HOlntFlYUX6RV99vix96HuSf/Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=s7oyHmRMeoB85nY2H5MwlHP1tnuFUQgQZntIdCBWMcZTPNa61fvOKDqqQGn8venARuIywBYB4SH1+ObM/NUOyhHR2pZG9bp8Wy+gssR1kOxjk/8OLLq/Ok2wPls7XVlc6dtO9y+LYnXy4QXBtQajYG1oWV4TxeB5AcZbqjZJ0u4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=R3LxhEyL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747048809; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=IGKqITX6Hjk690RY4FGEkhcu0uueDzYWH+OLU72fXnXH6OOjN7ZatAhSq64w3SvZnjFb4K7mPg78q/+VY6Cy/UgVseEW17UQ0plnO+1zKo7Zp0zrrN1mKzoriGnzcfMbpPm/H4TC+NoxwFJyxE9YH09oFkW4mqrLzNnXXeTpexc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747048809; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=g90Nw/fmAwO4pS0osmfC5pCtVd1LdCVyskY3AiteFZ8=; 
+	b=GSz+wyQ0B6J5lticVKsosdIHC/sAwq6EkWhn+PJ9fdBFQDAolCQYBoMYPZDkVMiTnz345VHIf8cGZv0VOg+MyURqAPNnoknsrIs2Re6qZ8Duj5MpwIKheuCbvSLYnjr6GeBEJU+JyJTNrIVROm6ENaDTF/cOwDHsNprxCFGeuC4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747048809;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=g90Nw/fmAwO4pS0osmfC5pCtVd1LdCVyskY3AiteFZ8=;
+	b=R3LxhEyLq2DqfFYmblbWb4c+h3W1emUUlpHrUoLXj01DG1IuMN1Guo4mY/Kp6YFw
+	IprYx4QLCd3qwdqfNiVVsonHKMMiRVdYpAcTn53vRBcgZqED4b0hu/QS6OZDRm1wgBO
+	Rl/5YiS0EOBOTaJQFoGiM1VJYjH5nTYtW1kQ2wAk=
+Received: by mx.zohomail.com with SMTPS id 1747048806755289.84670803140045;
+	Mon, 12 May 2025 04:20:06 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <87ldr2uush.wl-tiwai@suse.de>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 11:18:29 up 14 days, 19:32,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [RFC PATCH 0/2] scatterlist rust bindings
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
+Date: Mon, 12 May 2025 08:19:48 -0300
+Cc: dakr@kernel.org,
+ lyude@redhat.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ airlied@redhat.com,
+ rust-for-linux@vger.kernel.org,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ Petr Tesarik <petr@tesarici.cz>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Michael Kelley <mhklinux@outlook.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <78DB1F66-9DF5-4679-ADC4-177BED5D4FDE@collabora.com>
+References: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-ZohoMailClient: External
 
-* Takashi Iwai (tiwai@suse.de) wrote:
-> On Sun, 11 May 2025 19:29:57 +0200,
-> linux@treblig.org wrote:
-> > 
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > Nothing calls snd_msndmidi_new()
-> >   thus nothing sets chip->msndmidi_mpu
-> >     The call to snd_msndmidi_input_read is gated on that being set,
-> >     so snd_msndmidi_input_read() won't be called either.
-> > 
-> > This is probably a missing call to snd_msndmidi_new(), but since
-> > this is ancient code, it's probably best to remove it (especially
-> > since I don't have the hardware to test it).
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> Applied now.  Thanks.
+Hi Abdiel,
 
-Thanks!
+> On 12 May 2025, at 06:53, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
+wrote:
+>=20
+> Hi,
+>=20
+> Here are the scatterlist bindings that has been brewing for a while in =
+my
+> local tree while working with Nova code. The bindings are used mostly =
+to
+> build the radix3 table from the GSP firmware which is loaded via dma.
+> This interface can be used on top of existing kernel scatterlist =
+objects
+> or to allocate a new one from scratch.
+>=20
+> Some questions still need to be resolved, which mostly come from
+> the DeviceSGTable::dma_map() function. Primarily, what if you call
+> bindings::dma_map_sgtable() on an already mapped sg_table? =46rom my
 
-Dave
+Perhaps we should introduce a type for buffers which are known to be =
+mapped. Then
+we can simply not offer the option to map for that type.
 
-> 
-> Takashi
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> experiments it doesn't seem to do anything and no indication is =
+returned if
+> the call succeeded or not. Should we save the "mapping info" to a list
+> everytime we call DeviceSGTable::dma_map more than once?
+
+What mapping info are you referring to?
+
+>=20
+> Hoping this initial submission will generate some discussion. I'd like =
+to
+> acknowledge valuable feedback from Danilo Krummrich and Lyude
+> Paul in shaping this up.
+>=20
+> Abdiel Janulgue (2):
+>  rust: add initial scatterlist bindings
+>  samples: rust: add sample code for scatterlist bindings
+>=20
+> rust/bindings/bindings_helper.h |   1 +
+> rust/helpers/helpers.c          |   1 +
+> rust/helpers/scatterlist.c      |  25 +++
+> rust/kernel/lib.rs              |   1 +
+> rust/kernel/scatterlist.rs      | 275 ++++++++++++++++++++++++++++++++
+> samples/rust/rust_dma.rs        |  14 +-
+> 6 files changed, 316 insertions(+), 1 deletion(-)
+> create mode 100644 rust/helpers/scatterlist.c
+> create mode 100644 rust/kernel/scatterlist.rs
+>=20
+>=20
+> base-commit: dd21715de3dfa6f6457432ce909e5f7eb142a7d2
+> --=20
+> 2.43.0
+>=20
+>=20
+
+=E2=80=94 Daniel=20
+
 
