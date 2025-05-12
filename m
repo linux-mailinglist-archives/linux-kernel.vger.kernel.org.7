@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-644763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7B4AB442A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:58:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5011BAB442F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7F13BBEC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8385419E5C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88592528E6;
-	Mon, 12 May 2025 18:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C829713F;
+	Mon, 12 May 2025 18:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b8gt1O+U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GqeDIyvt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aI81sbtS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D024328F3;
-	Mon, 12 May 2025 18:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CFD258CC1;
+	Mon, 12 May 2025 18:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076284; cv=none; b=WTmQuToKmGhL570L9N3PVQscZqpnvvDZ8a/02Tiv7U9O1yctGb1eOQFP467G3PG3wK1DsyxElJQAGV7GdfOtTD+G2qnMO/qmKQ0ezlF62Q4O92YRIDoJNXbMXa9qZ0LV36GyyHRlkyWzn/ucv2WLJavZoEPqwaGYHraYz5W/kLE=
+	t=1747076302; cv=none; b=uRCQre4E0ZOokHaaUXAHV3OmbepLRJjuVSRx++dAHkyB/5BB4nNBF3eI2fglXrMYhzYbelhD0MdcgRYzphJ+LxBYeH8yeAC4dZb68UMpDKDEVhs3F/NsehlVNfLGs2r/wpPzOGRR4fOuk00qrIsKFeJj2BV5I0dNqpNhbasiLNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076284; c=relaxed/simple;
-	bh=a081WB6SxuONkR4u0GsO43F/0PwYW6jnwgGxUEMwCRs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jHBcpXTeulE3ZIF2H9j3ZY2q78XOZRUACbVjL6w2MBOQYKD6doR+zQ3x+Kaq6eV6sEH+/KHHDRP5hp9Fzxs6+IBAaT0Ofg9YAaY6MSevh25DiHCPpvF/okEMBu3C/F2R5WWx/2865ssYGn5dDZ7x52BPjAZEGM8ieDkh4sApRZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b8gt1O+U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GqeDIyvt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747076281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=It3ZkHrF/ybpGgsvf1rdjtabzTDxdApsEcKThmxYw7Q=;
-	b=b8gt1O+Ubizxvw2Y7EAMWPCcwCLx+KT8VQOEQpRB3EvAazfK305nMMrvh5ASb+h7es1++S
-	ZNV//+OoK4drZ2UUr1NXKNHCrdF5funXgqU4kgwBUKGRmbGz6mzzuHOagtRJLcwlXQsyE0
-	kywSlW9ysEuKZCpNx6EClRXlEEetSvz/hTfy+aQVvinXq94scSlvJSumRK8RqT2jtgw3b1
-	ZKJ/QrbWqgaIy4ERPNumhI9rxcC15FYxFqmeq3mBs/JTBEyu0lblB36ssUW/x+c0Mk+I/5
-	Rdsy2yLhc/z0EMtSW87iqU9vR/TD6/By7nkMGu7kQ8Z8+uktQW2BuWevKAuVig==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747076281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=It3ZkHrF/ybpGgsvf1rdjtabzTDxdApsEcKThmxYw7Q=;
-	b=GqeDIyvt8XSPdNBmK6crbulLG7Eo1g4InPC38SDVZr0ZAaDfsB8Rx30LfMcntJlFopChS2
-	RMcD7XFZEA+9wECw==
-To: Anup Patel <apatel@ventanamicro.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, "Rafael J .
- Wysocki" <rafael@kernel.org>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Uwe
- =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Len Brown <lenb@kernel.org>, Sunil V L
- <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>,
- Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra
- <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel
- Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Anup Patel
- <apatel@ventanamicro.com>
-Subject: Re: [PATCH v3 13/23] irqchip: Add driver for the RPMI system MSI
- service group
-In-Reply-To: <20250511133939.801777-14-apatel@ventanamicro.com>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-14-apatel@ventanamicro.com>
-Date: Mon, 12 May 2025 20:58:00 +0200
-Message-ID: <87zffhk66f.ffs@tglx>
+	s=arc-20240116; t=1747076302; c=relaxed/simple;
+	bh=DhqQMJeCz7KcqMO9pFZZ9SLZWQgVIgwsMsQ5GbkfyLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukXD/kkaQYHohT0n36KxMptRkRSxC63iUYeAdbzj0+KJS+iGAu7e67Nw1C1yi8bCfFHPwAh5mzbMCyGmrIQYZxjeas0mQVFHqaOoI/N5nLwfsAiMM7iy8IGTAmcukELMSB9/psho11gvBPPn5EOkVrUTilyt2/V9SUt4f9pfFUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aI81sbtS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB0B7C4CEE7;
+	Mon, 12 May 2025 18:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747076301;
+	bh=DhqQMJeCz7KcqMO9pFZZ9SLZWQgVIgwsMsQ5GbkfyLE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aI81sbtSYxp4ZUFqKIdL8tPZyBnf7zssH2SFPfSa0SIJFYJz67c0ycT734TIISYJe
+	 voB4FpdUmvI5jCKlBayoenOgfCh0jSLg/AQtcefz/t1E4haqPDpLhMyrjiLjBNS4GG
+	 aRepWJ37m/l4ofO8hKelcnK/eCIxAKN7wHLZB5E/Qqzj0qpEQYtOD09jXEQjBgOl88
+	 wLh1a26PSJGASXkDVEqp7SyG6BKdLBL3s43vQcnlMoxklJgpXywBNgz9D7yWtDO+QI
+	 9dvvjAQxE9RG1vETmpuf3+icNC0Gk6LEJ9jnJ3/ouoam8Eh/KDqBdrCOfkFAhTExxX
+	 MiuHB4kIAWDCQ==
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f2c45ecaffso51182266d6.2;
+        Mon, 12 May 2025 11:58:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBKIhGX1yRAfu22fZbezZKUHwcGk8sTjaUp4ddS2cixJ1nyVqZvrkgrp/twEUjyII2RoDhbUSvTWmkJVsGzVxP@vger.kernel.org, AJvYcCUzwWfh96GGUe5Pnqcf8QtUf2aEp+DdMDWa9/pChQjAv9gyb8Ce0hIIviy4fpnddcoEReDeLVw7v0eyUZ2H@vger.kernel.org, AJvYcCV8ZHASOxLqmCqAbHP4Zk8wIuID+OpB7XPuNG9tGv9EaxexQ3hwXympBbAwhisTF+KdkCk=@vger.kernel.org, AJvYcCXK5xq8IOUjIOxgkwBsM8W137v7eBbR4G6jN2QnEwfiUh7TZ2TvdP8EJUU6xchKt+PH58RGF1VWpB/ZIVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKY9/ZLM1hGneUGBoM2iAYXlPigGT2HHggPZOHMiljDnjGfyHi
+	yx4VQnnxVj0qHqybxHXNmdOw8SSNZhzPGb5NLT1m1Bm38VZJC/cBk6GsC0wTJ7ISdu+YOWVMkWL
+	Ju16L73dvLddsh7m6c1zvuamL46E=
+X-Google-Smtp-Source: AGHT+IFyd6yL6raX/sTg46CKX63s6TNC5S7yKKUcNYsUtZqJrEQZJsF0fn7Rhu83nX52qQ9gtfsjefq2LxgweTQn6ss=
+X-Received: by 2002:a05:6214:f6d:b0:6e8:fee2:aae6 with SMTP id
+ 6a1803df08f44-6f6e48151b9mr222853596d6.41.1747076300958; Mon, 12 May 2025
+ 11:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250512174036.266796-1-tjmercier@google.com> <20250512174036.266796-5-tjmercier@google.com>
+In-Reply-To: <20250512174036.266796-5-tjmercier@google.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 12 May 2025 11:58:09 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6TUogokra2mJQG6jeuZ1_RZPwr4xGbBOUJZBUg9AqW3g@mail.gmail.com>
+X-Gm-Features: AX0GCFvByoV9AZSi2Y8neroJoSZ_eSUedTGCmZtmiP0XEcoch5fMWNH94wsBues
+Message-ID: <CAPhsuW6TUogokra2mJQG6jeuZ1_RZPwr4xGbBOUJZBUg9AqW3g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 4/5] selftests/bpf: Add test for dmabuf_iter
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: sumit.semwal@linaro.org, christian.koenig@amd.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	skhan@linuxfoundation.org, alexei.starovoitov@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, android-mm@google.com, 
+	simona@ffwll.ch, eddyz87@gmail.com, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 11 2025 at 19:09, Anup Patel wrote:
-> +static int rpmi_sysmsi_probe(struct platform_device *pdev)
+On Mon, May 12, 2025 at 10:41=E2=80=AFAM T.J. Mercier <tjmercier@google.com=
+> wrote:
+[...]
+> +
+> +static int udmabuf;
+
+static int udmabuf =3D -1;
+
+> +static const char udmabuf_test_buffer_name[DMA_BUF_NAME_LEN] =3D "udmabu=
+f_test_buffer_for_iter";
+> +static size_t udmabuf_test_buffer_size;
+> +static int sysheap_dmabuf;
+
+static int sysheap_dmabuf =3D -1;
+
+> +static const char sysheap_test_buffer_name[DMA_BUF_NAME_LEN] =3D "syshea=
+p_test_buffer_for_iter";
+> +static size_t sysheap_test_buffer_size;
+> +
+> +static int create_udmabuf(void)
 > +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rpmi_sysmsi_priv *priv;
-> +	int rc;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +	priv->dev = dev;
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	/* Setup mailbox client */
-> +	priv->client.dev		= priv->dev;
-> +	priv->client.rx_callback	= NULL;
-> +	priv->client.tx_block		= false;
-> +	priv->client.knows_txdone	= true;
-> +	priv->client.tx_tout		= 0;
-> +
-> +	/* Request mailbox channel */
-> +	priv->chan = mbox_request_channel(&priv->client, 0);
-> +	if (IS_ERR(priv->chan))
-> +		return PTR_ERR(priv->chan);
-> +
-> +	/* Get number of system MSIs */
-> +	rc = rpmi_sysmsi_get_num_msi(priv);
-> +	if (rc < 1) {
-> +		mbox_free_channel(priv->chan);
-> +		return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
-> +	}
-> +	priv->nr_irqs = rc;
-> +
-> +	/* Set the device MSI domain if not available */
-> +	if (!dev_get_msi_domain(dev)) {
-> +		/*
-> +		 * The device MSI domain for OF devices is only set at the
-> +		 * time of populating/creating OF device. If the device MSI
-> +		 * domain is discovered later after the OF device is created
-> +		 * then we need to set it explicitly before using any platform
-> +		 * MSI functions.
-> +		 */
-> +		if (is_of_node(dev_fwnode(dev)))
-> +			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
-> +
-> +		if (!dev_get_msi_domain(dev))
-> +			return -EPROBE_DEFER;
+> +       struct udmabuf_create create;
 
-This leaks the channel.
+nit: zero initialize create to be future proof.
 
-> +	}
+> +       int dev_udmabuf, memfd, local_udmabuf;
 > +
-> +	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-> +					  &rpmi_sysmsi_template,
-> +					  priv->nr_irqs, priv, priv))
-> +		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
+> +       udmabuf_test_buffer_size =3D 10 * getpagesize();
 
-Ditto.
+[...]
+
+> +static void subtest_dmabuf_iter_check_default_iter(struct dmabuf_iter *s=
+kel)
+> +{
+> +       bool found_test_sysheap_dmabuf =3D false;
+> +       bool found_test_udmabuf =3D false;
+> +       struct DmabufInfo bufinfo;
+> +       size_t linesize =3D 0;
+> +       char *line =3D NULL;
+> +       FILE *iter_file;
+> +       int iter_fd, f =3D INODE;
+> +
+> +       iter_fd =3D bpf_iter_create(bpf_link__fd(skel->links.dmabuf_colle=
+ctor));
+> +       ASSERT_OK_FD(iter_fd, "iter_create");
+
+Should we check ASSERT_OK_FD() and exit early on
+failures?
+
+> +
+> +       iter_file =3D fdopen(iter_fd, "r");
+> +       ASSERT_OK_PTR(iter_file, "fdopen");
+
+Same here.
+[...]
+> +/*
+> + * Fields output by this iterator are delimited by newlines. Convert any
+> + * newlines in user-provided printed strings to spaces.
+> + */
+> +static void sanitize_string(char *src, size_t size)
+> +{
+> +       for (char *c =3D src; c && (size_t)(c - src) < size; ++c)
+
+Should this be:
+
+  for (char *c =3D src; *c && (size_t)(c - src) < size; ++c)
+
+?
 
 Thanks,
+Song
 
-        tglx
+[...]
 
