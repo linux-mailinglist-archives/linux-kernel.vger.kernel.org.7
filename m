@@ -1,57 +1,107 @@
-Return-Path: <linux-kernel+bounces-644605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B341AB3F16
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309FFAB3F45
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B098A19E4E8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EDF719E6238
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418C029345A;
-	Mon, 12 May 2025 17:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0762566DD;
+	Mon, 12 May 2025 17:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hnU0z3mv"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lqR3eJW8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="og9SZLqU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u5AxjwAT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yiEimHsd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CE078F52
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802A9248F71
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747071060; cv=none; b=QMmwIhLFxprq6ZkR0Pbz0Aj0tItPKXh1c16oUkfQU51hBr9Whd0OvHi6U4mkr2+SRIEWFeW9SCL9coDYy2lZVlJ25AQEKHowABoaWta2Umjl8LjO++ZpcTDwjq1yF3d9IXyZgcj2EXhR0pAy4JgbA+dCSyy+SHv+a1UDkCqEfZ4=
+	t=1747071219; cv=none; b=eHK7TmAFnxGfnaLiCmOW+faY6ABRShnxJlbR8ne8p5Dy16jSe+P7bRTiggi4tV0cXWZXzz+GG4k9e2AWJzfg7V4S3q935QS3jieKw1KtR1W60T8eBHCqfu1jY5aSrJ8RUip7aI+gqf3HoOjVUP4D1XcHD2OZelv0wznRLx6Qd78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747071060; c=relaxed/simple;
-	bh=E9ESfUj2WpfAG3ZXR2IjD+sEGB/Jc66yklwYO9G2ZtM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QvEaUAIZqgH26cPombHC6fnlmnuaa5KSYfyj/MiRo2izMYznjXUhnoflQ2N0vJmyMZbkh6lWMirTkzgDeMLYAHpoilG8wSrYnWHcB++YBZrcTmwn5JUrIB5K+Ouahon3mAaOdFDEIWLMvD3Ewk5eRr10czAV+buxZXLYKkXkOio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hnU0z3mv; arc=none smtp.client-ip=109.224.244.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1747071049; x=1747330249;
-	bh=jZB1nicxWGlckxXy4g4z7NQCQ6SF2nkWYs9QJ8KThJg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=hnU0z3mv0v1aQKbYN4eYUoAu1Cn2A0EOwpQz2VOqoUbf7FMZffgduPBswVNAg2bO1
-	 AlIX8FUJlImsDUZIvAWZlveHZjnDkSsRD6JSolNg/sLCe/gEzRYTE4aKshjC9vQzjB
-	 /PKN5KM3sGFubVCVwYZEgXGM+9Y+zRRCz3hQaHuFJ/iqJKGEY0/8YldpLiJ/FHP5bP
-	 RoGHqM0F2D3qPPTcr/VYORXpO3tXWoeYQzRmg9A7mLEwMuGCJUGtzc0XaMQ2GXwzLg
-	 YRoGkltyvzu0+7qC1aCQ3SXdKVIpfWB1VTMuJ3hvygC7pDdXQdNXkDDATPvyammK4I
-	 p4iYIQXl8KVFQ==
-Date: Mon, 12 May 2025 17:30:45 +0000
-To: Vignesh Raman <vignesh.raman@collabora.com>
-From: dmkhn@proton.me
-Cc: Ingo Molnar <mingo@kernel.org>, dmukhin@ford.com, mingo@redhat.com, andriy.shevchenko@linux.intel.com, x86@kernel.org, daniels <daniels@collabora.com>, Daniel Stone <daniel@fooishbar.org>, robdclark <robdclark@gmail.com>, lumag@kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: x86: Boot failure on select chromebooks with v6.15-rc5
-Message-ID: <aCIwQHABCPufAQWr@kraken>
-In-Reply-To: <45450eeb-1866-4bf6-a83b-1f28e26f311c@collabora.com>
-References: <a8638f85-1cc2-4f51-97ba-7106a4662885@collabora.com> <aB2bStp8efMHPjet@gmail.com> <d966d626-458b-4a29-abe1-b645317e15d2@collabora.com> <aB2itc2-5h3LEJi6@gmail.com> <45450eeb-1866-4bf6-a83b-1f28e26f311c@collabora.com>
-Feedback-ID: 123220910:user:proton
-X-Pm-Message-ID: a49518909be0c153ec45816968a30cf2458eeb5e
+	s=arc-20240116; t=1747071219; c=relaxed/simple;
+	bh=r//yglxmzlx6+RQNu8+pmUsJoTPf7DXFCrVR2yUdi0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfhdZxe7oQRYMIMNQQwnbOg2uE0hD2lIR3R1ArCM0oJUyA2Wu2z7vWQ/g6TJ1henJKR252vbO9/+Pj+G99X7LW6a+gQJg3ftWh//9scb5Llk+hgUtHVl+Pde+mPPRhDjvM+FCTPGBePJkWXwA/y/UU65O6OM2wiME3QmsoJ0KnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lqR3eJW8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=og9SZLqU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u5AxjwAT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yiEimHsd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 357732117F;
+	Mon, 12 May 2025 17:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747071208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RYl1jrwNDXmOPi5p2P9O/OvhauybKN2oOHVU51RJia4=;
+	b=lqR3eJW8+Sz18ENRLFGuCUz3MnH/ywkD9A+j48tRk0fYhsOC3vEbw/99Fx43aptZwEEOBL
+	tLTGbwOpwIbMSxHpq7QL6pHyyMl8W1jbbNEA+CuK0L2KW+Fld/cIZmFIKRrniHUwTy/jz4
+	eamRpprwIcoMA2MtCHqrRi8t8YYJ54I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747071208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RYl1jrwNDXmOPi5p2P9O/OvhauybKN2oOHVU51RJia4=;
+	b=og9SZLqU1OzAjWYjmSlB9H1e+Dru08rPCMsATtPsj0TqQp4L8+/i2s4re784l1ZSJdCAjJ
+	QragGl501sN4UvBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=u5AxjwAT;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=yiEimHsd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747071207; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RYl1jrwNDXmOPi5p2P9O/OvhauybKN2oOHVU51RJia4=;
+	b=u5AxjwATbqtv5NSBEYYpbkFYuZS1ok1t+q0cZJrF+Xipcm1QuvE5LgQ+lMO7EpgoYgtny7
+	qC4dgpR4TS3T8+HxgL/aynHN/TYN2pcaJnglDK5n7mSwMaUXvEVvhprKYqQI8wOFvlTNFE
+	qxaRW4NRe2eGUnxHWD7zloPmbA5NcR4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747071207;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RYl1jrwNDXmOPi5p2P9O/OvhauybKN2oOHVU51RJia4=;
+	b=yiEimHsdmAyNzGnWBuy6+bPfJxHzAsUqoh+lM2p40WNDhx+tt+Qv33nkZA8fwLosaZmDVz
+	WVcOHK95rpobUKBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28EC1137D2;
+	Mon, 12 May 2025 17:33:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RUbzCecwImiwdQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 12 May 2025 17:33:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 84AE8A07C1; Mon, 12 May 2025 19:33:13 +0200 (CEST)
+Date: Mon, 12 May 2025 19:33:13 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Max Kellermann <max.kellermann@ionos.com>, jack@suse.cz, 
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: make several inode lock operations killable
+Message-ID: <hzrj5b7x3rvtxt4qgjxdihhi5vjoc5gw3i35pbyopa7ccucizo@q5c42kjlkly3>
+References: <20250429094644.3501450-1-max.kellermann@ionos.com>
+ <20250429094644.3501450-2-max.kellermann@ionos.com>
+ <20250429-anpassen-exkremente-98686d53a021@brauner>
+ <CAKPOu+8H11mcMEn5gQYcJs5BhTt8J8Cypz73Vdp_tTHZRXgOKg@mail.gmail.com>
+ <20250512-unrat-kapital-2122d3777c5d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,109 +109,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250512-unrat-kapital-2122d3777c5d@brauner>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 357732117F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-Hi,=20
+On Mon 12-05-25 11:52:14, Christian Brauner wrote:
+> On Tue, Apr 29, 2025 at 01:28:49PM +0200, Max Kellermann wrote:
+> > On Tue, Apr 29, 2025 at 1:12 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > > --- a/fs/read_write.c
+> > > > +++ b/fs/read_write.c
+> > > > @@ -332,7 +332,9 @@ loff_t default_llseek(struct file *file, loff_t offset, int whence)
+> > > >       struct inode *inode = file_inode(file);
+> > > >       loff_t retval;
+> > > >
+> > > > -     inode_lock(inode);
+> > > > +     retval = inode_lock_killable(inode);
+> > >
+> > > That change doesn't seem so obviously fine to me.
+> > 
+> > Why do you think so? And how is this different than the other two.
+> 
+> chown_common() and chmod_common() are very close to the syscall boundary
+> so it's very unlikely that we run into weird issues apart from userspace
+> regression when they suddenly fail a change for new unexpected reasons.
+> 
+> But just look at default_llseek():
+> 
+>     > git grep default_llseek | wc -l
+>     461
+> 
+> That is a lot of stuff and it's not immediately clear how deeply or
+> nested they are called. For example from overlayfs in stacked
+> callchains. Who knows what strange assumptions some of the callers have
+> including the possible return values from that helper.
+> 
+> > 
+> > > Either way I'd like to see this split in three patches and some
+> > > reasoning why it's safe and some justification why it's wanted...
+> > 
+> > Sure I can split this patch, but before I spend the time, I'd like us
+> > first to agree that the patch is useful.
+> 
+> This is difficult to answer. Yes, on the face of it it seems useful to
+> be able to kill various operations that sleep on inode lock but who
+> knows what implicit guarantees/expectations we're going to break if we
+> do it. Maybe @Jan has some thoughts here as well.
 
-On Fri, May 09, 2025 at 01:07:54PM +0530, Vignesh Raman wrote:
-> Hi Ingo,
->=20
-> On 09/05/25 12:07, Ingo Molnar wrote:
-> >=20
-> > * Vignesh Raman <vignesh.raman@collabora.com> wrote:
-> >=20
-> > > > What boot cmdline does your kernel have? The MMIO-UART patches shou=
-ld
-> > > > only have an effect if the feature is specifically enabled via a bo=
-ot
-> > > > option:
-> > > >=20
-> > > > +               if (!strncmp(buf, "mmio32", 6)) {
-> > > > +=09=09=09buf +=3D 6;
-> > > > +                       early_mmio_serial_init(buf);
-> > > > +                       early_console_register(&early_serial_consol=
-e, keep);
-> > > > +                       buf +=3D 4;
-> > > > +               }
-> > > >=20
-> > >=20
-> > > amdgpu:stoney:
-> > > earlyprintk=3Duart8250,mmio32,0xfedc6000,115200n8  console=3DttyS0,11=
-5200n8
-> > > root=3D/dev/nfs rw nfsroot=3D192.168.201.1:/var/lib/lava/dispatcher/t=
-mp/18598802/extract-nfsrootfs-wgn1xjer,tcp,hard,v3
-> > > init=3D/init rootwait usbcore.quirks=3D0bda:8153:k ip=3Ddhcp
-> > > tftpserverip=3D192.168.201.1
-> > >=20
-> > > i915:amly:
-> > > earlyprintk=3Duart8250,mmio32,0xde000000,115200n8  console=3DttyS0,11=
-5200n8
-> > > root=3D/dev/nfs rw nfsroot=3D192.168.201.1:/var/lib/lava/dispatcher/t=
-mp/18598804/extract-nfsrootfs-5rlm_b6z,tcp,hard,v3
-> > > init=3D/init rootwait usbcore.quirks=3D0bda:8153:k ip=3Ddhcp
-> > > tftpserverip=3D192.168.201.1
-> > >=20
-> > > i915:whl:
-> > > earlyprintk=3Duart8250,mmio32,0xde000000,115200n8  console=3DttyS0,11=
-5200n8
-> > > root=3D/dev/nfs rw nfsroot=3D192.168.201.1:/var/lib/lava/dispatcher/t=
-mp/18598833/extract-nfsrootfs-3w0w5_mi,tcp,hard,v3
-> > > init=3D/init rootwait usbcore.quirks=3D0bda:8153:k ip=3Ddhcp
-> > > tftpserverip=3D192.168.201.1
-> >=20
-> > Well, if you remove the earlyprintk option then it will boot fine,
-> > right?
->=20
-> Yes, it works when mmio32 option is removed.
->=20
-> https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/76005338
->=20
-> earlyprintk=3Duart8250,0xde000000,115200n8  console=3DttyS0,115200n8
-> root=3D/dev/nfs rw nfsroot=3D192.168.201.1:/var/lib/lava/dispatcher/tmp/1=
-8599938/extract-nfsrootfs-neuejjq0,tcp,hard,v3
-> init=3D/init rootwait usbcore.quirks=3D0bda:8153:k ip=3Ddhcp
-> tftpserverip=3D192.168.201.1
+So I think having lock killable is useful and generally this should be safe
+wrt userspace (the process will get killed before it can notice the
+difference anyway). The concern about guarantees / expectations is still
+valid for the *kernel* code (which is I think what you meant above). So I
+guess some audit of kernel paths that can end up calling ->llseek handler
+and whether they are OK with the handler returning EINTR is needed. I
+expect this will be fine but I would not bet too much on it :)
 
-For the above example, can you please try something like
-
-  earlyprintk=3Dmmio32,0xde000000,nocfg
-
-?
-
-In my case, configuring exact baud rate did not work. I started to dig that=
-,
-but did not finish, because `nocfg` worked (firmware happened to configure =
-the
-UART correctly). Using `nocfg` was sufficient for the system bringup debugg=
-ing.
-
->=20
-> >=20
-> > The earlyprintk=3Dmmio32 in v6.15 is a new debugging feature that was
-> > tested on a single board by Denis Mukhin AFAIK, and it may or may not
-> > work on your particular UART - even assuming that all the parameters
-> > are correct.
-
-Correct, I have tested with one board only and with limited UART configurat=
-ion
-combinations.
-
->=20
-> So the earlyprintk=3Dmmio32 debugging feature is needed only for v6.15 an=
-d is
-> not necessary in previous kernels (e.g., v6.14 and earlier). Is my
-> understanding correct?
->=20
-> Regards,
-> Vignesh
->=20
-> >=20
-> > Thanks,
-> >=20
-> > =09Ingo
->=20
-
-Thanks,
-Denis
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
