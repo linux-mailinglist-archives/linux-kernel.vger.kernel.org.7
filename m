@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-643762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7DAAB3186
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:24:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEFAAB3184
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978FA189BAB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792793BC9DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67311258CE4;
-	Mon, 12 May 2025 08:24:11 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC5C258CDE;
-	Mon, 12 May 2025 08:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3028D258CE6;
+	Mon, 12 May 2025 08:24:04 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A15B257AD8;
+	Mon, 12 May 2025 08:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747038251; cv=none; b=ePodEbCTH65rCCx5ksdwL7FsEQGDlWLNuD9VmP4gtvDQ+lDXXnvJF4Lba6nHgZqEM5RH02i4cMQWwl5peiRqWYHGovykqu9IxR4cvXh9dTkgdXAxo464SGR6hAgpilw8CSmFEqvvUWwzPBRWYTulCL/ABchVsSe0CSGmcx4KgYY=
+	t=1747038243; cv=none; b=mhZpxmb+SDunuzHDm6jiaYAHHsoVyE/9YR1gZrPkaGOymDxz/gXTxxoPNiCTgkC5PDHo8fCRuPpKtR+IcVYpqLp0xzuOnIqEnr/qEsRZZ+eEvaqIfLMK+w+/cEqKfDH9BcKkC7i0nlcW8V057FdXVvQtvfaWbW1vY28fKWFK0Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747038251; c=relaxed/simple;
-	bh=MS0NFFRw924pnwMwbLeUEDTmXVxiKYxOyHWYyTxzUBw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iuhlh303/PiIpjUFMsYVZxwvj0qQttbMSzwoIN9OQIrrWBd5hZYTXpfiYCKbTBEKDLcFJ8+pu/LyXcyJsCQzBhB9ATnM8b7pbF4Uh2fjSSAaQphIx+nP7IbC1FgadQd1XOfW9KEIEoyEyXvqPb/sVHGNU5Z+jBzBMZ4v3JXzm70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-0f-6821b0269d8f
-From: Rakie Kim <rakie.kim@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: Rakie Kim <rakie.kim@sk.com>,
-	joshua.hahnjy@gmail.com,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Keith Busch <kbusch@kernel.org>,
-	Jerome Glisse <jglisse@google.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in weighted interleave
-Date: Mon, 12 May 2025 17:23:55 +0900
-Message-ID: <20250512082402.285-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <aB4tgSP2r-2s-1ce@gourry-fedora-PF4VCD3F>
-References: 
+	s=arc-20240116; t=1747038243; c=relaxed/simple;
+	bh=PGSpOJuLwDKFHcB99ZBz3OtHAgOA9XGAMJZz+sOTY48=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=G2qeho2Ka2bfDdjXF6HWheSvAlOSQ/V8pKe7x1sbnODRs8zhNWF/JxwJPa54duxu2zPYJq0HF8xDUlHV/7OSh+KBsQaHVy/WayjDXgkL/WqkW2i3585y4fA3c3XEOwrMaLtyDj0iyQdPT1CBbFtIKmY4lw1kimX5RKxBgNI8ybw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zwt0p44rXz4f3jYl;
+	Mon, 12 May 2025 16:23:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0F9B81A0359;
+	Mon, 12 May 2025 16:23:58 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBHq18csCFoXjOzMA--.56018S3;
+	Mon, 12 May 2025 16:23:57 +0800 (CST)
+Subject: Re: [PATCH RFC md-6.16 v3 15/19] md/md-llbitmap: implement APIs to
+ dirty bits and clear bits
+To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: xni@redhat.com, colyli@kernel.org, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250512011927.2809400-1-yukuai1@huaweicloud.com>
+ <20250512011927.2809400-16-yukuai1@huaweicloud.com>
+ <20250512051722.GA1667@lst.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <0de7efeb-6d4a-2fa5-ed14-e2c0bec0257b@huaweicloud.com>
+Date: Mon, 12 May 2025 16:23:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250512051722.GA1667@lst.de>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsXC9ZZnka7aBsUMg7sftCzmrF/DZjF96gVG
-	i593j7Nb/Dy8g8Vi1cJrbBbHt85jt5h06BqjxflZp1gsLu+aw2Zxb81/VovVazIcuD12zrrL
-	7rFgU6lHd9tldo+WI29ZPRbvecnksWlVJ5vHpk+T2D1OzPjN4rHzoaXH501yAVxRXDYpqTmZ
-	ZalF+nYJXBmn529lLOjirri09x1zA+N7ji5GTg4JAROJX7e+MMHYk1p/AdkcHGwCShLH9saA
-	mCICqhJtV9y7GLk4mAVWMUu8P7sbrFxYIEHi1LxLzCA2C1DNufPXweK8AsYSb1c3MkKM1JRo
-	uHQPLM4pYCbx9uVxsHohAR6JVxv2M0LUC0qcnPmEBcRmFpCXaN46mxlkmYTAZzaJjd3voW6T
-	lDi44gbLBEb+WUh6ZiHpWcDItIpRKDOvLDcxM8dEL6MyL7NCLzk/dxMjMAKW1f6J3sH46ULw
-	IUYBDkYlHt6EtQoZQqyJZcWVuYcYJTiYlUR4pzLIZwjxpiRWVqUW5ccXleakFh9ilOZgURLn
-	NfpWniIkkJ5YkpqdmlqQWgSTZeLglGpgXDBvadt39nXpvRNPzL3y1+bNsvh/+99V79s1df7f
-	6aveskUssVuYPatgm4+mVuWqE7U5F52ND3+7dvkB79oc27S8PzGOL9+8Dqyb9MCQc8d1o/nm
-	OnfNzx9h/ed1T0ztgMBvoyk8//lZ914+y97PM08m8nnY/mtZd7MCeed2NNfG/nm6Y+WVP55K
-	LMUZiYZazEXFiQBOGpsFfAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsXCNUNNS1dtg2KGwcIvMhZz1q9hs5g+9QKj
-	xc+7x9ktPj97zWzx8/AOFotVC6+xWRzfOo/dYtKha4wWh+eeZLU4P+sUi8XlXXPYLO6t+c9q
-	cejac1aL1WsyLH5vW8HmwO+xc9Zddo8Fm0o9utsus3u0HHnL6rF4z0smj02rOtk8Nn2axO5x
-	YsZvFo+dDy09vt328Fj84gOTx+dNcgE8UVw2Kak5mWWpRfp2CVwZp+dvZSzo4q64tPcdcwPj
-	e44uRk4OCQETiUmtv5i6GDk42ASUJI7tjQExRQRUJdquuHcxcnEwC6xilnh/djcTSLmwQILE
-	qXmXmEFsFqCac+evg8V5BYwl3q5uZIQYqSnRcOkeWJxTwEzi7cvjYPVCAjwSrzbsZ4SoF5Q4
-	OfMJC4jNLCAv0bx1NvMERp5ZSFKzkKQWMDKtYhTJzCvLTczMMdUrzs6ozMus0EvOz93ECAz6
-	ZbV/Ju5g/HLZ/RCjAAejEg+vhL9ihhBrYllxZe4hRgkOZiUR3qkM8hlCvCmJlVWpRfnxRaU5
-	qcWHGKU5WJTEeb3CUxOEBNITS1KzU1MLUotgskwcnFINjBv+z2WclX4oaIJW5bYgXqdo81AJ
-	WbNWjS7NwBda3841n1n7TEKk89p3Jeedp29s7qyxE8iMUfgu8XnGHq/aICX7HzPXxW33ujx1
-	2pSDL6ZJpXDMrtSUFzCpuWV36fXVNvXmAu5ekS9uuxctyo/8zOH/itn61jVdyR9/yyOLWljd
-	UzT+u06dr8RSnJFoqMVcVJwIAKkpSYN2AgAA
-X-CFilter-Loop: Reflected
+X-CM-TRANSID:gCh0CgBHq18csCFoXjOzMA--.56018S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrW3Ar1kGF47urWkJrW3GFg_yoWDKFX_Xa
+	s0yrnrC34UJrs0qw1UW3WDZrZ7Cw4rJ3Z5Xay3WFykJ3sxWayDAFsY93yktry3t34xAw13
+	Kr97ta48XFWagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j
+	6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
+	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I
+	0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbHa0JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, 9 May 2025 12:29:53 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Fri, May 09, 2025 at 12:31:31PM +0100, Jonathan Cameron wrote:
-> > Anyhow, short term I'd like us to revisit what info we present from HMAT
-> > (and what we get from CXL topology descriptions which have pretty much everything we
-> > might want).
-> > 
+Hi,
+
+ÔÚ 2025/05/12 13:17, Christoph Hellwig Ð´µÀ:
+> On Mon, May 12, 2025 at 09:19:23AM +0800, Yu Kuai wrote:
+>> +static void llbitmap_unplug(struct mddev *mddev, bool sync)
+>> +{
+>> +	DECLARE_COMPLETION_ONSTACK(done);
+>> +	struct llbitmap *llbitmap = mddev->bitmap;
+>> +	struct llbitmap_unplug_work unplug_work = {
+>> +		.llbitmap = llbitmap,
+>> +		.done = &done,
+>> +	};
+>> +
+>> +	if (!llbitmap_dirty(llbitmap))
+>> +		return;
+>> +
+>> +	INIT_WORK_ONSTACK(&unplug_work.work, llbitmap_unplug_fn);
+>> +	queue_work(md_llbitmap_unplug_wq, &unplug_work.work);
+>> +	wait_for_completion(&done);
+>> +	destroy_work_on_stack(&unplug_work.work);
 > 
-> Generally I think if there is new data to enrich the environment, we
-> should try to collect that first before laying down requirements for new
-> interfaces / policies.  So tl;dr: "This first, please!"
+> Why is this deferring the work to a workqueue, but then synchronously
+> waits on it?
+
+This is the same as old bitmap, by the fact that issue new IO and wait
+for such IO to be done from submit_bio() context will deadlock.
+
+1) bitmap bio must be done before this bio can be issued;
+2) bitmap bio will be added to current->bio_list, and wait for this bio
+to be issued;
+
+Do you have a better sulution to this problem?
+
+Thanks,
+Kuai
+
 > 
-> (I know we discussed this at LSFMM, dropped out of my memory banks)
+> .
 > 
-> ~Gregory
-> 
-
-Thank you for your response and for providing clear direction.
-
-I fully agree with your suggestion that we should first focus on gathering
-and exposing the relevant data before moving forward with new policies or
-interfaces.
-
-In practice, I believe many of the proposed enhancements can only function
-meaningfully if we have a solid understanding of the memory topology and
-interconnect structure?and if that information is reliably accessible in
-userspace.
-
-Without such data, there is a risk that even well-intentioned policies may
-end up diverging from real hardware behavior, or possibly degrading system
-performance.
-
-Thank you again for pointing us in the right direction. I'll continue to
-revisit my ideas along this path.
-
-Best regards,
-Rakie
 
 
