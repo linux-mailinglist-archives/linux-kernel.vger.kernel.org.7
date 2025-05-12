@@ -1,91 +1,67 @@
-Return-Path: <linux-kernel+bounces-644412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B1DAB3BE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:22:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE46AB3BEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034AC3BA73A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC59E16AD1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41352356C3;
-	Mon, 12 May 2025 15:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF90823A9BD;
+	Mon, 12 May 2025 15:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QKj1ZDbk"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iY74upwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D18B66E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110551DE8A6;
+	Mon, 12 May 2025 15:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747063329; cv=none; b=IO3c7PtA7IU5kRSE/Jr9aNAmx7m5x/UhVIRKfzpDMdEetuYmhdijse2wDzjh8sQTOwmM1his1V/f08oTEuZzJCJsC0nPOJhMCKWoQPVbTXmCF5rW26a50FC3nnNeg3h9qTQVb/mRLH0wCFABGr+j1qw813YBP1OKRcRhRklnvrY=
+	t=1747063390; cv=none; b=IwyJusQq6DSd/FDkX7g7uXsKmQtK/czBnDlqdwye9Hh6SgwydwFuYq7u55bNi7YR+2MZBX/402uujl/FTd3hLbYs4NRxxnbEDuSjVYAHKonAbrZpjiUpnU7UZM+t3xQwuTYQv6OgbyzKmWF8nBggLBIaNqJcXsCKM/c5EE42IIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747063329; c=relaxed/simple;
-	bh=wbEqmMEMqD1AvJL1qNtfeANnAbYoQcEnNNLmmCf2oyw=;
+	s=arc-20240116; t=1747063390; c=relaxed/simple;
+	bh=bTluUh+XxqovVbRY+Sbpmqom/EmKfFvjwLJ8AnpA5YA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIFXL0Fv2agN2NtegarAunKLhuGERIaPj6PAuD6dNf4eboDvca5HoF+XiCmPXk95uiLEWKB3gfGuNj2l2UBvwuvSC3YzQSzXRttPoOJlMYjColq+hEk4kxizZCJUytRrIU1qj8WwvHhRz8od+aGSAVnw0/al7DP2I1YmBEdybx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QKj1ZDbk; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad2452e877aso275481566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 08:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747063325; x=1747668125; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pwCgsB48IJa6Iqqt1Nvy5n+N4R6t7txPXIwtholDS0A=;
-        b=QKj1ZDbkhvw4J58xEWiJrVC8UMz4z7Gdt/d9KPD+31TptHhIVNODAp7tOM4MaoPSx2
-         /3iNrRgZ9LXxIJh4tVO1qldoPVkgYorqQQmaERVU52nI9/ZS1LIzcB4bIXxNvbXGklJ6
-         tLA/6tW+4bn3gb3rZW01O4CPwvZw+g71ehw9OYyojYm/9MDj8rxO9XCYNZidFUdDGKGL
-         jVWCnmpySgD0/ifR1fPZDRmEAsM5ia30iLDWTUsKiLstB4Z8r2R43b1356VrD0Tk7wFe
-         bA+LIIuHk5bT4Zz1wVWHsnnvL4fC4Xo3vR18G2XED+mdpTWOG/EiRANocYGRr6+xdrMz
-         BhCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747063325; x=1747668125;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pwCgsB48IJa6Iqqt1Nvy5n+N4R6t7txPXIwtholDS0A=;
-        b=O4tTnbFbsIWgmJjWLTiWOvhoSzhQjQC26wI3GDTIWUs832SuOi7DCWKbveMiE7v90Z
-         QXX9FTVSLblEyHBiKiVBwo8gxsSsx5Zmxfl57Tp6kC9AdEMPEOn1ygAzXq/NDx+JpYDk
-         CmH+PSoWRMwbQKNveN80L8eNaB44m04w8AS+Ja7NaJu/IPo55D1CUNXmENOMGGOC90y8
-         gbA7sxuz2GcVXnccOs9HfdKGHXqiLRkI4IQXIhWCG1AKUSb4Fftz/i22+CT7kubXZKhi
-         gFKyjkmYWSdT/jksQZ1TUbxu8qiXnGPnbr76OezitJxZ6OW8/7XLx2OMd4sEvgxlWb1E
-         AGRg==
-X-Gm-Message-State: AOJu0Yypd4kshpVpW95dlkqetIcca2G6liezgdvJ4vtXhFZV6cy1It69
-	Wt3+Or0RRkvXNc94VQWpBPZPrU/q6sHy6ddW51rk59iFdJ8VoyWJJ5Z/HORj+TY=
-X-Gm-Gg: ASbGncvYHjBaHuwgtHgZrhg4NUAT4oyIRZcqw6ZRhJZrawJAGPA3ssnBA7N2MHsotpR
-	eZ1F+eahG1SVXWof6RPqTiewbkNgcHD2oWjaoxBxC2Zdx3LVr6VOZzS37L9FdTSmtsdOno2AV2W
-	b9dWRIZtlD6SaodBtFnyFqPKRBFpty8UZZGTTySFv6j30a72g9keCXakXCWPXU3iqEFy8tyQpo+
-	mF1iT0BuW6cLtMKWZXUB571nrPHLFizT/mPIKD44XlDmJXwPpopAghW3KtX8kDfAyXPsPMRjUg5
-	l5SEcyjtcVhj7ev9Rfdv9BwBk9ZLR/8wHokjAIYrxabpqLwtCAYWIw==
-X-Google-Smtp-Source: AGHT+IH8CjfXyuuePrnoFgkeVZOY1m1OFEWObGuNoM604cU4OzREf5Fg3kwEWLwl+ycH1gdmJA4AKg==
-X-Received: by 2002:a17:907:86a4:b0:aca:d6f2:5d5 with SMTP id a640c23a62f3a-ad21915f68cmr1339483766b.39.1747063325138;
-        Mon, 12 May 2025 08:22:05 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2192c8ac2sm629798466b.27.2025.05.12.08.22.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 08:22:04 -0700 (PDT)
-Date: Mon, 12 May 2025 17:22:02 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>
-Subject: Re: [PATCH v5 20/21] lib: Add trivial kunit test for ratelimit
-Message-ID: <aCISGjo-aYAs8y0u@pathway.suse.cz>
-References: <1bcf7d5e-b89c-4118-b872-c8896bdbdc19@paulmck-laptop>
- <20250508233335.1996059-20-paulmck@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lq7Iby1o5+w2yoBUzMu+PKKA4qsHUcg+YVA9YktlEndH1hdMmHx29r1UAnjUb0A6rwXMb3jGZWubi0N49NTYWT3FWep2I0h4sUyyHQAnHGiiCCHW580HjxTOLWXvVeh1xdT9RxpOQJVF2M6jkxStBxEA+8iSLxHjZKePSJxGYlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iY74upwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397C8C4CEE7;
+	Mon, 12 May 2025 15:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747063389;
+	bh=bTluUh+XxqovVbRY+Sbpmqom/EmKfFvjwLJ8AnpA5YA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iY74upwZEVgnMWkd6DFuihA0PhEb03hzXLjWuL6d6mEXu5y2mDo8EZyjD2jy+9w+Q
+	 2pb1yePe6EczYRs2HXQKPr9ElYKqReLG9dbeDJYfd0y8njYBizl3TOmHtEWya6v6MC
+	 eM5hBveawqia8ow+DPKHr84/PfOvxFgMH/HI/BX/6bsECCREbU7YBgxsdtg1al7fZe
+	 r08yz0Q8gq4i1bnie8vmGLBcbk4f9mzmnUxNk6kt/SPkxwqT0i0oGTRb5qR976Bhsb
+	 iiIb/v7kck8BDKVDdQXc1fmYd4wkAC1SRRAR4y83o5GM58UQtzMwwrDgLL5l79mWIu
+	 LiMVwdvCOqCGA==
+Date: Mon, 12 May 2025 10:23:07 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: diogo.ivo@siemens.com, rogerq@ti.com, conor+dt@kernel.org,
+	richardcochran@gmail.com, devicetree@vger.kernel.org, srk@ti.com,
+	basharath@couthit.com, pabeni@redhat.com, horms@kernel.org,
+	linux-arm-kernel@lists.infradead.org, m-karicheri2@ti.com,
+	rogerq@kernel.org, s-anna@ti.com, tony@atomide.com, kuba@kernel.org,
+	pratheesh@ti.com, jacob.e.keller@intel.com, danishanwar@ti.com,
+	netdev@vger.kernel.org, glaroque@baylibre.com,
+	s.hauer@pengutronix.de, schnelle@linux.ibm.com, krzk+dt@kernel.org,
+	afd@ti.com, rdunlap@infradead.org, edumazet@google.com,
+	pmohan@couthit.com, ssantosh@kernel.org, andrew+netdev@lunn.ch,
+	javier.carrasco.cruz@gmail.com, vigneshr@ti.com,
+	krishna@couthit.com, linux-kernel@vger.kernel.org, nm@ti.com,
+	m-malladi@ti.com, davem@davemloft.net, mohan@couthit.com,
+	prajith@ti.com, praneeth@ti.com
+Subject: Re: [PATCH net-next v7 01/11] dt-bindings: net: ti: Adds DUAL-EMAC
+ mode support on PRU-ICSS2 for AM57xx, AM43xx and AM33xx SOCs
+Message-ID: <174706338693.3372878.17398563182195678411.robh@kernel.org>
+References: <20250503121107.1973888-1-parvathi@couthit.com>
+ <20250503121107.1973888-2-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,121 +70,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250508233335.1996059-20-paulmck@kernel.org>
+In-Reply-To: <20250503121107.1973888-2-parvathi@couthit.com>
 
-On Thu 2025-05-08 16:33:34, Paul E. McKenney wrote:
-> Add a simple single-threaded smoke test for lib/ratelimit.c
+
+On Sat, 03 May 2025 17:40:57 +0530, Parvathi Pudi wrote:
+> Documentation update for the newly added "pruss2_eth" device tree
+> node and its dependencies along with compatibility for PRU-ICSS
+> Industrial Ethernet Peripheral (IEP), PRU-ICSS Enhanced Capture
+> (eCAP) peripheral and using YAML binding document for AM57xx SoCs.
 > 
-> To run on x86:
+> Co-developed-by: Basharath Hussain Khaja <basharath@couthit.com>
+> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+> ---
+>  .../devicetree/bindings/net/ti,icss-iep.yaml  |  10 +-
+>  .../bindings/net/ti,icssm-prueth.yaml         | 233 ++++++++++++++++++
+>  .../bindings/net/ti,pruss-ecap.yaml           |  32 +++
+>  .../devicetree/bindings/soc/ti/ti,pruss.yaml  |   9 +
+>  4 files changed, 281 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,icssm-prueth.yaml
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,pruss-ecap.yaml
 > 
-> 	make ARCH=x86_64 mrproper
-> 	./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add CONFIG_RATELIMIT_KUNIT_TEST=y --kconfig_add CONFIG_SMP=y lib_ratelimit
-> 
-> This will fail on old ___ratelimit(), and subsequent patches provide
-> the fixes that are required.
-> 
-> --- /dev/null
-> +++ b/lib/tests/test_ratelimit.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <kunit/test.h>
-> +
-> +#include <linux/ratelimit.h>
-> +#include <linux/module.h>
-> +
-> +/* a simple boot-time regression test */
-> +
-> +#define TESTRL_INTERVAL (5 * HZ)
-> +static DEFINE_RATELIMIT_STATE(testrl, TESTRL_INTERVAL, 3);
-> +
-> +#define test_ratelimited(test, expected) \
-> +	KUNIT_ASSERT_EQ(test, ___ratelimit(&testrl, "test_ratelimit_smoke"), (expected))
-> +
-> +static void test_ratelimit_smoke(struct kunit *test)
-> +{
-> +	// Check settings.
-> +	KUNIT_ASSERT_GE(test, TESTRL_INTERVAL, 100);
-> +
-> +	// Test normal operation.
-> +	test_ratelimited(test, true);
-> +	test_ratelimited(test, true);
-> +	test_ratelimited(test, true);
-> +	test_ratelimited(test, false);
-> +
-> +	schedule_timeout_idle(TESTRL_INTERVAL - 40);
 
-Heh, I have got a new laptop. The battery in the previous one was
-about to explode. And the test started failing on the next line most
-of the time.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-The following change helped me:
-
-From 005e00ca09b4bd5b4a5f3026f1835e0435ecfbd9 Mon Sep 17 00:00:00 2001
-From: Petr Mladek <pmladek@suse.com>
-Date: Mon, 12 May 2025 16:38:02 +0200
-Subject: [PATCH] lib: Make the ratelimit test more reliable
-
-The selftest fails most of the times when running in qemu with
-a kernel configured with CONFIG_HZ = 250:
-
->  test_ratelimit_smoke: 1 callbacks suppressed
->  # test_ratelimit_smoke: ASSERTION FAILED at lib/tests/test_ratelimit.c:28
->                    Expected ___ratelimit(&testrl, "test_ratelimit_smoke") == (false), but
->                        ___ratelimit(&testrl, "test_ratelimit_smoke") == 1 (0x1)
->                        (false) == 0 (0x0)
-
-Try to make the test slightly more reliable by calling the problematic
-ratelimit in the middle of the interval.
-
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- lib/tests/test_ratelimit.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/lib/tests/test_ratelimit.c b/lib/tests/test_ratelimit.c
-index 0374107f5ea8..5d6ec8854600 100644
---- a/lib/tests/test_ratelimit.c
-+++ b/lib/tests/test_ratelimit.c
-@@ -24,19 +24,19 @@ static void test_ratelimit_smoke(struct kunit *test)
- 	test_ratelimited(test, true);
- 	test_ratelimited(test, false);
- 
--	schedule_timeout_idle(TESTRL_INTERVAL - 40);
-+	schedule_timeout_idle(TESTRL_INTERVAL / 2);
- 	test_ratelimited(test, false);
- 
--	schedule_timeout_idle(50);
-+	schedule_timeout_idle(TESTRL_INTERVAL * 3 / 4);
- 	test_ratelimited(test, true);
- 
- 	schedule_timeout_idle(2 * TESTRL_INTERVAL);
- 	test_ratelimited(test, true);
- 	test_ratelimited(test, true);
- 
--	schedule_timeout_idle(TESTRL_INTERVAL - 40);
-+	schedule_timeout_idle(TESTRL_INTERVAL / 2 );
- 	test_ratelimited(test, true);
--	schedule_timeout_idle(50);
-+	schedule_timeout_idle(TESTRL_INTERVAL * 3 / 4);
- 	test_ratelimited(test, true);
- 	test_ratelimited(test, true);
- 	test_ratelimited(test, true);
--- 
-2.49.0
-
-Feel free to squash it into the original patch which added the test.
-
-> +	test_ratelimited(test, false);
-> +
-> +	schedule_timeout_idle(50);
-> +	test_ratelimited(test, true);
-> +
-> +	schedule_timeout_idle(2 * TESTRL_INTERVAL);
-> +	test_ratelimited(test, true);
-> +	test_ratelimited(test, true);
-> +
-
-Best Regards,
-Petr
 
