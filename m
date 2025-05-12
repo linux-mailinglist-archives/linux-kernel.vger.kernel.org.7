@@ -1,162 +1,113 @@
-Return-Path: <linux-kernel+bounces-644250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5CFAB397D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:41:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102AFAB3981
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80CA178C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:41:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3100E7A741B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA2C2951DB;
-	Mon, 12 May 2025 13:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNK/UfBo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nJwxY6nI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNK/UfBo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nJwxY6nI"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD75295512;
+	Mon, 12 May 2025 13:41:43 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B8C149C4A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229EB294A10;
+	Mon, 12 May 2025 13:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747057272; cv=none; b=GpUNHSRhkzZl/NtOPiSIOxE8IkESlhFbICeFOeE0tyz6jRwIpxQwITjsF/wq3B7DfupFCeL1oFHuk4E9OxOg2MFZgq6r8XEo+PWF1pHXKHR/t1QgvhOCpvFuh4qDDBq3dVGEBEyRXBFTOX66L9s9EO6NHezIqwKtGmGkOVfO1hc=
+	t=1747057302; cv=none; b=TOSSYCRyg9AjdzsUIm17s5aRogIfCreBgZ4dTKZ2sBgtLUnsGYPp8VHDOTIPzFzL5lADfh/TGS8m/BHdjPvT8ObxfcG/pkavLMKDKqe5FFzzYY7AaLqv0hsuzjYikoz23W2fquOtC8MvmxE7reCIzZsteI87AsNXcYCt79R4uGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747057272; c=relaxed/simple;
-	bh=8ktmtIYpT6wwtdT0zYdkBhVaJ3gPszcgYgVw1aS/E5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VPilQAX3tb8kh+obn9DXpbthQTEIlRXELNlisMg1lY4F14yujW6Yj/6vg5nZKJKgc0Cx4YMwLiti2Ln8r/1+Bu5mCjSb65G4SqejnESuDjjDSb7ej53MP/sg7YaiXjqI4xQOMeOVfxa2YnDjMKe4dsVZiI6/bjzFfTuUUPNd5YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNK/UfBo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nJwxY6nI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNK/UfBo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nJwxY6nI; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 96FF521186;
-	Mon, 12 May 2025 13:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747057268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hkc92dB4s/OAzbA2ymL5HCS5Yfyt+Sp+XYay4jTgCDc=;
-	b=lNK/UfBo/xbhPN5pZ7VQCHQ9ClJ/Mqizxut2wWLXH6nVhELd5GnrllnQj/DWNsBmLW9Px3
-	aUL5cIVq9rr6hkmEwzpzmPLG8gIRsYcr7lO9LM4q6DfpgYbFFZZzHoSbqRall4gvMalYFt
-	lD+BeGQG6pOgn9deFHhKC6b+04t4AKI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747057268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hkc92dB4s/OAzbA2ymL5HCS5Yfyt+Sp+XYay4jTgCDc=;
-	b=nJwxY6nIODhzUIMNYfhvKp6oS+hmpJHRZwMuIjAju9LMe1cj/R8mEDM/ihrdLJIzq1qOLo
-	yp/TG0yo5GF/1+Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747057268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hkc92dB4s/OAzbA2ymL5HCS5Yfyt+Sp+XYay4jTgCDc=;
-	b=lNK/UfBo/xbhPN5pZ7VQCHQ9ClJ/Mqizxut2wWLXH6nVhELd5GnrllnQj/DWNsBmLW9Px3
-	aUL5cIVq9rr6hkmEwzpzmPLG8gIRsYcr7lO9LM4q6DfpgYbFFZZzHoSbqRall4gvMalYFt
-	lD+BeGQG6pOgn9deFHhKC6b+04t4AKI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747057268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hkc92dB4s/OAzbA2ymL5HCS5Yfyt+Sp+XYay4jTgCDc=;
-	b=nJwxY6nIODhzUIMNYfhvKp6oS+hmpJHRZwMuIjAju9LMe1cj/R8mEDM/ihrdLJIzq1qOLo
-	yp/TG0yo5GF/1+Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A575137D2;
-	Mon, 12 May 2025 13:41:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5amAHXT6IWgkLQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 12 May 2025 13:41:08 +0000
-Message-ID: <5c5ccea9-3ce4-40c5-94b4-796d4bc1f533@suse.cz>
-Date: Mon, 12 May 2025 15:41:08 +0200
+	s=arc-20240116; t=1747057302; c=relaxed/simple;
+	bh=MRkWQPYb0VD2RHdEFzP8GefKj7cVuZINANlg7F9SD9s=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=tXj2FiPpbf9ZK9ksVhcjmkoXYtpV5x2JPN4fDK7k0M1Q4Bo8lenwYTj24WBNdHn8wioIdoegld/f+KbbBZdbz/H4peQYj9yii98RDIllQVAgzHWKPRUlAl8nS4fdiTDwP5w1jeTM4o+6PzH1kj80cKOugJEYf7/GzjOPmqJLe74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zx13C586Dz4f3lCf;
+	Mon, 12 May 2025 21:41:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DF7E01A0359;
+	Mon, 12 May 2025 21:41:37 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl+Q+iFo693IMA--.57717S3;
+	Mon, 12 May 2025 21:41:37 +0800 (CST)
+Subject: Re: [PATCH RFC md-6.16 v3 00/19] md: introduce a new lockless bitmap
+To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: xni@redhat.com, colyli@kernel.org, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250512011927.2809400-1-yukuai1@huaweicloud.com>
+ <20250512052118.GA1796@lst.de>
+ <6aeecf3e-2f24-7d30-8462-c8d30b197740@huaweicloud.com>
+ <20250512132750.GD31781@lst.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <934fdd89-3963-98d5-b450-f36024aa47b2@huaweicloud.com>
+Date: Mon, 12 May 2025 21:41:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mm: secretmem: convert to .mmap_prepare() hook
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>
-References: <cover.1746792520.git.lorenzo.stoakes@oracle.com>
- <0f758474fa6a30197bdf25ba62f898a69d84eef3.1746792520.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <0f758474fa6a30197bdf25ba62f898a69d84eef3.1746792520.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
+In-Reply-To: <20250512132750.GD31781@lst.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnCl+Q+iFo693IMA--.57717S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7GryxAFWrWFWUWr4UXF1rtFb_yoWfWFgEvF
+	y3KFyxG39rZw4SvanFgF1DZrZ8Ww17ZFy5A395Gas3Jw4UGa4xGF4vk392qa45tFsakrs8
+	ZFWYqry5XwsxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
+	0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7VUbHa0JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 5/9/25 14:13, Lorenzo Stoakes wrote:
-> Secretmem has a simple .mmap() hook which is easily converted to the new
-> .mmap_prepare() callback.
-> 
-> Importantly, it's a rare instance of an driver that manipulates a VMA which
-> is mergeable (that is, not a VM_SPECIAL mapping) while also adjusting VMA
-> flags which may adjust mergeability, meaning the retry merge logic might
-> impact whether or not the VMA is merged.
-> 
-> By using .mmap_prepare() there's no longer any need to retry the merge
-> later as we can simply set the correct flags from the start.
-> 
-> This change therefore allows us to remove the retry merge logic in a
-> subsequent commit.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+Hi,
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+ÔÚ 2025/05/12 21:27, Christoph Hellwig Ð´µÀ:
+> On Mon, May 12, 2025 at 04:40:02PM +0800, Yu Kuai wrote:
+>> I don't have such plan for now, actually I tend to remove bitmap file,
+>> once llbitmap is ready with lightweight overhead, I expect perforamce
+>> can be better than old bitmap with bitmap file.
+>>
+>> If there are cases that llbitmap performace is still much worse than
+>> none bitmap, and bitmap file can reduce the gap, we'll probable think
+>> about bitmap file again.
+> 
+> I'd really love to see this replace the old code as soon as possible.
+> But can we simply drop support for users with the bitmap in a file
+> in the file system (no matter how much I dislike that use case..)?
+> 
+
+Do you mean drop it now?
+
+AFAIK, bitmap file in a file system is problem the only case for now, I
+don't see any users pass in a raw disk in this case, because bitmap file
+is at most 128k by default.
+
+Thanks,
+Kuai
+
+> .
+> 
 
 
