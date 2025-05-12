@@ -1,144 +1,96 @@
-Return-Path: <linux-kernel+bounces-643791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8ACFAB3208
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66612AB3219
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6457A179CB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53E617A7AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104C1259C96;
-	Mon, 12 May 2025 08:46:32 +0000 (UTC)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9C225B1DE;
+	Mon, 12 May 2025 08:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Cpjqn/hY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538383234;
-	Mon, 12 May 2025 08:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7320925A2AC;
+	Mon, 12 May 2025 08:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747039591; cv=none; b=npS0ZklR+oTl2MmbNhJE3JZHPRUi927GhSlC3Cgege2GU8ve23J4ufa3RF/MWm2Bv5IOXVaW4IL6TJ8DoEDSiYMoNX4BLsIDB4Bfc6FrYceuqBxdr7WS08b17uPe1ybbaLQBgDV3qC7YaorWTmBQ4Gt+5RsHoGR0LRHAgzhXboI=
+	t=1747039609; cv=none; b=Bv4FzX4tiHOfE2608ryzxOHkvtokfW00yECFPkiNHUe2tGGTS16xUS5SJCpuf7u5h+96VYMJpYfgeEWYJWVr8HnaOpTerjCzNNwRrrSkKWOTMQvdPO9wzIIJS2k7circeOjw97BjdxXkZHvCV+QgRp/Rbf6bxpOpe2C2pU2Svx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747039591; c=relaxed/simple;
-	bh=Io5UFZTqm8Lw9JYk0VCOf0VK26C26TuHAeEeKuuS8hg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KdTQIfctZh+/lUo7iF1qBXDvmqA4cfMDjEXynhpmwiSWue39iMvrYMxgDqBURDJBsbb4/V05jnAYj6U9CNMTObkhf0DYi/FWDY8pvGIxCfk62KBOFks3xFKZaQNt4NWlXgks5KXb8VLM+P6Bhoug8FHD3t5+Tpv+9cPQQO8/5WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5259327a93bso1464942e0c.2;
-        Mon, 12 May 2025 01:46:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747039587; x=1747644387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jKOi5KiEbUlTkmRJMN7ZFl6uLQWf/hx3AnyYinhNvrk=;
-        b=rmqWvetrfQeveikRgD+kT1FNvPaUgbLpkJceSelYBd+xfO4lzgwI5QfDxZsSMHTx4g
-         Q6Naf0BhVQHn4EoPRtTY8txhMCfaPqNcZxaLQrQbKq5gS1VgFhcHwAXqnIOsNzPLsl+8
-         xTrv4mZSB245bBCfaq0VmUiUe+LxUdOX3cDzqvuHrq45FSDPe0qUOV7l+b0CUoP2J+zO
-         ZejKaNelH2JKvFddOicHcMhBH7QuqfSbIKhmIrFl8V9ebjadutZF78f3LIR3FefvH7ZV
-         7DltzQDMjBakrTTaafJSwf68Pg6QdJypkB1dAWyQHFQs2akyKpiVotAxZP4zfzooCGqU
-         9bgA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1G+Ov+3CyPln2XeKnnpF9fark4Gq/M8H6rkp4H675II+P7bo/eCtsjq5B4c4IWvoeEY7zrQk2PNx7Sg==@vger.kernel.org, AJvYcCVgPLJdrq328xFOdO302k0Q73IKA78tzexBQGEqtDVJTL/VzW8VvpQaLZRaJyYbSKvyOB5c1Tkf+lfBgjZ/@vger.kernel.org, AJvYcCVj+93n6O9WNcAKUQ8fNwJzHLxUkmjc9Cx8K1/a5nnG4nDscsohc+fFGpPtGMySruA5HiXYvK4mZoFmsQ==@vger.kernel.org, AJvYcCWepsTvNM5U+B95GNomOU3+IUQYTpqxYdDxbTKBTBcYyE+LV7Q4cpPJYBFnFX1UiaSYzXmDwpLqBwV2BePrY4ulCg1f@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe4aD3lB4GugW7nzU/rG/S85Tzmn9s6nW4ZBbEHdo9FwcCfy2X
-	dxE+Qud8dFB0qGVg4493b+XUMx2PE5LjZUWtfyk8TWNFOq1cXQutDWTre5Tc
-X-Gm-Gg: ASbGncv9t3nrGqC3tN6CvHr6Za0v0ZRjC7NlOWhMaMjEDC+iAMg3tL678INtNDphwbN
-	clfqSCQ//a2M7sYukqz24gDt/V+CBQc70Z5/tRS/Ew4XcnjNXCn7wUtir0BUtf53DzV3QztzARA
-	ac9pRsbxoCVCEvSyS4FZzQ2urTnLKbAPtEOjJtjYTizZ9bXkicipGvvccUSCNnBWuk9dOs8s8yx
-	yNx9CAl2IlfQJN7NF+Y25Ph6I7J7RDucVf/RLchkyNqrmDjurEXAoG65o0gascbf5SM7gru04lo
-	iEmLf2P1xWi3wibVAXCmI4DqFwO/VswVZsJhg3J9RPfR0TWnziray3TZu+oCGNNUJhhXyNg/P5F
-	lglanPaXxTZxsGg==
-X-Google-Smtp-Source: AGHT+IHpKG/i4WSB6zhjanRq5d5u8RVaYmC5MGxRr8rBFabaILxB80pEi39pX72QSQxvrPQ6+JDbDA==
-X-Received: by 2002:a05:6122:1da4:b0:529:373:fcb7 with SMTP id 71dfb90a1353d-52c53cebf52mr7705752e0c.10.1747039587359;
-        Mon, 12 May 2025 01:46:27 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52c538a6f4fsm5237087e0c.43.2025.05.12.01.46.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 01:46:26 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4def13d3f01so1028733137.1;
-        Mon, 12 May 2025 01:46:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9l2OFEUve0PySFuztN1nDsv0bBNijNbeI1sFh9YeZU47U3awebwvhWC+bwudvVQTZ5A0SW0jZTzDVs83NVJhuQ8H6@vger.kernel.org, AJvYcCWEArj0bnTOAc1kjpmROmmZ/fRCnMt0Tl9qUerIybbt+64vGPHDUEWVDFqb1xfh8Ef7DvWZPUfM6S24euKm@vger.kernel.org, AJvYcCWMhjqV8AkRgaLLMJpJTiUwEedSEx2AZWg2goLvSZJlWnSFoAuCdwTw9Rvla/SyIsIn7c7hx9Pwv23dBg==@vger.kernel.org, AJvYcCWNBM2b9KNNigcz6CByJMjBiCECnbqh+kIrmY3B+BEHiT74Tfsk0GEPbE0lKOmREIbFOIHcssx+qonbRA==@vger.kernel.org
-X-Received: by 2002:a05:6102:fa8:b0:4c3:6568:3e18 with SMTP id
- ada2fe7eead31-4deed37048dmr8678078137.15.1747039586713; Mon, 12 May 2025
- 01:46:26 -0700 (PDT)
+	s=arc-20240116; t=1747039609; c=relaxed/simple;
+	bh=5E/bA1eM2wU2BC0VCWGwxexEaGR0i3e1NdalK4z2Pfs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qKToz5cXXF5+V8LgjEHaHjM1FwffL6IN6LO1nJw9AKT4eg8WPYs6iSoV/i9e1xV3njIotY5cDNVMST1+s8R9sHboyJGBT2Ui8ZqEN5IH1pgXnvYXiksC11bFLU7cZgGlY6tc2347Mk0a2ozORwnZSMd7DeZTQog0ZGWEN12SOjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Cpjqn/hY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 523DD40E023F;
+	Mon, 12 May 2025 08:46:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SKF5IAOxcAli; Mon, 12 May 2025 08:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747039599; bh=r4yiL2NeUjVIZT9U2eVGSesDcYIgjx9AlbTxXhhyCFI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Cpjqn/hYUk3g50RPTmdKe6Y9brQGhDLwfq277OQSG8zEXOXuVJ56UjP5KjOsjse51
+	 tJam1vlG77V6OMpwJ7hmXGJRR5gNRDeUt4hbBILM7QU91bkNptWJOPJW7WkWx1y6KS
+	 8n5DGbSs0e4DBxbHfmMjP81JBCy256J+OcIOV9xsS0ED6apa41dULHEeYz4v/zZtJl
+	 YZGtk5JVtkGmyjuvajZuGCC2o4hfpG4ZS+otH4TQzQ7z8Mn6J12yEYei+b6NpCnT6z
+	 pNK1orFZjtb5rC1VJNPXKDTN9LfPPbXrp3tDLE/3HVbTOtqNSJnK1J0elySRmh9MOf
+	 M1fpEIb8EEaL21awp+oUcknC0C+h5ns2gLsKUH5kz7srlnvyhr11V7NFMzvG/FoyVI
+	 X7wcHwvWmaSEHYujNFLVr3kGd3v4zaiq+NG3UIiehqgmy6GMspaDOb52MHxvQTbg86
+	 NCYpJHJ9sf/CU3eo5gCNq//NAxd/t0LkGV6DsfSdFZIfiac53qMbKZBKIfhBOUzKgj
+	 KGw/07LxcnpyBXUKIif/Dwe7GxY+zvNezo/y+0c5edizJKD6Wnvq/DbwkEIIR3tVE5
+	 fwODnHffjSxHH4DJL9y+GQyPlJ9kX1Oi3AyHHbc/1SHMAPSMvYWCgqBdw3WTOwQoS8
+	 A4VScONipcpSorRfULnP/UM0=
+Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:204:a05a:7dcf:8efb:5016:7f05])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 387A440E023B;
+	Mon, 12 May 2025 08:46:28 +0000 (UTC)
+Date: Mon, 12 May 2025 10:46:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Bernhard Kaindl <bk@suse.de>,
+ Andi Kleen <ak@linux.intel.com>, Li Fei <fei1.li@intel.com>,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2=5D_x86/mtrr=3A_Check_if_fixed-ra?=
+ =?US-ASCII?Q?nge_MTRR_exists_in_mtrr=5Fsave=5Ffixed=5Franges=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <0ec52e49-3996-48e2-a16b-5d7eb0a4c8a6@linux.intel.com>
+References: <20250509170633.3411169-2-jiaqing.zhao@linux.intel.com> <20250509173225.GDaB48KZvZSA9QLUaR@fat_crate.local> <0ec52e49-3996-48e2-a16b-5d7eb0a4c8a6@linux.intel.com>
+Message-ID: <FFB8ACEC-7208-40D0-8B57-EBB2A57DF65F@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506192033.77338015@canb.auug.org.au> <CAMuHMdX_K7EA4kE2mqxv+BkfR_oQmcpek2B3LxiYxMjSMfwjAw@mail.gmail.com>
- <CAL_JsqJRw18vN+gXL1H11hMRNQ-6HGS1z2533z7Rb293tSvW6g@mail.gmail.com>
-In-Reply-To: <CAL_JsqJRw18vN+gXL1H11hMRNQ-6HGS1z2533z7Rb293tSvW6g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 May 2025 10:46:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXiVW0p5J5tki47YzvYz5eU87kGVdx8dFq522Zv5Qdw5w@mail.gmail.com>
-X-Gm-Features: AX0GCFufQxBxiXNWp_ZGdOOrG3lhvKdPMrPtLr8VTsff-VdHayWXxDxwfI2YNk0
-Message-ID: <CAMuHMdXiVW0p5J5tki47YzvYz5eU87kGVdx8dFq522Zv5Qdw5w@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the renesas tree
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Devicetree Compiler <devicetree-compiler@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On May 12, 2025 10:31:23 AM GMT+02:00, Jiaqing Zhao <jiaqing=2Ezhao@linux=
+=2Eintel=2Ecom> wrote:
+>This fixes unchecked MSR access error on platform without fixed-range
+>MTRRs when doing ACPI S3 suspend=2E
 
-On Fri, 9 May 2025 at 20:25, Rob Herring <robh@kernel.org> wrote:
-> On Tue, May 6, 2025 at 5:05=E2=80=AFAM Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
-> > On Tue, 6 May 2025 at 11:20, Stephen Rothwell <sfr@canb.auug.org.au> wr=
-ote:
-> > > After merging the renesas tree, today's linux-next build (arm64 defco=
-nfig)
-> > > produced these warnings:
-> > >
-> > > arch/arm64/boot/dts/renesas/r8a779g0.dtsi:1269.24-1283.5: Warning (sp=
-i_bus_bridge): /soc/spi@e6ea0000: incorrect #address-cells for SPI bus
-> > >   also defined at arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.d=
-ts:463.9-478.3
-> > > arch/arm64/boot/dts/renesas/r8a779g0.dtsi:1269.24-1283.5: Warning (sp=
-i_bus_bridge): /soc/spi@e6ea0000: incorrect #size-cells for SPI bus
-> > >   also defined at arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.d=
-ts:463.9-478.3
-> > > arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dtb: Warning (spi_b=
-us_reg): Failed prerequisite 'spi_bus_bridge'
-> > >
-> > > Introduced by commit
-> > >
-> > >   c29748ccad88 ("arm64: dts: renesas: sparrow-hawk: Add MSIOF Sound s=
-upport")
-> >
-> > Thanks, this is a known conflict between SPI bus bindings and dtc:
-> >   - Serial engines that can be SPI controllers must use "spi" as their
-> >     node names,
-> >   - Dtc assumes nodes named "spi" are always SPI controllers.
->
-> I think you can disable 'spi_bus_bridge' warning by overriding or
-> appending DTC_FLAGS in arch/arm64/boot/dts/renesas/Makefile.
-
-Thx, I've sent a fix
-https://lore.kernel.org/fbad3581f297d5b95a3b2813bbae7dba25a523fd.1747039399=
-.git.geert+renesas@glider.be
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Is this happening on hw which is shipping now and users will see it or is =
+this some new platform which is yet to see the light of day in the future?
 
 --=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
