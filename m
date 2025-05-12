@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-644360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B63AB3AD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:38:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20037AB3AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472BB16D6BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC59F17EEF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9CD229B1F;
-	Mon, 12 May 2025 14:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RohOeaqH"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AC822A1D5;
+	Mon, 12 May 2025 14:39:57 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A25478F43
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 14:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF01E22A7E0;
+	Mon, 12 May 2025 14:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747060696; cv=none; b=FfRT+OQuPK/IC/lZDceM7B+CvKTGo8Kfe+4//5FsW9QgQyUw00Tu79C1TIH0q5Q5DuXTF3j40+JfLDfCAK05k09Yk5Uoe9Jp/4njc6Q6nG4xCBB7h1+JI+2ZpuNI9E56+l31v6uEAxPZQSoEVHuJelUgvPVFewHfR1gNzEL8TKw=
+	t=1747060797; cv=none; b=bEH6uFtBAE0mtpFuD76bTGYmpsAHdsxgI+s3qbYErq2PSvmTXDF3WWeFyPZMEx7y0i624GMbqtDCYFEDpXr6MPV2pixKnL/+36yNZYpcUUWLSMIvzK9VcazH9Dzl2slqOm5T0f2EPgBzZWrqEaB7QPa+KCjkvwVqCXF7k5rXHYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747060696; c=relaxed/simple;
-	bh=Sy6EpNC/Y+5ukgFoCzt3VwoEYi0RJAdFAr3piAD6kAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q5/IzgZfabjW6PkDS6MJW+EthiL0X0xIaEYan9ub2l3XyxnFEmpcbqf9ln8+oBg78oajHGGbmld7icJ3KpMqu14zFQMq2+lNnom4lPCOg8JBTcV2g2Y7ayWbNPlU0SaBdO0D9Y8KkGSQZvwoPOIMIuhI2VmWaXdAcmgs6i44a34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=RohOeaqH; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a1f5d2d91eso2452898f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 07:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1747060693; x=1747665493; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7EiJ3KDheimK0eEoXvhBi6uLkJp2hVXs5X1KRMU6bsI=;
-        b=RohOeaqHel04FTVUovN4SgGvodNZvR9HuGBM/H1JqSqBd924n9tMu4NHbmpiYEZq6C
-         +ZDo6RX2/CAZjpc5z9eAPIESfk5Gv1jyobeK8Egi6REEXSQ7baRpqYcHTJzPlFyc07po
-         zJR7qXCY+zT+gl4rZi/hBn7gIzvEX6Db0Dwmk=
+	s=arc-20240116; t=1747060797; c=relaxed/simple;
+	bh=Y17awEESg2LErrL8JCmdKRYQ5sEkFBnsWygtJqC80NE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pEotVJCuRRx29J2yRHETYoUgtkmCkOZPQimX2ykc+Aj/KQyZiyLDIlS0WuVIcK541E4elLnxduzmCtCVvm9dGZF4el13Zsnrv1EEKogjf9APMrCMOmPpHjHXRqHlwUGajh0cbgQ5ATK6aFA4fYtuOSeQb/zN7PNDK460EZI3dhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4def6955e85so1107788137.3;
+        Mon, 12 May 2025 07:39:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747060693; x=1747665493;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1747060794; x=1747665594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7EiJ3KDheimK0eEoXvhBi6uLkJp2hVXs5X1KRMU6bsI=;
-        b=IyWzsrXQ1U74PC5nILgMW3uW8t0Gpj8pUU5xql6Gzl++9HzvZtGwLTk8Py4gDE+S4z
-         JQdVVLff+6UVJ7b0e18v4C6qMPCgoyngjq80C0cbMT5a+9A5Vt7YVGBJN6NDPQL6TjpM
-         yIH+xlb85f6ObG4tk7ryiekXX//nvT3n8DZCFwMKqV5528TCQ8BHnwPF29PM8btzr3iA
-         QPnaZUcoVrylH6qZgzwtELNJMazoG5M8ih0W8I4w0JNVgSsHXsKi0x18BNgo9SEPFT/7
-         +HWH3Ze5LoSzLbv7drp6Kr+Kpke/kVAJVremjeKakRCfh1JYk7S7mKwjkpHpT/HVDaV9
-         dr2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvZqkmIGwWenNNi6cH3HH3nqtimFoZ8tJeVgp/61H0Z3GiuheVZr9pHfRw9YUecETd1mhD5oAn7A4yMmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSHyD2swQBDOsDoEg1rvYwEMcPZ8XJSo0ZbLjv4mOxLpQV4s7u
-	hQAyeN0gYxZlYpqcuOcTeEagc2n+KzeE7qszpKgaDVR4JX+fxNgIejidaPl9sA==
-X-Gm-Gg: ASbGnct7/M6KTt4+R5Ge3wZ76qXmC09JFEwh2eCLam51WisNP1JxYIwmi7N1JCULwr7
-	J/Na79FXi/0fslTZi6rKnUCOJpAWFxW4pZGQTaOwW2RyHw8EfUo9edi1jggzEnfqLYgYV7nRdD7
-	GzfHPWInZUCONqVaPFqywzM6Rwyr8ItkFqYyy8TzJ9E2CaIAPFf8Kr44p0+/4xectQZzOprLP1W
-	Z793AY9N2/R9GMbj/GaHzeOhCLVuQnyD0Jggn0ybWzYP2BWBXgc/+pQwkwfYTkI/9I33WpZ2Z6z
-	WpMsF6c1bswzqE4zQbWKJAPRn8epN9VNki573T9/vaPLU3pTGq/0LS4stFrY1eAl/A2knXYQqQf
-	U6eL8Ez+U6alWhMikHw==
-X-Google-Smtp-Source: AGHT+IHtVKtNckwkGS0Cg04t40M2HE//ia/rcwOCx7LnM+yXL6cnr1sfbIg2b6C1vkYs0SueWv+2Ww==
-X-Received: by 2002:a5d:59ac:0:b0:397:5de8:6937 with SMTP id ffacd0b85a97d-3a1f64a4b57mr10113915f8f.41.1747060693115;
-        Mon, 12 May 2025 07:38:13 -0700 (PDT)
-Received: from [10.229.41.21] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67df574sm126777665e9.11.2025.05.12.07.38.11
+        bh=05JsmMNwJva64+BtkCkZpam/OAJPWNRgxTT4dtTVxqo=;
+        b=P0UcKAMUWZOtsuKaqUfZHCnngc53rwvCzTR0jAYNfyrukVvmpb0+DhebfwXXdLKcC0
+         OgEf1LbLb0I1Jc1mMqfKBvjxD0FDQ2OGOMOVeSXbaJNsLDMB8lrih8uCl2bgL16scM2W
+         qclVBw4yZfcvNYExE48RFaHGkgoUKe3lOiNCrf9yJMZoDxD/8EYIKfgGY19o7aa3Y388
+         dzDjDFVIfA29R94zFj0WXu7V1WrqjieMYh7duTRoI8rvFq/K5HGhYnA9xob/4SsHYKKN
+         35IWtCLY41PVE880hfw5ICAD5meFGQxd3htFxFGyD10eASr4cWhzhURDX/rJfX/XZXEa
+         XSEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDTaHCkMAUlvIzu0VHZ9itjYmaN3jxKYUcU4E87YQFXWNcuqQFL9Z+FbqiudUX/oalSykrTxQ4ojMGzw/MuUK+@vger.kernel.org, AJvYcCWdBdUnGYRbkM58HG2ienOpF20WzTxBbY7Nrm5IIhmLQ76jDWn6DHPx8yYsTuIUMiLIf2iu/o/ca2jZ@vger.kernel.org, AJvYcCX4UTmmnMQX3hhIPK8yOamAvgf0xDBYUMSNM/jcqFyHrmEF0kfp7yXvOhKY9g+Ew5TfqUyi9wBQxk4WMb9Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVGqjoWGFyQXOsF3AtD5dYrZ3S1/fH2MumC2zv3ldejfdHzOtU
+	vjcG6zRG30moqJBQTHNRqrCKyA4G1reM+wQ5XU2otXDwwZ3nbm84ABS53FqP
+X-Gm-Gg: ASbGnctrQdNT0yVu/tvV3wZ69Nb+TrUkMYY9xbRNZFBX5Krz14lxrHFR1COLYFvhkLO
+	gPPKaIoPCpAITAuqrwcFO+gGLS3tYPEdV30OX7u9GaKKombLRT1rKOHWfSaoKbv4XI69rW4i4g5
+	RYQsKzAZ3UW9Xy9srvbW5sKVBlbjnVjMCwTYf/KwcBh+08dnGW5AOYKrp6oSIhABS2ZbiYIALQn
+	x9y6QcMPJmcUJDowtZLoUn2P6vpTSVS+rT+7BTQpgoV6rCHPvFNPI/Wvtwi0OB1FZluUHisRnK6
+	rBTMQRWgDYO+4uQV/bacp+lrszvKjNa7Rv0GAhs8uz61t3HrQD+vHmal/8+WmlpAtRdeUhEaIQE
+	5maI+ylfIkwXTfA==
+X-Google-Smtp-Source: AGHT+IF4bn8Q0Bij731smAvLbxSOpYh4jfFMTGmogTexjXrEcLLtAbNovk3mnCEAym7NX0KulPVWFA==
+X-Received: by 2002:a05:6102:148f:b0:4b1:1eb5:8ee3 with SMTP id ada2fe7eead31-4deed3ff7d2mr10726549137.22.1747060793998;
+        Mon, 12 May 2025 07:39:53 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f6171564sm5104061241.13.2025.05.12.07.39.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 07:38:12 -0700 (PDT)
-Message-ID: <c19fcd0b-2004-4c99-8733-937fcfa0769a@broadcom.com>
-Date: Mon, 12 May 2025 16:38:10 +0200
+        Mon, 12 May 2025 07:39:53 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4de317a6fbcso1554176137.1;
+        Mon, 12 May 2025 07:39:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUpx95Y7pybsXvCNuE+zEVnQTl6g2ktzyV1zHXbnIgKW0wjWvrDdrG+y4kwBSyMBTvwKmBfxV4fSND@vger.kernel.org, AJvYcCWRKnXHZrjNE2+MgiIo88LWGKtQ6ap36NB5BifImLNAcV7PP9v84ZSxB1Fjix8i764+iUtgzZqeherAUvif@vger.kernel.org, AJvYcCXe34r8ktpZs7jN1iftzc0dI9jjoTvdI6kfAYMtC5Z/wS4o2Bw+6N7ZHhNphII4CnFWL2gfbD6oj8k4a8NA9Dt7@vger.kernel.org
+X-Received: by 2002:a05:6102:4a95:b0:4d7:11d1:c24e with SMTP id
+ ada2fe7eead31-4deed3fdbccmr10508480137.21.1747060792620; Mon, 12 May 2025
+ 07:39:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: mtd: rawnand: brcmnand: exec_op patch broke < v5.0 controllers
-To: =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
- dregan@broadcom.com, Miquel Raynal <miquel.raynal@bootlin.com>,
- bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
- MTD Maling List <linux-mtd@lists.infradead.org>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Brian Norris <computersforpeace@gmail.com>, dan.beygelman@broadcom.com,
- William Zhang <william.zhang@broadcom.com>, frieder.schrempf@kontron.de,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Vignesh R <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>,
- bbrezillon@kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
- liao jaime <jaimeliao.tw@gmail.com>, kilobyte@angband.pl,
- Jonas Gorski <jonas.gorski@gmail.com>, dgcbueu <dgcbueu@gmail.com>
-References: <CAKR-sGezB_SEb7UfPV6o6T2yibkAzNSqK9Hry1kNM46BMsH2_g@mail.gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <CAKR-sGezB_SEb7UfPV6o6T2yibkAzNSqK9Hry1kNM46BMsH2_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
+ <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
+ <CAMuHMdXzU1k_JZ0UhUh33XCq_zpq6MBJgAjo9F9Cw4gckA12EQ@mail.gmail.com> <c10b7752-cec5-483c-90a9-ada16aa0904a@bootlin.com>
+In-Reply-To: <c10b7752-cec5-483c-90a9-ada16aa0904a@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 May 2025 16:39:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUtEtZH0MuS7TA6RTa1-LB=K47sEGzo9BJM_RvfCRmRAw@mail.gmail.com>
+X-Gm-Features: AX0GCFtBB0NPqcRF4Vf9YhvCgyehMS_G0PxE4z0auJK_waQKI-5qQqM6guRCFiI
+Message-ID: <CAMuHMdUtEtZH0MuS7TA6RTa1-LB=K47sEGzo9BJM_RvfCRmRAw@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] gpio: aggregator: export symbols of the GPIO
+ forwarder library
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Thomas,
 
+On Mon, 12 May 2025 at 16:08, Thomas Richard <thomas.richard@bootlin.com> wrote:
+> On 5/9/25 11:07, Geert Uytterhoeven wrote:
+> > On Tue, 6 May 2025 at 17:21, Thomas Richard <thomas.richard@bootlin.com> wrote:
+> >> Export all symbols and create header file for the GPIO forwarder library.
+> >> It will be used in the next changes.
+> >>
+> >> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+>
+> ...
+>
+> >> +
+> >> +int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
+> >> +                       unsigned long config);
+> >> +
+> >> +int gpio_fwd_to_irq(struct gpio_chip *chip, unsigned int offset);
+> >
+> > I would expect all of these to take gpiochip_fwd pointers instead of
+> > gpio_chip pointers.  What prevents you from passing a gpio_chip pointer
+> > that does not correspond to a gpiochip_fwd object, causing a crash?
+>
+> Indeed nothing prevents from passing gpio_chip pointer which does not
+> correspond to a gpiochip_fwd object.
+> And it is also a bit weird to pass a gpiochip_fwd pointer in some cases
+> (for example gpio_fwd_gpio_add()) and a gpio_chip in other cases.
+>
+> I can keep GPIO operations as is, and create exported wrappers which
+> take a gpiochip_fwd pointer as parameter, for example:
+>
+> int gpiochip_fwd_get_multiple(struct gpiochip_fwd *fwd,
+>                               unsigned long *mask,
+>                               unsigned long *bits)
+> {
+>         struct gpio_chip *gc = gpiochip_fwd_get_gpiochip(fwd);
+>
+>         return gpio_fwd_get_multiple_locked(chip, mask, bits);
+> }
+> EXPORT_SYMBOL_NS_GPL(gpiochip_fwd_get_multiple, "GPIO_FORWARDER");
+>
+> So exported functions are gpiochip_fwd_*().
 
-On 5/11/2025 11:42 AM, Álvaro Fernández Rojas wrote:
-> Hi David,
-> 
-> I've just realized that your exec_op implementation patch broke
-> support of v2.1, v2.2 and v4.0 controllers.
-> https://github.com/torvalds/linux/commit/3c8260ce76634291aed877032a41e373884d69e4
-> https://patchwork.ozlabs.org/project/linux-mtd/patch/20231125012438.15191-4-dregan@broadcom.com/
-> I know it's an old patch from 6.8 but I just discovered this while
-> trying to add 6.12 support for bmips on OpenWrt (from 6.6):
-> https://github.com/openwrt/openwrt/pull/18746
-> 
-> The issue is that low level ops always return 0 on v4.0 controllers
-> and v2.1/v2.2 controllers don't even have the low level registers
-> defined:
-> https://github.com/torvalds/linux/blob/3ce9925823c7d6bb0e6eb951bf2db0e9e182582d/drivers/mtd/nand/raw/brcmnand/brcmnand.c#L357
-> https://github.com/torvalds/linux/blob/3ce9925823c7d6bb0e6eb951bf2db0e9e182582d/drivers/mtd/nand/raw/brcmnand/brcmnand.c#L371
-> 
-> I guess that restoring the legacy functions isn't going to happen, but
-> is it possible to restore < v5.0 compatibility on the new exec_op
-> implementation?
+That sounds fine to me.
 
-Unfortunately, I don't think we have any other choice unless we want to 
-have a functional NAND driver for these older chips. Would you be 
-willing to do that? Thanks
+BTW, do you need to use these functions as gpio_chip callbacks?
+If that is the case, they do no need to take struct gpio_chip pointers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Florian
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
