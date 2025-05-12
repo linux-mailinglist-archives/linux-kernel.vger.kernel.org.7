@@ -1,277 +1,144 @@
-Return-Path: <linux-kernel+bounces-643826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCD6AB328B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E6EAB3281
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9935B3AFC2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41C73AF43A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7D226656A;
-	Mon, 12 May 2025 08:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D34425B668;
+	Mon, 12 May 2025 08:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dyqNmqy8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D1Uaidzq"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F047E25B691;
-	Mon, 12 May 2025 08:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F3325A32F
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 08:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747040268; cv=none; b=B9VvuZX+XtRzG8Y5MUKvcU/KOie1rcr/3kUorVpzlqb25x8eu3iZtyi/q33y4hh2vQr9U1WTivhVlOsmd/8pUEX2GSY8ztPSGvqDKUqHtksGWWRKBNEjOeL4/JV5JCoRor/RubAUbr6JH9nr0A3YTws8WXJ/gG8SCa2kRUbO3H8=
+	t=1747040242; cv=none; b=drGpjSMqXo+ofZLJR4ysRwHme6Yx5vCYG07sj2usMPvT48Tn+PdGQr3RaoA7fA1CSoMy4l5jTwAFTAosKuZAxQC8EVSS2AZtLSR6OMKh7pB71QWWe0WPKgKOtVkAU6mbNDSvkSj3+GlVes5o/7XBpqKgWxvC92dFMOEUqCNQRq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747040268; c=relaxed/simple;
-	bh=+hNZSzs+UU0rkjlXcA84b2Bq54FhNUxCpNk6I3td9qg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rvSPOl7c+wzGJ2AI/QJR4NsVd1tqiRes2bxnXeD4dPuQXA6Ww6+JtwwV9XbT3EichOJVbv8nuT8rDo6S+nFKIKy6QtPJk5/e/Mg6QYu3nd4Ob6p4YWEVaeZPQ+SRsSydVogYADQl6Oa+zVpsXOCPzXQgEAve/K/NHIqt31Gj+EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dyqNmqy8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747040265; x=1778576265;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+hNZSzs+UU0rkjlXcA84b2Bq54FhNUxCpNk6I3td9qg=;
-  b=dyqNmqy8GaJtLdGswb7BcpF0xj2EIyhgk1VbsuFiAxemcf9XhwiFi+tD
-   KWnelDuywME4RAmGhCEd5FZrHkeyoRmn/KKEhKXeLQnM08j+Q6GgrfYwR
-   weCSa90Y+wTb1FYJ5/y3UutaL2QA8p8jcigu4h+91VkWOaVFvx1cX9+yQ
-   lCyPtkfN2HZPtwFSMXChlIBYuKDwFRDZoJdM5ybMzJsyjj0O1Y2P5Jk2t
-   pY5XENSMQJmCOE9wB8+BnVhboZnQ+XePRiO1qeyXMrwfOHYWYXG5kUVb2
-   PzPYACIpLNwGzyPG3OUeZ3lQsD8eSJ9Xa+Ig9i1JKVV/8sXP5+r90Yob5
-   Q==;
-X-CSE-ConnectionGUID: dLcqbt58SW2jcvyKMWFFgw==
-X-CSE-MsgGUID: 6PkiyQKwRoumycdJSwSTqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="59488692"
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="59488692"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:57:44 -0700
-X-CSE-ConnectionGUID: eDU5l9WKQp2Mq9YEp1dZiw==
-X-CSE-MsgGUID: /0EaOvfmQACyWE7Up/w+1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="138235776"
-Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:57:44 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	tglx@linutronix.de,
-	dave.hansen@intel.com,
-	seanjc@google.com,
-	pbonzini@redhat.com
-Cc: peterz@infradead.org,
-	rick.p.edgecombe@intel.com,
-	weijiang.yang@intel.com,
-	john.allen@amd.com,
-	bp@alien8.de,
-	chang.seok.bae@intel.com,
-	xin3.li@intel.com,
-	Chao Gao <chao.gao@intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	s=arc-20240116; t=1747040242; c=relaxed/simple;
+	bh=JhLyS8OlAvaLP9r7KbQp2hC6ezEHKIzbqXNmUbZHJpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nc5mbRL6Al6c3oNWIWB2qp/POD9EPzh0kHRDDZgDIlLRdeXeqelJObYZUTwEsCGXVFjPfKxzX9UPvoepzjB6+oGsckKQIhGMfHzbdlv4seg40+bexdL7lCVaUDPPerjf7LCssBu8Qj7nDg+Do/eoMLzWC3g1LAkSfigpRcCkSTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D1Uaidzq; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74068f95d9fso3779214b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 01:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1747040240; x=1747645040; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sc3CqNV/8Mi2zP04knLd5VAdkGEl8lYzJxAs+HQXCEQ=;
+        b=D1UaidzqpoK8gIulW9n1/Bsx8Ekb5WoxuQhpfF1z5uBRux3hsCDFNo7zNHYqBGDgZl
+         CeuQ1ux0KNKMYNODDa+mV5+KkseMK8cJpdf7QNhrawYkjidcIVpNH1BdKcuohzpkUbhW
+         H6OPN+E6uxWcZ8TiyAaooZbZvVbgrPO/+dx6xiqDCUywjer71y4j6E02z++N7wVyozLc
+         Tu2vclbwMDZawKoou3vuUNFLo2pZL/r2FZn+y7dZuGppA3bis57GWmW3mZGVoFrEc6sn
+         UPAYt6fOdNkIMqa8bLneDh4oVgiKEsxVpti/1u+LdyY14pvc+1BrWXQ0IAfzDtVRFeGy
+         7kpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747040240; x=1747645040;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sc3CqNV/8Mi2zP04knLd5VAdkGEl8lYzJxAs+HQXCEQ=;
+        b=n89w4wjjw28O4JC21l+yEfYF8b0K6hTRhzpJl7K/oMIJ2KurmQInYiVAJTZZjoaj2s
+         qRHUkEV/SLAbvQyrZzbbtk5f35WG6E+vzJJY7DVaAGxUrzAPQeVJgwsbPdZcx1NCcWoB
+         WJjV0CWDbiIimdtDaxj+zxbXa61aL4nSINw2Kh/iiNfuH2fOhI9KuyewzM10cMIHqrZj
+         InBK6fDyLxlMU5O3NlTv6HGnsQBqR0gfuRE9CPFEGtsVqo248TfliVVGfYHO97A4YpMz
+         oV5auaNysORGqG6YhVYrzen4wK9gJf+pXjWvisZUhoVyOPqDS2Fo7DTE4fE/85xNrY4E
+         ATTg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+zpDoRHj2Bg6f9MhDlmHp87dYNvf4LtBlLt8gtACyccRRKRPEX3/uyDg2ac/46b6LKT9PukZVzTxEFnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/e/QAYMeMXLVm4Km9hv8if0x13lgMH9yWLvJ8ewN7SDZD4Df6
+	DXuHdeS4CO6eYWEi3CumqUS4J/DA9NJ7iDDoHUED9iggbtqix00KGHXzUXZNik0=
+X-Gm-Gg: ASbGncu5tgqo6yhLSCymSd0IlPM08azUAtXkSR7GDQbR7JD/t/d8cVgyhX+73T1Jwe5
+	NOgrfpTuOcrlsz8EfxYk64U8ohAcqwfTeqYDlI+qrV/61UEKGTUcTTZ8JWQDT/8JaiGsPbX2HJA
+	juEj+V1kCItH3doQn3lbZ5RN0Q4xZepXYnOY5Z08pIh7GrgKXLvme3bQba+pX2SzPF8CaURp2Lg
+	+jYpwMBcf4bUHuwnhh9TJpg6ECD2tAb7UvBB/vOEuuC/QRLBmv906ZUsCQzKa9dijekDfb0BHrc
+	YXGqUzhiHUmQ/g/471qb+RfjR/reeabEhe3HXCiz2UtorqlgcXdVRcp4FK8=
+X-Google-Smtp-Source: AGHT+IFWgBjdZaW68l9bQibLY9baPAwDqAl5/2YWyRVkP0+/oKFF3fyXGC7vyJbnIM52riOnSv7fSQ==
+X-Received: by 2002:a05:6a20:8792:b0:215:d4be:b0ad with SMTP id adf61e73a8af0-215d4beb697mr3485599637.28.1747040239872;
+        Mon, 12 May 2025 01:57:19 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b234a0b29casm4459423a12.28.2025.05.12.01.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 01:57:19 -0700 (PDT)
+Date: Mon, 12 May 2025 14:27:05 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
 	Samuel Holland <samuel.holland@sifive.com>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	Stanislav Spassov <stanspas@amazon.de>,
-	Eric Biggers <ebiggers@google.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Vignesh Balasubramanian <vigbalas@amd.com>
-Subject: [PATCH v7 1/6] x86/fpu/xstate: Differentiate default features for host and guest FPUs
-Date: Mon, 12 May 2025 01:57:04 -0700
-Message-ID: <20250512085735.564475-2-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250512085735.564475-1-chao.gao@intel.com>
-References: <20250512085735.564475-1-chao.gao@intel.com>
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 20/23] mailbox/riscv-sbi-mpxy: Add ACPI support
+Message-ID: <aCG34XoERpmESesO@sunil-laptop>
+References: <20250511133939.801777-1-apatel@ventanamicro.com>
+ <20250511133939.801777-21-apatel@ventanamicro.com>
+ <aCGjEdNVH3ughITd@smile.fi.intel.com>
+ <aCGzFVXFBVRbMUKz@sunil-laptop>
+ <aCG1kqi2w2EUKWyO@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCG1kqi2w2EUKWyO@smile.fi.intel.com>
 
-Currently, guest and host FPUs share the same default features. However,
-the CET supervisor xstate is the first feature that needs to be enabled
-exclusively for guest FPUs. Enabling it for host FPUs leads to a waste of
-24 bytes in the XSAVE buffer.
+On Mon, May 12, 2025 at 11:47:14AM +0300, Andy Shevchenko wrote:
+> On Mon, May 12, 2025 at 02:06:37PM +0530, Sunil V L wrote:
+> > On Mon, May 12, 2025 at 10:28:17AM +0300, Andy Shevchenko wrote:
+> > > On Sun, May 11, 2025 at 07:09:36PM +0530, Anup Patel wrote:
+> 
+> ...
+> 
+> > > > +#ifdef CONFIG_ACPI
+> > > > +	if (!acpi_disabled)
+> > > 
+> > > Hmm... Why do you need this check? What for?
+> > > 
+> > When we boot with DT, ACPI_COMPANION(dev) will return NULL which will
+> > cause a crash in acpi_dev_clear_dependencies(). Let me know if I am
+> > missing something.
+> 
+> Yes, just check that the companion is NULL, rather than the above.
+> 
+> 	struct acpi_device *adev;
+> 
+> 	adev = ACPI_COMPANION(dev);
+> 	if (adev)
+> 		acpi_dev_clear_dependencies(adev);
+> 
+Ah Ok. Sure. Will update.
 
-To support "guest-only" features, add a new structure to hold the
-default features and sizes for guest FPUs to clearly differentiate them
-from those for host FPUs.
-
-Note that,
-1) for now, the default features for guest and host FPUs remain the
-same. This will change in a follow-up patch once guest permissions, default
-xfeatures, and fpstate size are all converted to use the guest defaults.
-
-2) only supervisor features will diverge between guest FPUs and host
-FPUs, while user features will remain the same [1][2]. So, the new
-vcpu_fpu_config struct does not include default user features and size
-for the UABI buffer.
-
-An alternative approach is adding a guest_only_xfeatures member to
-fpu_kernel_cfg and adding two helper functions to calculate the guest
-default xfeatures and size. However, calculating these defaults at runtime
-would introduce unnecessary overhead.
-
-Suggested-by: Chang S. Bae <chang.seok.bae@intel.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
-Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Link: https://lore.kernel.org/kvm/aAwdQ759Y6V7SGhv@google.com/ [1]
-Link: https://lore.kernel.org/kvm/9ca17e1169805f35168eb722734fbf3579187886.camel@intel.com/ [2]
----
-v7: add Rick's Reviewed-by
-
-v6:
-Drop vcpu_fpu_config.user_* (Rick)
-Reset guest default size when XSAVE is unavaiable or disabled (Chang)
-
-v5:
-Add a new vcpu_fpu_config instead of adding new members to
-fpu_state_config (Chang)
-Extract a helper to set default values (Chang)
----
- arch/x86/include/asm/fpu/types.h | 26 ++++++++++++++++++++++++++
- arch/x86/kernel/fpu/core.c       |  1 +
- arch/x86/kernel/fpu/init.c       |  1 +
- arch/x86/kernel/fpu/xstate.c     | 27 +++++++++++++++++++++------
- 4 files changed, 49 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index 1c94121acd3d..abd193a1a52e 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -551,6 +551,31 @@ struct fpu_guest {
- 	struct fpstate			*fpstate;
- };
- 
-+/*
-+ * FPU state configuration data for fpu_guest.
-+ * Initialized at boot time. Read only after init.
-+ */
-+struct vcpu_fpu_config {
-+	/*
-+	 * @size:
-+	 *
-+	 * The default size of the register state buffer in guest FPUs.
-+	 * Includes all supported features except independent managed
-+	 * features and features which have to be requested by user space
-+	 * before usage.
-+	 */
-+	unsigned int size;
-+
-+	/*
-+	 * @features:
-+	 *
-+	 * The default supported features bitmap in guest FPUs. Does not
-+	 * include independent managed features and features which have to
-+	 * be requested by user space before usage.
-+	 */
-+	u64 features;
-+};
-+
- /*
-  * FPU state configuration data. Initialized at boot time. Read only after init.
-  */
-@@ -606,5 +631,6 @@ struct fpu_state_config {
- 
- /* FPU state configuration information */
- extern struct fpu_state_config fpu_kernel_cfg, fpu_user_cfg;
-+extern struct vcpu_fpu_config guest_default_cfg;
- 
- #endif /* _ASM_X86_FPU_TYPES_H */
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 1cda5b78540b..2cd5e1910ff8 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -36,6 +36,7 @@ DEFINE_PER_CPU(u64, xfd_state);
- /* The FPU state configuration data for kernel and user space */
- struct fpu_state_config	fpu_kernel_cfg __ro_after_init;
- struct fpu_state_config fpu_user_cfg __ro_after_init;
-+struct vcpu_fpu_config guest_default_cfg __ro_after_init;
- 
- /*
-  * Represents the initial FPU state. It's mostly (but not completely) zeroes,
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 6bb3e35c40e2..e19660cdc70c 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -202,6 +202,7 @@ static void __init fpu__init_system_xstate_size_legacy(void)
- 	fpu_kernel_cfg.default_size = size;
- 	fpu_user_cfg.max_size = size;
- 	fpu_user_cfg.default_size = size;
-+	guest_default_cfg.size = size;
- }
- 
- /*
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 1c8410b68108..f32047e12500 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -742,6 +742,9 @@ static int __init init_xstate_size(void)
- 	fpu_user_cfg.default_size =
- 		xstate_calculate_size(fpu_user_cfg.default_features, false);
- 
-+	guest_default_cfg.size =
-+		xstate_calculate_size(guest_default_cfg.features, compacted);
-+
- 	return 0;
- }
- 
-@@ -762,6 +765,7 @@ static void __init fpu__init_disable_system_xstate(unsigned int legacy_size)
- 	fpu_kernel_cfg.default_size = legacy_size;
- 	fpu_user_cfg.max_size = legacy_size;
- 	fpu_user_cfg.default_size = legacy_size;
-+	guest_default_cfg.size = legacy_size;
- 
- 	/*
- 	 * Prevent enabling the static branch which enables writes to the
-@@ -772,6 +776,21 @@ static void __init fpu__init_disable_system_xstate(unsigned int legacy_size)
- 	fpstate_reset(x86_task_fpu(current));
- }
- 
-+static void __init init_default_features(u64 kernel_max_features, u64 user_max_features)
-+{
-+	u64 kfeatures = kernel_max_features;
-+	u64 ufeatures = user_max_features;
-+
-+	/* Default feature sets should not include dynamic xfeatures. */
-+	kfeatures &= ~XFEATURE_MASK_USER_DYNAMIC;
-+	ufeatures &= ~XFEATURE_MASK_USER_DYNAMIC;
-+
-+	fpu_kernel_cfg.default_features = kfeatures;
-+	fpu_user_cfg.default_features   = ufeatures;
-+
-+	guest_default_cfg.features      = kfeatures;
-+}
-+
- /*
-  * Enable and initialize the xsave feature.
-  * Called once per system bootup.
-@@ -854,12 +873,8 @@ void __init fpu__init_system_xstate(unsigned int legacy_size)
- 	fpu_user_cfg.max_features = fpu_kernel_cfg.max_features;
- 	fpu_user_cfg.max_features &= XFEATURE_MASK_USER_SUPPORTED;
- 
--	/* Clean out dynamic features from default */
--	fpu_kernel_cfg.default_features = fpu_kernel_cfg.max_features;
--	fpu_kernel_cfg.default_features &= ~XFEATURE_MASK_USER_DYNAMIC;
--
--	fpu_user_cfg.default_features = fpu_user_cfg.max_features;
--	fpu_user_cfg.default_features &= ~XFEATURE_MASK_USER_DYNAMIC;
-+	/* Now, given maximum feature set, determine default values */
-+	init_default_features(fpu_kernel_cfg.max_features, fpu_user_cfg.max_features);
- 
- 	/* Store it for paranoia check at the end */
- 	xfeatures = fpu_kernel_cfg.max_features;
--- 
-2.47.1
-
+Thanks!
+Sunil
 
