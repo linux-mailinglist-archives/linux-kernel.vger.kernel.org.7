@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-644522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91639AB3D91
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C86CBAB3D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C83866ED4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C99C866871
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECB0295DA2;
-	Mon, 12 May 2025 16:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3523929346F;
+	Mon, 12 May 2025 16:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="naJCUgy1"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="JnQElByY"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B722505CD
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5240225D20D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747066934; cv=none; b=AEHtG51bQdPcsuFGcF7wz/2CGHpmNNbTXYcW89JBebfrt0drhuHOuk/3rkXib3X/PraPoZ5yflob1SK5NoLMiI2qtEmws4Qk1/KtIBc1xtoZu8VjERBARrOl5dxPTNI1tzl1oXYos5UYEEHe9ikTLdEkUZ8HIStcFQWWMecnVXI=
+	t=1747066925; cv=none; b=A2n4V5ixu5RgSgnbUMxdlQp2nR+VJ5ngxIcJeRaUj0IYJPoREZR/9b9e2n50eqV6FvE44vfq/RqKRdqx5/IRcUxRg+E/Ysbz9QlYOUPvGLHDiMipzR99tNi+kA9SIdJVnROUIWmC5y85AWrAEcee/WwTb4qMTa0D4SmNjCUYWCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747066934; c=relaxed/simple;
-	bh=AhTLdqyE2De1b9HJN76/C5lAERWGT4jHTFZhEoUDbtk=;
+	s=arc-20240116; t=1747066925; c=relaxed/simple;
+	bh=6kFRAXLyb71mD2Zs2gNFWfCB+AfEcQArhWsCvZFm48U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a/IUSvu3eC1jt/2qt12JtrlFze9fdpppq9na3UvTYyjLiRO0l5grFUtUMqWTijTILpEmCF1w9Bg8bSqAqKhhnh9OYRj7Afgrl8zIymQzIqp02GqvkgvHLF3dTd6UmemJGzFpKHr7mwlQn9wQ1afqdczeNi1RqH3Nwk/Fh5nYSLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=naJCUgy1; arc=none smtp.client-ip=209.85.160.171
+	 MIME-Version; b=M0MopTjIm+9t2DAZ3j5n5SVAmE3J4My3hhnJ4vE7V8uTtaJZjyGvUlbpdvVTRxi0S6BhyYb9j7sBC/WzZyIM8VYflQqjJ/My+ENFMTd2kw0Ld53Yf5NtZUAY08MqbKd+QQq8frmPVREf+Jasvm2JFDc4fWqUzeaTG5WWoR7chdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=JnQElByY; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-476a1acf61eso50527611cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 09:22:12 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-476ae781d21so55631201cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 09:22:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1747066932; x=1747671732; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1747066922; x=1747671722; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xF2+54Is9Y/RM3HTLl2GmOBtMHoFbKc3iQ93j5V9CWg=;
-        b=naJCUgy1KWk+rmjdU4UXP/sXKVzlM6e/kOeFIw2bcTa8BKo+5adJjkIjJY3n4Z6le6
-         IhK4lGAc18HZcr22dV7XR2FxKJvFlFP+8+MxpRLhX+Q4duAppB7QPy8J3AVqNTRwXpDH
-         ue4kGKIsWS9bpethSs0ip7bQc9u5+XOAK6oiyuPKYQKA+WK1h60GZjHmG3UQm8GdfMSR
-         XJy8dWe4ihEVMaufP1U8STA8NL6CU26cOkpivcVCOJV0XRjGxhejghidvf1ruCdB/x8d
-         B76Q1bBOnMv53aAnwOfhtoJS+KwrOx1pMzevELpbqvaOhCQzPrD2uzWOhhLsZoXL0lwJ
-         KDsA==
+        bh=tpBvWJMvNrl2dBGkl5driDL3hYTI6jOnBaaDfES2w1M=;
+        b=JnQElByYJxg6o/n5loj0kZT19DtAktksz+qN61RdF2oaWDqIHKV8aFcNcCvsxW0FHC
+         pYSnQZsUnbxVcWxgAV8kGggKL6eUEishsR5dWy/Rs045fVb90jouUNaOlI/5FjLY5BZy
+         ctnLUGndKKZbn2S0nN15JlLOq9CbGQft3XmZOyYIHQ5aqB8js673f8l304Ro+UwxGQ17
+         MpTvbphYM1tsFD0QcKsdGxS2c9jhdkEmuDJqAGnyXBFyWjT2xmr7/CZS71MQTZ3UEw9j
+         syopRlDwDO57k9vskFG/k/vdjD1qy34YGj5YaWo3iW0ncj8MPa2sbDLIJTnbEHy1odQn
+         NlBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747066932; x=1747671732;
+        d=1e100.net; s=20230601; t=1747066922; x=1747671722;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xF2+54Is9Y/RM3HTLl2GmOBtMHoFbKc3iQ93j5V9CWg=;
-        b=hg1DOz/ullCqfQ7Z3E0uvgEtIYXS3Rowyj/19Dd+n43qtx9V/OenarEtnFlN8UQk2O
-         44dLA9/pIK5Iw45vWpaiyXa9Ru0k/wH9TKqViyqE6WkpLOnu0KgXWN8kJP3MJX8/H2+V
-         U+KaOXEyluH3493QwzfHTXW0Z3MtzcRYu7/e1LdcKfGsfyflkvYHKlKgtQNVoM/ZdadO
-         8aSPIEpJgmV79sJtTvHryMYMdN2M+yRIGa2bhmVV5vHCdkkWXwmA6XkWXOTxRJr+Oa0a
-         4A0+pnAas6OolEOKUq8nzKCjFVXZvZ6gXwwZtAAZbASWjzG0Cru1LFEQOxHA3XKjwBFA
-         fn3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVhbcSjoS13+YGhRU3QyM3Of3YkOQ4aOsCtghARkmJHlpHa06j8xVF779visPYZYBctfjFKfJLgW5hcM1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7GG1Nrc9LjGvBUPxOgEeZ20lv5x2tc16NVBnQnW1+LijZV/ST
-	P3NdmoalqmgvxgKfvkl4YXOXJDEEvbtbR0Ngb8GaawlkGLusidNZ0XkxkAED8luWVc4XWgNd7xS
-	I
-X-Gm-Gg: ASbGncuQDNLxOSSHzD3WmZ9K3wExyevpGI/qjc6oBe+zTwtfz7Yfk+mQNRy592L/F1R
-	xmei4pF+AmJeQ3l+SqLjGGUOZ3u+qrMiyczzk3OQ9YSJDl/2VlmEy22o0jUqXYHU/vcONqKvaEN
-	77knLz34WlS29Wu8Lsi4XKNXF21cNG3yCJcm5zpkH9idBBAc9U3ejhxfptCiCweycQhkT2LUoBw
-	EDdNpDZlZLRXLlk9cO+cLVYbWtakbRRCqJ+D9htKZDG8PdAH1ko5LFbwuJdko9QSdyHan1NSNdX
-	rVRXD2aMgcrBXk788PXxWscva5EwAe19eTnhZ/grgNpYxJlbnUzir3cyNNQbDjcgnsi3Wa7tjeH
-	d8K9kOaB02xLiii/YmNpaN2+EHEHzddKngDyO
-X-Google-Smtp-Source: AGHT+IEUvJWC96dITPrF63xDkehCwcU0FPTtDoj7fUuKu2PGS+4UNxLAuwofc+V4RoH9DNoujCSNzA==
-X-Received: by 2002:a05:622a:1aa0:b0:476:838c:b0ce with SMTP id d75a77b69052e-4945273c308mr238859421cf.13.1747066920650;
-        Mon, 12 May 2025 09:22:00 -0700 (PDT)
+        bh=tpBvWJMvNrl2dBGkl5driDL3hYTI6jOnBaaDfES2w1M=;
+        b=Zch9WCC2JZ0jZPJQPKPWmL8vrzdAH5RVKqtgvxra1itpTaMLBFpd2WeFuV9p/dlxvk
+         XN6zCWo0yZDaWG9+34y8pW1wi56CIWZh2pchpWKTzrv9QbBU02wUFjqwYJJdjIz/X8oU
+         7rIfTlCqo0l4ttZMShFv/k12LWBINZ4nxchMaEs8bm0J5aTcY1CNXPXDgHdiVUH33x/V
+         zM9yppf+jAGFp85Fu1mdNixKohZ7ue/iLWOdVohe+SZiIm5HKZt87Fl6+ZjpR5ZtIKAA
+         uoECJSLAJWsPMzYRbNQHMlg8L+mkUAHKGwFZGbELtZ7kfsp70XG/7BL8woMsyzKODkJi
+         8EcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhakfn98FzICHGG4UyR/oGStS/Sxq7EfDqmJ62BYy95RGNp1T15Ky6qo2jyA5YI0QV1FhXFPjXn/rx3Jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwwpbkWwTrAFMrc7XA2nN6eRJWOxb40N4SBidJZFhVnNsMnGhg
+	RoxbSBn9S9q7dHiz4V7s1QEp+CzWKJDPPK7Qblxh+yG6nyUatS2YzDAipYgiFiE=
+X-Gm-Gg: ASbGncuTdEHlXTPGsSWL1KmvolNdxE1sNXLeKcID4CatlU6eJ0AFRh1FpXhJ/XEPBaT
+	SBkHXzFJcBUjaKVqfTCBXfT/OyjV39lOI2CaN/jbTbWfs3zQXkJQp6DrDXahelQW4uxFlIkSMHd
+	/pL/nZUTspVvdiGgPpjpjUJvp4BZ9WLod8XGa+Kl/GGO4yUz0ngHa0A8DM4yzZdqs9YvNy1S9Hv
+	6pWwvszcKsUXRAf6Tz1s9MQzfZOJy7Z0cBIS4yC4IDZwrgAUC3h7Zhvn+1vxJuHZzH4l1M9N8QW
+	yfuOKjcqK+1KMKhzsaK1C3N5KIuHK1AuuIlJGuzqnrL0++jgHtTFHUwV922I/Od9xZ7HO0hl2HC
+	hGJaOp3nYCnylexiMrOuk3+a5NbMV6xE74yk6
+X-Google-Smtp-Source: AGHT+IEgOwqbTVyM2cCqwhYH6oeFz+yp7dgByEYQB2haUlrU8NGA2h0ID7S4kwTF7yVmhY0k+Ia7IQ==
+X-Received: by 2002:a05:622a:5408:b0:477:c04:b512 with SMTP id d75a77b69052e-4945273c1dbmr225206941cf.16.1747066922158;
+        Mon, 12 May 2025 09:22:02 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-49452583961sm52461791cf.58.2025.05.12.09.21.59
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-49452583961sm52461791cf.58.2025.05.12.09.22.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 09:22:00 -0700 (PDT)
+        Mon, 12 May 2025 09:22:01 -0700 (PDT)
 From: Gregory Price <gourry@gourry.net>
 To: linux-cxl@vger.kernel.org
 Cc: linux-doc@vger.kernel.org,
@@ -86,9 +85,9 @@ Cc: linux-doc@vger.kernel.org,
 	ira.weiny@intel.com,
 	dan.j.williams@intel.com,
 	corbet@lwn.net
-Subject: [PATCH v3 12/17] cxl: docs/linux/memory-hotplug
-Date: Mon, 12 May 2025 12:21:29 -0400
-Message-ID: <20250512162134.3596150-13-gourry@gourry.net>
+Subject: [PATCH v3 13/17] cxl: docs/allocation/dax
+Date: Mon, 12 May 2025 12:21:30 -0400
+Message-ID: <20250512162134.3596150-14-gourry@gourry.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250512162134.3596150-1-gourry@gourry.net>
 References: <20250512162134.3596150-1-gourry@gourry.net>
@@ -100,112 +99,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add documentation on how the CXL driver surfaces memory through the
-DAX driver and memory-hotplug.
+Small example of accessing CXL memory capacity via DAX device
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- Documentation/driver-api/cxl/index.rst        |  1 +
- .../driver-api/cxl/linux/memory-hotplug.rst   | 78 +++++++++++++++++++
- 2 files changed, 79 insertions(+)
- create mode 100644 Documentation/driver-api/cxl/linux/memory-hotplug.rst
+ .../driver-api/cxl/allocation/dax.rst         | 60 +++++++++++++++++++
+ Documentation/driver-api/cxl/index.rst        |  5 ++
+ 2 files changed, 65 insertions(+)
+ create mode 100644 Documentation/driver-api/cxl/allocation/dax.rst
 
-diff --git a/Documentation/driver-api/cxl/index.rst b/Documentation/driver-api/cxl/index.rst
-index f2127968ea78..35c5b0c6f95e 100644
---- a/Documentation/driver-api/cxl/index.rst
-+++ b/Documentation/driver-api/cxl/index.rst
-@@ -37,6 +37,7 @@ that have impacts on each other.  The docs here break up configurations steps.
-    linux/early-boot
-    linux/cxl-driver
-    linux/dax-driver
-+   linux/memory-hotplug
-    linux/access-coordinates
- 
- 
-diff --git a/Documentation/driver-api/cxl/linux/memory-hotplug.rst b/Documentation/driver-api/cxl/linux/memory-hotplug.rst
+diff --git a/Documentation/driver-api/cxl/allocation/dax.rst b/Documentation/driver-api/cxl/allocation/dax.rst
 new file mode 100644
-index 000000000000..af368c2bc9cf
+index 000000000000..c6f7a5da832f
 --- /dev/null
-+++ b/Documentation/driver-api/cxl/linux/memory-hotplug.rst
-@@ -0,0 +1,78 @@
++++ b/Documentation/driver-api/cxl/allocation/dax.rst
+@@ -0,0 +1,60 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+==============
-+Memory Hotplug
-+==============
-+The final phase of surfacing CXL memory to the kernel page allocator is for
-+the `DAX` driver to surface a `Driver Managed` memory region via the
-+memory-hotplug component.
++===========
++DAX Devices
++===========
++CXL capacity exposed as a DAX device can be accessed directly via mmap.
++Users may wish to use this interface mechanism to write their own userland
++CXL allocator, or to managed shared or persistent memory regions across multiple
++hosts.
 +
-+There are four major configurations to consider:
++If the capacity is shared across hosts or persistent, appropriate flushing
++mechanisms must be employed unless the region supports Snoop Back-Invalidate.
 +
-+1) Default Online Behavior (on/off and zone)
-+2) Hotplug Memory Block size
-+3) Memory Map Resource location
-+4) Driver-Managed Memory Designation
++Note that mappings must be aligned (size and base) to the dax device's base
++alignment, which is typically 2MB - but maybe be configured larger.
 +
-+Default Online Behavior
-+=======================
-+The default-online behavior of hotplug memory is dictated by the following,
-+in order of precedence:
++::
 +
-+- :code:`CONFIG_MHP_DEFAULT_ONLINE_TYPE` Build Configuration
-+- :code:`memhp_default_state` Boot parameter
-+- :code:`/sys/devices/system/memory/auto_online_blocks` value
++  #include <stdio.h>
++  #include <stdlib.h>
++  #include <stdint.h>
++  #include <sys/mman.h>
++  #include <fcntl.h>
++  #include <unistd.h>
 +
-+These dictate whether hotplugged memory blocks arrive in one of three states:
++  #define DEVICE_PATH "/dev/dax0.0" // Replace DAX device path
++  #define DEVICE_SIZE (4ULL * 1024 * 1024 * 1024) // 4GB
 +
-+1) Offline
-+2) Online in :code:`ZONE_NORMAL`
-+3) Online in :code:`ZONE_MOVABLE`
++  int main() {
++      int fd;
++      void* mapped_addr;
 +
-+:code:`ZONE_NORMAL` implies this capacity may be used for almost any allocation,
-+while :code:`ZONE_MOVABLE` implies this capacity should only be used for
-+migratable allocations.
++      /* Open the DAX device */
++      fd = open(DEVICE_PATH, O_RDWR);
++      if (fd < 0) {
++          perror("open");
++          return -1;
++      }
 +
-+:code:`ZONE_MOVABLE` attempts to retain the hotplug-ability of a memory block
-+so that it the entire region may be hot-unplugged at a later time.  Any capacity
-+onlined into :code:`ZONE_NORMAL` should be considered permanently attached to
-+the page allocator.
++      /* Map the device into memory */
++      mapped_addr = mmap(NULL, DEVICE_SIZE, PROT_READ | PROT_WRITE,
++                         MAP_SHARED, fd, 0);
++      if (mapped_addr == MAP_FAILED) {
++          perror("mmap");
++          close(fd);
++          return -1;
++      }
 +
-+Hotplug Memory Block Size
-+=========================
-+By default, on most architectures, the Hotplug Memory Block Size is either
-+128MB or 256MB.  On x86, the block size increases up to 2GB as total memory
-+capacity exceeds 64GB.  As of v6.15, Linux does not take into account the
-+size and alignment of the ACPI CEDT CFMWS regions (see Early Boot docs) when
-+deciding the Hotplug Memory Block Size.
++      printf("Mapped address: %p\n", mapped_addr);
 +
-+Memory Map
-+==========
-+The location of :code:`struct folio` allocations to represent the hotplugged
-+memory capacity are dictated by the following system settings:
++      /* You can now access the device through the mapped address */
++      uint64_t* ptr = (uint64_t*)mapped_addr;
++      *ptr = 0x1234567890abcdef; // Write a value to the device
++      printf("Value at address %p: 0x%016llx\n", ptr, *ptr);
 +
-+- :code:`/sys_module/memory_hotplug/parameters/memmap_on_memory`
-+- :code:`/sys/bus/dax/devices/daxN.Y/memmap_on_memory`
++      /* Clean up */
++      munmap(mapped_addr, DEVICE_SIZE);
++      close(fd);
++      return 0;
++  }
+diff --git a/Documentation/driver-api/cxl/index.rst b/Documentation/driver-api/cxl/index.rst
+index 35c5b0c6f95e..6e7497f4811a 100644
+--- a/Documentation/driver-api/cxl/index.rst
++++ b/Documentation/driver-api/cxl/index.rst
+@@ -40,5 +40,10 @@ that have impacts on each other.  The docs here break up configurations steps.
+    linux/memory-hotplug
+    linux/access-coordinates
+ 
++.. toctree::
++   :maxdepth: 2
++   :caption: Memory Allocation
 +
-+If both of these parameters are set to true, :code:`struct folio` for this
-+capacity will be carved out of the memory block being onlined.  This has
-+performance implications if the memory is particularly high-latency and
-+its :code:`struct folio` becomes hotly contended.
-+
-+If either parameter is set to false, :code:`struct folio` for this capacity
-+will be allocated from the local node of the processor running the hotplug
-+procedure.  This capacity will be allocated from :code:`ZONE_NORMAL` on
-+that node, as it is a :code:`GFP_KERNEL` allocation.
-+
-+Systems with extremely large amounts of :code:`ZONE_MOVABLE` memory (e.g.
-+CXL memory pools) must ensure that there is sufficient local
-+:code:`ZONE_NORMAL` capacity to host the memory map for the hotplugged capacity.
-+
-+Driver Managed Memory
-+=====================
-+The DAX driver surfaces this memory to memory-hotplug as "Driver Managed". This
-+is not a configurable setting, but it's important to note that driver managed
-+memory is explicitly excluded from use during kexec.  This is required to ensure
-+any reset or out-of-band operations that the CXL device may be subject to during
-+a functional system-reboot (such as a reset-on-probe) will not cause portions of
-+the kexec kernel to be overwritten.
++   allocation/dax
+ 
+ .. only::  subproject and html
 -- 
 2.49.0
 
