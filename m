@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-643946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BA2AB34D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0AEAB34D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FD217D91F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5690B3BE7DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC6025F79D;
-	Mon, 12 May 2025 10:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CC9C8DC;
+	Mon, 12 May 2025 10:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftCmj1IB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cBcoFfOY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F29F2B9B7
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2332525A32A;
+	Mon, 12 May 2025 10:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747045369; cv=none; b=ltDPUwOxXuXPtWQroZzuAiwOfkzYTRwh/10EvPAQB41rUZXgz6W1MqMTKHcc4a9TeHe4Xefu1RwTcrDRwaTyoiIeb+IUv7kZQKGoc5uQIOOduNUTZYAi1pI/7GSF48M6BFqm3iSh/wz1YGQ0nzuA1mUSgoZtbjrB35qE3det7og=
+	t=1747045434; cv=none; b=EkePP+9Jv6AID20JeO6VYtVD/QRlw/2KsMREy/Ask1rDvDlSdc51KFGgvMuPscY5cysNY/gX2/zw9wEcDK7EIdpH2raetPHEf8MRl2DsCCELog+nRSmzSqR+MpnUMtEzrabFIWN07CFB5rGltWtaz/249hh59noiwLbqiL6Yil4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747045369; c=relaxed/simple;
-	bh=hy6dZlCXBrMC7R8bvN+Vgrk0dgZbOaUl4Uqs8FQUUCU=;
+	s=arc-20240116; t=1747045434; c=relaxed/simple;
+	bh=bUjI6qlVAAceceFnl6Zz3aGArQVeBhgk7QdxtcLy908=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BowUXRM/6nSSurw5me2tQcrjqtllGnYausDmFzjcZc2/u4sz4ixqEv8xfpxa3snekMq15d4Sekr4QZG34DERl7B7JNN+f7o2ujoCT1MoeNqnpg8x8pxabWcfeQrZs/chqUVE1mBw172hVG7n4zVrX/yG0S0mRZFUGE8jYppbP1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftCmj1IB; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9lXuzXCSVb06YgWbhJt4JWM4upAkGmWMirfSODYxNCxXjLyhbOfDzQanbMjZY+BqCVKokmqkMS/WadiKnXlJvmcks+Nw4PcgqceUmf/7+uQRKsO514gNGSaiWFXIru3RKRuVP8tr/0DpFgNKPl5o9Zok+oDIUh3Xuu5nA2agAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cBcoFfOY; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747045368; x=1778581368;
+  t=1747045434; x=1778581434;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=hy6dZlCXBrMC7R8bvN+Vgrk0dgZbOaUl4Uqs8FQUUCU=;
-  b=ftCmj1IBhhyNHkUf7KhX/lbyQhnxznS3WhdWgoI0+w3jcpJQOWLNC6SC
-   C6Am6yItXFPIr/ayAJMaPK3vc7lVjdHQ1r2zDOwtOe1gVZkv3YqIcLAiI
-   BMDSFsRBAFsT4L/TZhgdsl62TnLoANxp0GqsOAI0m0N4SdxG9xu99rEYE
-   OyCGtKRXBGFFdNKX19l3sMG2BCQNpXRuiINSXuACFEwPljVc6gMhVP1F1
-   JQSSVeogmyxM5p9CKT9HCwu9jp74TtZbtR76bausdTYfafWU1Ew09nJXq
-   cuIdMsisXC6soFI7e8Zu9/Ndy7xpN1Tdi+Fend3XNLkOig8cAnRSLqTiy
+  bh=bUjI6qlVAAceceFnl6Zz3aGArQVeBhgk7QdxtcLy908=;
+  b=cBcoFfOYqh5cCJ4hwInI/hiEpbcCVCbs1u6F3HmY6/oh86VdZlnwFNFe
+   QChOpsFCQCdf6c3TenTNGeXxvi/EpGW8EIXVZZ0+GYkAfkjIzF7un1E5G
+   OrKpZBGEo2Qj06bFwr9L+0vJANTfEK3TFk3j5B89anJM1Y84f95bssDEh
+   LpszC20IpXst92ftKsq0ZCUY9E1dlxsNNPEFFHGsBnC42CCwQlyQTUm3L
+   vibXKrql2BWS45Wiy3+eCifoPoAYn70azeVLzZF6Y1RhMNgy9Cdv711fd
+   xqX+a6P5kW6FuvOcqflf2iorebAZ03TTa2EKifvHPRgkfVEWKZ/DY+/qN
    Q==;
-X-CSE-ConnectionGUID: pIjo15myQoy9tPcDkDWuiw==
-X-CSE-MsgGUID: Ys9V9Q2qQd+Xf1TQzfVK3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48700764"
+X-CSE-ConnectionGUID: W5q2ocv9SCqgTgiBWd1KSQ==
+X-CSE-MsgGUID: RI1wjHKQRfiK6Fjfc3C+dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48529605"
 X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
-   d="scan'208";a="48700764"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 03:22:47 -0700
-X-CSE-ConnectionGUID: L8AGSCanR7WDHI9bKgHHjQ==
-X-CSE-MsgGUID: O/ZNLsxUR4yXP9QobEqbng==
+   d="scan'208";a="48529605"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 03:23:53 -0700
+X-CSE-ConnectionGUID: 2dtO5S7tRveWfCh3fJCTig==
+X-CSE-MsgGUID: /AnlC+2hQCG/f2eqCdUuGw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
-   d="scan'208";a="137252507"
+   d="scan'208";a="138297538"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 03:22:45 -0700
-Date: Mon, 12 May 2025 13:22:41 +0300
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 03:23:50 -0700
+Date: Mon, 12 May 2025 13:23:47 +0300
 From: Raag Jadav <raag.jadav@intel.com>
-To: Lee Jones <lee@kernel.org>, gregkh@linuxfoundation.org
-Cc: david.m.ertman@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-	heikki.krogerus@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] mfd: core: Support auxiliary device
-Message-ID: <aCHL8WWV-Wt7OrII@black.fi.intel.com>
-References: <20250428060207.3170325-1-raag.jadav@intel.com>
- <20250501125028.GM1567507@google.com>
- <aBVArb-zJ_aqicHW@black.fi.intel.com>
+To: rafael@kernel.org, mahesh@linux.ibm.com, oohall@gmail.com,
+	bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com, lukas@wunner.de,
+	aravind.iddamsetty@linux.intel.com
+Subject: Re: [PATCH v3] PCI: Prevent power state transition of erroneous
+ device
+Message-ID: <aCHMM7YMqT8onaKl@black.fi.intel.com>
+References: <20250504090444.3347952-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,50 +76,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBVArb-zJ_aqicHW@black.fi.intel.com>
+In-Reply-To: <20250504090444.3347952-1-raag.jadav@intel.com>
 
-On Sat, May 03, 2025 at 01:01:23AM +0300, Raag Jadav wrote:
-> On Thu, May 01, 2025 at 01:50:28PM +0100, Lee Jones wrote:
-> > On Mon, 28 Apr 2025, Raag Jadav wrote:
-> > 
-> > > Extend MFD subsystem to support auxiliary child device. This is useful
-> > > for MFD usecases where parent device is on a discoverable bus and doesn't
-> > > fit into the platform device criteria. Purpose of this implementation is
-> > > to provide discoverable MFDs just enough infrastructure to register
-> > > independent child devices without abusing the platform device.
-> > > 
-> > > Current support is limited to just PCI type MFDs, but this can be further
-> > > extended to support other types like USB in the future.
-> > > 
-> > > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> > > ---
-> > > 
-> > > v2: Introduce a shared struct mfd_aux_device
-> > >     Introduce auxiliary device opt-in flag
-> > > 
-> > > v3: Fix device_type ABI breakage (Andy)
-> > >     Aesthetic adjustments (Andy)
-> > > 
-> > > v4: s/mfd_aux/maux
-> > >     Allow num_resources for child device (Andy)
-> > >     Fix build warning (Andy)
-> > > 
-> > >  drivers/mfd/Kconfig      |   2 +-
-> > >  drivers/mfd/Makefile     |   2 +-
-> > >  drivers/mfd/mfd-aux.c    | 156 +++++++++++++++++++++++++++++++
-> > 
-> > This looks like mostly duplicated platform device code.
-> > 
-> > If you are _certain_ that it needs to exist, you need to push it out to
-> > the auxiliary subsystem and remove any traces of it being MFD related.
-> > 
-> > If it's needed by MFD, it'll be needed by other auxiliary users.  Even
-> > if not now, sometime in the future.
+On Sun, May 04, 2025 at 02:34:44PM +0530, Raag Jadav wrote:
+> If error flags are set on an AER capable device, most likely either the
+> device recovery is in progress or has already failed. Neither of the
+> cases are well suited for power state transition of the device, since
+> this can lead to unpredictable consequences like resume failure, or in
+> worst case the device is lost because of it. Leave the device in its
+> existing power state to avoid such issues.
 > 
-> Greg, if you are okay with this, please let me know. Or perhaps suggest
-> a better alternative.
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> ---
+> 
+> v2: Synchronize AER handling with PCI PM (Rafael)
+> v3: Move pci_aer_in_progress() to pci_set_low_power_state() (Rafael)
+>     Elaborate "why" (Bjorn)
+> 
+> More discussion on [1].
+> [1] https://lore.kernel.org/all/CAJZ5v0g-aJXfVH+Uc=9eRPuW08t-6PwzdyMXsC6FZRKYJtY03Q@mail.gmail.com/
 
-Greg, any guidance on this?
+Bump. Anything I can do to move this forward?
 
 Raag
 
