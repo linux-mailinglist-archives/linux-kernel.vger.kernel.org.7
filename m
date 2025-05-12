@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-644655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD63AB41A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F14AB41C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014B74A0C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11B33A431F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB08B298CD1;
-	Mon, 12 May 2025 18:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53D929A9D4;
+	Mon, 12 May 2025 18:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ANocxE/M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cdOvs6sn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55550298CA9
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0899029A304
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747073072; cv=none; b=Jr2mKpX8Z46JxY5n49DMt9PbmiRZ2x/sH2C9TohNxzWl5YY0wQmlBjpJq/WTL8Oi9w7t/HpBFdLFNJyFHLgjv7Lhz26gSOOh56SsBBlVXsUgr1O3yjFifhaXsA/i5vlKrzKQuajHeXBHBpKVv4qfqnurrstonQyTg5P6eNn90us=
+	t=1747073082; cv=none; b=X0jRL0oqNJBcKWWdugo9OPOAI5MAkENGbyn58gDx2Grm+p+M+pYcqFwvX8mNukVo6Ox49dSSFI8eYJF6NyJsUFqvQjkf0sFwpiUGlax9euplqCEUCgUvCPgN08ydz98MTuQoHzs3vj6Ne+zVW5fqJuazqdMXcGfmuzR3bYlpOns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747073072; c=relaxed/simple;
-	bh=01AxGl5y9sewo+AjNmG3P95dBC2IXR63aHqvqvehehg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ROOq+bx+hVGsGTtJEmzpZdD6d21cW71Mz/lDLFWGXEV/m67DuKTBqLm6RGD6qQtyYAF+EV2wZMl+ch+A1pbc9jineA6bcypCtBfzf8bm2BfiUtV2yrWFdYcREPTDiec8gPDh4NLlg+sjMtjifadCWb/LqYVQIU1US5FvCsyhjFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ANocxE/M; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1747073082; c=relaxed/simple;
+	bh=oBzmlHt0HTJa1iYabb2/WVIvO0yzC8VwyaNi+DS7efQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kWZURSmB0iVbuC4cXWeOjBeNQKSmGE5W5ZDeqERY8NGvZQl5Eg5GVBLCYbyjITjbcPr6B4au0RVwF34yVxsz8ZCZZS7LFssEqLR1IPfWWAgMksI5Bvu9lAzCs2Omyl8aUhoWzt1DJV57UKytHMeeQVpSLszLi4vyoK57QuvQzTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cdOvs6sn; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747073068;
+	s=mimecast20190719; t=1747073078;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Jzez9beQL600E+agH2Z2p3TWupq3wuiKJM0KPUz5arQ=;
-	b=ANocxE/M7PEoUH4mScO/CsNDklfs07uizBWJLuoVbXFX/83YBkaPXqXVVazb20PVpQLEOt
-	wu3kVCkBiVBegNaPWJ3UUfWSdd63ooYXG5zeVh15a4oXa12J5uM7rxLMuyBa67V7hsYNtC
-	bZkW80o0bUTII3rXffHb+lQQt5PsGLo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z2T7ycCKwqZIMsv2I6XJvuhGXIY81vCrox7I0j0GM+0=;
+	b=cdOvs6sn9uEzNzywegXP6shEo8ZBbZEgnXwfw6xyqEQCZcNO7sk3p/15wOaaG0fGxi/aqV
+	Kju2g6g1dLo6X3jKXzMsQAEWBymdQ4+BKlusM7Ah+ANVD/fnSv/kWn5aQEFjsXAQLIsesl
+	oBTa6QwdAMLHPuktw3X21NJUm40Ayl8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-Mc8z2qJpM0WcOmyyGPFIow-1; Mon,
- 12 May 2025 14:04:25 -0400
-X-MC-Unique: Mc8z2qJpM0WcOmyyGPFIow-1
-X-Mimecast-MFC-AGG-ID: Mc8z2qJpM0WcOmyyGPFIow_1747073061
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-418-bCO2M7_lMsCo5R7BHCagxQ-1; Mon,
+ 12 May 2025 14:04:36 -0400
+X-MC-Unique: bCO2M7_lMsCo5R7BHCagxQ-1
+X-Mimecast-MFC-AGG-ID: bCO2M7_lMsCo5R7BHCagxQ_1747073066
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7837C1800263;
-	Mon, 12 May 2025 18:04:17 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 987FE1955D4A;
+	Mon, 12 May 2025 18:04:25 +0000 (UTC)
 Received: from intellaptop.lan (unknown [10.22.80.5])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B909630002D4;
-	Mon, 12 May 2025 18:04:08 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B654930001A1;
+	Mon, 12 May 2025 18:04:17 +0000 (UTC)
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: kvm@vger.kernel.org
 Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
@@ -95,67 +97,137 @@ Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Ingo Molnar <mingo@redhat.com>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Albert Ou <aou@eecs.berkeley.edu>
-Subject: [PATCH v5 0/6] KVM: lockdep improvements
-Date: Mon, 12 May 2025 14:04:01 -0400
-Message-ID: <20250512180407.659015-1-mlevitsk@redhat.com>
-Content-Type: text/plain; charset="utf-8"
+Subject: [PATCH v5 1/6] locking/mutex: implement mutex_trylock_nested
+Date: Mon, 12 May 2025 14:04:02 -0400
+Message-ID: <20250512180407.659015-2-mlevitsk@redhat.com>
+In-Reply-To: <20250512180407.659015-1-mlevitsk@redhat.com>
+References: <20250512180407.659015-1-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-This is	a continuation of my 'extract lock_all_vcpus/unlock_all_vcpus'=0D
-patch series.=0D
-=0D
-Implement the suggestion of using lockdep's "nest_lock" feature=0D
-when locking all KVM vCPUs by adding mutex_trylock_nest_lock() and=0D
-mutex_lock_killable_nest_lock() and use these functions	in the=0D
-implementation of the=0D
-kvm_trylock_all_vcpus()/kvm_lock_all_vcpus()/kvm_unlock_all_vcpus().=0D
-=0D
-Those changes allow removal of a custom workaround that was needed to=0D
-silence the lockdep warning in the SEV code and also stop lockdep from=0D
-complaining in case of ARM and RISC-V code which doesn't include the above=
-=0D
-mentioned workaround.=0D
-=0D
-Finally, it's worth noting that this patch series removes a fair=0D
-amount of duplicate code by implementing the logic in one place.=0D
-=0D
-V5: addressed review feedback.=0D
-=0D
-Best regards,=0D
-	Maxim Levitsky=0D
-=0D
-Maxim Levitsky (6):=0D
-  locking/mutex: implement mutex_trylock_nested=0D
-  locking/mutex: implement mutex_lock_killable_nest_lock=0D
-  KVM: add kvm_lock_all_vcpus and kvm_trylock_all_vcpus=0D
-  x86: KVM: SVM: use kvm_lock_all_vcpus instead of a custom=0D
-    implementation=0D
-  KVM: arm64: use kvm_trylock_all_vcpus when locking all vCPUs=0D
-  RISC-V: KVM: use kvm_trylock_all_vcpus when locking all vCPUs=0D
-=0D
- arch/arm64/include/asm/kvm_host.h     |  3 --=0D
- arch/arm64/kvm/arch_timer.c           |  4 +-=0D
- arch/arm64/kvm/arm.c                  | 43 ----------------=0D
- arch/arm64/kvm/vgic/vgic-init.c       |  4 +-=0D
- arch/arm64/kvm/vgic/vgic-its.c        |  8 +--=0D
- arch/arm64/kvm/vgic/vgic-kvm-device.c | 12 ++---=0D
- arch/riscv/kvm/aia_device.c           | 34 +------------=0D
- arch/x86/kvm/svm/sev.c                | 72 ++-------------------------=0D
- include/linux/kvm_host.h              |  4 ++=0D
- include/linux/mutex.h                 | 32 ++++++++++--=0D
- kernel/locking/mutex.c                | 21 +++++---=0D
- virt/kvm/kvm_main.c                   | 59 ++++++++++++++++++++++=0D
- 12 files changed, 126 insertions(+), 170 deletions(-)=0D
-=0D
--- =0D
-2.46.0=0D
-=0D
+Despite the fact that several lockdep-related checks are skipped when
+calling trylock* versions of the locking primitives, for example
+mutex_trylock, each time the mutex is acquired, a held_lock is still
+placed onto the lockdep stack by __lock_acquire() which is called
+regardless of whether the trylock* or regular locking API was used.
+
+This means that if the caller successfully acquires more than
+MAX_LOCK_DEPTH locks of the same class, even when using mutex_trylock,
+lockdep will still complain that the maximum depth of the held lock stack
+has been reached and disable itself.
+
+For example, the following error currently occurs in the ARM version
+of KVM, once the code tries to lock all vCPUs of a VM configured with more
+than MAX_LOCK_DEPTH vCPUs, a situation that can easily happen on modern
+systems, where having more than 48 CPUs is common, and it's also common to
+run VMs that have vCPU counts approaching that number:
+
+[  328.171264] BUG: MAX_LOCK_DEPTH too low!
+[  328.175227] turning off the locking correctness validator.
+[  328.180726] Please attach the output of /proc/lock_stat to the bug report
+[  328.187531] depth: 48  max: 48!
+[  328.190678] 48 locks held by qemu-kvm/11664:
+[  328.194957]  #0: ffff800086de5ba0 (&kvm->lock){+.+.}-{3:3}, at: kvm_ioctl_create_device+0x174/0x5b0
+[  328.204048]  #1: ffff0800e78800b8 (&vcpu->mutex){+.+.}-{3:3}, at: lock_all_vcpus+0x16c/0x2a0
+[  328.212521]  #2: ffff07ffeee51e98 (&vcpu->mutex){+.+.}-{3:3}, at: lock_all_vcpus+0x16c/0x2a0
+[  328.220991]  #3: ffff0800dc7d80b8 (&vcpu->mutex){+.+.}-{3:3}, at: lock_all_vcpus+0x16c/0x2a0
+[  328.229463]  #4: ffff07ffe0c980b8 (&vcpu->mutex){+.+.}-{3:3}, at: lock_all_vcpus+0x16c/0x2a0
+[  328.237934]  #5: ffff0800a3883c78 (&vcpu->mutex){+.+.}-{3:3}, at: lock_all_vcpus+0x16c/0x2a0
+[  328.246405]  #6: ffff07fffbe480b8 (&vcpu->mutex){+.+.}-{3:3}, at: lock_all_vcpus+0x16c/0x2a0
+
+Luckily, in all instances that require locking all vCPUs, the
+'kvm->lock' is taken a priori, and that fact makes it possible to use
+the little known feature of lockdep, called a 'nest_lock', to avoid this
+warning and subsequent lockdep self-disablement.
+
+The action of 'nested lock' being provided to lockdep's lock_acquire(),
+causes the lockdep to detect that the top of the held lock stack contains
+a lock of the same class and then increment its reference counter instead
+of pushing a new held_lock item onto that stack.
+
+See __lock_acquire for more information.
+
+Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+---
+ include/linux/mutex.h  | 15 +++++++++++++++
+ kernel/locking/mutex.c | 14 +++++++++++---
+ 2 files changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 2143d05116be..da4518cfd59c 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -193,7 +193,22 @@ extern void mutex_lock_io(struct mutex *lock);
+  *
+  * Returns 1 if the mutex has been acquired successfully, and 0 on contention.
+  */
++
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++extern int _mutex_trylock_nest_lock(struct mutex *lock, struct lockdep_map *nest_lock);
++
++#define mutex_trylock_nest_lock(lock, nest_lock)		\
++(								\
++	typecheck(struct lockdep_map *, &(nest_lock)->dep_map),	\
++	_mutex_trylock_nest_lock(lock, &(nest_lock)->dep_map)	\
++)
++
++#define mutex_trylock(lock) _mutex_trylock_nest_lock(lock, NULL)
++#else
+ extern int mutex_trylock(struct mutex *lock);
++#define mutex_trylock_nest_lock(lock, nest_lock) mutex_trylock(lock)
++#endif
++
+ extern void mutex_unlock(struct mutex *lock);
+ 
+ extern int atomic_dec_and_mutex_lock(atomic_t *cnt, struct mutex *lock);
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index 555e2b3a665a..c75a838d3bae 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -1062,6 +1062,7 @@ __ww_mutex_lock_interruptible_slowpath(struct ww_mutex *lock,
+ 
+ #endif
+ 
++#ifndef CONFIG_DEBUG_LOCK_ALLOC
+ /**
+  * mutex_trylock - try to acquire the mutex, without waiting
+  * @lock: the mutex to be acquired
+@@ -1077,18 +1078,25 @@ __ww_mutex_lock_interruptible_slowpath(struct ww_mutex *lock,
+  * mutex must be released by the same task that acquired it.
+  */
+ int __sched mutex_trylock(struct mutex *lock)
++{
++	MUTEX_WARN_ON(lock->magic != lock);
++	return __mutex_trylock(lock);
++}
++EXPORT_SYMBOL(mutex_trylock);
++#else
++int __sched _mutex_trylock_nest_lock(struct mutex *lock, struct lockdep_map *nest_lock)
+ {
+ 	bool locked;
+ 
+ 	MUTEX_WARN_ON(lock->magic != lock);
+-
+ 	locked = __mutex_trylock(lock);
+ 	if (locked)
+-		mutex_acquire(&lock->dep_map, 0, 1, _RET_IP_);
++		mutex_acquire_nest(&lock->dep_map, 0, 1, nest_lock, _RET_IP_);
+ 
+ 	return locked;
+ }
+-EXPORT_SYMBOL(mutex_trylock);
++EXPORT_SYMBOL(_mutex_trylock_nest_lock);
++#endif
+ 
+ #ifndef CONFIG_DEBUG_LOCK_ALLOC
+ int __sched
+-- 
+2.46.0
 
 
