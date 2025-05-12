@@ -1,99 +1,170 @@
-Return-Path: <linux-kernel+bounces-644752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D836AB440B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69324AB4411
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E104917F397
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3497E3AAB2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75FC296D3F;
-	Mon, 12 May 2025 18:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA410258CC1;
+	Mon, 12 May 2025 18:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Icj9fsug";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vtdc6rMi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="doW6AABL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D282550A0
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748FB245022
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747075650; cv=none; b=AF/t2O+tIS0r4wodU2uB4GapV8NOl6rEPXEnUtkppygLkCmo0PX/jWi/G23gVW3dLHiqmIjV6BH55CAj34mN42smD5zE7/iZjhNnE4yOl/C09690CB4f8bYqnpr0MRP22tMZh/ZaZDkV7XDqe+SFLGPhPB3AnF21yq2sHwOkh1g=
+	t=1747075727; cv=none; b=BetPZe0kZCGn8toAn8ErLT7wE56CNr7s1DJeDy78kDclHVGbiDgTnmLXdfGOjzjK2yHoS7vLXvc6bDKEYXEV64RIRbCjtIeaPGZKMtdlERi4154MoBh/yseCov5XI8Zbv3g25Rc40K1x3wFE3rYBuJTdXnSZyVuRK5PmEtcZcDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747075650; c=relaxed/simple;
-	bh=ufw+GE8HQEk8s+1r52a0AoQvL+irfth2f04OYx/FmwQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gX+C+QMuw3OOoYUd97O+ZVTTTgq3qXmrYrlpY4BF5pd3KqUZ8cnJBCXrPwyaGLgFFFhWiVLcPeA7hA+0ECmyKQAAGEPZ7iQEG68QaxoLLN9NBZuMEKFuFXPXfJhnuNRRctBWMb3BoIHEUoZEVavJfDUa5NvpnZlhf6ydraVHcek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Icj9fsug; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vtdc6rMi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747075646;
+	s=arc-20240116; t=1747075727; c=relaxed/simple;
+	bh=mI5i/GImq1ZnUQr2ekI8bE0fqAimP+Wb8ALeMzLg/18=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTkPMVTHlfdzAP/kkDQHIvtNx3gTQwhrokh1r4WDrnu8NBMvyxmrpbfhjoe+xBxmnNh8Jg8UsCXicZvgs2TTyRIDA3npAgQVmKigfppwsFf7F5wcIMj91M8hkEbtk8LPug0T+Psn5MNJWOb9M8B1pyfQPL9mIqb8D68pIdyuYPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=doW6AABL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747075724;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jHmzi1JghzgO2lKN7GfkMIAB+j0JUv2F/ls2ddofuRY=;
-	b=Icj9fsugE7Xl2MsWfdMVUWGJhjPTfEoe6zlNASHGY/toScPK1MHSVWzkTNkxavWwxcFwsl
-	6jYuXbpA6sx7ZOouSDUHrM8U6xt9uLpfyH8i82F5YcK3P1lKzHLgVat8kfrLjx0rHzRHMY
-	Tu/vopPk+5fGFNZR8tcYMKYsY/KHhHvXM4xyxO++gY4XqpVpNJUcZg7jRY/XRSaMEDj/DA
-	mAXBjy0aENBEe+C5U4xpjx8XkinOHSJbEymQb5ARCxTB/IcQBxYnHucr5hChS76uKfaWZn
-	nD+YLIBiE1dIR6WHm8nrNUShqBzWjJCBSJWMVMKBxJeXILgQe2dOR3s7nXJmog==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747075646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHmzi1JghzgO2lKN7GfkMIAB+j0JUv2F/ls2ddofuRY=;
-	b=vtdc6rMiCftIgQQzBqx51RmevM5pbSBHVZRqyQSA7eduSZfiNZXQE2l+MYpzk5rTVx0q+j
-	ivvrWb15lFv0Z2Bw==
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Sascha Bischoff
- <sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>
-Subject: Re: [PATCH 2/4] irqchip/gic-v3-its: Implement .msi_teardown() callback
-In-Reply-To: <86sel9g694.wl-maz@kernel.org>
-References: <20250511163520.1307654-1-maz@kernel.org>
- <20250511163520.1307654-3-maz@kernel.org> <87ecwtlwx8.ffs@tglx>
- <86sel9g694.wl-maz@kernel.org>
-Date: Mon, 12 May 2025 20:47:26 +0200
-Message-ID: <875xi5ll8h.ffs@tglx>
+	bh=Fe+TIk6WVks6ABD04kvwmyFaFFWKImSpZeKv17rlzew=;
+	b=doW6AABL3/76+/zpbqROKNf6rrwbZgCSQvpBxnksNb1CWvUVrNEW3D+I2ppMXPrP/PjBe6
+	LQkcApLI+MmUA3h+eQ10N7U1l4Wm62CZec8QJgyl8jzWoeVtIModYaNO3fUarAp8J5XQTb
+	TVeKZ/N8Dbf+hIWLus5e+EUcQtDppq8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-500-bYtFZULYN7OX6-Mi1X5-dg-1; Mon,
+ 12 May 2025 14:48:39 -0400
+X-MC-Unique: bYtFZULYN7OX6-Mi1X5-dg-1
+X-Mimecast-MFC-AGG-ID: bYtFZULYN7OX6-Mi1X5-dg_1747075716
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4846C1955BED;
+	Mon, 12 May 2025 18:48:36 +0000 (UTC)
+Received: from localhost (unknown [10.22.80.42])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F3D7918001DA;
+	Mon, 12 May 2025 18:48:34 +0000 (UTC)
+Date: Mon, 12 May 2025 15:48:33 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4] sched: do not call __put_task_struct() on rt if
+ pi_blocked_on is set
+Message-ID: <aCJCgXdyz6pTkr4h@uudg.org>
+References: <Z_gLsK6rOjV3KElO@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_gLsK6rOjV3KElO@uudg.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, May 12 2025 at 17:09, Marc Zyngier wrote:
-> On Mon, 12 May 2025 15:34:59 +0100,
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Changing prepare first breaks nvme and igbxe, amongst other things,
-> for the reasons explained just above, so you need to implement
-> teardown first, plug the MSI controller into it, and only then you can
-> switch prepare.
->
-> What I can do is:
->
-> (1) introduce teardown without the call site in msi_remove_device_irq_domain()
->
-> (2) add its implementation in the ITS driver
->
-> (3) move the prepare crap
->
-> (4) add the teardown call to msi_remove_device_irq_domain(), without
->     the check on info->alloc_data
->
-> With that order, everything will keep working, with a temporary leak
-> of ITTs in the ITS driver between patches (2) and (4).
->
-> Is that something you can live with?
+On Thu, Apr 10, 2025 at 03:19:28PM -0300, Luis Claudio R. Goncalves wrote:
+> With PREEMPT_RT enabled, some of the calls to put_task_struct() coming
+> from rt_mutex_adjust_prio_chain() could happen in preemptible context and
+> with a mutex enqueued. That could lead to this sequence:
+> 
+>         rt_mutex_adjust_prio_chain()
+>           put_task_struct()
+>             __put_task_struct()
+>               sched_ext_free()
+>                 spin_lock_irqsave()
+>                   rtlock_lock() --->  TRIGGERS
+>                                       lockdep_assert(!current->pi_blocked_on);
+> 
+> Fix that by unconditionally resorting to the deferred call to
+> __put_task_struct() if PREEMPT_RT is enabled.
 
-Sounds good.
+Peter, Sebastian,
+
+Is this patch acceptable as is or do you think I should rework something?
+
+Best regards,
+Luis
+ 
+> Suggested-by: Crystal Wood <crwood@redhat.com>
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
+> 
+> v2: (Rostedt) remove the #ifdef from put_task_struct() and create
+>     tsk_is_pi_blocked_on() in sched.h to make the change cleaner.
+> v3: (Sebastian, PeterZ) always call the deferred __put_task_struct() on RT.
+> v4: Fix the implementation of what was requested on v3.
+> 
+>  include/linux/sched/task.h |   17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> index 0f2aeb37bbb04..51678a541477a 100644
+> --- a/include/linux/sched/task.h
+> +++ b/include/linux/sched/task.h
+> @@ -134,11 +134,8 @@ static inline void put_task_struct(struct task_struct *t)
+>  	if (!refcount_dec_and_test(&t->usage))
+>  		return;
+>  
+> -	/*
+> -	 * In !RT, it is always safe to call __put_task_struct().
+> -	 * Under RT, we can only call it in preemptible context.
+> -	 */
+> -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
+> +	/* In !RT, it is always safe to call __put_task_struct(). */
+> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>  		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+>  
+>  		lock_map_acquire_try(&put_task_map);
+> @@ -148,11 +145,13 @@ static inline void put_task_struct(struct task_struct *t)
+>  	}
+>  
+>  	/*
+> -	 * under PREEMPT_RT, we can't call put_task_struct
+> +	 * Under PREEMPT_RT, we can't call __put_task_struct
+>  	 * in atomic context because it will indirectly
+> -	 * acquire sleeping locks.
+> +	 * acquire sleeping locks. The same is true if the
+> +	 * current process has a mutex enqueued (blocked on
+> +	 * a PI chain).
+>  	 *
+> -	 * call_rcu() will schedule delayed_put_task_struct_rcu()
+> +	 * call_rcu() will schedule __put_task_struct_rcu_cb()
+>  	 * to be called in process context.
+>  	 *
+>  	 * __put_task_struct() is called when
+> @@ -165,7 +164,7 @@ static inline void put_task_struct(struct task_struct *t)
+>  	 *
+>  	 * delayed_free_task() also uses ->rcu, but it is only called
+>  	 * when it fails to fork a process. Therefore, there is no
+> -	 * way it can conflict with put_task_struct().
+> +	 * way it can conflict with __put_task_struct().
+>  	 */
+>  	call_rcu(&t->rcu, __put_task_struct_rcu_cb);
+>  }
+> 
+---end quoted text---
+
 
