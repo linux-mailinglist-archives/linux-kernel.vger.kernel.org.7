@@ -1,210 +1,202 @@
-Return-Path: <linux-kernel+bounces-644635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703B5AB40AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:56:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66104AB4123
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6489D7A60B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B563BDCE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEA5295DBC;
-	Mon, 12 May 2025 17:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AECD296D3E;
+	Mon, 12 May 2025 18:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i40gCx0L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hGlf2DxK"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2256525742B;
-	Mon, 12 May 2025 17:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8551DE4CD
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747072561; cv=none; b=VW1CSTUiqYhtBZsuvS1LwJgsXhfZeYMygpmJHAUNfXJZomYMhz4k83UF9f7AFHH5fGwGv9xQ7tVeM5nUFL96S4ID0uVQMB5TNYCRpkbLhoKKwd0NpX19p5orZGBN1vEVOCOCkUlNgl/SqV7OU3eMYn+gg4QVs9cm5nX0ji9qOqM=
+	t=1747072842; cv=none; b=XwjldEQHAvd6KrckI2hcHkEl8gcyOcXliVA1JLrssLUf7f9OY9ljxEVkBcMWAXSbVdI6lpza64M4d8sC+CBadKdlutan6iw/P1qEyNcFo5MZx2//Iky4x8JULT1T9cwDXTlWAqqlh1go+qn8Ss4hwDHliFvC/5VsMb9v++0zz3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747072561; c=relaxed/simple;
-	bh=7PNc2HdbCkpyHnT6/nPDH6L5Zch1/Jzmc+ZEuFMaWqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qE61FUtb80NOdXQeHgdCxGP2PqcGhGV0iKUof5RMpKnINMAJKp+8t8VBprRCIcmN3nQoYEfooWuiOR0vReukTvuIS3CSiVAgyu2qwoZxHpkBhznw4r5iMbYizFqD1nDSwtOvbZmUU9YnHQ6q6fl19QeDLLv700KUJBMVO4opTxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i40gCx0L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803C3C4CEE9;
-	Mon, 12 May 2025 17:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747072560;
-	bh=7PNc2HdbCkpyHnT6/nPDH6L5Zch1/Jzmc+ZEuFMaWqg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i40gCx0LcEJb+P73g0+7K1tMG9pLAg0KHSjnruQrNC8JF1iDFRFk4YdlNRUI6uCr+
-	 G/Rn9G1/BZJ6yTJjXCazhowFyxoXooVmqBpLcahC39Iolmyoct5JMfVK+fn07ML52z
-	 WAx5TnvCGx1Sc7bAiGEZcXh/ZCRW0uU3yAZnZI+zdxhicTFFZEQA9Q/G5ObDuPUDZ+
-	 v/LyZnYvfFdMJPUKn6cNuoZr/bJBBTTteITj9cfNBpDGJSX8fgD0AiL2xF4h+3TKQS
-	 IzQF1Y3Rf0/VEjBqN53KqPchgyY1AoDSAC61t/0K1NQIzhQF8rWDDg2iuAa/vmZO+S
-	 eW8ZqCQcvLFlg==
-Date: Mon, 12 May 2025 14:55:58 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	German Gomez <german.gomez@arm.com>
-Subject: Re: [PATCH v3] perf tests: Harden branch stack sampling test
-Message-ID: <aCI2LnmPgauls0BN@x1>
-References: <20250318161639.34446-1-irogers@google.com>
+	s=arc-20240116; t=1747072842; c=relaxed/simple;
+	bh=fGBDzm38SHotQ4ArsU6HmeU+3zz7XAVrMhlyZFy3IZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NdtO0QeLJpAvMGQqE5i1DnjVF926LbVVmvQuVv2QkwMb9oK+X1ksh3gy4PPCjYp9TjoHEjFJLTrdkBfCNNnNABz3yqogBvkIDcfQWLlStHk7DGMh/JjWmCzpzQz1G1dZN/6aYfNIdcZVouJE9OtEm6C6HPL7C9Cs41u0U3wO3XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hGlf2DxK; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f27b0506-4841-4650-a0ee-0fe1643fdf37@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747072827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ma5n1WWRt3IZMb/J5uvgHDAZKLn3T38CaI/Jo/Q76W4=;
+	b=hGlf2DxK/ll+4zVXxruxyenHniDCnXz8vzRbFapb8hUS/itdZEy/TPz0teFHV4TatUnnP5
+	BZv20ibsOKJy8hV5P8G/DZG5leGxmgDJH5uq+u9fW1PbSJFjurDRqz8BLE1IErge+GiHcI
+	Rumre5V3Jb6JPbLB6RELqbbucJ4f7ug=
+Date: Mon, 12 May 2025 11:00:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318161639.34446-1-irogers@google.com>
+Subject: Re: [PATCH v6 04/14] riscv: sbi: add FWFT extension interface
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-kselftest@vger.kernel.org
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+ Andrew Jones <ajones@ventanamicro.com>, Deepak Gupta <debug@rivosinc.com>
+References: <20250424173204.1948385-1-cleger@rivosinc.com>
+ <20250424173204.1948385-5-cleger@rivosinc.com>
+ <1c385a47-0a01-4be4-a34b-51a2f168e62d@linux.dev>
+ <fe9d801b-007d-476d-97fe-96d0f3d218cd@rivosinc.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <fe9d801b-007d-476d-97fe-96d0f3d218cd@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 18, 2025 at 09:16:39AM -0700, Ian Rogers wrote:
-> On continuous testing the perf script output can be empty, or nearly
-> empty, causing tr/grep to exit and due to "set -e" the test traps and
-> fails. Add some empty file handling that sets the test to skip and
-> make grep and other text rewriting failures non-fatal by adding
-> "|| true".
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
 
+On 5/12/25 1:14 AM, Clément Léger wrote:
+>
+> On 09/05/2025 02:18, Atish Patra wrote:
+>> On 4/24/25 10:31 AM, ClÃ©ment LÃ©ger wrote:
+>>> This SBI extensions enables supervisor mode to control feature that are
+>>> under M-mode control (For instance, Svadu menvcfg ADUE bit, Ssdbltrp
+>>> DTE, etc). Add an interface to set local features for a specific cpu
+>>> mask as well as for the online cpu mask.
+>>>
+>>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>>> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+>>> ---
+>>>    arch/riscv/include/asm/sbi.h | 17 +++++++++++
+>>>    arch/riscv/kernel/sbi.c      | 57 ++++++++++++++++++++++++++++++++++++
+>>>    2 files changed, 74 insertions(+)
+>>>
+>>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+>>> index 7ec249fea880..3bbef56bcefc 100644
+>>> --- a/arch/riscv/include/asm/sbi.h
+>>> +++ b/arch/riscv/include/asm/sbi.h
+>>> @@ -503,6 +503,23 @@ int sbi_remote_hfence_vvma_asid(const struct
+>>> cpumask *cpu_mask,
+>>>                    unsigned long asid);
+>>>    long sbi_probe_extension(int ext);
+>>>    +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long
+>>> flags);
+>>> +int sbi_fwft_set_cpumask(const cpumask_t *mask, u32 feature,
+>>> +             unsigned long value, unsigned long flags);
+>>> +/**
+>>> + * sbi_fwft_set_online_cpus() - Set a feature on all online cpus
+>>> + * @feature: The feature to be set
+>>> + * @value: The feature value to be set
+>>> + * @flags: FWFT feature set flags
+>>> + *
+>>> + * Return: 0 on success, appropriate linux error code otherwise.
+>>> + */
+>>> +static inline int sbi_fwft_set_online_cpus(u32 feature, unsigned long
+>>> value,
+>>> +                       unsigned long flags)
+>>> +{
+>>> +    return sbi_fwft_set_cpumask(cpu_online_mask, feature, value, flags);
+>>> +}
+>>> +
+>>>    /* Check if current SBI specification version is 0.1 or not */
+>>>    static inline int sbi_spec_is_0_1(void)
+>>>    {
+>>> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+>>> index 1d44c35305a9..d57e4dae7dac 100644
+>>> --- a/arch/riscv/kernel/sbi.c
+>>> +++ b/arch/riscv/kernel/sbi.c
+>>> @@ -299,6 +299,63 @@ static int __sbi_rfence_v02(int fid, const struct
+>>> cpumask *cpu_mask,
+>>>        return 0;
+>>>    }
+>>>    +/**
+>>> + * sbi_fwft_set() - Set a feature on the local hart
+>>> + * @feature: The feature ID to be set
+>>> + * @value: The feature value to be set
+>>> + * @flags: FWFT feature set flags
+>>> + *
+>>> + * Return: 0 on success, appropriate linux error code otherwise.
+>>> + */
+>>> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
+>>> +{
+>>> +    return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>> +struct fwft_set_req {
+>>> +    u32 feature;
+>>> +    unsigned long value;
+>>> +    unsigned long flags;
+>>> +    atomic_t error;
+>>> +};
+>>> +
+>>> +static void cpu_sbi_fwft_set(void *arg)
+>>> +{
+>>> +    struct fwft_set_req *req = arg;
+>>> +    int ret;
+>>> +
+>>> +    ret = sbi_fwft_set(req->feature, req->value, req->flags);
+>>> +    if (ret)
+>>> +        atomic_set(&req->error, ret);
+>> What happens when cpuX executed first reported an error but cpuY
+>> executed this function later and report success.
+>>
+>> The error will be masked in that case.
+> We actually only set the bit if an error happened (consider it as a
+> sticky error bit). So if CPUy reports success, it won't clear the bit.
 
-Thanks, applied to perf-tools-next,
+Ahh yes. I missed that.
 
-- Arnaldo
-
-> ---
-> v3: Drop set -x
-> v2: Change skips to errors Leo Yan.
-> ---
->  tools/perf/tests/shell/test_brstack.sh | 72 +++++++++++++++++++-------
->  1 file changed, 52 insertions(+), 20 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
-> index e01df7581393..9138fa83bf36 100755
-> --- a/tools/perf/tests/shell/test_brstack.sh
-> +++ b/tools/perf/tests/shell/test_brstack.sh
-> @@ -1,4 +1,4 @@
-> -#!/bin/sh
-> +#!/bin/bash
->  # Check branch stack sampling
->  
->  # SPDX-License-Identifier: GPL-2.0
-> @@ -17,35 +17,50 @@ fi
->  
->  skip_test_missing_symbol brstack_bench
->  
-> +err=0
->  TMPDIR=$(mktemp -d /tmp/__perf_test.program.XXXXX)
->  TESTPROG="perf test -w brstack"
->  
->  cleanup() {
->  	rm -rf $TMPDIR
-> +	trap - EXIT TERM INT
->  }
->  
-> -trap cleanup EXIT TERM INT
-> +trap_cleanup() {
-> +	set +e
-> +	echo "Unexpected signal in ${FUNCNAME[1]}"
-> +	cleanup
-> +	exit 1
-> +}
-> +trap trap_cleanup EXIT TERM INT
->  
->  test_user_branches() {
->  	echo "Testing user branch stack sampling"
->  
-> -	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
-> -	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
-> +	perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
-> +	perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR/perf.script"
->  
->  	# example of branch entries:
->  	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
->  
-> -	set -x
-> -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"	$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"		$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"	$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"	$TMPDIR/perf.script
-> -	grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"		$TMPDIR/perf.script
-> -	set +x
-> -
-> +	expected=(
-> +		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
-> +		"^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
-> +		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
-> +		"^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
-> +		"^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
-> +		"^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
-> +		"^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
-> +		"^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
-> +	)
-> +	for x in "${expected[@]}"
-> +	do
-> +		if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1 -q "$x"
-> +		then
-> +			echo "Branches missing $x"
-> +			err=1
-> +		fi
-> +	done
->  	# some branch types are still not being tested:
->  	# IND COND_CALL COND_RET SYSCALL SYSRET IRQ SERROR NO_TX
->  }
-> @@ -57,14 +72,28 @@ test_filter() {
->  	test_filter_expect=$2
->  
->  	echo "Testing branch stack filtering permutation ($test_filter_filter,$test_filter_expect)"
-> -
-> -	perf record -o $TMPDIR/perf.data --branch-filter $test_filter_filter,save_type,u -- ${TESTPROG} > /dev/null 2>&1
-> -	perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' | grep '.' > $TMPDIR/perf.script
-> +	perf record -o "$TMPDIR/perf.data" --branch-filter "$test_filter_filter,save_type,u" -- ${TESTPROG}  > "$TMPDIR/record.txt" 2>&1
-> +	perf script -i "$TMPDIR/perf.data" --fields brstack > "$TMPDIR/perf.script"
->  
->  	# fail if we find any branch type that doesn't match any of the expected ones
->  	# also consider UNKNOWN branch types (-)
-> -	if grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" $TMPDIR/perf.script; then
-> -		return 1
-> +	if [ ! -s "$TMPDIR/perf.script" ]
-> +	then
-> +		echo "Empty script output"
-> +		err=1
-> +		return
-> +	fi
-> +	# Look for lines not matching test_filter_expect ignoring issues caused
-> +	# by empty output
-> +	tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep '.' | \
-> +	  grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" \
-> +	  > "$TMPDIR/perf.script-filtered" || true
-> +	if [ -s "$TMPDIR/perf.script-filtered" ]
-> +	then
-> +		echo "Unexpected branch filter in script output"
-> +		cat "$TMPDIR/perf.script"
-> +		err=1
-> +		return
->  	fi
->  }
->  
-> @@ -80,3 +109,6 @@ test_filter "any_ret"	"RET|COND_RET|SYSRET|ERET"
->  test_filter "call,cond"		"CALL|SYSCALL|COND"
->  test_filter "any_call,cond"		"CALL|IND_CALL|COND_CALL|IRQ|SYSCALL|COND"
->  test_filter "cond,any_call,any_ret"	"COND|CALL|IND_CALL|COND_CALL|SYSCALL|IRQ|RET|COND_RET|SYSRET|ERET"
-> +
-> +cleanup
-> +exit $err
-> -- 
-> 2.49.0.rc1.451.g8f38331e32-goog
-> 
+> Thanks,
+>
+> Clément
+>
+>>> +}
+>>> +
+>>> +/**
+>>> + * sbi_fwft_set_cpumask() - Set a feature for the specified cpumask
+>>> + * @mask: CPU mask of cpus that need the feature to be set
+>>> + * @feature: The feature ID to be set
+>>> + * @value: The feature value to be set
+>>> + * @flags: FWFT feature set flags
+>>> + *
+>>> + * Return: 0 on success, appropriate linux error code otherwise.
+>>> + */
+>>> +int sbi_fwft_set_cpumask(const cpumask_t *mask, u32 feature,
+>>> +                   unsigned long value, unsigned long flags)
+>>> +{
+>>> +    struct fwft_set_req req = {
+>>> +        .feature = feature,
+>>> +        .value = value,
+>>> +        .flags = flags,
+>>> +        .error = ATOMIC_INIT(0),
+>>> +    };
+>>> +
+>>> +    if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
+>>> +        return -EINVAL;
+>>> +
+>>> +    on_each_cpu_mask(mask, cpu_sbi_fwft_set, &req, 1);
+>>> +
+>>> +    return atomic_read(&req.error);
+>>> +}
+>>> +
+>>>    /**
+>>>     * sbi_set_timer() - Program the timer for next timer event.
+>>>     * @stime_value: The value after which next timer event should fire.
 
