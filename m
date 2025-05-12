@@ -1,225 +1,344 @@
-Return-Path: <linux-kernel+bounces-644175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21844AB37FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:01:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A693AB380B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896723A87A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962DB1B602C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A7F27605C;
-	Mon, 12 May 2025 13:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7092949F8;
+	Mon, 12 May 2025 13:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZK4h/Zyg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvcSHSeN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949D520322
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EA6292933
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747054900; cv=none; b=ikYGMs7i8C1wJTkG9aZ6tVkpAJblLOGaG3sL43hmWnzWhXONy7tKZnzMrPJxmb/swTyVvEInJZiQec1ZcWdsl4CkC+/JUYuww+K/rqpvtPTGF/h6rQ4jfPqoejOGeOhPfR/J3QtY3Qq+Bj5Ve2QMpXgirVxnlhuEbax6k6v27K4=
+	t=1747054991; cv=none; b=cWY0qFbEev5CcHhs2urtDZ4OjCFkiEtUbCPIJGeKGm0t5iysNOmSCMHCafNlAUStn70cxSFm0+nK/3XBlSl0CyS8tEUjEXB4NPt4tV7LeDHw6kRgxIcD5pF2iQ9NiljIyEVBwlBfdj866JF2ZUyWJaJIzZQLTTM20W9R//z2fA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747054900; c=relaxed/simple;
-	bh=hNc0cyVnMc0NiU++5b7MJFZJ5a8MCuBwl0x11ar+ohE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m2FWhFomNPshPrMQFyYixjJD9Z6ulwIFRsbmD7sxGchT9Dbygcdu8TFf+CtBAqmAlxs5tCRGC8pYX3MS3LY7ekDn33bQQWroWNYTNwIfgEcmnFxA2G7FWNrdbzA61L35F+cCpN17Zu6ieAg19Qd/xDlAO+u2VcOeNsOT/3AVzcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZK4h/Zyg; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1747054991; c=relaxed/simple;
+	bh=1WUEWHEolQwC8720ZZECWxHjReWB0vujNXYAmpR1iCc=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=HVGymZgOaBhNn8A/dJeXK65deCp3vp4cOguMKcy8Ni+smHQvK+p5nqccSdaHg5qEAUm8pqs9CIf8PBBTf+MJHGGZd1zzjbzfsT0WsoYpbNE348v7os0iN3fO0afIGHYIL4G2VViEoqFCM57A0bCQmnG5ZVW8S332Mfj0rfc8o+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fvcSHSeN; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747054896;
+	s=mimecast20190719; t=1747054988;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xq73wCtb8aMxKsuxA4x6nRYQmVU+JW3Qy+e8q7P6NuU=;
-	b=ZK4h/Zygu1lqBi+Y+6JtcJC3SxlpQ2vtTwk/4PF/iWmyQF50TKUt/0hxV6tPVixqfY55o7
-	F+AGu0C1gL1kCT7I0uvuculAvib+jgQ267dPfHhqEBrS1nopGEzm15saK2lQ/Wf2J/ak+U
-	hqoGbPXOLyutGgNvD9nUyyoGSqCHbZI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-195-8HfxHKTrMwul-MhufIRZyg-1; Mon, 12 May 2025 09:01:34 -0400
-X-MC-Unique: 8HfxHKTrMwul-MhufIRZyg-1
-X-Mimecast-MFC-AGG-ID: 8HfxHKTrMwul-MhufIRZyg_1747054893
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442cd12d151so28919315e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:01:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747054893; x=1747659693;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Xq73wCtb8aMxKsuxA4x6nRYQmVU+JW3Qy+e8q7P6NuU=;
-        b=hQ94rfmODN285NIY3l83nzm0S8rORtpC8slNHGw91zRy0droG68SuewLsj0A0QMHOm
-         FybT+ADDS7Edx7dTiK7Q/V2DX6HSIMz6DFP9SqdlImEpzBiX0e7qHqm9/jMcYD+MKSjK
-         iA1eJbVPNpi2eyGu6iZlO+cqaJkRRTealUM+sz5xMNyYUg5n3GVEY2ULeVQIdxy5ccRB
-         16p3uEJuZm9j2Ljo1dOqBX24jlSTETPwNKltOxRe2TBvq1BivFqLj9kB3B5Nu0pUzETC
-         D+m4WG1owL8kpuPlR1FEtlL/0zVWJN+UMPejQCiC2pbWAvwAQqv1a0s+z9VeqVe4Ptpi
-         Mz2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWz0VFyKU4hdG+Eiy8fSwKrMLesGsh3r8N7vM+A48qe4TZCM1r2we6ERt6BZAZDX6RHLjUEcxi4knvS8l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7VUl9TCSA9VBREmfasDNBpoqoGzYpmmmoWqMqyaFnrI25I+ry
-	KUiyvFV6IWjvkb7k5Khi+XbwzV6hpaqnEdur+VGZLpOMMmvD1XDZWI9izpndoij/07YvKHfqJo9
-	DI0ivAWupwVXV5a90FuZwKprpLm05u8LwiymMfR4XxuT7uVykUaZTsEjoNreKrQ==
-X-Gm-Gg: ASbGncsaJmIXiLxZn0INVj9DhSmmwGnP8A/UFCrmBWkGD4n7vfEmAXrE+7lUHZ/kSH5
-	/ZCN77eae1WJnIUtPXOvlv75D+J8dJiKNoB5Ed95AgF/uSjVEDnqPUcyso2VWKhrTLkGZEaTxAE
-	0o4OSOQICD3ZFeAavJjRBdiS7Ax5qCfkUrIj1oobB7h0ajK9KjdShLnVmfjLotLZ+9nMOdKhNFa
-	we75f8aiWEkvTZpW/YvZnM4CZZLFwcts+Gxdtv/hhI9kH4hiBjFOzmsVfmQirJOk99ccob3/3tI
-	qr7IBhFM/fi9iVthHPKQww81DO15o1MFv28Mz8dBPGhh0KwaUxeAYgtFnTCyQBrRT1EOyG9m1Zn
-	aHf+/zlsbj2lhunPw+NXm2p7zrb3LCb3sRwgervc=
-X-Received: by 2002:a05:600c:3b17:b0:441:b5cb:4f94 with SMTP id 5b1f17b1804b1-442d6d08c20mr102665905e9.5.1747054892743;
-        Mon, 12 May 2025 06:01:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4xYYVLnB2We0hUzT61e43pLTgwCS38KxE1FaZSeJCvOYxF+GdKM8oy82wLnicMhQg/dbfnw==
-X-Received: by 2002:a05:600c:3b17:b0:441:b5cb:4f94 with SMTP id 5b1f17b1804b1-442d6d08c20mr102665245e9.5.1747054892308;
-        Mon, 12 May 2025 06:01:32 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4a:5800:f1ae:8e20:d7f4:51b0? (p200300d82f4a5800f1ae8e20d7f451b0.dip0.t-ipconnect.de. [2003:d8:2f4a:5800:f1ae:8e20:d7f4:51b0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f2a8sm166268485e9.14.2025.05.12.06.01.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 06:01:31 -0700 (PDT)
-Message-ID: <a6789c57-af54-48e8-8be5-4ae2aa43e9e9@redhat.com>
-Date: Mon, 12 May 2025 15:01:30 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=rHw3xY0JnT4h9Q3NaKNlwMtkuyY4mD1BTf/wtxHKiQk=;
+	b=fvcSHSeNNbzI3IxXwlzkFHJv4cHVEtfAdpFEv1AY3eqdx7vvdXlyrm66u9SnfP8bZCQZ3W
+	oCkT9waTs81caxBRhs5Mryycoq2YrGuMtoVs/h8Q6mHKNvnzLCA5mEXvWQtn2k9rZALHZ9
+	LAoWHz39jWvOX2ECpjr2MEZhvJW8WsM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-wCVkiRG3N6Cctfq4p2e1Lg-1; Mon,
+ 12 May 2025 09:02:54 -0400
+X-MC-Unique: wCVkiRG3N6Cctfq4p2e1Lg-1
+X-Mimecast-MFC-AGG-ID: wCVkiRG3N6Cctfq4p2e1Lg_1747054966
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB4CA180048E;
+	Mon, 12 May 2025 13:02:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.188])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED1C81956095;
+	Mon, 12 May 2025 13:02:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250509-deckung-glitschig-8d27cb12f09f@brauner>
+References: <20250509-deckung-glitschig-8d27cb12f09f@brauner> <20250505-erproben-zeltlager-4c16f07b96ae@brauner> <433928.1745944651@warthog.procyon.org.uk> <1209711.1746527190@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+    Etienne Champetier <champetier.etienne@gmail.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jeffrey Altman <jaltman@auristor.com>,
+    Chet Ramey <chet.ramey@case.edu>, Steve French <sfrench@samba.org>,
+    linux-afs@lists.infradead.org, openafs-devel@openafs.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH v2] afs, bash: Fix open(O_CREAT) on an extant AFS file in a sticky dir
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add mm GUP section
-To: Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@nvidia.com>,
- John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250506173601.97562-1-lorenzo.stoakes@oracle.com>
- <20250506162113.f8fa0c00e76722a1789ec56a@linux-foundation.org>
- <c4258dfd-14ee-411a-9fa7-c4a1fa4fad1c@redhat.com> <aBshiBX_N6hhExmS@pc636>
- <13a32f52-dc5c-45ef-b45a-585586868509@lucifer.local>
- <e3e2663b-2749-44c7-8452-ffcbf2167572@redhat.com>
- <28428030-1178-469a-a4ab-f1e7179d9106@lucifer.local>
- <eb2b0bce-6012-4019-8ff7-c35c24ba7aa1@suse.cz>
- <9AF9CF7D-D4A3-4D97-9B7D-F259E33E982C@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9AF9CF7D-D4A3-4D97-9B7D-F259E33E982C@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2086611.1747054957.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 12 May 2025 14:02:37 +0100
+Message-ID: <2086612.1747054957@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 12.05.25 14:54, Zi Yan wrote:
-> On 12 May 2025, at 3:38, Vlastimil Babka wrote:
-> 
->> On 5/8/25 14:23, Lorenzo Stoakes wrote:
->>>>
->>>> M for "PAGE ALLOCATOR", hmmm ..., I was hoping that Vlastimil might have
->>>> capacity for that? :)
->>>
->>> Vlastimil? ;)
->>>
->>> I'd certainly support this.
->>
->> OK, can do, thanks.
->>
->>>>
->>>>
->>>>
->>>> Not 100% sure what to do with
->>>>
->>>> * include/linux/page_isolation.h
->>>> * mm/page_isolation.c
->>>>
->>>> (I hate the word "page isolation")
->>>>
->>>> They are mostly about page migration (either for alloc_contig... or memory
->>>> hotunplug). Likely they should either go to the MIGRATION section or to the
->>>> PAGE ALLOCATOR? Maybe MIGRATION makes more sense. Thoughts?
->>>
->>> I mean it explicitly relates to migrate type and migration so seems to me
->>> it ought to be in migration.
->>>
->>> Though migrate type + the machinary around it is a product of the physical
->>> page allocator (I even cover it in the 'physical memory' section of the
->>> book).
->>>
->>> I wonder if our soon-to-be page allocator maintainer Vlastimil has
->>> thoughts? ;)
->>>
->>> I'd vote for migration though to be honest.
->>
->> I checked the code briefly and although migratetypes are related to
->> migration, it seems rather page allocator code to me.
->>
->> In fact if I didn't miss these files, I would have included them when
->> proposing the PAGE ALLOCATOR section.
->> Zi Yan has a series on that topic now and is one of the R: in PAGE
->> ALLOCATOR. What do you think?
-> 
-> I agree with Vlastimil that these two files belong to PAGE ALLOCATOR
-> section. Page isolation (actually should be pageblock isolation) is
-> doing work on pageblock migratetype, which IMHO is an important part
-> of anti-fragmentation mechanism for page allocation.
+Christian Brauner <brauner@kernel.org> wrote:
 
-IIRC, it's a bit confusing, because pageblock isolation as in 
-mm/page_isolation.c does not have a lot to do with anti-fragmentation in 
-reality.
+> > Now, in my patch, I added two inode ops because they VFS code involved=
+ makes
+> > two distinct evaluations and so I made an op for each and, as such, th=
+ose
+> > evaluations may be applicable elsewhere, but I could make a combined o=
+p that
+> > handles that specific situation instead.
+> =
 
-All of these functions should primarily be used for memory offlining + 
-alloc_contig. (where we try page migration afterwards)
+> Try to make it one, please.
 
-Anyhow, I am fine as long as these files live somewhere related :)
+Okay, see attached.
 
--- 
-Cheers,
+David
+----
+Bash has a work around in redir_open() that causes open(O_CREAT) of a file
+in a sticky directory to be retried without O_CREAT if bash was built with
+AFS workarounds configured:
 
-David / dhildenb
+        #if defined (AFS)
+              if ((fd < 0) && (errno =3D=3D EACCES))
+            {
+              fd =3D open (filename, flags & ~O_CREAT, mode);
+              errno =3D EACCES;    /* restore errno */
+            }
+
+        #endif /* AFS */
+
+This works around the kernel not being able to validly check the
+current_fsuid() against i_uid on the file or the directory because the
+uidspaces of the system and of AFS may well be disjoint.  The problem lies
+with the uid checks in may_create_in_sticky().
+
+However, the bash work around is going to be removed:
+
+        https://git.savannah.gnu.org/cgit/bash.git/tree/redir.c?h=3Dbash-5=
+.3-rc1#n733
+
+Fix this in the kernel by providing a ->may_create_in_sticky() inode op,
+similar to ->permission(), that, if provided, is called to:
+
+ (1) see if an inode has the same owner as the parent on the path walked;
+
+ (2) determine if the caller owns the file instead of checking the i_uid t=
+o
+     current_fsuid().
+
+For kafs, the hook is implemented to see if:
+
+ (1) the AFS owner IDs retrieved on the file and its parent directory by
+     FS.FetchStatus match;
+
+ (2) if the server set the ADMINISTER bit in the access rights returned by
+     the FS.FetchStatus and suchlike for the key, indicating ownership by
+     the user specified by the key.
+
+(Note that the owner IDs retrieved from an AuriStor YFS server may not fit
+in the kuid_t being 64-bit, so they need comparing directly).
+
+This can be tested by creating a sticky directory (the user must have a
+token to do this) and creating a file in it.  Then strace bash doing "echo
+foo >>file" and look at whether bash does a single, successful O_CREAT ope=
+n
+on the file or whether that one fails and then bash does one without
+O_CREAT that succeeds.
+
+Reported-by: Etienne Champetier <champetier.etienne@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jeffrey Altman <jaltman@auristor.com>
+cc: Chet Ramey <chet.ramey@case.edu>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Steve French <sfrench@samba.org>
+cc: linux-afs@lists.infradead.org
+cc: openafs-devel@openafs.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/afs/dir.c       |    1 +
+ fs/afs/file.c      |    1 +
+ fs/afs/internal.h  |    2 ++
+ fs/afs/security.c  |   52 +++++++++++++++++++++++++++++++++++++++++++++++=
++++++
+ fs/namei.c         |   17 ++++++++++++-----
+ include/linux/fs.h |    2 ++
+ 6 files changed, 70 insertions(+), 5 deletions(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 9e7b1fe82c27..27e565612bde 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -65,6 +65,7 @@ const struct inode_operations afs_dir_inode_operations =3D=
+ {
+ 	.permission	=3D afs_permission,
+ 	.getattr	=3D afs_getattr,
+ 	.setattr	=3D afs_setattr,
++	.may_create_in_sticky =3D afs_may_create_in_sticky,
+ };
+ =
+
+ const struct address_space_operations afs_dir_aops =3D {
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index fc15497608c6..dff48d0adec3 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -47,6 +47,7 @@ const struct inode_operations afs_file_inode_operations =
+=3D {
+ 	.getattr	=3D afs_getattr,
+ 	.setattr	=3D afs_setattr,
+ 	.permission	=3D afs_permission,
++	.may_create_in_sticky =3D afs_may_create_in_sticky,
+ };
+ =
+
+ const struct address_space_operations afs_file_aops =3D {
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 440b0e731093..4a5bb01606a8 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -1495,6 +1495,8 @@ extern struct key *afs_request_key(struct afs_cell *=
+);
+ extern struct key *afs_request_key_rcu(struct afs_cell *);
+ extern int afs_check_permit(struct afs_vnode *, struct key *, afs_access_=
+t *);
+ extern int afs_permission(struct mnt_idmap *, struct inode *, int);
++int afs_may_create_in_sticky(struct mnt_idmap *idmap, struct inode *inode=
+,
++			     struct path *path);
+ extern void __exit afs_clean_up_permit_cache(void);
+ =
+
+ /*
+diff --git a/fs/afs/security.c b/fs/afs/security.c
+index 6a7744c9e2a2..9fd6e4b5c228 100644
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -477,6 +477,58 @@ int afs_permission(struct mnt_idmap *idmap, struct in=
+ode *inode,
+ 	return ret;
+ }
+ =
+
++/*
++ * Perform the ownership checks for a file in a sticky directory on AFS.
++ *
++ * In the case of AFS, this means that:
++ *
++ * (1) the file and the directory have the same AFS ownership or
++ *
++ * (2) the file is owned by the AFS user represented by the token (e.g. f=
+rom a
++ *     kerberos server) held in a key.
++ *
++ * Returns 0 if owned by me or has same owner as parent dir, 1 if not; ca=
+n also
++ * return an error.
++ */
++int afs_may_create_in_sticky(struct mnt_idmap *idmap, struct inode *inode=
+,
++			     struct path *path)
++{
++	struct afs_vnode *dvnode, *vnode =3D AFS_FS_I(inode);
++	struct dentry *parent;
++	struct key *key;
++	afs_access_t access;
++	int ret;
++	s64 owner;
++
++	key =3D afs_request_key(vnode->volume->cell);
++	if (IS_ERR(key))
++		return PTR_ERR(key);
++
++	/* Get the owner's ID for the directory.  Ideally, we'd use RCU to
++	 * access the parent rather than getting a ref.
++	 */
++	parent =3D dget_parent(path->dentry);
++	dvnode =3D AFS_FS_I(d_backing_inode(parent));
++	owner =3D dvnode->status.owner;
++	dput(parent);
++
++	if (vnode->status.owner =3D=3D owner) {
++		ret =3D 0;
++		goto error;
++	}
++
++	/* Get the access rights for the key on this file. */
++	ret =3D afs_check_permit(vnode, key, &access);
++	if (ret < 0)
++		goto error;
++
++	/* We get the ADMINISTER bit if we own the file. */
++	ret =3D (access & AFS_ACE_ADMINISTER) ? 1 : 0;
++error:
++	key_put(key);
++	return ret;
++}
++
+ void __exit afs_clean_up_permit_cache(void)
+ {
+ 	int i;
+diff --git a/fs/namei.c b/fs/namei.c
+index 84a0e0b0111c..e52c91cbed2a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1316,13 +1316,20 @@ static int may_create_in_sticky(struct mnt_idmap *=
+idmap, struct nameidata *nd,
+ 	if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
+ 		return 0;
+ =
+
+-	i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
++	if (unlikely(inode->i_op->may_create_in_sticky)) {
++		int ret =3D inode->i_op->may_create_in_sticky(idmap, inode, &nd->path);
+ =
+
+-	if (vfsuid_eq(i_vfsuid, dir_vfsuid))
+-		return 0;
++		if (ret <=3D 0) /* 1 if not owned by me or by parent dir. */
++			return ret;
++	} else {
++		i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
+ =
+
+-	if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+-		return 0;
++		if (vfsuid_eq(i_vfsuid, dir_vfsuid))
++			return 0;
++
++		if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
++			return 0;
++	}
+ =
+
+ 	if (likely(dir_mode & 0002)) {
+ 		audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 016b0fe1536e..11122e169719 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2236,6 +2236,8 @@ struct inode_operations {
+ 			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+ 	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
++	int (*may_create_in_sticky)(struct mnt_idmap *idmap, struct inode *inode=
+,
++				    struct path *path);
+ } ____cacheline_aligned;
+ =
+
+ static inline int call_mmap(struct file *file, struct vm_area_struct *vma=
+)
 
 
