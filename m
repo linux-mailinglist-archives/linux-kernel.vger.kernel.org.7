@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-644466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B6AB3CCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90397AB3CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A920319E33A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F0719E33BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88375242D6B;
-	Mon, 12 May 2025 15:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJilTLEz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FAF230BF0;
+	Mon, 12 May 2025 15:57:59 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7496134D4
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ABF1E571A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747065424; cv=none; b=HKKUnzXTHGl16aSrE8umIdci8z95XzDGqTZioR3mI9nahPILpmmmPBzFBw6i21kNO7iQLXa+9RZ0P5rg+UFDj3qPtS9ScZ3kLGxZbPeZuaOPJsSeSAk001sSReVxLkHLabDB+SGZZvke13MMQtwiCUenJUGGiyLCgZRFiy0D6XI=
+	t=1747065479; cv=none; b=cDI9sjXp6PCuCoHzYXNw2GgJ/GQLV+EFvNr9KRZc1DSI5QUWZMCb9ioL+p+WPd7qCV/NLXGdmzF31h1uFOMaAhJlMGPcpMbxuyXP5Sf4XByIbMYTL2gigVBBbApen7y5j8MHsm0XQBsSFj+k7PQ3DTa5zAZ8TBSypW8qxOOIo50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747065424; c=relaxed/simple;
-	bh=vIJFy1J5IitTiA0zWWnMwAXixJjGYXx9yRIC4TtCy9Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AMcZwLZM7WyqlYy7AH0OTrkPqVF5Pm0wwIoQDJL1r6V0hwpecGHO41HeC/leOkMzI0ZC6wfyYm61Kg5kyedfgBdJbsg1MzgAIn3vRjx0FwRrTPdIS5/PtbHuTimcdqqsOjg+8wSxmpXU7c2QXz+X1/EFI7dWMBEuDXbSv4qJrr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJilTLEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B32C4CEEF;
-	Mon, 12 May 2025 15:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747065423;
-	bh=vIJFy1J5IitTiA0zWWnMwAXixJjGYXx9yRIC4TtCy9Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cJilTLEzWJ+5/y/u6z/HiA2WABgTOZS+kDBIWyxXNQ9S8F0u5VUcSDqSd0dmfDjdU
-	 /oEmw7yBQMJ4ttM1993SPmSECYK9szAuh/vwTtkQh96XzsvGyugingJXYGyWqSALbm
-	 edeGk/SoxtjTZ1HzqcfNrp8T93fsNg7ouDzRfR53T4QxjKJocHj8tIboenGYx//J2T
-	 qgVBtzL/FlweuDhwKv5KGg8VWSd5WoMO/eUxEu+x3TF8x6UVT8TH9d44Mx57eb6z3b
-	 qacoxTFdyq1Y6QCfUILmPmBzRpR0+WUMFvInHLpjUN5/K6ngCQuL9SuAObmYr7UyTn
-	 WhzuegTndAoLA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uEVWX-00EBWw-LB;
-	Mon, 12 May 2025 16:57:01 +0100
-Date: Mon, 12 May 2025 16:57:00 +0100
-Message-ID: <86tt5pg6ur.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sascha Bischoff
- <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>
-Subject: Re: [PATCH 1/4] genirq/msi: Add .msi_teardown() callback as the reverse of .msi_prepare()
-In-Reply-To: <87h61plx64.ffs@tglx>
-References: <20250511163520.1307654-1-maz@kernel.org>
-	<20250511163520.1307654-2-maz@kernel.org>
-	<87h61plx64.ffs@tglx>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1747065479; c=relaxed/simple;
+	bh=BM5JSJOKNhTfLPEfa9NZIcPTtKYu51Ogr3Y10YAFwbw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=dFnLLGTsiWTdXrfnHrMueakT3AuQ9DT+2856pcneB+nxr3n+5/L5SqfPSKXBf9snu229sDTS1HDUfJIkUFnZbFORl6fXEYgFGvkFosCj2Wo61VxJ62REdONa6uxUAalPJTSGt45re0v5JeRED2Kyr/u9CRqUuJ2uPm0NsQFh9tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id C633A294730;
+	Mon, 12 May 2025 17:57:54 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id WUghdvuq5KTy; Mon, 12 May 2025 17:57:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 6FF76298562;
+	Mon, 12 May 2025 17:57:54 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IzOUdMxh8QkF; Mon, 12 May 2025 17:57:54 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 4D1D2294730;
+	Mon, 12 May 2025 17:57:54 +0200 (CEST)
+Date: Mon, 12 May 2025 17:57:54 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <636744371.31012717.1747065474158.JavaMail.zimbra@nod.at>
+In-Reply-To: <2c2ff01f-b6e2-4b9e-958a-c4c405518a54@prolan.hu>
+References: <20250512084033.69718-1-csokas.bence@prolan.hu> <d70952c1-e4ca-4f09-ac23-2ad13e0facc0@prolan.hu> <1200504110.30346467.1747054025727.JavaMail.zimbra@nod.at> <4ebe2146-ee1c-4325-8259-be3803475f1f@prolan.hu> <87r00ugcat.fsf@bootlin.com> <1689545397.30901605.1747063396608.JavaMail.zimbra@nod.at> <87y0v1g7xz.fsf@bootlin.com> <2c2ff01f-b6e2-4b9e-958a-c4c405518a54@prolan.hu>
+Subject: Re: [PATCH v3] mtd: Verify written data in paranoid mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, sascha.bischoff@arm.com, timothy.hayes@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF138 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Verify written data in paranoid mode
+Thread-Index: 75AKXALdUUz/uNm8Yjvipq4cEdAKSw==
 
-On Mon, 12 May 2025 15:29:39 +0100,
-Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> On Sun, May 11 2025 at 17:35, Marc Zyngier wrote:
-> 
-> > While the MSI ops do have a .msi_prepare() callback that is
-> > responsible for setting up the relevant (usually per-device)
-> > allocation, we don't have a callback reversing this setup.
-> 
-> ..., there is no callback reversing ...
-> 
-> > For this purpose, let's a .msi_teardown() callback. This is
-> 
-> 'let's a ...' is not a sentence. Just say: add a .... calback.
->
-> > reliying on the msi_domain_info structure having a non-NULL
-> 
->   ^^^^^ spell check is your friend.
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Cs=C3=B3k=C3=A1s Bence" <csokas.bence@prolan.hu>
+>>> UBI offers this already, there is a write self-check as part of the io
+>>> checks that can be enabled
+>>> via debugfs per UBI device.
+>>> So for troubleshooting this should be good enough.
+>>> There is room for improvement, though. Currently it uses vmalloc().
+>>=20
+>> UBI is full of uncovered resources :-)
+>=20
+> For sure. Plus, even though we use UBI + UBIFS, that may not necessarily
+> be the case for others. Maybe someone uses mtdblock + some
+> "conventional" FS (ext*, f2fs etc.). Or maybe they use JFFS. Or maybe no
+> FS at all. We should still allow userspace or higher FS layers to be
+> notified of the problem.
 
-I rely on humans for that. But maybe I should ask someone to put these
-recommendations into one of these AI bots, and generate the stuff
-automatically. It will be devoid of any actual reasoning, but at least
-it will have the "officially sanctioned" verbiage.
+Nobody sane would every use a regular block based filesystem in rw mode
+on-top of mtdblock. Especially if you care about your data.
 
-> 
-> > alloc_data field.
-> >
-> > Nobody is populating this field yet, so there is no change
-> 
-> No driver is ..
+JFFS2 has CONFIG_JFFS2_FS_WBUF_VERIFY.
+AFAIK, this origins form the old and dark age of flashes where everything
+was wonky and no good test tooling existed.
 
-No. There is definitely no driver populating this, nor there will ever
-be. That's 100% MSI infrastructure.
-
-> 
-> >  
-> > +static void msi_domain_ops_teardown(struct irq_domain *domain,
-> > +				    msi_alloc_info_t *arg)
-> 
-> No line break required.
-
-You mean...
-
-> 
-> > +{
-> > +}
-> > +
-> >  static void msi_domain_ops_set_desc(msi_alloc_info_t *arg,
-> >  				    struct msi_desc *desc)
-
-... not like this?
-
-> >  {
-> > @@ -821,6 +826,7 @@ static struct msi_domain_ops msi_domain_ops_default = {
-> >  	.get_hwirq		= msi_domain_ops_get_hwirq,
-> >  	.msi_init		= msi_domain_ops_init,
-> >  	.msi_prepare		= msi_domain_ops_prepare,
-> > +	.msi_teardown		= msi_domain_ops_teardown,
-> >  	.set_desc		= msi_domain_ops_set_desc,
-> >  };
-> >  
-> > @@ -842,6 +848,8 @@ static void msi_domain_update_dom_ops(struct msi_domain_info *info)
-> >  		ops->msi_init = msi_domain_ops_default.msi_init;
-> >  	if (ops->msi_prepare == NULL)
-> >  		ops->msi_prepare = msi_domain_ops_default.msi_prepare;
-> > +	if (ops->msi_teardown == NULL)
-> > +		ops->msi_teardown = msi_domain_ops_default.msi_teardown;
-> >  	if (ops->set_desc == NULL)
-> >  		ops->set_desc = msi_domain_ops_default.set_desc;
-> >  }
-> > @@ -1088,6 +1096,10 @@ void msi_remove_device_irq_domain(struct device *dev, unsigned int domid)
-> >  
-> >  	dev->msi.data->__domains[domid].domain = NULL;
-> >  	info = domain->host_data;
-> > +
-> > +	if (info->alloc_data)
-> > +		info->ops->msi_teardown(domain, info->alloc_data);
-> 
-> Hmm, that's weird.
-> 
-> Why not call it unconditionally. The empty teardown() default callback
-> does not care about @arg being NULL. No?
-
-Because at this point, nothing populates that pointer. It is only
-after patch 3 that this pointer is valid. After patch 2, we get a
-non-default callback, which should never be presented with a NULL
-allocation context.
-
-And since I value keeping things bisectable, it has to happen in this
-order.
+Long story short, I'm not convinced by this patch set.
+No ack form my side.
+At least it should be configurable per device and not being a global
+config option. If Michael or Miquel like it, I'll not block this decision.
 
 Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+//richard
 
