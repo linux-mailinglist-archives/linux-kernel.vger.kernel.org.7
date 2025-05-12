@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-644591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC382AB3ECF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:17:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1544AB3EDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61D1D4605F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:17:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 509037ABA7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9A2296D09;
-	Mon, 12 May 2025 17:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AEC296D20;
+	Mon, 12 May 2025 17:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lp3byPd9"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KOXWbERp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014CC1C173C;
-	Mon, 12 May 2025 17:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07573296D01
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747070257; cv=none; b=Oz/ybNeAtdz9V31ZB8ejq1TdvoagUVpiPj2b0kNYv1AWj4gt9r/32WzAK+ogIepTq4vKPI2+v3XCQPd8ZMorEB7LZa1XckNIMvJK/20xeRwjfmLSgnK9xc6/sjZKeebLWs83liLt1P21/FIkU0xmSHX071jxDXrJYoTdmxIgmBw=
+	t=1747070393; cv=none; b=s0iIGxF1VdjtCV2EHoZCjRjyK1jt6DIQf6L6RL1y2f30o7Bt8cMhGB/Ed9xMqMNeM3fxuBaRAa/YMFlcRXjJc6jeQVu+6xEchNrbkfzpcXvz6+aW2xZAlA7APuTI8U1q84raUaGLN4PFhl4hxBgESg7youekpnxkogK9wO6FBQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747070257; c=relaxed/simple;
-	bh=uQvuRiI5kPMGlQPnZpqbJg0uCwAXBGPJ/G0MqmJdv5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kS3Be1u9Z7kZ/AwWKU+he7r9xWTm1OISOOqd9Qz4EbaAdCFaRQSKDp7/B8r11j9VAZlEJcRD+Tc2LiXHCgFyLgPWxMtTKHs8ee1egL+ShDaClhkhAEViITaC8Y/iwFxmbx7JUTEEZC2RpqNFPBluMc9qDMueCwu7wQbxSbpJOJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lp3byPd9; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d0618746bso35991435e9.2;
-        Mon, 12 May 2025 10:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747070254; x=1747675054; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sI4zsfQnGs3u1qkcrZ5bt4unz98es01LFver8RGkzzA=;
-        b=Lp3byPd9g+95OZqsGQM7/L/CluYOkM8hvN69xhoijIQcIpCbimyp81gtNDQtYVtr53
-         xoX0QKcksTL/VrCRGq5fUAfGwRkUwlZjEmfKOpG1zml5AaNqhsZ3WRjWedCNYHEi20Ai
-         Fyjluhv3Zf0YtsPO0ww6cuQHG/eMYG5DlHIdA4xg9CEUtHzmGDhjH1D4yOp+36zWtuln
-         Vr9lthBYqU3SrSo3Ad9vxWAuCnpXPn2RC3oASiJ+SM8FtEtA6UsXOBjtsEPIxAuFd/sk
-         aWMp+WIdZY5jUiTtdgyawENjsV+VbBU6/RfGPDA+Rs3iWCF219IlXZjSSMpTKHnc6Aev
-         laKg==
+	s=arc-20240116; t=1747070393; c=relaxed/simple;
+	bh=Jq6+zTmMIhbJtMdND1aZOGEUnT/8ETS5iQtBBhAPFRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=USVzqYSB57KU1TMnvBmDsCSFRG+mHK2w9KoVkJ2+dcdtv44HK07tvt2E8xKWnnYnsRkZ/oTTzr6JM37nqSD/Oz64YC3Enns7s/dy5X2yKViy9ilKXH+3J16xsqhv2K/miRZo1iy0F5mDBToeY406p5dL50vOQ43U4ab9gfuie5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KOXWbERp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747070391;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hc4wc6R5tCq7zzSrnONS3LsbZ4BpArkF0zZej/1ubvw=;
+	b=KOXWbERp1396/QvL4NboaLPLXbo76RXnKTBLuyQuEQ56TianWiZz9JHwFJUnVoaSmlEbII
+	TxhGYjYKC+y3sck3r26ULda3XRTpOVDr9nb0HqAdfgPKuq174hAFNL9Gtm3+p01MrbkURQ
+	kOruJePYjdUCuLHSDOSUyIByreVysWc=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-201-pIwaoyPqOGeQwN6ULptgkA-1; Mon, 12 May 2025 13:19:50 -0400
+X-MC-Unique: pIwaoyPqOGeQwN6ULptgkA-1
+X-Mimecast-MFC-AGG-ID: pIwaoyPqOGeQwN6ULptgkA_1747070389
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-401c6c3a679so3640655b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:19:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747070254; x=1747675054;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sI4zsfQnGs3u1qkcrZ5bt4unz98es01LFver8RGkzzA=;
-        b=GhSLWwXqjaAjCHT4A+wCZJpwTjisU9dovFQxOuNtWkDNP9xmU9fl4U/W9vmEYaWRGL
-         hCCuzMm4b9pNRSK8AKmigUi5AfPUAQmhXkwl4bT7hlnyjmLwsYDBbmasmF+mp57esv+e
-         SP5mQ0/gYy0M2BPEXZ4WkoN++ajHrSeiKUOv/aYa1nn0MfmBLqjIJzaLVBBn4MVjXBGG
-         TU1Dkx26tLWpQYziV8PHVsaH/5RFObO3EycFPI76pI46QOTL08NrtXa8eIprzEqrVaAZ
-         jfrz6UkarrRhGASJdh9v5OcNiqHy7E7yvPa49zw8ejXKoJyyp+v5A8KV3q6OwL+4hmQX
-         1FfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUomn5QVuIiSQMUyydInYphxUSyMHUHkQPx30St9W7sAkZzyyT/ZjUOhsxZRXhOTcvjA+kEF/VgU9qMT6UPExNnwKw=@vger.kernel.org, AJvYcCWT7d33LnkVF5SblSx/YFS33xONBu3+/p2/BFDrDimh7Lv4UpIb6+p+Ml19uLKzHLML3CwBD82tOc7ieuLr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqKfRanWqPcoNisyRKVMBsHw9R0J/XvSR09GECeB4wq1CQ8rXg
-	5ZnShqk78eqOlVubiwG1b5J3t7zc7z8GGZXXipj2onxiEwZTtE1b
-X-Gm-Gg: ASbGncumg/+DQq/olz7BfvxIXLFU3BT8PmuuKcpi8CxU0aSXypaKw7xDjoLi/dNqdDk
-	/m2j3EFsNInpzDOJQ7nr1J0pfSB4b9pUIu2KPMgGxTPsXfTUJgDRYh16XDMoGrDJanbskJXj0k6
-	o8HY7WevNgTi74+wtD+i+m62sx3jpMaywX56ix/uVCsmfiQE2ryTg+sSX2nMAYtD+EebtC1EDi+
-	xlofKLeVpmwZcfOOwm0HZU4iHDL+vUormwT365XKHPo/ffypXzCTsXoVvp/Mnc5l3ZEGWbtggm1
-	fhxmSXxdv/wEhlyaB/zyLvqvYXLIPhNWsnl+zxDuWLymD/a0eV75bXEr5L6R9p5sjvoAWvbi9hu
-	Vlu3CxeZ3+QmirZv0
-X-Google-Smtp-Source: AGHT+IHl3N2ydHbkwjBPrum+F97wwz3+Z7Oye0ZT7idcXbNUhXq1nwXfd7bUz0B5x+zT/NfFKcnA2w==
-X-Received: by 2002:a05:600c:b91:b0:441:b3eb:5720 with SMTP id 5b1f17b1804b1-442d6ddeb79mr109443795e9.29.1747070254035;
-        Mon, 12 May 2025 10:17:34 -0700 (PDT)
-Received: from [192.168.0.33] (85.219.19.182.dyn.user.ono.com. [85.219.19.182])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57ddde0sm13381332f8f.14.2025.05.12.10.17.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 10:17:33 -0700 (PDT)
-Message-ID: <81a6627f-f569-4174-9d15-37615ea58458@gmail.com>
-Date: Mon, 12 May 2025 19:17:31 +0200
+        d=1e100.net; s=20230601; t=1747070388; x=1747675188;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hc4wc6R5tCq7zzSrnONS3LsbZ4BpArkF0zZej/1ubvw=;
+        b=FVfhEen5eLu9WRNwLfsfkBvn+tCAZQ1SGj69/uOPGDsllfx2avSwsQ3EbdMirb+kFF
+         WmPD06n4ihizJEHNYbG6c/F76HLDyNuZmDagOtvCUMJDFeEQZSBHoX+c/bVm9Mjj6Zda
+         NvZs/86lc4OaA5EUqFADnbXC+fo2Phs2wNPAKxZlpoIMe/vgzaTgiIdGUhGrv5QRX7Ii
+         RWz8lKPK7yqZUA573H+JHFGhAZHgVTU/U2ezC3xKGjVPoOb21mdk9lbtiW3tc5bUcOuh
+         k07v6BVkM+vA8uw9dgy8apCPTP0n8A1Ynj1VmUAxSeEO47C6dWKfi06ex+O1lZDN/2ad
+         CfLA==
+X-Gm-Message-State: AOJu0YyzJ1GFKKwKPjsaRkCP/9sHNNoYFSarZ+Ps6YbMTXBfNhA3wwiF
+	czbGLUp/3G/FyfjAjITjBzqEwC9iiEno2SeP3yCsteHEjYTDMTDGXUuo3WMNbshaMTjrTlYWpJM
+	PYLIHtGWmzVy1Uj4XC6BgdRohgGjOO5oM/+6rQR2EZ8cQr6Yrij8CyxaCdnON0/n4ZXAEeg==
+X-Gm-Gg: ASbGnctb/IpkiO7a4m94vakhTweiR+QLI0s+xZ1jB2TPex1S+YmNDixpwcY7ViRIsIa
+	DdRavMusbYLjoXzOKYRnNfq9ggwafNhq6NtryrgbZi+V0FQnQb+7wy3sr1VWKBS8TxjZHMyUim5
+	/ZyjhXEEyw2DgDp09SyecEkrB7eowLks8Z9/OWFCs2MD7lCiicmw8S15b4Hrl3tRNC+sX/NtIY+
+	splmZJ/IBBSGUUVu5+lzXdwDe7iWA7fx48RB3QUpscdMzXBp0nvYWP6fTazbGJ4FGc5CFejHp5k
+X-Received: by 2002:a05:620a:2b99:b0:7c9:2537:be48 with SMTP id af79cd13be357-7cd01105576mr2466063985a.24.1747070377099;
+        Mon, 12 May 2025 10:19:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHl9jzo5zoXQr1y1xkM8mBx7JmDU17IT0zbHtFKnAy9/wCXiV9Vo2yKvBGoU6lfRFASKBu7iA==
+X-Received: by 2002:a05:620a:2b99:b0:7c9:2537:be48 with SMTP id af79cd13be357-7cd01105576mr2465872785a.24.1747070365989;
+        Mon, 12 May 2025 10:19:25 -0700 (PDT)
+Received: from x1.com ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00fde7c9sm574237485a.75.2025.05.12.10.19.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 10:19:25 -0700 (PDT)
+From: Peter Xu <peterx@redhat.com>
+To: Alejandro Colomar <alx@kernel.org>,
+	linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Kyle Huey <me@kylehuey.com>,
+	linux-mm@kvack.org,
+	peterx@redhat.com,
+	Robert O'Callahan <robert@ocallahan.org>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH 0/2] UFFDIO_API.2const: Two man page updates
+Date: Mon, 12 May 2025 13:19:20 -0400
+Message-ID: <20250512171922.356408-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.49.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
- filesystems with manually crafted filesystem
-To: Theodore Ts'o <tytso@mit.edu>, Dmitry Vyukov <dvyukov@google.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, cve@kernel.org,
- linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <2025040820-REJECTED-6695@gregkh>
- <20250509072033.1335321-1-dvyukov@google.com>
- <2025050940-marrow-roundish-8b98@gregkh>
- <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
- <2025050924-marmalade-overfill-fc5a@gregkh>
- <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
- <20250509121036.GA92783@mit.edu>
- <CACT4Y+Z8ANddFCpNHvNqq6u6=s_aWoYPwu_1HmH19OWeLBi47A@mail.gmail.com>
- <20250512144402.GA200944@mit.edu>
-Content-Language: en-US
-From: Attila Szasz <szasza.contact@gmail.com>
-In-Reply-To: <20250512144402.GA200944@mit.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-At their core, tough software decisions often involve economic trade-offs,
-weighing ideal solutions against practical constraints like development 
-time,
-budget, and acceptable risk. This doesn't make a particular decision
-fundamentally wrong from a computer science or program correctness (à la
-Dijkstra) standpoint, but rather reflects the real-world limitations under
-which software is built.
+The first patch updates the page on two-steps handshake, removing the
+misleading paragraph and replacing it with a paragraph explaining the
+correct way to probe the userfaultfd features.
 
-Mounting pendrives in 2025? We're just not there yet.
+The second patch is a small touch up on the same man page that misses the
+newly added UFFDIO_MOVE feature.
 
-On 5/12/25 16:44, Theodore Ts'o wrote:
-> On Mon, May 12, 2025 at 03:22:12PM +0200, Dmitry Vyukov wrote:
->> This is not even about auto-mount. Let's say I am mounting a flash
->> drive that you gave me, how do I ensure it's a safe image to mount?
->> Removable media, portable drives, and some use cases related to
->> mounting images stored in local files either deal with images with
->> unknown origin, or can't provide 100% guarantee that the image wasn't
->> tempered with.
-> >From my perspective, the answer is simple.
->
-> You run fsck -y on the file system image.  If fsck.FSTYP isn't capable
-> of sanitizding the file system image to make it be safe, then that
-> should be considered a security bug for fsck.FSTYP, and should be
-> reported as such.
->
-> Does the user not have the latest version of fsck?  Well, they should.
-> If they don't have the latest version of the kernel, or any other
-> system software in the TCB, then they could be unsafe.  And that's on
-> the user.
->
->> Question of resources for fixing is orthogonal to classification of an
->> issue (if it's a bug or not, if it's a security issue or not).
-> No, but the resources available should inform the trust model, and
-> assuming that users should be able to blindly insert any random USB
-> thumb drive, or blindly mounting any untrusted file system image, is
-> not a trust model that is realistic.
->
-> If you want a different trust model, then give me the resources.
-> Otherwise, don't try to impose an unfunded mandate on me.  Because I
-> will ignore you, for the sake of my mental health if nothing else.
->
->       	    	     	      	 - Ted
->
+Thanks,
+
+Peter Xu (2):
+  UFFDIO_API.2const: Update userfaultfd handshake and feature probe
+  UFFDIO_API.2const: Add an entry for UFFDIO_MOVE
+
+ man/man2const/UFFDIO_API.2const | 49 ++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
+
+-- 
+2.49.0
+
 
