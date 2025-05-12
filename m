@@ -1,176 +1,353 @@
-Return-Path: <linux-kernel+bounces-643915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09211AB3406
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D9BAB349E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE43C3B5D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:51:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB8B17D107
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447232609CF;
-	Mon, 12 May 2025 09:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890B726137F;
+	Mon, 12 May 2025 10:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Wf8xqb+j"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013040.outbound.protection.outlook.com [52.101.127.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0AVZguy"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1C425F7AA;
-	Mon, 12 May 2025 09:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747043489; cv=fail; b=OTB0Dmz4yP7EWyp+F1zGCWmns5tyACtQewxfTeJUgG3XyUiWMOHrJki6sxZu4JSmwo4HbHOh+mGRVfekHp0vlQYsm4r8pGjlUVf3oSdL7rJczDWSreau6412npZc2pjOc/lYRofsQsAAYd1L7qLl79RQo/ZDRHKuWswvTn1x3CU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747043489; c=relaxed/simple;
-	bh=lI89NeZ2t6ka0HmhJIlFeSQS0H+0iujoi8G68I1KZxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BEqyeS8lvd/Y505/9kR/XxVrDESdCP28k3GyVcgATVdgcAiTBI/8QPaIy4WBGADF/RqlW8D3CxXAek7bf2lkYMylK4/8tOloXT5S/xXUIOMZWGcxSW60+lGKFxg/o/mirs/iHUTVL+sCevWbtVF2vgVe4IWQHIM+OtdanQUyLMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Wf8xqb+j; arc=fail smtp.client-ip=52.101.127.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bT34ZZSXnqw79YJgYUg0bRt2yAvfPXmxs4iBntUINfACm+IQxYYGh+myB7bjSFEZttObKzXpH/p5JHN7nWwaycD25FIL+8BXeUHswsbP1qQwE6ox+D3+Jk2nOpscK70/xeOBaxxK5riS3HU9aLSL+aO3mg0AIA3B3CWUlTB0D1fg/4MYvcgoBkQSZxNT0lMZg3XUPxE5aI2JmI+h0KSK6YqslHVoDUCWGRP6BwSEvGeQXWhNzvRVSXGRe2le02uPLf2+xfunKrKtVllucBhyjXL7nONLb7Bf42s22wHanVRKPtiL15H14i6WXvVFWHl+GmxKcHQbtTAP05faaHdC9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lI89NeZ2t6ka0HmhJIlFeSQS0H+0iujoi8G68I1KZxc=;
- b=wJxWHGDt5o+NFD1/mg0wyAb7F0+OoZT6U5P7jBqNgBPkdaxVk69wbnCigW+5564Urrq/ZXSSPoge2is22qPydA631YF0vPZPvsl78DsACJL4d7AUgK1J5AWekItOuxcEemTTR3qiB401sVKR9tXbSqdCz+GcUkzh+1Yp1NHEWB+eD7uyEYsD7pS58wDbNUnbFKBkOvLhflhzC3+TNATlTfgdqjIWWFEvzx7GG4VM/zvJazNarWsLfmYMtjKOHR3EPY4m6rn7sn5lMH1SoSfRfdVztwW/6Piq4Dwr88AC8D7dVWWzRs0fv8R/qYsXaXPtIcaRz29/hrdqIOYCbdiCIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lI89NeZ2t6ka0HmhJIlFeSQS0H+0iujoi8G68I1KZxc=;
- b=Wf8xqb+jBEKtwKefloqcr4Myw5kD/yjhfmA3siACEA7sorXFiHs2y6MNVwsmiXY7lN5jT8TFa32ZfzPlrrxAG60+96JCuUPAzso1y4KSF2EAnbfz98zxpl2QhVMTYKl2zB0ZrANRocHyTR9UNZ3NncOG3vVOw/qzdWZVGxeQYu6g7iWdXIUhF7OReqebG2lmWPE9RIjeDBMsmYeowzKPxqeKkeGCybKtAbFWWCTqitUz1fMez97ALaPxmzGsxv2umh9CNrFxd74ZrwAZrz6GxgZSlGd8t/dqWall/k5r/H2Shftrv1kzgaimxiAwPpQ0LzrjNd6iitPO6Z9wBP4Wbw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SG2PR06MB5310.apcprd06.prod.outlook.com (2603:1096:4:1b8::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Mon, 12 May
- 2025 09:51:20 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%5]) with mapi id 15.20.8722.021; Mon, 12 May 2025
- 09:51:19 +0000
-From: Yangtao Li <frank.li@vivo.com>
-To: ethan@ethancedwards.com
-Cc: asahi@lists.linux.dev,
-	brauner@kernel.org,
-	dan.carpenter@linaro.org,
-	ernesto.mnd.fernandez@gmail.com,
-	ernesto@corellium.com,
-	gargaditya08@live.com,
-	gregkh@linuxfoundation.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	sven@svenpeter.dev,
-	tytso@mit.edu,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org,
-	slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de
-Subject: Re: Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem support
-Date: Mon, 12 May 2025 04:11:22 -0600
-Message-Id: <20250512101122.569476-1-frank.li@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
-References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0185.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::19) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C016136C;
+	Mon, 12 May 2025 10:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747044946; cv=none; b=QZ+TQavdD9jqepbikKW2kZRWFJ3KAVZFNG021ZXdBgHdGrXTU9uJVpp1aorNeTdxrGyu/U16+daa27M8Kli82YaDkxw4tHcDtxf2AdAv5Dl613kL0Cp9iK5YDdoME59Og1xlIqjaefApZux5HKlEbN2XQStjiCyTUDi5OdpWvjA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747044946; c=relaxed/simple;
+	bh=YEVzF/4RhjzwytVvw9iWfdQD/vyZMyC3yGPu2a4DCkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QNgJDKXL9xmuhNnEShpu/E/B0S7rW3MemoDBJgE5OEfHoii7eCdKDjsAMdwxygzcK7H9/lIRWoBDT8O14byW3QdEthUkXnlJRGlW+Mo3YMEoWiQpx1YX/AgWAXZbhs8duIcEsPXeuTzLZ5DeTk6CoY1fKtH18r+ZojMfccq+IXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0AVZguy; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad24ee085a8so164340766b.0;
+        Mon, 12 May 2025 03:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747044943; x=1747649743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NlOkLKKLO78ZMSCYDMZCAd10hMDoDs86MSNcBVk2Ats=;
+        b=F0AVZguyxmCpmCtrgYijgmXB40/3iKKqKh27pekprEfS13dD6hGhhuZ5V+cvODYVYD
+         oySBQvrr0py2s7LIj7+XrNKb9lrmdmrB8Ch1Mq1VdSdyK0nBPvEub+W17kHDnESWC5Y8
+         g34Y65pSxYcSDNpL2GhsmnEidDbQ2vsbklwNmJsJS52mupvQKVzUCTF632aabCTVolJv
+         19VLaJDIIdoQ1VqHttXw8hnmpGdvrApgGGANecejWGypLtt1Xb3LoCtm0vOzFz1Y1XOM
+         G1FJi8XnkH2NbwCqMnlPenwBXsI+3BRg5W5BLg4U2P7Ivj1Of8FFlfHPgiZmcgETSOtP
+         JStQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747044943; x=1747649743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NlOkLKKLO78ZMSCYDMZCAd10hMDoDs86MSNcBVk2Ats=;
+        b=wuLBODa/ZFNWgOPCMrYhkhs1L++JziQ7Wy+toliFkL4VWMnsXTTqQIUvkvylFyS0us
+         oYFOGbSxRhfwC4JqoUHUFGVkWJlWomrfApUa9w9NGxNLcqglX/vzejnZjKoBDX+AWya3
+         eyjgBL+qpHcftqPooOQhS5Q+p5P3ihhQlJ9BbPv57u2K/6yvUo6pJCu1k6b4LsvH2iqO
+         S5YtYzYlTAVY2mCg8SsVmnX64AKD6TyxRjgb+ibVWIbEXNxwtfrd+QB1g4yAhJDnXJdb
+         xbGGBWZmWx95vpGVPJCc4KfGcWNPFV0BTU4ZtRZG+2ONNGKhMhpGEWbd7vPfQsM8zopI
+         yadg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBEkbmAySrmalwxLGaInczISo9uesM4ejPn54qwK4/Ez2WLUGnKnPk4bHWuG4f4L86/8cIqBHqYKECHVI=@vger.kernel.org, AJvYcCX2cBRqzTpgVIvVwmb9R1LLDzWGNuO0I8fXgAonC1Lh0jN/m4C9YHeM8ubPIpRbnXpu8ndDN0g3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV2rs+vSVC3u6NDZs5eJqFAibR0ngxH82gHRJP6MWIzb84kPn5
+	5ePAMm+yljVGUBhjKhiYoqiLlPmrmq+4bS7wKwGn7/W4JHY9OdNy
+X-Gm-Gg: ASbGncu4SC48oxa/JlJyKliNMdJjSUWq2gvTcP7YdcDZ37RzfNJXIjiEc5N+gUIYpds
+	HXUZSo5Rjj6G35n8L+7Syh8xzHwvO4WXnB0MQL0DeeC1uGvgu742VfIPbDY98qZeWSl/ehd1yfq
+	0Js4Dh3+g4c/nsUr+5YkIAmepQ1gN4TWRgUkoDc9qsecRqndmUZ5VUZlAqXEyqErdpTmtyzXkJc
+	mgGwj9nHgMXZba59v1UqCOeszOrixVbmJpDo09wDp6hUSJUNmY4SnnoVHBkHSEY+fKxyVkd0UhM
+	F6UJ3b4BQ/QFUYMkprYv95euNIH+mucVwx9tZoaJg4eTKtgXtOQD9aifAKF1iw==
+X-Google-Smtp-Source: AGHT+IHl8UycOLOMTfznPcamDojkGMvURWHkUedJ21DOo4ra8aV9W4b6j0uwidMFP5+ZW4JFdQ04jw==
+X-Received: by 2002:a17:907:a0ca:b0:acb:7105:61a5 with SMTP id a640c23a62f3a-ad218fef523mr1319402166b.32.1747044942579;
+        Mon, 12 May 2025 03:15:42 -0700 (PDT)
+Received: from debian-vm.localnet ([2a01:4b00:d20c:cd03:20c:29ff:fe56:c86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad22a3a1501sm473051866b.121.2025.05.12.03.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 03:15:42 -0700 (PDT)
+From: Zak Kemble <zakkemble@gmail.com>
+To: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Zak Kemble <zakkemble@gmail.com>
+Subject: [PATCH v2] net: bcmgenet: tidy up stats, expose more stats in ethtool
+Date: Mon, 12 May 2025 11:15:20 +0100
+Message-Id: <20250512101521.1350-1-zakkemble@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SG2PR06MB5310:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac72fc09-9875-47ec-d1c0-08dd913a8b99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2fXLrXQg/sX0ub2+lZ8leqKHgM6yNAhM50DzSgSeu9wIRUrDR3ouBLda4chq?=
- =?us-ascii?Q?ZirfJBlBb3AQ1z/fMrdCDnsV51nHrju7TzCQNdkRSgp1UYOilz1Yoh5gr/Py?=
- =?us-ascii?Q?2a5ylCVPnOevGHkgF/voj/ic7pZnQ6+ENQUtD6uBzygV6eBLwwoTzD6U9QPf?=
- =?us-ascii?Q?Oq7G5c9g9Z7pv5WA9c+Uy+4TiMA3ZzZRpKR/OUwue4kiYEsDdp92AykAbyup?=
- =?us-ascii?Q?pVBte9O/9/qaRqMKQ5flokYc7S5SEvfmdI6qdVZUDZdZUofqKtp8AUFsHQNK?=
- =?us-ascii?Q?V7Y3+G49XBqlswRfA55PATt6RY5wJsZoOoMlfnzqmzESh8UhWIGRVg/aaaN7?=
- =?us-ascii?Q?kI+U4PvungQsDYo3PwMnsGR/dDvBDNRG9Ng+N7qjJvty1dgOoq1RIe/uPkbk?=
- =?us-ascii?Q?9PnynpaoyOwu6GIn1Beck2/AZJmI6B0ppzzPFSuOG140eDzpD6S7IUzTCO5V?=
- =?us-ascii?Q?LNi3XguzvFVRPxf2ngLK5hgJJHQfQi2YkYS3JuxV/1Ht9hRnr81b+1PO5L1a?=
- =?us-ascii?Q?Tr4tadk/w0nokozJl/FelOLOXXw9LjSB31mALT8L3KDfO74qFcyjO/vewf79?=
- =?us-ascii?Q?n/+5M+aOMUATeI5JzpkLsmfszzY23SH1BWCvxllbPIc0S0nBub+WZhUWSyc9?=
- =?us-ascii?Q?XJKDLZVNB7WjrCbQPfTyw8RB4PdE2cqlFPgs60kN1bLWnh6T0mtIkuABgmSX?=
- =?us-ascii?Q?fnj3l5/ZP0Oscx94W4A2YYQIIpja8Xphsa0AaM+GrtIgcVHzn4vQDJEVyTEb?=
- =?us-ascii?Q?cBj/M7PUf8q2yj3cDHv2QYHxzY/aUD7dRDX5316alKzfGMk0LGTLTGcRUZG/?=
- =?us-ascii?Q?7Bt+ZO1ZOz/rACt5vP0jgPkJx3g4yPSkNxRwJrAyKBV2PcXVtrwiEqgLnSdZ?=
- =?us-ascii?Q?P8pg1eLsHgzOi7Ht3lhT4WdwDqMMRKDivFSGqqYyhQRhBxih9U0hcL41OunF?=
- =?us-ascii?Q?eDHc7PUTtdD5Jf7HGB0YSRlgZFmhrE2pkuGVmo+NJhiWxmRo8Eo6SSb/ReD+?=
- =?us-ascii?Q?7Z9dmJqR+BfhK5AhKh1GQqvRAncqYgPi+gwfgAb6oBK5cseP7ppenYLTLnOS?=
- =?us-ascii?Q?jQTnrXwe9kmVZYdILULub9u8oOrG1vo23zbCY8joYHOLR3epXhkFf9Pbx1RS?=
- =?us-ascii?Q?BQZFmm4mO6XHGtNhV4JsxrlkhM5Vtn79W9tyZKHntnvx+58cNudjHZ7T4z1k?=
- =?us-ascii?Q?pEFAuvpGtGQ9asLqFvSiVQYeJ79Oa4bnKtSXcjahn13WdwrmYYdz7EwWZwRm?=
- =?us-ascii?Q?4hrTz94L4NWDrq6hjA76mrAY6zt3WbhV8GGYsgQ+Q93r3DK8adLaI+qIA7rS?=
- =?us-ascii?Q?c19cJqOQLIKA9Dp01+pK2LEEF5Br8el4yNStI2zLyZUSTPfU3Cp/wqamYFew?=
- =?us-ascii?Q?4NxcHTB10ApOpwKlIXE8cU8KR+lKki5ggIqYiWI0mATO4yHUcAdeDvmR7YDa?=
- =?us-ascii?Q?y02bqMp2vzb5WnJyARJvojaOTUV6oJbfSbACgc2BM1lYyRjjJvJvNw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JL/GLaEG6eUhkrKp7PivJwqFMIsI5wkU8vaztv3zUyYtsKL7I/FhmQ+bg/A+?=
- =?us-ascii?Q?SLfyc2/058WWtlgKMmcX3+wCsj5vqgW6euUA1wR8zKG2UXvVFFnhGEZkwTr1?=
- =?us-ascii?Q?CQdNuabmozPneO1pltebpiVpBmM/CkzgxaDMG6yurz6lIzNqV1PehK92t/+h?=
- =?us-ascii?Q?PzgfmLPWp96mWBrCwZx5KuDKiRqLbdrJzxYNS2qSgOfUxC7VwG1TY2Qo+ya0?=
- =?us-ascii?Q?gn4AUcVXvtYE0GgiZN2efP4mb3R0vMNMouX59hmXu9ovJRLfM06RHpcAmPG7?=
- =?us-ascii?Q?4lwJs++iLD0hu4vZUQ+v0ntLodQ6xo2nMp9a/GPIJfXJesHbMHiyZzX5btVy?=
- =?us-ascii?Q?wQuYiM2WDEcBIbfzJ/nnGfXDLYtieJ1yQmUv3HVnzYQFkTGYX7cz3hS6u9zt?=
- =?us-ascii?Q?td4MD0q4E5Fq8HiUUDtbjjK8v5C9349koSwkUkQbhxdvCsA0p78kGeEHMsVL?=
- =?us-ascii?Q?TlmHRG2a2l0tx/q65PCw7sClDtcLzbEzUPn6iT0g0pfaEgjgeai6v9ZC+Izi?=
- =?us-ascii?Q?dk3yWNh2mhYOrtFYATKGNmft/QX+hQc6rGpCpzeFLVuLQ4hILMVosSYkTamZ?=
- =?us-ascii?Q?BJCmMIKB70NRffMYBboSFmDXSGkQNAolonGceFMklc50AYAx7CYsINBPypkI?=
- =?us-ascii?Q?n0xEj2vlo9KbMnbqLUpc8y5tLfNdZBMMabxvv/BhhH3v8YfxxTbf+ZT5FsCV?=
- =?us-ascii?Q?D6M9tr/1KYQqlhAmiXW2HEVOii5NVr8HjnMB5alZ7xX5VTmEBi9I4QXp31lE?=
- =?us-ascii?Q?oL1RRyU2/R/GH8vnSn7aUTpZ7NBmLIlt9Gsenb6/WocqMQh9MWN7Y7F0dNdy?=
- =?us-ascii?Q?0RGMnDChck9ht5/kJh3iHTeGEZfMXi/xEzNhkkJWixaGeo2+RtnmFY/+/s2P?=
- =?us-ascii?Q?HKHOEuZIXqFVP6tZFByShbgCYvyDKaiJdy0IlZKwCAM1HcrTGRcPzkjyokm6?=
- =?us-ascii?Q?mJ/puEWOsvsbSD1JDE/2G0wtW8Wi0lM8sQl+FBYReKCANf+0fZeddJFxJEXX?=
- =?us-ascii?Q?4iAGZTtU5Egl0bAH75mKKyH2YjlFRxxs7AIkffQ6tmPqC8Vhz0j1PDXWqvgD?=
- =?us-ascii?Q?kPMBAKtxOLo+Nrz8t51foUY4I6De+vmTxGLb6+6DFIvFdBvDJi+0Wh3tcXUx?=
- =?us-ascii?Q?25gjdteQxeKgpJ7NXakOQLaVm3M1+OgiT9RsWZppbj2XsQF80QDdVmcqdvna?=
- =?us-ascii?Q?1WvdbXqTGmPNDfLZHtTlIOs1onUFMx1xDTu0/l49Z9Lt2c4OK4j/ZwMX7+Ms?=
- =?us-ascii?Q?coKPLyblF3LHGezCo3+h5BEV4YRPV1pHeCp0GD7BIfewHufFRlgnwGyti7QD?=
- =?us-ascii?Q?L39kq77EoNekLoQCvQdRf9mR04OyY6vILvediojbvgD7SiEqtgM31Z/uTeDF?=
- =?us-ascii?Q?s724fKxrkkPrmHNUIZPJrzDSZeLwXHLVWakK926FMY4wLU4ibofmC9ReOWtQ?=
- =?us-ascii?Q?buQmjacb384gPTnaHlYQO+nfSg5ZPfd6EGLvG8p4zSeXvR+K7QCFm6XrNOKY?=
- =?us-ascii?Q?+XDGAOyFaM4YJgRVnvHHs9TIGHucnQllLXuLUDKOypTGkkn0vSA+nYuNjfU9?=
- =?us-ascii?Q?6d5B+lX6Q+5tilaCObA4nu7NmdBkrj6UTx9jFaH5?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac72fc09-9875-47ec-d1c0-08dd913a8b99
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 09:51:19.5391
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PlR4iDtZMyIPhLJicDqjejb+ngIF/dWCtOACPx47zGKf/I379CatrKIdoAfnPPB+b09v3+qiE0J3xxyMpU32Ew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5310
+Content-Transfer-Encoding: 8bit
 
-+cc Slava and Adrian
+This patch exposes more statistics counters in ethtool and tidies up the
+counters so that they are all per-queue. The netdev counters are now only
+updated synchronously in bcmgenet_get_stats instead of a mix of sync/async
+throughout the driver. Hardware discarded packets are now counted in their
+own missed stat instead of being lumped in with general errors.
 
-I'm interested in bringing apfs upstream to the community, and perhaps slava and adrian too.
+Changes in v2:
+- Remove unused variable
+- Link to v1: https://lore.kernel.org/all/20250511214037.2805-1-zakkemble%40gmail.com
 
-Thx,
-Yangtao
+Signed-off-by: Zak Kemble <zakkemble@gmail.com>
+---
+ .../net/ethernet/broadcom/genet/bcmgenet.c    | 88 +++++++++++++++----
+ .../net/ethernet/broadcom/genet/bcmgenet.h    | 10 +++
+ 2 files changed, 82 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index 73d78dcb7..77fa08878 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1018,6 +1018,8 @@ struct bcmgenet_stats {
+ 			tx_rings[num].packets), \
+ 	STAT_GENET_SOFT_MIB("txq" __stringify(num) "_bytes", \
+ 			tx_rings[num].bytes), \
++	STAT_GENET_SOFT_MIB("txq" __stringify(num) "_errors", \
++			tx_rings[num].errors), \
+ 	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_bytes", \
+ 			rx_rings[num].bytes),	 \
+ 	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_packets", \
+@@ -1025,7 +1027,23 @@ struct bcmgenet_stats {
+ 	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_errors", \
+ 			rx_rings[num].errors), \
+ 	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_dropped", \
+-			rx_rings[num].dropped)
++			rx_rings[num].dropped), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_multicast", \
++			rx_rings[num].multicast), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_missed", \
++			rx_rings[num].missed), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_length_errors", \
++			rx_rings[num].length_errors), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_over_errors", \
++			rx_rings[num].over_errors), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_crc_errors", \
++			rx_rings[num].crc_errors), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_frame_errors", \
++			rx_rings[num].frame_errors), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_fragmented_errors", \
++			rx_rings[num].fragmented_errors), \
++	STAT_GENET_SOFT_MIB("rxq" __stringify(num) "_broadcast", \
++			rx_rings[num].broadcast)
+ 
+ /* There is a 0xC gap between the end of RX and beginning of TX stats and then
+  * between the end of TX stats and the beginning of the RX RUNT
+@@ -1046,6 +1064,11 @@ static const struct bcmgenet_stats bcmgenet_gstrings_stats[] = {
+ 	STAT_NETDEV(rx_dropped),
+ 	STAT_NETDEV(tx_dropped),
+ 	STAT_NETDEV(multicast),
++	STAT_NETDEV(rx_missed_errors),
++	STAT_NETDEV(rx_length_errors),
++	STAT_NETDEV(rx_over_errors),
++	STAT_NETDEV(rx_crc_errors),
++	STAT_NETDEV(rx_frame_errors),
+ 	/* UniMAC RSV counters */
+ 	STAT_GENET_MIB_RX("rx_64_octets", mib.rx.pkt_cnt.cnt_64),
+ 	STAT_GENET_MIB_RX("rx_65_127_oct", mib.rx.pkt_cnt.cnt_127),
+@@ -1983,7 +2006,8 @@ static void bcmgenet_tx_reclaim_all(struct net_device *dev)
+  * the transmit checksum offsets in the descriptors
+  */
+ static struct sk_buff *bcmgenet_add_tsb(struct net_device *dev,
+-					struct sk_buff *skb)
++					struct sk_buff *skb,
++					struct bcmgenet_tx_ring *ring)
+ {
+ 	struct bcmgenet_priv *priv = netdev_priv(dev);
+ 	struct status_64 *status = NULL;
+@@ -2001,7 +2025,7 @@ static struct sk_buff *bcmgenet_add_tsb(struct net_device *dev,
+ 		if (!new_skb) {
+ 			dev_kfree_skb_any(skb);
+ 			priv->mib.tx_realloc_tsb_failed++;
+-			dev->stats.tx_dropped++;
++			ring->dropped++;
+ 			return NULL;
+ 		}
+ 		dev_consume_skb_any(skb);
+@@ -2089,7 +2113,7 @@ static netdev_tx_t bcmgenet_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	GENET_CB(skb)->bytes_sent = skb->len;
+ 
+ 	/* add the Transmit Status Block */
+-	skb = bcmgenet_add_tsb(dev, skb);
++	skb = bcmgenet_add_tsb(dev, skb, ring);
+ 	if (!skb) {
+ 		ret = NETDEV_TX_OK;
+ 		goto out;
+@@ -2253,7 +2277,7 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
+ 		   DMA_P_INDEX_DISCARD_CNT_MASK;
+ 	if (discards > ring->old_discards) {
+ 		discards = discards - ring->old_discards;
+-		ring->errors += discards;
++		ring->missed += discards;
+ 		ring->old_discards += discards;
+ 
+ 		/* Clear HW register when we reach 75% of maximum 0xFFFF */
+@@ -2306,8 +2330,7 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
+ 
+ 		if (unlikely(len > RX_BUF_LENGTH)) {
+ 			netif_err(priv, rx_status, dev, "oversized packet\n");
+-			dev->stats.rx_length_errors++;
+-			dev->stats.rx_errors++;
++			ring->length_errors++;
+ 			dev_kfree_skb_any(skb);
+ 			goto next;
+ 		}
+@@ -2315,7 +2338,7 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
+ 		if (unlikely(!(dma_flag & DMA_EOP) || !(dma_flag & DMA_SOP))) {
+ 			netif_err(priv, rx_status, dev,
+ 				  "dropping fragmented packet!\n");
+-			ring->errors++;
++			ring->fragmented_errors++;
+ 			dev_kfree_skb_any(skb);
+ 			goto next;
+ 		}
+@@ -2329,14 +2352,19 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
+ 			netif_err(priv, rx_status, dev, "dma_flag=0x%x\n",
+ 				  (unsigned int)dma_flag);
+ 			if (dma_flag & DMA_RX_CRC_ERROR)
+-				dev->stats.rx_crc_errors++;
++				ring->crc_errors++;
+ 			if (dma_flag & DMA_RX_OV)
+-				dev->stats.rx_over_errors++;
++				ring->over_errors++;
+ 			if (dma_flag & DMA_RX_NO)
+-				dev->stats.rx_frame_errors++;
++				ring->frame_errors++;
+ 			if (dma_flag & DMA_RX_LG)
+-				dev->stats.rx_length_errors++;
+-			dev->stats.rx_errors++;
++				ring->length_errors++;
++			if ((dma_flag & (DMA_RX_CRC_ERROR |
++						DMA_RX_OV |
++						DMA_RX_NO |
++						DMA_RX_LG |
++						DMA_RX_RXER)) == DMA_RX_RXER)
++				ring->errors++;
+ 			dev_kfree_skb_any(skb);
+ 			goto next;
+ 		} /* error packet */
+@@ -2359,7 +2387,9 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
+ 		ring->packets++;
+ 		ring->bytes += len;
+ 		if (dma_flag & DMA_RX_MULT)
+-			dev->stats.multicast++;
++			ring->multicast++;
++		else if (dma_flag & DMA_RX_BRDCAST)
++			ring->broadcast++;
+ 
+ 		/* Notify kernel */
+ 		napi_gro_receive(&ring->napi, skb);
+@@ -3420,7 +3450,7 @@ static void bcmgenet_timeout(struct net_device *dev, unsigned int txqueue)
+ 
+ 	netif_trans_update(dev);
+ 
+-	dev->stats.tx_errors++;
++	priv->tx_rings[txqueue].errors++;
+ 
+ 	netif_tx_wake_all_queues(dev);
+ }
+@@ -3513,8 +3543,13 @@ static struct net_device_stats *bcmgenet_get_stats(struct net_device *dev)
+ {
+ 	struct bcmgenet_priv *priv = netdev_priv(dev);
+ 	unsigned long tx_bytes = 0, tx_packets = 0;
++	unsigned long tx_errors = 0, tx_dropped = 0;
+ 	unsigned long rx_bytes = 0, rx_packets = 0;
+ 	unsigned long rx_errors = 0, rx_dropped = 0;
++	unsigned long rx_missed = 0, rx_length_errors = 0;
++	unsigned long rx_over_errors = 0, rx_crc_errors = 0;
++	unsigned long rx_frame_errors = 0, rx_fragmented_errors = 0;
++	unsigned long multicast = 0;
+ 	struct bcmgenet_tx_ring *tx_ring;
+ 	struct bcmgenet_rx_ring *rx_ring;
+ 	unsigned int q;
+@@ -3523,6 +3558,8 @@ static struct net_device_stats *bcmgenet_get_stats(struct net_device *dev)
+ 		tx_ring = &priv->tx_rings[q];
+ 		tx_bytes += tx_ring->bytes;
+ 		tx_packets += tx_ring->packets;
++		tx_errors += tx_ring->errors;
++		tx_dropped += tx_ring->dropped;
+ 	}
+ 
+ 	for (q = 0; q <= priv->hw_params->rx_queues; q++) {
+@@ -3532,15 +3569,34 @@ static struct net_device_stats *bcmgenet_get_stats(struct net_device *dev)
+ 		rx_packets += rx_ring->packets;
+ 		rx_errors += rx_ring->errors;
+ 		rx_dropped += rx_ring->dropped;
++		rx_missed += rx_ring->missed;
++		rx_length_errors += rx_ring->length_errors;
++		rx_over_errors += rx_ring->over_errors;
++		rx_crc_errors += rx_ring->crc_errors;
++		rx_frame_errors += rx_ring->frame_errors;
++		rx_fragmented_errors += rx_ring->fragmented_errors;
++		multicast += rx_ring->multicast;
+ 	}
+ 
++	rx_errors += rx_length_errors;
++	rx_errors += rx_crc_errors;
++	rx_errors += rx_frame_errors;
++	rx_errors += rx_fragmented_errors;
++
+ 	dev->stats.tx_bytes = tx_bytes;
+ 	dev->stats.tx_packets = tx_packets;
++	dev->stats.tx_errors = tx_errors;
++	dev->stats.tx_dropped = tx_dropped;
+ 	dev->stats.rx_bytes = rx_bytes;
+ 	dev->stats.rx_packets = rx_packets;
+ 	dev->stats.rx_errors = rx_errors;
+-	dev->stats.rx_missed_errors = rx_errors;
+ 	dev->stats.rx_dropped = rx_dropped;
++	dev->stats.rx_missed_errors = rx_missed;
++	dev->stats.rx_length_errors = rx_length_errors;
++	dev->stats.rx_over_errors = rx_over_errors;
++	dev->stats.rx_crc_errors = rx_crc_errors;
++	dev->stats.rx_frame_errors = rx_frame_errors;
++	dev->stats.multicast = multicast;
+ 	return &dev->stats;
+ }
+ 
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.h b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+index 10c631bbe..429b63cc6 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+@@ -517,6 +517,8 @@ struct bcmgenet_tx_ring {
+ 	struct napi_struct napi;	/* NAPI per tx queue */
+ 	unsigned long	packets;
+ 	unsigned long	bytes;
++	unsigned long	errors;
++	unsigned long	dropped;
+ 	unsigned int	index;		/* ring index */
+ 	struct enet_cb	*cbs;		/* tx ring buffer control block*/
+ 	unsigned int	size;		/* size of each tx ring */
+@@ -544,6 +546,14 @@ struct bcmgenet_rx_ring {
+ 	unsigned long	packets;
+ 	unsigned long	errors;
+ 	unsigned long	dropped;
++	unsigned long	multicast;
++	unsigned long	missed;
++	unsigned long	length_errors;
++	unsigned long	over_errors;
++	unsigned long	crc_errors;
++	unsigned long	frame_errors;
++	unsigned long	fragmented_errors;
++	unsigned long	broadcast;
+ 	unsigned int	index;		/* Rx ring index */
+ 	struct enet_cb	*cbs;		/* Rx ring buffer control block */
+ 	unsigned int	size;		/* Rx ring size */
+-- 
+2.39.5
+
 
