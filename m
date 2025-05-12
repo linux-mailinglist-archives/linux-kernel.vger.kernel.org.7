@@ -1,190 +1,175 @@
-Return-Path: <linux-kernel+bounces-643674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D8CAB301B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:54:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAC5AB30D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42D43A6590
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729FC16BA2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901F0255F58;
-	Mon, 12 May 2025 06:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972AF257430;
+	Mon, 12 May 2025 07:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4iqbgLs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6ucNlne"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1333254B11;
-	Mon, 12 May 2025 06:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4C01D8A10;
+	Mon, 12 May 2025 07:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747032872; cv=none; b=Grp5YCZqLlb0liJ2oCJ84+8WxHaUNPHpgJOpOHYcKU6UjM/a2JZ6/KdM2LLK+B66x6k+QCVX9Xu7FjoPgXban+A7sDBv9loW5rwNjrc4CckQo61SHY3lmo6S9uLYTvXwoaxNyTna3l1NKeggPgp1JRvwDQUoWyyO4UHjTxcY4m0=
+	t=1747036446; cv=none; b=lTlcbwYqzYkOEFRyQlMEeg5xYjrNAvP6DH7CQyP5CLAcLz3DU+95cVVTpGIgjNaW9hxo/srUWAbNrP1a0tkWFM4rQ48CxppgUxmwB/fbhm7+oKYKuYaBxE+JJMyTOpC0QwUuF0Quc3rAa6z8dIvRG9ZWb79EccOXSSoMAAN0tvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747032872; c=relaxed/simple;
-	bh=UzyEJvf8UIvCMjIRcLORGRYJMFtP5tILmnPRiEBiat0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rXGbuAXBBS8D/PLkPV6e0yvzlbK0nUgK4+X2dkgRtqT2CxeU3UUux34hzElYbnUg+cQZwuslml6KtKz0ASnveqwcVJFpCAPKnvIY4vJUCcpZtCngxWfYAYcIioQujlj9HJwbBot4unJgWYzgnCOD3la5DnnWpG4VyQzF3VO+sgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4iqbgLs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F65C4CEF0;
-	Mon, 12 May 2025 06:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747032872;
-	bh=UzyEJvf8UIvCMjIRcLORGRYJMFtP5tILmnPRiEBiat0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V4iqbgLsOub54hoUrXAi6Npd3rIZcXZpXN6k1b2hLv3wR/tCAmdwOohvATOxxfdCy
-	 OFEkTFftL4i70t7QFmxJu79Wnt17MP+BH2LWci1BvLdV7Kc8PttI8tCMpv3ajG/slL
-	 EwpoUKDh5ZtP9PfTtzv5n4e5dxyUm2k6jiB+lqmHF430Y3aD2JZLvSikAZPoQmPoAS
-	 iYSfQMuuM8Q2GsFTGBMHj4IHVTZ3R8O+l74e6XHbKJExc6f7F+bUf0XZ/HQJ2DMJvX
-	 Uw4TylArMUx2CgUbo0MGZ2L2RzBdJClf1zGdcATiJnZdPgFVNoXwqiWQ8qQ3PG0Gvl
-	 gl2iWs4EO5zjA==
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad238c68b35so337380266b.1;
-        Sun, 11 May 2025 23:54:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrTc5uuwhh32TxWPHpfEHkkdNQgpOnFgra0/zC728JsfiJXJUZYg8cpI/MUP2mMSvjzPM=@vger.kernel.org, AJvYcCWZYveOofdsP3Z/vO+aO4GTjYkmBor6YC09hF/PBlP502XzZDLes162ULRYS6JNp9xYUql4pDvOzhMgQEJl@vger.kernel.org, AJvYcCXRTrVHSuhlwix8V8xYegHL56Ke7HVUIbXufS/5FtUfLzrjz/e8WSuY1HnWauw9X3UyUzjXoZ642zZ1dkH386aB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTm/kstjLUtzTTZ4iOP5VdrNjxA7pqv2pBR+MJBk7BEDIgGobp
-	JypYDstmZUow+PP5XTcH7RjKFAUA1Mo4114DZ9xUzgJ0pZ3jE1TJMQt3wvdRgTdTJqpiwIhgptR
-	tM8haDGPp8NBqPFvD9wJugyorxHU=
-X-Google-Smtp-Source: AGHT+IFxFWMNvgOxu8zRhvVKyXxVHRL6cDDVhBy0i7qh8Xalv67bNmfVN2BYwKEk4C5/eCMRlmSaBUD1DiQOzCvq3DM=
-X-Received: by 2002:a17:907:7e8b:b0:ad2:4f80:a79a with SMTP id
- a640c23a62f3a-ad24f80a96fmr370746466b.46.1747032870867; Sun, 11 May 2025
- 23:54:30 -0700 (PDT)
+	s=arc-20240116; t=1747036446; c=relaxed/simple;
+	bh=9hRtQjM3Ar0+t8NaFtNU6223DSovsHzT3Gbal7PWyeM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iZyIGWCRS0uwfhyTHz5ltzlNYd66UAHScET92JUaH+aUjFlivePk4tfjm/fCDuQWhyttvM+CiQ/XyXH7K+rnkh9AnqIAxVW6lAD3kqQeTEuTxzc7S/UjfgMR+TiI2t8pEsMyl1JbLG9nZbODBjStnueaJ7NngbgMztnbQd/ESv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6ucNlne; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-441c99459e9so26503675e9.3;
+        Mon, 12 May 2025 00:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747036442; x=1747641242; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z8eD6ibI0M6lASI+q48vwpEE1ZUnMeuu16Z2EjSEGtI=;
+        b=a6ucNlneuGudEpx5t1RLUZ/iaRj7Cao79rwaZorXyUgccv2RHQMCl4NZoB85EYhTx7
+         xY3tDILIg15aUE5AFuRKTW4IKJzQlfiHFoEg+w/buSh4+QBUbAqfvx13+Cli+MtXy4Hj
+         HUnmjNLdCrF4l8oFRk1YYHCLKvqviICuaKNJ7Jmai/vXRbubfplcV/2zFKvigKQew6JC
+         Mr9PSsznLRL2rUpO/hkTkfIwUhTa6Eq4Tzwp+kIhWYCULS9NNj1sczSFd4h2bCUC+j3S
+         mrlgpeV4VkWdRr/YGlCbRS11oJaeL8FwjjNuwHoJoRz3m35K+fdyipr2Y79nWno5g31t
+         TcFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747036442; x=1747641242;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Z8eD6ibI0M6lASI+q48vwpEE1ZUnMeuu16Z2EjSEGtI=;
+        b=E2YF9yu8c8P46tRUXTBuVf8zdRU3gIf7PqvKaE3AW9kWWmvlESE63xb7cmsNOHtOVH
+         DtfZOZSb1KZUQZrHEr6OrTik2C7x4hEpqHAC/QUxih2bONeL71kO0DOJEH2zhu8uYtIw
+         JYz7EWyaw+LLTBtNdPG0kzT4Uhz/GMnaLwOY2FAZvyJbyn7LfMo9DwtrZ8ER7H6YFuV7
+         FDbUmjiQrFV9avPovEsvyu/SNFXPI3fQxPmVyj5VYHdBI01zWfnTf3Y+BGyQhxdXBPKl
+         5zbulloS6YY7oE/uSkcuNa/bYrLrOHI9Yy8AHXM30CClorsX2M2Pf5MiH+BzCqyyGm4+
+         c/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUx2TKeroG+HWTdYGGkF7ZfPqHNZIdHk1OnvGjLGpnPYBjMKk5XP1lqnc8XSMg8ul0/qrKSFfGiar+h@vger.kernel.org, AJvYcCW9QeDk/HA0D3p/AwYwFsETd/u96dfW+o0EIQoQjrHUT0gCEUtqFqW6tiul77+JWDQ81RHDXs9Q0Qjb6BMK@vger.kernel.org, AJvYcCXnFYNcIsXXodz1Px5iwmW4uBWSm9Wyj1CMrVx9R9LBunNdUDaEsOp9nX5DJmRnmBxN4P97xrbfYF8g@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ6fsKwLoOxPqum1fXHCez9YW0MSutFucwXVw8/t6BXayYX4tv
+	x0mDJz1KmxYqTp2BZC5vh8y2sX9sqBb+O7E3yC/aKXhKcIz+enwnPjFL0HEL
+X-Gm-Gg: ASbGncs1GONhGbgT21Miz77+z/xrjj1MyRpyQlT9VAvC3GMgSUsbt9l6tf/xGtIqalY
+	3+4iPBk6GDPe3zgffMLqPwtbMJpyLXr9CGA7lKgJRCGLoz+sQfAD4UmsU5z6NlDmHfIKnt6oGgz
+	OqrbVt1P2eN/FIaIsswuKhH1OTUFBO+ztkJILI4kjJmvIVI/FUVidgDL+fqoH1ik6feyBY8BJtm
+	Zd3F7S19SIg+xlejXcKhwKFFSR09/59csQvkZwKUX8CQhbq1QxZuUoehoKolvh9ZButeeTcwjiq
+	ZpoPw/N7QtwoTiZO/mME4z5unxINXa4flQJ4V9ioW3mTwvNUlk4xUUDSOEerJ279ZO05fF/4d+l
+	pRZqbvMYBuNm+Ts4mPKslb/uxTw==
+X-Google-Smtp-Source: AGHT+IEfHplh8cNwmPpaq0KlybZ2Fw7To90UFmiV4KRxwfuo/kp+SVmgodT0r4pMnBoRnX3v940I/w==
+X-Received: by 2002:a05:600c:c0d2:20b0:442:d9fc:7de with SMTP id 5b1f17b1804b1-442d9fc0872mr50362825e9.22.1747036442472;
+        Mon, 12 May 2025 00:54:02 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58ecccbsm11699530f8f.32.2025.05.12.00.54.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 00:54:02 -0700 (PDT)
+Message-ID: <4b2a5e563bcd867c0f85e4ac34630ec8161707fa.camel@gmail.com>
+Subject: Re: [PATCH v5 06/10] iio: adc: adi-axi-adc: add data align process
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 12 May 2025 07:54:27 +0100
+In-Reply-To: <20250509105019.8887-7-antoniu.miclaus@analog.com>
+References: <20250509105019.8887-1-antoniu.miclaus@analog.com>
+	 <20250509105019.8887-7-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250427064535.242404-1-maobibo@loongson.cn> <20250427064535.242404-6-maobibo@loongson.cn>
-In-Reply-To: <20250427064535.242404-6-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 12 May 2025 14:54:06 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5Es=TwK+2uPWwBdJ4uEiro5H4mg-fRYdqneebWWf0H4Q@mail.gmail.com>
-X-Gm-Features: AX0GCFu9KNAdZfVJev6aerIkTBkCRrioJYlTWqzxkU51wZJTdyNJRkoGE0rbyII
-Message-ID: <CAAhV-H5Es=TwK+2uPWwBdJ4uEiro5H4mg-fRYdqneebWWf0H4Q@mail.gmail.com>
-Subject: Re: [PATCH v11 5/5] KVM: selftests: Add test cases for LoongArch
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi, Bibo,
-
-On Sun, Apr 27, 2025 at 2:45=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Some common KVM test cases are supported on LoongArch now as following:
->   coalesced_io_test
->   demand_paging_test
->   dirty_log_perf_test
->   dirty_log_test
->   guest_print_test
->   hardware_disable_test
->   kvm_binary_stats_test
->   kvm_create_max_vcpus
->   kvm_page_table_test
->   memslot_modification_stress_test
->   memslot_perf_test
->   set_memory_region_test
-> And other test cases are not supported by LoongArch such as rseq_test,
-> since it is not supported on LoongArch physical machine either.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+On Fri, 2025-05-09 at 13:50 +0300, Antoniu Miclaus wrote:
+> Add support for starting the sync process used for data
+> capture alignment.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > ---
->  MAINTAINERS                                    |  2 ++
->  tools/testing/selftests/kvm/Makefile           |  2 +-
->  tools/testing/selftests/kvm/Makefile.kvm       | 18 ++++++++++++++++++
->  .../selftests/kvm/set_memory_region_test.c     |  2 +-
->  4 files changed, 22 insertions(+), 2 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3cbf9ac0d83f..20cb455e0821 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13043,6 +13043,8 @@ F:      Documentation/virt/kvm/loongarch/
->  F:     arch/loongarch/include/asm/kvm*
->  F:     arch/loongarch/include/uapi/asm/kvm*
->  F:     arch/loongarch/kvm/
-> +F:     tools/testing/selftests/kvm/*/loongarch/
-> +F:     tools/testing/selftests/kvm/lib/loongarch/
->
->  KERNEL VIRTUAL MACHINE FOR MIPS (KVM/mips)
->  M:     Huacai Chen <chenhuacai@kernel.org>
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftes=
-ts/kvm/Makefile
-> index 20af35a91d6f..d9fffe06d3ea 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -3,7 +3,7 @@ top_srcdir =3D ../../../..
->  include $(top_srcdir)/scripts/subarch.include
->  ARCH            ?=3D $(SUBARCH)
->
-> -ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
-> +ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64 loongarch))
->  # Top-level selftests allows ARCH=3Dx86_64 :-(
->  ifeq ($(ARCH),x86_64)
->         ARCH :=3D x86
-> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/sel=
-ftests/kvm/Makefile.kvm
-> index f62b0a5aba35..7985bb42d2c1 100644
-> --- a/tools/testing/selftests/kvm/Makefile.kvm
-> +++ b/tools/testing/selftests/kvm/Makefile.kvm
-> @@ -47,6 +47,10 @@ LIBKVM_riscv +=3D lib/riscv/handlers.S
->  LIBKVM_riscv +=3D lib/riscv/processor.c
->  LIBKVM_riscv +=3D lib/riscv/ucall.c
->
-> +LIBKVM_loongarch +=3D lib/loongarch/processor.c
-> +LIBKVM_loongarch +=3D lib/loongarch/ucall.c
-> +LIBKVM_loongarch +=3D lib/loongarch/exception.S
+
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+
+> changes in v5:
+> =C2=A0- use regmap_read_poll_timeout
+> =C2=A0drivers/iio/adc/adi-axi-adc.c | 24 ++++++++++++++++++++++++
+> =C2=A01 file changed, 24 insertions(+)
+>=20
+> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.=
+c
+> index 2a3a6c3f5e59..f9c4018e3b41 100644
+> --- a/drivers/iio/adc/adi-axi-adc.c
+> +++ b/drivers/iio/adc/adi-axi-adc.c
+> @@ -44,6 +44,7 @@
+> =C2=A0#define=C2=A0=C2=A0 ADI_AXI_ADC_REG_CONFIG_CMOS_OR_LVDS_N	BIT(7)
+> =C2=A0
+> =C2=A0#define ADI_AXI_ADC_REG_CTRL			0x0044
+> +#define=C2=A0=C2=A0=C2=A0 ADI_AXI_ADC_CTRL_SYNC_MSK		BIT(3)
+> =C2=A0#define=C2=A0=C2=A0=C2=A0 ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
+> =C2=A0
+> =C2=A0#define ADI_AXI_ADC_REG_CNTRL_3			0x004c
+> @@ -54,6 +55,9 @@
+> =C2=A0#define=C2=A0=C2=A0 AXI_AD485X_PACKET_FORMAT_32BIT	0x2
+> =C2=A0#define=C2=A0=C2=A0 AXI_AD408X_CNTRL_3_FILTER_EN_MSK	BIT(0)
+> =C2=A0
+> +#define ADI_AXI_ADC_REG_SYNC_STATUS		0x0068
+> +#define=C2=A0=C2=A0 ADI_AXI_ADC_SYNC_STATUS_ADC_SYNC_MSK	BIT(0)
 > +
->  # Non-compiled test targets
->  TEST_PROGS_x86 +=3D x86/nx_huge_pages_test.sh
->
-> @@ -190,6 +194,20 @@ TEST_GEN_PROGS_riscv +=3D coalesced_io_test
->  TEST_GEN_PROGS_riscv +=3D get-reg-list
->  TEST_GEN_PROGS_riscv +=3D steal_time
->
-> +TEST_GEN_PROGS_loongarch +=3D coalesced_io_test
-> +TEST_GEN_PROGS_loongarch +=3D demand_paging_test
-> +TEST_GEN_PROGS_loongarch +=3D dirty_log_perf_test
-> +TEST_GEN_PROGS_loongarch +=3D dirty_log_test
-> +TEST_GEN_PROGS_loongarch +=3D demand_paging_test
-This line is duplicated.
-
-
-Huacai
-
-> +TEST_GEN_PROGS_loongarch +=3D guest_print_test
-> +TEST_GEN_PROGS_loongarch +=3D hardware_disable_test
-> +TEST_GEN_PROGS_loongarch +=3D kvm_binary_stats_test
-> +TEST_GEN_PROGS_loongarch +=3D kvm_create_max_vcpus
-> +TEST_GEN_PROGS_loongarch +=3D kvm_page_table_test
-> +TEST_GEN_PROGS_loongarch +=3D memslot_modification_stress_test
-> +TEST_GEN_PROGS_loongarch +=3D memslot_perf_test
-> +TEST_GEN_PROGS_loongarch +=3D set_memory_region_test
+> =C2=A0#define ADI_AXI_ADC_REG_DRP_STATUS		0x0074
+> =C2=A0#define=C2=A0=C2=A0 ADI_AXI_ADC_DRP_LOCKED		BIT(17)
+> =C2=A0
+> @@ -416,6 +420,25 @@ static int axi_adc_ad408x_filter_type_set(struct iio=
+_backend
+> *back,
+> =C2=A0				 AXI_AD408X_CNTRL_3_FILTER_EN_MSK);
+> =C2=A0}
+> =C2=A0
+> +static int axi_adc_ad408x_interface_data_align(struct iio_backend *back,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 timeout_us)
+> +{
+> +	struct adi_axi_adc_state *st =3D iio_backend_get_priv(back);
+> +	bool sync_en;
+> +	u32 val;
+> +	int ret;
 > +
->  SPLIT_TESTS +=3D arch_timer
->  SPLIT_TESTS +=3D get-reg-list
->
-> diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools=
-/testing/selftests/kvm/set_memory_region_test.c
-> index bc440d5aba57..ce3ac0fd6dfb 100644
-> --- a/tools/testing/selftests/kvm/set_memory_region_test.c
-> +++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-> @@ -350,7 +350,7 @@ static void test_invalid_memory_region_flags(void)
->         struct kvm_vm *vm;
->         int r, i;
->
-> -#if defined __aarch64__ || defined __riscv || defined __x86_64__
-> +#if defined __aarch64__ || defined __riscv || defined __x86_64__ || defi=
-ned __loongarch__
->         supported_flags |=3D KVM_MEM_READONLY;
->  #endif
->
-> --
-> 2.39.3
->
+> +	ret =3D regmap_set_bits(st->regmap, ADI_AXI_ADC_REG_CTRL,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADI_AXI_ADC_CTRL_SYNC_MSK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_read_poll_timeout(st->regmap, ADI_AXI_ADC_REG_SYNC_STATUS=
+,
+> +					val,
+> +					FIELD_GET(ADI_AXI_ADC_SYNC_STATUS_ADC_SYNC
+> _MSK, val),
+> +					1, timeout_us);
+> +}
+> +
+> =C2=A0static struct iio_buffer *axi_adc_request_buffer(struct iio_backend=
+ *back,
+> =C2=A0						 struct iio_dev *indio_dev)
+> =C2=A0{
+> @@ -605,6 +628,7 @@ static const struct iio_backend_ops adi_ad408x_ops =
+=3D {
+> =C2=A0	.free_buffer =3D axi_adc_free_buffer,
+> =C2=A0	.data_sample_trigger =3D axi_adc_data_sample_trigger,
+> =C2=A0	.filter_type_set =3D axi_adc_ad408x_filter_type_set,
+> +	.interface_data_align =3D axi_adc_ad408x_interface_data_align,
+> =C2=A0	.debugfs_reg_access =3D iio_backend_debugfs_ptr(axi_adc_reg_access=
+),
+> =C2=A0	.debugfs_print_chan_status =3D
+> iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
+> =C2=A0};
+
 
