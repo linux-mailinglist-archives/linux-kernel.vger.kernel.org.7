@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-643988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E11AAB354B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:55:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16C7AB3548
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C76861A4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8264B1891771
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9956527465C;
-	Mon, 12 May 2025 10:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0C1270560;
+	Mon, 12 May 2025 10:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tydgRKNj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9uzzgayU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NM4cbR/1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NKvPR8YI"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403D826A0BE;
-	Mon, 12 May 2025 10:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EA426A0E3;
+	Mon, 12 May 2025 10:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747047086; cv=none; b=nshJtO04JqraJIoU9vatQ7lYm3Qb0H+/Pj1zN8PsDOWjyH5xNLcArzv6VpCnpA2ff9o7Hh37bWFBcQJRPV4qt8jEF2GG6dAXRMNQZ3euRgs/Cv7NOHP40EpMvBStTNLtlznKJqC9dWcBrD5ksbv/COojOUywaR4W1/c7fhXlPhM=
+	t=1747047086; cv=none; b=GQHXeQRHlyYFV/xHilmd+gozrVpnbJ8goUSBsYOeWMdirO/VR4p5zt8Y2CAzCqtEP60QuznetRX+I12F3qLfzvrK/lhO8nWg5F24vcq8+GJQB9o9NZdMlfmc1aZPnrXIH90sEo2r7qta/xti8cFtTiKIEUg5rYyE6ic6NbTHM28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747047086; c=relaxed/simple;
-	bh=bdxKB73YbwkmMKaWGPqzWUoNRWFtEOJ5WFaLqaz5z3s=;
+	bh=Iw07wFt0+gQYOcEanYE2hryxh819INzn0JbhVVIGwJM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V6kZWJCwgyD9qocXr/6pg/dDzGHGexTVeQwkxGVvPxiEs0MEnMlrKrGHKft8mVF9xsxSTPLUDTPlqEdkntnoLstR4cAOXsZw6LFr9Hezipjzy/GCFHUxgKSZ6vveK4LWa1mh9lkIrLkHpD2cNzCAtVjIM7GTPoxfFvIi5WHMr/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tydgRKNj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9uzzgayU; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=r5BYTyvuIFB9WG9YIkeFaU8Ry7fHRvuAuECQx3La9+1K/gZHGtKF5lEofvM/98SUixcwRTFyzmDbpVGnXyzhm87MY0OVctuTfdFSGEalpVe0wbvuD1cNi7RqULsKIY2qbXXjbS6R26BaWeswb08zlToXcVnefV3pOTKIC+HxtfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NM4cbR/1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NKvPR8YI; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747047080;
+	s=2020; t=1747047081;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qhGqdfKGbPufsVKTcWaO/3wWw42NieK+TOOt0vJGg4Y=;
-	b=tydgRKNjAA0/ttTeSDrZptKfPhnPJ6hHWp5Ze7T5B2JTF0bv4nTt2deUrLO/bZBaFu0nrm
-	ISNcHVvCnNxXP7oFycR4Qdsr0vdLJqzUMPiSuA+qBsLqbVCrlaFaqfDZ4w0rPL/MGKWrfl
-	cUol0FZTFAjUXql1d091VJElexWL17imLAC70FHzQ4RX3bzyRr4ELy2wXpeZWeuClMi3U8
-	1Hw/0sfoNnIcVbN8kKPthv5s4etbGPi0XESnFpWCdbv6o/NYJ8Qp2FVOTbO2NyPtaEGIuG
-	HGkVT3OQJWXqn88ULK2aIyio7I4N3FW9GAoCk+M1jy8oPYPeR+A/xfWTaPCEFg==
+	bh=iXCyrOTzBm4Kc/gaphbbedDVfX2Yv/YjdhR7XjDB+pI=;
+	b=NM4cbR/1EB7ija5elslU8EJj8kirB44KKtOH9yNxi3Ue1O3GmIOeqoDpS+IoxYjnN5Nn2/
+	YOyuhJteW9AqFMAS7zBz+VZ22sZZsSd6qYkqsXvUG6bTzKRZD5GPn2fA+ydIaNo7+WzeVg
+	JyAGyzCZXVbOyWuKBJfGxf31cEN98N2L2hwURA+ml9m9rrqwfAHvMUlQMGjYlqEjoNW7eO
+	F2wdbPHZWs9GyL+QgF1WWM6zLDonDk72I1nhUvx/PFd2wJHbYzkroMKeWdz7yRhX3LI+Kl
+	oMrMjM1BGbi9cNKZGBqPwoBnhvhfKjmvCauvmJiheD0b8hx0sxKQ/G1751FVow==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747047080;
+	s=2020e; t=1747047081;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qhGqdfKGbPufsVKTcWaO/3wWw42NieK+TOOt0vJGg4Y=;
-	b=9uzzgayU4+yPCFeSkDSrQK4UDbv/5lPoRCMpqO2aHTsc10DVbY9TbNejHDuvRdWJ5mrxCd
-	OSGQLuGOVc+JspAg==
+	bh=iXCyrOTzBm4Kc/gaphbbedDVfX2Yv/YjdhR7XjDB+pI=;
+	b=NKvPR8YIxaOp1trvc/MXQxr0orWnuY6o17ErKxpeA2U78P/X5f1ah4IYtv2G/QzNPjP1fN
+	uOdcRhWrmPHRWhBQ==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: john.ogness@linutronix.de,
 	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v8 20/22] rv: Add rtapp_sleep monitor
-Date: Mon, 12 May 2025 12:51:03 +0200
-Message-Id: <3199656a35cc8a7acc2e30d320defa778acf8532.1747046848.git.namcao@linutronix.de>
+Subject: [PATCH v8 21/22] rv: Add documentation for rtapp monitor
+Date: Mon, 12 May 2025 12:51:04 +0200
+Message-Id: <9963a4e8307fbf0bbb0937a33b0880af23ba6141.1747046848.git.namcao@linutronix.de>
 In-Reply-To: <cover.1747046848.git.namcao@linutronix.de>
 References: <cover.1747046848.git.namcao@linutronix.de>
 Precedence: bulk
@@ -72,685 +72,195 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Add a monitor for checking that real-time tasks do not go to sleep in a
-manner that may cause undesirable latency.
-
-Also change
-	RV depends on TRACING
-to
-	RV select TRACING
-to avoid the following recursive dependency:
-
- error: recursive dependency detected!
-	symbol TRACING is selected by PREEMPTIRQ_TRACEPOINTS
-	symbol PREEMPTIRQ_TRACEPOINTS depends on TRACE_IRQFLAGS
-	symbol TRACE_IRQFLAGS is selected by RV_MON_SLEEP
-	symbol RV_MON_SLEEP depends on RV
-	symbol RV depends on TRACING
+Add documentation describing the rtapp monitor.
 
 Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- kernel/trace/rv/Kconfig                      |   3 +-
- kernel/trace/rv/Makefile                     |   1 +
- kernel/trace/rv/monitors/sleep/Kconfig       |  13 +
- kernel/trace/rv/monitors/sleep/sleep.c       | 236 +++++++++++++++++
- kernel/trace/rv/monitors/sleep/sleep.h       | 250 +++++++++++++++++++
- kernel/trace/rv/monitors/sleep/sleep_trace.h |  14 ++
- kernel/trace/rv/rv_trace.h                   |   1 +
- tools/verification/models/rtapp/sleep.ltl    |  22 ++
- 8 files changed, 539 insertions(+), 1 deletion(-)
- create mode 100644 kernel/trace/rv/monitors/sleep/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sleep/sleep.c
- create mode 100644 kernel/trace/rv/monitors/sleep/sleep.h
- create mode 100644 kernel/trace/rv/monitors/sleep/sleep_trace.h
- create mode 100644 tools/verification/models/rtapp/sleep.ltl
+ Documentation/trace/rv/index.rst         |   1 +
+ Documentation/trace/rv/monitor_rtapp.rst | 116 +++++++++++++++++++++++
+ 2 files changed, 117 insertions(+)
+ create mode 100644 Documentation/trace/rv/monitor_rtapp.rst
 
-diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
-index 6f86d8501e87..942d57575e67 100644
---- a/kernel/trace/rv/Kconfig
-+++ b/kernel/trace/rv/Kconfig
-@@ -20,7 +20,7 @@ config RV_LTL_MONITOR
-=20
- menuconfig RV
- 	bool "Runtime Verification"
--	depends on TRACING
-+	select TRACING
- 	help
- 	  Enable the kernel runtime verification infrastructure. RV is a
- 	  lightweight (yet rigorous) method that complements classical
-@@ -43,6 +43,7 @@ source "kernel/trace/rv/monitors/snep/Kconfig"
- source "kernel/trace/rv/monitors/sncid/Kconfig"
- source "kernel/trace/rv/monitors/rtapp/Kconfig"
- source "kernel/trace/rv/monitors/pagefault/Kconfig"
-+source "kernel/trace/rv/monitors/sleep/Kconfig"
- # Add new monitors here
-=20
- config RV_REACTORS
-diff --git a/kernel/trace/rv/Makefile b/kernel/trace/rv/Makefile
-index 353ecf939d0e..13ec2944c665 100644
---- a/kernel/trace/rv/Makefile
-+++ b/kernel/trace/rv/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RV_MON_SNEP) +=3D monitors/snep/snep.o
- obj-$(CONFIG_RV_MON_SNCID) +=3D monitors/sncid/sncid.o
- obj-$(CONFIG_RV_MON_RTAPP) +=3D monitors/rtapp/rtapp.o
- obj-$(CONFIG_RV_MON_PAGEFAULT) +=3D monitors/pagefault/pagefault.o
-+obj-$(CONFIG_RV_MON_SLEEP) +=3D monitors/sleep/sleep.o
- # Add new monitors here
- obj-$(CONFIG_RV_REACTORS) +=3D rv_reactors.o
- obj-$(CONFIG_RV_REACT_PRINTK) +=3D reactor_printk.o
-diff --git a/kernel/trace/rv/monitors/sleep/Kconfig b/kernel/trace/rv/monit=
-ors/sleep/Kconfig
+diff --git a/Documentation/trace/rv/index.rst b/Documentation/trace/rv/inde=
+x.rst
+index 2a27f6bc9429..a2812ac5cfeb 100644
+--- a/Documentation/trace/rv/index.rst
++++ b/Documentation/trace/rv/index.rst
+@@ -14,3 +14,4 @@ Runtime Verification
+    monitor_wip.rst
+    monitor_wwnr.rst
+    monitor_sched.rst
++   monitor_rtapp.rst
+diff --git a/Documentation/trace/rv/monitor_rtapp.rst b/Documentation/trace=
+/rv/monitor_rtapp.rst
 new file mode 100644
-index 000000000000..d00aa1aae069
+index 000000000000..fb0ca0bf33a1
 --- /dev/null
-+++ b/kernel/trace/rv/monitors/sleep/Kconfig
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+config RV_MON_SLEEP
-+	depends on RV
-+	select RV_LTL_MONITOR
-+	depends on HAVE_SYSCALL_TRACEPOINTS
-+	depends on RV_MON_RTAPP
-+	select TRACE_IRQFLAGS
-+	default y
-+	select LTL_MON_EVENTS_ID
-+	bool "sleep monitor"
-+	help
-+	  Monitor that real-time tasks do not sleep in a manner that may cause un=
-desirable latency.
-diff --git a/kernel/trace/rv/monitors/sleep/sleep.c b/kernel/trace/rv/monit=
-ors/sleep/sleep.c
-new file mode 100644
-index 000000000000..1841875e1cef
---- /dev/null
-+++ b/kernel/trace/rv/monitors/sleep/sleep.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/ftrace.h>
-+#include <linux/tracepoint.h>
-+#include <linux/init.h>
-+#include <linux/irqflags.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/rv.h>
-+#include <linux/sched/deadline.h>
-+#include <linux/sched/rt.h>
-+#include <rv/instrumentation.h>
++++ b/Documentation/trace/rv/monitor_rtapp.rst
+@@ -0,0 +1,116 @@
++Real-time application monitors
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
 +
-+#define MODULE_NAME "sleep"
++- Name: rtapp
++- Type: container for multiple monitors
++- Author: Nam Cao <namcao@linutronix.de>
 +
-+#include <trace/events/syscalls.h>
-+#include <trace/events/sched.h>
-+#include <trace/events/lock.h>
-+#include <uapi/linux/futex.h>
-+#include <rv_trace.h>
-+#include <monitors/rtapp/rtapp.h>
++Description
++-----------
 +
-+#include "sleep.h"
-+#include <rv/ltl_monitor.h>
++Real-time applications may have design flaws such that they experience une=
+xpected latency and fail
++to meet their time requirements. Often, these flaws follow a few patterns:
 +
-+static void ltl_atoms_fetch(struct task_struct *task, struct ltl_monitor *=
-mon)
-+{
-+	/*
-+	 * This includes "actual" real-time tasks and also PI-boosted tasks. A ta=
-sk being PI-boosted
-+	 * means it is blocking an "actual" real-task, therefore it should also o=
-bey the monitor's
-+	 * rule, otherwise the "actual" real-task may be delayed.
-+	 */
-+	ltl_atom_set(mon, LTL_RT, rt_or_dl_task(task));
-+}
++  - Page faults: A real-time thread may access memory that does not have a=
+ mapped physical backing
++    or must first be copied (such as for copy-on-write). Thus a page fault=
+ is raised and the kernel
++    must first perform the expensive action. This causes significant delay=
+s to the real-time thread
++  - Priority inversion: A real-time thread blocks waiting for a lower-prio=
+rity thread. This causes
++    the real-time thread to effectively take on the scheduling priority of=
+ the lower-priority
++    thread. For example, the real-time thread needs to access a shared res=
+ource that is protected by
++    a non-pi-mutex, but the mutex is currently owned by a non-real-time th=
+read.
 +
-+static void ltl_atoms_init(struct task_struct *task, struct ltl_monitor *m=
-on, bool task_creation)
-+{
-+	ltl_atom_set(mon, LTL_SLEEP, false);
-+	ltl_atom_set(mon, LTL_WAKE, false);
-+	ltl_atom_set(mon, LTL_ABORT_SLEEP, false);
-+	ltl_atom_set(mon, LTL_WOKEN_BY_HARDIRQ, false);
-+	ltl_atom_set(mon, LTL_WOKEN_BY_NMI, false);
-+	ltl_atom_set(mon, LTL_WOKEN_BY_EQUAL_OR_HIGHER_PRIO, false);
++The `rtapp` monitor detects these patterns. It aids developers to identify=
+ reasons for unexpected
++latency with real-time applications. It is a container of multiple sub-mon=
+itors described in the
++following sections.
 +
-+	if (task_creation) {
-+		ltl_atom_set(mon, LTL_KTHREAD_SHOULD_STOP, false);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_MONOTONIC, false);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_TAI, false);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_TIMER_ABSTIME, false);
-+		ltl_atom_set(mon, LTL_CLOCK_NANOSLEEP, false);
-+		ltl_atom_set(mon, LTL_FUTEX_WAIT, false);
-+		ltl_atom_set(mon, LTL_FUTEX_LOCK_PI, false);
-+		ltl_atom_set(mon, LTL_BLOCK_ON_RT_MUTEX, false);
-+	}
++Monitor pagefault
+++++++++++++++++++
 +
-+	if (task->flags & PF_KTHREAD) {
-+		ltl_atom_set(mon, LTL_KERNEL_THREAD, true);
++The `pagefault` monitor reports real-time tasks raising page faults. Its s=
+pecification is::
 +
-+		/* kernel tasks do not do syscall */
-+		ltl_atom_set(mon, LTL_FUTEX_WAIT, false);
-+		ltl_atom_set(mon, LTL_FUTEX_LOCK_PI, false);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_MONOTONIC, false);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_TAI, false);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_TIMER_ABSTIME, false);
-+		ltl_atom_set(mon, LTL_CLOCK_NANOSLEEP, false);
++  RULE =3D always (RT imply not PAGEFAULT)
 +
-+		if (strstarts(task->comm, "migration/"))
-+			ltl_atom_set(mon, LTL_TASK_IS_MIGRATION, true);
-+		else
-+			ltl_atom_set(mon, LTL_TASK_IS_MIGRATION, false);
++To fix warnings reported by this monitor, `mlockall()` or `mlock()` can be=
+ used to ensure physical
++backing for memory.
 +
-+		if (strstarts(task->comm, "rcu"))
-+			ltl_atom_set(mon, LTL_TASK_IS_RCU, true);
-+		else
-+			ltl_atom_set(mon, LTL_TASK_IS_RCU, false);
-+	} else {
-+		ltl_atom_set(mon, LTL_KTHREAD_SHOULD_STOP, false);
-+		ltl_atom_set(mon, LTL_KERNEL_THREAD, false);
-+		ltl_atom_set(mon, LTL_TASK_IS_RCU, false);
-+		ltl_atom_set(mon, LTL_TASK_IS_MIGRATION, false);
-+	}
++This monitor may have false negatives because the pages used by the real-t=
+ime threads may just
++happen to be directly available during testing. To minimize this, the syst=
+em can be put under memory
++pressure (e.g. invoking the OOM killer using a program that does `ptr =3D =
+malloc(SIZE_OF_RAM);
++memset(ptr, 0, SIZE_OF_RAM);`) so that the kernel executes aggressive stra=
+tegies to recycle as much
++physical memory as possible.
 +
-+}
++Monitor sleep
+++++++++++++++
 +
-+static void handle_sched_set_state(void *data, struct task_struct *task, i=
-nt state)
-+{
-+	if (state & TASK_INTERRUPTIBLE)
-+		ltl_atom_pulse(task, LTL_SLEEP, true);
-+	else if (state =3D=3D TASK_RUNNING)
-+		ltl_atom_pulse(task, LTL_ABORT_SLEEP, true);
-+}
++The `sleep` monitor reports real-time threads sleeping in a manner that ma=
+y cause undesirable
++latency. Real-time applications should only put a real-time thread to slee=
+p for one of the following
++reasons:
 +
-+static void handle_sched_wakeup(void *data, struct task_struct *task)
-+{
-+	ltl_atom_pulse(task, LTL_WAKE, true);
-+}
++  - Cyclic work: real-time thread sleeps waiting for the next cycle. For t=
+his case, only the
++    `clock_nanosleep` syscall should be used with `TIMER_ABSTIME` (to avoi=
+d time drift) and
++    `CLOCK_MONOTONIC` (to avoid the clock being changed). No other method =
+is safe for real-time. For
++    example, threads waiting for timerfd can be woken by softirq which pro=
+vides no real-time
++    guarantee.
++  - Real-time thread waiting for something to happen (e.g. another thread =
+releasing shared
++    resources, or a completion signal from another thread). In this case, =
+only futexes
++    (FUTEX_LOCK_PI, FUTEX_LOCK_PI2 or one of FUTEX_WAIT_*) should be used.=
+  Applications usually do
++    not use futexes directly, but use PI mutexes and PI condition variable=
+s which are built on top
++    of futexes. Be aware that the C library might not implement conditiona=
+l variables as safe for
++    real-time. As an alternative, the librtpi library exists to provide a =
+conditional variable
++    implementation that is correct for real-time applications in Linux.
 +
-+static void handle_sched_waking(void *data, struct task_struct *task)
-+{
-+	if (this_cpu_read(hardirq_context)) {
-+		ltl_atom_pulse(task, LTL_WOKEN_BY_HARDIRQ, true);
-+	} else if (in_task()) {
-+		if (current->prio <=3D task->prio)
-+			ltl_atom_pulse(task, LTL_WOKEN_BY_EQUAL_OR_HIGHER_PRIO, true);
-+	} else if (in_nmi()) {
-+		ltl_atom_pulse(task, LTL_WOKEN_BY_NMI, true);
-+	}
-+}
++Beside the reason for sleeping, the eventual waker should also be real-tim=
+e-safe. Namely, one of:
 +
-+static void handle_contention_begin(void *data, void *lock, unsigned int f=
-lags)
-+{
-+	if (flags & LCB_F_RT)
-+		ltl_atom_update(current, LTL_BLOCK_ON_RT_MUTEX, true);
-+}
++  - An equal-or-higher-priority thread
++  - Hard interrupt handler
++  - Non-maskable interrupt handler
 +
-+static void handle_contention_end(void *data, void *lock, int ret)
-+{
-+	ltl_atom_update(current, LTL_BLOCK_ON_RT_MUTEX, false);
-+}
++This monitor's warning usually means one of the following:
 +
-+static void handle_sys_enter(void *data, struct pt_regs *regs, long id)
-+{
-+	struct ltl_monitor *mon;
-+	unsigned long args[6];
-+	int op, cmd;
++  - Real-time thread is blocked by a non-real-time thread (e.g. due to con=
+tention on a mutex without
++    priority inheritance). This is priority inversion.
++  - Time-critical work waits for something which is not safe for real-time=
+ (e.g. timerfd).
++  - The work executed by the real-time thread does not need to run at real=
+-time priority at all.
++    This is not a problem for the real-time thread itself, but it is poten=
+tially taking the CPU away
++    from other important real-time work.
 +
-+	mon =3D ltl_get_monitor(current);
++Application developers may purposely choose to have their real-time applic=
+ation sleep in a way that
++is not safe for real-time. It is debatable whether that is a problem. Appl=
+ication developers must
++analyze the warnings to make a proper assessment.
 +
-+	switch (id) {
-+	case __NR_clock_nanosleep:
-+#ifdef __NR_clock_nanosleep_time64
-+	case __NR_clock_nanosleep_time64:
-+#endif
-+		syscall_get_arguments(current, regs, args);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_MONOTONIC, args[0] =3D=3D CLOCK_MO=
-NOTONIC);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_TAI, args[0] =3D=3D CLOCK_TAI);
-+		ltl_atom_set(mon, LTL_NANOSLEEP_TIMER_ABSTIME, args[1] =3D=3D TIMER_ABST=
-IME);
-+		ltl_atom_update(current, LTL_CLOCK_NANOSLEEP, true);
-+		break;
++The monitor's specification is::
 +
-+	case __NR_futex:
-+#ifdef __NR_futex_time64
-+	case __NR_futex_time64:
-+#endif
-+		syscall_get_arguments(current, regs, args);
-+		op =3D args[1];
-+		cmd =3D op & FUTEX_CMD_MASK;
++  RULE =3D always ((RT and SLEEP) imply (RT_FRIENDLY_SLEEP or ALLOWLIST))
 +
-+		switch (cmd) {
-+		case FUTEX_LOCK_PI:
-+		case FUTEX_LOCK_PI2:
-+			ltl_atom_update(current, LTL_FUTEX_LOCK_PI, true);
-+			break;
-+		case FUTEX_WAIT:
-+		case FUTEX_WAIT_BITSET:
-+		case FUTEX_WAIT_REQUEUE_PI:
-+			ltl_atom_update(current, LTL_FUTEX_WAIT, true);
-+			break;
-+		}
-+		break;
-+	}
-+}
++  RT_FRIENDLY_SLEEP =3D (RT_VALID_SLEEP_REASON or KERNEL_THREAD)
++                  and ((not WAKE) until RT_FRIENDLY_WAKE)
 +
-+static void handle_sys_exit(void *data, struct pt_regs *regs, long ret)
-+{
-+	struct ltl_monitor *mon =3D ltl_get_monitor(current);
++  RT_VALID_SLEEP_REASON =3D FUTEX_WAIT
++                       or RT_FRIENDLY_NANOSLEEP
 +
-+	ltl_atom_set(mon, LTL_FUTEX_LOCK_PI, false);
-+	ltl_atom_set(mon, LTL_FUTEX_WAIT, false);
-+	ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_MONOTONIC, false);
-+	ltl_atom_set(mon, LTL_NANOSLEEP_CLOCK_TAI, false);
-+	ltl_atom_set(mon, LTL_NANOSLEEP_TIMER_ABSTIME, false);
-+	ltl_atom_update(current, LTL_CLOCK_NANOSLEEP, false);
-+}
++  RT_FRIENDLY_NANOSLEEP =3D CLOCK_NANOSLEEP
++                      and NANOSLEEP_TIMER_ABSTIME
++                      and NANOSLEEP_CLOCK_MONOTONIC
 +
-+static void handle_kthread_stop(void *data, struct task_struct *task)
-+{
-+	/* FIXME: this could race with other tracepoint handlers */
-+	ltl_atom_update(task, LTL_KTHREAD_SHOULD_STOP, true);
-+}
++  RT_FRIENDLY_WAKE =3D WOKEN_BY_EQUAL_OR_HIGHER_PRIO
++                  or WOKEN_BY_HARDIRQ
++                  or WOKEN_BY_NMI
++                  or KTHREAD_SHOULD_STOP
 +
-+static int enable_sleep(void)
-+{
-+	int retval;
++  ALLOWLIST =3D BLOCK_ON_RT_MUTEX
++           or FUTEX_LOCK_PI
++           or TASK_IS_RCU
++           or TASK_IS_MIGRATION
 +
-+	retval =3D ltl_monitor_init();
-+	if (retval)
-+		return retval;
++Beside the scenarios described above, this specification also handle some =
+special cases:
 +
-+	rv_attach_trace_probe("rtapp_sleep", sched_waking, handle_sched_waking);
-+	rv_attach_trace_probe("rtapp_sleep", sched_wakeup, handle_sched_wakeup);
-+	rv_attach_trace_probe("rtapp_sleep", sched_set_state_tp, handle_sched_set=
-_state);
-+	rv_attach_trace_probe("rtapp_sleep", contention_begin, handle_contention_=
-begin);
-+	rv_attach_trace_probe("rtapp_sleep", contention_end, handle_contention_en=
-d);
-+	rv_attach_trace_probe("rtapp_sleep", sched_kthread_stop, handle_kthread_s=
-top);
-+	rv_attach_trace_probe("rtapp_sleep", sys_enter, handle_sys_enter);
-+	rv_attach_trace_probe("rtapp_sleep", sys_exit, handle_sys_exit);
-+	return 0;
-+}
-+
-+static void disable_sleep(void)
-+{
-+	rv_detach_trace_probe("rtapp_sleep", sched_waking, handle_sched_waking);
-+	rv_detach_trace_probe("rtapp_sleep", sched_wakeup, handle_sched_wakeup);
-+	rv_detach_trace_probe("rtapp_sleep", sched_set_state_tp, handle_sched_set=
-_state);
-+	rv_detach_trace_probe("rtapp_sleep", contention_begin, handle_contention_=
-begin);
-+	rv_detach_trace_probe("rtapp_sleep", contention_end, handle_contention_en=
-d);
-+	rv_detach_trace_probe("rtapp_sleep", sched_kthread_stop, handle_kthread_s=
-top);
-+	rv_detach_trace_probe("rtapp_sleep", sys_enter, handle_sys_enter);
-+	rv_detach_trace_probe("rtapp_sleep", sys_exit, handle_sys_exit);
-+
-+	ltl_monitor_destroy();
-+}
-+
-+static struct rv_monitor rv_sleep =3D {
-+	.name =3D "sleep",
-+	.description =3D "Monitor that RT tasks do not undesirably sleep",
-+	.enable =3D enable_sleep,
-+	.disable =3D disable_sleep,
-+};
-+
-+static int __init register_sleep(void)
-+{
-+	return rv_register_monitor(&rv_sleep, &rv_rtapp);
-+}
-+
-+static void __exit unregister_sleep(void)
-+{
-+	rv_unregister_monitor(&rv_sleep);
-+}
-+
-+module_init(register_sleep);
-+module_exit(unregister_sleep);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-+MODULE_DESCRIPTION("sleep: Monitor that RT tasks do not undesirably sleep"=
-);
-diff --git a/kernel/trace/rv/monitors/sleep/sleep.h b/kernel/trace/rv/monit=
-ors/sleep/sleep.h
-new file mode 100644
-index 000000000000..d1f990195a20
---- /dev/null
-+++ b/kernel/trace/rv/monitors/sleep/sleep.h
-@@ -0,0 +1,250 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/rv.h>
-+
-+#define MONITOR_NAME sleep
-+
-+enum ltl_atom {
-+	LTL_ABORT_SLEEP,
-+	LTL_BLOCK_ON_RT_MUTEX,
-+	LTL_CLOCK_NANOSLEEP,
-+	LTL_FUTEX_LOCK_PI,
-+	LTL_FUTEX_WAIT,
-+	LTL_KERNEL_THREAD,
-+	LTL_KTHREAD_SHOULD_STOP,
-+	LTL_NANOSLEEP_CLOCK_MONOTONIC,
-+	LTL_NANOSLEEP_CLOCK_TAI,
-+	LTL_NANOSLEEP_TIMER_ABSTIME,
-+	LTL_RT,
-+	LTL_SLEEP,
-+	LTL_TASK_IS_MIGRATION,
-+	LTL_TASK_IS_RCU,
-+	LTL_WAKE,
-+	LTL_WOKEN_BY_EQUAL_OR_HIGHER_PRIO,
-+	LTL_WOKEN_BY_HARDIRQ,
-+	LTL_WOKEN_BY_NMI,
-+	LTL_NUM_ATOM
-+};
-+static_assert(LTL_NUM_ATOM <=3D RV_MAX_LTL_ATOM);
-+
-+static const char *ltl_atom_str(enum ltl_atom atom)
-+{
-+	static const char *const names[] =3D {
-+		"ab_sl",
-+		"bl_on_rt_mu",
-+		"cl_na",
-+		"fu_lo_pi",
-+		"fu_wa",
-+		"ker_th",
-+		"kth_sh_st",
-+		"na_cl_mo",
-+		"na_cl_ta",
-+		"na_ti_ab",
-+		"rt",
-+		"sl",
-+		"ta_mi",
-+		"ta_rc",
-+		"wak",
-+		"wo_eq_hi_pr",
-+		"wo_ha",
-+		"wo_nm",
-+	};
-+
-+	return names[atom];
-+}
-+
-+enum ltl_buchi_state {
-+	S0,
-+	S1,
-+	S2,
-+	S3,
-+	S4,
-+	S5,
-+	S6,
-+	S7,
-+	RV_NUM_BA_STATES
-+};
-+static_assert(RV_NUM_BA_STATES <=3D RV_MAX_BA_STATES);
-+
-+static void ltl_start(struct task_struct *task, struct ltl_monitor *mon)
-+{
-+	bool task_is_migration =3D test_bit(LTL_TASK_IS_MIGRATION, mon->atoms);
-+	bool task_is_rcu =3D test_bit(LTL_TASK_IS_RCU, mon->atoms);
-+	bool val40 =3D task_is_rcu || task_is_migration;
-+	bool futex_lock_pi =3D test_bit(LTL_FUTEX_LOCK_PI, mon->atoms);
-+	bool val41 =3D futex_lock_pi || val40;
-+	bool block_on_rt_mutex =3D test_bit(LTL_BLOCK_ON_RT_MUTEX, mon->atoms);
-+	bool val5 =3D block_on_rt_mutex || val41;
-+	bool kthread_should_stop =3D test_bit(LTL_KTHREAD_SHOULD_STOP, mon->atoms=
-);
-+	bool abort_sleep =3D test_bit(LTL_ABORT_SLEEP, mon->atoms);
-+	bool val32 =3D abort_sleep || kthread_should_stop;
-+	bool woken_by_nmi =3D test_bit(LTL_WOKEN_BY_NMI, mon->atoms);
-+	bool val33 =3D woken_by_nmi || val32;
-+	bool woken_by_hardirq =3D test_bit(LTL_WOKEN_BY_HARDIRQ, mon->atoms);
-+	bool val34 =3D woken_by_hardirq || val33;
-+	bool woken_by_equal_or_higher_prio =3D test_bit(LTL_WOKEN_BY_EQUAL_OR_HIG=
-HER_PRIO,
-+	     mon->atoms);
-+	bool val14 =3D woken_by_equal_or_higher_prio || val34;
-+	bool wake =3D test_bit(LTL_WAKE, mon->atoms);
-+	bool val13 =3D !wake;
-+	bool kernel_thread =3D test_bit(LTL_KERNEL_THREAD, mon->atoms);
-+	bool nanosleep_clock_tai =3D test_bit(LTL_NANOSLEEP_CLOCK_TAI, mon->atoms=
-);
-+	bool nanosleep_clock_monotonic =3D test_bit(LTL_NANOSLEEP_CLOCK_MONOTONIC=
-, mon->atoms);
-+	bool val24 =3D nanosleep_clock_monotonic || nanosleep_clock_tai;
-+	bool nanosleep_timer_abstime =3D test_bit(LTL_NANOSLEEP_TIMER_ABSTIME, mo=
-n->atoms);
-+	bool val25 =3D nanosleep_timer_abstime && val24;
-+	bool clock_nanosleep =3D test_bit(LTL_CLOCK_NANOSLEEP, mon->atoms);
-+	bool val18 =3D clock_nanosleep && val25;
-+	bool futex_wait =3D test_bit(LTL_FUTEX_WAIT, mon->atoms);
-+	bool val9 =3D futex_wait || val18;
-+	bool val11 =3D val9 || kernel_thread;
-+	bool sleep =3D test_bit(LTL_SLEEP, mon->atoms);
-+	bool val2 =3D !sleep;
-+	bool rt =3D test_bit(LTL_RT, mon->atoms);
-+	bool val1 =3D !rt;
-+	bool val3 =3D val1 || val2;
-+
-+	if (val3)
-+		__set_bit(S0, mon->states);
-+	if (val11 && val13)
-+		__set_bit(S1, mon->states);
-+	if (val11 && val14)
-+		__set_bit(S4, mon->states);
-+	if (val5)
-+		__set_bit(S5, mon->states);
-+}
-+
-+static void
-+ltl_possible_next_states(struct ltl_monitor *mon, unsigned int state, unsi=
-gned long *next)
-+{
-+	bool task_is_migration =3D test_bit(LTL_TASK_IS_MIGRATION, mon->atoms);
-+	bool task_is_rcu =3D test_bit(LTL_TASK_IS_RCU, mon->atoms);
-+	bool val40 =3D task_is_rcu || task_is_migration;
-+	bool futex_lock_pi =3D test_bit(LTL_FUTEX_LOCK_PI, mon->atoms);
-+	bool val41 =3D futex_lock_pi || val40;
-+	bool block_on_rt_mutex =3D test_bit(LTL_BLOCK_ON_RT_MUTEX, mon->atoms);
-+	bool val5 =3D block_on_rt_mutex || val41;
-+	bool kthread_should_stop =3D test_bit(LTL_KTHREAD_SHOULD_STOP, mon->atoms=
-);
-+	bool abort_sleep =3D test_bit(LTL_ABORT_SLEEP, mon->atoms);
-+	bool val32 =3D abort_sleep || kthread_should_stop;
-+	bool woken_by_nmi =3D test_bit(LTL_WOKEN_BY_NMI, mon->atoms);
-+	bool val33 =3D woken_by_nmi || val32;
-+	bool woken_by_hardirq =3D test_bit(LTL_WOKEN_BY_HARDIRQ, mon->atoms);
-+	bool val34 =3D woken_by_hardirq || val33;
-+	bool woken_by_equal_or_higher_prio =3D test_bit(LTL_WOKEN_BY_EQUAL_OR_HIG=
-HER_PRIO,
-+	     mon->atoms);
-+	bool val14 =3D woken_by_equal_or_higher_prio || val34;
-+	bool wake =3D test_bit(LTL_WAKE, mon->atoms);
-+	bool val13 =3D !wake;
-+	bool kernel_thread =3D test_bit(LTL_KERNEL_THREAD, mon->atoms);
-+	bool nanosleep_clock_tai =3D test_bit(LTL_NANOSLEEP_CLOCK_TAI, mon->atoms=
-);
-+	bool nanosleep_clock_monotonic =3D test_bit(LTL_NANOSLEEP_CLOCK_MONOTONIC=
-, mon->atoms);
-+	bool val24 =3D nanosleep_clock_monotonic || nanosleep_clock_tai;
-+	bool nanosleep_timer_abstime =3D test_bit(LTL_NANOSLEEP_TIMER_ABSTIME, mo=
-n->atoms);
-+	bool val25 =3D nanosleep_timer_abstime && val24;
-+	bool clock_nanosleep =3D test_bit(LTL_CLOCK_NANOSLEEP, mon->atoms);
-+	bool val18 =3D clock_nanosleep && val25;
-+	bool futex_wait =3D test_bit(LTL_FUTEX_WAIT, mon->atoms);
-+	bool val9 =3D futex_wait || val18;
-+	bool val11 =3D val9 || kernel_thread;
-+	bool sleep =3D test_bit(LTL_SLEEP, mon->atoms);
-+	bool val2 =3D !sleep;
-+	bool rt =3D test_bit(LTL_RT, mon->atoms);
-+	bool val1 =3D !rt;
-+	bool val3 =3D val1 || val2;
-+
-+	switch (state) {
-+	case S0:
-+		if (val3)
-+			__set_bit(S0, next);
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val5)
-+			__set_bit(S5, next);
-+		break;
-+	case S1:
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val13 && val3)
-+			__set_bit(S2, next);
-+		if (val14 && val3)
-+			__set_bit(S3, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val13 && val5)
-+			__set_bit(S6, next);
-+		if (val14 && val5)
-+			__set_bit(S7, next);
-+		break;
-+	case S2:
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val13 && val3)
-+			__set_bit(S2, next);
-+		if (val14 && val3)
-+			__set_bit(S3, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val13 && val5)
-+			__set_bit(S6, next);
-+		if (val14 && val5)
-+			__set_bit(S7, next);
-+		break;
-+	case S3:
-+		if (val3)
-+			__set_bit(S0, next);
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val5)
-+			__set_bit(S5, next);
-+		break;
-+	case S4:
-+		if (val3)
-+			__set_bit(S0, next);
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val5)
-+			__set_bit(S5, next);
-+		break;
-+	case S5:
-+		if (val3)
-+			__set_bit(S0, next);
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val5)
-+			__set_bit(S5, next);
-+		break;
-+	case S6:
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val13 && val3)
-+			__set_bit(S2, next);
-+		if (val14 && val3)
-+			__set_bit(S3, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val13 && val5)
-+			__set_bit(S6, next);
-+		if (val14 && val5)
-+			__set_bit(S7, next);
-+		break;
-+	case S7:
-+		if (val3)
-+			__set_bit(S0, next);
-+		if (val11 && val13)
-+			__set_bit(S1, next);
-+		if (val11 && val14)
-+			__set_bit(S4, next);
-+		if (val5)
-+			__set_bit(S5, next);
-+		break;
-+	}
-+}
-diff --git a/kernel/trace/rv/monitors/sleep/sleep_trace.h b/kernel/trace/rv=
-/monitors/sleep/sleep_trace.h
-new file mode 100644
-index 000000000000..22eaf31da987
---- /dev/null
-+++ b/kernel/trace/rv/monitors/sleep/sleep_trace.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Snippet to be included in rv_trace.h
-+ */
-+
-+#ifdef CONFIG_RV_MON_SLEEP
-+DEFINE_EVENT(event_ltl_monitor_id, event_sleep,
-+	     TP_PROTO(struct task_struct *task, char *states, char *atoms, char *=
-next),
-+	     TP_ARGS(task, states, atoms, next));
-+DEFINE_EVENT(error_ltl_monitor_id, error_sleep,
-+	     TP_PROTO(struct task_struct *task),
-+	     TP_ARGS(task));
-+#endif /* CONFIG_RV_MON_SLEEP */
-diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
-index cfa34af5551b..36ed96868dc4 100644
---- a/kernel/trace/rv/rv_trace.h
-+++ b/kernel/trace/rv/rv_trace.h
-@@ -173,6 +173,7 @@ TRACE_EVENT(error_ltl_monitor_id,
- 	TP_printk("%s[%d]: violation detected", __get_str(comm), __entry->pid)
- );
- #include <monitors/pagefault/pagefault_trace.h>
-+#include <monitors/sleep/sleep_trace.h>
- // Add new monitors based on CONFIG_LTL_MON_EVENTS_ID here
- #endif /* CONFIG_LTL_MON_EVENTS_ID */
- #endif /* _TRACE_RV_H */
-diff --git a/tools/verification/models/rtapp/sleep.ltl b/tools/verification=
-/models/rtapp/sleep.ltl
-new file mode 100644
-index 000000000000..6379bbeb6212
---- /dev/null
-+++ b/tools/verification/models/rtapp/sleep.ltl
-@@ -0,0 +1,22 @@
-+RULE =3D always ((RT and SLEEP) imply (RT_FRIENDLY_SLEEP or ALLOWLIST))
-+
-+RT_FRIENDLY_SLEEP =3D (RT_VALID_SLEEP_REASON or KERNEL_THREAD)
-+                and ((not WAKE) until RT_FRIENDLY_WAKE)
-+
-+RT_VALID_SLEEP_REASON =3D FUTEX_WAIT
-+                     or RT_FRIENDLY_NANOSLEEP
-+
-+RT_FRIENDLY_NANOSLEEP =3D CLOCK_NANOSLEEP
-+                    and NANOSLEEP_TIMER_ABSTIME
-+                    and (NANOSLEEP_CLOCK_MONOTONIC or NANOSLEEP_CLOCK_TAI)
-+
-+RT_FRIENDLY_WAKE =3D WOKEN_BY_EQUAL_OR_HIGHER_PRIO
-+                or WOKEN_BY_HARDIRQ
-+                or WOKEN_BY_NMI
-+                or ABORT_SLEEP
-+                or KTHREAD_SHOULD_STOP
-+
-+ALLOWLIST =3D BLOCK_ON_RT_MUTEX
-+         or FUTEX_LOCK_PI
-+         or TASK_IS_RCU
-+         or TASK_IS_MIGRATION
++  - `KERNEL_THREAD`: kernel tasks do not have any pattern that can be reco=
+gnized as valid real-time
++    sleeping reasons. Therefore sleeping reason is not checked for kernel =
+tasks.
++  - `KTHREAD_SHOULD_STOP`: a non-real-time thread may stop a real-time ker=
+nel thread by waking it
++    and waiting for it to exit (`kthread_stop()`). This wakeup is safe for=
+ real-time.
++  - `ALLOWLIST`: to handle known false positives with the kernel.
++  - `BLOCK_ON_RT_MUTEX` is included in the allowlist due to its implementa=
+tion. In the release path
++    of rt_mutex, a boosted task is de-boosted before waking the rt_mutex's=
+ waiter. Consequently, the
++    monitor may see a real-time-unsafe wakeup (e.g. non-real-time task wak=
+ing real-time task). This
++    is actually real-time-safe because preemption is disabled for the dura=
+tion.
++  - `FUTEX_LOCK_PI` is included in the allowlist for the same reason as `B=
+LOCK_ON_RT_MUTEX`.
 --=20
 2.39.5
 
