@@ -1,289 +1,287 @@
-Return-Path: <linux-kernel+bounces-644452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6583AB3C8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3037AB3CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2970E1892C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652E919E2BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C4223E34D;
-	Mon, 12 May 2025 15:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ntyjDWB6"
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC9222AE71;
+	Mon, 12 May 2025 15:47:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C292C23C50B
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22910195
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747064626; cv=none; b=BDhPg97zeJMOgfPkhsTUuS1WcMZjutpCqZC9k2iLx6s8fbfkfYMEMDb7MWmyUtRDlvL2+YhH7TNlpcukegbTBiJEZv7lzhACSllB664mwDDz37AdknrWJtWhaHEIk44PwingdAExmoAzzdCQzFehNbtjLx3zTc3sIWsE5KyW7BM=
+	t=1747064843; cv=none; b=uM4Vt8tm16aQC9lawZ8h3Lq2V3Cjd0bdE0BwaM7tNbeGa5dWu9YALRjZh+eJVmERoCRp/z9CIZh0Y+d1SXpHQ4i3OjygvNqUHq8SuFznIYUMvbj/BOytVlo0FlNT6lhOetcgAMYGPMC5W3wjBUh9GTZUSyjrqgkoBDvFaeE4454=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747064626; c=relaxed/simple;
-	bh=1gBUpbibTjYzRxZM991IHxsllk2DYccgIV54Tgef7vI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ok4RdE32DYJCUnoQaDlyt1x1PZFhzhJglV/+4kRlJa3lLQ0GPu63OodkzIY9c8zshCtlizzdL+c3deUBNMtK5aRJjJAIqetG4SQVHf5uEXhvtXXO62F6032j89e06FNa9MzNR9PGGhJDyBzAnpS84BqXPH5STyXdNtyMwzKc7EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ntyjDWB6; arc=none smtp.client-ip=66.163.189.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747064617; bh=QKPRXBWiP6vdtfxBDOOQtpUp6zIgN5XDA7BfuJSNLwU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ntyjDWB6dZv+7X3N+X5yr8pc8QkaeC0EnNEnTjw4j/LhW/o5uxeNqWWaQjHa7TLz0TS2PETV/CDYnYbEmQ/bnq86BJyiMylNlNp6owf1AWCcIDUqcow5jZlmnPPkEivipb8eZNQkjGt0Hy/R95hTcaurNsuxxeInpDw6w3Dblgu/lfHPngbLdlFFOQ593HTotqRgI/YKiping4wg+KPDwR867sRRPcdMxo7eRLA0uyxKFkbYcSKPAkOm/wnDoAgNiXRjT7MuBU+1acqEfzjpNTi2KGV+AqM8oLnThoB+rZYplU+kCGpImYX0vvM9TKYgGjl0+1cvDQjDCWa/GrW6jg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747064617; bh=8redTxGWiikRY2d9LbwTHUnouBcNgByzMEi97v7vI8H=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nRUEtVeR4NHmVxZuFNuV/CkPDcetgpdNnyk9EeNGbJ1z4LCvrEyKLj6H8RTiJkyOQN/P5zBUNxOVPAjh5QulBI/SJPN/Ud6wBlVsLaIC8xvan/klygJyE8eJtafxegFIY23HdWuxsAYB/Eq3YvAZb37diwk+DN7Od77ETwbBNs5gWnSYXVm6HOzFOMmrOo8AZ/6vyX2kCiwag/vSvEPzkRitY18IzIjweHRfAm/ur/cA3dbgliY4eRe+PwajjzZmRv1kTIPvRbBSfeld/7dp00DXMzA0qODLuk2ccuA6P6cB/Ahqtt/pgOIW/8rN66ENfhIwHVW8FmbqBU2EWO8GZA==
-X-YMail-OSG: WM0Uc6IVM1nokahWIeUzSYQROtDJ9qeYMqEm7._cOi5dW2OQxX1llQWOhl5Htkw
- pjqZQRdX6mFRJ5HACZZsjO4D7uqCqBCGc1hISzip1nkT5f0JbgEYn5DwLsVF_zNN9h5.ljwLXxHG
- MLEdCtBfxijdLgBKpmOBQmdL.6E7I63B67qzw4fTZCtYY87Y2sG7n9V2G3IcXkpSRmCdOjGj35kd
- 6wZhNQBHe_zsRK93qaekXH6G3rQ0llGNpd69ZxMX2YgwokTwHrEjucGbV3zA4aY1A0usOxMeI.5Q
- g_Y7ZfRYb9f_iaOkE0C3wlun.ML7bLz9TNs7LR6hUbiKfS7R_xnua7CMPYcos52uVZESl04Yj8HT
- SgkSN.HPDPy_mTbQODVWMFUR1kwxRfSu6y1pp.8Kf1JHOedaNvoTnKdsWbPX1eDMeTG44MWJnkFp
- BreWN8tfY1ZWTOpSF.UrHsF_M45pb7610HXwrW01_zFezmO9sZ6Hs_IswvhcPI2f8roAsMEnEVsy
- YQcqrMHUb3SKNShsH_B2KvZO1q29_1FgKtCbTknNAsW3JhjznDOIhQFqZz1pKTCgMudVmxsaDaEK
- uXPO8GZ66zJhG.Db_2RCAUOkdgg04QsHPqt_Jv9aFJUu_GC1x0ByCnk7LWRO6Eze_PUMZcFCYE.j
- 7u_q4Ny66FNycDqi0JYh4V2eak0XQ.9fUIs5N.ZtM5.mPEJbU._veqQCv4eeX0PnjmcH6_6jLlvC
- cMnrhKZeSaJvH7jVwQ3Gy8WBtNc3J7SrdTYTIzsVXb57JuhulLTYcW7gANxy5__UCyzz9yrI_Sle
- dDyaQzYAU6eKo3_thzIur1cqBiA0xfbn7YzjFTflnwaTmB9s8Z5cXoi7qL.IrFiNDg8typtgdpiS
- obXp643ZT.cennx8.wg6MfeSxHio3cUCDwnTIxV3dwv_kwKVD0CIotga4WI52Bvi7MXD_t.vbVlW
- AmlnBrxupeN_f_QhVkf0DGOXGVECOMEt3zs5rw5yb_1kx.JHYf4DyYrvh51Rz8vePzxA9IfRbX1d
- 8NITO0GqX7FPEACmRoN9um44C1.b0XjtyqCql7CXQP0P._JiwvpvvNh38RWC7s7RNeG5IFN.JFIf
- jD9l2jK.Vl7WgBphg.Bo.BpPoTBNZh5Jg1Tr_k0e9b4_cTmbpy6fdxwrPF08ENXp.m6DQExcEf0F
- oFaIAzVBYgjolQOlfdgMECkYvUNBAsbdocO00OGFdqxau74UdkBgVM1awnBMUwAflj_Fu_.M1.sg
- svpD5b6Z4HD6d4ILD1C.G9smUlbD1SWuK6KbptHvZqepNB3GTexWWjVem0Z05STHxPGSHOkl.zIN
- _BJDI4ly8NC1S74hHfu4bq.wF..fsPsq1JjyeQLGljkI7SeonIuMRktURm5XxIhdsrFsxNILEzF_
- gJQtx78kT1Vro4YDrt.6wlJGeiPvSnoNDpeAga7Ftm7hQV6zn9cz_M7lAxvvMksUI0_6RWqhrwMa
- Qln6rPUfOOpWXN5KlqhwkU1lcFLoAiqgNtNjxbYrE5pBda3jH3sQBc2fk6ONYxXTmLKR1smptkTh
- zBR2KISLTGFvfO4fypux_tUy.zDVWgQHb.hBwsxdoq.lQQi6P8xIJejgomrkjC_mfNkLwx6ujady
- K2k_12wDulVH7DMfGgH7tb.iriJjz93IfXsXbuzmgQBfGYzFkd7WOlfB2hddSAoJUP5ipAxHtAgU
- 0saYraZitFaM4ggkxcTrL9UzkIb5Fud59DW1FRPZqb_l04XEzkx5pQIkhkGF.oi73yquM24q_dBY
- AAgrnSL8tRBalM_LvCniSz9571Y8kjMjA6G8y7jZJWj4DNh_fi_aozx4Eu9P.XS4OLtgA7AE109t
- SKpkzRlBrUnm505ojZRoLVA4qqYnDwusVoD7K0s9Lcq2S6kopzsptsEHsmWfub0DTOCnlXMbattC
- KavPkZytUKqA2cLl9D7_0ncFvzCOUQvBsilxK0gEUd.994raVMJgtdlMDz_REtm0uROPRIW.KQy2
- RS0hypGIAfb1KSV_lnQxl85e9J.aJ2qxtH99GYclfQrVqxriF0RachyDZaCxsN7tIdHMcP_USx6X
- .nnn.bcWn_Vy3tJDwXoR42hyd27mJSLy4ok3.1BDA0LuOMH6u3y0JPOT0pN6Y1PslOdSw4PUUwOl
- X7cSpTQsWS7ZfnQNOno1IGB.d2nDRZkiy9QB9fsqP6KpY5DGbGaBmtw1ug6xXdzV4o8lYcDW8kcy
- lDxB6hRTPgSCzq62cPOd1UJqAv3_xYrAJp7509YQy8Ef.L.75s27NGiAipeIkuudzCObUkBNkMVK
- z238o0uQ-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4a184068-b4a9-4c89-b0eb-f26242664d7e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 12 May 2025 15:43:37 +0000
-Received: by hermes--production-gq1-74d64bb7d7-mh87r (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9937c2f444744075ac11cc686b78df22;
-          Mon, 12 May 2025 15:43:34 +0000 (UTC)
-Message-ID: <f700845d-f332-4336-a441-08f98cd7f075@schaufler-ca.com>
-Date: Mon, 12 May 2025 08:43:32 -0700
+	s=arc-20240116; t=1747064843; c=relaxed/simple;
+	bh=tUkGeaZlP3x1PEPFhPd7Xaku48ipwY2NnrpefVgMago=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PDLwuV1c0PWOqxHMeCt64wz0H6qE2vCbE9+/pCgf/lgm2we2JJ4asjxMYxTuxCnVVGKToR/EiSj/IupppHvJj9CYFbe6mursDbiRj7JJRCKkQjINuyiK7LlvS1HP6JnsnK+slCe0mLilwybhQTkNdaiDs8a15PxKIsKpE2lkNi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uEVMh-0002iA-9Q; Mon, 12 May 2025 17:46:51 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uEVMe-002OVJ-27;
+	Mon, 12 May 2025 17:46:49 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uEVMf-000IW0-01;
+	Mon, 12 May 2025 17:46:49 +0200
+Message-ID: <91afcfde275a28127ba0df962a9abf4d07ba6b8b.camel@pengutronix.de>
+Subject: Re: [PATCH v8 3/6] clk: spacemit: set up reset auxiliary devices
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ mturquette@baylibre.com, sboyd@kernel.org, paul.walmsley@sifive.com, 
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, heylenay@4d2.org,
+  inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org, 
+ linux-clk@vger.kernel.org, spacemit@lists.linux.dev, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Mon, 12 May 2025 17:46:48 +0200
+In-Reply-To: <abfd4c78-2592-4b8a-97be-109a8fd1bed6@riscstar.com>
+References: <20250509112032.2980811-1-elder@riscstar.com>
+	 <20250509112032.2980811-4-elder@riscstar.com>
+	 <20250512135429-GYA517867@gentoo>
+	 <abfd4c78-2592-4b8a-97be-109a8fd1bed6@riscstar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/7] lsm: introduce new hooks for setting/getting inode
- fsxattr
-To: Andrey Albershteyn <aalbersh@redhat.com>,
- Richard Henderson <richard.henderson@linaro.org>,
- Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- selinux@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250512-xattrat-syscall-v5-0-4cd6821e8ff7@kernel.org>
- <20250512-xattrat-syscall-v5-2-4cd6821e8ff7@kernel.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250512-xattrat-syscall-v5-2-4cd6821e8ff7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 5/12/2025 6:25 AM, Andrey Albershteyn wrote:
-> Introduce new hooks for setting and getting filesystem extended
-> attributes on inode (FS_IOC_FSGETXATTR).
->
-> Cc: selinux@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
->
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ---
->  fs/file_attr.c                | 19 ++++++++++++++++---
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      | 16 ++++++++++++++++
->  security/security.c           | 30 ++++++++++++++++++++++++++++++
->  4 files changed, 64 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index 2910b7047721..be62d97cc444 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -76,10 +76,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
->  int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
->  {
->  	struct inode *inode = d_inode(dentry);
-> +	int error;
->  
->  	if (!inode->i_op->fileattr_get)
->  		return -ENOIOCTLCMD;
->  
-> +	error = security_inode_file_getattr(dentry, fa);
-> +	if (error)
-> +		return error;
-> +
+On Mo, 2025-05-12 at 10:34 -0500, Alex Elder wrote:
+> On 5/12/25 8:54 AM, Yixun Lan wrote:
+> > On 06:20 Fri 09 May     , Alex Elder wrote:
+> > > Add a new reset_name field to the spacemit_ccu_data structure.  If it=
+ is
+> > > non-null, the CCU implements a reset controller, and the name will be
+> > > used in the name for the auxiliary device that implements it.
+> > >=20
+> > > Define a new type to hold an auxiliary device as well as the regmap
+> > > pointer that will be needed by CCU reset controllers.  Set up code to
+> > > initialize and add an auxiliary device for any CCU that implements re=
+set
+> > > functionality.
+> > >=20
+> > > Make it optional for a CCU to implement a clock controller.  This
+> > > doesn't apply to any of the existing CCUs but will for some new ones
+> > > that will be added soon.
+> > >=20
+> > > Signed-off-by: Alex Elder <elder@riscstar.com>
+> > > ---
+> > > v8: Allocate the auxiliary device using kzalloc(), not devm_kzalloc()
+> > >=20
+> > >   drivers/clk/spacemit/Kconfig     |  1 +
+> > >   drivers/clk/spacemit/ccu-k1.c    | 90 ++++++++++++++++++++++++++++-=
+---
+> > >   include/soc/spacemit/k1-syscon.h | 12 +++++
+> > >   3 files changed, 93 insertions(+), 10 deletions(-)
+> > >=20
+> > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kcon=
+fig
+> > > index 4c4df845b3cb2..3854f6ae6d0ea 100644
+> > > --- a/drivers/clk/spacemit/Kconfig
+> > > +++ b/drivers/clk/spacemit/Kconfig
+> > > @@ -3,6 +3,7 @@
+> > >   config SPACEMIT_CCU
+> > >   	tristate "Clock support for SpacemiT SoCs"
+> > >   	depends on ARCH_SPACEMIT || COMPILE_TEST
+> > > +	select AUXILIARY_BUS
+> > >   	select MFD_SYSCON
+> > >   	help
+> > >   	  Say Y to enable clock controller unit support for SpacemiT SoCs.
+> > > diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu=
+-k1.c
+> > > index 801150f4ff0f5..551df9d076859 100644
+> > > --- a/drivers/clk/spacemit/ccu-k1.c
+> > > +++ b/drivers/clk/spacemit/ccu-k1.c
+> > > @@ -5,12 +5,14 @@
+> > >    */
+> > >  =20
+> > >   #include <linux/array_size.h>
+> > > +#include <linux/auxiliary_bus.h>
+> > >   #include <linux/clk-provider.h>
+> > >   #include <linux/delay.h>
+> > >   #include <linux/mfd/syscon.h>
+> > >   #include <linux/minmax.h>
+> > >   #include <linux/module.h>
+> > >   #include <linux/platform_device.h>
+> > > +#include <linux/slab.h>
+> > >   #include <soc/spacemit/k1-syscon.h>
+> > >  =20
+> > >   #include "ccu_common.h"
+> > > @@ -21,6 +23,7 @@
+> > >   #include <dt-bindings/clock/spacemit,k1-syscon.h>
+> > >  =20
+> > >   struct spacemit_ccu_data {
+> > > +	const char *reset_name;
+> > see my comment below..
+> >=20
+> > >   	struct clk_hw **hws;
+> > >   	size_t num;
+> > >   };
+> > > @@ -710,8 +713,9 @@ static struct clk_hw *k1_ccu_pll_hws[] =3D {
+> > >   };
+> > >  =20
+> > >   static const struct spacemit_ccu_data k1_ccu_pll_data =3D {
+> > > -	.hws	=3D k1_ccu_pll_hws,
+> > > -	.num	=3D ARRAY_SIZE(k1_ccu_pll_hws),
+> > > +	/* The PLL CCU implements no resets */
+> > > +	.hws		=3D k1_ccu_pll_hws,
+> > > +	.num		=3D ARRAY_SIZE(k1_ccu_pll_hws),
+> > >   };
+> > >  =20
+> > >   static struct clk_hw *k1_ccu_mpmu_hws[] =3D {
+> > > @@ -751,8 +755,9 @@ static struct clk_hw *k1_ccu_mpmu_hws[] =3D {
+> > >   };
+> > >  =20
+> > >   static const struct spacemit_ccu_data k1_ccu_mpmu_data =3D {
+> > > -	.hws	=3D k1_ccu_mpmu_hws,
+> > > -	.num	=3D ARRAY_SIZE(k1_ccu_mpmu_hws),
+> > > +	.reset_name	=3D "mpmu-reset",
+> > > +	.hws		=3D k1_ccu_mpmu_hws,
+> > > +	.num		=3D ARRAY_SIZE(k1_ccu_mpmu_hws),
+> > >   };
+> > >  =20
+> > >   static struct clk_hw *k1_ccu_apbc_hws[] =3D {
+> > > @@ -859,8 +864,9 @@ static struct clk_hw *k1_ccu_apbc_hws[] =3D {
+> > >   };
+> > >  =20
+> > >   static const struct spacemit_ccu_data k1_ccu_apbc_data =3D {
+> > > -	.hws	=3D k1_ccu_apbc_hws,
+> > > -	.num	=3D ARRAY_SIZE(k1_ccu_apbc_hws),
+> > > +	.reset_name	=3D "apbc-reset",
+> > > +	.hws		=3D k1_ccu_apbc_hws,
+> > > +	.num		=3D ARRAY_SIZE(k1_ccu_apbc_hws),
+> > >   };
+> > >  =20
+> > >   static struct clk_hw *k1_ccu_apmu_hws[] =3D {
+> > > @@ -929,8 +935,9 @@ static struct clk_hw *k1_ccu_apmu_hws[] =3D {
+> > >   };
+> > >  =20
+> > >   static const struct spacemit_ccu_data k1_ccu_apmu_data =3D {
+> > > -	.hws	=3D k1_ccu_apmu_hws,
+> > > -	.num	=3D ARRAY_SIZE(k1_ccu_apmu_hws),
+> > > +	.reset_name	=3D "apmu-reset",
+> > > +	.hws		=3D k1_ccu_apmu_hws,
+> > > +	.num		=3D ARRAY_SIZE(k1_ccu_apmu_hws),
+> > >   };
+> > >  =20
+> > >   static int spacemit_ccu_register(struct device *dev,
+> > > @@ -941,6 +948,10 @@ static int spacemit_ccu_register(struct device *=
+dev,
+> > >   	struct clk_hw_onecell_data *clk_data;
+> > >   	int i, ret;
+> > >  =20
+> > > +	/* Nothing to do if the CCU does not implement any clocks */
+> > > +	if (!data->hws)
+> > > +		return 0;
+> > > +
+> > >   	clk_data =3D devm_kzalloc(dev, struct_size(clk_data, hws, data->nu=
+m),
+> > >   				GFP_KERNEL);
+> > >   	if (!clk_data)
+> > > @@ -981,9 +992,63 @@ static int spacemit_ccu_register(struct device *=
+dev,
+> > >   	return ret;
+> > >   }
+> > >  =20
+> > > +static void spacemit_cadev_release(struct device *dev)
+> > why this function define as _cadev_ prefix, while below as _adev_
+> > is it a typo? or c short for ccu, I just feel it isn't consistent..
+>=20
+> It is not a typo.  Yes, it was intended to represent CCU
+> Auxiliary device, while "adev" represents just Auxiliary
+> Device.  It is releasing (freeing) a spacemit_ccu_adev
+> structure.
+>=20
+> > > +{
+> > > +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> > > +
+> > > +	kfree(to_spacemit_ccu_adev(adev));
+> > > +}
+> > > +
+>=20
+> This function is operating on an auxiliary_device structure,
+> so "adev" is used in its name.
+>=20
+> > > +static void spacemit_adev_unregister(void *data)
+> > > +{
+> > > +	struct auxiliary_device *adev =3D data;
+> > > +
+> > > +	auxiliary_device_delete(adev);
+> > > +	auxiliary_device_uninit(adev);
+> > > +}
+> > > +
+> > > +static int spacemit_ccu_reset_register(struct device *dev,
+> > > +				       struct regmap *regmap,
+> > > +				       const char *reset_name)
+> > > +{
+> > > +	struct spacemit_ccu_adev *cadev;
+> > > +	struct auxiliary_device *adev;
+> > > +	static u32 next_id;
+> > > +	int ret;
+> > > +
+> > > +	/* Nothing to do if the CCU does not implement a reset controller *=
+/
+> > > +	if (!reset_name)
+> > > +		return 0;
+> > > +
+> > > +	cadev =3D kzalloc(sizeof(*cadev), GFP_KERNEL);
+> > > +	if (!cadev)
+> > > +		return -ENOMEM;
+> > add one blank line here?
+>=20
+> If I do a new version that's easy but this was intentional.
+>=20
+> > > +	cadev->regmap =3D regmap;
+> > > +
+> > > +	adev =3D &cadev->adev;
+> > > +	adev->name =3D reset_name;
+> > > +	adev->dev.parent =3D dev;
+> > > +	adev->dev.release =3D spacemit_cadev_release;
+> > > +	adev->dev.of_node =3D dev->of_node;
+> > [..]
+> > > +	adev->id =3D next_id++;
+> > so I'd assume the underlying device doesn't really care the id?
+> > but with different order of registration, it will result random id for =
+the device
+>=20
+> These things are identified in DTS files by their index values
+> defined in "spacemit,k1-syscon.h".  If there is a need for the
+> assigned device ID to be consistent, I'm not aware of it.  Can
+> you think of one?  I think all that matters is that they're
+> unique, and this ensures that (for up to 2^32 PMICs).
 
-If you're changing VFS behavior to depend on LSMs supporting the new
-hooks I'm concerned about the impact it will have on the LSMs that you
-haven't supplied hooks for. Have you tested these changes with anything
-besides SELinux?
+If there are multiple reset controllers and the driver can be unbound,
+it's trivial to provoke a collision by keeping one device bound and
+unbinding/binding the second one until next_id wraps.
+This could be fixed by using ida_alloc/free to manage the id.
 
->  	return inode->i_op->fileattr_get(dentry, fa);
->  }
->  EXPORT_SYMBOL(vfs_fileattr_get);
-> @@ -242,12 +247,20 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
->  		} else {
->  			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
->  		}
-> +
->  		err = fileattr_set_prepare(inode, &old_ma, fa);
-> -		if (!err)
-> -			err = inode->i_op->fileattr_set(idmap, dentry, fa);
-> +		if (err)
-> +			goto out;
-> +		err = security_inode_file_setattr(dentry, fa);
-> +		if (err)
-> +			goto out;
-> +		err = inode->i_op->fileattr_set(idmap, dentry, fa);
-> +		if (err)
-> +			goto out;
->  	}
-> +
-> +out:
->  	inode_unlock(inode);
-> -
->  	return err;
->  }
->  EXPORT_SYMBOL(vfs_fileattr_set);
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index bf3bbac4e02a..9600a4350e79 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -157,6 +157,8 @@ LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *name)
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
->  	 const char *name)
-> +LSM_HOOK(int, 0, inode_file_setattr, struct dentry *dentry, struct fileattr *fa)
-> +LSM_HOOK(int, 0, inode_file_getattr, struct dentry *dentry, struct fileattr *fa)
->  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_set_acl, struct dentry *dentry,
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index cc9b54d95d22..d2da2f654345 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -451,6 +451,10 @@ int security_inode_listxattr(struct dentry *dentry);
->  int security_inode_removexattr(struct mnt_idmap *idmap,
->  			       struct dentry *dentry, const char *name);
->  void security_inode_post_removexattr(struct dentry *dentry, const char *name);
-> +int security_inode_file_setattr(struct dentry *dentry,
-> +			      struct fileattr *fa);
-> +int security_inode_file_getattr(struct dentry *dentry,
-> +			      struct fileattr *fa);
->  int security_inode_need_killpriv(struct dentry *dentry);
->  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
->  int security_inode_getsecurity(struct mnt_idmap *idmap,
-> @@ -1053,6 +1057,18 @@ static inline void security_inode_post_removexattr(struct dentry *dentry,
->  						   const char *name)
->  { }
->  
-> +static inline int security_inode_file_setattr(struct dentry *dentry,
-> +					      struct fileattr *fa)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline int security_inode_file_getattr(struct dentry *dentry,
-> +					      struct fileattr *fa)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_inode_need_killpriv(struct dentry *dentry)
->  {
->  	return cap_inode_need_killpriv(dentry);
-> diff --git a/security/security.c b/security/security.c
-> index fb57e8fddd91..09c891e6027d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2622,6 +2622,36 @@ void security_inode_post_removexattr(struct dentry *dentry, const char *name)
->  	call_void_hook(inode_post_removexattr, dentry, name);
->  }
->  
-> +/**
-> + * security_inode_file_setattr() - check if setting fsxattr is allowed
-> + * @dentry: file to set filesystem extended attributes on
-> + * @fa: extended attributes to set on the inode
-> + *
-> + * Called when file_setattr() syscall or FS_IOC_FSSETXATTR ioctl() is called on
-> + * inode
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_inode_file_setattr(struct dentry *dentry, struct fileattr *fa)
-> +{
-> +	return call_int_hook(inode_file_setattr, dentry, fa);
-> +}
-> +
-> +/**
-> + * security_inode_file_getattr() - check if retrieving fsxattr is allowed
-> + * @dentry: file to retrieve filesystem extended attributes from
-> + * @fa: extended attributes to get
-> + *
-> + * Called when file_getattr() syscall or FS_IOC_FSGETXATTR ioctl() is called on
-> + * inode
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_inode_file_getattr(struct dentry *dentry, struct fileattr *fa)
-> +{
-> +	return call_int_hook(inode_file_getattr, dentry, fa);
-> +}
-> +
->  /**
->   * security_inode_need_killpriv() - Check if security_inode_killpriv() required
->   * @dentry: associated dentry
->
+regards
+Philipp
 
