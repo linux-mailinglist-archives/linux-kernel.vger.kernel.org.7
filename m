@@ -1,313 +1,112 @@
-Return-Path: <linux-kernel+bounces-644273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08042AB39BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:54:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA49AB39C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFD53A5EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B7D16DF69
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AED51DDA15;
-	Mon, 12 May 2025 13:54:42 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B6D1DDA1E;
+	Mon, 12 May 2025 13:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InVSDza7"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DBF1B3956;
-	Mon, 12 May 2025 13:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9721DACA1;
+	Mon, 12 May 2025 13:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747058081; cv=none; b=qfqLBr+VDu9MDu4rdnPndajZhkTF33zbU2e0c4SBfJZaZRD4FQqjZdxNjf4vqMZpOauBxA9Jr8o9zX/ivCWuhSbN9WjMXMV9PgpTo/WvSWyPnRqrdqt6BPvW6jqC58Nxua3uLotf2djlxjynlt7Sh8bezEhMUg2lW56NMryMT+Q=
+	t=1747058153; cv=none; b=IWmjaExYc11mSNsDGJT8uqfW0DJLD0sANScWLjebABAnCvSKWDtc24ZPdE77SpzX4DeAGELtFO382v0bttaLUwKaGEyUMKqqOYSWAw/3oDV9se1y4KMiR13dpqxHMg9e4PntJTRX6tp0QNyni160yYRjnlsvJK+z4Jf7wd45YmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747058081; c=relaxed/simple;
-	bh=uWFgPnEf6SnCZ4dyfllxv7eJLNeqfcKdcos2J8D+o50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFswU7/HaaGNTIMX9hRnc3EU/RnE5YOWl/9Evw1wIrp8qHP0f+hXsEhLs2wceoZ8B1pa4OCEXjxZKF/GYHzWCIFAyl2v20Z8Ffibjk7S1yRQlSYkfOkJusFLPE6M1UalpVrP2IvMUgTkR8PlJkmcm5mldf34EsiEGEcunkIkxxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 79D9F3434F9;
-	Mon, 12 May 2025 13:54:38 +0000 (UTC)
-Date: Mon, 12 May 2025 13:54:29 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
-	guodong@riscstar.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/6] clk: spacemit: set up reset auxiliary devices
-Message-ID: <20250512135429-GYA517867@gentoo>
-References: <20250509112032.2980811-1-elder@riscstar.com>
- <20250509112032.2980811-4-elder@riscstar.com>
+	s=arc-20240116; t=1747058153; c=relaxed/simple;
+	bh=+ZZSzyIE925hYW7q42//ezvUz+07QvMzLEpyUvxe9Xs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pqJX+7oKJncbR73erSz8w0iFYR9wSGWZB7i1DIGvqCILn73dtDpFrc2IFTNznC7d4OKyQfCKSlk5lBzF5BhQRuFsgHazVIZKDxMgwUFBooyusrWmUEG7o+BBo0Kl32zlvet+W/Ss7N3UUr9KlNdpoRp1Ji73mnMuj5w/v5g76jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InVSDza7; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22e696bbc85so5255095ad.2;
+        Mon, 12 May 2025 06:55:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747058151; x=1747662951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uagD9PML4UKLbVE3TK9z0hidHWU3xrubZHMIlw3aa6A=;
+        b=InVSDza7OyZEGp64Rxjf0eBphpJNd8NfDNajZXaVMoewlyNtkaQTvt8JAtK7OVyVlm
+         6KOCNZConBbwuwvNfTI0tDFUb7519lTkZowAk1xpqp3OfTf4sUZ+vSwe+i2WNi8tRX64
+         NwXQYR64I8jBULwVjbCO+B82neG1bNwAgjA1sv9aKMX2xF0RTWuhBu+4/ipb/AEu8IbZ
+         ZC6a8n5ISFlPJxN5wXjEGXZwEXSLaVV4FU1LJxqJrmxLmKeC5UNhW+gsTIn1IVdv8DKT
+         NXoJn93U6tBD536Z69mKKJWJNQtOiOGre79uG0d4LPAc5ThFrrPIRXDLsm+tZPI1K1JV
+         zGUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747058151; x=1747662951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uagD9PML4UKLbVE3TK9z0hidHWU3xrubZHMIlw3aa6A=;
+        b=HyoUUOvvTYR2J5XRbtJdn3F+NjHzlGm94zbVE5B8ZwewQ3zzP0JOtzBaXJX4ULUAvE
+         4nkIjzXT6ek7qoWmw8qEzmntFtxK3LlWozigqBmjG1h2NHojtvnkImb5GimdcRvqryDb
+         Xi+kkk3HNt8Wm7mCHDrAhjSDfNxXQkqv/2eCFcT3TzDd1odpTzcOMGOFH8sFcivUUq7m
+         qe718Zi6UveasayR16iuLxg6BrRy+Uu0uwrtK1MiTDqCN5B4sB6uz562FjMw3OJiqW0i
+         GwqvQC7ADazmUAYpv279FnwaOK0EE5uV13CZQXlKFnEZnowcMloJ5s5bBfiHZ2QXwshM
+         lK+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6smp9XtZQnjxSlZm/r5sDtvXwsqnPx8jWM+v6a3rE/6YUe81glRrnrkYUUSmxNXKUVrsQwptH+WDRixItUIE=@vger.kernel.org, AJvYcCX1IH3Phxg5fjWFjCWkS6mtB0ARFhC/89X6aIjylCDFgzlzjrcF9pU3xWE7/aTXSaGZWEPm4EI8lUqp5DI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5/p6fs3LG6M5pxHPhPm5Fopk1Ip+U5z1nqHBHW/ABVPCvubLS
+	pRsdnykuTID4ljefokZCSRj6/K64HoAv2n65NlAFcW+iykXzWttNCOLejJJt/APZnHSIIiWismC
+	l/uZQueBlvLkbDjbVQAS1E1XPZTE=
+X-Gm-Gg: ASbGnctjArYDELdQbWr/VdUDUf0xrA3NBoVbYL0e+nNoYTu+c5+i2sojdU4HzRtCuRz
+	rhLfwBIFLL616K2oG6GZUefX+xYvbq0xQ1UwmP89PiJbY2Suh5f3qHJ410AIHHs5ZkUtLkO/qdW
+	h/FisE+aaKMT2Dd064inr2OisOnW+yHuUR
+X-Google-Smtp-Source: AGHT+IFM0DnpRaQKkaWcwkchrJ3QrCTyVQMGRqJs2wr/StUOKT3dl/zrI3+MhxJsKUpkerRo8rtPtT+oQxFxgCaqxGw=
+X-Received: by 2002:a17:903:443:b0:230:413c:d46b with SMTP id
+ d9443c01a7336-230413cd6b0mr11618955ad.6.1747058150937; Mon, 12 May 2025
+ 06:55:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509112032.2980811-4-elder@riscstar.com>
+References: <20250325133352.441425-1-andrewjballance@gmail.com>
+In-Reply-To: <20250325133352.441425-1-andrewjballance@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 12 May 2025 15:55:37 +0200
+X-Gm-Features: AX0GCFuoSyH2lQY6tvCfxm3orzDtbjWMIdmxl-_VMfgu74lYck7z6XPjpUnzfjs
+Message-ID: <CANiq72kFCo-5HwXsTDsE=AKx2GEJvQn605F_07jfrXBRB-rOmA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: docs: replace rustdoc refrences to alloc::format
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: dakr@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	jubalh@iodoru.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06:20 Fri 09 May     , Alex Elder wrote:
-> Add a new reset_name field to the spacemit_ccu_data structure.  If it is
-> non-null, the CCU implements a reset controller, and the name will be
-> used in the name for the auxiliary device that implements it.
-> 
-> Define a new type to hold an auxiliary device as well as the regmap
-> pointer that will be needed by CCU reset controllers.  Set up code to
-> initialize and add an auxiliary device for any CCU that implements reset
-> functionality.
-> 
-> Make it optional for a CCU to implement a clock controller.  This
-> doesn't apply to any of the existing CCUs but will for some new ones
-> that will be added soon.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
-> v8: Allocate the auxiliary device using kzalloc(), not devm_kzalloc()
-> 
->  drivers/clk/spacemit/Kconfig     |  1 +
->  drivers/clk/spacemit/ccu-k1.c    | 90 ++++++++++++++++++++++++++++----
->  include/soc/spacemit/k1-syscon.h | 12 +++++
->  3 files changed, 93 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-> index 4c4df845b3cb2..3854f6ae6d0ea 100644
-> --- a/drivers/clk/spacemit/Kconfig
-> +++ b/drivers/clk/spacemit/Kconfig
-> @@ -3,6 +3,7 @@
->  config SPACEMIT_CCU
->  	tristate "Clock support for SpacemiT SoCs"
->  	depends on ARCH_SPACEMIT || COMPILE_TEST
-> +	select AUXILIARY_BUS
->  	select MFD_SYSCON
->  	help
->  	  Say Y to enable clock controller unit support for SpacemiT SoCs.
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 801150f4ff0f5..551df9d076859 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -5,12 +5,14 @@
->   */
->  
->  #include <linux/array_size.h>
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/minmax.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/slab.h>
->  #include <soc/spacemit/k1-syscon.h>
->  
->  #include "ccu_common.h"
-> @@ -21,6 +23,7 @@
->  #include <dt-bindings/clock/spacemit,k1-syscon.h>
->  
->  struct spacemit_ccu_data {
-> +	const char *reset_name;
-see my comment below..
+On Tue, Mar 25, 2025 at 2:34=E2=80=AFPM Andrew Ballance
+<andrewjballance@gmail.com> wrote:
+>
+> replaces alloc::format[1] in the pr_* and dev_* macros' doc comments
+> with std::format[2] because they are identical but less likely to get
+> confused with the kernel's alloc crate. and adds a url link
+> for the std::format! macro
+>
+> Link: https://doc.rust-lang.org/alloc/macro.format.html [1]
+> Link: https://doc.rust-lang.org/std/macro.format.html [2]
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
 
->  	struct clk_hw **hws;
->  	size_t num;
->  };
-> @@ -710,8 +713,9 @@ static struct clk_hw *k1_ccu_pll_hws[] = {
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_pll_data = {
-> -	.hws	= k1_ccu_pll_hws,
-> -	.num	= ARRAY_SIZE(k1_ccu_pll_hws),
-> +	/* The PLL CCU implements no resets */
-> +	.hws		= k1_ccu_pll_hws,
-> +	.num		= ARRAY_SIZE(k1_ccu_pll_hws),
->  };
->  
->  static struct clk_hw *k1_ccu_mpmu_hws[] = {
-> @@ -751,8 +755,9 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
-> -	.hws	= k1_ccu_mpmu_hws,
-> -	.num	= ARRAY_SIZE(k1_ccu_mpmu_hws),
-> +	.reset_name	= "mpmu-reset",
-> +	.hws		= k1_ccu_mpmu_hws,
-> +	.num		= ARRAY_SIZE(k1_ccu_mpmu_hws),
->  };
->  
->  static struct clk_hw *k1_ccu_apbc_hws[] = {
-> @@ -859,8 +864,9 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_apbc_data = {
-> -	.hws	= k1_ccu_apbc_hws,
-> -	.num	= ARRAY_SIZE(k1_ccu_apbc_hws),
-> +	.reset_name	= "apbc-reset",
-> +	.hws		= k1_ccu_apbc_hws,
-> +	.num		= ARRAY_SIZE(k1_ccu_apbc_hws),
->  };
->  
->  static struct clk_hw *k1_ccu_apmu_hws[] = {
-> @@ -929,8 +935,9 @@ static struct clk_hw *k1_ccu_apmu_hws[] = {
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_apmu_data = {
-> -	.hws	= k1_ccu_apmu_hws,
-> -	.num	= ARRAY_SIZE(k1_ccu_apmu_hws),
-> +	.reset_name	= "apmu-reset",
-> +	.hws		= k1_ccu_apmu_hws,
-> +	.num		= ARRAY_SIZE(k1_ccu_apmu_hws),
->  };
->  
->  static int spacemit_ccu_register(struct device *dev,
-> @@ -941,6 +948,10 @@ static int spacemit_ccu_register(struct device *dev,
->  	struct clk_hw_onecell_data *clk_data;
->  	int i, ret;
->  
-> +	/* Nothing to do if the CCU does not implement any clocks */
-> +	if (!data->hws)
-> +		return 0;
-> +
->  	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->num),
->  				GFP_KERNEL);
->  	if (!clk_data)
-> @@ -981,9 +992,63 @@ static int spacemit_ccu_register(struct device *dev,
->  	return ret;
->  }
->  
-> +static void spacemit_cadev_release(struct device *dev)
-why this function define as _cadev_ prefix, while below as _adev_
-is it a typo? or c short for ccu, I just feel it isn't consistent..
+Applied to rust-next -- thanks everyone!
 
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +
-> +	kfree(to_spacemit_ccu_adev(adev));
-> +}
-> +
-> +static void spacemit_adev_unregister(void *data)
-> +{
-> +	struct auxiliary_device *adev = data;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static int spacemit_ccu_reset_register(struct device *dev,
-> +				       struct regmap *regmap,
-> +				       const char *reset_name)
-> +{
-> +	struct spacemit_ccu_adev *cadev;
-> +	struct auxiliary_device *adev;
-> +	static u32 next_id;
-> +	int ret;
-> +
-> +	/* Nothing to do if the CCU does not implement a reset controller */
-> +	if (!reset_name)
-> +		return 0;
-> +
-> +	cadev = kzalloc(sizeof(*cadev), GFP_KERNEL);
-> +	if (!cadev)
-> +		return -ENOMEM;
-add one blank line here?
+    [ Fixed typo and reworded slightly. - Miguel ]
 
-> +	cadev->regmap = regmap;
-> +
-> +	adev = &cadev->adev;
-> +	adev->name = reset_name;
-> +	adev->dev.parent = dev;
-> +	adev->dev.release = spacemit_cadev_release;
-> +	adev->dev.of_node = dev->of_node;
-[..]
-> +	adev->id = next_id++;
-so I'd assume the underlying device doesn't really care the id?
-but with different order of registration, it will result random id for the device
-
-how about define a reset struct, and group reset_name and next_id together,
-then we can intialize them with fixed value
-(this will also let us dropping 'static next_id' variable)
-
-with this change, it's more easy to extend in the future (a weak reason)..
-
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, spacemit_adev_unregister, adev);
-> +}
-> +
->  static int k1_ccu_probe(struct platform_device *pdev)
->  {
->  	struct regmap *base_regmap, *lock_regmap = NULL;
-> +	const struct spacemit_ccu_data *data;
->  	struct device *dev = &pdev->dev;
->  	int ret;
->  
-> @@ -1012,11 +1077,16 @@ static int k1_ccu_probe(struct platform_device *pdev)
->  					     "failed to get lock regmap\n");
->  	}
->  
-> -	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap,
-> -				    of_device_get_match_data(dev));
-> +	data = of_device_get_match_data(dev);
-> +
-> +	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap, data);
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to register clocks\n");
->  
-> +	ret = spacemit_ccu_reset_register(dev, base_regmap, data->reset_name);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register resets\n");
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-> index 039a448c51a07..53eff7691f33d 100644
-> --- a/include/soc/spacemit/k1-syscon.h
-> +++ b/include/soc/spacemit/k1-syscon.h
-> @@ -5,6 +5,18 @@
->  #ifndef __SOC_K1_SYSCON_H__
->  #define __SOC_K1_SYSCON_H__
->  
-> +/* Auxiliary device used to represent a CCU reset controller */
-> +struct spacemit_ccu_adev {
-> +	struct auxiliary_device adev;
-> +	struct regmap *regmap;
-> +};
-> +
-> +static inline struct spacemit_ccu_adev *
-> +to_spacemit_ccu_adev(struct auxiliary_device *adev)
-> +{
-> +	return container_of(adev, struct spacemit_ccu_adev, adev);
-> +}
-> +
->  /* APBS register offset */
->  #define APBS_PLL1_SWCR1			0x100
->  #define APBS_PLL1_SWCR2			0x104
-> -- 
-> 2.45.2
-> 
-> 
-
--- 
-Yixun Lan (dlan)
+Cheers,
+Miguel
 
