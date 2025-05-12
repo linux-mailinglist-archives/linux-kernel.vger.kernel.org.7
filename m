@@ -1,469 +1,249 @@
-Return-Path: <linux-kernel+bounces-644782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D0DAB4474
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:09:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAB1AB441B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9DE167377
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B7A3AE7AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DF6298240;
-	Mon, 12 May 2025 19:09:41 +0000 (UTC)
-Received: from trager.us (trager.us [52.5.81.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3C6296FB8;
+	Mon, 12 May 2025 18:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RsHtlFP3"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2A0297B95;
-	Mon, 12 May 2025 19:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324AF29614C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076980; cv=none; b=Nwy+1fQtN3o64BlHUDolQyFBYZ1tauMqxs4Qa6eKoTy7z+L8EGRI6YupgCzSKzPOTWVSGV07Fb+1CwGPwWF1TzXINvGSvP+4NmQaiN3lHHbCO3L7wkfZMLlU1wCANaAuAOB20exkJ6e2oeK/VWOYt9gLLWnAL5dJeiY1VGx9C4s=
+	t=1747076049; cv=none; b=TQ6nkGutjitu0vQLwAEw33TZs8qJU5Xgemkpgvr9zAlfxqsonvZno9NjgOVk2KNpRmnRZJ6dK7cP5z2yOTrcGmtH+DBYNce217nFMrAJ4cl7N5Fkq/gTOuVOwn6mueIDr+DHjZlFR0unFfWBC/AJAU+X2zHdhAjF0aMluYXeEiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076980; c=relaxed/simple;
-	bh=DJ+l5QzZw9VZQNabyv3jkwLGwtMY56b2MtxyzuPKzcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nwMsDA6XQfbBUZ70lvQWJwwH1OLOifPq89WClrbxAYMISMtiKzm/D74/vptpFLwYzdIlMo6DLNthYjsb9+6YuK9Ijk6xR7FhI8zHvUuellECdMhFefDNUw6IbJ1tsjmgw4NSLv7bY1nis+k95R/9p22/pHKJ4B7sseGlcuVnmXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
-Received: from [163.114.132.130] (helo=localhost)
-	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92.3)
-	(envelope-from <lee@trager.us>)
-	id 1uEYWm-00072w-UD; Mon, 12 May 2025 19:09:29 +0000
-From: Lee Trager <lee@trager.us>
-To: Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	kernel-team@meta.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Mohsin Bashir <mohsin.bashr@gmail.com>,
-	Sanman Pradhan <sanman.p211993@gmail.com>,
-	Su Hui <suhui@nfschina.com>,
-	Lee Trager <lee@trager.us>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v5 5/5] eth: fbnic: Add devlink dev flash support
-Date: Mon, 12 May 2025 11:54:01 -0700
-Message-ID: <20250512190109.2475614-6-lee@trager.us>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250512190109.2475614-1-lee@trager.us>
-References: <20250512190109.2475614-1-lee@trager.us>
+	s=arc-20240116; t=1747076049; c=relaxed/simple;
+	bh=JSxc2uQS1+66+Lh74XqOtLZP07YRS6mgEmayJMCk6/E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=msLdqCzJ672Td28DwxiU95pKQfdMdOdYMCQ0piCuYDlf43j8q/wBq0jUruZRxZ4bl3Dz1C5Jy8mEkWrW4WakbydtKPlSbpyYAxrOXArFOP1clLp4h/WgQ2iviHEXl7QSILjLNfgYpbRFG4vpXDMv+v2y2Jb5N9HjifYHooLijW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RsHtlFP3; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af5310c1ac1so2766200a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:54:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747076047; x=1747680847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W4uoDzbBLJd7QAkF/AkM6h4dCLCMBNmAnD0UD06xFNI=;
+        b=RsHtlFP3tBUZ7UZDM5Uyqpzn/pQGsSSqhvEjl4pTZgB6+xXGIKo4uPD6fY3MFTF/P7
+         U8RAxHA9CD6yx6TJWANiSkxiS55712CLYzZOyV/sqwKtBPewyu9+08E6pbdnQIBLTqGS
+         O1MwIREpZmf+oJmuYno6L15e+HkdLuH4IvtrNRjSq4CSTkK0Z6opi2MUmnoLTsrZjj9A
+         jEKFftzn6IM49ttvYVqkkZDXsc5sIfemyzqqsZ65R+n73LYIPv1eb7oMhrnastSg/Vkx
+         4ZE1DK6LwqcYCwEEfZ0xzw7WVSXMGOv+IufL2k1sc04RbYx7w1wVO7UU46bIa2DCAx10
+         5krA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747076047; x=1747680847;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W4uoDzbBLJd7QAkF/AkM6h4dCLCMBNmAnD0UD06xFNI=;
+        b=cZM/PCoGsOq9jSmiGANjsddsUlTaCkZCxIT/wFCIvMz4gvdgaziqgciLfYstkU37Wo
+         FSKGQru/tekdwjAX1WVlz2oVCyzjQtQLXugWITR53Rdn+dQAZyq9Q96TTazOMUHwXYVA
+         5/UOcB91iQTW4YqGmG6weJ/IFzd3ovHcKFCq2We1SCJziLu2THPZMxCWlLAQ1QL1xsfs
+         GKtCNW/ztLFbwQSfCInQ8cwmmzNIdlpV0D0T1LqabKB4R6Z/2hezg4EEsqfH9BLORV+c
+         fRG2gJpjIYNSN+baqlgr8BpP/pLjqrq1ODNIcp5CHHRlVmxBrRmCbOY0atQ/yvVksQXc
+         p3Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXNloThov/fjTnl3S85dm4zIWuYOAYVnmFCHAtfTBz0YnH/nyg1nS3O9eyRqVSxI6fZ9oGfyCcMAd7GSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBZ07XyIMifNi/dH2uHs51WO7mhHL7ywq+ijemue/tx5B0dpo6
+	1B+enfWNVexUkziid0bc3NJoiItJ2Mom8PUxAJUX56GYn8UADyaw+s1BAxk59HoyDIET3WDCqcZ
+	vJg==
+X-Google-Smtp-Source: AGHT+IGCZJ/eZ/AOlCQQiuh9XV3QntmEBRUnqMYmiI9dWW0R+dssCHX15mrFy7PORzGDdl8a6riNBWQpzqc=
+X-Received: from pjbso5.prod.google.com ([2002:a17:90b:1f85:b0:2ff:6e58:8a03])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a0b:b0:305:5f25:fcf8
+ with SMTP id 98e67ed59e1d1-30c3cafea7amr20801632a91.5.1747076047504; Mon, 12
+ May 2025 11:54:07 -0700 (PDT)
+Date: Mon, 12 May 2025 11:54:05 -0700
+In-Reply-To: <20250313203702.575156-12-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-12-jon@nutanix.com>
+Message-ID: <aCJDzU1p_SFNRIJd@google.com>
+Subject: Re: [RFC PATCH 11/18] KVM: VMX: Enhance EPT violation handler for PROT_USER_EXEC
+From: Sean Christopherson <seanjc@google.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support to update the CMRT and control firmware as well as the UEFI
-driver on fbnic using devlink dev flash.
+On Thu, Mar 13, 2025, Jon Kohler wrote:
+> From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+>=20
+> Add EPT_VIOLATION_PROT_USER_EXEC (6) to reflect the user executable
+> permissions of a given address when Intel MBEC is enabled.
+>=20
+> Refactor usage of EPT_VIOLATION_RWX_TO_PROT to understand all of the
+> specific bits that are now possible with MBEC.
+>=20
+> Intel SDM 'Exit Qualification for EPT Violations' states the following
+> for Bit 6.
+>   If the =E2=80=9Cmode-based execute control=E2=80=9D VM-execution contro=
+l is 0, the
+>   value of this bit is undefined. If that control is 1, this bit is
+>   the logical-AND of bit 10 in the EPT paging-structure entries used
+>   to translate the guest-physical address of the access causing the
+>   EPT violation. In this case, it indicates whether the guest-physical
+>   address was executable for user-mode linear addresses.
+>=20
+>   Bit 6 is cleared to 0 if (1) the =E2=80=9Cmode-based execute control=E2=
+=80=9D
+>   VM-execution control is 1; and (2) either (a) any of EPT
+>   paging-structure entries used to translate the guest-physical address
+>   of the access causing the EPT violation is not present; or
+>   (b) 4-level EPT is in use and the guest-physical address sets any
+>   bits in the range 51:48.
+>=20
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Co-developed-by: Jon Kohler <jon@nutanix.com>
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
+>=20
+> ---
+>  arch/x86/include/asm/vmx.h     |  7 ++++---
+>  arch/x86/kvm/mmu/paging_tmpl.h | 15 ++++++++++++---
+>  arch/x86/kvm/vmx/vmx.c         |  7 +++++--
+>  3 files changed, 21 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index ffc90d672b5d..84c5be416f5c 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -587,6 +587,7 @@ enum vm_entry_failure_code {
+>  #define EPT_VIOLATION_PROT_READ		BIT(3)
+>  #define EPT_VIOLATION_PROT_WRITE	BIT(4)
+>  #define EPT_VIOLATION_PROT_EXEC		BIT(5)
+> +#define EPT_VIOLATION_PROT_USER_EXEC	BIT(6)
 
-Make sure the shutdown / quiescence paths like suspend take the devlink
-lock to prevent them from interrupting the FW flashing process.
+Ugh, TDX added this as EPT_VIOLATION_EXEC_FOR_RING3_LIN (apparently the TDX=
+ module
+enables MBEC?).  I like your name a lot better.
 
-Signed-off-by: Lee Trager <lee@trager.us>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
----
-V5:
-* Make sure fbnic_pldm_match_record() always returns a bool
+>  #define EPT_VIOLATION_PROT_MASK		(EPT_VIOLATION_PROT_READ  | \
+>  					 EPT_VIOLATION_PROT_WRITE | \
+>  					 EPT_VIOLATION_PROT_EXEC)
 
- .../device_drivers/ethernet/meta/fbnic.rst    |  11 +
- drivers/net/ethernet/meta/Kconfig             |   1 +
- .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 260 +++++++++++++++++-
- drivers/net/ethernet/meta/fbnic/fbnic_fw.h    |   9 +
- drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |   9 +
- 5 files changed, 289 insertions(+), 1 deletion(-)
+Hmm, so I think EPT_VIOLATION_PROT_MASK should include EPT_VIOLATION_PROT_U=
+SER_EXEC.
+The existing TDX change does not, because unfortunately the bit is undefine=
+d if
+MBEC is unsupported, but that's easy to solve by unconditionally clearing t=
+he bit
+in handle_ept_violation().  And then when nested-EPT MBEC support comes alo=
+ng,
+handle_ept_violation() can be modified to conditionally clear the bit based=
+ on
+whether or not the current MMU supports MBEC.
 
-diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-index 3483e498c08e..f8592dec8851 100644
---- a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-+++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-@@ -28,6 +28,17 @@ devlink dev info provides version information for all three components. In
- addition to the version the hg commit hash of the build is included as a
- separate entry.
+I'll post a patch to include the bit in EPT_VIOLATION_PROT_MASK, and opport=
+unistically
+change the name.
 
-+Upgrading Firmware
-+------------------
-+
-+fbnic supports updating firmware using signed PLDM images with devlink dev
-+flash. PLDM images are written into the flash. Flashing does not interrupt
-+the operation of the device.
-+
-+On host boot the latest UEFI driver is always used, no explicit activation
-+is required. Firmware activation is required to run new control firmware. cmrt
-+firmware can only be activated by power cycling the NIC.
-+
- Statistics
- ----------
+> @@ -596,7 +597,7 @@ enum vm_entry_failure_code {
+>  #define EPT_VIOLATION_READ_TO_PROT(__epte) (((__epte) & VMX_EPT_READABLE=
+_MASK) << 3)
+>  #define EPT_VIOLATION_WRITE_TO_PROT(__epte) (((__epte) & VMX_EPT_WRITABL=
+E_MASK) << 3)
+>  #define EPT_VIOLATION_EXEC_TO_PROT(__epte) (((__epte) & VMX_EPT_EXECUTAB=
+LE_MASK) << 3)
+> -#define EPT_VIOLATION_RWX_TO_PROT(__epte) (((__epte) & VMX_EPT_RWX_MASK)=
+ << 3)
 
-diff --git a/drivers/net/ethernet/meta/Kconfig b/drivers/net/ethernet/meta/Kconfig
-index 831921b9d4d5..3ba527514f1e 100644
---- a/drivers/net/ethernet/meta/Kconfig
-+++ b/drivers/net/ethernet/meta/Kconfig
-@@ -27,6 +27,7 @@ config FBNIC
- 	select NET_DEVLINK
- 	select PAGE_POOL
- 	select PHYLINK
-+	select PLDMFW
- 	help
- 	  This driver supports Meta Platforms Host Network Interface.
+Why?  There's no escaping the fact that EXEC, a.k.a. X, is doing double dut=
+y as
+"exec for all" and "kernel exec".  And KVM has nearly two decades of histor=
+y
+using EXEC/X to refer to "exec for all".  I see no reason to throw all of t=
+hat
+away and discard the intuitive and pervasive RWX logic.
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-index 0072d612215e..71d9461a0d1b 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-@@ -3,10 +3,12 @@
+> @@ -510,7 +511,15 @@ static int FNAME(walk_addr_generic)(struct guest_wal=
+ker *walker,
+>  		 * Note, pte_access holds the raw RWX bits from the EPTE, not
+>  		 * ACC_*_MASK flags!
+>  		 */
+> -		walker->fault.exit_qualification |=3D EPT_VIOLATION_RWX_TO_PROT(pte_ac=
+cess);
+> +		walker->fault.exit_qualification |=3D
+> +			EPT_VIOLATION_READ_TO_PROT(pte_access);
+> +		walker->fault.exit_qualification |=3D
+> +			EPT_VIOLATION_WRITE_TO_PROT(pte_access);
+> +		walker->fault.exit_qualification |=3D
+> +			EPT_VIOLATION_EXEC_TO_PROT(pte_access);
 
- #include <linux/unaligned.h>
- #include <linux/pci.h>
-+#include <linux/pldmfw.h>
- #include <linux/types.h>
- #include <net/devlink.h>
+IMO, this is a big net negative.  I much prefer the existing code, as it hi=
+ghlights
+that USER_EXEC is the oddball.
 
- #include "fbnic.h"
-+#include "fbnic_tlv.h"
+> +		if (vcpu->arch.pt_guest_exec_control)
 
- #define FBNIC_SN_STR_LEN	24
+This is wrong on multiple fronts.  As mentioned earlier in the series, this=
+ is a
+property of the MMU (more specifically, the root role), not of the vCPU.
 
-@@ -109,8 +111,264 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
- 	return 0;
- }
+And consulting MBEC support *only* when synthesizing the exit qualifcation =
+is
+wrong, because it means pte_access contains bogus data when consumed by
+FNAME(gpte_access).  At a glance, FNAME(gpte_access) probably needs to be m=
+odified
+to take in the page role, e.g. like FNAME(sync_spte) and FNAME(prefetch_gpt=
+e)
+already adjust the access based on the owning shadow page's access mask.
 
-+static bool
-+fbnic_pldm_match_record(struct pldmfw *context, struct pldmfw_record *record)
-+{
-+	struct pldmfw_desc_tlv *desc;
-+	u32 anti_rollback_ver = 0;
-+	struct devlink *devlink;
-+	struct fbnic_dev *fbd;
-+	struct pci_dev *pdev;
-+
-+	/* First, use the standard PCI matching function */
-+	if (!pldmfw_op_pci_match_record(context, record))
-+		return false;
-+
-+	pdev = to_pci_dev(context->dev);
-+	fbd = pci_get_drvdata(pdev);
-+	devlink = priv_to_devlink(fbd);
-+
-+	/* If PCI match is successful, check for vendor-specific descriptors */
-+	list_for_each_entry(desc, &record->descs, entry) {
-+		if (desc->type != PLDM_DESC_ID_VENDOR_DEFINED)
-+			continue;
-+
-+		if (desc->size < 21 || desc->data[0] != 1 ||
-+		    desc->data[1] != 15)
-+			continue;
-+
-+		if (memcmp(desc->data + 2, "AntiRollbackVer", 15) != 0)
-+			continue;
-+
-+		anti_rollback_ver = get_unaligned_le32(desc->data + 17);
-+		break;
-+	}
-+
-+	/* Compare versions and return error if they do not match */
-+	if (anti_rollback_ver < fbd->fw_cap.anti_rollback_version) {
-+		char buf[128];
-+
-+		snprintf(buf, sizeof(buf),
-+			 "New firmware anti-rollback version (0x%x) is older than device version (0x%x)!",
-+			 anti_rollback_ver, fbd->fw_cap.anti_rollback_version);
-+		devlink_flash_update_status_notify(devlink, buf,
-+						   "Anti-Rollback", 0, 0);
-+
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static int
-+fbnic_flash_start(struct fbnic_dev *fbd, struct pldmfw_component *component)
-+{
-+	struct fbnic_fw_completion *cmpl;
-+	int err;
-+
-+	cmpl = kzalloc(sizeof(*cmpl), GFP_KERNEL);
-+	if (!cmpl)
-+		return -ENOMEM;
-+
-+	fbnic_fw_init_cmpl(cmpl, FBNIC_TLV_MSG_ID_FW_START_UPGRADE_REQ);
-+	err = fbnic_fw_xmit_fw_start_upgrade(fbd, cmpl,
-+					     component->identifier,
-+					     component->component_size);
-+	if (err)
-+		goto cmpl_free;
-+
-+	/* Wait for firmware to ack firmware upgrade start */
-+	if (wait_for_completion_timeout(&cmpl->done, 10 * HZ))
-+		err = cmpl->result;
-+	else
-+		err = -ETIMEDOUT;
-+
-+	fbnic_fw_clear_cmpl(fbd, cmpl);
-+cmpl_free:
-+	fbnic_fw_put_cmpl(cmpl);
-+
-+	return err;
-+}
-+
-+static int
-+fbnic_flash_component(struct pldmfw *context,
-+		      struct pldmfw_component *component)
-+{
-+	const u8 *data = component->component_data;
-+	const u32 size = component->component_size;
-+	struct fbnic_fw_completion *cmpl;
-+	const char *component_name;
-+	struct devlink *devlink;
-+	struct fbnic_dev *fbd;
-+	struct pci_dev *pdev;
-+	u32 offset = 0;
-+	u32 length = 0;
-+	char buf[32];
-+	int err;
-+
-+	pdev = to_pci_dev(context->dev);
-+	fbd = pci_get_drvdata(pdev);
-+	devlink = priv_to_devlink(fbd);
-+
-+	switch (component->identifier) {
-+	case QSPI_SECTION_CMRT:
-+		component_name = "boot1";
-+		break;
-+	case QSPI_SECTION_CONTROL_FW:
-+		component_name = "boot2";
-+		break;
-+	case QSPI_SECTION_OPTION_ROM:
-+		component_name = "option-rom";
-+		break;
-+	default:
-+		snprintf(buf, sizeof(buf), "Unknown component ID %u!",
-+			 component->identifier);
-+		devlink_flash_update_status_notify(devlink, buf, NULL, 0,
-+						   size);
-+		return -EINVAL;
-+	}
-+
-+	/* Once firmware receives the request to start upgrading it responds
-+	 * with two messages:
-+	 * 1. An ACK that it received the message and possible error code
-+	 *    indicating that an upgrade is not currently possible.
-+	 * 2. A request for the first chunk of data
-+	 *
-+	 * Setup completions for write before issuing the start message so
-+	 * the driver can catch both messages.
-+	 */
-+	cmpl = kzalloc(sizeof(*cmpl), GFP_KERNEL);
-+	if (!cmpl)
-+		return -ENOMEM;
-+
-+	fbnic_fw_init_cmpl(cmpl, FBNIC_TLV_MSG_ID_FW_WRITE_CHUNK_REQ);
-+	err = fbnic_mbx_set_cmpl(fbd, cmpl);
-+	if (err)
-+		goto cmpl_free;
-+
-+	devlink_flash_update_timeout_notify(devlink, "Initializing",
-+					    component_name, 15);
-+	err = fbnic_flash_start(fbd, component);
-+	if (err)
-+		goto err_no_msg;
-+
-+	while (offset < size) {
-+		if (!wait_for_completion_timeout(&cmpl->done, 15 * HZ)) {
-+			err = -ETIMEDOUT;
-+			break;
-+		}
-+
-+		err = cmpl->result;
-+		if (err)
-+			break;
-+
-+		/* Verify firmware is requesting the next chunk in the seq. */
-+		if (cmpl->u.fw_update.offset != offset + length) {
-+			err = -EFAULT;
-+			break;
-+		}
-+
-+		offset = cmpl->u.fw_update.offset;
-+		length = cmpl->u.fw_update.length;
-+
-+		if (length > TLV_MAX_DATA || offset + length > size) {
-+			err = -EFAULT;
-+			break;
-+		}
-+
-+		devlink_flash_update_status_notify(devlink, "Flashing",
-+						   component_name,
-+						   offset, size);
-+
-+		/* Mailbox will set length to 0 once it receives the finish
-+		 * message.
-+		 */
-+		if (!length)
-+			continue;
-+
-+		reinit_completion(&cmpl->done);
-+		err = fbnic_fw_xmit_fw_write_chunk(fbd, data, offset, length,
-+						   0);
-+		if (err)
-+			break;
-+	}
-+
-+	if (err) {
-+		fbnic_fw_xmit_fw_write_chunk(fbd, NULL, 0, 0, err);
-+err_no_msg:
-+		snprintf(buf, sizeof(buf), "Mailbox encountered error %d!",
-+			 err);
-+		devlink_flash_update_status_notify(devlink, buf,
-+						   component_name, 0, 0);
-+	}
-+
-+	fbnic_fw_clear_cmpl(fbd, cmpl);
-+cmpl_free:
-+	fbnic_fw_put_cmpl(cmpl);
-+
-+	return err;
-+}
-+
-+static const struct pldmfw_ops fbnic_pldmfw_ops = {
-+	.match_record = fbnic_pldm_match_record,
-+	.flash_component = fbnic_flash_component,
-+};
-+
-+static int
-+fbnic_devlink_flash_update(struct devlink *devlink,
-+			   struct devlink_flash_update_params *params,
-+			   struct netlink_ext_ack *extack)
-+{
-+	struct fbnic_dev *fbd = devlink_priv(devlink);
-+	const struct firmware *fw = params->fw;
-+	struct device *dev = fbd->dev;
-+	struct pldmfw context;
-+	char *err_msg;
-+	int err;
-+
-+	context.ops = &fbnic_pldmfw_ops;
-+	context.dev = dev;
-+
-+	err = pldmfw_flash_image(&context, fw);
-+	if (err) {
-+		switch (err) {
-+		case -EINVAL:
-+			err_msg = "Invalid image";
-+			break;
-+		case -EOPNOTSUPP:
-+			err_msg = "Unsupported image";
-+			break;
-+		case -ENOMEM:
-+			err_msg = "Out of memory";
-+			break;
-+		case -EFAULT:
-+			err_msg = "Invalid header";
-+			break;
-+		case -ENOENT:
-+			err_msg = "No matching record";
-+			break;
-+		case -ENODEV:
-+			err_msg = "No matching device";
-+			break;
-+		case -ETIMEDOUT:
-+			err_msg = "Timed out waiting for reply";
-+			break;
-+		default:
-+			err_msg = "Unknown error";
-+			break;
-+		}
-+
-+		NL_SET_ERR_MSG_FMT_MOD(extack,
-+				       "Failed to flash PLDM Image: %s (error: %d)",
-+				       err_msg, err);
-+	}
-+
-+	return err;
-+}
-+
- static const struct devlink_ops fbnic_devlink_ops = {
--	.info_get = fbnic_devlink_info_get,
-+	.info_get	= fbnic_devlink_info_get,
-+	.flash_update	= fbnic_devlink_flash_update,
- };
+> +			walker->fault.exit_qualification |=3D
+> +				EPT_VIOLATION_USER_EXEC_TO_PROT(pte_access);
+>  	}
+>  #endif
+>  	walker->fault.address =3D addr;
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 116910159a3f..0aadfa924045 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -5809,7 +5809,7 @@ static int handle_task_switch(struct kvm_vcpu *vcpu=
+)
+> =20
+>  static int handle_ept_violation(struct kvm_vcpu *vcpu)
+>  {
+> -	unsigned long exit_qualification;
+> +	unsigned long exit_qualification, rwx_mask;
+>  	gpa_t gpa;
+>  	u64 error_code;
+> =20
+> @@ -5839,7 +5839,10 @@ static int handle_ept_violation(struct kvm_vcpu *v=
+cpu)
+>  	error_code |=3D (exit_qualification & EPT_VIOLATION_ACC_INSTR)
+>  		      ? PFERR_FETCH_MASK : 0;
+>  	/* ept page table entry is present? */
+> -	error_code |=3D (exit_qualification & EPT_VIOLATION_PROT_MASK)
+> +	rwx_mask =3D EPT_VIOLATION_PROT_MASK;
+> +	if (vcpu->arch.pt_guest_exec_control)
+> +		rwx_mask |=3D EPT_VIOLATION_PROT_USER_EXEC;
+> +	error_code |=3D (exit_qualification & rwx_mask)
+>  		      ? PFERR_PRESENT_MASK : 0;
 
- void fbnic_devlink_free(struct fbnic_dev *fbd)
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_fw.h b/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
-index 0ab6ae3859e4..6baac10fd688 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
-@@ -100,6 +100,15 @@ do {									\
- #define fbnic_mk_fw_ver_str(_rev_id, _str) \
- 	fbnic_mk_full_fw_ver_str(_rev_id, "", "", _str, sizeof(_str))
+As mentioned above, if KVM clears EPT_VIOLATION_PROT_USER_EXEC when it's
+undefined, then this can simply use EPT_VIOLATION_PROT_MASK unchanged.
 
-+enum {
-+	QSPI_SECTION_CMRT			= 0,
-+	QSPI_SECTION_CONTROL_FW			= 1,
-+	QSPI_SECTION_UCODE			= 2,
-+	QSPI_SECTION_OPTION_ROM			= 3,
-+	QSPI_SECTION_USER			= 4,
-+	QSPI_SECTION_INVALID,
-+};
-+
- #define FW_HEARTBEAT_PERIOD		(10 * HZ)
-
- enum {
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-index 70a852b3e99d..249d3ef862d5 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-@@ -6,6 +6,7 @@
- #include <linux/pci.h>
- #include <linux/rtnetlink.h>
- #include <linux/types.h>
-+#include <net/devlink.h>
-
- #include "fbnic.h"
- #include "fbnic_drvinfo.h"
-@@ -388,8 +389,12 @@ static int fbnic_pm_suspend(struct device *dev)
- 	rtnl_unlock();
-
- null_uc_addr:
-+	devl_lock(priv_to_devlink(fbd));
-+
- 	fbnic_fw_free_mbx(fbd);
-
-+	devl_unlock(priv_to_devlink(fbd));
-+
- 	/* Free the IRQs so they aren't trying to occupy sleeping CPUs */
- 	fbnic_free_irqs(fbd);
-
-@@ -420,11 +425,15 @@ static int __fbnic_pm_resume(struct device *dev)
-
- 	fbd->mac->init_regs(fbd);
-
-+	devl_lock(priv_to_devlink(fbd));
-+
- 	/* Re-enable mailbox */
- 	err = fbnic_fw_request_mbx(fbd);
- 	if (err)
- 		goto err_free_irqs;
-
-+	devl_unlock(priv_to_devlink(fbd));
-+
- 	/* No netdev means there isn't a network interface to bring up */
- 	if (fbnic_init_failure(fbd))
- 		return 0;
---
-2.47.1
+> =20
+>  	if (error_code & EPT_VIOLATION_GVA_IS_VALID)
+> --=20
+> 2.43.0
+>=20
 
