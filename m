@@ -1,127 +1,180 @@
-Return-Path: <linux-kernel+bounces-643607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD42AB2F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:06:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397EEAB2F52
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1A0178194
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD033A58A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E7E255E2C;
-	Mon, 12 May 2025 06:06:04 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F889255233;
+	Mon, 12 May 2025 06:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JG46GzaI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06E9255223;
-	Mon, 12 May 2025 06:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BA23C38;
+	Mon, 12 May 2025 06:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747029964; cv=none; b=Vsyz4OeEfsYCmaO/28yVbgIaDmz9/pIobw4Hu6TJgT9PqvnY017yL6U1w0qdzpBEeMCvHqvucri3PY+ZELNZwsjvKjG9djroF6A4LkGOankAvRtmaNfk1wS5hiRlGbaJm9cpN9+1yngm+CimuwexFBvBW83yowiKKE2u+1fUdfE=
+	t=1747030124; cv=none; b=nPGdawsJ0KDAas+yZZsm2lJVBBUuB4AXhj03PF7olaWtOdilsD9XdAbTVpO7nEuP4av0dGwErXclcXPq8FHmpQu2ogMEKNlaf2vgewQzQHgTv6AoOqxGQv3TMsvHHyDfIDsE1sSLf1cKMO8e/bNFw6U2waKL8OUDC3BkNgQ0fVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747029964; c=relaxed/simple;
-	bh=bq67q7+bU5SxI5x84gX3+S/6BoUlZWkfuzP9TZlO2c0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=O5L298gWhXWd/VBXw5egVWdbOKaTDWorJNu+yWPuYGYnARY1KnYG/M82Humps4SCPjdBRGocOGjeIx2s7BImz1ZwACv8/5+Xul2Vr/WCFk7idFVmBv36/DM9ECUCfkhwarKJI4Y3X5HCLkrZ8bznm06qtoY7E4JBbbX3lYYiJmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZwpxZ5q9nz4f3jt8;
-	Mon, 12 May 2025 14:05:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 48CC41A13A4;
-	Mon, 12 May 2025 14:05:58 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHa1_EjyFo8K+pMA--.56895S3;
-	Mon, 12 May 2025 14:05:58 +0800 (CST)
-Subject: Re: [PATCH RFC md-6.16 v3 02/19] md: support discard for bitmap ops
-To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: xni@redhat.com, colyli@kernel.org, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250512011927.2809400-1-yukuai1@huaweicloud.com>
- <20250512011927.2809400-3-yukuai1@huaweicloud.com>
- <20250512044125.GB868@lst.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2830c5d0-cc04-51eb-6785-79d0a43f4fc4@huaweicloud.com>
-Date: Mon, 12 May 2025 14:05:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1747030124; c=relaxed/simple;
+	bh=aeBo/HtHc7JVSi8gCCikzWTDfo2c+IE0WmhaGHAMUcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jy2bU1o+dY39jbq/WM7u8dZfQYwGz6FsiOdV1m0IqjT9DUGayk2CKQaRLhQwUwSZSan57KzklQPPa2vAN6QHgkJkOge/NvOaU7vZNP1yqZDz54CFee/PYWqgrf9w8n3I5KHQdTp/7VaeAmVaw/DA9NPkkpdG9oYFvQstLaUbk7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JG46GzaI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54BNTuoR013680;
+	Mon, 12 May 2025 06:08:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZAg73qctMdAHl6qXg7azYTSd5wdfKLHTQzj8wlUwENs=; b=JG46GzaIghBXd6z7
+	iYG15YdxYHaoaS14TUuTpN7Y1YUcFsV/tGWIy5brD3wUKWvPTvAyfwuN4AJFgZ/b
+	U+b5l/qcOpbyUhUV59M0/nBclhPpvr5tbeccPqEFTp6PlfqafPrs4+xU0PDsfj+d
+	dz3PqO7lt0CbNE5tgqWCQNl3Veh/bC1bdEPKcMuplfQrreTIB9JxpDmfl69KQzLv
+	JiYzZiYqZKxauIiwO/hTHwKGWfQ2wM9iGJ76mHDBVtKjO/SBtfkLlvLnM4gzsRCY
+	2Xzii8Q69rXappyCaeNTP2TK2/+oGI2KGLB5mvOXZd2+Qx394fpbMR71Hpv6D8zG
+	tnx4/Q==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hwt939hq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 06:08:38 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54C68aDw030763
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 06:08:36 GMT
+Received: from [10.50.62.222] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 11 May
+ 2025 23:08:32 -0700
+Message-ID: <7de5bf3f-12e6-99ca-38fd-45435de5773f@quicinc.com>
+Date: Mon, 12 May 2025 11:38:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250512044125.GB868@lst.de>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHa1_EjyFo8K+pMA--.56895S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFW7AFy5GFyDKryUur47XFb_yoW8GFW3pa
-	9FqFW3KFs8XF9Y9347X34YgF1Fqw1DGr90yFyIgr45Gw1rCr93CF4fua4YvF15uryxZF4j
-	va10y3W3Xry8WrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v7 0/5] media: qcom: iris: add support for QCS8300
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250501-qcs8300_iris-v7-0-b229d5347990@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250501-qcs8300_iris-v7-0-b229d5347990@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDA2MyBTYWx0ZWRfXx6pfsOXrxel7
+ fCkaKHrTriL2FLbFdT2nR68gK5UK0sADv4ZyjYrxnkyiuJc4Arf3OTA1U73Ce50hg8DTDyVJFXg
+ n6EK6gWPWsLyo6HIXsfjr9B3ly3nTT7q8ansefxscLF6nDPogPG+nj9j3hnHmWOYXZ913l9NhLl
+ HiPcSKPnXQrBcnht6oJ7/AbcO6KJ5lxawtD1V3i5ABJFY2AK6rMqO6SewrVvSvs+G4HaNY0e4Zv
+ zzYoyBRG7CoO3z9IO2PkZhgQJdWDi4Zfms588ajYcJcfWmXIgiGO3v+Tqt1/YnT7gJAmenGP95c
+ p/Q4xzfnN0bBWe6dn5jMjrow/FQg39sqC4C0C07cXyfl+E/kRspF1Lyq7OaqXOvmISLb0uetcXV
+ iK9jFNA8BhjHXQeMgqK1znsvslwYJZNSak+8/hG6lMveBGHylWqasVLh1rVPhRtPq9iwaTCC
+X-Proofpoint-ORIG-GUID: b9szylcn0rVwlWotNU-Krm6vnodLKfTs
+X-Proofpoint-GUID: b9szylcn0rVwlWotNU-Krm6vnodLKfTs
+X-Authority-Analysis: v=2.4 cv=a58w9VSF c=1 sm=1 tr=0 ts=68219066 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=-hBaU0KkIdV-hY_gRgQA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_02,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 spamscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505120063
 
-Hi,
+Hi Bjorn,
 
-ÔÚ 2025/05/12 12:41, Christoph Hellwig Ð´µÀ:
-> On Mon, May 12, 2025 at 09:19:10AM +0800, Yu Kuai wrote:
->> +++ b/drivers/md/md.c
->> @@ -8849,14 +8849,24 @@ static void md_bitmap_start(struct mddev *mddev,
->>   		mddev->pers->bitmap_sector(mddev, &md_io_clone->offset,
->>   					   &md_io_clone->sectors);
->>   
->> -	mddev->bitmap_ops->startwrite(mddev, md_io_clone->offset,
->> -				      md_io_clone->sectors);
->> +	if (unlikely(md_io_clone->rw == STAT_DISCARD) &&
->> +	    mddev->bitmap_ops->start_discard)
->> +		mddev->bitmap_ops->start_discard(mddev, md_io_clone->offset,
->> +						 md_io_clone->sectors);
->> +	else
->> +		mddev->bitmap_ops->startwrite(mddev, md_io_clone->offset,
->> +					      md_io_clone->sectors);
->>   }
+On 5/1/2025 2:16 AM, Vikash Garodia wrote:
+> add support for video hardware acceleration on QCS8300 platform.
 > 
-> This interface feels weird, as it would still call into the write
-> interfaces when the discard ones are not defined instead of doing
-> nothing.  Also shouldn't discard also use a different interface
-> than md_bitmap_start in the caller?
-
-This is because the old bitmap handle discard the same as write, I
-can't do nothing in this case. Do you prefer also reuse the write
-api to new discard api for old bitmap?
-
-For the caller, I think it's fine, since bitmap framwork already
-calculate sectors and len for discard as well.
+> This series depends on
+> https://lore.kernel.org/all/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
 > 
-> I'd also expect the final version of this to be merged with the
-> previous patch, as adding an interface without the only user is a
-> bit odd.
-
-Sure.
-
-Thanks,
-Kuai
-
-> .
+> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> ---
+> Changes in v7:
+> - Fix clock corner.
+> - Link to v6: https://lore.kernel.org/r/20250430-qcs8300_iris-v6-0-a2fa43688722@quicinc.com
 > 
+> Changes in v6:
+> - Address a comment related the commit title.
+> - Link to v5: https://lore.kernel.org/r/20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com
+> 
+> Changes in v5:
+> - Fix order in dt bindings.
+> - Drop an unrelated sentence from commit description.
+> - Link to v4: https://lore.kernel.org/r/20250424-qcs8300_iris-v4-0-6e66ed4f6b71@quicinc.com
+> 
+> Changes in v4:
+> - Introduce a patch to fix existing order of compat strings.
+> - Fix the order of header inclusions.
+> - Link to v3: https://lore.kernel.org/r/20250423-qcs8300_iris-v3-0-d7e90606e458@quicinc.com
+> 
+> Changes in v3:
+> - Fix commit description to better describe about QCS8300.
+> - Fix the order of the patch.
+> - Collect the review tags.
+> - Link to v2: https://lore.kernel.org/r/20250418-qcs8300_iris-v2-0-1e01385b90e9@quicinc.com
+> 
+> Changes in v2:
+> - Added dependent info in binding patch as well.
+> - Fix a sparse error.
+> - Link to v1: https://lore.kernel.org/r/20250418-qcs8300_iris-v1-0-67792b39ba21@quicinc.com
+> 
+> ---
+> Vikash Garodia (5):
+>       dt-bindings: media: qcom,sm8550-iris: document QCS8300 IRIS accelerator
+>       media: iris: fix the order of compat strings
+>       media: iris: add qcs8300 platform data
+>       arm64: dts: qcom: qcs8300: add video node
+>       arm64: dts: qcom: qcs8300-ride: enable video
+> 
+>  .../bindings/media/qcom,sm8550-iris.yaml           |   1 +
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts          |   4 +
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi              |  71 ++++++++++++
+>  .../platform/qcom/iris/iris_platform_common.h      |   1 +
+>  .../media/platform/qcom/iris/iris_platform_gen2.c  |  57 ++++++++++
+>  .../platform/qcom/iris/iris_platform_qcs8300.h     | 124 +++++++++++++++++++++
+>  drivers/media/platform/qcom/iris/iris_probe.c      |  16 ++-
+>  7 files changed, 268 insertions(+), 6 deletions(-)
+> ---
+When do u plan to pick DT patches (4/5 and 5/5) from this series ? I just saw
+the PR for 6.16 and i did not see these patches, would like to know what is
+pending ?
 
+Regards,
+Vikash
 
