@@ -1,153 +1,250 @@
-Return-Path: <linux-kernel+bounces-644209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3C6AB38AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08ADFAB38B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260ED3ACF0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:22:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2AE460C8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8A8294A0C;
-	Mon, 12 May 2025 13:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D4129551E;
+	Mon, 12 May 2025 13:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K09Bq98w"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q5TG11IN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E402628D857
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E072951D2
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747056147; cv=none; b=tu5a8R5Z27xlcCkBEKSNlbjkK+KHUV2oUos7+YFuSDA6cLYvcb/RoO6/KCKz84IZJGiTaWahQX2w5baP6bcmhT28fL+h8gNHse6F3T02IZeDYdamATzknlFzKOM+zOxoNpEKP9Er4/RXiMFdKQTi/qac/bYTsa+X0PrDDI+C1XM=
+	t=1747056182; cv=none; b=ZaKlneCpdPr8Ub13f40M1bYK13lQz/D6oYcJKVFNCUJwxXp4LzKruaSOt1klVr7jKtQT2UOuq3/yS1Qqot474Xpst6Z0Y1+tjBwmOYJzEZ+wXKu56rmgAB/AppVk395LxfJymKxw4H8AfCZ5FKpTytfkcIbhpDCjOMA6dbiUaH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747056147; c=relaxed/simple;
-	bh=devXGGTl4DFBk0hfDQYT+VXZS73W2OS2D90j3Cs28xw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CvCOvpNMKjLQoEu2WmWh41nGMJnt67ej09DM8tEE4wdF+pIO3Nw4jmZq4Aw73N+gqMvxU0jv/5t4Hs9w1kqLLVAXQuvqklQnjzcmjbSnag9G/Fh6GBs8DI+j0IwusCe/Xbj6hUVJvbG0oR0mCVSjEh2Ip9kZLPOs7NZp5bNUz1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K09Bq98w; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso43265961fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:22:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747056144; x=1747660944; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NxfQxcq5BBu2nIwTspctDTWvHfOZ5xVRTcaBJjw0co0=;
-        b=K09Bq98w1EpFzFYcMrDpJMhtAbVkvZC4waLkje3yhkSzWqBf152/TBblOAy3HM+Tqp
-         F0Mf4nXYSpCEFmly6h5khPzF95pP4fqeYN0x42OvEV0gRsvHzMM42Bc9RjD1AvSrdgTJ
-         2t8E1PfJgkQfSwWBJDsluyYY6NwOxjOAMru/owWoTvY0GAHGr67Ym9zqzjM751L43CPa
-         sJvL4blFiFQdaNkt8+6P2yGxpBes+fpMv0grAw0MlYZqOtt3mz9iC8mGDg2qxlaZb//n
-         i5Ch/jUy60I9o9YdzGdKXR5gTRJNd5Z1b9K9nYDbvGwCadeSVuyx7GMLPRRx+N3/1e0M
-         VM/g==
+	s=arc-20240116; t=1747056182; c=relaxed/simple;
+	bh=bzJZzvvRpjn9CYUnburWeDj8PO5yPP+Ob2vNmYc/qsA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjDsVDVmNmnvvU7wpMILeOwJKS1z4EVvDha46XCc8qezLu6aPNHIfv2Zj6UY/hj5UOtZ6vZA7Qm0gmfvtzFRym2tOcp7WsAq1wVczGtQeqEwMN35CRPMcF0eE+JtDwnjrk1BIHiDfmqqrN37lOcWUmgoBohCXDgrUjcKoprtBUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q5TG11IN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747056179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rt9GtFBQJVx2og2U+6x9mcRi6vq6T7dh1csKu94DEVk=;
+	b=Q5TG11INiTWo6N09iqEhF0dcEJzieqKaCkgyuBXVH2hy8osnjZwRrBTb0r5JCY5Ad3CaMR
+	iz4GVz9Kh9BnCOuTmXoRYHJDCT+y0mRB4o08fTv7o8p065ngLR12SNhi/XkCWE1eWRaRlh
+	0sy8wxLQ8ofjKRVDXqRhrWQ4BaBH9QU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-QjaU9c4lPgKyEnREsmOk9Q-1; Mon, 12 May 2025 09:22:57 -0400
+X-MC-Unique: QjaU9c4lPgKyEnREsmOk9Q-1
+X-Mimecast-MFC-AGG-ID: QjaU9c4lPgKyEnREsmOk9Q_1747056177
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ad22c5408e7so246168766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:22:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747056144; x=1747660944;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NxfQxcq5BBu2nIwTspctDTWvHfOZ5xVRTcaBJjw0co0=;
-        b=Tt/OMJ3mbkdw3Nt/YQ8TGW1MsoY8sXudtQI5TpJ5MqCpbcKFSWVsXD4ZE3TzhvXbOQ
-         RMNmRE72VP16w2biSPIOaNqFjuLZOhT81/bITbpENAv5y/oQdOVUxId/8N4TbK05GDjb
-         +6hiBUJenwhhf+LC14kTWS8kwteu+kwiwxPpK3ftOLljmLisQwoxYCChJpjPBECZTSk1
-         t1sFqeYTQZGy2NLq8Z/P9BMHsgnvtc/4HyDlcel/lCBrJxI9PoG6v3PzZjtqEDphn808
-         Y2H3s5ZntZ55IiEY+ZaiZrIkr4aI68r6/Lvb6xt11IUFxD409N+CMb9IJ0wGwQckW+G/
-         QjaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo35zxnvnF9JZhXZGDNJ8j8tfeHPETRRRA0fF9Qmo5TabGjT4p33QMxcOefzWzIQTgHj27TZxmL702hq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6oSs7I2wVjJp2tECUdtVQfk8sgoAN+lLzkdYz/vmEGuMx/naU
-	DCnMGbjdPQ6+/WbxOGm0jzurU5Ayk0FwVjJLUpEhf6AHkFcHh0jH/tYR4az9zW+RkZXXJZ6NUSN
-	vmJIMEaKoIUqN94Hb4steyMibEeO7wSLPVZB6
-X-Gm-Gg: ASbGncvTU0OsqaU7sZ5H87eQmvGVmUteCLaDDsTOEui7Kbfa2Wb0644DTgVAkwdXXsu
-	Jrbu56hvmXdpl+8EY6kEul8GrluCl+mcEHeZVkbHlOU7aIDBjKfHgcTpaKRYUMmwjrUiuoXaNRw
-	3qEQ24ftXugGt1KBWW87aFVovmy1W0gm8XROGhzMGjw7qAxVO9QR2Ym4+te/yhdoU=
-X-Google-Smtp-Source: AGHT+IHJ0J3uWkk7U0OJTsKkGCVoc1wLn6lNVuY2eD8aI4/X4UvTUJC7R+SKP6Y7Pq0muiFKVQNrWuLAUMwE86JkihM=
-X-Received: by 2002:a05:651c:a11:b0:30b:efa5:69c3 with SMTP id
- 38308e7fff4ca-326c45f2969mr53857651fa.22.1747056143763; Mon, 12 May 2025
- 06:22:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747056176; x=1747660976;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rt9GtFBQJVx2og2U+6x9mcRi6vq6T7dh1csKu94DEVk=;
+        b=HzaBkpbqgbukFXPM4I4+YkxhbcdqlmBsbzvg7PCFMTGTgWYGR1uvzViWRpDiYXFFCV
+         aj5fJGqDJjuzyikmdC9zSNTvjYrx3Y7J5+qib9TdO+TNm5/d28uTgghTaM5O+NwKGATy
+         3lfR/YdMsr12F6VOH5ZS9fYJQJ6aHpdOWrd4RixvXTH+D0idquBA07TEWG0+KXlDZ/3W
+         0D7rC7b+i8ZD9q0zvBCqT0E+troP2twL/Vhypn/G/T2zFESerSlQFNEPV72mxTcswE9J
+         9alDfYbseTeJkNDMhvp5EKFlyuh5oxN0S1/Xgsx1rbh+JRSwWsgYzcL8VfkslV3ZRut7
+         WEKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvlJXYWnnk/GiG4GYvSnweM4TUZQpPhBVYymA+SnlC4vdd78WMrWYiBlGYfVPoRdc2a9vc4Pz6jzrO4J8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzunypcdomMLqdtserHvvDplbWvVVrHZNWZyGujtN4a7/Fy5L3Z
+	8N7rMzaRDlhdvBh9z8YVzVWXKxJfalQUyYhD9/ig+9KnhAG3HziFwBAeIr6LZLbyseyX2x4vIjB
+	CzX+nYpSN9zEKg5w66gL3bZ/2hCfekVTBYyr56pvVWpr0JusBNNHtZCHP3PZv
+X-Gm-Gg: ASbGncveiaXhUQaybBL6VElVuBRAWosoWdXvQphkBx5POdzQkUdHglz+pAVlUaF346T
+	l+EbMb2fUjbGMjdyICDCyitK9qzQobiHZ+0h+aaJ9yNpho6IXLh2VoaLxz0LXLame80ZU5FX1cA
+	iDmqdmFZbBRadaCNA76+qhnDT2EKe29PirSxhQ0sK45Gv4wuN6y3FzNVYu4u7pez0eoe1c5nJjj
+	4kIBsuil81FDWVHG3Pbm50xMEYf9frKYdNbPG/NXV+L8oYhJ/MZjrHAoviwtRO0Zla5lKitAfl6
+	2f6Ut7l1xoQmOCf3a2QpVvMWVi5XqgBfcL4K+7H7
+X-Received: by 2002:a17:907:6ea4:b0:ad4:d00f:b4ca with SMTP id a640c23a62f3a-ad4d00fb8fcmr36842966b.50.1747056176274;
+        Mon, 12 May 2025 06:22:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJ1H/zptS/AHQGJ0FK52hePcKQfFfrpXhxDrhZE1E6E4AE2JiwqXtAXQ7n2gKkCn93DDW/NA==
+X-Received: by 2002:a17:907:6ea4:b0:ad4:d00f:b4ca with SMTP id a640c23a62f3a-ad4d00fb8fcmr36835166b.50.1747056175640;
+        Mon, 12 May 2025 06:22:55 -0700 (PDT)
+Received: from thinky (109-92-26-237.static.isp.telekom.rs. [109.92.26.237])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd28dsm613933766b.128.2025.05.12.06.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 06:22:55 -0700 (PDT)
+From: Andrey Albershteyn <aalbersh@redhat.com>
+X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
+Date: Mon, 12 May 2025 15:22:52 +0200
+To: Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: [PATCH v5 5/7] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+Message-ID: <20250512-xattrat-syscall-v5-5-ffbc7c477332@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3357; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=xNZgMi4eRRk641oOEdpKdfQ/bF05YfbIRMmgusqStnI=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMhS/7gpUUlnz86nTDU79jiMuhmaSU5Y0X4uZXFdRe
+ Vmc8dGRozkdpSwMYlwMsmKKLOuktaYmFUnlHzGokYeZw8oEMoSBi1MAJtIRzsjwXWjjY7HXi7bl
+ PFdbzGTT97Nn+gxH75Rvx4wCZ9h+erijleGfefXLzfMlHhZ1SRydlrlHbP8WO6cPJmv/zTu7xuT
+ VWu893ACrBku/
+X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
+ fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
+References: <20250512-xattrat-syscall-v5-0-ffbc7c477332@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2025040820-REJECTED-6695@gregkh> <20250509072033.1335321-1-dvyukov@google.com>
- <2025050940-marrow-roundish-8b98@gregkh> <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
- <2025050924-marmalade-overfill-fc5a@gregkh> <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
- <20250509121036.GA92783@mit.edu>
-In-Reply-To: <20250509121036.GA92783@mit.edu>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 12 May 2025 15:22:12 +0200
-X-Gm-Features: AX0GCFtzw9I9FmLNWVQ1hmmtOBCaQ8ajwJAZHoD_IV1RujUj26dE1DoyFijBsMM
-Message-ID: <CACT4Y+Z8ANddFCpNHvNqq6u6=s_aWoYPwu_1HmH19OWeLBi47A@mail.gmail.com>
-Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
- filesystems with manually crafted filesystem
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Greg KH <gregkh@linuxfoundation.org>, cve@kernel.org, 
-	linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512-xattrat-syscall-v5-0-ffbc7c477332@kernel.org>
 
-On Fri, 9 May 2025 at 14:10, Theodore Ts'o <tytso@mit.edu> wrote:
->
-> On Fri, May 09, 2025 at 10:03:13AM +0200, Dmitry Vyukov wrote:
-> >
-> > If we can't prove it does not have security impact in any context,
-> > then the safe default would be to say it's unsafe.
->
-> In that case *anything* could be unsafe.  You could have a context
-> where (a) you aren't using secure boot, (b) /dev/mem is enabled, (c)
-> /dev/mem is world writeable, etc.  In which case the mere existence of
-> /bin/bash would be "unsafe".  Yes, this is uncreasonable and unsane.
-> But that's because the "no security impact in any context" standard is
-> insane.
+Future patches will add new syscalls which use these functions. As
+this interface won't be used for ioctls only the EOPNOSUPP is more
+appropriate return code.
 
-The official documented behavior is not unsafe. If a user made
-/dev/mem world-writable, then allowing any writes to it is not a bug
-nor a security issue. Let's not mix working-as-intended with bugs.
+This patch coverts return code from ENOIOCTLCMD to EOPNOSUPP for
+vfs_fileattr_get and vfs_fileattr_set. To save old behavior
+translate EOPNOSUPP back for current users - overlayfs, encryptfs
+and fs/ioctl.c.
 
-> As far as many file system authors are concerned allowing automount by
-> defaullt is insane, and is apparently the fault of some Red Hat
-> product manager many years ago.
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+---
+ fs/ecryptfs/inode.c  |  8 +++++++-
+ fs/file_attr.c       | 12 ++++++++++--
+ fs/overlayfs/inode.c |  2 +-
+ 3 files changed, 18 insertions(+), 4 deletions(-)
 
-This is not even about auto-mount. Let's say I am mounting a flash
-drive that you gave me, how do I ensure it's a safe image to mount?
-Removable media, portable drives, and some use cases related to
-mounting images stored in local files either deal with images with
-unknown origin, or can't provide 100% guarantee that the image wasn't
-tempered with.
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index 51a5c54eb740..6bf08ff4d7f7 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -1124,7 +1124,13 @@ static int ecryptfs_removexattr(struct dentry *dentry, struct inode *inode,
+ 
+ static int ecryptfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ {
+-	return vfs_fileattr_get(ecryptfs_dentry_to_lower(dentry), fa);
++	int rc;
++
++	rc = vfs_fileattr_get(ecryptfs_dentry_to_lower(dentry), fa);
++	if (rc == -EOPNOTSUPP)
++		rc = -ENOIOCTLCMD;
++
++	return rc;
+ }
+ 
+ static int ecryptfs_fileattr_set(struct mnt_idmap *idmap,
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index d9eab553dc25..d696f440fa4f 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -79,7 +79,7 @@ int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ 	int error;
+ 
+ 	if (!inode->i_op->fileattr_get)
+-		return -ENOIOCTLCMD;
++		return -EOPNOTSUPP;
+ 
+ 	error = security_inode_file_getattr(dentry, fa);
+ 	if (error)
+@@ -239,7 +239,7 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	int err;
+ 
+ 	if (!inode->i_op->fileattr_set)
+-		return -ENOIOCTLCMD;
++		return -EOPNOTSUPP;
+ 
+ 	if (!inode_owner_or_capable(idmap, inode))
+ 		return -EPERM;
+@@ -281,6 +281,8 @@ int ioctl_getflags(struct file *file, unsigned int __user *argp)
+ 	int err;
+ 
+ 	err = vfs_fileattr_get(file->f_path.dentry, &fa);
++	if (err == -EOPNOTSUPP)
++		err = -ENOIOCTLCMD;
+ 	if (!err)
+ 		err = put_user(fa.flags, argp);
+ 	return err;
+@@ -302,6 +304,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+ 			fileattr_fill_flags(&fa, flags);
+ 			err = vfs_fileattr_set(idmap, dentry, &fa);
+ 			mnt_drop_write_file(file);
++			if (err == -EOPNOTSUPP)
++				err = -ENOIOCTLCMD;
+ 		}
+ 	}
+ 	return err;
+@@ -314,6 +318,8 @@ int ioctl_fsgetxattr(struct file *file, void __user *argp)
+ 	int err;
+ 
+ 	err = vfs_fileattr_get(file->f_path.dentry, &fa);
++	if (err == -EOPNOTSUPP)
++		err = -ENOIOCTLCMD;
+ 	if (!err)
+ 		err = copy_fsxattr_to_user(&fa, argp);
+ 
+@@ -334,6 +340,8 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
+ 		if (!err) {
+ 			err = vfs_fileattr_set(idmap, dentry, &fa);
+ 			mnt_drop_write_file(file);
++			if (err == -EOPNOTSUPP)
++				err = -ENOIOCTLCMD;
+ 		}
+ 	}
+ 	return err;
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 6f0e15f86c21..096d44712bb1 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -721,7 +721,7 @@ int ovl_real_fileattr_get(const struct path *realpath, struct fileattr *fa)
+ 		return err;
+ 
+ 	err = vfs_fileattr_get(realpath->dentry, fa);
+-	if (err == -ENOIOCTLCMD)
++	if (err == -EOPNOTSUPP)
+ 		err = -ENOTTY;
+ 	return err;
+ }
+
+-- 
+2.47.2
 
 
-> E2fsprogs and xfsprogs now ship with a udev rule which disables
-> automount by default.  If applied, mounting a maliciously fuzzed file
-> system requires root privileges.
->
-> Of course, distributions are free to change the default, just as they
-> are free to ship a system where root has a default password of
-> "password" or /bin/bash is setuid root.  It would be insane, but
-> product managers often do insane things in the name of user
-> convenience.  In those cases, I would invite that security researchers
-> file CVE's with the *product* as opposed to the upstream open source
-> project.
->
-> If companies want to assign me a chunk of headcount (say, 4 or 5 L4's
-> and L5's for 3 years working on thing but ext4 hardening, plus a
-> full-time L5 after that working exclusively to maintain the ext4
-> hardening featuers and fix random syzbot complaints), I know what I
-> could assign them to change the security assumptions that we have for
-> ext4.  It might require a
-> CONFIG_EXT4_SECURITY_IS_MORE_IMPORTANT_THAN_PERFORMANCE parameter to
-> enable all of the hardening features, but it is doable.
+-- 
+- Andrey
 
-Question of resources for fixing is orthogonal to classification of an
-issue (if it's a bug or not, if it's a security issue or not).
-
-
-> But they aren't, so I consider it to be *obivous* that the industry
-> doesn't think is important --- just as Orange Book A1 certified OS's
-> was a total, complete, and abject commercial failure.  And note, we
-> don't assign CVE's based on the fact that se all OS's violate the
-> security trust model of Orange Book's A1.  :-)
->
->                                                 - Ted
 
