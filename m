@@ -1,185 +1,208 @@
-Return-Path: <linux-kernel+bounces-643716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A8CAB30CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BD2AB3016
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4481890FA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041763A3697
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B197D2571D5;
-	Mon, 12 May 2025 07:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64463255F4D;
+	Mon, 12 May 2025 06:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h23yl+ZA"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEVlwO9f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525FC256C73;
-	Mon, 12 May 2025 07:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEBF20326;
+	Mon, 12 May 2025 06:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747036386; cv=none; b=hZCoAH2vmn5aYoDAeoWVjobjdj5mQysEMtOGCplSfWrbQVzFuuTaDB0WXoeRfe4leDrtt4BbI7OTleXZnEnI7tpPvQq6l6Djd6WWlrWwcPb4fwpfgrO+3ryUvhbNdJXAdTcjjZ0QCmKq4VKhaviwRfBtG9gMGuDI9y64zj2rHKk=
+	t=1747032839; cv=none; b=DWJDaVXYYwz3Qq1/RJuGVLwhJZYh2drZjgVHSKMa3AVrKrow7VllF2QRHC4GRqMlIc48tbZ3+poc5RMxXXAs3n6YjGO5xuoJPoLbHz41Hm3FDZXcIGCIMapyG6hg+KRvp/l46asggfdyt6HUzCQobcL/h/NzgDxzOBgqc5P5GXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747036386; c=relaxed/simple;
-	bh=isnbYV8jTH6SMpXcosxx1uwezjwExTjsCQIyI0kAwLo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n+IGU0mctGOscAnEFYlDTFNU854WVMDtLXVCqY4bhgfpo0781oiX7LV3HVJobVGJTuEcFVHKbeI9lfLYaYudpSVWMzHQB5QlhzKCEfbS17lL7LCwexlnuS77V4/90jEGO1AP4SaIHtu7vpOUj4axOHrHJPOmAczUP7oyOyCqcMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h23yl+ZA; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a0bd7f4cd5so3475738f8f.0;
-        Mon, 12 May 2025 00:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747036382; x=1747641182; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zPk+W/jcKj4KahuD3Ov6QRv0TumK9Na5GoaM8Yh7J6k=;
-        b=h23yl+ZAcu2jaUvdupzmj+1h3Sf+aUuDIwvMpZiiZNlKOQqQhFk2BxselezgLX56/C
-         iSer2FigSc1G2/PTG5zGbzToCc0ANPtqHECm1faRauDPmKtJYuY6coYzypWJcjVLuraN
-         xfBt7RlyZG9n032Qv3Jpwynrjuu3QOyJwwGfNAb2MzixfgeeiDHDdh14Ud2rxL1Hzsuj
-         o2k+Duz4sTFJM3CmW/usw01Ig7sChSYfMK7L2KExmQ4yEfLuvRcwuenAM5kDn/EsqW7j
-         sZU2XpvCSDo/rnPZqSk8XXZEipDL60FZAkFLsn6YcrtcpigNmbC4y1B8WYdYBLAEHXgd
-         mTsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747036382; x=1747641182;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zPk+W/jcKj4KahuD3Ov6QRv0TumK9Na5GoaM8Yh7J6k=;
-        b=kMVdP49lxvVRGOJ3Mn5Wj04bI1PKNaFLvl4tyOiaatMM3rQ//pe83pTd99XdvbT7zd
-         4oj3wlxUzn714m3SC6sNYYFwyUv6OO3iqWU3j/QTFP7QIa2HkVPzZa9OrJxBE3IWZojk
-         +VgJpqw0LhVYHMdN5jx+bo57f91iSl9v5I4dUcJFA2mETzgaTqdvmSoyn6CSn/U0F+TC
-         6OXqURu9MBvQsUVzY/0k+n2kkbLK4Whqd3FPLglNTgMo2HRuZESzbIXFW6F69ySbYDO5
-         qNgZrgTsBn1s+i3RNZBtfDEFAcrsdaXlQma9/uDskUGQp1dzGhi5mvYZvmNPHbLTeMv6
-         xaKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQoAqve/MAltGwlguTCquV6nnyWGVlAJ8b7KPXtStPhQaPrllhYv7WMDpoAHCrOH9S5kvksFtCcPIh@vger.kernel.org, AJvYcCWSQ146PDzCqzddIsIAEr8asl6NfCUobYCl23XfBx2o77wKfQd7KjFcfWCKLpWL3+Rug+Lb66oJiMIM@vger.kernel.org, AJvYcCWSYxNCAMTZM/VhjENNbU1NQfCVuSExDAyefDIay5yf5z6P8PdhU1lkfRYYH15DKT7kxUETZebI4q2NHnTr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwunfbCEg6lruyzrK3X4ugTLuir4QwSjAbS2h4+yk8EyNSo5w8I
-	62lPFY59Iv9LkQ0G9CVJ83dlw7BazJ6FBHrIoHPM9FStHtgW6Thv
-X-Gm-Gg: ASbGnctx2drIOS7xVhcQMypFyb4ylD9IsVDTL9nAzCrKD0LOUa0wozDvWaNStS+802b
-	zIvFucPG2apn1EXwOqEvTZlSfCaiTVaKSyHCZphIc0BUPugmqsCEQSRq+sxaw4GzP6Ow6UezBCM
-	1BCxDuJ0snsPIaZW7o8CCxb6pc5cp9AHcwTauR6zDJsl2pCCHvCunsc5R7VCdScAoYqrhhHvxur
-	mxtLOhfikExsuYs+X9bPlYHVWvkm9jpx/zTlL3+xl/rnkTO2NS6gku+Hs5tqwpXe4fD3j5Bknht
-	YxbRjWfQ9mdxiFRkU98iZPTcP7QE76tTv4aEKfgLaZWYLLT/D5r4RLikncCgedYcWI1sSuuL/iJ
-	5VUooMf39fW0nNmZSQk+RzNnOqw==
-X-Google-Smtp-Source: AGHT+IGOQ+EFDLGkYtWQu+16fjBJc63uVRNsF6+99EfyeVrzgyeYWZISjDFaq+Wr5JblZR6ChVMnXg==
-X-Received: by 2002:a05:6000:186f:b0:39f:fd4:aec7 with SMTP id ffacd0b85a97d-3a1f643a593mr9745003f8f.7.1747036382394;
-        Mon, 12 May 2025 00:53:02 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2cf1bsm11686801f8f.72.2025.05.12.00.53.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 00:53:01 -0700 (PDT)
-Message-ID: <cb2eabee32d1cb6128a7ef15aae749806ca19541.camel@gmail.com>
-Subject: Re: [PATCH v5 02/10] iio: backend: add support for data alignment
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
-	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 12 May 2025 07:53:27 +0100
-In-Reply-To: <20250509105019.8887-3-antoniu.miclaus@analog.com>
-References: <20250509105019.8887-1-antoniu.miclaus@analog.com>
-	 <20250509105019.8887-3-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1747032839; c=relaxed/simple;
+	bh=mh+sdmR3x5Rbvl556oXQ+b9KXmClWHYBqf3INe3CBIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sw6yYS6bNnKRNrrBCn0h8Kx6Prgyq/vVIgj/cdR8hOOLqbvZs3PZ/EixZLjih+wcahH7DypXKyOM6uOTs6gS3ga6gXpkoawRT7BoWiJrnp0Vwov2wvatamfSUAYnlwksuCMyg4991nB3ImOSVjjkW3LmRuOYdDZIjM9Y/i9INR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEVlwO9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054A0C4CEE7;
+	Mon, 12 May 2025 06:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747032839;
+	bh=mh+sdmR3x5Rbvl556oXQ+b9KXmClWHYBqf3INe3CBIM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TEVlwO9fPqb4KYxcSKok/3WWhh6Roy+HMyg2gazSODgwSIPiMZt89NLxTz9jeLXSw
+	 7iy2n9cSfsXdDvGTqj1lacaUwnNaUGV2Q+aAbn1QpyvW0mWL/uuyoKaa04ypQYIEac
+	 t1OlcqyETToELo9ndHjwmq1NBU/Tl9yVgMXaNqtJSNTRL4OrpV3RZWoMAtUMNtqMbg
+	 /NXw89QfB3vH+axLTuqRCdJonifYLpwj0mkJ1OBUkGeAide2Q5V4hJ9gLYpOlS1Mkh
+	 EEVBVT4LzTUfVMhfmpMIPy2101HzN1uJDj4o8xDLIi66NPmvA/DbF1a14isvkK2DlB
+	 xxh1eLdPqs1vw==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5feb22e7d84so501423a12.3;
+        Sun, 11 May 2025 23:53:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9B23gPbWkwAetI1fD0PKhKLUr1WnfVxOuxtasV2l2KlmY/c7lk8IdyLk7llKegGPJrEc=@vger.kernel.org, AJvYcCVWQPM3uKvWXbFtAPFpbXC8Z44Tk704VZkIcimMbeJk2kZVwAV1k8ImcESjrJqYmyO0pBUyFhPQYnWEtPeBkKCV@vger.kernel.org, AJvYcCWYd8gQPPs4ZSJcguMxvQ0RBpNF7QycdVY0hoke3kCByjEuKTnDA58jSuhmytgTfcohK/SdJqKek8fmOI1o@vger.kernel.org
+X-Gm-Message-State: AOJu0YytDFIiSKxoTBc0y7kJakJGnXgrOLgJl8YnBzA3zgBF4lMPH2cW
+	InxegtOT8fUNvptq8HUFpgyRNkdgDElQPjVx71pI55YNBTM7avPVn29NutA2xdD+bHrboaK7veZ
+	t55XvKvNrcVflduoVOqVD45YWL+I=
+X-Google-Smtp-Source: AGHT+IGYRY0B10vegQmafQSE8DUSAPwKI0y7cXH+07quA4LOc9ROMYRJ/NbsjsQKA9jnOXY8pQ4n1aGH9LYo+ms3Ukc=
+X-Received: by 2002:a05:6402:239c:b0:5fc:a51c:149 with SMTP id
+ 4fb4d7f45d1cf-5fca51c13acmr7690374a12.15.1747032837537; Sun, 11 May 2025
+ 23:53:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250427064535.242404-1-maobibo@loongson.cn>
+In-Reply-To: <20250427064535.242404-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 12 May 2025 14:53:48 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7XmHcvea-8NvgnSzfg6dVt5wATyDKmDYp31ThYZa+Fgw@mail.gmail.com>
+X-Gm-Features: AX0GCFuW_0esH8fIIs24kGTOZ9DFkLfLl9d7hy6t1OtIT5_MwJ3ZMPQwKcpHYSM
+Message-ID: <CAAhV-H7XmHcvea-8NvgnSzfg6dVt5wATyDKmDYp31ThYZa+Fgw@mail.gmail.com>
+Subject: Re: [PATCH v11 0/5] KVM: selftests: Add LoongArch support
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-05-09 at 13:50 +0300, Antoniu Miclaus wrote:
-> Add backend support for staring the capture synchronization.
-> When activated, it initates a proccess that aligns the sample's most
-> significant bit (MSB) based solely on the captured data, without
-> considering any other external signals.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Hi, Bibo,
+
+On Sun, Apr 27, 2025 at 2:45=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
+>
+> This patchset adds KVM selftests for LoongArch system, currently only
+> some common test cases are supported and pass to run. These test cases
+> are listed as following:
+>     coalesced_io_test
+>     demand_paging_test
+>     dirty_log_perf_test
+>     dirty_log_test
+>     guest_print_test
+>     hardware_disable_test
+>     kvm_binary_stats_test
+>     kvm_create_max_vcpus
+>     kvm_page_table_test
+>     memslot_modification_stress_test
+>     memslot_perf_test
+>     set_memory_region_test
+I have applied this series [1] but with some modifications (see
+comments in other patches). You can test it to see if everything is
+OK.
+
+And if it's OK, it is better to fetch the patches from [1] and then send V1=
+2.
+
+[1] https://github.com/chenhuacai/linux/commits/loongarch-next
+
+
+
+Huacai
+
+>
 > ---
-
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-
-> changes in v5:
-> =C2=A0- add description for data_align function
-> =C2=A0- add suffix for timeout parameter.
-> =C2=A0drivers/iio/industrialio-backend.c | 23 +++++++++++++++++++++++
-> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 3 +++
-> =C2=A02 files changed, 26 insertions(+)
->=20
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
-o-
-> backend.c
-> index 038c9e1e2857..545923310f1f 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -796,6 +796,29 @@ int iio_backend_filter_type_set(struct iio_backend *=
-back,
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_filter_type_set, "IIO_BACKEND");
-> =C2=A0
-> +/**
-> + * iio_backend_data_align - Perform the data alignment process.
-> + * @back: Backend device
-> + * @timeout_us: Timeout value in us.
-> + *
-> + * When activated, it initates a proccess that aligns the sample's most
-> + * significant bit (MSB) based solely on the captured data, without
-> + * considering any other external signals.
-> + *
-> + * The timeout_us value must be greater than 0.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_interface_data_align(struct iio_backend *back, u32 timeo=
-ut_us)
-> +{
-> +	if (!timeout_us)
-> +		return -EINVAL;
-> +
-> +	return iio_backend_op_call(back, interface_data_align, timeout_us);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_data_align, "IIO_BACKEND");
-> +
-> =C2=A0/**
-> =C2=A0 * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate)=
- mode
-> =C2=A0 * @back: Backend device
-> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-> index 5526800f5d4a..a971a83121b7 100644
-> --- a/include/linux/iio/backend.h
-> +++ b/include/linux/iio/backend.h
-> @@ -109,6 +109,7 @@ enum iio_backend_filter_type {
-> =C2=A0 * @debugfs_print_chan_status: Print channel status into a buffer.
-> =C2=A0 * @debugfs_reg_access: Read or write register value of backend.
-> =C2=A0 * @filter_type_set: Set filter type.
-> + * @interface_data_align: Perform the data alignment process.
-> =C2=A0 * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
-> =C2=A0 * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
-> =C2=A0 * @data_stream_enable: Enable data stream.
-> @@ -161,6 +162,7 @@ struct iio_backend_ops {
-> =C2=A0				=C2=A0 unsigned int writeval, unsigned int *readval);
-> =C2=A0	int (*filter_type_set)(struct iio_backend *back,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_filter_typ=
-e type);
-> +	int (*interface_data_align)(struct iio_backend *back, u32 timeout_us);
-> =C2=A0	int (*ddr_enable)(struct iio_backend *back);
-> =C2=A0	int (*ddr_disable)(struct iio_backend *back);
-> =C2=A0	int (*data_stream_enable)(struct iio_backend *back);
-> @@ -203,6 +205,7 @@ int devm_iio_backend_request_buffer(struct device *de=
-v,
-> =C2=A0				=C2=A0=C2=A0=C2=A0 struct iio_dev *indio_dev);
-> =C2=A0int iio_backend_filter_type_set(struct iio_backend *back,
-> =C2=A0				enum iio_backend_filter_type type);
-> +int iio_backend_interface_data_align(struct iio_backend *back, u32 timeo=
-ut_us);
-> =C2=A0int iio_backend_ddr_enable(struct iio_backend *back);
-> =C2=A0int iio_backend_ddr_disable(struct iio_backend *back);
-> =C2=A0int iio_backend_data_stream_enable(struct iio_backend *back);
-
+> Changes in v11:
+> 1. Fix a typo issue in notes of patch 2, it is kvm_util_arch.h rather tha=
+n
+>    kvm_util_base.h
+>
+> Changes in v10:
+> 1. Add PS_64K and remove PS_8K in file include/loongarch/processor.h
+> 2. Fix a typo issue in file lib/loongarch/processor.c
+> 3. Update file MAINTAINERS about LoongArch KVM selftests
+>
+> Changes in v9:
+> 1. Add vm mode VM_MODE_P47V47_16K, LoongArch VM uses this mode by
+>    default, rather than VM_MODE_P36V47_16K.
+> 2. Refresh some spelling issues in changelog.
+>
+> Changes in v8:
+> 1. Porting patch based on the latest version.
+> 2. For macro PC_OFFSET_EXREGS, offsetof() method is used for C header fil=
+e,
+>    still hardcoded definition for assemble language.
+>
+> Changes in v7:
+> 1. Refine code to add LoongArch support in test case
+> set_memory_region_test.
+>
+> Changes in v6:
+> 1. Refresh the patch based on latest kernel 6.8-rc1, add LoongArch
+> support about testcase set_memory_region_test.
+> 2. Add hardware_disable_test test case.
+> 3. Drop modification about macro DEFAULT_GUEST_TEST_MEM, it is problem
+> of LoongArch binutils, this issue is raised to LoongArch binutils owners.
+>
+> Changes in v5:
+> 1. In LoongArch kvm self tests, the DEFAULT_GUEST_TEST_MEM could be
+> 0x130000000, it is different from the default value in memstress.h.
+> So we Move the definition of DEFAULT_GUEST_TEST_MEM into LoongArch
+> ucall.h, and add 'ifndef' condition for DEFAULT_GUEST_TEST_MEM
+> in memstress.h.
+>
+> Changes in v4:
+> 1. Remove the based-on flag, as the LoongArch KVM patch series
+> have been accepted by Linux kernel, so this can be applied directly
+> in kernel.
+>
+> Changes in v3:
+> 1. Improve implementation of LoongArch VM page walk.
+> 2. Add exception handler for LoongArch.
+> 3. Add dirty_log_test, dirty_log_perf_test, guest_print_test
+> test cases for LoongArch.
+> 4. Add __ASSEMBLER__ macro to distinguish asm file and c file.
+> 5. Move ucall_arch_do_ucall to the header file and make it as
+> static inline to avoid function calls.
+> 6. Change the DEFAULT_GUEST_TEST_MEM base addr for LoongArch.
+>
+> Changes in v2:
+> 1. We should use ".balign 4096" to align the assemble code with 4K in
+> exception.S instead of "align 12".
+> 2. LoongArch only supports 3 or 4 levels page tables, so we remove the
+> hanlders for 2-levels page table.
+> 3. Remove the DEFAULT_LOONGARCH_GUEST_STACK_VADDR_MIN and use the common
+> DEFAULT_GUEST_STACK_VADDR_MIN to allocate stack memory in guest.
+> 4. Reorganize the test cases supported by LoongArch.
+> 5. Fix some code comments.
+> 6. Add kvm_binary_stats_test test case into LoongArch KVM selftests.
+> ---
+> Bibo Mao (5):
+>   KVM: selftests: Add VM_MODE_P47V47_16K VM mode
+>   KVM: selftests: Add KVM selftests header files for LoongArch
+>   KVM: selftests: Add core KVM selftests support for LoongArch
+>   KVM: selftests: Add ucall test support for LoongArch
+>   KVM: selftests: Add test cases for LoongArch
+>
+>  MAINTAINERS                                   |   2 +
+>  tools/testing/selftests/kvm/Makefile          |   2 +-
+>  tools/testing/selftests/kvm/Makefile.kvm      |  18 +
+>  .../testing/selftests/kvm/include/kvm_util.h  |   6 +
+>  .../kvm/include/loongarch/kvm_util_arch.h     |   7 +
+>  .../kvm/include/loongarch/processor.h         | 141 ++++++++
+>  .../selftests/kvm/include/loongarch/ucall.h   |  20 +
+>  tools/testing/selftests/kvm/lib/kvm_util.c    |   3 +
+>  .../selftests/kvm/lib/loongarch/exception.S   |  59 +++
+>  .../selftests/kvm/lib/loongarch/processor.c   | 342 ++++++++++++++++++
+>  .../selftests/kvm/lib/loongarch/ucall.c       |  38 ++
+>  .../selftests/kvm/set_memory_region_test.c    |   2 +-
+>  12 files changed, 638 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/include/loongarch/kvm_uti=
+l_arch.h
+>  create mode 100644 tools/testing/selftests/kvm/include/loongarch/process=
+or.h
+>  create mode 100644 tools/testing/selftests/kvm/include/loongarch/ucall.h
+>  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/exception.S
+>  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/processor.c
+>  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/ucall.c
+>
+>
+> base-commit: 5bc1018675ec28a8a60d83b378d8c3991faa5a27
+> --
+> 2.39.3
+>
 
