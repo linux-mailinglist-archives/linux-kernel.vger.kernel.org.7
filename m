@@ -1,401 +1,275 @@
-Return-Path: <linux-kernel+bounces-643901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C26AB33D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:40:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF10DAB33E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB27A172A9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:40:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D5E3A45A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A80F25CC65;
-	Mon, 12 May 2025 09:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF19825F7BD;
+	Mon, 12 May 2025 09:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FBtv97dg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Yqs7n+gD";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lBGIvCrj"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC342571C1;
-	Mon, 12 May 2025 09:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747042789; cv=none; b=sdzb/lDInuF43KO3FySTClFQhkbf7PttrWEAbNkx6a1UYQuSxPmwsKB82/RnnTOv9zhMwMYBF14Wt8DUAm29ws0jV+Pfk/5qV3HwArmHfO/gf7zwpNXqbace3V5GzkeCgBZ8BLPot6CHHZtJiWKSc8zoUn4ADgr/4Smjb6VXvb4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747042789; c=relaxed/simple;
-	bh=eEsJfpXhhFEznIeL9s5dBzJb2o4yce1yvI0AwzyhvH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YdTsrZIwW3faK35veyiv0V9qiQ32EJjmchb9aJjQhgp/TMpuoAsWdaT8ST246wRX6fDN3PyeB5z4/NsRHNA+kx7+AH758Xp6rbTFAM8R47wuDZLAuk9uvB93J/oYXbFMAM2aTQqq7b5Ga6dkmtvZGhSvS4ClNDSL+zr9c2ATQQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FBtv97dg; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747042787; x=1778578787;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eEsJfpXhhFEznIeL9s5dBzJb2o4yce1yvI0AwzyhvH4=;
-  b=FBtv97dgPnubQ9Ew5lterl++4ucVoPY6A89KTwQHc8kOpOZwr1mH1ogM
-   S3T0QiMpEMI7h6IGrEG75Umx9JMvrMhAh/7NLsWXleG505q9u+4kLuQl0
-   RWEv7EzYlBj75s21aabroH79Llw4D+A2vgiKhEuJXtxK1ceNjCx3PTxbP
-   Cqv1i1RW8XB7P0S6ajW4twB0iUmToNgHxHoxYMfr1gP4eVwwIjuJNjvyp
-   PrXaxBY6n95CU2nY8FVIyNcZWJ73DQErt8u/GNqb9qSMLw6ioDfkf7hqN
-   intoy75dGdmrLQyTKsK50LenntK9gSOOLG5aBwrAFNiSwemhfYAa0fgQR
-   w==;
-X-CSE-ConnectionGUID: SePu6qAUTwOroCJYjeR9+w==
-X-CSE-MsgGUID: jk0v7fcFRXG+6im9io6sPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="36457524"
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="36457524"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 02:39:46 -0700
-X-CSE-ConnectionGUID: nJwKMXrLTJq9EhbVJQU5/A==
-X-CSE-MsgGUID: Rfq6piiaQ2qC4mtGzhMEZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="142214289"
-Received: from bvivekan-mobl1.gar.corp.intel.com (HELO localhost.localdomain) ([10.245.245.139])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 02:39:44 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/3] perf intel-pt: Fix PEBS-via-PT data_src
-Date: Mon, 12 May 2025 12:39:30 +0300
-Message-ID: <20250512093932.79854-2-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250512093932.79854-1-adrian.hunter@intel.com>
-References: <20250512093932.79854-1-adrian.hunter@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDD525E45B;
+	Mon, 12 May 2025 09:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747042822; cv=fail; b=DG0z/pT7Dk1PyVUPO6A5JHQv7gnKGu0mZsqgXasWH6FNqUk08h88LRv3Xu4uEdgSiAQbTbA5yQmWTrtr1so5yBcy/gMPx/3ZC6FDlJs2YB3AQX02E7GJEFy0+znchkMQ4aWxZ6vIC2q1h4DH3zo/peMoyuFSDUclZtNgIeaG3yk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747042822; c=relaxed/simple;
+	bh=jZUWR1Ws08xFtwQ+GOdO0Qazgm0OGpjGsoh01DcX2hg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=al4L3QpMQEo0Lom0l6A0b4NRO2J19Ph5/3j7dTKSXzcWfe30PYzfdeYuZcP9+M6993H+dwiDQMZ2ijt0fi2MHwVM4Va57NynC4ej0Cq/KnnAcTT/0JClpCdBQI2PNo/U24z+1RiiN9wj/B0U1c3lwK2eHaCvwbj+NcZODiHcOMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Yqs7n+gD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lBGIvCrj; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C7fqVC017479;
+	Mon, 12 May 2025 09:39:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=mFP+yRzKuZ0vbYh7xZCPnqAdlKVWOOBhBhzJVxmT9dA=; b=
+	Yqs7n+gD2GJqRxxRp3YOKDv23/wdAQdnq/jMSrrfU1bgHlPbjA7VvW7B+0nljh05
+	zerFWZEvcdt2qnIIhlKKVqRjfBdU7Qc7SqQpkZrOVPZuWM4vNddrDRbwzB3SIpq2
+	2a5hXzaUj8BynJwLBS8ktpyfv2imDSyo8wTfEoVN4yVTyz6V+25eMZ95kPduZEOC
+	rJaY8FPOavb9Id8DgU/EESNMQWift/oGxvJ9cSl3gXAs9wsjlAlB1ff/r/tywGND
+	0UctGIEg1Q6OPzhQbop66Z1e3zbMW/p/WdTfTgV5ZUz/vMemlW3jLXedkJeIi3km
+	1qpeELkEp/wvGsXMVzF2nQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46j11c22qq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 May 2025 09:39:47 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54C8KvHl036207;
+	Mon, 12 May 2025 09:39:46 GMT
+Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazlp17012051.outbound.protection.outlook.com [40.93.20.51])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46hw875nvf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 May 2025 09:39:46 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tf+R1E1zQHcYguKA26mNcWjmIhD52btBQOyg6AgZ/wGr8Vp/uj4We7rQSUktbFf0vOhm4UZLpmLXAZrhAjskvOIUxGyknGflGxQNNLyiS++wS3P2HUjZSTLdHa6TXAwHETuSZByBj6AnekfnBDCslSrTUPeTqBi3Co5CROJGeO/ZKb5zaTseRCuWyV1i+pI2T4MPGbQpOhOxF/250/X6HBq84THoWeneJIQ3sMkKdsNtXmyDrjdJMIdrCFqB7OPLhruSNWgOu5z+TEdeN/n42ihx0PVRy23lykCx+qxfRAsRQ4snNlz7V/kWADeirTmPJ3+i+zcWhxDTuRJSzy/SQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mFP+yRzKuZ0vbYh7xZCPnqAdlKVWOOBhBhzJVxmT9dA=;
+ b=ZkDaU0RSoV1grHP7AAQvVJP1OzXRpIGG0O3tuDvfpzHjEn2AN8oweFXMWgEACI3QNM8C4OTrZTu/uyRSNVJ8zd3dJONnVNHvw/sr5Gx1/AIVC8eka+0aB5TgAd3wk0FCfJ1TSo+mYkPKto3Q5akaMvAGfFPWWVAiaK/vxW80Pxdm2+WNl4JEQe1obbuHM/La3gw42+mhaIqD0zG6wrYxIsvYFWdopSxI1iPl8AZA2WNS6yTFIEEGTNcLpW0rsgfE5rqH2fzz7l8uXkfE/FWny9pP1CH4qbJwgEhIOcTfxScHRYCDKexJqe5HjddgL5kfi9+uwYE1ovWrL/tZQoSWsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mFP+yRzKuZ0vbYh7xZCPnqAdlKVWOOBhBhzJVxmT9dA=;
+ b=lBGIvCrjmaGZMY4mKRWvHR7EvQvp4a7CRyWLjyasOibPbBe8z3Q9LfxuvhbUvoSBEiIvpGwoxX+1QdcxVOC2lrX5P8bNutLJv1A0f35FZE+IwGjAiQ1mYg8bCeRgdCukQj2ltdSmyALWoRafGtwgfHNA1Ajij8//VxA/4Q1ad0E=
+Received: from BLAPR10MB5315.namprd10.prod.outlook.com (2603:10b6:208:324::8)
+ by MN2PR10MB4333.namprd10.prod.outlook.com (2603:10b6:208:199::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Mon, 12 May
+ 2025 09:39:44 +0000
+Received: from BLAPR10MB5315.namprd10.prod.outlook.com
+ ([fe80::7056:2e10:874:f3aa]) by BLAPR10MB5315.namprd10.prod.outlook.com
+ ([fe80::7056:2e10:874:f3aa%5]) with mapi id 15.20.8699.024; Mon, 12 May 2025
+ 09:39:44 +0000
+Message-ID: <323ecc55-d829-4c74-8cb6-7b3a77dd3351@oracle.com>
+Date: Mon, 12 May 2025 15:09:30 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v2 3/4] arch: hyperv: Get/set SynIC
+ synth.registers via paravisor
+To: Roman Kisel <romank@linux.microsoft.com>, arnd@arndb.de, bp@alien8.de,
+        catalin.marinas@arm.com, corbet@lwn.net, dave.hansen@linux.intel.com,
+        decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+        kys@microsoft.com, mingo@redhat.com, tglx@linutronix.de,
+        wei.liu@kernel.org, will@kernel.org, x86@kernel.org,
+        linux-hyperv@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arch@vger.kernel.org
+Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+        sunilmut@microsoft.com
+References: <20250511230758.160674-1-romank@linux.microsoft.com>
+ <20250511230758.160674-4-romank@linux.microsoft.com>
+Content-Language: en-US
+From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+In-Reply-To: <20250511230758.160674-4-romank@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYAPR01CA0021.jpnprd01.prod.outlook.com (2603:1096:404::33)
+ To DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5315:EE_|MN2PR10MB4333:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67550d8f-02b0-48db-3986-08dd9138ec8f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z1dQakR4ZEMwakJFNmU4NDBDS3J1cHpLbytxTERMcUNkUkUySjR6TDRlOVFw?=
+ =?utf-8?B?czBjVVE3aVVPMGhPUFZYUWtlNlZDdjRQY3U0bHFPd3VMSHZiZEJwaVIwaDlH?=
+ =?utf-8?B?NjZ3eFVta21ueEQrV0dqSmZXWG1NK0Y3bXN0NHEyc29yRUhIQ09rYzFWUUJ4?=
+ =?utf-8?B?dk5WcnVXR0NUSUlGaUFmQlhsc0dub0M5NVZRSWtUMngzOVJBbXZYSlFyN0FV?=
+ =?utf-8?B?YmlQREV5bWZ1UXIvVjVFazZENlczTWd2MmREdG5sbVVLTUJhcDNXK1h1THJB?=
+ =?utf-8?B?UGdIN2ZLeUEzYjF6Y045WTl3VmM3Vi9KT2JRUDhQL2hxNjJ2QTh1dWR1a25m?=
+ =?utf-8?B?RXZtMm5aSTI4anMvQ3paN3FtdHlRZWV3RWhXU0J0aUNFNmJRSDVteG0xcDI0?=
+ =?utf-8?B?TU9BOXZEYUk1Nm1qbWNoUkN1ZWF2Ylc2aERGL2tNdENDQzE5Zk1pSmpDZ2NT?=
+ =?utf-8?B?aHZZOXY0WGxzR1pDckorV2RUTlhhYVdFejNUMkZrTXVwbklXN29jTlBEbTFE?=
+ =?utf-8?B?UDg4d3BFa0E0VU9OTXZGcGloa21TR3VkakNKSDI2Vk9TNXAzOGZHUVUvWkhF?=
+ =?utf-8?B?anlSNTRmelJydHVaOUlobFFkOWRlejVOMnJpbTdablorZUFzVlIyMUZSL0Ez?=
+ =?utf-8?B?UWZJUTJzU2EwN1Z0ZFdITFBmZWxudWlqZHVrUjBpaTFpUFRGRFlDM0JUVTlG?=
+ =?utf-8?B?b2NPUGhBOHBIL1gwcllVaHdXUmI5cDdtVUNNbVZEaEpUcUVkNVNrVFN0Tmdq?=
+ =?utf-8?B?WWdlWW5YUG1oUUpxVkk5V2FjQzVVZk1Ib3F2NEI0aGtmWWtNQmowT0ExUFZ6?=
+ =?utf-8?B?VVRQUGpHWEJCbE5VbjY4YTgzRHZDcGNZK3dmaHczcU9lRnloQkJnc1VKdnZS?=
+ =?utf-8?B?L0UybWhmY3dYd0I0MVU0TnpmbUFpUSs0a0p2WVhaZkJvSkxLamRpQUQzaDRX?=
+ =?utf-8?B?a1htK0t5ck5TWk51QkZLMDFGaVFrYnNUMERNTDAvcHVyRk9MWE1CVkpNc1hJ?=
+ =?utf-8?B?WElRYnFERGJDTlpLQmluWVlVMVhlUytBUHpPRWlsVVNXWHJDRXR5MnRROHp4?=
+ =?utf-8?B?TFJ4WFZzZWVJdzVKMzdDcnRtSGRUbC9MQ25sV3FZbnd5QkVTdU9OUzA5Uzdi?=
+ =?utf-8?B?S1IwL3pvbVk5QUpuYkRzc3o1ZENxaVhMUDM0UWVjVVdCMFh0YWpZWUZFbFhn?=
+ =?utf-8?B?ZjlVWVMxeThwbCtWTkRxaVdBWU1ZQ2wzS0pOZXhNU1pvZE9aZGVjM2RhTm03?=
+ =?utf-8?B?WkYvZ3J1VVNPcGRWUXlwZHZQa0o1VmIxblJHby9zKzBxRy9yd0hxeHlOMVhk?=
+ =?utf-8?B?Ky9QNWFrNlZObWdRVm1UeW9MdDF2d0VHbVdKUFlNTm9rdTJDR3V2ZklCWHFu?=
+ =?utf-8?B?RkFieUJMbjUydS9yRHNaV01CQzAydVZ6TERPcks2blZwSmxVTXFEWjE4bG00?=
+ =?utf-8?B?T29NSkZTMGNsY3VPaUc3QUlRdGZUb0tvWkZaSUZpKyt5Zk16UytBSm53a3dV?=
+ =?utf-8?B?Y1hwNVU4MW5QdGJHc1hSUFp0UmNrTXBTMFpHcXBCT2xCVEJla1Y2emhwNkgr?=
+ =?utf-8?B?dDdYMjRxalR6NndmbG5ucXNIejE0akVLb0FKZlAvUjRpNkJ1c0s3b1dpL1ZI?=
+ =?utf-8?B?RmFMaDdWcDkydVRhcXpWTnpLNlh1NFBkQTBOdytwNUptLzkzc2ZyUWc2SHA4?=
+ =?utf-8?B?Y21kMzdzRGxsR1IycUMyR3Y4SEl6UEVSZTRJTkhtVWI1NjdINmdqd2hXcU1n?=
+ =?utf-8?B?eUZoa2lFU1J0ekRXMDI0eVBpWEF1MXRURkt2Q2liTFJ3UzcvaWRpYmRFeURi?=
+ =?utf-8?B?RW9USVdRWk8vWUdYLzJyZDB0dnlCZ0Q1dGhXcWJaRStIWkczL0hkVXFyM2tL?=
+ =?utf-8?B?S0R5NW45cDF2L0w0YkwyZDdXOGwrNmZUUmZQN0tJWTNwaVk2dlFsUHVNN3RC?=
+ =?utf-8?Q?pO6vPFcBxcYaNOtDtqohfnOGv2x1KSvx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5315.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MDc4OEt2QWRuTzczbXNoM2lOajErcmdhTHJ5aFJrc09WcUc2a1lEdmd6OFN1?=
+ =?utf-8?B?MnNEU1htUWdweEtydG5SRUZDMzVPeVc4cW1NZzdRdXgyYUFUYmR3a0ljQkVp?=
+ =?utf-8?B?VkZTbkJabXF1RFIrYnUyazViM1hQemJVdVYwZTFOWlJORHI0NzNaTTlJZ2VZ?=
+ =?utf-8?B?SXlndXRPK0EwMERwNTExcWZscThhOHpYZ2VtOXRwNkVMbUVNcGsvL0lFWlNj?=
+ =?utf-8?B?ZndtNzY3VFdnMjEzOEs5VkdoZUUrS3NwQi9WYmdXVytLa0xBMU9VWjVQOHdQ?=
+ =?utf-8?B?V0o0UWpXRFJVd2NiVzRTV0Zybkx4cG9lOFVWdUVvTWF5ZDYwL3l1Zy9UeWJZ?=
+ =?utf-8?B?RzNtZGI0UHJXQmFLb0svM21idnRKQWpuRTFDaUFWbmdXcUg2bDJpTzFOWDd2?=
+ =?utf-8?B?SU5SbDVsd3RpWVVsaXhiN1UyN2pidXROaW5UUUQzRXFzZGhhZXNZdnhOMUUz?=
+ =?utf-8?B?bjFsM3JjbGFLWUhXNkJNWjhtQk5GeGJoYXY0YTdFaHdtVVFORjdaZGtaWHpT?=
+ =?utf-8?B?UDREcjBEeTdtK0FZNXF0SVBsaFZkTzI0N3hEYkRUbHZOR3d4Y2xZY0VoU2Ro?=
+ =?utf-8?B?azhIc2F0Rk03ckZ3OUVQYTcwL3ltOFhHWHVmS2pCWjNNVW1FQzhrV1d1TzZx?=
+ =?utf-8?B?N25QK3M3TkxldVhCY2xIaG0vUHNnZE9hUWpLeVNpRHBWUHZEbnJiYnZHdnVM?=
+ =?utf-8?B?QzQzRWp3bExJWkovUUVUVUtlNGw0WHVwU2QxWU5CamliUDY2cmlpSE83N2hV?=
+ =?utf-8?B?Y0RXUHgxMjY1L1ZXRUl5VUNvUWdIOExIeUh4VEJxVVo5L1FJakpFMkc0eVRq?=
+ =?utf-8?B?YWRBSjlmQ3diLzhzQnNWekxMMFlhZ0dPZm5jcmJXWXNLOXBJRWRqRVM0RkNQ?=
+ =?utf-8?B?Q0MvRjlNbFgyRHFiamNreTRYOFRSMFhrVUtvWFFBT01SYXRzWkhaaFJvWjgz?=
+ =?utf-8?B?N0kwd3pRWnFoVWdZUVJ4ekNHa0RVRk9INWUzYlVpeVZrN3NKWVlKVmV6Vkl1?=
+ =?utf-8?B?NTBZcEttcmJCRjlPTHY3cmozY3ZJbTZqOWNwc0tuVjhTZ0tHVG4xTk5TcGNQ?=
+ =?utf-8?B?S0R3Z2JQL3lEN0VUYUN0NWhrYXpXS2p5b0JweHNvQ2Q2dzRaQnVUTDlXTVl3?=
+ =?utf-8?B?UlhFMUJFL0RpQmZjTXNncXBxMmY1VTV5TndGaVN6aHNoV1FKeHA3b3lIWi85?=
+ =?utf-8?B?UWtXTnVNaDJiN1V5M0NWREpZY2p3czIzYmxnQUNxQmltRGs5Nko4MTIzR1ho?=
+ =?utf-8?B?aG9lMTVER1pZVXBxWi83N0s1em9zdS9OTXZMVU1nNW1VVnhaVkphMUQ1Q0Vx?=
+ =?utf-8?B?bFFLcHNlazVpWktkOVNvbDhib1RqZTVOTTMwSzRlSDRsd1gwcEVpRDZHSitX?=
+ =?utf-8?B?dGZJVVhFQ0hzQmJkcVJVNERYUTVLTEJ2emJjRWhWd1VpWkJWQWZieDhsakI5?=
+ =?utf-8?B?ZFk1a3NvZVJlRXdHekhvRWJUZEREK1hjNkVBZDA2SCtlei9OdmFSUTFkc3Zq?=
+ =?utf-8?B?UzZMeWNhR2NNV09kNUZEWG5xVXY2dHdNa2FCVkZFUitFQXlneHF6M2xKbEdC?=
+ =?utf-8?B?Tmp5THk3SHJOdGZZeUJGLzdWUkNzZnFHQ2dqNE5mSWt4dVpka3MxalMvVThs?=
+ =?utf-8?B?a29tcjdOM2Y0MG1Nc0xiU2NIZzRIaHYyQ2FrSGo3cENMdWFDaWxtMGJ3Q2tt?=
+ =?utf-8?B?dnhVLzVoSzR0NTJrc1hsc1BIT1NxWVpENnQzV0Y3NzhDSWJZQ3djY3NjVnBJ?=
+ =?utf-8?B?cTJyWm9kT2MrYVplMG81ajNYK1BNR2FKM0wvSTdKUmVSMUREV2VENXUycVlJ?=
+ =?utf-8?B?U0cxV2IvUERSNi9ZZmo0RDZMbTBKT0tzeS9rS3BDazEvS1FRS0VmcnJHYUo1?=
+ =?utf-8?B?eHc4K1RPSERVZlFaVzZYazBHQ3F2cDIzSGNQa0dJTjNGWTlQZEo4ckxXWFVa?=
+ =?utf-8?B?c2srV2hJRlROM2JHYXdyTHNXSkVPS3pXLzA1OFlaeVdiS3NUZGFuVEJDVFF2?=
+ =?utf-8?B?NU1DUldXT25pcG4wdit2NTc0NitsQ2NxK3d0U3VTZmhhaFlQaVRabHFtZ2Fo?=
+ =?utf-8?B?U3dpQXR5UWJjSjhhci83ZEJ2R3FKbUlIMFlxaGNNc0s4N0tSemVaTlA1RzZP?=
+ =?utf-8?B?Ukk0aVh1ZEFjeVJqdG9mLy9GRHRBcnlINnhRc3YxT2NlditGMHFqdHpUNm5j?=
+ =?utf-8?B?UWc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	yyfOjFnqWY3GS8M5bKhjop8BEbXwa0sQ1MOQg2UmIh3p/d8ze3D/xysn8I1K/c7LaJIMEnAy2uKCYviO9X8GCfdkLUivHvz6mdO8F0yDMpOw1GeGn51b1Y8zmcXWVNm/lBrs4MBHszbFehPmZ0fq2ijulLsKMb9By0hJC6SijcetC+AOtFJhA22Th6z60LP0yfoHY/YAtb/X/RSuD6S92Tc8IQxw95zK86ILMT1Vvd6HmKQl0se9d35OC1SXgUE+sazE6gXyyZCccEtR/dmjNP1s+pa7Qin/q/+d65JzHtbTfmnAJU1boD5o/78RF7lynycHMSEVViBmJgMJbZPj2DdSQ0GQZoHN1II/EZYv3aZpP2RHmA9hJKN3cIwynx/D02X1tYZj3gnMD30kHgzHhz/B0555VgG+/au9i5T6ayPDg5EStxJqq2mdku9CBlxDYp3u4l2Xp4zFoHn2Gwok+7mIXmcpFt2VlfFu3NwGvnjtmu250pK4fh4BjRewxhl3b9QTdixcPsccz2R8bO7saIcXvlt/2Ritaum2NZoF2TnJFMCKgwus+3v2q3xb7BmNTjh6O61rX3xTQq6GTpuyCKN9kpC5CyIfLl5ddG3y/Nk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67550d8f-02b0-48db-3986-08dd9138ec8f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 09:39:44.3051
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1FgsbF7oW2gUfLzvjdMIAOI3OIvlgZMwHtSTrQFcnn/N19HMbvqSyd1r4htRf2uTpbSLJ9T9YfPJ02cvOeaNIQJwZbqmsMrDK5wPqKST5ww=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4333
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_03,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ spamscore=0 mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505120101
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDEwMSBTYWx0ZWRfX+9HrgRKe4bHv YBfpxHFK4gEq1rKAbfhc9c0Hs/kJvZ0tCGMHusK6uQuvt2vHd14LUDL2yaS5S5n+unsvmsPxC6c 2dPv1/mhZ5k52NCNTYiOpH3N+c5T/pKG0HkbHZK1gOarhJ6yMupMGfihvk3h9VbASmcLRSwD8Hp
+ 4DP3abfXx5wrOKg1LJQ4TGLXjlV+H3VPt8PVPt4FErpku4SPRmYL1qAR0SB/it2EnI4asjpOTv/ KQZgc6gdVFQIY/vRn7NkNawkCW8FVSvABbfn/ZWnsaKmwUTFBSjz3OZfF89HbS2iwQwwGxH8+Ts xraXbvxd4AlABr7tPATorzOnn35QHmk40bFob8uY48WzJ9Ab6w2NGql+vo018hX4lYtLWC691tO
+ rc+MDcfmjPktX582MV4rJjsnIgjwAHiMbTzEsAVcaPpyQb7DlxJbd+UvdzD27BQGx1bs+D4U
+X-Authority-Analysis: v=2.4 cv=YJ2fyQGx c=1 sm=1 tr=0 ts=6821c1e3 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=gRteV8TEMhhfuH8V2V4A:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:13186
+X-Proofpoint-GUID: cr7udnuJ2D_Amje5_ii1mY8oY16ye-7q
+X-Proofpoint-ORIG-GUID: cr7udnuJ2D_Amje5_ii1mY8oY16ye-7q
 
-The Fixes commit did not add support for decoding PEBS-via-PT data_src.
-Fix by adding support.
 
-PEBS-via-PT is a feature of some E-core processors, starting with
-processors based on Tremont microarchitecture. Because the kernel only
-supports Intel PT features that are on all processors, there is no support
-for PEBS-via-PT on hybrids.
 
-Currently that leaves processors based on Tremont, Gracemont and Crestmont,
-however there are no events on Tremont that produce data_src information,
-and for Gracemont and Crestmont there are only:
+On 12-05-2025 04:37, Roman Kisel wrote:
+> +/*
+> + * Not every paravisor supports getting SynIC registers, and
+> + * this function may fail. The caller has to make sure that this function
+> + * runs on the CPU of interest.
+> + */
 
-	mem-loads	event=0xd0,umask=0x5,ldlat=3
-	mem-stores	event=0xd0,umask=0x6
+Title and Intent: Clearly state the purpose of the function in the first 
+sentence
+/*
+  * Attempt to get the SynIC register value.
+  *
+  * Not all paravisors support reading SynIC registers, so this function
+  * may fail. The caller must ensure that it is executed on the target
+  * CPU.
+  *
+  * Returns: The SynIC register value or ~0ULL on failure.
+  * Sets err to -ENODEV if the provided register is not a valid SynIC
+  * MSR.
+  */
 
-Affected processors include Alder Lake N (Gracemont), Sierra Forest
-(Crestmont) and Grand Ridge (Crestmont).
+> +u64 hv_pv_get_synic_register(unsigned int reg, int *err)
+> +{
+> +	if (!hv_is_synic_msr(reg)) {
+> +		*err = -ENODEV;
+> +		return !0ULL;
+> +	}
+> +	return native_read_msr_safe(reg, err);
+> +}
+> +EXPORT_SYMBOL_GPL(hv_pv_get_synic_register);
+> +
+> +/*
+> + * Not every paravisor supports setting SynIC registers, and
+> + * this function may fail. The caller has to make sure that this function
+> + * runs on the CPU of interest.
+> + */
 
-Example:
+ditto.
 
- # perf record -d -e intel_pt/branch=0/ -e mem-loads/aux-output/pp uname
+> +int hv_pv_set_synic_register(unsigned int reg, u64 val)
+> +{
+> +	if (!hv_is_synic_msr(reg))
+> +		return -ENODEV;
+> +	return wrmsrl_safe(reg, val);
+> +}
+> +EXPORT_SYMBOL_GPL(hv_pv_set_synic_register);
 
- Before:
-
-  # perf.before script --itrace=o -Fdata_src
-            0 |OP No|LVL N/A|SNP N/A|TLB N/A|LCK No|BLK  N/A
-            0 |OP No|LVL N/A|SNP N/A|TLB N/A|LCK No|BLK  N/A
-
- After:
-
-  # perf script --itrace=o -Fdata_src
-  10268100142 |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK  N/A
-  10450100442 |OP LOAD|LVL L2 hit|SNP None|TLB L2 miss|LCK No|BLK  N/A
-
-Fixes: 975846eddf907 ("perf intel-pt: Add memory information to synthesized PEBS sample")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/util/intel-pt.c | 205 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 202 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 4e8a9b172fbc..9b1011fe4826 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -127,6 +127,7 @@ struct intel_pt {
- 
- 	bool single_pebs;
- 	bool sample_pebs;
-+	int pebs_data_src_fmt;
- 	struct evsel *pebs_evsel;
- 
- 	u64 evt_sample_type;
-@@ -175,6 +176,7 @@ enum switch_state {
- struct intel_pt_pebs_event {
- 	struct evsel *evsel;
- 	u64 id;
-+	int data_src_fmt;
- };
- 
- struct intel_pt_queue {
-@@ -2272,7 +2274,146 @@ static void intel_pt_add_lbrs(struct branch_stack *br_stack,
- 	}
- }
- 
--static int intel_pt_do_synth_pebs_sample(struct intel_pt_queue *ptq, struct evsel *evsel, u64 id)
-+#define P(a, b) PERF_MEM_S(a, b)
-+#define OP_LH (P(OP, LOAD) | P(LVL, HIT))
-+#define LEVEL(x) P(LVLNUM, x)
-+#define REM P(REMOTE, REMOTE)
-+#define SNOOP_NONE_MISS (P(SNOOP, NONE) | P(SNOOP, MISS))
-+
-+#define PERF_PEBS_DATA_SOURCE_GRT_MAX	0x10
-+#define PERF_PEBS_DATA_SOURCE_GRT_MASK	(PERF_PEBS_DATA_SOURCE_GRT_MAX - 1)
-+
-+/* Based on kernel __intel_pmu_pebs_data_source_grt() and pebs_data_source */
-+static const u64 pebs_data_source_grt[PERF_PEBS_DATA_SOURCE_GRT_MAX] = {
-+	P(OP, LOAD) | P(LVL, MISS) | LEVEL(L3) | P(SNOOP, NA),         /* L3 miss|SNP N/A */
-+	OP_LH | P(LVL, L1)  | LEVEL(L1)  | P(SNOOP, NONE),             /* L1 hit|SNP None */
-+	OP_LH | P(LVL, LFB) | LEVEL(LFB) | P(SNOOP, NONE),             /* LFB/MAB hit|SNP None */
-+	OP_LH | P(LVL, L2)  | LEVEL(L2)  | P(SNOOP, NONE),             /* L2 hit|SNP None */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, NONE),             /* L3 hit|SNP None */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, HIT),              /* L3 hit|SNP Hit */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, HITM),             /* L3 hit|SNP HitM */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, HITM),             /* L3 hit|SNP HitM */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOPX, FWD),             /* L3 hit|SNP Fwd */
-+	OP_LH | P(LVL, REM_CCE1) | REM | LEVEL(L3) | P(SNOOP, HITM),   /* Remote L3 hit|SNP HitM */
-+	OP_LH | P(LVL, LOC_RAM)  | LEVEL(RAM) | P(SNOOP, HIT),         /* RAM hit|SNP Hit */
-+	OP_LH | P(LVL, REM_RAM1) | REM | LEVEL(L3) | P(SNOOP, HIT),    /* Remote L3 hit|SNP Hit */
-+	OP_LH | P(LVL, LOC_RAM)  | LEVEL(RAM) | SNOOP_NONE_MISS,       /* RAM hit|SNP None or Miss */
-+	OP_LH | P(LVL, REM_RAM1) | LEVEL(RAM) | REM | SNOOP_NONE_MISS, /* Remote RAM hit|SNP None or Miss */
-+	OP_LH | P(LVL, IO)  | LEVEL(NA) | P(SNOOP, NONE),              /* I/O hit|SNP None */
-+	OP_LH | P(LVL, UNC) | LEVEL(NA) | P(SNOOP, NONE),              /* Uncached hit|SNP None */
-+};
-+
-+/* Based on kernel __intel_pmu_pebs_data_source_cmt() and pebs_data_source */
-+static const u64 pebs_data_source_cmt[PERF_PEBS_DATA_SOURCE_GRT_MAX] = {
-+	P(OP, LOAD) | P(LVL, MISS) | LEVEL(L3) | P(SNOOP, NA),       /* L3 miss|SNP N/A */
-+	OP_LH | P(LVL, L1)  | LEVEL(L1)  | P(SNOOP, NONE),           /* L1 hit|SNP None */
-+	OP_LH | P(LVL, LFB) | LEVEL(LFB) | P(SNOOP, NONE),           /* LFB/MAB hit|SNP None */
-+	OP_LH | P(LVL, L2)  | LEVEL(L2)  | P(SNOOP, NONE),           /* L2 hit|SNP None */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, NONE),           /* L3 hit|SNP None */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, MISS),           /* L3 hit|SNP Hit */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, HIT),            /* L3 hit|SNP HitM */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOPX, FWD),           /* L3 hit|SNP HitM */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3)  | P(SNOOP, HITM),           /* L3 hit|SNP Fwd */
-+	OP_LH | P(LVL, REM_CCE1) | REM | LEVEL(L3) | P(SNOOP, HITM), /* Remote L3 hit|SNP HitM */
-+	OP_LH | P(LVL, LOC_RAM)  | LEVEL(RAM) | P(SNOOP, NONE),      /* RAM hit|SNP Hit */
-+	OP_LH | LEVEL(RAM) | REM | P(SNOOP, NONE),                   /* Remote L3 hit|SNP Hit */
-+	OP_LH | LEVEL(RAM) | REM | P(SNOOPX, FWD),                   /* RAM hit|SNP None or Miss */
-+	OP_LH | LEVEL(RAM) | REM | P(SNOOP, HITM),                   /* Remote RAM hit|SNP None or Miss */
-+	OP_LH | P(LVL, IO)  | LEVEL(NA) | P(SNOOP, NONE),            /* I/O hit|SNP None */
-+	OP_LH | P(LVL, UNC) | LEVEL(NA) | P(SNOOP, NONE),            /* Uncached hit|SNP None */
-+};
-+
-+/* Based on kernel pebs_set_tlb_lock() */
-+static inline void pebs_set_tlb_lock(u64 *val, bool tlb, bool lock)
-+{
-+	/*
-+	 * TLB access
-+	 * 0 = did not miss 2nd level TLB
-+	 * 1 = missed 2nd level TLB
-+	 */
-+	if (tlb)
-+		*val |= P(TLB, MISS) | P(TLB, L2);
-+	else
-+		*val |= P(TLB, HIT) | P(TLB, L1) | P(TLB, L2);
-+
-+	/* locked prefix */
-+	if (lock)
-+		*val |= P(LOCK, LOCKED);
-+}
-+
-+/* Based on kernel __grt_latency_data() */
-+static u64 intel_pt_grt_latency_data(u8 dse, bool tlb, bool lock, bool blk,
-+				     const u64 *pebs_data_source)
-+{
-+	u64 val;
-+
-+	dse &= PERF_PEBS_DATA_SOURCE_GRT_MASK;
-+	val = pebs_data_source[dse];
-+
-+	pebs_set_tlb_lock(&val, tlb, lock);
-+
-+	if (blk)
-+		val |= P(BLK, DATA);
-+	else
-+		val |= P(BLK, NA);
-+
-+	return val;
-+}
-+
-+/* Default value for data source */
-+#define PERF_MEM_NA (PERF_MEM_S(OP, NA)    |\
-+		     PERF_MEM_S(LVL, NA)   |\
-+		     PERF_MEM_S(SNOOP, NA) |\
-+		     PERF_MEM_S(LOCK, NA)  |\
-+		     PERF_MEM_S(TLB, NA)   |\
-+		     PERF_MEM_S(LVLNUM, NA))
-+
-+enum DATA_SRC_FORMAT {
-+	DATA_SRC_FORMAT_ERR  = -1,
-+	DATA_SRC_FORMAT_NA   =  0,
-+	DATA_SRC_FORMAT_GRT  =  1,
-+	DATA_SRC_FORMAT_CMT  =  2,
-+};
-+
-+/* Based on kernel grt_latency_data() and cmt_latency_data */
-+static u64 intel_pt_get_data_src(u64 mem_aux_info, int data_src_fmt)
-+{
-+	switch (data_src_fmt) {
-+	case DATA_SRC_FORMAT_GRT: {
-+		union {
-+			u64 val;
-+			struct {
-+				unsigned int dse:4;
-+				unsigned int locked:1;
-+				unsigned int stlb_miss:1;
-+				unsigned int fwd_blk:1;
-+				unsigned int reserved:25;
-+			};
-+		} x = {.val = mem_aux_info};
-+		return intel_pt_grt_latency_data(x.dse, x.stlb_miss, x.locked, x.fwd_blk,
-+						 pebs_data_source_grt);
-+	}
-+	case DATA_SRC_FORMAT_CMT: {
-+		union {
-+			u64 val;
-+			struct {
-+				unsigned int dse:5;
-+				unsigned int locked:1;
-+				unsigned int stlb_miss:1;
-+				unsigned int fwd_blk:1;
-+				unsigned int reserved:24;
-+			};
-+		} x = {.val = mem_aux_info};
-+		return intel_pt_grt_latency_data(x.dse, x.stlb_miss, x.locked, x.fwd_blk,
-+						 pebs_data_source_cmt);
-+	}
-+	default:
-+		return PERF_MEM_NA;
-+	}
-+}
-+
-+static int intel_pt_do_synth_pebs_sample(struct intel_pt_queue *ptq, struct evsel *evsel,
-+					 u64 id, int data_src_fmt)
- {
- 	const struct intel_pt_blk_items *items = &ptq->state->items;
- 	struct perf_sample sample;
-@@ -2393,6 +2534,18 @@ static int intel_pt_do_synth_pebs_sample(struct intel_pt_queue *ptq, struct evse
- 		}
- 	}
- 
-+	if (sample_type & PERF_SAMPLE_DATA_SRC) {
-+		if (items->has_mem_aux_info && data_src_fmt) {
-+			if (data_src_fmt < 0) {
-+				pr_err("Intel PT missing data_src info\n");
-+				return -1;
-+			}
-+			sample.data_src = intel_pt_get_data_src(items->mem_aux_info, data_src_fmt);
-+		} else {
-+			sample.data_src = PERF_MEM_NA;
-+		}
-+	}
-+
- 	if (sample_type & PERF_SAMPLE_TRANSACTION && items->has_tsx_aux_info) {
- 		u64 ax = items->has_rax ? items->rax : 0;
- 		/* Refer kernel's intel_hsw_transaction() */
-@@ -2413,9 +2566,10 @@ static int intel_pt_synth_single_pebs_sample(struct intel_pt_queue *ptq)
- {
- 	struct intel_pt *pt = ptq->pt;
- 	struct evsel *evsel = pt->pebs_evsel;
-+	int data_src_fmt = pt->pebs_data_src_fmt;
- 	u64 id = evsel->core.id[0];
- 
--	return intel_pt_do_synth_pebs_sample(ptq, evsel, id);
-+	return intel_pt_do_synth_pebs_sample(ptq, evsel, id, data_src_fmt);
- }
- 
- static int intel_pt_synth_pebs_sample(struct intel_pt_queue *ptq)
-@@ -2440,7 +2594,7 @@ static int intel_pt_synth_pebs_sample(struct intel_pt_queue *ptq)
- 				       hw_id);
- 			return intel_pt_synth_single_pebs_sample(ptq);
- 		}
--		err = intel_pt_do_synth_pebs_sample(ptq, pe->evsel, pe->id);
-+		err = intel_pt_do_synth_pebs_sample(ptq, pe->evsel, pe->id, pe->data_src_fmt);
- 		if (err)
- 			return err;
- 	}
-@@ -3407,6 +3561,49 @@ static int intel_pt_process_itrace_start(struct intel_pt *pt,
- 					event->itrace_start.tid);
- }
- 
-+/*
-+ * Events with data_src are identified by L1_Hit_Indication
-+ * refer https://github.com/intel/perfmon
-+ */
-+static int intel_pt_data_src_fmt(struct intel_pt *pt, struct evsel *evsel)
-+{
-+	struct perf_env *env = pt->machine->env;
-+	int fmt = DATA_SRC_FORMAT_NA;
-+
-+	if (!env->cpuid)
-+		return DATA_SRC_FORMAT_ERR;
-+
-+	/*
-+	 * PEBS-via-PT is only supported on E-core non-hybrid. Of those only
-+	 * Gracemont and Crestmont have data_src. Check for:
-+	 *	Alderlake N   (Gracemont)
-+	 *	Sierra Forest (Crestmont)
-+	 *	Grand Ridge   (Crestmont)
-+	 */
-+
-+	if (!strncmp(env->cpuid, "GenuineIntel,6,190,", 19))
-+		fmt = DATA_SRC_FORMAT_GRT;
-+
-+	if (!strncmp(env->cpuid, "GenuineIntel,6,175,", 19) ||
-+	    !strncmp(env->cpuid, "GenuineIntel,6,182,", 19))
-+		fmt = DATA_SRC_FORMAT_CMT;
-+
-+	if (fmt == DATA_SRC_FORMAT_NA)
-+		return fmt;
-+
-+	/*
-+	 * Only data_src events are:
-+	 *	mem-loads	event=0xd0,umask=0x5
-+	 *	mem-stores	event=0xd0,umask=0x6
-+	 */
-+	if (evsel->core.attr.type == PERF_TYPE_RAW &&
-+	    ((evsel->core.attr.config & 0xffff) == 0x5d0 ||
-+	     (evsel->core.attr.config & 0xffff) == 0x6d0))
-+		return fmt;
-+
-+	return DATA_SRC_FORMAT_NA;
-+}
-+
- static int intel_pt_process_aux_output_hw_id(struct intel_pt *pt,
- 					     union perf_event *event,
- 					     struct perf_sample *sample)
-@@ -3427,6 +3624,7 @@ static int intel_pt_process_aux_output_hw_id(struct intel_pt *pt,
- 
- 	ptq->pebs[hw_id].evsel = evsel;
- 	ptq->pebs[hw_id].id = sample->id;
-+	ptq->pebs[hw_id].data_src_fmt = intel_pt_data_src_fmt(pt, evsel);
- 
- 	return 0;
- }
-@@ -3976,6 +4174,7 @@ static void intel_pt_setup_pebs_events(struct intel_pt *pt)
- 			}
- 			pt->single_pebs = true;
- 			pt->sample_pebs = true;
-+			pt->pebs_data_src_fmt = intel_pt_data_src_fmt(pt, evsel);
- 			pt->pebs_evsel = evsel;
- 		}
- 	}
--- 
-2.45.2
+Thanks,
+Alok
 
 
