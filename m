@@ -1,114 +1,158 @@
-Return-Path: <linux-kernel+bounces-644731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF78AB4392
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5BA0AB43D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 843867A2A1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35EEB867DA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E10298CB5;
-	Mon, 12 May 2025 18:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rcSsYrlg"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0CB1F0E26;
+	Mon, 12 May 2025 18:35:10 +0000 (UTC)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C627298265
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EB6175BF;
+	Mon, 12 May 2025 18:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747074771; cv=none; b=Gg0V04hWI6mfSoeJo6wVNsveOmUSEluxCL+euqH8Xhv4t/YxxelIEbIUYIn9FNB1gwlALywkfFLaqny69glUZxatd67lfaIkS+fAZiGVaYbHuAtO4QXCTZrRgWAzTYqokOJn1hayOYTSABtvxXH/dtZqGbA8QKeo0ZvAjhJRxjs=
+	t=1747074909; cv=none; b=t69SIU1HicCM41x/Eo4EfuxELVLhj9eA45MjUwXqDjaVuVYRShYoBOxBJq30c9hHdv5JrFMrX0oDs7cmLpNxM1x5BCG6nQ8Iom3dzG1LQ8Pla7Q6bQhT+PlVIGR6ZoG7QvZ30DJ+LgeqEoQvF7Cr0eWpz0toyA34rTncl8Qbsf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747074771; c=relaxed/simple;
-	bh=AAIIenbc+d7FxcqG64ms5dtMeSFjiKAShRQtQwUxbqU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=R4Q6LjEN2ZYNsfnjQ34gk2QhPy3digOdLyAbmTvKlpRZ9v8aMGDGD9Q/ODtZhxinEvo5vTnRvfbIUtwMq5dWuckeBJvaPWjJcchd17YKt+naIvFYy2BU6+bFvIv79g7X3RGK/OrGPieOhu++of2mxe/LIEDIMBKEsYqYPdy2f3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rcSsYrlg; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30df7c1287fso596783a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747074769; x=1747679569; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/gxOKtBBDZqqDmvsSr73mAYX/83+2w4poyEp2awYQM=;
-        b=rcSsYrlgO/CgwzbfRi6qKmvNOa7c6rSNuSJTDxnKyhPFfzVdF4IeEOq/iyQ4BuGDTK
-         foCLM+jtYYqFVCGld718rmCtyJ88hJVrtPJ/LJ5KmHsrpL5YUzeMT+OuWdzdjmPrCok2
-         /4Vnxfpb7CKUceCm4/gj5OfPlxtsddmuB/7/UhNbiuOP8x3feuYa0680Y8CiWQVcJEXK
-         goI29sI2N9WuNe/lW2M1kWk9Wu8WynHpm4Dub9fSfgPvYntxkRguR0ZLEUpDArAnOHKi
-         c3U/V1RJR3K6wPdC7jYMapwnth7/qNPxP8aNb8B/U3+8EANvm/pXFjQVT2efrGC+yB6t
-         hytg==
+	s=arc-20240116; t=1747074909; c=relaxed/simple;
+	bh=t9E7jaIRgmZ+jhjkrMSLZufPgigLkMJGG8vibrwiY9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e+VoSKg1F96Qlyya+MlttTu5dO71aagILBTDkgQb/ezyW6rHA80EE8sGjelSbu6kft7h+d2il8I+zbXi324tvmeBCkJEvoeT/Jvf9GbTS0dJs9Y7FVcoN5/RfLQKNf6SqY5/9P2grzWS8gekP1thCQ42bdEQk9ohybhOFRDWQJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-8783bce9f84so1235614241.2;
+        Mon, 12 May 2025 11:35:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747074769; x=1747679569;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/gxOKtBBDZqqDmvsSr73mAYX/83+2w4poyEp2awYQM=;
-        b=bUVuBVeGjMeE5ZMFBG5vu3CShAeoCCH6//7osCUlJuYzA0k5vMB7Wc4QpmT66Wu+N9
-         l2ZYo7FQK2Ca+6p9T2tg52VjyU2yfZjWlpiIsXPXeKVIxo7kjvmgCYMaD37EX3AffbM0
-         4DyRapYKMRhq1whrZPLTcEwuQCarOLBu89D8Bia8JHKADJuvbiWaAZAHPSIul5ImVKuA
-         O2+26ZIEDP2ARqGdASSJwnMubVsvAO8zUb3oTYE/sVFTI6/f6F7tEc1lH0JKi3HxyVsu
-         pKhwprw5nmJEjs+u5vzLehvNGe/Tt4blZZ3fQUTCP9apw1ishRW6Uj6C8y65H1MydXGL
-         +I1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXhQojwuFW8I9Q8VKrrPHfVIXRhU382hIqfbJI1iuwdU5iQUrOQ9QVZLWpqIO5Xl/grJnsDg5SUO16jboA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlfPPjR8UOa9vxPZCd6ZJng854htL3UoipaCHpMCVKQER0vYC4
-	A3fv/v5E1GM7Rw6f1Yqx8eXAx0F8LkJZ5dEjMWeK966ak7MdHHvv790b4fWxGCYSj9sVsRcF2+c
-	ozQ==
-X-Google-Smtp-Source: AGHT+IG/D/jSo3c5DwUvTZhtwy6RkxcPf+zUGVrU9iIwBmOVhV1e2yEZ0csfAY7+5g9vZ2Pnw1DToFiT7Gg=
-X-Received: from pjbqn8.prod.google.com ([2002:a17:90b:3d48:b0:2fb:fa85:1678])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a88:b0:2ff:5a9d:937f
- with SMTP id 98e67ed59e1d1-30c3d62db46mr21960004a91.24.1747074769292; Mon, 12
- May 2025 11:32:49 -0700 (PDT)
-Date: Mon, 12 May 2025 11:32:47 -0700
-In-Reply-To: <20250313203702.575156-10-jon@nutanix.com>
+        d=1e100.net; s=20230601; t=1747074906; x=1747679706;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=faDWq4SXHnuv6JR8rza3bg7AFXqM/F53I5xb503DYJA=;
+        b=DWRxmg7uBvsWUAxnD3meLSTpQXi1ClsJ7VQ6Tt/0+OV9F+FxT7dGHGHT67R0VmXxNm
+         voLpakFWLL2rZoUbNRbxM8UH0PAy4xXb6yECuwyd8i88aRy3vriULgRLHFkjg4sNXE98
+         79upgFrtUnhRYIrXOKUQIFi7mf79ltrogR6+KgNRQr7HpfF7baNToawkHw3GRGiWOg1t
+         Eu6pisGb44trL6hh5cV7CQNo+I2PPZQEJI1K0FabMBldn4RbPZ5ECklDXJzlYzHYD6OA
+         wOQMsGjmjJR3KaoVy2Hn4Z2kDqvVcvoTaVPTcQph6JRFM2kDq17RAFdqSUFqwjznmB6V
+         41jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoDGP+mOSqJcbv1Oioox3YDTr8M+vbUZvgUcn2oOONU+illYyKV7Ipg6WTzjSXSFyNJBIOkgdNXUv3@vger.kernel.org, AJvYcCVUVVeDgDJLPmJ0aPC1E5x/X2eJBrcRKrvtSQIQAzY2w8RfuUR+SU2nOGBSBwszX81mCqw8ba13HldW0OA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTwg6thpDt0EsTCP7yEW/c+tGKJ6Ih63tymJW9vsJpuRzUHR2Z
+	YIikRcV4Bfyg9S2unZNd5GTcZjBcvwnE38GDvHBCUx07i8JHgfeLhkfYVmbw
+X-Gm-Gg: ASbGnctNDaMl9oei7gV+N8LZNH6hNlBDly1ajN5zNKxUO44tOyDgnUR9K2KvEp+uKFS
+	wS643+MO0qvgzLzt3SzQkaj7uY8m5AMtznHaBE1wlRm5LM9KpIo+E4JqP3UFR+APyfG6ex0OCcr
+	A7vHrOvCI+I7k17Anlxklg9Fqk88JUPBdN0SnKAUPsBfuJ4RqGhcidxrASa7gnex0tJLOZz6TJk
+	UnG8DD4L6nGr8rLvU2sLheqiixzp6CK/IAM2DFLO441Xvt46aoC+mx7ZP/fLeTv5Md2/M8LI2u4
+	Nn4XR3vt0UCKmRxe5VBwjOU7uGY0nZt2n4YRUnum2/Lfhfg+L91G56i7c98o9/gWQl8jssRc4NO
+	nMtBJse3+PoVBSw==
+X-Google-Smtp-Source: AGHT+IG/Baza7umAn+ya2o1lnut6yQn9jj5gSstGFTFrs+dHvbM44monQFWD669h+oRYGD7XbZhA7Q==
+X-Received: by 2002:a05:6102:800f:b0:4bb:9b46:3f87 with SMTP id ada2fe7eead31-4deed3374d9mr10491936137.6.1747074905969;
+        Mon, 12 May 2025 11:35:05 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4deb2016d22sm5382267137.19.2025.05.12.11.35.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 11:35:05 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4def152384eso1064942137.1;
+        Mon, 12 May 2025 11:35:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDgvJGtubwoP7MUrLUKEqvRwXPTfoAcVdmhs820/8VJDh/G9xGIC7+SyTFrqHKxmyNLjSHkuxmILp1@vger.kernel.org, AJvYcCUJ6xIqvnJyHxKytjpA3FjATlYm/zgAyNGzj9mmdysdJJvYDUU5BwbYCULsBfOTzAGvSSz10nBbg0ymM8g=@vger.kernel.org
+X-Received: by 2002:a05:6102:5345:b0:4dd:c8f6:c479 with SMTP id
+ ada2fe7eead31-4deed337524mr12552678137.7.1747074904660; Mon, 12 May 2025
+ 11:35:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-10-jon@nutanix.com>
-Message-ID: <aCI-z5vzzLwxOCfw@google.com>
-Subject: Re: [RFC PATCH 09/18] KVM: x86/mmu: Extend access bitfield in kvm_mmu_page_role
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Sergey Dyasli <sergey.dyasli@nutanix.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250509181737.997167-1-Raju.Rangoju@amd.com> <202505110641.zLT16Dv7-lkp@intel.com>
+ <e84f5483-a203-4095-82cd-23fa94c87700@amd.com> <CAMuHMdUAE2umYggDdBjYZJY2-mYwim=P_=4Q00k9b8gB1tNY+Q@mail.gmail.com>
+ <8c89410b-80f2-47ad-97fd-6ac10752c040@amd.com>
+In-Reply-To: <8c89410b-80f2-47ad-97fd-6ac10752c040@amd.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 May 2025 20:34:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX_ugjS475udqa1oOOfbOJ+0s_JAKcCyCcdQfPhhaWOTQ@mail.gmail.com>
+X-Gm-Features: AX0GCFvM4NO1qlCePh4MALJ9BqQGETeVVgnvPLy3fBf6nSRJBizZ7wMT2W-NF_U
+Message-ID: <CAMuHMdX_ugjS475udqa1oOOfbOJ+0s_JAKcCyCcdQfPhhaWOTQ@mail.gmail.com>
+Subject: Re: [PATCH] spi: spi_amd: Add HIDDMA basic write support
+To: "Rangoju, Raju" <raju.rangoju@amd.com>
+Cc: kernel test robot <lkp@intel.com>, broonie@kernel.org, oe-kbuild-all@lists.linux.dev, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>, 
+	Akshata MukundShetty <akshata.mukundshetty@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 13, 2025, Jon Kohler wrote:
-> diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-> index 71d6fe28fafc..d9e22133b6d0 100644
-> --- a/arch/x86/kvm/mmu/spte.h
-> +++ b/arch/x86/kvm/mmu/spte.h
-> @@ -45,7 +45,9 @@ static_assert(SPTE_TDP_AD_ENABLED == 0);
->  #define ACC_EXEC_MASK    1
->  #define ACC_WRITE_MASK   PT_WRITABLE_MASK
->  #define ACC_USER_MASK    PT_USER_MASK
-> -#define ACC_ALL          (ACC_EXEC_MASK | ACC_WRITE_MASK | ACC_USER_MASK)
-> +#define ACC_USER_EXEC_MASK (1ULL << 3)
-> +#define ACC_ALL          (ACC_EXEC_MASK | ACC_WRITE_MASK | ACC_USER_MASK | \
-> +			  ACC_USER_EXEC_MASK)
+Hi Raju,
 
-This is very subtly a massive change, and I'm not convinced its one we want to
-make.  All usage in the non-nested TDP flows is arguably wrong, because KVM should
-never enable MBEC when using non-nested TDP.
+On Mon, 12 May 2025 at 19:55, Rangoju, Raju <raju.rangoju@amd.com> wrote:
+> On 5/12/2025 7:47 PM, Geert Uytterhoeven wrote:
+> > On Mon, 12 May 2025 at 09:29, Rangoju, Raju <raju.rangoju@amd.com> wrote:
+> >> On 5/11/2025 3:51 AM, kernel test robot wrote:
+> >>> kernel test robot noticed the following build warnings:
+> >>>
+> >>> [auto build test WARNING on v6.15-rc5]
+> >>> [also build test WARNING on linus/master]
+> >>> [cannot apply to broonie-spi/for-next next-20250509]
+> >>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> >>> And when submitting patch, we suggest to use '--base' as documented in
+> >>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >>>
+> >>> url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Rangoju/spi-spi_amd-Add-HIDDMA-basic-write-support/20250510-021954
+> >>> base:   v6.15-rc5
+> >>> patch link:    https://lore.kernel.org/r/20250509181737.997167-1-Raju.Rangoju%40amd.com
+> >>> patch subject: [PATCH] spi: spi_amd: Add HIDDMA basic write support
+> >>> config: m68k-randconfig-r111-20250511 (https://download.01.org/0day-ci/archive/20250511/202505110641.zLT16Dv7-lkp@intel.com/config)
+> >>> compiler: m68k-linux-gcc (GCC) 14.2.0
+> >>
+> >> Thanks for reporting this. We do not support m68k.
+> >
+> > All write[bwlq]() functions take a volatile void __iomem pointer
+> > (https://elixir.bootlin.com/linux/v6.14.6/source/include/asm-generic/io.h#L174)
+> > while you are passing a void *, so sparse should complain about this
+> > on all architectures.
+>
+> My bad, with the following flags included, sparse now complains this on
+> all architectures.
+>
+> -fmax-errors=unlimited -fmax-warnings=unlimited
+>
+> And sparse is right, this driver is using MMIO
+> > accessors on allocated DMA memory, which is just plain wrong:
+> >
+> >      amd_spi->dma_virt_addr = dma_alloc_coherent(dev, AMD_SPI_HID2_DMA_SIZE,
+> >              &amd_spi->phy_dma_buf, GFP_KERNEL);
+> >
+> >       for (i = 0; left_data >= 8; i++, left_data -= 8)
+> >              *buf_64++ = readq((u8 __iomem *)amd_spi->dma_virt_addr + (i * 8));
+> >
+> >> Will re-spin v2 with necessary changes in Kconfig.
+> >
+> > Please fix the real issue instead ;-)
+>
+> We are using read*/write* calls instead of memcpy to copy data to/from
+> DMA memory due to performance concerns, as we observed better throughput
+> during continuous read/write compared to the memcpy functions.
 
-And the use in kvm_calc_shadow_ept_root_page_role() is wrong, because the root
-page role shouldn't include ACC_USER_EXEC_MASK if the associated VMCS doesn't
-have MBEC.  Ditto for the use in kvm_calc_cpu_role().
+Perhaps your memcpy() copies backwards?
+https://lwn.net/Articles/1016300/
 
-So I'm pretty sure the only bit of this change that is desriable/correct is the
-usage in kvm_mmu_page_get_access().  (And I guess maybe trace_mark_mmio_spte()?)
+There is no guarantee that read*/write* calls work on normal RAM on
+all architectures. It may just crash, as some architectures return
+cookies instead of real pointers when mapping MMIO.
 
-Off the cuff, I don't know what the best approach is.  One thought would be to
-prep for adding ACC_USER_EXEC_MASK to ACC_ALL by introducing ACC_RWX and using
-that where KVM really just wants to set RWX permissions.  That would free up
-ACC_ALL for the few cases where KVM really truly wants to capture all access bits.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
