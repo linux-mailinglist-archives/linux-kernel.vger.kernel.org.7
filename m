@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-644188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC13AB382F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:13:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5B7AB3840
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E43189FA50
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:13:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E841C3A9AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86144293B75;
-	Mon, 12 May 2025 13:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="r3K5O2WR"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED1293743;
+	Mon, 12 May 2025 13:16:32 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0882920A2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0BBAD58
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747055614; cv=none; b=GUNC69mKSFBirY9ElDZvvZTEiJx1bINcrIduTPLnmwHEC4m2Z8riQvudY5hUmAYOr+aIgKXrvrv89MnrUSqfXU69bvzdchoab326fFOdwjrHLQOu7zsd6oiEPuC48shLWOqMTFGOtCgLbXUA7u8gtTvT7GS8/bRF2xp4xky8ieY=
+	t=1747055792; cv=none; b=D2gvE5WYjA8RahxGPDW0i599xbc+qLVQn4xypNWEiPUxuUaQPgMZVqXNyVe+3jukLnbL9Zb6KTmptYnGZdEtz88FDDw83b3P6CDGblEpPxjlrrBwSqed4azPdeQWzY32qWTSJUoMPg1NlE0J0QB13P3eG9Bw/+qzYjTdUAQcdB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747055614; c=relaxed/simple;
-	bh=PCH8jYLq1mvp2cmIhNoQShfb8IuT/oL/EP5J1d5SW3o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=XI0HgJVS3Yqgr4na6sx8sZIILt6SuyCPDMLfLIRKh2UOtfZ60sEFC77K/TkcE0uYg+8AzHo+sLEZBPtaVoISIL7IrHgmoN5dfiq+SFAREGNxr6YuYE5WQOdgoO9q+/LBVE3gg7Wcg85AP6frhB+eX9+Hgv8L5jebTUFI9F5i6I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=r3K5O2WR; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A8BCAA0AC9;
-	Mon, 12 May 2025 15:13:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=eV7fWU1o3gw8HSp86Nai
-	7nFrbU7RbFJQ69HIGvP0aTo=; b=r3K5O2WRmoWPGuGTjLcwpelrrT2RzMKXyvkr
-	pOshiTH/IcBtb3mKgfqLQ4IMHJgO1KUHu18jc6CXwGtTFRHplJUs1kWHgeCf/8y5
-	KWzoLeqMFq6NG9pYZ/+4BkRVvcFWMjF4+oLrK+vQPOb+eutNnc32tB+SLZhZJKaK
-	ohTJqfELrQWdvGHzgRgJZWfV0EVxxks439yk6SNCPbjNXMC5gXCctJ/XnQkxV5Rb
-	imWAvZjbu8q56zKzJhES13O64qzeplKik7IPKqXkotd6SEDd6cctds+XItRsxHPa
-	DOR9x4XylIq5PbR7qGyjD2+h8P/0MSiWMDuEGJGWMSJ4wQwYcIpefpqFNSryXyeP
-	7afDC0QJeG5N01/jWhUHhbb5pCUMXuSGiJNFHWc/21q8VB9BU8hPVIOb3mVreTD4
-	6GOC1IBN6i4et2NbhCSFF3c8GKX+JSvKtlhQhqJQQQ6Xaq2Bjwl3LEgy9/Wki/kp
-	9MjLxI2CbrVqn9ePr6JyPMQO+LsO+vgXUkNznE2XD6Ix3cNuR+nn+9OnuUw26XOY
-	bg1NZW+vpAbBMsG6jifU84dGzhp4R+Ab57i57YEml7w/yYUGi/E/V+E+gnGI8w2a
-	Y0sHcduYOUZg+xx51KF4WGamGcCiiXe0odhO7SSjLWAxkKxg4UD1xUKNms1JhbB3
-	Y/Mmz1g=
-Message-ID: <4ebe2146-ee1c-4325-8259-be3803475f1f@prolan.hu>
-Date: Mon, 12 May 2025 15:13:20 +0200
+	s=arc-20240116; t=1747055792; c=relaxed/simple;
+	bh=l/0gsrFoVPDA7ZtJpXzRTh0pyA35QHVBabd3tm5D8og=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UHITL3HEzR1vu1A/LMQ7V9ZhHDrwOlhtfeYPuQmVZzsIG9Kg4wIpYnwSYAVJ6PoBsFdxfiPLQ8NQm+68drC/WSFkOuI+acH8et8XjPSYXL7O0gNkEpGXgSBU67f4yq+Vnk8+25ZC+033dc3RZNkL28RrqEttEJkV5FdeMt4YlZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id 94EA95FAA7;
+	Mon, 12 May 2025 15:16:15 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Bert Karwatzki <spasswolf@web.de>, Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 4/6] iommu: make inclusion of riscv directory conditional
+Date: Mon, 12 May 2025 15:13:43 +0200
+Message-ID: <2235451.Icojqenx9y@devpool92.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <1926170.CQOukoFCf9@devpool92.emlix.com>
+References: <1926170.CQOukoFCf9@devpool92.emlix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-Subject: Re: [PATCH v3] mtd: Verify written data in paranoid mode
-To: Richard Weinberger <richard@nod.at>
-CC: Miquel Raynal <miquel.raynal@bootlin.com>, linux-mtd
-	<linux-mtd@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-References: <20250512084033.69718-1-csokas.bence@prolan.hu>
- <87frhambri.fsf@bootlin.com> <d70952c1-e4ca-4f09-ac23-2ad13e0facc0@prolan.hu>
- <1200504110.30346467.1747054025727.JavaMail.zimbra@nod.at>
-Content-Language: en-US
-In-Reply-To: <1200504110.30346467.1747054025727.JavaMail.zimbra@nod.at>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94853617464
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi,
+Nothing in there is active if CONFIG_RISCV_IOMMU is not enabled, so the who=
+le
+directory can depend on that switch as well.
 
-On 2025. 05. 12. 14:47, Richard Weinberger wrote:
-> ----- Ursprüngliche Mail -----
->> Von: "Csókás Bence" <csokas.bence@prolan.hu>
->> Well, yes, in our case. But the point is, we have a strict requirement
->> for data integrity, which is not unique to us I believe. I would think
->> there are other industrial control applications like ours, which dictate
->> a high data integrity.
-> 
-> In your last patch set you said your hardware has an issue that every
-> now and that data is not properly written.
-> Now you talk about data integrity requirements. I'm confused.
+=46ixes: 5c0ebbd3c6c6 ("iommu/riscv: Add RISC-V IOMMU platform device drive=
+r")
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+=2D--
+ drivers/iommu/Makefile       | 3 ++-
+ drivers/iommu/riscv/Makefile | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-The two problems are not too dissimilar: in one case you have a random, 
-and _very_ low chance of data corruption, e.g. because of noise, aging 
-hardware, power supply ripple etc. But you still need to make sure that 
-the written data is absolutely correct; or if it is not, the system will 
-immediately enter some fail-safe mode. This is the problem we want to 
-solve, for everybody using Linux in high reliability environments.
+diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+index a486032d3e079..355294fa9033f 100644
+=2D-- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+=2Dobj-y +=3D arm/ iommufd/ riscv/
++obj-y +=3D arm/ iommufd/
+ obj-$(CONFIG_AMD_IOMMU) +=3D amd/
+ obj-$(CONFIG_INTEL_IOMMU) +=3D intel/
++obj-$(CONFIG_RISCV_IOMMU) +=3D riscv/
+ obj-$(CONFIG_IOMMU_API) +=3D iommu.o
+ obj-$(CONFIG_IOMMU_SUPPORT) +=3D iommu-pages.o
+ obj-$(CONFIG_IOMMU_API) +=3D iommu-traces.o
+diff --git a/drivers/iommu/riscv/Makefile b/drivers/iommu/riscv/Makefile
+index f54c9ed17d41d..b5929f9f23e64 100644
+=2D-- a/drivers/iommu/riscv/Makefile
++++ b/drivers/iommu/riscv/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+=2Dobj-$(CONFIG_RISCV_IOMMU) +=3D iommu.o iommu-platform.o
++obj-y +=3D iommu.o iommu-platform.o
+ obj-$(CONFIG_RISCV_IOMMU_PCI) +=3D iommu-pci.o
+=2D-=20
+2.49.0
 
-The problem we _have_ though happens to be a bit different: here we are 
-blursed with a system that corrupts data at a noticeable probability. 
-But the model is the same: a stochastic process introducing bit errors 
-on write. But I sincerely hope no one else has this problem, and this is 
-*not* the primary aim of this patch; it just happens to solve our issue 
-as well. But I intend it to be useful for the larger Linux community, 
-thus the primary goal is to solve the first issue.
 
-> My point is that at some level we need to trust hardware,
-> if your flash memory is so broken that you can't rely on the write
-> path you're in deep trouble.
+=2D-=20
+Rolf Eike Beer
 
-Sure, but at the moment, we're not giving any return path for hardware. 
-We just shovel megabytes at it, and don't even ask back. In critical 
-systems, this will not fly.
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
 
-> What is the next step, reading it back every five seconds to make
-> sure it is still there? (just kidding).
+emlix - your embedded Linux partner
 
-(( Well, you're kidding now, but this is what we will have to do in 
-another project, a rail interlocking system. Though obviously not in the 
-kernel. But I digress... ))
-
-Bence
 
 
