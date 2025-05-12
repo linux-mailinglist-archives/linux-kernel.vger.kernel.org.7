@@ -1,326 +1,161 @@
-Return-Path: <linux-kernel+bounces-643682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132B6AB303F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404C3AB3050
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B3B1891E2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591561891CDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9272561DF;
-	Mon, 12 May 2025 07:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44697256C8F;
+	Mon, 12 May 2025 07:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mb5DRkWr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNx3CHpM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184E2AD11;
-	Mon, 12 May 2025 07:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8879D2561BF;
+	Mon, 12 May 2025 07:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747033689; cv=none; b=d+GXmGQgk1tzTu9RXxOtsuOnIdIrostni356XBsJ8X8FUj5TXOyNBE8QOP/nwyAXV2aGrrusgVLoXTERhWVJnAUP7QSfZe2E/ZTYEn6AmgKdT+gu7IfhrfZPKIix7KJtc3m5WLliu9MXTsgzBl8bwGkpUIpLtd+mNos8X3Rzqe0=
+	t=1747033921; cv=none; b=YE9MnJyQTZM0+NTMZNNuRGHySYesjO3JNq9buCVDVWlQXLelhhnQaY9yGBkctRt9WWyJ2bmwuh0TE2qDAtW2bqmo5GbFPcApd4ggePFF0zfqNKHAnUWNFtwVwo16HIjOGr9MPWcIssqHM9lH0P/YUuoHn4b9AtxeIvnlmcctryM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747033689; c=relaxed/simple;
-	bh=Mul8tNeRrypv/NSAZe83gZO8+DlWm98zYe0h3LwG4jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UL8PbMYg2E7YyvxAF8VPg+9dI2xGOoK52wNA3wR7PpnD7GsxVJGweH1FiNfx+HrQZped0R7TK14YQU+DzN94m+53gZJ518WsCySWUX6IRsL/FwsNpy4prY4TKrwuxpPl2PJt9cAjrTyVYVdMVCTjFaFNilTWaAd3frpZwymoIng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mb5DRkWr; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747033688; x=1778569688;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Mul8tNeRrypv/NSAZe83gZO8+DlWm98zYe0h3LwG4jg=;
-  b=mb5DRkWrGJvnAdL32F2ztPSRwxcEv2tViRGrHjaAGQ24+FmHhs/HKR3+
-   mLCJEfsE/iHsSdnklQeASC+EpJGfWplDSNpEe7P8cPTjk8nZLj/Fp0/nC
-   adD8hEXTm0Sa3IS+eLg5lhdwn7LxdL5F0E6AAp39odijDeDpF6z/tu9uo
-   U6+sSzUvP9g59bQqO+rh3L3Mt3XjA+o9/MqYTVcLlev9EMWxV3KaSD28F
-   zEgfvOtRTx59/dTMQpnK0iy/KqJqXB0ArZmUw6XtH/OsOLMWDCz3roMEG
-   uxm3SiijVAl1QGBdCxzt0XNi8e2H8TR+HqIN6LzjWAlE6r6Yn1cSGKo75
-   A==;
-X-CSE-ConnectionGUID: /AgWA6jBSoqMKjcNtP1ZwQ==
-X-CSE-MsgGUID: 6u7NJRIGSg6CfnnJzRhREg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="66355112"
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="66355112"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:08:07 -0700
-X-CSE-ConnectionGUID: +NC4/pH6QHKeJIQkvRlB3Q==
-X-CSE-MsgGUID: zFExEVxoRFiOmm8OdIwj5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="174434482"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:08:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uENGX-00000000qLL-0P5S;
-	Mon, 12 May 2025 10:07:57 +0300
-Date: Mon, 12 May 2025 10:07:56 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 10/23] clk: Add clock driver for the RISC-V RPMI clock
- service group
-Message-ID: <aCGeTPS4WiGYMTTo@smile.fi.intel.com>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-11-apatel@ventanamicro.com>
+	s=arc-20240116; t=1747033921; c=relaxed/simple;
+	bh=UWaHpy3tnuk3FHkK9ajulVDIc6cTkMBqJq892XSpDJ8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=A8GlUzE86GXbOOcVdPSqRqfnQPP9VhwgJ5/ebZCQbKwKTrWu0kwsZrCfZ0u8snMCGAc6W5+r4NM+prDJevJO7siRpYCy0HLTwyBYjn8ZO63f5MaW7ZvxqNqWnY1S5lQpVfp0gBBeBpqlQP8ZqBOgOyPCVVW0LfWk7YY2qb4vNbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNx3CHpM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 063E5C4CEE7;
+	Mon, 12 May 2025 07:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747033921;
+	bh=UWaHpy3tnuk3FHkK9ajulVDIc6cTkMBqJq892XSpDJ8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cNx3CHpMxuoX6aa0usZ5ar0ypKnec4Jlm2rV27TTE5anvmg4ItL2sRdW/1MGAb53J
+	 eHzZrvqRW/J2PDtcgaQjxnP1uC0ZQ9f1NsH7w2seaNmsve0ZdZEdH8luHLFopV0vax
+	 b1l128KRpmFvxquOfPRdN2E8u8zrJTFsj7+Pl0QPyzHGB4JoA8oHQmZp1m3CjAl4Fr
+	 JGpEndGq2LwPulC2O/xNBatG5jR7HvZWs7qM1foaGK7we5X1NrdJ8IEIfTj7IYbOQ9
+	 hHiUERZ8NzefcAAIBjj9FOQB0jiRBE2kYoOVHFrj8AaUjGvqOgQGNs4U+JGTaVsqud
+	 FSKgkq+CuE96w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A01C3ABC3;
+	Mon, 12 May 2025 07:12:00 +0000 (UTC)
+From: Sung-Chi Li via B4 Relay <devnull+lschyi.chromium.org@kernel.org>
+Subject: [PATCH v3 0/3] Export fan control and register fans as cooling
+ devices
+Date: Mon, 12 May 2025 15:11:54 +0800
+Message-Id: <20250512-cros_ec_fan-v3-0-a9f2b255f0cd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250511133939.801777-11-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Sun, May 11, 2025 at 07:09:26PM +0530, Anup Patel wrote:
-> From: Rahul Pathak <rpathak@ventanamicro.com>
-> 
-> The RPMI specification defines a clock service group which can be
-> accessed via SBI MPXY extension or dedicated S-mode RPMI transport.
-> 
-> Add mailbox client based clock driver for the RISC-V RPMI clock
-> service group.
-
-...
-
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/mailbox/riscv-rpmi-message.h>
-
-Just to point out again that the above misses a lot of headers definitions
-and/or APIs this driver uses. Follow IWYU principle.
-
-...
-
-> +#define GET_RATE_U64(hi_u32, lo_u32)	((u64)(hi_u32) << 32 | (lo_u32))
-
-Hmm... Perhaps add this kind of macro to wordpart.h ? IIRC not only this driver
-uses something like this.
-
-...
-
-> +enum rpmi_clk_type {
-> +	RPMI_CLK_DISCRETE = 0,
-> +	RPMI_CLK_LINEAR = 1,
-
-> +	RPMI_CLK_TYPE_MAX_IDX,
-
-No comma for the terminator. Please, clean all these cases.
-
-> +};
-
-...
-
-> +union rpmi_clk_rates {
-> +	u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
-> +	struct {
-> +		u64 min;
-> +		u64 max;
-> +		u64 step;
-> +	} linear;
-
-Have you looked at the linear ranges library we have in the kernel? Can you
-utilise it here?
-
-> +};
-
-...
-
-> +struct rpmi_clk {
-> +	struct rpmi_clk_context *context;
-> +	u32 id;
-> +	u32 num_rates;
-> +	u32 transition_latency;
-> +	enum rpmi_clk_type type;
-> +	union rpmi_clk_rates *rates;
-> +	char name[RPMI_CLK_NAME_LEN];
-> +	struct clk_hw hw;
-
-Just a reminder to use `pahole` to check that your data layout is optimised for
-memory consumption.
-
-> +};
-
-...
-
-> +struct rpmi_get_supp_rates_rx {
-> +	u32 status;
-> +	u32 flags;
-> +	u32 remaining;
-> +	u32 returned;
-> +	u32 rates[];
-> +};
-
-Is it ABI? (I mean if this is interface with some kind of FW)
-If so, Use proper endianess aware types. Same Q for all data
-types defined in this driver.
-
-...
-
-> +			for (j = 0; j < rx->returned; j++) {
-> +				if (rateidx >= (clk_rate_idx + rx->returned))
-
-Too many parentheses.
-
-> +					break;
-> +				rpmi_clk->rates->discrete[rateidx++] =
-> +					GET_RATE_U64(rate_discrete[j].hi,
-> +						     rate_discrete[j].lo);
-> +			}
-> +		}
-
-...
-
-> +	devm_kfree(context->dev, rx);
-
-Why?! This is a red flag to point that here is misunderstanding or abuse of
-managed resources approach. Either use __Free() from cleanup.h or don't call
-devm_kfree(). The latter must have a very good justification to explain why.
-
-> +	return 0;
-
-(this is even not an error path, where it might have a little argument for)
-
-...
-
-> +	/* Keep the requested rate if the clock format
-> +	 * is of discrete type. Let the platform which
-> +	 * is actually controlling the clock handle that.
-> +	 */
-
-/*
- * Use proper style for the multi-line comments. You can
- * refer to this comment as an example.
- */
-
-...
-
-> +out:
-
-Redundant label. Note, the labels are recommended to be named after the flow
-they will run if goto. This one can be named as out_literally_with_return_0,
-which makes it obvious how useless it is.
-
-> +	return 0;
-
-...
-
-> +	rates = devm_kzalloc(dev, sizeof(union rpmi_clk_rates), GFP_KERNEL);
-
-sizeof(*...)
-
-> +	if (!rates)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	rpmi_clk = devm_kzalloc(dev, sizeof(struct rpmi_clk), GFP_KERNEL);
-
-Ditto.
-
-> +	if (!rpmi_clk)
-> +		return ERR_PTR(-ENOMEM);
-
-...
-
-> +	ret = rpmi_clk_get_supported_rates(clkid, rpmi_clk);
-> +	if (ret)
-> +		return dev_err_ptr_probe(dev, ret,
-> +			"Get supported rates failed for clk-%u, %d\n", clkid, ret);
-
-Indentation issues. Repetitive ret in the message. Please, get familiar with
-the format dev_err_probe() uses.
-
-...
-
-> +	int ret, num_clocks, i;
-
-Why is 'i' signed?
-
-...
-
-> +	/* Allocate RPMI clock context */
-> +	context = devm_kzalloc(dev, sizeof(*context), GFP_KERNEL);
-
-Ha-ha, you have even inconsistent style in the same file! So, go through the
-whole series and make sure that the style used in each file is consistent.
-
-> +	if (!context)
-> +		return -ENOMEM;
-
-...
-
-> +	/* Validate RPMI specification version */
-> +	rpmi_mbox_init_get_attribute(&msg, RPMI_MBOX_ATTR_SPEC_VERSION);
-> +	ret = rpmi_mbox_send_message(context->chan, &msg);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to get spec version\n");
-> +		goto fail_free_channel;
-
-This is simply wrong. You should not do goto before any devm_*() calls.
-The error path and ->remove(), if present) is broken. Fix it accordingly.
-
-Here should be
-
-		return dev_err_probe(...);
-
-it's your homework to understand how to achieve that. Plenty of the examples in
-the kernel.
-
-> +	}
-
-...
-
-> +enum rpmi_clock_service_id {
-> +	RPMI_CLK_SRV_ENABLE_NOTIFICATION = 0x01,
-> +	RPMI_CLK_SRV_GET_NUM_CLOCKS = 0x02,
-> +	RPMI_CLK_SRV_GET_ATTRIBUTES = 0x03,
-> +	RPMI_CLK_SRV_GET_SUPPORTED_RATES = 0x04,
-> +	RPMI_CLK_SRV_SET_CONFIG = 0x05,
-> +	RPMI_CLK_SRV_GET_CONFIG = 0x06,
-> +	RPMI_CLK_SRV_SET_RATE = 0x07,
-> +	RPMI_CLK_SRV_GET_RATE = 0x08,
-
-> +	RPMI_CLK_SRV_ID_MAX_COUNT,
-
-No comma in the terminator line.
-
-> +};
-
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADqfIWgC/23MQQ6CMBCF4auYrq1pCxhw5T2MIUM7hVlAzVQbD
+ eHuFjZG4/K95P9mEZEJozjtZsGYKFKY8ij2O2EHmHqU5PIWRplKlaaRlkNs0bYeJumg6I4l2MZ
+ qJXJxY/T03LTLNe+B4j3wa8OTXt//TtJSSahdgwX6rtNwtgOHkR7jIXAvViqZT14p852bnJeuq
+ utMg9L+J1+W5Q0Luz3p6AAAAA==
+X-Change-ID: 20250429-cros_ec_fan-da3b64ac9c10
+To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Sung-Chi Li <lschyi@google.com>, Sung-Chi Li <lschyi@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747033920; l=3417;
+ i=lschyi@chromium.org; s=20250429; h=from:subject:message-id;
+ bh=UWaHpy3tnuk3FHkK9ajulVDIc6cTkMBqJq892XSpDJ8=;
+ b=EQQGXva2ZZS8B7c6+//f34iGTwDkWEWiJYknBjz7FXnCpBoYGtn0gOLAtaIXoHIvnx5LRG97E
+ Y4wuF7ijplXBlacBRO/kZ3ALLzh/sTiap7mvYUCqRWkDgnu+hgDoJ2k
+X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
+ pk=9gCZPRJmYyHDt6VN9FV2UreFcUr73JFrwYvmsltW9Y8=
+X-Endpoint-Received: by B4 Relay for lschyi@chromium.org/20250429 with
+ auth_id=392
+X-Original-From: Sung-Chi Li <lschyi@chromium.org>
+Reply-To: lschyi@chromium.org
+
+This is a continuation of the previous series "Export the target RPM fan
+control by ChromeOS EC under hwmon"
+(https://lore.kernel.org/lkml/20250313-extend_ec_hwmon_fan-v1-0-5c566776f2c4@chromium.org/T/#t).
+There is a change from controlling the target fan RPM value to control
+the PWM value.
+
+We anticipate to involve fans connected to EC as thermal cooling
+devices, so we can utilize the thermal framework to have further thermal
+control strategies.
+
+This series updates the required EC controls definitions, implements the
+mechanism for controlling fan PWM values, and registers these fans under
+thermal framework as cooling devices.
+
+Adapting comments from the previous series, the driver probes the host
+command capability at beginning to see whether a fan is controllable:
+  - if command `EC_CMD_PWM_GET_FAN_DUTY` is supported (v0, this is a
+    new command).
+  - if command `EC_CMD_THERMAL_AUTO_FAN_CTRL` v2 is supported.
+  - if command `EC_CMD_PWM_SET_FAN_DUTY` v1 is supported.
+
+This combination is selected as this is the minimum requirement for a
+fan to be fully controllable under hwmon framework.
+
+The driver supports changing the fan control mode, and allows to change
+the fan PWM value only if the fan is in manual control mode. The power
+management hook is implemented as well for keeping the fan control
+settings, as EC will automatically restore the control method to auto
+when device is suspended.
+
+Change-Id: I4e2fdc8c4bc50778c0d04cfbefeaab7088d3181e
+Signed-off-by: Sung-Chi Li <lschyi@google.com>
+---
+Changes in v3:
+- Make required EC command versions macros.
+- Add `CONFIG_THERMAL` guarding for registering as thermal fan cooling
+  devices.
+- Add error handling during registering thermal cooling devices, and
+  immediately abort the registration if any error occurred to align with
+  the thermal sensor registration in hwmon core.
+- Add error handling for EC fan communication during suspend and resume.
+- Add `CONFIG_PM` guarding for checking whether the EC supports a
+  complete fan control in hwmon driver.
+- Sort variables order in declaration.
+- Separate declaration and logic to different sections.
+- Move `cros_ec_thermal_cooling_ops` next right after the operation
+  functions declaration.
+- Improve describing the resume behavior in documentation.
+
+Changes in v2:
+- Change column from 80 to 100 and fix styles.
+- Directly store driver data into platform dev with
+  platform_set_drvdata.
+- Unify the PWM unit (from 0 ~ 255) between hwmon and thermal cooling
+  devices.
+- Only fetch the fan control mode and PWM value when suspending rather
+  than caching values when writing. The suspend hook is thus added.
+- Link to v1: https://lore.kernel.org/r/20250429-cros_ec_fan-v1-0-a8d9e3efbb1a@chromium.org
+
+---
+Sung-Chi Li (3):
+      platform/chrome: update pwm fan control host commands
+      hwmon: (cros_ec) add PWM control over fans
+      hwmon: (cros_ec) register fans into thermal framework cooling devices
+
+ Documentation/hwmon/cros_ec_hwmon.rst          |   7 +-
+ drivers/hwmon/cros_ec_hwmon.c                  | 306 +++++++++++++++++++++++++
+ include/linux/platform_data/cros_ec_commands.h |  29 ++-
+ 3 files changed, 340 insertions(+), 2 deletions(-)
+---
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+change-id: 20250429-cros_ec_fan-da3b64ac9c10
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
+Sung-Chi Li <lschyi@chromium.org>
 
 
 
