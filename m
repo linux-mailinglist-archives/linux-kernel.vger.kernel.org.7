@@ -1,146 +1,247 @@
-Return-Path: <linux-kernel+bounces-644772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A6EAB4443
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C825DAB444D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86C7189E3D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433CC189EF54
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12153296FDF;
-	Mon, 12 May 2025 19:05:28 +0000 (UTC)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC99297118;
+	Mon, 12 May 2025 19:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzbvSqAT"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009E246788;
-	Mon, 12 May 2025 19:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6A6246788;
+	Mon, 12 May 2025 19:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076727; cv=none; b=ikWx8i6+vkUf0LChp5ntuGLNcHGTDotpZ0frjdjo0qFlCEk1o3LSsY/AMYE/jyyzzzQlPVsJUI3wNOP0RwPgxZau5OPTRz57uI9kEK1sGcnfWp1mn7bXx26U4Y8DJ6H1VmK0gHljvaL6PgBI/BsQB2HnQTFFln98z3smQ6+mR6U=
+	t=1747076773; cv=none; b=t+qOTNTbLDbcEirQKlT5wjQkUW5NM4Yk6oszM73gQO/9q81h0ruqPyipopJckN5973DgjPup0uw9fTSndEQJwt1bc+dhHr/kxSTO3SKpNOAa4Gtu8t9q2eSaYnY9MF/91DYBvniXplS07eSIonBKe9rky0PVG9+1WXp/xu1M7jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076727; c=relaxed/simple;
-	bh=1ZSZ7d40EjM6PfGtNNzgCiWaN1/tS5p7HVYONGN2Dj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3vKokaxpLjyFsbWrNzKgONHkYYeWcAnba7VXzaKfOljk7ZyqE+4vTJ4rgMNUz861RD5Q99FUlpeYs6uhhObBdOO9B/u4a/84LPzt+Nm+xtAS7F0E5nRZuvD+OGRPW4vuZ14MZCvhN//RrgaKMas88OLSVZa/l2tj+SQYjw1kWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1747076773; c=relaxed/simple;
+	bh=6kUXqRfl/QRDHqu7tMXUAiQxfdy3036V26oKCsXgiD4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=BPhR00M+h2twr9vajqTzKFJV7YqJS7M5dLgRnZESN57sFECSmBrFCd/54UydC05g6LubX3GS+eaWCioLxXw3A7kOE3ZXoMta3QJ6i0aJ2aucayFnw1lI8rGsUPE+xF860GhQQ6Q5Z+8YVwVF9KvINpMRU1yO58uKAvSnZ8a8Jk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzbvSqAT; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47663aeff1bso51908501cf.0;
-        Mon, 12 May 2025 12:05:25 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5290be1aedcso4517221e0c.1;
+        Mon, 12 May 2025 12:06:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747076770; x=1747681570; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4h/HoEMxsgGlwFELk4YaCnFR/81exfwZAWd/Rc8C414=;
+        b=bzbvSqATKylbOxiUN6nz11XVoVnYI0uNTI5krVdjvAs7no+Wwlx/7m6U84KT6DjuA1
+         rfDrTkXbcYJmG+0H8gAhAn8ryc9eqTIjlHUwRxAAPMj2I3X90UpUXEliX04q9lUt4Y0S
+         ooFnJdOhTTfI3LF9zvdG6nqSSHTVVj/PO5sOtREATmmomXqOyI7BlnhMfmXywsdqviss
+         YgSCpiBbyhcILIvuIGm6h9/+3fAPyHrMwW46rY5vbueQLqcYF/D8HygFeqJFdBGmAtXv
+         we8elpRb3oV2NeERbGUnOtFFyTU3gNY+PJuIzgWKBLtqQf/81AvRqwNAU6tT+w6noR9e
+         02fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747076724; x=1747681524;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=1e100.net; s=20230601; t=1747076770; x=1747681570;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=d3MF6Gdr8jf4kveAGsiH58pOxAm/4f3V90GsWQvlGwk=;
-        b=sAVOzYyIz1hmU4mTQOI9iLh0G+cEhbe6hIVDv2ubsvbzaDiSbPxU8khtAlYPV3njUy
-         EI6O5LcTInVQh1A/9izEbCM/cp8FqfxgBAocXHok3VXdSpGgM56h4Bs3+OIwXseAciLn
-         LGeHKExOJ8FTXYx5s14ulB+A9jgl16GN2RoClG20zs8MwC/0t9nUhKCr9H6bsm6xMXgx
-         0iB03bV5FS3ysaQevIXKQu5FBKnmQwnHzE0bIW6UidrbU6Ah5m9/X+yctM67+xdhRSOD
-         VztQrsdml1bZ7P/wtMzdPZAY3RRIOWtY1WkBI/7mzNuyR6aREg4plY8QJhbk7V3SWO0M
-         LTTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9bXYkeuDTsoHNAIPvSu1YH75wZjUySAGp99q1S1eYk1O+I9SXSXF7oJJVspZSKME7k/5x5YrrTR+IVFOmvfxKHXo=@vger.kernel.org, AJvYcCXL2bCz8vEpw4jTqjYe1lUkNCKhEIVx3pe+AZAMDETvyZWiDXUolgTmtPdEEm2tRCPwumQyHO07aRLQ@vger.kernel.org, AJvYcCXtpsBhFfidBaLpYOlJz6rlA7SJI9W+Vu0lyyG7nG3dQIZP4j2Pq0wO3lDedG1pou5ZattU+43NTC7k06z2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9l1NDqQZ/SiNyH1h3uAq16Z+5oIXNUWfh8F+fXf9ijxt1LE9U
-	CJhYngKkPZWha+6cTd2LfE5d9etCwjt12IhYBuMQh8Vc8O/I/7eBygN97t+r
-X-Gm-Gg: ASbGnctn+LyhOz7uNOIKDQEIOCZ/bgWZ0VlS2PpiHCOyAHnR2lw1Od28yaxmJB/fQ07
-	Cfu1CgfMb/Se/JU0voG1UmGYaQq8TEEQGnE+k/VQf9kXshKXfcOwMYheId8C3Bf0z3YZM6Pvo1T
-	tc5FIMFl8ZfveyVCytqIBEFqJUgpKEV4wp6B5Ehgy+H25I8K6vSlrdH+nqP3hZxnRU0Zo0snSxQ
-	XDxg8v5GZ81aboln0J42gXVf/hVvmj6fFUNp8mw3+QZvnKiANupsyBZ6zJKSD2xYt3T6gum0A7W
-	4nypMMJuNnWd9WmVL+nM8lgZKgWpEpCRZNhz628g+JICZE2WWLDE9CHTS+zqfbwyN0HTqUFz6yh
-	W3cJXeHglGwx6/4OfMQ==
-X-Google-Smtp-Source: AGHT+IGstQiLdDGDu9maHppC/iabqbA5QXQmg8mpHV7U9Tqs/EcOZcOoeOb0kjqYGdqfIm0J1wUE/Q==
-X-Received: by 2002:ac8:5a4b:0:b0:48e:1c13:ecaf with SMTP id d75a77b69052e-4945273c570mr229066781cf.16.1747076724062;
-        Mon, 12 May 2025 12:05:24 -0700 (PDT)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4945259e590sm54065441cf.73.2025.05.12.12.05.23
+        bh=4h/HoEMxsgGlwFELk4YaCnFR/81exfwZAWd/Rc8C414=;
+        b=A2M2ARNfV6b3q7mvEkoobVKNKkDhus1NATu1ZJuDfLiE6g45GAZ/Fkwa6VzDfjhqmS
+         +0ORB0ZJECkW+LT/gi8mvTmganj9aNvaSYdmKRYCCRjU+EKDMDhJE6emKXWvGDLva4c4
+         25aVyahziNteqfzAJ8bNpEhbkghdGcCCboDJyw/N7pngqKM2rBxPKSlsPRBoNV8/Fnol
+         d3cUx1vdRCY9vUBPN0zypASHmkevfdhyEhKHcAqCo1fguz6ZaY0UPFiDCqfc4hp+i/W1
+         UUni5IzBie9Q6dBkAjnrKbrmRHzacxqvVyI/GgHPEam7It0ZI5+RLWZS6HL8S+QWEQ4l
+         B2hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgyBTsakusVuvGAexk/cvM1Cb6OeW4xTE7D3y1faeTy7EmPNjkQGQlkVH8+fOXCXjooInuUk+jm2FuWMoR@vger.kernel.org, AJvYcCVhsO+9Fb1CPOFuzOEx6AS4FGksXpAKGP/9wRRRlWTYV0cyUXfkaE0MfNLMi2ikJMkzeYOgo9mC9X7RxW0=@vger.kernel.org, AJvYcCWGBfPZfzg8r5eVzCWc42+U2ntHu3K5EuoH8/TMLeLH+pm1mUUg3yewLvoVZ9qJlwPB2uu9Yz73gX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGzgkKOds7mK2nYjbeR9OxNtzp0oUIIHbPMPbz+Bt/nV8eUU6w
+	weczk5KZ5F7682ad4ITzqAVBGEyczv35W/NdSTDMbHC4RxVilNYQ
+X-Gm-Gg: ASbGncu3IEo2aOUFv1ywomVwR/i3LzQOISU7H2hSf4eo5InHAI6nqwe8rNC+hcFxdBE
+	EpcjaRPAWJevnva1ct6SxNPUWBCB5U6iphL8eZwBhpgjiO2vqfnx2v31MLDtQKMdTvk81T7p78J
+	Ob+1adFbWlXN0Cs60rZfRFujg3Vlnfus/kqkeYF2Wog4Z+D3ydNZFBRH+vqvCldougakQxF3m4S
+	p6Lef7ZFtDwSRko/swPoQKEqDWRytHogayNakx499cyVF2qyPVd1v/EU/MmRwJiTR4TgQDpdl8u
+	0f9GTQCxczsXYobCyMTujIS1+Qhi+wKaPr/kQSQiWllxuX+UyJjYNtA=
+X-Google-Smtp-Source: AGHT+IHhM1WuOrFfud3xHWGersrJfw6ltQOIuLsHMahLNTS+wCuSOkQbBayYZvHrZGar3gstSEYr/Q==
+X-Received: by 2002:a05:6122:318e:b0:527:67d9:100d with SMTP id 71dfb90a1353d-52c88a73545mr624984e0c.4.1747076770234;
+        Mon, 12 May 2025 12:06:10 -0700 (PDT)
+Received: from localhost ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52c537264dfsm6194990e0c.13.2025.05.12.12.05.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 12:05:23 -0700 (PDT)
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c542ffec37so574814985a.2;
-        Mon, 12 May 2025 12:05:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3QqpLqFTVf0zYXFFOIQ0/svFgUNnjmr90jlPj5aIZOAVMdjaR++asn8CdXzLQhJ61jB+Tyy306U872WseQg6XqGY=@vger.kernel.org, AJvYcCWE59ePz78McCXCZ6kRh5OVLV0MysWxvQkRqLYOK4FdOH4XOJFBqYrcOLhuTKXKZEqGfxV1qqa8064Kb/yG@vger.kernel.org, AJvYcCWzSjSV9ZMznRvrHcFHbD7lSbNms+tenWvwA4Yz2m4n7PddM64hAKFtp0MmmVLGTtZOja+Q5BCZUgmV@vger.kernel.org
-X-Received: by 2002:a05:620a:8e16:b0:7cc:fd28:8c6d with SMTP id
- af79cd13be357-7cd01115c75mr1718978285a.30.1747076723435; Mon, 12 May 2025
- 12:05:23 -0700 (PDT)
+        Mon, 12 May 2025 12:06:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250509153559.326603-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250509153559.326603-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250509153559.326603-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 May 2025 21:05:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWnaujCjK+gu8RFfrZ4a2axf=xffEOAdwsjFMvUHcfw1w@mail.gmail.com>
-X-Gm-Features: AX0GCFs1qqVunPFP6HjVL2vSxCh34k-gq5vGbef1mspomelrG6kKVz1s8JOeHg0
-Message-ID: <CAMuHMdWnaujCjK+gu8RFfrZ4a2axf=xffEOAdwsjFMvUHcfw1w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: renesas: r9a09g057h44-rzv2h-evk:
- Enable GBETH
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=eee164ff418b0b8924af0432fe0737a6f07a095a24ff0c61f41e7842966b;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Mon, 12 May 2025 16:05:35 -0300
+Message-Id: <D9UF0KCST7K7.23TWU22S6L09H@gmail.com>
+To: "Antheas Kapenekakis" <lkml@antheas.dev>
+Cc: <platform-driver-x86@vger.kernel.org>, "Armin Wolf" <W_Armin@gmx.de>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Hans de Goede" <hdegoede@redhat.com>,
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Jean
+ Delvare" <jdelvare@suse.com>, "Guenter Roeck" <linux@roeck-us.net>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-hwmon@vger.kernel.org>
+Subject: Re: [PATCH v1 00/10] platform/x86: msi-wmi-platform: Add fan
+ curves/platform profile/tdp/battery limiting
+From: "Kurt Borja" <kuurtb@gmail.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250511204427.327558-1-lkml@antheas.dev>
+ <D9TQ0LYKISGB.3QAOHFXVL9PEO@gmail.com>
+ <CAGwozwFJnR2aMhj6LJKU8aF+MDzF9FR21fXPPd7_=44M+KUJGg@mail.gmail.com>
+In-Reply-To: <CAGwozwFJnR2aMhj6LJKU8aF+MDzF9FR21fXPPd7_=44M+KUJGg@mail.gmail.com>
 
-Hi Prabhakar,
+--eee164ff418b0b8924af0432fe0737a6f07a095a24ff0c61f41e7842966b
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Fri, 9 May 2025 at 17:36, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon May 12, 2025 at 7:16 AM -03, Antheas Kapenekakis wrote:
+> On Mon, 12 May 2025 at 01:30, Kurt Borja <kuurtb@gmail.com> wrote:
+>>
+>> Hi Antheas,
+>>
+>> On Sun May 11, 2025 at 5:44 PM -03, Antheas Kapenekakis wrote:
+>> > This draft patch series brings into parity the msi-wmi-platform driver=
+ with
+>> > the MSI Center M Windows application for the MSI Claw (all models).
+>> > Unfortunately, MSI Center M and this interface do not have a discovery=
+ API,
+>> > necessitating the introduction of a quirk system.
+>> >
+>> > While this patch series is fully functional and tested, there are stil=
+l
+>> > some issues that need to be addressed:
+>> >   - Armin notes we need to disable fan curve support by default and qu=
+irk
+>> >     it as well, as it is not supported on all models. However, the way
+>> >     PWM enable ops work, this makes it a bit difficult, so I would lik=
+e
+>> >     some suggestions on how to rework this.
+>>
+>> If I understood the question correctly, then you should control the
+>> visibility of all "curve" related attributes with the quirk.
 >
-> Enable the GBETH nodes on the RZ/V2H Evaluation Kit.
+> Yep, this is what I was wondering. I will investigate this. It would
+> be good to get some comments on the quirk naming as well.
+
+You can check [1] for an example of the hwmon visibility. It's a similar
+problem because some models have 2 fans and others have 4. In the
+alienware-wmi driver we also have custom hwmon attributes, see [2] for
+how to handle visibility with those.
+
+I would personally just name it fan_curve or has_fan_curve.
+
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> @@ -78,6 +80,68 @@ &audio_extal_clk {
->         clock-frequency = <22579200>;
->  };
+>> The custom hwmon attribute_group has an is_visible callback, and so do
+>> the hwmon_ops.
+>>
+>> >   - It turns out that to fully disable the fan curve, we have to resto=
+re
+>> >     the default fan values. This is also what is done on the OEM softw=
+are.
+>> >     For this, the last patch in the series is used, which is a bit dir=
+ty.
+>>
+>> I have a couple questions about this.
+>>
+>> * What are the default fan curves? Can these be statically defined?
+>> * Are user-defined fan curves persistent between reboots?
+>>
+>> I have some doubts about the approach you took on the last patch, but I
+>> want to understand how the platform works first.
 >
-> +&eth0 {
-> +       pinctrl-0 = <&eth0_pins>;
-> +       pinctrl-names = "default";
-> +       phy-handle = <&phy0>;
-> +       phy-mode = "rgmii-id";
-> +       status = "okay";
-> +
-> +       mdio {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               compatible = "snps,dwmac-mdio";
+> So do I. Essentially here is how the Windows software works: when it
+> first opens, it saves the current curve in Windows registry. Then,
+> when the user sets a fan curve, it applies it in the same way we do
+> here and sets a bit in AP. When the custom curve is removed, it unsets
+> that bit and restores the original curve in WMI.
+>
+> The logical reasoning would be that that bit controls the fan curve.
+> This is how it is named in the software. However, when setting that
+> bit on its own, it seems to only partially affect the fan curve. E.g.,
+> when the fan curve is 100% in all points, unsetting that bit makes it
+> go down to 50% when no load occurs. When using the default fan curve,
+> it goes to 0%. Therefore, it seems like that bit makes the fan curve
+> semi-autonomous?
+>
+> The fan curve seems to be hardware specific and resets after reboots.
+> So a straightforward way to get it is to grab it on a fresh boot.
 
-I am just wondering if the above parts of the mdio subnodes should be
-moved to the SoC-specific .dtsi instead, as it is part of the SoC and
-fairly static?
+Oh - this is interesting. Then I think it is the right approach. I'll
+add a couple more comments.
 
-Both approaches seem to be popular: e.g. rk3568.dtsi[1] has the mdio
-subnode in the SoC part, and rk3568-nanopi-r5s.dts[2] extends the
-subnode, while rk3399-orangepi.dts[3] has the full subnode in the
-board part.
+>
+> Antheas
+>
+>> >
+>> > Sleep was tested with all values being preserved during S0iX (platform
+>> > profile, fan curve, PL1/PL2), so we do not need suspend/resume hooks, =
+at
+>> > least for the Claw devices.
+>> >
+>> > For PL1/PL2, we use firmware-attributes. So for that I +cc Kurt since =
+if
+>> > his new high level interface is merged beforehand, we can use that ins=
+tead.
+>>
+>> Hopefully!
+>>
+>> --
+>>  ~ Kurt
+>>
+>> >
+>> > Antheas Kapenekakis (8):
+>> >   platform/x86: msi-wmi-platform: Add unlocked msi_wmi_platform_query
+>> >   platform/x86: msi-wmi-platform: Add quirk system
+>> >   platform/x86: msi-wmi-platform: Add platform profile through shift
+>> >     mode
+>> >   platform/x86: msi-wmi-platform: Add PL1/PL2 support via firmware
+>> >     attributes
+>> >   platform/x86: msi-wmi-platform: Add charge_threshold support
+>> >   platform/x86: msi-wmi-platform: Drop excess fans in dual fan devices
+>> >   platform/x86: msi-wmi-platform: Update header text
+>> >   platform/x86: msi-wmi-platform: Restore fan curves on PWM disable an=
+d
+>> >     unload
+>> >
+>> > Armin Wolf (2):
+>> >   platform/x86: msi-wmi-platform: Use input buffer for returning resul=
+t
+>> >   platform/x86: msi-wmi-platform: Add support for fan control
+>> >
+>> >  .../wmi/devices/msi-wmi-platform.rst          |   26 +
+>> >  drivers/platform/x86/Kconfig                  |    3 +
+>> >  drivers/platform/x86/msi-wmi-platform.c       | 1181 ++++++++++++++++=
+-
+>> >  3 files changed, 1156 insertions(+), 54 deletions(-)
+>> >
+>> >
+>> > base-commit: 62b1dcf2e7af3dc2879d1a39bf6823c99486a8c2
+>>
 
-[1] arch/arm64/boot/dts/rockchip/rk3568.dtsi
-[2] arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts
-[3] arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-=
+x86.git/tree/drivers/platform/x86/dell/alienware-wmi-wmax.c?h=3Dfor-next#n7=
+42
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-=
+x86.git/tree/drivers/platform/x86/dell/alienware-wmi-wmax.c?h=3Dfor-next#n9=
+42
 
-Gr{oetje,eeting}s,
+--eee164ff418b0b8924af0432fe0737a6f07a095a24ff0c61f41e7842966b
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iHUEABYKAB0WIQSHYKL24lpu7U7AVd8WYEM49J/UZgUCaCJGggAKCRAWYEM49J/U
+Zh6EAQD+BliCO7QDYlUXFOISo+JdFEngBzHqoPexiF+Q+2MbhAD+P4bi/TbuhQNG
+M9RvPyR4ew+RrrgxHSJDwMYxqwWhGg4=
+=Hb/2
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--eee164ff418b0b8924af0432fe0737a6f07a095a24ff0c61f41e7842966b--
 
