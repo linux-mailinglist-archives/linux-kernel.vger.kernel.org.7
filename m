@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-643827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40A0AB328D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679B2AB3297
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC4817849E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7507C3B0939
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28838266EE4;
-	Mon, 12 May 2025 08:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E2C24E4CE;
+	Mon, 12 May 2025 08:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WyhxcAIb"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZUdcBvsQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEF1265CA3;
-	Mon, 12 May 2025 08:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCCE25A625
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 08:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747040270; cv=none; b=K9LUe784lE1JUi/1MxajK36p4/onoQFHVHmkuL+RUSVUH6lOhItMY3DRvpsNEH829azO2zEc6FbJN4PruIkBpmBEDlYHY1QUOBZU9d4ldVNQngfnFh7L9GIQukgXehSp32gmSlxYsYppFPEOZsdCnK+scVSxBGo5ko9Xce1hgmM=
+	t=1747040291; cv=none; b=KV7kZM6dGMbNTp9l+cEbxgc95TQEoVO3gKs9CpbtX4VxV5tfEUmS+zevfeBg+PzdFWw2VNCi7+vLKRTBLjiF1fsYavjsMSrHqbWfXjyJDhMAEtTP35t0Ojf39dB7FFWtyT9lhRkfxfcyHwRJun9G5p/YY8YFB4X9KzHcWafSCkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747040270; c=relaxed/simple;
-	bh=qCiOc2lGEPA6wS0ywTwxLfWN66tfkPb8n12/TLdqL3k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BNoHkeeL0Qxp5H4SAS67EabXJN6Dl3TNbLUUo/vlUh5oGazrBjN5B7y0YrMrdUtyg5u2rJxAdWlYjCpJ63T3I/PPFgrZsoQijVIBK+WST41q4ORKDiGajaCi/YD+KWQaSYhN2YU2nyqemSwlOawBPEENXndviZ3lb8s3iP7lsoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WyhxcAIb; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acb5ec407b1so732796566b.1;
-        Mon, 12 May 2025 01:57:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747040267; x=1747645067; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qCiOc2lGEPA6wS0ywTwxLfWN66tfkPb8n12/TLdqL3k=;
-        b=WyhxcAIblIrbetgEpJN72aIIzpnHeRVv5HHk/lpMAzxuSuOkZYpVktK6CMfjbil8Qk
-         w1uW9SXgGLXSmDTLtb7PhFvyxwxHf7Kxs5RyILqG75IT+fpcKjKqrpCuNqryPX/P5I7R
-         ZGfe6veZ9Zc1Itabxjc0sClh8iMnDK0CV5nn4RUHps7uJWF2EL1SZzYISctAV5WwjOB/
-         bM+/vVc7s2FUJIKfx9e6ryBOyQQtIupFseamrqHqGDF1tDBjVhJK+rUgk4EVrwf6/GRw
-         UijC1M9ZQFmBtDtpChPW2AMapDv3nXOQEplneO7Cv6OaeZjGjavTJqmVrDJ3olFMSQQU
-         Reiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747040267; x=1747645067;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qCiOc2lGEPA6wS0ywTwxLfWN66tfkPb8n12/TLdqL3k=;
-        b=JjF7hmcczQ8CNl2trHEUKKTdiMZiYtngtfomm6nLq8P6YICQ+6FIPUVCu5Kwau6fAI
-         jMc+k8KaRtoyx7VwlXkQlMmdzGdj5B2xdfZZBjPPWPwvb59DMeOK8gN/7VFoC885SPE+
-         AZA5i9n6/L5t3Orecjt+PjJsJ5DD0/6TvCufJE3yDFGG+cHjqaVFi/zxCDGDBzfq6lxM
-         fowNMzKLpoD7CD0TzHcl2CyFSf2Glyl7TIRX8PErhbIIoLKHu4AFAdIaprWTAcDK8RJM
-         Hx/h4SC/3BNXOa88G/jqgHVGWE2mKb5nMYrxzTPte7rn3DCb2Qx2oIHJLJtuhG8BG9YI
-         nfJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9qZCyQnuVMMql2bGBrW7fCNsUwONhfEoZiiCgtiOT1XreVm1dbk1oKbLdPccNMw/GIAD6t7WFa44ENCQ=@vger.kernel.org, AJvYcCXYxANixajhKEi6X3lvoTR3GmonElk0dXuQQe0vfWxx1X0behTFTl+cMY2sAxKJUMeaaDuQWVHWU356sQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB3IfBKAdmVjM1e8YiQaiGzFW1qX4mzGUZX3WnVNKqoOi6ZOak
-	D3waaBSaFeNI7F8JCIiSPFIj9AIOVS9XEHgdhO8ccMidBCFUqSPM
-X-Gm-Gg: ASbGncvMaB5uO3/YajpnHWOwovtT4yQnKQyYHdhmRvKD+mu4Fs/tR4c/dOce7AxVIaE
-	VLI7IAU8Ocw/WUhGdtsQphkWqeJpr4fole8LbCjVvbG1Jy1qz5+L5/XNVSU5jkZzcQ8pXl64a/c
-	z/4DUp5tOKs/nWFB9/VxVaN2hp1mJO0wjzRZNXhGhoZwJWJ9UR3lvY9uThzoGeQdncsLpRBKUum
-	qwtXhr34+XsfFVatnuAFcqJLiRgkM2nZZwk1xstq1Ajhs47UbQaqGH645qBs2Taq0A5q6ppobos
-	wW5tjFj7a61Ombba6k0o/oK6zoGn5KCIpnipxIsUjggA22XRlklqCg==
-X-Google-Smtp-Source: AGHT+IGJBdps9c8bdW4GuYaz6tfF93ydrZ6lD3tOaY3CcqSNDXObZagPFTfmNPLmYXrOY46TTm5x3g==
-X-Received: by 2002:a17:907:a810:b0:ad2:5499:75a1 with SMTP id a640c23a62f3a-ad254997932mr280618466b.32.1747040266634;
-        Mon, 12 May 2025 01:57:46 -0700 (PDT)
-Received: from [10.176.234.34] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21985b026sm588720366b.177.2025.05.12.01.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 01:57:46 -0700 (PDT)
-Message-ID: <9df429e159b3933566c386a4464536ec2982f5f5.camel@gmail.com>
-Subject: Re: [PATCH v3 2/3] scsi: ufs: qcom: Map devfreq OPP freq to UniPro
- Core Clock freq
-From: Bean Huo <huobean@gmail.com>
-To: Ziqi Chen <quic_ziqichen@quicinc.com>, quic_cang@quicinc.com, 
- bvanassche@acm.org, mani@kernel.org, beanhuo@micron.com,
- avri.altman@wdc.com,  junwoo80.lee@samsung.com, martin.petersen@oracle.com,
- quic_nguyenb@quicinc.com,  quic_nitirawa@quicinc.com,
- quic_rampraka@quicinc.com, neil.armstrong@linaro.org, 
- luca.weiss@fairphone.com, konrad.dybcio@oss.qualcomm.com, 
- peter.wang@mediatek.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, Manivannan
-	Sadhasivam <manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
-	 <James.Bottomley@HansenPartnership.com>, open list
-	 <linux-kernel@vger.kernel.org>
-Date: Mon, 12 May 2025 10:57:44 +0200
-In-Reply-To: <20250509075029.3776419-3-quic_ziqichen@quicinc.com>
-References: <20250509075029.3776419-1-quic_ziqichen@quicinc.com>
-	 <20250509075029.3776419-3-quic_ziqichen@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1747040291; c=relaxed/simple;
+	bh=kc5GSFFX/O1pk4VfeAAu72fqhvLdEcPt+XSmat/prac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBZ61Imi+QznxoFpdkqeQzumuL9/FUlufHQoiLdakwnZSh6je5J9GlTBJodu0bTUD2eUMhgvhpw6Q6vusmKxdGlcbx+w2MGSsVYVUw9AdDg4ZLE23UsqNYanQehxFsYTLMB7Okdr1hbb7MTzkacpw9y297ut8X9rGW2ywJWRsBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZUdcBvsQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747040285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/itYxELyk+TdH5HSQhUSdXuubPJi4gcF7E7JylRYM9w=;
+	b=ZUdcBvsQhOV2Ile2LS58jOf9FM8qPAiX3d+9UNt76gLfx24To8ShURrp124V9/QE2yy3yR
+	7AdE2hkM1heL42U//EnsU9v38GZIGEKjkh4m0ZqiZe6XTkcPct6nrwRsnJDd4bKtKrUxde
+	0m9vTFP/yrlmAb1WX765b+o9+5sCnpg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-D5DDTtu7O1qb0IrEGVFMtg-1; Mon,
+ 12 May 2025 04:58:01 -0400
+X-MC-Unique: D5DDTtu7O1qb0IrEGVFMtg-1
+X-Mimecast-MFC-AGG-ID: D5DDTtu7O1qb0IrEGVFMtg_1747040280
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FDC5195609E;
+	Mon, 12 May 2025 08:57:59 +0000 (UTC)
+Received: from localhost (unknown [10.43.135.229])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 045E718001DA;
+	Mon, 12 May 2025 08:57:56 +0000 (UTC)
+Date: Mon, 12 May 2025 10:57:54 +0200
+From: Miroslav Lichvar <mlichvar@redhat.com>
+To: John Stultz <jstultz@google.com>
+Cc: Keno Goertz <contact@kenogo.org>, tglx@linutronix.de,
+	zippel@linux-m68k.org, mingo@elte.hu, linux-kernel@vger.kernel.org
+Subject: Re: ntp: Adjustment of time_maxerror with 500ppm instead of 15ppm
+Message-ID: <aCG4El4aub9TEKWo@localhost>
+References: <4a6f1494-c6fe-4f66-a376-b6389538ef9f@kenogo.org>
+ <CANDhNCpQLN0j5KBp9OB4LB-YJGCCexFG+v5Zax2wwBn-3Tv3Tw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANDhNCpQLN0j5KBp9OB4LB-YJGCCexFG+v5Zax2wwBn-3Tv3Tw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, 2025-05-09 at 15:50 +0800, Ziqi Chen wrote:
-> From: Can Guo <quic_cang@quicinc.com>
->=20
-> On some platforms, the devfreq OPP freq may be different than the unipro
-> core clock freq. Implement ufs_qcom_opp_freq_to_clk_freq() and use it to
-> find the unipro core clk freq.
->=20
-> Fixes: c02fe9e222d1 ("scsi: ufs: qcom: Implement the freq_to_gear_speed()=
- vop")
-> Signed-off-by: Can Guo <quic_cang@quicinc.com>
-> Co-developed-by: Ziqi Chen <quic_ziqichen@quicinc.com>
-> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
-> Tested-by: Luca Weiss <luca.weiss@fairphone.com>
+On Thu, May 08, 2025 at 12:45:13PM -0700, John Stultz wrote:
+> Looking back through the commit history, we used to increment
+> time_maxerror by (time_tolerance >> SHIFT_USEC), but all the way back
+> in the git history (2.6.12, and seemingly back as far as 2.3?)
+> time_tolerance was always set to MAXFREQ.
 
+This 500 ppm increment goes all way back to the original nanokernel
+implementation by David Mills, on which IIRC was based the Linux and
+other systems' timekeeping code:
+https://www.eecis.udel.edu/~mills/ntp/html/kern.html
 
-Looks good to me:
+I think the idea to use MAXFREQ (reported as tolerance in timex) was
+to cover the case when the clock is not synchronized at all with the
+frequency offset set to any value in the +/- 500 ppm range. The Linux
+adjtimex also allows setting the tick length, which gives it a much
+wider range of +/-10% adjustment, so that is not fully covered.
 
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+Changing the hardcoded rate to 15 ppm to match RFC5905 doesn't seem
+like a good idea to me. The kernel doesn't know how well the clock is
+synchronized and I'm sure in some cases it would be too small.
+
+The best solution would be to add a new mode to adjtimex to make it
+configurable, e.g. named ADJ_MAXERRORRATE and the actual value
+provided in the timex tolerance field. For compatibility with existing
+NTP/PTP clients the rate could be reset to the default 500 ppm on
+every ADJ_MAXERROR setting. To get a reduced rate updated applications
+could set both ADJ_MAXERROR and ADJ_MAXERRORRATE at the same time.
+
+-- 
+Miroslav Lichvar
+
 
