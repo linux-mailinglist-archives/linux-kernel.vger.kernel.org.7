@@ -1,226 +1,172 @@
-Return-Path: <linux-kernel+bounces-644006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16D7AB3585
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:03:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135DBAB3571
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C33717291F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58EA1893431
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A85E263892;
-	Mon, 12 May 2025 10:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1AA268FF4;
+	Mon, 12 May 2025 10:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iBP+OoD/"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="ShP2Q1lh"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D97267B90
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BBD268FF1
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747047581; cv=none; b=dpZCxa4iq3NJHikfnQFJclY1o54meX7bj0tKkOgGakNPdon3qRMBeCvVxu/CpCslhx/sXrl53WaClJQGco7YiapSA/8+UzPI4wq3OGQ3Ih7eX2/DHBL5HTpfaHv6NeaSaYnPX5W0j0QZgqeOq6m92n3VgknD/1PzHRmdn3h3Suo=
+	t=1747047555; cv=none; b=a3RjSGxxf9o1opRl46xRbiA5vxNaiN59jNwgmKeyb0gZ2II0p7R8qswzCBM1bzj4cAwIESm6SWQVbqYE19o8vFSGlJ5okHzYDiwudaKWxK0neoY6ErLkKZL+WasyCJ6pFVHb8WrHQOnn0RrV+3ckwxAF+yd1StC3FnodTdGVdlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747047581; c=relaxed/simple;
-	bh=Mf1la858hqAJr8LutHXjNn3/rfRODDJSK6FlMwVDubU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ui72ds4B8sMkAWW83lSi7MkWzwzDSFhXD93OV83HPDTCbiC2IwAk9pqYjiKOo56qcQBIFMkT/YgoUH22c6LpeQkpiDNheTmWs2n1RSsx5+ErPBl972oJmXUfh/qb7FeLoJwfQ1BsvACqmKkwMpn2IOWTV9PYWIdp5PYvpE7rglo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iBP+OoD/; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747047577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8DSHevcaoSeQ5GAnjIxMyZYZhMqtaudfe/7o3ZKDxqg=;
-	b=iBP+OoD/vqBhf3MMBUJ/na6ABzFMTGylfs4Jzkjm55thvzBUi0va4eHdlc4Lw9uARQuf6v
-	wNp5iDxkJE5Km03ShON+UVYIL1J1SMPQ01Vu+DU9FjQarwZYOgMZMbVZlrT8pilDCbciAn
-	xanXLwVLmh1MOXut6Q+aFGvCUCdY4+8=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: sb: Replace deprecated strcpy() with strscpy()
-Date: Mon, 12 May 2025 12:57:41 +0200
-Message-ID: <20250512105754.35595-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1747047555; c=relaxed/simple;
+	bh=KOKI1TT7Ffxa/5Huul2yUCdIH6bNQbnt9ywZxg209f0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=eq6+MgxgtEWTlX4VWUjg7ahNZwqcYtakWzAP07GyurxsuL8x2xSQU/AEPKGBEpbLeuluHVZIR+BJkp1iliUvli5FsqoC3G2p7whStcQsiQiuWmxW4ynPrL5BpXDytrtYh+C6yjeOoWbjLjMawQlMOsQv6MDomH202SowN9ZtBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=ShP2Q1lh; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1747047550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T8/Ht4vLH47yQgnyA3aHoKEjFyY3IKH+TxDUhnG4Pis=;
+	b=ShP2Q1lh0QUy9ERDnw/XyUESNdFmosr43cn7zNMQgNobgnz3j/jedkv9j5CKVBYNm+8vDn
+	N0gyToplqVDXrQrVDcUo6cyt5E4+/YT8KJ5L9dFRdOWn2PZXu6NEvup8tYnORw9ZAUZpov
+	VBU9NUrFQ69gEAFU4nxCCclW/gFw4YVNjlPQD19mamiA/0ygoD4YmyVflSybIMuGtxGRbb
+	Gc17pDEGSpSW9spEv7cHsnlo+Uy1UYeDbt4WgEBK4KiHyKOTaeX1RbQkohfqK/VXiiRBOx
+	vhvHoPWtq25Yuek/wANmqPZYLaLtTNlXPQF/SbXXdC9/fLBBJNlNr1jTIdOMhA==
+Content-Type: multipart/signed;
+ boundary=f5128d620a41dad2d3ab473cb7c3567b2921ffecd91198bee2646459e69b;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Mon, 12 May 2025 12:58:51 +0200
+Message-Id: <D9U4NW0TLBIE.2WTOIETA78EVQ@cknow.org>
+Subject: Re: [PATCH 0/1] arm64: dts: rockchip: rk3568: Move PCIe3 MSI to use
+ GIC ITS
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Chukun Pan" <amadeus@jmu.edu.cn>, <linux-pci@vger.kernel.org>
+Cc: <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <dsimic@manjaro.org>, <heiko@sntech.de>, <krzk+dt@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>
+References: <D9RSA5K547DD.1LYPIZZM4XALS@cknow.org>
+ <20250512070009.336989-1-amadeus@jmu.edu.cn>
+In-Reply-To: <20250512070009.336989-1-amadeus@jmu.edu.cn>
 X-Migadu-Flow: FLOW_OUT
 
-strcpy() is deprecated; use strscpy() instead.
+--f5128d620a41dad2d3ab473cb7c3567b2921ffecd91198bee2646459e69b
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-No functional changes intended.
+Hi,
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- sound/isa/sb/emu8000.c  | 3 ++-
- sound/isa/sb/jazz16.c   | 5 +++--
- sound/isa/sb/sb16.c     | 5 +++--
- sound/isa/sb/sb8.c      | 5 +++--
- sound/isa/sb/sb8_midi.c | 3 ++-
- sound/isa/sb/sb_mixer.c | 5 +++--
- 6 files changed, 16 insertions(+), 10 deletions(-)
+Added linux-pci ML to "To".
 
-diff --git a/sound/isa/sb/emu8000.c b/sound/isa/sb/emu8000.c
-index 52884e6b9193..312b217491d4 100644
---- a/sound/isa/sb/emu8000.c
-+++ b/sound/isa/sb/emu8000.c
-@@ -14,6 +14,7 @@
- #include <linux/export.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/string.h>
- #include <sound/core.h>
- #include <sound/emu8000.h>
- #include <sound/emu8000_reg.h>
-@@ -1096,7 +1097,7 @@ snd_emu8000_new(struct snd_card *card, int index, long port, int seq_ports,
- #if IS_ENABLED(CONFIG_SND_SEQUENCER)
- 	if (snd_seq_device_new(card, index, SNDRV_SEQ_DEV_ID_EMU8000,
- 			       sizeof(struct snd_emu8000*), &awe) >= 0) {
--		strcpy(awe->name, "EMU-8000");
-+		strscpy(awe->name, "EMU-8000");
- 		*(struct snd_emu8000 **)SNDRV_SEQ_DEVICE_ARGPTR(awe) = hw;
- 	}
- #else
-diff --git a/sound/isa/sb/jazz16.c b/sound/isa/sb/jazz16.c
-index b28490973892..69d9bfb6c14c 100644
---- a/sound/isa/sb/jazz16.c
-+++ b/sound/isa/sb/jazz16.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/string.h>
- #include <asm/dma.h>
- #include <linux/isa.h>
- #include <sound/core.h>
-@@ -286,8 +287,8 @@ static int snd_jazz16_probe(struct device *devptr, unsigned int dev)
- 
- 	jazz16->chip = chip;
- 
--	strcpy(card->driver, "jazz16");
--	strcpy(card->shortname, "Media Vision Jazz16");
-+	strscpy(card->driver, "jazz16");
-+	strscpy(card->shortname, "Media Vision Jazz16");
- 	sprintf(card->longname,
- 		"Media Vision Jazz16 at 0x%lx, irq %d, dma8 %d, dma16 %d",
- 		port[dev], xirq, xdma8, xdma16);
-diff --git a/sound/isa/sb/sb16.c b/sound/isa/sb/sb16.c
-index 2f7505ad855c..752762117338 100644
---- a/sound/isa/sb/sb16.c
-+++ b/sound/isa/sb/sb16.c
-@@ -10,6 +10,7 @@
- #include <linux/err.h>
- #include <linux/isa.h>
- #include <linux/module.h>
-+#include <linux/string.h>
- #include <sound/core.h>
- #include <sound/sb.h>
- #include <sound/sb16_csp.h>
-@@ -337,12 +338,12 @@ static int snd_sb16_probe(struct snd_card *card, int dev)
- 	if (err < 0)
- 		return err;
- 
--	strcpy(card->driver,
-+	strscpy(card->driver,
- #ifdef SNDRV_SBAWE_EMU8000
- 			awe_port[dev] > 0 ? "SB AWE" :
- #endif
- 			"SB16");
--	strcpy(card->shortname, chip->name);
-+	strscpy(card->shortname, chip->name);
- 	sprintf(card->longname, "%s at 0x%lx, irq %i, dma ",
- 		chip->name,
- 		chip->port,
-diff --git a/sound/isa/sb/sb8.c b/sound/isa/sb/sb8.c
-index 8726778c815e..6d5131265913 100644
---- a/sound/isa/sb/sb8.c
-+++ b/sound/isa/sb/sb8.c
-@@ -9,6 +9,7 @@
- #include <linux/isa.h>
- #include <linux/ioport.h>
- #include <linux/module.h>
-+#include <linux/string.h>
- #include <sound/core.h>
- #include <sound/sb.h>
- #include <sound/opl3.h>
-@@ -162,8 +163,8 @@ static int snd_sb8_probe(struct device *pdev, unsigned int dev)
- 	if (err < 0)
- 		return err;
- 
--	strcpy(card->driver, chip->hardware == SB_HW_PRO ? "SB Pro" : "SB8");
--	strcpy(card->shortname, chip->name);
-+	strscpy(card->driver, chip->hardware == SB_HW_PRO ? "SB Pro" : "SB8");
-+	strscpy(card->shortname, chip->name);
- 	sprintf(card->longname, "%s at 0x%lx, irq %d, dma %d",
- 		chip->name,
- 		chip->port,
-diff --git a/sound/isa/sb/sb8_midi.c b/sound/isa/sb/sb8_midi.c
-index d2908fc280f8..57867e51d367 100644
---- a/sound/isa/sb/sb8_midi.c
-+++ b/sound/isa/sb/sb8_midi.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/io.h>
-+#include <linux/string.h>
- #include <linux/time.h>
- #include <sound/core.h>
- #include <sound/sb.h>
-@@ -254,7 +255,7 @@ int snd_sb8dsp_midi(struct snd_sb *chip, int device)
- 	err = snd_rawmidi_new(chip->card, "SB8 MIDI", device, 1, 1, &rmidi);
- 	if (err < 0)
- 		return err;
--	strcpy(rmidi->name, "SB8 MIDI");
-+	strscpy(rmidi->name, "SB8 MIDI");
- 	snd_rawmidi_set_ops(rmidi, SNDRV_RAWMIDI_STREAM_OUTPUT, &snd_sb8dsp_midi_output);
- 	snd_rawmidi_set_ops(rmidi, SNDRV_RAWMIDI_STREAM_INPUT, &snd_sb8dsp_midi_input);
- 	rmidi->info_flags |= SNDRV_RAWMIDI_INFO_OUTPUT | SNDRV_RAWMIDI_INFO_INPUT;
-diff --git a/sound/isa/sb/sb_mixer.c b/sound/isa/sb/sb_mixer.c
-index 9d23b7a4570b..b2709ed134b4 100644
---- a/sound/isa/sb/sb_mixer.c
-+++ b/sound/isa/sb/sb_mixer.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/string.h>
- #include <linux/time.h>
- #include <sound/core.h>
- #include <sound/sb.h>
-@@ -718,7 +719,7 @@ static int snd_sbmixer_init(struct snd_sb *chip,
- 			return err;
- 	}
- 	snd_component_add(card, name);
--	strcpy(card->mixername, name);
-+	strscpy(card->mixername, name);
- 	return 0;
- }
- 
-@@ -799,7 +800,7 @@ int snd_sbmixer_new(struct snd_sb *chip)
- 			return err;
- 		break;
- 	default:
--		strcpy(card->mixername, "???");
-+		strscpy(card->mixername, "???");
- 	}
- 	return 0;
- }
--- 
-2.49.0
+On Mon May 12, 2025 at 9:00 AM CEST, Chukun Pan wrote:
+>> > With this patch I get the following kernel warnings:
+>> >
+>> > pci 0001:10:00.0: Primary bus is hard wired to 0
+>> > pci 0002:20:00.0: Primary bus is hard wired to 0
+>> >
+>> > If I 'unapply' this patch, I don't see those warnings.
+>
+>> I was pretty sure I had seen those messages before, but couldn't find
+>> them before. But now I have: on my rk3588-rock-5b.
+>
+> Thanks for the reminder, I didn't notice this before.
+> The BSP kernel also has this warning.
+>
+> Before this patch:
+> [    2.997725] pci_bus 0001:01: busn_res: can not insert [bus 01-ff] unde=
+r [bus 00-0f] (conflicts with (null) [bus 00-0f])
+> [    3.009990] pci 0001:00:00.0: BAR 6: assigned [mem 0xf2200000-0xf220ff=
+ff pref]
+> [    3.018100] pci 0001:00:00.0: PCI bridge to [bus 01-ff]
+> ...
+> [    3.401416] pci_bus 0002:01: busn_res: can not insert [bus 01-ff] unde=
+r [bus 00-0f] (conflicts with (null) [bus 00-0f])
+> ...
+> [    3.545459] pci 0002:00:00.0: PCI bridge to [bus 01-ff]
+>
+> After this patch:
+> [    3.037779] pci 0001:10:00.0: Primary bus is hard wired to 0
+> [    3.044120] pci 0001:10:00.0: bridge configuration invalid ([bus 01-ff=
+]), reconfiguring
+> [    3.053362] pci_bus 0001:11: busn_res: [bus 11-1f] end is updated to 1=
+1
+> [    3.068920] pci 0001:10:00.0: PCI bridge to [bus 11]
+> ...
+> [    3.451429] pci 0002:20:00.0: Primary bus is hard wired to 0
+> [    3.457793] pci 0002:20:00.0: bridge configuration invalid ([bus 01-ff=
+]), reconfiguring
+> ...
+> [    3.535794] pci_bus 0002:21: busn_res: [bus 21-2f] end is updated to 2=
+1
+> ...
+> [    3.612893] pci 0002:20:00.0: PCI bridge to [bus 21]
+>
+> Looks like a harmless warning.
 
+I see various messages which look odd or suboptimal to me:
+- (conflicts with (null) [bus 00-0f])
+- bridge configuration invalid ([bus 01-ff]), reconfiguring
+
+But those are informational messages, so I guess that is considered
+normal. Looking a bit further and it does look that the severities in
+``drivers/pci/probe.c`` are chosen deliberately. So even though my NVMe
+drives seem to work, I'm not ready yet to ignore a WARNING.
+
+In my view, a warning is something that should be fixed or if it's
+indeed harmless, then its severity should be downgraded.
+
+So I looked where that warning came from and found commit
+71f6bd4a2313 ("PCI: workaround hard-wired bus number V2")
+
+And its commit message does not make it clear to *me* if it's valid:
+
+    Fixes PCI device detection on IBM xSeries IBM 3850 M2 / x3950 M2
+    when using ACPI resources (_CRS).
+    This is default, a manual workaround (without this patch)
+    would be pci=3Dnocrs boot param.
+
+    V2: Add dev_warn if the workaround is hit. This should reveal
+    how common such setups are (via google) and point to possible
+    problems if things are still not working as expected.
+
+This could be interpreted as "let's make it a warning so people will put
+it in a search engine (and not just ignore it) and then we can find out
+via that, if it's a common issue".
+
+It would be helpful if the people (way) more familiar with the PCI
+subsystem then me to tell me/us whether the severity is appropriate (and
+thus should be fixed?) or if this should be an info or dbg level message
+instead.
+
+Cheers,
+  Diederik
+
+--f5128d620a41dad2d3ab473cb7c3567b2921ffecd91198bee2646459e69b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaCHUdwAKCRDXblvOeH7b
+brPcAQDFLvLOr4MVv6bPcn//tl4F4G7GpE+qkYliDw8IQiSYpAEAmxHUXv878qId
+zZdpqj/69uyB2oVZDR5clQaoGkkD7wU=
+=2NDu
+-----END PGP SIGNATURE-----
+
+--f5128d620a41dad2d3ab473cb7c3567b2921ffecd91198bee2646459e69b--
 
