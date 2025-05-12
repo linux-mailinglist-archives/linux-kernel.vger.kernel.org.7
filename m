@@ -1,105 +1,124 @@
-Return-Path: <linux-kernel+bounces-644263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B89AB39A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:49:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37577AB39A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB087A8E78
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ECA816E892
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF59C1DDC37;
-	Mon, 12 May 2025 13:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C716F1C701C;
+	Mon, 12 May 2025 13:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVcbS+6a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZggClBqr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CD7219E4;
-	Mon, 12 May 2025 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38C20322
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747057713; cv=none; b=R7nPNwtjpL8y/jk2QxUc5m1A6BcREiYeSaEZVD52iJtMV9h8OTFY6oOO6inAYslB2D5ywLWJWPN0017V10xujZcaRg11679u6+wGmA0zJg00m9GQPd3gOLtImP0pmJGvc5b/RWMnU3NAtFC4rcP4sbpAIGOzv2rLdCowoCtBjE0=
+	t=1747057757; cv=none; b=TZF/yfZ3D6iGmuWfwi7WQZeZq7TnMAjITMB2R1z7NeEbIMxqMngB6gpY4laRFOKooGbBjQgzcDPFW9DrVxcSKY8zoR2b1GKO0xBQWevHAAFAVAzvkeCvX6CFrOKNVIOjhngK3/Gcsw3IV5YzpR7f19v4rR9OZ8WjuAtnmlFaOO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747057713; c=relaxed/simple;
-	bh=ZtcN5AbkC6JRxscSzpTZ6yhbH1um53//UF1LbMyQjx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F5wA7IQiXy9J6+dNfYOU1qlTFVVGVC3Oj/JN/6k4VJWTt9AWilsrhVfAExdxCNXGBqlM5jtQ+tMJy77P6f/o0oH1fT1EkJJFyz8KNN+4hNOClT3/obUx0sfaiVbeu9Hfm/QxCUplprqARnfzousgSGKGBSsGv71TDovNWNXfyZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVcbS+6a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA2BC4CEEF;
-	Mon, 12 May 2025 13:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747057711;
-	bh=ZtcN5AbkC6JRxscSzpTZ6yhbH1um53//UF1LbMyQjx8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dVcbS+6a89aPGN7YF1tPHEst6vPTmCaJEw3geIxrbuxAZY7qMMT6GEQHe2sm98oCn
-	 CmAdmkp5b5Y6ykcZrLjp6rKhEXOofLIuIs+L1HBAK9n5qmvok9JYtK4uucb3luySvX
-	 xenRAyO7edwT+3OD6NOxtRm1iyhdvKeUsBGr2NAgqOEGE5CNROG+5FpxA1L/E9xc4M
-	 hjUy5cP4/jXoVcCFcoYKSZnI6y3E9SpGJ0Zz5S5X2AuTbQ8CQ7pVtzsTMyg0H4dXc/
-	 c/YM3/oV4skQ38V57vibpr2kW3XX/6trfXQAEBdPQGrNhKu1fXSvZ8Elv5Y0dOjM76
-	 OhM+/+O1Kiw7g==
-From: Conor Dooley <conor@kernel.org>
-To: linux-renesas-soc@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Ben Zong-You Xie <ben717@andestech.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1747057757; c=relaxed/simple;
+	bh=W46sKoTAcXzSZ14kvpbvNaqoM5PlozMi0I1Gakngk3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LlpOm6Vv+QAQEsQuHv3dgwWOLvVxdyKPXA2C7sUkSrrbrg0p/LRI3WzEU0xdjSi/NqC1yTd4k5yHbSpOBJ4mrfY2TmWQPxovMKRBfVzluFVQSfsC2OfxYhURaddKMr/5biZOpPoW+oHza936d+GH4paQOppy7zT7dM/ZBi1msQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZggClBqr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 82E3840E0241;
+	Mon, 12 May 2025 13:49:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9e8mVcqvAY75; Mon, 12 May 2025 13:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747057748; bh=cPK2BZeF54LQ+QUrzr2RXlQkhK+9iLtBaUWwpT1rT3g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZggClBqrBYWecc5FS45GhGuQ5qZAkFTxkI61L5BFNFlxTukcLyU6PO4o4R9TIPa4C
+	 /EhVZZOO0RcBQzin6AnMDu2zSkUfyORwXl7r9CBOuaeiya1B3zzAUZi1Ok2rJi9fak
+	 1aC2YCsGlcUNQfhnBHUKPCs9AHlVkhyD+dVQmHRkesBZeyrBBmV0OLC797AZ2jHkCb
+	 JtdRDpH8Yhltb4VYwDvMhsN6rVFuFWW7fqlM2WeTgB51h27eNjxriz/6iYO9x83SoN
+	 8YKdRJqvSv9nvFQTySXK2cY/83aYGqulk7LOIfV4udSyxlD+oMtkpO2cQP/bE+0ltz
+	 0RYuyfulHyFbWB32BN/Qbn38T32cZUxlfJBkgQVBpOwJOoYMHXn/3PHu35d9Z8F1W/
+	 Aek5KnVad+8BN5mdixcQVPzGkiaRpYuAjAFtgUVudEioglTSA04fCQGR1upig38v/4
+	 gP1Zej4HDIX52Rlsc5ObPaQE8QVmFi8pWhexlQvFky7HcNK6ZYNrKxO65n8Rkg0I1E
+	 ynn9prkYJTTWEERwdFOemP2tirYbZBdzGJBLnUp+W4WklTkXaSYw7tcoobCltm3bXX
+	 462my9EhGFrMKjMg/A1dk5XP/0JIwXbi0zG69FINrxZqFt78AUulh9ZdDwDtgpp8mt
+	 /vPt5wmTFRNE3dyzZamh0mTo=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3425240E023B;
+	Mon, 12 May 2025 13:48:54 +0000 (UTC)
+Date: Mon, 12 May 2025 15:48:53 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2 2/2] riscv: dts: renesas: add specific RZ/Five cache compatible
-Date: Mon, 12 May 2025 14:48:15 +0100
-Message-ID: <20250512-sphere-plenty-8ce4cd772745@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250512-daily-saga-36a3a017dd42@spud>
-References: <20250512-daily-saga-36a3a017dd42@spud>
+	"Ahmed S . Darwish" <darwi@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: Re: [RFC PATCH 0/15] x86: Remove support for TSC-less and CX8-less
+ CPUs
+Message-ID: <20250512134853.GGaCH8RUjJwgHq25qx@fat_crate.local>
+References: <alpine.DEB.2.21.2505050944230.31828@angie.orcam.me.uk>
+ <98C88CE8-C3D5-4B75-8545-71DD47C67614@zytor.com>
+ <alpine.DEB.2.21.2505051356340.31828@angie.orcam.me.uk>
+ <1E50C160-EB89-4C5C-B9F0-6441026EE380@zytor.com>
+ <20250505205405.GNaBklbdKLbadRATbr@fat_crate.local>
+ <alpine.DEB.2.21.2505060059010.31828@angie.orcam.me.uk>
+ <20250506141631.GEaBoZvzPCWh88xDzu@fat_crate.local>
+ <alpine.DEB.2.21.2505062228200.21337@angie.orcam.me.uk>
+ <8C172B63-38E1-427B-8511-25ECE5B9E780@alien8.de>
+ <alpine.DEB.2.21.2505121225000.46553@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1260; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=ybCPqZEqw4uWvO05OQd8ua1QcdWR7/7pRvsx7RcK7bg=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDBmKf2QnyJscNLaJb6tofyZ/7prgnseHPl9o4bW49FpbY Tn72WrpjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzkWBDDX5FTBssymqYJrnuS 997tyvr+/fHndz+JcrBd4LfqYsKPLA6GfzorrtV+q2jR4S5c5nZoPueNJxoan99dPskQufvrvkn 2l1kB
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2505121225000.46553@angie.orcam.me.uk>
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Mon, May 12, 2025 at 01:55:35PM +0100, Maciej W. Rozycki wrote:
+> On Thu, 8 May 2025, Borislav Petkov wrote:
+> 
+> > > NB people also fancy old cars, or boats, or trains even, not because 
+> > >they're faster, more comfortable, or have any real advantage over modern 
+> > >alternatives.
+> > 
+> > 
+> > This fits very well, IMO, with Linus' suggestion to support this stuff 
+> > out of tree. I think this solution is the optimal one for all parties 
+> > involved...
+> 
+>  Would kernel.org git infrastructure be available for such a project?
 
-When the binding was originally written, it was assumed that all
-ax45mp-caches had the same properties etc. This has turned out to be
-incorrect, as the QiLai SoC has a different number of cache-sets.
+as in hosting your repo there?
 
-Add a specific compatible for the RZ/Five for property enforcement and
-in case there turns out to be additional differences between these
-implementations of the cache controller.
+I don't see why not:
 
-Acked-by: Ben Zong-You Xie <ben717@andestech.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+https://korg.docs.kernel.org/accounts.html
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index e0ddf8f602c79..a8bcb26f42700 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -143,7 +143,8 @@ plic: interrupt-controller@12c00000 {
- 	};
- 
- 	l2cache: cache-controller@13400000 {
--		compatible = "andestech,ax45mp-cache", "cache";
-+		compatible = "renesas,r9a07g043f-ax45mp-cache", "andestech,ax45mp-cache",
-+			     "cache";
- 		reg = <0x0 0x13400000 0x0 0x100000>;
- 		interrupts = <SOC_PERIPHERAL_IRQ(476) IRQ_TYPE_LEVEL_HIGH>;
- 		cache-size = <0x40000>;
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
