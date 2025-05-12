@@ -1,241 +1,90 @@
-Return-Path: <linux-kernel+bounces-644055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27320AB3607
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAE9AB361A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8F53A380F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0927D860881
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54D4293B65;
-	Mon, 12 May 2025 11:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB742920BB;
+	Mon, 12 May 2025 11:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avqs1XCH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbeIR/9T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E78292908;
-	Mon, 12 May 2025 11:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD933255227;
+	Mon, 12 May 2025 11:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050020; cv=none; b=ZMipHTBcheA//owxyyW+Xx6qscOAqXfBxAuaeaFvp4wwLr7UrT5nTE/VyQPEi2yjMFNGfuaEtgJJMj/5i/vVrauJr+mRBtFBnyTKFU6KbC7AGYY+uyTeEbOlz/GQ3hCpNR1uWzyUc75McJ1xsTo8YZ5YF0Nwa85u22U3CzHihfc=
+	t=1747050149; cv=none; b=J/wmIJ9v+TMFdh7tcOSoz5IXNj9wWMapoabs7qfE2MBQ/q7YR+IucrTUyfw36L2plMT3y/0lg3ISX0jz+YXjWn0NQ/EGwG6WnFBzoEw5+O/j7hcAArskUA9jIcdnC8TYWe1/XV0ZERgi8zdIA7yXvMPW9QfLfmf4VGxDLTEWBpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050020; c=relaxed/simple;
-	bh=3+mgovEH2U7GbbwYUPvC67milPze1pciOWU6d6iilto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gq5G5IBkotUKh6nBXz5Q8BabxTtxsiQwI05K2C7iZ8ozbVV+RO7YQ5K+ruM+PX/2q8MlJfuE79HIsNhlKj5ska9Ovg753XedLxxPyPuBITLuYaatBSG90pDfTqk1Q725QVNezQQFfQbqTQgHH6ELx8wa94CABISxNfuDpjvupOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avqs1XCH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4CA24C4CEFA;
-	Mon, 12 May 2025 11:40:19 +0000 (UTC)
+	s=arc-20240116; t=1747050149; c=relaxed/simple;
+	bh=G+iZK/fJWTYrFKszSrPiBYm4ohAZS1672uKXRst4nIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WX1TkPSDMM9wrcF86kXW7aNwkXuHGMJ1z5zkwdv5PyK8iHTnH5QURQuwIa/B62PmUVsnnxZAGBGosoMYjbonY6t0i/cXN1DHvL38EXtG5kJv3xdycCLyYkSDEzm/+4E8/uj+EzZXsEzN+Pt26pRSxmL+5vhGvC/KIJxPQtfFmzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbeIR/9T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6C4CC4CEE7;
+	Mon, 12 May 2025 11:42:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747050019;
-	bh=3+mgovEH2U7GbbwYUPvC67milPze1pciOWU6d6iilto=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=avqs1XCHJl6ivrYl7leI2E1pFPlIXcyNPQIm1xjOVYCkUVeL6CtyRL982bThKjpOo
-	 m80UJLEobUCC/0ilsYNuOlNuHZAqYPEgMkCX2GCm7GHDzyUWSHfesLB8vPJkO3wcDL
-	 pnG/4aOyG/y2LAzf1M3WMg2SHcrzU6WTF0FK20sDJ90GAUc0oWUGeT9o4WGAs7qhxf
-	 Tm+y7Sa+d78ENKxpB8Ikc4M8N02SBIuMrWmuzmKYKmoU+nPl/h9/ajlWofsGYGu8Sp
-	 DMKt85MdOPRpYRNmlTua9RzakEP+teafsf9y6TCsQzHogcLFje1liB6dqrJlemi2pM
-	 hnHTReGK7klKQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C63C3ABD2;
-	Mon, 12 May 2025 11:40:19 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Mon, 12 May 2025 19:39:57 +0800
-Subject: [PATCH v2 7/7] firmware: stratix10-svc: Add support for HWMON
- temperature and voltage read command.
+	s=k20201202; t=1747050149;
+	bh=G+iZK/fJWTYrFKszSrPiBYm4ohAZS1672uKXRst4nIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RbeIR/9Te4YzbM4nys+aPrS0lal+55xmPrwruMsQWxrNKNwpg2gh/11ARF59CgmbI
+	 t02IgBG7HRvHav0q6NVtyF9AmsY0t8ROsIeKJR8BEHteNHsJr6PmZxdKs6RqF6HfSY
+	 YCkzQZnmLQAHIpY5ahdTr1AWtHOr+5oviU7jnSPNdk9dvROmuV8IKy8AafCqgdC1G7
+	 LYBWFUL9K4cEFTG45n6CSonq9mmr0pBEwRwQjUKdw4qXW9uqYw5K9gfRoVeITOreJQ
+	 0njHAduTZlI1eTW63AQZ5cm6r4tHdEm1zg9Pas8WdgOD2RHnMiKUwS2XOudqL7rmUX
+	 BlobEQ8KMr21g==
+Date: Mon, 12 May 2025 14:42:25 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, keyrings@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [v3 PATCH] KEYS: Invert FINAL_PUT bit
+Message-ID: <aCHeoSBOLF-mcY7I@kernel.org>
+References: <aB3OsMWScE2I9DhG@gondor.apana.org.au>
+ <aBccz2nJs5Asg6cN@gondor.apana.org.au>
+ <202505091721.245cbe78-lkp@intel.com>
+ <1960113.1747041554@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250512-sip_svc_upstream-v2-7-fae5c45c059d@altera.com>
-References: <20250512-sip_svc_upstream-v2-0-fae5c45c059d@altera.com>
-In-Reply-To: <20250512-sip_svc_upstream-v2-0-fae5c45c059d@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747050016; l=5773;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=JivcqKDOJIt5kDrV3wGuv8X3Vtjgv7lk5n3TnWoduZM=;
- b=xvCa7P+zu3SXxb5VoGVvj7apxcDojRruWUKgEzgdh8aYApRyzNDxkENG3zTcShsT4DyjnpeCK
- qfg1wojZZApDLgXaEqOorsS42kjoujDCBlLzv7kivAD6JaEvej6cAs2
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1960113.1747041554@warthog.procyon.org.uk>
 
-From: Mahesh Rao <mahesh.rao@altera.com>
+On Mon, May 12, 2025 at 10:19:14AM +0100, David Howells wrote:
+> Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> 
+> > Invert the FINAL_PUT bit so that test_bit_acquire and clear_bit_unlock
+> > can be used instead of smp_mb.
+> > 
+> > Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> Acked-by: David Howells <dhowells@redhat.com>
 
-Add support for HWMON commands in stratix10
-Asynchronous communication
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/firmware/stratix10-svc.c                   | 20 +++++++++++-
- include/linux/firmware/intel/stratix10-smc.h       | 38 ++++++++++++++++++++++
- .../linux/firmware/intel/stratix10-svc-client.h    | 11 +++++++
- 3 files changed, 68 insertions(+), 1 deletion(-)
+David, are you going to pick this?
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index d60808cc077da6d88ca6cc1043f6da46df31ebad..4ee89980319dcde5198d7112d08708b543881f73 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -40,7 +40,7 @@
-  * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
-  */
- #define SVC_NUM_DATA_IN_FIFO			32
--#define SVC_NUM_CHANNEL				3
-+#define SVC_NUM_CHANNEL				4
- #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
- #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
- #define BYTE_TO_WORD_SIZE              4
-@@ -1429,6 +1429,14 @@ int stratix10_svc_async_send(struct stratix10_svc_chan *chan, void *msg, void **
- 		STRATIX10_SIP_SMC_SET_TRANSACTIONID_X1(handle->transaction_id);
- 
- 	switch (p_msg->command) {
-+	case COMMAND_HWMON_READTEMP:
-+		args.a0 = INTEL_SIP_SMC_ASYNC_HWMON_READTEMP;
-+		args.a2 = p_msg->arg[0];
-+		break;
-+	case COMMAND_HWMON_READVOLT:
-+		args.a0 = INTEL_SIP_SMC_ASYNC_HWMON_READVOLT;
-+		args.a2 = p_msg->arg[0];
-+		break;
- 	default:
- 		dev_err(ctrl->dev, "Invalid command ,%d\n", p_msg->command);
- 		ret = -EINVAL;
-@@ -1508,6 +1516,11 @@ static int stratix10_svc_async_prepare_response(struct stratix10_svc_chan *chan,
- 	data->status = STRATIX10_GET_SDM_STATUS_CODE(handle->res.a1);
- 
- 	switch (p_msg->command) {
-+	case COMMAND_HWMON_READTEMP:
-+	case COMMAND_HWMON_READVOLT:
-+		data->kaddr1 = (void *)&handle->res.a2;
-+		break;
-+
- 	default:
- 		dev_alert(ctrl->dev, "Invalid command\n ,%d", p_msg->command);
- 		return -ENOENT;
-@@ -2136,6 +2149,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	chans[2].name = SVC_CLIENT_FCS;
- 	spin_lock_init(&chans[2].lock);
- 
-+	chans[3].scl = NULL;
-+	chans[3].ctrl = controller;
-+	chans[3].name = SVC_CLIENT_HWMON;
-+	spin_lock_init(&chans[3].lock);
-+
- 	list_add_tail(&controller->node, &svc_ctrl);
- 	platform_set_drvdata(pdev, controller);
- 
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index ee00f17ea9f6c7a1114fb617d4d6393f2c27e2a9..78055b0234cee990515f01a509a75e1c8142c68b 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -625,6 +625,44 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_FCS_GET_PROVISION_DATA \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FCS_GET_PROVISION_DATA)
- 
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_HWMON_READTEMP
-+ * Async call to request temperature
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP
-+ * a1 transaction job id
-+ * a2 Temperature Channel
-+ * a3-a17 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK ,INTEL_SIP_SMC_STATUS_REJECTED
-+ * or INTEL_SIP_SMC_STATUS_BUSY
-+ * a1-a17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP (0xE8)
-+#define INTEL_SIP_SMC_ASYNC_HWMON_READTEMP \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP)
-+
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_HWMON_READVOLT
-+ * Async call to request voltage
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_HWMON_READVOLT
-+ * a1 transaction job id
-+ * a2 Voltage Channel
-+ * a3-a17 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK ,INTEL_SIP_SMC_STATUS_REJECTED
-+ * or INTEL_SIP_SMC_STATUS_BUSY
-+ * a1-17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READVOLT (0xE9)
-+#define INTEL_SIP_SMC_ASYNC_HWMON_READVOLT \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READVOLT)
-+
- /**
-  * Request INTEL_SIP_SMC_ASYNC_POLL
-  * Async call used by service driver at EL1 to query mailbox response from SDM.
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index bda837815bae35fbf4df6280dba5bc02d747426e..032e780c7b545e2e238f9dea712779d979e491d6 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -16,6 +16,7 @@
- #define SVC_CLIENT_FPGA			"fpga"
- #define SVC_CLIENT_RSU			"rsu"
- #define SVC_CLIENT_FCS			"fcs"
-+#define SVC_CLIENT_HWMON		"hwmon"
- 
- /*
-  * Status of the sent command, in bit number
-@@ -71,6 +72,7 @@
- #define SVC_RSU_REQUEST_TIMEOUT_MS              300
- #define SVC_FCS_REQUEST_TIMEOUT_MS		2000
- #define SVC_COMPLETED_TIMEOUT_MS		30000
-+#define SVC_HWMON_REQUEST_TIMEOUT_MS		2000
- 
- struct stratix10_svc_chan;
- 
-@@ -142,6 +144,12 @@ struct stratix10_svc_chan;
-  *
-  * @COMMAND_FCS_RANDOM_NUMBER_GEN: generate a random number, return status
-  * is SVC_STATUS_OK, SVC_STATUS_ERROR
-+ *
-+ * @COMMAND_HWMON_READTEMP: read temperature from the hardware sensor connected
-+ * to the FPGA, return status is SVC_STATUS_OK, SVC_STATUS_ERROR
-+ *
-+ * @COMMAND_HWMON_READVOLT: read voltage from the hardware sensor connected
-+ * to the FPGA, return status is SVC_STATUS_OK, SVC_STATUS_ERROR
-  */
- enum stratix10_svc_command_code {
- 	/* for FPGA */
-@@ -172,6 +180,9 @@ enum stratix10_svc_command_code {
- 	COMMAND_MBOX_SEND_CMD = 100,
- 	/* Non-mailbox SMC Call */
- 	COMMAND_SMC_SVC_VERSION = 200,
-+	/* for HWMON */
-+	COMMAND_HWMON_READTEMP,
-+	COMMAND_HWMON_READVOLT
- };
- 
- /**
-
--- 
-2.35.3
-
-
+BR, Jarkko
 
