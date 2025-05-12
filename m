@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-644595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1544AB3EDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:20:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B70DAB3ED5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 509037ABA7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA978863DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AEC296D20;
-	Mon, 12 May 2025 17:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC86296D2D;
+	Mon, 12 May 2025 17:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KOXWbERp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dGff3/ex"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07573296D01
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66CE295DA9
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747070393; cv=none; b=s0iIGxF1VdjtCV2EHoZCjRjyK1jt6DIQf6L6RL1y2f30o7Bt8cMhGB/Ed9xMqMNeM3fxuBaRAa/YMFlcRXjJc6jeQVu+6xEchNrbkfzpcXvz6+aW2xZAlA7APuTI8U1q84raUaGLN4PFhl4hxBgESg7youekpnxkogK9wO6FBQ8=
+	t=1747070372; cv=none; b=lHl9iefn0aAxT9KkCSQbDV2cDIREF7rTlkuTHmAqXTKfNFPZJlM3/gX1qdzbwqp2EB99nybZFNPWAlteApYHYfkvgmk06jJEBwC7bmnX23DZ2K555Ujg+JWsHx3iSqiBWIWo4kzKRupWcvsf4hcyWpm/O6jM8eccuYSrl9JCZiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747070393; c=relaxed/simple;
-	bh=Jq6+zTmMIhbJtMdND1aZOGEUnT/8ETS5iQtBBhAPFRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=USVzqYSB57KU1TMnvBmDsCSFRG+mHK2w9KoVkJ2+dcdtv44HK07tvt2E8xKWnnYnsRkZ/oTTzr6JM37nqSD/Oz64YC3Enns7s/dy5X2yKViy9ilKXH+3J16xsqhv2K/miRZo1iy0F5mDBToeY406p5dL50vOQ43U4ab9gfuie5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KOXWbERp; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1747070372; c=relaxed/simple;
+	bh=RNW2KeimRQOcvFcw/i3cv8RxlurLx/D1s5LYekc162I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qnEzkQQuljgFm9Vll3ypDl2ysxdNTKqfNqIt5n+obhyxs8lf+l0uZU4lmAGUEP1AK39x8p3/UHfzGAmfHJCNIy/lgXeqTJimI9WfeSbJpGcKvM8QbyNrU2Q20DsmrGTFXJuxugLpJwWCBeWLd2i2p/7Mttf3nS9wirz1lm0KbRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dGff3/ex; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747070391;
+	s=mimecast20190719; t=1747070369;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hc4wc6R5tCq7zzSrnONS3LsbZ4BpArkF0zZej/1ubvw=;
-	b=KOXWbERp1396/QvL4NboaLPLXbo76RXnKTBLuyQuEQ56TianWiZz9JHwFJUnVoaSmlEbII
-	TxhGYjYKC+y3sck3r26ULda3XRTpOVDr9nb0HqAdfgPKuq174hAFNL9Gtm3+p01MrbkURQ
-	kOruJePYjdUCuLHSDOSUyIByreVysWc=
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
- [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GkyjsEBVXZql//c31Uv3m9eI0pp2by/4V63M4hl5UAI=;
+	b=dGff3/exv3QiXEdlBVs1kbwI0YACOcOI+3ZjR/lQRJiRrenp0T5yZ9jLJtaMTnaGQBppR2
+	0cccCbb9ZH1mq+5K9NigQAKFZM7CxjiOwlhG7iOzpnV5EEqIENp2nKFJwu/1abWp+wBzhr
+	URj0GoAZIRm+Q72q/fV7yoTsCtEP0qQ=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-201-pIwaoyPqOGeQwN6ULptgkA-1; Mon, 12 May 2025 13:19:50 -0400
-X-MC-Unique: pIwaoyPqOGeQwN6ULptgkA-1
-X-Mimecast-MFC-AGG-ID: pIwaoyPqOGeQwN6ULptgkA_1747070389
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-401c6c3a679so3640655b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:19:49 -0700 (PDT)
+ us-mta-361-03KZGTXsPnmqEJRQRaGviw-1; Mon, 12 May 2025 13:19:28 -0400
+X-MC-Unique: 03KZGTXsPnmqEJRQRaGviw-1
+X-Mimecast-MFC-AGG-ID: 03KZGTXsPnmqEJRQRaGviw_1747070367
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7caef20a527so1277837185a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:19:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747070388; x=1747675188;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hc4wc6R5tCq7zzSrnONS3LsbZ4BpArkF0zZej/1ubvw=;
-        b=FVfhEen5eLu9WRNwLfsfkBvn+tCAZQ1SGj69/uOPGDsllfx2avSwsQ3EbdMirb+kFF
-         WmPD06n4ihizJEHNYbG6c/F76HLDyNuZmDagOtvCUMJDFeEQZSBHoX+c/bVm9Mjj6Zda
-         NvZs/86lc4OaA5EUqFADnbXC+fo2Phs2wNPAKxZlpoIMe/vgzaTgiIdGUhGrv5QRX7Ii
-         RWz8lKPK7yqZUA573H+JHFGhAZHgVTU/U2ezC3xKGjVPoOb21mdk9lbtiW3tc5bUcOuh
-         k07v6BVkM+vA8uw9dgy8apCPTP0n8A1Ynj1VmUAxSeEO47C6dWKfi06ex+O1lZDN/2ad
-         CfLA==
-X-Gm-Message-State: AOJu0YyzJ1GFKKwKPjsaRkCP/9sHNNoYFSarZ+Ps6YbMTXBfNhA3wwiF
-	czbGLUp/3G/FyfjAjITjBzqEwC9iiEno2SeP3yCsteHEjYTDMTDGXUuo3WMNbshaMTjrTlYWpJM
-	PYLIHtGWmzVy1Uj4XC6BgdRohgGjOO5oM/+6rQR2EZ8cQr6Yrij8CyxaCdnON0/n4ZXAEeg==
-X-Gm-Gg: ASbGnctb/IpkiO7a4m94vakhTweiR+QLI0s+xZ1jB2TPex1S+YmNDixpwcY7ViRIsIa
-	DdRavMusbYLjoXzOKYRnNfq9ggwafNhq6NtryrgbZi+V0FQnQb+7wy3sr1VWKBS8TxjZHMyUim5
-	/ZyjhXEEyw2DgDp09SyecEkrB7eowLks8Z9/OWFCs2MD7lCiicmw8S15b4Hrl3tRNC+sX/NtIY+
-	splmZJ/IBBSGUUVu5+lzXdwDe7iWA7fx48RB3QUpscdMzXBp0nvYWP6fTazbGJ4FGc5CFejHp5k
-X-Received: by 2002:a05:620a:2b99:b0:7c9:2537:be48 with SMTP id af79cd13be357-7cd01105576mr2466063985a.24.1747070377099;
-        Mon, 12 May 2025 10:19:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHl9jzo5zoXQr1y1xkM8mBx7JmDU17IT0zbHtFKnAy9/wCXiV9Vo2yKvBGoU6lfRFASKBu7iA==
-X-Received: by 2002:a05:620a:2b99:b0:7c9:2537:be48 with SMTP id af79cd13be357-7cd01105576mr2465872785a.24.1747070365989;
-        Mon, 12 May 2025 10:19:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747070367; x=1747675167;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GkyjsEBVXZql//c31Uv3m9eI0pp2by/4V63M4hl5UAI=;
+        b=N+bTbVDDCLWwnFpDEX6CeNNpGqiEp9LoirOABO/9ojge8jUuhjCNRCce8UKHz/PmdL
+         +jQynK1GZG+Wbtfzi+cAjBBYwXD+8ZqZWDQHPx6KCjK5mBgUlJK+1Nm0PYMKVK3i9+X9
+         XrZE+0x7Op1XyURyQ+ddQxLR2xng2QwRLmCC4f8zH5xlhcMjJKnKQ3XUU41lRTE5XtnK
+         RUTsdUQ841GLQ9+T2Zc5ofuWhnS7gzSY6af+h0V/WZdpcTHfe+3jz7IbXiHs443peXvz
+         xeBMYfbGGHUfZmOsXsIqZ8Myx8s6vPWPTzmffNBJXhm8XWEPTsdqD2MVWWqREA7weZzB
+         sYZQ==
+X-Gm-Message-State: AOJu0Yzdn5hbybW84KhXTtLKale/BwpIQ8NUdaHZKtzO4kMIbGUTGFfp
+	26DlH/+pTd2uC0NnYiwEiW1LhD1dlXWn9Jry89paEGeD1rgLlpQQMHUwZ47ej8OKgCNgNwfnJR0
+	Y/vf2O+zGEQ7vMXdWcsfMA104Xo0aNsFbl9TGrw/9CYa10eA6UuEyia9vCyrVkA==
+X-Gm-Gg: ASbGncuSRJFOYKIKTLzkrFNHvCzoG9MLXrcMgZP7DNWa0v88gkQPU0HByrK1edurmj5
+	TMWTgrEwrRzrqSomsxwMa/1fPq03HT9opxK1FA1jyc/aEKUG2tKz+wkVmiW8UqoZ6lWdHLTdKh/
+	nW4PamY9LDeyVeYb3gL57tlEpyk1NUkx8fbzQO8bl+DHdFFf0Pkrzm75kM15FmeYMm4PwaXNwg3
+	7+l6scpYHmY6rbG011QCCXcVuo6yyMBjeY0J0uwZ8NVxcU4KUXpYUPmo06PwCkqHsnuWhSzuQBj
+X-Received: by 2002:a05:620a:2690:b0:7c5:49e8:993b with SMTP id af79cd13be357-7cd0117903amr2600637685a.56.1747070367662;
+        Mon, 12 May 2025 10:19:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhXHfrlA0sTV0PHOWBuw1s2FByKk5Y/Ebo9kg3frdH6FoHXH39u54Ko2H7v00+/RU+D2wJOA==
+X-Received: by 2002:a05:620a:2690:b0:7c5:49e8:993b with SMTP id af79cd13be357-7cd0117903amr2600632085a.56.1747070367162;
+        Mon, 12 May 2025 10:19:27 -0700 (PDT)
 Received: from x1.com ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00fde7c9sm574237485a.75.2025.05.12.10.19.25
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00fde7c9sm574237485a.75.2025.05.12.10.19.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 10:19:25 -0700 (PDT)
+        Mon, 12 May 2025 10:19:26 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: Alejandro Colomar <alx@kernel.org>,
 	linux-man@vger.kernel.org
@@ -86,11 +88,12 @@ Cc: linux-kernel@vger.kernel.org,
 	peterx@redhat.com,
 	Robert O'Callahan <robert@ocallahan.org>,
 	Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH 0/2] UFFDIO_API.2const: Two man page updates
-Date: Mon, 12 May 2025 13:19:20 -0400
-Message-ID: <20250512171922.356408-1-peterx@redhat.com>
+Subject: [PATCH 1/2] UFFDIO_API.2const: Update userfaultfd handshake and feature probe
+Date: Mon, 12 May 2025 13:19:21 -0400
+Message-ID: <20250512171922.356408-2-peterx@redhat.com>
 X-Mailer: git-send-email 2.49.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20250512171922.356408-1-peterx@redhat.com>
+References: <20250512171922.356408-1-peterx@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,22 +102,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The first patch updates the page on two-steps handshake, removing the
-misleading paragraph and replacing it with a paragraph explaining the
-correct way to probe the userfaultfd features.
+There's a confusing paragraph in the man page on two-steps handshake for
+userfaultfd UFFDIO_API ioctl.  In reality, after a successful UFFDIO_API
+ioctl, the userfaultfd will be locked up on the features and any further
+UFFDIO_API on top of an initialized userfaultfd would fail.
 
-The second patch is a small touch up on the same man page that misses the
-newly added UFFDIO_MOVE feature.
+Modify the UFFDIO_API(2const) man page to reflect the reality.  Instead,
+add a paragraph explaining the right way to probe userfaultfd features.
+Add that only after the "Before Linux 4.11" paragraph, as the old kernel
+doesn't support any feature anyway.
 
-Thanks,
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ man/man2const/UFFDIO_API.2const | 43 ++++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
-Peter Xu (2):
-  UFFDIO_API.2const: Update userfaultfd handshake and feature probe
-  UFFDIO_API.2const: Add an entry for UFFDIO_MOVE
-
- man/man2const/UFFDIO_API.2const | 49 ++++++++++++++++++++-------------
- 1 file changed, 30 insertions(+), 19 deletions(-)
-
+diff --git a/man/man2const/UFFDIO_API.2const b/man/man2const/UFFDIO_API.2const
+index 54b34a1bc..1c554107a 100644
+--- a/man/man2const/UFFDIO_API.2const
++++ b/man/man2const/UFFDIO_API.2const
+@@ -42,25 +42,6 @@ fields to bit masks representing all the available features and the generic
+ .BR ioctl (2)
+ operations available.
+ .P
+-Since Linux 4.11,
+-applications should use the
+-.I features
+-field to perform a two-step handshake.
+-First,
+-.B UFFDIO_API
+-is called with the
+-.I features
+-field set to zero.
+-The kernel responds by setting all supported feature bits.
+-.P
+-Applications which do not require any specific features
+-can begin using the userfaultfd immediately.
+-Applications which do need specific features
+-should call
+-.B UFFDIO_API
+-again with a subset of the reported feature bits set
+-to enable those features.
+-.P
+ Before Linux 4.11, the
+ .I features
+ field must be initialized to zero before the call to
+@@ -70,6 +51,30 @@ and zero (i.e., no feature bits) is placed in the
+ field by the kernel upon return from
+ .BR ioctl (2).
+ .P
++Since Linux 4.11,
++userfaultfd supports features that need to be enabled explicitly.
++To enable any of the features,
++one needs to set the corresponding feature bits in
++.I features
++when issuing the
++.B UFFDIO_API
++ioctl.
++.P
++For historical reasons,
++a temporary userfaultfd is needed to probe
++what userfaultfd features the kernel supports.
++The application needs to create a temporary userfaultfd,
++issue an
++.B UFFDIO_API
++ioctl with
++.I features
++set to 0. After the
++.B UFFDIO_API
++ioctl returns successfully,
++.I features
++should contain all the userfaultfd features that the kernel supports.
++The temporary userfaultfd can be safely closed after the probe.
++.P
+ If the application sets unsupported feature bits,
+ the kernel will zero out the returned
+ .I uffdio_api
 -- 
 2.49.0
 
