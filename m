@@ -1,107 +1,100 @@
-Return-Path: <linux-kernel+bounces-644829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B524AB44FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:32:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41515AB450B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74DCB7B0C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6504463F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28219298CD0;
-	Mon, 12 May 2025 19:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA7E298CA5;
+	Mon, 12 May 2025 19:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSnwCH/0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4kLthsVE"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7303925332D;
-	Mon, 12 May 2025 19:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549BF298250
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747078226; cv=none; b=oW9YWZ+s1p1mpZST+FFJNTgwVHtqdJ+cPFF24GSzaT8V/KoWztAYAoiCi5qgNXBC193roqJ84nPWX1ivfOUfuyaingb7CficgigBSGIa5p2Sel+pm4bP5cY9C7qngOeiCAqURBPHx5DGofbTmGBF9FM2k4IWtihadXA0NSHkO+Y=
+	t=1747078643; cv=none; b=rf6Ik+mHjm8R99mwSY4IoBFmd9vTG27s/RAvT2mzi66rIyKmjlC0b9pov8RD4vd9bB3dj005i9+54KQzTO/As9wyzjxn9S0xxTqdnwQyO9SrwF3oQlGq5a5T9TQ0ViSNQCkudsodu38NLhvaRjzERTsXov4R9lbwKzixrbeyek4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747078226; c=relaxed/simple;
-	bh=SnfXj5AiXjTNiB+Fi6IRuaS5N/lfiblfFGY2z5N4g6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRWUrkT1/WdaVbWzYtRuZOBT7wjiyrtmQFV4KNmEq6/Jr3X603vyDqBO+EjHiesEcRkS2gbYqnP+NMgc2A4DAd3614E8XwzVi57ZgEcGOmEiPWM/Xbi5xglo9U3KkZ2hBPDvZIsIU4yJ59bWB9q+l1J2vT/9ZH2BqFgCGdwLiAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSnwCH/0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ED12C4CEE7;
-	Mon, 12 May 2025 19:30:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747078225;
-	bh=SnfXj5AiXjTNiB+Fi6IRuaS5N/lfiblfFGY2z5N4g6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kSnwCH/0MiCWixLiKAZWxYQeeso/DTlx7vs8BTNUQxtyT+7yRJklPvnBUH1mFJW4z
-	 mSgN9w2RbiR8/fHK+v99pAIq6Pt9v2YSjdE/SC5gzGVm5dU2B0xKIXMO7TGyXOchzB
-	 8nzoNa0nTzfsVUoCDAlS6blZFZQKc4162/VzKPRlLn7yEx2vRRbVmJ0ToXbBCLk1xj
-	 dcWJ18azoOjXQzdKGLaWl3knqOYBwZ2xzV7v60ijiVeBHrD05j7OME+Q/kkHr83RsN
-	 LYXenR3n9MaC4D7gO8RcZIgMIfKecDsPrVMDKUqKFnZciKYmo8Oh9y3fjLe06JjeSu
-	 Y95gkvrf8aFOA==
-Date: Mon, 12 May 2025 14:30:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Vijay Balakrishna <vijayb@linux.microsoft.com>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: arm: cpus: Add edac-enabled property
-Message-ID: <20250512193023.GA3708326-robh@kernel.org>
-References: <1746404860-27069-1-git-send-email-vijayb@linux.microsoft.com>
- <1746404860-27069-3-git-send-email-vijayb@linux.microsoft.com>
+	s=arc-20240116; t=1747078643; c=relaxed/simple;
+	bh=QWiCLP8D2rUi6TG/MoWMjJzDeskVuP36w/zPOMjGcws=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JChkJE6Log1WAzmFeWevDIr3ebuNAOJZSh0adGIBChKnlQcBqju1uNxhbcW4Cj6c3otX883zuTyrrDD/1m477Nl6x1DQ6sqNFv1ODUbZTlJv/SV5W+vAU1NHl3WFjkhKhprPbbDqxFpR/F8YG3A7LHSDSYlCY9SIPqIB7IWRJmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4kLthsVE; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30a7cc8c52eso5906243a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747078641; x=1747683441; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=38HKQiklWepPU3qbWvVj4j0NVLrqbA0sO4nv2WaJHSU=;
+        b=4kLthsVEzqD663f3iK1mlng4rS1zzIOSA/ICh91vJrJyQf3lfklRG2GvrvMc0fKl+H
+         9K1D43ebiCJ1n5TwVrWHxjZpWxc17q0CnMnOTfS231STmRbd8i+WUZF64zxBjHfcvXsJ
+         ApR2Yn0BIsC1PhgombGFK8LsxgOKDCYmpOWPvgS+pGLTIOLAQe07nxItH8bmwkHJhByX
+         a6Ksu5rsH8sWSO06ej5WmqTyoBU/KZQhOpof9lbJLYFPacQIB/K1KVxK8MGA1B8QGXQv
+         ans453i4U1+6qkdjv+zqVVeNMnm7V6nx1iy0wF88lWGLsv0I6f2y01lAYW7HeIGP+OxB
+         XxdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747078641; x=1747683441;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=38HKQiklWepPU3qbWvVj4j0NVLrqbA0sO4nv2WaJHSU=;
+        b=lfcwKyPzAJmyuESCjmYaxllzAbx49GUUg+zpnv1bzx640tSSC0gBDs+UQ3/NxS++ge
+         vrKTo61kAo5uFjt4+EvFtO9llA8o0druukeRvB17otEn8UTVthjWK8vUBRA/GJkxp0PX
+         nCzxWbhTuCYQrEvrRJ4guhNkC8ENEESHK7tYvBn8SUIxiql8+yP4zksyLMpwTKRqpppj
+         M7xdLtac9w2mg8Cs07tWj25Tg7XNJN3iNG0TapgNGZ+8t0Xow/CER91c/EeWzTTYM/CC
+         r5zWSKiD5XIexhpKl5HFrk6G7NuBM4H2dLFQgSYP0s9XxJr2Q2X6Ges2SZgiDZrVOO6j
+         1u6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlMaedQy54Whv6NSA+XWEFzq3PMEAGpC+151rUeV6ffa0R+X//C3Xhcc0MNSevuPRe1lGNsuSyyjNf3pU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3pjqhuAaEJPDg2/0n/LVHjAduUc/LclnizRfcoWV547oU4LJ2
+	3pmEtGibb967KzH11E6/+7G8XhNFBG+zIOdUztEv7tg4vnpxHHU2rf38hZOOqt0r58qOYGb4Ncc
+	HCA==
+X-Google-Smtp-Source: AGHT+IEH/vApxszPhZUNxCOdgc1rPPj0HCQHT2dwioZc2EGArIqaGYNc0uWa7Ib8OiwC6GxFHUvbjJ13Q9w=
+X-Received: from pjbpb18.prod.google.com ([2002:a17:90b:3c12:b0:30a:953d:af9a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:380f:b0:2ff:64a0:4a58
+ with SMTP id 98e67ed59e1d1-30c3d628b6emr19141945a91.22.1747078641552; Mon, 12
+ May 2025 12:37:21 -0700 (PDT)
+Date: Mon, 12 May 2025 12:37:19 -0700
+In-Reply-To: <20250313203702.575156-14-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1746404860-27069-3-git-send-email-vijayb@linux.microsoft.com>
+Mime-Version: 1.0
+References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-14-jon@nutanix.com>
+Message-ID: <aCJN789_iZa6omeu@google.com>
+Subject: Re: [RFC PATCH 13/18] KVM: x86/mmu: Adjust SPTE_MMIO_ALLOWED_MASK to
+ understand MBEC
+From: Sean Christopherson <seanjc@google.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, May 04, 2025 at 05:27:40PM -0700, Vijay Balakrishna wrote:
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> Some ARM Cortex CPUs like the A53, A57 and A72 have Error Detection And
-> Correction (EDAC) support on their L1 and L2 caches. This is implemented
-> in implementation defined registers, so usage of this functionality is
-> not safe in virtualized environments or when EL3 already uses these
-> registers. This patch adds a edac-enabled flag which can be explicitly
-> set when EDAC can be used.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> [vijayb: Added A72 to the commit message]
-> Signed-off-by: Vijay Balakrishna <vijayb@linux.microsoft.com>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
-> index 2e666b2a4dcd..d1dc0a843d07 100644
-> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
-> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-> @@ -331,6 +331,12 @@ properties:
->        corresponding to the index of an SCMI performance domain provider, must be
->        "perf".
->  
-> +  edac-enabled:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Some CPUs support Error Detection And Correction (EDAC) on their L1 and
-> +      L2 caches. This flag marks this function as usable.
-> +
+Please be more precise with the shortlogs.  "Understand MBEC" is extremely vague.
 
-Since we don't want this on newer cores, add an if/then schema to only 
-allow this on A72 and whatever else you end up supporting.
+On Thu, Mar 13, 2025, Jon Kohler wrote:
+> Adjust the SPTE_MMIO_ALLOWED_MASK and associated values to make these
+> masks aware of PTE Bit 10, to be used by Intel MBEC.
 
-Rob
+Same thing here.  "aware of PTE bit 10" doesn't describe the change in a way that
+allows for quick review of the patch.  E.g. 
+
+  KVM: x86/mmu: Exclude EPT MBEC's user-executable bit from the MMIO generation
+
+The changelogs also need to explain *why*.  If you actually tried to write out
+justification for why KVM can't use bit 10 for the MMIO generation, then unless
+you start making stuff up (or Chao and I are missing something), you'll come to
+same conclusion that Chao and I came to: this patch is unnecessary.
 
