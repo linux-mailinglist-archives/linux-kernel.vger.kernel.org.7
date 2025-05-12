@@ -1,157 +1,189 @@
-Return-Path: <linux-kernel+bounces-644730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8808AB439A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816F8AB43D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CC1A7ABE0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:34:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33398C53AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDA02980C1;
-	Mon, 12 May 2025 18:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81616298270;
+	Mon, 12 May 2025 18:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="oDT9UmQX"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dFz9Usrl"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E2A297B72
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00975298261
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747074747; cv=none; b=LI544BwFKXapaGgzBrnFaNnwsCcELvMSXriMuEMbZ5fpY3baV3T6POvqn5kUNBK1DzXXmmEL5NIuZ9uxe0pClnyLQkylcKjGIlZUtgOJsA6QYm7XFxypmcsR4qwD9dWGJMf9aw37Ue4f22mZASDAp3gVRxciER3TM+Ym4yAjM8I=
+	t=1747074799; cv=none; b=VVz6a8vf3Baaa5dG6R2qj6bpU9rLdqzpJVVjcL3Ed5oC3MJVPND5AGcQ7t/zgb+P/cM41YG4tGcYs9S7k26uuzvxY2x3LaBqkggSOXD7SgQnTwridrIMECFJcvj6tb5gaf0312KyqDqE/YifLiVKNOGtLGHpHRQJmhAl+sRigKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747074747; c=relaxed/simple;
-	bh=KZJEwnPF2oP9YPtwzisRM5EnPhICPVWmlwFr/un/FRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=brvd15IhP9NX6l3pvZ/i3f1MHn5Eq0TbeyfID8tRs5w7RLEQ61h0PqSblQcjJdg9eaf5C5oxDz9EuxFocTVSP0hE+kBdOyQX0z7rPczO24Y9fHdv8CoCinGnlMGDTc8TDdhRiutUw0TXgAs8gUScSpZjrixVHwk5SQr07O/KTAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=oDT9UmQX; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85e73562577so507903439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:32:25 -0700 (PDT)
+	s=arc-20240116; t=1747074799; c=relaxed/simple;
+	bh=Jfr+rPTF9YEL6CXsRLZkDVbD7zeE5o9vHdvBe29mjQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HQJQ68DP54At8jQCr0POsSE99+XsVJPt2mmAAOWcrzJRNKswmD/M1cw1xACJz/eYFJPbqcl2Q0q7oNNjH1h861Bsx0sFw8v5wzWLVruUhuD+x85N6E2nitHwmjH7xvmWX9GGvKC3xcmdyyO9hs/hI0ukuwSYBC1EWjtUJ5AkUL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dFz9Usrl; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso1782a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:33:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1747074744; x=1747679544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1747074794; x=1747679594; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EyAsDOHX0TzSNx8TRSfIb8QCj6vETa2EWwj7A6u+8bU=;
-        b=oDT9UmQXV8dBmXK5S+NLUe6HI2cW15SYDuOUdyf7xEiSQrqM5aV5Z6+to25+RUHFjf
-         j14aNFd64PHAYjzBfVLIF/MBOkWTFguQhgf4cnKF7cyX7CN58AwGkVpVcmYhSgmhmp1z
-         UGnSNaZgyvWz5V1ItUyK7wsNhcu3RwVRxU9AyEl0nCUutftlxoZBtsBr12OjTOThtZyv
-         n7c8XU3Ph3aPWVTh2XAgG+rexeF+TU1mBAkUCygYdOJX3z3oE9F/vbzNNM2C13oqT01h
-         Co/HYWhVggZ/Uh6BjDjNrVbjxW5ln0kZaNisdNJyAvBYBKXswqM5Oi+br3a8/JZGJWPY
-         1GdA==
+        bh=t3p3BzNnsNOsVRctsx25cVwnAL8OxJuAKNOd3s8OQK4=;
+        b=dFz9Usrlk6W0+4FfXN6+pCYVOjinjywuZ09QGRwLnyyNK3ZEyoZ68tT6j5iW0pps9y
+         ercBWsyltBRjwGlivCDYfbjlPWnViU0OxYQEzKsr7DOETQ9HuHK80RwHnHvKuBCVQ7UO
+         8NE9NQTCfrPzglw8S7/ZRdM9nHKb4YRzkYqinrxfqxQ2jUomP1mlduwhUFtusHS0PW9r
+         TCu7P/sE7TEHNVZ5xWYS3cErV0kxUouEdumkMCsu278UpdNKxh9pu6UXz88m8VgSGp6K
+         gxLBo+JfEC0oR8mbl+lsR+O7drKwjLnhbOj7UxiZA34FBO93uu+3RLSw6lxByB1azAWt
+         LPxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747074744; x=1747679544;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1747074794; x=1747679594;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EyAsDOHX0TzSNx8TRSfIb8QCj6vETa2EWwj7A6u+8bU=;
-        b=WPmIHIxTUFkkJDE4MKrH3YZzzg9aN4RAtWfMVzjT9BOY5N5av2uUf8mT+3obI5z9Mw
-         Qbsw3UVcT04+VNh4goM9ORmSfkJacJdRPHf9PFfiVziRQoGJmXNxFJr9M22BZAtK1dUl
-         rP1Im35gGme74zwj4j9bSTutHLfC7AGe2k7iwIclTPRi3OI0FB98Z+O8nutz6WQ17ZZJ
-         ShrAUQnb4zqSYtKTiVzILzuyq+QNxJPIcnhfE+WYZHmEDrOACS0pQ+RJ1qED2JMaj62s
-         37yNjzeU458jEldH06HBIatLXMG5BnzAhm1yexsY6p0mJaj1S0umhkDo4U37BreShaT5
-         L5Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVC/f0hnhWT9NenxfY7N55DHVe2uIF0n3PzOXZncf4HD8o8X80UOaN00ZQ7RaYt/tXADaleWquC6cZEEu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkVNsf1pOjbZEI8x7B6gMjrBnaFx3XBeBLEGzdd9ck3+ylLynJ
-	suYNDxIsdFQovTbbb/g9q8i0ZOVBPrWqd9qIw1SLwcRfsj7OWG3R22oacxpnt3Tpp9fnl4TstsT
-	3
-X-Gm-Gg: ASbGnctVeJifGTA5QfrHKW7CXOodGb8jfjjaNk13KnJ+WJQ2GomA/hjwlCwPf+rXIza
-	yaW7G9xXpMnnOclidrRJbp9rv/k6AjGhtM8hPo7A7II7/9loLP4qOhrtzfuQ9+n0KR8Lh2Ni0SZ
-	bVkBqD/w1QWmOROe1i7n9ODyoVKIDWwEFKMj50aN/uHfof/uTJvqbYAR+LMmGrO8SKhMrwcfho+
-	cl9M0jbe53V/pDDmmh52vhXNnKkVFBInl5EY68kCI2eKw+Dka0pNFp8jjz2qUv5uBabdxDy8v1+
-	XNzdF1gg4X6KmlX79lol7Fi4Brkyn5OQIFWosvI4CLkFipaiEEbCt5u0akOMiywLyIoUXR7va3A
-	040H5+kNinS0TjHvbOE5uIptC
-X-Google-Smtp-Source: AGHT+IFp8y0gq7FRiygtuXYQxumD0qfklzDcQqew2MqXSZ32JaN7tFBN5F+L1BBzUbVI3IjffHBXLA==
-X-Received: by 2002:a05:6e02:3784:b0:3d8:1dc7:ca7a with SMTP id e9e14a558f8ab-3da7e1e1acbmr157948855ab.5.1747074744563;
-        Mon, 12 May 2025 11:32:24 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa22496e9fsm1740333173.11.2025.05.12.11.32.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 11:32:24 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 6/6] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Mon, 12 May 2025 13:32:11 -0500
-Message-ID: <20250512183212.3465963-7-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250512183212.3465963-1-elder@riscstar.com>
-References: <20250512183212.3465963-1-elder@riscstar.com>
+        bh=t3p3BzNnsNOsVRctsx25cVwnAL8OxJuAKNOd3s8OQK4=;
+        b=KRSOg0dAbltp+eYvCp9mmB7gernvKBYr4KD5R01g+FGIrbv8UCf4tWcpD0p8POfCRP
+         gFrafTynKZ5qo22xe/aRrRfV/lxfA+Pr8D3fNf8AgquaUqPmf4q5dagVeHezBC2qRkga
+         faAkSDx0XXjAdL16Q2sVpt8wzEj4TY9N9T0nhXBxIuuoXHDFM/KUZJ9zyaynndiJ7Xgq
+         RbVyiwAIvaRL75yeXb6/jnnLZBbaKrH03oKVv1NvisaRnpkLCWNiJqTEOZFAkj6sL6f4
+         a3Q6Z58ARJHkS51LS5EZDeQY+oqMLHt6k0P7AQHfOEftKLLJINWCXv9mfhZWFoYmMD3f
+         2Kpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVSGYqjLvvlS00BC6D/1Y3qoAMTidSl+y0TgFnew2YBFH20+kmp44dDzEugc1/4ei0NvPmFzBXhhIDIJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyupe9hGAwvo332s3aiV8cl/imayOqNcWaGnpwlMUeVbsrVEvw9
+	fWt50ca6a0lGjP2NyjRXuTLDYpa8wEfC4YI9/Wuh3Hg6g/r2xT/kpVoDyLRQl6Fof53WiWlcevA
+	jY/O2E6YCFsPQaBaE5Oofv/QyQcr1807P+abNrf5b
+X-Gm-Gg: ASbGncsDH/briQ0dGmjSHd9fd9xoUuYXFPEe5X95QZ/jzWHHtfsT/xIgNoNd7Z72eSc
+	TWU/PMgo/Te+1cAkaHgHe0hFbWYILligeboozuDWEUw8uDi86JGB69zr97c+4qiKHtG0zQ4HcLH
+	JDTyDfqqDzl2RmFZgN1hTauqEx1+wFcaaqUhFCXVAj3qDJkntUgMEcu8mk1pI=
+X-Google-Smtp-Source: AGHT+IFdiDpC7ixGH7SkseAzHJ3JVL3BGJru908mNuJ0aTnwNHxNi+WZFqYvXJP8Y9CtGHbMSokBExFJQL+IShP4N3c=
+X-Received: by 2002:aa7:c487:0:b0:5fb:eab6:cdb0 with SMTP id
+ 4fb4d7f45d1cf-5ff356e3dd6mr10105a12.4.1747074793804; Mon, 12 May 2025
+ 11:33:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <6819bfbb.050a0220.a19a9.0007.GAE@google.com> <CAG48ez2pOt_Zf28CnLbVCzo1uBhWfqUjgh4fzDaQo+qceM6kSQ@mail.gmail.com>
+In-Reply-To: <CAG48ez2pOt_Zf28CnLbVCzo1uBhWfqUjgh4fzDaQo+qceM6kSQ@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 12 May 2025 20:32:37 +0200
+X-Gm-Features: AX0GCFuNzImgrwkQ8XRKQ84YMx3R5FRAZw32CIxRTGh4nx36LK_p_qKSG8M7NiE
+Message-ID: <CAG48ez1BGFn7jw+FYZJxRyyjnR+rrqx1AtNQoR_Jup3tZ-dADQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in copy_page_from_iter_atomic / pagecache_isize_extended
+To: syzkaller <syzkaller@googlegroups.com>, 
+	syzbot <syzbot+189d4742d07e937d68ea@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, hughd@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+On Mon, May 12, 2025 at 7:44=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+> On Tue, May 6, 2025 at 9:52=E2=80=AFAM syzbot
+> <syzbot+189d4742d07e937d68ea@syzkaller.appspotmail.com> wrote:
+> > HEAD commit:    01f95500a162 Merge tag 'uml-for-linux-6.15-rc6' of git:=
+//g..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D17abbb68580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6154604431d=
+9aaf9
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D189d4742d07e9=
+37d68ea
+> > compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89=
+dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+> [...]
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+189d4742d07e937d68ea@syzkaller.appspotmail.com
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KCSAN: data-race in copy_page_from_iter_atomic / pagecache_isize_e=
+xtended
+>
+> I think this is a problem with the KCSAN implementation.
+>
+> This is a race between writing to a userspace-owned page and reading
+> from a userspace-owned page.
+>
+> This kind of pattern should be fairly trivial to trigger: If userspace
+> tells the kernel to read from a GUP'd page or pagecache on one thread,
+> and simultaneously tells the kernel to write to the same page on
+> another thread, we'll get a data race. This is not really a kernel
+> data race; it is more like a userspace race whose memory accesses
+> happen to go through the kernel.
+>
+> So I think the fix would be for KCSAN to ignore anything in such
+> pages. The hard part is, I'm not sure how to tell what kind of page
+> we're dealing with from the kernel, some MM people might know...
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Or alternatively, if we really do want data_race() operations around
+any memset() or memcpy() on userspace-controlled pages, I guess we'd
+have to pepper a lot of those around the kernel.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index c0f8c5fca975d..de403bda2b878 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-controller@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -553,6 +565,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+Also, I didn't really think about some of what I wrote here - we
+certainly wouldn't want to ignore unannotated accesses to some struct
+located in pagecache that userspace can concurrently write to.
 
+Maybe it would actually make sense to do the opposite of what I said
+to some extent, special-case userspace-mapped pages such that KCSAN
+_always_ alerts on plain access to them...
+
+> distinguishing normal pagecache/anon pages from other pages might be
+> doable, but I guess it probably gets hard when thinking about
+> driver-allocated pages that were mapped into userspace vs
+> driver-allocated pages that are used internally in the driver...
+
+
+> > read to 0xffff88811d47e000 of 2048 bytes by task 37 on cpu 0:
+> >  memcpy_from_iter lib/iov_iter.c:73 [inline]
+> >  iterate_bvec include/linux/iov_iter.h:123 [inline]
+> >  iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+> >  iterate_and_advance include/linux/iov_iter.h:328 [inline]
+> >  __copy_from_iter lib/iov_iter.c:249 [inline]
+> >  copy_page_from_iter_atomic+0x77f/0xff0 lib/iov_iter.c:483
+> >  copy_folio_from_iter_atomic include/linux/uio.h:210 [inline]
+> >  generic_perform_write+0x2c2/0x490 mm/filemap.c:4121
+> >  shmem_file_write_iter+0xc5/0xf0 mm/shmem.c:3464
+> >  lo_rw_aio+0x5f7/0x7c0 drivers/block/loop.c:-1
+> >  do_req_filebacked drivers/block/loop.c:-1 [inline]
+> >  loop_handle_cmd drivers/block/loop.c:1866 [inline]
+> >  loop_process_work+0x52d/0xa60 drivers/block/loop.c:1901
+> >  loop_workfn+0x31/0x40 drivers/block/loop.c:1925
+> >  process_one_work kernel/workqueue.c:3238 [inline]
+> >  process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
+> >  worker_thread+0x582/0x770 kernel/workqueue.c:3400
+> >  kthread+0x486/0x510 kernel/kthread.c:464
+> >  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> >
+> > write to 0xffff88811d47e018 of 4072 bytes by task 4432 on cpu 1:
+> >  zero_user_segments include/linux/highmem.h:278 [inline]
+> >  folio_zero_segment include/linux/highmem.h:635 [inline]
+> >  pagecache_isize_extended+0x26f/0x340 mm/truncate.c:850
+> >  ext4_alloc_file_blocks+0x4ad/0x720 fs/ext4/extents.c:4545
+> >  ext4_do_fallocate fs/ext4/extents.c:4694 [inline]
+> >  ext4_fallocate+0x2b8/0x660 fs/ext4/extents.c:4750
+> >  vfs_fallocate+0x410/0x450 fs/open.c:338
+> >  ksys_fallocate fs/open.c:362 [inline]
+> >  __do_sys_fallocate fs/open.c:367 [inline]
+> >  __se_sys_fallocate fs/open.c:365 [inline]
+> >  __x64_sys_fallocate+0x7a/0xd0 fs/open.c:365
+> >  x64_sys_call+0x2b88/0x2fb0 arch/x86/include/generated/asm/syscalls_64.=
+h:286
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
