@@ -1,348 +1,107 @@
-Return-Path: <linux-kernel+bounces-644812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E837AB44B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29E0AB44C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E51166AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2D91B401FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2918296FA7;
-	Mon, 12 May 2025 19:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2662C2989B9;
+	Mon, 12 May 2025 19:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDDNIfWY"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ecWfwWi8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DEE2561CB;
-	Mon, 12 May 2025 19:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3F42561BD;
+	Mon, 12 May 2025 19:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747077380; cv=none; b=uEgEGFPvT50R2j6F3QsGLXqwkzGjSXdALS3Z6CY4w6rUd3lzyyIddah5pBUUuMckgi8V30WONRtU/3LLTu3JUBpVenk/DSV7ETNQAoHOykn2jZhuXuIptu3R8MvdI1d7hXOfsUuPrqvA7jsbddnvmIBfJppDsOEZU7r6iJy/Z80=
+	t=1747077478; cv=none; b=PjFS/oqqJVYFThuW+peAOJ9auBjYKDfe8LmlSQ6cO8sZ/X82TbeMY/fTV3+778SqBhhKPi3Eve1uzJJJ2B9lMnqv41xsNYIeBxaAswgV+3OOoa1o9cgUHXbuWfiz269bNaZWnN7EudjizvsgjHhRIrbHFlTTmWeaj5YknUEcT94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747077380; c=relaxed/simple;
-	bh=csoWxmWxRHcoiw+mcdR3F2D8ykvGSGe3zRxtHmNwDhc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Hm2RYrf+x+WMShtPUCTwANu5rdGv5d5ZCpCKIM7QKhaC8A8aFEy6kLidb3z3p6/3fsFtO6b3wfL04WcGKxTdfSmPpd1FEJ+HHeGFeBAVBStUq67nzP++SsfhktukgpGDowNmYPZfMqb1eJLUXEPp9pJ9PUvrnnMcpLO0zIfnYHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDDNIfWY; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-52403e39a23so3275258e0c.2;
-        Mon, 12 May 2025 12:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747077377; x=1747682177; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RYSuLkdFz2FZsbrZ/W7pjYu4T4GfGBCPecCYVxKA/cw=;
-        b=IDDNIfWYxobqphfjpCmHUa7SS7ZQ97Yag8t6xhXyKWuLbavDJAIqQRQ7YSF28ZAO3+
-         quPHOOd4Otuo3BRAyiy34ZD7t/wzWHXjXsL1BXy8ErbsyUBsMpxNYUj5qbUjex+0aPh6
-         GzcwV6M2xozFUTa59iXGtMzRlKd+Cqsa6FPPggftOXESHRFapIlhTUZzRdS+dYQVRY++
-         xOZ7NfasVJZZTRUaTTa6b9LKPBZlPW3niy18Wv3vBmka6xu/pU1Varf3jeFfDndjkcfK
-         L6V2CQ1VuyZf0wiJp0Tcw5HIoYQyTsdbe5GtNNDqM816sIjIC00A1Ns+O5DiNSHyzRzo
-         mKkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747077377; x=1747682177;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RYSuLkdFz2FZsbrZ/W7pjYu4T4GfGBCPecCYVxKA/cw=;
-        b=RPkHKDycGiE/cCeItLX9DJDRbEZBCLfuriH8pEZHJk2w6Zfh/shEROIxRFUoMzV0EE
-         JtAP2ngEFpQ3vWykZxPaXnwvqlfbMGjEPqcyCgZcMSvE12CKE6NAPJZkuC94Hesh56iA
-         mPv0Dd8ilXjh+EFFEyWvc46Nn1KzZKfyavFx33RudtSDvI33OZ3wiPNsIbwdbu6oVSgW
-         T+SPwbuJPStKkbDTEdFxeZ0okN5wEhCzqi0j3qOo6S244Qt71kuKHfsv69KN35IRavG6
-         amM4q9CwvbZD7hxe2UaAy03PP7gwlWyVZhWeEpYn/mJ3UUuf7b21H5Hr4+URwrOTp/dX
-         9dIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa8fKRORCIerA796mdEcFnQxz97qY2fesSSoGBVrlKDzJHfiimHKAziwTRbo0OHPLx5N0Ry9f5htpWQ4LF@vger.kernel.org, AJvYcCUawa81ylf4FKdH7lEvQ50Y4vIapNfhg0k/u8JTLs77dfZsQ4MWFmDqyTo/6L6Pn+2bAk+c1rodY8LAVOVt5BfhnN3OLQ==@vger.kernel.org, AJvYcCW4LoaQDHv6jDzz130qu/hXrNt876nx9+A72+cZ56hzVFCm411KHiVa2ZcGg2bhfpKtMICNvpvutIjM1CE=@vger.kernel.org, AJvYcCWnMhLyCE1EeTydyAPtYqMhSQTNVOftrVV0oJO6HEXo3vIhch+UaCDJvuFmAxB1i1vZZZ1rfl7lsDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbCsY90BOKixQIK9HLoH+KXYWhuqrlo7UKb8NOt9UG7jV1mJiI
-	bbSG3W6x/OfVrhFkI5dcTiskQbheJbVD+rKspNK9L0jVFMYpvXPuniXgJg==
-X-Gm-Gg: ASbGncsg2WHXDD3MQ7/1dDe07A1gm4zHiULKB0ijbFJCpEO5MTJ9x5GufjthVxhYZm0
-	Ay7cNVbqWlGHI2o9bNRMgKJxBqvP2Igh9nNNxoTpsKTgPOsFruJHFCi4lFFy3RIjrTcd2gdyDGR
-	jDiBvPiwIjK+jL79Pewr/laQKQ3ajPoCLj2VNJp1jMo1LIqysiMOFrTM+V12pStoOXKwaOJqAbi
-	11mSCyLgV1tmo5FPYilSm4DCBbejwiK8c0U0GCWdoDLld/Pd929uo5fcCMyFPW9QfTFIT5yOEl2
-	ZgnnB4FvZ2tfa21isIccmSdSpyOtXBsvwKLzdSe/OIEyNUBBhtfKJoE=
-X-Google-Smtp-Source: AGHT+IFHQoQemjQLv58nIUo1L8Az0vfwrtj4FK8I9sNBvd3K6hRB1VyQoRijEVWVHfUw7padc6pFtQ==
-X-Received: by 2002:a05:6122:1d14:b0:523:dd87:fe95 with SMTP id 71dfb90a1353d-52c53daf2admr11691435e0c.9.1747077376966;
-        Mon, 12 May 2025 12:16:16 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f6298ebasm5631710241.34.2025.05.12.12.16.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 12:16:16 -0700 (PDT)
+	s=arc-20240116; t=1747077478; c=relaxed/simple;
+	bh=gow85DnX8qkBC7BDNTGHZHQHD8EpPHE1yCYQe+JhPzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKJZ94sUBO3ZH15l2QGw3yoZtAQJqwsDOgJVBWjGu0JpvqpoTP1aBCwdXeNs/7MC/Nxi+L/pgcKRIypF5vBYIHj1ZHr8pKTQ/h1b9hm1MOXAyvNY0LXpYvQoUpC9+dgPB+t2c+5c2NppoBsrJ7uB+9huSFH+pdINBXrcVyy7jxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ecWfwWi8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6F4B940E0258;
+	Mon, 12 May 2025 19:17:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id HPiofi35CC_E; Mon, 12 May 2025 19:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747077441; bh=fnrOGTlwK6DB8DonrOYNYpF4Xlpq1tNa6YtxGoahYJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ecWfwWi8/xVhQmk8VfJ+vQLQ9kEaAdSuX4lLzvN0ny/w3m0DKO3J5IpFYoDgtEnRz
+	 ui9JJYT1zSV6WwtETlWU51MoBq6uvrTVZI9oU9kuqKphmS616VbIzuGyASse8L5Tfp
+	 tRA0LCqI60Iky46GqkTTx+GwA9Y9LX1tqiRBpToW306WhTt98lsjy9dq8c+oLHuCZg
+	 AM5lfp5g549PqML/akOabuBX6BVhaLixNB2COEo+g/440y5c9QyzREvFJbTEV2+Ukh
+	 kfhzSBvHw5NsFy/7S8cI081lcDng0TItFwKchTYDj3hLtNYvyouxPDtZCxv2vZ+510
+	 8OgwilUYr2NidJyU3cRBo3/b9b54Fl+ST9g2qfv9GL1B/8dia/shaSc9J6mVV+UKDU
+	 LRiDLyAKlMT90Xx49HHW6qrAEFuiIp64q1ZTaGe29KSu+1ft0ReZCSCMgfBm0oTEdQ
+	 XHHaXnjeMiEvPAcoaXtH5yvfcdjn2p3yyIr1vaenx14LdElSkJEXTvfUIs1UHR0ZhU
+	 5l0YqST7DJH98mo0ukUlK25a9SPPQEeyBFCtCSK7QHYFg25FJZydeCB8ybr+WXGd3p
+	 gb4j3PhAYvPDAIKw+FZDADtNsVJVniwwrqvt2TCLznmsMilFNTyxjdyI5V3nFNbc30
+	 0K34cMhIFELRtGFA0m8FZsHo=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2ECE840E01ED;
+	Mon, 12 May 2025 19:17:12 +0000 (UTC)
+Date: Mon, 12 May 2025 21:17:05 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Dionna Amalie Glaze <dionnaglaze@google.com>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [RFT PATCH v3 00/21] x86: strict separation of startup code
+Message-ID: <20250512191705.GHaCJJMcpPTS4ioLpm@fat_crate.local>
+References: <20250512190834.332684-23-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=5ca082a70d43aa946c92beeef9ccf0d061b858a7f9da8673702484b413ff;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 12 May 2025 16:16:12 -0300
-Message-Id: <D9UF8OXHEJKZ.23PW2J8J7VYSZ@gmail.com>
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Antheas Kapenekakis" <lkml@antheas.dev>,
- <platform-driver-x86@vger.kernel.org>
-Cc: "Armin Wolf" <W_Armin@gmx.de>, "Jonathan Corbet" <corbet@lwn.net>, "Hans
- de Goede" <hdegoede@redhat.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Jean Delvare" <jdelvare@suse.com>,
- "Guenter Roeck" <linux@roeck-us.net>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>
-Subject: Re: [PATCH v1 10/10] platform/x86: msi-wmi-platform: Restore fan
- curves on PWM disable and unload
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250511204427.327558-1-lkml@antheas.dev>
- <20250511204427.327558-11-lkml@antheas.dev>
-In-Reply-To: <20250511204427.327558-11-lkml@antheas.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250512190834.332684-23-ardb+git@google.com>
 
---5ca082a70d43aa946c92beeef9ccf0d061b858a7f9da8673702484b413ff
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Mon, May 12, 2025 at 09:08:35PM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> !!! Boot tested on non-SEV guest ONLY !!!!
 
-On Sun May 11, 2025 at 5:44 PM -03, Antheas Kapenekakis wrote:
-> MSI software is a bit weird in that even when the manual fan curve is
-> disabled, the fan speed is still somewhat affected by the curve. So
-> we have to restore the fan curves on unload and PWM disable, as it
-> is done in Windows.
->
-> Suggested-by: Armin Wolf <W_Armin@gmx.de>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/msi-wmi-platform.c | 123 +++++++++++++++++++++++-
->  1 file changed, 122 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/msi-wmi-platform.c b/drivers/platform/x=
-86/msi-wmi-platform.c
-> index 7dafe17d4d6be..a917db0300c06 100644
-> --- a/drivers/platform/x86/msi-wmi-platform.c
-> +++ b/drivers/platform/x86/msi-wmi-platform.c
-> @@ -123,16 +123,25 @@ struct msi_wmi_platform_quirk {
->  	bool shift_mode;	/* Shift mode is supported */
->  	bool charge_threshold;	/* Charge threshold is supported */
->  	bool dual_fans;		/* For devices with two hwmon fans */
-> +	bool restore_curves;	/* Restore factory curves on unload */
->  	int pl_min;		/* Minimum PLx value */
->  	int pl1_max;		/* Maximum PL1 value */
->  	int pl2_max;		/* Maximum PL2 value */
->  };
-> =20
-> +struct msi_wmi_platform_factory_curves {
-> +	u8 cpu_fan_table[32];
-> +	u8 gpu_fan_table[32];
-> +	u8 cpu_temp_table[32];
-> +	u8 gpu_temp_table[32];
-> +};
-> +
->  struct msi_wmi_platform_data {
->  	struct wmi_device *wdev;
->  	struct msi_wmi_platform_quirk *quirks;
->  	struct mutex wmi_lock;	/* Necessary when calling WMI methods */
->  	struct device *ppdev;
-> +	struct msi_wmi_platform_factory_curves factory_curves;
->  	struct acpi_battery_hook battery_hook;
->  	struct device *fw_attrs_dev;
->  	struct kset *fw_attrs_kset;
-> @@ -219,6 +228,7 @@ static struct msi_wmi_platform_quirk quirk_gen1 =3D {
->  	.shift_mode =3D true,
->  	.charge_threshold =3D true,
->  	.dual_fans =3D true,
-> +	.restore_curves =3D true,
->  	.pl_min =3D 8,
->  	.pl1_max =3D 43,
->  	.pl2_max =3D 45
-> @@ -227,6 +237,7 @@ static struct msi_wmi_platform_quirk quirk_gen2 =3D {
->  	.shift_mode =3D true,
->  	.charge_threshold =3D true,
->  	.dual_fans =3D true,
-> +	.restore_curves =3D true,
->  	.pl_min =3D 8,
->  	.pl1_max =3D 30,
->  	.pl2_max =3D 37
-> @@ -507,6 +518,94 @@ static struct attribute *msi_wmi_platform_hwmon_attr=
-s[] =3D {
->  };
->  ATTRIBUTE_GROUPS(msi_wmi_platform_hwmon);
-> =20
-> +static int msi_wmi_platform_curves_save(struct msi_wmi_platform_data *da=
-ta)
-> +{
-> +	int ret;
-> +
-> +	data->factory_curves.cpu_fan_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_CPU_FAN_TABLE;
-> +	ret =3D msi_wmi_platform_query_unlocked(
-> +		data, MSI_PLATFORM_GET_FAN,
-> +		data->factory_curves.cpu_fan_table,
-> +		sizeof(data->factory_curves.cpu_fan_table));
-> +	if (ret < 0)
-> +		return ret;
-> +	data->factory_curves.cpu_fan_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_CPU_FAN_TABLE;
+...
 
-Is it necessary to set the subfeature again here (and bellow)?
+> !!! Boot tested on non-SEV guest ONLY !!!!
+> 
+> Again, I will need to lean on Tom to determine whether this breaks
+> SEV-SNP guest boot. As I mentioned before, I am still waiting for
+> SEV-SNP capable hardware to be delivered.
 
-Also there is a lot of code repetition here, I would suggest a helper
-function. It will be optimized/inlined by the compiler anyway.
+Ingo, please do not rush this stuff in before Tom and I have tested it
+successfully with SEV* guests.
 
-> +
-> +	data->factory_curves.gpu_fan_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_GPU_FAN_TABLE;
-> +	ret =3D msi_wmi_platform_query_unlocked(
-> +		data, MSI_PLATFORM_GET_FAN,
-> +		data->factory_curves.gpu_fan_table,
-> +		sizeof(data->factory_curves.gpu_fan_table));
-> +	if (ret < 0)
-> +		return ret;
-> +	data->factory_curves.gpu_fan_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_GPU_FAN_TABLE;
-> +
-> +	data->factory_curves.cpu_temp_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_CPU_TEMP_TABLE;
-> +	ret =3D msi_wmi_platform_query_unlocked(
-> +		data, MSI_PLATFORM_GET_TEMPERATURE,
-> +		data->factory_curves.cpu_temp_table,
-> +		sizeof(data->factory_curves.cpu_temp_table));
-> +	if (ret < 0)
-> +		return ret;
-> +	data->factory_curves.cpu_temp_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_CPU_TEMP_TABLE;
-> +
-> +	data->factory_curves.gpu_temp_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_GPU_TEMP_TABLE;
-> +	ret =3D msi_wmi_platform_query_unlocked(
-> +		data, MSI_PLATFORM_GET_TEMPERATURE,
-> +		data->factory_curves.gpu_temp_table,
-> +		sizeof(data->factory_curves.gpu_temp_table));
-> +	if (ret < 0)
-> +		return ret;
-> +	data->factory_curves.gpu_temp_table[0] =3D
-> +		MSI_PLATFORM_FAN_SUBFEATURE_GPU_TEMP_TABLE;
-> +
-> +	return 0;
-> +}
-> +
-> +static int msi_wmi_platform_curves_load(struct msi_wmi_platform_data *da=
-ta)
-> +{
-> +	u8 buffer[32] =3D { };
-> +	int ret;
-> +
-> +	memcpy(buffer, data->factory_curves.cpu_fan_table,
-> +	       sizeof(data->factory_curves.cpu_fan_table));
-> +	ret =3D msi_wmi_platform_query_unlocked(data, MSI_PLATFORM_SET_FAN,
-> +					      buffer, sizeof(buffer));
-> +	if (ret < 0)
-> +		return ret;
+Thanks!
 
-A helper for this operation would be nice too.
+-- 
+Regards/Gruss,
+    Boris.
 
-> +
-> +	memcpy(buffer, data->factory_curves.gpu_fan_table,
-> +	       sizeof(data->factory_curves.gpu_fan_table));
-> +	ret =3D msi_wmi_platform_query_unlocked(data, MSI_PLATFORM_SET_FAN,
-> +					      buffer, sizeof(buffer));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	memcpy(buffer, data->factory_curves.cpu_temp_table,
-> +	       sizeof(data->factory_curves.cpu_temp_table));
-> +	ret =3D msi_wmi_platform_query_unlocked(
-> +		data, MSI_PLATFORM_SET_TEMPERATURE, buffer, sizeof(buffer));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	memcpy(buffer, data->factory_curves.gpu_temp_table,
-> +	       sizeof(data->factory_curves.gpu_temp_table));
-> +	ret =3D msi_wmi_platform_query_unlocked(
-> +		data, MSI_PLATFORM_SET_TEMPERATURE, buffer, sizeof(buffer));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +
->  static umode_t msi_wmi_platform_is_visible(const void *drvdata, enum hwm=
-on_sensor_types type,
->  					   u32 attr, int channel)
->  {
-> @@ -603,9 +702,19 @@ static int msi_wmi_platform_write(struct device *dev=
-, enum hwmon_sensor_types ty
->  				return -EINVAL;
->  			}
-> =20
-> -			return msi_wmi_platform_query_unlocked(
-> +			ret =3D msi_wmi_platform_query_unlocked(
->  				data, MSI_PLATFORM_SET_AP, buffer,
->  				sizeof(buffer));
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			if (val =3D=3D 2 && data->quirks->restore_curves) {
-> +				ret =3D msi_wmi_platform_curves_load(data);
-> +				if (ret < 0)
-> +					return ret;
-> +			}
-> +
-> +			return 0;
->  		default:
->  			return -EOPNOTSUPP;
->  		}
-> @@ -1373,6 +1482,13 @@ static int msi_wmi_platform_probe(struct wmi_devic=
-e *wdev, const void *context)
-> =20
->  	msi_wmi_platform_profile_setup(data);
-> =20
-> +	if (data->quirks->restore_curves) {
-> +		guard(mutex)(&data->wmi_lock);
-
-We don't need locking here. data->factory_curves is not shared until you
-register the hwmon device.
-
-> +		ret =3D msi_wmi_platform_curves_save(data);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->  	return msi_wmi_platform_hwmon_init(data);
->  }
-> =20
-> @@ -1382,6 +1498,11 @@ static void msi_wmi_platform_remove(struct wmi_dev=
-ice *wdev)
-> =20
->  	if (data->quirks->charge_threshold)
->  		battery_hook_unregister(&data->battery_hook);
-> +
-> +	if (data->quirks->restore_curves) {
-> +		guard(mutex)(&data->wmi_lock);
-
-We can avoid locking here by adding a devm action that restores the
-curves. devm resources are unloaded in LIFO order.
-
-Please, also check my comments on [Patch 2]. I don't think that patch is
-needed.
-
---=20
- ~ Kurt
-
-> +		msi_wmi_platform_curves_load(data);
-> +	}
->  }
-> =20
->  static const struct wmi_device_id msi_wmi_platform_id_table[] =3D {
-
-
---5ca082a70d43aa946c92beeef9ccf0d061b858a7f9da8673702484b413ff
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSHYKL24lpu7U7AVd8WYEM49J/UZgUCaCJJAAAKCRAWYEM49J/U
-ZsklAP4nP+TLLnauvq9QNwdLDzn1mhru1skaFEs6UZfARtrQWgEAoWwjSMYzbHky
-NEul9sSHiTtk8t2DDwCv4E5z70V7kAY=
-=mk39
------END PGP SIGNATURE-----
-
---5ca082a70d43aa946c92beeef9ccf0d061b858a7f9da8673702484b413ff--
+https://people.kernel.org/tglx/notes-about-netiquette
 
