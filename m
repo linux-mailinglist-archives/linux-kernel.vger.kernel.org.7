@@ -1,111 +1,192 @@
-Return-Path: <linux-kernel+bounces-644238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63733AB3962
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:35:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABDAAB3964
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D140A18839B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F800177EE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD60295DA9;
-	Mon, 12 May 2025 13:34:35 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27D8295D9F
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C5E2951D3;
+	Mon, 12 May 2025 13:35:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A421295514;
+	Mon, 12 May 2025 13:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747056875; cv=none; b=OAht0A73ZjM7Zb4rlqF6nhwi0OeHF9AkBtNoddh6sSbbC5GLVIhJcABf6mDMEVqTRqoVPbf7n3SUwF0AyUzUd+6FxE/fwl8y79nQCUpTfcMHq5xcLvLG1NShgYpiVDafc51RjdIhu0H+rYVP+1J8Y9bf/wZ69CvXTWJbb94gZRI=
+	t=1747056910; cv=none; b=JPz8X3AHmQX18zBwaxmwZWXVERfLhLrZlcsHbyJlvtxs3hy7sEIcNfUG8WALqAmghLSjv4u3UoHIg0Al8eRHOYDUvmR8SJwlZpFQxL7Q2aJlhw8cTADfaWpDaapIGZFqXOCyBAWh9ngJroRVmFWgRyrwvL6Hk9lz0zSXRly/pjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747056875; c=relaxed/simple;
-	bh=wl+3F8eTpNR2nRXfBq9CGFzHjza01r4LUHMwsOEe33Q=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=vBCNwYQ19i8qDDHYoxg+nNmYTB+OOWIE16BHSvRNkjrUU4R4YM75NVAo3yUaQck/o4tEiXZ1J+K1gY7ww/xknAOHCRDIWTa+w1AH2aebbteDR6yRUG3a103qr1QLFqcKZxSpexLAYX3NHGZs8zfRlQoLI/6WIGEDXDk7guDhCDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3da644c8ffeso50838585ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:34:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747056873; x=1747661673;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b27Pk0GqEJwbCqvpgYObHkg51OVsd3f/nd7AM7iKm1E=;
-        b=oHqOZH223YxgXspPxqg8Tb3zRy5bu2HKd189+XimZmyHnTuDeyg/Dy+zsvpi4fJCmy
-         1xV3MTO3DKktYu1+IEe9IfhW/syKXSao2Hd7wa5yaV5GQf1p5tS+KRFVcKAxy3bu1wzN
-         jwHDzD4Dd04XANWKmMQ7bqxt5GjfAaHjlXmcLikPuo+wTAF0Vght09vFNRwnX5HT9wQ3
-         gJyjqlhQ7zHeqcWWni9ObHAC6TBBNKuns0wRt00hCEV8Ej5wA1ZWPEv77IHT00IQzfzn
-         ayaeubKcIKLoIZCiFbxoll+Q5a4pXXWZrFpsVbluM0u/q7GF+VRqH2HuEl7bA01YO+x/
-         jyoA==
-X-Gm-Message-State: AOJu0YzYL+ogxDn5smTPn+NZgPYdUQdigMItztUcIkX3PRfMcJPsIaQ6
-	tTkwNTUzy1zNDhc7E1F/Dn64ttNXQHsHK2G/TARgo2GffXU8acB3YsqSsCOD00ZDUQ7jfcDan9m
-	h8r3PzpxwjGeGwiXSReqFswzgoMBEF96ENd6TXoZLOSa9LpfZjZ/AEYo=
-X-Google-Smtp-Source: AGHT+IExU+RmJLuLIScj3qPHE6KbUQp9ULv9VSNxzAViRUPadJULffIFiUp+xyaXLKTBRYFXV9jb5R5DGwrQREIjHN1jPRbSR0sC
+	s=arc-20240116; t=1747056910; c=relaxed/simple;
+	bh=awHNVJyaHw8/80BC7Snxq4IjeNVF1gecvNMAl54NTRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=omFE1InoU5iqGpKJzEy0qV4LHOGxumqhdrcaaVdfxX53P0/0nRdFOvpp4zj4rIRwXCHJDOMzjVH7Maw7SrYQ3OK6Q4mRzrtoaJxnzWSEJ/abTRsvI02aSiOnMjYj1t4vgR12FBohOru6i6PrNmRXsd6tgP4cjUQoU6eye7sUF3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 814DF150C;
+	Mon, 12 May 2025 06:34:56 -0700 (PDT)
+Received: from [10.57.90.222] (unknown [10.57.90.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E57BB3F5A1;
+	Mon, 12 May 2025 06:35:02 -0700 (PDT)
+Message-ID: <99079d56-428b-4bc4-b20a-dc10032f2a2f@arm.com>
+Date: Mon, 12 May 2025 14:35:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0e:b0:3d8:1d0e:5308 with SMTP id
- e9e14a558f8ab-3da7e1e782fmr141354655ab.6.1747056868750; Mon, 12 May 2025
- 06:34:28 -0700 (PDT)
-Date: Mon, 12 May 2025 06:34:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6821f8e4.050a0220.f2294.0064.GAE@google.com>
-Subject: [syzbot] Monthly net report (May 2025)
-From: syzbot <syzbot+list13a88a54d07849545a99@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v6 1/3] arm64: Add BBM Level 2 cpu feature
+Content-Language: en-GB
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ yang@os.amperecomputing.com, corbet@lwn.net, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ paulmck@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com,
+ maz@kernel.org, james.morse@arm.com, broonie@kernel.org,
+ oliver.upton@linux.dev, baohua@kernel.org, david@redhat.com,
+ ioworker0@gmail.com, jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
+ jsnitsel@redhat.com, smostafa@google.com, kevin.tian@intel.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+References: <20250428153514.55772-2-miko.lenczewski@arm.com>
+ <20250428153514.55772-4-miko.lenczewski@arm.com>
+ <20250506142508.GB1197@willie-the-truck>
+ <78fec33d-fe66-4352-be11-900f456c9af3@arm.com>
+ <20250509134904.GA5707@willie-the-truck> <aB4nqtMJuvvp7Vwm@arm.com>
+ <015746d7-ca46-4978-a441-09fba781fdd4@arm.com>
+ <4709ff5a-f89c-426e-ae95-f8356808f4f5@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <4709ff5a-f89c-426e-ae95-f8356808f4f5@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello net maintainers/developers,
+On 12/05/2025 14:24, Suzuki K Poulose wrote:
+> On 12/05/2025 14:07, Ryan Roberts wrote:
+>> On 09/05/2025 17:04, Catalin Marinas wrote:
+>>> On Fri, May 09, 2025 at 02:49:05PM +0100, Will Deacon wrote:
+>>>> On Tue, May 06, 2025 at 03:52:59PM +0100, Ryan Roberts wrote:
+>>>>> On 06/05/2025 15:25, Will Deacon wrote:
+>>>>>> This penalises large homogeneous systems and it feels unnecessary given
+>>>>>> that we have the ability to check this per-CPU. Can you use
+>>>>>> ARM64_CPUCAP_BOOT_CPU_FEATURE instead of ARM64_CPUCAP_SYSTEM_FEATURE
+>>>>>> to solve this?
+>>>>>
+>>>>> We are trying to solve for the case where the boot CPU has BBML2 but a
+>>>>> secondary
+>>>>> CPU doesn't. (e.g. hetrogeneous system where boot CPU is big and secondary is
+>>>>> little and does not advertise the feature. I can't remember if we proved there
+>>>>> are real systems with this config - I have vague recollection that we did
+>>>>> but my
+>>>>> memory is poor...).
+>>>>>
+>>>>> My understanding is that for ARM64_CPUCAP_BOOT_CPU_FEATURE, "If the boot CPU
+>>>>> has enabled this feature already, then every late CPU must have it". So that
+>>>>> would exclude any secondary CPUs without BBML2 from coming online?
+>>>>
+>>>> Damn, yes, you're right. However, it still feels horribly hacky to iterate
+>>>> over the online CPUs in has_bbml2_noabort() -- the cpufeature framework
+>>>> has the ability to query features locally and we should be able to use
+>>>> that. We're going to want that should the architecture eventually decide
+>>>> on something like BBML3 for this.
+>>>>
+>>>> What we have with BBML2_NOABORT seems similar to an hwcap in that we only
+>>>> support the capability if all CPUs have it (rejecting late CPUs without it
+>>>> in that case) but we can live without it if not all of the early CPUs
+>>>> have it. Unlikely hwcaps, though, we shouldn't be advertising this to
+>>>> userspace and we can't derive the capability solely from the sanitised
+>>>> system registers.
+>>>>
+>>>> I wonder if we could treat it like an erratum in some way instead? That
+>>>> is, invert things so that CPUs which _don't_ have BBML2_NOABORT are
+>>>> considered to have a "BBM_CONFLICT_ABORT" erratum (which we obviously
+>>>> wouldn't shout about). Then we should be able to say:
+>>>>
+>>>>    - If any of the early CPUs don't have BBML2_NOABORT, then the erratum
+>>>>      would be enabled and we wouln't elide BBM.
+>>>>
+>>>>    - If a late CPU doesn't have BBML2_NOABORT then it can't come online
+>>>>      if the erratum isn't already enabled.
+>>>>
+>>>> Does that work? If not, then perhaps the cpufeature/cpuerrata code needs
+>>>> some surgery for this.
+>>>
+>>> Ah, I should have read this thread in order. I think we can treat this
+>>> as BBML2_NOABORT available as default based on ID regs and use the
+>>> allow/deny-list as an erratum.
+>>>
+>>
+>> Just to make sure I've understood all this, I think what you are both saying is
+>> we can create a single capability called ARM64_HAS_NO_BBML2_NOABORT of type
+>> ARM64_CPUCAP_LOCAL_CPU_ERRATUM. Each CPU will then check it has BBML2 and is in
+>> the MIDR allow list; If any of those conditions are not met, the CPU is
+>> considered to have ARM64_HAS_NO_BBML2_NOABORT.
+> 
+> I guess we need two caps.
+> 
+> 1. SYSTEM cap -> ARM64_HAS_BBML2. Based on the ID registers
+> 2. An erratum -> ARM64_BBML2_ABORTS. Based on BBLM2==1 && !in_midr_list()
 
-This is a 31-day syzbot report for the net subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/net
+I don't think we *need* two caps; I was suggesting to consider both of these
+conditions for the single cap. You are suggesting to separate them. But I think
+both approaches give the same result?
 
-During the period, 26 new issues were detected and 3 were fixed.
-In total, 136 issues are still open and 1599 have already been fixed.
+I'm easy either way, but keen to understand why 2 caps are preferred?
 
-Some of the still happening issues:
+Perhaps for my version it would be better to refer to it as
+ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE instead of
+ARM64_CPUCAP_LOCAL_CPU_ERRATUM (they both have the exact same semantics under
+the hood AFAICT).
 
-Ref  Crashes Repro Title
-<1>  333909  Yes   possible deadlock in team_del_slave (3)
-                   https://syzkaller.appspot.com/bug?extid=705c61d60b091ef42c04
-<2>  312666  Yes   unregister_netdevice: waiting for DEV to become free (8)
-                   https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84
-<3>  7829    Yes   WARNING: suspicious RCU usage in dev_deactivate_queue
-                   https://syzkaller.appspot.com/bug?extid=ca9ad1d31885c81155b6
-<4>  7126    Yes   KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-                   https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
-<5>  7026    Yes   KMSAN: uninit-value in eth_type_trans (2)
-                   https://syzkaller.appspot.com/bug?extid=0901d0cc75c3d716a3a3
-<6>  7023    Yes   possible deadlock in team_device_event (3)
-                   https://syzkaller.appspot.com/bug?extid=b668da2bc4cb9670bf58
-<7>  6412    Yes   WARNING in inet_sock_destruct (4)
-                   https://syzkaller.appspot.com/bug?extid=de6565462ab540f50e47
-<8>  3215    Yes   INFO: task hung in linkwatch_event (4)
-                   https://syzkaller.appspot.com/bug?extid=2ba2d70f288cf61174e4
-<9>  3096    No    BUG: sleeping function called from invalid context in dev_set_allmulti
-                   https://syzkaller.appspot.com/bug?extid=368054937a6a7ead5f35
-<10> 2547    Yes   WARNING in rcu_check_gp_start_stall
-                   https://syzkaller.appspot.com/bug?extid=111bc509cd9740d7e4aa
+Thanks,
+Ryan
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> 
+> And then:
+> 
+> 
+>>
+>> Then we have this helper:
+>>
+>> static inline bool system_supports_bbml2_noabort(void)
+>> {
+>>     return system_capabilities_finalized() &&
+>         alternative_has_cap_unlikely(ARM64_HAS_BBML2) &&
+>         !alternative_has_cap_unlikely(!ARM64_HAS_BBML2_ABORTS)
+> 
+> Without (1), we may enable BBML2 on a (system with) CPU that doesn't
+> have BBML2 feature.
+> 
+> And (1) can prevent any non-BBML2 capable CPUs from booting or (2) can prevent
+> anything that aborts with BBML2.
+> 
+> 
+> Suzuki
+> 
+> 
+>>            !alternative_has_cap_unlikely(ARM64_HAS_NO_BBML2_NOABORT);
+> 
+> 
+>> }
+>>
+>> system_capabilities_finalized() is there to ensure an early call to this helper
+>> returns false (i.e. the safe value before we have evaluated on all CPUs).
+>> Because ARM64_HAS_NO_BBML2_NOABORT is inverted it would otherwise return true
+>> prior to finalization.
+>>
+>> I don't believe we need any second (SYSTEM or BOOT) feature. This is sufficient
+>> on its own?
+>>
+>> Thanks,
+>> Ryan
+>>
+> 
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
