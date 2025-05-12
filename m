@@ -1,411 +1,128 @@
-Return-Path: <linux-kernel+bounces-644288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B5CAB39ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD23AB39F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BB13A9379
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A603A7ABB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F561DF757;
-	Mon, 12 May 2025 14:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8C1DF24B;
+	Mon, 12 May 2025 14:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jDBET9ag"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vmd870Wt"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA724172BD5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 14:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145F12AD18;
+	Mon, 12 May 2025 14:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747058445; cv=none; b=kNqr+nVcGB9k7qXH+ufv6cJBEHyUFRZK2f/Ktj1sjnqhQc4yCpBc5LRhgxY3Q6kuqlVeWbvPLHQZFBaaxAeXhGc7bekLxPRBc1lCtDreiRSKj2GzcluQ8/ZdQo6fa/BpeAnS8FyCe+wD/WlKVMbXsOHlSApd/hvMiAYNG1hmidQ=
+	t=1747058529; cv=none; b=P9f3MCXEml31ogyrl0iZWBN8lynrp0qYZv9r+M6UHcfriqPk5Th5JkSFbAJJ/nMun/PrxrghRXxLQ/Bhdf2oH4CWDU8OtNuNE5dLeA9grI1ISY5/U3EMqvsaILlN5kG+Z36cRG4jFLLR1h0XDeabCMaSGghXV4eqGf0A3GnjwUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747058445; c=relaxed/simple;
-	bh=FpSOrFTBA3zPhR8xzcPPZckD+36feXezDwiD5X0jZ7I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQfPSvuiT6B6JB8lG7wHI0gHgHhPELWWdTdq7Kq0P6JGW74THfYMe5LpfFPzXTl4IHsoWFliNkUWlmvRRjvZAMb/fSC6QBUXw0lujLObyj+VoqEuLzq3N7hgiHeXSP7FaoN0xTyzoR1mPw+spgqKpzt/iYHoRTEX7NEshjprG8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jDBET9ag; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-60658e1fedfso2109767eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 07:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747058442; x=1747663242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oY5MPOFskIW58U8yakui/ToG+SoS5dGhSlJd4Y0itw4=;
-        b=jDBET9agE4STi0F9psBnCjrM4hNXKr+ppVeCJXO1ubEZ41ztJBGs6h0uEClH9heDCy
-         km22pjYc5dpeJM9so6U6tx6+sM1fumO2Lp3o9QB5nP041c3n3m7+n7055Rt1xfCqfqde
-         UY4/Gva/8FL8XOHTSqpvKaGB6fPG+w+82KYY6IExEHHCOAQ4dS+CbHCnDPBj4Es0TEg0
-         OdbSPPnhyIsRqnF8I5Wt+0/NSDvwqfZRXltFJnZqtOIBnRa8w7ZSz5u37RMETeQJnC5T
-         RsLd82SmKoc6Vve26RvEMmj2nXXW0eYQBOzt4WXnNjVOiPvfWeqGQYUs9hrMxMD6ICBp
-         pajg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747058442; x=1747663242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oY5MPOFskIW58U8yakui/ToG+SoS5dGhSlJd4Y0itw4=;
-        b=vQ+00zTnUPGNBfB47daJsEkvCk9LkEKKkC6KnAZDoEfMTBblfS1X1y8AXGk54Ke5mk
-         mxME4KBh3RGbLCbOmYhyZROgNB6tSbiGtRGTt/zQPynNE06k3iCtgGj4NSxMciTLRb5G
-         f45bF7y0LgsvIARdmSvzvcEdyhC0CeYrxLXwUI6rCtOk0RLe2F824nzHTYnSGQH8lIhp
-         47s1gQ3gcg7BjqoLnz+73TOH07uYYdTbhF1sbXirCBmf02RiW9rA7mDk42QGC3cfg4bd
-         lYKFQOiZm+kEyB0H2/yUDmCDHoFi92p+ObCmOfHxyqvAgc3/DS3Fxe+Gt0ZA93lwyzDi
-         XGoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8m0J8luaWx06IRUAlqLCOrsILKHcTu9t+rqz/tPUHa+5cRPkk/cd0ZzpicvwgP3IaYB1nphsbtIt5hOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJh/Xszyxh6RlE7CAKKbdYNsoViGxGZxngK+PFsHOyHZoQbYAe
-	xRhZCqfvud5DARn3XVgKmn6siJCpWxfa1MfvanJr1Gk27kaeNSnCGlw/rw3TpHQ560nmm+06RZ4
-	Okt3Wc9hE891AmArkD23DITijj3fTRxPiN+RdTA==
-X-Gm-Gg: ASbGncv46SWhAwifyjt/bEEe4b8UyH8MmsOTAnYFVs5mkfkV9ujXTGszTHyEmGcYSn+
-	QV/2rXwIoXtiSiB+EZpdEjz7MkA7kMppDDR+sfDMLqw3j1Fxi4FJoHMsFeNS3c+o6xiMYRy+Apc
-	WYkyTcMR3MSZxKY7LLP9FUNGRe/snmndCH8/Bj0etBSkhpTSSpGQ==
-X-Google-Smtp-Source: AGHT+IHsSG6LFf5PiDFFo3ewFAedI003xvd4xJxMeRbQ3MH6DeQs3j9PCwinE182BXoCfinBuy0Ea+M9rZ1PRL74+a4=
-X-Received: by 2002:a05:6820:450a:b0:606:8579:4c5e with SMTP id
- 006d021491bc7-6083ff1566bmr6867317eaf.1.1747058441567; Mon, 12 May 2025
- 07:00:41 -0700 (PDT)
+	s=arc-20240116; t=1747058529; c=relaxed/simple;
+	bh=KN51EL+e4VUtFwp7G7kO6TE/8vRbhxJnqwxzLoK8Z7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pJ6efnf+t/JZOOLMCRJRM0iqyGKWP7FwhZTa3GRsUqDIRKflzoL2QDVYmTql30nxxCwscNzLExQ+ZYJALO2+5cf8AOMFUnkxfCX7bmjyCs5rTHICGYpWqgXMFMRHMB/7JfeikUvpeHH43BeD+Rb/Z4GMeJINAunNtfZPfxlJBAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vmd870Wt; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0CC0743912;
+	Mon, 12 May 2025 14:02:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747058525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o3TRMmycxHOQ79R3VMJurcxx8hZEsQrWPdGeODqMNcc=;
+	b=Vmd870WtRHsIOA6Yr7wFlzOG4AmNyCWFvocZMUvnqrE8yWUTp27MGDROkWw1/AglWncaXv
+	+vj8GiQu90rRrZrWpiQnGj5nYeLthGJAxAyMirLdRtqA1kbVvjXXsj32yYMDVxfg2TnvNT
+	YRTdEcq8iGDdwsthMOYJinZJyPHGL6ak4+BGsiBYdNDeEq20hap0dLm7FSJLKFYknxQWo/
+	j6NMEKqWHQsdsRDjzuyjoBREAvCU+TV+4cCS+Nx3op1D9Im/DA6xYSh75ycr6Hk31DkA+N
+	a6nxiISEpD8aBsL4L5+roNOI89e6Oo7wYscVzKIbGUMk2uWhEmnSu9HERElAjg==
+Date: Mon, 12 May 2025 16:02:01 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Louis Chauvet <louis.chauvet@bootlin.com>, Dmitry
+ Baryshkov <lumag@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/22] drm: convert many bridge drivers from
+ devm_kzalloc() to devm_drm_bridge_alloc() API
+Message-ID: <20250512160201.7d0b21d8@booty>
+In-Reply-To: <4yeqvg3wnlr2bhb54zutgqpkehrodat5w5x4rr5qjlrc2ts3pz@gr2iosycclpl>
+References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
+	<20250509-drm-bridge-convert-to-alloc-api-v3-2-b8bc1f16d7aa@bootlin.com>
+	<4yeqvg3wnlr2bhb54zutgqpkehrodat5w5x4rr5qjlrc2ts3pz@gr2iosycclpl>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506112321.61710-1-cuiyunhui@bytedance.com>
- <20250506112321.61710-2-cuiyunhui@bytedance.com> <6801686d-a0b3-7093-1293-cdac6ad055e4@linux.intel.com>
- <CAEEQ3wnouWbVvkvhV1oB8MrOADNhN6BQB4-epUXa6cLYkKFRiw@mail.gmail.com>
- <41066f2f-a690-83ef-5fbb-0bc1d956a19d@linux.intel.com> <CAEEQ3w=xPmbyaCHLPtCBgFOzz7TzDYMkOnKt=EvpdknQqot=cA@mail.gmail.com>
- <34f3c38c-b224-8a4d-3235-c1df04ac1d04@linux.intel.com>
-In-Reply-To: <34f3c38c-b224-8a4d-3235-c1df04ac1d04@linux.intel.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 12 May 2025 22:00:30 +0800
-X-Gm-Features: AX0GCFtQnMyMmbX6QGe3uzimLWaCVKqkrdfQH7AzCtz4fE2y6kAPg4G42xunhNw
-Message-ID: <CAEEQ3wn8Q04ne7nqq+MTtx=ocbi16FuCR-ptZpmYx_23Xwt60Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v5 2/4] serial: 8250: avoid potential
- PSLVERR issue
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: arnd@arndb.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	benjamin.larsson@genexis.eu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	heikki.krogerus@linux.intel.com, Jiri Slaby <jirislaby@kernel.org>, 
-	jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
-	LKML <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, 
-	markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de, 
-	paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com, 
-	sunilvl@ventanamicro.com, tim.kryger@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftddugeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfejhffgjeelkeeftdekfefgteekgefhleelueeijeffieekieeigefhledtffetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpfhhrvggvuggvshhkthhophdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigr
+ dhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Ilpo,
+Hi Maxime,
 
-On Mon, May 12, 2025 at 8:03=E2=80=AFPM Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Mon, 12 May 2025, yunhui cui wrote:
->
-> > Hi Ilpo,
-> >
-> > On Mon, May 12, 2025 at 6:27=E2=80=AFPM Ilpo J=C3=A4rvinen
-> > <ilpo.jarvinen@linux.intel.com> wrote:
-> > >
-> > > On Mon, 12 May 2025, yunhui cui wrote:
-> > >
-> > > > Hi Ilpo,
-> > > >
-> > > > On Tue, May 6, 2025 at 8:00=E2=80=AFPM Ilpo J=C3=A4rvinen
-> > > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > > >
-> > > > > On Tue, 6 May 2025, Yunhui Cui wrote:
-> > > > >
-> > > > > > Failure to check the UART_LSR_DR before reading UART_RX, or the
-> > > > > > non-atomic nature of clearing the FIFO and reading UART_RX, pos=
-es
-> > > > > > potential risks that could lead to PSLVERR.
-> > > > >
-> > > > > Don't expect reader to know the condition how PSLVERR is triggere=
-d. I know
-> > > > > it's worded out in the other patch but also explain it here.
-> > > > >
-> > > > > You're only explaining problem and missing what this patch does t=
-o solve
-> > > > > the problem.
-> > > > >
-> > > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > > > > ---
-> > > > > >  drivers/tty/serial/8250/8250.h      | 13 +++++++++
-> > > > > >  drivers/tty/serial/8250/8250_port.c | 43 +++++++++++++++------=
---------
-> > > > > >  2 files changed, 35 insertions(+), 21 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/seria=
-l/8250/8250.h
-> > > > > > index b861585ca02a..6f97ff3a197d 100644
-> > > > > > --- a/drivers/tty/serial/8250/8250.h
-> > > > > > +++ b/drivers/tty/serial/8250/8250.h
-> > > > > > @@ -162,6 +162,19 @@ static inline u16 serial_lsr_in(struct uar=
-t_8250_port *up)
-> > > > > >       return lsr;
-> > > > > >  }
-> > > > > >
-> > > > > > +/*
-> > > > > > + * To avoid PSLVERR, check UART_LSR_DR in UART_LSR before
-> > > > > > + * reading UART_RX.
-> > > > > > + */
-> > > > > > +static inline void serial8250_discard_data(struct uart_8250_po=
-rt *up)
-> > > > > > +{
-> > > > > > +     u16 lsr;
-> > > > > > +
-> > > > > > +     lsr =3D serial_in(up, UART_LSR);
-> > > > > > +     if (lsr & UART_LSR_DR)
-> > > > > > +             serial_in(up, UART_RX);
-> > > > > > +}
-> > > > > > +
-> > > > > >  /*
-> > > > > >   * For the 16C950
-> > > > > >   */
-> > > > > > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/=
-serial/8250/8250_port.c
-> > > > > > index a913135d5217..1666b965f6a0 100644
-> > > > > > --- a/drivers/tty/serial/8250/8250_port.c
-> > > > > > +++ b/drivers/tty/serial/8250/8250_port.c
-> > > > > > @@ -1357,9 +1357,8 @@ static void autoconfig_irq(struct uart_82=
-50_port *up)
-> > > > > >       /* Synchronize UART_IER access against the console. */
-> > > > > >       uart_port_lock_irq(port);
-> > > > > >       serial_out(up, UART_IER, UART_IER_ALL_INTR);
-> > > > > > +     serial8250_discard_data(up);
-> > > > > >       uart_port_unlock_irq(port);
-> > > > > > -     serial_in(up, UART_LSR);
-> > > > > > -     serial_in(up, UART_RX);
-> > > > > >       serial_in(up, UART_IIR);
-> > > > > >       serial_in(up, UART_MSR);
-> > > > > >       serial_out(up, UART_TX, 0xFF);
-> > > > > > @@ -2137,25 +2136,22 @@ static void wait_for_xmitr(struct uart_=
-8250_port *up, int bits)
-> > > > > >  static int serial8250_get_poll_char(struct uart_port *port)
-> > > > > >  {
-> > > > > >       struct uart_8250_port *up =3D up_to_u8250p(port);
-> > > > > > -     int status;
-> > > > > > +     int status =3D NO_POLL_CHAR;
-> > > > > >       u16 lsr;
-> > > > > > +     unsigned long flags;
-> > > > > >
-> > > > > >       serial8250_rpm_get(up);
-> > > > > >
-> > > > > > +     uart_port_lock_irqsave(port, &flags);
-> > > > > >       lsr =3D serial_port_in(port, UART_LSR);
-> > > > > > +     if (lsr & UART_LSR_DR)
-> > > > > > +             status =3D serial_port_in(port, UART_RX);
-> > > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > > >
-> > > > > > -     if (!(lsr & UART_LSR_DR)) {
-> > > > > > -             status =3D NO_POLL_CHAR;
-> > > > > > -             goto out;
-> > > > > > -     }
-> > > > > > -
-> > > > > > -     status =3D serial_port_in(port, UART_RX);
-> > > > > > -out:
-> > > > > >       serial8250_rpm_put(up);
-> > > > > >       return status;
-> > > > >
-> > > > > Not a problem that originates from you, but IMO calling this vari=
-able
-> > > > > "status" is quite misleading when it is the character (or NO_POLL=
-_CHAR
-> > > > > is no character is present).
-> > > > >
-> > > > > >  }
-> > > > > >
-> > > > > > -
-> > > > > >  static void serial8250_put_poll_char(struct uart_port *port,
-> > > > > >                        unsigned char c)
-> > > > > >  {
-> > > > > > @@ -2264,13 +2260,17 @@ int serial8250_do_startup(struct uart_p=
-ort *port)
-> > > > > >        * Clear the FIFO buffers and disable them.
-> > > > > >        * (they will be reenabled in set_termios())
-> > > > > >        */
-> > > > > > +     uart_port_lock_irqsave(port, &flags);
-> > > > > >       serial8250_clear_fifos(up);
-> > > > > >
-> > > > > >       /*
-> > > > > > -      * Clear the interrupt registers.
-> > > > > > +      * Read UART_RX to clear interrupts (e.g., Character Time=
-out).
-> > > > > > +      * No data on UART_IIR_RX_TIMEOUT, UART_LSR_DR won't set.
-> > > > > > +      * FIFO disabled, read UART_RX without LSR check, no PSLV=
-ERR.
-> > > > >
-> > > > > I don't understand what the last two lines mean and I don't see t=
-he
-> > > > > connection to the code that is below the comment either, could yo=
-u try to
-> > > > > rephrase the comment.
-> > > >
-> > > > The original intention was to check UART_LSR_DR first when reading
-> > > > UART_RX. However, the purpose of serial_port_in(port, UART_RX) here=
- is
-> > > > to clear the interrupt, such as the interrupt caused by RX_TIMEOUT.
-> > >
-> > > I understood the first sentence in the comment but the rest of it is =
-very
-> > > cryptic and has many grammar issues too. Also, the extent of passive =
-voice
-> > > there makes it hard to know who does what (UART / kernel).
-> > >
-> > > > The logic for clearing the interrupt in the interrupt handling
-> > > > function of RX_TIMEOUT is !UART_LSR_DR. And to avoid PSLVERR, we ne=
-ed
-> > > > to check UART_LSR_DR first. To meet the requirements of both, the F=
-IFO
-> > > > needs to be disabled.
-> > >
-> > > The grammar is so broken, it failed to convey that message.
-> >
-> > The purpose of serial_port_in(port, UART_RX) is to clear interrupts
-> > such as rx_timeout. In dw8250_handle_irq(), serial_port_in(p, UART_RX)
-> > is called when the LSR does not have the UART_LSR_DR bit set.
-> >
-> > To avoid PSLVERR when the FIFO is enabled, serial_in(up, UART_RX)
-> > should be called only when the LSR has the UART_LSR_DR bit set.
-> >
-> > These two logics are clearly contradictory. Therefore, both
-> > serial8250_clear_fifos() and serial_port_in(port, UART_RX) are placed
-> > under the protection of port->lock.
-> >
-> > If you believe this is not a potential issue, that's fine. I can
-> > remove this patch in the next patchset version.
->
-> No, my goal is not to get this removed from the patch series.
->
-> I meant that the comment wording needs to be fixed for the next version
-> such that it is understandable for those that are not deeply familiar wit=
-h
-> what is related to PSLVERR. Currently even I struggle to follow what's
-> written into that comment (unless I read heavily between lines and base
-> guesses on the extra knowledge I've about how this entire patchset relate=
-s
-> to PSLVERR).
->
+On Sat, 10 May 2025 10:43:04 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-I plan to change the commit message as follows:
-When the PSLVERR_RESP_EN parameter is set to 1, reading UART_RX while
-the FIFO is enabled and UART_LSR_DR is not set will generate a PSLVERR
-error.
-Failure to check the UART_LSR_DR before reading UART_RX, or the non -
-atomic nature of clearing the FIFO and reading UART_RX, poses
-potential risks that could lead to PSLVERR.
-PSLVERR is addressed through two methods. One is to introduce
-serial8250_discard_data() to check whether UART_LSR_DR is set before
-reading UART_RX, thus solving the PSLVERR issue when the FIFO is
-enabled. The other is to place FIFO clearing and reading of UART_RX
-under port->lock.
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 
+Thanks for looking at this series!
 
-The comment here will be changed as follows:
-To prevent PSLVERR, we can either disable the FIFO before reading
-UART_RX or read UART_RX only when UART_LSR_DR is set while the FIFO
-remains enabled. If using the latter approach to avoid PSLVERR, it
-creates a contradiction with the interrupt - clearing (see the
-rx_timeout handling in dw8250_handle_irq()).
+Unfortunately the exynos patch is still needing a decision. Quick recap
+of the story:
 
-What do you think?
+ 1. patch was sent in v2, nobody acked/reviewed it [1]
+ 2. was applied by mistake to drm-misc-next [2]
+ 3. you pinged maintainers, no reply do far -> should be reverted [3]
+ 4. Louis (fomys) asked on IRC how to handle it, no reply [4]
+ 5. in this v3 I added a revert (patch 1), no acks/reviews on it [5]
 
-> > > > Therefore, we should put serial8250_clear_fifos() and the execution=
- of
-> > > > serial_port_in(port, UART_RX) without checking UART_LSR_DR under th=
-e
-> > > > port->lock.
-> > > >
-> > > > >
-> > > > > >        */
-> > > > > >       serial_port_in(port, UART_LSR);
-> > > > > >       serial_port_in(port, UART_RX);
-> > > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > > >       serial_port_in(port, UART_IIR);
-> > > > > >       serial_port_in(port, UART_MSR);
-> > > > > >
-> > > > > > @@ -2429,15 +2429,14 @@ int serial8250_do_startup(struct uart_p=
-ort *port)
-> > > > > >       }
-> > > > > >
-> > > > > >  dont_test_tx_en:
-> > > > > > -     uart_port_unlock_irqrestore(port, flags);
-> > > > > >
-> > > > > >       /*
-> > > > > >        * Clear the interrupt registers again for luck, and clea=
-r the
-> > > > > >        * saved flags to avoid getting false values from polling
-> > > > > >        * routines or the previous session.
-> > > > > >        */
-> > > > > > -     serial_port_in(port, UART_LSR);
-> > > > > > -     serial_port_in(port, UART_RX);
-> > > > > > +     serial8250_discard_data(up);
-> > > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > > >       serial_port_in(port, UART_IIR);
-> > > > > >       serial_port_in(port, UART_MSR);
-> > > > > >       up->lsr_saved_flags =3D 0;
-> > > > > > @@ -2519,7 +2518,6 @@ void serial8250_do_shutdown(struct uart_p=
-ort *port)
-> > > > > >               port->mctrl &=3D ~TIOCM_OUT2;
-> > > > > >
-> > > > > >       serial8250_set_mctrl(port, port->mctrl);
-> > > > > > -     uart_port_unlock_irqrestore(port, flags);
-> > > > > >
-> > > > > >       /*
-> > > > > >        * Disable break condition and FIFOs
-> > > > > > @@ -2527,6 +2525,14 @@ void serial8250_do_shutdown(struct uart_=
-port *port)
-> > > > > >       serial_port_out(port, UART_LCR,
-> > > > > >                       serial_port_in(port, UART_LCR) & ~UART_LC=
-R_SBC);
-> > > > > >       serial8250_clear_fifos(up);
-> > > > > > +     /*
-> > > > > > +      * Read data port to reset things, and then unlink from
-> > > > > > +      * the IRQ chain.
-> > > > > > +      * Since reading UART_RX clears interrupts, doing so with
-> > > > > > +      * FIFO disabled won't trigger PSLVERR.
-> > > > > > +      */
-> > > > > > +     serial_port_in(port, UART_RX);
-> > > > > > +     uart_port_unlock_irqrestore(port, flags);
-> > > > > >
-> > > > > >  #ifdef CONFIG_SERIAL_8250_RSA
-> > > > > >       /*
-> > > > > > @@ -2535,11 +2541,6 @@ void serial8250_do_shutdown(struct uart_=
-port *port)
-> > > > > >       disable_rsa(up);
-> > > > > >  #endif
-> > > > > >
-> > > > > > -     /*
-> > > > > > -      * Read data port to reset things, and then unlink from
-> > > > > > -      * the IRQ chain.
-> > > > > > -      */
-> > > > > > -     serial_port_in(port, UART_RX);
-> > > > > >       serial8250_rpm_put(up);
-> > > > > >
-> > > > > >       up->ops->release_irq(up);
-> > > > > >
-> > > > >
-> > > > > --
-> > > > >  i.
-> > > > >
-> > > >
-> > > > Thanks,
-> > > > Yunhui
-> > > >
-> > >
-> > > --
-> > >  i.
-> >
-> > Thanks,
-> > Yunhui
-> >
->
-> --
->  i.
+[1] https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-14-8f91a404d86b@bootlin.com/
+[2] https://lore.kernel.org/lkml/832a9db0-cf8a-4d35-8a98-08053fbd6723@bootlin.com/
+[3] https://lore.kernel.org/lkml/20250430-arrogant-marmoset-of-justice-92ced3@houat/
+[4] https://dri.freedesktop.org/~cbrill/dri-log/index.php?channel=dri-devel&highlight_names=&date=2025-05-07
+[5] https://lore.kernel.org/lkml/20250509-drm-bridge-convert-to-alloc-api-v3-1-b8bc1f16d7aa@bootlin.com/
 
-Thanks,
-Yunhui
+What to do? Proposed plan:
+
+ 1. Louis immediately applies the revert (patch 1)
+ 2. I send v4 with the original patch to hopefully be reviewed/acked
+
+Plan is OK?
+
+I'm assuming Louis doesn't need an Acked/Reviewed-by for that, but I might
+be wrong, and we both would like to avoid further mess.
+
+This annoying issue is taking much more effort to be fixed than it took
+to develop it. I'd like to get past it and think about the next steps
+in bridge lifetime management.
+
+Thanks for your understanding.
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
