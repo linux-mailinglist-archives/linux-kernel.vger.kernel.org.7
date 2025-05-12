@@ -1,173 +1,132 @@
-Return-Path: <linux-kernel+bounces-644162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC4AB37D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:53:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACF2AB36E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E697ABCEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:51:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF4EB7A19EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B57A2905;
-	Mon, 12 May 2025 12:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5506D292931;
+	Mon, 12 May 2025 12:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="n7bDYyPR"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noNXBDAB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6C72AE68;
-	Mon, 12 May 2025 12:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B219913635E;
+	Mon, 12 May 2025 12:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747054377; cv=none; b=T2Np/elBHKSuwbsZbjTvJT305AlGaYWtprur3n5Rwxe8r94HehEmPZ6FITQPSE5jHO5ZOJU/7omB0pVPrbuCQVfMeFZ0NJDIKiYj5Ure8sfpA9E9euveSLItmNXLLvAu5/AMzU2QqiAA9z60YYikvzYQRSWGRf8dJHugTiHkp3M=
+	t=1747052651; cv=none; b=AFnruKC62B62E9m5u9ZjccOizihiAZ1LlWT33otwqdj8tzAb+JPg7s/bgnOj0CS267uWi2nAcyzcck1Jfna7+VIlxmHuPR9wYkz3dfz+Lsnevnlhfhr/5uix5Ovgi1NxTM2cVc3daSdPjNj/YvHA1XQGLIdKOhGSbrSnFcOmzhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747054377; c=relaxed/simple;
-	bh=zECTQVlS7BoMjRy+nopuy5oEj3xxBDKN5vQJhKE6xzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGTW1wmNy/7SBv1YiGiPWDl1GAW//zoL6Nx010ma13fB+6f0+RJ23I1KZLuLQt8B+YFxZ5Tph88QTCsoAAYCdAtY8OgoNnM7R6o95dZvStmM0w1Vm/xf+fnkpTVY3bQPhO7j0e9n6MoWM7fcOXBef48Q4jA5vup7Bk+IROYwsqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=n7bDYyPR; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uESBp-00C5t2-Df; Mon, 12 May 2025 14:23:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=qGVhATLfDHfKI3zxu6jJB+4o6rhgxGO4+J2Ibmk67sA=; b=n7bDYyPRLhNNg3V1RCrSWfCkzh
-	2Tc6oSpJceBKv6vVofPdd1P3Y+fuHPzd2ap3wSuC0QFW6Gnb/4YWRZgk5maPmG1fJ2pWQWrW1dlL3
-	k+NYZoYtsBMc365Sh7e9zsrNHvy6HGvn7ScGv4z3bE8Ko/ZL1WaVf/Q7YlM5MqggpcY/sZbsWsAEp
-	0dn1UdWh3ebefOLUcclU+J8V6ck+ne59icCt5lVC63kYZKVInmjhca+68i1veSjGm7NPJcorEbt+K
-	j0Or+l8ASbVL86mBkVfVbVugyVLBeNRgoh3Xiga+iaKoNLNlhEMBwS9Y3cLogDGxcGVBn2yzVVsqw
-	nkB90NDw==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uESBn-0000sF-KA; Mon, 12 May 2025 14:23:24 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uESBd-007iLF-FJ; Mon, 12 May 2025 14:23:13 +0200
-Message-ID: <720f6986-8b32-4d00-b309-66a6f0c1ca40@rbox.co>
-Date: Mon, 12 May 2025 14:23:12 +0200
+	s=arc-20240116; t=1747052651; c=relaxed/simple;
+	bh=CuA0PRV2eY5uvmxFanRx7AjJOjnVPk5V1XikCu5c2rI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pKSYG20dcEj4sM2+3AsnoXUlB/pgxkrV90Tv2OPq789FzK40SIx3Lc9NhBSclqN0eOIy/tlbTo++0nCo7aYvnQPWNOgrOPa3TWrXCgW6plQqT6EAqHO2KwZvxkVUQzt61zvmIWpjziHazoOqj7yRwqak4tDDp4Txr6l5zs2DnG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noNXBDAB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CE4C4CEE7;
+	Mon, 12 May 2025 12:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747052649;
+	bh=CuA0PRV2eY5uvmxFanRx7AjJOjnVPk5V1XikCu5c2rI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=noNXBDABD/8aCASxMVsFy3wn5dWJSJknLxazlj1fnNwXTc37Q97hEY2X+bGbvHf5d
+	 46QjgmuK8EBHn/gTTEq3i9cHnkA7X1gGXECwP9j7RosEqL81US6PiRp96Ns2pkJkXM
+	 Aje2i0B4URYE3oZl0PycMzyX10ByTEVHiSMPW0R0kB2l1GXEYH2PlLjw9WZcBQlUYE
+	 5P4pm1ZZVoT+zM1M7HsnnAJISvBZPzg0EZVZONHpfL7uM6BGL7J4kVapg5Hd8HabXI
+	 CCfIUD43rsZoi1rNluEhQ3oedDTsn7NiKp/0mVZd+K4oR+1Scr6kRFMjnsHmiNnnGT
+	 qxq7mu+wxPSQA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30c416cdcc0so42538771fa.2;
+        Mon, 12 May 2025 05:24:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVwaPhfj9Y1u1E2T0sDypV4ccPPAmvfYMZQmxtiZWV2q3P8KiGbHyNzjyFaWaabAX2jBNsyh79TxR8yuVFC@vger.kernel.org, AJvYcCWtjnzJ38JMoz4kD5rb6TxdT1SGnkKp3iGaM8QNK97WTMYuxvZRU7J+cJrUGcuntI4kwUKs99ahegcFKLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIGI3ms2mJ/i53RDl2xAp1UxScH1IGjXKKxOSJ56kOaPC1pDVd
+	Fm/KUnAjbt9jzuFZ7vft7T6VeVY+yVtPgFgNnnK0vn4Lm6RtMMTB3dBONDRTQcxbwCNIKE4vW8m
+	3xyui+8m+jTAuz8t2XDMcPyWVeSw=
+X-Google-Smtp-Source: AGHT+IFgejYovTU2ziQC6NLwJHU+TqCzJstadHwkOOrZVguS9uC++X6OwuPHYHvGRhI7PSZR29GtlvyQwlajuuW/PPQ=
+X-Received: by 2002:a2e:a549:0:b0:30c:50fd:925e with SMTP id
+ 38308e7fff4ca-326c456a7ffmr48417241fa.3.1747052647892; Mon, 12 May 2025
+ 05:24:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 3/3] vsock/test: Expand linger test to ensure
- close() does not misbehave
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250501-vsock-linger-v4-0-beabbd8a0847@rbox.co>
- <20250501-vsock-linger-v4-3-beabbd8a0847@rbox.co>
- <g5wemyogxthe43rkigufv7p5wrkegbdxbleujlsrk45dmbmm4l@qdynsbqfjwbk>
- <CAGxU2F59O7QK2Q7TeaP6GU9wHrDMTpcO94TKz72UQndXfgNLVA@mail.gmail.com>
- <ff959c3e-4c47-4f93-8ab8-32446bb0e0d0@rbox.co>
- <CAGxU2F77OT5_Pd6EUF1QcvPDC38e-nuhfwKmPSTau262Eey5vQ@mail.gmail.com>
-Content-Language: pl-PL, en-GB
-From: Michal Luczaj <mhal@rbox.co>
-In-Reply-To: <CAGxU2F77OT5_Pd6EUF1QcvPDC38e-nuhfwKmPSTau262Eey5vQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250510153204.11052-1-henrik@lxm.se>
+In-Reply-To: <20250510153204.11052-1-henrik@lxm.se>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 12 May 2025 21:23:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYL6VCf_JgT_ks6ZObiR1xdB8HvV0XyYrWLrfYghtzbA@mail.gmail.com>
+X-Gm-Features: AX0GCFu6iB3zZBCW96oso2PKpux_Q14JdGCkIHiGi3IPjLTEn_3ZE2L0rfGekWo
+Message-ID: <CAK7LNASYL6VCf_JgT_ks6ZObiR1xdB8HvV0XyYrWLrfYghtzbA@mail.gmail.com>
+Subject: Re: [PATCH] Makefile: remove dependency on archscripts for header installation
+To: =?UTF-8?Q?Henrik_Lindstr=C3=B6m?= <henrik@lxm.se>
+Cc: nathan@kernel.org, nicolas.schier@linux.dev, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/7/25 10:26, Stefano Garzarella wrote:
-> On Wed, 7 May 2025 at 00:47, Michal Luczaj <mhal@rbox.co> wrote:
->>
->> On 5/6/25 11:46, Stefano Garzarella wrote:
->>> On Tue, 6 May 2025 at 11:43, Stefano Garzarella <sgarzare@redhat.com> wrote:
->>>>
->>>> On Thu, May 01, 2025 at 10:05:24AM +0200, Michal Luczaj wrote:
->>>>> There was an issue with SO_LINGER: instead of blocking until all queued
->>>>> messages for the socket have been successfully sent (or the linger timeout
->>>>> has been reached), close() would block until packets were handled by the
->>>>> peer.
->>>>
->>>> This is a new behaviour that only new kernels will follow, so I think
->>>> it is better to add a new test instead of extending a pre-existing test
->>>> that we described as "SOCK_STREAM SO_LINGER null-ptr-deref".
->>>>
->>>> The old test should continue to check the null-ptr-deref also for old
->>>> kernels, while the new test will check the new behaviour, so we can skip
->>>> the new test while testing an old kernel.
->>
->> Right, I'll split it.
->>
->>> I also saw that we don't have any test to verify that actually the
->>> lingering is working, should we add it since we are touching it?
->>
->> Yeah, I agree we should. Do you have any suggestion how this could be done
->> reliably?
-> 
-> Can we play with SO_VM_SOCKETS_BUFFER_SIZE like in credit-update tests?
-> 
-> One peer can set it (e.g. to 1k), accept the connection, but without
-> read anything. The other peer can set the linger timeout, send more
-> bytes than the buffer size set by the receiver.
-> At this point the extra bytes should stay on the sender socket buffer,
-> so we can do the close() and it should time out, and we can check if
-> it happens.
-> 
-> WDYT?
+On Sun, May 11, 2025 at 12:34=E2=80=AFAM Henrik Lindstr=C3=B6m <henrik@lxm.=
+se> wrote:
+>
+> There doesn't seem to be any purpose behind this dependency, and it preve=
+nts
+> installing x86 and mips headers on non Linux systems. Doing so is useful =
+when
+> building a cross compiler targetting Linux, which requires the header fil=
+es.
+>
+> Signed-off-by: Henrik Lindstr=C3=B6m <henrik@lxm.se>
+> ---
 
-Haven't we discussed this approach in [1]? I've reported that I can't make
-it work. But maybe I'm misunderstanding something, please see the code below.
+This clean-up makes sense.
 
-[1]:
-https://lore.kernel.org/netdev/df2d51fd-03e7-477f-8aea-938446f47864@rbox.co/
+However, I could not understand the commit description
+about the non-Linux systems.
 
-import termios, time
-from socket import *
+In my understanding, archscripts is not required here
+regardless of whether it is a Linux or non-Linux system.
 
-SIOCOUTQ = termios.TIOCOUTQ
-VMADDR_CID_LOCAL = 1
-SZ = 1024
+So, the following description sound good to me:
 
-def set_linger(s, timeout):
-	optval = (timeout << 32) | 1
-	s.setsockopt(SOL_SOCKET, SO_LINGER, optval)
-	assert s.getsockopt(SOL_SOCKET, SO_LINGER) == optval
+  archscripts has nothing to do with headers_install.
 
-def set_bufsz(s, size):
-	s.setsockopt(AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE, size)
-	assert s.getsockopt(AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE) == size
 
-def check_lingering(addr):
-	lis = socket(AF_VSOCK, SOCK_STREAM)
-	lis.bind(addr)
-	lis.listen()
-	set_bufsz(lis, SZ)
+Could you send v2 with the simplified commit log?
 
-	s = socket(AF_VSOCK, SOCK_STREAM)
-	set_linger(s, 5)
-	s.connect(lis.getsockname())
 
-	p, _ = lis.accept()
 
-	s.send(b'x')
-	p.recv(1)
 
-	print("sending...")
-	s.send(b'x' * (SZ+1)) # blocks
-	print("sent")
 
-	print("closing...")
-	ts = time.time()
-	s.close()
-	print("done in %ds" % (time.time() - ts))
 
-check_lingering((VMADDR_CID_LOCAL, 1234))
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index b29cc321ffd9..0234faafe8f0 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1366,7 +1366,7 @@ PHONY +=3D archheaders archscripts
+>  hdr-inst :=3D -f $(srctree)/scripts/Makefile.headersinst obj
+>
+>  PHONY +=3D headers
+> -headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders archs=
+cripts
+> +headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders
+>  ifdef HEADER_ARCH
+>         $(Q)$(MAKE) -f $(srctree)/Makefile HEADER_ARCH=3D SRCARCH=3D$(HEA=
+DER_ARCH) headers
+>  else
+> --
+> 2.39.5
+>
 
+
+--
+Best Regards
+Masahiro Yamada
 
