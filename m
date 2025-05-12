@@ -1,230 +1,313 @@
-Return-Path: <linux-kernel+bounces-644047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF22AB35F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:40:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C17AB3608
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F12B17AFD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA003A4126
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1AF292083;
-	Mon, 12 May 2025 11:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10248293B68;
+	Mon, 12 May 2025 11:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="gZYmvowq"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012050.outbound.protection.outlook.com [52.101.71.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHO8RsIK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC51319F101;
-	Mon, 12 May 2025 11:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050003; cv=fail; b=kY62zYj2tuPsY49ebAL9xvDcLCtqx0AMzrdYVDcbJVe1YpFLk2oaR+CM1EOBSDfuWqUixpkeS/hnCxHlzHXViDV50gyboWUADmoj+W5GA3DsAI3YabW/GGMBK4Iuo9GY8rBy/mbcCdp8XfEKc9uDxYgQcAG/yQgBK2ODI75dtMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050003; c=relaxed/simple;
-	bh=dzuI+40ocM5x+sXIToY2xTjjvq/gT2JawX8pfzOHaOo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=skDD90GuaX9oajDvFm6a33heDHtW7KJvDlDXINWp15IF66a9ebMpPN7V66ArTcemGNZVd3drx8iIuJNe6SYMSXRyl3cUGjDTWYjs5ZnDvEfWBVQeJY4dqZMrQmX1OY5sM/WhNqpW/HzOp01j4JvyPIUdcrgGWDk6gCSPqxNIDtI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=gZYmvowq; arc=fail smtp.client-ip=52.101.71.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wg7IFlF3G2CqYO+x5ZI8w8o7dKEqP7Lo3lih5jwrwQQqwSCLkobGRFVH+WtxJoUvPP0kcfj9njjJ0GRaqxbshSjZgbUziMIPkqogKThq/eLTBMAoOoajOCu4Kvh0hf0lIkl2ZOrKwgfvGqY/qPxuFDT5EHW82RBU6q8IzE5MpeLOxsWgC0VHuFZR+7rD9MoQt9Pe6BjwaYhYpN+fT2kWsBYXS0idXFmXlkw6DBHta288LtFj6Dq537cfjH8flS33DYG0fioIMrJX5o0h1Hs6tMRXhIRM6DPHnZn/ehbKwWy6D5Z0bM7MY+BZec0T4L7MpgX6/7bOmVHckEurlnM1HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dzuI+40ocM5x+sXIToY2xTjjvq/gT2JawX8pfzOHaOo=;
- b=nmy9n1icF5Dflz88euVUQALkHhdxPym/MNzpX6DIfSqmuaiepx7jRDiWc0X87/sLVTi+DDGR+RDiwv8wnK4QqipqCrENDV8nQPpbMNEtKNj7zUQybbKDToHuo4KM22bYyx4/eMHS4ggEZKOeqrZch/H6DN5+O6W9pGNxWdyJ8pL+nz2f7BY8Q5oZIkNXbbenjHMwM5sH/QNDS7FDGWniSxXP+PG8I7xRYV23KFxKxYTbQ72NjP1Ytznd9cGO/An4rV77heAryvF+ugEKgStcqMhWZtycAL8jzoU1CHNABzuvAUN6dtrkVd/wQDYMPi+9/uEtAf+0Nfa70Ovi8ZW8vQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dzuI+40ocM5x+sXIToY2xTjjvq/gT2JawX8pfzOHaOo=;
- b=gZYmvowqs+jEolIeJyD8oDQqQ64kEY1aKtB+5yxFTyqYWgD/MJeLeKPRwkMsfp0JN9/Zd5kbDIaT9bhiHG/MOetv4LIezFJBT+AO5aIn31Lp1cvCAqOvifOzGk7IttrV9/+0CV02hav1JCkZ2FMHq1VcrE0crfS2SCV6gHUVoeM42jKfPWLT1xrVPfKGJrJBRxqrW0K7ar/gCChCubv36EgZHMeGy3+92MpJBnLOKiNgZKX9VDkY3q90J/oYZyYYAfCwFmcffF536VLyXkyHh1mlJuux8NFyyp1zNh9+elDySo9FuLJw/ednb30LNCx8nh+FrM7WEfO4W2KAZXinPw==
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
- by GVXPR10MB8315.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1e5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Mon, 12 May
- 2025 11:39:56 +0000
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::baa6:3ada:fbe6:98f4]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::baa6:3ada:fbe6:98f4%5]) with mapi id 15.20.8722.027; Mon, 12 May 2025
- 11:39:56 +0000
-From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-To: "luca.ceresoli@bootlin.com" <luca.ceresoli@bootlin.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [PATCH v4 6/8] backlight: led-backlight: add devlink to supplier
- LEDs
-Thread-Topic: [PATCH v4 6/8] backlight: led-backlight: add devlink to supplier
- LEDs
-Thread-Index: AQHbwy6KQi63IdReNUm0mQlOTxVNOrPO3syA
-Date: Mon, 12 May 2025 11:39:56 +0000
-Message-ID: <fa87471d31a62017067d4c3ba559cf79d6c3afec.camel@siemens.com>
-References: <20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com>
-	 <20240917-hotplug-drm-bridge-v4-6-bc4dfee61be6@bootlin.com>
-In-Reply-To: <20240917-hotplug-drm-bridge-v4-6-bc4dfee61be6@bootlin.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|GVXPR10MB8315:EE_
-x-ms-office365-filtering-correlation-id: b854b065-9835-4b23-ed1a-08dd9149b84a
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?YVIvcGhYbjB5SHRXNGNEZkZkNXNqS3NrT21qemsyeFdaTFhEREZEVm91Q3J1?=
- =?utf-8?B?V1J5T0oxY0tMdHhXdFRSZitiQ0dLb0ovSWYydXV6bHpUK0lta1JCVUtwNGU3?=
- =?utf-8?B?czZINlh5MTFxSksyVW5COURWaGhzNEZNRVU4ME41ZWJ0aGlxdmxKUkdIN21p?=
- =?utf-8?B?ZU93TlJqbjdXN1B0T0hxTEZRN21KdTJ4ak1aR1FiS3VlUWxQaWdQMzdGTTJj?=
- =?utf-8?B?WkVJdGVHK3hpdHVMdk0wcnBKSDh1S3g5MVVHV3N6S2pQV3ZFTXVvSlQzS1JN?=
- =?utf-8?B?V3pQTUZZQzlzTnNQVjFOK3VhRGJwUWU5cVRWU0t1Y2Z1eFQ1T1JCUjR1Z0o1?=
- =?utf-8?B?YVhMYlFEcms0cTFPbzFNT0R3SG9wcFN2U2JHamRac0ZucDNjbFAydXlsWVd3?=
- =?utf-8?B?bHE2NjIyc3YrM1liWXRsY1hzOTVqWC9oUTVQRHVvVzQya0ttazdWSFlYbHNX?=
- =?utf-8?B?MEVjSG14VTlRRFNmbnNnUVRvb0JqQmEyK05hKzViTFQrSy9RUy9VcVF3TCs3?=
- =?utf-8?B?UTRPN21YcEtleHdXVEJjMG1iU2RrYnZEejRFNDNBVEhlT0V2OTJ4V29BanJ2?=
- =?utf-8?B?S3krUUcrTFdUREdWNEt1Z0c4N0UrZytIVkNJRzJGYVdhZDNyUkUvbXc2QmZO?=
- =?utf-8?B?REE0MXZzSFRBOE1SeEFKV29ibW9uNmZEeW9yaFNqSWMyenYvWXUxcXlOWldS?=
- =?utf-8?B?d2F2Y00zdUlCVWF6TEkrSklLclU3bmo2N0tsczRRd1Z4bnV2Q0ZsM0lFekpY?=
- =?utf-8?B?dDQwaWJOYVo1b2ZFM1VKc012RXJNM2FpcWpFcVl1dG9IUUdVRVVMTkdWamhX?=
- =?utf-8?B?RnpaVUdmTGhkN2pQWlU2Uk55UnJSajhmaXdjcmFlT2UzTUhleXZXMjIvR1g5?=
- =?utf-8?B?bEdhdzB0bEF5UXR4KzNncyswS3VvUTV0SWFZaFpqTElJN2plZnNFQmpCZSsr?=
- =?utf-8?B?MVNpc0U5Vk9HNUVnK05ZWWZEeE1EcE0yaEY4YStCN2lHMmdQQk8wd0dxMldj?=
- =?utf-8?B?ck11dk9ibkNqSGVQQzBvTHB0UnNkUUd0cGYzNUZzTHBrelIwWjhIT0s4L1BY?=
- =?utf-8?B?ZEhJd2VJck9DcHN0dk1WVEFjVHF4eE5LOS9HYmU4U2RCOWswbmNHazcxd2dN?=
- =?utf-8?B?Y1FoQjZ2QWowbXZHVGV6TEh6R3d6ZFoydlpPc0JlMDgyd1o4OFpQNVVpeWU5?=
- =?utf-8?B?QjlqYkpkd2p0R3ppUXFWY0JzeVo4amJmRXU5MlhVbWkwcDg3a0dteVQ5NHBY?=
- =?utf-8?B?NkcvRk5pQXRYdER1dndyY1haQldKWS9tSWRNY3JHZEFUcy81dkZ0MHRBaEJZ?=
- =?utf-8?B?Q3BGMERBaVJxTjBzMmRvRjdVWjRaUmJQMDdzd2hxaG54WGM2RjVuc1lHZXd2?=
- =?utf-8?B?VS9rNzlHV0huMlIxR1pvSTR6Nk81aTR2L0wyemNMaUdjRGJqVEZvVWRvQ0tn?=
- =?utf-8?B?b3ppT1RSUzcwZGRxMlZxQXovOW5URVB3ZWcrUDhsT0JvRFo4VnZqUzNZMHM3?=
- =?utf-8?B?TGRkUmllV3g3WHVDdWNpSWF1SHNUWkFSK2JPM3BlS2RKOVdCeCtLUFdQMVR6?=
- =?utf-8?B?M2lpTXR1dmZTYWpRRkJ4M09hbnp2TVFVeTMrRGZvMFdPbVlYZS9SWGVtYnIr?=
- =?utf-8?B?OGdyNWxPTmNjblkxY3ByL3ZqWkJxSlFMaUtQYndBbnYvcVhHZVA0cTl2T1hS?=
- =?utf-8?B?dmhZbzJvVHpobFVwRUZQZmhoRmw0R1Q3MTBoNnJrcXIwRGZDNzdFOU8yb0VU?=
- =?utf-8?B?WmhTYTMrRlpZNTVqeHp1MmxtdThBWjRDaTF6S3ZiS0h6SDRkdWttTDVQb1pN?=
- =?utf-8?B?aCtCRmZpOXFWZndTeTBGNUQxVklNRitPdXhBUVlieTJKZzNFSVM3R3FFaWx3?=
- =?utf-8?B?TDRjZ2U4Y1VPanIwaXlPUFZUekwzYjBiRHlzVXE5V2ZXOG5QNVBRQmtWUjdl?=
- =?utf-8?Q?WuHPDhgPMYk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YzNwS3BIQVMxRzd5YXNnL2VFOWxtZ3NZQkI2dmd3d0Z2M092Sm9QUkdjeitJ?=
- =?utf-8?B?TlFZczR4U21EekxRV29tWUhIeXYvN2tEb1hvQzFHWHRMSmFGTXZPaEpvaFFi?=
- =?utf-8?B?YlBxNk9YUTM5UzRZVHBFVmpONWRCM3FhcTVaV2RSSCszelpFODlaQ2NZaHpE?=
- =?utf-8?B?WEFBTVdYWGdGdlVwUkhGRXhzVldTRGE0dXhCQmpuang4SngxbVlMTFNuUzk3?=
- =?utf-8?B?cTBqQjlMRmdxTEVKR2J3L0ZCbnhmSVZsY1lKK2M1Qk5ZLzFwM3RSYkVjdENx?=
- =?utf-8?B?YkRkeVA3V3E3Z0dvOXA2VVEycTBzRVlRazJJdk1tMUVJaFo0ZUhEcUNzZUJP?=
- =?utf-8?B?QXZYcTZYdjYrVDhFVlRUZGNrdjk4VzZ4aEFRZlVlYUs0V0pGY3lBSWk1ejF5?=
- =?utf-8?B?eGdMNTRJZHNjaVpVQUpwT1FyY1R4ZmVsekRkK1d0dDg3WFZlemhMNWtmdmNP?=
- =?utf-8?B?NU9QMldtUTJkWHZlaVJpU3NCZ2pvRXZEakFoN29aNUY1cFMzVlVjOG9EU3lk?=
- =?utf-8?B?ZGhjVndpcGNhUEorSXllcWIrV2dqMytaTkozRi8xaThndWF0NWVVVWNROUJM?=
- =?utf-8?B?eXU1c2RNc2Fpbko5TVg4QVVobEdUSGl0Uk1wc2FpT256dmkwUE03elgxV2c1?=
- =?utf-8?B?NHdOZHptbzkyZ3k1WVR0cHNDNXJpMmFQemhPVFE4VFlsdlg3TW9yV2dPRUNw?=
- =?utf-8?B?NVVFcEJIMGRndlFONFJTUDkwY0kybExQK0VzVXQ1NGxjSWxnSExUNStnL3Ri?=
- =?utf-8?B?U2M5WjZTeFVYUWp6cElCa1ZtWFRTWmxBZW1oNnpwNDlDNFlLL05TeEZhVkpl?=
- =?utf-8?B?czl3NVRWb003SFUybkhrMzRTUmRIWU1XZ0tzN21LaExDUHBBaHBudUhNSXZC?=
- =?utf-8?B?Wkw2aTErOEJCVTIzUkZCUGpDUnNLczhYT1p1VFhkSVpvT09wMlRRTENJVjlT?=
- =?utf-8?B?clVmMWtISDRkNzIvV1BoamNFQWNOTXhvZS80K2lZVk5xRUkwZGtHdGxtaHF0?=
- =?utf-8?B?NXlFTVBmSElGdVU0ZXMwZjJBOXRCcFlnMS9SYUljZmx6dk1ORmgzU3ZCbUdx?=
- =?utf-8?B?T0NkbTk1Ui8vYjJZY3FyTTVmQmcvUHduWGM4T0NLQjZwaFR5UG0wa1lMR0Jv?=
- =?utf-8?B?VVArSFBCWEdDMkRtUCtadG5RMTJmbVhkZDZKMVhKL0p4U1YwbEplQ3Q3QjdF?=
- =?utf-8?B?OGJxdWZabnAyc1dyV2VweHc5enBHM1MzaGlEYmRGdGprdHpBRDk0amI2U2ZD?=
- =?utf-8?B?akhmcDJ6ZnJRQnZOb2l4UVhDR1N4eThTaUZwZm1CQ3ZSU3U2VlIrcHEycU1T?=
- =?utf-8?B?ZXNseEYzOEJUazY5bHNnYkplS212WjU4aUNLM0tSekdDWUE4elNxNU9EaE1T?=
- =?utf-8?B?Q1U1T3AvcUkzM0xwc3g2QmNSN2ZpK1E2RnNOZGY2NlZkK0xZVDhlSDkwa21S?=
- =?utf-8?B?RFkrWjhQM3NhaURDQzZTWlY5ZFl6Y2d3aXUvTy8wWkFUQlk4MU1QdGVZTk9h?=
- =?utf-8?B?c3ROc0VlUjkyMElDSWlOOEFQZzZnNHFCMG1haWNncU9GT3Nrb3h0eEtRRmFl?=
- =?utf-8?B?MTc3amQyNzY1Ymd1U1Y4dE1rSENXRGRYK1JleGs2a0ZtR0R4cTIrekxaYTZx?=
- =?utf-8?B?VW12WXhMLzdtSXFNcS9FVTBlOUtFYlB4M1BSQTFhWjd1aTV4TWNiTkc5NmZC?=
- =?utf-8?B?bmRMQzltb0tsclJNcGkwZmxzQ0lJOEp0SnFGRXI5MGRmdTNsZTRoclowMk16?=
- =?utf-8?B?R1A3K3VjOFJaejNmV20rdkRrK2ZoUnZQdjZRT3U5WEppaCtOMFJmeEVlK2VR?=
- =?utf-8?B?N1d1VGF5TGtBMERjdFFZQ3duU0dWU0NpUUt6VjdWRlZKZ3RHeXJFRDlVVTFG?=
- =?utf-8?B?RGV4dlVkekpqSFVEajVIZUx3Y1Q2bzhtSVlvTGZSOU9PNDkwSHMvY0M4eHA1?=
- =?utf-8?B?dzB0SGUyRElhNkxncUdGcy93Q3M2VEY0T2tKd2ViYzlNMnI5Qk9XcktGT1Mx?=
- =?utf-8?B?eFA0bTZhMVg1MmtpOUl5T09MdXBWSGxOdU11dWdZMWZ0aitjb25obUFid1Jn?=
- =?utf-8?B?TG5QZ0xTcmdZRkhtRDFvaFFqZ3dPWU0xc0dUdnZrS2JHc0xzM2NHL0xFeE4x?=
- =?utf-8?B?aDNZSTVTbTZ4bFRXTXREL3dIY1VoVWZzTC92eXRxMUpmMm9heERxTXRqdGZx?=
- =?utf-8?Q?LF7JZ0aJkkMsfy/UC55cfuU=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <91D091C21C8BD1449D998420D0F45C3C@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B444929209D;
+	Mon, 12 May 2025 11:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747050019; cv=none; b=u72FNknn/kOs+YCnfPeUiqZV0zzqKF6yqfZKLbJT0F0dFzvDuOae1ifFQHqSaXCrpv1yShVu2b/c6QkvEb3yo6cUAvoU2uAIpCmVM/Qh6fqC3XGitMeCKTztwO8x+m3WoPHdEzH8Srf68NKoIuVen/jJDY+39Ma0rKOUoFAFCug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747050019; c=relaxed/simple;
+	bh=ibeU41DrHsv6J87QYx9gpQfkrUVjiWDuwngy+ibG+JU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=e8jWal30+92b0pdiVSzYeIPqg/MSVDnsI81N1jjxGbBLsc4VicKOrUyjuudNgqoO2Sc3fR8od1A6fZBdJoKVbkdHHtTBERA2g5B5+GKbnRokSH16IqRh4/5rGu0Ppsj7eAWD7yEcgeVR2Ot+AQ1IkK9heW18woY/0Z5ct6mQEcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHO8RsIK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4146CC4CEF2;
+	Mon, 12 May 2025 11:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747050019;
+	bh=ibeU41DrHsv6J87QYx9gpQfkrUVjiWDuwngy+ibG+JU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=RHO8RsIKDa5mH823BllY9gVsOePqLyU4OQ6HrTJd+6X/HhP/3DCmAsML73NMaFozE
+	 mb/8Gh5CZDzJRtzHb8iwWIvGElQ16v2123rIs5L9PsMG2gxNQfM0kTZW4Mb5wknFaH
+	 ATUQpQREBTu+juKo7km5YEAG2+TUsldt9/NxqjtRvuxxjg+beZAA5wvqYctbjp2Dc9
+	 MdIlM00WihFizfflghS1TpGj9/TnYMsuQaqfKql0nNYp8gTHfP4uo8+oAVTfUl2P+j
+	 a3hCD58R9dwSWVKLtS9RPUSdM3xYBTJnsJDR1/xJovAl/eUxJEN4puxuEIC6EUohdn
+	 wBIYFEvHQoBZg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37045C3ABD5;
+	Mon, 12 May 2025 11:40:19 +0000 (UTC)
+From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
+Date: Mon, 12 May 2025 19:39:56 +0800
+Subject: [PATCH v2 6/7] firmware: stratix10-svc: Add for SDM mailbox
+ doorbell interrupt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: b854b065-9835-4b23-ed1a-08dd9149b84a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 May 2025 11:39:56.6695
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pEhpU2c+qvYNDWFfUmlBQGkOKaCYljeNex6g1jnyYvcEi1qDS1H94C4skmTbOfbMasZX4Gtzl44tiLZ1Mq4AeMgOr/zxHOBzjEAox3HDGEE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8315
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250512-sip_svc_upstream-v2-6-fae5c45c059d@altera.com>
+References: <20250512-sip_svc_upstream-v2-0-fae5c45c059d@altera.com>
+In-Reply-To: <20250512-sip_svc_upstream-v2-0-fae5c45c059d@altera.com>
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747050016; l=8985;
+ i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
+ bh=dlRM3LW8GIMqbmovGBPGMrJEM/n02Ou9PDk2reiH21M=;
+ b=T1zvMnm5GvUyO6/XxYkQwc0Grtnz9fb0LasHAzsMFqFLXJOZ/9m9DHTZoJRNCq9luzPhWou81
+ lhQng4gHEEsBhGol5ujXHhsUrsNyXuwDYZ0ITkDJEJGOL5rWKbY/MbB
+X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
+ pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
+X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
+ auth_id=337
+X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
+Reply-To: mahesh.rao@altera.com
 
-SGkgTHVjYSwNCg0KT24gVHVlLCAyMDI0LTA5LTE3IGF0IDEwOjUzICswMjAwLCBMdWNhIENlcmVz
-b2xpIHdyb3RlOg0KPiBsZWQtYmFja2xpZ2h0IGlzIGEgY29uc3VtZXIgb2Ygb25lIG9yIG11bHRp
-cGxlIExFRCBjbGFzcyBkZXZpY2VzLCBidXQgbm8NCj4gZGV2bGluayBpcyBjcmVhdGVkIGZvciBz
-dWNoIHN1cHBsaWVyLXByb2R1Y2VyIHJlbGF0aW9uc2hpcC4gT25lIGNvbnNlcXVlbmNlDQo+IGlz
-IHRoYXQgcmVtb3ZhbCBvcmRlcmVkIGlzIG5vdCBjb3JyZWN0bHkgZW5mb3JjZWQuDQo+IA0KPiBJ
-c3N1ZXMgaGFwcGVuIGZvciBleGFtcGxlIHdpdGggdGhlIGZvbGxvd2luZyBzZWN0aW9ucyBpbiBh
-IGRldmljZSB0cmVlDQo+IG92ZXJsYXk6DQo+IA0KPiAgICAgLy8gQW4gTEVEIGRyaXZlciBjaGlw
-DQo+ICAgICBwY2E5NjMyQDYyIHsNCj4gICAgICAgICBjb21wYXRpYmxlID0gIm54cCxwY2E5NjMy
-IjsNCj4gICAgICAgICByZWcgPSA8MHg2Mj47DQo+IA0KPiAJLy8gLi4uDQo+IA0KPiAgICAgICAg
-IGFkZG9uX2xlZF9wd206IGxlZC1wd21AMyB7DQo+ICAgICAgICAgICAgIHJlZyA9IDwzPjsNCj4g
-ICAgICAgICAgICAgbGFiZWwgPSAiYWRkb246bGVkOnB3bSI7DQo+ICAgICAgICAgfTsNCj4gICAg
-IH07DQo+IA0KPiAgICAgYmFja2xpZ2h0LWFkZG9uIHsNCj4gICAgICAgICBjb21wYXRpYmxlID0g
-ImxlZC1iYWNrbGlnaHQiOw0KPiAgICAgICAgIGxlZHMgPSA8JmFkZG9uX2xlZF9wd20+Ow0KPiAg
-ICAgICAgIGJyaWdodG5lc3MtbGV2ZWxzID0gPDI1NT47DQo+ICAgICAgICAgZGVmYXVsdC1icmln
-aHRuZXNzLWxldmVsID0gPDI1NT47DQo+ICAgICB9Ow0KPiANCj4gT24gcmVtb3ZhbCBvZiB0aGUg
-YWJvdmUgb3ZlcmxheSwgdGhlIExFRCBkcml2ZXIgY2FuIGJlIHJlbW92ZWQgYmVmb3JlIHRoZQ0K
-PiBiYWNrbGlnaHQgZGV2aWNlLCByZXN1bHRpbmcgaW46DQo+IA0KPiAgICAgVW5hYmxlIHRvIGhh
-bmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0IHZpcnR1YWwgYWRkcmVzcyAw
-MDAwMDAwMDAwMDAwMDEwDQo+ICAgICAuLi4NCj4gICAgIENhbGwgdHJhY2U6DQo+ICAgICAgbGVk
-X3B1dCsweGUwLzB4MTQwDQo+ICAgICAgZGV2bV9sZWRfcmVsZWFzZSsweDZjLzB4OTgNCj4gDQo+
-IEZpeCBieSBhZGRpbmcgYSBkZXZsaW5rIGJldHdlZW4gdGhlIGNvbnN1bWluZyBsZWQtYmFja2xp
-Z2h0IGRldmljZSBhbmQgdGhlDQo+IHN1cHBseWluZyBMRUQgZGV2aWNlLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogTHVjYSBDZXJlc29saSA8bHVjYS5jZXJlc29saUBib290bGluLmNvbT4NCg0KSSd2
-ZSB0ZXN0ZWQgdGhlIHBhdGNoIHdpdCBMUDg4NjQgTEVEIGFzIGEgcHJvdmlkZXIgZm9yIGxlZF9i
-bCwgcmVtb3ZpbmcgdGhlDQp1bmRlcmx5aW5nIEkyQyBidXMuIFRoZSBwYXRjaCBhdm9pZHMgdGhl
-IGNyYXNoIGZvciBtZSAoYnkgcmVtb3ZpbmcgbGVkX2JsIGRldmljZSBhcyB3ZWxsKSwNCnRoYW5r
-cyBmb3IgZml4aW5nIGl0IQ0KDQpUZXN0ZWQtYnk6IEFsZXhhbmRlciBTdmVyZGxpbiA8YWxleGFu
-ZGVyLnN2ZXJkbGluQHNpZW1lbnMuY29tPg0KDQo+IC0tLQ0KPiANCj4gVGhpcyBwYXRjaCBmaXJz
-dCBhcHBlYXJlZCBpbiB2NC4NCj4gLS0tDQo+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9sZWRf
-YmwuYyB8IDEzICsrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25z
-KCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVkX2JsLmMg
-Yi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9sZWRfYmwuYw0KPiBpbmRleCBjN2FlZmNkNmU0ZTMu
-LmJmYmQ4MDcyODAzNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVk
-X2JsLmMNCj4gKysrIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVkX2JsLmMNCj4gQEAgLTIw
-OSw2ICsyMDksMTkgQEAgc3RhdGljIGludCBsZWRfYmxfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gIAkJcmV0dXJuIFBUUl9FUlIocHJpdi0+YmxfZGV2KTsNCj4gIAl9DQo+
-ICANCj4gKwlmb3IgKGkgPSAwOyBpIDwgcHJpdi0+bmJfbGVkczsgaSsrKSB7DQo+ICsJCXN0cnVj
-dCBkZXZpY2VfbGluayAqbGluazsNCj4gKw0KPiArCQlsaW5rID0gZGV2aWNlX2xpbmtfYWRkKCZw
-ZGV2LT5kZXYsIHByaXYtPmxlZHNbMF0tPmRldi0+cGFyZW50LA0KPiArCQkJCSAgICAgICBETF9G
-TEFHX0FVVE9SRU1PVkVfQ09OU1VNRVIpOw0KPiArCQlpZiAoIWxpbmspIHsNCj4gKwkJCWRldl9l
-cnIoJnBkZXYtPmRldiwgIkZhaWxlZCB0byBhZGQgZGV2bGluayAoY29uc3VtZXIgJXMsIHN1cHBs
-aWVyICVzKVxuIiwNCj4gKwkJCQlkZXZfbmFtZSgmcGRldi0+ZGV2KSwgZGV2X25hbWUocHJpdi0+
-bGVkc1swXS0+ZGV2LT5wYXJlbnQpKTsNCj4gKwkJCWJhY2tsaWdodF9kZXZpY2VfdW5yZWdpc3Rl
-cihwcml2LT5ibF9kZXYpOw0KPiArCQkJcmV0dXJuIC1FSU5WQUw7DQo+ICsJCX0NCj4gKwl9DQo+
-ICsNCj4gIAlmb3IgKGkgPSAwOyBpIDwgcHJpdi0+bmJfbGVkczsgaSsrKSB7DQo+ICAJCW11dGV4
-X2xvY2soJnByaXYtPmxlZHNbaV0tPmxlZF9hY2Nlc3MpOw0KPiAgCQlsZWRfc3lzZnNfZGlzYWJs
-ZShwcml2LT5sZWRzW2ldKTsNCg0KLS0gDQpBbGV4YW5kZXIgU3ZlcmRsaW4NClNpZW1lbnMgQUcN
-Cnd3dy5zaWVtZW5zLmNvbQ0K
+From: Mahesh Rao <mahesh.rao@altera.com>
+
+Add support for SDM (Secure Device Manager) mailbox
+doorbell interrupt for async transactions. On interrupt,
+a workqueue is triggered which polls the ATF for
+pending responses and retrieves the bitmap of all
+retrieved and unprocessed transaction ids of mailbox
+responses from SDM. It then triggers the corresponding
+registered callbacks.
+
+Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
+Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+---
+ drivers/firmware/stratix10-svc.c             | 97 +++++++++++++++++++++++++++-
+ include/linux/firmware/intel/stratix10-smc.h | 22 +++++++
+ 2 files changed, 118 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index e25493db074930dcc16964fbb427be7168a841e6..d60808cc077da6d88ca6cc1043f6da46df31ebad 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -9,12 +9,14 @@
+ #include <linux/delay.h>
+ #include <linux/genalloc.h>
+ #include <linux/hashtable.h>
++#include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/kfifo.h>
+ #include <linux/kthread.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+@@ -22,6 +24,7 @@
+ #include <linux/firmware/intel/stratix10-smc.h>
+ #include <linux/firmware/intel/stratix10-svc-client.h>
+ #include <linux/types.h>
++#include <linux/workqueue.h>
+ 
+ /**
+  * SVC_NUM_DATA_IN_FIFO - number of struct stratix10_svc_data in the FIFO
+@@ -190,17 +193,20 @@ struct stratix10_async_chan {
+ 
+ /**
+  * struct stratix10_async_ctrl - Control structure for Stratix 10 asynchronous operations
++ * @irq: Interrupt request number associated with the asynchronous control
+  * @initialized: Flag indicating whether the control structure has been initialized
+  * @invoke_fn: Function pointer for invoking Stratix 10 service calls to EL3 secure firmware
+  * @async_id_pool: Pointer to the ID pool used for asynchronous operations
+  * @common_achan_refcount: Atomic reference count for the common asynchronous channel usage
+  * @common_async_chan: Pointer to the common asynchronous channel structure
+  * @trx_list_wr_lock: Spinlock for protecting the transaction list write operations
++ * @async_work: Work structure for scheduling asynchronous work
+  * @trx_list: Hash table for managing asynchronous transactions
+  */
+ 
+ struct stratix10_async_ctrl {
+ 	bool initialized;
++	int irq;
+ 	void (*invoke_fn)(struct stratix10_async_ctrl *actrl,
+ 			  const struct arm_smccc_1_2_regs *args, struct arm_smccc_1_2_regs *res);
+ 	struct stratix10_sip_id_pool *async_id_pool;
+@@ -208,6 +214,7 @@ struct stratix10_async_ctrl {
+ 	struct stratix10_async_chan *common_async_chan;
+ 	/* spinlock to protect the writes to trx_list hash table */
+ 	spinlock_t trx_list_wr_lock;
++	struct work_struct async_work;
+ 	DECLARE_HASHTABLE(trx_list, ASYNC_TRX_HASH_BITS);
+ };
+ 
+@@ -1632,6 +1639,71 @@ static inline void stratix10_smc_1_2(struct stratix10_async_ctrl *actrl,
+ 	arm_smccc_1_2_smc(args, res);
+ }
+ 
++static irqreturn_t stratix10_svc_async_irq_handler(int irq, void *dev_id)
++{
++	struct stratix10_svc_controller *ctrl = dev_id;
++	struct stratix10_async_ctrl *actrl = &ctrl->actrl;
++
++	queue_work(system_bh_wq, &actrl->async_work);
++	disable_irq_nosync(actrl->irq);
++	return IRQ_HANDLED;
++}
++
++/**
++ * stratix10_async_workqueue_handler - Handles asynchronous workqueue tasks
++ * @work: Pointer to the work_struct representing the work to be handled
++ *
++ * This function is the handler for the asynchronous workqueue. It performs
++ * the following tasks:
++ * - Invokes the asynchronous polling on interrupt supervisory call.
++ * - On success,it retrieves the bitmap of pending transactions from mailbox
++ *   fifo in ATF.
++ * - It processes each pending transaction by calling the corresponding
++ *   callback function.
++ *
++ * The function ensures that the IRQ is enabled after processing the transactions
++ * and logs the total time taken to handle the transactions along with the number
++ * of transactions handled and the CPU on which the handler ran.
++ */
++static void stratix10_async_workqueue_handler(struct work_struct *work)
++{
++	u64 bitmap_array[4];
++	unsigned long transaction_id = 0;
++	struct stratix10_svc_async_handler *handler;
++	DECLARE_BITMAP(pend_on_irq, TOTAL_TRANSACTION_IDS);
++	struct arm_smccc_1_2_regs args = { .a0 = INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ }, res;
++	struct stratix10_async_ctrl *actrl =
++		container_of(work, struct stratix10_async_ctrl, async_work);
++
++	actrl->invoke_fn(actrl, &args, &res);
++	if (res.a0 == INTEL_SIP_SMC_STATUS_OK) {
++		bitmap_array[0] = res.a1;
++		bitmap_array[1] = res.a2;
++		bitmap_array[2] = res.a3;
++		bitmap_array[3] = res.a4;
++		bitmap_from_arr64(pend_on_irq, bitmap_array, TOTAL_TRANSACTION_IDS);
++		rcu_read_lock();
++		do {
++			transaction_id = find_next_bit(pend_on_irq,
++						       TOTAL_TRANSACTION_IDS,
++						       transaction_id);
++			if (transaction_id >= TOTAL_TRANSACTION_IDS)
++				break;
++			hash_for_each_possible_rcu_notrace(actrl->trx_list,
++							   handler, next,
++							   transaction_id) {
++				if (handler->transaction_id == transaction_id) {
++					handler->cb(handler->cb_arg);
++					break;
++				}
++			}
++			transaction_id++;
++		} while (transaction_id < TOTAL_TRANSACTION_IDS);
++		rcu_read_unlock();
++	}
++	enable_irq(actrl->irq);
++}
++
+ /**
+  * stratix10_svc_async_init - Initialize the Stratix 10 service controller
+  *                            for asynchronous operations.
+@@ -1639,6 +1711,7 @@ static inline void stratix10_smc_1_2(struct stratix10_async_ctrl *actrl,
+  *
+  * This function initializes the asynchronous service controller by setting up
+  * the necessary data structures, initializing the transaction list, and
++ * registering the IRQ handler for asynchronous transactions.
+  *
+  * Return: 0 on success, -EINVAL if the controller is NULL or already initialized,
+  *         -ENOMEM if memory allocation fails, -EADDRINUSE if the client ID is already
+@@ -1646,7 +1719,7 @@ static inline void stratix10_smc_1_2(struct stratix10_async_ctrl *actrl,
+  */
+ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
+ {
+-	int ret;
++	int ret, irq;
+ 	struct arm_smccc_res res;
+ 
+ 	if (!controller)
+@@ -1693,6 +1766,22 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
+ 	hash_init(actrl->trx_list);
+ 	atomic_set(&actrl->common_achan_refcount, 0);
+ 
++	irq = of_irq_get(dev_of_node(dev), 0);
++	if (irq < 0) {
++		dev_warn(dev, "Failed to get IRQ, falling back to polling mode\n");
++	} else {
++		ret = devm_request_any_context_irq(dev, irq, stratix10_svc_async_irq_handler,
++						   IRQF_NO_AUTOEN, "stratix10_svc", controller);
++		if (ret == 0) {
++			dev_alert(dev,
++				  "Registered IRQ %d for sip async operations\n",
++				irq);
++			actrl->irq = irq;
++			INIT_WORK(&actrl->async_work, stratix10_async_workqueue_handler);
++			enable_irq(actrl->irq);
++		}
++	}
++
+ 	actrl->initialized = true;
+ 	return 0;
+ }
+@@ -1728,6 +1817,12 @@ static int stratix10_svc_async_exit(struct stratix10_svc_controller *ctrl)
+ 
+ 	actrl->initialized = false;
+ 
++	if (actrl->irq > 0) {
++		free_irq(actrl->irq, ctrl);
++		flush_work(&actrl->async_work);
++		actrl->irq = 0;
++	}
++
+ 	spin_lock(&actrl->trx_list_wr_lock);
+ 	hash_for_each_safe(actrl->trx_list, i, tmp, handler, next) {
+ 		stratix10_deallocate_id(handler->achan->job_id_pool,
+diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
+index c98ed992d23bed5aa344868ca0c77a2d19d94c06..ee00f17ea9f6c7a1114fb617d4d6393f2c27e2a9 100644
+--- a/include/linux/firmware/intel/stratix10-smc.h
++++ b/include/linux/firmware/intel/stratix10-smc.h
+@@ -644,4 +644,26 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
+ #define INTEL_SIP_SMC_ASYNC_FUNC_ID_POLL (0xC8)
+ #define INTEL_SIP_SMC_ASYNC_POLL \
+ 	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNC_ID_POLL)
++
++/**
++ * Request INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ
++ * Async call used by service driver at EL1 to read response from SDM mailbox and
++ * to retrieve the transaction id's of the read response's.
++ *
++ * Call register usage:
++ * a0 INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ
++ * a1 transaction job id
++ * a2-7 will be used to return the response data
++ *
++ * Return status
++ * a0 INTEL_SIP_SMC_STATUS_OK
++ * a1-a4 will contain bitmap of available responses's transaction id as set bit position.
++ * a5-17 not used
++ * Or
++ * a0 INTEL_SIP_SMC_STATUS_NO_RESPONSE
++ * a1-17 not used
++ */
++#define INTEL_SIP_SMC_ASYNC_FUNC_ID_IRQ_POLL (0xC9)
++#define INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ \
++	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNC_ID_IRQ_POLL)
+ #endif
+
+-- 
+2.35.3
+
+
 
