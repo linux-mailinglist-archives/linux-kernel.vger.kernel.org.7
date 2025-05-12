@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-644315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A4CAB3A3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2628BAB3A44
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0CF817C2C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5FF861B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E861A1EDA12;
-	Mon, 12 May 2025 14:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762811EF37C;
+	Mon, 12 May 2025 14:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bw8UddU/"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8djEoCP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D21A1EB9E1
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 14:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7E91E505;
+	Mon, 12 May 2025 14:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747059333; cv=none; b=eph/X35pBYEO/ddDFaZRGAHpCIXcGpgYGb0GdjwLQVcCAHZWMgTWqPsC5veL5aDrWIfIBc68Bui7PqG4qcijsu7f0WBP8U+OPpStzQNH+Y2T+ALrF0gTVy/efXSRoVf5DckYdd9Sf19MA8SweXGX+plXjKh8nyVg3wMrQ0kWz3g=
+	t=1747059354; cv=none; b=uhonIVZLbqSrQEAwroBwT1ldu4wrabkxdvXeSjVtYZybK3AFOMr2a8Nci7Rg3ptqn9Xx3pUqrJoECGzQ1ZgnJLHXhj9Neu3Z5yJQItj7K2+58M1CGqb7zhaUsHkqnjQke+uf8qcgHzDiwQ1gy0ZjBj+OZAX3t2manY6A96QuYBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747059333; c=relaxed/simple;
-	bh=nNU/RFz2rUbNl7nLf7Z8+rvRbBvzu5h/opPgTl9yzxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=u8isVe+W+yMU45uP6iVgEiGKmt9MENWdDTpScSoPUJBRzXHtaT4gDKD6JFx3UK4Hd8olIBycGKFfp39uCE+AwjKjRrbYhqctpr7atY4YpoefT8ZOplyfQyfQIqeCDKHQTAVuUv0u6n4fPwSwspCnCu4+rL2CZBkPOhA5l1HL1aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bw8UddU/; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72ecb4d9a10so4948137a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 07:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747059329; x=1747664129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5ZkQGRREx70HQmMXnJ2JUFahkKh8y7M/M223iiroUNg=;
-        b=bw8UddU/wc/Hi3X8dltpVwdE0zslMaZ6BZxCPfOevQSpYb4Joy0N1owoi+5k/um9aI
-         U4oWu6+cdt2i+gWJInEiRFZQHMiv9lL2QCKq/BwsHTuIMvVCDjDSVXmSGrXqWRQJphH3
-         tBIScIESt4qK1aHJ6u3JgeXJ4xUcgBGgCZ7I22+TJ5/zxoVaVWJ95IMlZgfjnHLlJttP
-         3SMtexBUt77PkAPGk7oQibFHcWetavzBbH3xhfl1Jl3h2XM66Jl+6RUjsjb6ew4NPgHP
-         7af8EBC/c/OGFx/1MMIIKBGfI46jQ+71XfXw1Ljy+dPrQLeTTSzt7u01BAhT3yTVQ6Ff
-         ipkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747059329; x=1747664129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ZkQGRREx70HQmMXnJ2JUFahkKh8y7M/M223iiroUNg=;
-        b=n8zJRfquRThW3MRW3t9JHLs16XOyiomPYXI/0jNmq8jxsIsnUijNJJDQXSYa0vB748
-         i98FXGY0QXt5r4aAiW+Mw/yWoay+5PoyTBaU69Fc/mw241n/dlXFK7h791Fz25XVSpJ8
-         DXkBnXSCgWOn4c8KRADMGCZSg2h2xg+nhKWD7cxTBmeo11R2mQ2saf//1bJ7PKGBWRsg
-         SCT8Zsg/jhfl7lPVeOLqg7cjAOMQJLrjL54j8fcVOi5t7fUSRILxfPrX+Gybz9B9Uksj
-         UcNFsETgsp5PF+rKsL0eU6r/jdro7yt4aaOSc8coAOnluCuE3rfXZCO56bO5V4Fqo0rL
-         reVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDv04o3rQdjOhX1A/IbHOEHsCENyMnH5v7d5fawTm402VeRrMIj+bHWGmtJIYRqCvU287ABr2URP6MPvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws2pN4Hem+ua7VtNJwvIwaAOcalarKi4r05n04jn57qkHVr6SJ
-	BSNZzJIijP+yhSIp66bvcwPLC55b2NkAK0VIrAtgTGcV/ileeT4Y0SYNzzh98pQ=
-X-Gm-Gg: ASbGnctr2ObwKX6r1hceo5tpmQ3qeGDNj6fVPwsDsVWukr39QXLlpKBuStkHjyxDGAQ
-	HXWjwaaEYgm1GZXU72VCxqOEpkL+Lz3aRHuWU5p5f1XCi/5NzoeGS3AckektPxvV80PRtIzOaqh
-	2EbJAPLTMCrPsTpRZiQMzMfJldhNiCIPwGgusLLe9bnHgiTfiTMDE8UVyPrFFhkKjyfGwMQkrRG
-	M2jhHn5bS4en9avuTrobm8d/TnPi8gE0Eb0ZY90jQEXJwmquzv3rZUPIzylUl6G8f4UuBBn7697
-	LlmMVfwGpIFSwNrdSoIatFLr4FBKZDblOkyUVUda7bm+QsknJ4C179mmm++4aAvuBuhFGul4GQQ
-	XVotcP8o4aNLgERIOH3CsN2tBe5Kl
-X-Google-Smtp-Source: AGHT+IHCEnMxUGxiLvsEuMQ4xMc51y5Br4FOqLhzjMrNBPxOpyphbh4RrGySc1szYHqvL/h+260LuA==
-X-Received: by 2002:a05:6830:6611:b0:72b:a465:d93c with SMTP id 46e09a7af769-73226b09920mr8559233a34.20.1747059328997;
-        Mon, 12 May 2025 07:15:28 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fd2e:ffda:4c42:b314? ([2600:8803:e7e4:1d00:fd2e:ffda:4c42:b314])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732264d78fbsm1563212a34.32.2025.05.12.07.15.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 07:15:27 -0700 (PDT)
-Message-ID: <5f373faf-2ca4-405d-8709-2ec91a05f86d@baylibre.com>
-Date: Mon, 12 May 2025 09:15:25 -0500
+	s=arc-20240116; t=1747059354; c=relaxed/simple;
+	bh=MEHGyJSZV6ZmVvbm4C4hI9TFH3oY2U0jBbfKq+YT31I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4QHtIWcYNjDfBWQWdSsNq0vY15cJCVDSkM7MRtpN4SEF6cTY2zRvf2zV5ZXnDP7Hj3eHCz29NDiYgjQ2gL4WKQL+8n72e4czrwf/WgeEw8xuyTghNSN9aMmT7wXDLn04Z/+NzjZAGyVVkoM2qQXtNG1a6bt/dafujZWkazZbQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8djEoCP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97AACC4CEEF;
+	Mon, 12 May 2025 14:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747059353;
+	bh=MEHGyJSZV6ZmVvbm4C4hI9TFH3oY2U0jBbfKq+YT31I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k8djEoCPjVGyQx42aTZVSbqgQDZkJ/Bj5aRHJUHgLcQd/mnl/eY5cWr5F1P4swDmb
+	 lzG6JLGZU0Ux1ZZs5sjKcv5w4aTYiilPh5dzD717eImtSkvgPEpRmCKwi9n93zKQV0
+	 UKaX8fY2iUpJgoVN7Qf78dmv80A95BDTKkzqIE5TXbeFEh/O+sRPUc6YO8UxSq4o8n
+	 SlQne8XGIR0WeijFfGryo85ElqzfZXctr8HKG1FebB3u6NGhfAhjEefVEI01K1wp9R
+	 VMQDo7Zvn7Kd7dGauwJtfURxUSALzYzHGi5P79HmdlQAgQRlKnLZ30P6zhm0cKOiW1
+	 9mLZbKqtKN/CA==
+Date: Mon, 12 May 2025 15:15:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	decui@microsoft.com, stephen@networkplumber.org, kys@microsoft.com,
+	paulros@microsoft.com, olaf@aepfle.de, vkuznets@redhat.com,
+	davem@davemloft.net, wei.liu@kernel.org, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, leon@kernel.org,
+	longli@microsoft.com, ssengar@linux.microsoft.com,
+	linux-rdma@vger.kernel.org, daniel@iogearbox.net,
+	john.fastabend@gmail.com, bpf@vger.kernel.org, ast@kernel.org,
+	hawk@kernel.org, tglx@linutronix.de,
+	shradhagupta@linux.microsoft.com, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next,v2] net: mana: Add handler for hardware
+ servicing events
+Message-ID: <20250512141546.GI3339421@horms.kernel.org>
+References: <1746832603-4340-1-git-send-email-haiyangz@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/10] Documetation: ABI: add sinc1 and sinc5+pf1
- filter
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250509105019.8887-1-antoniu.miclaus@analog.com>
- <20250509105019.8887-11-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250509105019.8887-11-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1746832603-4340-1-git-send-email-haiyangz@microsoft.com>
 
-On 5/9/25 5:50 AM, Antoniu Miclaus wrote:
-> Add sinc1 and sinc5+pf1 filter types used for ad4080 device.
+On Fri, May 09, 2025 at 04:16:43PM -0700, Haiyang Zhang wrote:
+> To collaborate with hardware servicing events, upon receiving the special
+> EQE notification from the HW channel, remove the devices on this bus.
+> Then, after a waiting period based on the device specs, rescan the parent
+> bus to recover the devices.
 > 
-> Add these two options into the filter_type available attribute.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 > ---
->  Documentation/ABI/testing/sysfs-bus-iio | 3 +++
->  1 file changed, 3 insertions(+)
+> v2: 
+> Added dev_dbg for service type as suggested by Shradha Gupta.
+> Added driver cap bit.
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> index b8838cb92d38..2dfb74b5a990 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -2275,6 +2275,8 @@ Description:
->  		Reading returns a list with the possible filter modes. Options
->  		for the attribute:
+> ---
+>  .../net/ethernet/microsoft/mana/gdma_main.c   | 63 +++++++++++++++++++
+>  include/net/mana/gdma.h                       | 11 +++-
+>  2 files changed, 72 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+
+...
+
+> +static void mana_serv_func(struct work_struct *w)
+> +{
+> +	struct mana_serv_work *mns_wk = container_of(w, struct mana_serv_work, serv_work);
+> +	struct pci_dev *pdev = mns_wk->pdev;
+> +	struct pci_bus *bus, *parent;
+
+Please avoid lines wider than 80 columns in Networking code.  In this case
+I would suggest separating the declaration and initialisation of mns_wk and
+pdev.  Something like this (completely untested!):
+
+	struct mana_serv_work *mns_wk;
+	struct pci_bus *bus, *parent;
+	struct pci_dev *pdev;
+
+	mns_wk = container_of(w, struct mana_serv_work, serv_work);
+	pdev = mns_wk->pdev;
+
+
+...
+
+> @@ -400,6 +441,28 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
+>  		eq->eq.callback(eq->eq.context, eq, &event);
+>  		break;
 >  
+> +	case GDMA_EQE_HWC_FPGA_RECONFIG:
+> +	case GDMA_EQE_HWC_SOCMANA_CRASH:
+> +		dev_dbg(gc->dev, "Recv MANA service type:%d\n", type);
+> +
+> +		if (gc->in_service) {
+> +			dev_info(gc->dev, "Already in service\n");
+> +			break;
+> +		}
+> +
+> +		mns_wk = kzalloc(sizeof(*mns_wk), GFP_ATOMIC);
+> +		if (!mns_wk) {
+> +			dev_err(gc->dev, "Fail to alloc mana_serv_work\n");
 
-Should also add:
+The memory allocator will log a message on error.
+So please don't also do so here.
 
-		* "none" - Filter is disabled/bypassed.
+> +			break;
+> +		}
+> +
+> +		dev_info(gc->dev, "Start MANA service type:%d\n", type);
+> +		gc->in_service = true;
+> +		mns_wk->pdev = to_pci_dev(gc->dev);
+> +		INIT_WORK(&mns_wk->serv_work, mana_serv_func);
+> +		schedule_work(&mns_wk->serv_work);
+> +		break;
+> +
+>  	default:
+>  		break;
+>  	}
 
-> +		* "sinc1" - The digital sinc1 filter. Fast 1st
-> +		  conversion time. Poor noise performance.
->  		* "sinc3" - The digital sinc3 filter. Moderate 1st
->  		  conversion time. Good noise performance.
->  		* "sinc4" - Sinc 4. Excellent noise performance. Long
-> @@ -2290,6 +2292,7 @@ Description:
->  		* "sinc3+pf2" - Sinc3 + device specific Post Filter 2.
->  		* "sinc3+pf3" - Sinc3 + device specific Post Filter 3.
->  		* "sinc3+pf4" - Sinc3 + device specific Post Filter 4.
-> +		* "sinc5+pf1" - Sinc5 + device specific Post Filter 1.
->  
->  What:		/sys/bus/iio/devices/iio:deviceX/filter_type
->  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_type
+...
 
+-- 
+pw-bot: changes-requested
 
