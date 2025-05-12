@@ -1,82 +1,58 @@
-Return-Path: <linux-kernel+bounces-644768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3918AAB4436
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A69AB443A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 21:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43E837A8679
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98DB189EB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1792C2550C7;
-	Mon, 12 May 2025 19:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C97297127;
+	Mon, 12 May 2025 19:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fa++PwjA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m8nKzx19"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC04023C4E5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E541123A9BD
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076523; cv=none; b=pMinsiLq7m3liO6l6tjU9iH3FbmQtq4RvMC0zsybFXSHDtixp9ag5YrsKYookjUve0nMn6IXZQIb+SGpfIIbq5liF99P0xXomkI+Qc+S7K573Z9kVaDhujo+MfRmziE7GskFbgD3p6HC7gfjQaUuo4+kmzJaX7+cfygoI/59gT0=
+	t=1747076598; cv=none; b=LdGkJCU+r1n54Ya24bTBl7lWXI+eaGZHSftalfdG7kOVOpqOrCzJT9DAW5hFgKbCMTquNOqzRlczmAFskp6541Q0sLt28rXO4/aaZnHEYCfxxqGv3B1Mmo37pKKxFAjLLat/a+L2igWgp4wcxCkw1wcmuvvC/PPmr0IOeblztm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076523; c=relaxed/simple;
-	bh=Iw4FMLxMzOsRhPUzCitoDc187twmhNXKei/YG2KflGU=;
+	s=arc-20240116; t=1747076598; c=relaxed/simple;
+	bh=O4H8iAzwOwN+yTMHteguWKtTAD4YhTkV/H8oa2wjqkY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9MyK2+QSwbjbEIPU7lpSAKLkv07e+RwbQPSVVC3Ymu8MUdI9NoK1bFVy/FT8L3IPfVizxtGcLnLSc9F0b6GlpDORnjkIoVZSoUG+vFQta/W2aM60/tAN0mqGU6wS7eG4e/jWZ3eIwX+u1dwEXG7GJlvsWz5RJfADdDYZxO0eV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fa++PwjA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747076520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kWaIpBAE+GNW2dWuVErPfYy1v7Zx0jvZfL8ijBtInX8=;
-	b=Fa++PwjAMTZYEUQON1vNuI6ctN2hBI6qTLZ6475mXbNiHurWeN5VT0dlX7Ps9MncN7Zix4
-	nUSJuG2R48Mpz36yJNhR+yrx55nOGFeMUtysddYkioeZ2qFJuqwzFHhOALexfjX3Ksavwo
-	v2kc226yBtsfWcXHD59iJGGAp7PNkkg=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-pdvLv3UxNZ24d8YSQeBYyw-1; Mon,
- 12 May 2025 15:01:56 -0400
-X-MC-Unique: pdvLv3UxNZ24d8YSQeBYyw-1
-X-Mimecast-MFC-AGG-ID: pdvLv3UxNZ24d8YSQeBYyw_1747076514
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 67EE318001CA;
-	Mon, 12 May 2025 19:01:54 +0000 (UTC)
-Received: from localhost (unknown [10.22.80.42])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6F1C31956095;
-	Mon, 12 May 2025 19:01:53 +0000 (UTC)
-Date: Mon, 12 May 2025 16:01:52 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <aCJFoCq7Pp_luu2M@uudg.org>
-References: <Z_bDWN2pAnijPAMR@uudg.org>
- <20250410064844.wm4KbunL@linutronix.de>
- <20250410075103.GV9833@noisy.programming.kicks-ass.net>
- <20250410153205.u92eJDos@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5LEzmBHHEmGOhfH1RAmmezdbjPnmRtHBs9CaEdME/aNP9to8q6OnGej/+lDbRb1kS+9PwhNwSw73dd4bhbmiAZEup4BPXqS+zBGDuduhv/kO/DR7KEp7JMp+wvZI23b7BIo+Tfr/T18IzTkj2QK614djRw05s8Wcfk+v9hv2dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m8nKzx19; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6TU8lovtR+mIfquQ2rCbk6fwLvKUBUsDQ9Gbh5JlI78=; b=m8nKzx198g557xXfy33UFRw+Kr
+	qoyVHoc5J/ZHQWHjy+CmISnWIg9QilqxqRc8j5FTIC44xRVH68NBsZBcQtK0pJzqoGQ8aNBSUKezj
+	4AoX90aHZB39mu2IfgjZn4nJg61ODpbKGnlMQGDPjujcsDYFgY2ao9ddJgjrhc3+qC7gpe6Ow9ytz
+	9EpqnIuyHFh+fWWZZLlL6mGmjat0WVnJ7Fth3pWkzPpGj9onP41kYaYjM5iKCJngX659kfFbAtkxU
+	oi6USOiKVK6s1Y9R8W5CYVaxs50SuOTOrGBQA/Cd64UgKVuoz5Ju26v890On9g7o86334/Ia0xUI3
+	LwARxIjg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uEYQh-0000000AAGr-304E;
+	Mon, 12 May 2025 19:03:11 +0000
+Date: Mon, 12 May 2025 20:03:11 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosryahmed@google.com,
+	yosry.ahmed@linux.dev, chengming.zhou@linux.dev, linux-mm@kvack.org,
+	kernel-team@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] page_io: zswap: do not crash the kernel on
+ decompression failure
+Message-ID: <aCJF74ILruXJOAkQ@casper.infradead.org>
+References: <20250306205011.784787-1-nphamcs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,42 +61,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250410153205.u92eJDos@linutronix.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20250306205011.784787-1-nphamcs@gmail.com>
 
-On Thu, Apr 10, 2025 at 05:32:05PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-04-10 09:51:03 [+0200], Peter Zijlstra wrote:
-> > > I complained about this special RT case in put_task_struct() when it was
-> > > first got introduced. Couldn't we just just unconditionally do the RCU
-> > > put?
-> > 
-> > Yeah, please make it simpler, not more complex.
-> 
-> Just so we clear: simpler as in everyone does call_rcu() or RT does
-> always call_rcu() and everyone else __put_task_struct()? I mean we would
-> end up with one call chain I am just not sure how expensive it gets for
-> !RT.
+On Thu, Mar 06, 2025 at 12:50:10PM -0800, Nhat Pham wrote:
+> -static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
+> +static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
 
-Sebastian, I implemented the change where put_task_struct() unconditionally
-resorted to:
+Hm, why do it this way?  I had it as:
 
-	call_rcu(&t->rcu, __put_task_struct_rcu_cb);
+-static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
++static int zswap_decompress(struct zswap_entry *entry, struct folio *folio)
+...
++       err = crypto_acomp_decompress(acomp_ctx->req);
++       err = crypto_wait_req(err, &acomp_ctx->wait);
++       if (!err && acomp_ctx->req->dlen != PAGE_SIZE)
++               err = -EIO;
 
-I submitted the kernels I built with that change and a pristine upstream
-kenrel to LTP and stress-ng and also ran 'perf bench all'. I built kernels
-with and without lockdep and extra debug. All kernels survived the tests
-without a scratch and I haven't observed differences in behaviors nor
-timings (for the tests that had that information).
+which allows us to return something more meaningful than -EIO.  Or is
+doing that a bad idea and we should squash all decompression failures
+to EIO?
 
-What would be a good benchmark to compare the kernels with and without the
-put_task_struct() change? I would like to observe whether there is a
-penalty or added overhead with the change in place.
+(also i really dislike the chained approach:
 
-Best,
-Luis
+        decomp_ret = crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait);
 
-> Sebastian
-> 
----end quoted text---
-
+that's much harder to understand than the two lines i have above)
 
