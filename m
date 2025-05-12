@@ -1,117 +1,87 @@
-Return-Path: <linux-kernel+bounces-644693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B59AB42AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D91AB42E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6024A17E779
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:24:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFC88C4040
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21A5298C1A;
-	Mon, 12 May 2025 18:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDC1299923;
+	Mon, 12 May 2025 18:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q6oHlQ66"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u3oqGM40"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59B6298C01
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A774298CDC
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747073291; cv=none; b=Kh2TD3f4qTBsQaUMjGzbjwWJZSP4O+dTYR3MJqDvaKIgzONc0QIWawM/hAPCNKB3CYxReXXqWD0/l4NiUC96GDz3ssbkX+3/bvqjo5fOQsjBj9PKWXoRbdncF+zhHZi4wj4phL8e/U3WV661Bz8QnD1phSECN61qpENmuaCIKUs=
+	t=1747073334; cv=none; b=qZE97ToDXusLDctaEmodB6nMNMuolEuxzRgrWzdbWTWQaZhkylNyiNxLzhbBdc34i8arrjAUfmGKTFTkEJgAuSn3cdswujGWn3+DizpepRHRlcX+dbcUmLlmi1pkrxAYS+FNbqCoNFXNI5ds4T7tr+eVR0NTfBPfxpvCd5V8oiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747073291; c=relaxed/simple;
-	bh=ejLKkLFYtUMpXHdsOTHtW0v9ZW+VQmKQChOCq21oL40=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G2jLSTGAuqhHwYlOZmpmeckyw6GSrawvGacSlTXuqBOzr5IMFlI4WR6MD/UBit8qi6xByQ5HjjBuBjIn4p2m2nvWBudXYo1s+5w6/MEEGERWXEmnsr+vXzSRouHyiEqbsd/mkJpAyxb/8hDStwN3tpE8cXJZzDRL21KrFDFg82k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q6oHlQ66; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22aa75e6653so34849955ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747073289; x=1747678089; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwuOPvPojv1l0TmDPTQsLIJwuOHkezsc7kTLGMrlcwg=;
-        b=q6oHlQ66UIxXEUT5MyNWohZB8oRwTGbtFztjts23W0DqCHyagoa6TnPUd7z5SI8Ph+
-         aA1UQTYf9xGfQQJSD1ywzN10ht0Qgh14zIRRQgb81Umsy0CyW+RixsQYF3bKQGeXRfDS
-         tfn9EUYDueEzlBdsEV1lhNGafBiB4NNGY6ouKVwm6Xorbga5R47KLl1iNx2FHIK3ToOb
-         56cD2Pll/5wyUGuWwkOWJiaW3pDcpqv/QW6RPHmDcnOX18QdZp2EUMIHjMR/9xtuY6+v
-         jcI/4Qm0Gd6tkEg9MMDW5jWJkEvKwtC0O7gzwmoEd6CIztkFEfaMHe8JbUbZgiChCA3p
-         Yw+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747073289; x=1747678089;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwuOPvPojv1l0TmDPTQsLIJwuOHkezsc7kTLGMrlcwg=;
-        b=emURhNjxMZNvkfqgMDfrGXIbpOdYEk6z0g5PQuznD6qy3UyPw7nvP6KNRRjjvayrsL
-         T6UNUAUGB+ls4P0mhRId2QKS28p8PmtPobm6yoQ52QCesxwbbyH0BtUXUSmObfdkhfzP
-         28Ne6MvwnNQmzD+R+NB57hvIySs09UnPLmzTsgNTIhMlzp6e6+p8y2pvYGtj5BtB056S
-         I/3FWxU3uANgnKxWDpgPpRVa1quSw+UBc6wq6rnSs+w7joado4ZdPRZRZBd4naIRJYUU
-         2mxifQ3yrOvqHv0WCwzo8bZBG6V/hvsln1Zqz2EfKzKy03uykch1TMaI40awwU/tO+tC
-         wRKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUabB4BYPZMDOsIN5UTZLY1Rl7cpyD1ynktLsfskvdzD+/qmJMxc3ZoWwydom5/X5+qZFL8h6gi5wa+Pfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOz3qaB5pW99aCn+vWRrdTdTWxqTOO32ilBjT9DLB6ibCcB7c3
-	MsNF1cxge8IQ7BFiE52rc1bTKOXQV8CIho9SrbqCgm7esmayl/NUoLY+BldQBFxvU3vAjlKT/Is
-	8YQ==
-X-Google-Smtp-Source: AGHT+IH71D2UI9Ksbkvxo8YwHen4FAYZY6ws0smj3LEwh8OXjODVe85IC+hix2m/Z6IzhlrHe5bvJpSOD5Y=
-X-Received: from plil3.prod.google.com ([2002:a17:903:17c3:b0:223:4c5f:3494])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:988:b0:22e:5abd:7133
- with SMTP id d9443c01a7336-22fc917f836mr180576485ad.45.1747073288984; Mon, 12
- May 2025 11:08:08 -0700 (PDT)
-Date: Mon, 12 May 2025 11:08:07 -0700
-In-Reply-To: <20250313203702.575156-4-jon@nutanix.com>
+	s=arc-20240116; t=1747073334; c=relaxed/simple;
+	bh=9sFKIGpTQIObW8ewu+pjp7fzCsKkwOvlWvfG5bMYO1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwKxZomkB6f4yKtU42n3BBuecaFFKYj9QFy/UxhB74EIixhTeFjBmZN7NIvCHzycj0hl3c2f8iP2WRalY97AprFjtCi+qMPCXxloPKXAVN05tywUaP+V8mD7iLOrHlXXPjyNLa3PmHx6FqScjswxct/auazNQPDBMzwFYbvdDVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u3oqGM40; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Oa6A8+qzaBX/k47EFQIvxMkVXbsVVrzU2Y5F8y4wCQA=; b=u3oqGM40AizaOr3hdwKtFZd5GG
+	/OGqjof9LhElxsWh3Fd2irIdGtFQgMy+4tFy6oID+//3u0WjiCduTQv5da/mGwVdyu/p/9ufGqdg6
+	9GhDwo08oUwvYrTwDSU7+qV6ekzd1G04yKUHjpQmQyYOrncCRQKRtel49SJmtg5ZMtEKRS1RgEGiV
+	XT4nIwc7dJiTQM64MhRo3MJgkfAMk6dG89TXCOt0pom/dnz09aDPcQZaGnMtbsyNPHN1TowyGRzUl
+	fLip6p1IJEHa5619lljS5ZJh8jBMIsG3EiEjGtru972OJb3TWOz573ZP/Jjoxx3CUPULblatUI+9c
+	okSXxZRQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uEXa3-0000000A7JJ-1KR9;
+	Mon, 12 May 2025 18:08:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AD911300717; Mon, 12 May 2025 20:08:46 +0200 (CEST)
+Date: Mon, 12 May 2025 20:08:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chris Mason <clm@meta.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+	dietmar.eggemann@arm.com, vschneid@redhat.com
+Subject: Re: scheduler performance regression since v6.11
+Message-ID: <20250512180846.GA25891@noisy.programming.kicks-ass.net>
+References: <1e3c711f-8c96-4c39-bbe2-7742940d1d31@meta.com>
+ <20250509194955.GA25798@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-4-jon@nutanix.com>
-Message-ID: <aCI5B7Mz8mgP-V2o@google.com>
-Subject: Re: [RFC PATCH 03/18] KVM: x86: Add module parameter for Intel MBEC
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509194955.GA25798@noisy.programming.kicks-ass.net>
 
-On Thu, Mar 13, 2025, Jon Kohler wrote:
-> Add 'enable_pt_guest_exec_control' module parameter to x86 code, with
-> default value false.
+On Fri, May 09, 2025 at 09:49:55PM +0200, Peter Zijlstra wrote:
+> 152 729288bc6856 kernel/sched: Fix util_est accounting for DELAY_DEQUEUE
+> 	average rps: 1936829.47
+> 	average rps: 1950715.10
+> 
+> 153 84d265281d6c sched/pelt: Use rq_clock_task() for hw_pressure
+> 	average rps: 2176857.32
+> 	average rps: 2223004.23
 
-...
+So, a little more data on this.
 
-> +bool __read_mostly enable_pt_guest_exec_control;
-> +EXPORT_SYMBOL_GPL(enable_pt_guest_exec_control);
-> +module_param(enable_pt_guest_exec_control, bool, 0444);
+The result appears stable, but reverting 729288bc6856 on master does not
+seem to cure things.
 
-The default value of a parameter doesn't prevent userspace from enabled the param.
-I.e. the instant this patch lands, userspace can enable enable_pt_guest_exec_control,
-which means MBEC needs to be 100% functional before this can be exposed to userspace.
+OTOH, switching to performance governor completely cures things here.
 
-The right way to do this is to simply omit the module param until KVM is ready to
-let userspace enable the feature.
+My machine defaults to schedutil governor.
 
-All that said, I don't see any reason to add a module param for this.  *KVM* isn't
-using MBEC, the guest is using MBEC.  And unless host userspace is being extremely
-careless with VMX MSRs, exposing MBEC to the guest will require additional VMM
-enabling and/or user opt-in.
-
-KVM provides module params to control features that KVM is using, generally when
-there is no sane alternative to tell KVM not to use a particular feature, i.e.
-when there is way for the user to disable a feature for testing/debug purposes.
-
-Furthermore, how this series keys off the module param throughout KVM is completely
-wrong.  The *only* input that ultimately matters is the control bit in vmcs12.
-Whether or not KVM allows that bit to be set could be controlled by a module param,
-but KVM shouldn't be looking at the module param outside of that particular check.
-
-TL;DR: advertising and enabling MBEC should come along when KVM allows the bit to
-       be set in vmcs12.
+Chris, can you confirm -- or did we manage to find different issues?
 
