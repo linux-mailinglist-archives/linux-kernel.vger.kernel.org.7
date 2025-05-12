@@ -1,90 +1,113 @@
-Return-Path: <linux-kernel+bounces-643850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99924AB32FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192C1AB33BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0991516D3AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 943323AD7A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11F625D524;
-	Mon, 12 May 2025 09:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF31269CF5;
+	Mon, 12 May 2025 09:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+r9GNDk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSfeU+Ol"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E131A25C715;
-	Mon, 12 May 2025 09:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AF7267F44;
+	Mon, 12 May 2025 09:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747041611; cv=none; b=omhmFMEwEOc4R5qi58zkUCB9icppEiP5bm2JNUyEJU+8bV6/UprVcrgQ587MvTkxoj0YHsKrl09UeT4i/qJfdOH9/VCLeqztkIBgCbzMNk5os36/UGOl2wIx3XFOD+kyVZnsTWmYITKRLKJuC/RHC49UzNEQ+MOQxOtTMf7nO6Y=
+	t=1747042073; cv=none; b=QQy4LE5mjmQ7otIAHD+luCTTSidbg3IY3NTr31A5iBaItBaGtxiX4GalzDLCl+ZOTNF0WTDPd6yFIuSg03Uc9sTYkx+K1Azi1W4chMtp16L/RRmyq5CdXtchMAnSHTM9ZKfTQ+VF0Jefp09NubVHsYTFhbabYKoANRCHJihFepk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747041611; c=relaxed/simple;
-	bh=52aKOno0EL7URiPWvaUs3aD3TypLQPuRkCsQEHt1V7I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jcVi87hcALFYwlL6L93MYVU8c+StLIQ0umrm3HcRyjGyTcee+2euA4T0NMFy/WJXdQWcuNkWC0aQ/xBblXz9guKwhqKhgdWxD7v2sercc/ZYOMFbr+2mn09spWO28ronPYJ1smPQw7cl7W4pVltKeXCtsFzElSOesUYBa/rz628=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+r9GNDk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CFCCC4CEEF;
-	Mon, 12 May 2025 09:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747041610;
-	bh=52aKOno0EL7URiPWvaUs3aD3TypLQPuRkCsQEHt1V7I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h+r9GNDk5Npg/xucrTc5NBwbu9B9JgGx1VO8Ml5T6khBC/1OrkYtYp+/A51AmuD5t
-	 yVqwo42vij7yFasxXteweV2t8wLJMx3RhIASLq7S4VcWqD0rTtTYhJAPxikqeZOixx
-	 FJE+zojJCZdk0Ab/+mF+LUEI9OIPqZ0HmZFGcxX+L4RrNxhfapbpeKaDSn/FK5rzav
-	 z9pqqLxCk3XLPfG7LSQILdWo0XAHLt8lVyEIMqVGWJnSnPrjBE2Glm4CGjvq6+zIu3
-	 GKsE6fyOLzg1t0t9MrBYTiPlSXRR/kT3izpMTzvceYTZlIVJNu+bRXnH06oRb+LhSH
-	 kNsXi9DMyfAug==
-From: Christian Brauner <brauner@kernel.org>
-To: "Dmitry V. Levin" <ldv@strace.io>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1747042073; c=relaxed/simple;
+	bh=daQmruAQAI8gRPt/6goQ02a/HIENBKV5TCpMi1jKuKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lugs2zG0nIsOyYIKBLMsysEwR3iK0uVJ8oNaB9I9lP40+tJQE/mSXGfzhJ3KWdAqEk3nJtcToJ8FQNsjYaKewJdDjuJmsAS+sMJrF0mpW+2ZzAvomZrcJz47pwIXAL5gGpUdK82PUh9blQ3Lh9SAooHIpk8DdHcBHpjcUk2Hb1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSfeU+Ol; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5fbee322ddaso7889503a12.0;
+        Mon, 12 May 2025 02:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747042069; x=1747646869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2lCCYqSSDOknXdDD+W0wbgP1Fgi8UCHS+A7wnJsRnVQ=;
+        b=CSfeU+OlPO07v6yQU0sJMb6DimjIIvsXZDeIfj70psReZW27pynSxBjn+GATwCB+E6
+         MDeBJwiWyozHZtujqiuPJyOV2dyhUdTyfosYNhKUk4UT3kR5HpJKwJOEgVQ37XQaa/Kr
+         kpKcZ1sshQzlP5+wMmsMIcD1iTXFFUQQsEUn4z58yA2j49OId2Y4AocZsZiuLzIZu6P8
+         nh1SKUh1L0m0km67Xpmx6LxepBcQFmKfuDp8REeDLPyWOTMm7sz3xWne0ULtKy4TQkNE
+         Pf6yghIFFHUZwtwN8dvAKEBXVbWISi3gubee5YCdGGFOMcF4TQbzpYzI9r4zaRKot/o3
+         rz+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747042069; x=1747646869;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2lCCYqSSDOknXdDD+W0wbgP1Fgi8UCHS+A7wnJsRnVQ=;
+        b=ra5cK/X7/quPaaY9mS6vaJWHubRXutcmgSheBZFy0Qc1n8sXhd9Qtk3IcMgzubJtiN
+         iSBHYmiKMMdT93TFQgfbykMmrQjkdWI/5wiZDq94noZNOJteHTyvk+N5cmL2lgwjINOJ
+         hohh9kGPbm+YldP+uGkaGvK7/6tdsKg5l8XV3ZGB3Y/O5xUvp+tLp83aa9YewA9THb6b
+         ZdfuErpv5vTOGse0fAhMiw9HPaIM7C0HMGCbbbJXe3wyBqfyyjV0mciwVzRvlPrarTcm
+         AMLvWnXFyWff3+qcscnYRQFrueHn4rZ0gD0kozYzlIuIzZ0ooIa8z7dwo7Wj985xeaw3
+         judg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpaeVpxOeAs5z5eCJSuntqw4BpGi3TbAivFRUalMSIkwrXYxvZ/Kn3JUkd/qBhB2nN9J+16eV1JLCV@vger.kernel.org, AJvYcCVbVtvIDKjn0Xcg4rIOTBUiLngXkYP7vkBO1RCkS0GkzxkeNkk1hxNxVXJIg4zL0NgzbyEfN0rZUKHF@vger.kernel.org, AJvYcCXAmzZY1+AvVR3qSluv/tTT3nDQSUiwOyMRhEckbLp7oy8kWgw3dwbTzTm+MWhB1Lg9VUSP/o0OA7Ha2ii+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyagVAA9btnk1flRdkJ8Z+4KvmI1Xh4vJCogfiQbB8olxE8CU2N
+	pCS2TlGBChoQE+8Wbhwval+mec5jvp/x6AfzIEEgCk3MgFmHZoqspmvgw7rTFQ==
+X-Gm-Gg: ASbGncuYhP0OjFgjXHG/gwPgzEVukmoZeTz2E3IG/1K/Ojjm5r3LDx6D3Mr6oBT++LE
+	8eyAJxFL6rBpOcw42ebpu5liqeWhfQT87hDSAOavGdm2m7WMpgBOJ/gBVihBHbSynqgc4eJQdB/
+	7K/CL+k5rqdlHEOajCW/QUlhF9Sn3KKg1Dua9AZdRJCwylR3mH1GaMh1Xo36t2J78Mbd1U7toc6
+	fYHjbhgviqIMT2NQzhE+bJSv40s5e9cWOqeee1FrxXQNtWfVzljauk62ZUx+YJ0pkp/2zAsEgwd
+	EOcB3w0kGRbvlKGVTwRM7mIJTsYL4O5KumLRqbICF3upKYeKylBsQZor
+X-Google-Smtp-Source: AGHT+IFGCB1qaH/mNnABT9Qdsc4NUqQKYY0073rH6RsL7N0wJygie7S5IY08v+IN8TKTRd1Y0fiP6Q==
+X-Received: by 2002:a05:6402:5386:b0:5fc:a3df:9469 with SMTP id 4fb4d7f45d1cf-5fca3df9987mr8177705a12.29.1747042068431;
+        Mon, 12 May 2025 02:27:48 -0700 (PDT)
+Received: from alex-x1.lan ([84.226.118.249])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cc26483sm5480242a12.22.2025.05.12.02.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 02:27:48 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Abel Vesa <abel.vesa@linaro.org>,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] statmount: update STATMOUNT_SUPPORTED macro
-Date: Mon, 12 May 2025 11:20:04 +0200
-Message-ID: <20250512-beinbruch-hasten-ab36c2eb1b66@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250511224953.GA17849@strace.io>
-References: <20250511224953.GA17849@strace.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Subject: [PATCH v4 0/1] Add Parade PS8833 Type-C retimer variant
+Date: Mon, 12 May 2025 11:20:27 +0200
+Message-ID: <20250512092745.249293-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1003; i=brauner@kernel.org; h=from:subject:message-id; bh=52aKOno0EL7URiPWvaUs3aD3TypLQPuRkCsQEHt1V7I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQo7nXbUazCZVO00Gv6wb180r3SDF9nNjUfm3KsJe957 YM9ysurO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyvoDhf+Sp97s3J5S+vXb4 Tghb68oUrv+r1wo5PPymON/k19Z3WmcZ/qeu5dZ0WJvtekIqJXep57TDGyf+bPQKC5Wfqfteu3y 3AAcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 12 May 2025 01:49:53 +0300, Dmitry V. Levin wrote:
-> According to commit 8f6116b5b77b ("statmount: add a new supported_mask
-> field"), STATMOUNT_SUPPORTED macro shall be updated whenever a new flag
-> is added.
-> 
-> 
+Introduce PS8833 variant, which appears to be similar to PS8830.
+Present on some Snapdragon X1E devices, eg. Asus Zenbook A14.
 
-Applied to the vfs-6.16.mount branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.mount branch should appear in linux-next soon.
+This patch is part of Asus Zenbook A14 support series [1]. Resending
+1/4 separately, as the rest of abovementioned series either already
+landed (2/4, 3/4 in qcom tree for 6.16), or awaiting for this patch to
+make it to linux-next (4/4).
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+[1] https://lore.kernel.org/all/20250426130203.37659-1-alex.vinarskis@gmail.com/
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Aleksandrs Vinarskis (1):
+  dt-bindings: usb: Add Parade PS8833 Type-C retimer variant
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+ Documentation/devicetree/bindings/usb/parade,ps8830.yaml | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.mount
+-- 
+2.45.2
 
-[1/1] statmount: update STATMOUNT_SUPPORTED macro
-      https://git.kernel.org/vfs/vfs/c/ed3453bed26a
 
