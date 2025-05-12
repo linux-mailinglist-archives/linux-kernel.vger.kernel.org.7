@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-644700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27302AB436E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47ADAB433B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEFC3A449C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0A94A3FD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A9D297A51;
-	Mon, 12 May 2025 18:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="MI4gu6RF"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0B297A45;
-	Mon, 12 May 2025 18:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70535297B60;
+	Mon, 12 May 2025 18:20:36 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CE91C8639
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747073704; cv=none; b=JDWrX1qYFSXfiFUKWKOknfgh2RRzgOCOWTzZLRLUJObaKgOyfw+ykYwFaVfdjhe21425sse3JZKjbbPm4Qj+Y1V94HsnCSVeqhdo/4ySqNmXgFyab+YrOaKnKHkf4cpxcDY+1G1LDv3V5QjUgW5HYmgxM3f1KNHPE0fw6s/nMoA=
+	t=1747074036; cv=none; b=gS789W7J1dC652wJXwjewpC7fVVHFSHgGTYVKoZeJkbnfQPlLaFVz/RR6bXd4s+/KwFUGlr2+KLEo9gLF7euevCVqPtct2akXNoMl157Cyo7poJmtOtLMt4TJzGDzMahagACbvyhnCe98qAad2m8LDUbB8cNOaFVXX3wsZgsd3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747073704; c=relaxed/simple;
-	bh=Vqe5AmLOxv2544pzcRLMoQPFYWzIjs2Axn9+CmQDJUE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=Wxjj8I3qrtbJprCzk2fAAxSG0STrZ9FTM752bePQW/UOZeVKuswjd6YjC9XuDz3IRBxq51hjA60gJCS1mlrC4TNYgj5wAIzyHws+8cGUfJbL1t0SyRHMHn0pn8rnUHj8PxqhbGtsV06ZK996vGC7r3opiZHxFWmdOLw+DRvZv54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=MI4gu6RF; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2ea3:0:640:da3e:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 8248660F73;
-	Mon, 12 May 2025 21:14:52 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id oEKTJA2LjeA0-igIVqRQm;
-	Mon, 12 May 2025 21:14:51 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1747073691; bh=sKWFY9qzdW+cQL8kjiBG6SWhUDBg0xlq9ULolK89XaU=;
-	h=In-Reply-To:Subject:To:From:Cc:Date:References:Message-ID;
-	b=MI4gu6RF6+85eSlPYRhUhzGaC+5VKy5S0DDvYSq6CcDZ3TI12P0OrVgd3Bo3EhWpx
-	 4PFzWocdvxM7l0KxySacO4gpOBPW5gxRWrDy7vshPN8O5+7zjaSYev2jzZuAQhUx3N
-	 mizfOsMaon039aNX6epo/RKBTraI7p5sFRw8YNBg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <f40c3d5c-edf8-4d3d-a50a-506c5b6d7bc0@yandex.ru>
-Date: Mon, 12 May 2025 21:14:50 +0300
+	s=arc-20240116; t=1747074036; c=relaxed/simple;
+	bh=2bRnPOgixSh1KN5TilifSXLoxOTTFgZvz6H1AGyqCe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oo/IQIrRgkq6nvTIadAwoX3kdnocqZ9siTZU0jm9t9DOgOQ/HW/1RtOgJEBUoPVdKrEoRrzXhgU3G5bRxjXg7zz7a9tJUZE6oTMqWW/7KWnky8z/RsD2DNVW66wfKFdtzhThJoLOqQC8wLE/1X5w9K7OGZWFyjbevo6UsY3gOQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4Zx7790M1cz9sB2;
+	Mon, 12 May 2025 20:15:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 4RD4ewTYA1SE; Mon, 12 May 2025 20:15:00 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zx7786JDDz9s9J;
+	Mon, 12 May 2025 20:15:00 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C80628B764;
+	Mon, 12 May 2025 20:15:00 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id pjYqhLFiADqp; Mon, 12 May 2025 20:15:00 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.202.221])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 880118B763;
+	Mon, 12 May 2025 20:14:59 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/vdso: Fix build of VDSO32 with pcrel
+Date: Mon, 12 May 2025 20:14:55 +0200
+Message-ID: <1fa3453f07d42a50a70114da9905bf7b73304fca.1747073669.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-MW
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Petr Pavlu <petr.pavlu@suse.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <0e82be0f-a305-4aba-b9ab-79596f595277@suse.com>
- <CAHk-=wjNj0vHh9v6-LTrbgtq=o6OS+RN3u3m03nV3n9V+urGtg@mail.gmail.com>
-From: Dmitry Antipov <dmantipov@yandex.ru>
-Autocrypt: addr=dmantipov@yandex.ru; keydata=
- xsDNBGBYjL8BDAC1iFIjCNMSvYkyi04ln+5sTl5TCU9O5Ot/kaKKCstLq3TZ1zwsyeqF7S/q
- vBVSmkWHQaj80BlT/1m7BnFECMNV0M72+cTGfrX8edesMSzv/id+M+oe0adUeA07bBc2Rq2V
- YD88b1WgIkACQZVFCo+y7zXY64cZnf+NnI3jCPRfCKOFVwtj4OfkGZfcDAVAtxZCaksBpTHA
- tf24ay2PmV6q/QN+3IS9ZbHBs6maC1BQe6clFmpGMTvINJ032oN0Lm5ZkpNN+Xcp9393W34y
- v3aYT/OuT9eCbOxmjgMcXuERCMok72uqdhM8zkZlV85LRdW/Vy99u9gnu8Bm9UZrKTL94erm
- 0A9LSI/6BLa1Qzvgwkyd2h1r6f2MVmy71/csplvaDTAqlF/4iA4TS0icC0iXDyD+Oh3EfvgP
- iEc0OAnNps/SrDWUdZbJpLtxDrSl/jXEvFW7KkW5nfYoXzjfrdb89/m7o1HozGr1ArnsMhQC
- Uo/HlX4pPHWqEAFKJ5HEa/0AEQEAAc0kRG1pdHJ5IEFudGlwb3YgPGRtYW50aXBvdkB5YW5k
- ZXgucnU+wsEJBBMBCAAzFiEEgi6CDXNWvLfa6d7RtgcLSrzur7cFAmYEXUsCGwMFCwkIBwIG
- FQgJCgsCBRYCAwEAAAoJELYHC0q87q+3ghQL/10U/CvLStTGIgjRmux9wiSmGtBa/dUHqsp1
- W+HhGrxkGvLheJ7KHiva3qBT++ROHZxpIlwIU4g1s6y3bqXqLFMMmfH1A+Ldqg1qCBj4zYPG
- lzgMp2Fjc+hD1oC7k7xqxemrMPstYQKPmA9VZo4w3+97vvnwDNO7iX3r0QFRc9u19MW36wq8
- 6Yq/EPTWneEDaWFIVPDvrtIOwsLJ4Bu8v2l+ejPNsEslBQv8YFKnWZHaH3o+9ccAcgpkWFJg
- Ztj7u1NmXQF2HdTVvYd2SdzuJTh3Zwm/n6Sw1czxGepbuUbHdXTkMCpJzhYy18M9vvDtcx67
- 10qEpJbe228ltWvaLYfHfiJQ5FlwqNU7uWYTKfaE+6Qs0fmHbX2Wlm6/Mp3YYL711v28b+lp
- 9FzPDFqVPfVm78KyjW6PcdFsKu40GNFo8gFW9e8D9vwZPJsUniQhnsGF+zBKPeHi/Sb0DtBt
- enocJIyYt/eAY2hGOOvRLDZbGxtOKbARRwY4id6MO4EuSs7AzQRgWIzAAQwAyZj14kk+OmXz
- TpV9tkUqDGDseykicFMrEE9JTdSO7fiEE4Al86IPhITKRCrjsBdQ5QnmYXcnr3/9i2RFI0Q7
- Evp0gD242jAJYgnCMXQXvWdfC55HyppWazwybDiyufW/CV3gmiiiJtUj3d8r8q6laXMOGky3
- 7sRlv1UvjGyjwOxY6hBpB2oXdbpssqFOAgEw66zL54pazMOQ6g1fWmvQhUh0TpKjJZRGF/si
- b/ifBFHA/RQfAlP/jCsgnX57EOP3ALNwQqdsd5Nm1vxPqDOtKgo7e0qx3sNyk05FFR+f9px6
- eDbjE3dYfsicZd+aUOpa35EuOPXS0MC4b8SnTB6OW+pmEu/wNzWJ0vvvxX8afgPglUQELheY
- +/bH25DnwBnWdlp45DZlz/LdancQdiRuCU77hC4fnntk2aClJh7L9Mh4J3QpBp3dh+vHyESF
- dWo5idUSNmWoPwLSYQ/evKynzeODU/afzOrDnUBEyyyPTknDxvBQZLv0q3vT0UiqcaL7ABEB
- AAHCwPYEGAEIACAWIQSCLoINc1a8t9rp3tG2BwtKvO6vtwUCZgRdSwIbDAAKCRC2BwtKvO6v
- t9sFC/9Ga7SI4CaIqfkye1EF7q3pe+DOr4NsdsDxnPiQuG39XmpmJdgNI139TqroU5VD7dyy
- 24YjLTH6uo0+dcj0oeAk5HEY7LvzQ8re6q/omOi3V0NVhezdgJdiTgL0ednRxRRwNDpXc2Zg
- kg76mm52BoJXC7Kd/l5QrdV8Gq5WJbLA9Kf0pTr1QEf44bVR0bajW+0Lgyb7w4zmaIagrIdZ
- fwuYZWso3Ah/yl6v1//KP2ppnG0d9FGgO9iz576KQZjsMmQOM7KYAbkVPkZ3lyRJnukrW6jC
- bdrQgBsPubep/g9Ulhkn45krX5vMbP3wp1mJSuNrACQFbpJW3t0Da4DfAFyTttltVntr/ljX
- 5TXWnMCmaYHDS/lP20obHMHW1MCItEYSIn0c5DaAIfD+IWAg8gn7n5NwrMj0iBrIVHBa5mRp
- KkzhwiUObL7NO2cnjzTQgAVUGt0MSN2YfJwmSWjKH6uppQ7bo4Z+ZEOToeBsl6waJnjCL38v
- A/UwwXBRuvydGV0=
-Subject: Re: [GIT PULL] Modules fixes for v6.15-rc6
-In-Reply-To: <CAHk-=wjNj0vHh9v6-LTrbgtq=o6OS+RN3u3m03nV3n9V+urGtg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747073696; l=2735; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=2bRnPOgixSh1KN5TilifSXLoxOTTFgZvz6H1AGyqCe4=; b=gJKXhk5l8wg7PTWXYLYWRfjMZnNjPB8gWqHCIsAtnbSFXNMPDLiWnB7uowT38KyfINX9TmzEO 8GXCIPXwtSbBp79ffWNmIrzbr2p8zraECBzL2A5mZjKofq7Ogp1mQ38
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On 5/9/25 7:19 PM, Linus Torvalds wrote:
+Building vdso32 on power10 with pcrel leads to following errors:
 
-> At a minimum, the *description* of this bug is garbage.
-> 
-> It talks about an "uninitialized completion pointer", but then the fix
-> actually depends on it being initialized - just initialized to NULL.
-> 
-> I do believe that it always is initialized, and I have pulled this.
-> but I really think the explanations here are actively misleading.
-> 
-> Because there's a big difference between "uninitialized" and "not
-> pointing to a completion".
+	  VDSO32A arch/powerpc/kernel/vdso/gettimeofday-32.o
+	arch/powerpc/kernel/vdso/gettimeofday.S: Assembler messages:
+	arch/powerpc/kernel/vdso/gettimeofday.S:40: Error: syntax error; found `@', expected `,'
+	arch/powerpc/kernel/vdso/gettimeofday.S:71:  Info: macro invoked from here
+	arch/powerpc/kernel/vdso/gettimeofday.S:40: Error: junk at end of line: `@notoc'
+	arch/powerpc/kernel/vdso/gettimeofday.S:71:  Info: macro invoked from here
+	 ...
+	make[2]: *** [arch/powerpc/kernel/vdso/Makefile:85: arch/powerpc/kernel/vdso/gettimeofday-32.o] Error 1
+	make[1]: *** [arch/powerpc/Makefile:388: vdso_prepare] Error 2
 
-Technically speaking you're right, and I will take notice on that for
-further commits. OTOH replying with "please adjust commit message and
-send v2" could be the way faster.
+Once the above is fixed, the following happens:
 
-Dmitry
+	  VDSO32C arch/powerpc/kernel/vdso/vgettimeofday-32.o
+	cc1: error: '-mpcrel' requires '-mcmodel=medium'
+	make[2]: *** [arch/powerpc/kernel/vdso/Makefile:89: arch/powerpc/kernel/vdso/vgettimeofday-32.o] Error 1
+	make[1]: *** [arch/powerpc/Makefile:388: vdso_prepare] Error 2
+	make: *** [Makefile:251: __sub-make] Error 2
+
+Make sure pcrel version of CFUNC() macro is used only for powerpc64
+builds and remove -mpcrel for powerpc32 builds.
+
+Fixes: 7e3a68be42e1 ("powerpc/64: vmlinux support building with PCREL addresing")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/include/asm/ppc_asm.h | 2 +-
+ arch/powerpc/kernel/vdso/Makefile  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
+index 02897f4b0dbf..b891910fce8a 100644
+--- a/arch/powerpc/include/asm/ppc_asm.h
++++ b/arch/powerpc/include/asm/ppc_asm.h
+@@ -183,7 +183,7 @@
+ /*
+  * Used to name C functions called from asm
+  */
+-#ifdef CONFIG_PPC_KERNEL_PCREL
++#if defined(__powerpc64__) && defined(CONFIG_PPC_KERNEL_PCREL)
+ #define CFUNC(name) name@notoc
+ #else
+ #define CFUNC(name) name
+diff --git a/arch/powerpc/kernel/vdso/Makefile b/arch/powerpc/kernel/vdso/Makefile
+index e8824f933326..8834dfe9d727 100644
+--- a/arch/powerpc/kernel/vdso/Makefile
++++ b/arch/powerpc/kernel/vdso/Makefile
+@@ -53,7 +53,7 @@ ldflags-$(CONFIG_LD_ORPHAN_WARN) += -Wl,--orphan-handling=$(CONFIG_LD_ORPHAN_WAR
+ ldflags-y += $(filter-out $(CC_AUTO_VAR_INIT_ZERO_ENABLER) $(CC_FLAGS_FTRACE) -Wa$(comma)%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+ 
+ CC32FLAGS := -m32
+-CC32FLAGSREMOVE := -mcmodel=medium -mabi=elfv1 -mabi=elfv2 -mcall-aixdesc
++CC32FLAGSREMOVE := -mcmodel=medium -mabi=elfv1 -mabi=elfv2 -mcall-aixdesc -mpcrel
+ ifdef CONFIG_CC_IS_CLANG
+ # This flag is supported by clang for 64-bit but not 32-bit so it will cause
+ # an unused command line flag warning for this file.
+-- 
+2.47.0
 
 
