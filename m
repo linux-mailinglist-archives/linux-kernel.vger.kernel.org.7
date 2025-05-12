@@ -1,259 +1,146 @@
-Return-Path: <linux-kernel+bounces-644022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F62AB35AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58D8AB359F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B8D1887603
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6111897902
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D61928850E;
-	Mon, 12 May 2025 11:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE8F26FDAC;
+	Mon, 12 May 2025 11:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UAN1IaYR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dxxXulPc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AFA2882D1;
-	Mon, 12 May 2025 11:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6381D17555
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747048309; cv=none; b=WUo+nem1J8rOBdI87ipdaW+ivCLZb4CuEwRfBAYUsxaBHMXrtxalfO1YDOQm/LnP7Tvz1T7MO8+/fvci94i4QV3XADK7+FJ8Zcwoan4j4fT9okRdozeuMAkddqAU/AifbTlgmplvXLH8RGmtv4uP9IlW1+AVGNeRJm3A4vKD3IA=
+	t=1747048245; cv=none; b=kMhxl1UU6MlttsmocyEbrs+UBSHdRMDQjyPVnalY62lxIfLkKDMt9LXD7j74d6zT+GQlnm31YT14Pjyk1nuaHz1yxSLLjuSmghH+Xft1abmZyi19eUf54sY76sZZ2YODXdQqE2Gsad5rETp+CpayFh1PCsqCdxTu6SJN9uDt984=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747048309; c=relaxed/simple;
-	bh=hiSScpjEHjYXsHewL93gr04mirii3oB/kuXOXOyEQ7w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=MXhXytgbQA8iNfw5tL+ZXDbf4IXcVbWSUYqLvq3vzFFajPzjA15kIKCjLWO3dimHpwkRScMWPJDh7OeyVfIlq92646dUSyXRd3Ul/kCak+LHQfS302jdt7eLGOg3k7gkL+9kRLU33872/ZZ6EeuOCGC2nhd1nfbTa7eUj+XyGx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UAN1IaYR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54CAKZJI015473;
-	Mon, 12 May 2025 11:11:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Bn7IN4QntrmEpPgFtV7vdjI6LpAFx6kSGQ/zOJ8UKgQ=; b=UAN1IaYRGNpavVTT
-	Adv/CGwSCrPSPJK+BL+DXL3pbyNhH5wXKVxZ2JrmqTbyKqAMBZ3LFgN2ifddeXfm
-	GULAdAT1tX9PwRGa+XFIitXYt6n+tpwJBmPvbZfBi+bbuOB1yJB4hBhM9BErWz+Z
-	Mm1Ygngpwn0nZj/63fOQDpftquGhFlPy8n2h7mWE5x/fXTCHL8kQFWpIan/aLhnB
-	hBER1hch5gPliCteLHbx8zbhvJw0K3qAja81BsEmDvgB0rI34bi1SNjp3IV+AIag
-	OdixG1YobHmkJkEZlIbIXOJecP7v1tsTZy6VbXOGZ/7Ftlp4pcwlJG5MnK+SeVCE
-	Y5OXOQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hyjjm1yc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:11:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54CBBOvv025047
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:11:24 GMT
-Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 12 May 2025 04:11:21 -0700
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Date: Mon, 12 May 2025 19:10:37 +0800
-Subject: [PATCH v5 1/2] dt-bindings: arm: Add device Trace Network On Chip
- definition
+	s=arc-20240116; t=1747048245; c=relaxed/simple;
+	bh=3R86o/WscK7lM10ya42CG/B/k+oINWTHPif2orUE+Ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpaanotR00ontvqDulGzlAXUob0MqmjFRHgrv7QkbSYt8sNUmHrV2QpbMNBEgdJ39oGpBw3Q0OsaFmPUKqzvotJ9tRCl+1abQydlH4nNBnEQI+HUr0u2mhHbq9igYlfHEdpSrgv2UCqt3lfmMG4fEu7XXfhronArQ9NdOuuHOXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dxxXulPc; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747048243; x=1778584243;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3R86o/WscK7lM10ya42CG/B/k+oINWTHPif2orUE+Ls=;
+  b=dxxXulPcjRyfWQF41vC7UB4rqGXWrbbM860MdsVvoT+n/PLSHHh4TS80
+   5S55xHmnUV0TvAWqZ/5sjdfGT18JcoWleJb4bpUnE4fMmI+TiVkhzSaaY
+   OO61xQ5gUNkuetyeusejPC8fR3/V5KwEwDgKtfR3Nm93dbhWj9hgJA/GY
+   izf0AbX7ecdSvVzQJW4DDE2eI7SuLk9aCKf4P2Q2MJlgXFOoluxt2LsQq
+   LS19mZsltmjLlxAIas68HZb5HZSyRj0h38FEl+7xr2QcBO+36PvmIWRJB
+   vpOS/MxIvQUqfWb/0SNO9kmooSy1ANIhqOTZdOYICoN9uAnO8xbPVG3o/
+   g==;
+X-CSE-ConnectionGUID: euRq3RC0QEOfOjPaaj7L/Q==
+X-CSE-MsgGUID: WhY0VGRYTn21GBHFG16G0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="51490679"
+X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
+   d="scan'208";a="51490679"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 04:10:42 -0700
+X-CSE-ConnectionGUID: 1UCgEBFkSHGY0UulsJovMg==
+X-CSE-MsgGUID: K/xs96yhS+SPaLa7FRIoHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; 
+   d="scan'208";a="142546267"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 04:10:40 -0700
+Date: Mon, 12 May 2025 14:10:37 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Lee Jones <lee@kernel.org>, david.m.ertman@intel.com,
+	ira.weiny@intel.com, andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] mfd: core: Support auxiliary device
+Message-ID: <aCHXLarju7hOXL40@black.fi.intel.com>
+References: <20250428060207.3170325-1-raag.jadav@intel.com>
+ <20250501125028.GM1567507@google.com>
+ <aBVArb-zJ_aqicHW@black.fi.intel.com>
+ <aCHL8WWV-Wt7OrII@black.fi.intel.com>
+ <2025051221-gulf-schematic-26e1@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250512-trace-noc-v5-1-f2ef070baee5@quicinc.com>
-References: <20250512-trace-noc-v5-0-f2ef070baee5@quicinc.com>
-In-Reply-To: <20250512-trace-noc-v5-0-f2ef070baee5@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>
-CC: <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747048277; l=3625;
- i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
- bh=hiSScpjEHjYXsHewL93gr04mirii3oB/kuXOXOyEQ7w=;
- b=jGDIQuTW5smbeVFNFXci4BSNteEp1Pb/Y236vhqJWGMRGM2RrbryiWNX8lvQpDvJ/Y5QW5rFn
- wGh51PBQdUrDwhN2BRP8LEq2uED3ORgJIEYedBqeIn/EpGZJh3kri4Q
-X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
- pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDExNyBTYWx0ZWRfXyko/d2gWLsIM
- Pm0lv800vndLx9U/P3RA6siI7sHyw5ISzNVICKfbMEULRAtk/230WfOAxmA2F6F2bPVUiuOzC11
- ZKld1WjFOI297oXInEkqxo6j8B6B0E3iAH1urx2+zjcFMGRfR7ckI5DKhHUvfL/odosI1GDueqE
- veMhi4TO5p75MuqIB9sYpuLakLBoI/w1XJ669Wh5oJjAzd0h5tw9DPraSfc5w4BX9arC22xI0g7
- Vw1UvE4oY9RXmlqc9e9zyvvTXXc71SfXjujr+IC6TzwWcACEfdgmB5kEXxl5QlSRGVu4kB4RDJa
- drB5TDHDcY4sEOY/PSBvivLYIb220+PM5qIoQPeWJZB0YHrh5Y/qPTUO792UeJzjvks+BSHunvt
- q6HboO5HzLXw9gkKmD/MMKYxqUc5iEPOYR/Vgd4BnDB/GcoiIwCCsalckAWyzlq/EcU1sH24
-X-Proofpoint-GUID: 50ZfsTofrsx1nochlwOe4_uyEq4yBizd
-X-Authority-Analysis: v=2.4 cv=QuVe3Uyd c=1 sm=1 tr=0 ts=6821d75d cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=gEfo2CItAAAA:8
- a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=APcPAnuBUoPLjZ3N-PUA:9 a=QEXdDO2ut3YA:10
- a=sptkURWiP4Gy88Gu7hUp:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 50ZfsTofrsx1nochlwOe4_uyEq4yBizd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1011 spamscore=0 phishscore=0
- mlxlogscore=999 impostorscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505120117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025051221-gulf-schematic-26e1@gregkh>
 
-Add a new coresight-tnoc.yaml file to describe the bindings required to
-define Trace Network On Chip (TNOC) in device trees. TNOC is an
-integration hierarchy which is a hardware component that integrates the
-functionalities of TPDA and funnels. It collects trace form subsystems
-and transfers to coresight sink.
+On Mon, May 12, 2025 at 12:36:24PM +0200, Greg KH wrote:
+> On Mon, May 12, 2025 at 01:22:41PM +0300, Raag Jadav wrote:
+> > On Sat, May 03, 2025 at 01:01:23AM +0300, Raag Jadav wrote:
+> > > On Thu, May 01, 2025 at 01:50:28PM +0100, Lee Jones wrote:
+> > > > On Mon, 28 Apr 2025, Raag Jadav wrote:
+> > > > 
+> > > > > Extend MFD subsystem to support auxiliary child device. This is useful
+> > > > > for MFD usecases where parent device is on a discoverable bus and doesn't
+> > > > > fit into the platform device criteria. Purpose of this implementation is
+> > > > > to provide discoverable MFDs just enough infrastructure to register
+> > > > > independent child devices without abusing the platform device.
+> > > > > 
+> > > > > Current support is limited to just PCI type MFDs, but this can be further
+> > > > > extended to support other types like USB in the future.
+> > > > > 
+> > > > > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> > > > > ---
+> > > > > 
+> > > > > v2: Introduce a shared struct mfd_aux_device
+> > > > >     Introduce auxiliary device opt-in flag
+> > > > > 
+> > > > > v3: Fix device_type ABI breakage (Andy)
+> > > > >     Aesthetic adjustments (Andy)
+> > > > > 
+> > > > > v4: s/mfd_aux/maux
+> > > > >     Allow num_resources for child device (Andy)
+> > > > >     Fix build warning (Andy)
+> > > > > 
+> > > > >  drivers/mfd/Kconfig      |   2 +-
+> > > > >  drivers/mfd/Makefile     |   2 +-
+> > > > >  drivers/mfd/mfd-aux.c    | 156 +++++++++++++++++++++++++++++++
+> > > > 
+> > > > This looks like mostly duplicated platform device code.
+> > > > 
+> > > > If you are _certain_ that it needs to exist, you need to push it out to
+> > > > the auxiliary subsystem and remove any traces of it being MFD related.
+> > > > 
+> > > > If it's needed by MFD, it'll be needed by other auxiliary users.  Even
+> > > > if not now, sometime in the future.
+> > > 
+> > > Greg, if you are okay with this, please let me know. Or perhaps suggest
+> > > a better alternative.
+> > 
+> > Greg, any guidance on this?
+> 
+> I don't know what to say, I don't see the code here that is being
+> quoted, sorry.  If this should be in the aux code, add it and submit a
+> patch that uses it so we can see what you are referring to.
+> 
+> confused,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
----
- .../bindings/arm/qcom,coresight-tnoc.yaml          | 111 +++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+Apologies for snipping the context in attempt to reduce noise.
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..d07c6f2d7b949f69f9d8dd8de8664382eb39fac1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-@@ -0,0 +1,111 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/qcom,coresight-tnoc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Trace Network On Chip - TNOC
-+
-+maintainers:
-+  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
-+
-+description: >
-+  The Trace Network On Chip (TNOC) is an integration hierarchy hardware
-+  component that integrates the functionalities of TPDA and funnels.
-+
-+  It sits in the different subsystem of SOC and aggregates the trace and
-+  transports it to Aggregation TNOC or to coresight trace sink eventually.
-+  TNOC embeds bridges for all the interfaces APB, ATB, TPDA and NTS (Narrow
-+  Time Stamp).
-+
-+  TNOC can take inputs from different trace sources i.e. ATB, TPDM.
-+
-+# Need a custom select here or 'arm,primecell' will match on lots of nodes
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - qcom,coresight-tnoc
-+  required:
-+    - compatible
-+
-+properties:
-+  $nodename:
-+    pattern: "^tn(@[0-9a-f]+)$"
-+
-+  compatible:
-+    items:
-+      - const: qcom,coresight-tnoc
-+      - const: arm,primecell
-+
-+  reg:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: apb_pclk
-+
-+  clocks:
-+    items:
-+      - description: APB register access clock
-+
-+  in-ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    patternProperties:
-+      '^port(@[0-9a-f]{1,2})?$':
-+        description: Input connections from CoreSight Trace Bus
-+        $ref: /schemas/graph.yaml#/properties/port
-+
-+  out-ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+    additionalProperties: false
-+
-+    properties:
-+      port:
-+        description:
-+          Output connection to CoreSight Trace Bus
-+        $ref: /schemas/graph.yaml#/properties/port
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - in-ports
-+  - out-ports
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    tn@109ab000  {
-+      compatible = "qcom,coresight-tnoc", "arm,primecell";
-+      reg = <0x109ab000 0x4200>;
-+
-+      clocks = <&aoss_qmp>;
-+      clock-names = "apb_pclk";
-+
-+      in-ports {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        port@0 {
-+          reg = <0>;
-+
-+          tn_ag_in_tpdm_gcc: endpoint {
-+            remote-endpoint = <&tpdm_gcc_out_tn_ag>;
-+          };
-+        };
-+      };
-+
-+      out-ports {
-+        port {
-+          tn_ag_out_funnel_in1: endpoint {
-+            remote-endpoint = <&funnel_in1_in_tn_ag>;
-+          };
-+        };
-+      };
-+    };
-+...
+Original patch[1] with Lee's recommendation to move all the resource()
+helpers from MFD to auxiliary subsystem, or perhaps an alternative way
+to manage resources for the usecase.
 
--- 
-2.34.1
+[1] https://lore.kernel.org/r/20250428060207.3170325-1-raag.jadav@intel.com
 
+I can still send out a v5 if it doesn't help. Let me know.
+
+Raag
 
