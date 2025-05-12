@@ -1,383 +1,182 @@
-Return-Path: <linux-kernel+bounces-644436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0928AB3C3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B66DAB3C40
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646F1462059
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAAB9170B54
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9675E23C504;
-	Mon, 12 May 2025 15:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CD023C4EA;
+	Mon, 12 May 2025 15:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="bqXCYsgA"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vggVx81B"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2046.outbound.protection.outlook.com [40.107.102.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E8B23C4F8
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 15:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747064095; cv=none; b=jdK1sXlnU55qJtiOjgzJT4rcnlEwZ5mscTvi1LMUADwQMUEkj1iE/k6qLpaLqSVDZrFSblCu8ei0s7yflOypJYA1uQzkZc3X9xDALBurt+6fd2iEB4+Ma7BwWAJ/V69SZz0es+9dI78tvnIxMlyIGFzHm40kZhaDi55N1sI++68=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747064095; c=relaxed/simple;
-	bh=pv78F9stsJ8G3bZB63UkFBcvn8rAZ1R9f12eL6IUMao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmIQZG9a067XYnb2aoksfxw1LqowSraUDxDEW+IyslpgeUYChTqxbseq17VMiLHmyAqixyKrgTx/lBh6enaStXJ3QLdnGYlOpRO8KP2KXbESWpLOmlMUTaexAlkR26E43iWzhgOu4ksEzkj27v3rqR4Aa2pX3TEAyTqYbimYmz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=bqXCYsgA; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-86135ad7b4cso245097739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 08:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1747064092; x=1747668892; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lYJaGZXZUyw5dmv6C4SZsZQfI6bTO70Cjj2nmUvqWrc=;
-        b=bqXCYsgAGSH15OPeC9/2Sjd7vlz+0DP06PBgoe6rV8oMSSNBvAxIr4+acYol0IUXZC
-         S6asXE4dKPa6B6wxclr3X8f4L+DTuRFkroIxjR6mQIewQCjsrO6pUVPOBitqPO6haWSp
-         RSXbiQqF5UxCrsGfD7H0v7ozAqZ5XrjOKFeyVmpbip1LeoGAJ5aCOuzbhP0dbjgV8hWT
-         yCOvra/zUGWNOXF3+ACrd1LQSenI76wZm/jTsNK/LrVXtZURdbPYP1D4X3nBh5h0A+Pt
-         pTXlcxtDMHnp/cuCoGXaLwnabqg9+hNaa8fTOLhJYMMDMGLk81OSqa3cUPXuWIjNH1FI
-         9a2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747064092; x=1747668892;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lYJaGZXZUyw5dmv6C4SZsZQfI6bTO70Cjj2nmUvqWrc=;
-        b=uVh+2RCThMMnmyC1qSgQQEh6YGeijfHBcJ4q+5AL2UwSdUO+LyYiAFnIk9eIr6pdmg
-         sFSDWII+ZQ3MD1NSZx5zmhYpYppWsfFtvZlGXb/8FL7JtefS7wUZIiL7DwoYoEiVuiT+
-         pJkl5HGwhqi2nZFmc5vto1+F1BrQgUOA/Ms/OhucypG9uPy4rlyIaskr5vMZVeDdFxYO
-         dHBdfXljhVQJWSW+AR6YQwRXtUUurxAtZ8DOhcs6j6WGCZgcKOTLH9u+qLX7oo/CvdFO
-         zc6ahNl2vzi5dPPJ/EU25Knoxleqng+ThyV5UTpNnHpQeYSZzKiVs3I8BUypog2W66C/
-         zPuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxBUvMLKz2cYAqV/BQFdIqAJiN9wH76tWl5AIZcm2N1z0nkM/elG9+iGK/OvlFWdfdqvYoANxlg7izzEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCW3XlHBWaafHEiUYL1ZFPvLLjUjzAiCajIlvktdQ4Xx6bklVf
-	fdH9rWVJgKMhzJ+fxIPKS0TY9g494XUnJbgGbtR1H2HKXPM5GmrsbPzo1B+kzBw=
-X-Gm-Gg: ASbGnctUzwzn/AXH9JxQB9AJZ+Eh3w/qqlo/VP7HPIN49Ys77q5h3ES7L6pyaMbz6C7
-	IPjH4dv3UVbAcxCSfxHRfquOJJhyn3lkXf+MCnLes9P9GOE12efL3CHBiJxzsMAr5HbxPe5BlY2
-	PBNWlYP6EwhD9zkb12ysOZ/AumDIsSqRI5qFzLjELCqOwub3F8rKlRe05QomwUKkWU10R0aupxx
-	MN7nm18BcHXr2d09+20XJahNjRrEO6siQYzkcaU9mhCKcOIQrUIyqctkhUVAz5kamPdWkVH0kXJ
-	FNn65eVga3p45BWG9xLonoOmcBTviS6e48onG+78a+vvQ/aAinV71/S0BraoVt38l1UiCs6vr8i
-	30GtR0ysVL17Ovxw=
-X-Google-Smtp-Source: AGHT+IH16NsP5SQEwuJ4If2aiYvLrNSPMhqtNtOBoBzqL+qXeoZ6Dn+0ikRgSmuBULdjkG/IsIjvIw==
-X-Received: by 2002:a05:6e02:154e:b0:3d6:d18b:868c with SMTP id e9e14a558f8ab-3da7e1e71a0mr134648155ab.10.1747064092279;
-        Mon, 12 May 2025 08:34:52 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da7e10477csm23785295ab.27.2025.05.12.08.34.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 08:34:51 -0700 (PDT)
-Message-ID: <abfd4c78-2592-4b8a-97be-109a8fd1bed6@riscstar.com>
-Date: Mon, 12 May 2025 10:34:50 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB0723A99F;
+	Mon, 12 May 2025 15:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747064118; cv=fail; b=RoQ9/iH4qfQ7fVxqlul2p0bs5RYH3lagxji2ugIdrybf1qg/Lulwb+gOgBfE7Tut4QEULcSt1bljD23YriAhzBBulUWnuTc7qGo82wrEUU4NTd0J5M9VbGtEy/uvw4Hy1NivdHk1iBzscREMYKctgCqjCjmp5MWmaJYHG0wX3ik=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747064118; c=relaxed/simple;
+	bh=wUARdmRtt8jq/57EgJZH5uTixPmGEtrdquPM3VJ0Ktg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PHK6rgDvpo9e9iCJDZ2bW1fI20s2DfL/o1i35jm9k9Xw+8p/k++uRQjpEsfAjAqXgCpP7ANfAU74A10031KkBg/R0ZMJN+3bCUcIjBNqFQvmaFTFbBcJFBII4j/prEUqSUJ8eZrQe1X7id0R1gPjTw/eDGXt/oluPxS14u/Qrjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vggVx81B; arc=fail smtp.client-ip=40.107.102.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LPQp51NGwGoA0dbXeYvgwZU0+CwnIQseVm3VzwOrfrj+QRJCGyGXfjU42mQvNPtwHL96txmvoIhC5XWnRBs9zE8/ULICJ9I0IYLkEV2235CqIjHSV5h4QK3SR1Uu0Y1NChjQDgm65I0GfwcQP5uHR/wNjeNbrYA2AeqPg6PEzjQy9nNhfivdhxZZXaSRaU8wlOYrsVrI/wh0TZFPFN45eNCDs+TxckOY4LlsV0sQAoSBlFL7c0ZkI6Sx60jsLt6qROMOkjPv3WcGotesUAroKK9vRbGSuKRUwd7WavDvfW+DODdmfc3vQFbsj6kGHhRrWCNiym7VRFXF81X9+sXNwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XNlnUF3NAKxPJY9fEhI8o/lJX/AR/J1uJYILJrUv8bg=;
+ b=a3KNpPnfVf3uJBIWvGZhhrV4vQzZ9joiJ0S3iHhEdg+9eKVlHh648SeBIqQm9dwM6tDMarhPmBMRhn9u1GZinQp7YoicC+x9Ibr42HDzAS4T/jDjXiV4tN9AOE5gaUUsdNQ+rHvYXPAUoYv3Zf5Qy0y7tZzNpS8HCXPHj0zDgKehoTUmsx2SkXJFCNdpeucv1Aih6z1oKRuu+uKv47rovo7Cd8floQfvOMZfnlYRjrTb6va1NceyMe+tneUbpJCLJyGpnzE8tXUeRE+3CUEc0+sn189rkOh+Gcvk/M0KveypAuBD+4r9RaWI8ehwvyGAqhvUeLntBQEZCviKkFmRXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XNlnUF3NAKxPJY9fEhI8o/lJX/AR/J1uJYILJrUv8bg=;
+ b=vggVx81BxDthUFCCbFZ/FdCY2Tkm5xchAUwCkAgdtQyjx5kgcSzxey8zNnko47PtMZiEinnV5BNcgie8Qri/NdKNHgdUF1C+xmxNL5RR9p7D5aovr4ZQ2LM7fdg3op5OvvJgPwMyPjY/jtH9sGyx4T7yiMzHsUUUO+ZVw7Xsi70=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ MN2PR12MB4096.namprd12.prod.outlook.com (2603:10b6:208:1dc::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Mon, 12 May
+ 2025 15:35:13 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%7]) with mapi id 15.20.8722.027; Mon, 12 May 2025
+ 15:35:13 +0000
+Date: Mon, 12 May 2025 11:35:08 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Subject: Re: [PATCH v3 15/17] x86/mce/amd: Support SMCA Corrected Error
+ Interrupt
+Message-ID: <20250512153508.GB2355@yaz-khff2.amd.com>
+References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
+ <20250415-wip-mca-updates-v3-15-8ffd9eb4aa56@amd.com>
+ <20250509193721.GRaB5ZccvAs9ST_3IM@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509193721.GRaB5ZccvAs9ST_3IM@fat_crate.local>
+X-ClientProxiedBy: BN1PR12CA0005.namprd12.prod.outlook.com
+ (2603:10b6:408:e1::10) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/6] clk: spacemit: set up reset auxiliary devices
-To: Yixun Lan <dlan@gentoo.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
- guodong@riscstar.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250509112032.2980811-1-elder@riscstar.com>
- <20250509112032.2980811-4-elder@riscstar.com>
- <20250512135429-GYA517867@gentoo>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250512135429-GYA517867@gentoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MN2PR12MB4096:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6c06c9d-c84d-42a1-5b20-08dd916a964d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/u4GqyeQg1TeprjvTpWeyTrVQx1I3IKoWRTeUmS7B848FlK6vcWtyIzl+NtZ?=
+ =?us-ascii?Q?hRzabiZQVyCC3F4iBxzFL3kbkmiup3GpKE532N1C9e7TkUrFWByr5I7COAdE?=
+ =?us-ascii?Q?76a6AKde/tGMdcHjUDMwqn/8uaMBSZG5EZHnR7xWBuP099DJ94yFevF9aaXG?=
+ =?us-ascii?Q?8gTOIvv5Wo0fpGkAOTO4/myy7nN+w8IVBvLjI0qrqW/67GHFWyx7W3k/PpSO?=
+ =?us-ascii?Q?+zMxdQcovVji8fg8iyUrMy2oBAuDq05bLpQWe4ToU0jGY7+87E6gyhczAC/s?=
+ =?us-ascii?Q?v6COZ8e8JTUvSF3+vFc+6+RyLnxkSyUqRklB+UFlK3OoBHTxsEOcVCRIwXap?=
+ =?us-ascii?Q?J053hcTooZl9qyn5hv7dHvwbKRjm5LmfQVkbOWqiJaEIs2/JRfwc17Xsy1EX?=
+ =?us-ascii?Q?dYu6+ahr0f8xmRdu9ORHerdDUUeqOWZpUBfcFKTDNJuoPYRICt2bbE0sriQa?=
+ =?us-ascii?Q?SH/2A4I7Z4fAsGVdz9IXvVVMAYAGiKF2rmp0i0dwokFjcXAcCeGnoNNHOd84?=
+ =?us-ascii?Q?C0pykNHWbDmHzwhdsmI87f1JbBQxcRusqa3I7ERC8CdbwykgOJEneSTgibcT?=
+ =?us-ascii?Q?ehhf21inbXM2+FIwYMnrZuQMn+eVxo3dwxESHmXgNonvxoOmVlSxzsryKiN3?=
+ =?us-ascii?Q?B1sER2stim6calCl1hLkQOswNd7ISDCkg49k/cWSVdY929efhdGk2iiRB/Ja?=
+ =?us-ascii?Q?Z03gWHzB8jQ2ENWwX8xfZYXCAvjwin73wuzClmTr6UjHJWhWlrgMQiAbCX3p?=
+ =?us-ascii?Q?6J8OY5nuMZPRW9Hm1N99WqmnYEDK/uW4ePg3xG3ADLtf2wnAuLA2mWy9oTis?=
+ =?us-ascii?Q?tCmH8W0AKRAnn0wOLLXelAH9OgiSDsEKTfNk5rHvwYYiXWwtDX9mbbp9rbxN?=
+ =?us-ascii?Q?h9UTp8oas9sGqSmtq2SJwVCrkEahwGtwt2bsWLwCH/aCPsnnnKnf1z10leP1?=
+ =?us-ascii?Q?laNy4t25N/CPrpjG2zOyYJVP1xeEm9EwXCPJaDeKhhBgBtcS6lyGsDlM0ftQ?=
+ =?us-ascii?Q?bDtwaSMN/FgTQWKv21wuDmYhPFGPmfOlQktDp6vJNHE0tn+SDWBj4ogkKUmf?=
+ =?us-ascii?Q?omiNMq9W0lICoycyfSdyyfX9xgzkH0hXvy2J6tfolG6TftXAqxCSIyjdAuS8?=
+ =?us-ascii?Q?BesL95BZRiFcxBQP0No0tCePc/4H+JsfFqb24e25MvVJhwW6wqBTi2SgJ/pm?=
+ =?us-ascii?Q?a9xgSVhKlAlN8pbLg7AP6ytlCQMOH2GyJQNEOCpODTHuB4NNentF6TKFKNtz?=
+ =?us-ascii?Q?fd1wkiKVfv1M6fJC1JsFYcAYh5qCKiuaiV4zFsoy6ntIk0Ic8ksUgrz4+I8s?=
+ =?us-ascii?Q?suLytiiN0SdDXqtyQ7P6oiSo0CnGqaSZuXV8YN/ieBFA7goTmTtwg/t3sSQi?=
+ =?us-ascii?Q?OzMYgMyAUefBCuKurC6BQIpaV41pcBQCTEAL2OOzvFQFcLiEKk9IFFP2UUoP?=
+ =?us-ascii?Q?JZl74WzfDkI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LFXu/6Bnuw0WqgxI2+uUtYROG5angwBuhmY6ALVrU5Ox+iMk7CRLh7+NibFt?=
+ =?us-ascii?Q?VxPGPYZCQ26av95cOdC4RF/9zQUYPOVBFI+Gvqge1JynRSikA8/e0x1I+gbe?=
+ =?us-ascii?Q?cEoXREB4PIvMTDhNrxFdfb5Cz81w1rs6OET6l0pRGJOK6wNPm83AVgamqe+Q?=
+ =?us-ascii?Q?ZMIX2sbnGO8kiBAiIkcLq5Gmm304OqvIZ1Bly306Sse8Xsm6m3pG4YmQq3W9?=
+ =?us-ascii?Q?5tuFEY8Na6LxeBK3JPE7rnuYmzyRkia6bEmsbxK54bV7orXcjsmeINFFx4l9?=
+ =?us-ascii?Q?zQ+ebE3AZBjE9SD8bidq1UhE7hu1RuhJn1CtOqFK/NTyzo7QqgR/Sep5gZjQ?=
+ =?us-ascii?Q?bbCdgejklmnY5AOKPuM4HABaYQd62wJTx00mQzaT7o+TtYokvOI8HIa1hZ4h?=
+ =?us-ascii?Q?PtdBWFlBVgibf/8WVynbl6XTxOkRbCKmX93MxDQPR6HQXX6/8pvJzd2YNfsw?=
+ =?us-ascii?Q?mbu0mBdr+RmyPHv5edSJVVNSqQydGCyGri0jMPS3mfQLFeAXGGAi/d2mfSAp?=
+ =?us-ascii?Q?XYCm+7TgV/QM6YwQ52L4hwwli5CKVfF7+lctqnP05k31ix+gs6RgLFEXOXRa?=
+ =?us-ascii?Q?eXvWdOxTgXq/y+1bNbT5mRL1j6Z/PXLjnhM9EjfPIkwqXwNSl+S+TE3wUzoE?=
+ =?us-ascii?Q?KJOYlNH8oiElfkfhYdIUUDFlr7tMLk+Z2I0tBZQk83oqZlrTzMwFkAU8MOw0?=
+ =?us-ascii?Q?kskpQnLQhtvxWvABbyLc+E/qt4Xw+kBJHCpQ5P4C6IlmJUzY9JRAgNKO9dmd?=
+ =?us-ascii?Q?8h2PB7M/QSgD7QVK0Jd+Q+SSXlhMIoTwMrAIIdnwt/pdDuzzpqFrUoAe6ZvD?=
+ =?us-ascii?Q?qRqx547t+U9rU57sOZn2Ml0HU+bi4lWb6BsfeoODrkaThPe2v4nDSGJSJGaR?=
+ =?us-ascii?Q?s/nOzqaT/B2NgFiPRwbk3CvcvfEEZrUXhikoHAUrF4RuLo6K6jq6f93hGUyy?=
+ =?us-ascii?Q?kB/NC0skY294BMKURva9wkVlz4/ff6zS5/XM22UZeQ9XjiJxgg1VjsgXS0pd?=
+ =?us-ascii?Q?m1UYprjpKsvoOXn8m/O7hiufZd3NjXlAcQT0o3j62nKX9V0spyd4iKTfVsRh?=
+ =?us-ascii?Q?qq1rVZibHkj8g5ReSU6Fgoaau+yNjZ2FP9oW/9L0YCqk9pPl4Iw3rBsIqr5A?=
+ =?us-ascii?Q?F1bP48hecuWgKCz+ZeOv3nJ74+OiK8ghf+5y7DfFlbJaQjvIRDi5GgYtWpls?=
+ =?us-ascii?Q?Hi/jiwORAY7SfU8lBJbYpMYFqIBrPs8Tf6di7VtBeRLAmHgPIc4oEI0ptFIz?=
+ =?us-ascii?Q?5Sf/TPs4ik+3Yt2BtiCVPkFyE+/huhkEIqqBCHWPjlWnkJGLpLRzI0HZkc4j?=
+ =?us-ascii?Q?yOm0ezISQvV25ZFrdOCpBW4fXr4q73zIslVhCWc5MX+lIcfiUgLOBDZMiB+G?=
+ =?us-ascii?Q?6aTQIoeGNLg57aHtqtXOQa0ERWFcZqie+uzeQXPP3xwauyteZAT0PVphhzaH?=
+ =?us-ascii?Q?NiK4J0JSF0Z3MkuRkPbzOk/Kltjm0QeO4P4ivyIgciw8I1pXBNY296PWkxR5?=
+ =?us-ascii?Q?XUBJmMRC0v0Txk5L3GtmhrqK6227x6sVVS8L11OQTNh7TYprwSSy7FNqgj5p?=
+ =?us-ascii?Q?6ayTplTH+4nheM3603k6N52rU1tEyfD8rOhniUv/?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6c06c9d-c84d-42a1-5b20-08dd916a964d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 15:35:13.3453
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y8WW8YW86sd3YjNG8p+Pb1aIrxABa+CHwLWzP6p1YlSlz0TjGSY6eUK3/JfwUf5grcZTUcbjl+1Cy+yoSazDmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4096
 
-On 5/12/25 8:54 AM, Yixun Lan wrote:
-> On 06:20 Fri 09 May     , Alex Elder wrote:
->> Add a new reset_name field to the spacemit_ccu_data structure.  If it is
->> non-null, the CCU implements a reset controller, and the name will be
->> used in the name for the auxiliary device that implements it.
->>
->> Define a new type to hold an auxiliary device as well as the regmap
->> pointer that will be needed by CCU reset controllers.  Set up code to
->> initialize and add an auxiliary device for any CCU that implements reset
->> functionality.
->>
->> Make it optional for a CCU to implement a clock controller.  This
->> doesn't apply to any of the existing CCUs but will for some new ones
->> that will be added soon.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->> v8: Allocate the auxiliary device using kzalloc(), not devm_kzalloc()
->>
->>   drivers/clk/spacemit/Kconfig     |  1 +
->>   drivers/clk/spacemit/ccu-k1.c    | 90 ++++++++++++++++++++++++++++----
->>   include/soc/spacemit/k1-syscon.h | 12 +++++
->>   3 files changed, 93 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
->> index 4c4df845b3cb2..3854f6ae6d0ea 100644
->> --- a/drivers/clk/spacemit/Kconfig
->> +++ b/drivers/clk/spacemit/Kconfig
->> @@ -3,6 +3,7 @@
->>   config SPACEMIT_CCU
->>   	tristate "Clock support for SpacemiT SoCs"
->>   	depends on ARCH_SPACEMIT || COMPILE_TEST
->> +	select AUXILIARY_BUS
->>   	select MFD_SYSCON
->>   	help
->>   	  Say Y to enable clock controller unit support for SpacemiT SoCs.
->> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
->> index 801150f4ff0f5..551df9d076859 100644
->> --- a/drivers/clk/spacemit/ccu-k1.c
->> +++ b/drivers/clk/spacemit/ccu-k1.c
->> @@ -5,12 +5,14 @@
->>    */
->>   
->>   #include <linux/array_size.h>
->> +#include <linux/auxiliary_bus.h>
->>   #include <linux/clk-provider.h>
->>   #include <linux/delay.h>
->>   #include <linux/mfd/syscon.h>
->>   #include <linux/minmax.h>
->>   #include <linux/module.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/slab.h>
->>   #include <soc/spacemit/k1-syscon.h>
->>   
->>   #include "ccu_common.h"
->> @@ -21,6 +23,7 @@
->>   #include <dt-bindings/clock/spacemit,k1-syscon.h>
->>   
->>   struct spacemit_ccu_data {
->> +	const char *reset_name;
-> see my comment below..
+On Fri, May 09, 2025 at 09:37:21PM +0200, Borislav Petkov wrote:
+> On Tue, Apr 15, 2025 at 02:55:10PM +0000, Yazen Ghannam wrote:
+> > @@ -306,6 +306,11 @@ static void smca_configure(unsigned int bank, unsigned int cpu)
+> >  			high |= BIT(5);
+> >  		}
 > 
->>   	struct clk_hw **hws;
->>   	size_t num;
->>   };
->> @@ -710,8 +713,9 @@ static struct clk_hw *k1_ccu_pll_hws[] = {
->>   };
->>   
->>   static const struct spacemit_ccu_data k1_ccu_pll_data = {
->> -	.hws	= k1_ccu_pll_hws,
->> -	.num	= ARRAY_SIZE(k1_ccu_pll_hws),
->> +	/* The PLL CCU implements no resets */
->> +	.hws		= k1_ccu_pll_hws,
->> +	.num		= ARRAY_SIZE(k1_ccu_pll_hws),
->>   };
->>   
->>   static struct clk_hw *k1_ccu_mpmu_hws[] = {
->> @@ -751,8 +755,9 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
->>   };
->>   
->>   static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
->> -	.hws	= k1_ccu_mpmu_hws,
->> -	.num	= ARRAY_SIZE(k1_ccu_mpmu_hws),
->> +	.reset_name	= "mpmu-reset",
->> +	.hws		= k1_ccu_mpmu_hws,
->> +	.num		= ARRAY_SIZE(k1_ccu_mpmu_hws),
->>   };
->>   
->>   static struct clk_hw *k1_ccu_apbc_hws[] = {
->> @@ -859,8 +864,9 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
->>   };
->>   
->>   static const struct spacemit_ccu_data k1_ccu_apbc_data = {
->> -	.hws	= k1_ccu_apbc_hws,
->> -	.num	= ARRAY_SIZE(k1_ccu_apbc_hws),
->> +	.reset_name	= "apbc-reset",
->> +	.hws		= k1_ccu_apbc_hws,
->> +	.num		= ARRAY_SIZE(k1_ccu_apbc_hws),
->>   };
->>   
->>   static struct clk_hw *k1_ccu_apmu_hws[] = {
->> @@ -929,8 +935,9 @@ static struct clk_hw *k1_ccu_apmu_hws[] = {
->>   };
->>   
->>   static const struct spacemit_ccu_data k1_ccu_apmu_data = {
->> -	.hws	= k1_ccu_apmu_hws,
->> -	.num	= ARRAY_SIZE(k1_ccu_apmu_hws),
->> +	.reset_name	= "apmu-reset",
->> +	.hws		= k1_ccu_apmu_hws,
->> +	.num		= ARRAY_SIZE(k1_ccu_apmu_hws),
->>   };
->>   
->>   static int spacemit_ccu_register(struct device *dev,
->> @@ -941,6 +948,10 @@ static int spacemit_ccu_register(struct device *dev,
->>   	struct clk_hw_onecell_data *clk_data;
->>   	int i, ret;
->>   
->> +	/* Nothing to do if the CCU does not implement any clocks */
->> +	if (!data->hws)
->> +		return 0;
->> +
->>   	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->num),
->>   				GFP_KERNEL);
->>   	if (!clk_data)
->> @@ -981,9 +992,63 @@ static int spacemit_ccu_register(struct device *dev,
->>   	return ret;
->>   }
->>   
->> +static void spacemit_cadev_release(struct device *dev)
-> why this function define as _cadev_ prefix, while below as _adev_
-> is it a typo? or c short for ccu, I just feel it isn't consistent..
-
-It is not a typo.  Yes, it was intended to represent CCU
-Auxiliary device, while "adev" represents just Auxiliary
-Device.  It is releasing (freeing) a spacemit_ccu_adev
-structure.
-
->> +{
->> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
->> +
->> +	kfree(to_spacemit_ccu_adev(adev));
->> +}
->> +
-
-This function is operating on an auxiliary_device structure,
-so "adev" is used in its name.
-
->> +static void spacemit_adev_unregister(void *data)
->> +{
->> +	struct auxiliary_device *adev = data;
->> +
->> +	auxiliary_device_delete(adev);
->> +	auxiliary_device_uninit(adev);
->> +}
->> +
->> +static int spacemit_ccu_reset_register(struct device *dev,
->> +				       struct regmap *regmap,
->> +				       const char *reset_name)
->> +{
->> +	struct spacemit_ccu_adev *cadev;
->> +	struct auxiliary_device *adev;
->> +	static u32 next_id;
->> +	int ret;
->> +
->> +	/* Nothing to do if the CCU does not implement a reset controller */
->> +	if (!reset_name)
->> +		return 0;
->> +
->> +	cadev = kzalloc(sizeof(*cadev), GFP_KERNEL);
->> +	if (!cadev)
->> +		return -ENOMEM;
-> add one blank line here?
-
-If I do a new version that's easy but this was intentional.
-
->> +	cadev->regmap = regmap;
->> +
->> +	adev = &cadev->adev;
->> +	adev->name = reset_name;
->> +	adev->dev.parent = dev;
->> +	adev->dev.release = spacemit_cadev_release;
->> +	adev->dev.of_node = dev->of_node;
-> [..]
->> +	adev->id = next_id++;
-> so I'd assume the underlying device doesn't really care the id?
-> but with different order of registration, it will result random id for the device
-
-These things are identified in DTS files by their index values
-defined in "spacemit,k1-syscon.h".  If there is a need for the
-assigned device ID to be consistent, I'm not aware of it.  Can
-you think of one?  I think all that matters is that they're
-unique, and this ensures that (for up to 2^32 PMICs).
-
-> how about define a reset struct, and group reset_name and next_id together,
-> then we can intialize them with fixed value
-> (this will also let us dropping 'static next_id' variable)
-
-I don't see why isolating the visibility of the next_id variable
-inside here is a problem.
-
-> with this change, it's more easy to extend in the future (a weak reason)..
-
-How does this make it easier to extend?  How do you anticipate
-it will need to be extended?
-
-
-If you can explain why it's necessary to use fixed IDs for the
-auxiliary devices I'll gladly post a new version.  But outside
-that I would really prefer to just leave this code as-is.
-
-					-Alex
-
->> +
->> +	ret = auxiliary_device_init(adev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = auxiliary_device_add(adev);
->> +	if (ret) {
->> +		auxiliary_device_uninit(adev);
->> +		return ret;
->> +	}
->> +
->> +	return devm_add_action_or_reset(dev, spacemit_adev_unregister, adev);
->> +}
->> +
->>   static int k1_ccu_probe(struct platform_device *pdev)
->>   {
->>   	struct regmap *base_regmap, *lock_regmap = NULL;
->> +	const struct spacemit_ccu_data *data;
->>   	struct device *dev = &pdev->dev;
->>   	int ret;
->>   
->> @@ -1012,11 +1077,16 @@ static int k1_ccu_probe(struct platform_device *pdev)
->>   					     "failed to get lock regmap\n");
->>   	}
->>   
->> -	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap,
->> -				    of_device_get_match_data(dev));
->> +	data = of_device_get_match_data(dev);
->> +
->> +	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap, data);
->>   	if (ret)
->>   		return dev_err_probe(dev, ret, "failed to register clocks\n");
->>   
->> +	ret = spacemit_ccu_reset_register(dev, base_regmap, data->reset_name);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "failed to register resets\n");
->> +
->>   	return 0;
->>   }
->>   
->> diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
->> index 039a448c51a07..53eff7691f33d 100644
->> --- a/include/soc/spacemit/k1-syscon.h
->> +++ b/include/soc/spacemit/k1-syscon.h
->> @@ -5,6 +5,18 @@
->>   #ifndef __SOC_K1_SYSCON_H__
->>   #define __SOC_K1_SYSCON_H__
->>   
->> +/* Auxiliary device used to represent a CCU reset controller */
->> +struct spacemit_ccu_adev {
->> +	struct auxiliary_device adev;
->> +	struct regmap *regmap;
->> +};
->> +
->> +static inline struct spacemit_ccu_adev *
->> +to_spacemit_ccu_adev(struct auxiliary_device *adev)
->> +{
->> +	return container_of(adev, struct spacemit_ccu_adev, adev);
->> +}
->> +
->>   /* APBS register offset */
->>   #define APBS_PLL1_SWCR1			0x100
->>   #define APBS_PLL1_SWCR2			0x104
->> -- 
->> 2.45.2
->>
->>
+> Yeah, the above statements explain in comments what they do so that we don't
+> have to define the bits but use them straight "naked" with the BIT macro.
+> I think you'd need to put something along the lines of that text...
+> 
+> > Check for the feature bit in the MCA_CONFIG register and confirm that
+> > the MCA thresholding interrupt handler is already enabled. If successful,
+> > set the feature enable bit in the MCA_CONFIG register to indicate to the
+> > Platform that the OS is ready for the interrupt.
+> 
+> ... here.
+> 
+> <---
 > 
 
+Okay, will do.
+
+Thanks,
+Yazen
 
