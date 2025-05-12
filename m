@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-644247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3C6AB3974
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC816AB397F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EF23A5E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:37:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418873A7153
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB75B293B60;
-	Mon, 12 May 2025 13:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D2D2957AC;
+	Mon, 12 May 2025 13:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FoWcyPpH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FzO9mzHc"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9822F257AEC
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1032951AE
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747057090; cv=none; b=uPK05VN8PnWBTwJdzpybGtxxbGf6AzJCOJa1hyMblrvY9h9ynpo9T0rSYz9P9rRH0mzNK9deAh/wS1OcXrjkjFuNrHEomQ2rGIVzMjw86c1shOhcs4SjV1nBbR867oGU2tgxNFAPyb2fs3QdqwTRRlbs3jFnfPlAue3nwJog638=
+	t=1747057276; cv=none; b=qy0/SPyL+PMksGGtlelTZiXxKybyWuzNkoRNoY+ZMA0WN0NK4vhoien/+yp+gC8+S8HsOjwqX/JW5UPZDzbK3vdhoiIR4x5ysnl2QlHeiaYR1DJydsrKLMmRuJVMrDMTIZOXc/1UK3ojUnbktFaVnkmyTSMF7N/OYg+Am/eQMYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747057090; c=relaxed/simple;
-	bh=BjHjOPeyL4nVfAzamk7y35XVKWRnvl/ucSKe+ZQSA5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1esn+6qT2gXRj4RotvzYzMREef25Q1Th1ASiXf/l/XdJjspf3CZ+a/KsdqSsrPI9rvTwlCrxlw+tClhVJYEwDPWG5Q26FM4qUDOEbtUEL+54tkXaF1VFB7LQcBMhwKJFCZWHhGT59QetvNMJxG3Pkaqb8OmVIowqX+GmCpDLw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FoWcyPpH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747057087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N+d4pcIzBQG+0dzsibKX47VMF4utPM2RH2ZFFbMKIl0=;
-	b=FoWcyPpH9z7Pbxbr6wY4pqNG6vhISl1FmVAmK/4FN8bByUK1pVLA1Ortl2UWAnFm26m28e
-	+Brh8Ep7Lp4Qma0AIbozcOMnYxeM7HQ7db+7Yy96ObyKMgqCC777xZSU1H6UTnhfEgdHi8
-	VsXuCQPQDHtwk8jIYLcSV2pn3Flle9U=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-bYSc778lMimWzCbSrEbjVQ-1; Mon,
- 12 May 2025 09:38:02 -0400
-X-MC-Unique: bYSc778lMimWzCbSrEbjVQ-1
-X-Mimecast-MFC-AGG-ID: bYSc778lMimWzCbSrEbjVQ_1747057080
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BCA21956094;
-	Mon, 12 May 2025 13:37:59 +0000 (UTC)
-Received: from fedora (unknown [10.45.226.238])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 290DB180148F;
-	Mon, 12 May 2025 13:37:52 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 12 May 2025 15:37:58 +0200 (CEST)
-Date: Mon, 12 May 2025 15:37:51 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 03/22] uprobes: Move ref_ctr_offset update out
- of uprobe_write_opcode
-Message-ID: <aCH5r9yuyKT1yKMS@redhat.com>
-References: <20250421214423.393661-1-jolsa@kernel.org>
- <20250421214423.393661-4-jolsa@kernel.org>
- <20250427141335.GA9350@redhat.com>
- <aA9dzY-2V3dCpMDq@krava>
- <aBoKnP4L-k8CweMy@krava>
- <aBoWEydkftHO_q1N@redhat.com>
- <aB02m4ZdPGJOWatx@krava>
+	s=arc-20240116; t=1747057276; c=relaxed/simple;
+	bh=Fj1YnEmAnUyJ38wHvYld2l/KQQX9tZNAVl2z+GqAxso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Djj6rabhHVGeRIAgn32E2G7em4zuRlviVe9y4KaHQ+DSIYCRV311/mAwaqQWCUfnlmP6LER5hXZVVJc921k4N8gLOUW38YffnoZ1nGDHRUWwfmLOA8k1hdGgvr7CTim3G1OH8Nf6Dq0sVrGF6PyqwbV4BrJVcEjGb4229kMRVWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=FzO9mzHc; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kj0xD8FPYRcjZw2mQNJ4IqSPTRwkMeeQixKqAC0S9kk=; b=FzO9mzHc2pYWwR3HJIdsbAr7wo
+	cJsZXLJWlMd82Z4n7H+UBE733uHKnv9t/O9hdsqGoY/8jgwvyWata8IchIoiMIklT1Bpb4WbSMSQK
+	TpfYKZ2JUnm2aImBdwzkiLVAQ2hc7NHz0jbXXmBozwe4aiQxEogkjd0NCQaGNi0CGeQVPckBP8WJr
+	jfDtuQ91m6EbErL83pk6E833LWDzkJ3qkPvbHA+Au18zvMVnr85MbyK+Xed8jVtDyQ1Wm3VX8mwio
+	pPhlMcMdw9NDZk0757/B7llu8F1lYaCWnsVc+H3U5EHJ5lhcoJkpPaiI49vRnEM4Y6m7KjMwXc14b
+	M0iMsWIA==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uETJb-0076X9-K9; Mon, 12 May 2025 15:40:52 +0200
+Message-ID: <bd1bfb32-1da3-4680-94f8-44e8008a80f9@igalia.com>
+Date: Mon, 12 May 2025 10:40:46 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aB02m4ZdPGJOWatx@krava>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] drm: Create an app info option for wedge events
+To: Krzysztof Karas <krzysztof.karas@intel.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
+ Raag Jadav <raag.jadav@intel.com>, rodrigo.vivi@intel.com,
+ jani.nikula@linux.intel.com, Xaver Hugl <xaver.hugl@gmail.com>,
+ "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+References: <20250511224745.834446-1-andrealmeid@igalia.com>
+ <20250511224745.834446-2-andrealmeid@igalia.com>
+ <x3ep3offdy5on6hckumvpsvnlfnmjdfqjlcyv7hojitzsn5u3k@opnou6grp7ad>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <x3ep3offdy5on6hckumvpsvnlfnmjdfqjlcyv7hojitzsn5u3k@opnou6grp7ad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-I am still traveling, will actually read your email when I get back...
+Hi Krzysztof,
 
-On 05/09, Jiri Olsa wrote:
->
-> On Tue, May 06, 2025 at 04:01:45PM +0200, Oleg Nesterov wrote:
-> >
-> > - uprobe_unregister() is called again and this time it succeeds. In this case
-> >   ref_ctr is changed from 0 to -1. IIRC, we even have some warning for this
-> >   case.
->
-> AFAICS that should not happen, there's check below in __update_ref_ctr:
->
->         if (unlikely(*ptr + d < 0)) {
->                 pr_warn("ref_ctr going negative. vaddr: 0x%lx, "
->                         "curr val: %d, delta: %d\n", vaddr, *ptr, d);
->                 ret = -EINVAL;
->                 goto out;
->         }
+Thanks for the feedback.
 
-OK,
+Em 12/05/2025 03:08, Krzysztof Karas escreveu:
+> Hi André,
+> 
+> [...]
+> 
+>> @@ -582,6 +584,14 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
+>>   	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
+>>   		 "but recovered through reset" : "needs recovery");
+>>   
+>> +	if (info) {
+>> +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
+>> +		snprintf(comm_string, sizeof(comm_string), "APP=%s", info->comm);
+>> +	} else {
+>> +		snprintf(pid_string, sizeof(pid_string), "%s", "PID=-1");
+>> +		snprintf(comm_string, sizeof(comm_string), "%s", "APP=none");
+> 
+> I think using PID=-1 and APP=none might be misleading, because
+> something did cause the wedge if we landed here. You could use
+> "PID=unknown" and "APP=unknown" or ensure these arrays are
+> zeroed and fill them only if "info" is available:
+> 
+> -     char *envp[] = { event_string, NULL };
+> +     char pid_string[15] = {}, comm_string[TASK_COMM_LEN] = {};
+> +     char *envp[] = { event_string, pid_string, comm_string, NULL };
+> 
+> [...]
+> 
+> +     if (info) {
+> +             snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
+> +             snprintf(comm_string, sizeof(comm_string), "APP=%s", info->comm);
+> +     }
+> 
+> Then, when printing the logs later you could check if they have
+> a value and only use them if they do (or handle that however
+> you would see fit :) ).
+> 
 
-> few things first..
->
->  - how do you make uprobe_unregister fail after succesful uprobe_register?
->    I had to instrument the code to do that for me
+That works for me, I will address this in my v3.
+Thanks!
 
-I guess _unregister() should not fail "in practice" after
-get_user_page + verify_opcode, yet I think we should not rely on this, if possible.
-
-But I won't argue if you think we can ignore this "impossible" failures, just
-this should be documented. Same for update_ref_ctr(), iirc it should "never"
-fail if ref_offset is correct.
-
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -589,8 +589,8 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
->
->  out:
->  	/* Revert back reference counter if instruction update failed. */
-> -	if (ret < 0 && is_register && ref_ctr_updated)
-> -		update_ref_ctr(uprobe, mm, -1);
-> +	if (ret < 0 && ref_ctr_updated)
-> +		update_ref_ctr(uprobe, mm, is_register ? -1 : 1);
-
-Yes, this is what I meant.
-
-Oleg.
+> Best Regards,
+> Krzysztof
 
 
