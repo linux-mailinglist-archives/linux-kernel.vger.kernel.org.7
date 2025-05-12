@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-643650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB366AB2FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5D0AB2FBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C443168F8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B348A170489
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A296255F45;
-	Mon, 12 May 2025 06:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6228255F3E;
+	Mon, 12 May 2025 06:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TcUkStEN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vi1ZC6bg"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EB88F40
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8131C2550B9
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747032156; cv=none; b=cLyQb7ztMzPtm47CaLsS5FyU1hbS90XlkF4Xi6D51trr4Ket80oBuRKTqfhAFVrG680BTvlX3YjKwDk7b5m0PsUYrSjiJd5/436/Q3EkYS5o2CgiByHQdQmhsLT9Yx6fTK/JRjOBKks55rJUJtKWoM+FSiJdhiudkiIdS/RnCu0=
+	t=1747031907; cv=none; b=sIiqa4puOngTurAbISXMjyNMkgwQc0tB+c3snl4D2tXGfWTUswT1zVgFqcV1nP0b920Ef5pQwVIRfQxMlxM/uCnqI+/USNJipL9OVQq20TMHtH5nnGwF/QbECBP0WQXAKGvaLu01kgg21LIljR5otGEH8MnCN2CtGIpqiFv8/hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747032156; c=relaxed/simple;
-	bh=3jNVitMyrsT+unXNWleK6dQla5aEs2uzLLL1DWk9G8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZuYmnt8ohaU2TsymxPmzOWpSfxxCe9mIw4NLFoHmtMdU2LhD2L+Es8avgg5OowDCITGDu1nIofYS3EDvCCCwB6xrgJtWgZa/yh80ASjCF9Z1LDtvMhksQ4Tv5LNY/W3YQ33J87ITSvPgTq3QI1ZRKwS+h9j76G5P/Wu/Dqqw0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TcUkStEN; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747032155; x=1778568155;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3jNVitMyrsT+unXNWleK6dQla5aEs2uzLLL1DWk9G8o=;
-  b=TcUkStENdvFzlP1VhUvYqBSCWXFssiv55OWLT9EqB1PesyWI5OI8xGaT
-   Jxb3fWR5HHItOLlhtMiYakk2BZgqACRrMnCQ9RGpmDBitgCLekJ+PMX7D
-   XftCROGN7F9YTrcOnTvoWnHR6d3eYRsKy0R4+o94et1pPfm48YozjPQbG
-   oEayU5kj4F/IiT8ZJ4Yax/YZTAr7G2m4FPzZ6Ztv0OD5eoOpJMD+NMmAI
-   oLCWjsTecix77a/Lpm6JqhJ4JMEEPTYaBUOS6D12WeCVd3JF1Fuo3Co/U
-   SuhSjt4PiX/vLPMDvdONyd6q7H81U6bG0IYqJZkJu0fJv4EF+nfOCfr/Q
-   g==;
-X-CSE-ConnectionGUID: mL4ZO8NwTlq9ah6XBX74Qw==
-X-CSE-MsgGUID: fxuxxrfdSwiKkCr8hul04g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48678779"
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="48678779"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2025 23:42:34 -0700
-X-CSE-ConnectionGUID: MN7BlsYEQBGB9NlR1klb+g==
-X-CSE-MsgGUID: zhNgw+z4Sc+3zXeScwl4FA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="142028505"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2025 23:42:33 -0700
-Message-ID: <2cc8a047-5453-44f1-839e-62425e1ca239@linux.intel.com>
-Date: Mon, 12 May 2025 14:37:58 +0800
+	s=arc-20240116; t=1747031907; c=relaxed/simple;
+	bh=k6nyCIyilz7zfov4OFEUENE2DGQbjDDdPx3tbpfgW8I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AcBknk9Lkf+/RuHLPRgkJ1FXpM2HkEXx10FH9a2OaYtwBde7uAAnJfzXpKDe5lcJj4kh+4WDQlKOMMTRx26ahO6727Ec61E5Ep/lvPCRHACjrlOrYlPPAP582vlyGNmBg/un5MxpsUZwS6NuT9wQSP4CWvrsKSUUfaSVNe5pjKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vi1ZC6bg; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad2407f6499so37296566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 23:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747031904; x=1747636704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gs9qjJWfXtPIqCNTFhtaejIkA6pnbjDMF0lYDQwceAc=;
+        b=Vi1ZC6bga6JNi66kFjfQkulQJxezhF7ZoHiOllcNF8kI/aKLTyf87pw59iwMXXbKQw
+         RcRc8OXBu5LN8u29i8PxqRI0TETmyvxJ1HinuDAYXAcGmN1qx0pl+BzKevgqtT0DOOJw
+         crU8uyi5/+67Gqzk9edMcwvsBO2P5SR48n0PVJsB37mgFgn+Fr5t0mLuS2CRrH102vra
+         Fj2u7+2/HVxkfFV1Ejaw7+KTKFvbZEVsSIb7DlKGai2rziERt/UNwKzxXAUElcULa4GT
+         6Bwj3BxeYC5GcnknKU17LpSwyvX2+tJnU8BnYH6s64LpemCKNGdN8qiahykoexxXLWA/
+         BzAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747031904; x=1747636704;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gs9qjJWfXtPIqCNTFhtaejIkA6pnbjDMF0lYDQwceAc=;
+        b=HqN4qMVza3+YhSetW+CnVAKw+DwZWGbqWHpyqq/9ezj4fdl1qZ4oLR6KAyA+aBoOQc
+         Kaw2v071Ll6VmnOapYFnnLu10UjVYCTeWUbtRaoT6f3Hx0jJFT3J1OdE9UmqJc5Jd25A
+         VxQalXUW6k38wVHVVMCQ0rAeCW9KIzxus/TNmdSRlNdXckrknlA3XgcI/vAGHEf5Li5m
+         wDKX9PtYERxrmQE3+BEIpckoc0URDijqa+X3ILs1MhFl/ep/vHHiScxKh/36tMBaHv70
+         Yb3V23g48GJnSQ6fSr+C0yTadWgDfisiu6zwp6KBNrE5FOxOmkNvZXuh1ro1+yBJ/QYr
+         VWng==
+X-Forwarded-Encrypted: i=1; AJvYcCVzTwy+cqpKpaW7Mahz1Eg0uKyjPjovA7VHCJ10v2mBher/XW2ZWFJbMK7aPYFJf5K7ySMLHZGDiXmMwuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD0sc8Q35CeKNMbWXzxObfm8u9kfzHTbdj0B05pv6hTX+8jfNH
+	UWWI7HJxY2AALWJQM0TAPQ+yHXsmOg1NjnkUZSpyhH18ZvIfQhJDjbdPsaUtLW0=
+X-Gm-Gg: ASbGncsc+aNKxAa2V/m1agy+qafgRehNmFZm7vRNJTeBeZE/adVSgz03acj0rzqhKhf
+	7fMKTQm0HVWgAmLostUH+3zIwmPZZ6kSGKKU+Pg2Zxgc/VWGICsSSanMSkgzlPArlj4qb5Q/K6X
+	fjHGP6PFqtTmUWDby1AY6JTL2RMapk9ghJOHR18/WZ8F5wS3kjV4hMfRgspih0Qj1FDXIXl9wuF
+	3V6rT8W/xQ4yT1rLaF45zNxD9xfI3yBoP0Z8T8EJ+2w6uYxMGrzFDt/zNz8ibUpe9f0AKaLYbqO
+	QPevbpQ9mLvceL1OvaVhnXiJvCFfz8xaOFm2o7hbPxeE1In3eJqAgXbWrn2d+FwXHQ7ZGlmqKRz
+	GIy9EHg==
+X-Google-Smtp-Source: AGHT+IHvnruoQf/zsWKz811qCbdXO6vDPHDtBmgtxIKDoHCWYrcOhWQOhDK0kiHkWvqsK39CY/vV6A==
+X-Received: by 2002:a17:906:81c5:b0:ad2:20bb:1cf4 with SMTP id a640c23a62f3a-ad220bb20abmr329227966b.15.1747031903658;
+        Sun, 11 May 2025 23:38:23 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.222.234])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21985342dsm560597966b.169.2025.05.11.23.38.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 May 2025 23:38:22 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+ alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+ sunyeal.hong@samsung.com, Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com, 
+ stable <stable@kernel.org>
+In-Reply-To: <20250506080154.3995512-1-pritam.sutar@samsung.com>
+References: <CGME20250506075413epcas5p2ce0db6da9f359e9c3bb16b03c1a5eb4f@epcas5p2.samsung.com>
+ <20250506080154.3995512-1-pritam.sutar@samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: correct clock summary for hsi1 block
+Message-Id: <174703190180.30824.7869810440516124016.b4-ty@linaro.org>
+Date: Mon, 12 May 2025 08:38:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] iommu/vt-d: Use ida for domain ID management
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250430021135.2370244-1-baolu.lu@linux.intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250430021135.2370244-1-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 4/30/25 10:11, Lu Baolu wrote:
-> This converts the Intel iommu driver's domain ID management from a
-> fixed-size bitmap to the dynamic ida allocator. This improves memory
-> efficiency by only allocating resources for the domain IDs actually in
-> use, rather than the maximum possible number.
-> 
-> The also includes necessary cleanups after the ida conversion, including
-> locking adjustment for the ida.
-> 
-> ---
-> Change log:
-> v2:
->   - Drop the last patch which simplified the code with __free(). There
->     needs a helper like xa_store_or_{reset,kfree}(). Thus I plan to put
->     it a separated series with broader reviewers.
-> 
-> v1:https://lore.kernel.org/linux-iommu/20250423031020.2189546-1- 
-> baolu.lu@linux.intel.com/
-> 
-> Lu Baolu (2):
->    iommu/vt-d: Use ida to manage domain id
->    iommu/vt-d: Replace spin_lock with mutex to protect domain ida
 
-Queued for v6.16-rc1.
+On Tue, 06 May 2025 13:31:54 +0530, Pritam Manohar Sutar wrote:
+> clk_summary shows wrong value for "mout_hsi1_usbdrd_user".
+> It shows 400Mhz instead of 40Mhz as below.
+> 
+> dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+>   mout_hsi1_usbdrd_user     0 0 0 400000000 0 0 50000 Y ...
+>     dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] clk: samsung: correct clock summary for hsi1 block
+      https://git.kernel.org/krzk/linux/c/81214185e7e1fc6dfc8661a574c457accaf9a5a4
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
