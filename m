@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-644234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21C7AB3955
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8642AB3942
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5DC3A8820
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67391165BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9EA2951BE;
-	Mon, 12 May 2025 13:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0700293751;
+	Mon, 12 May 2025 13:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Co6n9zSv"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="hI33z0tR"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B678B291163;
-	Mon, 12 May 2025 13:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F8295500
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747056704; cv=none; b=ViKlQhoCRUV1hjW+xYSbUEohw+PXlnbIpqEdRySclA/mbI/1hnajUvLy2Cr6fZsXgBxOR3G4fAT6a/85NerX40suNjgKGWJDT57tpC2wjBoDLLcMQeSr77onSGJcI0jmU2/eBqgWMZvcnmmedps8FSxuiY7dUZyEMK8/g59/e08=
+	t=1747056618; cv=none; b=laswf8SYKWeJkk1d9HY93HyEPd2xw2yye8ypvY0emTfSLYMJBifFbBaERLb2/SJ50Dgh02fKLQPIBRarrV2bnKXSalhry5QgdNf91QjjYzI3bQTNHQjp3s9w7EgrTc/FNy7ZRJSCuX/O+3Q/VUDJYiGfaHscnbx1M/Y+Hp9jIhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747056704; c=relaxed/simple;
-	bh=hglYuKmxN4zcQEW7/ROUv/QWojJ+3PZfbTHmGdPFU10=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s7aW4y3EYFh3YgJ/pu2TVEAWeEkh68mm2XSHBfOiJrXzn45ktwMlEn9DjNDIZeRRC/yV20/NxmLNKZNllcjMuIWSC1w3EZIFrZodfv5s6nTgoUT6/riR5wMzr+YKSq1Qc5oQtt43GMc+LL0hmrs7Gce0H+oGH7odEmJLTVyJUkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Co6n9zSv; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=O+V+RCvpoAaGRFT4GZBhiApWS5v7S4yG0iss69ry+Po=; b=Co6n9zSvwNUsxs6gnNNk3Jo6KX
-	xK5oFL4yQV10FygzxSVW0Lc9tRJk7exKi9G5xm2wAlQXL4BVmCeMdoc2Cw50s/XYPw5+hoEAz/Jh9
-	HMfEey7XQqTz+Yt9jo6VIYtS8bziHyuO67q8DSaFZWsJH5erR2/8vTPEi6flXiM1bPXC9uFZVfKsa
-	GrH7rIRVtUiGinhT8ZV/LUq+kDmXJRasTmq//5IT06hbOkOj8YJNbFyKazqHA5HpNekXp4+1z0wab
-	2/9t/z5auo5hpJXvVA5VzCyuO3NALLe3R8vDuGqhk4E0H3uFMcFJJSEewW296QKk7sEArOw/w1Vd1
-	YsgwY3Qw==;
-Received: from i53875a50.versanet.de ([83.135.90.80] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uETFV-0006NF-9J; Mon, 12 May 2025 15:31:17 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: robh@kernel.org, chainsx@foxmail.com
-Cc: chainsx@foxmail.com, conor+dt@kernel.org, krzk+dt@kernel.org,
- sfr@canb.auug.org.au, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v1 0/2] Add support for Firefly Station-M3/ROC-RK3588S-PC
-Date: Mon, 12 May 2025 15:31:16 +0200
-Message-ID: <3612514.V25eIC5XRa@diego>
-In-Reply-To: <tencent_D5C17F39C684CD6491505763B23BACCE5106@qq.com>
-References: <tencent_D5C17F39C684CD6491505763B23BACCE5106@qq.com>
+	s=arc-20240116; t=1747056618; c=relaxed/simple;
+	bh=O8oz5UvKiTFaAgUQe1w3ZHg8nAMDBTrMSIwdDYm3EAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SFc7K4GC7nvMXuzpJsPUpIY5gwWSui8TnBaRtdafJkvCe9xhEb0+tlsjhVPkoJSwHwb2CWviM+dyp/3xEVFzJwYT96R/Q0syrLNnKScUpEyludkRSuAkkLqRysn6/f9Zk9p2xZ29tXkkBfZTvo5g7/sKKdjboAqLrnktqrk+tk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=hI33z0tR; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so52130345e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=csie.ntu.edu.tw; s=google; t=1747056613; x=1747661413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6O0jvL9bp0RhLH3gFStx+IoQOSIzReGN6we6Sj8t7oo=;
+        b=hI33z0tRKXBUNmuOsZuKg5r8twTlx4P15iGap4f4ngJNysiIDcl155Heg65mjy5ecG
+         dCBevx51aKjuNLvOcdfJOoA85dBOfw9g6UcF7aEztsJGgoHrcoJhTF1nH7H7MuMaLSLq
+         r6rV6g2FOQwNWIYUQMDfnoAGpYHyeyDre7IC1oASimQVlLtPtlO3PMidjCbGpRLYUEpO
+         +jO7nDKZae2XDTH9DycBZe+7NHKLJR2s+ZpI7W2w/XFDnxp5XJ3gIhX2q211139Kzk2F
+         yb7i3Ydpri3ipYyWNPme3e/5ELZFggnWhHF4WkFvc0BnYV3j3kGpUj9zfYwWaN9xwVz/
+         nHEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747056613; x=1747661413;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6O0jvL9bp0RhLH3gFStx+IoQOSIzReGN6we6Sj8t7oo=;
+        b=SX23JiVrAl2eNSWmziAgC2xGDDMHerDUSGnBFZMyscT5LMemczF19nGZBZSr1JsvU7
+         kOB1jguYsblBcfsIl9kMSpAVx6LwRQ5OrHvv1QbCxIzKn/kJdNl10awyFVVmdCbhZrR4
+         5acXEo75cwPYOZUP0WdLKAuVVk6Lr3JT37hjpvuJ7cQUsKyYgLt+cLVauHrAWkJ42Gox
+         tyCcP+Cj9AwBLBI6T4d+JRbBaCe7ODyBKq0+lD3MR/RCMVc/+J7Lv36oPPJ3xVFZveDw
+         BAjX5LSCvjoSjZxy11CPsdRQ9NOh+dGZqiizkVeTf4k/limmZEWd9yybgXNfgWm/OpLp
+         Dnqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBE+2fscrFvS0PYADb5ogrAxYdMW9wH3wB4HXsot3ESXniJHR85/7fIC7a6D3dhRgnfebxVrYE2216kn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXw2+fwbPy8NpvwOL7A0P9LIu0FZnnKcLCVKpWmQVwz72TZ1Ti
+	W9J/CEld3UcCo6ZI9hDsoBcw8BW9+qgPMPpaavqf5xqQIcbbz/AO0GRsZu6bZPtF7ZoIr56YYP+
+	fmvX+yhZjh/p/hZcccZr9BlZAoroQcvaWNJ7ca2H5rUwQPsETmF2hVm0=
+X-Gm-Gg: ASbGncseIK1DCMsWENahUvxPhTtmv422mmrcQOoa556AtK3Fd1RJ8aS5rkcrhfTqX58
+	w/By29INm1aJw3tZQ6tgBPK+4PKbtZA3bm5dUTrE1Wz2++5sNLT0iekXgiEwGZvB+KeUfYpAs82
+	/AUfKE0lsLBMVLa/jKw0Hp1zRok4vdFHjRI4bPb445z2EdorpDiMJZ612MusWKVya1p6sWKXbcd
+	gP66O2AJcLgIMyIsT/+yhuVlC1Xp3GMXHRxTa0dR8gjjsygctAA7zGpCJeEU/AQw5JFGuj50LTT
+	bdVX+C2+VapOhZkgukXAug7OgD3ewUe4nwJ/Xh3ur4UeBaXP6OAX33D2/iDqtjL7dwng9Mv3
+X-Google-Smtp-Source: AGHT+IGvjNxhAX66VVq4W0wV6STryscjMOGjWiI63Myou666P8Evc1sc/t303qv3kgeVp110Hjntxg==
+X-Received: by 2002:a05:600c:5250:b0:43c:ea1a:720c with SMTP id 5b1f17b1804b1-442d6d6ad52mr105665795e9.18.1747056612621;
+        Mon, 12 May 2025 06:30:12 -0700 (PDT)
+Received: from localhost.localdomain ([213.157.19.150])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67ee33bsm125593325e9.20.2025.05.12.06.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 06:30:12 -0700 (PDT)
+From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jintack Lim <jintack@cs.columbia.edu>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Subject: [PATCH] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1
+Date: Mon, 12 May 2025 21:32:23 +0800
+Message-ID: <20250512133223.866999-1-r09922117@csie.ntu.edu.tw>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-Hi,
+In the case of ICH_LR<n>.HW == 1, bit 41 of LR is just a part of pINTID
+without EOI meaning, and bit 41 will be zeroed by the subsequent clearing
+of ICH_LR_PHYS_ID_MASK anyway.
+No functional changes intended.
 
-Am Montag, 12. Mai 2025, 15:20:48 Mitteleurop=C3=A4ische Sommerzeit schrieb=
- chainsx@foxmail.com:
-> From: Hsun Lai <chainsx@foxmail.com>
->=20
-> This series add support for Firefly Station-M3/ROC-RK3588S-PC.
->=20
-> Info of device can be found at:
-> https://wiki.t-firefly.com/en/Station-M3/index.html
->=20
-> Changes in v1:
-> - Add support for Firefly ROC-RK3588S-PC
->=20
-> Hsun Lai (2):
->   dt-bindings: arm: rockchip: Add Firefly ROC-RK3588S-PC
->   arm64: dts: rockchip: add DTs for Firefly ROC-RK3588S-PC
+Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+---
+ arch/arm64/kvm/vgic/vgic-v3-nested.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-hmm, you seem to be using git-send-email, but your mails did not
-get in-reply-to headers. Normally git-send-email should detect the
-cover-letter + patches thing and tie them together to a mail thread
-when you send them with a "git send-email *.patch" or similar .
-
-
-Heiko
-
+diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+index bfa5bde1f106..4f6954c30674 100644
+--- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
++++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+@@ -240,9 +240,6 @@ static void vgic_v3_create_shadow_lr(struct kvm_vcpu *vcpu,
+ 			goto next;
+ 		}
+ 
+-		/* It is illegal to have the EOI bit set with HW */
+-		lr &= ~ICH_LR_EOI;
+-
+ 		/* Translate the virtual mapping to the real one */
+ 		lr &= ~ICH_LR_PHYS_ID_MASK;
+ 		lr |= FIELD_PREP(ICH_LR_PHYS_ID_MASK, (u64)irq->hwintid);
+-- 
+2.49.0
 
 
