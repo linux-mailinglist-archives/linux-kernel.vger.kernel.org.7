@@ -1,177 +1,144 @@
-Return-Path: <linux-kernel+bounces-644245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B578BAB3973
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3C6AB3974
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 15:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57001892A89
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EF23A5E49
 	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B992951C3;
-	Mon, 12 May 2025 13:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB75B293B60;
+	Mon, 12 May 2025 13:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rqlqwpxY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TVLRb/iM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MeYp35Dy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6tBEbYPw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FoWcyPpH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D9D25A2B7
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9822F257AEC
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747057057; cv=none; b=mdSV2JGLH2ORdxOl907SjVps8PymoNDD04NpPu/eaObEhuE85QLaMuXloklc7JA7ARbb7xFMiRrMRje5LApSkd/ukMMmcQJFHqcNVbirwrmwUMYAt6tzzr+RdF1PYyADnKaeOvJ6ZuvBC+NPIPWMOR69taxpEPvZlThOXlGa0wY=
+	t=1747057090; cv=none; b=uPK05VN8PnWBTwJdzpybGtxxbGf6AzJCOJa1hyMblrvY9h9ynpo9T0rSYz9P9rRH0mzNK9deAh/wS1OcXrjkjFuNrHEomQ2rGIVzMjw86c1shOhcs4SjV1nBbR867oGU2tgxNFAPyb2fs3QdqwTRRlbs3jFnfPlAue3nwJog638=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747057057; c=relaxed/simple;
-	bh=VjaFsJKrEN9Uqf2591BKI2pEMYemOjP3DnnZ2fcUpug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L/H6LbaXFbDk+t/2IqLzi1uRNmz6bTkm6ITF4sWy/xGEPzuApwXiANg7leERUMKAaOPUPM6pyfSj5y8kHZWLBpKuhB793EmiJefctGHI2rV5HFsIJwGUHOrfveUR8KnsCrn5+YQovZSkskq7ETF14wmC1aJuq+l6zzMNShWVtVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rqlqwpxY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TVLRb/iM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MeYp35Dy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6tBEbYPw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1747057090; c=relaxed/simple;
+	bh=BjHjOPeyL4nVfAzamk7y35XVKWRnvl/ucSKe+ZQSA5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1esn+6qT2gXRj4RotvzYzMREef25Q1Th1ASiXf/l/XdJjspf3CZ+a/KsdqSsrPI9rvTwlCrxlw+tClhVJYEwDPWG5Q26FM4qUDOEbtUEL+54tkXaF1VFB7LQcBMhwKJFCZWHhGT59QetvNMJxG3Pkaqb8OmVIowqX+GmCpDLw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FoWcyPpH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747057087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N+d4pcIzBQG+0dzsibKX47VMF4utPM2RH2ZFFbMKIl0=;
+	b=FoWcyPpH9z7Pbxbr6wY4pqNG6vhISl1FmVAmK/4FN8bByUK1pVLA1Ortl2UWAnFm26m28e
+	+Brh8Ep7Lp4Qma0AIbozcOMnYxeM7HQ7db+7Yy96ObyKMgqCC777xZSU1H6UTnhfEgdHi8
+	VsXuCQPQDHtwk8jIYLcSV2pn3Flle9U=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-bYSc778lMimWzCbSrEbjVQ-1; Mon,
+ 12 May 2025 09:38:02 -0400
+X-MC-Unique: bYSc778lMimWzCbSrEbjVQ-1
+X-Mimecast-MFC-AGG-ID: bYSc778lMimWzCbSrEbjVQ_1747057080
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D2DF921180;
-	Mon, 12 May 2025 13:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747057054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JROcxVkua+4AIgLxyA/F6RSaVGE9I8Kot2UvFgn8FMY=;
-	b=rqlqwpxY/5Yqv1eWbuwp99XqS+kfuJvDV+GqO21Cy3zjvJJyI3s4mcFqkXjj6aaMNEpR4v
-	dhhGcQ1FlkTtYrG/lrF9ldxB6pki5aMyMzQgR1yLoNyrNf8LAyigAsZ3FNXJ/i7BEszfEd
-	ne/FroC5nlH+paObG/qn3Qpa5aol2Ok=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747057054;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JROcxVkua+4AIgLxyA/F6RSaVGE9I8Kot2UvFgn8FMY=;
-	b=TVLRb/iM7Z60T426PPm8ySXDc22+ebXwEhmLphOjXy1GZnGZmbLOMPSzbY6u0D31Zdxj7b
-	kxfaMCh0FV4uF4Cw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747057053; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JROcxVkua+4AIgLxyA/F6RSaVGE9I8Kot2UvFgn8FMY=;
-	b=MeYp35Dy3PGxhehnvRbdcqcXJMzNk2XpvU6G6F2I6apnekFkBmngzb0yLZh1Xt1A2dGC7A
-	VcgGeyNIDPBm88jAk4OvIeQk3OH56Ot67PenQKPLspKHilNS5Doo1NXJVKpE7oyrOThb6A
-	XlNXS7dZq4uJdRrfbBC3H2Wik97oSww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747057053;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JROcxVkua+4AIgLxyA/F6RSaVGE9I8Kot2UvFgn8FMY=;
-	b=6tBEbYPw5EsNjfo81Wq8VZBWh5iOShS5f4xTq4o9tgjz2Q2ikIWwxn6tGZFKAgAfrU4D+O
-	msmgGevynHj7CiCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACC9A137D2;
-	Mon, 12 May 2025 13:37:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id svnWKZ35IWiqKwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 12 May 2025 13:37:33 +0000
-Message-ID: <bddc6930-fd82-489b-b1fd-03949822f53d@suse.cz>
-Date: Mon, 12 May 2025 15:37:33 +0200
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BCA21956094;
+	Mon, 12 May 2025 13:37:59 +0000 (UTC)
+Received: from fedora (unknown [10.45.226.238])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 290DB180148F;
+	Mon, 12 May 2025 13:37:52 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 12 May 2025 15:37:58 +0200 (CEST)
+Date: Mon, 12 May 2025 15:37:51 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 03/22] uprobes: Move ref_ctr_offset update out
+ of uprobe_write_opcode
+Message-ID: <aCH5r9yuyKT1yKMS@redhat.com>
+References: <20250421214423.393661-1-jolsa@kernel.org>
+ <20250421214423.393661-4-jolsa@kernel.org>
+ <20250427141335.GA9350@redhat.com>
+ <aA9dzY-2V3dCpMDq@krava>
+ <aBoKnP4L-k8CweMy@krava>
+ <aBoWEydkftHO_q1N@redhat.com>
+ <aB02m4ZdPGJOWatx@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm: introduce new .mmap_prepare() file callback
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>
-References: <cover.1746792520.git.lorenzo.stoakes@oracle.com>
- <adb36a7c4affd7393b2fc4b54cc5cfe211e41f71.1746792520.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <adb36a7c4affd7393b2fc4b54cc5cfe211e41f71.1746792520.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aB02m4ZdPGJOWatx@krava>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 5/9/25 14:13, Lorenzo Stoakes wrote:
-> Provide a means by which drivers can specify which fields of those
-> permitted to be changed should be altered to prior to mmap()'ing a
-> range (which may either result from a merge or from mapping an entirely new
-> VMA).
-> 
-> Doing so is substantially safer than the existing .mmap() calback which
-> provides unrestricted access to the part-constructed VMA and permits
-> drivers and file systems to do 'creative' things which makes it hard to
-> reason about the state of the VMA after the function returns.
-> 
-> The existing .mmap() callback's freedom has caused a great deal of issues,
-> especially in error handling, as unwinding the mmap() state has proven to
-> be non-trivial and caused significant issues in the past, for instance
-> those addressed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
-> error path behaviour").
-> 
-> It also necessitates a second attempt at merge once the .mmap() callback
-> has completed, which has caused issues in the past, is awkward, adds
-> overhead and is difficult to reason about.
-> 
-> The .mmap_prepare() callback eliminates this requirement, as we can update
-> fields prior to even attempting the first merge. It is safer, as we heavily
-> restrict what can actually be modified, and being invoked very early in the
-> mmap() process, error handling can be performed safely with very little
-> unwinding of state required.
-> 
-> The .mmap_prepare() and deprecated .mmap() callbacks are mutually
-> exclusive, so we permit only one to be invoked at a time.
-> 
-> Update vma userland test stubs to account for changes.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+I am still traveling, will actually read your email when I get back...
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+On 05/09, Jiri Olsa wrote:
+>
+> On Tue, May 06, 2025 at 04:01:45PM +0200, Oleg Nesterov wrote:
+> >
+> > - uprobe_unregister() is called again and this time it succeeds. In this case
+> >   ref_ctr is changed from 0 to -1. IIRC, we even have some warning for this
+> >   case.
+>
+> AFAICS that should not happen, there's check below in __update_ref_ctr:
+>
+>         if (unlikely(*ptr + d < 0)) {
+>                 pr_warn("ref_ctr going negative. vaddr: 0x%lx, "
+>                         "curr val: %d, delta: %d\n", vaddr, *ptr, d);
+>                 ret = -EINVAL;
+>                 goto out;
+>         }
+
+OK,
+
+> few things first..
+>
+>  - how do you make uprobe_unregister fail after succesful uprobe_register?
+>    I had to instrument the code to do that for me
+
+I guess _unregister() should not fail "in practice" after
+get_user_page + verify_opcode, yet I think we should not rely on this, if possible.
+
+But I won't argue if you think we can ignore this "impossible" failures, just
+this should be documented. Same for update_ref_ctr(), iirc it should "never"
+fail if ref_offset is correct.
+
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -589,8 +589,8 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>
+>  out:
+>  	/* Revert back reference counter if instruction update failed. */
+> -	if (ret < 0 && is_register && ref_ctr_updated)
+> -		update_ref_ctr(uprobe, mm, -1);
+> +	if (ret < 0 && ref_ctr_updated)
+> +		update_ref_ctr(uprobe, mm, is_register ? -1 : 1);
+
+Yes, this is what I meant.
+
+Oleg.
 
 
