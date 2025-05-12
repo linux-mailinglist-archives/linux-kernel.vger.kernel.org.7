@@ -1,138 +1,144 @@
-Return-Path: <linux-kernel+bounces-643520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA93AB2E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 05:29:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18513AB2E21
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 05:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B15818912C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 03:29:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E5B7AA71C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 03:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1EB253927;
-	Mon, 12 May 2025 03:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GMfnHiCP"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D77254865;
+	Mon, 12 May 2025 03:31:48 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B5E12E5D
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 03:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B89618035;
+	Mon, 12 May 2025 03:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747020544; cv=none; b=O0/gzajUcZUQF41yWlxZJ4QiV08X+pQbYqJn+Si5ic2i8PQbvqpxUnigz+Z4qWiQWs+nw+2oXcfHTPZQ/MXPIX7DGDfN4ItYr8ZDTyVhEOOTlP/3KzrrLFXuW5p68ZxoVd4syz6aH3/jGDHNNLQwuRlfRbEV4ao+5spuMdt2WRU=
+	t=1747020707; cv=none; b=baK0kgspn8g7+XZbfacflPB7YEZeTMUTE1ElBUrPa4KE1Lcd3lgHfyzISxN3cpXUUpbt4kQkOkOtiyzqY0SiE9gZdbVZZdJTNc5UeK56b5rtGPwWL+rf790X1PQg6Kf2N2A/hi/WKxZ+laV+teZu/EPAzpM96Hv0ypRW4WKf7jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747020544; c=relaxed/simple;
-	bh=mY8R9inhJBfVS60tJs9PKJkwD3X+3bhVO6wtxbHX/Xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ddw7QlGaT+kwTOE9oyttHvjP5jmIgRF9q/kpgPeIqi+1OHem+UeI/ZU9TiKIgqH6LkkFR46zLAn159pYEeQkmT6SSSd0RVB0Moc/3ahWiFfUMqCH6ag+QSnpXZP+S/TN4J4clI0JKydANmtW1y45S34985WcwBw6E9W0d4sjHMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=GMfnHiCP; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6df1419f94so3145715276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 20:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1747020542; x=1747625342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmqsshPmY7H9QOb+mn4lTusa/z2qhgLdDUm/2L4LcwE=;
-        b=GMfnHiCPJ7KpHaVf7F+4WFZPYWlo53Pa+cYcAQg4I+BFxuEY+QsxmmScG3slxqb+6f
-         Dq3CwaqcgeVKJirverVwTsXo2MB+dr10Ig6s57KDbqFp5LZCDnZ8TskbA5oEIG18duQX
-         h1pUIhRVcMlQPRIZ7oepHcEVOnJCQftEowXtKcxkJifQc28CYMUkbTWtlzIMKj7F7VvX
-         zGCoMj58Jasr3LNR5n5PdtGT2qYbLGG2vO/2AeTvA+bC8FCvMrNKsqAGk812Oxu7hLTI
-         AWj9FylTYSQzR3UIf0hDYubwWrdPLNxkeO54pQsCok5nhF/noOY3Yktnu61S36+2PbYR
-         xknQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747020542; x=1747625342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RmqsshPmY7H9QOb+mn4lTusa/z2qhgLdDUm/2L4LcwE=;
-        b=L4Bin3OtjALNj8R2YAtWhdM2GS7afuclsh+Zj24QDWcY74EPzL8zFVETczU8Zx6Xgt
-         yw7GSrLdggaoQHB+Vlv15SlVK+uSNAlnervTG7OD0R1zmSnQCHecaMWlGv5/JwmExv0h
-         3usIEEAtRJUUaW8fO+I1J8oJxNOSANL2T6vqrzHEgmfhGI5MoCDMsTcBK/Ebs3hofcjo
-         rALdZ3EL2vJknIeuIgAu+/8Hc/xcHjh7SKaDM58rmk2PCaTnXpWkMYg57JBsTvIhkym9
-         /e2ua7TuskxC4nozNZ9KG05n0w7ah1iYasUAE1CkP/PnA2VLA8qMpbK12cZ8myb5ZOjN
-         TVtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXIfHP1kqrb2/6fu3eHVA8t6GLV/2yn6dFc+k/CS9TeIjUESsWDOCZWVcA/BhCOEgEwaVAj4y40YP9RXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzGXFfEsl4rMnueYeN2NnBA1UgNpYQiAN4V91cQMgUNZ28b2RE
-	6h9Ao1XAS/w6popOfqQ1cG80m4TZHYF8Lbhiam4R6Z5ZFksWMJX+Zqis7aGH+wcB6mFtc8nbbZU
-	G0gMUydmCObjqIp5WbYLyA8Oe+DjYdu6IAe9YjQ==
-X-Gm-Gg: ASbGncuv7pWK3PbL8/c0NdrGvBkG7E2gDdjnyX3sdxbPZtnd39r747sD72cf2czX/wJ
-	US7op9t4AkuruWQ0dxEbMdkrqjV8xowatkFc1BaO54QcmvaGSAmb6Of+JnYgRdJQsGMJ/gcP2hS
-	nBAT2Bm+E+RZVN6aHQluIplovk10AR2gFwTNM=
-X-Google-Smtp-Source: AGHT+IEFaNiH4m8SfL7s95SR1yaroida1cIZ6e04N6YGot2PHwDpN08d57NAQJEqGB4qgW357SQelDenklQ6NVilKz4=
-X-Received: by 2002:a05:6902:e02:b0:e73:2da2:c300 with SMTP id
- 3f1490d57ef6-e78fdda3cecmr15370879276.44.1747020542325; Sun, 11 May 2025
- 20:29:02 -0700 (PDT)
+	s=arc-20240116; t=1747020707; c=relaxed/simple;
+	bh=DQ/uhrXFki3GETA4re1GZrkES0oFIanWxCPcsts1edI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lj/BIrGEFkz+8CXSnc4WXz/65oeeDqlFp2fEr6kYHD+nuSXF4a/0zgggKj/4WxT25wfp5lrk3ok0INANn3T7FwFKK/fOtZB+6QOu6s1F+u2P4czT54uJwhHQk4ANOvbGnX0sXpx4NEL8bmHvo+tX8wZJ9QMkNTmXfvoPJFyuWnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C18mRA014547;
+	Mon, 12 May 2025 03:31:22 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46hws899gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 12 May 2025 03:31:22 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Sun, 11 May 2025 20:31:21 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Sun, 11 May 2025 20:31:17 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <jianqi.ren.cn@windriver.com>, <robdclark@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <sean@poorly.run>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <sashal@kernel.org>, <quic_vpolimer@quicinc.com>,
+        <quic_jesszhan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <quic_kalyant@quicinc.com>
+Subject: [PATCH 6.1.y 1/2] drm/msm/disp/dpu: use atomic enable/disable callbacks for encoder functions
+Date: Mon, 12 May 2025 11:31:16 +0800
+Message-ID: <20250512033116.3331668-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509021605.26764-1-nick.hu@sifive.com> <20250509-small-graceful-limpet-d0ea41@kuoka>
- <20250509-subtract-caramel-08d47ed3281c@spud> <c91d99c9-0ecb-4dcd-9beb-5a1e9fadc619@kernel.org>
-In-Reply-To: <c91d99c9-0ecb-4dcd-9beb-5a1e9fadc619@kernel.org>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Mon, 12 May 2025 11:28:51 +0800
-X-Gm-Features: AX0GCFu8apu7KqsRMVT6pTWyP_dDY5ZSOdIicXfNhfDZ3ehPXy6u4YhVzFdti1c
-Message-ID: <CAKddAkDvJcXoAtgvgVBhMOY-NUwdkjUODytGqXeZgfybPRmbfA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: power: Add SiFive Domain Management controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Cyan Yang <cyan.yang@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: iFPOCI3-Pi2bcXI3MRHJhHxmJznQCvhj
+X-Proofpoint-GUID: iFPOCI3-Pi2bcXI3MRHJhHxmJznQCvhj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDAzNSBTYWx0ZWRfXyGxQgasjYjmX zGeWxyNQJv5wKTQu39vU2Oke2qkog0t03zeFA0R0tvDYyyNB8ES8+JvsO3AwV0jqDKuElo0aGgb NmCyY+Stb9bmjt/N0vbjJQVtbRjvsdXCCLBBdDSusYrbV+217Fi/EPQw8OCyj4pG2pIjdKEZWHn
+ Rg7/ZfCcMn0sYAcBAnMV4cOZFFrv9W4JxM/e86UPNvvOFXer749395sx3E/LKOKCfdbKS/TiNT8 RnydsliTYggVA8mMa2UIk1ifUwpCTwcXuyAh0rjZ8nCAhjKwx3zrNsqvghZFP1Pu8dm2SFDSjsb CuZbMMfdv17LWBG8x4f9w5s0xO5IyDOgxtVS2AQZC2ozHtTC1EdF+cQUisiiuje23z74TgB8CUM
+ va2bsyZw88dwjbd5BBn723d/B40nIyY99wjkBJEI+errCF23DtRFcgVMQsTYmzPaJMqJ9SfP
+X-Authority-Analysis: v=2.4 cv=Q+HS452a c=1 sm=1 tr=0 ts=68216b8a cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=dt9VzEwgFbYA:10 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=t7CeM3EgAAAA:8
+ a=txotuCt1tKXyWzYZ5sMA:9 a=Vxmtnl_E_bksehYqCbjh:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_01,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 bulkscore=0 lowpriorityscore=0 spamscore=0
+ clxscore=1011 suspectscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
+ definitions=main-2505120035
 
-On Sat, May 10, 2025 at 10:57=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 09/05/2025 17:57, Conor Dooley wrote:
-> >>> +          - pattern: "^sifive,[ts]mc1$"
-> >>> +      - items:
-> >>> +          - {}
-> >>> +          - const: sifive,cmc3
-> >>> +          - const: sifive,cmc2
-> >>> +      - items:
-> >>> +          - {}
-> >>> +          - const: sifive,cmc2
-> >>
-> >> All of this is just unexpected. Why any compatible should come with
-> >> these?
-> >
-> > It's also not quite correct either, right? Or may not be correct at
-> > least. It permits "xxx", "tmc2", "smc1" and "xxx", "smc2", "tmc1"
-> > which mean that the smc and tmc must be identical in terms of
-> > programming model.
->
-> Yep
->
-> >
-> >> You need to use SoC specific compatibles.
-> >
-> > I think there's some slack to provide here, sifive are upstreaming it i=
-n
-> > advance of there being customers (or customers ready to upstream) and t=
-his
-> > format allows us to accept bindings/drivers and the customer will have
-> > to add a soc-specific compatible in order to actually use these in a
-> > dts. I think it's better to accept something along these lines than
->
-> Sure, commit msg should explain that and probably these {} wildcards
-> should have comment as well.
->
-I'll update it in the next version. Thanks.
+From: Vinod Polimera <quic_vpolimer@quicinc.com>
 
-> > stall out until a customer decides to upstream their user. That said, I
-> > would expect this to come (as you mentioned above) with the driver.
-> >
->
-> Best regards,
-> Krzysztof
+[ Upstream commit c0cd12a5d29fa36a8e2ebac7b8bec50c1a41fb57 ]
+
+Use atomic variants for encoder callback functions such that
+certain states like self-refresh can be accessed as part of
+enable/disable sequence.
+
+Signed-off-by: Kalyan Thota <quic_kalyant@quicinc.com>
+Signed-off-by: Vinod Polimera <quic_vpolimer@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Patchwork: https://patchwork.freedesktop.org/patch/524738/
+Link: https://lore.kernel.org/r/1677774797-31063-12-git-send-email-quic_vpolimer@quicinc.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 5f8345016ffe..c7fcd617b48c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1182,7 +1182,8 @@ void dpu_encoder_virt_runtime_resume(struct drm_encoder *drm_enc)
+ 	mutex_unlock(&dpu_enc->enc_lock);
+ }
+ 
+-static void dpu_encoder_virt_enable(struct drm_encoder *drm_enc)
++static void dpu_encoder_virt_atomic_enable(struct drm_encoder *drm_enc,
++					struct drm_atomic_state *state)
+ {
+ 	struct dpu_encoder_virt *dpu_enc = NULL;
+ 	int ret = 0;
+@@ -1218,7 +1219,8 @@ static void dpu_encoder_virt_enable(struct drm_encoder *drm_enc)
+ 	mutex_unlock(&dpu_enc->enc_lock);
+ }
+ 
+-static void dpu_encoder_virt_disable(struct drm_encoder *drm_enc)
++static void dpu_encoder_virt_atomic_disable(struct drm_encoder *drm_enc,
++					struct drm_atomic_state *state)
+ {
+ 	struct dpu_encoder_virt *dpu_enc = NULL;
+ 	int i = 0;
+@@ -2407,8 +2409,8 @@ static void dpu_encoder_frame_done_timeout(struct timer_list *t)
+ 
+ static const struct drm_encoder_helper_funcs dpu_encoder_helper_funcs = {
+ 	.atomic_mode_set = dpu_encoder_virt_atomic_mode_set,
+-	.disable = dpu_encoder_virt_disable,
+-	.enable = dpu_encoder_virt_enable,
++	.atomic_disable = dpu_encoder_virt_atomic_disable,
++	.atomic_enable = dpu_encoder_virt_atomic_enable,
+ 	.atomic_check = dpu_encoder_virt_atomic_check,
+ };
+ 
+-- 
+2.34.1
+
 
