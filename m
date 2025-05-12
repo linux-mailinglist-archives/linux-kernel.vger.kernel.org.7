@@ -1,101 +1,174 @@
-Return-Path: <linux-kernel+bounces-644620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ABCAB3FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:45:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9757BAB3FBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 19:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C18FE8676C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2876A19E68D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 17:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E0F29712E;
-	Mon, 12 May 2025 17:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B122566DD;
+	Mon, 12 May 2025 17:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tna/Lc78"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2AtkUz2j"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABCE251788;
-	Mon, 12 May 2025 17:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FB9297132
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747071869; cv=none; b=JjFxv6VUtIsLK7jgEttErBB3php5yNh4S7uZ3PWPEOPXuo7NJu8Sw4+kFyuJldrH9CuY5O/qxlowmptRjGfnujtJb1SnZydw1OW6wTWqWbiSVkax3I1BNevxWQ18FtqJe06ACLlqen/gnKLFJb7seSJwGxWoaa9FLAjO59oKk1s=
+	t=1747071910; cv=none; b=LuGfBppb9AszYKz9tTp7VndlHRlJC8PA8g38c0Pp0ICTXzaJpg0kvr7obXMCcTDJC4XNcWUkoYzw/lpiako8GjkIXb/dSP9L82OnMi2P7icttaWkTxbabTVn38VUuh7RvDXVTG0PHEsQ8Hpj0QlqtaTzBOxdUaMoy1tQ/pucGss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747071869; c=relaxed/simple;
-	bh=2jaOeTXRTo6O+Dpv3rgcR5tqNqzM621hkni8JsfD2sE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YwxsLt0uax57NwjPc+JeeoRJxIZc0kqojhByX1/MrQDlsnTbenCFXOk4B9+wstjO6rRGfNE8Mn6SoZVnbd1LrQ6+fL2weNCi64oO14IaYGvTbTQxuFj3TdH1txdyU5g5S1DexyWkCWvs5ABt1g7zK+NkSxlgS/pgw9ddzQ4Ont8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tna/Lc78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB62C4CEEF;
-	Mon, 12 May 2025 17:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747071869;
-	bh=2jaOeTXRTo6O+Dpv3rgcR5tqNqzM621hkni8JsfD2sE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tna/Lc78F3FoV8pMV38i88aoRvyDrdqGzWZDSnwfq5YQdcaEKoaIsEZehxhV6yVCd
-	 /AZNBLTFvUIq8c4jmC+Az1NHFD2l1cyfKhu2oFmoi8p6EM+g0bqiDUsBNw8J175BMq
-	 4tCUWqs5/t9CrZdERCIlJ1ASuBsFh3Yw6MDlUFammTMRRcjYbFXhEsv+t/IHpKfwRT
-	 FUdPTKtEmpz/9lRSSlLlViw6pKODM5oxq+emXT56lvU9YvclAllPkzlq12lnrfFJvc
-	 UZ9og2vnzvkqNGFlg8qkN3bGDFK67NKJ1F20J3y59vw5AHydHfQ2PnQGftCtHpydI3
-	 9liB7bluMbxlw==
-Date: Mon, 12 May 2025 19:44:23 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Remo Senekowitsch <remo@buenzli.dev>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4 3/9] rust: device: Move property_present() to FwNode
-Message-ID: <aCIzdx8drlVMzCLk@cassiopeiae>
-References: <20250504173154.488519-1-remo@buenzli.dev>
- <20250504173154.488519-4-remo@buenzli.dev>
- <20250512172957.GB3463681-robh@kernel.org>
+	s=arc-20240116; t=1747071910; c=relaxed/simple;
+	bh=UJ0Nv/tiHfH1BZi1bfwZryelsyB/d4J+P1i9rWpginM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qVKNH71d18gVbKrPjhRA+EKIAU0sHpgPISOc3bGf3+F/tRo3ZiImQFLE2Oei0pckT3zC+Ts8amAUh2j6Vs3NSTwMKmuw4BYDux2YNiXGIyoYhlvlOY7r7e/V5N27/lURKHOdATE8QH/wrvXhL9bKzZHuVHRpdy3bvzepm0NsgiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2AtkUz2j; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5fc4fc27983so917a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 10:45:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747071907; x=1747676707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKyF5ivhB38O0n4mqcTC8jxtzKF2DnmCYoFt82pLoBo=;
+        b=2AtkUz2jshsBEMPjN5PG6SyL1AwihceTLIY8CQqq4wJvjfH1uYMiD45BEHBTp3kCL1
+         azCAQ6OajaoiCJd8t4Kg8qrxd4bEd6O5CMePYP797fK/zm/lL5O3/nJ7AYuuASv9Kq+l
+         QJd1e7q3XIy976ZgMjRUubP8R2twDDSi7YkaC4whHIez61mstuT1q/EUIPxzm1za8mAu
+         BIdLApHcSIuNIzR3ukunt8WaCRSRG1MpO/MiGo938xcMRqHezk1d5pfUnNATfVKBtsiv
+         WZsYnFp8dt2Fgnzpj6U7/FcTaSFsg2CNem7qrztvgDMaiB/nQUDyD9QNXW5kU7X2X8vu
+         13jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747071907; x=1747676707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WKyF5ivhB38O0n4mqcTC8jxtzKF2DnmCYoFt82pLoBo=;
+        b=JLs2x3/0MMONDzB7Yu6AL5PZpeeTvLJ2cEVyNqnwj7oJogAgUyUr6KRqXz2kMLmSsY
+         lE4t9RDmkeSGE2Xp3OWUniSHO30u38GP45jTCLxqERjs7oniAbasnGeLGaX+nXsGz4Rr
+         pGdWKuKHHj/vQk0788Bplu7IvXnRe1QeIFJe7/xmwK19nnpxFeToDv5lv7LV8MVZU6Vt
+         pDEG01BCq6J3JRTXKQiJi1nWLr2jBXNB4GQ6tDKqN86e3+fgWsLfnQbWyRa0mgck5Ur4
+         4nEtuMgVNDU9D5kBWAhNWhQYxAaL2G3QM55w+JeWAqc9xwlSdfN4XuA3cQb6TrlfFPig
+         aRQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYJu2UT9CHQZvzlN3ELvvUlWzV1sXroq3aiaIVEKE5Oz4PrKBJKJmfie8f0Vd/uLud+V3lpsrKsgmhjeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy31RLO1rxWIaGS8MJKLLTdKMQNEd3NWWC/8TFdM3BzpE7USx1B
+	N7j72Ak8Q9EL03fQD7/P0SGwNLKRusmhBpm0jxogJt8tMoGe/txLGP1jCXTFdd+m84Dq84PXAfj
+	2JVWgU29rt/D+DQpGY63ym9UVRc/DB5iPIIB5
+X-Gm-Gg: ASbGncs8wqebR+VrtV8Rrg8RJTZ2mSxD0bruP0QCL0Nz4pKV/B7VbnIWTHxYmpVSBnq
+	AdTddpDB5D56H2777/+jm4dlxZfh62evUv4gOi6MF/rotqT+NMtUSZs9d6AX/NDttmGvWoSFAA9
+	2IN91ODekQ8msM1aiaI0rmvBErGNzmbneQm2uQ9EwKq88857aRZLuioov4uLg=
+X-Google-Smtp-Source: AGHT+IGvMCe4UX2v40Wz0FcaErsAvKW/7NlqcD/ZBMDCMO69M78kxAQz8sfib4Hq6eaEsqNDdbg8QghyEiwUeyppcKw=
+X-Received: by 2002:a50:f693:0:b0:5e6:15d3:ffe7 with SMTP id
+ 4fb4d7f45d1cf-5fcde51c45dmr145972a12.7.1747071906474; Mon, 12 May 2025
+ 10:45:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512172957.GB3463681-robh@kernel.org>
+References: <6819bfbb.050a0220.a19a9.0007.GAE@google.com>
+In-Reply-To: <6819bfbb.050a0220.a19a9.0007.GAE@google.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 12 May 2025 19:44:30 +0200
+X-Gm-Features: AX0GCFsE_2EekYWSD9aNjGjOJGZK506gVTcilLvXgUiO8MBDAgL7EhpH3qmKF5E
+Message-ID: <CAG48ez2pOt_Zf28CnLbVCzo1uBhWfqUjgh4fzDaQo+qceM6kSQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in copy_page_from_iter_atomic / pagecache_isize_extended
+To: syzkaller <syzkaller@googlegroups.com>, 
+	syzbot <syzbot+189d4742d07e937d68ea@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, hughd@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 12:29:57PM -0500, Rob Herring wrote:
-> On Sun, May 04, 2025 at 07:31:48PM +0200, Remo Senekowitsch wrote:
-> > The new FwNode abstraction will be used for accessing all device
-> > properties, so it must have the property_present method.
-> > 
-> > It's possible to duplicate the methods on the device itself, but since
-> > some of the methods on Device would have different type sigatures as the
-> > ones on FwNode, this would only lead to inconsistency and confusion.
-> > Hence, remove the method from Device.
-> > 
-> > There aren't any users to update yet.
-> 
-> But there is one going into 6.16 most likely with the cpufreq stuff[1] 
-> which complicates merging.
+On Tue, May 6, 2025 at 9:52=E2=80=AFAM syzbot
+<syzbot+189d4742d07e937d68ea@syzkaller.appspotmail.com> wrote:
+> HEAD commit:    01f95500a162 Merge tag 'uml-for-linux-6.15-rc6' of git://=
+g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D17abbb6858000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6154604431d9a=
+af9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D189d4742d07e937=
+d68ea
+> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd=
+6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+[...]
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+189d4742d07e937d68ea@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KCSAN: data-race in copy_page_from_iter_atomic / pagecache_isize_ext=
+ended
 
-Should we target the upcoming merge window, I suggest to just add
-FwNode::property_present() and remove Device::property_present() with a
-subsequent patch for v6.17.
+I think this is a problem with the KCSAN implementation.
 
-Should we not make it (which given that there are a few open points and -rc7 is
-rather close is not that unlikely), we can just rebase and merge early.
+This is a race between writing to a userspace-owned page and reading
+from a userspace-owned page.
 
-> 
-> Rob
-> 
-> [1] https://lore.kernel.org/all/f7e96b7da77ac217be5ccb09b9309da28fd96c90.1745218976.git.viresh.kumar@linaro.org/
+This kind of pattern should be fairly trivial to trigger: If userspace
+tells the kernel to read from a GUP'd page or pagecache on one thread,
+and simultaneously tells the kernel to write to the same page on
+another thread, we'll get a data race. This is not really a kernel
+data race; it is more like a userspace race whose memory accesses
+happen to go through the kernel.
+
+So I think the fix would be for KCSAN to ignore anything in such
+pages. The hard part is, I'm not sure how to tell what kind of page
+we're dealing with from the kernel, some MM people might know...
+distinguishing normal pagecache/anon pages from other pages might be
+doable, but I guess it probably gets hard when thinking about
+driver-allocated pages that were mapped into userspace vs
+driver-allocated pages that are used internally in the driver...
+
+> read to 0xffff88811d47e000 of 2048 bytes by task 37 on cpu 0:
+>  memcpy_from_iter lib/iov_iter.c:73 [inline]
+>  iterate_bvec include/linux/iov_iter.h:123 [inline]
+>  iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+>  iterate_and_advance include/linux/iov_iter.h:328 [inline]
+>  __copy_from_iter lib/iov_iter.c:249 [inline]
+>  copy_page_from_iter_atomic+0x77f/0xff0 lib/iov_iter.c:483
+>  copy_folio_from_iter_atomic include/linux/uio.h:210 [inline]
+>  generic_perform_write+0x2c2/0x490 mm/filemap.c:4121
+>  shmem_file_write_iter+0xc5/0xf0 mm/shmem.c:3464
+>  lo_rw_aio+0x5f7/0x7c0 drivers/block/loop.c:-1
+>  do_req_filebacked drivers/block/loop.c:-1 [inline]
+>  loop_handle_cmd drivers/block/loop.c:1866 [inline]
+>  loop_process_work+0x52d/0xa60 drivers/block/loop.c:1901
+>  loop_workfn+0x31/0x40 drivers/block/loop.c:1925
+>  process_one_work kernel/workqueue.c:3238 [inline]
+>  process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
+>  worker_thread+0x582/0x770 kernel/workqueue.c:3400
+>  kthread+0x486/0x510 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>
+> write to 0xffff88811d47e018 of 4072 bytes by task 4432 on cpu 1:
+>  zero_user_segments include/linux/highmem.h:278 [inline]
+>  folio_zero_segment include/linux/highmem.h:635 [inline]
+>  pagecache_isize_extended+0x26f/0x340 mm/truncate.c:850
+>  ext4_alloc_file_blocks+0x4ad/0x720 fs/ext4/extents.c:4545
+>  ext4_do_fallocate fs/ext4/extents.c:4694 [inline]
+>  ext4_fallocate+0x2b8/0x660 fs/ext4/extents.c:4750
+>  vfs_fallocate+0x410/0x450 fs/open.c:338
+>  ksys_fallocate fs/open.c:362 [inline]
+>  __do_sys_fallocate fs/open.c:367 [inline]
+>  __se_sys_fallocate fs/open.c:365 [inline]
+>  __x64_sys_fallocate+0x7a/0xd0 fs/open.c:365
+>  x64_sys_call+0x2b88/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:=
+286
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
