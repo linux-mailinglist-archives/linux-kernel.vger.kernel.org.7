@@ -1,344 +1,364 @@
-Return-Path: <linux-kernel+bounces-643964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B8BAB3531
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126BBAB3537
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9F67A76CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E305219E05AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFC8265633;
-	Mon, 12 May 2025 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F101A267F74;
+	Mon, 12 May 2025 10:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ux2VZqQo"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3Jj9+QHm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BNlDAEkZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310EA136988;
-	Mon, 12 May 2025 10:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA872673B6;
+	Mon, 12 May 2025 10:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747047041; cv=none; b=DkcftFeblnkgolpV6jGYAraR3clf673EO3cm+/6kdPSGaOBaH6BzRcdeQdL/BmIXyAS/5jTFRFWFaNnsFlxYZwxNKqgMOVfXaeeLvEseEpQOIr5m0JVVSa64ozB5ryksyhE/6koOw9/qVNfVaQKj2BN+II2z4Br+P+OKmji1wAA=
+	t=1747047078; cv=none; b=Q9+VxX8XAZq0g+La/8CTR4/csg3Gq9poWnQZi4cJqRUYkIYvkt0P326OP0XCQ5rc3r2WADsYCYk4S4gKehZDZYV/nT9d/bXAC99xkUefx8sSKX7T191d70oR9khwQqy8B5hlSEGB29JpD1LvvTboP3T8mtwxwTUKAINttUfV89o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747047041; c=relaxed/simple;
-	bh=IkzbvfjzDYWbphpyW2IDrgtnafGpDBdltDp9JTpA7xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnNTqccxAZTrLVpxqQ8Y2ymeTAcVGMAI8uKVOk2r1VDNZLoj37Lj1WcyIt94DbWApk8k9w/dUrOmhnCYBr8v9r9UnEqTEDHlvJfFypsN6g/JqwQPzChw1wOfoPLX28v0r140DFmRTF6NNlmEc1uBxAo67Yo/u2FpgZrdVGZsoRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ux2VZqQo; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e0HZJ9wUeu2+Lw+/RFIiPN+iuLxrwz61cA7t0PY+IAI=; b=Ux2VZqQo4PMc0qCUjTeDNvYvFd
-	UbXMIASVLYlSTpfcuZHoBoHjkSk7VH1EQUoBLLMKIDPc6CFm++XZzLSs5aOT87NNvohVLSJYLJkcU
-	fOr605pcjlAYx+nZ57U3V3JrzOI+qpxflIHK3pmmAc/sbilg5twhsAXkpYsuRl3KxQXWI35q9e6Cz
-	og6k4D2FFIr44hYuXZ/lev1B49hi67tMHVKHtGHgakHr/b1RTiPcl7gNnjHbKkJtPfd7PsR6mjSXB
-	fiuEosW7rsU3MYiTwumY2Tq2A3Xgu7ECkClxG5GYq23t/W79DLME0EFhEIvkEoHDpxgzCpKG4rF7R
-	UnQG9qog==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uEQjr-0000000GkMU-0Rcm;
-	Mon, 12 May 2025 10:50:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 81290300717; Mon, 12 May 2025 12:50:26 +0200 (CEST)
-Date: Mon, 12 May 2025 12:50:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lechner <dlechner@baylibre.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for
- conditional locking
-Message-ID: <20250512105026.GP4439@noisy.programming.kicks-ass.net>
-References: <20250507072145.3614298-1-dan.j.williams@intel.com>
- <20250507072145.3614298-2-dan.j.williams@intel.com>
- <20250507093224.GD4439@noisy.programming.kicks-ass.net>
- <681bce2193f38_1229d6294c7@dwillia2-xfh.jf.intel.com.notmuch>
- <20250508110043.GG4439@noisy.programming.kicks-ass.net>
- <681d8ce06c869_1229d6294e@dwillia2-xfh.jf.intel.com.notmuch>
- <20250509104028.GL4439@noisy.programming.kicks-ass.net>
- <681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch>
+	s=arc-20240116; t=1747047078; c=relaxed/simple;
+	bh=Vnbt8PYI0dnu1i1QQA1pUcRiFD9xVew0593yPtQCC6k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nPHrP2iCWCc/3OLrApRvVs2HDD9n6sw65L+F6TWc/rQQ+T2NP1wPeQBEBofcoL10616sj07HBzRquKHbNnYCgG5D3V+0y2Nk1nYYDABfnYPbC+JT9SU5fingbfF7xYuFVv0F2+pKquQ5oEYVSHaAGK03n7V/kqB0nurW3Mb2p7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3Jj9+QHm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BNlDAEkZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747047073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a8kL3YU/sHJ9zjArpCJJoXCwrYyVoqURYj+rWL9pYW8=;
+	b=3Jj9+QHmbZXtWMN/wmjcGewwIgVQ2j8o0zxPJB6De2OlblE9s3XbNSB2NXZB6fwRcfx3/C
+	/+tCwcjQ18XN+SdTp8MTysP1tUDSo/f2vr5lBZheNdVa9iYgntQay3wY5gKaaAojijQoI2
+	Xxh9V5v+yLYt7czPKhOwyvmkMHBypU3mjCJ0XTIHmVXRBVhbPcsbeJpSkK5n+Pj5KoZ1cg
+	ogcBeZmqQS9c3YQ4xiseLpgQzfG31Pl5l/FBYt9zzAZCyPtVG52teeXU5+riKLRu3K0Xn+
+	Y7gMCem+HM82e9W80KC3RwFSeAesQZrVDV9vHMzr/Aa5E5QcXIiQ1i1PMz87kA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747047073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a8kL3YU/sHJ9zjArpCJJoXCwrYyVoqURYj+rWL9pYW8=;
+	b=BNlDAEkZCKYwqEsFhOIRs8EvA+AMfVZRvPAsO4EHDYmBVgPj0MYsS1kpTuwu3JkfknjvSs
+	Oj+6Tvt32mjWqVAw==
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: john.ogness@linutronix.de,
+	Nam Cao <namcao@linutronix.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v8 00/22] RV: Linear temporal logic monitors for RT application
+Date: Mon, 12 May 2025 12:50:43 +0200
+Message-Id: <cover.1747046848.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 09, 2025 at 06:11:49PM -0700, dan.j.williams@intel.com wrote:
+Real-time applications may have design flaws causing them to have
+unexpected latency. For example, the applications may raise page faults, or
+may be blocked trying to take a mutex without priority inheritance.
 
-> ---
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 6b0ca400b393..e5d2171c9a48 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -1395,7 +1395,7 @@ int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
->  	int rc;
->  
->  	ACQUIRE(mutex_intr, lock)(&mds->poison.poison_lock);
-> -	if ((rc = ACQUIRE_ERR(mutex_intr, &lock)))
-> +	if ((rc = ACQUIRE_ERR(mutex_intr, lock)))
->  		return rc;
->  
->  	po = mds->poison.list_out;
-> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-> index 17d4655a6b73..b379ff445179 100644
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -335,7 +342,7 @@ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
->  	CLASS(_name, _var)
->  
->  #define ACQUIRE_ERR(_name, _var) \
-> -	({ long _rc = PTR_ERR(__guard_ptr(_name)(_var)); \
-> +	({ long _rc = PTR_ERR(__guard_ptr(_name)(&(_var))); \
->  	   if (!_rc) _rc = -EBUSY; \
->  	   if (!IS_ERR_VALUE(_rc)) _rc = 0; \
->  	   _rc; })
-> 
+However, while attempting to implement DA monitors for these real-time
+rules, deterministic automaton is found to be inappropriate as the
+specification language. The automaton is complicated, hard to understand,
+and error-prone.
 
-No strong feelings about this. I see arguments either way.
+For these cases, linear temporal logic is found to be more suitable. The
+LTL is more concise and intuitive.
 
-> ---
-> 
-> Also, I needed the following to get this to compile:
+This series adds support for LTL RV monitor, and use it to implement two
+monitors for reporting problems with real-time tasks.
 
-Ah, I didn't get beyond nvim/clangd not complaining about things :-)
+Patch 1-12 cleanup and prepare the RV code for the integration of LTL
+monitors.
 
-> ---
-> 
-> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-> index 17d4655a6b73..052bbad6ac68 100644
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -305,8 +305,15 @@ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
->  	__DEFINE_CLASS_IS_CONDITIONAL(_name, true); \
->  	__DEFINE_GUARD_LOCK_PTR(_name, _T)
->  
-> +/*
-> + * For guard with a potential percpu lock, the address space needs to be
-> + * cast away.
-> + */
-> +#define IS_ERR_OR_NULL_ANY(x) \
-> +IS_ERR_OR_NULL((const void *)(__force const unsigned long)(x))
-> +
->  #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
-> -	DEFINE_CLASS(_name, _type, if (!IS_ERR_OR_NULL(_T)) { _unlock; }, ({ _lock; _T; }), _type _T); \
-> +	DEFINE_CLASS(_name, _type, if (!IS_ERR_OR_NULL_ANY(_T)) { _unlock; }, ({ _lock; _T; }), _type _T); \
->  	DEFINE_CLASS_IS_GUARD(_name)
->  
->  #define DEFINE_GUARD_COND_4(_name, _ext, _lock, _cond) \
-> @@ -401,7 +408,7 @@ typedef struct {							\
->  									\
->  static inline void class_##_name##_destructor(class_##_name##_t *_T)	\
->  {									\
-> -	if (!IS_ERR_OR_NULL(_T->lock)) { _unlock; }			\
-> +	if (!IS_ERR_OR_NULL_ANY(_T->lock)) { _unlock; }			\
->  }									\
->  									\
->  __DEFINE_GUARD_LOCK_PTR(_name, &_T->lock)
+Patch 13 adds support for LTL monitors.
 
-So looking at this I realized I might have inadvertly broken
-scoped_guard() and scoped_cond_guard(), both rely on !__guard_ptr() for
-the failure case, and this is no longer true.
+Patch 14 adds the container monitor "rtapp". This encapsulates the
+sub-monitors for real-time.
 
-The below seems to cover things. I even did a simple compile :-)
+Patch 15-18 prepares the pagefault tracepoints, so that patch 19 can add
+the monitor which watches real-time tasks doing page faults.
 
----
+Patch 20 adds the "sleep" monitor: it detects potential undesirable latency
+with real-time threads.
 
-diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-index d72764056ce6..8a52e337dd0f 100644
---- a/drivers/cxl/core/mbox.c
-+++ b/drivers/cxl/core/mbox.c
-@@ -1394,8 +1394,8 @@ int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
- 	int nr_records = 0;
- 	int rc;
- 
--	rc = mutex_lock_interruptible(&mds->poison.lock);
--	if (rc)
-+	ACQUIRE(mutex_intr, lock)(&mds->poison.mutex);
-+	if ((rc = ACQUIRE_ERR(mutex_intr, lock)))
- 		return rc;
- 
- 	po = mds->poison.list_out;
-@@ -1430,7 +1430,6 @@ int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
- 		}
- 	} while (po->flags & CXL_POISON_FLAG_MORE);
- 
--	mutex_unlock(&mds->poison.lock);
- 	return rc;
- }
- EXPORT_SYMBOL_NS_GPL(cxl_mem_get_poison, "CXL");
-@@ -1466,7 +1465,7 @@ int cxl_poison_state_init(struct cxl_memdev_state *mds)
- 		return rc;
- 	}
- 
--	mutex_init(&mds->poison.lock);
-+	mutex_init(&mds->poison.mutex);
- 	return 0;
- }
- EXPORT_SYMBOL_NS_GPL(cxl_poison_state_init, "CXL");
-diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-index 3ec6b906371b..1dfd361ed295 100644
---- a/drivers/cxl/cxlmem.h
-+++ b/drivers/cxl/cxlmem.h
-@@ -257,7 +257,7 @@ struct cxl_poison_state {
- 	u32 max_errors;
- 	DECLARE_BITMAP(enabled_cmds, CXL_POISON_ENABLED_MAX);
- 	struct cxl_mbox_poison_out *list_out;
--	struct mutex lock;  /* Protect reads of poison list */
-+	struct mutex mutex;  /* Protect reads of poison list */
- };
- 
- /*
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 7093e1d08af0..a20d70e563e1 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -3,6 +3,8 @@
- #define _LINUX_CLEANUP_H
- 
- #include <linux/compiler.h>
-+#include <linux/err.h>
-+#include <linux/args.h>
- 
- /**
-  * DOC: scope-based cleanup helpers
-@@ -310,9 +312,17 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
- #define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
- static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
- 
-+#define __GUARD_ERR(_ptr) \
-+	({ long _rc = (__force unsigned long)(_ptr); \
-+	   if (!_rc) { _rc = -EBUSY; } if (!IS_ERR_VALUE(_rc)) { _rc = 0; } \
-+	   _rc; })
-+
- #define __DEFINE_GUARD_LOCK_PTR(_name, _exp) \
- 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
--	{ return (void *)(__force unsigned long)*(_exp); }
-+	{ void *_ptr = (void *)(__force unsigned long)*(_exp); \
-+	  if (IS_ERR(_ptr)) { _ptr = NULL; } return _ptr; } \
-+	static inline int class_##_name##_lock_err(class_##_name##_t *_T) \
-+	{ return __GUARD_ERR(*(_exp)); }
- 
- #define DEFINE_CLASS_IS_GUARD(_name) \
- 	__DEFINE_CLASS_IS_CONDITIONAL(_name, false); \
-@@ -323,23 +333,37 @@ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
- 	__DEFINE_GUARD_LOCK_PTR(_name, _T)
- 
- #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
--	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
-+	DEFINE_CLASS(_name, _type, if (!__GUARD_ERR(_T)) { _unlock; }, ({ _lock; _T; }), _type _T); \
- 	DEFINE_CLASS_IS_GUARD(_name)
- 
--#define DEFINE_GUARD_COND(_name, _ext, _condlock) \
-+#define DEFINE_GUARD_COND_4(_name, _ext, _lock, _cond) \
- 	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true); \
- 	EXTEND_CLASS(_name, _ext, \
--		     ({ void *_t = _T; if (_T && !(_condlock)) _t = NULL; _t; }), \
-+		     ({ void *_t = _T; int _RET = (_lock); if (_T && !(_cond)) _t = ERR_PTR(_RET); _t; }), \
- 		     class_##_name##_t _T) \
- 	static inline void * class_##_name##_ext##_lock_ptr(class_##_name##_t *_T) \
--	{ return class_##_name##_lock_ptr(_T); }
-+	{ return class_##_name##_lock_ptr(_T); } \
-+	static inline int class_##_name##_ext##_lock_err(class_##_name##_t *_T) \
-+	{ return class_##_name##_lock_err(_T); }
-+
-+/*
-+ * Default binary condition; success on 'true'.
-+ */
-+#define DEFINE_GUARD_COND_3(_name, _ext, _lock) \
-+	DEFINE_GUARD_COND_4(_name, _ext, _lock, _RET)
-+
-+#define DEFINE_GUARD_COND(X...) CONCATENATE(DEFINE_GUARD_COND_, COUNT_ARGS(X))(X)
- 
- #define guard(_name) \
- 	CLASS(_name, __UNIQUE_ID(guard))
- 
- #define __guard_ptr(_name) class_##_name##_lock_ptr
-+#define __guard_err(_name) class_##_name##_lock_err
- #define __is_cond_ptr(_name) class_##_name##_is_conditional
- 
-+#define ACQUIRE(_name, _var)     CLASS(_name, _var)
-+#define ACQUIRE_ERR(_name, _var) __guard_err(_name)(&(_var))
-+
- /*
-  * Helper macro for scoped_guard().
-  *
-@@ -401,7 +425,7 @@ typedef struct {							\
- 									\
- static inline void class_##_name##_destructor(class_##_name##_t *_T)	\
- {									\
--	if (_T->lock) { _unlock; }					\
-+	if (!__GUARD_ERR(_T->lock)) { _unlock; }			\
- }									\
- 									\
- __DEFINE_GUARD_LOCK_PTR(_name, &_T->lock)
-@@ -433,15 +457,22 @@ __DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
- __DEFINE_UNLOCK_GUARD(_name, void, _unlock, __VA_ARGS__)		\
- __DEFINE_LOCK_GUARD_0(_name, _lock)
- 
--#define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
-+#define DEFINE_LOCK_GUARD_1_COND_4(_name, _ext, _lock, _cond)		\
- 	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true);		\
- 	EXTEND_CLASS(_name, _ext,					\
- 		     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
--		        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
-+		        int _RET = (_lock);                             \
-+		        if (_T->lock && !(_cond)) _T->lock = ERR_PTR(_RET);\
- 			_t; }),						\
- 		     typeof_member(class_##_name##_t, lock) l)		\
- 	static inline void * class_##_name##_ext##_lock_ptr(class_##_name##_t *_T) \
--	{ return class_##_name##_lock_ptr(_T); }
-+	{ return class_##_name##_lock_ptr(_T); } \
-+	static inline int class_##_name##_ext##_lock_err(class_##_name##_t *_T) \
-+	{ return class_##_name##_lock_err(_T); }
-+
-+#define DEFINE_LOCK_GUARD_1_COND_3(_name, _ext, _lock) \
-+	DEFINE_LOCK_GUARD_1_COND_4(_name, _ext, _lock, _RET);
- 
-+#define DEFINE_LOCK_GUARD_1_COND(X...) CONCATENATE(DEFINE_LOCK_GUARD_1_COND_, COUNT_ARGS(X))(X)
- 
- #endif /* _LINUX_CLEANUP_H */
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 2143d05116be..232fdde82bbb 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -200,7 +200,7 @@ extern int atomic_dec_and_mutex_lock(atomic_t *cnt, struct mutex *lock);
- 
- DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
- DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
--DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) == 0)
-+DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T), _RET == 0)
- 
- extern unsigned long mutex_get_owner(struct mutex *lock);
- 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index c8b543d428b0..c810deb88d13 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -240,7 +240,7 @@ extern void up_write(struct rw_semaphore *sem);
- 
- DEFINE_GUARD(rwsem_read, struct rw_semaphore *, down_read(_T), up_read(_T))
- DEFINE_GUARD_COND(rwsem_read, _try, down_read_trylock(_T))
--DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T) == 0)
-+DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T), _RET == 0)
- 
- DEFINE_GUARD(rwsem_write, struct rw_semaphore *, down_write(_T), up_write(_T))
- DEFINE_GUARD_COND(rwsem_write, _try, down_write_trylock(_T))
+Patch 21 adds documentation on the new monitors.
+
+Patch 22 allows the number of per-task monitors to be configurable, so that
+the two new monitors can be enabled simultaneously.
+
+v7->v8 https://lore.kernel.org/lkml/cover.1746776116.git.namcao@linutronix.=
+de/
+  - Fix some pylint warnings
+  - Fix some bugs with some currently-unused operators in the ltl2ba.py
+    script
+  - sleep monitor: Allow all FUTEX_WAIT_* as valid sleep reason
+
+v6->v7 https://lore.kernel.org/lkml/cover.1745999587.git.namcao@linutronix.=
+de/
+  - Add missing parameter description for vpanic()
+  - Remove the now-redundant CFLAGS_fault.o for x86
+  - Change #if to #ifdef to resolve a build warning
+  - rtapp/sleep monitor:
+    + Handle the case where an RT task "aborts" the sleep by setting state
+      to TASK_RUNNING. This case previously caused a false positive. Fix it
+      by adding "ABORT_SLEEP" as an RT-safe wake.
+    + Also allow CLOCK_TAI for real-time tasks.
+
+v5->v6 https://lore.kernel.org/lkml/cover.1745926331.git.namcao@linutronix.=
+de
+  - sleep monitor: Drop the block_on_rt_mutex tracepoints. The contention
+    tracepoints are sufficient.
+
+v4->v5 https://lore.kernel.org/lkml/cover.1745390829.git.namcao@linutronix.=
+de
+  - sleep monitor: Fix a false positive due to a race with waking and
+    scheduling.
+  - sleep monitor: Add block_on_rt_mutex tracepoints and use them for
+    BLOCK_ON_RT_MUTEX, instead of trace_sched_pi_setprio
+  - sleep monitor: tighten the rule on nanosleep: only clock_nanosleep()
+    with TIMER_ABSTIME and CLOCK_MONOTONIC is allowed
+  - add comments explaining why it is correct to treat PI-boosted tasks as
+    real-time tasks.
+
+    It should be noted that due to the changes in v5, 'perf' does not work
+    as well as before, because sometimes the errors happen out of the
+    real-time tasks' contexts. Fixing this is left for future work.
+
+    stress-ng is also far noisier in v5, because the rule on nanosleep is
+    tightened.
+
+v3->v4 https://lore.kernel.org/lkml/cover.1744785335.git.namcao@linutronix.=
+de
+  - support deadline tasks
+  - rtapp_sleep: use sched_pi_setprio tracepoint instead of contention
+    tracepoints for BLOCK_ON_RT_MUTEX, so that proxy lock is covered.
+  - fix the scripts generating an "slightly" incorrect verification automat=
+on
+  - makes rtapp monitor depends on RV_PER_TASK_MONITORS >=3D 2
+  - make the event tracepoint output a bit more readable
+  - some documentation's format fixes
+
+v2->v3 https://lore.kernel.org/lkml/cover.1744355018.git.namcao@linutronix.=
+de/
+  - fix a problem with sleep monitor's specification (around
+    KTHREAD_SHOULD_STOP)
+  - merge the patches that move the dot2k/rvgen scripts around
+  - pull panic/printk changes into separate patches
+  - fixup some build errors
+  - fixup monitor's init function return code
+  - fix some flake8 warnings with the scripts
+  - add some references to LTL documentation
+  - fixup some mistakes with rtapp documentation
+  - fixup capitalization mistake with monitor_synthesis.rst
+  - remove the now-redundant macro RV_PER_TASK_MONITORS
+
+v1->v2 https://lore.kernel.org/lkml/cover.1741708239.git.namcao@linutronix.=
+de/
+  - Integrate the LTL scripts into the existing dot2k tool, taking
+    advantage of the existing monitor generation scripts.
+  - Switch the struct ltl_monitor to use bitmap instead of an array, to
+    optimize memory usage.
+  - Correct the generated code to be non-deterministic state machine,
+    instead of deterministic state machine
+  - Put common code for all LTL monitors into a single file
+    (include/rv/ltl_monitor.h), reducing code duplication
+  - Change the LTL monitors to make user of container. Add a bug fix to
+    container while at it.
+  - Make the number of per-task monitor configurable
+
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org
+
+Nam Cao (22):
+  rv: Add #undef TRACE_INCLUDE_FILE
+  printk: Make vprintk_deferred() public
+  panic: Add vpanic()
+  rv: Let the reactors take care of buffers
+  verification/dot2k: Make a separate dot2k_templates/Kconfig_container
+  verification/dot2k: Remove __buff_to_string()
+  verification/dot2k: Replace is_container() hack with subparsers
+  rv: rename CONFIG_DA_MON_EVENTS to CONFIG_RV_MON_EVENTS
+  verification/dot2k: Prepare the frontend for LTL inclusion
+  Documentation/rv: Prepare monitor synthesis document for LTL inclusion
+  verification/rvgen: Restructure the templates files
+  verification/rvgen: Restructure the classes to prepare for LTL
+    inclusion
+  rv: Add support for LTL monitors
+  rv: Add rtapp container monitor
+  x86/tracing: Remove redundant trace_pagefault_key
+  x86/tracing: Move page fault trace points to generic
+  arm64: mm: Add page fault trace points
+  riscv: mm: Add page fault trace points
+  rv: Add rtapp_pagefault monitor
+  rv: Add rtapp_sleep monitor
+  rv: Add documentation for rtapp monitor
+  rv: Allow to configure the number of per-task monitor
+
+ .../trace/rv/da_monitor_synthesis.rst         | 147 -----
+ Documentation/trace/rv/index.rst              |   4 +-
+ .../trace/rv/linear_temporal_logic.rst        | 122 ++++
+ Documentation/trace/rv/monitor_rtapp.rst      | 116 ++++
+ Documentation/trace/rv/monitor_synthesis.rst  | 256 +++++++++
+ arch/arm64/mm/fault.c                         |   8 +
+ arch/riscv/mm/fault.c                         |   8 +
+ arch/x86/include/asm/trace/common.h           |  12 -
+ arch/x86/include/asm/trace/irq_vectors.h      |   1 -
+ arch/x86/kernel/Makefile                      |   1 -
+ arch/x86/kernel/tracepoint.c                  |  21 -
+ arch/x86/mm/Makefile                          |   2 -
+ arch/x86/mm/fault.c                           |   5 +-
+ include/linux/panic.h                         |   3 +
+ include/linux/printk.h                        |   5 +
+ include/linux/rv.h                            |  74 ++-
+ include/linux/sched.h                         |   8 +-
+ include/rv/da_monitor.h                       |  45 +-
+ include/rv/ltl_monitor.h                      | 184 ++++++
+ .../trace/events}/exceptions.h                |  27 +-
+ kernel/fork.c                                 |   5 +-
+ kernel/panic.c                                |  18 +-
+ kernel/printk/internal.h                      |   1 -
+ kernel/trace/rv/Kconfig                       |  27 +-
+ kernel/trace/rv/Makefile                      |   3 +
+ kernel/trace/rv/monitors/pagefault/Kconfig    |  11 +
+ .../trace/rv/monitors/pagefault/pagefault.c   |  87 +++
+ .../trace/rv/monitors/pagefault/pagefault.h   |  57 ++
+ .../rv/monitors/pagefault/pagefault_trace.h   |  14 +
+ kernel/trace/rv/monitors/rtapp/Kconfig        |   7 +
+ kernel/trace/rv/monitors/rtapp/rtapp.c        |  33 ++
+ kernel/trace/rv/monitors/rtapp/rtapp.h        |   3 +
+ kernel/trace/rv/monitors/sleep/Kconfig        |  13 +
+ kernel/trace/rv/monitors/sleep/sleep.c        | 236 ++++++++
+ kernel/trace/rv/monitors/sleep/sleep.h        | 250 ++++++++
+ kernel/trace/rv/monitors/sleep/sleep_trace.h  |  14 +
+ kernel/trace/rv/reactor_panic.c               |   8 +-
+ kernel/trace/rv/reactor_printk.c              |   8 +-
+ kernel/trace/rv/rv.c                          |  10 +-
+ kernel/trace/rv/rv_reactors.c                 |   2 +-
+ kernel/trace/rv/rv_trace.h                    |  52 +-
+ tools/verification/dot2/Makefile              |  26 -
+ tools/verification/dot2/dot2k                 |  53 --
+ tools/verification/models/rtapp/pagefault.ltl |   1 +
+ tools/verification/models/rtapp/sleep.ltl     |  22 +
+ tools/verification/rvgen/.gitignore           |   3 +
+ tools/verification/rvgen/Makefile             |  27 +
+ tools/verification/rvgen/__main__.py          |  67 +++
+ tools/verification/{dot2 =3D> rvgen}/dot2c      |   2 +-
+ .../{dot2 =3D> rvgen/rvgen}/automata.py         |   0
+ tools/verification/rvgen/rvgen/container.py   |  22 +
+ .../{dot2 =3D> rvgen/rvgen}/dot2c.py            |   2 +-
+ tools/verification/rvgen/rvgen/dot2k.py       | 129 +++++
+ .../dot2k.py =3D> rvgen/rvgen/generator.py}     | 249 ++------
+ tools/verification/rvgen/rvgen/ltl2ba.py      | 540 ++++++++++++++++++
+ tools/verification/rvgen/rvgen/ltl2k.py       | 245 ++++++++
+ .../rvgen/templates}/Kconfig                  |   0
+ .../rvgen/rvgen/templates/container/Kconfig   |   5 +
+ .../rvgen/templates/container/main.c}         |   0
+ .../rvgen/templates/container/main.h}         |   0
+ .../rvgen/templates/dot2k}/main.c             |   0
+ .../rvgen/templates/dot2k}/trace.h            |   0
+ .../rvgen/rvgen/templates/ltl2k/main.c        | 102 ++++
+ .../rvgen/rvgen/templates/ltl2k/trace.h       |  14 +
+ 64 files changed, 2865 insertions(+), 552 deletions(-)
+ delete mode 100644 Documentation/trace/rv/da_monitor_synthesis.rst
+ create mode 100644 Documentation/trace/rv/linear_temporal_logic.rst
+ create mode 100644 Documentation/trace/rv/monitor_rtapp.rst
+ create mode 100644 Documentation/trace/rv/monitor_synthesis.rst
+ delete mode 100644 arch/x86/include/asm/trace/common.h
+ delete mode 100644 arch/x86/kernel/tracepoint.c
+ create mode 100644 include/rv/ltl_monitor.h
+ rename {arch/x86/include/asm/trace =3D> include/trace/events}/exceptions.h=
+ (55%)
+ create mode 100644 kernel/trace/rv/monitors/pagefault/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.c
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.h
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault_trace.h
+ create mode 100644 kernel/trace/rv/monitors/rtapp/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/rtapp/rtapp.c
+ create mode 100644 kernel/trace/rv/monitors/rtapp/rtapp.h
+ create mode 100644 kernel/trace/rv/monitors/sleep/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep.c
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep.h
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep_trace.h
+ delete mode 100644 tools/verification/dot2/Makefile
+ delete mode 100644 tools/verification/dot2/dot2k
+ create mode 100644 tools/verification/models/rtapp/pagefault.ltl
+ create mode 100644 tools/verification/models/rtapp/sleep.ltl
+ create mode 100644 tools/verification/rvgen/.gitignore
+ create mode 100644 tools/verification/rvgen/Makefile
+ create mode 100644 tools/verification/rvgen/__main__.py
+ rename tools/verification/{dot2 =3D> rvgen}/dot2c (97%)
+ rename tools/verification/{dot2 =3D> rvgen/rvgen}/automata.py (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/container.py
+ rename tools/verification/{dot2 =3D> rvgen/rvgen}/dot2c.py (99%)
+ create mode 100644 tools/verification/rvgen/rvgen/dot2k.py
+ rename tools/verification/{dot2/dot2k.py =3D> rvgen/rvgen/generator.py} (5=
+2%)
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2ba.py
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2k.py
+ rename tools/verification/{dot2/dot2k_templates =3D> rvgen/rvgen/templates=
+}/Kconfig (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/templates/container/Kcon=
+fig
+ rename tools/verification/{dot2/dot2k_templates/main_container.c =3D> rvge=
+n/rvgen/templates/container/main.c} (100%)
+ rename tools/verification/{dot2/dot2k_templates/main_container.h =3D> rvge=
+n/rvgen/templates/container/main.h} (100%)
+ rename tools/verification/{dot2/dot2k_templates =3D> rvgen/rvgen/templates=
+/dot2k}/main.c (100%)
+ rename tools/verification/{dot2/dot2k_templates =3D> rvgen/rvgen/templates=
+/dot2k}/trace.h (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
+
+--=20
+2.39.5
+
 
