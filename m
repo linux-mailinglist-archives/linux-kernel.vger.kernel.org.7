@@ -1,144 +1,103 @@
-Return-Path: <linux-kernel+bounces-643713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B0DAB30B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6461CAB30E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B72189988B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EA216EAD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 07:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275EB2571C9;
-	Mon, 12 May 2025 07:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106D32571D5;
+	Mon, 12 May 2025 07:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/POGKet"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="a6lXuY/k"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C98179BF;
-	Mon, 12 May 2025 07:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8965255F48;
+	Mon, 12 May 2025 07:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747035781; cv=none; b=FzLLXbHiL0LWG0yUKEKAjv2oX2Bm84TBjrc95ZN8w34CoJXShDeIYd0UBIGlG7tLIa0yA00JTjU8I2UrayYJY2LW+q4IQsZqk1zaD1TAvzeTkWAtY29vK+oOyv7bjXwonlQgx3DSPTys+m3XSFLOfYBmxn1hqz5yEXcJ/VUmjY4=
+	t=1747036575; cv=none; b=gvGACuc5Esh5zaPCQqTnRfGVzexTbMexvdpGCwepuRnjoVJV/DnIGl62uCSYmQCM+LJaJcHlwphPHoSnQlp2uCGd96NTwsfjbvtI2W9mfo/q7J6sGt1ImbQvV0E2CyM+UmpCuRLHy0Lxc3ssHw8qST9jIqyJ9S3BwDcc2Ehi0VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747035781; c=relaxed/simple;
-	bh=Bvd9v2KaOdNJwLWfy1ir5zBhQ0rZibvm1b+wCf5BiF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BFYGyspvWd6A7gb2UY1hl/VoWkPH25QqvCxF5/F5fMIEvL/dktujpDxnTsqYG3f/fH9sVJ0+mSkpAq3VuRQH1zKZQ+rtBYRrwevt/2EP24K+2qJO1qU0vCuy3sh/04sAghqOBKcvdDHzUX6mJO3INQH1lIdYTPxBsS4OQVeqEbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/POGKet; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7403f3ece96so5655087b3a.0;
-        Mon, 12 May 2025 00:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747035778; x=1747640578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ixYcQq0rSF0bg9NFU6d5lRXfvmxhdZj5BggjL8hxVE=;
-        b=M/POGKeti/aLSIhswhTtGCuE9w02VruiQNnl0H6fnQENPw3oHukEuv39+BbfO9S5eK
-         srhhVC8uugWoTAJPMfUbYAN2boUveeacKk08rkkeY53oiD9srBIs54Q/4/c93+XpPQH8
-         8mwgYzkHNEKwlhCNrDB1mwnXFPCspPseh8jpEk9pk1B/lzfiIMOffNqTl+fJatbSRVmi
-         TooHSn8LVf7kkU0pvBZMiIn+uYdk1TAKebTMkYYvWFPMJxx2oL8DzDnBPqopNm63ScK2
-         P20NOJlzXsSAxzFTupNjoZ0sAn2PcupZTHjOSYFHBMnYXkTUVA6UeW/8v/7pavT3/1Se
-         9QDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747035778; x=1747640578;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6ixYcQq0rSF0bg9NFU6d5lRXfvmxhdZj5BggjL8hxVE=;
-        b=G9POQC4RZjBp/Iitfw+0WPN1IOMxpTnOKZm6CxsmLKm6J066H0KR0VzhtGq9Kw1ncM
-         AHvwL0cDp69VBVLtbW5HwvZ4piLcnur4loJeaZd8oYPnxCN9EL9qI/4xs84VGSEn/1Ej
-         wvhnioW3s8xTqx7rhPuqEYJY9P0PwFnTQlis2Su5Udx0xHpVJRtXy2diPa/2RVOF19XA
-         JpXGVKqvEhfvDqN7iRUQT8KBsufVyCxiO8zvESwG70XPA/P3WT0IlJxeA5nvQioXr0vr
-         iayxtCEh5SUvK7vcuCEXN91MSEkOlkoUR/PxAV2SkYRztLf/sPpxRzEb61rZMlf23fH0
-         OTTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVO7i3F5wFeKEY8HCzIssI6PEfW5eEjv6yhQnlJCPXNj5R3i2HEboZkHueMpvojX9Ru21aX/haME0=@vger.kernel.org, AJvYcCXM1kxJOdKeoipOlsb1Vz3Vv6USsKgCKTT4DSp0e6WEvT/d8hqexGW0ZPNbU8Mvgmeq8xt/0iaiDwgSb+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ5CHZ5C4gC9QEJg/ZCJfVvn/SUSRi2K65LEEYdY+NdgWpxLYr
-	Mg4x1tlAUbhV1T2h0eEFonOgzvXh6aWH8KfyoV53eN1zaFIT3siN
-X-Gm-Gg: ASbGnctbKmtXXUOZNEs9xQpziiLTaae5+CwoNr0jFV3ih2zveocNIzSkXaLwqlhw9tt
-	CdVh6peldNGu+brid425Z5g37jclHSIitu0Zy8ND9WU9adgPveJXGKMHhKAhKBoIrXY4PBlmlUD
-	J3+/ARS7RLMoufkumZc/ZY+DGPST3nW8m+NDN4Otp8kHvI7naSYpFBczSGPxlHdw2Aehtzywia4
-	xGzheCijPAf5teh+fsl2FDRG/7IiOqlki7l+goWqskJ8FquhIHgqSVPJ8LMC7XNEhGYTK9vlE8C
-	4e0XedEeV8C0N0rifXzSA+d70bW6WMYxZM/fAP4dqAlnTq+LwlQ=
-X-Google-Smtp-Source: AGHT+IEM8O9x95BglttkpsX1VYoI4jLWpK+gMFTpf3ZBXg7sxj3iLdI7bWtsrH6IFjYE84LOvjVznA==
-X-Received: by 2002:a05:6a00:190f:b0:740:9a42:a356 with SMTP id d2e1a72fcca58-7423bd5544cmr17176473b3a.11.1747035778066;
-        Mon, 12 May 2025 00:42:58 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a0d007sm5690848b3a.96.2025.05.12.00.42.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 00:42:57 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id C0F76420AB0E; Mon, 12 May 2025 14:42:52 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux DRI Development <dri-devel@lists.freedesktop.org>,
-	Linux AMDGPU <amd-gfx@lists.freedesktop.org>,
-	Linux Media Subsystem <linux-media@vger.kernel.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] Documentation/gpu: Disambiguate SPI term
-Date: Mon, 12 May 2025 14:42:16 +0700
-Message-ID: <20250512074215.40928-2-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747036575; c=relaxed/simple;
+	bh=9Glz5LZDc7HH2FSiAtq3LuSpQaYGP+6gOkpN5kwj+zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqcQYjlWNJAExQob5xrQw5bbtEorfd7UwWElacjdOorxiGurWXPzChKBLbYYdUb/ikIyw/vljSmB4isCyRyKaSyU+Svqif2Yw3awzOID26PLsWL1dJL5LEUZL6GRQ/XoFSiBd40Qxsv5/vbSDWTS2k8qzQ458Va4yITvpatLjCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=a6lXuY/k; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 223DF40E023F;
+	Mon, 12 May 2025 07:46:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id VHyi69vfs-C5; Mon, 12 May 2025 07:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747035990; bh=oKhGyt1QxbrnNI4Wnk9jzdBGpu2nyB7Th8n6nIIp19U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a6lXuY/kD0AoY9lSeAjkmxqiwqvuvQuXahuLFky6BB4qkONTFiCwZDTSouQYvP7wu
+	 cC3L2KLty7ZDAHuOruYDpzFE+A5Uk14j2h4etV4zCxTfAuVpudRX1oec/f9yDxPoN9
+	 jGvD8wp/+QyXoUwM4kHQEMJLNj7qojvOM0wqhnLAgdO5DS7u+Qwtb/3TNzyp5Nlw4r
+	 bWM57GhGP38IhzyvYO6j/0SQrRrBoE38pa3+YSCzSBJDSSbdL4Jnm35BAK7FLjJ16D
+	 0Horft1GRUIsOIylQatBo1jhDMJjzUh8V43RfVsBAA8GPkrv+3Ir8okJGijs2EnzsL
+	 +2Dv6aex3FBnDsemBmuv+2zPRH/ESBOyI0dsd7UIulLJh8eOfdynALMCYAdz133e8J
+	 bVCkBCyXgfznn1s4zj2o3ayA+TZSKZ+gkpP3lMFyZK/gcFpaA9emtDT56bTXHlgtHJ
+	 58RtEyGa3ZmysbX6wTT37LSbTH1XjeK7OpmC8rdTFOZmMQh8z5EgbKRstZDfH6+6QU
+	 /jxnsEGO9o3tk2cYwPzWg8blfPBIQz/wFkdwtAkB1MjhCHWM6YR204m+AlFoL50wJs
+	 xPuOBi0GnkP9Q1sopdO9eG8mCj9C5Ivh08lUkM3jXrOgbDcU5vw0JWZ6GigAJWWUfB
+	 5K+5V0IeCh49Jp04jX62tmEA=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7F61F40E023B;
+	Mon, 12 May 2025 07:46:23 +0000 (UTC)
+Date: Mon, 12 May 2025 09:46:16 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Subject: Re: [PATCH v3 17/17] x86/mce: Restore poll settings after storm
+ subsides
+Message-ID: <20250512074616.GSaCGnSJbBpToh2VM6@fat_crate.local>
+References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
+ <20250415-wip-mca-updates-v3-17-8ffd9eb4aa56@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1452; i=bagasdotme@gmail.com; h=from:subject; bh=0Ff/DfdS8SM8W7YuaV5Dll23KaO6sYsRLEZgfh2NHJI=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmKSxutzjK83xzJWfo1+rSB1/66S/XV36er3TApzjA81 P5Q+o1ARykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACay9wPD/zCXyKlr4lNVHMKL ix8lhjNN5fR0bSuV3Kz27HEtX0IMM8P/hPX6hu+LdjKZsbzb95rhbZH7R/+Cnk8pWqH2DAtMGY8 zAwA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250415-wip-mca-updates-v3-17-8ffd9eb4aa56@amd.com>
 
-Documentation/userspace-api/media/glossary.rst:170: WARNING: duplicate term description of SPI, other instance in gpu/amdgpu/amdgpu-glossary
+On Tue, Apr 15, 2025 at 02:55:12PM +0000, Yazen Ghannam wrote:
+> Users can disable MCA polling by setting the "ignore_ce" parameter or by
+> setting "check_interval=0". This tells the kernel to *not* start the MCE
+> timer on a CPU.
+> 
+> During a CMCI storm, the MCE timer will be started with a fixed
+> interval.
 
-That's because SPI of amdgpu (Shader Processor Input) shares the same
-global glossary term as SPI of media subsystem (which is Serial
-Peripheral Interface Bus). Disambiguate the former from the latter to
-fix the warning.
+Why?
 
-Note that adding context qualifiers in the term is strictly necessary
-in order to make Sphinx happy.
+If a user doesn't want CEs, why are we even bothering with CMCI storms?
 
-Fixes: dd3d035a7838 ("Documentation/gpu: Add new entries to amdgpu glossary")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250509185845.60bf5e7b@canb.auug.org.au/
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-Also Cc: media maintainers.
+Might as well disable the storm handling code altogether...
 
- Documentation/gpu/amdgpu/amdgpu-glossary.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/gpu/amdgpu/amdgpu-glossary.rst b/Documentation/gpu/amdgpu/amdgpu-glossary.rst
-index 2040da593b1490..30812d9d53c645 100644
---- a/Documentation/gpu/amdgpu/amdgpu-glossary.rst
-+++ b/Documentation/gpu/amdgpu/amdgpu-glossary.rst
-@@ -182,7 +182,7 @@ we have a dedicated glossary for Display Core at
-     SMU/SMC
-       System Management Unit / System Management Controller
- 
--    SPI
-+    SPI (AMDGPU)
-       Shader Processor Input
- 
-     SRLC
-
-base-commit: afc6053d4c4b0a6be500b9e643aa17221e93a57b
 -- 
-An old man doll... just what I always wanted! - Clara
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
