@@ -1,106 +1,126 @@
-Return-Path: <linux-kernel+bounces-643851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8D7AB3301
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEAADAB3315
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DBE17A1DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0661888D61
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33B725B663;
-	Mon, 12 May 2025 09:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299D25E465;
+	Mon, 12 May 2025 09:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDUqrjR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZlSnRaJK"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6425B68E;
-	Mon, 12 May 2025 09:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F0625B1FA;
+	Mon, 12 May 2025 09:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747041634; cv=none; b=u0zuwGlFFjcMGPJUEHDjxHcbJ1dzI3tl857fgWmD70jHgYM2FkrrtGIfGXYfARsXVUPaTwgpLE4QTMh9kKOH44bWeCq3lwspEqIbYBAuruUy+IV7yaodw/1T1FlRpqOzZBkVUKoA8Kxh6PKd03tO/sULPBhU6gcfDrsK3oT81PY=
+	t=1747041698; cv=none; b=kSTkaEZtJuUT7MrTjkTrEDrfbFn68S6ks40GSTDYYl97kjX0rb8YADKHK1YJ46wdWzPzg81N+D8eLQQe5WT8j9rB3ICVGezCJMyyPgWIghF3HH1AClb1o/KEFUVdgtt/k5UgfYKeZHXjdvNg4JnhL9nCSKLvHEM70kaxnO+XizA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747041634; c=relaxed/simple;
-	bh=iXPNXOwECHF6vzmv4N3t7dpHwXal1mkPGC6CEteuntI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TmWNsJ/ZVSWW/cimEJ1SQqMGc3TTbczFGhUj0zedYAJL/PcjLOOQ64JpcBOgG9F6Y6vxpljsBZR4qZRO+uoycAh9htrJ+vd5P2kiJe2fFdfZ421JA4JsA7jWnlKy0BPjGpwg8l3AWsXlI9jgxSRFpLmBrzWRlfe6xFYtWTfLCOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDUqrjR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FEDC4CEE7;
-	Mon, 12 May 2025 09:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747041633;
-	bh=iXPNXOwECHF6vzmv4N3t7dpHwXal1mkPGC6CEteuntI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nDUqrjR+3krhDJ5Ew/pgFcib4HULQgxv4dAlZInqyhQuuxUJBdkpuer4jT/99Wvms
-	 KeN2hLfi7CWsgMmXuelniYaUvQ7HplFyye9CGeYTj1qjgNT/cqDlI6U6tAu1gyPNlj
-	 r2aToEYKw/cggt+4zhuutClE+6TGoIzC/gLHwEixB+1tZI9dUXg1311tkCB3/6rsVH
-	 pU3MsCb6MIoOlbkCRtLrIgZMF6hSJsTLeig1rwVD2mICsjQSBHRcovAXvoG5EHnE7S
-	 bSiuynmX3XWP6EFYx0fne0Kq79PAsIOGGaOnd0If2dxi9cRv5xnIcl/hYjFlsUJ78o
-	 4hTU5HRjTENXg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  Tudor Ambarus <tudor.ambarus@linaro.org>,
-  Pratyush Yadav <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
-  Miquel Raynal <miquel.raynal@bootlin.com>,  Richard Weinberger
- <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,  Krzysztof
- Kozlowski <krzk@kernel.org>,  linux-spi@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] mtd: spi-nor: Add a driver for the VIA/WonderMedia
- serial flash controller
-In-Reply-To: <20250510-wmt-sflash-v1-2-02a1ac6adf12@gmail.com>
-References: <20250510-wmt-sflash-v1-0-02a1ac6adf12@gmail.com>
-	<20250510-wmt-sflash-v1-2-02a1ac6adf12@gmail.com>
-Date: Mon, 12 May 2025 09:20:30 +0000
-Message-ID: <mafs01psu89sx.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1747041698; c=relaxed/simple;
+	bh=BM3gRkXxpP/SAKqky4iMMr6XOm95AlJ/4pnaReE+WGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h3h/Mi9Qrg0QeieTqguXTEgEK49b149lu34cW+gY1Ag+qko+OeHTTepw/bRH53CfKlwyXF8AZPaWLsV7g2kqS8cJFEdRs9XWxATiMv5lVr2gf/A7dpTu20TnHCRFwWtFlC16QZnHOGypDoL2rCcBcL3sHqJhMYdGslkZ/GCKUF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZlSnRaJK; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D5FCC10269581;
+	Mon, 12 May 2025 11:21:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1747041688; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=v9XjcCc4+Cf0EOOdbdHT18QGrQ05At74v3TRQYv6bAA=;
+	b=ZlSnRaJKukyx7PnElNEJGOPHXWwU2zZi4dNgGOO6fV7mnefUhhTe8OCaXdDhsA7jiO9i+u
+	W9FmNFjPVp0onVkdA2KaBgu+Hwf2Jj2b0eIV5ATFP2rTZUnZ9yjeiVOO0LBohADZI4S5T1
+	sVat7kRNqXblIrt6ky7Q9PYVnl639uSGeB1I6hAnl6OhAoWCEF6O9/RJbUCl7fsLGi+QG+
+	pfgV9M1X9WwYGU+2UfXvJSDfCgAxpCutGtpFQOpQi5UQjpvJ41SL5ihq1uqVPKfGtjeghx
+	zPGDRUXP70VnDRasaVdfh5dCioYzNzCqXHXngEeT0iTSkbyALQpRc2tHR0ZKlA==
+Date: Mon, 12 May 2025 11:21:20 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/569] 6.1.129-rc2 review
+Message-ID: <aCG9kFjnZrMd4sy8@duo.ucw.cz>
+References: <20250220104545.805660879@linuxfoundation.org>
+ <80ab673f-aa94-43e2-899a-0c5a22f3f1e0@gmail.com>
+ <2025022221-revert-hubcap-f519@gregkh>
+ <Z7mXDolRS+3nLAse@duo.ucw.cz>
+ <2025022213-brewery-synergy-b4bf@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nPmsm5nd9fp/OMiG"
+Content-Disposition: inline
+In-Reply-To: <2025022213-brewery-synergy-b4bf@gregkh>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Alexey,
 
-On Sat, May 10 2025, Alexey Charkov wrote:
+--nPmsm5nd9fp/OMiG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The controller is tailored to SPI NOR flash memory and abstracts away all
-> SPI communications behind a small set of MMIO registers and a physical
-> memory mapping of the actual chip contents.
->
-> It doesn't expose chip probing functions beyond reading the ID though, so
-> use lower level chip opcodes via the "programmable command mode" of the
-> controller and the kernel's SPI NOR framework to avoid hard-coding chip
-> parameters for each ID the way the vendor kernel does it.
->
-> Currently tested on a WonderMedia WM8950 SoC with a Macronix MX25L4005A
-> flash chip (APC Rock board), but should work on all VIA/WonderMedia SoCs
->
-> Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> ---
->  MAINTAINERS                                  |   1 +
->  drivers/mtd/spi-nor/controllers/Kconfig      |  14 +
->  drivers/mtd/spi-nor/controllers/Makefile     |   1 +
->  drivers/mtd/spi-nor/controllers/wmt-sflash.c | 525 +++++++++++++++++++++++++++
+On Sat 2025-02-22 10:39:23, Greg Kroah-Hartman wrote:
+> On Sat, Feb 22, 2025 at 10:21:18AM +0100, Pavel Machek wrote:
+> > On Sat 2025-02-22 07:28:10, Greg Kroah-Hartman wrote:
+> > > On Fri, Feb 21, 2025 at 09:45:15AM -0800, Florian Fainelli wrote:
+> > > >=20
+> > > >=20
+> > > > On 2/20/2025 2:57 AM, Greg Kroah-Hartman wrote:
+> > > > > This is the start of the stable review cycle for the 6.1.129 rele=
+ase.
+> > > > > There are 569 patches in this series, all will be posted as a res=
+ponse
+> > > > > to this one.  If anyone has any issues with these being applied, =
+please
+> > > > > let me know.
+> > > > >=20
+> > > > > Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
+> > > > > Anything received after that time might be too late.
+> > > >=20
+> > > > And yet there was a v6.1.29 tag created already?
+> > >=20
+> > > Sometimes I'm faster, which is usually the case for -rc2 and later, I=
+ go
+> > > off of the -rc1 date if the people that had problems with -rc1 have
+> > > reported that the newer -rc fixes their reported issues.
+> >=20
+> > Well, quoting time down to second then doing something completely
+> > different is quite confusing. Please fix your scripts.
+>=20
+> Patches gladly welcome :)
 
-Drivers in drivers/mtd/spi-nor/controllers/ are deprecated, and we want
-to eventually get rid of the API. The expected way is for drivers to use
-SPI MEM (drivers/spi/spi-mem.c). SPI MEM drivers are usually more
-general and not tailored specifically to SPI NOR flashes, so it might be
-a bit tricky to write drivers for specialized hardware with it. But I
-think the drivers/spi/spi-intel.c driver is written for similar kind of
-hardware so it should be possible.
->
-[...]
+It is not okay to send misleading emails just because script generated
+them.
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
--- 
-Regards,
-Pratyush Yadav
+--nPmsm5nd9fp/OMiG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaCG9kAAKCRAw5/Bqldv6
+8nz5AJ4lRm+kLJxoT8iH3r2OS+x01g2/pwCdElAtjh0eJDbRTA3b5dOr3cnBK8s=
+=ctRF
+-----END PGP SIGNATURE-----
+
+--nPmsm5nd9fp/OMiG--
 
