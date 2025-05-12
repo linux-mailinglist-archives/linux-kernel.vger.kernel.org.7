@@ -1,191 +1,210 @@
-Return-Path: <linux-kernel+bounces-644087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F38AB366A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:57:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4B5AB3674
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C5817D33B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E9B17C1CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33730293449;
-	Mon, 12 May 2025 11:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKf7XXKy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D35265629;
-	Mon, 12 May 2025 11:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5481292928;
+	Mon, 12 May 2025 12:00:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EB3261574
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 12:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050981; cv=none; b=PYcaOrKu34lgg9sif7zOXJxLmkC+AudhYxcz21yoicCDmQSljdRpVTcz5RB1qRRAmyFn1iyVF7LEl/LxWtFxKljM7Xc+hohlv7xAXztZigrufoa6jQICm87Zrfga+6Qz+jvxEIAOTTyxq9DiJanHFDpi05iX3Mum1/a3O8sPhjs=
+	t=1747051215; cv=none; b=Qu1l5752G1Xjrx/8FHJMJvO9ETmrhFqOKOpwcHBzfZaCLYeY/L7wzq2qzveQken4eTZe24efpJiHvpIhe0d+b/11ZcXOyuBh0jQ4uVqiP8wRoAK1QBVBOnfVSwwciePclNnBgFHl6opGipbGK045Bso9ozTZwanmo2tzWctsjTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050981; c=relaxed/simple;
-	bh=OP26wRID7imVo7J12rxlgz9zyMjobt/1rWh6Hpm9uqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oz+EwjFVZ2xlCvULzynUy1BhU9nSuKyF9Ee6a6foMdAtkkpfl2V0oQ7F1Z1TzBm226olTJ8QWG5dJ39bHP3PLIYYFRfjyHPYo3GmWKwLWHaYvNe6q1nOLXpE4c+6Vcx3RWU4L04wzZ3+9JNaZqCjCqvquAC/GuqsZInDfujiKXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKf7XXKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3BB1C4CEF1;
-	Mon, 12 May 2025 11:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747050980;
-	bh=OP26wRID7imVo7J12rxlgz9zyMjobt/1rWh6Hpm9uqk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VKf7XXKyJpJhLM038WIdAnO5wVREGY6OMuI4H9Wc1zYvJWzR1kt97dSLt8pjVsC6j
-	 11fjkTFmSfEhvYE0SdfKHJcTyTshHpwfSOZqYQQZaiF1YaVikub8w99sQ3Qweor7Wd
-	 1h+0blQFDMCRynpbU6DNaF4+K7IB+H4nzAjIjubNvwZL+d75VdNRLFwdkvMlpt/C6X
-	 BYNQzbZjhLAniX2A3LHi7ahxyw/gY5aX1me4SNiHwYdieV5+V+rL11beZ3DPMR5tPg
-	 gfMcH5SfqZhHxFBwcFEppQCHi8ksLAoQiDhHLasfUFKZN4rEVRxb3OZTBCMoRY6sxM
-	 z8MUiOne/YR+Q==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2d09d495c6cso1297007fac.3;
-        Mon, 12 May 2025 04:56:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWXpy7tvEuZgk5B7KEXnCybuvB5FMq4qoVc15tbvqEUilKYus5galBAtHRAepL9EgwGUQK1PIPiX2Lf@vger.kernel.org, AJvYcCXzciVnI4OgGpiJaisPK34d7fU+2jH1iUJdYh6cqeLpVCBoCwBwV3d4GSwEdKH5ueiDfo4SiXFnGhVD7vU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpA2zZ1bVU0q1LNtwQcGWC9YgnWcoCQJqHyPNqbPadaZDHQRuP
-	y3PfxCo1oVFztllJT7rIhuAuyIXz9SPuymAbZrRzj2kNUE2Ri3Ha2WWqHJCnCp/Z+ij8GmhENMe
-	lpIgSAnyIRyMMI2ZDSOqF4FG9qPs=
-X-Google-Smtp-Source: AGHT+IEgc1cpclFVS0xFmPfpfxKO7eNwHf/74FzkXLvjtGWVCoI5mCd4F1Qf6diExoLwb0LzDJCm0ssPJhXK3COGOVU=
-X-Received: by 2002:a05:6870:2424:b0:29e:671b:6003 with SMTP id
- 586e51a60fabf-2dba4539eeemr7885724fac.32.1747050980096; Mon, 12 May 2025
- 04:56:20 -0700 (PDT)
+	s=arc-20240116; t=1747051215; c=relaxed/simple;
+	bh=3Na1Ke6o+QZJp7uoY5MGg8R1W2mEwARTrYYs/7Qgmfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBwvi2klZ2VKAyOpsveYSZcR1Wruo8PhJpDhAoSCVAJho02VsIVyy0YgXgf6zhbwgpZF/Sa/XczbLU2hKyZ0Z1UC+0BGVOtiiCvowXpmNBgu8GCgWyf9oA8eY/RnMKaWLvWSJSUfxgSs/GOTLE0D9hfbiHgF8HnhirhgMM/yTfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 391E1150C;
+	Mon, 12 May 2025 04:59:59 -0700 (PDT)
+Received: from [10.57.90.222] (unknown [10.57.90.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 881C03F673;
+	Mon, 12 May 2025 05:00:07 -0700 (PDT)
+Message-ID: <e37d5e61-54e7-4425-837f-25a13f5a68b5@arm.com>
+Date: Mon, 12 May 2025 13:00:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250504090444.3347952-1-raag.jadav@intel.com>
-In-Reply-To: <20250504090444.3347952-1-raag.jadav@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 12 May 2025 13:56:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hgpq0VmO_rDnEjDQniUiLJP3yo3-Rpy1NNxA_k8VAS2A@mail.gmail.com>
-X-Gm-Features: AX0GCFtPUWD14OGMLgzCm3qM3Ty93hEQvIBQ5Hqi1UOaQYnHDabs5y8Ippsyig4
-Message-ID: <CAJZ5v0hgpq0VmO_rDnEjDQniUiLJP3yo3-Rpy1NNxA_k8VAS2A@mail.gmail.com>
-Subject: Re: [PATCH v3] PCI: Prevent power state transition of erroneous device
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: rafael@kernel.org, mahesh@linux.ibm.com, oohall@gmail.com, 
-	bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ilpo.jarvinen@linux.intel.com, lukas@wunner.de, 
-	aravind.iddamsetty@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Disable barrier batching in interrupt contexts
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
+References: <20250512102242.4156463-1-ryan.roberts@arm.com>
+ <001dfd4f-27f2-407f-bd1c-21928a754342@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <001dfd4f-27f2-407f-bd1c-21928a754342@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 4, 2025 at 11:06=E2=80=AFAM Raag Jadav <raag.jadav@intel.com> w=
-rote:
->
-> If error flags are set on an AER capable device, most likely either the
-> device recovery is in progress or has already failed. Neither of the
-> cases are well suited for power state transition of the device, since
-> this can lead to unpredictable consequences like resume failure, or in
-> worst case the device is lost because of it. Leave the device in its
-> existing power state to avoid such issues.
->
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> ---
->
-> v2: Synchronize AER handling with PCI PM (Rafael)
-> v3: Move pci_aer_in_progress() to pci_set_low_power_state() (Rafael)
->     Elaborate "why" (Bjorn)
+On 12/05/2025 12:07, David Hildenbrand wrote:
+> On 12.05.25 12:22, Ryan Roberts wrote:
+>> Commit 5fdd05efa1cd ("arm64/mm: Batch barriers when updating kernel
+>> mappings") enabled arm64 kernels to track "lazy mmu mode" using TIF
+>> flags in order to defer barriers until exiting the mode. At the same
+>> time, it added warnings to check that pte manipulations were never
+>> performed in interrupt context, because the tracking implementation
+>> could not deal with nesting.
+>>
+>> But it turns out that some debug features (e.g. KFENCE, DEBUG_PAGEALLOC)
+>> do manipulate ptes in softirq context, which triggered the warnings.
+>>
+>> So let's take the simplest and safest route and disable the batching
+>> optimization in interrupt contexts. This makes these users no worse off
+>> than prior to the optimization. Additionally the known offenders are
+>> debug features that only manipulate a single PTE, so there is no
+>> performance gain anyway.
+>>
+>> There may be some obscure case of encrypted/decrypted DMA with the
+>> dma_free_coherent called from an interrupt context, but again, this is
+>> no worse off than prior to the commit.
+>>
+>> Some options for supporting nesting were considered, but there is a
+>> difficult to solve problem if any code manipulates ptes within interrupt
+>> context but *outside of* a lazy mmu region. If this case exists, the
+>> code would expect the updates to be immediate, but because the task
+>> context may have already been in lazy mmu mode, the updates would be
+>> deferred, which could cause incorrect behaviour. This problem is avoided
+>> by always ensuring updates within interrupt context are immediate.
+>>
+>> Fixes: 5fdd05efa1cd ("arm64/mm: Batch barriers when updating kernel mappings")
+>> Reported-by: syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
+>> Closes: https://lore.kernel.org/linux-arm-
+>> kernel/681f2a09.050a0220.f2294.0006.GAE@google.com/
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>
+>> Hi Will,
+>>
+>> I've tested before and after with KFENCE enabled and it solves the issue. I've
+>> also run all the mm-selftests which all continue to pass.
+>>
+>> Catalin suggested a Fixes patch targetting the SHA as it is in for-next/mm was
+>> the preferred approach, but shout if you want something different. I'm hoping
+>> that with this fix we can still make it for this cycle, subject to not finding
+>> any more issues.
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>   arch/arm64/include/asm/pgtable.h | 16 ++++++++++++++--
+>>   1 file changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index ab4a1b19e596..e65083ec35cb 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -64,7 +64,11 @@ static inline void queue_pte_barriers(void)
+>>   {
+>>       unsigned long flags;
+>>
+>> -    VM_WARN_ON(in_interrupt());
+>> +    if (in_interrupt()) {
+>> +        emit_pte_barriers();
+>> +        return;
+>> +    }
+>> +
+>>       flags = read_thread_flags();
+>>
+>>       if (flags & BIT(TIF_LAZY_MMU)) {
+>> @@ -79,7 +83,9 @@ static inline void queue_pte_barriers(void)
+>>   #define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+>>   static inline void arch_enter_lazy_mmu_mode(void)
+>>   {
+>> -    VM_WARN_ON(in_interrupt());
+>> +    if (in_interrupt())
+>> +        return;
+>> +
+>>       VM_WARN_ON(test_thread_flag(TIF_LAZY_MMU));
+>>
+>>       set_thread_flag(TIF_LAZY_MMU);
+>> @@ -87,12 +93,18 @@ static inline void arch_enter_lazy_mmu_mode(void)
+>>
+>>   static inline void arch_flush_lazy_mmu_mode(void)
+>>   {
+>> +    if (in_interrupt())
+>> +        return;
+>> +
+>>       if (test_and_clear_thread_flag(TIF_LAZY_MMU_PENDING))
+>>           emit_pte_barriers();
+>>   }
+>>
+>>   static inline void arch_leave_lazy_mmu_mode(void)
+>>   {
+>> +    if (in_interrupt())
+>> +        return;
+>> +
+>>       arch_flush_lazy_mmu_mode();
+>>       clear_thread_flag(TIF_LAZY_MMU);
+>>   }
+> 
+> I guess in all cases we could optimize out the in_interrupt() check on !debug
+> configs.
 
-I think this is reasonable, so
+I think that assumes we can easily and accurately identify all configs that
+cause this? We've identified 2 but I'm not confident that it's a full list.
+Also, KFENCE isn't really a debug config (despite me calling it that in the
+commit log) - it's supposed to be something that can be enabled in production
+builds.
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> 
+> Hm, maybe there is an elegant way to catch all of these "problematic" users?
 
-(and you might as well CC it to linux-pm@vger.kernel.org>).
+I'm all ears if you have any suggestions? :)
 
-Thanks!
 
->
-> More discussion on [1].
-> [1] https://lore.kernel.org/all/CAJZ5v0g-aJXfVH+Uc=3D9eRPuW08t-6PwzdyMXsC=
-6FZRKYJtY03Q@mail.gmail.com/
->
->  drivers/pci/pci.c      | 12 ++++++++++++
->  drivers/pci/pcie/aer.c | 11 +++++++++++
->  include/linux/aer.h    |  2 ++
->  3 files changed, 25 insertions(+)
->
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 4d7c9f64ea24..25b2df34336c 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -9,6 +9,7 @@
->   */
->
->  #include <linux/acpi.h>
-> +#include <linux/aer.h>
->  #include <linux/kernel.h>
->  #include <linux/delay.h>
->  #include <linux/dmi.h>
-> @@ -1539,6 +1540,17 @@ static int pci_set_low_power_state(struct pci_dev =
-*dev, pci_power_t state, bool
->            || (state =3D=3D PCI_D2 && !dev->d2_support))
->                 return -EIO;
->
-> +       /*
-> +        * If error flags are set on an AER capable device, most likely e=
-ither
-> +        * the device recovery is in progress or has already failed. Neit=
-her of
-> +        * the cases are well suited for power state transition of the de=
-vice,
-> +        * since this can lead to unpredictable consequences like resume
-> +        * failure, or in worst case the device is lost because of it. Le=
-ave the
-> +        * device in its existing power state to avoid such issues.
-> +        */
-> +       if (pci_aer_in_progress(dev))
-> +               return -EIO;
-> +
->         pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
->         if (PCI_POSSIBLE_ERROR(pmcsr)) {
->                 pci_err(dev, "Unable to change power state from %s to %s,=
- device inaccessible\n",
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a1cf8c7ef628..4040770df4f0 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -237,6 +237,17 @@ int pcie_aer_is_native(struct pci_dev *dev)
->  }
->  EXPORT_SYMBOL_NS_GPL(pcie_aer_is_native, "CXL");
->
-> +bool pci_aer_in_progress(struct pci_dev *dev)
-> +{
-> +       u16 reg16;
-> +
-> +       if (!pcie_aer_is_native(dev))
-> +               return false;
-> +
-> +       pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &reg16);
-> +       return !!(reg16 & PCI_EXP_AER_FLAGS);
-> +}
-> +
->  static int pci_enable_pcie_error_reporting(struct pci_dev *dev)
->  {
->         int rc;
-> diff --git a/include/linux/aer.h b/include/linux/aer.h
-> index 02940be66324..e6a380bb2e68 100644
-> --- a/include/linux/aer.h
-> +++ b/include/linux/aer.h
-> @@ -56,12 +56,14 @@ struct aer_capability_regs {
->  #if defined(CONFIG_PCIEAER)
->  int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
->  int pcie_aer_is_native(struct pci_dev *dev);
-> +bool pci_aer_in_progress(struct pci_dev *dev);
->  #else
->  static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
->  {
->         return -EINVAL;
->  }
->  static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
-> +static inline bool pci_aer_in_progress(struct pci_dev *dev) { return fal=
-se; }
->  #endif
->
->  void pci_print_aer(struct pci_dev *dev, int aer_severity,
-> --
-> 2.34.1
->
+It actaully looks like x86/XEN tries to solves this problem in a similar way:
+
+enum xen_lazy_mode xen_get_lazy_mode(void)
+{
+	if (in_interrupt())
+		return XEN_LAZY_NONE;
+
+	return this_cpu_read(xen_lazy_mode);
+}
+
+Although I'm not convinced it's fully robust. It also has:
+
+static inline void enter_lazy(enum xen_lazy_mode mode)
+{
+	BUG_ON(this_cpu_read(xen_lazy_mode) != XEN_LAZY_NONE);
+
+	this_cpu_write(xen_lazy_mode, mode);
+}
+
+which is called as part of its arch_enter_lazy_mmu_mode() implementation. If a
+task was already in lazy mmu mode when an interrupt comes in and causes the
+nested arch_enter_lazy_mmu_mode() that we saw in this bug report, surely that
+BUG_ON() should trigger?
+
+Thanks,
+Ryan
+
 
