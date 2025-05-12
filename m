@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-643790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD5CAB31F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5965AB3214
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823B13A6BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:43:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67DA43B2C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E172D259CB8;
-	Mon, 12 May 2025 08:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F27025A33A;
+	Mon, 12 May 2025 08:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUp0IBgq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="g9yE1SUI"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F55257436;
-	Mon, 12 May 2025 08:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FE325A2C5;
+	Mon, 12 May 2025 08:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747039446; cv=none; b=p41qb4KA/qUntD2oFpkcgqORB4BimTM7jSY8nD+sNV9wxqj9iZAkTUhu2KwYc0/tO9qZXeOV9VBf7eKd/NrsqjNBnj+bsRIkfr2133lv9gdl57Gm1AgT6rb/uIMjRsVpITDTNozaMCvK8WPSRIB07aJsaGsvWCcp9gjwcYx9ZUE=
+	t=1747039595; cv=none; b=rOukwpcWe7Iycd87KirRUqOJoOzKVcBY8dgk2wMhl7Y9uDsolorqIYD2BB4D9u1wA9/24RrwlfSO0KqsBk6IyDJj6ELO8C1qajnexOiAE1ZvcA9rk9j81gS0GmHAp6KnOCQcb/yRzGF4Rmqa4VOK4bOUFIzW/ahgO2gHDPHEY6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747039446; c=relaxed/simple;
-	bh=aO0nrrJS8HORN2b0dkbOEnZb76TM/1Rz49FnYj/O6R4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d82B4qJN2DNjm0NHVNDIWalk5xp0rhLa1dIbn7F1hBwemRlb4ZOlkYocKURv4P7EXjLkPezEZSLbaOZIX8g3sf2O9VdaccnGaNesjZlTQuYgt9hQt+gH6E/3R6OqIKZ8wXxRtfu+pZVB6ENwYwj5sWu+RKDjx9jBwlS/KIZmLX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUp0IBgq; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747039445; x=1778575445;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aO0nrrJS8HORN2b0dkbOEnZb76TM/1Rz49FnYj/O6R4=;
-  b=IUp0IBgqWpQpPRkxkVT3VFolzu+GMmnOKZKxN0EZn10+3wK7c9tB80of
-   IQJC8dk3e2wMf2/2IpOneynGxeLBC8FcDWQMTOoD5Yb+NyBcJd14NG6ak
-   chdSqk4pE+XszP26nJF5xp5hNNjxAzHMoyOklEl+0iO0WqJpnNX1Me159
-   M0vn/myo/vuPEuF4f7J0UEShnbKJtuhRne+yHLrft2ndKQfjnjucna74b
-   ZGUZzyNwA7e9/YoD2pl1Smv7hnGVBc4nQy0HEl4hqUOCbWGSbgkqGOqXX
-   Q2Gj1cVNp7I0xvt4D6/6OXu7vBu4kGUpZ5XJA9NGid3tO+uUotokM5jTl
-   Q==;
-X-CSE-ConnectionGUID: 7JmZqgajTD+b2mFLsFXJOQ==
-X-CSE-MsgGUID: 34tskvRBRWyYWjS6+E3ohQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48901664"
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="48901664"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:44:04 -0700
-X-CSE-ConnectionGUID: sVxN3AVHRf2RESn32JKGZQ==
-X-CSE-MsgGUID: nsx9lkCuRn6kBHgYj8UcUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="137205262"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 01:43:58 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uEOlO-00000000rhm-1X7N;
-	Mon, 12 May 2025 11:43:54 +0300
-Date: Mon, 12 May 2025 11:43:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 14/23] ACPI: property: Refactor
- acpi_fwnode_get_reference_args()
-Message-ID: <aCG0ykZt-DcEG2kr@smile.fi.intel.com>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-15-apatel@ventanamicro.com>
+	s=arc-20240116; t=1747039595; c=relaxed/simple;
+	bh=Z2VWxu2V7moZYDd06BiypMThnTUdVOI8o7oiaxVEHIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Su6OKdyBxkfiJVS0Tu1Hzw7en9JCcXveakcUYwj+7M+aZHiNV6oT1hK1oh0v+PVOTMUMDijIeJyoSuEz1LOwvAO5+c8cC6PR1d+cLCrcbhjpTZ5UADjQ4v34fvem2KafCR/1J+hNOG/tM12jWGzVWBmNvKDmKaqUKLuRmdK7tOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=g9yE1SUI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54C8jqc41586901
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Mon, 12 May 2025 01:45:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54C8jqc41586901
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1747039560;
+	bh=7a7DioSZkOkbzgFBLNF+1MMN8PbvCPClN1vs7CkMDT4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g9yE1SUIh+a4/A07fhKWcikSvZS/B1o32tMs/ljMYpKNDM5Mzs8/5CLXUUzW+O2d9
+	 anFCSIGiPm6lXib7pAMPfKu9y7K6kCM65jPzDHqpFTNgaiVUrnm8LLASk4DkkPleFV
+	 KXWcQs4YY0htPPFfCvcSwzJaxgP0bip3uPvcLW58ILxilulgaXhzoJ3fH7rYGNjr2W
+	 Jti+nP3nWugH5PAeH7DXNtt/R17RvC/pPhDLA2a7XbxaimpeGRXO4LZHZhIhz24/d8
+	 76LsC0rfGbo5S8nmx6unBRR1HHW9iyGvQiDbgcMLTqL2t+jkloEdlVTsyQg+vtg+z7
+	 TwX8Nrssqf2bQ==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, jgross@suse.com, boris.ostrovsky@oracle.com,
+        rafael@kernel.org, lenb@kernel.org
+Subject: [PATCH v1 0/3] MSR fixes and cleanups after last round of MSR cleanups
+Date: Mon, 12 May 2025 01:45:49 -0700
+Message-ID: <20250512084552.1586883-1-xin@zytor.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250511133939.801777-15-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 11, 2025 at 07:09:30PM +0530, Anup Patel wrote:
-> 
-> Currently acpi_fwnode_get_reference_args() calls the public function
-> __acpi_node_get_property_reference() which ignores the nargs_prop
-> parameter. To fix this, make __acpi_node_get_property_reference() to
-> call the static acpi_fwnode_get_reference() so that callers of
-> fwnode_get_reference_args() can still pass a valid property name to
-> fetch the number of arguments.
+These patches:
 
-...
+1) remove a superfluous inclusion of <asm/asm.h> accidently added to
+   drivers/acpi/processor_throttling.c in commit:
 
-> +static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
-> +					  const char *prop, const char *nargs_prop,
+     efef7f184f2e ("x86/msr: Add explicit includes of <asm/msr.h>").
 
-Why prop and not propname?
+2) Fix uninitialized symbol 'err' introduced by:
 
-> +					  unsigned int args_count, unsigned int index,
-> +					  struct fwnode_reference_args *args)
+     d815da84fdd0 ("x86/msr: Change the function type of native_read_msr_safe()").
 
-...
+3) Convert a native_wrmsr() use to native_wrmsrq() in
+   arch/x86/coco/sev/core.c.
 
-> -	ret = acpi_data_get_property(data, propname, ACPI_TYPE_ANY, &obj);
-> +	ret = acpi_data_get_property(data, prop, ACPI_TYPE_ANY, &obj);
 
-Ditto.
+Xin Li (Intel) (3):
+  x86/msr: Remove a superfluous inclusion of <asm/asm.h>
+  x86/xen/msr: Fix uninitialized symbol 'err'
+  x86/msr: Convert a native_wrmsr() use to native_wrmsrq()
 
-Sounds like an unneeded churn.
+ arch/x86/coco/sev/core.c            | 7 +------
+ arch/x86/xen/enlighten_pv.c         | 5 ++++-
+ drivers/acpi/processor_throttling.c | 1 -
+ 3 files changed, 5 insertions(+), 8 deletions(-)
 
->  	if (ret)
->  		return ret == -EINVAL ? -ENOENT : -EINVAL;
 
+base-commit: 9cf78722003178b09c409df9aafe9d79e5b9a74e
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
