@@ -1,95 +1,77 @@
-Return-Path: <linux-kernel+bounces-644173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7E2AB37F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:59:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7209AB39EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C56B189421F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D283B9B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B706C2949E0;
-	Mon, 12 May 2025 12:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DEE1E1DF9;
+	Mon, 12 May 2025 14:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsdY9hbU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QvDgyhgf"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63478F43;
-	Mon, 12 May 2025 12:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2941E1C09
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 14:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747054784; cv=none; b=hsfTXy1HMSN8bDLHUDG7YbCRFSLcwVAtgzVfAzK/rE798CzacIcrd25q06+HL7eZBSd/uolWlw6lIvMxqgO9g3M1t/qgwPe/Eic6rOuM/AB4g88sy5oZBtZSG/zrJ+abJnm2jaToYLvJZOvD4IDezjl25bZZB+10E+v108SVFec=
+	t=1747058453; cv=none; b=jS2m+QeTDu1/Z316vwNCvQx09pWAEzm4yKxjGKFViCDbYaTCme3+xjGiIvn4dfOsdHuyCMWZzC+626OF0RGz5WC3LesBBGORU/7lp2fKRjbFLVt4Snzh0xnsBZsI19OQ9dVKFjzpH/fyZmYdQ1E2R3rWi7pmkn5MjHUwlXe5JfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747054784; c=relaxed/simple;
-	bh=Sl9HhishayHhuvvB5bQuDThhoqmbFaMgmkYIGRlpRog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bz13aRkb17Oned2NuzkVEf7pWwqEH7l+6M/LybfjeejdWOGGAGG4BX/iGNleurF31IDIa8UNxlQjJmgPWe5103/YqaW6Y8kj8rObHuOin3yyQ4ilA4T6Lw9jGSlsps/oZS13c/wT46rGKdlg95ZgM6nJhkIq6l5Cd/Ae+ZhXg40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsdY9hbU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7B9C4CEE7;
-	Mon, 12 May 2025 12:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747054783;
-	bh=Sl9HhishayHhuvvB5bQuDThhoqmbFaMgmkYIGRlpRog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VsdY9hbUj7lzvgCG+qD3jMnd/6+YmALHBCgEFxiAI5SeZV0QsLiluVIisah5mqeQJ
-	 caJXV365FgBEgoe/qhzjhhu7c3uteuwTTdTE3bRKWDQ5K3dNAqMTjp94iGN/dcDq5M
-	 dPlrnJtUEJTnW0mCls7X2FaBzWgrV2yiQNPfv0cdFuXUnMbhqlTChttFa4QXMIDG+/
-	 BB8J4IKc2qJUPnTY6PslvQOhR2xmcm2HEPMRJ3G04adrg2HGyCg3xA/wYv5+4TMwpm
-	 889vc2UYfKPbKuRjWHqDQwoOLvnXaMtx57t8OGRjD4w5t36XsqpPMiGGg+BbLyKttv
-	 LZAAXBB1X+qRg==
-Date: Mon, 12 May 2025 07:59:41 -0500
-From: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, andy@kernel.org, nuno.sa@analog.com,
-	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
-	jic23@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	marcelo.schmitt1@gmail.com, linus.walleij@linaro.org, brgl@bgdev.pl,
-	lgirdwood@gmail.com, broonie@kernel.org, jonath4nns@gmail.com,
-	dlechner@baylibre.com, David Lechner <dlechner@baylirbe.com>
-Subject: Re: [PATCH v7 03/12] dt-bindings: iio: adc: ad7768-1: add
- trigger-sources property
-Message-ID: <20250512125941.GA2952373-robh@kernel.org>
-References: <cover.1746662899.git.Jonathan.Santos@analog.com>
- <731196750f27eee0bad5493647edb2f67a05a6e2.1746662899.git.Jonathan.Santos@analog.com>
- <20250509-gala-unfiled-fd273655b89d@spud>
+	s=arc-20240116; t=1747058453; c=relaxed/simple;
+	bh=JkdKaL2iFKo4vgbPLrWo2J9XuIX7Fdk8UQcBDH+Xj70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ipYUTFWwf5u5C7mkj9xK3dFNoFYEZaxff3iZ4S915CzrA41vDUqYWOfU0GljmGmCLQFQUkCohpCo1U/a4Y6OMZ6bmtLDR5InjiR7H/PkHAHn+0uiFNRQhwMgLCfr4ofrIYk7F3m35uTvlW6qinMFRLN0lvirK+OfExWox3yV0dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QvDgyhgf; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0b01a3ae-4766-490e-939d-1d16c2748644@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747058448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJt0rAK9N64ywS+8cjcx1q6dtT4JHAquqNHQUOsx420=;
+	b=QvDgyhgfH+F49xOXo1L5Ci9KfvFz/EESz1u68D9NsGzDoho3327H878UxaSIIGCBihxQ6g
+	46TLkmYAR9NzF9k9nift8belENT7cwvAi8SMeuU/3tpk2O4MHZimao8Mbwo1CYJSNRXfVT
+	uGbgL7dRayK2pZX5eFjvzE3frNNkdfw=
+Date: Mon, 12 May 2025 14:59:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509-gala-unfiled-fd273655b89d@spud>
+Subject: Re: [PATCH 0/5] ASoC/SOF/PCI/Intel: add Wildcat Lake support
+To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, lgirdwood@gmail.com,
+ broonie@kernel.org
+Cc: linux-sound@vger.kernel.org, kai.vehmanen@linux.intel.com,
+ ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, May 09, 2025 at 05:18:55PM +0100, Conor Dooley wrote:
-> On Thu, May 08, 2025 at 02:03:30PM -0300, Jonathan Santos wrote:
-> > +dependencies:
-> > +  adi,sync-in-gpios:
-> > +    not:
-> > +      required:
-> > +        - trigger-sources
-> > +  trigger-sources:
-> > +    not:
-> > +      required:
-> > +        - adi,sync-in-gpios
+
+> The audio IP in Wildcat Lake (WCL) is largely identical to the one in
+> Panther Lake, the main difference is the number of DSP cores, memory
+> and clocking.
+> It is based on the same ACE3 architecture.
 > 
-> Actually, this is normally not written like this. Usually it is done as
-> an allOf entry:
->   - if:
->       required:
->         - maxim,gpio-poc
->     then:
->       properties:
->         poc-supply: false
->         gpio-controller: false
+> In SOF the PTL topologies can be re-used for WCL to reduce duplication
+> of code and topology files. 
 
-Using 'dependencies' is fine here. It's actually shorter.
-
-Rob
+Is this really true? I thought topology files are precisely the place where a specific pipeline is assigned to a specific core. If the number of cores is lower, then a PTL topology could fail when used on a WCL DSP, no?
 
