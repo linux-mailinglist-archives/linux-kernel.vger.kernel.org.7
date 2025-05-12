@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-644697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E85AB42F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6425AAB4369
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 20:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66221897554
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594D78C608C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D0D299ABA;
-	Mon, 12 May 2025 18:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7AF29B77C;
+	Mon, 12 May 2025 18:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkPMOGuT"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jBiXfOEo"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBD023C4E7;
-	Mon, 12 May 2025 18:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6341B297A48
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747073410; cv=none; b=oFW5zP1mAN8oAz8WsvJfiLMu7NBWHAsNUs/fQ1nQ+K1dp/ph16wHB0MbyOr6Rx18lRwUC7fyGHNzbuQdyU5As2DVrjieVNEY0YUC1tmSgShsPWhbZ92z8VI89SeFPVCYpJydIQdkPJYchpIIHkPcktG50M6QxUox/BAREwM424Y=
+	t=1747073666; cv=none; b=JN/p5NSIVSFmHJstC+VV/+Jqe0Sa0C9+67bbOvnLW7+1kla5tR8zW61e06XiEa7HC6ysMXyi09rUtj39SaZTKHACUUnKLcEh+Ruc6R15x7lKyzqbP2HnK2z4cMGLw0pyXsSMGdOcwrME5wO6CceUEine3xIANa0Aga3xs8CxGno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747073410; c=relaxed/simple;
-	bh=uFUaSVYNAvXIYAUNz+Rx/NPSaWzGUE/AKMdPflMdRX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GC5EOWXJiTK1MoNPnRdhpX+ajEEp63TfTLgv8YjannDxubk/6McI0ymvHWNnxrxn410HBnmWerR5nMu6DyKsVB6CrlZa/+QDog+9ZkjM0kLxDLQGPdDWfSWbiQEjgSILRQj3KcgHukEOcqCidf4i/BUBrLTXJuKuB6LmeaTx3yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkPMOGuT; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad24677aaf6so242798366b.2;
-        Mon, 12 May 2025 11:10:07 -0700 (PDT)
+	s=arc-20240116; t=1747073666; c=relaxed/simple;
+	bh=ge8nSwHM2/L0C3/tgG66L21hTU30oQNN1Lla7jkdOAc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XWSWhUimDkxlSVfvdBwJrM+nFNHeg2F5A7QOuHy9n3FKIikmZVCKHlqmHFoPRHzS8axdSgSOtV68SQ9yBo02xOADnFJW/GNhF5uXaVoZMXHLd5WmiU9j47fkXksghIOc/tz+HnfG7NU8eN7UivoPEKpLGgJOYmO+483zPrUGBEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jBiXfOEo; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30abb33d1d2so7526516a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:14:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747073406; x=1747678206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZmBBbW75s2tlX7b8l6/8ObAx8ZWM6smBqykkodUDjYg=;
-        b=fkPMOGuTPO+VnZhJWW+v1co8w5t7ZUxNi/kjz+bMbSHWtT0+Aby66U4jDa8mcG5fz0
-         2zP79ZxTzhB/r4qTmx3PgFf/3gZoI8R4vBLgzjJnzZ9orLtkf2CO6FieiQNW207iG7cb
-         9Hq4jHVVGlEXQEYwmyQSCtyRMWMqrhpViIq640LmzBZNPy7bUJcksPcbjLNUPVISfTzl
-         I0MGhNf7FEwjIG5WVIeYvjHT4hYNEMNEnvvMOjGr+wMSJuZD/HtpdkccLH+EjRxa2e/N
-         lUooAhtRPwD0c2R5JwqJFCY1NIUiZT9SPO3AuHlw4/Wtbe+zhQRwsALjzwpFTY1xF1Vs
-         Pc/w==
+        d=google.com; s=20230601; t=1747073660; x=1747678460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DppjzGuONHUmUt6xrl/Gh7jXlRXjo91ajvJ8cLSO9UA=;
+        b=jBiXfOEomwUBjlJ9WAZ5r7XHHI7+2rnwX5D5JFGCpm96UBaGvvQ5jcUiQsRHj2dKot
+         +Z8PCaVAGyw1qDLwsecrKWw1w2ZDJ6f7eq5TF6AtjyHMEEvDfbjjuECMWgby9wT/pXeX
+         qDx+1CmpwiWD0uosMbiLBxAbTFziz4Bf/StmKyDKHSLD0I9etwYEXMLjyQlZ0R41tCYl
+         2cFM4/Rh5MBrq9HB2AYPEaFeiREs/+nmvjUTI3wATJNNUeXLaxrofsePNFrjcfF3KuDg
+         zdbmwpPfZSyHdxuVWg9OsKuLF3kvSa+8gisFzuyEYTFHGBXG//lzR7hdkn9HXocZsFsz
+         P68Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747073406; x=1747678206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZmBBbW75s2tlX7b8l6/8ObAx8ZWM6smBqykkodUDjYg=;
-        b=G4qFiCWoDRK5ZW7rBiXuygafjZVxYTfRas8CEQKVaD4zq6jnN/l9hfaTohorGzLIFG
-         jN6OOEbdbw41YrEm15QuRYhM5kfTQU+i1BzxD12OBMfLhoCSeL/rW3SYoJGRWe+Z1JHI
-         zZ6C/osnHqk6rL2Vh4ADVTRZUbicQadfq0ijDyWn0hwjkGH33QMEIsJ9321IN+SYnqUc
-         Ho+YIgrKS0XJuJIVzEX9ZQUcGIg1tUK3rrs1XxU0SBO6fM9C0zh8EyolT6hOoth/09LY
-         cw1wEMkDKkEHwxMXLZVx6aO4F5pAR4K4cfV4WwxxZkbgg03fj2OuKDo1qVQO6qKv/CPN
-         OaNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm2eSN2DZ/7Q+w3DR2XUGVo7uUL7aPTjFKJ3bV+JRXVurze2I/r7Ub4ZPnp8/+AqPTFCC2z3iK8X6NMok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoXJVcViLl9kOYZl8uYy6aeG8hYT5pyrsQNIhMlra2ZRzWngd5
-	SyLhN7Tb9S3TBSC7rzTpe4lVsvatWX7/ZnyxiWBLE557pE5YmnHx
-X-Gm-Gg: ASbGncux+zuWgVlUBrf7y8xba/VKGR747V1cGiei9jzHyHECK39NKjHbAj+KkDrjnmL
-	T/FyDJO+dJXWkJShOcFL91LkXL35VFPEsO9M2lBboJNg2zg/+ViNFbJFp8NJxDYKyX2ftpGAEVZ
-	kQoEQdyb649q38+xapZDesMCAXqI1BYz3f0abeCmh1JeW7tpwCaCgl+OoJq5mENqPWrGaWa1fKO
-	6G0RDTo+v0iizl+W4/23RjNzFevJmNtPcZ580dyX1dRM8bQ+9WSdiIJkU7rf36p9hQwst1RYXqA
-	T+B/QyY+VlobT52mkAjed91njlzgw7pCAjP49jwiWjAh+4ZkfiqUsgxpBfNXQY5t
-X-Google-Smtp-Source: AGHT+IHPlyAlfrTqN1w3LVNPrQcr8DnOtPZtyVS9h3hXu/7aJDgKkYIIkXZJU+QeSspXhQoWh6PZ0Q==
-X-Received: by 2002:a17:907:9453:b0:aca:a3da:80b8 with SMTP id a640c23a62f3a-ad21917d128mr1642453866b.55.1747073406421;
-        Mon, 12 May 2025 11:10:06 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad24085b44fsm391903966b.149.2025.05.12.11.10.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 11:10:05 -0700 (PDT)
-Message-ID: <0bf10848-0fa2-438a-92dc-6d3b29760b64@gmail.com>
-Date: Mon, 12 May 2025 20:10:04 +0200
+        d=1e100.net; s=20230601; t=1747073660; x=1747678460;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DppjzGuONHUmUt6xrl/Gh7jXlRXjo91ajvJ8cLSO9UA=;
+        b=K7LwS//PmhaXjv21Ef1x2P6zwChJ5VzP/IMdhyt8ksAmUCN39uPy5eqU5601Xg+GQ6
+         +8ANiegbevIr1pITDOv29pBONFNQs8OUJKbwcBjz7CdtQVhNtKrj1J+UhVCI57/BPOIU
+         2lcb2lWfxxJHuYmO8VzneNhbzqvJRnNvjgSifr/u8SuT9ozKqy9hR+M/6ZC4M612KD0n
+         b7arrEeq13VX4RzPUV8eJGcqUVUwZIBq8pOY0PaLdeMB0iKPFZPlRqAlwhBHfn8mAyXH
+         l6wBg1PHvRSZ0vleAtkd1eDYdJ1OK7YuntiCrfEcls+HB2yj1aDJ4pzfnLxnmHMEvIq/
+         c5yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfJit9QOQFiusJ5jUW9ThGNX5nz84kehsZIOWEcbzgEqqMQ4R1L+S/68vONoaCvncHYcv1bYKr8DqhMYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynEkncyrHeNkTpSZM5d/UE2KEcdXxmIsjoKWdgZ86+j2osnc4b
+	KzaSJo+Hu2M5vdooNy2Abetk28yYH2tdDn4FemSod/1y2gBgzuJwwPaAN6pLFFrt/zt0qbf0uYA
+	aVA==
+X-Google-Smtp-Source: AGHT+IFVSP9g1YX6T9SSblQiikemd9gCjFwSJSmUr0xZ8O9g7WsE/PEszOVr+Pcq7V+3+YvAiBJ1tciAERI=
+X-Received: from pjbli15.prod.google.com ([2002:a17:90b:48cf:b0:2ff:5516:6add])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d44e:b0:2f5:88bb:12f
+ with SMTP id 98e67ed59e1d1-30c3d3eb7c2mr18454811a91.21.1747073660687; Mon, 12
+ May 2025 11:14:20 -0700 (PDT)
+Date: Mon, 12 May 2025 11:14:19 -0700
+In-Reply-To: <20250313203702.575156-5-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct
- multi_index
-To: Johan Adolfsson <Johan.Adolfsson@axis.com>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Kernel <Kernel@axis.com>
-References: <20250506-led-fix-v1-1-56a39b55a7fc@axis.com>
- <62a74e0e-f5a1-40b5-a855-6e9bd620cbd5@gmail.com>
- <PAWPR02MB92814A311B18A6FD8A448D249B97A@PAWPR02MB9281.eurprd02.prod.outlook.com>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <PAWPR02MB92814A311B18A6FD8A448D249B97A@PAWPR02MB9281.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-5-jon@nutanix.com>
+Message-ID: <aCI6e6KYXmfi_Oqp@google.com>
+Subject: Re: [RFC PATCH 04/18] KVM: VMX: add cpu_has_vmx_mbec helper
+From: Sean Christopherson <seanjc@google.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/12/25 12:59, Johan Adolfsson wrote:
-> 
-> From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Sent: Saturday, May 10, 2025 17:32
-> To: Johan Adolfsson; Lee Jones; Pavel Machek
-> Cc: linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; Kernel
-> Subject: Re: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct multi_index
-> 
->> Hi Johan,
->>
->> On 5/6/25 12:39, Johan Adolfsson wrote:
->>> mc_subled used for multi_index needs well defined array indexes,
->>> to guarantee the desired result, optionally use reg for that.
->>>
->>> If devicetree child nodes is processed in random or reverse order
->>> you may end up with multi_index "blue green red" instead of the expected
->>> "red green blue".
->>> If user space apps uses multi_index to deduce how to control the leds
->>> they would most likely be broken without this patch if devicetree
->>> processing is reversed (which it appears to be).
->>
->> Are you trying to solve some real problem that occurred to you?
-> 
-> Yes! Since the subled is indexed by the processing order, it gets reversed if devicetree processing is reversed
-> (which I understand is a "feature"), so instead of "red green blue" I would get "blue green red" in the multi_index file without this patch.
-> The mapping to the hardware does not match that, so writing "255 0 0" to multi_intensity will give me red and not blue.
+On Thu, Mar 13, 2025, Jon Kohler wrote:
+> From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+>=20
+> Add 'cpu_has_vmx_mbec' helper to determine whether the cpu based VMCS
+> from hardware has Intel Mode Based Execution Control exposed, which is
+> secondary execution control bit 22.
+>=20
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Co-developed-by: Jon Kohler <jon@nutanix.com>
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
 
-You are expected to write intensities to the multi_intensity file
-according to the order of colors listed in multi_index file.
+LOL, really?  There's a joke in here about how many SWEs it takes...
 
->> The order of DT nodes parsing is not a problem here - we save
->> color index in subled_info to be able to figure out which color
->> is on which position. This information can be retrieved in sysfs
->> by reading multi_index file.
-> 
-> Maybe the bug is somewhere else in the leds-lp50xx if that is supposed to work,
-> but I still think it's a good thing to be able to get the expected order in the multi_index file.
+> ---
+>  arch/x86/kvm/vmx/capabilities.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/arch/x86/kvm/vmx/capabilities.h b/arch/x86/kvm/vmx/capabilit=
+ies.h
+> index cb6588238f46..f83592272920 100644
+> --- a/arch/x86/kvm/vmx/capabilities.h
+> +++ b/arch/x86/kvm/vmx/capabilities.h
+> @@ -253,6 +253,12 @@ static inline bool cpu_has_vmx_xsaves(void)
+>  		SECONDARY_EXEC_ENABLE_XSAVES;
+>  }
+> =20
+> +static inline bool cpu_has_vmx_mbec(void)
+> +{
+> +	return vmcs_config.cpu_based_2nd_exec_ctrl &
+> +		SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
+> +}
 
-Please make sure you read Documentation/leds/leds-class-multicolor.rst.
-There is no such term as "expected order in the multi_index file".
-The framework is called multicolor, not rgb. The order of colors does
-not need to be RGB.
+This absolutely doesn't warrant its own patch.  Introduce it whenever its f=
+irst
+used/needed.
 
--- 
-Best regards,
-Jacek Anaszewski
-
+> +
+>  static inline bool cpu_has_vmx_waitpkg(void)
+>  {
+>  	return vmcs_config.cpu_based_2nd_exec_ctrl &
+> --=20
+> 2.43.0
+>=20
 
