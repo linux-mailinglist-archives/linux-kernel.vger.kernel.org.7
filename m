@@ -1,190 +1,357 @@
-Return-Path: <linux-kernel+bounces-643757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519EDAB317D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329DEAB317F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 10:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAFFD3BC23E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07CA189B23E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622F02586EB;
-	Mon, 12 May 2025 08:23:11 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89835257AFF;
-	Mon, 12 May 2025 08:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747038191; cv=none; b=NzAnf5eqaMxl8xgErGRBNSt0j/IdprBLgEBnrSsKghWl1l8WPFEIhMrvZcSN6YCA4A93NqEuFTROQWOVqvChK6evYLiOOAqEyPVGF5WRalB1Fcc7keaRb1btL65rHCU3jNmKaahU4Vq0Y2EnVlWawa7nlcpP+Q3gUarPhdvIoDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747038191; c=relaxed/simple;
-	bh=pY7jvXYq3d5U5CAMqYYen1ekEQUQSgJvswNHpgHog2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p06Dz/vQNdbsg/CFman/c8uN2yZATreMy1IIaDIc0uZM8byQ+B9x4ZgbQov0fGmP81RB4owrFdIjuERdL91uQhXUmK7laGIh9D53ZNeG3PJFHNSRpx46NDT5mpYX4Vcsif/Bxlksr0qo+TmVzmsZ5eruyweQFrnEhSm5/pn+lmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-1e-6821afe537ee
-From: Rakie Kim <rakie.kim@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: joshua.hahnjy@gmail.com,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Rakie Kim <rakie.kim@sk.com>
-Subject: Re: [RFC] Add per-socket weight support for multi-socket systems in weighted interleave
-Date: Mon, 12 May 2025 17:22:50 +0900
-Message-ID: <20250512082257.263-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <aB2Xh4jEqpSTuvsi@gourry-fedora-PF4VCD3F>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327D3258CDE;
+	Mon, 12 May 2025 08:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=allegrodvt.com header.i=@allegrodvt.com header.b="REXcRRVh"
+Received: from PA5P264CU001.outbound.protection.outlook.com (mail-francecentralazon11020088.outbound.protection.outlook.com [52.101.167.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BCA2571CC;
+	Mon, 12 May 2025 08:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747038204; cv=fail; b=fk5ijmM2AfoylFu2/zbUigVb+gOfgFXQOeonqhEQnNSHKQSnnbcPn2EutEJj1fW6zq7fD8bIf7ORUgDdxfKBB8bt0Wrnc/ZE6mGY1LP9iDo6wCm8ykUkOuMCePwO+efgXNT2mb0OnpPk+WnMn2WyHEUihEHKlH1wx0Y8h4cPnXk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747038204; c=relaxed/simple;
+	bh=P5r7QMD0J4Evn+VSa+p3yuNzACF1aJ1RvldIZbednps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=suptis5Ih1NLgb5N00OejxaKPiENO3bB8W7aFllhRIAdcij3oPKoYY13Mge9TXsMtDjEWdfJvkxAmiWr6LrveWm65BzqCKSujlQaXXFJCu4bLxLy3IcpHx4pd/gGdbBt/0G56WJ4dwuX53tj+F70X24ArBLrycJpGdg7ZyDYs4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=allegrodvt.com; spf=pass smtp.mailfrom=allegrodvt.com; dkim=pass (2048-bit key) header.d=allegrodvt.com header.i=@allegrodvt.com header.b=REXcRRVh; arc=fail smtp.client-ip=52.101.167.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=allegrodvt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allegrodvt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RHprg2fC4OCkJzjhaDLVwJKOiQ523t48dGGBRZEvjfbZEy5VGiz+TqCSQfJ24nv0eK43cI7VkRsW973O1BGLeIBM0fh2p8UpI3x+t/law4w6mnUTfUT0/x4ibYrECJaC21ZbMldJFhDjiCHkABX0QEfczb1gJt25Y9v8VcEqwVb9AtnTThAKAwNViZiRITZU/rb3fft8njYRdxlQFt8aBOVzVEg1qCoHeMV00ue30xB1fYpMU6r2NY8bmKqIqZEzHbGCtH6cPhWLmjs+XEP/W/rBp88xVTHdoEtPC5Cu0ZYteivwyocDplcD8z0/Oc2MJiOi0bpehJQtzHx+xiv5sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=louO3HeTn1w1tdHlsF7pK+pS5T5/CSyz/x+2GkuYLj8=;
+ b=qOueJU7JssF7ufHUDcrWfjcq8hs8hpLVmARrCNnyXA/qHOY9SXwb5ntj5xEwPuUKXEmpxa/lUmJOojUOjlVmE+YSZ7mM6dh+P1lGKmn2npW1vjdA0AGKm4BbQDIsgaFPNcwSWS0uTqwXn/hcAfpzem912ST14IDEM0MNoZ2M39idiG4ygQk7gfJ2EpLjoK8zVFhuQS+Up4dd0i3MXrOpYLv0DucF2VuGxQnjxKkGAeumVmPmMq49k79CYMEqcbZ1cP95CI8qdBSX9WxJmPKPV0JtEo36cF0UoQIqZhnu6HtHtOvKdhK7UCgqT3DctVUIdGINiil1IOX5TPwtYmOrQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=allegrodvt.com; dmarc=pass action=none
+ header.from=allegrodvt.com; dkim=pass header.d=allegrodvt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=allegrodvt.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=louO3HeTn1w1tdHlsF7pK+pS5T5/CSyz/x+2GkuYLj8=;
+ b=REXcRRVhZbtHp3TVPQDJnRZACd50N2louAcfeZ5gk/RfdfImoMouzgo6FI0/KyXRm8a5sN/U8O5OOsZl4s/yjCsbYglmCyiomIpogpIEu/cA5wD00MInto0Rto6ftwvdd8c4bC89ackt6soTj+51WrQNGYx26UssUtcg0TbMGVFM1fis1lI73ARi5CPFc5XK8tFE/URgoR40cUByDHXkhEjpK/DbFgdIYgZsVCp9qcfQcX9c1/LolIqzmacFYcueOB2XRvbWwkuMgmmlCAVLeM1NU3te7xLkCRcrDk5vPv/IPv8xxdGCNhMtRwG5EHpYaBXcssMvF+ktX5+GHcq9zA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=allegrodvt.com;
+Received: from MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3d::18)
+ by PR0P264MB2632.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1d3::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Mon, 12 May
+ 2025 08:23:15 +0000
+Received: from MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::4281:c926:ecc4:8ba5]) by MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::4281:c926:ecc4:8ba5%3]) with mapi id 15.20.8722.027; Mon, 12 May 2025
+ 08:23:15 +0000
+Date: Mon, 12 May 2025 08:23:11 +0000
+From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Tretter <m.tretter@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Aradhya Bhatia <a-bhatia1@ti.com>, Rafa?? Mi??ecki <rafal@milecki.pl>, 
+	Junhao Xie <bigfoot@classfun.cn>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Kever Yang <kever.yang@rock-chips.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, 
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, Gaosheng Cui <cuigaosheng1@huawei.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe Kleine-K??nig <u.kleine-koenig@baylibre.com>, 
+	Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] media: allegro-dvt: Add DT-bindings for the Gen 3 IP
+Message-ID: <knnumpmyq4ewvqcfor3vqynxbplynajdlmz3p6f2ywadvmz6wo@5uz53eubbkfg>
+References: <20250511144752.504162-1-yassine.ouaissa@allegrodvt.com>
+ <20250511144752.504162-4-yassine.ouaissa@allegrodvt.com>
+ <595adbaa-15b4-4917-b3ad-9bac3e2333e2@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <595adbaa-15b4-4917-b3ad-9bac3e2333e2@kernel.org>
+X-ClientProxiedBy: PA7P264CA0375.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:399::22) To MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:3d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC9ZZnoe7T9YoZBk9vGVrMWb+GzWL61AuM
-	Fj/vHme3OL51HrvF+VmnWCwu75rDZnFvzX9Wi9VrMhw4PHbOusvu0d12md1j8Z6XTB6bPk1i
-	9zgx4zeLx86Hlh6fN8kFsEdx2aSk5mSWpRbp2yVwZRxevYKl4IlKxaytk9gaGFvluhg5OSQE
-	TCROTn3NBGNf3/iRtYuRg4NNQEni2N4YEFNEQFWi7Yp7FyMXB7PAeiaJAxe3soOUCwskSJya
-	d4kZxGYBqvne0QgW5xUwltja8AJqpKZEw6V7TCBzOAXMJP6/jgMJCwnwSLzasJ8RolxQ4uTM
-	JywgNrOAvETz1tnMILskBM6wSdw/9JwZYo6kxMEVN1gmMPLPQtIzC0nPAkamVYxCmXlluYmZ
-	OSZ6GZV5mRV6yfm5mxiBQbys9k/0DsZPF4IPMQpwMCrx8CasVcgQYk0sK67MPcQowcGsJMI7
-	lUE+Q4g3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwenVAPjEq1k
-	35ftAtdWulXdWyE95UHP3nVWe017+/sOxEnXdPQkN+b9nnjhCX/SgWA+vZn5LGz7W275JgdO
-	fTH5oc73Tz8Sw19cXzN5S3hNiMRBoxahzvk9jR8/HTYuCL0TMV1krmbPo7zkU//Ss23O/lWQ
-	bfpze9rvhOA/CexF6l5cWvv+Cvd8vDhTiaU4I9FQi7moOBEATM4NQF4CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsXCNUNNS/fpesUMg3OP1SzmrF/DZjF96gVG
-	i593j7NbfH72mtni+NZ57BaH555ktTg/6xSLxeVdc9gs7q35z2px6NpzVovVazIsfm9bwebA
-	47Fz1l12j+62y+wei/e8ZPLY9GkSu8eJGb9ZPHY+tPT4dtvDY/GLD0wenzfJBXBGcdmkpOZk
-	lqUW6dslcGUcXr2CpeCJSsWsrZPYGhhb5boYOTkkBEwkrm/8yNrFyMHBJqAkcWxvDIgpIqAq
-	0XbFvYuRi4NZYD2TxIGLW9lByoUFEiROzbvEDGKzANV872gEi/MKGEtsbXjBBDFSU6Lh0j0m
-	kDmcAmYS/1/HgYSFBHgkXm3YzwhRLihxcuYTFhCbWUBeonnrbOYJjDyzkKRmIUktYGRaxSiS
-	mVeWm5iZY6pXnJ1RmZdZoZecn7uJERi4y2r/TNzB+OWy+yFGAQ5GJR5eCX/FDCHWxLLiytxD
-	jBIczEoivFMZ5DOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ83qFpyYICaQnlqRmp6YWpBbBZJk4
-	OKUaGK9n9bWpXct9O1f2mn1X+iFp+zVHrb1DJnCdeLidf4lpLWvLn56NHHd83+7aHvbUbvO/
-	gCD3X13v+RIVv0eksN2eJayv/dZV4JX5ZFmB23dfBZWcvnvc78OucuZ3ynV/m1zXhUy68d3n
-	7K7fB/7UBh7NVXsdbrqoS7Fk9h/xogDrhLMqLNeWrFZiKc5INNRiLipOBABf+eqeWAIAAA==
-X-CFilter-Loop: Reflected
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MR1P264MB3140:EE_|PR0P264MB2632:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51f2f6b0-f4b9-4822-9ba6-08dd912e3e0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UTViMW1CVzRQakRTYjNidzhrTXUzWWR3cDdCbkRJbWxQendvWU12K0o3MEJL?=
+ =?utf-8?B?aHhiQ0tTM09ITzB3dDZuTStwR2RJSmdIbnIxbTVCRVo4NnNxLzIzL3pKUVIv?=
+ =?utf-8?B?SzVFalVIQ05WaHU2R0h4ZkVOZzNibmFTK2k1QkQ0azBTc2FlSmg1UHdCcm12?=
+ =?utf-8?B?MjBxcHdTUmtYKy9mU3ZBa3BJTlRKQjBhdDZGMG1iOHFNR0lwQi96dEpKK3ZI?=
+ =?utf-8?B?ZHJBbkRXMGJBd3FpNUQ1MnZ6MDVBOG9IeHk5akJrWVhxRFlhdWR1TTJOL1Ev?=
+ =?utf-8?B?aHNLQS8xa0UvV0czTW5STW85cGFOMjI4QVpuM2txam1ySEpicldNQWoyM2RQ?=
+ =?utf-8?B?ZnhBQWNUd1NkZFFXcWE2UVVOWlVYTWtMZHZIbWtsMHY1MWdBMEszcitBV0lw?=
+ =?utf-8?B?RTdNYnNXS2I2U25XMkdlc0E4TjI5NUlpcTdWRjIvOVoxWVQrRzloWmdleEMv?=
+ =?utf-8?B?V1l1MTllbkhBaENteGZOMXNNZGFrRUZRa2Y5bHlqQ2FId2xOQ1E1UGRqdUNF?=
+ =?utf-8?B?amg2azlqNTdncEk5SVBHZVQ1Y1Bkb0lmRXBIOGVEMXVuUEJ2bU1QcTVwZkJW?=
+ =?utf-8?B?LzZuL1luRjdaaVlwVTdZL1lucldwaVVHbWlZMDRhOFVjb1NibUNnZ3BhNSto?=
+ =?utf-8?B?c002M0ZqRzNEYlJ0bHZXYjdqdFVmYkxQNDNINlNGUW5tVFRRZWRoR0RQL1Rk?=
+ =?utf-8?B?TkhCa0cycGxhSGJUSWQwejhwVU9sbStsTnhsbEZxaWxodGcwSFd0S2RSUUhR?=
+ =?utf-8?B?UUxRK0JEdTZobDFpeVJOb2Z2WDlTTFFkNmNkOGVXdHlNclZzY2V6ek8vYXdK?=
+ =?utf-8?B?cFRVNkJXbTZwS1cwU1JaZUkrWk9TamI1dUZncGhrZTU4WjZzRTlxTkNQVGYx?=
+ =?utf-8?B?Ylhnb01YVFhZU29mY0JRL3psNnZYTkpFNTlpNDErWUJiRStBMTYxdnNXUXZP?=
+ =?utf-8?B?NWtRTHRtUm52MURON2Rld0dLTS90bmYyb0kxaDZ2dTV3Yzd1bnZtazZvT1lx?=
+ =?utf-8?B?RFRsZWxqWVk0bmhCTzloVFRGdXRQNXowbWN6MzBqc0M5aFVRRk0zVXZBRG5X?=
+ =?utf-8?B?M21SRXJNREl6Q3FYc3ZUMzRHbFY2d2dvL3ZFdnhzc3BhL3RwWHo0cFdMTyti?=
+ =?utf-8?B?d0ZNYXFUN2VxeW9iTTVGRm45ckZFK0t3SnAyM1Z3K1ZyeVNmN0ExSTZiOXc4?=
+ =?utf-8?B?RWdzV2pUSUNHVGRnc2pxcVI5QWxTRVJ3RUo0clhnMzF0Nm5CTEt1bDh4SG1Y?=
+ =?utf-8?B?OU1ReWhUQUU0VWh5elFtcEZ0ZS9hOC82VFNjYzlheldrM3VwZmxBOCt4MEpC?=
+ =?utf-8?B?OVV3bVpHQXZjczcrWEhwcTJQTlpER3N0S2IzcTZXOUpVZ2tnZVpLaTgreC91?=
+ =?utf-8?B?anBMZVVlS1FDbzFUWmQzbmpJc0hKaVB0TmZYa3JYMU9nanh4M3huU3FSYW1S?=
+ =?utf-8?B?QnRnK2srOG92bHcxQ2xPMFN2QlFPbHpYSXBsMUE2STRTUjJhQ2pPeDVBbEZX?=
+ =?utf-8?B?UnhvZzIxTXpIeHE0VkZCdGRQRVg5V0k1c0RBTnNPbUtua05BZFZmRlpDZkVK?=
+ =?utf-8?B?RHFWbjZUTWZoNzJxQkl1cm9QRGMxSURBYzJKYlQ5SEMzMzVER2xweS83UjFT?=
+ =?utf-8?B?cGhwUTIwdVRSMXFrMlpZZU5BVnF3aVlham5EZTRCTGg3SmxLK2RlV1lGbTEz?=
+ =?utf-8?B?SFZaNkhuVTlyRE1OTTh6bTM2WjZrU0Rjci9uME5kWklId3RBc2QrcGdGY3lx?=
+ =?utf-8?B?VllFeW0wa2xkdnc4aXRzQ3JlNmlZMWFmdEVTeThhbWE4bTNoR1RubmVsMUYr?=
+ =?utf-8?Q?iBQcQSvB4VOigLd9On0SGMDtA/qgYRH5oaBSo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dmxNak1BN01Kb1JZVzNIT0dhU2VsMlZzSXFPTHI5dHBYUWw1dCtoeGtrZ2tu?=
+ =?utf-8?B?RjRWSm1RTThhU3haZHlQYkM1QTdLcVlNZHdWb3ZWSGR0ZStDUFJqV1djNDcv?=
+ =?utf-8?B?SUdXTjFVYU00UW9VY01UN1ZRb3JadEVLLzVZcUlvOU9SQm1UTUpsMGhiOG9S?=
+ =?utf-8?B?bHdPTHU1RTZNMWJOejIxTjVVR2JCd3RDZW9lY2FFaDVIVHRRMjAvczFEZ09y?=
+ =?utf-8?B?WUxBSjAyeEM4d0prbHFzbGhoSk5ySEtlOURkLy8xdEplM2kxNEtMRFZVNXN6?=
+ =?utf-8?B?d0tsQU1FQXlrNHRmUjdGZ3NSYzVTVFdaM3J4bE9WUG1DS3lFZjZwUk0rNEVt?=
+ =?utf-8?B?QU5xY3J0Z24vM0doNDVKNzI5bk40eGgrN08xMDN3SHpFVnNqdU5RK3cybVl5?=
+ =?utf-8?B?MHRld1lZMUZrYUlZSlVuVjZockkvUEhwbldVQVVERXZOMFRYaE5qRytiNzRB?=
+ =?utf-8?B?Zkp2a2JMZThnQncxK0pBTEROQ0RyWnZCZlhETDd6T29JRTAzQWtwa1B6b0ZX?=
+ =?utf-8?B?WmJCaThTcXUzRVhtM3FiMCtlYmJVN2NiUW1rOGZuempoVTVGS2JwWHk0anAr?=
+ =?utf-8?B?RXZsenoxZmxPc0psVzVQZzN2bEZpM3Y2d0ozcm9pVkl6ZUFPcWpmZHZpdHAz?=
+ =?utf-8?B?cXFoYWxucmszcm1EekZETUpKWjZrTmIydUIxR3BReHBoSlA3QjBRVlFpSzBn?=
+ =?utf-8?B?K0dYM0txN0gwRHhvYzBTdVpmcldvRGFjdEp6WTZLMzJrcEdlS0RSd0V3K2Fm?=
+ =?utf-8?B?b05hRFVmT3dGaXUvdUNreEdTdVVaakk3WnpQKzNLS1NmOVRQbEhwdW5FZzBG?=
+ =?utf-8?B?RnNKbnNkS1A4MTFmM3pGMVJnaWFxRGpjazB5OG9JQTU4NER6b2tDd0ZhTVc0?=
+ =?utf-8?B?cjhFbGplRVdsdFk0b1ZBbVpvY1pSZ1JrN1dlOW9ZSmRPQUVybnMwclZWeVlE?=
+ =?utf-8?B?UUVUVzBqa200WS82TkZNZ3VRdmprSjBKUFYwdmVycHpTZGI0L3I5L3M2cXRB?=
+ =?utf-8?B?d2FNR204NlhPVjBZYlZZdzR4VFlUTElwMElHSDZGdWV3cUhHMVdHR1NDeXRY?=
+ =?utf-8?B?V2JYWjkyQzlsVytaWlRXSGFOWExidmg2dHFmZFBXOHFFRm1ERDJlTjhoNW05?=
+ =?utf-8?B?bERoOWpObzJhbFpjSlJwSVV0aFVSNkYvRVpQeGtSMDBWWVQzOEFYaVVrRDVi?=
+ =?utf-8?B?NEFIeTNFNDFJN01sRFovbTVWSy9ENVUwdVdoWTkybkxkV1NYcVl0T21zemxl?=
+ =?utf-8?B?ekRhQzROQlVVbEFMMG9rVGptTTR4Qkt5aE9JR2VYb25DbVI3UU1ab3EwcElz?=
+ =?utf-8?B?aFhUV2REdzg3YXhJOXJVaTVYK2tBR2hzUUU5MmY4aktYa2dMZkVHZWVHTHkx?=
+ =?utf-8?B?YWJ4SW9zVGIxaGFuNGY4d1IyWmNHUVMvM0NyYzNET0JmUThqV0NNc3J1Q0xV?=
+ =?utf-8?B?cmY5T1ViSXFzcEYwQnQyYjJKeUhHM2NHVXU2UTJDWUV0WkZkOGFnSC81U0JH?=
+ =?utf-8?B?ZkhScGtLL2wrNmMwWGtUL3NPMzdmdU5oU2hCYzBrUUY1RDQ3dm8yV2pkRE1t?=
+ =?utf-8?B?U0xlZWdHbGZvdmNtdURPRVJEdFVSNEExWkdDdHNDSWRBY2pUMTVDV3J0NkFr?=
+ =?utf-8?B?Uy84a3IyZFVRQ3puSmw4NmYzbHFnN1N5VmcwdjRWYzRpUFVjMVpmUWNnR3du?=
+ =?utf-8?B?Q1FYODN5cER4N2ZDbXdNdTZTQndWb0NFMS9UZlhEaWNwU0JYeFphMDNYVEZQ?=
+ =?utf-8?B?TUJNK05xY2t2SWRvTytVN29HVFZnM3hmYng3aGZTN0NkUG95TllNdE1uUm9Q?=
+ =?utf-8?B?dklDN0VZZEs5RHA2MkxzQkxZTFRUYThBR2txbHdiS2hkand6STIyRGM0bUd3?=
+ =?utf-8?B?TXdkTzRxZks0QlNRaDJIREIvMHAwL3Z4NDIvNlR1dTI2cVFiUzQwUzBrU3FF?=
+ =?utf-8?B?Ym1Ld1ZqeEhPSUVkUVpDaWRJYmYxcFZIcWc0WG02Q1R6a1VYQXl6V1AwL1Rq?=
+ =?utf-8?B?RUo1cE12bWpXRlNlcE95UFhNVUIwbzhsbXRMTUhpMmU3QUNZaVNKdVB0Vlls?=
+ =?utf-8?B?SkhBVlorMVZ2aTdzRDVma1J1T0xDdXNyTVNNY3JxcnJib2lyVU5xd0JhaWJC?=
+ =?utf-8?B?b21wYlVndFBKNVluL3BhS3VkY0FrTk14cUhXWnRkaDdBcmE5Um5UUEkvYzN5?=
+ =?utf-8?B?MmtPcDdsM2lWTnBrcVFPSnIzeUxLcnRjY3Fla2tNYi9nakV5dHgvMXk2MGtS?=
+ =?utf-8?Q?k028lm1NVn8SFHXsjOIgoo7livc+/NpeltGw1E2+BE=3D?=
+X-OriginatorOrg: allegrodvt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51f2f6b0-f4b9-4822-9ba6-08dd912e3e0a
+X-MS-Exchange-CrossTenant-AuthSource: MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 08:23:15.3862
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 6c7a5ec0-2d92-465a-a3e1-9e3f1e9fd917
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DMac4J5AM1gQZOjHFNaq6W99AJ5aLYsZZ3tkV4wOd+1hWFvXA4BLZ9XquBuMs/VjOriksEoV7kD+cpU9T9grBeWjpLQzZXYv9Yg1jdlz/8w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR0P264MB2632
 
-On Fri, 9 May 2025 01:49:59 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Fri, May 09, 2025 at 11:30:26AM +0900, Rakie Kim wrote:
-> > 
-> > Scenario 1: Adapt weighting based on the task's execution node
-> > A task prefers only the DRAM and locally attached CXL memory of the
-> > socket on which it is running, in order to avoid cross-socket access and
-> > optimize bandwidth.
-> > - A task running on CPU0 (node0) would prefer DRAM0 (w=3) and CXL0 (w=1)
-> > - A task running on CPU1 (node1) would prefer DRAM1 (w=3) and CXL1 (w=1)
-> ... snip ...
-> > 
-> > However, Scenario 1 does not depend on such information. Rather, it is
-> > a locality-preserving optimization where we isolate memory access to
-> > each socket's DRAM and CXL nodes. I believe this use case is implementable
-> > today and worth considering independently from interconnect performance
-> > awareness.
-> > 
-> 
-> There's nothing to implement - all the controls exist:
-> 
-> 1) --cpunodebind=0
-> 2) --weighted-interleave=0,2
-> 3) cpuset.mems
-> 4) cpuset.cpus
+On 11.05.2025 22:03, Krzysztof Kozlowski wrote:
+>On 11/05/2025 16:47, Yassine Ouaissa wrote:
+>> Add the device-tree bindings for the allegro-dvt Gen 3 IP decoders, and
+>> update the MAINTAINERS file.
+>>
+>> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+>> ---
+>>  .../bindings/media/allegrodvt,al300-vdec.yaml | 86 +++++++++++++++++++
 
-Thank you again for your thoughtful response and the detailed suggestions.
+Hi Kozlowski,
 
-As you pointed out, it is indeed possible to construct node-local memory
-allocation behaviors using the existing interfaces such as --cpunodebind,
---weighted-interleave, cpuset.mems, and cpuset.cpus. I appreciate you
-highlighting that path.
+Thanks for the review.
+>
+>Looks untested so limited review follows.
+>
+>A nit, subject: drop second/last, redundant "DT bindings". The
+>"dt-bindings" prefix is already stating that these are DT bindings.
+>See also:
+>https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>
+I'll fix this issue in the next version.
 
-However, what I am proposing in Scenario 1 (Adapt weighting based on the
-task's execution node) is slightly different in intent.
+>>  MAINTAINERS                                   |  1 +
+>>  2 files changed, 87 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
+>>
+>
+>Please organize the patch documenting compatible (DT bindings) before
+>their user.
+>See also:
+>https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
+>
 
-The idea is to allow tasks to dynamically prefer the DRAM and CXL nodes
-attached to the socket on which they are executing without requiring a
-fixed execution node or manual nodemask configuration. For instance, if
-a task is running on node0, it would prefer node0 and node2; if running
-on node1, it would prefer node1 and node3.
+I'll fix this issue in the next version.
 
-This differs from the current model, which relies on statically binding
-both the CPU and memory nodes. My proposal aims to express this behavior
-as a policy-level abstraction that dynamically adapts based on execution
-locality.
+>> diff --git a/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml b/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
+>> new file mode 100644
+>> index 000000000000..ea4a55de570c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
+>> @@ -0,0 +1,86 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/media/allegrodvt,al300-vdec.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Allegro DVT Video IP Decoder Gen 3
+>> +
+>> +maintainers:
+>> +  - Yassine OUAISSA <yassine.ouaissa@allegrodvt.com>
+>> +
+>> +description: |-
+>> +  The al300-vdec represents the latest generation of Allegro DVT IP decoding technology, offering
+>
+>Wrap at 80, see Linux coding style.
+>
+issue fixed also, thanks.
+>> +  significant advancements over its predecessors. This new decoder features
+>> +  enhanced processing capabilities with improved throughput and reduced latency.
+>> +
+>> +  Communication between the host driver software and the MCU is implemented through
+>> +  a specialized mailbox interface mechanism. This mailbox system provides a
+>> +  structured channel for exchanging commands, parameters, and status information
+>> +  between the host CPU and the MCU controlling the codec engines.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: allegrodvt,al300-vdec
+>
+>Undocumented prefix.
+>
+>What is the actual device name? al300? Can you have al300-adec? or
+>al300-dec?
+>
+>
 
-So rather than being a combination of manual configuration and execution
-constraints, the intent is to incorporate locality-awareness into the
-memory policy itself.
+the device name is al300, the vdec is for decoder driver.
 
-> 
-> You might consider maybe something like "--local-tier" (akin to
-> --localalloc) that sets an explicitly fallback set based on the local
-> node.  You'd end up doing something like
-> 
-> current_nid = memtier_next_local_node(socket_nid, current_nid)
-> 
-> Where this interface returns the preferred fallback ordering but doesn't
-> allow cross-socket fallback.
-> 
-> That might be useful, i suppose, in letting a user do:
-> 
-> --cpunodebind=0 --weighted-interleave --local-tier
-> 
-> without having to know anything about the local memory tier structure.
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: The registers
+>> +      - description: the MCU APB register
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: regs
+>> +      - const: apb
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: MCU clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: mcu_clk
+>
+>Drop clock-names, pretty obvious
+>
+the clock-name is a require item, it used by the driver.
+>> +
+>> +  memory-region:
+>> +    items:
+>> +      - description: Used to allocate memory for the MCU firmware,
+>> +      and is also used for various operational buffers required by the MCU during codec operations.
+>> +
+>> +  firmware-name:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>
+>Drop, type is already fixed.
+>
+>missing maxItems: 1
+>
 
-That said, I believe your suggestion for a "--local-tier" option is a
-very good one. It could provide a concise, user-friendly way to activate
-such locality-aware fallback behavior, even if the underlying mechanism
-requires some policy extension.
+The next version will have the maxItem, and drop the ref type.
 
-In this regard, I fully agree that such an interface could greatly help
-users express their intent without requiring them to understand the
-details of the memory tier topology.
+>> +    description:
+>> +      If present, name of the file within the firmware search path containing
+>> +      the MCU firmware.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - interrupts
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: False
+>> +
+>> +examples:
+>> +  - |
+>> +    axi {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        ald300: ald300@a0120000 {
+>
+>Drop unused label.
+>
+>Node names should be generic. See also an explanation and list of
+>examples (not exhaustive) in DT specification:
+>https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>
+>
+>> +            compatible = "allegrodvt,al300-vdec";
+>> +            reg = <0 0xa0120000 0 0x80000>,
+>
+>Here 0 is not hex
+>
+>> +            <0x01 0x8000000 0x00 0x8000000>;
+>
+>but here is hex?
+>
+>Also misaligned.
+>
+>Also: very odd large address space.
+>
 
-> 
-> > > At the same time we were discussing this, we were also discussing how to
-> > > do external task-mempolicy modifications - which seemed significantly
-> > > more useful, but ultimately more complex and without sufficient
-> > > interested parties / users.
-> > 
-> > I'd like to learn more about that thread. If you happen to have a pointer
-> > to that discussion, it would be really helpful.
-> > 
-> 
-> https://lore.kernel.org/all/20231122211200.31620-1-gregory.price@memverge.com/
-> https://lore.kernel.org/all/ZV5zGROLefrsEcHJ@r13-u19.micron.com/
-> https://lore.kernel.org/linux-mm/ZWYsth2CtC4Ilvoz@memverge.com/
-> https://lore.kernel.org/linux-mm/20221010094842.4123037-1-hezhongkun.hzk@bytedance.com/
-> There are locking issues with these that aren't easy to fix.
-> 
-> I think the bytedance method uses a task_work queueing to defer a
-> mempolicy update to the task itself the next time it makes a kernel/user
-> transition.  That's probably the best overall approach i've seen.
-> 
-> https://lore.kernel.org/linux-mm/ZWezcQk+BYEq%2FWiI@memverge.com/
-> More notes gathered prior to implementing weighted interleave.
+Nice catch, the misaligned issue is fixed.
+>>
+>
+>
+>Best regards,
+>Krzysztof
 
-Thank you for sharing the earlier links to related discussions and
-patches. They were very helpful, and I will review them carefully to
-gather more ideas and refine my thoughts further.
-
-I look forward to any further feedback you may have on this topic.
-
-Best regards,
-Rakie
-
-> 
-> ~Gregory
-> 
+Best regards
+Yassine OUAISSA
 
