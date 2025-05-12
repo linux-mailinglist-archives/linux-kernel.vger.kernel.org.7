@@ -1,303 +1,161 @@
-Return-Path: <linux-kernel+bounces-643855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD26AB3333
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:23:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28001AB337B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7937A3BEB95
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712DA18911A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 09:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6B512DD95;
-	Mon, 12 May 2025 09:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0201B25CC64;
+	Mon, 12 May 2025 09:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="myroYSTo"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/WNNIav"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21E625A32C;
-	Mon, 12 May 2025 09:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921B425B1CD;
+	Mon, 12 May 2025 09:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747041735; cv=none; b=WIELxG+Wfq4A9l2I6Qk/QtqxYl1i89+My9LCyftgK/d1hgHIS5ZvT7VECKCQ56P8g/JzgSZcB0+kUyHcDh+kdep3Vys6/ivfN8bcCnraE5sOnseisjqP3Ux+KZMlx1FMsZJOpStzpV4mkvMn0MV5PlX/hYm2JgnWCnRAlZcu7UA=
+	t=1747041812; cv=none; b=CsxpL/dODDMZk+tCTrq2FJA3JRSUqFeWoqZpW5FSGwlTLKYkHqnx4gLUVotOUR56JmouhIPno6dY3Q/pg0eAUrZZgMiLWCeNcHDVtyOG7TCPuEmct2lCWrONwcBS2mVp73rCmvVHrOX6qQJ/heN1NL4YKfFuvrimhjBYYZSi8Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747041735; c=relaxed/simple;
-	bh=63Xla2q+6hr/2d84/UOsWS1nUsyEbKKfUrI6v0LXHNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nsgNeB2WAqBToY7aRekFSwAgJRbOqjV7YI3fPzv3bGo16vL24VcLoiyC8SOTNz4RMM3AhJtHSLeFHPHkT5cic9iHn7A7PpSsXThTZZzD9hTKhu3pgFhL7KPn7aZbplIOShIQNfX2HshZIAgTNJ5tQ6p5cjWzDL6bEZiDcyB7kG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=myroYSTo; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B96A642E7E;
-	Mon, 12 May 2025 09:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747041731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kaiEC+PufeTUFVHYk/7+WnDcWgVB2rCo/IXTSdg1Hds=;
-	b=myroYSToz66ns5AWaEKJJvPJUQ2gNhiviSmOpp/J2y/Y8GROMCYAYuwQj8YyoGQq0ioQrw
-	I0vja15KBTuai/J5zuSpLfuqRQvQiR3kb2j3hHKZ3BcBsRXrmg2YnmRQwaBSuy+vx6s/pB
-	1D83Xhz/+9fcJksBAxbL9E0q4tvY8TteyaYaLEtxufK51sq7VmWbCEC0WvYDFGFBsGYCfS
-	36kYPxE4KFGfMPeCaWLFJrogT8glen7n3s2DRBE3lNQkyNFvGFTXHHfKS3QK691LwDekZV
-	tRzViTTgIV7ihzkV75uqQhgc0VRSa4JY6wdpJoo/hOJVrOvqkI9jfVbYQFE5RA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: davem@davemloft.net, Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>,
- Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?B?Tmljb2zDsg==?= Veronese <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject:
- Re: [PATCH net-next v6 14/14] Documentation: networking: Document the
- phy_port infrastructure
-Date: Mon, 12 May 2025 11:22:04 +0200
-Message-ID: <873525603.0ifERbkFSE@fw-rgant>
-In-Reply-To: <20250507135331.76021-15-maxime.chevallier@bootlin.com>
-References:
- <20250507135331.76021-1-maxime.chevallier@bootlin.com>
- <20250507135331.76021-15-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1747041812; c=relaxed/simple;
+	bh=89sZqGuNSkvdpj6n9MXwDCPpmTPbDyYHg6keMS4GHqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L5sGpnu03iJ1DN2KFNV2fZtlGUCB7ssVlRwOgpELRZTIa/YO9rzZH/bJZf14VZgYB8nZ0OQTF21vfRZARlKgc7F6VxxHUOOB8ssyaI47c3Vkd7B6wM1qGM9Z45NIF3c9gT7Ob31bMYIuKDpgzgaHjdordwM9yItbL/pk+ahxrAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/WNNIav; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5fc9c49c8adso3994931a12.3;
+        Mon, 12 May 2025 02:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747041809; x=1747646609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VeVC66rQDN7pvLPMFsPPWmT1oKHoJXZc3cx0+31yGWk=;
+        b=E/WNNIav7ArdICItLCvfgTERbkWK/LMVX8KfOrjQHUTbCxBUVbhh7Da5DkQWPh86XI
+         2z7NDyMOOBUfYhoIdICdEot0WK2t4qDfK4pIKgOqEcq5bomRs68Vh61pRacgMYcayPp+
+         Whsbu/O2Jcip7M6EQSkB0EnKTWhmJCaAk1BvVFsST49HDUiQy8DXJ0FSUDAAZORCB/nH
+         Tms0psGM8bjzdkdbG5fc991yiEzklsxe9l+v3SBqgw2DXc5nSxriqKlagll2Wa6GDiAT
+         x1bqqsdg4Sf7s2+50pCqYI9/YqJbPsIQM5pGcCw0gvlPk9pNAq+Jbg3hT+KBHb0JOuF6
+         pp/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747041809; x=1747646609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VeVC66rQDN7pvLPMFsPPWmT1oKHoJXZc3cx0+31yGWk=;
+        b=U0r1QAAdrHrLu1DgjS5LJ3MDQrIU/7S7ZQwx5cGK+0n0ZSY9E6Jm4ffBBpbaeHamZ0
+         yyU4CYrpW7Jw2k5lnByLtVkuqxzcTzIGKYJ7GsJb3xcYZz6S8PUT9AEJyD8Pdpc9eEID
+         xBH9gH3HGaIu/dBfMNLyQXrJrnq43ZUTjtoi/1311QY5cZI3zqB5zC/S2nwTGlPSwEKn
+         GZ6olcQfq0/huToDu4B1A2ZLcGab6wqMVZjClEbzLFu+tT4elrGuYkOwJv2GOma7tCeg
+         4qK4IjxlRyUUPp5BeWrinWSyhHEvXgDV2CQtf+F/e2QowxQtoaSxzt3n4t3l9i83tLng
+         cumg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBzBPJ9JX0EZPKbF1oLuAeU6owhZKk/JfKYhzBn3i13nzrenpnK5L3U44U3HGfvRtNhjDYPVNgQoHVMN3E@vger.kernel.org, AJvYcCXHWkNr7Y39uXF6JirO/q79MosmzmWLLDRE4WVPyZJop4DTGT+Oma7+cyxdDv+I3XB3XlCSfRsc/W734n2v@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ0pQzNhrfYYrnBi3KRcowSTdk87/kh3S1hA1I6cgcV0EAPaRi
+	ZvTUtZLoI2lQ+jgxQGm3thK9Yb0iMYzClSG+91xzJukIEkzC/GyBYkdKK4gwJr6tP1P3+TPWebN
+	ZK+glTCRrqOh7W2hsktr2UpKAAmM=
+X-Gm-Gg: ASbGncv8LpY//Mft82lczCne7W5wklHdBdnXXt3w9CIasEjGdNgakvivZqJAI/KtU5i
+	hls2n5zdm2rEEcwaDiHGhMONXeRXXYreRc0H3C/73ACk44dLTLBLzdPc8NBzhee/C52HX3oa/xf
+	ZqA12Ofy8kaWOzi7APp/iMnXe8Xjmok8rO
+X-Google-Smtp-Source: AGHT+IFgfcOzZ/ZrpapltWUFPPSovtg1lPh2QGS5fNadobB3/uric5qh0Sh0mvSJJEez27Ujl1s3Ouq3Wn1auVG3r9k=
+X-Received: by 2002:a17:907:9729:b0:ad2:54c5:42ef with SMTP id
+ a640c23a62f3a-ad254c545cemr274632466b.5.1747041808134; Mon, 12 May 2025
+ 02:23:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5568568.Sb9uPGUboI";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftddtkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhvdelkeevgfeijedtudeiheefffejhfelgeduuefhleetudeiudektdeiheelgfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqmhhsmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
+ <20250509-fusectl-backing-files-v3-2-393761f9b683@uniontech.com>
+ <CAJfpegvhZ8Pts5EJDU0efcdHRZk39mcHxmVCNGvKXTZBG63k6g@mail.gmail.com>
+ <CAC1kPDPeQbvnZnsqeYc5igT3cX=CjLGFCda1VJE2DYPaTULMFg@mail.gmail.com>
+ <CAJfpegsTfUQ53hmnm7192-4ywLmXDLLwjV01tjCK7PVEqtE=yw@mail.gmail.com>
+ <CAC1kPDPWag5oaZH62YbF8c=g7dK2_AbFfYMK7EzgcegDHL829Q@mail.gmail.com> <CAJfpegu59imrvXSbkPYOSkn0k_FrE6nAK1JYWO2Gg==Ozk9KSg@mail.gmail.com>
+In-Reply-To: <CAJfpegu59imrvXSbkPYOSkn0k_FrE6nAK1JYWO2Gg==Ozk9KSg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 12 May 2025 11:23:15 +0200
+X-Gm-Features: AX0GCFso4tMDxIW78HKWY_HNHtLI9t31XfP6g-OaXqjofsiOCFHpDFG1Yc6uBKg
+Message-ID: <CAOQ4uxgM+oJxp0Od=i=Twj9EN2v2+rFByEKabZybic=6gA0QgA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] fs: fuse: add backing_files control file
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Chen Linxuan <chenlinxuan@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---nextPart5568568.Sb9uPGUboI
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Mon, 12 May 2025 11:22:04 +0200
-Message-ID: <873525603.0ifERbkFSE@fw-rgant>
-In-Reply-To: <20250507135331.76021-15-maxime.chevallier@bootlin.com>
-MIME-Version: 1.0
+On Mon, May 12, 2025 at 10:27=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu>=
+ wrote:
+>
+> On Sun, 11 May 2025 at 11:56, Chen Linxuan <chenlinxuan@uniontech.com> wr=
+ote:
+>
+> > I noticed that the current extended attribute names already use the
+> > namespace.value format.
+> > Perhaps we could reuse this naming scheme and extend it to support
+> > features like nested namespaces.
+>
+> Right.  Here's a link to an old and long thread about this:
+>
+>    https://lore.kernel.org/all/YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com=
+/#r
+>
 
-Hi Maxime,
+The way I see it is, generic vs. specialized have pros and cons
+There is no clear winner.
+Therefore, investing time on the getxattr() direction without consensus
+with vfs maintainer is not wise IMO.
 
-On Wednesday, 7 May 2025 15:53:30 CEST Maxime Chevallier wrote:
-> This documentation aims at describing the main goal of the phy_port
-> infrastructure.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
->  Documentation/networking/index.rst    |   1 +
->  Documentation/networking/phy-port.rst | 111 ++++++++++++++++++++++++++
->  MAINTAINERS                           |   1 +
->  3 files changed, 113 insertions(+)
->  create mode 100644 Documentation/networking/phy-port.rst
-> 
-> diff --git a/Documentation/networking/index.rst
-> b/Documentation/networking/index.rst index ac90b82f3ce9..f60acc06e3f7
-> 100644
-> --- a/Documentation/networking/index.rst
-> +++ b/Documentation/networking/index.rst
-> @@ -96,6 +96,7 @@ Contents:
->     packet_mmap
->     phonet
->     phy-link-topology
-> +   phy-port
->     pktgen
->     plip
->     ppp_generic
-> diff --git a/Documentation/networking/phy-port.rst
-> b/Documentation/networking/phy-port.rst new file mode 100644
-> index 000000000000..6d9d46ebe438
-> --- /dev/null
-> +++ b/Documentation/networking/phy-port.rst
-> @@ -0,0 +1,111 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. _phy_port:
-> +
-> +=================
-> +Ethernet ports
-> +=================
-> +
-> +This document is a basic description of the phy_port infrastructure,
-> +introduced to represent physical interfaces of Ethernet devices.
-> +
-> +Without phy_port, we already have quite a lot of information about what the
-> +media-facing interface of a NIC can do and looks like, through the
+> >
+> > For instance, in a situation like this:
+> >
+> > A fixed file 0 in an io_uring is a FUSE fd.
+> > This FUSE fd belongs to FUSE connection 64.
+> > This FUSE fd has a backing file.
+> > This backing file is actually provided by mnt_id=3D36.
+> >
+> > Running getfattr -m '-' /proc/path/to/the/io_uring/fd could return
+> > something like:
+> >
+> > io_uring.fixed_files.0.fuse.conn=3D"64"
+> > io_uring.fixed_files.0.fuse.backing_file.mnt_id=3D"36"
+> > io_uring.fixed_files.0.fuse.backing_file.path=3D"/path/to/real/file"
+>
+> Yeah, except listxattr wouldn't be able to properly work in such
+> cases: it lacks support for hierarchy.
+>
+> The proposed solution was something like making getxattr on the
+> "directory" return a listing of child object names.
+>
+> I.e. getxattr("/proc/123/fd/12", "io_uring.fixed_files.") would return
+> the list of instantiated fixed file slots, etc...
 
-I'd replace "and looks like" by "and what it looks like".
+The problem I see with this scheme is that it is not generic enough.
+If lsof is to support displaying fuse backing files, then it needs to
+know specifically about those magic xattrs.
 
-> +:c:type:`struct ethtool_link_ksettings <ethtool_link_ksettings>`
-> attributes, +which includes :
-> +
-> + - What the NIC can do through the :c:member:`supported` field
-> + - What the Link Partner advertises through :c:member:`lp_advertising`
-> + - Which features we're advertising through :c:member:`advertising`
-> +
-> +We also have info about the number of lanes and the PORT type. These
-> settings +are built by aggregating together information reported by various
-> devices that +are sitting on the link :
-> +
-> +  - The NIC itself, through the :c:member:`get_link_ksettings` callback
-> +  - Precise information from the MAC and PCS by using phylink in the MAC
-> driver +  - Information reported by the PHY device
-> +  - Information reported by an SFP module (which can itself include a PHY)
-> +
-> +This model however starts showing its limitations when we consider devices
-> that +have more than one media interface. In such a case, only information
-> about the +actively used interface is reported, and it's not possible to
-> know what the +other interfaces can do. In fact, we have very few
-> information about whether or +not there are any other media interfaces.
+Because lsof only displays information about open files, I think
+it would be better to come up with a standard tag in fdinfo for lsof
+to recognize, for example:
 
-maybe "hints" instead of "information"?
+hidden_file: /path/to/hidden/file
+hidden_files_list: /path/to/connections/N/backing_files
 
-> +
-> +The goal of the phy_port representation is to provide a way of representing
-> a +physical interface of a NIC, regardless of what is driving the port (NIC
-> through +a firmware, SFP module, Ethernet PHY).
-> +
-> +Multi-port interfaces examples
-> +==============================
-> +
-> +Several cases of multi-interface NICs have been observed so far :
-> +
-> +Internal MII Mux::
-> +
-> +  +------------------+
-> +  | SoC              |
-> +  |          +-----+ |           +-----+
-> +  | +-----+  |     |-------------| PHY |
-> +  | | MAC |--| Mux | |   +-----+ +-----+
-> +  | +-----+  |     |-----| SFP |
-> +  |          +-----+ |   +-----+
-> +  +------------------+
-> +
-> +Internal Mux with internal PHY::
-> +
-> +  +------------------------+
-> +  | SoC                    |
-> +  |          +-----+ +-----+
-> +  | +-----+  |     |-| PHY |
-> +  | | MAC |--| Mux | +-----+   +-----+
-> +  | +-----+  |     |-----------| SFP |
-> +  |          +-----+       |   +-----+
-> +  +------------------------+
-> +
-> +External Mux::
-> +
-> +  +---------+
-> +  | SoC     |  +-----+  +-----+
-> +  |         |  |     |--| PHY |
-> +  | +-----+ |  |     |  +-----+
-> +  | | MAC |----| Mux |  +-----+
-> +  | +-----+ |  |     |--| PHY |
-> +  |         |  +-----+  +-----+
-> +  |         |     |
-> +  |    GPIO-------+
-> +  +---------+
-> +
-> +Double-port PHY::
-> +
-> +  +---------+
-> +  | SoC     | +-----+
-> +  |         | |     |--- RJ45
-> +  | +-----+ | |     |
-> +  | | MAC |---| PHY |   +-----+
-> +  | +-----+ | |     |---| SFP |
-> +  +---------+ +-----+   +-----+
-> +
-> +phy_port aims at providing a path to support all the above topologies, by
-> +representing the media interfaces in a way that's agnostic to what's
-> driving +the interface. the struct phy_port object has its own set of
+and then conform to the same fdinfo standard from fuse_dev_fd,
+io_uring_fd, unix_socket_fd.
 
-s/the/The
+Making an interface more hierarchic than hidden_files_list:
+is useless because lsof traverses all fds anyway to filter by
+name pattern and I am very sceptical of anyone trying to
+push for an API get_open_fds_by_name_pattern()...
 
-> callback ops, and +will eventually be able to report its own ksettings::
-> +
-> +             _____      +------+
-> +            (     )-----| Port |
-> + +-----+   (       )    +------+
-> + | MAC |--(   ???   )
-> + +-----+   (       )    +------+
-> +            (_____)-----| Port |
-> +                        +------+
-> +
-> +Next steps
-> +==========
-> +
-> +As of writing this documentation, only ports controlled by PHY devices are
-> +supported. The next steps will be to add the Netlink API to expose these
-> +to userspace and add support for raw ports (controlled by some firmware,
-> and directly +managed by the NIC driver).
-> +
-> +Another parallel task is the introduction of a MII muxing framework to
-
-I'd suggest "related" instead of "parallel".
-
-> allow the +control of non-PHY driver multi-port setups.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b155eec69552..211a6ba50166 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8781,6 +8781,7 @@
-> F:	Documentation/devicetree/bindings/net/ethernet-connector.yaml
-> F:	Documentation/devicetree/bindings/net/ethernet-phy.yaml
->  F:	Documentation/devicetree/bindings/net/mdio*
->  F:	Documentation/devicetree/bindings/net/qca,ar803x.yaml
-> +F:	Documentation/networking/phy-port.rst
->  F:	Documentation/networking/phy.rst
->  F:	drivers/net/mdio/
->  F:	drivers/net/mdio/acpi_mdio.c
-
-Thanks!
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart5568568.Sb9uPGUboI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmghvbwACgkQ3R9U/FLj
-2871DxAAn7+aUBy4seGGJo1GygKlbkXBHGDeR8bvU6xiVEX4iQCpM5/8/fSk413V
-VaVRwapjz/rEK7gx0fKzUw2EmEUSBkSSW4SPocPH7bEYREdo5y0f1xgTp7PXD1Yj
-osDFFsXo9S3rsDCvCBMDb73s60/EZsDp/gcw+xAdhZPBjDine0wArdRPTmWmJDsc
-OJTM9eMwHYxj03b0j+3ZytXWTQ8ku2I3zeT+RD1M/XWTguJ/h0QYJnn9O1OU6kLh
-uxgtP8lSrFAz/hPvIRa7u4TG73e4Dfm0/cP4liGgDFJEofnxVSU7BKuFT5K/PDW/
-+H3aRHQAPfuNNrzE/j6Ek7KMYfFa3vGbM3kD0lnhMGoKD9s9vhLmOxG/b3+8fiQl
-KQX7UMQfKHEfmMz8HyTG3dX5vplbpR4MlQYDoub9Icu3AYJO/uRKw5X6NaJT89yT
-aIEeMjzxKTxrTryx7aQ8T8IWzQF58mj9IPao4qHXSm+nP0KWMbZMrNP3KkFvTNSI
-RPjPzPlBYD1DT5o7Nt4izr8c+b9GCJQDdFxkAfjmisjvxljVSL1yTaFVvpgcClSe
-6FGRHENouJJrH+nadqpZKNmzkLDDoQoi1dfzq4Dx7KAxul3gqwh+lZ6QOBCwH/o0
-Hax/Lqkzq0+JXynFI3fTL2/czWHZUzzkoZdkQbxQsS2CSXgHcC4=
-=G59j
------END PGP SIGNATURE-----
-
---nextPart5568568.Sb9uPGUboI--
-
-
-
+Thanks,
+Amir.
 
