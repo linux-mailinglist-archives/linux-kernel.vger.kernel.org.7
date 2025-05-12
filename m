@@ -1,104 +1,173 @@
-Return-Path: <linux-kernel+bounces-644115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A237CAB36E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:23:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC4AB37D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5313BE14C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E697ABCEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 12:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FDD293472;
-	Mon, 12 May 2025 12:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B57A2905;
+	Mon, 12 May 2025 12:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozxBVWXo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="n7bDYyPR"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1165256C84;
-	Mon, 12 May 2025 12:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6C72AE68;
+	Mon, 12 May 2025 12:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747052586; cv=none; b=cvQ0mYgl+YKyyS4WwXscqRgn2eYHVs6eGsAxFup1OIcTgN0X3fdtVKDNPz61Ktosbr0n4WfABtGp5BIQy93HdwFrwqysIZ/Q1KQ6N6LABPLxIk7rK9vGDGBknmMDoIrpihkC08B0YG+0M5QiODhoh5DweTNCJxce7ky5OyFDbwo=
+	t=1747054377; cv=none; b=T2Np/elBHKSuwbsZbjTvJT305AlGaYWtprur3n5Rwxe8r94HehEmPZ6FITQPSE5jHO5ZOJU/7omB0pVPrbuCQVfMeFZ0NJDIKiYj5Ure8sfpA9E9euveSLItmNXLLvAu5/AMzU2QqiAA9z60YYikvzYQRSWGRf8dJHugTiHkp3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747052586; c=relaxed/simple;
-	bh=2WNZsBiK3HiRTHULHlEXidSD2YudyevaPY4FvNsGzxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n583HddQL07t0h1Uo/jWYZ2A/OZyuCHoHTmdSqO6YeyvMYObE8m2aGEYlRdmAvmpONhtgI315n34IE+5ZRdqnEJ0b1cqw87x32jc2KHqr3rfAREY//TXhni2ynRK3Jc8JB17WeC6iXEIFiEh8IkvwzrAqOj2fNnppLFvgO4cccE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozxBVWXo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51193C4CEE7;
-	Mon, 12 May 2025 12:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747052586;
-	bh=2WNZsBiK3HiRTHULHlEXidSD2YudyevaPY4FvNsGzxg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ozxBVWXoxSIkRzW8dM4064bu3lgZBaeQwAEp2tZRril6R8vRUFQDxo8DTgQzhA3CS
-	 +Tn0N5GnKfRSiv0LGu0wPgabbLIyYnXGfJdyz7frzpZK8BqfGnJkFKCFnAtxP/8dfY
-	 FVaYqi0c7CnvOMcTnqJEZ8KqlU4jg4/qFDmJ6eS5QkShg1a1pqtqARV+78KCdkYEiD
-	 KS53e3a8DMRTtlpqcvYa6IhsqYwuiECeUHg6B0ZLoDCqw1Slz12+4hGS8f7j1gST63
-	 aPdeqc79DuvbZb8OemzwG0OOLUj2ZUxJfIiDHQinqbTUV8BudxI0j5rBSmPsyW9apT
-	 7iEBuEHbY+j5g==
-Date: Mon, 12 May 2025 14:22:59 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Asahi Lina <lina@asahilina.net>
-Subject: Re: [PATCH 3/4] rust: drm: gem: s/into_gem_obj()/as_gem_obj()/
-Message-ID: <aCHoI2Em6M2Y8QdD@pollux>
-References: <20250501183717.2058109-1-lyude@redhat.com>
- <20250501183717.2058109-4-lyude@redhat.com>
+	s=arc-20240116; t=1747054377; c=relaxed/simple;
+	bh=zECTQVlS7BoMjRy+nopuy5oEj3xxBDKN5vQJhKE6xzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QGTW1wmNy/7SBv1YiGiPWDl1GAW//zoL6Nx010ma13fB+6f0+RJ23I1KZLuLQt8B+YFxZ5Tph88QTCsoAAYCdAtY8OgoNnM7R6o95dZvStmM0w1Vm/xf+fnkpTVY3bQPhO7j0e9n6MoWM7fcOXBef48Q4jA5vup7Bk+IROYwsqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=n7bDYyPR; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uESBp-00C5t2-Df; Mon, 12 May 2025 14:23:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=qGVhATLfDHfKI3zxu6jJB+4o6rhgxGO4+J2Ibmk67sA=; b=n7bDYyPRLhNNg3V1RCrSWfCkzh
+	2Tc6oSpJceBKv6vVofPdd1P3Y+fuHPzd2ap3wSuC0QFW6Gnb/4YWRZgk5maPmG1fJ2pWQWrW1dlL3
+	k+NYZoYtsBMc365Sh7e9zsrNHvy6HGvn7ScGv4z3bE8Ko/ZL1WaVf/Q7YlM5MqggpcY/sZbsWsAEp
+	0dn1UdWh3ebefOLUcclU+J8V6ck+ne59icCt5lVC63kYZKVInmjhca+68i1veSjGm7NPJcorEbt+K
+	j0Or+l8ASbVL86mBkVfVbVugyVLBeNRgoh3Xiga+iaKoNLNlhEMBwS9Y3cLogDGxcGVBn2yzVVsqw
+	nkB90NDw==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uESBn-0000sF-KA; Mon, 12 May 2025 14:23:24 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uESBd-007iLF-FJ; Mon, 12 May 2025 14:23:13 +0200
+Message-ID: <720f6986-8b32-4d00-b309-66a6f0c1ca40@rbox.co>
+Date: Mon, 12 May 2025 14:23:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250501183717.2058109-4-lyude@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 3/3] vsock/test: Expand linger test to ensure
+ close() does not misbehave
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250501-vsock-linger-v4-0-beabbd8a0847@rbox.co>
+ <20250501-vsock-linger-v4-3-beabbd8a0847@rbox.co>
+ <g5wemyogxthe43rkigufv7p5wrkegbdxbleujlsrk45dmbmm4l@qdynsbqfjwbk>
+ <CAGxU2F59O7QK2Q7TeaP6GU9wHrDMTpcO94TKz72UQndXfgNLVA@mail.gmail.com>
+ <ff959c3e-4c47-4f93-8ab8-32446bb0e0d0@rbox.co>
+ <CAGxU2F77OT5_Pd6EUF1QcvPDC38e-nuhfwKmPSTau262Eey5vQ@mail.gmail.com>
+Content-Language: pl-PL, en-GB
+From: Michal Luczaj <mhal@rbox.co>
+In-Reply-To: <CAGxU2F77OT5_Pd6EUF1QcvPDC38e-nuhfwKmPSTau262Eey5vQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 01, 2025 at 02:33:18PM -0400, Lyude Paul wrote:
-> There's a few changes here:
-> * The rename, of course (this should also let us drop the clippy annotation
->   here)
-> * Return *mut bindings::drm_gem_object instead of
->   &Opaque<bindings::drm_gem_object> - the latter doesn't really have any
->   benefit and just results in conversion from the rust type to the C type
->   having to be more verbose than necessary.
+On 5/7/25 10:26, Stefano Garzarella wrote:
+> On Wed, 7 May 2025 at 00:47, Michal Luczaj <mhal@rbox.co> wrote:
+>>
+>> On 5/6/25 11:46, Stefano Garzarella wrote:
+>>> On Tue, 6 May 2025 at 11:43, Stefano Garzarella <sgarzare@redhat.com> wrote:
+>>>>
+>>>> On Thu, May 01, 2025 at 10:05:24AM +0200, Michal Luczaj wrote:
+>>>>> There was an issue with SO_LINGER: instead of blocking until all queued
+>>>>> messages for the socket have been successfully sent (or the linger timeout
+>>>>> has been reached), close() would block until packets were handled by the
+>>>>> peer.
+>>>>
+>>>> This is a new behaviour that only new kernels will follow, so I think
+>>>> it is better to add a new test instead of extending a pre-existing test
+>>>> that we described as "SOCK_STREAM SO_LINGER null-ptr-deref".
+>>>>
+>>>> The old test should continue to check the null-ptr-deref also for old
+>>>> kernels, while the new test will check the new behaviour, so we can skip
+>>>> the new test while testing an old kernel.
+>>
+>> Right, I'll split it.
+>>
+>>> I also saw that we don't have any test to verify that actually the
+>>> lingering is working, should we add it since we are touching it?
+>>
+>> Yeah, I agree we should. Do you have any suggestion how this could be done
+>> reliably?
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/drm/gem/mod.rs | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
+> Can we play with SO_VM_SOCKETS_BUFFER_SIZE like in credit-update tests?
 > 
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index f70531889c21f..55b2f1d056c39 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -42,8 +42,7 @@ pub trait IntoGEMObject: Sized + super::private::Sealed {
->  
->      /// Returns a reference to the raw `drm_gem_object` structure, which must be valid as long as
->      /// this owning object is valid.
-> -    #[allow(clippy::wrong_self_convention)]
-> -    fn into_gem_obj(&self) -> &Opaque<bindings::drm_gem_object>;
-> +    fn as_gem_obj(&self) -> *mut bindings::drm_gem_object;
+> One peer can set it (e.g. to 1k), accept the connection, but without
+> read anything. The other peer can set the linger timeout, send more
+> bytes than the buffer size set by the receiver.
+> At this point the extra bytes should stay on the sender socket buffer,
+> so we can do the close() and it should time out, and we can check if
+> it happens.
+> 
+> WDYT?
 
-Maybe just as_raw()? Either way,
+Haven't we discussed this approach in [1]? I've reported that I can't make
+it work. But maybe I'm misunderstanding something, please see the code below.
 
-	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+[1]:
+https://lore.kernel.org/netdev/df2d51fd-03e7-477f-8aea-938446f47864@rbox.co/
+
+import termios, time
+from socket import *
+
+SIOCOUTQ = termios.TIOCOUTQ
+VMADDR_CID_LOCAL = 1
+SZ = 1024
+
+def set_linger(s, timeout):
+	optval = (timeout << 32) | 1
+	s.setsockopt(SOL_SOCKET, SO_LINGER, optval)
+	assert s.getsockopt(SOL_SOCKET, SO_LINGER) == optval
+
+def set_bufsz(s, size):
+	s.setsockopt(AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE, size)
+	assert s.getsockopt(AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE) == size
+
+def check_lingering(addr):
+	lis = socket(AF_VSOCK, SOCK_STREAM)
+	lis.bind(addr)
+	lis.listen()
+	set_bufsz(lis, SZ)
+
+	s = socket(AF_VSOCK, SOCK_STREAM)
+	set_linger(s, 5)
+	s.connect(lis.getsockname())
+
+	p, _ = lis.accept()
+
+	s.send(b'x')
+	p.recv(1)
+
+	print("sending...")
+	s.send(b'x' * (SZ+1)) # blocks
+	print("sent")
+
+	print("closing...")
+	ts = time.time()
+	s.close()
+	print("done in %ds" % (time.time() - ts))
+
+check_lingering((VMADDR_CID_LOCAL, 1234))
+
 
