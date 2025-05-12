@@ -1,53 +1,58 @@
-Return-Path: <linux-kernel+bounces-644578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D71AB3E90
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:59:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6479AAB3E91
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 18:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D47C8C0123
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABC019E6ED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861F6254863;
-	Mon, 12 May 2025 16:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="USwPZBGa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B060D29290D;
+	Mon, 12 May 2025 16:58:33 +0000 (UTC)
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD88246794;
-	Mon, 12 May 2025 16:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6877C253B64
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 16:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747069073; cv=none; b=JUJ5hAbZ5q4VgYpz6Y6mifoG7s+shYxSdlOfw2vQ8Y7XRBAI0W8S2V+SwjPwr4gTHKccOh1Ahc+UDZHRHb2nd8gjKYEzsVN5YZmJYrb3hM7ywJvwyiXo29EsGVeOtrRvw7mNjs7oF5lcvH8ZZJ3GDW92ICfHzUidcapxDyD2wPE=
+	t=1747069113; cv=none; b=b3A9Qd1rDK/X60gX+VCDWCPcCRCSjL04r6KqL4k7eMlSnWmaZg18ymBcSPAmGFuV8XolV30oFcF92I45gc1cwXRA5otShdYjXaoM5RNHSTH20ZIQZsGfiSv9kpHCoelgecf1ZpPIlpPzOHZmC5D95XT3N+wa0qmPef7iaDdLwzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747069073; c=relaxed/simple;
-	bh=jtmhvy+igoWarO8PIdZ3LGqvMhYkNDTKVtMcVaaeYnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNYnEW6W8mTj8vv0FZKc+Ed/bTZP7dFYtdQjGwHc1mh/F/Cze4cJAv//Ad1w9KcJDKNJ9tTVobRyus7Vk6DYgoo3zmhRYcXc0WE3WoxZtSmsmturOQmRWZfc8Hum/NLmCNkv57usFQbVt0iyqBjspxLJkOAfimWXv2PXtj87Yns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=USwPZBGa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F318C4CEE7;
-	Mon, 12 May 2025 16:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747069072;
-	bh=jtmhvy+igoWarO8PIdZ3LGqvMhYkNDTKVtMcVaaeYnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USwPZBGaCrF4OOrhmuZAcAHI13eVshZ3/K0bwJ6RiKOQGGFWJfhh5EF/FT895MSwQ
-	 niVRzkI8AudeQY5kJfVVvHZgYtIwLWNvA8SCFkMY26EKM6n+b7akU5WeJ89rD63Mr+
-	 0j/gkbhG4jaPkEpglku421lkT2l/AWzkBt+3/bO4=
-Date: Mon, 12 May 2025 18:57:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] CodingStyle: make Documentation/CodingStyle into
- symlink
-Message-ID: <2025051203-secluded-emphases-1c76@gregkh>
-References: <20250509203430.3448-1-adobriyan@gmail.com>
- <87frhcsrva.fsf@trenco.lwn.net>
- <77f03295-df5d-4bc0-9a61-5be829969662@p183>
+	s=arc-20240116; t=1747069113; c=relaxed/simple;
+	bh=G9r/xNz3qPTnKCCzs0klOz9xAugo03yXKKnCDVhaRF4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=keThT6v2dQ7VfJPXvjsYsIZIlzaJCXlToQL3Zn/N1QMHNBvh3m40LZB/00DIkST9/B/QBKgJWVFxotxYn4He18DFhoseF0Qm8nXJT8hJHH8YfmmTYp+/egZWFwMfbLBzz60irFLoUuiD4LLhyH/cmLo7om5Bq45b/gEQHqC1iHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+Received: from localhost (unknown [82.64.135.138])
+	by smtp2-g21.free.fr (Postfix) with ESMTP id 38CBE2003ED;
+	Mon, 12 May 2025 18:58:16 +0200 (CEST)
+Received: by localhost (Postfix, from userid 1502)
+	id 878C9C4CE; Mon, 12 May 2025 16:58:15 +0000 (GMT)
+Date: Mon, 12 May 2025 16:58:15 +0000
+From: Etienne Buira <etienne.buira@free.fr>
+To: Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: RaspberryPi4B, VC4 fails to output on HDMI
+Message-ID: <aCIopzfzbckMQFLj@Z926fQmE5jqhFMgp6>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,35 +61,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <77f03295-df5d-4bc0-9a61-5be829969662@p183>
 
-On Mon, May 12, 2025 at 07:08:53PM +0300, Alexey Dobriyan wrote:
-> On Sat, May 10, 2025 at 04:05:29AM -0600, Jonathan Corbet wrote:
-> > Alexey Dobriyan <adobriyan@gmail.com> writes:
-> > 
-> > > Every time I open Documentation/CodingStyle it says the party moved
-> > > somewhere else. :-(
-> > >
-> > > Of course, I forget where it moved to by the next time.
-> > >
-> > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > > ---
-> > 
-> > No 0/9 cover letter?
-> 
-> Not really. Cover letter would be very short:
-> 
-> 	Tweak coding style to add things I've learned over the years of
-> 	Linux/C programming.
-> 
-> 	And stop making kernel devs look like aliens from another Universe
-> 	(see static_assert() rule and especially(!) "declare ALAP" rule)
+Hi all (and i hope you won't feel spammed).
 
-Both of those are not valid reasons to change coding style, sorry.
-Again, learn about _why_ we have one, don't get bogged down in the
-details of _what_ it is.
+I have a Raspberry Pi 4B i want to use with HDMI0, but i can't make it
+work (tried lot of kernel versions), and i'd appreciate some guidance.
 
-sorry,
+Overview of dmesg (6.15-rc6 with some trace/stack dump of mine):
+[    0.212555] simple-framebuffer 3e40f000.framebuffer: framebuffer at 0x3e40f000, 0x6e7000 bytes
+[    0.212569] simple-framebuffer 3e40f000.framebuffer: format=a8r8g8b8, mode=1824x984x32, linelength=7296
+[    0.216036] Console: switching to colour frame buffer device 228x61
+[    0.219382] simple-framebuffer 3e40f000.framebuffer: fb0: simplefb registered!
+...
+[    1.923879] raspberrypi-firmware soc:firmware: Attached to firmware from 2025-02-17T20:03:07
+...
+[    1.957445] v3d fec00000.gpu: [drm] Using Transparent Hugepages
+[    1.964814] [drm] Initialized v3d 1.0.0 for fec00000.gpu on minor 0
+[    1.972428] Console: do_bind_con_driver, backtrace:
+[    1.972437] CPU: 0 UID: 0 PID: 44 Comm: kworker/u16:2 Not tainted 6.15.0-rc6-00001-gb4f861e88093-dirty #2 PREEMPT 
+[    1.972446] Hardware name: Raspberry Pi 4 Model B Rev 1.5 (DT)
+[    1.972449] Workqueue: events_unbound deferred_probe_work_func
+[    1.972465] Call trace:
+[    1.972467]  show_stack+0x2c/0xc0 (C)
+[    1.972476]  dump_stack_lvl+0x60/0x94
+[    1.972483]  dump_stack+0x18/0x30
+[    1.972488]  do_bind_con_driver.isra.0+0x40/0x294
+[    1.972497]  do_unbind_con_driver+0x1b8/0x1dc
+[    1.972506]  fbcon_fb_unbind+0x108/0x1d8
+[    1.972512]  unregister_framebuffer+0x110/0x120
+[    1.972522]  simplefb_remove+0x14/0x2c
+[    1.972527]  platform_remove+0x28/0x5c
+[    1.972533]  device_remove+0x4c/0xa0
+[    1.972538]  device_release_driver_internal+0x1fc/0x250
+[    1.972543]  device_release_driver+0x18/0x40
+[    1.972548]  bus_remove_device+0xd4/0x17c
+[    1.972552]  device_del+0x150/0x3b8
+[    1.972559]  platform_device_del+0x28/0xbc
+[    1.972564]  platform_device_unregister+0x18/0x50
+[    1.972570]  aperture_detach_platform_device+0x14/0x2c
+[    1.972575]  aperture_detach_devices+0xb8/0x120
+[    1.972581]  aperture_remove_conflicting_devices+0x10/0x2c
+[    1.972587]  vc4_drm_bind+0x110/0x364
+[    1.972592]  try_to_bring_up_aggregate_device+0x22c/0x308
+[    1.972597]  __component_add+0xec/0x224
+[    1.972602]  component_add+0x14/0x30
+[    1.972607]  vc4_hdmi_dev_probe+0x1c/0x40
+[    1.972614]  platform_probe+0x68/0xf0
+[    1.972620]  really_probe+0xc0/0x3ac
+[    1.972624]  __driver_probe_device+0x7c/0x174
+[    1.972629]  driver_probe_device+0x40/0x100
+[    1.972634]  __device_attach_driver+0x10c/0x1e0
+[    1.972639]  bus_for_each_drv+0x88/0x100
+[    1.972643]  __device_attach+0xa0/0x1c8
+[    1.972647]  device_initial_probe+0x14/0x30
+[    1.972652]  bus_probe_device+0xc8/0xcc
+[    1.972656]  deferred_probe_work_func+0xb8/0x12c
+[    1.972661]  process_one_work+0x160/0x2d4
+[    1.972668]  worker_thread+0x2d8/0x400
+[    1.972673]  kthread+0x12c/0x208
+[    1.972678]  ret_from_fork+0x10/0x20
+[    1.972720] Console: switching to colour dummy device 80x25
+[    3.115665] vc4-drm gpu: bound fe400000.hvs (ops 0xffffffd14312f480)
+[    3.122490] Registered IR keymap rc-cec
+[    3.125869] rc rc0: vc4-hdmi-0 as /devices/platform/soc/fef00700.hdmi/rc/rc0
+[    3.133033] input: vc4-hdmi-0 as /devices/platform/soc/fef00700.hdmi/rc/rc0/input0
+[    3.141737] vc4-drm gpu: bound fef00700.hdmi (ops 0xffffffd14312bc68)
+[    3.148700] Registered IR keymap rc-cec
+[    3.152074] rc rc1: vc4-hdmi-1 as /devices/platform/soc/fef05700.hdmi/rc/rc1
+[    3.159241] input: vc4-hdmi-1 as /devices/platform/soc/fef05700.hdmi/rc/rc1/input1
+[    3.168548] vc4-drm gpu: bound fef05700.hdmi (ops 0xffffffd14312bc68)
+[    3.174671] vc4-drm gpu: bound fe004000.txp (ops 0xffffffd1431307d0)
+[    3.181044] vc4-drm gpu: bound fe206000.pixelvalve (ops 0xffffffd1431296f0)
+[    3.188070] vc4-drm gpu: bound fe207000.pixelvalve (ops 0xffffffd1431296f0)
+[    3.195114] vc4-drm gpu: bound fe20a000.pixelvalve (ops 0xffffffd1431296f0)
+[    3.202132] vc4-drm gpu: bound fe216000.pixelvalve (ops 0xffffffd1431296f0)
+[    3.210213] [drm] Initialized vc4 0.0.0 for gpu on minor 1
+...
+[   12.308295] EDID block 1 read ok (drivers/gpu/drm/drm_edid.c:edid_block_status_print case EDID_BLOCK_OK)
 
-greg k-h
+The EDID is fetched ok (but strangely late according to dmesg), and edid-decode
+softly complains about it (and it lists a wide range of modes it does not
+complain about):
+Warnings:
+
+Block 1, CTA-861 Extension Block:
+  Display Product Serial Number is set, so the Serial Number in the Base EDID should be 0.
+  Add a Colorimetry Data Block with the sRGB colorimetry bit set to avoid interop issues.
+
+Failures:
+
+Block 1, CTA-861 Extension Block:
+  Missing VCDB, needed for Set Selectable RGB Quantization to avoid interop issues.
+EDID:
+  Base EDID: Some timings are out of range of the Monitor Ranges:
+    Vertical Freq: 50.000 - 75.029 Hz (Monitor: 56.000 - 76.000 Hz)
+    Horizontal Freq: 15.625 - 79.976 kHz (Monitor: 30.000 - 83.000 kHz)
+
+
+Interestingly enough, while EDID seems to have parsed ok, there is zero
+entry in /sys/class/drm/card1-HDMI-A-1/modes (the hdmi node i took the
+edid from).
+
+
+Can someone give me some hint(s) on how to get this hdmi output working?
+I can obviously give more informations if needed.
+
+Regards.
+
 
