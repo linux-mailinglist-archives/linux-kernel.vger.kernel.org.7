@@ -1,192 +1,140 @@
-Return-Path: <linux-kernel+bounces-644067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9448DAB363C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F581AB364A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E55B189EB40
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:51:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FB4189F5ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C5A292938;
-	Mon, 12 May 2025 11:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4495D292928;
+	Mon, 12 May 2025 11:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="F4VyUJ+J"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vS+LrQsw"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E6D25F781;
-	Mon, 12 May 2025 11:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8CB1E87B;
+	Mon, 12 May 2025 11:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050636; cv=none; b=kDy2ZIrBNcRP2qWDIbKffOKDw29j3E3YGmZyWSXBrUgNC1xbpMo6u7oa1BigBoKHmo20deVI5BdIbvYGtdUhTousyga1oFQe+fSDzUX68Te6F5pmCaZeJzJpCN2k/0HuVNVPwJJwNGIQOWBMfGTmc+9qd9pZasn7R0Du17dt6WY=
+	t=1747050809; cv=none; b=luJ4qEuhIF3ISjFnkYUGb3npzve+mK2jVo1p5z4pSTs9PCbUpkpKAGzwPSawpG9SDG46OzK4XaUPI6JUds1J0/5rGXH366bzLqn2Pm5518oCsNXPDE3bAj5pIoTi0JtgFT8VIJfrMus75KRysz6mNKOJG+PZk21LG+3VbGgRb9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050636; c=relaxed/simple;
-	bh=JN5peLSh0AwCANNu9zwVzWJjdSn1bSj6lqHMZVB9QYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6+AzK0JHxa29i9FSlAGkD/EfEYmcpH8qaKoPeqUlfAir4wzzLLOkKAC3L7VM3z2aLoi7m2yzDtabYhPaQHujhcAouAn6kfKdRaakeByxgIxg+asFrF2UkFL43oEGFW5iVEVf+6BIcDuD9yTcDb+tnEg3dFPdzSOEBCzL+8GD6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=F4VyUJ+J; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=gTYrY24hx52txmsL9HPT3mdHpmxzXrMYsHxWBh70XWQ=; b=F4VyUJ+JTCQfCaNu
-	4hX0qz3EorbaU4dbcAt4m9Qht58mZ45609zPcz1ZA9duLHlMG55Vv+BU8SSWHbIUNdVyvD3kAgbtK
-	frC9vcbmjKAX8jrZl3eMaX2qNNNmiWBWlgviDHpAX9ey0vlR9GLDfy+qbmTVDRJDIHX/zzmMCgy/0
-	kp9BoH+GJ4zF0dIPOUI0rl7SoLNeClUhjMvddrxT5BwYReUP1J2hz90v5O6BtKPsLiFPqHYRD3flA
-	tkkjbStGpR+9Hr1xxadHBbY6K7BL3wFasKDlsha6h++2s0dbZ8vFTBqcHgdl5r/C6w4MsJoi5Ni5y
-	/pz9rIWnIJZraOvH7g==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uERfs-0031El-2o;
-	Mon, 12 May 2025 11:50:24 +0000
-Date: Mon, 12 May 2025 11:50:24 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Jason Xing <kerneljasonxing@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	andriy.shevchenko@linux.intel.com, corbet@lwn.net,
-	linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] relay: Remove unused relay_late_setup_files
-Message-ID: <aCHggEc3MdlL6t7j@gallifrey>
-References: <CAL+tcoCVjihJc=exL4hJDaLFr=CrMx=2JgYO_F_m12-LP9Lc-A@mail.gmail.com>
- <aCFPRhfxKUeRu1Qh@gallifrey>
- <CAL+tcoBKZ4FMk9ozFidWUgfrEyRBrHCsh4cMMbTOA_e-wn0UJQ@mail.gmail.com>
+	s=arc-20240116; t=1747050809; c=relaxed/simple;
+	bh=SMNugYqHqlQWxjNXEGkVbJueD+094nRbHoLFSCfuPfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EbdA4VqciXPmFiYdy8xVAIlNcN8d2pB4Uivq/Q2/DacnRQNbNMgXrcyg7AbMm9Cjm+X9+utW+WhKVjKIeOUEXsTIJDC6xdnHCIwIQNfiygHBaKAjSjzHBkAxo51b1oBiI5fjkwrpOuwSI+Zb0i8JkfTy16SApCVvROkqV7U+nFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vS+LrQsw; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54CAeG2P004639;
+	Mon, 12 May 2025 13:53:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	VlcV0kRPaTfk5YK6ZyqecQK16+pijh8il4Op3fbctew=; b=vS+LrQswgnOdeU02
+	AJAX5CoLB1+iKNrpHnJt8/1j647MTkFSFqx+2CkI6Dc301/Gv5dTTTI/5CVH5lgf
+	i8wQk6r8wybepprii5hAgzr/BYZxpJ8rPhs4vCj4dQsBPxjgfvzgspGvkmhsKw39
+	y8lJLeC0My7w1b+xgrSKFDq42ph5CGnJIJOZ6nwuENGFmPA1MhE7aN/uxS2p+din
+	iDHaXHpq7MOnu0zeCs/TxSoRHLgtkHJGf9y7fzIZjawNr0k1LjnXEkZJvNqEjFzy
+	ogG+4Hx7F1pGtvaU90RBlSI56DVeYCApMr7SSLfvknTEw95aEQwufvmPa3ImN3if
+	bUlbVg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46jgc44ne6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 May 2025 13:53:14 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 93CB84004A;
+	Mon, 12 May 2025 13:52:18 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BBB1CAF5655;
+	Mon, 12 May 2025 13:51:47 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 12 May
+ 2025 13:51:47 +0200
+Message-ID: <a5c0f081-b3e1-42c0-980f-2e4ad1d766df@foss.st.com>
+Date: Mon, 12 May 2025 13:51:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL+tcoBKZ4FMk9ozFidWUgfrEyRBrHCsh4cMMbTOA_e-wn0UJQ@mail.gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 11:25:31 up 14 days, 19:39,  1 user,  load average: 0.09, 0.03, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 0/3] arm64: dts: st: Add SPI NOR support for
+ stm32mp257f-ev1
+To: Patrice Chotard <patrice.chotard@foss.st.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250512-upstream_omm_ospi_dts-v10-0-fca0fbe6d10a@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250512-upstream_omm_ospi_dts-v10-0-fca0fbe6d10a@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
 
-* Jason Xing (kerneljasonxing@gmail.com) wrote:
-> On Mon, May 12, 2025 at 9:30 AM Dr. David Alan Gilbert
-> <linux@treblig.org> wrote:
-> >
-> > * Jason Xing (kerneljasonxing@gmail.com) wrote:
-> > > Hi All,
-> >
-> > Hi Jason,
-> >
-> > > I noticed this patch "relay: Remove unused relay_late_setup_files"
-> > > appears in the mm branch already[1], which I totally missed. Sorry for
-> > > joining the party late.
-> > >
-> > > I have a different opinion on this. For me, I'm very cautious about
-> > > what those so-called legacy interfaces are and how they can work in
-> > > different cases and what the use case might be... There are still a
-> > > small number of out-of-tree users like me heavily relying on relayfs
-> > > mechanism. So my humble opinion is that if you want to remove
-> > > so-called dead code, probably clearly state why it cannot be used
-> > > anymore in the future.
-> >
-> > We've got lots of deadcode, why it's dead varies a lot; for example
-> > people forgetting to clean it up after other patches etc - so this
-> > _could_ be used but hasn't been for well over 7 years.
-> >
-> > > Dr. David, I appreciate your patch, but please do not simply do the
-> > > random cleanup work __here__. If you take a deep look at the relayfs,
-> > > you may find there are other interfaces/functions no one uses in the
-> > > kernel tree.
-> >
-> > Actually, that was the only interface in relay that I found unused.
+Hi Patrice
+
+On 5/12/25 08:29, Patrice Chotard wrote:
+> Add SPI NOR support for stm32mp257f-ev1 board by adding:
+>    _ Octo memory Manager node in stm32mp251.dtsi
+>    _ OSPI port1 pinctrl entries in stm32mp25-pinctrl.dtsi
+>    _ Add SPI NOR support for stm32mp257f-ev1.dts
 > 
-> Not really. More than this single one, say, __relay_write() and
-> subbuf_start_reserve()...
-
-Ah, my tools only spot unused symbols, they're header inlines; I've
-not found a way to spot those yet.
-
-> > > I'm now checking this kind of patch in relayfs one by one to avoid
-> > > such a thing happening. I'm trying to maintain it as much as possible
-> > > since we internally use it in the networking area to output useful
-> > > information in the hot paths, a little bit like blktrace. BTW, relayfs
-> > > is really a wonderful one that helps kernel modules communicate with
-> > > userspace very efficiently. I'm trying to revive it if I can.
-> >
-> > If you've got a use for that function, then I'm more than happy to suggest
-> > just dropping my patch.
-> >
-> > However, it is a fairly chunky function that is built into distro
-> > kernels - so I think it should have a little thought put to it.
-> >
-> > As I say, if you are using it, it's fine by me just to drop this patch.
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> To: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 > 
-> For now, I'm not using it but still considering what the use case
-> might be in the future. As I mentioned earlier, I'm trying to make
-> relayfs more robust with more realistic functions.
+> Changes in v10:
+> - rebase on top of next-20250509 to fix DTB warnings.
+> - Link to v9: https://lore.kernel.org/r/20250428-upstream_omm_ospi_dts-v9-0-62522b1b0922@foss.st.com
 > 
-> IMHO, it's not really a dead code to me unless you can clarify why
-> it's obsolete instead of claiming "no one is using it".
-
-i'm very gentle about this; I'm not pushing back hard if someone
-says actually they want to keep something.
-
-I'd say my 'claim' is fairly good as even you say
-  'I'm not using it but still considering..'
-
-You don't need to push back quite as hard on me!
-
-> If you insist
-> on the point, then most of relayfs would be removed, which is
-> apparently not what I'm wishing for.
-
-You could forgive me for thinking this is unused;
-  a) There are no callers in the tree - I can't possibly imagine all
-   other trees to check; especially those on someones local disk
-   or thoughts still bouncing around in your brain!
-
-  b) There's no listed maintainer, so I can't assume anyone is actively
-  working on it
-
-  c) The only changes in years in the tree are cleanups, like strcpy
-  variants.
-
-We do have other APIs that people care about and aren't in use;
-now if those are nicely thought out APIs etc I think that's fine.
-(I've had others say they want to keep some because they like them or
-they're part of a well thought out API)
-
-> Probably it will be finally removed, but not at the moment. Evidence
-> is still not clear to me :S
+> Changes in v9:
+>    - split patchset by susbsystem, current one include only DTS related
+>      patches.
+>    - Link to v8: https://lore.kernel.org/r/20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com
 > 
-> For sure, the last call would be made by Andrew and Jens. Please help
-> review this patch one more time. Thanks!
-
-Why don't you add a MAINTAINERS section with you added just as a 
-reviewer?   That at least gets you told if someone dares to clean it up
-in the future!
-
-Dave
-
-> Thanks,
-> Jason
+> ---
+> Patrice Chotard (3):
+>        arm64: dts: st: Add OMM node on stm32mp251
+>        arm64: dts: st: Add ospi port1 pinctrl entries in stm32mp25-pinctrl.dtsi
+>        arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board
 > 
-> >
-> > Dave
-> >
-> > > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-everything&id=46aa76118ee365c25911806e34d28fc2aa5ef997
-> > >
-> > > Thanks,
-> > > Jason
-> > --
-> >  -----Open up your eyes, open up your mind, open up your code -------
-> > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
-> > \        dave @ treblig.org |                               | In Hex /
-> >  \ _________________________|_____ http://www.treblig.org   |_______/
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+>   arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 51 +++++++++++++++++++++++++
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi        | 54 +++++++++++++++++++++++++++
+>   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    | 32 ++++++++++++++++
+>   3 files changed, 137 insertions(+)
+> ---
+> base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
+> change-id: 20250410-upstream_omm_ospi_dts-04b97cc02e52
+> 
+> Best regards,
+
+Series applied on stm32-next.
+
+Cheers
+Alex
 
