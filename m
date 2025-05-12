@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-644344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E30AB3AA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7AFAB3A9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 16:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6549816D321
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:29:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B70860869
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 14:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB232192F9;
-	Mon, 12 May 2025 14:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8634A1E32D5;
+	Mon, 12 May 2025 14:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4rinRmW/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hdgwawyo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJslSrDV"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F501BD035
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 14:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558694A3C;
+	Mon, 12 May 2025 14:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747060184; cv=none; b=iLLW08Wf2YOgUk/zZBFwBCRU8KegsIBtOQCGlWyu2D6yNOqyj2uGFxwMdaKjn/VcRYh+bgK5uy4hiuPfHO86rsJdnnKKun9Ar6tBfVv3+N/ZgmhU6DWM22SxY1vhcnuldht+sxh15lKDpcggTveH4QutBCLoFwE/4Mx7YV26TOw=
+	t=1747060131; cv=none; b=One/g09y85eAjugwGDfPWKd8+dbc2uTPFmN8mRk2+Nd7JEZv35Ksgi7EAJFf3rAid87lSx4ohL+Ynv/KczfV4Mqlo2zSnDc/AZeKZ/h9zndaxL125bJOwZIPzl3FgKOrJdEh0nkgMwv6yWKPUGGIg13sdOFeSv+ghjkB3pRmePE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747060184; c=relaxed/simple;
-	bh=EcI0vp4wo0rPFoOwXHb46js93DbpKg70V1aJeQEW+rQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nso9y9M/5DJ+qfHm6nMKqvAXQywgVQDc1aaL1wh8SISwfEH6PxeB6It9YGIqBVHHoPst6Q+7KlC+dliPArnCeKUYAmezq0ysskyhPPVTYMBW08al+BxqcjcaV2L2kCfNaI5NfUr9otXBDPdDhX2XcprwT8a05JauzZ/EXMxc3zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4rinRmW/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hdgwawyo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747060180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bulm+OAY6G9mwFtOIOO/nNbm8lthx9J/UosG91L7fxY=;
-	b=4rinRmW/uHX018N9DTYr1SW3h7Gu25O2gbpdwtFNhPlVbNQvUwcr9VHWmVpF3nfsYzqqmc
-	KVce5f4CcEK9fIKVKT0LGr1vwauRVdMqo6Zeosa4WxKBPuKdxrWmxXQWRU53sNvP4Eg04H
-	bdMUpaO2SBM1JzYM/GpCWzXbxomu1h5XIHxQAIktWV1ZeTSoz1iq1xqYBBv+ZH1YyXah0c
-	ml30ow+kz8VjwD9/kmNpLQGMa5ssSvMRjk6UjPiYbiTCyp3Wx908+6gCvMd5QKcf9Kfrev
-	mFrJwvC8ijh/viUhHQRt3bhXB22TGZ6tSwCvbt5Szvg+Di3gbkrMvnnSP4OEEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747060180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bulm+OAY6G9mwFtOIOO/nNbm8lthx9J/UosG91L7fxY=;
-	b=hdgwawyoaz9LAbwRHhGPcvSIjfXofFwW37OX343vDtRGeIc57x8igVldAwumhSllL9Gpi1
-	3YktCIBb4sSGy1Bg==
-To: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Sascha Bischoff
- <sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>
-Subject: Re: [PATCH 1/4] genirq/msi: Add .msi_teardown() callback as the
- reverse of .msi_prepare()
-In-Reply-To: <20250511163520.1307654-2-maz@kernel.org>
-References: <20250511163520.1307654-1-maz@kernel.org>
- <20250511163520.1307654-2-maz@kernel.org>
-Date: Mon, 12 May 2025 16:29:39 +0200
-Message-ID: <87h61plx64.ffs@tglx>
+	s=arc-20240116; t=1747060131; c=relaxed/simple;
+	bh=wAQSCOa8NKq0dKvOJ2tgxBAF7iZnMu3ypPhBo8Jdcuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fbUFyi4ZpVmrdHRU0pmOhKgG3Wqoolb7eXr94vLzQP4fCtPaYZI27W1cL+rqHBvAzYxxDW7eOD0gqhGzn8pv938c3F1ptu0dSSL2UGNyCzNBEUOu2kFggYN/u3ntE9wHnTuMapjjFBU+n7wZV7gUlgq3/5L7y4fG5lsp/pELsg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJslSrDV; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442ea341570so1174985e9.1;
+        Mon, 12 May 2025 07:28:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747060128; x=1747664928; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8W12PO8Oqlmx8ERZBKdteNxpcbGu3ITArHrHNFvcMcQ=;
+        b=RJslSrDVSWOjcCI0eor9fUQkw6fz1VdWdwmY8dvPya8j/QuF2YLOU1PFhbxKni/wrr
+         fsgtPuG+OK/OzJMQDngwL8BQ+9ghDhE6RP2LVO6RCsI1RXNKq95FIazxGOhYo+IyREmQ
+         HwO3jJ1keZhV4v3DBrBXtN0jW9jsr+mulFhzpcbslI4wzeQ6lp33f3EV97+XNHa3z0P2
+         vpSCQz48v6w/WqYla/VeoNKPkP71SVDoMELQE1EjpJIvx7f29+4ALIhv/dR8S2tKmLDe
+         pNN4StQmGm81QYaa0LJi97oy/3lhJxvzvT+BnbOhx2AuGqFQN+4wNHVP21KjUJIQjxuq
+         8K0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747060128; x=1747664928;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8W12PO8Oqlmx8ERZBKdteNxpcbGu3ITArHrHNFvcMcQ=;
+        b=Py4gxnzG3Zv05RgkXeHHZzyYFI0Fb786EI6a+dB6nBErp1rh4VYREF4+AHIOIpoXU6
+         3ayXjDBHkhmwNAO6CGBPzOfGuQt2Y34wG9tnNXv2d6mQOHXfcmljZYMbTx7NZDtaYGw6
+         1hHaf6chL0GzQYWiuRwzGuQ+drany+g1/4rt3FYukURdXvH0723A1vNB8qrUfiBBRe89
+         pgNq/MBrdoWT0t5jyF3N82ctQZXcS2ueJGwI0czrnsD5LyOWJnIhUaK6j9nHuxi7Wk6F
+         qXImh+oLhomESVH42h+Ei/Ni/u6AuhM7uo31y7Npa4SD/WxLrUMpHaM1mW2pXtkolBaG
+         cQ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHi5jalfkKZxTm5kHUszfKU/J5YR9jTbqbRqZAlpw13Lj3ICA6x78ZbKOB790Xx2FwpmDZ7ppkVw==@vger.kernel.org, AJvYcCVzxwncshesynZWWIlagdox6t5NCCwmyNRrckoYEX12xTpEwqJ8bKIMkbXI+vw8tCkZdalxs43hNA9ku7c2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnWNq8cXZbxShirX703nD9K+X4zpePW0pe7NJP1rkSwND4nQhQ
+	mZD4A7GQzyJ0Q/Qb3uXYhnrfzSxPrL75v43DtuLJRQmIk60behQX
+X-Gm-Gg: ASbGncvOamPb4Wg2YDHlNp7+IxfC30dGqVEkyrjctVWc9uv4OqMpMaUxANOZYhO+uD5
+	CpEsc6g+oA+Qlp49VhupkRRNO+177WIHtoMX8za/aFR7x5Xdf8HyTGBGPyLeLDjfmWyvuS0MQP/
+	mAWaQ74EgIKUYpr3eNPo0v08PoKVMKdRyr1uIiwwoQv47/E7B8px4lldvbiOY2oxcdHVUoEgeeF
+	0Mb1O6yX9T8bWFKLl1ZCZjdoNtdv7kD9XFtEWUemA4U9/hzz4llyHHAvOgez0ylDKfReJaPPDTT
+	f2sxOoHOg94GOwX3eNdP5Ob5txeurxScCdCxWzcV9G91lM3xBOQYcwns3tGLYA==
+X-Google-Smtp-Source: AGHT+IE6Wl+pveujM6GjzrwRxgKqs4ai1C1+lBCqx+xXwjYNytZITfy6+2iQ9TX1sdtY4qOihXJz9w==
+X-Received: by 2002:a05:600c:4694:b0:440:94a2:95b8 with SMTP id 5b1f17b1804b1-442d6d6b65fmr123365435e9.16.1747060127359;
+        Mon, 12 May 2025 07:28:47 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.146.237])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f238sm168113455e9.11.2025.05.12.07.28.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 07:28:46 -0700 (PDT)
+Message-ID: <1cfb5382-8d1e-4c35-b8b1-fdfc69a831fd@gmail.com>
+Date: Mon, 12 May 2025 15:29:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] BUG: unable to handle kernel NULL pointer
+ dereference in io_buffer_select
+To: Jens Axboe <axboe@kernel.dk>,
+ syzbot <syzbot+6456a99dfdc2e78c4feb@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <681fed0a.050a0220.f2294.001c.GAE@google.com>
+ <3460e09f-fafd-4d59-829a-341fa47d9652@gmail.com>
+ <a132579a-b97c-4653-9ede-6fb25a6eb20c@kernel.dk>
+ <991ce8af-860b-41ec-9347-b5733d8259fe@gmail.com>
+ <69ae835b-89b2-44bf-b51c-c365d89dbb45@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <69ae835b-89b2-44bf-b51c-c365d89dbb45@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 11 2025 at 17:35, Marc Zyngier wrote:
+On 5/12/25 15:19, Jens Axboe wrote:
+> On 5/12/25 8:19 AM, Pavel Begunkov wrote:
+>> On 5/12/25 14:56, Jens Axboe wrote:
+>> ...>> this line:
+>>>>
+>>>> tail = smp_load_acquire(&br->tail);
+>>>>
+>>>> The offset of the tail field is 0xe so bl->buf_ring should be 0. That's
+>>>> while it has IOBL_BUF_RING flag set. Same goes for the other report. Also,
+>>>> since it's off io_buffer_select(), which looks up the list every time we
+>>>> can exclude the req having a dangling pointer.
+>>>
+>>> It's funky for sure, the other one is regular classic provided buffers.
+>>> Interestingly, both reports are for arm32...
+>>
+>> The other is ring pbuf as well
+> 
+> True yes, both are pbuf. I can't hit any of this on arm64 or x86-64, fwiw.
+> Which is why I thought the arm32 connection might be interesting. Not that
+> the arch should matter at all here, but...
 
-> While the MSI ops do have a .msi_prepare() callback that is
-> responsible for setting up the relevant (usually per-device)
-> allocation, we don't have a callback reversing this setup.
+Yep, there is a suspicion there might be something on the
+mm / allocation side, need to find a good way to narrow it down.
+At least we can make syz test patches for us.
 
-..., there is no callback reversing ...
+-- 
+Pavel Begunkov
 
-> For this purpose, let's a .msi_teardown() callback. This is
-
-'let's a ...' is not a sentence. Just say: add a .... calback.
-
-> reliying on the msi_domain_info structure having a non-NULL
-
-  ^^^^^ spell check is your friend.
-
-> alloc_data field.
->
-> Nobody is populating this field yet, so there is no change
-
-No driver is ..
-
->  
-> +static void msi_domain_ops_teardown(struct irq_domain *domain,
-> +				    msi_alloc_info_t *arg)
-
-No line break required.
-
-> +{
-> +}
-> +
->  static void msi_domain_ops_set_desc(msi_alloc_info_t *arg,
->  				    struct msi_desc *desc)
->  {
-> @@ -821,6 +826,7 @@ static struct msi_domain_ops msi_domain_ops_default = {
->  	.get_hwirq		= msi_domain_ops_get_hwirq,
->  	.msi_init		= msi_domain_ops_init,
->  	.msi_prepare		= msi_domain_ops_prepare,
-> +	.msi_teardown		= msi_domain_ops_teardown,
->  	.set_desc		= msi_domain_ops_set_desc,
->  };
->  
-> @@ -842,6 +848,8 @@ static void msi_domain_update_dom_ops(struct msi_domain_info *info)
->  		ops->msi_init = msi_domain_ops_default.msi_init;
->  	if (ops->msi_prepare == NULL)
->  		ops->msi_prepare = msi_domain_ops_default.msi_prepare;
-> +	if (ops->msi_teardown == NULL)
-> +		ops->msi_teardown = msi_domain_ops_default.msi_teardown;
->  	if (ops->set_desc == NULL)
->  		ops->set_desc = msi_domain_ops_default.set_desc;
->  }
-> @@ -1088,6 +1096,10 @@ void msi_remove_device_irq_domain(struct device *dev, unsigned int domid)
->  
->  	dev->msi.data->__domains[domid].domain = NULL;
->  	info = domain->host_data;
-> +
-> +	if (info->alloc_data)
-> +		info->ops->msi_teardown(domain, info->alloc_data);
-
-Hmm, that's weird.
-
-Why not call it unconditionally. The empty teardown() default callback
-does not care about @arg being NULL. No?
-
-Thanks,
-
-        tglx
 
