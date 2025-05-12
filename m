@@ -1,167 +1,167 @@
-Return-Path: <linux-kernel+bounces-644076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-644077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE960AB364E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:54:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8864AAB3651
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 13:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66076189FA53
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:54:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF5919E0B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 11:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DB329293C;
-	Mon, 12 May 2025 11:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9202292902;
+	Mon, 12 May 2025 11:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hI820fn6"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cieMWKEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACD427511F
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 11:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128D12673A9;
+	Mon, 12 May 2025 11:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747050828; cv=none; b=qoiOaGKsAVTs2oSaoqgFGbX15rpYPfD6EJyNT6EeiE1/Jq9L3zJs+KY8ZAj2wUVbwkMtVxnELYQcs9tTwGjFW0mTv/met7HEHdwzRlwxePpFV/NwdHxQ8kEm9eECXzthzjHEiDpyc4z3qdpx6cdYHSfU3hXwWpj50xGK0t5dSa8=
+	t=1747050844; cv=none; b=bnH/Lxm5EweyLyiCuSJetqvD46Mp4lnWghEzHQihnOLlld8wtn+ZngieZYO/6rClcNsEmTCSsdx5wFeOAzj36axLkdTELYhsRcPfwUg+LcBhiNeOtqvkjzxBBZKzZWo700pVsvlIsrCMPReF2tTpZwPpY9nlso/yID9EZJY9hR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747050828; c=relaxed/simple;
-	bh=FSil9k36AUgGeOGdJ1CqAyVzBiybUDfYnUkpWfS85mM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G+7L9Huh1SwOP7u4h6/UZuYO0Zzxy3H3N7AUArawIl0A4pTEJih/p24bbv4ItRf6Ic2z3MLRPIr2BZc/dDxW9nL46BEe0cR71dsreTnlpJm2Z33QAWVU+TDLyEICembiIyHtAw9FYc03pzFm1QmcNCI1Gwk1/FZuqX3+4Rknat4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hI820fn6; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54C0hYn5017585;
-	Mon, 12 May 2025 11:53:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=7XbRVulreCYu5DjKd
-	RO0kmuT14ISqJyFSs5qeJXwyzc=; b=hI820fn6ZTeKbLSzIk7nK6d2Fsi70zge7
-	DLJqxvebjElIWR2FdZvynqyScydXoO/J7Rm8wlcxcGOz5jO8uPNzwowsoy2ArDR3
-	GVdES9vxU2zm9AsaPqEuZQXA/gBWI+r23+eaiT7Hn5YmAKVwO1hZVpwyVwFBVwOu
-	I1pCDQ0VwypJrn/9bFxy9nveQXi6FQVqAF8CLpSgIpPQhTv5grWy7kYXFRtGQmaY
-	qOKBf3Zl3xzA+25LGF2610XK5HLvMHenzOQIS28xS/Frv87QrbRHQRyNnwhWU1/m
-	noAB1BWtBx4EhtvrX3I1nXl6NYwxWOA3KSdDjpadXzV+T4zA+g1UA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46jw42unmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:35 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54CBqmnc031932;
-	Mon, 12 May 2025 11:53:34 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46jw42unmg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:34 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54CApOps012021;
-	Mon, 12 May 2025 11:53:33 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46jku25etv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 May 2025 11:53:33 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54CBrUfh47317318
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 May 2025 11:53:30 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4224D200E8;
-	Mon, 12 May 2025 11:53:30 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 70E06200EB;
-	Mon, 12 May 2025 11:53:29 +0000 (GMT)
-Received: from IBM-PW0CRK36.ibm.com (unknown [9.111.90.223])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 12 May 2025 11:53:29 +0000 (GMT)
-From: Tobias Huschle <huschle@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, sshegde@linux.ibm.com
-Subject: [RFC PATCH v3 4/4] s390/topology: Add initial implementation for selection of parked CPUs
-Date: Mon, 12 May 2025 13:53:25 +0200
-Message-Id: <20250512115325.30022-5-huschle@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250512115325.30022-1-huschle@linux.ibm.com>
-References: <20250512115325.30022-1-huschle@linux.ibm.com>
+	s=arc-20240116; t=1747050844; c=relaxed/simple;
+	bh=eb8ZsJ6Yx2yDxjJYXJfcI7YxWu14s9HET5BlZwhZGq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EDji/9YKhpS0fPupC74GnqyiEDeVbtPBRVe0hdaaFAnFlbVnyJYyw9yIlD8zc7g5zyjm5BwD3HrMyu1tsmdkolagaF/busdzR+bw12OWUF5BnqgL0uGJy2YMPKM034dEuf7EeFI42w/S0I6Q7F9vi4yxOwU3CQaCy+IT5tNTqLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cieMWKEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A7EAC4CEE7;
+	Mon, 12 May 2025 11:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747050843;
+	bh=eb8ZsJ6Yx2yDxjJYXJfcI7YxWu14s9HET5BlZwhZGq0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cieMWKEcGLYW1VpYVrH2+e+HK8IxhJDwv4H/37aidvb8AwUvqV1zBqrA6yrGJi7XH
+	 Q+yNOIkjLRqXsbgS3U4fv13sKW8ZQh4XoPALgPp3krZMK12n5ycESW3CyJPsBOer1Y
+	 8Su/GSwO06gc6XZrwHWEmnq+V3MGflV6NTIBl8iAKIWV4sm0GBYeD4/87DWdJr3bmV
+	 V6EB9Peb8WIvBCDSRJutcyaMGrTxd56N239rYB9B22hf4EkchdVYJwnqStMZTfqsju
+	 t52c13R92nulq1hN2Ca5H+sE+CLphiK6O6LO2KLr/yUW/w5BbSBg655T+KzAqw3FPB
+	 zyfRHBjTlFatA==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fbf534f8dbso6691546a12.3;
+        Mon, 12 May 2025 04:54:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKu0BQUJaVPkjx2x684osQiuFAgVUOolfKWOz8dr6Tormb66M7Y1MRqNZmX7+Z9wUrwChA8eyBoHUBcLSi@vger.kernel.org, AJvYcCXT7qbLsBXhbuaqYL0rJbvaBMkIb0LQDpiLw8qI2DoqBT/eT6uupFOzgnoijsocCGNRykc08mAIqRdI8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx33MAWtoOnIhygMsagOj+V/Rfs/P/aJ9wjUWvLujjAGRwX7y8H
+	sY3YVVfrCJMekWvYxhE1DtXpgXv3hyKf4gJOrf08VVYyI4NGnrm0DnCX15uaFcLq4lIakTq6hpY
+	vnFbf1ssGwXvBjj4/E3tvCJQBLfM=
+X-Google-Smtp-Source: AGHT+IHITliuM5o9K8MKsEdEWVwNfSftxfl7r9fZQdUSymVQs1FehguKW9uNhVvxJtBQ2ZkajSKvZ1otZvxtGf/XAVI=
+X-Received: by 2002:a17:907:968c:b0:ad2:49cc:b460 with SMTP id
+ a640c23a62f3a-ad249ccb8admr495776666b.3.1747050842117; Mon, 12 May 2025
+ 04:54:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEyMDEyMiBTYWx0ZWRfX4Wq5IUtUF1jP yE5z/CrLnAbW/V0rgo3zKl5Z0yxW39TGaSYjcFfQjhLVdtZMGkAaIRQy94Qn6cQRoitkxKFgQW4 3qoZjYJCo/VvSOsWAi7t7QEBjS1Nb/KsokKt4hdV2xpkzyftMUE1oQTQOFJCDCtRg4FOY+ion/s
- K5P+MCEw61Z9qq2QdtWdnSfk+cGKmmp7jiQV0o+yfekn/9vVP4TgryliPN/5cZcXszqKD9ghOFw DFf5AuVw7X5rOdosuq69VGuITl/XYGlQbdm5e34d21hyaj9tcunnOYVIdIX5knSXto8ecRAgGbq 1uT5GNRsxq3FmuafRhp20g1iW5Y+JXZKF9o9AOMiQxYGU+VWLzE6/dvGiQ3PMeSSDonO0BQm+hV
- eEzmvXPFOd4WI28VQVHzuQ+cUn08UeXZA1496uMkaZo5ma5zpWn7jOI6q9VxBh4A3NNOM47i
-X-Proofpoint-ORIG-GUID: GyxktJOoiId2Yp-YRs9e2IgzFNA_y3Oq
-X-Authority-Analysis: v=2.4 cv=UqJjN/wB c=1 sm=1 tr=0 ts=6821e13f cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=eEyMWbnfSktHb8uulP0A:9
-X-Proofpoint-GUID: GIyJV8wDoRwWowEmjcWJffDh9vVtrmhb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_04,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0
- clxscore=1015 mlxlogscore=828 lowpriorityscore=0 spamscore=0
- suspectscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505120122
+References: <CAFRLqsUCLMz0hY-GaPj1Z=fhkgRHjxVXHZ8kz0PvkFN0b=8L2Q@mail.gmail.com>
+In-Reply-To: <CAFRLqsUCLMz0hY-GaPj1Z=fhkgRHjxVXHZ8kz0PvkFN0b=8L2Q@mail.gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Mon, 12 May 2025 12:53:25 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5NtJ+0eB6HzLw-JAewBSA8V8jZbPMapdwUA+P5axg+7g@mail.gmail.com>
+X-Gm-Features: AX0GCFuIY-Igdi5x80pqhZ87dmhuLhMQMTqAy8tWwut9ziBsG-2p072Zetq-2_c
+Message-ID: <CAL3q7H5NtJ+0eB6HzLw-JAewBSA8V8jZbPMapdwUA+P5axg+7g@mail.gmail.com>
+Subject: Re: [BUG] Data race on delayed_refs->num_heads_ready between
+ btrfs_delete_ref_head and btrfs_run_delayed_refs
+To: cen zhang <zzzccc427@gmail.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	baijiaju1990@gmail.com, zhenghaoran154@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-At first, vertical low CPUs will be parked generally. This will later
-be adjusted by making the parked state dependent on the overall
-utilization on the underlying hypervisor.
+On Sat, May 10, 2025 at 8:48=E2=80=AFAM cen zhang <zzzccc427@gmail.com> wro=
+te:
+>
+> Hello maintainers,
+>
+> I would like to report a data race bug detected in
+> the Btrfs filesystem on Linux kernel 6.14-rc4.
+> The issue was discovered by our tools,
+> which identified unsynchronized concurrent accesses to
+> `delayed_refs->num_heads_ready`.
+>
+> The relevant stack trace detail is as follows:
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3DDATARACE=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> Function: btrfs_delete_ref_head+0x164/0x180 fs/btrfs/delayed-ref.c:550
+> Function: check_ref_cleanup+0x178/0x290 fs/btrfs/extent-tree.c:3381
+> Function: btrfs_free_tree_block+0x334/0x7f0 fs/btrfs/extent-tree.c:3444
+> Function: btrfs_quota_disable+0x4d2/0x750 fs/btrfs/qgroup.c:1414
+> Function: btrfs_ioctl_quota_ctl+0x18f/0x1f0 fs/btrfs/ioctl.c:3707
+> Function: btrfs_ioctl+0x943/0xe40 fs/btrfs/ioctl.c:5325
+> Function: vfs_ioctl fs/ioctl.c:51 [inline]
+> Function: __do_sys_ioctl fs/ioctl.c:906 [inline]
+> Function: __se_sys_ioctl+0x91/0xf0 fs/ioctl.c:892
+> Function: do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> Function: do_syscall_64+0xc9/0x1a0 arch/x86/entry/common.c:83
+> Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Function: 0x0
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>  __btrfs_run_delayed_refs+0xe0/0x1a50 fs/btrfs/extent-tree.c:2015
+>  btrfs_run_delayed_refs+0xd1/0x2b0 fs/btrfs/extent-tree.c:2158
+>  btrfs_commit_transaction+0x27a/0x1c40 fs/btrfs/transaction.c:2196
+>  del_balance_item fs/btrfs/volumes.c:3810 [inline]
+>  reset_balance_state+0x193/0x240 fs/btrfs/volumes.c:3874
+>  btrfs_balance+0x1698/0x1770 fs/btrfs/volumes.c:4706
+>  btrfs_ioctl_balance+0x290/0x470 fs/btrfs/ioctl.c:3587
+>  btrfs_ioctl+0xcaf/0xe40 fs/btrfs/ioctl.c:5305
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:906 [inline]
+>  __se_sys_ioctl+0x91/0xf0 fs/ioctl.c:892
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1a0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> The code locations involved in the data race are:
+>
+> Write (fs/btrfs/delayed-ref.c):
+>
+> if (!head->processing)
+>     delayed_refs->num_heads_ready--;
+>
+> Reader (fs/btrfs/extent-tree.c):
+>
+> delayed_refs =3D &trans->transaction->delayed_refs;
+> if (min_bytes =3D=3D 0) {
+>     max_count =3D delayed_refs->num_heads_ready;
+>     ...
+> }
+>
+> I=E2=80=99ve verified that this issue still exists in the latest source t=
+ree as follows
+>
+> Write (fs/btrfs/delayed-ref.c):
+>
+> 548        if (!head->processing)
+> 549                delayed_refs->num_heads_ready--;
+>
+> Reader (fs/btrfs/extent-tree.c):
+>
+> 2007        delayed_refs =3D &trans->transaction->delayed_refs;
+> 2008        if (min_bytes =3D=3D 0) {
+> 2009                max_count =3D delayed_refs->num_heads_ready;
+> 2010                min_bytes =3D U64_MAX;
+> 2011        }
 
-Vertical lows are always bound to the highest CPU IDs. This implies that
-the three types of vertically polarized CPUs are always clustered by ID.
-This has the following implications:
-- There might be scheduler domains consisting of only vertical highs
-- There might be scheduler domains consisting of only vertical lows
+It's a harmless race. We can silence KCSAN and such tools with a
+data_race() annotation there.
 
-Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
----
- arch/s390/include/asm/smp.h | 2 ++
- arch/s390/kernel/smp.c      | 5 +++++
- 2 files changed, 7 insertions(+)
+Patch sent:    https://lore.kernel.org/linux-btrfs/13e40ba1be5f87e2b79275f5=
+8f4defe11e6bd62d.1747050634.git.fdmanana@suse.com/
 
-diff --git a/arch/s390/include/asm/smp.h b/arch/s390/include/asm/smp.h
-index 03f4d01664f8..93754c354803 100644
---- a/arch/s390/include/asm/smp.h
-+++ b/arch/s390/include/asm/smp.h
-@@ -31,6 +31,7 @@ static __always_inline unsigned int raw_smp_processor_id(void)
- }
- 
- #define arch_scale_cpu_capacity smp_cpu_get_capacity
-+#define arch_cpu_parked smp_cpu_parked
- 
- extern struct mutex smp_cpu_state_mutex;
- extern unsigned int smp_cpu_mt_shift;
-@@ -56,6 +57,7 @@ extern int smp_cpu_get_polarization(int cpu);
- extern void smp_cpu_set_capacity(int cpu, unsigned long val);
- extern void smp_set_core_capacity(int cpu, unsigned long val);
- extern unsigned long smp_cpu_get_capacity(int cpu);
-+extern bool smp_cpu_parked(int cpu);
- extern int smp_cpu_get_cpu_address(int cpu);
- extern void smp_fill_possible_mask(void);
- extern void smp_detect_cpus(void);
-diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-index 63f41dfaba85..6f6b2e90366d 100644
---- a/arch/s390/kernel/smp.c
-+++ b/arch/s390/kernel/smp.c
-@@ -680,6 +680,11 @@ void smp_set_core_capacity(int cpu, unsigned long val)
- 		smp_cpu_set_capacity(i, val);
- }
- 
-+bool smp_cpu_parked(int cpu)
-+{
-+	return smp_cpu_get_polarization(cpu) == POLARIZATION_VL;
-+}
-+
- int smp_cpu_get_cpu_address(int cpu)
- {
- 	return per_cpu(pcpu_devices, cpu).address;
--- 
-2.34.1
+Thanks.
 
+>
+> Thank you for your attention to this matter.
+>
+> Best regards,
+> Cen Zhang
+>
 
