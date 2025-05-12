@@ -1,100 +1,146 @@
-Return-Path: <linux-kernel+bounces-643636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-643640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EE4AB2FB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:34:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E7EAB2FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 08:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749F47A37EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D25178D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 May 2025 06:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE34255F54;
-	Mon, 12 May 2025 06:34:24 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36292550AE;
+	Mon, 12 May 2025 06:36:31 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7652550B0
-	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FDF255F57
+	for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 06:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747031663; cv=none; b=X6+8a0dyyLBUXJDj6B1W3EYl0FRAX6ugowzHWpbe08lJiNjxr7WGNfqOgO53UufCGDdvO1xj7JJ6n3fCt8ls697jA5I55vx/MTACjZ6aXrKVrSAVkxS+xc0KLrynU/uEgRCoR7YknRowVfCnjQkYRzlHzzi6+Bu4Kg3nS68y5no=
+	t=1747031791; cv=none; b=fDtMV99Txf8VMg/Ov0hyeTQ0K57EvMepZ4HCRbUOBynxptop0wof447gUEe2brYU7vdLXacBA5U2XG7SxnlMV5z7YD/XaQejvn3GAilXno9cMJHysgXSQA3gaGrgprsHDtiGrqh9KuOnXtl2+8O64tPWbhLd0JrsLyKKoWzmTzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747031663; c=relaxed/simple;
-	bh=dx1xwTZDbaZY9TJ/RvC0JYpCldMZJmDYnz/sEdttaWM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZC5Z9nxsd5vh9iO3n3lU5vGbUPPsgmCPiasIJ18NgPRp4zsEVnQ+jAV1UHANjaDv1/aNkFBRVZsleYhB3JElfdyHvQDNmf1415SjM9vcJ3cofOYBuAkiwsy/AL5DqPMCkyta+6pikvgPzM7A8lnAZSHsXSUtJlg56rkU3PUJBus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+	s=arc-20240116; t=1747031791; c=relaxed/simple;
+	bh=iTY5OVB5ZVBPsC3hHGreLcDqY72ZXsOXDjGTDKRQE8s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=K7YG8sl+sLo8EcImZ0C3/2d7I8yczVvYqo+16hYTJeQJJz16/QXVP3DbHTE5HU/nKXN8Bt4QvHB6L9XuhXySPCcXmIOgqB5nqcL/z79vZngZikQaXbnRAwU4I8zm/sDb3Pxn/Gy734xenD66Z5kBfbGbCvFC1U1tv3XkN4M9u84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b5e46a526so323892639f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 23:34:22 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8610d7ec4d3so623431139f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 May 2025 23:36:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747031661; x=1747636461;
+        d=1e100.net; s=20230601; t=1747031789; x=1747636589;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xNCTCFViNT8bek4HRRT3/aNA6OTSRILgCslp5/6v4b4=;
-        b=Rk+Jlfk0Ov+fr/xg4oA1ymFrStmiU3nWF4hi2GjlgGDwC/yyCuqhg+xE8WvyIxjUj1
-         8DT/1CVV17U8Um62luUgSZDNlg42OZTOfMrzCPPwwx2/QVKP3XTeROMVl6Mpch5ieUaD
-         aSTQZqF+xsLvCHHQNQYzWQ+JNYe6RAgi2LfTqokEEsSXZsCmLSr6WrXdTuMrXUXxruHY
-         f3YW1uum7L8keazNSb9lGHln2NIMFAJXahdzDeWbGAIeevHPUvkVns30YT9fEQOZnMHA
-         mP22RmxSxR3CKtkFXp67e2HxYEfQCxsljivjE7tWjWmQUHn5hkRBsXaB5aghMVUi6AP3
-         0AiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV55JomkEOe8ilODNlkedsdSAnuvbTKb2sGzKAteABqLXM4GVAn7Ff3z6snkelJh8Ung5OvyBj2jcAjmpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfDzrZumRlYNGUyFb5jU+lR5Av+AgwwL1VeAtLXp0Zy5wWYoZX
-	xbF7wFI3LnBTLSUATo8jdwhKdHYmYeVX8Doe/K3nDBXGsz8Jfr3krNn6mboK9fZ+CDVf2cWiTBG
-	p3spiUqVDxD6QIEMehIOsIFEak1lQFsffaONt8VKqv+WtfUhKVtKVY/g=
-X-Google-Smtp-Source: AGHT+IFRefKmtjW6013ms9QCXydNgmsa0owtvurRwlGX5Q5Y5xPOhLB3uM/XOrm4j0NA2Z4BXCNjuho3jkrk6R4JlWiB5NCiL7kw
+        bh=ALCSqFqOa8mQuP4T7hyujJbBxYyxsR29K9a4OWtUl2Q=;
+        b=JpqRBl5pJZFLi59WFlnFxwrEP8XSOV+gOfWUA/TmUWTdEVk7iWlh6aV0cEOhZ0nN1/
+         yw6ZcR8sVOUAHxmaPYela3OI5pJAeYqCXr4xJuoLjjIzV/c+TsvSsNYagFGHg7uZ89Jm
+         x6jqib4goB0OUWVzpm/OlP+4ZR3Ji5nABXr9bPIWyN+WsKaBlj+YNLWTIhwOiyknH7wV
+         V1OXyHY2qFPEUGz1ghHwmtEVmk8v/HKPnLeEvNb9JhlWy4UTyOlEvjMMJ39wTuksoS+r
+         7PrfTtVglbzHe02NaCQjl4FRUlPj1UwK1fq87ulavG0oc0LHYFH8MTuRm0DOnEMuWooD
+         w1+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+eeKiOlwbXwXjx/4w3CIyaEuAWsAFuZrm4/YrW5gDy/kLyVirVD8psKKvBSJyXvb2v9VM+aKhKqgTuOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWRQZAHN3nFoG1PD6XCjGJie9njXrk/C4ejR+508sXQYdMVqHX
+	VbP8ne/J8Qj9jS4k2h+63RVzGpI8tgYPF/p90q6kkXI/6AooCDWIjrE4duc7+15pWgns+IGTQIi
+	h0S/blCJmxB7jdKPrcBzA0UIqWqrJowrg79VTOiS7NnzeoMpCYrWEFgU=
+X-Google-Smtp-Source: AGHT+IFrz6OdnWcXPFcMz403h0bQpLQC4w0dlRYsMQZIzSqGXNC/QwPEzmDggiFo5lAYIAt+VtSCMBPGOGoGg1jMPAJ8JiF46l+y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:640f:b0:85b:59f3:2ed3 with SMTP id
- ca18e2360f4ac-867635c97d0mr1423178939f.8.1747031661590; Sun, 11 May 2025
- 23:34:21 -0700 (PDT)
-Date: Sun, 11 May 2025 23:34:21 -0700
+X-Received: by 2002:a05:6602:3423:b0:85d:a5d3:618c with SMTP id
+ ca18e2360f4ac-86763653dbdmr1331586039f.11.1747031789138; Sun, 11 May 2025
+ 23:36:29 -0700 (PDT)
+Date: Sun, 11 May 2025 23:36:29 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6821966d.050a0220.f2294.0052.GAE@google.com>
-Subject: [syzbot] Monthly wireguard report (May 2025)
-From: syzbot <syzbot+listad97b905a104dc343053@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+Message-ID: <682196ed.050a0220.f2294.0053.GAE@google.com>
+Subject: [syzbot] [io-uring] KCSAN: data-race in copy_mm / percpu_counter_destroy_many
+From: syzbot <syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello wireguard maintainers/developers,
+Hello,
 
-This is a 31-day syzbot report for the wireguard subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/wireguard
+syzbot found the following issue on:
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 19 have already been fixed.
+HEAD commit:    3ce9925823c7 Merge tag 'mm-hotfixes-stable-2025-05-10-14-2..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ff74d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6154604431d9aaf9
+dashboard link: https://syzkaller.appspot.com/bug?extid=8be9bf36c3cf574426c8
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
 
-Some of the still happening issues:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Ref Crashes Repro Title
-<1> 12253   Yes   BUG: workqueue lockup (5)
-                  https://syzkaller.appspot.com/bug?extid=f0b66b520b54883d4b9d
-<2> 360     No    INFO: task hung in wg_netns_pre_exit (5)
-                  https://syzkaller.appspot.com/bug?extid=f2fbf7478a35a94c8b7c
-<3> 248     No    INFO: task hung in netdev_run_todo (4)
-                  https://syzkaller.appspot.com/bug?extid=894cca71fa925aabfdb2
-<4> 3       Yes   INFO: rcu detected stall in wg_packet_handshake_receive_worker (3)
-                  https://syzkaller.appspot.com/bug?extid=48f45f6dd79ca20c3283
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/afdc6302fc05/disk-3ce99258.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fc7f98d3c420/vmlinux-3ce99258.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ea7ca2da2258/bzImage-3ce99258.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in copy_mm / percpu_counter_destroy_many
+
+write to 0xffff8881045e19d8 of 8 bytes by task 2123 on cpu 0:
+ __list_del include/linux/list.h:195 [inline]
+ __list_del_entry include/linux/list.h:218 [inline]
+ list_del include/linux/list.h:229 [inline]
+ percpu_counter_destroy_many+0xc7/0x2b0 lib/percpu_counter.c:244
+ __mmdrop+0x22e/0x350 kernel/fork.c:947
+ mmdrop include/linux/sched/mm.h:55 [inline]
+ io_ring_ctx_free+0x31e/0x360 io_uring/io_uring.c:2740
+ io_ring_exit_work+0x529/0x560 io_uring/io_uring.c:2962
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
+ worker_thread+0x582/0x770 kernel/workqueue.c:3400
+ kthread+0x486/0x510 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+read to 0xffff8881045e1600 of 1344 bytes by task 5051 on cpu 1:
+ dup_mm kernel/fork.c:1728 [inline]
+ copy_mm+0xfb/0x1310 kernel/fork.c:1786
+ copy_process+0xcf1/0x1f90 kernel/fork.c:2429
+ kernel_clone+0x16c/0x5b0 kernel/fork.c:2844
+ __do_sys_clone kernel/fork.c:2987 [inline]
+ __se_sys_clone kernel/fork.c:2971 [inline]
+ __x64_sys_clone+0xe6/0x120 kernel/fork.c:2971
+ x64_sys_call+0x2c59/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:57
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 5051 Comm: syz.1.494 Not tainted 6.15.0-rc5-syzkaller-00300-g3ce9925823c7 #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+==================================================================
+
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-You may send multiple commands in a single email message.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
