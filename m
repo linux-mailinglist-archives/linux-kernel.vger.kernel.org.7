@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-646111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80821AB5823
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:11:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D47AB5826
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A46C3AB0C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:10:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1730B7A9CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A26828E582;
-	Tue, 13 May 2025 15:10:56 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7D520311;
+	Tue, 13 May 2025 15:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Wvtiko5C"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9EB482F2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB35328E582
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747149055; cv=none; b=NEz7ihOHKeu2DYncZpeuYyoDRMAs2NS3mV2q5x5rLuZUSLN6C/ijq2hvbn4zivhgD/nocFKLguZI/FoMHmFDHSy162mL1Iq/nUZJZaMsoE2v23rhQpuPX86uuUzR/W1gMuatGGw8AcHti0daTAUj52fMU2uMitmGBprg/SWctwk=
+	t=1747149082; cv=none; b=rgIfMGl08jj02jON5IxUehSjF4Uje5pzCuoZgH4ZxEC+Av2chX06HBauV1OjvXEYNfHD9Qtg+OG10dcGcFLZlDJYkmEiAO8OjsUVO72OrcXVXgPq5s/VaL+HC4CmA6aOcoSSm7ZP7jUfTABX0b0h1UzCDQSI+CYJ4B4hHOs4JG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747149055; c=relaxed/simple;
-	bh=YBcGVz3+FTAklFqlhCiPgfh6cB3y0r94zyf4ZMWm8fQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SkCO8OP0cTktJJLh9TOhWRY2bqjE8KslAluH3Abh8dFIfs21W3FmjneMuFPeb83BHUuT2DjW+jImj5hkynv7Lfo2M80NH3QL7stLZm8HxCgqIvcYXQJfJB4TMkv3ubIiXF2T5lRvnQIpSUZVQqgavNqwEEm5Yk8RixfJAbctNas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Zxftp02g1zyTpT;
-	Tue, 13 May 2025 23:06:10 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id 327A71402DA;
-	Tue, 13 May 2025 23:10:28 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 13 May 2025 23:10:27 +0800
-Message-ID: <c02f6e33-6788-412a-8622-49364d67d369@huawei.com>
-Date: Tue, 13 May 2025 23:10:26 +0800
+	s=arc-20240116; t=1747149082; c=relaxed/simple;
+	bh=vSuPr7ri2jzEwCjhbZAQ66WU4exRsQXK236Tp2UMrTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDdL8TyxsQgLrnh9AtdIcPL0hRlF3P9Jl3G8CTPMpA1gvIXLAPmwx3Aq8gPxUpGArrXSk5eAOD1l6YhFVi+7Fl7KWL+ZbeQ0VRNMwuqsmMJeW7gqH1Q+64nRCGPuVvP1zLErbXAlE7vIz1qikYF+CV4R4ChDNg44uGkTZVkioC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Wvtiko5C; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6f0c30a1ca3so72411656d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1747149080; x=1747753880; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vcA3Z4jzMIZZtYMJRiF5ZNA7Jc6yPVtKd63c9eBjQkY=;
+        b=Wvtiko5C64luSkzmOPA9Q8VE1OKFd7d1d77n+Z8k9WA7aULQ5Vw7w6Y9hAH2TPdXc5
+         1zzwMa+lrbKJ0mRTv0YWBo8txJ5RiSYAeNuekwhgYVz21gTFDUSfiqq63VPLSHJHACeT
+         wxdcancftGFxirCfCwa0YkyMuBz/bhWa29pj59KIynAgbYQ4rlMmts7KSjqDyJ7Vd4ni
+         eI3wH+igdU7SPo9XMPJw65c5ryOJyc9rpyv+TCDB6ol1FlFR/Qe4sJaUSeVUkohT6nfX
+         ruSXxz56/rq7d7MFCYFwbKfhqxUXjqnIAhmjpAZZsx6yAOetZ8f7kAC+ph2hCDZBNNu+
+         PB2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747149080; x=1747753880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vcA3Z4jzMIZZtYMJRiF5ZNA7Jc6yPVtKd63c9eBjQkY=;
+        b=fAYBA8unhQhiOQoANES8TFK7u2LU3KYrJF/MMHYCCm2HqcY+rOctVz8+lbiBxKmCX4
+         hU2dcipHL/UbEFHaOf6iHMEr/o8ygntjK2IbutToy0ewFaiQXBrPtWW9giFkLFumSzU4
+         oLUsj7jmteZKq2C/UM3yycp9hYeGTqzU7q7zR4Qc5ePYa81QFwAmflSFoP4/vOkj5a9S
+         YvJzShGdbXeB5VNEqNiNfrNqe8ZRNodicS092q2sKp12Z1VV0L8QJ1+vNliwnMv7W3Lk
+         9UI702opsnkHErRedTr+0VlU0ZocSX3K7WQTSzI9jJOBUxQzuivXaUMGwpDqyE3SUPsG
+         H/KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQa4flxory/qdnc4ZDZrSerg+ScVgd6kehVOqnrEhtGKQq9syCXEkTnSZNRob3t4nkB5OdTZYuof2K0bI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1sIBwkh3zDBPEA3rueM0riIWCdl9khmfl9sIrG31yjCFcKkal
+	qc1hWp5GOLVYTP38y+4rmR8jUNo13AG1ct9VfshyohdkW4oDQwRC2xPY6qe4Uw==
+X-Gm-Gg: ASbGncvZ4YKtn0haAFlF05qXBjCrHNMXq0SgM4nQwdLGAXMQSrC5n0TkSWmpmzeW+UN
+	fVYpQFgaEARXpV6OUqXywYAGIOh0pSI3x2NulOTuZQFvltqJp2D27C+5dbhN4JNnMTBMXzVQiQM
+	AtL18SMbR1vKoDDirncl8FejYbEgqDWd3nh8h7Rgx8l0JWwO5+m9HzC3Iq3LzHgEUXCaKUVT2af
+	uGuI3Q2+EVUyxl4RCRIEa/xDqAYMl2wX+GBZ7MKe7Egr8VNE3YmkIfO6v+53gVmgrMXZVXTlxpY
+	8Qi6IV+6tffh7Rr3hISBn+4Gy+SyljYGMh5H5I5jiq/aE5bcb2oXqQBGWzDu9muF6XKshA==
+X-Google-Smtp-Source: AGHT+IFE+sCALMsVuAzcyi0CFJEyC2jHv15dAG6xqL5vQvflSMq1MuCrXdzeM+nxcj1DyxaL/2CcbQ==
+X-Received: by 2002:ad4:5d63:0:b0:6f4:cb2e:25ca with SMTP id 6a1803df08f44-6f6e4800ddemr310098676d6.27.1747149078868;
+        Tue, 13 May 2025 08:11:18 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6eb393f0esm51659016d6.33.2025.05.13.08.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 08:11:18 -0700 (PDT)
+Date: Tue, 13 May 2025 11:11:15 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+99d6c66dbbc484f50e1c@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, hdanton@sina.com,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-usb@vger.kernel.org, mchehab@kernel.org, paskripkin@gmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] [media?] KASAN: use-after-free Read in
+ em28xx_init_extension (2)
+Message-ID: <ab7652b5-f854-4221-99a3-1c5b192b29ff@rowland.harvard.edu>
+References: <000000000000453f3d05db72fc7e@google.com>
+ <68235ee9.050a0220.f2294.09fc.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] erofs: avoid using multiple devices with different
- type
-Content-Language: en-US
-To: Sheng Yong <shengyong2021@gmail.com>, <xiang@kernel.org>,
-	<chao@kernel.org>, <zbestahu@gmail.com>, <jefflexu@linux.alibaba.com>,
-	<dhavale@google.com>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Sheng Yong
-	<shengyong1@xiaomi.com>
-References: <20250513113418.249798-1-shengyong1@xiaomi.com>
- <20250513113418.249798-2-shengyong1@xiaomi.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20250513113418.249798-2-shengyong1@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68235ee9.050a0220.f2294.09fc.GAE@google.com>
 
-
-
-On 2025/5/13 19:34, Sheng Yong wrote:
-> From: Sheng Yong <shengyong1@xiaomi.com>
+On Tue, May 13, 2025 at 08:02:01AM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> For multiple devices, both primary and extra devices should be the
-> same type. `erofs_init_device` has already guaranteed that if the
-> primary is a file-backed device, extra devices should also be
-> regular files.
+> commit a368ecde8a5055b627749b09c6218ef793043e47
+> Author: Alan Stern <stern@rowland.harvard.edu>
+> Date:   Thu Jun 27 19:56:18 2024 +0000
 > 
-> However, if the primary is a block device while the extra device
-> is a file-backed device, `erofs_init_device` will get an ENOTBLK,
-> which is not treated as an error in `erofs_fc_get_tree`, and that
-> leads to an UAF:
+>     USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor
 > 
->    erofs_fc_get_tree
->      get_tree_bdev_flags(erofs_fc_fill_super)
->        erofs_read_superblock
->          erofs_init_device  // sbi->dif0 is not inited yet,
->                             // return -ENOTBLK
->        deactivate_locked_super
->          free(sbi)
->      if (err is -ENOTBLK)
->        sbi->dif0.file = filp_open()  // sbi UAF
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12cf6cd4580000
+> start commit:   cd802e7e5f1e Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11cf6cd4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16cf6cd4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=91c351a0f6229e67
+> dashboard link: https://syzkaller.appspot.com/bug?extid=99d6c66dbbc484f50e1c
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143a7768580000
 > 
-> So if -ENOTBLK is hitted in `erofs_init_device`, it means the
-> primary device must be a block device, and the extra device
-> is not a block device. The error can be converted to -EINVAL.
+> Reported-by: syzbot+99d6c66dbbc484f50e1c@syzkaller.appspotmail.com
+> Fixes: a368ecde8a50 ("USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor")
 > 
-> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
-> ---
->   fs/erofs/super.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 512877d7d855..16b5b1f66584 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -165,8 +165,11 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
->   				filp_open(dif->path, O_RDONLY | O_LARGEFILE, 0) :
->   				bdev_file_open_by_path(dif->path,
->   						BLK_OPEN_READ, sb->s_type, NULL);
-> -		if (IS_ERR(file))
-> +		if (IS_ERR(file)) {
-> +			if (PTR_ERR(file) == -ENOTBLK)
-> +				file = ERR_PTR(-EINVAL);
->   			return PTR_ERR(file);
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Hi, Yong
+Clearly a ridiculous claim.  Maybe the bug fixed by that commit covered 
+up the actual cause of this problem.
 
-Thank you, I think it is indeed a UAF problem. This fixes the problem 
-introduced by fb176750266a ("erofs: add file-backed mount support"). How 
-about considering adding the fixes tag?
-
-In addition, I wonder may be we can only check the fc->s_fs_info (we can 
-set it to NULL in .kill_sb) in erofs_fc_get_tree rather than change the 
-error code. So this way we can reback the correct error message to user.
-
-Thanks,
-Hongbo
-
-> +		}
->   
->   		if (!erofs_is_fileio_mode(sbi)) {
->   			dif->dax_dev = fs_dax_get_by_bdev(file_bdev(file),
+Alan Stern
 
