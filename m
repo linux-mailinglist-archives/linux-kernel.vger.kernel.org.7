@@ -1,113 +1,130 @@
-Return-Path: <linux-kernel+bounces-645551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2D2AB4F98
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C35AAB4FA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 468B6461629
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25674A2132
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02971216396;
-	Tue, 13 May 2025 09:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zxy+1epp"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A81E2222A1;
+	Tue, 13 May 2025 09:21:42 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26852215F6B
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726C4221F2F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747128069; cv=none; b=MwnloY6tLS1OtlI0eD64jPoKMB2rrQ6pooLOcPVbSwxMJ3KVfWerWLaBgVCrAD6dBk4f+6FoktpktNcnzyyXuKskmgXYi0EYLlHLN6gs+pi7CMd1C91fXfXVDLiaAKrEd8o75hgs5NHnFDcjIPqfWKJdjto6Y1wwZonqw7D3I+w=
+	t=1747128102; cv=none; b=FTLipUXDTc4W9soFEqv5TbsbU/MYEfaWbWKuzV7PpgNWUo++c22NwhKJqWME03pEZ+5iwoP/dx0s+FVkIkeuaCFR3Fmcw43xRRAHho9pOYVKMRC0uzW1Lg5JoF3B7Jqs6DIzAwK718DzbcrASV8jWMX2xr6UyAdkfmFCqv+mMLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747128069; c=relaxed/simple;
-	bh=jAG6UOMOffV3gCVoCmbgmLMxOpZlx9u8Ad39RHvZ1TI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DGdhMCgbfCiIrd4Bw4LOaxEE0d89KrFbP00LL4Y555EC3hpQJTOOv4PmHTXcBwpNqGGG5z3UCD05Gorguq5LUkRwQLK2uWaJhfLn4M9tHykDl8h2fIRmkHbb74oPPQ2Lelgvw/KZPG+ef3v5rw9SNdmhny5FtklvxSBBRW1F3Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zxy+1epp; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54e98f73850so6215727e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:21:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747128064; x=1747732864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jAG6UOMOffV3gCVoCmbgmLMxOpZlx9u8Ad39RHvZ1TI=;
-        b=zxy+1eppz0AOm1YjT6rvKlsa5iMWWAkQC3+DLhyvnNkmS5KdD+kIjB7uDdODpZoBPO
-         MTttUZ5XI9A0q9ACZ43hFuXk5aU7I9Fr6gVn9WvjDbi0p4Hp5ht+6vtgvWJ2nhwnHFTJ
-         VNkmbpN5Y1Um747b7nCwGKbjz+/mzN/A2b8gxSjh+g86/iz+aWgrdGoihG04Ks9g6AON
-         bwWF3mI57wxnODdicxu8jx3SWtApeVvgvaKbSSOniRlJAGVhNn1G0bi2PEkDdrJDsH08
-         zju4mwRXBPHAtigQ7RlYRAr2veYMcd8TUJ0qkzlJ0P+cGor00OjKAXE5u7CYcjxkGiDQ
-         +7qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747128064; x=1747732864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jAG6UOMOffV3gCVoCmbgmLMxOpZlx9u8Ad39RHvZ1TI=;
-        b=FYPXfTHWJuPgpZeehCvNOlp1t3Dtvltb/iC38PZdbplz9uRHOQqYsX8TEhvRuGYPSo
-         5AsskzImClSwWRIoQkPQ83JaGkTPbbGtSldSme7nI482hmRzcbFuZqrnjLmBtYSOdrD5
-         ++YNHu+FcZN9yoECnTIRKOMktZOF1tT5DY7UN+IeJUrFyqyfeaG4ad0xc3zSiPviTvp9
-         0+BJxMBGBCxmSEZaiWgwI+jRc+1IB0n4pmN/EvpjmLPTIDPwLj0H/0nOjG7OZXJXq1HU
-         FeKO615f2WKV8UquyICNopxqfaOWzDUKKdzniBrse4xDgByy/7kpVuwsPASN1SDdV3lE
-         6RJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhsuERsQsaMAew7zYgmVa3X1Z+RG+OEvtMUKJfAOeye0Z3l/CQPtLbUSmgtKq0cdR+x6zg5HVaUvOcFto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbCcJsZ7wSAh7YkKEbmCVu6NDxNydQkfkhIBd3hFgkfvw5ni1h
-	GL8nCnrUfMTbkIbNrBBfeRUeNnPf8jGvhTrSGi2XX2BwW7jDZw/8sqYe/oJHueSJrhY5Oq4an92
-	5JRUNjo/ndpcHmOXRQqi+sp5L3DwMt5KRZP2Se1oQFgpkgA3Rr18=
-X-Gm-Gg: ASbGncsSat0zOcUVI8IzR0aHLL6vXsbTWc8o28ywkT6LPn/etJsQbYRQXooPvIEZ6ur
-	M6h+ixVONIDXwfeLMdDWgJ5DjUwoZzkH2gndBvSsr1g47wUWd52q1uf6eresfXyPQm76UnBG0Q6
-	69eoIjFHJEenwcUA5pHUfoFkmN3wOI7W6x
-X-Google-Smtp-Source: AGHT+IGKvl0a9PYMoR7pe3tZ5kyPbARxdNFLenyjWORpsYZx6Qr+/V56jGkku8jVsQAW4x2zH8hvY9ZJIUWfZ8j8uTg=
-X-Received: by 2002:a05:6512:6408:b0:545:f1d:6f2c with SMTP id
- 2adb3069b0e04-54fc67c37b8mr5182580e87.18.1747128064206; Tue, 13 May 2025
- 02:21:04 -0700 (PDT)
+	s=arc-20240116; t=1747128102; c=relaxed/simple;
+	bh=zI11X3TEAqDD/ZmmKc13sUhGr+7EmnEE9HGeNRaiarc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bxc2N4taWHtmtEJ+dVqThMCzo2TfyWEXP6JyuwpDUhf+Z0BfB+0Szx4UY9aQNHMuQ/WY6MKQI5fHPUDblhcAupHNRhu+U4qAY/yA/wMlS9lsH2luxPCMTTJeCrT8gDhLFZhpCgvGk1Xv6mAJYrCBHVkfLzANzDLCDP4WEMj+mK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uElow-0008Gg-Bp; Tue, 13 May 2025 11:21:06 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uElot-002W0h-2r;
+	Tue, 13 May 2025 11:21:04 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uElou-0004Y5-0o;
+	Tue, 13 May 2025 11:21:04 +0200
+Message-ID: <d25aa4b10e2ebefb36e0db03123b404044e71ec1.camel@pengutronix.de>
+Subject: Re: [PATCH v9 4/6] reset: spacemit: add support for SpacemiT CCU
+ resets
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr,  dlan@gentoo.org
+Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ spacemit@lists.linux.dev,  linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 13 May 2025 11:21:04 +0200
+In-Reply-To: <20250512183212.3465963-5-elder@riscstar.com>
+References: <20250512183212.3465963-1-elder@riscstar.com>
+	 <20250512183212.3465963-5-elder@riscstar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430-max77759-mfd-v9-0-639763e23598@linaro.org> <20250430-max77759-mfd-v9-5-639763e23598@linaro.org>
-In-Reply-To: <20250430-max77759-mfd-v9-5-639763e23598@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 13 May 2025 11:20:53 +0200
-X-Gm-Features: AX0GCFux1HtYoXX3UiKQeMd3kDVZuoIvGECfOVBviXvO98OxIVsjOGF-W-k86hk
-Message-ID: <CACRpkdY15L5PpV9ah_0R3ZPZVMh18OR+Dg2qXiBG=8Kq79-rjA@mail.gmail.com>
-Subject: Re: [PATCH v9 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Apr 30, 2025 at 11:03=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
-linaro.org> wrote:
-
-> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-> Port Controller (TCPC), NVMEM, and a GPIO expander.
+On Mo, 2025-05-12 at 13:32 -0500, Alex Elder wrote:
+> Implement reset support for SpacemiT CCUs.  A SpacemiT reset controller
+> device is an auxiliary device associated with a clock controller (CCU).
+>=20
+> This initial patch defines the reset controllers for the MPMU, APBC, and
+> MPMU CCUs, which already define clock controllers.
+>=20
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  drivers/reset/Kconfig          |   9 ++
+>  drivers/reset/Makefile         |   1 +
+>  drivers/reset/reset-spacemit.c | 246 +++++++++++++++++++++++++++++++++
+>  3 files changed, 256 insertions(+)
+>  create mode 100644 drivers/reset/reset-spacemit.c
 >
-> This driver supports the GPIO functions using the platform device
-> registered by the core MFD driver.
->
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+[...]
+> diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemi=
+t.c
+> new file mode 100644
+> index 0000000000000..eff67bdc8adba
+> --- /dev/null
+> +++ b/drivers/reset/reset-spacemit.c
+> @@ -0,0 +1,246 @@
+[...]
+> +static int spacemit_reset_controller_register(struct device *dev,
+> +			       struct ccu_reset_controller *controller)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Align to open parenthesis, line length is fine.
 
-Yours,
-Linus Walleij
+> +{
+> +	struct reset_controller_dev *rcdev =3D &controller->rcdev;
+> +
+> +	rcdev->ops =3D &spacemit_reset_control_ops;
+> +	rcdev->owner =3D THIS_MODULE;
+> +	rcdev->of_node =3D dev->of_node;
+> +	rcdev->nr_resets =3D controller->data->count;
+> +
+> +	return devm_reset_controller_register(dev, &controller->rcdev);
+> +}
+> +
+> +static int spacemit_reset_probe(struct auxiliary_device *adev,
+> +				const struct auxiliary_device_id *id)
+> +{
+> +	struct spacemit_ccu_adev *rdev =3D to_spacemit_ccu_adev(adev);
+> +	const void *data =3D (void *)id->driver_data;
+
+Unnecessary (void *) detour. Just cast to (const struct
+ccu_reset_controller_data *) directly. Otherwise,
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+
+regards
+Philipp
 
