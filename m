@@ -1,87 +1,70 @@
-Return-Path: <linux-kernel+bounces-645580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7CAAB500F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67000AB5017
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE26D7ACAB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:39:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C827B2B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983E421CA0F;
-	Tue, 13 May 2025 09:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C43F239567;
+	Tue, 13 May 2025 09:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdQ0v7E0"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBQFW/OS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA561E570D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEA41E570D;
+	Tue, 13 May 2025 09:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747129223; cv=none; b=Eb52rXKntnkK6wDkFH2/jMm68orjMQ6iCuWsujVfwmsysIBU1d8OTYxhzDcSPk+ujY1LTtFaOH2fEe3mI8foRGvj4pX8q5ex2M89ikGxNf12aEzKYViWqZmRg63OiPRkOsXKWSuxiWxp0KINyLxzJ/v/Kaw3CtVDUpwT9pxtMzM=
+	t=1747129293; cv=none; b=IiMvEbLuwUWBLLAhfR9Zf6kbzmF1eSdtdAQeb58X4WY5ivWxGK6aBKNHDAus7Bt+MApVgd94mtSr/6CsMWa6Da54+acqHBzVnesy1dGnp5QOPyeipuBJZNwe9dPT3SnZAJrIkGBAudvL64j0a3AFz9V37SugZvXEKYRu0e/ufrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747129223; c=relaxed/simple;
-	bh=y95+dDV6mcOwRPJJ2X0+bkbLdz55ei6Ti3x5ncLzUjw=;
+	s=arc-20240116; t=1747129293; c=relaxed/simple;
+	bh=9LpchjhiZX+DBZ6lMeGJvFj12PZytbaMZ9VCzKNnWKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YV3drGZlqgDUtjGbCTIum4SozMYc206gYK49DAnC6xenkIxJcVgpjkha4aFblFOQ6TLXXDPUHCCaXLSkZ7GChb4bA3d3xAsNZntJTzP7Ia+1WS9FkOJUgQfX3Cs8jhjZgqvW22mwm8QyNsDinTnr4E6GLAohHHPQg80G54qohPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KdQ0v7E0; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ede096d73so37609105e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747129219; x=1747734019; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZcH3NoUa9zYUGHE3e6RZVql7e10Z0H4w1SBFkELAfU4=;
-        b=KdQ0v7E06t5F27WJvbxj1MXkA7ou3wUrhUXimfpLUCFJGSfXG+YCgXikTIimhiq65F
-         m5nFetFlMyM+osZMWLjJ2URGxFXXaSYhM9E7n2hHhxeVPdQMNQE8vxa2EjtdSq0DPBBX
-         NbakRh8OsVibDgnrIFsb3Q+CQyJmdKPNeXExpmTwWRgYNer7hFMbaJRAJ/SEpaQIZick
-         FJu7CXK2B2m9R8KzFHUjlDs//7W7yX6E1APnfD4JTxRb+KLtdEmkUM94U/Vyo3qb2vhT
-         rkumT1Cpes2/gMCh+3S+DcBfJVbm1AwhkM+MfWy1en9FPuPPnCJWGVgtDO33dFSVLYY6
-         pL5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747129219; x=1747734019;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcH3NoUa9zYUGHE3e6RZVql7e10Z0H4w1SBFkELAfU4=;
-        b=PtR275PIhEIyYQOD59CQ3T7Wm6wJ4IWFCxvcyC24R4oCtRawltPx69iPKB6Rc59FEG
-         EIUl+uyD/wf7pb5EWinfXAbYzNH2H33t7z0m4FggRA0Ph4Coedz/YfUWhQOLdLnv7VoZ
-         Q4sZWyE36p7MKCql3EHJ2j0aa+a9szAa90WByWFrkgCejZorBJDfT8WUDD8H15wmBb36
-         H6nUUt938dBFNEnjqvZ9zfegFiFtnync5Y5facWV6LHUHeZzvbytuOtGY2AzpYa60T1C
-         F2wjFuRWh6XzHlREMFKzwdnSrVGa1sgSGUa0k7uZw2skvmfZm+O7zxLVawzEx100e9bd
-         zoVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgyFpDuKMINrdDyg0ZEnPDfTCEucr3L6m9enExSVXyJLn7QIj5uNc3e0nu++aetDcX03fXdKLtdbwfBVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHKSIkv2+acmNncCfmmHKqgNvdfhSvSWaesM9h/lsfl1Ell+Fv
-	QP+H1MgtBGmlmzMNtXGBp/82UB1QCXbm1CtzhjbdmlP6goEHJ04ZFkKMPvtTbQ==
-X-Gm-Gg: ASbGncuzKue+Pprn7INyeHYlW1ljaZPWJ/k28WYVnwJ0gyAursEUep3piOser8qzcHJ
-	cibqceZftOtpNZ/I/Fuyi/zw+WRdDGmHd8xikXtZS05QV0x6OLpNdkuZu48mbVygpQpEh6dsV+h
-	lXgV6XZ7W2J6frzbZ7Ee5TsrIeNpScwUy98ZgnWxFrSrVfsjXsFgAkClRCQOBEck+XgpYTcc+S/
-	y0f+qfDaKwOYxyLC/Ho1hQwp45H08yR8vVehvN6vamXZbVsbhrKWtxsWus5wqe/uaIzAy4RyiDK
-	EuymKZa+lu1uqsZmt1RL3zU/tBjdlCuJwv6OThCAV2yYebxBd1DoZYkxoYIXU2rBSXzBIVh9KN1
-	oS2EFJ+Uka2xWew==
-X-Google-Smtp-Source: AGHT+IEnFcdOdVeGZ05hT5lYfCJGIEriQAJ/H62kZzWpWG7SrRPdhYj+LEeG7joQas8peUF0EQqhBQ==
-X-Received: by 2002:a05:600c:5118:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-442d6dc557cmr110195405e9.25.1747129219435;
-        Tue, 13 May 2025 02:40:19 -0700 (PDT)
-Received: from thinkpad (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c35sm160428035e9.5.2025.05.13.02.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 02:40:18 -0700 (PDT)
-Date: Tue, 13 May 2025 10:40:17 +0100
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com, 
-	jingoohan1@gmail.com, cassel@kernel.org, robh@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 0/3] Standardize link status check to return
- bool
-Message-ID: <k2ralcw6ynqfejsyk6z7vdodhbn5gu37gqkt4x6yzs7t2y4h5s@6ag7omevjfl2>
-References: <20250510160710.392122-1-18255117159@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5B/Q0QeyF5jS2TtxrjiVbPHTfR2/lXJmBIqW5Q8qH1IXOjoVXXYaON3NxsBD21dnTraothZBADinzLACxWZ8baqSn36pXN2v5ze56/70+WYqqRDWi7DYyxHrqVkj3Zs5pvMOQoz4aP4+N6F+ci2gLXZDd5uMbqMr1qKP/+E0yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBQFW/OS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D74C4CEE4;
+	Tue, 13 May 2025 09:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747129293;
+	bh=9LpchjhiZX+DBZ6lMeGJvFj12PZytbaMZ9VCzKNnWKk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lBQFW/OSWl0JKCgO3wU5Zev4svkXFf7hg1hXf5vz/dafM3maiJzs1pvZB4PggT3J7
+	 4Fgb0P+P3LbyvaBBr+NTPBk5toNUyb87sBxZfI029TpdTVwCYABse2TcYvVL3TzZRe
+	 9C4BxfZkhY6ir7IctfItjKlVifYGxX11uT+x8kHAsC7aCQrQyotU+baHY2Z0qsG4XD
+	 Vg9Gu0DWBjjxzBIlamIYcZ9EPvglCZ2lXw9NX7+y5wXevRIfDjRe3oukq9hP9DTrSd
+	 jegikYcugiinVo0isHFxAPJLdkQ+V3E8WpGg+7wZWeF7zzIkfEjiL7pChb+hsn8aX5
+	 OCNDfyrLDoADg==
+Date: Tue, 13 May 2025 10:41:26 +0100
+From: Lee Jones <lee@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, netdev@vger.kernel.org,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v7 8/8] mfd: zl3073x: Register DPLL sub-device
+ during init
+Message-ID: <20250513094126.GF2936510@google.com>
+References: <20250507124358.48776-1-ivecera@redhat.com>
+ <20250507124358.48776-9-ivecera@redhat.com>
+ <CAHp75Ven0i05QhKz2djYx0UU9E9nipb7Qw3mm4e+UN+ZSF_enA@mail.gmail.com>
+ <2e3eb9e3-151d-42ef-9043-998e762d3ba6@redhat.com>
+ <aBt1N6TcSckYj23A@smile.fi.intel.com>
+ <20250507152609.GK3865826@google.com>
+ <b095ffb9-c274-4520-a45e-96861268500b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,65 +74,130 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250510160710.392122-1-18255117159@163.com>
+In-Reply-To: <b095ffb9-c274-4520-a45e-96861268500b@redhat.com>
 
-On Sun, May 11, 2025 at 12:07:07AM +0800, Hans Zhang wrote:
-> 1. PCI: dwc: Standardize link status check to return bool.
-> 2. PCI: mobiveil: Refactor link status check.
-> 3. PCI: cadence: Simplify j721e link status check.
+On Mon, 12 May 2025, Ivan Vecera wrote:
 
-Please do not paste the patch subjects in cover letter. Cover letter should
-elaborate the issue this series is fixing, its purpose, any dependency etc...
+> On 07. 05. 25 5:26 odp., Lee Jones wrote:
+> > On Wed, 07 May 2025, Andy Shevchenko wrote:
+> > 
+> > > On Wed, May 07, 2025 at 03:56:37PM +0200, Ivan Vecera wrote:
+> > > > On 07. 05. 25 3:41 odp., Andy Shevchenko wrote:
+> > > > > On Wed, May 7, 2025 at 3:45 PM Ivan Vecera <ivecera@redhat.com> wrote:
+> > > 
+> > > ...
+> > > 
+> > > > > > +static const struct zl3073x_pdata zl3073x_pdata[ZL3073X_MAX_CHANNELS] = {
+> > > > > > +       { .channel = 0, },
+> > > > > > +       { .channel = 1, },
+> > > > > > +       { .channel = 2, },
+> > > > > > +       { .channel = 3, },
+> > > > > > +       { .channel = 4, },
+> > > > > > +};
+> > > > > 
+> > > > > > +static const struct mfd_cell zl3073x_devs[] = {
+> > > > > > +       ZL3073X_CELL("zl3073x-dpll", 0),
+> > > > > > +       ZL3073X_CELL("zl3073x-dpll", 1),
+> > > > > > +       ZL3073X_CELL("zl3073x-dpll", 2),
+> > > > > > +       ZL3073X_CELL("zl3073x-dpll", 3),
+> > > > > > +       ZL3073X_CELL("zl3073x-dpll", 4),
+> > > > > > +};
+> > > > > 
+> > > > > > +#define ZL3073X_MAX_CHANNELS   5
+> > > > > 
+> > > > > Btw, wouldn't be better to keep the above lists synchronised like
+> > > > > 
+> > > > > 1. Make ZL3073X_CELL() to use indexed variant
+> > > > > 
+> > > > > [idx] = ...
+> > > > > 
+> > > > > 2. Define the channel numbers
+> > > > > 
+> > > > > and use them in both data structures.
+> > > > > 
+> > > > > ...
+> > > > 
+> > > > WDYM?
+> > > > 
+> > > > > OTOH, I'm not sure why we even need this. If this is going to be
+> > > > > sequential, can't we make a core to decide which cell will be given
+> > > > > which id?
+> > > > 
+> > > > Just a note that after introduction of PHC sub-driver the array will look
+> > > > like:
+> > > > static const struct mfd_cell zl3073x_devs[] = {
+> > > >         ZL3073X_CELL("zl3073x-dpll", 0),  // DPLL sub-dev for chan 0
+> > > >         ZL3073X_CELL("zl3073x-phc", 0),   // PHC sub-dev for chan 0
+> > > >         ZL3073X_CELL("zl3073x-dpll", 1),  // ...
+> > > >         ZL3073X_CELL("zl3073x-phc", 1),
+> > > >         ZL3073X_CELL("zl3073x-dpll", 2),
+> > > >         ZL3073X_CELL("zl3073x-phc", 2),
+> > > >         ZL3073X_CELL("zl3073x-dpll", 3),
+> > > >         ZL3073X_CELL("zl3073x-phc", 3),
+> > > >         ZL3073X_CELL("zl3073x-dpll", 4),
+> > > >         ZL3073X_CELL("zl3073x-phc", 4),   // PHC sub-dev for chan 4
+> > > > };
+> > > 
+> > > Ah, this is very important piece. Then I mean only this kind of change
+> > > 
+> > > enum {
+> > > 	// this or whatever meaningful names
+> > > 	..._CH_0	0
+> > > 	..._CH_1	1
+> > > 	...
+> > > };
+> > > 
+> > > static const struct zl3073x_pdata zl3073x_pdata[ZL3073X_MAX_CHANNELS] = {
+> > >         { .channel = ..._CH_0, },
+> > >         ...
+> > > };
+> > > 
+> > > static const struct mfd_cell zl3073x_devs[] = {
+> > >         ZL3073X_CELL("zl3073x-dpll", ..._CH_0),
+> > >         ZL3073X_CELL("zl3073x-phc", ..._CH_0),
+> > >         ...
+> > > };
+> > 
+> > This is getting hectic.  All for a sequential enumeration.  Seeing as
+> > there are no other differentiations, why not use IDA in the child
+> > instead?
+> 
+> For that, there have to be two IDAs, one for DPLLs and one for PHCs...
 
-- Mani
+Sorry, can you explain a bit more.  Why is this a problem?
 
+The IDA API is very simple.
+
+Much better than building your own bespoke MACROs.
+
+> The approach in my second reply in this thread is simpler and taken
+> in v8.
 > 
-> ---
-> Changes for RESEND:
-> - add Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> <cite>
+> +#define ZL3073X_PDATA(_channel)			\
+> +	(&(const struct zl3073x_pdata) {	\
+> +		.channel = _channel,		\
+> +	})
+> +
+> +#define ZL3073X_CELL(_name, _channel)				\
+> +	MFD_CELL_BASIC(_name, NULL, ZL3073X_PDATA(_channel),	\
+> +		       sizeof(struct zl3073x_pdata), 0)
+> +
+> +static const struct mfd_cell zl3073x_devs[] = {
+> +	ZL3073X_CELL("zl3073x-dpll", 0),
+> +	ZL3073X_CELL("zl3073x-dpll", 1),
+> +	ZL3073X_CELL("zl3073x-dpll", 2),
+> +	ZL3073X_CELL("zl3073x-dpll", 3),
+> +	ZL3073X_CELL("zl3073x-dpll", 4),
+> +};
+> </cite>
 > 
-> Changes for v2:
-> - Remove the return of some functions (!!) .
-> - Patches 2/3 and 3/3 have not been modified.
+> Lee, WDYT?
 > 
-> Based on the following branch:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dw-rockchip
-> ---
-> 
-> Hans Zhang (3):
->   PCI: dwc: Standardize link status check to return bool
->   PCI: mobiveil: Refactor link status check
->   PCI: cadence: Simplify j721e link status check
-> 
->  drivers/pci/controller/cadence/pci-j721e.c             | 6 +-----
->  drivers/pci/controller/dwc/pci-dra7xx.c                | 4 ++--
->  drivers/pci/controller/dwc/pci-exynos.c                | 4 ++--
->  drivers/pci/controller/dwc/pci-keystone.c              | 5 ++---
->  drivers/pci/controller/dwc/pci-meson.c                 | 6 +++---
->  drivers/pci/controller/dwc/pcie-armada8k.c             | 6 +++---
->  drivers/pci/controller/dwc/pcie-designware.c           | 2 +-
->  drivers/pci/controller/dwc/pcie-designware.h           | 4 ++--
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c          | 2 +-
->  drivers/pci/controller/dwc/pcie-histb.c                | 9 +++------
->  drivers/pci/controller/dwc/pcie-keembay.c              | 2 +-
->  drivers/pci/controller/dwc/pcie-kirin.c                | 7 ++-----
->  drivers/pci/controller/dwc/pcie-qcom-ep.c              | 2 +-
->  drivers/pci/controller/dwc/pcie-qcom.c                 | 4 ++--
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c            | 2 +-
->  drivers/pci/controller/dwc/pcie-spear13xx.c            | 7 ++-----
->  drivers/pci/controller/dwc/pcie-tegra194.c             | 4 ++--
->  drivers/pci/controller/dwc/pcie-uniphier.c             | 2 +-
->  drivers/pci/controller/dwc/pcie-visconti.c             | 4 ++--
->  drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 9 ++-------
->  drivers/pci/controller/mobiveil/pcie-mobiveil.h        | 2 +-
->  21 files changed, 37 insertions(+), 56 deletions(-)
-> 
-> 
-> base-commit: 286ed198b899739862456f451eda884558526a9d
-> -- 
-> 2.25.1
+> Thanks,
+> Ivan
 > 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Lee Jones [李琼斯]
 
