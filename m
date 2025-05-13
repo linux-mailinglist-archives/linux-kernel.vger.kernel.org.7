@@ -1,94 +1,156 @@
-Return-Path: <linux-kernel+bounces-646002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E949DAB567A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFABAB567F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932A41B46082
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985FE1B46083
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FB92BCF4F;
-	Tue, 13 May 2025 13:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940982BCF51;
+	Tue, 13 May 2025 13:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Deoz/43t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAbS59lA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82214242931;
-	Tue, 13 May 2025 13:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D25128E5E3;
+	Tue, 13 May 2025 13:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747144192; cv=none; b=izFQPDCnDqwfRDTcGl14QCjnv5ALQco6B2kn17ufq9rXhUPGEwnD8oTG42gB+yLupVlXQYtF72YQ5RY5Xgr5afPczsHsfGlKndEgbwGg0ugjdrVpBKrIluKLCCNyM6xNKAugAZGsdQ/VduJSfl1+LLVvTMon+b6Y79XbzA1MvBs=
+	t=1747144256; cv=none; b=l1tbsOgBxO1D/FH8qJbx1HI02jjGaYqIz39CVSbByAmOSvGDBmPjCd89zUITzBWjZibFhSRUQjiVHqLtma7k8DL4bo4WA3gEdwgeDFTh7RkJqcXsexPbk6KBJLbyo+82QJK/2WwOoWh2Yl+qPmdMeCZ4YnOb0oyS+cjj42h5MZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747144192; c=relaxed/simple;
-	bh=iXce77Zxe0hJqfiwEb6FAIjbqHrEaQ2HlNz9uvNBDUQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=shaqKQSch/hnBmR6shtVlGsWysab/1GrmAQetgY6dCdPp4ximDJ6cuAhVwBM0fMOAMgnMZAAW4ybdAMeu9iiOy0RALhjeIfh8yKIe58+uwBq4jTPV+9ZpMdDmd157tHIAJ5xHZ10xsBg/7Y0dNPV/UAqufZ+nuEWJm+BD8JZAOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Deoz/43t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA732C4CEE4;
-	Tue, 13 May 2025 13:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747144192;
-	bh=iXce77Zxe0hJqfiwEb6FAIjbqHrEaQ2HlNz9uvNBDUQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Deoz/43tY8IQC8vU47bA0UzoagE1pIqJg8dq0GUUUuDt1/CWtHwjZrcY8ifhBlFtO
-	 emuOJMENOeaxnhiu2+LgDRHN1VvQH18uwxEabwVShb0HrHb5m2JERJPnfu7ehjbgHS
-	 NifbKMYrOoydZD0QKHoGl1Ego89C+5c8hS/XXCNyAmBwa1Rssi+vq3P1Eq8n+llrHn
-	 SAsO/kvkP1Seb3icFkgPfGHHYr4zn6GgIDE4u/OY+IqNjjR8svFZHJEWymJ9dFByYC
-	 awa5BZ3IJKvWBk4KMo2/srEcabXRqBLNJMfm0GRU4rRvEKvzF3sUva0NvcNwVW99df
-	 l8LUH5H8lUeNQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD4A39D61FF;
-	Tue, 13 May 2025 13:50:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747144256; c=relaxed/simple;
+	bh=8Md9VYH+GVWl7EBtiFSSM0L114z6V7Svzk31k5efaxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLPBV+T0u1ziAkwlbAVNuvq1lbnq2WRsbiHZ0RDnz2y3cwo2BBeNOMH2soJild4MzZjDmY7EXbNbXz9l1EXRE+pyWbbe5faMhx1ZD0m7RP39LSS4D0uUoBTQK/ZyIpH6yQYJHqxhJ2H2irbgcHMewSckOqnaGC3eKyT1GW6oNO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAbS59lA; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747144255; x=1778680255;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8Md9VYH+GVWl7EBtiFSSM0L114z6V7Svzk31k5efaxU=;
+  b=ZAbS59lArMBG+89bXqCYNeT+046Ahw4qdzhrZxjsLvq63n97ME6rLJyj
+   YlOMiQgZok0JTsF1G2UaI93IjwLkg9UmPf9AAvL+iS8qBGLkocgMxb01P
+   aP0dK8wJe2AcF2lmefQatJjJvhGAEfRhGhID3BarJyJWpgRGi7WdimAL+
+   ptylvzBmYPrm0pr3A8GTpBgJkR3mYEq28/dc17PrmFf4KIB+4i1nyjX+s
+   Uj2jMSuUDqBnrihTd+vjFA/k1xFk1g9jJjYAb4AmkYpNCb6cQvGKTK5v0
+   wdev54xOOP2UFakcgNDEAlmLa8G+oB4rDk5zRWmTHBQHfWUKlSZJQmU8t
+   w==;
+X-CSE-ConnectionGUID: RDtQN4OUQrqxowOFv2559A==
+X-CSE-MsgGUID: Sv0fM9e0QoWo+K9hbaa5lw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="48922778"
+X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
+   d="scan'208";a="48922778"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 06:50:54 -0700
+X-CSE-ConnectionGUID: QX096WcgTW2hzK35NN/lbw==
+X-CSE-MsgGUID: Hu1fWME+T0ubgMoZ+WzMNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
+   d="scan'208";a="137451251"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa009.jf.intel.com with SMTP; 13 May 2025 06:50:51 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 13 May 2025 16:50:49 +0300
+Date: Tue, 13 May 2025 16:50:49 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Cosmo Chou <chou.cosmo@gmail.com>
+Cc: badhri@google.com, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cosmo.chou@quantatw.com
+Subject: Re: [PATCH v2] usb: typec: tcpm: Use configured PD revision for
+ negotiation
+Message-ID: <aCNOOXcAuA_1B-0Z@kuha.fi.intel.com>
+References: <20250513130834.1612602-1-chou.cosmo@gmail.com>
+ <aCNLeX1k34BSgPOV@kuha.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dsa: b53: prevent standalone from trying to forward
- to other ports
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174714422950.1672299.16837840764503369784.git-patchwork-notify@kernel.org>
-Date: Tue, 13 May 2025 13:50:29 +0000
-References: <20250508091424.26870-1-jonas.gorski@gmail.com>
-In-Reply-To: <20250508091424.26870-1-jonas.gorski@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: florian.fainelli@broadcom.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCNLeX1k34BSgPOV@kuha.fi.intel.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu,  8 May 2025 11:14:24 +0200 you wrote:
-> When bridged ports and standalone ports share a VLAN, e.g. via VLAN
-> uppers, or untagged traffic with a vlan unaware bridge, the ASIC will
-> still try to forward traffic to known FDB entries on standalone ports.
-> But since the port VLAN masks prevent forwarding to bridged ports, this
-> traffic will be dropped.
+On Tue, May 13, 2025 at 04:39:09PM +0300, Heikki Krogerus wrote:
+> On Tue, May 13, 2025 at 09:08:34PM +0800, Cosmo Chou wrote:
+> > Initialize negotiated_rev and negotiated_rev_prime based on the port's
+> > configured PD revision (rev_major) rather than always defaulting to
+> > PD_MAX_REV. This ensures ports start PD communication using their
+> > appropriate revision level.
+> > 
+> > This allows proper communication with devices that require specific
+> > PD revision levels, especially for the hardware designed for PD 1.0
+> > or 2.0 specifications.
+> > 
+> > Signed-off-by: Cosmo Chou <chou.cosmo@gmail.com>
+> > ---
+> > Change log:
+> > 
+> > v2:
+> >   - Add PD_CAP_REVXX macros and use switch-case for better readability.
+> > 
+> > ---
+> >  drivers/usb/typec/tcpm/tcpm.c | 29 +++++++++++++++++++++++++----
+> >  1 file changed, 25 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> > index 8adf6f954633..48e9cfc2b49a 100644
+> > --- a/drivers/usb/typec/tcpm/tcpm.c
+> > +++ b/drivers/usb/typec/tcpm/tcpm.c
+> > @@ -313,6 +313,10 @@ struct pd_data {
+> >  	unsigned int operating_snk_mw;
+> >  };
+> >  
+> > +#define PD_CAP_REV10	0x1
+> > +#define PD_CAP_REV20	0x2
+> > +#define PD_CAP_REV30	0x3
+> > +
+> >  struct pd_revision_info {
+> >  	u8 rev_major;
+> >  	u8 rev_minor;
+> > @@ -4665,6 +4669,25 @@ static void tcpm_set_initial_svdm_version(struct tcpm_port *port)
+> >  	}
+> >  }
+> >  
+> > +static void tcpm_set_initial_negotiated_rev(struct tcpm_port *port)
+> > +{
+> > +	switch (port->pd_rev.rev_major) {
+> > +	case PD_CAP_REV10:
+> > +		port->negotiated_rev = PD_REV10;
+> > +		break;
+> > +	case PD_CAP_REV20:
+> > +		port->negotiated_rev = PD_REV20;
+> > +		break;
+> > +	case PD_CAP_REV30:
+> > +		port->negotiated_rev = PD_REV30;
+> > +		break;
+> > +	default:
+> > +		port->negotiated_rev = PD_MAX_REV;
+> > +		break;
+> > +	}
+> > +	port->negotiated_rev_prime = port->negotiated_rev;
+> > +}
 > 
-> This e.g. can be observed in the bridge_vlan_unaware ping tests, where
-> this breaks pinging with learning on.
+> Do we need this? Couldn't you just add one to rev_major?
 > 
-> [...]
+>         port->negotiated_rev = port->pd_rev.rev_major + 1;
+>         port->negotiated_rev_prime = port->pd_rev.rev_major + 1;
+> 
+> Or am I missing something?
 
-Here is the summary with links:
-  - [net] net: dsa: b53: prevent standalone from trying to forward to other ports
-    https://git.kernel.org/netdev/net/c/4227ea91e265
+Sorry, I mean minus one :-)
 
-You are awesome, thank you!
+        port->negotiated_rev = port->pd_rev.rev_major - 1;
+        port->negotiated_rev_prime = port->pd_rev.rev_major - 1;
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+heikki
 
