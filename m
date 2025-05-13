@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-646094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D0EAB57ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:03:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46970AB57EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441E51B437FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:03:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0F24A6863
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA14C28E616;
-	Tue, 13 May 2025 15:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEFF2BE0FC;
+	Tue, 13 May 2025 15:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="utYb/EL4"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Z4hI895U"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE131A83E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF031AF0C9;
 	Tue, 13 May 2025 15:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747148581; cv=none; b=jpVtL5Evwik+c1UkRuCa4DGDDeIMjPYHr3Rp3Xe2cdS6YAlQ/wjOwQ+LQ2UVm3hC4Q+62lFy+7tFw7br2qasuRdEdJy+HCZtWj9GElNCE6nt4eWNZldnCPo6XfKqDSl4MSx+YDBd6vUHxEWU71vN1dBzHLMm1wyM03hrFwDC+FM=
+	t=1747148582; cv=none; b=SkWcn5+Cp6TYYh6nJJ4vxYugNbQ5Ex+EPo/Ca2RL9mZq4ARxmUJlKf972aJ6wgAROPXNjPQOGJeYjcrD/Z/BHY4B0bnB3itjuuII6O0wikqKWG9MmEtXrZEzs9pw+ew+ZP/KDfj26xxQgoFQjDbI8fUolyZdbuZSXabogKFgwS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747148581; c=relaxed/simple;
-	bh=v5YY0SZ0PYpJOc41X3mbWN+7Qhji612T5TVNWtMUFmM=;
+	s=arc-20240116; t=1747148582; c=relaxed/simple;
+	bh=m5vCvjfOgtsdOdZeYm5gSkKK2NkNNaRASLMycHBQAyo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eFxe2OfPC5W9U4rp2ooEaGZmqQAn2QU+cp7b3hwgMeIjoBg9WbT80RU07yOjSBiseVenuDbSEBsSRYHl7wP+hi7GF9TzRfwEtEKwHsXHNqFB7O4qfCPtwvOvalth9RtEaiWSneC192V2i7PIoUkEjDYTBk21XX7mS8x1JdKbWrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=utYb/EL4; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version; b=d+AZpCyR1hKEJqQtwkZc4GA1Yc0PfT1/UF/dVwgMl/f94eBHiXMwKauInTJDbgnUxDFtbAE4EOLnv55/oTBNOcSM/k8vJEHOAm4oi2PVebk3AMgJpdoWfH8CbPbc4TMZur9JW+t8sb+ykuKkwkjLSEnVMq+/vche7LSwOFj00LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Z4hI895U; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,17 +35,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=RV3QvTlWfQTkDjPmndYOu91G7Myw8NKGakZkfON1fQE=; b=utYb/EL4RvDbKkhKrPXOMrbWto
-	MmdWPsTo7RL3nrPSkz3EBwx392PRrk1tIbgAuFDm5cqJ5YI2NQmmCJehGz0G2XOsnacsJPshdf4OG
-	ay3NeuQAAjxl7ZrPyvvwX9zIVRgxN5F0+R/gYMplzDE3Nb87RtLRdUyPScqYc1bImWnemp028jEGn
-	Pq2wUcrPIJa1fVOtJxLy2IxQV/0UQG6d/bVeVrNiC3g3r0fJHkHyTa8NF+GgNXNcEumX1OFjtTIVS
-	8UdOgzRzlmSZu/Eki7gx8Lg3morJCwkjLbqqY6+HNytDtEeXFGI8qwBpz2noUo6cc4Co2NloI0dhz
-	XMqE54xA==;
+	bh=bup6NhA6evSSr2vJWZ/rxyhkcFN8+wVdFF6iyZzNxv0=; b=Z4hI895Uza0VBpF/RhOi6Tt5Mt
+	8NC2Se+CimmK3/ALd67hCKhcW1+lcNUtzs3XmWv0WBNhQH0cb2NdT7EW7REi+LgzI0twZuecF7r9J
+	ZD95YsCivgVyAmammsEM+xVly38FIOg6oIGMHd++oDvPyFgbZNjy9owaSYRgGRr5MeoTNgriPhCjI
+	p5jHqLaTMPe7VAlx2jBbdDZBDRW2FzxCMiONVU4VXryCzg347oVM0niEGjOxSQCwMjoIU5dAraaCl
+	p9lcGLc954nRZIWGiraDdQ7bgRuWGwW3B7K1x9B6vxSGEhbWd4oOLFGwZ9f3BaFOLAaijH4XsOySb
+	hzduA7DQ==;
 Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uEr9a-0008L7-VI; Tue, 13 May 2025 17:02:47 +0200
+	id 1uEr9b-0008L7-DQ; Tue, 13 May 2025 17:02:47 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: heiko@sntech.de
 Cc: quentin.schulz@cherry.de,
@@ -57,9 +57,9 @@ Cc: quentin.schulz@cherry.de,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v2 1/6] arm64: dts: rockchip: add basic mdio node to px30
-Date: Tue, 13 May 2025 17:02:29 +0200
-Message-ID: <20250513150234.2331221-2-heiko@sntech.de>
+Subject: [PATCH v2 2/6] arm64: dts: rockchip: move reset to dedicated eth-phy node on ringneck
+Date: Tue, 13 May 2025 17:02:30 +0200
+Message-ID: <20250513150234.2331221-3-heiko@sntech.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250513150234.2331221-1-heiko@sntech.de>
 References: <20250513150234.2331221-1-heiko@sntech.de>
@@ -73,36 +73,65 @@ Content-Transfer-Encoding: 8bit
 
 From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Using snps,reset-* properties for handling the phy-reset is deprecated
-and instead a real phy node should be defined that then contains the
-reset-gpios handling.
+Using snps,reset-* properties to handle the ethernet-phy resets is
+deprecated and instead a real phy node should be used.
 
-To facilitate this, add the core mdio node under the px30's gmac, similar
-to how the other Rockchip socs already do this.
+Move the Ringneck phy-reset properties to such a node
 
 Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- arch/arm64/boot/dts/rockchip/px30.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../boot/dts/rockchip/px30-ringneck.dtsi      | 22 ++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
-index 9137dd76e72c..feabdadfa440 100644
---- a/arch/arm64/boot/dts/rockchip/px30.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
-@@ -985,6 +985,12 @@ gmac: ethernet@ff360000 {
- 		resets = <&cru SRST_GMAC_A>;
- 		reset-names = "stmmaceth";
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi b/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
+index 142244d52706..ab232e5c7ad6 100644
+--- a/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
+@@ -83,9 +83,7 @@ &emmc {
+ 
+ /* On-module TI DP83825I PHY but no connector, enable in carrierboard */
+ &gmac {
+-	snps,reset-gpio = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
+-	snps,reset-active-low;
+-	snps,reset-delays-us = <0 50000 50000>;
++	phy-handle = <&dp83825>;
+ 	phy-supply = <&vcc_3v3>;
+ 	clock_in_out = "output";
+ };
+@@ -344,6 +342,18 @@ &io_domains {
+ 	status = "okay";
+ };
+ 
++&mdio {
++	dp83825: ethernet-phy@0 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0x0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&phy_rst>;
++		reset-assert-us = <50000>;
++		reset-deassert-us = <50000>;
++		reset-gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
++	};
++};
 +
-+		mdio: mdio {
-+			compatible = "snps,dwmac-mdio";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
+ &pinctrl {
+ 	emmc {
+ 		emmc_reset: emmc-reset {
+@@ -351,6 +361,12 @@ emmc_reset: emmc-reset {
+ 		};
  	};
  
- 	sdmmc: mmc@ff370000 {
++	ethernet {
++		phy_rst: phy-rst {
++			rockchip,pins = <3 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	leds {
+ 		module_led_pin: module-led-pin {
+ 			rockchip,pins = <1 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
 -- 
 2.47.2
 
