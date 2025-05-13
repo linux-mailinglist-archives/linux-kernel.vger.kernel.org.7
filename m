@@ -1,149 +1,215 @@
-Return-Path: <linux-kernel+bounces-646687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F73AB5F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC4AB5F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BBCC7B20CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC3E9468105
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8861F2C34;
-	Tue, 13 May 2025 22:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="QwG4SGSC"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE59120C49E;
+	Tue, 13 May 2025 22:17:34 +0000 (UTC)
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758BE1F92A;
-	Tue, 13 May 2025 22:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5801F2B83;
+	Tue, 13 May 2025 22:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747174550; cv=none; b=PPc+RpEeyuH77gYDKXCW5ER0jmQyeIk2W2ljQ/ec/CKyw6QCrsP1vuo8YAmmuxax0l4l/WiTZnDP0r9C8k5dcLJdtuE2QKPoYyqm43o97ut2LPi3ZH0AU5VPSwnms4EvcSoLDUS3nhqDi1SmbRyhfgjj2I+3+cb7OS9RHIfaoxw=
+	t=1747174654; cv=none; b=ZYwuVcsmLneYS2Pw3I10pYjvzC5rGM4j4Y5xg8VJplyP5CVKnuOyvadNHrjgoftINFU85J50UcMLSJomzOoHElBfJBq8rm0j/+ps+EFkFmrcRNwAj+892xUQ2Z3DXg9qlLV2aSlqo844W0J94MGs6qoy93EB5O4TPMR/rVZJDdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747174550; c=relaxed/simple;
-	bh=/6JGk2DoI6qFvLdA+3NLv30kEQpSMfwvorKLNIMJluk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dmjDv2M3G/yUY22n2AVEOuyj891cQT7ZQvfTkEUBhXWR1gIdzpw3uUDiR05UKqoHpwHXy2SPzIFBtMG7RQyF7AUFQBBfP2zizZyIa+ElXH/KjH+ZDmsehrAXydPQPrwTD9KComny5XUttaKcbUdoqP9RMT/NsGJ8M6bXIrEBIX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=QwG4SGSC; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1747174533; x=1747779333; i=spasswolf@web.de;
-	bh=/6JGk2DoI6qFvLdA+3NLv30kEQpSMfwvorKLNIMJluk=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QwG4SGSCK5aevOMdIURsAq9kUetkeW4CTIM48WKxYBODQsv4BCM9oirNYOP04Ce6
-	 EOnmo97fUDx6lyuvBWAXyZQRpGfejOTvs704rREXhXfXvS9xsqnvnLjBE3+mgcPfP
-	 8lEcMGmSP/Fh3P+29/AOQE2nFrvnvsj8Kdk3Dqm7p0bWCgQpd4OVlsPwesYQ29geZ
-	 +WeC4O5ctZcuLpDpcAv2Hykrm/zbAWjF3RFUJnDNUzTYhs6k3eIyAciQVQx2aDbru
-	 aEiegcRE/NVb7jaIqqMcteeb8nkCy683fHFkdDqJeDRpHnU1W7HtRR8F5mXPEJmcf
-	 jla7kZlcEposz524QQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
- (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1M6HG8-1uLagf1glM-0019ST; Wed, 14 May 2025 00:15:33 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: linux-kernel@vger.kernel.org
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	linux-next@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Johannes Berg <johannes.berg@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: lockup and kernel panic in linux-next-202505{09,12} when compiled with clang
-Date: Wed, 14 May 2025 00:15:29 +0200
-Message-ID: <20250513221530.2966-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: 20250513164807.51780-1-spasswolf@web.de
-References: 
+	s=arc-20240116; t=1747174654; c=relaxed/simple;
+	bh=EqI+Zbf+yprFaOnpVj9CMNRe5vztGlLJaZ5wSl6b0nc=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=IC376gfu5/cNxtEZcrecJsqkN8pD9qTqnJS41lVbAE96Ww3F84uHI8UGgX7505sOUtLXQ04/ItVryTimtZDG2HYFSoDdB3YRKfRIdczQbsn+pN6Xuc84VqjfzeNns3L3I3nAJGWzj5agg+tgIJEPAdeqg8AbH/ttD+zObfKyB+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:44070)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uExwB-005sqC-Le; Tue, 13 May 2025 16:17:23 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:34512 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uExwA-004yCk-FO; Tue, 13 May 2025 16:17:23 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>,  Mateusz Guzik <mjguzik@gmail.com>,  Kees
+ Cook <keescook@chromium.org>,  Christian Brauner <brauner@kernel.org>,
+  Jorge Merlino <jorge.merlino@canonical.com>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Thomas Gleixner <tglx@linutronix.de>,  Andy
+ Lutomirski <luto@kernel.org>,  Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>,  Andrew Morton <akpm@linux-foundation.org>,
+  linux-mm@kvack.org,  linux-fsdevel@vger.kernel.org,  John Johansen
+ <john.johansen@canonical.com>,  Paul Moore <paul@paul-moore.com>,  James
+ Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
+  Stephen Smalley <stephen.smalley.work@gmail.com>,  Eric Paris
+ <eparis@parisplace.org>,  Richard Haines
+ <richard_c_haines@btinternet.com>,  Casey Schaufler
+ <casey@schaufler-ca.com>,  Xin Long <lucien.xin@gmail.com>,  "David S.
+ Miller" <davem@davemloft.net>,  Todd Kjos <tkjos@google.com>,  Ondrej
+ Mosnacek <omosnace@redhat.com>,  Prashanth Prahlad <pprahlad@redhat.com>,
+  Micah Morton <mortonm@chromium.org>,  Fenghua Yu <fenghua.yu@intel.com>,
+  Andrei Vagin <avagin@gmail.com>,  linux-kernel@vger.kernel.org,
+  apparmor@lists.ubuntu.com,  linux-security-module@vger.kernel.org,
+  selinux@vger.kernel.org,  linux-hardening@vger.kernel.org,
+  oleg@redhat.com
+References: <20221006082735.1321612-1-keescook@chromium.org>
+	<20221006082735.1321612-2-keescook@chromium.org>
+	<20221006090506.paqjf537cox7lqrq@wittgenstein>
+	<CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
+	<86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
+	<h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
+	<D03AE210-6874-43B6-B917-80CD259AE2AC@kernel.org>
+	<CAG48ez0aP8LaGppy6Yon7xcFbQa1=CM-HXSZChvXYV2VJZ8y7g@mail.gmail.com>
+Date: Tue, 13 May 2025 17:16:49 -0500
+In-Reply-To: <CAG48ez0aP8LaGppy6Yon7xcFbQa1=CM-HXSZChvXYV2VJZ8y7g@mail.gmail.com>
+	(Jann Horn's message of "Tue, 13 May 2025 23:09:48 +0200")
+Message-ID: <871pss17hq.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:QbM8WIz0yz2M2XOuky6oi/SH1BqLt0DoQE3r1SGxkHNDE+nYO+o
- Z+MgfqWB1irJ2/wf7NhbprDk6okV6W1dRwvWOhIINzhxUiFykrZ8+9bG25+aBfQeLBxjs5f
- DD6UpOgi4hjeptdj8IcPmKHFxf7yljs/7K2WSgd6HBu2lmsYxBc0fIKpZ7fqnOBGn3r8t7Y
- oVnsqAg9ozs0CcFTnv73Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Lu/Gg/EVVtM=;zZgYsZTJLB6AiZLcYNgqMRQfgif
- 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
- bk2q1kAn96Yrc=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-XM-SPF: eid=1uExwA-004yCk-FO;;;mid=<871pss17hq.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX19MKpBmCOdib17JedfBy1DoBc7s2t+3dns=
+X-Spam-Level: ****
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ****;Jann Horn <jannh@google.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 686 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (1.6%), b_tie_ro: 9 (1.4%), parse: 1.44 (0.2%),
+	 extract_message_metadata: 6 (0.9%), get_uri_detail_list: 3.2 (0.5%),
+	tests_pri_-2000: 3.5 (0.5%), tests_pri_-1000: 6 (0.8%),
+	tests_pri_-950: 1.26 (0.2%), tests_pri_-900: 1.06 (0.2%),
+	tests_pri_-90: 78 (11.4%), check_bayes: 77 (11.2%), b_tokenize: 14
+	(2.1%), b_tok_get_all: 14 (2.0%), b_comp_prob: 4.6 (0.7%),
+	b_tok_touch_all: 39 (5.8%), b_finish: 0.96 (0.1%), tests_pri_0: 551
+	(80.4%), check_dkim_signature: 0.58 (0.1%), check_dkim_adsp: 3.4
+	(0.5%), poll_dns_idle: 1.49 (0.2%), tests_pri_10: 2.3 (0.3%),
+	tests_pri_500: 15 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-commit 97f4b999e0c8 ("genirq: Use scoped_guard() to shut clang up") may me have been
-a false lead, I reverted the following commit in next-20250512 and the boot failure
-is still there.
+Jann Horn <jannh@google.com> writes:
 
-73e2e0671c90 (HEAD -> clang_panic) Revert "genirq/manage: Convert to lock guards"
-ff2e5dfa1c21 Revert "genirq/manage: Rework irq_update_affinity_desc()"
-f2be1d787117 Revert "genirq/manage: Rework __irq_apply_affinity_hint()"
-bc2493e2bdef Revert "genirq/manage: Rework irq_set_vcpu_affinity()"
-8c1736260f99 Revert "genirq/manage: Rework __disable_irq_nosync()"
-dd529a9bc52d Revert "genirq/manage: Rework enable_irq()"
-75316d9120cf Revert "genirq/manage: Rework irq_set_irq_wake()"
-544ff63947f5 Revert "genirq/manage: Rework can_request_irq()"
-198028713b99 Revert "genirq/manage: Rework irq_set_parent()"
-70a3f6953491 Revert "genirq/manage: Rework enable_percpu_irq()"
-bcb28ca2603d Revert "genirq/manage: Rework irq_percpu_is_enabled()"
-5858d87ac7e3 Revert "genirq/manage: Rework disable_percpu_irq()"
-1a1f97a3dde0 Revert "genirq/manage: Rework prepare_percpu_nmi()"
-e249ccf0dde0 Revert "genirq/manage: Rework teardown_percpu_nmi()"
-9be3639bdde9 Revert "genirq: Remove irq_[get|put]_desc*()"
-942b93a1ee9c Revert "genirq/manage: Rework irq_get_irqchip_state()"
-8f731e7b7475 Revert "genirq/manage: Rework irq_set_irqchip_state()"
-5bb621187696 Revert "genirq: Use scoped_guard() to shut clang up"
-6539255c6012 Revert "wifi: free SKBTX_WIFI_STATUS skb tx_flags flag"
-edef45700477 (tag: next-20250512, origin/master, origin/HEAD, master) Add linux-next specific files for 20250512
+> On Tue, May 13, 2025 at 10:57=E2=80=AFPM Kees Cook <kees@kernel.org> wrot=
+e:
+>> On May 13, 2025 6:05:45 AM PDT, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>> >Here is my proposal: *deny* exec of suid/sgid binaries if fs_struct is
+>> >shared. This will have to be checked for after the execing proc becomes
+>> >single-threaded ofc.
+>>
+>> Unfortunately the above Chrome helper is setuid and uses CLONE_FS.
+>
+> Chrome first launches a setuid helper, and then the setuid helper does
+> CLONE_FS. Mateusz's proposal would not impact this usecase.
+>
+> Mateusz is proposing to block the case where a process first does
+> CLONE_FS, and *then* one of the processes sharing the fs_struct does a
+> setuid execve(). Linux already downgrades such an execve() to be
+> non-setuid, which probably means anyone trying to do this will get
+> hard-to-understand problems. Mateusz' proposal would just turn this
+> hard-to-debug edgecase, which already doesn't really work, into a
+> clean error; I think that is a nice improvement even just from the
+> UAPI standpoint.
+>
+> If this change makes it possible to clean up the kernel code a bit, even =
+better.
 
+What has brought this to everyone's attention just now?  This is
+the second mention of this code path I have seen this week.
 
-Bert Karwatzki
+AKA: security/commoncap.c:cap_bprm_creds_from_file(...)
+> ...
+> 	/* Don't let someone trace a set[ug]id/setpcap binary with the revised
+> 	 * credentials unless they have the appropriate permit.
+> 	 *
+> 	 * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
+> 	 */
+> 	is_setid =3D __is_setuid(new, old) || __is_setgid(new, old);
+>=20
+> 	if ((is_setid || __cap_gained(permitted, new, old)) &&
+> 	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+> 	     !ptracer_capable(current, new->user_ns))) {
+> 		/* downgrade; they get no more than they had, and maybe less */
+> 		if (!ns_capable(new->user_ns, CAP_SETUID) ||
+> 		    (bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)) {
+> 			new->euid =3D new->uid;
+> 			new->egid =3D new->gid;
+> 		}
+> 		new->cap_permitted =3D cap_intersect(new->cap_permitted,
+> 						   old->cap_permitted);
+> 	}
 
+The actual downgrade is because a ptrace'd executable also takes
+this path.
+
+I have seen it argued rather forcefully that continuing rather than
+simply failing seems better in the ptrace case.
+
+In general I think it can be said this policy is "safe".  AKA we don't
+let a shared fs struct confuse privileged applications.  So nothing
+to panic about.
+
+It looks like most of the lsm's also test bprm->unsafe.
+
+So I imagine someone could very carefully separate the non-ptrace case
+from the ptrace case but *shrug*.
+
+Perhaps:
+
+ 	if ((is_setid || __cap_gained(permitted, new_old)) &&
+ 	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+ 	     !ptracer_capable(current, new->user_ns))) {
++		if (!(bprm->unsafe & LSM_UNSAFE_PTRACE)) {
++			return -EPERM;
++		}
+  		/* downgrade; they get no more than they had, and maybe less */
+  		if (!ns_capable(new->user_ns, CAP_SETUID) ||
+  		    (bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)) {
+  			new->euid =3D new->uid;
+  			new->egid =3D new->gid;
+  		}
+  		new->cap_permitted =3D cap_intersect(new->cap_permitted,
+  						   old->cap_permitted);
+         }
+
+If that is what you want that doesn't look to scary.  I don't think
+it simplifies anything about fs->in_exec.  As fs->in_exec is set when
+the processing calling exec is the only process that owns the fs_struct.
+With fs->in_exec just being a flag that doesn't allow another thread
+to call fork and start sharing the fs_struct during exec.
+
+*Shrug*
+
+I don't see why anyone would care.  It is just a very silly corner case.
+
+Eric
 
