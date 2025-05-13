@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-646669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE74EAB5EF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:01:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3B2AB5ED5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79EEA1B479F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:01:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9AB4172C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771FD21C18C;
-	Tue, 13 May 2025 22:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DC720C49C;
+	Tue, 13 May 2025 21:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ERIPej2x"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VYO8tJDf"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035DE21ADB0;
-	Tue, 13 May 2025 22:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282062770B;
+	Tue, 13 May 2025 21:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747173603; cv=none; b=b8LrPoYBUGcPERasZb2d+WVi+OpQNVEjJpJ8DwAfORjIO+NLK3+aklF2KVTEkSlsYcsRcbvy9W70xEXtlXQ/eUSXhxw1uLXaNlOSK7L5ISCpOvkVP6spHcmqb3DbSKQHuNnFZKTv1BH8EYuwZKS+nJGQuY+s5UY0AT5EhYFruig=
+	t=1747173587; cv=none; b=higyN6/1TDYkDSE3SyRtMTCdFposuwTfsL84t1+8qa6lAH27K0Y44O6EapJX+YlU4+imELJGILpxHhsseUWlgvT0089e/zAyiei8nl/wK79MjWAjPw7ZzXOgQPnaKFKPvDLbvx5zN2T1PtKU54j5Kad776vh4HNdh1Vq8uCBxDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747173603; c=relaxed/simple;
-	bh=KytDEG2rZK2nxmftE17Y9osIJn/dpALlYzKwo0Q8mDQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pg1QT+0ZyJQixK3cavVbWzMQSclNXFAvnKrq7uJVj8ttkDH8yCa/y+OWL1Ydyv7S+HuV/RJbDr0x5D9NFcG91VB+fBcaqKy2mhqaLzzduECEWMseDQtCWPZj6jmN+2kehVdRJAFyNhs1XGoM+1uVPIM90bG+GGige9xNgxaHNeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ERIPej2x; arc=none smtp.client-ip=198.47.23.234
+	s=arc-20240116; t=1747173587; c=relaxed/simple;
+	bh=ntDm6nMYwj9nso877Gv0Ll0lYiGUYVC4kTqiZ2cOGrM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dhrYqJPLIDt+zCLV7PLrNmm4drkHQkQRFNvRdlZKH69ka3Gfl0vWF11gIandEnv5t9vFcLZoJldH2owBwuiMh9ouE5Lab0u9eYMZZum9q338oZOXDBxY+3Fa2u+DnkY/YZV6wmfL36rlJNvA+yQW/nUosT0w4EJR4DYgRYd5Z9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VYO8tJDf; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54DLxZs22431440
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 16:59:35 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54DLxa7l2425893;
+	Tue, 13 May 2025 16:59:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747173575;
-	bh=jnHT8pxDxVP+7w5heuoy29BHYqRqmLa4rbZcp55hLz8=;
-	h=From:To:CC:Subject:Date;
-	b=ERIPej2xrbzviCKtULWnltF915ieOQyQ737wTjYJ3yrGmUpTP4MagUxPdM8O0F1Pt
-	 EbklfBSl+HoN5NdjbmKOLjpTXimwonpHNs1xOKiqdUj5SdD12gZFIeRATv9Jfavpnm
-	 2HmrTZKeOXO4CeBS5q2InDFhaOwDku6AnqMAYj5Y=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54DLxZQb033002
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	s=ti-com-17Q1; t=1747173576;
+	bh=qmQfcLpiSyLwy3Zc5zbrGssZMtkDmMAcUwLjz7QJh1g=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=VYO8tJDfkIroqj/Xvx4yPWEaQDxkcQSISNZS4QLwOtrV7lPkoxtGea5Lc8+WeNbov
+	 ZuZbj0hZA8xyXfAuSXGX+EytnYg9dnLaqXDVb3hwpRsuM+27CSb4IETYJDFITFs53t
+	 xYyW1bqhZGTvTxxFRX13wy1+wHJP5KtFsJCcO3kI=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54DLxZ021005887
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Tue, 13 May 2025 16:59:35 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
  May 2025 16:59:34 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Tue, 13 May 2025 16:59:34 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54DLxYdB111031;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54DLxYdC111031;
 	Tue, 13 May 2025 16:59:34 -0500
 From: Judith Mendez <jm@ti.com>
 To: Judith Mendez <jm@ti.com>,
@@ -72,10 +72,12 @@ CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Andrew Davis <afd@ti.com>, <linux-kernel@vger.kernel.org>,
         <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 0/7] Introduce PRU UART driver
-Date: Tue, 13 May 2025 16:59:27 -0500
-Message-ID: <20250513215934.933807-1-jm@ti.com>
+Subject: [PATCH 1/7] dt-bindings: serial: add binding documentation for TI PRUSS UART
+Date: Tue, 13 May 2025 16:59:28 -0500
+Message-ID: <20250513215934.933807-2-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250513215934.933807-1-jm@ti.com>
+References: <20250513215934.933807-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,62 +88,77 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The PRU_ICSSG subsystems in am64x SoC, the PRU subsystem in am62 SoC, and
-PRU_ICSS subsystem in am335x SoC include a UART sub-module. This patch
-series introduces the driver and the corresponding binding documentation
-for this UART sub-module.
+From: Bin Liu <b-liu@ti.com>
 
-The DTS patches for adding PRU UART nodes and enabling PRU UART is added
-in this v1 version, but marked as DONOTMERGE since the patches only add
-context to this series.
+This adds the YAML DT binding for PRUSS UART on TI SoCs.
 
-This driver version has been tested on the following boards: am64x SK and
-am62x SK.
-
-The RFC version of this driver has been previously tested on am335x SK as
-well. DTS patches for enabling PRU UART for am335x SK will be sent as a
-separate series once this series is merged.
-
-Changes since RFC:
-- Add DTS patches 3-6
-- Fix include list
-- Switch to platform_get_resource & uart_read_port_properties
-- Remove custom speed hack in pruss8250_get_divisor
-- Use port->serial_out functions provided by core driver instead of
-  local writel() functions
-- Switch to UPIO_MEM32 since largest UART register is 18 bits in length
-- Cleanup whitspace, comments, variable/structure names, error paths
-  and GPL licensing
-
-Link to RFC:
-https://lore.kernel.org/all/20250501003113.1609342-1-jm@ti.com/
-
-Bin Liu (2):
-  dt-bindings: serial: add binding documentation for TI PRUSS UART
-  serial: 8250: Add PRUSS UART driver
-
-Judith Mendez (5):
-  dt-bindings: soc: ti: pruss: Add documentation for PRU UART support
-  DONOTMERGE: arm64: dts: ti: k3-am64-main: Add PRU UART nodes
-  DONOTMERGE: arm64: dts: ti: k3-am642-sk: Enable PRU UART
-  DONOTMERGE: arm64: dts: ti: k3-am62-main: Add PRU UART node
-  DONOTMERGE: arm64: dts: ti: k3-am62x-sk: Enable PRU UART
-
- .../bindings/serial/ti,pruss-uart.yaml        |  54 ++++++
- .../devicetree/bindings/soc/ti/ti,pruss.yaml  |   7 +
- arch/arm64/boot/dts/ti/k3-am62-main.dtsi      |   9 +
- .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  14 ++
- arch/arm64/boot/dts/ti/k3-am64-main.dtsi      |  18 ++
- arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  16 ++
- drivers/tty/serial/8250/8250_pruss.c          | 178 ++++++++++++++++++
- drivers/tty/serial/8250/Kconfig               |  11 ++
- drivers/tty/serial/8250/Makefile              |   1 +
- 9 files changed, 308 insertions(+)
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+ .../bindings/serial/ti,pruss-uart.yaml        | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/serial/ti,pruss-uart.yaml
- create mode 100644 drivers/tty/serial/8250/8250_pruss.c
 
-
-base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
+diff --git a/Documentation/devicetree/bindings/serial/ti,pruss-uart.yaml b/Documentation/devicetree/bindings/serial/ti,pruss-uart.yaml
+new file mode 100644
+index 000000000000..34a03d572333
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/ti,pruss-uart.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/serial/ti,pruss-uart.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI PRUSS serial UART
++
++maintainers:
++  - Bin Liu <b-liu@ti.com>
++
++description: |
++  The PRU subsystem has a serial UART peripheral based on the industry
++  standard TL16C550, with 16-byte TX/RX FIFOs.
++
++allOf:
++  - $ref: /schemas/serial.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: ti,pruss-uart
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++    description: |
++      PRU UART interrupt mappings, containing an entry of 3 cell-values.
++      The first is the PRU System Event ID for PRU UART Interrupt Request.
++      The second is the PRU interrupt channel ID.
++      The third is the PRU host interrupt ID.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    pruss_uart: serial@28000 {
++        compatible = "ti,pruss-uart";
++        reg = <0x28000 0x40>;
++        clocks = <&k3_clks 81 13>;
++        interrupt-parent = <&pruss_intc>;
++        interrupts = <6 4 4>;
++    };
 -- 
 2.49.0
 
