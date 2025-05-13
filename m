@@ -1,111 +1,224 @@
-Return-Path: <linux-kernel+bounces-645585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2081AB501D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C802AB5018
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2E33B4ADD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD0C0188BC1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0115B23908B;
-	Tue, 13 May 2025 09:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69C9238C26;
+	Tue, 13 May 2025 09:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="n7hpxsMF"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5663721421A;
-	Tue, 13 May 2025 09:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VCiENWgH"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A5C237717;
+	Tue, 13 May 2025 09:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747129362; cv=none; b=cffLjm1cwTmTUoBvq56p2c96Azag0cQav8Vuzg6dUNvJirCqhpeQ8k+I6vl1VEm+/Ifa2kcUvMT/sdIyEQfZx6Cs5j9NNsNWm9lVD4rED3s7dCiANw8dpbm0psDdJ91QWXwkxo9z95Ci8G0QlauSNOPOj16/cMC8u7Ncs2hivhM=
+	t=1747129324; cv=none; b=be7aTniwv9Y4ZDYUFBGwc8wZasAWLdvh/UBwF8vFix4g3tYkoUt++DAt7n01sfWK0AMR/abPvHtfAE4XrS9joMK7WnC626jEXT/TrBEocvB9P7PaEwrRJmJ6+4zpRA4c8v6plTCzZ/sJGjuCSmWNm6kSq0wXK+3+dTfA1GJD+ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747129362; c=relaxed/simple;
-	bh=M+yKmN1koIZ36ERi0qheu0QfoMnio0RKdbnPCYGl9/0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Cm4/YI2NSDRh3fRMoH02uWV4wVIPNbJ/yfKWFeb1vZmZFI17Z+rmptYTTE52ufBGlfpZW6z4xtutwknIhj8McfaJLuVJtA/RS90Z06j2qzf/iJkOaZ0ggX84MKuDnOvv0PEYn+FTxSjqNSxgJU755gW93Kl4q2f3++zc0g8LrjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=n7hpxsMF reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=dogYMoWGOHSNgWDSY9Uko0mlmhk8IaMi8xlVmljwiJg=; b=n
-	7hpxsMFe8mUg2o6ez+GBSvysoC5DUhiWaNNwnAU2jj+Js60gDAXP+hmh9NmXIL6j
-	4E2BC8wr25QLmOaX6g0mD/J9yxzDCyzQDm0CH0ctY90mZwhnT1Wi84m8nuWQWHfe
-	JvCM28wlqAHeeFFdPNz8vnT01SBJKuXaUDb0V/KlEo=
-Received: from 00107082$163.com ( [111.35.191.17] ) by
- ajax-webmail-wmsvr-40-110 (Coremail) ; Tue, 13 May 2025 17:41:37 +0800
- (CST)
-Date: Tue, 13 May 2025 17:41:37 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Mathias Nyman" <mathias.nyman@intel.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, surenb@google.com,
-	kent.overstreet@linux.dev
-Subject: Re: [RFC] USB: core/xhci: add a buffer in urb for host controller
- private data
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <76b2a5ae-31b1-4627-aa59-8ff023654c3d@intel.com>
-References: <20250512150724.4560-1-00107082@163.com>
- <76b2a5ae-31b1-4627-aa59-8ff023654c3d@intel.com>
-X-NTES-SC: AL_Qu2fBf2Ztkoi4SadYukZnEYQheY4XMKyuPkg1YJXOp80vyTg8BgQZm9MAUHHws6uNDKhoAi0TT1A0eZkcIVZfqSsHLL8VHnwAltxxnfdVEgh
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1747129324; c=relaxed/simple;
+	bh=qBLNBy/gq445RAkBYHQEtoxXsl0N+NBg01MgE36mwbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IatMWohm+7aSZ5BoqWFLNY8DMSTOX1/lqJu43JWMOnPeJGyF526tLm51miObvx/g3hGRnKStL/gSDYCcp8HuGrV+gXIYAr4Kq5VNqGNUKIh9wy2gb564mtxmhZ5pqohJZQcHPUPsqeBGX8mhg6lmkDY5SAqzVD7j5i0nKM98ma0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VCiENWgH; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=js5CdpYS9yFA/MzQbhixDBeZ4NnfAUqz+EhtbAMZ180=; b=VCiENWgHxoFeNq368K6MRyaFcu
+	ifPbpMsoCnYsfCxINGjEfCZPR63eukf0vd3F8365MwYkW9ssTdMgJiHqSyEuiC+MM0L4fr8iR3sUy
+	JgBjBvzhX9KWoSOE8UHs2LJhPytfs/x0nwp+nODRVq401eNDc8Txm3SkMZZjdLv7CqoDym7SL3ki3
+	bdsxAvFmyfAiGC1cXZXzHvwqyKXUzOX5tIqg5JpBTpDohty4f3tScHXyf3P8frhmCMmQEA9G78el7
+	CxNBqRbjBzCQPY3xCmon1LzemNW3e9LULkUYa2gmwcISrnX3fpJuMop/+hdTco5lg558EpUJmvbI3
+	8F5sqRMg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uEm95-0000000GuC2-3uRT;
+	Tue, 13 May 2025 09:41:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4F3E0300787; Tue, 13 May 2025 11:41:55 +0200 (CEST)
+Date: Tue, 13 May 2025 11:41:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, namhyung@kernel.org, irogers@google.com,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, eranian@google.com,
+	ctshao@google.com, tmricht@linux.ibm.com
+Subject: Re: [RFC PATCH 01/15] perf: Fix the throttle logic for a group
+Message-ID: <20250513094155.GD25763@noisy.programming.kicks-ass.net>
+References: <20250506164740.1317237-1-kan.liang@linux.intel.com>
+ <20250506164740.1317237-2-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <49a5d0b7.9095.196c9056aff.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:bigvCgDnD+DSEyNojXMDAA--.31721W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hVMqmgjDQV06AADs9
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506164740.1317237-2-kan.liang@linux.intel.com>
 
-CgpBdCAyMDI1LTA1LTEzIDE3OjI3OjM0LCAiTWF0aGlhcyBOeW1hbiIgPG1hdGhpYXMubnltYW5A
-aW50ZWwuY29tPiB3cm90ZToKPkhpIERhdmlkCj4KPk9uIDEyLjUuMjAyNSAxOC4wNywgRGF2aWQg
-V2FuZyB3cm90ZToKPj4gLS0tCj4+IEkgd2FzIGNoZWNraW5nIG1lbW9yeSBhbGxvY2F0aW9uIGJl
-aGF2aW9ycyAodmlhIG1lbW9yeSBwcm9maWxpbmdbMV0pLAo+PiB3aGVuIEkgbm90aWNlIGEgaGln
-aCBmcmVxdWVudCBtZW1vcnkgYWxsb2NhdGlvbiBpbiB4aGNpX3VyYl9lbnF1ZXVlLCBhYm91dAo+
-PiAyNTAvcyB3aGVuIHVzaW5nIGEgVVNCIHdlYmNhbS4gSWYgdGhvc2UgYWxsb2NlZCBidWZmZXIg
-Y291bGQgYmUga2VwdCBhbmQKPj4gcmV1c2VkLCBsb3RzIG9mIG1lbW9yeSBhbGxvY2F0aW9ucyBj
-b3VsZCBiZSBhdm9pZCBvdmVyIHRpbWUuCj4+IAo+PiBUaGlzIHBhdGNoIGlzIGp1c3QgYSBQT0Ms
-IGFib3V0IDAvcyBtZW1vcnkgYWxsb2NhdGlvbiBpbiB4aGNpIHdpdGggdGhpcwo+PiBwYXRjaCwg
-d2hlbiBJIHVzZSBteSBVU0IgZGV2aWNlcywgd2ViY2FtL2tleWJvYXJkL21vdXNlLgo+Cj5UaGFu
-a3MgZm9yIGxvb2tpbmcgYXQgdGhpcywgdGhpcyBpcyBzb21ldGhpbmcgdGhhdCBvYnZpb3VzbHkg
-bmVlZHMgbW9yZQo+YXR0ZW50aW9uCj4KPj4gCj4+IEEgZHluYW1pYyBjYWNoZWQgbWVtb3J5IHdv
-dWxkIGJlIGJldHRlcjogVVJCIGtlZXAgaG9zdCBjb250cm9sbGVyJ3MKPj4gcHJpdmF0ZSBkYXRh
-LCBpZiBsYXJnZXIgc2l6ZSBidWZmZXIgbmVlZGVkIGZvciBwcml2YXRlIGRhdGEsIG9sZCBidWZm
-ZXIKPj4gcmVsZWFzZWQgYW5kIGEgbGFyZ2VyIGJ1ZmZlciBhbGxvY2VkLgo+PiAKPj4gSSBkaWQg
-bm90IG9ic2VydmUgYW55IG5hZ2F0aXZlIGltcGFjdCB3aXRoIHhoY2kncyAyNTAvcyBhbGxvY2F0
-aW9ucwo+PiB3aGVuIHVzaW5nIG15IHN5c3RlbSwgaGVuY2Ugbm8gbWVhc3VyZW1lbnQgb2YgaG93
-IHVzZWZ1bCB0aGlzIGNoYW5nZXMKPj4gY2FuIG1ha2UgdG8gdXNlci4gSnVzdCB3YW50IHRvIGNv
-bGxlY3QgZmVlZGJhY2tzIGJlZm9yZSBwdXR0aW5nIG1vcmUKPj4gZWZmb3J0Lgo+PiAKPgo+SSB0
-aGluayB3ZSBjYW4gbWFrZSBhIHhoY2kgaW50ZXJuYWwgc29sdXRpb24gdGhhdCBkb2Vzbid0IGFm
-ZmVjdCBvdGhlciBob3N0cwo+b3IgdXNiIGNvcmUuCgpZZXMsICBteSBsYXRlc3QgcGF0Y2hlcyBz
-ZXBhcmF0ZXMgeGhjaSBjaGFuZ2VzIGZyb20gIHVzYmNvcmUgLgo+Cj5Ib3cgYWJvdXQgYWRkaW5n
-IGEgbGlzdCBvZiBzdHJ1Y3QgdXJiX3ByaXYgbm9kZXMgZm9yIGV2ZXJ5IHVzYiBkZXZpY2UsIG9y
-IG1heWJlCj5ldmVuIHBlciBlbmRwb2ludD8gaS5lLiB0byBzdHJ1Y3QgeGhjaV92aXJ0X2Rldmlj
-ZSBvciAgc3RydWN0IHhoY2lfdmlydF9lcC4KPgo+QWRkIHNpemUgYW5kIGxpc3RfaGVhZCBlbnRy
-aWVzIHRvIHN0cnVjdCB1cmJfcHJpdi4KPgpkZXZpY2UgbGV2ZWwgbWVtcG9vbCBjb3VsZCBiZSB2
-ZXJ5IGNvbXBsaWNhdGVkLCBJIHRoaW5rIGEgc2luZ2xlIG1lbW9yeSBwb29sIGhvbGQgYnkgVVJC
-CndvdWxkIGJlIG11Y2ggc2ltcGxlci4gKENvdWxkIHlvdSBoZWxwICB0YWtlIGEgbG9vayBhdCB0
-aGlzIHBhdGNoOgpodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMjUwNTEzMDU1NDQ3LjU2
-OTYtMS0wMDEwNzA4MkAxNjMuY29tLykgCgo+SW4geGhjaV91cmJfZW5xdWV1ZSgpIHBpY2sgdGhl
-IGZpcnN0IHVyYl9wcml2IG5vZGUgZnJvbSBsaXN0IGlmIGl0IGV4aXN0cyBhbmQgaXMKPmxhcmdl
-IGVub3VnaCwgb3RoZXJ3aXNlIGp1c3QgYWxsb2NhdGUgYSBuZXcgb25lIGFuZCBzZXQgdGhlIHNp
-emUuCj4KPldoZW4gZ2l2aW5nIGJhY2sgdGhlIFVSQiB6ZXJvIGV2ZXJ5dGhpbmcgaW4gdGhlIHN0
-cnVjdCB1cmJfcHJpdiBleGNlcHQgdGhlIHNpemUsCj5hbmQgYWRkIGl0IHRvIHRoZSBsaXN0Lgo+
-Cj5XaGVuIHRoZSBkZXZpY2UgaXMgZnJlZWQgdGhlcmUgc2hvdWxkbid0IGJlIGFueSBub2RlcyBs
-ZWZ0IGluIHRoZSBsaXN0LCBidXQgaWYKPnRoZXJlIGFyZSB0aGVuIHdhcm4gYW5kIGZyZWUgdGhl
-bS4KPgo+SXNvYyB0cmFuc2ZlcnMgYXJlIHRoZSBvbmVzIHdpdGggb2RkIHVyYl9wcml2IHNpemVz
-LiBJZiB3ZSBoYXZlIGEgcGVyIGRldmljZSBvcgo+cGVyIGVuZHBvaW50IHVyYl9wcml2IGxpc3Qg
-dGhlbiBzaXplcyB3aWxsIG1hdGNoIGJldHRlci4KCklmIHRoZSBtZW1wb29sIGlzIGluIFVSQiwg
-dGhlbiBvbmx5IGxhcmdlc3Qgc2l6ZSBtYXR0ZXJzLCBzaW5jZSBubyB0d28gSEMgY2FuIG93biB0
-aGUgVVJCCmF0IHRoZSBzYW1lIHRpbWUuCgo+Cj5UaGFua3MKPk1hdGhpYXMKPgoKVGhhbmtzIGZv
-ciB0aGUgY29tbWVudHMgYW5kIHN1Z2dlc3Rpb25zLgpEYXZpZA==
+On Tue, May 06, 2025 at 09:47:26AM -0700, kan.liang@linux.intel.com wrote:
+
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index a84abc2b7f20..eb0dc871f4f1 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2734,6 +2734,38 @@ void perf_event_disable_inatomic(struct perf_event *event)
+>  static void perf_log_throttle(struct perf_event *event, int enable);
+>  static void perf_log_itrace_start(struct perf_event *event);
+>  
+> +static void perf_event_group_unthrottle(struct perf_event *event, bool start_event)
+> +{
+> +	struct perf_event *leader = event->group_leader;
+> +	struct perf_event *sibling;
+> +
+> +	if (leader != event || start_event)
+> +		leader->pmu->start(leader, 0);
+> +	leader->hw.interrupts = 0;
+> +
+> +	for_each_sibling_event(sibling, leader) {
+> +		if (sibling != event || start_event)
+> +			sibling->pmu->start(sibling, 0);
+> +		sibling->hw.interrupts = 0;
+> +	}
+> +
+> +	perf_log_throttle(leader, 1);
+> +}
+> +
+> +static void perf_event_group_throttle(struct perf_event *event)
+> +{
+> +	struct perf_event *leader = event->group_leader;
+> +	struct perf_event *sibling;
+> +
+> +	leader->hw.interrupts = MAX_INTERRUPTS;
+> +	leader->pmu->stop(leader, 0);
+> +
+> +	for_each_sibling_event(sibling, leader)
+> +		sibling->pmu->stop(sibling, 0);
+> +
+> +	perf_log_throttle(leader, 0);
+> +}
+
+Urgh, this seems inconsistent at best.
+
+ - unthrottle will set interrupts to 0 for the whole group
+ - throttle will set interrupts for leader
+   while the old code would set interrupts for event.
+ - interrupts was written with event stopped, while now you consistently
+   write when started
+ - both now issue perf_log_throttle() on leader, whereas previously it
+   was issued on event.
+
+IOW
+
+before:				after:
+ event stops			 leader MAX_INTERRUPTS
+ event MAX_INTERRUPTS		 event group stops
+ event logs			 leader logs
+
+ event 0			 event group 0
+ event starts			 event group starts
+ event logs			 leader logs
+
+Like said, a rather inconsistent and random collection of things.
+
+
+
+What's wrong with something simple like:
+
+static void perf_event_throttle(struct perf_event *event, bool start)
+{
+	event->hw.interrupts = 0;
+	if (start)
+		event->pmu->start(event, 0);
+	perf_log_throttle(event, 1);
+}
+
+static void perf_event_unthrottle(struct perf_event *event)
+{
+	event->pmu->stop(event, 0);
+	event->hw.interrupts = MAX_INTERRUPTS;
+	perf_log_throttle(event, 0);
+}
+
+static void perf_event_throttle_group(struct perf_event *event, bool start)
+{
+	struct perf_event *sibling, *leader = event->group_leader;
+
+	perf_event_throttle(leader, start);
+	for_each_sibling_event(sibling, leader)
+		perf_event_throttle(sibling, start);
+}
+
+static void perf_event_unthrottle_group(struct perf_event *event)
+{
+	struct perf_event *sibling, *leader = event->group_leader;
+
+	perf_event_unthrottle(leader);
+	for_each_sibling_event(sibling, leader)
+		perf_event_unthrottle(sibling);
+}
+
+That way:
+
+before:				after:
+ event stops			 event group stops
+ event MAX_INTERRUPTS		 event group MAX_INTERRUPTS
+ event logs			 event group logs
+
+ event 0			 event group 0
+ event starts			 event group starts
+ event logs			 event group logs
+
+All that was done before is still done - no change in behaviour for
+event. Its just that the rest of the group is now taken along for the
+ride.
+
+> @@ -6421,14 +6451,6 @@ static void __perf_event_period(struct perf_event *event,
+>  	active = (event->state == PERF_EVENT_STATE_ACTIVE);
+>  	if (active) {
+>  		perf_pmu_disable(event->pmu);
+> -		/*
+> -		 * We could be throttled; unthrottle now to avoid the tick
+> -		 * trying to unthrottle while we already re-started the event.
+> -		 */
+> -		if (event->hw.interrupts == MAX_INTERRUPTS) {
+> -			event->hw.interrupts = 0;
+> -			perf_log_throttle(event, 1);
+> -		}
+>  		event->pmu->stop(event, PERF_EF_UPDATE);
+>  	}
+>  
+> @@ -6436,6 +6458,12 @@ static void __perf_event_period(struct perf_event *event,
+>  
+>  	if (active) {
+>  		event->pmu->start(event, PERF_EF_RELOAD);
+> +		/*
+> +		 * We could be throttled; unthrottle now to avoid the tick
+> +		 * trying to unthrottle while we already re-started the event.
+> +		 */
+> +		if (event->group_leader->hw.interrupts == MAX_INTERRUPTS)
+> +			perf_event_group_unthrottle(event, false);
+>  		perf_pmu_enable(event->pmu);
+>  	}
+>  }
+
+This change seems random. Also, note that I'm kicking myself for the
+total lack of useful information in commit 1e02cd40f151.
+
+Notably, we're calling this from event_function_call(), this means we're
+having IRQs disabled and are running on the events CPU. How can we
+interact with the tick?
+
+
 
