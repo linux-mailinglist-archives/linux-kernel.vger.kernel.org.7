@@ -1,124 +1,209 @@
-Return-Path: <linux-kernel+bounces-646014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078E6AB56A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:00:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DC2AB56AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625854A3EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677773A474F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507292BCF49;
-	Tue, 13 May 2025 14:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FF72BCF69;
+	Tue, 13 May 2025 14:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OkIM9Vko"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZxQtcR4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084D745BE3;
-	Tue, 13 May 2025 14:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4AB27FB39;
+	Tue, 13 May 2025 14:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747144839; cv=none; b=QWGQPJ2ky7CzgTgv9t2FP7H7LP5QOHZki72rAy9DO3QwEl1gOiynDJOCz+xhfJQ43G0K4EMzYFF/yvadzH/N/HvjKYIqNKrI6ZhiwUArOQ46ZsFZotS9U44WUF53K2LYraAEucthYjBEznsAkVc/qOi4y8I38n8CGruuG8VOzG0=
+	t=1747144883; cv=none; b=YRyEccW/i88J1BRd8SHsR9/U4Q3jtvtuPVl8E76+W8QyfEomdms/O/FeskDjRAA7rfSig1YnYKBu61Ydo8tnXiVcAWeRBXKQaLCFTTw4gHPeH69dnrC/Sc6Ldva0wNn/TX3Y7fTYZ8bqHT3A0aOU+x2V1hbwAB3dlGj8GSxolcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747144839; c=relaxed/simple;
-	bh=2V3RJMoSdH5GN6pzpuraWftQOkguKespuzVKhIClrls=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pzejwLTtW/MWeasoODTOpBrzESwTZDKyogXbRLoQGn6qUz8cNFUhxW/4kaGLka0YtiN3/SOYEl21p0qY7yjD0iuVOYSfviY1OD1SdeIMk4pbmiPezAX8oJuZVDgMLLKE3Yn45xvlSYal1mhH63liz6jDX8turRgUUddQAGUsP3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OkIM9Vko; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EA5FF1FCEB;
-	Tue, 13 May 2025 14:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747144829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LOCvs6S0yB1k4/Je2C7sy7pn1hJL4NhQpJPWsxB0p0s=;
-	b=OkIM9VkoWq05ApH3uJJ9wnlsWXx+ZJyx43JU/8tkdn4ITLtXlec4X0PbuOnOzVw+dDRCDM
-	JaMsu4mBipS7YaOCpJOfRFtKd5Koi16gx2B2wwGL/D0jnhPYSMrf/mIZrv8wQLhlpsWlwX
-	j0Gq07O7OKeKONpvDIWR5JbXrVvOLpkgNg9synD7W5if226RZQ5xfQXZ2/kqW/iq/S5AW+
-	v84s0t47wCgugU/S+eVdAGw2KQibsaLKiLMGhSL6nVJDoWvXB5jTt4LlHAPwozZDs/MwPC
-	QBgxdywjSeHZfLJbL3qRhs353JxQ+jVgIthgxtLa1zuylKN68Pl1Zy2mxzaSGg==
-Date: Tue, 13 May 2025 16:00:15 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v6 04/14] net: phy: dp83822: Add support for
- phy_port representation
-Message-ID: <20250513155957.700c1a05@kmaincent-XPS-13-7390>
-In-Reply-To: <20250507135331.76021-5-maxime.chevallier@bootlin.com>
-References: <20250507135331.76021-1-maxime.chevallier@bootlin.com>
-	<20250507135331.76021-5-maxime.chevallier@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747144883; c=relaxed/simple;
+	bh=v6Rm2EsNBVuAl6TS+dj1EgQWTYT0Iby5wb5SCwSNQ9g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vCLxCP6L1vGHMfu0DJDK+P8PtgDXfpi1vCbMXGSWMF49/Cdfg9fiXOC7lxrVtl8vy9CSytdatNDpA9tyxHqwzaBQa8ysOgkKgGRz5pgnwY7YJ5d66ol2uXsq/7yZNwOghN/ehn2QXll3u0HHznK2CzCxVTWKbaF1FUGjNNBXPgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZxQtcR4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C02A9C4CEE9;
+	Tue, 13 May 2025 14:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747144882;
+	bh=v6Rm2EsNBVuAl6TS+dj1EgQWTYT0Iby5wb5SCwSNQ9g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EZxQtcR4ph0vkw7ikUX3c3CAB6v+eQVzr3qIDlvRDcziv2s5bBkhhaoVnOuRfzJyj
+	 S5Hci/qa0OoTL7/D/roCg6VR3Q+ligKXGIWR5wEOQ97EvKhweh8dQ4+5aEgL17iqMP
+	 3fBIGP0LJ3fHhZY4bTB+g3VSyEmNDiUksrO3ODKpcHn2dEg4ToQjCtHjErpQjUkuKd
+	 OtZup+TjT1kBkRZ3mRVJWT6OIzYeUlOPlxt+sfpS4otUX5RrTxJqoUzUBH+4bAKk+Z
+	 NRkEXmePxe8PD7QLY6aumvcmpebFTCyhlxWww/N7yLkzJT2NFM1HcPoOfvzGM5vJsA
+	 +MmfoZaP0nfmA==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2d071fcd89bso2022182fac.3;
+        Tue, 13 May 2025 07:01:22 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxFDJV+UxcSRc/kOnRBdck1b0hiPuNPjZAGIJaCTXJrisWB/YE2
+	M7vTo+T4OiASfcSBPsKNE+DXQajaC31QsK3+AUT7ylc6H/UqGa5nlAq6Pzn8rbxDJUDyB9MBdpM
+	jUe98c6KbtmtcGxrzV1r5KY5IWOY=
+X-Google-Smtp-Source: AGHT+IH7Fv0nO3ps9l44Deuibp7LvKppm8chuSm6AFepZ8q20wlIH8lneFlf9aFpFkWUm78CukuKszd9bhPMZzk5MJI=
+X-Received: by 2002:a05:6870:ac11:b0:2d5:1894:8c29 with SMTP id
+ 586e51a60fabf-2dba435d651mr8383878fac.23.1747144880719; Tue, 13 May 2025
+ 07:01:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <2999205.e9J7NaK4W3@rjwysocki.net> <CAJZ5v0jLpKEgAodWx8G0k127vMUe-J1rGkCEreRP7a1dQXT2vA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jLpKEgAodWx8G0k127vMUe-J1rGkCEreRP7a1dQXT2vA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 13 May 2025 16:01:08 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gcgMJ-qihgc3_OF4djxAy8K0i-cmnjRe4AQrc_YEu4DQ@mail.gmail.com>
+X-Gm-Features: AX0GCFtctmpLuypFLtk5Ny2JrEMqafth8YnYP7vVwtioEKYPgbRKcct9jYOiFec
+Message-ID: <CAJZ5v0gcgMJ-qihgc3_OF4djxAy8K0i-cmnjRe4AQrc_YEu4DQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] cpufreq: intel_pstate: Enable EAS on hybrid
+ platforms without SMT
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>, Christian Loehle <christian.loehle@arm.com>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdegvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudgrmeeiudemjehfkegtmegurgehjeemfeehsggsmegttdejudemiegsvdgsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdurgemiedumeejfhektgemuggrheejmeefhegssgemtgdtjedumeeisgdvsgdphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedupdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpt
- hhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqmhhsmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed,  7 May 2025 15:53:20 +0200
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On Tue, May 13, 2025 at 2:51=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Tue, May 6, 2025 at 10:49=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >
+> > Hi Everyone,
+> >
+> > This is a new (and most likely final) version of
+> >
+> > https://lore.kernel.org/linux-pm/3344336.aeNJFYEL58@rjwysocki.net/
+> >
+> > The most significant difference between it and the above is that schedu=
+til is
+> > now required for EAS to be enabled, like on the other platforms using E=
+AS,
+> > which means that intel_pstate needs to operate in the passive mode in o=
+rder
+> > to use it (the most straightforward way to switch it over to the passiv=
+e mode
+> > is to write "passive" to /sys/devices/system/cpu/intel_pstate/status).
+> >
+> > Accordingly, the changes that were needed for EAS to work without sched=
+util are
+> > not needed any more, so there is one patch less in the series because o=
+f that
+> > and patch [5/7] is simpler than its previous version because some chang=
+es made
+> > by it are not necessary any more.
+> >
+> > Another patch that has been dropped is
+> >
+> > https://lore.kernel.org/linux-pm/1964444.taCxCBeP46@rjwysocki.net/
+> >
+> > because it didn't take CPU online into account properly and it is not e=
+ssential
+> > for the current hardware anyway.
+> >
+> > There is a new patch, [7/7], which adds CAS/EAS/hybrid support descript=
+ion to
+> > the intel_pstate admin-guide documentation.
+> >
+> > The following paragraph from the original cover letter still applies:
+> >
+> > "The underlying observation is that on the platforms targeted by these =
+changes,
+> > Lunar Lake at the time of this writing, the "small" CPUs (E-cores), whe=
+n run at
+> > the same performance level, are always more energy-efficient than the "=
+big" or
+> > "performance" CPUs (P-cores).  This means that, regardless of the scale=
+-
+> > invariant utilization of a task, as long as there is enough spare capac=
+ity on
+> > E-cores, the relative cost of running it there is always lower."
+> >
+> > The first 2 patches depend on the current cpufreq material queued up fo=
+r 6.16
+> > in linux-pm.git/linux-next (and in linux-next proper) and are not reall=
+y
+> > depended on by the rest of the series, but I've decided to include them=
+ into
+> > this series because they have been slightly updated since the previous =
+version,
+> > mostly to take review feedback into account (I'm going to queue them up=
+ for
+> > 6.16 shortly because they don't appear to be objectionable).
+> >
+> > The next 2 patches (Energy Model code changes) were reviewed previously=
+, but
+> > they are only needed because of patch [5/7].
+> >
+> > Patch [5/7] has not changed much except that some changes made by the p=
+revious
+> > version have been dropped from it.  Also its changelog has been updated=
+.  It
+> > causes perf domains to be registered per CPU and in addition to the pri=
+mary cost
+> > component, which is related to the CPU type, there is a small component
+> > proportional to performance whose role is to help balance the load betw=
+een CPUs
+> > of the same type.
+> >
+> > The expected effect is still that the CPUs of the "low-cost" type will =
+be
+> > preferred so long as there is enough spare capacity on any of them.
+> >
+> > Patch [6/7] has been updated to walk all of the cache leaves and look f=
+or
+> > the ones with level equal to 3 because the check used in the previous v=
+ersion
+> > does not always work.
+> >
+> > The documentation patch, [7/7], is new.
+> >
+> > Please refer to the individual patch changelogs for details.
+>
+> This series along with the fix at
+>
+> https://lore.kernel.org/linux-pm/2806514.mvXUDI8C0e@rjwysocki.net/
+>
+> is now present in the experimental/intel_pstate/eas-final brangh in
+> linux-pm.git:
+>
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/l=
+og/?h=3Dexperimental/intel_pstate/eas-final
+>
+> and it has been added to the bleeding-edge branch for 0-day build testing=
+.
 
-> With the phy_port representation intrduced, we can use .attach_port to
-> populate the port information based on either the straps or the
-> ti,fiber-mode property. This allows simplifying the probe function and
-> allow users to override the strapping configuration.
->=20
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
+In order to test it, the kernel needs to be compiled with
+CONFIG_ENERGY_MODEL set.
 
-...
- =20
-> +static int dp83822_attach_port(struct phy_device *phydev, struct phy_port
-> *port) +{
-> +	struct dp83822_private *dp83822 =3D phydev->priv;
-> +	int ret;
-> +
-> +	if (port->mediums) {
-> +		if (phy_port_is_fiber(port))
-> +			dp83822->fx_enabled =3D true;
-> +	} else {
-> +		ret =3D dp83822_read_straps(phydev);
-> +		if (ret)
-> +			return ret;
-> +
-> +#ifdef CONFIG_OF_MDIO
+If at least some cores in the system are SMT-capable, SMT needs to be
+turned off (either in the BIOS setup or by passing nosmt to the kernel
+in the command line).
 
-if IS_ENABLED(CONFIG_OF_MDIO) seems to be more used than ifdef
+Finally, schedutil needs to be the cpufreq governor which requires
+intel_pstate to operate in the passive mode (schedutil is the default
+governor in that case).  The most straightforward way to switch it
+into the passive mode is to write "passive" to
+/sys/devices/system/cpu/intel_pstate/status (it may also be started in
+the passive mode as described in
+https://www.kernel.org/doc/html/latest/admin-guide/pm/intel_pstate.html).
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Note that you can compare the default non-EAS configuration of
+intel_pstate to the one with EAS enabled by switching it between the
+"active" and "passive" modes via sysfs (no reboots needed).
+
+Thanks!
 
