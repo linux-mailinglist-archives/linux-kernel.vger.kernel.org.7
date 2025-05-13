@@ -1,791 +1,207 @@
-Return-Path: <linux-kernel+bounces-645043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D8AAB483D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5122AAB4828
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F3018865A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 00:08:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44607465D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 00:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3540717583;
-	Tue, 13 May 2025 00:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EAF1DFF8;
+	Tue, 13 May 2025 00:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IQvGxLAf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9x4nIZK"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD587E571;
-	Tue, 13 May 2025 00:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3BA50;
+	Tue, 13 May 2025 00:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747094821; cv=none; b=LK5KsaiVYUmujLN1DLNRAMPlvz5IA+zwVur9TToSIjEPiAQidM9moaZxS7z3DR7kwaHgO88DBKMkD8pL8eXFbLDZw6yHjPXvX9FFf7mZhrvCUtRTyVHF/KWIk2NeCznfrrnSBr+P5XGh++yx8RwrWDMkCLyYk/bGndguBge9c00=
+	t=1747094785; cv=none; b=jT4JbzcKxWtfJrIreWOK64OLw+B9UiqfmWevkvA0vDJ92naY9hyGXWLJBSv1HyALT+VYF06oaF7RHGQ3qo9gMTc7wcqmCHym+pQjCcgEliF42F/Y0LquFjSe8ndDkUDo7tFegOatlrjWqHXeQajfIn+wBoe3S/zOuaW3G9gvwAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747094821; c=relaxed/simple;
-	bh=+VQ0wmtyeYsSG5oaxBcEeZJlBZKC9hen8ExVWEztkgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QcS2UJ7jZM4sUbSIVXRy034nzDDWDNfjBtGvCoIA1d3QZ42xhlWOC9O0cyDWTaBzi62CSFMLnQ+6pFT8R5KR7c9OtzdLQv80S2aFryNsowNmntZZLOy8Oup1k2Vf9ma2JKpg6uZTNEYChqR9IXq60xSbRiL5HNtrkoSN8rb+/Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IQvGxLAf; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747094819; x=1778630819;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+VQ0wmtyeYsSG5oaxBcEeZJlBZKC9hen8ExVWEztkgc=;
-  b=IQvGxLAfOINcdG7BUhyrU7loovoK69jVrnelv2Pd9kZGEkBfDAtkxOLH
-   MdwoP2iDo6apVZFOknD/D4oRPj029sUbVPTNAtr4ERif0H1zsza251Kwe
-   0Os+0eDc23EIGF6qFiI9DU6hlMYbxDkRbeTRd7HPiSg/sPSCjOdY6j7Uh
-   aOqhy7acHXVPJ2Jo6GM5L2tX3Q19WR9uXuJkpOWjkgBB9C1/GgoKTyLTF
-   1qdg/LgaB14o6fOdHARgSYVSNMTL/wwTUtiDWaw0d5kod0+2WyjY1hqEc
-   j6r3SOy6wPcw99wCpJkRIJYGjoTX7ikNe3W/E8QGbv/6M0C5TxZhCb2dL
-   Q==;
-X-CSE-ConnectionGUID: qy4v4xPIR2y2bhw9AaZUiQ==
-X-CSE-MsgGUID: C6HLiAnnQVeyHU+TMtNgmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="48792612"
-X-IronPort-AV: E=Sophos;i="6.15,283,1739865600"; 
-   d="scan'208";a="48792612"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 17:05:14 -0700
-X-CSE-ConnectionGUID: UhxHnWoeSAC42Ci8tQ3qiQ==
-X-CSE-MsgGUID: Q7EdIZMiSeWBl2g2GCDzjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,283,1739865600"; 
-   d="scan'208";a="168435327"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.233]) ([10.124.220.233])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 17:05:14 -0700
-Message-ID: <1913b048-1033-4cab-8e7e-119a685794ec@intel.com>
-Date: Mon, 12 May 2025 17:05:10 -0700
+	s=arc-20240116; t=1747094785; c=relaxed/simple;
+	bh=15QlA1RvqwWBPCuQg1QOEhb8GU/p5PFuITDF0PemJyE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XT+Jp/Sbx+xIrk+PONHg2bmzvRmVWib2jTSBWugpkfT7gd7CL4AnJ7T2dKgjm9duGBAP3mzKXhgGVyJq2mB2v7dx/Wuap7yrxoRu8dY3J3FcVtzssezr0C3G35dU5lCOyfcC0xv43mibyWSgggwnDm9of+czcrr/X9nOEC0goaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9x4nIZK; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22e730c05ddso45738815ad.2;
+        Mon, 12 May 2025 17:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747094781; x=1747699581; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8muQO4QFV9cfTFAot9pQ7G4buAK54OtcnnAyHHxj5uY=;
+        b=R9x4nIZK0O6YLd4fJHGWwKR2fwoD4q5OW0dxAAHjBCSjYy6BouFc5DH93i5MgO0N3y
+         dE/aQvn7LifHmAzZS012f+ooj3sXJ0/o9+H+ZJOPiwYC9trhb6ftZurQ4PbKEub1FMXc
+         YmF1GEMH39XNwK/7Lo3mBoJw3vZABV8cxqm08Dk7EI4FI1d5yiXqWY4FVSBUR91k5D81
+         EuQK3kEaKxiRCRrUlQkf2ge55kI3IJFRxCygUtjGf8uXdyOLytVtwPlkZ4Ncg8zghlXM
+         4jlBdBgJzHo+Tyb8OiRduRkn/wP4ekSIA0QN5+9HHgZkmqZlJZmXQA0USYwLLY4sGaMx
+         4Qtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747094781; x=1747699581;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8muQO4QFV9cfTFAot9pQ7G4buAK54OtcnnAyHHxj5uY=;
+        b=Aa+unqBk4JU+t1P0BcHxSChWoyzB1gU2K+IouWHAD/UQooRn7kXEQZZ1hvRFEW7NFC
+         qsHjJQMTjZizXJiV90HdacRj978f1EHetvY1b0jWRDfiFNvZfMY2mEVk8EBVPzfnkOHr
+         E0bRm6Ekh7W6NNT8RmZWg/yzMkb8/jYbGdBjw2wWWrw+QuZkc4siE40hpqJFzc8oZIAg
+         SXBq3qIARL5omuB+LB/eaf5wLpIZtaZvXUSKvUqdwH3I1PCHE86MqNEeqO4d3rKQpoYh
+         IwOwXFxSaWfBiJjY2n9JFCr9+6udbpUKDsHXAitho1cD0A1WYqt9/a9WT/WIDFWy7Jjx
+         +qLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMt+ZzmvJwpuDlahCl/7otsqZMkq5tu510KK81Q+PhcIYRMCHxRlnmmnLGZ8fi65Wb7qWvZxtTNIUaKg==@vger.kernel.org, AJvYcCUlAUAV0rAkVs8eC1y4QUoYJzFqu9Zq5AeU+tjdJsY+sJ3OuK0AtqtEqsfR3FS78MCjmy4AueiS@vger.kernel.org, AJvYcCVqhbAmgeoFDkpHBbFw+KCaM1X4D6NXlXuRzX9ZQbRcKCUa6gEnKZFqm5tqsJLXnWxB0E5kIBwF@vger.kernel.org, AJvYcCXFfVKFJjfuyREPqqlb+IfWJltNhkXi3jsDbaQhKIHElEbUQfYJ+uVf4F072fEj2O/wCYS1IaWDnR4N0E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyeMkIhRyMVRkruNCEuqgRvjoT82HxqxU7uYiK6WdYNRlUaA68
+	MOLWcEc0QeE/fPLg2do50D5rktoTXEbMZ0bLGgneUPii4SnOA+2+
+X-Gm-Gg: ASbGncvAK3Q8X1gC8cmZKOqSSwCx7au3op5KkbXxrJD/d3l52tggBJ4xHDDfJGxRGig
+	kk57xT0WB4ugBYbNpHH27L72Na8PFju3qNAX/CyaXMgUWWW0JSMYeDCcryzs9kzVFogDFAr+Ieb
+	c5Q1wjZbiclsrKI6xZK40eKd3H+sZp7x7L13j+v+ICndC10auydJT0O8CL/wuQansfo+Dcz7PpG
+	wesH4M7NlQHZlIo9CaXc4YamI+8U8S5jlMIiC3RVVj/iv+JUDI7rrU4lDTv/V6GPZlpfWfSfUGW
+	eSPUCAKCZf9UVMxkPoRjFlGSF7I0Ctv10p0B3Jk3a3U3YO7X7Q1dPYIcg6CaXugq30YJHs+Hkw+
+	/GFaaVxXjIuFyp0DrHhWsYv0RTl6byQ==
+X-Google-Smtp-Source: AGHT+IGOdy/5TRdsB8TQMESAds9fv8y6dVMhnUM3bhvm/H593j88ln37N2/fl5wL+AZFbQpPJwnybQ==
+X-Received: by 2002:a17:902:ce8b:b0:223:44c5:4eb8 with SMTP id d9443c01a7336-22fc8d98ab0mr231086305ad.32.1747094780966;
+        Mon, 12 May 2025 17:06:20 -0700 (PDT)
+Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc828b491sm68470665ad.184.2025.05.12.17.06.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 17:06:20 -0700 (PDT)
+From: mhkelley58@gmail.com
+X-Google-Original-From: mhklinux@outlook.com
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net 0/5] hv_netvsc: Fix error "nvsp_rndis_pkt_complete error status: 2"
+Date: Mon, 12 May 2025 17:05:59 -0700
+Message-Id: <20250513000604.1396-1-mhklinux@outlook.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: mhklinux@outlook.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/17] cxl: docs/platform/example-configs documentation
-To: Gregory Price <gourry@gourry.net>, linux-cxl@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- dan.j.williams@intel.com, corbet@lwn.net
-References: <20250512162134.3596150-1-gourry@gourry.net>
- <20250512162134.3596150-7-gourry@gourry.net>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250512162134.3596150-7-gourry@gourry.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Michael Kelley <mhklinux@outlook.com>
 
+Starting with commit dca5161f9bd0 in the 6.3 kernel, the Linux driver
+for Hyper-V synthetic networking (netvsc) occasionally reports
+"nvsp_rndis_pkt_complete error status: 2".[1] This error indicates
+that Hyper-V has rejected a network packet transmit request from the
+guest, and the outgoing network packet is dropped. Higher level
+network protocols presumably recover and resend the packet so there is
+no functional error, but performance is slightly impacted. Commit
+dca5161f9bd0 is not the cause of the error -- it only added reporting
+of an error that was already happening without any notice. The error
+has presumably been present since the netvsc driver was originally
+introduced into Linux.
 
-On 5/12/25 9:21 AM, Gregory Price wrote:
-> Add example ACPI Table configurations for different sample platforms.
-> 
-> Signed-off-by: Gregory Price <gourry@gourry.net>
+This patch set fixes the root cause of the problem, which is that the
+netvsc driver in Linux may send an incorrectly formatted VMBus message
+to Hyper-V when transmitting the network packet. The incorrect
+formatting occurs when the rndis header of the VMBus message crosses a
+page boundary due to how the Linux skb head memory is aligned. In such
+a case, two PFNs are required to describe the location of the rndis
+header, even though they are contiguous in guest physical address
+(GPA) space. Hyper-V requires that two PFNs be in a single "GPA range"
+data struture, but current netvsc code puts each PFN in its own GPA
+range, which Hyper-V rejects as an error in the case of the rndis
+header.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+The incorrect formatting occurs only for larger packets that netvsc
+must transmit via a VMBus "GPA Direct" message. There's no problem
+when netvsc transmits a smaller packet by copying it into a pre-
+allocated send buffer slot because the pre-allocated slots don't have
+page crossing issues.
 
-> ---
->  Documentation/driver-api/cxl/index.rst        |   1 +
->  .../cxl/platform/example-configs.rst          |  13 +
->  .../example-configurations/flexible.rst       | 296 ++++++++++++++++++
->  .../example-configurations/hb-interleave.rst  | 107 +++++++
->  .../multi-dev-per-hb.rst                      |  90 ++++++
->  .../example-configurations/one-dev-per-hb.rst | 136 ++++++++
->  6 files changed, 643 insertions(+)
->  create mode 100644 Documentation/driver-api/cxl/platform/example-configs.rst
->  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/flexible.rst
->  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/hb-interleave.rst
->  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/multi-dev-per-hb.rst
->  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-> 
-> diff --git a/Documentation/driver-api/cxl/index.rst b/Documentation/driver-api/cxl/index.rst
-> index 336322dc35a0..6a5fb7e00c52 100644
-> --- a/Documentation/driver-api/cxl/index.rst
-> +++ b/Documentation/driver-api/cxl/index.rst
-> @@ -27,6 +27,7 @@ that have impacts on each other.  The docs here break up configurations steps.
->  
->     platform/bios-and-efi
->     platform/acpi
-> +   platform/example-configs
->  
->  .. toctree::
->     :maxdepth: 1
-> diff --git a/Documentation/driver-api/cxl/platform/example-configs.rst b/Documentation/driver-api/cxl/platform/example-configs.rst
-> new file mode 100644
-> index 000000000000..90a10d7473c6
-> --- /dev/null
-> +++ b/Documentation/driver-api/cxl/platform/example-configs.rst
-> @@ -0,0 +1,13 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Example Platform Configurations
-> +###############################
-> +
-> +.. toctree::
-> +   :maxdepth: 1
-> +   :caption: Contents
-> +
-> +   example-configurations/one-dev-per-hb.rst
-> +   example-configurations/multi-dev-per-hb.rst
-> +   example-configurations/hb-interleave.rst
-> +   example-configurations/flexible.rst
-> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/flexible.rst b/Documentation/driver-api/cxl/platform/example-configurations/flexible.rst
-> new file mode 100644
-> index 000000000000..e39daba65fa0
-> --- /dev/null
-> +++ b/Documentation/driver-api/cxl/platform/example-configurations/flexible.rst
-> @@ -0,0 +1,296 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=====================
-> +Flexible Presentation
-> +=====================
-> +This system has a single socket with two CXL host bridges. Each host bridge
-> +has two CXL memory expanders with a 4GB of memory (32GB total).
-> +
-> +On this system, the platform designer wanted to provide the user flexibility
-> +to configure the memory devices in various interleave or NUMA node
-> +configurations.  So they provided every combination.
-> +
-> +Things to note:
-> +
-> +* Cross-Bridge interleave is described in one CFMWS that covers all capacity.
-> +* One CFMWS is also described per-host bridge.
-> +* One CFMWS is also described per-device.
-> +* This SRAT describes one node for each of the above CFMWS.
-> +* The HMAT describes performance for each node in the SRAT.
-> +
-> +CEDT ::
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000007
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010370400000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000006
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010380800000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000001000000000
-> +              Window size : 0000000400000000
-> + Interleave Members (2^n) : 01
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +            Second Target : 00000006
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000002000000000
-> +              Window size : 0000000200000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000002200000000
-> +              Window size : 0000000200000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000006
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000003000000000
-> +              Window size : 0000000100000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000003100000000
-> +              Window size : 0000000100000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000003200000000
-> +              Window size : 0000000100000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000006
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000003300000000
-> +              Window size : 0000000100000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000006
-> +
-> +SRAT ::
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000001
-> +             Reserved1 : 0000
-> +          Base Address : 0000001000000000
-> +        Address Length : 0000000400000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000002
-> +             Reserved1 : 0000
-> +          Base Address : 0000002000000000
-> +        Address Length : 0000000200000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000003
-> +             Reserved1 : 0000
-> +          Base Address : 0000002200000000
-> +        Address Length : 0000000200000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000004
-> +             Reserved1 : 0000
-> +          Base Address : 0000003000000000
-> +        Address Length : 0000000100000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000005
-> +             Reserved1 : 0000
-> +          Base Address : 0000003100000000
-> +        Address Length : 0000000100000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000006
-> +             Reserved1 : 0000
-> +          Base Address : 0000003200000000
-> +        Address Length : 0000000100000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000007
-> +             Reserved1 : 0000
-> +          Base Address : 0000003300000000
-> +        Address Length : 0000000100000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +HMAT ::
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 00   [Latency]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> + Target Proximity Domain List : 00000002
-> + Target Proximity Domain List : 00000003
-> + Target Proximity Domain List : 00000004
-> + Target Proximity Domain List : 00000005
-> + Target Proximity Domain List : 00000006
-> + Target Proximity Domain List : 00000007
-> +                        Entry : 0080
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 03   [Bandwidth]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> + Target Proximity Domain List : 00000002
-> + Target Proximity Domain List : 00000003
-> + Target Proximity Domain List : 00000004
-> + Target Proximity Domain List : 00000005
-> + Target Proximity Domain List : 00000006
-> + Target Proximity Domain List : 00000007
-> +                        Entry : 1200
-> +                        Entry : 0400
-> +                        Entry : 0200
-> +                        Entry : 0200
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +
-> +SLIT ::
-> +
-> +     Signature : "SLIT"    [System Locality Information Table]
-> +    Localities : 0000000000000003
-> +  Locality   0 : 10 20 20 20 20 20 20 20
-> +  Locality   1 : FF 0A FF FF FF FF FF FF
-> +  Locality   2 : FF FF 0A FF FF FF FF FF
-> +  Locality   3 : FF FF FF 0A FF FF FF FF
-> +  Locality   4 : FF FF FF FF 0A FF FF FF
-> +  Locality   5 : FF FF FF FF FF 0A FF FF
-> +  Locality   6 : FF FF FF FF FF FF 0A FF
-> +  Locality   7 : FF FF FF FF FF FF FF 0A
-> +
-> +DSDT ::
-> +
-> +  Scope (_SB)
-> +  {
-> +    Device (S0D0)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x07)  // _UID: Unique ID
-> +    }
-> +    ...
-> +    Device (S0D5)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x06)  // _UID: Unique ID
-> +    }
-> +  }
-> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/hb-interleave.rst b/Documentation/driver-api/cxl/platform/example-configurations/hb-interleave.rst
-> new file mode 100644
-> index 000000000000..ce07e6162f26
-> --- /dev/null
-> +++ b/Documentation/driver-api/cxl/platform/example-configurations/hb-interleave.rst
-> @@ -0,0 +1,107 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +============================
-> +Cross-Host-Bridge Interleave
-> +============================
-> +This system has a single socket with two CXL host bridges. Each host bridge
-> +has a single CXL memory expander with a 4GB of memory.
-> +
-> +Things to note:
-> +
-> +* Cross-Bridge interleave is described.
-> +* The expanders are described by a single CFMWS.
-> +* This SRAT describes one node for both host bridges.
-> +* The HMAT describes a single node's performance.
-> +
-> +CEDT ::
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000007
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010370400000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000006
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010380800000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000001000000000
-> +              Window size : 0000000200000000
-> + Interleave Members (2^n) : 01
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +            Second Target : 00000006
-> +
-> +SRAT ::
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000001
-> +             Reserved1 : 0000
-> +          Base Address : 0000001000000000
-> +        Address Length : 0000000200000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +HMAT ::
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 00   [Latency]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> + Target Proximity Domain List : 00000002
-> +                        Entry : 0080
-> +                        Entry : 0100
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 03   [Bandwidth]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> + Target Proximity Domain List : 00000002
-> +                        Entry : 1200
-> +                        Entry : 0400
-> +
-> +SLIT ::
-> +
-> +     Signature : "SLIT"    [System Locality Information Table]
-> +    Localities : 0000000000000003
-> +  Locality   0 : 10 20
-> +  Locality   1 : FF 0A
-> +
-> +DSDT ::
-> +
-> +  Scope (_SB)
-> +  {
-> +    Device (S0D0)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x07)  // _UID: Unique ID
-> +    }
-> +    ...
-> +    Device (S0D5)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x06)  // _UID: Unique ID
-> +    }
-> +  }
-> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/multi-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/multi-dev-per-hb.rst
-> new file mode 100644
-> index 000000000000..6adf7c639490
-> --- /dev/null
-> +++ b/Documentation/driver-api/cxl/platform/example-configurations/multi-dev-per-hb.rst
-> @@ -0,0 +1,90 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +================================
-> +Multiple Devices per Host Bridge
-> +================================
-> +
-> +In this example system we will have a single socket and one CXL host bridge.
-> +There are two CXL memory expanders with 4GB attached to the host bridge.
-> +
-> +Things to note:
-> +
-> +* Intra-Bridge interleave is not described here.
-> +* The expanders are described by a single CEDT/CFMWS.
-> +* This CEDT/SRAT describes one node for both devices.
-> +* There is only one proximity domain the HMAT for both devices.
-> +
-> +CEDT ::
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000007
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010370400000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000001000000000
-> +              Window size : 0000000200000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +
-> +SRAT ::
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000001
-> +             Reserved1 : 0000
-> +          Base Address : 0000001000000000
-> +        Address Length : 0000000200000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +HMAT ::
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 00   [Latency]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> +                        Entry : 0080
-> +                        Entry : 0100
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 03   [Bandwidth]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> +                        Entry : 1200
-> +                        Entry : 0200
-> +
-> +SLIT ::
-> +
-> +     Signature : "SLIT"    [System Locality Information Table]
-> +    Localities : 0000000000000003
-> +  Locality   0 : 10 20
-> +  Locality   1 : FF 0A
-> +
-> +DSDT ::
-> +
-> +  Scope (_SB)
-> +  {
-> +    Device (S0D0)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x07)  // _UID: Unique ID
-> +    }
-> +    ...
-> +  }
-> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-> new file mode 100644
-> index 000000000000..b89ba3cab98f
-> --- /dev/null
-> +++ b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-> @@ -0,0 +1,136 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==========================
-> +One Device per Host Bridge
-> +==========================
-> +
-> +This system has a single socket with two CXL host bridges. Each host bridge
-> +has a single CXL memory expander with a 4GB of memory.
-> +
-> +Things to note:
-> +
-> +* Cross-Bridge interleave is not being used.
-> +* The expanders are in two separate but adjascent memory regions.
-> +* This CEDT/SRAT describes one node per device
-> +* The expanders have the same performance and will be in the same memory tier.
-> +
-> +CEDT ::
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000007
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010370400000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 00 [CXL Host Bridge Structure]
-> +                 Reserved : 00
-> +                   Length : 0020
-> +   Associated host bridge : 00000006
-> +    Specification version : 00000001
-> +                 Reserved : 00000000
-> +            Register base : 0000010380800000
-> +          Register length : 0000000000010000
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000001000000000
-> +              Window size : 0000000100000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000007
-> +
-> +            Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> +                 Reserved : 00
-> +                   Length : 002C
-> +                 Reserved : 00000000
-> +      Window base address : 0000001100000000
-> +              Window size : 0000000100000000
-> + Interleave Members (2^n) : 00
-> +    Interleave Arithmetic : 00
-> +                 Reserved : 0000
-> +              Granularity : 00000000
-> +             Restrictions : 0006
-> +                    QtgId : 0001
-> +             First Target : 00000006
-> +
-> +SRAT ::
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000001
-> +             Reserved1 : 0000
-> +          Base Address : 0000001000000000
-> +        Address Length : 0000000100000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +         Subtable Type : 01 [Memory Affinity]
-> +                Length : 28
-> +      Proximity Domain : 00000002
-> +             Reserved1 : 0000
-> +          Base Address : 0000001100000000
-> +        Address Length : 0000000100000000
-> +             Reserved2 : 00000000
-> + Flags (decoded below) : 0000000B
-> +             Enabled : 1
-> +       Hot Pluggable : 1
-> +        Non-Volatile : 0
-> +
-> +HMAT ::
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 00   [Latency]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> + Target Proximity Domain List : 00000002
-> +                        Entry : 0080
-> +                        Entry : 0100
-> +                        Entry : 0100
-> +
-> +               Structure Type : 0001 [SLLBI]
-> +                    Data Type : 03   [Bandwidth]
-> + Target Proximity Domain List : 00000000
-> + Target Proximity Domain List : 00000001
-> + Target Proximity Domain List : 00000002
-> +                        Entry : 1200
-> +                        Entry : 0200
-> +                        Entry : 0200
-> +
-> +SLIT ::
-> +
-> +     Signature : "SLIT"    [System Locality Information Table]
-> +    Localities : 0000000000000003
-> +  Locality   0 : 10 20 20
-> +  Locality   1 : FF 0A FF
-> +  Locality   2 : FF FF 0A
-> +
-> +DSDT ::
-> +
-> +  Scope (_SB)
-> +  {
-> +    Device (S0D0)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x07)  // _UID: Unique ID
-> +    }
-> +    ...
-> +    Device (S0D5)
-> +    {
-> +        Name (_HID, "ACPI0016" /* Compute Express Link Host Bridge */)  // _HID: Hardware ID
-> +        ...
-> +        Name (_UID, 0x06)  // _UID: Unique ID
-> +    }
-> +  }
+After commit 14ad6ed30a10 in the 6.14 kernel, the error occurs much
+more frequently in VMs with 16 or more vCPUs. It may occur every few
+seconds, or even more frequently, in a ssh session that outputs a lot
+of text. Commit 14ad6ed30a10 subtly changes how skb head memory is
+allocated, making it much more likely that the rndis header will cross
+a page boundary when the vCPU count is 16 or more.  The changes in
+commit 14ad6ed30a10 are perfectly valid -- they just had the side
+effect of making the netvsc bug more prominent.
+
+One fix is to check for adjacent PFNs in vmbus_sendpacket_pagebuffer()
+and just combine them into a single GPA range. Such a fix is very
+contained. But conceptually it is fixing the problem at the wrong
+level. So this patch set takes the broader approach of maintaining
+the already known grouping of contiguous PFNs at a higher level in
+the netvsc driver code, and propagating that grouping down to the
+creation of the VMBus message to send to Hyper-V. Maintaining the
+grouping fixes this problem, and has the added benefit of allowing
+netvsc_dma_map() to make fewer calls to dma_map_single() to do bounce
+buffering in CoCo VMs.
+
+Patch 1 is a preparatory change to allow vmbus_sendpacket_mpb_desc()
+to specify multiple GPA ranges. In current code
+vmbus_sendpacket_mpb_desc() is used only by the storvsc synthetic SCSI
+driver, and it always creates a single GPA range.
+
+Patch 2 updates the netvsc driver to use vmbus_sendpacket_mpb_desc()
+instead of vmbus_sendpacket_pagebuffer(). Because the higher levels of
+netvsc still don't group contiguous PFNs, this patch is functionally
+neutral. The VMBus message to Hyper-V still has many GPA ranges, each
+with a single PFN. But it lays the groundwork for the next patch.
+
+Patch 3 changes the higher levels of netvsc to preserve the already
+known grouping of contiguous PFNs. When the contiguous groupings are
+passed to vmbus_sendpacket_mpb_desc(), GPA ranges containing multiple
+PFNs are produced, as expected by Hyper-V. This is point at which the
+core problem is fixed.
+
+Patches 4 and 5 remove code that is no longer necessary after the
+previous patches.
+
+These changes provide a net reduction of about 65 lines of code, which
+is an added benefit.
+
+These changes have been tested in normal VMs, in SEV-SNP and TDX CoCo
+VMs, and in Dv6-series VMs where the netvsp implementation is in the
+OpenHCL paravisor instead of the Hyper-V host.
+
+These changes are built against kernel version 6.15-rc6.
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=217503
+
+Michael Kelley (5):
+  Drivers: hv: Allow vmbus_sendpacket_mpb_desc() to create multiple
+    ranges
+  hv_netvsc: Use vmbus_sendpacket_mpb_desc() to send VMBus messages
+  hv_netvsc: Preserve contiguous PFN grouping in the page buffer array
+  hv_netvsc: Remove rmsg_pgcnt
+  Drivers: hv: vmbus: Remove vmbus_sendpacket_pagebuffer()
+
+ drivers/hv/channel.c              | 65 ++-----------------------------
+ drivers/net/hyperv/hyperv_net.h   | 13 ++++++-
+ drivers/net/hyperv/netvsc.c       | 57 ++++++++++++++++++++++-----
+ drivers/net/hyperv/netvsc_drv.c   | 62 +++++++----------------------
+ drivers/net/hyperv/rndis_filter.c | 24 +++---------
+ drivers/scsi/storvsc_drv.c        |  1 +
+ include/linux/hyperv.h            |  7 ----
+ 7 files changed, 83 insertions(+), 146 deletions(-)
+
+-- 
+2.25.1
 
 
