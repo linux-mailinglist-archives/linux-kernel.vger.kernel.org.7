@@ -1,95 +1,111 @@
-Return-Path: <linux-kernel+bounces-645467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547ADAB4E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3C9AB4E0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B6F16D00F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E013A5963
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE7C20B215;
-	Tue, 13 May 2025 08:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA20205519;
+	Tue, 13 May 2025 08:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOsLeKXo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WxeALdY8"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7867E1F2C58;
-	Tue, 13 May 2025 08:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68E6202C5A;
+	Tue, 13 May 2025 08:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747124684; cv=none; b=aYWiQvgKhDLmVjxNTlkuE9/wqsMXaj5vNtpjeinRFtYpFlcHS8B/+2gWlcBkQMnLQxIqGw80nEKtswFgJx0FXzN8fjrW7qY07n+0R8mhFcpQ5DZtgzrl3QzA1zNl4G9SnEeDfZbcfbcNppxkHqf62vpgxDrHZJkYOAD49kRQJQY=
+	t=1747124751; cv=none; b=IZKQWnvanWmpnY7sDPgSg6VAQNddm6iNFKa1VAr80Qg3y9A2FVal14Fj/+bfRw+9rbKHmpSSg1mbyVi+uNM3YNGto8sCPOIsdnegXj2jFA33YhbQvg1TSGn5pwlgQxxU7w025lsp8Il+kL5YaGuSziOLupV/lWL0dqeoNGS4n84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747124684; c=relaxed/simple;
-	bh=YHA/wvWEDB8CgIoUnHtp7szR/abPgZrTVkvyNlmczCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sh+Z3cYqoCRgLQqbc2OcKXCCcLpwyo14xuXElZp6vfkb/AKkPEYPDUcut/FLogVpu4sZP7M7OWRVviCmwsyHetVNMQ960UF4xIA6ltEPonZQ0GuKi//2jNpiC8RkC1szEYCrfDhUwPDjTibi2cQhZ/t21VVuSpqA7nodZG7/9jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOsLeKXo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC30C4CEE4;
-	Tue, 13 May 2025 08:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747124682;
-	bh=YHA/wvWEDB8CgIoUnHtp7szR/abPgZrTVkvyNlmczCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pOsLeKXoaJjDR7Uej2TlJeM6ZmoE7XJ1eY2NW6EWvVbEdYKdNoHifU2oYl1NCpNcj
-	 05cGqKrPBX7tyjVBdRbn+SzIcuKHPlRsbgqJK46eiiMZYYcMLDd0yoBzk0zcctZoT5
-	 88rkSUu8KWAF+m3PM71lYiXI9gs2yzOsFIA4FLyZ0jTr5Y8FLRYvi4dISD8QFo1ATr
-	 S8P/VCDjGSYzbJcqt8ZzQMjAuYW7D/ZCcdarVIO5Bue5AhTUxLrTClQ71Dn2txfTwz
-	 OstRPVaqa7P4ms/78eMW1q+EnE6838KH/802tcNklQ2fgt7QYGzRyfY/YjRkQZm0NM
-	 uPsFhWO1hBI/A==
-Date: Tue, 13 May 2025 10:24:27 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250513-wunden-tierzucht-0cd8fb32bb0e@brauner>
-References: <20250512-xattrat-syscall-v5-0-a88b20e37aae@kernel.org>
- <vxjuophuvmvqloczajfyjd5jvvcbvcty2fpvfmcaz5xuh5vyqv@fxiymeww26mf>
+	s=arc-20240116; t=1747124751; c=relaxed/simple;
+	bh=KmyKHA+amWKsGoGT7dggZMj1WfmDBtdepYE+juYv7zg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=jQ7Eupk5582TWqYWOEGsg8S2dJPrMS12Z4ujKhk3OurHSvMk2gCl3sADC8LUmp8h2R1YaiUkoMuWTlbCMqNGijsGJci2dtf4NkhrBX5rmr+wYo/pKuEnxupGJLvFU3+MdwWoaHOFEmqF6mAbaCH2FJRPRkkXRuyQI2nw0PP01is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WxeALdY8; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2DD114341A;
+	Tue, 13 May 2025 08:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747124741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QaYT2F+5JVMz3q6yy4S7Oj1Azgj0lWFgsw5T0hxiTco=;
+	b=WxeALdY8M10GpHf+0grO4hv46XBXpsMNoi2LtGiJI3QA0QA3r1ZeF3TmbCBgOx6RV+O+D7
+	3OJUfy+gVkbjBnfVDpIcqhDov/JVGPEKs+O22kEj5/Ojk4/ePSeTyRscQU9qY3wLSw9hri
+	kFGsLHN+0Sgd6bJ6ovUnA8vcXtIrTIhPUP0psPV/gNR3n4gYZFe8R9OMPbXwJwwKOqdTcX
+	V8W4ZeImyBwdw5BZHxroSQz5qZche5A8tUEwmQcLuHzAPF6UGMW+y5WVA5+KMgbz4WfcU9
+	yc8RuzAFCLhfjcjlDDodQ2GqXLEVxFQb1K8/J9PkSAR5off3+Wl7oS91jCWEGA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <vxjuophuvmvqloczajfyjd5jvvcbvcty2fpvfmcaz5xuh5vyqv@fxiymeww26mf>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 13 May 2025 10:25:38 +0200
+Message-Id: <D9UW14SJQ9HV.3BA1FYKMG9DE0@bootlin.com>
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v8 02/11] mfd: Add max7360 support
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250509-mdb-max7360-support-v8-0-bbe486f6bcb7@bootlin.com>
+ <20250509-mdb-max7360-support-v8-2-bbe486f6bcb7@bootlin.com>
+ <aCG9lyaCGchBsqLE@smile.fi.intel.com>
+In-Reply-To: <aCG9lyaCGchBsqLE@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdefieehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefhvffuofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeftedvgfegteehjeejtdefgffhteevvddtvdejleeghfefuefgledtteduvdetkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-> Ignore please, somehow b4 crashed with timeout on gmail
+On Mon May 12, 2025 at 11:21 AM CEST, Andy Shevchenko wrote:
+> On Fri, May 09, 2025 at 11:14:36AM +0200, mathieu.dubois-briand@bootlin.c=
+om wrote:
+>
+>> +#define MAX7360_REG_GPIO_LAST		0x5F
+>
+>> +#define MAX7360_FIFO_EMPTY		0x3f
+>> +#define MAX7360_FIFO_OVERFLOW		0x7f
+>
+> Please, be consistent in style of the values.
 
-Ok, no worries. I wondered why I didn't get all messages of that series.
+Is your point about the alignment of the values? Most of these are
+aligned on column 41, including the ones above. I just have an exception
+with MAX7360_PORT_CFG_*, as they are a bit too long. But as we are using
+tabs here, indentation appears a bit broken in the patch.
+
+OK with all other points.
+
+Thanks for your review.
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
