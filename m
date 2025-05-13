@@ -1,83 +1,91 @@
-Return-Path: <linux-kernel+bounces-645390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432F5AB4C94
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C5FAB4C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36701893667
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:18:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF2A3AE710
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B4C1F09A1;
-	Tue, 13 May 2025 07:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="dExfaAKW"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A631C1EFFBB;
+	Tue, 13 May 2025 07:20:17 +0000 (UTC)
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9631EB180;
-	Tue, 13 May 2025 07:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9601E885A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 07:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747120678; cv=none; b=hlXVwMX2GHW8JDTE+XCdBXYp3lD+z6936wWN0Tb9RR8I6iXEboj4ZMyaY5k9OrUer6X0sPOH7tFi3C6k9R6tIME8jbYuq+KB8HoZBxnSlhPRohg3znmEIbEvBz4YOT1MTbPBrQKKCZrE3LFqsqP+bpzrGdT6wKD8W9WUjrkyN/E=
+	t=1747120817; cv=none; b=Tu1ZtBieNAGOkBbwkd3gAxS6FCoekZ7otibKISTKCEXrlfx+6Boqf+uEHqiwkoFRbwVnTOGlHfv0hNEh3o9/7ruxo5AaafdhOzFcLEyh8hMQ56cVSejSFjxDGyi3FDw6wRbw1EHnnD2/cRcz77BpaHZLxtl66fJSe9MQXljWORs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747120678; c=relaxed/simple;
-	bh=V5FNwPI2kQgLu1dX+l5kRapdnptiYaNrbywLNE+PKeQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=huLDab3M6dK3aILefbzLNQ1mzMDMilmJSSW3aOj9Zdj11xepUyVSVRUUnZE8bIDLhMnNpoioREeHVcgaSdHn5tzfCwvsmyTuZp9RrTFZxbEOZpThTiY74C+bzWinNMp5g6HNxGUFKz3YxskFkoSnrOREkJ/LmJ5t3E50GvYmgh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=dExfaAKW; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=usLtNPHMdMJU1a6dRfum36pLhpdLH95VE6zNtQnTF30=;
-	t=1747120676; x=1748330276; b=dExfaAKWXmrNj7qCteHnTXeHJB0w+QGhSBjt2X4RCNXMTVc
-	H8gEwY5g19IQtGktMSi9Ru+gXdgA46HXEQZ5b3i2O2QWY7gFpm9l6bhJcrMj6+/YYe5/xnIRg9P/R
-	nDzS4pD4NbUrgghImtPrj+bPdQR1ylhK7flOcxnqFALbN8GFRCkSaX4C8d9+aNTYAPo8LIoNOGbTx
-	VCqQ1RGmMf4W+slgNfrF8eLRalwJi2F6k15ZbCqwkeKrg1GkD3CuqUMejYp2N/ltX3sIYQ0eyfSwO
-	npiLDAp4JE2u4fQU3feMrfpr5IRHU5xdw0zQ9cZwUZiFogW8fboTxMEg4Yrww5Rg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.1)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uEjtb-00000005Ix1-2ZER;
-	Tue, 13 May 2025 09:17:47 +0200
-Message-ID: <16499ad8e4b060ee04c8a8b3615fe8952aa7b07b.camel@sipsolutions.net>
-Subject: Re: [PATCH wireless-next 1/2] wifi: mac80211: validate SCAN_FLAG_AP
- in scan request during MLO
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 13 May 2025 09:17:46 +0200
-In-Reply-To: <20250513-bug_fix_mlo_scan-v1-1-94235bb42fbe@oss.qualcomm.com>
-References: <20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com>
-	 <20250513-bug_fix_mlo_scan-v1-1-94235bb42fbe@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1747120817; c=relaxed/simple;
+	bh=z89cV37A1BzKVH5waNhFO0vTDICN0cpfkHVfKGEx1HM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=D7//grbciWGSMrhwo6nvKc1iiSlF6kP57uDqxRmQKkPD+s15t+iEC54gEB2fR3yzJoEfncQtYTPxQTdE3ILDTvL5F0WUk8BfkQoPVRiQDR5E95+TMPhj/u3YNz83CEfPGa6Q4R/xhI8p9w6Rt8CrmnCVXBC3v3FW8Ryyoh7tpvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.214.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22fafbbe51fso75470185ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 00:20:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747120814; x=1747725614;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MeRMeXbTDrvhPp+1BOYIczfNEGi+t+SLBi0QtIycPH8=;
+        b=LGlgwCXGt0a5jQLjMuei/3G/8q5D+dCMnw7fWBa68SepQSSBLu8ztfecqffyX1TmP+
+         cR/uk8rqgs5jZJGiW1xj61OV6doA0ExkT1F2rqj5oZhHBJFV0Mirm7lOrJpsdovI3nmB
+         2LiGStfCVh4EofptfAZ6yvBv5lBTfCif/Vx81huKVClKZdojiAlhvoBmuGgf6eQAcg/b
+         0JP8O8CUN2b+0sdL664e6cJCYt/ahro5MXC1Q4gCwDk3lJderVIgGPfFPOqdsGE5ir5R
+         ZgVl5w6me6qYmU3pbeKA6FgkYLfIYfHJTnUtrbfbImdLikpQuOD56qH1aYFTUBb5tm3f
+         ky4A==
+X-Forwarded-Encrypted: i=1; AJvYcCURUG6h/FTh0zezeSyyXVHUIrWGkTPPLqeLzRnNl8KZyr6Zew5g0Fabds/MFL3NXPfw7Oc5VoZ8ShaOYiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG49sP/98Oc0mtJZ378gBTKXWSv1OxN9l0XcAyflLyKxFLuBkq
+	8xxkLGMemoQfNr2aIG3fPlHLHRUX8AcLL7KTy0zRZdDOYjJPOI3P5JWcRiIEMYBPFdV4uH1o7ek
+	7+qsk172tkuDbG+WrU6VRaa45+RyLtsdeadyvZtN0MGZ88as/mz39T0E=
+X-Google-Smtp-Source: AGHT+IHkvnZLGzM8GIvS9rpIvhqGG29wKFa6dseqNcftKL44TEPKgL2MlP8nj1Ok1QbFjPtxMGKC9Y40GMBfMMynzFPAV6dx7ANM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+X-Received: by 2002:a05:6e02:1fc6:b0:3d8:1b25:cc2 with SMTP id
+ e9e14a558f8ab-3da7e1e34b0mr191437605ab.8.1747120803765; Tue, 13 May 2025
+ 00:20:03 -0700 (PDT)
+Date: Tue, 13 May 2025 00:20:03 -0700
+In-Reply-To: <tencent_B0F292D9064049B26EFC6ECACC8227E4C606@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6822f2a3.050a0220.f2294.0120.GAE@google.com>
+Subject: Re: [syzbot] [usb?] INFO: task hung in dvb_usb_i2c_exit
+From: syzbot <syzbot+0dcc341ee61fc9e4032f@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-05-13 at 09:26 +0530, Aditya Kumar Singh wrote:
->=20
-> -		if (sdata->deflink.u.ap.beacon &&
-> +		if ((sdata->deflink.u.ap.beacon ||
-> +		     ieee80211_num_beaconing_links(sdata)) &&
->=20
+Hello,
 
-Do we even still need the deflink check? Seems like
-num_beaconing_links() _should_ return 1 anyway even though it currently
-doesn't, and we need to fix that?
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Also seems the VLAN carrier handling is broken.
+drivers/media/usb/dvb-usb/cxusb.c:1668:13: error: invalid storage class for function 'cxusb_disconnect'
+drivers/media/usb/dvb-usb/cxusb.c:2389:27: error: initializer element is not constant
+drivers/media/usb/dvb-usb/cxusb.c:2393:19: error: invalid storage class for function 'cxusb_driver_init'
+./include/linux/compiler.h:286:52: error: initializer element is not constant
+drivers/media/usb/dvb-usb/cxusb.c:2393:19: error: invalid storage class for function 'cxusb_driver_exit'
+drivers/media/usb/dvb-usb/cxusb.c:2393:19: error: initializer element is not constant
+drivers/media/usb/dvb-usb/cxusb.c:2400:1: error: expected declaration or statement at end of input
 
-johannes
+
+Tested on:
+
+commit:         e9565e23 Merge tag 'sched_ext-for-6.15-rc6-fixes' of g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca17f2d2ba38f7a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=0dcc341ee61fc9e4032f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1509e2f4580000
+
 
