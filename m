@@ -1,69 +1,88 @@
-Return-Path: <linux-kernel+bounces-646636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A24EAB5E91
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:46:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26F3AB5E97
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873A03AFA69
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B839466ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9712581;
-	Tue, 13 May 2025 21:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A4520B81D;
+	Tue, 13 May 2025 21:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fa3vkfXw"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYSHZOyj"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7191E5B93
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840672153FB;
+	Tue, 13 May 2025 21:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747172782; cv=none; b=qHX7EAbrStAAzxNQyWcnB1hMklUm3K4WeGwFTpnh5RXlIedO27xTJP778HiZ6SSso7BKUGRqF+8uzptCjCTl6+MymovbP43MelmHk7imWA6/1s9aYRwgmOEVbblczOxKN+jXbTTS52lVlO0doJFLoGvhuZnONsGCCbBhTQt2rRc=
+	t=1747172805; cv=none; b=QRpw/a2g96SxMMVeQWOmS4jAstD3Xywnl1cCC9fac47KXwDiYNr44y/yMRxUCS65c8FL5he0Ipu4pqyfZE8vtN7NTBA/Sl4/gGJnpDFI1iWIvyBkj6QOrK2T82MIykykP87+HLtsgMjboVDX9WP75o55s74UWhZh8rmuCcw6gPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747172782; c=relaxed/simple;
-	bh=8oSgZqYJ7fyvLQLyfkymRSnOWIb3CUWExGI3AAn9z3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a56jAS756y+WVjxKbvIQ79doDS3pwN3yM7ljVLaK6mX8462tiOMx8RYv4khmER/BSPoBEUJtLbTaEZANE2G/HUKdaO4SUSdUBkI0dBotgMyDJM8nZpXmksmND8QlqB/1AvDFclBKYlqdgoAFwV3N5khQEXQgui/L/XqfYY4lp4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fa3vkfXw; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54DL0mCB008956;
-	Tue, 13 May 2025 21:46:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=J7Oxn
-	v8gc8VK5Due4buy0qqRPwymDwfCK+r62ACGAIU=; b=fa3vkfXwYYnfSnWUWAGu3
-	YaMfhqn8gRaV7aTERCbtZPLD0dNc0V8+fpIxqGzpYxKMmYSQekJn36H2X6uivYW0
-	Hnk+RTGpkfThIt9p0sOD7GZhx5LIvA6wBTd8peVBwYfCTHib7pDHMDXdTnWTeBQ+
-	epovwiP5AenBYbEqB78FVtAUzRa9s1KyCss9dgtku6n9PVqfGerbhxj86C0R/HIL
-	u2s/868BZHLdHDFNS2K6XYCPCgyrTKI6sXWOr63+7OHv86ibOCG5+CY7zyZX7tk6
-	Cw1wTOigt7uapNVL/1gvyJ4pQmtjyhiqdmPNrUW0NilmNU/5jKi9M6u8VsbntxYa
-	A==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46mbchgbbr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 21:46:05 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54DLQjeS001890;
-	Tue, 13 May 2025 21:46:04 GMT
-Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46mc4yv943-7
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 13 May 2025 21:46:04 +0000
-From: Prakash Sangappa <prakash.sangappa@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com
-Subject: [PATCH V4 6/6] Add API to query supported rseq cs flags
-Date: Tue, 13 May 2025 21:45:54 +0000
-Message-ID: <20250513214554.4160454-7-prakash.sangappa@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250513214554.4160454-1-prakash.sangappa@oracle.com>
-References: <20250513214554.4160454-1-prakash.sangappa@oracle.com>
+	s=arc-20240116; t=1747172805; c=relaxed/simple;
+	bh=wG/Wp1GjJWoFt+2qnjj6hA+4W+5qF2qQBrY0vwHfkDk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iqC3hEH8OpBvAYr/xR7mZHmaoEV5pTppOmSLJC8+sIrbgqPGlhiE3QJ2CLhjxi+hY4rj8WdxZMf7I9xxpehrymisSUns+LcUnlKwpKis64k8py9HU301hKGDtlmOTYhZRXdxG8dowfkDFsJtoVgRjgyWGlg+Aoeh84AKUSyiqGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYSHZOyj; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d72b749dcso7308225e9.1;
+        Tue, 13 May 2025 14:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747172802; x=1747777602; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=stc73lGvEUEFWN8GCfFvarZDGFQnQhaMztIejiIT7GA=;
+        b=BYSHZOyjG0dYKWQca/yBtfnotL7sKwisaNf6nUzKGjKEXv53syHB3WZgvc4iQ+M4kr
+         B6tYiQ8vOwEz7KSmol5gNZ0REJVaOwGrsS4FjgEeyYwzgH36OnYSa7csz2t1/s/Acspv
+         K01VlUy3bDU/E2bsLB/Prc3oO6Pq88PBfH9oD2J6oCNj5skRdJ9GFADdHXoPPDkY9Y0N
+         ufgiOWSX19gFqzpm9CcF6IGibUbuh0TkrQNLq0vgKndVov2qtrrvlPLCbsXeOJHnGT+e
+         /ZVSNdJV06K+HJkpEOV3dVigmArBpzX9mi4qL2z8d5lA+BHCjcqX/BmvLHEH5S5vrvDe
+         KuLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747172802; x=1747777602;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=stc73lGvEUEFWN8GCfFvarZDGFQnQhaMztIejiIT7GA=;
+        b=NpCANIr3YUtleABa6NbDTg3dGA2bbaByfS6GpCTLfh+532omkCr2ZzaTJbg5maj680
+         6v2EKbqmRyGdFdmFN+roKBfzWFl1qJibbuYiEe+nXeGISSiVKiEL608hot/TzPrDVuhd
+         dx+ia2NckNEowub2vq74+KfsOKU457BWBwX465YUSLujgdjccAF7V57owq+aDpmjeoDc
+         2t64tkHHngfqVqO74/k35CF6fpr4zjOovyIMxWlpG6LyQBROTBvRWJVD3dOHj5El05VM
+         ERLnO+fBadeK0aTIwI4xVsPbnHRdo/tcIrKEP260VFangEnO0ocPLI7pEYeS2jrVKuPD
+         sPqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoMdDm7J02wtgS7i2XNQ63oPxkEHYvpJjZ/XTtU5WBl+KUEi7b4M3MPca+tbT9Soy0OcmKqo4QDX0wEK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznof1YBBYFxRXq+wgAh1ZMUL11QHMEBTyPnk+4d/RZh57XnJ3O
+	h8Ry5j6Cj+Q74Png+nS9zUhqDBmcw+MA2Uqc+MAl1mdW4+TcSfsJ
+X-Gm-Gg: ASbGncsKhsAaPU55eBRpY6TWQzFqfRO1y4irQj6IV6EC6f2YQ288uRWBRKapaev5BT/
+	2a9Dx/8OLVvDUAepfaqTFvWtN4GBPerbinamt8yikaAvNdHMkmSsLhZxYZTBkZnRclWtazSjTR1
+	iy5kHuCYIYhk9p6K8L3YX/KemV0qCYkXzeJo7I+FBVF4dL2qI3OPpG/41PRvx3QvHV13cpmXwz/
+	52X6//QJpGahQbwMHf6ZCApyyzK8+bXI/fViwtbfun7FqPJx+foBdKMrZOMgbunv3MlOhZ9kRF8
+	gqSLaSlpsyb3wPwaZ+OmaT3vPuzHQv7jU9UIjdbLR4uN2p8rudRI3gutyaR8PCrJDkn/shi13az
+	ESEceKhOymOuPNhO/2Fb9+Sw=
+X-Google-Smtp-Source: AGHT+IHiV8X+PIZMB34eU//Sz/WBPdRkfT4sZ6bPvbJjMB0TtkFVxh14WGHbwd+hbFf4okMBSwWR3Q==
+X-Received: by 2002:a05:600c:4f0d:b0:439:9909:c785 with SMTP id 5b1f17b1804b1-442f217aba9mr2686485e9.7.1747172801282;
+        Tue, 13 May 2025 14:46:41 -0700 (PDT)
+Received: from localhost.localdomain ([102.44.114.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f337db8asm2601235e9.9.2025.05.13.14.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 14:46:40 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+X-Google-Original-From: Abdelrahman Fekry <Abdelrahmanfekry375@gmail.com>
+To: shuah@Kernel.org,
+	skhan@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Abdelrahman Fekry <Abdelrahmanfekry375@gmail.com>,
+	Abdelrahman Fekry <AbdelrahmanFekry375@gmail.com>
+Subject: [PATCH] selftests: size: fix grammar and align output formatting
+Date: Wed, 14 May 2025 00:46:37 +0300
+Message-Id: <20250513214637.300563-1-Abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,74 +90,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-13_03,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505070000
- definitions=main-2505130206
-X-Proofpoint-GUID: Swp99mSf9_JrBTggQ06xahzA2TBUG436
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDIwNSBTYWx0ZWRfX0M3GRc9T3lU7 I89qYSuTzkoKywtdRVtRU2q470RMploR2FWdSoH2JDdHpQDiNF3pWj657OyjfUFqvxCkKLQ5BNh LGDFZY9P4JR91HJW7XdEYvDeCAfLSSdsEYd1XxIG0KZSnAsfDgo/oeaEYs7fcOUWcW+2DOer3+J
- BQH0G3JVKQHlNYB9QYsRqxVdat/logzrgzYaRG4pguoEmjtEc9M+f5qm6F5fWFVngVvP/dvrM3K vDr37pBJTj2M7MPEcew6PQyoID9xngR3U36L4Qef0TtDWb6jSl06J+RZFXyza2ZOMldEbisIhSF 66E20wGgOrOjx4YiXOZMG0dnnvpm1Bc634aTyI3w+TXMCorPNJu3T0wS6Vta0Z+cFIU211aj5G6
- YEBMvryvswEJnB9Ji6xT0Mb9DEEu4r5H/QaDKrHDydyBY+0sjBlr6JP5NH4dp8UAlHna7Fje
-X-Proofpoint-ORIG-GUID: Swp99mSf9_JrBTggQ06xahzA2TBUG436
-X-Authority-Analysis: v=2.4 cv=Da8XqutW c=1 sm=1 tr=0 ts=6823bd9d b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=dt9VzEwgFbYA:10 a=7d_E57ReAAAA:8 a=yPCof4ZbAAAA:8 a=lNSuT_yr9ip2OW1UfLwA:9 a=jhqOcbufqs7Y1TYCrUUU:22
 
-For the API, add a new flag to sys_rseq 'flags' argument called
-RSEQ_FLAG_QUERY_CS_FLAGS.
+Improve the grammar in the test name by changing "get runtime memory use"
+to "get runtime memory usage". Also adjust spacing in output lines
+("Total:", "Free:", etc.) to ensure consistent alignment and readability.
 
-When this flag is passed it returns a bit mask of all the supported
-rseq cs flags in the user provided rseq struct's 'flags' member.
-
-Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
+Signed-off-by: Abdelrahman Fekry <AbdelrahmanFekry375@gmail.com>
 ---
- include/uapi/linux/rseq.h |  1 +
- kernel/rseq.c             | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
+ tools/testing/selftests/size/get_size.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-index 015534f064af..44baea9dd10a 100644
---- a/include/uapi/linux/rseq.h
-+++ b/include/uapi/linux/rseq.h
-@@ -20,6 +20,7 @@ enum rseq_cpu_id_state {
+diff --git a/tools/testing/selftests/size/get_size.c b/tools/testing/selftests/size/get_size.c
+index 2980b1a63366..d5b67c073d8e 100644
+--- a/tools/testing/selftests/size/get_size.c
++++ b/tools/testing/selftests/size/get_size.c
+@@ -86,7 +86,7 @@ void _start(void)
+ 	int ccode;
+ 	struct sysinfo info;
+ 	unsigned long used;
+-	static const char *test_name = " get runtime memory use\n";
++	static const char *test_name = " get runtime memory usage\n";
  
- enum rseq_flags {
- 	RSEQ_FLAG_UNREGISTER = (1 << 0),
-+	RSEQ_FLAG_QUERY_CS_FLAGS = (1 << 1),
- };
- 
- enum rseq_cs_flags_bit {
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index c4bc52f8ba9c..997f7ca722ca 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -576,6 +576,23 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
- 		return 0;
- 	}
- 
-+	/*
-+	 * return supported rseq_cs flags
-+	 * It is an or of all the rseq_cs_flags;
-+	 */
-+	if (flags & RSEQ_FLAG_QUERY_CS_FLAGS) {
-+		u32 rseq_csflags = RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT |
-+				   RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL  |
-+				   RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE |
-+				   RSEQ_CS_FLAG_DELAY_RESCHED |
-+				   RSEQ_CS_FLAG_RESCHEDULED;
-+		if (!rseq)
-+			return -EINVAL;
-+		if (copy_to_user(&rseq->flags, &rseq_csflags, sizeof(u32)))
-+			return -EFAULT;
-+		return 0;
-+	}
-+
- 	if (unlikely(flags))
- 		return -EINVAL;
- 
+ 	print("TAP version 13\n");
+ 	print("# Testing system size.\n");
+@@ -105,8 +105,8 @@ void _start(void)
+ 	used = info.totalram - info.freeram - info.bufferram;
+ 	print("# System runtime memory report (units in Kilobytes):\n");
+ 	print(" ---\n");
+-	print_k_value(" Total:  ", info.totalram, info.mem_unit);
+-	print_k_value(" Free:   ", info.freeram, info.mem_unit);
++	print_k_value(" Total : ", info.totalram, info.mem_unit);
++	print_k_value(" Free  : ", info.freeram, info.mem_unit);
+ 	print_k_value(" Buffer: ", info.bufferram, info.mem_unit);
+ 	print_k_value(" In use: ", used, info.mem_unit);
+ 	print(" ...\n");
 -- 
-2.43.5
+2.25.1
 
 
