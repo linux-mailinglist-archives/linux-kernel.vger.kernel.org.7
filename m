@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-645479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7857AB4E2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:33:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87691AB4E36
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DA31B40A12
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:33:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D043E3B5136
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C4420E717;
-	Tue, 13 May 2025 08:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59B420E002;
+	Tue, 13 May 2025 08:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHeQbiTn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKRyHWXQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282691F16B;
-	Tue, 13 May 2025 08:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D020CCE4;
+	Tue, 13 May 2025 08:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747125158; cv=none; b=RWYyMaaYnM+sMb3Ih4jeB9DyCr35ic98mUJPeZ/JptjasPULBunqIDVOANU2Sg4BuVLB8LtH48nFUbjG+DElVfAU/Gh/nbwqeEv9FnLWLIpJeuk8r+WvXC6b6IYrKLNU/iPsGEVMriCRo1AmvfrtyVQHX0sG8vD3Y+2547klXbg=
+	t=1747125336; cv=none; b=gdHlSbOwVF0R2PKPmO0HXHKgH81HPknSvMFrcMWBRvMcfAmCfFb9VozryvWCsnSmbCeaoIUkj7TNOE4CtiFT+09DO2/rVxiJwBBs5fOGdVkkdxB88o6VoUGsOMI+wl2ULuCMFMjuOlumiWbuKpDois9pwXQbJjp12d15UcXWWmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747125158; c=relaxed/simple;
-	bh=q70TIRrGdpp6yg967Z9NaG3C82XUVJAKivW+wfIO/tM=;
+	s=arc-20240116; t=1747125336; c=relaxed/simple;
+	bh=AQsw6m7iH5by6TnMCmB9Fcyzck4JqC+iM5hS4GjSXTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGf8BnWvW0wjf1Ok+mwwtzEEcJZp+6nejrv3Xi59cHZ02g/rUj7UI9BI08+nA+xP07byhogmi6XfP/84S404aIBOvV8DUHNSmW/kxjJSRzb+nU4CPplEi0wjmjKZL3x3FV7CFYmxjyTNBGwKE/BHRpvL+7P36+2hAX60uC8bPPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHeQbiTn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7ED0C4CEE4;
-	Tue, 13 May 2025 08:32:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=F9DPGdZaZuCf6UNBk6+6cYaqVbuMIWJbS9kPFz/pbl8cawf6WKjn8Pcss1YOHN+apNTI98C7C8r8RB2uV3uKknf1q5OE28sWcwNnu1TvM+wDaoSq42gN7P1c9hl9m9+zc6fXkLJN2oh3FucMTHFRLf7ElktgHyxkeWku5P4UgpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKRyHWXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E58DC4CEE4;
+	Tue, 13 May 2025 08:35:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747125157;
-	bh=q70TIRrGdpp6yg967Z9NaG3C82XUVJAKivW+wfIO/tM=;
+	s=k20201202; t=1747125334;
+	bh=AQsw6m7iH5by6TnMCmB9Fcyzck4JqC+iM5hS4GjSXTY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UHeQbiTn5XtYLW7+AfbL65SS3DvgOAZP2K+mt25BR8fhFkeRHeTTgjYJffT4uH6MD
-	 b77UFscjVwRx6Us3pQDmBq7Qlm7hmUzpyno/WePUR5mYocp+jiIy1yP822oACfAtLu
-	 eCx62UP6S4ZREJAEQ7HiCyZlntpUW/XMgRyni3i5wdrSUWNVntt+xDdzT2o1L6daS7
-	 gauhQEePN4NFpabmrfMTUgA604cCtWtWOunaees9Vjj+r2UpJO+mqfARF6Ns1U3d7N
-	 kL+2BBL7BNr2K3gOHn7g+X3PGFF+H4q7l33pTTUohTO9YOgw/Sz0Zm513FmUv68Om8
-	 b1uHeAuC4Czuw==
-Date: Tue, 13 May 2025 10:32:29 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Andrew Ballance <andrewjballance@gmail.com>
-Cc: airlied@gmail.com, simona@ffwll.ch, akpm@linux-foundation.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	kwilczynski@kernel.org, raag.jadav@intel.com,
-	andriy.shevchenko@linux.intel.com, arnd@arndb.de, me@kloenk.dev,
-	fujita.tomonori@gmail.com, daniel.almeida@collabora.com,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 00/11] rust: add support for Port io
-Message-ID: <aCMDnQCcAOt28ONM@pollux>
-References: <20250509031524.2604087-1-andrewjballance@gmail.com>
+	b=cKRyHWXQ1Ci63Evz8Btig3gSKZnRJ2oQPD64QOiVjNS+aHTHvyJl0XrXNKlyfag/Y
+	 IOstQmBNvqBol0UBuLeiZXhJsF6MuKwK3FCYmxTd32Mk949NRR06rKkdajNsXLQdVf
+	 DTDnPFDBRc43DaZei1QMHRjFhEqlRL+OMwqK+lD7RSfACwPhji6Jn4leHixc+tJRoS
+	 fSddiK2SDvfnC/3HTBT8vqH/QOxksGWXHnqrBU1fC9DqiSlYdlCF98SDSQ/yg4Pq6n
+	 8XCbpE4CUONrW8BvlicrLpW9NF7IEHcHI5pNnKFalA/D/eC2XYsD1s9nqqom+jMMuD
+	 bfxYFaLd9LTiw==
+Date: Tue, 13 May 2025 09:35:28 +0100
+From: Lee Jones <lee@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Nam Tran <trannamatk@gmail.com>, andy@kernel.org, geert@linux-m68k.org,
+	pavel@ucw.cz, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, christophe.jaillet@wanadoo.fr, corbet@lwn.net,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
+ LED driver
+Message-ID: <20250513083528.GA2936510@google.com>
+References: <aCGPuKtfprIvwADa@smile.fi.intel.com>
+ <20250512173800.6767-1-trannamatk@gmail.com>
+ <CAHp75VcXmOByVsuwm0m0+FYXoaxBc1CLKtofGgHfB4sMDg+T2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250509031524.2604087-1-andrewjballance@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VcXmOByVsuwm0m0+FYXoaxBc1CLKtofGgHfB4sMDg+T2A@mail.gmail.com>
 
-Hi Andrew,
+On Mon, 12 May 2025, Andy Shevchenko wrote:
 
-On Thu, May 08, 2025 at 10:15:13PM -0500, Andrew Ballance wrote:
-> currently the rust `Io` type maps to the c read{b, w, l, q}/write{b, w, l, q}
-> functions and have no support for port io.this is a problem for pci::Bar
-> because the pointer returned by pci_iomap is expected to accessed with
-> the ioread/iowrite api [0].
+> On Mon, May 12, 2025 at 8:38 PM Nam Tran <trannamatk@gmail.com> wrote:
+> > On Mon, 12 May 2025 Andy Shevchenko wrote:
+> > > On Sat, May 10, 2025 at 02:48:02PM +0700, Nam Tran wrote:
+> > > > On Thu, 8 May 2025 Lee Jones wrote:
+> > > > > On Thu, 08 May 2025, Andy Shevchenko wrote:
+> > > > > > On Thu, May 8, 2025 at 5:27 PM Nam Tran <trannamatk@gmail.com> wrote:
+> > > > > > > On Thu, 8 May 2025 Lee Jones wrote:
+> > > > > > > > On Thu, 08 May 2025, Andy Shevchenko wrote:
 > 
-> this patch series splits the `Io` type into `Io`, `PortIo` and `MMIo`.and,
-> updates pci::Bar, as suggested in the zulip[1], so that it is generic over
-> Io and, a user can optionally give a compile time hint about the type of io. 
+> ...
 > 
-> Link: https://docs.kernel.org/6.11/driver-api/pci/pci.html#c.pci_iomap [0]
-> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/.60IoRaw.60.20and.20.60usize.60/near/514788730 [1]
+> > > > I think setting PWM also same as brightness_set API. However, there are
+> > > > many PWM config for a LED and it is one of other config to make autonomous mode work.
+> > > > Therefore, standard led API can use in some use cases only.
+> > > >
+> > > > Please see the link below for a better visualization of how to configure the LP5812.
+> > > > https://dev.ti.com/gallery/view/LED/LP581x/ver/0.10.0/
+> > >
+> > > To me it sounds like you should start from the small steps, i.e. do not
+> > > implement everything at once. And starting point of the 4 RGB LEDs sounds
+> > > the best approach to me. Then, if needed, you can always move on with
+> > > fancy features of this hardware on top of the existing code.
+> >
+> > Thanks for the suggestion.
+> > I understand your point and agree that starting with standard LED APIs is the preferred approach.
+> >
+> > However, the LP5812 hardware offers more advanced features, and I’d like to support end users all
+> > features as shown in the link: https://dev.ti.com/gallery/view/LED/LP581x/ver/0.10.0/.
+> > It is easy for end user to investigate and use driver.
 > 
-> Andrew Ballance (6):
->   rust: io: add new Io type
->   rust: io: add from_raw_cookie functions
->   rust: pci: make Bar generic over Io
->   samples: rust: rust_driver_pci: update to use new bar and io api
->   gpu: nova-core: update to use the new bar and io api
->   rust: devres: fix doctest
+> I see. Good luck then!
 > 
-> Fiona Behrens (5):
->   rust: helpers: io: use macro to generate io accessor functions
->   rust: io: Replace Io with MMIo using IoAccess trait
->   rust: io: implement Debug for IoRaw and add some doctests
->   rust: io: add PortIo
->   io: move PIO_OFFSET to linux/io.h
+> > If I want to keep the current driver interface to meet this expectation, would it be acceptable
+> > to move it to the misc subsystem to better support the hardware?
+> 
+> Don't ask me, I don't know what you want at the end and I have not so
+> much time to invest in this anymore. Only what I'm sure about I
+> already expressed in the previous replies and emails.
 
-Thanks for sending out the patch series.
+Briefly spoke to Greg (now Cc:ed).  We can all discuss this together.
 
-I gave it a quick shot and the series breaks the build starting with patch 2. I
-see that you have fixup commits later in the series, however in the kernel we
-don't allow patches to intermediately introduce build failures, build warnings,
-bugs, etc., see also [1]. You should still try to break things down logically as
-good as possible.
+My 2c, whilst falling short of deep-diving, is as follows:
 
-From the current structure of your patches it seems to me that structure-wise
-you should be good by going through them one by one and fix them up; your later
-patches should become "noops" then. But feel free to re-organize things if you
-feel that's not the best approach.
+1. No one is going to enjoy reviewing a 3k line submission!
 
-Can you please fix this up and resend right away? This should make the
-subsequent review much easier.
+   - Instead, submit the smallest driver you can whilst still retaining
+     functionality.  It is not good practice to fully enable a
+     complicated driver such as this in a single submission - let alone
+     a single patch.
 
-[1] https://docs.kernel.org/process/submitting-patches.html#separate-your-changes
+2. Hand-rolling your own API from scratch is to be highly discouraged.
+
+   - There seems to be quite a bit of overlap in functionality between
+     your bespoke API and LED's.  The LED subsystem already supports a
+     lot of what's being implemented here.  Instead of letting the user
+     configure the device directly, why not offer some high level
+     options and attempt to infer the rest.  If possible, the complexity
+     of the device should be handed by driver, rather than placing the
+     onus on the user.
+
+3. Shoving this into Misc because you don't want to use the APIs that
+   are already offered to you is not a good approach.
+
+-- 
+Lee Jones [李琼斯]
 
