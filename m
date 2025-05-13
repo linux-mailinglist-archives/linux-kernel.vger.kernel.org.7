@@ -1,176 +1,379 @@
-Return-Path: <linux-kernel+bounces-646343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6948DAB5B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:25:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5631AB5B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F791860383
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54D993B5BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45DB1DF258;
-	Tue, 13 May 2025 17:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE832BE7C5;
+	Tue, 13 May 2025 17:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="AfMfEUbI"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ypEIuLZB"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B291A2398
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3149E645
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747157144; cv=none; b=Or1YJw63SJABRbGleF5y2m9Ubqxy9XITzzTd0KF/TIQ1RQ4h3TITRxEOR7gE8bS/Yv+CHMgAGPKxW6Of6fUPixXvWHxZrVUl758kvBbwD6J8sEuQR+hCKAU5TcDfe65elZGu8qq320EUo3lfH9+8VBq8brGNdKiNd4k2chmFayg=
+	t=1747157202; cv=none; b=dQXTrHYDRBeGgkam0wD/Aw5CGsMsFjY2qbhCygr3cv2QgXgrOYpqdfr0xx0J/p+XIUFjhBZD6Sjwy7z83dmXQQy2d/1jwr3UNwC5MNZO/a9BuX1SlPwqmHBzP9f0ZW+1nniKeJjSQd7aCGOk5I85tT6FYhsMinOD0XM3UzrQ0rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747157144; c=relaxed/simple;
-	bh=0IN2D/okqMHWE0nXrbprs09StzNcM6Okc89h9JohR94=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O4wcziojQGCBn7BBiG8V84TMOge4wXrWysfOtDTmFGr8ngndznkcHfkNHie4nunQB6bjgZE508OiS7/3alOzmt9GPYF/FauYOO90RDIa2fO9RQuPO8e7/scoKYZqZp+LN9+AXUQtK3irCZV7PNmIEHNZofuHBvHTnSlw8TwjTO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=AfMfEUbI; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4H2DYdicH8cY2u0pkRgeIrS4yk2HqnARpS5QbRb4AGU=; b=AfMfEUbIftCZYx51MEWG76Jbxm
-	86Gk4kUFZP6BYBhkGpWehh2aMMRwicmPjtYaWwYgvxQ3bTEBx4Tx2GfvHpj024OBaoofYFwNTZdcB
-	zwUIIfeAhaINxePljmT0jzRoBC3WpeIFz4iNyG2kKv4Zuzt3+pdm5eKEeKZH9vmLdlL3tClL2SS6E
-	HrxG2ScdVyaQbKdgMRfDDxn/X1FV8YzOI5X1CJtK9sG5ayg5OgGUErOUPfBPQ2Q8JTBfkCGNLXrBY
-	i5V0meEORd+YrMN08fJ5rvUyetcz/eJMJHeEW0uOhpdlkGqHhOK2fbfezi9ah7+rM9pH52SnMII7F
-	2o+OdJoA==;
-Received: from i53875a50.versanet.de ([83.135.90.80] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uEtNk-0002TU-Te; Tue, 13 May 2025 19:25:32 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Arnd Bergmann <arnd@arndb.de>, Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] arm64: dts: rockchip: move rk3528 i2c+uart aliases to board files
-Date: Tue, 13 May 2025 19:25:31 +0200
-Message-ID: <3704497.hdfAi7Kttb@diego>
-In-Reply-To: <4a4c0295-d8f1-4d8a-92e4-34a69b42c728@kwiboo.se>
-References:
- <20250510220106.2108414-1-heiko@sntech.de>
- <4a4c0295-d8f1-4d8a-92e4-34a69b42c728@kwiboo.se>
+	s=arc-20240116; t=1747157202; c=relaxed/simple;
+	bh=j7MG8fRFjn64P571yBnwfXSB6U8Ki0vuuY9QiefIPV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ghrrLNn4YpARg2c0rbwnH/AxO0GCnaR851C/YArMalU3Gg+SKDMPLM0HBG86aKuen1q3GOPkU6KOawcc6KtLCnlOTuQK8arM50eAaR+6nKJNcwifLB1KhW9VhIcC/zkux06mHt+JuymY86AM9mcgUO0J5eQL1QxGgfS//lttZIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ypEIuLZB; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22e42641d7cso17355ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:26:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747157199; x=1747761999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pt97d48gjNxSANYhlUYSzocgwjeBM/CBv6nzairLsS4=;
+        b=ypEIuLZBfTWXmWpqvsQGdbfz1PwLCFuA03Afo9CgJGYAhv9MwzrRsnrwg4bM1Hsrak
+         JDLs9XoeO1u8vkrIaTXsxKO8JG1bS3rL7uyiSUgjPPwHV8qt3W1cghzuHrCmTG3d2O+G
+         psBwcTOap9o6htTXFfU1gPehP5P70n3/+RpF69MP5+LhcLnfYuF88ugH5StboRGTHgim
+         2Kso82W3rtu5TCQuv4DcPixbJYq4jScW2A1ofYgiKhxgHpcZcRz9NwfB1vDWA3O+Y6JZ
+         iv0DOOc/S+Tn6uco92SUVwpdPyD5LXd7yjz1N7Tn0BNV3sEaemyvNoRhJsFW5QqRe7R9
+         v45w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747157199; x=1747761999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pt97d48gjNxSANYhlUYSzocgwjeBM/CBv6nzairLsS4=;
+        b=ds/JoYZq6VdJdaWGvKiyWHk+90JlqfJiP48qzHvGH3XlZoMWKwMjgsOm3fvjQ5enos
+         ipyy3gfFiUgB/jWSDEsTOAJWg3wOTmNdB/ZPWL00PRL2O9fS93HI81Jb2wD5LJnZAJWl
+         xsKjhFNbykyRuyWgn6a7hrcrbdns72s8jALxxbgkYDe+LEUeuN1rI02C1DtaqjzmRCDO
+         +Kw5qBatkTfp/s8llFDeiAkJgF649A6lsN9ozBGoZHY0tPHLg9CApXPQmRgB7bsBNw/t
+         a4iorHbK0ZEh4H5bzgiWlIGfkdOH3luilUyErE3ya6afzdfWZssvKanucLgbDs/2EHaN
+         DmBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWePenVkZh6qvW04/da8AEDvQfU0jaFL2+8eA+vWtsHN88AIOhiNTc9a2FXpX/NA1qrw2SyOnzdLCE4wkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyeyh7mvLh2rhgtQfJryVxl0L3YzC22o2iMZpCMlyLJgBO1OQto
+	Z4m+A5/rvR9yVLpBYVZlbV1pKFX+csy1yxsiQYa8snCD+jUAAZYTJvAIzc3n9dA323eQAjkwIgi
+	OQbW1vRLlupSLdl2+QhV3wwJOW1zDaOroeZr8/iWS
+X-Gm-Gg: ASbGncs5mSTF0PNfVtXPEm5chLNjTQ9FgXCz9tZ/fYltWRsBuTkOg4DCZNRctgMRmW6
+	kCFiKyHDmLIcojPRnIqanTJaWZT86oWMvrggFdycFrEVibGL8AbpH1ZgQKx2APUTEV+v4hK2J9G
+	hNxHbW2K/VVd1S3ApQeKbHDphfNS0c8QJAWiJXIbl3JshkxB3k6sVWzPz3IX/9EQ==
+X-Google-Smtp-Source: AGHT+IFlIkzISAflQDFsf9GZe2dx0t09B6mo1dIn5rYsLY+FhyqTbGnWgAXgCe6we8o1uLkfk0pj6mv0d4VZl0VUorY=
+X-Received: by 2002:a17:903:2b10:b0:21f:2ded:bfa0 with SMTP id
+ d9443c01a7336-231803fbff3mr3273635ad.25.1747157199111; Tue, 13 May 2025
+ 10:26:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250512184700.11691-1-irogers@google.com> <20250512184700.11691-2-irogers@google.com>
+ <108f87fc28453adb52d6b8c2afd8d184e288a83e.camel@intel.com> <CAP-5=fVaC662z2nJnTwBHMu-RE+9HkRmvSyNT5qB448+zw6e9Q@mail.gmail.com>
+In-Reply-To: <CAP-5=fVaC662z2nJnTwBHMu-RE+9HkRmvSyNT5qB448+zw6e9Q@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 13 May 2025 10:26:26 -0700
+X-Gm-Features: AX0GCFvK2V6CRXEAzQUuHKbGYnq4DKTfCv9i3TVjKKobxEOPyde8mDvOMXOdHlo
+Message-ID: <CAP-5=fW5gap1OOFiEq6Lrc500rDPx=h5UNwOF8mEg2LOgfBsew@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] perf test: Hybrid improvements for metric value
+ validation test
+To: "Falcon, Thomas" <thomas.falcon@intel.com>, "Wang, Weilin" <weilin.wang@intel.com>
+Cc: "james.clark@linaro.org" <james.clark@linaro.org>, 
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
+	"acme@kernel.org" <acme@kernel.org>, "namhyung@kernel.org" <namhyung@kernel.org>, 
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hey Jonas,
+On Mon, May 12, 2025 at 2:52=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Mon, May 12, 2025 at 1:30=E2=80=AFPM Falcon, Thomas <thomas.falcon@int=
+el.com> wrote:
+> >
+> > On Mon, 2025-05-12 at 11:47 -0700, Ian Rogers wrote:
+> > > On my alderlake I currently see for the "perf metrics value validatio=
+n" test:
+> > > ```
+> > > Total Test Count:  142
+> > > Passed Test Count:  139
+> > > [
+> > > Metric Relationship Error:      The collected value of metric ['tma_f=
+etch_latency', 'tma_fetch_bandwidth', 'tma_frontend_bound']
+> > >                         is [31.137028] in workload(s): ['perf bench f=
+utex hash -r 2 -s']
+> > >                         but expected value range is [tma_frontend_bou=
+nd, tma_frontend_bound]
+> > >                         Relationship rule description: 'Sum of the le=
+vel 2 children should equal level 1 parent',
+> > > Metric Relationship Error:      The collected value of metric ['tma_m=
+emory_bound', 'tma_core_bound', 'tma_backend_bound']
+> > >                         is [6.564442] in workload(s): ['perf bench fu=
+tex hash -r 2 -s']
+> > >                         but expected value range is [tma_backend_boun=
+d, tma_backend_bound]
+> > >                         Relationship rule description: 'Sum of the le=
+vel 2 children should equal level 1 parent',
+> > > Metric Relationship Error:      The collected value of metric ['tma_l=
+ight_operations', 'tma_heavy_operations', 'tma_retiring']
+> > >                         is [57.806179] in workload(s): ['perf bench f=
+utex hash -r 2 -s']
+> > >                         but expected value range is [tma_retiring, tm=
+a_retiring]
+> > >                         Relationship rule description: 'Sum of the le=
+vel 2 children should equal level 1 parent']
+> > > Metric validation return with erros. Please check metrics reported wi=
+th errors.
+> > > ```
+> > > I suspect it is due to two metrics for different CPU types being
+> > > enabled. Add a -cputype option to avoid this. The test still fails wi=
+th:
+> > > ```
+> > > Total Test Count:  115
+> > > Passed Test Count:  114
+> > > [
+> > > Wrong Metric Value Error:       The collected value of metric ['tma_l=
+2_hit_latency']
+> > >                         is [117.947088] in workload(s): ['perf bench =
+futex hash -r 2 -s']
+> > >                         but expected value range is [0, 100]]
+> > > Metric validation return with errors. Please check metrics reported w=
+ith errors.
+> > > ```
+> > > which is a reproducible genuine error and likely requires a metric fi=
+x.
+> >
+> > Hi Ian, I tested this on my alder lake and an arrow lake. All tests, in=
+cluding tma_l2_hit_latency,
+> > pass on my end.
+> >
+> > Tested-by: Thomas Falcon <thomas.falcon@intel.com>
+>
+> Thanks Thomas! It should also work for core_lowpower on ArrowLake. I
+> find some times that tma_l2_hit_latency passes for me. Trying a few
+> more times I see other failures, but they all seem to be "No Metric
+> Value Error" - perhaps these shouldn't fail the test. In the testing
+> code we're passing '-a' for system wide profiling:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
+git/tree/tools/perf/tests/shell/lib/perf_metric_validation.py?h=3Dperf-tool=
+s-next#n380
+> I believe this is done so that counters for things like AVX will
+> gather values. I wonder if the tma_l2_hit_latency something is
+> happening due to scaling counts:
+> ```
+> $ sudo /tmp/perf/perf stat -M tma_l2_hit_latency -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>      7,987,903,325      cpu_core/TOPDOWN.SLOTS/          #    210.2 %
+> tma_l2_hit_latency       (87.27%)
+>      3,131,119,398      cpu_core/topdown-retiring/
+>                          (87.27%)
+>      1,910,718,811      cpu_core/topdown-mem-bound/
+>                          (87.27%)
+>        481,456,610      cpu_core/topdown-bad-spec/
+>                          (87.27%)
+>      1,681,347,944      cpu_core/topdown-fe-bound/
+>                          (87.27%)
+>      2,798,109,902      cpu_core/topdown-be-bound/
+>                          (87.27%)
+>        365,736,554      cpu_core/MEMORY_ACTIVITY.STALLS_L1D_MISS/
+>                                   (87.27%)
+>        327,668,588      cpu_core/MEMORY_ACTIVITY.STALLS_L2_MISS/
+>                                  (87.30%)
+>         12,744,464      cpu_core/MEM_LOAD_RETIRED.L1_MISS/
+>                            (75.32%)
+>      1,403,250,041      cpu_core/CPU_CLK_UNHALTED.THREAD/
+>                           (87.65%)
+>          6,657,480      cpu_core/MEM_LOAD_RETIRED.L2_HIT/
+>                           (87.66%)
+>     59,424,499,192      TSC
+>         40,830,608      cpu_core/MEM_LOAD_RETIRED.FB_HIT/
+>                           (62.46%)
+>      1,461,544,380      cpu_core/CPU_CLK_UNHALTED.REF_TSC/
+>                            (74.79%)
+>      1,008,604,319      duration_time
+>
+>        1.004974560 seconds time elapsed
+> ```
+> The values in the parentheses is a scaling amount which should mean
+> for event multiplexing but for hybrid the events aren't running when
+> on the other core type, so we're seeing these odd multiplexing values
+> and these are used to scale counts:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
+git/tree/tools/lib/perf/evsel.c?h=3Dperf-tools-next#n599
+> I find when I run a benchmark rather than "sleep" the issue seems
+> harder to reproduce.
 
-Am Sonntag, 11. Mai 2025, 13:05:08 Mitteleurop=C3=A4ische Sommerzeit schrie=
-b Jonas Karlman:
-> On 2025-05-11 00:01, Heiko Stuebner wrote:
-> > Even though they will be the same for all boards, i2c and uart aliases
-> > are supposed to live in the individual board files, to not create
-> > aliases for disabled nodes.
->=20
-> This sounds like something tooling should be able to handle, e.g. U-Boot
-> use fdtgrep to filter out nodes (and aliases) for the FDT used by early
-> boot phases.
->=20
-> Maybe DTC just need a feature to remove aliases to disabled nodes?
+Ok chatting with Weilin and actually paying attention to warning
+messages I think I see a problem. TSC (msr/tsc/) is aggregating data
+across all CPUs (it is a software event and is a different performance
+monitoring unit to cpu_core) while the counters are only on cpu_core.
+So I think this means the TSC value is too large. However, even with
+restricting the CPUs I see the >100% problem:
+```
+$ perf stat -M tma_l2_hit_latency -C 0-15 -a sleep 1
 
-personally I don't see the issue with an i2c alias pointing to a disabled
-i2c controller, but it does seem to violate some dt convention.
+ Performance counter stats for 'system wide':
 
-At least people got adamant this time about the aliases moving into the
-board file [0].
+    27,985,670,146      cpu_core/TOPDOWN.SLOTS/          #    125.6 %
+tma_l2_hit_latency       (87.22%)
+     9,619,906,383      cpu_core/topdown-retiring/
+                         (87.22%)
+     2,333,124,385      cpu_core/topdown-mem-bound/
+                         (87.22%)
+     3,607,656,674      cpu_core/topdown-bad-spec/
+                         (87.22%)
+     9,839,779,867      cpu_core/topdown-fe-bound/
+                         (87.22%)
+     5,244,189,749      cpu_core/topdown-be-bound/
+                         (87.22%)
+       442,932,231      cpu_core/MEMORY_ACTIVITY.STALLS_L1D_MISS/
+                                  (87.24%)
+       360,126,840      cpu_core/MEMORY_ACTIVITY.STALLS_L2_MISS/
+                                 (87.63%)
+        31,264,814      cpu_core/MEM_LOAD_RETIRED.L1_MISS/
+                           (75.26%)
+     4,761,244,040      cpu_core/CPU_CLK_UNHALTED.THREAD/
+                          (87.63%)
+        28,429,277      cpu_core/MEM_LOAD_RETIRED.L2_HIT/
+                          (87.62%)
+    33,863,490,835      TSC
+        23,533,366      cpu_core/MEM_LOAD_RETIRED.FB_HIT/
+                          (62.25%)
+     3,158,155,632      cpu_core/CPU_CLK_UNHALTED.REF_TSC/
+                           (74.63%)
+     1,003,102,327      duration_time
 
+       1.001912038 seconds time elapsed
+```
+So we still need to figure this one out. The multiplexing numbers
+still worry me.
 
-> Also how should overlays handle aliases? Are all overlays suppose to add
-> aliases for the add-on devices they may enable?
->=20
-> And how should we handle boards with e.g. a 40-pin header where pins
-> could be muxed to multiple functions. Is it the overlays responsibility
-> to remove and replace aliases? E.g. if pins can mux between i2c1 and
-> uart3, and i2c1 was enabled by default.
-
-I guess we'll cross those bridge together with the bigger round of
-dt-people when the first overlay appears ;-) .
-
-Heiko
-
-
-[0] https://lore.kernel.org/all/df6003e3-7fc3-4e50-a702-f0aa8d663dff@app.fa=
-stmail.com/
-
->=20
-> Regards,
-> Jonas
->=20
-> >=20
-> > So move the newly added aliases for rk3528 over to the Radxa E20C board,
-> > which is the only rk3528 board right now.
-> >=20
-> > Fixes: d3a05f490d04 ("arm64: dts: rockchip: Add I2C controllers for RK3=
-528")
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >  .../boot/dts/rockchip/rk3528-radxa-e20c.dts      |  2 ++
-> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi         | 16 ----------------
-> >  2 files changed, 2 insertions(+), 16 deletions(-)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/=
-arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> > index 506d54337ece..9f6ccd9dd1f7 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> > @@ -18,8 +18,10 @@ / {
-> > =20
-> >  	aliases {
-> >  		ethernet0 =3D &gmac1;
-> > +		i2c1 =3D &i2c1;
-> >  		mmc0 =3D &sdhci;
-> >  		mmc1 =3D &sdmmc;
-> > +		serial0 =3D &uart0;
-> >  	};
-> > =20
-> >  	chosen {
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot=
-/dts/rockchip/rk3528.dtsi
-> > index cd8ef389ccf3..b2724c969a76 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > @@ -24,22 +24,6 @@ aliases {
-> >  		gpio2 =3D &gpio2;
-> >  		gpio3 =3D &gpio3;
-> >  		gpio4 =3D &gpio4;
-> > -		i2c0 =3D &i2c0;
-> > -		i2c1 =3D &i2c1;
-> > -		i2c2 =3D &i2c2;
-> > -		i2c3 =3D &i2c3;
-> > -		i2c4 =3D &i2c4;
-> > -		i2c5 =3D &i2c5;
-> > -		i2c6 =3D &i2c6;
-> > -		i2c7 =3D &i2c7;
-> > -		serial0 =3D &uart0;
-> > -		serial1 =3D &uart1;
-> > -		serial2 =3D &uart2;
-> > -		serial3 =3D &uart3;
-> > -		serial4 =3D &uart4;
-> > -		serial5 =3D &uart5;
-> > -		serial6 =3D &uart6;
-> > -		serial7 =3D &uart7;
-> >  	};
-> > =20
-> >  	cpus {
->=20
->=20
+Thanks,
+Ian
 
 
-
-
+> Thanks,
+> Ian
+>
+> > Thanks,
+> > Tom
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  .../tests/shell/lib/perf_metric_validation.py   | 12 +++++++++---
+> > >  tools/perf/tests/shell/stat_metrics_values.sh   | 17 +++++++++++----=
+--
+> > >  2 files changed, 20 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/tools/perf/tests/shell/lib/perf_metric_validation.py b/t=
+ools/perf/tests/shell/lib/perf_metric_validation.py
+> > > index 0b94216c9c46..dea8ef1977bf 100644
+> > > --- a/tools/perf/tests/shell/lib/perf_metric_validation.py
+> > > +++ b/tools/perf/tests/shell/lib/perf_metric_validation.py
+> > > @@ -35,7 +35,8 @@ class TestError:
+> > >
+> > >
+> > >  class Validator:
+> > > -    def __init__(self, rulefname, reportfname=3D'', t=3D5, debug=3DF=
+alse, datafname=3D'', fullrulefname=3D'', workload=3D'true', metrics=3D''):
+> > > +    def __init__(self, rulefname, reportfname=3D'', t=3D5, debug=3DF=
+alse, datafname=3D'', fullrulefname=3D'',
+> > > +                 workload=3D'true', metrics=3D'', cputype=3D'cpu'):
+> > >          self.rulefname =3D rulefname
+> > >          self.reportfname =3D reportfname
+> > >          self.rules =3D None
+> > > @@ -43,6 +44,7 @@ class Validator:
+> > >          self.metrics =3D self.__set_metrics(metrics)
+> > >          self.skiplist =3D set()
+> > >          self.tolerance =3D t
+> > > +        self.cputype =3D cputype
+> > >
+> > >          self.workloads =3D [x for x in workload.split(",") if x]
+> > >          self.wlidx =3D 0  # idx of current workloads
+> > > @@ -377,7 +379,7 @@ class Validator:
+> > >
+> > >      def _run_perf(self, metric, workload: str):
+> > >          tool =3D 'perf'
+> > > -        command =3D [tool, 'stat', '-j', '-M', f"{metric}", "-a"]
+> > > +        command =3D [tool, 'stat', '--cputype', self.cputype, '-j', =
+'-M', f"{metric}", "-a"]
+> > >          wl =3D workload.split()
+> > >          command.extend(wl)
+> > >          print(" ".join(command))
+> > > @@ -443,6 +445,8 @@ class Validator:
+> > >                  if 'MetricName' not in m:
+> > >                      print("Warning: no metric name")
+> > >                      continue
+> > > +                if 'Unit' in m and m['Unit'] !=3D self.cputype:
+> > > +                    continue
+> > >                  name =3D m['MetricName'].lower()
+> > >                  self.metrics.add(name)
+> > >                  if 'ScaleUnit' in m and (m['ScaleUnit'] =3D=3D '1%' =
+or m['ScaleUnit'] =3D=3D '100%'):
+> > > @@ -578,6 +582,8 @@ def main() -> None:
+> > >      parser.add_argument(
+> > >          "-wl", help=3D"Workload to run while data collection", defau=
+lt=3D"true")
+> > >      parser.add_argument("-m", help=3D"Metric list to validate", defa=
+ult=3D"")
+> > > +    parser.add_argument("-cputype", help=3D"Only test metrics for th=
+e given CPU/PMU type",
+> > > +                        default=3D"cpu")
+> > >      args =3D parser.parse_args()
+> > >      outpath =3D Path(args.output_dir)
+> > >      reportf =3D Path.joinpath(outpath, 'perf_report.json')
+> > > @@ -586,7 +592,7 @@ def main() -> None:
+> > >
+> > >      validator =3D Validator(args.rule, reportf, debug=3Dargs.debug,
+> > >                            datafname=3Ddatafile, fullrulefname=3Dfull=
+rule, workload=3Dargs.wl,
+> > > -                          metrics=3Dargs.m)
+> > > +                          metrics=3Dargs.m, cputype=3Dargs.cputype)
+> > >      ret =3D validator.test()
+> > >
+> > >      return ret
+> > > diff --git a/tools/perf/tests/shell/stat_metrics_values.sh b/tools/pe=
+rf/tests/shell/stat_metrics_values.sh
+> > > index 279f19c5919a..30566f0b5427 100755
+> > > --- a/tools/perf/tests/shell/stat_metrics_values.sh
+> > > +++ b/tools/perf/tests/shell/stat_metrics_values.sh
+> > > @@ -16,11 +16,16 @@ workload=3D"perf bench futex hash -r 2 -s"
+> > >  # Add -debug, save data file and full rule file
+> > >  echo "Launch python validation script $pythonvalidator"
+> > >  echo "Output will be stored in: $tmpdir"
+> > > -$PYTHON $pythonvalidator -rule $rulefile -output_dir $tmpdir -wl "${=
+workload}"
+> > > -ret=3D$?
+> > > -rm -rf $tmpdir
+> > > -if [ $ret -ne 0 ]; then
+> > > -     echo "Metric validation return with erros. Please check metrics=
+ reported with errors."
+> > > -fi
+> > > +for cputype in /sys/bus/event_source/devices/cpu_*; do
+> > > +     cputype=3D$(basename "$cputype")
+> > > +     echo "Testing metrics for: $cputype"
+> > > +     $PYTHON $pythonvalidator -rule $rulefile -output_dir $tmpdir -w=
+l "${workload}" \
+> > > +             -cputype "${cputype}"
+> > > +     ret=3D$?
+> > > +     rm -rf $tmpdir
+> > > +     if [ $ret -ne 0 ]; then
+> > > +             echo "Metric validation return with errors. Please chec=
+k metrics reported with errors."
+> > > +     fi
+> > > +done
+> > >  exit $ret
+> > >
+> >
 
